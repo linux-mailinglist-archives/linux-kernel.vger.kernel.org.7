@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-863091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34306BF6FDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:11:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F63BF6FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2758519A3A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:09:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3F1C503668
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE49218DB1F;
-	Tue, 21 Oct 2025 14:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3145633B95F;
+	Tue, 21 Oct 2025 14:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9EoWC/m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oywEPCVo"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE55E33B946;
-	Tue, 21 Oct 2025 14:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1812535502F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761055731; cv=none; b=MZox9sSUU4FlMj86ujsCpCbhWSmydHwMMzlQooNagndfB1HccebzoBSZdlDyvPLBXnuDGA2J+JrXE+8HDYtXVFGTzfsETBsomHqnocQbKiex9h4aHvStGa7zxdK8V1nv6xh4XeZX20Xl7X/pjjpHvisQo2gt4ZQ0IeHpNPTZmQo=
+	t=1761055804; cv=none; b=lJqgG6n2Rvkg0+wnSi9BUbI5GN2UZJCQmbH8v6P8gliPYB1rfn5pYwgcZopGDGccXdUkbn6v29KQxrxPuxyEYpZfmbN6AIREipbPTYA8KyRZJJHt2QcvfBJ3fShIk3sdvOg8CIC0hbX015/VLcMQJqcQM0GwquGSwcZJc3Pl/Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761055731; c=relaxed/simple;
-	bh=6wiuS401xDdRYtvpYyrKEXyzFHQauHIZFmJ3uP/Anok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHIZo5HfGM2jbfIFJIbeAwHnUMKqH1WUpSyTWwaC+z00BeXdV+cOWj/aviGAzG/9TQ1EMmlGD0CVaF5a+jOTXTTGSo+JKQUqTfgA1wI/yA+6OCPkOeWW/TpEKndweTPbXDSVkA2ztT2BzqDuFup6JdKImRdaiUB2BUD0CKRI2kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9EoWC/m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5FE2C4CEF1;
-	Tue, 21 Oct 2025 14:08:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761055730;
-	bh=6wiuS401xDdRYtvpYyrKEXyzFHQauHIZFmJ3uP/Anok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h9EoWC/mq7Q8GB3952OE3all4Y/oQD5FJazcpywTYBebX9RoedVedxpDNHS4PVCJB
-	 clvxh71HKix+go+cCL2UzMsHzRMMZ8ruBpQT5N9lcglWN/kJN7EEWIY1SawDc/vy3o
-	 VEaepM0CQ2LtsiW8Ij1TwZBblsp9XkcJQJ2+x5rfrSWun323p0OHBWApqr0f0X4D65
-	 nRVaaS9OnWqUfefZN1x3dgzkoRCJkh33bjuP8nnXxDN1utdIlbi21X8qf6xPys6ote
-	 HgFMOa390SZZ1ZUrb4qxdlFJIwD91zhb2ENSsirE6jUOlefx5ZFECqK9n6xSPOSLdy
-	 +Xmkzd4fZE6oA==
-Date: Tue, 21 Oct 2025 15:08:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Will Deacon <will@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-Message-ID: <0e1f3a1b-46ab-4eb5-ad05-70784f9b9103@sirena.org.uk>
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
- <CAMRc=Me4Fh5pDOF8Z2XY4MG_DYqPRN+UJh_BzKvmULL96wciYw@mail.gmail.com>
- <81bda56c-f18b-4bd9-abf9-9da7c2251f42@sirena.org.uk>
- <CAMRc=MdOCHJEyPxN+-g71ux68=Mt_Q5P9611QO7Q8J9e8UJv_A@mail.gmail.com>
+	s=arc-20240116; t=1761055804; c=relaxed/simple;
+	bh=8wTLAvGi9ID9Ft8t8f5sMJPAEM8KIov9ku8jUR3+m8E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R77a7mj0NgrI/3F0ph2/ebnqvyDMGYpg4anqOtUH2tDkEChnWJ8MfQbg8lL8L4oRNYM9OT+fr9JtaNxCF0F1skXAUUkiSDr33d4nVEq1ZwR+i8DlMrK/xl0eZQ6ZiCh5dWY5n0qQLWfKRLbm7M6gcU7PKODimFOZFcQrxC/sE30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oywEPCVo; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3c9b1b8ccb1so850300fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761055802; x=1761660602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8wTLAvGi9ID9Ft8t8f5sMJPAEM8KIov9ku8jUR3+m8E=;
+        b=oywEPCVo+SyvObmNYX/40v4pP4Y5PlvowGYvqSX/xOGgzoMd94pmkKxyHyucAgBLEP
+         qoTHAVKTHRQ5Kv4PSUpXY58pWtqxoqVaCkRwevoK7MajdsWB+DsmxCwYQ4S15AnOgwQ5
+         uqB9cwqN2n/10FqlypeO40+Pyd3NDBSQupcVJj+3Hkf5mmtv37Fe7Z5p2LqeWDfcE4MJ
+         IEpxEp9xvGet3X2PRkZVu5jSunuKzYwuLk2dMocQKgxbQ8OLmF3EwDlooPbKkvquer3d
+         LMEaxpvNF4no2WnsAV9yH3encdoKvq/OUmceIIVc4YEMq0vbItM6s1wsZHeex1YVd113
+         HysA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761055802; x=1761660602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8wTLAvGi9ID9Ft8t8f5sMJPAEM8KIov9ku8jUR3+m8E=;
+        b=EIVvo9/76BMyzrAB/DNglVnZAeR1vByjuoxBcfXTma9vQIT47BuxdQXN/0W2r+Xg+l
+         PhtsB55V0FJwWpHo57/oWhsIxTUEI99as3Yy0p5Macfy3yRs1j6xedUW5MbnTNJ6X6Rp
+         HKcjGqxR7XBrVeoewkRYJjtoM4PFEm0OyYrXUcb0+uUdGddnIMcdVVaqP7Hbb/U/KsOX
+         Fg6NJjuXnan6e1YLzBRw84IxQmKjzRhLeNAMn7zDQO7MR5xAREzzwiuET2OHu2cZalCu
+         1eWnOgHg61aU2Bxu7RSeJodtqJ28jEYAjBuAvtZrMJsAg6ca1v52fkpneX2GPNhGXTfS
+         I0WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX42X6DxPp5o1ycv1Yl4/W8dLCEbN86EDEnI7IR6eYguxMOcI+0qVSSIrVFZfYBmiBluBjP4pT75Diihtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWcu0aBgeyJqNUPas+W3PsoES2sWbitZQoeuiadH2+U1DUkKbt
+	fkZvOA1PH+dGN1smriG6Gw1jI6u/zScmX4AVz6RyBb88WxpPBFqd0dsa0HuN9LvZlJbVDZmuUPc
+	BMC4fO7qNIHyeofk/TmtHiE7hSI8fuDftLOn0WOvs
+X-Gm-Gg: ASbGnct+NZa4UGj9JVZP3ZDXSSJdocSmEw8288nFfrgn7MebLo6DAiGNgotwuF7yhHr
+	1DHMTPuKra0Rt2F+PB7fSdPKKgv4z4wMvcIwHZz4AKyrBKmF9KHm640DbSPVovpv/0KyxLMu98u
+	w5HDwlQlp+3Rw7PKwn+hSvsR1Bq/NBARf6nirz1Cx5IGrgGIQCh+cmUiEensMlmCZPL987vHp1Y
+	CwpG1xY3N2Hg6MwoZ0IZnHMgadoCBNuTZZJNVIZ4b1ICN4FAkY2zc3HbGtXiKKdQGTBIZQtvCtT
+	EwqMim7FPUjXUL8=
+X-Google-Smtp-Source: AGHT+IH3VghCiCE3lxLOTrviSNeoulpzb3G7Sl27fBh08zim90scpuPdYk8nSiGtl8LWCrKQVcsM85+T67T5u2ckeQU=
+X-Received: by 2002:a05:6870:1f05:b0:3c9:83d4:db66 with SMTP id
+ 586e51a60fabf-3c98d1e2699mr7751225fac.48.1761055801935; Tue, 21 Oct 2025
+ 07:10:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="be2R75B6whIQ+eJQ"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdOCHJEyPxN+-g71ux68=Mt_Q5P9611QO7Q8J9e8UJv_A@mail.gmail.com>
-X-Cookie: Accordion, n.:
-
-
---be2R75B6whIQ+eJQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20251021-binder-bitmap-v2-0-e652d172c62b@google.com> <20251021-binder-bitmap-v2-3-e652d172c62b@google.com>
+In-Reply-To: <20251021-binder-bitmap-v2-3-e652d172c62b@google.com>
+From: Burak Emir <bqe@google.com>
+Date: Tue, 21 Oct 2025 16:09:49 +0200
+X-Gm-Features: AS18NWCfdoTu2E-3B42NFe8GMy5fnHpVX_b7zcHHmcDYGg8P0ZL5WsqS0Rf8vrY
+Message-ID: <CACQBu=UyZ_=A3j56xNX+F8nExTN8CdCrAXbTRT6z-9MePyuqKg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] rust: id_pool: do not supply starting capacity
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 11:41:52AM +0200, Bartosz Golaszewski wrote:
-> On Fri, Oct 17, 2025 at 7:32=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
+On Tue, Oct 21, 2025 at 3:33=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
 rote:
+>
+> When creating the initial IdPool, Rust Binder simply wants the largest
+> value that does not allocate. Having to handle allocating error failures
+> that cannot happen is inconvenient, so make the constructor infallible
+> by removing the size argument.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Burak Emir <bqe@google.com>
 
-> > It really should be the actual physical state change that triggers the
-> > event.
+Since Binder is the one use case we made this abstraction is for, it
+makes sense to me.
 
-> I guess so, but this would require some non-trivial rework of the
-> regulator core. We'd need some list of deferred notifications stored
-> in memory for when the physical state actually changes.
-
-I'm not sure I see the need for deferred notifications?  We'd need to go
-round all the users whenever a physical change to the GPIO happens but
-it's not clear what we'd need to store beyond the list of users?
-
---be2R75B6whIQ+eJQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj3k+oACgkQJNaLcl1U
-h9BE1wf/fE5s96hdrurlAFqdd32+YZYJUqEYFJu5LZKnjuA1wTr1MHfqMigev/B6
-b/Jr686Hrm/k7WS6R4q0VG8c660FzZ1zdSt/M3AoQXiQ24DcYxb8MbAexAKFbc6g
-2UYm/hbZOIK49A5XX4XBSm+zUG7c6gII9SKcovXcNVb9N3mRnsiFmnOkyTkBnFJr
-97coLg4GMr7Hh1YQLC1dAXjdfkyttrF0R5/JiVabTqQfyD27tYYedFbfSjChRVA8
-Gw7oS3+X70V6zrG/w/9Pxq2R7ikYQSZoIt9BWSh7mGFcMVudZ/QlT1P1u9q0PpLP
-avLCRl+U9JHws84L5zHfZKX0vHlk7w==
-=8Lgz
------END PGP SIGNATURE-----
-
---be2R75B6whIQ+eJQ--
+cheers,
+Burak
 
