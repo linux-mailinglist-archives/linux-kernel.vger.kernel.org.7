@@ -1,164 +1,146 @@
-Return-Path: <linux-kernel+bounces-863278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B96CBF7747
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:45:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1994ABF776E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162E5188EA8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:45:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC0103A3F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D3733C52E;
-	Tue, 21 Oct 2025 15:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D72343207;
+	Tue, 21 Oct 2025 15:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dLkeUeFl"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDAFYe4z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA52239E97
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2773FC2;
+	Tue, 21 Oct 2025 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761061502; cv=none; b=WCJWLu3T/xDf/Rn/wmKYWuKx+7VozA4gtjzV02+qCltIvHNARogYGEGQMPj3oV7+qj066ZeLmpSxVu6QT8meylj0ud5t3p73NNdRxliW2+yuG0fKSCQ5hylZ7nCpIODopI6b7yi09n0aT8jTy810cH98Z05+0sRwcasrxlKUDsM=
+	t=1761061531; cv=none; b=D98kEvK3DqYvr8umoozjZsyHEjuVDSNI5S1CL1MONautsSAgZQEje3ZKwBmdwdjCPVxv5EZ5ay2FGuZY+0s/BFfrWuV8yyFUH/ynO1Z6NOqjul9D0vZBbDcfGpXda3VTcTjjHrt2B2NvID2Z9Jr9jTEw5GFuC9Xr3xGwgpWQpV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761061502; c=relaxed/simple;
-	bh=2PFyqNZSot8EDSGMplRBObbfqgmY6ztn/ALY7W+G8Xg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DHh0kR2ckMQPTF12rUqCxtAnCoWDvSiLi0Q3H7nbB/L4BRsPdbEQx8gf0ZYF8/soYe/cdNXbFhFaKQc4Ug7E23azIDmVJG7jxkZUppkFG6LjtHhiWBkIugtwtEhY2X/pTIKDw7QIje33Yb6X/y4MNNclR8DgaTTgDtogtXjdImI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dLkeUeFl; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so1539a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1761061499; x=1761666299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/MK7K2Vi99xas8WktvZiAjv4QT6t/qx7SHQF2LdRMWg=;
-        b=dLkeUeFlb3efPsoHwrpKxIHc5dh1aGja/uhFZ0nwX2XlcVc0oKRkWzXWEdcZuHC1ti
-         0cgpbkTwMz1EDH6bbYdL/GWCg3Fvnbt0vS0Vgy8KZx4HlkV0+dcZtKx1lBJX+zZZs4Vg
-         Wu/lkGvcnOG35aSx1qBwPWayjC03iQdMzT7QPGryTuJDFWD/H2+dUQFD2Yl7Rp9UhrKF
-         6nhaxTaCdyFTJwTAKqw93a8fg4h35szY4IYDjyOWvPpfG/G6xIencPcMdT1yA5qJy4Dq
-         CCDK5SqphaIfuofInBDESesq5ikqPyOOzhMHh0UtOPKLkm/JxV/41a6m2YWslid0+SpQ
-         w/8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761061499; x=1761666299;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/MK7K2Vi99xas8WktvZiAjv4QT6t/qx7SHQF2LdRMWg=;
-        b=iHW/dRbpI2ZETBNAibZHtFFDpuMNdoTHo5hxYkTfsjB6FPb8Rxd/6GsGyxkoSZMySS
-         /EQ2EOWC5UnyNr+uB1ocqH0l1rBbwEw1W4ATpye37Cv9sHOz5ZEz2vF/RCsjQazW4Ayi
-         b6zhVlBYiQvnKK9fWx9+PtmAoRc6KOAWVObGUXYybtz3nZMt1frZPNyQGb75bXy9ZiE1
-         jM8swyRg5/eB+BR0pK7SuWEsTIq9xUp4XwvOw66LaCiyiFmVLg9i1OsoSrHhhp0TTgW4
-         odz4TY/RxEFw2EuBSrmQkt7i4VuGuCg04/vMVRp89pqsKqSFQV4qHzavUIutfZJfC26B
-         15Qg==
-X-Gm-Message-State: AOJu0Yy/eDfiQzeXm3MwytdEQ7sH82HvLo/DXZwhQBjp+J24ohkZT+vI
-	mpf7XQl60Prc5kUJO/yg7nGHnUJVizs6YHnGucYX9hd3ZWk9Y7H6bB+vtxt6SQ2jvLCMo+89Fkk
-	b5YufsuFsdyb+7XVycTMOqVUcX7a5Gn8prZSfZBFJ
-X-Gm-Gg: ASbGncvfCQ7nMouoFKt3ABaUywC6hSPVTVxs+RBVIHi/rplpHrFy2wXRGErU+S2+STI
-	vRko2xR2OC1HIBreDlzX7uIbiduot4HcZjnbQudA0SC4AunPKYWEPgz5UkkLyWvgQ5x2Q6QGeFg
-	J1/fNJXU5gkTzgbMiTJndgfYHKn+dv7ygxEU3eUvkj050XQMzsTOD43redA2E3VpS9UZHEOhr8t
-	HMgDvpLDMykEEb/fKMVAwiL2oWgynFuASfyMHjOK5a6VsHZg6uHOUXTV1/M
-X-Google-Smtp-Source: AGHT+IFQOGllR5Jxi/TrF28dWQPOXUr2TUQ1LEG9JjC84pIqFv6UuDKjZ+Hh5UHwdDry6HVzfiTcPXTufR+x4+xdPHY=
-X-Received: by 2002:a17:90b:1a8f:b0:314:2cd2:595d with SMTP id
- 98e67ed59e1d1-33e21ef11efmr200209a91.8.1761061499140; Tue, 21 Oct 2025
- 08:44:59 -0700 (PDT)
+	s=arc-20240116; t=1761061531; c=relaxed/simple;
+	bh=dlcvFtDb6OWOoHzfzh8r4khgVAAzJlONTZXsa6DBayk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tXCJLxiinoeYm7xGUp3rwFpZazeSnIrZUSUGk7YDwXgvPsFsvpzxe0bL9kTO1bp+Aqa1nlX9iho1BgHayKngbdCRPL8b6N43ntUTDsoci0zxBU+bwH1PQd6GesC+BFcYVkm1q/ClcwxlYLbX9qFaTwDDez+j7daweB0HWiFWERg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDAFYe4z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39119C4CEF1;
+	Tue, 21 Oct 2025 15:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761061531;
+	bh=dlcvFtDb6OWOoHzfzh8r4khgVAAzJlONTZXsa6DBayk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=lDAFYe4zauOxm0ztpPeoaTFpH+ptcIs3FnZjeFSTMg1PKwu2LGzLqEOJEtlEONbTl
+	 tqTTRXbE1NgxbjCRU2lxwchhMEMZbFbAPhUBJrpxMYYU8GBiPGWhV/rLul5d+isNQc
+	 X/I+brRNwBetrzgcZiO84FF2bP8+XXVlDqCw4A3F5iXKJI21eujGXea5uAK6DVMGmV
+	 phcPPxU0HbX1eeyDEfeOkBfDBXkVW2o4sUsSUZRp15wKS2Q+SJFazMG1XRO5i0t94F
+	 Fs+cfYpeGmXFdSOi3SZDF1webtGEOOlQ7ffVW14p+H7Cnz9hO3boNQpE4q2o2R3thg
+	 djeA1fhcseOEw==
+Date: Tue, 21 Oct 2025 10:45:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>, Scott Branden <sbranden@broadcom.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+	Ray Jui <rjui@broadcom.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v4 4/5] PCI: iproc: Implement MSI controller node
+ detection with of_msi_xlate()
+Message-ID: <20251021154529.GA1191613@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhQ_hv1ri1csrgGP+9RssCuJBDuOLSDowZRD5xZcDD2mPA@mail.gmail.com>
- <20251021123842.968605-1-zhanghongru@xiaomi.com>
-In-Reply-To: <20251021123842.968605-1-zhanghongru@xiaomi.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 21 Oct 2025 11:44:47 -0400
-X-Gm-Features: AS18NWCTB9vDb1wg1H6rs7OmAJYTQeAAWNpZWN3LNEXMYxnDXbB0GiUgNAMn0pc
-Message-ID: <CAHC9VhQeW7fFtB5uGRJhU7882MsSLazHmOZ0UKj=pX6PKiwz8A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] selinux: Make avc cache slot size configurable
- during boot
-To: Hongru Zhang <zhanghongru06@gmail.com>
-Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, selinux@vger.kernel.org, 
-	stephen.smalley.work@gmail.com, zhanghongru@xiaomi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251021124103.198419-5-lpieralisi@kernel.org>
 
-On Tue, Oct 21, 2025 at 8:38=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
-om> wrote:
-> > I would imagine that a very simple implementation would simply convert
-> > the selinux_avc variable from an instance of selinux_avc to a RCU
-> > protected selinux_avc pointer.  As the AVC already uses RCU, I think
-> > the number of changes should be relatively minimal:
-> >
-> > * Ensure we wrap selinux_avc derefs with rcu_dereference().  This
-> > should be the only real change needed for lookups and insertions as
-> > every search through the AVC will start with deref'ing the selinux_avc
-> > pointer.
-> >
-> > * Update avc_init() to allocate the cache slots with a default value,
-> > fail if unable to allocate the cache memory.  If we ensure that the
-> > selinux_avc pointer will always be valid, we can avoid having to check
-> > it.
-> >
-> > * Policy (re)loads which would change the number of AVC cache slots
-> > would allocate and initialize a new selinux_avc then swap the global
-> > selinux_avc pointer under spinlock.  The old AVC cache could then be
-> > free'd according to RCU rules.  I haven't thought about it too much,
-> > but I suspect we could do away with flushing the old AVC in these
-> > cases, even if we can't, flushing the old AVC is easy enough.
-> >
-> > > When increasing slot size, we could directly copy the contents from t=
-he
-> > > old table. When decreasing slot size, nodes exceeding the new slot si=
-ze
-> > > would need to be re-hashed and attached to appropriate positions.
-> >
-> > Changing the number of cache slots should happen infrequently enough
-> > that I see no need to migrate the old entries to the new cache
-> > instance.  It's a cache, it will fill back up naturally.
-> >
-> > > On my Android device, policies are fixed before system image release =
-and
-> > > don't change or load dynamically during system running. Using kernel
-> > > parameters for adjustment ensures no additional locks or checks are n=
-eede=3D
-> > d
-> > > during runtime table access, maintaining simplicity and efficiency of=
- the
-> > > lookup code.
-> >
-> > If your system does not update its policy over the course of a single
-> > boot, and presumably doesn't drastically change its behavior during
-> > that time, there is another, simpler option that we should consider:
-> > setting AVC_CACHE_SLOTS at compile time based on a Kconfig tunable.
-> > The code change would essentially be one line:
-> >
-> >  #define AVC_CACHE_SLOTS   (2 << CONFIG_SECURITY_SELINUX_AVC_HASH_BITS)
-> >
-> > ... with a corresponding entry in security/selinux/Kconfig.  That
-> > should be a very easy change, and if you set the default value such
-> > that AVC_CACHE_SLOTS remains at 512, there should be no impact on
-> > existing systems.
->
-> Alright=EF=BC=8CI will add a CONFIG_SECURITY_SELINUX_AVC_HASH_BITS in
-> security/selinux/Kconfig, the range is between 9 and 14 (512 : 16384),
-> with a default value of 9. And then I will send a new patchset version.
+On Tue, Oct 21, 2025 at 02:41:02PM +0200, Lorenzo Pieralisi wrote:
+> The functionality implemented in the iproc driver in order to detect an
+> OF MSI controller node is now fully implemented in of_msi_xlate().
+> 
+> Replace the current msi-map/msi-parent parsing code with of_msi_xlate().
+> 
+> Since of_msi_xlate() is also a deviceID mapping API, pass in a fictitious
+> 0 as deviceID - the driver only requires detecting the OF MSI controller
+> node not the deviceID mapping per-se (of_msi_xlate() return value is
+> ignored for the same reason).
+> 
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
 
-That seems reasonable.  I'm sure you've seen it already, but you'll
-likely need to modify AVC_DEF_CACHE_THRESHOLD as well ... or honestly
-just remove it in favor of AVC_CACHE_SLOTS, it's only used to set an
-initial value for the cache threshold.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-> I will try to submit the final version in Q1 2026 based on the discussion
-> (Because I have some planned Q4 work that hasn't been completed yet).
+I assume this is material for Rob or Thomas?
 
-No worries, thank you!
-
---=20
-paul-moore.com
+> ---
+>  drivers/pci/controller/pcie-iproc.c | 22 +++++-----------------
+>  1 file changed, 5 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> index 22134e95574b..ccf71993ea35 100644
+> --- a/drivers/pci/controller/pcie-iproc.c
+> +++ b/drivers/pci/controller/pcie-iproc.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/irqchip/arm-gic-v3.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+>  #include <linux/of_pci.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/phy/phy.h>
+> @@ -1337,29 +1338,16 @@ static int iproc_pcie_msi_steer(struct iproc_pcie *pcie,
+>  
+>  static int iproc_pcie_msi_enable(struct iproc_pcie *pcie)
+>  {
+> -	struct device_node *msi_node;
+> +	struct device_node *msi_node = NULL;
+>  	int ret;
+>  
+>  	/*
+>  	 * Either the "msi-parent" or the "msi-map" phandle needs to exist
+>  	 * for us to obtain the MSI node.
+>  	 */
+> -
+> -	msi_node = of_parse_phandle(pcie->dev->of_node, "msi-parent", 0);
+> -	if (!msi_node) {
+> -		const __be32 *msi_map = NULL;
+> -		int len;
+> -		u32 phandle;
+> -
+> -		msi_map = of_get_property(pcie->dev->of_node, "msi-map", &len);
+> -		if (!msi_map)
+> -			return -ENODEV;
+> -
+> -		phandle = be32_to_cpup(msi_map + 1);
+> -		msi_node = of_find_node_by_phandle(phandle);
+> -		if (!msi_node)
+> -			return -ENODEV;
+> -	}
+> +	of_msi_xlate(pcie->dev, &msi_node, 0);
+> +	if (!msi_node)
+> +		return -ENODEV;
+>  
+>  	/*
+>  	 * Certain revisions of the iProc PCIe controller require additional
+> -- 
+> 2.50.1
+> 
 
