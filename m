@@ -1,153 +1,225 @@
-Return-Path: <linux-kernel+bounces-862067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB811BF45AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:08:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE14BF45B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D116405326
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59775404783
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9D4274B5A;
-	Tue, 21 Oct 2025 02:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508C227603C;
+	Tue, 21 Oct 2025 02:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtX9FdGO"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOkdXt0M"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC732737EE
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F722737EE
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761012509; cv=none; b=RJIXy4i6iPsIm8cCqNlleDMBlEbN98LzJBfbKFUkZO5TzcKqsQMEGY+ZdiNtn2JUY0i3zxmYGwBCPI3GqX0N6L7JlvW+56+rewjKyhZRoprmRQkj8BfxSy3YQi7D3MssSitO42VdzZIoSzaIbdZVPZVuQgFwqHzr0OMbgaqpEXo=
+	t=1761012550; cv=none; b=T8Fa4GuLT3nhn7CODXQ9JlVW0W0h+kFIoOMSK2uESjMyJO+EyVjjMs3rsWuuu9xU2TjyC4AusAQPKcsA4N4k2JooMirWPEQphOnOmFMnwB58S32QB8IkDykvwyXSK+IwSpG09zqR5rDZTHdmvPWr73ZWzDD+qS8q10byYrdQI3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761012509; c=relaxed/simple;
-	bh=lMDSCfXDFAAsG+lJ4/PlhyxArZIcaelWaaU9/c3MB38=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VTG1Oi3WNWFux/ZGpjtkofHlKYABZ/MXRERWbVYVlJONFgHzOzlg1ky5dhShsOsnIfXptpFkvJbXJcC6mmrkN0v+vWfsLJpB4excbKJrhNvGOqtzKm3R6l5psioinmyvqyqaeTT5ifVOCvvq3fECCcxMfLsDh31C3ekAHnMcgX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtX9FdGO; arc=none smtp.client-ip=209.85.166.175
+	s=arc-20240116; t=1761012550; c=relaxed/simple;
+	bh=yGtbk5lHI3kq7dyR6Ccfn979PbRPyfWmTul2ikCiYio=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=O+Mc2xqnuABpAueocU8J+2N6LsTlvsoPqayJNvm5Eb22T8qmphunqRg3ouVlfRWOzps4k6dbiLwVNmZLK7sr+BnLlFegFup+Xnt/Xc9HFsRcJOVFd0VMpIITmJtOJwKfbvcuSH/ECY9f5P7DIvu1X7P7mtOSYd/leB6MTB2HCw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOkdXt0M; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-430d7638d27so20987765ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:08:26 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b62fcddfa21so3267844a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:09:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761012505; x=1761617305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SOPZINqJ1ZYn4I38TToVeVJycFqUKIHAHcONMbNzpkE=;
-        b=gtX9FdGOS19dGYoNZoNHibe9hbAxWl9rAFyhotY/7l1eKeWZyyIc42LUzOmtNwef2J
-         jGeQVmiHKjaboCdJGfmv12VM8sodRZvKLwWpMSTQiUpwHp7ICWK7+2Up06ummDt2+ppB
-         rsjhhUYIgrLpeFxnV3bBGzYXnS+ZDUghFRsPhuhu9YewrwMuiwtN7v4DNuuAu0SJqkgw
-         JYsigoxmJl5BumP+QiSwu4DPIPrZFk2T5OgL/2MvPPZCBp4O0elnQgXvSmMhAhPx1HSk
-         kRsXEcyfq9rc44xdKjmgdBPFEMkyVlD3E9oNU/mBMg1adOmScNaGWzXlbnm8BHXhT2Cj
-         4QkQ==
+        d=gmail.com; s=20230601; t=1761012547; x=1761617347; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RSHZrMdT1rNKLCfHO0WzHkGQXMBPH1VXE0UZcdITjiE=;
+        b=aOkdXt0MDl9aBkRGHyw++3wUld6q8+dOq9sbqlDRjsd1ad3ZJYWa75/wMiM7r/uVb7
+         QV1e5vvV4iHjL40vnZqyELu65QVSlR0XYxoH+kF8FTU+0q0Kz/hBx6tJHWROUww22+oV
+         PB9liGTb0b6xDxpEpXpgnA0eMIgIuWi9wIurU4f7KJWezZ2Qvo20tIw4h94kmevY4p77
+         FA4tZwjQEqYn7UzLeUXh/gZkB7+l4o1YwsIKYh+Gvf7r1+NuMwXpiHOqBKC3xCb6Qf2k
+         ghnVZuglZkG4rdCvlqcNLHlhmUe0ZcfoxyqzQ2BfqzKp9wpkR1cJ69iEJhwGO8Ontpb6
+         0B6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761012505; x=1761617305;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SOPZINqJ1ZYn4I38TToVeVJycFqUKIHAHcONMbNzpkE=;
-        b=d60jSD2CIWbhxVmhpjcHtCteQorstatye32KuiFVOyoqaQAhgqpFR7rbyXNc14XBRi
-         8ffUFEt+4lNd+IhvUw6vyA5N+lwqphrtFHj5ekmTTyOm9MFld5MpNN8xC6TJRhFv+2Nk
-         EhmG0UbGB4v4zERVrVZX25C03fN2m6ePtoaMiRuBl0F165Q77PUo5PRLXrjmCWr+EVzW
-         /dyT+9uHkqVn2uvlDHxAqy/rwww8ywksfe90+qksMC88bOg3+/IA6O36i/CMfzqisvGm
-         JJ/WZWNflqvWtFIMw44G4/ogp2gxo2eKl1zQzXLsJtVvYMO1SGQkAHzP5KTwOSLLiIlz
-         pcCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQbXhlphM3lgufiQK9tQiDV57tnXoe7ALat2cL5IG4YfP2i8DU/89BJh1kh5HFAI2Q0YiU4ikQtCWMCY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4f3U2kmA6JL/p4eCRonh/XILe+xICG8uqzBjaimJEOteGvWmz
-	gEoupdE4/cFpHEOnH8Yx78c9aa+mpyptgTSwrJ6fP20ic+430wH8pJ0E
-X-Gm-Gg: ASbGncughsuC/fRMpwhzFsM2DdbPeuS2FsbCmdzRUG6Wr4ycnGJPPM3U2PubSDoztcl
-	ETwWnPd3dc3nWocpKVX66CbfbrHS0pFbOF/OSa9iExMXBFfp0xyzeSR19RIX2XIH847U0ISsdbd
-	x55AflDCQwkoCeyFJH67r+aZbgwpCcG1m+0TLGe8/sy9hAd3Q3AgKmUvTyYzUeFFEbOxYITfFGv
-	KxbHL+G159DXa+onguUQFckHlk/+U+u1Xm/47xXhTCq60Efi/JaML4X8qMytXCq23BSS8lT8Rmx
-	7i6JTlZm6fiSSPYg61NbS+LjiBntSBzQtXodvGfkW+ZxN680eXnnyD6HzhkZ0QPcucOOQc7u1x/
-	Wc9KEU2INMCPQ3EAh+IiJ3h+S51OAsg//VY/MRHQM7fweRBmo3kBj58gAGEaSr2qfYszMh/lkQm
-	dmf409kqbcodUsodkmsPOrAbhyKLSwHW3rqgaF//Fp8SAL7w7gSHCjYum4vwYfbCPykL8R80MhF
-	1LC
-X-Google-Smtp-Source: AGHT+IHxMaRrHMYn6K2NMgEXSDVxYWRsu+Ax0RcX2EKq6KdEsQ4xITeLkd7KXFChEkdLb65yRzCBzw==
-X-Received: by 2002:a05:6e02:148a:b0:430:a013:b523 with SMTP id e9e14a558f8ab-430c52aa249mr247916055ab.25.1761012505291;
-        Mon, 20 Oct 2025 19:08:25 -0700 (PDT)
-Received: from abc-virtual-machine.localdomain (c-76-150-86-52.hsd1.il.comcast.net. [76.150.86.52])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a97699f4sm3556852173.51.2025.10.20.19.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 19:08:24 -0700 (PDT)
-From: Yuhao Jiang <danisjiang@gmail.com>
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuhao Jiang <danisjiang@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] scsi: wd33c93: fix buffer overflow in SCSI message-in handling
-Date: Mon, 20 Oct 2025 21:08:04 -0500
-Message-Id: <20251021020804.3248930-1-danisjiang@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1761012547; x=1761617347;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RSHZrMdT1rNKLCfHO0WzHkGQXMBPH1VXE0UZcdITjiE=;
+        b=ta+eEx9dSb+NPyfDx+G8SMUHC8SVfLxnwfX6B6RVA+P4NV2bQbiCkDrcl0iPXOANs6
+         IRRy/RC1wYVz14C4W0WioZR6djeWgLmC6QUdLq3iMH7Sc0k/stpEDBfoYXSmrei3YlAv
+         JHoTmc6yelYtM4U6QHKOyX59UUaaSq6WHVH9RzHllA0pYnphRIkdu1SqPCg2x75yePzm
+         QW5MpY1V9v6kdDAol7Ea05EgITwUmKGX6FBIrWy+wyUEe+Cv3Osl6DpKSf0AOachBijJ
+         uq+guX5qpIv5BLXjEtHknmj0WvJBP7dDziJGF4nBrNupdVGL3QGrhUTiiEHcdk1B7v+M
+         8c4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUcJ1A72adI+B3u+3mz6jW/7OgWX2KFzOdz7jnyLliygqGFvw5gcYvCxveaheXJjmMWulVHBedkE/yIaVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDOLPAga3IpbrsRdoXxpLBM+Rfv/JQQGjnmmcubhGsrG+bdwQs
+	WxcSH4/2ynlcqefeqTOT4Hpbt616Qxwl10Bov3ad8eQT3zMjwoQl9IVpPO8wXm1WDKf9alpH+4g
+	GVNF9aQ1IJozADtBCfk0Yi9/vS7ec6OA=
+X-Gm-Gg: ASbGncvkgX+Tm/DngAjV9VW6s9CmPJmty16UZ5dU7rBW8ep+kLIGGn2Bb+l1CHb9OKo
+	SRdR6pV2e1v5StKOWykCXlxGeBWzCXFFEICzmlx7v2cbaBLNDKFxBueUF+iR19uKgaQ4yL2kEOR
+	jOgYGq/6czc2DEM5po4oNxo3QUryhK0Q79Ku4T7sDw+yFvtFgyia0hE7owecR03OBjJT8FsTIrb
+	CK928MeUk8VggyBnBD34A/YVyQEJccgegA0IMlZtPghAFlLLNUorDdrKCwdUauqpHhnRQ==
+X-Google-Smtp-Source: AGHT+IGI6nmhwmy6qVV/5p98VPbodX2KbY/ejETa/NKy48hQF8/IWksWUPDrLNOcGYbgqzWaEnpoxE+cPeFDLYDBOeI=
+X-Received: by 2002:a17:902:d501:b0:28e:7fce:667e with SMTP id
+ d9443c01a7336-290c9cbc6d2mr196330075ad.17.1761012547292; Mon, 20 Oct 2025
+ 19:09:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Tue, 21 Oct 2025 04:08:31 +0200
+X-Gm-Features: AS18NWCV60O9H_TfISsqY7ZnWFD9f_H8XtVJP2DI992D3PQ7BXcUyCc296_2jFs
+Message-ID: <CAHaCkmc_CrwBRj-Gji_td9S19oPg9U9-n8B4u8yTR4sPm9Vx7Q@mail.gmail.com>
+Subject: [PATCH] Fix up 'make versioncheck' issues
+To: wireguard@lists.zx2c4.com, linux-kselftest@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	Jesper Juhl <jesperjuhl76@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-A buffer overflow vulnerability exists in the wd33c93 SCSI driver's
-message handling where missing bounds checking allows a malicious
-SCSI device to overflow the incoming_msg[] buffer and corrupt kernel
-memory.
+From d2e411b4cd37b1936a30d130e2b21e37e62e0cfb Mon Sep 17 00:00:00 2001
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Tue, 21 Oct 2025 03:51:21 +0200
+Subject: [PATCH] [PATCH] Fix up 'make versioncheck' issues
 
-The issue occurs because:
-- incoming_msg[] is a fixed 8-byte buffer (line 235 in wd33c93.h)
-- wd33c93_intr() writes to incoming_msg[incoming_ptr] without
-  validating incoming_ptr is within bounds (line 935)
-- For EXTENDED_MESSAGE, incoming_ptr increments based on the device-
-  supplied length field (line 1085) with no maximum check
-- The validation at line 1001 only checks if the message is complete,
-  not if it exceeds buffer size
+'make versioncheck' currently flags a few files that don't need to
+needs it but doesn't include it. This patch fixes that up.
 
-This allows an attacker controlling a SCSI device to craft an extended
-message with length field 0xFF, causing the driver to write 256 bytes
-into an 8-byte buffer. This can corrupt adjacent fields in the
-WD33C93_hostdata structure including function pointers, potentially
-leading to arbitrary code execution.
-
-Add bounds checking in the MESSAGE_IN handler to ensure incoming_ptr
-does not exceed buffer capacity before writing. Reject oversized
-messages per SCSI protocol by sending MESSAGE_REJECT.
-
-Reported-by: Yuhao Jiang <danisjiang@gmail.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
+Signed-Off-By: Jesper Juhl <jesperjuhl76@gmail.com>
 ---
- drivers/scsi/wd33c93.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+samples/bpf/spintest.bpf.c                                | 1 -
+tools/lib/bpf/bpf_helpers.h                               | 2 ++
+tools/testing/selftests/bpf/progs/dev_cgroup.c            | 1 -
+tools/testing/selftests/bpf/progs/netcnt_prog.c           | 2 --
+tools/testing/selftests/bpf/progs/test_map_lock.c         | 1 -
+tools/testing/selftests/bpf/progs/test_send_signal_kern.c | 1 -
+tools/testing/selftests/bpf/progs/test_spin_lock.c        | 1 -
+tools/testing/selftests/bpf/progs/test_tcp_estats.c       | 1 -
+tools/testing/selftests/wireguard/qemu/init.c             | 1 -
+9 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/scsi/wd33c93.c b/drivers/scsi/wd33c93.c
-index dd1fef9226f2..2d50a0a01726 100644
---- a/drivers/scsi/wd33c93.c
-+++ b/drivers/scsi/wd33c93.c
-@@ -932,6 +932,19 @@ wd33c93_intr(struct Scsi_Host *instance)
- 		sr = read_wd33c93(regs, WD_SCSI_STATUS);	/* clear interrupt */
- 		udelay(7);
- 
-+		/* Prevent buffer overflow from malicious extended messages */
-+		if (hostdata->incoming_ptr >= sizeof(hostdata->incoming_msg)) {
-+			printk("wd33c93: Incoming message too long, rejecting\n");
-+			hostdata->incoming_ptr = 0;
-+			write_wd33c93_cmd(regs, WD_CMD_ASSERT_ATN);
-+			hostdata->outgoing_msg[0] = MESSAGE_REJECT;
-+			hostdata->outgoing_len = 1;
-+			write_wd33c93_cmd(regs, WD_CMD_NEGATE_ACK);
-+			hostdata->state = S_CONNECTED;
-+			spin_unlock_irqrestore(&hostdata->lock, flags);
-+			break;
-+		}
+diff --git a/samples/bpf/spintest.bpf.c b/samples/bpf/spintest.bpf.c
+index cba5a9d507831..6278f6d0b731f 100644
+--- a/samples/bpf/spintest.bpf.c
++++ b/samples/bpf/spintest.bpf.c
+@@ -5,7 +5,6 @@
+ * License as published by the Free Software Foundation.
+ */
+#include "vmlinux.h"
+-#include <linux/version.h>
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
+
+diff --git a/tools/lib/bpf/bpf_helpers.h b/tools/lib/bpf/bpf_helpers.h
+index 80c0285406561..393ce1063a977 100644
+--- a/tools/lib/bpf/bpf_helpers.h
++++ b/tools/lib/bpf/bpf_helpers.h
+@@ -2,6 +2,8 @@
+#ifndef __BPF_HELPERS__
+#define __BPF_HELPERS__
+
++#include <linux/version.h>
 +
- 		hostdata->incoming_msg[hostdata->incoming_ptr] = msg;
- 		if (hostdata->incoming_msg[0] == EXTENDED_MESSAGE)
- 			msg = EXTENDED_MESSAGE;
--- 
-2.34.1
+/*
+ * Note that bpf programs need to include either
+ * vmlinux.h (auto-generated from BTF) or linux/types.h
+diff --git a/tools/testing/selftests/bpf/progs/dev_cgroup.c
+b/tools/testing/selftests/bpf/progs/dev_cgroup.c
+index c1dfbd2b56fc9..4c4e747bf827a 100644
+--- a/tools/testing/selftests/bpf/progs/dev_cgroup.c
++++ b/tools/testing/selftests/bpf/progs/dev_cgroup.c
+@@ -6,7 +6,6 @@
+ */
 
+#include <linux/bpf.h>
+-#include <linux/version.h>
+#include <bpf/bpf_helpers.h>
+
+SEC("cgroup/dev")
+diff --git a/tools/testing/selftests/bpf/progs/netcnt_prog.c
+b/tools/testing/selftests/bpf/progs/netcnt_prog.c
+index f9ef8aee56f16..3cf6b7a27a34a 100644
+--- a/tools/testing/selftests/bpf/progs/netcnt_prog.c
++++ b/tools/testing/selftests/bpf/progs/netcnt_prog.c
+@@ -1,7 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0
+#include <linux/bpf.h>
+-#include <linux/version.h>
+-
+#include <bpf/bpf_helpers.h>
+#include "netcnt_common.h"
+
+diff --git a/tools/testing/selftests/bpf/progs/test_map_lock.c
+b/tools/testing/selftests/bpf/progs/test_map_lock.c
+index 1c02511b73cdb..982bdbf0dba6b 100644
+--- a/tools/testing/selftests/bpf/progs/test_map_lock.c
++++ b/tools/testing/selftests/bpf/progs/test_map_lock.c
+@@ -1,7 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0
+// Copyright (c) 2019 Facebook
+#include <linux/bpf.h>
+-#include <linux/version.h>
+#include <bpf/bpf_helpers.h>
+
+#define VAR_NUM 16
+diff --git a/tools/testing/selftests/bpf/progs/test_send_signal_kern.c
+b/tools/testing/selftests/bpf/progs/test_send_signal_kern.c
+index 176a355e30624..e70b191162359 100644
+--- a/tools/testing/selftests/bpf/progs/test_send_signal_kern.c
++++ b/tools/testing/selftests/bpf/progs/test_send_signal_kern.c
+@@ -1,7 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0
+// Copyright (c) 2019 Facebook
+#include <vmlinux.h>
+-#include <linux/version.h>
+#include <bpf/bpf_helpers.h>
+
+struct task_struct *bpf_task_from_pid(int pid) __ksym;
+diff --git a/tools/testing/selftests/bpf/progs/test_spin_lock.c
+b/tools/testing/selftests/bpf/progs/test_spin_lock.c
+index d8d77bdffd3d2..9bcee268f828b 100644
+--- a/tools/testing/selftests/bpf/progs/test_spin_lock.c
++++ b/tools/testing/selftests/bpf/progs/test_spin_lock.c
+@@ -1,7 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0
+// Copyright (c) 2019 Facebook
+#include <linux/bpf.h>
+-#include <linux/version.h>
+#include <bpf/bpf_helpers.h>
+#include "bpf_misc.h"
+
+diff --git a/tools/testing/selftests/bpf/progs/test_tcp_estats.c
+b/tools/testing/selftests/bpf/progs/test_tcp_estats.c
+index e2ae049c2f850..eb0e55ba3f284 100644
+--- a/tools/testing/selftests/bpf/progs/test_tcp_estats.c
++++ b/tools/testing/selftests/bpf/progs/test_tcp_estats.c
+@@ -34,7 +34,6 @@
+#include <string.h>
+#include <linux/bpf.h>
+#include <linux/ipv6.h>
+-#include <linux/version.h>
+#include <sys/socket.h>
+#include <bpf/bpf_helpers.h>
+
+diff --git a/tools/testing/selftests/wireguard/qemu/init.c
+b/tools/testing/selftests/wireguard/qemu/init.c
+index 3e49924dd77e8..20d8d3192f75c 100644
+--- a/tools/testing/selftests/wireguard/qemu/init.c
++++ b/tools/testing/selftests/wireguard/qemu/init.c
+@@ -24,7 +24,6 @@
+#include <sys/sysmacros.h>
+#include <sys/random.h>
+#include <linux/random.h>
+-#include <linux/version.h>
+
+__attribute__((noreturn)) static void poweroff(void)
+{
+--
+2.51.1
 
