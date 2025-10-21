@@ -1,159 +1,104 @@
-Return-Path: <linux-kernel+bounces-862177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE397BF49A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:50:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0169CBF49B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 33EAF34F5E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:50:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 480A34E776D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75203231A30;
-	Tue, 21 Oct 2025 04:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67E238C29;
+	Tue, 21 Oct 2025 04:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ure6nvZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1B7ATjX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9C28460;
-	Tue, 21 Oct 2025 04:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEB98460;
+	Tue, 21 Oct 2025 04:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761022207; cv=none; b=R90RsHnPsEKwnefi8LVtx8ItjC8znu26fNLKle8VutVB694zaSwygAaFSD9V4NLgbOzNJJlML0GfDgKW3+w0lAn6agpQEXXxzhc2+eKH6k5CtWNKd/kty+pLCTbodUJXbxbTO3aSj1tYFuya/lzeJW8jv/no/L7MuQA1LIerCQ4=
+	t=1761022456; cv=none; b=q/PgmH6fhIhR8+Hftl1BaSDOOZ9DyKT5qTQPf3Ex9Sex6MPs3X4zdm/yiOW6LNoYfIYoYlR25Zu5h4DfNA7+TGgR8biccLNSSB3QNWGvEofszzcS3LZ9p45iyG7Y6FgcTb3eMb0EBmtcjV43EOKZh4k1sn0zS7pBy67bXEzvT8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761022207; c=relaxed/simple;
-	bh=QGD45ga5zWdLTFV/K5GdIbJuErXC7zGRF80m5HoRfcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bJe9cmAT4p7VUjIE7ViFBqTPMbU9qjrdEte4H0luB6lZAJQ53lEtHt6LaLIHFPWEEiv9mioekCjvqstlMJWVj6bFoNHcpMCUW7vJPg9BZ5AENnFqs7SxlrO1+m7LmN660tueOUTlwP95RO5XglNe+bO/bA1VWpaFZtLVGSMpU0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ure6nvZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD4AEC4CEF1;
-	Tue, 21 Oct 2025 04:50:01 +0000 (UTC)
+	s=arc-20240116; t=1761022456; c=relaxed/simple;
+	bh=UJ8dZv5bHlZPJQMkZaF2uHRed3zaCZaqouJxTbRtbKk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=I2LbbyIk+qOLwTzI5qFjLq+MMyqiaLRY1iy3DNH9guk4VkNZfgS9uJeIwXW/utoncDHDGv/sD8M6BU3ukHE3PmZx59D8bDu74lHD6mvXKCXls+4CrNmnvPcb0FfVkh0PRN0kA/BrRkjGsUqoKAzDzpN31IaGVmSYk4S60ktWd0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1B7ATjX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDDDC4CEF1;
+	Tue, 21 Oct 2025 04:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761022204;
-	bh=QGD45ga5zWdLTFV/K5GdIbJuErXC7zGRF80m5HoRfcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ure6nvZCgjKTFB34N3cCy9GcbSh3diCqfJgHQ7EbhyZgKv2YKLD+/hBwu00yHGWLE
-	 /9fiGpYQRNIqGeViWBuNEwXa/E0h60bRIpP2TOdADQd/jVbqXfMDNqMEVz4RZEOD6T
-	 Ct6tXaXL2hG+5Sa9WeVD7GGZpQF4/mv3gjwEZxv7jTmNegreiYvX6667D48Jlcx603
-	 +OZuVIn5gCntw56FXnA/G6lwHOGF/kf71T+NkVVNIOrgE7nxg+6/1tsGBRbQ1BcLX0
-	 /qG27Sn5sP1JuSC7rk4ccOZdMcCrPX1aQnO6wrZ7Tnca2u1TBGLx4EuflYd03RU7WH
-	 UMJE3H6PwFbEA==
-Date: Tue, 21 Oct 2025 04:49:59 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-Message-ID: <aPcQ99MZse5zmv3o@google.com>
-References: <20251016054204.1523139-1-tzungbi@kernel.org>
- <20251016054204.1523139-6-tzungbi@kernel.org>
- <20251016123149.GA88213@nvidia.com>
- <aPGryj-V5PQZRtoI@google.com>
- <20251017134916.GK3901471@nvidia.com>
- <aPJp3hP44n96Rug9@tzungbi-laptop>
- <20251017162116.GA316284@nvidia.com>
- <aPT-7TTgW_Xop99j@tzungbi-laptop>
- <20251020115734.GH316284@nvidia.com>
+	s=k20201202; t=1761022455;
+	bh=UJ8dZv5bHlZPJQMkZaF2uHRed3zaCZaqouJxTbRtbKk=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=p1B7ATjXuQjDxi8Wih6SciXdIjQSn4W9b3flzgtdqYyDQRCUOJEk8ft+Yln1ba2b+
+	 l7LYsMl1Cpij8Y/ay6wYKI4Fnvu9H9c9VkJd4m52DbYgSG/IzYoXfoGaid36/EmAqe
+	 YjU9CcujNl8Uo9tfurbZ59fl/RO91gDBLXYGnfwt0R6jX9mTSpUTcjgGEw5CqGlXKm
+	 njWia+00P2Wh7cDFM3H6SVGIZMfJ+WopUIFce43gz8H814w1pajC5SO6V0i1t/ORzE
+	 mcMj2Nk+9952GdJZbIBeCQfyMvLjs7RwM+YCeBum8FsgvN2o/vmadZyotyBjzUsjpr
+	 YUFeCprPUlYag==
+Date: Mon, 20 Oct 2025 23:54:14 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020115734.GH316284@nvidia.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, mturquette@baylibre.com, 
+ huangtao@rock-chips.com, linux-kernel@vger.kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org, conor+dt@kernel.org, 
+ linux-clk@vger.kernel.org, finley.xiao@rock-chips.com, heiko@sntech.de, 
+ linux-arm-kernel@lists.infradead.org, sugar.zhang@rock-chips.com, 
+ linux-rockchip@lists.infradead.org
+To: Elaine Zhang <zhangqing@rock-chips.com>
+In-Reply-To: <20251021033834.1390006-5-zhangqing@rock-chips.com>
+References: <20251021033834.1390006-1-zhangqing@rock-chips.com>
+ <20251021033834.1390006-5-zhangqing@rock-chips.com>
+Message-Id: <176102245277.2690154.9518311303158362414.robh@kernel.org>
+Subject: Re: [PATCH v4 4/7] dt-bindings: clock: Add support for rockchip
+ pvtpll
 
-On Mon, Oct 20, 2025 at 08:57:34AM -0300, Jason Gunthorpe wrote:
-> On Sun, Oct 19, 2025 at 11:08:29PM +0800, Tzung-Bi Shih wrote:
-> > On Fri, Oct 17, 2025 at 01:21:16PM -0300, Jason Gunthorpe wrote:
-> > > On Sat, Oct 18, 2025 at 12:07:58AM +0800, Tzung-Bi Shih wrote:
-> > > > > This is already properly lifetime controlled!
-> > > > > 
-> > > > > It *HAS* to be, and even your patches are assuming it by blindly
-> > > > > reaching into the parent's memory!
-> > > > > 
-> > > > > +	misc->rps[0] = ec->ec_dev->revocable_provider;
-> > > > > 
-> > > > > If the parent driver has been racily unbound at this point the
-> > > > > ec->ec_dev is already a UAF!
-> > > > 
-> > > > Not really, it uses the fact that the caller is from probe().  I think the
-> > > > driver can't be unbound when it is still in probe().
-> > > 
-> > > Right, but that's my point you are already relying on driver binding
-> > > lifetime rules to make your access valid. You should continue to rely
-> > > on that and fix the lack of synchronous remove to fix the bug.
-> > 
-> > I think what you're looking for is something similar to the following
-> > patches.
-> > 
-> > - Instead of having a real resource to protect with revocable, use the
-> >   subsystem device itself as a virtual resource.  Revoke the virtual
-> >   resource when unregistering the device from the subsystem.
-> > 
-> > - Exit earlier if the virtual resource is NULL (i.e. the subsystem device
-> >   has been unregistered) in the file operation wrappers.
-> 
-> Sure
->  
-> > By doing so, we don't need to provide a misc_deregister_sync() which could
-> > probably maintain a list of opening files in miscdevice and handle with all
-> > opening files when unregistering.  
-> 
-> I don't think we want to change the default behavior of
-> misc_deregister.. Maybe if it was a mutex not srcu it would be OK, but
-> srcu you are looking at delaying driver removal by seconds
-> potentially.
-> 
-> > @@ -234,6 +240,10 @@ int misc_register(struct miscdevice *misc)
-> >                 return -EINVAL;
-> >         }
-> >  
-> > +       misc->rp = revocable_provider_alloc(misc);
-> > +       if (!misc->rp)
-> > +               return -ENOMEM;
-> 
-> Just get rid of all this revocable stuff, all this needs is a scru or
-> a mutex, none of this obfuscation around a simple lock is helpful in
-> core kernel code.
 
-I didn't get the idea.  With a mutex, how to handle the opening files?
-
-Are they something like: (?)
-- Maintain a list for opening files in both .open() and .release().
-- In misc_deregister_sync(), traverse the list, do something (what?), and
-  wait for the userspace programs close the files.
-
-> > @@ -1066,6 +1066,7 @@ struct file {
-> >                 freeptr_t               f_freeptr;
-> >         };
-> >         /* --- cacheline 3 boundary (192 bytes) --- */
-> > +       struct fs_revocable_replacement *f_rr;
-> >  } __randomize_layout
+On Tue, 21 Oct 2025 11:38:31 +0800, Elaine Zhang wrote:
+> Add pvtpll documentation for rockchip.
 > 
-> The thing that will likely attract objections is this. It is probably
-> a good idea to try to remove it.
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,pvtpll.yaml       | 100 ++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,pvtpll.yaml
 > 
-> For simple misc users the inode->i_cdev will always be valid and you
-> can reach the struct misc_dev/cdev from there in all the calls.
-> 
-> More complex cdev users replace the inode so that wouldn't work
-> universally but it is good enough to get started at least.
 
-The context is meant to be the same lifecycle with file opens/releases but
-not the miscdevice.  I think the mutex vs. revocable stuff is the more
-fundamental issue, we can focus on that first.
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,pvtpll.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,pvtpll.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251021033834.1390006-5-zhangqing@rock-chips.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
