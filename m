@@ -1,103 +1,104 @@
-Return-Path: <linux-kernel+bounces-862497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E719BF5770
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:18:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA787BF5767
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197D8481EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59C6118A760A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385F632ABDB;
-	Tue, 21 Oct 2025 09:18:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8704F328B78;
+	Tue, 21 Oct 2025 09:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T0MwssBb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C48F2FB0BC
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A272FB0BC;
+	Tue, 21 Oct 2025 09:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761038292; cv=none; b=JeR2Zp6EZ3PDEQWHsESvRH6oCV/jVWWAUdjLcVsQfhURofzHkJVLvfJFbVnNMtzk7d1CSIDBdGh3AJrbLdscRcQ6+zzdVO618yFD23k7jfb21YPX38oXGIcFmz7XTgCwvVzJLimGOFCgdHBX6jT5iHuC8umQoHE4BFHYOUQAGzg=
+	t=1761038287; cv=none; b=QG4Qlof5pvHGkmuBqa8++F9XQ650IQjnh4oLgWaedjE1nkqleN+zCAXweDb8tnLI+Mhz8sDBLbrUF+sRcjWiIuwJObzlVi5ZdBIwypp/xMo2H6EKzocJkIuNzenyB4tdbhy27BWzWEjHAeCnI6OnB9c7OS9HFIb5Eyxaz8HYQUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761038292; c=relaxed/simple;
-	bh=sxN9Glz3sFE/HdyyuHbJiz7TF/YHuXhweLSBVq0Y/QQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LtnldUvFoEBUz/4P3eAYyXrRvQ/5VbCDTDpIV5J0D6CTLrQQAMqQ3GH5ttfhU8oIsQRD8OxIPGtOhD8dbRnf2uOdIsxHoHo88/fc5aSXwTxDn6cmOXnCKP1peJlNjX2M6PpQCtjfFpFKS+LCmPvMTtIT6lkDEJZtn4tsgceQH34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vB8Uw-0001iN-Dv; Tue, 21 Oct 2025 11:17:42 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vB8Uv-004hJ9-1C;
-	Tue, 21 Oct 2025 11:17:41 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vB8Uv-0000000041g-1CkS;
-	Tue, 21 Oct 2025 11:17:41 +0200
-Message-ID: <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
-Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent
- of the reset device
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko	
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich	 <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- 	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Date: Tue, 21 Oct 2025 11:17:41 +0200
-In-Reply-To: <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com>
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
-	 <20251006-reset-gpios-swnodes-v1-7-6d3325b9af42@linaro.org>
-	 <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
-	 <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1761038287; c=relaxed/simple;
+	bh=UuBuv44gNzyj1+yUJap8HHMxkyOwxw2EgIgQnSBwTI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WrBQ43sfDi9Ab5yBjEpqJeV9LGak5QDRUGxl0ym6ZufkaHp4uF0msjnnBjPQ7pRALT5C6KNpM4XuIF9bFAiOySh1kPZ4xCAd8Z9YpYJ7OfNy5DazkoyNK68APB15BFdZE2kzT9thn9UCPjByxRYRBa1E7SSPlCW8XU6qVZznq6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T0MwssBb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761038286; x=1792574286;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UuBuv44gNzyj1+yUJap8HHMxkyOwxw2EgIgQnSBwTI0=;
+  b=T0MwssBbsCN3WsR2TApPm/xujNaOD1PnKbfU3vJFkdgbm52vQ/kh8mp3
+   wsGyivC/Tne154KQ/7MqIwjk5ut0F8zChJGN8VYitXGV9bAxS+c+Kzj50
+   NNUUek7XHYIbePqRg0pL6/Q5HtQKGAonhVErRShTIqRD6teXCCG/C8ea4
+   WXJ+ZENuc/W0RB8EIOglXjOTvYPuH1LflqnAQXW+x8jhApxfx1sfnrShD
+   99IuFVa+Kw3Y5cCoZyux9ul7WA/v4ExSTRrx0RkG1vVp7fveO2H+j+FD0
+   2SyNjlnhiWRLSvG5Ekg25RqwdFFM933Qw4VjYsmpaNcvpuEhIuCW1YhBC
+   Q==;
+X-CSE-ConnectionGUID: HpZSDNspRYurUv4fwfjSDA==
+X-CSE-MsgGUID: jQPH9pDMQnmxPwTZSP14VQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88627838"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="88627838"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 02:18:06 -0700
+X-CSE-ConnectionGUID: mDuXJpdKSTqo8OBCWx1+TA==
+X-CSE-MsgGUID: TtcfR3JkRTaQOgzl1jDMMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="214505506"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.134])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 02:18:03 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 499B31202B5;
+	Tue, 21 Oct 2025 12:18:01 +0300 (EEST)
+Date: Tue, 21 Oct 2025 12:18:01 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Ricardo Ribalda <ribalda@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] media: i2c: imx214: Rearrange control initialization
+Message-ID: <aPdPyc6Lasmp3EzC@kekkonen.localdomain>
+References: <20251020-imx214-smatch-v3-1-2c9999efc97c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020-imx214-smatch-v3-1-2c9999efc97c@chromium.org>
 
-On Mo, 2025-10-20 at 17:25 +0200, Bartosz Golaszewski wrote:
-> On Mon, Oct 6, 2025 at 5:19=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix=
-.de> wrote:
-> > [...] could you take this
-> > opportunity to prepend a patch that splits the part under guard() into
-> > a separate function?
->=20
-> If I'm being honest, I'd just make everything else use __free() as
-> well. Except for IDA, it's possible.
->=20
-> That being said: I have another thing in the works, namely converting
-> the OF code to fwnode in reset core. I may address this there as I'll
-> be moving stuff around. Does this make sense?
+Hi Ricardo,
 
-Yes. There was already a previous attempt at fwnode support [1], but we
-abandoned that when there was no use case anymore.
+Thank you for the update.
 
-[1] https://lore.kernel.org/r/20220323095022.453708-3-clement.leger@bootlin=
-.com
+On Mon, Oct 20, 2025 at 08:18:13PM +0000, Ricardo Ribalda wrote:
+> Smatch is confused by the control initialization logic. It assumes that
+> there can be a case where imx214->link_freq can be NULL and ctrls_init
+> returns 0.
+> 
+> Re-arrage the function to make smatch happy.
+> 
+> This patch fixes this smatch error:
+> drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previously assumed 'imx214->link_freq' could be null (see line 1017)
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
->=20
-regards
-Philipp
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+-- 
+Sakari Ailus
 
