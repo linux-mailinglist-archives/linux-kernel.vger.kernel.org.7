@@ -1,119 +1,159 @@
-Return-Path: <linux-kernel+bounces-862481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED21BF566D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:04:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AA4BF569A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953BF18C7142
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:04:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6CC4641F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE0932A3D4;
-	Tue, 21 Oct 2025 09:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0851B32A3DA;
+	Tue, 21 Oct 2025 09:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mfCbNVAC"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tfU4V0m0"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068A5328B60;
-	Tue, 21 Oct 2025 09:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA22331E10D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037446; cv=none; b=hImINQ/PX1OxC5kqzizh+TrNpP8+3FCm21Ckssr1KDiW+qJnq4kZFKo6mLCx/0jaGQG3pMevF1dfs2NTE8hToSsxJI8zjdVXbPAUNuWSIm0wKGOCxHDNotxR1Y2DpRu+GSPyKz/UjyiA2STfG92CShcRfaP1FqKWbsH5A7HnykM=
+	t=1761037602; cv=none; b=I3H8AuUVvuh1MWMAJsnhq/YLj5jNiW3H+gnyca5pQ1Fwe21DniT9dh8V88IBd10uq/XDYahfzvCEgJbK/B0Kf0zPX0tE5o8X8rQ9UHkajlZ2uTTIsxijxsFmYFPObNbJZAVR/VhTO/g2NRnoiZxa1qB2O89VDluDa8/Pj3smcKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037446; c=relaxed/simple;
-	bh=k5Buo0le6EqXUC/QN/g5Mt0ej2j7xhhd8+t9O1O2Png=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bqBf6YJmevmKS7vFdrZCGhxVA6KsPfWcxHgzCAxrneix1G4D8n+42nx/7q0peRwwk6JjFIbMPgGYk4qk00vegxLmvJ9+nWCOHakuAFcWq+1vPQ2+6kuCm7YvIa/I7EYQIadjGbTVu/9RMDqrEMeXDfOLiWhWIY1sNji+NyJefjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=mfCbNVAC; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VSk3y2Mk5tvsRCRDhegaZJGDtEZ5KIaLNXeYF9q4FCs=; b=mfCbNVACWYLZeUU8wq34OFmldn
-	sC4nEKCA2KivdMJn9v8HB1QudaCWpHUkIBU/t+1ig0eaMY4bl32KlpN5RmSWCpdRybkdB6CECGgfO
-	xblkQ5paGdsAKuNqkLovVDx1diBFbmbavQG/PDfLgG9+r0l7fS65SRv15jDmqqSrUB+JZukPnLzGr
-	J0KitZsqY3pIh81IVNWYKFvsxs5obKEheAcne8A4J6hqLjXehFw/Lud2vCow/ycSyJ+55pBTemwVI
-	25Pz25DbgZpkVF/0DwCAbWSDpN1EU+hscanWWCG03IPVfUs6yE/vjaOCQ5vZw3zQei0Qlgzlr79EF
-	8ooGeWow==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57544)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vB8Hf-000000003Uk-1ylP;
-	Tue, 21 Oct 2025 10:03:59 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vB8Hc-00000000847-2URk;
-	Tue, 21 Oct 2025 10:03:56 +0100
-Date: Tue, 21 Oct 2025 10:03:56 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Gerhard Engleder <gerhard@engleder-embedded.com>
-Cc: Horatiu Vultur <horatiu.vultur@microchip.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, richardcochran@gmail.com
-Subject: Re: [PATCH net-next] net: phy: micrel: Add support for non PTP SKUs
- for lan8814
-Message-ID: <aPdMfMlYMXHjvw_l@shell.armlinux.org.uk>
-References: <20251017074730.3057012-1-horatiu.vultur@microchip.com>
- <79f403f0-84ed-43fe-b093-d7ce122d41fd@engleder-embedded.com>
- <20251020063945.dwqgn5yphdwnt4vk@DEN-DL-M31836.microchip.com>
- <e0a8830e-6267-4b2a-b1fa-f3cbe34bd3ba@engleder-embedded.com>
+	s=arc-20240116; t=1761037602; c=relaxed/simple;
+	bh=Kw8PWnwgX+EVahNAArZWM7gjO7i4Jria4MYBSb58vsE=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A4n6Nzih9w9KWy66Ic5Wvth5VxYJe8EbAnzR+T9iGyAvBsJhXOe6Z9fcjdDAQCWaA8XYjB/WmKyWqBFzIhRwi70KDIheYU6p+d8dD97cQSdIaBGlk5nooz7e1FPkAzHmwSCuvoz99TAIzDvJAaZgrWGVBh3MFg2ARVNjJL15tUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tfU4V0m0; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-57a604fecb4so6025371e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:06:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761037598; x=1761642398; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qPpFx6ykYRuQv3SA/HXCy/3dmgOcOpqVjX/aVsVTlzA=;
+        b=tfU4V0m0q57ZNx37L4RF0azZHlUDduWeeC9bYeHb9rdfOA1mum134AYF39DYXOiIYT
+         I+vn8/fKOQ3Ss5jnpxMfjeBiJZwPTYfWw1x9lkaDZe1m/NrbyWflzd7trjvmr1779Ray
+         9eEEMaR6jYRnSD+DofE1YJA1MdBqwlmNIGHyHXZd1tOaKo6SjNT05obwLiRhc17s4FMv
+         ZDwKw6yKfo43zpGAPgutaBmavQSgpkqo09ByL/tp6OUwwpAoNfIj72EPsVofw5KNKlsK
+         JpTM6dOj5kfVxvDAw0O81/YwmJDN3zMPEp4ff98oisA8xQkaEFiQnGQICDaEAZKJWSFZ
+         1tww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761037598; x=1761642398;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qPpFx6ykYRuQv3SA/HXCy/3dmgOcOpqVjX/aVsVTlzA=;
+        b=ZIXp0tdXob9bktXmnPlK8gtd51UNo5LB386bwFgRzj9qTwIytZN1/wRADEsfpiOIMe
+         ZvbzLGaQ7O26v+OnsFUCwnJ3/5PaYCnheb3rDo3qhVRRK/awk/A3dyQB0EwN5falujvF
+         1cS3vNjANKPIXM3V1ocinZf2XNFIwEGJhiablkAnMdcCwLDqamAbQku2iniwl/l3Gc4P
+         BHHUkk2jse+cmTdeXq3CucP1fJsv3SLK0e54hTzf/b8qhWU4121JJyt6/aS+AzTznVpB
+         wJCfn4kNyUUAll1tKLndWg1QzWBlaPmfLNcgRoqRWqjVWFx8X3s0rHy/T2GW/B7hSLdP
+         0H/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVpABfd7g8TIF/22jEGbPySOqiuxmigUFmWUe361rdhMLoja17n4uKJ+72aMv/93pF1amTsLNua6BKfT3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPLpF5Ccpi6K4iTA0EpZMGRvKsIixugNMMHy8TbHAJLXvYoKkv
+	yrbsYDYZ8yJwvVNcWMi+os1Rfmfrm5LTPdpEr351XgCdvKfQ3BNVdK4/f+8Vkv0rNAnL2erKOhr
+	IsGIRPp95N/Fq4V2QvQpAdkEvTg0kAzvWphSGSH9ccw==
+X-Gm-Gg: ASbGnctdXpBIhVFR0bQgGcoiaZCPaTNO8N3ZWMx07szhGySZgW29FaIh3T29cQAgSED
+	SqQ1jEGPoFSAlKdNHH0ckW82iA+AKhBUb9ngaGUlmKmSMKoEhdgiVQ+en1dVQxVPypE+dSErfUx
+	jnfkJJyAySi9pch2xBVtnqb9lzUiW2ymdd5+CcNoSYlipPDU5G+eLm9qDGf7M5B4dfawlF1lRko
+	17pcmkViggIOmstwSQbIK4WvIZMVhrt7GqszZIa09q+JZYGvXEmdV8gx13l8k4gSFOgarg1ONjI
+	MFQ3SqCYRSshSHQJysmZMl6HcQE=
+X-Google-Smtp-Source: AGHT+IE3YtmLtzMdziyNQ1IevYP+jbdpiGOkpNCybV2U1useYtB1KfMzt3wyojS9vR+rFcn0fnnKKJYLP3lPJrg2WpI=
+X-Received: by 2002:a05:6512:68d:b0:57d:a8e6:6574 with SMTP id
+ 2adb3069b0e04-591d8506e95mr4737920e87.20.1761037597726; Tue, 21 Oct 2025
+ 02:06:37 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 Oct 2025 02:06:36 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 Oct 2025 02:06:36 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <aPcuHpYCM22NZ7S_@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0a8830e-6267-4b2a-b1fa-f3cbe34bd3ba@engleder-embedded.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
+ <20251006-reset-gpios-swnodes-v1-3-6d3325b9af42@linaro.org>
+ <aO1dBgPZfDJTsPfE@smile.fi.intel.com> <CAMRc=MfOoHn+mLRpQBEsC3g5sM=VZBgVffsm68CAXJBHffPxdA@mail.gmail.com>
+ <aPYJeqFY_9YV9AQn@ashevche-desk.local> <CAMRc=McBTgnQXkPoOUYC=PDDwFXuVqfMFuiwZTW7ODb6owJbeg@mail.gmail.com>
+ <aPcuHpYCM22NZ7S_@kekkonen.localdomain>
+Date: Tue, 21 Oct 2025 02:06:36 -0700
+X-Gm-Features: AS18NWBfQzQ4G0TaM5lf1nYCqc0Xona873xRGvt4LqOC2I4vW3KZIjQXa4Az2P0
+Message-ID: <CAMRc=Me0YyBK5DtyJO4ZZvfvnhdtJx92_ktQA_eVhqFEkh=Bqg@mail.gmail.com>
+Subject: Re: [PATCH 3/9] software node: allow referencing firmware nodes
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 08:11:13PM +0200, Gerhard Engleder wrote:
-> On 20.10.25 08:39, Horatiu Vultur wrote:
-> > The 10/17/2025 23:15, Gerhard Engleder wrote:
-> 
-> ...
-> 
-> > > > 
-> > > > +/* Check if the PHY has 1588 support. There are multiple skus of the PHY and
-> > > > + * some of them support PTP while others don't support it. This function will
-> > > > + * return true is the sku supports it, otherwise will return false.
-> > > > + */
-> > > 
-> > > Hasn't net also switched to the common kernel multiline comment style
-> > > starting with an empty line?
-> > 
-> > I am not sure because I can see some previous commits where people used
-> > the same comment style:
-> > e82c64be9b45 ("net: stmmac: avoid PHY speed change when configuring MTU")
-> > 100dfa74cad9 ("net: dev_queue_xmit() llist adoption")
-> 
-> The special coding style for multi line comments for net and drivers/net has
-> been removed with
-> 82b8000c28 ("net: drop special comment style")
-> 
-> But I checked a few mails on the list and also found the old style in
-> new patches.
+On Tue, 21 Oct 2025 08:54:22 +0200, Sakari Ailus
+<sakari.ailus@linux.intel.com> said:
+> Hi Bartosz, Andy,
+>
+> On Mon, Oct 20, 2025 at 01:26:59PM +0200, Bartosz Golaszewski wrote:
+>> On Mon, Oct 20, 2025 at 12:05=E2=80=AFPM Andy Shevchenko
+>> <andriy.shevchenko@linux.intel.com> wrote:
+>> >
+>> > > >
+>> > > > Can't we always have an fwnode reference?
+>> > >
+>> > > Unfortunately no. A const struct software_node is not yet a full
+>> > > fwnode, it's just a template that becomes an actual firmware node wh=
+en
+>> > > it's registered with the swnode framework. However in order to allow
+>> > > creating a graph of software nodes before we register them, we need =
+a
+>> > > way to reference those templates and then look them up internally in
+>> > > swnode code.
+>> >
+>> > Strange that you need this way. The IPU3 bridge driver (that creates a=
+ graph of
+>> > fwnodes at run-time for being consumed by the respective parts of v4l2
+>> > framework) IIRC has no such issue. Why your case is different?
+>> >
+>>
+>> From what I can tell the ipu-bridge driver only references software
+>> nodes (as struct software_node) from other software nodes. I need to
+>> reference ANY implementation of firmware node from a software node.
+>
+> Yes, the IPU bridge only references software nodes.
+>
+> I might use two distinct pointers instead of an union and an integer fiel=
+d
+> that tells which type is the right one. I don't expect more such cases
+> here; it's either a software node or an fwnode handle (ACPI or OF node).
+>
 
-I hope this means we aren't going to be flooded with loads of "cleanup"
-patches converting the comment style.
+Like:
 
-I also think that the general rule of coding should still apply: keep to
-the style that is already present in the file being modified - or if
-you're intending to change style, one of the initial patches should do
-that before one's own modifications (so the style remains consistent.)
-Hopefully netdev maintainers will agree with this ^^^ :)
+struct software_node_ref_args {
+	const struct software_node *swnode;
+	struct fwnode_handle *fwnode;
+	unsigned int nargs;
+	u64 args[NR_FWNODE_REFERENCE_ARGS];
+};
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+And then if swnode is NULL then assume fwnode must not be?
+
+I'm not sure if it's necessarily better but I don't have a strong opinion o=
+n
+this either.
+
+Bartosz
 
