@@ -1,201 +1,262 @@
-Return-Path: <linux-kernel+bounces-863653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D522BF8B61
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A769BF8B7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6411F4FB43D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E33F3B13D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A0D27EFEE;
-	Tue, 21 Oct 2025 20:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3371E51FA;
+	Tue, 21 Oct 2025 20:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kWQrQV20"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="R9tqsHoY"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012052.outbound.protection.outlook.com [40.93.195.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC542561C2;
-	Tue, 21 Oct 2025 20:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761078173; cv=none; b=G1OxeRhWupKWMCjH7hJ30Z7v/14BFtKuZrzn0J7JxzWfgh3wd8A+kat0STl4UP9G2DILtfOSYIC+mQfFqZL/8XJrMXbMFAg0ifdMpoxOmaeAd1nyKfImfnQ68i6RX6aUr7OYRmjArMJvTOKrQdstuycy5yzYv8udDYAO7sh5cMs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761078173; c=relaxed/simple;
-	bh=j1/9Zn64S+rdPHLo4FHM6+vjbfyF5VAgvH31TrIGStQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jbnr760yfyOnmZ5I2SqXf0pnwF+o83ozzzWnbdtenzNdAlgLTfrmqqd4xMOxsokhnN9Q0a5MEDicCg7MuCXjA5ZRks6ucdSib/R9HHVqYOaE7Z98RxU/Pk0BLbzKFQTsQfeA1J/ukoY2c2OAnSKwnQjmZorJ7w5fQjFT2WSQIP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kWQrQV20; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LGAHwM011773;
-	Tue, 21 Oct 2025 20:22:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=DVWHq3
-	w1V9bird66o/HT3IQgYq83pLC6FZywZkJrf00=; b=kWQrQV20B6KwMkoLiXLs2Y
-	mJ1vu88hk3HEpiuZc19pv0pdlUwGxPDHfKKhI1dutyQCGMk2BXihcF/byyCr2G2f
-	JimkkLWUQhWCXqocw4wYyQLvjAkf5axiD8VA4hxTKiU1C0Etnkkq1Vb8NlAxLFVO
-	VlMUjWHVxqsNfOS1DNV0byodKskUvNh6PLPFmPi14jLpgYhaonQ+dbHYDwPak88d
-	vDQIsrwNFYYbuoks/bXTjiSqkJ1mm7H6Q/wrRo1b+JfzNqX2epHrlfFjsC9DTetW
-	krpx2VBRgfZBrKuCkgdD91uAEZ4MTd0Q7Rv/vDWSgJn4IWkuadVEyx0irfJHDttg
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31c7u8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 20:22:48 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59LJeGmA011075;
-	Tue, 21 Oct 2025 20:22:47 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqx14ewj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 20:22:47 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LKMjDY17105426
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 20:22:45 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 76F5058055;
-	Tue, 21 Oct 2025 20:22:45 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DDC3158043;
-	Tue, 21 Oct 2025 20:22:44 +0000 (GMT)
-Received: from [9.61.241.19] (unknown [9.61.241.19])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 21 Oct 2025 20:22:44 +0000 (GMT)
-Message-ID: <41c90334-9bee-4252-9366-a4f5c38c83b9@linux.ibm.com>
-Date: Tue, 21 Oct 2025 13:22:39 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E8926ACC;
+	Tue, 21 Oct 2025 20:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761078646; cv=fail; b=Xua4qGr1GAG/iec69birU7CIRHLgdU3GIBxbApS4d1WzuuJVMVm804dg+0u+QpKvY5v2SwAhgEX0wtdR/gUe6CkkudycnLVZZY819xgV0eSRqBl9UY7eaLpUT6pXNsf3d0+KKso/5/ulRUb62tuVkaVVbv5qWcbpNaudUeedN/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761078646; c=relaxed/simple;
+	bh=vWpYL8HSZWbrcZEaB+Q6w/caWyp4bD/dPNMd7cbIas0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LLBoeTJARi/+dwfY5nxjKRzFwFKHx8Ytm+d6mCxVYTfs/goiaRTC8rM+HPqCQGSkB03jTiNSJWGybNyhptF6UkBXS+5aFZWhFSEqpGtKoNg4RaS4yAoATCI7sgq0HB8/A04H1dYzmov6owGoqiQ6svevqfL/+LkepW9MUG3Qf3s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=R9tqsHoY; arc=fail smtp.client-ip=40.93.195.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pZvWOgYc7UNnFSiupa2EvWYlBec5S9jPFtVZgVdenq5OKOY1xfpUXUO3sH2jxZ774yIOio6LuDzTRdxn4aOjDq63M+N82r+EaJRccEi1APgDPIZn23S7UapBrN+Cobi4cCMyzloI/vuV79QGGxGXEcGbaFeAhFREq1hjYpKSBfmvjQncVFjHusfrZ4clkHXHp5fMfzN5k8+575wIPXKHzyRCKZia9ZSMVia/Pr1Zoaw1FQxKU8Ut6NpltJ8NrdiQLN9COnQALX95n3bPZSRdIRGdKdiBEja9WSluN6sygsOPaBJmvYeOaGgQNZVH/VleTCgy56L85A3fbYO2lUpNKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EnYEMgmSq18dv4YOiejCaHGYyOmUS62yCN+5hd+QSk0=;
+ b=sJJxFwepR5lJdWOWwjM2bUozJaqmE8QGP/V6G9MLzKWfgn3vSj2slVxYKWFbJdJfwa/NkIn6SsXffLNR7lNlSaQbsJwdkNC3rEMmS6IHQFVSpkwk5vB8OhTJjK8ssc4PFqMSmekPXpWAZVjYhtxVRxYfvyv1oTZrfuIdEn46s8Te78rfGeD1n65/B0AmOgdkgx4+TuRbx115eSRA0XlQrxLol5j8DaBNmqvDWamXDrdgAzMrF5LTxpPqZKrLa2G4Va9dwN3GPgA+d0VxWpIZSK6i9fuFLlUX38NCwfhQ2GMnj7SkeEDR7ZaB8BHI9H6/+RtkxWYbyEhCJEMwx6mCVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EnYEMgmSq18dv4YOiejCaHGYyOmUS62yCN+5hd+QSk0=;
+ b=R9tqsHoYA3iTfHFiXx6YIIexdjGBqc7eAAvHWycJJMHkyKHH+Q31fdJo+6dGyy6sdR1Ha/b7tTu94Gkdeq5qQcp+7ay6PGpGW+bXyrcrJF4nDVSQbXbRyKxs54bOdMPkGs7BniEG344vDKgGeJFEp5SX9KdoeeswkzdtkGhxalLdtNahSU6vRgFzhEfuU7Teakx0FVNINXo1dn+GJiZXjV8yX3EGwmjIxd+JTI9kXDRNA1i5bUPJHPXGMRR7zY3Z8jHaJd86X2cGzb3jcbdlukoxU66sGFDfyr9P2v0ivtQt8eS7VuGgK4MY4A8pUaD9l+I+AikB+LBm/FJAokgVhQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by PH0PR12MB7095.namprd12.prod.outlook.com (2603:10b6:510:21d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Tue, 21 Oct
+ 2025 20:30:40 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9253.011; Tue, 21 Oct 2025
+ 20:30:40 +0000
+Message-ID: <fac90f9e-0389-41de-86b7-18b13832f413@nvidia.com>
+Date: Tue, 21 Oct 2025 13:30:33 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] nova-core: mm: Add data structures for page table
+ management
+To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
+ Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+ <20251020185539.49986-8-joelagnelf@nvidia.com>
+ <8680705c-7298-4a33-979c-d91bd4e65b1c@nvidia.com>
+ <a4241841-b9cc-46ce-baa8-91545c2aa4ee@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <a4241841-b9cc-46ce-baa8-91545c2aa4ee@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR05CA0042.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::17) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] PCI: Allow per function PCI slots
-To: Niklas Schnelle <schnelle@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: helgaas@kernel.org, stable@vger.kernel.org, mjrosato@linux.ibm.com,
-        Benjamin Block <bblock@linux.ibm.com>
-References: <20251020190200.1365-1-alifm@linux.ibm.com>
- <20251020190200.1365-2-alifm@linux.ibm.com>
- <f8d1619917f105ec805b212af9e940aa73925b70.camel@linux.ibm.com>
-Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <f8d1619917f105ec805b212af9e940aa73925b70.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: pMJL_spnLMC3cmT05Fdl1YmBnIvIlqUL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX8xHNaqHe1Lx0
- vpwIfS420Ot8iWmKPy6POV1rLw6jwSpIxAEUuCCOxyiR9PVuODMiXVkm26qsQDjmX5SOwlxajGc
- 5lTnHkZVDPxm3nwdmCnnfk33TpiYwNtiOwC2ziNUxPi0w9+iyiJ+RGbWjg7I36tuf2TMZKvZq/j
- Pa+sbI01QH25InSKyYxa6y6XlAQSnDwPI7TGbM7Bjfg/RbdwxgCiCdP6VInB/o99fYK4UKnyCgB
- 0vq8p+GIlr/4S2GvEnAPBepNCIEPO81t1Hv+yFpDwxzWNXWYGJpRrccEgp+Q05H4+81rcW5mX9e
- Zg86KABvmuggaGzr//qZnAyVgHWPxXmVi4r863lBE+9iELDt0244Y0DOPAmdOkMklpaqjJcw+hr
- 1yAbu4/++/YbVFL7qYxvHnKAhDYqtw==
-X-Proofpoint-GUID: pMJL_spnLMC3cmT05Fdl1YmBnIvIlqUL
-X-Authority-Analysis: v=2.4 cv=SKNPlevH c=1 sm=1 tr=0 ts=68f7eb98 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=1mzHYz07CPLjn6S_tm4A:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 suspectscore=0 clxscore=1015 priorityscore=1501
- spamscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|PH0PR12MB7095:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7e7b0071-9592-4992-08c5-08de10e0b333
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dGZjQ0dUYXVtNWVjQ21XNHF3ZGlnK3ZNd2FweVZGblhwSFVuTnlqTVplY2dj?=
+ =?utf-8?B?cHhBOVlsdlI4em15UHp1NlJ0WmJ4aThBTXdlSXZKNnRqZEpobVZvQlMwM3pz?=
+ =?utf-8?B?NUd0c3dvWWl0Q015M1JubDFJblZCTlB2ZEttVXdHSmF0M05Ta20rZHI3bW93?=
+ =?utf-8?B?THlWc3BYa1lzVlQ5cCtHTGt1OStFU2ZYYWFiUnFOWFZ5S2lFeUNqVDlmVmxn?=
+ =?utf-8?B?WVZoUXNJZlh1OWNUdmhZWE9zVjVSbndDQ0EySzcyMGZHQkJabjExS3prMDBE?=
+ =?utf-8?B?UFhvUXNTZFcvRTRScUQ2ekgrVGFURTIvN0pGWHBjazhmdk5jMHBnaXN5QTFl?=
+ =?utf-8?B?YjNEOXZYUUhzOER5TDFSMFhaa1B2S0M1S2FEaWlvdGN6K0t4ampaOVVqQ0g4?=
+ =?utf-8?B?Tmt3V2Rhc1JSeEg3MEUvT0xNYTZBdENMZlNDN3B6cHgyeUhRMkpYU1Vob1F0?=
+ =?utf-8?B?UTVDdHBkNm5NNW5VRUpmN2hmTjRGQWVOWVZ6K2hvNGxSWDdiVHVKalZtV09B?=
+ =?utf-8?B?TkhqMWhNUDhJdjFmV0RBcy9rV2xwaU5HM2JOWGRXbjVxc1BoU1JIZkFiQkVW?=
+ =?utf-8?B?NTR3SjV5QUthYnQxTzhJajVxWjR2cURYVzV0NUFZNVFFekFTakdIWUk4eXdC?=
+ =?utf-8?B?bWNOaTdad3dhU2ltb29zdkMwTFhsa3ViUk5SUExjVlQxeDNLRldlaVh2M3ph?=
+ =?utf-8?B?anoxUDdYdHZWQytiV0d0WVl2cnJoRElyUzc4ejJObXJJQ1BEbGpCNVFpRGdH?=
+ =?utf-8?B?aUZHQThaNjBuRE5ybmJwT1Bzam9nWlYrN2NydldyL01QaVVwRjNGSExJeG5D?=
+ =?utf-8?B?VHl4UGdSdGFzWnJyaGUzSzg3YnVDVzVaN2hZTTU2dmNlS0VEanYwcHJkRWNt?=
+ =?utf-8?B?MEpvZCtFVFhvclJJUnY5L1M1N2R1N2IxTWdLVDRwRWo0M2p6UHBQQ3orc0JB?=
+ =?utf-8?B?Yi9nNjJta1lza3h4QmlxQ0NOV2hoMXZoazRMcGgxQ2pEbkM3WGxKd1JDY1BH?=
+ =?utf-8?B?eVpDUTFyNm1GMWJENStCS05WTlRzY0FRY0VkZlJ3Qm9WaWVaUFFGTEtEMnNn?=
+ =?utf-8?B?eHl4L05DNGc4czJjT09xVHVibXRzaVhQN2M5N3FIaUZheitSRXVWdUJYTnBP?=
+ =?utf-8?B?dzc3RHVSNW1QWWdTL1BzckhaMStBR1FyR2xLWWtqaFJaN0RyUDFDQml3VjBj?=
+ =?utf-8?B?cGlTdWJuKy9QYlNNWTFyUVFPc2VrVlp6TnRFMWY1aCtqMU5Cck1hajhOTnpH?=
+ =?utf-8?B?SFRqREdrbDNQVmQ2OHN5alJDd1A3bXNuVmxFWlpUb1QvRHY3RThZNW5DVVJu?=
+ =?utf-8?B?Y1VKbGQ3N2E5cmdCUmxBUEE3c1hsU2MvS3hadTdDcUg5R2xkSUZyL3phcDBB?=
+ =?utf-8?B?enFzL1RRcWRORzJyRWF4UE91YjlPbmJma1ZjbGhWcmZCSVNMeEl5dkVybnNm?=
+ =?utf-8?B?UE44OThnLzh2K2cxVVRLclJNeFVPUTdycVdVUXNmUXBQckhubWpkSHB6UnpX?=
+ =?utf-8?B?QnJXVEtDSmozWnlOUVA2VW94VVdpS3J1bStrZnBNb09Ja3N5VkduRDdpbm1D?=
+ =?utf-8?B?RW9MNDBkZmpjMlJDTmQyQzRCc2FmWFQrZ0NsWExaZ0FTaFJIS3BiZmo3SzRJ?=
+ =?utf-8?B?ZW1MV2ZwVlh6R0g3dEFId1ZHa3Z6cVpuOE9QWTdGVEhZR2k4LzFXUmFEd1py?=
+ =?utf-8?B?d2JjWThFRWFyc3ZiZkhzVkxqT0ltdFdwRTg3NDJNc2NGS1FFbHB3eEl6UG14?=
+ =?utf-8?B?L2paSzNySGhJQnpxaElXeXNIbnZaSFZzVDdBUnpJY1lRb0pMcEduSUdjSFoy?=
+ =?utf-8?B?MjIyLzF0ZUVSOUhSVGxHU25Iem1xSzJZWUhZeG9lbHREYU5tTmJrTUtzT29l?=
+ =?utf-8?B?eXErd1lROWFRbGZQNDBzclBpdThIK25vN0NYc2p0MVZ5Ri9venVRV0RsakpF?=
+ =?utf-8?Q?NZyPY/i828FmRaf/wK7wG+5512glSwya?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RmpNaGRmVWtyQ1RYWjFjNkVvWnVFTEpKcWg4c3lYUC9yRmdYanhlR3BWYzE5?=
+ =?utf-8?B?TkhwN2RjUEhvSW9mRzhvSGtKWU9LVE0vTlkzdDA3WDNrVmJQbmZxT3NHTW9U?=
+ =?utf-8?B?QXIyV0l2T0QwWWJsMGlmU0hYbHNhb1VZSjVkSGxnYjFrWUxJYzVsQXlSWGVh?=
+ =?utf-8?B?TjJtU0VFd3BXUnY3bC82VmxtSENBWGo1NDBCL0JjS1dsNFN0VnZVaXFVd2o0?=
+ =?utf-8?B?bkd0dHo1QVdrMEFNZFk2eGJCRDlvVjlSMS9lT3l2M3FzUHcvL3AzUnFyWjQx?=
+ =?utf-8?B?Y00xQUVLblFkZFNPemRYdXFhaitsNUJtQVR0WklUL1NJZk9qRjBLNnNHZjNM?=
+ =?utf-8?B?WXBlQlRTSmRHYSttVVVSRm8weTdnSTVuUFkwNWd0UVZDblExV1duUzlZaTE0?=
+ =?utf-8?B?OUNkckhrekNPTFBaY3ppM2J2aVV1NWNZanhyZEI3NWI4MFc5YkQwbTlXLzdC?=
+ =?utf-8?B?T2VaTmpMdzlNcTFGOTRTKzRjc2VJSytUR3dzODNvVkt0ZlJzcmdZRkIvTmR2?=
+ =?utf-8?B?QUl1Y3ZTLzJueXhWYWQ0ckN0N0FBdWFlTVRlWUxrSzhPaE9qTVBCbDh5bU5p?=
+ =?utf-8?B?YWhST2hnY0twVlpNcFRmN01QM1pOMW9NTDIyN0VKTmRIalh4Vm52L2JZOXJm?=
+ =?utf-8?B?bmZ1czd0cGdLVTB4dURaa3kwYTJKa0hHdlBlNnRKUW5sT2VsdWwySGNMOFlj?=
+ =?utf-8?B?SDJtODlHT3VnS01tV3l3b3VGNUgySlB2eWJGa0dCMWJKL0ErQnRyT09OR0xU?=
+ =?utf-8?B?cHpJdkg5STZEc3hDU3ZabVV0YkpRb21Eb3hvR3R2ek9OUlg0ckNpNDdoZVF1?=
+ =?utf-8?B?SUhqSGVoWnRyeXB4MktieWhJRkxENEkzNVN3cm9tbzQ3bE9ER1dHSVdwMEVD?=
+ =?utf-8?B?YUFmUzdvOFFQRnNheFE2YzhaNnFHUFp6UjljMWNwV0RCZUxhTHRJQUgvUThy?=
+ =?utf-8?B?VG1Ua2g0SkxGZFliYkVEOVFOZkVrb1hhTmdlRXY0WUV2bjQ1SURLZmFiUHE5?=
+ =?utf-8?B?c3l4cThiM3JDVUNsSUE3R0pZNU9mTjBkYkdnSmpjZThxZGdXQ3BjTS83bUxH?=
+ =?utf-8?B?TDlTOU1MZnR3SmNwUSticVNudENiWkFUSFNwNWpmblphbDBYa3ViUU5OTGVH?=
+ =?utf-8?B?Yi9xbHpnUkxQeTlsdkJ5SHordHhlWEh4cTQwRUpKUlBBUGdickNxVE1NdUt3?=
+ =?utf-8?B?bVJUcG1tZFlRSnJiRGtOS3FUdmh5Z0Jxemh2QnIrZmRrYUFlU2hXdnhtdFY4?=
+ =?utf-8?B?VVI5Q3NWN0hXZ2R4bjNXZy9yb2FLYXl4ZmhrUkE1Rkc2cDJtV216ek1iTWJJ?=
+ =?utf-8?B?bEdBUi9sVUUyMmhhS0RKdmNPMVk0YTZoSjJCcW1HcSs4dUoyYTcwdEx2TGlG?=
+ =?utf-8?B?ODdKVG1TZEdmeU5CZUR4S1M3aFZsL2RWcDJKV0o4TTBscXRpVW1WUUFtTFVT?=
+ =?utf-8?B?dzIrQnk2UnB4K1VRMWRydmg4UzBSWkkyY0pPUkM4QXZhV0FsN0kvaDZubjhS?=
+ =?utf-8?B?d2JDQTFwd3lTZWhkS3NweWZLRStUZ0NyQ3pCa3JxVW52KzhEVkh0T0NqU2I1?=
+ =?utf-8?B?QkFDRGlYbHB5REs4ZmJPZys2ZmhlM1JraWs5ajAyQnZvV2tWNWxQaTV0Ti85?=
+ =?utf-8?B?TCtHem4yZHA1eDV5U1A2Uk9vY3lhYVFnMjFhWGQ3aW4zUUtrR3JKbUh2S3Vp?=
+ =?utf-8?B?M21rTW1Mc1Jtc1djT0k5bVpGZ2djSUVFUHd3N3RJTG9TVi9rTVppcVNmWVFF?=
+ =?utf-8?B?KzlLM2Znei9DelVDcmRyVE8wRUpzYkZEYnUxb3I0ZlVMS0JFdXV1WURWcTRU?=
+ =?utf-8?B?WCtWWCs1NjJCT0VWbVQyR29hY2dCWGFFWWhQSEdVZGw4NXVvVnRydkt2L2Iw?=
+ =?utf-8?B?NEVsVjg0NWhoTURYR0pvamdjdG1YY3VweTZvWHpKcTdnbm93MUtDVlJ5dGc5?=
+ =?utf-8?B?endnbjViZ2hxZ0tHSXdsOWRJSm0yNXA1a3QxcHJpRFFlamdCT3VSVzZwVjl5?=
+ =?utf-8?B?TVhQYzNyN2N2UlNqUjNZUldjOFBRYkhPeUJDY2hRR1pEcFZ6OUk2a3dYM3JS?=
+ =?utf-8?B?M0wyaS9MWGphOEJkYWxHYWRJNXU4UjVnQklCeFJJYjc3U3lVL1MxUlJ3YXJP?=
+ =?utf-8?Q?XHtA3wTEYYtECCJVWHsxkHqv5?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e7b0071-9592-4992-08c5-08de10e0b333
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 20:30:40.0878
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I3KRm6qKaxVaHpYGUDu9O8pwLKw1INw/HhoU+Ms9Eb3LeJFuAyFGxmvPfRsknylLdiwVjG3u1yaAeFuqTNl4Ng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7095
 
+On 10/21/25 11:26 AM, Joel Fernandes wrote:
+> On 10/20/2025 4:59 PM, John Hubbard wrote:
+>> On 10/20/25 11:55 AM, Joel Fernandes wrote:
+>> ...
+> Yes, there's different format versions.
+> 
+> This patch supports all Turing and later GPUs because all GPUs including Hopper+
+> are backward compatible with version 1. However they wont be able to use the
+> version 2 and 3 features with only this patch.
+> 
+> I kind of intentionally did this for a first cut. But yes, I could split it into
+> versions. The 3 MMU structures (PTE, PDE and Dual PDE) are versioned. Version 2
+> is Turing and later. Hopper+ is when Version 3 got introduced and it is also
 
-On 10/21/2025 5:49 AM, Niklas Schnelle wrote:
-> On Mon, 2025-10-20 at 12:01 -0700, Farhan Ali wrote:
->> On s390 systems, which use a machine level hypervisor, PCI devices are
->> always accessed through a form of PCI pass-through which fundamentally
->> operates on a per PCI function granularity. This is also reflected in the
->> s390 PCI hotplug driver which creates hotplug slots for individual PCI
->> functions. Its reset_slot() function, which is a wrapper for
->> zpci_hot_reset_device(), thus also resets individual functions.
->>
->> Currently, the kernel's PCI_SLOT() macro assigns the same pci_slot object
->> to multifunction devices. This approach worked fine on s390 systems that
->> only exposed virtual functions as individual PCI domains to the operating
->> system.  Since commit 44510d6fa0c0 ("s390/pci: Handling multifunctions")
->> s390 supports exposing the topology of multifunction PCI devices by
->> grouping them in a shared PCI domain. When attempting to reset a function
->> through the hotplug driver, the shared slot assignment causes the wrong
->> function to be reset instead of the intended one. It also leaks memory as
->> we do create a pci_slot object for the function, but don't correctly free
->> it in pci_slot_release().
->>
->> Add a flag for struct pci_slot to allow per function PCI slots for
->> functions managed through a hypervisor, which exposes individual PCI
->> functions while retaining the topology.
->>
->> Fixes: 44510d6fa0c0 ("s390/pci: Handling multifunctions")
->> Cc: stable@vger.kernel.org
->> Suggested-by: Niklas Schnelle <schnelle@linux.ibm.com>
->> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
->> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
->> ---
->>   drivers/pci/hotplug/s390_pci_hpc.c | 10 ++++++++--
->>   drivers/pci/pci.c                  |  5 +++--
->>   drivers/pci/slot.c                 | 14 +++++++++++---
->>   include/linux/pci.h                |  1 +
->>   4 files changed, 23 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pci/hotplug/s390_pci_hpc.c b/drivers/pci/hotplug/s390_pci_hpc.c
->> index d9996516f49e..8b547de464bf 100644
->> --- a/drivers/pci/hotplug/s390_pci_hpc.c
->> +++ b/drivers/pci/hotplug/s390_pci_hpc.c
->> @@ -126,14 +126,20 @@ static const struct hotplug_slot_ops s390_hotplug_slot_ops = {
->>   
->>   int zpci_init_slot(struct zpci_dev *zdev)
->>   {
->> +	int ret;
->>   	char name[SLOT_NAME_SIZE];
->>   	struct zpci_bus *zbus = zdev->zbus;
->>   
->>   	zdev->hotplug_slot.ops = &s390_hotplug_slot_ops;
->>   
->>   	snprintf(name, SLOT_NAME_SIZE, "%08x", zdev->fid);
->> -	return pci_hp_register(&zdev->hotplug_slot, zbus->bus,
->> -			       zdev->devfn, name);
->> +	ret = pci_hp_register(&zdev->hotplug_slot, zbus->bus,
->> +				zdev->devfn, name);
->> +	if (ret)
->> +		return ret;
->> +
->> +	zdev->hotplug_slot.pci_slot->per_func_slot = 1;
-> I think the way this works is a bit odd. Due to the order of setting
-> the flag pci_create_slot() in pci_hp_register() tries to match using
-> the wrong per_func_slot == 0. This doesn't really cause mismatches
-> though because the slot->number won't match the PCI_SLOT(dev->devfn)
-> except for the slot->number 0 where it is fine.
->
-> One way to improve(?) on this is to have a per_func_slot flag also in
-> the struct hotplug_slot and then copy it over into the newly created
-> struct pci_slot. But then we have this flag twice. Or maybe this really
-> should be an argument to pci_create_slot()?
+Ah, then we shouldn't even do version 1. We should take full advantage of
+the fact that Nova's earliest GPU is Turing.
 
-This would still work as we associate the struct pci_dev to struct 
-pci_slot in pci_dev_assign_slot(), when we would have the flag set. But 
-I do see your point that there is room for improvement here. As 
-discussed offline we can maybe have the flag in struct pci_bus since we 
-already have the slots list. This would allow us to set the flag for 
-zpci devices at the creation of the pci_bus. And can be used by 
-pci_create_slot() and pci_dev_assign_slot() to correctly set the slot 
-for the pci dev. Will post a v2 with this.
+> backward compatible with Version 2.
+> 
+> We could eventually support versions 2 and 3 (instead of just version 1 as I am
+> doing), however my working MMU translation prototype is based on version 1 (I
+> did not have to configure anything in the MMU to switch versions, this was default).
+> 
+> There are a couple of options:
+> 
+> 1. For starters, support only version 1. Drawback is, when/if we want to use
+> version 2 and 3 features, it may require some rework.
+> 
+> 2. Have the following hierarchy:
+> mm/types.rs - all common structures (stuff that is generic like Pfn).
+> mm/types/ver1.rs - Version 1 specific types.
+> mm/types/ver2.rs - Version 2 specific types.
+> mm/types/ver3.rs - Version 3 specific types.
 
-Thanks
+Maybe a file/directory structure that more directly indicates page table
+formats. "mm/types" could be quite a few things.
 
-Farhan
+> The advantage of this is it keeps the structs namespaced. So it'd be
+> nova_core::mm:types::ver2::Pte or nova_core::mm:types::ver3::Pte. And the
+> nova-core MMU code can pick the correct version.
+> 
+> 3. Keep the single file types.rs and just suffix the structs with version
+> numbers. This is attractive because there are only 3 types that have version
+> flavors (pte, pde and dual pde). So instead of Pte, we would have PteVersion1,
+> PteVersion2 etc, and a helper abstraction can pick the correct struct.
+> 
+> 4. Any of the options 1-3, but dropping version 1 since Turing+ supports version
+> 2 and later. I do have to figure out how to configure the MMU to use a specific
 
+Right, I see you already noticed that we can start with Turing. Good.
+
+> version (which is reasonable).
+> 
+> 5. Your options here.
+> 
+> Btw, I used Nouveau as a reference as well, so likely Nouveau doesn't support
+> version 2 and 3 features. Not that that matters (we should support newer
+> features in nova-core), but just thought I'd mention it.
+> 
+> Other thoughts?
+
+Two things:
+
+1) Danilo is working on writing down locking requirements for Nova page
+tables, based on earlier experience with Nouveau page table locking
+problems, which were apparently very serious.
+
+2) Maybe it would be good to start with versions 2 and 3, so that we
+can see how to do >1 version?
+
+thanks,
+-- 
+John Hubbard
 
 
