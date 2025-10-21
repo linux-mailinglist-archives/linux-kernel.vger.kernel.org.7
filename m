@@ -1,189 +1,112 @@
-Return-Path: <linux-kernel+bounces-863325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAC2BF78FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABDBBF7910
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02631505F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936683B6373
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343253446BB;
-	Tue, 21 Oct 2025 16:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D203451B5;
+	Tue, 21 Oct 2025 16:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9Zujx5R"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DbD6kg6h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6E1339A4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6088C3446CF;
+	Tue, 21 Oct 2025 16:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062480; cv=none; b=O+RomgYn/TPug/f+ontaeiKo3MgmI899OFq2VWZ1B/NhTEL4S5jjx/vHJVApErfvOz/OTnFRpv4POBgZe+iSAFCeZA7ztA3CD3ZzvtAa0pxBcmk6LpbaiVONZAZ0HoCJlYSsxH9Ew6s7dFLXYKUBS3mPHjM6lod3QszJO1ZLA0M=
+	t=1761062543; cv=none; b=shLBjYcZITkclAYFyJrYifziijDTjnPFWFVJhad/jLIbc07T+MXrctHSd9D07I0WbQ8W99oJL5q/Hclp8+NiVLGzdZwEysRIKNmMiDWK94nIRJLr9wUGo4tUXVgFc8Rps/YnyqiKkVe4zf/QL7TYkuUQ+xF1+SF1yQbEwsk7kDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062480; c=relaxed/simple;
-	bh=h8f+2mlAVixbbRPndHqYJN9W6PWBGmuOEI1As8n6tWo=;
+	s=arc-20240116; t=1761062543; c=relaxed/simple;
+	bh=P+RznSpBWRdr/Wlu6he4/KMoMQItfGKiQ752hnJNb/c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaJoSHnceBhUM1uXfQ2eiYvWPe8JBmGmNwyUrZVxB18xVyPqaVbhxbpG9tt8HUoLil+CqfrPaUHfnuDLVNsfUzdmVYhQEq9HobB/FtrsKuvFDcKq96zKGkBTgUiOYvf7jr0jVvUw0w9m0DMuZ00QF9xskE8fXilm+dbFBkB9IF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9Zujx5R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008AAC4CEF1;
-	Tue, 21 Oct 2025 16:01:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761062480;
-	bh=h8f+2mlAVixbbRPndHqYJN9W6PWBGmuOEI1As8n6tWo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ol1PKTuybHW3P+kWxXKdhcnasu7W7cZKnSkxAsQfy4vgYNYonj3eGW10m7BfTb03P0u8ZccOeGIqQVrxKETOyCPe33setU9enjmWDyFg3vfX3ZL1git14KFncfSBZTjRCAqPz19G9O486ntzlhrw2rbqRx4gsBl7qwwmtuFlobE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DbD6kg6h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808A3C4CEF1;
+	Tue, 21 Oct 2025 16:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761062542;
+	bh=P+RznSpBWRdr/Wlu6he4/KMoMQItfGKiQ752hnJNb/c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D9Zujx5RJHL1eHpmvYiNlBCVvZxpCqzOdS4c5hgHPHOfhQVCQ3pLtv9EkvLGhKZRD
-	 wmbws4xIqo57po58rlpuz9G5djnt1iF+vohuAxkA0U3YrZxmDC+r1bLKhJBdK94QfX
-	 1Zm6srQrbVV87pOQFvPN69v2cMc7CnAL1NhhE4OSNCJ7ycotbWDj0MN69D9dLXoS3o
-	 tY1OBuepwmLeK8dYO5lV63m27T8dFODYX+SKoyLNVwOQ95eQ4RMQxJOIjb6q6m9mTZ
-	 sF0ekUmVOg3ghSZRIxRuGrAVI/iqDSf/YmUGHN3eG9QdO8aqllutNOdkmuCrr6s+Vq
-	 ELLa2gbYiqL3Q==
-Date: Tue, 21 Oct 2025 18:01:17 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Bajjuri Praneeth <praneeth@ti.com>, Louis Chauvet <louis.chauvet@bootlin.com>, 
-	thomas.petazzoni@bootlin.com, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH] drm/tilcdc: Fix removal actions in case of failed probe
-Message-ID: <zpbkhcczqdf2ppxnytms3yfnvf5nr2r5pvsg2hiob76m5fxm4g@czug2uitm57n>
-References: <20251014143229.559564-1-kory.maincent@bootlin.com>
- <p4u2goyadub3dfuz4empf3g7a44b2ausy4hjjkcwj7nzgeochx@xztpij2i2lao>
- <20251014182122.5f63b027@kmaincent-XPS-13-7390>
- <20251021151435.23a03b85@kmaincent-XPS-13-7390>
+	b=DbD6kg6hLcoZvgzNxQtrDdlbOIKwnHfHmXS5Pb9WiJ6mow4aewkOuCtKt5H/ioUXj
+	 zFsKXt/8imt+95CY4ejCDvu9VxV1X2sV4dJAu7/LgYl7txsfKgLg7y5+7N+S26j4P9
+	 flh+VX/arOuNFNdql8GgZ/dgjx6jLvl77/SK3FRE=
+Date: Tue, 21 Oct 2025 18:02:20 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Olle Lukowski <olle@lukowski.dev>
+Cc: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+	Christian Gromm <christian.gromm@microchip.com>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] staging: most: dim2: replace BUG_ON() with proper
+ checks and error returns
+Message-ID: <2025102108-smartness-rework-238c@gregkh>
+References: <20251021-staging-most-warn-v2-0-cd51e1e717f6@lukowski.dev>
+ <20251021-staging-most-warn-v2-2-cd51e1e717f6@lukowski.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="n7x4gneis3run3kt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021151435.23a03b85@kmaincent-XPS-13-7390>
+In-Reply-To: <20251021-staging-most-warn-v2-2-cd51e1e717f6@lukowski.dev>
 
+On Tue, Oct 21, 2025 at 04:09:29PM +0300, Olle Lukowski wrote:
+> Replace BUG_ON() calls with proper checks to prevent unnecessary kernel
+> panics. Return appropriate error codes (-EINVAL or -EFAULT) instead of
+> crashing the system.
+> 
+> Signed-off-by: Olle Lukowski <olle@lukowski.dev>
+> ---
+>  drivers/staging/most/dim2/dim2.c | 27 +++++++++++++++++++--------
+>  1 file changed, 19 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/staging/most/dim2/dim2.c b/drivers/staging/most/dim2/dim2.c
+> index dad2abe6c..d0832704b 100644
+> --- a/drivers/staging/most/dim2/dim2.c
+> +++ b/drivers/staging/most/dim2/dim2.c
+> @@ -166,8 +166,10 @@ static int try_start_dim_transfer(struct hdm_channel *hdm_ch)
+>  	unsigned long flags;
+>  	struct dim_ch_state st;
+>  
+> -	BUG_ON(!hdm_ch);
+> -	BUG_ON(!hdm_ch->is_initialized);
+> +	if (!hdm_ch)
+> +		return -EINVAL;
+> +	if (!hdm_ch->is_initialized)
+> +		return -EINVAL;
 
---n7x4gneis3run3kt
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/tilcdc: Fix removal actions in case of failed probe
-MIME-Version: 1.0
+Can these things ever actually happen?  In looking at the code, I don't
+see how that could be, do you?
 
-On Tue, Oct 21, 2025 at 03:14:35PM +0200, Kory Maincent wrote:
-> On Tue, 14 Oct 2025 18:21:22 +0200
-> Kory Maincent <kory.maincent@bootlin.com> wrote:
->=20
-> > Hello Maxime,
-> >=20
-> > On Tue, 14 Oct 2025 17:36:47 +0200
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> >=20
-> > > On Tue, Oct 14, 2025 at 04:32:28PM +0200, Kory Maincent wrote: =20
-> > > > From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
-> > > >=20
-> > > > The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() hel=
-pers
-> > > > should only be called when the device has been successfully registe=
-red.
-> > > > Currently, these functions are called unconditionally in tilcdc_fin=
-i(),
-> > > > which causes warnings during probe deferral scenarios.
-> > > >=20
-> > > > [    7.972317] WARNING: CPU: 0 PID: 23 at
-> > > > drivers/gpu/drm/drm_atomic_state_helper.c:175
-> > > > drm_atomic_helper_crtc_duplicate_state+0x60/0x68 ... [    8.005820]
-> > > > drm_atomic_helper_crtc_duplicate_state from
-> > > > drm_atomic_get_crtc_state+0x68/0x108 [    8.005858]
-> > > > drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0=
-x1c8 [
-> > > >  8.005885]  drm_atomic_helper_disable_all from
-> > > > drm_atomic_helper_shutdown+0x90/0x144 [    8.005911]
-> > > > drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc] [
-> > > > 8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [=
-tilcdc]
-> > > >=20
-> > > > Fix this by moving both drm_kms_helper_poll_fini() and
-> > > > drm_atomic_helper_shutdown() inside the priv->is_registered conditi=
-onal
-> > > > block, ensuring they only execute after successful device registrat=
-ion.
-> > > >=20
-> > > > Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at
-> > > > shutdown/remove time for misc drivers") Signed-off-by: Kory Maincent
-> > > > (TI.com) <kory.maincent@bootlin.com> ---
-> > > >  drivers/gpu/drm/tilcdc/tilcdc_drv.c | 8 ++++----
-> > > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> > > > b/drivers/gpu/drm/tilcdc/tilcdc_drv.c index 7caec4d38ddf..2031267a3=
-490
-> > > > 100644 --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> > > > +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> > > > @@ -172,11 +172,11 @@ static void tilcdc_fini(struct drm_device *de=
-v)
-> > > >  	if (priv->crtc)
-> > > >  		tilcdc_crtc_shutdown(priv->crtc);
-> > > > =20
-> > > > -	if (priv->is_registered)
-> > > > +	if (priv->is_registered) {
-> > > >  		drm_dev_unregister(dev);
-> > > > -
-> > > > -	drm_kms_helper_poll_fini(dev);
-> > > > -	drm_atomic_helper_shutdown(dev);
-> > > > +		drm_kms_helper_poll_fini(dev);
-> > > > +		drm_atomic_helper_shutdown(dev);
-> > > > +	}
-> > > >  	tilcdc_irq_uninstall(dev);
-> > > >  	drm_mode_config_cleanup(dev);   =20
-> > >=20
-> > > I don't think that's the right fix. tilcdc_fini is pretty complex
-> > > because it gets called from multiple locations with various level of
-> > > initialisation.
-> > >=20
-> > > This is done because tilcdc_init is using a bunch of deprecated
-> > > functions with better alternatives now, and those would make the job =
-of
-> > > tilcdc_fini much easier.
-> > >=20
-> > > That's what we should be focusing on. =20
-> >=20
-> > I am also currently focusing on improving this driver (which has indeed=
- some
-> > weird code leftover), but this work will land in drm misc next while th=
-is is a
-> > fix for the current implementation which fix an unwanted warning.
->=20
-> Maxime is it okay to merge this to the right drm fix branch as I am curre=
-ntly
-> working on the tilcdc cleaning process that will land into drm misc next.
->=20
-> Also I intend to remove the tilcdc panel subdriver and its binding as it
-> can be replaced by the simple panel driver. I know it is unusual to remov=
-e a
-> binding but the driver and the binding are crappy and legacy. What do you=
- think?
+Let's not check for things that are impossible to ever hit.
 
-I don't see why what I was suggesting also couldn't be fixes, but at the
-end of the day, I don't care which way it goes.
+Same with the other changes in this series, please verify that these are
+actually possible to happen.  If not, then just remove the check.
 
-Maxime
+>  	spin_lock_irqsave(&dim_lock, flags);
+>  	if (list_empty(head)) {
+> @@ -188,7 +190,11 @@ static int try_start_dim_transfer(struct hdm_channel *hdm_ch)
+>  		return -EAGAIN;
+>  	}
+>  
+> -	BUG_ON(mbo->bus_address == 0);
+> +	if (mbo->bus_address == 0) {
+> +		spin_unlock_irqrestore(&dim_lock, flags);
+> +		return -EFAULT;
 
---n7x4gneis3run3kt
-Content-Type: application/pgp-signature; name="signature.asc"
+You need to do more than just that here :(
 
------BEGIN PGP SIGNATURE-----
+Please be very careful on error paths to properly clean up everything.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaPeuSQAKCRAnX84Zoj2+
-du+JAYDfQOLwXDYTby3YeidW4aLo0eJAhYd67R95dahkcCEsaD6yDv6w7d9OWP6J
-bC0peGEBfAgXz2XXC+SrZtOpd+rCSua4tDE6+3jKAt70GTsrerW3UPaGCyZvAtF5
-Q/m7v0YJiA==
-=4mGh
------END PGP SIGNATURE-----
+thanks,
 
---n7x4gneis3run3kt--
+greg k-h
 
