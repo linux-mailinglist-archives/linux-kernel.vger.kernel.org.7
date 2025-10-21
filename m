@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-863475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6144BF7EC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B36BF7EB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1C33AB33E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591CB486FD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970C034C80B;
-	Tue, 21 Oct 2025 17:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1BB34B69F;
+	Tue, 21 Oct 2025 17:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8X8sgIt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHv9pwKM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB17C23BCE4;
-	Tue, 21 Oct 2025 17:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090E41F584C;
+	Tue, 21 Oct 2025 17:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761068172; cv=none; b=q9tJ1YJrEngruM2kilI6s7cPc6P9DjfbwgntH1n+4QQQBGvkWvz6ESDBJwcoI9dEbH43gVkYqUh5Auepe8Yh8QbY97PIPy9getFIow50GgKTXN4P8bfrFtYnJH+5zDt+SoSkcUJMnmsNBqDsqxVFIju134okl7Z87gPQpbeeGg8=
+	t=1761068059; cv=none; b=OuBse//UxUi3BOJEQSUkUGEPemt2iEePxYbVS6DcWcbgMu5xJH1y71ifeCWgdN6elPTVgpYavCUVO4T5q1LZNK2oZiRMoWtzzPHpbLaEN1tdhB+H/EozyFND8eEGPFvN0fhlbE8PsL1pTMJPC4Hb4jGl6dhb88TX8S35J0/f4Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761068172; c=relaxed/simple;
-	bh=vIDhnWWXuu7ZhO04wW3hkRyYZbwm1xPMIRx5DylFCro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dUlUgUdJn70jH4qyL53O4m11GvUY97UbRcNdE3uvAtRltqqg50KUALNCRG2cMN3HLSa21JJHk1yoDR79eneng5cGMC6xfZVUf1GTl2MO+xoHdsF/qTu5Ffne9QMS36rImMusVPqsGWBcmPd9haXjNAGlqKNwVMAH8PXKcQL6KD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8X8sgIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B824C4CEF5;
-	Tue, 21 Oct 2025 17:36:08 +0000 (UTC)
+	s=arc-20240116; t=1761068059; c=relaxed/simple;
+	bh=yZ5iFEeaaYVaI3L+acwknFPYoOVNKOCIcgEuvzYBv50=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=d4+2b3hsZvUcRV9ygcQvrn3pcvlRPhYZROLRVCPRS2yGbFJHGL9yd1fu+jgaUZ/9FozHsuxPr5ee+nIbIFKTa6IU4jcFZKnfAAU2rrTdLpgVAcJKdIUbLJRz0h+5BC1gi/KXAbBP7NdATdI0aX/RaeeirzMtWsYjgEGwoO7aTpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHv9pwKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1090C4CEF1;
+	Tue, 21 Oct 2025 17:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761068171;
-	bh=vIDhnWWXuu7ZhO04wW3hkRyYZbwm1xPMIRx5DylFCro=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S8X8sgIt2EL9qa3LEB8TFAGp3HGPG4hmS5GX6t0ucO2gcsi1xt9rrN1HvHr8OIIIV
-	 LjjGGMDEioDMPG7MqrmSTlq0XtPOGd7C8qh/UtQm1B1/yUJGheHqyOgw1t3KvpIjuO
-	 9Ottvw8lvTaN8qAv8A9IRPkqIxE2oT4Bw3LNRDa81mQx7mt0KxTWjLiW5Xykcnn/uT
-	 y+QbpN17qjVIMyIRCHFfo9g9aMYrBNJnJiXHJJ8U0fBirqqnn7uTRR2Zwk3oB52SSm
-	 X22UI0Z476j4RtSgrBroAmzcTGLhFtl/mzAzZ60jFCKUv9GWTxH7rp728Wvz3zw0lr
-	 7OzPixcDlEQxQ==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Takashi Iwai <tiwai@suse.de>,
- LKML <linux-kernel@vger.kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
- Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Subject:
- [PATCH v3 1/2] ACPI: TAD: Rearrange runtime PM operations in
- acpi_tad_remove()
-Date: Tue, 21 Oct 2025 19:33:39 +0200
-Message-ID: <5031965.GXAFRqVoOG@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <4698369.LvFx2qVVIh@rafael.j.wysocki>
-References: <4698369.LvFx2qVVIh@rafael.j.wysocki>
+	s=k20201202; t=1761068058;
+	bh=yZ5iFEeaaYVaI3L+acwknFPYoOVNKOCIcgEuvzYBv50=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=tHv9pwKMTLil8clUAW1faEeTmf5FikkTPHvroA4B4dqaiszSwgHhmP5jf4kbO/VvO
+	 wg+uvzXpGRE4rEZ1wq7dP4csBeMUbmqtiGPAN+nyI5r9ykjDr3dblQdM+s0UkL03ZZ
+	 wter9xjJgbYMOoBq7meeqskEIdcipkWBMn6YMrA6HJT0KDn7rkiRigY5c+W/4e1B4a
+	 VFj1WEReLuNg3bOOd6W+RfcaYqgcASAMUeSS69zMJJ9TY5xGmp/e1bBfYWVR8fM0i9
+	 Dce7wuzl2pCvOeN3QfSbUL/yHlHJ6UX4IEj2Io5WJKNqBgA9fwBL0wTZ1qvF7l/qlQ
+	 fO0ku3AANA6KA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 Oct 2025 19:34:12 +0200
+Message-Id: <DDO6IUEAVBR0.14AZ0UXFYQF48@kernel.org>
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <mmaurer@google.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+References: <20251020222722.240473-1-dakr@kernel.org>
+ <20251020222722.240473-2-dakr@kernel.org>
+ <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
+ <DDO3T1NMVRJR.3OPF5GW5UQAGH@kernel.org>
+ <CANiq72k-_=nhJAfzSV3rX7Tgz5KcmTdqwU9+j4M9V3rPYRmg+A@mail.gmail.com>
+ <DDO521751WXE.11AAYWCL2CMP0@kernel.org>
+ <CANiq72=N+--1bhg+nSTDhvx3mFDcvppXo9Jxa__OPQRiSgEo2w@mail.gmail.com>
+In-Reply-To: <CANiq72=N+--1bhg+nSTDhvx3mFDcvppXo9Jxa__OPQRiSgEo2w@mail.gmail.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Subject: [PATCH v1] 
+On Tue Oct 21, 2025 at 6:47 PM CEST, Miguel Ojeda wrote:
+> If it is just e.g. add/sub and a few from/into, then it sounds ideal
+> (i.e. I am worried if it wants to be used as essentially a primitive,
+> in which case I agree it would need to be automated to some degree).
 
-It is not necessary to resume the device upfront in acpi_tad_remove()
-because both acpi_tad_disable_timer() and acpi_tad_clear_status()
-attempt to resume it, but it is better to prevent it from suspending
-between these calls by incrementing its runtime PM usage counter.
+That's what I need for this patch series, I think the operations applicable=
+ for
+this type are quite some more; not that far from a primitive.
 
-Accordingly, replace the pm_runtime_get_sync() call in acpi_tad_remove()
-with a pm_runtime_get_noresume() one and put the latter right before the
-first invocation of acpi_tad_disable_timer().
+> To me, part of that is restricting what can be done with the type to
+> prevent mistakes.
+>
+> i.e. a type alias is essentially the wild west, and this kind of
+> type/concept is common enough that it sounds a good idea to pay the
+> price to provide a proper type for it.
 
-In addition, use pm_runtime_put_noidle() to drop the device's runtime
-PM usage counter after using pm_runtime_get_noresume() to bump it up
-to follow a common pattern and use pm_runtime_suspend() for suspending
-the device afterward.
+The reason why I said for this case I think it would be good to have derive
+macros first is that there's a lot of things that are valid to do with an o=
+ffset
+value.
 
-No intentional functional impact.
+Of course, there's also a lot of things that don't make a lot of sense that=
+ we
+could prevent (e.g. reverse_bits(), ilogX(), etc.).
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+I think in this case there not a lot to gain from preventing this, consider=
+ing
+that we don't have derive macros yet.
 
-v1 -> v3: No changes
+However, I understand where you're coming from. Even though there's not a h=
+uge
+gain here, it would be good to set an example -- especially if it's somethi=
+ng as
+cental as a file offset type.
 
----
- drivers/acpi/acpi_tad.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+If this is what you have in mind, let me go ahead and do it right away (at =
+least
+for the things needed by this patch series), because that's a very good rea=
+son I
+think.
 
---- a/drivers/acpi/acpi_tad.c
-+++ b/drivers/acpi/acpi_tad.c
-@@ -563,8 +563,6 @@ static void acpi_tad_remove(struct platf
- 
- 	device_init_wakeup(dev, false);
- 
--	pm_runtime_get_sync(dev);
--
- 	if (dd->capabilities & ACPI_TAD_RT)
- 		sysfs_remove_group(&dev->kobj, &acpi_tad_time_attr_group);
- 
-@@ -573,6 +571,8 @@ static void acpi_tad_remove(struct platf
- 
- 	sysfs_remove_group(&dev->kobj, &acpi_tad_attr_group);
- 
-+	pm_runtime_get_noresume(dev);
-+
- 	acpi_tad_disable_timer(dev, ACPI_TAD_AC_TIMER);
- 	acpi_tad_clear_status(dev, ACPI_TAD_AC_TIMER);
- 	if (dd->capabilities & ACPI_TAD_DC_WAKE) {
-@@ -580,7 +580,8 @@ static void acpi_tad_remove(struct platf
- 		acpi_tad_clear_status(dev, ACPI_TAD_DC_TIMER);
- 	}
- 
--	pm_runtime_put_sync(dev);
-+	pm_runtime_put_noidle(dev);
-+	pm_runtime_suspend(dev);
- 	pm_runtime_disable(dev);
- 	acpi_remove_cmos_rtc_space_handler(handle);
- }
+> So I don't want to delay real work, and as long as we do it early
+> enough that we don't have many users, that sounds like a good idea to
+> me -- done:
+>
+>     https://github.com/Rust-for-Linux/linux/issues/1198
+>
+> Also took the chance to ask for a couple examples/tests.
 
+Thanks a lot for creating the issue!
 
-
+(I mainly also thought of adding one for a derive macro.)
 
