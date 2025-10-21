@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-862565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55171BF59E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F17A9BF59A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67D644FFE3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25361980437
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8345F2F656D;
-	Tue, 21 Oct 2025 09:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C565132C33B;
+	Tue, 21 Oct 2025 09:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="XqeRRzht"
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="mByfwOmN"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7533F313539;
-	Tue, 21 Oct 2025 09:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5593C32B9AD;
+	Tue, 21 Oct 2025 09:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761040041; cv=pass; b=jgQ2ZfWR39a7VCFBGjaKmLdcOfsvEzhxJ+1qe9SGbpSdQ6sJdn4FM+p9R3AWsTeCvqPI7/5A7CEk7aWSfTQbb5D/XXQb8Qwvffmf382EuuXrVeq6ZggqXvUOJHm2diZiqmsmWkEdKR3Y0aRAs21TGUj/AfqH7rfR8nZ0E5ilaUU=
+	t=1761039977; cv=pass; b=juPU0E+YRen38IVWiW/8Lje1hyzChJhIunLeWr4e38QF+bB79iGWbvvaQY6xsT+4QJOIqbR9jpWXGt7IL5neAbf2AwE2zS8rXJNuU3BEBmSVBPB100PNBrQb4oLmHlAG1FDbRyx5BrW3iObL8S5EG2vGmWgvYqZSyhOWP4uAp0Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761040041; c=relaxed/simple;
-	bh=aL8VQaPRJAjxauni7+ank2K5a+1YkvZipzoMxURVk3A=;
+	s=arc-20240116; t=1761039977; c=relaxed/simple;
+	bh=9OdYZIcHYCn1T72Knpz+3UUuf/Imgss8DndocK825yM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vs0DprEzKEFs+u5vjBmjiTA8hThSaCS3e8cu55EJGrhHgK/wORqumEFf9bzGtLDbPT40A1mFCI+mPk52qMVJa04t41mpD4M8bcjGSGxxedsdJ3iPOy8iHK+XYZnblVvVwk3me9zB+kr+nxb5jeJ6WCTgiBuE5jGBZXXjqUUINlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=XqeRRzht; arc=pass smtp.client-ip=136.143.188.15
+	 In-Reply-To:To:Cc; b=WKByAbh7eOpwQNIur4KjJ71LRWTG+Q/f+bpBci7nzLEWU5BRq7AgIm3B5trP/AOI7I+03BPtt0dEHjG3hzv+C16S4eVG95Sv596xlZqnJYse9080BxnTgNxXT6Qo4UTOPy0SqHbgrk1isfq/g/FjPsDKTKYd42pMEfl7tvOB8LI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=mByfwOmN; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1761039943; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1761039951; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=TDfUGAfYpRcT0urFw9+bzmbLLer4gRTlbNQjslKH4C4uYZCQsMnsLiXhUGWd3VvKbhjax7QtGWaP7UsyrccIdpbYGcRpvKSVAoG+1AH57saR0NPpiqFkKyRZUfHHPN87f/21M68oXf7VLI2mJqbnMZ3IgcOUwqnmsdmA50Twa3o=
+	b=dDLRGvoAMkowcfjxfLWZ4mq++uaRgBwkogOkMVbtU7kCjEUarkfQKfY88+7yH55hbyRVObXV6PwU2C7nt1PGNTujXwFYiXZ9Q3+xXl3WYe4rd8pfmx9r/HkYZjPmSRlFymLK7HOBgY0B2PjVy45RgzRzJvIzmfai3KZEZkB65Xk=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761039943; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CUl4Oz1AaENiLJK0HdSL1flO7p1OM/HO2y+DaZArucw=; 
-	b=Sos5YwWOuUVA+P/vcU/k1y7RDhfa09AeHxTLTLgFAFySMBajsZt3lv5P/zqDI3oQMfdiHs3HGVkrtOgqtnyo0+VLEvujh2sMgISEaxRwhoVYK3pGPvTtYJrldrTvMlG7kVGgv7NfqRcuwdHfcY9a/E+EhQrGCxOwIEFGdcKFfNA=
+	t=1761039951; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=AH1+SqtWbfAt+P6KqNKSczwkQpAkG3TFhMGHQUWfOAk=; 
+	b=QWGKPJ/Nv3EZ5TXK13rFbIb4ek5+R7ZyyITtQ3hVee91WKkOcvIXjqOUivUwa0qkN8mwkAgAt4DxcQwc5ambQ5vHW2LIkEgsW/d0EBIE9/qEDfR98x0MhapGMGnwnmVxi7zHvL/kd57DhfakEEPbMGPqvsa8mwyxf0f7UgqX/1M=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=pigmoral.tech;
 	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
 	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761039943;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761039951;
 	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=CUl4Oz1AaENiLJK0HdSL1flO7p1OM/HO2y+DaZArucw=;
-	b=XqeRRzht9vIjZG8W62JOtVxgaxTApwHwwKO/nUoFQp1ON0T2VWanLPsN6fZh9mHP
-	hjVM5oiNuyH+7CQpYc6M1a5a0XyCrqVhfd29IE+IP/nz0bhil217lYG5VG7b3BViQ4Z
-	WP5pC5EkM/vo2XbfwbaTLHjSsB2jrqI6Piw/ur/o=
-Received: by mx.zohomail.com with SMTPS id 1761039941047323.07553784607876;
-	Tue, 21 Oct 2025 02:45:41 -0700 (PDT)
+	bh=AH1+SqtWbfAt+P6KqNKSczwkQpAkG3TFhMGHQUWfOAk=;
+	b=mByfwOmNsDutV2riePCycGrncRlxYusDCRJa1xMuSiHZDMcZDe4tlb3VKto8Dycg
+	9kIi2bFKruxvFaT/ZH+pw9dibYb2s7DClde39QIV3lvCAfxi0fK8QwptUm2K7n6MZRh
+	oblR9DIQJ02DwbaLCObeJzWaWDdcbR9R7AUco0Vo=
+Received: by mx.zohomail.com with SMTPS id 1761039949164800.4672868226596;
+	Tue, 21 Oct 2025 02:45:49 -0700 (PDT)
 From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Tue, 21 Oct 2025 17:41:44 +0800
-Subject: [PATCH v3 09/13] irqchip/aclint-sswi: Add Nuclei UX900 support
+Date: Tue, 21 Oct 2025 17:41:45 +0800
+Subject: [PATCH v3 10/13] riscv: Add Anlogic SoC famly Kconfig support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-dr1v90-basic-dt-v3-9-5478db4f664a@pigmoral.tech>
+Message-Id: <20251021-dr1v90-basic-dt-v3-10-5478db4f664a@pigmoral.tech>
 References: <20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech>
 In-Reply-To: <20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -78,39 +78,43 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  Paul Walmsley <paul.walmsley@sifive.com>, 
  Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
  linux-riscv@lists.infradead.org, Inochi Amaoto <inochiama@outlook.com>, 
- sophgo@lists.linux.dev, linux-serial@vger.kernel.org
+ sophgo@lists.linux.dev, linux-serial@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761039846; l=1059;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761039846; l=787;
  i=junhui.liu@pigmoral.tech; s=20250910; h=from:subject:message-id;
- bh=aL8VQaPRJAjxauni7+ank2K5a+1YkvZipzoMxURVk3A=;
- b=t89Ai7cypoy3Jeymaxc7PSarsJr/Zf3m7GyW+zepjdaWbL1sFwJacXsafuIBH0i4nzOLUhRdu
- MfnJR8Q/uo0CBuWeCUy7ZisosK7sRWa4yNDIyuTc1aineA4eP3K5Abe
+ bh=9OdYZIcHYCn1T72Knpz+3UUuf/Imgss8DndocK825yM=;
+ b=bLTQf4SKPLAwRKBHjWe/Q34iFXG0eLXcOppTb6SOYA745MZRviDD126BIdzyczBEuSMf1A3MQ
+ OQzdbE5iNuiB48oQhPtHlUCgFIX/MPlDOYWdfSrbM0SpI8Ql+iCTWPT
 X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
  pk=cgATWSU1KfGWmdwNmkPyHGnWgofhqqhE8Vts58wyxe4=
 X-ZohoMailClient: External
 
-Reuse the generic ACLINT SSWI probe for Nuclei UX900 since it is
-compliant with the ACLINT specification.
+The first SoC in the Anlogic series is DR1V90, which contains a RISC-V
+core from Nuclei.
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
 ---
- drivers/irqchip/irq-aclint-sswi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/riscv/Kconfig.socs | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/irq-aclint-sswi.c b/drivers/irqchip/irq-aclint-sswi.c
-index 93e28e9f281f64da4568be37dc57b414354c3f56..fee30f3bc5ac252b236078bf13df8c04e7327eaf 100644
---- a/drivers/irqchip/irq-aclint-sswi.c
-+++ b/drivers/irqchip/irq-aclint-sswi.c
-@@ -175,7 +175,8 @@ static int __init generic_aclint_sswi_early_probe(struct device_node *node,
- {
- 	return generic_aclint_sswi_probe(&node->fwnode);
- }
--IRQCHIP_DECLARE(generic_aclint_sswi, "mips,p8700-aclint-sswi", generic_aclint_sswi_early_probe);
-+IRQCHIP_DECLARE(mips_p8700_sswi, "mips,p8700-aclint-sswi", generic_aclint_sswi_early_probe);
-+IRQCHIP_DECLARE(nuclei_ux900_sswi, "nuclei,ux900-aclint-sswi", generic_aclint_sswi_early_probe);
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 848e7149e4435ad3ca138b62bc3b3c8efb594a18..25f7e58cbf745a78b0e946749aa2a770dae3eb2b 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -7,6 +7,11 @@ config ARCH_ANDES
+ 	help
+ 	  This enables support for Andes SoC platform hardware.
  
- /* THEAD variant */
- #define THEAD_C9XX_CSR_SXSTATUS			0x5c0
++config ARCH_ANLOGIC
++	bool "Anlogic SoCs"
++	help
++	  This enables support for Anlogic SoC platform hardware.
++
+ config ARCH_ESWIN
+ 	bool "ESWIN SoCs"
+ 	help
 
 -- 
 2.51.1
