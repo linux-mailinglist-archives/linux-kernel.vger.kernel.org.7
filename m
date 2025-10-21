@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-863470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AD7BF7E8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:32:24 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47941BF7E96
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E37C3B422E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:32:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E244345FF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC1F34C151;
-	Tue, 21 Oct 2025 17:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1EF34C819;
+	Tue, 21 Oct 2025 17:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ne9DUyQi"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7LGBQ3E"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A2C34B692
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371D34B674
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067933; cv=none; b=neg8tPdJifX3CT9PSx1V7Zh3Ow7FbbDcrqqoNtJHXseH5MWqTwjRZZqfwCOycoyG61rLQzEOQnZ3KQM0X7An0t9CCCtMYufiOtPEMgZev9r16TDEmo3thOVgIIp+vBcooTezTJ8c6ED90v0XAowz4QLhL96Of8xxRtrwV7dqfEM=
+	t=1761067939; cv=none; b=hLmp7WX8oR6scg4jv++STOZM1P6q+bdAfavfVNUNCCyMjLFMj6AsobBoYzYGnxmiubW3YBRRe7EMfXhG7zZYOFOX5AKJlTZscrWAGBKoVEYah7FuaIoK/1/CSAsqfaVeW0PnsO/7JoNm9yDgeGhFUVf7u9wdzTTmvsgxFE/tmBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067933; c=relaxed/simple;
-	bh=Z6X3mqZcPYraf2DVQKy1+mGtHY5lO4bJYnXE5CeEFvM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KCFjmNeeEUkmDkYq/CQjL8gK0x8qMnC1NADMxqWSzF6SQ5SdPP25JH7XvH2H/1eqGZ98j2BANaqwqI2oE/BhxqanDYzbLO6lr7g0/vnpiBfOFqkcTxwuyT59ul6mXRVTxFMYvSwwdw2e5si9pHB+1GADn8bsF4SRshckkKdlgZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ne9DUyQi; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1761067939; c=relaxed/simple;
+	bh=LWmEWjRyeCjLG1cMy0JCFnlQjX+UfVSwvPnfh+zdDvY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hmBK/+EAbcWZdsCIrdN6mvP6yn8DMoggoNVXfjy3YtoQuu4MkiICN/WNfHzIjgl8LgLSol1fGPEd9hJMJ+lZZsx4rh2EyY8hY5Jhrx0683C9ThO6CyBdwRAHE3gPjveNjJHlSHE7WoLWASP3CL+ahLdDaRdL/8dL+uwuDj9Dlwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7LGBQ3E; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27d3540a43fso62112085ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:32:11 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7833765433cso7335149b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761067931; x=1761672731; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQ+zArbjDCMGCO6Bvb9dufDVd7PF4/gLdFb+sRMsH6U=;
-        b=Ne9DUyQi6jQQJwWvr4DrlTjDDf1bFrIXEOf1fa225G4PlaxZmJZWTVQJngmFQ6GDpN
-         BUa6Z6RPQHPTecOOxP5BSLVNvS7rRSljLdFMMbqHjG4u/x/Dg+WiFQQjmIqFPfGJwLgV
-         4D4SO3XuuwAn+8zu1a5j86P5ea287pVTUbMWfntenWAuj6ESrPj7SIJOzlu3jyKgFcMn
-         Yh7jQo0wfvYUdwNvDwHG0shHbi/+S3AQ6sVkMLaAD/n+UY8c9mAWxWjDuuIqhYvpyAu1
-         TQmunr7oCRfmwvE6ghPBcnmmuFjtQxf2lSmkYNZFEkFFeI0oyRrZlVzNn/Ko53d8jE5P
-         eG+A==
+        d=gmail.com; s=20230601; t=1761067937; x=1761672737; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W32bDqvyR7vujxfMeW9XwQgpRLc26l7oP7qKEtb01No=;
+        b=Y7LGBQ3Eu306T0aGNRBFKPOr4ENkYud1JYkAp3ik7YU6dlFxfLIkDAM0a2y5bMLSBo
+         Zu6MLlzerY683jwzk35LECn+2TaRwld2EsiyyzQYWwBzEdV3BwsQjVTOCVB+ZJjmFvI5
+         T8d8jReqZy2cjlUAAUXHWjg4aj8aXH3ZOnenyS9tzrYpXtFhVl/mQ7Mvym1ZaUpKI4hh
+         zXzYibJ/hCCSVdUI/PG9XZ0WmrG7arnMljArqad6w5/wvgGJKiEQmJZPsUqmwRgpROQv
+         WKZeBkhWvFZOHXyd+elu00bk/qjD5aGn+kVIz8Dcp1ATnvSLVspE2hsRsGjS5QfyFlNK
+         GAOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761067931; x=1761672731;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aQ+zArbjDCMGCO6Bvb9dufDVd7PF4/gLdFb+sRMsH6U=;
-        b=qCywQIfKpCuv8cVDHTLpd4F/qyHXTLbCFVvKwm/btYh7JiJK4MAp6y/NboSMFuQHLr
-         ntGiJNddeYx/S9CxmiHilxx6QpvXayR+/HTwixP82yPGQoa318vxPqtgQ4hdueAdmXoy
-         18KZzL8UImvJuagiGUeus1WfaQsp5CoDbMltFgj7Kp0JYiVzclhqWucfth7mcrHMzxde
-         8swfx2swjwQ4Zirr1HXm4Wi/mw9wOTW4wfuk2ahhZ093sAYD2ghGvwAMF+O3etTuhTSv
-         n1kFTkvP/aIQmlRC2CAdVxO+A9/gdGjwMKNATbbRdkikzCxHgHLlJKL8n8akHHj5x+zr
-         d8pA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPrD3mxIr6Ii3PkQ+u1POXHmu3wKhaiX4KczqMdjGYCAON93sZ3ZMxNGDNgWRVmKG1aje076CzR59Z12w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3QtV9CTZkKh/zJLDPu9qNQsOx8RbP5fYOwoLGwUMMutuO0uD0
-	VPO8t60uePxPxrZHcM22HMoM9GcYUR80DTvbq271ZeoGkCc0xXaNe/oEs9bYQa3c4Mo=
-X-Gm-Gg: ASbGnct1M9KfXG/SQW/4p6FvyI2yXgKP1im8BJbp3OE58IilrasfY8ZYKLQyKa7IdxF
-	sx3khrcfO68F96vGTM7/bFpSTFI2Fp4VwUOIkHwXzrCJ3xUfq+OgSXbGbmLyT9YynHRwHZYf5e0
-	CkWFArbXGqjDV37b4PP+KoiaaKq9CTehCB6e9WYmOh3jZCyzkoTQLSm0/smiiMYp6e/6s99gs5T
-	iFQ8jsSf+hzsdIfokuRx9SqEB/+kbeUz3Z6xC1MDkzco9/Pg65cFoe0WEuV4gFdjZYbggRVp/Da
-	vqUUVoBz8HN4/9orQXw1jMzy+ipIScABppSQEpI38rsSv6A/usHfAfF048Yv07B4hDrqC3gobYr
-	N1xYvTyOq1l1QuunGuJG5K6VOX2IM5W461UXnbLu0LWPjPrlLESRCYkWbHsVyZWAdmbPclWS6SS
-	zZz2mUNMPewRcBsA==
-X-Google-Smtp-Source: AGHT+IHBTh8hb/ic48yiyeOWMvVLJaZLWfjl5/Ft3cSUM4e+h+FFQOTWZmBhfmoXN8HdMJnPfxcabQ==
-X-Received: by 2002:a17:902:c950:b0:292:fc65:3584 with SMTP id d9443c01a7336-292fc6538acmr13530505ad.50.1761067930650;
-        Tue, 21 Oct 2025 10:32:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761067937; x=1761672737;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W32bDqvyR7vujxfMeW9XwQgpRLc26l7oP7qKEtb01No=;
+        b=rG4lxV3ZLBTwYoUP8rv/SDwIQX8p5fXGkkNK6nLa8aKdh8mzMziZMM7bQKVO3/itv4
+         F/DKxbteImc79mPGzLz4Zmvhz+UyplTtFUOkmmfLKUM7P7Nf8ijHdCFYTbFycrqPmcAx
+         iSBC9RgDX0yIngwEaO7405xkR7KkhUcc3vZiJk6vreAVoGSYplbPEa3evmV5hK7GnA82
+         D25p4v1XP6uoYhlYUanNrH5hjm0FLJWtvicI45ZHt6SX3FqFU+ip/tWvwMA6m3zpV8it
+         TL6QRRWjuNj5A+xET1DCLvKYmfy3lcAwwwmicbLN6z2EDB6D/6Mr9BFTb5mBZYpnWvuZ
+         kRpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvQnbGhzUg4CtizaiZ5jKGoW3h5A3d/OU84KH7LyVg8lZOU81IXxfVTj58joq5xD8tiASpSL3+KTWRxlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU4br5orTLWh6MdTpZp8wfSiGXe9kSa7EiDAyvT/T16zkE/c73
+	I4R+wGh62zsO66r22WMPl/i1pDBT2eJ2Q7OR5s9YLlluyzDk56JsbJBM
+X-Gm-Gg: ASbGnctwFG14N4YvCQU2ol4mqwhggk0cKkGWj6ijl49nj8WUOVJdyhbPFoowO+dD1RP
+	tqsq41ZY1uYcAtu4pwgPsV6CYMj7nowlsfy9j9slaawFyGXVuBEu3FtOZRusF0nl+vnvSfwrWJw
+	TIxvu4yw4MmNOoKGLrg8FkBViqOjiWiE854gz0Fr6Z+wtL8iBhMHLA8f4k8a2YFokzqitzAFsJK
+	dV41LzdYDEWkVf/iMKjj/Eiq+Il1l85gYq650B6AIBbnBxTmQDbSERD6sS63vwnkmNmgQpa/OkY
+	n474sWE+y1WPldUlkFJ9RW+/oYtIwfOpMT+nx5ptGSQ7j4PuhBAYT7m3BdRmQ8cX/C7/pnIqcBx
+	vER+vgT4AHPMVRWXC/2OzM9Q2HwP+DJpPzkMsSfEHheThiKoZIUPAxcux5ktGqHFTZsn725yc6f
+	Xc0ejFpZ/OGQWfRQ==
+X-Google-Smtp-Source: AGHT+IGJnLDF4X5uEtsa2xDyV0cUHKx8VFYNG1No6zJf1JQmgFUvBau7xsPVnXixxXlAbB/zCJrVMg==
+X-Received: by 2002:a05:6a21:9986:b0:320:3da8:34d7 with SMTP id adf61e73a8af0-334a85661b7mr22334007637.22.1761067936853;
+        Tue, 21 Oct 2025 10:32:16 -0700 (PDT)
 Received: from 192.168.1.4 ([104.28.246.147])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b346aasm10941006a12.20.2025.10.21.10.32.04
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b346aasm10941006a12.20.2025.10.21.10.32.11
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 21 Oct 2025 10:32:10 -0700 (PDT)
+        Tue, 21 Oct 2025 10:32:16 -0700 (PDT)
 From: Alessandro Decina <alessandro.d@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
@@ -91,10 +93,12 @@ Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
 	intel-wired-lan@lists.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Alessandro Decina <alessandro.d@gmail.com>
-Subject: [PATCH net v2 0/1] i40e: xsk: advance next_to_clean on status descriptors
-Date: Wed, 22 Oct 2025 00:31:59 +0700
-Message-Id: <20251021173200.7908-1-alessandro.d@gmail.com>
+Subject: [PATCH net v2 1/1] i40e: xsk: advance next_to_clean on status descriptors
+Date: Wed, 22 Oct 2025 00:32:00 +0700
+Message-Id: <20251021173200.7908-2-alessandro.d@gmail.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+In-Reply-To: <20251021173200.7908-1-alessandro.d@gmail.com>
+References: <20251021173200.7908-1-alessandro.d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,22 +107,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Submitting v2 since while linting v1 I moved the ntp definition in the
-wrong place. Apologies for the noise.
+Whenever a status descriptor is received, i40e processes and skips over
+it, correctly updating next_to_process but forgetting to update
+next_to_clean. In the next iteration this accidentally causes the
+creation of an invalid multi-buffer xdp_buff where the first fragment
+is the status descriptor.
 
-Link to v1: https://lore.kernel.org/netdev/20251021135913.5253-1-alessandro.d@gmail.com/T/#u
+If then a skb is constructed from such an invalid buffer - because the
+eBPF program returns XDP_PASS - a panic occurs:
 
-Changes since v1:
- * advance next_to_process after accessing the current descriptor
+[ 5866.367317] BUG: unable to handle page fault for address: ffd31c37eab1c980
+[ 5866.375050] #PF: supervisor read access in kernel mode
+[ 5866.380825] #PF: error_code(0x0000) - not-present page
+[ 5866.386602] PGD 0
+[ 5866.388867] Oops: Oops: 0000 [#1] SMP NOPTI
+[ 5866.393575] CPU: 34 UID: 0 PID: 0 Comm: swapper/34 Not tainted 6.17.0-custom #1 PREEMPT(voluntary)
+[ 5866.403740] Hardware name: Supermicro AS -2115GT-HNTR/H13SST-G, BIOS 3.2 03/20/2025
+[ 5866.412339] RIP: 0010:memcpy+0x8/0x10
+[ 5866.416454] Code: cc cc 90 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 90 48 89 f8 48 89 d1 <f3> a4 e9 fc 26 c0 fe 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[ 5866.437538] RSP: 0018:ff428d9ec0bb0ca8 EFLAGS: 00010286
+[ 5866.443415] RAX: ff2dd26dbd8f0000 RBX: ff2dd265ad161400 RCX: 00000000000004e1
+[ 5866.451435] RDX: 00000000000004e1 RSI: ffd31c37eab1c980 RDI: ff2dd26dbd8f0000
+[ 5866.459454] RBP: ff428d9ec0bb0d40 R08: 0000000000000000 R09: 0000000000000000
+[ 5866.467470] R10: 0000000000000000 R11: 0000000000000000 R12: ff428d9eec726ef8
+[ 5866.475490] R13: ff2dd26dbd8f0000 R14: ff2dd265ca2f9fc0 R15: ff2dd26548548b80
+[ 5866.483509] FS:  0000000000000000(0000) GS:ff2dd2c363592000(0000) knlGS:0000000000000000
+[ 5866.492600] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 5866.499060] CR2: ffd31c37eab1c980 CR3: 0000000178d7b040 CR4: 0000000000f71ef0
+[ 5866.507079] PKRU: 55555554
+[ 5866.510125] Call Trace:
+[ 5866.512867]  <IRQ>
+[ 5866.515132]  ? i40e_clean_rx_irq_zc+0xc50/0xe60 [i40e]
+[ 5866.520921]  i40e_napi_poll+0x2d8/0x1890 [i40e]
+[ 5866.526022]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 5866.531408]  ? raise_softirq+0x24/0x70
+[ 5866.535623]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 5866.541011]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 5866.546397]  ? rcu_sched_clock_irq+0x225/0x1800
+[ 5866.551493]  __napi_poll+0x30/0x230
+[ 5866.555423]  net_rx_action+0x20b/0x3f0
+[ 5866.559643]  handle_softirqs+0xe4/0x340
+[ 5866.563962]  __irq_exit_rcu+0x10e/0x130
+[ 5866.568283]  irq_exit_rcu+0xe/0x20
+[ 5866.572110]  common_interrupt+0xb6/0xe0
+[ 5866.576425]  </IRQ>
+[ 5866.578791]  <TASK>
 
-Alessandro Decina (1):
-  i40e: xsk: advance next_to_clean on status descriptors
+Advance next_to_clean to ensure invalid xdp_buff(s) aren't created.
 
+Fixes: 1c9ba9c14658 ("i40e: xsk: add RX multi-buffer support")
+Signed-off-by: Alessandro Decina <alessandro.d@gmail.com>
+---
  drivers/net/ethernet/intel/i40e/i40e_xsk.c | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
 
-
-base-commit: 49d34f3dd8519581030547eb7543a62f9ab5fa08
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+index 9f47388eaba5..dbc19083bbb7 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+@@ -441,13 +441,18 @@ int i40e_clean_rx_irq_zc(struct i40e_ring *rx_ring, int budget)
+ 		dma_rmb();
+ 
+ 		if (i40e_rx_is_programming_status(qword)) {
++			u16 ntp;
++
+ 			i40e_clean_programming_status(rx_ring,
+ 						      rx_desc->raw.qword[0],
+ 						      qword);
+ 			bi = *i40e_rx_bi(rx_ring, next_to_process);
+ 			xsk_buff_free(bi);
+-			if (++next_to_process == count)
++			ntp = next_to_process++;
++			if (next_to_process == count)
+ 				next_to_process = 0;
++			if (next_to_clean == ntp)
++				next_to_clean = next_to_process;
+ 			continue;
+ 		}
+ 
 -- 
 2.43.0
 
