@@ -1,170 +1,139 @@
-Return-Path: <linux-kernel+bounces-863396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094ABBF7C6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:47:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEF0BF7C74
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B1EFA4EE19C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:47:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F08014F866B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCDE2417C6;
-	Tue, 21 Oct 2025 16:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DD3345CBF;
+	Tue, 21 Oct 2025 16:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yBCwqNBg"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3RF94Vp"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B01346E5A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4959D346E79
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761065265; cv=none; b=jiI7hbTaYP00/j5jVqdOXoa4afLaEthBeTgZNoHCBg7uXKvjFeR8n79hoFC7QyXsu/rjlCR2wsg8TA1fxrODROWcdq/XtAASg4r3xy9/LQVDyQ5+0RZpX/+pNjJKbbHQXEwsXRaddHW1Qz/kLi+ep5jnLCQWbyexxFczRfA7dec=
+	t=1761065276; cv=none; b=V/wR6027gPYyYhVVA+6+5M9WvrhZLSQ9PR1LNeN9Zb4qxeo8MdhgviUofrVnyloufnhdSIvl/+PI8xPug2U4evcVwMaJdhf8arfo4TC+GiELHcp5BUQyXQc7NbJLcgEo/A4Ict+GKAXgnC5VtggvflhZEzpt/JWogj7iFza1Qws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761065265; c=relaxed/simple;
-	bh=vmo9iwuWXa2Qo1hdNIh/2vpO3AB9WtxtaHeat68xtJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qg3+PoCCueBHXjnh73u9ZZV4Ed5WvJgGGAHmprkxDCaf3R55aP7aAd9Ltr/vGcbm5/YtKDhBhWwFaFOBteo0thcHWWFYqOHAn6sMknbgCIYAHAZSuaI+CnRVQivKGhMMeRoNYlQ0rCNGUvymwhyfyUAYSlWERLiXS9mKj+XjWCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yBCwqNBg; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-781997d195aso4450465b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:47:43 -0700 (PDT)
+	s=arc-20240116; t=1761065276; c=relaxed/simple;
+	bh=28qNQ7rQ0dZK2hZ0bRbYpkKxEWOFNpR8yAeDonqWFt8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XhMXTjCmHE8TLMMpl5YMBL1zjzePEFia+ZPNrk+fMxI74XG7CY9rSBMBSAk7LgNJpuOxqpfTUjGduxqtU1PisMVpWv4xIiA8IlyMdxN3x2ZZ5F8m9T2a7eqpQsN406JgKrpjhVK9ICgGHX3+8ZyRs+4dN9ZFEqrFPA8o8kMyC50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3RF94Vp; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b67c74c7f20so299690a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761065263; x=1761670063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OT9BDqZbtTZ8FlPJwy4YL51bMKIbhKLdUmKCp9QkH1I=;
-        b=yBCwqNBgAyLwZUIE6ghV6qXDz91US3DrL9/PMoUeEr8unL/Uo1OV82rXQoIB8dlRlj
-         OM3aqLLA4NmquwjJlGU6iiemb+Y0FA3kki90zT4sd07YqPtv68sQVjqwGjxq6Xkyh4yR
-         p/vqlyzAmtaWyq1k7dnIiHGJGllVnivl+Byxd8ZV38ZCsYBz08HbV7fgO7SlMQ3H5e7w
-         lMit55mxcVmlOCvsJ7IUO2BUZWPQn83cecNTQCRXDhvG/qVmjPHyM7jswyNUsBYeCKL6
-         uGe5zvRZcwzOx2xtT976J3T3iKaqsnv0T8frSC/LiYBtcp65+eV9QNKeZdj6Fu58ulRJ
-         zL1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761065263; x=1761670063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761065275; x=1761670075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OT9BDqZbtTZ8FlPJwy4YL51bMKIbhKLdUmKCp9QkH1I=;
-        b=fOlEMlfvE6eeT7xGzoj2rNrUFL/eCWykOUznJ2f+OmSVssxc6W1bNZ7zM4rs2/pGSH
-         HrLwcx8swyr52jC7rP1vuFzVzbhSyOoqWLwt86gwHLTC+mrAYraT2adK4HiM1b6Zj4NW
-         WoDNc9kuwMdJ5Sq2D6HuzEAtvloYjEJMXjaqx+ED39tbYT0FfwI37cbASj0PyHP0synw
-         CpKKFiXcxRzZ4Jg6+k0U3kDXa4leJmvcnkA6brIFBeSrdtVYKJpNh3G4ty9Jdg2EQFo+
-         /Wn0Rfwf3DpP9nojRaFuQtf5gbEBDbKsoBq7jElYsuUXyDDlKRnJqn2GraNOyXGq1Rww
-         aRXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfArXgFfo4LCNrnAtEZEuT5ydaYZ/GbDkQ3DOBZp+0X3n6Rg0OT1YJFE/O6gHo1Gg2I+yvgxZnrOhBSB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIqvl3wnLSDoW7PVmN25zIJyAyL4ZVJIaC9k+u+ixg4CqfcI4X
-	zkrz0ghmPvP0g0IxJKSrOHj2VQ4+hVYBZdQ4eLwLcIQaTx5+1oCDCs9B356agqjdqg==
-X-Gm-Gg: ASbGncvp1xk4LsLkWEgTU4Tlo7qpd5pkJmhfWX+8NgDUpD/R9SMoUhISEE4/KLkdL0r
-	xul5LUgngclAKYgBbb5fNrhKY9zQJkitCJxO9cIco1KPutz7maUNG/BPZeou4aYqEbZTkArb37b
-	m+v7fwrdPzx32pg2hAiWiulKT3uQC6HhufFPc5freO4axWgpYuo4jMeaKhlBprAniF642gI/Hj6
-	LVi4KrcWCO4BOeeEADZOSt53+xRX+SEKs6SCNPlvxos5Vaxf3OaxBmK6NRG9VbUoiUnph3u8KMC
-	xR/8fzPQ6bG3dswpSqF5Qm9DfRNYOoOo/74tciRV2UCmCsGp3/bbhU4+IV932BKrw5VXmX2IiCF
-	/SfLFZP++Rn3ckY3mn+zQ60jVFbebAZpl7eOWm7losUYZQOODSK9X5Nr/7/Lvu0fQ18ozaaxBO2
-	SzFjCdRegRqTarH/NUrSKsNfyebfNLBxlYRtLcXb0Rx3c=
-X-Google-Smtp-Source: AGHT+IGansT+A0rkfAhKvQNOk21vPK7u8dZSK91Dy5X88gGuQfgY22M2jXK6HVEdK0aJoNY/t4sDOg==
-X-Received: by 2002:a17:902:ce12:b0:271:479d:3de2 with SMTP id d9443c01a7336-290c9ca2a4bmr199750875ad.13.1761065262494;
-        Tue, 21 Oct 2025 09:47:42 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:ef0c:c990:b2a8:9da9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ec0847sm114116915ad.22.2025.10.21.09.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 09:47:42 -0700 (PDT)
-Date: Tue, 21 Oct 2025 09:47:36 -0700
-From: Ryan Neph <ryanneph@google.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: David Laight <david.laight.linux@gmail.com>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/xe/configfs: fix clang warnings for missing
- parameter name
-Message-ID: <qgugikjwzoc2ia7no5x5jspgu6dx6p6yeuhpxkqfsdggxtk5ty@ptmw53oycmnk>
-References: <20251017-rn-cfi-v1-0-bf66e6ad4fcd@google.com>
- <20251017-rn-cfi-v1-2-bf66e6ad4fcd@google.com>
- <20251020110513.48d18788@pumpkin>
- <20251021063957.GA757076@ax162>
+        bh=d1ntUXOmnFmu9OCpv+5ZoMXNluJmcwruKsf9+rVDB5c=;
+        b=l3RF94VprvV6KITv6p+3Js5R4E5hsBVCrEeIEIq9uezdVSa5MnPxbfjYZovA5M7+St
+         WZrlfzcLfakojt0grFSLMDUdPWLrwW1cpE/GBOwx3eEmtwmUFU9IViyB8Out+3TFVbj7
+         1IyXXNgva09CT+3SNL+cxPvL3fV2dZsMfvcIkMHMVHX90hJVRAPk61i4Q5mpNkxVQwwT
+         NgVRCt8SSgUNmRSDqyCrXS/5yylyA+hmHO8yrMNryvTxGuDYCfAKhbknrZSc7IohgP1Z
+         KbVsdcPXiCOASCZBdXHjAMZuOag583xtsGjU6HoLJzT0WQs1/BOatJW4UmpOmv/rfwCV
+         SO1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761065275; x=1761670075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d1ntUXOmnFmu9OCpv+5ZoMXNluJmcwruKsf9+rVDB5c=;
+        b=bvqK35Z/R/lI/Ebe6LTsprslV071sG6/uY3mZgMDljLsrvpOQyyklZS20FkZitvknq
+         cKfIV4L8KYtVjE2vAqVVyXMbmVUTzoKSUfJFaAW4BJywgciSWWfVsh5aMuEIk79LvyIp
+         NsxzwHZBSC9IxaL9wzggx6m131jq1abpGqmY0hwZcAPkY8jN1fu9vIRgsAxR1x+RyT2u
+         U0z8EcJj94mMqxjWfXHRZqJBDEyI4V3NVsRbLh2hX7FeQorxKYB0aDxBSP3lfik8WKNd
+         PVvlJEosMmFv2pSDEPd7slaJcZ2oYouDnKmuTDTuwjj2TQeNOsbjbwCgjwq/MvuKSzv9
+         bP1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXJuB6Qo79JjouppXPggAEXT16R3DhixWOSqBw3FAzOTy+aMVOeHHMQgnz3GqaqV9984w2+scGIsFnsqXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGhGK3UF6DJGkLQ9tDODr7ifyHFU+ltKIZ/nnI+eV+mNcRQMpg
+	CjaezV+v0PF3fF9Ye6s9jfZiD7zxA3GGtDwso70Ew+FopnSeaXMs+rIyb6zGCEcxodqwBH22IQ3
+	C2YZ62HkO1gcBJ9HRYz1wVoy65eR3lMc=
+X-Gm-Gg: ASbGncvBFv68KGfR0LP85X7rNKEIFGuQDk82TUVUY3+pAo9UVt4A4BY9yNj/+u5i1/S
+	IGcAA83OiHa4RpH12EaO8XGM654SnGwmqgvxW42Ycj//+b5hMglrv5FQn6uQ47hwZDEuMB3pNOY
+	0cRQfXh9JfS8nxdhWTtlSvDwJYQpM5k/12ezyraEFf6LE6W+FPsYEh7/CePqVZK1nkknwwIK9vf
+	BIgwVx+ZcCVWySiyQgh9YTFypdZUo9oQkzXx3q49F4X02JbNTt/6ZUXxafXVzcb2NgvXV5H7XTN
+	O4UKpQdbHGqP/6OzJfqIV51HvxB5KxgdETX7t86LdQ6oOVxEWEFzk1JBALKkuZZ9PH0CjcGdk92
+	CjEBW1/ZIEkhrDA==
+X-Google-Smtp-Source: AGHT+IE6+zr2kq6R0XUbG0FThRLhPuL0rneOx9WE7IygbOP6VOZmHKd2PRk5rs9w/gQWQpmwElugiOYl8XVdOqXeB9E=
+X-Received: by 2002:a17:903:19e6:b0:27a:186f:53ec with SMTP id
+ d9443c01a7336-290cc2023d8mr130241865ad.9.1761065274551; Tue, 21 Oct 2025
+ 09:47:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021063957.GA757076@ax162>
+References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
+ <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
+ <DDO3T1NMVRJR.3OPF5GW5UQAGH@kernel.org> <CANiq72k-_=nhJAfzSV3rX7Tgz5KcmTdqwU9+j4M9V3rPYRmg+A@mail.gmail.com>
+ <DDO521751WXE.11AAYWCL2CMP0@kernel.org>
+In-Reply-To: <DDO521751WXE.11AAYWCL2CMP0@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 21 Oct 2025 18:47:41 +0200
+X-Gm-Features: AS18NWD6A3w6PR4fvS3IEgI9kkvx3dHP14ZgUtZuoQwDL0enZmy2MlsAuUPXLUw
+Message-ID: <CANiq72=N+--1bhg+nSTDhvx3mFDcvppXo9Jxa__OPQRiSgEo2w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, mmaurer@google.com, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 08:39:57AM +0200, Nathan Chancellor wrote:
-> On Mon, Oct 20, 2025 at 11:05:13AM +0100, David Laight wrote:
-> > On Fri, 17 Oct 2025 12:46:26 -0700
-> > Ryan Neph <ryanneph@google.com> wrote:
-> > 
-> > > Fixes warning from clang-17 that look like:
-> > > 
-> > > drivers/gpu/drm/xe/xe_configfs.h:35:97: error: omitting the parameter name in a function definition is a C2x extension [-Werror,-Wc2x-extensions]
-> > >    35 | static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > 
-> > Why did that become invalid?
-> > It has pretty much always been used - and can be used to avoid -Wshadow warnings.
-> > This looks like a clang bug.
-> > And you'd want a specific -W 'knob' for it as well.
-> > 
-> > At a guess the C2x extension lets the name be omitted in the function body for
-> > an unused parameter (the same as C++).
-> > I think that is the 'definition' and the ones being changed here are the 'declaration'.
-> > But I might be wrong.
-> 
-> I don't think you read the patch clearly enough. Both declarations and
-> 'static inline' definitions are being updated in this patch, likely for
-> consistency rather than necessity (but the commit message could call
-> this out). I don't see how there is a clang bug here.
+On Tue, Oct 21, 2025 at 6:25=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> We need arithmetic operations (e.g. checked_add()) and type conversions (=
+e.g.
+> from/into usize). That'd be quite some code to write that just forwards t=
+o the
+> inner primitive.
 
-Correct. The warning is generated for the stub definitions on the false branch of the
-`#if IS_ENABLED(CONFIG_CONFIGFS_FS)`.
+If it is just e.g. add/sub and a few from/into, then it sounds ideal
+(i.e. I am worried if it wants to be used as essentially a primitive,
+in which case I agree it would need to be automated to some degree).
 
-The pure declarations on the true side of the branch don't need a named variable but I included them for
-consistency. I can mention this in the commit message for v2 if desired.
+> So, I think as by now a new type makes sense if there is some reasonable
+> additional semantics to capture.
 
-> 
-> > > 
-> > > Signed-off-by: Ryan Neph <ryanneph@google.com>
-> > > ---
-> > >  drivers/gpu/drm/xe/xe_configfs.h | 10 ++++++----
-> > >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/xe/xe_configfs.h b/drivers/gpu/drm/xe/xe_configfs.h
-> > > index fed57be0b90e146d57d966bab0e55e1723513997..a0d614b37efd54b89390f04a238aef1a8d4df4e2 100644
-> > > --- a/drivers/gpu/drm/xe/xe_configfs.h
-> > > +++ b/drivers/gpu/drm/xe/xe_configfs.h
-> > > @@ -21,9 +21,9 @@ bool xe_configfs_primary_gt_allowed(struct pci_dev *pdev);
-> > >  bool xe_configfs_media_gt_allowed(struct pci_dev *pdev);
-> > >  u64 xe_configfs_get_engines_allowed(struct pci_dev *pdev);
-> > >  bool xe_configfs_get_psmi_enabled(struct pci_dev *pdev);
-> > > -u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class class,
-> > >  				       const u32 **cs);
-> > > -u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class class,
-> > >  					const u32 **cs);
-> > >  #ifdef CONFIG_PCI_IOV
-> > >  unsigned int xe_configfs_get_max_vfs(struct pci_dev *pdev);
-> > > @@ -37,9 +37,11 @@ static inline bool xe_configfs_primary_gt_allowed(struct pci_dev *pdev) { return
-> > >  static inline bool xe_configfs_media_gt_allowed(struct pci_dev *pdev) { return true; }
-> > >  static inline u64 xe_configfs_get_engines_allowed(struct pci_dev *pdev) { return U64_MAX; }
-> > >  static inline bool xe_configfs_get_psmi_enabled(struct pci_dev *pdev) { return false; }
-> > > -static inline u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +static inline u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev,
-> > > +						     enum xe_engine_class class,
-> > >  						     const u32 **cs) { return 0; }
-> > > -static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev,
-> > > +						      enum xe_engine_class class,
-> > >  						      const u32 **cs) { return 0; }
-> > >  static inline unsigned int xe_configfs_get_max_vfs(struct pci_dev *pdev) { return UINT_MAX; }
-> > >  #endif
-> > > 
-> > 
+To me, part of that is restricting what can be done with the type to
+prevent mistakes.
+
+i.e. a type alias is essentially the wild west, and this kind of
+type/concept is common enough that it sounds a good idea to pay the
+price to provide a proper type for it.
+
+> Maybe the action to take from this is to add this to the list of (good fi=
+rst)
+> issues (not sure this is actually a _good first_ issue though :).
+
+So I don't want to delay real work, and as long as we do it early
+enough that we don't have many users, that sounds like a good idea to
+me -- done:
+
+    https://github.com/Rust-for-Linux/linux/issues/1198
+
+Also took the chance to ask for a couple examples/tests.
+
+I hope that helps.
+
+Cheers,
+Miguel
 
