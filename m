@@ -1,161 +1,114 @@
-Return-Path: <linux-kernel+bounces-862460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC730BF55B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:49:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D06AABF55B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668C94221AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:49:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7BFAE35220E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0391D328B4B;
-	Tue, 21 Oct 2025 08:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D02328B5D;
+	Tue, 21 Oct 2025 08:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aeGO1Ufi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZVvVylep"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37653303A15;
-	Tue, 21 Oct 2025 08:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831C030BB83
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761036538; cv=none; b=dq5Vym8NRqd32wy1LhLd0qwLyLQtCt/JfO5mBOj4pjmBvzG7GfKsJT6SnpfIygW8FJ1wBjYTPZ8PjQp3qNm7PXAZc/YtXncbSRwqLXzAeNnvab/8auqyc/TqF50FScOGxpJj4Z0LaHfk3ZRCeJTkWmOtNnP0JrK2jrBXfX/LxdM=
+	t=1761036544; cv=none; b=RfcLcSZece5Hu9NeeRwGj+tpWlXglEHpX0pYRQ8t1zjC0+FSivPFBS6zdacfvie73Fyf1MelqorbuSWLcBiU8nb6EuViC8ml/BAvq6x368i6Xmt/bCEXs6SWY/g3pdBNWJka0r01RcT92WcqOeRz92WGH1ItQ+VGDijW9S/g+p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761036538; c=relaxed/simple;
-	bh=ixN0SnuQ8N2jtGJB1Dvgz9zJy2AHG8oUKIXx/yt/S8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CijaUcrY/RLO5P96oNEQq8bgxODn7YZIgRyQcahdkHF7hBZJBLiaUdO7n6igsWf4JaOt8quaEfYQb/dgnsAKMXymU/AldQwz8iJ0QYgPubvVKdMkI6JtzUXY3EnSgCxC+P8IeeA9MHkjvZ/8bx3q189+giwn1N62jGLzIRX/75s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aeGO1Ufi; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761036537; x=1792572537;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ixN0SnuQ8N2jtGJB1Dvgz9zJy2AHG8oUKIXx/yt/S8w=;
-  b=aeGO1UfizO148v/f+76FotvAGhQrrCYY/x9BmoQxP+A2pkxG7iUmtZkz
-   Iyna+f4PRrKpSWdiOsCCw3DQikrZhazqHP06b7HwH4FPdp5Gc9GIEwW81
-   rhay9GR8u85mzEdVMOZGfyp7oOSIp5Lxq2h1EhC7Z+Qio6ROUcrRTz1bT
-   qrTSDT64RGzM4u3T3tTx10SYX4wytVdiPDP0V7zCXctc1H4YqXzLrViiL
-   MEK7fV8TZ1N8h5w8Bc5Nf1lGkEeA33SLG17mv9hlDOgnLHYrnTPn+QpOB
-   Fi8OSNgkNYpy4XqELmlq3UG9n3LM6kNCrEL8FzkFpK+pMn0Lqx3tpLvuT
-   Q==;
-X-CSE-ConnectionGUID: DqATerEoTruQWsG2SbBjxw==
-X-CSE-MsgGUID: rs5hlnUrQ+eyND0IVqHu7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="50732125"
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="50732125"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 01:48:56 -0700
-X-CSE-ConnectionGUID: eCD/H1/RSIKfOQZXnX6Vww==
-X-CSE-MsgGUID: 5oEWrWiFR5aYJfjpPgNG5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="183099996"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.224])
-  by orviesa009.jf.intel.com with SMTP; 21 Oct 2025 01:48:47 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 Oct 2025 11:48:45 +0300
-Date: Tue, 21 Oct 2025 11:48:45 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Cc: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Yubing Zhang <yubing.zhang@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Amit Sunil Dhamne <amitsd@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v6 1/8] usb: typec: Add default HPD device when register
- DisplayPort altmode
-Message-ID: <aPdI7Vb_djrfCfbT@kuha.fi.intel.com>
-References: <20251016022741.91-1-kernel@airkyi.com>
- <20251016022741.91-2-kernel@airkyi.com>
- <aPYImGmesrZWwyqh@kuha.fi.intel.com>
- <954a67d1-1759-4e18-8eef-3fa14fb3cef5@rock-chips.com>
+	s=arc-20240116; t=1761036544; c=relaxed/simple;
+	bh=XPoKmOvkORtTPa9NjvFga22Y6k1YtkHFkJ0SSvV1lJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P4dYXXgs0jhfhlPzaVjeIUMYTgB4PrkxbeHEV8geApwIyhX5WkhBKPXZ3OMe8Vt4yaCv1LY2uhomdOTXJl6wljcAAbuuUpYvornwko3OVc0IJcTauajPSxSGo2iMQwAqOX0ymDSjFfhzYS53ccdAYMEJgwOJsh0Rbgthl5ktgIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZVvVylep; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-591c9934e0cso5942336e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:49:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761036540; x=1761641340; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UWB7I3uOZH2R37zOj0nUgiboN1KhJcfYPAPWQf++YmE=;
+        b=ZVvVylepYlIRipIxlYJ7M2tQIKLOhLUf4xj3CX7eETpiUVZ/SF2VzA55Wtt9jwm9i7
+         3jlqyQLTYjFlfHGORHSO9eP4oLxhXRzAA95V3mwhyVan97pV2MhOpA15rUv5OlDUgTEv
+         rlxvpB1AapIVPOnzJvdcVZNR/juJDS/c5rVmnS2KoFnr2deH2MWcg6RptvXuX09Ucbr5
+         hyDNxItrTSTaN9aodWlRoZ6kS/kgREKf4M2iLMheUR1Friad90qBZVAZKuz0FeFXeQW1
+         IuYsPkUg4aUfpzQlAlVX7E3+Kp7j3Qc9sFb8qnYVKsCrx1iI5bSoNHusrObEj2/dICws
+         w6Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761036540; x=1761641340;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UWB7I3uOZH2R37zOj0nUgiboN1KhJcfYPAPWQf++YmE=;
+        b=ndoeLyDk8DZbZRxfVjs4prM5qIbj0th6KZ2OxIYRtRYnhqf1q4toGLdcxRlpYyJ1e4
+         NKRHNovZEXV0vFw30kH554QSUgkPEXfIncb7+PEIrXb8IMLtTGebDDVmZ0VDLIm/5Q3v
+         Mwzq33QZHbBwHTWbakTKDYrMe+ZPQlpJ+s+jZCT3w7cLe9GxWhU8k/Zx3JLfCPbc1Z0A
+         +IR0CuzDRQUQkEvM/Yf8/dze2EaOgiHCrJ02yDegOhGr4OcW6LJC25RkRVjTlD2+tkki
+         Oy/2aFwMpLMmnU+zhb0J2k2Oq0QDSjekj1Ftptt9vfHTp5gwXlgl+QgK4dDWYLD/+FLt
+         ftHg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9VonclUccRoKCX8OyjdmbxKSyxmqFQ3Y8svJTxmXcVzvlkxIrmHBTZvNMONcNeIvNLYy9SmZPypOWmYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyzO0VNCX17d9d/it0Frb3ZFr0pDliRPekNpYvF7poM95zKXtc
+	LXqQO97T0nFXDPxqJKoV7lHlWLGWvmj5k2SMnMXdj4f9RC55AnI4X+pVeuNT7nkrdqiNJzmvmzU
+	nDoX07I77VI6w6nHnjnaSO58ToMl4KKOhESD0zC6f3g==
+X-Gm-Gg: ASbGncurScOqKS8pQKYTLUtRKw5aI2Pj4ey/Bd88KHVFYkVvHdqCk2msVwZvLiY4Na4
+	4w8g+u/HIM1dWx/X4QD6voL3d1+VxAzkEQKh9/iGczihAC4aXyw1P2TVeweeW/I+5zqUhqjeySu
+	6lEm7bkFdIjMk5YUpPBVQFmqQ71J59VlY9ryqWVlVtEy0SRWIqVMHIXPDx/IvCLL6DcsySN36qP
+	OWdVqXZajsDGFnBlKFUrLLxgi64pe6ealsNs8fkATczgjo2CrxbVTJQVFjzSwY91Z8Cuje+3dGt
+	0IZ5wgNMOj2IBMb8YjK4f6bNh2A=
+X-Google-Smtp-Source: AGHT+IGhse0+b3CMkpG2vCzGWzQdyEVQTxsJwBmPyyMaoRdINy22RkUY/oSul+AvEUV91IDbfefUY9oqSpF1cwaoD0w=
+X-Received: by 2002:a05:6512:23a2:b0:58b:15b:21df with SMTP id
+ 2adb3069b0e04-591d8533c83mr6150254e87.32.1761036540599; Tue, 21 Oct 2025
+ 01:49:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <954a67d1-1759-4e18-8eef-3fa14fb3cef5@rock-chips.com>
+References: <20251013174319.GA847155@bhelgaas> <20251016163618.1355923-1-vaibhavgupta40@gmail.com>
+In-Reply-To: <20251016163618.1355923-1-vaibhavgupta40@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 21 Oct 2025 10:48:48 +0200
+X-Gm-Features: AS18NWBHxy0Kh94MMHCmN-r2YbyHV5c_I_gws2Hy0s5QMWm9HV2uo_-7iwXoW2I
+Message-ID: <CAMRc=Mf4FnBoZfdR3gG47te=X53jASzb6MVnUmNw2q1rtUwxzQ@mail.gmail.com>
+Subject: Re: [PATCH v6] gpio: bt8xx: use generic power management
+To: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Cc: Michael Buesch <m@bues.ch>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Oct 16, 2025 at 6:36=E2=80=AFPM Vaibhav Gupta <vaibhavgupta40@gmail=
+.com> wrote:
+>
+> Switch to the generic PCI power management framework and remove legacy
+> callbacks like .suspend() and .resume(). With the generic framework, the
+> standard PCI related work like:
+>         - pci_save/restore_state()
+>         - pci_enable/disable_device()
+>         - pci_set_power_state()
+> is handled by the PCI core and this driver should implement only gpio-bt8=
+xx
+> specific operations in its respective callback functions.
+>
+> Signed-off-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+> ---
 
-On Mon, Oct 20, 2025 at 07:07:46PM +0800, Chaoyi Chen wrote:
-> Hi Heikki,
-> 
-> On 10/20/2025 6:02 PM, Heikki Krogerus wrote:
-> > On Thu, Oct 16, 2025 at 10:27:34AM +0800, Chaoyi Chen wrote:
-> > > From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> > > 
-> > > Add default DRM AUX HPD bridge device when register DisplayPort
-> > > altmode. That makes it redundant for each Type-C driver to implement
-> > > a similar registration process in embedded scenarios.
-> > > 
-> > > Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> > > ---
-> > > 
-> > > Changes in v6:
-> > > - Fix depend in Kconfig.
-> > > 
-> > > Changes in v5:
-> > > - Remove the calls related to `drm_aux_hpd_bridge_notify()`.
-> > > - Place the helper functions in the same compilation unit.
-> > > - Add more comments about parent device.
-> > > 
-> > >   drivers/usb/typec/Kconfig         |  2 ++
-> > >   drivers/usb/typec/class.c         | 26 ++++++++++++++++++++++++++
-> > >   include/linux/usb/typec_altmode.h |  2 ++
-> > >   3 files changed, 30 insertions(+)
-> > > 
-> > > diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
-> > > index 2f80c2792dbd..a6730fbb576b 100644
-> > > --- a/drivers/usb/typec/Kconfig
-> > > +++ b/drivers/usb/typec/Kconfig
-> > > @@ -2,6 +2,8 @@
-> > >   menuconfig TYPEC
-> > >   	tristate "USB Type-C Support"
-> > > +	depends on DRM || DRM=n
-> > > +	select DRM_AUX_HPD_BRIDGE if DRM_BRIDGE && OF
-> > This is wrong. DRM should not dictate how this entire subsystem core
-> > is configured. The dependency needs to be on the DRM bridge side.
-> > 
-> > You can for example use the bus notification there to see when a new
-> > alternate mode is being registered, or use some other notification
-> > mechanism.
-> 
-> Is it a good idea to implement notification functions like
-> drivers/usb/core/notify.c in TCPM, and then let other subsystems (such as DRM)
-> listen to these notifications?
+This says it's a v6 but I have no idea what changed since v1. Please
+provide a changelog for every version when submitting patches.
 
-Don't limit this to tcpm only. I would suggest something similar what
-we have for usb bus: drivers/usb/core/notify.c
+Bjorn: does this look good to you?
 
-So that, but for the typec bus. Then in DRM bridge code you just use
-typec_register/unregister_notify().
-
-thanks,
-
--- 
-heikki
+Bartosz
 
