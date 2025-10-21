@@ -1,106 +1,134 @@
-Return-Path: <linux-kernel+bounces-862325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DDDFBF5007
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF92BF5016
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 403983A65ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:38:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7DE18A2CC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD982280024;
-	Tue, 21 Oct 2025 07:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1397224678F;
+	Tue, 21 Oct 2025 07:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXziEsyC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SXiC5qZ4"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400D6264F99;
-	Tue, 21 Oct 2025 07:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAB127FB34
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032335; cv=none; b=HDp2uGd0brxwlIhLX5intofyj9ziFlm3Dwj79Gtqh1vw87KqMN7ah9pQXtSY+TxlAOq0rcL3NdO2rTIEXURgmjJToFTOMl4Z/XujHPf0wnWYU1M989qeuFiOpPqFvm95zzMZoJ58+GjxWxn4KLOTskWPknh/VnyLTnxCIrMtp3k=
+	t=1761032496; cv=none; b=uCi3IvD9ScZX8auzxRCOYQyrI3GEf5YcVj1LT6rGyE8PFNvE4WC234Roviq30wEPedZ5JU3hsLlKuv2WFy9j5r6jGDM4+vjPupu9kXNOzOdqEtADBaVTL/PzCBJJMuqy8ZnwM1X8hXEQbYLGeakq11Db3MsHQQjICty+MixtsfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032335; c=relaxed/simple;
-	bh=vHFferdc9wnVHHmEcQcTqndecULFvcVf12ja2yCoymA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=sigVTZfSSRwaVQDXmXnqrGNOLRoDDw6hWJnHx9DemJeKGbpqxQ3am+xxJAYRd5kL48SEG3xS9Utvg/m431WuJ5MGWpwSpH2AUGSoYf1queE45NhSBUD5p+dkzrZUoNJGGTXNFra2gBDIm8u23j8nm3gZBDX3eeNloyj/SwBrvf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXziEsyC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CEA6C4CEF1;
-	Tue, 21 Oct 2025 07:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761032334;
-	bh=vHFferdc9wnVHHmEcQcTqndecULFvcVf12ja2yCoymA=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=lXziEsyCX6aW/ra7wktzxPcascVmpx2AOChtoaRdMxdtMJEEQjFh8Bc+ZXyqC5vtY
-	 09TKvXf2qgp9ts9O5HpyDf+sgc6iavQs+w91SpFZBtyRxXQzo11Ok9kC5i/+GJOkKd
-	 Pcy5P6bSRcaUWhnkcYDxcpjfgMAjP9dnSoPEpiW8JjJinwzLJyMzDpkyULj3bIRI0A
-	 TgXMO/+wZkr7nYvlAzzzglR2kkQpodx5P+5TRXQ+nNvrcl7WCAZcADeCKK3/2I/ng5
-	 tiWrjxuufrFTOMe0zd11eKnoxEFAgdNb6SpIETVYLm5/cAJMco4DIfLS00DFawkgDT
-	 fyaw4z7p4tSog==
+	s=arc-20240116; t=1761032496; c=relaxed/simple;
+	bh=DK3PRwZpBq1od1VedcTebPWw4rDrTPz/ZDSqWv21YEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mM4FgIon37SEMROtVNu9R17dAnQDHMCFcqj2fKIQ14PDNl/Ni8sUsQUpYD/lBU/OH8yziWr2/JX/7YYsS2FsRMU9cyWUIldleCEKMqWLIAShQkwaP2g4c/OdWhx2I4EOlPrsjLirRFx5EB9EcnnbzCoQsu9E2c3sQ+chRK0ZETk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SXiC5qZ4; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761032491;
+	bh=DK3PRwZpBq1od1VedcTebPWw4rDrTPz/ZDSqWv21YEA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SXiC5qZ4XSjTTVhbMOCbm/N7jOl41DRnFhqfoOM9cr+gB88A/DW5LbjqYpIagSX2C
+	 o+PWTpaD+JR84KOl4ew03e8XF+/l5PVWSx7IZGoy/KMIzxnrbsZwaJgp4igMHC0AuC
+	 2XEyOutMUEmhJlCGDhLB3+go7Jn9uMIfim5YU7J0GH1Wo7mmqpkJeqAL0m16i/I0ii
+	 JY/5Y6mI/1c92Jb4pqHHA07zpcTiWoyC3051+boT7wxftgBSmME6L1ikRwOWaF2Aoa
+	 x2T28+jd3lD5iGN/IvyVPLuHio9cr8TEWz+suHBYJ9Hk7AseWyGj6kBuyj86bSMa6M
+	 FKN0n21Vyllcg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 38ABD17E081A;
+	Tue, 21 Oct 2025 09:41:31 +0200 (CEST)
+Date: Tue, 21 Oct 2025 09:41:25 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: liviu.dudau@arm.com, steven.price@arm.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
+Subject: Re: [PATCH v2] drm/panthor: Fix potential memleak of vma structure
+Message-ID: <20251021094125.7be19764@fedora>
+In-Reply-To: <20251020200243.1324045-1-akash.goel@arm.com>
+References: <20251020200243.1324045-1-akash.goel@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=beb9f8f9ee4d183a7d1204fbb04464e8e5b381b05fd161ee3833599433db;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 21 Oct 2025 09:38:46 +0200
-Message-Id: <DDNTUYA4T785.27OYNQIPCJUUV@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Sander Vanheule" <sander@svanheule.net>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- <linux-gpio@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] gpio: regmap: Bypass cache for aliased outputs
-X-Mailer: aerc 0.20.0
-References: <20251020115636.55417-1-sander@svanheule.net>
- <20251020115636.55417-3-sander@svanheule.net>
-In-Reply-To: <20251020115636.55417-3-sander@svanheule.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---beb9f8f9ee4d183a7d1204fbb04464e8e5b381b05fd161ee3833599433db
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Mon, 20 Oct 2025 21:02:43 +0100
+Akash Goel <akash.goel@arm.com> wrote:
 
-On Mon Oct 20, 2025 at 1:56 PM CEST, Sander Vanheule wrote:
-> GPIO chips often have data input and output registers aliased to the
-> same offset. The output register is non-valitile and could in theory be
-> cached. The input register however is volatile by nature and hence
-> should not be cached, resulting in different requirements for reads and
-> writes.
->
-> The generic gpiochip implementation stores a shadow value of the pin
-> output data, which is updated and written to hardware on output data
-> changes. Pin input values are always obtained by reading the aliased
-> data register from hardware.
->
-> For gpio-regmap the output data could be in multiple registers, but we
-> can use the regmap cache support to shadow the output values by marking
-> the data registers as non-volatile. By using regmap_read_bypassed() we
-> can still treat the input values as volatile, irrespective of the regmap
-> config. This ensures proper functioning of writing the output register
-> with regmap_write_bits(), which will then use and update the cache only
-> on data writes, gaining some performance from the cached output values.
->
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
+> This commit addresses a memleak issue of panthor_vma (or drm_gpuva)
+> structure in Panthor driver, that can happen if the GPU page table
+> update operation to map the pages fail.
+> The issue is very unlikely to occur in practice.
+> 
+> v2: Add panthor_vm_op_ctx_return_vma() helper (Boris)
+> 
+> Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
+> Signed-off-by: Akash Goel <akash.goel@arm.com>
 
-Reviewed-by: Michael Walle <mwalle@kernel.org>
+Just one minor thing below, but the patch is
 
---beb9f8f9ee4d183a7d1204fbb04464e8e5b381b05fd161ee3833599433db
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
------BEGIN PGP SIGNATURE-----
+regardless.
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaPc4hhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hwJwGA9Ko3G1nJZCRCp45NYqHrFYbxkBBGBFyU
-R9+N8TABsmbyBZirACBc1G/TltIJ9cyrAYChS/a96C19thAvzY6J+5Cif3AXCMX3
-VS0VBxnmiXgtR6q/ecrERM/rbDoMk1TxEMI=
-=gq6+
------END PGP SIGNATURE-----
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 6dec4354e378..63af8ee89b08 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -1146,6 +1146,18 @@ static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  	}
+>  }
+>  
+> +static void
+> +panthor_vm_op_ctx_return_vma(struct panthor_vm_op_ctx *op_ctx,
+> +			     struct panthor_vma *vma)
+> +{
+> +	for (u32 i = 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++) {
+> +		if (!op_ctx->preallocated_vmas[i]) {
+> +			op_ctx->preallocated_vmas[i] = vma;
+> +			return;
+> +		}
+> +	}
 
---beb9f8f9ee4d183a7d1204fbb04464e8e5b381b05fd161ee3833599433db--
+Maybe add a WARN_ON_ONCE() here.
+
+> +}
+> +
+>  static struct panthor_vma *
+>  panthor_vm_op_ctx_get_vma(struct panthor_vm_op_ctx *op_ctx)
+>  {
+> @@ -2081,8 +2093,10 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+>  	ret = panthor_vm_map_pages(vm, op->map.va.addr, flags_to_prot(vma->flags),
+>  				   op_ctx->map.sgt, op->map.gem.offset,
+>  				   op->map.va.range);
+> -	if (ret)
+> +	if (ret) {
+> +		panthor_vm_op_ctx_return_vma(op_ctx, vma);
+>  		return ret;
+> +	}
+>  
+>  	/* Ref owned by the mapping now, clear the obj field so we don't release the
+>  	 * pinning/obj ref behind GPUVA's back.
+
 
