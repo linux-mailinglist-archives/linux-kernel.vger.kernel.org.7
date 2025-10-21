@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-862583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1E9BF5AE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30145BF5B36
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE403A46C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39633AE8EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3342931329A;
-	Tue, 21 Oct 2025 10:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="druJg+gG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E5E2F1FFB;
+	Tue, 21 Oct 2025 10:08:52 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8530A25BF13;
-	Tue, 21 Oct 2025 10:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C977027C866
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041098; cv=none; b=fPqOoA+Is3KhqC2qPEA/5oaA1XOeamBOc8uXMU5XFmySC8fd4QVhgvLZPf3CZOAs2DYzv2PTa3hNP+MmKklzu4S4uZU2IijUIUC+DZRxPgUQVZHxw/iXG2NhEmsc4Ybqzv8zGreVovydKpo3jbTuC4m9swCIznIfUY547pCFMEo=
+	t=1761041331; cv=none; b=qE2Pa5DQhEwx+Dwqv4z1mjJehSABVx3v0M4q+vovsY2ptPcGHRS2zv27qAEwcetXw6XEgwpCSdPLfZdtiz9akbIQQpfT70bg3mVwdio2/4FzPTHa3e+Kv5J5jZJT+YnWMYdbXkLhrWqnT/1sG//d3NQ/NX2n0dzPNOBNChJetMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041098; c=relaxed/simple;
-	bh=UNDuyBu/H9MLieySEn/zKXMZnN2v+zyRHcL9xe+3KKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddUv8zewE/EF6SKXMp61WkYVLre2RwWGwjDJghoFMJPAKOwWN4JAvCfYTtu6GF2c2P4vkw86quRxTEQOj3O5qV14QobW3euNc+K+S7WDoq4MQpxawBWUY8DXxAJvFeFEVhF5tTy3Mk/A0fguXm8zbvlIpAIgQjKQ3uTk0ymWKK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=druJg+gG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4448C4CEF1;
-	Tue, 21 Oct 2025 10:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761041098;
-	bh=UNDuyBu/H9MLieySEn/zKXMZnN2v+zyRHcL9xe+3KKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=druJg+gGstrNmnqvB3SEHDFZc6qu9YG+3G4hJWNMy42QLfnZJDQWICRungso+3O9H
-	 MkND4jyCl2Q/7nlXIxdvfsOhuz7M6PFpUzA7UPbgy3P7yAu8PDbC4fyClhMmYMGJtn
-	 T2bCHqCmrJGuSm9+AJxnvnOFYXpfiD9L90b4bSphYADfNU2V1TVh1o9Hic1UImtZx+
-	 BO5E5xVu4lG8Fq/1VqCP+hbYSfiswqAxDnMh+uCnj44Hj6k5Pr8ipu3nraUE+zNpVk
-	 OHTLz/ViFQdRThwbTx8kVZT/qPBw1lgaeQ4LHTZCUaSsSYt5GdvVQ17mNZStiqQzN3
-	 vG6A8al9ZiQhg==
-Date: Tue, 21 Oct 2025 11:04:53 +0100
-From: Simon Horman <horms@kernel.org>
-To: Gustavo Luiz Duarte <gustavold@gmail.com>
-Cc: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Matthew Wood <thepacketgeek@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net 2/2] netconsole: Fix race condition in between reader
- and writer of userdata
-Message-ID: <aPdaxSUBMYwfQXW6@horms.kernel.org>
-References: <20251020-netconsole-fix-race-v1-0-b775be30ee8a@gmail.com>
- <20251020-netconsole-fix-race-v1-2-b775be30ee8a@gmail.com>
+	s=arc-20240116; t=1761041331; c=relaxed/simple;
+	bh=ia07eOihL1yqulTo87UwUziS0m5PaMY91zKf1HCvy00=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IiyUuloknGMjf+TXH5Rf9/09MoR6MJWVXM5dFugXqMeX/kkHCmSGOPRM7yRo5tWssXjZ5WcnAM8xXpW7wGpkQkUaCWA57wP86gaQ2LJZojaN5MDTT6lryJXLPsQxk6TAxvaXllifbHCNECEWzD5iGfkAWh4QRQES4MVPpe+C2iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4crSDn73DmzYrxv2;
+	Tue, 21 Oct 2025 17:49:13 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 21 Oct
+ 2025 17:50:08 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 21 Oct
+ 2025 17:50:08 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <akpm@linux-foundation.org>
+CC: <david@redhat.com>, <lorenzo.stoakes@oracle.com>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>,
+	<surenb@google.com>, <mhocko@suse.com>, <jackmanb@google.com>,
+	<hannes@cmpxchg.org>, <ziy@nvidia.com>, <zhengqi.arch@bytedance.com>,
+	<shakeel.butt@linux.dev>, <axelrasmussen@google.com>, <yuanchu@google.com>,
+	<weixugc@google.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<liulu.liu@honor.com>, <feng.han@honor.com>, <zhongjinji@honor.com>
+Subject: [PATCH] mm/page_alloc: Consider PCP pages as part of pfmemalloc_reserve
+Date: Tue, 21 Oct 2025 17:50:04 +0800
+Message-ID: <20251021095004.12157-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020-netconsole-fix-race-v1-2-b775be30ee8a@gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a018.hihonor.com
+ (10.68.17.250)
 
-On Mon, Oct 20, 2025 at 02:22:35PM -0700, Gustavo Luiz Duarte wrote:
-> The update_userdata() function constructs the complete userdata string
-> in nt->extradata_complete and updates nt->userdata_length. This data
-> is then read by write_msg() and write_ext_msg() when sending netconsole
-> messages. However, update_userdata() was not holding target_list_lock
-> during this process, allowing concurrent message transmission to read
-> partially updated userdata.
-> 
-> This race condition could result in netconsole messages containing
-> incomplete or inconsistent userdata - for example, reading the old
-> userdata_length with new extradata_complete content, or vice versa,
-> leading to truncated or corrupted output.
-> 
-> Fix this by acquiring target_list_lock with spin_lock_irqsave() before
-> updating extradata_complete and userdata_length, and releasing it after
-> both fields are fully updated. This ensures that readers see a
-> consistent view of the userdata, preventing corruption during concurrent
-> access.
-> 
-> The fix aligns with the existing locking pattern used throughout the
-> netconsole code, where target_list_lock protects access to target
-> fields including buf[] and msgcounter that are accessed during message
-> transmission.
-> 
-> Fixes: df03f830d099 ("net: netconsole: cache userdata formatted string in netconsole_target")
+When free_pages becomes critically low, the kernel prevents other tasks
+from entering the slow path to ensure that reclaiming tasks can
+successfully allocate memory.
 
-nit: no blank line here please
+This blocking is important to avoid memory contention with reclaiming
+tasks. However, in some cases it is unnecessary because the PCP list may
+already contain sufficient pages, as freed pages are first placed there
+and are not immediately visible to the buddy system.
 
-> 
-> Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
-> ---
->  drivers/net/netconsole.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> index 194570443493b..1f9cf6b12dfc5 100644
-> --- a/drivers/net/netconsole.c
-> +++ b/drivers/net/netconsole.c
-> @@ -888,6 +888,9 @@ static void update_userdata(struct netconsole_target *nt)
->  {
->  	int complete_idx = 0, child_count = 0;
->  	struct list_head *entry;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&target_list_lock, flags);
->  
->  	/* Clear the current string in case the last userdatum was deleted */
->  	nt->userdata_length = 0;
-> @@ -918,6 +921,8 @@ static void update_userdata(struct netconsole_target *nt)
->  	}
->  	nt->userdata_length = strnlen(nt->extradata_complete,
->  				      sizeof(nt->extradata_complete));
-> +
-> +	spin_unlock_irqrestore(&target_list_lock, flags);
->  }
->  
->  static ssize_t userdatum_value_store(struct config_item *item, const char *buf,
-> 
-> -- 
-> 2.47.3
-> 
-> 
+By accounting PCP pages as part of pfmemalloc_reserve, we can reduce
+unnecessary blocking and improve system responsiveness under low-memory
+conditions.
+
+Signed-off-by: zhongjinji <zhongjinji@honor.com>
+---
+ mm/internal.h   |  1 +
+ mm/page_alloc.c | 14 ++++++++++++++
+ mm/vmscan.c     |  1 +
+ 3 files changed, 16 insertions(+)
+
+diff --git a/mm/internal.h b/mm/internal.h
+index 45b725c3dc03..c8fcee51d662 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -842,6 +842,7 @@ static inline struct page *alloc_frozen_pages_noprof(gfp_t gfp, unsigned int ord
+ #define alloc_frozen_pages(...) \
+ 	alloc_hooks(alloc_frozen_pages_noprof(__VA_ARGS__))
+ 
++extern int zone_pcp_pages_count(struct zone *zone);
+ extern void zone_pcp_reset(struct zone *zone);
+ extern void zone_pcp_disable(struct zone *zone);
+ extern void zone_pcp_enable(struct zone *zone);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1999eb7e7c14..e34031946adb 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7134,6 +7134,20 @@ void zone_pcp_reset(struct zone *zone)
+ 	}
+ }
+ 
++int zone_pcp_pages_count(struct zone *zone)
++{
++	struct per_cpu_pages *pcp;
++	int total_pcp_pages = 0;
++	int cpu;
++
++	for_each_online_cpu(cpu) {
++		pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
++		total_pcp_pages += pcp->count;
++	}
++
++	return total_pcp_pages;
++}
++
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+ /*
+  * All pages in the range must be in a single zone, must not contain holes,
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 674999999cd0..148f452d9cf5 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -6498,6 +6498,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
+ 
+ 		pfmemalloc_reserve += min_wmark_pages(zone);
+ 		free_pages += zone_page_state_snapshot(zone, NR_FREE_PAGES);
++		free_pages += zone_pcp_pages_count(zone);
+ 	}
+ 
+ 	/* If there are no reserves (unexpected config) then do not throttle */
+-- 
+2.17.1
+
 
