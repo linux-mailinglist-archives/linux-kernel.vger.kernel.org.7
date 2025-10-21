@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-863025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8935EBF6CFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:36:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BEABF6CEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E51465CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4F940142B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6B3338915;
-	Tue, 21 Oct 2025 13:35:29 +0000 (UTC)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B344337B9A;
+	Tue, 21 Oct 2025 13:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S18DavwY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF52433891A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26DC337B86
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053729; cv=none; b=D6HA7Xz6tZJgBtdhuULDMqYeEIKGsX7Kr3pT0I0I92Zv7n4yKcPQlFUJOqzsJFa9Xp/LdeM/Y243gexwzaRFx5uvk8P2P+UPsCxOmia246/LYTAeBLc/mFqHmQRcZh1lJX93KMs9MYfFshrwCfJSGpmNL5YT85GGOrEztp918I0=
+	t=1761053723; cv=none; b=axCgbvFwvOZH28NO2/hvMNPoxhyNXAoNbwq5iGHIBaKAxQu7x5DqkN4ECtyNNWDQhexmbdgg1+LahjwLdOzgv2SoewecbouicHQlRGrmi+IFSABTDC78bF99q1jC9rqAgOiogFAW4FiywakvOL9SaygG9jy0tHOXa0tICvhdu9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053729; c=relaxed/simple;
-	bh=gnF9AkJgPkgv+c5e70+0S/TuXUz2qGPWDAKnDZ2oFUs=;
+	s=arc-20240116; t=1761053723; c=relaxed/simple;
+	bh=ZuqBsIVbt1VZeH9Nd3+eLrJ3RNjtyUBnOrvCECRWIMo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l7IrFFYjtkUHHX2j4dB2QlKKTin7NFI6tjkmWZMxsvs90xU7JI13sOgRPfFBe1OBYll1DJWaXuBbWSabw/XH8dBxh7iAIExkr1JNGhWW/MjKMxelB6skxJWXX3xyKqjSI+YwgDBTUW5cWS4/x2MelO8VVOFkfIQlPcowoR9cfZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-54bc04b9d07so2194179e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:35:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761053726; x=1761658526;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2TkKqx+vxrv5wCaSsuSiP+PuBVA5+FMh9B80POq+sr0=;
-        b=fhORMzlZXUWl8HOZRFSkwFj/U92D9ujBPeeWGfWO11mmxbAmTyAjp8roeWUYk6tvDS
-         fnFJ2RzJZZVIffMUNH5HzvRzPPw5Sim5vBY3fxtNd2Irdxmznkp6sIMX/E5sh6WSZzpV
-         7pByBv+Uwobq4eRv5SAQex8Tq51g6RrH0B8gaTiYWLRTT/3uQNdfHCeZKdP0n1EF2r/r
-         FBK4h1BMnnjAPaTzXoPk8Z6KdlB/mw8CEFutrTnR6NShX0Ku1jE3jMukptIuv72Cw2Zv
-         W91/NXahV65bM+jvBbPovsyyLGIhwR61WsNrwHR0HEz0IuOLeoTuVi0iYgyzh/grcn/r
-         f/CA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhnEGityr1QCbOV1Nssp+mglWmdGrStmj1FoHla8m3xNl7qcwhtOrXsTZB5ZTNcAHAK5Fi1Wv8VWuKVN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDudc0F7SRkBgkDzStlZZU/aN46Gxe8I8igRVK363CrludKKa8
-	qUhwsTeG+TGC/p4zl5vIq7o4pa2+Ehcjzf/juxpt1QR2iKUyhcz/sguxbGiMEBtl
-X-Gm-Gg: ASbGncvxlkITgbxE+Alu8pN1IwNI/8H5rwg4Haz92m9/1LbhMHQ55BZm0NzUfybbxzo
-	PsK+CumkHdcRyzLZYDS2bz3wL/8bxKzRBIXnPLHZhq9uGWAqx5ISVHMfPWbGP4xXEx3ZbLIp4Bm
-	gLLvHj+MUju+ATdoKpHTx64GEVy+VMpcUAkZFCbcHu0CK1KXTcfxdeliXNCYVTR2XUaCdNmEizI
-	2deGcLWy2aEXfuKShFlbjcLr5y4ASBEhioRkDvyFdQnmkObTPN37dEYcmCFSBY3cKRFERaNl+g1
-	b8JBkyVrPTLK91r3poPz9z5U2t7qpXw3unJL+UNTL8wjvWrjO1RLcrTNyCenBxJDa47ASRdR6Fv
-	7JKaf+Lyfdc4BtLvVcSFW59minZUmj8M35QL3t0r6k3Gz+FXhkNz0jh9vIeCN0QIpt3UKTJ+9OQ
-	JByaNWrUSDTTQS/rC6bgmucEUOL0j5SkZmWyl+Vqr+FuatVUEs
-X-Google-Smtp-Source: AGHT+IGPPLggcVtQbWD3K4DrACXlpA8fcOd7LW31NTBEA8zZn4FqN7VGPtKa2hMrffAKHHO6HGWeMw==
-X-Received: by 2002:a05:6122:8d4:b0:54a:71f6:900f with SMTP id 71dfb90a1353d-5564eca636emr4425127e0c.0.1761053726542;
-        Tue, 21 Oct 2025 06:35:26 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55693a2aae7sm143186e0c.26.2025.10.21.06.35.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 06:35:25 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5d6266f1a33so2481255137.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:35:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6p3WlhzJzKQPHfu7fcUGB+BHMwC2RVymYaeIUzkd2dSi+RaKduXdSdXPd46t4+1H6GmpXFJFCVHyMwos=@vger.kernel.org
-X-Received: by 2002:a05:6102:390a:b0:5d5:f6ae:38de with SMTP id
- ada2fe7eead31-5d7dd6ba33emr4614068137.41.1761053723732; Tue, 21 Oct 2025
- 06:35:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=dTIDvwolDl+87ZxTOKzh/pFxouyfxSviXBPLjA0dJFVU+ZOXOTBKAtDTQsPeEAbWmE3ugTQYhtxDxBU3JoGeJj51jsn6Oml4RLOHY6JVfiT5yoknmYzqZWKtRBr/woHSbgnta21e0/PMiHs44gth/u2yDvFpjCq5ciV708zJ7YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S18DavwY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DC5C4AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761053723;
+	bh=ZuqBsIVbt1VZeH9Nd3+eLrJ3RNjtyUBnOrvCECRWIMo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=S18DavwYbzRxUahcWRpwvrAe0zB/UyjTqme1jX6ivlUDXe9QF0MKnRpZNlzcuUyr8
+	 qP5MgWy12F+Rs9j7/aCAn6IFq9dZJl3do1D5zUf4WGRirGdJX9e52/ghZzazGqgLq8
+	 jltEEgMXbsleqCDk34o9aZkyOzhqHH5ihgj2Ag5zKitF1ewMcY0HKzIRV0L+UQBVqm
+	 92UaqEccm542WIRtl/tiJOy6cjSQyveypKBIyuOGWuZm4fA2jWKGnilpLEmqBs7Xmo
+	 lPOeXhXZEwXbADA8Pt1oU6PNsQ3Ei09bw7u1q+Wq9LxPo5DNaN9tkIR6oFASPG7Mob
+	 KEPxeFT7w9bQw==
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-4439fc3abfeso2252869b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:35:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXmtWSnT2y8VEmwAy2xIv8oLYQnIHsjEMpfv0p9w3hvTGLX9KgS/kE9DDxtlpfFzmJemSHxXa6+e9A8li0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfBixmqKD5Xbf3IKUtx5v3TuzuMcbcQNO1uOIVbqV7QXPsumgS
+	kAx8Q/rdzDXj2kA5hqAuBZntHVRhLLUsgYARZpybJf+s6Q1vfBa02z9wM9nRI1nipHaxyWyEZy/
+	486iKbKPONu+eOGeLZOyMozUmSSHZTsk=
+X-Google-Smtp-Source: AGHT+IEKKO8UIzncbp3yZO81oyf6QsCEy/ZN7tr85jZ4pwoPxanGyvexPT/O4C5oiumqVgjKTnBwE1h32ENYeNiUZgM=
+X-Received: by 2002:a05:6808:444b:b0:441:8f74:f1a with SMTP id
+ 5614622812f47-443a315b372mr7649786b6e.52.1761053722613; Tue, 21 Oct 2025
+ 06:35:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021080705.18116-1-ovidiu.panait.rb@renesas.com> <20251021080705.18116-2-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20251021080705.18116-2-ovidiu.panait.rb@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Oct 2025 15:35:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU+=c-HseXicppm+185qq3fcc7=qq3Nu4LjoKZuYF0d-A@mail.gmail.com>
-X-Gm-Features: AS18NWDE7aRGEcmYizQFJmtQta7msQIG0JXTbcDHGFqFLxinOoGCd4ViST3rwwc
-Message-ID: <CAMuHMdU+=c-HseXicppm+185qq3fcc7=qq3Nu4LjoKZuYF0d-A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] clk: renesas: r9a09g057: Add clock and reset
- entries for RTC
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	p.zabel@pengutronix.de, linux-rtc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20251021092825.822007-1-xry111@xry111.site>
+In-Reply-To: <20251021092825.822007-1-xry111@xry111.site>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 15:35:11 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iy8wChaPYGmc=mWJRrA+uXnGF2Ar7aMCMRoUqS6877aQ@mail.gmail.com>
+X-Gm-Features: AS18NWA8xXgTYvIuPvaLuEdFpvBPRx9_4TgORXKHv2p-jVKPnls01cOnTQbgH10
+Message-ID: <CAJZ5v0iy8wChaPYGmc=mWJRrA+uXnGF2Ar7aMCMRoUqS6877aQ@mail.gmail.com>
+Subject: Re: [PATCH] acpica: Work around bogus -Wstringop-overread warning
+ since GCC 11
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, loongarch@lists.linux.dev, 
+	Mingcong Bai <jeffbai@aosc.io>, Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org, 
+	Saket Dumbre <saket.dumbre@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>, 
+	Huacai Chen <chenhuacai@kernel.org>, 
+	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <linux-acpi@vger.kernel.org>, 
+	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <acpica-devel@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 Oct 2025 at 10:07, Ovidiu Panait
-<ovidiu.panait.rb@renesas.com> wrote:
-> Add module clock and reset entries for the RTC module on the Renesas RZ/V2H
-> (R9A09G057) SoC.
+On Tue, Oct 21, 2025 at 11:28=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wro=
+te:
 >
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> When ACPI_MISALIGNMENT_NOT_SUPPORTED, GCC can produce a bogus
+> -Wstringop-overread warning, see https://gcc.gnu.org/PR122073.
+>
+> To me it's very clear that we have a compiler bug here, thus just
+> disable the warning.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: a9d13433fe17 ("LoongArch: Align ACPI structures if ARCH_STRICT_ALI=
+GN enabled")
+> Link: https://lore.kernel.org/all/899f2dec-e8b9-44f4-ab8d-001e160a2aed@ro=
+eck-us.net/
+> Link: https://github.com/acpica/acpica/commit/abf5b573
+> Co-developed-by: Saket Dumbre <saket.dumbre@intel.com>
+> Signed-off-by: Saket Dumbre <saket.dumbre@intel.com>
+> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+Please submit ACPICA changes to the upstream ACPICA project on GitHub
+as pull requests (PRs).  After a given PR has been merged upstream, a
+corresponding Linux patch can be submitted with a Link: tag pointing
+to the upstream commit, but note that upstream ACPICA material is
+automatically transferred to Linux, so it should not be necessary to
+do so unless timing is important.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  drivers/acpi/acpica/tbprint.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/acpi/acpica/tbprint.c b/drivers/acpi/acpica/tbprint.=
+c
+> index 049f6c2f1e32..e5631027f7f1 100644
+> --- a/drivers/acpi/acpica/tbprint.c
+> +++ b/drivers/acpi/acpica/tbprint.c
+> @@ -95,6 +95,11 @@ acpi_tb_print_table_header(acpi_physical_address addre=
+ss,
+>  {
+>         struct acpi_table_header local_header;
+>
+> +#pragma GCC diagnostic push
+> +#if defined(__GNUC__) && __GNUC__ >=3D 11
+> +#pragma GCC diagnostic ignored "-Wstringop-overread"
+> +#endif
+> +
+>         if (ACPI_COMPARE_NAMESEG(header->signature, ACPI_SIG_FACS)) {
+>
+>                 /* FACS only has signature and length fields */
+> @@ -143,4 +148,5 @@ acpi_tb_print_table_header(acpi_physical_address addr=
+ess,
+>                            local_header.asl_compiler_id,
+>                            local_header.asl_compiler_revision));
+>         }
+> +#pragma GCC diagnostic pop
+>  }
+> --
+> 2.51.1
+>
 
