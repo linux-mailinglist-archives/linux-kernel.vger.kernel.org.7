@@ -1,111 +1,51 @@
-Return-Path: <linux-kernel+bounces-862752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F115BF6136
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:33:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD78BF6145
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E4474ED674
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89006487AD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128EB32E74E;
-	Tue, 21 Oct 2025 11:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FE132ED25;
+	Tue, 21 Oct 2025 11:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="VtVOLEBl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aFvs788V"
-Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XhBQYYoc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1556332E13D;
-	Tue, 21 Oct 2025 11:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613332E6A8;
+	Tue, 21 Oct 2025 11:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761046279; cv=none; b=uGsz1DExPzMmuRoQbrhAtWribXBnwirnEMLIk0ePUFDp1MdayV2WAqD5oP8vekgj5eYv7qgcekKRMN1yVaaA5eBbvY98c6W+0o8fMHo7Uv2WSm7J7dXg9ljJ4IQk8srkvXAMuqK6DntxTBBQFxKZ0PFbvEb2Ma7WdKw1eBHeUuw=
+	t=1761046329; cv=none; b=AyKoyGhGGpHz4FRzN4l7b4gkdHzoRwOWRZn58b6bSH9wBQrAP7Ha9+1t5BoYNX89h9mrgVpstABz+C5i8o7zEHANxX5Umnb6OA12V+XQn/TrbgcL+19a6OXG9cYFXLQAplTbi4dv+6vpZCPnQYFpGJbeWxjkxSO1jP2ooUqhtSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761046279; c=relaxed/simple;
-	bh=i2ypIgVxR5XKVj6oglN5eSqLYS95V5/BxaV2psQ371E=;
+	s=arc-20240116; t=1761046329; c=relaxed/simple;
+	bh=V0LzGqlm6ZT2RHcJE0MR9bBz502IUmS+3riFSgA+IaI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YrlIeNztNlDQUO/4U0HGKU1GlTNfF8dnC/Xudwpo+JcG8xcpqYCatPgl/klcImJh6WlOOnlBPj999N/+6CbVVlo3aQzpNVYu/RqXxgSo992s03fYtn2ZKp7B6FEi2m3J9TKMjS2lU9vVUIFvjRAekbx6vAq6jAjH27MnF9KQrJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=VtVOLEBl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aFvs788V; arc=none smtp.client-ip=202.12.124.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id 0D7891300099;
-	Tue, 21 Oct 2025 07:31:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 21 Oct 2025 07:31:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761046274; x=
-	1761053474; bh=BLuUH66s5GK5mvKmYkyR8CP4H6QviMHTV/wP+OAXiXQ=; b=V
-	tVOLEBljxFSK4E4lhTxWAlL/ba9qwZSnEFWSqacoI5R7kgVCiKIxoZsvON95LFmE
-	xoDya60LWDBFSR1e1bw30/GlLZL3o4nfz3qXpuIXZEZVRo/ViKE0F5YjvaFfPGnj
-	XuEsBzH/m+N0VrP2WS3y34OTx9W1ecGRywFMNkHd313pgpswYEpYIvtCa2h4KzmP
-	iWGxHm3fAIJTRvKerXuOFdhRQ8qD59t87gxFH1nIuj4q17xFdxHTYLA7o8cLH/nR
-	erdQBTUQA0O6ettsJnUL8VXnCLZ9t6LktqKOwd99TTuN3yQ8M5JUjTglXwWHz02r
-	ktf+vlegg3qaaGpJCXowQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761046274; x=1761053474; bh=BLuUH66s5GK5mvKmYkyR8CP4H6QviMHTV/w
-	P+OAXiXQ=; b=aFvs788VrXnd8g82PJYeNvUI53vVxwk18Ndv2uvKvtvljy15OTR
-	h4WYYBHrrO+OwztFJwlVUS3amF90w4OU3xannSAyfXNZZyFBGuqKZz0TPO3GNtd7
-	LiBz9h62+fvFY/U77VleCHyLpxXsueVua3dTMnsPnipA+ss0hGUKvYE0Mf0KiRBY
-	Sgk9YXLNRYO/jp8C2ZihSvz5d/tszQz5kDaAzAni8tstEoQVQ+4BaHllZ6+lxQkP
-	D5LVzU8oBa06CeB9a8Mxj9LiULXttMUuOH8q0IxAYzTW2606yBTDoRA3PI46DEj8
-	lNL9R3RMlSX7og8eRViJsCCsaaHBhdM5PDQ==
-X-ME-Sender: <xms:AG_3aJ1aLBz_kNGW9nRdGfmahw6U8DwgfJ-dJoX4CCAQyD3ZfiQqqQ>
-    <xme:AG_3aMROrGlYnv_olSTsAAGcoyItemt7cJPJvcTK9R9s_oEUVHjjsk29KztSIwSlb
-    vqT7hiXnfY_JMBBL4u9p_ubgE9t-AmVcNL0IwiFGc50tzmOeX8-EA>
-X-ME-Received: <xmr:AG_3aBAIomb4Gm8dpNjkqNcOf7uDGKAk-0FfSyVR-jQv_6heE_eHP6-bnedBGQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedtheelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
-    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:AG_3aCYxh4OsdSuannxhKiVcXTYN90LbuhkeFf2kpQu-BoU26k4U2g>
-    <xmx:AG_3aNawM5tTZoyPJCGn-YFXzTHP4sTIeYfby4T22uZYJj1m-X7Pqg>
-    <xmx:AG_3aNlk51B-HQP3ueaKimaqsrIvO87dFdtNhnYUcmr32cJyis5SDA>
-    <xmx:AG_3aEMZGhoCb0mdqmLKXuelhtzyUKqbNAiPRiAxuewOAMFhzPgfhg>
-    <xmx:Am_3aE5rG7YeIoEvLbRvVYLoTuCMmIb3LpXFvKkmi-ujHwsAIlZVxTEF>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 07:31:12 -0400 (EDT)
-Date: Tue, 21 Oct 2025 12:31:10 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFGmTqg0Pnf5QiDcIGJ+Ca+eBtp2Zz3Thkpl+8anwyXmnbhTrOxFgREYX8XCRhi4OeqedWyAOyerzqDCSHLQfsTQxKCkXih4Yx9hDGIxDoGw+0tO1lH7+BdSt2j5gtkjIs/Lh4faWSj0oMFH06ovdXY/BMqpzWJaw+3eesGS2QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XhBQYYoc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC92C4CEF1;
+	Tue, 21 Oct 2025 11:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761046328;
+	bh=V0LzGqlm6ZT2RHcJE0MR9bBz502IUmS+3riFSgA+IaI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XhBQYYocP2zSHNl/y3zc3uCDpEOgRDQ97zRiReFaf36+qgwPO5j/aB9xQSbXr5xRJ
+	 KdcMiCxhjyh/zvBNWXUnHINNsm+8qtsAAjbN3vts6WeKzZFXB8rdnUZVsoN9/ORXfh
+	 loh/mVozneqCYzBbB5HUx263LPFgyBJ9g7GiAgg8=
+Date: Tue, 21 Oct 2025 13:32:01 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Abel Vesa <abel.vesa@linaro.org>, linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm/truncate: Unmap large folio on split failure
-Message-ID: <eokncpih37zm7ypt6gn5xyetx6jlemhvvfdzpmdlxleqlsqcr4@45h5w5ahwugs>
-References: <20251021063509.1101728-1-kirill@shutemov.name>
- <20251021063509.1101728-2-kirill@shutemov.name>
- <a013f044-1dc6-4c2c-9d9a-99f223157c69@redhat.com>
- <37ceab54-c4b2-449e-aa46-ffaefe525737@redhat.com>
+Subject: Re: [PATCH RFC] usb: typec: ucsi: Add support for orientation
+Message-ID: <2025102129-overlabor-equinox-e24c@gregkh>
+References: <20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org>
+ <aPdc808hqRH73cjg@kuha.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,43 +54,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37ceab54-c4b2-449e-aa46-ffaefe525737@redhat.com>
+In-Reply-To: <aPdc808hqRH73cjg@kuha.fi.intel.com>
 
-On Tue, Oct 21, 2025 at 11:47:11AM +0200, David Hildenbrand wrote:
-> On 21.10.25 11:44, David Hildenbrand wrote:
-> > On 21.10.25 08:35, Kiryl Shutsemau wrote:
-> > > From: Kiryl Shutsemau <kas@kernel.org>
-> > > 
-> > > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-> > > supposed to generate SIGBUS.
-> > > 
-> > > This behavior might not be respected on truncation.
-> > > 
-> > > During truncation, the kernel splits a large folio in order to reclaim
-> > > memory. As a side effect, it unmaps the folio and destroys PMD mappings
-> > > of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
-> > > are preserved.
-> > > 
-> > > However, if the split fails, PMD mappings are preserved and the user
-> > > will not receive SIGBUS on any accesses within the PMD.
-> > > 
-> > > Unmap the folio on split failure. It will lead to refault as PTEs and
-> > > preserve SIGBUS semantics.
+On Tue, Oct 21, 2025 at 01:14:11PM +0300, Heikki Krogerus wrote:
+> On Wed, Oct 15, 2025 at 04:50:36PM +0300, Abel Vesa wrote:
+> > According to UCSI 2.0 specification, the orientation is
+> > part of the connector status payload. So tie up the port
+> > orientation.
 > > 
-> > Was the discussion on the old patch set already done? I can spot that
-> > you send this series 20min after asking Dave
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> 
+> RFC or not, this looks ok to me.
+> 
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Based on feedback from Dave and Christoph on this patchset as well as
-comments form Matthew and Darrick ont the report thread I see that my
-idea to relax SIGBUS semantics for large folios will not fly :/
+For obvious reasons, I don't apply RFCs as they imply that the submitter
+still has some questions that need to be answered :)
 
-But if you want to weigh in...
+thanks,
 
-> Also, please send a proper patch series including cover letter that
-> describes the changes since the last RFC.
-
-There is no change besides Signed-off-bys.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+greg k-h
 
