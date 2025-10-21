@@ -1,294 +1,117 @@
-Return-Path: <linux-kernel+bounces-863479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43BEBF7EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8886DBF7EED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 740BE4E4773
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:39:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 767E74EC14C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E2D34C128;
-	Tue, 21 Oct 2025 17:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9712F34C14E;
+	Tue, 21 Oct 2025 17:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="byPK2mq5"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fMPyjWpA"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7D332E6B4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761068379; cv=pass; b=qHtKi9/94C4gCdQzeFIM4rMRMtUxLOXB9bUiw2xJFb7Ljx1364t7sbcQUp13eny/k1PA1bQXfg3ri3agKzqgwGci3fL1/5zSIdVQVQnzo8eDX/eDyHr/A+d5FPhWc+OujJd4Wqaxjx3KrMIOQ7OqNtkNhUi23L+ytdcEEsu8ths=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761068379; c=relaxed/simple;
-	bh=ReeTVeQLx7NhIvC8xg4+uyKIb9wbFIozxkGbmNcQF94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gV68Ee+z9bgMtadqY9dfPBMGLlzEplgSy/wj+kD87IzHclFxQvOs7a0351UQN4rcA8Bd0T+3Zz2R7OSnv2qI0TFlFEOeJMyLWxZ7rSvZuNp9hHw7iwlZc8uW56SeKHrvx0BRyjV67yzFqKv5ZIgKqHTrhUd0XJpd2v+b2FNQO/E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=byPK2mq5; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761068353; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Rn0UKui+I+/y63IsXl/oigLfg+ObGKv05jW2+XvXUX/zdK4E2bNuSk/laHrtY6EppJtTGdbnXb+5NWoEAr4wHfXmHdD6k82ghGjx500RIFy9YwxVzxxzobkJKIfTvpjCoRdz3p9d992soXGdAnupN3I0aNruMHANOYL72/Zk+0k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761068353; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/l5LFWBSXBtebNpEKUkNuf9wVJwhzoEKbg+jP+ECxl8=; 
-	b=DAWR9MEhkBIa/drxksPA3y4q8YQEUDU8q3vyxpR4T5Vn7OMmyR90Q9ccTrIIaAm4mgbPJZZRQsQDdmTFZBkhgOCvrrV6QvaqPmIw3vAPzl2AXqa3nbDMFe7mMVoAfN4p9YVGPEnOozp/bYHvl6TeSVR5oxxJDrIY1BeDRg0hJU0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761068353;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=/l5LFWBSXBtebNpEKUkNuf9wVJwhzoEKbg+jP+ECxl8=;
-	b=byPK2mq5S8DC9pQvegjkwG7o48DUtocZrrexZNEPtVuobpgeyHOnB+Knyvdkvued
-	phNVAgZSUAWZZoOUHlCAe7+VtY8oW3FzKB0xeuI0qX/vuMiBXBSjPQcNWXqC8MKG0pY
-	EwTDDJk4ENbMtTF4iOvsx4ebYHSeZOwNJCdd7fUs=
-Received: by mx.zohomail.com with SMTPS id 1761068352092412.6009342302924;
-	Tue, 21 Oct 2025 10:39:12 -0700 (PDT)
-Date: Tue, 21 Oct 2025 18:39:05 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Akash Goel <akash.goel@arm.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Steven Price <steven.price@arm.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
-	kernel@collabora.com, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
-Message-ID: <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
-References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
- <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433A034C137;
+	Tue, 21 Oct 2025 17:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761068403; cv=none; b=S8Gq3t2Npm48JUPVHbQKVCfCNJ9wE1HHEjQ/zI7c9izE+p4YAo0M8kD8EqjFr/pZj29eyuAcvhBDRNCXpB4eJC46RA3dJQKSqpaJGFrn8cn/epVHABrxYvhOlzLW+T65QBWTpri75dNtqFbPQdZ6D35wwApAZVf7UF13ZGpu03I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761068403; c=relaxed/simple;
+	bh=unjjgmF57TNACe+Xjat1+NlIgmvvKyfS2nRWnXqlQ9E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J8pPVmaRzyqxLpiKP/XkMwAtJFOO67VnwWNUI6QOz3B6FHp4Jn85jfc2TxCwcMwMEpASFMXCqJ+6CfYJ2u+wNyRzeDBa1XKRuF93Z4tnNALXAxVbRRfRl4U63oZFgMjwROiHFltxXsnKcixoWzZGphyBceFYEcc182hoXOur8OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fMPyjWpA; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=lw
+	ZwYDkdZriiEU3fooZ1PmsCHRlFRSaUEjgODePLjsE=; b=fMPyjWpA5C9ppdCX0s
+	Z97ldgAvS459/x9d8+U1HLnCUWCqrTwe6KimRkgMEVz36C0ee8PBd3CQUgMTo+/X
+	R8Mfx7IdSIyksAd+n+pMqhF28VhbXtJNdXpyNhT1Z/Y3+w4ImUMJv9mTmb5JNOQm
+	wBJdek6CSLGBhPkrfalOgc3/Y=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wCHoIhVxfdoyEzmAA--.1516S2;
+	Wed, 22 Oct 2025 01:39:35 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: tj@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	hch@infradead.org,
+	jackzxcui1989@163.com,
+	jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] serial: 8250_dma: add parameter to queue work on specific cpu
+Date: Wed, 22 Oct 2025 01:39:33 +0800
+Message-Id: <20251021173933.1077124-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aPe3ZBCcyc5XR7TO@slm.duckdns.org>
+References: <aPe3ZBCcyc5XR7TO@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
+X-CM-TRANSID:_____wCHoIhVxfdoyEzmAA--.1516S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxury8uryrXF43Ar4DXF45trb_yoW5XFy5pF
+	WakF4YkFWkJ3W8Zw4xAw1xGa4093WfAFW3JF95Gr4UAws8JwnIyry7K34avFy2vr40yw1j
+	vFWqvrn0y3Z0yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pio7KxUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRw-tCmj3qqmyuQABs5
 
-Hi Akash,
+On Tue, 21 Oct 2025 06:40:04 -1000 Tejun Heo <tj@kernel.org> wrote:
 
-On 21.10.2025 15:32, Akash Goel wrote:
->
->
-> On 10/19/25 04:19, Adrián Larumbe wrote:
-> > Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
-> > behavior") did away with the treatment of partial unmaps of huge IOPTEs.
-> >
->
-> Sorry have a doubt.
->
-> Corresponding to the commit 33729a5fc0ca, can we now remove the code to
-> pre-allocate L3 page table pages i.e. 'op_ctx->rsvd_page_tables.pages' inside
-> panthor_vm_prepare_unmap_op_ctx() ?.
->
-> > In the case of Panthor, that means an attempt to run a VM_BIND unmap
-> > operation on a memory region whose start address and size aren't 2MiB
-> > aligned, in the event it intersects with a huge page, would lead to ARM
-> > IOMMU management code to fail and a warning being raised.
-> >
-> > Presently, and for lack of a better alternative, it's best to have
-> > Panthor handle partial unmaps at the driver level, by unmapping entire
-> > huge pages and remapping the difference between them and the requested
-> > unmap region.
-> >
-> > This could change in the future when the VM_BIND uAPI is expanded to
-> > enforce huge page alignment and map/unmap operational constraints that
-> > render this code unnecessary.
-> >
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > ---
-> >   drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
-> >   1 file changed, 126 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > index 2d041a2e75e9..f9d200e57c04 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > @@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
-> >   	return 0;
-> >   }
-> > +static bool
-> > +is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
-> > +			   const struct drm_gpuva_op_map *op,
-> > +			   u64 unmap_start, u64 unmap_range,
-> > +			   u64 sz2m_prev, u64 sz2m_next)
-> > +{
-> > +	size_t pgcount, pgsize;
-> > +	const struct page *pg;
-> > +	pgoff_t bo_offset;
-> > +
-> > +	if (op->va.addr < unmap_vma->base.va.addr) {
->
->
-> Sorry, another doubt.
->
-> Will this condition ever be true ?
->
-> For 'op->remap.prev', 'op->va.addr' will always be equal to
-> 'unmap_vma->base.va.addr'.
+> > True, which is something that the rt changes should have addressed.
+> > This sounds like an overall rt issue, not a serial port issue.  Have you
+> > asked about this on the rt mailing list?
+> 
+> Maybe it's mostly RT; however, because of the shared worker pool
+> implementation, workqueue can introduce high tail latencies, especially
+> depending on what mm is doing. When a work item is scheduled, there would
+> usually be a worker thread that can service it right away; however, there's
+> no guarantee and when it gets unlucky it may have to create a new kworker
+> for the pool, which can easily add some msecs of delay. If the system is
+> under even moderate memory pressure, that can shoot up considerably too.
+> 
+> I'm not convinced WQ_HIGHPRI is a good solution tho. It changes scheduling
+> priority and it likely reduces the probabilty of having to create a new
+> kworker as highpri pools are a lot less utilized. However, that can still
+> happen. If consistent low latency is really important, it should use
+> dedicated kthread workers with appropriate priority bump.
 
-I believe it will always be less than that. What will be equal to
-unmap_vma->base.va.addr is op->remap.prev->va.addr + op->remap.prev->va.range
+Thank you for your insights about high tail latencies. However, the spikes
+I'm encountering in the project related to kworker still stem from RT
+processes preempting kworker threads that are already executing. In our
+project, I have already implemented my optimization approach by queuing
+work to CPU0, since there aren't as many long-running real-time tasks on CPU0.
+Moreover, some logic on CPU0 replies on the tty uart data, which provides a
+degree of complementarity from the perspective of CPU resource usage. From
+the experimental data results, the most significant optimization effect comes
+from queuing work to this fixed CPU0, rather than using the WQ_HIGHPRI flag,
+although WQ_HIGHPRI does provide some improvement.
+I also agree that tasks requiring continuous real-time execution should be
+handled by kthread workers. However, while the ideal situation is appealing,
+the reality is challenging. A large amount of driver code in the system uses
+the system's pwq and worker_pool management, as this API is very convenient.
+Refactoring the code carries significant change risks, and even with a team
+effort, it's hard to bear such risks.
+Adding flags like WQ_HIGHPRI or even introducing WQ_RT from a functional
+development perspective doesn't pose too much concern; we just need to focus
+on whether there is any impact on performance. In other words, for developers
+working on the tty driver in this context, it might be difficult to practically
+accept changes to a large portion of the current work code in tty, making
+implementation quite challenging.
 
-> And for 'op->remap.next', 'op->va.addr' will always be greater than
-> 'unmap_vma->base.va.addr'.
 
-Yes, I believe so.
+--
+Xin Zhao
 
-> Please can you clarify.
->
-> Best regards
-> Akash
->
->
-> > +		bo_offset = unmap_start - unmap_vma->base.va.addr + unmap_vma->base.gem.offset;
-> > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
-> > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
-> > +		pgsize = get_pgsize(unmap_start, unmap_range, &pgcount);
-> > +
-> > +	} else {
-> > +		bo_offset = ((unmap_start + unmap_range - 1) - unmap_vma->base.va.addr)
-> > +			+ unmap_vma->base.gem.offset;
-> > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
-> > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
-> > +		pgsize = get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev, &pgcount);
-> > +	}
-> > +
-> > +	pg = to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> PAGE_SHIFT];
-> > +
-> > +	if (pgsize == SZ_4K && folio_order(page_folio(pg)) == PMD_ORDER &&
-> > +	    unmap_vma->base.va.addr <= sz2m_prev && unmap_vma->base.va.addr +
-> > +	    unmap_vma->base.va.range >= sz2m_next)
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +struct remap_params {
-> > +	u64 prev_unmap_start, prev_unmap_range;
-> > +	u64 prev_remap_start, prev_remap_range;
-> > +	u64 next_unmap_start, next_unmap_range;
-> > +	u64 next_remap_start, next_remap_range;
-> > +	u64 unmap_start, unmap_range;
-> > +};
-> > +
-> > +static struct remap_params
-> > +get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
-> > +			const struct panthor_vma *unmap_vma)
-> > +{
-> > +	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
-> > +	struct remap_params params = {0};
-> > +
-> > +	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
-> > +
-> > +	if (op->prev) {
-> > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
-> > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
-> > +
-> > +		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
-> > +					       unmap_range, sz2m_prev, sz2m_next)) {
-> > +			params.prev_unmap_start = sz2m_prev;
-> > +			params.prev_unmap_range = SZ_2M;
-> > +			params.prev_remap_start = sz2m_prev;
-> > +			params.prev_remap_range = unmap_start & (SZ_2M - 1);
-> > +
-> > +			u64 diff = min(sz2m_next - unmap_start, unmap_range);
-> > +
-> > +			unmap_range -= diff;
-> > +			unmap_start += diff;
-> > +		}
-> > +	}
-> > +
-> > +	if (op->next) {
-> > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
-> > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
-> > +
-> > +		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
-> > +					       unmap_range, sz2m_prev, sz2m_next)) {
-> > +			if (unmap_range) {
-> > +				params.next_unmap_start = sz2m_prev;
-> > +				params.next_unmap_range = SZ_2M;
-> > +				unmap_range -= op->next->va.addr & (SZ_2M - 1);
-> > +			}
-> > +
-> > +			params.next_remap_start = op->next->va.addr;
-> > +			params.next_remap_range = SZ_2M - (op->next->va.addr & (SZ_2M - 1));
-> > +		}
-> > +	}
-> > +
-> > +	params.unmap_start = unmap_start;
-> > +	params.unmap_range = unmap_range;
-> > +
-> > +	return params;
-> > +}
-> > +
-> >   static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
-> >   				       void *priv)
-> >   {
-> > @@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
-> >   	struct panthor_vm *vm = priv;
-> >   	struct panthor_vm_op_ctx *op_ctx = vm->op_ctx;
-> >   	struct panthor_vma *prev_vma = NULL, *next_vma = NULL;
-> > -	u64 unmap_start, unmap_range;
-> > +	struct remap_params params;
-> >   	int ret;
-> > -	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_range);
-> > -	ret = panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
-> > +	/*
-> > +	 * ARM IOMMU page table management code disallows partial unmaps of huge pages,
-> > +	 * so when a partial unmap is requested, we must first unmap the entire huge
-> > +	 * page and then remap the difference between the huge page minus the requested
-> > +	 * unmap region. Calculating the right offsets and ranges for the different unmap
-> > +	 * and map operations is the responsibility of the following function.
-> > +	 */
-> > +	params = get_map_unmap_intervals(&op->remap, unmap_vma);
-> > +
-> > +	ret = panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_range);
-> >   	if (ret)
-> >   		return ret;
-> >   	if (op->remap.prev) {
-> > +		ret = panthor_vm_unmap_pages(vm, params.prev_unmap_start,
-> > +					     params.prev_unmap_range);
-> > +		if (ret)
-> > +			return ret;
-> > +		ret = panthor_vm_map_pages(vm, params.prev_remap_start,
-> > +					   flags_to_prot(unmap_vma->flags),
-> > +					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
-> > +					   op->remap.prev->gem.offset, params.prev_remap_range);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> >   		prev_vma = panthor_vm_op_ctx_get_vma(op_ctx);
-> >   		panthor_vma_init(prev_vma, unmap_vma->flags);
-> >   	}
-> >   	if (op->remap.next) {
-> > +		ret = panthor_vm_unmap_pages(vm, params.next_unmap_start,
-> > +					     params.next_unmap_range);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		ret = panthor_vm_map_pages(vm, params.next_remap_start,
-> > +					   flags_to_prot(unmap_vma->flags),
-> > +					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
-> > +					   op->remap.next->gem.offset, params.next_remap_range);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> >   		next_vma = panthor_vm_op_ctx_get_vma(op_ctx);
-> >   		panthor_vma_init(next_vma, unmap_vma->flags);
-> >   	}
-> >
-> > base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
-> > prerequisite-patch-id: 3b0f61bfc22a616a205ff7c15d546d2049fd53de
-
-Adrian Larumbe
 
