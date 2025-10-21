@@ -1,176 +1,105 @@
-Return-Path: <linux-kernel+bounces-863706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1F2BF8E2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:04:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C37BF8E36
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78AAE5646EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:04:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DD0B35445B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC97E287505;
-	Tue, 21 Oct 2025 21:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33E4280A5A;
+	Tue, 21 Oct 2025 21:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBSdOj8V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vh1guTcP"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1353128640F;
-	Tue, 21 Oct 2025 21:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF52C27281C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761080638; cv=none; b=hUxhA9oGxDjlyk9E1aZKe9Mh7wvtOek7DNbQ1JcI+HkRWt3y1wH0x50FK4YoVgRQQswQ6NLllI5jp+JbJQLGI/qkPL/ylAasfqhfUMdtJSKp4vl3xzocpvOhNxm0WcR3amDaGnrhUsrnmd2fnZ0CVR9S/PspUodvksT/WAWOYnE=
+	t=1761080755; cv=none; b=qh4Rq+OeiTBchkt7vB3tdO8aNdu8nwmMNUhMpbg91GPl8N0QkBt1CrQrs/ryflfMvdwbHuE0B1WxeJTJw36/lWx3WgBInGMZOP/w443MtPem++Pt96pNg9A3OczQeXYNxsQsch6rUJSOB4+maX6j10waz2IUrRUZcRHPVYu6cL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761080638; c=relaxed/simple;
-	bh=nO4XYAYdsd9fcLoPnd9+7c7/knhsLnXNsxHYoVP5GZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YtPHyVkfvGbX4chz9yPg/0Muj3WMei1XEW1oGeScnKSDEjSIgKOMUVNoO1aHH2ZvrXKMm5xdZesMpWvArUThyb9LVoBzNESyOkNZdgDt6mEH75yR9We+Uugvqt8AYS0ofTX/nKRNYiMfor3MsYjIFwKqDEenxevknNFqC6RSj3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBSdOj8V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B28DC4CEFD;
-	Tue, 21 Oct 2025 21:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761080637;
-	bh=nO4XYAYdsd9fcLoPnd9+7c7/knhsLnXNsxHYoVP5GZE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WBSdOj8Vk7QssjyIoe/Jaq8UtDwUQ3aQ/lm129jpzaSmTVVd4rD+fzZ6QqNoTzjRN
-	 G0dbVBKF/z9I7uFS8ipjsK+SBpRX2/0pldbkwPAah1pkcVFWWttPVtjSkpYkyM/7nm
-	 tcV5DJZMXmhiC0s202JSOdM79+8v4CNxdRsJrt98meocLEuT50+zGhBXwqf8ZvjfrV
-	 EvG5Fnv6FXcRABt7JnJVB1yIa6NrvG6o1O5DTd0OuGflBU7gX0NFNPL8dpVT8bRSvv
-	 MElo3w5T5VAyLmjqc+XQZWWs+n+OBIE9OUmSN+4wFQ8aa+Nc/6RSH/34XxM+8xDe6X
-	 okD5dv+Z3kBWw==
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev,
-	bpf@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	Wen-Fang Liu <liuwenfang@honor.com>
-Subject: sched_ext: Fix SCX_KICK_WAIT to work reliably
-Date: Tue, 21 Oct 2025 11:03:54 -1000
-Message-ID: <20251021210354.89570-3-tj@kernel.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251021210354.89570-1-tj@kernel.org>
-References: <20251021210354.89570-1-tj@kernel.org>
+	s=arc-20240116; t=1761080755; c=relaxed/simple;
+	bh=lmgxMPK/b3rGKECnlJXXfebD4fVGZtbiAlKPc84ROo8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=EQrKKAiJRC2V3kSUmhmr6x6r1vU3LxY+ITQOUbm8etBHc2V77ew+B9VaWIggiQb/snLWZ08nTLVxT0LwA/MiTw+BuolthYfVQOnwvedCIwXv+7CCre3Kwei8umLcWl6v6Si3e8xv1rQcOhdowtDOSHfko9CKm5rvnh+loQ4DWvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vh1guTcP; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 470B8C0B8A2;
+	Tue, 21 Oct 2025 21:05:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B7AEE60680;
+	Tue, 21 Oct 2025 21:05:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 63CB1102F2416;
+	Tue, 21 Oct 2025 23:05:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761080750; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=lmgxMPK/b3rGKECnlJXXfebD4fVGZtbiAlKPc84ROo8=;
+	b=Vh1guTcPS4hWMVnatliJa78v3xzxuw/wSvsuAO6vEwhYUsiF7o/Lmlk5NmxThHpnXbwAEc
+	84LuPDG/YkHVEkiwTIfj17DST9tZ9grQzC846/36Hf8bWyNNPDlpLiAKHVGW+TiNgDW/qw
+	UmXvgjKeoO0Th4LJKK+/6E14GbC70QLvyOuzmdFIgrxjKdR8DNqXlzeTRdmhsI9mNmjHeA
+	IV41rZYCqYHSNz4JoDkXMFkWpK/qkSgULk0gRaiVoa+7rNJU/Ze75/cSUvhkuzcTBAh0rX
+	ih1sAanMWRWiQDxBoWH3iTo1RAzDDHaL7sD4KTlTJ/E+W6VtXbkbReKCfKMzDg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 Oct 2025 23:05:45 +0200
+Message-Id: <DDOB0TVD1B9Z.23U6EH06F38NV@bootlin.com>
+Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] drm/bridge: enforce drm_bridge_add() before
+ drm_bridge_attach()
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+To: =?utf-8?q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>, "Alain
+ Volmat" <alain.volmat@foss.st.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-0-92fb40d27704@bootlin.com> <f3904ae1-bf1b-455f-b5ba-5d625b76222f@gmail.com>
+In-Reply-To: <f3904ae1-bf1b-455f-b5ba-5d625b76222f@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-SCX_KICK_WAIT is used to synchronously wait for the target CPU to complete
-a reschedule and can be used to implement operations like core scheduling.
+Hello Rapha=C3=ABl,
 
-This used to be implemented by scx_next_task_picked() incrementing pnt_seq,
-which was always called when a CPU picks the next task to run, allowing
-SCX_KICK_WAIT to reliably wait for the target CPU to enter the scheduler and
-pick the next task.
+On Sat Oct 18, 2025 at 2:49 PM CEST, Rapha=C3=ABl Gallais-Pou wrote:
+>
+>
+> Le 03/10/2025 =C3=A0 10:59, Luca Ceresoli a =C3=A9crit=C2=A0:
+>> This small series enforces that DRM bridges must be added before they ar=
+e
+>> attached as discussed in [1].
 
-However, commit b999e365c298 ("sched_ext: Replace scx_next_task_picked()
-with switch_class()") replaced scx_next_task_picked() with the
-switch_class() callback, which is only called when switching between sched
-classes. This broke SCX_KICK_WAIT because pnt_seq would no longer be
-reliably incremented unless the previous task was SCX and the next task was
-not.
+Thanks for reviewing this series!
 
-This fix leverages commit 4c95380701f5 ("sched/ext: Fold balance_scx() into
-pick_task_scx()") which refactored the pick path making put_prev_task_scx()
-the natural place to track task switches for SCX_KICK_WAIT. The fix moves
-pnt_seq increment to put_prev_task_scx() and refines the semantics: If the
-current task on the target CPU is SCX, SCX_KICK_WAIT waits until that task
-switches out. This provides sufficient guarantee for use cases like core
-scheduling while keeping the operation self-contained within SCX.
+I just sent v2 which only adds a new patch with an additional check, which
+I realized being useful after receiving a regression report.
 
-Reported-by: Wen-Fang Liu <liuwenfang@honor.com>
-Link: http://lkml.kernel.org/r/228ebd9e6ed3437996dffe15735a9caa@honor.com
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/ext.c          |   31 ++++++++++++++++++-------------
- kernel/sched/ext_internal.h |    6 ++++--
- 2 files changed, 22 insertions(+), 15 deletions(-)
+All the details at
+https://lore.kernel.org/r/20251021-b4-drm-bridge-alloc-add-before-attach-v2=
+-0-c17cc1bbff72@bootlin.com
 
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2260,12 +2260,6 @@ static void switch_class(struct rq *rq,
- 	struct scx_sched *sch = scx_root;
- 	const struct sched_class *next_class = next->sched_class;
- 
--	/*
--	 * Pairs with the smp_load_acquire() issued by a CPU in
--	 * kick_cpus_irq_workfn() who is waiting for this CPU to perform a
--	 * resched.
--	 */
--	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
- 	if (!(sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT))
- 		return;
- 
-@@ -2305,6 +2299,14 @@ static void put_prev_task_scx(struct rq
- 			      struct task_struct *next)
- {
- 	struct scx_sched *sch = scx_root;
-+
-+	/*
-+	 * Pairs with the smp_load_acquire() issued by a CPU in
-+	 * kick_cpus_irq_workfn() who is waiting for this CPU to perform a
-+	 * resched.
-+	 */
-+	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
-+
- 	update_curr_scx(rq);
- 
- 	/* see dequeue_task_scx() on why we skip when !QUEUED */
-@@ -5144,8 +5146,12 @@ static bool kick_one_cpu(s32 cpu, struct
- 		}
- 
- 		if (cpumask_test_cpu(cpu, this_scx->cpus_to_wait)) {
--			pseqs[cpu] = rq->scx.pnt_seq;
--			should_wait = true;
-+			if (cur_class == &ext_sched_class) {
-+				pseqs[cpu] = rq->scx.pnt_seq;
-+				should_wait = true;
-+			} else {
-+				cpumask_clear_cpu(cpu, this_scx->cpus_to_wait);
-+			}
- 		}
- 
- 		resched_curr(rq);
-@@ -5208,12 +5214,11 @@ static void kick_cpus_irq_workfn(struct
- 
- 		if (cpu != cpu_of(this_rq)) {
- 			/*
--			 * Pairs with smp_store_release() issued by this CPU in
--			 * switch_class() on the resched path.
-+			 * Pairs with store_release in put_prev_task_scx().
- 			 *
--			 * We busy-wait here to guarantee that no other task can
--			 * be scheduled on our core before the target CPU has
--			 * entered the resched path.
-+			 * We busy-wait here to guarantee that the task running
-+			 * at the time of kicking is no longer running. This can
-+			 * be used to implement e.g. core scheduling.
- 			 */
- 			while (smp_load_acquire(wait_pnt_seq) == pseqs[cpu])
- 				cpu_relax();
---- a/kernel/sched/ext_internal.h
-+++ b/kernel/sched/ext_internal.h
-@@ -997,8 +997,10 @@ enum scx_kick_flags {
- 	SCX_KICK_PREEMPT	= 1LLU << 1,
- 
- 	/*
--	 * Wait for the CPU to be rescheduled. The scx_bpf_kick_cpu() call will
--	 * return after the target CPU finishes picking the next task.
-+	 * The scx_bpf_kick_cpu() call will return after the current SCX task of
-+	 * the target CPU switches out. This can be used to implement e.g. core
-+	 * scheduling. This has no effect if the current task on the target CPU
-+	 * is not on SCX.
- 	 */
- 	SCX_KICK_WAIT		= 1LLU << 2,
- };
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
