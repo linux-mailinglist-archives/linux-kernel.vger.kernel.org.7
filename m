@@ -1,47 +1,88 @@
-Return-Path: <linux-kernel+bounces-863579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF52BF8369
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF662BF8382
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A167319C0A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A8D19A7C2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DB33502B7;
-	Tue, 21 Oct 2025 19:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CFB34217C;
+	Tue, 21 Oct 2025 19:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ek/NIQQK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fOetQZWr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84123351FA2;
-	Tue, 21 Oct 2025 19:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA8D345CA2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761074153; cv=none; b=lDnY8FSGKpYJ8R8jwc+Ud5v1lLuWRmxicRJICrC5NLYDwhWSzZaRPR9zkY2ovaOHuTOA8XtkbLmQoRG4p5AuR+FEG0EcTd80ti7dNhfmid80KnDPPbFstuhBtOk7S0HB11hVNNUJLQ2zhzuN+SrsMkKfmBbSC6FTiO/yIhIAKeI=
+	t=1761074217; cv=none; b=BUdh2bc5CqslhugW/ngMt81fjm5BkDIZ9KMBYG4l/hXUICTBn5dMPdWKR8n2jH6SXXWUQ2ECjp+tcdmh4iirQIXZCtB2fjhvzedXQZ6MLa+V8EMK0vDTTO3KCT0m6al37b8pKcH9ta422eqsJrnXnn4kDaqU4tBJErXwbIvNJVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761074153; c=relaxed/simple;
-	bh=xGjfKWdynroCwIPtLKS2R4aJHqJjS/idEXZ2IRfMxf8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fpuatMcD2GvMl687dY4sZ9ye4X3n3Oc3kzh5sM40hszr2G8LyQMbTq3tq20WABwc+Ple5q8NJwOJXaXQVdb797wSKEDxIoNyny0inOG79ijSFL1C9ITuA3tMHQuo7jw2ZlWrQD4BpU55zXfAB0jncMIUrESABipZiXw31Ijeu3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ek/NIQQK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15AA2C4CEF1;
-	Tue, 21 Oct 2025 19:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761074152;
-	bh=xGjfKWdynroCwIPtLKS2R4aJHqJjS/idEXZ2IRfMxf8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ek/NIQQKkRiVlIhMzCdSAxvpnCMjF6yFxf64IUMQPVQPDCEirx7G6TNxAHVc63PLo
-	 E2rn46hjah4reO0QJupvimJuDE5McFTUGwxGht1sBsTUyjEcU79IWf1mWe0Uvu2Sdh
-	 vjylqJuqXAlmACxp/wo04BUK0uSTziaidI1vIxZBZRhUldxY+faP1KU0/dyHP4dcqq
-	 tuX4OPgYrFhe6++DqHbj/wRZEuJrCc4ypBAaD83boO9TcrBDEWveSjqiKF25VGmfqc
-	 F8ze8MVvLPb2Viv4wrNJYnRj8vEz8Arvn0226yORxhIOHA5eNsEmt2fSqcDFL1oJBU
-	 LruRXYVf6rr0Q==
-Message-ID: <d19b1279-3031-43b9-ac73-7e5f990802ed@kernel.org>
-Date: Tue, 21 Oct 2025 21:15:47 +0200
+	s=arc-20240116; t=1761074217; c=relaxed/simple;
+	bh=WfFPtDMJOslnO8xd96RYBPFjxdDxPv7APLMtkSd5nII=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rwGWQM270p6MMNDBbhWZoIV83O2HGEb5aMUBCASEO0zTHLRxqrcTVNuxitHZWP4AJJM6PltjHdpxazLDOScp0hlSMLiMJ4KiCL8LiqbmhFaOKFR4aQ1FWT3K51pT2CrHK3dnx/N7nLmdeHnFPocjd82jPhlMCHXRqtiX0HYmApk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fOetQZWr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761074214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Av2zs3MEbcbLC7aMwacLFVSODjPRb5hpuHHxAZIybWo=;
+	b=fOetQZWrqdnwAKsRVWEzaHukC2X7Bg/HFcDNqttp55v5Nod+YeSym7auuEzPAxurPr5zfm
+	tLypG/W8i4LBN7kDJmis1AXqnzl/9RV6kPEqickeRGw/KhD+Tbyy9AfwshrBNtbjqI5OZO
+	L2BQxvG50RH7kTdd5+1M9xC850aEmb0=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-572-uuswi4eUMmOaFxubrTlR8g-1; Tue, 21 Oct 2025 15:16:51 -0400
+X-MC-Unique: uuswi4eUMmOaFxubrTlR8g-1
+X-Mimecast-MFC-AGG-ID: uuswi4eUMmOaFxubrTlR8g_1761074211
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c1cc5a75dso312149796d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:16:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761074211; x=1761679011;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Av2zs3MEbcbLC7aMwacLFVSODjPRb5hpuHHxAZIybWo=;
+        b=MSAIsbWULhItyv45BSokN9wvkmP+Fh1lAoIXPk+qvcsFCfhwj911ZLF153xNNySLXE
+         js8xQzLBAbXrbLAh1S/ZlcnRPBENq7/Y0svPU8RG1u5v0VnTkr7NqVmj0deifrzgBuRc
+         yjdTrNFLTIdrKJvNesMjREC6S4pFzJzZ5pWXYcERu7tJdGFXhGNNc5PyjdgGLp6PkQ2+
+         V0XfsickzYdtQDgnAaubjF6WotHdMR6Qhm1YlgKd5M+SgaV0Aa4YaAabBqcer0Zut3xn
+         /sr9UzJMYJWzSsXG6rNaao2vsOa26FWNl1o062WG0KOgp7A2BBCgDSTjfT9JxRdAttVB
+         NN8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUdO4JOHlgFXkr3MJ4jRB+nVigPekUgpn40AVH95amuKwYeamI9ZU3/ZVRPAkjUEnHClzohKthP6v3/cz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk+rXe7Gj6gVYweEAZQYBHvuhaslfSgXGcU0dth5epRglz13Md
+	p6e9bw2CyDJbBXGojxtqXXpjPm/Rg480XNzi9h75uSBelntVqaa+PCwxL3YVTpW7H/ukgb050F9
+	AmZB+6+imm+iy/KuiGqpZntq7yy0MEC7o0ymf32QIKqXKr+JsKD/CELljL//IAEJ/Lg==
+X-Gm-Gg: ASbGncvW7AZ47cOXUaLoCDwjsS0Xh4EDB5XQQuq92alACK3f3rR9tywDCrvUD3V5Jdq
+	GUivPj5lew7LHs8g4fmyqZbCdcOh39WEOHomMCLyr3Id7fEfjsF/mcieJAsRb+enmYXHhRL77Hr
+	IJhk8N8KUJWybKn7jwR+CluqNH8l774rXfGiqdPAeSWGmNtTfPUioakEnol72IxZr0YJKM/TCzi
+	kRoKXZhRn8oMtww2GPJGpzg8jNmALQwz9QI9lFuLiIaYjCHVxBZb9wSX6enl2H8aI8WAreiBCW7
+	A6pVsBVwza629R/6S/Mv4l3twH7git3uO7Cr1sfcH/r4meqEH3xogQ03ZkBo3gzZwHFSY+NWVt+
+	S9gcLBV2yh+KXcnOOzMPpbRpGhclO+pGqJ0PS342NtJc+Xg==
+X-Received: by 2002:a05:6214:4012:b0:87d:8fa7:d29e with SMTP id 6a1803df08f44-87d8fa7d3a7mr172807856d6.35.1761074211076;
+        Tue, 21 Oct 2025 12:16:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMN3DCL5z77zrF4an/kPQngsHh4Dl7HI0jLtCtPSfq0EP/4XoCKRGCEKlYnjWxZgcz1y0y9w==
+X-Received: by 2002:a05:6214:4012:b0:87d:8fa7:d29e with SMTP id 6a1803df08f44-87d8fa7d3a7mr172807136d6.35.1761074210482;
+        Tue, 21 Oct 2025 12:16:50 -0700 (PDT)
+Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf521c2c7sm74369666d6.19.2025.10.21.12.16.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 12:16:49 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <364e084a-ef37-42ab-a2ae-5f103f1eb212@redhat.com>
+Date: Tue, 21 Oct 2025 15:16:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,162 +90,158 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
- kaanapali video codec binding
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue <bod@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vishnu Reddy <quic_bvisredd@quicinc.com>
-References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
- <20251017-knp_video-v2-1-f568ce1a4be3@oss.qualcomm.com>
- <c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org>
- <034bf6f4-0a49-4973-8536-28526b3409d1@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 14/33] sched/isolation: Flush memcg workqueues on cpuset
+ isolated partition change
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
+ <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-block@vger.kernel.org, linux-mm@kvack.org, linux-pci@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20251013203146.10162-1-frederic@kernel.org>
+ <20251013203146.10162-15-frederic@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <034bf6f4-0a49-4973-8536-28526b3409d1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251013203146.10162-15-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 21/10/2025 20:55, Vikash Garodia wrote:
-> 
-> On 10/18/2025 9:28 PM, Krzysztof Kozlowski wrote:
->> On 17/10/2025 16:16, Vikash Garodia wrote:
->>> +  clock-names:
->>> +    items:
->>> +      - const: iface
->>> +      - const: core
->>> +      - const: vcodec0_core
->>> +      - const: iface1
->>> +      - const: core_freerun
->>> +      - const: vcodec0_core_freerun
->>> +      - const: vcodec_bse
->>> +      - const: vcodec_vpp0
->>> +      - const: vcodec_vpp1
->>> +      - const: vcodec_apv
->>> +
->>> +  dma-coherent: true
->>> +
->>> +  firmware-name:
->>> +    maxItems: 1
->>> +
->>> +  interconnects:
->>> +    maxItems: 2
->>> +
->>> +  interconnect-names:
->>> +    items:
->>> +      - const: cpu-cfg
->>> +      - const: video-mem
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  iommus:
->>> +    minItems: 3
->>> +    maxItems: 8
->>
->> I don't understand why this is flexible. Make it fixed size and anyway -
->> list the items.
-> 
-> kaanapali vpu generates 8 different stream-ids. Now, boards running kernel in
-> EL2 mode can list all of them, while boards running in EL1 can have only non
-> secure stream IDs. Min have the list of stream ids which can be enabled for all
-> type of boards, while max is for boards which can list all in HLOS given kernel
-> is in EL2 mode.
-> 
-> Below crash would be seen if boards running kernel in EL1 mode lists the secure
-> ones.
+On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
+> The HK_TYPE_DOMAIN housekeeping cpumask is now modifyable at runtime. In
+> order to synchronize against memcg workqueue to make sure that no
+> asynchronous draining is still pending or executing on a newly made
+> isolated CPU, the housekeeping susbsystem must flush the memcg
+> workqueues.
+>
+> However the memcg workqueues can't be flushed easily since they are
+> queued to the main per-CPU workqueue pool.
+>
+> Solve this with creating a memcg specific pool and provide and use the
+> appropriate flushing API.
+>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>   include/linux/memcontrol.h |  4 ++++
+>   kernel/sched/isolation.c   |  2 ++
+>   kernel/sched/sched.h       |  1 +
+>   mm/memcontrol.c            | 12 +++++++++++-
+>   4 files changed, 18 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 873e510d6f8d..001200df63cf 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1074,6 +1074,8 @@ static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
+>   	return id;
+>   }
+>   
+> +void mem_cgroup_flush_workqueue(void);
+> +
+>   extern int mem_cgroup_init(void);
+>   #else /* CONFIG_MEMCG */
+>   
+> @@ -1481,6 +1483,8 @@ static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
+>   	return 0;
+>   }
+>   
+> +static inline void mem_cgroup_flush_workqueue(void) { }
+> +
+>   static inline int mem_cgroup_init(void) { return 0; }
+>   #endif /* CONFIG_MEMCG */
+>   
+> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> index 95d69c2102f6..9ec365dea921 100644
+> --- a/kernel/sched/isolation.c
+> +++ b/kernel/sched/isolation.c
+> @@ -144,6 +144,8 @@ int housekeeping_update(struct cpumask *mask, enum hk_type type)
+>   
+>   	synchronize_rcu();
+>   
+> +	mem_cgroup_flush_workqueue();
+> +
+>   	kfree(old);
+>   
+>   	return 0;
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 8fac8aa451c6..8bfc0b4b133f 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -44,6 +44,7 @@
+>   #include <linux/lockdep_api.h>
+>   #include <linux/lockdep.h>
+>   #include <linux/memblock.h>
+> +#include <linux/memcontrol.h>
+>   #include <linux/minmax.h>
+>   #include <linux/mm.h>
+>   #include <linux/module.h>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 1033e52ab6cf..1aa14e543f35 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -95,6 +95,8 @@ static bool cgroup_memory_nokmem __ro_after_init;
+>   /* BPF memory accounting disabled? */
+>   static bool cgroup_memory_nobpf __ro_after_init;
+>   
+> +static struct workqueue_struct *memcg_wq __ro_after_init;
+> +
+>   static struct kmem_cache *memcg_cachep;
+>   static struct kmem_cache *memcg_pn_cachep;
+>   
+> @@ -1975,7 +1977,7 @@ static void schedule_drain_work(int cpu, struct work_struct *work)
+>   {
+>   	guard(rcu)();
+>   	if (!cpu_is_isolated(cpu))
+> -		schedule_work_on(cpu, work);
+> +		queue_work_on(cpu, memcg_wq, work);
+>   }
+>   
+>   /*
+> @@ -5092,6 +5094,11 @@ void mem_cgroup_sk_uncharge(const struct sock *sk, unsigned int nr_pages)
+>   	refill_stock(memcg, nr_pages);
+>   }
+>   
+> +void mem_cgroup_flush_workqueue(void)
+> +{
+> +	flush_workqueue(memcg_wq);
+> +}
+> +
+>   static int __init cgroup_memory(char *s)
+>   {
+>   	char *token;
+> @@ -5134,6 +5141,9 @@ int __init mem_cgroup_init(void)
+>   	cpuhp_setup_state_nocalls(CPUHP_MM_MEMCQ_DEAD, "mm/memctrl:dead", NULL,
+>   				  memcg_hotplug_cpu_dead);
+>   
+> +	memcg_wq = alloc_workqueue("memcg", 0, 0);
 
+Should we explicitly mark the memcg_wq as WQ_PERCPU even though I think 
+percpu is the default. The schedule_work_on() schedules work on the 
+system_percpu_wq.
 
-That has to be explained somewhere, e.g. comment, and still we need then
-EL2 DTS in the kernel. I did not see such so far, but maybe I missed it
-- can you link it?
+Cheers,
+Longman
 
-> 
-> [    1.361157] pc : qcom_smmu_write_s2cr+0x64/0xa4
-> [    1.361165] lr : arm_smmu_write_s2cr+0x2c/0xbc
-> [    1.361168] sp : ffff80008005b8f0
-> [    1.361169] x29: ffff80008005b8f0 x28: 0000000000000000 x27: ffffc7f252f45320
-> ....
-> [    1.361195] x2 : ffff800081200c48 x1 : 0000000000000048 x0 : ffff800081200000
-> [    1.361198] Call trace:
-> [    1.361199]  qcom_smmu_write_s2cr+0x64/0xa4 (P)
-> [    1.361203]  arm_smmu_master_install_s2crs+0x7c/0xac
-> [    1.361207]  arm_smmu_attach_dev+0xb0/0x1d4
-> 
-> Could you please suggest on listing the iommu items ? I did not find the
-> relevant references in other bindings where flexible iommus is being listed.
+> +	WARN_ON(!memcg_wq);
+> +
+>   	for_each_possible_cpu(cpu) {
+>   		INIT_WORK(&per_cpu_ptr(&memcg_stock, cpu)->work,
+>   			  drain_local_memcg_stock);
 
-
-Just like every other list property - clocks, resets, power-domains.
-
-> 
->>
->> I already asked this.
->>
->>> +
->>> +  memory-region:
->>> +    minItems: 1
->>> +    maxItems: 2
->>
->> Same comment. I already asked this about iommus.
-> 
-> Same here, there aren't any bindings which lists for flexible memory-region.
-> Please suggest if there are any such references.
-
-Because they do not matter for all other bindings, but it turned out
-recently it might matter for this device.
-
-
-Best regards,
-Krzysztof
 
