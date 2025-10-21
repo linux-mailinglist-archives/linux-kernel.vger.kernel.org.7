@@ -1,169 +1,203 @@
-Return-Path: <linux-kernel+bounces-862220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812EEBF4B4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:31:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EEC0BF4C56
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84CD14EE772
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48A618C53CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AAF21D3C0;
-	Tue, 21 Oct 2025 06:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2412026E146;
+	Tue, 21 Oct 2025 06:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A9mGP4MH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b="YpYVuGBx"
+Received: from mx07-006a4e02.pphosted.com (mx07-006a4e02.pphosted.com [143.55.146.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771D6239E6F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB942224245;
+	Tue, 21 Oct 2025 06:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.55.146.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761028263; cv=none; b=Br1bqozSNPwxrydH6EM6i5Iu/+CO0Y4lI3i3qtJijb3Cgl+zJWEbOBUIz1Jv/DXcF+1934U60mJuOTdvg7TaVceWryqPHbxOxdMTZQiMkI+as6w615aCDVu9IORyfBZxo32PRoPnkLjXhBPs/278QOaKDpChUreDoXEVrt3RfY8=
+	t=1761029728; cv=none; b=LoaORVwXEiIWmDRcwdCLQvBTfkV5M5Z9g24NmgjPEK2Zty+gjH8uhpDDwxDdmJu30rsB02cLwuqV9Yv8wyf8zNSTRQJIB3WlIJKLHpJB8DxrZDEJVIKulnL1Dl8rTGh0M84VLTQhEI2WajVPra76MvzrB2rYRrhmDvpgb5EmcZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761028263; c=relaxed/simple;
-	bh=Xn2v/XixXomU1lq1IhOn0xRQ39dUnTMlBPJKpTbUd7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XiENJjUuM/V+mD/AH+LDcSYJQ3DY3rkVgSC8dtiuI8x9VoULnh3EnWvSYzPvmu41hAcQ0rOfxfpEwzPKkF7bpeX2s1S3FJ4fyaaZ4B7QYVIH/7dy0kaAv19DS/+JkbLZLL8kxQ+js3P7IKhlrg9pQDIla6iBpmyqhKJnhINuWq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A9mGP4MH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KL0qTr020187
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:31:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Xn2v/XixXomU1lq1IhOn0xRQ39dUnTMlBPJKpTbUd7s=; b=A9mGP4MHhL32d08h
-	6ZCxyXxoc/9UoSFbMim5VGrXcG0BGM5NxOgdGxHkMjcbHW5NByK2NcOm57Uc9krg
-	xmBdb4tCkMCb1ZNVh5ridNHUfZ8b/PjgTjkTqo/P40KE7LyCR3vAVl5VHfbqtVFz
-	n8tDAclmgL5+qUx5dybRFFQTDU9iTIxSmkeIyS3Ck/96goIJxATRmUnouTB3koPE
-	cSOFmp1pDZlRk0yeraXhBgPW91bzMMnrop6/PvzrWjfy0nesjjcYlMPxBRehSOkA
-	GJp5wnF/ZVpDMd48O/80Gk6TanZMp5icMpY9Ija6DJ925sjKM4cQ8/I6cMFOZzxk
-	SZCuqA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v343yc1m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:31:01 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2697410e7f9so133566935ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 23:31:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761028261; x=1761633061;
-        h=content-transfer-encoding:fcc:content-language:user-agent
-         :mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xn2v/XixXomU1lq1IhOn0xRQ39dUnTMlBPJKpTbUd7s=;
-        b=NGAM1rL6/EPt2sPBonf+dC/sK5WrYw1UB4t7+ABxC2H1gj/CyRZu9s17NDPDGD3smV
-         Xh4VREheOxt7SkwldqbIVO1rAh2j08AvbTarc+I9PqoV0tOISQSrJZNcZzAlyTbA4ekg
-         uO6HJHs/7svxfsyfvGGMN5x6zKzFLwBfglc0QPLmRrJexeR4FI86DEN6EjGyHdOCrlwK
-         i+1XHkrfsIRGcCD6ndOeEgMEkjchQz2iotpkjMdbmJG10WGq7a2ODMqrgYxoPVQvnORq
-         x0NjG1xTYEz3vPvpNjiUuFCxp2w40JAzMcZXdNPqk7jF55nwzutXIAkQJlOko0iPdQZS
-         VI5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHMHWEVP5D/rpyxwCcTlsaOIQAgAFHZicS0jxKwpRp0otABGUO8L2g0QKAV4X+QSoocDUdTzL6Shmt55Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN4CSCeOddGvIUDMlk+/ApLrXI/vB5mK2W9I6wTTGIokcyKZvK
-	KiRCC4+Cvl//D01HvzTU4ma6fLZFXh++eyJ5WtDaE2CoHyDTY/lvOTUGEWwnmYmog/Zl50mzLdV
-	NdPpljio07Nz/TCeDEVTwudol6+r/sgw0MWppRjDOw7XlUmw2GKTE1vI6s+KTTTybwmQ=
-X-Gm-Gg: ASbGncuc/2zR7cwaJB595ANXvrK1hG32FUdbRXN5t84aVWx8iEdrC9nBv6p2+3lnLvq
-	OoXVsNr69sgG/IFnqKp9yACyyslIHcoNpXn5Km09reTL/7jEOL05WV4SRFjJB57iPW31dta039u
-	14KsDPAh6kt/ZKAMghZpi/KnCoxsfqyXXYFrmn6C5SZJAgGgULUNkG84kJrPoj+JxvWbCXzj5F5
-	bYgBMg+djCtGpJ4A04Hj74qhSnBJw+ZqWViLvolfp4gbCSbDAJinUdUJQDOV6R26BZvDgNqwX+3
-	ouEo3UL99YNV/D6uZqr//miI5h/CJzHkXidkEkp5dB2/G5ZxcpVT3N4mG4Va8Vi9i6RQ+vnf8VH
-	gsy+IIgEqYg8OnEnetpEEyaiRrQY1
-X-Received: by 2002:a17:902:ec87:b0:269:82a5:fa19 with SMTP id d9443c01a7336-290cb07cbbbmr180399025ad.45.1761028260970;
-        Mon, 20 Oct 2025 23:31:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7d1oD/icwL9tXF2A+vZkz2krk4s2ylMycm0mskHgpzBPJz6Z8WKXs/AtbHkwBz835xZyBMA==
-X-Received: by 2002:a17:902:ec87:b0:269:82a5:fa19 with SMTP id d9443c01a7336-290cb07cbbbmr180398585ad.45.1761028260502;
-        Mon, 20 Oct 2025 23:31:00 -0700 (PDT)
-Received: from cbsp-sz01-lnx.qualcomm.com ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33dfb573f97sm731028a91.1.2025.10.20.23.30.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 23:30:59 -0700 (PDT)
-From: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>, kernel@oss.qualcomm.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-        Rakesh Kota <rakesh.kota@oss.qualcomm.com>,
-        Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Subject: Re: [PATCH] arm64: dts: qcom: hamoa-iot-evk: enable pwm rgb leds
-Date: Tue, 21 Oct 2025 14:29:22 +0800
-Message-ID: <ada950ed-7b51-4e62-93ff-550c427a73fa@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cb973808-005e-4920-a35b-3f02a402a78b@oss.qualcomm.com>
-References: <20251017-add-rgb-led-for-hamoa-iot-evk-v1-1-6df8c109da57@oss.qualcomm.com>
- <cb973808-005e-4920-a35b-3f02a402a78b@oss.qualcomm.com>
+	s=arc-20240116; t=1761029728; c=relaxed/simple;
+	bh=HMGdk3I075bK5E/gp9SATIQq1qBXSq91Oir+DGivIiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E4fJ1vz/dMDfZ6fSERaYY86VUJyd1zbs/JlufaBjMqwZtOCBcMuvtWZXNH/wU8npIikjJYARc+G0CaXmV8B4BtBYYWPV0+SpcepLT4PU/9Tosrw2JyTPv4fTAJAcr7PVwylij9e1uUFKDwQT7wKou/qhGJCkHtTv96Olwi13Jkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es; spf=pass smtp.mailfrom=iram.es; dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b=YpYVuGBx; arc=none smtp.client-ip=143.55.146.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iram.es
+Received: from pps.filterd (m0316690.ppops.net [127.0.0.1])
+	by mx07-006a4e02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59L63AQs1248592;
+	Tue, 21 Oct 2025 08:34:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iram.es; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=dkim3; bh=F164kmUr5EMZ6e+BTntGiD39zV8R
+	xXZwoRaGnCHEUKE=; b=YpYVuGBxuCwNJOQ3pBoy4A9ND5k7mRQOc+KGKrd42ih8
+	OAXsKtgh51RKxIBPRqYFZZhxoqsJDsHSjdT+uBjxoUEETInGL/mkVbpDNQSh0jTi
+	AINogUjyNJYUKHNOvirHoJmCRTw0E0AGyG1mEh2hfTH9ypTfEajsFBmTzWEW6AcI
+	3cDOIJXKeNn4+YDr1ZUiqzADvthene2bFu72cXBErZFkYhcAwTd24ZD9nwGwRTu/
+	6/0YkK7nru8rVpz30c/b25h17gRRIVulAV1foZlV1gIXNsVELI9YAVooBm+XaTJL
+	kaMRQ+ZSe2o1We13qnamNjH/qaU+Hcfl/guzkqy5Wg==
+Received: from mta-out02.sim.rediris.es (mta-out02.sim.rediris.es [130.206.24.44])
+	by mx07-006a4e02.pphosted.com (PPS) with ESMTPS id 49wrkpfknq-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 08:34:47 +0200 (MEST)
+Received: from mta-out02.sim.rediris.es (localhost.localdomain [127.0.0.1])
+	by mta-out02.sim.rediris.es (Postfix) with ESMTPS id 15B3914009E;
+	Tue, 21 Oct 2025 08:34:47 +0200 (CEST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mta-out02.sim.rediris.es (Postfix) with ESMTP id DF9E7140FAD;
+	Tue, 21 Oct 2025 08:34:46 +0200 (CEST)
+X-Amavis-Modified: Mail body modified (using disclaimer) -
+ mta-out02.sim.rediris.es
+Received: from mta-out02.sim.rediris.es ([127.0.0.1])
+ by localhost (mta-out02.sim.rediris.es [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id 9cGW7RgyfRah; Tue, 21 Oct 2025 08:34:46 +0200 (CEST)
+Received: from lt-gp.iram.es (haproxy01.sim.rediris.es [130.206.24.69])
+	by mta-out02.sim.rediris.es (Postfix) with ESMTPA id 2DFB114009E;
+	Tue, 21 Oct 2025 08:34:45 +0200 (CEST)
+Date: Tue, 21 Oct 2025 08:34:43 +0200
+From: Gabriel Paubert <paubert@iram.es>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andre Almeida <andrealmeid@igalia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 10/10] powerpc/uaccess: Implement masked user access
+Message-ID: <aPcpg0lQUk0IhHvL@lt-gp.iram.es>
+References: <cover.1760529207.git.christophe.leroy@csgroup.eu>
+ <179dbcda9eb3bdc5d314c949047db6ef8fd8a2ee.1760529207.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-X-Mozilla-Draft-Info: internal/draft; vcard=0; receipt=0; DSN=0; uuencode=0;
- attachmentreminder=0; deliveryformat=0
-X-Identity-Key: id1
-Fcc: imap://tingguo.cheng%40oss.qualcomm.com@imap.gmail.com/[Gmail]/Sent Mail
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: ooOPPIK86ePnGFy1pSotdM5pUf8GKIKg
-X-Proofpoint-ORIG-GUID: ooOPPIK86ePnGFy1pSotdM5pUf8GKIKg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX5UlIFVWFIwiw
- Bm3Z87DKgRYd0xWVfu1Y6UqmH8KUmvqywF9seYWrIjUuelYUQCDCYnXblwtE84+p3FKClwmAiVq
- 2dkR6pduBZM6YH8cpR1irru5uSOhEwNyXdmz2K1mTvrfy1uO0h0FT66vlyXGtqhtngJO+JP0BgW
- B6+h5E6V8c/zEfwVkR48RIPgj98f98CPAv+42ZRZgzHQ20zICpz3W/l0p5S7GzygY+4ZktsqT/e
- muaHjJjDPAgsHlXScttCrkCllYM4KQy8IkKOX7fPsIt548Mdo3R/wVel5YJ96sorMN/D37OSm/R
- jZXs8TWQbaej8n5agc1D4XBfbZms/stsHdq7Ypc948+oIqJXjHaxIAhojyI5gw3LkiVYP7wp7W+
- Xoeq8oxvLhG1TvHLnQoNzcPJaIwp9g==
-X-Authority-Analysis: v=2.4 cv=E/vAZKdl c=1 sm=1 tr=0 ts=68f728a5 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=tLeiS6LLZF2fRYzC2IMA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <179dbcda9eb3bdc5d314c949047db6ef8fd8a2ee.1760529207.git.christophe.leroy@csgroup.eu>
+X-Authority-Analysis: v=2.4 cv=QvxTHFyd c=1 sm=1 tr=0 ts=68f72988 cx=c_pps
+ a=N+btqqeLiyZkBSWNmht35Q==:117 a=N+btqqeLiyZkBSWNmht35Q==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pbnP-CYKNpT2arfVchsA:9 a=CjuIK1q_8ugA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: fPY5OWlvYhbiva90HCVVCXenrvtnOCXX
+X-Proofpoint-GUID: fPY5OWlvYhbiva90HCVVCXenrvtnOCXX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDA1MCBTYWx0ZWRfX2lPxlPelhpYO
+ fKzNMXsOb4ELb/Gi1Q5qBO8bWlp8UOoMX00pFGk6ILvZghWaahLfwNY1BC8iutNisGPxbYKcfK5
+ 4MhDp3/ncePuRlR/rquIly1v6w2VvpjCqmMBBRwbC86Ke4g/JPasy6W84eYdQkoWsP1JdD0GNE4
+ 4w8bDukcBTT9KRN2Hwq+ouDLYqLo+b4eLMTzAvpwKaoTlBLi8+9N4ZR0+oAC0aiImf/KfuErwi2
+ llnHe09xbNiWeHl8ok/ZcciYVmj2p82Vu/bg1rMmjKvAs9nmCQ94pQWKiv/nqhnpm5gTjuu9ch9
+ 08WPk+WA9Fx7B6JEMFzL2tsZJrphM8OT8ykb1U3ruJrsbXfnXvrJZqyBKRtX/wBu7SkUYv7uUd1
+ T8qu9FfLEfoIX5vM8kLOIPLSRBhb7Q==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=salida_notspam policy=salida score=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
+ bulkscore=0 clxscore=1011 priorityscore=1501 suspectscore=0 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180023
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510210050
 
-=0D
-On 10/17/2025 4:09 PM, Konrad Dybcio wrote:=0D
-> On 10/17/25 10:06 AM, Tingguo Cheng wrote:=0D
->> Add red, green and blue LED channels for the RGB device connected to=0D
->> PMC8380C PWM-LED pins.=0D
->>=0D
->> Signed-off-by: Tingguo Cheng<tingguo.cheng@oss.qualcomm.com>=0D
->> ---=0D
-> Just to make sure, is this a "multicolor LED" consisting of 3 ones,=0D
-> and *not* three LEDs that are supposed to communicate different=0D
-> functions (i.e. network, power, disk i/o)?=0D
-Yes, it's a multicolor LED composed of three individual LEDs within a =0D
-single package=E2=80=94not three separate LEDs for different functions like=
- =0D
-network, power, or disk I/O.=0D
-However, there's one exception worth mentioning:=0D
-The blue channel is connected to two sourcing signals=E2=80=94the EDL indic=
-ator =0D
-and the PMIC PWM-RGB blue LED=E2=80=94via two resistors. These resistors al=
-low =0D
-selection between the two sources.=0D
-By default, the board is configured with the resistor soldered to =0D
-connect the blue LED to the EDL indicator.=0D
-To support software control, I=E2=80=99ve added the blue channel in the DTS=
-, =0D
-enabling the capability to light the blue LED from the software side.=0D
-Some developers may choose to re-solder the resistor to connect the blue =0D
-LED to the PMIC PWM-RGB output instead, depending on their hardware setup.=
-=0D
-> Konrad=0D
+
+Hi Christophe,
+
+On Fri, Oct 17, 2025 at 12:21:06PM +0200, Christophe Leroy wrote:
+> Masked user access avoids the address/size verification by access_ok().
+> Allthough its main purpose is to skip the speculation in the
+> verification of user address and size hence avoid the need of spec
+> mitigation, it also has the advantage of reducing the amount of
+> instructions required so it even benefits to platforms that don't
+> need speculation mitigation, especially when the size of the copy is
+> not know at build time.
+> 
+> So implement masked user access on powerpc. The only requirement is
+> to have memory gap that faults between the top user space and the
+> real start of kernel area.
+> 
+> On 64 bits platforms the address space is divided that way:
+> 
+> 	0xffffffffffffffff	+------------------+
+> 				|                  |
+> 				|   kernel space   |
+>  		 		|                  |
+> 	0xc000000000000000	+------------------+  <== PAGE_OFFSET
+> 				|//////////////////|
+> 				|//////////////////|
+> 	0x8000000000000000	|//////////////////|
+> 				|//////////////////|
+> 				|//////////////////|
+> 	0x0010000000000000	+------------------+  <== TASK_SIZE_MAX
+> 				|                  |
+> 				|    user space    |
+> 				|                  |
+> 	0x0000000000000000	+------------------+
+> 
+> Kernel is always above 0x8000000000000000 and user always
+> below, with a gap in-between. It leads to a 3 instructions sequence:
+> 
+>   20:	7c 69 fe 76 	sradi   r9,r3,63
+>   24:	7c 69 48 78 	andc    r9,r3,r9
+>   28:	79 23 00 4c 	rldimi  r3,r9,0,1
+> 
+
+Actually there is an even simpler (more obvious) sequence:
+
+sradi r9,r3,63
+srdi r9,r9,1  
+andc r3,r3,r9
+
+(the second instruction could also be clrldi r9,r9,1)
+
+which translates back to C as:
+
+[snipped]
+> +static inline void __user *mask_user_address_simple(const void __user *ptr)
+> +{
+> +	unsigned long addr = (unsigned long)ptr;
+> +	unsigned long sh = BITS_PER_LONG - 1;
+> +	unsigned long mask = (unsigned long)((long)addr >> sh);
+> +
+> +	addr = ((addr & ~mask) & ((1UL << sh) - 1)) | ((mask & 1UL) << sh);
+> +
+> +	return (void __user *)addr;
+> +}
+> +
+
+either (srdi):
+	unsigned long mask = ((unsigned long)((long)addr >> sh)) >> 1;
+or (clrldi):
+	unsigned long mask = (unsigned long)(((long)addr >> sh) & LONG_MAX);
+
+followed by:
+	return (void __user *)(addr & ~ mask);
+
+the result is the same but I find it easier to read, and it may be
+easier for the compiler than to recognize an rl?imi insruction.
+
+Cheers,
+Gabriel
+
+ 
+
 
