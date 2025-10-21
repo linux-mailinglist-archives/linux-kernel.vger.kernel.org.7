@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-863765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC982BF90E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:32:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562BFBF90EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20DA94E226E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0607A19A5E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316E3286D40;
-	Tue, 21 Oct 2025 22:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0595A29B217;
+	Tue, 21 Oct 2025 22:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="VP2WUpw4"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uJccnVcU"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853FD287507;
-	Tue, 21 Oct 2025 22:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D765426980F;
+	Tue, 21 Oct 2025 22:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761085941; cv=none; b=mA47is8lCRTaABEvMY31xjsIfMssrNnox4ruI0W4oVY5Z6f8kRMuhJfpF41gU1FLe7EMNHg7+9Pw6pAUKCOfk/iqk+m8owtA8IvUAWzxtbNNEPD4Txt2c+wJkPSdIYqX5gEcliRg5Cn/1lkcQFBlcWu80f+2+vTgpTGIK4lyEGk=
+	t=1761086008; cv=none; b=RbOqB/8TzVv5u/2j4SjGCJv5+Q6Zurh0jjcbkxb5h5Vg0IkNmEdEu0BAUW5O1hocMgSxaE7V/u1rAkAKoTXTqN9Y1ISMs4s5v4Rj7rD84WMvrcWaN3Gwz7TbQBTV07MHfOBI5DQIN//sXfXWHJQ6hr+wocNJ8qDFM/BFBFHwdWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761085941; c=relaxed/simple;
-	bh=XVDN38Ce3is+BThCyx2vMfnTnnfFYvAvkgtYjiNqHaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EZ8dAPwixWcq/uFloA7RDvdWLnhNLRkblZXaOMvt+79+9vN/OsCv5Tn5OSMMCooXhGUxYlWo0DAf6SkJftWtME1W2arfQot6Y91NMJVw05SnZCGsFTt17l0M5JPGjOTCKHyn23rVonjJ+nVO6JUaNxy6axMApXder+UvGP1FgeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=VP2WUpw4; arc=none smtp.client-ip=185.11.138.130
+	s=arc-20240116; t=1761086008; c=relaxed/simple;
+	bh=RdF4C4zfYIMOuutMG05EeRkQa47z45nPm6Udszd7vhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BZfCYOYlO3tN0KREsyG/Hf0k8ik58XSG9lQVP7kJmVKn++UdgTJY/yUCY4z1/h8LwgBuwAJEXJe1fqysCCP/zm65kWDVaN9tG5SjsSGeDYBzHEodi9kW68/1oiPyotCWR79QKRhoUuXesznAfO31PjM2SD0ulIU+UEXsemh5/Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uJccnVcU; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
 	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=NVduo6AU/bBVeWob5x7Axw4B39GBzhToTLxXRQ8b3FQ=; b=VP2WUpw4rA73g9Boh/9ywlGd3X
-	6iH1hkd9+i0cC09Rf/SwrHc/NQI8jl5Hh3E5SnLyH7LV1Se5wm5T9+en4C+4e9T1eNKYZ2KioYqsZ
-	QzhXgZSR/yY7SUM8rOHp4ksSqVS08BZO6CwQqclJ9b3v6UkMPF/4quBpzYtkVSA91ucdU5zSUlVuH
-	h/GebZWfjwzIjYyO3EJcI5NcTbqkEeKpNdTxWiRVfUTpM7oJBkxXwBcHmxbQSP9O5VqBR/plvMdi5
-	OOhKq3MqBXkmkSSVGBksdamgypN4w8rc1LDT1xUOF4Zm1TNG0qKuuxYtgb8nFN/GGlWeKGTyZDsWH
-	JmadYqiQ==;
+	bh=ZCoka1jT4C6ihTpSLrU+pRABpnrzNQJSt1sW9jdikJc=; b=uJccnVcUirU4XfQWmMRDGrSklU
+	j4NghMTQauqT/J5yxFt4+kptP57NF332BvxIySgI1XFPVDV2UpMHeNdBksxFMJZgKuktoTTEM/U/S
+	3RPNnrzeBOVSo4nXAK63/3XouuNrvnnTQvk5FWC1iT+0CFdUNfL+Ljad1bj882dVSknRlecfRWOkK
+	bdGZjyLla5SyaZjN7zQ0yEYXcvGv4qPxSwa9FCwL2K0emSyhRRO+Q55pliBpKnjfVzIwPgye2gLY3
+	bC2c9+Tr+nIIASxVfdAvuUOqTJdPn74zLU+ODqTXsmiMIFqNM2NRaEU1AeSIFvV4J+ho2ERM/SjSU
+	utwpJsvw==;
 Received: from i53875b19.versanet.de ([83.135.91.25] helo=phil.fritz.box)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1vBKts-0006ih-5F; Wed, 22 Oct 2025 00:32:16 +0200
+	id 1vBKuv-0006j8-6Z; Wed, 22 Oct 2025 00:33:21 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net
 Cc: robh@kernel.org,
 	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] dt-bindings: serial: snps-dw-apb-uart: Add support for rk3506
-Date: Wed, 22 Oct 2025 00:32:09 +0200
-Message-ID: <20251021223209.193569-1-heiko@sntech.de>
+Subject: [PATCH] dt-bindings: watchdog: Add RK3506 compatible
+Date: Wed, 22 Oct 2025 00:33:08 +0200
+Message-ID: <20251021223308.193700-1-heiko@sntech.de>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,27 +65,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The uarts used in the RK3506 SoC are still the same dw-apb-uart compatible
-type as on the SoCs that came before, so add the RK3506 to the list
-of variants.
+The watchdog used on the RK3506 is still the same snps,dw-wdt compatible
+one that is in use since the RK3066 days, so add the RK3506 to the
+variant list.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml | 1 +
+ Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-index cb9da6c97afc..7a71b58f880a 100644
---- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-@@ -64,6 +64,7 @@ properties:
-               - rockchip,rk3328-uart
-               - rockchip,rk3368-uart
-               - rockchip,rk3399-uart
-+              - rockchip,rk3506-uart
-               - rockchip,rk3528-uart
-               - rockchip,rk3562-uart
-               - rockchip,rk3568-uart
+diff --git a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+index ef088e0f6917..609e98cdaaff 100644
+--- a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+@@ -28,6 +28,7 @@ properties:
+               - rockchip,rk3328-wdt
+               - rockchip,rk3368-wdt
+               - rockchip,rk3399-wdt
++              - rockchip,rk3506-wdt
+               - rockchip,rk3562-wdt
+               - rockchip,rk3568-wdt
+               - rockchip,rk3576-wdt
 -- 
 2.47.2
 
