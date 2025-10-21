@@ -1,191 +1,115 @@
-Return-Path: <linux-kernel+bounces-862529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB095BF588C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:36:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC22EBF5895
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 90BB8352AB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:36:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B06524E7172
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B6A2E264C;
-	Tue, 21 Oct 2025 09:36:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CB22C3271;
-	Tue, 21 Oct 2025 09:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142D62E973F;
+	Tue, 21 Oct 2025 09:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRGFgEvG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D75C7D07D;
+	Tue, 21 Oct 2025 09:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761039373; cv=none; b=EJ4T3iFIvQYQ6V0MSqy1Kla4K8eSoiUcdBgtvJNS2VPrCaiMLGFuKHmNDd7DWqT40q2LoXb6F1k3xM653Kwtkx/5SjppO5O2NbkwNKl3Lzi6XLHueCXJfp0oI2m+tRGsXwrZuAZXexG2JU9A6ww0l5c1Eu22zVsEj4D+5h4+oKg=
+	t=1761039430; cv=none; b=BwSRFcejENYEb8xVQttuDn2BcrY7Aue18HWP6r2SiI/c9ctr+QB4oR0nD+NxLnAALI4NqiO7RCrvJ3Abh78KN5TRPHNZ+fzqjjaE9evEFPKEdSsg5/Njih/7x9XcalZELdlBXBhFpbsm8KiJ3x2uxeL2Eep2bSBBKHOiM4Bv0Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761039373; c=relaxed/simple;
-	bh=4zOODg0oy67fGjo10q+UJcg1qHs3HItvi17vHzNvwUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQX6vk5xFFMMUhT62g2h/s2LHVEROSEjn+gCuhEeklfBCalJec+MdFOliEBBoYY41UJ5/TtQvShZAo+/fX1QmQ/mL5Ldlo1swpfz/sNsrc7Dp+6G8D5mvlRawX/mnaMoq0omFYLsB70mBnxumRKBohAsTOQvPWWObThssfaSzJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 817FD1007;
-	Tue, 21 Oct 2025 02:36:02 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B2F23F66E;
-	Tue, 21 Oct 2025 02:36:08 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:36:00 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org, d-gole@ti.com, souvik.chakravarty@arm.com
-Subject: Re: [PATCH 02/10] firmware: arm_scmi: Reduce the scope of protocols
- mutex
-Message-ID: <aPdUAOirD2yodeTy@pluto>
-References: <20250925203554.482371-1-cristian.marussi@arm.com>
- <20250925203554.482371-3-cristian.marussi@arm.com>
- <20251017160702.00002af4@huawei.com>
+	s=arc-20240116; t=1761039430; c=relaxed/simple;
+	bh=vROLQ/huaW8/CmioOws1Snjr2nLyqHBL1ATXlL1hhH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LPfdsirZOwrJb/eJfzendjQ0lJQdYY1+7adHGm4vwEivla/9H9DESrnS8oLEVjzHkzlxGaYMYZ0Ts/VnGdNDodxq7IbSH4VtVKtt0q78iOvROEqzSER1SOk+woUk9Nnv0vdmvKzfW/wfyGcd39wCyv1nuV3XNG3iiepLFC+l5nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRGFgEvG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2211C4CEF1;
+	Tue, 21 Oct 2025 09:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761039427;
+	bh=vROLQ/huaW8/CmioOws1Snjr2nLyqHBL1ATXlL1hhH8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GRGFgEvG7nDjyoNfr+98OUc31cYs1vcfeJ1lZ19J39hKo6KNETy4lLfe8i1yrFd2z
+	 AEWh7m8gQ3Q0A0brHYhNsr966m+eGOBlduSiyN9Qf+I4zLSYE+dSz9SSC8fuMMS2Bo
+	 oAq7+wMNBvMpwh9p9bqypFSReeSKxBwk+l95Ea2CasiTlpqOPT1GYOQiHxaTxXoVy6
+	 3PajPbL4ITGPJ1ixgTR6dz8UDX7wKWfJ0qAxIqgbFW6RHjFGPEt9Lx3a0la+alcc5o
+	 UwwmcsDehn+kIvOFLk/h/tiGAZnY6BN0qVow27leRxghJGOBkuOSzGBC1UUJcOfZ/n
+	 hulvUWugCRQ4Q==
+Message-ID: <e0901356-ef48-4652-9ad4-ff85ae07d83a@kernel.org>
+Date: Tue, 21 Oct 2025 11:37:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017160702.00002af4@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2] bpf/cpumap.c: Remove unnecessary TODO comment
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>, ast@kernel.org,
+ daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, haoluo@google.com,
+ jolsa@kernel.org
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251020170254.14622-1-mehdi.benhadjkhelifa@gmail.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20251020170254.14622-1-mehdi.benhadjkhelifa@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 04:07:02PM +0100, Jonathan Cameron wrote:
-> On Thu, 25 Sep 2025 21:35:46 +0100
-> Cristian Marussi <cristian.marussi@arm.com> wrote:
-> 
-> > Currently the mutex dedicated to the protection of the list of registered
-> > protocols is held during all the protocol initialization phase.
-> > 
-> > Such a wide locking region is not needed and causes problem when trying to
-> > initialize notifications from within a protocol initialization routine.
-> > 
-> > Reduce the scope of the protocol mutex.
-> > 
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> 
-> Hi Cristian.  A few things inline and this runs into one of the things
-> that is dangerous to do with guard() or the other cleanup.h magic
-> (and documented there!)
 
-Hi Jonathan,
 
-thanks for having a look at this series.
+On 20/10/2025 19.02, Mehdi Ben Hadj Khelifa wrote:
+> After discussion with bpf maintainers[1], queue_index could
+> be propagated to the remote XDP program by the xdp_md struct[2]
+> which makes this todo a misguide for future effort.
+> 
+> [1]:https://lore.kernel.org/all/87y0q23j2w.fsf@cloudflare.com/
+> [2]:https://docs.ebpf.io/linux/helper-function/bpf_xdp_adjust_meta/
+> 
+> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+> ---
+> Changelog:
+> 
+> Changes from v1:
+> 
+> -Added a comment to clarify that RX queue_index is lost after the frame
+> redirection.
+> 
+> Link:https://lore.kernel.org/bpf/d9819687-5b0d-4bfa-9aec-aef71b847383@gmail.com/T/#mcb6a0315f174d02db3c9bc4fa556cc939c87a706
+>   kernel/bpf/cpumap.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
+> index 703e5df1f4ef..6856a4a67840 100644
+> --- a/kernel/bpf/cpumap.c
+> +++ b/kernel/bpf/cpumap.c
+> @@ -195,7 +195,10 @@ static int cpu_map_bpf_prog_run_xdp(struct bpf_cpu_map_entry *rcpu,
+>   
+>   		rxq.dev = xdpf->dev_rx;
+>   		rxq.mem.type = xdpf->mem_type;
+> -		/* TODO: report queue_index to xdp_rxq_info */
+> +		/* The NIC RX queue_index is lost after the frame redirection
+> +		 * but in case of need, it can be passed as a custom XDP
+> +		 * metadata via xdp_md struct to the remote XDP program
 
-> 
-> > ---
-> >  drivers/firmware/arm_scmi/driver.c | 53 +++++++++++++++---------------
-> >  1 file changed, 26 insertions(+), 27 deletions(-)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> > index bd56a877fdfc..71ee25b78624 100644
-> > --- a/drivers/firmware/arm_scmi/driver.c
-> > +++ b/drivers/firmware/arm_scmi/driver.c
-> > @@ -17,6 +17,7 @@
-> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> >  
-> >  #include <linux/bitmap.h>
-> > +#include <linux/cleanup.h>
-> >  #include <linux/debugfs.h>
-> >  #include <linux/device.h>
-> >  #include <linux/export.h>
-> > @@ -2179,10 +2180,13 @@ scmi_alloc_init_protocol_instance(struct scmi_info *info,
-> >  	if (ret)
-> >  		goto clean;
-> >  
-> > -	ret = idr_alloc(&info->protocols, pi, proto->id, proto->id + 1,
-> > -			GFP_KERNEL);
-> > -	if (ret != proto->id)
-> > -		goto clean;
-> > +	/* Finally register the initialized protocol */
-> > +	scoped_guard(mutex, &info->protocols_mtx) {
-> 
-> See the guidance in cleanup.h on mixing goto and anything defined in that file.
-> 
-> In some compilers, if you hit the goto above and hence jump over this
-> the cleanup variable will still be instantiated, but not initialized leading to
-> a potential attempt to unlock random memory.
-> 
-> Either this needs more substantial rework, or just handling the mutex with
-> out using guards.
-> 
+Argh, saying XDP metadata is accessed via the xdp_md struct is just wrong.
 
-Thanks for the heads-up I will dig better into cleanup.h which obviously
-I did not enough...my bad.
+Nacked-by: Jesper Dangaard Brouer <hawk@kernel.org>
 
-> 
-> > +		ret = idr_alloc(&info->protocols, pi, proto->id, proto->id + 1,
-> > +				GFP_KERNEL);
-> > +		if (ret != proto->id)
-> > +			goto clean;
-> > +	}
-> >  
-> >  	/*
-> >  	 * Warn but ignore events registration errors since we do not want
-> > @@ -2243,25 +2247,22 @@ scmi_alloc_init_protocol_instance(struct scmi_info *info,
-> >  static struct scmi_protocol_instance * __must_check
-> >  scmi_get_protocol_instance(const struct scmi_handle *handle, u8 protocol_id)
-> >  {
-> > -	struct scmi_protocol_instance *pi;
-> > +	struct scmi_protocol_instance *pi = ERR_PTR(-EPROBE_DEFER);
-> >  	struct scmi_info *info = handle_to_scmi_info(handle);
-> > +	const struct scmi_protocol *proto;
-> >  
-> > -	mutex_lock(&info->protocols_mtx);
-> > -	pi = idr_find(&info->protocols, protocol_id);
-> > -
-> > -	if (pi) {
-> > -		refcount_inc(&pi->users);
-> > -	} else {
-> > -		const struct scmi_protocol *proto;
-> > -
-> > -		/* Fails if protocol not registered on bus */
-> > -		proto = scmi_protocol_get(protocol_id, &info->version);
-> > -		if (proto)
-> > -			pi = scmi_alloc_init_protocol_instance(info, proto);
-> > -		else
-> > -			pi = ERR_PTR(-EPROBE_DEFER);
-> > +	scoped_guard(mutex, &info->protocols_mtx) {
-> > +		pi = idr_find(&info->protocols, protocol_id);
-> > +		if (pi) {
-> 
-> if !pi we carry on with it NULL, which is a behavior change from
-> before where it would be ERR_PTR(-EPROBE_DEFER);
-> 
-> That might not matter, but it's not 'obviously' a safe change.
+> +		 */
+>   
+>   		xdp_convert_frame_to_buff(xdpf, &xdp);
+>   
 
-You are right...also the Dox comment is obsoleted..I will review this
-patch as a whole, since even if probably right in its essence is badly
-implemented because I rushed it in in this series to fix a probblem that
-popped up on KASAN.
-
-> 
-> > +			refcount_inc(&pi->users);
-> > +			return pi;
-> > +		}
-> >  	}
-> > -	mutex_unlock(&info->protocols_mtx);
-> > +
-> > +	/* Fails if protocol not registered on bus */
-> > +	proto = scmi_protocol_get(protocol_id, &info->version);
-> > +	if (proto)
-> Trivial but I'd flip the logic to
-> 	if (!proto)
-> 		return ERR_PTR(-EPROBE_DEFER);
-> assuming a NULL return as mentioned above isn't the intent.
-> Then
-> 	return scmi_alloc_init_protocol_instance(info, protoo);
-
-Yes this seems a better rework...
-
-Thanks,
-Cristian
 
