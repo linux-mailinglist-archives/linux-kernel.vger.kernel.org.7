@@ -1,303 +1,353 @@
-Return-Path: <linux-kernel+bounces-862769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE9CBF61C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:44:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11666BF63B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D903A55A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F3C402EB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6905632E6B3;
-	Tue, 21 Oct 2025 11:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099B8342C94;
+	Tue, 21 Oct 2025 11:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="X6A8Vg+W"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpHkfio1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B41F244693;
-	Tue, 21 Oct 2025 11:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EF5334363;
+	Tue, 21 Oct 2025 11:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047022; cv=none; b=tXnIjoQBwlo5P2cAnbmoqTgEe4pWZImKdzIBItvVPW0wqZ9S9nvTlX8C5BlhVcGP/hEYR3GIM3cVFim/sJRxmwc8ykH1wA4SA5sRGXmvuu3VAewvdi+HT8ccTO+za+YBR9C1+disEqI9X3jHfGcRY9cW3DyUCktHK8ATBzWxwxI=
+	t=1761047164; cv=none; b=qJPAbdnta27j4BC6HaEEnWkRwf7bPZjDu0dICRA7+tEwxNFt57XDxzdCkBGr2Ounay8GrmUQyyV2ievkT3ffHHsDDkvreiVDE1RobACJO+Q+EmrXbqtsN5SfPSrqyTfq3GwrBw0WUzN8qZTvUrjaFbZlDMVxhIXjh1s8659MraA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047022; c=relaxed/simple;
-	bh=4/wPubUubr6qTSSbAihLczvGyM352rWdAaTJHeSVTBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JPnBvw/aoGAzkHbqbaj+cbbdbWtNBUG8W9KwFwYN3LuxsGzyBjA8wgI2RV+31nKZ2PhxLwdqCg0Mf3vbQE7nyEdShn4QoXa0HBQpBdJV09ik3BTtnJtL71OWkuthdYskUhAkVWFlMFxjYeSsZdF/RP2Nge/kYZMy6F1t/emUgQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=X6A8Vg+W; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761047018;
-	bh=4/wPubUubr6qTSSbAihLczvGyM352rWdAaTJHeSVTBo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X6A8Vg+WYATpuhsFpQ3ZsJxt/QswcDrcGTpcfIoEoQIS63m673G0GbGfTRQL8aydv
-	 +ccpa8fOn0/TF2FvpJGMdtw0ffwoUDQLJn4zA96ldPBS/BlMMsG0uGyrMbwdSvDkCk
-	 cVP37O9DJBzFd7fbgnfPjW19UrL+XZOngS5BcIhOxhb68KfeAFiC5BfWfW778xBL8h
-	 BSoMudQQwKJw2RKbCnudstHVmQkkoJ+MN8CSXPhp3tlKlBOakfHMPpnKe+73m08/Rz
-	 LG9VWkhwuOkiPA+fmuEVp4neXVFjyrD3lXjoSoHMVuM2ex8xkyMuVCoWQuGDd+kyaA
-	 selFJWS4cADRA==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 873A917E0CA3;
-	Tue, 21 Oct 2025 13:43:37 +0200 (CEST)
+	s=arc-20240116; t=1761047164; c=relaxed/simple;
+	bh=U3JxLSa2fcjBw06O9/5jwtS8zf3ICC+ECTB2/eqH3P8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Tnlum+Te9T5PoBPAq/qArkmR+D8tGM9Xqrpu8vqG02MODJAYGTn6Q4dIxChVfR6e798Bvs/DPz92NVvx540t77kOo2s6hU6vDMZmrcoUbu97gBWi3ZoKQWSv/7sX9/vP6SL/6moQ0qnd/tZHAVkkG1FK5ojGxYtOInqMwnuyJPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpHkfio1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E2EC4CEF1;
+	Tue, 21 Oct 2025 11:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761047163;
+	bh=U3JxLSa2fcjBw06O9/5jwtS8zf3ICC+ECTB2/eqH3P8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=hpHkfio1WabJfxnOKMQZOBXVRc7azbXC4kkB+1wSsenukirkdL+kAQ6JrcRFkw08/
+	 ZAvugPYQX5hskuVrdXbupffbJv2QIaeYTpc6VetFAFCxMNB3Cdzed0lekbfreZ5zOl
+	 IGwSghIz1LZtAPQ5gPqyCiZ0rTDmMP5etOZHVaL7u13COamhMn/WrgYs4i73gTpOx7
+	 vkxE/2c9/WBR05yjx9elgUGYAR+sTMOeUulfZgL/mfgokUgHWuLz90+CMBcQH48dx5
+	 GTGHCCpj3OwEMtVGdq/ObmPk81oAyepztNjhFq5t0b776WTPsXnYsNqtGwyqANZaYg
+	 CNBLRyVCpuhRA==
+From: Christian Brauner <brauner@kernel.org>
 Date: Tue, 21 Oct 2025 13:43:31 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
- Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
- Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v5 05/12] drm/gem: Add huge tmpfs mountpoint helpers
-Message-ID: <20251021134331.549ebeea@fedora>
-In-Reply-To: <20251021113049.17242-6-loic.molinari@collabora.com>
-References: <20251021113049.17242-1-loic.molinari@collabora.com>
-	<20251021113049.17242-6-loic.molinari@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+Subject: [PATCH RFC DRAFT 25/50] selftests/namespaces: seventh active
+ reference count tests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-work-namespace-nstree-listns-v1-25-ad44261a8a5b@kernel.org>
+References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Lennart Poettering <mzxreary@0pointer.de>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, 
+ Johannes Weiner <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-96507
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9454; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=U3JxLSa2fcjBw06O9/5jwtS8zf3ICC+ECTB2/eqH3P8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3y7p4n52GXDw4t7j/y3cVwt4PvIzWjTXfXVb45sF
+ Gvg0Dz3oKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiWn6MDBuVi7Zde+A/ddOx
+ d2p/lnBOCxP/bnf2sl/AdTbDjICzO1sYGT7Et1ZdLPRlLeb/W3nlZcQF9l+1/y2lfB2iTI++W9y
+ bwgUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue, 21 Oct 2025 13:30:42 +0200
-Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+Test hierarchical active reference propagation.
+When a child namespace is active, its owning user namespace should also
+be active automatically due to hierarchical active reference propagation.
+This ensures parents are always reachable when children are active.
 
-> Add the drm_gem_huge_mnt_create() and drm_gem_has_huge_mnt() helpers
-> to avoid code duplication in the i915, V3D, Panfrost and Panthor
-> drivers. The former creates and mounts a dedicated huge tmpfs
-> mountpoint, for the lifetime of a DRM device, used at GEM object
-> initialization. The latter checks whether a dedicated huge tmpfs
-> mountpoint is in use by a DRM device.
->=20
-> The next commits will port drivers to this helper.
->=20
-> v3:
-> - store huge tmpfs mountpoint in drm_device
->=20
-> v4:
-> - return 0 in builds with CONFIG_TRANSPARENT_HUGEPAGE=3Dn
-> - return 0 when huge_mnt already exists
-> - use new vfs_parse_fs_string() helper
->=20
-> v5:
-> - removed warning on !dev->huge_mnt and reset to NULL on free
-> - inline drm_gem_huge_mnt_create() to remove func from text and avoid
->   calls in builds with CONFIG_TRANSPARENT_HUGEPAGE=3Dn
-> - compile out drm_device's huge_mnt field in builds with
->   CONFIG_TRANSPARENT_HUGEPAGE=3Dn
-> - add drm_gem_has_huge_mnt() helper
->=20
-> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
-> ---
->  drivers/gpu/drm/drm_gem.c | 39 +++++++++++++++++++++++++++++
->  include/drm/drm_device.h  | 15 +++++++++++
->  include/drm/drm_gem.h     | 52 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 106 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index a98d5744cc6c..161da048330e 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -29,6 +29,9 @@
->  #include <linux/export.h>
->  #include <linux/file.h>
->  #include <linux/fs.h>
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +#include <linux/fs_context.h>
-> +#endif
->  #include <linux/iosys-map.h>
->  #include <linux/mem_encrypt.h>
->  #include <linux/mm.h>
-> @@ -82,6 +85,42 @@
->   * up at a later date, and as our interface with shmfs for memory alloca=
-tion.
->   */
-> =20
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +static void drm_gem_huge_mnt_free(struct drm_device *dev, void *data)
-> +{
-> +	kern_unmount(dev->huge_mnt);
-> +}
-> +
-> +int __drm_gem_huge_mnt_create(struct drm_device *dev, const char *value)
-> +{
-> +	struct file_system_type *type;
-> +	struct fs_context *fc;
-> +	int ret;
-> +
-> +	if (unlikely(drm_gem_has_huge_mnt(dev)))
-> +		return 0;
-> +
-> +	type =3D get_fs_type("tmpfs");
-> +	if (unlikely(!type))
-> +		return -EOPNOTSUPP;
-> +	fc =3D fs_context_for_mount(type, SB_KERNMOUNT);
-> +	if (IS_ERR(fc))
-> +		return PTR_ERR(fc);
-> +	ret =3D vfs_parse_fs_string(fc, "source", "tmpfs");
-> +	if (unlikely(ret))
-> +		return -ENOPARAM;
-> +	ret =3D vfs_parse_fs_string(fc, "huge", value);
-> +	if (unlikely(ret))
-> +		return -ENOPARAM;
-> +
-> +	dev->huge_mnt =3D fc_mount_longterm(fc);
-> +	put_fs_context(fc);
-> +
-> +	return drmm_add_action_or_reset(dev, drm_gem_huge_mnt_free, NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(__drm_gem_huge_mnt_create);
-> +#endif
-> +
->  static void
->  drm_gem_init_release(struct drm_device *dev, void *ptr)
->  {
-> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-> index 778b2cca6c49..684939987d83 100644
-> --- a/include/drm/drm_device.h
-> +++ b/include/drm/drm_device.h
-> @@ -3,6 +3,9 @@
-> =20
->  #include <linux/list.h>
->  #include <linux/kref.h>
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +#include <linux/mount.h>
-> +#endif
->  #include <linux/mutex.h>
->  #include <linux/idr.h>
->  #include <linux/sched.h>
-> @@ -168,6 +171,18 @@ struct drm_device {
->  	 */
->  	struct drm_master *master;
-> =20
-> +	/**
-> +	 * @huge_mnt:
-> +	 *
-> +	 * Huge tmpfs mountpoint used at GEM object initialization
-> +	 * drm_gem_object_init(). Drivers can call drm_gem_huge_mnt_create() to
-> +	 * create a huge tmfps mountpoint. The default tmpfs mountpoint
-> +	 * (`shm_mnt`) is used if NULL.
-> +	 */
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ .../selftests/namespaces/ns_active_ref_test.c      | 242 +++++++++++++++++++++
+ 1 file changed, 242 insertions(+)
 
-Can we move the ifdef before the kernel doc for this field?
+diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
+index dbb1eb8a04b2..6377f5d72ed9 100644
+--- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
++++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
+@@ -20,6 +20,10 @@
+ #define FD_NSFS_ROOT -10003 /* Root of the nsfs filesystem */
+ #endif
+ 
++#ifndef FILEID_NSFS
++#define FILEID_NSFS 0xf1
++#endif
++
+ /*
+  * Test that initial namespaces can be reopened via file handle.
+  * Initial namespaces should have active ref count of 1 from boot.
+@@ -641,4 +645,242 @@ TEST(ns_fd_keeps_active)
+ 	}
+ }
+ 
++/*
++ * Test hierarchical active reference propagation.
++ * When a child namespace is active, its owning user namespace should also
++ * be active automatically due to hierarchical active reference propagation.
++ * This ensures parents are always reachable when children are active.
++ */
++TEST(ns_parent_always_reachable)
++{
++	struct file_handle *parent_handle, *child_handle;
++	int ret;
++	int child_nsfd;
++	int pipefd[2];
++	pid_t pid;
++	int status;
++	__u64 parent_id, child_id;
++	char parent_buf[sizeof(*parent_handle) + MAX_HANDLE_SZ];
++	char child_buf[sizeof(*child_handle) + MAX_HANDLE_SZ];
++
++	ASSERT_EQ(pipe(pipefd), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		TH_LOG("Child: creating parent user namespace and setting up mappings");
++
++		/* Create parent user namespace with mappings */
++		ret = setup_userns();
++		if (ret < 0) {
++			TH_LOG("Child: setup_userns() for parent failed: %s", strerror(errno));
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		TH_LOG("Child: parent user namespace created, now uid=%d gid=%d", getuid(), getgid());
++
++		/* Get namespace ID for parent user namespace */
++		int parent_fd = open("/proc/self/ns/user", O_RDONLY);
++		if (parent_fd < 0) {
++			TH_LOG("Child: failed to open parent /proc/self/ns/user: %s", strerror(errno));
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		TH_LOG("Child: opened parent userns fd %d", parent_fd);
++
++		if (ioctl(parent_fd, NS_GET_ID, &parent_id) < 0) {
++			TH_LOG("Child: NS_GET_ID for parent failed: %s", strerror(errno));
++			close(parent_fd);
++			close(pipefd[1]);
++			exit(1);
++		}
++		close(parent_fd);
++
++		TH_LOG("Child: got parent namespace ID %llu", (unsigned long long)parent_id);
++
++		/* Create child user namespace within parent */
++		TH_LOG("Child: creating nested child user namespace");
++		ret = setup_userns();
++		if (ret < 0) {
++			TH_LOG("Child: setup_userns() for child failed: %s", strerror(errno));
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		TH_LOG("Child: nested child user namespace created, uid=%d gid=%d", getuid(), getgid());
++
++		/* Get namespace ID for child user namespace */
++		int child_fd = open("/proc/self/ns/user", O_RDONLY);
++		if (child_fd < 0) {
++			TH_LOG("Child: failed to open child /proc/self/ns/user: %s", strerror(errno));
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		TH_LOG("Child: opened child userns fd %d", child_fd);
++
++		if (ioctl(child_fd, NS_GET_ID, &child_id) < 0) {
++			TH_LOG("Child: NS_GET_ID for child failed: %s", strerror(errno));
++			close(child_fd);
++			close(pipefd[1]);
++			exit(1);
++		}
++		close(child_fd);
++
++		TH_LOG("Child: got child namespace ID %llu", (unsigned long long)child_id);
++
++		/* Send both namespace IDs to parent */
++		TH_LOG("Child: sending both namespace IDs to parent");
++		write(pipefd[1], &parent_id, sizeof(parent_id));
++		write(pipefd[1], &child_id, sizeof(child_id));
++		close(pipefd[1]);
++
++		TH_LOG("Child: exiting - parent userns should become inactive");
++		/* Exit - parent user namespace should become inactive */
++		exit(0);
++	}
++
++	/* Parent process */
++	close(pipefd[1]);
++
++	TH_LOG("Parent: reading both namespace IDs from child");
++
++	/* Read both namespace IDs - fixed size, no parsing needed */
++	ret = read(pipefd[0], &parent_id, sizeof(parent_id));
++	if (ret != sizeof(parent_id)) {
++		close(pipefd[0]);
++		waitpid(pid, NULL, 0);
++		SKIP(return, "Failed to read parent namespace ID from child");
++	}
++
++	ret = read(pipefd[0], &child_id, sizeof(child_id));
++	close(pipefd[0]);
++	if (ret != sizeof(child_id)) {
++		waitpid(pid, NULL, 0);
++		SKIP(return, "Failed to read child namespace ID from child");
++	}
++
++	TH_LOG("Parent: received parent_id=%llu, child_id=%llu",
++	       (unsigned long long)parent_id, (unsigned long long)child_id);
++
++	/* Construct file handles from namespace IDs */
++	parent_handle = (struct file_handle *)parent_buf;
++	parent_handle->handle_bytes = sizeof(struct nsfs_file_handle);
++	parent_handle->handle_type = FILEID_NSFS;
++	struct nsfs_file_handle *parent_fh = (struct nsfs_file_handle *)parent_handle->f_handle;
++	parent_fh->ns_id = parent_id;
++	parent_fh->ns_type = 0;
++	parent_fh->ns_inum = 0;
++
++	child_handle = (struct file_handle *)child_buf;
++	child_handle->handle_bytes = sizeof(struct nsfs_file_handle);
++	child_handle->handle_type = FILEID_NSFS;
++	struct nsfs_file_handle *child_fh = (struct nsfs_file_handle *)child_handle->f_handle;
++	child_fh->ns_id = child_id;
++	child_fh->ns_type = 0;
++	child_fh->ns_inum = 0;
++
++	TH_LOG("Parent: opening child namespace BEFORE child exits");
++
++	/* Open child namespace while child is still alive to keep it active */
++	child_nsfd = open_by_handle_at(FD_NSFS_ROOT, child_handle, O_RDONLY);
++	if (child_nsfd < 0) {
++		TH_LOG("Failed to open child namespace: %s (errno=%d)", strerror(errno), errno);
++		waitpid(pid, NULL, 0);
++		SKIP(return, "Failed to open child namespace");
++	}
++
++	TH_LOG("Opened child namespace fd %d", child_nsfd);
++
++	/* Now wait for child to exit */
++	TH_LOG("Parent: waiting for child to exit");
++	waitpid(pid, &status, 0);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	if (WEXITSTATUS(status) != 0) {
++		close(child_nsfd);
++		SKIP(return, "Child failed to create namespaces");
++	}
++
++	TH_LOG("Child process exited, parent holds fd to child namespace");
++
++	/*
++	 * With hierarchical active reference propagation:
++	 * Since the child namespace is active (parent process holds fd),
++	 * the parent user namespace should ALSO be active automatically.
++	 * This is because when we took an active reference on the child,
++	 * it propagated up to the owning user namespace.
++	 */
++	TH_LOG("Attempting to reopen parent namespace (should SUCCEED - hierarchical propagation)");
++	int parent_fd = open_by_handle_at(FD_NSFS_ROOT, parent_handle, O_RDONLY);
++	if (parent_fd < 0) {
++		close(child_nsfd);
++		TH_LOG("ERROR: Parent namespace inactive despite active child: %s (errno=%d)",
++		       strerror(errno), errno);
++		TH_LOG("This indicates hierarchical active reference propagation is not working!");
++		ASSERT_TRUE(false);
++	}
++
++	TH_LOG("SUCCESS: Parent namespace is active (fd=%d) due to active child", parent_fd);
++
++	/* Verify we can also get parent via NS_GET_USERNS */
++	TH_LOG("Verifying NS_GET_USERNS also works");
++	int parent_fd2 = ioctl(child_nsfd, NS_GET_USERNS);
++	if (parent_fd2 < 0) {
++		close(parent_fd);
++		close(child_nsfd);
++		TH_LOG("NS_GET_USERNS failed: %s (errno=%d)", strerror(errno), errno);
++		SKIP(return, "NS_GET_USERNS not supported or failed");
++	}
++
++	TH_LOG("NS_GET_USERNS succeeded, got parent fd %d", parent_fd2);
++
++	/* Verify both methods give us the same namespace */
++	struct stat st1, st2;
++	ASSERT_EQ(fstat(parent_fd, &st1), 0);
++	ASSERT_EQ(fstat(parent_fd2, &st2), 0);
++	TH_LOG("Parent namespace inodes: parent_fd=%lu, parent_fd2=%lu", st1.st_ino, st2.st_ino);
++	ASSERT_EQ(st1.st_ino, st2.st_ino);
++
++	/*
++	 * Close child fd - parent should remain active because we still
++	 * hold direct references to it (parent_fd and parent_fd2).
++	 */
++	TH_LOG("Closing child fd - parent should remain active (direct refs held)");
++	close(child_nsfd);
++
++	/* Parent should still be openable */
++	TH_LOG("Verifying parent still active via file handle");
++	int parent_fd3 = open_by_handle_at(FD_NSFS_ROOT, parent_handle, O_RDONLY);
++	if (parent_fd3 < 0) {
++		close(parent_fd);
++		close(parent_fd2);
++		TH_LOG("ERROR: Parent became inactive despite holding fds: %s (errno=%d)",
++		       strerror(errno), errno);
++		ASSERT_TRUE(false);
++	}
++	close(parent_fd3);
++
++	TH_LOG("Closing all fds to parent namespace");
++	close(parent_fd);
++	close(parent_fd2);
++
++	/* Both should now be inactive */
++	TH_LOG("Attempting to reopen parent (should fail - inactive, no refs)");
++	parent_fd = open_by_handle_at(FD_NSFS_ROOT, parent_handle, O_RDONLY);
++	if (parent_fd >= 0) {
++		close(parent_fd);
++		TH_LOG("ERROR: Parent namespace still active after closing all fds (fd=%d)", parent_fd);
++	} else {
++		TH_LOG("Parent inactive as expected: %s (errno=%d)", strerror(errno), errno);
++		ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
++	}
++}
++
+ TEST_HARNESS_MAIN
 
-> +	struct vfsmount *huge_mnt;
-> +#endif
-> +
->  	/**
->  	 * @driver_features: per-device driver features
->  	 *
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index 7c8bd67d087c..9845854850fb 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -492,6 +492,58 @@ struct drm_gem_object {
->  		DRM_GEM_FOPS,\
->  	}
-> =20
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +int __drm_gem_huge_mnt_create(struct drm_device *dev, const char *value);
-> +#endif
-> +
-> +/**
-> + * drm_gem_huge_mnt_create - Create, mount and use a huge tmpfs mountpoi=
-nt
-> + * @dev: DRM device a huge tmpfs mountpoint should be used with
-> + * @value: huge tmpfs mount option value
-> + *
-> + * This function creates and mounts a dedicated huge tmpfs mountpoint fo=
-r the
-> + * lifetime of the DRM device @dev which is used at GEM object initializ=
-ation
-> + * with drm_gem_object_init().
-> + *
-> + * The most common option value @value is "within_size" which only alloc=
-ates
-> + * huge pages if the page will be fully within the GEM object size. "alw=
-ays",
-> + * "advise" and "never" are supported too but the latter would just crea=
-te a
-> + * mountpoint similar to the default one (`shm_mnt`). See shmemfs and
-> + * Transparent Hugepage for more information.
-> + *
-> + * Returns:
-> + * 0 on success or a negative error code on failure.
-> + */
-> +static inline int drm_gem_huge_mnt_create(struct drm_device *dev,
-> +					  const char *value)
-> +{
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	return __drm_gem_huge_mnt_create(dev, value);
-> +#else
-> +	return 0;
-> +#endif
-> +}
-
-Unless __drm_gem_huge_mnt_create() is really used internally (at first
-glance, that doesn't seem to be the case), I'd suggest renaming it
-drm_gem_huge_mnt_create() and having:
-
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-int drm_gem_huge_mnt_create(struct drm_device *dev, const char *value);
-#else
-static inline int drm_gem_huge_mnt_create(struct drm_device *dev,
-					  const char *value)
-{
-	return 0;
-}
-#endif
-
-> +
-> +/**
-> + * drm_gem_has_huge_mnt - Check if a huge tmpfs mountpoint is in use
-> + * @dev: DRM device
-> + *
-> + * This function checks whether a huge tmpfs mountpoint is in use after =
-by DRM
-> + * device @dev. A huge tmpfs mountpoint is used after a successful call =
-to
-> + * drm_gem_huge_mnt_create() on builds with Transparent Hugepage enabled.
-> + *
-> + * Returns:
-> + * true on success, false otherwise.
-> + */
-> +static inline bool drm_gem_has_huge_mnt(struct drm_device *dev)
-> +{
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	return !!dev->huge_mnt;
-> +#else
-> +	return false;
-> +#endif
-> +}
-> +
->  void drm_gem_object_release(struct drm_gem_object *obj);
->  void drm_gem_object_free(struct kref *kref);
->  int drm_gem_object_init(struct drm_device *dev,
+-- 
+2.47.3
 
 
