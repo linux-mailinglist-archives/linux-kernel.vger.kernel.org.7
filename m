@@ -1,102 +1,120 @@
-Return-Path: <linux-kernel+bounces-863217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1997ABF7460
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 585B3BF746C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C2E18C1C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C9B1884061
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED143431FC;
-	Tue, 21 Oct 2025 15:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEFE342CBA;
+	Tue, 21 Oct 2025 15:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eh//w81L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qHs96uoW"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF8D4AEE2;
-	Tue, 21 Oct 2025 15:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24565340A5D;
+	Tue, 21 Oct 2025 15:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761059379; cv=none; b=jW0DPLbTLEuhCLvGZiazX6NTk5snqBq9/OoO8ppZzyQlJNeYF12Q7j6F3GGFB2jwjDbUQ49qKN6y70bsutfSe7Wy8VrsB81E/wKUPXf4JpMXNqxa4w2VjxSXnQEdntp2RIlDHdTCME8QncQnBXIUyNPx93ENW2EHr6cjAQaGIJM=
+	t=1761059459; cv=none; b=G/BiXzRaf1aMhGw2A790gZ1xKojsJu97DVqdIhTGrbz7gtKt6y2g2kJQ/h1shAD941d6LZUNc6vE3WmBEX7rQouPV4eceL+K9yJ4gpzl7aNwDcun/74mBjT4kqvyukdOeJNv7IGxFFDYKSm8OGiQUsm7TYLGYkcL/NfV42IEXZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761059379; c=relaxed/simple;
-	bh=5U/hwM6oStRUswmzcr0DDq1CXsslSOAL1jIHn7nowgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UE00Wc8AW1c0W49aB5dYuRNASko3GGnnd3qVKqeMeCn8F5rTbITM7sobJLO6pL+Cc8GAOHUZZ6STMp9VxkGsL6kvSN/ih5HJvAfFZ1RZihlVXh17HPsrUMunV1h+vNqS0YQ1aLhuO3mKxQcdxu1ZDbIESQeVOkEodXluw+bqSi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eh//w81L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E163FC4CEF1;
-	Tue, 21 Oct 2025 15:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761059379;
-	bh=5U/hwM6oStRUswmzcr0DDq1CXsslSOAL1jIHn7nowgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Eh//w81L8H2VOFwI5+wCMVxu86xgZmHHchIe0BoP7Qj4b8T8SYrBd9l4+nwEoD9/9
-	 rmQk/iKuEFuAyr5mRHu6wqkmlsCbeDN47I8ecFm2NO52P6q3rQ7dLGRb+ysdb+gOF7
-	 R7De5rLMSD54lnrvpVAp2/vn9y36UzILxllaTC5ubJovJFtDkdpT5Z5ebBwTlTWkhE
-	 GA/JmcE/o7YXcoeXVapxbAmwvREpTaezrIhEi4U7g+8/7Q7C1Sig1I4YFoCLN58mSe
-	 nViY5HoQTRpxjHgMKI7VDV4YjRJXkGElbRK8Hu1fEF0cvfERBOOoxYjAX71Z65dAAm
-	 BL71bz6rUn72w==
-Date: Tue, 21 Oct 2025 16:09:35 +0100
-From: Lee Jones <lee@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: macsmc: Initialize mutex
-Message-ID: <20251021150935.GK475031@google.com>
-References: <20250925-macsmc-mutex_init-v1-1-416e9e644735@jannau.net>
+	s=arc-20240116; t=1761059459; c=relaxed/simple;
+	bh=8UX2AOYcc1pJvShjqCkumWUTvtIN49sR3TGCRj1P9TQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=itv5SrPllFK8g1vU8VQPqst9/2yFV+XSVQ1zVpemXjyOzLqxHaulRzen73OiyNhh0mDBxUlIAGPLdl148xj8TBLL0mwwZeJBph5vAYQT3AkYjo8hnpw9lvJU27n1QbA2Ymi3V/e6y8T4BFczABY7kznIq0aA/F15FMcxas/hU+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qHs96uoW; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59LFAmIT1185633;
+	Tue, 21 Oct 2025 10:10:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761059448;
+	bh=THUgBVvFZqvoUFLNnGVZTqBXS6eet/3dT4lK761pWwk=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=qHs96uoWj/odh6QDja+Otn5aKic8lwd/12QMeCs6vKkskiNvhiNzM4Kyks1OT442h
+	 I+H5FlQb9nI/sBaHcKbF7ALAEdwE0gRWl3OVyp5LMa/0VVVVpzMr6XwuOCywk25pNk
+	 mJYHgaoalq5C/vDxaEZGaR13caJ8bB5UYvaco/H8=
+Received: from DFLE208.ent.ti.com (dfle208.ent.ti.com [10.64.6.66])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59LFAm1n1653813
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 21 Oct 2025 10:10:48 -0500
+Received: from DFLE214.ent.ti.com (10.64.6.72) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 21 Oct
+ 2025 10:10:48 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE214.ent.ti.com
+ (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 21 Oct 2025 10:10:48 -0500
+Received: from [10.249.129.179] ([10.249.129.179])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59LFAfcC3922619;
+	Tue, 21 Oct 2025 10:10:43 -0500
+Message-ID: <c76843e9-e644-4b9b-803f-b9eb9a31b89c@ti.com>
+Date: Tue, 21 Oct 2025 20:40:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250925-macsmc-mutex_init-v1-1-416e9e644735@jannau.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] crypto: ti - Add support for AES-XTS in DTHEv2
+ driver
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Manorit Chawdhry
+	<m-chawdhry@ti.com>,
+        Kamlesh Gurudasani <kamlesh@ti.com>,
+        Shiva Tripathi
+	<s-tripathi1@ti.com>,
+        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+        Vishal
+ Mahaveer <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251009111727.911738-1-t-pratham@ti.com>
+ <20251009111727.911738-2-t-pratham@ti.com>
+ <aPHW_zyWwA36Usy1@gondor.apana.org.au>
+ <07032efd-52a2-44e1-89bd-81602be9eb32@ti.com>
+Content-Language: en-US
+In-Reply-To: <07032efd-52a2-44e1-89bd-81602be9eb32@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, 25 Sep 2025, Janne Grunau wrote:
+Hi Herbert,
+On 17-10-2025 22:13, T Pratham wrote:
+> On 17-10-2025 11:11, Herbert Xu wrote:
+>> On Thu, Oct 09, 2025 at 04:11:31PM +0530, T Pratham wrote:
+>>>
+>>
+>> You should allocate a fallback that is synchronous only.  Then you
+>> can store the sub-request on the stack with SYNC_SKCIPHER_REQUEST_ON_STACK.
+>> Otherwise the sub-request reqsize may overflow your request object.
+> 
+> Understood. Will correct this.
 
-> Struct apple_smc's mutex was not initialized before use. Surprisingly
-> this only resulted in occasional NULL pointer dereferences in
-> apple_smc_read() calls from the probe() functions of sub devices.
-> 
-> Fixes: e038d985c9823 ("mfd: Add Apple Silicon System Management Controller")
+Since a similar mechanism is not available for AEADs, I was wondering if
+doing the following in the tfm_init functions of AEAD algs (PATCH 3/4
+and 4/4 of this series) is acceptable, esp. since setting reqsize is
+moved to the algorithm struct field cra_reqsize.
 
-You need to Cc: Stable as well.  Please submit a [RESEND] with that done.
++       unsigned int reqsize = crypto_aead_reqsize(tfm);
++       crypto_aead_set_reqsize(tfm, reqsize +
+crypto_aead_reqsize(ctx->aead_fb));
 
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
->  drivers/mfd/macsmc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mfd/macsmc.c b/drivers/mfd/macsmc.c
-> index 870c8b2028a8fc0e905c8934c2636824cbe5d527..3a117cf19145e86b642f40dc165b542b8df69070 100644
-> --- a/drivers/mfd/macsmc.c
-> +++ b/drivers/mfd/macsmc.c
-> @@ -413,6 +413,7 @@ static int apple_smc_probe(struct platform_device *pdev)
->  	if (!smc)
->  		return -ENOMEM;
->  
-> +	mutex_init(&smc->mutex);
->  	smc->dev = &pdev->dev;
->  	smc->sram_base = devm_platform_get_and_ioremap_resource(pdev, 1, &smc->sram);
->  	if (IS_ERR(smc->sram_base))
-> 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250925-macsmc-mutex_init-80d7cb2aacfa
-> 
-> Best regards,
-> -- 
-> Janne Grunau <j@jannau.net>
-> 
+
+I noticed all older existing drivers using a fallback do something
+similar, and was wondering if you'll still accept new drivers which use
+crypto_*_set_reqsize() to modify reqsize for fallback use-cases?
 
 -- 
-Lee Jones [李琼斯]
+Regards
+T Prathm <t-pratham@ti.com>
 
