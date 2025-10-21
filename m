@@ -1,48 +1,82 @@
-Return-Path: <linux-kernel+bounces-862091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC24BF4690
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:56:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EC3BF469F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523F218C5479
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:57:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD4034E3323
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D5F278E44;
-	Tue, 21 Oct 2025 02:56:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4335B274FD3;
-	Tue, 21 Oct 2025 02:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B1917993;
+	Tue, 21 Oct 2025 02:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QIAutRYY"
+Received: from mail-m1973172.qiye.163.com (mail-m1973172.qiye.163.com [220.197.31.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7999E1F2C34;
+	Tue, 21 Oct 2025 02:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761015407; cv=none; b=cgz85xUNnsPbgAIlvPPzWrmc01RNBZ3ffsdMIVP+55Ns/OWru1kwvCgYOXFWwmF3DTIBQIs54zNDNLlHCwjA+IVrLjkrin3+inICrAm6aIObPXz+JzlAwmq+kz3349RzyvP0VmShk7/q8JLY1O3NDi8lg5EDaO1V9ID2z9KhHQc=
+	t=1761015440; cv=none; b=dhJkQVjlU6CPK5SdjW8vwlTKoNj/jHV+y3sZy/kzCXbSdzPOiUUNS8L41r/W76E9jIRFvjofBZzMVACXDi0SwCd6KoDpnEtKQpU10xesq+MkbILoE5Hmaq0U9V4yWsaDl+5hi5iEDPsLhmMPedeibiRmst/m4rX7LnxYDorPoH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761015407; c=relaxed/simple;
-	bh=CxJm60S2gZHUoWCZVhWJAPPBtiNPP28nE8Kbbp6mI7g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m6AaUqu0vE+V9G/3JULahH6yjVpKL3obLfWFRjHnhtCM01CMAdebxUwO/TZA8OlqcYJKDfUNRTR1Hm+TNA7i2EcA/YlTF+YMXMZaj0KqbFG/T7Anp8NhQne1OEHq3fOqP1YG68jqPZjlCgWNogE848FcZ/msR23HJyrDtjgqnps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D39371063;
-	Mon, 20 Oct 2025 19:56:36 -0700 (PDT)
-Received: from ergosum.cambridge.arm.com (ergosum.cambridge.arm.com [10.1.196.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 852D03F59E;
-	Mon, 20 Oct 2025 19:56:43 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	s=arc-20240116; t=1761015440; c=relaxed/simple;
+	bh=1QN0bEYipOkUKeklfF3558x99x71eghhFYDfUmZioqY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Qcm6LZ70JjDWN7Qyt2y5Ijq7d+R1CNwdIXVhILeXLI/Ey/YHAN5tiHW+nu8g9GLboPMCxtfM4E8U9VWoZesOz/kcczgysBSEbUYzZ6g2J8CMcTlRW38R0ujYlW5bLzJhM5P+yyWy/X6+H2DaxkhB49NQYl2evnihOnTmlKeArHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QIAutRYY; arc=none smtp.client-ip=220.197.31.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 26979c619;
+	Tue, 21 Oct 2025 10:57:12 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	jingoohan1@gmail.com,
+	p.zabel@pengutronix.de,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dianders@chromium.org,
+	m.szyprowski@samsung.com,
+	luca.ceresoli@bootlin.com,
+	jani.nikula@intel.com,
 	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-s390@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	virtualization@lists.linux.dev
-Subject: [PATCH] mm: Make INVALID_PHYS_ADDR a generic macro
-Date: Tue, 21 Oct 2025 03:56:38 +0100
-Message-Id: <20251021025638.2420216-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.30.2
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v7 08/18] drm/exynos: exynos_dp: Apply of-display-mode-bridge to parse the display-timings node
+Date: Tue, 21 Oct 2025 10:56:54 +0800
+Message-Id: <20251021025701.1524229-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251021023130.1523707-1-damon.ding@rock-chips.com>
+References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,91 +84,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a04b3047603a3kunmcdd3bf8c5a402a
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkgfTVYfQh8aGkNDTUhNQ01WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEtNQk
+	tVSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=QIAutRYYHTvhVTgjC3uYoHP/QIXWTsU0vgvlk0wvkLxpZC2ae06FXyl0bVbZmtEwCHWn9pTwidsTlNHoyVBIdYJJxDBQaQO9YjizNS38xlFz8usiUYTSiMxcnhqVxn5ZTKipC+/rniAIq22E2N9GDu9hCcajGXHKC7FJnSLe1Y4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=DLgwRoSZkiEzvN/zcPKGoFOzo9iVfJiXb9YkvPXxjaY=;
+	h=date:mime-version:subject:message-id:from;
 
-INVALID_PHYS_ADDR has very similar definitions across the code base. Hence
-just move that inside header <liux/mm.h> for more generic usage. Also drop
-the now redundant ones which are no longer required.
+If there is neither a panel nor a bridge, the display timing can be
+parsed from the display-timings node under the dp node.
 
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: iommu@lists.linux.dev
-Cc: linux-s390@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: virtualization@lists.linux.dev
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+In order to get rid of &analogix_dp_plat_data.get_modes() and make
+the codes more consistent, apply DRM of-display-mode-bridge to parse
+display timings.
+
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+------
+
+Changes in v6:
+- Apply DRM legacy bridge to parse display timings instead of
+  implementing the same codes only for Exynos DP.
+
+Changes in v7:
+- Use temporary flag &exynos_dp_device.has_of_bridge, which will be
+  removed in the following patch, instead of applying API
+  drm_bridge_is_legacy().
+- Remove exynos_dp_legacy_bridge_init() and inline API
+  devm_drm_of_display_mode_bridge().
 ---
- arch/arm64/mm/mmu.c                  | 2 --
- arch/s390/boot/vmem.c                | 1 -
- drivers/vdpa/vdpa_user/iova_domain.h | 2 --
- include/linux/mm.h                   | 2 ++
- kernel/dma/swiotlb.c                 | 2 --
- 5 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/exynos/Kconfig     |  1 +
+ drivers/gpu/drm/exynos/exynos_dp.c | 66 ++++++++----------------------
+ 2 files changed, 17 insertions(+), 50 deletions(-)
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index e80bb623ef53..1da02d908c30 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -470,8 +470,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
- 	mutex_unlock(&fixmap_lock);
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 0d13828e7d9e..380d9a8ce259 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -72,6 +72,7 @@ config DRM_EXYNOS_DP
+ 	select DRM_ANALOGIX_DP
+ 	select DRM_DISPLAY_DP_HELPER
+ 	default DRM_EXYNOS
++	select DRM_OF_DISPLAY_MODE_BRIDGE
+ 	select DRM_PANEL
+ 	help
+ 	  This enables support for DP device.
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index e20513164032..ac16138a22fe 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -19,6 +19,7 @@
+ #include <video/videomode.h>
+ 
+ #include <drm/bridge/analogix_dp.h>
++#include <drm/bridge/of-display-mode-bridge.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_crtc.h>
+@@ -38,9 +39,10 @@ struct exynos_dp_device {
+ 	struct drm_device          *drm_dev;
+ 	struct device              *dev;
+ 
+-	struct videomode           vm;
+ 	struct analogix_dp_device *adp;
+ 	struct analogix_dp_plat_data plat_data;
++
++	bool has_of_bridge;
+ };
+ 
+ static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
+@@ -67,44 +69,20 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+ 	return exynos_dp_crtc_clock_enable(plat_data, false);
  }
  
--#define INVALID_PHYS_ADDR	(-1ULL)
+-static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+-			       struct drm_connector *connector)
+-{
+-	struct exynos_dp_device *dp = to_dp(plat_data);
+-	struct drm_display_mode *mode;
 -
- static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
- 				       enum pgtable_type pgtable_type)
+-	if (dp->plat_data.panel)
+-		return 0;
+-
+-	mode = drm_mode_create(connector->dev);
+-	if (!mode) {
+-		DRM_DEV_ERROR(dp->dev,
+-			      "failed to create a new display mode.\n");
+-		return 0;
+-	}
+-
+-	drm_display_mode_from_videomode(&dp->vm, mode);
+-	connector->display_info.width_mm = mode->width_mm;
+-	connector->display_info.height_mm = mode->height_mm;
+-
+-	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+-	drm_mode_set_name(mode);
+-	drm_mode_probed_add(connector, mode);
+-
+-	return 1;
+-}
+-
+ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+ 				   struct drm_bridge *bridge,
+ 				   struct drm_connector *connector)
  {
-diff --git a/arch/s390/boot/vmem.c b/arch/s390/boot/vmem.c
-index cea3de4dce8c..fbe64ffdfb96 100644
---- a/arch/s390/boot/vmem.c
-+++ b/arch/s390/boot/vmem.c
-@@ -16,7 +16,6 @@
- #include "decompressor.h"
- #include "boot.h"
+ 	struct exynos_dp_device *dp = to_dp(plat_data);
++	enum drm_bridge_attach_flags flags = 0;
+ 	int ret;
  
--#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
- struct ctlreg __bootdata_preserved(s390_invalid_asce);
- 
- #ifdef CONFIG_PROC_FS
-diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_user/iova_domain.h
-index 775cad5238f3..a923971a64f5 100644
---- a/drivers/vdpa/vdpa_user/iova_domain.h
-+++ b/drivers/vdpa/vdpa_user/iova_domain.h
-@@ -17,8 +17,6 @@
- 
- #define IOVA_START_PFN 1
- 
--#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
--
- #define BOUNCE_MAP_SHIFT	12
- #define BOUNCE_MAP_SIZE	(1 << BOUNCE_MAP_SHIFT)
- #define BOUNCE_MAP_MASK	(~(BOUNCE_MAP_SIZE - 1))
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d16b33bacc32..543a5f780874 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -105,6 +105,8 @@ extern int mmap_rnd_compat_bits __read_mostly;
- # endif
- #endif
- 
-+#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
+ 	/* Pre-empt DP connector creation if there's a bridge */
+ 	if (plat_data->next_bridge) {
+-		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
+-					0);
++		if (dp->has_of_bridge)
++			flags = DRM_BRIDGE_ATTACH_NO_CONNECTOR;
 +
- #include <asm/page.h>
- #include <asm/processor.h>
++		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge, flags);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -129,19 +107,6 @@ static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
+ 	.disable = exynos_dp_nop,
+ };
  
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 0d37da3d95b6..a547c7693135 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -61,8 +61,6 @@
-  */
- #define IO_TLB_MIN_SLABS ((1<<20) >> IO_TLB_SHIFT)
- 
--#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
+-static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
+-{
+-	int ret;
 -
- /**
-  * struct io_tlb_slot - IO TLB slot descriptor
-  * @orig_addr:	The original address corresponding to a mapped entry.
+-	ret = of_get_videomode(dp->dev->of_node, &dp->vm, OF_USE_NATIVE_MODE);
+-	if (ret) {
+-		DRM_DEV_ERROR(dp->dev,
+-			      "failed: of_get_videomode() : %d\n", ret);
+-		return ret;
+-	}
+-	return 0;
+-}
+-
+ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+@@ -151,12 +116,6 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	dp->drm_dev = drm_dev;
+ 
+-	if (!dp->plat_data.panel && !dp->plat_data.next_bridge) {
+-		ret = exynos_dp_dt_parse_panel(dp);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+ 
+ 	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
+@@ -223,6 +182,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0, &panel, &bridge);
++	if (ret == -ENODEV) {
++		dp->plat_data.next_bridge = devm_drm_of_display_mode_bridge(dp->dev,
++									dp->dev->of_node,
++									DRM_MODE_CONNECTOR_eDP);
++		ret = IS_ERR(dp->plat_data.next_bridge) ? PTR_ERR(dp->plat_data.next_bridge) : 0;
++		if (!ret)
++			dp->has_of_bridge = true;
++	}
+ 	if (ret)
+ 		return ret;
+ 
+@@ -233,7 +200,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	dp->plat_data.power_on = exynos_dp_poweron;
+ 	dp->plat_data.power_off = exynos_dp_poweroff;
+ 	dp->plat_data.attach = exynos_dp_bridge_attach;
+-	dp->plat_data.get_modes = exynos_dp_get_modes;
+ 	dp->plat_data.skip_connector = !!bridge;
+ 
+ out:
 -- 
-2.30.2
+2.34.1
 
 
