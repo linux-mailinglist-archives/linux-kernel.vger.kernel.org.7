@@ -1,87 +1,67 @@
-Return-Path: <linux-kernel+bounces-862163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6075BF4918
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:03:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC09BF4927
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1F818C5B68
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:04:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C15189716D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4AF2571A0;
-	Tue, 21 Oct 2025 04:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07D423AB98;
+	Tue, 21 Oct 2025 04:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5yXQBfT"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WKQfwvni"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF80A256C76
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35198615A;
+	Tue, 21 Oct 2025 04:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761019404; cv=none; b=keyrKPYBuKOSGKgWUDwdr2cFb9ycrQOs02hoT/3lYuC2Rg3G8PWkCZk6MXnx5sujnsNo/VD7em6eZtkl8zA5TQjFc2JEY9WfHGsXvGFJ/6uYcuMFI3O+L6qkNejxRH7zzjZSJtB1IReM2W8heDaOXyUVnE0ldqAKbIxCrLQsodM=
+	t=1761019451; cv=none; b=MdEW+m86TmaaeiEH2I148ig13JmeobQC7pBQW4McCxWW+GJj6IOH6jfX4tuTeCUJRXLlVhHnk/mByilUaLZVCbojJXHl5NWla5wp0BvxctgVm/Nsh15QDIPCpqLmE//t8c20AZLxI8rx+80pKPCo7gi+V06u/pXLDGoDM4c4Gfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761019404; c=relaxed/simple;
-	bh=qkgQ+CuvMxhT7IF/OSj0mBr4K8PM/2u4lU3uq8Jys20=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tsas+1L22Xfkmdn1f6bsPRw8NhIZBJ0IJDTu5YXA//Tz6iDneNPsZDiaKesKA/Q7yxradDIZv9Lh4ML11Tmh2Ck6/qmj9NLBs5jUcaUjE9ZEPdT6+UJFF4VGuiiNRtB4VZOAVmQKADcAlbPBnR1uRb02slGSwv7Y6Vatk3xMAvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5yXQBfT; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so962726566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:03:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761019401; x=1761624201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jnTDz5myCum0dz0iQoApan5kQSf5oDLmv5hHI45kMmc=;
-        b=H5yXQBfTn7ILDfKZmkrNueqc3hPLA+lG952E3yIWJ9ApDYj2iGy+Of43mYcWQQsfMX
-         K2B/YQLCY8r0BVD5loCLdZe/8yMToSPP7OY8zMt36PY0D9oeegSN5eEiTaNM9rNL5vZM
-         4CSrloMgtSE9xNwzIIrwLc5wihRe3IeWKnaTCa2MeyTnE0ywH1QRAUUZa4JnLu2dJRkb
-         U5tInK+ykDE8i8x3HniC154/XMQl0xbqI+lEXAVqJvwRYZLZiHbJ/Td7WQ17oIZ5kXwl
-         bVSOEOa5nVh/+T4E1zUbHO6htfEZRYC7dhUTYPNMqKJqo4lg+pwmc3/1GiSV8HcTzY6H
-         U5KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761019401; x=1761624201;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jnTDz5myCum0dz0iQoApan5kQSf5oDLmv5hHI45kMmc=;
-        b=tnZfwIi+Ki62uuJT4uYdjlzCxJoUIFbmSGcsUAesBIKLsP0s2mIlwAXk3FBd8csKCB
-         jB8TtxYn1D1Es8PbCH5rGCrbTpB8kN6OyltMU726jYtVshxqo3D3Kg+3DRtsuWkfJNDa
-         PY8O1Vr9HNXZqzsPMSrDp0FdWhRyMNSOFJ0ZB6qIHpx9xbaezf9Nz/WONcuptjb6DZ2p
-         hld2MnIBNRYUY3vm1gfE6KhxbfA8Ix2wnkJUI7mnTa99JiTr+doi6+aUmK8BsfsCZCfq
-         9wLAFkYRKybHNcexlVVZQS+/1uqj7NvpvACOipPE59CbEwTEc2LOcl3VdFV26aGo3Xq/
-         3BKg==
-X-Gm-Message-State: AOJu0YykngYBFseOcTYi3BYdb+HnPIU8lAOG5vUruRb3cFOedE4FetYz
-	gmQ+DUocrwFd3eJ/enKzHpBf3bsdbJrOUOf/OnW9Lq+dOk14z1YmdC4srPOuYeTs
-X-Gm-Gg: ASbGncsOqLAeTUsO5m1fGX2xsx7GbJMgzTdaAOW/HZGvkfhDN4zbmZAGPtNsw7hF1qu
-	BbtG2NxpivgCX9x32HrFzOK+H+O9nYPvyO57SV28AXUQxPhETB5OQ+V9XESTPZevE519X5y8fJN
-	Bse+IEaUE8Pj6D1aHN1e6ooowMOCDmlSMvaA8owZCKeRi0g1H/KzqUUNS0KhixcGF14s9IY4DZh
-	oUU7g5lp43YOxXoz1OzwlRwLYlH21TouA+5KX2VzH7E4aSJHRcAAfZmbCn+BgNpCl05gMGbsgDx
-	0BH+JG1SePY+sk8HADzh1YUlHG+Ui0OGZizyc3CJqI7HRxkpGnBr7SlWxWvYqC4GLRzO7q+Io5V
-	6Lf3CATz/9ti5pr6IhOFkIBSWpun7pCTqoPDzLNeEQG9UgU3EgvZszMuTF6xQmY7Z0QO9qAe9mm
-	iS
-X-Google-Smtp-Source: AGHT+IF/W/OUyMQtEPCa5HqocBu5oNtQhxuKiUfejPDq9YCHbvzs4GnzMxPIwpn+wdtN2EqB3qg0zA==
-X-Received: by 2002:a17:906:7308:b0:b3f:f6d:1d90 with SMTP id a640c23a62f3a-b647403a550mr1958365466b.11.1761019400841;
-        Mon, 20 Oct 2025 21:03:20 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b65e7da3412sm961510466b.3.2025.10.20.21.03.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 21:03:20 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org,
-	rusindanilo@gmail.com
-Subject: Re: [PATCH 0/1] x86/power: Enhanced hibernation support with integrity checking
-Date: Tue, 21 Oct 2025 07:03:11 +0300
-Message-ID: <20251021040311.15214-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <aE/gS7r1mrllLSSp@duo.ucw.cz>
-References: <aE/gS7r1mrllLSSp@duo.ucw.cz>
+	s=arc-20240116; t=1761019451; c=relaxed/simple;
+	bh=pniHWhkDj46xPpYmdftLqXe9tb8Rn1sLicOaUC0/Y4s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z+lemNO/44rb46WBKs16a92jKwncx69QJMW09TjOpGX1blpxRY4Yt2Ij46qCCvkM7VU9SlL2cm3Sa6A/geJ66C/Jf/AX3McAhxOUYQ8qgRtMVT3HR+A2NAKi8D7/kPLtT2Qc3+wOBta1YqP0JHUqsF7HHqn8L54GbSG+8wzttgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WKQfwvni; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KL1B1G002360;
+	Tue, 21 Oct 2025 04:03:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=sS99kXuvO8tRfzb74p05uX
+	dgt5SQfG6eloyhE90leQI=; b=WKQfwvniKDeCurKRvXUSao6r1tfcDFBwT7zlkT
+	x9Ahqysu3FuyTxEMdaPw7/274dngpGoo6NeqAcNonLUKDbRy/rAn7WfPjv2uIHUx
+	2S7AmvToEKEUV9PQGW7lKf2a/2sjz6LZMUH8/KAJ3rZbEHqzqSmePsuYCIDjjCza
+	Y6eGJ+Il7aODXVk3UdqzfUOpSXLqrrUR0+zdX7sPax5nDv3E4Ut4yMDUO52eP7eF
+	uHJlrv8glr47EpjSySdr7oWoR3qKbRd9Mc0YnvQZp5eSSdQdzjM2eKG5KS4qB74h
+	BV4oCIaLNN4zgv81ot/yPJVRo5UTZ3y1Ji6s6JZKFSV1WGpw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08w4n5a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 04:03:59 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59L43wrV012371
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 04:03:59 GMT
+Received: from hu-dmukhopa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Mon, 20 Oct 2025 21:03:56 -0700
+From: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>
+To: <quic_neersoni@quicinc.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>
+Subject: [PATCH] qcom: ice: Prevent client probe failures on unsupported ICE
+Date: Tue, 21 Oct 2025 09:33:37 +0530
+Message-ID: <20251021040337.787980-1-quic_dmukhopa@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,14 +69,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GcORUaXlo2A7ESlyTXMwWCkiE2ivhzyz
+X-Proofpoint-GUID: GcORUaXlo2A7ESlyTXMwWCkiE2ivhzyz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX93OC8fAyVzLK
+ WS2bF5JK3/Lwdu0s7l0No8b6IiSiIPerTpXq4cL/2RKlnoQkAr6TlyW1sVAS9H0ycT90qT2d3VO
+ kHbJRN9gLWbJcWF0H4sQ5dIG3wBY/v8KZImWcQ9ZrDUQECyAG9296geLDepoxF9/Bk0Rj9jQFJV
+ 5pB5AV3IgjoYaQcPRc24MTATxNshtWlhKqN9omhBdNoJYd5v2zjfFUhMR0mzopWTuRwHdGmWxV8
+ lhdG8lCkTgIY6mE41is/2hlvEhqs0Gs18LVlhJ8l8AtdS5tzq/FpQ3SYhvbrLD2bXDw7/Fbm/vH
+ SYDiFVnZoj6pNXDdKHmmTODaI5ABqktzPTvYNbJ4CfvKcaFB/bZ4fXUsVoeEmEEBrQDS9oruj0W
+ 6zzaTKD81BVeSUdTNkiqpLQ/IV2VlQ==
+X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68f7062f cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=COk6AnOGAAAA:8 a=e8WBJt8hLZ1ywCPIfMwA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 suspectscore=0 clxscore=1011 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
 
-Pavel Machek <pavel@ucw.cz>:
-> There's uswsusp support. You can use that to provide robust
-> signatures. You can even use RSA to encrypt the image but only require
-> password during resume.
+Storage clients (ex. UFS and MMC) invoke of_qcom_ice_get() to obtain the
+handle from ICE (Inline Crypto Engine) driver. Currently if ICE is
+unsupported, the return code from probe could prevent the client
+initialization which is a bug. To fix this a new flag
+qcom_ice_create_error is introduced which caches the error encountered
+during ICE probe.
 
-So uswsusp project is still alive? Where is userspace programs for using it?
+The qcom_ice_create() and of_qcom_ice_get() functions are updated to
+return -EOPNOTSUPP when ICE is unsupported, allowing clients to proceed
+without ICE.
 
+For other failures, such as ICE not yet initialized, the existing
+behavior (e.g., -EPROBE_DEFER) is retained to ensure proper error
+handling.
+
+This improves error signaling and ensures that client initialization is
+not blocked unnecessarily.
+
+Signed-off-by: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>
+---
+ drivers/soc/qcom/ice.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
+index c467b55b4174..5460436d9158 100644
+--- a/drivers/soc/qcom/ice.c
++++ b/drivers/soc/qcom/ice.c
+@@ -85,6 +85,8 @@ union crypto_cfg {
+ #define qcom_ice_readl(engine, reg)	\
+ 	readl((engine)->base + (reg))
+ 
++static bool qcom_ice_create_error;
++
+ static bool qcom_ice_use_wrapped_keys;
+ module_param_named(use_wrapped_keys, qcom_ice_use_wrapped_keys, bool, 0660);
+ MODULE_PARM_DESC(use_wrapped_keys,
+@@ -524,7 +526,7 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
+ 
+ 	if (!qcom_scm_ice_available()) {
+ 		dev_warn(dev, "ICE SCM interface not found\n");
+-		return NULL;
++		return ERR_PTR(-EOPNOTSUPP);
+ 	}
+ 
+ 	engine = devm_kzalloc(dev, sizeof(*engine), GFP_KERNEL);
+@@ -604,7 +606,7 @@ static struct qcom_ice *of_qcom_ice_get(struct device *dev)
+ 	struct device_node *node __free(device_node) = of_parse_phandle(dev->of_node,
+ 									"qcom,ice", 0);
+ 	if (!node)
+-		return NULL;
++		return ERR_PTR(-EOPNOTSUPP);
+ 
+ 	pdev = of_find_device_by_node(node);
+ 	if (!pdev) {
+@@ -617,7 +619,10 @@ static struct qcom_ice *of_qcom_ice_get(struct device *dev)
+ 		dev_err(dev, "Cannot get ice instance from %s\n",
+ 			dev_name(&pdev->dev));
+ 		platform_device_put(pdev);
+-		return ERR_PTR(-EPROBE_DEFER);
++		if (qcom_ice_create_error)
++			return ERR_PTR(-EOPNOTSUPP);
++		else
++			return ERR_PTR(-EPROBE_DEFER);
+ 	}
+ 
+ 	link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
+@@ -691,8 +696,10 @@ static int qcom_ice_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	engine = qcom_ice_create(&pdev->dev, base);
+-	if (IS_ERR(engine))
++	if (IS_ERR(engine)) {
++		qcom_ice_create_error = true;
+ 		return PTR_ERR(engine);
++	}
+ 
+ 	platform_set_drvdata(pdev, engine);
+ 
 -- 
-Askar Safin
+2.34.1
+
 
