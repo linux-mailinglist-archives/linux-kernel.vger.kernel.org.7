@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-862979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A57CBF6B75
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:17:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E2CBF6B78
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D045450449C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:17:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FFD19A50DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD04336EE0;
-	Tue, 21 Oct 2025 13:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ggWKD7xb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F46334C0D;
+	Tue, 21 Oct 2025 13:17:13 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF84C23EA85
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AF721D590
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052618; cv=none; b=LmaaHQun/eZfKwqA+x2bECQHKELj5mXCHPnKjjvf2GhKWEzKqYhAGSiB/mmshUsAwHt7lQqYF1iO62XH+RS/gF35VH9vKeTi9q2p9d+xhSKTckRrn1s1bWYVn4wytYFl47qc1ZRfu+dgs8PD/b1hjaH4BMaubdNvzTtTBeNfQqk=
+	t=1761052632; cv=none; b=bCDW/z9W6Hs+Lb3QsnVA9H/oK6/GQ/ckaP91+341vLOdVz+2LrHD2f/6bOnEVnJbzcOHHzE6pBnStwSC6WI/rBsEuMu5JyQ1fSiEARIfu215KDmotquRnJXd9mAJxcJmKFfIjuGJCmd30GasIK07XAjHIAvJw2RrzkEY5XXZhEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052618; c=relaxed/simple;
-	bh=K16OiEvHLEE5P9JWPOOzxQz3iSFrMjRDBmvPteaRCZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MRorylBxCS3UITqBgl0CnT8WFYjPOiEQ27XHt5ntXsfWglIx7+2N8ip1/xXlRWBeczt9gUCrtMH8ruRiTQjWvMq6V1VbTrjM0BjGTUK+dme8VZPIGHbCH31W0jmWnjg7H/tmlOR/LN8Qoh3roAn36jpHykNnIN3NI2yjDMrgRDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ggWKD7xb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8NU8g020896
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:16:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CWUXrVsIv5uz3Q9scHKagVEzhFaWQ8+fZVxGbgRHCdA=; b=ggWKD7xbnPIT46My
-	o2uh0x8OE83IMoaVqSvP3ckUEpyuIpSsQ0N0hvFngTGHqT3fwPFTmeljg0l7qUui
-	AoqH8cVwR3QpFnM4GxexA/KS3MZ0MYYloptBsPJ8WWZcRzKxRXLmvYHeYSzQqTj3
-	Rf7VKgPpD6weY//7CQlkSbj5qolBIrNoWwIoOgnXfQMQEnFaDlf+DOzUvVuVNn8s
-	qlBSoyJyKWE6rNYybZNVmHrEfSIchn0m+r1RO+kq99wlQ84N0X3CE39wEsdK+HCH
-	gzPzK+jpqP5npbmaOS0jVt8ChW7Z9Su5uBDYCysNVxqR+Mt1DrdmTTxFapU3IU9p
-	uj0rBg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v469gpx1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:16:56 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-890cb81b3dfso210537485a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:16:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761052614; x=1761657414;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWUXrVsIv5uz3Q9scHKagVEzhFaWQ8+fZVxGbgRHCdA=;
-        b=cuEuB1KExEa6FAH5NFG1VjBN7ExAo2xRQnDVmzAmRJqadGbnduKt59FhsJj9wbLdBD
-         JwObuRY8luWt7ZopTFPXGB/Xa6hB4GECli600kmZ2ebKeBDhzt6zYjUAhARTXDN17tUB
-         mkSjj54Uph1lsjF6NFK/MkL4lUbclrQO6F/19FCd/QiDILO6ZMjX+jBuwJwTMs/VzWoT
-         ht6UZ6lrkOTMLxfAwMuIOPI4M8yTbfdma5X0UQ/MesqTjMlkwZd7oNODXKj72sve9lUg
-         YRjfL+NUdHb0tlkAV0O4ivAel1xde77MBDAqxSdtQm3ZBwQbp5H2IswhUEoKJnA383sf
-         a2jw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9E+lyFC7fS6FtHFrmo1a0SMwR73W5wKYGOnVRWBpOo2GhaG+9ryyRaiUt610UU89bz0bmWZK3aprace4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwetWIjm2LufyLG6oiHXtZlSjGOjUusBgS850UaCqlUymSv1+ky
-	rjxCrQqnYHcqq0M64xEh7/+qBrQFyRWMli+gy3EWvC4TaZC/4mRWVbdihaTNbuCo5ufTN+e4J6J
-	h9uVETVTMov5r7cb7l2wZ6+/QmAFdKBMZpzR+jhS69m6W8umx/EsNkSLa5tdfYMwmt6Y=
-X-Gm-Gg: ASbGncvHydBgR2y+WC7R4cjZSlrncFEfIkllCPA2GX8KV+fFWofBsOJP8IOSWkAYsVa
-	QIhPjF4f0jA96n8tv/NeTRsDndg0oP7QvmLA1PSu023o/zGbZnDOG/9TjiJA8sqAeq4lMkaqfV+
-	TULACHHGl67y109NCpPmssZDcb9pE5jiFsaMt9jvnn8sqCnZyD1hfqB52K+XF40jgg621CmGRw1
-	rTi5QuGJfHqZN9EfvZCFAaSjCPYZ1g2sjXHson20bpVCVrEGGc9PCauZXEX2WY2vS4SR52ovO3l
-	cctRbPL7fc1zJIaCMXrjnc97i/La0T9X5ZyVHf2MR137NLj8+l8qmBu3DGZ7i4g98zZd+P5/gpx
-	o1X84rFW4THL7PS9bSpN72WzCotkxi1MXRghO9bxSp4BaPXJSzB1hsjm2
-X-Received: by 2002:ac8:7c4e:0:b0:4b2:b591:4602 with SMTP id d75a77b69052e-4ea117a5b7fmr22868471cf.9.1761052614236;
-        Tue, 21 Oct 2025 06:16:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhrRrLX+L9pClZQtFbNEWvlViDkRlkGNmA7lfMRkaxTXZ1qhcdLBO3MOkS1AHdWDH6zOIELQ==
-X-Received: by 2002:ac8:7c4e:0:b0:4b2:b591:4602 with SMTP id d75a77b69052e-4ea117a5b7fmr22868241cf.9.1761052613569;
-        Tue, 21 Oct 2025 06:16:53 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7e984f2sm1057089266b.13.2025.10.21.06.16.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 06:16:53 -0700 (PDT)
-Message-ID: <16844fe5-9090-4504-be72-f3591b64e0d5@oss.qualcomm.com>
-Date: Tue, 21 Oct 2025 15:16:51 +0200
+	s=arc-20240116; t=1761052632; c=relaxed/simple;
+	bh=FfiejyCIuDpjyWPKEELXN4hAsPCZryQHEyfxdtTqgkE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jVG+snytknDY/p7uwonPuvhiI1/BYxrUEfrrhwyAOh/xhTu/SozL6YcddogFuqPS0TvIKRmeT+BDqFhQLveJ3JWzWd+sk+gupPLEtdnBoWX3PH2vy4qjiR4cNq5qJYtb8VKxmXc/RPpJZyK8GVvUGruYgBI5JLAyY87laQH9VT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 21 Oct
+ 2025 16:17:05 +0300
+Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 21 Oct
+ 2025 16:17:05 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten
+	<hsweeten@visionengravers.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>, Hillf Danton
+	<hdanton@sina.com>, <syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] comedi: drivers: do not detach device if driv->attach() fails
+Date: Tue, 21 Oct 2025 16:16:55 +0300
+Message-ID: <20251021131656.164783-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] qcom: ice: Prevent client probe failures on unsupported
- ICE
-To: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>, quic_neersoni@quicinc.com,
-        andersson@kernel.org, konradybcio@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251021040337.787980-1-quic_dmukhopa@quicinc.com>
- <89150929-873f-4d09-9cec-727f92572d17@oss.qualcomm.com>
- <413d84ad-0858-4e96-94e5-c0a2ed68e6a2@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <413d84ad-0858-4e96-94e5-c0a2ed68e6a2@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: tm5Nr5Rp_ibHruj8w12Fvt0rWF42Tmwr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMiBTYWx0ZWRfXwD14du1T1ezK
- OLTQFoZu5FhJswT17AuMg7tKYCDLLLa/5V+mT0dPoMT5KEKREoDTKzSa96vniO2uP/TYT8J/gwW
- KTlaaq8Ugr6G6WHopSvRRXViR2L699ZI8QnM3Zjz+0locaoLr+GQEKC4Bobe8JVgVI6QYglRAb/
- IkSLSZEoVYogDoFTr+14DLffrD6g176H2MRaFEcKxzPjsK8iR0ikp6leTGTd2IVriVMMpa5V8sc
- hoyPmxJF4QE0xt28jLVPyvmc+B1jRQLNuPUhQusgjJfgyfe9oLBlD+TeSgmctkNCKVJmiuaD5aB
- M2p8JwW9/4iXM/CgOE+MqtEU6Hr/dOfx7iCdcTfYLEHEX9CWbZVZqnBv0fqj0z3yGGwClv+Vt5Z
- 5G70FAXGRMU4w/BBxUF4VdrxbU9IxQ==
-X-Authority-Analysis: v=2.4 cv=U8qfzOru c=1 sm=1 tr=0 ts=68f787c8 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=AeV98SofgcCFkdjVCqEA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: tm5Nr5Rp_ibHruj8w12Fvt0rWF42Tmwr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
- spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180032
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On 10/21/25 2:34 PM, Debraj Mukhopadhyay wrote:
-> Hi Konrad,
-> 
-> Thanks for your comment. Please find my response inline below.
+Syzbot identified an issue [1] in comedi_device_attach() that occurs
+when kernel attempts to detach a comedi device via
+comedi_device_detach() even if a driver-specific attach() method
+already failed. Attempts to follow through with detaching the
+device and unregistering the driver trigger a warning.
 
-https://lore.kernel.org/linux-arm-msm/2023042722-humble-unthread-9597@gregkh/
-> On 10/21/2025 2:57 PM, Konrad Dybcio wrote:
->> On 10/21/25 6:03 AM, Debraj Mukhopadhyay wrote:
->>> Storage clients (ex. UFS and MMC) invoke of_qcom_ice_get() to obtain the
->>> handle from ICE (Inline Crypto Engine) driver. Currently if ICE is
->>> unsupported, the return code from probe could prevent the client
->>> initialization which is a bug. To fix this a new flag
->>> qcom_ice_create_error is introduced which caches the error encountered
->>> during ICE probe.
->> Probe currently only happens if the ICE node is present in the DT and
->> referred to from the storage controller. What does this patch solve?
->>
->> Konrad
-> 
-> Even if the DT node is present it is possible that The SCM support for ICE is unavailable in the underlying TZ framework. With the existing logic, qcom_scm_ice_available() would have failed in such cases, returning NULL to storage clients where the clients like storage may keep retrying which potentially can cause boot up issues. This patch corrects that behavior by explicitly returning -EOPNOTSUPP to the clients. I will update the commit message accordingly.
+Fix this by rearranging cleanup calls so that comedi_device_detach()
+runs only if the device in question has been successfully attached.
 
-Wouldn't that mean that we have a broken TZ?
+Original idea for this patch belongs to Hillf Danton
+<hdanton@sina.com>.
 
-And wouldn't this be better solved by simply moving the SCM checks
-to of_qcom_ice_get()?
+[1] Syzbot crash:
+Unexpected driver unregister!
+WARNING: CPU: 0 PID: 5970 at drivers/base/driver.c:273 driver_unregister drivers/base/driver.c:273 [inline]
+WARNING: CPU: 0 PID: 5970 at drivers/base/driver.c:273 driver_unregister+0x90/0xb0 drivers/base/driver.c:270
+...
+Call Trace:
+ <TASK>
+ comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
+ comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
+ comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
+ do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
+ comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+...
 
-Konrad
+Reported-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=6616bba359cec7a1def1
+Suggested-by: Hillf Danton <hdanton@sina.com>
+Fixes: 74ece108f9e5 ("staging: comedi: move detach out of post-config")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+ drivers/comedi/drivers.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
+index c9ebaadc5e82..001083f96138 100644
+--- a/drivers/comedi/drivers.c
++++ b/drivers/comedi/drivers.c
+@@ -1005,10 +1005,13 @@ int comedi_device_attach(struct comedi_device *dev, struct comedi_devconfig *it)
+ 	dev->board_name = dev->board_ptr ? *(const char **)dev->board_ptr
+ 					 : dev->driver->driver_name;
+ 	ret = driv->attach(dev, it);
+-	if (ret >= 0)
++	if (ret >= 0) {
+ 		ret = comedi_device_postconfig(dev);
+-	if (ret < 0) {
+-		comedi_device_detach(dev);
++		if (ret < 0) {
++			comedi_device_detach(dev);
++			module_put(driv->module);
++		}
++	} else {
+ 		module_put(driv->module);
+ 	}
+ 	/* On success, the driver module count has been incremented. */
 
