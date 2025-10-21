@@ -1,174 +1,77 @@
-Return-Path: <linux-kernel+bounces-863691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4786BF8D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:58:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A07FBF8D88
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 424C54813F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:58:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5BB04F0A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EB5285CA7;
-	Tue, 21 Oct 2025 20:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+mP1zT9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278CB283CB0;
+	Tue, 21 Oct 2025 20:58:21 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B402848A0;
-	Tue, 21 Oct 2025 20:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4125F350A33
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761080280; cv=none; b=G1XcxRAAZM3b1GbSGpsuVYLM5L05JbTpH44NopB7uebT1EAgr7h1HfvOcT9SRqekmOhegz9LWmF1HNTK0eEaFMI0eu2EyImdPAsXYYf1VrSuiQkrg/MzIJ+yKq5tSLBfGIO8eTRpZxGk45ffQ4N1FVxOqAC1xfWES+NsoglRrMQ=
+	t=1761080300; cv=none; b=c+qoF3W9GJ0P4gUBua+wUfcPxcooZNEM0E06Zf7Ji9VIshtLb6KrCrkR2AIq6z7uCCY0HJBjT7r79rCnsMk5ZRV7c4fxL9SQfCYfT6OTsBB4uCLUj0qY5rdGuF/06bf0WzdvowxexHrbBaN/cmfYiSYIRUsYg9rsOlgP4ZX+m4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761080280; c=relaxed/simple;
-	bh=Vhn4F7seFPjyyQ1YTdO1XOJMZPnKBBBpIfyFDjuBGPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BUHrFYE9ufw1dhQKpZuOVQNagBnpn0pDgt7li3ns1luM0r2eyEuM1IzCwKLmFVT+b+GWfAvmNQFaKmN8gHLBSbUn1USnjXNqzCav8aIomd/9Jhd6C3AZ6gMrvzh9oSp+4xROYvjuEyrfss00LDy95mJvZ0gjd8tx+S0/TqtaFKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+mP1zT9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D25ABC4CEF7;
-	Tue, 21 Oct 2025 20:57:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761080280;
-	bh=Vhn4F7seFPjyyQ1YTdO1XOJMZPnKBBBpIfyFDjuBGPs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a+mP1zT9T4vUkaMyA3dfabnk54wBMqRK+xfwukEKC4AjoWuE+oczt7MF7k4PAYokg
-	 loBSw05Bb+x7+FwAM6tLwjea8mPpOTs6an5oIXAFyowTU4g26yUSsjMxCuh99iGy+U
-	 dT1RJx7EMqUiSFHn1q/mOlXz8YY6EKazYP37CsmLw4x4LyIyF7KnQnFsYaZ0rD33TW
-	 FwsyIgLsEC3Q5L7UVvufnTo/crTjQhzB9MskkRsY5xyxTNUdVGEEua0R1XNIDkkoob
-	 ly7D+TGj1vQofN7D3MjPWCSVuD43aAJE3WyZDpGLPYCWHraSvrm+awt/6A4S3vYCIX
-	 U8EKyVBl87IOA==
-Message-ID: <cc2b4fda-9e7c-4b97-b83b-1297ea931aea@kernel.org>
-Date: Wed, 22 Oct 2025 05:57:59 +0900
+	s=arc-20240116; t=1761080300; c=relaxed/simple;
+	bh=QtRLj3vOoZMDeu5ioxtwz0mA9axsP99tGxCDQ49INNY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NSqXv0/1joAlKmKrDOBpGRgC0OhbA3CI/82pE3XIFUUIZnpu/aw8vt4Hl1zbFECk00upfawC+0W4QYEdziIIbD8kWATDY5sd1pK/ILvsUU3vX+B/TDgruW0XGcTftVzpynZ6N4zK7RQM5T+UxmBx5cjNSF0u3zlFIzsvnqVmv6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e8d8d2617so52899639f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:58:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761080298; x=1761685098;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QtRLj3vOoZMDeu5ioxtwz0mA9axsP99tGxCDQ49INNY=;
+        b=FolRB38Dbn5RMNW5AnCy56n08Edvuew4oZgAPdAke14GfxxPmp+Ra0tsrLkZ3bSaE4
+         sTY9ujT+r/A1JQx7BzOKk3XcweKOjXi5d9iVpaYKiZ6sB4hEcaa36RttF3fsh5a8B4uG
+         Pym4P8d02AfPi1PcD3am3FFtMYhM25WIOwUVmPUMaFVfnn90hJ/cJTJ/nwCDo2gjWYm2
+         kZebissdlwv1KqeZlDncOQQYd+wpcEM5tYQRrilRFh0LB3YiyF9iIfMUxtBtwYu57THT
+         /qtH59GosBq8+Y17Lq6ptvFqwMMgVF26p5hfpE2smZbkqwkAL7ltiqjtdAPgAmNpt/OM
+         cexg==
+X-Gm-Message-State: AOJu0Yz2edDXA2EEHeumV7RXLDVzMwdwqs1TuAQ+Ptyr2GG5QLQRvI/7
+	FJH2Bqn5yDHOj5/e5P9Ga5fwp/UCUqq3Tub+MNV5slsWWxNqUdJnYVxQOKzpXTBrRg8eUSSFZU3
+	1F1nHTLne7cL6Fw6aAxVTpUQJVnEsRP2DIGkZswLac8Tfc6w2olreBr4qhhg=
+X-Google-Smtp-Source: AGHT+IEPA2jEDcQ4vvTVPT9iHIFHV5R4NP/C8not92F6kV7AjkjYPUMmQNihV3Upe2g+JBSicbghwxuISUz4KBD7pE/KhwdhTcaI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/16] blktrace: add block trace commands for zone
- operations
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>, axboe@kernel.dk
-Cc: chaitanyak@nvidia.com, hare@suse.de, hch@lst.de, john.g.garry@oracle.com,
- linux-block@vger.kernel.org, linux-btrace@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- martin.petersen@oracle.com, mathieu.desnoyers@efficios.com,
- mhiramat@kernel.org, naohiro.aota@wdc.com, rostedt@goodmis.org,
- shinichiro.kawasaki@wdc.com
-References: <20251020134123.119058-1-johannes.thumshirn@wdc.com>
- <20251020134123.119058-14-johannes.thumshirn@wdc.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20251020134123.119058-14-johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:1344:b0:940:36e0:ad2f with SMTP id
+ ca18e2360f4ac-940f448c848mr178323639f.7.1761080298331; Tue, 21 Oct 2025
+ 13:58:18 -0700 (PDT)
+Date: Tue, 21 Oct 2025 13:58:18 -0700
+In-Reply-To: <68f6a48f.050a0220.91a22.0451.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f7f3ea.050a0220.346f24.0027.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [gfs2?] WARNING: ODEBUG bug in gfs2_fill_super
+From: syzbot <syzbot+19e0be39cc25dfcb0858@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/20/25 22:41, Johannes Thumshirn wrote:
-> Add block trace commands for zone operations. These commands can only be
-> handled with version 2 of the blktrace protocol. For version 1, warn if a
-> command that does not fit into the 16 bits reserved for the command in
-> this version is passed in.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  include/uapi/linux/blktrace_api.h | 13 +++++++++++--
->  kernel/trace/blktrace.c           | 28 ++++++++++++++++++++++++----
->  2 files changed, 35 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/uapi/linux/blktrace_api.h b/include/uapi/linux/blktrace_api.h
-> index 3a771b9802aa..925f78af939e 100644
-> --- a/include/uapi/linux/blktrace_api.h
-> +++ b/include/uapi/linux/blktrace_api.h
-> @@ -26,11 +26,20 @@ enum blktrace_cat {
->  	BLK_TC_DRV_DATA	= 1 << 14,	/* binary per-driver data */
->  	BLK_TC_FUA	= 1 << 15,	/* fua requests */
->  
-> -	BLK_TC_END	= 1 << 15,	/* we've run out of bits! */
-> +	BLK_TC_END_V1	= 1 << 15,	/* we've run out of bits! */
-> +
-> +	BLK_TC_ZONE_APPEND	= 1ull << 16,  	/* zone append */
-> +	BLK_TC_ZONE_RESET	= 1ull << 17,	/* zone reset */
-> +	BLK_TC_ZONE_RESET_ALL	= 1ull << 18,	/* zone reset all */
-> +	BLK_TC_ZONE_FINISH	= 1ull << 19,	/* zone finish */
-> +	BLK_TC_ZONE_OPEN	= 1ull << 20,	/* zone open */
-> +	BLK_TC_ZONE_CLOSE	= 1ull << 21,	/* zone close */
-> +
-> +	BLK_TC_END_V2		= 1ull << 21,
->  };
->  
->  #define BLK_TC_SHIFT		(16)
-> -#define BLK_TC_ACT(act)		((act) << BLK_TC_SHIFT)
-> +#define BLK_TC_ACT(act)		((u64)(act) << BLK_TC_SHIFT)
->  
->  /*
->   * Basic trace actions
-> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> index 8ffb218e9fb7..e8effb6cb393 100644
-> --- a/kernel/trace/blktrace.c
-> +++ b/kernel/trace/blktrace.c
-> @@ -163,8 +163,8 @@ static void relay_blktrace_event(struct blk_trace *bt, unsigned long sequence,
->  					     bytes, what, error, cgid, cgid_len,
->  					     pdu_data, pdu_len);
->  	return relay_blktrace_event1(bt, sequence, pid, cpu, sector, bytes,
-> -				     lower_32_bits(what), error, cgid, cgid_len,
-> -				     pdu_data, pdu_len);
-> +				     what, error, cgid, cgid_len, pdu_data,
-> +				     pdu_len);
->  }
->  
->  /*
-> @@ -342,10 +342,31 @@ static void __blk_add_trace(struct blk_trace *bt, sector_t sector, int bytes,
->  	case REQ_OP_FLUSH:
->  		what |= BLK_TC_ACT(BLK_TC_FLUSH);
->  		break;
-> +	case REQ_OP_ZONE_APPEND:
-> +		what |= BLK_TC_ACT(BLK_TC_ZONE_APPEND);
-> +		break;
-> +	case REQ_OP_ZONE_RESET:
-> +		what |= BLK_TC_ACT(BLK_TC_ZONE_RESET);
-> +		break;
-> +	case REQ_OP_ZONE_RESET_ALL:
-> +		what |= BLK_TC_ACT(BLK_TC_ZONE_RESET_ALL);
-> +		break;
-> +	case REQ_OP_ZONE_FINISH:
-> +		what |= BLK_TC_ACT(BLK_TC_ZONE_FINISH);
-> +		break;
-> +	case REQ_OP_ZONE_OPEN:
-> +		what |= BLK_TC_ACT(BLK_TC_ZONE_OPEN);
-> +		break;
-> +	case REQ_OP_ZONE_CLOSE:
-> +		what |= BLK_TC_ACT(BLK_TC_ZONE_CLOSE);
-> +		break;
->  	default:
->  		break;
->  	}
->  
-> +	WARN_ON_ONCE(bt->version == 1 &&
-> +		     (what >> BLK_TC_SHIFT) > BLK_TC_END_V1);
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Shouldn't this be a "if (WARN_ON_ONCE())" and return doing nothing if true ?
+***
 
-> +
->  	if (cgid)
->  		what |= __BLK_TA_CGROUP;
->  
-> @@ -386,8 +407,7 @@ static void __blk_add_trace(struct blk_trace *bt, sector_t sector, int bytes,
->  	sequence = per_cpu_ptr(bt->sequence, cpu);
->  	(*sequence)++;
->  	relay_blktrace_event(bt, *sequence, pid, cpu, sector, bytes,
-> -			     lower_32_bits(what), error, cgid, cgid_len,
-> -			     pdu_data, pdu_len);
-> +			     what, error, cgid, cgid_len, pdu_data, pdu_len);
->  	local_irq_restore(flags);
->  }
->  
+Subject: Re: [syzbot] [gfs2?] WARNING: ODEBUG bug in gfs2_fill_super
+Author: nirbhay.lkd@gmail.com
 
-
--- 
-Damien Le Moal
-Western Digital Research
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+master
 
