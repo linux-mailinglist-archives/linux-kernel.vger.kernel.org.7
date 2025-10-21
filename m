@@ -1,96 +1,135 @@
-Return-Path: <linux-kernel+bounces-863574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58884BF8330
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:09:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B94BF8339
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 02ED7346E77
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60D8019A7CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F7A34E779;
-	Tue, 21 Oct 2025 19:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB21C34E74E;
+	Tue, 21 Oct 2025 19:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9A8QkA/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2I3Kyuk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB8234D925;
-	Tue, 21 Oct 2025 19:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4729B34D925;
+	Tue, 21 Oct 2025 19:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761073771; cv=none; b=R6XeXo+B+nsbak4YR5xp/cKOWHNwFI3Ibfwc10OSpPGW2PF1r1H/8PLyG8kj8eK/1kYu/vG0gzqDW5zPDfNj0xuTXhGfK6qYLTH3Lq4eS+zeacgqeqtxNifDNWssW0/XRGelayK2yeb6aVJJLPFZP5Lj6ck+8l090UIj1sD7gzo=
+	t=1761073807; cv=none; b=suehChYkdB/QKNSUpZdOqykmHJKB+FIXRRWwC3ZXfsaI7W4ql15zjv6G2T5lf5+DdYdq3THy+g/j+FvhQ6HWAQTK0TVd4G8eKl240KmsZeoe6Fct2d1CKQc4VjJadbT5IsQkLsoiVF2V9ZljBO+/PvC8+SD+T/CFvwDCfAKvY+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761073771; c=relaxed/simple;
-	bh=1ZpcLoZSoXJDjtDxiz4gSdpEpIyYXDeKX6uMtMztT3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MT+mFTafvzg9n7gh3IKZWlxPabFrQVwv69U3vt46yuTfMZeF9PEL6VlaL6rHt9kBirOi7DslRNxjP7rNcWmFp8PePntkKfbfcrUx2TY80SXzkrGh+hnhkwSzxOXxAQVy7NGzMvvcGBfRbtB+9q7XtXMDbw0Ez3RIkrgS9GUxIIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9A8QkA/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6358AC4CEF1;
-	Tue, 21 Oct 2025 19:09:28 +0000 (UTC)
+	s=arc-20240116; t=1761073807; c=relaxed/simple;
+	bh=OlM+hp5liynWD7x8TgYwNOV4Zf2KLGwQL6h+7jLysUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eXatPtyRHel9UpdLRI/pgkTAYBg7aITLqxcqDlRMkXbpKmk7vmzAwgC+k6AWH5kMw2Dk8ToD92wxnkIvpKWkPbsetHbQeKL/2/WMkgt95O2upWRSFW4qoP6I4b+JpSUCNEKCOIinLvXoiNj59l7m//fLFdMaaHij23xZBGYOy2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2I3Kyuk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91784C4CEF1;
+	Tue, 21 Oct 2025 19:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761073771;
-	bh=1ZpcLoZSoXJDjtDxiz4gSdpEpIyYXDeKX6uMtMztT3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C9A8QkA/fi8WFDL5y8ml8FomW8Szdae1zj92V3zhedoVafs/nqeWyM/0kg87QxAvh
-	 la/IdHu9noB90BsVX37QLs78hySHUu4b/wnIEo5NSVTkJPQI6TRhGpNxPjcpMTIuOK
-	 8IP5aRKRg6ahrDtaKJpH5Bt8xrH7/sLhSFLqdkudKciv3Q8k92iTsK/ZB+HImcGNGF
-	 i/jFJEMmqOs6sfl+gwhMCs4S018gQpV0C8FeNs/uspKxkcexccabl3xGaqqUb4a5VW
-	 SXA8nsyEnonVj4eLt4Jk5cejK9R26uGQbA+iQcwaaYFDqwtezLJymHvzLWWtfmOmbc
-	 1wjVI8kEQX11A==
-Date: Tue, 21 Oct 2025 20:09:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org, vkoul@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, quic_varada@quicinc.com
-Subject: Re: [PATCH v3 1/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5424
- compatible
-Message-ID: <dd1e4289-5e36-4b24-9afd-f09569459a96@sirena.org.uk>
-References: <20251014110534.480518-1-quic_mdalam@quicinc.com>
- <20251014110534.480518-2-quic_mdalam@quicinc.com>
+	s=k20201202; t=1761073805;
+	bh=OlM+hp5liynWD7x8TgYwNOV4Zf2KLGwQL6h+7jLysUk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=u2I3Kyukg/Wif1wUoptuz5TgrwRmfk7omZ+7pSbwDV8VJh4ZKmmg6jbknZp3kDthA
+	 8x5+cMD+KsRJ1QpuNTaCLO7J9uNmQtf+osMB4Qpq+euqRl99kqmgTJFrcjUnXQTSU9
+	 I2BtKqHN8sMMxk5FW7/41y3nTiLTt9wlSMOgJKvbYP0PNhJhFUOdKYzH49cLv0xXiW
+	 lj3r4OmNqQlxvW4/AfxxtgPTpgOpaRevzbkIQZ8+RSk1mCXq4Ld0yX9x9pEaSsXhd+
+	 tSRZnzJeZOZNbczRtKmE8XDucUY2vIY02W3EzKxDQbZ2ehGrR5Yv2NMCeAEgwBZcmM
+	 SLKdchcqT9Klw==
+Date: Tue, 21 Oct 2025 14:10:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Bandi, Ravi Kumar" <ravib@amazon.com>
+Cc: "mani@kernel.org" <mani@kernel.org>,
+	"thippeswamy.havalige@amd.com" <thippeswamy.havalige@amd.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Stefan Roese <stefan.roese@mailbox.org>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+Message-ID: <20251021191004.GA1205652@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5HMXsR3PIyPFDxBq"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251014110534.480518-2-quic_mdalam@quicinc.com>
-X-Cookie: Absinthe makes the tart grow fonder.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AB5963BB-A896-4CFA-AF27-31164705DF5A@amazon.com>
 
+On Tue, Oct 21, 2025 at 05:46:17PM +0000, Bandi, Ravi Kumar wrote:
+> > On Oct 21, 2025, at 10:23 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi wrote:
+> >> The pcie-xilinx-dma-pl driver does not enable INTx interrupts
+> >> after initializing the port, preventing INTx interrupts from
+> >> PCIe endpoints from flowing through the Xilinx XDMA root port
+> >> bridge. This issue affects kernel 6.6.0 and later versions.
+> >> 
+> >> This patch allows INTx interrupts generated by PCIe endpoints
+> >> to flow through the root port. Tested the fix on a board with
+> >> two endpoints generating INTx interrupts. Interrupts are
+> >> properly detected and serviced. The /proc/interrupts output
+> >> shows:
+> >> 
+> >> [...]
+> >> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
+> >> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
+> >> [...]
+> >> 
+> >> Changes since v1::
+> >> - Fixed commit message per reviewer's comments
+> >> 
+> >> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
+> >> Cc: stable@vger.kernel.org
+> >> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
+> > 
+> > Hi Ravi, obviously you tested this, but I don't know how to reconcile
+> > this with Stefan's INTx fix at
+> > https://lore.kernel.org/r/20251021154322.973640-1-stefan.roese@mailbox.org
+> > 
+> > Does Stefan's fix need to be squashed into this patch?
+> 
+> Sure, we can squash Stefan’s fix into this.
 
---5HMXsR3PIyPFDxBq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I know we *can* squash them. 
 
-On Tue, Oct 14, 2025 at 04:35:26PM +0530, Md Sadre Alam wrote:
-> IPQ5424 contains the QPIC-SPI-NAND flash controller which is the same as
-> the one found in IPQ9574. So let's document the IPQ5424 compatible and
-> use IPQ9574 as the fallback.
+I want to know why things worked for you and Stefan when they
+*weren't* squashed:
 
-This doesn't apply against current code, please check and resend.
+  - Why did INTx work for you even without Stefan's patch.  Did you
+    get INTx interrupts but not the right ones, e.g., did the device
+    signal INTA but it was received as INTB?
 
---5HMXsR3PIyPFDxBq
-Content-Type: application/pgp-signature; name="signature.asc"
+  - Why did Stefan's patch work for him even without your patch.  How
+    could Stefan's INTx work without the CSR writes to enable
+    interrupts?
 
------BEGIN PGP SIGNATURE-----
+  - Why you mentioned "kernel 6.6.0 and later versions."  8d786149d78c
+    appeared in v6.7, so why would v6.6.0 would be affected?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj32mQACgkQJNaLcl1U
-h9C/uQf+PdpQR2TcWPjk1rtRwSf5/3CwqidMjRkxczfM3UFPW6a0lrsv4BqmhyAC
-SxDdB3eCjgn4UkFQ/NiOtKAykJuusvUr9Aa2gGFzzojWSAFNC7B7KpP+geiv5UUP
-zSJtiuvEVadVj6UjiEv48nWI+BxlFOQi331kCRQJKYXMIqWc/EurvOUI3EnZyOey
-LtWy/vwXKilPCy5/idM4MzAHk1nsyG8xpt3/Tepj2dOWUYQiJmzEsqEP+0bDn7Ta
-CJwxQrcPzPSvJI4oTox2aa3op7mJzkAzAiM8C9VTxSqFSy0ez1gcBkKgONr69r5I
-zJKvUPjAVYto+P0uVFzrNN1TbPAMxg==
-=EPX2
------END PGP SIGNATURE-----
-
---5HMXsR3PIyPFDxBq--
+> >> +++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
+> >> @@ -659,6 +659,12 @@ static int xilinx_pl_dma_pcie_setup_irq(struct pl_dma_pcie *port)
+> >>              return err;
+> >>      }
+> >> 
+> >> +     /* Enable interrupts */
+> >> +     pcie_write(port, XILINX_PCIE_DMA_IMR_ALL_MASK,
+> >> +                XILINX_PCIE_DMA_REG_IMR);
+> >> +     pcie_write(port, XILINX_PCIE_DMA_IDRN_MASK,
+> >> +                XILINX_PCIE_DMA_REG_IDRN_MASK);
+> >> +
+> >>      return 0;
+> >> }
 
