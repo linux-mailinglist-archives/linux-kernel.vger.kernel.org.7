@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-863033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6EDBF6D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:41:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEFEBF6D4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F80619A6DFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C563B32C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80219338925;
-	Tue, 21 Oct 2025 13:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202D8337BBB;
+	Tue, 21 Oct 2025 13:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b="p7lVcsSi"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b="g0KgIDaT"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9006033890D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DC93385A2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053966; cv=none; b=b4SDwD2TlxlD18PSdrJqXbzmL8fdq3c1412aZCYUGkEP/zm0vjFlUqwzOIlPkqFbn5DNDMP/KIkz6ZwkQGxl4HiZccKCipSJOg5KxSLxRo11CozQD3O7cbwfbsztlDSBkWo4+AV02764qSBks86pIwifXhC29ienAMhydWDc1nQ=
+	t=1761053969; cv=none; b=Ew7wq4SWEs3K+q/Wc/eiPv2FTflBOqCWTJe+RsxiXl7ub9zbpkioqkNTPqXAXz479J4tAmrXyFJcNe0uoDIZEkmbqJiS0R9qjxioCbxINqqbqcHZPDQuEeezjLPomNkQhyg6ywEGulHT/7nYKvKyv3hMMwGUFS8WwteEGSnVmXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053966; c=relaxed/simple;
-	bh=19MVhz7xqXDQUXy0vDIrrq66+Hihap1o026Xk6ljVbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SuGyJQ0/cCDMZbtJ9AQZN9BRIWCxwDHxsUQLo6MJuXT5Oj/7goWLBAcZOd3uo4+t/4M6t/cwbXiK8cTJc1Q70sE0sBtidCFHTLsY8cngaXk27FV8b5oAfYQxPTP1q8E1jCJxJQzFqRIFZIV16TlF89epJCZqv0ksGDIddlkYxak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vyos.io; spf=pass smtp.mailfrom=vyos.io; dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b=p7lVcsSi; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1761053969; c=relaxed/simple;
+	bh=cNGh5J0AR2A/GqGO4tHahYfT476/GJWxYY4uqwgT6Vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HGvaWpMVP34bPi01juDJXPf+5VST4EUYyNGsxQ2ltifjAueYVZCy3GGEMvBdG33WfWJFgyFHN5MYbn/v3y2DUrLc5Gp0wH9x4ruylLmUE6JGOhMbeoD3AJ8caBXbRVthBHUy+e1OqhF7gnn4BAsA3sDJyl5K2UjDBEfDPGnKrU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vyos.io; spf=pass smtp.mailfrom=vyos.io; dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b=g0KgIDaT; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vyos.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vyos.io
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62fc0b7bf62so8300220a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:39:23 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3d80891c6cso1282551366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:39:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vyos.io; s=google; t=1761053962; x=1761658762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tmrRtzmkKDb4W7Kk/4f96y/xqSYKoOu2EjB7ELjVNYU=;
-        b=p7lVcsSiqOo8ZGcGgEpJXxxYM0U6WoD/kCXV0DbM9q3IzVuIzCkdsL9hhxbjnZIGnv
-         E+doObNCDGGM0+btZ2qz8sWQcSPKhgjbnKTQYnzOkx5JC8OAoQk437n0AeeNfcl3OgXc
-         9HU8FKtK9FXCPN+TZ9g3dFd641tfodNu8wJj/92iDnNW5HB8fozrVmm/samichcMaPps
-         ULTuuuG65YUuq/5betwx0fbgo88ZZ9SM1Dq+rn+EJjKeKNs4XnatpdnM9bcFRtzPYhHh
-         4i8cbOUEvFqq0Pz/2fWwjkLkC9CBi2fS0TiU2wTuI0lwEbVA3pnXDNkD3oeROv1XctzV
-         Vk/w==
+        d=vyos.io; s=google; t=1761053964; x=1761658764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L7KCmcriZ6DcJoUuMS1DaMt8k8S5NC6HcwGo5EQqVbM=;
+        b=g0KgIDaTNstTo88xF3rnFuFvG+P2fDg40+8+zktay4K6fC2x0V1zav6wCg1yLTM3ql
+         TXT12acl2KLjXYxW2OZ/dlburrUhDfoPlxhFNX4pSsqWVjFmHgyqWFAf25EiCwOfZbPv
+         upyUsku2Tv9YfLI4rxMpU4H/krjzvgJr5xTMDkB8M5qTs5jBgjvst/ENBmIWrziYZJyP
+         xpjqTTtRE3SNQ9iYb2GaTWDv1UuCvPhOS7t0QDp0t+dzK+upSQ3pjzRviodFsFfXIKi1
+         ECIrlgKFfPnTjqlUogerLK9Yx0oMUBe5LSsmBBcQsybDfCrOiMht3CIWubuAH5udABdB
+         wORA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761053962; x=1761658762;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tmrRtzmkKDb4W7Kk/4f96y/xqSYKoOu2EjB7ELjVNYU=;
-        b=RrL6p9Vvy2uFt0GhzgdJukQUGUtheIW/Dkv4QLY3WaI6NPa7BZQMMMZ9STdvmirhgI
-         S1bA/62ln/2ExrnI/delgw3y96Nk0Ir9vo5bJo2sQkA6Emey7x5xbKpC8b6Lha+iT4+Y
-         DHW1UaLV5RlUFCKn89gS06rBspulYvyTE0nJ29SqpdxjQS7AxS5MiEd91qA0vEYM39KX
-         eetHWk1KQGHxaCuuXRp8zXvKFS/bKBKZ34qqH3oD3XBQmRKDrmTFaBAdQof2O0/VS8aD
-         aqL3+Z7XK6xb1qxqOeudbNSc9tcKCCHfplXUwy6bTUJ7FxpnCabKjkOD8vlrRX3FW/wy
-         VmjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxJRFCuUfmi/FKl6E5s+p09DvqaFDAcYYrIHsws/cvn5yvdS1AaNFFD1Pcjt3LGOehirrCy7uebQWeiww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbBVhsHCrzIvEmQNhIrvv8PSyBaCbNenAEDzk9vnW+IyK+bJzk
-	Ax0W2x43ZUgyGAcy6gjCHGaGc4H3Qet78FZGghvtXIASwrnZLvf1KDKpZAralkKbCfY=
-X-Gm-Gg: ASbGncsqaC7TLkeXYj/KXmbiE5FhkOBMUNmsFP/4ngOijiY04fYnTK5QupVD20823J9
-	nCx1r9KpVc/+cXpkMHapym00PNPQ3GQRn2MYIl5lIm92z74FG/kW0ho0cEWpWDkNaLqyI2Y3nd4
-	SXhVNWbv2Oa2VRiZRA+ySz6F0rmKu2Xv2qCoTKih0lsariJCdXaTlJ+4YLbd9f8x4VH7esm0oxH
-	9BXuD+zseyci3s8AexOMHrGrCXqr23Hvo/JCMzSsgld4EeU8qmSCFvxzXGRY6UyP2oSjqNdeAcw
-	xhLWwEidLRR2P3lawYQ4U3I41tysB2NJODvHdQ7zPw6yeMaKwssvy/w0iuHCSD+jWfKoM3eJefk
-	gHbKxg6uxrPtrLRUEfjsbaxOgd/+7Nsu3KBXavgrDxtoGTs+J5oxVfR5ZUgtQsKMJujzUta6aK2
-	+QpolTCbqJgbArQ76CsRfewDUSfS3cYktbmGxphg==
-X-Google-Smtp-Source: AGHT+IGSB9XJOXh9CvWulz/F7SPGw6MJGYDuyr1NX30lC8Dfib+Gwwn3nt6ZvsTA4i3bGksA16IR8g==
-X-Received: by 2002:a17:907:d1d:b0:b3a:ecc1:7774 with SMTP id a640c23a62f3a-b64742414a1mr2072221866b.53.1761053961791;
-        Tue, 21 Oct 2025 06:39:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761053964; x=1761658764;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L7KCmcriZ6DcJoUuMS1DaMt8k8S5NC6HcwGo5EQqVbM=;
+        b=jZoJLQnUEWJYOcvd2knELJkJmCmOkVlI2HVLRPbcy5oe+H01l0hffxs+DCFPAABh1n
+         qlLFAi4X/cFgdYZazmjCM25veMKAdExiuEleH+x3Etesz1OYXPyxJr7n9w8gBoer3LgU
+         zFXxgoZasV8sXoqP/haAX2MHPHhPy6l60QybOOYuDcMib0wRRwvUt0HrNAtkB8YnJHtX
+         mHwGav588CfcEWESKE7Axm5SNOAX8pYzXpc2Fk9NIZ91CVzekYJkA27/GOWs7s/ICGal
+         EJvdpVa05E6KfiHMzDNgzLn0cpldKp2lfKUDLvdDj7wKJg51HaTKn+HyWUdUvUQTcZ4Y
+         7gQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7EKp9VO5o4xL50JNGLSPU8QjDmhdtH6UqTtlR0ngj498wPXsG7ZjOhTGrLsnTfE8KskEgRxOGYxspwVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1JhXfWft5NzxJrXxTRe/RsuatbZvOqoma234E08C5mvyaBH6G
+	sJnXIlGLsTa8brNP4StjJgKKi+AI/MNVBugrFhJ4e+xOPQwVgNdjQXmvNm3Vvp0q/Qc=
+X-Gm-Gg: ASbGnctGY54FD3GWLkZDDrnsj2fNtAU5qDSfWWaZNQkKROVaPl9TJeF8MM1YK8HZ+nW
+	pWeGPnNE962ZpXD7wv9VO/DqlvKpn7JsgswCT7e4q+a5HhUgKh0f0zpd5Gv2SdIpijNO2Y4d4z1
+	AAP30Tv0Dcn93V3h+vfXE6uXvNWZJ54ftOvjeTLhTJGnVkMfJ7M4gWNaBVkzepVXBOv+nWUClic
+	M2ZTO3Y/JTHgYHLLFAK4LhZKd/RmD2zmAZRQZVGWhCwe/UmB52Fu1qearNrgP1nwy4fpaf/lS/B
+	kJNLT6XiilChuOiuy75XkPQvXODb37e5F2Kpj+tYtQ60cvudUyLt5AuPgXBO7RDiIkAdqKHno1F
+	6E7q7B9WgagrcZ44KDZ6y9dHnmqvBOIol7/BlOkx11bM7s1fnox1ZavcmLTYGrD+bu5GZBE3K21
+	RkrXGBCsP7QgJ8iuZUJfIDIBg805S/T0JLQTtwTw==
+X-Google-Smtp-Source: AGHT+IFxp301s7Af0Dmq9fBwxWd+PghLQFCXJTR5rYSaeMIfp0t1XquJV/jQsAIUhD3+84jJzvtYVg==
+X-Received: by 2002:a17:907:c389:b0:b3d:a295:5445 with SMTP id a640c23a62f3a-b605249e5ccmr2359488466b.13.1761053963973;
+        Tue, 21 Oct 2025 06:39:23 -0700 (PDT)
 Received: from VyOS.. (213-225-7-96.nat.highway.a1.net. [213.225.7.96])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83958fbsm1089803666b.27.2025.10.21.06.39.19
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83958fbsm1089803666b.27.2025.10.21.06.39.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 06:39:21 -0700 (PDT)
+        Tue, 21 Oct 2025 06:39:23 -0700 (PDT)
 From: Andrii Melnychenko <a.melnychenko@vyos.io>
 To: pablo@netfilter.org,
 	kadlec@netfilter.org,
@@ -85,10 +87,12 @@ Cc: davem@davemloft.net,
 	coreteam@netfilter.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/1] nf_conntrack_ftp: Added nfct_seqadj_ext_add().
-Date: Tue, 21 Oct 2025 15:39:17 +0200
-Message-ID: <20251021133918.500380-1-a.melnychenko@vyos.io>
+Subject: [PATCH v3 1/1] nft_ct: Added nfct_seqadj_ext_add() for NAT'ed conntrack.
+Date: Tue, 21 Oct 2025 15:39:18 +0200
+Message-ID: <20251021133918.500380-2-a.melnychenko@vyos.io>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251021133918.500380-1-a.melnychenko@vyos.io>
+References: <20251021133918.500380-1-a.melnychenko@vyos.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,14 +101,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-There is an issue with FTP SNAT/DNAT. When the PASV/EPSV message is altered
-The sequence adjustment is required, and there is an issue that seqadj is
-not set up at that moment.
-
-During the patch v2 discussion, it was decided to implement the fix
-in the nft_ct. Apparently, missed seqadj is the issue of nft nat helpers.
-The current fix would set up the seqadj extension for all NAT'ed conntrack
-helpers.
+There is an issue with the missed seqadj extension for NAT'ed
+conntrack setup with nft. Sequence adjustment may be required
+for FTP traffic with PASV/EPSV modes.
 
 The easiest way to reproduce this issue is with PASV mode.
 Topoloy:
@@ -112,7 +111,7 @@ Topoloy:
  +-------------------+     +----------------------------------+
  | FTP: 192.168.13.2 | <-> | NAT: 192.168.13.3, 192.168.100.1 |
  +-------------------+     +----------------------------------+
-                                     |
+                                      |
                          +-----------------------+
                          | Client: 192.168.100.2 |
                          +-----------------------+
@@ -120,25 +119,6 @@ Topoloy:
 
 nft ruleset:
 ```
-nft flush ruleset
-sudo nft add table inet ftp_nat
-sudo nft add ct helper inet ftp_nat ftp_helper { type \"ftp\" protocol tcp\=
-; }
-sudo nft add chain inet ftp_nat prerouting { type filter hook prerouting pr=
-iority 0 \; policy accept \; }
-sudo nft add rule inet ftp_nat prerouting tcp dport 21 ct state new ct help=
-er set "ftp_helper"
-nft add table ip nat
-nft add chain ip nat prerouting { type nat hook prerouting priority dstnat =
-\; policy accept \; }
-nft add chain ip nat postrouting { type nat hook postrouting priority srcna=
-t \; policy accept \; }
-nft add rule ip nat prerouting tcp dport 21 dnat ip prefix to ip daddr map =
-{ 192.168.100.1 : 192.168.13.2/32 }
-nft add rule ip nat postrouting tcp sport 21 snat ip prefix to ip saddr map=
- { 192.168.13.2 : 192.168.100.1/32 }
-
-# nft -s list ruleset
 table inet ftp_nat {
         ct helper ftp_helper {
                 type "ftp" protocol tcp
@@ -168,12 +148,11 @@ table ip nat {
 
 Connecting the client:
 ```
-# ftp 192.168.100.1
 Connected to 192.168.100.1.
 220 Welcome to my FTP server.
 Name (192.168.100.1:dev): user
 331 Username ok, send password.
-Password:=20
+Password:
 230 Login successful.
 Remote system type is UNIX.
 Using binary mode to transfer files.
@@ -187,83 +166,9 @@ ftp> ls
 
 Kernel logs:
 ```
-Oct 16 10:24:37 vyos kernel: nf_conntrack_ftp: ftp: Conntrackinfo =3D 2
-Oct 16 10:24:37 vyos kernel: nf_conntrack_ftp: ftp: dataoff(60) >=3D skblen=
-(60)
-Oct 16 10:24:37 vyos kernel: nf_conntrack_ftp: ftp: dataoff(52) >=3D skblen=
-(52)
-Oct 16 10:24:37 vyos kernel: nf_conntrack_ftp: nf_conntrack_ftp: wrong seq =
-pos (UNSET)(0) or (UNSET)(0)
-Oct 16 10:24:37 vyos kernel: nf_conntrack_ftp: ftp: dataoff(52) >=3D skblen=
-(52)
-Oct 16 10:24:38 vyos kernel: nf_conntrack_ftp: nf_conntrack_ftp: wrong seq =
-pos (UNSET)(0) or (UNSET)(0)
-Oct 16 10:24:38 vyos kernel: nf_conntrack_ftp: ftp: dataoff(52) >=3D skblen=
-(52)
-Oct 16 10:24:38 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 33
-Oct 16 10:24:38 vyos kernel: nf_conntrack_ftp: find_pattern `229 ': dlen =
-=3D 33
-Oct 16 10:24:38 vyos kernel: nf_conntrack_ftp: ftp: dataoff(52) >=3D skblen=
-(52)
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `PORT': dlen =
-=3D 8
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `EPRT': dlen =
-=3D 8
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 23
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `229 ': dlen =
-=3D 23
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: ftp: dataoff(52) >=3D skblen=
-(52)
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `PORT': dlen =
-=3D 6
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `EPRT': dlen =
-=3D 6
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 19
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `229 ': dlen =
-=3D 19
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `PORT': dlen =
-=3D 6
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `EPRT': dlen =
-=3D 6
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 25
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `229 ': dlen =
-=3D 25
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 133
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `229 ': dlen =
-=3D 133
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 15
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: find_pattern `229 ': dlen =
-=3D 15
-Oct 16 10:24:40 vyos kernel: nf_conntrack_ftp: ftp: dataoff(52) >=3D skblen=
-(52)
-Oct 16 10:24:44 vyos kernel: nf_conntrack_ftp: find_pattern `PORT': dlen =
-=3D 6
-Oct 16 10:24:44 vyos kernel: nf_conntrack_ftp: find_pattern `EPRT': dlen =
-=3D 6
-Oct 16 10:24:44 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 51
-Oct 16 10:24:44 vyos kernel: nf_conntrack_ftp: Pattern matches!
-Oct 16 10:24:44 vyos kernel: nf_conntrack_ftp: Skipped up to 0x0 delimiter!
-Oct 16 10:24:44 vyos kernel: nf_conntrack_ftp: Match succeeded!
-Oct 16 10:24:44 vyos kernel: nf_conntrack_ftp: conntrack_ftp: match `192,16=
-8,13,2,209,129' (20 bytes at 2149072380)=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-Oct 16 10:24:44 vyos kernel: ------------[ cut here ]------------
 Oct 16 10:24:44 vyos kernel: Missing nfct_seqadj_ext_add() setup call
 Oct 16 10:24:44 vyos kernel: WARNING: CPU: 1 PID: 0 at net/netfilter/nf_con=
-ntrack_seqadj.c:41 nf_ct_seqadj_set+0xbf/0xe0 [nf_conntrack]=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+ntrack_seqadj.c:41 nf_ct_seqadj_set+0xbf/0xe0 [nf_conntrack]
 Oct 16 10:24:44 vyos kernel: Modules linked in: nf_nat_ftp(E) nft_nat(E) nf=
 _conntrack_ftp(E) af_packet(E) nft_ct(E) nft_chain_nat(E) nf_nat(E) nf_tabl=
 es(E) nfnetlink_cthelper(E) nf_conntrack(E) nf_defrag_ipv6(E) nf_defrag_ipv=
@@ -277,35 +182,21 @@ E) virtio_rng(E) rng_core(E) ip_tables(E) x_tables(E) autofs4(E) usb_storag=
 e(E) ohci_hcd(E) uhci_hcd(E) ehci_hcd(E) sd_mod(E) squashfs(E) lz4_decompre=
 ss(E) loop(E) overlay(E) ext4(E) crc16(E) mbcache(E) jbd2(E) nls_cp437(E) v=
 fat(E) fat(E) efivarfs(E) nls_ascii(E) hid_generic(E) usbhid(E) hid(E) virt=
-io_net(E) net_failover(E) virtio_blk(E) failover(E) ahci(E) libahci(E)=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20
+io_net(E) net_failover(E) virtio_blk(E) failover(E) ahci(E) libahci(E)
 Oct 16 10:24:44 vyos kernel:  crc32c_intel(E) i2c_i801(E) i2c_smbus(E) liba=
 ta(E) lpc_ich(E) scsi_mod(E) scsi_common(E) xhci_pci(E) xhci_hcd(E) virtio_=
 pci(E) virtio_pci_legacy_dev(E) virtio_pci_modern_dev(E) virtio(E) virtio_r=
-ing(E)=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
+ing(E)
 Oct 16 10:24:44 vyos kernel: CPU: 1 PID: 0 Comm: swapper/1 Tainted: G      =
       E      6.6.108-vyos #1
 Oct 16 10:24:44 vyos kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2=
-009), BIOS Arch Linux 1.17.0-2-2 04/01/2014=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20
+009), BIOS Arch Linux 1.17.0-2-2 04/01/2014
 Oct 16 10:24:44 vyos kernel: RIP: 0010:nf_ct_seqadj_set+0xbf/0xe0 [nf_connt=
 rack]
 Oct 16 10:24:44 vyos kernel: Code: ea 44 89 20 89 50 08 eb db 45 85 ed 74 d=
 e 80 3d 51 6d 00 00 00 75 d5 48 c7 c7 68 57 ad c0 c6 05 41 6d 00 00 01 e8 7=
 1 28 dd dc <0f> 0b eb be be 02 00 00 00 e8 63 fc ff ff 48 89 c3 e9 66 ff ff=
- ff=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
+ ff
 Oct 16 10:24:44 vyos kernel: RSP: 0018:ffff9a66c00e8910 EFLAGS: 00010286
 Oct 16 10:24:44 vyos kernel: RAX: 0000000000000000 RBX: 0000000000000014 RC=
 X: 000000000000083f
@@ -318,11 +209,7 @@ Oct 16 10:24:44 vyos kernel: R10: 0000000000000003 R11: ffffffff9ecbab08 R1=
 Oct 16 10:24:44 vyos kernel: R13: 0000000000000001 R14: ffff893872e18862 R1=
 5: ffff893842f8c700
 Oct 16 10:24:44 vyos kernel: FS:  0000000000000000(0000) GS:ffff893bafc8000=
-0(0000) knlGS:0000000000000000=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20
+0(0000) knlGS:0000000000000000
 Oct 16 10:24:44 vyos kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050=
 033
 Oct 16 10:24:44 vyos kernel: CR2: 000055fbc64ec690 CR3: 000000011de22001 CR=
@@ -361,10 +248,7 @@ Oct 16 10:24:44 vyos kernel: RIP: 0010:pv_native_safe_halt+0xb/0x10
 Oct 16 10:24:44 vyos kernel: Code: 0b 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1=
 f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 90 0f 00 2d 29 9a 3=
 e 00 fb f4 <c3> cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90=
- 8b=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
+ 8b
 Oct 16 10:24:44 vyos kernel: RSP: 0018:ffff9a66c009bed8 EFLAGS: 00000252
 Oct 16 10:24:44 vyos kernel: RAX: ffff893bafcaaca8 RBX: 0000000000000001 RC=
 X: 0000000000000001
@@ -383,58 +267,37 @@ Oct 16 10:24:44 vyos kernel:  cpu_startup_entry+0x21/0x30
 Oct 16 10:24:44 vyos kernel:  start_secondary+0x11a/0x140
 Oct 16 10:24:44 vyos kernel:  secondary_startup_64_no_verify+0x178/0x17b
 Oct 16 10:24:44 vyos kernel:  </TASK>
-Oct 16 10:24:44 vyos kernel: ---[ end trace 0000000000000000 ]---
-Oct 16 10:24:45 vyos kernel: nf_conntrack_ftp: find_pattern `227 ': dlen =
-=3D 51
-Oct 16 10:24:45 vyos kernel: nf_conntrack_ftp: Pattern matches!
-Oct 16 10:24:45 vyos kernel: nf_conntrack_ftp: Skipped up to 0x0 delimiter!
-Oct 16 10:24:45 vyos kernel: nf_conntrack_ftp: Match succeeded!
-Oct 16 10:24:45 vyos kernel: nf_conntrack_ftp: conntrack_ftp: match `192,16=
-8,13,2,209,129' (20 bytes at 2149072380)=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-Oct 16 10:24:45 vyos kernel: nf_conntrack_ftp: ftp: dataoff(40) >=3D skblen=
-(40)
 ```
 
-According to callstack, despite installing nf_nat_follow_master() helper,
-the nfct_seqadj() call comes almost immediately after, before any
-potential setups on already confirmed conntrack.
-
-```
-net/netfilter/nf_conntrack_proto.c: nf_confirm()
-
-net/netfilter/nf_conntrack_ftp.c: help()
-        nf_ct_expect_init()
-        nf_nat_ftp()
-
-net/netfilter/nf_nat_ftp.c: nf_nat_ftp()
-        exp->expectfn =3D nf_nat_follow_master;
-        nf_nat_mangle_tcp_packet()
-
-net/netfilter/nf_nat_helper.c: __nf_nat_mangle_tcp_packet()
-    nf_ct_seqadj_set()
-
-net/netfilter/nf_conntrack_seqadj.c: nf_ct_seqadj_set()
-        if (unlikely(!seqadj)) {
-                WARN_ONCE(1, "Missing nfct_seqadj_ext_add() setup call\n");
-                return 0;
-        }
-```
-
-Changes since v2:
- * the "fix" moved from nf_conntrack_ftp to nft_ct
-Changes since v1:
- * fixed build, added missed header
-
-Andrii Melnychenko (1):
-  nft_ct: Added nfct_seqadj_ext_add() for NAT'ed conntrack.
-
+Fixes: 1a64edf54f55 ("netfilter: nft_ct: add helper set support")
+Signed-off-by: Andrii Melnychenko <a.melnychenko@vyos.io>
+---
  net/netfilter/nft_ct.c | 4 ++++
  1 file changed, 4 insertions(+)
 
+diff --git a/net/netfilter/nft_ct.c b/net/netfilter/nft_ct.c
+index d526e69a2..73d0590fb 100644
+--- a/net/netfilter/nft_ct.c
++++ b/net/netfilter/nft_ct.c
+@@ -22,6 +22,7 @@
+ #include <net/netfilter/nf_conntrack_timeout.h>
+ #include <net/netfilter/nf_conntrack_l4proto.h>
+ #include <net/netfilter/nf_conntrack_expect.h>
++#include <net/netfilter/nf_conntrack_seqadj.h>
+=20
+ struct nft_ct_helper_obj  {
+ 	struct nf_conntrack_helper *helper4;
+@@ -1173,6 +1174,9 @@ static void nft_ct_helper_obj_eval(struct nft_object =
+*obj,
+ 	if (help) {
+ 		rcu_assign_pointer(help->helper, to_assign);
+ 		set_bit(IPS_HELPER_BIT, &ct->status);
++
++		if ((ct->status & IPS_NAT_MASK) && !nfct_seqadj(ct))
++			nfct_seqadj_ext_add(ct);
+ 	}
+ }
+=20
 --=20
 2.43.0
 
