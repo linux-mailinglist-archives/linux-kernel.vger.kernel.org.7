@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-862193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA66BF4A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:36:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DA1BF4A80
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 51E603515A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869B5467130
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9E025743E;
-	Tue, 21 Oct 2025 05:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O5ys5hDF"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E3F2571D8;
+	Tue, 21 Oct 2025 05:39:51 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9AB23AB9C;
-	Tue, 21 Oct 2025 05:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2180246BAA;
+	Tue, 21 Oct 2025 05:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761025010; cv=none; b=Rg70yt1LK63iSvOY746y8caHWP1svPSSNltUKOlQPHHpri2PcLM1h1YZXwN0THHmGwMw94Nx1gBOrq50gxdfVSNhhDSnoyctVKLmaeDCOArMPoObtiuC4ltpsXOr76Om4zJs1rtCSck/1Pri5DyYOlIoaXyk6+QQRwNzJrygOoI=
+	t=1761025191; cv=none; b=Bzp3WxQhLzURrBeyPSB3ODdAu7tqbbQjoc0wHJseXbV6X1tgzJszBheyQQl+GfjEhfoQhvxa6Vp3J6qtttzfEjgxe0NFPcCGGgLVJXlydqxUHcWPgFGtitNLbFuPrLwYmwXsxrlZeOyjCwH5/DAuD7nqGRhLFzFEUvKsAp3zWIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761025010; c=relaxed/simple;
-	bh=T09YKLc/aWWjmxxkF2jQHHlcSWx+HpI6aR2Lq2mNO58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGQfK6jalBZxjzTZKxa3yX8z7PVrqKO6Y/NWc77+o7nza3nt3DqyInDeuLcMH3xcOC5FWHTFkpetVKGywSPGnYMi7AV9FWN5LXG2HScroSxfIVecr3ey8uoW5Tuh8CagoFKymUeaWHiKGMp/7uaSpqyTlXjJfo0TkxWBgV7tGP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O5ys5hDF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YlFYbdykABayPvN+IU9EDT7b7dDniXXWQfbMhJjQoRY=; b=O5ys5hDF/JUqv4GTDZ9CfnNB97
-	bkSwcNvT9u+cK36isCaQ/FW3WPY2Uy7KpnNsxMtEoO3wLNSe4ClSQeBdbAOj6J9P4HdkTeeO8MWe5
-	l1VdwCZko+QrkD0/VPNnd2ywkMPz6gJImVpJsMoRo5DWBmiju5M0TzkvIeffT2bnDpBe1riVxxgHH
-	5kOY8ZlN2+Kixvf8nhquo//E8n+Lkt7JCuVegYYdCZvSIqQOfuZKKnlZ2EE+8stbGcBSrh4rBXGOV
-	1d5cFqNeoy3/CASLSqSX6sAdfXfF82xArzYDOY57XDQ+QJHy7LpT5pDBT2w2IdkuxtwZ8CI58IIsh
-	ypncjiDg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vB53A-0000000FsC2-1kdS;
-	Tue, 21 Oct 2025 05:36:48 +0000
-Date: Mon, 20 Oct 2025 22:36:48 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yuhao Jiang <danisjiang@gmail.com>
-Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] scsi: wd33c93: fix buffer overflow in SCSI message-in
- handling
-Message-ID: <aPcb8MMIJ2ve64yD@infradead.org>
-References: <20251021020804.3248930-1-danisjiang@gmail.com>
+	s=arc-20240116; t=1761025191; c=relaxed/simple;
+	bh=BSruS+e+1mMM0hqPQrzFkBHtZC+eDjaFGPxLazb4w+w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rU5ke+mwQbeu5BWD/9b6wLPkHMvF+WaKYKJFJkPkiddKeOF5YIFgPyGna2WQZHQQperzaVzVeTU/XQAuEXVU4cvXMQtvgjD6KlGQrK3EEVAmWFRL/KGCw3vaglmgLTIwLl3c0FUg0wamuVA8rDyRH9j9GVdbHjp7FOsvnmrVivs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.105] (unknown [114.241.85.109])
+	by APP-05 (Coremail) with SMTP id zQCowAD3lhB9HPdoosmmEg--.36897S2;
+	Tue, 21 Oct 2025 13:39:10 +0800 (CST)
+Message-ID: <52693a5b-e564-41f1-b430-b87784e0559b@iscas.ac.cn>
+Date: Tue, 21 Oct 2025 13:39:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021020804.3248930-1-danisjiang@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] riscv: dts: spacemit: add Ethernet and PDMA to
+ OrangePi RV2
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+To: michael.opdenacker@rootcommit.com
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Yixun Lan <dlan@gentoo.org>
+References: <20251017100106.3180482-1-michael.opdenacker@rootcommit.com>
+ <20251017100106.3180482-2-michael.opdenacker@rootcommit.com>
+ <002e0b15-57b6-4433-a9fe-8b7ce4b8dcd9@iscas.ac.cn>
+Content-Language: en-US
+In-Reply-To: <002e0b15-57b6-4433-a9fe-8b7ce4b8dcd9@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAD3lhB9HPdoosmmEg--.36897S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFy8CFyrGF1DtF17Xw4xZwb_yoW8Ar47pF
+	W3XrnxJr9FkrW2vrnIvw4kuF1fuan5tF43Gw1Fva48AFs8tr9agr18tr45JFy3XrZ8XF4Y
+	9FW0gas7uFyqyrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvlb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+	C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x07betCcUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-This exploit really needs a catchy name.  Just think of how much
-valuable data you could extract by selling malicious fake 8-bit
-SCSI disks to retro computing enthusiasts and then exploiting their
-SCSI HBA driver.
+On 10/20/25 17:07, Vivian Wang wrote:
 
-On Mon, Oct 20, 2025 at 09:08:04PM -0500, Yuhao Jiang wrote:
-> A buffer overflow vulnerability exists in the wd33c93 SCSI driver's
-> message handling where missing bounds checking allows a malicious
-> SCSI device to overflow the incoming_msg[] buffer and corrupt kernel
-> memory.
-> 
-> The issue occurs because:
-> - incoming_msg[] is a fixed 8-byte buffer (line 235 in wd33c93.h)
-> - wd33c93_intr() writes to incoming_msg[incoming_ptr] without
->   validating incoming_ptr is within bounds (line 935)
-> - For EXTENDED_MESSAGE, incoming_ptr increments based on the device-
->   supplied length field (line 1085) with no maximum check
-> - The validation at line 1001 only checks if the message is complete,
->   not if it exceeds buffer size
-> 
-> This allows an attacker controlling a SCSI device to craft an extended
-> message with length field 0xFF, causing the driver to write 256 bytes
-> into an 8-byte buffer. This can corrupt adjacent fields in the
-> WD33C93_hostdata structure including function pointers, potentially
-> leading to arbitrary code execution.
-> 
-> Add bounds checking in the MESSAGE_IN handler to ensure incoming_ptr
-> does not exceed buffer capacity before writing. Reject oversized
-> messages per SCSI protocol by sending MESSAGE_REJECT.
-> 
-> Reported-by: Yuhao Jiang <danisjiang@gmail.com>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
-> ---
->  drivers/scsi/wd33c93.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/scsi/wd33c93.c b/drivers/scsi/wd33c93.c
-> index dd1fef9226f2..2d50a0a01726 100644
-> --- a/drivers/scsi/wd33c93.c
-> +++ b/drivers/scsi/wd33c93.c
-> @@ -932,6 +932,19 @@ wd33c93_intr(struct Scsi_Host *instance)
->  		sr = read_wd33c93(regs, WD_SCSI_STATUS);	/* clear interrupt */
->  		udelay(7);
->  
-> +		/* Prevent buffer overflow from malicious extended messages */
-> +		if (hostdata->incoming_ptr >= sizeof(hostdata->incoming_msg)) {
-> +			printk("wd33c93: Incoming message too long, rejecting\n");
-> +			hostdata->incoming_ptr = 0;
-> +			write_wd33c93_cmd(regs, WD_CMD_ASSERT_ATN);
-> +			hostdata->outgoing_msg[0] = MESSAGE_REJECT;
-> +			hostdata->outgoing_len = 1;
-> +			write_wd33c93_cmd(regs, WD_CMD_NEGATE_ACK);
-> +			hostdata->state = S_CONNECTED;
-> +			spin_unlock_irqrestore(&hostdata->lock, flags);
-> +			break;
-> +		}
-> +
->  		hostdata->incoming_msg[hostdata->incoming_ptr] = msg;
->  		if (hostdata->incoming_msg[0] == EXTENDED_MESSAGE)
->  			msg = EXTENDED_MESSAGE;
-> -- 
-> 2.34.1
-> 
-> 
----end quoted text---
+> [...]
+>> +	phy-handle = <&rgmii0>;
+>> +	phy-mode = "rgmii-id";
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&gmac0_cfg>;
+>> +	rx-internal-delay-ps = <0>;
+>> +	tx-internal-delay-ps = <0>;
+> The hardware design of OPI-RV2 is not the same as BPI-F3, so the
+> parameters here deserves some scruitiny. Same for eth1 below.
+(Apparently my spelling deserves scrutiny as well. Oh well.)
+> I would appreciate at least iperf TCP tests in both directions on both
+> ethernet ports. The expected speed should be at least 940 Mbit/sec - if
+> it's much lower than that something is wrong.
+
+Okay so this is not *necessarily* a problem, but just for context...
+
+If you look at the DTS files provided by SpacemiT [1] you'd think the
+OPI-RV2 also uses RTL8211F Ethernet PHYs. It does not. The schematics
+(linked on the board main page [2]) says it uses Motorcomm YT8531C.
+
+This doesn't mean that your DTS is wrong (because we don't write the id
+here when the PHY-sent one is correct), but I hope you understand that
+what I'm worried is that the electrical characteristics have been
+changed since they have changed the board design. This is why I think
+actually taking the time to check the delay parameters would be a good idea.
+
+And yes, it would not be surprising if the parameters for BPI-F3 also
+works completely reliably for OPI-RV2. The delay tuning has quite a bit
+of margin for wiggle room. 
+
+Thanks,
+Vivian "dramforever" Wang
+
+[1]: https://github.com/spacemit-com/linux-k1x/blob/k1/arch/riscv/boot/dts/spacemit/k1-x_orangepi-rv2.dts
+[2]: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-RV2.html
+
 
