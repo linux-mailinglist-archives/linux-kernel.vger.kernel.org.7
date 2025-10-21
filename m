@@ -1,88 +1,47 @@
-Return-Path: <linux-kernel+bounces-863580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF662BF8382
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:17:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3026CBF8397
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A8D19A7C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E863AEEEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CFB34217C;
-	Tue, 21 Oct 2025 19:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E69351FA1;
+	Tue, 21 Oct 2025 19:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fOetQZWr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSDc+/uq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA8D345CA2
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE23C1F936;
+	Tue, 21 Oct 2025 19:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761074217; cv=none; b=BUdh2bc5CqslhugW/ngMt81fjm5BkDIZ9KMBYG4l/hXUICTBn5dMPdWKR8n2jH6SXXWUQ2ECjp+tcdmh4iirQIXZCtB2fjhvzedXQZ6MLa+V8EMK0vDTTO3KCT0m6al37b8pKcH9ta422eqsJrnXnn4kDaqU4tBJErXwbIvNJVs=
+	t=1761074361; cv=none; b=kxZVC0/byM9Qbn5YU6Y3x9BECX9Xd1g3x9q00FWmv1BFV2sRqV5dZ28FFmtASBfO4ci2dyJ2dkc9ull8F7oFBv1mHbxPSaRnqbqPcrc05lIDANl7IyLf/KcqGHAXnXoriXcwAUC4YTr7JcmKOCDl/lgumKuhyCok1ijMgLGmPs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761074217; c=relaxed/simple;
-	bh=WfFPtDMJOslnO8xd96RYBPFjxdDxPv7APLMtkSd5nII=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rwGWQM270p6MMNDBbhWZoIV83O2HGEb5aMUBCASEO0zTHLRxqrcTVNuxitHZWP4AJJM6PltjHdpxazLDOScp0hlSMLiMJ4KiCL8LiqbmhFaOKFR4aQ1FWT3K51pT2CrHK3dnx/N7nLmdeHnFPocjd82jPhlMCHXRqtiX0HYmApk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fOetQZWr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761074214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Av2zs3MEbcbLC7aMwacLFVSODjPRb5hpuHHxAZIybWo=;
-	b=fOetQZWrqdnwAKsRVWEzaHukC2X7Bg/HFcDNqttp55v5Nod+YeSym7auuEzPAxurPr5zfm
-	tLypG/W8i4LBN7kDJmis1AXqnzl/9RV6kPEqickeRGw/KhD+Tbyy9AfwshrBNtbjqI5OZO
-	L2BQxvG50RH7kTdd5+1M9xC850aEmb0=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-572-uuswi4eUMmOaFxubrTlR8g-1; Tue, 21 Oct 2025 15:16:51 -0400
-X-MC-Unique: uuswi4eUMmOaFxubrTlR8g-1
-X-Mimecast-MFC-AGG-ID: uuswi4eUMmOaFxubrTlR8g_1761074211
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c1cc5a75dso312149796d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:16:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761074211; x=1761679011;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Av2zs3MEbcbLC7aMwacLFVSODjPRb5hpuHHxAZIybWo=;
-        b=MSAIsbWULhItyv45BSokN9wvkmP+Fh1lAoIXPk+qvcsFCfhwj911ZLF153xNNySLXE
-         js8xQzLBAbXrbLAh1S/ZlcnRPBENq7/Y0svPU8RG1u5v0VnTkr7NqVmj0deifrzgBuRc
-         yjdTrNFLTIdrKJvNesMjREC6S4pFzJzZ5pWXYcERu7tJdGFXhGNNc5PyjdgGLp6PkQ2+
-         V0XfsickzYdtQDgnAaubjF6WotHdMR6Qhm1YlgKd5M+SgaV0Aa4YaAabBqcer0Zut3xn
-         /sr9UzJMYJWzSsXG6rNaao2vsOa26FWNl1o062WG0KOgp7A2BBCgDSTjfT9JxRdAttVB
-         NN8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUdO4JOHlgFXkr3MJ4jRB+nVigPekUgpn40AVH95amuKwYeamI9ZU3/ZVRPAkjUEnHClzohKthP6v3/cz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk+rXe7Gj6gVYweEAZQYBHvuhaslfSgXGcU0dth5epRglz13Md
-	p6e9bw2CyDJbBXGojxtqXXpjPm/Rg480XNzi9h75uSBelntVqaa+PCwxL3YVTpW7H/ukgb050F9
-	AmZB+6+imm+iy/KuiGqpZntq7yy0MEC7o0ymf32QIKqXKr+JsKD/CELljL//IAEJ/Lg==
-X-Gm-Gg: ASbGncvW7AZ47cOXUaLoCDwjsS0Xh4EDB5XQQuq92alACK3f3rR9tywDCrvUD3V5Jdq
-	GUivPj5lew7LHs8g4fmyqZbCdcOh39WEOHomMCLyr3Id7fEfjsF/mcieJAsRb+enmYXHhRL77Hr
-	IJhk8N8KUJWybKn7jwR+CluqNH8l774rXfGiqdPAeSWGmNtTfPUioakEnol72IxZr0YJKM/TCzi
-	kRoKXZhRn8oMtww2GPJGpzg8jNmALQwz9QI9lFuLiIaYjCHVxBZb9wSX6enl2H8aI8WAreiBCW7
-	A6pVsBVwza629R/6S/Mv4l3twH7git3uO7Cr1sfcH/r4meqEH3xogQ03ZkBo3gzZwHFSY+NWVt+
-	S9gcLBV2yh+KXcnOOzMPpbRpGhclO+pGqJ0PS342NtJc+Xg==
-X-Received: by 2002:a05:6214:4012:b0:87d:8fa7:d29e with SMTP id 6a1803df08f44-87d8fa7d3a7mr172807856d6.35.1761074211076;
-        Tue, 21 Oct 2025 12:16:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEMN3DCL5z77zrF4an/kPQngsHh4Dl7HI0jLtCtPSfq0EP/4XoCKRGCEKlYnjWxZgcz1y0y9w==
-X-Received: by 2002:a05:6214:4012:b0:87d:8fa7:d29e with SMTP id 6a1803df08f44-87d8fa7d3a7mr172807136d6.35.1761074210482;
-        Tue, 21 Oct 2025 12:16:50 -0700 (PDT)
-Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf521c2c7sm74369666d6.19.2025.10.21.12.16.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 12:16:49 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <364e084a-ef37-42ab-a2ae-5f103f1eb212@redhat.com>
-Date: Tue, 21 Oct 2025 15:16:45 -0400
+	s=arc-20240116; t=1761074361; c=relaxed/simple;
+	bh=pWyFoPwNpfIEUwiiETXv/ApplcO4w46GMcOHiVnAie8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PAdh0yUFkTPxcmJy91OJDcdmUAk8ms5qY5QXOFcpaepQmlJIVAkY00PsHPA8YgwZyGS9RWaVqs3vqe/tasObe0iHIFoLx85dda1MhlAgcuSag7dz3z8bb4airmsPBSvVXW2t371pA3V9tAdK8d8vdFfMkA73Z8U/cUgwXBwmYRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSDc+/uq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50F4C4CEF1;
+	Tue, 21 Oct 2025 19:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761074361;
+	bh=pWyFoPwNpfIEUwiiETXv/ApplcO4w46GMcOHiVnAie8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tSDc+/uq6EqEWPHzBCDcO9XR/CDsTS0e2IOthPHZI77ZgMq3jsIsyJRGs0Mcpz5vE
+	 gpbakkD+zz7vb/tcl4eF/a98gtUzBmDeGkInfm86gwbJFFbDnb3226+y07LIRUafX7
+	 Pdvjfdme04aQ1a24/x5POXnvUdwInbKILv/6E3TwOXr1Y6khWS2xvULoqjqsYfE+1I
+	 MlNWBpN/+H200wxgTu/nhXu7xuz6zyABWectLx7K8UjaPMtJUbh+XdfcPgkL6FAw76
+	 QnyIPELQFj9pa5wS+XWB4naU8BBGdaynTww39FipfjekPR3QF9scAfzJ0JljCsr3Jl
+	 J+z4hdEUYon8w==
+Message-ID: <ff37b635-b3dc-4180-8eae-e798ef6ce55a@kernel.org>
+Date: Tue, 21 Oct 2025 21:19:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,158 +49,269 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/33] sched/isolation: Flush memcg workqueues on cpuset
- isolated partition change
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
- <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
- Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, linux-mm@kvack.org, linux-pci@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20251013203146.10162-1-frederic@kernel.org>
- <20251013203146.10162-15-frederic@kernel.org>
+Subject: Re: [PATCH 3/6] dt-bindings: display/msm/gmu: Document A612 RGMU
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
+ <20251017-qcs615-spin-2-v1-3-0baa44f80905@oss.qualcomm.com>
+ <8f3f4874-2e82-473e-87bd-e3bd58089b90@kernel.org>
+ <181af756-09a1-4694-98c4-53cea556e172@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20251013203146.10162-15-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <181af756-09a1-4694-98c4-53cea556e172@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
-> The HK_TYPE_DOMAIN housekeeping cpumask is now modifyable at runtime. In
-> order to synchronize against memcg workqueue to make sure that no
-> asynchronous draining is still pending or executing on a newly made
-> isolated CPU, the housekeeping susbsystem must flush the memcg
-> workqueues.
->
-> However the memcg workqueues can't be flushed easily since they are
-> queued to the main per-CPU workqueue pool.
->
-> Solve this with creating a memcg specific pool and provide and use the
-> appropriate flushing API.
->
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->   include/linux/memcontrol.h |  4 ++++
->   kernel/sched/isolation.c   |  2 ++
->   kernel/sched/sched.h       |  1 +
->   mm/memcontrol.c            | 12 +++++++++++-
->   4 files changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 873e510d6f8d..001200df63cf 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1074,6 +1074,8 @@ static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
->   	return id;
->   }
->   
-> +void mem_cgroup_flush_workqueue(void);
-> +
->   extern int mem_cgroup_init(void);
->   #else /* CONFIG_MEMCG */
->   
-> @@ -1481,6 +1483,8 @@ static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
->   	return 0;
->   }
->   
-> +static inline void mem_cgroup_flush_workqueue(void) { }
-> +
->   static inline int mem_cgroup_init(void) { return 0; }
->   #endif /* CONFIG_MEMCG */
->   
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index 95d69c2102f6..9ec365dea921 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -144,6 +144,8 @@ int housekeeping_update(struct cpumask *mask, enum hk_type type)
->   
->   	synchronize_rcu();
->   
-> +	mem_cgroup_flush_workqueue();
-> +
->   	kfree(old);
->   
->   	return 0;
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 8fac8aa451c6..8bfc0b4b133f 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -44,6 +44,7 @@
->   #include <linux/lockdep_api.h>
->   #include <linux/lockdep.h>
->   #include <linux/memblock.h>
-> +#include <linux/memcontrol.h>
->   #include <linux/minmax.h>
->   #include <linux/mm.h>
->   #include <linux/module.h>
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 1033e52ab6cf..1aa14e543f35 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -95,6 +95,8 @@ static bool cgroup_memory_nokmem __ro_after_init;
->   /* BPF memory accounting disabled? */
->   static bool cgroup_memory_nobpf __ro_after_init;
->   
-> +static struct workqueue_struct *memcg_wq __ro_after_init;
-> +
->   static struct kmem_cache *memcg_cachep;
->   static struct kmem_cache *memcg_pn_cachep;
->   
-> @@ -1975,7 +1977,7 @@ static void schedule_drain_work(int cpu, struct work_struct *work)
->   {
->   	guard(rcu)();
->   	if (!cpu_is_isolated(cpu))
-> -		schedule_work_on(cpu, work);
-> +		queue_work_on(cpu, memcg_wq, work);
->   }
->   
->   /*
-> @@ -5092,6 +5094,11 @@ void mem_cgroup_sk_uncharge(const struct sock *sk, unsigned int nr_pages)
->   	refill_stock(memcg, nr_pages);
->   }
->   
-> +void mem_cgroup_flush_workqueue(void)
-> +{
-> +	flush_workqueue(memcg_wq);
-> +}
-> +
->   static int __init cgroup_memory(char *s)
->   {
->   	char *token;
-> @@ -5134,6 +5141,9 @@ int __init mem_cgroup_init(void)
->   	cpuhp_setup_state_nocalls(CPUHP_MM_MEMCQ_DEAD, "mm/memctrl:dead", NULL,
->   				  memcg_hotplug_cpu_dead);
->   
-> +	memcg_wq = alloc_workqueue("memcg", 0, 0);
+On 21/10/2025 17:51, Akhil P Oommen wrote:
+> On 10/19/2025 2:43 PM, Krzysztof Kozlowski wrote:
+>> On 17/10/2025 19:08, Akhil P Oommen wrote:
+>>> RGMU a.k.a Reduced Graphics Management Unit is a small state machine
+>>> with the sole purpose of providing IFPC (Inter Frame Power Collapse)
+>>> support. Compared to GMU, it doesn't manage GPU clock, voltage
+>>> scaling, bw voting or any other functionalities. All it does is detect
+>>> an idle GPU and toggle the GDSC switch. As it doesn't access DDR space,
+>>> it doesn't require iommu.
+>>>
+>>> So far, only Adreno 612 GPU has an RGMU core. Document RGMU in the GMU's
+>>> schema.
+>>>
+>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>> ---
+>>>  .../devicetree/bindings/display/msm/gmu.yaml       | 98 +++++++++++++++++-----
+>>>  1 file changed, 79 insertions(+), 19 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+>>> index afc1879357440c137cadeb2d9a74ae8459570a25..a262d41755f09f21f607bf7a1fd567f386595f39 100644
+>>> --- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
+>>> +++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+>>> @@ -26,6 +26,9 @@ properties:
+>>>        - items:
+>>>            - pattern: '^qcom,adreno-gmu-x[1-9][0-9][0-9]\.[0-9]$'
+>>>            - const: qcom,adreno-gmu
+>>> +      - items:
+>>> +          - const: qcom,adreno-rgmu-612.0
+>>> +          - const: qcom,adreno-rgmu
+>>>        - const: qcom,adreno-gmu-wrapper
+>>>  
+>>>    reg:
+>>> @@ -45,24 +48,30 @@ properties:
+>>>      maxItems: 7
+>>>  
+>>>    interrupts:
+>>> -    items:
+>>> -      - description: GMU HFI interrupt
+>>> -      - description: GMU interrupt
+>>
+>>
+>> Both stay, just explain what is the first interrupt. You should not drop
+>> descriptions here. Look at every other binding - of course except that
+>> terrible Adreno GPU which is anti-example.
+> 
+> Do you mean we should use a OneOf and list both combo? Or elaborate the
+> description of the first interrupt to include OOB too? Something like:
+> 
+> - description: HFI interrupt on GMU and OOB interrupt on RGMU.
 
-Should we explicitly mark the memcg_wq as WQ_PERCPU even though I think 
-percpu is the default. The schedule_work_on() schedules work on the 
-system_percpu_wq.
+Yes, like that.
 
-Cheers,
-Longman
+> 
+> Sorry, I am a bit confused.
+> 
+>>
+>>> +    minItems: 2
+>>> +    maxItems: 2
+>>>  
+>>>    interrupt-names:
+>>> -    items:
+>>> -      - const: hfi
+>>> -      - const: gmu
+>>> +    oneOf:
+>>> +      - items:
+>>> +          - const: hfi
+>>> +            description: GMU HFI interrupt
+>>
+>> No, descriptions never go to xxx-names, but to xxx.
+>>
+>>> +          - const: gmu
+>>> +            description: GMU interrupt
+>>> +      - items:
+>>> +          - const: oob
+>>> +            description: GMU OOB interrupt
+>>> +          - const: gmu
+>>> +            description: GMU interrupt
+>>> +
+>>>  
+>>>    power-domains:
+>>> -    items:
+>>> -      - description: CX power domain
+>>> -      - description: GX power domain
+>>> +    minItems: 2
+>>> +    maxItems: 3
+>>
+>> No.
+> I will keep the 'description'. Here, RGMU has 3 power domains instead of
+> 2. I suppose we should add the description for the 3rd power domain here
+> and keep 'minItems: 2' property to override the default 3?
 
-> +	WARN_ON(!memcg_wq);
-> +
->   	for_each_possible_cpu(cpu) {
->   		INIT_WORK(&per_cpu_ptr(&memcg_stock, cpu)->work,
->   			  drain_local_memcg_stock);
+Yes.
 
+> 
+>>
+>>>  
+>>>    power-domain-names:
+>>> -    items:
+>>> -      - const: cx
+>>> -      - const: gx
+>>> +    minItems: 2
+>>> +    maxItems: 3
+>>
+>>
+>> No. Why?
+> Same as above.
+> 
+>>
+>>>  
+>>>    iommus:
+>>>      maxItems: 1
+>>> @@ -86,6 +95,44 @@ required:
+>>>  additionalProperties: false
+>>>  
+>>>  allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            const: qcom,adreno-rgmu-612.0
+>>> +    then:
+>>> +      properties:
+>>> +        reg:
+>>> +          items:
+>>> +            - description: Core RGMU registers
+>>> +        reg-names:
+>>> +          items:
+>>> +            - const: gmu
+>>> +        clocks:
+>>> +          items:
+>>> +            - description: GMU clock
+>>> +            - description: GPU CX clock
+>>> +            - description: GPU AXI clock
+>>> +            - description: GPU MEMNOC clock
+>>> +            - description: GPU SMMU vote clock
+>>> +        clock-names:
+>>> +          items:
+>>> +            - const: gmu
+>>> +            - const: cxo
+>>> +            - const: axi
+>>> +            - const: memnoc
+>>> +            - const: smmu_vote
+>>> +        power-domains:
+>>> +          items:
+>>> +            - description: CX power domain
+>>> +            - description: GX power domain
+>>> +            - description: VDD_CX power domain
+>>> +        power-domain-names:
+>>> +          items:
+>>> +            - const: cx
+>>> +            - const: gx
+>>> +            - const: vdd_cx
+>>
+>> This does not make even sense. Why did you remove the the common list
+>> from  power-domain-names?
+>>
+>>> +
+>>>    - if:
+>>>        properties:
+>>>          compatible:
+>>> @@ -313,13 +360,26 @@ allOf:
+>>>            items:
+>>>              - const: gmu
+>>>      else:
+>>> -      required:
+>>> -        - clocks
+>>> -        - clock-names
+>>> -        - interrupts
+>>> -        - interrupt-names
+>>> -        - iommus
+>>> -        - operating-points-v2
+>>> +      if:
+>>> +        properties:
+>>> +          compatible:
+>>> +            contains:
+>>> +              const: qcom,adreno-rgmu
+>>> +      then:
+>>> +        required:
+>>> +          - clocks
+>>> +          - clock-names
+>>> +          - interrupts
+>>> +          - interrupt-names
+>>> +          - operating-points-v2
+>>> +      else:
+>>
+>> No. Don't nest multiple ifs.
+> 
+> I guess we should split this. I will add a 'required' constraint to the
+> rgmu constraints above. And apply the below 'required' constraint
+> specifically to 'qcom,adreno-gmu' instead of the 'else' fallback case.
+> 
+> Please let me know if you have any suggestion.
+
+Maybe the binding is getting to complicated and RGMU should have its own.
+
+
+Best regards,
+Krzysztof
 
