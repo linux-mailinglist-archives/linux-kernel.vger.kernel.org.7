@@ -1,157 +1,83 @@
-Return-Path: <linux-kernel+bounces-863683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB0ABF8D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:53:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99154BF8D3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F97463483
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:53:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F2A94FB230
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBB9284883;
-	Tue, 21 Oct 2025 20:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB643280025;
+	Tue, 21 Oct 2025 20:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="bl3SOocf";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="K5h34oCB"
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.12])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NaqmZhs9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01864414;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13BB245014;
 	Tue, 21 Oct 2025 20:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761080018; cv=pass; b=W1GY6OqYZBukv+EtJqHUFmGaLKhV+t92ix4s9Cf60bmx3wxuei7v/cBRLXS+pTTtqPllwma6yN9BEJuXOKqL5K9qUfDJ9k8YcSFPckRikNPJEnXov82jc9dReuD6Q7V1nNvCHGqvAEu7ZVt0npJtrfcuV+fiw0fHq7ZPrtUoI50=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761080018; c=relaxed/simple;
-	bh=4PU5mV895pNdIV2Sn7TJY2lTLez4n2dKmgx6ITLpx+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NNER7lO/dtjpL4E1h1hzRYqYAqqo0Lgb4RSU8Q72Pze575ep8ACpp98zeGed6PhPY8zET10cavpjaOOG1pGh0RfII5nhePoRNcYcvXuZHvpmU50Bbzf45zCjIpFiOB1P1Tg8GVYx+lneqhsI6HJoMMEpFHNt2bKdk7NSaOwuSKY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=bl3SOocf; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=K5h34oCB; arc=pass smtp.client-ip=185.56.87.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-txv0.prod.antispam.mailspamprotection.com; s=arckey; t=1761080013;
-	 b=BJN0+a+w4rc0x8pe0LM/+J2gJ57LKDujQfG/8WGgUtT0QmwMEh9YgrB4UOAEn4nzYtnpMNoB2O
-	  pJA+MBs8bDLYDvYzc3U/LsqWBna0fhWgYxXf9FtfaaGnc2kf9vGqap2n8sLURSX6mBuDXa1r9+
-	  jW4Is95U2EZluVNPdcLpwfJA7S19dTQTM446JUT7G/Wf9ElQEGiq3BAuNyFynN7ROyk/qOmtao
-	  nQ4gH1KEPYjwSlMSc23z33o7IJg0yaItMu+IK+TNCTZM6MvQaUYDoP/ElqqDXS7FfoZRyNHocT
-	  2f4u2PXkJBgHyRlN4JYu+5U2H6SO6EIQHgZ+6WFXG2BONQ==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-txv0.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-txv0.prod.antispam.mailspamprotection.com; s=arckey; t=1761080013;
-	bh=4PU5mV895pNdIV2Sn7TJY2lTLez4n2dKmgx6ITLpx+g=;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	  Cc:To:From:DKIM-Signature:DKIM-Signature;
-	b=DCXVrHfAbYFHND6qaRJWIKhuWtc6q+2b2a9HPDOCjoHAUyNIy6Bs8pD5ybSYZ0yV7gb6Q+EoxX
-	  XXMOUKkMvu+rMKFjf+ynnY8Ov0FI2+VzkRh/atVKGhjCTcTQlS0wy5as8WD0jkSG4vxazIJvk0
-	  MGJAUoM4rLoT+9K1uX4a4/vGhm4LtX2VA5OHjnKc3p7FKDG5nQi4csjv2qrjP6A56sCll8NlMj
-	  bGu5pGSFGaY86ENcWWtCLjLUzVx7Gm6Z1DQhzRgb67vLRoCAZgIHQQqN29hzBK6Bq3xz2Rp/x8
-	  YGY6i0R1O2Vrz5suUwVGeKPXBx2xDHfX7Yj2hQVhbKolug==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Reply-To:List-Unsubscribe;
-	bh=mdvj68vJAADYdOaJIVC1HFGHYHSapuI24Ot8joNe8mU=; b=bl3SOocf4ZEj3hJvUQjwe5a9lu
-	5OhJPj9S4W++A0nbtO/PdfREAytbmgBIPw0abhTdlFTCwi01Ak05WfgJn1FkQ0ys+qiPH2Nu3zsn5
-	hC/voSrK0fJhQ1LjZhHW4VcBua4wRsusvq0A1Gx7GOiok/9xYe5fjyU7IPvr8NYtjkFA=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-txv0.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vBJMG-00000001OOp-0QuD;
-	Tue, 21 Oct 2025 20:53:31 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=mdvj68vJAADYdOaJIVC1HFGHYHSapuI24Ot8joNe8mU=; b=K5h34oCB5B3ChRxrAccEeGlGgi
-	jpXypSdHvbCnoPY1iIItCUo+uqQggb+biHq4ei5mezF8kog73p93ALyDqpTufshqmAmqmOwuRV/Hi
-	VAwhmfjvDHqZqggVypMiOs3GHgaLzW5x5pRjIAIXKC8ZqssYoKS2P3hvFGM14YhjZ44w=;
-Received: from [95.239.58.48] (port=65022 helo=fedora.fritz.box)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vBJM0-000000006uc-3Qsx;
-	Tue, 21 Oct 2025 20:53:12 +0000
-From: Francesco Valla <francesco@valla.it>
-To: Calvin Owens <calvin@wbinvd.org>, Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- [BUG] Erratic behavior in btnxpuart on v6.18-rc2 - and a possible solution
-Date: Tue, 21 Oct 2025 22:53:12 +0200
-Message-ID: <6837167.ZASKD2KPVS@fedora.fritz.box>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761080014; cv=none; b=P5y+KhgtESUe+msMgoCnaYch9ZniIz2geNxrOtbLONMceT+FMCZe69hwpqzbKvbe7gLwI7QBRlNDXCExVvLvrPHsjYFAkIPSjoUFCEXBKePzRBeWFPUjsAV4LP7qmaGodts9YWXVAmEdw1UEaBVcAK3NT5KhbAE2dcwqc7u2Sw0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761080014; c=relaxed/simple;
+	bh=fI+yNyL288oWuuAQXpDX1oeqM1MuN31aastcVe2xSe0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CO3UUU3B1MTPGihkGBbDdL+q4NV1I96kduhEQoe8oz9wK+lk6UOzkRv1kwg5pyp+bQjrfuNSLGD34dyZx05m2DvHaUx4Cb0/MqoUnv0OGN70zmx+q9oxL+fprRuiEjXNfmx+xByRVgi7dj59Y9J6tcfUKonszwcW/6UqiEn3kGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NaqmZhs9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1330C4CEF1;
+	Tue, 21 Oct 2025 20:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761080013;
+	bh=fI+yNyL288oWuuAQXpDX1oeqM1MuN31aastcVe2xSe0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NaqmZhs9s1YlmtvVI28BxFJ2yKuSAVgnxi9HuDWs+o9qn+J9FaCTxHYWqazwysrO2
+	 swjyZvmX4vEjQbufrh+1Z1Lsn7JNmpzMP3YTVAbD5B9PNppdLLLdPfNyOrFYjGnPOa
+	 u7bH6DvBPMHNDngTkwER1bydv9MHMeXRrNPdE9ZY=
+Date: Tue, 21 Oct 2025 13:53:31 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Mike Rapoport <rppt@kernel.org>, brauner@kernel.org, corbet@lwn.net,
+ graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org,
+ ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, jasonmiu@google.com, dmatlack@google.com,
+ skhawaja@google.com
+Subject: Re: [PATCH v3 0/3] KHO: kfence + KHO memory corruption fix
+Message-Id: <20251021135331.8e0185a173a5fa40add60802@linux-foundation.org>
+In-Reply-To: <CA+CK2bAHH1tzMEGxAwbmrLnLTzJANMntRu=cp0J8-n101ER7Pw@mail.gmail.com>
+References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
+	<aPchmxfh4ACM0vY2@kernel.org>
+	<CA+CK2bAHH1tzMEGxAwbmrLnLTzJANMntRu=cp0J8-n101ER7Pw@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: e1c565c38749307d116ccccf7363c19c
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1vBJMG-00000001OOp-0QuD-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-txv0.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Tue, 21 Oct 2025 12:04:47 -0400 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
 
-while testing Bluetooth on my NXP i.MX93 FRDM, which is equipped with an IW612
-Bluetooth chipset from NXP, I encountered an erratic bug during initialization.
+> > With liveupdate: dropped from the subjects
+> 
+> I noticed "liveupdate: " subject prefix left over only after sending
+> these patches. Andrew, would you like me to resend them, or could you
+> remove the prefix from these patches?
 
-While the firmware download always completed without errors, subsequent HCI
-communication would fail most of the time with:
+No problem.
 
-    Frame reassembly failed (-84)
+What should we do about -stable kernels?
 
-After some debug, I found the culprit to be this patch that was integrated as
-part of the current (v6.18) cycle:
+It doesn't seem worthwhile to backport a 3-patch series for a pretty
+obscure bug.  Perhaps we could merge a patch which disables this
+combination in Kconfig, as a 6.18-rcX hotfix with a cc:stable.
 
-    93f06f8f0daf Bluetooth: remove duplicate h4_recv_buf() in header [1]
-
-The reason is simple: the h4_recv_buf() function from hci_h4.c, which is now
-used instead the "duplicated" one in the (now removed) h4_recv_buf.h, assumes
-that the private drvdata for the input struct hci_dev is a pointer to a
-struct hci_uart, but that's not the case for the btnxpuart driver. In this
-case, the information about padding and alignment are pretty random and
-depend on the content of the data that was incorrectly casted as a
-struct hci_uart.
-
-The bug should impact also the other platforms that were touched by the
-same patch. 
-
-For the time being, I'd then propose to revert the commit.
-
-Thank you
-
-Regards,
-Francesco Valla
-
-[1] https://lore.kernel.org/linux-bluetooth/be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org/
-
-
-
- 
-
-
-
+Then for 6.19-rc1 we add this series and a fourth patch which undoes
+that Kconfig change?
 
