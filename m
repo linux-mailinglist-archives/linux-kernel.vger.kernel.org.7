@@ -1,306 +1,96 @@
-Return-Path: <linux-kernel+bounces-863573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CB2BF8321
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:08:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58884BF8330
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6845437B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:08:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 02ED7346E77
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D5B34F24B;
-	Tue, 21 Oct 2025 19:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F7A34E779;
+	Tue, 21 Oct 2025 19:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bt+50a3T"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9A8QkA/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BB9221DB9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB8234D925;
+	Tue, 21 Oct 2025 19:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761073685; cv=none; b=WzPYrXrdXFcuiv1Isylqy8xYKec7ljBhqdFfEvul7j3OM6UysHo6qGxIeFtkBfgU6HCReC2V7l9C0/w4tsEKSHpjllEYMV24EP5vslcm9n3gifA6kt014pMmYREYwl3hSW17UQhHDKLN4ErnYo666X8ImIxOwkVgWiV6ONk/48I=
+	t=1761073771; cv=none; b=R6XeXo+B+nsbak4YR5xp/cKOWHNwFI3Ibfwc10OSpPGW2PF1r1H/8PLyG8kj8eK/1kYu/vG0gzqDW5zPDfNj0xuTXhGfK6qYLTH3Lq4eS+zeacgqeqtxNifDNWssW0/XRGelayK2yeb6aVJJLPFZP5Lj6ck+8l090UIj1sD7gzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761073685; c=relaxed/simple;
-	bh=g2dJ/u8Sne5OzCu7UQjFntaGV3803V5eDu2XYCBZC/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KMHjX2iasIBBWIK4g1P816A/LROyEuxImeNybyByJDx6zepyKoS05pwgPOZhMqNTGD5zQRFkTDMf5zK+rgc9rUkO/uyqzel5W2g7sNQG9cC5a7cfhViLOVcHs+9QMbPMFOBR5/ZlFYoi7/OKXeKfb7fdp6ZQNmHSFRkTorhRITc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bt+50a3T; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5b658b006e2so3003401137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761073683; x=1761678483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ih1Ch3iw7RIxA9JcjZCICBR9PPRDjzjVXI5AMkESEI0=;
-        b=bt+50a3TPtx4/YxNVNnKpmLgvQtk36R1FFsXGmf0LdJO4v+Lk+YcGjmq2SVpqjtOws
-         Qj7pNCdIvKMwGZgH6+MBCdFg4uXrAIDTq7R6eCSuuXlpqqNvZyhH+WN1hZORIaY9eqv2
-         eB1IPk2+lj+YZsugVQVGOPKcTCbB3NhMxN8xSEwMShuM8juucx+3SKHXWZO2enb/xmyp
-         /M343fCGohSo3yTB0J87YNLT7d22A5rmuBgL3vNAFQkQZBlclFWbPUnUS9H4szdoXAjn
-         k2EPkxco/AawaHCF+0RTA/w2oiK+d1AOOIhEVhGzVQ72HSGCQTW3hZcLR9ZzjWeQyubP
-         /QYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761073683; x=1761678483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ih1Ch3iw7RIxA9JcjZCICBR9PPRDjzjVXI5AMkESEI0=;
-        b=PnXQ7504wBeXQFAUmVu7fcW1iVPLz02YYVOKZVeiDBU0hurtQn8bjiNZVACiMoU6X9
-         9Odf+VIzCVhbiTjnTe45dwkPlQQDkGViHQbrTCFhkJDyGWA1NVxSeQSt0BfJcbTwhVEA
-         b/wVGERGNEKWmh4uXdaeYkFO1aH919RO4kbHLAQyfjlF63pildygnDZP1vkPp6NTtfMa
-         HJlCjN4vckWwsEV+rBVSi3CligTSqVDxiG/tfYQG9j0AIB9e87dF3aWcUqu6WBVsPd/M
-         TN3NvXnZHdBa7Dwg18O/Lqbgn/wdTR2fLqP8dTZCdM2gehnxR6f27HlPYLuZg/K52Iku
-         fyIw==
-X-Forwarded-Encrypted: i=1; AJvYcCViWoQ3wSmUl8offCDuFF6wCwN+1McVblktOCFlDeMwssowl7a5Lsd6oupOezpEBC/UkS1+kCY83tfKALo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuecKCNHcn9yC7ubJdqQ57VRJNPkOn0VqfUQW4B2saVwcJxD3H
-	fN0Gb6S6CeHqRv2AuEva9HO13ntp+NoBe+JHPGjIABuFhtk6SrO/ft6M4nOJVl2rM94SISWMnrJ
-	/wul4VHhXlP9xabJp7rMFKtvDhJFVby8=
-X-Gm-Gg: ASbGncvoE3HhMkY/Mo+xyxVMgNuDTrSG+jnfO9olwGPQ4Ee7vZFsMuTY/fQFm8P02Mx
-	ka9vxF6uw9aDYQ8dC/NyKVwr3OfNhJVpSEywcb1WOJ2hoPRPQWXe66rbNjRqeSzuaWJLKc8TlSQ
-	EyCUxSxkDjGELPHo9/ZObOxi3ZE86qMB2wQDPZs41PiB5zcFu+YfUEqqUbg72ctlzlLwRjO7oL/
-	PraJOWtVHNudT4+ELH8xmiXSJjnTMEyDy6zyy3rmYDxhmcdE/oT0q7NrqgkZGxGMBx8+IsGgQ==
-X-Google-Smtp-Source: AGHT+IFlj4r2CIdxYmWU/Zi9ZOv/Fra2dbdRQSIRCL+DLRP4lrjPe1dkhMd8vBIZJF7+BrBOdoskf6mJVBs9ZM2ndC0=
-X-Received: by 2002:a05:6102:512b:b0:5d7:bc22:f9af with SMTP id
- ada2fe7eead31-5d7dd6a5227mr4503063137.25.1761073682915; Tue, 21 Oct 2025
- 12:08:02 -0700 (PDT)
+	s=arc-20240116; t=1761073771; c=relaxed/simple;
+	bh=1ZpcLoZSoXJDjtDxiz4gSdpEpIyYXDeKX6uMtMztT3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MT+mFTafvzg9n7gh3IKZWlxPabFrQVwv69U3vt46yuTfMZeF9PEL6VlaL6rHt9kBirOi7DslRNxjP7rNcWmFp8PePntkKfbfcrUx2TY80SXzkrGh+hnhkwSzxOXxAQVy7NGzMvvcGBfRbtB+9q7XtXMDbw0Ez3RIkrgS9GUxIIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9A8QkA/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6358AC4CEF1;
+	Tue, 21 Oct 2025 19:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761073771;
+	bh=1ZpcLoZSoXJDjtDxiz4gSdpEpIyYXDeKX6uMtMztT3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C9A8QkA/fi8WFDL5y8ml8FomW8Szdae1zj92V3zhedoVafs/nqeWyM/0kg87QxAvh
+	 la/IdHu9noB90BsVX37QLs78hySHUu4b/wnIEo5NSVTkJPQI6TRhGpNxPjcpMTIuOK
+	 8IP5aRKRg6ahrDtaKJpH5Bt8xrH7/sLhSFLqdkudKciv3Q8k92iTsK/ZB+HImcGNGF
+	 i/jFJEMmqOs6sfl+gwhMCs4S018gQpV0C8FeNs/uspKxkcexccabl3xGaqqUb4a5VW
+	 SXA8nsyEnonVj4eLt4Jk5cejK9R26uGQbA+iQcwaaYFDqwtezLJymHvzLWWtfmOmbc
+	 1wjVI8kEQX11A==
+Date: Tue, 21 Oct 2025 20:09:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org, vkoul@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, quic_varada@quicinc.com
+Subject: Re: [PATCH v3 1/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5424
+ compatible
+Message-ID: <dd1e4289-5e36-4b24-9afd-f09569459a96@sirena.org.uk>
+References: <20251014110534.480518-1-quic_mdalam@quicinc.com>
+ <20251014110534.480518-2-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016033452.125479-1-ziy@nvidia.com> <20251016033452.125479-3-ziy@nvidia.com>
- <CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com>
- <5EE26793-2CD4-4776-B13C-AA5984D53C04@nvidia.com> <CAHbLzkp8ob1_pxczeQnwinSL=DS=kByyL+yuTRFuQ0O=Eio0oA@mail.gmail.com>
- <A4D35134-A031-4B15-B7A0-1592B3AE6D78@nvidia.com> <b353587b-ef50-41ab-8dd2-93330098053e@redhat.com>
- <893332F4-7FE8-4027-8FCC-0972C208E928@nvidia.com> <595b41b0-428a-4184-9abc-6875309d8cbd@redhat.com>
- <6ACA0358-4C83-430A-892C-F0A6CC1DC8EA@nvidia.com>
-In-Reply-To: <6ACA0358-4C83-430A-892C-F0A6CC1DC8EA@nvidia.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Tue, 21 Oct 2025 12:07:49 -0700
-X-Gm-Features: AS18NWBQm40401R-3eSStXerP5YpXnZxigPk8j1z8V14Yb_RrXNCxRz1tuxoYTs
-Message-ID: <CAHbLzkqDt0FfNaG7-rxqz4y=3Wu8yiL38FQiH6hVEsAfRBRvuw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio handling.
-To: Zi Yan <ziy@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, linmiaohe@huawei.com, jane.chu@oracle.com, 
-	kernel@pankajraghav.com, 
-	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org, mcgrof@kernel.org, 
-	nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5HMXsR3PIyPFDxBq"
+Content-Disposition: inline
+In-Reply-To: <20251014110534.480518-2-quic_mdalam@quicinc.com>
+X-Cookie: Absinthe makes the tart grow fonder.
 
-On Tue, Oct 21, 2025 at 11:58=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 21 Oct 2025, at 14:28, David Hildenbrand wrote:
->
-> > On 21.10.25 17:55, Zi Yan wrote:
-> >> On 21 Oct 2025, at 11:44, David Hildenbrand wrote:
-> >>
-> >>> On 21.10.25 03:23, Zi Yan wrote:
-> >>>> On 20 Oct 2025, at 19:41, Yang Shi wrote:
-> >>>>
-> >>>>> On Mon, Oct 20, 2025 at 12:46=E2=80=AFPM Zi Yan <ziy@nvidia.com> wr=
-ote:
-> >>>>>>
-> >>>>>> On 17 Oct 2025, at 15:11, Yang Shi wrote:
-> >>>>>>
-> >>>>>>> On Wed, Oct 15, 2025 at 8:38=E2=80=AFPM Zi Yan <ziy@nvidia.com> w=
-rote:
-> >>>>>>>>
-> >>>>>>>> Large block size (LBS) folios cannot be split to order-0 folios =
-but
-> >>>>>>>> min_order_for_folio(). Current split fails directly, but that is=
- not
-> >>>>>>>> optimal. Split the folio to min_order_for_folio(), so that, afte=
-r split,
-> >>>>>>>> only the folio containing the poisoned page becomes unusable ins=
-tead.
-> >>>>>>>>
-> >>>>>>>> For soft offline, do not split the large folio if it cannot be s=
-plit to
-> >>>>>>>> order-0. Since the folio is still accessible from userspace and =
-premature
-> >>>>>>>> split might lead to potential performance loss.
-> >>>>>>>>
-> >>>>>>>> Suggested-by: Jane Chu <jane.chu@oracle.com>
-> >>>>>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> >>>>>>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> >>>>>>>> ---
-> >>>>>>>>    mm/memory-failure.c | 25 +++++++++++++++++++++----
-> >>>>>>>>    1 file changed, 21 insertions(+), 4 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> >>>>>>>> index f698df156bf8..443df9581c24 100644
-> >>>>>>>> --- a/mm/memory-failure.c
-> >>>>>>>> +++ b/mm/memory-failure.c
-> >>>>>>>> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned =
-long pfn, struct page *p,
-> >>>>>>>>     * there is still more to do, hence the page refcount we took=
- earlier
-> >>>>>>>>     * is still needed.
-> >>>>>>>>     */
-> >>>>>>>> -static int try_to_split_thp_page(struct page *page, bool releas=
-e)
-> >>>>>>>> +static int try_to_split_thp_page(struct page *page, unsigned in=
-t new_order,
-> >>>>>>>> +               bool release)
-> >>>>>>>>    {
-> >>>>>>>>           int ret;
-> >>>>>>>>
-> >>>>>>>>           lock_page(page);
-> >>>>>>>> -       ret =3D split_huge_page(page);
-> >>>>>>>> +       ret =3D split_huge_page_to_list_to_order(page, NULL, new=
-_order);
-> >>>>>>>>           unlock_page(page);
-> >>>>>>>>
-> >>>>>>>>           if (ret && release)
-> >>>>>>>> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int =
-flags)
-> >>>>>>>>           folio_unlock(folio);
-> >>>>>>>>
-> >>>>>>>>           if (folio_test_large(folio)) {
-> >>>>>>>> +               int new_order =3D min_order_for_split(folio);
-> >>>>>>>>                   /*
-> >>>>>>>>                    * The flag must be set after the refcount is =
-bumped
-> >>>>>>>>                    * otherwise it may race with THP split.
-> >>>>>>>> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int=
- flags)
-> >>>>>>>>                    * page is a valid handlable page.
-> >>>>>>>>                    */
-> >>>>>>>>                   folio_set_has_hwpoisoned(folio);
-> >>>>>>>> -               if (try_to_split_thp_page(p, false) < 0) {
-> >>>>>>>> +               /*
-> >>>>>>>> +                * If the folio cannot be split to order-0, kill=
- the process,
-> >>>>>>>> +                * but split the folio anyway to minimize the am=
-ount of unusable
-> >>>>>>>> +                * pages.
-> >>>>>>>> +                */
-> >>>>>>>> +               if (try_to_split_thp_page(p, new_order, false) |=
-| new_order) {
-> >>>>>>>
-> >>>>>>> folio split will clear PG_has_hwpoisoned flag. It is ok for split=
-ting
-> >>>>>>> to order-0 folios because the PG_hwpoisoned flag is set on the
-> >>>>>>> poisoned page. But if you split the folio to some smaller order l=
-arge
-> >>>>>>> folios, it seems you need to keep PG_has_hwpoisoned flag on the
-> >>>>>>> poisoned folio.
-> >>>>>>
-> >>>>>> OK, this means all pages in a folio with folio_test_has_hwpoisoned=
-() should be
-> >>>>>> checked to be able to set after-split folio's flag properly. Curre=
-nt folio
-> >>>>>> split code does not do that. I am thinking about whether that caus=
-es any
-> >>>>>> issue. Probably not, because:
-> >>>>>>
-> >>>>>> 1. before Patch 1 is applied, large after-split folios are already=
- causing
-> >>>>>> a warning in memory_failure(). That kinda masks this issue.
-> >>>>>> 2. after Patch 1 is applied, no large after-split folios will appe=
-ar,
-> >>>>>> since the split will fail.
-> >>>>>
-> >>>>> I'm a little bit confused. Didn't this patch split large folio to
-> >>>>> new-order-large-folio (new order is min order)? So this patch had
-> >>>>> code:
-> >>>>> if (try_to_split_thp_page(p, new_order, false) || new_order) {
-> >>>>
-> >>>> Yes, but this is Patch 2 in this series. Patch 1 is
-> >>>> "mm/huge_memory: do not change split_huge_page*() target order silen=
-tly."
-> >>>> and sent separately as a hotfix[1].
-> >>>
-> >>> I'm confused now as well. I'd like to review, will there be a v3 that=
- only contains patch #2+#3?
-> >>
-> >> Yes. The new V3 will have 3 patches:
-> >> 1. a new patch addresses Yang=E2=80=99s concern on setting has_hwpoiso=
-ned on after-split
-> >> large folios.
-> >> 2. patch#2,
-> >> 3. patch#3.
-> >
-> > Okay, I'll wait with the review until you resend :)
-> >
-> >>
-> >> The plan is to send them out once patch 1 is upstreamed. Let me know i=
-f you think
-> >> it is OK to send them out earlier as Andrew already picked up patch 1.
-> >
-> > It's in mm/mm-new + mm/mm-unstable, AFAIKT. So sure, send it against on=
-e of the tress (I prefer mm-unstable but usually we should target mm-new).
->
-> Sure.
-> >
-> >>
-> >> I also would like to get some feedback on my approach to setting has_h=
-wpoisoned:
-> >>
-> >> folio's has_hwpoisoned flag needs to be preserved
-> >> like what Yang described above. My current plan is to move
-> >> folio_clear_has_hwpoisoned(folio) into __split_folio_to_order() and
-> >> scan every page in the folio if the folio's has_hwpoisoned is set.
-> >
-> > Oh, that's nasty indeed ... will have to think about that a bit.
-> >
-> > Maybe we can keep it simple and always set folio_set_has_hwpoisoned() o=
-n all split folios? Essentially turning it into a "maybe_has" semantics.
-> >
-> > IIUC, the existing folio_stest_has_hwpoisoned users can deal with that?
->
-> folio_test_has_hwpoisoned() direct users are fine. They are shmem.c
-> and memory.c, where the former would copy data in PAGE_SIZE instead of fo=
-lio size
-> and the latter would not install PMD entry for the folio (impossible to h=
-it
-> this until we have > PMD mTHPs and split them to PMD THPs).
->
-> The caller of folio_contain_hwpoisoned_page(), which calls
-> folio_test_has_hwpoisoned(), would have issues:
->
-> 1. shmem_write_begin() in shmem.c: it returns -EIO for shmem writes.
-> 2. thp_underused() in huge_memory.c: it does not scan the folio.
-> 3. shrink_folio_list() in vmscan.c: it does not reclaim large hwpoisoned =
-folios.
-> 4. do_migrate_range() in memory_hotplug.c: it skips the large hwpoisoned =
-folios.
->
-> These behaviors are fine for folios truly containing hwpoisoned pages,
-> but might not be desirable for false positive cases. A scan to make sure
-> hwpoisoned pages are indeed present is inevitable. Rather than making
-> all callers to do the scan, scanning at split time might be better, IMHO.
 
-Yeah, I was trying to figure out a simpler way too. For example, we
-can defer to set this flag to page fault time when page fault sees the
-poisoned page when installing PTEs. But it can't cover most of the
-cases mentioned by Zi Yan above. We may run into them before any page
-fault happens.
+--5HMXsR3PIyPFDxBq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Yang
+On Tue, Oct 14, 2025 at 04:35:26PM +0530, Md Sadre Alam wrote:
+> IPQ5424 contains the QPIC-SPI-NAND flash controller which is the same as
+> the one found in IPQ9574. So let's document the IPQ5424 compatible and
+> use IPQ9574 as the fallback.
 
->
-> Let me send a patchset with scanning at split time. Hopefully, more peopl=
-e
-> can chime in to provide feedbacks.
->
->
-> --
-> Best Regards,
-> Yan, Zi
+This doesn't apply against current code, please check and resend.
+
+--5HMXsR3PIyPFDxBq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj32mQACgkQJNaLcl1U
+h9C/uQf+PdpQR2TcWPjk1rtRwSf5/3CwqidMjRkxczfM3UFPW6a0lrsv4BqmhyAC
+SxDdB3eCjgn4UkFQ/NiOtKAykJuusvUr9Aa2gGFzzojWSAFNC7B7KpP+geiv5UUP
+zSJtiuvEVadVj6UjiEv48nWI+BxlFOQi331kCRQJKYXMIqWc/EurvOUI3EnZyOey
+LtWy/vwXKilPCy5/idM4MzAHk1nsyG8xpt3/Tepj2dOWUYQiJmzEsqEP+0bDn7Ta
+CJwxQrcPzPSvJI4oTox2aa3op7mJzkAzAiM8C9VTxSqFSy0ez1gcBkKgONr69r5I
+zJKvUPjAVYto+P0uVFzrNN1TbPAMxg==
+=EPX2
+-----END PGP SIGNATURE-----
+
+--5HMXsR3PIyPFDxBq--
 
