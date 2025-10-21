@@ -1,138 +1,144 @@
-Return-Path: <linux-kernel+bounces-863548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B82DBF8231
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:45:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFF9BF8243
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 637B44F15B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67E9485D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BB434C136;
-	Tue, 21 Oct 2025 18:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7781A34B1BC;
+	Tue, 21 Oct 2025 18:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pbxPVS6j"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkaPk02I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5187324A047;
-	Tue, 21 Oct 2025 18:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FCC264A92;
+	Tue, 21 Oct 2025 18:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761072321; cv=none; b=QKzsiUjp7LqINt2h8wdrd8SpoIgOXzbeof6uk2QC19GlnoWZmPaNwgMZPq1WhKNxaYiRdZdd+l6YMokknk5dfwTSW7jDQ2678Lfc4al16nFQ+Ad0nQWw0g0zVSaKKZZyJuFzgwMHS5pUc6+mELWUXTao78ImhIqiwrj7rQ+OHeM=
+	t=1761072476; cv=none; b=L0x303/bBCaJoPmIVbnWbMeDDXR7I4s+z29YmD6MAG9MXC7QUgBXwNQaGSUtYYjxyiUNzsFaF+GIIMxPhMR1PXKlsxihRaFGp1yv83UzT2MAYVCmuAmOmlMWXPFcT0BLz8tYZlkWGXtRTPde8MbgFNsYm3GsCO0qBsr42QI6NwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761072321; c=relaxed/simple;
-	bh=aH/M0s0TmS9qF38cCeaZcFrAvocjovEuJFK7OoMK6O0=;
+	s=arc-20240116; t=1761072476; c=relaxed/simple;
+	bh=Or8UPol/3Ca66cBHJCX3ABq8gz+Sv/4BREXRc3B8dJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UUOS6NeHF8AWXHCGf0cdSNjTg43x5aqYclccXIhUiNGYs/SBuNZ1qYSMGAOvldZ4D4XbTq3LYQoddTjWrHKipWM/scCH6LUW3Nav9k2rmGPWa6nDumStz/5oL1p7QjdZaigC+hK5Otm34t9D42KStrnR423KchIUuMGgK+0Q9PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=pbxPVS6j; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (87-94-110-32.bb.dnainternet.fi [87.94.110.32])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id C4FF76F9;
-	Tue, 21 Oct 2025 20:43:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761072211;
-	bh=aH/M0s0TmS9qF38cCeaZcFrAvocjovEuJFK7OoMK6O0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=A921AliRde/pUDXb8K7YNsvblmYYfdm+a9ZbJaU6iKfZO4mM2m4qOukDXwtFOQ7bJADHPJUgya4EArTDMVgG7Tb6ubTjZFc1XElPrCCnhnhCH+iZk0eBj4vGSwWFjdb01l0yamVuUKgyF4H5paORq2k8v7gddFw45VQJCvCCwMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkaPk02I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1C22C4CEF1;
+	Tue, 21 Oct 2025 18:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761072476;
+	bh=Or8UPol/3Ca66cBHJCX3ABq8gz+Sv/4BREXRc3B8dJA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pbxPVS6jQ0rfLjSiePkJXl7XPQyVFWALWQfImlL7BQCI1oQv5EOfFNx5wQHlexnML
-	 BM2cLy2b5d5RAXqNOCSN3Q/hrJG1W25LjZl+iHY38y0Cv8GmmhOXSG4fQdk8y7XSZY
-	 17gkCqffNUtPEskzn2WlQWCgJNBpSy2GBlsTsFqU=
-Date: Tue, 21 Oct 2025 21:45:02 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver
- support for the Renesas RZ/V2H(P) SoC
-Message-ID: <20251021184502.GD19043@pendragon.ideasonboard.com>
-References: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
- <CA+V-a8uY11uWoQ_en5QC=W4HPHRwT6rKQQJ-knT8Gi-+czm05w@mail.gmail.com>
+	b=fkaPk02I4VXljsBrSM2V7XdYHCn8OcshyeP9oHaauRW8hRym9RQQsx4o4mwwMWOrf
+	 tHB7n4l0CUOWHcJ1YXAscQsXFr5vk3+Xe5EIhG+LmMsZP6dbCh2qN04Sc/7C/6EMwP
+	 xkn9OHLI359qPZYOrXOu6tfPtOEoBJ+71OoEhFlqaKLdFmxrIf2Hlpip0MwqbQwvqJ
+	 Zwhw8NpNJsGB/E4D/t2maLl8z29xQAxlAAYAGBAwlocOzyQ9IHgeESy/Wnl5lMilE9
+	 G01dV3/8uzIdDVUWy9yFWT1jtoMbrS7ds3fzXGMddTZCiF9W3uFl+cGGL73+uYmZD9
+	 aZ8CMaqx8Q9Kw==
+Date: Tue, 21 Oct 2025 19:47:50 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Sascha Bischoff <Sascha.Bischoff@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, nd <nd@arm.com>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Aishwarya.TCV@arm.com
+Subject: Re: [PATCH] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3
+ or v3 guests
+Message-ID: <2505ae61-c7a4-4756-a239-12d4a6653780@sirena.org.uk>
+References: <20251007160704.1673584-1-sascha.bischoff@arm.com>
+ <23072856-6b8c-41e2-93d1-ea8a240a7079@sirena.org.uk>
+ <86frbcwv5t.wl-maz@kernel.org>
+ <78b0297c-4622-4b75-bcae-45c144c92c45@sirena.org.uk>
+ <86bjm0wcag.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pKIH9p1vMGpW/p5P"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8uY11uWoQ_en5QC=W4HPHRwT6rKQQJ-knT8Gi-+czm05w@mail.gmail.com>
+In-Reply-To: <86bjm0wcag.wl-maz@kernel.org>
+X-Cookie: Accordion, n.:
 
-On Tue, Oct 21, 2025 at 07:26:49PM +0100, Lad, Prabhakar wrote:
-> On Tue, Oct 21, 2025 at 11:26 AM Geert Uytterhoeven wrote:
-> >
-> > Hi Prabhakar et al,
-> >
-> > On Wed, 15 Oct 2025 at 21:26, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > > This patch series adds DU/DSI clocks and provides support for the
-> > > MIPI DSI interface on the RZ/V2H(P) SoC.
-> > >
-> > > v10->v11:
-> > > - Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
-> > > - Updated rzv2h_cpg_plldsi_div_determine_rate()
-> > >   while iterating over the divider table
-> > > - Added Acked-by tag from Tomi for patch 2/7 and 3/7
-> > > - Added Reviewed-by tag from Geert for patch 2/7 and 3/7
-> >
-> > I think this series is ready for merging.
-> 
-> \o/
-> 
-> > > Lad Prabhakar (7):
-> > >   clk: renesas: rzv2h-cpg: Add instance field to struct pll
-> > >   clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
-> > >   clk: renesas: rzv2h-cpg: Add support for DSI clocks
-> > >   clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
-> > >   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
-> > >     RZ/V2N
-> > >   drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
-> > >   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
-> >
-> > As this touches both clk and drm, let's discuss the merge strategy.
-> > My proposal:
-> >   1. I queue patches 1-3 in an immutable branch with a signed tag,
-> >      to be used as a base for the remaining patches,
-> >   2. I queue patch 4 on top of 1 in renesas-clk for v6.19,
-> >   3. The DRM people queue patches 5-7 on top of 1.
-> >
-> > Does that sound fine for you?
-> Sounds good to me.
-> 
-> Biju/Tomi, are you OK with the above?
 
-The plan seems good to me. Note that you won't be able to push this
-yourself to drm-misc as committers are limited to pushing linear
-branches. We need an ack from the drm-misc maintainers, and one of them
-will need to merge the branch (either branch 1. as prepared by Geert, on
-top of which you can them push patches 5-7 yourself, or a branch you'll
-prepare on top of 1. with patches 5-7).
+--pKIH9p1vMGpW/p5P
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Regards,
+On Tue, Oct 21, 2025 at 03:37:59PM +0100, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-Laurent Pinchart
+> > The only thing I can think of is that you are objecting to the idea of
+> > having the KVM arm64 tree merge it's fixes branch into it's development
+> > branch.  That is not what I am suggesting, I am suggesting putting the
+> > fixes branch itself directly into -next to be merged by Stephen.  I am
+> > not proposing any change to the content of the KVM arm64 branches.
+
+> Then I don't know why you even involve me here.
+
+> You can pull anything you want in -next, and you don't need my
+> approval for it. I still don't think this is a good idea because the
+> life cycles are totally different, but if you like making your own
+> life complicated, go ahead, I'm not going to stop you.
+
+Generally any branch in -next is included at the request of the
+maintainer, and one of the things that's attached to a branch in -next
+is a set of contacts to report any merge issues - generally whoever
+maintains the branch.  I *could* ask Stephen to add the fixes tree but
+it'd be very weird for me to do that, and if you are actively hostile
+I'm not sure what to do about contacts since I would have expected that
+to be you and Oliver.  Oliver, I don't know if you have thoughts here?
+
+I really do not understand your objection here, including fixes branches
+in -next is a totally standard thing which as I have mentioned does not
+seem to be causing issues for the other trees that do it.  It is true
+that fixes get sent upstream faster (I think that's what you mean when
+you say the life cycles are different?) but I don't see why this would
+be a problem, if anything it is normally helpful to get test coverage
+sooner so there's more time for any issues to be noticed.
+
+The current situation creates work, and I would expect including the
+fixes branch in -next to reduce that work and generally make things less
+stressful.  Currently we get test issues like the one that started this
+thread getting caught only when they hit an upstream tree, this tends to
+make them more of an emergency.  We also get issues when a problem is
+detected in -next where the fix should be sent as a fix, even after the
+fix is applied it does not appear in -next until it has been pulled by
+Paolo.  In both cases even people doing testing still have whatever was
+failing showing as a failure in the the time between the fix being
+applied and it showing up in Paolo's tree which adds to their workload
+and can obscure other issues.  Reducing the latency on getting fixes
+visible in -next solves actual problems with the testing workflow.
+
+--pKIH9p1vMGpW/p5P
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj31VYACgkQJNaLcl1U
+h9BOMgf+J13J60RaqB0NKeqwtuSZci8mm1vq7KbrxeZqdPhfSOl6VL1p4UmFJoe2
+WJC1hOzYBUN96I+U9ytnspRcYBeDlMTFeGP6Y5YPHPNXKAVMdU6pR1KnBFKISVPi
+wJA4vVIiVKN3H7bOzTBwggF6l66l9X0XgtSRCC7J4pF0opFmZH+D5yEi/dJ1B7nu
+aI5vg5qGywVmfnfnhmHNwOrdoQ78LMTBcff/h3O7DGNZ7cRInBnzuXkPLRo/rNeW
+PVbzWPkDPsRNM+d9zHJzVugHMmgB6gh6Hwe+MjQXkG46YTDGUSiNghdH+5MxpYIA
+RBjTjSw2l38bLQOE0i5l/XdwcuXlig==
+=L6ks
+-----END PGP SIGNATURE-----
+
+--pKIH9p1vMGpW/p5P--
 
