@@ -1,311 +1,595 @@
-Return-Path: <linux-kernel+bounces-862048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C9FBF44F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:48:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EBEBF4502
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1D418C609B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F41D3A3F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF97258EC3;
-	Tue, 21 Oct 2025 01:46:38 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4869D233721;
+	Tue, 21 Oct 2025 01:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NsDC5MEi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA004CB5B;
-	Tue, 21 Oct 2025 01:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761011198; cv=none; b=upUjSQliZo5ElDR/pLgIWvqNCLwoEhcKb3EtvQR6UErOpc7k+tMQ46D4wCcKtvAjltGSwcyBkA47n5GP14SHk0hxF0j+jMs/IHs3umQvD1OZhb50hc3tauPCYpEehp+7HXdlXHYe4FrN2URO5W7VyOwMkfy/v6nH4eVXecI2Afg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761011198; c=relaxed/simple;
-	bh=DMSW77Ig5NSB9MdxHiF8S86xio/BEcY1eYc0Mg5gLmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZuTM0xmr7pLRynot++rXrdrH3PLpAyV0uaaUiqTzVwTk7mJXnvVbWlpH/MUBzkt2hixKasc/4bRPWn5ekEq1z76wfNC8InDberp2Eeg0Uw6UCw5fe0gG//1dcKCz4QeSyEcNpxXqNMp6NghRop4JMzxN7f2IUlJ/UQIy2dayX8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4crFVy2WFrzKHMRQ;
-	Tue, 21 Oct 2025 09:45:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 18F781A1585;
-	Tue, 21 Oct 2025 09:46:32 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP1 (Coremail) with SMTP id cCh0CgB36Uz25fZoPxk8BA--.39058S2;
-	Tue, 21 Oct 2025 09:46:31 +0800 (CST)
-Message-ID: <bb9a75dc-8c34-41da-b064-e31bf5fe6cb2@huaweicloud.com>
-Date: Tue, 21 Oct 2025 09:46:29 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA40C8FE;
+	Tue, 21 Oct 2025 01:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761011385; cv=fail; b=KF4Fg4o5mJFiD6rgsyUWWCpWeieXAV+9/nyUyOUIIbFCP7Bzr88ui+7nObDv0oV+nlRi0rjIWND6PSQtQN8QO9n6R2VonaFzfYW+69iC3/cIXSbZak39eEpaTwjqZbgfOUkZN8kGyRcSki0GiBM70OGjfsRmO8rmGtfFJkjvj/U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761011385; c=relaxed/simple;
+	bh=KmHK9Jjz+CZlDpOkldVaFuzrRb1wGUnw623SuWJ0WYs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Gt0vvN2a07qCV8NNAuM16L0l00+RTnQDmDM4aFrU1gJbZE2aIUVvqN49C8U15Ml7H6KttXyMLOZafVz2RtayF+oH+29w06qVYwV28PY17kPs7fA1JGRrzDtU2leMNpvfpqVCem6vfmw3f9RDgDLzbgzJp0xLzxaiB1Q6ZkiNu8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NsDC5MEi; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761011384; x=1792547384;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=KmHK9Jjz+CZlDpOkldVaFuzrRb1wGUnw623SuWJ0WYs=;
+  b=NsDC5MEiq/NgTNwkRSY55HAKKdQUo5CeizfqEwKrZBLxH47Yt0uyaPgH
+   FQh+1Kw7ICobEEQm3UxpHak6GCo2WM50idcIePRSdvMpBncwy8Kw6W+29
+   x5HRyvX2pGEcETos02p9QA7Ud7uWH2i+bzlfdb0LDcG/mKgjy0EGC7mDb
+   5B3VJyNtxEXoVLVWeHLAtVtTM6ZnLEUzxutBOQKxR/wYl+ys9IOs6Wxw5
+   nmcZfjJV5Nu3uydV34yaFerZ3Ai5q2cchwEAEzvcIEfh3sOi1Ys7Xdqm2
+   GMLRiv9ATM/Dc8EyuJ+xZAOkBzBgerLplFfriJMntyUVaEx4kSAW5y5De
+   Q==;
+X-CSE-ConnectionGUID: C9U0/8ELSKyr3GWdthl3jw==
+X-CSE-MsgGUID: BWbi3cnGTTuqoBy2VVDkmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62166168"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="62166168"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 18:49:43 -0700
+X-CSE-ConnectionGUID: 1UNnnI8CR+uZVJE62weH+Q==
+X-CSE-MsgGUID: z/aVyXXKQXSOhTHWA4phYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="187497776"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 18:49:43 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 20 Oct 2025 18:49:42 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 20 Oct 2025 18:49:42 -0700
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.13) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 20 Oct 2025 18:49:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jAGzKDOqn6AnLR3BzBpASCnz174m2TRvxlxt8H8tbvWQFgreqZ6MalUaX0q3wCLcAbC5eS4Gi4TzI8dauORB8rJFMIkj/zlXF1y8yBgvX3M/sBYMVQ22vq87fahV2Zy2Q58FDOYw9DckgSYEmGaXs9cKvEZ/ytVLY5wTf63xTeG/K1u/gmJGw4KhXjVEhssRU/2o/Fe1bXX3mEvK0zodMTGnIC5y2yAEgN7uHWd7wY89Mv7saH0oHMcoMZAosrwWtaTL2XdUDuzqKZrZFXmIIfFT0sdtyVmhLlkH/yw4n6W/sQ5F66GutEls3q0v9CMnI2w8u5lk6FyOgfo/L5F+HQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mDzzIivSZU3eeENmub4M3vVblpQ3FdmzhXJTgAtM4n4=;
+ b=bgoRX1kEtLn2Z+scXISzzlH/m+Ui+KlY+Br30xrstk7awZtNwjZrODOblYplaIewCNujxcBv5Cuso1eeI0gzQKSmHHF/Tg+L9rs9S8Wdjbe65owE7AjjiGX0GVCCgXALJxdBp2VY5nIGXrAMcqBRvqd7JKhEi3CKSRzsSmbwPI7Cyu8mPvbAKVYaSlUvhneHXb6IeyDEmlZ9PZHYeROHUPj+EWbuG8XBidi+RAepuDY8NA/8w6b0/9QBrg7DWcEcgMGy9ytpD0Mn+xUi6T0Zvk/uzp7qPr/aR2gX5SvwR933CON0Dy2w34sRT2dJc9aEWoUFOBc+UGTMutsBqfoLmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
+ DS7PR11MB6248.namprd11.prod.outlook.com (2603:10b6:8:97::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.16; Tue, 21 Oct 2025 01:49:37 +0000
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.9228.016; Tue, 21 Oct 2025
+ 01:49:37 +0000
+Date: Tue, 21 Oct 2025 03:49:33 +0200
+From: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+To: Michal Wajdeczko <michal.wajdeczko@intel.com>
+CC: Alex Williamson <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, Matthew Brost <matthew.brost@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
+ Laguna" <lukasz.laguna@intel.com>
+Subject: Re: [PATCH 25/26] drm/xe/pf: Export helpers for VFIO
+Message-ID: <5zbjmqb2sa7pxsej5e65gq7e4joy44mc2x37j7vf6yva4xsqqf@zjeqsxjguj2b>
+References: <20251011193847.1836454-1-michal.winiarski@intel.com>
+ <20251011193847.1836454-26-michal.winiarski@intel.com>
+ <7cacd33e-e8f2-486b-a507-9b9259e4473d@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7cacd33e-e8f2-486b-a507-9b9259e4473d@intel.com>
+X-ClientProxiedBy: WA0P291CA0015.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1::20) To DM4PR11MB5373.namprd11.prod.outlook.com
+ (2603:10b6:5:394::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/33] sched/isolation: Convert housekeeping cpumasks to
- rcu pointers
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
- <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
- Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
- Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
- linux-mm@kvack.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org
-References: <20251013203146.10162-1-frederic@kernel.org>
- <20251013203146.10162-13-frederic@kernel.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251013203146.10162-13-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgB36Uz25fZoPxk8BA--.39058S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3WF43tF17Ww17Gr4xXF43Wrg_yoW3Jw4kpr
-	Z8W3y3GrWkXr1fG398ZwnrAry5Wwn7Arn2yas3Ww4rCFy7uw1kZry09FnxXryUu3s7Cry7
-	Zas8tw4F93Wjy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
-	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	j6a0PUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|DS7PR11MB6248:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7564c816-c1b5-4a93-0eb1-08de10441770
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YnNsYXRqWm5FRlg1Z0VGNzdmdUpFemg1WENYdGpMbjVxcFdTMXorL2hLNWRD?=
+ =?utf-8?B?UEo2UTc3dDZ5V0lVRnY5YWtLeG5RZFlicDd2M2YyZzJrTGtML2dmNmxzWmZ6?=
+ =?utf-8?B?bitZUldxR09BbmozN1BGMVRyWGJYUjNNMklYN2dyNldLdXZpS1RCVTNXVFNK?=
+ =?utf-8?B?Q0p5Z2dPQkVKY012SWVOd0Y4UlZRVkdVakJpZlRGeWRMK0FuL28zUUgyQ3hr?=
+ =?utf-8?B?REE0YnNhVktxNDhKdXk2T1NjU0VKT05GWTBtb204aHhjc3pHSmRQZ1VWdzk1?=
+ =?utf-8?B?UDhWd2F0QmVEdW5kaHNQR2dLSG1oN1pyaVlKZVVTbFhyeVNMUTVNeG0rNXp1?=
+ =?utf-8?B?ckxQczErblh2dW1pdGczUjhybUtYcVd0WlAxdkFicG5UOVoxcnpvTDdCZk5t?=
+ =?utf-8?B?VGc2eGNVVVhzNHlYWmNSRWdoVXpTSlZkeGM3Z0NtTFdZamp0OTI4NG41MlRp?=
+ =?utf-8?B?ekpHcDR2MUJBYlZiWGhUYitnWk9pZURuNm12Tk9qWGltNDBzKzQ4bnV3RVRM?=
+ =?utf-8?B?alN6L1diYVIvWmUxTGZ0RWNzcVVlc1MxbmNBbFhNTmhIRlVGU2pUNjZTRm1u?=
+ =?utf-8?B?WlpVMlZiZld3eGFRdEZPRW04UlZNZmxwbFdVcjNIWTduYU5JWUFYL3VweHFq?=
+ =?utf-8?B?SWlzL0lRR1gwMnROVlR1azdlLzQyaGhFekxjQmJheEdhdlZnYjFwZ1BLbms4?=
+ =?utf-8?B?Q3VaOXlpa0QrWUlJSElYWXZTVis5eXRBaEpmWi9hZm1ndzNPUU0vbUJ5UGR5?=
+ =?utf-8?B?Y0xBQ2JyZXpqZ09sclBRTWwwTmNSZVhmYzJ4NFJKWUNpMVAyOUJZY05BZ2pH?=
+ =?utf-8?B?UFJGWlo0aDNaUmlYMWRSOGtoNHh1Zjc0Sk50ZlpZa3VFSVFWdkJyWlZIOFdy?=
+ =?utf-8?B?d2RMYTdxWkt4b1NNb1krWFV6c250d1pTU1ROWTViSXlNbnF1aVJ0eHJDWFpi?=
+ =?utf-8?B?ZURCOWdvQjFzakRDc3RmeC8remtlMkl4QmpZVWdyQmhENWF1UFdraGR2Tlk4?=
+ =?utf-8?B?NFhmbVZ5eVpXYzZ5emdBODY2QitjYnllU1VvajZzWW5MVTFlRDZpb0lsajh6?=
+ =?utf-8?B?c0hBT1czU0t5dmZVNXJSRDQzVUpQS2N0bS9tZGhWK21sd2NlUXI3SlpEYkNZ?=
+ =?utf-8?B?MXRsOGVMRytieHVIUXBranJGSXZkY3lkY0RVYnZOd2E0elZiNmFWUGF3WUpE?=
+ =?utf-8?B?c0N1eHk5ZmpSeWVMaDVXaXZhY2RibWpvSW54d0M1WnlGUVJGS2k4U0ZOb0w0?=
+ =?utf-8?B?cExOS2xQd1ZmejM0ZXg0ZDRYdDB1QU53dHZpQkhuSWxUblo0NHRsUmRoZjlY?=
+ =?utf-8?B?TkdEc3puMURtbDV3dkRlZkFCRkpUOWFkSzlKSTl2Q1VBeFMxdGg1MlU0aitm?=
+ =?utf-8?B?MjFEVU9xU1Izd2hkR1BYOURzZ0ZSZTBHWkxnTnZkb3dZUGFRL0lCdU1DcDhj?=
+ =?utf-8?B?ZndaN0dKdTNSdi9PL0dOdWdReG9tSm5USG5QQThybzZCekFUdElTam9uUGQ3?=
+ =?utf-8?B?bUUxWG9zTjdZSWxxbUFLS2twM2N1L2Y3a1JTaDVYN0ZBVWJHUU5ZeVNZczhr?=
+ =?utf-8?B?NW5mNHVYZk1sQTNNU1FTNkMydEMvSFdJZ0QvSHJBR2NId0d6V2I4QU93REpI?=
+ =?utf-8?B?M1JLYkxLeXVsdjZuRGY2SHJWeVpVdWkvYnhKZFM1eFU0TEVTcTVOa1NvVEJ2?=
+ =?utf-8?B?b3d3QnNLN01zSUc5MlVUZklXT2FvUlhqTnpPYlR4bkRvQ21EQnFFallkdkh5?=
+ =?utf-8?B?WDFDc1FhZGpXeGJ6VGcvYzA5aHVaeWpYSC9JVVNOVURva1lnaGtVNWNjVlJY?=
+ =?utf-8?B?eXFRb0F0Z01OblVyYkZiOUV6USs0WlhDY2VWTGhEaXg2U2swa0xlY29GVkJF?=
+ =?utf-8?B?bG9QMWdsdHMxTWE0cDJVWno2WVFMTVludzEzdGVseTZBdEIvejZteHlGSlhj?=
+ =?utf-8?Q?s5XzptYYqT/0Ija7YPuGqI6XJugLY6Zi?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R0tOVVd5cU5FaWVzK2FhZ3VaZFd5ZlJwdnQxajdib01ZeXl6dnpFOVc4dlZR?=
+ =?utf-8?B?TExxcC9Ca3BweTdmZEFRbGtsUGlvcDJLTENxMC9MbE94STVVem9Wc3dwNHFz?=
+ =?utf-8?B?QU9pNFlpekE2WnZPZHg4U0pVTi82WUxrZmxNTCt0Mk9FREFIeFNnVHFHZUJj?=
+ =?utf-8?B?akxLZkNiN09vVjE3S2VTajlSVVRNQ1VZbGh5R2tRRnY5K3M4K2ZoOFd3QkNS?=
+ =?utf-8?B?VE9WNUMyTGFiRHd0dUpGc205OHhlYUkyOGRWYVJOYTROV2QrYjFWNUZ3YWZM?=
+ =?utf-8?B?ME5WZ3NFSVh3d3hZdjVkeUJrM1J4eVVYNGpOK0xtOW9xbHZRcE9hWE00V3Vs?=
+ =?utf-8?B?WmppTGZNN0ZXT2NLeTdVQWErMlZDYXN3bllvaVBvemxwa09BQmtFUGNJZUxl?=
+ =?utf-8?B?RU9nV05UM2NRTkNTNnJWTWlDMGdPcXhFYUc4OVhvZEpzOVJFRk1Yc2h4cDNt?=
+ =?utf-8?B?aGZrZE5HRTdSK1dVaDlxMnFJTWtoUG1EV1lvYVNEU1pxU1ppcHE4NFlOOFEz?=
+ =?utf-8?B?ZTVKdkZqdDlYeS8ra2prZkl6bEZvTDBlNzRtOVhSMFFsNTYvYzhxakkxajAr?=
+ =?utf-8?B?ZnR5QzUxWGt0SUNaSi9VVTR1MnpKTERCekI4UGpUZm1abXcwL0t5U1EwR01L?=
+ =?utf-8?B?emVrbThxeWxTT1JoVWNrNjUyMDUyR2lpZ2RXRWR3RDZMclgrR0FHTklWQ1lC?=
+ =?utf-8?B?NWRtS0hjcU5Od3ZVNmRtNnNNU0JhT2ZrVm5wbk84KzQrVGo0bmwwbU14SUow?=
+ =?utf-8?B?eksyOUp6QzFJS3U2ZWh0bXZVRWhTN1lTY0JsZmNUWUlhVDBubjdTT3FPOW5a?=
+ =?utf-8?B?R2hCQklmcGpGcWVyeG9FcFRKdDhkbXJTK2RkOGtqQ2JjTW9la3o5Y1Faa0Zk?=
+ =?utf-8?B?ajhTYjN0c2dBTk5rM1RxTlFsWHZUOHBRd3ZDdDF2WWJIaUV6M2g5YUpQbnh0?=
+ =?utf-8?B?UXFKc3R2eGYzWldNdkhjWnNpTFBqYjM4SHRjeWxOM21od2NTZVU3N1pGUDlx?=
+ =?utf-8?B?eW16a2xGN3RMRWpVeVZxbEtSRzRsN1ZzZlAwakQ4QU8xdmdna21IN2R2ZUp1?=
+ =?utf-8?B?bWNDaVRwcHNjU0FYNUxpR0NjaFAyTE9KV2xMdVp5RnB5SnBUeUcrcWZhVlpa?=
+ =?utf-8?B?ZmRnTVIyOGV1eDRITU9VR3QydUtYclB2aUV3a3ZtbEdBVjBzL0JPc3hiYXl5?=
+ =?utf-8?B?cTVMTTRmdVlhdllvWUZaRnNqQzFvMnpNallxdW9GL2FSb3NiU2pMbnBTQ3RT?=
+ =?utf-8?B?YlpUNWU2ZmtCdW1MdWdueEdoRFlGamxZeTl5Ny9ta3hCRGI5UHI5a2VRSXQ5?=
+ =?utf-8?B?TzNId09zenVmYkUxUWpML21uVjNKQlovM0ZWR0k2Yk9vNW1vcFNwQVZ5S3Zx?=
+ =?utf-8?B?NC9KbFZ3M2xLRVNjYy84b3RYeTBwK25VcGlQdnNHWEVCY3h0OWc1RHh5SlVZ?=
+ =?utf-8?B?VExBTVkvWHhWOUMydWxQTDluUWVFZ2dMRlo0NjZnQ29pcmg4N1REdHlnRFZL?=
+ =?utf-8?B?aHZWc3BEYUErWHRiNnhCd1czaVVqYjhJTXV2OVdTdm9OQzhPTnNvbDI3OXJk?=
+ =?utf-8?B?Q3VtbSs0d3dYTG4yRnYvaS9CbXNoZ29IdWl6c1prTWt3ZmpnU3dDckE5QWtO?=
+ =?utf-8?B?WWFrRGtuTmUwaDl2d1J0THRqclBhOTNuR2ZmS1F3QjVBdHdlVGw0VDgxRWtI?=
+ =?utf-8?B?MHkwR2ZWYStZTVBCeC8xTWg0WHZNVy80bk1IRS9qRUFNQlhTbzZiNlhFM21y?=
+ =?utf-8?B?dEdsZHpUSDU1WE05RnQ5RkE4Q0dzSVRCeU4zSHYwbm9JaHpxOHpyUzFDMitq?=
+ =?utf-8?B?RXlQTXlrZ21hekhVbDFRK0UyWWRYVnY1SU1oOWVNREYrQUpkYWhVZHBvN1pI?=
+ =?utf-8?B?QjQ0L0owcThYb2lYV3JhTVZpUkFicHQ2QTBzcHRuUW0raldCdWpPWWZFVUU2?=
+ =?utf-8?B?SkpGY3hhUmpMQy9adHJZVkZyTk8wUWwyMjJQY2p3NDJrQzdJWEJIZ2VSUFZT?=
+ =?utf-8?B?U0tUZ3NTS0NXdEdEMWV2M2krc0dFSGRZVlRFSkFUd2M0dTZkRzFkZFlNUnhE?=
+ =?utf-8?B?WlI5REtXVmVEQS9oYzBpTkZMUVlyd01JK0pwVnVuN2xRWDNZSzNXbHM0U0NH?=
+ =?utf-8?B?Z01kdlI4V3Z5UldaVUM2TVJGQm1uZ1VJWDBvOUJ6M2Z5UGlkeXpsbWdMdTNt?=
+ =?utf-8?B?TFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7564c816-c1b5-4a93-0eb1-08de10441770
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 01:49:37.4884
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VcR6C9qL2qadnc1tAuEPOkNZ4fb4iFEVyvP0tEVigwBaCQQcPP089gQnD5J6Fd92UG57MDOjMgofeeQM2f8c/40rG8oGW9NIUG+vaWkmz1E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6248
+X-OriginatorOrg: intel.com
 
-
-
-On 2025/10/14 4:31, Frederic Weisbecker wrote:
-> HK_TYPE_DOMAIN's cpumask will soon be made modifyable by cpuset.
-> A synchronization mechanism is then needed to synchronize the updates
-> with the housekeeping cpumask readers.
+On Mon, Oct 13, 2025 at 04:02:36PM +0200, Michal Wajdeczko wrote:
 > 
-> Turn the housekeeping cpumasks into RCU pointers. Once a housekeeping
-> cpumask will be modified, the update side will wait for an RCU grace
-> period and propagate the change to interested subsystem when deemed
-> necessary.
 > 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/sched/isolation.c | 58 +++++++++++++++++++++++++---------------
->  kernel/sched/sched.h     |  1 +
->  2 files changed, 37 insertions(+), 22 deletions(-)
+> On 10/11/2025 9:38 PM, Michał Winiarski wrote:
+> > Vendor-specific VFIO driver for Xe will implement VF migration.
+> > Export everything that's needed for migration ops.
+> > 
+> > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> > ---
+> >  drivers/gpu/drm/xe/Makefile        |   2 +
+> >  drivers/gpu/drm/xe/xe_sriov_vfio.c | 252 +++++++++++++++++++++++++++++
+> >  include/drm/intel/xe_sriov_vfio.h  |  28 ++++
+> >  3 files changed, 282 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/xe/xe_sriov_vfio.c
+> >  create mode 100644 include/drm/intel/xe_sriov_vfio.h
+> > 
+> > diff --git a/drivers/gpu/drm/xe/Makefile b/drivers/gpu/drm/xe/Makefile
+> > index e253d65366de4..a5c5afff42aa6 100644
+> > --- a/drivers/gpu/drm/xe/Makefile
+> > +++ b/drivers/gpu/drm/xe/Makefile
+> > @@ -181,6 +181,8 @@ xe-$(CONFIG_PCI_IOV) += \
+> >  	xe_sriov_pf_service.o \
+> >  	xe_tile_sriov_pf_debugfs.o
+> >  
+> > +xe-$(CONFIG_XE_VFIO_PCI) += xe_sriov_vfio.o
+> > +
+> >  # include helpers for tests even when XE is built-in
+> >  ifdef CONFIG_DRM_XE_KUNIT_TEST
+> >  xe-y += tests/xe_kunit_helpers.o
+> > diff --git a/drivers/gpu/drm/xe/xe_sriov_vfio.c b/drivers/gpu/drm/xe/xe_sriov_vfio.c
+> > new file mode 100644
+> > index 0000000000000..a510d1bde93f0
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/xe/xe_sriov_vfio.c
+> > @@ -0,0 +1,252 @@
+> > +// SPDX-License-Identifier: MIT
+> > +/*
+> > + * Copyright © 2025 Intel Corporation
+> > + */
+> > +
+> > +#include <drm/intel/xe_sriov_vfio.h>
+> > +
+> > +#include "xe_pm.h"
+> > +#include "xe_sriov.h"
+> > +#include "xe_sriov_pf_control.h"
+> > +#include "xe_sriov_pf_migration.h"
+> > +#include "xe_sriov_pf_migration_data.h"
+> > +
+> > +/**
+> > + * xe_sriov_vfio_migration_supported() - Check if migration is supported.
+> > + * @pdev: PF PCI device
+> > + *
+> > + * Return: true if migration is supported, false otherwise.
+> > + */
+> > +bool xe_sriov_vfio_migration_supported(struct pci_dev *pdev)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	return xe_sriov_pf_migration_supported(xe);
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_migration_supported, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_wait_flr_done - Wait for VF FLR completion.
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
 > 
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index 8690fb705089..b46c20b5437f 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -21,7 +21,7 @@ DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
->  EXPORT_SYMBOL_GPL(housekeeping_overridden);
->  
->  struct housekeeping {
-> -	cpumask_var_t cpumasks[HK_TYPE_MAX];
-> +	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
->  	unsigned long flags;
->  };
->  
-> @@ -33,17 +33,28 @@ bool housekeeping_enabled(enum hk_type type)
->  }
->  EXPORT_SYMBOL_GPL(housekeeping_enabled);
->  
-> +const struct cpumask *housekeeping_cpumask(enum hk_type type)
-> +{
-> +	if (static_branch_unlikely(&housekeeping_overridden)) {
-> +		if (housekeeping.flags & BIT(type)) {
-> +			return rcu_dereference_check(housekeeping.cpumasks[type], 1);
-> +		}
-> +	}
-> +	return cpu_possible_mask;
-> +}
-> +EXPORT_SYMBOL_GPL(housekeeping_cpumask);
-> +
->  int housekeeping_any_cpu(enum hk_type type)
->  {
->  	int cpu;
->  
->  	if (static_branch_unlikely(&housekeeping_overridden)) {
->  		if (housekeeping.flags & BIT(type)) {
-> -			cpu = sched_numa_find_closest(housekeeping.cpumasks[type], smp_processor_id());
-> +			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
->  			if (cpu < nr_cpu_ids)
->  				return cpu;
->  
-> -			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
-> +			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
->  			if (likely(cpu < nr_cpu_ids))
->  				return cpu;
->  			/*
-> @@ -59,28 +70,18 @@ int housekeeping_any_cpu(enum hk_type type)
->  }
->  EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
->  
-> -const struct cpumask *housekeeping_cpumask(enum hk_type type)
-> -{
-> -	if (static_branch_unlikely(&housekeeping_overridden))
-> -		if (housekeeping.flags & BIT(type))
-> -			return housekeeping.cpumasks[type];
-> -	return cpu_possible_mask;
-> -}
-> -EXPORT_SYMBOL_GPL(housekeeping_cpumask);
-> -
->  void housekeeping_affine(struct task_struct *t, enum hk_type type)
->  {
->  	if (static_branch_unlikely(&housekeeping_overridden))
->  		if (housekeeping.flags & BIT(type))
-> -			set_cpus_allowed_ptr(t, housekeeping.cpumasks[type]);
-> +			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
->  }
->  EXPORT_SYMBOL_GPL(housekeeping_affine);
->  
->  bool housekeeping_test_cpu(int cpu, enum hk_type type)
->  {
-> -	if (static_branch_unlikely(&housekeeping_overridden))
-> -		if (housekeeping.flags & BIT(type))
-> -			return cpumask_test_cpu(cpu, housekeeping.cpumasks[type]);
-> +	if (housekeeping.flags & BIT(type))
-> +		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
->  	return true;
->  }
->  EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
-> @@ -96,20 +97,33 @@ void __init housekeeping_init(void)
->  
->  	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
->  		sched_tick_offload_init();
-> -
-> +	/*
-> +	 * Realloc with a proper allocator so that any cpumask update
-> +	 * can indifferently free the old version with kfree().
-> +	 */
->  	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
-> +		struct cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
-> +
-> +		if (WARN_ON_ONCE(!nmask))
-> +			return;
-> +
-> +		omask = rcu_dereference(housekeeping.cpumasks[type]);
-> +
->  		/* We need at least one CPU to handle housekeeping work */
-> -		WARN_ON_ONCE(cpumask_empty(housekeeping.cpumasks[type]));
-> +		WARN_ON_ONCE(cpumask_empty(omask));
-> +		cpumask_copy(nmask, omask);
-> +		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
-> +		memblock_free(omask, cpumask_size());
->  	}
->  }
->  
->  static void __init housekeeping_setup_type(enum hk_type type,
->  					   cpumask_var_t housekeeping_staging)
->  {
-> +	struct cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
->  
-> -	alloc_bootmem_cpumask_var(&housekeeping.cpumasks[type]);
-> -	cpumask_copy(housekeeping.cpumasks[type],
-> -		     housekeeping_staging);
-> +	cpumask_copy(mask, housekeeping_staging);
-> +	RCU_INIT_POINTER(housekeeping.cpumasks[type], mask);
->  }
->  
->  static int __init housekeeping_setup(char *str, unsigned long flags)
-> @@ -162,7 +176,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->  
->  		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
->  			if (!cpumask_equal(housekeeping_staging,
-> -					   housekeeping.cpumasks[type])) {
-> +					   housekeeping_cpumask(type))) {
->  				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
->  				goto free_housekeeping_staging;
->  			}
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 1f5d07067f60..0c0ef8999fd6 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -42,6 +42,7 @@
->  #include <linux/ktime_api.h>
->  #include <linux/lockdep_api.h>
->  #include <linux/lockdep.h>
-> +#include <linux/memblock.h>
->  #include <linux/minmax.h>
->  #include <linux/mm.h>
->  #include <linux/module.h>
+> or
+> 
+>  * @pdev: the PF struct &pci_dev device
+>  * @vfid: the VF identifier (can't be 0)
 
-A warning was detected:
+Ok
 
-=============================
-WARNING: suspicious RCU usage
-6.17.0-next-20251009-00033-g4444da88969b #808 Not tainted
------------------------------
-kernel/sched/isolation.c:60 suspicious rcu_dereference_check() usage!
+> 
+> > + *
+> > + * This function will wait until VF FLR is processed by PF on all tiles (or
+> > + * until timeout occurs).
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_wait_flr_done(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> 
+> you also need to validate:
+> 
+> 	vfid != PFID
+> and
+> 	vfid <= xe_sriov_pf_get_totalvfs()
+> 
+> this applies to all exported functions below
 
-other info that might help us debug this:
+Ok.
 
+> > +
+> > +	return xe_sriov_pf_control_wait_flr(xe, vfid);
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_wait_flr_done, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_stop - Stop VF.
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
+> > + *
+> > + * This function will pause VF on all tiles/GTs.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_stop(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +	int ret;
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	xe_pm_runtime_get(xe);
+> 
+> maybe we should use xe_pm_runtime_get_if_active() to avoid awaking PF if there are no VFs?
+> 
+> when VFs are enabled xe_pm_runtime_get_if_active() will always return true
 
-rcu_scheduler_active = 2, debug_locks = 1
-1 lock held by swapper/0/1:
- #0: ffff888100600ce0 (&type->i_mutex_dir_key#3){++++}-{4:4}, at: walk_compone
+I'll replace it with assert.
 
-stack backtrace:
-CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-next-20251009-00033-g4
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239
-Call Trace:
- <TASK>
- dump_stack_lvl+0x68/0xa0
- lockdep_rcu_suspicious+0x148/0x1b0
- housekeeping_cpumask+0xaa/0xb0
- housekeeping_test_cpu+0x25/0x40
- find_get_block_common+0x41/0x3e0
- bdev_getblk+0x28/0xa0
- ext4_getblk+0xba/0x2d0
- ext4_bread_batch+0x56/0x170
- __ext4_find_entry+0x17c/0x410
- ? lock_release+0xc6/0x290
- ext4_lookup+0x7a/0x1d0
- __lookup_slow+0xf9/0x1b0
- walk_component+0xe0/0x150
- link_path_walk+0x201/0x3e0
- path_openat+0xb1/0xb30
- ? stack_depot_save_flags+0x41e/0xa00
- do_filp_open+0xbc/0x170
- ? _raw_spin_unlock_irqrestore+0x2c/0x50
- ? __create_object+0x59/0x80
- ? trace_kmem_cache_alloc+0x1d/0xa0
- ? vprintk_emit+0x2b2/0x360
- do_open_execat+0x56/0x100
- alloc_bprm+0x1a/0x200
- ? __pfx_kernel_init+0x10/0x10
- kernel_execve+0x4b/0x160
- kernel_init+0xe5/0x1c0
- ret_from_fork+0x185/0x1d0
- ? __pfx_kernel_init+0x10/0x10
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-random: crng init done
+> 
+> 
+> > +	ret = xe_sriov_pf_control_pause_vf(xe, vfid);
+> > +	xe_pm_runtime_put(xe);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_stop, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_run - Run VF.
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
+> > + *
+> > + * This function will resume VF on all tiles.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_run(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +	int ret;
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	xe_pm_runtime_get(xe);
+> > +	ret = xe_sriov_pf_control_resume_vf(xe, vfid);
+> > +	xe_pm_runtime_put(xe);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_run, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_stop_copy_enter - Copy VF migration data from device (while stopped).
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
+> > + *
+> > + * This function will save VF migration data on all tiles.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_stop_copy_enter(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +	int ret;
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	xe_pm_runtime_get(xe);
+> > +	ret = xe_sriov_pf_control_save_vf(xe, vfid);
+> > +	xe_pm_runtime_put(xe);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_stop_copy_enter, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_stop_copy_exit - Wait until VF migration data save is done.
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
+> > + *
+> > + * This function will wait until VF migration data is saved on all tiles.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_stop_copy_exit(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +	int ret;
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	xe_pm_runtime_get(xe);
+> > +	ret = xe_sriov_pf_control_wait_save_vf(xe, vfid);
+> > +	xe_pm_runtime_put(xe);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_stop_copy_exit, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_resume_enter - Copy VF migration data to device (while stopped).
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
+> > + *
+> > + * This function will restore VF migration data on all tiles.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_resume_enter(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +	int ret;
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	xe_pm_runtime_get(xe);
+> > +	ret = xe_sriov_pf_control_restore_vf(xe, vfid);
+> > +	xe_pm_runtime_put(xe);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_resume_enter, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_resume_exit - Wait until VF migration data is copied to the device.
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
+> > + *
+> > + * This function will wait until VF migration data is restored on all tiles.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_resume_exit(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +	int ret;
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	xe_pm_runtime_get(xe);
+> > +	ret = xe_sriov_pf_control_wait_restore_vf(xe, vfid);
+> > +	xe_pm_runtime_put(xe);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_resume_exit, "xe-vfio-pci");
+> > +
+> > +/**
+> > + * xe_sriov_vfio_error - Move VF to error state.
+> > + * @pdev: PF PCI device
+> > + * @vfid: VF identifier
+> > + *
+> > + * This function will stop VF on all tiles.
+> > + * Reset is needed to move it out of error state.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_sriov_vfio_error(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +	int ret;
+> > +
+> > +	if (!IS_SRIOV_PF(xe))
+> > +		return -ENODEV;
+> > +
+> > +	xe_pm_runtime_get(xe);
+> > +	ret = xe_sriov_pf_control_stop_vf(xe, vfid);
+> > +	xe_pm_runtime_put(xe);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_error, "xe-vfio-pci");
+> > +
+> 
+> add kernel-doc
 
--- 
-Best regards,
-Ridong
+Ok.
 
+> 
+> > +ssize_t xe_sriov_vfio_data_read(struct pci_dev *pdev, unsigned int vfid,
+> > +				char __user *buf, size_t len)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> 
+> missing param validation
+> 
+> 	is PF
+> 	is valid VFID
+
+Ok.
+
+> 
+> no RPM ?
+
+In this case, there's no need for RPM, as read/write calls are only
+interacting with the ring.
+
+> 
+> > +
+> > +	return xe_sriov_pf_migration_data_read(xe, vfid, buf, len);
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_data_read, "xe-vfio-pci");
+> > +
+> > +ssize_t xe_sriov_vfio_data_write(struct pci_dev *pdev, unsigned int vfid,
+> > +				 const char __user *buf, size_t len)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +
+> > +	return xe_sriov_pf_migration_data_write(xe, vfid, buf, len);
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_data_write, "xe-vfio-pci");
+> > +
+> > +ssize_t xe_sriov_vfio_stop_copy_size(struct pci_dev *pdev, unsigned int vfid)
+> > +{
+> > +	struct xe_device *xe = pci_get_drvdata(pdev);
+> > +
+> > +	return xe_sriov_pf_migration_size(xe, vfid);
+> > +}
+> > +EXPORT_SYMBOL_FOR_MODULES(xe_sriov_vfio_stop_copy_size, "xe-vfio-pci");
+> > diff --git a/include/drm/intel/xe_sriov_vfio.h b/include/drm/intel/xe_sriov_vfio.h
+> > new file mode 100644
+> > index 0000000000000..24e272f84c0e6
+> > --- /dev/null
+> > +++ b/include/drm/intel/xe_sriov_vfio.h
+> > @@ -0,0 +1,28 @@
+> > +/* SPDX-License-Identifier: MIT */
+> > +/*
+> > + * Copyright © 2025 Intel Corporation
+> > + */
+> > +
+> > +#ifndef _XE_SRIOV_VFIO_H_
+> > +#define _XE_SRIOV_VFIO_H_
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +struct pci_dev;
+> > +
+> > +bool xe_sriov_vfio_migration_supported(struct pci_dev *pdev);
+> > +int xe_sriov_vfio_wait_flr_done(struct pci_dev *pdev, unsigned int vfid);
+> > +int xe_sriov_vfio_stop(struct pci_dev *pdev, unsigned int vfid);
+> > +int xe_sriov_vfio_run(struct pci_dev *pdev, unsigned int vfid);
+> > +int xe_sriov_vfio_stop_copy_enter(struct pci_dev *pdev, unsigned int vfid);
+> > +int xe_sriov_vfio_stop_copy_exit(struct pci_dev *pdev, unsigned int vfid);
+> > +int xe_sriov_vfio_resume_enter(struct pci_dev *pdev, unsigned int vfid);
+> > +int xe_sriov_vfio_resume_exit(struct pci_dev *pdev, unsigned int vfid);
+> > +int xe_sriov_vfio_error(struct pci_dev *pdev, unsigned int vfid);
+> > +ssize_t xe_sriov_vfio_data_read(struct pci_dev *pdev, unsigned int vfid,
+> > +				char __user *buf, size_t len);
+> > +ssize_t xe_sriov_vfio_data_write(struct pci_dev *pdev, unsigned int vfid,
+> > +				 const char __user *buf, size_t len);
+> > +ssize_t xe_sriov_vfio_stop_copy_size(struct pci_dev *pdev, unsigned int vfid);
+> > +
+> > +#endif /* _XE_SRIOV_VFIO_H_ */
+> 
+> this is a very simple header, no need to repeat include guard name here
+
+Ok.
+
+Thanks,
+-Michał
+
+> 
 
