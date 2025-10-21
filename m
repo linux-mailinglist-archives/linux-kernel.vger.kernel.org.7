@@ -1,124 +1,90 @@
-Return-Path: <linux-kernel+bounces-862598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7800EBF5B6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:12:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D30BF5B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51EC14FED52
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDBC3AED17
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C98A328B7C;
-	Tue, 21 Oct 2025 10:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="JkBTlwHp"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF99832AAD1;
+	Tue, 21 Oct 2025 10:11:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B082E88B7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F512EF66D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041538; cv=none; b=QOAf3RcFno55PKBsMa5ytYpgR4c/xsRkSTMr6KZ+5O2LNhiheKFLmYvpu2NMrya8Sz1xI1uFvJS3G0E3809EJyxAoFNNjk7+puEL9JFUckqAm3G/g/IQPwmidSIBWNsDdrSe98Zt5O5D2Ahykw/0UPYkIAD7s1Jac2xUb5md00w=
+	t=1761041464; cv=none; b=P42eh6JsQCe48ZanQnFR3y7B7A4wUasG5cPt+o+JVJ6u6PU33qO2V7ADnDNRK1ngVg73BEPKa3zVCPNYN4ZcH9KrHvTWvpZXFEpuFTwiDynoIbtWtKx9f/HMHTCg+rc1I0VcwhKL6AIGr2AzJtq0xx/ve1BLHV8ZHW0+NgOf9YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041538; c=relaxed/simple;
-	bh=lS7BlA3ltA1K+OuXFELUMAx/9ayEMieaqVJ6yEPITIo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=NdtXvqu17MThvw8gtYFePLxhQ7RzT2LFd5NAM7PrFJB5lxev/sHqBDQoPLDKxKXFRQMJr9lk7SSIOSyh/mZ87IQH04tjuISji9ME6EEnNf6iiKI4eEghDxGVLDZvhrqtijISdfyx5cvBQtWJei/vwplU7dkAzMo9zEQyl+rLwx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=JkBTlwHp; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-427054641f0so794501f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1761041535; x=1761646335; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lS7BlA3ltA1K+OuXFELUMAx/9ayEMieaqVJ6yEPITIo=;
-        b=JkBTlwHpyLZTgYHz/IdzEveZvpMBXSz6i+qrRCjp6QqKa25oaBZG99U+6DvsJBtoqZ
-         EoXT1iTsTmhOQn+eG51AlLpGYoOqrWLVmGj6827ZqWCSD9Gss8uKHJ5z+5usqZNDbktS
-         J9hcPMLkvVNWe2Oq+isq+1yKdoQWEKjh666waZjKK4tEfAn9o5KESXN124aun0dLjTSf
-         WFJsqdNm1dkXGgRphthprzTPW3Wu2+pxn8kTvoqf/Gjz0PtN9WFwu0bGPg6jbK3rB4lM
-         kA3pQUwLeqbX3mouGEPnCAHYa+7WASNeKzkcXlIn4PabuMUEGqnabZIuobJA8swAR6KA
-         H+6g==
+	s=arc-20240116; t=1761041464; c=relaxed/simple;
+	bh=vpXQiflVU7E/srPq9JfjysqPUwZeetf3iBJFxoNFNfA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Hv08sx6+II871cLYjznmQ8+62+3x7WoVoOEhtq0rtO63t8tAmacPaGjq+BkP8E5SrGPk/i0O0VxI9rUFKYZ8KYkrFueUUGUqCVMH+2fyhzpBA/pc2Maa6D/lgb7zas/YS4/rKBF+sbIXAK4BfPqiTyJRHF4Q87VN+Jx+JSzrJd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-93e7ff77197so1223376139f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:11:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761041535; x=1761646335;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lS7BlA3ltA1K+OuXFELUMAx/9ayEMieaqVJ6yEPITIo=;
-        b=EWrwk+r5I3Rd6xkOqsVh47KrIwkc/lM552Af4pgx0e0V1874ljmtWuDSR9uLuK88yA
-         fFrsLO9ffg77b1q4/oINRhmvX0XoKmQlMmhEi6ZOG0wYXurchea8zVJR3l1EkATt9xon
-         Oa5FM/+d/5UZjXdE+9B9PsYWtw7s2n6Dmb7XMIrfcwu+C0xPuM3eDq5yCxJta/UIxwU9
-         A0S5tlQE76m5DcrXwPst7anReMY5L9hcvmotmacSrz8SEbQQGbH7kJ6rmB8fVn/ZDYjZ
-         TOphxaxWS916gJje2UBYGrEdH61FRmVM4qpmcMIMmed+M0XBSXYwELc2XlWzpaZVOuTF
-         wU2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnmds0qn9GYDaNAcm8TzRmpHh7qYMRnQAWdx8GBbU+qsCfvaCHpfN66Wa0ngGg9U8Qlh/Mi/2fq3X8drE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRCq93MmDLt9N0AAiuTUKcP2+KjI21JxTYA5y5ZzoupMTi6RAu
-	Kz021tG4CQsq12bQSJY01yDzsQAuyklOXiKuHY9Xs/OvUhsutKNK6zDzMrerP7Qr35o=
-X-Gm-Gg: ASbGncuNCqK3ZsAlA3Z3QenDKf7G8N1i00QD0X/8aIUCCxjxKDxiySA5Ua4keLmNRw5
-	oNqKFRuM++UWG+FCc53+r0+R6Di34bKpf/N0dJNLPuZXt6iD/PpFRIVga4RhQMk4MeQoyltP1U/
-	vpdDMcI/XcqSVn1UxJwtEImSP8pBii5/bCyrCUVIgIYY7d5am4Q144jZHZbXR+oGY21DqzHW+V5
-	73RLelRQCSiBG2ZcO23+NaeVepS7aj7FaEEv3dYCKLPK+Uu5txIqESOTcdepcC+O/DSN7TwjUtp
-	03HgBHAv6dkRIYrvDYn7fOoBcRO1eNl94y0MeuuG2sAgm3AZcIzKU1Wv93h0WP2b346cc80zmtq
-	884HD9vu67F6lGFfEyo8ntJVRhy2XfmZkl5dgjjndE8CXdkZBnbhBPtajG3WJd8TZ2qxRh4+8gm
-	s=
-X-Google-Smtp-Source: AGHT+IGMp04zmiOU/hD8LCGYBTUQQCGASEAZAsC4+kzM41lFqGtljB8ajxnMiIjuotYviMNMQl6Bbg==
-X-Received: by 2002:a05:600c:6308:b0:45d:da49:c47d with SMTP id 5b1f17b1804b1-474941ec4b9mr10454745e9.0.1761041535023;
-        Tue, 21 Oct 2025 03:12:15 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::bfbb])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4715257d90bsm189405475e9.2.2025.10.21.03.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 03:12:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761041462; x=1761646262;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ijl+KuktG6GVPgjZkCiCYwgydFvbdcvzoiJcnFOxm7I=;
+        b=FWybNyTG+K13usTeynQsYSeyBWKrXFUpIY8xTg/XeW2r5womqa7gbqeOGqYzXgLTUR
+         7oAfCLjCQVqTdqzLEOpBky12Xd2mzfLXq2nK8S2HBcz8DLCTWPt2FirzJJc4HwFNQ8jc
+         tGrMC6L3kLHZ+9zrVu6e0JN3FY/dlhn1MNbT1Xnz8+IpLDjgUuLQAQJyoTxw7wByUV07
+         OL46xyLx9wcPGkn9k6QUEMvXo0m7A48o4+zPxcr8J4a1xxgW1lPvho1msD6Au84MPh97
+         /v2J+aeMxsLdT51woxhwl3zNLqYqffExFIHB5x8h7ietl0oU/Kdb+f0FksMz9smCgqbe
+         e3Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrhN5z50qYAEEYsCyz+pBPPdzxFT6gZLWzdYXj41Zc5xQtNU1TRRCtJbamGAfToKJVAI37Sun1P3ChZSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCFxOl/6y2xAFbYYeFcJILY/GAX796WIKzVFp15VqMqHxdz7G7
+	lva1FpMCQllczqX3Ow8HGUpZnArAS1U0wSh1WlgPVPMy2l7+Qwt9IJPm3SglH+4YZoKZn/4sJpt
+	aZHP8nQN0kDUG+CqZcBlLVHiKzzslTmUA5y1ffcGz9tGeFE26y7ECBSRJY9g=
+X-Google-Smtp-Source: AGHT+IFO/PptUIaZovR6keuCooSX+DOI1vkk7sEagxXGmiTLgzZnl5FSVhzaAIb+vmqRsREXvQCYmlgS7kfKa9KhO/ZMeJlBHq+0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 Oct 2025 12:10:47 +0200
-Message-Id: <DDNX3CCBLWXK.3KMVX9AKL162N@ventanamicro.com>
-Subject: Re: [PATCH v2] RISC-V: KVM: flush VS-stage TLB after VCPU migration
- to prevent stale entries
-Cc: <kvm@vger.kernel.org>, <kvm-riscv@lists.infradead.org>,
- <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <tim609@andestech.com>, <ben717@andestech.com>, <az70021@gmail.com>,
- "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-To: "Hui Min Mina Chou" <minachou@andestech.com>, <anup@brainfault.org>,
- <atish.patra@linux.dev>, <pjw@kernel.org>, <palmer@dabbelt.com>,
- <aou@eecs.berkeley.edu>, <alex@ghiti.fr>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20251021083105.4029305-1-minachou@andestech.com>
-In-Reply-To: <20251021083105.4029305-1-minachou@andestech.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:718a:b0:893:65c1:a018 with SMTP id
+ ca18e2360f4ac-93e7627ad1fmr2655618139f.3.1761041462284; Tue, 21 Oct 2025
+ 03:11:02 -0700 (PDT)
+Date: Tue, 21 Oct 2025 03:11:02 -0700
+In-Reply-To: <mpv4ljrxyucr23x4hj7k7s4vmtvv3bgeq7uct3t44ghaw35l4r@wanp7mklhw7x>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f75c36.a70a0220.3bf6c6.0003.GAE@google.com>
+Subject: Re: [syzbot] [virt?] [net?] possible deadlock in vsock_linger
+From: syzbot <syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, mhal@rbox.co, 
+	netdev@vger.kernel.org, pabeni@redhat.com, sgarzare@redhat.com, 
+	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-2025-10-21T16:31:05+08:00, Hui Min Mina Chou <minachou@andestech.com>:
-> From: Hui Min Mina Chou <minachou@andestech.com>
->
-> If multiple VCPUs of the same Guest/VM run on the same Host CPU,
-> hfence.vvma only flushes that Host CPU=E2=80=99s VS-stage TLB. Other Host=
- CPUs
-> may retain stale VS-stage entries. When a VCPU later migrates to a
-> different Host CPU, it can hit these stale GVA to GPA mappings, causing
-> unexpected faults in the Guest.
->
-> To fix this, kvm_riscv_gstage_vmid_sanitize() is extended to flush both
-> G-stage and VS-stage TLBs whenever a VCPU migrates to a different Host CP=
-U.
-> This ensures that no stale VS-stage mappings remain after VCPU migration.
->
-> Fixes: 92e450507d56 ("RISC-V: KVM: Cleanup stale TLB entries when host CP=
-U changes")
-> Signed-off-by: Hui Min Mina Chou <minachou@andestech.com>
-> Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-> ---
+Hello,
 
-The vvma flush is not necessary on implementation that have a single TLB
-for the combined mapping, but there is no good way of detecting that,
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Reviewed-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
+failed to apply patch:
+checking file net/vmw_vsock/af_vsock.c
+patch: **** unexpected end of file in patch
+
+
+
+Tested on:
+
+commit:         6548d364 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=10e35716f8e4929681fa
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17204e7c580000
+
 
