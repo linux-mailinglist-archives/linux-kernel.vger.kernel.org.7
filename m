@@ -1,540 +1,192 @@
-Return-Path: <linux-kernel+bounces-862961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DB7BF6A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:07:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3598BF6A7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11B6545ED1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F84F19A4A3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAD5334C28;
-	Tue, 21 Oct 2025 13:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AAE2ED165;
+	Tue, 21 Oct 2025 13:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="f6cd+2xw"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m7fzZPoX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93280337118
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65A73321DB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761051706; cv=none; b=SXyXDm7IhwsKf716x76uGoE01Oe2+bO++j6zWUnlJ747TQRbgxqj8vmtgt1L0VxPkRmlD9xTQ3tNQCkJs8SQsm6MvayyECFO8chQOUIvlKrMZbt4ciPed/eKEySc/JNOnu+EtmauRP2xzarL8wDHbh6yvz0ts3BeyBKFs5fnM14=
+	t=1761051837; cv=none; b=FX8LvyBI5V9ygCNbjRlYU8MFg6igbbLsrBXH1yGJHIvJF2JhasIAd0XG2uZZUX+LxSzmcunB5HUZoUIan+sOvZ9+G4/G6Ac62C7cYXw0RfDHa97zHmQfiDfAlvqnYr2PNWUOospMl7FuoGG0PUeeoZwDhAd/4qiULzvvbb0R098=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761051706; c=relaxed/simple;
-	bh=Ks8XgcKXndycUbTm+Uu8wrGFfOzPcCjYJzyE9/UppCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CLjL/tDL81Nn2412tC/dIewxX4rQ3dp877L54+sJn836tofK6SAvQD/weI3Mcj//RDLu3lGCj1WHJujhGF+D4FV1/ETMCXOYokXwn23Q85H4W8a8IJUw5KLbwcs7EOpaXm4+FVliD9GHFa0KIrz+3uMHmbgg4mYCqd7X8t5lFHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=f6cd+2xw; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761051700; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=HMOIo9bj01WGBspEBVjROmQ/WIesyC/CiLx2+1Px6os=;
-	b=f6cd+2xwsXVPbNBOvwP6vVi2Fh28Qu3ogj031tAn3CO1qqbwpOekVPJKINGg7fP8p2HFLu6FSgbJv4qnsO3S17WgQ9PYM+aGNUyNMBfDzKVQs0xNKW2+C9RpntRyzRcnLare3AaUqE9qf9000PAFg2RgM7ak+nZxR+6GBEGhPiA=
-Received: from 30.180.79.37(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WqjB-52_1761051698 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 21 Oct 2025 21:01:39 +0800
-Message-ID: <96569039-1d93-45bc-a0e0-631b71bbb41f@linux.alibaba.com>
-Date: Tue, 21 Oct 2025 21:01:38 +0800
+	s=arc-20240116; t=1761051837; c=relaxed/simple;
+	bh=FDyI0ELaP+8G6K2J87c4ou8IZSaFgqHpQeJVkW91Fp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkNW5f7vDxG6ukCu9xWOZzn7mAH39sZ8I2RhIsgjl1yuDXEods8BgG4ztBzgue4WldKoEYayBZdwKvN42apDlt2u0LbJmKCVtU0lC6CovJQ72QRWcLffNNlH8EGiWiKkuXzyBB2u5PorplzhmWMsRgjLhGuhP8ZjNe8YLVSwVYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m7fzZPoX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8Lud3004415
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:03:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EDrIqOlDWabTc3vmLbQ0DUei
+	ZyiWzCtrffXjD0fQBds=; b=m7fzZPoXJUiRKy7jLR+DFiwS7U+89rFly7j6qaNC
+	lb4tBdMK5NlFYgFtlni3rijyRfYScjrcTHuhM6Gb3nWZSFqVXW6cTWd0wbrFOY6B
+	gfd/38XNwiIWfiIExxLgt3R8GI0tYsK2mimtozWw4L73c4M+lihPKOdxY6N2Jk5/
+	OxNKaav5mGAexhkyjyz7tq2WLubclB134renYtfBKuFY6a3OoohZiArLkG4xiHWI
+	dT5jQRyUgulhx8keK2ItyrJaT2T1cmY0Mx8hTAMmpMh5AGSW/7lBHWug5v9r+ct6
+	ZUnEB3XKH+Kqg025nkhBvyIoOg6PQXa6keu1zuzhvIjnbg==
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3nfgpk3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:03:53 +0000 (GMT)
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-932ee98bb3dso907812241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:03:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761051832; x=1761656632;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EDrIqOlDWabTc3vmLbQ0DUeiZyiWzCtrffXjD0fQBds=;
+        b=t5KrDT5zjvTMgXo4URd0K7Xy37+KbueATV5FEWhB+LDr9stqDxPr8jHsmd+edr8/pC
+         Lh4ZLaEdkZpPd4ge+TfvZz0Q2y2uod4WwfZ7PwA8iKp2RrAR5yjm7SRjprSncxget7S2
+         zgQ60Unz26gKypGd0U6mdGc09/QVk/jXUFYyiGe3HPhGPkamoEIn3yXQTsWWAocZvQdt
+         g83qJO+XMJGOCVEKI5uxSzPl8/I3LD6swXXNIDGfusx428E5QP6JC9paQxAOcwMfm/Tm
+         iiBEq/zpU7Hg7HLorR0wkdtC1NKXfTmJbI1v02RnIOfI/AKgjnIsHeYHqRTHLRH+R53K
+         ncOA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/N3kO0uU9f6c+p8gq/5SseM2do/IhYRJOEvF3BJLXfXpIky78ItNCugqgFNpNPMLZsyolq8cNwT+4OBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywse0p7Myq9v10zaMweg0m8yhRxWjIYzWKtv3U+fG7WoCuuK/rK
+	qGM36guul1vvzWuMipCY0EFD+59B7/QiCW8xqE5hweyI6TOPiULsJQfVJfl3QRmi3qI0nwT24iP
+	+L6jpGDEQwBY57ZHC1ZYzpxsgDXabIRkS7jHQ9KS2sOun4ySRlWITm+uU0In1POBMueI=
+X-Gm-Gg: ASbGncubQwoSGvPeCHVaK+se/NMgJAIXkE/l5Ihu2LXCp4icT/YwXg8Y4L0Mh4lxqA3
+	pE7fwlRI1QElnJqmUrF2bH/9Rj32BFsPjhyCyQDrr80ZXTPEcuOVrp8F1GtzgQylO5EVkmi6rzg
+	P+045wWQH3iCgbrM5/nGpAwogd0+klff5xntxiu2KteBN22233/VZK4TkSUkX6pSJ99eeQnllte
+	Muh76oMeWqLlDBWWET952Pi0KdA7Sv/FXC2ISWV9pa842ioRbFa9lLj1TD4vT0O1prdJoRbg7nn
+	8EzsYVjbesRxAtGqGF11JXryioYgfK3x1+rn17ITUM2+HNNzta0pNRtvMs/tMzE0O/9TKZceWtj
+	uK6amarkZwINHJxi2It8nH6rJdeKUhyaK0HQKhZMbu8p6vkezn+n7jZTeUqSx/ufoJSuXBEF3HU
+	fTJYRxXjOrGOw=
+X-Received: by 2002:a05:6122:1346:b0:54c:3fe6:6281 with SMTP id 71dfb90a1353d-5564ee23106mr5038771e0c.6.1761051832343;
+        Tue, 21 Oct 2025 06:03:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhkuO0rTjc/ZeeWLixgVS1Ew/7JMs0TEHaib+DIHO5ztf4dvMOXWkt92zh6Povn11NoZSU3w==
+X-Received: by 2002:a05:6122:1346:b0:54c:3fe6:6281 with SMTP id 71dfb90a1353d-5564ee23106mr5038728e0c.6.1761051831810;
+        Tue, 21 Oct 2025 06:03:51 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a950cb2bsm29151841fa.27.2025.10.21.06.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 06:03:50 -0700 (PDT)
+Date: Tue, 21 Oct 2025 16:03:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: qcm2290: add LPASS LPI pin
+ controller
+Message-ID: <56vmqgrjy3je7omzirxnfxtuocebbj356iaew5thgkagi35464@hh34y7efssow>
+References: <20251007-rb1_hdmi_audio-v2-0-821b6a705e4c@linaro.org>
+ <20251007-rb1_hdmi_audio-v2-3-821b6a705e4c@linaro.org>
+ <b6223af9-2d9e-4ccd-b297-79f63167242b@oss.qualcomm.com>
+ <DDEN5NSLDIHD.C1IELQW0VOG3@linaro.org>
+ <zmi5grjg2znxddqzfsdsr35ad5olj3xgwwt6hvkiaynxzm5z33@gsgrdguj563n>
+ <DDO0LYS7UTEW.3A9WGTAA5DKVO@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 5/7] erofs: support unencoded inodes for page cache
- share
-To: Hongbo Li <lihongbo22@huawei.com>, brauner@kernel.org
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Chao Yu <chao@kernel.org>, Hongzhen Luo <hongzhen@linux.alibaba.com>
-References: <20251021104815.70662-1-lihongbo22@huawei.com>
- <20251021104815.70662-6-lihongbo22@huawei.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20251021104815.70662-6-lihongbo22@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDO0LYS7UTEW.3A9WGTAA5DKVO@linaro.org>
+X-Proofpoint-ORIG-GUID: RB3aylgalCl1dcqEZQL80XVSpyskJUrF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyNyBTYWx0ZWRfX9jtlEbZakoXs
+ lKNHPgUf64Pupynark1+e9hN9EPrkL/N6ZOwz96qNXuWyCfQn0WZi14hgJZlBaTCYtZt7wQZHOu
+ vm9SX+wGq2+ITeyZgEJXlgLnNug3JlL/bYZrUOj7Kg8Gm50NTGneDKw2R6yFvt3z7gPp9DTtnnF
+ qrZG9vru+w9c4oyfh/aSYcS1ByhvEjyI7zQFy6lbdh6n+I/jwO8oUDfOFP2CrWFJvc+Y5eD05st
+ iuA87xdBGUVofxWo9Ncc333D97GqZNqLb7KdajKmv0sMAOcyskrvnzD9DPUEfFsGOcaoB7InFhw
+ XIQ10gtLgmqsIJ29KnbS8OUdMtg2gxxnoAgZ/UVLhUP7PjLaWbT5JU6OWFEerY7cCfYDfmEvAHK
+ U8X1XWt+1s1RhDirlcPXhzkdiB1Sdg==
+X-Proofpoint-GUID: RB3aylgalCl1dcqEZQL80XVSpyskJUrF
+X-Authority-Analysis: v=2.4 cv=EYjFgfmC c=1 sm=1 tr=0 ts=68f784b9 cx=c_pps
+ a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=SizNog2SKWkDgIwviPAA:9 a=CjuIK1q_8ugA:10 a=TD8TdBvy0hsOASGTdmB-:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 spamscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180027
 
-
-
-On 2025/10/21 18:48, Hongbo Li wrote:
-> From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+On Tue, Oct 21, 2025 at 01:56:09PM +0100, Alexey Klimov wrote:
+> On Fri Oct 17, 2025 at 11:42 PM BST, Bjorn Andersson wrote:
+> > On Fri, Oct 10, 2025 at 01:29:38PM +0100, Alexey Klimov wrote:
+> >> On Tue Oct 7, 2025 at 1:39 PM BST, Konrad Dybcio wrote:
+> >> > On 10/7/25 4:03 AM, Alexey Klimov wrote:
+> >> >> Add the Low Power Audio SubSystem Low Power Island (LPASS LPI) pin
+> >> >> controller device node required for audio subsystem on Qualcomm
+> >> >> QRB2210 RB1. QRB2210 is based on qcm2290 which is based on sm6115.
+> >> >> 
+> >> >> While at this, also add description of lpi_i2s2 pins (active state)
+> >> >> required for audio playback via HDMI/I2S.
+> >> >> 
+> >> >> Cc: Srinivas Kandagatla <srini@kernel.org>
+> >> >> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> >> >> ---
+> >> >
+> >> > [...]
+> >> >
+> >> >> +			lpi_i2s2_active: lpi-i2s2-active-state {
+> >> >> +				data-pins {
+> >> >> +					pins = "gpio12";
+> >> >> +					function = "i2s2_data";
+> >> >> +					bias-disable;
+> >> >> +					drive-strength = <8>;
+> >> >> +					output-high;
+> >> >
+> >> > I.. doubt output-high is what you want?
+> >> 
+> >> Why? Or is it because of some in-kernel gpiod?
+> >> 
+> >
+> > What does "output-high" mean for a non-gpio function?
 > 
-> This patch adds inode page cache sharing functionality for unencoded
-> files.
-> 
-> I conducted experiments in the container environment. Below is the
-> memory usage for reading all files in two different minor versions
-> of container images:
-> 
-> +-------------------+------------------+-------------+---------------+
-> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
-> |                   |                  |             | Reduction (%) |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     241     |       -       |
-> |       redis       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     872     |       -       |
-> |      postgres     +------------------+-------------+---------------+
-> |    16.1 & 16.2    |        Yes       |     630     |      28%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     2771    |       -       |
-> |     tensorflow    +------------------+-------------+---------------+
-> |  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     926     |       -       |
-> |       mysql       +------------------+-------------+---------------+
-> |  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     390     |       -       |
-> |       nginx       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
-> +-------------------+------------------+-------------+---------------+
-> |       tomcat      |        No        |     924     |       -       |
-> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
-> |                   |        Yes       |     474     |      49%      |
-> +-------------------+------------------+-------------+---------------+
-> 
-> Additionally, the table below shows the runtime memory usage of the
-> container:
-> 
-> +-------------------+------------------+-------------+---------------+
-> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
-> |                   |                  |             | Reduction (%) |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |      35     |       -       |
-> |       redis       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |      28     |      20%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     149     |       -       |
-> |      postgres     +------------------+-------------+---------------+
-> |    16.1 & 16.2    |        Yes       |      95     |      37%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     1028    |       -       |
-> |     tensorflow    +------------------+-------------+---------------+
-> |  2.11.0 & 2.11.1  |        Yes       |     930     |      10%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     155     |       -       |
-> |       mysql       +------------------+-------------+---------------+
-> |  8.0.11 & 8.0.12  |        Yes       |     132     |      15%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |      25     |       -       |
-> |       nginx       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |      20     |      20%      |
-> +-------------------+------------------+-------------+---------------+
-> |       tomcat      |        No        |     186     |       -       |
-> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
-> |                   |        Yes       |      98     |      48%      |
-> +-------------------+------------------+-------------+---------------+
-> 
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> [hongbo: forward port, minor fixes and cleanup]
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->   fs/erofs/data.c     | 81 ++++++++++++++++++++++++++++++++++++++-----
->   fs/erofs/inode.c    |  5 +++
->   fs/erofs/internal.h |  4 +++
->   fs/erofs/ishare.c   | 83 +++++++++++++++++++++++++++++++++++++++++++++
->   fs/erofs/ishare.h   | 18 ++++++++++
->   fs/erofs/super.c    |  7 ++++
->   6 files changed, 190 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-> index 8ca29962a3dd..438d43c959aa 100644
-> --- a/fs/erofs/data.c
-> +++ b/fs/erofs/data.c
-> @@ -5,6 +5,7 @@
->    * Copyright (C) 2021, Alibaba Cloud
->    */
->   #include "internal.h"
-> +#include "ishare.h"
->   #include <linux/sched/mm.h>
->   #include <trace/events/erofs.h>
->   
-> @@ -266,25 +267,55 @@ void erofs_onlinefolio_end(struct folio *folio, int err, bool dirty)
->   	folio_end_read(folio, !(v & BIT(EROFS_ONLINEFOLIO_EIO)));
->   }
->   
-> +struct erofs_iomap {
-> +	void *base;
-> +	struct inode *realinode;
-> +};
-> +
->   static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->   		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
->   {
->   	int ret;
-> -	struct super_block *sb = inode->i_sb;
-> +	struct super_block *sb;
->   	struct erofs_map_blocks map;
->   	struct erofs_map_dev mdev;
-> +	struct inode *realinode = inode;
-> +	struct erofs_iomap *erofs_iomap;
-> +	bool is_ishare = erofs_is_ishare_inode(inode);
-> +
-> +	if (is_ishare) {
-> +		if (!iomap->private) {
+> This is not efficient. It will be more useful to go straight to
+> the point.
 
-I tend to pass in `iomap->private` and allocate on disk
-as I mentioned in
-https://lore.kernel.org/r/20250829235627.4053234-14-joannelkoong@gmail.com
+It is efficient. It makes everybody think about it (and ask the same
+question in future) instead of just depending on maintainers words.
 
-to avoid unnecessary kzalloc.
+> This description of pins was taken from Qualcomm downstream code
+> and the similar patch was applied (see provided URL in the prev email).
 
-Thanks,
-Gao Xiang
+And we all know that downstream can be buggy, incomplete, etc.
 
-> +			erofs_iomap = kzalloc(sizeof(*erofs_iomap),
-> +					      GFP_KERNEL);
-> +			if (!erofs_iomap)
-> +				return -ENOMEM;
-> +			erofs_iomap->realinode = erofs_ishare_iget(inode);
-> +			if (!erofs_iomap->realinode) {
-> +				kfree(erofs_iomap);
-> +				return -EINVAL;
-> +			}
-> +			iomap->private = erofs_iomap;
-> +		}
-> +		erofs_iomap = iomap->private;
-> +		realinode = erofs_iomap->realinode;
-> +	}
->   
-> +	sb = realinode->i_sb;
->   	map.m_la = offset;
->   	map.m_llen = length;
-> -	ret = erofs_map_blocks(inode, &map);
-> +	ret = erofs_map_blocks(realinode, &map);
->   	if (ret < 0)
->   		return ret;
->   
->   	iomap->offset = map.m_la;
->   	iomap->length = map.m_llen;
->   	iomap->flags = 0;
-> -	iomap->private = NULL;
->   	iomap->addr = IOMAP_NULL_ADDR;
-> +
-> +	if (is_ishare)
-> +		erofs_iomap->base = NULL;
-> +	else
-> +		iomap->private = NULL;
->   	if (!(map.m_flags & EROFS_MAP_MAPPED)) {
->   		iomap->type = IOMAP_HOLE;
->   		return 0;
-> @@ -318,7 +349,10 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->   		if (IS_ERR(ptr))
->   			return PTR_ERR(ptr);
->   		iomap->inline_data = ptr;
-> -		iomap->private = buf.base;
-> +		if (is_ishare)
-> +			erofs_iomap->base = buf.base;
-> +		else
-> +			iomap->private = buf.base;
->   	} else {
->   		iomap->type = IOMAP_MAPPED;
->   	}
-> @@ -328,7 +362,17 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->   static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
->   		ssize_t written, unsigned int flags, struct iomap *iomap)
->   {
-> -	void *ptr = iomap->private;
-> +	struct erofs_iomap *erofs_iomap;
-> +	bool is_ishare;
-> +	void *ptr;
-> +
-> +	is_ishare = erofs_is_ishare_inode(inode);
-> +	if (is_ishare) {
-> +		erofs_iomap = iomap->private;
-> +		ptr = erofs_iomap->base;
-> +	} else {
-> +		ptr = iomap->private;
-> +	}
->   
->   	if (ptr) {
->   		struct erofs_buf buf = {
-> @@ -341,6 +385,12 @@ static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
->   	} else {
->   		DBG_BUGON(iomap->type == IOMAP_INLINE);
->   	}
-> +
-> +	if (is_ishare) {
-> +		erofs_ishare_iput(erofs_iomap->realinode);
-> +		kfree(erofs_iomap);
-> +		iomap->private = NULL;
-> +	}
->   	return written;
->   }
->   
-> @@ -369,17 +419,32 @@ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->    */
->   static int erofs_read_folio(struct file *file, struct folio *folio)
->   {
-> +	struct erofs_read_ctx rdctx = {
-> +		.file = file,
-> +		.inode = folio_inode(folio),
-> +	};
-> +	int ret;
-> +
-> +	erofs_read_begin(&rdctx);
-> +	ret = iomap_read_folio(folio, &erofs_iomap_ops);
-> +	erofs_read_end(&rdctx);
->   	trace_erofs_read_folio(folio, true);
->   
-> -	return iomap_read_folio(folio, &erofs_iomap_ops);
-> +	return ret;
->   }
->   
->   static void erofs_readahead(struct readahead_control *rac)
->   {
-> +	struct erofs_read_ctx rdctx = {
-> +		.file = rac->file,
-> +		.inode = rac->mapping->host,
-> +	};
-> +
-> +	erofs_read_begin(&rdctx);
-> +	iomap_readahead(rac, &erofs_iomap_ops);
-> +	erofs_read_end(&rdctx);
->   	trace_erofs_readahead(rac->mapping->host, readahead_index(rac),
->   					readahead_count(rac), true);
-> -
-> -	return iomap_readahead(rac, &erofs_iomap_ops);
->   }
->   
->   static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
-> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> index cb780c095d28..fe45e6c18f8e 100644
-> --- a/fs/erofs/inode.c
-> +++ b/fs/erofs/inode.c
-> @@ -5,6 +5,7 @@
->    * Copyright (C) 2021, Alibaba Cloud
->    */
->   #include "xattr.h"
-> +#include "ishare.h"
->   #include <linux/compat.h>
->   #include <trace/events/erofs.h>
->   
-> @@ -215,6 +216,10 @@ static int erofs_fill_inode(struct inode *inode)
->   	case S_IFREG:
->   		inode->i_op = &erofs_generic_iops;
->   		inode->i_fop = &erofs_file_fops;
-> +#ifdef CONFIG_EROFS_FS_INODE_SHARE
-> +		if (erofs_ishare_fill_inode(inode))
-> +			inode->i_fop = &erofs_ishare_fops;
-> +#endif
->   		break;
->   	case S_IFDIR:
->   		inode->i_op = &erofs_dir_iops;
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 158bda6ba784..9ce6e5753978 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -322,11 +322,15 @@ struct erofs_inode {
->   			spinlock_t lock;
->   			/* all backing inodes */
->   			struct list_head backing_head;
-> +			/* processing list */
-> +			struct list_head processing_head;
->   		};
->   
->   		struct {
->   			struct inode *ishare;
->   			struct list_head backing_link;
-> +			struct list_head processing_link;
-> +			atomic_t processing_count;
->   		};
->   	};
->   #endif
-> diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-> index 910b732bf8e7..73432b13bf75 100644
-> --- a/fs/erofs/ishare.c
-> +++ b/fs/erofs/ishare.c
-> @@ -72,6 +72,7 @@ static int erofs_ishare_iget5_set(struct inode *inode, void *data)
->   
->   	vi->fingerprint = data;
->   	INIT_LIST_HEAD(&vi->backing_head);
-> +	INIT_LIST_HEAD(&vi->processing_head);
->   	spin_lock_init(&vi->lock);
->   	return 0;
->   }
-> @@ -124,7 +125,9 @@ bool erofs_ishare_fill_inode(struct inode *inode)
->   	}
->   
->   	INIT_LIST_HEAD(&vi->backing_link);
-> +	INIT_LIST_HEAD(&vi->processing_link);
->   	vi->ishare = idedup;
-> +
->   	spin_lock(&EROFS_I(idedup)->lock);
->   	list_add(&vi->backing_link, &EROFS_I(idedup)->backing_head);
->   	spin_unlock(&EROFS_I(idedup)->lock);
-> @@ -234,3 +237,83 @@ const struct file_operations erofs_ishare_fops = {
->   	.get_unmapped_area = thp_get_unmapped_area,
->   	.splice_read	= filemap_splice_read,
->   };
-> +
-> +void erofs_read_begin(struct erofs_read_ctx *rdctx)
-> +{
-> +	struct erofs_inode *vi, *vi_dedup;
-> +
-> +	if (!rdctx->file || !erofs_is_ishare_inode(rdctx->inode))
-> +		return;
-> +
-> +	vi = rdctx->file->private_data;
-> +	vi_dedup = EROFS_I(file_inode(rdctx->file));
-> +
-> +	spin_lock(&vi_dedup->lock);
-> +	if (!list_empty(&vi->processing_link)) {
-> +		atomic_inc(&vi->processing_count);
-> +	} else {
-> +		list_add(&vi->processing_link,
-> +			 &vi_dedup->processing_head);
-> +		atomic_set(&vi->processing_count, 1);
-> +	}
-> +	spin_unlock(&vi_dedup->lock);
-> +}
-> +
-> +void erofs_read_end(struct erofs_read_ctx *rdctx)
-> +{
-> +	struct erofs_inode *vi, *vi_dedup;
-> +
-> +	if (!rdctx->file || !erofs_is_ishare_inode(rdctx->inode))
-> +		return;
-> +
-> +	vi = rdctx->file->private_data;
-> +	vi_dedup = EROFS_I(file_inode(rdctx->file));
-> +
-> +	spin_lock(&vi_dedup->lock);
-> +	if (atomic_dec_and_test(&vi->processing_count))
-> +		list_del_init(&vi->processing_link);
-> +	spin_unlock(&vi_dedup->lock);
-> +}
-> +
-> +/*
-> + * erofs_ishare_iget - find the backing inode.
-> + */
-> +struct inode *erofs_ishare_iget(struct inode *inode)
-> +{
-> +	struct erofs_inode *vi, *vi_dedup;
-> +	struct inode *realinode;
-> +
-> +	if (!erofs_is_ishare_inode(inode))
-> +		return igrab(inode);
-> +
-> +	vi_dedup = EROFS_I(inode);
-> +	spin_lock(&vi_dedup->lock);
-> +	/* try processing inodes first */
-> +	if (!list_empty(&vi_dedup->processing_head)) {
-> +		list_for_each_entry(vi, &vi_dedup->processing_head,
-> +				    processing_link) {
-> +			realinode = igrab(&vi->vfs_inode);
-> +			if (realinode) {
-> +				spin_unlock(&vi_dedup->lock);
-> +				return realinode;
-> +			}
-> +		}
-> +	}
-> +
-> +	/* fall back to all backing inodes */
-> +	DBG_BUGON(list_empty(&vi_dedup->backing_head));
-> +	list_for_each_entry(vi, &vi_dedup->backing_head, backing_link) {
-> +		realinode = igrab(&vi->vfs_inode);
-> +		if (realinode)
-> +			break;
-> +	}
-> +	spin_unlock(&vi_dedup->lock);
-> +
-> +	DBG_BUGON(!realinode);
-> +	return realinode;
-> +}
-> +
-> +void erofs_ishare_iput(struct inode *realinode)
-> +{
-> +	iput(realinode);
-> +}
-> diff --git a/fs/erofs/ishare.h b/fs/erofs/ishare.h
-> index 54f2251c8179..b85fa240507b 100644
-> --- a/fs/erofs/ishare.h
-> +++ b/fs/erofs/ishare.h
-> @@ -9,6 +9,11 @@
->   #include <linux/spinlock.h>
->   #include "internal.h"
->   
-> +struct erofs_read_ctx {
-> +	struct file *file; /* may be NULL */
-> +	struct inode *inode;
-> +};
-> +
->   #ifdef CONFIG_EROFS_FS_INODE_SHARE
->   
->   int erofs_ishare_init(struct super_block *sb);
-> @@ -16,6 +21,13 @@ void erofs_ishare_exit(struct super_block *sb);
->   bool erofs_ishare_fill_inode(struct inode *inode);
->   void erofs_ishare_free_inode(struct inode *inode);
->   
-> +/* read/readahead */
-> +void erofs_read_begin(struct erofs_read_ctx *rdctx);
-> +void erofs_read_end(struct erofs_read_ctx *rdctx);
-> +
-> +struct inode *erofs_ishare_iget(struct inode *inode);
-> +void erofs_ishare_iput(struct inode *realinode);
-> +
->   #else
->   
->   static inline int erofs_ishare_init(struct super_block *sb) { return 0; }
-> @@ -23,6 +35,12 @@ static inline void erofs_ishare_exit(struct super_block *sb) {}
->   static inline bool erofs_ishare_fill_inode(struct inode *inode) { return false; }
->   static inline void erofs_ishare_free_inode(struct inode *inode) {}
->   
-> +static inline void erofs_read_begin(struct erofs_read_ctx *rdctx) {}
-> +static inline void erofs_read_end(struct erofs_read_ctx *rdctx) {}
-> +
-> +static inline struct inode *erofs_ishare_iget(struct inode *inode) { return inode; }
-> +static inline void erofs_ishare_iput(struct inode *realinode) {}
-> +
->   #endif // CONFIG_EROFS_FS_INODE_SHARE
->   
->   #endif
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index f067633c0072..cba3da383558 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -97,6 +97,7 @@ static void erofs_free_inode(struct inode *inode)
->   		erofs_free_dedup_inode(vi);
->   		return;
->   	}
-> +	erofs_ishare_free_inode(inode);
->   	if (inode->i_op == &erofs_fast_symlink_iops)
->   		kfree(inode->i_link);
->   	kfree(vi->xattr_shared_xattrs);
-> @@ -762,6 +763,10 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->   	if (err)
->   		return err;
->   
-> +	err = erofs_ishare_init(sb);
-> +	if (err)
-> +		return err;
-> +
->   	sbi->dir_ra_bytes = EROFS_DIR_RA_BYTES;
->   	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
->   	return 0;
-> @@ -911,6 +916,7 @@ static void erofs_kill_sb(struct super_block *sb)
->   		kill_anon_super(sb);
->   	else
->   		kill_block_super(sb);
-> +
->   	erofs_drop_internal_inodes(sbi);
->   	fs_put_dax(sbi->dif0.dax_dev, NULL);
->   	erofs_fscache_unregister_fs(sb);
-> @@ -922,6 +928,7 @@ static void erofs_put_super(struct super_block *sb)
->   {
->   	struct erofs_sb_info *const sbi = EROFS_SB(sb);
->   
-> +	erofs_ishare_exit(sb);
->   	erofs_unregister_sysfs(sb);
->   	erofs_shrinker_unregister(sb);
->   	erofs_xattr_prefixes_cleanup(sb);
+> Back to your question -- does it matter here if it is gpio or non-gpio
+> function?
 
+It does. The I2S data pin is supposed to be toggled in some way by a
+certain IP core. What would it mean if we program output-high? Will the
+pin still be toggled (by the function) or stay pulled up (because of the
+output being programmed)?
+
+-- 
+With best wishes
+Dmitry
 
