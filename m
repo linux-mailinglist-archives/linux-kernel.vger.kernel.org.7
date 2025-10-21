@@ -1,106 +1,167 @@
-Return-Path: <linux-kernel+bounces-862006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170DCBF43AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE973BF43C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAAB426916
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0B44614A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F4C2236FA;
-	Tue, 21 Oct 2025 01:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5FB241114;
+	Tue, 21 Oct 2025 01:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0uN+GWj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROZaTbP1"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9553418CBE1;
-	Tue, 21 Oct 2025 01:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6D118CBE1
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761009406; cv=none; b=KY+h42IQG2jfeHe9z6HcPeptRZ5uYrHi5R0PW6JTC5u/T1gexucts2l/POK9d20PMnPDij3nOQYYRsPYZWH+PYpqYmbnvo+p/H2/X6ojgszmfDPetO1bxcGvU1WFGhWDN2WMXWWiZJx0ffj3WcIqtd0DB/Ke1mrMSeRdOkqQxA8=
+	t=1761009427; cv=none; b=n6gQnWQZQUFl7yfkTafUjDzfyap+cZuhMGPHuTk96GLCrMh8IvQ+YcWVWLGGVBTpxZjKdz9zSoB3T/ngUq6VE9wYRM/kxK+ML7LjNbKEoNb0DM0PEUjhNTQyeyBp6IOyEYhWXMBSb7nfmVgZifcmApUYblagrtZgN/0WSjAdg7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761009406; c=relaxed/simple;
-	bh=FlG+exzSWR++/edIMS0S5Y+KS4hcAr0q2UH5cA3Hx28=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f+kyREmI0HaKSQbCR+VrESx5j3wTmIeqW2ApbzjyYyMx3miutDft7UO7E/QYTPCrYxga7FxChYH/nb50jK0ShNMuFo2u/qUUgAI62HHps0iWTi+hQ8YujTVv0/oo7+baUrHAKpAO7IkbfmwbIfeP1+QxUBol4EpjLpBOVCuIdxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0uN+GWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664A1C4CEFB;
-	Tue, 21 Oct 2025 01:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761009406;
-	bh=FlG+exzSWR++/edIMS0S5Y+KS4hcAr0q2UH5cA3Hx28=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f0uN+GWjFLqoIVLzDdrkPOJbT42cSjN81WJxOrJIgcS2nsX1w0KLhzoX0J0NTH014
-	 KVlPKkGOEYVYGVfS+O+5zBuHTl/YeI/EjUGjOyioazJl9ZeonnXyIyDK92Ayif48Io
-	 l9vW3HBG7tDVxsPrz6l60OXCjb43UCCgpA7zo7DMGE2oWnqNkCAfy+rFQnZxklYnHt
-	 9UQjDk5VRVdEMOrurh1VVtXRensKY+fRyKyHmFax4XS/KiwEQS3X3oprhY3lLDAnWk
-	 1sMtsK4L0gRQxRGOocW0GV9hGfNc2Hx0iCYmDezS790nFbVoH7VApKtg0K1egwkfxI
-	 4n7QqZuvC2TtA==
-Date: Mon, 20 Oct 2025 18:16:44 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Alexander Lobakin <aleksander.lobakin@intel.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Aleksandr
- Loktionov <aleksandr.loktionov@intel.com>, Dan Nowlin
- <dan.nowlin@intel.com>, Rafal Romanowski <rafal.romanowski@intel.com>
-Subject: Re: [PATCH net-next v2 05/14] ice: improve TCAM priority handling
- for RSS profiles
-Message-ID: <20251020181644.5b651591@kernel.org>
-In-Reply-To: <20251016-jk-iwl-next-2025-10-15-v2-5-ff3a390d9fc6@intel.com>
-References: <20251016-jk-iwl-next-2025-10-15-v2-0-ff3a390d9fc6@intel.com>
-	<20251016-jk-iwl-next-2025-10-15-v2-5-ff3a390d9fc6@intel.com>
+	s=arc-20240116; t=1761009427; c=relaxed/simple;
+	bh=1zeq0Q49NwqRZRi1E4alBbjTRuUASN/N0O5LnU4lOx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B/th3ivz72Es8rP/q9+igMxjmu0Akx6wo2bBgNZGNYu6Kivr9/YH2Z/MeOEsgjtwnAVHkfGrmaNTChEcJfZFG7mrwpHVp+TTZC1RdH2vTLkMPPx/4UX5ErAHyAr/0+k91rCn3LgIOiYSLFCevRSpB2cujqpnkwwNaTea8gcxSAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROZaTbP1; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78125ed4052so6171018b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:17:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761009424; x=1761614224; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R+jF/m5GxGdkV4M8f/uDqVu8BkqXyzon9JTL3m8pZ6o=;
+        b=ROZaTbP1pn6Y2KnIsOPHrzTyoA7Y5eZI6Srq1vdmuQNHzPJXBLHIwCTHESCjTpZRNe
+         m/utNBS/cKhxxTn5R/ZcGCGXPiZoqCiMM6g6qt+LmA9/sjMjOGiGWIscgipTTZ/q1YEn
+         2L3TsK3jI3C7iTBAaIgyUGkXzOvfSIhz31epbC0TSNFDuJQX4zGgPTbBt5nX4JzLAxVM
+         Jp683rCVCzazya4SiDi2YoubHd4XL5hGTaM6wFBnW/8j/QmD5m08TEUfM2xtKbK/4Lzv
+         PXWYcAkdMy9cHHk+pBc8TpX9dujskQnrZ7ZKNeRpvGuJf0GAfW86quQjpO52tx5ctS+B
+         jgmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761009424; x=1761614224;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R+jF/m5GxGdkV4M8f/uDqVu8BkqXyzon9JTL3m8pZ6o=;
+        b=B+40IPwzCsLsl40firgiyLxtz6lcXBajkCq+losHEhN2zs+r9/37wHGiJ2iI11h+3a
+         2LYAh5E07ti2XIkmwT2zHPNifA5Amj/KIYa+e3mpHP6nWZDaxDy1eG703sVtXAByeoEr
+         6c3eMwQKZEG+qrjdb1cCJvFpBDaRBFkR+4BuBiAIlIlNi3AzUOSFb5l/HAIgp5oQCyyW
+         SWCivMMtkzpcXACsTN1Rts+a8+wKsKFaUfJdDb+Zt0UjdYq69qDhmZCtQzg3XxCgVnrU
+         eVYmyBAAzP6p+CMRs12gMmkxyw6jdS4RNhHS0LlgSRy4L35Ik6CDwpoOHK0AOjgjKW50
+         VKeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNyJlL3XT0gKzKbEBcNElL+qtiZ6Gh32Wv24qfooQ/FcPa2UfY3SBK62vrXJvZtHy9+FMWAlQpynPbSfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytGQLZ6e+B2zy26ozSarwB3SNBwYhIno6sjoYxNcWqBvelcIsA
+	/vBK7dvVidzEyDbsGbwSmNEF0l2ORed6a/o+CADL4TxsiPN6N81nHAex
+X-Gm-Gg: ASbGnctSWTX41P7kZ8zSlStPnkZjU4c9ppFX52iYyHpF49xzE2c6S3kEUG7VJMwIxp5
+	dhzupcphdYY5COJfprjhU8M+pGtCl9bnGkJ/NgrAWrrbWabP/UscViJbvMgGwNVu22h+oeyiatd
+	IV1MhnX1GscdNV3c2y65pjpZcpXkGLMgHJlvNMCW6NtEdRIKG1YxnMeSkpKKuSnzf1WJC31h4JU
+	IoVd9V376cJulAFZ4pcoHCdZOXKLz7gb0yW4CCr1UlQ5KoaBeDkD6gqKokwcLSZ5tScQVg+MwX+
+	gIStBpQOMhUst2fNtArna/1KniCTNvMo4M99sskJgWPJ0iTWVRXsam7SImUe2uT0zdVjtbrM2kq
+	Z/QpTPVNTj/nXMp7oXE9UA5zhsIlt86TMWS69tIut7yqHF2PpM4YaYaHabTob+YtiShZu65pTDC
+	JJD7wPpfFRJIlZaJuCnp+8GHPLTwQ632/yJpqt3g4p3glZeFIYoskwlmyZCI67ai1c1c1T
+X-Google-Smtp-Source: AGHT+IFz7BMEyiUbDQVbe7h7z/q786244belk8+vOd3hqwr5CAeeHL/XEJmuhApsPJjkKQZ+v/uU9A==
+X-Received: by 2002:a05:6a21:7914:b0:334:bec2:5b63 with SMTP id adf61e73a8af0-334bec25e36mr9995666637.24.1761009423608;
+        Mon, 20 Oct 2025 18:17:03 -0700 (PDT)
+Received: from [192.168.50.88] ([49.245.38.171])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff34e72sm9658662b3a.24.2025.10.20.18.17.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 18:17:03 -0700 (PDT)
+Message-ID: <195761a4-0251-4e9f-a896-018ff20e1643@gmail.com>
+Date: Tue, 21 Oct 2025 09:16:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] ovl: Use fsid as unique identifier for trusted
+ origin
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, "Guilherme G . Piccoli"
+ <gpiccoli@igalia.com>
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+ <20251014015707.129013-2-andrealmeid@igalia.com>
+ <aO3T8BGM6djYFyrz@infradead.org>
+ <5137ce36-c3b4-4a0a-83af-e00892feaf43@gmail.com>
+ <aPas60j7AoyLLQK0@dread.disaster.area>
+Content-Language: en-US
+From: Anand Jain <anajain.sg@gmail.com>
+In-Reply-To: <aPas60j7AoyLLQK0@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 16 Oct 2025 23:08:34 -0700 Jacob Keller wrote:
-> +/**
-> + * ice_set_tcam_flags - set TCAM flag don't care mask
-> + * @mask: mask for flags
-> + * @dc_mask: pointer to the don't care mask
-> + */
-> +static void ice_set_tcam_flags(u16 mask, u8 dc_mask[ICE_TCAM_KEY_VAL_SZ])
-> +{
-> +	u16 *flag_word;
-> +
-> +	/* flags are lowest u16 */
-> +	flag_word = (u16 *)dc_mask;
-> +	*flag_word = ~mask;
 
-Please don't cast pointers to wider types, get_unaligned() exists 
-for a reason. BTW endian also exists, AFAIU, this will do a different
-thing on BE and LE.
 
->  /**
->   * ice_adj_prof_priorities - adjust profile based on priorities
->   * @hw: pointer to the HW struct
-> @@ -3688,10 +3733,17 @@ ice_adj_prof_priorities(struct ice_hw *hw, enum ice_block blk, u16 vsig,
->  			struct list_head *chg)
->  {
->  	DECLARE_BITMAP(ptgs_used, ICE_XLT1_CNT);
-> +	struct ice_tcam_inf **attr_used;
->  	struct ice_vsig_prof *t;
-> -	int status;
-> +	u16 attr_used_cnt = 0;
-> +	int status = 0;
->  	u16 idx;
->  
-> +	attr_used = devm_kcalloc(ice_hw_to_dev(hw), ICE_MAX_PTG_ATTRS,
+On 21/10/25 05:43, Dave Chinner wrote:
+> On Wed, Oct 15, 2025 at 07:46:34AM +0800, Anand Jain wrote:
+>> On 14-Oct-25 12:39 PM, Christoph Hellwig wrote:
+>>> On Mon, Oct 13, 2025 at 10:57:07PM -0300, André Almeida wrote:
+>>>> Some filesystem have non-persistent UUIDs, that can change
+>>>> between mounting, even if the filesystem is not modified. To
+>>>> prevent false-positives when mounting overlayfs with index
+>>>> enabled, use the fsid reported from statfs that is persistent
+>>>> across mounts.
+>>>
+>>> Please fix btrfs to not change uuids, as that completely defeats
+>>> the point of uuids.
+>>
+>> We needed cloned device mount support for an A/B testing use case,
+>> but changing the on-disk UUID defeats the purpose.
+>>
+>> Right now, ext4 and Btrfs can mount identical devices, but XFS
+>> can't.
+> 
+> Absolutely not true.
+> 
+> XFS has been able to mount filesystems with duplicate UUIDs on Linux
+> for almost 25 years. The "-o nouuid" mount option (introduced in
+> 2001) to bypass the duplicate uuid checks done at mount time.
+> 
 
-attr_used is freed before exiting this function, every time.
-Why the devm_* ?
+Damn, I completely missed the nouuid XFS option. My bad!!
+> XFS tracks all mounted filesystem UUIDs largely to prevent multiple
+> mounts of the same filesystem due to multipath storage presenting it
+> via multiple different block devices.
+ > > The nouuid mount option was added back when enterprise storage
+> arrays started supporting hardware level thinp and LUN
+> clone/snapshot functionality. Adding "-o nouuid" allowed cloned LUNs
+> to be mounted for for backup/recovery purposes whilst the main
+> filesystem was still mounted and in active use.
+> 
+
+Agree. Also, in some SAN error situations, the same device may
+disappear and reappear with a new maj:min.
+
+>> How about extending this to the common
+>> VFS layer and adding a parameter to tell apart a cloned
+>> device from the same device accessed through multiple
+>> paths?
+> 
+> Perhaps we should lift the XFS UUID tracking code to the VFS
+> and intercept "-o nouuid" at the VFS to allow duplicates only when
+> that mount option is set?
+> 
+> -Dave.
+
+It looks like XFS (with -o nouuid) and ext4 allow duplicate
+FSIDs to pass into VFS. We may be able to extend this to Btrfs,
+though there could be conflicts with fanotify? I'm not sure yet.
+we still need -o nouuid, to alert admins to handle cases where a
+device reappears with a new devt. I'm digging more.
+
+Thanks, Anand
 
