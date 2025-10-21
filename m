@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-862054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DD5BF4535
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:54:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79BABF453B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3AB8400B12
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:54:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268F718C5115
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A26B248883;
-	Tue, 21 Oct 2025 01:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhSer6FA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579142475D0;
+	Tue, 21 Oct 2025 01:55:01 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602677E105;
-	Tue, 21 Oct 2025 01:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0080D7E105;
+	Tue, 21 Oct 2025 01:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761011633; cv=none; b=Nan5ivN2ygUsnQmNh87iyEGnH+wBLX79LXo4KkDNOJ/xETWHTK90lRjlNPlgb++OOY9nZirMtSz6p1ApsnOTk5CeNgga9HDy7Nwl3+xfQ6ozi9vtDaTLdsaTG+QjWccOUikv1F7sR/Bx4cgOe0sTYucgDuNwhbfAIlsVPnnUaHU=
+	t=1761011700; cv=none; b=ObuR32jyGtLKR0R/sBQOZh04nzAcFr6cUvZ0jUkXBD9xB8qS9ueLOynXFrPm+ZVosdMUtzdo5i+QHZ8UcOuNA96oUKMqfpIJg1+jWIizMZ/xCjMIDDtEKO6grq0wbMvb0gXuG846jl/VqZREkalMtds3D+s9rkz/qhJ5S5mXva0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761011633; c=relaxed/simple;
-	bh=gEFXq3ZbGcZ2wLt1kNCnmyzf7qCy7XGcSSRG5SuAU8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsRvVCV9Ppb7irG60tSaY2kqpg1jfIMnGFwUrkBJug0Memnyr9qzVNH8zV2R0qJb2ZR5/GoMjwEUbaoKkbfVBO3CLqlIWk4OBUkO+zFJWiG2rm5x1PA4ZTyIha0cibcUYD7gpyfFZ2pbzGGJDEOxgCF5xuDIiEGOWRwxplFY33o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhSer6FA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C0EC4CEFB;
-	Tue, 21 Oct 2025 01:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761011633;
-	bh=gEFXq3ZbGcZ2wLt1kNCnmyzf7qCy7XGcSSRG5SuAU8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lhSer6FAbofHcgD61qoh5QzZYC4905I96PcCZWfI86ac1ynePuJi3fg0VrjU9ztAo
-	 XkR6dgKlCQnBR0dsVJeZNZPgnQB/RUGODC9QoLTYhQjR6KMtKOAmjqopw3rdEynIfH
-	 Vmbx1RjuwgnyFqnleQEZTrdFrVMapKDurCZ6J2JRxqY/dHT6Ar+xeS0eD68/DIOKvI
-	 Ysb7LH67G5pD87/ezpN+lEAEQPCuYRmpogqeTZbdxOD/3O1PmZOJawv0JS8N3wEeMx
-	 +kifMX87l6Y3ReoHxNohaM65naJhnkJwFJXQEKTfd9ZAYoODmDf/CaWQMRURoY0Bxa
-	 xbw5EKuNfqZIA==
-Date: Tue, 21 Oct 2025 07:23:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andy@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-Message-ID: <rvsyll4u6v4tpaxs4z3k4pbusoktkaocq4o3g6rjt6d2zrzqst@raiuch3hu3ce>
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
- <hyzzrjn7jzo3tt3oyg7azijouawe3zopfjzq6zfhoo6e6z2m4t@ssl5vl4g557e>
- <zk4ea5cibrkp4vttuy4evrqybf76b3nop5lnyck4ws4nyf2yc4@ghj2eyswsoow>
- <CAMRc=MdWmO4wvX6zpzN0-LZF1pF5Y2=sS8fBwr=CKMGWHg+shA@mail.gmail.com>
- <rfr5cou6jr7wmtxixfgjxhnda6yywlsxsei7md7ne3qge7r3gk@xv6n5pvcjzrm>
- <CAMRc=Me9Td5G9qZV8A98XkGROKw1D2UeQHpFzt8uApF8995MZw@mail.gmail.com>
+	s=arc-20240116; t=1761011700; c=relaxed/simple;
+	bh=k67S5mOZusmV0HZQ3DexRmg2w3RlJTUA/f8y9L63NZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GJtSfqnQbgiqkswJ9Kr1rzYSai0ezEqT0On8b2BUlXwR8x222yb1E/ODb6FGVOk8kfRnVqAEvQkb3LHymvKG4+yoSS2Kz0ufDB2F0et71E3hWSZlp+eO+oHlUQbend4G1t5dqzSP86n6K8VLyVk0/0w8OTHiwfrzUp2hSO30sPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ed3b6aceae2011f0a38c85956e01ac42-20251021
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:793db734-4ff4-45e2-9e85-dabbbc081d5e,IP:0,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:a99d211a2bcf1e17a23bfdddff75a54d,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:5,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: ed3b6aceae2011f0a38c85956e01ac42-20251021
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 603910544; Tue, 21 Oct 2025 09:54:49 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+Cc: davem@davemloft.net,
+	herbert@gondor.apana.org.au,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] [patch] syz test
+Date: Tue, 21 Oct 2025 09:54:45 +0800
+Message-Id: <287c3a106ca4565311685d637af0884c5a6bdea2.1761011646.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <68f6a48f.050a0220.91a22.0452.GAE@google.com>
+References: <68f6a48f.050a0220.91a22.0452.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me9Td5G9qZV8A98XkGROKw1D2UeQHpFzt8uApF8995MZw@mail.gmail.com>
 
-On Tue, Oct 07, 2025 at 02:29:01PM +0200, Bartosz Golaszewski wrote:
-> On Tue, Oct 7, 2025 at 12:09 AM Manivannan Sadhasivam <mani@kernel.org> wrote:
-> >
-> > > >
-> > > > Not always... For something like shared reset line, consumers request the line
-> > > > as GPIO and expect gpiolib to do resource manangement.
-> > > >
-> > >
-> > > They could use the reset API and it would implicitly create a virtual
-> > > device that requests the reset GPIO and controls its enable count.
-> > > Except that some devices also do a specific reset sequence with delays
-> > > etc. That would require some additional logic in reset-gpio.
-> > >
-> >
-> > I was referring to the PCIe PERST# line, for which the 'reset-gpios' property
-> > already exist in the schema. Now, you want me to model this simple GPIO as a
-> > fake reset controller and use it the PCIe Bridge nodes through 'resets'
-> > property?
-> >
-> 
-> No, not at all. It's just that a shared `reset-gpios` property is
-> pretty common and Krzysztof implemented the reset-gpio driver[1] to
-> address it. Drivers that request a reset control via the OF interface
-> will notice that there's no `resets` property but if there's a
-> `reset-gpios`, the reset core will create a virtual device binding to
-> the reset-gpio driver which requests the GPIO in question (once!) and
-> registers with the reset subsystem providing shared reset control to
-> users. Basically the abstraction Srini mentioned minus any reset
-> sequence.
-> 
-> That only happens if the driver uses the reset API. If you go with the
-> GPIOLIB then none of this matters. I definitely don't want to change
-> the existing DT sources either but I want to find out if the code in
-> this series is suitable (with some modifications) for supporting the
-> PERST# line or if the logic behind it is more complex and possibly
-> requires separate, more fine-grained handling.
-> 
+#syz test
+---
+ include/crypto/internal/poly1305.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-All PCI controllers relied on '{reset/perst}-gpios' property for handling the
-PERST# signal. Now if we change it to a reset line, then the drivers have to
-first detect it as a reset line and use the reset APIs, if not fallback to gpiod
-APIs (for DT backwards compatibility), which will add unncessary churn IMO.
-
-But if there is no way the GPIO subsystem is going to support shared GPIOs, then
-we have to live with it.
-
-- Mani
-
+diff --git a/include/crypto/internal/poly1305.h b/include/crypto/internal/poly1305.h
+index a72fff409ab8..f6de53965319 100644
+--- a/include/crypto/internal/poly1305.h
++++ b/include/crypto/internal/poly1305.h
+@@ -8,6 +8,7 @@
+ 
+ #include <crypto/poly1305.h>
+ #include <linux/types.h>
++#include <linux/string.h>
+ 
+ /*
+  * Poly1305 core functions.  These only accept whole blocks; the caller must
+@@ -21,7 +22,8 @@ void poly1305_core_setkey(struct poly1305_core_key *key,
+ 			  const u8 raw_key[POLY1305_BLOCK_SIZE]);
+ static inline void poly1305_core_init(struct poly1305_state *state)
+ {
+-	*state = (struct poly1305_state){};
++	//*state = (struct poly1305_state){};
++	memset(state, 0, sizeof(struct poly1305_state));
+ }
+ 
+ void poly1305_core_blocks(struct poly1305_state *state,
 -- 
-மணிவண்ணன் சதாசிவம்
+2.25.1
+
 
