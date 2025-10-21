@@ -1,214 +1,83 @@
-Return-Path: <linux-kernel+bounces-863492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FBBBF7F90
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:52:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D48BF7F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C991C4F8A3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:52:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A873B1F62
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D70F3557F1;
-	Tue, 21 Oct 2025 17:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukGtqBiE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20BD280318
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758F034E748;
+	Tue, 21 Oct 2025 17:53:27 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510553557ED;
+	Tue, 21 Oct 2025 17:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761069150; cv=none; b=pUXFJbPKT/Ybhg5EgUFQiZx7Mf4UkZMdVPKI07f8JMOvt++8HqGfX+KlNddzKVW+Akq909vUhiCV6Tpo2cepmv/TApHV9fvhdqT2xkrtl/EWY0skN3ixN1fHp4gguo3ZwtA4antW3ryheH9JLAlOX1fXPLi3kLr0Zm30UHVxgAg=
+	t=1761069207; cv=none; b=P4t4vMU43t5qxBgJCzgP1TGfay4E2NP7a+DH/RV/KijWKKxD9Sq5LZBGj5M/LR5PxuHvP0hXnT4ZWoFxmAxW+o33FdWpYGCYvRqDr0P8DbWgp37XiApmtpBfH/FzdnFF+AH8InP9e7qT+Ib8e3PmHkhf2G6HBKoeKuGzqT9MKn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761069150; c=relaxed/simple;
-	bh=ndfCxg4M63xn2nqUZ2Ayh9FKf+NUQ5blADXKYxyxxf4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hunOnfpzxMOfoe+6t5tjuGDvhD+/zl5kQHmLj7EAg7Z47jQ7yxAyjqwQCiPYr0BgU70eOxVkY7TUEuoo1pM+v32GbjOWe16HYpG7uZx/+0IYlKkOqMxH0l8C4zivG2KFgczvFDfzL6IU/QHVdlVRnsk7vSytKU3Opqb8E9TtlpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukGtqBiE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8CBC4AF09
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761069150;
-	bh=ndfCxg4M63xn2nqUZ2Ayh9FKf+NUQ5blADXKYxyxxf4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ukGtqBiES93R3iz1DWMY1Pj9Y1eWR1jip8/DOJ9D9v2/2MgPFtWPncPoQPgcIjQYl
-	 4XX3hmJS75XRzMIFjQGNGeohA4wTuVToDnFXMhwoqjT3dMa018BzbcfhPwCDxGKEA+
-	 v9JOJsg9tuYODIQgDVSmFj2cx3Bh6aaKozxI7tiZDzOok+fq0SRZB8PDILnnIgT+dM
-	 x6nfxmcb9vHMvoEFMCDUtS2FKQIJWso/BUhjTiWC9WK15CrF+FtzuoEbFrrp7/qKV8
-	 UB1S/Goe1e0bBZYIqb0JFcOwuVCxiUWISlV6N9ZlCBbunnlgVmA/GtYRxLQvBEs7Td
-	 gTxUdQbASInHw==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-651c83b6c14so1252027eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:52:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXmX+SLX5iTlbB2HGo/VZ3EOi19L7eVc+S6C3oO7E7eLe/miWK7URVerPcpej9Hm/c/cfIsZUcicZ1jdXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOBh0o+jNbFp//eRcj/4Oxg0aewS/42ogoLbY05yZhX9tKlhiC
-	HruAQRqn2g/Paau7bXK5iYRAhpURV3aPpqaGtph2KrcMgJuwuXvgsAcb6bitO0PB7A8dzOwieEC
-	qkNLO8iQwBuywE63Xw5tAN8Y1xUMZugA=
-X-Google-Smtp-Source: AGHT+IGPKl3GQ9sdtZoYyLsrJBzwYizXgcnSpczdZWQwaAv3rUzoD9WeKdfE/wLYE6wyyaaHLp86bkCftKiteQeGZFk=
-X-Received: by 2002:a05:6808:2444:b0:441:8f74:f48 with SMTP id
- 5614622812f47-443a31bd4d4mr8372621b6e.66.1761069149581; Tue, 21 Oct 2025
- 10:52:29 -0700 (PDT)
+	s=arc-20240116; t=1761069207; c=relaxed/simple;
+	bh=TWXOv5Mdy2U7Y72TfpTFWHWBB0MlAP/zZFp/GDplpuQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EJu1e+gGQqf47cwjfugR7UbdTwSk7cr0AeYf6oP3s/dvTzQzE1NQQO2grBo/+c4VWNEh1ky6jnPOUmr76g3C6TvafuHDV4R/01/KFBOyXsesES4GcubYFVrqYojFJtCN23jTBGJrXV6oW/EFB463AE7uoJjJyagyjGrRnEDDsgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: mYCLAkorRimnIgxsyhB2gA==
+X-CSE-MsgGUID: 81K4wOQxQyyQlIVGZETLaw==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Oct 2025 02:53:17 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.145])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1FA064031FFC;
+	Wed, 22 Oct 2025 02:53:12 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: biju.das.jz@bp.renesas.com,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/4] Add versaclock3 support for RZ/V2H EVK
+Date: Tue, 21 Oct 2025 17:53:07 +0000
+Message-ID: <20251021175311.19611-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020220914.320832-1-changwoo@igalia.com>
-In-Reply-To: <20251020220914.320832-1-changwoo@igalia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 21 Oct 2025 19:52:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jy3gztTTfR_UOv_yX5w9Uj2ZqEmhmNZ63WVnFHM2rRcw@mail.gmail.com>
-X-Gm-Features: AS18NWCGY90SiFbX5qje6-fmqgpchXM6x_TukWYEclLqBmorwEojmFOe7VXcsV4
-Message-ID: <CAJZ5v0jy3gztTTfR_UOv_yX5w9Uj2ZqEmhmNZ63WVnFHM2rRcw@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] PM: EM: Add netlink support for the energy model
-To: Changwoo Min <changwoo@igalia.com>
-Cc: lukasz.luba@arm.com, rafael@kernel.org, len.brown@intel.com, 
-	pavel@kernel.org, christian.loehle@arm.com, tj@kernel.org, 
-	kernel-dev@igalia.com, linux-pm@vger.kernel.org, sched-ext@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 21, 2025 at 12:09=E2=80=AFAM Changwoo Min <changwoo@igalia.com>=
- wrote:
->
-> Addressed all the comments from Lukasz and rebased the code to the head
-> of the linus tree.
->
-> There is a need to access the energy model from the userspace. One such
-> example is the sched_ext schedulers [1]. The userspace part of the
-> sched_ext schedules could feed the (post-processed) energy-model
-> information to the BPF part of the scheduler.
->
-> Currently, debugfs is the only way to read the energy model from userspac=
-e;
-> however, it lacks proper notification mechanisms when a performance domai=
-n
-> and its associated energy model change.
->
-> This patch set introduces a generic netlink for the energy model, as
-> discussed in [2]. It allows a userspace program to read the performance
-> domain and its energy model. It notifies the userspace program when a
-> performance domain is created or deleted or its energy model is updated
-> through a multicast interface.
->
-> Specifically, it supports two commands:
->   - EM_CMD_GET_PDS: Get the list of information for all performance
->     domains.
->   - EM_CMD_GET_PD_TABLE: Get the energy model table of a performance
->     domain.
->
-> Also, it supports three notification events:
->   - EM_CMD_PD_CREATED: When a performance domain is created.
->   - EM_CMD_PD_DELETED: When a performance domain is deleted.
->   - EM_CMD_PD_UPDATED: When the energy model table of a performance domai=
-n
->     is updated.
->
-> This can be tested using the tool, tools/net/ynl/pyynl/cli.py, for exampl=
-e,
-> with the following commands:
->
->   $> tools/net/ynl/pyynl/cli.py \
->      --spec Documentation/netlink/specs/em.yaml \
->      --do get-pds
->   $> tools/net/ynl/pyynl/cli.py \
->      --spec Documentation/netlink/specs/em.yaml \
->      --do get-pd-table --json '{"pd-id": 0}'
->   $> tools/net/ynl/pyynl/cli.py \
->      --spec Documentation/netlink/specs/em.yaml \
->      --subscribe event  --sleep 10
->
-> [1] https://lwn.net/Articles/922405/
-> [2] https://lore.kernel.org/lkml/a82423bc-8c38-4d57-93da-c4f20011cc92@arm=
-.com/
-> [3] https://lore.kernel.org/lkml/202506140306.tuIoz8rN-lkp@intel.com/#t
->
-> ChangeLog v5 -> v6:
->   - Fix two problems reported by the kernel test robot.
->   - Conditionally include the iterator/accessor code for the performance
->     domain when both CONFIG_ENERGY_MODEL and CONFIG_NET are set to avoid
->     the compilation errors (patch 5).
->   - Remove an unused variable, `ret`, in em_notify_pd_deleted() to avoid
->     a warning (patch 8).
->
-> ChangeLog v4 -> v5:
->   - Rebase the code to the head of the linus tree.
->   - Remove the redundant em_check_capacity_update() call from
->     em_dev_register_pd_no_update().
->   - Move patch 3 ("PM: EM: Add an iterator and accessor for the
->     performance domain") after patch 5 ("PM: EM: Add a skeleton code for
->     netlink notification").
->   - Move the declaration of for_each_em_perf_domain() and
->     em_perf_domain_get_by_id() from energy_model.h to em_netlink.h.
->   - Fix a typo in patch 7 ("PM: EM: Implement
->     em_nl_get_pd_table_doit()") and change the variable declaration
->     order in em_nl_get_pd_table_doit() following the reverse Christmas
->     tree order.
->   - Remove the empty skeleton code of em_notify_pd_created/updated() from
->     patch 8 ("PM: EM: Implement em_notify_pd_deleted()") and introduce
->     them later where they are actually implemented.
->   - Change the return type of em_notify_pd_created/updated/deleted()
->     from int to void, since we don't check it anyway.
->
-> ChangeLog v3 -> v4:
->   - Move patches [3-5] to the first.
->   - Remove the ending period (".") from all of the patch subjects.
->   - Rebase the code to v6.17-rc4.
->
-> ChangeLog v2 -> v3:
->   - Properly initialize a return variable in
->     em_notify_pd_created/updated() at an error path (09/10), reported by
->     the kernel test robot [3].
->   - Remove redundant initialization of a return variable in
->     em_notify_pd_deleted() at an error path (08/10).
->
-> ChangeLog v1 -> v2:
->   - Use YNL to generate boilerplate code. Overhaul the naming conventions
->     (command, event, notification, attribute) to follow the typical
->     conventions of other YNL-based netlink implementations.
->   - Calculate the exact message size instead of using NLMSG_GOODSIZE
->     when allocating a message (genlmsg_new). This avoids the reallocation
->     of a message.
->   - Remove an unnecessary function, em_netlink_exit(), and initialize the
->     netlink (em_netlink_init) at em_netlink.c without touching energy_mod=
-el.c.
->
-> Changwoo Min (10):
->   PM: EM: Assign a unique ID when creating a performance domain
->   PM: EM: Expose the ID of a performance domain via debugfs
->   PM: EM: Add em.yaml and autogen files
->   PM: EM: Add a skeleton code for netlink notification
->   PM: EM: Add an iterator and accessor for the performance domain
->   PM: EM: Implement em_nl_get_pds_doit()
->   PM: EM: Implement em_nl_get_pd_table_doit()
->   PM: EM: Implement em_notify_pd_deleted()
->   PM: EM: Implement em_notify_pd_created/updated()
->   PM: EM: Notify an event when the performance domain changes
->
->  Documentation/netlink/specs/em.yaml | 113 ++++++++++
->  MAINTAINERS                         |   3 +
->  include/linux/energy_model.h        |   4 +
->  include/uapi/linux/energy_model.h   |  62 ++++++
->  kernel/power/Makefile               |   5 +-
->  kernel/power/em_netlink.c           | 309 ++++++++++++++++++++++++++++
->  kernel/power/em_netlink.h           |  39 ++++
->  kernel/power/em_netlink_autogen.c   |  48 +++++
->  kernel/power/em_netlink_autogen.h   |  23 +++
->  kernel/power/energy_model.c         |  85 +++++++-
->  10 files changed, 689 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/netlink/specs/em.yaml
->  create mode 100644 include/uapi/linux/energy_model.h
->  create mode 100644 kernel/power/em_netlink.c
->  create mode 100644 kernel/power/em_netlink.h
->  create mode 100644 kernel/power/em_netlink_autogen.c
->  create mode 100644 kernel/power/em_netlink_autogen.h
->
-> --
+Hi,
 
-Is there any particular reason why you have not picked up the tags
-received by the previous iteration?
+This series extends the versaclock3 driver to support the internal
+freerunning 32.768 kHz clock, which is used on the RZ/V2H SoC as RTC
+counter clock. It also adds the dts node for the RZ/V2H EVK.
+
+Best regards,
+Ovidiu
+
+Ovidiu Panait (4):
+  clk: versaclock3: Remove unused SE2 clock select macro
+  clk: versaclock3: Use clk_parent_data arrays for clk_mux
+  clk: versaclock3: Add freerunning 32.768kHz clock support
+  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add versa3 clock
+    generator node
+
+ .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  25 ++++
+ drivers/clk/clk-versaclock3.c                 | 126 +++++++++++++-----
+ 2 files changed, 120 insertions(+), 31 deletions(-)
+
+-- 
+2.51.0
+
 
