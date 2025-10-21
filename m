@@ -1,82 +1,168 @@
-Return-Path: <linux-kernel+bounces-863106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7785CBF7072
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:21:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C513EBF708A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D42D8500229
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:21:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140373B3BCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844F332E6A0;
-	Tue, 21 Oct 2025 14:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CC332B9BD;
+	Tue, 21 Oct 2025 14:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xeut2wRk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lxf/7M7Q"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D327822FDFF;
-	Tue, 21 Oct 2025 14:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E0523D2B8;
+	Tue, 21 Oct 2025 14:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761056492; cv=none; b=o9uM35Nd3OF69W7TxVmvg3W6SXSfJoKJY5WO6SX433YxUCtU2yBZ4O2XEsLAxQfV9j/fof9fO4ZCb7OgK0EODL7NkUDpdZVkLpXdKDVsB38pzWyQBREPzBEIgjK2jDKukt5r/rA16tT9UHGDBX9ezrErkDZSq2AtfJydDlIjGbo=
+	t=1761056506; cv=none; b=ryMWwv+QCQQlDJwxLel+n3Y4AJ6NaCeSD6LlepSLg8x/3Nxx3/R62DiniZrN+0EG+uoH7QtCYpRB6Jh1KzKwAlUrfg67sZtfgTMCkGY1++Vx0h6EQML5WwCnMQ6XJ+7hdsjDMUEbuR9SlT5Uc68+aYEn9oLRt/qqfTyfJbpDH5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761056492; c=relaxed/simple;
-	bh=SXu2kCneESoXCkpfGtRLyiuYbh2vZwF+jNxVAoF42Wo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAF1LfIkwsTo5DK6O3ViQ8H3vOEt5+Ictz2udGtFNqY62609I2LphtxQ5IbsoIdkwm3QztOhFHGPxoiIqKC7EdRAA3H6pEJmoJZ3rKQPs7GjWSOCbmxQPvamQJOx6uKtdIRlsbDSr3D7iIsZjat42b0um/xiDIwTjsaF7dfub+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xeut2wRk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 391B4C4CEF1;
-	Tue, 21 Oct 2025 14:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761056491;
-	bh=SXu2kCneESoXCkpfGtRLyiuYbh2vZwF+jNxVAoF42Wo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xeut2wRkpHOhdNj2qnGiB5GhnESam4Ne9KqRd7Lds9PUSsdDTumIeJBWhU64HjZVp
-	 pAcRFJJjJP6qDARWnfCG8AvOndFwLqPxCgfo/1b00AMApZ8+vAHnCC7LpwQbZyQa/i
-	 T6oNstpEy0y/s4lit/fg5thHOfX+OiDTXL/u2VfgmsG/Ldx7erNpqqhXg3T61f6gAF
-	 7ORCf2cNVRpL7iemjQo6Bjc9I6uyOfyIkVv+R029+X7yiC3ri0dBPwVIhm+fw+3Ovd
-	 dz64QO4ZazG+PTB6Sg+zoNxLRGvy0/YLIftMSrwnoh27n/v88b8HobZV9uY1ke+mvT
-	 YsEHJtjx/wNZA==
-Date: Tue, 21 Oct 2025 09:21:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: spi: Add spi-buses property
-Message-ID: <20251021142129.GA34073-robh@kernel.org>
-References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
- <20251014-spi-add-multi-bus-support-v1-1-2098c12d6f5f@baylibre.com>
+	s=arc-20240116; t=1761056506; c=relaxed/simple;
+	bh=zbf5X6xFgjcLKvQ//NfXqUxkpVqdnHgnddzIX/9P3i0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QM/OhYaIEoTafgQrnATcsvCfYfdGJbqkMI+Hhda2VY58O/xygOa2pko14DrnzJaZFt/43SEnz0s0jER9hVH6PxwzClsuHBPelg8n56KbqOiYWlm7wZDNEbv89cbD4uXo5es7DhrmZ3+LG8qdeSZjPyeE6cV1vr0NGTPeYJGGaEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lxf/7M7Q; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761056497; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=bcvGo8vZx1GTax8WxbQQMp+Ghln0kxNOs/BCW6mwRY4=;
+	b=lxf/7M7QxySY7IP4CMnr3nMde1Jwv3vXRKjvVmSoQqCrnihsuspPI363MwxC+3Y+RtW8PkcxXVDzwL5aEFes6aMKghPsvFeiQx6mEYx2m1iNp1I6ZhjVyfBSI7rBuOZ84niWxvx8wJlAnU6ssGBaZO0iT8D2DpzGvQSvuleQwB0=
+Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WqjBICH_1761056493 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 21 Oct 2025 22:21:35 +0800
+From: fangyu.yu@linux.alibaba.com
+To: anup@brainfault.org,
+	atish.patra@linux.dev,
+	pjw@kernel.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	pbonzini@redhat.com,
+	jiangyifei@huawei.com
+Cc: guoren@kernel.org,
+	dbarboza@ventanamicro.com,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Subject: [PATCH v2] RISC-V: KVM: Remove automatic I/O mapping for VM_PFNMAP
+Date: Tue, 21 Oct 2025 22:21:31 +0800
+Message-Id: <20251021142131.78796-1-fangyu.yu@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014-spi-add-multi-bus-support-v1-1-2098c12d6f5f@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 05:02:11PM -0500, David Lechner wrote:
-> Add a spi-buses property to the spi-peripheral-props binding to allow
-> specifying the SPI data bus or buses that a peripheral is connected to
-> in cases where the SPI controller has more than one physical SPI data
-> bus.
+From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 
-Is there a reason why spi-rx-bus-width property doesn't work for you? 
-The only thing I see would be you need to define the order of the pins 
-like "data-lanes" property.
+As of commit aac6db75a9fc ("vfio/pci: Use unmap_mapping_range()"),
+vm_pgoff may no longer guaranteed to hold the PFN for VM_PFNMAP
+regions. Using vma->vm_pgoff to derive the HPA here may therefore
+produce incorrect mappings.
 
-Rob
+Instead, I/O mappings for such regions can be established on-demand
+during g-stage page faults, making the upfront ioremap in this path
+is unnecessary.
+
+Fixes: 9d05c1fee837 ("RISC-V: KVM: Implement stage2 page table programming")
+Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Tested-by: Daniel Henrique Barboza <dbarboza@ventanamicro.com>
+
+---
+Changes in v2:
+- Fixed build warnings.
+---
+ arch/riscv/kvm/mmu.c | 25 ++-----------------------
+ 1 file changed, 2 insertions(+), 23 deletions(-)
+
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index 525fb5a330c0..58f5f3536ffd 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -171,7 +171,6 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 				enum kvm_mr_change change)
+ {
+ 	hva_t hva, reg_end, size;
+-	gpa_t base_gpa;
+ 	bool writable;
+ 	int ret = 0;
+ 
+@@ -190,15 +189,13 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 	hva = new->userspace_addr;
+ 	size = new->npages << PAGE_SHIFT;
+ 	reg_end = hva + size;
+-	base_gpa = new->base_gfn << PAGE_SHIFT;
+ 	writable = !(new->flags & KVM_MEM_READONLY);
+ 
+ 	mmap_read_lock(current->mm);
+ 
+ 	/*
+ 	 * A memory region could potentially cover multiple VMAs, and
+-	 * any holes between them, so iterate over all of them to find
+-	 * out if we can map any of them right now.
++	 * any holes between them, so iterate over all of them.
+ 	 *
+ 	 *     +--------------------------------------------+
+ 	 * +---------------+----------------+   +----------------+
+@@ -209,7 +206,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 	 */
+ 	do {
+ 		struct vm_area_struct *vma;
+-		hva_t vm_start, vm_end;
++		hva_t vm_end;
+ 
+ 		vma = find_vma_intersection(current->mm, hva, reg_end);
+ 		if (!vma)
+@@ -225,36 +222,18 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 		}
+ 
+ 		/* Take the intersection of this VMA with the memory region */
+-		vm_start = max(hva, vma->vm_start);
+ 		vm_end = min(reg_end, vma->vm_end);
+ 
+ 		if (vma->vm_flags & VM_PFNMAP) {
+-			gpa_t gpa = base_gpa + (vm_start - hva);
+-			phys_addr_t pa;
+-
+-			pa = (phys_addr_t)vma->vm_pgoff << PAGE_SHIFT;
+-			pa += vm_start - vma->vm_start;
+-
+ 			/* IO region dirty page logging not allowed */
+ 			if (new->flags & KVM_MEM_LOG_DIRTY_PAGES) {
+ 				ret = -EINVAL;
+ 				goto out;
+ 			}
+-
+-			ret = kvm_riscv_mmu_ioremap(kvm, gpa, pa, vm_end - vm_start,
+-						    writable, false);
+-			if (ret)
+-				break;
+ 		}
+ 		hva = vm_end;
+ 	} while (hva < reg_end);
+ 
+-	if (change == KVM_MR_FLAGS_ONLY)
+-		goto out;
+-
+-	if (ret)
+-		kvm_riscv_mmu_iounmap(kvm, base_gpa, size);
+-
+ out:
+ 	mmap_read_unlock(current->mm);
+ 	return ret;
+-- 
+2.50.1
+
 
