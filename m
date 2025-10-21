@@ -1,251 +1,194 @@
-Return-Path: <linux-kernel+bounces-862136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8B3BF4823
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:30:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3C9BF478F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082F53AF910
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B864664AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E86723C4FD;
-	Tue, 21 Oct 2025 03:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D4D211499;
+	Tue, 21 Oct 2025 03:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BgUqtszw"
-Received: from mail-m49243.qiye.163.com (mail-m49243.qiye.163.com [45.254.49.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9FmyixS"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1642E157493;
-	Tue, 21 Oct 2025 03:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E6A3B186
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761017404; cv=none; b=dHv3hCklY84gbTK+JqREq2V32cLa7trLZZM6vI9Fkfq3c6omPbHNj/8fAqJqH5KjiukzYQenWyLHP/eYtc1YGsLDXWbK2Cn0jJVmJM48EA95ZIpsaqEPQ+ixyhX86TBefAEfI7KFV+4kjtMDjXUyQA48HgwCbVyhoCs5IT233nY=
+	t=1761016553; cv=none; b=rX8IcTuWYuTSY8PY4HheZGE/QmkIRa/yWV0d8+IKEHMoeh2HfxQ1QA3Bx4It6hwaWfV+/OcQeqN1ZzAqNA41fSxi8i0VQJQppuaw19Mk2Rv8P96GMKMqMPV6bbYb6MTG/uADMwL/GtX6Alb9gGb2ImCgZldfGSRLLHcbRO+3aOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761017404; c=relaxed/simple;
-	bh=pSodc1sVsc8ZqFGMlbhjXYQOnHdeBJT8wEdPCWVwfwg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ebxflKsZgQfSDYyV6miHP+2ShgFwTiN5EDEJRit26KDDX9Xxgt9a1zAujKAa5Tnm20N+sFbdSN1/gSBXKiFhBUWnSJkMI/dZIRzhSrf7gvaIHB4oT7kf2cZ+kAudCaej4w2G0FyEp93AfmFzA9Du5kg5YpuYxdqH/8JhX1wQsVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BgUqtszw; arc=none smtp.client-ip=45.254.49.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 269853654;
-	Tue, 21 Oct 2025 11:14:38 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	jingoohan1@gmail.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com,
-	jani.nikula@intel.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v7 18/18] drm/bridge: analogix_dp: Apply panel_bridge helper
-Date: Tue, 21 Oct 2025 11:14:29 +0800
-Message-Id: <20251021031429.1524354-2-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251021031429.1524354-1-damon.ding@rock-chips.com>
-References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
- <20251021031429.1524354-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1761016553; c=relaxed/simple;
+	bh=FozCj5Qtilnm6MTFQqUJJBi0+f5aDzs/7epoDnQr8Rw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eZw877HkXajrrEq9UsGQVUrN+pvWqpHd0jVTVKi+Hu7AYDDQvHCaBbG9csKSrUc3QB7QOBjUewL9EmQrTDMYg7CeLXJOoujVL/v9TFkChZPko9Qfl3jvWxJAuSnJWJAhZHSOZtf8kVdw6Up4Ys64jh/G6rtLigLujrv2PvB9tk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9FmyixS; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27ee41e0798so80769295ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761016551; x=1761621351; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MIc5Jk6uXrpT5vKhUN3R3BidtAKxdUPzX/dU/naleU8=;
+        b=P9FmyixSb94cxMLRqyW/OTZj/wzKWawTCu1NAN3EYTDUgInaRAy3rt3KyCj/JDnuew
+         kprRO9iS03CtTySFOlfSiDFCUvvLpB+9sdvN7tF2noUBA3Ewj2dIG6oMbjpuDA5B+EWJ
+         FsW0kxOMOqeRWVHpD/t3rYq7T4+VIFeIvBPJGaIdj+ZeKxRbB4RhDdwjEAJ6adWPPPga
+         +wnHKPBf/erEGhEUs+eIaYkdTJjk9rx9tU+w6jQTAyxRk6bXdZQqP9Y3joaB/HjFAFsn
+         TiHyyaXugJxC8QvqjVNptYZ0hru0NcnD94dnL2xF5w1IB1bqgdclItju4l9qZaj3cdxC
+         4eOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761016551; x=1761621351;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MIc5Jk6uXrpT5vKhUN3R3BidtAKxdUPzX/dU/naleU8=;
+        b=a442sftI/te3mjLnWxSxR6MEJXQJXYv+GcaNPhJbqKw5RVcrVczn7NEey2tlD9fR+8
+         SR/ZLlmCpnaXuYYFZcYrgZqoXqcnoIJHN3zhzvXxB1JKarZPyvuuQmpayK49Z+JfvqLd
+         4/YcGaL7WAZBN9iDQZuY7kFLAlFbfD+ahdiVOaCPqG1dMoPaGnT/aznIhelNA3DYEsDo
+         qAWHaq8KT9AOzN1WATAzb+5o1yEMgg1tsyc0Pf7Q6rQBitDt2GJqufPIsuy3C5LHmTr+
+         Be2tpKzz+eTPJLPpWn6KeOOZhxVAHnz8bMtQQF56tsDyVBigWFXEnd5pkmUKZCNCaekL
+         T6ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUaKJyE6lz2LY4sYxh8Et8btmChl41ehfhuwAT5pQd7GVv+4Oe99nBxZ/g0myGrGUWYMVrIN1N0oUdQVu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK3mX0Ay/Lvw/9dt8itY9Lzc/XBhMs7uJjiR1z7R5pV5uIriDW
+	2HFBUI2JxvtJIs5WJUxsTpx/Rc+HtPLP1FyN2/d1Mo3a0jOVSrYuxRqE
+X-Gm-Gg: ASbGncu5IiS90nPiy5uk8uxzE+jPzETVqOstKAo6b5k8jrSy/WbcAUfpB0ahKiNxovF
+	yxnmzn7m0RT4wxHi0/CrdAZPbSMGyJiKrI0OPRvOQpVfSGzgNfg4WkjM2GoTwcDOPohDAp/J1Od
+	AQn14VHxWvNSEaGScBmEIHxZFS57ZTBLM36kKOsvYalkTseKS8EN9jRoInSr9Y0QZ4HycUVnVqo
+	V4RWepRksofGhs6gCKFfeFKCmZ7jh9m1xQR4Akqu5Nkft/bSqkNKGne8HZHpUfE/mszT+SJByw4
+	JLMpJF3VMDTalk1/yuHPjh5uPTsG0O6wccHOLIMABPKh96wFG0ZOVK9hqrluNvIyFJeJ5+oLuyw
+	0LukF2p3pq6ft8aXnEglfV/c1XSdqADtvnXq16f6G7OHA0sxSQqX4TrzQIqEx5TBLYL+L0jHc/+
+	RBAahsoFc0PAzsLSpRI5qvlF78J396O4ydkFtE
+X-Google-Smtp-Source: AGHT+IHvc2OdIns7Dhqd5TV4LyvC/HJfGjCUatzoXh06HQxZAcairq7EJA2klU28lcwGsK1CQQDx2g==
+X-Received: by 2002:a17:903:2b0d:b0:272:f9c3:31f7 with SMTP id d9443c01a7336-290cbe2ae84mr56298125ad.50.1761016551034;
+        Mon, 20 Oct 2025 20:15:51 -0700 (PDT)
+Received: from [172.17.0.2] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fcc2b1sm94889765ad.27.2025.10.20.20.15.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 20:15:50 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+Date: Tue, 21 Oct 2025 11:15:39 +0800
+Subject: [PATCH] ARM: dts: aspeed: clemente: Add EEPROMs for boot and data
+ drive FRUs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a04c2f97b03a3kunmd8891efc5aaaff
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ05LGFZDTE4aHk0ZHk4YGE1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=BgUqtszwd271b/8Vo5r63ymPpTtE1HaV1xylDRI3pKV4zl8nprs/m34x+c8ApzpGSIYuyTiiWcJ/LNGygZSzNMWkRjGgDVSw2+BJQP1KXaXIRsrCVPam3B0rQUZ6O49z4tHMSgMGchDLkYVRqC8xQgb9AFdtq0iJ5WF5PGNPf3w=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=6UvZjfZZmEIshg80bXUbC+uz2GS4ovT+vz4BXH8QlXg=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-leo-dts-add-nvme-eeprom-v1-1-33166b3665b4@gmail.com>
+X-B4-Tracking: v=1; b=H4sIANr69mgC/x3MQQqEMBAF0atIr21IZ3REryIuxHy1YUwkERkQ7
+ 25w+RZVFyVERaKuuCji1KTBZ0hZ0LSOfgGryyZrbC3GCv8Q2B2JR+fYnxsY2GPY+CPfqpG2bid
+ rKNd7xKz/99wP9/0A40cKRWkAAAA=
+X-Change-ID: 20251021-leo-dts-add-nvme-eeprom-316471959c20
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ george.kw.lee@fii-foxconn.com, bruce.jy.hung@fii-foxconn.com, 
+ leo.jt.wang@fii-foxconn.com, Leo Wang <leo.jt.wang@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761016548; l=2272;
+ i=leo.jt.wang@gmail.com; s=20250618; h=from:subject:message-id;
+ bh=FozCj5Qtilnm6MTFQqUJJBi0+f5aDzs/7epoDnQr8Rw=;
+ b=8BInr5iA6wBDcAL4sY8DnyKW4muBdm9myjKyhrNgz4zvC7PgZByz+aciemOqaw2l3lP+Dk17F
+ WiRuYEfnT9MAdWDDJm8CfcmcWioWtAmA94gNx57lZN4uJoHCmtiSswe
+X-Developer-Key: i=leo.jt.wang@gmail.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
-In order to unify the handling of the panel and bridge, apply
-panel_bridge helpers for Analogix DP driver. With this patch, the
-bridge support will also become available.
+Add EEPROM devices on the I2C buses used for the boot and data NVMe
+drives. These EEPROMs store FRU information for each drive, allowing
+the BMC to identify.
 
-The following changes have ben made:
-- Apply plane_bridge helper to wrap the panel as the bridge.
-- Remove the explicit panel APIs calls, which can be replaced with
-  the automic bridge APIs calls wrapped by the panel.
-- Remove the unnecessary analogix_dp_bridge_get_modes().
-
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
+Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
 ---
+ .../dts/aspeed/aspeed-bmc-facebook-clemente.dts    | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Changes in v4:
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge.
-
-Changes in v5:
-- Move panel_bridge addition a little forward.
-- Move next_bridge attachment from Analogix side to Rockchip/Exynos
-  side.
-
-Changes in v6
-- Remove the unnecessary analogix_dp_bridge_get_modes().
-- Not to set DRM_BRIDGE_OP_MODES if the next is a panel.
-- Squash [PATCH v5 15/17]drm/bridge: analogix_dp: Remove panel
-  disabling and enabling in analogix_dp_set_bridge() into this
-  commit.
-- Fix the &drm_bridge->ops to DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT.
----
- .../drm/bridge/analogix/analogix_dp_core.c    | 41 +++++--------------
- 1 file changed, 11 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 7e3e9d4f4ea2..d2ea93e1c9a3 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -749,9 +749,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- {
- 	int ret;
- 
--	/* Keep the panel disabled while we configure video */
--	drm_panel_disable(dp->plat_data->panel);
--
- 	ret = analogix_dp_train_link(dp);
- 	if (ret) {
- 		dev_err(dp->dev, "unable to do link train, ret=%d\n", ret);
-@@ -771,9 +768,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- 		return ret;
- 	}
- 
--	/* Safe to enable the panel now */
--	drm_panel_enable(dp->plat_data->panel);
--
- 	/* Check whether panel supports fast training */
- 	ret = analogix_dp_fast_link_train_detection(dp);
- 	if (ret)
-@@ -858,17 +852,6 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
- 	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
- }
- 
--static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
--{
--	struct analogix_dp_device *dp = to_dp(bridge);
--	int num_modes = 0;
--
--	if (dp->plat_data->panel)
--		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
--
--	return num_modes;
--}
--
- static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
- 							   struct drm_connector *connector)
- {
-@@ -909,7 +892,7 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
- 	struct analogix_dp_device *dp = to_dp(bridge);
- 	enum drm_connector_status status = connector_status_disconnected;
- 
--	if (dp->plat_data->panel || dp->plat_data->next_bridge)
-+	if (dp->plat_data->next_bridge)
- 		return connector_status_connected;
- 
- 	if (!analogix_dp_detect_hpd(dp))
-@@ -995,8 +978,6 @@ static void analogix_dp_bridge_atomic_pre_enable(struct drm_bridge *bridge,
- 	/* Don't touch the panel if we're coming back from PSR */
- 	if (old_crtc_state && old_crtc_state->self_refresh_active)
- 		return;
--
--	drm_panel_prepare(dp->plat_data->panel);
- }
- 
- static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
-@@ -1168,16 +1149,12 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
- 		return;
- 
--	drm_panel_disable(dp->plat_data->panel);
--
- 	disable_irq(dp->irq);
- 
- 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
- 
- 	pm_runtime_put_sync(dp->dev);
- 
--	drm_panel_unprepare(dp->plat_data->panel);
--
- 	dp->fast_train_enable = false;
- 	dp->psr_supported = false;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
-@@ -1252,7 +1229,6 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
- 	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
- 	.atomic_check = analogix_dp_bridge_atomic_check,
- 	.attach = analogix_dp_bridge_attach,
--	.get_modes = analogix_dp_bridge_get_modes,
- 	.edid_read = analogix_dp_bridge_edid_read,
- 	.detect = analogix_dp_bridge_detect,
- };
-@@ -1498,17 +1474,22 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 		return ret;
- 	}
- 
--	if (dp->plat_data->panel)
--		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
--	else
--		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
--
-+	bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
- 	bridge->of_node = dp->dev->of_node;
- 	bridge->type = DRM_MODE_CONNECTOR_eDP;
- 	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
- 	if (ret)
- 		goto err_unregister_aux;
- 
-+	if (dp->plat_data->panel) {
-+		dp->plat_data->next_bridge = devm_drm_panel_bridge_add(dp->dev,
-+								       dp->plat_data->panel);
-+		if (IS_ERR(dp->plat_data->next_bridge)) {
-+			ret = PTR_ERR(bridge);
-+			goto err_unregister_aux;
-+		}
-+	}
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
+index 450446913e36b1418fab901cde44280468990c7a..885c50a7d66593dfa8493d2d031700174b452382 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
+@@ -311,6 +311,12 @@ i2c0mux0ch1mux0ch0: i2c@0 {
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <0>;
 +
- 	ret = drm_bridge_attach(dp->encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 	if (ret) {
- 		DRM_ERROR("failed to create bridge (%d)\n", ret);
++					// HDD NVMe SSD FRU 0
++					eeprom@53 {
++						compatible = "atmel,24c02";
++						reg = <0x53>;
++					};
+ 				};
+ 
+ 				i2c0mux0ch1mux0ch1: i2c@1 {
+@@ -323,6 +329,12 @@ i2c0mux0ch1mux0ch2: i2c@2 {
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <2>;
++
++					// HDD NVMe SSD FRU 1
++					eeprom@53 {
++						compatible = "atmel,24c02";
++						reg = <0x53>;
++					};
+ 				};
+ 
+ 				i2c0mux0ch1mux0ch3: i2c@3 {
+@@ -493,6 +505,12 @@ i2c0mux3ch1mux0ch0: i2c@0 {
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <0>;
++
++					// HDD NVMe SSD FRU 2
++					eeprom@53 {
++						compatible = "atmel,24c02";
++						reg = <0x53>;
++					};
+ 				};
+ 
+ 				i2c0mux3ch1mux0ch1: i2c@1 {
+@@ -505,6 +523,12 @@ i2c0mux3ch1mux0ch2: i2c@2 {
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <2>;
++
++					// HDD NVMe SSD FRU 3
++					eeprom@53 {
++						compatible = "atmel,24c02";
++						reg = <0x53>;
++					};
+ 				};
+ 
+ 				i2c0mux3ch1mux0ch3: i2c@3 {
+@@ -619,6 +643,12 @@ i2c0mux5ch1: i2c@1 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <1>;
++
++			// BOOT DRIVE FRU
++			eeprom@53 {
++				compatible = "atmel,24c02";
++				reg = <0x53>;
++			};
+ 		};
+ 
+ 		i2c0mux5ch2: i2c@2 {
+
+---
+base-commit: 6953afcd81a2cc73784e3dd23faa0a1aaf97441a
+change-id: 20251021-leo-dts-add-nvme-eeprom-316471959c20
+
+Best regards,
 -- 
-2.34.1
+Leo Wang <leo.jt.wang@gmail.com>
 
 
