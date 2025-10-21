@@ -1,157 +1,175 @@
-Return-Path: <linux-kernel+bounces-862383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68683BF5226
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:02:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C797BF522E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A77B402699
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40F08460616
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2A9269AEE;
-	Tue, 21 Oct 2025 08:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DA32E972D;
+	Tue, 21 Oct 2025 08:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="DRrWZumJ"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ujd1EYVB"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A969281356
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A642C0279;
+	Tue, 21 Oct 2025 08:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761033733; cv=none; b=AOjuUESKRTOtB3Gw+mUacqT8QzhLpziz3OsrDnCUA6LqgF6t6TqVheZ3NGZl4rvLMogAiWnu376CXQhvQeNl/KeCo7/rIaSmYHXQDOArai5XJdamhAyxYfP9XPX9Pe8ZpQKg1XnEzjnZ4+KNaf9ve7qL2CUiffcXjb6LfccdU1c=
+	t=1761033741; cv=none; b=gFgC5ozA0vHDz91YFTDkdg2Ed7j65cZJtkbYGCxidBKBAtueKhdhB1UrKAA/xXzkTKwtAV7XHtIc9/5hx0LPQb2l63YINctoZZz99N8dEF7TYcXhZEilJgsmthks3112ZCtmIsVHM9Gks5I/bLJqibaDhVEjtL7YowuePx7l5GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761033733; c=relaxed/simple;
-	bh=i+m3PusaxM6Zgin3C3En/lGk4W/S63Hvd6XwDnbd7Ug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zz+ZnO0QX1JpXVzPnjKr1Qx1J8BrcMT0TQdlpzW1ChQADWEbO+N7odkldh6B6nm1+KKUhPnatZdWT/QmyQUPbLS8f/kK9SHhZYGms12GMgGKxMB6u/Sfm0oNHgPEOXlvL5wQxd6nbqobXgETF2ZKQVcDZNgtYHZevTdheO5V33Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=DRrWZumJ; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b43a3b1ae1fso129212266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1761033729; x=1761638529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k0VWPqCHv6+ZQuDCTFQQ2tUl50NtMLOJ2aVBSBufBxc=;
-        b=DRrWZumJLWlQQYVAwwdZ9UjK/OX3tFtqQIygVaobmULxIhz8TsmMGwWjugbCyJG/TT
-         n1DisF41E2n7SCCu5Ow4O85jzTnWfSXt8lKZihDJo8KVtRsMVaD2hKDmMuIhBsbaYTxE
-         rEO04c4IOVa60P52jb5mBgRIvD3zpJn6BePYm34wJNSrHC9n/jM5CtHEih+v5cF8Vk0w
-         UMgg7XcMxykPPAcbgYAfFVy+kn5kUR0tXv5Bmys+Bw4+gt9Os5YLpsLf+6i0/GutnOxM
-         1gvVIP5sj2M1i3gRJOmmgiQ6dgBYKdI4BRFe3e5P8g8lEyZF2VfN2cR1LesjLs8Dd/vy
-         MW9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761033729; x=1761638529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k0VWPqCHv6+ZQuDCTFQQ2tUl50NtMLOJ2aVBSBufBxc=;
-        b=kKVkPN05LqE6kONYRbZhikJDDaxqbrgsv4iexy0qk1FGYiQLiAvjU5N1xKdOsR1MmY
-         fRM5UPIV9t06BYgg8QlqRMU85lrNZ4wSDBStBYXkwYPte6GVAoem2QTW5BJEQj7mK90W
-         Kthu0wp4I50ewGeU0FzJbK6GxiCsOGbvoW4Ww6PT4nOi4L73mcW0IJ4Rn+1Q/Kc7pfra
-         qLFwMoypaNMh4gNlvwKpldKSqp5+VpcUyjvJ4RuNCKRFJQzQhRLJ9Eq9RDccM23AAPTs
-         0CgEAtwwXBp2+DYhGwHNr0tEjRIP/fEDTcoR2E7bO5eLNRBS9fy8yKJRd/7FIwgB1Hwm
-         5QmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVe2/kwMcy87TyE6xart3HPqdINtHiZzObJgQqGkFlw2qHjOWJIEO09qt46Hl8qAfvhEWxv3V8FHn44h9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLZUtiYtf/pBDp6UM21TdeX6rqfR5Kd2yS6zhPoIAeIZifCaWO
-	CsGxC0Uem4Pzlfm951+0BCDR8vggZBstnS/ERzu4b+ZC8/Cfl5/0liN/6GOSDHCWD5fsOYM0WDt
-	Nbj5eyo79fUQwFlkyny4MaWxYQ67QojZPcCEmMrupmg==
-X-Gm-Gg: ASbGncszv/qh+r/WvoqZuWBuVWEV1JxmUQugN+T7dlipt6GPrf/gFzvkyMGuOfhGSTo
-	kX8G4AEKKVyPE8s0CBwBJzN0VbsDILI7o0UN21aJWei2T3kJ/WfKsbfs9bUboWYZAqRdirrbyKK
-	fKZzT4MzeZ3SMJmt1h9HPyW3FKnZfqPgUI14OFHfnOwygXpk/IrX7cz9C77JMJhz7+slpMlQ60n
-	G1U1tdlAOKWeXw9MUNKdfe9VfqHdfzioc7X2MYn8Agn9Mwt0XLEbkzbqUqO
-X-Google-Smtp-Source: AGHT+IEQfgvHZuihlbBSJlVb+dcEnjFV14dIS2e3QeU28hCgVySmEX3k7+tkYGmNfEgLKxBR2Hkp3zdbZ2HHX0oRDVA=
-X-Received: by 2002:a05:6402:2115:b0:638:e8af:35c7 with SMTP id
- 4fb4d7f45d1cf-63d16af7935mr1354397a12.2.1761033728661; Tue, 21 Oct 2025
- 01:02:08 -0700 (PDT)
+	s=arc-20240116; t=1761033741; c=relaxed/simple;
+	bh=VbThsJznKFD+NheQ9uNHDmuNUxq8TTfMjDafcPKUYO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZZmGetyU+GKaQVpIokjEf+sHpPrqqhGaWZcBlmd12XTQd4N0+L96BRhCTuh4ZYPjO81NC2yqXqqRpshBDSFCYzENuNJAMi3PP429cNI5HdXz7NYKx7dPzXe0XNXhEMKujpy8Yz5SkcRfU+uQWR0M/sYXrCQsgl0SkN/inv4Yg44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ujd1EYVB; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id BFC36C0B88D;
+	Tue, 21 Oct 2025 08:01:57 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6544860680;
+	Tue, 21 Oct 2025 08:02:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 31523102F23E1;
+	Tue, 21 Oct 2025 10:02:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761033736; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=OegdgNVbNw+KkRfrQDXaRBUpYFyQJOKVqsrjfmccusE=;
+	b=Ujd1EYVBFKWa1NGizpbWWxW2JcSND0EfAG/uNPgiqM7MtxUPYXj8cvBuZHZECAxyzULNWV
+	vrBlgx+YQ+SGfoxQFPBmfmlzDf2JlljWJvY9YIOQUM2sXrr9XlN/apuAR7bMj4vNmsHh1/
+	CRK5W1KvP9/Grku+NViQRRcU4ACaP/dnORToyb2wIEjCCszc3MjS2hBUR2jgaINm1limPa
+	iDTrdcJxefCwoOcD+uhypcdvOMqpgmish1KWBWd97oAHVNiFi36612MUwzASchfzMz7Bwe
+	k4HUKjjt+XkJ2xwwejOCLPGk3Mot3GrOuwvIWFVqM/8uha1dTJIck21eUTKtkg==
+Message-ID: <911372f3-d941-44a8-bec2-dcc1c14d53dd@bootlin.com>
+Date: Tue, 21 Oct 2025 10:02:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-rnbd_fix-v1-1-71559ee26e2b@gmail.com>
-In-Reply-To: <20251021-rnbd_fix-v1-1-71559ee26e2b@gmail.com>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Tue, 21 Oct 2025 10:01:57 +0200
-X-Gm-Features: AS18NWAjr1vMpIROYlrNqm-3ej7s5Tkh074kVV9erysvDSTuNEiz5Pc19hwQJzo
-Message-ID: <CAMGffEmsJjeqW8DGnKapVyM0Gporn_UuDB2xNosRmD2GduGgzg@mail.gmail.com>
-Subject: Re: [PATCH] drivers: block: rnbd: Handle generic ERR_PTR returns
- safely in find_and_get_or_create_sess()
-To: Ranganath V N <vnranganath.20@gmail.com>
-Cc: "Md. Haris Iqbal" <haris.iqbal@ionos.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/3] net: stmmac: Allow supporting coarse
+ adjustment mode
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
+ <20251015102725.1297985-3-maxime.chevallier@bootlin.com>
+ <20251017182358.42f76387@kernel.org>
+ <d40cbc17-22fa-4829-8eb0-e9fd26fc54b1@bootlin.com>
+ <20251020180309.5e283d90@kernel.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20251020180309.5e283d90@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Oct 21, 2025 at 8:21=E2=80=AFAM Ranganath V N <vnranganath.20@gmail=
-.com> wrote:
->
-> Fix the issue detected by the smatch tool.
-> drivers/block/rnbd/rnbd-clt.c:1241 find_and_get_or_create_sess()
-> error: 'sess' dereferencing possible ERR_PTR()
->
-> find_and_get_or_create_sess() only checks for ERR_PTR(-ENOMEM) after
-> calling find_or_create_sess(). In other encoded failures, the code
-> may dereference the error pointer when accessing sess->nr_poll_queues,
-> resulting ina kernel oops.
->
-> By preserving the existing -ENOMEM behaviour and log unexpected
-> errors to assist in debugging. This change eliminates a potential
-> invalid pointer dereference without altering the function's logic
-> or intenet.
->
-> Tested by compiling using smatch tool.
-Thx for the patch.
-But I read the code again, find_or_create_sess -> alloc_sess, which
-only return ERR_PTR(-ENOMEM) or a valid pointer.
-I think this is just a false positive.
->
-> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
-> ---
->  drivers/block/rnbd/rnbd-clt.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.=
-c
-> index f1409e54010a..57ca694210b9 100644
-> --- a/drivers/block/rnbd/rnbd-clt.c
-> +++ b/drivers/block/rnbd/rnbd-clt.c
-> @@ -1236,9 +1236,14 @@ find_and_get_or_create_sess(const char *sessname,
->         struct rtrs_clt_ops rtrs_ops;
->
->         sess =3D find_or_create_sess(sessname, &first);
-> -       if (sess =3D=3D ERR_PTR(-ENOMEM)) {
-> -               return ERR_PTR(-ENOMEM);
-> -       } else if ((nr_poll_queues && !first) ||  (!nr_poll_queues && ses=
-s->nr_poll_queues)) {
-> +       if (IS_ERR(sess)) {
-> +               err =3D PTR_ERR(sess);
-> +               if (err !=3D -ENOMEM)
-> +                       pr_warn("rndb: find_or_create_sess(%s) failed wit=
-h %d\n",
-> +                               sessname, err);
-> +               return ERR_PTR(err);
-> +       }
-> +       if ((nr_poll_queues && !first) ||  (!nr_poll_queues && sess->nr_p=
-oll_queues)) {
->                 /*
->                  * A device MUST have its own session to use the polling-=
-mode.
->                  * It must fail to map new device with the same session.
->
-> ---
-> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-> change-id: 20251021-rnbd_fix-9b478fb52403
->
-> Best regards,
-> --
-> Ranganath V N <vnranganath.20@gmail.com>
->
+Hi Jakub,
+
+On 21/10/2025 03:03, Jakub Kicinski wrote:
+> On Sat, 18 Oct 2025 09:42:57 +0200 Maxime Chevallier wrote:
+>>> If the HW really needs it, just lob a devlink param at it?  
+>>
+>> I'm totally OK with that. I'm not well versed into devlink, working mostly with
+>> embedded devices with simple-ish NICs, most of them don't use devlink. Let me
+>> give it a try then :)
+>>
+>> Thanks for taking a look at this,
+> 
+> FWIW I dropped this form PW in an attempt to unblock testing of
+> Russell's series.
+
+Yup no problem for me
+
+> I'm not convinced that the tsconfig API is correct
+> here but I don't get how the HW works. Could you perhaps put together
+> some pseudocode?
+
+I'm not fully convinced either, devlink could also work. I already have 
+a patchset ready that uses devlink for that.
+
+Let's see if I can do a better job explaining this timestamping
+parameter :
+
+
+- In "fine" mode (mapped to precise qualifier if we go with the
+tsinfo approach), which is the mode currently used in stmmac :
+
+  u32 accumulator
+  u32 addend
+  u64 subsecond_increment
+
+  at each ref ptp clock cycle {
+    
+    accumulator += addend;
+
+    /* accumulator and addend are 32 bits. addend is adjusted
+     * to control the drift of the target frequency.
+     */
+    if (accumulator overflows)
+      current_time += subsecond_increment
+
+  }
+
+Main advantage: We can fine tune when we update the current_time, so
+basically we can multiply or divide the ref ptp clock based on when
+the accumulator overflows, and use the resulting clock as the
+timestamp source.
+
+In practice for stmmac, we set the addend to a value so that it takes
+2 cycles to overflow, and we adjust the subsecond increment when
+updating the PHC frequency. This gives a precision of 46-ish ns.
+
+We do this by design as the ptp ref clk may be fairly slow (down to
+5MHz in some cases). If we try to rely on accumulator overflowing at
+every cycle to update the time, we'd have to overflow multiple times
+per cycle, and the computation of the addend value simply overflows,
+cf commit 91a2559 ("net: stmmac: Fix sub-second increment") [1]
+
+This is basic PTP follower mode, we continuously update
+the clock used for timestamping.
+
+
+- In "coarse" mode :
+
+  u32 subsecond_increment
+
+  at each ref ptp clock cycle {
+    current_time += subecond_increment
+  }
+
+We increment time at a fixed rate. The current_time can only be adjusted
+by setting the entire current_time, which is jittery or even non-monotonically
+increasing. However, we can use a 20ns increment (or even lower if the ref
+clock is faster), and if our ref clock is externally provided by a high
+precision source, this allows implementing Grand Master mode with the
+highest possible precision.
+
+[1] : https://lore.kernel.org/netdev/20200415122432.70972-2-julien.beraud@orolia.com/
+
+Hopefully that's a bit clearer WRT what the HW can do.
+
+Let me know if you need more clarifications on this, I'll send another
+iteration once Russell's cleanup lands, using either devlink or tsconfig
+depending on what we chose here.
+
+Maxime
 
