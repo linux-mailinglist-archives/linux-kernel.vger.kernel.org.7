@@ -1,146 +1,132 @@
-Return-Path: <linux-kernel+bounces-863724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A4ABF8EE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:24:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C69ABF8EE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6D61898C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:25:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED9E4240ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C75F1922FD;
-	Tue, 21 Oct 2025 21:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BF628CF49;
+	Tue, 21 Oct 2025 21:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Fd7YyQbg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UZ97+p0r"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D9728A1CC
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8342AD16
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761081877; cv=none; b=pCT8HG+CJpq/NJo2P+0ozoXECIu3Jkh0L5/YnUx14pGKBqV3FaRflM9JIMKlyoVCvkMcd1/AvHrF6qNPESNOK99JkI9yk4X9+h3oVyIrvnx3HeERr5Om3Ql0hq/BgZhYUCZ0CVQs4DeOyyBNPES/NFV6sz+sDPwtG2jICidcfDI=
+	t=1761081987; cv=none; b=nwy4fUrVpM7ME4wLeMGeUTQR3myqQIos9gTetqCjCtxHVWD1z+EwD3B4gaaJT/XRuaakeC9uJ2o8S7aTeSZ6bvFWOjhJbfVNTjBmWDelsCE8bC6/Ys3pwWwGgeRFAEOesGkPPUOJNm65hB1yLhJQEYIBoLpqkPaSG/yE58hF91E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761081877; c=relaxed/simple;
-	bh=oqkW0jXITuUuP1+YPYte4eJvwGa2Mg1pWU6Rq32htJo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GSaOgOyncPOAuNPv3korEvHA5aT9sjE3AsZkiIQ8YQPk1fTSZlAIttjsQ0VnC8onTlRAnPwSlcYJn3qMTG0uV24NOVejQbWlAlRl5KZh4jdelfqbUR/JmZiDKdodOiu1HnQVyhxVEoQMrM9vjj0xtZDtddhWcouIpI/8R3B3IwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Fd7YyQbg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E9EC4CEF1;
-	Tue, 21 Oct 2025 21:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761081877;
-	bh=oqkW0jXITuUuP1+YPYte4eJvwGa2Mg1pWU6Rq32htJo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Fd7YyQbgM7JOcm0pPSTvo8rC23g00gbXsNPzTfSAX65pGNKoko2XIkUo3Gv+Ifr88
-	 ZZmmnayyqQ409qX+8bfe83maT//uPddN1a1uxkb3gPBuThXRApnYAyZom3aLrMzM1m
-	 dwGQGQIwC32drpZYgkPIUfhwpp57HPhP/hPwXf6M=
-Date: Tue, 21 Oct 2025 14:24:36 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Uladzislau Rezki
- <urezki@gmail.com>
-Subject: Re: [PATCH] mm/vmalloc: request large order pages from buddy
- allocator
-Message-Id: <20251021142436.323fec204aa6e9d4b674a4aa@linux-foundation.org>
-In-Reply-To: <20251021194455.33351-2-vishal.moola@gmail.com>
-References: <20251021194455.33351-2-vishal.moola@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761081987; c=relaxed/simple;
+	bh=fk4uDHBJ7seBjI9wBGl6e9lK7q/Nv9TIYlYWxndM84s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N+gaNZTOCS9smNvraBl/shN3NZWhrUKYd4aeCGroIcKP/2exzBxBQJIAQ5NVNPwqzoSKKCz3RgDIzp5KLr6TLJcjfr9N4+yh0r+AvdCKd1A/I42XnFziSGoHjCxzKNA+98rXYC1AHzj4I4aD2Si0XVoHMttaobvG4zkbdrBpMHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UZ97+p0r; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c2b48c201so1661a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761081985; x=1761686785; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fk4uDHBJ7seBjI9wBGl6e9lK7q/Nv9TIYlYWxndM84s=;
+        b=UZ97+p0roE8xztzXGDJzWe4bui6rJO4WpILhIXPHY2SG/i9k4LbD0uzC1NVa0Usvxa
+         4bWIzp1biTjkrCmJvYVAEj0HkF0wX9SwKCI8foGlJKbqzQjyYWydGMki66fuN5L+/RPx
+         5gNtmc/RN4d+h1xsvyadWMY9mPAPfg9L6kVfERpG9dmiJnh5pJdx6l0o8X5GFk21lJxN
+         8U+wr0p9FCYczU0YAa35dy1KmluPnUPYUx5KKqyoHUmvl+dIEDcK0n5U25gyc0yXm3HB
+         NKNZqC4sv3cpIJj7/otvG3Us3l+PefxCnDjdQVWGoURbPykTZSLvjLL9f1ia06fvfaif
+         40YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761081985; x=1761686785;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fk4uDHBJ7seBjI9wBGl6e9lK7q/Nv9TIYlYWxndM84s=;
+        b=dMXV3cJQaNQ7C9ocv0PZHc5ay1rXEsPHhC82FRU8zRXK2dIf5wQ8lRucTCa9NCgcJL
+         t6jYjpUdsgTldCGvct3p/k1Cr4wBmisW0kTQ8iZgcySYBwn8g8BScC6hOOcd24wkOK4l
+         W221phkfmJZ92QafY16BCqOOzLK8whTyY5QeOjpMmA1z6Tf+9CloUOyqsxGTQOo/2LEi
+         0+SqUwmHeFz1Tj1j2y3XNg54ff+mZSVZlwbbIEh1Avi/6/1UNO0bfoNYgTNiV0nP3elj
+         frGDSaSMWk+RvB7SDzOJTwG4BUXkbiyg0t5BWNXzOBDlSPHQIBOYEwW04elcAsPOVsYi
+         1RoA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+uYixG34h7hlT48cZVss3t/bkZ3rF4tiIBQGkBGyVpUr35QE0VF8E0Nzx/RXfBeHzEnjUpm1u9gj6lT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd309T35Q8rH6orSBkwDSg7gM7RFuMtfK8kqc1izH5trZXpme5
+	EKvnxI+I0ADJbaTCU6fpGMZhlJga/L/cRdRqgpiDxpo7wHHUzhwjA3jiL92ev7p6+Bqtp/srFoW
+	wUFOpdP2z1sXX21Vg04I6pHJhKmVoSeWE6mDoZHQc
+X-Gm-Gg: ASbGncvVkjdDB/tpCqWgE6Oj/QOaDFWQBZgh4KajTo96E4Kd8KUVqafS0QZkEjIIlef
+	fxmODLVLp+P6LdY7+jZOgax+ZevPf2k6Z6QJYrN2f8/EI5pZAxWziYsNxPibHRVm0+WheZvdd1R
+	XBduBCL42muJnv0LNZ6/2x1fd1BfqTC1DGUwbaLdz5GCymKe0JCvnGyf18vkjLvoEZ+rmW2LUSM
+	JQ8jT6PUx9KpxGc1kuizIIOhLO5QWU2YTDog2PvUEUk0W9XPZf55H3lmc/ZOvW/3VpJvKdECemX
+	gIhrUn3y/IUgsgk=
+X-Google-Smtp-Source: AGHT+IHIK7LRKircy3o7ZXU64JDEZ1svJocF6KUfMmgbCGzy8S1rqeS98AsrhAAzTWhtg1sLGH+a+O1AV1PvLhW6NO8=
+X-Received: by 2002:a05:6402:a18e:b0:63c:11a5:3b24 with SMTP id
+ 4fb4d7f45d1cf-63e1d96bb8dmr8627a12.1.1761081984441; Tue, 21 Oct 2025 14:26:24
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20251020222722.240473-1-dakr@kernel.org> <2025102150-maturely-squiggle-f87e@gregkh>
+In-Reply-To: <2025102150-maturely-squiggle-f87e@gregkh>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Tue, 21 Oct 2025 14:26:12 -0700
+X-Gm-Features: AS18NWC-1jwJmoNEc6IBrfF-BcQRCnK47G8SMuewBFW-uaWirgjur0uX31H4tG0
+Message-ID: <CAGSQo00J6SjVLBDFHYqwVZ7x_5nT8L=RQEHTfAe43CoDuo0q3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] Binary Large Objects for Rust DebugFS
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 Oct 2025 12:44:56 -0700 "Vishal Moola (Oracle)" <vishal.moola@gmail.com> wrote:
-
-> Sometimes, vm_area_alloc_pages() will want many pages from the buddy
-> allocator. Rather than making requests to the buddy allocator for at
-> most 100 pages at a time, we can eagerly request large order pages a
-> smaller number of times.
-
-Does this have potential to inadvertently reduce the availability of
-hugepages?
-
-> We still split the large order pages down to order-0 as the rest of the
-> vmalloc code (and some callers) depend on it. We still defer to the bulk
-> allocator and fallback path in case of order-0 pages or failure.
-> 
-> Running 1000 iterations of allocations on a small 4GB system finds:
-> 
-> 1000 2mb allocations:
-> 	[Baseline]			[This patch]
-> 	real    46.310s			real    0m34.582
-> 	user    0.001s			user    0.006s
-> 	sys     46.058s			sys     0m34.365s
-> 
-> 10000 200kb allocations:
-> 	[Baseline]			[This patch]
-> 	real    56.104s			real    0m43.696
-> 	user    0.001s			user    0.003s
-> 	sys     55.375s			sys     0m42.995s
-
-Nice, but how significant is this change likely to be for a real workload?
-
-> ...
+On Tue, Oct 21, 2025 at 12:10=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
 >
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3619,8 +3619,44 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->  		unsigned int order, unsigned int nr_pages, struct page **pages)
->  {
->  	unsigned int nr_allocated = 0;
-> +	unsigned int nr_remaining = nr_pages;
-> +	unsigned int max_attempt_order = MAX_PAGE_ORDER;
->  	struct page *page;
->  	int i;
-> +	gfp_t large_gfp = (gfp &
-> +		~(__GFP_DIRECT_RECLAIM | __GFP_NOFAIL | __GFP_COMP))
-> +		| __GFP_NOWARN;
+> On Tue, Oct 21, 2025 at 12:26:12AM +0200, Danilo Krummrich wrote:
+> > This series adds support for exposing binary large objects via Rust deb=
+ugfs.
+> >
+> > The first two patches extend UserSliceReader and UserSliceWriter with p=
+artial
+> > read/write helpers.
+> >
+> > The series further introduces read_binary_file(), write_binary_file() a=
+nd
+> > read_write_binary_file() methods for the Dir and ScopedDir types.
+> >
+> > It also introduces the BinaryWriter and BinaryReader traits, which are =
+used to
+> > read/write the implementing type's binary representation with the help =
+of the
+> > backing file operations from/to debugfs.
+> >
+> > Additional to some more generic blanked implementations for the BinaryW=
+riter and
+> > BinaryReader traits it also provides implementations for common smart p=
+ointer
+> > types.
+> >
+> > Both samples (file-based and scoped) are updated with corresponding exa=
+mples.
+> >
+> > A branch containing the patches can be found in [1].
+> >
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/=
+?h=3Ddebugfs_blobs
+>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Gee, why is this so complicated?
-
-> +	unsigned int large_order = ilog2(nr_remaining);
-
-Should nr_remaining be rounded up to next-power-of-two?
-
-> +	large_order = min(max_attempt_order, large_order);
-> +
-> +	/*
-> +	 * Initially, attempt to have the page allocator give us large order
-> +	 * pages. Do not attempt allocating smaller than order chunks since
-> +	 * __vmap_pages_range() expects physically contigous pages of exactly
-> +	 * order long chunks.
-> +	 */
-> +	while (large_order > order && nr_remaining) {
-> +		if (nid == NUMA_NO_NODE)
-> +			page = alloc_pages_noprof(large_gfp, large_order);
-> +		else
-> +			page = alloc_pages_node_noprof(nid, large_gfp, large_order);
-> +
-> +		if (unlikely(!page)) {
-> +			max_attempt_order = --large_order;
-> +			continue;
-> +		}
-> +
-> +		split_page(page, large_order);
-> +		for (i = 0; i < (1U << large_order); i++)
-> +			pages[nr_allocated + i] = page + i;
-> +
-> +		nr_allocated += 1U << large_order;
-> +		nr_remaining = nr_pages - nr_allocated;
-> +
-> +		large_order = ilog2(nr_remaining);
-> +		large_order = min(max_attempt_order, large_order);
-> +	}
->  
->  	/*
->  	 * For order-0 pages we make use of bulk allocator, if
-> -- 
-> 2.51.0
+Reviewed-by: Matthew Maurer <mmaurer@google.com>
 
