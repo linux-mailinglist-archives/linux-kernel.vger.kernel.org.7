@@ -1,51 +1,79 @@
-Return-Path: <linux-kernel+bounces-862737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DE3BF6064
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:29:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75BBDBF603D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3AB5C3434C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:29:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16B7C3B74FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11E532C31A;
-	Tue, 21 Oct 2025 11:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEED32ABEF;
+	Tue, 21 Oct 2025 11:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z+Le7Y7c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E249V/It"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286DA2F4A1B;
-	Tue, 21 Oct 2025 11:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EC5320CA2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761046133; cv=none; b=kX9tRwwqgyF0iYioE7BZ9sR4R0tD/jEFq6QNcB++rG+3mlReUJBNFKh6+sCv6W8XMAYGIC5YFbGlkkWH1E4YrktjGDWLKnEPNPGJnTebYVb2RuxaDLYM4bzLrJboCBC2Y3lCTIKklA8OBsXbtTk54XRFBr3Y9xppAgHvMYaMEr8=
+	t=1761045983; cv=none; b=keVsiheM7mNgnuywbZ8oGxCw7BRLIlB0k8YXI3pAv0VT1mV8M773rpwXUBU7vpo88l/tZy7UJ8Aygp3Xtq0NI/fnwgPXlclO+TcKVsRM/dit7kktW6ltitOvoIDgpwDXuUwVyLEWdSCzZSLiNIv9/plF0Hv0v2scPNy4ClxHfu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761046133; c=relaxed/simple;
-	bh=/LAo/XgiJw3yP/NruDjQn14rn0dicvR7MvhTnc73HZg=;
+	s=arc-20240116; t=1761045983; c=relaxed/simple;
+	bh=4o6GabJCs8lMZMdxN0bZMTFHmu3hyrO8WHGu9QddGZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F53pVLEc4pRFRbPVFiW3toLMCerFphndoZLBZDUlQ9PCO2k26BDOjiHt/0pSSNJB8Ffa/XPGd/vCmGoFBe4J4LNiOdRu/0K3FltTfEPyyG97o/fzmRyrLT95mtqRaCc5iDcbiwdDObslpwYnetqYR3PLuC+M4wU754Ib3oYz5Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z+Le7Y7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D72EC4CEF1;
-	Tue, 21 Oct 2025 11:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761046132;
-	bh=/LAo/XgiJw3yP/NruDjQn14rn0dicvR7MvhTnc73HZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+Le7Y7cpYeyev2yLI9fzD4vPa1GFAzLnlyXdtGJ2G/OzBCZ/rmyFfbtAmSdhWFnY
-	 tdlGke0RVGfH3A/Z9rbS25PEtlS8JanYEL9mckK+LQzGwa0kCqaHby3UXUv6VXiucy
-	 UmP+ZTsDWXCW3fGYEZCArgXP/YlPH9VhlPB9FD5k=
-Date: Tue, 21 Oct 2025 13:28:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: jirislaby@kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, tj@kernel.org, hch@infradead.org
-Subject: Re: [PATCH v1 2/2] serial: 8250_dma: add parameter to queue work on
- specific cpu
-Message-ID: <2025102157-goal-grandma-36d4@gregkh>
-References: <20251021083947.705135-1-jackzxcui1989@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbwsDBtnCFJoLymWo5H7pno8pT69D2Xkw65XpQ0n7OWNZ9j/XViSm6g3yAaPU1+oTqbzLJ5Rw5EaX+YTIgbqdLtwZr7AnSpbWZOMOu9hg7+l3XnLJxFswP/Jr/eEOgGm8ykmM4RtOqjxmZy5g8WAWBsZ8V1aHbb3YHVPtOElgGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E249V/It; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761045980;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IAp9PJIXRx90mxRigYbDEFeaSrCTmH7Jl9dfYi3Qn60=;
+	b=E249V/ItFiCPqj7maToW5ze6xG4QTcdQf+QXXK5B073YgOO/oAXzM8wgwVgFT67qdcu1GI
+	qQzK7jFJkwV8It+GjjYb0FJh+6J7sqfGjyu9450sJQs2HFzLl39LCL6Kbnb/KCJg7QKQxw
+	snsVFTBaY6fww4epxAcQWhMIDNTKYrA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-142-9qAaqctCOsCM9bHGN8WSXg-1; Tue,
+ 21 Oct 2025 07:26:17 -0400
+X-MC-Unique: 9qAaqctCOsCM9bHGN8WSXg-1
+X-Mimecast-MFC-AGG-ID: 9qAaqctCOsCM9bHGN8WSXg_1761045976
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C04FA18002F7;
+	Tue, 21 Oct 2025 11:26:15 +0000 (UTC)
+Received: from bfoster (unknown [10.22.65.116])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2365A19560A2;
+	Tue, 21 Oct 2025 11:26:14 +0000 (UTC)
+Date: Tue, 21 Oct 2025 07:30:32 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: John Garry <john.g.garry@oracle.com>, Zorro Lang <zlang@redhat.com>,
+	fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	djwong@kernel.org, tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <aPdu2DtLSNrI7gfp@bfoster>
+References: <cover.1758264169.git.ojaswin@linux.ibm.com>
+ <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+ <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aOJrNHcQPD7bgnfB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aOPCAzx0diQy7lFN@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <66470caf-ec35-4f7d-adac-4a1c22a40a3e@oracle.com>
+ <aPdgR5gdA3l3oTLQ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,139 +82,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021083947.705135-1-jackzxcui1989@163.com>
+In-Reply-To: <aPdgR5gdA3l3oTLQ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Oct 21, 2025 at 04:39:47PM +0800, Xin Zhao wrote:
-
-Meta-comment, this is a v2, and was not threaded with patch 1/1.  Please
-use a tool like b4 or git send-email to send patches out so that we can
-properly review/apply them.
-
-> On the embedded platform, certain critical data, such as IMU data, is
-> transmitted through UART. The tty_flip_buffer_push interface in the TTY
-> layer uses system_unbound_wq to handle the flipping of the TTY buffer.
-> Although the unbound workqueue can create new threads on demand and wake
-> up the kworker thread on an idle CPU, the priority of the kworker thread
-> itself is not high. Even if the CPU running this work was idle just a
-> moment ago, it may be preempted by real-time tasks or other high-priority
-> tasks.
-
-Are you using the RT kernel?  It seems odd that this is just coming up
-now, given our normal latency issues in the tty layer.  What changed to
-cause this?
-
-> In our system, the processing interval for each frame of IMU data
-> transmitted via UART can experience significant jitter due to this issue.
-> Instead of the expected 10 to 15 ms frame processing interval, we see
-> spikes up to 30 to 35 ms. Moreover, in just one or two hours, there can
-> be 2 to 3 occurrences of such high jitter, which is quite frequent. This
-> jitter exceeds the software's tolerable limit of 20 ms.
-
-Again, are you using the RT kernel?  If not, can you try that?
-
-> Add module param tty_flip_cpu to queue rx complete work on the specific
-> cpu by tty_flip_buffer_push_wq.
-
-This is not the 1990's, we don't add new module parameters :)
-
-This will not work for systems with multiple tty devices/drivers, please
-use a correct api for this if you really really need it.
-
-But again, I think this might not be needed if you use the RT kernel
-issue.
-
-> The default value of tty_flip_cpu is
-> WORK_CPU_UNBOUND which means using the default system_unbound_wq called
-> by tty_flip_buffer_push, otherwise we use the newly added workqueue
-> wq_tty_flip which is set to WQ_HIGHPRI to promote performance.
-> We set tty_flip_cpu to a specific CPU core that has relatively few
-> real-time tasks running continuously for long periods. Additionally,
-> tasks on this core have some correlation with the UART data related to
-> the 8250 DMA operation. After queuing work to this designated CPU and
-> set workqueue to WQ_HIGHPRI, we can stably eliminate the jitter and
-> ensure that the frame processing interval remains between 10 and 15 ms.
-> If we do not add the WQ_HIGHPRI flag, our testing on the platform shows
-> that there are still spikes occurring approximately once every hour.
-> Considering that projects utilizing this optimization feature must have
-> encountered similar issues to ours, just add the WQ_HIGHPRI flag in the
-> patch, without adding new module parameters for selection.
+On Tue, Oct 21, 2025 at 03:58:23PM +0530, Ojaswin Mujoo wrote:
+> On Mon, Oct 20, 2025 at 11:33:40AM +0100, John Garry wrote:
+> > On 06/10/2025 14:20, Ojaswin Mujoo wrote:
+> > > Hi Zorro, thanks for checking this. So correct me if im wrong but I
+> > > understand that you have run this test on an atomic writes enabled
+> > > kernel where the stack also supports atomic writes.
+> > > 
+> > > Looking at the bad data log:
+> > > 
+> > > 	+READ BAD DATA: offset = 0x1c000, size = 0x1803, fname = /mnt/xfstests/test/junk
+> > > 	+OFFSET      GOOD    BAD     RANGE
+> > > 	+0x1c000     0x0000  0xcdcd  0x0
+> > > 	+operation# (mod 256) for the bad data may be 205
+> > > 
+> > > We see that 0x0000 was expected but we got 0xcdcd. Now the operation
+> > > that caused this is indicated to be 205, but looking at that operation:
+> > > 
+> > > +205(205 mod 256): ZERO     0x6dbe6 thru 0x6e6aa	(0xac5 bytes)
+> > > 
+> > > This doesn't even overlap the range that is bad. (0x1c000 to 0x1c00f).
+> > > Infact, it does seem like an unlikely coincidence that the actual data
+> > > in the bad range is 0xcdcd which is something xfs_io -c "pwrite" writes
+> > > to default (fsx writes random data in even offsets and operation num in
+> > > odd).
+> > > 
+> > > I am able to replicate this but only on XFS but not on ext4 (atleast not
+> > > in 20 runs).  I'm trying to better understand if this is a test issue or
+> > > not. Will keep you update.
+> > 
+> > 
+> > Hi Ojaswin,
+> > 
+> > Sorry for the very slow response.
+> > 
+> > Are you still checking this issue?
+> > 
+> > To replicate, should I just take latest xfs kernel and run this series on
+> > top of latest xfstests? Is it 100% reproducible?
+> > 
+> > Thanks,
+> > John
 > 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
-> ---
->  drivers/tty/serial/8250/8250.h     |  2 ++
->  drivers/tty/serial/8250/8250_dma.c | 46 ++++++++++++++++++++++++++++--
->  2 files changed, 46 insertions(+), 2 deletions(-)
+> Hi John,
 > 
-> diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
-> index cfe6ba286..e6da925df 100644
-> --- a/drivers/tty/serial/8250/8250.h
-> +++ b/drivers/tty/serial/8250/8250.h
-> @@ -20,6 +20,8 @@ struct uart_8250_dma {
->  	void (*prepare_tx_dma)(struct uart_8250_port *p);
->  	void (*prepare_rx_dma)(struct uart_8250_port *p);
->  
-> +	struct workqueue_struct *wq_tty_flip;
-> +
->  	/* Filter function */
->  	dma_filter_fn		fn;
->  	/* Parameter to the filter function */
-> diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
-> index bdd26c9f3..9a0abee62 100644
-> --- a/drivers/tty/serial/8250/8250_dma.c
-> +++ b/drivers/tty/serial/8250/8250_dma.c
-> @@ -38,6 +38,35 @@ static void __dma_tx_complete(void *param)
->  	uart_port_unlock_irqrestore(&p->port, flags);
->  }
->  
-> +#define TTY_FLIP_WORK_CPU		WORK_CPU_UNBOUND
-> +
-> +static int wq_tty_flip_cpu = TTY_FLIP_WORK_CPU;
-> +
-> +static int param_set_tty_flip_cpu(const char *val,
-> +					const struct kernel_param *kp)
-> +{
-> +	int cpu;
-> +	int ret;
-> +
-> +	ret = kstrtoint(val, 0, &cpu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if ((cpu >= 0 && cpu < nr_cpu_ids) || cpu == WORK_CPU_UNBOUND)
-> +		wq_tty_flip_cpu = cpu;
-> +	else
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct kernel_param_ops tty_flip_cpu_ops = {
-> +	.set	= param_set_tty_flip_cpu,
-> +	.get	= param_get_int,
-> +};
-> +
-> +module_param_cb(tty_flip_cpu, &tty_flip_cpu_ops, &wq_tty_flip_cpu, 0644);
-> +
->  static void __dma_rx_complete(struct uart_8250_port *p)
->  {
->  	struct uart_8250_dma	*dma = p->dma;
-> @@ -61,7 +90,10 @@ static void __dma_rx_complete(struct uart_8250_port *p)
->  	p->port.icount.rx += count;
->  	dma->rx_running = 0;
->  
-> -	tty_flip_buffer_push(tty_port);
-> +	if (wq_tty_flip_cpu == WORK_CPU_UNBOUND)
-> +		tty_flip_buffer_push(tty_port);
-> +	else
-> +		tty_flip_buffer_push_wq(tty_port, dma->wq_tty_flip, wq_tty_flip_cpu);
+> Yes Im looking into it but I'm now starting to run into some reflink/cow
+> based concepts that are taking time to understand. Let me share what I
+> have till now:
+> 
+> So the test.sh that I'm using can be found here [1] which just uses an
+> fsx replay file (which replays all operations) present in the same repo
+> [2]. If you see the replay file, there are a bunch of random operations
+> followed by the last 2 commented out operations:
+> 
+> # copy_range 0xd000 0x1000 0x1d800 0x44000   <--- # operations <start> <len> <dest of copy> <filesize (can be ignored)>
+> # mapread 0x1e000 0x1000 0x1e400 *
+> 
+> The copy_range here is the one which causes (or exposes) the corruption
+> at 0x1e800 (the end of copy range destination gets corrupted).
+> 
+> To have more control, I commented these 2 operations and am doing it by
+> hand in the test.sh file, with xfs_io. I'm also using a non atomic write
+> device so we only have S/W fallback.
+> 
+> Now some observations:
+> 
+> 1. The copy_range operations is actually copying from a hole to a hole,
+> so we should be reading all 0s. But What I see is the following happening:
+> 
+>   vfs_copy_file_range
+>    do_splice_direct
+>     do_splice_direct_actor
+>      do_splice_read
+>        # Adds the folio at src offset to the pipe. I confirmed this is all 0x0.
+>      splice_direct_to_actor
+>       direct_splice_actor
+>        do_splice_from
+>         iter_file_splice_write
+>          xfs_file_write_iter
+>           xfs_file_buffered_write
+>            iomap_file_buferred_write
+>             iomap_iter
+>              xfs_buferred_write_iomap_begin
+>                # Here we correctly see that there is noting at the
+>                # destination in data fork, but somehow we find a mapped
+>                # extent in cow fork which is returned to iomap.
+>              iomap_write_iter
+>               __iomap_write_begin
+>                 # Here we notice folio is not uptodate and call
+>                 # iomap_read_folio_range() to read from the cow_fork
+>                 # mapping we found earlier. This results in folio having
+>                 # incorrect data at 0x1e800 offset.
+> 
+>  So it seems like the fsx operations might be corrupting the cow fork state
+>  somehow leading to stale data exposure. 
+> 
+> 2. If we disable atomic writes we dont hit the issue.
+> 
+> 3. If I do a -c pread of the destination range before doing the
+> copy_range operation then I don't see the corruption any more.
+> 
+> I'm now trying to figure out why the mapping returned is not IOMAP_HOLE
+> as it should be. I don't know the COW path in xfs so there are some gaps
+> in my understanding. Let me know if you need any other information since
+> I'm reliably able to replicate on 6.17.0-rc4.
+> 
 
-So you just bound ALL tty devices to the same cpu?  That feels very
-wrong, how will that work with multiple devices on different interrupts
-coming in on different cpus?
+I haven't followed your issue closely, but just on this hole vs. COW
+thing, XFS has a bit of a quirk where speculative COW fork preallocation
+can expand out over holes in the data fork. If iomap lookup for buffered
+write sees COW fork blocks present, it reports those blocks as the
+primary mapping even if the data fork happens to be a hole (since
+there's no point in allocating blocks to the data fork when we can just
+remap).
 
-Why not just queue this up on the cpu that the irq happened on instead?
+Again I've no idea if this relates to your issue or what you're
+referring to as a hole (i.e. data fork only?), but just pointing it out.
+The latest iomap/xfs patches I posted a few days ago kind of dance
+around this a bit, but I was somewhat hoping that maybe the cleanups
+there would trigger some thoughts on better iomap reporting in that
+regard.
 
-thanks,
+Brian
 
-greg k-h
+> [1]
+> https://github.com/OjaswinM/fsx-aw-issue/tree/master
+> 
+> [2] https://github.com/OjaswinM/fsx-aw-issue/blob/master/repro.fsxops
+> 
+> regards,
+> ojaswin
+> 
+
 
