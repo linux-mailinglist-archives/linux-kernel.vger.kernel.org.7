@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-862951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55508BF6A09
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:02:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FCEBF69F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0538B502877
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05D019A3F2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AD8338929;
-	Tue, 21 Oct 2025 13:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFE633893C;
+	Tue, 21 Oct 2025 13:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZeqP5W2Y"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZJtYsFrz"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB14337BB9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B7B33892C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761051600; cv=none; b=TEWDmAmB3lBUB5qVvbYY5iO3+4dRBvbKGAnZgM+odrLFQwEhBteRuDnvawSLrl8271jRPgp+p3BFKHmdMC3z9S1PbamEr1KEP94RrnWCDQ2I74V0W7rJNk5hthqmLIbiBDdd5UdVPC27sC4gtdLd5fzlaonPHJsuHCJujv6pVns=
+	t=1761051602; cv=none; b=l4Tp3spVm04/hpYjXwKBD4W28KCq4ITNqEGg87HQV7iC9aN2Y3eZDfKa0rzLWG0vmmwx7UiWuO8JmTtXbw33lkypOZgYjuEhQtHcRAil/w3mwvN4kodlKom/Jls6f6w6OBHKJU9qqoAbyLTD9asFbPHJbE16CmXybbwTvSdACjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761051600; c=relaxed/simple;
-	bh=RVpO0/1Rr2WqDw7IdAgDtrk1Tta4kn04Oz5nTYeayzU=;
+	s=arc-20240116; t=1761051602; c=relaxed/simple;
+	bh=kfpHhOMhCTafFElzJiRv8QNBxHxjmeSCOSw1fMkjaaU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kJElTzX70pUZKAA/w+nNEAq0xAeivLEU3FyWvMwnSJCWcyInJ2bbUBaWBJhHedydoUH++4+J4s89HRfAynCkWYGtaZ18f2llTmh+ng1GWLkvUl3LGmEP12233n0ir5bstGqTdi3yHGqOvVR0Dts8cXoHLgFA5LEB0DG6hjLYXdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZeqP5W2Y; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=YZ+oeOX00Y2ss/Qw5frAE+Jlf5zs/QxkYQmuEvUBVaaloH5+0jEv10qVFVv80JSGS2ZH1oH0fCmfsGHgxk3Da9Mctb/qGfmq7f4pbeUos/lmqhsh/Oua4QvvGLzhFlcTI2NTr/XUmeiQp57AE8cw2MazLPxTHrXQ2E5sUTCYHWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZJtYsFrz; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761051597;
+	s=mimecast20190719; t=1761051600;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=a58UIIapVgV9zdPpt63SgupeCmEgQ8fjnLkqSW0/g7g=;
-	b=ZeqP5W2Ybe1TzfDt/dZ+rbzug9YXzMDndJCEgtExNQ3acemanQFMWZvupPKoPeuIl4DO/K
-	p/DMpE5ieknROaWPPgXWrW0kElvPkJyNKjMXiSa54bP6IkfZaNPckhtuDPwqv4IE/DJEvn
-	H8h4FrdRKO/T5+bnF+l2USfoctKYo4I=
+	bh=sGRFD+OUXBdzIHwpdd8L6KTTXumWjBTMpIxo57Gp8oE=;
+	b=ZJtYsFrzzRgGw3xBXxGhVG0rKH2zSQAloChKKhhQr2rbntq8Euqp91zcfinqiwaD0eaT4p
+	+oYbCAqlPQq1OW3hq7PcvbLbfMxfhKPnju412pGNpKQ2TzqjTiLDTpp5Iq7QTmIuAzxy3o
+	GLh2H4WgcK4gfa4I5y8luwv+Jwwc3Cg=
 Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
  [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-KgEjdSgxNEGmLrNwm4qF9w-1; Tue, 21 Oct 2025 08:59:56 -0400
-X-MC-Unique: KgEjdSgxNEGmLrNwm4qF9w-1
-X-Mimecast-MFC-AGG-ID: KgEjdSgxNEGmLrNwm4qF9w_1761051595
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4283bf540ceso2237499f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:59:56 -0700 (PDT)
+ us-mta-43-UkIVgq5rNr2dww6vOtdbFg-1; Tue, 21 Oct 2025 08:59:58 -0400
+X-MC-Unique: UkIVgq5rNr2dww6vOtdbFg-1
+X-Mimecast-MFC-AGG-ID: UkIVgq5rNr2dww6vOtdbFg_1761051598
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-426ec5e9278so6557359f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:59:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761051595; x=1761656395;
+        d=1e100.net; s=20230601; t=1761051597; x=1761656397;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a58UIIapVgV9zdPpt63SgupeCmEgQ8fjnLkqSW0/g7g=;
-        b=qV0dZTOTz25NNynW07A8AbmtP5tDgpfFsaOiKUmMOYq9vum/UdytoWMVK4dNG7mLsh
-         Jw5X9MUyU3944yt7+z6DFh5KZaBdmYVwY6CS2Sxh0S/Bvz9vq1K7RYHny+viEadp22I1
-         gjXYVFPR1ORMgK6ZKS8507clPvXVjmqKIpA7waKaVP76JGtoPnhlRaF2IFZWwCsm469C
-         yIe84Upbc7nt6oSgFYSa4s7btSPKxC4N4DaAOXLqzT0J/di2P/s5gbw2G3RIloTiXEgL
-         KgIV6W2EoqxGfpOcQVFsE//6GXymNbOICpi4/ItGFRKVXpE8/p6jX+l9/W+zOEBDhWjo
-         087g==
-X-Gm-Message-State: AOJu0YyzDFQcARwRo8X7gbUWLul9mf35GCwQ/amY4vZRO5ZS8si9pJn5
-	kFqcDZIUbTsV5niJIVWFo4ZqyV8YAntpjM4OGCeCq+91EjqGfstoLBZrJwIGzofOZe5ABMWPqqQ
-	RS0Rqsv3YuJ9aT4I0QjHYZxytohUmuGspnXTb9hgtl5RgCXQtdw7O5to0/dA7xqMJRPo+EsXjjm
-	gy3y4I8Ms+ZA0GUgh+YgoNRzGZQiKNn0RDO87ICkeE+fDnDA==
-X-Gm-Gg: ASbGnct8kaZ85DxlP5mKeWKyWUoiPDaoC0JmL/A/1ygvbH+6kslpRC6ljOAFE1O72Ck
-	6G2S/2GE24468LTWC2xCVjOrC7vvJJCkttfJerc3hpBCj3dFgtG07DNBAnrMX7y8mx8MAIpH0QY
-	a96xi9Qn72UfAJo7vwXfyMKkhTp2qbd2SmsCTbBDypqeW0CSM/KVwvhEmxLekoKjqqkO0S9Xf2m
-	9UynU63IIKkK7HN+WF665tRNxWe+tI2apyHIaVFGcsbFzAkgZLqkJu8lRI0ItBz8vNbmC8vQZND
-	p4QeWIJlwGfUj9uwlUJ2hScpLfIAYCiNhi+2f1YKeq2V/ZrMchyMxuG0H5L7pKU00UOvjMJnCGI
-	QOiK2eSvW69erXlvDMSOCuMqm1jVJEHsfJ8IyIZ9kYEhqbNUWLLD7cVTpHTRw
-X-Received: by 2002:a5d:5f48:0:b0:427:2e8:fe5e with SMTP id ffacd0b85a97d-42704d83898mr11742035f8f.13.1761051594966;
-        Tue, 21 Oct 2025 05:59:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOL78NSzfD/K3cQTXDnH1hifM9lFea/fB9GzfGevY7RVlJ9OG6SsU/tMvE3AQ+AuHnf7dxjA==
-X-Received: by 2002:a5d:5f48:0:b0:427:2e8:fe5e with SMTP id ffacd0b85a97d-42704d83898mr11741985f8f.13.1761051594394;
-        Tue, 21 Oct 2025 05:59:54 -0700 (PDT)
+        bh=sGRFD+OUXBdzIHwpdd8L6KTTXumWjBTMpIxo57Gp8oE=;
+        b=Ee4lYrR0DmPTLB2k9kYFY3RX/yCAUZeaEzOVQ2lExQWO5JmSAU2O3B/1gew3ltV744
+         Qxuaghi845BmaluSpPqOU4EYZBLjKdyxeJZZYS7mdg/lgPaZFgwKg3mzx++cn+JoYX6Y
+         X9eJizIp5HP4ZCgTD/qlBkLgStmi/i1ZAS9FIL13dwINnRBUjVOaBjG6h1+6QI6nna72
+         oknzgjh8kbIhTWEAPKA4PkG43cFhjsGOpeGIgEHzzSCfIYeRhq+awJizRaWaLunLqfVQ
+         Hl8x9pMKuxmZ7OVbM9JOGyFyHQC8jQ1VCv9hWYfkeWZDXf7eJq1BwxmfsgW5RSLjBJaC
+         sSkA==
+X-Gm-Message-State: AOJu0YyMQhntrgLiJJjrq4XqvKiNAmC9aJZAyeTtuCuXiNlHdoZGTgDU
+	HuhqyuWx7mLS7by9JX7J1jEZeMyiCYNxJohBN/c4Ax2hq8eE21ZDLg40b1s6Wgii1Tl98J+zTXq
+	abqoscP62WmB6fb+kiRTl9WTrsddqRRIK9LuxL5y4auRiwOjvQ1V09mA2TCL90ZoqM3LgK8uOBN
+	idDL6GUg4I3/FnzCh/8GrXFNeyvduSYGNfUZUoBFRJAhuojg==
+X-Gm-Gg: ASbGnct3NDtcrbUvxCkwuj7KJ1y/HkBpnBY+VQZ6ZsZUyzMbNEauMtvK+ryK+22F3r+
+	ib6TNx5HugnfEHH65Rng7iqA3Mry/o5uXUzh7KrVPc45mwFq7sdbAt54vcDpQEaVpeuPlYvKogC
+	Q6oI08jUU6aJPKyGbD6pZo1NNY4yICLPYVpdA62KuuOT8sF4Rbrz0rlY1nwm8uUxwqRhDbOd0Uc
+	cp9B1yXBJLJX/boplSox4RpmMmfA56P/fMluLrd1bGIxv5n9wGVvSGi0xFkJlsY+Nchae+X1z7g
+	YBx8R5LUd7sYokDpqlFnkjHTPuG6RLIClUEPYmeURfkSTdiBiwvtW/s0fAlSKFuEuix3w4btm6C
+	Q+bfi1L1CT10TrfRTNZFShu9UgLy9v6gmdDdVSsjSc20P3hZwZgJDhPCDvTsG
+X-Received: by 2002:a05:6000:2284:b0:400:7e60:7ee0 with SMTP id ffacd0b85a97d-42704c8848cmr11160784f8f.0.1761051597499;
+        Tue, 21 Oct 2025 05:59:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF1yccRPZwAQwYfj1DMBRFBsRJJ5k0BROkzwajkMvCNAUgq3lYo09LUN84ZfbVlOv9dAfW2Ig==
+X-Received: by 2002:a05:6000:2284:b0:400:7e60:7ee0 with SMTP id ffacd0b85a97d-42704c8848cmr11160739f8f.0.1761051596931;
+        Tue, 21 Oct 2025 05:59:56 -0700 (PDT)
 Received: from localhost (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f00ce56csm20023457f8f.50.2025.10.21.05.59.53
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f00b9f9dsm20357223f8f.39.2025.10.21.05.59.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 05:59:53 -0700 (PDT)
+        Tue, 21 Oct 2025 05:59:56 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -108,9 +108,9 @@ Cc: linux-mm@kvack.org,
 	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
 	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v1 10/23] mm/balloon_compaction: drop fs.h include from balloon_compaction.h
-Date: Tue, 21 Oct 2025 14:59:15 +0200
-Message-ID: <20251021125929.377194-11-david@redhat.com>
+Subject: [PATCH v1 11/23] drivers/virtio/virtio_balloon: stop using balloon_page_push/pop()
+Date: Tue, 21 Oct 2025 14:59:16 +0200
+Message-ID: <20251021125929.377194-12-david@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251021125929.377194-1-david@redhat.com>
 References: <20251021125929.377194-1-david@redhat.com>
@@ -122,27 +122,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Ever since commit 68f2736a8583 ("mm: Convert all PageMovable users to
-movable_operations") we no longer store an inode in balloon_dev_info,
-so we can stop including "fs.h".
+Let's stop using these function so we can remove them. They look like
+belonging to the balloon API for managing the device balloon list when
+really they are just simple helpers only used by virtio-balloon.
+
+Let's just inline them and switch to a proper
+list_for_each_entry_safe().
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/balloon_compaction.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/virtio/virtio_balloon.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
-index 7db66c2c86cdc..1452ea0635245 100644
---- a/include/linux/balloon_compaction.h
-+++ b/include/linux/balloon_compaction.h
-@@ -42,7 +42,6 @@
- #include <linux/migrate.h>
- #include <linux/gfp.h>
- #include <linux/err.h>
--#include <linux/fs.h>
- #include <linux/list.h>
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index f7d6a4a6e54f5..4b22de6a5f845 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -242,8 +242,8 @@ static void set_page_pfns(struct virtio_balloon *vb,
+ static unsigned int fill_balloon(struct virtio_balloon *vb, size_t num)
+ {
+ 	unsigned int num_allocated_pages;
++	struct page *page, *next;
+ 	unsigned int num_pfns;
+-	struct page *page;
+ 	LIST_HEAD(pages);
  
- /*
+ 	/* We can only do one array worth at a time. */
+@@ -262,14 +262,15 @@ static unsigned int fill_balloon(struct virtio_balloon *vb, size_t num)
+ 			break;
+ 		}
+ 
+-		balloon_page_push(&pages, page);
++		list_add(&page->lru, &pages);
+ 	}
+ 
+ 	mutex_lock(&vb->balloon_lock);
+ 
+ 	vb->num_pfns = 0;
+ 
+-	while ((page = balloon_page_pop(&pages))) {
++	list_for_each_entry_safe(page, next, &pages, lru) {
++		list_del(&page->lru);
+ 		balloon_page_enqueue(&vb->vb_dev_info, page);
+ 
+ 		set_page_pfns(vb, vb->pfns + vb->num_pfns, page);
+@@ -474,15 +475,19 @@ static inline s64 towards_target(struct virtio_balloon *vb)
+ static unsigned long return_free_pages_to_mm(struct virtio_balloon *vb,
+ 					     unsigned long num_to_return)
+ {
+-	struct page *page;
+-	unsigned long num_returned;
++	unsigned long num_returned = 0;
++	struct page *page, *next;
++
++	if (unlikely(!num_to_return))
++		return 0;
+ 
+ 	spin_lock_irq(&vb->free_page_list_lock);
+-	for (num_returned = 0; num_returned < num_to_return; num_returned++) {
+-		page = balloon_page_pop(&vb->free_page_list);
+-		if (!page)
+-			break;
++
++	list_for_each_entry_safe(page, next, &vb->free_page_list, lru) {
++		list_del(&page->lru);
+ 		__free_pages(page, VIRTIO_BALLOON_HINT_BLOCK_ORDER);
++		if (++num_returned == num_to_return)
++			break;
+ 	}
+ 	vb->num_free_page_blocks -= num_returned;
+ 	spin_unlock_irq(&vb->free_page_list_lock);
+@@ -717,7 +722,7 @@ static int get_free_page_and_send(struct virtio_balloon *vb)
+ 		}
+ 		virtqueue_kick(vq);
+ 		spin_lock_irq(&vb->free_page_list_lock);
+-		balloon_page_push(&vb->free_page_list, page);
++		list_add(&page->lru, &vb->free_page_list);
+ 		vb->num_free_page_blocks++;
+ 		spin_unlock_irq(&vb->free_page_list_lock);
+ 	} else {
 -- 
 2.51.0
 
