@@ -1,361 +1,111 @@
-Return-Path: <linux-kernel+bounces-863816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F5BBF92CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:06:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286A1BF92D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400CA188E63F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D4E18C8255
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFCF2701DA;
-	Tue, 21 Oct 2025 23:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DB728C2BF;
+	Tue, 21 Oct 2025 23:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gy2DxIAM"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yCHvnADN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28A6285CB3
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E076285C8C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761087981; cv=none; b=O+qg6TuyQIV2E1R2x5Xz/Smic4UMX6CiowcUKaGiE6tTjYNEDzjm1SMWUVb1pvQDF9gVOFB3vHiuEZ3LCqUevKYz2A9VmX9gY4sWVW/Ccoy+aGtaSB8UxBatgZdcXC9g2Ahc2vQfL37KFFp6/y+jp24OpWXqCoyhF4s/3tcDVJo=
+	t=1761088020; cv=none; b=j//XXdMQy5+qH+PQMn1lNoxwY/ypoaqLOPyVSPfLNVKSHiTFzePVnq6NYtjND8+3lJNZxpT7vku6kiQbdr/cEj+e0A3Sz9NbFTI/GS25J6hNMD0zv++KWor0P7TVKA+bl+ClzlHzov782lnhvfci+PHxgEpKO8LAwBx6k0IWRoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761087981; c=relaxed/simple;
-	bh=v9qdrPtUu7fyhR7g5W1mWsSB1mC75h6wItXGPacFG6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QrGR5AMcDDQmY2yBkyy0gdbfR+pVZfmsBi3rNYWB/O8MYEenq+jS6DrCM/uEdnD82XwZHUVFFAZ4zroKx5nZUiHL9lRyMcdfde/xih+T9RCCKJAXOTUSyI4wf5kgYfCvAuRGcos9TeTk46ftFq0UJ94ssvzj8SBI8wiB9wED4PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gy2DxIAM; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63e076e24f2so2092909a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761087977; x=1761692777; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1skSu2R/EvG/sBAR/zOuIUly/4EtcboZ1vNpxOtlC6Q=;
-        b=Gy2DxIAMz7JgiGjcHBezvujflomdr+MS5VzckydOdzppa/rnM/ky34FoE4zmYFDrB+
-         evrmIqEusTl+YDb4XcEgp+20K74ESqgGTMzp3lFP2+WP5ReMAEPkI2u7cIvTA6FY7lU9
-         fPFDRGod01pQieR5pHH2I6eTd8kQk+yMOPOg6VDNOnIzAGOWemS1qA/15MtXO7vg4nML
-         oRevTf/ewLOiMIXs6K1MEGbuO74CP3akTKKOAekmV7kOwv7M+7hBDlyoP1t84bvv8pEY
-         pVjfxf+KDGjJ5I7UaS9023P3j7oqClEyoFrQSqXbTSM+QoiLhfnOdaQxuzrvIdh1fTSz
-         Te5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761087977; x=1761692777;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1skSu2R/EvG/sBAR/zOuIUly/4EtcboZ1vNpxOtlC6Q=;
-        b=flWRx9ZcyNdUgkZRsA1Th/9TM6jmO+Zy+LKoPnPwAt50sTyj0z4koGZgwp/T9pqZcn
-         5iOThaoozusyc3SyYW8iexpUiHwkMxu/NKl57mnBrVQ6IrM0K7EZ3TxBJ1rPeYmJlICJ
-         BNsGPM2L7121ubC8ftTNqfGSHwUYC41Li+sv+UnkdanpwO41FUe9+ZbU9BUN33ZQw2+i
-         yk/4b9spI8rkj4Ns2YmapJJdXEEXdRnfY2rNdfEx/S+SjjpZQS8QH4upUcWXgejnomNr
-         iiz9m+MIR36y/ZtiClCgyCuV7HpkZMYT+5gmSwa8BPeSUbo+mJUkGzvrohbH63hd0Kyj
-         jEzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvPCK3K/ZTlFe36up5+TwF6uwP0Vz1SAcI5EJLx8h690KCdIZ7+5yZ3fpZxMsqTjcv3x/G581QRQLUJCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsr8qWtnlfSb8268GBMNCPJPo8u1/Je5IsxDc2Ass1tDgggVs2
-	EOYCmJcbxHzXsEHXOfxgkZc3ewln5jm+paVNW35baZSVllAS3F3vwucWDwdICql+/OdBjqJJr13
-	0ZGgy
-X-Gm-Gg: ASbGncvTMk9LstuZmXScalpgVQy5+gyUj1y1KuALZ7KBAV8G66iZrbYMxK4ahz/Keqr
-	xDQcFxJS/e/zt06FwZ6ls5d2VUl6hC1Evm6qq5sQOVi/OlHL6wf7ye10b4D5q3TeM7zeEmEBVkX
-	yHQfj667P/T5oC4MCP4Z3tHJBEhJUXSD38YQtsdbogTNNznnYPox753YI5CFKKWx6VmSm9uRWaN
-	USXRwMAjGn6A8U4xyPBESfAL+DvzNVSMJ9wF5lyy7e4Ks6muZ23PBZEMHJCU0G/eghXSqHiqmCc
-	9aiN/FROSNNtW/EE7t/5vITz5H7TmSb3cb/da0bqtjzE70mRBmjFg2vyz8PEm0B75rSynCQBV/X
-	JiYGu///JyTB6jCn5LomLpK/R+fqrdexBG+dS8QbkSDUGk3nqbwFEV1yjB1FIjx5sVDlgrOQVxm
-	c+e369TF6SZZDLGIXNMJIg+GeHBg0A5g8OPwSyUsx25Jg=
-X-Google-Smtp-Source: AGHT+IFtNmFUjXoSgBEFbhWp4FEFDk6kOFYy/fkKwIxw3udp45uEWOU+nEdWHQxP3zzwua5iSJikTA==
-X-Received: by 2002:a05:6402:5650:b0:636:6801:eed7 with SMTP id 4fb4d7f45d1cf-63c1f6d05b1mr13395163a12.32.1761087976999;
-        Tue, 21 Oct 2025 16:06:16 -0700 (PDT)
-Received: from [192.168.0.163] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48ab54fbsm10165210a12.15.2025.10.21.16.06.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 16:06:15 -0700 (PDT)
-Message-ID: <1e3053ae-3482-4388-a6e4-1edc921bfdcb@linaro.org>
-Date: Wed, 22 Oct 2025 00:06:13 +0100
+	s=arc-20240116; t=1761088020; c=relaxed/simple;
+	bh=oOACCClxAEyNfZVhcvJdsNwkAGOMQawD8Hmc9TvywuA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=kdQC8cQdYjPodcAoC6BHk++BlTakGE87bky1q44nZB5Ej7nKDyU1/wY/i838BZHddL2vv9EDo1WFf1UDM3fX2vwHSDGAI+1otu2yQ8N710BaSse+5ywML9bHLbdVmA4yd6ZOU77W7iQo6p/BDah5BBYuWdcrs40KjA97fp1+cD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yCHvnADN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3833C4CEF1;
+	Tue, 21 Oct 2025 23:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761088019;
+	bh=oOACCClxAEyNfZVhcvJdsNwkAGOMQawD8Hmc9TvywuA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=yCHvnADNQ9b8LvZl+RpaJT/78rSIFVF4088ebcMZFPcvisQgQ5WBYUr2Q/kw/7Xhc
+	 MBOC//It6rg3MR0gK5G4MfUDxKFTzmw883uxHLOS5a+qqk5OqGqAajURVlP2HN/6Pl
+	 1X09f034xSKqNt2so0fmKHhBDfvdApc35RA6iJEM=
+Date: Tue, 21 Oct 2025 16:06:57 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Chant <achant@google.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, Brian Gerst
+ <brgerst@gmail.com>, Christian Brauner <brauner@kernel.org>, Francesco
+ Valla <francesco@valla.it>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Guo Weikang <guoweikang.kernel@gmail.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu
+ <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, Masahiro Yamada
+ <masahiroy@kernel.org>, Michal =?ISO-8859-1?Q?Koutn=FD?=
+ <mkoutny@suse.com>, Miguel Ojeda <ojeda@kernel.org>,
+ "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Randy Dunlap
+ <rdunlap@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo
+ <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Thomas
+ =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Subject: Re: [PATCH] init/main.c: Wrap long kernel cmdline when printing to
+ logs
+Message-Id: <20251021160657.29b745a94ff8cfd2fe92c7af@linux-foundation.org>
+In-Reply-To: <CAD=FV=XXpMnjXzPgDseoLGOYUHVQy9Z2cjmCC+OE+uDC43eNRw@mail.gmail.com>
+References: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
+	<20251020115132.10897a599c8fbda4829b3f89@linux-foundation.org>
+	<CAD=FV=Uzp_Pi_q5YRbRi3FgdiCy1HR3g6P72d92dbqAdLyWuRQ@mail.gmail.com>
+	<20251021135553.811b77539d2d41fff3c3b992@linux-foundation.org>
+	<CAD=FV=XXpMnjXzPgDseoLGOYUHVQy9Z2cjmCC+OE+uDC43eNRw@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] media: iris: Add support for multiple clock
- sources
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vishnu Reddy <quic_bvisredd@quicinc.com>
-References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
- <-nNKoml-evcewtxxqJqJKKjaeWf8uLZt3Vgbwq_EjIBXLfYOmkWyNTPHpARSXlsa6fjxoudnLDHuneVT6ZvCcA==@protonmail.internalid>
- <20251017-knp_video-v2-2-f568ce1a4be3@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20251017-knp_video-v2-2-f568ce1a4be3@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 15:16, Vikash Garodia wrote:
-> vpu4 depends on more than one clock source. Thus far hardware versions
-> up to vpu3x have been clocked by a single source.
-> This adds support for multiple clocks by,
-> - Adding a lookup table
-> - Configuring OPP table for video device with different video clocks
-> - Setting OPP for multiple clocks during dev_pm_opp_set_opp()
+On Tue, 21 Oct 2025 15:57:18 -0700 Doug Anderson <dianders@chromium.org> wrote:
+
+> In other words `dmesg` seemed to be trying to read 2047 bytes from
+> `/dev/kmsg` and this wasn't enough to hold the output line. You can
+> see in the kernel function devkmsg_read() that when this happens the
+> kernel returns -EINVAL.
 > 
-> This patch extends the support for multiple clocks in driver, which
-> would be used in subsequent patch for kaanapali, when the platform data
-> is prepared.
+> We could _try_ to improve devkmsg_read() to be able to return partial
+> log lines, but that violates the docs. The file
+> `Documentation/ABI/testing/dev-kmsg` says:
 > 
-> Co-developed-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
-> Signed-off-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
-> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> ---
->   .../media/platform/qcom/iris/iris_platform_common.h  |  1 +
->   .../media/platform/qcom/iris/iris_platform_gen2.c    |  9 +++++++++
->   .../media/platform/qcom/iris/iris_platform_sm8250.c  |  6 ++++++
->   drivers/media/platform/qcom/iris/iris_power.c        |  2 +-
->   drivers/media/platform/qcom/iris/iris_probe.c        | 20 ++++++++------------
->   drivers/media/platform/qcom/iris/iris_resources.c    | 16 ++++++++++++++--
->   drivers/media/platform/qcom/iris/iris_resources.h    |  1 +
->   drivers/media/platform/qcom/iris/iris_vpu_common.c   |  4 ++--
->   8 files changed, 42 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 58d05e0a112eed25faea027a34c719c89d6c3897..df03de08c44839c1b6c137874eb7273c638d5f2c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -206,6 +206,7 @@ struct iris_platform_data {
->   	const char * const *opp_pd_tbl;
->   	unsigned int opp_pd_tbl_size;
->   	const struct platform_clk_data *clk_tbl;
-> +	const char * const *opp_clk_tbl;
->   	unsigned int clk_tbl_size;
->   	const char * const *clk_rst_tbl;
->   	unsigned int clk_rst_tbl_size;
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index 36d69cc73986b74534a2912524c8553970fd862e..fea800811a389a58388175c733ad31c4d9c636b0 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -633,6 +633,11 @@ static const struct platform_clk_data sm8550_clk_table[] = {
->   	{IRIS_HW_CLK,   "vcodec0_core" },
->   };
-> 
-> +static const char * const sm8550_opp_clk_table[] = {
-> +	"vcodec0_core",
-> +	NULL,
-> +};
-> +
->   static struct ubwc_config_data ubwc_config_sm8550 = {
->   	.max_channels = 8,
->   	.mal_length = 32,
-> @@ -756,6 +761,7 @@ struct iris_platform_data sm8550_data = {
->   	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
->   	.clk_tbl = sm8550_clk_table,
->   	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
-> +	.opp_clk_tbl = sm8550_opp_clk_table,
->   	/* Upper bound of DMA address range */
->   	.dma_mask = 0xe0000000 - 1,
->   	.fwname = "qcom/vpu/vpu30_p4.mbn",
-> @@ -848,6 +854,7 @@ struct iris_platform_data sm8650_data = {
->   	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
->   	.clk_tbl = sm8550_clk_table,
->   	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
-> +	.opp_clk_tbl = sm8550_opp_clk_table,
->   	/* Upper bound of DMA address range */
->   	.dma_mask = 0xe0000000 - 1,
->   	.fwname = "qcom/vpu/vpu33_p4.mbn",
-> @@ -930,6 +937,7 @@ struct iris_platform_data sm8750_data = {
->   	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
->   	.clk_tbl = sm8750_clk_table,
->   	.clk_tbl_size = ARRAY_SIZE(sm8750_clk_table),
-> +	.opp_clk_tbl = sm8550_opp_clk_table,
->   	/* Upper bound of DMA address range */
->   	.dma_mask = 0xe0000000 - 1,
->   	.fwname = "qcom/vpu/vpu35_p4.mbn",
-> @@ -1017,6 +1025,7 @@ struct iris_platform_data qcs8300_data = {
->   	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
->   	.clk_tbl = sm8550_clk_table,
->   	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
-> +	.opp_clk_tbl = sm8550_opp_clk_table,
->   	/* Upper bound of DMA address range */
->   	.dma_mask = 0xe0000000 - 1,
->   	.fwname = "qcom/vpu/vpu30_p4_s6.mbn",
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-> index 16486284f8acccf6a95a27f6003e885226e28f4d..1b1b6aa751106ee0b0bc71bb0df2e78340190e66 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-> @@ -273,6 +273,11 @@ static const struct platform_clk_data sm8250_clk_table[] = {
->   	{IRIS_HW_CLK,   "vcodec0_core" },
->   };
-> 
-> +static const char * const sm8250_opp_clk_table[] = {
-> +	"vcodec0_core",
-> +	NULL,
-> +};
-> +
->   static struct tz_cp_config tz_cp_config_sm8250 = {
->   	.cp_start = 0,
->   	.cp_size = 0x25800000,
-> @@ -333,6 +338,7 @@ struct iris_platform_data sm8250_data = {
->   	.opp_pd_tbl_size = ARRAY_SIZE(sm8250_opp_pd_table),
->   	.clk_tbl = sm8250_clk_table,
->   	.clk_tbl_size = ARRAY_SIZE(sm8250_clk_table),
-> +	.opp_clk_tbl = sm8250_opp_clk_table,
->   	/* Upper bound of DMA address range */
->   	.dma_mask = 0xe0000000 - 1,
->   	.fwname = "qcom/vpu-1.0/venus.mbn",
-> diff --git a/drivers/media/platform/qcom/iris/iris_power.c b/drivers/media/platform/qcom/iris/iris_power.c
-> index dbca42df0910fd3c0fb253dbfabf1afa2c3d32ad..91aa21d4070ebcebbe2ed127a03e5e49b9a2bd5c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_power.c
-> +++ b/drivers/media/platform/qcom/iris/iris_power.c
-> @@ -91,7 +91,7 @@ static int iris_set_clocks(struct iris_inst *inst)
->   	}
-> 
->   	core->power.clk_freq = freq;
-> -	ret = dev_pm_opp_set_rate(core->dev, freq);
-> +	ret = iris_opp_set_rate(core->dev, freq);
->   	mutex_unlock(&core->lock);
-> 
->   	return ret;
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index 00e99be16e087c4098f930151fd76cd381d721ce..ad82a62f8b923d818ffe77c131d7eb6da8c34002 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -40,8 +40,6 @@ static int iris_init_icc(struct iris_core *core)
-> 
->   static int iris_init_power_domains(struct iris_core *core)
->   {
-> -	const struct platform_clk_data *clk_tbl;
-> -	u32 clk_cnt, i;
->   	int ret;
-> 
->   	struct dev_pm_domain_attach_data iris_pd_data = {
-> @@ -56,6 +54,11 @@ static int iris_init_power_domains(struct iris_core *core)
->   		.pd_flags = PD_FLAG_DEV_LINK_ON | PD_FLAG_REQUIRED_OPP,
->   	};
-> 
-> +	struct dev_pm_opp_config iris_opp_clk_data = {
-> +		.clk_names = core->iris_platform_data->opp_clk_tbl,
-> +		.config_clks = dev_pm_opp_config_clks_simple,
-> +	};
-> +
->   	ret = devm_pm_domain_attach_list(core->dev, &iris_pd_data, &core->pmdomain_tbl);
->   	if (ret < 0)
->   		return ret;
-> @@ -64,16 +67,9 @@ static int iris_init_power_domains(struct iris_core *core)
->   	if (ret < 0)
->   		return ret;
-> 
-> -	clk_tbl = core->iris_platform_data->clk_tbl;
-> -	clk_cnt = core->iris_platform_data->clk_tbl_size;
-> -
-> -	for (i = 0; i < clk_cnt; i++) {
-> -		if (clk_tbl[i].clk_type == IRIS_HW_CLK) {
-> -			ret = devm_pm_opp_set_clkname(core->dev, clk_tbl[i].clk_name);
-> -			if (ret)
-> -				return ret;
-> -		}
-> -	}
-> +	ret = devm_pm_opp_set_config(core->dev, &iris_opp_clk_data);
-> +	if (ret)
-> +		return ret;
-> 
->   	return devm_pm_opp_of_add_table(core->dev);
->   }
-> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> index cf32f268b703c1c042a9bcf146e444fff4f4990d..939f6617f2631503fa8cb3e874b9de6b2fbe7b76 100644
-> --- a/drivers/media/platform/qcom/iris/iris_resources.c
-> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> @@ -4,6 +4,7 @@
->    */
-> 
->   #include <linux/clk.h>
-> +#include <linux/devfreq.h>
->   #include <linux/interconnect.h>
->   #include <linux/pm_domain.h>
->   #include <linux/pm_opp.h>
-> @@ -58,11 +59,22 @@ int iris_unset_icc_bw(struct iris_core *core)
->   	return icc_bulk_set_bw(core->icc_count, core->icc_tbl);
->   }
-> 
-> +int iris_opp_set_rate(struct device *dev, unsigned long freq)
-> +{
-> +	struct dev_pm_opp *opp __free(put_opp);
-> +
-> +	opp = devfreq_recommended_opp(dev, &freq, 0);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	return dev_pm_opp_set_opp(dev, opp);
-> +}
-> +
->   int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev)
->   {
->   	int ret;
-> 
-> -	ret = dev_pm_opp_set_rate(core->dev, ULONG_MAX);
-> +	ret = iris_opp_set_rate(core->dev, ULONG_MAX);
->   	if (ret)
->   		return ret;
-> 
-> @@ -77,7 +89,7 @@ int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev)
->   {
->   	int ret;
-> 
-> -	ret = dev_pm_opp_set_rate(core->dev, 0);
-> +	ret = iris_opp_set_rate(core->dev, 0);
->   	if (ret)
->   		return ret;
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_resources.h b/drivers/media/platform/qcom/iris/iris_resources.h
-> index f723dfe5bd81a9c9db22d53bde4e18743d771210..6bfbd2dc6db095ec05e53c894e048285f82446c6 100644
-> --- a/drivers/media/platform/qcom/iris/iris_resources.h
-> +++ b/drivers/media/platform/qcom/iris/iris_resources.h
-> @@ -8,6 +8,7 @@
-> 
->   struct iris_core;
-> 
-> +int iris_opp_set_rate(struct device *dev, unsigned long freq);
->   int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev);
->   int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev);
->   int iris_unset_icc_bw(struct iris_core *core);
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> index bb98950e018fadf69ac4f41b3037f7fd6ac33c5b..bbd999a41236dca5cf5700e452a6fed69f4fc922 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> @@ -266,7 +266,7 @@ void iris_vpu_power_off_hw(struct iris_core *core)
-> 
->   void iris_vpu_power_off(struct iris_core *core)
->   {
-> -	dev_pm_opp_set_rate(core->dev, 0);
-> +	iris_opp_set_rate(core->dev, 0);
->   	core->iris_platform_data->vpu_ops->power_off_hw(core);
->   	core->iris_platform_data->vpu_ops->power_off_controller(core);
->   	iris_unset_icc_bw(core);
-> @@ -352,7 +352,7 @@ int iris_vpu_power_on(struct iris_core *core)
->   	freq = core->power.clk_freq ? core->power.clk_freq :
->   				      (u32)ULONG_MAX;
-> 
-> -	dev_pm_opp_set_rate(core->dev, freq);
-> +	iris_opp_set_rate(core->dev, freq);
-> 
->   	core->iris_platform_data->set_preset_registers(core);
+>   Every read() from the opened device node receives one record
+>   of the kernel's printk buffer.
+>   ...
+>   Messages in the record ring buffer get overwritten as whole,
+>   there are never partial messages received by read().
+
+Well that was dumb of us.  POSIX be damned.
+
+> So tl;dr: as far as I can tell, we simply cannot put the whole cmdline
+> (which is 2048+ on many architectures) on one line without breaking
+> userspace. My userspace reads 2047 bytes and we'd need to return not
+> just the cmdline but the prefix "Kernel command line:" as well as the
+> data about time/log_level/etc.
 > 
 > 
-> --
-> 2.34.1
-> 
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Does any of the above change your mind about my wrapping scheme? ;-)
+
+Yeah.
+
+> Obviously, I'd want to update my commit message with some of the
+> research...
+
+Sure.
 
