@@ -1,238 +1,143 @@
-Return-Path: <linux-kernel+bounces-863416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE7DBF7D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:11:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3438CBF7D5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D4933B822D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBC5018937D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9392234FF43;
-	Tue, 21 Oct 2025 17:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841B034B18E;
+	Tue, 21 Oct 2025 17:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jN1yTmFO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2Q1SsXK2"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0EF347FC6;
-	Tue, 21 Oct 2025 17:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066673; cv=fail; b=PDT3+6uo9EIwUTV7rk8p+Bv2ndnMu1FsepvEhbcNN5r8Gn1DpXol8PHI7C4A4v9QDF8URQDgPypkxJu4aLOX6A2VUnhI2iuJmtPD2CdccE/TJFdwDGAF43pqzUQP1gX8Yf3/O2xU2Lv7Opo8SG4Az2hrAPGgEEd6L0/AwkWXhYU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066673; c=relaxed/simple;
-	bh=3NkFn1RlEEpF+8IAOp4EMxb7JC1QKl15922XQ8MdKqI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oLAFl6V5+ioYSnw40kud2O4jGSfqAb3Rqoep5ewdveStAfUAlGhopdBl8Bxxdu+NCSRHcvRJQ7y9+MaDhyDUxQwH4hpOLQWmV0hX/HUwf78JpqdURlROEB9wYCME3x8HUzZIVh9PZkld2azkvIg3GY1Bz1OfKRWssEwmxb/yfc0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jN1yTmFO; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761066672; x=1792602672;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=3NkFn1RlEEpF+8IAOp4EMxb7JC1QKl15922XQ8MdKqI=;
-  b=jN1yTmFO2znvf6JiFp/1pvSKJU9a4M9bcg1WVmeuqSUVe6+Q1tGWBkz/
-   YL8AL+fs3Iec5N5koSYMKjeulVwc3/9ypwZkKczVeLtaNpNQHke7i+MzV
-   88f8PmaygY+9uuEnKn7bp8JcuAH4KUD995AQRSpiUIxTcONTY0qvanhAM
-   TQgxduxbOny8FY0ModS9tno4CUMPs0XWkl0a5VzN4/M+XGg9yfi+hnyWK
-   78L4yZv0PQW4y24U0tNnSEpsKrg8fsmSMFBGM6oIWongn2hPAdMEPYgLk
-   Is+sQHZ1LJ5LLrJWrUdC54LBnFqUIIYUhuycUGpBDMWKkfvRu4AlmGuV9
-   A==;
-X-CSE-ConnectionGUID: VpxbM+fvQp6TRNGzFlyDeg==
-X-CSE-MsgGUID: bNYfxkmET7CQC/LE++M/MA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73807244"
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="73807244"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 10:11:10 -0700
-X-CSE-ConnectionGUID: dvrXJOj5SbGLuDUi7Njrjw==
-X-CSE-MsgGUID: PERtVwRxRSudh91p9ntHYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="183346787"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 10:11:09 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 21 Oct 2025 10:11:08 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 21 Oct 2025 10:11:08 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.43) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 21 Oct 2025 10:11:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b4z4GLPqUStkaMhqVcokrQ0M2A9h1mg2dZhN6kn80zu/rW03dtsVzB0rrpP0KzkJB9IhdmdFiiXu9TmgdE5jG+C1s1MmWUIZr2CibeFW/dxM5Pd7x9rqi1N+ancem7V5FFX8X/+NP66uSuShPTcxngQFKWNIzsx5SFFKCftYFmXaU0SfvA4Xjw4O7kv9ELO6HAfb246krjfz6oOGzp2jPded9zPfmEOvsR6Sbuh6q5aPxomhn5Zeam1sX52nfTJqR2dZpzAuCO0G45gpSJ4ScPei7bRElp6MaLmbaVnNDpoN3GyFErGAhBvpfDiv39P9auNnztyuEXGfPiK0q1rZRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hM8c7GvWydfBUBCRMQsusjf6EZhc6yHKRSd2RWaiEGQ=;
- b=mGLVX/esOw0pfsVmHE2aRN2qOd5NMJhoiv+KHUNOuowRQa5wrD73kJSNZSBpEYHST1KQWYpB8TVOUwH95pgNOVgeMbciyoLrCiT+AInYtXS/qKdN0ZSB4ahr40QjQOG0AC5p7VfajUWUCb4HUBHBSpcX8+fFdLDJWkkxovekEDXT6cnky7j2ncQFJNOEgusac9NG1enbjtxlcN42SIQ4CbGAFpsiMIpbYaiyr34+HRvo5cRRR26e1daWSyCrkeXvWAfhSY+XYXFtDkCSLzqL/fhQ8NFtujOh6+qJgEkmoD4HXH1i4iC3FRzPKGeVLaqEOyVlnOKhedVztk89KOlf0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by CH8PR11MB9457.namprd11.prod.outlook.com
- (2603:10b6:610:2c3::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Tue, 21 Oct
- 2025 17:11:06 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::8289:cecc:ea5b:f0c]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::8289:cecc:ea5b:f0c%8]) with mapi id 15.20.9253.011; Tue, 21 Oct 2025
- 17:11:06 +0000
-Date: Tue, 21 Oct 2025 12:13:17 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: <ankita@nvidia.com>, <aniketa@nvidia.com>, <vsethi@nvidia.com>,
-	<jgg@nvidia.com>, <mochs@nvidia.com>, <skolothumtho@nvidia.com>,
-	<linmiaohe@huawei.com>, <nao.horiguchi@gmail.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <rafael@kernel.org>,
-	<guohanjun@huawei.com>, <mchehab@kernel.org>, <lenb@kernel.org>,
-	<kevin.tian@intel.com>, <alex@shazbot.org>
-CC: <cjia@nvidia.com>, <kwankhede@nvidia.com>, <targupta@nvidia.com>,
-	<zhiw@nvidia.com>, <dnigam@nvidia.com>, <kjaju@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-edac@vger.kernel.org>, <Jonathan.Cameron@huawei.com>,
-	<ira.weiny@intel.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<u.kleine-koenig@baylibre.com>, <peterz@infradead.org>,
-	<linux-acpi@vger.kernel.org>, <kvm@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] mm: Change ghes code to allow poison of
- non-struct pfn
-Message-ID: <68f7bf2d6d591_1668f310061@iweiny-mobl.notmuch>
-References: <20251021102327.199099-1-ankita@nvidia.com>
- <20251021102327.199099-3-ankita@nvidia.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251021102327.199099-3-ankita@nvidia.com>
-X-ClientProxiedBy: SJ0PR05CA0116.namprd05.prod.outlook.com
- (2603:10b6:a03:334::31) To PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C1234B186;
+	Tue, 21 Oct 2025 17:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761066818; cv=none; b=Us3oP8AKZJF3LvfcAYWZwMSPsJuKnBQQcvkVZQqOz8ieQrBkQL6Poy9hMdhT+LTihZMW62U0JHmlQdl7QFz4s939pVL6Ik06VE1i93soFqRAtSLDQSFPsas+wzbk03TVisjJd8sg/l0qPKts3PhBWvq/Y8XKD+WKmJo9eXKMDk0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761066818; c=relaxed/simple;
+	bh=R5R2k63XM16jqmqIYLNZB7V1352UBMlgCSWQ7dgTCYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WGkBN+rRFXcrdHZH24SsALAFY90UBY4ywbLmX40YpUTepVI5Iopa4SrLAP8wTOpC+T+Y7aOC+DoweO3lpZfYRuMQNwLS5rT4jONUff2QKjGk3orjBJ/CXGcxOPsyUjWCL/sQECoFHjhF+5/P8D/DExPGgF+i/T68GDptrqz8NUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2Q1SsXK2; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=T7OF7YinQtdM6zEwx9mf3VJteIbSNxF5xxDOzyp6kaY=; b=2Q1SsXK2pXUN8mCnQvRcx+QhQn
+	VHutmMR5Rm8NehoV2QJEip/SnFEKMiY64LR/hUPPumhePnybaugYxUzHfGHyOTx0cLGbotoYVCFO+
+	9lyaG/SBzt/6AdyC0IaqifMG/VBu1VMxQL4cnSdmGLEv5ebIL4NZuRX+insIu9cdUJH+b1dnBTRaV
+	g/ngxAKGwaWSaDIqSP52BljzzeAD3aihVqBuTjHlzHYldIZjI+8FkMKoKbeVVwYEWZ5Mboqi23dON
+	0PhF/1OuVgk3SXof8lmqPChWNgxxrLnkYAEP0sqPbIgJb3IRxOhYKRc9Dv4GF2LUgqx3m6edVBpYg
+	uGdt9VGQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBFvS-00000000CZQ-0p2N;
+	Tue, 21 Oct 2025 17:13:34 +0000
+Message-ID: <3ba11b0c-818f-41d5-8885-038c7e0133f5@infradead.org>
+Date: Tue, 21 Oct 2025 10:13:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|CH8PR11MB9457:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1926bcfd-dc79-4bec-0036-08de10c4d22d
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?iJANH6ASxftG0IXMs/cy0rJ9wtnrCt9112VQjPJs6oRdkUb5wVqOqS+lwRf5?=
- =?us-ascii?Q?gsWAANjmrxilvRyzCa6D0ERFhP1qFSyX6BjYVMPmIZCw5GD+spDkCPFe24O1?=
- =?us-ascii?Q?0BABnoL0GbPBRXOuxkRACyIeLHHBsOz6ra9OGX8poFKlNsa86nya4R5oP6kJ?=
- =?us-ascii?Q?YeYOMj9ccDVtP4rcLFYHOzUJBQ/GwPzMrU6YybqcZrdpMsju0UVMWm5uqPiW?=
- =?us-ascii?Q?pM4xMwOvZa8n6Gwuf5d9atQgRMZb1ot722wiaSeicHO/C5LiRNWbwy9SkLrC?=
- =?us-ascii?Q?KV6lt57RQ52XzZ3kdiovb9ibPz82Fy09NbmOp8Re86NBebmt67LQEftPliWG?=
- =?us-ascii?Q?qCsvonDLA+OKt0PF+D9PYVLRso6LE0fl00VeDwpIoYTzO/buhZw6a1xNC/N8?=
- =?us-ascii?Q?AqajKNqOaDL+IUSZDqTUOPPwPJQBjGD1sk3TXMUdRiylu8kmQK41huYkLFJV?=
- =?us-ascii?Q?SRP4QL8gmPgTSO0MnuLMu1s8w8c24aT/BaHVuqR5ioottKqMnl90CEF8mu6U?=
- =?us-ascii?Q?YW+qHEihHzd0d5sw6G/uC3qrANqKt2u/XPZ9jYrTHgzoAhaV8Q9DGhd/cf8h?=
- =?us-ascii?Q?gXH128m4RPoJh0bzYCtdO1rjAfhZkVqpKWq+Ah6cIUh9qX5nckzCQf7CYUKp?=
- =?us-ascii?Q?5Eooz8OCgpPmLhr7NRmtWqi6+LHeqaEuIVl/JiuJoJjjPHmjkIm3gUYmMGEq?=
- =?us-ascii?Q?Up+jSYrh0Y9BQhDyDotdX7Kg4eRh8wISZyPA0PjqRw464wpdskXsxNKx6v8r?=
- =?us-ascii?Q?oVJ1RQZcqm70fNfjz7G+PJrscUm8YLNIM8wDqcK2tvSGAF3u7Se7k+dqeotg?=
- =?us-ascii?Q?+bVY57i3stQWyXL2+MZvYxvrXVi2LdLZJ+l+9ytwldHLc5eWgIeBZppbpDT7?=
- =?us-ascii?Q?OChO/Py6DF+bYU6GvC62ZzmTBF7lpXGWqQNQ/zeFAaDvdisXzGgf3xUUZh85?=
- =?us-ascii?Q?ejSS2ppJNthG6XTsOIZY4uqTmtOhCJ9mh9JEAEYpxv3tgHJMML/cT/eiCcfL?=
- =?us-ascii?Q?MZJ4UWR3IbCFkKDssZ6nFqqfmlsdIFbrt1cbkRIl01i8DzeT/8u4igVH/oDF?=
- =?us-ascii?Q?bbNaRIQUWR9CjBp7b4Bb1DI3BH739oGqQPs8Cl88IAABCd+++uh5ZEN0SAst?=
- =?us-ascii?Q?NEX6sjtC+WFAE4VasSUucHw3sojav4MXf5i25k/2sCZekPUiQLiUJJa7MsOo?=
- =?us-ascii?Q?5WTc3ifR4u3nxMD7wewr8s6pNhZ6rYJN1plbItiTvKLXKl38nGkppqZIZ4LK?=
- =?us-ascii?Q?WCrJv08YujSUrtjt8l/NYa9aC3Nf9ub/UOgINq6nUvqPZqiG92tYAsDkhdox?=
- =?us-ascii?Q?vox4+gv7pr1R9HqyAUnHHLGhFnocQGUanTpF9K1MkfJ9/LnIqYIEXh+cm5c0?=
- =?us-ascii?Q?Emr125q9SkfEeb4aKJG91nX5i14VRYJDVWJQ18ZCw0ZXIheTXv2dXfLqwBN6?=
- =?us-ascii?Q?fFg3lTdYH0njEn1Jrb9v15QB78jzh9onWGCnK7kKx0KGbMkhuasZTeGHCina?=
- =?us-ascii?Q?TxHbf376QLXcY3M=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?F9XnTluY1GvUlvAjnwosucwE0GZe6FOoxjnxBkbx4exn2L9DzmPlpEXAzKyX?=
- =?us-ascii?Q?SGlt5QSYJDUT7TdFKjIsdISt4dhxkmBFP8ojidX8fkLRAMUPqBe1gyY/TvYe?=
- =?us-ascii?Q?MF48lBhfp6MC3Nf0qrwOPjBqd6PPs2zgENDaQ9CjgPoNL5xH9BD+HDE77mYB?=
- =?us-ascii?Q?Cvn3Mt320im7XMzFiMeAhOPxF7gBYFM3efLQh0Nuotjvki0AVUIehU+Z+uOq?=
- =?us-ascii?Q?9IX2Cg+VfdFRhKfBdPkEzD7Dz4sZpujG7t2GiRdFj8uPHveb9FQbqs1aX3fo?=
- =?us-ascii?Q?S4F13VRNbvZyWj7C25UesnkFaNn00q7p9DSY8N8rwn3t16bA6d2fir29AfYz?=
- =?us-ascii?Q?gJh6hRCyVY51MXvnkEDY2IJXJaY8LYViceQgaC42drrqXebY09aQtLBjwop1?=
- =?us-ascii?Q?HJzVnCT8QPR6CiJHqomLEgaZIpmbWVZ6kFh2sNoKxaRWWxD21RmBVjVtpEt9?=
- =?us-ascii?Q?RMQROdslBfQtpxacSfu2l+tSMwW+AOlJ+C4rxXMCekwiXYbe6/HtV9HngXAP?=
- =?us-ascii?Q?8XVl7yo9u0q0ge2Xx2kaqgPv6YYteNMwapYJ0e9lGFcV92MX2O26PHQ9Gzi/?=
- =?us-ascii?Q?F5WAQGKdVbuZ20wCqDOShLZlEjIUuGqliA6Y22l+W1Rm1ZxtUIMI7yfr97AO?=
- =?us-ascii?Q?eGIjJKf7zljbTva3pEztP8feI6OEQvmKFM0bOfpuNWAOT7MF1zY0f12XDZjj?=
- =?us-ascii?Q?NgU0wMvjK2T35MmfMtzWGVgheO+2z3HmiIYBi9DjC7uCPJ5pzc5hDJp3eu85?=
- =?us-ascii?Q?oUqpjHZqRQ/mIIBa4ogAmRmb4W18hxO2Ms7HwHdJUi/mAnyafAsS6pzPtbvI?=
- =?us-ascii?Q?zpnOMvDtjNCHLKYBjzLYx8tvmQ1De/BK+g0nUNtsEXFu9+3a3NeUAq1K7cGl?=
- =?us-ascii?Q?n9qIe6Hda5vOL4JgPEQq/In/GWeKAyaeh4hB+rIgOiXv7hyXTnp6cM2M9l+V?=
- =?us-ascii?Q?wizfjRoVtdOlX2GyFHNUz0R21DDbx6D7jU9s9PoFRs9VM7VYfRk8txYzhwWR?=
- =?us-ascii?Q?hS2inMGKq9x97vCO7fx3kt70QuXnyvO2ihLMY/PazyR/mJ6hRgR3ePKF7cQb?=
- =?us-ascii?Q?TTs70exwct0wJmY6KOWU0EobSxVi4kdzVIwPBsWQm6p7t6iNud8QEWOGR3qG?=
- =?us-ascii?Q?ARKybo2s1dXpyLaoX7+45cbHG9EcQHrwNm/co20pez89cJwbgQZSvxQB75qX?=
- =?us-ascii?Q?ebtnE8XpXLl1hBE9un4ZJQqzpb7VRrfqVNDqPL+D8au2yNj9scKX0cV7ac8a?=
- =?us-ascii?Q?h3XF6qjS8A1mbUuGkb3G+fv2CB/SAJl94j/ncnRB5fZEwysw/m+aR3Dg7z13?=
- =?us-ascii?Q?SgJcvMdNQAMCcs1RZQ8Ok/XlZC9ybXP9qbCdMEeRLJDBXCYY0HiBEswzM7H+?=
- =?us-ascii?Q?LPiNch26XOT5poDgSvZtlOsXlohR0xCRHbIKQrFarPymiwirme6z8/K/U1kf?=
- =?us-ascii?Q?89ZBtPOuE52NzOVncSsbVEg4S/KcxiiihWsxNkR/DUl6UCBr8DzUVzrzwKJx?=
- =?us-ascii?Q?AeFEUdplDSdgq4oEI5KN8r/DCEmDv8Ce2A6FlLUznNFtWYd2H+kO446sx5fO?=
- =?us-ascii?Q?y65KszXo4si/lK6vrhSLN37fbsUVk7f50YwkArJg?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1926bcfd-dc79-4bec-0036-08de10c4d22d
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 17:11:06.1843
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uwiOvIa3lb/LFkwJ1OYZnnMKcVreFcJ13Y+oCqHjr33Q0jfEXp3472+RkywsSy2+QkvbKdjVEkioGFhoNw56iQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR11MB9457
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 20/23] mm/kconfig: make BALLOON_COMPACTION depend on
+ MIGRATION
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-doc@vger.kernel.org,
+ virtualization@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann
+ <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+ "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Zi Yan <ziy@nvidia.com>
+References: <20251021125929.377194-1-david@redhat.com>
+ <20251021150040.498160-1-david@redhat.com>
+ <20251021150040.498160-4-david@redhat.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251021150040.498160-4-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-ankita@ wrote:
-> From: Ankit Agrawal <ankita@nvidia.com>
+
+
+On 10/21/25 8:00 AM, David Hildenbrand wrote:
+> Migration support for balloon memory depends on MIGRATION not
+> COMPACTION. Compaction is simply another user of page migration.
 > 
-> The GHES code allows calling of memory_failure() on the PFNs that pass the
-> pfn_valid() check. This contract is broken for the remapped PFNs which
-> fails the check and ghes_do_memory_failure() returns without triggering
-> memory_failure().
+> The last dependency on compaction.c was effectively removed with
+> commit 3d388584d599 ("mm: convert "movable" flag in page->mapping to a
+> page flag"). Ever since, everything for handling movable_ops page
+> migration resides in core migration code.
 > 
-> Update code to allow memory_failure() call on PFNs failing pfn_valid().
+> So let's change the dependency and adjust the description +
+> help text.
 > 
-> Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
+> We'll rename BALLOON_COMPACTION separately next.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->  drivers/acpi/apei/ghes.c | 6 ------
->  1 file changed, 6 deletions(-)
+>  mm/Kconfig | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index a0d54993edb3..bc4d0f2b3e9d 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -505,12 +505,6 @@ static bool ghes_do_memory_failure(u64 physical_addr, int flags)
->  		return false;
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index e47321051d765..3aff4d05a2d8c 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -599,17 +599,14 @@ config MEMORY_BALLOON
+>  #
+>  # support for memory balloon compaction
+>  config BALLOON_COMPACTION
+> -	bool "Allow for balloon memory compaction/migration"
+> +	bool "Allow for balloon memory migration"
+>  	default y
+> -	depends on COMPACTION && MEMORY_BALLOON
+> -	help
+> -	  Memory fragmentation introduced by ballooning might reduce
+> -	  significantly the number of 2MB contiguous memory blocks that can be
+> -	  used within a guest, thus imposing performance penalties associated
+> -	  with the reduced number of transparent huge pages that could be used
+> -	  by the guest workload. Allowing the compaction & migration for memory
+> -	  pages enlisted as being part of memory balloon devices avoids the
+> -	  scenario aforementioned and helps improving memory defragmentation.
+> +	depends on MIGRATION && MEMORY_BALLOON
+> +	help
+> +	  Allow for migration of pages inflated in a memory balloon such that
+> +	  they can be allocated from memory areas only available for movable
+> +	  allocations (e.g., ZONE_MOVABLE, CMA) and such that they can get
+
+nit:
+s/get/be/
+
+> +	  migrated for memory defragmentation purposes by memory compaction.
 >  
->  	pfn = PHYS_PFN(physical_addr);
-> -	if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) {
+>  #
+>  # support for memory compaction
 
-Tony,
+-- 
+~Randy
 
-I'm not an SGX expert but does this break SGX by removing
-arch_is_platform_page()?
-
-See:
-
-40e0e7843e23 ("x86/sgx: Add infrastructure to identify SGX EPC pages")
-Cc: Tony Luck <tony.luck@intel.com>
-
-Ira
 
