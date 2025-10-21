@@ -1,186 +1,110 @@
-Return-Path: <linux-kernel+bounces-863667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA69BF8C12
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:43:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228DABF8C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218F43B7A23
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ADB719A547E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323B827FD51;
-	Tue, 21 Oct 2025 20:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAC9280CF6;
+	Tue, 21 Oct 2025 20:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MrHfJ5Gi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Bt2URJXI"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027D727815E
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC2E25C6EE;
+	Tue, 21 Oct 2025 20:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761079413; cv=none; b=OmbVyNLIKnaNNV7Jqb40umam2dmyLQpR7x/pT/vQRe6RV1PhB6Bb1LjgiVu+YPQnL1jBfRjTbfnc533kURhzgT2OvNQULXCuq/IPHqCxKpbwaUGsD1yqUZvMUnBPzlC9vjN5yAmIErAgVnn03+6TLYPIp6iBjzihTuwabJ4zAn8=
+	t=1761079608; cv=none; b=eKlkFNybH0EoT+uNgtuS6WOFAcEOANili6q5lNunANtVBYgA06JCCMtL07oQCvSVwkrRt2JIX1RV1gi21QTG15rHuabrDtleeYWWad8q9KAZJ3ma8WAZTElSVBms+85q4SmzUrPAoblcO+BR35hh06TSwFnZ8YxwBulZdWLl8vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761079413; c=relaxed/simple;
-	bh=eF1fACVfV6HLT5roiTx6wO7WHbA4YryGuaxzvCrw3KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evxmudfH8D/IK1U0WztlbxfOhr/mtRIOMSEitlY/rGchgxxAVq8KKuJXY6X52xoPXjUFX1fKAZ74cN2p7D/yQxs6WvWpS6juF507kWx+1GbixEzNW/ov4KHyIdVQRkQ1uIqiPQqzvjnYARCjJY9bhRrS3XPrK/K1ulqdbiXd71g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MrHfJ5Gi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761079411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jca+iAluyvXYfcIcNG0HUymCKJQKka+3ZoKebkZZYlk=;
-	b=MrHfJ5GiBUFm7KqFFr2U/9vMbz2qElSDeLF+RaXNERDjErmUR2olNmw2RDARgVli9n1AZB
-	mh/Q74ssMqGfKUX8HL73OgTJhA7XLYaGsfzZtlsfqBB3eCFWeyq7L/phWaSNf7ombSaV5M
-	3W4kKJjQHUMd30Eb2HGa4BuPWa/gL/M=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-aweGORK2N16VCq-NfHw8Hg-1; Tue, 21 Oct 2025 16:43:28 -0400
-X-MC-Unique: aweGORK2N16VCq-NfHw8Hg-1
-X-Mimecast-MFC-AGG-ID: aweGORK2N16VCq-NfHw8Hg_1761079407
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4710c04a403so62416405e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:43:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761079407; x=1761684207;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jca+iAluyvXYfcIcNG0HUymCKJQKka+3ZoKebkZZYlk=;
-        b=wCLhaf+2NGEeTxd0dd7GV/dUaxAwNOzHusVJWcJ7QXQZomV0Q6xDIKAxFCRE8wZIj1
-         pwP6hDH0HLif0MCnKDQ8wokyh/t/+v7mPuQpsCWV1YCko8x/1sf3bsFEkqhfIS+mnpAH
-         yWj5W65zGr0dyzxdsRlAzoucMQoJqYsManNA9FQRNmnQjBVvFBiZdQ5lNX9XY0WmmPr/
-         r1YWd4eJc5joAQpgEJJQGiv3xBw9QIOP/eUZg7qYY3+G4P3qYR5esZNiP2TIJk32LLUy
-         Xhf2djM0tcmE/7uYFjDvRr/jGe70JXlceL+hz33+088wCATvgK/m8Yh/YzqDW3NgT3V5
-         6NYA==
-X-Gm-Message-State: AOJu0YyiyYaQKxICVQ3hwU4Ms6I03uHeXHaLQ0iRnBiCcwMdYz5W4r4g
-	QJYhY94Bz6WimXEOPe+8tZhYnLrNTeebQQkn/pRs76W9yxIr9wrXjMT/edRIjerP5AMzWOt4SQk
-	QfDI9Ylo7EVaRG12LwccI/dPoUjmpsyOoV8Y5GnXBm/ry9TCYYCT5xpl2xvuKwsNnFg==
-X-Gm-Gg: ASbGnctL/ocylPnydbtaNRUKsSVp63fuabEUXrEwlOSPgumKjL36BWLjsvwsM1Rl+ga
-	0rL5P9nGczG12mPyj9TkINc0uqUB14pW/qppRHGIVM3GVDc5zeW6tEdyRPJVH1Z+8oDCz7Hx16X
-	Rvuk/oUkIAqm9EPKGdQRRDHkxuojQeKm6ZF8VdOigBaJnzpGGDj8ZBKKz9IYytxguQs1DhBUsM0
-	zQ7IjiQgxE2a/JmuCYs+W5TP9zxY2XInY3Fidsnyyo6yZ5yCrx+eZByFLUAmeaAPZwHLhe8QSaT
-	2VDkxtvoNY9XHPcCqbXjiKAUl317MENBbZXXPxj1rTjOnSxgYikA4Dc+LGsBSaj/Lv19
-X-Received: by 2002:a05:600c:4fd4:b0:471:13dd:bae7 with SMTP id 5b1f17b1804b1-4711791c5dfmr155489115e9.30.1761079407237;
-        Tue, 21 Oct 2025 13:43:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3tqHiyIT27d9/w9pV3Cihx1kc1ZDJQnIJKiIuWuTpURVwED00bfMi5FBVB40yx0uQLffj0A==
-X-Received: by 2002:a05:600c:4fd4:b0:471:13dd:bae7 with SMTP id 5b1f17b1804b1-4711791c5dfmr155488865e9.30.1761079406669;
-        Tue, 21 Oct 2025 13:43:26 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c429e82dsm9612815e9.11.2025.10.21.13.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 13:43:26 -0700 (PDT)
-Date: Tue, 21 Oct 2025 16:43:22 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 03/23] powerpc/pseries/cmm: remove
- cmm_balloon_compaction_init()
-Message-ID: <20251021164220-mutt-send-email-mst@kernel.org>
-References: <20251021125929.377194-1-david@redhat.com>
- <20251021125929.377194-4-david@redhat.com>
+	s=arc-20240116; t=1761079608; c=relaxed/simple;
+	bh=hxoUGzw7ETeIvgYoFvUBa+elRqVmf1UtxvpnhOkiJxk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UwfLjUQArhdKifywq+qQgEctt5FewCEUZfDmuizfrXfSpF+6AZY0d07GU88D+Yn7a+Ys3VnsZXr19JXnkezu1TJskyaiscv6R2mGIUIYI7WaCXdfYGfZGYgfOYw3ZcSQ8+pRhiDPFYrzLUq+m4vT4LziWYXVbBlJkkk9DfIeYAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Bt2URJXI; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59LKkRIX1244879;
+	Tue, 21 Oct 2025 15:46:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761079587;
+	bh=QBP3QfRnfIamzhwaxwbtj1LkpxU7f5gKMVd3rl/TpKI=;
+	h=From:To:CC:Subject:Date;
+	b=Bt2URJXI0LsfgNa8zMrNeUyz/tW/yN5wVUIg8J1t3wVIboezqWwQVkOv2e51F2voJ
+	 MikCOoQq3Nq1v/F0xCAxe27DfD3ZgSBz7g/BzClpxH4lhRRzH5dJAZbsnyWSBDNVdb
+	 tmvD2Wiy++ZazQsye9Tr40rcoQGfwVq2pwDPSF6A=
+Received: from DLEE206.ent.ti.com (dlee206.ent.ti.com [157.170.170.90])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59LKkQB51491540
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 21 Oct 2025 15:46:27 -0500
+Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 21 Oct
+ 2025 15:46:26 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 21 Oct 2025 15:46:26 -0500
+Received: from udba0500997.dhcp.ti.com (udba0500997.dhcp.ti.com [128.247.81.190])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59LKkQ9C113737;
+	Tue, 21 Oct 2025 15:46:26 -0500
+From: Brandon Brnich <b-brnich@ti.com>
+To: Nas Chung <nas.chung@chipsnmedia.com>,
+        Jackson Lee
+	<jackson.lee@chipsnmedia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nicolas
+ Dufresne <nicolas.dufresne@collabora.com>
+CC: Darren Etheridge <detheridge@ti.com>, Brandon Brnich <b-brnich@ti.com>
+Subject: [PATCH v2 1/2] media: chips-media: wave5: Fix conditional in start_streaming
+Date: Tue, 21 Oct 2025 15:46:17 -0500
+Message-ID: <20251021204618.2441939-1-b-brnich@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021125929.377194-4-david@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Oct 21, 2025 at 02:59:08PM +0200, David Hildenbrand wrote:
-> Now that there is not a lot of logic left, let's just inline setting up
-> the migration function.
-> 
-> To avoid #ifdef in the caller we can instead use IS_ENABLED() and make
-> the compiler happy by only providing the function declaration.
-> 
-> Now that the function is gone, drop the "out_balloon_compaction" label.
-> Note that before commit 68f2736a8583 ("mm: Convert all PageMovable users
-> to movable_operations"), now not anymore.
+When STREAMON(CAP) is called after STREAMON(OUT), the driver was failing to
+switch states from VPU_INST_STATE_OPEN to VPU_INST_STATE_INIT_SEQ and
+VPU_INST_STATE_PIC_RUN because the capture queue streaming boolean had not
+yet been set to true. This led to a hang in the encoder since the state
+was stuck in VPU_INST_STATE_OPEN. During the second call to
+start_streaming, the sequence initialization and frame buffer allocation
+should occur.
 
-What does this sentence mean?
+Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+---
+ drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  arch/powerpc/platforms/pseries/cmm.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/pseries/cmm.c b/arch/powerpc/platforms/pseries/cmm.c
-> index 310dab4bc8679..67c7309c36147 100644
-> --- a/arch/powerpc/platforms/pseries/cmm.c
-> +++ b/arch/powerpc/platforms/pseries/cmm.c
-> @@ -548,15 +548,9 @@ static int cmm_migratepage(struct balloon_dev_info *b_dev_info,
->  
->  	return 0;
->  }
-> -
-> -static void cmm_balloon_compaction_init(void)
-> -{
-> -	b_dev_info.migratepage = cmm_migratepage;
-> -}
->  #else /* CONFIG_BALLOON_COMPACTION */
-> -static void cmm_balloon_compaction_init(void)
-> -{
-> -}
-> +int cmm_migratepage(struct balloon_dev_info *b_dev_info, struct page *newpage,
-> +		    struct page *page, enum migrate_mode mode);
->  #endif /* CONFIG_BALLOON_COMPACTION */
->  
->  /**
-> @@ -573,11 +567,12 @@ static int cmm_init(void)
->  		return -EOPNOTSUPP;
->  
->  	balloon_devinfo_init(&b_dev_info);
-> -	cmm_balloon_compaction_init();
-> +	if (IS_ENABLED(CONFIG_BALLOON_COMPACTION))
-> +		b_dev_info.migratepage = cmm_migratepage;
->  
->  	rc = register_oom_notifier(&cmm_oom_nb);
->  	if (rc < 0)
-> -		goto out_balloon_compaction;
-> +		return rc;
->  
->  	if ((rc = register_reboot_notifier(&cmm_reboot_nb)))
->  		goto out_oom_notifier;
-> @@ -606,7 +601,6 @@ static int cmm_init(void)
->  	unregister_reboot_notifier(&cmm_reboot_nb);
->  out_oom_notifier:
->  	unregister_oom_notifier(&cmm_oom_nb);
-> -out_balloon_compaction:
->  	return rc;
->  }
->  
-> -- 
-> 2.51.0
+diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+index 1978551a28fa..0a2eab372913 100644
+--- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
++++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+@@ -1367,7 +1367,8 @@ static int wave5_vpu_enc_start_streaming(struct vb2_queue *q, unsigned int count
+ 		if (ret)
+ 			goto return_buffers;
+ 	}
+-	if (inst->state == VPU_INST_STATE_OPEN && m2m_ctx->cap_q_ctx.q.streaming) {
++	if (inst->state == VPU_INST_STATE_OPEN && (m2m_ctx->cap_q_ctx.q.streaming ||
++		q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)) {
+ 		ret = initialize_sequence(inst);
+ 		if (ret) {
+ 			dev_warn(inst->dev->dev, "Sequence not found: %d\n", ret);
+-- 
+2.34.1
 
 
