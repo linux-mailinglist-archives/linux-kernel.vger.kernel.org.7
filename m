@@ -1,94 +1,130 @@
-Return-Path: <linux-kernel+bounces-863410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100E0BF7D1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:05:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B919DBF7D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3E519C1324
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:05:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A87584E6FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391B732E73B;
-	Tue, 21 Oct 2025 17:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102B4346E62;
+	Tue, 21 Oct 2025 17:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yLc8NOn6"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfuC1iWz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE621DFD8B;
-	Tue, 21 Oct 2025 17:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A019341650;
+	Tue, 21 Oct 2025 17:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066304; cv=none; b=M+Mvpyt6N7R3tYRSQNMPFlEogZ57J+44KcqArGCrRE/ro58mW/Rbkk4c8l7tju5/TA4CVnJ24eRHwjl8pP+0sVmKDMlVt7yL/U8pQG6RgWnqUeOVb1hXKNotd2wJ9QVJl2Iti7UScwwaBI7ZGi6dGxgkodxG/ajLaCp15A0byp0=
+	t=1761066318; cv=none; b=qpyeFBf5yCsnKFivhbHSEhaJsVcaMcr3X8Gk+SubcR3SfDwD5DL9RYSruYNLNFEvmAE59PpG0T1K27iMDI3KERxTavJl1A+L5O2MWL4DtnkxeDmkGyGf55ohfsO5KQhTMggTwB6/khO4WovV35+6XlSYnDlJ6Uwen8oFo6Fp8RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066304; c=relaxed/simple;
-	bh=+kwjXs839N2xZLvTKn1xWQBqDurYxN4cpyyYVCuhJQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RJ9wBmbrs+HdNudk+Ys9h68jn8YIWdYW9SmAotMM0HoEDUp/DX8AS4GHgjYBh9zxc2zzVMA+mQSGChCqKkvGqdBSdjtwVN4S8YPN60FPmvq1jbtMofGjScjDeArlgkthTV3OJjXQDVEzqV8CWasA1rt7ebHoZKoTzklkQTP75BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yLc8NOn6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=mY4olOqNwciXe7P6w4zygG2fd6hYPFXexwywwvO9rNg=; b=yLc8NOn6zLdKsEf7KabiGkt9X/
-	7vuHgpZD5UlV3y7zbIFj0smh5mqG9oNn6JDdf64xbA4LRVPkVHG+ywm0dc+yan9RFHcc4sORYhdiN
-	BoqaP6hlHeKbKpTyQpMAw3AEcb4pFid0F5rFr2aOBNWxOh72xUCdqEWbm5pCGpU+O2l+z6t87CK0h
-	1apmLiU/y2neZ/vi1SiPJDo+AdBA4FzY7RFjCq4PHb+G9b0KHHKcTZCCveiJS6WDjxBkBPr9zAGNb
-	ECjpc2sie/SdFHLezJ9g7ylS8sTM74HdsB2c5194DDF0SRnJ0UeLGQwg74gjLVyaiBT8vQyq2Gj+b
-	jKWjJY5Q==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBFn9-00000000Bc3-2NeN;
-	Tue, 21 Oct 2025 17:04:59 +0000
-Message-ID: <1b0acbf2-8ce4-4c8d-a088-1f271233e60a@infradead.org>
-Date: Tue, 21 Oct 2025 10:04:59 -0700
+	s=arc-20240116; t=1761066318; c=relaxed/simple;
+	bh=nTdwv3Rks8hDE9igPxkMOcHeAQ1oHeXXF17Qtt8UWNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=h4iu3l5jfbja2ro9zolCCsCY+glh7fiNtXek5gpD/62Fd8ZFXo3XUXQwrHrAcjdJSGnQNgCKn2jpVPh1/8eQh0Xe4IbeFu3x6xQv7LaO0v4qVlle9yuSuWmeNOFjWqtAWZTQt6OnMe6nNl3RfXE+bmE569YaAixdfZioyZFlZsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BfuC1iWz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A2BEC4CEF1;
+	Tue, 21 Oct 2025 17:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761066317;
+	bh=nTdwv3Rks8hDE9igPxkMOcHeAQ1oHeXXF17Qtt8UWNo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BfuC1iWzEwI9u9n3LOJLbQ9s2OOkABW/X5O5BnhDVairX7hiGIwwWZR016oUFlwhd
+	 fLc9xJixm03Nir31F+8FRS2DqKVHlOaKQoMiET30k8XwvAI9JuvZQQlw6Suz9KFJDQ
+	 ox4zVMwDHa3Rit7JDT8rwHqFrFE2t7TbqFaIFpnPm5fDtgU+imc8VUidXrarKuoXkR
+	 ALUwTwN4+BKPW31Ig46yCYPeG5IKzsXqLPLqkDUKMQ/vfEEH0WkdhZDguNgR5ZfI7A
+	 JX7fkvUJzy58mZr5oCilgJPOLWAjHKSuzubpSWTJ22XmZl+JWxkIBF7kI/eJqMo0FQ
+	 K4d13AKGqsNnA==
+Date: Tue, 21 Oct 2025 12:05:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Randolph Lin <randolph@andestech.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alex@ghiti.fr,
+	aou@eecs.berkeley.edu, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	ben717@andestech.com, inochiama@gmail.com,
+	thippeswamy.havalige@amd.com, namcao@linutronix.de,
+	shradha.t@samsung.com, pjw@kernel.org, randolph.sklin@gmail.com,
+	tim609@andestech.com
+Subject: Re: [PATCH v8 4/5] PCI: andes: Add Andes QiLai SoC PCIe host driver
+ support
+Message-ID: <20251021170516.GA1193376@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation: sysrq: Rewrite /proc/sysrq-trigger
- usage
-To: =?UTF-8?B?VG9tw6HFoSBNdWRydcWIa2E=?= <tomas.mudrunka@gmail.com>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Serial <linux-serial@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Cengiz Can <cengiz@kernel.wtf>,
- Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
-References: <20251016103609.33897-2-bagasdotme@gmail.com>
- <aa388d29-b83b-454e-a686-638c80c6a7bf@infradead.org>
- <CAH2-hc+XQR7v9Z28yH_CTWZ4ieaF5eQFKBVut1idULP=4w03fQ@mail.gmail.com>
- <6b8e7935-6b80-4f00-9a44-7003071d1a21@infradead.org>
- <CAH2-hc+M-CyXL1HtHkD9o_Q_8PP_OkYLvjqhdBiCnHVBQspedQ@mail.gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CAH2-hc+M-CyXL1HtHkD9o_Q_8PP_OkYLvjqhdBiCnHVBQspedQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014120349.656553-5-randolph@andestech.com>
 
+On Tue, Oct 14, 2025 at 08:03:48PM +0800, Randolph Lin wrote:
+> Add driver support for DesignWare based PCIe controller in Andes
+> QiLai SoC. The driver only supports the Root Complex mode.
 
+> + * Setup the Qilai PCIe IOCP (IO Coherence Port) Read/Write Behaviors to the
+> + * Write-Back, Read and Write Allocate mode.
 
-On 10/21/25 1:37 AM, Tomáš Mudruňka wrote:
-> In that case, can we use some short form? Something like
-> "extra characters are ignored for now, which might change in future".
-> 
-> Thing is that i wanted to add handling of extra characters, but
-> maintainer said it cannot be done because people might currently rely
-> on characters being ignored as written in documentation.
+s/Setup/Set up/
+s/Qilai/QiLai/
 
-Sure, OK with me.
-Thanks.
+> + * The QiLai SoC PCIe controller's outbound iATU region supports
+> + * a maximum size of SZ_4G - 1. To prevent programming failures,
+> + * only consider bridge->windows with sizes within this limit.
+> + *
+> + * To ensure compatibility with most endpoint devices, at least
+> + * one memory region must be mapped within the 32-bits address space.
+> + */
+> +static int qilai_pcie_host_fix_ob_iatu_count(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct device *dev = pci->dev;
+> +	struct resource_entry *entry;
+> +	/* Reserved 1 ob iATU for config space */
+> +	int count = 1;
+> +	bool ranges_32bits = false;
+> +	u64 pci_addr;
+> +	u64 size;
+> +
+> +	resource_list_for_each_entry(entry, &pp->bridge->windows) {
+> +		if (resource_type(entry->res) != IORESOURCE_MEM)
+> +			continue;
+> +
+> +		size = resource_size(entry->res);
+> +		if (size < SZ_4G)
+> +			count++;
+> +
+> +		pci_addr = entry->res->start - entry->offset;
+> +		if (pci_addr < SZ_4G)
+> +			ranges_32bits = true;
+> +	}
+> +
+> +	if (!ranges_32bits) {
+> +		dev_err(dev, "Bridge window must contain 32-bits address\n");
+> +		return -EINVAL;
 
--- 
-~Randy
+Is this really a PCI host controller driver probe failure?  I assume
+there are devices that only have 64-bit BARs and could work fine
+without a 32-bit window?
+
+If a device requires a 32-bit BAR, and the PCI core can't assign such
+an address, and gracefully decline to enable a device where we
+couldn't assign the BAR, I think that would be preferable and would
+identify the specific device that doesn't work.
+
+> +	}
+> +
+> +	pci->num_ob_windows = count;
+> +
+> +	return 0;
+> +}
 
 
