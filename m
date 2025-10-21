@@ -1,139 +1,158 @@
-Return-Path: <linux-kernel+bounces-863810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529DDBF9295
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53E9BF92A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0457C1886215
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0E04828D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DEB26F292;
-	Tue, 21 Oct 2025 22:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF2E28506B;
+	Tue, 21 Oct 2025 22:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oz9DC/VV"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="hy7B04aU"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D1F227E83
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA1026E71B;
+	Tue, 21 Oct 2025 22:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761087376; cv=none; b=eM68dqRsHiZLp6wrwvnJrxKEcVAD+r60tolWzz0ALci8/PndrYCUdjYY1k5irX8SgQNlkfy/iI6f9SLKY4nn166zteLVqI/YB23JGIQbyt9lUZRTezpDiE+SGfj2AEYv5vnKjve/YULyfFay+uRJrzzxYUcbSo7B7cajbOIvYtU=
+	t=1761087442; cv=none; b=dLuVvSPikAta9bTE06dBVmwKVLel+MwDIOEtmdkvcP/td66E4/5E4FAVkgzyLGkVdzEfB6Bq3iGGgFl20KbmDBLsYV1yKu4k24uTklwGaPr8D0huFOFnY1pZO/PPKbw6vOesuvy3hhUjoZDlQQikfbUbTgTM9uuzDPT/+qXgowA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761087376; c=relaxed/simple;
-	bh=V4NkGznR2T3JDSWLjVwJZnSY0RygDlkJEpy+1BcVOcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=exodHqGoMTH3SPV388cRb1KrwAbu0WUZQ7AH7c0pm2F5aC2ay08BM5ZQ2WPRTVku9ZBhJrghubQnPspOmGnKs3Dm5LNEKyzucmBr9eZA4JrgbS2AKgB6P9YnzrvsPS9FXprtGQaNk2SKKCX/u+rR61EItRgMiy5VOBjwq5WPUsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oz9DC/VV; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 21 Oct 2025 22:56:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761087372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NpRYlL+s+eEOejHoASihIL1oHT0zJD6g2o7SauG22IE=;
-	b=oz9DC/VV3MtrfOCesocIxygeMEGMSmJ+eFUdPd0IojRwOa6Nn9/TeiTREaDHgRZ7b8Lnfw
-	d9qvXN4phTu3fbIynOrV/lHEMn3XtMx+NM9/TfTyT2MOJb8vFCBuPBUmGp6WO1Yx9SqBmF
-	hA/okaduGDC5wtBfwut5SHzWY0Dd7+I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Jim Mattson <jmattson@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
-	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 3/4] KVM: selftests: Add VM_MODE_PXXV57_4K VM mode
-Message-ID: <ffph6d2gjnw3mboy5tm2ulkyhyq7zz5y66zrtdcuutqba75oh5@b7kktjtve2fs>
-References: <20250917215031.2567566-1-jmattson@google.com>
- <20250917215031.2567566-4-jmattson@google.com>
- <l7txoioo3gntu3lyl542jg3n3wvkqruf2qh33xy7lmr5mjgfq5@iw4wsfdurlc7>
- <CALMp9eSPgy7RdT9TwKkRD5oh6-74XfCCP_UZ1mJWj6Nb9P4P7w@mail.gmail.com>
+	s=arc-20240116; t=1761087442; c=relaxed/simple;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u2Ngrbl9qyx5iKcMWu8bu+7cG/8SV8EYN7xUomQfYgxRZ0lmZgfnVpOZN/Pflf7e8f2UdQqtPLOXC6UG/Ic5cy1r9DpLOlsB0qupbdLJ6fGAs6IFoEPohkyN6NpI5zN+DJJW7tP9OM3IycckN9WJMnGuP7LuwjTgHcatuDw+DsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=hy7B04aU; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1761087433; x=1761692233; i=rwarsow@gmx.de;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=hy7B04aUXm2PtF6bqdoeZHXbYBQ1ZkKbSmPXe4KOb3iWBLxay79Ky/aTVITFeAvy
+	 JD/JjqPJsfcMePbEFfwu25BnPRiHsJKpakxw3NVpS6qDO8f64ER7uJE5iAg6f9zGD
+	 luwBuCvQIIrfmC0m7+bALwVU4wi7L/cU2DcBqlkjSUmHoeg3SUQMEnlUvGr1emqhb
+	 srIg6MSUNyIzCOZRNTBwxdjvaHOIdXR7Jy7G5jhZNRNdlMaYkS6L9bYkbV1RfIait
+	 gtq4tH1QZvCsyLzkxGv3D9I1IxdqC4ZNKHADl1hIttTMjSE70APM3P3ibntFlrY9b
+	 4uhndMDBv1LfRUqNOw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.33.216]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MKsjH-1usyOK2QjF-00QMUA; Wed, 22
+ Oct 2025 00:57:13 +0200
+Message-ID: <2acbcd59-87ec-4cb6-9244-aa184d03f623@gmx.de>
+Date: Wed, 22 Oct 2025 00:57:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALMp9eSPgy7RdT9TwKkRD5oh6-74XfCCP_UZ1mJWj6Nb9P4P7w@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 000/159] 6.17.5-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251021195043.182511864@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20251021195043.182511864@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:y13vKs8A19CBVRjV4k5d8N2DTAEH/aMYNJRrvO34aj3jxCKB9Xd
+ yIQ7MfcjZ22IbVH8keEQ8beEfrYdX4XwCenco7+p631zDM1UVeHbSZQcxpA4szeT0wXfOO/
+ SNPlJdW7vw6K64t50FwnHPg6yDoGi6PLVzhOpJw/8m2O7E+6Ld01pkouFldYTQdMxP5N9cF
+ TXEW7sTxxrsEVANzRLKBA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3KcB0Kc4+/Q=;Ro6RSahjcUqxzknmKiw9JfIBqrV
+ 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
+ CBHVf/1AR9w+0x7GIgQZ24A==
 
-On Tue, Oct 21, 2025 at 03:34:22PM -0700, Jim Mattson wrote:
-> On Wed, Oct 15, 2025 at 2:23 PM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
-> >
-> > On Wed, Sep 17, 2025 at 02:48:39PM -0700, Jim Mattson wrote:
-> > > Add a new VM mode, VM_MODE_PXXV57_4K, to support tests that require
-> > > 5-level paging on x86. This mode sets up a 57-bit virtual address
-> > > space and sets CR4.LA57 in the guest.
-> > >
-> > > Signed-off-by: Jim Mattson <jmattson@google.com>
-> > > ---
-> > >  .../testing/selftests/kvm/include/kvm_util.h  |  1 +
-> > >  tools/testing/selftests/kvm/lib/kvm_util.c    | 21 +++++++++++++++++
-> > >  .../testing/selftests/kvm/lib/x86/processor.c | 23 ++++++++++++-------
-> > >  tools/testing/selftests/kvm/lib/x86/vmx.c     |  7 +++---
-> > >  4 files changed, 41 insertions(+), 11 deletions(-)
-> > >
-> > > ...
-> > > diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > index d4d1208dd023..1b6d4a007798 100644
-> > > --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > @@ -401,11 +401,12 @@ void __nested_pg_map(struct vmx_pages *vmx, struct kvm_vm *vm,
-> > >       struct eptPageTableEntry *pt = vmx->eptp_hva, *pte;
-> > >       uint16_t index;
-> > >
-> > > -     TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K, "Attempt to use "
-> > > -                 "unknown or unsupported guest mode, mode: 0x%x", vm->mode);
-> > > +     TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K ||
-> > > +                 vm->mode == VM_MODE_PXXV57_4K,
-> > > +                 "Unknown or unsupported guest mode: 0x%x", vm->mode);
-> > >
-> > >       TEST_ASSERT((nested_paddr >> 48) == 0,
-> > > -                 "Nested physical address 0x%lx requires 5-level paging",
-> > > +                 "Nested physical address 0x%lx is > 48-bits and requires 5-level EPT",
-> >
-> > Shouldn't this assertion be updated now? We technically support 5-level
-> > EPT so it should only fire if the mode is VM_MODE_PXXV48_4K. Maybe we
-> > should use vm->va_bits?
-> 
-> I did update the assertion! :)
-> 
-> init_vmcs_control_fields() hardcodes a page-walk-length of 4 in the
-> EPTP, and the loop in __nested_pg_map() counts down from
-> PG_LEVEL_512G. There is no support for 5-level EPT here.
+Hi
 
-__nested_pg_map() will be gone with the series [1] moving nested
-mappings to use __virt_pg_map(), and with your series the latter does
-support 5-level EPTs. init_vmcs_control_fields() still hardcodes a
-page-walk-length of 4 tho.
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-I actually just realized, my series will already drop these assertions
-and rely on the ones in __virt_pg_map(), which do use vm->page_shift, so
-the assertion won't fire if init_vmcs_control_fields() starts using
-5-level EPTs.
+Thanks
 
-TL;DR nothing to do here.
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
-[1]https://lore.kernel.org/kvm/20251021074736.1324328-1-yosry.ahmed@linux.dev/
-
-> 
-> >
-> > >                   nested_paddr);
-> > >       TEST_ASSERT((nested_paddr % page_size) == 0,
-> > >                   "Nested physical address not on page boundary,\n"
-> > > --
-> > > 2.51.0.470.ga7dc726c21-goog
-> > >
-> >
 
