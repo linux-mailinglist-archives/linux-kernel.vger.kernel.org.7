@@ -1,101 +1,151 @@
-Return-Path: <linux-kernel+bounces-862708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C2DBF5F46
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:08:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A83BF5F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80FC74E8D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:08:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 938314E9752
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A35B2F0C7F;
-	Tue, 21 Oct 2025 11:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754F82F3607;
+	Tue, 21 Oct 2025 11:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igUgvHFj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DgIsgCF6"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AE4189F20;
-	Tue, 21 Oct 2025 11:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A9B2E0B69
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761044933; cv=none; b=PVg1bEGFWtZT3REs7uxrvW78TwAzs1rqGFuXTf5T/7naVhfogDJbXQHj64k77ButxlKKfXPIox/H9oEtriomdhLMJkLK5y4OF/gVSvRLteBYDxss3MQ4ZWfA4TAjVBfs0vt6602UR/D8WexZYHEghSLjAWc3T4lP+Wp70SToiP0=
+	t=1761044949; cv=none; b=Ags9sJuKqVJppYEx78fLfdNdTmCECW/8f5W5eepBHyS/mUVLf8iON0GdJtIdID9wugXvTUldX76OOSC3b0m6pYtvGrjA3hExvT1BJfDZNkiOByYgW9NA9NGknTsVJIBMft8doMaEBpwCDgSQ4zg8qeDtXbyhQPMyfmWyjhdP4rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761044933; c=relaxed/simple;
-	bh=EBDQiTKaAEBRPfvCwExdUce+DP45FiyywQJSr5JKIwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWq8oOjsZcHjuFXFyQTHBqqqTY2fye93lZPHzuXPvAl22lubKeFW+b3mi4PFvKT4XYFv6ikTZTMo3X5eFKDGInfkD+RHrTfFU1s+xgkgzjL0DtnQQsDwAW2jI3xNfVV7lsWSJ4xzMD0jP67b+MH797PoJcE1Gn5Iczcn8rOC6MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igUgvHFj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E269EC4CEF1;
-	Tue, 21 Oct 2025 11:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761044931;
-	bh=EBDQiTKaAEBRPfvCwExdUce+DP45FiyywQJSr5JKIwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=igUgvHFjcL7vbaC5BvDTu0V2LoWB/fDzQlcIcLdx3E142kEz9RZDAxygfY7PNZ7Ir
-	 hBFjESFOqitCULjXnt4u3kNZxnliiJ5xE0gTCtAj5n7MjAy5BYtQIaytmyJTYS0WTj
-	 aKc0RhVN/pxBa5Yjt4EOSMBXGOPKt+clhR5qa4uuNeQAWolp+AX32j40HS/v2ZYF/u
-	 C2z2LG0ib4v6GoZHjd1aZkqc45GZXhh76ZFgl4VHBWgascK2sHdQZB/GKt2b8oECVw
-	 kLXclYB5f3Dtc6qKa4aGNiGKXqEsjSkQHGVKkSK2uD4fztf82wCt6POJ79GdRZPKkB
-	 qP5xszOY068sw==
-Date: Tue, 21 Oct 2025 12:08:47 +0100
-From: Lee Jones <lee@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Support Opensource <support.opensource@diasemi.com>
-Subject: Re: [PATCH v2] mfd: da9063: occupy second I2C address, too
-Message-ID: <20251021110847.GG475031@google.com>
-References: <20251007154016.25896-2-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1761044949; c=relaxed/simple;
+	bh=0Jj/oz3j5238pHi/+PUT7w3mAJ0abt9UDzN0aejE3p4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=EnC4fg5cC02EkL79/DBKDFbVsbNvmXvEvjQ3wKMDgIOBohwJ6J0SCn1R9d+02rHZLdP2w22LfIXEk2hsJMkLtKVeUyju31wJHhuy/I8WI2zH6R+Vkc4+Pm2tGj0s+uYXp/RySWFmzbfBiJ/ZG0Lca2DLygTbap0zOwc85MdkRXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DgIsgCF6; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-290ab379d48so49720555ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:09:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761044946; x=1761649746; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=clvqVveEl4VakYM5nZd2uVSfls27BpwOnq3AhL7nZXs=;
+        b=DgIsgCF6HAAgB51XcOkXw9wSe4kQSyViwQDQp0/M1NhrobdURa7+PNtmr/O9lKaZ3k
+         2w1lD8jLkmwFFdW3y8v6E3F2+Lo983W0BIf6PHOs8zAvUaVy3/+kRuSE3DT0xiCauDWo
+         NKRTvC+G7+IAO0pFur1WpUV+Z03HErhR7Fz3QFPk9tY8UIz0SheWGKkzbLnFgA8WhuSd
+         PArn/e61Fzfb0OtOBf71aGfmvJ/FZCaW67aA4GkIJLSjEV0+QsJYlvjK/mkIQUWDTBTk
+         JF2s4rlER2ynVr9myjCofPKLSL3zRhHyDDAAASzkLc8VnNt0JDxz281WDLJqygGhVupN
+         FSXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761044946; x=1761649746;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=clvqVveEl4VakYM5nZd2uVSfls27BpwOnq3AhL7nZXs=;
+        b=Aok8VaJ0rOEEY6s5qkPl5d0+IS8jzvzOHPIem5U8haxXvkUmbv6m/q0MPLfrHpf8t4
+         fp4lzojxB/+dK45xiEGcnAp3GNCsfJw8kaFSAPYYVuX5bzzYuakPKS9ocLkCr1yhXc9H
+         PdU5ke/+adUaBaNWMPGUymGgWAY+XNIWm9u37P1pj0HiDZMBL0iVBOI0VGIgqI5REAd/
+         2vtD6c0JYBNyztXT/7SfnkTuXiEA55FDl3eTcQ0IRdhDNZ/EBpYCUOfiag5Den2ULnOb
+         hzHBltunGdRf5nwunQwQIMjMu/1IuPCW9vIQFz5tRtz24oYz4CDWjbLM1oIRNjBUBfYH
+         zAyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWzTweYRb7oiqJgl0a7mZTG/dIFxU/RgV3oL1hY6KAlJ3q/DnoGJIdXqxFFLQUP9so2WcrLtZ3Wcdz5sI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyG9gA2t8O5Sn0fW7DEk/B5IkOXxYjM97+7zjhiVYtreuFmqAh
+	SAkmP4yQ3TtOvg1PuhEVAJbRqYFtx90hOAaerweTtw/Zh74h7DUMHdmshf+g/IlUoMJik3A5Xkc
+	2fOeAe9oU1xJYnCCaAdESMs220l5jgfKHzfSmRAHw/g==
+X-Gm-Gg: ASbGncuWp949M1Dc68GNKM6K6BULw3djdarJjOtQo6Qg7GMU7nZX91HbQzqPclOMCkd
+	+Plwc3SCLVQxZ5rGANNoxjcIrK10VkTQGAZJw/E+k7KyJVwJQnWWyIgoSRss+t584dj7FlPqnRV
+	Vo9oKDL+KKx/bryHUB3ZZxMGEuVEea5+QnNCLM55jVd7fHbnGZfqxDsqd6xBoP09ePwYiywEOwS
+	axXnmk/a0dnzs35hlj7MsMrvkljpanefqvRiposW0qrYKjk4AcmF4uMJajDp9fIdKi6GvAgUuCC
+	mPApKWVzL4QIXS3b9yaF53+SKmIVpuAPfrpAbpaxorl5vNDMQgFtEo1+zxre5vhlhvva
+X-Google-Smtp-Source: AGHT+IFDGXUp9tKVVOyQcA7+CvoT4bVfCCGV2+qBmOVEr+wXy9Mo7bFJyDSAnV0yMljTfotevCIwB/WqStf9CbjQvMw=
+X-Received: by 2002:a17:903:4407:b0:27e:ef27:1e52 with SMTP id
+ d9443c01a7336-290ca1218dfmr195009785ad.35.1761044946535; Tue, 21 Oct 2025
+ 04:09:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251007154016.25896-2-wsa+renesas@sang-engineering.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 21 Oct 2025 16:38:55 +0530
+X-Gm-Features: AS18NWCNxSm7rurPtBIV1Ywyd2Z1uJw_dWK2NUhN3UHurWzm1qYuCb5CL-5txYM
+Message-ID: <CA+G9fYvKjQcCBMfXA-z2YuL2L+3Qd-pJjEUDX8PDdz2-EEQd=Q@mail.gmail.com>
+Subject: next-20251020: selftests: helpers.h:10:10: fatal error: kselftest.h:
+ No such file or directory
+To: X86 ML <x86@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Shuah Khan <shuah@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	"BALAVIGNESH #" <reddybalavignesh9979@gmail.com>, Wei Yang <richard.weiyang@gmail.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, 
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 07 Oct 2025, Wolfram Sang wrote:
+The selftests x86_64 builds failed due to following build warnings / errors
+on the Linux next-20251020 and next-20251021 tags with gcc-14 and clang-21.
 
-> The second address can be used as a shortcut to access register pages
-> 2+3. The driver does not use this feature yet. The second address should
-> still be marked as used, otherwise userspace could interfere with the
-> driver.
+First seen on next-20251020
+Good: next-20251020
+Bad: next-20251017
 
-Perfect.  Thanks for updating.
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Peter Rosin <peda@axentia.se>
-> Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
-> 
-> Change since v1: reworded commit message
-> 
->  drivers/mfd/da9063-i2c.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-> index 1ec9ab56442d..12f3dd927aba 100644
-> --- a/drivers/mfd/da9063-i2c.c
-> +++ b/drivers/mfd/da9063-i2c.c
-> @@ -469,6 +469,8 @@ static int da9063_i2c_probe(struct i2c_client *i2c)
->  		}
->  	}
->  
-> +	devm_i2c_new_dummy_device(&i2c->dev, i2c->adapter, i2c->addr + 1);
+### Build errors
+x86_64-linux-gnu-gcc -m64 -o kselftest/x86/single_step_syscall_64 -O2
+-g -std=gnu99 -pthread -Wall -isystem usr/include -no-pie
+-DCAN_BUILD_64 single_step_syscall.c  -lrt -ldl
+In file included from single_step_syscall.c:34:
+helpers.h:10:10: fatal error: kselftest.h: No such file or directory
+   10 | #include "kselftest.h"
+      |          ^~~~~~~~~~~~~
+compilation terminated.
+make[4]: *** [Makefile:86: kselftest/x86/single_step_syscall_64] Error 1
 
-I still think we need a simple comment to explain why we're obtaining
-and seemingly not using the address.
+### Suspected patch
+  git log --oneline   next-20251017..next-20251020  --
+tools/testing/selftests/x86/
+  4d89827dfb274 selftests: complete kselftest include centralization
 
+Build regressions: next-20251020: selftests: helpers.h:10:10: fatal
+error: kselftest.h: No such file or directory
 
--- 
-Lee Jones [李琼斯]
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+### Steps to reproduce
+  - tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-14 \
+     --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/34JgN0fZ9uXj6HVnjvjqzIhgWbQ/config
+\
+     debugkernel cpupower headers kernel kselftest modules
+
+## Source
+* Kernel version: 6.18.0-rc2
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20251021 and next-20251020
+* Git commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
+* Architectures: x86_64
+* Toolchains: gcc-14 and clang-21
+* Kconfigs: defconfig+selftests/*/configs
+
+## Build
+* Build log: https://storage.tuxsuite.com/public/linaro/lkft/builds/34JgN0fZ9uXj6HVnjvjqzIhgWbQ/build.log
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20251020/kselftest-x86/x86_avx_64/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/34JgN0fZ9uXj6HVnjvjqzIhgWbQ/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/34JgN0fZ9uXj6HVnjvjqzIhgWbQ/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
