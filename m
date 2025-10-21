@@ -1,86 +1,219 @@
-Return-Path: <linux-kernel+bounces-862641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE216BF5CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:37:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675D7BF5CF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF051884FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:38:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BA304F8BA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484B532C31A;
-	Tue, 21 Oct 2025 10:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0932D32D432;
+	Tue, 21 Oct 2025 10:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OEVnb6g1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YQdZEiU6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ewrOJUn6"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367582F12A6
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3760132D0FD
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761042969; cv=none; b=diLVcrey03XtY6LuMnN5HZXog1ExzJf//74oZdmKkqitVT8zRvMsZmL6Sbh5LMrWlRlEgvMEqjS3I4cUZCsi+WezCjurs6g7Ft0oVSTRo29vflAbrUv6OImQLX5z+LozjxI4IQXC9PdV31cB8jDSTXzTehhzjawVbqLWarB1tKU=
+	t=1761042983; cv=none; b=iPVUpGg3HN1E0VUvDwGeRgjMJ13LT+meOmVLxexR74HlJ8kH7Jq6Na97Zgh4+lswdAc8W43NWWuNwrfGgFAsnwfigUAJd7+ex/OQr7VnbF8FsGOpMhxRsM3qe9G5PewU3am719O3F466HGDLnagk14lZ/uYs7/0kQjyYuLf5r6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761042969; c=relaxed/simple;
-	bh=XcZFDb1TXZOGa35K/MLl9HGI/seSGUHoRnNJs5ul5Uw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PAL9tOfodfpwH1ppNCsZ7O42fBd8DT4mi13XxrRDJykqYRyJIfly/FjktEsHsykGcnAgeM29OXfqoMZkuorPk3BpZhslzNRWILkqblFVHMZCgFs5bKiOdGHtKy5HY+gpPyOOrQ3L3TB1MQxLHnkpMcx0yK3pEX2PteUpRyBwcIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OEVnb6g1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YQdZEiU6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761042966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S+dbGUmxbEbdMP/TWbhqHELpgBFElFNdyMVOi0l1Qzc=;
-	b=OEVnb6g1A4hxFzOx1dfcjSznDJOK5W6O+8YHkdabHDbum0Iqa+AQFjJ2tAvO+FwJ7j60M1
-	JpNPjCq5xwkp4ZaYxwkXj4uMfQfB2zUqAM93k2dhrF2oN0LycPreJyg+FlzGQDa9bw35bV
-	FWOvTzK2hgTzXqvXmGeBwl6V7hOihfsC2DBvMT5Xlb+h6CuE6SX6WBnQEfmP0ucTN8EyDI
-	PEddOs1z8L7eMTVA62XA8d33cR4ikvEeTe4xgHggWBhmgl5izsvVwxLdQ8jWM4gKFX8MRA
-	2ny8fs6bBjNoJB+EeSuoFte2S40qft+8+0fKLcV8A6YMK3J4VCAfjc/XhRcLgg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761042966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S+dbGUmxbEbdMP/TWbhqHELpgBFElFNdyMVOi0l1Qzc=;
-	b=YQdZEiU611GfzujG9zA5c99LvJyju8e/PyGZ9pBxWGOX73Jldv0y1iFFV6nrEq568p7xZZ
-	Ew85d7OHK613UoAw==
-To: Vivian Wang <wangruikang@iscas.ac.cn>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Han Gao
- <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto
- <inochiama@gmail.com>, Yao Zi <ziyao@disroot.org>, Vivian Wang
- <wangruikang@iscas.ac.cn>
-Subject: Re: [PATCH 0/2] riscv: tests: Make RISCV_KPROBES_KUNIT tristate
-In-Reply-To: <20251020-riscv-kunit-kconfig-fix-6-18-v1-0-d773b5d5ce48@iscas.ac.cn>
-References: <20251020-riscv-kunit-kconfig-fix-6-18-v1-0-d773b5d5ce48@iscas.ac.cn>
-Date: Tue, 21 Oct 2025 12:36:05 +0200
-Message-ID: <87sefc1qzu.fsf@yellow.woof>
+	s=arc-20240116; t=1761042983; c=relaxed/simple;
+	bh=mu/cr0ccCQhZG4HUcvVpPbQl30IkLO8o/gI0SvZrpZ4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qr/R/TeSWd+v+lDXSXFcurrzPtE3AaqsetMCGvWWwuR1AcK6Z5Dh/u0iwEmxZF8woNFYOGFLGzf8JiJ/E2bKHx72ubnJsGRVIE40/0i7StEPE1C/X+xFC/HHCMqa6Q4EYZJvKTDtDVZZd1aGzsmg7OCwmkLeKO0Xjblwhg3qpeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ewrOJUn6; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-591c98ebe90so6025102e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761042979; x=1761647779; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/TafpqYvz7n63SFC71twwiYhEsv21pktmNXXlISP5Ho=;
+        b=ewrOJUn6MwR5+0lFAAMHA8o9z9Liz6JolyrjOxVFtAf9V8SKaldjSf16KsNjDHYM0Z
+         rIkxT9nW5lFYjylWHgyObBOQUGonvviQa+Ft2Hmkjd7/nrY+p3lpZF9SI0x4BYySS+FY
+         pTY+wnD5muAqx+MTYMKqtKMg+cWenyiMw61j0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761042979; x=1761647779;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/TafpqYvz7n63SFC71twwiYhEsv21pktmNXXlISP5Ho=;
+        b=JARgzxrES/eWQfaq8C67aJdAmcP5gYlm3pQFncFig3QtuuP0Sn/sgBs7PR7dtdLqUr
+         hY/FtZwFf8ql/r/dtYoA9YUWsbGccDp60VMrjy1/Zkh5lRFXcaBoSj2iLK9pw7FYOjnG
+         Zw8tATj0c7eLXUfpECfynPfnSRZfUTuVXo4fx0xN2uVSJbKbpvRz7ZLbW1LUxXLxB9EF
+         YwwayNjZw8loXzp/uyQj79lmwQ4yr3w7PJlSVeGQEZal6fShxxKt03YmQibKT7T5Pm9p
+         8nYW2n4Ahzrrf2xKhL1EsWbxZKkORvhG/rJrIS9rAwYdI3qiTa6vKMRyfhQbslq/rDv3
+         Wyow==
+X-Forwarded-Encrypted: i=1; AJvYcCVDMdZlkIhLjzfi7tuvlAXGb0dECqWF9lbuIawS+FSia0MLy9p4iKNVrZSogcz4/+9VCBrrEY5p2EwXUgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO5bm2dKUlMz7cyG3S1c3MtnvqVIJ6E2iBNSZ70jeF+Vub29M+
+	Dn2XSzA+TNl5UrMx605sXny4w5BjhoVSdWQwFEPGtVwxhke/R+XOFvuk3IEgkIq96ra+egWkkpu
+	Z5TI=
+X-Gm-Gg: ASbGnctKN/PmpIf64hILcViKrxPrzRQpA4f8A8SRDTeedzoezHsPjl4WeIIYsRvdnSE
+	7JXigmd7Ebno1yPKiCgZr1K+p40u+1x0d9X7huSI3ILJOS0bL7eTP2oLoV0Ft4Wq/6XDXK/+erv
+	TGwDnOxY/fry9BBacshyNADSQ0MUlfoPCi1ohLFifVeCpow91/0Gc7xQHTfuQfehLgfGGi2XSIq
+	FPOQ9acUC8GRaWBOJ9X7e3vpKMRAZnCetTMfo+6WBE4wD76T2rL/FefjK3LJQfMNlFUGaU7SHvH
+	80hy7bHBw++EyG3I+MUlSodbf+q2imHAIIQgbyjZ7q/EwFhaJlh8BAJo163DS+CaY2xXFPzbe1C
+	t6sbpLQ8tPFUGxraK/gMz4QT2FEBYokSYW/kRfNAY0n/8xYjiscmlTbqpa1GE8MzufhUc3A0Tfh
+	uaZ3FdnC/ud84KUD0pQ9vUotoLqrjH6a2sn+6vnM8sk/hybNhsvGEarGorCSTlDL/Iyw==
+X-Google-Smtp-Source: AGHT+IFY8+5yWsF2/+yXKzUgKDznuSxR53YAociIJKjxctfTBbridZE9yYWajB+gH0DDhnuJ0uI+6g==
+X-Received: by 2002:a05:651c:b2c:b0:36f:77e6:d25a with SMTP id 38308e7fff4ca-37797a8fa40mr51550211fa.43.1761042978949;
+        Tue, 21 Oct 2025 03:36:18 -0700 (PDT)
+Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a950635csm27946251fa.30.2025.10.21.03.36.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 03:36:18 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 21 Oct 2025 10:36:17 +0000
+Subject: [PATCH v2] media: uvcvideo: Use heuristic to find stream entity
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-uvc-grandstream-v2-1-6a74a44f4419@chromium.org>
+X-B4-Tracking: v=1; b=H4sIACBi92gC/3WNQQ6CMBBFr0JmbU1nDNq48h6ERS0DzAJqptBoC
+ He3snf5XvLf3yCxCie4VxsoZ0kS5wJ0qiCMfh7YSFcYyFKNltCsOZhB/dylRdlPxtYcekvO9Ve
+ Csnop9/I+ik1beJS0RP0cBxl/9n8ro0HjLPKls+5JN3yEUeMk63SOOkC77/sXXAG6MrEAAAA=
+X-Change-ID: 20251021-uvc-grandstream-05ecf0288f62
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans Verkuil <hverkuil+cisco@kernel.org>, 
+ Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
+ Angel4005 <ooara1337@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
-Vivian Wang <wangruikang@iscas.ac.cn> writes:
-> Fix an allmodconfig warning on v6.18-rc1:
->
->     WARNING: 3 bad relocations
->     ffffffff81e24118 R_RISCV_64        kunit_unary_assert_format
->     ffffffff81e24a60 R_RISCV_64        kunit_binary_assert_format
->     ffffffff81e269d0 R_RISCV_JUMP_SLOT  __kunit_do_failed_assertion
->
-> While we're at it, rename the test to remove the word "test", in order
-> to conform to the style guide.
+Some devices, like the Grandstream GUV3100 webcam, have an invalid UVC
+descriptor where multiple entities share the same ID, this is invalid
+and makes it impossible to make a proper entity tree without heuristics.
 
-Reviewed-by: Nam Cao <namcao@linutronix.de>
+We have recently introduced a change in the way that we handle invalid
+entities that has caused a regression on broken devices.
+
+Implement a new heuristic to handle these devices properly.
+
+Reported-by: Angel4005 <ooara1337@gmail.com>
+Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
+Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID")
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+I have managed to get my hands into a Grandstream GUV3100 and
+implemented a new heuristics. (Thanks Yunke and Hidenori!).
+
+With this heuristics we can use this camera again (see the /dev/video0
+in the topology).
+
+I have tested this change in a 6.6 kernel. Because the notebook that I
+used for testing has some issues running master. But for the purpose of
+this change this test should work.
+
+~ # media-ctl --print-topology
+Media controller API version 6.6.99
+
+Media device information
+------------------------
+driver          uvcvideo
+model           GRANDSTREAM GUV3100: GRANDSTREA
+serial
+bus info        usb-0000:00:14.0-9
+hw revision     0x409
+driver version  6.6.99
+
+Device topology
+- entity 1: GRANDSTREAM GUV3100: GRANDSTREA (1 pad, 1 link)
+            type Node subtype V4L flags 1
+            device node name /dev/video0
+        pad0: SINK
+                <- "Extension 3":1 [ENABLED,IMMUTABLE]
+
+- entity 4: GRANDSTREAM GUV3100: GRANDSTREA (0 pad, 0 link)
+            type Node subtype V4L flags 0
+            device node name /dev/video1
+
+- entity 8: Extension 3 (2 pads, 2 links, 0 routes)
+            type V4L2 subdev subtype Unknown flags 0
+        pad0: SINK
+                <- "Processing 2":1 [ENABLED,IMMUTABLE]
+        pad1: SOURCE
+                -> "GRANDSTREAM GUV3100: GRANDSTREA":0 [ENABLED,IMMUTABLE]
+
+- entity 11: Processing 2 (2 pads, 3 links, 0 routes)
+             type V4L2 subdev subtype Unknown flags 0
+        pad0: SINK
+                <- "Camera 1":0 [ENABLED,IMMUTABLE]
+        pad1: SOURCE
+                -> "Extension 3":0 [ENABLED,IMMUTABLE]
+                -> "Extension 4":0 [ENABLED,IMMUTABLE]
+
+- entity 14: Extension 4 (2 pads, 1 link, 0 routes)
+             type V4L2 subdev subtype Unknown flags 0
+        pad0: SINK
+                <- "Processing 2":1 [ENABLED,IMMUTABLE]
+        pad1: SOURCE
+
+- entity 17: Camera 1 (1 pad, 1 link, 0 routes)
+             type V4L2 subdev subtype Sensor flags 0
+        pad0: SOURCE
+                -> "Processing 2":0 [ENABLED,IMMUTABLE]
+---
+Changes in v2:
+- Fix : invalid reference to the index variable of the iterator.
+- Link to v1: https://lore.kernel.org/r/20251021-uvc-grandstream-v1-1-801e3d08b271@chromium.org
+---
+ drivers/media/usb/uvc/uvc_driver.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..ee4f54d6834962414979a046afc59c5036455124 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -167,13 +167,26 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
+ 
+ static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
+ {
+-	struct uvc_streaming *stream;
++	struct uvc_streaming *stream, *last_stream;
++	unsigned int count = 0;
+ 
+ 	list_for_each_entry(stream, &dev->streams, list) {
++		count += 1;
++		last_stream = stream;
+ 		if (stream->header.bTerminalLink == id)
+ 			return stream;
+ 	}
+ 
++	/*
++	 * If the streaming entity is referenced by an invalid ID, notify the
++	 * user and use heuristics to guess the correct entity.
++	 */
++	if (count == 1 && id == UVC_INVALID_ENTITY_ID) {
++		dev_warn(&dev->intf->dev,
++			 "UVC non compliance: Invalid USB header. The streaming entity has an invalid ID, guessing the correct one.");
++		return last_stream;
++	}
++
+ 	return NULL;
+ }
+ 
+
+---
+base-commit: ea299a2164262ff787c9d33f46049acccd120672
+change-id: 20251021-uvc-grandstream-05ecf0288f62
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
