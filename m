@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-863317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79705BF7888
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18199BF78A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7AF5502BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056B73B5BEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1DF343D63;
-	Tue, 21 Oct 2025 15:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1BC343D63;
+	Tue, 21 Oct 2025 15:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPdf5EBr"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D2CtZBHz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522FF355057
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C801946A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062271; cv=none; b=JUFHGksZ5lwgBPDkv4eOEag7h8kkc5bYGdr8sAxlqGqIBYlI7a6p3jl2Jnv1oyluFKQIwbd4n9aFM29uDf+Ek0oxa/ArU75EGCcem3fZfvQ91g/ydynbhdyDCD53M5UufmGxekQ52SiqFa21rH44uaNvcbulEt2MqgdXNlHmWeU=
+	t=1761062293; cv=none; b=bZQsjVLB0VsFq6OZ41cuZ+zdPpxyG7rIPcqKNvY25X4Ecok8kgyHuZu0+ojMLzj0niIGxUj/XymoxfikCspGd5Fmqd8SlLyX0Y+3vW2VrVP1VRiDjApq3pDKQyRKa6DG+dkN/9eTfx5tBPwDMrNhAiA7kNFjqsUCpID1NnRd+p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062271; c=relaxed/simple;
-	bh=Z/1v14ONw8upvjPlG+HxTxWPgwSB262WBk6X08dAu7w=;
+	s=arc-20240116; t=1761062293; c=relaxed/simple;
+	bh=zd+ArKte7lBSnCcvbJeEFtoxHRPUAR2nsc5ee9j+mGU=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OoqzpHngwxALkNAm5KNZ0RbYrkJ9t0kPQHRSLHnA1G2nSueafuRw+4R5RKY9mYyVZklDTtup/FqgMgn/iBkBKYbUSoDb3VFllBeMrJOFdikUGPow+3yF6a/CDzA6IUGqoJQnNxR4qmxOwmpA51vDEZtHOEJjiZkyJN9p5jN5HFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPdf5EBr; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-28a5b8b12a1so58253335ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:57:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761062270; x=1761667070; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z/1v14ONw8upvjPlG+HxTxWPgwSB262WBk6X08dAu7w=;
-        b=mPdf5EBrUvWOeXPNFd66GJnMEzEmnOeFfmjuAue0bwrFqgaMLzrDqZjhrtrdETgVqq
-         FYNed/jN+rzXiLrsARpmm5eGvJhiX23am5HbW8WcGWuP3lo9ww0I/y77N0aq8rTZV/9O
-         GcGk81C8FfqGMVYCr5k6XoQJONgxK6eYXEGuKp1pG+fzWAv47JKW4DxO4IcAobYFCa+m
-         AKVoR84coBb4Pj6pPedyUFQNKZPKmrOFwsxn4DJkX/99JhUTNLncHp+nENesw2/VVxkS
-         703sLnt8MmZAmODoSlT7ItNUIVWsP2mmTlonhNPceHKGU2cotHzl6cUzDhRpBdTEw6ls
-         0aGQ==
+	 Content-Type:MIME-Version; b=rPb+44yfyaK5hNFEu4S4Gk5kPg1PpccpUlMjz/JH+mkxBRhg8mlB4jB3mAfwDLOiV4izBzOs7ZL8lKlgHRCIqmIPit8avLf8hKhWtA8EE0AlWhTXkaRsXkMWxRPDPDlk0vEaMP9wnxnoRgzE6IGSzE592lRrwWdDO8VUDcuz0hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D2CtZBHz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761062290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zd+ArKte7lBSnCcvbJeEFtoxHRPUAR2nsc5ee9j+mGU=;
+	b=D2CtZBHzU65O2ya+oRymHL8Cl+OY3I9PAVk44+sdbXoMzX1X0uC9JzafUfOulhLpfOifpB
+	yHGbXvxhlr+cbUQ6lse71iiUZAYTuy6wUKOC2mQVcVhv5bblp1M7go1f44zKx0uVB/iJLW
+	6Me91cX4nswnpiReuyRIlZbxN9NieS0=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-578-nA2Ier7LN8mVMaReqazGuw-1; Tue, 21 Oct 2025 11:58:09 -0400
+X-MC-Unique: nA2Ier7LN8mVMaReqazGuw-1
+X-Mimecast-MFC-AGG-ID: nA2Ier7LN8mVMaReqazGuw_1761062289
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e884663b25so1265051cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:58:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761062270; x=1761667070;
+        d=1e100.net; s=20230601; t=1761062289; x=1761667089;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z/1v14ONw8upvjPlG+HxTxWPgwSB262WBk6X08dAu7w=;
-        b=HuBNKPh9Ie7TVDFvUlwlETyBA6fmXxN6fDQsny6ywEDp7ujqLyGMOidmq3HYX0xWlb
-         so+fHJxdpDg0TD2eNOKTahtjKrKMkOV9x58KdjHSYv7YIoUBPEGWyktDI4rK8lSLZqki
-         XKF0fLMyR1crr/ES95yU0tAaCGOD9H6Kf1ykc9Aaz8FvalssM5tGfzZrbWbKADrKKDAg
-         Gy0BnywGcmgVSVzM8zxTBwV9LkUOee8mjHLcbn+a0QSD62aVJNEmhEL/lRvWLMihw4yW
-         B/M3senINzzgbU0R8UgHF4y9Gk0YYudCve+89SmrqZNNmXtUMCY1+HOkcPwczyzHwl+6
-         /xXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnq2JT32M8rdoqI9J4selxiePq2HsC+d3PcFuh/EY1T5Br/3002h/ButTROP90HkjIP0ICXAMMe+4DidU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy6qK9RxpdQE2UEEtgoGoys6exuTNswwmT2ruV8KD5ZSyxT915
-	HPKSlwezwUdjUFBDGl72LfEJdv36lIXH1S2Kh1xIvv5MQdeI8OqebOzvFKwa4UA8
-X-Gm-Gg: ASbGncsOfpW2FVnwg3eRT9Rm3+P7dtNNKNeJqrnjs2uFj1ivw1YiYUzm7ymEDEGJ3Wu
-	wB32jYopja11vVp51Egkeao7b9Si0lMTRfll6w89ssOIq7QENj9Fld6gfl8ru16ezCOD+YbfVak
-	QOiOykklqKZsV0eQ9irt7KpjmgiL6IKxWzoLddP3mKrMcflIW+pJvSWF2/PAqE1P2naQpaAyI1H
-	YHJ9kMMdAz70oeguvWKU18L8Fc37JXtDE7itugjBSRytnX0SNasQe2S34Pi6m8UJPWVSC/jtUBi
-	lHThsoEpSrTneBNNtlntUkAkyLTQfoYIbQYGSx19eLbJkJZW1ZSvBg54pupzmnsGwkqJoi2VOqJ
-	RJXB68uAGJlByMysZpwJcPPdjguUPBvgkDmLUAaDuWUAyE7TsvHTpvMpUaYjnJDMFaFvdRbiThT
-	H5fua+BADkKJ6kfDXQioXEKGHL0gDmpxZTSaNm
-X-Google-Smtp-Source: AGHT+IFXBM54S/3IPHg/YLriqEWWdSNp+qID7b3KPyfagGS3obpL3xkYxPk+L7+SiGexSO69U2KtUw==
-X-Received: by 2002:a17:903:244e:b0:290:56e7:8ca9 with SMTP id d9443c01a7336-290ccaba092mr197957345ad.52.1761062269488;
-        Tue, 21 Oct 2025 08:57:49 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:5f45:f3d3:dde4:d0ab? ([2620:10d:c090:500::6:82c0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ffef8esm112694575ad.51.2025.10.21.08.57.48
+        bh=zd+ArKte7lBSnCcvbJeEFtoxHRPUAR2nsc5ee9j+mGU=;
+        b=d9G2l4I42NVjFP01qPGJJqIvv5tKBDBwFycEVaH20lOJ+i4++aVsVE1AbvRD8uoWzz
+         9D/vXt89UHKru5NSvvygmT8BeYkUBolEvMeaswqivfv7mh46IEk+IH9j+W0xM438S9KF
+         DxkR0yOjC+Tj1AYFsqjvL+4WSSLbN/U8LKT7CvA7ia/vIaY1hf2r5HV6yEONF15z64Jt
+         sU6u222+ohOdl1K2AjyfChoLBRkWjg44s401n+tsiaEjwkoH0xSA3i+KAqD/8I5FzQpy
+         qsVMVUmkJs2jm/o9w7b9wBGhf0e37r7QLY4a4ZC73ao+KVVFcGsty13LClTAhO9VpIwI
+         M1kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJPPpt8bUHjuzhx/1A8CRaz7y3YfimTBExBCadM+UhtBGM72WPXB0xmrvIyLd9dEmDKCuEuGF/edxZHt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyjyi+RJFjZqBlH1ShuxBkcEv2hZudER/cB9m+T1/0JELGtKYx
+	NOlU6NxmmFn2wCS8SK0phhSiTVPqEsPgU1ILKq/r6JcCI1V4Gv07+FN4W4YFXYSutVhmUKCqpus
+	mB466HzcsaOGbYqZXcha8WSJIBhtPCj1zpmHTFQbhr22hWuxJz4Zwium31yeFtRGJVg==
+X-Gm-Gg: ASbGncvHnKEiMmAzzyWy5cVCyfzVGhvdG2gXQk3pS1xxyXkbSJ5w9+EOr2SUPwgi4QK
+	GxLqg2UIBihiLH8QpMcBO2LwJbs4EoiVI+5aX7e+VGqhoXHVDcxe1qEWHLEKoyS9Yn7t99Dac50
+	HFzMNpdhm1+zoSlivsRspk3udJAlIcmSVK6i1DrIWbsisO6PRYNxP3PG7KrtcF2A82NL4vcY2fF
+	slKCK4VbO6gfeOBxaMYn8YlXT6dZzlATeVFJWR9rEULoU0SYZ9AZ6Sh06sBwoYTOswLrjeXy1fC
+	piWBKPts1w5ey/ynWrdNIADjO494Uc6Dz1uZzWdcrlI0CNY8nIWF+7o7neE/3bEZjPd6DmWRIUw
+	ftANIXMaP11BSAZW+5yU8fv2HG6vNWuw=
+X-Received: by 2002:ac8:5a4f:0:b0:4d4:a43d:316c with SMTP id d75a77b69052e-4e89d3de63dmr217194171cf.62.1761062288879;
+        Tue, 21 Oct 2025 08:58:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5szTseO6I4FG2HD0vTjKdNDMZmPXaowNDyBlk3/ojACBLUbgg83sr1esbAzDc5Vj05+rEPg==
+X-Received: by 2002:ac8:5a4f:0:b0:4d4:a43d:316c with SMTP id d75a77b69052e-4e89d3de63dmr217193701cf.62.1761062288301;
+        Tue, 21 Oct 2025 08:58:08 -0700 (PDT)
+Received: from crwood-thinkpadp16vgen1.minnmso.csb ([2601:447:c680:2b50:ee6f:85c2:7e3e:ee98])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cc8d5edasm794643985a.7.2025.10.21.08.58.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 08:57:49 -0700 (PDT)
-Message-ID: <e2716ad9963403dd0dea37c85d106267659e52bd.camel@gmail.com>
-Subject: Re: [PATCH v3 bpf] bpf: liveness: clarify get_outer_instance()
- handling in propagate_to_outer_instance()
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Shardul Bankar <shardulsb08@gmail.com>, bpf@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,  Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh	 <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo	
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, open list	
- <linux-kernel@vger.kernel.org>
-Date: Tue, 21 Oct 2025 08:57:47 -0700
-In-Reply-To: <20251021080849.860072-1-shardulsb08@gmail.com>
-References: <20251021080849.860072-1-shardulsb08@gmail.com>
+        Tue, 21 Oct 2025 08:58:07 -0700 (PDT)
+Message-ID: <aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
+Subject: Re: [PATCH 3/4] rtla/timerlat: Add example for BPF action program
+From: Crystal Wood <crwood@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,  Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, Luis
+ Goncalves	 <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
+ Wander Lairson Costa <wander@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>
+Date: Tue, 21 Oct 2025 10:58:06 -0500
+In-Reply-To: <CAP4=nvT8VGpYrqQDztmB1WJPEb6JXvUuL201ksWq6eSV7kn-oA@mail.gmail.com>
+References: <20251017144650.663238-1-tglozar@redhat.com>
+	 <20251017144650.663238-4-tglozar@redhat.com>
+	 <c52490c9c2f682fd3c30d6f8a198be2ba408c4fe.camel@redhat.com>
+	 <CAP4=nvT8VGpYrqQDztmB1WJPEb6JXvUuL201ksWq6eSV7kn-oA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,24 +105,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2025-10-21 at 13:38 +0530, Shardul Bankar wrote:
-> propagate_to_outer_instance() calls get_outer_instance() and uses the
-> returned pointer to reset and commit stack write marks. Under normal
-> conditions, update_instance() guarantees that an outer instance exists,
-> so get_outer_instance() cannot return an ERR_PTR.
+On Tue, 2025-10-21 at 16:54 +0200, Tomas Glozar wrote:
+> po 20. 10. 2025 v 19:53 odes=C3=ADlatel Crystal Wood <crwood@redhat.com> =
+napsal:
+> >=20
+> > We should have the makefile build this, and add a test that uses it.
+> >=20
 >=20
-> However, explicitly checking for IS_ERR(outer_instance) makes this code
-> more robust and self-documenting. It reduces cognitive load when reading
-> the control flow and silences potential false-positive reports from
-> static analysis or automated tooling.
+> I agree. I tried to use the example, but it would be also good to
+> check if the BPF program was actually executed.
 >=20
-> No functional change intended.
->=20
-> Reported-by: kernel-patches-review-bot (https://github.com/kernel-patches=
-/bpf/pull/10006#issuecomment-3409419240)
-> Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
-> Signed-off-by: Shardul Bankar <shardulsb08@gmail.com>
-> ---
+> That is hard to do reliably for the current example, as it writes into
+> the global tracefs instance, which might conflict with another user of
+> the same instance. I will write another BPF program that will create a
+> map instead, and a script that will check the map value via
+> --on-threshold in the test.
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Huh, so I guess BPF is an exception to the "no generic printk to the
+global trace instance except for debugging that generates a big boot
+splat" rule?
+
+Speaking of which, why doesn't trace_osnoise.c call
+trace_array_init_printk() given that it uses trace_array_printk_buf()?
+
+-Crystal
+
 
