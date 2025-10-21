@@ -1,148 +1,133 @@
-Return-Path: <linux-kernel+bounces-862414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E5EBF539A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:28:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4BEBF53A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92EB73ABFB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DDD5460C25
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675AA303A0B;
-	Tue, 21 Oct 2025 08:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AC4303A1D;
+	Tue, 21 Oct 2025 08:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TtiB+EBC"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CYlcS07v"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0245302758
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A9B298CB7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035301; cv=none; b=ckUU6wWGxEI+F9P+D/xtmiHiQXF6cf1LpH/JnM1Al5CS0w1lHJ14YeMTIrmfQOY01e5EgEH1vqcEOGhp+jRxDfwrWlJxvfXD8BroyTmiLSNLgNgM48KdEzQlb/yO/VH2Iw1Vzgiox+Gr1EwO8SGja3gM0heoL7CnTWI8n7nILP4=
+	t=1761035313; cv=none; b=g9j7nWSRvOA6k8ituCKx/TDlynGMHwP79Pslyx3/MbAptVAXK/hfrULp4LMbnTQ3RFjtXWTUPyhpB7pVdhTQpZez5bRytFr0/rhHUKCYQTo86syDirBHVs2m2JUa1idySRFvYAdkZMqB1KaYD5mKVFcX/uW0EF9NIsVKdO1iyKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035301; c=relaxed/simple;
-	bh=bzpOktbYO2tYBTucV155BxXIDpmGKecPOHUkItg8BLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+yPY0PLTg65eu9ouzr8hg5K8+6L8vLpoPV+cXEOrCr0dXAkNIaZ7KV9Vq5w6Z6I2I9Fpve7rqlMX0F/OJr/KPZ+OafKPS85JDpdbDa1ONbVsrQvY0U8iM2Dy79YK+xyMy20QcYeUYq3G3twaDcho8J2TboKZyESZTybNom6P1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TtiB+EBC; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47495477241so4952325e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761035298; x=1761640098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b52ybaDxDJQAgpDd+OquVpENnANEDzFwPJdoTxwdyo0=;
-        b=TtiB+EBC6khzycTQDXFF0pZrO8uAvItn2dZX9PM0j0+F2KbUXquqVxw5H9YVDcpq2v
-         WUIct6ryQjNYskp+AEpX/Z+pNAjOVJ5NhQf4NAzIn+tRAp8zqv7xbgP9N8hW62Wj30bm
-         votBplHAmtYbQcl7M9OKGL82Zg3S+gHoiOcXLTZL02G/SUS0aC6df0ehEDm9vMD1EXGy
-         O51F96nKYFuZpi2eHqPBGW/Uj5Co2wRXpZ57TMlviNpuPxPljpvnNe9eNGox6WoaSwMC
-         SE84YFsb0PAWH+4ovJEOy0j8jmJBJ6aaoanMkVslbwk35vYjAHRQXT5/4CfQKI/Ds50u
-         9rCA==
+	s=arc-20240116; t=1761035313; c=relaxed/simple;
+	bh=6b74B6VXDCdcmJHeIm2ZbabEvGQgPJOC4TiiYfNyIxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHj0HP12sGiPy5lFQFdhkaZm16S8y4DuY7lLfUXtcFU4i5Gv6FMAhWhy53WpPLDq8q1c2bbdWyixAGhTuAMbiPbrNvFNEM2wo4TkWzZ+NigpwklHvjEXiS7nZIZXag2u06vWPWGx7/9cPOlNTAwI74im/n9bZNNfXfTa4v5rGTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CYlcS07v; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761035310;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9wgX9rXCO2UPANmfcyjOB2pBN8YmhnWytsGw80sw54k=;
+	b=CYlcS07vK4w/UQOtsUYIvNUKE+ZmCWnmNHD5zaCWAxwxHHx7VwMXUMKLP2Q35JZsLYPotj
+	CaakgnXqSxGuvAggG1EudK+zPfbclD/vZRRca78EniWtJgkVm2bUoT26jDyTeKLbKBm8wW
+	UVPETM5pivLcjrAlNM/e3t2/ymnvNis=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-146-HBSHd0M5OAib-XNXRbTD6A-1; Tue, 21 Oct 2025 04:28:29 -0400
+X-MC-Unique: HBSHd0M5OAib-XNXRbTD6A-1
+X-Mimecast-MFC-AGG-ID: HBSHd0M5OAib-XNXRbTD6A_1761035308
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47113538d8cso31090305e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:28:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761035298; x=1761640098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b52ybaDxDJQAgpDd+OquVpENnANEDzFwPJdoTxwdyo0=;
-        b=OfeLvzfO2Mf+ZgIqPbwUBZTRfz0ylV8f1j4bjyoRzBQqmBpG0k2Bg14w+X8arWInCE
-         55me3PUaHjmUIPiguPjYSe/R7DuDkQppHRnypoYQM+HZaeKdI87UFRS0wG0d65vh/Nug
-         rgthCq6Grepj+l7pMf6kLQAVmGDltdxsNwRtuq0tOr9a3oO2DEtGm7hrcA9ezUa6Ey4w
-         TohUnSUYMnId0UWe6zjH1KgUl5QrciaLMUGE1zlaBf7jbvq4TAq8FVn34mX5rAOE6yvV
-         ZRI0bh2vqwPrHCJMBwnE1ZCIjpylY8qyGg8zwUxQWVeFgLXrdxj4R1A5RAmSTG5DQ71Z
-         obFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSy4uWODiHScEj+4ykVGlqipjT4DnCYKieo3ngzhO5xm0P6NtfHjnxSM8LHkI/Sj4otyftljTyH3oK/Ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlleocU1dbPMlOXkQR51+rrxYSVgqzE46Kxc4UxAVqgiydCOnT
-	V69e84LTCjJE0iNXT6z5of/JtE0BqftDnjOnIvRjc8JuBcxBaEg/ECo2z++oV7Fv3VY=
-X-Gm-Gg: ASbGncsZJ5KrBxK7YS6oDfYakK4gNDtCqo0Z45sWDQb9pjnnWQBAWQpY5wh6hMqxPPY
-	Ef1boZPkCXeQ3cYiroX78qVQWlPOaon47h/DjrfFTry/QLiv6skEHVnCoRpYF3/QiVXDO5D3Ggc
-	ZWToNfHDt50hHh9XVgiB9RTSpXKu0eiZ/1ix+r402uFVn09gOrMX/SO/mXtuIq27oCKfe9Asd+5
-	jhkz8hWzq040gvqZwj3xoz8YY4XnSCc4pQCLeI0B4oKsTNDMiUuR2QS8XDa+zc5MLqaG7TvTzKU
-	wOViLc5odD3nwnN08MH+3RZBp0Yy0m1HAbabzn7wd09ewQKADf53qlY4CNcW2V8U4fmZH+//hte
-	kYl71uxS6tkXuM3c5Iqh7sF+RrcJfY5lekqp5plkJ3/VIbBqWMAvEPFJAji/eOGR4Vcwn38PdXl
-	GCJgoAg7gl44RVHN2B
-X-Google-Smtp-Source: AGHT+IEf+14wrIR+AkVBMF4pU21DeYP3U2sM85qOJiSGJSUOr3M9WjJk+DnUtO/N8Z7K2WyYMosFog==
-X-Received: by 2002:a05:600c:1994:b0:471:a73:9c49 with SMTP id 5b1f17b1804b1-471178745fdmr135759115e9.2.1761035298036;
-        Tue, 21 Oct 2025 01:28:18 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5bab52sm18943601f8f.22.2025.10.21.01.28.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 01:28:17 -0700 (PDT)
-Message-ID: <de62f91e-b081-4cf5-8052-0b910ccf1b41@linaro.org>
-Date: Tue, 21 Oct 2025 09:28:16 +0100
+        d=1e100.net; s=20230601; t=1761035308; x=1761640108;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9wgX9rXCO2UPANmfcyjOB2pBN8YmhnWytsGw80sw54k=;
+        b=qpdegjcf4u0Z0H0IvlrO86YTiKo0XH+v51XCe+RvoZtZwmudzT02YokesvrexpJKZq
+         qIQE1tifeUuTA97qQ8R3BO07uWdgMJDcNBXzgpO+ApzjMNFIXhXkL0ULu49RlMFJnjFc
+         EwQKUQM7/WDck1bJTX6bo2zt17hgVGfNtevSMp6hhnOoJHGNtzfa21d5qretJ7Wh8qgX
+         yUAniCo4lNzos8b6OJCU8Q0e4j2z+zstwKQDynYoPrHioebW4a0qX7cb4pzK+D3qU9Z7
+         gUJMfkn5n0uBfdGE662LpOLWPiAoHfrz25GP4ZjeeMl2o6jrcVCFLXf7B78NL19hP8M3
+         Gh7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUAjiwTG3nb4VBjeaRixXOznUHCRfbGDAQwGMRKux+SfVQxfOlx6QzuSdV7jQBYq3Xr469ZPU7DfR8zWGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk4pwLXISks//YLyOdqpHADqBskFHOfmJcWsPDcp87X4tI4IC/
+	Xz5R4n25BXLi9njBFcivx/D+OpQqy5AARuYYBXE63LUB83Ti9PKAWG2KYq3gcurkIFozLyd3GnL
+	Cipz/4BPDLF9sjhURyGrgpO6DvWdD7xxmp6mVDqi84yhEkCyoeNwULkE2UR8Nocrlzw==
+X-Gm-Gg: ASbGncvEwpiCxmYXwXrdsLJND4qDJredaRdqyovv8EbK/jtNFjLI7NI0CzXW2Km/SGo
+	Cdm7kX0DUvhm/YrBaNvPKfy8A/mLTQ37w2hqBToQYsmf28U0bkbHK6LTB36FmJmezMNZqJNMWYl
+	tKYO28XJC+BvfZNsn/YAbOsohA6fpaDUwCWUKNiWFZVeM2WA02A02qmPexrlPOGblG8w1OJWEMT
+	7b3mqsJWEyF1BZ1yv+wikc/NUloEoXiPig+nPGL2J8KrVADaIYzhLlXP7uF44IjqRk60+x+afhO
+	UoyWC/sFQQ17jY5A8KIuGerzSZEq+araBPvy/WvTdakLEWa44c8VRjtb0xK2JC8sBPGw
+X-Received: by 2002:a05:600d:824d:b0:471:1b25:f9ff with SMTP id 5b1f17b1804b1-4711b25fcefmr68406875e9.39.1761035307821;
+        Tue, 21 Oct 2025 01:28:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGRVyIsfoQR5BPGvrQHdlbSlAJgPiR7tZMRXYjTySH7Todua5vbiJ9sWTo57eh1Pa8fByUpA==
+X-Received: by 2002:a05:600d:824d:b0:471:1b25:f9ff with SMTP id 5b1f17b1804b1-4711b25fcefmr68406715e9.39.1761035307261;
+        Tue, 21 Oct 2025 01:28:27 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4714fb1b668sm213055095e9.0.2025.10.21.01.28.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 01:28:26 -0700 (PDT)
+Date: Tue, 21 Oct 2025 04:28:24 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, pabeni@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH net] virtio-net: zero unused hash fields
+Message-ID: <20251021042820-mutt-send-email-mst@kernel.org>
+References: <20251021040155.47707-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] perf jevents: Fix build when there are other json
- files in the tree
-To: Leo Yan <leo.yan@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251020-james-perf-fix-json-find-v1-0-627b938ccf0d@linaro.org>
- <20251020-james-perf-fix-json-find-v1-1-627b938ccf0d@linaro.org>
- <20251020163835.GI281971@e132581.arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20251020163835.GI281971@e132581.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021040155.47707-1-jasowang@redhat.com>
 
-
-
-On 20/10/2025 5:38 pm, Leo Yan wrote:
-> On Mon, Oct 20, 2025 at 05:08:26PM +0100, James Clark wrote:
->> The unquoted glob *.json will expand to a real file if, for example,
->> there is any file in the Perf source ending in .json. This can happen
->> when using tools like Bear and clangd which generate a
->> compile_commands.json file. With the glob already expanded by the shell,
->> the find command will fail to wildcard any real json events files.
->>
->> Fix it by wrapping the star in quotes so it's passed to find rather than
->> the shell.
->>
->> This fixes the following build error (most of the diff output omitted):
->>
->>    $ make V=1 -C tools/perf O=/tmp/perf_build_with_json
->>
->>    TEST    /tmp/perf_build_with_json/pmu-events/empty-pmu-events.log
->>    ...
->>     /* offset=121053 */ "node-access\000legacy cache\000Local memory read accesses\000legacy-cache-config=6\000\00010\000\000\000\000\000"
->>     /* offset=121135 */ "node-misses\000legacy cache\000Local memory read misses\000legacy-cache-config=0x10006\000\00010\000\000\000\000\000"
->>     /* offset=121221 */ "node-miss\000legacy cache\000Local memory read misses\000legacy-cache-config=0x10006\000\00010\000\000\000\000\000"
->>    ...
->>    -       {
->>                    .event_table = { 0, 0 },
->>                    .metric_table = { 0, 0 },
->>            },
->>    make[3]: *** [pmu-events/Build:54: /tmp/perf_build_with_json/pmu-events/empty-pmu-events.log] Error 1
->>
->> Fixes: 4bb55de4ff03 ("perf jevents: Support copying the source json files to OUTPUT")
->> Signed-off-by: James Clark <james.clark@linaro.org>
+On Tue, Oct 21, 2025 at 12:01:55PM +0800, Jason Wang wrote:
+> When GSO tunnel is negotiated virtio_net_hdr_tnl_from_skb() tries to
+> initialize the tunnel metadata but forget to zero unused rxhash
+> fields. This may leak information to another side. Fixing this by
+> zeroing the unused hash fields.
 > 
-> Searched a bit, if without quotes, the wildcard will be expanded by make
-> but not by shell.  It makes sense for me to fix it with quotes.
+> Fixes: a2fb4bc4e2a6a ("net: implement virtio helpers to handle UDP GSO tunneling")x
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+> ---
+>  include/linux/virtio_net.h | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-
-I think it is the shell. The only * expanded by make is file names on 
-the right hand side of rules. Either way it only makes a difference to 
-the commit message.
-
-> Reviewed-by: Leo Yan <leo.yan@arm.com>
-
-Thanks for the review.
+> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+> index 20e0584db1dd..4d1780848d0e 100644
+> --- a/include/linux/virtio_net.h
+> +++ b/include/linux/virtio_net.h
+> @@ -401,6 +401,10 @@ virtio_net_hdr_tnl_from_skb(const struct sk_buff *skb,
+>  	if (!tnl_hdr_negotiated)
+>  		return -EINVAL;
+>  
+> +        vhdr->hash_hdr.hash_value = 0;
+> +        vhdr->hash_hdr.hash_report = 0;
+> +        vhdr->hash_hdr.padding = 0;
+> +
+>  	/* Let the basic parsing deal with plain GSO features. */
+>  	skb_shinfo(skb)->gso_type &= ~tnl_gso_type;
+>  	ret = virtio_net_hdr_from_skb(skb, hdr, true, false, vlan_hlen);
+> -- 
+> 2.42.0
 
 
