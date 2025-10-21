@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-863624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7420BF8658
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:57:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16977BF868E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 90EC0356E92
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE0C1892D75
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4481B274FE3;
-	Tue, 21 Oct 2025 19:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="cbgE6ZIp"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC0227510E;
+	Tue, 21 Oct 2025 19:57:38 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5FF274652;
-	Tue, 21 Oct 2025 19:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD416350A2A;
+	Tue, 21 Oct 2025 19:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761076615; cv=none; b=mRbPqu+9FoT//3huVgzfXXORQ/hPmZoAQ7UC4UVEXeZ7cmwiwKOl0PfA64XddDbZhE3rSJxVsWbAGb/MTl6dK7JcIpYXZfFvOWITtpXjpprklB7St90m3pjR6bdDxf175Owx5cAAtlcP+qt8mWCtyDsds+5nDnHuKJVngE8gfNg=
+	t=1761076657; cv=none; b=KNWtGLl3hBbU4YOcv697wGmytiYUS7WyxNjutELSYpwd+saerRAANqCw2j1RvH7oNRgx9+pSIuJbpN1bZqnGfulmiiMA9IbML/u4K8ggYAe5q706+C3me1vuOhVdWgvEteEWLzTuVOmdh7/P5zA4PU+Em+1CCCpCIo+PnvJqIBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761076615; c=relaxed/simple;
-	bh=uyJ4+ZYdJDSiyU7gttduHt1TnkKidYtyKbIBzHJ8G9w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Vf6WAmTi9qoWZ5mQATdYbW7s+ti9RUIBbI4rXVHt9AeXAu/ilhABAwMVFvZexZHMRtvlwn80U5XRJpaXZ2/EhDcRDNVnYU9A+gKbs07l2eNUp8CDiJFm5tB9CLzoOR8GeZ9X593BcVr+jQpHQuYaoMFcTIE9qqb2w53NKx+EYrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=cbgE6ZIp; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=uyJ4+ZYdJDSiyU7gttduHt1TnkKidYtyKbIBzHJ8G9w=; b=cbgE6ZIp/E9bDXLrB81/nrYiGK
-	H94siNBqttYGGgOX01Tcv4+5wSe9MvCNnwqxGUkR2sg830i4fJqzg3OW60IaHIRhJ2wTz4ScBatSy
-	hnJsqbizC5hVpNKecJ5z34EpCWH99dmD08Bizv43I5jXIGRxiCnZviUIHFJ7jb6JAAP7CVyY1inzd
-	E+srhcOaFBsMAy/CzXmCLgUMISxNnGL2Rfot6WwKBZHVsWOhOHkyEZ6S0Hoo5L6jKnUBhhSy1wQPz
-	vyBgS+qQhSyQq4afJ73SVy26oMR6ScIJejVqfHlMu3EgWu8H32qDRee4S8BEfXmh8wNVC9SAh2prd
-	BPFpDfFQ==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1vBITQ-000IMp-3A;
-	Tue, 21 Oct 2025 21:56:49 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1vBITQ-000I1x-1D;
-	Tue, 21 Oct 2025 21:56:48 +0200
-Message-ID: <e7086b14b7585ffe1215afbd85c15599e6c51714.camel@apitzsch.eu>
-Subject: Re: [PATCH v2 0/8] media: i2c: dw9719: add DT compatible and
- DW9718S support
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Daniel Scally <djrscally@gmail.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Val Packett
-	 <val@packett.cool>
-Date: Tue, 21 Oct 2025 21:56:46 +0200
-In-Reply-To: <750398e8-1781-47be-bccd-e2679a58d449@kernel.org>
-References: <20250920-dw9719-v2-0-028cdaa156e5@apitzsch.eu>
-	 <790fd7d05fa03f788f0a628a99b2e127db824207.camel@apitzsch.eu>
-	 <750398e8-1781-47be-bccd-e2679a58d449@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	s=arc-20240116; t=1761076657; c=relaxed/simple;
+	bh=mQAeIUj+5N6ZMI+9sCTvDOby4ZK86es/53DbWVnlNwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iEfiaq1ggkQUlGbubdxRaKCccIs2MByNO7C4SqjoNSPS+Yod9ticwSLroR3A9JiNiGYpHmzyKvDChaqD8JSxTj3ZsDyxDGbJhjCnSjmpnjdQZSEBHCrpujskFC4iMFtv0e9+EP+dpR/WF5v9GEupLHndPrgDDxPyEWBuxmw7lyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 99D7A16065D;
+	Tue, 21 Oct 2025 19:57:27 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 3647430;
+	Tue, 21 Oct 2025 19:57:24 +0000 (UTC)
+Date: Tue, 21 Oct 2025 15:57:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada
+ <masahiroy@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, Nick
+ Desaulniers <nick.desaulniers+lkml@gmail.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell
+ <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v9 4/4] tracing: Add warnings for unused tracepoints for
+ modules
+Message-ID: <20251021155746.7623b0f4@gandalf.local.home>
+In-Reply-To: <20251015231928.GC3943617@ax162>
+References: <20251015203842.618059565@kernel.org>
+	<20251015203924.731213165@kernel.org>
+	<20251015231928.GC3943617@ax162>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Virus-Scanned: Clear (ClamAV 1.0.9/27799/Tue Oct 21 11:30:25 2025)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 1o9gydmia61y3jehqe9awbktnhqobewu
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 3647430
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19btsGDjdf3yUND2ucEAIwOWovMpIr+28w=
+X-HE-Tag: 1761076644-924534
+X-HE-Meta: U2FsdGVkX1+rvTCtXMUuQ3Ao89OtwXtoLr7g43VgtOfYrHJ8ufTIkxn1etAIbhOeta2Fkyspe1Rk9sUnHdjm6qRWWUunyu8xL/luruEL9eBdtiLrlDZD732WkaPbtKWGvlZreWGfxreHI3S23O5GJ5LoAyV0eT22hmK2XdeCnhA2NbtFOsFD8i1qyLXvC+gXEJkTX/7LxK1Qir1VpxlXyjfsp7/8HYI5ax2Io24m0u9zxkUtlZdeFBQ1TaidMAncmWEcV+mVCAtAs1BKfZ46dwRZw43UIGztAGBCaBNRBRjA7VLLIYOt7r+DkvI8hvheWhSKWR4v5mFF09dBerglA9O3sbQQ4j7Y
 
-Hi Krzysztof,
+On Wed, 15 Oct 2025 16:19:28 -0700
+Nathan Chancellor <nathan@kernel.org> wrote:
 
-Am Montag, dem 20.10.2025 um 22:45 +0200 schrieb Krzysztof Kozlowski:
-> On 20/10/2025 22:40, Andr=C3=A9 Apitzsch wrote:
-> > > =C2=A0.../bindings/media/i2c/dongwoon,dw9719.yaml=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 88
-> > > +++++++++++++++++
-> > > =C2=A0drivers/media/i2c/dw9719.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 110
-> > > +++++++++++++++++----
-> > > =C2=A02 files changed, 178 insertions(+), 20 deletions(-)
-> > > ---
-> > > base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
-> > > change-id: 20250709-dw9719-8a8822efc1b1
-> > >=20
-> >=20
-> > Gentle ping.
->=20
-> Please apply the patch and run checkpatch. Probably you received
-> checkpatch warnings from media patchwork, no?
->=20
-> Best regards,
-> Krzysztof
+> Hi Steve,
+> 
+> On Wed, Oct 15, 2025 at 04:38:46PM -0400, Steven Rostedt wrote:
+> > diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
+> > index 542ba462ed3e..6f909979af91 100644
+> > --- a/scripts/Makefile.modfinal
+> > +++ b/scripts/Makefile.modfinal
+> > @@ -28,6 +28,12 @@ ccflags-remove-y := $(CC_FLAGS_CFI)
+> >  .module-common.o: $(srctree)/scripts/module-common.c FORCE
+> >  	$(call if_changed_rule,cc_o_c)
+> >  
+> > +ifneq ($(WARN_ON_UNUSED_TRACEPOINTS),"")  
+> 
+> Drop the "", nowhere else in Kbuild appears to do this.
+> 
+> > +cmd_check_tracepoint = ${objtree}/scripts/tracepoint-update $<;  
+> 
+> Please use $(objtree) to be consistent with the rest of Kbuild.
 
-I run "b4 prep --check" before submitting the series and it didn't
-complain about the wrong separator, that you have spotted in patch 1.
-There was also no email from media patchwork. Should it send one if
-checks fail?
+OK for both.
 
-Best regards,
-Andr=C3=A9
+> 
+> > +else
+> > +cmd_check_tracepoint =
+> > +endif
+> > +
+> >  quiet_cmd_ld_ko_o = LD [M]  $@
+> >        cmd_ld_ko_o =							\
+> >  	$(LD) -r $(KBUILD_LDFLAGS)					\
+> > @@ -57,6 +63,7 @@ if_changed_except = $(if $(call newer_prereqs_except,$(2))$(cmd-check),      \
+> >  ifdef CONFIG_DEBUG_INFO_BTF_MODULES
+> >  	+$(if $(newer-prereqs),$(call cmd,btf_ko))
+> >  endif
+> > +	+$(call cmd,check_tracepoint)
+> >  
+> >  targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) .module-common.o
+> >  
+> > diff --git a/scripts/tracepoint-update.c b/scripts/tracepoint-update.c
+> > index 6ec30f39d0ad..7e068de9c7f1 100644
+> > --- a/scripts/tracepoint-update.c
+> > +++ b/scripts/tracepoint-update.c
+> > @@ -188,6 +188,13 @@ static int process_tracepoints(void *addr, char const *const fname)
+> >  		}
+> >  	}
+> >  
+> > +	/*
+> > +	 * Modules may not have either section. But if it has one section,
+> > +	 * it should have both of them.
+> > +	 */
+> > +	if (!check_data_sec && !tracepoint_data_sec)
+> > +		return 0;
+> > +  
+> 
+> This feels like it could be its own patch but I guess it does not make
+> much sense without enablement. It might be worth calling this out a bit
+> more in the commit message.
+> 
+
+It was found during debugging. I could make this a separate patch in
+preparation for this patch.
+
+-- Steve
+
+
+
+> >  	if (!check_data_sec) {
+> >  		fprintf(stderr,	"no __tracepoint_check in file: %s\n", fname);
+> >  		return -1;
+> > -- 
+> > 2.51.0
+> > 
+> >   
+
 
