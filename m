@@ -1,78 +1,126 @@
-Return-Path: <linux-kernel+bounces-862433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA959BF5466
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D61ABF5478
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F3774FCF17
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0856467A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F73304BA0;
-	Tue, 21 Oct 2025 08:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839F0307AE1;
+	Tue, 21 Oct 2025 08:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ZMisxgFw"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkcFdEM9"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D897B29617D;
-	Tue, 21 Oct 2025 08:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F4429617D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035618; cv=none; b=o1rx4dhif5RJS5szvORLb7izd0DguRO3ZvWnRQn3eE2leK2ceg51XxsTnC9V+0jvemx3XM+HHuogU6I1tWYzj2ViSZ7HtV6267wMwEY1wcBdnEn6/WwNTs2zJ0iI54CCNpmN+PrU2IZ+2vYZIbd/ev6Pr+eUH61LE5ItAC5hm5k=
+	t=1761035631; cv=none; b=U1boPJa6HwWLSOYRZ3EVJlil3C6+cVOx+LmiBQqyZHmV9w47IiaUOwxYXqqmX8ZQkwCV3abpiLLQcR2fm8gSJkOO5r6nB0C7rDtKsNCRSvAND6KPOaDI5/0BwsAFZUGh2XyqPzvH771L5VV91wjE9X4OYH6vVGuGey+ZJ7Pk4i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035618; c=relaxed/simple;
-	bh=7iU7CJTvsGK9QB7AoMy91TybH/xefVCLXzcsEBKxdlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A2yLFLaICyedk3S1bxy36AaG9ZEjjqdjqx3et3siUj1NiQqlRcw+juUtWvJEvA/UHGqfdBJfLBaaRvKw5Yd1/cBmeCkV59cpGv+b7fAfg2ufTbnJEU2wMJlaae17fe2CYmoMf52nqe0iFvPl25gwF5jciCQZMHupHLXRY2U2ARA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ZMisxgFw; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=wVH8qj8Pg0otsfGSWfNaf2orFhrbu2S797ibxbYfU1o=;
-	b=ZMisxgFwfZYcUxQVgOeJ8r907ZvHQcT3D08YfXgNn0ihnWGJZcHh+PCWeTEuW/
-	LGIH2YC/aIhi/PZbv3FmY8n0az1rD0T71PjmNsvS0L1AAFtdcm2nZffuot/zOEP2
-	7evX+vB1UfaNzgSg+ZV6rCLhTEEg34mPwvoDIKXa2uLm4=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgD3d7A9Rfdo_wZeAA--.47555S3;
-	Tue, 21 Oct 2025 16:33:03 +0800 (CST)
-Date: Tue, 21 Oct 2025 16:33:01 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Joy Zou <joy.zou@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx95-15x15-evk: add fan-supply property for
- pwm-fan
-Message-ID: <aPdFPdXD6MhZRvQZ@dragon>
-References: <20250919-b4-imx95-fan-v1-1-c9127bd975e9@nxp.com>
+	s=arc-20240116; t=1761035631; c=relaxed/simple;
+	bh=sC9XWrnBE3t7CWsd+EUC6s+rW0xvjJOyGukU/qizeVs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bwgmF6cVN7/9SJiCkNUNBPmlE82jgxeFWridpal2z4wp9ZMnBBifarmXoKZmPQELhGL/XQUftezjBZMDpSoF1Axnb+t2hV1Y2EEFmsuZYgwLKoVDf+/B5FzG7Bbfru0oIlMyb5ASxivwJM+7geDm4juV7KUmRwsN0c3e8UGQGVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkcFdEM9; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63c09141cabso7935273a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761035629; x=1761640429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gyP++HOcnM7lkmBraj+8ZhnO1B17TMRPQ7N0T27aqTI=;
+        b=QkcFdEM941FvSGgVKR6mAUYEOJNo0jtZlbyrMg6OLyfOkykbA6xhriNopFiQBv3IZy
+         OyM2B+S0YJFYG2s454TXEC8YNMZB0n6GOk6oFBtO3shjrb4VY+UppC+66pTatdLFjizg
+         1LC9jcf8j3Du4/UVggTO7p5UnSz/9P+LJOQC8yLVBVZZx4pASRe92ahe2LDZ0y1BM2do
+         c5j9poEaFu26Z5ft4VSZ8WZJtg4zgTGT3+xHkJ2dMGCDfPmKZuIWBsDqOroBz3/cwuPR
+         vAsQAYvtUecTgi+uIQcKcLRo3RfUDPNHHw10ltI2R5SuTqH0Abm5G2nJPvb5fnum22ri
+         cVcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761035629; x=1761640429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gyP++HOcnM7lkmBraj+8ZhnO1B17TMRPQ7N0T27aqTI=;
+        b=g2rZGT2xFZtginTEYJW54Ujy5307ayGTTFPSeh7GZ+iD89D1cme8PQzTt9dw400U8Y
+         BDrGK2+aqt5fPUKvUBHqtUyPLqoj/nrlEBJ55r9Y4nuZu4fXHOEfLxe69LE52ZPMFy13
+         jMxSR127ECyCX/6cxcemqTXeNtRRqkHiTf7cA2QyvwxA7DnvL911PiSvvUCvEgfFu5bq
+         vb8+e6MUdea8/5+pqevZ6rKNYZLNl7VTLJrhbEIn1+RLQ2Rh9LtAIzTJcxXPfajYMxgl
+         Q8UDCCY5B47Ufl8XZE9G1H4U8DKLNu8mKFkDUDmg8FFWkTWYLXIOzYbvvFa5aA2/slaY
+         ZjtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxNeeIhpal16tZjyxKi/fGYDbq1lhwmXOUMon1+hLot8i+zoUrvp6h6lun7K/r3WXuVHw6d2f7FDwA8gA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjRkdEX7HuMyKXMYYbMhkXfztvm83miVHirdFMRB6DoBvHIAsB
+	N+dWHpA/aNjiNr9u0cm9ehEcILP9SnzClUG5/vyVSwY0M/xcZXT1GSFT5aoLj58gmiRWQGzUC6D
+	YjK6SWUXVyyng+OwVBZultvcTZZj3id0=
+X-Gm-Gg: ASbGncv2k27Kr6lF0VCVdDUlArMQzvD5zBWA08QK1Zupsw6UzzGuhOjGidbP9d+sMzX
+	PadOOvnRLluqcTB2lgbyYJWbJIrW9xidvpmtZTVFFFeszUoPBJJpqhmt8Ei409aEgzV2bgD1G3/
+	tRRGRaikMS2oQTxxlYIj2J++f7J9vvCVdxp/pyEPsM2BF2Ifc6RFLId+iaU87dqOCUULVV2qbAH
+	epzcHC8VKAtoSqIlIkoImSco5oP1v2hYyhLdbXgSJ0eOPqhkI+kIzoLj8Yp2Q==
+X-Google-Smtp-Source: AGHT+IH/pE5ik6MMElYZe3UMIK5tnAihJXbcXEyKiU+GhEhSlSbJSIbTy2jEhjI6EnSJJeysRC1LrRzMS8mFAq/utIA=
+X-Received: by 2002:a05:6402:5247:b0:63c:4d42:9928 with SMTP id
+ 4fb4d7f45d1cf-63c4d429ba7mr10190315a12.7.1761035628426; Tue, 21 Oct 2025
+ 01:33:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919-b4-imx95-fan-v1-1-c9127bd975e9@nxp.com>
-X-CM-TRANSID:M88vCgD3d7A9Rfdo_wZeAA--.47555S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUxwvKUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNB943Wj3RT81VwAA3J
+References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+ <20251020093941.548058-6-dolinux.peng@gmail.com> <f7024fc31ccc9c8b8bdfe2865cdf3604079e0039.camel@gmail.com>
+In-Reply-To: <f7024fc31ccc9c8b8bdfe2865cdf3604079e0039.camel@gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Tue, 21 Oct 2025 16:33:36 +0800
+X-Gm-Features: AS18NWDhGggOjJO_tD-qLkRT-BVTimxKtqYZ4e3A7X_roKbqerQg19kh8xI5vfY
+Message-ID: <CAErzpmt8HOfZUtYSbmemvpwKO7=Y79ffJo--tLaEsHFUQCRtmA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 5/5] btf: add CONFIG_BPF_SORT_BTF_BY_KIND_NAME
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 10:27:04AM +0800, Joy Zou wrote:
-> Add fan-supply regulator to pwm-fan node to specify power source.
-> 
-> Fixes: e3e8b199aff8 ("arm64: dts: imx95: Add imx95-15x15-evk support")
-> Signed-off-by: Joy Zou <joy.zou@nxp.com>
+On Tue, Oct 21, 2025 at 8:50=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
+> wrote:
+>
+> On Mon, 2025-10-20 at 17:39 +0800, Donglin Peng wrote:
+>
+> [...]
+>
+> > diff --git a/kernel/bpf/Kconfig b/kernel/bpf/Kconfig
+> > index eb3de35734f0..08251a250f06 100644
+> > --- a/kernel/bpf/Kconfig
+> > +++ b/kernel/bpf/Kconfig
+> > @@ -101,4 +101,12 @@ config BPF_LSM
+> >
+> >         If you are unsure how to answer this question, answer N.
+> >
+> > +config BPF_SORT_BTF_BY_KIND_NAME
+> > +     bool "Sort BTF types by kind and name"
+> > +     depends on BPF_SYSCALL
+> > +     help
+> > +       This option sorts BTF types in vmlinux and kernel modules by th=
+eir
+> > +       kind and name, enabling binary search for btf_find_by_name_kind=
+()
+> > +       and significantly improving its lookup performance.
+> > +
+>
+> Why having this as an option?
+> There are no downsides to always enabling, right?
+> The cost of sorting btf at build time should be negligible.
 
-Applied, thanks!
+Thanks, I'll remove this config option in the next version as suggested.
 
+>
+> [...]
 
