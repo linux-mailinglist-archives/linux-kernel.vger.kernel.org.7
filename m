@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-863356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3F4BF7A55
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:26:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20677BF7A6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05A774F98AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:26:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B5304F6071
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B80F3491DE;
-	Tue, 21 Oct 2025 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6743E3491E6;
+	Tue, 21 Oct 2025 16:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="3mN1nDvv"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LfcSrQDC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DCB2DECB0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F283451B5;
+	Tue, 21 Oct 2025 16:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761063965; cv=none; b=Bk7OTfLVCSI55fYj1nvti1CDuDH4wioHgWs1OTTlbvKKgis/7VtO/DWtJcOjiMcZXTdsECjA83jRUpcBEAJ8XWpBJ8KPKlFyvikQxOPxcEXIgBBgGwzvAsOOsKgmNpp5Nna7GFYFIEkoKI6burOhlbVmFA6IUzJKtNeuRwfVyK4=
+	t=1761064016; cv=none; b=emGCWoSEbJuVcMeG7jiXr9FKF9FjzPVh9KPMlypG2ewjz95Lgtspe7p7Lf0X88gSbQpHwGSveEbDQFdx/olwcQ6/YmiMCtIrRO76EQ1jKuiATBUDsD9p+CYhlMmpPonCEm/g7XXN0SEjuEK42527fOe2G8qFrTQ/WuWI9kgRF4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761063965; c=relaxed/simple;
-	bh=6R1KW03BlAqZIPkPdTpbrLdRFVQw9kdpmHbWu/eh0hU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIHI1jnFByhQt3G9qBYxHlACR1jzY88ZGZ8HBHd/+SLhvry8JFZvQSrpoOcMiZGooxGErtM8zrrGxg1rFf3yUS4RjoRi+BZMWz3tNcKGbWLOUA0OmJxO5au44LiB3J1UWBgXCwwHlAYA0NljfApxXK0SvdJafBVxhEuY6fHhsk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=3mN1nDvv; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59LDOcnY3758033
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:26:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=uixxVY5jBxz7ifOxrNlz
-	AIr93OBtbXeTLIuJeKqDRW8=; b=3mN1nDvvW2b3puZIQm3jI4O186+QpPjneWHI
-	lcbJcimLisZD2dwjjxnP81e/Fya53QRoVsWDnBw68h6JTKw3rCyRfWjN/kX+neWM
-	tkZsnQnIKn+kk/rZ43JvmNIVAFUQi6JVsCmmNAdRRPLFd+6GHJ3KlT+UQz0olWBL
-	KW9WDdq6Npp3vrBP6q6PRSU75LBB25vsPZ2kRsn2geEs2PFJjoyQ/nk8eyV8eLdd
-	NfP9XB0UjOOy4z7ygRsmqTzkqq2IJKIHNIVIa82PK65pq+qyGxkJq87uS1ydFa0r
-	4Lfi32K+1kNl09wwyByrpwUOS1wfrSc7g3IRHM6+FOHc2q7NiQ==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49xb1g1nw0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:26:00 -0700 (PDT)
-Received: from twshared51336.15.frc2.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 21 Oct 2025 16:25:59 +0000
-Received: by devgpu012.nha5.facebook.com (Postfix, from userid 23751)
-	id 49A5D4D1322; Tue, 21 Oct 2025 09:25:55 -0700 (PDT)
-Date: Tue, 21 Oct 2025 09:25:55 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-        Jason Gunthorpe
-	<jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, David
- Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
- limit
-Message-ID: <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
-References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
- <20251015132452.321477fa@shazbot.org>
- <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
- <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
- <20251016160138.374c8cfb@shazbot.org>
- <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
- <20251020153633.33bf6de4@shazbot.org>
+	s=arc-20240116; t=1761064016; c=relaxed/simple;
+	bh=s3oZkA4nJ7dcSOY1YyzCYB73ZTlasatK8ZPHkJrRTVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FS1WC5G5GmWNc3cFBhH6MDGHkzmUle6Ao+RxpLF+IYVGz1ZIWqxVzpKIM08T1IqNaFNRx0ms8SmpyhOKU23zU2EtyKsbzbcSbIfN1TS8FakSdy/nw19DlbKxExXG04hun3fVyQdwoRDwq2WNpzIKWkbxxaVDzXMPUdc+DsEO1T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LfcSrQDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE4ACC4CEF1;
+	Tue, 21 Oct 2025 16:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761064016;
+	bh=s3oZkA4nJ7dcSOY1YyzCYB73ZTlasatK8ZPHkJrRTVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LfcSrQDCHwNzt4RPoijyP5r0oK8HcWQBlbSmOFbeqL9mn8i0lkkTjAwvLzcDbuUwM
+	 vE9SUCijeOuSDKyKmh3PhrCBrDmRLLzE10f5QYAIvtOEoTOwiX+godV6ke7jqvIKVd
+	 AbVhNANUvKUi4MT9Vbog25sWcreBAckm2pKGxgDk=
+Date: Tue, 21 Oct 2025 18:26:53 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Xin Zhao <jackzxcui1989@163.com>
+Cc: hch@infradead.org, jirislaby@kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, tj@kernel.org
+Subject: Re: [PATCH v1 2/2] serial: 8250_dma: add parameter to queue work on
+ specific cpu
+Message-ID: <2025102107-player-baggie-37fc@gregkh>
+References: <2025102157-goal-grandma-36d4@gregkh>
+ <20251021130513.871830-1-jackzxcui1989@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251020153633.33bf6de4@shazbot.org>
-X-FB-Internal: Safe
-X-Proofpoint-ORIG-GUID: zW74K4sdWIr4f2Ott3UiFid0eOtJJ0Lu
-X-Proofpoint-GUID: zW74K4sdWIr4f2Ott3UiFid0eOtJJ0Lu
-X-Authority-Analysis: v=2.4 cv=Jr38bc4C c=1 sm=1 tr=0 ts=68f7b418 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=PJXvXVaVCeDa2e8N594A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDEyOSBTYWx0ZWRfX1hpEaD1WDYpx
- SLfShURvoffB61zB3IlZoaRYR2DEoXYDK0PGDq2Ht/OnSwuyCTWxNBKLWchzKfzXMBcmbDDw6CY
- rLy8ue7fbd3zvt+OPyjDtxjos1NZtVWgywy9o20wW0kKWQbkUp8/CKxEYCXn2UgKPYgIYti0AT5
- OV0sEVODbFqJDVaIdoIUXRg0TdFbXkJfca1l8NgQrme7U8bXu4EaCrli+t6bQ7q7Ipe019zkc1J
- 4H4w+Af+b5RmI+xOJydvAPBJds7A/00UVKsVL4K2T6NpoMmVtSOlOmgMdJAtiLcB95iSYHSyw/6
- UksItTLf2l9FiIjJDdv0eMrp9chXtvJZnTGOu1knrmA2upZdYuwLduCprR+M+IIl4BL1T2D24Iu
- 85FP1H3LlTqICO9O2kzZpTHwHvSsTQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_02,2025-10-13_01,2025-03-28_01
+In-Reply-To: <20251021130513.871830-1-jackzxcui1989@163.com>
 
-On Mon, Oct 20, 2025 at 03:36:33PM -0600, Alex Williamson wrote:
-> I do note that we're missing a Fixes: tag.  I think we've had hints of
-> this issue all the way back to the original implementation, so perhaps
-> the last commit should include:
+On Tue, Oct 21, 2025 at 09:05:13PM +0800, Xin Zhao wrote:
+> On Tue, 21 Oct 2025 13:28:46 +0200 Greg KH <gregkh@linuxfoundation.org> wrote:
 > 
-> Fixes: 73fa0d10d077 ("vfio: Type1 IOMMU implementation")
+> > Meta-comment, this is a v2, and was not threaded with patch 1/1.  Please
+> > use a tool like b4 or git send-email to send patches out so that we can
+> > properly review/apply them.
+> 
+> I did use git send-email to send the patches. I have successfully used the
+> git send-email tool to send a series of patches before, and that series was
+> later merged into 6.18-rc1. Therefore, I feel that my usage of git send-email
+> should not be an issue. The only difference of my current submission is that
+> after sending each patch with git send-email, I waited for the patches to
+> appear on lkml.org before sending the next one. I had encountered issues before
+> where sending multiple patches in a row caused only some of them to appear on
+> lkml.org, with others taking a long time to show up. That's why I specifically
+> decided to wait a bit after each patch this time. I'm really not sure why the
+> system didn't group my three patches together; it's quite puzzling to me.
 
-SGTM
+I do not know, but it was not threaded :(
 
-> Unless you've identified a more specific target.
+Try sending it to yourself and see if the delay maybe caused a problem?
+there should not be an issue sending just 3 messages at once.
 
-I have not.
+> > Are you using the RT kernel?  It seems odd that this is just coming up
+> > now, given our normal latency issues in the tty layer.  What changed to
+> > cause this?
+> 
+> > > In our system, the processing interval for each frame of IMU data
+> > > transmitted via UART can experience significant jitter due to this issue.
+> > > Instead of the expected 10 to 15 ms frame processing interval, we see
+> > > spikes up to 30 to 35 ms. Moreover, in just one or two hours, there can
+> > > be 2 to 3 occurrences of such high jitter, which is quite frequent. This
+> > > jitter exceeds the software's tolerable limit of 20 ms.
+> > 
+> > Again, are you using the RT kernel?  If not, can you try that?
+> 
+> Our system is indeed RT-Linux, version 6.1.146-rt53. Our project has been
+> ongoing for about 2 years, and we hadn't paid close attention to these jitter
+> issues before. It is only recently that we needed to focus on them specifically.
 
-> Along with the tag, it would probably be useful in that same commit to
-> expand on the scope of the issue in the commit log.  I believe we allow
-> mappings to be created at the top of the address space that cannot be
-> removed via ioctl, but such inconsistency should result in an
-> application error due to the failed ioctl and does not affect cleanup
-> on release.
+6.1 is very old, please try the latest 6.17.y release, or 6.18-rc1.
+Lots and lots of RT stuff has been fixed since 6.1.
 
-Makes sense. I will clarify the commit msg in v5 to be more specific about what
-this series changes relative to existing functionality.
+> > This is not the 1990's, we don't add new module parameters :)
+> > 
+> > This will not work for systems with multiple tty devices/drivers, please
+> > use a correct api for this if you really really need it.
+> > 
+> > But again, I think this might not be needed if you use the RT kernel
+> > issue.
+> 
+> If user-configurable CPUs are really needed for queueing, do you have any
+> recommendations on how to implement this? Would it be appropriate to create
+> a new node under /sys/devices/platform/serial8250/tty/ttyS*?
+> As mentioned earlier, our system is an RT-Linux system. As you say that
+> using an RT kernel may not encounter this issue, are you implying that RT-Linux
+> has priority inheritance logic?
 
-> Should we also therefore expand the DMA mapping tests in
-> tools/testing/selftests/vfio to include an end of address space test?
+I'm saying that the RT selection should cause you not to have those
+larger variants in delays.  Try a newer kernel and see.
 
-Yes. I will append such a commit to the end of the series in v5. Our VFIO tests
-are built on top of a hermetic rust wrapper library over VFIO ioctls, but they
-aren't quite ready to be open sourced yet.
+> However, the logic within work items isn't
+> always protected by locks. Even if everything is under lock protection, when a
+> work item starts executing and hasn't yet entered the lock, it can still be
+> preempted by real-time tasks. In an RT-Linux system, such preemption of kworker
+> by real-time tasks is more common compared to a standard kernel.
 
+True, which is something that the rt changes should have addressed.
+This sounds like an overall rt issue, not a serial port issue.  Have you
+asked about this on the rt mailing list?
+
+> > So you just bound ALL tty devices to the same cpu?  That feels very
+> > wrong, how will that work with multiple devices on different interrupts
+> > coming in on different cpus?
+> > 
+> > Why not just queue this up on the cpu that the irq happened on instead?
+> 
+> If possible, I will later add a node to separately configure each tty/ttyS*
+> device. The approach I intend to use is to add this tty_flip_cpu node under
+> /sys/devices/platform/serial8250/tty/ttyS*. Is it OK?
+> Based on our project, the DMA RX complete events for tty are almost evenly
+> distributed across each core.
+
+This should come from a hardware definition somewhere in your DT, not as
+a user-selectable option.  And again, why not just tie it to the cpu
+where the irq came from automatically?
+
+> I believe it is necessary to increase the
+> flexibility of the queue_work to be located on a specific CPU, as it is difficult
+> to predict whether a core is running many long-duration real-time tasks based on
+> the driver code or low-level logic strategy.
+
+That's a system design issue, not a kernel issue :)
+
+thanks,
+
+greg k-h
 
