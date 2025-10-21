@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-863303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D933CBF7828
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:53:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A55BF7831
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B90F1403761
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19027422368
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85129339B5C;
-	Tue, 21 Oct 2025 15:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF7C340282;
+	Tue, 21 Oct 2025 15:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="euiQK8r0"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IVX7j4b3"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA7D1DE8A4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D08355057
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761061841; cv=none; b=CQFEk0ZsVBx7NvK/p3VR0WjVpVHW9dmXy7QA2TDvS+g/LSKwbyvqZ3hpclu5YIbFViqIVLsO4yCu8BQxcZz5fXGt6Tm9Mdc9rVzfPjWGu4b/2wNRTpAJZAZtPH0vORlkMSbH9MrNcAb9syFfz0yIrNRspwg20BBSehNPC8ik8Dw=
+	t=1761061909; cv=none; b=YhbM6OaB/utxp1X0XwgpnYb3lRasKNmdSIZvo3Cff6BRFr2xjJBBpMSKTNqjsGSua1osStKtavedA++SB1zeTgL748xDU3A6bx3tXGtyHr0/jc0j6qZDl47zd7vV/EgrQkp9GUMs1KFHcwjSOnwwH0NTeRWNbrQTkeXtDWsUcM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761061841; c=relaxed/simple;
-	bh=w/7b/vcrnwDmzcCJFmEGmVXMR8uWlmKwT0l7hIVnP3U=;
+	s=arc-20240116; t=1761061909; c=relaxed/simple;
+	bh=lViBcaKLu+UAiDt1Nf19hKosCzWDWEUaKqiaIlkaqqg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UJp3+GB+AJnqE07W8rkUysF3AWS7vDWGeCBenvapqXG/AFZxgSyoZSS0VvPit6EGYGMnFJ450a3KOptA9BhYbCKsFarZ2eKNHeuvgy7KVmVUYfEzmuqmZbH+uh4dun7APORbo32Q3TEY7br8sQSBHH21gU4EWU52rRgE679UZjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=euiQK8r0; arc=none smtp.client-ip=209.85.208.53
+	 To:Cc:Content-Type; b=o+qe8Px3438iNYzZErF2ROwsZcpglARvtmKxuZsuUmRKS+fEsWObQAKo2ww8K/jgjuJb4W1d0cw6O4rdGKt8BqXx8r9B8piPa5ijhmtkTHxKpxCOhLuiBwAHc84Cm+a0Cj5vZcsy9zW0b05iDBa1Z1c8xjaYi6tuopbWAVxf424=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IVX7j4b3; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c31c20b64so7312162a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:50:39 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b5a8184144dso941674566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761061838; x=1761666638; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1761061905; x=1761666705; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSX4wv/8cP4pcdwROoiiFUZrKHWnfYkhVs1Qya+vg78=;
-        b=euiQK8r0b0SXwtUX8uLQPtctlbovEFbHGeSzCpBtjO4D9MbwRCw+msic9v+JMQttAw
-         VsVMu1DWnd6JDwUlME/RiRXoHdLu4+2cWLlB7SK3bg66XDXDsB3hXye9ONX7vh1FN9LO
-         4Lx98npo9N5UBPYV9ERaiV6cxl1Knjg9pJ5VU=
+        bh=+0cSMAwFRMJRxsYANvmyJeRZmZI2zdPSEESzl/tT500=;
+        b=IVX7j4b3r0Y1ESPHIeWh8815sJzlcF+mjmohss+B3sEAbfTRtZqY0NHLiN8iTltYMk
+         uuBQ3+rYHYxEbl2Gj/chqXjU97ZCTxJ2qN0TV5Ge92VhWdoUWXTCiDpBnqx0rMgWd/aM
+         0xzZkEqCnIZwwxANV9IP32XXBcPyDotu9gHtQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761061838; x=1761666638;
+        d=1e100.net; s=20230601; t=1761061905; x=1761666705;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WSX4wv/8cP4pcdwROoiiFUZrKHWnfYkhVs1Qya+vg78=;
-        b=L10FQ3aSpnIlYhNn+0VRJZxChRrFnCTXYzCd8HOOO6P9Ppk823jx47Zj/XW/XMusO3
-         2o9A7nyAFaKWxyqvyb8A2UnBtxcJfdyWCdwRENDlZVsqT7Nadm7Zidof4S/UjXTnoMfC
-         FZJH8gMBYXROGLuaFOC6Ktp2mfyA/kap7B6fulFuIm6Y81yf9o63UpqnOkr/kvHdk1i5
-         uQFJAFnLNh1ldAWBqJCACw/k17kYTeze5lnYu6MhCv7BjIm9XSJiK5MDVlpe1bvTWDFg
-         CHO64ovIZpBJFWLTz+F30LrpgzKFcUgi5TFntTGBdR9hr3XAetmoN+LoFppm9QqyuZLv
-         FCcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3meGwJ10sS3DBPw0LBJtEerN0iL7yvIXQjTDD8KxjWaNiN5wBA6Skxo5DjIjOfxpLT2qPUXOodyWti4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLHQgAl4HbkWIJ9lLbAQnJaudmaFoFO0G4ycNNNpbctvdcMn6r
-	TM5fn6LppST2iZYa9sUgDo6Bx0OYhsoTTyCCzEYuTyKcbPoF7g3Invv6RNf21QkE2+wxiJZTpkd
-	tQjRnTDk/1w==
-X-Gm-Gg: ASbGncvvlr4//A3SaM0AATW65oAPcTvyxd3SlEe6EElB6b4+j7bpfn6NgE7S8Uo9NwS
-	udASR0O65il8wmt4awRl+iBXZ8ZOcy8TEZq5YILRT2T/TxirQuHmtMCKGFyi2PFRDvcFImycHah
-	vrHYTczhlqupOG9HOTz3Pnvvsv9ZCvDCFThwE1NX632oiq3uP+0YyWxETTUf4OoMFYAtWq0WINQ
-	tX7Dk6QOX0AZ3etXAuIeavJsNrqHVuUdIjdmkp/5BeiCKubiefFzU31AW6mJBKSRbpfgXLgmMDb
-	yMAktcAgIPUKZi7WGi6LNnD4fXqEUkmuG60D/HeZxRAZR+2ZQwTevJxecH+s7oE+c2oWr2s0bX3
-	wpnWlktg0EPMb9HqhT8lKr/RnJ2K+oE8Y6P68krMv3xq4jLyfU2J7NSd0+5tcFc+TH1DO5zWWwB
-	InyhFAs1kVeCWP3x8EYSToiltKmt/v6jw34RGygibkrSJ/GDPl8BxMpvTbeQlG
-X-Google-Smtp-Source: AGHT+IG8H2QCCgeXtJDEaIt76WNjqo8I7C+VF97khXhhwxu9sluk4EDERxHkHOs7eWBwuQHziDhREw==
-X-Received: by 2002:a05:6402:1e8f:b0:636:9129:882f with SMTP id 4fb4d7f45d1cf-63c1f6e1e4dmr16415887a12.30.1761061837874;
-        Tue, 21 Oct 2025 08:50:37 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48acf60dsm9599379a12.18.2025.10.21.08.50.37
+        bh=+0cSMAwFRMJRxsYANvmyJeRZmZI2zdPSEESzl/tT500=;
+        b=H6/Y7tuEIo2vh6LxbknX0rDj7JD2g9hScf7mSSwkpD7zZnGluRWsWnY2aDH1HfUkEo
+         PD6EfJBZ8oRZxeBsm1id6OIDJ1C4MCdjMGHTvncwgM2wHLBx8HgLhyaldFpXCUjXxLGM
+         yezTyxhIqE9Elv4VjlbRh3SUIbOt6UZw0pg5JgFU7c+Fbkj+gaes/75vcnRrGya/qVwH
+         /y2zLyjJmjs1il2YZ6nyv1MuU/8NHXC2Rp1FKsSR/PGA3V0mRvb2H+/n70PrzmSdjFpE
+         CbyOn+iriH2U1QuEwJiKjMwZlfB9OfRIl3w3wIDr1jF54AtcmCu1xf4xu+6G1WZ5/Z3O
+         g2ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+22jKGzXGK7MweoE4+gCaZ+iE65Ip/yMZF0tkd+MLtd8O/21YBxzAtbTzgVM9BKrEjy0rkfxR67LNjJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5oBaPak4IlWy4Uu7cHqadRa/9ws9BCmAnlDg/hGb+2h7zs18D
+	N6K6L14fGhlQgfRwLlid8hB0eRjguHH0csOkFw/eceubCxiwbqScCW09CBXbHJuKgpvlXDrguWc
+	ISOCom70vOQ==
+X-Gm-Gg: ASbGncs/HLsuCHC16TMsgNtOd+M9GBEhcXC/sdU1hKH+QlAKZ3m9Z6xEJnnK/W3V2Pl
+	Pnqr84oyonzTs1Mpp4cJoaL+vrISdIGOdzvdWFTxpHrJbyxTBrfff4f60pxr9evMqVnqk3PkeWO
+	nLLMkaRcL2BoG1GQKzNBdhbo0VKrBCEs76+P0nZL5sTibE4FVWj9276SoiMu4lOwGjMhUlKJw95
+	Qx4X+boRoJPGCa7BB4sZLLqxvS5oKU47bjJnkP9zK4Pjf2H/Cwi+toAcz9CYpMJ4FTW8bkcQfsE
+	TrDxr/HAcTLyqrlCBAh+qykDoki920Wi5FE6jSComuxfvEf4h5mg5ovrpe2mIsMC/kQxIR9Z7uV
+	mz3GtNlkluKtSVnM9Rcl/Vh1m3OlN/0//878iUKGQv29358UlQ9N9rOLX5UlFF95DSjt4y5Phkj
+	JV30mV33R7kqgJ4ZIWIFx1Eb0XGeVaGEd43NJl3cB6GmQFmZmciQ==
+X-Google-Smtp-Source: AGHT+IF9DmoJj/ViDIFoNSSdc8qEpR8DTghl1+dVPf312qJ7V4k/ya8KGglbQDES1wf7BchvhGfRsg==
+X-Received: by 2002:a17:907:74e:b0:b04:67f3:890f with SMTP id a640c23a62f3a-b6475e09c31mr2143826966b.33.1761061904716;
+        Tue, 21 Oct 2025 08:51:44 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb526098sm1085153266b.62.2025.10.21.08.51.44
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:50:37 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso10434317a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:50:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnM5I30IdNOI4CHDbPW+acTRk7L5Mi4t5p3PIlLSjZORlZEdegeKA5oMKOSJds4WpqIaeFbpnsQEOlprs=@vger.kernel.org
-X-Received: by 2002:a05:6402:3554:b0:63c:4d42:993d with SMTP id
- 4fb4d7f45d1cf-63c4d429b92mr11883163a12.31.1761061836721; Tue, 21 Oct 2025
- 08:50:36 -0700 (PDT)
+        Tue, 21 Oct 2025 08:51:44 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso9753326a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:51:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW44T6mkaeTl3raCrqgihHtF2RCNEBF6p6iWgET1ghhIET3pZ+BKtT0zW0Ik8OfefazJnDfmYnNYkCF/Ac=@vger.kernel.org
+X-Received: by 2002:a05:6402:518e:b0:63c:4da1:9a10 with SMTP id
+ 4fb4d7f45d1cf-63c4da19c97mr11628470a12.31.1761061904052; Tue, 21 Oct 2025
+ 08:51:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017141536.577466-1-kirill@shutemov.name> <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
- <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
-In-Reply-To: <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
+References: <20251017085938.150569636@linutronix.de> <20251017093030.253004391@linutronix.de>
+ <20251020192859.640d7f0a@pumpkin> <877bwoz5sp.ffs@tglx> <CAHk-=wgE-dAHPzrZ7RxwZNdqw8u-5w1HGQUWAWQ0rMDCJORfCw@mail.gmail.com>
+ <871pmwz2a3.ffs@tglx>
+In-Reply-To: <871pmwz2a3.ffs@tglx>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 21 Oct 2025 05:50:19 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wigaATtHqwU+KHRzf-t2jGmD=zT3tGnJVD+4MAk86tpNg@mail.gmail.com>
-X-Gm-Features: AS18NWBOp9VJpCXyIKnJNta0lggyjzqPvsPMHPbiYL935bxgvLcEoC8FIS9Zxss
-Message-ID: <CAHk-=wigaATtHqwU+KHRzf-t2jGmD=zT3tGnJVD+4MAk86tpNg@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 21 Oct 2025 05:51:26 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wj3VgQAwUjfM_6f5O5gFr4kXBma2q5m8PLarRCnA8R49w@mail.gmail.com>
+X-Gm-Features: AS18NWAG7YIQvZWdpCHOlvhJ3OJWyOrD174ntZFm1lwB34kJVwOkBypjHYnGjQo
+Message-ID: <CAHk-=wj3VgQAwUjfM_6f5O5gFr4kXBma2q5m8PLarRCnA8R49w@mail.gmail.com>
+Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access regions
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Laight <david.laight.linux@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>, 
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org, 
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
+	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
+	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 20 Oct 2025 at 01:33, Kiryl Shutsemau <kirill@shutemov.name> wrote:
+On Tue, 21 Oct 2025 at 05:46, Thomas Gleixner <tglx@linutronix.de> wrote:
 >
-> On Sun, Oct 19, 2025 at 09:53:28PM -0700, Andrew Morton wrote:
+> On Tue, Oct 21 2025 at 05:06, Linus Torvalds wrote:
 > >
-> > A use case for alloca() or equiv.  That would improve the average-case
-> > stack depth but not the worst-case.
+> > We could still change it since there aren't that many users, but I'm
+> > not sure what would be a better name...
 >
-> __kstack_alloca()/__builtin_alloca() would work and it bypassed
-> -Wframe-larger-than warning.
+> I couldn't come up with something sensible for the architecture side.
 >
-> But I don't see any real users.
+> But for the scope guards I think the simple scoped_user_$MODE_access()
+> is fine as for the usage site it's just a user access, no?
 
-Yes, and we've walked away from alloca() (and on-stack VLAs, which are
-really exactly the same thing as far as a compiler is concerned),
-because it makes static analysis much *MUCH* harder.
+Ack.
 
-Let's not ever re-introduce dynamic stack use in the kernel.
-
-                Linus
+               Linus
 
