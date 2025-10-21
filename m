@@ -1,135 +1,133 @@
-Return-Path: <linux-kernel+bounces-863575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B94BF8339
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:10:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30064BF8342
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60D8019A7CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:10:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EC974F07AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB21C34E74E;
-	Tue, 21 Oct 2025 19:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD62134E75E;
+	Tue, 21 Oct 2025 19:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2I3Kyuk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCI4xnKd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4729B34D925;
-	Tue, 21 Oct 2025 19:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285B034D925;
+	Tue, 21 Oct 2025 19:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761073807; cv=none; b=suehChYkdB/QKNSUpZdOqykmHJKB+FIXRRWwC3ZXfsaI7W4ql15zjv6G2T5lf5+DdYdq3THy+g/j+FvhQ6HWAQTK0TVd4G8eKl240KmsZeoe6Fct2d1CKQc4VjJadbT5IsQkLsoiVF2V9ZljBO+/PvC8+SD+T/CFvwDCfAKvY+8=
+	t=1761073869; cv=none; b=TRV04ukA2hOQ3KI1PPcV0yfCCM5wwsNEHQbTNWB1FpCymirhuwqI4zznRAzjA1aJLnvRoNCgxu4oJC3Xhi2JejVHMcSCOI2wSQvQ1J2hTYVXToqAXyyPmf3A6OXgNtvteNFM0eRs7xJrhFDIq3XuAeUoLtce83C1tsHMoqlj33E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761073807; c=relaxed/simple;
-	bh=OlM+hp5liynWD7x8TgYwNOV4Zf2KLGwQL6h+7jLysUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=eXatPtyRHel9UpdLRI/pgkTAYBg7aITLqxcqDlRMkXbpKmk7vmzAwgC+k6AWH5kMw2Dk8ToD92wxnkIvpKWkPbsetHbQeKL/2/WMkgt95O2upWRSFW4qoP6I4b+JpSUCNEKCOIinLvXoiNj59l7m//fLFdMaaHij23xZBGYOy2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2I3Kyuk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91784C4CEF1;
-	Tue, 21 Oct 2025 19:10:05 +0000 (UTC)
+	s=arc-20240116; t=1761073869; c=relaxed/simple;
+	bh=6B/f/zDHX9K//eScsZbpkFfCKiThC8QvFqMo8KT6eSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LeSXGVtAebv/uOuWEXCYWy91wi+w+/OumvOAfhwyckFgukOKb7Od34bxqqGP6YH5asFjkL991hbfPTemR/C0tSoy8Ut9PmvL+lh/cz7w5QRMZaV7cPuM8yImEKQ+i1Q4NCPtrO8l5ejfDTQO7dg+vwnu9J1umNJ26vKHu/IT950=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCI4xnKd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4B8C4CEF1;
+	Tue, 21 Oct 2025 19:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761073805;
-	bh=OlM+hp5liynWD7x8TgYwNOV4Zf2KLGwQL6h+7jLysUk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=u2I3Kyukg/Wif1wUoptuz5TgrwRmfk7omZ+7pSbwDV8VJh4ZKmmg6jbknZp3kDthA
-	 8x5+cMD+KsRJ1QpuNTaCLO7J9uNmQtf+osMB4Qpq+euqRl99kqmgTJFrcjUnXQTSU9
-	 I2BtKqHN8sMMxk5FW7/41y3nTiLTt9wlSMOgJKvbYP0PNhJhFUOdKYzH49cLv0xXiW
-	 lj3r4OmNqQlxvW4/AfxxtgPTpgOpaRevzbkIQZ8+RSk1mCXq4Ld0yX9x9pEaSsXhd+
-	 tSRZnzJeZOZNbczRtKmE8XDucUY2vIY02W3EzKxDQbZ2ehGrR5Yv2NMCeAEgwBZcmM
-	 SLKdchcqT9Klw==
-Date: Tue, 21 Oct 2025 14:10:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Bandi, Ravi Kumar" <ravib@amazon.com>
-Cc: "mani@kernel.org" <mani@kernel.org>,
-	"thippeswamy.havalige@amd.com" <thippeswamy.havalige@amd.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"michal.simek@amd.com" <michal.simek@amd.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Stefan Roese <stefan.roese@mailbox.org>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Message-ID: <20251021191004.GA1205652@bhelgaas>
+	s=k20201202; t=1761073867;
+	bh=6B/f/zDHX9K//eScsZbpkFfCKiThC8QvFqMo8KT6eSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NCI4xnKdWDRnFqbrOoM9dO62c+C8Nq8q0Da3+TvouJ2BHUzYUYncC9DJbAbTNyUrT
+	 oGp1k+jk8xWOVyIQ8YIdsUjR9cjg/CpJMabDW/rCz2rkaSmwMuVbAGkF/Pcmjjc9fR
+	 13J2pJ3ijat0D9CmPo80fILTLuDagutkwtXOWWMdOJproGj7QTUBKPOCEKM8Dzs1Nq
+	 RmVefA7DszfJf6e7GPDUs0rao1SmruZ8MnNlnw/X8HvoAeh9HDM8mx/OGymB3kXtKF
+	 ysyowYkalIkkbsHvwtaIPYIgqkHRP49GClddz/+xD63LFbCntKMeDfFgtanbcggdj/
+	 Z6w3Q4RT49mig==
+Message-ID: <ee6b80a7-4505-466e-a433-5f186d747945@kernel.org>
+Date: Tue, 21 Oct 2025 21:11:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AB5963BB-A896-4CFA-AF27-31164705DF5A@amazon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] memory: tegra: Support EMC dfs on Tegra186/Tegra194
+To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 05:46:17PM +0000, Bandi, Ravi Kumar wrote:
-> > On Oct 21, 2025, at 10:23 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi wrote:
-> >> The pcie-xilinx-dma-pl driver does not enable INTx interrupts
-> >> after initializing the port, preventing INTx interrupts from
-> >> PCIe endpoints from flowing through the Xilinx XDMA root port
-> >> bridge. This issue affects kernel 6.6.0 and later versions.
-> >> 
-> >> This patch allows INTx interrupts generated by PCIe endpoints
-> >> to flow through the root port. Tested the fix on a board with
-> >> two endpoints generating INTx interrupts. Interrupts are
-> >> properly detected and serviced. The /proc/interrupts output
-> >> shows:
-> >> 
-> >> [...]
-> >> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
-> >> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
-> >> [...]
-> >> 
-> >> Changes since v1::
-> >> - Fixed commit message per reviewer's comments
-> >> 
-> >> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
-> > 
-> > Hi Ravi, obviously you tested this, but I don't know how to reconcile
-> > this with Stefan's INTx fix at
-> > https://lore.kernel.org/r/20251021154322.973640-1-stefan.roese@mailbox.org
-> > 
-> > Does Stefan's fix need to be squashed into this patch?
+On 21/10/2025 20:29, Aaron Kling via B4 Relay wrote:
+> This series borrows the concept used on Tegra234 to scale EMC based on
+> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+> bpmp on those archs does not support bandwidth manager, so the scaling
+> iteself is handled similar to how Tegra124 currently works.
 > 
-> Sure, we can squash Stefan’s fix into this.
+> This was originally part of a larger series [0], but it was requested to
+> be split into smaller series.
+> 
+> [0] https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-09413724e781@gmail.com
 
-I know we *can* squash them. 
+Please keep correct versioning and changelog in the future. Try yourself:
 
-I want to know why things worked for you and Stefan when they
-*weren't* squashed:
+b4 diff '<20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>'
+Grabbing thread from
+lore.kernel.org/all/20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com/t.mbox.gz
+---
+Analyzing 6 messages in the thread
+Could not find lower series to compare against.
 
-  - Why did INTx work for you even without Stefan's patch.  Did you
-    get INTx interrupts but not the right ones, e.g., did the device
-    signal INTA but it was received as INTB?
+I think I emphasized last time how important is to make it readable and
+easy for maintainers.
 
-  - Why did Stefan's patch work for him even without your patch.  How
-    could Stefan's INTx work without the CSR writes to enable
-    interrupts?
-
-  - Why you mentioned "kernel 6.6.0 and later versions."  8d786149d78c
-    appeared in v6.7, so why would v6.6.0 would be affected?
-
-> >> +++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-> >> @@ -659,6 +659,12 @@ static int xilinx_pl_dma_pcie_setup_irq(struct pl_dma_pcie *port)
-> >>              return err;
-> >>      }
-> >> 
-> >> +     /* Enable interrupts */
-> >> +     pcie_write(port, XILINX_PCIE_DMA_IMR_ALL_MASK,
-> >> +                XILINX_PCIE_DMA_REG_IMR);
-> >> +     pcie_write(port, XILINX_PCIE_DMA_IDRN_MASK,
-> >> +                XILINX_PCIE_DMA_REG_IDRN_MASK);
-> >> +
-> >>      return 0;
-> >> }
+Best regards,
+Krzysztof
 
