@@ -1,146 +1,136 @@
-Return-Path: <linux-kernel+bounces-863489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E056BBF7F7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:49:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E404BF7F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7223B254D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:49:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6D034FE09A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAB434E744;
-	Tue, 21 Oct 2025 17:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46A334E75C;
+	Tue, 21 Oct 2025 17:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/FboD36"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="j6QYjbUs"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4432234D4E2
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C95334D4E2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761068990; cv=none; b=iUVXJ5m0/bJ+0wSOFHPHEflrDjdrysDmxN4mw4uMVW+b+zJd2gpkT2JGObsp9xNGxsuP6pMKBqzF0QNd9mQzFEP3HdG+BQOKPqAEHCM0g20E0kqkObSODzYZPdaT/px2KriQU7EaJS9nt36ZT8l7Mjs6rK/UEvpERZHXPwf9lTY=
+	t=1761069075; cv=none; b=LaTU1rSpKujn7yoZK0zFHxACKXEm4QtiNRqytUy4GFP1KtKbbWuskTv4VW/4WiNteYtR86QFkTbY2AvKC2C5+Etrrd7Hn7hQUeBmKLpsA5l2/alSmHiF8bTHF/JZTfptXzLRfRoexi29QNlAwDmINXCAXlKDhi2IaYALNzpByjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761068990; c=relaxed/simple;
-	bh=qDzlcTloUqpO+I/XqJPhOmpCeUL3ayv4KE9vfDTV9es=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GwU6QdGO7rpjwqhGTMjzJKzLMjRcCOFDTX7iCvqbPS/2VZlSakX5pqW4gPuOvBv4DI/IQzWHXCoJj6kMhZLJ+KpiDN5veW5IBXj/f37NvdGKhMgqoMQbwBupRD7F/d+UyRzrEZJurQJ4GcnxuMX9CPrOIL7FDV90fyaMJv2I91M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/FboD36; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so7099528a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:49:49 -0700 (PDT)
+	s=arc-20240116; t=1761069075; c=relaxed/simple;
+	bh=uulynMXpJ8L7oZoo/JnalEEKQQI90SdeVbLT2Q7OUmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sJvhbljGtcS9gNepHhGpBztwp4/TwJ/hUNplOVdJmLUb+UHylRbjJTVK4F2EeIdMzsZ+DJ7zDtRvJFJU8rKsoxNPJrumgEnlgIzAPGon9Vi9SDvdgBpNCzxtHbPf48XC1wNynh21Vf/DAeOsznRy8M2INwtWywAPk6qOBPtCFjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=j6QYjbUs; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63c09141cabso8907878a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:51:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761068988; x=1761673788; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+q8Os3QV4AiQnNKQL40uNK7bo4U73YgmtqjVFwNJYtk=;
-        b=N/FboD36fRPRysCGMLgON3wdGu5jHn+tLrRWNZbEv4TZ+9sajIv6xFsfG8OpEo/A7V
-         JrKMOrLq7nG4BHMiIqQLXtyi5rx0gTuNj1DSQ8eey5IoR7NDWMMUoxl2zNJ2waJCd7DV
-         69zS/qSjprlZR8RkzfcaI5muwwCf5qoKvAf9OJodBYMWSyJvZgJ3r9GIdfTChvGLCqT9
-         eMgr72hSxYpU1bwp1z81IP/zwqkUodw0aeglsW1zUPbq2whFUiW7rjLyIBc7dJhvC1Ro
-         DQXz6GZinONa+ynOqArDkbdZVvqaPKUmTmsok4oto4KtBAZ0sFzzxGrtGBilhKP1J7WG
-         PQWg==
+        d=googlemail.com; s=20230601; t=1761069071; x=1761673871; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HeBYLR+HPAzqZm44zT70Xofjp77IUs91RxgARCWm0c0=;
+        b=j6QYjbUsWWY/F8CWhjCzVdJc60A0qtVsOBjfWmSmypcAAxLr12SLg7D7BoBBOBqtoQ
+         pCbgi21j4D0bivuS0Ba2Dw4XUKwCm9sWtlMT2auBpeengknFAqjmsOcM7mHPJFM/zR+i
+         OM2DpD3/bALZfw4GfxVox0988AyDYtah6YReC2SdIIvSrf0scDESWHGTqQzoAgkUc/JB
+         Hq95hidTl01xI1HtAaH6K5bWea0M3y3NLtEZvJiHRPYJMpr14jFahZwY6I5+k9fQg3IE
+         u8WGhNyxUOXsFBkbepIRrrqkWN9AaMMyKmWCv4MvuH9dFm+9sxImt8CKZN0sgso9hiSB
+         mkHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761068988; x=1761673788;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761069071; x=1761673871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+q8Os3QV4AiQnNKQL40uNK7bo4U73YgmtqjVFwNJYtk=;
-        b=r6pCFHOLeRqRDs0zD2lK1qYbMtNtFvHn6PtrpCNq8+jmJAzmRb4KC64ioz+TTqyrag
-         REiatoEj4wURjb/i+/XWxWUAR9X2zKzJCFdI3U7DPoWO8KdXhTe8DGewLDrW2SOESMYN
-         bqirbaBGzL3VkoMOPbprUJGENIa/ly/eGqtjvv+a+G1ruRLiOIxsgMsjzUNThpm/4s8q
-         +F/M4vsN41AuqlpP0LmsuhaHcFef88qSyAvzR+1b4PQ+u/1VNKUFnKlKZkm0s0TCPx/I
-         kXbKquhHXZ0cwALzN4xF0yX/6Wt+FJY0vHzoXnQewXosUgXz6slr3MbtWK4c2kGo4J4R
-         q5Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDPoL8AWiaNWtlsKDENOH2wx9jjrDJv09YjJ5kQjvvHbYWE8aFDvrpPvYqcCxuyts49QMnXlxmFxzZhS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaWgfD7VAiLsOhnjE0GbsvN+HLfIGmEBBfi4KWXqTx4xdwWZaA
-	hNCaqMLTGLZCP5gyueQMWCp+cA7gobkm82b8pXapEJmjAqjyVRDvu1rfzCtP5lay/27OS7K84Hi
-	SV+QSRTHes/PXijc8qjI5AnnyrMusnhQ=
-X-Gm-Gg: ASbGncsSvMk9hB8xE7hQScT3WG674x4PSTarzLyFmkVTMyrdsmX6WZ8jxNK4DcaJMRA
-	PnThvzeAjaMHZOGq5i5ZT8+ZkEyIwSpjQkqNzzZOglAwMPcSumLV65FYN7b8umdC9w1raDAGAqV
-	tJepoIKmB+hS/YpBTDlxEnCFGfdNXqn92aq/ExtB05APtlUZ6f+lfsmEnmVyACkNs1ztOJPiyPP
-	xKcXW+SdsMxgEd3qzXM21xhbjAbASWV9cXEGdwWIVfiBj7wooG/GxAaDIKzD5MdKouw
-X-Google-Smtp-Source: AGHT+IGOXQgu6lQWhFyf+t/CSA1diNM3SwVxnFnjh0utUblYzFhYLfjlWfGOvy2Gt+AOFXij58+2eNPtcHopEifHSlY=
-X-Received: by 2002:a17:90b:3d87:b0:33b:b020:595e with SMTP id
- 98e67ed59e1d1-33bcf8f78cfmr21160963a91.25.1761068988525; Tue, 21 Oct 2025
- 10:49:48 -0700 (PDT)
+        bh=HeBYLR+HPAzqZm44zT70Xofjp77IUs91RxgARCWm0c0=;
+        b=chx3GQ4o4rCqPZRa1deVhJthOVLGTWu8rctUGeIycuMuZI94XaONK6MI3uwjO25eSo
+         c8pXb6EwLjKGrU2nI3BXy/qf9rxwObM+oXfBs0IOGDTM8Wv/R0zTfK70qL6Ag1LxfMiP
+         CLUcnImueexaFoH5kfVZpm9gE6C2ycejl2WsZYv0UMVwn68y4Rb7mESdIuT6QgP0ZNB/
+         WJZvMNOmQbMzmzrcJcza/jYY18SBZldA2ei2GePHB9ZxjWjAkCaifBf1Rd0+Kp/DOdHH
+         JPLAnf8YSLcgByu6U7NDCpSeErWfphIbUW8CU1K8NFDlDwxs84zK6XQu8Umeyk9GkjHA
+         q1UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+QEsU0yBQbSlLMImWYawtCAuePQIGjv04Cc2+MXxVq8U7ph2+e7+o7vXI/1fRL5UzTc20WfBkfSGrOn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7EFVKbuDShhTYMnJgArhk6pXJOxoRQRZzACQ3EAgtGLbNe58O
+	WhzFyDTXQqpaJvXtzlNAeRMaOiolqbzwXcDrgb7gAkV46MDaqxCkeWeG
+X-Gm-Gg: ASbGncuAwpYwV/YebX9qziuVduRVnMDpPzUHuyQ0XWiz37u70uP+27CLr/NT7J14Eor
+	F9s4qAinoev+3nD1IE274wNQf2UOq4gjU0oMVVJNT6namwY/GJvSewHhmtMBZnaV7Plr6a7yU2y
+	Ppe1ve3DsDJ5InyMn0QW2bLBhc9YFEjbLNBjhPndMi3IYOjdMKdsz94VM4y+upesByJ2AtrzFDb
+	cD8uP2gy+PT4nZVCAwh4tzshiqepRdNfgJCDPPqd8ycc16WCve9tePDDTw/pIahR3gAAkSHvKQp
+	ZB4pEGBrAku9P9zsaxNYya3zye9Bdw4jpOGypJXPQjEf+VYEPFiOfX6RndADwwlRntWfNvFJLgw
+	Jxr75PwwPqddITinIN0laUnrW7XPrQi9S8wVH6m2XN3qhcUYfbH+p149JSWM85oc5U6ww6JA7
+X-Google-Smtp-Source: AGHT+IHrpAt0rLjva+P5xvD3NT/keHv+NO8Cp9/2lCGhGrs48scqdgskaOvuSk1U3f7LeXkeOhT2xw==
+X-Received: by 2002:a05:6402:510f:b0:63c:20a3:70ab with SMTP id 4fb4d7f45d1cf-63c20a37123mr16345212a12.18.1761069071389;
+        Tue, 21 Oct 2025 10:51:11 -0700 (PDT)
+Received: from hp-kozhuh ([2a01:5a8:304:48d5::100])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48ab52b6sm10017556a12.10.2025.10.21.10.51.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 10:51:10 -0700 (PDT)
+Sender: Zahari Doychev <zahari.doychev@googlemail.com>
+Date: Tue, 21 Oct 2025 20:50:03 +0300
+From: Zahari Doychev <zahari.doychev@linux.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: donald.hunter@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, horms@kernel.org, jacob.e.keller@intel.com, ast@fiberby.net, 
+	matttbe@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, 
+	johannes@sipsolutions.net
+Subject: Re: [PATCH 4/4] tools: ynl: add start-index property for indexed
+ arrays
+Message-ID: <75gog4sxd6oommzndamgddjbz3jrrrpbmnd4rhxg4khjg3rnnp@tlciirwh5cig>
+References: <20251018151737.365485-1-zahari.doychev@linux.com>
+ <20251018151737.365485-5-zahari.doychev@linux.com>
+ <20251020163221.2c8347ea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHaCkmc_CrwBRj-Gji_td9S19oPg9U9-n8B4u8yTR4sPm9Vx7Q@mail.gmail.com>
-In-Reply-To: <CAHaCkmc_CrwBRj-Gji_td9S19oPg9U9-n8B4u8yTR4sPm9Vx7Q@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 21 Oct 2025 10:49:36 -0700
-X-Gm-Features: AS18NWAsfq3fhmrRaxV6XHiZww58Xefxp9cRzg3SYFrj93L49T-WggbE-aYzrZs
-Message-ID: <CAEf4BzaKhqx+5O6k7i5naAxAhpPxBuWgy=ryFwkLzGROJxQbgw@mail.gmail.com>
-Subject: Re: [PATCH] Fix up 'make versioncheck' issues
-To: Jesper Juhl <jesperjuhl76@gmail.com>
-Cc: wireguard@lists.zx2c4.com, linux-kselftest@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020163221.2c8347ea@kernel.org>
 
-On Mon, Oct 20, 2025 at 7:09=E2=80=AFPM Jesper Juhl <jesperjuhl76@gmail.com=
-> wrote:
->
-> From d2e411b4cd37b1936a30d130e2b21e37e62e0cfb Mon Sep 17 00:00:00 2001
-> From: Jesper Juhl <jesperjuhl76@gmail.com>
-> Date: Tue, 21 Oct 2025 03:51:21 +0200
-> Subject: [PATCH] [PATCH] Fix up 'make versioncheck' issues
->
-> 'make versioncheck' currently flags a few files that don't need to
-> needs it but doesn't include it. This patch fixes that up.
->
-> Signed-Off-By: Jesper Juhl <jesperjuhl76@gmail.com>
-> ---
-> samples/bpf/spintest.bpf.c                                | 1 -
-> tools/lib/bpf/bpf_helpers.h                               | 2 ++
-> tools/testing/selftests/bpf/progs/dev_cgroup.c            | 1 -
-> tools/testing/selftests/bpf/progs/netcnt_prog.c           | 2 --
-> tools/testing/selftests/bpf/progs/test_map_lock.c         | 1 -
-> tools/testing/selftests/bpf/progs/test_send_signal_kern.c | 1 -
-> tools/testing/selftests/bpf/progs/test_spin_lock.c        | 1 -
-> tools/testing/selftests/bpf/progs/test_tcp_estats.c       | 1 -
-> tools/testing/selftests/wireguard/qemu/init.c             | 1 -
-> 9 files changed, 2 insertions(+), 9 deletions(-)
->
-> diff --git a/samples/bpf/spintest.bpf.c b/samples/bpf/spintest.bpf.c
-> index cba5a9d507831..6278f6d0b731f 100644
-> --- a/samples/bpf/spintest.bpf.c
-> +++ b/samples/bpf/spintest.bpf.c
-> @@ -5,7 +5,6 @@
->  * License as published by the Free Software Foundation.
->  */
-> #include "vmlinux.h"
-> -#include <linux/version.h>
-> #include <bpf/bpf_helpers.h>
-> #include <bpf/bpf_tracing.h>
->
-> diff --git a/tools/lib/bpf/bpf_helpers.h b/tools/lib/bpf/bpf_helpers.h
-> index 80c0285406561..393ce1063a977 100644
-> --- a/tools/lib/bpf/bpf_helpers.h
-> +++ b/tools/lib/bpf/bpf_helpers.h
-> @@ -2,6 +2,8 @@
-> #ifndef __BPF_HELPERS__
-> #define __BPF_HELPERS__
->
-> +#include <linux/version.h>
-> +
+On Mon, Oct 20, 2025 at 04:32:21PM -0700, Jakub Kicinski wrote:
+> On Sat, 18 Oct 2025 17:17:37 +0200 Zahari Doychev wrote:
+> > The Linux tc actions expect that the action order starts from index
+> > one. To accommodate this, add a start-index property to the ynl spec
+> > for indexed arrays. This property allows the starting index to be
+> > specified, ensuring compatibility with consumers that require a
+> > non-zero-based index.
+> > 
+> > For example if we have "start_index = 1" then we get the following
+> > diff.
+> > 
+> >  		ynl_attr_put_str(nlh, TCA_FLOWER_INDEV, obj->indev);
+> >  	array = ynl_attr_nest_start(nlh, TCA_FLOWER_ACT);
+> >  	for (i = 0; i < obj->_count.act; i++)
+> > -		tc_act_attrs_put(nlh, i, &obj->act[i]);
+> > +		tc_act_attrs_put(nlh, i + 1, &obj->act[i]);
+> >  	ynl_attr_nest_end(nlh, array);
+> 
+> The first one is just silently skipped by the kernel right?
 
-this is libbpf's public API header, we are not adding linux/version.h
-here. Linux version on which something was built has nothing to do
-with the version of Linux on which the BPF program is actually
-running. And BPF programs are most of the time intentionally Linux
-version-agnostic.
+yes, and then only the second action is being confiugred. The
+index defines the action order and the expectation is that they
+start from order 1.
 
-[...]
+> 
+> We need to be selective about what API stupidity we try to
+> cover up in YNL. Otherwise the specs will be unmanageably complex.
+> IMO this one should be a comment in the spec explaining that action
+> 0 is ignore and that's it.
+> 
+
+I am not sure if this applies for all cases of indexed arrays. For sure
+it applies for the tc_act_attrs case but I need to check the rest again.
+
+Do you think it would be fine to start from 1 for all indexed arrays?
+
 
