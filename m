@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-863502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F31BF7FF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:57:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F63DBF7FFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6984119A2069
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:57:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B22903479E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0E1348449;
-	Tue, 21 Oct 2025 17:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547D334D4CD;
+	Tue, 21 Oct 2025 17:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="MBmXpQRL"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4Mr0Ft2"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACD83557F1
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FC434C833
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761069443; cv=none; b=Uu9kSIYdNM0c9b2JYz+wqhsxbqfZIzB/icLXnX86PQGEMeJkdIIEeQq0JZ1tpoYAYsTWSCOoFkH1Z30S6TSNgf9TKkt62ei+9g/nlcl1XMrF3MxkHYuQpChURGFW1YnN7M9zQPQBeKmetmWJMH5FdRVEurSzmdhz3ldjlUS2sys=
+	t=1761069502; cv=none; b=odkTe8mHKa3gtc01E2ZimjIFhaWGbyoqlTif8FsNOfxvizIT6IaswcMnBhfTFOjamgkfFBqodCV3RhGV+6Xx8VmhiXxIWxV7mgvoaR4pK2BKOqYPY2y3UIkn7OZ6HL12ZaqGd5SXOD7+fGEIZ4t4MSnGx/Iqu9rsp+ofA4ZfwVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761069443; c=relaxed/simple;
-	bh=P6gOTDuxOa/YTaF/r+9WBSdmbFeLRsp1krHSzNxYKmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NNIEXNxAaLNiTXVfJTR/qlSSWfDNIbRcz+UHxhpsF64qO4+uWZOn6YJIQcBnqvn9+L3YF5a6yPdf4XMnX4+hCyZlm2xiIJ49cAEjWYNXfsI8OYUWQLtU4ylkbE/fryZQ42VyerCB2JrJ7fVq7ohdG0Ng0OnKxZNmA35GMl3zPk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=MBmXpQRL; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so5554799a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:57:18 -0700 (PDT)
+	s=arc-20240116; t=1761069502; c=relaxed/simple;
+	bh=G47MvJWvuOhJGsJjH6oTOX1ThsvCSd/b1SDd+h4dpKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ufKbEvLLknqy0dY4Uoy0RkPeiAh13IpZeaxyT3kgMC5VmuAf72f0T7PxtQ4vX3j4Tb2NE4L31GEuEGs4RUnbG+q3G+NXfLXC4oRN3DaCC9ZGNcPTpONBt8A+JRuJyawXwXhbkQN8jiFbwN8kDtVlTz/cLZsf4zjmeVn3Scr+j+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4Mr0Ft2; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-58d29830058so7146508e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ssn.edu.in; s=ssn; t=1761069438; x=1761674238; darn=vger.kernel.org;
-        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AcFoefsaPjLXkyzo6zOvLiCXIAfemQ8FPLpQYhQcMBA=;
-        b=MBmXpQRLNns2IvxwmZLfGH2w+L5Wsi4k3l6qqognnwvIyl1wo8HJMo03TDN8xKLUZg
-         +7SEed8RfuddGnHIwwkdQWYitrmENxjGltHHBrib+KgWJCWbeOHmKKPjKkwo6L/kt7yf
-         jFi8XGoajMMSQKVvU89F/KP6zBRylo4bEC6VI=
+        d=gmail.com; s=20230601; t=1761069499; x=1761674299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QOocNKmVfDLIyakQcVwyYTTBvpO95NrPUt1n/fTcY6Q=;
+        b=R4Mr0Ft20d+Tg1bgvcdO594QJTjZ1dvyIxKq5sVpbqAYeEjwTEUW4kPK+AerqIzuvl
+         fRdK3IqrHmPY44a13qS55JQOiCTbmt3NiMCBQ7eVRIzfc/B+PZ2XsrFqNdM04xUbITPv
+         0g84ZLw1lh0wSSY1b+SPt/l0W2+baZt2Q8qnEvqq0E5lteMnmlvQf5LILSXh13WZ+YxA
+         lf4f7tX/t9xG7ItYsDyxe56vPjzzi4Lt+AmMx3s3o/eje2qOXcoASSIDgluIiZLwZ89m
+         tShleadB3byK6cyN/EK6n/DRSYDHf1p7vNVO4yk+1Jo5Eh0g2oSz299veeLSMCcjnp9c
+         Mkug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761069438; x=1761674238;
-        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AcFoefsaPjLXkyzo6zOvLiCXIAfemQ8FPLpQYhQcMBA=;
-        b=YebgMXSPZ9ybnwqDNq8FU/e5mU8vN6At0JjctCztkcvzCOzxQRfPM4hNM38ly9cmkY
-         N3q3/xF7DueHVakq3uFJfJEJ45bpwnNzX+EA7HYblFTpHLcO1VYYPKnpPqqH4HFM/IMY
-         I87sef0f2pnUn+lE/ugZkz/4vFtaZIUFX6nkLWw8ztr+WeyyV6rjWXfOZR2KQNQnknyI
-         tdHgPn7bQvH8lL0XKPV85YTJNB5ffgpWPFGnp6aK3b/xxPi1zN+Py8Vtmjzf7jR5MnRp
-         StSOTa9b4aGQ8s5XMx1L4RohdURoUZiFGQiDwgvxND+KpAWMjoe081NrmNapokanN3lZ
-         0pGw==
-X-Gm-Message-State: AOJu0Yx6PKpFP+uM3fUKc8OfEGP59ZpugyYyR2YpTwpdcuGY+Vlu56Ee
-	K5bYX0aPlqPBwxZAmenYPeUod5/Rxxu9xpGMBf8Tbcpspf8NChlod7KLzuHp1V4M5bzzT2SgnCK
-	925nrh5onjIQojIoAaV9d6+btsO5WC+N4iD8ufChJ1JX5ytwFBFYpk665JGi7NQ84CPRYCQRIXp
-	c=
-X-Gm-Gg: ASbGncszaBGG2HXdVz66qZm2dAWEJPPrmBve/x9eUgM1DlsPIHkez+ZHOAT5mWFafvg
-	w5gJxcjSlADLyLVuoEWcU/x9YxwIVNwCNQ7C+c6f2plKqV+UBgDvMFoMKXjulrNMcqt7unhbhCr
-	eXtOFAdKXSycZBPYbqBGb/vIPBKG4ITi4LkCC3vLQxStdn7E6cQPz9eAmPh1bH8VcPFhtXbJroT
-	xmAWCKgSd50ItmrMbFEgTyWZfzQ9j7A4rOidgJ8KMYqbfyDdgn9vU+GARDRb0/RFckNO5II+FkU
-	V65Mp38z/8Pfty/b5WM5DzbfX61YzVSgOU4n2a9tiL8zrHvb68oye869OAfM2qfX48tEv7/F4vy
-	y9V6HpF0JXyx/T4pbm1+rdIBnO2TH6ABLSiG8RBY76ZyzmQ/2qQVbDL0Acnozb+2xCKure2SUgo
-	j6JNQpeI1KLDuF1zqhaKY60jzAdIYquhSh+CSl9jVWAFFwuxDuM7PrCNvtRP/ekFC/1Rn+LLrD/
-	+cm7+z+1aivvoM=
-X-Google-Smtp-Source: AGHT+IHMeMIqd7HYhWo0R8En4guDZNNRMCYAnayKlf4Yiqw/2uDg3GDyf007UNqITSS1P+6Pah57pw==
-X-Received: by 2002:a17:90b:1d44:b0:32b:ca6f:1245 with SMTP id 98e67ed59e1d1-33bcf85b2ebmr21081722a91.5.1761069437830;
-        Tue, 21 Oct 2025 10:57:17 -0700 (PDT)
-Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:33f3:d5f3:33d1:a1e0:46bc])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223dd9e3sm188868a91.6.2025.10.21.10.57.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 10:57:17 -0700 (PDT)
-From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-To: linux-kernel@vger.kernel.org
-Cc: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Subject: [PATCH] kernel memory safety check in a block
-Date: Tue, 21 Oct 2025 23:27:11 +0530
-Message-ID: <20251021175711.49252-1-biancaa2210329@ssn.edu.in>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1761069499; x=1761674299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QOocNKmVfDLIyakQcVwyYTTBvpO95NrPUt1n/fTcY6Q=;
+        b=m2eJqpPQMZuZzQc2VNx+KL3PS4uKJ2aenhI+J4G3DLGGGsdcWTodNaZnYv0FQRhx+Y
+         nUxAAMHMFrchUFDMrvZpT20VUrRuFbBwrQFjfNG6Hom/dIEA0yfoBC6Kh4SwGZ1HTkgg
+         eatNE9cIIMb93HAPGOLymNQnNEvv/vq0uazsNlhYWvj3SC9DWugs21TIxJLB7JNED8DW
+         xgke6dRAp2PqE5miUp7/tcuB5NvtWqx/ZtiYycd99zEV48fiwfm5Gzsu1vgjfKADA7MD
+         LOTlxCXq3E2Hqz6qmmItMZmAHblwCOSr5s/1PvH4Klhd+I/WxtNj5baR+DD0dZF5DXnV
+         emGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNguVwCvs2H6CrC4EQsMDStCIJlNC0xsbrIEYXeNR1EseWY4DXlV9d2TdCACybZ/maDE/k3K+hiqJNLvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhopY/qNWwb7S0HJGAUSlT3LZvplqIItjuBYs2fO8fFaZTohdU
+	HjcgbVXfjM3SH2kbGZpdyEUqqVyU9MdbgSFvd029dHDvyn1cOQSB8rv2FuMDJJUAxpgEO7wBxUy
+	UcBzsKnZXFTPZ3T0S4IlbkFWDYg//YBU=
+X-Gm-Gg: ASbGncuMV0Kp0Lff/bXK7PIg1DkaO70Xr0rjyX8ybBlPvuVl9tCyTewAM9swht+fMjj
+	TpNkf4ZpyLmhLhtE4PgBN91Q7Hbm/HYWMnkvqeCv+A5FooNVwEpcm5ucgUaMXZf5NxDSgPSnW47
+	CjMMyhYSVnxLFotWy5zq+8eHgT4F8zNfnZxNdlKbp/oBMtmgboErJrP1w9lBuBErm9DaTxLwAUm
+	xC/8nPVx6d9GWaoIh5X87OEcdWgEA6AvucszIXBo5uABSzP77KGX9xz2fD8
+X-Google-Smtp-Source: AGHT+IGB2swM6EPMZAWJrbU+PYzr6bBq9/N58DfugsjDP4QfXY1a2mV6Zvt0xgfuUqpsHA0mxQibDBO32iQwd4Vsx3A=
+X-Received: by 2002:a05:6512:1113:b0:590:651b:10e1 with SMTP id
+ 2adb3069b0e04-591d8566409mr5652069e87.44.1761069498973; Tue, 21 Oct 2025
+ 10:58:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+References: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
+ <20250909-tegra186-icc-v2-1-09413724e781@gmail.com> <20250930103006.octwlx53p2shwq2v@vireshk-i7>
+ <CALHNRZ84s8rxQKWZeF-bfS31nK6ay4_MspmYa4+qapf9gtk+Fg@mail.gmail.com> <5ind7yevxsrsd3ws5rkl5z3zuxw4yrqoclqg7q6beunc6kgr2n@qmgbgw5q2ltc>
+In-Reply-To: <5ind7yevxsrsd3ws5rkl5z3zuxw4yrqoclqg7q6beunc6kgr2n@qmgbgw5q2ltc>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 21 Oct 2025 12:58:07 -0500
+X-Gm-Features: AS18NWCSSly5o6m2t5VO9WpiY4hgkm_v2vXdcycfbSTP89Bkw5Qe_Byc5eywF7M
+Message-ID: <CALHNRZ-frshyU7bGKEkMhqjJfLBawWH_F-J8-WLsU2ezYpR5rQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] cpufreq: tegra186: add OPP support and set bandwidth
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
----
- drivers/media/pci/cx18/cx18-queue.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+On Mon, Oct 13, 2025 at 12:08=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
+org> wrote:
+>
+> On 12-10-25, 21:32, Aaron Kling wrote:
+> > On Tue, Sep 30, 2025 at 5:30=E2=80=AFAM Viresh Kumar <viresh.kumar@lina=
+ro.org> wrote:
+> > >
+> > > On 09-09-25, 01:21, Aaron Kling via B4 Relay wrote:
+> > > > +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, uns=
+igned long freq_khz)
+> > > > +{
+> > > > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_dat=
+a();
+> > > > +     struct dev_pm_opp *opp __free(put_opp);
+> > >
+> > > The usage here looks incorrect..
+> > >
+> > > > +     struct device *dev;
+> > > > +     int ret;
+> > > > +
+> > > > +     dev =3D get_cpu_device(policy->cpu);
+> > > > +     if (!dev)
+> > > > +             return -ENODEV;
+> > >
+> > > On failure, we would return from here with a garbage `opp` pointer, w=
+hich the
+> > > OPP core may try to free ?
+> > >
+> > > Moving the variable definition here would fix that.
+> >
+> > If the var was NULL initialized, would the free handle that correctly?
+> > Keeping the declarations at the start of the function reads better
+> > imo.
+>
+> include/linux/cleanup.h has some recommendations around that.
 
-diff --git a/drivers/media/pci/cx18/cx18-queue.c b/drivers/media/pci/cx18/cx18-queue.c
-index eeb5513b1d52..025ba4e6e4be 100644
---- a/drivers/media/pci/cx18/cx18-queue.c
-+++ b/drivers/media/pci/cx18/cx18-queue.c
-@@ -383,9 +383,16 @@ int cx18_stream_alloc(struct cx18_stream *s)
- 						 buf->buf, s->buf_size,
- 						 s->dma);
- 		if (dma_mapping_error(&s->cx->pci_dev->dev, buf->dma_handle)) {
--			kfree(buf->buf);
-+			if (buf) {
-+        		if (buf->buf){
-+            	kfree(buf->buf);
-+				buf->buf =NULL;
-+				}
-+        		kfree(buf);
-+				buf=NULL;
-+    		}
- 			kfree(mdl);
--			kfree(buf);
-+			//makes accidental double free less possible
- 			break;
- 		}
- 
--- 
-2.43.0
+There was a request to split this series into separate series
+per-subsystem. So I will fix this in a new patch, but it won't be
+tracked as a new revision to this.
 
-
--- 
-::DISCLAIMER::
-
----------------------------------------------------------------------
-The 
-contents of this e-mail and any attachment(s) are confidential and
-intended 
-for the named recipient(s) only. Views or opinions, if any,
-presented in 
-this email are solely those of the author and may not
-necessarily reflect 
-the views or opinions of SSN Institutions (SSN) or its
-affiliates. Any form 
-of reproduction, dissemination, copying, disclosure,
-modification, 
-distribution and / or publication of this message without the
-prior written 
-consent of authorized representative of SSN is strictly
-prohibited. If you 
-have received this email in error please delete it and
-notify the sender 
-immediately.
----------------------------------------------------------------------
-Header of this mail should have a valid DKIM signature for the domain 
-ssn.edu.in <http://www.ssn.edu.in/>
+Aaron
 
