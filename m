@@ -1,206 +1,224 @@
-Return-Path: <linux-kernel+bounces-862420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E02BF53C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:31:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017F7BF53FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFE61189163D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B2F3B497B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32000248F47;
-	Tue, 21 Oct 2025 08:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9923081AD;
+	Tue, 21 Oct 2025 08:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="THAgaj/6"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BGgr7ukz"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117D2301495
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B979032143A;
+	Tue, 21 Oct 2025 08:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035491; cv=none; b=AYTR2lP/4IVW5rSPT7qe9PCfyPUeEjQJhTvGWQBLD1UIp8K5FGpkL+kjK94OuJbWUMezLax74WxwqKWFi8Ykgkf9i4Bqs4wxBxw/4jDWdV9udalHcIscBgDQGgLY46P7NdPLdzmTK4rF27/VbaNjBmy1CJkpdHd4PJJpuUEHgus=
+	t=1761035548; cv=none; b=bvKyppg2UMeVLGAMGvkrm+EE0vLopV+2U2e9diELzhKsaIkLP6Uw7nKgSatJRe4RfEzGGAgP67MnQKBmau6l6KvBNgYHNbbGz2kzgqlm7oPj3//IEjm85krOXA2nXcgcj8L60WxQjj+v8OKANu4EGOCw8o3ZYOVTX2w9Lf6yU8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035491; c=relaxed/simple;
-	bh=0+caDIujhpz0FRhcDE2+VAxE9La8nPwvKl4NgW9uldY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MM90hFbn/WvD6FORPUAs2y/q717wINNU/5IdiLeqMZFGAzTXjKnZBzEUL2x3BYTI9e3vTTnkDWZvQ94uxMZHNMaRZvm0AprrFhF1gSSI+xGztgelXHAvmTgeRczHq+BaHnEa7qnYQKPGBT96kptiXdBkHxZM5SsxIOt76jyzgYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=THAgaj/6; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3d80891c6cso1227657366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:31:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761035487; x=1761640287; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=08GVp+OInLnYCUoelIzBBSQmuc+ORFR2n22PxCU3mnk=;
-        b=THAgaj/6Iobqr6JGlLMTmydst7CfyaKHS/tBYyy7uUE8VAqlatGaSCU3BfgVd9/ZWN
-         ks3LOwhAqvDGQIOAc65aFxuCPbntyep7P5XiJ1lmbVJ6rEun/44qELHpfcHov0FjNLkq
-         A+j3pm0kW/B2SuvIDx2CX9TLcxx0F/ZNW0Po/2A99Rm9SPtMqk2L7nsXe1PjmPfZTWtz
-         iU5oxqWMGhBuJvKJZAPeaAIHQfFH0vYrx39krRrgljcqSogRoyDUEdZRAMjqmsSxlTME
-         rUYFdEHLDgQMPcjGarofp8/CNOG8pj27UmNSbiWtK3JXKRImpfvY27x4fxb/SGuc2E1V
-         F3OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761035487; x=1761640287;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=08GVp+OInLnYCUoelIzBBSQmuc+ORFR2n22PxCU3mnk=;
-        b=rETvicglPgsxqfWLTdWYAfofyWL+Rm6LpdjR3Bm2+vBD0F04OKsmZjwBIjYm/xMPak
-         k77p3RYHQIzDF6Fuw1ru4bjLQ5C+AQav6651PGLJOhRldjn8MBpAmCYCiscyvif1ip14
-         tANuSiyKPZZ84TDvybG9ypzmB68+1ZR7+CNfpR4513gVB7eocaAJJbnVDhANKip/XPQe
-         qN4nB9XduCPQY4B3N8swZDWWnHiIe/use3OKgLvhgQZPvakYaKai+cHsJjCkxdMa7poJ
-         HylYOthVNgzjl4x4CChpw0IGoGhip08fia83EjpwXPYct/d1hY/HBsWsf/ZQu4Kv0U/l
-         lSLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPMEzstNZ7d39R6ROspNWJYyiOMKh17yFY6Ri9wB0ptXJZIwxgYuG3qZKqm/2izsDAeLMmAoPq7ile6nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF+9zS8bRA4zjs8P0awTxalRvgcNfPpzHqFLiFhGuyHLdYKKTJ
-	0zSyGcjlw0W0AL2zxFj6ATIh69jcEUAuvG81JXkuP478WdNNGl1Z72k1LCgc8/Rpn+A=
-X-Gm-Gg: ASbGnct/uLs53T104+tXHhIYLSyu2NTpj//QZWV1eAs9+RA3e2c1ELjmNg6mZcv1egD
-	0ovxJcLRl1TT7fCnM2IyDfdCETSRN11btlROEtYesECoFmx0R5rZRPbcdmRMMOuVFxZHrz5hVoS
-	jGASDcB1dIrkNZXDj/OkW/I2EIS312Q5Li9R8/up1AHpYhzKGrm6i9H6aLtYgCM9+mwJPWzwBhb
-	zKLnSZzND5yn1Ec+gB4uaSaIQqkQkFIEMx9TP3bOAmflgO2ImepQMGODLi8Tg3Clv0GJCcS4h0Q
-	PUl3MAV4aNgKPcl7osTEaswLIDIKaB3gFsViH7lY2ROeqhPYtaiweNoBqBfWsu17vNHipMvRTj+
-	3prrMduoBjMl6YbS2ZMk0Qqt3QWA0Px3TPwYy5rJ+Mx/c7dbaHATdGNXxlIqO4ckuj1DSrAWQ1A
-	W1t5gyElneMa24fA2/VpFoikP9QFPX498Scvg5w+M9omMQOmVz9dlQ
-X-Google-Smtp-Source: AGHT+IE9nMGLvWb06pmplezToqR2L95J3tFlgDU1qAVV3hP6xK1kSz7780MH5ZLzX2rb+2xlSC+S1Q==
-X-Received: by 2002:a17:907:1b05:b0:b46:57fd:8443 with SMTP id a640c23a62f3a-b645f0f9a4emr1588815766b.24.1761035487224;
-        Tue, 21 Oct 2025 01:31:27 -0700 (PDT)
-Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b65e83960e6sm1008220066b.33.2025.10.21.01.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 01:31:26 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:31:25 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Rakuram Eswaran <rakuram.e96@gmail.com>
-Cc: chenhuacai@kernel.org, dan.carpenter@linaro.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org, linux-kernel-mentees@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, lkp@intel.com, 
-	skhan@linuxfoundation.org, ulf.hansson@linaro.org, zhoubinbin@loongson.cn
-Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling
- using devm APIs
-Message-ID: <pvid2ycmgbkbmegnnzwl4hyev6e2smusxk5olkuqxfwxzykz2e@jlvolirolrxl>
-References: <o55ujlbvxwezsf3ogqx33pcbg5b2lviy6bv5ufnz6t7yi4v23t@i6uiafh6no6c>
- <20251020183209.11040-1-rakuram.e96@gmail.com>
+	s=arc-20240116; t=1761035548; c=relaxed/simple;
+	bh=O7s5zys8WMbwKz7fcQlw9ommRaXCrMYh4+PsKEP37tw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rLA9jFN2NG2Ij9SFYkfQz9csf/kRmwaJN2R5JEWAjHsE1YD6agIpet5E3VFMF188huKOXp4JOWOjkEmf2gHl0aUjlkuwEKD3rGcLDosN6dP1Sq9KxtfliOtm+PK+i0DcIXJxJlo4+g31kmk/wTObiB8QtsFg909L4krMJ336BAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BGgr7ukz; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761035542;
+	bh=O7s5zys8WMbwKz7fcQlw9ommRaXCrMYh4+PsKEP37tw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BGgr7ukzBNqsrUQYpcwod5f+UTdg+AJEuK4tqjkoZhGmT8ixERBPKHDrDj5/oDEIs
+	 SHHUxuo9HnAPZh7PpUSLEjiI9Ii7Otg76O/Bj6rvDkhXZjxWNnFyQZaGm/r3enXHkJ
+	 Q7ZGglEIvpDbp9QNsf1mqgCePCmoUolyZ9eO32GTUiWT9ePNx2agkTPkf5ixzsz5Df
+	 IO6DTbxoL2EMM0vH83/OfstxAQB1hPeHRNgUARJImejgjSCtAK37KTKcKAieN6tQ6L
+	 MMfUBlxYCD1pkohL8au2AWsoQd+GIJgBMg7JgGv+wJoywUq+mqIQU+MpDrPI7BLL86
+	 SetRqb6Z0xZfA==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0234F17E013C;
+	Tue, 21 Oct 2025 10:32:21 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: sboyd@kernel.org
+Cc: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	srini@kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	sre@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	u.kleine-koenig@baylibre.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	kernel@collabora.com,
+	wenst@chromium.org,
+	casey.connolly@linaro.org
+Subject: [PATCH v7 00/10] SPMI: Implement sub-devices and migrate drivers
+Date: Tue, 21 Oct 2025 10:32:09 +0200
+Message-ID: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2qhn5ffy7ssp2gct"
-Content-Disposition: inline
-In-Reply-To: <20251020183209.11040-1-rakuram.e96@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Changes in v7:
+ - Added commit to cleanup redundant dev_name() in the pre-existing
+   spmi_device_add() function
+ - Added commit removing unneeded goto and improving spmi_device_add()
+   readability by returning error in error path, and explicitly zero
+   for success at the end.
 
---2qhn5ffy7ssp2gct
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling
- using devm APIs
-MIME-Version: 1.0
+Changes in v6:
+ - Added commit to convert spmi.c to %pe error format and used
+   %pe error format in spmi_subdevice code as wanted by Uwe Kleine-Konig
 
-Hello Rakuram,
+Changes in v5:
+ - Changed dev_err to dev_err_probe in qcom-spmi-sdam (and done
+   that even though I disagree - because I wanted this series to
+   *exclusively* introduce the minimum required changes to
+   migrate to the new API, but okay, whatever....!);
+ - Added missing REGMAP dependency in Kconfig for qcom-spmi-sdam,
+   phy-qcom-eusb2-repeater and qcom-coincell to resolve build
+   issues when the already allowed COMPILE_TEST is enabled
+   as pointed out by the test robot's randconfig builds.
 
-On Tue, Oct 21, 2025 at 12:02:07AM +0530, Rakuram Eswaran wrote:
-> On Thu, 16 Oct 2025 at 14:20, Uwe Kleine-K=C3=B6nig <u.kleine-koenig@bayl=
-ibre.com> wrote:
-> > On Wed, Oct 15, 2025 at 12:16:57AM +0530, Rakuram Eswaran wrote:
-> Sorry for the delayed reply as I was in vacation.=20
+Changes in v4:
+ - Added selection of REGMAP_SPMI in Kconfig for qcom-coincell and
+   for phy-qcom-eusb2-repeater to resolve undefined references when
+   compiled with some randconfig
 
-I didn't hold my breath :-O
+Changes in v3:
+ - Fixed importing "SPMI" namespace in spmi-devres.c
+ - Removed all instances of defensive programming, as pointed out by
+   jic23 and Sebastian
+ - Removed explicit casting as pointed out by jic23
+ - Moved ida_free call to spmi_subdev_release() and simplified error
+   handling in spmi_subdevice_alloc_and_add() as pointed out by jic23
 
-> Ah, got it =E2=80=94 I=E2=80=99ll drop the clk_get_rate() comment since i=
-t was only a reminder
-> from your WIP suggestion.
->=20
-> Just to confirm, are you referring to adding a call to clk_prepare_enable=
-()
-> before clk_get_rate()? I can move the clk_get_rate() call after
-> clk_prepare_enable(), or drop the comment entirely.
->=20
-> If my understanding is correct, I=E2=80=99ll keep v3 focused on the curre=
-nt set of
-> fixes and handle the clk_get_rate() precondition (by moving it after
-> clk_prepare_enable()) in a follow-up patch. That should keep the scope of=
- each
-> change clean and review-friendly.
->=20
-> > > -out:
-> > > -     if (host->dma_chan_rx)
-> > > -             dma_release_channel(host->dma_chan_rx);
-> > > -     if (host->dma_chan_tx)
-> > > -             dma_release_channel(host->dma_chan_tx);
-> >
-> > I was lazy in my prototype patch and didn't drop the calls to
-> > dma_release_channel() in pxamci_remove(). For a proper patch this is
-> > required though.
-> >
-> > To continue the quest: Now that I looked at pxamci_remove(): `mmc` is
-> > always non-NULL, so the respective check can be dropped.
-> >
->=20
-> Understood. Since pxamci_remove() is only called after successful allocat=
-ion
-> and initialization in probe(), mmc will always be a valid pointer. I=E2=
-=80=99ll drop
-> the if (mmc) check in v3 as it can never be NULL in normal operation, and
-> remove the dma_release_channel() calls as well.
+Changes in v2:
+ - Fixed missing `sparent` initialization in phy-qcom-eusb2-repeater
+ - Changed val_bits to 8 in all Qualcomm drivers to ensure
+   compatibility as suggested by Casey
+ - Added struct device pointer in all conversion commits as suggested
+   by Andy
+ - Exported newly introduced functions with a new "SPMI" namespace
+   and imported the same in all converted drivers as suggested by Andy
+ - Added missing error checking for dev_set_name() call in spmi.c
+   as suggested by Andy
+ - Added comma to last entry of regmap_config as suggested by Andy
 
-Yes, I suggest to make restructuring .remote a separate patch. (But
-removing dma_release_channel belongs into the patch that introduces devm
-to allocate the dma channels.)
-=20
-> I=E2=80=99ve prepared a preview of the v3 patch incorporating your previo=
-us comments.
-> Before sending it out formally, I wanted to share it with you to confirm =
-that
-> the updates look good =E2=80=94 especially the cleanup changes in pxamci_=
-remove() and
-> the dropped clk_get_rate() comment.
->=20
-> static void pxamci_remove(struct platform_device *pdev)
-> {
-> 	struct mmc_host *mmc =3D platform_get_drvdata(pdev);
-> 	struct pxamci_host *host =3D mmc_priv(mmc);
->=20
-> 	mmc_remove_host(mmc);
->=20
-> 	if (host->pdata && host->pdata->exit)
-> 		host->pdata->exit(&pdev->dev, mmc);
->=20
-> 	pxamci_stop_clock(host);
-> 	writel(TXFIFO_WR_REQ|RXFIFO_RD_REQ|CLK_IS_OFF|STOP_CMD|
-> 			END_CMD_RES|PRG_DONE|DATA_TRAN_DONE,
-> 			host->base + MMC_I_MASK);
->=20
-> 	dmaengine_terminate_all(host->dma_chan_rx);
-> 	dmaengine_terminate_all(host->dma_chan_tx);
-> }
+While adding support for newer MediaTek platforms, featuring complex
+SPMI PMICs, I've seen that those SPMI-connected chips are internally
+divided in various IP blocks, reachable in specific contiguous address
+ranges... more or less like a MMIO, but over a slow SPMI bus instead.
 
-Looks right.
+I recalled that Qualcomm had something similar... and upon checking a
+couple of devicetrees, yeah - indeed it's the same over there.
 
-Best regards
-Uwe
+What I've seen then is a common pattern of reading the "reg" property
+from devicetree in a struct member and then either
+ A. Wrapping regmap_{read/write/etc}() calls in a function that adds
+    the register base with "base + ..register", like it's done with
+    writel()/readl() calls; or
+ B. Doing the same as A. but without wrapper functions.
 
---2qhn5ffy7ssp2gct
-Content-Type: application/pgp-signature; name="signature.asc"
+Even though that works just fine, in my opinion it's wrong.
 
------BEGIN PGP SIGNATURE-----
+The regmap API is way more complex than MMIO-only readl()/writel()
+functions for multiple reasons (including supporting multiple busses
+like SPMI, of course) - but everyone seemed to forget that regmap
+can manage register base offsets transparently and automatically in
+its API functions by simply adding a `reg_base` to the regmap_config
+structure, which is used for initializing a `struct regmap`.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj3RNoACgkQj4D7WH0S
-/k6+YQgAr92q5s709v2e2BChQIN4X2vYjeO2/gvjNuan22NTaX7HppNrsjvFEnLQ
-PKamVLa4sZMUMa1Zpc1rP3B1qg1+lsYClULLMBczGMzBoHYjlCqivZWEd6NL1LaZ
-rSw2n5PrsUTDrCH94opmwLm/JL/I9x+Ofq8mnyOZRDY3CClcn6Dre7ZdPvRxEwt2
-5v3i9C+UL9LA+ikeeOermflH/FgPguY8zixyH7nFDRfmOO0MmJhmk5fx0OQ2BvgV
-DRE5GuHRFOf69W37oRMSmOPNyW9yktsb/YTItSNvuc7ihllD2I4OMcnsSnaSlw3O
-umMuZIVp59WFY1WJFnsx7yX4aqQxYg==
-=iPja
------END PGP SIGNATURE-----
+So, here we go: this series implements the software concept of an SPMI
+Sub-Device (which, well, also reflects how Qualcomm and MediaTek's
+actual hardware is laid out anyway).
 
---2qhn5ffy7ssp2gct--
+               SPMI Controller
+                     |                ______
+                     |               /       Sub-Device 1
+                     V              /
+              SPMI Device (PMIC) ----------- Sub-Device 2
+                                    \
+                                     \______ Sub-Device 3
+
+As per this implementation, an SPMI Sub-Device can be allocated/created
+and added in any driver that implements a... well.. subdevice (!) with
+an SPMI "main" device as its parent: this allows to create and finally
+to correctly configure a regmap that is specific to the sub-device,
+operating on its specific address range and reading, and writing, to
+its registers with the regmap API taking care of adding the base address
+of a sub-device's registers as per regmap API design.
+
+All of the SPMI Sub-Devices are therefore added as children of the SPMI
+Device (usually a PMIC), as communication depends on the PMIC's SPMI bus
+to be available (and the PMIC to be up and running, of course).
+
+Summarizing the dependency chain (which is obvious to whoever knows what
+is going on with Qualcomm and/or MediaTek SPMI PMICs):
+    "SPMI Sub-Device x...N" are children "SPMI Device"
+    "SPMI Device" is a child of "SPMI Controller"
+
+(that was just another way to say the same thing as the graph above anyway).
+
+Along with the new SPMI Sub-Device registration functions, I have also
+performed a conversion of some Qualcomm SPMI drivers and only where the
+actual conversion was trivial.
+
+I haven't included any conversion of more complex Qualcomm SPMI drivers
+because I don't have the required bandwidth to do so (and besides, I think,
+but haven't exactly verified, that some of those require SoCs that I don't
+have for testing anyway).
+
+AngeloGioacchino Del Regno (10):
+  spmi: Print error status with %pe format
+  spmi: Remove redundant dev_name() print in spmi_device_add()
+  spmi: Remove unneeded goto in spmi_device_add() error path
+  spmi: Implement spmi_subdevice_alloc_and_add() and devm variant
+  nvmem: qcom-spmi-sdam: Migrate to devm_spmi_subdevice_alloc_and_add()
+  power: reset: qcom-pon: Migrate to devm_spmi_subdevice_alloc_and_add()
+  phy: qualcomm: eusb2-repeater: Migrate to
+    devm_spmi_subdevice_alloc_and_add()
+  misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
+  iio: adc: qcom-spmi-iadc: Migrate to
+    devm_spmi_subdevice_alloc_and_add()
+  iio: adc: qcom-spmi-iadc: Remove regmap R/W wrapper functions
+
+ drivers/iio/adc/qcom-spmi-iadc.c              | 109 ++++++++----------
+ drivers/misc/Kconfig                          |   2 +
+ drivers/misc/qcom-coincell.c                  |  38 ++++--
+ drivers/nvmem/Kconfig                         |   1 +
+ drivers/nvmem/qcom-spmi-sdam.c                |  36 ++++--
+ drivers/phy/qualcomm/Kconfig                  |   2 +
+ .../phy/qualcomm/phy-qcom-eusb2-repeater.c    |  53 ++++++---
+ drivers/power/reset/qcom-pon.c                |  34 ++++--
+ drivers/spmi/spmi-devres.c                    |  24 ++++
+ drivers/spmi/spmi.c                           |  95 +++++++++++++--
+ include/linux/spmi.h                          |  16 +++
+ 11 files changed, 289 insertions(+), 121 deletions(-)
+
+-- 
+2.51.1
+
 
