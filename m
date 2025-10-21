@@ -1,102 +1,220 @@
-Return-Path: <linux-kernel+bounces-862273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7736DBF4D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:08:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE306BF4D41
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F75918C5F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6269C3B0C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2E823BF80;
-	Tue, 21 Oct 2025 07:08:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958F8273805;
-	Tue, 21 Oct 2025 07:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C320E274B29;
+	Tue, 21 Oct 2025 07:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MytdQgZt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283BF239E6F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030486; cv=none; b=rJZUa+5MDKwsNCsANdTLoBRyT+NB8YcZs+F838lFXor6TVwC+sTkXePpd+ksSUVazeSXT18USzIIHkKeWtACV8PSYw+C7l7h3wUhAcMZbh51OMC73Rhk+6PgC7yRueTxxD0IG0M4RgCTcx76u5KhjcXm+6H8X4XtbMmZ9YRnnCA=
+	t=1761030502; cv=none; b=G4CJN532L4CjoA4QlPYTq6R05KzFDjOmc4vRsU+y+oRM4PvDC0E4B5SOxsFXUPB1EsVlUoeJPb2Y5bCiqFkQxiKQDLGmyHAXsih0/fHvfLjyPaku8NVFSWnUMtdti4lvjCzh1ZfQ74seofoR6nttLk26APycEHzaeK+VdLvPluQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030486; c=relaxed/simple;
-	bh=i9l9MFRWwj7syIRpiVJObf/x/w9KrsaHS+iN1oIRGBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ts8hfF8/NGGcpznb5EX4Q86xc2WDu7L8vhK31Fntxv5HJlvBfB23c9zXCj+hdd787tgHjKOFvnA2Id+42k6GkZ/QiUEYCFA7y7kAni6L5F4arF0GodyyG5h1JAroDRPE4jwdBGWmCqEUODvlGddC3Y43h6zgJaRwBU2oeor2lrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC0431063;
-	Tue, 21 Oct 2025 00:07:54 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 68E2E3F66E;
-	Tue, 21 Oct 2025 00:08:02 -0700 (PDT)
-Date: Tue, 21 Oct 2025 08:08:00 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Xiaoqi Zhuang <xiaoqi.zhuang@oss.qualcomm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] coresight: ETR: Fix ETR buffer use-after-free issue
-Message-ID: <20251021070800.GK281971@e132581.arm.com>
-References: <20251020-fix_etr_issue-v1-1-902ab51770b4@oss.qualcomm.com>
- <20251020143718.GH281971@e132581.arm.com>
- <6e6c3034-221c-4e79-8971-7bfbe26f91a6@oss.qualcomm.com>
+	s=arc-20240116; t=1761030502; c=relaxed/simple;
+	bh=lSdJkaQpaF2qhWbhmvpzzG0XYHlFdbfkXv6CiPaEUuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZJte7F/U24a3//WMJ6LRq/KSlgbkzsyVFidi8LMCa6DEXFDd6G9rkgx5VHAYiMJxjNNfmFd0tyW2FAJrnaZwURBzxiCZuyFdDL4BrxgXwk0TdI6O8KWRXJTceSnj7qcnKCNBJvkXa2DfIlNN7u0DPxmcA7+ceT/4fYG4A3UwUUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MytdQgZt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761030500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2xPTBI/BvJVBTH0bO2IDPCnHQ8CTKIOA4Ozbz62ndF0=;
+	b=MytdQgZtQ71JFvwdaRfZA2mCPs9zyVRPg7guPnTD58ug3hyQ+MQDviCsyTXBSID9/bqLbF
+	5je7/tbZP4rDTiX8CKh0uCIwGjW0OyGYdniWV7GQznuzs1syhcIEGzn/vrXdpiUiy8BAgn
+	YEJfgNBfB0XC+tJLo1BQ6appF0K4pzc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-332-Q1ux-31WOei-V-fTPxutKw-1; Tue, 21 Oct 2025 03:08:18 -0400
+X-MC-Unique: Q1ux-31WOei-V-fTPxutKw-1
+X-Mimecast-MFC-AGG-ID: Q1ux-31WOei-V-fTPxutKw_1761030497
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4710c04a403so55926515e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:08:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761030497; x=1761635297;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2xPTBI/BvJVBTH0bO2IDPCnHQ8CTKIOA4Ozbz62ndF0=;
+        b=wbOyn+j3RM33zPzX4DcJ8dpdpSOaLU2xAMbN8UbxI//O2Y0u2yA3mP5fy2SU8UjIeq
+         mCEpqcMw6LeuzpFeLLVTWfHFVwndiaOMM8IsFb1kvt1AJqytq8XAv4TLdvgOc8CdY14z
+         MGcD3x7GA+DrbEbs0NeLC8UoFDQDezLi5Rap2NpqvaHFpLG4/wZslRE3/W4WOVMJXwxz
+         NU0bxjYZokkJsnBoOqr2sRryRfXfloeqOzVCLlFVMVLF/VrREzmEbug0zNgr9Rv5ogo1
+         ZnzJ3M5CXf/3JPiDrwaC4QwlQDLhz4cbZbX+DewyO/AaYdUnOz5FQrB43Eq+jHk87vmh
+         B4HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVInPmaec2xqc4PQVO/iJM1Mo489hGOb3mNacaX4HdgdAnFxTNPBIEvLNZThhmKlb7U37EFFjaDH7KMzrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgAKBarp7OkwCWpkYTo1GLkjk3B3Av9gcQQf3X+i73ojON0yGY
+	3RrjRGTLYL1a5laZgflzvjEWbY3P/7ibyO/qeyieqCfzZXko+9qKSzN0OAR3Ljw0bhcLh3+p9Xe
+	f71dqu4xzwPQYl7h6Wb1X25S3+Si4o4Oc7rR4lSry13/6ReDkU+2QmZowxzLsvr2x+Q==
+X-Gm-Gg: ASbGnctXGOlBdy5djWhozhqZFiZDnf0rl+qNjyESsFCjy6Aun0uiwYj8QbYtGfng1tl
+	PAS/lrqQwSHxVReo7dhhzJAEhyk7gcQDKRetbdtMw2J9vXcfCC7OlNpcZOHvtEf+UJA+6Ad502d
+	zxxH+7wbFcT5d5gaJtjnCX1vBKaTfK7myELK4djn4Gmz+O9E/9D7V4fnmiAK7mLs5qsD+Gi3EL9
+	aSD16z+ukF+xAt5mcP/XPNnJzYPz0lCFhbe8UWDiJmd7hVMeS86FzciVCBpDPSmMqjBUVLo6NH4
+	E759dZhftwGDAY+lAEiii3zEsKO839xwz3MPiwlC2NFR/SOka8pigV0sR87Tarf1vYq01kxoNSN
+	c35aSKv8SECWjI7cKJ3qHbSRfsJ0CDWnEjiHbib9rEObCgMY=
+X-Received: by 2002:a05:600c:190f:b0:470:feb2:e968 with SMTP id 5b1f17b1804b1-471178b125amr116158145e9.15.1761030497232;
+        Tue, 21 Oct 2025 00:08:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfeULxx9QBgsLfU6ewhvNaSK+B9y0CapaXM5d5KIoN+VltTEytFeDsgfboyBJs8MoMlsxoKw==
+X-Received: by 2002:a05:600c:190f:b0:470:feb2:e968 with SMTP id 5b1f17b1804b1-471178b125amr116157935e9.15.1761030496823;
+        Tue, 21 Oct 2025 00:08:16 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c34sm281292155e9.10.2025.10.21.00.08.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 00:08:16 -0700 (PDT)
+Message-ID: <b0bc747b-82ee-4d7b-90f9-3ea299d1249c@redhat.com>
+Date: Tue, 21 Oct 2025 09:08:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e6c3034-221c-4e79-8971-7bfbe26f91a6@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: dsa: tag_brcm: legacy: fix untagged rx on
+ unbridged ports for bcm63xx
+To: Jonas Gorski <jonas.gorski@gmail.com>, Vladimir Oltean <olteanv@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?=
+ <noltari@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251015070854.36281-1-jonas.gorski@gmail.com>
+ <20251016102725.x5gqyehuyu44ejj3@skbuf>
+ <CAOiHx=mNnMJTnAN35D6=LPYVTQB+oEmedwqrkA6VRLRVi13Kjw@mail.gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <CAOiHx=mNnMJTnAN35D6=LPYVTQB+oEmedwqrkA6VRLRVi13Kjw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 21, 2025 at 09:56:43AM +0800, Jie Gan wrote:
-
-[...]
-
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > index b07fcdb3fe1a..d0fac958c614 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > @@ -1241,6 +1241,8 @@ static struct etr_buf *tmc_etr_get_sysfs_buffer(struct coresight_device *csdev)
-> >   	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> >   	struct etr_buf *sysfs_buf = NULL, *new_buf = NULL, *free_buf = NULL;
-> > +	WARN_ON(coresight_get_mode(csdev) != CS_MODE_SYSFS);
+On 10/16/25 1:50 PM, Jonas Gorski wrote:
+> On Thu, Oct 16, 2025 at 12:27 PM Vladimir Oltean <olteanv@gmail.com> wrote:
+>> On Wed, Oct 15, 2025 at 09:08:54AM +0200, Jonas Gorski wrote:
+>>> The internal switch on BCM63XX SoCs will unconditionally add 802.1Q VLAN
+>>> tags on egress to CPU when 802.1Q mode is enabled. We do this
+>>> unconditionally since commit ed409f3bbaa5 ("net: dsa: b53: Configure
+>>> VLANs while not filtering").
+>>>
+>>> This is fine for VLAN aware bridges, but for standalone ports and vlan
+>>> unaware bridges this means all packets are tagged with the default VID,
+>>> which is 0.
+>>>
+>>> While the kernel will treat that like untagged, this can break userspace
+>>> applications processing raw packets, expecting untagged traffic, like
+>>> STP daemons.
+>>>
+>>> This also breaks several bridge tests, where the tcpdump output then
+>>> does not match the expected output anymore.
+>>>
+>>> Since 0 isn't a valid VID, just strip out the VLAN tag if we encounter
+>>> it, unless the priority field is set, since that would be a valid tag
+>>> again.
+>>>
+>>> Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy tags")
+>>> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+>>> ---
+>>>  net/dsa/tag_brcm.c | 12 ++++++++++--
+>>>  1 file changed, 10 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/net/dsa/tag_brcm.c b/net/dsa/tag_brcm.c
+>>> index 26bb657ceac3..32879d1b908b 100644
+>>> --- a/net/dsa/tag_brcm.c
+>>> +++ b/net/dsa/tag_brcm.c
+>>> @@ -224,12 +224,14 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_buff *skb,
+>>>  {
+>>>       int len = BRCM_LEG_TAG_LEN;
+>>>       int source_port;
+>>> +     __be16 *proto;
+>>>       u8 *brcm_tag;
+>>>
+>>>       if (unlikely(!pskb_may_pull(skb, BRCM_LEG_TAG_LEN + VLAN_HLEN)))
+>>>               return NULL;
+>>>
+>>>       brcm_tag = dsa_etype_header_pos_rx(skb);
+>>> +     proto = (__be16 *)(brcm_tag + BRCM_LEG_TAG_LEN);
+>>>
+>>>       source_port = brcm_tag[5] & BRCM_LEG_PORT_ID;
+>>>
+>>> @@ -237,8 +239,14 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_buff *skb,
+>>>       if (!skb->dev)
+>>>               return NULL;
+>>>
+>>> -     /* VLAN tag is added by BCM63xx internal switch */
+>>> -     if (netdev_uses_dsa(skb->dev))
+>>> +     /* The internal switch in BCM63XX SoCs will add a 802.1Q VLAN tag on
+>>> +      * egress to the CPU port for all packets, regardless of the untag bit
+>>> +      * in the VLAN table.  VID 0 is used for untagged traffic on unbridged
+>>> +      * ports and vlan unaware bridges. If we encounter a VID 0 tagged
+>>> +      * packet, we know it is supposed to be untagged, so strip the VLAN
+>>> +      * tag as well in that case.
+>>> +      */
+>>> +     if (proto[0] == htons(ETH_P_8021Q) && proto[1] == 0)
+>>>               len += VLAN_HLEN;
+>>>
+>>>       /* Remove Broadcom tag and update checksum */
+>>>
+>>> base-commit: 7f0fddd817ba6daebea1445ae9fab4b6d2294fa8
+>>> --
+>>> 2.43.0
+>>>
+>>
+>> Do I understand correctly the following:
+>>
+>> - b53_default_pvid() returns 0 for this switch
+>> - dsa_software_untag_vlan_unaware_bridge() does not remove it, because,
+>>   as the FIXME says, 0 is not the PVID of the VLAN-unaware bridge (and
+>>   even if it were, the same problem exists for standalone ports and is
+>>   not tackled by that logic)?
 > 
-> I think we should check the WARN_ON result and exit if there is an error?
-
-When run at here, it should be in Sysfs mode. Here the check is for
-debugging purpose in case any mismatch.
-
-[...]
-
-> > +static void tmc_release_mode(struct coresight_device *csdev, enum cs_mode mode)
-> > +{
-> > +	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> > +
-> > +	scoped_guard(raw_spinlock_irqsave, &drvdata->spinlock);
-> > +
-> > +	if (WARN_ON(coresight_get_mode(csdev) != mode))
-> > +		return;
+> In general yes. And it happens to work for vlan aware bridges because
+> br_get_pvid() returns 0 if a port has no PVID configured.
 > 
-> the mode here could be set to any CS_MODE, so I think it's possible to
-> encounter the secenario below:
+> Also b53 doesn't set untag_bridge_pvid except in very weird edge
+> cases, so dsa_software_untag_vlan_unaware_bridge() isn't even called
+> ;-)
 > 
-> coresight_get_mode(csdev) == CS_MODE_DISABLED, mode == CS_MODE_DISABLED,
+>> I'm trying to gauge the responsibility split between taggers and
+>> dsa_software_vlan_untag(). We could consider implementing the missing
+>> bits in that function and letting the generic untagging logic do it.
 > 
-> With the condition, the csdev->refcnt will go to negative number?
+> If there are more devices that need this, it might make sense. Not
+> sure if this has any negative performance impact compared to directly
+> stripping it along the proprietary tag.
 
-The parameter "mode" might cause complexity, will drop it.  The
-correctness will be ensured by the callers.
+I think this patch makes sense for 'net' and reaching stable trees,
+where most b53 users sits (I think/guess).
 
-Thanks for review!
+The DSA-core base solution could be a follow-up IMHO.
 
-Leo
+@Jonas, please still clarify a bit the comment, as per Simon's request.
+
+Thanks,
+
+Paolo
+
+> 
+> And to sidetrack the discussion a bit, I wonder if calling
+> __vlan_hwaccel_clear_tag() in
+> dsa_software_untag_vlan_(un)aware_bridge() without checking the
+> vlan_tci field strips 802.1p information from packets that have it. I
+> fail to find if this is already parsed and stored somewhere at a first
+> glance.
+
 
