@@ -1,251 +1,244 @@
-Return-Path: <linux-kernel+bounces-862852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0F1BF65AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB323BF6667
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB70918A71A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:12:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6D83B2AB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7270D333724;
-	Tue, 21 Oct 2025 12:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C76A2F12DA;
+	Tue, 21 Oct 2025 12:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="dsutjZ5p";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="TM1wM7Xl"
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eGgglJf4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE2F333436;
-	Tue, 21 Oct 2025 12:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761048554; cv=pass; b=H594goKpEL6PAcf44K/rw1mU2mfGCdsGV7gYCtKjpbGkYQxaL5t7K2rNGm0PAkXbo53OCqu1lI3LkNqTwPAOiIVH+PEMDifH2cZ0ZH9x5Z/lQTfuxOejyPvl9p/M4iEMIzxfAuXcm5LQ8OWmeBOPOSPF4Ytp9z3osDC6ALB3buk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761048554; c=relaxed/simple;
-	bh=k/JBKH2vI1/UCFnQkOHqpD/NJyrEHN8KXki2dB6QmkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RV9vxQW6bOYQoLWtnoJKhJlTBDNV80v5tgi3OHeY9jh7Og8WZwOSbwlOVx9+ivUphqdWxAn+7bTVomdG0L8JNiUM5BrlarE5VNUahG4F8ULOfeSWK6EuJ5gF4dnrWw6FsLuoYxPVI9fZqZIZPK/9hlz6/o4d91vdn/CjuZ6KbFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=dsutjZ5p; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=TM1wM7Xl; arc=pass smtp.client-ip=185.56.87.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-zj18.prod.antispam.mailspamprotection.com; s=arckey; t=1761048551;
-	 b=T+COwp8whd8ZSF0NdtVGv+GlhR4Q/5wF1a0RPSvET4g3jFz2ZV0bQTT20Au/cwl1eO7YciKgHc
-	  2w3egl9jDuh7w9sVJ0Eo0PrGjgC912TMN7RSzq8OyLDDXt4FOA0DFBLpBJrFxOUXo6ZYSvw0qI
-	  Y2vj4JpMnDZDJQ+pGm+GVWemwzSvtSIuMNzNoTZccMer2jtiQwibVESx4dt0Uly8REBV/wH3g5
-	  wiGLjFF08Xlx3Bw+Zwterx27Lav6bn4Vl5OL2QI90boPsD72+rVngs4sZRlybA8QWBqxlqPWTI
-	  IAa5uVmX15//YinJB2k6qzFZy+6KfY4iAg2Jv08AcMSLMQ==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-zj18.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-zj18.prod.antispam.mailspamprotection.com; s=arckey; t=1761048551;
-	bh=k/JBKH2vI1/UCFnQkOHqpD/NJyrEHN8KXki2dB6QmkE=;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	  Message-ID:Date:Subject:Cc:To:From:DKIM-Signature:DKIM-Signature;
-	b=e0P6G2aWgLGJiiiq7URV8ivG4A3926QuDnBhwRJXhBMn2N0symfJX0+4j6BZzbaUjza7PqPeSL
-	  auYGtIa/RuT5QOaXQSzUIPDxFXC/ekmNQj0RTzMJB+Z3W/nNYMIp6dBAEJnqkZM9k0/Vec8Jno
-	  zxZG3EzpvANJ+jgjhinC2lGTmxNEvGkqP6fUceBmM9dpgniiocw2fUQEZaKPFg0pLBlVhibRAr
-	  jCOX43RCIa6+/keVe9hI2HT+I0hBD6FX5sQc3/zoLUzwNx98VAmk2EtHU5/HertVQ1itDZn4nt
-	  eWiRou6QKNHS8e3MUpHmwgtMjrySmaAQYR4BS5HK3Edsqg==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Reply-To:List-Unsubscribe;
-	bh=pNzAWqaeaTCPO3gF7PZWEYVRaidTc0Ewfr2jBPVAsgE=; b=dsutjZ5pQKCPBe0PrEnlvroEXH
-	FtXrz3VPbW4fhrtFFg8Ic4Ln5ozJjr/SdYjEX0z/J8vAAtBEPuj/SHCEYA1pqsQ7E6Ew2tekqJF8s
-	CPHzDzjUnFyyZJMK39yvnSQIbIehqlQz6lCZtUQQNmfJX59OHtcEorOdneTlwaWqwXYU=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-zj18.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vBBAg-00000002Bjj-3vVH;
-	Tue, 21 Oct 2025 12:09:01 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=pNzAWqaeaTCPO3gF7PZWEYVRaidTc0Ewfr2jBPVAsgE=; b=TM1wM7XlESEhidmw9p+vMbQbvs
-	FYpcCmLo+5qjG832TYone0TFwBdK5DrshS12VcVTmwDb7vr+CS3buAlpwx45LkuVncbpEpqDSkM06
-	RcZAqmW6nWEmpK0CZIGXvZRuRYrP1MIn3c6wwf+jTjuBsXHiQGZNR8ijwJubwG8k6So4=;
-Received: from [95.239.58.48] (port=60828 helo=fedora.fritz.box)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vBBAL-00000000J0Y-1zlx;
-	Tue, 21 Oct 2025 12:08:37 +0000
-From: Francesco Valla <francesco@valla.it>
-To: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
- Harald Mommer <harald.mommer@opensynergy.com>,
- Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>,
- Wolfgang Grandegger <wg@grandegger.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>,
- linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, virtualization@lists.linux.dev,
- development@redaril.me
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-Date: Tue, 21 Oct 2025 14:08:35 +0200
-Message-ID: <28156189.1r3eYUQgxm@fedora.fritz.box>
-In-Reply-To: <aPdU93e2RQy5MHQr@fedora>
-References:
- <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
- <27327622.1r3eYUQgxm@fedora.fritz.box> <aPdU93e2RQy5MHQr@fedora>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2041C69
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761048532; cv=none; b=LIm80d/J9AukRY1ROS/HYDBdqYEeCoBRgYySZNTJ2MV24Rm/wunsH3gDAQrMocgUx309QNPgndPu2RSOL6wDa3VHoyXWlE3y3hVpZJsfWi2sRJddD/S4sUj/GrFKLMkTinp6aFx+4QZVA7xp3nd7ovN1+M9zaS0/QEArQhEA2NM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761048532; c=relaxed/simple;
+	bh=Se4jxx6lLa/LixzWounwQe2HQfxls1H1T66SY4jhs0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HPRIQGbaMEns3RDEr2300Z4SX/lG5LJ2hiNkHAtgQXBCCpnzLH6IIIdTBjE+eJvqumlwVI9Z+BPro7JvM2EmmDhYvQ8CM3RLKrity18WKBkrQBFUWc3iiE7JC5anWzVPh9U/P3Gaasc6DIYletUiiOZvaJ/oeb/sLIHM+fc+tkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eGgglJf4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761048529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jBk/hMZm1AU2HUgl06IU47txGUglYm8peBHpiuPlFXY=;
+	b=eGgglJf41d6cQxOjm+mNunYzitf/Nrynmlijl9Z0pLasiaW9j5gMWPkeGJ04s2SKftSnpE
+	hqdoqTZQvt2K0HXjtBpt9D/z53FfHj9TrpncuOAwB3WYas6S9ZveSaOWQXmcVc/3jIF88U
+	lwokAKpAKFYxBfn0GC5ryP/hjeGHWao=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-aV7Pwgj0OPuTC2esxXWZrg-1; Tue, 21 Oct 2025 08:08:48 -0400
+X-MC-Unique: aV7Pwgj0OPuTC2esxXWZrg-1
+X-Mimecast-MFC-AGG-ID: aV7Pwgj0OPuTC2esxXWZrg_1761048527
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso2403580f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:08:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761048527; x=1761653327;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jBk/hMZm1AU2HUgl06IU47txGUglYm8peBHpiuPlFXY=;
+        b=k5QykrBcVL43mCMXnQhLAHFCi3A15IFN9/6qLj60U1yJSzXT4o+kvWTtAsSDHqbev3
+         zh2YwXViRLs5aVxgkntMY8/+PaDeaEput1HhlKdBt0lS7ony7v89E09Bw7gTht0tPLz8
+         /Xcs9tVhB/Ox0LaACqmwKeD4To1ww+UEGZcabfgNUU304g8P0F/qGNK5zbThMKLTmRPS
+         mCvOvOODwkYaKRzZA74S0RGl1MjcPeSbQLemcCHzJ0jjN+egK398WtSiEZH2cyUg154Q
+         berF4eVAuCAKoqQiRPYzmmqL4H57fUOc0/OoEEcrI3XeZWwDp9Viv2+76QS8Ox7Npfa+
+         ST9g==
+X-Forwarded-Encrypted: i=1; AJvYcCW3enNsQW/n1ez1LstbgS6McJejLZbuAHZXiXoZNtMZzoUeA/fhMYrBzlIi82bPGYzK074S8Ya5k+1qRG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHOlt8Kn7sjz+H4qzL57GW+aMU5gwfqwS9ZDBf+H/J1v80n2zl
+	m9kssy1a6hxpHMJgf84L8fVWGbdFMi98D9nWn39q/r6Mj1thvYgRhLZy6Qxrw4b0ibJdf2luluO
+	C5t+2n+0QxOOz6t+Wk3bCgt7tjhH7Ned93U4Do7FkTVsXo43vGX1rv2yij3WCpDyYWQ==
+X-Gm-Gg: ASbGncub+wRMTCqw2A/C6K0U4C32c38SpZBMw5rwcDR8fbwFGbPS+VTZWHm9P9phJ82
+	1Xv83TrzWTKAA9Z/r+1eQWVYRHCu22mBYhlOACLWKSnKexJerwj+5RHTqJI7lLp6EYu1qfincgQ
+	VOY9hsiSuPHY6BgN8f1haJrIl4yrIA4M3+Rd4dKYcACqmq+NxA/kuGxf3En9E3OC3qEZfotmSav
+	SsJDwrP/iiEnjxP9PRXgQJmNww65i1jShtCuOXBnkFIt2hwcV69dMgkvbaU9SEJLgKU3PTbi7Gr
+	xhSfum+8wxefnVOIrupsSne3+a/C7xZMJoomB9Zf1mBX4hKG7sQi6Rgl7x3oaXZk71nREZY7iKb
+	IMwfHv+/RoJm1tmMSXLvI7Y4aD3cc9Yk57+RYBkz1WPU1lXole2V+1gv0kdpvFXNeHd0Zl+2JWX
+	QdpRttn1GEoLZ1S8pB6SJ0ebKV8gY=
+X-Received: by 2002:a05:6000:612:b0:425:6866:ede8 with SMTP id ffacd0b85a97d-42704d49a78mr9955320f8f.8.1761048527232;
+        Tue, 21 Oct 2025 05:08:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZ5mwIbXc0FupYjOjOI7qYovL003CpULMJ3bbgFzgJ3ZkyizTtVqUvrxQ5Ewt99StNhrhgpg==
+X-Received: by 2002:a05:6000:612:b0:425:6866:ede8 with SMTP id ffacd0b85a97d-42704d49a78mr9955285f8f.8.1761048526794;
+        Tue, 21 Oct 2025 05:08:46 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a1056sm19970736f8f.2.2025.10.21.05.08.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 05:08:46 -0700 (PDT)
+Message-ID: <8379d8cb-aec5-44f7-a5f0-2356b8aaaf00@redhat.com>
+Date: Tue, 21 Oct 2025 14:08:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 9909174f231b3c6b9b19d237f31e977e
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1vBBAg-00000002Bjj-3vVH-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-zj18.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm/memory: Do not populate page table entries beyond
+ i_size.
+To: Kiryl Shutsemau <kirill@shutemov.name>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Hugh Dickins <hughd@google.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kiryl Shutsemau <kas@kernel.org>
+References: <20251021063509.1101728-1-kirill@shutemov.name>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251021063509.1101728-1-kirill@shutemov.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tuesday, 21 October 2025 at 11:40:07 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> On Mon, Oct 20, 2025 at 11:24:15PM +0200, Francesco Valla wrote:
-> > On Monday, 20 October 2025 at 16:56:08 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> > > On Tue, Oct 14, 2025 at 06:01:07PM +0200, Francesco Valla wrote:
-> > > > On Tuesday, 14 October 2025 at 12:15:12 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> > > > > On Thu, Sep 11, 2025 at 10:59:40PM +0200, Francesco Valla wrote:
-> > > > > > Hello Mikhail, Harald,
-> > > > > > 
-> > > > > > hoping there will be a v6 of this patch soon, a few comments:
-> > > > > > 
-> > > > > > On Monday, 8 January 2024 at 14:10:35 Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com> wrote:
-> > > > > > 
-> > > > > > [...]
-> > > > > > > +
-> > > > > > > +/* Compare with m_can.c/m_can_echo_tx_event() */
-> > > > > > > +static int virtio_can_read_tx_queue(struct virtqueue *vq)
-> > > > > > > +{
-> > > > > > > +	struct virtio_can_priv *can_priv = vq->vdev->priv;
-> > > > > > > +	struct net_device *dev = can_priv->dev;
-> > > > > > > +	struct virtio_can_tx *can_tx_msg;
-> > > > > > > +	struct net_device_stats *stats;
-> > > > > > > +	unsigned long flags;
-> > > > > > > +	unsigned int len;
-> > > > > > > +	u8 result;
-> > > > > > > +
-> > > > > > > +	stats = &dev->stats;
-> > > > > > > +
-> > > > > > > +	/* Protect list and virtio queue operations */
-> > > > > > > +	spin_lock_irqsave(&can_priv->tx_lock, flags);
-> > > > > > > +
-> > > > > > > +	can_tx_msg = virtqueue_get_buf(vq, &len);
-> > > > > > > +	if (!can_tx_msg) {
-> > > > > > > +		spin_unlock_irqrestore(&can_priv->tx_lock, flags);
-> > > > > > > +		return 0; /* No more data */
-> > > > > > > +	}
-> > > > > > > +
-> > > > > > > +	if (unlikely(len < sizeof(struct virtio_can_tx_in))) {
-> > > > > > > +		netdev_err(dev, "TX ACK: Device sent no result code\n");
-> > > > > > > +		result = VIRTIO_CAN_RESULT_NOT_OK; /* Keep things going */
-> > > > > > > +	} else {
-> > > > > > > +		result = can_tx_msg->tx_in.result;
-> > > > > > > +	}
-> > > > > > > +
-> > > > > > > +	if (can_priv->can.state < CAN_STATE_BUS_OFF) {
-> > > > > > > +		/* Here also frames with result != VIRTIO_CAN_RESULT_OK are
-> > > > > > > +		 * echoed. Intentional to bring a waiting process in an upper
-> > > > > > > +		 * layer to an end.
-> > > > > > > +		 * TODO: Any better means to indicate a problem here?
-> > > > > > > +		 */
-> > > > > > > +		if (result != VIRTIO_CAN_RESULT_OK)
-> > > > > > > +			netdev_warn(dev, "TX ACK: Result = %u\n", result);
-> > > > > > 
-> > > > > > Maybe an error frame reporting CAN_ERR_CRTL_UNSPEC would be better?
-> > > > > > 
-> > > > > I am not sure. In xilinx_can.c, CAN_ERR_CRTL_UNSPEC is indicated during
-> > > > > a problem in the rx path and this is the tx path. I think the comment
-> > > > > refers to improving the way the driver informs this error to the user
-> > > > > but I may be wrong.
-> > > > > 
-> > > > 
-> > > > Since we have no detail of what went wrong here, I suggested
-> > > > CAN_ERR_CRTL_UNSPEC as it is "unspecified error", to be coupled with a
-> > > > controller error with id CAN_ERR_CRTL; however, a different error might be
-> > > > more appropriate.
-> > > > 
-> > > > For sure, at least in my experience, having a warn printed to kmsg is *not*
-> > > > enough, as the application sending the message(s) would not be able to detect
-> > > > the error.
-> > > > 
-> > > > 
-> > > > > > For sure, counting the known errors as valid tx_packets and tx_bytes
-> > > > > > is misleading.
-> > > > > > 
-> > > > > 
-> > > > > I'll remove the counters below.
-> > > > > 
-> > > > 
-> > > > We don't really know what's wrong here - the packet might have been sent and
-> > > > and then not ACK'ed, as well as any other error condition (as it happens in the
-> > > > reference implementation from the original authors [1]). Echoing the packet
-> > > > only "to bring a waiting process in an upper layer to an end" and incrementing
-> > > > counters feels wrong, but maybe someone more expert than me can advise better
-> > > > here.
-> > > > 
-> > > > 
-> > > 
-> > > I agree. IIUC, in case there has been a problem during transmission, I
-> > > should 1) indicate this by injecting a CAN_ERR_CRTL_UNSPEC package with
-> > > netif_rx() and 2) use can_free_echo_skb() and increment the tx_error
-> > > stats. Is this correct?
-> > > 
-> > > Matias
-> > > 
-> > > 
-> > 
-> > That's my understanding too! stats->tx_dropped should be the right value to
-> > increment (see for example [1]).
-> > 
-> > [1] https://elixir.bootlin.com/linux/v6.17.3/source/drivers/net/can/ctucanfd/ctucanfd_base.c#L1035
-> > 
+On 21.10.25 08:35, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
+
+Subject: I'd drop the trailing "."
+
 > 
-> I think the counter to increment would be stats->tx_errors in this case ...
+> Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> supposed to generate SIGBUS.
 > 
+> Recent changes attempted to fault in full folio where possible. They did
+> not respect i_size, which led to populating PTEs beyond i_size and
+> breaking SIGBUS semantics.
+> 
+> Darrick reported generic/749 breakage because of this.
+> 
+> However, the problem existed before the recent changes. With huge=always
+> tmpfs, any write to a file leads to PMD-size allocation. Following the
+> fault-in of the folio will install PMD mapping regardless of i_size.
 
-I don't fully agree. tx_errors is for CAN frames that got transmitted but then
-lead to an error (e.g.: no ACK), while here we might be dealing with frames
-that didn't even manage to reach the transmission queue [1].
+Right, there are some legacy oddities with shmem in that area (e.g., 
+"within_size" vs. "always" THP allocation control).
 
-An exception to this may arise when the VIRTIO_CAN_F_CAN_LATE_TX_ACK feature
-is negotiated; in this case, a VIRTIO_CAN_RESULT_NOT_OK may indicate either a
-dropped frame (tx_dropped) or a failed transmission (tx_error) [2].
+Let me CC Hugh: the behavior for shmem seems to date back to 2016.
 
+> 
+> Fix filemap_map_pages() and finish_fault() to not install:
+>    - PTEs beyond i_size;
+>    - PMD mappings across i_size;
 
-
-[1] https://github.com/oasis-tcs/virtio-spec/blob/master/device-types/can/description.tex#L139 
-[2] https://github.com/oasis-tcs/virtio-spec/blob/master/device-types/can/description.tex#L196
-
-
-BR,
-Francesco
+Makes sense to me.
 
 
+[...]
 
+> +++ b/mm/memory.c
+> @@ -5480,6 +5480,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>   	int type, nr_pages;
+>   	unsigned long addr;
+>   	bool needs_fallback = false;
+> +	pgoff_t file_end = -1UL;
+>   
+>   fallback:
+>   	addr = vmf->address;
+> @@ -5501,8 +5502,14 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>   			return ret;
+>   	}
+>   
+> +	if (vma->vm_file) {
+> +		struct inode *inode = vma->vm_file->f_mapping->host;
+
+empty line pleae
+
+> +		file_end = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> +	}
+> +
+>   	if (pmd_none(*vmf->pmd)) {
+> -		if (folio_test_pmd_mappable(folio)) {
+> +		if (folio_test_pmd_mappable(folio) &&
+> +		    file_end >= folio_next_index(folio)) {
+>   			ret = do_set_pmd(vmf, folio, page);
+>   			if (ret != VM_FAULT_FALLBACK)
+>   				return ret;
+> @@ -5533,7 +5540,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>   		if (unlikely(vma_off < idx ||
+>   			    vma_off + (nr_pages - idx) > vma_pages(vma) ||
+>   			    pte_off < idx ||
+> -			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE)) {
+> +			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE ||
+
+While at it you could fix the double space before the ">".
+
+> +			    file_end < folio_next_index(folio))) {
+>   			nr_pages = 1;
+>   		} else {
+>   			/* Now we can set mappings for the whole large folio. */
+
+Nothing else jumped at me.
+
+-- 
+Cheers
+
+David / dhildenb
 
 
