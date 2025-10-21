@@ -1,95 +1,117 @@
-Return-Path: <linux-kernel+bounces-862880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CFC1BF66D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:25:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F8BBF66E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0CCCF3557EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:25:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 242364E9026
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D66432ED37;
-	Tue, 21 Oct 2025 12:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8061E5B71;
+	Tue, 21 Oct 2025 12:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="V+24LYlZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXpsIlZz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA681624DF;
-	Tue, 21 Oct 2025 12:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB4D32E6A6;
+	Tue, 21 Oct 2025 12:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049490; cv=none; b=uFVo3Sv3uyg2tC/4Slw7vkeqlr5gp63XSukzaCd2fWhACu4e4AvkHCcPP0YydJRk0mhdf/T5Jh9Up5WuyClWrM67mo03/43oiNtLdYTdEOBms9l9ULy80R5qBG0nMPDJuPhfi2IaLuOOuTt6o/GJSAbrv07tYgnFCmJ7aeF5UMA=
+	t=1761049504; cv=none; b=ARcYTKLnGQCutpwzBMqP9l1Fc1JjI62rOZFRY1TaMzw4Da3BfHYdWS6mMQCChPMby+XFtSShi5xd44CN8jWLWWBe9qScghi2swf/ZX4OoMYXwohyvNswBE2vRmsvZR4StUUTqhInN26+Mz7Y0j02ZPhJYi+kPdchBdruBuZS5S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049490; c=relaxed/simple;
-	bh=WTwCxXhyf3l6LHnurbDVNOc2H94EiEBW7MvtPFkctKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nb2tSXzQiLtlWYv9WRr966cXswaEAYhk0MTayZChn/vRd9HVIw4iZQAKiNOpUtfmyGOJbpRB+uYjXhzlGjlWdHtaVVjiYYlQptHwrLthtxWawy8syODEG1FbvqYYBmIFgb7U8L5nW/0RQubHrY8LVbeUEwi/NxefULHDYu24owY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=V+24LYlZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7393C4CEF1;
-	Tue, 21 Oct 2025 12:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761049490;
-	bh=WTwCxXhyf3l6LHnurbDVNOc2H94EiEBW7MvtPFkctKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V+24LYlZPV06a4J85K5fAD/qI7DbdEKC3xQf1BUZG1qbco28dYO/tLSm7Q8g144Vi
-	 ldK38HrQR9hrPzB5pZv3wrMcwZmVfnXx4lb3g1wXH3maNBveyfiTatayzaXUuir/+A
-	 9MB89714EsWvM2qC4EmTaibD9FII3NZvXvZGA1Ro=
-Date: Tue, 21 Oct 2025 14:24:47 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Olle Lukowski <olle@lukowski.dev>
-Cc: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] staging: most: i2c: replace BUG_ON() with
- WARN_ON_ONCE() and return error
-Message-ID: <2025102130-siberian-rut-3a96@gregkh>
-References: <20251021-staging-most-warn-v1-0-4cdd3745bbdc@lukowski.dev>
- <20251021-staging-most-warn-v1-1-4cdd3745bbdc@lukowski.dev>
+	s=arc-20240116; t=1761049504; c=relaxed/simple;
+	bh=QAp0WH1C/zbfZAC6WrcLNYkAgwamHfqX68wiGHk2Ts8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lSoPFLLeA3C2Jrc8PL0PzAtreVyIR01l2zaP7A8RA12QQBFI2W658D3qnWJJuZur/YuyzxaXuupMx+sdyNfNUOayNp89fiSfvmB1DeSzrz3mTeZt7rXjmRSGi/i2sA7RrLnSZ/K5PiBxzTXEb75AVJduod18ub8QpPPThCdcj3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXpsIlZz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8D7C4CEF5;
+	Tue, 21 Oct 2025 12:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761049503;
+	bh=QAp0WH1C/zbfZAC6WrcLNYkAgwamHfqX68wiGHk2Ts8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JXpsIlZz/zrd/nzfTJJ5XNltOcWIGmTh8FTDJ3uXwKmN9f58zgtXBBZc5sJOJ9iiw
+	 lD4TDc1sDlOtT4mzVIYYdsYL+pkl2h+QwjcqhF7Y6x/xgAaLbz2RjYlIG5XRhSrSgU
+	 4GjTbBa6neRY7T3Cv2pQXbY7LJm3e5zI1NOoqYkhN3NIS57eTrkuyLejkGCOc7VAy9
+	 ez5k+o6N+HgrU8IMjE3GG+n27TgpCXrdL1OdrcaioJ9T3l3NsUci3+WwEWXEefF4C6
+	 RibxOQYv0qMgIdI7tNXdjtE173keuMegx9bQX8vQIYaA/lxdNQGPpNaf6K7AwdboAV
+	 Tgoke2Q5++u+w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vBBQC-0000000FpwD-3dby;
+	Tue, 21 Oct 2025 12:25:00 +0000
+Date: Tue, 21 Oct 2025 13:25:00 +0100
+Message-ID: <86ecqwwig3.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Liao Chang <liaochang1@huawei.com>
+Cc: <corbet@lwn.net>,
+	<catalin.marinas@arm.com>,
+	<will@kernel.org>,
+	<akpm@linux-foundation.org>,
+	<paulmck@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>,
+	<mingo@kernel.org>,
+	<bp@alien8.de>,
+	<kees@kernel.org>,
+	<arnd@arndb.de>,
+	<fvdl@google.com>,
+	<broonie@kernel.org>,
+	<oliver.upton@linux.dev>,
+	<yeoreum.yun@arm.com>,
+	<yangyicong@hisilicon.com>,
+	<james.morse@arm.com>,
+	<ardb@kernel.org>,
+	<hardevsinh.palaniya@siliconsignals.io>,
+	<linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: Add kernel parameter to disable trap EL0 accesses to IMPDEF regs
+In-Reply-To: <20251021115428.557084-1-liaochang1@huawei.com>
+References: <20251021115428.557084-1-liaochang1@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021-staging-most-warn-v1-1-4cdd3745bbdc@lukowski.dev>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: liaochang1@huawei.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, paulmck@kernel.org, pawan.kumar.gupta@linux.intel.com, mingo@kernel.org, bp@alien8.de, kees@kernel.org, arnd@arndb.de, fvdl@google.com, broonie@kernel.org, oliver.upton@linux.dev, yeoreum.yun@arm.com, yangyicong@hisilicon.com, james.morse@arm.com, ardb@kernel.org, hardevsinh.palaniya@siliconsignals.io, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Oct 21, 2025 at 03:16:27PM +0300, Olle Lukowski wrote:
-> Replace BUG_ON() checks for invalid channel indices with WARN_ON_ONCE()
-> and return -EINVAL to avoid crashing the kernel unnecessarily.
+On Tue, 21 Oct 2025 12:54:28 +0100,
+Liao Chang <liaochang1@huawei.com> wrote:
 > 
-> Signed-off-by: Olle Lukowski <olle@lukowski.dev>
-> ---
->  drivers/staging/most/i2c/i2c.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/most/i2c/i2c.c b/drivers/staging/most/i2c/i2c.c
-> index 184b2dd11..b9267c3fc 100644
-> --- a/drivers/staging/most/i2c/i2c.c
-> +++ b/drivers/staging/most/i2c/i2c.c
-> @@ -71,7 +71,8 @@ static int configure_channel(struct most_interface *most_iface,
->  	struct hdm_i2c *dev = to_hdm(most_iface);
->  	unsigned int delay, pr;
->  
-> -	BUG_ON(ch_idx < 0 || ch_idx >= NUM_CHANNELS);
-> +	if (WARN_ON_ONCE(ch_idx < 0 || ch_idx >= NUM_CHANNELS))
-> +		return -EINVAL;
+> Add kernel parameter to allow system-wide EL0 access to IMPDEF system
+> regregisters and instructions without trapping to EL1/EL2. Since trap
+> overhead will compromises benefits, and it's even worse in
+> virtualization on CPU where certain IMPDEF registers and instructions
+> are designed for EL0 performance use.
 
-If this is something that can actually ever happen, this change really
-doesn't do anything well.  Many systems (i.e. the HUGE majority of Linux
-instances in the world, billions) are running with panic-on-warn set, so
-that means this will still reboot the box.
+Since you mention virtualisation, I want to be clear: there is no way
+I will consider anything like this for KVM. KVM will always trap and
+UNDEF such register accesses, no matter where they come from (EL0 or
+EL1).
 
-So please, just properly handle the issue and return an error and do not
-panic the system.
+Allowing such registers to be accessed from within a guest would make
+it impossible to context-switch or save/restore the guest correctly.
 
-Same for the other patches in this series.
+You can of course do what you want in your downstream kernel or your
+own hypervisor, but I wanted to set the expectations on the upstream
+side.
 
-thanks,
+	M.
 
-greg k-h
+-- 
+Without deviation from the norm, progress is not possible.
 
