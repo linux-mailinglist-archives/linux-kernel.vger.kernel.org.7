@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-863211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E013BF7433
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:11:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76048BF742F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D4CE188BA95
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:07:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A6AB50772A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35944342CB8;
-	Tue, 21 Oct 2025 15:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42212343218;
+	Tue, 21 Oct 2025 15:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AY5TKxio"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sWV0ZhOh"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD1C340299;
-	Tue, 21 Oct 2025 15:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D2C342CBF;
+	Tue, 21 Oct 2025 15:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761059206; cv=none; b=FVjmC/0I9Q0P2fQ3DWUYBm/1Kl+nohk+7KwwaTuMD9Vue3vnzi14L0vCzwOWQK3EfRZy9cdRC0Esg34ZzVZzSz2RrC7zInjE5MUaxnSFCEmXuWY3Mo7+JmT1VKZR5peYMpMqdeZvzu+T2UV0yfZfL/KmZ/ZuGr95C6E/cziLRyE=
+	t=1761059301; cv=none; b=IiVKeZAmb6D5RSfj/Hro/BUCN9Vqej+EfoKA1xWx7Gy3tlsMp0Ky7lBVVYI+lNzvkMXB9qqDF3gN6idIR1aCzJCYW+bK5XZOB9UVIGcNakpzgo6JfGTMtt8yXf8BDxooJ7N4bYC3PtSUdyiJowE+tcGrJYZ3kUD0qVtIK7uYLfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761059206; c=relaxed/simple;
-	bh=GbKOuiXZBtxsAWSv9rFIVwfWTojJtnRVB3sTM7YwbPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Go2XxtHEonsILUyBiZjASs78vk6m9oW3pyM7wo/H4rrplFgWERhAXPBTRkkPkDSoXfgqTJn4Wf82NMTCRXwD4brMVPbJakc4GYfylPBUwbl8oltaM+rcXTf9EeJz3ysupHBRHhzW37e9WtAksAopJGM6O8guMnzYXljAiYH6nhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AY5TKxio; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0937C4CEF5;
-	Tue, 21 Oct 2025 15:06:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761059206;
-	bh=GbKOuiXZBtxsAWSv9rFIVwfWTojJtnRVB3sTM7YwbPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AY5TKxioba5QvWwSvsvhkB1ZkjjKEaSKHHQ+Hj8ieaibQAssbMUiPcu8ylPDXYn4G
-	 ANJoGSN3MXVXXP0yM7a6iPISzqEWtg+6JNcFXBCyO5Dse20NjJjNYnNvjWMyn3L+v1
-	 LZ5HqPCRU8M/nNOREr+8P0kJnhp38e12+LcqmkVzXBQ+iIydCirk2cLT2GFVRa7PKk
-	 X65d+MysAxMI8B3JYVvn4ZXYJUL+Nj+HjmsrtvsKBQ3CdrBDisjDEUx5mSVIuYyPHQ
-	 +OOQWGqYs92xw6THmp5PlyOhWGBSsMkQLYsTxg0JFdzbojQkws0HW8yrl4s2G+pstm
-	 OO95NhE5UT1ww==
-Date: Tue, 21 Oct 2025 16:06:42 +0100
-From: Lee Jones <lee@kernel.org>
-To: Christian Hitz <christian@klarinett.li>
-Cc: Pavel Machek <pavel@kernel.org>, Christian Hitz <christian.hitz@bbv.ch>,
-	stable@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: leds-lp50xx: LP5009 supports 3 modules for a total
- of 9 LEDs
-Message-ID: <20251021150642.GJ475031@google.com>
-References: <20251008125031.1174886-1-christian@klarinett.li>
+	s=arc-20240116; t=1761059301; c=relaxed/simple;
+	bh=IGjOUBUClndtvZGsgegWC43Da37BaC6DfKMErVwR34Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jxP4z8oOn3hGLQ5AZZOGneSnkxBfji/jKXDjP2yNhC6zVg3Cjnh7yipyUWcOYJxg1iXFYQN3FtQnKsJElASd8PEj4G9bSau0nIq2gUvLkL/F5Apg+ACz18L9R9s6X86RmAx/uZqbm5Rg4qrufbHJzg/Id44Wh8b6rPrDYv1Q944=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sWV0ZhOh; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 7A52A4E41246;
+	Tue, 21 Oct 2025 15:08:15 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 423FE60680;
+	Tue, 21 Oct 2025 15:08:15 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58768102F2401;
+	Tue, 21 Oct 2025 17:07:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761059293; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=7SnhTdf3/ZnBb/Auo/xtgJWFGAq+ocBosOYhh6RlpME=;
+	b=sWV0ZhOhrBGkxxTsVko6gsm7SFgXKpZfniXDYQ+53CvCE3bHfz1UVt9V/FoRu3uemhbpzp
+	jB+jLCo/zHeHi7GnJ2VUZzLrIe6TBV78WrURJ1VwRc0uUPQ64as+OQbLKQoVQSfSgmZ2Wv
+	NEvux7I9qCCmbdTowGnMeiVgVc/sLqcv1vMUXRiFIzQIw7y2vnemItpnsTUE7oh1k7QWMJ
+	xGi3s/FR3fDgX4bdRPhMmRXkspskq4ULH6LiADl/zV1zQMb/1yYfNREBBPfcZU/bhQogZF
+	Ek3DxRNL14OEAxh47i2QrP+RiFYWdUtv+urGqqcVAIbuOn++ipgHmo+WQhzA9Q==
+Message-ID: <0e71d2b2-a08d-4ec9-b0d3-9094d3802065@bootlin.com>
+Date: Tue, 21 Oct 2025 17:07:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251008125031.1174886-1-christian@klarinett.li>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v14 00/16] net: phy: Introduce PHY ports
+ representation
+To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Russell King <linux@armlinux.org.uk>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+References: <20251013143146.364919-1-maxime.chevallier@bootlin.com>
+ <20251020185249.32d93799@kernel.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20251020185249.32d93799@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 08 Oct 2025, Christian Hitz wrote:
+Hi Jakub, Andrew, Rusell, Heiner,
 
-> From: Christian Hitz <christian.hitz@bbv.ch>
-
-You need forthcoming and insightful commit message.
-
-> Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
-> Cc: stable@vger.kernel.org
-
-Fine, but place this above your SoB.
-
-> ---
->  drivers/leds/leds-lp50xx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 21/10/2025 03:52, Jakub Kicinski wrote:
+> On Mon, 13 Oct 2025 16:31:26 +0200 Maxime Chevallier wrote:
+>> Hi everyone,
+>>
+>> Here is a V14 for the phy_port work, aiming at representing the
+>> connectors and outputs of PHY devices.
 > 
-> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-> index 94f8ef6b482c..05229e2f2e7e 100644
-> --- a/drivers/leds/leds-lp50xx.c
-> +++ b/drivers/leds/leds-lp50xx.c
-> @@ -54,7 +54,7 @@
->  /* There are 3 LED outputs per bank */
->  #define LP50XX_LEDS_PER_MODULE	3
->  
-> -#define LP5009_MAX_LED_MODULES	2
-> +#define LP5009_MAX_LED_MODULES	3
->  #define LP5012_MAX_LED_MODULES	4
->  #define LP5018_MAX_LED_MODULES	6
->  #define LP5024_MAX_LED_MODULES	8
-> -- 
-> 2.51.0
-> 
+> I can't help but read the lack of replies from PHY maintainers
+> here as a tacit rejection. Not entirely sure what to do here.
+> Should we discuss this at the netdev call tomorrow (8:30am PT)?
+> Would any PHY maintainer be willing to share their opinion?
 
--- 
-Lee Jones [李琼斯]
+I may have gotten my timezones wrong, but this call is in ~20 minutes,
+right ?
+
+I didn't see any annouce for this netdev call, it may be of too short
+notice for the PHY folks ? I'd be happy to discuss that in any manner :)
+
+Maxime
 
