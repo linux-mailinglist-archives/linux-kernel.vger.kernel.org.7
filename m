@@ -1,178 +1,181 @@
-Return-Path: <linux-kernel+bounces-862981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205D5BF6B7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:17:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B78EBF6B65
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B761891268
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:18:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95AC420F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E553321DC;
-	Tue, 21 Oct 2025 13:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jJLk6CRp"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C6B3321DC;
+	Tue, 21 Oct 2025 13:16:37 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EE61DD9AC;
-	Tue, 21 Oct 2025 13:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2786220F5C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052661; cv=none; b=ItZzy08Wx94fWHJ4bnC07cjDrPlFJa1SmmVbiMIcXjjfVF371XsfPiOYqocRH6S4zSRdBI1XI77YwdV8cTeH2i8nCZe/nCTHzJD+2q/DN39lZTNxyuiMQo8la3QmO9wBvMVDEqK57SBREwyit/0JRzhKdSvX4KfQzSU2Tz/2AAc=
+	t=1761052596; cv=none; b=ivi59m2oxQ4SzjVadebeFR+Kq4smwdHQCf44PC7q2w6IFBeW+kCPZ4lw+VCWQdSE52JavOhDb1zC+83rp67caoCoLc4OSZVObiwbXvycmDqInGrji/lNk+7mdBpBJf8Y6gD5A04MMKxGiKi6kH+IKo7e96kdVKOGFzKE4yG2DFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052661; c=relaxed/simple;
-	bh=ktO4m9jvZD/rIB4n95XBwqKHwPZqPVtiRfnNM1GVTG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7SzsIex5ex5/Yp6yWah9CfJHBmQnSYqet1nY+1evMTLCRBjypPBpAqTDGMWT19QF6X6u//rcMtQw19g84Gts6Z22BtxO5LITBBNWD2VSJdsh0K8YJB06LK1rXQK1/rSL1l/pABwi513gOGThHEhgP1GGL42BrrbF2d88KCKJeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jJLk6CRp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L6ljY7006853;
-	Tue, 21 Oct 2025 13:16:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=59kDhs
-	xHhCui/zE6BV0zbA2HLqf5J0MKFlP8k3AlIVc=; b=jJLk6CRpjdktmNUTiwy22T
-	1y8JkX5W6b1XDWWQuC30HJRqu0iUkILyxvN0YpLemJD6k/0zoMkcZuFSH1UQqd+a
-	B5MxdEwHTXNkdjeLFQG5Y9e9c6U0h+fBVNOkMDktRwG16pKtYe03ix+4OmYpayST
-	FwBeJ/zt5FWphwVvFdMX338k5ODEWSxRuMaHFgguyV1Ih6kqmFgGp1kqbAv3pXo1
-	D/AgA24z1BFmMVj80HD5HT3KTidgkHHRWdW0JF6XA8jxQD/iooZm1FjfSTCZzhg/
-	HMqvlWQnLZwMpMQ0TrdUAbRsn3L95GblXjHnDGFrYMu/erSTgbqb5ozEH5uV5hwQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vntfp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 13:16:39 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59LDGdhT028829;
-	Tue, 21 Oct 2025 13:16:39 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vntfm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 13:16:39 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59LB2Gjw017081;
-	Tue, 21 Oct 2025 13:16:38 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vnkxu02j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 13:16:38 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LDGacB50135394
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 13:16:36 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 56C1620043;
-	Tue, 21 Oct 2025 13:16:36 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A8E0F20040;
-	Tue, 21 Oct 2025 13:16:35 +0000 (GMT)
-Received: from osiris (unknown [9.155.211.25])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 21 Oct 2025 13:16:35 +0000 (GMT)
-Date: Tue, 21 Oct 2025 15:16:33 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Doug Anderson <dianders@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Andrew Chant <achant@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Francesco Valla <francesco@valla.it>,
-        Guo Weikang <guoweikang.kernel@gmail.com>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu <jeffxu@chromium.org>,
-        Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
-        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH] init/main.c: Wrap long kernel cmdline when printing to
- logs
-Message-ID: <20251021131633.26700Dd6-hca@linux.ibm.com>
-References: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
- <2d514d61-121d-44fc-aec7-637dd0920de8@infradead.org>
- <CAD=FV=VNyt1zG_8pS64wgV8VkZWiWJymnZ-XCfkrfaAhhFSKcA@mail.gmail.com>
- <CAMuHMdVT-_UVAO=1jvTPEjKO0zy7H1rUrQz1ubMfHivF4HWJNA@mail.gmail.com>
- <CAD=FV=WeXOj_hyA=V9hMLHOJ_m9ui5mP6cRv2DpjXnR62_nd2w@mail.gmail.com>
- <CAMuHMdWGb0jVt9ziBtWdHWC9omPAFMHVPBHDpv0F1XzvR0THpg@mail.gmail.com>
+	s=arc-20240116; t=1761052596; c=relaxed/simple;
+	bh=4lO37nzrIpBC423IxnKVQSeJkCQrkTfEy9wzC0YiE10=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=deaYJmeWuDcqQzp3Hvsm/TCaaQDVcn4f86BiCiXwenHjOrvGT+Tyi6efo2rhZPiwRxR/fnnSbj2p42o2aOUQ2unQknM7PFBxyZtI3+gob6IDTYIh0k78VnebTquplPQymhkByRR3/MbCXJc7yRQWcgGJsrhnt+AW3FWthYfApyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430d1adb32aso28988255ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:16:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761052594; x=1761657394;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QaEtq608qHIwmej6NQk9j0kRKo2k3QnrAL9CW0txtrM=;
+        b=moEJBygBzDjoTPPSj5ZgrGNrhvBzssPHuL8RXAnDBM0UgV4eCC8H4sKaoF0YxbuXxB
+         gGuFqiI+ke+8Rk1jqa/vXb1CA6Sl+fCiG74JQYUn5M56hFkHm/pPpP3g1KrU24EDxfXr
+         WkCzWTU3DIuLgX8Hk437MsJbOt/si3HOKBX7Sy79dAVK9SX+dEoRcwaKJh5hwyXcj4gE
+         PhqQKhp8VoNaM+YYayVmzpj2IfR232z5LZX7RubN3TwkkmmbKqoYMA/W8vhVa1aop5ZU
+         jvhTjedsQWlNsPFvqVWyGiAKFgkXR1Pd69lgparLNDWhvXzFojqTwH2GWJt7HevQblrm
+         Aoaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWH5lHAbjvDplCpPnpjUzr5EikSIBwt9b9nkb2XCbSVRWFvwPCrRV39K/HAtHUQUYWXoFMxMRx1jOcSgaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8U1qvwsyuWlReH31JTbtTgyInUtBzEd5rdHa8uUO4ZnJoRyKY
+	30eV3mIpqbnveHbHN8VBb1O0veNZHaMJT+OL0o4lJPpl4D3EEMHDFfsVmHwsJSjlQ1vJJ11BAaC
+	d0OINbHQhG6tHQuGM7tL6Tm+B64vcXMWCJB9ZBYIzgNgMkVG5Vuyz54gPVxY=
+X-Google-Smtp-Source: AGHT+IEJZ8XvlCYCgVR6vGEL2ByPS/F/dPCsyXntFCLM1/ojcI275IP5TD3P3NoKbuhxBfMSYs0elzRc39SD7RQktq6NpIM4VWVL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWGb0jVt9ziBtWdHWC9omPAFMHVPBHDpv0F1XzvR0THpg@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: I-TIS4kR6Ou-Mb55i_Ay1degV3_Mx5Fl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX6yB+urCIgoIi
- 6bgTPbTtxdzNQuDNbAlPfWyFzsZP0czUuCRqBrGQ88yR0qkjrAKBbvZFihPM5atVCrL1llTI+4E
- yFBwgZI0xe/HCzDvfZNVZ+8m9FiJCObDMlhwTgFw2D7vXWN5wHTFrscIsKQxg+BdtX++42p8u3a
- yTeRh81CNcqc4r8/eat0UTCsZ4yQNAQuI4oLrXukmeHQmfu9Dm1LRnlZvCB0IIj5hbjLbxV7ZoX
- BjeVDEU+uwGEc2V7KalslNq9VLJVmwGBkgtd3JFns3p9crNjSOnNQbJu/80R9aauto1pZoW3YsU
- gEPo2uFohFGSMDV+qM2UuWXJFODG1WHy4N7beZGdchGF8Qp+VF4qFija1D5Q9FrxZclXZQQyGlh
- Pruam5GVj+kawSChWFczG/9Qv9qq3Q==
-X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f787b7 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=cm27Pg_UAAAA:8 a=tBb2bbeoAAAA:8 a=EHDhFRfyqMhxxtNxYo4A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=nl4s5V0KI7Kw-pW0DWrs:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-ORIG-GUID: vs11V-hue1blIi2oIbSzP3wDj86PAYS3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- clxscore=1011 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+X-Received: by 2002:a05:6e02:2301:b0:430:ab2c:bd9f with SMTP id
+ e9e14a558f8ab-430c5254fffmr247876525ab.10.1761052593942; Tue, 21 Oct 2025
+ 06:16:33 -0700 (PDT)
+Date: Tue, 21 Oct 2025 06:16:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f787b1.a70a0220.3bf6c6.0006.GAE@google.com>
+Subject: [syzbot] [can?] general protection fault in can_rx_unregister
+From: syzbot <syzbot+7a52d4cc48fa6eae3c86@syzkaller.appspotmail.com>
+To: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mkl@pengutronix.de, socketcan@hartkopp.net, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 21, 2025 at 09:05:48AM +0200, Geert Uytterhoeven wrote:
-> On Mon, 20 Oct 2025 at 18:04, Doug Anderson <dianders@chromium.org> wrote:
-> > On Mon, Oct 20, 2025 at 8:42 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Mon, 20 Oct 2025 at 17:33, Doug Anderson <dianders@chromium.org> wrote:
-> > > > Printing the command line to the kernel log buffer is one of the very
-> > > > rare cases where:
-> > > > * There's a legitimate reason to print a (potentially) very long
-> > > > string to the kernel buffer.
-> > >
-> > > arch/s390/Kconfig:
-> > >
-> > >     config COMMAND_LINE_SIZE
-> > >             int "Maximum size of kernel command line"
-> > >             default 4096
-> > >             range 896 1048576
-> > >
-> > > Yummy...
-> >
-> > Wow, what are they expecting to stuff in there? An encoded initramfs
-> > or something? I kinda feel like the 1MB number isn't something anyone
-> > expects but is a number picked to effectively be "unlimited".
-> 
-> Dunno, commit 622021cd6c560ce7 ("s390: make command line configurable")
-> lacks the "why" part.
+Hello,
 
-That was just a follow-on patch of commit 5ecb2da660ab ("s390: support command
-lines longer than 896 bytes") which solved the real problem with a too short
-maximum command line size back then. In order to never have to deal with this
-sort of problem again it was made configurable.
+syzbot found the following issue on:
 
-But I doubt that anybody will change the default ever.
+HEAD commit:    98ac9cc4b445 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1732b67c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a52d4cc48fa6eae3c86
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1c3d2e04d272/disk-98ac9cc4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eccd74106a6c/vmlinux-98ac9cc4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f6ac0e43209c/bzImage-98ac9cc4.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7a52d4cc48fa6eae3c86@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+CPU: 0 UID: 0 PID: 4715 Comm: syz.0.9421 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:can_rx_unregister+0x250/0x730 net/can/af_can.c:537
+Code: 54 24 20 48 8d 84 24 b8 00 00 00 48 8d 74 24 78 48 8d 78 b0 e8 11 dc ff ff 48 ba 00 00 00 00 00 fc ff df 48 89 c1 48 c1 e9 03 <80> 3c 11 00 0f 85 7a 04 00 00 48 8b 18 44 8b 64 24 68 44 8b 74 24
+RSP: 0018:ffffc9000584fba8 EFLAGS: 00010206
+RAX: 0000000000000030 RBX: 0000000000000000 RCX: 0000000000000006
+RDX: dffffc0000000000 RSI: ffffffff8a56c94b RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000c00007ff
+R10: 00000000c00007ff R11: 0000000000000001 R12: ffff88808f3a8568
+R13: ffff88807c774000 R14: 0000000000000002 R15: 1ffff92000b09f7c
+FS:  000055558d910500(0000) GS:ffff8881249d6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b327dfff8 CR3: 000000005b42d000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ isotp_release+0x937/0xb90 net/can/isotp.c:1213
+ __sock_release+0xb3/0x270 net/socket.c:662
+ sock_close+0x1c/0x30 net/socket.c:1455
+ __fput+0x402/0xb70 fs/file_table.c:468
+ task_work_run+0x150/0x240 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x426/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc323b8efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdf923ea98 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007fc323de7da0 RCX: 00007fc323b8efc9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007fc323de7da0 R08: 00000000000427cc R09: 0000000ff923ed8f
+R10: 00007fc323de7cb0 R11: 0000000000000246 R12: 000000000021db0a
+R13: 00007fc323de6270 R14: ffffffffffffffff R15: 00007ffdf923ebb0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:can_rx_unregister+0x250/0x730 net/can/af_can.c:537
+Code: 54 24 20 48 8d 84 24 b8 00 00 00 48 8d 74 24 78 48 8d 78 b0 e8 11 dc ff ff 48 ba 00 00 00 00 00 fc ff df 48 89 c1 48 c1 e9 03 <80> 3c 11 00 0f 85 7a 04 00 00 48 8b 18 44 8b 64 24 68 44 8b 74 24
+RSP: 0018:ffffc9000584fba8 EFLAGS: 00010206
+RAX: 0000000000000030 RBX: 0000000000000000 RCX: 0000000000000006
+RDX: dffffc0000000000 RSI: ffffffff8a56c94b RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000c00007ff
+R10: 00000000c00007ff R11: 0000000000000001 R12: ffff88808f3a8568
+R13: ffff88807c774000 R14: 0000000000000002 R15: 1ffff92000b09f7c
+FS:  000055558d910500(0000) GS:ffff8881249d6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b327dfff8 CR3: 000000005b42d000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	54                   	push   %rsp
+   1:	24 20                	and    $0x20,%al
+   3:	48 8d 84 24 b8 00 00 	lea    0xb8(%rsp),%rax
+   a:	00
+   b:	48 8d 74 24 78       	lea    0x78(%rsp),%rsi
+  10:	48 8d 78 b0          	lea    -0x50(%rax),%rdi
+  14:	e8 11 dc ff ff       	call   0xffffdc2a
+  19:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
+  20:	fc ff df
+  23:	48 89 c1             	mov    %rax,%rcx
+  26:	48 c1 e9 03          	shr    $0x3,%rcx
+* 2a:	80 3c 11 00          	cmpb   $0x0,(%rcx,%rdx,1) <-- trapping instruction
+  2e:	0f 85 7a 04 00 00    	jne    0x4ae
+  34:	48 8b 18             	mov    (%rax),%rbx
+  37:	44 8b 64 24 68       	mov    0x68(%rsp),%r12d
+  3c:	44                   	rex.R
+  3d:	8b                   	.byte 0x8b
+  3e:	74 24                	je     0x64
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
