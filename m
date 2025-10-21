@@ -1,224 +1,245 @@
-Return-Path: <linux-kernel+bounces-862428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8391BF5454
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:34:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDBFBF542A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E5DA18C5222
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1915A461470
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA05320A3E;
-	Tue, 21 Oct 2025 08:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD7330DEB6;
+	Tue, 21 Oct 2025 08:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cK/2QFkQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fSglqdGg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zpRK7YsP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pReC2n1v";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7Kp5pBhl"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7DF3074A7;
-	Tue, 21 Oct 2025 08:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018D226E71C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035556; cv=none; b=BVSaXxQFaaa66CAlbD8rfI2iFw2ZOpWzSFs5litHp5SZdoPVfGZ56sQZeLfyBdoU1W+emLUQOOsj/8SN3cHFhYF+J/AdF+oJ/8aYqNjCB4M2yq2Tslbb22GWskeu/BhSIor0pd7iiWd6a6lNHcSIeoJAYcbXBhkv9H65OR+OkVU=
+	t=1761035553; cv=none; b=nGispp9ZOn8Z+jXZY/Y11PZvmIf/oVkpBn9he1eRxiqA4c22p9E9tkRKYhfAjt7KonI/JnJvnqRIP1uE9STPjo6nE9F3NjGPT2KZfCSnI22GKBvP6dqglVZVxl9uX6Xno9eg22ND6aHdb/jHko/lqkOeyaw91mM9z+vcAbzWaAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035556; c=relaxed/simple;
-	bh=pWVE1aetWCjbxUtekG5N3/7XA6kbi9V+NuMr8xUFisI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TosQqdYgyaB4pRk9lxkN9NlMFIVsLBU7iTRqQiJ6vuVF+CS9gv6YJQrTUpiI568P5mhGa5VOowrH4kq9cq33kavfEUUv1mwjqtTIKAlpY8OMo171Yrhg1pUomT1u47qj9z2k8SvqNyhdPajC8VyP4afESExlXXKs30NdsnGlp00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cK/2QFkQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761035549;
-	bh=pWVE1aetWCjbxUtekG5N3/7XA6kbi9V+NuMr8xUFisI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cK/2QFkQiE6XExDEcIcLEjvtsQ4bmNO8JR58UEZCHjZTSv00xhm+i0w21QqOuT9IL
-	 GpjfWpgVIqi5FAjSg4NIX0T0eoZWic5kvzS1AqtrJO8a78p/jpvl+UhIEhZ/Ac/SlS
-	 HeVV1fzHOA1mqVWLJ4GuRMw1izuFSbgqIVTK0Mn4hq5gVqyShrjJIXUKCPZI+tKibF
-	 w/nxdaP6G8buSUkOFRJ4IQdsF13WQ6x0KYhlg66d8Y+d3cUKW6AD/rmMN7sL5HY5+S
-	 jJkLuC7oYRhqh8uAMD1F+vTbgpqpzkaxzkKa0KOTOwlerp8sut5kpevwDBpqzqoY3/
-	 4Ilxf89Bu2wag==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	s=arc-20240116; t=1761035553; c=relaxed/simple;
+	bh=GXVLbW0oSSkWyvyF8wMpsYW3rYCoA28HSkzIc5tMN80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kpCHkuTDFx9xMcn4gf3nUxZwqt6EhW/42FNF8V4ytWOXsmjzQm4RfAET2pbEt8jPvLZFljNiggWBm0Q1g8D5mVTafSEkLRZVTpnPSNjauD53Xqohel+va9jNL3dQvYt+/Jx91685DBiuGJEDvTJn8RMTLxoCi4z7qgKaP1KccI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fSglqdGg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zpRK7YsP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pReC2n1v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7Kp5pBhl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 344A517E013C;
-	Tue, 21 Oct 2025 10:32:29 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: sboyd@kernel.org
-Cc: jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	srini@kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	sre@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	u.kleine-koenig@baylibre.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-arm-msm@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	kernel@collabora.com,
-	wenst@chromium.org,
-	casey.connolly@linaro.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v7 08/10] misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5E829211F5;
+	Tue, 21 Oct 2025 08:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761035542; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CFVe7t+jNbGnuviY5swscHquUBPgdT2KUteI+H3AgZc=;
+	b=fSglqdGgaSkFjVTHfLyZYfXAmyQ2K/0WXWZQfmUkG2qV/3qRyMCmMhEb5+ceeRXu8YKcEY
+	Dd4CxVbTBkyOsIFwsl4s999RUd2/k31XLFSUk445L3LNOCbWTiGOnJx4Mw92ChrExosNHH
+	sn4LlIvePmlfjzI3wYS4Sp/BOKjPG3Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761035542;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CFVe7t+jNbGnuviY5swscHquUBPgdT2KUteI+H3AgZc=;
+	b=zpRK7YsPf1iugkiNswgUJWD/vz1vCs5No0toC4BnaqYr4QkEH0ytWVT3RaA1gwoghdEG+j
+	ijH6hTtVbMCibvDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=pReC2n1v;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=7Kp5pBhl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761035538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CFVe7t+jNbGnuviY5swscHquUBPgdT2KUteI+H3AgZc=;
+	b=pReC2n1vUafxGuS5xL1/TzdvoYqHaPgbqOds+5+HojdwxDV2cPPVytOxi1qnVoAV+4FFTz
+	blebwf9r46Y9xnv5C6kluwdDklzxYILN74UatB/QQ868QlI2e5+4c7dAI9DpfGR3oMdPIr
+	OS7Pk1yoSPpdkE+nTnrqZWEqqpJ4e9I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761035538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CFVe7t+jNbGnuviY5swscHquUBPgdT2KUteI+H3AgZc=;
+	b=7Kp5pBhlPJIkT+LhMOCQpayycsPddOlGF7wgo0SLYE6dkhr2AyJIWra84gC0ox1Fz2fl+3
+	1gIYAhFvKRhi3zCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0529B139B1;
+	Tue, 21 Oct 2025 08:32:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bGoFABJF92g8EgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 21 Oct 2025 08:32:17 +0000
+Message-ID: <4b01c775-f87a-4c3c-88f1-f5c52261d9b2@suse.de>
 Date: Tue, 21 Oct 2025 10:32:17 +0200
-Message-ID: <20251021083219.17382-9-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
-References: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tiny: Refactor framebuffer's size calculation
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
+ lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251020115803.192572-1-mehdi.benhadjkhelifa@gmail.com>
+ <1de3112b-6349-46d8-b90b-69d0849c7659@suse.de>
+ <6a917f07-18dd-4f8f-bfc5-b85d9051339d@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <6a917f07-18dd-4f8f-bfc5-b85d9051339d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 5E829211F5
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,vger.kernel.org,linuxfoundation.org,gmail.com,kernel.org,lists.linuxfoundation.org];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:mid,suse.de:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-Some Qualcomm PMICs integrate a charger for coincells, usually
-powering an RTC when external (or main battery) power is missing.
+Hi
 
-Instead of using the parent SPMI device (the main PMIC) as a kind
-of syscon in this driver, register a new SPMI sub-device and
-initialize its own regmap with this sub-device's specific base
-address, retrieved from the devicetree.
+Am 21.10.25 um 10:41 schrieb Mehdi Ben Hadj Khelifa:
+> On 10/21/25 7:51 AM, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 20.10.25 um 13:57 schrieb Mehdi Ben Hadj Khelifa:
+>>> Use drm_format_info_min_pitch() to calculate the framebuffer line pitch
+>>> instead of directly multiplying width and height. This aligns with DRM
+>>> helpers for determining per-line byte size and avoids manual 
+>>> assumptions
+>>> about bytes per pixel.
+>>>
+>>> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>> ---
+>>>   drivers/gpu/drm/tiny/repaper.c | 6 +++++-
+>>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/ 
+>>> repaper.c
+>>> index 4824f863fdba..aeff49bc6ba7 100644
+>>> --- a/drivers/gpu/drm/tiny/repaper.c
+>>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>>> @@ -517,6 +517,8 @@ static int repaper_fb_dirty(struct 
+>>> drm_framebuffer *fb, const struct iosys_map *
+>>>       unsigned int dst_pitch = 0;
+>>>       struct iosys_map dst;
+>>>       struct drm_rect clip;
+>>> +    const struct drm_format_info *info = fb->format;
+>>
+>> This is the wrong format. You're allocating the output buffer here, 
+>> but you're using the input format. IIUC the output format is 
+>> DRM_FORMAT_R1. The input is _XRGB8888.
+>>
+> Ah. Thanks for clarification.I thought since it had the same output 
+> format. I will send a v3 shortly.> Best regards
 
-This allows to stop manually adding the register base address to
-every R/W call in this driver, as this can be, and is now, handled
-by the regmap API instead.
+Maybe just don't do it. This is just churn with no clear goal.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/misc/Kconfig         |  2 ++
- drivers/misc/qcom-coincell.c | 38 +++++++++++++++++++++++++-----------
- 2 files changed, 29 insertions(+), 11 deletions(-)
+Best regards
+Thomas
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index b9c11f67315f..f4c5e67192fb 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -291,6 +291,8 @@ config HP_ILO
- config QCOM_COINCELL
- 	tristate "Qualcomm coincell charger support"
- 	depends on MFD_SPMI_PMIC || COMPILE_TEST
-+	depends on SPMI
-+	select REGMAP_SPMI
- 	help
- 	  This driver supports the coincell block found inside of
- 	  Qualcomm PMICs.  The coincell charger provides a means to
-diff --git a/drivers/misc/qcom-coincell.c b/drivers/misc/qcom-coincell.c
-index 3c57f7429147..49e38442b289 100644
---- a/drivers/misc/qcom-coincell.c
-+++ b/drivers/misc/qcom-coincell.c
-@@ -9,11 +9,11 @@
- #include <linux/of.h>
- #include <linux/regmap.h>
- #include <linux/platform_device.h>
-+#include <linux/spmi.h>
- 
- struct qcom_coincell {
- 	struct device	*dev;
- 	struct regmap	*regmap;
--	u32		base_addr;
- };
- 
- #define QCOM_COINCELL_REG_RSET		0x44
-@@ -35,7 +35,7 @@ static int qcom_coincell_chgr_config(struct qcom_coincell *chgr, int rset,
- 	/* if disabling, just do that and skip other operations */
- 	if (!enable)
- 		return regmap_write(chgr->regmap,
--			  chgr->base_addr + QCOM_COINCELL_REG_ENABLE, 0);
-+			  QCOM_COINCELL_REG_ENABLE, 0);
- 
- 	/* find index for current-limiting resistor */
- 	for (i = 0; i < ARRAY_SIZE(qcom_rset_map); i++)
-@@ -58,7 +58,7 @@ static int qcom_coincell_chgr_config(struct qcom_coincell *chgr, int rset,
- 	}
- 
- 	rc = regmap_write(chgr->regmap,
--			  chgr->base_addr + QCOM_COINCELL_REG_RSET, i);
-+			  QCOM_COINCELL_REG_RSET, i);
- 	if (rc) {
- 		/*
- 		 * This is mainly to flag a bad base_addr (reg) from dts.
-@@ -71,19 +71,28 @@ static int qcom_coincell_chgr_config(struct qcom_coincell *chgr, int rset,
- 	}
- 
- 	rc = regmap_write(chgr->regmap,
--		chgr->base_addr + QCOM_COINCELL_REG_VSET, j);
-+		QCOM_COINCELL_REG_VSET, j);
- 	if (rc)
- 		return rc;
- 
- 	/* set 'enable' register */
- 	return regmap_write(chgr->regmap,
--			    chgr->base_addr + QCOM_COINCELL_REG_ENABLE,
-+			    QCOM_COINCELL_REG_ENABLE,
- 			    QCOM_COINCELL_ENABLE);
- }
- 
- static int qcom_coincell_probe(struct platform_device *pdev)
- {
--	struct device_node *node = pdev->dev.of_node;
-+	struct regmap_config qcom_coincell_regmap_config = {
-+		.reg_bits = 16,
-+		.val_bits = 8,
-+		.max_register = 0x100,
-+		.fast_io = true,
-+	};
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct spmi_subdevice *sub_sdev;
-+	struct spmi_device *sparent;
- 	struct qcom_coincell chgr;
- 	u32 rset = 0;
- 	u32 vset = 0;
-@@ -92,16 +101,22 @@ static int qcom_coincell_probe(struct platform_device *pdev)
- 
- 	chgr.dev = &pdev->dev;
- 
--	chgr.regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	rc = of_property_read_u32(node, "reg", &qcom_coincell_regmap_config.reg_base);
-+	if (rc)
-+		return rc;
-+
-+	sparent = to_spmi_device(dev->parent);
-+	sub_sdev = devm_spmi_subdevice_alloc_and_add(dev, sparent);
-+	if (IS_ERR(sub_sdev))
-+		return PTR_ERR(sub_sdev);
-+
-+	chgr.regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev,
-+						&qcom_coincell_regmap_config);
- 	if (!chgr.regmap) {
- 		dev_err(chgr.dev, "Unable to get regmap\n");
- 		return -EINVAL;
- 	}
- 
--	rc = of_property_read_u32(node, "reg", &chgr.base_addr);
--	if (rc)
--		return rc;
--
- 	enable = !of_property_read_bool(node, "qcom,charger-disable");
- 
- 	if (enable) {
-@@ -142,3 +157,4 @@ module_platform_driver(qcom_coincell_driver);
- 
- MODULE_DESCRIPTION("Qualcomm PMIC coincell charger driver");
- MODULE_LICENSE("GPL v2");
-+MODULE_IMPORT_NS("SPMI");
+>> Thomas
+>>
+>>> +    size_t pitch;
+>>>       int idx, ret = 0;
+>>>       u8 *buf = NULL;
+>>> @@ -534,7 +536,9 @@ static int repaper_fb_dirty(struct 
+>>> drm_framebuffer *fb, const struct iosys_map *
+>>>       DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+>>>             epd->factored_stage_time);
+>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
+>>> +    pitch = drm_format_info_min_pitch(info, 0, fb->width);
+>>> +
+>>> +    buf = kmalloc_array(fb->height, pitch, GFP_KERNEL);
+>>>       if (!buf) {
+>>>           ret = -ENOMEM;
+>>>           goto out_exit;
+>>
+>
+
 -- 
-2.51.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
