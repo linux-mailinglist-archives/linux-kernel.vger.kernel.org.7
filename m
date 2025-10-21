@@ -1,158 +1,221 @@
-Return-Path: <linux-kernel+bounces-863811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53E9BF92A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:57:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D37BF92A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0E04828D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:57:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7196E4F76F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF2E28506B;
-	Tue, 21 Oct 2025 22:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B0D227E83;
+	Tue, 21 Oct 2025 22:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="hy7B04aU"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8oRU4gZ"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA1026E71B;
-	Tue, 21 Oct 2025 22:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1293527B4F7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761087442; cv=none; b=dLuVvSPikAta9bTE06dBVmwKVLel+MwDIOEtmdkvcP/td66E4/5E4FAVkgzyLGkVdzEfB6Bq3iGGgFl20KbmDBLsYV1yKu4k24uTklwGaPr8D0huFOFnY1pZO/PPKbw6vOesuvy3hhUjoZDlQQikfbUbTgTM9uuzDPT/+qXgowA=
+	t=1761087459; cv=none; b=YS5qcMMGxpUyooYyN21KTMDgFhaMOGuJ9UZPPcyIB67RAc/S8MTeOhuffOzpDFES2iBIeByKKAFFCS4DrIH1UvqRHpGsFEHQlG3S6IYWJQhlrzs32WU+GrOE29YhIuRVRf80WalfeJq/KQW3WmPESL9MG6a3V2mFWBWAB9B32+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761087442; c=relaxed/simple;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u2Ngrbl9qyx5iKcMWu8bu+7cG/8SV8EYN7xUomQfYgxRZ0lmZgfnVpOZN/Pflf7e8f2UdQqtPLOXC6UG/Ic5cy1r9DpLOlsB0qupbdLJ6fGAs6IFoEPohkyN6NpI5zN+DJJW7tP9OM3IycckN9WJMnGuP7LuwjTgHcatuDw+DsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=hy7B04aU; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1761087433; x=1761692233; i=rwarsow@gmx.de;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hy7B04aUXm2PtF6bqdoeZHXbYBQ1ZkKbSmPXe4KOb3iWBLxay79Ky/aTVITFeAvy
-	 JD/JjqPJsfcMePbEFfwu25BnPRiHsJKpakxw3NVpS6qDO8f64ER7uJE5iAg6f9zGD
-	 luwBuCvQIIrfmC0m7+bALwVU4wi7L/cU2DcBqlkjSUmHoeg3SUQMEnlUvGr1emqhb
-	 srIg6MSUNyIzCOZRNTBwxdjvaHOIdXR7Jy7G5jhZNRNdlMaYkS6L9bYkbV1RfIait
-	 gtq4tH1QZvCsyLzkxGv3D9I1IxdqC4ZNKHADl1hIttTMjSE70APM3P3ibntFlrY9b
-	 4uhndMDBv1LfRUqNOw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.33.216]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MKsjH-1usyOK2QjF-00QMUA; Wed, 22
- Oct 2025 00:57:13 +0200
-Message-ID: <2acbcd59-87ec-4cb6-9244-aa184d03f623@gmx.de>
-Date: Wed, 22 Oct 2025 00:57:11 +0200
+	s=arc-20240116; t=1761087459; c=relaxed/simple;
+	bh=U5jc6wwVzwI/4xtKkppT2GQMTE8U/THJxLUBFs+395E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i8oNDTAQSVy+M0Mx6LH7mnCFdk2O80FUL8PkPfQQ5EXmmw7JuK5CS20sTOEuU5cG+PrFGPy1JIZMdRCD6aKbR/Sjk8LJCPAdiCAgWPByieeVQFXk43RgxstK6Bxq/402cf91rQdUt9t84bK4G4Dwa6wvWP804XFbag6wqWBR8pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O8oRU4gZ; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33226dc4fc9so5746284a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761087453; x=1761692253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=doBWJ36YRh7FR2yhW1YwaDN/HKyJY3N1ZAoovUg8x+M=;
+        b=O8oRU4gZdPh+WrhI/yQ5sAXaW13r5JOsVlDX/Jk8mzWHmlz49X1A7Z/hSUS1XKTqb6
+         MaaS58BB48hZ66nQ03CplTNX7DmaaOP7EUbf36NR7uT8I5i6srFltS1QZ3L4PNqFqtUa
+         mKfJrZ1/hv3vE6soRg/iagSdbJ89r8H+AA71E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761087453; x=1761692253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=doBWJ36YRh7FR2yhW1YwaDN/HKyJY3N1ZAoovUg8x+M=;
+        b=JNlDkk2KZ0xLsD74xkxNCdO1kSChFNVR0RYyNEIf0s9tLDTWVKpGFvBtKq8RAc8rMJ
+         QEVCyPqSL1s0mDXVGe5E3URNU993tWK7QyICAZPonJKFgOTGmZer3x3W+GcRhCpywNq8
+         Iad3dCP5uHTfsAh+Q/G6CiBmgyRQjebDeLpyNmtNB5stxCpuM7/ce+q49Uk6UUNbRLdv
+         sSBbMauxx13p1BTivb73Fx4HQ5pAJs9chIj2VpXRX7TRH4X5ISpGRhfuK5kDcCR2fR1F
+         lRKbBTmRJfeqOj6ScwovJ1jZwuWwRWWMz7i/kJ5Vbfd0AdzgnXmKHC/S7/FuGYnjp57S
+         09tA==
+X-Gm-Message-State: AOJu0Yz5aczQw8AcBAT4Ler17LKTzAFqbcTdpFR8s2lymgMLl28nEGJD
+	IgQLkGOXN1e8FyEE5ejpa8P904Petj8rX9zsqyvW2B3/GH4eY1OFD/DiFMuoSzSJDnv66UjlLpc
+	Lz1A=
+X-Gm-Gg: ASbGncsFdP5G5hg4Z+np2gvMDxjseqZvUXWqkevVJ122jzdDlOp7EWYLHEMspCKM3uV
+	60YhkSYDeI+k6ln+owq4sN/0pLbQD3N1rK7/YD8xhYtpDucmm/x0RoYI+LlxJbUc2dSPN9FKLGl
+	3bS0gJrGj7FG5z4A/umtfquiYzrS8y6UumsRclPukvnqrj2VdUlbznIprnu3qEAB5qu7scNsNAi
+	BQ9fC1klBi0b+mpqv5FduqiNaxQPqBOe4oJ3sPTgWCSPENsdwg3xW956uNcH9eJqWTbdUvBFu0H
+	B1bTGO98a7bhp+ZpopORbUZOP3wLyngD2672pWRN9uQdDiszwjAIjzV08+D8t3MkWqRRXCPqo8K
+	JpR8OavVVLjvDqDaaMzCD71zgGINI09qEZVFpP/ihlhJbPxWZq+zsBTK3H3165I2stYMP+S1Fu2
+	hPipMiWhCSkAGhj97ax0Z18OQtllEuV+/PlfutqIIzxfQ=
+X-Google-Smtp-Source: AGHT+IEN3t+4dtqJoDjW2b+OdRoHkvLm4dtO+jA+JKb7jsvUfAXdWJilkby1rP0gMkBtVII8fIKNMA==
+X-Received: by 2002:a17:90b:51c4:b0:32e:3f93:69e2 with SMTP id 98e67ed59e1d1-33bcf87ad33mr26440689a91.13.1761087453053;
+        Tue, 21 Oct 2025 15:57:33 -0700 (PDT)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com. [209.85.214.169])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223cb0a5sm633113a91.1.2025.10.21.15.57.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 15:57:31 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-290c2b6a6c2so56867975ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:57:30 -0700 (PDT)
+X-Received: by 2002:a17:902:ce8d:b0:282:2c52:5094 with SMTP id
+ d9443c01a7336-290caf831c2mr200878285ad.37.1761087450214; Tue, 21 Oct 2025
+ 15:57:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.17 000/159] 6.17.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251021195043.182511864@linuxfoundation.org>
-From: Ronald Warsow <rwarsow@gmx.de>
-Content-Language: de-DE, en-US
-In-Reply-To: <20251021195043.182511864@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:y13vKs8A19CBVRjV4k5d8N2DTAEH/aMYNJRrvO34aj3jxCKB9Xd
- yIQ7MfcjZ22IbVH8keEQ8beEfrYdX4XwCenco7+p631zDM1UVeHbSZQcxpA4szeT0wXfOO/
- SNPlJdW7vw6K64t50FwnHPg6yDoGi6PLVzhOpJw/8m2O7E+6Ld01pkouFldYTQdMxP5N9cF
- TXEW7sTxxrsEVANzRLKBA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3KcB0Kc4+/Q=;Ro6RSahjcUqxzknmKiw9JfIBqrV
- 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
- CBHVf/1AR9w+0x7GIgQZ24A==
+References: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
+ <20251020115132.10897a599c8fbda4829b3f89@linux-foundation.org>
+ <CAD=FV=Uzp_Pi_q5YRbRi3FgdiCy1HR3g6P72d92dbqAdLyWuRQ@mail.gmail.com> <20251021135553.811b77539d2d41fff3c3b992@linux-foundation.org>
+In-Reply-To: <20251021135553.811b77539d2d41fff3c3b992@linux-foundation.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 21 Oct 2025 15:57:18 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XXpMnjXzPgDseoLGOYUHVQy9Z2cjmCC+OE+uDC43eNRw@mail.gmail.com>
+X-Gm-Features: AS18NWDyuFa4ioCcno1eSGwwMkyCjgQZ5S24dwjlz7Z32yYgF-BEUWilWTykob8
+Message-ID: <CAD=FV=XXpMnjXzPgDseoLGOYUHVQy9Z2cjmCC+OE+uDC43eNRw@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Wrap long kernel cmdline when printing to logs
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Chant <achant@google.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Brian Gerst <brgerst@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Francesco Valla <francesco@valla.it>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Guo Weikang <guoweikang.kernel@gmail.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu <jeffxu@chromium.org>, 
+	Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+Hi,
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+On Tue, Oct 21, 2025 at 1:55=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Mon, 20 Oct 2025 13:00:22 -0700 Doug Anderson <dianders@chromium.org> =
+wrote:
+>
+> > > And the code would presumably be much simpler if we simply chunked up
+> > > the printing and spat out one really long line.
+> >
+> > I'm not quite sure what you're suggesting. Before my changes we _do_
+> > try to spit out one really long line, but then printk() silently
+> > truncates it for us at 1021 characters. Re-reading your suggestion,
+> > I'm not sure if you're suggesting that we improve printk() to handle
+> > lines longer than 1021 characters by chunking them up, or if you're
+> > suggesting that this code could use "pr_cont()" to chunk things up.
+> > ...or something totally different. ;-) Can you clarify?
+>
+> I was suggsting the latter - emit these really long lines via repeated
+> calls to printk().
 
-Thanks
+OK, I coded this up. I started with a pr_notice() and after 1021 bytes
+I followed up with a pr_cont().
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Unfortunately, this doesn't seem to work to make "one big line". The
+subsequent strings w/ "pr_cont()" end up on separate lines. In other
+words:
+  pr_notice(first_1021_byte_str);
+  pr_cont(second_1021_bytes_str);
+  pr_cont(last_10_byte_str);
 
+Ends up with logs that look like:
+  [ 0.000000] first_1021_byte_str
+  [ 0.000000] second_1021_bytes_str
+  [ 0.000000] last_10_byte_str
+
+...so we end up with a worse situation than with my patches since the
+wrapping happens at exactly 1021 characters rather than wrapping based
+on spaces.
+
+I tried to dig into this a bit to make sure it wasn't just a bug in my
+patch. I made it wrap at 504 bytes. Now I tested something like:
+  pr_notice(First_504_byte_str);
+  pr_cont(Second_504_bytes_str);
+  pr_cont(Third_504_bytes_str);
+  pr_cont(Fourth_504_bytes_str);
+  pr_cont(Last_10_byte_str);
+
+Now I had:
+  [ 0.000000] First_504_byte_strSecond_504_bytes_str
+  [ 0.000000] Third_504_bytes_strFourth_504_bytes_str
+  [ 0.000000] Last_10_byte_str
+
+In other words pr_cont() was working properly, but it seemed to
+realize when the resultant string would be > 1021 characters and it
+started a new line for me. This further cemented in my mind that it's
+not a way around the 1021 character limit.
+
+
+For giggles, I also tried backing out my patch and just doing:
+
+-#define PRINTK_MESSAGE_MAX     2048
++#define PRINTK_MESSAGE_MAX     8192
+
+-#define PRINTKRB_RECORD_MAX    1024
++#define PRINTKRB_RECORD_MAX    4096
+
+When I looked at the serial console output I found success. My very
+long cmdline was printed out in its entirety. ...but it made "dmesg"
+real unhappy. :'( In fact, when I ran `dmesg` after doing this it
+actually fully stopped printing anything when it got to the long line.
+:-P Things looked OK when I looked at `/dev/kmsg` directly. ...so I
+ran strace on `dmesg` on my system and I found:
+
+read(3, "6,53,0,-;alternatives: applying "..., 2047) =3D 50
+write(1, "\33[32m[    0.000000] \33[0m\33[33malt"..., 74[    0.000000]
+alternatives: applying boot alternatives
+) =3D 74
+read(3, 0xaab6c875c2d8, 2047)           =3D -1 EINVAL (Invalid argument)
+close(3)                                =3D 0
+
+In other words `dmesg` seemed to be trying to read 2047 bytes from
+`/dev/kmsg` and this wasn't enough to hold the output line. You can
+see in the kernel function devkmsg_read() that when this happens the
+kernel returns -EINVAL.
+
+We could _try_ to improve devkmsg_read() to be able to return partial
+log lines, but that violates the docs. The file
+`Documentation/ABI/testing/dev-kmsg` says:
+
+  Every read() from the opened device node receives one record
+  of the kernel's printk buffer.
+  ...
+  Messages in the record ring buffer get overwritten as whole,
+  there are never partial messages received by read().
+
+So tl;dr: as far as I can tell, we simply cannot put the whole cmdline
+(which is 2048+ on many architectures) on one line without breaking
+userspace. My userspace reads 2047 bytes and we'd need to return not
+just the cmdline but the prefix "Kernel command line:" as well as the
+data about time/log_level/etc.
+
+
+Does any of the above change your mind about my wrapping scheme? ;-)
+Obviously, I'd want to update my commit message with some of the
+research...
+
+-Doug
 
