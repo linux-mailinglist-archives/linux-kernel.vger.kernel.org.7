@@ -1,84 +1,93 @@
-Return-Path: <linux-kernel+bounces-862846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1699BF6576
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:10:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CDFBF6649
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662DD19A30FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B04D5453CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E40F355035;
-	Tue, 21 Oct 2025 12:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4840A355041;
+	Tue, 21 Oct 2025 12:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wF9rS8m9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K5ZZt1Nz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="mjvGSqem"
+Received: from sg-1-39.ptr.blmpb.com (sg-1-39.ptr.blmpb.com [118.26.132.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB97355029;
-	Tue, 21 Oct 2025 12:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DC2355044
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761048319; cv=none; b=mgBZSVnRHTuPPYL78oyr5BXPtuOW8WxvwYh5HRcZy8gMKfs78JVQgrk7XgcY+W9Sxr8KNSqjR8wp+WXFQZakHH5A9l/38zcEuH4avujxYzDH9fho8V4yDPr2B1WR1Xd9bhIdZzrkxxCbGRu0ccVcgImkq1TlZFAHNSgqBxD/ZSs=
+	t=1761048378; cv=none; b=CCw9wxTLbxbx/VKM9XJQkyWqcVPcTJ2XpLYoPOwuLOKX82JSlrUvu5CGBXP+HvNngMje+G0FB+CB5zFWLqq1V0t0ln4d7rmPHeJJ5xt0LZkbXwHFJNZpOEcTwTQ2UIMlg3+x1YVYEncaBC+B5/9wiUn0oKjakKmRRsCcRcxOa/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761048319; c=relaxed/simple;
-	bh=9gtXGABCKV5C8jBZJ0uyZGTM/sXQP5TWXUnHXdE9AJg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pCIzl2ABO1kp2y6cZkdioN9yimhlyfrfE3rZCuI5xKvnqGJmE5+q0wtiQ0CumWwFEAU5HdY4+gI5Gq3K/SWzV30lVhrWYzn53s7BqPSQKPFkIucliuRQnEY6bj3JNFOxd1Qv38YswJ8LCpiYinh40h0Z3Qg9o9djfiPSeekFMg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wF9rS8m9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K5ZZt1Nz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761048316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9gtXGABCKV5C8jBZJ0uyZGTM/sXQP5TWXUnHXdE9AJg=;
-	b=wF9rS8m9WtM7JgxpjncZs01R6QMCSbn+rUj9j///YhUgmZsaJ0gU+vXxu2YhDvRm1z3U/m
-	V+f/dPA6kg5Ou7L+ZT8r5zQaYrCGdDXgyV/wUd/VCDnjJ+Lrd0YcBPYLMQuoXrTGYwJfA6
-	PeoPRHeBnHIPzhJARB7YtV0msigvROVllCvAadZAvN3ncX5kafIS+58vZYnfWwOdnEOdJb
-	06CmaKsE34bBYVtR2dhOTA16TcyJHFWdSdC6SjIiUcrUr5Huy09RobSuSsKoTzMPYCUy0k
-	Hv79WXt/AwQy7BsReyokMB3Mj8pJgPMJYtBakQb9haq4cYvq2CCc7coyATFxQw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761048316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9gtXGABCKV5C8jBZJ0uyZGTM/sXQP5TWXUnHXdE9AJg=;
-	b=K5ZZt1NzRTLoFp9t+RJB24PqKPU3L2PqTNoSb+monuxS2Z3B+/mpN/l5EvyQtzSI6QOZ+I
-	4lGfyEux9+ixfvBA==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
- Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
- Kacur <jkacur@redhat.com>, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/20] rv: Add Hybrid Automata monitor type,
- per-object and deadline monitors
-In-Reply-To: <20250919140954.104920-1-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
-Date: Tue, 21 Oct 2025 14:05:15 +0200
-Message-ID: <87ikg8bguc.fsf@yellow.woof>
+	s=arc-20240116; t=1761048378; c=relaxed/simple;
+	bh=ds6EQDCNZa54CyyZGfqkWP2IvmjttGoZ1ZFeHkTVszg=;
+	h=To:From:Content-Type:Date:References:Cc:Message-Id:In-Reply-To:
+	 Subject:Mime-Version; b=dLlR+vxTFoSuwblVQUg97IJPeTfFxmILwREv1kfFCBDSSwGcmlyVlvhy/Tdy2syscZZnVmRwZ7zLEU+6tS6H0M0ErZ+s5eUfP7ywlOq797O2tJy+/g5YBhgwWSagWeAvGyxk0jhr4MaGRtbyMCrt3habWjoHarq4ytsZV3tVSMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=mjvGSqem; arc=none smtp.client-ip=118.26.132.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761048368;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=ds6EQDCNZa54CyyZGfqkWP2IvmjttGoZ1ZFeHkTVszg=;
+ b=mjvGSqemOtSWGFjGp1HUVaHgRljECvHGVW8tSP69i4BFqUysQrpWYweX9l3mUuIhLeJnJg
+ VjZnk0PcLt0zx6uGm6qAZ7x45ibpilPl7jkDEcxelJHVVgTwwblFBzWK+1hkduQDUOHdna
+ Q7+DFyQyOOVDa5iCIWFQ376qZErriWB+dGN+BrJ5RW2S2Ub8rcQU4x9kzL9Oc6NdzOFB2Y
+ dZg8KoXNDcTFoQcUfe/pxq3Ot5B0Ok01t3pzGtaFv0wha3GSp8b9S53oHaItszVBshMvNV
+ ZK+gp13WIoH4Oxnhq4Wr8zSkl+xN2k7EofHLvtX8JBYGTaN2rKDnJnW1dCOTuw==
+To: "John Garry" <john.g.garry@oracle.com>, 
+	"Yu Kuai" <yukuai1@huaweicloud.com>, <song@kernel.org>
+From: "Yu Kuai" <yukuai@fnnas.com>
+Content-Type: text/plain; charset=UTF-8
+X-Lms-Return-Path: <lba+268f7772e+5f57fe+vger.kernel.org+yukuai@fnnas.com>
+Date: Tue, 21 Oct 2025 20:06:04 +0800
+User-Agent: Mozilla Thunderbird
+References: <20250903161052.3326176-1-john.g.garry@oracle.com> <b6820280-cc1f-beae-2c1c-077d46bbf721@huaweicloud.com> <557f39a4-a760-4b10-80e3-229f7a4892cb@oracle.com> <84bbff83-b5db-6789-a668-61cc5cb7c761@huaweicloud.com> <c26f4b7f-f311-4cea-88b7-d1d6905c2c06@oracle.com>
+Reply-To: yukuai@fnnas.com
+Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<martin.petersen@oracle.com>, "yukuai (C)" <yukuai3@huawei.com>
+Message-Id: <5069c55a-5b3e-477d-99ef-731bacc6c427@fnnas.com>
+Received: from [192.168.1.104] ([39.182.0.169]) by smtp.feishu.cn with ESMTPS; Tue, 21 Oct 2025 20:06:05 +0800
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c26f4b7f-f311-4cea-88b7-d1d6905c2c06@oracle.com>
+Subject: Re: [PATCH] md/md-linear: Enable atomic writes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Organization: fnnas
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
-> This RFC contains several related changes, I'm sending them together to
-> give the full picture and get early feedback but I'm probably going to
-> submit some of them separately.
+Hi,
 
-I'm done reviewing the series, sorry for taking forever (I have other
-urgent stuffs going on, and this series is not easy to digest).
+=E5=9C=A8 2025/10/20 21:48, John Garry =E5=86=99=E9=81=93:
+> On 23/09/2025 10:10, Yu Kuai wrote:
+>>> Could I have this picked up now? Maybe it was missed.
+>>>
+>> Already picked last weekend, sorry that I forgot to reply.
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/mdraid/linux.git/=20
+>> commit/?h=3Dmd-6.18&id=3Db481e72d24feac15017b579232370aa4b33d4129
+>
+> This does not look like to being it into v6.18-rc - was it missed?
+>
+Yeah, a few patches is not pushed to v6.18-rc, because I was switching job =
+and the
+old email yukuai3@huawei.com is not used anymore. If you don't mind, I'll r=
+ebase with
+my new mail address and push to for-6.19/block later.
 
-Overall looks decent. Thank you for this work!
+Thanks,
+Kuai
 
-Nam
+> Thanks,
+> John
+>
 
