@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-862508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA7FBF57C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:25:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D99BF57D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02C684F6A51
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E413B72E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25EA329C50;
-	Tue, 21 Oct 2025 09:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF52F2E762D;
+	Tue, 21 Oct 2025 09:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Waxd1GKO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ES1sGkVm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC428F48
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835618F48
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761038714; cv=none; b=UTirHTR5+m+wkADYwr4ZC0BADEzKe4g83GC0mmD+84zaChqX7rA0rBexUbl0Jf82xtpqAfFgH222+oQQbXTFuBYhLQwhRd8ZTO694Dd10tkm5AtQZEHhrqMEZjq5bXoCTPI6F0zz/0gULiAzCghlosVHm63bRMnKbF1/3p3skV8=
+	t=1761038720; cv=none; b=L31BkSxyYHG/o6tGvtaw5tY5NuH9Ddq9hwVc5E5iaktP/Mst8QUfU79q3Z0Kzlbqbt7+MZgdIQyOhwzKRBWKZHqDdiCFCziYPciPLyoFNu6QTMcpmfP2P5BUXZ4t5EmgIgjxI3neRy1cJ1zCKCaKi95QlFQYZ9KfW5Mdvg4waMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761038714; c=relaxed/simple;
-	bh=70fh7l0TLwEingT0Dlsm17GX58QH+efSGCknR2mPUfQ=;
+	s=arc-20240116; t=1761038720; c=relaxed/simple;
+	bh=wOmHGZyZKyJNqAdT7tHEp7PbIwkY9sbR/Ea1DPL5/o8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OOlBcxEj3OK1IkNbVMJdsPM9UUghBLcCW5cTQkngZ5df3C2eFXqPBSjPbh81biyW0d6Rsd47AOfES8astCVbt5230tsWDAw2mPSd9oH57r55u+pPsSWUckZM7p4LlcLxVESKc/y8zCoyVj3ioM73iAj2iFqkNJbOgsSl3Fr9KFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Waxd1GKO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761038711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4RANMdE5VJt3ZJzx3yGMY3tj7r6cm2tCoc3fFUR1o9c=;
-	b=Waxd1GKOmZORm9wGxuuEenpLRd2wDC8mu12YYx9O64VnlQmArRyZP/38VnH+9QcmD1ejBF
-	wVVFwo9qQw+Gk8hULL+UHrAKCLqwUEFyhxfweH3nZtxRq7XGYlYiDDq4W2TTzyppgwI3+i
-	FDXLq/h0uoF/SAtrHp8q4asvx5CPbM4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-182-f1qVaJjxNwmh7SwNkU4S-Q-1; Tue, 21 Oct 2025 05:25:10 -0400
-X-MC-Unique: f1qVaJjxNwmh7SwNkU4S-Q-1
-X-Mimecast-MFC-AGG-ID: f1qVaJjxNwmh7SwNkU4S-Q_1761038709
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ecdb10a612so6016468f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:25:10 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=PQgeWLzcXpthRyXqTZL4m2ueqT8AS+ExFXPBCMEAiv/jVhchqyOTfKzafdVHwDHI6x8F/kecKQMyJRpBzYgDQF+kz1l/NHvGyGtCPUxuj0u+eN1xlFh3DMSuIsHCl3+DkeemfQsDSMWCTENi9Wuts9LiwhR00RSnjyoIOww2JlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ES1sGkVm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8OK6u010821
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:25:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7nW2A2/Sdl+uA+0oNeIno2lzJVyfIo1jiDtXonqrUVg=; b=ES1sGkVmOXmoUqoZ
+	BOuZXLEhjrmlGaBzUy8AfJwTkfgGwKDnyMlKODA5J+pPwIq6ttrAnb+efE9FZnyl
+	AbVrs5C4+eWw/NoYx07MwKlhX9jeYCyR2n9eF9OVUEDyLeC2uWphjjC5EX8iUqi6
+	ousMS/JP8RgDJgA19wWwd/aTAi3ghIwwyNyN+Aaz9aciUp5tIjxeqe6VyJEygfY3
+	xpFrMyA2irDJMX7PbcTrW8D88xapHmuaVcizKtxcrIa/DifJMDplaWczqRX1G2T1
+	H+es4mfT37LmDV75bV9Oww1vYS5wQtm76vnq3DSfHfJ/0LsIoj8dpsNmeF2JKR4X
+	yaIfbQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49wtgetd7e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:25:17 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c19c8393dso19172296d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:25:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761038709; x=1761643509;
+        d=1e100.net; s=20230601; t=1761038712; x=1761643512;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4RANMdE5VJt3ZJzx3yGMY3tj7r6cm2tCoc3fFUR1o9c=;
-        b=B8NWrqJnCm4eq0IBYcInb9rdbvsQmqmMv5cHrLCsaL3Y13izNTg5onZ6Pyna6aAPM2
-         wMe4CpUEWr8ZFiw6cweLM4YFaDRAz2syzmb34axtyjemmgxCLy4JeHjpY1tik+sGN++D
-         AamQb/7g3AuFSTCTJrrjueBkJI7JHf2SmDHrnE4f7+T5PXUwtQU084i1fYkFwTOcSEIW
-         AVwSHephyxvP14V/cYfhTFlTK7OuSFhrBr4Ll3KoINXoxpynA8tNuT8TShiQ0uk0Ux8e
-         EwjrK1tYymIhuoSlh7tP+GQO2KS/Ou240k/FzpONX1Cfk4l+w5eJ2ADuj+K2Dxh/Cq2Z
-         Ra9g==
-X-Gm-Message-State: AOJu0Yy7cv6i1lyuxy+LGAlVUie5ZmURcsM/pbks0742GlKakuYecnt1
-	X8Sgq8LhxAF+R7Qt8G2InfhjxhHQu/7vJlSbdzFnYHxNyV6Y50+Icb8lVF/dUOH6DvOhwttE41f
-	Uw8K4hrK/RRrkWWstTht0gIerInKU3S4Qzix8N7MH7Y+d/EROu8+LZ8qLoikNtfF/Jw==
-X-Gm-Gg: ASbGncufvX3ANavdx23u3tUxwCcgR1quJxH1d06lyeDYnrR89N+C8BC8L2H5TJq8IBr
-	Kvi/cJPecbOOp5g7kYV0T5a7SpaZFttlo/lyqZwyWisPMx/CV0sJbBfdMZvcWkzqxVJQW1R65L2
-	ereH1XhsI7tQ4r3a92qjFBX+YWukHkBbjdJzcK1o9B8aGOZbr9rV+J/V0ux7zaz36qllDGqZJZx
-	0wVvysdy27aKVq0loC/M/FUJ2nP2Pvt12J3fjbh0GmN6MUWLgRmBcdn5+J30fc6XwFTYxN+EGtT
-	pWiKjiHwW6XwW5BHahaHwsErx2JWie10xc9GVojw9gQYPYpgsG9t0uI4/+KjhWtFbJI97GGJpC7
-	fv6XhPyxFirPcOOdw1AoDVUxE/z0J2ezyu1uT6aevboRMW/o=
-X-Received: by 2002:a05:6000:22c6:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-42704dc9395mr11530736f8f.45.1761038709187;
-        Tue, 21 Oct 2025 02:25:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEW/8VpN7+oRVVI2gacXOhu1lhYOkSBU8WbVYkhEZvqfdiTjdCOVwmyWkwuv1K6C+wnD9GcTg==
-X-Received: by 2002:a05:6000:22c6:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-42704dc9395mr11530698f8f.45.1761038708787;
-        Tue, 21 Oct 2025 02:25:08 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0f88sm18692002f8f.7.2025.10.21.02.25.06
+        bh=7nW2A2/Sdl+uA+0oNeIno2lzJVyfIo1jiDtXonqrUVg=;
+        b=k0MuOVhxT2yLVWPxxRpH5XxgMB7oCar3m539fn/BZcPxUdJNpIWxLko9euF55YDNqv
+         vUZIZP84LCQRo/fBDzf16bNedQOUtRNhfIiDIPgP6LH2z8VwlZNpzxXedj4DATMlni0V
+         F632MYfnyCiYIY3I9cWpDHbfeErngidfiJtmSFm2w9ODf+ZXeZbTlT0A6E1zU971zPNb
+         vFjDoJLL0Tzfqk2xTaZWCR4oxwSMYNabzEYAATxd+MjeLFWrD8AnK/A5CJl+Of80W9hW
+         sDe57m0AByO2ULBmSMhzEmzQbCbs4MZdlgbLhlvI+GYkt3kThqloTAGWb4a3sUGsQL5A
+         EQOw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3NukGGeZTg8G80JvSeWmitAwWoiJe0N1yDxJTxgugSs0UJufZOKS0exqRF+LDkYXlswcLfbT+dql1pA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBpPzkGM153n4QyUKkI3/MrLyTB9JaB6HOUO++EW8PbeX/2wuN
+	HKaM20i2YMu9qF1+fb8kUkXH7/i9AgmWsLPJjUbaSYSLq5A1x74qiwMnIWd2HNDH7FqoqVVUXMe
+	SZjqvEruqA5e9C3NYcUi1GEXHhBiYBFgdEjMTv4ml00QCvQ2TZfcubGQv/B2sxIR0dEs=
+X-Gm-Gg: ASbGncvxcWUsLweHRBrma8FjSxPfD5bO1w1d5w58wQiBFiDrG2czIP54e2iyxvaCPGc
+	JLITjkxlo5zxSV3rQjQw0PLLyxYaPV7pBRmRXbCYA2nYGpUyivxL7O9Z6cZpLF6o9iXal6d99Ed
+	EHt7Y4DvYSOdpZURmWeKMLcteowCkVh/b2fGYPIS1H/mLiwnuL6F/016gTtnX4EEpr8WyNLkFir
+	pbNUOZPfcec8MctV1Zhz1ROmjqQ7A5XaEtpE8SBX5tNuq+J8VUOKdyjGvluJNJxdW+VEVuny9uu
+	Gk8jsV4MwXO6Zfvt+vDpdvSaKiisr8WWpRxX0sywA88SdQtxb6J2jmC37QgsqgbqFSouyu906xn
+	qS8Yxj8IUbL3vrco79qqZbIg8qrRj4ym/MAPkX6s/z9v91hVWTx82A6hZ
+X-Received: by 2002:a05:622a:4c7:b0:4e8:9bf5:5ecd with SMTP id d75a77b69052e-4ea1168541bmr18751931cf.1.1761038711959;
+        Tue, 21 Oct 2025 02:25:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHk59Wq45eSmY+tGWqEQNxDk//11cZC7q1beswb65jhbWLCg1ETbu+zF69qDRXnYYMyGb4j9A==
+X-Received: by 2002:a05:622a:4c7:b0:4e8:9bf5:5ecd with SMTP id d75a77b69052e-4ea1168541bmr18751761cf.1.1761038711453;
+        Tue, 21 Oct 2025 02:25:11 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb03671csm1014961166b.38.2025.10.21.02.25.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 02:25:08 -0700 (PDT)
-Message-ID: <c2534ab3-a843-43db-9447-19954467e2ed@redhat.com>
-Date: Tue, 21 Oct 2025 11:25:00 +0200
+        Tue, 21 Oct 2025 02:25:10 -0700 (PDT)
+Message-ID: <5569198e-5548-48f7-b64e-b7574ea59691@oss.qualcomm.com>
+Date: Tue, 21 Oct 2025 11:25:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,77 +89,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v02 2/6] hinic3: Add PF management interfaces
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
- netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Markus.Elfring@web.de, pavan.chebbi@broadcom.com
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- luosifu <luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>,
- Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>,
- Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>
-References: <cover.1760685059.git.zhuyikai1@h-partners.com>
- <8ad645360ce86569ec9c2c6532441352c06bc44a.1760685059.git.zhuyikai1@h-partners.com>
+Subject: Re: [PATCH] backlight: qcom-wled: fix unbalanced ovp irq enable
+To: foss@joelselvaraj.com, Lee Jones <lee@kernel.org>,
+        Daniel Thompson <danielt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-v1-1-edd304d165a5@joelselvaraj.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <8ad645360ce86569ec9c2c6532441352c06bc44a.1760685059.git.zhuyikai1@h-partners.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-v1-1-edd304d165a5@joelselvaraj.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: rKuSNOS1rcfW7getGiR28PJGPJiHAaCU
+X-Authority-Analysis: v=2.4 cv=JeaxbEKV c=1 sm=1 tr=0 ts=68f7517d cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=WFa1dZBpAAAA:8 a=6r-yMKpJyw27a2n3RXYA:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=MZguhEFr_PtxzKXayD1K:22
+X-Proofpoint-GUID: rKuSNOS1rcfW7getGiR28PJGPJiHAaCU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDE1NCBTYWx0ZWRfXxQCZ+OmtPU7l
+ 25M2i9sjkCf0/T0v9kH2u7V6w30H/TdKbLfVGz6as9d+4quI8uX95uSczsPL2Y1OAfBfFtX6h81
+ ufwukdPl3nwstKGR86FuXPhYYY4qVIgCepbbUpQJ+OEqZpGUYM6fKm4C+z/eo3o0mbM/+xUUyZY
+ +oopbsaWVDm/WiHIPG575K8trcjys7JBWyz2rNFJGIlsfGTbFoH838gXBCPKYVICm+fZBjXWkfW
+ luqNm0tJQealfBCBZsTC5mJWPlTdi+9j9USv1wPs0Pg9R0PGRuNSvpz+6I4c/1jMPD7pjo17AVN
+ 3DbMePquP6NaK6CwCfxQMc2N71DNTIwgyhmFCTiLTFdMGNzWtmWuhuemFBWQpIJTAF0UlfXM2M4
+ q/GBOfLKyjgsIsKbMvZgzASjxhY6aw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 malwarescore=0 impostorscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510200154
 
-On 10/17/25 10:30 AM, Fan Gong wrote:
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
-> index 78cface6ddd7..58c0c0b55097 100644
-> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
-> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
-> @@ -39,24 +39,25 @@ struct hinic3_pcidev {
->  };
+On 10/21/25 9:33 AM, Joel Selvaraj via B4 Relay wrote:
+> From: Joel Selvaraj <foss@joelselvaraj.com>
+> 
+> In Xiaomi Poco F1 and at least few other devices, the qcom wled driver
+> triggers unbalanced ovp irq enable warning like the following during
+> boot up.
+> 
+> [    1.151677] ------------[ cut here ]------------
+> [    1.151680] Unbalanced enable for IRQ 176
+> [    1.151693] WARNING: CPU: 0 PID: 160 at kernel/irq/manage.c:774 __enable_irq+0x50/0x80
+> [    1.151710] Modules linked in:
+> [    1.151717] CPU: 0 PID: 160 Comm: kworker/0:11 Not tainted 5.17.0-sdm845 #4
+> [    1.151724] Hardware name: Xiaomi Pocophone F1 (DT)
+> [    1.151728] Workqueue: events wled_ovp_work
+> ...<snip>...
+> [    1.151833] Call trace:
+> [    1.151836]  __enable_irq+0x50/0x80
+> [    1.151841]  enable_irq+0x48/0xa0
+> [    1.151846]  wled_ovp_work+0x18/0x24
+> [    1.151850]  process_one_work+0x1d0/0x350
+> [    1.151858]  worker_thread+0x13c/0x460
+> [    1.151862]  kthread+0x110/0x114
+> [    1.151868]  ret_from_fork+0x10/0x20
+> [    1.151876] ---[ end trace 0000000000000000 ]---
+> 
+> Fix it by storing and checking the state of ovp irq before enabling and
+> disabling it.
+> 
+> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+> ---
+> I am not entirely sure if this is the ideal fix. But this patch provides
+> an okayish stopgap solution till we can properly fix it. I am open to 
+> try a different approach if there is any suggestion.
+> ---
+>  drivers/video/backlight/qcom-wled.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+> index a63bb42c8f8b0333cd6d0ddc5bda93916da3fef3..36e2fe5c5fa37cfb8750254a75eff612741983c8 100644
+> --- a/drivers/video/backlight/qcom-wled.c
+> +++ b/drivers/video/backlight/qcom-wled.c
+> @@ -197,6 +197,7 @@ struct wled {
+>  	bool disabled_by_short;
+>  	bool has_short_detect;
+>  	bool cabc_disabled;
+> +	bool ovp_irq_disabled;
+
+This is generally "..irq_enabled"
+
+>  	int short_irq;
+>  	int ovp_irq;
 >  
->  struct hinic3_hwdev {
-> -	struct hinic3_pcidev        *adapter;
-> -	struct pci_dev              *pdev;
-> -	struct device               *dev;
-> -	int                         dev_id;
-> -	struct hinic3_hwif          *hwif;
-> -	struct hinic3_cfg_mgmt_info *cfg_mgmt;
-> -	struct hinic3_aeqs          *aeqs;
-> -	struct hinic3_ceqs          *ceqs;
-> -	struct hinic3_mbox          *mbox;
-> -	struct hinic3_cmdqs         *cmdqs;
-> -	struct delayed_work         sync_time_task;
-> -	struct workqueue_struct     *workq;
-> -	/* protect channel init and uninit */
-> -	spinlock_t                  channel_lock;
-> -	u64                         features[COMM_MAX_FEATURE_QWORD];
-> -	u32                         wq_page_size;
-> -	u8                          max_cmdq;
-> -	ulong                       func_state;
-> +	struct hinic3_pcidev         *adapter;
-> +	struct pci_dev               *pdev;
-> +	struct device                *dev;
-> +	int                          dev_id;
-> +	struct hinic3_hwif           *hwif;
-> +	struct hinic3_cfg_mgmt_info  *cfg_mgmt;
-> +	struct hinic3_aeqs           *aeqs;
-> +	struct hinic3_ceqs           *ceqs;
-> +	struct hinic3_mbox           *mbox;
-> +	struct hinic3_msg_pf_to_mgmt *pf_to_mgmt;
-> +	struct hinic3_cmdqs          *cmdqs;
-> +	struct delayed_work          sync_time_task;
-> +	struct workqueue_struct      *workq;
-> +	/* protect hwdev channel init and uninit */
-> +	spinlock_t                   channel_lock;
-> +	u64                          features[COMM_MAX_FEATURE_QWORD];
-> +	u32                          wq_page_size;
-> +	u8                           max_cmdq;
-> +	ulong                        func_state;
+> @@ -294,7 +295,10 @@ static void wled_ovp_work(struct work_struct *work)
+>  {
+>  	struct wled *wled = container_of(work,
+>  					 struct wled, ovp_work.work);
+> -	enable_irq(wled->ovp_irq);
+> +	if (wled->ovp_irq_disabled) {
+> +		enable_irq(wled->ovp_irq);
+> +		wled->ovp_irq_disabled = false;
 
-The above is a nice way to hide a single line addition. Please either
-avoid the reformatting entirely (preferred) or do the re-indentation in
-a separate pre-req patch.
+You can also create a short wrapper like ovp_irq_enable() that would do
+it internally (making it harder to overlook assigning this variable)
 
-/P
-
+Konrad
 
