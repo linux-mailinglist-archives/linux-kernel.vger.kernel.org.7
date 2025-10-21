@@ -1,138 +1,87 @@
-Return-Path: <linux-kernel+bounces-862104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B696BF4717
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:01:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16104BF4687
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 392F93517F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:01:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9AF224E7428
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03749199939;
-	Tue, 21 Oct 2025 03:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF292773C6;
+	Tue, 21 Oct 2025 02:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CJkbMPzb"
-Received: from mail-m19731106.qiye.163.com (mail-m19731106.qiye.163.com [220.197.31.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgixvuCj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373478F48;
-	Tue, 21 Oct 2025 03:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFEC1E868;
+	Tue, 21 Oct 2025 02:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761015628; cv=none; b=tRgq/RXUSPegJ/JetAb37mvYCK5EwaR8JsATpN5orMh+ApqqHpf9T6KQLhAvN0IdvE/8RJksZtN9W8QYxGVDYTIj0MbbMHB1Tmnt5gud64GON0n7vWMP8MiKhTuUvzGGMeep3TjPaa7QXJjcyoQWmPksTHChMme6FhqtzlfLga4=
+	t=1761015317; cv=none; b=YARomu/e2Y6WZWMA/rk4eaE52cHl3lrU2GU3nspJUmcDi1yTg5/rOJ/+/xtobg9FYTjq7wT1bwunJUOszQFM3xcyHPw+shYzoQltpyz9F17d+so8gStsXEuhaDpKUPnchWafwqnmj1ijv8hBd80i4jEAoAGm/nsSDEyLG/GXL94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761015628; c=relaxed/simple;
-	bh=7tukIHqKlPtvQo85AEe+ZHcpQ275Xm52vAAd47MIYic=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ogWHPvja4yo2mEXiBY5XGKWuug0u159trk7abQJceFLHT2nPRKjYFlgy4tBWNpw9YWeyyv9weFnbeGSJ6uSjQy3Lv2h+ShXsJU9eiJl+LhqGMUM5HVLydWqrGqaH5aDOrDcOIopPejy1ketPLmc3A1XI7VeqEfnV2vZBZRTKGks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CJkbMPzb; arc=none smtp.client-ip=220.197.31.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 26979c379;
-	Tue, 21 Oct 2025 10:55:12 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	jingoohan1@gmail.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com,
-	jani.nikula@intel.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v7 07/18] drm/exynos: exynos_dp: Remove unused &exynos_dp_device.connector
-Date: Tue, 21 Oct 2025 10:52:40 +0800
-Message-Id: <20251021025240.1524169-5-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251021025240.1524169-1-damon.ding@rock-chips.com>
-References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
- <20251021025240.1524169-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1761015317; c=relaxed/simple;
+	bh=vbYD+kETAiJfEcOI6cCNkdml0J8v/v8cpCFgqCTJ81M=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=G9xuFMAEZH5J9/vxYnevYoYtMlz/RMznLXlOwSzdjyTKwXIXO4nBd2NCxBRrf7lyLy7b+kAVDGkpd7NM5mZsC7fg/BvnauiMAUlNHwFOsz27j+BrZkbL+x425ZSEqSSdz59z7fQL1NwGcLv4r4BIGOQ2Rfi6vtzlnKsS+DpuGuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgixvuCj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2CDC116C6;
+	Tue, 21 Oct 2025 02:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761015316;
+	bh=vbYD+kETAiJfEcOI6cCNkdml0J8v/v8cpCFgqCTJ81M=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=DgixvuCjn/AJ3eCjTcDw+7UK3P9/3b0ApKAYt4mgxbdTKdWIHQFkt35schxa9TdAT
+	 eaQB+DmIAGcq9VoEAI26pAt4IpxuYsWv8g5k306IoiAfJXXir1WdtgFrIeas1xZqp3
+	 dMvcuvf4J62uXC166MRC4wFs0hV4jZSw6EFxpqU2dRjOFiy8554lRqx1TODO34Lnlq
+	 N4cMBKSgWTBMP+uot/Z7qcB22ejkeUBt6qJKDZp/b5B7ZnAhQtkHY05V8h7x/tZWRO
+	 6ortCu9A3ni3GAXNnJPMXFGxILHAtxtJUiVRuAXw6c3S4HmP0Wp88p2Jcpd5TaQl8M
+	 0bPq1/Cj7rViA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Thomas Falcon <thomas.falcon@intel.com>, 
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
+In-Reply-To: <20251017230357.15663-1-irogers@google.com>
+References: <20251017230357.15663-1-irogers@google.com>
+Subject: Re: [PATCH v2] perf parse-events: Make X modifier more respectful
+ of groups
+Message-Id: <176101531311.244304.14298928719214046994.b4-ty@kernel.org>
+Date: Tue, 21 Oct 2025 11:55:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a04b131cc03a3kunmb53d69df5a3393
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0NIHlYaTB5JGE8fSh9OS0JWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=CJkbMPzbUAGm0xogQl46UIE1Z5Vr3LqunUJq/9ePdo+rh27b5l+sxJZJYwen5dyYgC0Dw/B9dFbLOPAW3XJALpTed2MoBCRJNmVzUVK56qEj///WnKkT8xc9rCyQE/o3q6BXeOC3FQlXLfAzf8FMPZnmSHm89az3H0alXBqOFCQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=W7hscjxrhMolqP2gEq4HitXov1btGjuXKeTkNPaU3R8=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-The &exynos_dp_device.connector is assigned in exynos_dp_bridge_attach()
-but never used. It should make sense to remove it.
+On Fri, 17 Oct 2025 16:03:57 -0700, Ian Rogers wrote:
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Events with an X modifier were reordered within a group, for example
+> slots was made the leader in:
+> ```
+> $ perf record -e '{cpu/mem-stores/ppu,cpu/slots/uX}' -- sleep 1
+> ```
+> 
+> Fix by making `dont_regroup` evsels always use their index for
+> sorting. Make the cur_leader, when fixing the groups, be that of
+> `dont_regroup` evsel so that the `dont_regroup` evsel doesn't become a
+> leader.
+> 
+> [...]
 
----
+Applied to perf-tools-next, thanks!
 
-Changes in v5:
-- Fix the 'drm/bridge' to 'drm/exynos' in commit message.
----
- drivers/gpu/drm/exynos/exynos_dp.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index f469ac5b3c2a..e20513164032 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -35,7 +35,6 @@
- 
- struct exynos_dp_device {
- 	struct drm_encoder         encoder;
--	struct drm_connector       *connector;
- 	struct drm_device          *drm_dev;
- 	struct device              *dev;
- 
-@@ -102,8 +101,6 @@ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
- 	struct exynos_dp_device *dp = to_dp(plat_data);
- 	int ret;
- 
--	dp->connector = connector;
--
- 	/* Pre-empt DP connector creation if there's a bridge */
- 	if (plat_data->next_bridge) {
- 		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
--- 
-2.34.1
+Best regards,
+Namhyung
 
 
