@@ -1,115 +1,101 @@
-Return-Path: <linux-kernel+bounces-863092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F63BF6FED
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:12:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBE4BF6FBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3F1C503668
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E7D3B75A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3145633B95F;
-	Tue, 21 Oct 2025 14:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48B218DB1F;
+	Tue, 21 Oct 2025 14:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oywEPCVo"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zqq3vw01"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1812535502F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B52332B99A;
+	Tue, 21 Oct 2025 14:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761055804; cv=none; b=lJqgG6n2Rvkg0+wnSi9BUbI5GN2UZJCQmbH8v6P8gliPYB1rfn5pYwgcZopGDGccXdUkbn6v29KQxrxPuxyEYpZfmbN6AIREipbPTYA8KyRZJJHt2QcvfBJ3fShIk3sdvOg8CIC0hbX015/VLcMQJqcQM0GwquGSwcZJc3Pl/Lo=
+	t=1761055836; cv=none; b=ILNNAut1tM4GmVjDRXP9RBjRcbj46zmyJRYPwknVxVviNf+zuPJir3R7w25qouxIDDen9IG73DTXGnJlvXnAUh5lL+bRqKMo02LjTRcH7F0yUXpxkUhpGrUgSipVPQoWozPH6Isd//nDTQHJJ63XGYcK4pIq6dmMdJkRBS6tH4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761055804; c=relaxed/simple;
-	bh=8wTLAvGi9ID9Ft8t8f5sMJPAEM8KIov9ku8jUR3+m8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R77a7mj0NgrI/3F0ph2/ebnqvyDMGYpg4anqOtUH2tDkEChnWJ8MfQbg8lL8L4oRNYM9OT+fr9JtaNxCF0F1skXAUUkiSDr33d4nVEq1ZwR+i8DlMrK/xl0eZQ6ZiCh5dWY5n0qQLWfKRLbm7M6gcU7PKODimFOZFcQrxC/sE30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oywEPCVo; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3c9b1b8ccb1so850300fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761055802; x=1761660602; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8wTLAvGi9ID9Ft8t8f5sMJPAEM8KIov9ku8jUR3+m8E=;
-        b=oywEPCVo+SyvObmNYX/40v4pP4Y5PlvowGYvqSX/xOGgzoMd94pmkKxyHyucAgBLEP
-         qoTHAVKTHRQ5Kv4PSUpXY58pWtqxoqVaCkRwevoK7MajdsWB+DsmxCwYQ4S15AnOgwQ5
-         uqB9cwqN2n/10FqlypeO40+Pyd3NDBSQupcVJj+3Hkf5mmtv37Fe7Z5p2LqeWDfcE4MJ
-         IEpxEp9xvGet3X2PRkZVu5jSunuKzYwuLk2dMocQKgxbQ8OLmF3EwDlooPbKkvquer3d
-         LMEaxpvNF4no2WnsAV9yH3encdoKvq/OUmceIIVc4YEMq0vbItM6s1wsZHeex1YVd113
-         HysA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761055802; x=1761660602;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8wTLAvGi9ID9Ft8t8f5sMJPAEM8KIov9ku8jUR3+m8E=;
-        b=EIVvo9/76BMyzrAB/DNglVnZAeR1vByjuoxBcfXTma9vQIT47BuxdQXN/0W2r+Xg+l
-         PhtsB55V0FJwWpHo57/oWhsIxTUEI99as3Yy0p5Macfy3yRs1j6xedUW5MbnTNJ6X6Rp
-         HKcjGqxR7XBrVeoewkRYJjtoM4PFEm0OyYrXUcb0+uUdGddnIMcdVVaqP7Hbb/U/KsOX
-         Fg6NJjuXnan6e1YLzBRw84IxQmKjzRhLeNAMn7zDQO7MR5xAREzzwiuET2OHu2cZalCu
-         1eWnOgHg61aU2Bxu7RSeJodtqJ28jEYAjBuAvtZrMJsAg6ca1v52fkpneX2GPNhGXTfS
-         I0WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX42X6DxPp5o1ycv1Yl4/W8dLCEbN86EDEnI7IR6eYguxMOcI+0qVSSIrVFZfYBmiBluBjP4pT75Diihtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWcu0aBgeyJqNUPas+W3PsoES2sWbitZQoeuiadH2+U1DUkKbt
-	fkZvOA1PH+dGN1smriG6Gw1jI6u/zScmX4AVz6RyBb88WxpPBFqd0dsa0HuN9LvZlJbVDZmuUPc
-	BMC4fO7qNIHyeofk/TmtHiE7hSI8fuDftLOn0WOvs
-X-Gm-Gg: ASbGnct+NZa4UGj9JVZP3ZDXSSJdocSmEw8288nFfrgn7MebLo6DAiGNgotwuF7yhHr
-	1DHMTPuKra0Rt2F+PB7fSdPKKgv4z4wMvcIwHZz4AKyrBKmF9KHm640DbSPVovpv/0KyxLMu98u
-	w5HDwlQlp+3Rw7PKwn+hSvsR1Bq/NBARf6nirz1Cx5IGrgGIQCh+cmUiEensMlmCZPL987vHp1Y
-	CwpG1xY3N2Hg6MwoZ0IZnHMgadoCBNuTZZJNVIZ4b1ICN4FAkY2zc3HbGtXiKKdQGTBIZQtvCtT
-	EwqMim7FPUjXUL8=
-X-Google-Smtp-Source: AGHT+IH3VghCiCE3lxLOTrviSNeoulpzb3G7Sl27fBh08zim90scpuPdYk8nSiGtl8LWCrKQVcsM85+T67T5u2ckeQU=
-X-Received: by 2002:a05:6870:1f05:b0:3c9:83d4:db66 with SMTP id
- 586e51a60fabf-3c98d1e2699mr7751225fac.48.1761055801935; Tue, 21 Oct 2025
- 07:10:01 -0700 (PDT)
+	s=arc-20240116; t=1761055836; c=relaxed/simple;
+	bh=JRM2odY9VW0S4l+Z2OfO9X4SU0hKm51fzDYSn1D9qOY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jCGUQtk1uBO6Xcfq6tnXyBh+w3KI4JZCdMRWEVe2gAixbJ2QaWQ8dVHwXzdbAhskk2CklQqAmYj9U7z5SeszZ08dB7spJKnu2PHEEoaNJ0CdHMGOHjtKOpksd2VmQqsPV+SnQORw7D45VrYBCim6dnmRwsjytpg72qqyu5UJW2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zqq3vw01; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8498CC4CEF1;
+	Tue, 21 Oct 2025 14:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761055835;
+	bh=JRM2odY9VW0S4l+Z2OfO9X4SU0hKm51fzDYSn1D9qOY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Zqq3vw01LYZ7LCwbJr9YNGgmjgAgPqXAd3BF6WMCeNduXlbS0kgbPtAphmnurDtlc
+	 vr6jYgHl3mTwWPsge18Mg4iNn+zuo6NH6eosBn/AAF16W4bjwx9aFzyyy3zxz6xdoh
+	 +DofeyNNQG+fQhVorrJS754m20H34cSw784xKRmyBBaB5JkVRaPsg9Wy7X1MqyoUj/
+	 qzCPTcYzM2CVUwalJVo7pJ52bZuarYWtv+kVm6xdJ4SL1xWLurhdf0/hswA5qjzp4l
+	 VVA/KMFuCu4mTr5i6cW4qEboaEOQbzOk4K5hphwPMSZ6Qvsqez+Mzck4aYWz1cLp0m
+	 Tri2lloucd8WA==
+From: Mark Brown <broonie@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+ Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>, 
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aPMyw_ryay9LA5SW@stanley.mountain>
+References: <aPMyw_ryay9LA5SW@stanley.mountain>
+Subject: Re: [PATCH next] ASoC: codecs: va-macro: Clean up on error path in
+ probe()
+Message-Id: <176105583329.178516.13846738418896857989.b4-ty@kernel.org>
+Date: Tue, 21 Oct 2025 15:10:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-binder-bitmap-v2-0-e652d172c62b@google.com> <20251021-binder-bitmap-v2-3-e652d172c62b@google.com>
-In-Reply-To: <20251021-binder-bitmap-v2-3-e652d172c62b@google.com>
-From: Burak Emir <bqe@google.com>
-Date: Tue, 21 Oct 2025 16:09:49 +0200
-X-Gm-Features: AS18NWCfdoTu2E-3B42NFe8GMy5fnHpVX_b7zcHHmcDYGg8P0ZL5WsqS0Rf8vrY
-Message-ID: <CACQBu=UyZ_=A3j56xNX+F8nExTN8CdCrAXbTRT6z-9MePyuqKg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] rust: id_pool: do not supply starting capacity
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-2a268
 
-On Tue, Oct 21, 2025 at 3:33=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> When creating the initial IdPool, Rust Binder simply wants the largest
-> value that does not allocate. Having to handle allocating error failures
-> that cannot happen is inconvenient, so make the constructor infallible
-> by removing the size argument.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Burak Emir <bqe@google.com>
+On Sat, 18 Oct 2025 09:25:07 +0300, Dan Carpenter wrote:
+> Do some clean up before returning the error code.
+> 
+> 
 
-Since Binder is the one use case we made this abstraction is for, it
-makes sense to me.
+Applied to
 
-cheers,
-Burak
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: va-macro: Clean up on error path in probe()
+      commit: 7e1906643a7374529af74b013bba35e4fa4e6ffc
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
