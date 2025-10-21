@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-862257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A716FBF4C9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:02:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C2BBF4CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D934F4EE871
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:02:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A4444F01FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B8326E6F5;
-	Tue, 21 Oct 2025 07:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D6D26C3BD;
+	Tue, 21 Oct 2025 07:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHMaUTaQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="erXKkGm/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780D6199D8;
-	Tue, 21 Oct 2025 07:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD57260586;
+	Tue, 21 Oct 2025 07:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030141; cv=none; b=NobA6mJ5HO32cokNyzTbwcvrIMBnc5YatqSqpx743j3EWx6VTrR3WD8OFXe/kIdR/q1drACfg2Fh5B1BGji1xbtmmLSiKug+ROzjcGuUzC4eVO3jnJ/F0uR28i6V5BGuDs/CvmRM5MXJTI9B/nryHLJwDIsk82TSWgcaDw7txhg=
+	t=1761030161; cv=none; b=e3qCz+ecUKdctdYtriANDijdQkgZa0bd2uIe5H8PDZA/MEzvNvv+3jQE43WPm1qT2HHmXsZI/Amt59TDw0JMbosVA11wYyWrTw8uxUJvpQKw7L9cEJTq3Gbrg3a/cA445GFWqUsyVVCUyip8TbiXa/b1BWNxIUDTpE/Hc/FTTkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030141; c=relaxed/simple;
-	bh=+CuOcIy8l9Wxb3mYYyfLs1v0g1O8xn7/Uv9QbW1xMtk=;
+	s=arc-20240116; t=1761030161; c=relaxed/simple;
+	bh=6lEWOnbf4y1y98HAP+LxVFokT9voRQdo4MPMdq5hVac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxspeum5QlaAHp7Q37r3FwfemQHzVeufVsr5W7RPvwfhb2n5sHlMjRniGshE8fdnMr1B9gDVbEmciYTgiPo+pP0KcQoZjxLx8SwtHqmF8UsZX72c0grQgxcmlddkjmAF4APAeAfaR7aszlEiRQDtZQm8AqkGzZvK7Ig8Q3xdpKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHMaUTaQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EC3C4CEF1;
-	Tue, 21 Oct 2025 07:02:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEELyo4GuZqRcv+FNCELEbJSrfmvd4hyNfL//SSd2ctM21/J3aTySQzrmi5qqH9fbJOmxA7JyDHs+xn+mu6w3AvN1DcTpc9/CnG16PMEBPxCqRvtg42AJMeVk2XJcxua+ufZd5mSV6sXtJ676Plo4yrs+KwGdKPqhRyyCLc1Llk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=erXKkGm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4EE8C4CEF1;
+	Tue, 21 Oct 2025 07:02:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761030141;
-	bh=+CuOcIy8l9Wxb3mYYyfLs1v0g1O8xn7/Uv9QbW1xMtk=;
+	s=k20201202; t=1761030160;
+	bh=6lEWOnbf4y1y98HAP+LxVFokT9voRQdo4MPMdq5hVac=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SHMaUTaQXgNCwWOa329RDLxgKyGzzR8nA2M/bnRdG7LVugH0dJQiKmJcHcywRg4qY
-	 tbOzCk0wYmGyTDFlBuKDq5fzZWHU7GXJNtasvkcKq2a8BP4dE5rbsat0y5qf+KHxxZ
-	 kr403yn/DXfo68TTJCXLr4qfbIV/NG9uL4LndbRCO1bVfWzgHoAH7gXenCalb7k7N9
-	 FIpPXxd6EvxDwY9APOiRqNWL2MDAY7h24jmrl9UVl2L6d6q8C5XMLojTQ4VPp+EOAh
-	 MfQifSMkZvY/0xQayG1yyONaQoLGqF0NgEgqDrpj7cNR6HYeqax4rFQWozIDV4xUya
-	 uoQH7AdF6rVog==
-Date: Tue, 21 Oct 2025 09:02:18 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: sram: qcom,imem: drop the IPQ5424 compatible
-Message-ID: <20251021-quaint-hopping-tuna-0dade2@kuoka>
-References: <20251015-ipq5424-imem-v1-1-ee1c1476c1b6@oss.qualcomm.com>
+	b=erXKkGm/laR+wHFojIbkxwSIaRuI9hXLjpyDKcKZW+TmUpzofZpqRzjSBAMTLIH1H
+	 XT8LBljnrDjiC0cqnRajY4uJf8O6hyvpkHqKP0/zvJNaIgXMXcFAAmQxLkGKdv0GJ+
+	 cbXoYAzDoPB5YBUYUXdlUCueOCcxvBkF8WSR1qWgj3JHJRgZwOEK0LLu6CCg2rOHpt
+	 cVp+PD7kLMWDtK3utBCD27VhpnlJmPDuO6d3ErusEKjwk2+Z/yUaGSbj7LxglSXKU2
+	 ZuWThaCUBUIG9BYp8hrrWfCRcQNiM3ylGgNDM6fvxTaGga8dbHjYPZQMnQBK4RVkKL
+	 +8Pv993bJnFnQ==
+Date: Tue, 21 Oct 2025 09:02:35 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+Subject: Re: [PATCH] xfs: use kmalloc_array() instead of kmalloc() for map
+ allocation
+Message-ID: <qw64zhza44fxxtoripp2nu7d4tny7wy7dyqapilhxyxmng5jsk@fxyxlisrbcls>
+References: <eeslnTm4EeKA2atDj3UKUcXAaGwgiPzioO9tR3Kf0pBEyUjxEO_9DaFIpNYIlc_9ey63h8gqdBsIt9Xjgn7AkA==@protonmail.internalid>
+ <20251018194528.1871298-1-kriish.sharma2006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015-ipq5424-imem-v1-1-ee1c1476c1b6@oss.qualcomm.com>
+In-Reply-To: <20251018194528.1871298-1-kriish.sharma2006@gmail.com>
 
-On Wed, Oct 15, 2025 at 11:46:58AM +0530, Kathiravan Thirumoorthy wrote:
-> Based on the recent discussion in the linux-arm-msm list[1], it is not
-> appropriate to define the IMEM (On-Chip SRAM) as syscon or MFD. Since
-> there are no consumers of this compatible, drop it and move to
-> mmio-sram.
+Hello.
+
+On Sat, Oct 18, 2025 at 07:45:28PM +0000, Kriish Sharma wrote:
+> Using kmalloc_array() better reflects the intent to allocate an array of
+> map entries, and improves consistency with similar allocations across the
+> kernel.
 > 
-> While at it, add a comment to not to extend the list and move towards
-> mmio-sram.
+> No functional change intended.
+
+Thanks for the patch.
+Have you ran xfstests against this patch? All patches sent to xfs should
+at least pass basic testing via xfstests. I.e. ensure there is no new
+failure between an unpatched kernel and a kernel with your patch.
+
+If you did, please send me the results summary, if you did not, please
+run it, and send a V2 of this patch  including in the patch description
+the summary of the results.
+
+Any changes includes risk, and so every patch sent to xfs should be at
+least basically tested against xfstests auto group.
+
+Thanks,
+Carlos
+
 > 
-> [1] https://lore.kernel.org/linux-arm-msm/e4c5ecc3-fd97-4b13-a057-bb1a3b7f9207@kernel.org/
-> 
-> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
 > ---
->  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  fs/xfs/xfs_qm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> index 6a627c57ae2fecdbb81cae710f6fb5e48156b1f5..3147f3634a531514a670e714f3878e5375db7285 100644
-> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> @@ -14,11 +14,10 @@ description:
->    transactions.
->  
->  properties:
-> -  compatible:
-> +  compatible: # Don't grow this list. Please use mmio-sram if possible
->      items:
->        - enum:
->            - qcom,apq8064-imem
-> -          - qcom,ipq5424-imem
-
-And where is qcom,ipq5424-imem added? This is supposed to be one patch.
-
-Best regards,
-Krzysztof
-
+> diff --git a/fs/xfs/xfs_qm.c b/fs/xfs/xfs_qm.c
+> index 23ba84ec919a..34ec61e455ff 100644
+> --- a/fs/xfs/xfs_qm.c
+> +++ b/fs/xfs/xfs_qm.c
+> @@ -1218,7 +1218,7 @@ xfs_qm_reset_dqcounts_buf(
+>  	if (qip->i_nblocks == 0)
+>  		return 0;
+> 
+> -	map = kmalloc(XFS_DQITER_MAP_SIZE * sizeof(*map),
+> +	map = kmalloc_array(XFS_DQITER_MAP_SIZE, sizeof(*map),
+>  			GFP_KERNEL | __GFP_NOFAIL);
+> 
+>  	lblkno = 0;
+> --
+> 2.34.1
+> 
 
