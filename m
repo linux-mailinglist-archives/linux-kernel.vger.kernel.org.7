@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-863659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE85BF8BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:38:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD2CBF8BD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE0519A71D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3941119A70BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EBA27FD43;
-	Tue, 21 Oct 2025 20:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A6627F736;
+	Tue, 21 Oct 2025 20:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5nmKkED"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOSvS27I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FEF266584;
-	Tue, 21 Oct 2025 20:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA998528E;
+	Tue, 21 Oct 2025 20:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761079119; cv=none; b=L4gNLdG2Imqlu4p5Hul7ughNEzZdhzUng5zOBK5TjlN9lBjghUlbR3+xAnoNFkyK3ycF0GNO2t8ZM3VUfxXJqzn3klH2p5htWuPXfz0zVg/MVcjYvWN+BYyf9XUC8WMuGv5E/9TasF2hEYzl0Jwczeh4alP77GlGmmM4HKfZfPY=
+	t=1761079165; cv=none; b=EEMdOHwCSP0Clye9IKBupX8ETGtisDbY2io1F9wh5aeZxooEHwk68lvUZiNhFmvIF5JvLukvK53kLhPpro13jAyYx8UHlJOLwzc6gv2G1fK+O8UpLxjy4IE1SSbdE1sdyaLYIC0v3l0r8CZtGYfT0PfpZJmuUpFPZvGwlLWhJ3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761079119; c=relaxed/simple;
-	bh=xyumwPl30ONfVpygpOsANWfqQ6zL+CFhHbz/wrjnXZ4=;
+	s=arc-20240116; t=1761079165; c=relaxed/simple;
+	bh=6MoCzJu0OSrp5FJUgSLHBivJyw/b6mr+rt3qFr2LoRA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SM4EBVc70AlSc/sgDxR/WlsJHkNa1Mf52n9QirXL8Y79qtDk4GYz2w8c2XUhEVxNiJeOs5TJ7UNvqTfMwZpfEDbrMFxqi8uucbLOKJiMBj5iSMJ7rA7IEEQgARUdSA2pYk8ignNeY2o6bKQGRFKzM7vlhLWM6LH/MQWIgItjlOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5nmKkED; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1C7C4CEF7;
-	Tue, 21 Oct 2025 20:38:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=F+JVNJDR3dDBtcQp2ZpHjpNfvLWuJERQx7SeDaIKGmhLElyHlUUxM2xa1sVJ78C4wowwCvv01UXWOEcdWriKPNZe7JoyTVt5YZUHWHWlxtyULZ8WU+I+bzhalDd8i/9Blnq7j3zY274MQMr9bo2zK6XqI/TL+JRsp8IDDoPZRWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOSvS27I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C016C4CEF1;
+	Tue, 21 Oct 2025 20:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761079119;
-	bh=xyumwPl30ONfVpygpOsANWfqQ6zL+CFhHbz/wrjnXZ4=;
+	s=k20201202; t=1761079165;
+	bh=6MoCzJu0OSrp5FJUgSLHBivJyw/b6mr+rt3qFr2LoRA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o5nmKkEDRJHFaP+t6tHpF1Fz6BEGKwprNB+kVEm84f5YASXW2LlucA2GhXAe8EgBy
-	 GfPr7HyEv+D1+mcpH2BDc2J6IFwp7u0fzwIwYjYYhy9quGSXyhSmBx7ezidoW7NChv
-	 P0d6Q9t3W/pPG04I5+P/HaXdifMOu2CUZBRfZg7o/5FZJkiQxprMwU1a9SIr7QfYMd
-	 ALQcBvZslt7LcsBs1gffNSGDtFgtuEVVMbtEdNFF8C25ExIpyeuBbGxnZ4tugTeTjT
-	 vt1U176/pGk/PBQ5NAf+trUe8RZ4kkg/5pmszl4uWnEBYvAmqizi49SsKfIWf9IMv0
-	 H8A+4v2dvRb8Q==
-Date: Tue, 21 Oct 2025 15:38:37 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: pabeni@redhat.com, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	krzk+dt@kernel.org, netdev@vger.kernel.org, Frank.Li@nxp.com,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	richardcochran@gmail.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, conor+dt@kernel.org, vladimir.oltean@nxp.com,
-	davem@davemloft.net, edumazet@google.com, claudiu.manoil@nxp.com
-Subject: Re: [PATCH net-next 2/8] dt-bindings: net: enetc: add compatible
- string for ENETC with pseduo MAC
-Message-ID: <176107911426.776450.9549460321528011782.robh@kernel.org>
-References: <20251016102020.3218579-1-wei.fang@nxp.com>
- <20251016102020.3218579-3-wei.fang@nxp.com>
+	b=OOSvS27IahyFHqcGsLlVugHbvLmmwv+qR9avWY7PnLB9H6WquFRMV1f2D2nX/r+Pz
+	 n98a0j+MuukWkbQbend1WApPPuasOx/YYWbgFVYEgL53ay+/2V0yOWo/aYeZ0ogYqq
+	 FeOh6zosYKzhFJ2xGSUE2cdKiv+7cxVCs+dDT0edP96JGhOzTc6BmR0v1g5QPdYfUg
+	 BIOovi+i5WOulBf1ZkJQIJhGvSAQlUNwe5Yu9TVsr7ugqJXxtXOj7v+31J4MjOVG6l
+	 h82kjs/EMk9o1rt7blCtI2FAOOLUOJAxDXaIs8+YrUlaFTOVYZUvkfCvp9s/GuSSCN
+	 tatOsW5YQhAwA==
+Date: Tue, 21 Oct 2025 10:39:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 sched_ext/for-6.19] sched_ext: Fix scx_bpf_dsq_insert()
+ backward binary compatibility
+Message-ID: <aPfvfL_8knMw0w8Q@slm.duckdns.org>
+References: <c860cc12b4b0da311fa8cbbbe17f8199@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +57,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251016102020.3218579-3-wei.fang@nxp.com>
+In-Reply-To: <c860cc12b4b0da311fa8cbbbe17f8199@kernel.org>
 
+cded46d97159 ("sched_ext: Make scx_bpf_dsq_insert*() return bool")
+introduced a new bool-returning scx_bpf_dsq_insert() and renamed the old
+void-returning version to scx_bpf_dsq_insert___compat, with the expectation
+that libbpf would match old binaries to the ___compat variant, maintaining
+backward binary compatibility. However, while libbpf ignores ___suffix on
+the BPF side when matching symbols, it doesn't do so for kernel-side symbols.
+Old binaries compiled with the original scx_bpf_dsq_insert() could no longer
+resolve the symbol.
 
-On Thu, 16 Oct 2025 18:20:13 +0800, Wei Fang wrote:
-> The ENETC with pseudo MAC is used to connect to the CPU port of the NETC
-> switch. This ENETC has a different PCI device ID, so add a standard PCI
-> device compatible string to it.
-> 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
->  Documentation/devicetree/bindings/net/fsl,enetc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Fix by reversing the naming: Keep scx_bpf_dsq_insert() as the old
+void-returning interface and add ___v2 to the new bool-returning version.
+This allows old binaries to continue working while new code can use the
+___v2 variant. Once libbpf is updated to ignore kernel-side ___SUFFIX, the
+___v2 suffix can be dropped when the compat interface is removed.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+v2: Use ___v2 instead of ___new.
 
+Fixes: cded46d97159 ("sched_ext: Make scx_bpf_dsq_insert*() return bool")
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Applying to sched_ext/for-6.19. Thanks.
+
+ kernel/sched/ext.c                       |   12 ++++++------
+ tools/sched_ext/include/scx/compat.bpf.h |   10 +++++-----
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5407,8 +5407,8 @@ __bpf_kfunc_start_defs();
+  * scheduler, %false return triggers scheduler abort and the caller doesn't need
+  * to check the return value.
+  */
+-__bpf_kfunc bool scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice,
+-				    u64 enq_flags)
++__bpf_kfunc bool scx_bpf_dsq_insert___v2(struct task_struct *p, u64 dsq_id,
++					 u64 slice, u64 enq_flags)
+ {
+ 	struct scx_sched *sch;
+ 
+@@ -5431,12 +5431,12 @@ __bpf_kfunc bool scx_bpf_dsq_insert(stru
+ }
+ 
+ /*
+- * COMPAT: Will be removed in v6.23.
++ * COMPAT: Will be removed in v6.23 along with the ___v2 suffix.
+  */
+-__bpf_kfunc void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id,
++__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id,
+ 					     u64 slice, u64 enq_flags)
+ {
+-	scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags);
++	scx_bpf_dsq_insert___v2(p, dsq_id, slice, enq_flags);
+ }
+ 
+ static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
+@@ -5532,7 +5532,7 @@ __bpf_kfunc_end_defs();
+ 
+ BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
+ BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_RCU)
+-BTF_ID_FLAGS(func, scx_bpf_dsq_insert___compat, KF_RCU)
++BTF_ID_FLAGS(func, scx_bpf_dsq_insert___v2, KF_RCU)
+ BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_RCU)
+ BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
+ BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
+--- a/tools/sched_ext/include/scx/compat.bpf.h
++++ b/tools/sched_ext/include/scx/compat.bpf.h
+@@ -238,16 +238,16 @@ scx_bpf_dsq_insert_vtime(struct task_str
+  * v6.19: scx_bpf_dsq_insert() now returns bool instead of void. Move
+  * scx_bpf_dsq_insert() decl to common.bpf.h and drop compat helper after v6.22.
+  */
+-bool scx_bpf_dsq_insert___new(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+-void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
++bool scx_bpf_dsq_insert___v2(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
++void scx_bpf_dsq_insert___v1(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+ 
+ static inline bool
+ scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags)
+ {
+-	if (bpf_ksym_exists(scx_bpf_dsq_insert___new)) {
+-		return scx_bpf_dsq_insert___new(p, dsq_id, slice, enq_flags);
++	if (bpf_ksym_exists(scx_bpf_dsq_insert___v2)) {
++		return scx_bpf_dsq_insert___v2(p, dsq_id, slice, enq_flags);
+ 	} else {
+-		scx_bpf_dsq_insert___compat(p, dsq_id, slice, enq_flags);
++		scx_bpf_dsq_insert___v1(p, dsq_id, slice, enq_flags);
+ 		return true;
+ 	}
+ }
 
