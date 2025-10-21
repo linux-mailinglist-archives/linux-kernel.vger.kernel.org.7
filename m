@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-863734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB07BF8F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:40:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD273BF8F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9EC77351E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:40:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B1374E7EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E6B296BB2;
-	Tue, 21 Oct 2025 21:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CD429B776;
+	Tue, 21 Oct 2025 21:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CwIyxUmw"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EvZkWawf"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D42428CF52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DF528D82A
 	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761082800; cv=none; b=YkuFHeFuZCsdv2yw8WvrwHU0ulGskffAvT+gqpFv95mwHszUxBgQiIZsq9TfEJ2uy88K5fE1EHC4Bp4VLfwsS7i4lzh8UqDX1xetnqAjYL7nja6f1T+hBH+o8JJKkJcpPuMM83MWaCrqCuql+4YA7G+2ot4AxWcKGSfpPgG19dQ=
+	t=1761082800; cv=none; b=jYsD0MSg3RgWbYefRYAxl1tBadevy+pQY2RQnrAuN823ik0k8aoSdxHGxly9Kjce5t9v66Qfu3yNHUF92NTDkKrjgtCPzKABjni99Nvjctr/xiRcGLDpm+mfw6ZwzJLjEIx8E6EegEL1EIIGyxzoeZaIfvu2Ua6r3apDyBBbwZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761082800; c=relaxed/simple;
-	bh=/3gsznqjETCpL20UYfZwzexm+NaWvwrW1/yQ+wV6JyY=;
+	bh=iW/BcUJLCLLlHu2nMhEhUz1mgvhc+oR29dpeVfRwugQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cgbofxvgwUYHZHvXnzcZZt2DhUrvlMcU+UdUiQHYo8tI6QQgZ+XSL04wL0CTUBOM06LiFsfj3gzzqamUCNEuT0+nk8nfIr97y5V82/6zUKDkfVZYwjlcM6wInLP3b7UFIFEuCnn7N3Ce7xKolImRjJ2+l0fSK7gsHlkZUWtbLzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CwIyxUmw; arc=none smtp.client-ip=198.175.65.20
+	 MIME-Version:Content-Type; b=asjovs7+ZjJn0rLl3qgoWlQI85IIL1nyUcWL5thiN35Qq6lEGUJzeYZe4JnNF3/6vM2CkSwzc1SQMA4Lb3Ej45IZcekq/6n1Ae/qr3wKeKgnZxVFXKFqGPLtkQAvhOxhghHsz5APTXysKM/5nwn6CkBnLw/3WcrbiGLhDfecd7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EvZkWawf; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1761082799; x=1792618799;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/3gsznqjETCpL20UYfZwzexm+NaWvwrW1/yQ+wV6JyY=;
-  b=CwIyxUmwjc0SY7muHzTtIJQL5q0YzXZ1Wq79x+YAuvLkJIMIngjzpO4R
-   XbtTDAJNWFLXXGIi9zssbMhdPANe83a8ZW5u+eZfgitU2KH5dB+lvKjL0
-   RlbY4Z1oqGfHVL831zouFeMUOdvxzikkIbuXr0TnEHd2wGtXb4+uXEThk
-   GFu62xC0Y4HZvDc0VE99i1vXi89TdxCzWcriIRA0uq5/SyS0FJOHDS2L7
-   A4rqu1bakMuT7uXBDYsAlsK30YNgHFKijusUa8c4lHrPXVOvunwoe+mpm
-   YoS/yNcEoTOQXykMYwU+FWozUmCJ0jZo0SBGc8hKY9aud3yfEt2uUOl1e
-   w==;
-X-CSE-ConnectionGUID: CFC0ae1wSc2+/JkYM3OSUQ==
-X-CSE-MsgGUID: wqFyziUCTYCLvhD20thkFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62923172"
+  bh=iW/BcUJLCLLlHu2nMhEhUz1mgvhc+oR29dpeVfRwugQ=;
+  b=EvZkWawfOvhZSc4kvqcfHM6ifCSaArLD98iSKjLvcdzd6a5TSczaTcrL
+   WTMvtOkskOnE9k0lTkTMcI/+UYh0moIUraKtKGrcYX7YC7K0lKDCpeW0J
+   kSLXwZt/fqqlpdgcH5q403NH17+KcvQfCeCvdQhRUPAzxQlY2cJ4wDl+I
+   1cOPO33i5DqZ3IdF0kDabrsF4GnAUMSPq3GurfN0patut1XJjbV8PXBO4
+   MeKa3Yx/928wkROmueSwL205eVplzvpcoedvuhfACiQqLWpZ7K+LXu8iZ
+   CLahExdwIEFMFc5abIVMuOnrZxplgHl4wUCakbAREJqcCrK8AEshlXESF
+   Q==;
+X-CSE-ConnectionGUID: WOjj5WLES8Gzwcw5cO0Gjw==
+X-CSE-MsgGUID: 9O4UztQCQUyEgkkDOEg22A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62923174"
 X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="62923172"
+   d="scan'208";a="62923174"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 14:39:56 -0700
-X-CSE-ConnectionGUID: vBqdgJ5qTUKDgNHJC/1Vnw==
-X-CSE-MsgGUID: WNCBPE2aRt+VeBntHPyDbw==
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 14:39:57 -0700
+X-CSE-ConnectionGUID: 5kZ3gezoRQ2L5SMtTVCJOg==
+X-CSE-MsgGUID: 7LQ0VDHOTzmkZBnZ5Rs0Vw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="184099254"
+   d="scan'208";a="184099255"
 Received: from lstrano-desk.jf.intel.com ([10.54.39.91])
   by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 14:39:56 -0700
 From: Matthew Brost <matthew.brost@intel.com>
@@ -67,9 +67,9 @@ Cc: jiangshanlai@gmail.com,
 	christian.koenig@amd.com,
 	pstanner@redhat.com,
 	dakr@kernel.org
-Subject: [RFC PATCH 1/3] workqueue: Add an interface to taint workqueue lockdep with reclaim
-Date: Tue, 21 Oct 2025 14:39:50 -0700
-Message-Id: <20251021213952.746900-2-matthew.brost@intel.com>
+Subject: [RFC PATCH 2/3] drm/sched: Taint workqueues with reclaim
+Date: Tue, 21 Oct 2025 14:39:51 -0700
+Message-Id: <20251021213952.746900-3-matthew.brost@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251021213952.746900-1-matthew.brost@intel.com>
 References: <20251021213952.746900-1-matthew.brost@intel.com>
@@ -79,71 +79,39 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Drivers often use workqueues that are in the reclaim path (e.g., DRM
-scheduler workqueues). It is useful to teach lockdep that memory cannot
-be allocated on these workqueues. Add an interface to taint workqueue
-lockdep with reclaim.
+Multiple drivers seemingly do not understand the role of DMA fences in
+the reclaim path. As a result, DRM scheduler workqueues, which are part
+of the fence signaling path, must not allocate memory. This patch
+teaches lockdep to recognize these rules in order to catch driver-side
+bugs.
 
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Cc: Philipp Stanner <phasta@kernel.org>
+Cc: dri-devel@lists.freedesktop.org
 Signed-off-by: Matthew Brost <matthew.brost@intel.com>
 ---
- include/linux/workqueue.h | 19 +++++++++++++++++++
- kernel/workqueue.c        |  9 +++++++++
- 2 files changed, 28 insertions(+)
+ drivers/gpu/drm/scheduler/sched_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index dabc351cc127..954c7eb7e225 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -553,6 +553,25 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
- 						1, lockdep_map, ##args))
- #endif
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index c39f0245e3a9..676484dd3ea3 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -1368,6 +1368,9 @@ int drm_sched_init(struct drm_gpu_scheduler *sched, const struct drm_sched_init_
+ 	atomic64_set(&sched->job_id_count, 0);
+ 	sched->pause_submit = false;
  
++	taint_reclaim_workqueue(sched->submit_wq, GFP_KERNEL);
++	taint_reclaim_workqueue(sched->timeout_wq, GFP_KERNEL);
 +
-+#ifdef CONFIG_LOCKDEP
-+/**
-+ * taint_reclaim_workqueue - taint workqueue lockdep map with reclaim
-+ * @wq: workqueue to taint with reclaim
-+ * gfp: gfp taint
-+ *
-+ * Drivers often use workqueues that are in the reclaim path (e.g., DRM
-+ * scheduler workqueues). It is useful to teach lockdep that memory cannot be
-+ * allocated on these workqueues.
-+ */
-+extern void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp);
-+#else
-+static inline void taint_reclaim_workqueue(struct workqueue_struct *wq,
-+					   gfp_t gfp)
-+{
-+}
-+#endif
-+
- /**
-  * alloc_ordered_workqueue - allocate an ordered workqueue
-  * @fmt: printf format for the name of the workqueue
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 45320e27a16c..fea410c20b71 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5846,6 +5846,15 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags,
- 	return wq;
- }
- EXPORT_SYMBOL_GPL(alloc_workqueue_lockdep_map);
-+
-+void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp)
-+{
-+	fs_reclaim_acquire(gfp);
-+	lock_map_acquire(wq->lockdep_map);
-+	lock_map_release(wq->lockdep_map);
-+	fs_reclaim_release(gfp);
-+}
-+EXPORT_SYMBOL_GPL(taint_reclaim_workqueue);
- #endif
- 
- static bool pwq_busy(struct pool_workqueue *pwq)
+ 	sched->ready = true;
+ 	return 0;
+ Out_unroll:
 -- 
 2.34.1
 
