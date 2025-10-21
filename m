@@ -1,240 +1,218 @@
-Return-Path: <linux-kernel+bounces-862926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF30BF689E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:49:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16FFBF68D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8F5219A3C38
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:50:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 916873BDBB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B007F332EBA;
-	Tue, 21 Oct 2025 12:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B28D333740;
+	Tue, 21 Oct 2025 12:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TZsOeo3m"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="CIUe4zA6"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A4E35958;
-	Tue, 21 Oct 2025 12:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050976; cv=none; b=I7Y6c9TYaNEjrBwAzz9byledH89wmdygvQTcq4ftWEiLfuDFs6AQl5ObtI0pYbrxD/0amVmNXuuNPSsSfJ3rOaf5U+zypsRUuEzBSTYi7TJqDjWatO4Obr71IRFRh1S2gp+gHgqA0V1PXVjbHFWleqhqCNiNgcRilIkqVcRQux0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050976; c=relaxed/simple;
-	bh=4m2c0/Y/OZ5jVdZO/p59wa2lF3vX3csO9eav4qL/9c4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hGJk/hhZY7tonliFe/sRn/tX5cTJiwLxXSrvrcB9vB5gWBhJekWIpyeCvKVd6+Rr3+ehtvyIRtexMN4lZ28rGY/AdGILQal8gaAN67XFvlgZXjToFWgDHU6ljhqiyQTWdzavrzr5oLfN9tm66bS3LJWIIhQUxk2FJ8qtCKEENlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TZsOeo3m; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L9ebMG010053;
-	Tue, 21 Oct 2025 12:49:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7eIRdu
-	4qcIFBwdrOO2TwnJ8Urloeviv3u5z5XnSWY5Q=; b=TZsOeo3mTEMEfzphvOQIRy
-	mTnl1k4hVcdmS53PeRLuM19PNQVbCcaDufa/DsUq5PFOSgF4BM2bJE/e2UWj1BtH
-	fnPf/kqWSvhLpp7alHUMlM1GWt5M3m+KyoD2yTFwvhcfeNcHFSAryFSRTuvvvbLS
-	s0VV4XflszwY/W6Slv91JP0E7PtXJ0cEylni0P0qeNuEXYl9MGrxGLPTF8LdzVJJ
-	9cjN7PDPNq1NG+Adr7frmmrROXgwU1wEQwe8VpCUHgYXofO+oAri+bWKldT4Z4Bv
-	jDCcLmrWODcpjbDiX6C/RCIwirWmYdD1J5AnPqjoPf2LfoEGsZt3pvCvVDGfEDDA
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33f70yh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 12:49:32 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8jN4S002367;
-	Tue, 21 Oct 2025 12:49:31 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqejaj97-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 12:49:31 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LCnT3s31523438
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 12:49:29 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ADE905804E;
-	Tue, 21 Oct 2025 12:49:29 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 46F6158054;
-	Tue, 21 Oct 2025 12:49:28 +0000 (GMT)
-Received: from [9.152.212.179] (unknown [9.152.212.179])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 21 Oct 2025 12:49:28 +0000 (GMT)
-Message-ID: <f8d1619917f105ec805b212af9e940aa73925b70.camel@linux.ibm.com>
-Subject: Re: [PATCH v1 1/3] PCI: Allow per function PCI slots
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: helgaas@kernel.org, stable@vger.kernel.org, mjrosato@linux.ibm.com,
-        Benjamin Block <bblock@linux.ibm.com>
-Date: Tue, 21 Oct 2025 14:49:27 +0200
-In-Reply-To: <20251020190200.1365-2-alifm@linux.ibm.com>
-References: <20251020190200.1365-1-alifm@linux.ibm.com>
-	 <20251020190200.1365-2-alifm@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A631132B99A;
+	Tue, 21 Oct 2025 12:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761051086; cv=pass; b=GQDLeb/2hRWXL4s5Jwbu+JbGyzG51Q6WW0y8auzHR12dvfimO7XmWGQdWVHhMtPghjVCUoVjSFKJHJvW40TiWpcHIULFNWk6y/wGSzw6w6TMtDGEGXxmQx9apPpFlhwd0S8EgT8YdxtJcwblSKJ+/omCyZgLwWkUWd9i0NDwCFY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761051086; c=relaxed/simple;
+	bh=niOXTcBT3QO9AQGZdhg/L3FZ6iIn95kzYMmJAxUtWxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DK3Z2oOTDR8K9+fhTwBK3QsXWybqFqQljOKfyQtdhl8tk3+jVZs/wn+mvZgXB7xYJTd5Rb32uFqvoBK7rN8DimcvFWQseW61Mg9GW/wgmbQXDIUiZaq1q+BAAt1tvWnpZ9p5H9vtbLAgoyH8xcWeZWk9fiRNcYEWvCemu5foNuI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=CIUe4zA6; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761051051; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lzHgoYFKgS6RXH252NfGtH5MKLPjYZwcdKP6Hm4hhKvhh636hEasRNBCz0mEkhfymDtl1ejemeWqMlWmODTub2iEZZp3GRJGhyli0ze1rLtq9YjFUZSu3TKDs+b/9alKnoppTOSErgWicKM2N9ogMy2pkqQuvCyO50Iorv/EEPY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761051051; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sVBs5E3IrDShRMqJSob7W9r3Q2rnou+h3QXZROh8of0=; 
+	b=cL/tOcRYcCRSBuBtSMMvi1aTFLCeP5/8SZ0nHgqqq+TJeY9N+wOHSS9cqiBayakZwbwnrSYt5LKpvdSRU+MPagz0GamYHbEruDK33UBSqbNeyJmsQVzIWJpCAG6RQbuCLaTCZFzh4KmPHQnZ36HQM4Xdq3VNqPk5AoD0rImhvXc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761051051;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=sVBs5E3IrDShRMqJSob7W9r3Q2rnou+h3QXZROh8of0=;
+	b=CIUe4zA6cMdyn5fizicruc74iBFytep1RKW60SFwRu2m09eg64yshzB4DdS8YG+V
+	hjFD0Lc2hHrB5/XfgXLwcAM0BhvMtkbixfllwJmnfyTwJHWNTHC9a52Qk8Cvj6L+O//
+	OyDVd2WN0Gqqa9N/nDFvdGZI4KkHU8dwhnJs5ZCQ=
+Received: by mx.zohomail.com with SMTPS id 1761051048276913.6194416974873;
+	Tue, 21 Oct 2025 05:50:48 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id D227918374D; Tue, 21 Oct 2025 14:50:39 +0200 (CEST)
+Date: Tue, 21 Oct 2025 14:50:39 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>
+Subject: Re: [PATCH v2 0/3] Add Mali GPU support for Mediatek MT8365 SoC
+Message-ID: <e3hyej2bjtyjlwcpzupomvjzyqkwyclhvoyesgzq3byk3slom4@7bs5zsaxjq6t>
+References: <20251021-mt8365-enable-gpu-v2-0-17e05cff2c86@collabora.com>
+ <0e5ca992-730d-42c5-b5b8-5ad04116b8d4@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FMYWBuos c=1 sm=1 tr=0 ts=68f7815c cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=2elSIBTnQj6og0LtMUYA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: H1-gwTeXo1RaCFr0Kn2XrvUKTvMTBa7S
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXyqYCOxdW37+v
- GJmQn6gmyt8hOD4LxQ5lbA8NBt981WheJHEUV1LVp/x2BnoBkuInTFXlqAopkdkySITEtfz+Fih
- 0M29J54OZD3D/NcOVdSzR1B4n/U0SLmR67FiiOEQGOOb0HqXgjBfQwsReYbbtcmbQNIvEgA8PDz
- NvCf246oWlryjtHB0wyULiA60UKCg4kkXtBAdXZFMjIRylK+zT3vUDHPWqMs4kXXSbdvsccx/EE
- mlepmODBUujH637PXsmYCDqP6dBfJ+PX5G1aXPzZjyWZ4ZZQFnU6u1brgy4LxAXoOERrnJizDap
- x5Lz2Uk23ngQX3ViUoijL4BM8sjpQU+JtggYpMGrqF5o62628hFzSfAVHqi7HJcU9bTKkVrprbY
- 71o/tyU3W/QuWs8diNoLqvby76oOsQ==
-X-Proofpoint-ORIG-GUID: H1-gwTeXo1RaCFr0Kn2XrvUKTvMTBa7S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e5ca992-730d-42c5-b5b8-5ad04116b8d4@collabora.com>
+X-ZohoMailClient: External
 
-On Mon, 2025-10-20 at 12:01 -0700, Farhan Ali wrote:
-> On s390 systems, which use a machine level hypervisor, PCI devices are
-> always accessed through a form of PCI pass-through which fundamentally
-> operates on a per PCI function granularity. This is also reflected in the
-> s390 PCI hotplug driver which creates hotplug slots for individual PCI
-> functions. Its reset_slot() function, which is a wrapper for
-> zpci_hot_reset_device(), thus also resets individual functions.
->=20
-> Currently, the kernel's PCI_SLOT() macro assigns the same pci_slot object
-> to multifunction devices. This approach worked fine on s390 systems that
-> only exposed virtual functions as individual PCI domains to the operating
-> system.  Since commit 44510d6fa0c0 ("s390/pci: Handling multifunctions")
-> s390 supports exposing the topology of multifunction PCI devices by
-> grouping them in a shared PCI domain. When attempting to reset a function
-> through the hotplug driver, the shared slot assignment causes the wrong
-> function to be reset instead of the intended one. It also leaks memory as
-> we do create a pci_slot object for the function, but don't correctly free
-> it in pci_slot_release().
->=20
-> Add a flag for struct pci_slot to allow per function PCI slots for
-> functions managed through a hypervisor, which exposes individual PCI
-> functions while retaining the topology.
->=20
-> Fixes: 44510d6fa0c0 ("s390/pci: Handling multifunctions")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-> ---
->  drivers/pci/hotplug/s390_pci_hpc.c | 10 ++++++++--
->  drivers/pci/pci.c                  |  5 +++--
->  drivers/pci/slot.c                 | 14 +++++++++++---
->  include/linux/pci.h                |  1 +
->  4 files changed, 23 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/pci/hotplug/s390_pci_hpc.c b/drivers/pci/hotplug/s39=
-0_pci_hpc.c
-> index d9996516f49e..8b547de464bf 100644
-> --- a/drivers/pci/hotplug/s390_pci_hpc.c
-> +++ b/drivers/pci/hotplug/s390_pci_hpc.c
-> @@ -126,14 +126,20 @@ static const struct hotplug_slot_ops s390_hotplug_s=
-lot_ops =3D {
-> =20
->  int zpci_init_slot(struct zpci_dev *zdev)
->  {
-> +	int ret;
->  	char name[SLOT_NAME_SIZE];
->  	struct zpci_bus *zbus =3D zdev->zbus;
-> =20
->  	zdev->hotplug_slot.ops =3D &s390_hotplug_slot_ops;
-> =20
->  	snprintf(name, SLOT_NAME_SIZE, "%08x", zdev->fid);
-> -	return pci_hp_register(&zdev->hotplug_slot, zbus->bus,
-> -			       zdev->devfn, name);
-> +	ret =3D pci_hp_register(&zdev->hotplug_slot, zbus->bus,
-> +				zdev->devfn, name);
-> +	if (ret)
-> +		return ret;
-> +
-> +	zdev->hotplug_slot.pci_slot->per_func_slot =3D 1;
+[+cc Boris, Steven]
 
-I think the way this works is a bit odd. Due to the order of setting
-the flag pci_create_slot() in pci_hp_register() tries to match using
-the wrong per_func_slot =3D=3D 0. This doesn't really cause mismatches
-though because the slot->number won't match the PCI_SLOT(dev->devfn)
-except for the slot->number 0 where it is fine.=C2=A0
+Hi,
 
-One way to improve(?) on this is to have a per_func_slot flag also in
-the struct hotplug_slot and then copy it over into the newly created
-struct pci_slot. But then we have this flag twice. Or maybe this really
-should be an argument to pci_create_slot()?
+On Tue, Oct 21, 2025 at 10:03:52AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 21/10/25 09:30, Louis-Alexis Eyraud ha scritto:
+> > This patchset adds the support of the ARM Mali G52 MC1 GPU (Bifrost),
+> > integrated to the Mediatek MT8365 SoC, and its enablement to the
+> > Mediatek Genio 350-EVK board.
+> > 
+> > I've tested this patchset on a Mediatek Genio 350-EVK board,
+> > with a kernel based on linux-next (tag: next-20251021).
+> > 
+> 
+> Thanks for this one! This series is ready to be merged.
+> 
+> However, in order to take the DT patches I need someone to pick
+> the binding first.
+
+The binding patch submission is missing most of the maintainers
+potentially doing that in To/Cc ;)
+
+Somebody should update the MAINTAINERS entry for "ARM MALI PANFROST
+DRM DRIVER" to include the binding file, just like it is handled for
+the PANTHOR driver in the next section.
+
+Greetings,
+
+-- Sebastian
+
+
+> 
+> Cheers,
+> Angelo
+> 
+> > The panfrost driver probed with the following messages:
+> > ```
+> > panfrost 13040000.gpu: clock rate = 450000031
+> > panfrost 13040000.gpu: mali-g52 id 0x7402 major 0x1 minor 0x0 status
+> >    0x0
+> > panfrost 13040000.gpu: features: 00000000,00000df7, issues: 00000000,
+> >    00000400
+> > panfrost 13040000.gpu: Features: L2:0x07110206 Shader:0x00000003
+> >   Tiler:0x00000209 Mem:0x1 MMU:0x00002823 AS:0xff JS:0x7
+> > panfrost 13040000.gpu: shader_present=0x1 l2_present=0x1
+> > [drm] Initialized panfrost 1.5.0 for 13040000.gpu on minor 0
+> > ```
+> > 
+> > Running glmark2-es2-drm with MESA 25.2 is also OK:
+> > ```
+> > =======================================================
+> >      glmark2 2023.01
+> > =======================================================
+> >      OpenGL Information
+> >      GL_VENDOR:      Mesa
+> >      GL_RENDERER:    Mali-G52 r1 (Panfrost)
+> >      GL_VERSION:     OpenGL ES 3.1 Mesa 25.2.5-1
+> >      Surface Config: buf=32 r=8 g=8 b=8 a=8 depth=24 stencil=0 samples=0
+> >      Surface Size:   1200x1920 fullscreen
+> > =======================================================
+> > [build] use-vbo=false: FPS: 513 FrameTime: 1.952 ms
+> > [build] use-vbo=true: FPS: 514 FrameTime: 1.947 ms
+> > [texture] texture-filter=nearest: FPS: 489 FrameTime: 2.046 ms
+> > [texture] texture-filter=linear: FPS: 486 FrameTime: 2.061 ms
+> > [texture] texture-filter=mipmap: FPS: 476 FrameTime: 2.101 ms
+> > [shading] shading=gouraud: FPS: 436 FrameTime: 2.296 ms
+> > [shading] shading=blinn-phong-inf: FPS: 387 FrameTime: 2.585 ms
+> > [shading] shading=phong: FPS: 253 FrameTime: 3.955 ms
+> > [shading] shading=cel: FPS: 232 FrameTime: 4.328 ms
+> > [bump] bump-render=high-poly: FPS: 266 FrameTime: 3.765 ms
+> > [bump] bump-render=normals: FPS: 421 FrameTime: 2.376 ms
+> > [bump] bump-render=height: FPS: 343 FrameTime: 2.922 ms
+> > [effect2d] kernel=0,1,0;1,-4,1;0,1,0;: FPS: 133 FrameTime: 7.521 ms
+> > [effect2d] kernel=1,1,1,1,1;1,1,1,1,1;1,1,1,1,1;: FPS: 46 FrameTime:
+> >    21.990 ms
+> > [pulsar] light=false:quads=5:texture=false: FPS: 379 FrameTime: 2.645 ms
+> > [desktop] blur-radius=5:effect=blur:passes=1:separable=true:windows=4:
+> >    FPS: 57 FrameTime: 17.735 ms
+> > [desktop] effect=shadow:windows=4: FPS: 249 FrameTime: 4.018 ms
+> > [buffer] columns=200:interleave=false:update-dispersion=0.9:update-fraction
+> >    =0.5:update-method=map: FPS: 81 FrameTime: 12.447 ms
+> > [buffer] columns=200:interleave=false:update-dispersion=0.9:update-fraction
+> >    =0.5:update-method=subdata: FPS: 81 FrameTime: 12.388 ms
+> > [buffer] columns=200:interleave=true:update-dispersion=0.9:update-fraction
+> >    =0.5:update-method=map: FPS: 99 FrameTime: 10.127 ms
+> > [ideas] speed=duration: FPS: 287 FrameTime: 3.492 ms
+> > [jellyfish] <default>: FPS: 114 FrameTime: 8.842 ms
+> > [terrain] <default>: FPS: 14 FrameTime: 76.911 ms
+> > [shadow] <default>: FPS: 156 FrameTime: 6.432 ms
+> > [refract] <default>: FPS: 29 FrameTime: 34.791 ms
+> > [conditionals] fragment-steps=0:vertex-steps=0: FPS: 529 FrameTime: 1.890 ms
+> > [conditionals] fragment-steps=5:vertex-steps=0: FPS: 326 FrameTime: 3.076 ms
+> > [conditionals] fragment-steps=0:vertex-steps=5: FPS: 532 FrameTime: 1.880 ms
+> > [function] fragment-complexity=low:fragment-steps=5: FPS: 475 FrameTime:
+> >    2.106 ms
+> > [function] fragment-complexity=medium:fragment-steps=5: FPS: 227
+> >    FrameTime: 4.417 ms
+> > [loop] fragment-loop=false:fragment-steps=5:vertex-steps=5: FPS: 475
+> >    FrameTime: 2.108 ms
+> > [loop] fragment-steps=5:fragment-uniform=false:vertex-steps=5: FPS: 474
+> >    FrameTime: 2.110 ms
+> > [loop] fragment-steps=5:fragment-uniform=true:vertex-steps=5: FPS: 226
+> >    FrameTime: 4.428 ms
+> > =======================================================
+> >                                    glmark2 Score: 296
+> > =======================================================
+> > ```
+> > 
+> > Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> > ---
+> > Changes in v2:
+> > - Rebased on next-20251021 tag
+> > - Fixed missing blank lines in 'arm64: dts: mediatek: mt8365: Add GPU
+> >    support' patch
+> > - Added reviewed-by and acked-by trailers
+> > - Updated cover letter
+> > - Link to v1: https://lore.kernel.org/r/20250813-mt8365-enable-gpu-v1-0-46c44c6c1566@collabora.com
+> > 
+> > ---
+> > Louis-Alexis Eyraud (3):
+> >        dt-bindings: gpu: mali-bifrost: Add compatible for MT8365 SoC
+> >        arm64: dts: mediatek: mt8365: Add GPU support
+> >        arm64: dts: mediatek: mt8365-evk: Enable GPU support
+> > 
+> >   .../devicetree/bindings/gpu/arm,mali-bifrost.yaml  |  1 +
+> >   arch/arm64/boot/dts/mediatek/mt8365-evk.dts        |  9 +++++
+> >   arch/arm64/boot/dts/mediatek/mt8365.dtsi           | 43 +++++++++++++++++++++-
+> >   3 files changed, 52 insertions(+), 1 deletion(-)
+> > ---
+> > base-commit: 853c202e4aec8006c2c1367b052c9f8949db019a
+> > change-id: 20250812-mt8365-enable-gpu-a39835dca7fc
+> > 
+> > Best regards,
+> 
+> 
 
