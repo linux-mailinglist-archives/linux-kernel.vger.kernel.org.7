@@ -1,184 +1,190 @@
-Return-Path: <linux-kernel+bounces-862533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0072EBF58C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF5FBF58DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D91904EEAD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:38:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EAF34FF695
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B472EA729;
-	Tue, 21 Oct 2025 09:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290502E6CAD;
+	Tue, 21 Oct 2025 09:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDn0G5Am"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g2B81IgZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9317D07D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD832E1F0A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761039526; cv=none; b=iR92cymSzeY7PdXABJFMyq2wAIUG8qx7oEUw0/gML1Wqy2HvuW94Zl5XJ1p38cB+XTxG+ByK58648XojlG3fFL+8CWhTTnhJYZ/vURZNpkysA6KBHHY15aLnZkjxC1BNkP5vt54KADgMA/PiExfngvoDi1zrMe94AOw2rfiVG0c=
+	t=1761039584; cv=none; b=HoK32y/jGO2nbNAE7HAnLAHHqAtXS4npxgTj8GXhbgonKhvyjW0fvBY04PVxHoHUkRGJA1oQ+I3d8H642LOF6K0xb0vVLwwUZsUqzbuuMSOv9c0qgxLgf+VuvqeOFAppDZ+7wnCRE1QpZDA9pEFxVREK2h1yJc2wJ0inNnxldNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761039526; c=relaxed/simple;
-	bh=1jhsxDcrPTMn33f/fW0m2ck1tM2NNjIPKUg0Wc5mgUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jXRBN5timpaW0JUDx7dn3F7sFxV8Uh9uApAqNz2ac4Ja/0lXxtaPY9IaDWqFJVCeEGVTHz941pkxm/shL33gzuIgJD0Z5uowfJ1g6xvAdHcIxgfaiFHVXJsBhhjsrQ/yqn9FiA1RJCioQYU67eDEn3M6AwNhg8nG+OxKkdKopKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bDn0G5Am; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d71bcab69so52344867b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761039523; x=1761644323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m1eeVQ9VeQ+8eDNx7wVtovhJZK8MyMI+d0uyJgtez2M=;
-        b=bDn0G5AmodAsFCIPLJOzOUAm8duN7xSajTOAiZG9ToeUmZS32BBx8P9J3kd60qvj5H
-         rflAmsfZVNlySGQ3VZQ10AU8GjpNdstpNkXoe+prXndYi/mxSwyIi6oUmQ5dzO2zkb1j
-         7Bi2wFf5xkgMhsVQw+vsa8v/b+9wyAv/pfBrNrFmKTHZB8h6wc2zocizQrBhIQkw0ZdB
-         S8KqEItn6tH7rGY2h4DTJqwe0Wk3CaFfay5ZR4IIb6fPMy7ZYwVyXdwqU/K4td2fJugF
-         XunM+FpJZ6HSVzZfAzTL01YbgD2hrmoGnCZu0d+ENc0JNu4bk9JBfLOUsZyWZrDbXJJy
-         gwFw==
+	s=arc-20240116; t=1761039584; c=relaxed/simple;
+	bh=qUlnpjeYW48Wr0PjJs/bMwTmBoj9q3r+LLsVNiIOhFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mqml7gm/fv06yBsxvatj9jr6lOqFdJlqBo//81T6bdrL6iq/LDb66OptvnA3IJJkr+uf6WT6yBRCZiVShaYI57QnUY3FBo7vg7psRMEc4ibseu8IooFOdZ3BgXXAQUJ1bB+1LcUWrF0GDWMtQlzS3/UrQPTWsmJOm+2b2/Btwdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g2B81IgZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L7xAYl029608
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:39:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DmNpI2PFyL7gAvTOOzSM1Wwvj+YScqMSXFzuum/gIZ8=; b=g2B81IgZh/Q4ypvS
+	tu0gOiAtoB2AhpK7Z7/IYepjp2SHab5abSYxPcf+gDA+477l7APzSElt3ahXFz2X
+	TS6T15ddTuSpc0tXoK4wHyo+uMtQVZ+w8ml1YvuwhrLWGqrZskq1JF90j9j8uFxM
+	drOw0PxfGC9D3HPHeEcmRWjHtikGQkIRExboPQ5u1FQiaDtq+mDDhgHUzYO63wD2
+	LVwpSLJfPo8GgfHqPN7dmFadBbDmFZEgH7urOpx1fw8WRLXsiH+vm2XXSV0b7ycw
+	RpnCPHzXu23LCm5tnpoNvoOHK5nYj+3WPZJAL+y0bpo4Vr5yqU25hilynxVg7vDg
+	wDB8Pw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49wswntk0j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:39:41 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-88e452b04d5so176263585a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:39:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761039523; x=1761644323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m1eeVQ9VeQ+8eDNx7wVtovhJZK8MyMI+d0uyJgtez2M=;
-        b=d1LbKAsoEr2wVcDOK1YmQz6k4dLR4Q/u9IJ4BawQ8rkLpDfj+Orxi9AkKupOsHNrT8
-         2RweGQkgJ89GMryt4H2K0X9g10uso/BozfirQI95CWEFauexA/KB0KIE1O5Aa0vnPjRA
-         5IWm2krb9CyyL/S8Sn1pyjRwqbF6d5i0VrRfpYU/WF5D67rAd+ml7aqhEXuALaYI3cm1
-         i6jDhysedREYlFPK0PqeYLL+GhNN/H7ViHdQddXvmqIPd7Y2BLE5EkPNInmlbWAOAqYx
-         Wytx+IY0+tA447LtPBS25FRVoNNoAlr2ZXXfvTYRqlEavD/pNByLjaZ6e1XneDEPzqRg
-         tGnA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8h0aLbzUd9THB13ff2FVglDF0iF2WoWXdRccTSGycABgIDjdUdiHjUtsVmQ16OoH7fjwsmmitv+NxKpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU9HEERAkmxzurTHHzO1SZc5A/ndU7rGOnq/z4Wmu/N8x0NyNd
-	a/PqTCPGzxHNFk4/U0FKPkMGfbUjUv2/PaAsEw/9O4gzxN/B/Ep/2opdM4FjoWbqS2wHuuReMAO
-	tf8zWvCNz6n5f34BOXFKHVSoHAb/yYHY=
-X-Gm-Gg: ASbGncuyeXk9kMGAWWg7b7gEeGXKrENI8Xm35t/tTIq+l8WtzZLKKK9gHAQb57IUCWE
-	POltX3Ju+93J1F18g5bUDt8UXKiTbITx9cfGwOvq0E1T00WAHowDJPuxNi0rJ6Ad4kLm2M5jPS4
-	o3lx16vpdZFWWrs9VB2mzdiwsoV6/SRIIwBqZ64WsCnfPt1JNBDEoa8H1ApCMbABz5/alxTSWi0
-	gupLR3uxvg5q+KQaBhW/uxjzL8mziJGRL+DkK3oBJQWVWA9Up0zkPQq2ONijVYLfFuJlw==
-X-Google-Smtp-Source: AGHT+IFz8xZwydVmNj/TCSyMRnVEbcbJWu9Ym6Id+aYRdcCUbHyds3ytSGmbdU0cQBCvOCLLDzUcDsEaxAdV8+G4B18=
-X-Received: by 2002:a05:690e:1406:b0:63e:4927:72ff with SMTP id
- 956f58d0204a3-63e492777b9mr2222613d50.17.1761039522747; Tue, 21 Oct 2025
- 02:38:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761039581; x=1761644381;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DmNpI2PFyL7gAvTOOzSM1Wwvj+YScqMSXFzuum/gIZ8=;
+        b=MotEunW8FcwTbJ8zP5blQP7oU8xV1xV7J+NWqUMHtdWAcQ5bqSWbEAmE1fU698HOpP
+         Ks212dg0R9V9Bh4FDWYHfZ+8dlBpb1cR0X818ddYWF3SjD6Dfaujg6T5iaOZSdfbNuT8
+         DmdwnBKeyPUWXXKu5GdpuK1YC2k5As2Kd/0KB9fhQfad3piX9+RuCSyfdZ4051mq7Bo3
+         uo1I4x5athAyZzFWdxVmWKQPhil4LyfMjL5M13m736TH4voe3FwcWASsVp+RddpwykkD
+         iZXaKgdfQLFziWwfGK96ZBMOuMix7cpfC2Y9Vr7JggUmd41qDtTAa4jdTw7B50yZaqva
+         EBRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjY0oV67LZX/kW4wg0byN6fm/FURNhaBGuwpNhQm0IoEuv6IX4XfYzhfr5SThyOWzP35Z++gPi1vEUCwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnG6Gq1+KVQ0iuPqiMHLrIPvaGSIFSKwFIk39mJMubp/SrGgi/
+	O/KLTbvK1G+REOuHlPkyh0pTpvHACSiMXD6HfT/engUCLextCmolmDAujE4MJxQjWuBBEIBfh+w
+	hZl9RLUhZwARmKk1JGccsqssEk7v6Zzp5HqAb23AC3LFM7sziH0XCb3rskRDxu4Mae8E=
+X-Gm-Gg: ASbGncvUn6s09cfF5u73/8HCVQE/GdV/+uXnTbJVPrL3wbJq52pbDWFLHnoJZWrT8dF
+	hKy+5vUDGzilm5wJ8ujRzG7kXHA/7kKsa5jOyRmxG0PD83c6tn+u+7xqWS3bd4KQPa2c8DhodrC
+	jAzWqWNOKS4znRH6BWyUxtA5mSb9wQ2c9gRC0apBGLjYGYCEZ32n/Hc4Qb6J9sWcHTzIQVrOrli
+	3rlwKiq3/svvcveoqOr/med5CO5QettJ7f5Exnv0PyXTLdn+Or7gpodfyFH3sV3j16SBXSwVk8j
+	Fe1LlkWHviZGz/DHKAXeBWS+MiBM05fZqsc4U1Mj1novZ0EcfR5NWL65KoJacg41ctsu0jbxSiK
+	B46UEwQJ9Gaos36IOC8ScesYY1wc4xQVmikJNqxsIMPweAZF5I8Cf8pga
+X-Received: by 2002:ac8:5a04:0:b0:4e8:9f31:dec with SMTP id d75a77b69052e-4ea117b10dbmr21342671cf.13.1761039580526;
+        Tue, 21 Oct 2025 02:39:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6rNwhsDdnBGCRZf83g90l4+BAxf1E5QIzKJUMVkc4BEhDy4Fy39CzzVNB7EJBurhJpiJYeA==
+X-Received: by 2002:ac8:5a04:0:b0:4e8:9f31:dec with SMTP id d75a77b69052e-4ea117b10dbmr21342511cf.13.1761039579999;
+        Tue, 21 Oct 2025 02:39:39 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb526490sm1027264566b.65.2025.10.21.02.39.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 02:39:39 -0700 (PDT)
+Message-ID: <15617371-0b20-4326-8e08-2c20b3d3c767@oss.qualcomm.com>
+Date: Tue, 21 Oct 2025 11:39:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015070854.36281-1-jonas.gorski@gmail.com>
- <aO_H6187Oahh24IX@horms.kernel.org> <CAOiHx=nbRAkFW2KMHwFoF3u6yoN28_LbMrar1BoF37SA=Mz4gg@mail.gmail.com>
- <aO_PMWQlv0DhHukm@horms.kernel.org>
-In-Reply-To: <aO_PMWQlv0DhHukm@horms.kernel.org>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Tue, 21 Oct 2025 11:38:31 +0200
-X-Gm-Features: AS18NWAt-sNEZKvoBVjhcEcyf8gYc14VQDS_M46xD0Xr09bsTyEc-j3O-PJtf70
-Message-ID: <CAOiHx=mbd-JND4XR9FkARa0b6gGS0BXJwuAKSP_gVO48m00ZWg@mail.gmail.com>
-Subject: Re: [PATCH net] net: dsa: tag_brcm: legacy: fix untagged rx on
- unbridged ports for bcm63xx
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	=?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] soc: qcom: smp2p: Add support for smp2p v2
+To: Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Lew <chris.lew@oss.qualcomm.com>
+References: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
+ <20250923-smp2p-v1-2-2c045af73dac@oss.qualcomm.com>
+ <bb25208e-a6a6-4a81-9dd5-5c5eb1cf16b4@oss.qualcomm.com>
+ <ff382661-4d05-4f9a-8b9e-55fa9932a22a@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <ff382661-4d05-4f9a-8b9e-55fa9932a22a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: tocsu3j8aNEJtJmbMPl8L-36Bg6i_Fg6
+X-Authority-Analysis: v=2.4 cv=Maxhep/f c=1 sm=1 tr=0 ts=68f754dd cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=kMNSRdB3-21TAvZhXxQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-ORIG-GUID: tocsu3j8aNEJtJmbMPl8L-36Bg6i_Fg6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDE0OCBTYWx0ZWRfXw5klxpNkN7t3
+ 6uZJHpjdtqu5OAGDupCu6hcxvFeAlJgVAPweeC98FiBW43FOv2VENK9Lm689oHN1Acyb1OY5br+
+ O4X9ARFTKV7KMUNfbTxz57/+yuNcoECSggQOpsjVfYiG/o9LtyuWCYNQJfeRjxWOZKcYX8Ibwe/
+ 1SDJ/s2OSI3v5OhymKz1mGrpThaZUOG66qFTRK4fp+s/AqCB4o2hSfTpQxdjW3R4+Pf7nvfmin1
+ hZH4o+HehrT0sz3hJ2T261au9aM8udnFxEW8+ckoimCOhcPSUfSLtpieil/Dp05x4bqI+y9zgHP
+ 3eR1x1IScQZtgvd9lS5XxSUxVlP6ngjllsuFAXiWcYtnSyBygb1++6aQsY4sdRoUA87zCtz8FOK
+ +lh83maNimQJZ7NCRADC+n72sGWVNw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510200148
 
-On Wed, Oct 15, 2025 at 6:43=E2=80=AFPM Simon Horman <horms@kernel.org> wro=
-te:
->
-> On Wed, Oct 15, 2025 at 06:24:33PM +0200, Jonas Gorski wrote:
-> > On Wed, Oct 15, 2025 at 6:12=E2=80=AFPM Simon Horman <horms@kernel.org>=
- wrote:
-> > >
-> > > On Wed, Oct 15, 2025 at 09:08:54AM +0200, Jonas Gorski wrote:
-> > > > The internal switch on BCM63XX SoCs will unconditionally add 802.1Q=
- VLAN
-> > > > tags on egress to CPU when 802.1Q mode is enabled. We do this
-> > > > unconditionally since commit ed409f3bbaa5 ("net: dsa: b53: Configur=
-e
-> > > > VLANs while not filtering").
-> > > >
-> > > > This is fine for VLAN aware bridges, but for standalone ports and v=
-lan
-> > > > unaware bridges this means all packets are tagged with the default =
-VID,
-> > > > which is 0.
-> > > >
-> > > > While the kernel will treat that like untagged, this can break user=
-space
-> > > > applications processing raw packets, expecting untagged traffic, li=
-ke
-> > > > STP daemons.
-> > > >
-> > > > This also breaks several bridge tests, where the tcpdump output the=
-n
-> > > > does not match the expected output anymore.
-> > > >
-> > > > Since 0 isn't a valid VID, just strip out the VLAN tag if we encoun=
-ter
-> > > > it, unless the priority field is set, since that would be a valid t=
-ag
-> > > > again.
-> > > >
-> > > > Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy ta=
-gs")
-> > > > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-> > >
-> > > ...
-> > >
-> > > > @@ -237,8 +239,14 @@ static struct sk_buff *brcm_leg_tag_rcv(struct=
- sk_buff *skb,
-> > > >       if (!skb->dev)
-> > > >               return NULL;
-> > > >
-> > > > -     /* VLAN tag is added by BCM63xx internal switch */
-> > > > -     if (netdev_uses_dsa(skb->dev))
-> > > > +     /* The internal switch in BCM63XX SoCs will add a 802.1Q VLAN=
- tag on
-> > > > +      * egress to the CPU port for all packets, regardless of the =
-untag bit
-> > > > +      * in the VLAN table.  VID 0 is used for untagged traffic on =
-unbridged
-> > > > +      * ports and vlan unaware bridges. If we encounter a VID 0 ta=
-gged
-> > > > +      * packet, we know it is supposed to be untagged, so strip th=
-e VLAN
-> > > > +      * tag as well in that case.
-> > >
-> > > Maybe it isn't important, but here it is a TCI 0 that is being checke=
-d:
-> > > VID 0, PCP 0, and DEI 0.
-> >
-> > Right, that is intentional (I tried to convey it in the commit
-> > message, though should probably also extend it here).
->
-> Thanks, I see that more clearly now.
->
-> > If any of the fields is non-zero, then the tag is meaningful, and we
-> > don't want to strip it (e.g. 802.1p tagged packets).
->
-> I guess there are already a lot of words there. But, FWIIW, I would lean
-> to wards tightening up the comment a bit.
+On 10/21/25 10:23 AM, Deepak Kumar Singh wrote:
+> 
+> 
+> On 9/24/2025 8:27 PM, Konrad Dybcio wrote:
+>> On 9/24/25 6:18 AM, Jingyi Wang wrote:
+>>> From: Chris Lew <chris.lew@oss.qualcomm.com>
+>>>
+>>> Some remoteproc need smp2p v2 support, mirror the version written by the
+>>> remote if the remote supports v2. This is needed if the remote does not
+>>> have backwards compatibility with v1. And reset entry last value on SSR for
+>>> smp2p v2.
+>>>
+>>> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
+>>> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>> ---
+>>
+>> [...]
+>>
+>>> +static int qcom_smp2p_in_version(struct qcom_smp2p *smp2p)
+>>> +{
+>>> +    unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
+>>> +    unsigned int pid = smp2p->remote_pid;
+>>> +    struct smp2p_smem_item *in;
+>>> +    size_t size;
+>>> +
+>>> +    in = qcom_smem_get(pid, smem_id, &size);
+>>> +    if (IS_ERR(in))
+>>> +        return 0;
+>>> +
+>>> +    return in->version;
+>>
+>> are in and out versions supposed to be out of sync in case of
+>> error?
+>>
+> I think that should be ok. If we return error smp2p connection will be completely broken. With default version 1 partial features can be supported even if remote is using version 2. Some features like smp2p connection after subsystem restart may be affected by this.>> +}
 
-While I can't send patches, I can at least send emails at work:
+Perhaps a different question is in order.. do we ever expect smem_get to
+fail under normal conditions?
 
-How about:
+[...]
 
-"The internal switch in BCM63XX SoCs ignores the CPU port's egress
-untag bit. We use VID 0 internally for untagged traffic, so it becomes
-tagged with VID 0. Fix this up by removing the tag if the TCI field is
-all 0, and keep it otherwise."
+>>>       /*
+>>>        * Make sure the rest of the header is written before we validate the
+>>>        * item by writing a valid version number.
+>>>        */
+>>>       wmb();
+>>> -    out->version = 1;
+>>> +    out->version = (in_version) ? in_version : 1;
+>>
+>> = in_version ?: 1
+>>
+>> Konrad
+>>
+> We want to assign in_version when value is 1/2 and 1 if value is 0 i.e. error case.
 
-Best regards,
-Jonas
+That's what this syntax does, with less characters
+
+Konrad
 
