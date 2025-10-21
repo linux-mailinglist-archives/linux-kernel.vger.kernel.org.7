@@ -1,57 +1,82 @@
-Return-Path: <linux-kernel+bounces-862909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF63BBF681C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:44:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80501BF682C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78685480707
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:42:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0F3D505B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9ED334C15;
-	Tue, 21 Oct 2025 12:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49EF330331;
+	Tue, 21 Oct 2025 12:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uei7vXcs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="W0oSm8ss"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5380331A56;
-	Tue, 21 Oct 2025 12:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE5F355040
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050499; cv=none; b=AwcxC5b8yJLK1I669YZG2Yv2Bh4lDda0I41s2iRonfUa9z9UolgEUUR0Lnba6qilOWJylK2pWTCbE6gZorb9XIwju3VozKMuTP5DBjS4BiVqzejIdhTe01XpmkmRVwWXA5KThtRjnSberYd3a8aTWw9qptEwUU6L2y/1F7QEKO8=
+	t=1761050544; cv=none; b=FNhLTru3v61X8fELgX2SJQI6oybaOOdzwuQKxO9w2/TY5dH+NswvwzbbJ5XvTcs0q11XL/WlvWJBRRCr1az7G7oRdM1EDgrv80nFRWqrVnmPVBc5ERFPJpg7qpR7QEhTr0OqwBape9nyobQJkJOJ6jT2EqThUm9eTrXJ7EsPf8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050499; c=relaxed/simple;
-	bh=d9oesBpLqRfCkHZZ8TKTxA34sdMl6Gbv8qnQV7o09pk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lyRtw/HCFBq69CyK6plgM19R0bxlFl9ff3iFUMVZJXf5AByqO9K/gq5sLRpTebPp8eMYZgjP4AybyudR2uF/p5mfEPcI79UfAJmvmmVTcuvrrDaP9IXikXww4q3eH9FO4eB5r2InTd/dQPo5Yr2rQQoQW6sHObBBY4C3koY6R/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uei7vXcs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from isaac-ThinkPad-T16-Gen-2.infra.iob (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 07B066F9;
-	Tue, 21 Oct 2025 14:39:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761050385;
-	bh=d9oesBpLqRfCkHZZ8TKTxA34sdMl6Gbv8qnQV7o09pk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uei7vXcsqNYcWI85WPMvS0BIYJkfhRFbznmRk3QD9gaMiaSdfqxwoUWRMVAlmTLH2
-	 hIiMsrCR6HLCivf/1zcfLAcSsEW2puQwl6iCWBxo/kLn0LulfmpOwJu09LLhIBi0eA
-	 5YtjIFGa0Ok4jN5ODGmZADSKRHgilp/3N2JLRrPM=
-From: Isaac Scott <isaac.scott@ideasonboard.com>
-To: mchehab@kernel.org
-Cc: laurent.pinchart@ideasonboard.com,
-	sakari.ailus@linux.intel.com,
-	david.plowman@raspberrypi.com,
-	naush@raspberrypi.com,
-	kieran.bingham@ideasonboard.com,
-	linux-media@vger.kernel.org,
+	s=arc-20240116; t=1761050544; c=relaxed/simple;
+	bh=kZl7K/EZ0V7AqsFLwQW2yci0m3Jf7pMTBFK1AheIjOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hhd9qu+HWdYaEdI67j1cv5wdOLQqXH1qNKw6Rzo2dvsEDtXDUfg9LuwplYtqypvru9vTChneRVUm4ehX/MJZBRBvuoNyKDfl+BUhaPAhuKkyUK35erQ8i6h7kuAg0Vi08K0dkQfdaOPVmlc5N1D1DIpKlgBRv/xk/IWT9A+hq0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=W0oSm8ss; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so4486107b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ssn.edu.in; s=ssn; t=1761050540; x=1761655340; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aOn3UfMwHh1btp/pv4pFbIJEXlaH8RnvbklOwiTYonE=;
+        b=W0oSm8ssV2AjbCZqzIzzEfGt5iGG5MhFQE/6p9JdxLenQQcaKZuUzxnvoBY0IzRdLG
+         FBkpxJ+4cbXgMFRjejm/4RqF2/Sy7oOHqi3FSqmSfn/S2dQsUvWGckXKm0rJyLtl+yDp
+         8SClCTLktir0MHkx85bkOEmTY+CkBzHz3c3do=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761050540; x=1761655340;
+        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aOn3UfMwHh1btp/pv4pFbIJEXlaH8RnvbklOwiTYonE=;
+        b=RGxEIRrVu+OZoksRsrCGDwX5e2r2ytb6weTNWjlfRMDNKJ2wztZSgC5jMQld2be+de
+         6gliQ8NMuaO8CUP02Y0uFE9uQeXvTDWY9nz8OBrYY5O0kPgYnMXuZJjxhLrUFq8pA5v2
+         Xe7hjiNLpUFdtDfzgjg29eavHnAOADCwcYDyldenlw+eKSgRHKQQCPA2v/P/y6NpWDTs
+         3wyCOkDp+um8lm/0cTXLKHMKlPfQpnTg017JAgMvREZKfCJj7kce/y4oa0FRoxt4it5T
+         /TchXXUEKwRHF7Txp2AeqFMOdvb4JNrHEjDMb3nErZDmMB9qFPp2jNJPX7yimQivSiJE
+         YhGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ3CsoTe07Bi/5LklufiTdx96Izu7LXJ0/bDOWoZnjAyISlhOuEGAVfjUeJsYiG2t5I7TktDuF5OzXNqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS6j69sr3paHOhfWqxtMvU1An/0as6WO/XDouH6DRJED+OgUh6
+	sCUuX84MMbwid68nOqnfmZ27JrQZXPopCG7GtI9XQFR9u3rrUHOsAt3eqwaUjZpM9M5Jas2Z42m
+	eRZ3JU+M+EW2YWF0eIEEUJKDEomj49B1t+moXEzkzpyYzJKrhCzcIsggl
+X-Gm-Gg: ASbGnct460k89sSuT2xiamiWi6vwuiPP+sA+1xL8N8Drne2b/CR4swzCejj3l8VgTX6
+	X0G0J2uz3CrwID/pCB5gxuTzRH2eXOd0zimWXOz9QhvoO+bLG6bbC//M2VSK+fU2iaF/2K68jzN
+	dRUqh+B2Qn8Olc1WT8IoIH9YaPUOyJ1x2fXt3ZhjdptkdBp+4Iqsib1oy9Amkl25nB9DVKaNlsJ
+	sNCohArqvPyhf7mtcUUH4WLAKBDlDW6SE8VvHx5yfW+SPU/QZrkjewA9v8ZmmA9/dJQFSSeP5uB
+	ihofHGCYsysLC5Goz0V9PsyqOM3O7wkrE4SE8Ch0t5lMRELJwC/oyViEu+zp1ZpEequvdiHICe8
+	5jB1d63I40UMclrAp116C5nzi9CdyIAsOdARLdwxMSnkrDVY6pw//w8JfpBGQT8z8/+Zx7K4U7h
+	SBqaQtcFxgbnbOyH+W09FGwGVWwV0QwmC3O5CLaGpMP4LU+NgwLUazPfSm6ZiFUdJq+8FxZRPQ1
+	IhX
+X-Google-Smtp-Source: AGHT+IEdeUXEXYB4HW+XJo5SGpW27qmFvB4vzdwV++QmVAp0pZvJ7IJ1FNn2t13Bf9YjqW/yklyShg==
+X-Received: by 2002:a05:6a00:b96:b0:77f:1ef8:8acb with SMTP id d2e1a72fcca58-7a220a57f31mr18163889b3a.13.1761050540290;
+        Tue, 21 Oct 2025 05:42:20 -0700 (PDT)
+Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:33f3:d5f3:33d1:a1e0:46bc])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a2300f159csm11264417b3a.46.2025.10.21.05.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 05:42:20 -0700 (PDT)
+From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+To: jpoimboe@kernel.org
+Cc: peterz@infradead.org,
 	linux-kernel@vger.kernel.org,
-	Isaac Scott <isaac.scott@ideasonboard.com>
-Subject: [PATCH] v4l: controls: Add v4l2 control to store camera module identifier
-Date: Tue, 21 Oct 2025 13:41:21 +0100
-Message-ID: <20251021124121.93907-1-isaac.scott@ideasonboard.com>
+	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Subject: [PATCH] objtool: Fix warning in check.c when validating stack frames
+Date: Tue, 21 Oct 2025 18:12:13 +0530
+Message-ID: <20251021124214.25276-1-biancaa2210329@ssn.edu.in>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,67 +84,53 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
 
-Add a new v4l2 control ID that would be used by drivers to store a
-string representing a SKU or other vendor-specific camera module
-identifier. This would be used to tell user space which specific type of
-camera module is present in the system.
-
-Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-
+Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
 ---
+ tools/objtool/check.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi all,
-
-This patch builds on the discussion here:
-
-https://lore.kernel.org/all/20250507081338.53614-1-sakari.ailus@linux.intel.com/
-
-regarding the need to be able to identify camera modules. This is useful
-when modules need to use the base driver of the camera sensor they
-include, but need adjustments to account for different module features.
-
-The driver, or potentially core v4l2, would be responsible for setting
-this as a read-only control containing the SKU, or a vendor-specific
-identifier for a camera module.
-
-A SKU is expected to cover the sensor (found in the compatible string),
-as well as the lens / packaging. For example, Raspberry Pi produce an
-IMX708 camera module with several variations; a lot of code duplication
-could be avoided in user space applications if a camera module
-identifier was available.
-
-These could be expressed through the SKU instead of variations of the
-compatible string.
-
-This would allow user space programs, such as libcamera, to select
-different configurations specific to that module to account for
-differences in lens characteristics, different CCMs, and more.
-
-Tested on media/next
-
-Best wishes,
-
-Isaac
----
- include/uapi/linux/v4l2-controls.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 2d30107e047e..39267bdd5286 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -1102,6 +1102,8 @@ enum v4l2_auto_focus_range {
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index a5770570b106..64c54225f875 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -3947,7 +3947,7 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
+ 			return 0;
  
- #define V4L2_CID_HDR_SENSOR_MODE		(V4L2_CID_CAMERA_CLASS_BASE+36)
- 
-+#define V4L2_CID_CAMERA_MODULE_IDENTIFIER	(V4L2_CID_CAMERA_CLASS_BASE+37)
-+
- /* FM Modulator class control IDs */
- 
- #define V4L2_CID_FM_TX_CLASS_BASE		(V4L2_CTRL_CLASS_FM_TX | 0x900)
+ 		if (!next) {
+-			WARN_INSN(insn, "teh end!");
++			WARN_INSN(insn, "the end!");
+ 			return 1;
+ 		}
+ 		insn = next;
 -- 
 2.43.0
 
+
+-- 
+::DISCLAIMER::
+
+---------------------------------------------------------------------
+The 
+contents of this e-mail and any attachment(s) are confidential and
+intended 
+for the named recipient(s) only. Views or opinions, if any,
+presented in 
+this email are solely those of the author and may not
+necessarily reflect 
+the views or opinions of SSN Institutions (SSN) or its
+affiliates. Any form 
+of reproduction, dissemination, copying, disclosure,
+modification, 
+distribution and / or publication of this message without the
+prior written 
+consent of authorized representative of SSN is strictly
+prohibited. If you 
+have received this email in error please delete it and
+notify the sender 
+immediately.
+---------------------------------------------------------------------
+Header of this mail should have a valid DKIM signature for the domain 
+ssn.edu.in <http://www.ssn.edu.in/>
 
