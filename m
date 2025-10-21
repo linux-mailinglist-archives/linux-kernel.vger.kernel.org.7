@@ -1,285 +1,225 @@
-Return-Path: <linux-kernel+bounces-863546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF222BF8202
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:42:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BF3BF8217
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A44F43E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315B6461C21
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2E7346774;
-	Tue, 21 Oct 2025 18:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDC523E347;
+	Tue, 21 Oct 2025 18:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lyDFiTpP"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFUiTydi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2128F34D92E;
-	Tue, 21 Oct 2025 18:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFD62E6CA2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761072149; cv=none; b=VQVjLgTXqsc8EmmwzswXTqPJ62YG0h5kFGaYk5WXp1NHgSq6EBziJRFTNg8Mz+rF5nLjaGhdQn3IG0+J06d8nARi+W3GWWBTsg+r74+/D/V/BnTuIc/T2J5XvkkVtQJP8dHo+3m6+Lh9FpGm8GDMayXXTBDS2b9+Dis3PPNpuk0=
+	t=1761072196; cv=none; b=p6xEk+XVw2bFpOZkuFkKX2cv9qPd2LTmBY54XkR3tt7vcAKh0BQlVmMVH63yY/VDPa39RzjthOS1bTBR3gPP6tcCDgrYlst0AFbmwqkBrfGwCheojMuUW7pAQUe90zRS5TUw0ECfpliZXGgXz+uFT0baXjuD2ZyYeQRkBKb9Vgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761072149; c=relaxed/simple;
-	bh=Y3nkMRGccnwFhyLXOc20ulXVeae5mDdiUSAgCcKTfgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itGP2gMQu6AjfzLWSGAJJdAtQpKNKZ4gCnGyWpbD5XZ7CZGmW2XPFgXhshqB75d0t2zjBJbl0mbKpCFnIrqMupCGU0ArygTB9C3RfkM1z6FklMv/6EnPhd0Ck+esbZEAlujU3kSOBhffTbEQSmnXJ7zFzrYvlwysj7wYlvZ2hP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lyDFiTpP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (87-94-110-32.bb.dnainternet.fi [87.94.110.32])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 822E563F;
-	Tue, 21 Oct 2025 20:40:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761072041;
-	bh=Y3nkMRGccnwFhyLXOc20ulXVeae5mDdiUSAgCcKTfgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lyDFiTpP9MjdRPxPyzaINNPfhWyP3S+87NEayairfW6WWsCPcIrN8ryaIdYPn/wBd
-	 X7QczAbERhqYmGYtPq3OybCtWAdLNs9KXWhl9ApKuMg2tivmT5EeFu9baS/ZdIf8a4
-	 iZny5y8Q0gFr0rLPbsorzUfZgr5FsfiQhlyhSYGc=
-Date: Tue, 21 Oct 2025 21:42:13 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	Angel4005 <ooara1337@gmail.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: uvcvideo: Use heuristic to find stream entity
-Message-ID: <20251021184213.GC19043@pendragon.ideasonboard.com>
-References: <20251021-uvc-grandstream-v2-1-6a74a44f4419@chromium.org>
- <20251021164443.GA727@pendragon.ideasonboard.com>
- <CANiDSCsC6SgYJ-jSswPaeAw8RkxjZN4n23X35XbntNGcUsuRJQ@mail.gmail.com>
- <20251021170635.GC727@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1761072196; c=relaxed/simple;
+	bh=pk4QGgGHYEy1ITQUuv5ZBh9SCV9ju+FTCz1WTQv0wHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iIv0D1WfHtc2KzC0TsXSVfVQi99XRJKAP8m1arH9gZIhuRVc8G0pYNe+37qv4mbBnGStCvgkKcFJvQh9uf4sVFC2ilUg1lSSBAOKWTzBkDt59xBjeKCQRgySMuIwSR7sgn2Wv0uAvwre5UC4oQ402LhUULsBlsEcPlAA3blQbU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QFUiTydi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761072193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4/1n5Qmv6fUzICSy7SJ2nfo+Y+QoRpq1dX3+wvV2FX4=;
+	b=QFUiTydi2xdwvKtLBbSkPXPfhxVqOg/ww4e8Bf9GK4C98yOF9txblKnAPjDWa6RMaODw3p
+	mVNceFutpVGp7crQWv4sAEAK3aEEpP8e9/F98n87UjJYHHRDtnvf1gJBCj16ZmfTDI+dws
+	bxixijqyevKI2Vbfj9nf1//EYuKxTbk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-266-XnV5m07NMKKHyxRrl9KyBg-1; Tue, 21 Oct 2025 14:43:12 -0400
+X-MC-Unique: XnV5m07NMKKHyxRrl9KyBg-1
+X-Mimecast-MFC-AGG-ID: XnV5m07NMKKHyxRrl9KyBg_1761072191
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47114018621so30189945e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:43:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761072191; x=1761676991;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4/1n5Qmv6fUzICSy7SJ2nfo+Y+QoRpq1dX3+wvV2FX4=;
+        b=LaXyfNn16JJ2PFLPHh5XQ2xvsXFGc5t4GMSHBThY4CfoJXg8RoGeA/RtsmPuGna7w2
+         OTxuLpAsBb5MlpNzMclRpccJhdSRTFywxgnITjunz1yKuEC1GNxHUrKAmC8VWua8lLtJ
+         XHcXgOE5KWKjINZp5BDs3aXRl33//Oq1JA6zF8Wk+0AXX6AtdF7M/m6o6sHoGmMR9rJZ
+         /hWonfIXj/BoUml6CHRUJtC0Gn4oPiorDlf6tPAbXMqn6DEfMvopdQ0eUZsnTnUMRSTi
+         s6cMDQgqLT2f/mBgGAxdzvMTo35ndS6xOjxV904ZAHaW1OvNOhs1nDq9JNZS0KuZvdZA
+         eZfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGxqtHJthwSXYhwXRTndqoU2fbifvWK7XcwHS0l+scF+vsn+8lm0gX4qW4dmUHHiA8b/KfFJ/En3O1Abs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweINn34TADBDoWswnuR6pDnKEfdhNdEPUATQQrj2A44FCEuIBi
+	bRyQ1GwQBgbt+5aPydY/pYcmbHRB2GdM/OBSfDWyNmMA/4OK3HbRm++3iMnvmS093ejcPufdWuc
+	y9ru3Ae1lKNRw43HKcliYgaiqTVasCSAG2C0yN4P1+Bbh4BTuA3g/Xb7qVI5GWn8j0Q==
+X-Gm-Gg: ASbGncu5USeZQVBqvwaZk03TLkImAodz0JoKtrao8rvAsagQQEiyA0hVpYPDR0l9MK4
+	vNrdANyvnDmVwDarcnzFGjPTNHUQki5w5nMpEWhfjAcv8WOl8fV0k9Wm7KzX5Sdq4P+AksrHIHp
+	YmAXt2+3IDvQwE5M8xYI7NN4KZ/zNEQkvII4H6/WHLd3GD19JFLFtl+45Vx6Z4XpE4r35qL1Mb0
+	1r5bSzNrrAa1QSLQuUPK8fKJgxXNbFeRkvTtOz6FOKSS2ce8b803IGjglkdt4R6pc00on2jf2cY
+	4dnHYHVKuA9C9Ki8c0wohF+mHZceTrAuOx9CRk3aIu0O2lsXcTpMaF2W9nl/mKDWWfsfIQ2MTS+
+	ke2eG59P70Q4834eVwutLt4cv9yRX9emzewHyPPFEfOqw/AU4t2bW4TE1QEm7mxAYYqGgVzx24B
+	wgrNjZOqowNtTSPtAwo7mI2h/imC0=
+X-Received: by 2002:a05:600c:444d:b0:471:15bb:ad7f with SMTP id 5b1f17b1804b1-471178b04cfmr118237455e9.17.1761072191184;
+        Tue, 21 Oct 2025 11:43:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGF48PaGIZJJ8yDfzibDZrtRJ8BYf6TIUYzgr5nqD6RJbRA6dQ/xlt74jqHg+pveBdy6E8oUw==
+X-Received: by 2002:a05:600c:444d:b0:471:15bb:ad7f with SMTP id 5b1f17b1804b1-471178b04cfmr118237325e9.17.1761072190791;
+        Tue, 21 Oct 2025 11:43:10 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c438caeesm4880295e9.18.2025.10.21.11.43.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 11:43:10 -0700 (PDT)
+Message-ID: <5e35a398-af4e-4c54-9285-4202da08f456@redhat.com>
+Date: Tue, 21 Oct 2025 20:43:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251021170635.GC727@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 20/23] mm/kconfig: make BALLOON_COMPACTION depend on
+ MIGRATION
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-doc@vger.kernel.org,
+ virtualization@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann
+ <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+ "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Zi Yan <ziy@nvidia.com>
+References: <20251021125929.377194-1-david@redhat.com>
+ <20251021150040.498160-1-david@redhat.com>
+ <20251021150040.498160-4-david@redhat.com>
+ <3ba11b0c-818f-41d5-8885-038c7e0133f5@infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <3ba11b0c-818f-41d5-8885-038c7e0133f5@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 08:06:38PM +0300, Laurent Pinchart wrote:
-> On Tue, Oct 21, 2025 at 06:57:00PM +0200, Ricardo Ribalda wrote:
-> > On Tue, 21 Oct 2025 at 18:44, Laurent Pinchart wrote:
-> > > On Tue, Oct 21, 2025 at 10:36:17AM +0000, Ricardo Ribalda wrote:
-> > > > Some devices, like the Grandstream GUV3100 webcam, have an invalid UVC
-> > > > descriptor where multiple entities share the same ID, this is invalid
-> > > > and makes it impossible to make a proper entity tree without heuristics.
-> > > >
-> > > > We have recently introduced a change in the way that we handle invalid
-> > > > entities that has caused a regression on broken devices.
-> > > >
-> > > > Implement a new heuristic to handle these devices properly.
-> > > >
-> > > > Reported-by: Angel4005 <ooara1337@gmail.com>
-> > > > Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
-> > > > Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID")
-> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > ---
-> > > > I have managed to get my hands into a Grandstream GUV3100 and
-> > > > implemented a new heuristics. (Thanks Yunke and Hidenori!).
-> > > >
-> > > > With this heuristics we can use this camera again (see the /dev/video0
-> > > > in the topology).
-> > > >
-> > > > I have tested this change in a 6.6 kernel. Because the notebook that I
-> > > > used for testing has some issues running master. But for the purpose of
-> > > > this change this test should work.
-> > > >
-> > > > ~ # media-ctl --print-topology
-> > > > Media controller API version 6.6.99
-> > > >
-> > > > Media device information
-> > > > ------------------------
-> > > > driver          uvcvideo
-> > > > model           GRANDSTREAM GUV3100: GRANDSTREA
-> > > > serial
-> > > > bus info        usb-0000:00:14.0-9
-> > > > hw revision     0x409
-> > > > driver version  6.6.99
-> > > >
-> > > > Device topology
-> > > > - entity 1: GRANDSTREAM GUV3100: GRANDSTREA (1 pad, 1 link)
-> > > >             type Node subtype V4L flags 1
-> > > >             device node name /dev/video0
-> > > >         pad0: SINK
-> > > >                 <- "Extension 3":1 [ENABLED,IMMUTABLE]
-> > > >
-> > > > - entity 4: GRANDSTREAM GUV3100: GRANDSTREA (0 pad, 0 link)
-> > > >             type Node subtype V4L flags 0
-> > > >             device node name /dev/video1
-> > > >
-> > > > - entity 8: Extension 3 (2 pads, 2 links, 0 routes)
-> > > >             type V4L2 subdev subtype Unknown flags 0
-> > > >         pad0: SINK
-> > > >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
-> > > >         pad1: SOURCE
-> > > >                 -> "GRANDSTREAM GUV3100: GRANDSTREA":0 [ENABLED,IMMUTABLE]
-> > > >
-> > > > - entity 11: Processing 2 (2 pads, 3 links, 0 routes)
-> > > >              type V4L2 subdev subtype Unknown flags 0
-> > > >         pad0: SINK
-> > > >                 <- "Camera 1":0 [ENABLED,IMMUTABLE]
-> > > >         pad1: SOURCE
-> > > >                 -> "Extension 3":0 [ENABLED,IMMUTABLE]
-> > > >                 -> "Extension 4":0 [ENABLED,IMMUTABLE]
-> > > >
-> > > > - entity 14: Extension 4 (2 pads, 1 link, 0 routes)
-> > > >              type V4L2 subdev subtype Unknown flags 0
-> > > >         pad0: SINK
-> > > >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
-> > > >         pad1: SOURCE
-> > > >
-> > > > - entity 17: Camera 1 (1 pad, 1 link, 0 routes)
-> > > >              type V4L2 subdev subtype Sensor flags 0
-> > > >         pad0: SOURCE
-> > > >                 -> "Processing 2":0 [ENABLED,IMMUTABLE]
-> > > > ---
-> > > > Changes in v2:
-> > > > - Fix : invalid reference to the index variable of the iterator.
-> > > > - Link to v1: https://lore.kernel.org/r/20251021-uvc-grandstream-v1-1-801e3d08b271@chromium.org
-> > > > ---
-> > > >  drivers/media/usb/uvc/uvc_driver.c | 15 ++++++++++++++-
-> > > >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > > > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..ee4f54d6834962414979a046afc59c5036455124 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > > @@ -167,13 +167,26 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
-> > > >
-> > > >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
-> > > >  {
-> > > > -     struct uvc_streaming *stream;
-> > > > +     struct uvc_streaming *stream, *last_stream;
-> > > > +     unsigned int count = 0;
-> > > >
-> > > >       list_for_each_entry(stream, &dev->streams, list) {
-> > > > +             count += 1;
-> > > > +             last_stream = stream;
-> > > >               if (stream->header.bTerminalLink == id)
-> > > >                       return stream;
-> > > >       }
-> > > >
-> > > > +     /*
-> > > > +      * If the streaming entity is referenced by an invalid ID, notify the
-> > > > +      * user and use heuristics to guess the correct entity.
-> > > > +      */
-> > > > +     if (count == 1 && id == UVC_INVALID_ENTITY_ID) {
-> > > > +             dev_warn(&dev->intf->dev,
-> > > > +                      "UVC non compliance: Invalid USB header. The streaming entity has an invalid ID, guessing the correct one.");
-> > > > +             return last_stream;
-> > > > +     }
-> > >
-> > > As far as I understand, the reason why we can't find the streaming
-> > > interface here is because we have set the streaming output terminal ID
-> > > to UVC_INVALID_ENTITY_ID, due to the extension unit being previously
-> > > registered with the same ID. We're therefore adding a workaround on top
-> > > of another workaround.
-> > >
-> > > Looking at the UVC descriptors for this camera, ID 4 is shared between
-> > > an extension unit with GUID ffe52d21-8030-4e2c-82d9-f587d00540bd and the
-> > > streaming output terminal. That GUID is apparently a Logitech GUID
-> > > (according to https://github.com/soyersoyer/cameractrls/blob/c920e/cameractrls.py).
-> > > I don't know if the XU actually works in that camera, but it could be
-> > > useful to keep it functional.
-> > >
-> > > I think we could make the handling of non-unique IDs more clever. If an
-> > > output streaming terminal and a unit share the same ID, we could
-> > > allocate an unused ID for the output streaming terminal, and patch the
-> > > bTerminalLink of the stream headers accordingly. The ID remapping should
-> > > not cause other issues, as
-> > >
-> > > - streaming output terminals have no controls, so the ID isn't used to
-> > >   reference controls
-> > >
-> > > - the units graph is build from sink to source, with UVC descriptors
-> > >   containing the IDs of source units, so streaming output terminals are
-> > >   never referenced by ID from descriptors except for the bTerminalLink.
-> > >
-> > > This would produce a valid graph without duplicated IDs in this case.
-
-Thinking some more about this, I wonder if the fix couldn't be as simple
-as putting the streaming OTTs in a separate ID namespace:
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index fb6afb8e84f0..17a8cc96e6ed 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -969,6 +969,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 	struct usb_host_interface *alts = dev->intf->cur_altsetting;
- 	unsigned int i, n, p, len;
- 	const char *type_name;
-+	unsigned int id;
- 	u16 type;
- 
- 	switch (buffer[2]) {
-@@ -1107,8 +1108,14 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 			return 0;
- 		}
- 
-+		id = buffer[3];
-+
-+		/* Give streaming output terminals their own ID namespace. */
-+		if (type & TT_STREAMING)
-+			id |= UVC_TERM_OUTPUT;
-+
- 		term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
--					    buffer[3], 1, 0);
-+					    id, 1, 0);
- 		if (IS_ERR(term))
- 			return PTR_ERR(term);
- 
-@@ -2105,7 +2112,7 @@ static int uvc_register_terms(struct uvc_device *dev,
- 		if (UVC_ENTITY_TYPE(term) != UVC_TT_STREAMING)
- 			continue;
- 
--		stream = uvc_stream_by_id(dev, term->id);
-+		stream = uvc_stream_by_id(dev, term->id & ~UVC_TERM_OUTPUT);
- 		if (stream == NULL) {
- 			dev_info(&dev->intf->dev,
- 				 "No streaming interface found for terminal %u.",
-
-
-This is untested, and requires better comments to explain the
-heuristics, as well as possibly a macro to convert between the "raw" ID
-and the "namespaced" ID.
-
-> > I will try to work on a solution like you propose in this kernel
-> > cycle, but I do not feel very confident about landing that big change
-> > in "fixes" without being in linux-next for a couple of weeks. I'd
-> > rather go for a simple solution that fixes the regression.
-> > 
-> > With this fix, the media controller topology looks identical as before
-> > we introduce the bug, so we do not lose any functionality.
-> > 
-> > So if you agree I think the safest path is to land this fix in fixes
-> > now. And try to get a better logic landed in next in this kernel
-> > cycle.
-> > 
-> > What do you think?
+On 21.10.25 19:13, Randy Dunlap wrote:
 > 
-> I'm fine with that timelie. Thanks for agreeing to try and implement the
-> above proposal.
 > 
-> > > > +
-> > > >       return NULL;
-> > > >  }
-> > > >
-> > > >
-> > > > ---
-> > > > base-commit: ea299a2164262ff787c9d33f46049acccd120672
-> > > > change-id: 20251021-uvc-grandstream-05ecf0288f62
+> On 10/21/25 8:00 AM, David Hildenbrand wrote:
+>> Migration support for balloon memory depends on MIGRATION not
+>> COMPACTION. Compaction is simply another user of page migration.
+>>
+>> The last dependency on compaction.c was effectively removed with
+>> commit 3d388584d599 ("mm: convert "movable" flag in page->mapping to a
+>> page flag"). Ever since, everything for handling movable_ops page
+>> migration resides in core migration code.
+>>
+>> So let's change the dependency and adjust the description +
+>> help text.
+>>
+>> We'll rename BALLOON_COMPACTION separately next.
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   mm/Kconfig | 17 +++++++----------
+>>   1 file changed, 7 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index e47321051d765..3aff4d05a2d8c 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -599,17 +599,14 @@ config MEMORY_BALLOON
+>>   #
+>>   # support for memory balloon compaction
+>>   config BALLOON_COMPACTION
+>> -	bool "Allow for balloon memory compaction/migration"
+>> +	bool "Allow for balloon memory migration"
+>>   	default y
+>> -	depends on COMPACTION && MEMORY_BALLOON
+>> -	help
+>> -	  Memory fragmentation introduced by ballooning might reduce
+>> -	  significantly the number of 2MB contiguous memory blocks that can be
+>> -	  used within a guest, thus imposing performance penalties associated
+>> -	  with the reduced number of transparent huge pages that could be used
+>> -	  by the guest workload. Allowing the compaction & migration for memory
+>> -	  pages enlisted as being part of memory balloon devices avoids the
+>> -	  scenario aforementioned and helps improving memory defragmentation.
+>> +	depends on MIGRATION && MEMORY_BALLOON
+>> +	help
+>> +	  Allow for migration of pages inflated in a memory balloon such that
+>> +	  they can be allocated from memory areas only available for movable
+>> +	  allocations (e.g., ZONE_MOVABLE, CMA) and such that they can get
+> 
+> nit:
+> s/get/be/
+
+Thanks!
 
 -- 
-Regards,
+Cheers
 
-Laurent Pinchart
+David / dhildenb
+
 
