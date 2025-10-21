@@ -1,97 +1,400 @@
-Return-Path: <linux-kernel+bounces-863175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23226BF72D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:54:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DE8BF7267
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C15400CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:54:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5F514EA3BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22BF33FE34;
-	Tue, 21 Oct 2025 14:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=syptech.net header.i=@syptech.net header.b="ADcVACyK"
-Received: from gwf2.litvpn.com (gwf2.litvpn.com [216.244.76.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAFE340A41;
+	Tue, 21 Oct 2025 14:46:37 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E1932E6B4;
-	Tue, 21 Oct 2025 14:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.244.76.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F3F33FE38;
+	Tue, 21 Oct 2025 14:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761058461; cv=none; b=WGH94bjzDQXDvfDyBIkEuh1YeYsBfvpzkF1c9KtHr+uGFp1FlfOJmxxJI4AKJ7jIERLMm6akb83dD7P97IsN9/JS8tVR4GgI46qPQFhNOZWuDjgv3vrOy4+DaRMYKZS1bUCSsMskxgn1fx2ouMWaaGap36UEqkjQoV4rRV+La40=
+	t=1761057996; cv=none; b=MtGi+Rq06yv5w8Cd1J6AbQNoiEcSwAhwYIMvtHZAPB4yV4iWyG3vlcHQrRqW0BFkQsEq3NiEn24Y3MLsR0F18cRrbq7+W8rC18GkXvJRJb6w5O7yNx18aawC+lsv0zU9580ewrz1o9cjy7OOKYqmUnTyeU3E2lU1acWrNhRRaw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761058461; c=relaxed/simple;
-	bh=kjXzDlWgb9eThwmH9F3G/KyoVnumA55hC58shjQvoPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Xfe4A5zrS19JDDlKDz8gxZ6VK/rvnAZgHxVvzKXEYAm7XK5Rh8OdqZagzO16Tv63zVcbpKhKdefMGNS7baIAcAhIgaHCq8HZMuLAUDUT4wFeIv+p1ku22D8VHT6oPMkDtaQ6Rt6JdAnfW6fqhUcHO5e7sBP86WUtxO145lUvC5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=syptech.net; spf=pass smtp.mailfrom=syptech.net; dkim=pass (1024-bit key) header.d=syptech.net header.i=@syptech.net header.b=ADcVACyK; arc=none smtp.client-ip=216.244.76.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=syptech.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syptech.net
-Received: from gw2.cammew.com (gw2 [64.182.209.149])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by gwf2.litvpn.com (Postfix) with ESMTPS id 35516185C914;
-	Tue, 21 Oct 2025 10:44:25 -0400 (EDT)
-Received: from syptech.net (unknown [24.236.176.167])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by gw2.cammew.com (Postfix) with ESMTPSA id 852F3EE8FD;
-	Tue, 21 Oct 2025 10:44:18 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 gw2.cammew.com 852F3EE8FD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syptech.net;
-	s=relay; t=1761057858;
-	bh=4aiSc+CL9FZ65eMtNDmHHoElR3Dgy8bynX4TCf5YXW0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ADcVACyKVUNyoJgnlnEBaEEdRFdL9SBM6pqbG9jp8zHY0qjEkwDGSGiu7yWpYAOb2
-	 0V9DpTRHnNfvE/jjHUm5eQNZc47xiGsBqVA+MEKOGCAVPrHLKKLLY06nqWjtJ0C2q7
-	 QwkrUq/fBXm89NKaU9FyBOZQlQarEwtrMwyxp2DU=
-Date: Tue, 21 Oct 2025 10:44:05 -0400
-From: "Adam J. Sypniewski" <ajsyp@syptech.net>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Arec Kao <arec.kao@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: ov13b10: Add ACPI ID for ASUS Z13 Flow laptop
-Message-ID: <aPecNTw6RHzprJ6e@garrus>
+	s=arc-20240116; t=1761057996; c=relaxed/simple;
+	bh=EZ8iZmxtEjY5S/kY8DrOi3XNiSGLrtvYBs3T4mkMqbA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T2/gjM2cFzGFaWB+zACsWs9kYmoNf9LrSDotM+o72cZ1TNpNSPOM4PAl7GgiWNjwnM8u9lFWgrNNn4KE41WI+7tbsUwMWemy+sjCTeBxGE9e3meAakef8b4SqLA7k56j1+3+GyfYVPgnUilWlAytpVmxSrl+a8g9PxcG0bLjFmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4crZld2Sqmz6D98B;
+	Tue, 21 Oct 2025 22:42:53 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id EBA17140133;
+	Tue, 21 Oct 2025 22:46:31 +0800 (CST)
+Received: from huawei-ThinkCentre-M920t.huawei.com (10.123.122.223) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 21 Oct 2025 17:46:31 +0300
+From: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <andrey.bokhanko@huawei.com>, Dmitry Skorodumov
+	<skorodumov.dmitry@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net-next 4/8] ipvlan: Added some kind of MAC SNAT
+Date: Tue, 21 Oct 2025 17:44:06 +0300
+Message-ID: <20251021144410.257905-5-skorodumov.dmitry@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251021144410.257905-1-skorodumov.dmitry@huawei.com>
+References: <20251021144410.257905-1-skorodumov.dmitry@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mscpeml500004.china.huawei.com (7.188.26.250) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-The ASUS ROG Flow Z13 2025 (GZ302) laptop uses an OV13B10 sensor with a
-non-standard ACPI ID of OMNI13B1 instead of the expected OVTI13B1.
+We remember the SRC MAC address of outgoing packets
+together with IP addresses.
 
-Add this ACPI ID to the driver to make the front-facing camera work on
-these laptops.
+While RX, we patch MAC address with remembered MAC.
 
-Signed-off-by: Adam J. Sypniewski <ajsyp@syptech.net>
+We do patching for both eth_dst and ARPs.
+
+ToDo: support IPv6 Neighbours Discovery.
+
+Signed-off-by: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
 ---
- drivers/media/i2c/ov13b10.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ipvlan/ipvlan.h      |   5 +-
+ drivers/net/ipvlan/ipvlan_core.c | 144 +++++++++++++++++++++++--------
+ drivers/net/ipvlan/ipvlan_main.c |  11 ++-
+ 3 files changed, 118 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/media/i2c/ov13b10.c b/drivers/media/i2c/ov13b10.c
-index 869bc78ed792..6ecd77d02b78 100644
---- a/drivers/media/i2c/ov13b10.c
-+++ b/drivers/media/i2c/ov13b10.c
-@@ -1693,6 +1693,7 @@ static DEFINE_RUNTIME_DEV_PM_OPS(ov13b10_pm_ops, ov13b10_suspend,
- static const struct acpi_device_id ov13b10_acpi_ids[] = {
- 	{"OVTIDB10"},
- 	{"OVTI13B1"},
-+	{"OMNI13B1"},
- 	{ /* sentinel */ }
- };
+diff --git a/drivers/net/ipvlan/ipvlan.h b/drivers/net/ipvlan/ipvlan.h
+index 020e80df1e38..02a705bf9d42 100644
+--- a/drivers/net/ipvlan/ipvlan.h
++++ b/drivers/net/ipvlan/ipvlan.h
+@@ -78,6 +78,7 @@ struct ipvl_addr {
+ 		struct in6_addr	ip6;	 /* IPv6 address on logical interface */
+ 		struct in_addr	ip4;	 /* IPv4 address on logical interface */
+ 	} ipu;
++	u8			hwaddr[ETH_ALEN];
+ #define ip6addr	ipu.ip6
+ #define ip4addr ipu.ip4
+ 	struct hlist_node	hlnode;  /* Hash-table linkage */
+@@ -177,7 +178,9 @@ void ipvlan_multicast_enqueue(struct ipvl_port *port,
+ 			      struct sk_buff *skb, bool tx_pkt);
+ int ipvlan_queue_xmit(struct sk_buff *skb, struct net_device *dev);
+ void ipvlan_ht_addr_add(struct ipvl_dev *ipvlan, struct ipvl_addr *addr);
+-int ipvlan_add_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6);
++int ipvlan_add_addr(struct ipvl_dev *ipvlan,
++		    void *iaddr, bool is_v6, const u8 *hwaddr);
++void ipvlan_del_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6);
+ struct ipvl_addr *ipvlan_find_addr(const struct ipvl_dev *ipvlan,
+ 				   const void *iaddr, bool is_v6);
+ bool ipvlan_addr_busy(struct ipvl_port *port, void *iaddr, bool is_v6);
+diff --git a/drivers/net/ipvlan/ipvlan_core.c b/drivers/net/ipvlan/ipvlan_core.c
+index 41059639f307..fe8e59066c46 100644
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -320,8 +320,36 @@ void ipvlan_skb_crossing_ns(struct sk_buff *skb, struct net_device *dev)
+ 		skb->dev = dev;
+ }
  
-
-base-commit: 1fdb55ed40fa5ebe6934bd6b93036c714ebb5ef8
+-static int ipvlan_rcv_frame(struct ipvl_addr *addr, struct sk_buff **pskb,
+-			    bool local)
++static int ipvlan_snat_rx_skb(struct ipvl_addr *addr, int addr_type,
++			      struct sk_buff *skb)
++{
++	/* Here we have non-shared skb and free to modify it. */
++	struct ethhdr *eth = eth_hdr(skb);
++
++	if (addr_type == IPVL_ARP) {
++		struct arphdr *arph = arp_hdr(skb);
++		u8 *arp_ptr = (u8 *)(arph + 1);
++		u8 *dsthw = arp_ptr + addr->master->dev->addr_len + sizeof(u32);
++		const u8 *phy_addr = addr->master->phy_dev->dev_addr;
++
++		/* Some access points may do ARP-proxy and answers us back.
++		 * Client may treat this as address-conflict.
++		 */
++		if (ether_addr_equal(eth->h_source, phy_addr) &&
++		    ether_addr_equal(eth->h_dest, phy_addr) &&
++		    is_zero_ether_addr(dsthw)) {
++			return NET_RX_DROP;
++		}
++		if (ether_addr_equal(dsthw, phy_addr))
++			ether_addr_copy(dsthw, addr->hwaddr);
++	}
++
++	ether_addr_copy(eth->h_dest, addr->hwaddr);
++	return NET_RX_SUCCESS;
++}
++
++static int ipvlan_rcv_frame(struct ipvl_addr *addr, int addr_type,
++			    struct sk_buff **pskb, bool local)
+ {
+ 	struct ipvl_dev *ipvlan = addr->master;
+ 	struct net_device *dev = ipvlan->dev;
+@@ -331,10 +359,8 @@ static int ipvlan_rcv_frame(struct ipvl_addr *addr, struct sk_buff **pskb,
+ 	struct sk_buff *skb = *pskb;
+ 
+ 	len = skb->len + ETH_HLEN;
+-	/* Only packets exchanged between two local slaves need to have
+-	 * device-up check as well as skb-share check.
+-	 */
+-	if (local) {
++
++	if (local || ipvlan_is_learnable(ipvlan->port)) {
+ 		if (unlikely(!(dev->flags & IFF_UP))) {
+ 			kfree_skb(skb);
+ 			goto out;
+@@ -345,6 +371,13 @@ static int ipvlan_rcv_frame(struct ipvl_addr *addr, struct sk_buff **pskb,
+ 			goto out;
+ 
+ 		*pskb = skb;
++		if (!local && ipvlan_is_learnable(ipvlan->port)) {
++			if (ipvlan_snat_rx_skb(addr, addr_type, skb) !=
++			    NET_RX_SUCCESS) {
++				kfree_skb(skb);
++				goto out;
++			}
++		}
+ 	}
+ 
+ 	if (local) {
+@@ -436,8 +469,9 @@ static inline bool is_ipv6_usable(const struct in6_addr *addr)
+ }
+ 
+ static void ipvlan_addr_learn(struct ipvl_dev *ipvlan, void *lyr3h,
+-			      int addr_type)
++			      int addr_type, const u8 *hwaddr)
+ {
++	struct ipvl_addr *ipvladdr;
+ 	void *addr = NULL;
+ 	bool is_v6;
+ 
+@@ -486,10 +520,18 @@ static void ipvlan_addr_learn(struct ipvl_dev *ipvlan, void *lyr3h,
+ 		return;
+ 	}
+ 
+-	if (!ipvlan_ht_addr_lookup(ipvlan->port, addr, is_v6)) {
++	/* handle situation when MAC changed, but IP is the same. */
++	ipvladdr = ipvlan_ht_addr_lookup(ipvlan->port, addr, is_v6);
++	if (ipvladdr && !ether_addr_equal(ipvladdr->hwaddr, hwaddr)) {
++		/* del_addr is safe to call, because we are inside xmit*/
++		ipvlan_del_addr(ipvladdr->master, addr, is_v6);
++		ipvladdr = NULL;
++	}
++
++	if (!ipvladdr) {
+ 		spin_lock_bh(&ipvlan->addrs_lock);
+ 		if (!ipvlan_addr_busy(ipvlan->port, addr, is_v6))
+-			ipvlan_add_addr(ipvlan, addr, is_v6);
++			ipvlan_add_addr(ipvlan, addr, is_v6, hwaddr);
+ 		spin_unlock_bh(&ipvlan->addrs_lock);
+ 	}
+ }
+@@ -687,7 +729,7 @@ static int ipvlan_xmit_mode_l3(struct sk_buff *skb, struct net_device *dev)
+ 				consume_skb(skb);
+ 				return NET_XMIT_DROP;
+ 			}
+-			ipvlan_rcv_frame(addr, &skb, true);
++			ipvlan_rcv_frame(addr, addr_type, &skb, true);
+ 			return NET_XMIT_SUCCESS;
+ 		}
+ 	}
+@@ -712,12 +754,14 @@ static int ipvlan_xmit_mode_l2(struct sk_buff *skb, struct net_device *dev)
+ 	}
+ 
+ 	same_mac_addr = ether_addr_equal(eth->h_dest, eth->h_source);
++	if (same_mac_addr && ipvlan_is_learnable(ipvlan->port))
++		goto out_drop;
+ 
+ 	lyr3h = ipvlan_get_L3_hdr(ipvlan->port, skb, &addr_type);
+ 
+ 	if (ipvlan_is_learnable(ipvlan->port)) {
+ 		if (lyr3h)
+-			ipvlan_addr_learn(ipvlan, lyr3h, addr_type);
++			ipvlan_addr_learn(ipvlan, lyr3h, addr_type, eth->h_source);
+ 		/* Mark SKB in advance */
+ 		skb = skb_share_check(skb, GFP_ATOMIC);
+ 		if (!skb)
+@@ -734,47 +778,74 @@ static int ipvlan_xmit_mode_l2(struct sk_buff *skb, struct net_device *dev)
+ 			ipvlan_multicast_enqueue(ipvlan->port, nskb, true);
+ 		}
+ 
+-		goto tx_phy_dev;
++		goto tx_frame_out;
+ 	}
+ 
+ 	if (ipvlan_is_vepa(ipvlan->port))
+ 		goto tx_phy_dev;
+ 
+-	if (!same_mac_addr &&
++	if (ipvlan_is_learnable(ipvlan->port) &&
+ 	    ether_addr_equal(eth->h_dest, ipvlan->phy_dev->dev_addr)) {
+ 		/* It is a packet from child with destination to main port.
+ 		 * Pass it to main.
+ 		 */
+-		skb = skb_share_check(skb, GFP_ATOMIC);
+-		if (!skb)
+-			return NET_XMIT_DROP;
+ 		skb->pkt_type = PACKET_HOST;
+ 		skb->dev = ipvlan->phy_dev;
+ 		dev_forward_skb(ipvlan->phy_dev, skb);
+ 		return NET_XMIT_SUCCESS;
+-	} else if (same_mac_addr) {
+-		if (lyr3h) {
+-			addr = ipvlan_addr_lookup(ipvlan->port, lyr3h, addr_type, true);
+-			if (addr) {
+-				if (ipvlan_is_private(ipvlan->port)) {
+-					consume_skb(skb);
+-					return NET_XMIT_DROP;
+-				}
+-				ipvlan_rcv_frame(addr, &skb, true);
+-				return NET_XMIT_SUCCESS;
+-			}
++	}
++
++	if (lyr3h) {
++		addr = ipvlan_addr_lookup(ipvlan->port, lyr3h, addr_type, true);
++		if (addr) {
++			if (ipvlan_is_private(ipvlan->port))
++				goto out_drop;
++
++			ipvlan_rcv_frame(addr, addr_type, &skb, true);
++			return NET_XMIT_SUCCESS;
+ 		}
++	}
++
++tx_frame_out:
++	/* We don't know destination. Now we have to handle case for
++	 * non-learnable bridge and learnable case.
++	 */
++	if (!ipvlan_is_learnable(ipvlan->port)) {
+ 		skb = skb_share_check(skb, GFP_ATOMIC);
+ 		if (!skb)
+ 			return NET_XMIT_DROP;
++		if (same_mac_addr) {
++			/* Packet definitely does not belong to any of the
++			 * virtual devices, but the dest is local. So forward
++			 * the skb for the main-dev. At the RX side we just return
++			 * RX_PASS for it to be processed further on the stack.
++			 */
++			dev_forward_skb(ipvlan->phy_dev, skb);
++			return NET_XMIT_SUCCESS;
++		}
++	} else {
++		/* Ok. It is a packet to outside on learnable. Fix source eth-address. */
++		struct sk_buff *orig_skb = skb;
+ 
+-		/* Packet definitely does not belong to any of the
+-		 * virtual devices, but the dest is local. So forward
+-		 * the skb for the main-dev. At the RX side we just return
+-		 * RX_PASS for it to be processed further on the stack.
+-		 */
+-		dev_forward_skb(ipvlan->phy_dev, skb);
+-		return NET_XMIT_SUCCESS;
++		skb = skb_unshare(skb, GFP_ATOMIC);
++		if (!skb)
++			return NET_XMIT_DROP;
++
++		skb_reset_mac_header(skb);
++		ether_addr_copy(skb_eth_hdr(skb)->h_source,
++				ipvlan->phy_dev->dev_addr);
++
++		/* ToDo: Handle ICMPv6 for neighbours discovery.*/
++		if (lyr3h && addr_type == IPVL_ARP) {
++			struct arphdr *arph;
++			/* must reparse new skb */
++			if (skb != orig_skb && lyr3h && addr_type == IPVL_ARP)
++				lyr3h = ipvlan_get_L3_hdr(ipvlan->port, skb,
++							  &addr_type);
++			arph = (struct arphdr *)lyr3h;
++			ether_addr_copy((u8 *)(arph + 1),
++					ipvlan->phy_dev->dev_addr);
++		}
+ 	}
+ 
+ tx_phy_dev:
+@@ -849,8 +920,7 @@ static rx_handler_result_t ipvlan_handle_mode_l3(struct sk_buff **pskb,
+ 
+ 	addr = ipvlan_addr_lookup(port, lyr3h, addr_type, true);
+ 	if (addr)
+-		ret = ipvlan_rcv_frame(addr, pskb, false);
+-
++		ret = ipvlan_rcv_frame(addr, addr_type, pskb, false);
+ out:
+ 	return ret;
+ }
+@@ -918,7 +988,7 @@ static rx_handler_result_t ipvlan_handle_mode_l2(struct sk_buff **pskb,
+ 		return RX_HANDLER_PASS;
+ 
+ 	if (ipvlan_is_l2_mcast(port, skb, &need_eth_fix)) {
+-		if (ipvlan_external_frame(skb, port)) {
++		if (ipvlan_is_learnable(port) || ipvlan_external_frame(skb, port)) {
+ 			/* External frames are queued for device local
+ 			 * distribution, but a copy is given to master
+ 			 * straight away to avoid sending duplicates later
+diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
+index df5275bc30fc..6fdfeca6081d 100644
+--- a/drivers/net/ipvlan/ipvlan_main.c
++++ b/drivers/net/ipvlan/ipvlan_main.c
+@@ -911,7 +911,8 @@ static int ipvlan_device_event(struct notifier_block *unused,
+ }
+ 
+ /* the caller must held the addrs lock */
+-int ipvlan_add_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6)
++int ipvlan_add_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6,
++		    const u8 *hwaddr)
+ {
+ 	struct ipvl_addr *addr;
+ 
+@@ -929,6 +930,8 @@ int ipvlan_add_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6)
+ 		addr->atype = IPVL_IPV6;
+ #endif
+ 	}
++	if (hwaddr)
++		ether_addr_copy(addr->hwaddr, hwaddr);
+ 
+ 	list_add_tail_rcu(&addr->anode, &ipvlan->addrs);
+ 
+@@ -941,7 +944,7 @@ int ipvlan_add_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6)
+ 	return 0;
+ }
+ 
+-static void ipvlan_del_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6)
++void ipvlan_del_addr(struct ipvl_dev *ipvlan, void *iaddr, bool is_v6)
+ {
+ 	struct ipvl_addr *addr;
+ 
+@@ -982,7 +985,7 @@ static int ipvlan_add_addr6(struct ipvl_dev *ipvlan, struct in6_addr *ip6_addr)
+ 			  "Failed to add IPv6=%pI6c addr for %s intf\n",
+ 			  ip6_addr, ipvlan->dev->name);
+ 	else
+-		ret = ipvlan_add_addr(ipvlan, ip6_addr, true);
++		ret = ipvlan_add_addr(ipvlan, ip6_addr, true, NULL);
+ 	spin_unlock_bh(&ipvlan->addrs_lock);
+ 	return ret;
+ }
+@@ -1053,7 +1056,7 @@ static int ipvlan_add_addr4(struct ipvl_dev *ipvlan, struct in_addr *ip4_addr)
+ 			  "Failed to add IPv4=%pI4 on %s intf.\n",
+ 			  ip4_addr, ipvlan->dev->name);
+ 	else
+-		ret = ipvlan_add_addr(ipvlan, ip4_addr, false);
++		ret = ipvlan_add_addr(ipvlan, ip4_addr, false, NULL);
+ 	spin_unlock_bh(&ipvlan->addrs_lock);
+ 	return ret;
+ }
 -- 
-2.50.1
+2.25.1
 
 
