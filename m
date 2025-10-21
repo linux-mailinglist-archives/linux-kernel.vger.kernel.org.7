@@ -1,96 +1,130 @@
-Return-Path: <linux-kernel+bounces-862474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE531BF563A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:01:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9120BF55E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E28E18C4BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:01:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F9843514FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8549832B980;
-	Tue, 21 Oct 2025 09:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA94329C76;
+	Tue, 21 Oct 2025 08:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="FvyJ3XdP"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J7jmNfQ2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D45D303A23
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9D2329C50
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037232; cv=none; b=RGpGNzaDvkR28JS40m09mrEXecIAeN7e//rypGVzYwIzAOyKoNrVrSHAuud74Dptzk72g46XwS80xsXneZWsP1JySR0qEJmFaJOmkhQ0r1cV3krb/PgewCFT9ag1LnhDP5pTXg5IT7lAScKo4TCo74zhzjx+dgy+COEUtwZ9/tI=
+	t=1761036910; cv=none; b=OXZbZOjrJm+WfoaZW1dvpg2qhZaG14C6lDCSgmPTdbyNIN1r1j/wWnOrz8uBGI7XgyEX1KqeR2Ta91ol5xOiDG3oLETskfZO0hQbWuERdvTz7KD0rkIgDrQTdNiweB84RVUg6Vk8UEzEKe48RBCyUEmLfPPUkQy4aGAjs6kbTYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037232; c=relaxed/simple;
-	bh=/XlW3aS7vAxAi4hLZ7dTkWN9HWfNBsBf/kkXplXaTq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1lmijOMXTdUiTk1sq1QV813SSpeg+sqUqviFgkN0HoGKUdoS/QxrDf78/l4QErMkKP0u0/yZeYcrV01u1Nob6H+5Byi/zGJ9VMwqFuI5yyw3b3WO5XI6JyWB6wPfcttK+WnKXahmaGXLzK7yPGDwUIHN1CBrXDb7Z9RdepN7m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=FvyJ3XdP; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 816F81C007C; Tue, 21 Oct 2025 10:52:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1761036775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dErned3ck4ttHaxx/p3FOt0HvYqgzyJ/HMUXhenkLXY=;
-	b=FvyJ3XdPMW4mkfOJPWknVWswHcq1Yokmbns7wRV3Ntnl1i48gIrSuuSp2/Wy9EP97u5ngo
-	shvIy9bTDFPOFJCMnjI5Ae7zeIH+Q/jckOMU5UZw0sO53QiVAqVkaAN4enkIAWWa4/9FEz
-	BaIjnhyhK8qyo9x3BUR4ax+kEBW/BWw=
-Date: Tue, 21 Oct 2025 10:52:54 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rusindanilo@gmail.com
-Subject: Re: [PATCH 0/1] x86/power: Enhanced hibernation support with
- integrity checking
-Message-ID: <aPdJ5kff1DD0ZSdn@duo.ucw.cz>
-References: <aE/gS7r1mrllLSSp@duo.ucw.cz>
- <20251021040311.15214-1-safinaskar@gmail.com>
+	s=arc-20240116; t=1761036910; c=relaxed/simple;
+	bh=VswKoNYWqbxDAkBE7g2SLuE51cwjYRCIW4OtJaiJOJo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h/95DPT4ZBzXmRaEh+GGViyXDZ4C0QONshSU4uygifdZyj0W9RTsWVabZz6EzfXYN/XJjvA/lizLscj3/qq6+9hcWiuxWL6yl7ut6hOsOjNFAwHvRltO0oV028KW/9iDOM9c7sOClQEsS44B3HcYX8B59ZD7682Opbt4LgsaC1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J7jmNfQ2; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761036908; x=1792572908;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=VswKoNYWqbxDAkBE7g2SLuE51cwjYRCIW4OtJaiJOJo=;
+  b=J7jmNfQ2dGSqNzHQed4zxdMqk49qi/t+jgrGEa43KGPt9pjZAZ2e8wSW
+   dsEXsGyNWVzXBdfURk1Uu00/JW6WCG3lHwheVHjeHMl41gjfWa3W7WSww
+   xA+dlmZcsr+TnA7/kDB0FNwnYTw1sKaKnEjY5exOJr9ZuI29pGF20YHxu
+   iYYtPEV/oaAuzToFPa6D5WUkHVewR4leiU/pNUgRNLJKXJAbHGG3xi/Ie
+   yF3D+jTAfFuLp2br9Itp6d0bwaC5hT5CQOlXZnbWxa6lIYK4hemxNSbnQ
+   QduLWN6frc38sR5Qckwh8l+rBuawTNExJU4odNmk5RFJ3+y2Pk0GI3CoT
+   g==;
+X-CSE-ConnectionGUID: xBa0KKouQPSxwxUhj3gQkA==
+X-CSE-MsgGUID: GouDFVhTQXOKJjh9pN8tSA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65774226"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="65774226"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 01:55:08 -0700
+X-CSE-ConnectionGUID: al+HkUXbSR+qPKDIYLKN2A==
+X-CSE-MsgGUID: 7BIqSOfRSkmufTPq7jzz0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="183101095"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.52])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 01:55:04 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Chu Guangqing <chuguangqing@inspur.com>, alain.volmat@foss.st.com,
+ rgallaispou@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Chu
+ Guangqing <chuguangqing@inspur.com>
+Subject: Re: [PATCH v2 1/1] drm/sti: hdmi: call drm_edid_connector_update
+ when edid is NULL
+In-Reply-To: <20251020013039.1800-2-chuguangqing@inspur.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20251020013039.1800-1-chuguangqing@inspur.com>
+ <20251020013039.1800-2-chuguangqing@inspur.com>
+Date: Tue, 21 Oct 2025 11:55:01 +0300
+Message-ID: <4cf3050675a7090a87c80d525601b226e5e70f06@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fmNVwuxeVkagYk9J"
-Content-Disposition: inline
-In-Reply-To: <20251021040311.15214-1-safinaskar@gmail.com>
+Content-Type: text/plain
+
+On Mon, 20 Oct 2025, Chu Guangqing <chuguangqing@inspur.com> wrote:
+> call drm_edid_connector_update to reset the information when edid is NULL.
+> We can see the following comments in drm_edid.c
+> If EDID is NULL, reset the information.
+>
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> ---
+>  drivers/gpu/drm/sti/sti_hdmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+> index 4e7c3d78b2b9..e0be1be8bcdd 100644
+> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> @@ -1008,7 +1008,7 @@ static int sti_hdmi_connector_get_modes(struct drm_connector *connector)
+>  	return count;
+>  
+>  fail:
+> -	DRM_ERROR("Can't read HDMI EDID\n");
+> +	drm_edid_connector_update(connector, NULL);
+
+The context above has:
+
+	drm_edid = drm_edid_read(connector);
+
+	drm_edid_connector_update(connector, drm_edid);
+
+	cec_notifier_set_phys_addr(hdmi->notifier,
+				   connector->display_info.source_physical_address);
+
+	if (!drm_edid)
+		goto fail;
+
+i.e. drm_edid_connector_update() already gets called regardless of
+whether drm_edid is NULL or not. Precisely as intended in commit
+f7945d9fa8b7 ("drm/sti/sti_hdmi: convert to struct drm_edid").
 
 
---fmNVwuxeVkagYk9J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+BR,
+Jani.
 
-On Tue 2025-10-21 07:03:11, Askar Safin wrote:
-> Pavel Machek <pavel@ucw.cz>:
-> > There's uswsusp support. You can use that to provide robust
-> > signatures. You can even use RSA to encrypt the image but only require
-> > password during resume.
->=20
-> So uswsusp project is still alive? Where is userspace programs for using =
-it?
 
-See https://suspend.sourceforge.net/ .
-									Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
+>  	return 0;
+>  }
 
---fmNVwuxeVkagYk9J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaPdJ5gAKCRAw5/Bqldv6
-8iP6AKCj/JzL43JRivJohzSjXUutEJtrBQCffcTx1yu+aJMV+BcIiT/OMgGIOaU=
-=erIJ
------END PGP SIGNATURE-----
-
---fmNVwuxeVkagYk9J--
+-- 
+Jani Nikula, Intel
 
