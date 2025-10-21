@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-863520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7EA0BF809D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:25:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602AABF80AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062AC18A5EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:25:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08AC03579CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEA834F260;
-	Tue, 21 Oct 2025 18:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1803C351FA8;
+	Tue, 21 Oct 2025 18:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XECirQQ9"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YhGxVNDo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zqYaDsIE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33B4221FDA
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99FE3502BE
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761071104; cv=none; b=SzA2NGBQvi5kA6Un5jZ6NnQoiXVsIKHmqj02YZpJwMY+RttXNFLbbfCTgX85qrvIqfYrNzPHke7tJVE87XkD8yvwKSdD5ZoY6OmA2owqJOskEjhUDZYfI2SEar01svprUwd7NPunLO+QbvRSN5/xrbV1YfByA7IM2jEH+94zYYg=
+	t=1761071130; cv=none; b=Ls7pKYSC3IghRBEAKdn7lNgxZ5A68PJWXMq2+cdbdQhLTkt1ICs0kGkSAuA11Ain1/44A3BsIKD9m9IYSax6zztuFfwbAvPJwPwjqZLl/X9t5ZaqthoZEqnOH2EAVwXsyc97WykWmcpFMcOq2NL5nh3Qgo2rL5oPuLfWMUQTVpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761071104; c=relaxed/simple;
-	bh=uGGtj65PbTrlbw+uhHSVW++NmhcnRg1oiufGnyI2qRM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LW46mptzCMk/Ba3KpImL0YOpLmmk7TgCV2eIoqbfzoqdUZya56BpGE3SPcYZtfQuTI8TwL39NFaZZE12DC303pby4VPHWRWxOdMKubBfvWqD3R3CwygAfMiNf8DNbt5P91yYXXSnKLF7lPowYxqOeEFkBfd8+FIiISSVTUvRGO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XECirQQ9; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-93e7ff97d9fso438788239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:25:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761071102; x=1761675902; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/hRaAHyijOpufUPv49cvX1ntk/2yuvuUY4aCKFAmWd0=;
-        b=XECirQQ9heFZSgIbAb5HKk+eGkgpyrS6R7icQrRPvXjL58B/mUFT44sAfleJoxPBQt
-         Z5IykCrkSQqUSar5YdJrTQ28GuoTS+o65wo5Ah2nNe+5DkTimbumcyyf+0kK4bdgDXJq
-         l51edLFl/JENV3FPvclCgcvxvxzOpokiw0vzYKX/YHwwTxUSKFTyZj7A6Itg6R7Wa4L2
-         X0z1FHNm6MXPo9+ScnJt/VP9VxP+WwMeWt/UWrTknJ4VMJR1OoHZruOiZWkDTnZ3EUNw
-         WFlCEBlAHKsbtRWBcxezKjGa9LHYNjOVGixmsT0KoHJZkpnZAdXYlAko0iRyxmBj5gpn
-         Ag8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761071102; x=1761675902;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/hRaAHyijOpufUPv49cvX1ntk/2yuvuUY4aCKFAmWd0=;
-        b=T2gbeoLHMJW8pfsbg4L8mYuGExRsB0H4eJQ2J9BGIzvxWca0LM18XDpqjngiY2s3uO
-         SAb7DkISpaNvNkTVJevEAFe5OtcQI2eK+3OTQlg/kyp0Du0btRuJOm6iO1lwuEFcfG+L
-         H0zOVEpk7hSC2RlK9jAtfkFY/ZOzXTk97dGksv9l6FCaAk4SC8jS+lAIwc4i7PKa1f49
-         F4paplAQT7+k+6YYDWqzUJ41M6xEGE2jTI0myJSFUUcfMWy9PwBAXJtjUOt+eTkFVTXQ
-         qG27PH9me9iwXYnxYLb3FeBV1gVABgCAi+GP9TSuoVEzU4ighKJWvw/7+IHy1mcqJwsr
-         uXaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtrG7v9OVtT7JNrtyz/S6/VFkL4ziJyPC58g/C+wB+RFM4CRdn9mBDSdYKCGEZUSxwGAcG/FjtnXlIdJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPnxg6TqA0f3+zoMueST+D0egDizYGmETKMymvANpaxQ6tbjzR
-	mG3Lj7AbFzmwrJXYpz65Zmt/Jo0i7pL3HUuH294FDsnkdf4OMuliNix2
-X-Gm-Gg: ASbGncuXnetv5y1QFKB5xCFDfx5l8GDB8wGIDTZ1M4Ke/Frr5eqRMxDCIQ0eQHOUJ54
-	8MRQH3Fk7ZaGwXLtmJ2Ks5Mg2VzQKtoEbvSh0J5Sv8vhvwytfZeDfaChtC8DzW7arM5s0QOmDD8
-	zcO1Uyk8UmRa2dtIp7T+Qx7Nd0qA2DzOo5O9ZixPXMDCb+q+dBTMMel2QXQHpvzANl43a2SHMlY
-	cGf3HE1MTnpFHmGhrYfdhZgBkAMm9SqIk1m5nsadsOv3fJo7REmKNLI8ekuWUUZpqUmKkWvQfXt
-	VmsP++zdm3bk4zFEjlMfr4A9eDjstKgpEgNsHCKndFiwfOCpezjY1Ho3UQ7zUbA58TGGDcNDdti
-	7FGsjXTjhOZ67yiYFQFpekNzq8gMUcFsJKTzodbuFkgqxQSjo/ZbvfoMca7vRhHWBgLRFAn0Key
-	OqZjO5/R0/YMzV/c65KN2B5A==
-X-Google-Smtp-Source: AGHT+IEjqZ6+79HpV6r/CD1o/Z4Q+UBJIDYVMWQbNCZ5pOHYsJukoWPbU6x5ZEpq+HAyIA6z7ev07w==
-X-Received: by 2002:a05:6e02:1a66:b0:425:951f:52fa with SMTP id e9e14a558f8ab-430c5275304mr291734935ab.14.1761071101704;
-        Tue, 21 Oct 2025 11:25:01 -0700 (PDT)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d07c9ef0sm45644795ab.35.2025.10.21.11.25.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 11:25:00 -0700 (PDT)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] ptp: ocp: Fix typo using index 1 instead of i in SMA initialization loop
-Date: Tue, 21 Oct 2025 18:24:56 +0000
-Message-Id: <20251021182456.9729-1-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1761071130; c=relaxed/simple;
+	bh=Fpq5TguFnh7GJoFSbAmRLvYFjzZrQe2+wh8QZ39i1tE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I0vfzNZA5wklgsHzMQbmhHic0dnaltWdhspUtByKQSjeid8sAyybtRhneDgZvJk0YwQQPEn1SOV4nVBD/uWRiRiuWQSaLhEs7R+TkodgDiNk62zYv3gYTaqFW8fSAgNRK8lprNWcM6S2/1d2EiEGSMGNFg+pjX7a3ccvtq0r8GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YhGxVNDo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zqYaDsIE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761071126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh6FOKDSjWc03H2twpiTeFyRcRcme/drbYMmxZglaxQ=;
+	b=YhGxVNDoCKtV7HeIuqrBiJeooLpxn6AQ8yZQx6GOY6PLLoiQUujWsTC35UKIsRwIMYp3tV
+	siDG+DcDTM189/Y57EQ/N7rAsCkc3EnU/LXXkaBn9MFwFocSaaJ0eAe7d0GDxVtZxNwISi
+	PY0iuSOAfxLIdMrG6wOzX0DOoDtyX23thWbInxfw6dlnZJ67Nghyxd0zHd01qJBZcHap9v
+	ipu6BWl5HG89mHzUS/I2cNsC7ztGHcM1czlkhZROJx6appdfxQOxPUrYIFuwYWU4jR0/6T
+	HhokBIXCrUydxyvDMuzMcaxL2n2kzWyJ8ud4Wb0L5ODvwk98TvIT148Z8d4r5g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761071126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh6FOKDSjWc03H2twpiTeFyRcRcme/drbYMmxZglaxQ=;
+	b=zqYaDsIEXPxwz2x7ZTsTLVe6g4H162HRTF3cRSiZtZN1YnIrYyJniH4H2xBk7oUJ6AbIbX
+	ZpergSaXnYW9e9BQ==
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R. Shenoy"
+ <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim Chen
+ <tim.c.chen@intel.com>, TCMalloc Team <tcmalloc-eng@google.com>
+Subject: Re: [patch 06/19] sched/mmcid: Prevent pointless work in
+ mm_update_cpus_allowed()
+In-Reply-To: <20251020082250.GF3245006@noisy.programming.kicks-ass.net>
+References: <20251015164952.694882104@linutronix.de>
+ <20251015172834.694547089@linutronix.de>
+ <20251017111223.GD4067720@noisy.programming.kicks-ass.net>
+ <87y0p9zo9y.ffs@tglx>
+ <20251017175853.GH3419281@noisy.programming.kicks-ass.net>
+ <20251017181911.GR1386988@noisy.programming.kicks-ass.net>
+ <87jz0qzl74.ffs@tglx>
+ <20251020082250.GF3245006@noisy.programming.kicks-ass.net>
+Date: Tue, 21 Oct 2025 20:25:26 +0200
+Message-ID: <87v7k8xgbt.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-In ptp_ocp_sma_fb_init(), the code mistakenly used bp->sma[1]
-instead of bp->sma[i] inside a for-loop, which caused only SMA[1]
-to have its DIRECTION_CAN_CHANGE capability cleared. This led to
-inconsistent capability flags across SMA pins.
+On Mon, Oct 20 2025 at 10:22, Peter Zijlstra wrote:
+> On Sun, Oct 19, 2025 at 10:32:47PM +0200, Thomas Gleixner wrote:
+>> On Fri, Oct 17 2025 at 20:19, Peter Zijlstra wrote:
+>> > On Fri, Oct 17, 2025 at 07:58:53PM +0200, Peter Zijlstra wrote:
+>> >> Same is true when you offline a CPU come to think of it.
+>> >> 
+>> >> Same is true if the cpumask is sparse.
+>> >> 
+>> >> Anyway, just saying, checking against nr_cpu_ids might not be the best
+>> >> shortcut here.
+>> >
+>> > Put another way, nr_cpus_allowed == nr_cpu_ids only work when none of
+>> > the masks involved have holes. The moment anything {possible, present,
+>> > online} has holes in, it goes sideways.
+>> 
+>> You're right. I was too narrowly focussed on the normal x86 case, where
+>> nr_cpu_ids == num_possible_cpus ....
+>> 
+>> Let me think about that.
+>
+> So the obvious idea would be to grow hotplug hooks, such that you can
+> do:
+>
+>   nr_cpus_allowed == num_online_cpus()
+>
+> But then hotplug will have to iterate all mm's. Doable, but not really
+> nice.
 
-Fixes: 09eeb3aecc6c ("ptp_ocp: implement DPLL ops")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
- drivers/ptp/ptp_ocp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, but that can be done once the dust settled and if there is
+actually a need for it.
 
-diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-index 794ec6e71990..a5c363252986 100644
---- a/drivers/ptp/ptp_ocp.c
-+++ b/drivers/ptp/ptp_ocp.c
-@@ -2548,7 +2548,7 @@ ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
- 		for (i = 0; i < OCP_SMA_NUM; i++) {
- 			bp->sma[i].fixed_fcn = true;
- 			bp->sma[i].fixed_dir = true;
--			bp->sma[1].dpll_prop.capabilities &=
-+			bp->sma[i].dpll_prop.capabilities &=
- 				~DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE;
- 		}
- 		return;
--- 
-2.25.1
+Thanks,
 
+        tglx
 
