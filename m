@@ -1,46 +1,60 @@
-Return-Path: <linux-kernel+bounces-863142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F22BF71AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:36:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAD5BF71E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C9218969FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660333AAADD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F5E33CE87;
-	Tue, 21 Oct 2025 14:35:52 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEC84CB5B;
-	Tue, 21 Oct 2025 14:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA8F334C1F;
+	Tue, 21 Oct 2025 14:37:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38531F237A;
+	Tue, 21 Oct 2025 14:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761057352; cv=none; b=jDPIGlEbJIgb/2T838696Ozxby2AKBq2lUbd7X9IfRzEDqn/zdiGKW9fUcQVm8W/ZYuPm8fA/Z+bXoaghZiavq+HZXlioPr5Zsp2JIAd4y+gBzFdROyKw2iMwjVLx+EXZoMAoj+86ZTP0onO0cKLZ7sn7rhU+pq5j4oRlBp2yPY=
+	t=1761057466; cv=none; b=mhn4xQGftgjt9V4tNEzEerizPv8AZ+jypphzlcqyHSUgt4pO1CH8pUSANoPMs2cS9BuenrYW09ZmTZOCJM08qQnmiwQdjTYcQv/oTlC5p+TTZMDOXLFrs4UVDOlCrTLVlBMmQSGD8zCUglecs9Rks8HXfXFUMlTqf47JHXvwFM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761057352; c=relaxed/simple;
-	bh=hrZnjjo9UXVkwT4UCnJ37NiJduUzf7wEutnz76Qqsc8=;
+	s=arc-20240116; t=1761057466; c=relaxed/simple;
+	bh=pFOC1NQvZ4WI+z2NeOECoFfu3SxgHQl0t6oQW7CiwD4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNrHjqRrRUcg+ylOWNahJT1VnjSj4G/03dZ7EPb2/EUgVHd7CouunEghTGgIRkcX873t/v0D6ugl65rDdSmWejFM8yfTrAgMUS+oN2kHt17uxl2aEqwh21ow1GvgR6K4GNgDdH6XQZQ6Pjmn3Tr+HQhJtc0TL4yDXYB0tQFSc+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
-	id E8D3261117; Tue, 21 Oct 2025 16:35:47 +0200 (CEST)
-Date: Tue, 21 Oct 2025 16:35:47 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Andrii Melnychenko <a.melnychenko@vyos.io>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, phil@nwl.cc,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/1] nf_conntrack_ftp: Added nfct_seqadj_ext_add().
-Message-ID: <aPeaQ3BnCRLQ1wNm@strlen.de>
-References: <20251021133918.500380-1-a.melnychenko@vyos.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mEFqbb1jOfW0YI8WMg16esp8Q/4+hv++JHJVMwyrW5DZrDatIS/8j5S2uuGkiXQn8ATlkMsRMYVNY4Lh5dOtEf2gUMbFfBczAlylckaJec/gyh3Yr+H4d7dHSyck+K30GYfTmyaVLcv2ZsQyje+Q221+9TpgfEshUu0GNNrCyLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57C8E1063;
+	Tue, 21 Oct 2025 07:37:36 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F95A3F66E;
+	Tue, 21 Oct 2025 07:37:42 -0700 (PDT)
+Date: Tue, 21 Oct 2025 15:37:35 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
+ per-arch
+Message-ID: <aPearyfcnpJJ/e06@e133380.arm.com>
+References: <aNv53UmFGDBL0z3O@e133380.arm.com>
+ <1c4b6b46-16f9-4887-93f5-e0f5e7f30a6f@intel.com>
+ <aO0Oazuxt54hQFbx@e133380.arm.com>
+ <bf18c704-66d0-40cb-8696-435ac1c928b5@intel.com>
+ <aO/CEuyaIyZ5L28d@e133380.arm.com>
+ <dd5ba9e5-9809-4792-966a-e35368ab89f0@intel.com>
+ <aPJP52jXJvRYAjjV@e133380.arm.com>
+ <e788ca62-ec63-4552-978b-9569f369afd5@intel.com>
+ <aPZaTk97RC6sg+uQ@e133380.arm.com>
+ <aPZj1nDVEYmYytY9@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,71 +63,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021133918.500380-1-a.melnychenko@vyos.io>
+In-Reply-To: <aPZj1nDVEYmYytY9@agluck-desk3>
 
-Andrii Melnychenko <a.melnychenko@vyos.io> wrote:
-> There is an issue with FTP SNAT/DNAT. When the PASV/EPSV message is altered
-> The sequence adjustment is required, and there is an issue that seqadj is
-> not set up at that moment.
-> 
-> During the patch v2 discussion, it was decided to implement the fix
-> in the nft_ct. Apparently, missed seqadj is the issue of nft nat helpers.
-> The current fix would set up the seqadj extension for all NAT'ed conntrack
-> helpers.
-> 
-> The easiest way to reproduce this issue is with PASV mode.
-> Topoloy:
-> ```
->  +-------------------+     +----------------------------------+
->  | FTP: 192.168.13.2 | <-> | NAT: 192.168.13.3, 192.168.100.1 |
->  +-------------------+     +----------------------------------+
->                                      |
->                          +-----------------------+
->                          | Client: 192.168.100.2 |
->                          +-----------------------+
-> ```
-> 
-> nft ruleset:
-> ```
-> nft flush ruleset
-> sudo nft add table inet ftp_nat
-> sudo nft add ct helper inet ftp_nat ftp_helper { type \"ftp\" protocol tcp\; }
-> sudo nft add chain inet ftp_nat prerouting { type filter hook prerouting priority 0 \; policy accept \; }
-> sudo nft add rule inet ftp_nat prerouting tcp dport 21 ct state new ct helper set "ftp_helper"
-> nft add table ip nat
-> nft add chain ip nat prerouting { type nat hook prerouting priority dstnat \; policy accept \; }
-> nft add chain ip nat postrouting { type nat hook postrouting priority srcnat \; policy accept \; }
-> nft add rule ip nat prerouting tcp dport 21 dnat ip prefix to ip daddr map { 192.168.100.1 : 192.168.13.2/32 }
-> nft add rule ip nat postrouting tcp sport 21 snat ip prefix to ip saddr map { 192.168.13.2 : 192.168.100.1/32 }
-> 
-> # nft -s list ruleset
-> table inet ftp_nat {
->         ct helper ftp_helper {
->                 type "ftp" protocol tcp
->                 l3proto inet
->         }
-> 
->         chain prerouting {
->                 type filter hook prerouting priority filter; policy accept;
->                 tcp dport 21 ct state new ct helper set "ftp_helper"
->         }
-> }
-> table ip nat {
->         chain prerouting {
->                 type nat hook prerouting priority dstnat; policy accept;
->                 tcp dport 21 dnat ip prefix to ip daddr map { 192.168.100.1 : 192.168.13.2/32 }
->         }
-> 
->         chain postrouting {
->                 type nat hook postrouting priority srcnat; policy accept;
->                 tcp sport 21 snat ip prefix to ip saddr map { 192.168.13.2 : 192.168.100.1/32 }
->         }
-> }
-> 
+Hi Tony,
 
-Any chance you'd be willing to turn this into a selftest for
-tools/testing/selftests/net/netfilter ?
+On Mon, Oct 20, 2025 at 09:31:18AM -0700, Luck, Tony wrote:
+> On Mon, Oct 20, 2025 at 04:50:38PM +0100, Dave Martin wrote:
+> > Hi Reinette,
+> > 
+> > On Fri, Oct 17, 2025 at 08:59:45AM -0700, Reinette Chatre wrote:
 
-I think it would add value.
-Not a hard requirement of course.
+[...]
+
+> > > By extension I assume that software that understands a schema that is introduced
+> > > after the "relationship" format is established can be expected to understand the
+> > > format and thus these new schemata do not require the '#' prefix. Even if
+> > > a new schema is introduced with a single control it can be followed by a new child
+> > > control without a '#' prefix a couple of kernel releases later. By this point it
+> > > should hopefully be understood by user space that it should not write entries it does
+> > > not understand.
+> > 
+> > Generally, yes.
+> > 
+> > I think that boils down to: "OK, previously you could just tweak bits
+> > of the whole schemata file you read and write the whole thing back,
+> > and the effect would be what you inuitively expected.  But in future
+> > different schemata in the file may not be independent of one another.
+> > We'll warn you which things might not be independent, but we may not
+> > describe exactly how they affect each other.
+> 
+> Changes to the schemata file are currently "staged" and then applied.
+> There's some filesystem level error/sanity checking during the parsing
+> phase, but maybe for MB some parts can also be delayed, and re-ordered
+> when architecture code applies the changes.
+> 
+> E.g. while filesystem code could check min <= opt <= max. Architecture
+> code would be responsible to write the values to h/w in a sane manner
+> (assuming architecture cares about transient effects when things don't
+> conform to the ordering).
+> 
+> E.g. User requests moving from min,opt,max = 10,20,30 to 40,50,60
+> Regardless of the order those requests appeared in the write(2) syscall
+> architecture bumps max to 60, then opt to 50, and finally min to 40.
+
+This could be sorted indeed be sorted out during staging, but I'm not
+sure that we can/should rely on it.
+
+If we treat the data coming from a single write() as a transaction, and
+stage the whole thing before executing it, that's fine.  But I think
+this has to be viewed as an optimisation rather than guaranteed
+semantics.
+
+
+We told userspace that schemata is an S_IFREG regular file, so we have
+to accept a write() boundary anywhere in the stream.
+
+(In fact, resctrl chokes if a write boundary occurs in the middle of a
+line.  In practice, stdio buffering and similar means that this issue
+turns out to be difficult to hit, except with shell scripts that try to
+emit a line piecemeal -- I have a partial fix for that knocking around,
+but this throws up other problems, so I gave up for the time being.)
+
+
+We also cannot currently rely on userspace closing the fd between
+"transactions".  We never told userspace to do that, previously.  We
+could make a new requirement, but it feels unexpected/unreasonable (?)
+
+> > 
+> > "So, from now on, only write the things that you actually want to set."
+> > 
+> > Does that sound about right?
+> 
+> Users might still use their favorite editor on the schemata file and
+> so write everything, while only changing a subset. So if we don't go
+> for the full two-phase update I describe above this would be:
+> 
+>   "only *change* the things that you actually want to set".
+
+[...]
+
+> -Tony
+
+This works if the schemata file is output in the right order (and the
+user doesn't change the order):
+
+# cat schemata
+MB:0=100;1=100
+# MB_HW:0=1024;1=1024
+
+->
+
+# cat <<EOF >schemata
+MB:0=100;1=100
+MB_HW:0=512,1=512
+EOF
+
+... though it may still be inefficient, if the lines are not staged
+together.  The hardware memory bandwidth controls may get programmed
+twice, here -- though the final result is probably what was intended.
+
+I'd still prefer that we tell people that they should be doing this:
+# cat <<EOF >schemata
+MB_HW:0=512,1=512
+EOF
+
+...if they are really tyring to set MB_HW and don't care about the
+effect on MB?
+
+Cheers
+---Dave
 
