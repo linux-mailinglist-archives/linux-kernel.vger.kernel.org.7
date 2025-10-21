@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-862820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33417BF651F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:07:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609CDBF6531
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDD13AE4C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734DA541DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A739C3570CC;
-	Tue, 21 Oct 2025 11:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35AA393DEC;
+	Tue, 21 Oct 2025 11:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnllnALm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdnTFMDT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6CB3314C0;
-	Tue, 21 Oct 2025 11:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA34932E6B3;
+	Tue, 21 Oct 2025 11:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047273; cv=none; b=J47xOV0+1IGCnVD2kWGw6S7wMPF0KWVpzOEQYuOXUm0zgZHXyeDXg+0No98cLgCW0LFo8K+zD+beEyfjza8kv3DO01GgOxX4hiqfR0jAeWG2HpVuU1isXdPE2IJZCIr2ioNB62JV8em7QX7JlqUcCZbtwlknMQ7zHTqDUxxhMqc=
+	t=1761047282; cv=none; b=jauYDzCvLizPaWeJl67tJtYpkBqSY3Py5Las69oBlnTNxNIXfbgX5P+pG9nYqPThXuaCtQF/yQea0gdanvB9WMlR6KrThD8z0iouu72kwjg8SuIWU0gjpYk2Hb/ZLuuospnG7+n3QJitrgxM80pZ6YYogEoIm+/lGm/oH3CIxFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047273; c=relaxed/simple;
-	bh=qOQpMwb8a6Ty7XQD33x8dOA998CFgN+vzt4Bsk/lfA4=;
+	s=arc-20240116; t=1761047282; c=relaxed/simple;
+	bh=W101eyhrLICscf7roVQMEA8GrDRzuQACPaa4FbASft0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y+j3wWpIBeAI9QvXaKwzB651qDc8MdwUrsTfXJCycSRzTUm6D6ZHixEbqBAYXqVhaoi+g8OiWFprQkvbFwI1DbXbSGUdbPRnptVw/Orzbeu9S9CUm7t37OM1QqquiVgLoaiTDZ3d/EQ0Pn933MQchLIM5AWS499QhVRjMFtEA+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UnllnALm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A35CC4CEF1;
-	Tue, 21 Oct 2025 11:47:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=AlIsAJmj2NR/ENUenFYtswarvVbF9jiEGEikyuKnts6EhPkGeCsfjQJDp9ckvRAfAeRpVZ512w4lEibRaPKNEWYTSwXXJscwys/Qkp+Q0QWv53rFMinpWmlMOPIoCa5sHMTuN8WhRe3u9mSvKkDFoSkluMX2ybzKsG5ZHpknRco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdnTFMDT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE0B9C4CEF1;
+	Tue, 21 Oct 2025 11:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047272;
-	bh=qOQpMwb8a6Ty7XQD33x8dOA998CFgN+vzt4Bsk/lfA4=;
+	s=k20201202; t=1761047282;
+	bh=W101eyhrLICscf7roVQMEA8GrDRzuQACPaa4FbASft0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UnllnALmRxvfKcaWrXUqHNeJcbwIjlN5jFQVsQ8XdMqXlAu5/BKDB6VPHHf9O+IWn
-	 NwPlrwboArjmrr6tZm4Ba4LFWj3u9ZP3rQLtXLToL9L5RL1nme1f5qsGaEcCBS1N15
-	 nXGw+c04Vos0ywnHGpPOeHhWsCXFoWFrHXazxYLma/wH/92Skh9oGOU/jjx4UVUukX
-	 CZg1g980uP0WLmjdt/uAnX2woKdI/0ED+ScRpWG8pFKGfC9k7HKAmHbgLtMvoWHCmC
-	 WsW5YUHpHxvksQbSJYdtFPZojCYyYyeg535H0TvdohGp5PcREXYbyEcDKNmd5Wh8NN
-	 h6WLrPtN6lRSw==
+	b=WdnTFMDTwFXHFuujB+n2q93dvk41YRGjdmay+TXzLQ6LD0Bb/PslarbDOzdho3Gb7
+	 YeEfp5WiQJJ4/4HoVeIRvw17bA1S3iECixJrDnGUVbLRnoUPu2RptxKCaDRQ/0k6WV
+	 +pG7AmVJOH4+Waoz6w8JVRh3fJcOxNQxd6R0itSsL/1b3a/JT65QlcpqWhVEtN49WO
+	 3QauUsXp1DM+wkCgJFI/kEyDScNIpAySFzfLwgs5+E9MaDDbf0FJxspr9sBojV9mwT
+	 /6nzTKf2/vP9koWVgRiX/udBxCokXIoPVhSBx8/nmdXBLz1rhTIvGncy1j8p957Hn1
+	 u0iFn6qKpDkHA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:52 +0200
-Subject: [PATCH RFC DRAFT 46/50] selftests/namespaces: third listns()
+Date: Tue, 21 Oct 2025 13:43:54 +0200
+Subject: [PATCH RFC DRAFT 48/50] selftests/namespaces: fifth listns()
  permission test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-46-ad44261a8a5b@kernel.org>
+Message-Id: <20251021-work-namespace-nstree-listns-v1-48-ad44261a8a5b@kernel.org>
 References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,168 +69,151 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4038; i=brauner@kernel.org;
- h=from:subject:message-id; bh=qOQpMwb8a6Ty7XQD33x8dOA998CFgN+vzt4Bsk/lfA4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3xvFT+bOeOmqer+fnmXpylqOb7HjOYkFsx/Vre/M
- jhf8PnDjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlUijEy7JrA3HZh2qfyaPut
- krpvinyvdr7Mtb/+YN69mrXfLq3e6sbIcL564b/W5K9v7ym9qdljPcuP5XyBS9CpyI09D/9sYT/
- vyQgA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3512; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=W101eyhrLICscf7roVQMEA8GrDRzuQACPaa4FbASft0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3x/9uGUkPPny4S4Ps08+Pa/nK6Myduu369dZsbbl
+ 5tmXDTw7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIdWGG/zlSr6K8Q7bOPHIh
+ fHXS4UvWHc5Hyjx0+YsLqmff2TZl3VRGhvcmKjyfHoXJHVx+n7NyRkP1qWvZnjtWdIslppU/m1u
+ VywEA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that users cannot see namespaces from unrelated user namespaces.
-Create two sibling user namespaces, verify they can't see each other's
-owned namespaces.
+Test that CAP_SYS_ADMIN in parent user namespace allows seeing
+child user namespace's owned namespaces.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/listns_permissions_test.c | 138 +++++++++++++++++++++
- 1 file changed, 138 insertions(+)
+ .../selftests/namespaces/listns_permissions_test.c | 122 +++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/listns_permissions_test.c b/tools/testing/selftests/namespaces/listns_permissions_test.c
-index 803c42fc76ec..4e47b4c82c56 100644
+index ff42109779ca..07c0c2be0aa5 100644
 --- a/tools/testing/selftests/namespaces/listns_permissions_test.c
 +++ b/tools/testing/selftests/namespaces/listns_permissions_test.c
-@@ -234,4 +234,142 @@ TEST(listns_cap_sys_admin_in_userns)
- 			count);
+@@ -451,4 +451,126 @@ TEST(listns_current_user_permissions)
+ 	TH_LOG("LISTNS_CURRENT_USER returned %zd namespaces", count);
  }
  
 +/*
-+ * Test that users cannot see namespaces from unrelated user namespaces.
-+ * Create two sibling user namespaces, verify they can't see each other's
-+ * owned namespaces.
++ * Test that CAP_SYS_ADMIN in parent user namespace allows seeing
++ * child user namespace's owned namespaces.
 + */
-+TEST(listns_cannot_see_sibling_userns_namespaces)
++TEST(listns_parent_userns_cap_sys_admin)
 +{
 +	int pipefd[2];
-+	pid_t pid1, pid2;
++	pid_t pid;
 +	int status;
-+	__u64 netns_a_id;
-+	int pipefd2[2];
-+	bool found_sibling_netns;
++	bool found_child_userns;
++	ssize_t count;
 +
 +	ASSERT_EQ(pipe(pipefd), 0);
 +
-+	/* Fork first child - creates user namespace A */
-+	pid1 = fork();
-+	ASSERT_GE(pid1, 0);
++	pid = fork();
++	ASSERT_GE(pid, 0);
 +
-+	if (pid1 == 0) {
++	if (pid == 0) {
 +		int fd;
-+		__u64 netns_a_id;
-+		char buf;
++		__u64 parent_userns_id;
++		__u64 child_userns_id;
++		struct ns_id_req req;
++		__u64 ns_ids[100];
++		ssize_t ret;
++		bool found_child_userns;
 +
 +		close(pipefd[0]);
 +
-+		/* Create user namespace A */
++		/* Create parent user namespace - we have CAP_SYS_ADMIN in it */
 +		if (setup_userns() < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		/* Create network namespace owned by user namespace A */
-+		if (unshare(CLONE_NEWNET) < 0) {
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+
-+		/* Get network namespace ID */
-+		fd = open("/proc/self/ns/net", O_RDONLY);
++		/* Get parent user namespace ID */
++		fd = open("/proc/self/ns/user", O_RDONLY);
 +		if (fd < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		if (ioctl(fd, NS_GET_ID, &netns_a_id) < 0) {
++		if (ioctl(fd, NS_GET_ID, &parent_userns_id) < 0) {
 +			close(fd);
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +		close(fd);
 +
-+		/* Send namespace ID to parent */
-+		write(pipefd[1], &netns_a_id, sizeof(netns_a_id));
-+
-+		/* Keep alive for sibling to check */
-+		read(pipefd[1], &buf, 1);
-+		close(pipefd[1]);
-+		exit(0);
-+	}
-+
-+	/* Parent reads namespace A ID */
-+	close(pipefd[1]);
-+	netns_a_id = 0;
-+	read(pipefd[0], &netns_a_id, sizeof(netns_a_id));
-+
-+	TH_LOG("User namespace A created network namespace with ID %llu",
-+	       (unsigned long long)netns_a_id);
-+
-+	/* Fork second child - creates user namespace B */
-+	ASSERT_EQ(pipe(pipefd2), 0);
-+
-+	pid2 = fork();
-+	ASSERT_GE(pid2, 0);
-+
-+	if (pid2 == 0) {
-+		struct ns_id_req req = {
-+			.size = sizeof(req),
-+			.spare = 0,
-+			.ns_id = 0,
-+			.ns_type = CLONE_NEWNET,
-+			.spare2 = 0,
-+			.user_ns_id = 0,
-+		};
-+		__u64 ns_ids[100];
-+		ssize_t ret;
-+		bool found_sibling_netns;
-+
-+		close(pipefd[0]);
-+		close(pipefd2[0]);
-+
-+		/* Create user namespace B (sibling to A) */
++		/* Create child user namespace */
 +		if (setup_userns() < 0) {
-+			close(pipefd2[1]);
++			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		/* Try to list all network namespaces */
++		/* Get child user namespace ID */
++		fd = open("/proc/self/ns/user", O_RDONLY);
++		if (fd < 0) {
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		if (ioctl(fd, NS_GET_ID, &child_userns_id) < 0) {
++			close(fd);
++			close(pipefd[1]);
++			exit(1);
++		}
++		close(fd);
++
++		/* Create namespaces owned by child user namespace */
++		if (unshare(CLONE_NEWNET) < 0) {
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		/* List namespaces owned by parent user namespace */
++		req.size = sizeof(req);
++		req.spare = 0;
++		req.ns_id = 0;
++		req.ns_type = 0;
++		req.spare2 = 0;
++		req.user_ns_id = parent_userns_id;
++
 +		ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
 +
-+		found_sibling_netns = false;
++		/* Should see child user namespace in the list */
++		found_child_userns = false;
 +		if (ret > 0) {
 +			for (ssize_t i = 0; i < ret; i++) {
-+				if (ns_ids[i] == netns_a_id) {
-+					found_sibling_netns = true;
++				if (ns_ids[i] == child_userns_id) {
++					found_child_userns = true;
 +					break;
 +				}
 +			}
 +		}
 +
-+		/* We should NOT see the sibling's network namespace */
-+		write(pipefd2[1], &found_sibling_netns, sizeof(found_sibling_netns));
-+		close(pipefd2[1]);
++		write(pipefd[1], &found_child_userns, sizeof(found_child_userns));
++		write(pipefd[1], &ret, sizeof(ret));
++		close(pipefd[1]);
 +		exit(0);
 +	}
 +
-+	/* Parent reads result from second child */
-+	close(pipefd2[1]);
-+	found_sibling_netns = false;
-+	read(pipefd2[0], &found_sibling_netns, sizeof(found_sibling_netns));
-+	close(pipefd2[0]);
++	/* Parent */
++	close(pipefd[1]);
 +
-+	/* Signal first child to exit */
++	found_child_userns = false;
++	count = 0;
++	read(pipefd[0], &found_child_userns, sizeof(found_child_userns));
++	read(pipefd[0], &count, sizeof(count));
 +	close(pipefd[0]);
 +
-+	/* Wait for both children */
-+	waitpid(pid2, &status, 0);
++	waitpid(pid, &status, 0);
 +	ASSERT_TRUE(WIFEXITED(status));
 +
-+	waitpid(pid1, &status, 0);
-+	ASSERT_TRUE(WIFEXITED(status));
++	if (WEXITSTATUS(status) != 0) {
++		SKIP(return, "Child failed to setup namespaces");
++	}
 +
-+	/* Second child should NOT have seen first child's namespace */
-+	ASSERT_FALSE(found_sibling_netns);
-+	TH_LOG("User namespace B correctly could not see sibling namespace A's network namespace");
++	ASSERT_TRUE(found_child_userns);
++	TH_LOG("Process with CAP_SYS_ADMIN in parent user namespace saw child user namespace (total: %zd)",
++			count);
 +}
 +
  TEST_HARNESS_MAIN
