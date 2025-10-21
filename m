@@ -1,232 +1,165 @@
-Return-Path: <linux-kernel+bounces-862996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD69BF6C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:25:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C456ABF6C1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55234543CB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EAED5445D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6E1338917;
-	Tue, 21 Oct 2025 13:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B25337100;
+	Tue, 21 Oct 2025 13:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ugR/uiZI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="o69PsxyM"
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079C13385BB
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685873370FA
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053028; cv=none; b=Xx1+BhxuKFlXIPcke6UaopHyWEhKJSY2yH4SlkS3g+ZC7mvsJ4IJ2CsOkqsaMdHOeP5ATBa57RpjnxxP8TVaqqVYE6mggsQKgleOnhOiJBprJGVDjk/CFZDCSKiVwUEUvvoxEHxgeEr+YW1cOYeWDpRSoQIh1X+cn8/yZrM11EI=
+	t=1761053051; cv=none; b=PuynurO0QwQauhDFLKzH31bl+KyYDMa15h9GZ+o+rD5RRmlTBEgz//Jmjuqnv3c7HykQvuF9Nyak2Il0VPi4DmA+JeBef6xYCopTv4EW3O52GdWt7xuzm+RI1HHBYINIGYVSjgtTZOTAyLyzrvi6XbXCAK92KGd01DNL4Hjchts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053028; c=relaxed/simple;
-	bh=DU4mBpP4n9/aq51wPIxRsXdLU74pFSj4hjJV4fvEkxo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=itlnMWgoSiPPwvy5qEKMCt+1slzJgUFf+1fym4FirNpMpPsvaWKddKSG/bobS2DY+hf+dQm/6BvBy2BbOkisr+ftQbg7RZ2xjQcayA9+FqA+eMifBSjH7dxPJ7P6kDVe7JINRzKsutI2TTEUASFMKuEDDhxWP4M4a0D7XLjz8Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ugR/uiZI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BFD46153F;
-	Tue, 21 Oct 2025 15:21:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761052913;
-	bh=DU4mBpP4n9/aq51wPIxRsXdLU74pFSj4hjJV4fvEkxo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ugR/uiZIBzg3c2XJsGN83qOMdxV4VxJN5tPnlhjMfvK/du4/s4fMKROkSAqIXk/vy
-	 3c69+uTuRCEd2GIoZeTwr4M70igIvoR/XKt8kyMeiuGG+tu3RHiZkhC3wy4goXlgWD
-	 uPOip7/S98hLWu/t5BHUivT+RWA2MNrSNXr8zMqw=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Tue, 21 Oct 2025 16:23:03 +0300
-Subject: [PATCH 7/7] drm/bridge: tc358768: Add support for long command tx
- via video buffer
+	s=arc-20240116; t=1761053051; c=relaxed/simple;
+	bh=mUOp3RkD0WvW0xPMXKW+Quu5MRzzr+VDwZB/d4rf2aY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BnzA8AzXFp2/KtHnALECp0JBIwX901vTtMLhYaivMqVyPRPdBPLpmnT+l0RebHUcrZPNrAoH5tYuuwrCFNp/GzTg554jPgzH+XkpalKYiNSZQNDHNqP3x1Lqer1aOGV79sFK7oxp2QHcMc8e9BhrwDVia1T3oS/s6bKwssCOtUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=o69PsxyM; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=WOTiB39a6DgVGV93rhDR02QXQQuNzwOMoqALStC09kc=;
+	b=o69PsxyMFVNNI0c0rgeWtIY25a/AsGE5e1asHhJbNco9UglotmM60McAv1yCVfut5jSaKhLmX
+	umbI6K+Td2MdD7iQPJUPkJ3GRFVCl2iuXdzlesJtS0Kx+EHO9u/KeIdOFW1bwNmuVlDMRJXJbDz
+	jupFM2/i1LzVkYMCz9AduSo=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4crY0C3GQCzKm5G;
+	Tue, 21 Oct 2025 21:23:39 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6BA23140155;
+	Tue, 21 Oct 2025 21:24:03 +0800 (CST)
+Received: from huawei.com (10.50.163.32) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 21 Oct
+ 2025 21:24:02 +0800
+From: Jinqian Yang <yangjinqian1@huawei.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<maz@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<yuzenghui@huawei.com>
+CC: <wangzhou1@hisilicon.com>, <jiangkunkun@huawei.com>,
+	<tangnianyao@huawei.com>, <wangwudi@hisilicon.com>, <liuyonglong@huawei.com>,
+	<yangjinqian1@huawei.com>
+Subject: [PATCH] irqchip/gicv3-its: Clear cache with VINVALL for erratum 162100801
+Date: Tue, 21 Oct 2025 21:24:01 +0800
+Message-ID: <20251021132401.3570140-1-yangjinqian1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-tc358768-v1-7-d590dc6a1a0c@ideasonboard.com>
-References: <20251021-tc358768-v1-0-d590dc6a1a0c@ideasonboard.com>
-In-Reply-To: <20251021-tc358768-v1-0-d590dc6a1a0c@ideasonboard.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Parth Pancholi <parth.pancholi@toradex.com>, 
- Francesco Dolcini <francesco.dolcini@toradex.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4903;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=DU4mBpP4n9/aq51wPIxRsXdLU74pFSj4hjJV4fvEkxo=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBo94lQfnIQF5JGu4C8aVEOtOY178EaeIu6l/lPR
- PmtZOdxZVCJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaPeJUAAKCRD6PaqMvJYe
- 9TuoD/9XIMQFnv2Y0T51ZhnvBh+rd46g0GpbDT52js2KScp6SlSZRUfLR+082FgOTO6Tclxy3DO
- 4GB7ZDBP3ycGbGKXlKlEzw0qLwO9vR48BJnM3R5mxHmDW+VUgzCnOj9I7jx+zJci2c+rzbeW1p/
- cLJu9k6asjoFMbNAnjBOG32aSpoSNJqjQwiQLsDpNFhI4ntJZ9RZcjtKs9Td4OISQunYeoJGjk2
- 6pf1x16KqtCVXCu2KKwDfCg0MJDOiR+hvk7Ca70ss+Z9Gt+Ix/6xG9BcbN/s+yXrbDZYdqXNXuW
- 8UqEGzd8nyM2GaRvfe8sYq0kia3GI1s4H6p7FgOYuAylWcdSH4CWZVjf1ZG2FAydUb6RP6jExd1
- J8yXvI7dQ5m0k1sScEZW0Ne9UeRCj3+eydEWyk2UUvdnh4QvDJSVKQOZOu/vvLReqUAfglv+IHn
- bIENa2DO+ZFelqpgV7UywHi3CdYviAjDRYnpnzK/v7V1IJtr2m4XJOAUd0pxAzTOE/srrokIYQt
- pgVGqak80Vj3XvFUh3Sud/Z5Dg5eFvZdQNhdrDoEtvla/OEzQCdwiz3x8PpF98xdeitP2ocQzkY
- Fh+rdH3AzC8y4BaPJQJ3qJA/lVS0F9itbTOQBxxdE9H0KOdfFhD7o5NEnKvURKPjtgLOx4eAkn7
- bPdYFrZgLqehGiQ==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-TC358768 has two ways to send DSI commands: 1) buffer the payload data
-into registers (DSICMD_WDx), which supports up to 8 bytes of payload, 2)
-buffer the payload data into the video buffer, which supports up to 1024
-bytes of payload.
+Use VINVALL to clear cache after VMOVP operation to avoid incomplete
+cache cleanup. The previous implementation only cleared cache on one
+ITS. This change sends VINVALL to every ITS to properly clear caches.
 
-The driver currently supports method 1).
-
-Add support for transmitting long DSI commands (more than 8 bytes, up to
-1024 bytes) using the video buffer. This mode can only be used before
-the actual video transmission is enabled, i.e. the initial configuration.
-
-Original version from Parth Pancholi <parth.pancholi@toradex.com>
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Fixes: f82e62d470cc ("irqchip/gicv3-its: Add workaround for hip09 ITS erratum 162100801")
+Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
 ---
- drivers/gpu/drm/bridge/tc358768.c | 79 ++++++++++++++++++++++++++++++++++-----
- 1 file changed, 70 insertions(+), 9 deletions(-)
+ arch/arm64/Kconfig               |  2 +-
+ drivers/irqchip/irq-gic-v3-its.c | 25 +++++++++++--------------
+ 2 files changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/bridge/tc358768.c
-index e1ed4003b3c5..e0b5a4b5abbe 100644
---- a/drivers/gpu/drm/bridge/tc358768.c
-+++ b/drivers/gpu/drm/bridge/tc358768.c
-@@ -45,6 +45,9 @@
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 6663ffd23f25..d4848a8396a9 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1268,7 +1268,7 @@ config HISILICON_ERRATUM_162100801
+ 	help
+ 	  When enabling GICv4.1 in hip09, VMAPP will fail to clear some caches
+ 	  during unmapping operation, which will cause some vSGIs lost.
+-	  To fix the issue, invalidate related vPE cache through GICR_INVALLR
++	  To fix the issue, invalidate related vPE cache through VINVALL
+ 	  after VMOVP.
  
- /* Debug (16-bit addressable) */
- #define TC358768_VBUFCTRL		0x00E0
-+#define TC358768_VBUFCTRL_VBUF_EN	BIT(15)
-+#define TC358768_VBUFCTRL_TX_EN		BIT(14)
-+#define TC358768_VBUFCTRL_MASK		BIT(13)
- #define TC358768_DBG_WIDTH		0x00E2
- #define TC358768_DBG_VBLANK		0x00E4
- #define TC358768_DBG_DATA		0x00E8
-@@ -537,9 +540,21 @@ static ssize_t tc358768_dsi_host_transfer(struct mipi_dsi_host *host,
- 		return -ENOTSUPP;
+ 	  If unsure, say Y.
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 467cb78435a9..767ac171e440 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -66,7 +66,6 @@ static u32 lpi_id_bits;
+ #define LPI_PENDBASE_SZ		ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K)
+ 
+ static u8 __ro_after_init lpi_prop_prio;
+-static struct its_node *find_4_1_its(void);
+ 
+ /*
+  * Collection structure - just an ID, and a redistributor address to
+@@ -1405,6 +1404,14 @@ static void its_send_vmapp(struct its_node *its,
+ 	its_send_single_vcommand(its, its_build_vmapp_cmd, &desc);
+ }
+ 
++static void its_send_vinvall(struct its_node *its, struct its_vpe *vpe)
++{
++	struct its_cmd_desc desc;
++
++	desc.its_vinvall_cmd.vpe = vpe;
++	its_send_single_vcommand(its, its_build_vinvall_cmd, &desc);
++}
++
+ static void its_send_vmovp(struct its_vpe *vpe)
+ {
+ 	struct its_cmd_desc desc = {};
+@@ -1442,17 +1449,12 @@ static void its_send_vmovp(struct its_vpe *vpe)
+ 
+ 		desc.its_vmovp_cmd.col = &its->collections[col_id];
+ 		its_send_single_vcommand(its, its_build_vmovp_cmd, &desc);
++		if (is_v4_1(its) && (its->flags &
++			    ITS_FLAGS_WORKAROUND_HISILICON_162100801))
++			its_send_vinvall(its, vpe);
  	}
+ }
  
-+	if (msg->tx_len > 1024) {
-+		dev_warn(priv->dev, "Maximum 1024 byte MIPI tx is supported\n");
-+		return -EINVAL;
-+	}
-+
- 	if (msg->tx_len > 8) {
--		dev_warn(priv->dev, "Maximum 8 byte MIPI tx is supported\n");
--		return -ENOTSUPP;
-+		u32 confctl;
-+
-+		tc358768_read(priv, TC358768_CONFCTL, &confctl);
-+
-+		if (confctl & BIT(6)) {
-+			dev_warn(priv->dev,
-+				 "Video is currently active. Unable to transmit long command\n");
-+			return -EBUSY;
-+		}
- 	}
- 
- 	ret = mipi_dsi_create_packet(&packet, msg);
-@@ -552,23 +567,66 @@ static ssize_t tc358768_dsi_host_transfer(struct mipi_dsi_host *host,
- 		tc358768_write(priv, TC358768_DSICMD_WC, 0);
- 		tc358768_write(priv, TC358768_DSICMD_WD0,
- 			       (packet.header[2] << 8) | packet.header[1]);
--	} else {
--		int i;
+-static void its_send_vinvall(struct its_node *its, struct its_vpe *vpe)
+-{
+-	struct its_cmd_desc desc;
 -
-+		tc358768_dsicmd_tx(priv);
-+	} else if (packet.payload_length <= 8) {
- 		tc358768_write(priv, TC358768_DSICMD_TYPE,
- 			       (0x40 << 8) | (packet.header[0] & 0x3f));
- 		tc358768_write(priv, TC358768_DSICMD_WC, packet.payload_length);
--		for (i = 0; i < packet.payload_length; i += 2) {
-+
-+		for (int i = 0; i < packet.payload_length; i += 2) {
- 			u16 val = packet.payload[i];
- 
- 			if (i + 1 < packet.payload_length)
- 				val |= packet.payload[i + 1] << 8;
+-	desc.its_vinvall_cmd.vpe = vpe;
+-	its_send_single_vcommand(its, its_build_vinvall_cmd, &desc);
+-}
 -
- 			tc358768_write(priv, TC358768_DSICMD_WD0 + i, val);
- 		}
--	}
+ static void its_send_vinv(struct its_device *dev, u32 event_id)
+ {
+ 	struct its_cmd_desc desc;
+@@ -3910,7 +3912,6 @@ static int its_vpe_set_affinity(struct irq_data *d,
+ 	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+ 	unsigned int from, cpu = nr_cpu_ids;
+ 	struct cpumask *table_mask;
+-	struct its_node *its;
+ 	unsigned long flags;
  
--	tc358768_dsicmd_tx(priv);
-+		tc358768_dsicmd_tx(priv);
-+	} else {
-+		unsigned long tx_sleep_us;
-+		size_t len;
-+
-+		/* For packets over 8 bytes we need to use the video buffer */
-+		tc358768_write(priv, TC358768_DATAFMT, BIT(0));	/* txdt_en */
-+		tc358768_write(priv, TC358768_DSITX_DT, packet.header[0] & 0x3f);
-+		tc358768_write(priv, TC358768_CMDBYTE, packet.payload_length);
-+		tc358768_write(priv, TC358768_VBUFCTRL, TC358768_VBUFCTRL_VBUF_EN);
-+
-+		/*
-+		 * Write the payload in 2-byte chunks, and pad with zeroes to
-+		 * align to 4 bytes.
-+		 */
-+		len = ALIGN(packet.payload_length, 4);
-+
-+		for (int i = 0; i < len; i += 2) {
-+			u16 val = 0;
-+
-+			if (i < packet.payload_length)
-+				val |= packet.payload[i];
-+			if (i + 1 < packet.payload_length)
-+				val |= packet.payload[i + 1] << 8;
-+
-+			tc358768_write(priv, TC358768_DBG_DATA, val);
-+		}
-+
-+		/* Start transmission */
-+		tc358768_write(priv, TC358768_VBUFCTRL,
-+			       TC358768_VBUFCTRL_VBUF_EN |
-+			       TC358768_VBUFCTRL_TX_EN |
-+			       TC358768_VBUFCTRL_MASK);
-+
-+		/*
-+		 * The TC358768 spec says to wait until the transmission has
-+		 * been finished, estimating the sleep time based on the payload
-+		 * and clock rates. We use a simple safe estimate of 2us per
-+		 * byte (LP mode transmission).
-+		 */
-+		tx_sleep_us = packet.payload_length * 2;
-+		usleep_range(tx_sleep_us, tx_sleep_us * 2);
-+
-+		tc358768_write(priv, TC358768_VBUFCTRL, TC358768_VBUFCTRL_MASK);
-+		tc358768_write(priv, TC358768_VBUFCTRL, 0); /* Stop transmission */
-+	}
+ 	/*
+@@ -3974,10 +3975,6 @@ static int its_vpe_set_affinity(struct irq_data *d,
  
- 	ret = tc358768_clear_error(priv);
- 	if (ret)
-@@ -752,6 +810,9 @@ static void tc358768_bridge_atomic_pre_enable(struct drm_bridge *bridge,
- 		return;
- 	}
+ 	its_send_vmovp(vpe);
  
-+	/* Release RstPtr so that the video buffer can be used for DSI commands */
-+	tc358768_update_bits(priv, TC358768_PP_MISC, BIT(14), 0);
-+
- 	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
- 	conn_state = drm_atomic_get_new_connector_state(state, connector);
- 	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
-
+-	its = find_4_1_its();
+-	if (its && its->flags & ITS_FLAGS_WORKAROUND_HISILICON_162100801)
+-		its_vpe_4_1_invall_locked(cpu, vpe);
+-
+ 	its_vpe_db_proxy_move(vpe, from, cpu);
+ 
+ out:
 -- 
-2.43.0
+2.33.0
 
 
