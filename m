@@ -1,124 +1,126 @@
-Return-Path: <linux-kernel+bounces-863646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C0BBF8B19
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFAEBF8B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5548D188E889
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:17:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A34448630B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62D227CCF0;
-	Tue, 21 Oct 2025 20:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7569A26B75B;
+	Tue, 21 Oct 2025 20:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ib+tj8pN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="WzCL/I7I"
+Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F162C2701CB;
-	Tue, 21 Oct 2025 20:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761077840; cv=none; b=Ab7JVv2aDrTUpAxB38D8c666p522mAC1rn9HkXLyl4F6cIWngPVOqJZz/i/KwnZPPjCBu5tB2gBf8d8IxlXwHzwnoMwbYhp5v5sMlBdcTz3RkDxHLBwLIZ3gQwbFTeFQwj6WLV3JMru/XRvp98vTXXjryVZpECm27OZa38BfbmE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761077840; c=relaxed/simple;
-	bh=tY7M0kISqxZqE7MaOWrmfDCFzUUwCW/k6OZbTI+nRqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QPOtVZN0EnKfCtDZa7TNsiBA2+Lj7XBUOyrkmZlhDH1heeItcTOouivJ1gPhOC5rs6g58gQlcpd+7oTHj3o+bTh4OhVnbBTVFBBCnoBACi/3wkQ6I/ISuAc7LszRd6tieKN2Bxa54w1Bcalh3Q7GvtimtLaF9VEzNqbs4OspOhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ib+tj8pN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B08A8C4CEFD;
-	Tue, 21 Oct 2025 20:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761077839;
-	bh=tY7M0kISqxZqE7MaOWrmfDCFzUUwCW/k6OZbTI+nRqg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ib+tj8pNtcTRnPpXHv2coWJN0zYj/abJ+hqb0oR+YTpemcNLTj6pD9A8sbNExvCzP
-	 R92VKq7hi7qY38+TRh0Z/ahg5kUwruADR2KAK2aIm5OQEFBZMfg+HF96Z8SPOlL9+6
-	 iFTbW6iP97Bfs/2Ffxm3NIb6WoJRdmcdtBBhFiXlQziS3lJ1rsymOaoiq2oFa5PhJn
-	 JtRust98VWZoi14FP5RyAsO7oha1X+CHk1Fj3w8lkrL79lkbnEGGO1WsVaWfluCSSI
-	 BlsCGOx9KwjB9ELlkzHSJB6iJPTwUD3cq8pxlqFOztmXQAZoCMhi7il4/yJ7hP8Z6q
-	 V0lKtw0c325wA==
-Message-ID: <35daf24e-11f6-4d4a-a666-3ba641dd4996@kernel.org>
-Date: Tue, 21 Oct 2025 22:17:15 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C4B350A0B
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761077947; cv=pass; b=k1jN86jibhGVh3nfcvcl0fzkknvSmqMwMXxOVOjw6sLiDBeXXmtUM+95ybtdzpo2Zo6ass5FRHiDFmJEzy4W5dud0uMFesrDhrdG3z/T73PYjiYLBs+wvvZYKa8BScYiKHB6FixPFLN1bP04stWdbDX0tPoKvE86SBC1fdWQ7Es=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761077947; c=relaxed/simple;
+	bh=fQSr0ohH6ldzOLHdTI7voZvzMcDFXtD4eMmeZzLcs+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OqblLTsp+TStfUvIeHBwlSEzIsmP5QlG83WBxN11X4GXCWmOGeviJ1o0JDToSkk5Qh/vfxBJV6PsjgyM37i/DrqpgOIJ8r4u0OlFuN8Trd3hYYyXE1e0WfyY64UmkrRxf8S3YVMScBLMDNIFOY3luQ22+8sSAeY+57Pq++y/LUM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=WzCL/I7I; arc=pass smtp.client-ip=49.212.207.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from www.redadmin.org (bc043154.ppp.asahi-net.or.jp [222.228.43.154])
+	(authenticated bits=0)
+	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59LKItHM026350
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 22 Oct 2025 05:18:55 +0900 (JST)
+	(envelope-from weibu@redadmin.org)
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id 05D5F10A0ECCF;
+	Wed, 22 Oct 2025 05:18:55 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id UMCxPa58udCL; Wed, 22 Oct 2025 05:18:51 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id 2410F10A0ECCD; Wed, 22 Oct 2025 05:18:51 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1761077931;
+	cv=none; b=lfeThg3CYsn4JXjwm32xuTZQMVpQCont5vtfXxOtgnt0qUfdOSiTBnkmnq75FDUI66hRzJsQ736sReOATElhL3Q6lnuTX3sRI1q0J18NbDoRb71ChCGqHdhS/GcsCqJIBbiY059PEGXKpwYK08EgVTia965a1jNkgKew/NW9600=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1761077931; c=relaxed/relaxed;
+	bh=TgHTh1zsRTUhGnDg2RPXn7vAWeAZ5MWHXT2jf02tKlo=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=FKsjsewgw0weHhfPMcPCbE8tXr+YPMVJHeVItzdwhGmmV6Aj9PzV3IvZk2qrIIOge4MxeDxQQpqbMwBqUjY4QnT+dQZbjlWJwh/34AuTrZSuEIPZGDg9hkrPfpass33EcovPmwnkmfkfRKq8UY1uszIv4kHDhYrTxRB50oPRNkE=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 2410F10A0ECCD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1761077931;
+	bh=TgHTh1zsRTUhGnDg2RPXn7vAWeAZ5MWHXT2jf02tKlo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WzCL/I7IYMPKkSSrAOW+I3bR5AWBkKufQCLydGSIJssrcHraazEPNIuDzGcAd+3uS
+	 qvW7G3igJ4wlnK9RtbfMSEndKjBgvBSb5WJ2aWWdfQSRXrnuSpuVDmgpM7z8DL//yX
+	 T/1yermfrTUABhKjdkd4nT74EUDq4e1a1umkCvmo=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: amd-gfx@lists.freedesktop.org
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <siqueira@igalia.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] drm/amd/display: Fix typo and incorrect function name in dmub_srv.h comments
+Date: Wed, 22 Oct 2025 05:18:48 +0900
+Message-ID: <20251021201848.311586-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] media: dt-bindings: video-interfaces: add
- video-interfaces.h information
-To: Frank Li <Frank.Li@nxp.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)"
- <linux-media@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20251021154922.2874390-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251021154922.2874390-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 21/10/2025 17:49, Frank Li wrote:
-> Mention include/dt-bindings/media/video-interfaces.h in descriptions to
-> help avoid use hardcode in dts.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Fixes two instances of the typo "retreives" -> "retrieves"
+in documentation comments (for dmub_srv_calc_region_info()
+and dmub_srv_calc_mem_info()).
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Additionally, fixes a copy-paste error where the comment for
+dmub_srv_calc_mem_info() incorrectly listed the function name
+as dmub_srv_calc_region_info().
 
-Best regards,
-Krzysztof
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ drivers/gpu/drm/amd/display/dmub/dmub_srv.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dmub/dmub_srv.h b/drivers/gpu/drm/=
+amd/display/dmub/dmub_srv.h
+index 338fdc651f2c..a6f794ef2203 100644
+--- a/drivers/gpu/drm/amd/display/dmub/dmub_srv.h
++++ b/drivers/gpu/drm/amd/display/dmub/dmub_srv.h
+@@ -637,7 +637,7 @@ enum dmub_status dmub_srv_create(struct dmub_srv *dmub,
+ void dmub_srv_destroy(struct dmub_srv *dmub);
+=20
+ /**
+- * dmub_srv_calc_region_info() - retreives region info from the dmub servi=
+ce
++ * dmub_srv_calc_region_info() - retrieves region info from the dmub servi=
+ce
+  * @dmub: the dmub service
+  * @params: parameters used to calculate region locations
+  * @info_out: the output region info from dmub
+@@ -655,7 +655,7 @@ dmub_srv_calc_region_info(struct dmub_srv *dmub,
+ 			  struct dmub_srv_region_info *out);
+=20
+ /**
+- * dmub_srv_calc_region_info() - retreives fb info from the dmub service
++ * dmub_srv_calc_mem_info() - retrieves fb info from the dmub service
+  * @dmub: the dmub service
+  * @params: parameters used to calculate fb locations
+  * @info_out: the output fb info from dmub
+--=20
+2.47.3
+
 
