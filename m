@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-862373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCEB3BF51C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA84BF4FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 737F2481FBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED1A48029F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4CA29BDA4;
-	Tue, 21 Oct 2025 07:49:54 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF194280033;
+	Tue, 21 Oct 2025 07:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oGm9Zg6Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441D32989BC
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2915A27FB1E;
+	Tue, 21 Oct 2025 07:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032994; cv=none; b=tmOEkQc4AGERtgpQ/w2aC5YDSFF26+bwTK39kpAyrE5nu3bLXTM5ZxDMnpJ08uKfO0FACyeDSV1bMytLH4lEbv02sGVCh/iwjXyiXF1Szs5xQdnsJnZe3jnVrHiSK5uqubBTiratb7MqPlb8KonaHViCkWZz3X4EpnF/gQ57VA8=
+	t=1761032109; cv=none; b=UdaLrNcPx00TWFI2sjLEQ6vTxv/3A8j6yLLDS3Teti9j4fs8XHZoQj7mV05jRjb4CWVM8fQY2oC+j5nOFkMatJlcowAYAgCIJXRxY/rJzfnGS746On9NBBDiFaAucBBBJQzr5n8RFgnyoIvzKN4h68NVMD/bJw6EuXX8k6RHEjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032994; c=relaxed/simple;
-	bh=i9umFpVj3RMNqoGjHUhbGQ/qX5kyHsqAU+M5PTEXSK4=;
+	s=arc-20240116; t=1761032109; c=relaxed/simple;
+	bh=OwWy/3ZyBvLhFE9XTope3GptLHE7g08KOIFUWZ8LOy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UiwN8eNbW9SgXyQEBtq+BS91S+QeFLjLtpuuSq/txwdYRtJojAxKmj1bhotoYoT6RmwmDx9k58prpPV6pKHGF+3pBF1ymnwNgL1xfxojg61qZoT1Xu16DgxzYyQ7Pm26WsxzbKxdry+CGnHLSLmEm6ON1KvqOQNbp2tUWpQOY58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 21 Oct 2025 16:34:46 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Tue, 21 Oct 2025 16:34:46 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Chris Li <chrisl@kernel.org>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during
- allocation
-Message-ID: <aPc3lmbJEVTXoV6h@yjaykim-PowerEdge-T330>
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
- <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
- <CAMgjq7BD6SOgALj2jv2SVtNjWLJpT=1UhuaL=qxvDCMKUy68Hw@mail.gmail.com>
- <CACePvbVEGgtTqkMPqsf69C7qUD52yVcC56POed8Pdt674Pn68A@mail.gmail.com>
- <CACePvbWu0P+8Sv-sS7AnG+ESdnJdnFE_teC9NF9Rkn1HegQ9_Q@mail.gmail.com>
- <CAMgjq7BJcxGzrnr+EeO6_ZC7dAn0_WmWn8DX8gSPfyYiY4S3Ug@mail.gmail.com>
- <CAMgjq7CsYhEjvtN85XGkrONYAJxve7gG593TFeOGV-oax++kWA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IrrD8kS7nNiQrWnscztZ+FdxeJTx1vJXnHIcBx8j3LL6E3OO1EZhwOgpApP2jZ/eJ6Q/IIqDqrHqTitUyyxbrJxDfF9XsLkjzJCy4DwEpuwhAfqQUTDrNc98Pb6WQjS7bpr3bv+M+KuhvnTa/dO1UsogGemC447gzbUnPWSKU44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oGm9Zg6Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B579C4CEF1;
+	Tue, 21 Oct 2025 07:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761032108;
+	bh=OwWy/3ZyBvLhFE9XTope3GptLHE7g08KOIFUWZ8LOy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oGm9Zg6QNmBnyYDKSNuh+6126gcu3ZMM6EpoP1L1PuAkqeV8G/boG3UPhStUiPMZ1
+	 8E2dt2anosX9UlipJg6yUoon4DMlSs/l/I7K0/PjFpojYP0UpFuPGxN7KiYP8emIwx
+	 a9kvCFnBDWMfKrg3pTa6raPQNOUAMunC4qrf/cgQ=
+Date: Tue, 21 Oct 2025 09:35:05 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Gabriele Paoloni <gpaoloni@redhat.com>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	safety-architecture@lists.elisa.tech, acarmina@redhat.com,
+	kstewart@linuxfoundation.org, chuckwolber@gmail.com
+Subject: Re: [RFC v2 PATCH 3/3] selftests/devmem: initial testset
+Message-ID: <2025102151-distill-operate-a748@gregkh>
+References: <20250910170000.6475-1-gpaoloni@redhat.com>
+ <20250910170000.6475-4-gpaoloni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMgjq7CsYhEjvtN85XGkrONYAJxve7gG593TFeOGV-oax++kWA@mail.gmail.com>
+In-Reply-To: <20250910170000.6475-4-gpaoloni@redhat.com>
 
-> > Thanks, I was composing a reply on this and just saw your new comment.
-> > I agree with this.
+On Wed, Sep 10, 2025 at 07:00:00PM +0200, Gabriele Paoloni wrote:
+> From: Alessandro Carminati <acarmina@redhat.com>
 > 
-> Hmm, it turns out modifying V1 to handle non-order 0 allocation
-> failure also has some minor issues. Every mTHP SWAP allocation failure
-> will have a slight higher overhead due to the discard check. V1 is
-> fine since it only checks discard for order 0, and order 0 alloc
-> failure is uncommon and usually means OOM already.
+> This patch introduces a new series of tests for devmem.
+> Test cases are mapped against the tested Function's expectations
+> defined in /drivers/char/mem.c.
 
-Looking at the original proposed patch.
+Cool, but:
 
- +	spin_lock(&swap_avail_lock);
- +	plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail_lists[nid]) {
- +		spin_unlock(&swap_avail_lock);
- +		if (get_swap_device_info(si)) {
- +			if (si->flags & SWP_PAGE_DISCARD)
- +				ret = swap_do_scheduled_discard(si);
- +			put_swap_device(si);
- +		}
- +		if (ret)
- +			break;
-
-if ret is true and we break, 
-wouldn’t that cause spin_unlock to run without the lock being held?
-
- +		spin_lock(&swap_avail_lock);
- +	}
- +	spin_unlock(&swap_avail_lock); <- unlocked without lock grab.
- +
- +	return ret;
- +}
-
-> I'm not saying V1 is the final solution, but I think maybe we can just
-> keep V1 as it is? That's easier for a stable backport too, and this is
-> doing far better than what it was like. The sync discard was added in
-> 2013 and the later added percpu cluster at the same year never treated
-> it carefully. And the discard during allocation after recent swap
-> allocator rework has been kind of broken for a while.
 > 
-> To optimize it further in a clean way, we have to reverse the
-> allocator's handling order of the plist and fast / slow path. Current
-> order is local_lock -> fast -> slow (plist).
-> We can walk the plist first, then do the fast / slow path: plist (or
-> maybe something faster than plist but handles the priority) ->
-> local_lock -> fast -> slow (bonus: this is more friendly to RT kernels
+> Signed-off-by: Alessandro Carminati <acarmina@redhat.com>
+> ---
+>  tools/testing/selftests/Makefile         |   1 +
+>  tools/testing/selftests/devmem/Makefile  |  13 +
+>  tools/testing/selftests/devmem/debug.c   |  25 +
+>  tools/testing/selftests/devmem/debug.h   |  14 +
+>  tools/testing/selftests/devmem/devmem.c  | 200 ++++++++
+>  tools/testing/selftests/devmem/ram_map.c | 250 ++++++++++
+>  tools/testing/selftests/devmem/ram_map.h |  38 ++
+>  tools/testing/selftests/devmem/secret.c  |  46 ++
+>  tools/testing/selftests/devmem/secret.h  |  13 +
+>  tools/testing/selftests/devmem/tests.c   | 569 +++++++++++++++++++++++
+>  tools/testing/selftests/devmem/tests.h   |  45 ++
+>  tools/testing/selftests/devmem/utils.c   | 379 +++++++++++++++
+>  tools/testing/selftests/devmem/utils.h   | 119 +++++
 
-I think the idea is good, but when approaching it that way, 
-I am curious about rotation handling.
+That's a lot of files for a "simple" test.  Doesn't LTP have tests for
+this api already?  Why not use that here instead?
 
-In the current code, rotation is always done when traversing the plist in the slow path.
-If we traverse the plist first, how should rotation be handled?
+Also, this is userspace testing, not kunit testing, right, is that
+intentional?  You are documenting internal apis and then writing
+userspace tests for those apis, which feels a bit odd.
 
-1. Do a naive rotation at plist traversal time. 
-(But then fast path might allocate from an si we didn’t select.)
-2. Rotate when allocating in the slow path. 
-(But between releasing swap_avail_lock, we might access an si that wasn’t rotated.)
+Also /dev/mem should not be used on "modern" systems, so how was this
+tested?
 
-Both cases could break rotation behavior — what do you think?
+> +// SPDX-License-Identifier: GPL-2.0+
 
-> too I think). That way we don't need to rewalk the plist after
-> releasing the local_lock and save a lot of trouble. I remember I
-> discussed with Youngjun on this sometime ago in the mail list, I know
+Are you _sure_ you want GPLv2+?  I have to ask, sorry.
 
-Recapping your earlier idea: cache only the swap device per cgroup in percpu, 
-and keep the cluster inside the swap device.
-Applied to swap tiers, cache only the percpu si per tier, 
-and keep the cluster in the swap device.
-This seems to fit well with your previous suggestion.
+> +/*
+> + * devmem test debug.c
+> + *
+> + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
+> + * Written by Alessandro Carminati (acarmina@redhat.com)
+> + */
+> +
+> +#include <stdio.h>
+> +#include <stdarg.h>
+> +
+> +#define DEBUG_FLAG 0
+> +int pdebug = DEBUG_FLAG;
 
-However, since we shifted from per-cgroup swap priority to swap tier, 
-and will re-submit RFC for swap tier, we’ll need to revisit the discussion.
+That's a funny define that is never used elsewhere.  I'm guessing this
+was cut/pasted from some other userspace code somewhere?
 
-Youngjun Park
+> +
+> +void deb_printf(const char *fmt, ...)
+
+Who is "deb"?  You have more letters, always use them :)
+
+Also, why debugging for just this one set of tests?  Don't kselftests
+already have debugging logic?  if not, why is this unique to require it?
+
+And am I missing something, or does this new tool not tie into the
+kselftest framework properly?  I see lots of printing to output, but not
+in the proper test framework format, am I just missing that somewhere?
+
+thanks,
+
+greg k-h
 
