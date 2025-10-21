@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-862310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01431BF4F8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:32:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85A4BF4F8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51DE427BD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:32:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F10E64F72BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CAC280CD2;
-	Tue, 21 Oct 2025 07:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F50280025;
+	Tue, 21 Oct 2025 07:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hy3dnRt3"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dW0gTjge"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7909824678F;
-	Tue, 21 Oct 2025 07:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6194C27FD6E;
+	Tue, 21 Oct 2025 07:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761031911; cv=none; b=G9tYw2HbSCao+KJNwcnOZDrma6x45MHCeDL+buk3pRcEWLPuOtXYxCHGlvgTvyWxl+w9i1wNOU8VAcNIBjD6tqW9f9bwfVb8Wa513uUBOTeJRKUPGupYKkh8tz0uNWWYhfL9EEBokUvXH0zC3cBqwNz+npNbNfpat9sCJL9q9gc=
+	t=1761031912; cv=none; b=pRyKHs+ves04BLkmSLBa7zUoYf1daT6JwRsNhGR3j2M8NgDKxiSPYZYFTGkKjvJnoPXMzPePSA76MdAzoV4ovUg0LvH/728AEaaCK09VJs3RTCXgLteWXiHF6AyZlzksrRnyzy3Lo2apQaPptB7pd369Vu2UswE2QctJF6vWPHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761031911; c=relaxed/simple;
-	bh=u+G8Mt1dpRFClpUAKvKbFwgypYjcR8NzUmnmamS1YxM=;
+	s=arc-20240116; t=1761031912; c=relaxed/simple;
+	bh=qr9XyEgoKDrOvlQ/a4EvmrD00l7EvEI7RmtYodAKgIY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L0QIFZ5KpEEYmaGKATxHWsM2MhBOi17HR4PqOa+7inHvVOewjeGCpLCOtOD3JNmsj37wqlYsTRdU+f7tOrofgWkynVknvzaDrd8biKlo0J1lXCKiy4iuOckMnS42WRSBjkBTYbiOKYzXLdO8SMl44EXs1EUTQEb5qTQjDOcSWso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hy3dnRt3; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=GRI1thHU5jXSxX6IqGsx2eVDApEcWlsW5Qn0ym1ltJbgG9Q/eKWfHf2jbSLo0lqbsXWVGYAS7T2WGIg90G9MAgiWZgmsTLRJUTdKR/pdPw7+qfh6dEd53Q1RYU+QA51s3Ny9iAoIKtl4R8lMNvdYgV2x4j/PSX1/ZZ3xnjOFAYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dW0gTjge; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761031907;
-	bh=u+G8Mt1dpRFClpUAKvKbFwgypYjcR8NzUmnmamS1YxM=;
+	s=mail; t=1761031908;
+	bh=qr9XyEgoKDrOvlQ/a4EvmrD00l7EvEI7RmtYodAKgIY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hy3dnRt3eGLK9sJNQcn2Pt6rxou3kv6Wfv2SP/N/THo1eNPYIzy9TRnq63NrEe4wM
-	 3d0cKnRe9qgCTziRmCs+3GxI/w15CJl941+Z3ktXdfq/GWSexB2keIn2YeTgglJqQd
-	 xQv04P2xssQLfgyP4AVJ/tJ20JJllo4EuuLKDjyNKJllhPKO271r3IS9m//4ynms0i
-	 zl75+KqwwF7Qdq12kbfhNk46A+POCAp9k+aIDz6qJ9ubhe3tUMINsDzVQhIIdLZgYm
-	 a3dI8YlQBaScUvg85jgXwWmLp6lFcqrzXqHEq88bJgmn2zWhnvevXiMw/L0tgWWDa8
-	 9wBba5oa2yjVA==
+	b=dW0gTjgeOApqnGqmEI57D2DqO0dLmHAF2ruzdQQoe0xxt+dy4PLcasIdyPbR6HG0M
+	 Lv0N9El/lXwuwcdtP3baYFAASpLznKjJVFzGHzrrPddXI9d+GrifdBJQbgOWd84CnD
+	 tsHOVG1yVeJ/xvC8z/hKQgKS7jT6ZsP+OIlj+U7pAXZOHFZRVl+PehVydDi6yZPSOH
+	 6C2kEb9w8JrpQkWd1cznIflMWViMXLIleiCQvxdFWgRZbsTfJFoet1qAajhlcEOZ4t
+	 EbqWu00tZ+ZkOYHrGfaLS3nYoixj0yblyor/1v6rnjZGReJ9HcLYNmPen+TxPfZqra
+	 GXqqXZXkldPPg==
 Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E0EA417E1305;
-	Tue, 21 Oct 2025 09:31:46 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AF99D17E1404;
+	Tue, 21 Oct 2025 09:31:47 +0200 (CEST)
 From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Tue, 21 Oct 2025 09:30:52 +0200
-Subject: [PATCH v2 2/3] arm64: dts: mediatek: mt8365: Add GPU support
+Date: Tue, 21 Oct 2025 09:30:53 +0200
+Subject: [PATCH v2 3/3] arm64: dts: mediatek: mt8365-evk: Enable GPU
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-mt8365-enable-gpu-v2-2-17e05cff2c86@collabora.com>
+Message-Id: <20251021-mt8365-enable-gpu-v2-3-17e05cff2c86@collabora.com>
 References: <20251021-mt8365-enable-gpu-v2-0-17e05cff2c86@collabora.com>
 In-Reply-To: <20251021-mt8365-enable-gpu-v2-0-17e05cff2c86@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -73,93 +74,50 @@ Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
  Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761031905; l=2580;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761031905; l=1137;
  i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=u+G8Mt1dpRFClpUAKvKbFwgypYjcR8NzUmnmamS1YxM=;
- b=y05pIlBN0LFY95ArJuuCsCuEONmMvdyrcfp3eGfkpqGJkcEnRG5trecSjXqSwe1G06oqT2A7H
- LCL+qahdJMeCBNOr/GGmvc/3avl+W9OykjeO9G1siKKpKZItu8jez8d
+ bh=qr9XyEgoKDrOvlQ/a4EvmrD00l7EvEI7RmtYodAKgIY=;
+ b=BTk5evTjx76vWj0BG4kqs51CoKzKQA0I1u53jD7R8c+No3fzOaD/cj8PcW5jg7FGhngEcjNh5
+ lfTS+ARGzmiB2mjtHq+TygszS/qCGstK24Iinm/XVo45JtYMCefdsmE
 X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
  pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-The Mediatek MT8365 SoC has an integrated Arm Mali G52 MC1 GPU
-(Bifrost).
-Add gpu, OPP table, and MFG clock driver nodes in mt8365.dtsi to support
-it using the Panfrost driver.
+Enable for the Mediatek Genio 350-EVK board the support of the
+Arm Mali G52 MC1 GPU integrated in the MT8365 SoC.
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8365.dtsi | 43 +++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-index e6d2b3221a3b7a855129258b379ae4bc2fd05449..a5ca3cda6ef30d59a106222549dc15bcb6ce503d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-@@ -267,6 +267,26 @@ clk26m: oscillator {
- 		clock-output-names = "clk26m";
+diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+index 3de04ae70cc5fcd203a9cb745dfb3575ace66801..92ecde96dfeb4bdbc85a8fd869b405ef6cc1cdc0 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+@@ -284,6 +284,11 @@ eth_phy: ethernet-phy@0 {
  	};
+ };
  
-+	gpu_opp_table: opp-table-gpu {
-+		compatible = "operating-points-v2";
-+		opp-shared;
++&gpu {
++	mali-supply = <&mt6357_vcore_reg>;
++	status = "okay";
++};
 +
-+		opp-450000000 {
-+			opp-hz = /bits/ 64 <450000000>;
-+			opp-microvolt = <650000>;
-+		};
-+
-+		opp-560000000 {
-+			opp-hz = /bits/ 64 <560000000>;
-+			opp-microvolt = <700000>;
-+		};
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <800000>;
-+		};
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
-@@ -292,6 +312,27 @@ gic: interrupt-controller@c000000 {
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+ &i2c0 {
+ 	clock-frequency = <100000>;
+ 	pinctrl-0 = <&i2c0_pins>;
+@@ -354,6 +359,10 @@ touchscreen@5d {
+ 	};
+ };
  
-+		mfgcfg: syscon@13000000 {
-+			compatible = "mediatek,mt8365-mfgcfg", "syscon";
-+			reg = <0 0x13000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
++&mfg {
++	domain-supply = <&mt6357_vsram_others_reg>;
++};
 +
-+		gpu: gpu@13040000 {
-+			compatible = "mediatek,mt8365-mali", "arm,mali-bifrost";
-+			reg = <0 0x13040000 0 0x4000>;
-+
-+			clocks = <&mfgcfg CLK_MFG_BG3D>;
-+			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_LOW>,
-+				     <GIC_SPI 202 IRQ_TYPE_LEVEL_LOW>,
-+				     <GIC_SPI 201 IRQ_TYPE_LEVEL_LOW>,
-+				     <GIC_SPI 204 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-names = "job", "mmu", "gpu", "event";
-+			operating-points-v2 = <&gpu_opp_table>;
-+			power-domains = <&spm MT8365_POWER_DOMAIN_MFG>;
-+			status = "disabled";
-+		};
-+
- 		topckgen: syscon@10000000 {
- 			compatible = "mediatek,mt8365-topckgen", "syscon";
- 			reg = <0 0x10000000 0 0x1000>;
-@@ -398,7 +439,7 @@ power-domain@MT8365_POWER_DOMAIN_CONN {
- 					mediatek,infracfg = <&infracfg>;
- 				};
- 
--				power-domain@MT8365_POWER_DOMAIN_MFG {
-+				mfg: power-domain@MT8365_POWER_DOMAIN_MFG {
- 					reg = <MT8365_POWER_DOMAIN_MFG>;
- 					clocks = <&topckgen CLK_TOP_MFG_SEL>;
- 					clock-names = "mfg";
+ &mmc0 {
+ 	assigned-clock-parents = <&topckgen CLK_TOP_MSDCPLL>;
+ 	assigned-clocks = <&topckgen CLK_TOP_MSDC50_0_SEL>;
 
 -- 
 2.51.0
