@@ -1,220 +1,131 @@
-Return-Path: <linux-kernel+bounces-862605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5075FBF5BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:16:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73133BF5BD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027433BFF59
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:16:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01D8D4FA495
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62996328B65;
-	Tue, 21 Oct 2025 10:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC8132C336;
+	Tue, 21 Oct 2025 10:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eVr5/fTB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="olPmgnty"
+Received: from fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.197.217.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5071B652
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D8AB652;
+	Tue, 21 Oct 2025 10:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.197.217.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041788; cv=none; b=nAD2hltbOGHwpA1JX2CiMfRxS7/yuJtIaevwZ2FYrDHO2D9OLAosPQmCOwIlB6VVBj9eDpMSEOeYVbs8l7nTct3tHpTlXOum0hbPiTwIQZj/ogfInsuBEgto0oAyr2ASBLWgDt/7sjMstnCj/PGqGkZkFHM9UmWi5qr++Bw62vk=
+	t=1761041818; cv=none; b=q5vu3XH7RwplcL3gmIUwhVwfwUCS/2RH8xjhv92WesjLLikNOVSRGcrcT9giw3Ko9UZPT3e52J/XocL6yqrxKksAYLX4FVuYNlQzbKgVj/UAi0lVYK0HE9Y4+yvgjr/l3CqHcIrrxQhDQvFhTZk+nn6/5EUyRH7Tnj+tXGHIFiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041788; c=relaxed/simple;
-	bh=K8Bt1F4duKaYZD6FM5I3/3n7I5nh0OjMrdkO6KPZNLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owMl1UkypgrQifVv/RoWUlu4Iryurw0Ja4hsmIchUWj+BNg7/2Z/HzWCY9GaSKOMg2wShJo6AhMdXS8y/Pl6xybWkRw/258DP2FkfhCoVorSpc03ZAbJXpLUNkzJZvtj9hzNM2whZLRSTDODe7CkkHY/5I+OGYKo5JZM8kPQXSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eVr5/fTB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761041784;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JJYhMYYkH+gP1AV8KxmcpA9zINZajsuC9HdWMXBqSjE=;
-	b=eVr5/fTBFJTgDJowyUjds8txNpPDHwdwd8KTuQbFf4KSf1FHvDCAu876KqtULeMHnHrI71
-	fkb4L+Q9zFAXb3iBR616cCskMCEk11QVYOabfXsfRrtLlIYagI/vB7bPVg/kQjeVnKE71k
-	TvRI+rLsdxjBQVCkORQEA5T7MArUMng=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-ImbGl7ZjNY29M0yb68VWmw-1; Tue, 21 Oct 2025 06:16:23 -0400
-X-MC-Unique: ImbGl7ZjNY29M0yb68VWmw-1
-X-Mimecast-MFC-AGG-ID: ImbGl7ZjNY29M0yb68VWmw_1761041782
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-471168953bdso38964875e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:16:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761041781; x=1761646581;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JJYhMYYkH+gP1AV8KxmcpA9zINZajsuC9HdWMXBqSjE=;
-        b=mD4XKbOsj4+CBMgmaAUALVIEvkI9b89S6ACfS9kVA7fTeaUHSeGyhUpWhty92PSgIy
-         mxkoVYqQUALzClD6d9PEhs4cUHBlHrbdlKBhRCYVFA8X/VXDbTWARKhRQZ/o2a5cgDOh
-         00YMDGQHYCDw0+kDbY7c+tYWJ4klLRhQpva/ns3drd/4ryoxSPy+6gEMvAWHU+Mo1J0g
-         QUOjPYMC1iwnkbI4n6hRgi47W2JEt6hyqU0rIBRKgRVuZSWRbS2944tP5mWJ2jd/MFWi
-         Y7IxgrTzUXfyuN8VM+nn76ACIosnDPEZxS0IkIskVQ4ZBCueDUNanzOvW7u4uZXKeNSO
-         4RAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQlA+3OxPfxbekjd50gjgGl2m9z5ZbbUJYmeib4JdUR7dwQpcVh7PHr3ZW/s24CysffR/rgdbCpiY6/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHouhOY55iDkShOvDSL+muin3+0rknpbH+2FTDPSwHa1iuNZl5
-	3XH7V6Zru+OwMnPUDW0HeM1I1swFg70r6Oo78/pEUpmbii18EYfDKfrsOxXZ2yKdmgFCJBRM8vp
-	df5wMz9RPgufiidqHlWo3PTvBhG7c9b/YFi0RqIoAVJ4BKbu/nKctYQQvfWXbfvR4aA==
-X-Gm-Gg: ASbGncusTHhF+jEoJCgj7rAdAgmFpJqeFum12qN5pMlzDUIIzVjZvzXPaZCvvx+HJ5z
-	1paiM5lplb/l9q0GvkUUlA0sHSjxFlW0/qe9haZALx6utfQV5I/WInM2u1fg7HlZe76To9tKstv
-	TA55cNMQytNPAEiUbZEy4lSWdtjkJpqqdRjBB13QkdQyrJ7/4UjTDV4dW67tyydj+JteK6Kza1D
-	fsslNCiUwe9IS4Pfy6qZqbksLQL+hVFd5mL5tzdyIII+SWHgnuwMjAvsawBQK9LlSqan0CecJbD
-	vXDyrzjqivjufV6A6mhT7995pngzAoUGhul3Opwx0Lg0t7YAcuOX+aP9ZYIAlu5n0Dp9Ddjlbcj
-	m4reWb1T7fL/W7X3KO7+qbBFVEo8DUyyeGoVxKxe2yiHMJhsuDWQ=
-X-Received: by 2002:a05:600c:a088:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-47117315d8emr128167545e9.16.1761041780841;
-        Tue, 21 Oct 2025 03:16:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFi58yEM3Ci3GlIQ7LRsfZT8Jz32v9v6BKO98V35kuEXc5OOA/pGgs/FK9jj1Yuy4hgaCi++g==
-X-Received: by 2002:a05:600c:a088:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-47117315d8emr128167295e9.16.1761041780382;
-        Tue, 21 Oct 2025 03:16:20 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c82c9sm272580385e9.14.2025.10.21.03.16.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 03:16:19 -0700 (PDT)
-Date: Tue, 21 Oct 2025 12:16:14 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: syzbot <syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev
-Subject: Re: [syzbot] [virt?] [net?] possible deadlock in vsock_linger
-Message-ID: <u6mwe4gtor7cgqece6ctyabmlxcaxn7t2yk7k3xivifwxreu65@z5tjmfkoami7>
-References: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
+	s=arc-20240116; t=1761041818; c=relaxed/simple;
+	bh=8MDXwoEIFINszKm73LVpBYFxmKJH+hoRSLKsyiU5mp4=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ekI26XMv60VVgiaDaYmwisgY6cdATOkc8yzoIU8m82DpGAJsnRWbP7QiMO6CZLj1g+ouIBfaVrKCfnut70PgmfVbPmrqoN82RPglUJe51noezA8M7oX1B+qx0TKmiiccJx7ZuFmHQ7Ub7hGEA6k5+rGzA7BRstMcBGfOhIfP7K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=olPmgnty; arc=none smtp.client-ip=18.197.217.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1761041814; x=1792577814;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=8MDXwoEIFINszKm73LVpBYFxmKJH+hoRSLKsyiU5mp4=;
+  b=olPmgnty0B68hZrxZ6JCcV0+5pyyPv/kxvZgpPBRXNSZSMNZHEcTzF0o
+   0/C+d8QVlnwdzXg4y5hQzX/vQAawN28aoTt4Q1gCiAWMauCsktSB1tOLj
+   7M+bsEt+uHH1h5rvDpSDyTYgGtA1HleMbhNo4WS4gNsggsoPp8qogUBHl
+   PJffsdN+2uEXcvq7RBsL41xwpxOiq8AKq6MpJddvrjI6/IQpSpNjLXRIi
+   lF3S0kgKumF2Sa0QVTpkx9KDRsDhBQpHAxmxyU+5hs4zdxW06Z9sUIRTS
+   T13N1/EHRD5r7HSG504fFSfxCnYO/ouu2axEDSTHnh6jKgHae3Z4KLi1L
+   g==;
+X-CSE-ConnectionGUID: t3cCI8X3TtayPGBVW0wUyg==
+X-CSE-MsgGUID: KEzN1gffTHWZaf9BIhzJBg==
+X-IronPort-AV: E=Sophos;i="6.19,244,1754956800"; 
+   d="scan'208";a="3947772"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 10:16:43 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:30186]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.17.8:2525] with esmtp (Farcaster)
+ id faaeaca1-ecac-4e7b-891e-ed40e4b2799d; Tue, 21 Oct 2025 10:16:43 +0000 (UTC)
+X-Farcaster-Flow-ID: faaeaca1-ecac-4e7b-891e-ed40e4b2799d
+Received: from EX19D013EUB004.ant.amazon.com (10.252.51.92) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 21 Oct 2025 10:16:35 +0000
+Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com.amazon.de
+ (10.253.107.175) by EX19D013EUB004.ant.amazon.com (10.252.51.92) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 21 Oct 2025
+ 10:16:26 +0000
+From: Mahmoud Nagy Adam <mngyadam@amazon.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <stable@vger.kernel.org>, <nagy@khwaternagy.com>, Jens Axboe
+	<axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov
+	<idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+	<adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
+	<chao@kernel.org>, Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
+	<djwong@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, "Anna
+ Schumaker" <anna@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, Damien Le Moal
+	<dlemoal@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ceph-devel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+	<linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+	<linux-nilfs@vger.kernel.org>, <linux-mm@kvack.org>
+Subject: Re: [PATCH 6.1 0/8] Backporting CVE-2025-38073 fix patch
+In-Reply-To: <2025102111-stoppage-clergyman-f425@gregkh> (Greg KH's message of
+	"Tue, 21 Oct 2025 09:43:45 +0200")
+References: <20251021070353.96705-2-mngyadam@amazon.de>
+	<2025102128-agent-handheld-30a6@gregkh>
+	<lrkyqms5klnri.fsf@dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com>
+	<2025102111-stoppage-clergyman-f425@gregkh>
+Date: Tue, 21 Oct 2025 12:16:22 +0200
+Message-ID: <lrkyqikg8lfux.fsf_-_@dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ixrysslziegqmao6"
-Content-Disposition: inline
-In-Reply-To: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: EX19D040UWB004.ant.amazon.com (10.13.138.91) To
+ EX19D013EUB004.ant.amazon.com (10.252.51.92)
+Content-Transfer-Encoding: base64
 
-
---ixrysslziegqmao6
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-
-On Mon, Oct 20, 2025 at 05:02:56PM -0700, syzbot wrote:
->Hello,
->
->syzbot found the following issue on:
->
->HEAD commit:    d9043c79ba68 Merge tag 'sched_urgent_for_v6.18_rc2' of git..
->git tree:       upstream
->console output: https://syzkaller.appspot.com/x/log.txt?x=130983cd980000
->kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
->dashboard link: https://syzkaller.appspot.com/bug?extid=10e35716f8e4929681fa
->compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f0f52f980000
->C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ea9734580000
-
-#syz test
-
-
---ixrysslziegqmao6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="0001-TODO.patch"
-
-From c32c21ea301aadc56160a57ddcd99f836a49f028 Mon Sep 17 00:00:00 2001
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Tue, 21 Oct 2025 12:12:24 +0200
-Subject: [PATCH] TODO
-
-From: Stefano Garzarella <sgarzare@redhat.com>
-
----
- net/vmw_vsock/af_vsock.c | 38 ++++++++++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 12 deletions(-)
-
-diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index 4c2db6cca557..5434fe6a1d6b 100644
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -565,6 +565,11 @@ static u32 vsock_registered_transport_cid(const struct vsock_transport **transpo
- 	return cid;
- }
- 
-+/* vsock_find_cid() must be called outside lock_sock/release_sock
-+ * section to avoid a potential lock inversion deadlock with
-+ * vsock_assign_transport() where `vsock_register_mutex` is taken when
-+ * `sk_lock-AF_VSOCK` is already held.
-+ */
- bool vsock_find_cid(unsigned int cid)
- {
- 	if (cid == vsock_registered_transport_cid(&transport_g2h))
-@@ -735,23 +740,14 @@ static int __vsock_bind_dgram(struct vsock_sock *vsk,
- 	return vsk->transport->dgram_bind(vsk, addr);
- }
- 
-+/* The caller must ensure the socket is not already bound and provide a valid
-+ * `addr` to bind (VMADDR_CID_ANY, or a CID assgined to a transport).
-+ */
- static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr)
- {
- 	struct vsock_sock *vsk = vsock_sk(sk);
- 	int retval;
- 
--	/* First ensure this socket isn't already bound. */
--	if (vsock_addr_bound(&vsk->local_addr))
--		return -EINVAL;
--
--	/* Now bind to the provided address or select appropriate values if
--	 * none are provided (VMADDR_CID_ANY and VMADDR_PORT_ANY).  Note that
--	 * like AF_INET prevents binding to a non-local IP address (in most
--	 * cases), we only allow binding to a local CID.
--	 */
--	if (addr->svm_cid != VMADDR_CID_ANY && !vsock_find_cid(addr->svm_cid))
--		return -EADDRNOTAVAIL;
--
- 	switch (sk->sk_socket->type) {
- 	case SOCK_STREAM:
- 	case SOCK_SEQPACKET:
-@@ -991,15 +987,33 @@ vsock_bind(struct socket *sock, struct sockaddr *addr, int addr_len)
- {
- 	int err;
- 	struct sock *sk;
-+	struct vsock_sock *vsk;
- 	struct sockaddr_vm *vm_addr;
- 
- 	sk = sock->sk;
-+	vsk = vsock_sk(sk);
- 
- 	if (vsock_addr_cast(addr, addr_len, &vm_addr) != 0)
- 		return -EINVAL;
- 
-+	/* Like AF_INET prevents binding to a non-local IP address (in most
-+	 * cases), we only allow binding to a local CID.
-+	 */
-+	if (vm_addr->svm_cid != VMADDR_CID_ANY &&
-+	    !vsock_find_cid(vm_addr->svm_cid))
-+		return -EADDRNOTAVAIL;
-+
- 	lock_sock(sk);
-+
-+	/* Ensure this socket isn't already bound. */
-+	if (vsock_addr_bound(&vsk->local_addr)) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
- 	err = __vsock_bind(sk, vm_addr);
-+
-+out:
- 	release_sock(sk);
- 
- 	return err;
--- 
-2.51.0
-
-
---ixrysslziegqmao6--
+R3JlZyBLSCA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+IHdyaXRlczoKCj4gT24gVHVlLCBP
+Y3QgMjEsIDIwMjUgYXQgMDk6MjU6MzdBTSArMDIwMCwgTWFobW91ZCBOYWd5IEFkYW0gd3JvdGU6
+Cj4+IEdyZWcgS0ggPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPiB3cml0ZXM6Cj4+Cj4+ID4K
+Pj4gPgo+PiA+IE9uIFR1ZSwgT2N0IDIxLCAyMDI1IGF0IDA5OjAzOjM1QU0gKzAyMDAsIE1haG1v
+dWQgQWRhbSB3cm90ZToKPj4gPj4gVGhpcyBzZXJpZXMgYWltcyB0byBmaXggdGhlIENWRS0yMDI1
+LTM4MDczIGZvciA2LjEgTFRTLgo+PiA+Cj4+ID4gVGhhdCdzIG5vdCBnb2luZyB0byB3b3JrIHVu
+dGlsIHRoZXJlIGlzIGEgZml4IGluIHRoZSA2LjYueSB0cmVlIGZpcnN0Lgo+PiA+IFlvdSBhbGwg
+a25vdyB0aGlzIHF1aXRlIHdlbGwgOigKPj4gPgo+PiA+IFBsZWFzZSB3b3JrIG9uIHRoYXQgdHJl
+ZSBmaXJzdCwgYW5kIHRoZW4gbW92ZSB0byBvbGRlciBvbmVzLgo+PiA+Cj4+Cj4+IFl1cCwgSSd2
+ZSBhbHJlYWR5IHNlbnQgYSBzZXJpZXMgZm9yIDYuNiB5ZXN0ZXJkYXk6Cj4+IGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL3N0YWJsZS8yMDI1MTAyMDEyMjU0MS43MjI3LTEtbW5neWFkYW1AYW1hem9u
+LmRlLwo+Cj4gQWgsIHRvdGFsbHkgbWlzc2VkIHRoYXQgYXMgaXQgd2FzICJqdXN0IiBhIHNpbmds
+ZSBiYWNrcG9ydCwgbXkgZmF1bHQuCj4KCjYuNiBoYWQgYWxsIHRoZSByZXF1aXJlZCBkZXBlbmRl
+bmNpZXMgYWxyZWFkeSBzbyBpdCB3YXMgZm9ydHVuYXRlbHkgYQpzaW1wbGVyIHNlcmllcyA6KS4g
+SSdsbCBtYWtlIHN1cmUgdG8gcmVmZXJlbmNlIHRoZSBvdGhlciBzZXJpZXMgaW4gdGhlCmZ1dHVy
+ZSBhcyB3ZWxsLgoKPiBUaGFua3MgZm9yIHRoaXMsIEknbGwgcmV2aWV3IHRoaXMgd2hlbiBJIGdl
+dCBhIGNoYW5jZS4gIEhvdyB3YXMgdGhpcwo+IHRlc3RlZD8KClRoaXMgd2FzIHRlc3RlZCBieSBv
+dXIgaW50ZXJuYWwgdGVzdGluZyBvdmVyIHZhcmlvdXMgRUMyIGluc3RhbmNlcwooeDg2XzY0ICYg
+QVJNKS4gT3VyIHRlc3RpbmcgaW5jbHVkZXMgcnVubmluZyBrc2VsZnRlc3RzLCBmc3Rlc3RzLCBM
+VFAKc3VpdGVzLgoKSWYgdGhlcmUgYXJlIHNwZWNpZmljIHRlc3RzIHlvdeKAmWQgbGlrZSBtZSB0
+byBydW4gb3IgcmVzdWx0cyB0byBwcm92aWRlLApwbGVhc2UgbGV0IG1lIGtub3cuCgpUaGFua3Ms
+Ck1OQWRhbQoKCgpBbWF6b24gV2ViIFNlcnZpY2VzIERldmVsb3BtZW50IENlbnRlciBHZXJtYW55
+IEdtYkgKVGFtYXJhLURhbnotU3RyLiAxMwoxMDI0MyBCZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhydW5n
+OiBDaHJpc3RpYW4gU2NobGFlZ2VyCkVpbmdldHJhZ2VuIGFtIEFtdHNnZXJpY2h0IENoYXJsb3R0
+ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQgQgpTaXR6OiBCZXJsaW4KVXN0LUlEOiBERSAzNjUgNTM4
+IDU5Nwo=
 
 
