@@ -1,194 +1,170 @@
-Return-Path: <linux-kernel+bounces-862122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3C9BF478F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:16:00 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9B0BF47A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B864664AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:15:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EDB303507FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D4D211499;
-	Tue, 21 Oct 2025 03:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320B2202F9C;
+	Tue, 21 Oct 2025 03:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9FmyixS"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VveLCn15"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E6A3B186
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF93B1F16B
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761016553; cv=none; b=rX8IcTuWYuTSY8PY4HheZGE/QmkIRa/yWV0d8+IKEHMoeh2HfxQ1QA3Bx4It6hwaWfV+/OcQeqN1ZzAqNA41fSxi8i0VQJQppuaw19Mk2Rv8P96GMKMqMPV6bbYb6MTG/uADMwL/GtX6Alb9gGb2ImCgZldfGSRLLHcbRO+3aOc=
+	t=1761016683; cv=none; b=nUe9am17EoisC2hspMsQU5a7gGHwasGwXV2ZUDZvJ+I+Z0/Lcx3P73DT85SZHZpuE6SoTIKFDTo3iiaHziF3PM7b/Zzaa2HharYPPDr6Bd358cSOHVKj7lDH/CLq8H2ERjowhY70WYJCb/m9NoEJ2UmGF5xKdSCjwfq8ZCS/GkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761016553; c=relaxed/simple;
-	bh=FozCj5Qtilnm6MTFQqUJJBi0+f5aDzs/7epoDnQr8Rw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eZw877HkXajrrEq9UsGQVUrN+pvWqpHd0jVTVKi+Hu7AYDDQvHCaBbG9csKSrUc3QB7QOBjUewL9EmQrTDMYg7CeLXJOoujVL/v9TFkChZPko9Qfl3jvWxJAuSnJWJAhZHSOZtf8kVdw6Up4Ys64jh/G6rtLigLujrv2PvB9tk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9FmyixS; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1761016683; c=relaxed/simple;
+	bh=sfQfeeJSIBOGYQeQglmRX/1uHnkqyry3lbhoV7QNqE0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h5jN2epeQRSIHvarj27ufleCo5ULPc22ABOCIF853Qm8xe91ZTmr98rYhNlsz6rUDdlNPS8RB+ej181qDj5glRtP0zsnMdhVIuMcFZgkSloYZdlOAl+UnSELZxwXUMDnusTevkPTdIOKdIQzhpItrBGtpiHmvQZErvvpicbuC4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VveLCn15; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27ee41e0798so80769295ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:15:51 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-85a4ceb4c3dso709803885a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761016551; x=1761621351; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIc5Jk6uXrpT5vKhUN3R3BidtAKxdUPzX/dU/naleU8=;
-        b=P9FmyixSb94cxMLRqyW/OTZj/wzKWawTCu1NAN3EYTDUgInaRAy3rt3KyCj/JDnuew
-         kprRO9iS03CtTySFOlfSiDFCUvvLpB+9sdvN7tF2noUBA3Ewj2dIG6oMbjpuDA5B+EWJ
-         FsW0kxOMOqeRWVHpD/t3rYq7T4+VIFeIvBPJGaIdj+ZeKxRbB4RhDdwjEAJ6adWPPPga
-         +wnHKPBf/erEGhEUs+eIaYkdTJjk9rx9tU+w6jQTAyxRk6bXdZQqP9Y3joaB/HjFAFsn
-         TiHyyaXugJxC8QvqjVNptYZ0hru0NcnD94dnL2xF5w1IB1bqgdclItju4l9qZaj3cdxC
-         4eOw==
+        d=gmail.com; s=20230601; t=1761016681; x=1761621481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IKp8K5lCZ3dpAyDEqf6jcNNDcXUsYhzNGDh14Qf0pAE=;
+        b=VveLCn15TD+xby9ReQc5oxqgPGrqCJSWTi13Fk8KAI6qSXNKiSxLND6yuqgzPRxVkL
+         fWsTG4x09G+7Kt5GzJHhMUcKan8i4q7TfV9eHIctFukRqV1Kn/DB2NUUfYOh3QZj7FXF
+         1umfnz2QEdgxyDtaLdkMAoEcXvg1n4j9S4DdZ/4aEx3X0c7vBFoknsThK8o8hpEn/veS
+         086Pe7fuXXh4zRAbhJV2FL2JOjug4IUH1HigCYpAwDox7D2kPicQfAWSLmRk2xOC2Z3x
+         wUbvumnXwW5fH27m9Yipe4CK/kUdeYUAMsDX7yRfOerJPQTx7fxDwvsB1rajzQAv5Qu+
+         JYmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761016551; x=1761621351;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MIc5Jk6uXrpT5vKhUN3R3BidtAKxdUPzX/dU/naleU8=;
-        b=a442sftI/te3mjLnWxSxR6MEJXQJXYv+GcaNPhJbqKw5RVcrVczn7NEey2tlD9fR+8
-         SR/ZLlmCpnaXuYYFZcYrgZqoXqcnoIJHN3zhzvXxB1JKarZPyvuuQmpayK49Z+JfvqLd
-         4/YcGaL7WAZBN9iDQZuY7kFLAlFbfD+ahdiVOaCPqG1dMoPaGnT/aznIhelNA3DYEsDo
-         qAWHaq8KT9AOzN1WATAzb+5o1yEMgg1tsyc0Pf7Q6rQBitDt2GJqufPIsuy3C5LHmTr+
-         Be2tpKzz+eTPJLPpWn6KeOOZhxVAHnz8bMtQQF56tsDyVBigWFXEnd5pkmUKZCNCaekL
-         T6ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUaKJyE6lz2LY4sYxh8Et8btmChl41ehfhuwAT5pQd7GVv+4Oe99nBxZ/g0myGrGUWYMVrIN1N0oUdQVu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK3mX0Ay/Lvw/9dt8itY9Lzc/XBhMs7uJjiR1z7R5pV5uIriDW
-	2HFBUI2JxvtJIs5WJUxsTpx/Rc+HtPLP1FyN2/d1Mo3a0jOVSrYuxRqE
-X-Gm-Gg: ASbGncu5IiS90nPiy5uk8uxzE+jPzETVqOstKAo6b5k8jrSy/WbcAUfpB0ahKiNxovF
-	yxnmzn7m0RT4wxHi0/CrdAZPbSMGyJiKrI0OPRvOQpVfSGzgNfg4WkjM2GoTwcDOPohDAp/J1Od
-	AQn14VHxWvNSEaGScBmEIHxZFS57ZTBLM36kKOsvYalkTseKS8EN9jRoInSr9Y0QZ4HycUVnVqo
-	V4RWepRksofGhs6gCKFfeFKCmZ7jh9m1xQR4Akqu5Nkft/bSqkNKGne8HZHpUfE/mszT+SJByw4
-	JLMpJF3VMDTalk1/yuHPjh5uPTsG0O6wccHOLIMABPKh96wFG0ZOVK9hqrluNvIyFJeJ5+oLuyw
-	0LukF2p3pq6ft8aXnEglfV/c1XSdqADtvnXq16f6G7OHA0sxSQqX4TrzQIqEx5TBLYL+L0jHc/+
-	RBAahsoFc0PAzsLSpRI5qvlF78J396O4ydkFtE
-X-Google-Smtp-Source: AGHT+IHvc2OdIns7Dhqd5TV4LyvC/HJfGjCUatzoXh06HQxZAcairq7EJA2klU28lcwGsK1CQQDx2g==
-X-Received: by 2002:a17:903:2b0d:b0:272:f9c3:31f7 with SMTP id d9443c01a7336-290cbe2ae84mr56298125ad.50.1761016551034;
-        Mon, 20 Oct 2025 20:15:51 -0700 (PDT)
-Received: from [172.17.0.2] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fcc2b1sm94889765ad.27.2025.10.20.20.15.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 20:15:50 -0700 (PDT)
-From: Leo Wang <leo.jt.wang@gmail.com>
-Date: Tue, 21 Oct 2025 11:15:39 +0800
-Subject: [PATCH] ARM: dts: aspeed: clemente: Add EEPROMs for boot and data
- drive FRUs
+        d=1e100.net; s=20230601; t=1761016681; x=1761621481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IKp8K5lCZ3dpAyDEqf6jcNNDcXUsYhzNGDh14Qf0pAE=;
+        b=c19QZfE1IxaTVurMu+lEfnCkvPwXkgRXnAhqCydX8XeMf/8oHuI4j/nm7UHgoUYx+U
+         swBlIYTau3aHi4epSuW27MZpV2+9gIGz/7hpYbjRiXWRObpoQCc/zhevKMHGv9rr4VmA
+         9ozC58Di42hKCVGrUbzSRTLrXNmPzKojf5x4stkJWET6kodpeKimf3cwVxrwCKiGEUux
+         BK98F3hSDKqOsfBXTmnJul5TlWeBCz89nG9CHtGS/+X4xBYWAfm+MTHxLcny5d8GjAUL
+         OTQ1Xa4y7HP90J2qJ/fi0HmEpjWwGsyE4Ik0N5c57KgHvEUPORJzC8hCu8exQSLKX7JY
+         nPiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcvRwIQy2BDXgocLdYIf0lrAGy1CTcnohFIC8NqhH9onXg2Y0hOMES8HtWjLECii7NILF5HDxR7rjQH9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKuSyrmaeDo3l34EeydA6zdOXU8Nrtp8ONPatlDdsan4wy8BNr
+	SEdsbOy22Fsrmib6l4LzckPRabdLwBGih4YI5Y1x/cQNDS6mYFUgaysw0YH9te7WooyCrL3N17U
+	nSOp5UNUaHEF8DpoQYXzmwqmbteBK4XfifZcLNdM=
+X-Gm-Gg: ASbGncuzjfeVFIrwnz9lawOvucFtOjvUDLMhzj3batqBKPLXxMOI7nfM34eUVOK0V8M
+	VdiN5926mzpgkf6fvJuTxmNl3fGImFquOpoKV1dZN+Z0Mrr3AreUqQApHyc2FtlUszX3FkPsJAk
+	G674P3EBFuIxrxrfcX+hyXItZDOi3Xsm0eG2Ne+6EwszYwD6yvun11k7fmFPa5ras+L6tl28LCj
+	/REqtH6VlS2Uwj+Q/SZmjKtHboymTfNex75cjd8/aqsXoAEEHE7ZYMt5oey2YAsvpEVX8tv7JUy
+	N7gbUJKbbzXH5AUQC2nUTCQSzAUbsw+vlW0N1g==
+X-Google-Smtp-Source: AGHT+IEISLt1R8Tq3GUFGAlLRQg2JU0sPn1UxM/cYxwrh/JtX54j7bP+h6dE4yyysVO1BfHw279yngY5UxCTBJDhC+g=
+X-Received: by 2002:a05:620a:2950:b0:80d:4088:82dd with SMTP id
+ af79cd13be357-8906b7aaec6mr1842418985a.0.1761016680601; Mon, 20 Oct 2025
+ 20:18:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-leo-dts-add-nvme-eeprom-v1-1-33166b3665b4@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANr69mgC/x3MQQqEMBAF0atIr21IZ3REryIuxHy1YUwkERkQ7
- 25w+RZVFyVERaKuuCji1KTBZ0hZ0LSOfgGryyZrbC3GCv8Q2B2JR+fYnxsY2GPY+CPfqpG2bid
- rKNd7xKz/99wP9/0A40cKRWkAAAA=
-X-Change-ID: 20251021-leo-dts-add-nvme-eeprom-316471959c20
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- george.kw.lee@fii-foxconn.com, bruce.jy.hung@fii-foxconn.com, 
- leo.jt.wang@fii-foxconn.com, Leo Wang <leo.jt.wang@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761016548; l=2272;
- i=leo.jt.wang@gmail.com; s=20250618; h=from:subject:message-id;
- bh=FozCj5Qtilnm6MTFQqUJJBi0+f5aDzs/7epoDnQr8Rw=;
- b=8BInr5iA6wBDcAL4sY8DnyKW4muBdm9myjKyhrNgz4zvC7PgZByz+aciemOqaw2l3lP+Dk17F
- WiRuYEfnT9MAdWDDJm8CfcmcWioWtAmA94gNx57lZN4uJoHCmtiSswe
-X-Developer-Key: i=leo.jt.wang@gmail.com; a=ed25519;
- pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
+References: <20251017160251.96717-1-dev.jain@arm.com>
+In-Reply-To: <20251017160251.96717-1-dev.jain@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 21 Oct 2025 16:17:48 +1300
+X-Gm-Features: AS18NWDI6AbZQPBjErDyOP8dFS6M9xx3Z6lnBR5rWfIWS85iIEUyVJpIZk0sZ5U
+Message-ID: <CAGsJ_4xwS9Q_5e8-F6PmyHm_1OyuHuTKnnzH_WPNiOmVzkkmdw@mail.gmail.com>
+Subject: Re: [RESEND] [PATCH v2] arm64/mm: Elide TLB flush in certain pte
+ protection transitions
+To: Dev Jain <dev.jain@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, anshuman.khandual@arm.com, 
+	wangkefeng.wang@huawei.com, ryan.roberts@arm.com, pjaroszynski@nvidia.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add EEPROM devices on the I2C buses used for the boot and data NVMe
-drives. These EEPROMs store FRU information for each drive, allowing
-the BMC to identify.
+On Sun, Oct 19, 2025 at 12:36=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
+>
+> Currently arm64 does an unconditional TLB flush in mprotect(). This is no=
+t
+> required for some cases, for example, when changing from PROT_NONE to
+> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulat=
+e
+> growing into the non-main heaps), and unsetting uffd-wp in a range.
 
-Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
----
- .../dts/aspeed/aspeed-bmc-facebook-clemente.dts    | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+I recall seeing this pattern frequently in multi-threaded programs. The sta=
+cks
+for the threads can be observed by running strace on a multi-threaded app:
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
-index 450446913e36b1418fab901cde44280468990c7a..885c50a7d66593dfa8493d2d031700174b452382 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
-@@ -311,6 +311,12 @@ i2c0mux0ch1mux0ch0: i2c@0 {
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <0>;
-+
-+					// HDD NVMe SSD FRU 0
-+					eeprom@53 {
-+						compatible = "atmel,24c02";
-+						reg = <0x53>;
-+					};
- 				};
- 
- 				i2c0mux0ch1mux0ch1: i2c@1 {
-@@ -323,6 +329,12 @@ i2c0mux0ch1mux0ch2: i2c@2 {
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <2>;
-+
-+					// HDD NVMe SSD FRU 1
-+					eeprom@53 {
-+						compatible = "atmel,24c02";
-+						reg = <0x53>;
-+					};
- 				};
- 
- 				i2c0mux0ch1mux0ch3: i2c@3 {
-@@ -493,6 +505,12 @@ i2c0mux3ch1mux0ch0: i2c@0 {
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <0>;
-+
-+					// HDD NVMe SSD FRU 2
-+					eeprom@53 {
-+						compatible = "atmel,24c02";
-+						reg = <0x53>;
-+					};
- 				};
- 
- 				i2c0mux3ch1mux0ch1: i2c@1 {
-@@ -505,6 +523,12 @@ i2c0mux3ch1mux0ch2: i2c@2 {
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <2>;
-+
-+					// HDD NVMe SSD FRU 3
-+					eeprom@53 {
-+						compatible = "atmel,24c02";
-+						reg = <0x53>;
-+					};
- 				};
- 
- 				i2c0mux3ch1mux0ch3: i2c@3 {
-@@ -619,6 +643,12 @@ i2c0mux5ch1: i2c@1 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <1>;
-+
-+			// BOOT DRIVE FRU
-+			eeprom@53 {
-+				compatible = "atmel,24c02";
-+				reg = <0x53>;
-+			};
- 		};
- 
- 		i2c0mux5ch2: i2c@2 {
+mmap(NULL, 20480, PROT_NONE,
+MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) =3D 0x7fbfcd14c000
+mprotect(0x7fbfcd14d000, 16384, PROT_READ|PROT_WRITE) =3D 0
 
----
-base-commit: 6953afcd81a2cc73784e3dd23faa0a1aaf97441a
-change-id: 20251021-leo-dts-add-nvme-eeprom-316471959c20
+The stack guard page in the mmap region remains non-READ/WRITE, while the
+rest of the area is set to RW after initially being PROT_NONE.
 
-Best regards,
--- 
-Leo Wang <leo.jt.wang@gmail.com>
+>
+> Therefore, implement pte_needs_flush() for arm64, which is already
+> implemented by some other arches as well.
+>
+> Running a userspace program changing permissions back and forth between
+> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time take=
+n
+> for the none->rw transition, I get a reduction from 3.2 microseconds to
+> 2.85 microseconds, giving a 12.3% improvement.
+>
+> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
+The patch seems to make a lot of sense to me, but I=E2=80=99m not an ARM ar=
+chitecture
+expert and cannot judge whether __pte_flags_need_flush() is correct. I=E2=
+=80=99ll leave
+that to Will and Catalin.
+
+> ---
+> mm-selftests pass. Based on 6.18-rc1.
+>
+> v1->v2:
+>  - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
+>    pteval_t, return !!diff (Ryan)
+>
+>  arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/t=
+lbflush.h
+> index 18a5dc0c9a54..40df783ba09a 100644
+> --- a/arch/arm64/include/asm/tlbflush.h
+> +++ b/arch/arm64/include/asm/tlbflush.h
+> @@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct =
+arch_tlbflush_unmap_batch *b
+>  {
+>         __flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
+>  }
+> +
+> +static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newv=
+al)
+> +{
+> +       ptdesc_t diff =3D oldval ^ newval;
+> +
+> +       /* invalid to valid transition requires no flush */
+> +       if (!(oldval & PTE_VALID))
+> +               return false;
+> +
+> +       /* Transition in the SW bits requires no flush */
+> +       diff &=3D ~PTE_SWBITS_MASK;
+> +
+> +       return !!diff;
+> +}
+
+Thanks
+Barry
 
