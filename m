@@ -1,154 +1,111 @@
-Return-Path: <linux-kernel+bounces-863284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62E0BF7792
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:48:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64CBBF77B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13D648708D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB2E3A2F74
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C1A343207;
-	Tue, 21 Oct 2025 15:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4405F355057;
+	Tue, 21 Oct 2025 15:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AjBw7L0j"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCiVa+qy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DF47261B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E283451C7;
+	Tue, 21 Oct 2025 15:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761061646; cv=none; b=qti/n6/Fuq7AjclXx1vb/FeFmvM/ojTEdJ4IdNWelmRZse/ghkATsGSnJ9eE02xuCxHaWb3A1sSmnM7yrWE1YRhhM8K9axyf7nyIrNJ5MKjKBb0XNQuVZVbjkFIO/jczsJkCAoWOxbhj+uKjSAOtFKlKhqgC9/avcI+q34zZsIs=
+	t=1761061671; cv=none; b=a2JW0aM72Jmu6fm7p7UYDHqz5Xjx3CjR51AP7HolsxfeCldFY6by8gfrdEf/FoqzBrXpLeFZ9igBW0ZAYTh+W35GSg9wYqRQwglKhpRMk7UwdT0U49NW5ypir956FFnfOYKrFmuoEK9UFhHp8q1mxLed6dszDuJJKIiVRgOFQ8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761061646; c=relaxed/simple;
-	bh=v4DAAOopxPuDTS6b13jWhPwgY6rLi9/WRQVdYJEqclQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=behyqtLqtOKOxWGs5DE0Ns6AezVQuHeLoh/zGdTbn6XEpE0o7Qxdt9EW6A5ym6YWW8OUdyIvBiihPJChwsfH282Sf7cxLUQhJhciOKBSYR8i+XOxAn4pAB86Ed0dL9Ik8/TtxEr0VcNzyBD6GIk5nghc3PM5FJP8CWHpKD2fT1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AjBw7L0j; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c45c11be7so6681009a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761061642; x=1761666442; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9YHz5AJsTnbPUUFUzOK0b5SHXphkm+yoYDBq4kn6CE=;
-        b=AjBw7L0jp8FRGKTWa5UBsDpVayen0l8U5MV4rViSbQKBqsINy5GoXeWZDX/y1uCFLZ
-         6cpl3+CGuj+he0LIZ7NGjt1FEsXc4Blwe+Yk1E1Kmk5QvvVZBAkG9K4o09dksqtOJQex
-         VNV8ZG2pxNt56bgb85n6qFO9bOp3p3g5boZM8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761061642; x=1761666442;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r9YHz5AJsTnbPUUFUzOK0b5SHXphkm+yoYDBq4kn6CE=;
-        b=JbAMx758AzE3HGOsBuWqQ4923Gs3X2ukDRD4vefhkIyDAXUE2pqUDQejoxn5xMYt08
-         NGe2G4LeKoBzjEp5XEktzikza269GVnfT4Y03ZTvGLGoU3MQBlbPPjAd0HmyJrHB5ppm
-         vpOuZWDgQYOQeAtvB8gbnntASJhwULNxl+6/bCRgZR5e6XveQUt8Nt3EFOB0Co+01eYS
-         vCQ5iAirt9wdrpH9uI2NaT5bxsDHjHS/ZLhOaGV0JoKAurc0cRgsl4w3gBDrrAUJIH5l
-         GHJZ0/yOTecsphR3gMWghcG3Jyc7cM6TEuaMTsrVrTI5vZxdpYuSt+4lLRRG4WpT/dAX
-         Uy/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU9PUrhb2dCQuLxi0Byuv2qwYxgry5nrWp8YsPDgREmh/GcgboF0jJcUvNjX2UFF7PC6QgLLB5T++iNgaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu/PKbor8CKW6hpm/KEsTOswZ86TYhcVJKFoVARqUx8MFqfsjv
-	EJwlpQQ3iLAT04NDV2OJAGpCP5IMCf426GfjDDVE6ShFBoHsfF956s57QKpdVJxmm+KR5Lecrtm
-	dvHs6+Xv0Qw==
-X-Gm-Gg: ASbGncsuFVPZc3c8l/V8YITfzPJ532ItBGBJjnBnXiC5xs+LCy5SDjmDNZqASf/9lsx
-	5YdTkA0030kRz6kQei1lMVQQKZgouNKQwC15GUiwm3ATMSe39d9roab9IA1lRovr2XV85HEXs65
-	Xxs5B+ydekSHHvtQM/qKfBhBaqsaLBbClMgMAgc5FfRe+VSS9w2y7vzIVNkJDj7UDJWAbF92N4K
-	vDRL+zZBCWGwMho9V3H0YBSn9ht7NA3wuf3L3I5XZPihD3rso4uEla67K+2nigy4yGwQFQAh386
-	oTfKeZIxZww14VvO0t11WLH9wOWVabDGwPKGWvWTrFjwt7Ia6vZFeNjpHAQh9bjRCARmYInUzLx
-	ynkVssnBYAxlChxvYOXIZHaIHFv/77y1DVgXMNlLTWuOsEpnElWAvUw48p8UcKBUShAhdtKYGLA
-	5nli+DF3IRusfw5Oo6mzmeobls0HQ+s0uht4rFvlh/IInqSy5LF42O20FOYho7
-X-Google-Smtp-Source: AGHT+IGfY4vRh3qDDXHZNNHwW5/Hnl1Alz1htHAsSas+zsmtJPilOQAAUS49YeH0o5TAfVz0FxYAvQ==
-X-Received: by 2002:a05:6402:5191:b0:63c:4f1e:6d7a with SMTP id 4fb4d7f45d1cf-63c4f1e734cmr13623686a12.19.1761061642134;
-        Tue, 21 Oct 2025 08:47:22 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4949bfd3sm9573945a12.41.2025.10.21.08.47.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:47:21 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso9745049a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:47:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWjISNcn99qTsHuarWjGY9ai0x1Iiv6VKimrLVeh0qKFQUpqEXFSf5AlzM8d/GHO+wjy9XkIXdkeJtjil0=@vger.kernel.org
-X-Received: by 2002:a05:6402:26cc:b0:63c:1514:67cd with SMTP id
- 4fb4d7f45d1cf-63c1f6da983mr16912137a12.17.1761061639455; Tue, 21 Oct 2025
- 08:47:19 -0700 (PDT)
+	s=arc-20240116; t=1761061671; c=relaxed/simple;
+	bh=yloHVT/ZWbwsMdentgq3wkJfJDSHxtJH/8vBDr2zvH0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=flRkD98oZrFWvws2RHmfwOBbZJdbGJLoLJAX5URGoMgr8pPw9GxgGB7nwedt015odzQPo6zstKpjUd+JYp9g8M/AAjN/blRhR3mW+p/o4rTLTDCSwZLcY8TMBdk/jJpDEF4esqQKh6ZHcqlx/uFBceedMd2JyaEzK7UBx/hkqC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCiVa+qy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A42C4CEF5;
+	Tue, 21 Oct 2025 15:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761061671;
+	bh=yloHVT/ZWbwsMdentgq3wkJfJDSHxtJH/8vBDr2zvH0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=pCiVa+qyjSv3Zic1X1H0Ej2RTae+/7SlKzt0iMWsMNXEBw8vXJsG3HW2G5S0M0MTH
+	 XXYPe08W/TMjWNK5j5R+FEdYypKXFgF6PmT7EJSKAAydRhlASrtQ40FbqZuyyeI53s
+	 9/ioUhKnyY/RRIvRhJMfOlIBD0vGuUORcJeNL6j2z8Cs3tIKsO3W6Lmd0sFsMXwLB/
+	 Zfw73uo+fWtlT6tg5ITfl5s6+uFwbPyoG+lm9qhgS+sn6LtOrtXkUkJcQzy/ShObxf
+	 /HLWZaAF8EOv+ppgpkuOU14dGeZ2ITJHgURm6QSBoNgQ+VmPMuf2LMUJxXXBJPWjv8
+	 6MsoDgJTjXIPg==
+From: Vincent Mailhol <mailhol@kernel.org>
+Date: Tue, 21 Oct 2025 17:47:01 +0200
+Subject: [PATCH v2 01/10] can: bittiming: apply NL_SET_ERR_MSG() to
+ can_calc_bittiming()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017141536.577466-1-kirill@shutemov.name> <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
-In-Reply-To: <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 21 Oct 2025 05:47:01 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wh62OxWsL+msmks7=VdBJHz7HvRYoPDckkAEAwsgrmjew@mail.gmail.com>
-X-Gm-Features: AS18NWAv_MfH5FLOB6ldL8Zj3hG-nJtcm__9IX9yFQBhtiHusUcNpFwx2FU0x0Q
-Message-ID: <CAHk-=wh62OxWsL+msmks7=VdBJHz7HvRYoPDckkAEAwsgrmjew@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kiryl Shutsemau <kas@kernel.org>, Suren Baghdasaryan <surenb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-canxl-netlink-v2-1-8b8f58257ab6@kernel.org>
+References: <20251021-canxl-netlink-v2-0-8b8f58257ab6@kernel.org>
+In-Reply-To: <20251021-canxl-netlink-v2-0-8b8f58257ab6@kernel.org>
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Vincent Mailhol <mailhol@kernel.org>, 
+ =?utf-8?q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>, 
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>, 
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1133; i=mailhol@kernel.org;
+ h=from:subject:message-id; bh=yloHVT/ZWbwsMdentgq3wkJfJDSHxtJH/8vBDr2zvH0=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDBnfVzP7H3P+of8xdP3kmSnOv3fOYnDcIXb/XVVN2vXrO
+ 1amizfod5SyMIhxMciKKbIsK+fkVugo9A479NcSZg4rE8gQBi5OAZjIkhuMDPPq5Bbur3yftXj/
+ iuT7JX8EZur6imxrj4++X6b5LTKn6icjw7F5KjPu3rGQ9fL99artyS7pxMipPImx618Kr08oWny
+ knxMA
+X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 
-On Sun, 19 Oct 2025 at 18:53, Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> Is there really no way to copy the dang thing straight out to
-> userspace, skip the bouncing?
+When CONFIG_CAN_CALC_BITTIMING is disabled, the can_calc_bittiming()
+functions can not be used and the user needs to provide all the
+bittiming parameters.
 
-Sadly, no.
+Currently, can_calc_bittiming() prints an error message to the kernel
+log. Instead use NL_SET_ERR_MSG() to make it return the error message
+through the netlink interface so that the user can directly see it.
 
-It's trivial to copy to user space in a RCU-protected region: just
-disable page faults and it all works fine.
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+---
+Changelog:
 
-In fact, it works so fine that everything boots and it all looks
-beautiful in profiles etc - ask me how I know.
+  v1 -> v2:
 
-But it's still wrong. The problem is that *after* you've copies things
-away from the page cache, you need to check that the page cache
-contents are still valid.
+    - New patch.
+---
+ include/linux/can/bittiming.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And it's not a problem to do that and just say "don't count the bytes
-I just copied, and we'll copy over them later".
+diff --git a/include/linux/can/bittiming.h b/include/linux/can/bittiming.h
+index d30816dd93c7..3926c78b2222 100644
+--- a/include/linux/can/bittiming.h
++++ b/include/linux/can/bittiming.h
+@@ -141,7 +141,7 @@ static inline int
+ can_calc_bittiming(const struct net_device *dev, struct can_bittiming *bt,
+ 		   const struct can_bittiming_const *btc, struct netlink_ext_ack *extack)
+ {
+-	netdev_err(dev, "bit-timing calculation not available\n");
++	NL_SET_ERR_MSG(extack, "bit-timing calculation not available\n");
+ 	return -EINVAL;
+ }
+ 
 
-But while 99.999% of the time we *will* copy over them later, it's not
-actually guaranteed. What migth happen is that after we've filled in
-user space with the optimistically copied data, we figure out that the
-page cache is no longer valid, and we go to the slow case, and two
-problems may have happened:
+-- 
+2.51.0
 
- (a) the file got truncated in the meantime, and we just filled in
-stale data (possibly zeroes) in a user space buffer, and we're
-returning a smaller length than what we filled out.
-
-Will user space care? Not realistically, no. But it's wrong, and some
-user space *might* be using the buffer as a ring-buffer or something,
-and assume that if we return 5 bytes from "read()", the subsequent
-bytes are still valid from (previous) ring buffer fills.
-
-But if we decide to ignore that issue (possibly with some "open()"
-time flag to say "give me optimistic short reads, and I won't care),
-we still have
-
- (b) the folio we copied from migth have been released and re-used for
-something else
-
-and this is fatal. We might have optimistically copied things that are
-now security-sensitive and even if we return a short read - or
-overwrite it - layer, user space should never have seen that data.
-
-This (b) thing is solvable too, but requires that page cache releases
-always would be RCU-delayed, and they aren't.
-
-So both are "solvable", but they are very big and very separate solutions.
-
-               Linus
 
