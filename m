@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-862010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409C2BF43CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2919BF43D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054C618C14ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A17E18A7EB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F49C221D92;
-	Tue, 21 Oct 2025 01:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0A022FDFF;
+	Tue, 21 Oct 2025 01:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ROotCBXF"
-Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rwnf0FWt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE0615E5DC;
-	Tue, 21 Oct 2025 01:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11FA54918;
+	Tue, 21 Oct 2025 01:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761009544; cv=none; b=a4YZ9r8lVMtreGHq8rpmU2WrMZqiuXbPM30AZoaPn1hhhSNpe0CNNeDQt0V1HmX2VdcRgtUI5kTTTyEQ0zKnf8STAj4P0QE/a7gJW3uLwxmCTrmd3pG+S281OjC2bI29227qHA6oWTUtncZmXL5kDQ7dVYNRVezVXQcniHN9Jc0=
+	t=1761009736; cv=none; b=QCptGsg9BJZogyFsySmmipk8RhVrkCbx3ZG+EmSv0zGzJ6sSiMbE5Jo1WdJ5TL8f0zZf2i4H64DlVKVtWaXBFXabB0LAZzcxc5pbjJFNVLerRdmWXWJgCI6BJjf+YqqXnFmu4sQ3ForYKF1Ul3vQx6mewH1RUFiRMFStLJeIXVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761009544; c=relaxed/simple;
-	bh=nopaWkQFGS2iMxso0Hn2i1ziWVRkua1QbyjI2qTYzpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QB4ky9FQYf7zzRV3tMB1aevbsUgbF0WVTO7xH1ymMz1qOE3b11mP6zCPxjxyj3ftf9HG2tTnkqbegvzhhUVujzpM3W13nq7Q2VabtFRznLNNYrLe5rot/UDL/M8YESZIgN49YBNjYwb5cMA+fwUFhjwjxEYnCCw86voBf+KEbTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ROotCBXF; arc=none smtp.client-ip=113.46.200.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=nopaWkQFGS2iMxso0Hn2i1ziWVRkua1QbyjI2qTYzpY=;
-	b=ROotCBXFX6RPOHU2uwrGgEBQcd0I8tPduU2rAlytXQv6Ta7KVvwk1jCqfOnglnQfgOmmrWOME
-	1ztwKv9ANvXr3PxJufq5II7blgt3TFOWpaSeR6BfFYhKwahXBHXUU7yAvewxdhdI+wHsZM8BdDs
-	IkOtsIuXPIyw0HohmAbZXO8=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4crDtl2kb6zcZyT;
-	Tue, 21 Oct 2025 09:17:51 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 11573140156;
-	Tue, 21 Oct 2025 09:19:00 +0800 (CST)
-Received: from [10.174.177.19] (10.174.177.19) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 21 Oct 2025 09:18:58 +0800
-Message-ID: <031f1945-295d-4c33-a12e-798220ce68cc@huawei.com>
-Date: Tue, 21 Oct 2025 09:18:57 +0800
+	s=arc-20240116; t=1761009736; c=relaxed/simple;
+	bh=OnEWViiPhOB58rPZCDEBcxBM8GNn8eKC8Q7NgoTqBKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRNjDbYNtO0iDqTNwcKTzeWVOtTNAaxmOGjj9D/5rqf8+06KvMZ2ppFQ6tLYps0UKGzYC+PwxBM0DaUkijG/byllZI8xu37Go49GzxJCMcCgg6KZs54KS0nQMT66mD97m0e/56Y4Mnc4VMAE1PIiKvDETnYLAAxGoV4d5iVmjI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rwnf0FWt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 267FEC4CEFB;
+	Tue, 21 Oct 2025 01:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761009734;
+	bh=OnEWViiPhOB58rPZCDEBcxBM8GNn8eKC8Q7NgoTqBKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rwnf0FWtDxTp8uROYpn+nNwsLMTn/+2/9Zja4vGZdUvSRF9gv37jj/4ykwrJjPkmM
+	 /cieUGcPiekho1qqZJG7OeMNzREvQF3lPSRQU6aMl6Aaem+BfKmE3SfUo7Nx2NmAJb
+	 rl/k57+u/Ay3FqetmWhDvmTqypWIHQqaJ4cdQOKVi9L1IAV4Li4v9QrrYfhK41hA6y
+	 JUV/vhptN6ypgutEpejOCL7PisUJRXVmRkjfMXdzh275bLlgYYDrhZUaFbyruKFSP1
+	 r9ykW71PQfgbL+wgtvcLgP4uPoZo60u8BP7f2/0C75D0vw6OLinIjNktxr7MIiB5Ao
+	 7ZvHGN/FeT+iA==
+Date: Tue, 21 Oct 2025 06:52:02 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: sg2042: Fix a reference count issue in
+ sg2042_pcie_remove()
+Message-ID: <dscsxzccevbc2aw7wupz4bsl3rf2cyuue776pbgchtptnebnth@rwbg5bum6pby>
+References: <PN6PR01MB11717CDA6EBC89511A6B567B6FEEAA@PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM>
+ <20251020152738.GA1141158@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] Re: [syzbot] [net?] WARNING in xfrm_state_fini (4)
-To: Sabrina Dubroca <sd@queasysnail.net>
-CC: <syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>, <steffen.klassert@secunet.com>,
-	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>
-References: <20251020112553.2345296-1-wangliang74@huawei.com>
- <aPYo8wGLna44_57b@krikkit>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aPYo8wGLna44_57b@krikkit>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+In-Reply-To: <20251020152738.GA1141158@bhelgaas>
 
+On Mon, Oct 20, 2025 at 10:27:38AM -0500, Bjorn Helgaas wrote:
+> On Mon, Oct 13, 2025 at 10:31:22AM +0800, Chen Wang wrote:
+> > Hi，Manivannan,
+> > 
+> > I see 6.18-rc1 is released. Could you please pick this fix for 6.18-rcX?
+> 
+> Mani queued this for v6.19.  Is there a reason it should be in v6.18
+> instead?  We're after the v6.18 merge window now, so we only add
+> things to v6.18 if they fix a serious issue.
+> 
 
-在 2025/10/20 20:20, Sabrina Dubroca 写道:
-> 2025-10-20, 19:25:53 +0800, Wang Liang wrote:
->> #syz test
-> I've already sent
-> https://lore.kernel.org/all/15c383b3491b6ecedc98380e9db5b23f826a4857.1760610268.git.sd@queasysnail.net/
-> which should address this issue (and the other report in
-> xfrm6_tunnel_net_exit).
+The implication of calling pm_runtime_disable() manually in the remove() path
+is, 'dev->power.disable_depth' will be incremented twice. When the driver gets
+probed again, devm_pm_runtime_enable() will not enable runtime PM for the 'dev',
+but just decrement 'dev->power.disable_depth'.
 
+So this will result in an imbalanced runtime PM state. This is an issue, but
+the severity is less since the driver is not itself making use of runtime PM.
+So the driver should continue to work fine, but the runtime PM chain might be
+broken.
 
-Sorry! Yesterday I worked in the issue 'WARNING in xfrm6_tunnel_net_exit'
-and I didn't find any patchs that Reported-by/Tested-by its syzbot link in
-mail list, or syz test patchs, so I send the test patch.
+- Mani
 
-Please ignore my test patchs. Thanks.
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
