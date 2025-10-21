@@ -1,348 +1,296 @@
-Return-Path: <linux-kernel+bounces-863527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14836BF80DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:28:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A310BF80E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF0204EF43A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:28:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B7DC4EF269
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7087934A3AA;
-	Tue, 21 Oct 2025 18:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8DA34A3C9;
+	Tue, 21 Oct 2025 18:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTIp/a8z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fg3wHafk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB6A34A3AF;
-	Tue, 21 Oct 2025 18:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7376234A3BE
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761071296; cv=none; b=jKlRFbeAUzSp5tD8HdcnHsQc58I+uFR0xgjU+2sU3zqTiWvTTE+6grim2Uz/F+v6pEjbF+g/qxKFZ9ixgDULDNWMvV4vHHU5Sl5sh7KZ4m2IT0cuqWv8Lhy4yaNoLNsss0rHFMklaHO5bQAiDlaC1hD/u+vkyhQAIJpJ250EVAc=
+	t=1761071316; cv=none; b=f6NQSePf2qkKDmKdTcNePA4lg9zxeS9QKi0A5jKyJ2eb8liHDiNb/PKE5dnC/hjPIdZhqCObl74wanPgqk76O33W00/4qph1uDTOWlPG2cqrTpEa4Cw2XkkdsK6M7/hPVT6Wqq3jfOuhH3H6W7dPXaxHXmga1/7wfPhasOPT45M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761071296; c=relaxed/simple;
-	bh=aVzTN5Pe2u7CD+qSDkT0agN51qPgECGhUYuu2Ej+1Sc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sTOu3dB/gKphQCK74uKo2BcR5xUiLxXdRiv9WSguWsh/WaHvi3KKF9WgwduTE/vyNlD1y+vVnJqa5hhZwFx8lu1QTeevzVg6w5iiDk2UqPhdD5Riny3GuEwxVDx7/s4Fj2oIhX/nLPKIusQ+n4Ck1NOrRVwgJzlHNBNLwqe6UWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTIp/a8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0E44BC4CEF1;
-	Tue, 21 Oct 2025 18:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761071295;
-	bh=aVzTN5Pe2u7CD+qSDkT0agN51qPgECGhUYuu2Ej+1Sc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=dTIp/a8zVKjpLLDdOuvliIsSGsRIpHoK/JMW/dPf3tbRThhZ9MR2D3mH5rdTCr3EG
-	 QTXFNyTnSZ4ByzyhQQ3dbcdMsOhSg3qmJPOPWnoQrlImojQ1cW2p6kdQ0yd/AMMiOM
-	 Eh1UZ+wqhuRGWRqF8YiKgFibEIzG9JzPtLqWilq7u0T0eH2ltcBqZp7a0K0UCHpxRh
-	 z+7lW75m0sIpLBT1kKSp7wDrTiS4YAlMCrp8XrrRSiUwB3uNOMzIHvJqI7mA6fwvzo
-	 1C+6WanSQf4bl/9oUHyk+QRrLFC3XjvQxPdxBEvn1VvVQFYGCUzVklBE7KU4j35amv
-	 H0ojmX3voF4Ww==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2393CCD1A5;
-	Tue, 21 Oct 2025 18:28:14 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 21 Oct 2025 13:28:05 -0500
-Subject: [PATCH] cpufreq: tegra186: add OPP support and set bandwidth
+	s=arc-20240116; t=1761071316; c=relaxed/simple;
+	bh=zax8f3CTswP0OWqYQAc4Do7Qa/kWXv9vp2ys5rDaI10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NCGr1ZPqEu5MH5LU67GZ4LWtMTI4iqndtw39jdNqzDYPTriN5IgfkSL7b41OdY39fSO0hGrngjAkTwbZKW44AfEarcBLewvn1oSg7dZeLEH0jDz8i4ICKH5L00xudhG1U5SZrQ7iKv8bM5sDgoOEpQ6+tXuyp5HJO4ZurI19QFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fg3wHafk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761071312;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=p1rUujygHyp+nQsh5XAYAD7qtwFrdj1/nniIVtSG5Cg=;
+	b=fg3wHafkZYdLDJ7ttFAREMWBvt37Pe2Z51GDUCfkP63cB/e3zSWXFf17ji2sBnXn7EnxG0
+	S8PY+zU2e44uCi1BzFhp92TL8JZlr/5F96otk4DL5GrGA1V71MJv8mlGTePapmdnbzJgCw
+	qwVcatJAtrxyil0+Opub0cN5HzvMi44=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-222-WK8-6gK9Po-sT1g3-P4DdQ-1; Tue, 21 Oct 2025 14:28:31 -0400
+X-MC-Unique: WK8-6gK9Po-sT1g3-P4DdQ-1
+X-Mimecast-MFC-AGG-ID: WK8-6gK9Po-sT1g3-P4DdQ_1761071310
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4270a273b6eso3238551f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:28:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761071310; x=1761676110;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p1rUujygHyp+nQsh5XAYAD7qtwFrdj1/nniIVtSG5Cg=;
+        b=wk4/z7Pcf5HjhKR50aJQ3NQwJfMPRRQy3U3Uk81lpIX7Vbu8m4u2hdQ8roigrdDNvI
+         rm9JvvHEypApqZDrNiPkMMaCF+0CuG73Lo1Y9WFZJ3RmcuGkKTl9kIaGEYErlGtnhsz/
+         K1ujvZB5Klwqa016luCgtljAjrJJx/sb6iLgmxk/7hlRRJPvEHTMsEQzL8DdimiDNPPZ
+         WfyWE9Fs5cZ2Wdosxrs76oMrlFZxneQyGQollQWCx9RhkkcEtCWkcyrRVnenEkPVY3hv
+         cGYvglnVa20zYI69n/nDG3jY0aJ0oBclgOWNtjcNCvD28sventHt2LS734zYsB+JEbdL
+         K5yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNm4KGMyybg2sMNZHO2NHX2DHrT/2mTbAJ+iWUR7r+5TZOMLnOJdhgzZrkqEalARzzGDof4EcHO5HPU4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKWnI+1EyqNzNDVfCIPWWQRTY0pkI3k10RD1CJMrA58hkChaGf
+	KK8DgLZuhBavJ02FaoWjw5peAtZ3NwtqG5EwAnCCx0z/kjrNOx63my5o48cMbZ/BwVOxUWJUdH9
+	TG58RXUomgFFCNuFpkJi5ssmTuKCXDPhVDJE68nyL1U4AV0rHnU/aiMupv2Km8SvNcw==
+X-Gm-Gg: ASbGncsiNYZbBENOMCzTdrm4OQhraWS6OEp1cjtZTf/UA/rdk5InLJX7tlVOuK+k0Ng
+	Yzk0rwlVypG/R+8C1ds+Jt9zuZSM5dqgZ3U4vSL/2gmg51zoxyNVUaKCk9sUsW7jVgfF7wtLltX
+	3CpG/tXX390Buvrh/kJhEkMZfoc4Pudj8PxpBYsugC1X1ybcq0lGrTDAQOEozzDIyxSzrfPIat/
+	h7eaBC0TqwOk/mKB6VhgtgGKS9m6XNKFoNiM4TK3Rwu5SQil3Yx6ymeYafDJfRY5pNalfLY3knx
+	XljleRecb8vZzFRRFhVK+VEZpAXJoJUHuyX9sI0+ssdHew/WacS775NGsh+TDcZzLqv4+mVToo4
+	cLQaZFUI2kZlZD6jATCTE6md6QDzHSYk=
+X-Received: by 2002:a05:6000:184f:b0:427:a05:2ff with SMTP id ffacd0b85a97d-4270a050510mr10269752f8f.33.1761071309661;
+        Tue, 21 Oct 2025 11:28:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH81g8i/LCi1AuXlZHNIML/iiLnpPkqZNzar/dX2uHH9lLINKzpzMqLwuLZJ7387cttvNJOcA==
+X-Received: by 2002:a05:6000:184f:b0:427:a05:2ff with SMTP id ffacd0b85a97d-4270a050510mr10269722f8f.33.1761071309148;
+        Tue, 21 Oct 2025 11:28:29 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1af76.dip0.t-ipconnect.de. [87.161.175.118])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47494aad668sm23481915e9.2.2025.10.21.11.28.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 11:28:28 -0700 (PDT)
+Message-ID: <595b41b0-428a-4184-9abc-6875309d8cbd@redhat.com>
+Date: Tue, 21 Oct 2025 20:28:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-tegra186-icc-p1-v1-1-0d8eede5cc50@gmail.com>
-X-B4-Tracking: v=1; b=H4sIALTQ92gC/x3MQQqAIBBA0avErBtwTEW6SrQInWw2FhoRRHdPW
- r7F/w9ULsIVxu6BwpdU2XMD9R2EbcmJUWIzaKUtKU14cioLeYcSAh6E3ljLjqKxQ4RWHYVXuf/
- jNL/vB1qTW3phAAAA
-X-Change-ID: 20251021-tegra186-icc-p1-8455e61d453d
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761071294; l=8546;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=qWPRTxCCx08WIx7xdW9SGGyovJKa82Ei3y1cUQPJ9Z8=;
- b=U90KdYLoqGRMn7mIuUKRzIO3P36Xacvd8/6Uu0g4TvorWE8yZtvjL4bl19sEENSxO0QTU672F
- bKOZvOLBkEKAizW0ChjRxUJBe0xhilHJfiKZDbUboHcy1q4AEkFp7uQ
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio
+ handling.
+To: Zi Yan <ziy@nvidia.com>
+Cc: Yang Shi <shy828301@gmail.com>, linmiaohe@huawei.com,
+ jane.chu@oracle.com, kernel@pankajraghav.com,
+ syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
+ mcgrof@kernel.org, nao.horiguchi@gmail.com,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251016033452.125479-1-ziy@nvidia.com>
+ <20251016033452.125479-3-ziy@nvidia.com>
+ <CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com>
+ <5EE26793-2CD4-4776-B13C-AA5984D53C04@nvidia.com>
+ <CAHbLzkp8ob1_pxczeQnwinSL=DS=kByyL+yuTRFuQ0O=Eio0oA@mail.gmail.com>
+ <A4D35134-A031-4B15-B7A0-1592B3AE6D78@nvidia.com>
+ <b353587b-ef50-41ab-8dd2-93330098053e@redhat.com>
+ <893332F4-7FE8-4027-8FCC-0972C208E928@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <893332F4-7FE8-4027-8FCC-0972C208E928@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On 21.10.25 17:55, Zi Yan wrote:
+> On 21 Oct 2025, at 11:44, David Hildenbrand wrote:
+> 
+>> On 21.10.25 03:23, Zi Yan wrote:
+>>> On 20 Oct 2025, at 19:41, Yang Shi wrote:
+>>>
+>>>> On Mon, Oct 20, 2025 at 12:46 PM Zi Yan <ziy@nvidia.com> wrote:
+>>>>>
+>>>>> On 17 Oct 2025, at 15:11, Yang Shi wrote:
+>>>>>
+>>>>>> On Wed, Oct 15, 2025 at 8:38 PM Zi Yan <ziy@nvidia.com> wrote:
+>>>>>>>
+>>>>>>> Large block size (LBS) folios cannot be split to order-0 folios but
+>>>>>>> min_order_for_folio(). Current split fails directly, but that is not
+>>>>>>> optimal. Split the folio to min_order_for_folio(), so that, after split,
+>>>>>>> only the folio containing the poisoned page becomes unusable instead.
+>>>>>>>
+>>>>>>> For soft offline, do not split the large folio if it cannot be split to
+>>>>>>> order-0. Since the folio is still accessible from userspace and premature
+>>>>>>> split might lead to potential performance loss.
+>>>>>>>
+>>>>>>> Suggested-by: Jane Chu <jane.chu@oracle.com>
+>>>>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>>>>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+>>>>>>> ---
+>>>>>>>    mm/memory-failure.c | 25 +++++++++++++++++++++----
+>>>>>>>    1 file changed, 21 insertions(+), 4 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>>>>>> index f698df156bf8..443df9581c24 100644
+>>>>>>> --- a/mm/memory-failure.c
+>>>>>>> +++ b/mm/memory-failure.c
+>>>>>>> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
+>>>>>>>     * there is still more to do, hence the page refcount we took earlier
+>>>>>>>     * is still needed.
+>>>>>>>     */
+>>>>>>> -static int try_to_split_thp_page(struct page *page, bool release)
+>>>>>>> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
+>>>>>>> +               bool release)
+>>>>>>>    {
+>>>>>>>           int ret;
+>>>>>>>
+>>>>>>>           lock_page(page);
+>>>>>>> -       ret = split_huge_page(page);
+>>>>>>> +       ret = split_huge_page_to_list_to_order(page, NULL, new_order);
+>>>>>>>           unlock_page(page);
+>>>>>>>
+>>>>>>>           if (ret && release)
+>>>>>>> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flags)
+>>>>>>>           folio_unlock(folio);
+>>>>>>>
+>>>>>>>           if (folio_test_large(folio)) {
+>>>>>>> +               int new_order = min_order_for_split(folio);
+>>>>>>>                   /*
+>>>>>>>                    * The flag must be set after the refcount is bumped
+>>>>>>>                    * otherwise it may race with THP split.
+>>>>>>> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int flags)
+>>>>>>>                    * page is a valid handlable page.
+>>>>>>>                    */
+>>>>>>>                   folio_set_has_hwpoisoned(folio);
+>>>>>>> -               if (try_to_split_thp_page(p, false) < 0) {
+>>>>>>> +               /*
+>>>>>>> +                * If the folio cannot be split to order-0, kill the process,
+>>>>>>> +                * but split the folio anyway to minimize the amount of unusable
+>>>>>>> +                * pages.
+>>>>>>> +                */
+>>>>>>> +               if (try_to_split_thp_page(p, new_order, false) || new_order) {
+>>>>>>
+>>>>>> folio split will clear PG_has_hwpoisoned flag. It is ok for splitting
+>>>>>> to order-0 folios because the PG_hwpoisoned flag is set on the
+>>>>>> poisoned page. But if you split the folio to some smaller order large
+>>>>>> folios, it seems you need to keep PG_has_hwpoisoned flag on the
+>>>>>> poisoned folio.
+>>>>>
+>>>>> OK, this means all pages in a folio with folio_test_has_hwpoisoned() should be
+>>>>> checked to be able to set after-split folio's flag properly. Current folio
+>>>>> split code does not do that. I am thinking about whether that causes any
+>>>>> issue. Probably not, because:
+>>>>>
+>>>>> 1. before Patch 1 is applied, large after-split folios are already causing
+>>>>> a warning in memory_failure(). That kinda masks this issue.
+>>>>> 2. after Patch 1 is applied, no large after-split folios will appear,
+>>>>> since the split will fail.
+>>>>
+>>>> I'm a little bit confused. Didn't this patch split large folio to
+>>>> new-order-large-folio (new order is min order)? So this patch had
+>>>> code:
+>>>> if (try_to_split_thp_page(p, new_order, false) || new_order) {
+>>>
+>>> Yes, but this is Patch 2 in this series. Patch 1 is
+>>> "mm/huge_memory: do not change split_huge_page*() target order silently."
+>>> and sent separately as a hotfix[1].
+>>
+>> I'm confused now as well. I'd like to review, will there be a v3 that only contains patch #2+#3?
+> 
+> Yes. The new V3 will have 3 patches:
+> 1. a new patch addresses Yang’s concern on setting has_hwpoisoned on after-split
+> large folios.
+> 2. patch#2,
+> 3. patch#3.
 
-Add support to use OPP table from DT in Tegra186 cpufreq driver.
-Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
-Cross check the OPP's present in DT against the LUT from BPMP-FW
-and enable only those DT OPP's which are present in LUT also.
+Okay, I'll wait with the review until you resend :)
 
-The OPP table in DT has CPU Frequency to bandwidth mapping where
-the bandwidth value is per MC channel. DRAM bandwidth depends on the
-number of MC channels which can vary as per the boot configuration.
-This per channel bandwidth from OPP table will be later converted by
-MC driver to final bandwidth value by multiplying with number of
-channels before being handled in the EMC driver.
+> 
+> The plan is to send them out once patch 1 is upstreamed. Let me know if you think
+> it is OK to send them out earlier as Andrew already picked up patch 1.
 
-If OPP table is not present in DT, then use the LUT from BPMP-FW
-directy as the CPU frequency table and not do the DRAM frequency
-scaling which is same as the current behavior.
+It's in mm/mm-new + mm/mm-unstable, AFAIKT. So sure, send it against one 
+of the tress (I prefer mm-unstable but usually we should target mm-new).
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/cpufreq/tegra186-cpufreq.c | 152 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 145 insertions(+), 7 deletions(-)
+> 
+> I also would like to get some feedback on my approach to setting has_hwpoisoned:
+> 
+> folio's has_hwpoisoned flag needs to be preserved
+> like what Yang described above. My current plan is to move
+> folio_clear_has_hwpoisoned(folio) into __split_folio_to_order() and
+> scan every page in the folio if the folio's has_hwpoisoned is set.
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index 136ab102f636aa57741639ed1909d095881c14d3..35f1c1371f6a1688c35f3ba012b9f008fba83d74 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/units.h>
- 
- #include <soc/tegra/bpmp.h>
- #include <soc/tegra/bpmp-abi.h>
-@@ -58,7 +59,7 @@ static const struct tegra186_cpufreq_cpu tegra186_cpus[] = {
- };
- 
- struct tegra186_cpufreq_cluster {
--	struct cpufreq_frequency_table *table;
-+	struct cpufreq_frequency_table *bpmp_lut;
- 	u32 ref_clk_khz;
- 	u32 div;
- };
-@@ -66,16 +67,121 @@ struct tegra186_cpufreq_cluster {
- struct tegra186_cpufreq_data {
- 	void __iomem *regs;
- 	const struct tegra186_cpufreq_cpu *cpus;
-+	bool icc_dram_bw_scaling;
- 	struct tegra186_cpufreq_cluster clusters[];
- };
- 
-+static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
-+{
-+	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-+	struct device *dev;
-+	int ret;
-+
-+	dev = get_cpu_device(policy->cpu);
-+	if (!dev)
-+		return -ENODEV;
-+
-+	struct dev_pm_opp *opp __free(put_opp) =
-+		dev_pm_opp_find_freq_exact(dev, freq_khz * HZ_PER_KHZ, true);
-+	if (IS_ERR(opp))
-+		return PTR_ERR(opp);
-+
-+	ret = dev_pm_opp_set_opp(dev, opp);
-+	if (ret)
-+		data->icc_dram_bw_scaling = false;
-+
-+	return ret;
-+}
-+
-+static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
-+					    struct cpufreq_frequency_table *bpmp_lut,
-+					    struct cpufreq_frequency_table **opp_table)
-+{
-+	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-+	struct cpufreq_frequency_table *freq_table = NULL;
-+	struct cpufreq_frequency_table *pos;
-+	struct device *cpu_dev;
-+	unsigned long rate;
-+	int ret, max_opps;
-+	int j = 0;
-+
-+	cpu_dev = get_cpu_device(policy->cpu);
-+	if (!cpu_dev) {
-+		pr_err("%s: failed to get cpu%d device\n", __func__, policy->cpu);
-+		return -ENODEV;
-+	}
-+
-+	/* Initialize OPP table mentioned in operating-points-v2 property in DT */
-+	ret = dev_pm_opp_of_add_table_indexed(cpu_dev, 0);
-+	if (ret) {
-+		dev_err(cpu_dev, "Invalid or empty opp table in device tree\n");
-+		data->icc_dram_bw_scaling = false;
-+		return ret;
-+	}
-+
-+	max_opps = dev_pm_opp_get_opp_count(cpu_dev);
-+	if (max_opps <= 0) {
-+		dev_err(cpu_dev, "Failed to add OPPs\n");
-+		return max_opps;
-+	}
-+
-+	/* Disable all opps and cross-validate against LUT later */
-+	for (rate = 0; ; rate++) {
-+		struct dev_pm_opp *opp __free(put_opp);
-+
-+		opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
-+		if (IS_ERR(opp))
-+			break;
-+
-+		dev_pm_opp_disable(cpu_dev, rate);
-+	}
-+
-+	freq_table = kcalloc((max_opps + 1), sizeof(*freq_table), GFP_KERNEL);
-+	if (!freq_table)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Cross check the frequencies from BPMP-FW LUT against the OPP's present in DT.
-+	 * Enable only those DT OPP's which are present in LUT also.
-+	 */
-+	cpufreq_for_each_valid_entry(pos, bpmp_lut) {
-+		struct dev_pm_opp *opp __free(put_opp);
-+
-+		opp = dev_pm_opp_find_freq_exact(cpu_dev, pos->frequency * HZ_PER_KHZ, false);
-+		if (IS_ERR(opp))
-+			continue;
-+
-+		ret = dev_pm_opp_enable(cpu_dev, pos->frequency * HZ_PER_KHZ);
-+		if (ret < 0)
-+			return ret;
-+
-+		freq_table[j].driver_data = pos->driver_data;
-+		freq_table[j].frequency = pos->frequency;
-+		j++;
-+	}
-+
-+	freq_table[j].driver_data = pos->driver_data;
-+	freq_table[j].frequency = CPUFREQ_TABLE_END;
-+
-+	*opp_table = &freq_table[0];
-+
-+	dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
-+
-+	/* Prime interconnect data */
-+	tegra_cpufreq_set_bw(policy, freq_table[j - 1].frequency);
-+
-+	return ret;
-+}
-+
- static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
- 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
-+	struct cpufreq_frequency_table *freq_table;
-+	struct cpufreq_frequency_table *bpmp_lut;
- 	u32 cpu;
-+	int ret;
- 
--	policy->freq_table = data->clusters[cluster].table;
- 	policy->cpuinfo.transition_latency = 300 * 1000;
- 	policy->driver_data = NULL;
- 
-@@ -85,6 +191,20 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- 			cpumask_set_cpu(cpu, policy->cpus);
- 	}
- 
-+	bpmp_lut = data->clusters[cluster].bpmp_lut;
-+
-+	if (data->icc_dram_bw_scaling) {
-+		ret = tegra_cpufreq_init_cpufreq_table(policy, bpmp_lut, &freq_table);
-+		if (!ret) {
-+			policy->freq_table = freq_table;
-+			return 0;
-+		}
-+	}
-+
-+	data->icc_dram_bw_scaling = false;
-+	policy->freq_table = bpmp_lut;
-+	pr_info("OPP tables missing from DT, EMC frequency scaling disabled\n");
-+
- 	return 0;
- }
- 
-@@ -102,6 +222,10 @@ static int tegra186_cpufreq_set_target(struct cpufreq_policy *policy,
- 		writel(edvd_val, data->regs + edvd_offset);
- 	}
- 
-+	if (data->icc_dram_bw_scaling)
-+		tegra_cpufreq_set_bw(policy, tbl->frequency);
-+
-+
- 	return 0;
- }
- 
-@@ -134,7 +258,7 @@ static struct cpufreq_driver tegra186_cpufreq_driver = {
- 	.init = tegra186_cpufreq_init,
- };
- 
--static struct cpufreq_frequency_table *init_vhint_table(
-+static struct cpufreq_frequency_table *tegra_cpufreq_bpmp_read_lut(
- 	struct platform_device *pdev, struct tegra_bpmp *bpmp,
- 	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id,
- 	int *num_rates)
-@@ -229,6 +353,7 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct tegra186_cpufreq_data *data;
- 	struct tegra_bpmp *bpmp;
-+	struct device *cpu_dev;
- 	unsigned int i = 0, err, edvd_offset;
- 	int num_rates = 0;
- 	u32 edvd_val, cpu;
-@@ -254,9 +379,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 	for (i = 0; i < TEGRA186_NUM_CLUSTERS; i++) {
- 		struct tegra186_cpufreq_cluster *cluster = &data->clusters[i];
- 
--		cluster->table = init_vhint_table(pdev, bpmp, cluster, i, &num_rates);
--		if (IS_ERR(cluster->table)) {
--			err = PTR_ERR(cluster->table);
-+		cluster->bpmp_lut = tegra_cpufreq_bpmp_read_lut(pdev, bpmp, cluster, i, &num_rates);
-+		if (IS_ERR(cluster->bpmp_lut)) {
-+			err = PTR_ERR(cluster->bpmp_lut);
- 			goto put_bpmp;
- 		} else if (!num_rates) {
- 			err = -EINVAL;
-@@ -265,7 +390,7 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 
- 		for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
- 			if (data->cpus[cpu].bpmp_cluster_id == i) {
--				edvd_val = cluster->table[num_rates - 1].driver_data;
-+				edvd_val = cluster->bpmp_lut[num_rates - 1].driver_data;
- 				edvd_offset = data->cpus[cpu].edvd_offset;
- 				writel(edvd_val, data->regs + edvd_offset);
- 			}
-@@ -274,6 +399,19 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 
- 	tegra186_cpufreq_driver.driver_data = data;
- 
-+	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev) {
-+		err = -EPROBE_DEFER;
-+		goto put_bpmp;
-+	}
-+
-+	if (dev_pm_opp_of_get_opp_desc_node(cpu_dev)) {
-+		err = dev_pm_opp_of_find_icc_paths(cpu_dev, NULL);
-+		if (!err)
-+			data->icc_dram_bw_scaling = true;
-+	}
-+
- 	err = cpufreq_register_driver(&tegra186_cpufreq_driver);
- 
- put_bpmp:
+Oh, that's nasty indeed ... will have to think about that a bit.
 
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251021-tegra186-icc-p1-8455e61d453d
+Maybe we can keep it simple and always set folio_set_has_hwpoisoned() on 
+all split folios? Essentially turning it into a "maybe_has" semantics.
 
-Best regards,
+IIUC, the existing folio_stest_has_hwpoisoned users can deal with that?
+
 -- 
-Aaron Kling <webgeek1234@gmail.com>
+Cheers
 
+David / dhildenb
 
 
