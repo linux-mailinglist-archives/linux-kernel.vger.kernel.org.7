@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-863072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F7DBF6F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:01:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50308BF6F06
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8ADF85031E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:01:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EAA14E11D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFEA33B969;
-	Tue, 21 Oct 2025 14:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63597338F3D;
+	Tue, 21 Oct 2025 14:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="I+ERaNQe"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFcoZ9Dl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F58633B958;
-	Tue, 21 Oct 2025 14:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84C523E334;
+	Tue, 21 Oct 2025 14:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761055251; cv=none; b=fASuYrDMcUbdT3d0T7OQoTE/DUZQWAcjdFcI940tlU4uORiRdOvbAe0za0735pAFlACmnJ9Qdwry2p9P3WzGIXTukxtgs0X1N6DfEI6gEOfjU1BEneoXg6Kl8VJNYUWLjdbEvGVl0gnFvCtMXmWuAB+yLWNe3BK+2/1xNHl8olw=
+	t=1761055236; cv=none; b=FaacOzaw4YmUsju0BV/0+4DWFWgEhybc2flt0MgPaZciJ0s9c2COn3KZOmWCVHTwBK5MRMr91DPFw1I4zuY9MZ8/G6oI2ruc/je/3bhA3EPjrzUEYTlVBImTf7/4TnDkf5SaXzxEPTQzmzpAtzxoCaUtx3/b2GY/jWzy1Be3sks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761055251; c=relaxed/simple;
-	bh=Z4e+Rda2bYfjLOZMWdTklKDon1bvj8FeVYa8pl1efVc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y+PqoIYbv5BXgoFRtkRY6f3pt6pZ2IXbVPzD4FdV8X/AIwMiCOId96xLp+nTMTfYswzj2HnaevWb1eMT4gelhIUh5e3+EAOvLyAYeIkhGeQrV+kdRfrMdKSW6pUIrtVByeZ1em/iTbh/soSfFWe3Enb3X86C82QCNmXD3mQkYvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=I+ERaNQe; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=opBLMIIAqFH/C9JqHJAmW6L6I2eQ3SJbotO5tszdkkw=;
-	b=I+ERaNQevgxnbk0VcY7vk1EyDWj5hZ8e1WqC3F+EYXUFBWEfYX+f4RpWr4qcmryBYiGgO82gy
-	p8ZZqwYykXuR7NKWF9a6YSdwqNSI8PN59ADJFyWyOquVbn0MLbJMo28Y0QIdZL5EZ+pmFc53jFp
-	ufGyDdtKdkbcSgMb0K02Yf8=
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4crYp047dgz1T4Kh;
-	Tue, 21 Oct 2025 21:59:52 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9B950140155;
-	Tue, 21 Oct 2025 22:00:45 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 21 Oct 2025 22:00:44 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <lantao5@huawei.com>,
-	<huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
-	<jonathan.cameron@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH net 3/3] net: hibmcge: fix the inappropriate netif_device_detach()
-Date: Tue, 21 Oct 2025 22:00:16 +0800
-Message-ID: <20251021140016.3020739-4-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20251021140016.3020739-1-shaojijie@huawei.com>
-References: <20251021140016.3020739-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1761055236; c=relaxed/simple;
+	bh=EFS2ou0OHQmiqS5lDgkHKShR4QgnzFyZtuGoeF4ARw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7V0Yna3X9O9TY0Sc/UFWVEkHfJf73QYvXBgvRbFGNxxgdaoXX4vZU/XmxWzybHMSDK8/rTTcPCY/KFBIGOrRRgUdscmTzZf3MCYAvZzm4VUA++vXWj5K1nUtIMYLxWTiqpu5FQwjZm2ZbTPBBske+Jq8LSYpIhTq5lC4scG8OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFcoZ9Dl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EE7C4CEF1;
+	Tue, 21 Oct 2025 14:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761055236;
+	bh=EFS2ou0OHQmiqS5lDgkHKShR4QgnzFyZtuGoeF4ARw0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aFcoZ9Dl87h0IzZkohYqVR7bDWTyKIXo7EPZD3N/CLgJb1V3GCrrsNDs1BlQl8CO8
+	 4zNuXSJfFA240hc5FqfSrzndQpdxW7cSjCuHuZY9WkhzhsD6upUrZCdHKQ1oEviAD4
+	 jCMLUnq4T2h/vpePY2Ei1czit5VlKa0U32SjzLMwmHZ4JdDKgdW7eopcJ7uDJt/Xmp
+	 spK37robToBy+pQTmGcyFsBTu11wevxnSKZsGYIFMeopxHJsCJTYrhjGbEt06pFz1y
+	 I+QZErFW5h8SWEG+IhIq0ity34oQ9tOYp3SFpOpWLvWHtnb7vbBoltQpmF2LnBA7hq
+	 HNsj1K8TbFsIw==
+Date: Tue, 21 Oct 2025 15:00:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Sascha Bischoff <Sascha.Bischoff@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, nd <nd@arm.com>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Aishwarya.TCV@arm.com
+Subject: Re: [PATCH] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3
+ or v3 guests
+Message-ID: <78b0297c-4622-4b75-bcae-45c144c92c45@sirena.org.uk>
+References: <20251007160704.1673584-1-sascha.bischoff@arm.com>
+ <23072856-6b8c-41e2-93d1-ea8a240a7079@sirena.org.uk>
+ <86frbcwv5t.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wfhFGhe94Stv3FFn"
+Content-Disposition: inline
+In-Reply-To: <86frbcwv5t.wl-maz@kernel.org>
+X-Cookie: Accordion, n.:
 
-current, driver will call netif_device_detach() in
-pci_error_handlers.error_detected() and do reset in
-pci_error_handlers.slot_reset().
-However, if pci_error_handlers.slot_reset() is not called
-after pci_error_handlers.error_detected(),
-driver will be detached and unable to recover.
 
-drivers/pci/pcie/err.c/report_error_detected() says:
-  If any device in the subtree does not have an error_detected
-  callback, PCI_ERS_RESULT_NO_AER_DRIVER prevents subsequent
-  error callbacks of any device in the subtree, and will
-  exit in the disconnected error state.
+--wfhFGhe94Stv3FFn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Therefore, when the hibmcge device and other devices that do not
-support the error_detected callback are under the same subtree,
-hibmcge will be unable to do slot_reset.
+On Tue, Oct 21, 2025 at 08:50:22AM +0100, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-This path move netif_device_detach from error_detected to slot_reset,
-ensuring that detach and reset are always executed together.
+> > It didn't appear in -next since the arm64 KVM fixes tree is not directly
+> > in -next and it was only pulled into Paolo's tree on Saturday, a few
+> > hours before Paolo sent his pull request to Linus, so there was no
+> > opportunity for it to be picked up.  As I've previously suggested it
+> > does seem like it would be a good idea to include the fixes branches for
+> > the KVM arch trees in -next (s390 is there, but I don't see the others),
 
-Fixes: fd394a334b1c ("net: hibmcge: Add support for abnormal irq handling feature")
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> As I explained to you more than once, the answer is still no. We keep
+> the two branches separate for good reasons -- for a start, they are
+> manager by different people.
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
-index 83cf75bf7a17..e11495b7ee98 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
-@@ -136,12 +136,11 @@ static pci_ers_result_t hbg_pci_err_detected(struct pci_dev *pdev,
- {
- 	struct net_device *netdev = pci_get_drvdata(pdev);
- 
--	netif_device_detach(netdev);
--
--	if (state == pci_channel_io_perm_failure)
-+	if (state == pci_channel_io_perm_failure) {
-+		netif_device_detach(netdev);
- 		return PCI_ERS_RESULT_DISCONNECT;
-+	}
- 
--	pci_disable_device(pdev);
- 	return PCI_ERS_RESULT_NEED_RESET;
- }
- 
-@@ -150,6 +149,9 @@ static pci_ers_result_t hbg_pci_err_slot_reset(struct pci_dev *pdev)
- 	struct net_device *netdev = pci_get_drvdata(pdev);
- 	struct hbg_priv *priv = netdev_priv(netdev);
- 
-+	netif_device_detach(netdev);
-+	pci_disable_device(pdev);
-+
- 	if (pci_enable_device(pdev)) {
- 		dev_err(&pdev->dev,
- 			"failed to re-enable PCI device after reset\n");
--- 
-2.33.0
+You do keep saying that but I am still unable to understand your
+reasoning here.  Having two separate branches is very standard, it is
+the normal pattern for fixes branches in -next and does not generally
+present any problems that I am aware of.  A bit more than a third of the
+branches merged by -next are fixes branches.  As I said in my earlier
+reply to Sean it can be an advantage to have the fixes in -next
+separately since this allows the fixes to go into pending-fixes, helping
+spot unintended dependencies on work that's targeting the merge window
+and ensure coverage continues even when there is breakage in development
+code.
 
+As I understand it the management of the KVM arm64 tree is very similar
+to that for the arm64 architecture tree.  That has the separate feature and
+fixes branches in -next, each managed by different people and both of
+which are in -next.  So far as I am aware this hasn't been causing Will
+and Catalin any problems, I don't know what would be different about the
+KVM arm64 tree here.
+
+The only thing I can think of is that you are objecting to the idea of
+having the KVM arm64 tree merge it's fixes branch into it's development
+branch.  That is not what I am suggesting, I am suggesting putting the
+fixes branch itself directly into -next to be merged by Stephen.  I am
+not proposing any change to the content of the KVM arm64 branches.
+
+> If you want to manage a -fixes tree, go for it. If you want to take
+> the -fixes branch in your CI, I have no objection.  Do I support this?
+> Absolutely not.
+
+There is no need for anyone to create a -fixes tree since we already
+have pending-fixes, created as part of building -next.  The merge for
+-next pulls in all the fixes branches first, publishes that as
+next/pending-fixes, and then merges the new feature branches on top of
+that to publish as next/master.
+
+--wfhFGhe94Stv3FFn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj3kf0ACgkQJNaLcl1U
+h9Dktwf/am3z/Hk2mvzO9eubv9A1vucrl5ffURTfbc37wQsUD3LS3VXXO/mRbU5b
+KEV+tQJZ0p9ZmNbOo2QhOV+9W4SiKZero5lHYMfyFQd2oBxCV8D2mOtZVtLi7neS
+3EJLxL/88s80PhIq7cQCFBPIn8VcBnH98e9a6KsUtI8t2LrU+ZMkb7eO1RfzQK2Q
+4WF/YxBgXPRqpERIJuy58ETpwGDTJ04i76XmboOvuv1d/sLQMgZCp3ovI+IFsgCX
+G+DKm5ydY/bnmuonDatzFCVVt2ifddsDzSiObpDyOGERP2MTp5jm+3bn7B7Z9Y2h
+/hL9bcd+3moRsEiRl8MIJ1YyKdDndQ==
+=Trde
+-----END PGP SIGNATURE-----
+
+--wfhFGhe94Stv3FFn--
 
