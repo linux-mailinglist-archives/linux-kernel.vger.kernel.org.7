@@ -1,169 +1,210 @@
-Return-Path: <linux-kernel+bounces-863555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398B9BF8267
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:52:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3971BF8279
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 081EE4E3EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:52:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CDAED4E6FBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7238C34C14C;
-	Tue, 21 Oct 2025 18:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7183734E746;
+	Tue, 21 Oct 2025 18:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="V9sl1dPE"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="idRfU8Xx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F1034C81F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E7134D904;
+	Tue, 21 Oct 2025 18:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761072766; cv=none; b=c38w7a835y5W30WV6FM6v51iStUPj8UbY/m4qmjy0dRWh4bnHbiGygyEfP+4cWmy00xMZdfRWGAyIpp2YlnRwG0KAJqkYfgrdzlwePHB5Nz8TVP6kyPcCT3ikiLOf3JTO9jp+618qgBgtdSWjpGrNSclXpwhFDiRnqX74qZebBc=
+	t=1761072807; cv=none; b=J1iCAMl9xuaRXbJL1NkcpjvLhXBrkhi01FhlibqOXrRLKt+m/M9iIeUhrCYfRZCk0W9V6M+zrgiqj+kBWlMTYXy1JraJUG1nRmqTqdqvuAU4NZ6Q5UHSrjak83CvzJ6EjARWk0vtgx+VRT5UV9F9iv+jvbCnqUGWLBvZ8tSfGIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761072766; c=relaxed/simple;
-	bh=pxQiDnHtizoBQiDjU1ip0uPJ1qtkmU7KJE8IzqDdS3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBBwJMKSoNASBv6DziIKdnZ0Mjd4kTjYphed09exnGX5obWAoSpraHdhSWvkJooiAEnOJ7dDgnkyy9U4cxNBCiNLa5TZxJFZFATKCTFpPzm5dij0Ml4e4GxH8R+ilmYAJ5MTa58DdXqf3icYb99isF4AAtEOEua97izFzjXFbrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=V9sl1dPE; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8738c6fdbe8so2056696d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1761072763; x=1761677563; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLvUWCk0Mz4Y0PzOoaEb6Yq0ejoswRanjDyfbct8ulk=;
-        b=V9sl1dPEqCdGYwdFCA63bs03gQBEpsxMpluJbakUuyGM1lZ5m9QJffDqbPpNxZlgWV
-         ZvfjLgP8t7Muq7Dirbcgb5gzP2baJpIQuH7M/j7GSq75wmFg7o5XJQsB6EUh+HTtgx+Q
-         dh8Y74IAU3r3vyKIyKFcFNImNAxZxxtzbtVdO1nXl6ktCYFD0SLLDW/eGd9tZLp2Oju6
-         S78+eWkPjbNapUEg/CrmjCQpxa1pM8fJXn5OPbgfPdbre5RgWAce2+6cKxAWRzaGNDnC
-         W2GHlIl7EDE5DXifz+zOZc1TmwfkJtOYUkcpCoE2xTRN44SCGG4LeGBfGRwM00U6n20U
-         ZY2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761072763; x=1761677563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HLvUWCk0Mz4Y0PzOoaEb6Yq0ejoswRanjDyfbct8ulk=;
-        b=cQHfGN/mtIjXS2mBSFkTYe/VrhStdTCj8rkDM77stvxUzhNPiMpdJciTGv1/vO7lq8
-         GUHO7n1Q5LwlooBwwRyG/mg5kL43sDogAfM2bYYeYi8vXVAtfORImSz1waPE9vJ1/dVG
-         ja5YNmRbtHvN0AmjCEkkJ8xb4tQuV2pqpXj2D1QH+elUYmQiZaHWpI/jEfrOLxlJTA9n
-         XsUE+Z6PZfM0nwtA/jIYxPcvl8vMAfsf/rwvJP0CSjPVBmRGYe0gnQYZpVjkQ7Q1HfHA
-         jzu/GrNuBVBbQRWNkPDxI9P0e6ULxrqR+nzJQ6W5ZxZJtDqPoMNmQvxlolaO5lYPVBfS
-         geJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkGsvFN749k+JQznnyUrMmluJNCmkTM9RMZusXqigSU6KJUV6ckwuV5yExEHv3OX6UjdkhdNPHiOJiQPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbWiKZU07z8qHFdQQCy7AvfE9A4LiWjGiFsA0oyLes7vDfYSpo
-	ljXHgIwL+NhO8aHhPhNYXEAJ9GFvY9HIBROh7TKRGYv7cey1WMx1w22qHwvPrwsMAzU=
-X-Gm-Gg: ASbGncv8n2rGAbr2MXS8kCjn12JxbXoayNrZBOGSL2QKSWQ77r1ofT0TntQP/vwJRZ2
-	gKZNaf8/zf9UnxcvtMb1/DrqpY9iLALmeJdV9pyAAI3jxNfpcltEc3hXO53ZyCqRiZdvpBxVkJZ
-	fj5VeQKsFauJGyQn1sgx+vk0qO6BJvB64f4LusXGUJK8E/YVv3W+FDHbzN+C+xxfffHzXW9OMb3
-	xxvGD/BDFoWcVmuDeblZ+njGe2IWzO1VzA2tZaTDP44zZJI+NJMv5i4hHTHk2QtNbNB5Y524Xn0
-	ESpnS6LiApXOFVGNMpaWnmqaTozoVPZNZyow8EuqDxPskeGRfOB4OXlCSts7bJf7Gb5Lf41IiTs
-	RggynZvFkFPLi1Fy86XIV2oe+u3WX89yt2nvWjC5rd6HqupdhNOD2gLN5Bv0VggBagbXnBplp6a
-	bupWFn4rdnlwHD+LoSJcXe61fh/7KRcAbIsaI2wsB35pEg63djuN3miOFQdRc=
-X-Google-Smtp-Source: AGHT+IECNSsoqasWHr7E4/BHoh0FWWJN2h6QnlVVo6n6s/g3DObB3176YMdFgdU0/Gh837/Hks5Q1w==
-X-Received: by 2002:a05:6214:e8e:b0:87a:97f:de8c with SMTP id 6a1803df08f44-87df6760e0dmr10210096d6.28.1761072762996;
-        Tue, 21 Oct 2025 11:52:42 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf521bf8esm73053056d6.22.2025.10.21.11.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 11:52:42 -0700 (PDT)
-Date: Tue, 21 Oct 2025 14:52:40 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>,
-	Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, dave.hansen@intel.com, hannes@cmpxchg.org,
-	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org,
-	raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org,
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
-	nifan.cxl@gmail.com, xuezhengchu@huawei.com,
-	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com,
-	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com,
-	balbirs@nvidia.com, alok.rathore@samsung.com, yiannis@zptcorp.com,
-	Adam Manzanares <a.manzanares@samsung.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-Message-ID: <aPfWePBq8d3v979f@gourry-fedora-PF4VCD3F>
-References: <20250925162426.00007474@huawei.com>
- <aNVohF0sPNZSuTgI@gourry-fedora-PF4VCD3F>
- <20250925182308.00001be4@huawei.com>
- <aNWRuKGurAntxhxG@gourry-fedora-PF4VCD3F>
- <aNzWwz5OYLOjwjLv@gourry-fedora-PF4VCD3F>
- <CAOi6=wTsY=EWt=yQ_7QJONsJpTM_3HKp0c42FKaJ8iJ2q8-n+w@mail.gmail.com>
- <aPJPnZ01Gzi533v4@gourry-fedora-PF4VCD3F>
- <20251017153613.00004940@huawei.com>
- <aPJZtQS4wJ1fkJq-@gourry-fedora-PF4VCD3F>
- <20251020150526.000078b6@huawei.com>
+	s=arc-20240116; t=1761072807; c=relaxed/simple;
+	bh=C5ASNnmCmjSAcDOoSgjvozIBRKcQ5VpYkxdjPo6f1JU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JYmOa6ItmtiuuyOGIlJE6Eij9ioi0ZNNI1hlaYFmstmKf5x9Jb5Z6WrC7E6u0FHdR7tfhVytQOFRi4ppw+EVWnQsH8wqzUOc/9NiHAxwzUDV/PAxkIoqiiZS5JweupEg7tk1uWj/bSwrvYnsThZVjR+wf7NcsznTwrJQ2bdYoB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=idRfU8Xx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 283D3C4CEF1;
+	Tue, 21 Oct 2025 18:53:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761072807;
+	bh=C5ASNnmCmjSAcDOoSgjvozIBRKcQ5VpYkxdjPo6f1JU=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=idRfU8XxWpxeoW4rjtH1zLNwMc22v6LSmnzNUYMKa/iUzOtgB0UEZVuyrUGhbbhFV
+	 B6I1v2+7JyR3exb9j4/kQj46qI699414511FEyWHOVYOpQtISRI2mAfKtZKJkAY9LZ
+	 PS5765rdL7aeqyg0XqjuAWAOgJxihO0jrYwD+3bGitUdJvMbiGquGyyJXKKRktDTvD
+	 zrqFnUdD4cFd+xZ1ZkRxQxcf0AXKwCAU67BvzhIpJ1ybbsFQb7HXz7rWFawv4vqLV/
+	 exxfXFPIUEJT6Sdt+TszONOYdZDBUDNE/NgtPPmQ6OPFmqFC3QxqnCO9zlGYuodKhO
+	 53WO5CEt9SnGw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17186CCD1B9;
+	Tue, 21 Oct 2025 18:53:27 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
+Date: Tue, 21 Oct 2025 13:53:06 -0500
+Subject: [PATCH v2] backlight: qcom-wled: fix unbalanced ovp irq enable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020150526.000078b6@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-v2-1-7ff115b4ffe7@joelselvaraj.com>
+X-B4-Tracking: v=1; b=H4sIAJHW92gC/5WNQQ7CIBBFr9KwdgxgIdGV9zBdDGW0NAgtKGqa3
+ l3sDVy+n/z3FpYpOcrs1CwsUXHZxVBB7hrWDxhuBM5WZpJLJbgUMPfxDi9PFq7uDc9g0GPoK8Y
+ ygUszUEDjCVTbaiO4RnvUrNqmRPWwlS5d5cHlR0yfLVzEb/2/UQQIIGsPvLVCK1TnMZLP5AsmH
+ PfVwrp1Xb+2OdUg5QAAAA==
+X-Change-ID: 20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-5446b106ad96
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joel Selvaraj <foss@joelselvaraj.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761072806; l=4368;
+ i=foss@joelselvaraj.com; s=20250919; h=from:subject:message-id;
+ bh=+zxsXoGdLJQYgRVd89LWEBBj6NGtlp3Yp8wwgEWlx8w=;
+ b=5LCIDELJydjgakfLZUSdmtVysbCZBFc51OM6rE+/GwWadfxB/8xX6wtr4L6MMAreYmFRTKba8
+ p0+GvI2mgiIBg6NHMuFOHjhwfHWdPlAXUjEJPXkualGFTiWWFQXE7gA
+X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
+ pk=BBMos4ph15apUFh2AkG9rLZIrBWl5LD4egPOhEv63X0=
+X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20250919 with
+ auth_id=529
+X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
+Reply-To: foss@joelselvaraj.com
 
-On Mon, Oct 20, 2025 at 03:05:26PM +0100, Jonathan Cameron wrote:
-> > More generally could have a "Not-for-general-consumption bit" instead
-> > of specifically a compressed bit.  Maybe both a "No-Consume" and a
-> > "Special Node" bit would be useful separately.
-> > 
-> > Of course then platforms need to be made to understand all these:
-> > 
-> > "No-Consume" -> force EFI_MEMORY_SP or leave it reserved
-> > "Special Node" -> allocate its own PXM / Provide discrete CFMWS
-> > 
-> > Naming obviously non-instructive here, may as well call them Nancy and
-> > Bob bits.
-> 
-> For compression specifically I think there is value in making it
-> explicitly compression because the host hardware might handle that
-> differently. The other bits might be worth having as well
-> though. SPM was all about 'you could' use it as normal memory but
-> someone put it there for something else. This more a case of
-> SPOM. Specific Purpose Only Memory - eats babies if you don't know
-> the extra rules for each instance of that.
-> 
+From: Joel Selvaraj <foss@joelselvaraj.com>
 
-This is a fair point.  Something like a SPOM bit that says some other
-bit-field is valid and you get to add new extensions about how the
-memory should be used?  :shrug: probably sufficiently extensible but
-maybe never used for anything more than compression.
+In Xiaomi Poco F1 and at least few other devices, the qcom wled driver
+triggers unbalanced ovp irq enable warning like the following during
+boot up.
 
-> Maybe the BIOS would have a look at devices and decide to enable a
-> compressed memory CFMWS if it finds devices that need it and not do
-> so otherwise, though not doing so breaks hotplug of compressed memory devices.
-> 
-> So my guess is either we need to fix Linux to allow splitting a fixed
-> memory window up into multiple NUMA nodes, or platforms have to spin
-> extra fixed memory windows (host side PA ranges with a NUMA node for each).
-> 
+[    1.151677] ------------[ cut here ]------------
+[    1.151680] Unbalanced enable for IRQ 176
+[    1.151693] WARNING: CPU: 0 PID: 160 at kernel/irq/manage.c:774 __enable_irq+0x50/0x80
+[    1.151710] Modules linked in:
+[    1.151717] CPU: 0 PID: 160 Comm: kworker/0:11 Not tainted 5.17.0-sdm845 #4
+[    1.151724] Hardware name: Xiaomi Pocophone F1 (DT)
+[    1.151728] Workqueue: events wled_ovp_work
+...<snip>...
+[    1.151833] Call trace:
+[    1.151836]  __enable_irq+0x50/0x80
+[    1.151841]  enable_irq+0x48/0xa0
+[    1.151846]  wled_ovp_work+0x18/0x24
+[    1.151850]  process_one_work+0x1d0/0x350
+[    1.151858]  worker_thread+0x13c/0x460
+[    1.151862]  kthread+0x110/0x114
+[    1.151868]  ret_from_fork+0x10/0x20
+[    1.151876] ---[ end trace 0000000000000000 ]---
 
-I don't think splitting a CFMW into multiple nodes is feasible, but I
-also haven't looked at that region of ACPI code since i finished the
-docs.  I can look into that.
+Fix it by storing and checking the state of ovp irq before enabling and
+disabling it.
 
-I would prefer the former, since this is already what's done for
-hostbridge interleave vs non-interleave setups, where the host may
-expose multiple CFMW for the same devices depending on how the OS.
+Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+---
+I was able to debug the issue a little further. This happens mainly because
+devm_request_threaded_irq already enables the ovp irq during probe. Then ovp
+work gets scheduled when update_status happens and in turn enables the irq again.
+Tracking the status makes it easy to avoid the double irq enable. But I am
+open to try a different approach if there is any suggestion.
+---
+Changes in v2:
+- Track ovp irq status using ovp_irq_enabled flag instead of ovp_irq_disabled. (Konrad Dybcio)
+- Use short wrapper functions for ovp irq enable and disable. (Konrad Dybcio)
+- Link to v1: https://lore.kernel.org/r/20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-v1-1-edd304d165a5@joelselvaraj.com
+---
+ drivers/video/backlight/qcom-wled.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
-> Which option depends a bit on whether we expect host hardware to either
-> handle compressed differently from normal ram, or at least separate it
-> for QoS reasons.
-> 
+diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+index a63bb42c8f8b0333cd6d0ddc5bda93916da3fef3..3f49e4b3cdeb12541c057e56bac871a8ff680283 100644
+--- a/drivers/video/backlight/qcom-wled.c
++++ b/drivers/video/backlight/qcom-wled.c
+@@ -197,6 +197,7 @@ struct wled {
+ 	bool disabled_by_short;
+ 	bool has_short_detect;
+ 	bool cabc_disabled;
++	bool ovp_irq_enabled;
+ 	int short_irq;
+ 	int ovp_irq;
+ 
+@@ -290,11 +291,27 @@ static int wled5_set_brightness(struct wled *wled, u16 brightness)
+ 	return rc;
+ }
+ 
++static void wled_enable_ovp_irq(struct wled *wled)
++{
++	if (!wled->ovp_irq_enabled) {
++		enable_irq(wled->ovp_irq);
++		wled->ovp_irq_enabled = true;
++	}
++}
++
++static void wled_disable_ovp_irq(struct wled *wled)
++{
++	if (wled->ovp_irq_enabled) {
++		disable_irq(wled->ovp_irq);
++		wled->ovp_irq_enabled = false;
++	}
++}
++
+ static void wled_ovp_work(struct work_struct *work)
+ {
+ 	struct wled *wled = container_of(work,
+ 					 struct wled, ovp_work.work);
+-	enable_irq(wled->ovp_irq);
++	wled_enable_ovp_irq(wled);
+ }
+ 
+ static int wled_module_enable(struct wled *wled, int val)
+@@ -322,7 +339,7 @@ static int wled_module_enable(struct wled *wled, int val)
+ 			schedule_delayed_work(&wled->ovp_work, HZ / 100);
+ 		} else {
+ 			if (!cancel_delayed_work_sync(&wled->ovp_work))
+-				disable_irq(wled->ovp_irq);
++				wled_disable_ovp_irq(wled);
+ 		}
+ 	}
+ 
+@@ -1607,6 +1624,8 @@ static int wled_configure_ovp_irq(struct wled *wled,
+ 		return 0;
+ 	}
+ 
++	wled->ovp_irq_enabled = true;
++
+ 	rc = regmap_read(wled->regmap, wled->ctrl_addr +
+ 			 WLED3_CTRL_REG_MOD_EN, &val);
+ 	if (rc < 0)
+@@ -1614,7 +1633,7 @@ static int wled_configure_ovp_irq(struct wled *wled,
+ 
+ 	/* Keep OVP irq disabled until module is enabled */
+ 	if (!(val & WLED3_CTRL_REG_MOD_EN_MASK))
+-		disable_irq(wled->ovp_irq);
++		wled_disable_ovp_irq(wled);
+ 
+ 	return 0;
+ }
+@@ -1726,7 +1745,7 @@ static void wled_remove(struct platform_device *pdev)
+ 	mutex_destroy(&wled->lock);
+ 	cancel_delayed_work_sync(&wled->ovp_work);
+ 	disable_irq(wled->short_irq);
+-	disable_irq(wled->ovp_irq);
++	wled_disable_ovp_irq(wled);
+ }
+ 
+ static const struct of_device_id wled_match_table[] = {
 
-There's only a handful of folks discussing this at the moment, but so
-far we've all be consistent in our gut telling us it should be handled
-differently for reliability reasons.  But also, more opinions always
-welcome :]
+---
+base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
+change-id: 20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-5446b106ad96
 
-~Gregory
+Best regards,
+-- 
+Joel Selvaraj <foss@joelselvaraj.com>
+
+
 
