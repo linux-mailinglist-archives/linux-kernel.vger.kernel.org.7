@@ -1,151 +1,176 @@
-Return-Path: <linux-kernel+bounces-863383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC5DBF7BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:41:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F60BF7B8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6546481581
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED32719A2723
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC7D2EFD9F;
-	Tue, 21 Oct 2025 16:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BA034887D;
+	Tue, 21 Oct 2025 16:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="TBNxILAZ"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dMloydxH"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9A347BBC;
-	Tue, 21 Oct 2025 16:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379FA348875
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761064601; cv=none; b=tR909rv6n6Wq672lGq4MB+NlGLMeX2W1H7tl7CPmKeil280RKC0S0SNOS0jjeJZZ661xI+6k1vhoyIQOE3B+vTkX91C7iRMlxOgdHpfqg9nz+l7+Q88lgwYozYmwHsTc7yPfgXNLhbxlFN0K/+8yrkVcGEWOdMbdEnnm2PYQZT8=
+	t=1761064616; cv=none; b=ZZ2X3RkRtxryTsPLkCDTzIczaQoo2g7d9c3IdPYRRe4/Q7eq6T6oFNCfQ1dnaM2tBG9/ePlTGplmxie/96BqyGr2Mkxaf0EKtks0eiHuDF9cLiVC9naccj0gGjnmB959cEEzJr3tjlwRvP0norD/rImMPDt56zRTtEvGO1CnIs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761064601; c=relaxed/simple;
-	bh=DVrwumkkr5SZ61R+aJi6TAQQwRK3yb6x0kw2lkyk8uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cz1DXXanPyxjH3LDaexMlpGckJskQ+TVn6VrGfRLAhOXl13EtyZnJrw1lxmVJzglxQax/yAfiarSiQd9u9q2NN5R1RyLoYATiFrdKrxgmeOc0I2hqEhq0ibgVH6vfrpIc5p7cueBq2CShVYXZ/w521Wvtgq7N+rGwGG5PgYK458=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=TBNxILAZ; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=f+3XfcfI7PAxJh75DtOxQWWY3IPGdxhd0iLpj5h8rgU=; b=TBNxILAZZ5NJT3FqILwfu+4JPp
-	AcvLYpdWMkyrVp0gesCWxqqDlkyyuD8sABnCaANaOg9eNK048kU08D44e5XXbBM7x3vncvUE0Ie8P
-	XU+SmuaMganm0TCf50E7EkYmSt1Zs7XeK2Iyuo71hW5U68IEG8AQNBc24EIOsw1RjruRferk3QhFJ
-	ZoV+XjJzvhsSf9Hor/oduxKBQIwaR0fmq3/L9F4TVBvNCUNXQuxgo9YZHL2t2D6m6iJIuXjrLYbPw
-	N0TmE63JAOQV+ajgRDHyG3GXNUkZnMQhOrIqIeipg+bGaNDu9TzhmSpHXY+4kdvPvUzoj0PqBf4LS
-	Uo+32VyQ==;
-Date: Tue, 21 Oct 2025 18:36:24 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dmitry
- Torokhov <dmitry.torokhov@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Kevin Hilman <khilman@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- linux-omap@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: mfd: twl: enable power button also for
- twl603x
-Message-ID: <20251021183624.6fde0a15@kemnade.info>
-In-Reply-To: <beabb9f7-fcf4-4c1d-a259-6c48e82fbcf5@kernel.org>
-References: <20251020-twl6030-button-v1-0-93e4644ac974@kernel.org>
-	<20251020-twl6030-button-v1-1-93e4644ac974@kernel.org>
-	<5fd43d2c-3a08-4a51-abb6-38883ee86bf2@kernel.org>
-	<20251021104515.5e25bec1@kemnade.info>
-	<beabb9f7-fcf4-4c1d-a259-6c48e82fbcf5@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1761064616; c=relaxed/simple;
+	bh=V8VPj9cMcUrASFrIP3Xcl8Z1vzjTesRqQ0IhhfznT5E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GIghT9P8tUxbbqMkLWXNZHLE46oI5W9bVepL4DHDrPKQOk23MqA4/dtGcSmzO7LPV4Ch52KaYsBT7gBj5zHd/uvTGXi6yGIiy5QM61J6yKT0g6NP1rO3LW1qaQc7zZg4edCrEVgg4DPZLwDN8DqW+wXgBT4JK+TX8rJRPNWpIxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dMloydxH; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7810e5a22f3so11992046b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761064613; x=1761669413; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/IdadGFev8EMGQWIIqEHXt78w+GzasFDdOM6t/N/dU=;
+        b=dMloydxHK1a+lK1Uon8tQd6ya306rI/b0Rmj/Z29yJQwcdlDqOk0r7jWZpYk5HRR+/
+         eXmjnevrSJtfEhTCBYvgsPP9kUmTcMHWHU9U2Y0ULbTWh+2PFQSZpqf/9gUyOGDd64Ad
+         JDXT4NPM9leB1DjHg4LVN0WhuvhQ0FgDPXqCDc8hd5uAkcCrHaAeeGtDnXPSN1r+7r02
+         PeLSJjiKfc9pmJ2gItspupz+mTYPbyJs2k0i48qX86w+7GaDNBEgJgMy/5QRWBAbcrgY
+         JzfPxBwAZVyB9tqN+CK+M2XE2vwucztAplQFwBbvQqu+0p3a9ybRznk8izm8D+0QXwql
+         fdHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761064613; x=1761669413;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/IdadGFev8EMGQWIIqEHXt78w+GzasFDdOM6t/N/dU=;
+        b=SAn98WZ2hIc2tXkP1Oo6Z+lJZFCO1+E9lNOhfXZXtWFWMABiZTCDlyER/TkmlQw2dz
+         4Vj773iG6b0ZlQF4Hzhh0TrUSUW8x05nWkX/VT11ZfLRxBhtXQChrHPpnZ/JIfBJ+vtP
+         d1DF44d58fi+A0/gHQVrAOy3ujyndaX9+DsieX/Caj+/FArTUZoTK5K1ILp301d9pZkL
+         mFr9KfpeJMWt2PsHmS6nKO1GU/J5/P8mU3gTIYidoFOByAQmudjWSunpTffkU22LPUzV
+         rTFSsxHQoSzlf+uDqQjWhOLVLMNwvCtZaQf+OB3QWb7v0Pou8jY83Bs7/qAoGzNMvFhU
+         Efwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmR1eB9CM+oqkQf9J3uDxnMsXpMv67f+dE0bm5fOCZB5FuVqe7n3jhiDNc2/ALryRAki4VyJllll+4V9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0W4yhlZQfpmRVZ+xa3xYJcEOOuawgD4NPklMZ9aohpH/g/y+b
+	vdrhGaUt4jb8IB70m3VP9i/8U7o+HNFo8AEck3MDdk9lCFDDeMa75jn3xf5KnvNGMubehLgcIGx
+	O8eRlIQ==
+X-Google-Smtp-Source: AGHT+IES6ELYoVnXS8by0geR6jOr+Qyair+TP7lX0bGCC8OGD3dU25vj5A6KyxRj4XG+s9p6uoHaw2v+jQs=
+X-Received: from pjbnk17.prod.google.com ([2002:a17:90b:1951:b0:32e:ca6a:7ca9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d0b:b0:32b:7220:8536
+ with SMTP id adf61e73a8af0-334a856d5bbmr22480858637.16.1761064613440; Tue, 21
+ Oct 2025 09:36:53 -0700 (PDT)
+Date: Tue, 21 Oct 2025 09:36:52 -0700
+In-Reply-To: <aPcG3LMA0qX5H5YI@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-5-seanjc@google.com>
+ <aPcG3LMA0qX5H5YI@yzhao56-desk.sh.intel.com>
+Message-ID: <aPe2pDYSpVFxDRWv@google.com>
+Subject: Re: [PATCH v3 04/25] KVM: x86/mmu: Add dedicated API to map
+ guest_memfd pfn into TDP MMU
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 21 Oct 2025 11:58:49 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, Oct 21, 2025, Yan Zhao wrote:
+> On Thu, Oct 16, 2025 at 05:32:22PM -0700, Sean Christopherson wrote:
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 18d69d48bc55..ba5cca825a7f 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -5014,6 +5014,65 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+> >  	return min(range->size, end - range->gpa);
+> >  }
+> >  
+> > +int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+> > +{
+> > +	struct kvm_page_fault fault = {
+> > +		.addr = gfn_to_gpa(gfn),
+> > +		.error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS,
+> > +		.prefetch = true,
+> > +		.is_tdp = true,
+> > +		.nx_huge_page_workaround_enabled = is_nx_huge_page_enabled(vcpu->kvm),
+> > +
+> > +		.max_level = PG_LEVEL_4K,
+> > +		.req_level = PG_LEVEL_4K,
+> > +		.goal_level = PG_LEVEL_4K,
+> > +		.is_private = true,
+> > +
+> > +		.gfn = gfn,
+> > +		.slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn),
+> > +		.pfn = pfn,
+> > +		.map_writable = true,
+> > +	};
+> > +	struct kvm *kvm = vcpu->kvm;
+> > +	int r;
+> > +
+> > +	lockdep_assert_held(&kvm->slots_lock);
+> Do we need to assert that filemap_invalidate_lock() is held as well?
 
-> On 21/10/2025 10:45, Andreas Kemnade wrote:
-> > On Tue, 21 Oct 2025 09:10:28 +0200
-> > Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >   
-> >> On 20/10/2025 14:31, akemnade@kernel.org wrote:  
-> >>> From: Andreas Kemnade <andreas@kemnade.info>
-> >>>
-> >>> TWL603x has also a power button, so add the corresponding subnode.    
-> >>
-> >> No, we don't add subnodes just because there is a power button. This
-> >> needs broader explanation, see also my further comment.
-> >>  
-> > Hmm, what is the general pattern to follow if a mfd device has some
-> > functionality which depends on some optional external components?  
-> 
-> Please describe it better - how these nodes depend on external
-> component? The power button logic/IC is in this device always. It is not
-> optional.
->
-The power button logic is always there, yes, but it depends on an optional
-actual mechanical button connected to a pad of this device, which is
-not always there. The logic will not work if I just put my finger on the PMIC,
-but it will work if there is a mechanical button which I can press connected to
-the PMIC.
+Hrm, a lockdep assertion would be nice to have, but it's obviously not strictly
+necessary, and I'm not sure it's worth the cost.  To safely assert, KVM would need
+to first assert that the file refcount is elevated, e.g. to guard against
+guest_memfd _really_ screwing up and not grabbing a reference to the underlying
+file.
 
-> > The might be a power button connected to it or not. I find it ugly
-> > to have non-existent stuff in the system.
-> > In general, yes I understand the argument against the subnode.
-> >   
-> >>>
-> >>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/mfd/ti,twl.yaml | 40 ++++++++++++++++++-----
-> >>>  1 file changed, 32 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> >>> index 776b04e182cb2..3527fee32cb07 100644
-> >>> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> >>> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> >>> @@ -55,6 +55,15 @@ allOf:
-> >>>  
-> >>>          gpadc: false
-> >>>  
-> >>> +        pwrbutton:
-> >>> +          properties:
-> >>> +            compatible:
-> >>> +              const: ti,twl4030-pwrbutton
-> >>> +            interrupts:
-> >>> +              items:
-> >>> +                - items:
-> >>> +                    const: 8    
-> >>
-> >> What is the point of defining const interrupts? If they are const, then
-> >> it is implied by compatible and defined in the driver.
-> >>
-> >> Anyway, double items does not look right here. This is an odd syntax.
-> >>  
-> > Quoting Rob:
-> > As 'interrupts' is a matrix, this needs to be:
-> > 
-> > interrupts:
-> >   items:
-> >     - items:
-> >         - const: 8
-> > 
-> > https://lore.kernel.org/linux-omap/20240318150750.GA4000895-robh@kernel.org/  
-> 
-> 
-> OK, this answers second part but I don't understand why even having this
-> in DT. If this is fixed, should be implied by the compatible?
-> 
-correct, they do not need to come from DT. The same is true for all
-subnodes of the twl[46]03X. I just followed the usual
-pattern there, which is of course not recommended for new designs.
+E.g. it'd have to be something like this:
 
-Regards,
-Andreas
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 94d7f32a03b6..5d46b2ac0292 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -5014,6 +5014,18 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+        return min(range->size, end - range->gpa);
+ }
+ 
++static void kvm_assert_gmem_invalidate_lock_held(struct kvm_memory_slot *slot)
++{
++#ifdef CONFIG_PROVE_LOCKING
++       if (WARN_ON_ONCE(!kvm_slot_has_gmem(slot)) ||
++           WARN_ON_ONCE(!slot->gmem.file) ||
++           WARN_ON_ONCE(!file_count(slot->gmem.file)))
++               return;
++
++       lockdep_assert_held(file_inode(&slot->gmem.file)->i_mapping->invalidate_lock));
++#endif
++}
++
+ int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+ {
+        struct kvm_page_fault fault = {
+@@ -5038,6 +5050,8 @@ int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+ 
+        lockdep_assert_held(&kvm->slots_lock);
+ 
++       kvm_assert_gmem_invalidate_lock_held(fault.slot);
++
+        if (KVM_BUG_ON(!tdp_mmu_enabled, kvm))
+                return -EIO;
+--
+
+Which I suppose isn't that terrible?
 
