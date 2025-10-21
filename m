@@ -1,169 +1,220 @@
-Return-Path: <linux-kernel+bounces-862604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF1FBF5B9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:14:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5075FBF5BAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1E264FA8C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027433BFF59
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8894A2877ED;
-	Tue, 21 Oct 2025 10:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62996328B65;
+	Tue, 21 Oct 2025 10:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cABm1VCQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eVr5/fTB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53B72E2F03;
-	Tue, 21 Oct 2025 10:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5071B652
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041657; cv=none; b=sEiW1y0qGunPXKFkK4uI/K8CeEd4vi6vghezJDN2Fy/unL1WcWaj4x7jV9tNAbC02T4HHNfqSDUlC6CxwRZ3WeJGVn581qRZWATOqR5BrDTw84NkGqhnYzvp+JvzZ59b6Ppd/+PFVlzRvXj9xtdQsB5oX3E/lzJn+rmuc5P8qPM=
+	t=1761041788; cv=none; b=nAD2hltbOGHwpA1JX2CiMfRxS7/yuJtIaevwZ2FYrDHO2D9OLAosPQmCOwIlB6VVBj9eDpMSEOeYVbs8l7nTct3tHpTlXOum0hbPiTwIQZj/ogfInsuBEgto0oAyr2ASBLWgDt/7sjMstnCj/PGqGkZkFHM9UmWi5qr++Bw62vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041657; c=relaxed/simple;
-	bh=7G9wh+3pYjtmqhznpuhg/4zeG4jNF6FIdeVPDV76n9A=;
+	s=arc-20240116; t=1761041788; c=relaxed/simple;
+	bh=K8Bt1F4duKaYZD6FM5I3/3n7I5nh0OjMrdkO6KPZNLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tyVASXxhA+KDEDP2+1DfOwgMXtpXOCtvY/4MY6MOfkthU2yOUnwzsPbjf6eYK/bwyXRJBDujKGv8IYqzyVSkdc2bGbFMXpiBrxEg2VAEpcXcOnvi88t+iuBJQQpjOnHZQUB4wVlMWnOxoLqcv9/wW4LIw1U5GPYijwElpkqRhOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cABm1VCQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761041656; x=1792577656;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7G9wh+3pYjtmqhznpuhg/4zeG4jNF6FIdeVPDV76n9A=;
-  b=cABm1VCQZA1ORBJxjsSb2kUZcUFbpT5cVFTa+Mvda8DvxHfkb3GYPl/b
-   d3wD+YYx3y8GfPQSKcILdD2lt8QIjv3rt+EUVwvCr3e+4wMFWOXUrgpGG
-   KjBZ6r1cDl5K0gAXonI7gMRsNKefYI6EE41qkiNuk7dDSBP8+7xsgWql1
-   ooXHuBOXPNIfHciFA8HkdEFUnoY6IdnQ3y2dLmR/u3e2PbAyDjoxLz3Qy
-   /szirDSECuww3X3BkYZRQi2SlkeEsxEGW8fUviZoLEY1zB3+qSAkPG34I
-   W5xOOX7EpYd429RGvXqVhGyt/kbVkpsS9NK8DLBAW+sp42YWnnvsCEeol
-   w==;
-X-CSE-ConnectionGUID: 410yUsDFSFykXVN1MiXJHA==
-X-CSE-MsgGUID: ptc+hNrDSX+8S/HYekdELQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62372422"
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="62372422"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 03:14:15 -0700
-X-CSE-ConnectionGUID: vKdFSoyXTSCm5jBMmk1PvA==
-X-CSE-MsgGUID: vCmLMOb8QVe0urxPVPyQug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="183262245"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.224])
-  by fmviesa007.fm.intel.com with SMTP; 21 Oct 2025 03:14:13 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 Oct 2025 13:14:11 +0300
-Date: Tue, 21 Oct 2025 13:14:11 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] usb: typec: ucsi: Add support for orientation
-Message-ID: <aPdc808hqRH73cjg@kuha.fi.intel.com>
-References: <20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=owMl1UkypgrQifVv/RoWUlu4Iryurw0Ja4hsmIchUWj+BNg7/2Z/HzWCY9GaSKOMg2wShJo6AhMdXS8y/Pl6xybWkRw/258DP2FkfhCoVorSpc03ZAbJXpLUNkzJZvtj9hzNM2whZLRSTDODe7CkkHY/5I+OGYKo5JZM8kPQXSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eVr5/fTB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761041784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JJYhMYYkH+gP1AV8KxmcpA9zINZajsuC9HdWMXBqSjE=;
+	b=eVr5/fTBFJTgDJowyUjds8txNpPDHwdwd8KTuQbFf4KSf1FHvDCAu876KqtULeMHnHrI71
+	fkb4L+Q9zFAXb3iBR616cCskMCEk11QVYOabfXsfRrtLlIYagI/vB7bPVg/kQjeVnKE71k
+	TvRI+rLsdxjBQVCkORQEA5T7MArUMng=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-ImbGl7ZjNY29M0yb68VWmw-1; Tue, 21 Oct 2025 06:16:23 -0400
+X-MC-Unique: ImbGl7ZjNY29M0yb68VWmw-1
+X-Mimecast-MFC-AGG-ID: ImbGl7ZjNY29M0yb68VWmw_1761041782
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-471168953bdso38964875e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:16:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761041781; x=1761646581;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JJYhMYYkH+gP1AV8KxmcpA9zINZajsuC9HdWMXBqSjE=;
+        b=mD4XKbOsj4+CBMgmaAUALVIEvkI9b89S6ACfS9kVA7fTeaUHSeGyhUpWhty92PSgIy
+         mxkoVYqQUALzClD6d9PEhs4cUHBlHrbdlKBhRCYVFA8X/VXDbTWARKhRQZ/o2a5cgDOh
+         00YMDGQHYCDw0+kDbY7c+tYWJ4klLRhQpva/ns3drd/4ryoxSPy+6gEMvAWHU+Mo1J0g
+         QUOjPYMC1iwnkbI4n6hRgi47W2JEt6hyqU0rIBRKgRVuZSWRbS2944tP5mWJ2jd/MFWi
+         Y7IxgrTzUXfyuN8VM+nn76ACIosnDPEZxS0IkIskVQ4ZBCueDUNanzOvW7u4uZXKeNSO
+         4RAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBQlA+3OxPfxbekjd50gjgGl2m9z5ZbbUJYmeib4JdUR7dwQpcVh7PHr3ZW/s24CysffR/rgdbCpiY6/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHouhOY55iDkShOvDSL+muin3+0rknpbH+2FTDPSwHa1iuNZl5
+	3XH7V6Zru+OwMnPUDW0HeM1I1swFg70r6Oo78/pEUpmbii18EYfDKfrsOxXZ2yKdmgFCJBRM8vp
+	df5wMz9RPgufiidqHlWo3PTvBhG7c9b/YFi0RqIoAVJ4BKbu/nKctYQQvfWXbfvR4aA==
+X-Gm-Gg: ASbGncusTHhF+jEoJCgj7rAdAgmFpJqeFum12qN5pMlzDUIIzVjZvzXPaZCvvx+HJ5z
+	1paiM5lplb/l9q0GvkUUlA0sHSjxFlW0/qe9haZALx6utfQV5I/WInM2u1fg7HlZe76To9tKstv
+	TA55cNMQytNPAEiUbZEy4lSWdtjkJpqqdRjBB13QkdQyrJ7/4UjTDV4dW67tyydj+JteK6Kza1D
+	fsslNCiUwe9IS4Pfy6qZqbksLQL+hVFd5mL5tzdyIII+SWHgnuwMjAvsawBQK9LlSqan0CecJbD
+	vXDyrzjqivjufV6A6mhT7995pngzAoUGhul3Opwx0Lg0t7YAcuOX+aP9ZYIAlu5n0Dp9Ddjlbcj
+	m4reWb1T7fL/W7X3KO7+qbBFVEo8DUyyeGoVxKxe2yiHMJhsuDWQ=
+X-Received: by 2002:a05:600c:a088:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-47117315d8emr128167545e9.16.1761041780841;
+        Tue, 21 Oct 2025 03:16:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFi58yEM3Ci3GlIQ7LRsfZT8Jz32v9v6BKO98V35kuEXc5OOA/pGgs/FK9jj1Yuy4hgaCi++g==
+X-Received: by 2002:a05:600c:a088:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-47117315d8emr128167295e9.16.1761041780382;
+        Tue, 21 Oct 2025 03:16:20 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c82c9sm272580385e9.14.2025.10.21.03.16.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 03:16:19 -0700 (PDT)
+Date: Tue, 21 Oct 2025 12:16:14 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: syzbot <syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev
+Subject: Re: [syzbot] [virt?] [net?] possible deadlock in vsock_linger
+Message-ID: <u6mwe4gtor7cgqece6ctyabmlxcaxn7t2yk7k3xivifwxreu65@z5tjmfkoami7>
+References: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="ixrysslziegqmao6"
 Content-Disposition: inline
-In-Reply-To: <20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org>
+In-Reply-To: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
 
-On Wed, Oct 15, 2025 at 04:50:36PM +0300, Abel Vesa wrote:
-> According to UCSI 2.0 specification, the orientation is
-> part of the connector status payload. So tie up the port
-> orientation.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-RFC or not, this looks ok to me.
+--ixrysslziegqmao6
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On Mon, Oct 20, 2025 at 05:02:56PM -0700, syzbot wrote:
+>Hello,
+>
+>syzbot found the following issue on:
+>
+>HEAD commit:    d9043c79ba68 Merge tag 'sched_urgent_for_v6.18_rc2' of git..
+>git tree:       upstream
+>console output: https://syzkaller.appspot.com/x/log.txt?x=130983cd980000
+>kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
+>dashboard link: https://syzkaller.appspot.com/bug?extid=10e35716f8e4929681fa
+>compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f0f52f980000
+>C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ea9734580000
 
-> ---
->  drivers/usb/typec/ucsi/ucsi.c | 24 ++++++++++++++++++++++++
->  drivers/usb/typec/ucsi/ucsi.h |  3 +++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index 3995483a0aa097b822046e819f994164d6183b0d..17439ec434d41d24e8e4c7a97d7e6117fd07d950 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -1008,6 +1008,28 @@ static int ucsi_check_connector_capability(struct ucsi_connector *con)
->  	return ret;
->  }
->  
-> +static void ucsi_orientation(struct ucsi_connector *con)
-> +{
-> +	if (con->ucsi->version < UCSI_VERSION_2_0)
-> +		return;
-> +
-> +	if (!UCSI_CONSTAT(con, CONNECTED)) {
-> +		typec_set_orientation(con->port, TYPEC_ORIENTATION_NONE);
-> +		return;
-> +	}
-> +
-> +	switch (UCSI_CONSTAT(con, ORIENTATION)) {
-> +	case UCSI_CONSTAT_ORIENTATION_NORMAL:
-> +		typec_set_orientation(con->port, TYPEC_ORIENTATION_NORMAL);
-> +		break;
-> +	case UCSI_CONSTAT_ORIENTATION_REVERSE:
-> +		typec_set_orientation(con->port, TYPEC_ORIENTATION_REVERSE);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +}
-> +
->  static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
->  {
->  	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
-> @@ -1258,6 +1280,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
->  		typec_set_pwr_role(con->port, role);
->  		ucsi_port_psy_changed(con);
->  		ucsi_partner_change(con);
-> +		ucsi_orientation(con);
->  
->  		if (UCSI_CONSTAT(con, CONNECTED)) {
->  			ucsi_register_partner(con);
-> @@ -1690,6 +1713,7 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
->  		typec_set_pwr_role(con->port, UCSI_CONSTAT(con, PWR_DIR));
->  		ucsi_register_partner(con);
->  		ucsi_pwr_opmode_change(con);
-> +		ucsi_orientation(con);
->  		ucsi_port_psy_changed(con);
->  		if (con->ucsi->cap.features & UCSI_CAP_GET_PD_MESSAGE)
->  			ucsi_get_partner_identity(con);
-> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-> index e301d9012936fb85eaff7f260a862ff099eb77c5..c85175cd001487fa9d66076e608e098d236f5275 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.h
-> +++ b/drivers/usb/typec/ucsi/ucsi.h
-> @@ -360,6 +360,9 @@ struct ucsi_cable_property {
->  #define   UCSI_CONSTAT_BC_SLOW_CHARGING		2
->  #define   UCSI_CONSTAT_BC_TRICKLE_CHARGING	3
->  #define UCSI_CONSTAT_PD_VERSION_V1_2		UCSI_DECLARE_BITFIELD_V1_2(70, 16)
-> +#define UCSI_CONSTAT_ORIENTATION		UCSI_DECLARE_BITFIELD_V2_0(86, 1)
-> +#define   UCSI_CONSTAT_ORIENTATION_NORMAL	0
-> +#define   UCSI_CONSTAT_ORIENTATION_REVERSE	1
->  #define UCSI_CONSTAT_PWR_READING_READY_V2_1	UCSI_DECLARE_BITFIELD_V2_1(89, 1)
->  #define UCSI_CONSTAT_CURRENT_SCALE_V2_1		UCSI_DECLARE_BITFIELD_V2_1(90, 3)
->  #define UCSI_CONSTAT_PEAK_CURRENT_V2_1		UCSI_DECLARE_BITFIELD_V2_1(93, 16)
-> 
-> ---
-> base-commit: 13863a59e410cab46d26751941980dc8f088b9b3
-> change-id: 20251015-usb-typec-ucsi-orientation-75ed0a2c9ff3
-> 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
+#syz test
 
+
+--ixrysslziegqmao6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="0001-TODO.patch"
+
+From c32c21ea301aadc56160a57ddcd99f836a49f028 Mon Sep 17 00:00:00 2001
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Tue, 21 Oct 2025 12:12:24 +0200
+Subject: [PATCH] TODO
+
+From: Stefano Garzarella <sgarzare@redhat.com>
+
+---
+ net/vmw_vsock/af_vsock.c | 38 ++++++++++++++++++++++++++------------
+ 1 file changed, 26 insertions(+), 12 deletions(-)
+
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 4c2db6cca557..5434fe6a1d6b 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -565,6 +565,11 @@ static u32 vsock_registered_transport_cid(const struct vsock_transport **transpo
+ 	return cid;
+ }
+ 
++/* vsock_find_cid() must be called outside lock_sock/release_sock
++ * section to avoid a potential lock inversion deadlock with
++ * vsock_assign_transport() where `vsock_register_mutex` is taken when
++ * `sk_lock-AF_VSOCK` is already held.
++ */
+ bool vsock_find_cid(unsigned int cid)
+ {
+ 	if (cid == vsock_registered_transport_cid(&transport_g2h))
+@@ -735,23 +740,14 @@ static int __vsock_bind_dgram(struct vsock_sock *vsk,
+ 	return vsk->transport->dgram_bind(vsk, addr);
+ }
+ 
++/* The caller must ensure the socket is not already bound and provide a valid
++ * `addr` to bind (VMADDR_CID_ANY, or a CID assgined to a transport).
++ */
+ static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr)
+ {
+ 	struct vsock_sock *vsk = vsock_sk(sk);
+ 	int retval;
+ 
+-	/* First ensure this socket isn't already bound. */
+-	if (vsock_addr_bound(&vsk->local_addr))
+-		return -EINVAL;
+-
+-	/* Now bind to the provided address or select appropriate values if
+-	 * none are provided (VMADDR_CID_ANY and VMADDR_PORT_ANY).  Note that
+-	 * like AF_INET prevents binding to a non-local IP address (in most
+-	 * cases), we only allow binding to a local CID.
+-	 */
+-	if (addr->svm_cid != VMADDR_CID_ANY && !vsock_find_cid(addr->svm_cid))
+-		return -EADDRNOTAVAIL;
+-
+ 	switch (sk->sk_socket->type) {
+ 	case SOCK_STREAM:
+ 	case SOCK_SEQPACKET:
+@@ -991,15 +987,33 @@ vsock_bind(struct socket *sock, struct sockaddr *addr, int addr_len)
+ {
+ 	int err;
+ 	struct sock *sk;
++	struct vsock_sock *vsk;
+ 	struct sockaddr_vm *vm_addr;
+ 
+ 	sk = sock->sk;
++	vsk = vsock_sk(sk);
+ 
+ 	if (vsock_addr_cast(addr, addr_len, &vm_addr) != 0)
+ 		return -EINVAL;
+ 
++	/* Like AF_INET prevents binding to a non-local IP address (in most
++	 * cases), we only allow binding to a local CID.
++	 */
++	if (vm_addr->svm_cid != VMADDR_CID_ANY &&
++	    !vsock_find_cid(vm_addr->svm_cid))
++		return -EADDRNOTAVAIL;
++
+ 	lock_sock(sk);
++
++	/* Ensure this socket isn't already bound. */
++	if (vsock_addr_bound(&vsk->local_addr)) {
++		err = -EINVAL;
++		goto out;
++	}
++
+ 	err = __vsock_bind(sk, vm_addr);
++
++out:
+ 	release_sock(sk);
+ 
+ 	return err;
 -- 
-heikki
+2.51.0
+
+
+--ixrysslziegqmao6--
+
 
