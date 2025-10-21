@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-863171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9B2BF72BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:51:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE546BF72A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBDA19C278A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:50:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0446A501206
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3CB33FE38;
-	Tue, 21 Oct 2025 14:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892B233F8D4;
+	Tue, 21 Oct 2025 14:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="S2q5QIMA"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TU467j+9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340CF33FE20
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314BB3321B1
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761058159; cv=none; b=A1ncfxVqwpv1MGTbRZSwtek0jz8QK1rkUkIxnIfU60tgrz2P5bB/hx565DR+tfL2Ds6uR8w2PYfhRXTFD5CtbNHYwsY76jK0y7nYvNlB5YrFHxHuYk8uMBTwD8fpomJ6kIC/5xhZkxUeg5PkubVag2VpZJHflZjSLRC2+315inI=
+	t=1761058226; cv=none; b=bRAhPC1CQq9nKYO7W/qsMmvQzIiZpGMhVH3vkllnwIcjXu9Ms4Tggd3GwL4b9HCTdMqn9xJzUGXn4EB/uG4bee7+67C6nU9Sl8g5KQ9YeJl6pDbPuzQBEifA1yvNwHnVGmnzOoVHwziKjrBi6s81Ku1TAbbHF6PohxHGvj//rfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761058159; c=relaxed/simple;
-	bh=W2POVoQrYUSZPm1A3yimS9utpyJqHWo6t34zYlrDD9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XwbWc8MJV1elMe4TOtnR67xnu5DXSRq2sqq7/iHzL2FeIbPhJ82qbCIZxQg2a/WKLz8xzjPKmyn4TKgHCNDyqUkw/IR77+n4j2k/sgMGZhf3bFCkgiuoC5JsmrJVD9NMQytycocOKC+2HBeraBRxIsh4Qk/7Uw8M7C+Opvnc2Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=S2q5QIMA; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso6502415e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761058156; x=1761662956; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W2POVoQrYUSZPm1A3yimS9utpyJqHWo6t34zYlrDD9M=;
-        b=S2q5QIMACELbpbw3BFkBp/ESgGRjNmUqDzIVGS32uUicB+JK9ljXMfHmxs+McXOoCU
-         0UP1wC+Is2yy1abPxZmVo7zj5ySOcXaNSgMmJgXyomXLBECmjzEWKM5oPAwdzYi9fta2
-         NwL0jk28BbuRXNHI52s2+e0kxLs9WSvOicja4pvzkMKDYEHpqUlvjmP/j/Tp5bdwoVqp
-         gvUnH8GkCdkNEzuiaeeaj2CqJXHcNKz/V/g44BCf3+M7EYaYPCo/2lIiRDVtiXb61krj
-         4tpMmCZJ88R0GUYlGvuJvRScYHB2M7o+cZfnHyyrORHe1xjmnC6ZVXnSTAdubGslsgqQ
-         8ekg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761058156; x=1761662956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W2POVoQrYUSZPm1A3yimS9utpyJqHWo6t34zYlrDD9M=;
-        b=H4rO01E3zyagnJaoLTId4iKLs2UC97z57ogfHvf8LAxOEVuOroVvd1+uVL2lCcyduW
-         AsIbZ/ZEHuSXZBPCrmvNZbOoTLpPEg3kK3yxnH/1ahwxTjJeWWxB+AS4trc8oNQoRlPQ
-         Fki2k+lbCDfFW1NvQ247GlVKpi5MXFSv2PrUfndBKgoYK/+xwh/bzxRIzk4mAD0t8mV3
-         nPnBCfQlsxxvV/xyTIY2QfHGquzHE07gO9luyftfdhfjGf3mJTrWU3xQvtbwY4Sf08Lf
-         ueI03Urbx1eBUuNyC0WGu6wjKUZ6xQgCPkTivCAOWY931H04bzlsDMCCkM7ic3CA4OCj
-         gp/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW4jWCwzajRIsOShrcL8KF/dUcauEvMS5K7hx7JPBt9JQrSgwatV4oFszzgI41u/OcXhOs9jVjtP8Ebn5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4Uff42s3T9RAsfpGsnnxaZHbNaJHmVma1BIrF50OzkWcT2tyN
-	m2Rfm4t4k76FDGFus0xTPidAPMXgee1qcDtu2NaL5mrWdlVnwLcxYeYsbgXAZttLsvsnCsUirxI
-	8vLlLi8T/FcuZrs4VEYHSzeXh0rGtzR9I+HGA60oAHHxRm88r23SKpg0=
-X-Gm-Gg: ASbGncuumFYJ1rjbUDMgjeMEOJxE7AbEHqM9qZIAk/Q99wjijjbASq1AB9eLHh4MbFH
-	6GhHWK2JbhdSv+WvlWDOPtazMC2qWw3YFLJKHlGk7RJHLwhmoMXYw9ajwkGw4ZhwGTaoAts6BF2
-	cnmKPJrxEDwou/v8rgseYhedkMl3wdZgCFRN/9XemTPkkojweXloC7Rvj6IPjlKLoJGq9AFZ1OL
-	xDI/IP/V2zrKhq3giYfPjsuc+AGdQQkNsOWbyFkSdDjdck8nhUQMaqRYeoND6dhz6NdijcPwTAV
-	tHtfM6YyYzPf0rMO2qBTvFRgn68=
-X-Google-Smtp-Source: AGHT+IHHKA/c0dnWyRU1/iLjLRkY7tyq+bIgrghSWb7MxAig1bIW1157IfXsr8EXnJ7WeHo/HrV20fw8YRwsJS23Kmk=
-X-Received: by 2002:a05:6512:3ca6:b0:572:1f0b:5ef3 with SMTP id
- 2adb3069b0e04-591d84e398dmr4722237e87.11.1761058156385; Tue, 21 Oct 2025
- 07:49:16 -0700 (PDT)
+	s=arc-20240116; t=1761058226; c=relaxed/simple;
+	bh=awPIVGw/VUs/Ej6U4PuR8oMMPhCYfy2wcKd6w8Qxm2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=egC9RvtXmBOsfy7iarsSRajsmU29k2iaNMgEyFxRFwu+g5E+A23BoeqH3FViCrn9m5l3X5TG/eM4qjuPAKbQjKy+ksIDJL+RuAK//rhnpc4KdARpqeE3KAYvmOMFqtBD2+9pbUsWJPdTZFPcjzOHWPF+9Vsd9MBXt5PlpiuKdDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TU467j+9; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761058225; x=1792594225;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=awPIVGw/VUs/Ej6U4PuR8oMMPhCYfy2wcKd6w8Qxm2Y=;
+  b=TU467j+9kbPZQtuPlhzrcFTByrGAN3Oble34ZYIH5nuUpROeWqkF3Feg
+   5LmH1eukE2/80EUvb5K9qLLsHzOFETZZEf6OpzB1oBD+vt7ExgjF+qAyr
+   9RQQ+J7pSLK0sKMWGRAUp3/XQGiclwzdVq4VJsU5K/uUgcVfcFqUay+Yz
+   nag/Ikl+Z7ihGCX4x8V8ck8Y/tp9ak78Mw9nx3hNwWUYu5J+mtIti04MO
+   PVzLxELIs///5mPYtuGMcgF+lkOTTK4umpY7ckrpUCIrx5t7EGNjaojhE
+   9NtMn+UAesz1VPpBO7ULtH/tNuWAYscfQhlVRSWcXVsFx8Em3EgxpLVi5
+   w==;
+X-CSE-ConnectionGUID: ROhu4JXoSzS1aXDNpORvTQ==
+X-CSE-MsgGUID: dtGTiyRoSSqxE/IQro6s3g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65802661"
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="65802661"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:50:24 -0700
+X-CSE-ConnectionGUID: lwYzEMbEQ6qBBhjMSb86Jw==
+X-CSE-MsgGUID: lZQl/vTeQbGlIUSOm5ytIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="187645042"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.148])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:50:22 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vBDgp-00000001WOh-2ncS;
+	Tue, 21 Oct 2025 17:50:19 +0300
+Date: Tue, 21 Oct 2025 17:50:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Reuven Abliyev <reuven.abliyev@intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: Re: [PATCH v2] mtd: intel-dg: wake card on operations
+Message-ID: <aPedq3pz2TXYUSEk@smile.fi.intel.com>
+References: <20251021123246.3629282-1-alexander.usyskin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020-fix-gpio-idio-16-regmap-v2-0-ebeb50e93c33@kernel.org>
- <20251020-fix-gpio-idio-16-regmap-v2-3-ebeb50e93c33@kernel.org>
- <CAMRc=MeFZTDk4cgzEJNnkrJOEneFUBLwtKjkpV3-cLSm=xsxNg@mail.gmail.com> <aPebhGETy_3MIwkf@smile.fi.intel.com>
-In-Reply-To: <aPebhGETy_3MIwkf@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 21 Oct 2025 16:49:05 +0200
-X-Gm-Features: AS18NWBSKJhK7qYwfMnb3aaDS0lyPca9mQ0P-5mXERBibCAphYq6tUO01p7bilc
-Message-ID: <CAMRc=McPP6obWpnd7Y7duJDC=NLAOE7bjFN-iytDJ524nDr9mA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] gpio: idio-16: Define fixed direction of the GPIO lines
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: William Breathitt Gray <wbg@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Michael Walle <mwalle@kernel.org>, 
-	Ioana Ciornei <ioana.ciornei@nxp.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mark Cave-Ayland <mark.caveayland@nutanix.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021123246.3629282-1-alexander.usyskin@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Oct 21, 2025 at 4:41=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Oct 21, 2025 at 09:21:38AM -0400, Bartosz Golaszewski wrote:
-> > On Mon, 20 Oct 2025 10:51:46 +0200, William Breathitt Gray
-> > <wbg@kernel.org> said:
->
-> ...
->
-> > > Cc: stable@vger.kernel.org # ae495810cffe: gpio: regmap: add the .fix=
-ed_direction_output configuration parameter
->
-> > Turns out, this requires commit ae495810cffe ("gpio: regmap: add the
-> > .fixed_direction_output configuration parameter") so I cannot queue it =
-for
-> > v6.18. What do you want me to do? Send the first two ones upstream and =
-apply
-> > this for v6.19?
->
-> Why can't this be pulled from some IB/IT as part of the fix?
->
+On Tue, Oct 21, 2025 at 03:32:46PM +0300, Alexander Usyskin wrote:
+> The Intel DG cards do not have separate power control for
+> persistent memory.
+> The memory is available when the whole card is awake.
+> 
+> Enable runtime PM in mtd driver to notify parent graphics driver
+> that whole card should be kept awake while nvm operations are
+> performed through this driver.
 
-These kinds of things should be signalled before applying the patches
-that should go to an immutable branch. I would now have to rebase the
-my for-next branch. Also: the commit in question brings in a new
-feature, not a fix.
+> CC: Lucas De Marchi <lucas.demarchi@intel.com>
 
-Bartosz
+It's possible to make less noise in the commit message by moving Cc:s to...
+
+> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> ---
+
+...here. It will have the same effect on email, but commit message will be
+cleaner.
+
+> V2: Address review comments (Andrey S)
+
+I think you meant Andy or Andriy here :-)
+
+...
+
+> +	devm_pm_runtime_enable(device);
+
+I consider this as a wrong pattern of devm_*() usage. If one uses devm_*() they
+should check for errors and act accordingly. (One way can be a printed warning,
+but again, the devm_*() call inside can be implemented differently. It might
+make device be enabled for a moment and fail due to upper layer issues, such as
+memory allocation. In such case the error is different because it comes from
+a different layer and you effectively ignore it without a reason. Hence either
+check for errors, or drop devm_*() here.)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
