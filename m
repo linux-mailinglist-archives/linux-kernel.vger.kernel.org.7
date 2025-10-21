@@ -1,87 +1,140 @@
-Return-Path: <linux-kernel+bounces-862090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16104BF4687
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:55:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC24BF4690
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9AF224E7428
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523F218C5479
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF292773C6;
-	Tue, 21 Oct 2025 02:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgixvuCj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFEC1E868;
-	Tue, 21 Oct 2025 02:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D5F278E44;
+	Tue, 21 Oct 2025 02:56:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4335B274FD3;
+	Tue, 21 Oct 2025 02:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761015317; cv=none; b=YARomu/e2Y6WZWMA/rk4eaE52cHl3lrU2GU3nspJUmcDi1yTg5/rOJ/+/xtobg9FYTjq7wT1bwunJUOszQFM3xcyHPw+shYzoQltpyz9F17d+so8gStsXEuhaDpKUPnchWafwqnmj1ijv8hBd80i4jEAoAGm/nsSDEyLG/GXL94=
+	t=1761015407; cv=none; b=cgz85xUNnsPbgAIlvPPzWrmc01RNBZ3ffsdMIVP+55Ns/OWru1kwvCgYOXFWwmF3DTIBQIs54zNDNLlHCwjA+IVrLjkrin3+inICrAm6aIObPXz+JzlAwmq+kz3349RzyvP0VmShk7/q8JLY1O3NDi8lg5EDaO1V9ID2z9KhHQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761015317; c=relaxed/simple;
-	bh=vbYD+kETAiJfEcOI6cCNkdml0J8v/v8cpCFgqCTJ81M=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=G9xuFMAEZH5J9/vxYnevYoYtMlz/RMznLXlOwSzdjyTKwXIXO4nBd2NCxBRrf7lyLy7b+kAVDGkpd7NM5mZsC7fg/BvnauiMAUlNHwFOsz27j+BrZkbL+x425ZSEqSSdz59z7fQL1NwGcLv4r4BIGOQ2Rfi6vtzlnKsS+DpuGuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgixvuCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2CDC116C6;
-	Tue, 21 Oct 2025 02:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761015316;
-	bh=vbYD+kETAiJfEcOI6cCNkdml0J8v/v8cpCFgqCTJ81M=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=DgixvuCjn/AJ3eCjTcDw+7UK3P9/3b0ApKAYt4mgxbdTKdWIHQFkt35schxa9TdAT
-	 eaQB+DmIAGcq9VoEAI26pAt4IpxuYsWv8g5k306IoiAfJXXir1WdtgFrIeas1xZqp3
-	 dMvcuvf4J62uXC166MRC4wFs0hV4jZSw6EFxpqU2dRjOFiy8554lRqx1TODO34Lnlq
-	 N4cMBKSgWTBMP+uot/Z7qcB22ejkeUBt6qJKDZp/b5B7ZnAhQtkHY05V8h7x/tZWRO
-	 6ortCu9A3ni3GAXNnJPMXFGxILHAtxtJUiVRuAXw6c3S4HmP0Wp88p2Jcpd5TaQl8M
-	 0bPq1/Cj7rViA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Thomas Falcon <thomas.falcon@intel.com>, 
- Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-In-Reply-To: <20251017230357.15663-1-irogers@google.com>
-References: <20251017230357.15663-1-irogers@google.com>
-Subject: Re: [PATCH v2] perf parse-events: Make X modifier more respectful
- of groups
-Message-Id: <176101531311.244304.14298928719214046994.b4-ty@kernel.org>
-Date: Tue, 21 Oct 2025 11:55:13 +0900
+	s=arc-20240116; t=1761015407; c=relaxed/simple;
+	bh=CxJm60S2gZHUoWCZVhWJAPPBtiNPP28nE8Kbbp6mI7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m6AaUqu0vE+V9G/3JULahH6yjVpKL3obLfWFRjHnhtCM01CMAdebxUwO/TZA8OlqcYJKDfUNRTR1Hm+TNA7i2EcA/YlTF+YMXMZaj0KqbFG/T7Anp8NhQne1OEHq3fOqP1YG68jqPZjlCgWNogE848FcZ/msR23HJyrDtjgqnps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D39371063;
+	Mon, 20 Oct 2025 19:56:36 -0700 (PDT)
+Received: from ergosum.cambridge.arm.com (ergosum.cambridge.arm.com [10.1.196.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 852D03F59E;
+	Mon, 20 Oct 2025 19:56:43 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-s390@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH] mm: Make INVALID_PHYS_ADDR a generic macro
+Date: Tue, 21 Oct 2025 03:56:38 +0100
+Message-Id: <20251021025638.2420216-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Transfer-Encoding: 8bit
 
-On Fri, 17 Oct 2025 16:03:57 -0700, Ian Rogers wrote:
+INVALID_PHYS_ADDR has very similar definitions across the code base. Hence
+just move that inside header <liux/mm.h> for more generic usage. Also drop
+the now redundant ones which are no longer required.
 
-> Events with an X modifier were reordered within a group, for example
-> slots was made the leader in:
-> ```
-> $ perf record -e '{cpu/mem-stores/ppu,cpu/slots/uX}' -- sleep 1
-> ```
-> 
-> Fix by making `dont_regroup` evsels always use their index for
-> sorting. Make the cur_leader, when fixing the groups, be that of
-> `dont_regroup` evsel so that the `dont_regroup` evsel doesn't become a
-> leader.
-> 
-> [...]
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: iommu@lists.linux.dev
+Cc: linux-s390@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: virtualization@lists.linux.dev
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ arch/arm64/mm/mmu.c                  | 2 --
+ arch/s390/boot/vmem.c                | 1 -
+ drivers/vdpa/vdpa_user/iova_domain.h | 2 --
+ include/linux/mm.h                   | 2 ++
+ kernel/dma/swiotlb.c                 | 2 --
+ 5 files changed, 2 insertions(+), 7 deletions(-)
 
-Applied to perf-tools-next, thanks!
-
-Best regards,
-Namhyung
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index e80bb623ef53..1da02d908c30 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -470,8 +470,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+ 	mutex_unlock(&fixmap_lock);
+ }
+ 
+-#define INVALID_PHYS_ADDR	(-1ULL)
+-
+ static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
+ 				       enum pgtable_type pgtable_type)
+ {
+diff --git a/arch/s390/boot/vmem.c b/arch/s390/boot/vmem.c
+index cea3de4dce8c..fbe64ffdfb96 100644
+--- a/arch/s390/boot/vmem.c
++++ b/arch/s390/boot/vmem.c
+@@ -16,7 +16,6 @@
+ #include "decompressor.h"
+ #include "boot.h"
+ 
+-#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
+ struct ctlreg __bootdata_preserved(s390_invalid_asce);
+ 
+ #ifdef CONFIG_PROC_FS
+diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_user/iova_domain.h
+index 775cad5238f3..a923971a64f5 100644
+--- a/drivers/vdpa/vdpa_user/iova_domain.h
++++ b/drivers/vdpa/vdpa_user/iova_domain.h
+@@ -17,8 +17,6 @@
+ 
+ #define IOVA_START_PFN 1
+ 
+-#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
+-
+ #define BOUNCE_MAP_SHIFT	12
+ #define BOUNCE_MAP_SIZE	(1 << BOUNCE_MAP_SHIFT)
+ #define BOUNCE_MAP_MASK	(~(BOUNCE_MAP_SIZE - 1))
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index d16b33bacc32..543a5f780874 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -105,6 +105,8 @@ extern int mmap_rnd_compat_bits __read_mostly;
+ # endif
+ #endif
+ 
++#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
++
+ #include <asm/page.h>
+ #include <asm/processor.h>
+ 
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 0d37da3d95b6..a547c7693135 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -61,8 +61,6 @@
+  */
+ #define IO_TLB_MIN_SLABS ((1<<20) >> IO_TLB_SHIFT)
+ 
+-#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
+-
+ /**
+  * struct io_tlb_slot - IO TLB slot descriptor
+  * @orig_addr:	The original address corresponding to a mapped entry.
+-- 
+2.30.2
 
 
