@@ -1,264 +1,164 @@
-Return-Path: <linux-kernel+bounces-863277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BDDBF7741
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:44:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B96CBF7747
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77319352D29
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162E5188EA8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86007340A46;
-	Tue, 21 Oct 2025 15:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D3733C52E;
+	Tue, 21 Oct 2025 15:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G0kTBVo8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dLkeUeFl"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020EF20F067
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA52239E97
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761061455; cv=none; b=fAPtA/5dAL4VgJVSA7KFXWTYBC5CytK6dEke+hr6RIfdNuUe2s16pKB9hsqppmTo2/lu3jUmCjuSW2rHovOHfb/T3eLWCylABKqHdg+R0nPXxHJbiscyyvWH/k757SyVuvGVD09xs1+E7/n/3D5XeAdf+ojNO/X3XBNqSR+7Jv0=
+	t=1761061502; cv=none; b=WCJWLu3T/xDf/Rn/wmKYWuKx+7VozA4gtjzV02+qCltIvHNARogYGEGQMPj3oV7+qj066ZeLmpSxVu6QT8meylj0ud5t3p73NNdRxliW2+yuG0fKSCQ5hylZ7nCpIODopI6b7yi09n0aT8jTy810cH98Z05+0sRwcasrxlKUDsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761061455; c=relaxed/simple;
-	bh=A0TD5KKg3rvP50d4iN5qQNwBdRMTrU7Zn351z7no/Rg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pBOTFjxUGk8epfFwsDu+yMMO5IjYKbXwD9AhxHxky4mF4Bf+1XIFpQ/RA5SqEq4jb1dzVP1x3ORjAA1cTQ7GaVE7t4WZhSVscEjXYVH8s6XzbimOLdVUSYv+ZblC9zijzey30f0/IWm4bNWi82LDqLpVFZFOBRt7Eb3FuDPlfjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G0kTBVo8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761061453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=83AP2pcUZVkXSATkF5eTHL6M4I08IXBIdo5h/3fKK+w=;
-	b=G0kTBVo8sCmD9vgWSJz5RC0AZyT4WmcS8KDL1YZcNVLy1jVei6ZUtdlRthA1H/VeuAKceg
-	OH6RPoTcfxRfOO1N4PwKJw5pRpgpnlErbvy2/tt7mUuCP0Aa5nsaa67sPXd9mNeXyPBmW4
-	ThyhGyBfkIkQpB2rP6qZqOCFou3ZN3Q=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-g4rR-mNnNkGQMVJ0jGZJ-A-1; Tue, 21 Oct 2025 11:44:11 -0400
-X-MC-Unique: g4rR-mNnNkGQMVJ0jGZJ-A-1
-X-Mimecast-MFC-AGG-ID: g4rR-mNnNkGQMVJ0jGZJ-A_1761061451
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-47113dcc15dso39870815e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:44:11 -0700 (PDT)
+	s=arc-20240116; t=1761061502; c=relaxed/simple;
+	bh=2PFyqNZSot8EDSGMplRBObbfqgmY6ztn/ALY7W+G8Xg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DHh0kR2ckMQPTF12rUqCxtAnCoWDvSiLi0Q3H7nbB/L4BRsPdbEQx8gf0ZYF8/soYe/cdNXbFhFaKQc4Ug7E23azIDmVJG7jxkZUppkFG6LjtHhiWBkIugtwtEhY2X/pTIKDw7QIje33Yb6X/y4MNNclR8DgaTTgDtogtXjdImI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dLkeUeFl; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so1539a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1761061499; x=1761666299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/MK7K2Vi99xas8WktvZiAjv4QT6t/qx7SHQF2LdRMWg=;
+        b=dLkeUeFlb3efPsoHwrpKxIHc5dh1aGja/uhFZ0nwX2XlcVc0oKRkWzXWEdcZuHC1ti
+         0cgpbkTwMz1EDH6bbYdL/GWCg3Fvnbt0vS0Vgy8KZx4HlkV0+dcZtKx1lBJX+zZZs4Vg
+         Wu/lkGvcnOG35aSx1qBwPWayjC03iQdMzT7QPGryTuJDFWD/H2+dUQFD2Yl7Rp9UhrKF
+         6nhaxTaCdyFTJwTAKqw93a8fg4h35szY4IYDjyOWvPpfG/G6xIencPcMdT1yA5qJy4Dq
+         CCDK5SqphaIfuofInBDESesq5ikqPyOOzhMHh0UtOPKLkm/JxV/41a6m2YWslid0+SpQ
+         w/8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761061450; x=1761666250;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=83AP2pcUZVkXSATkF5eTHL6M4I08IXBIdo5h/3fKK+w=;
-        b=psxsTMugO/sB4imGU5rKMF1FgdKj0UBA68lmZgJJgxh1l4q8OoDSWvwTz+v8zvIUrK
-         cJSzLMoYld7GpJwU8/l8aOeKAVMskw/d2FR0TBseQb98Bv1/V3jWeMydby/I4lyQD2Jf
-         fyVID5QtXiWqsePBhX9S8JqDLNyOAbKCZQLOCIn77MOIG0Deo9Ky98ZhEw9jCqHJ9lqy
-         cORrYJsYFV33cfjv4uDtkLarCKir3U+B2lcVQyVsIVynMWeckXY7aBexzLOcmoDOmjiW
-         0JK/ZKWvad1RPAw2oaRki8fCNCqrhVhbUbfRapNWVXwSl643meweW0aTc7hRL28Moe3z
-         /QTA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7ie/3c3qviacI49MqQDIf9CsTAxOEg2+WZZ/0hCBbJMRiwi1byItN+DjkZhi4FxcDIG99EDYNI9asg4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxwNfV8W5NVibj+46qfNB65mrYcoxQktZGIJrXVKF1e7f/bH9t
-	Adm/qcl2UpAa1Rw5NNCdM46s+oBGo0X8FqAaxezDPw972dap29C2JTnTo8LWxcvEeWe8K3ALeRh
-	zr1IvCwhlG3NIIx2HGNgCcpN4iaAv6uzPQu4/UBCZ7RCO5oR8rr9QNEdQzH5s4QWD+Q==
-X-Gm-Gg: ASbGncvci2+rN6+kb1PmlkOhoVX1dRO+nLJHNhLTiTac/5NhhnlIVQlY2X8ehRJZrBF
-	Y8tp83Luv+IPhkzfoAjC7CLE5PHfLUktqv3xS6EXxDqRX8Bje8uvnLY1iv32/LcFqMUOhwiyq51
-	46APuPkucae3GqcFy2uyj6pTd4AGRl7M/q3uB8G5FPcadIddfjbsAcwKlG864hvp3RnL6WQA1hy
-	7OKc4P6OgB1+kTQ8zHLVzKqDYSnb+EpJLe1GX9hveakjYnFGyAr7OH/mY9FItSS+mt7+kHMS/3Q
-	4Ljn6nND/i26/YdxHBy61gl5M1dyCdenE/lqE6meSOjzslVRO4nfdzf1xkXa/2T5RImHWn7xXnY
-	WqUgFoaY7WfMbndQbUGBPBXRpwMHplM9wkneeu5h7aZOZUoVfGLg3eq7+Mu7DmoefoGgiHvUAQl
-	JUL8aDEB7HckKs1QgPzNzQFJwJV3A=
-X-Received: by 2002:a05:600c:474b:b0:46e:4e6d:79f4 with SMTP id 5b1f17b1804b1-47117877525mr130856455e9.15.1761061450431;
-        Tue, 21 Oct 2025 08:44:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaIH2bO/ck6gwXdnqS8Ypxq8Yv23OSCidYjsq98DaSka5gGo9ipZvZfYK6JfQASLqPXM6hqA==
-X-Received: by 2002:a05:600c:474b:b0:46e:4e6d:79f4 with SMTP id 5b1f17b1804b1-47117877525mr130856175e9.15.1761061449963;
-        Tue, 21 Oct 2025 08:44:09 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47114423862sm289821585e9.1.2025.10.21.08.44.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:44:09 -0700 (PDT)
-Message-ID: <b353587b-ef50-41ab-8dd2-93330098053e@redhat.com>
-Date: Tue, 21 Oct 2025 17:44:08 +0200
+        d=1e100.net; s=20230601; t=1761061499; x=1761666299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/MK7K2Vi99xas8WktvZiAjv4QT6t/qx7SHQF2LdRMWg=;
+        b=iHW/dRbpI2ZETBNAibZHtFFDpuMNdoTHo5hxYkTfsjB6FPb8Rxd/6GsGyxkoSZMySS
+         /EQ2EOWC5UnyNr+uB1ocqH0l1rBbwEw1W4ATpye37Cv9sHOz5ZEz2vF/RCsjQazW4Ayi
+         b6zhVlBYiQvnKK9fWx9+PtmAoRc6KOAWVObGUXYybtz3nZMt1frZPNyQGb75bXy9ZiE1
+         jM8swyRg5/eB+BR0pK7SuWEsTIq9xUp4XwvOw66LaCiyiFmVLg9i1OsoSrHhhp0TTgW4
+         odz4TY/RxEFw2EuBSrmQkt7i4VuGuCg04/vMVRp89pqsKqSFQV4qHzavUIutfZJfC26B
+         15Qg==
+X-Gm-Message-State: AOJu0Yy/eDfiQzeXm3MwytdEQ7sH82HvLo/DXZwhQBjp+J24ohkZT+vI
+	mpf7XQl60Prc5kUJO/yg7nGHnUJVizs6YHnGucYX9hd3ZWk9Y7H6bB+vtxt6SQ2jvLCMo+89Fkk
+	b5YufsuFsdyb+7XVycTMOqVUcX7a5Gn8prZSfZBFJ
+X-Gm-Gg: ASbGncvfCQ7nMouoFKt3ABaUywC6hSPVTVxs+RBVIHi/rplpHrFy2wXRGErU+S2+STI
+	vRko2xR2OC1HIBreDlzX7uIbiduot4HcZjnbQudA0SC4AunPKYWEPgz5UkkLyWvgQ5x2Q6QGeFg
+	J1/fNJXU5gkTzgbMiTJndgfYHKn+dv7ygxEU3eUvkj050XQMzsTOD43redA2E3VpS9UZHEOhr8t
+	HMgDvpLDMykEEb/fKMVAwiL2oWgynFuASfyMHjOK5a6VsHZg6uHOUXTV1/M
+X-Google-Smtp-Source: AGHT+IFQOGllR5Jxi/TrF28dWQPOXUr2TUQ1LEG9JjC84pIqFv6UuDKjZ+Hh5UHwdDry6HVzfiTcPXTufR+x4+xdPHY=
+X-Received: by 2002:a17:90b:1a8f:b0:314:2cd2:595d with SMTP id
+ 98e67ed59e1d1-33e21ef11efmr200209a91.8.1761061499140; Tue, 21 Oct 2025
+ 08:44:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio
- handling.
-To: Zi Yan <ziy@nvidia.com>, Yang Shi <shy828301@gmail.com>
-Cc: linmiaohe@huawei.com, jane.chu@oracle.com, kernel@pankajraghav.com,
- syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
- mcgrof@kernel.org, nao.horiguchi@gmail.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20251016033452.125479-1-ziy@nvidia.com>
- <20251016033452.125479-3-ziy@nvidia.com>
- <CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com>
- <5EE26793-2CD4-4776-B13C-AA5984D53C04@nvidia.com>
- <CAHbLzkp8ob1_pxczeQnwinSL=DS=kByyL+yuTRFuQ0O=Eio0oA@mail.gmail.com>
- <A4D35134-A031-4B15-B7A0-1592B3AE6D78@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <A4D35134-A031-4B15-B7A0-1592B3AE6D78@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAHC9VhQ_hv1ri1csrgGP+9RssCuJBDuOLSDowZRD5xZcDD2mPA@mail.gmail.com>
+ <20251021123842.968605-1-zhanghongru@xiaomi.com>
+In-Reply-To: <20251021123842.968605-1-zhanghongru@xiaomi.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 21 Oct 2025 11:44:47 -0400
+X-Gm-Features: AS18NWCTB9vDb1wg1H6rs7OmAJYTQeAAWNpZWN3LNEXMYxnDXbB0GiUgNAMn0pc
+Message-ID: <CAHC9VhQeW7fFtB5uGRJhU7882MsSLazHmOZ0UKj=pX6PKiwz8A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] selinux: Make avc cache slot size configurable
+ during boot
+To: Hongru Zhang <zhanghongru06@gmail.com>
+Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, selinux@vger.kernel.org, 
+	stephen.smalley.work@gmail.com, zhanghongru@xiaomi.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21.10.25 03:23, Zi Yan wrote:
-> On 20 Oct 2025, at 19:41, Yang Shi wrote:
-> 
->> On Mon, Oct 20, 2025 at 12:46 PM Zi Yan <ziy@nvidia.com> wrote:
->>>
->>> On 17 Oct 2025, at 15:11, Yang Shi wrote:
->>>
->>>> On Wed, Oct 15, 2025 at 8:38 PM Zi Yan <ziy@nvidia.com> wrote:
->>>>>
->>>>> Large block size (LBS) folios cannot be split to order-0 folios but
->>>>> min_order_for_folio(). Current split fails directly, but that is not
->>>>> optimal. Split the folio to min_order_for_folio(), so that, after split,
->>>>> only the folio containing the poisoned page becomes unusable instead.
->>>>>
->>>>> For soft offline, do not split the large folio if it cannot be split to
->>>>> order-0. Since the folio is still accessible from userspace and premature
->>>>> split might lead to potential performance loss.
->>>>>
->>>>> Suggested-by: Jane Chu <jane.chu@oracle.com>
->>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
->>>>> ---
->>>>>   mm/memory-failure.c | 25 +++++++++++++++++++++----
->>>>>   1 file changed, 21 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>>>> index f698df156bf8..443df9581c24 100644
->>>>> --- a/mm/memory-failure.c
->>>>> +++ b/mm/memory-failure.c
->>>>> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->>>>>    * there is still more to do, hence the page refcount we took earlier
->>>>>    * is still needed.
->>>>>    */
->>>>> -static int try_to_split_thp_page(struct page *page, bool release)
->>>>> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
->>>>> +               bool release)
->>>>>   {
->>>>>          int ret;
->>>>>
->>>>>          lock_page(page);
->>>>> -       ret = split_huge_page(page);
->>>>> +       ret = split_huge_page_to_list_to_order(page, NULL, new_order);
->>>>>          unlock_page(page);
->>>>>
->>>>>          if (ret && release)
->>>>> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flags)
->>>>>          folio_unlock(folio);
->>>>>
->>>>>          if (folio_test_large(folio)) {
->>>>> +               int new_order = min_order_for_split(folio);
->>>>>                  /*
->>>>>                   * The flag must be set after the refcount is bumped
->>>>>                   * otherwise it may race with THP split.
->>>>> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int flags)
->>>>>                   * page is a valid handlable page.
->>>>>                   */
->>>>>                  folio_set_has_hwpoisoned(folio);
->>>>> -               if (try_to_split_thp_page(p, false) < 0) {
->>>>> +               /*
->>>>> +                * If the folio cannot be split to order-0, kill the process,
->>>>> +                * but split the folio anyway to minimize the amount of unusable
->>>>> +                * pages.
->>>>> +                */
->>>>> +               if (try_to_split_thp_page(p, new_order, false) || new_order) {
->>>>
->>>> folio split will clear PG_has_hwpoisoned flag. It is ok for splitting
->>>> to order-0 folios because the PG_hwpoisoned flag is set on the
->>>> poisoned page. But if you split the folio to some smaller order large
->>>> folios, it seems you need to keep PG_has_hwpoisoned flag on the
->>>> poisoned folio.
->>>
->>> OK, this means all pages in a folio with folio_test_has_hwpoisoned() should be
->>> checked to be able to set after-split folio's flag properly. Current folio
->>> split code does not do that. I am thinking about whether that causes any
->>> issue. Probably not, because:
->>>
->>> 1. before Patch 1 is applied, large after-split folios are already causing
->>> a warning in memory_failure(). That kinda masks this issue.
->>> 2. after Patch 1 is applied, no large after-split folios will appear,
->>> since the split will fail.
->>
->> I'm a little bit confused. Didn't this patch split large folio to
->> new-order-large-folio (new order is min order)? So this patch had
->> code:
->> if (try_to_split_thp_page(p, new_order, false) || new_order) {
-> 
-> Yes, but this is Patch 2 in this series. Patch 1 is
-> "mm/huge_memory: do not change split_huge_page*() target order silently."
-> and sent separately as a hotfix[1].
+On Tue, Oct 21, 2025 at 8:38=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
+om> wrote:
+> > I would imagine that a very simple implementation would simply convert
+> > the selinux_avc variable from an instance of selinux_avc to a RCU
+> > protected selinux_avc pointer.  As the AVC already uses RCU, I think
+> > the number of changes should be relatively minimal:
+> >
+> > * Ensure we wrap selinux_avc derefs with rcu_dereference().  This
+> > should be the only real change needed for lookups and insertions as
+> > every search through the AVC will start with deref'ing the selinux_avc
+> > pointer.
+> >
+> > * Update avc_init() to allocate the cache slots with a default value,
+> > fail if unable to allocate the cache memory.  If we ensure that the
+> > selinux_avc pointer will always be valid, we can avoid having to check
+> > it.
+> >
+> > * Policy (re)loads which would change the number of AVC cache slots
+> > would allocate and initialize a new selinux_avc then swap the global
+> > selinux_avc pointer under spinlock.  The old AVC cache could then be
+> > free'd according to RCU rules.  I haven't thought about it too much,
+> > but I suspect we could do away with flushing the old AVC in these
+> > cases, even if we can't, flushing the old AVC is easy enough.
+> >
+> > > When increasing slot size, we could directly copy the contents from t=
+he
+> > > old table. When decreasing slot size, nodes exceeding the new slot si=
+ze
+> > > would need to be re-hashed and attached to appropriate positions.
+> >
+> > Changing the number of cache slots should happen infrequently enough
+> > that I see no need to migrate the old entries to the new cache
+> > instance.  It's a cache, it will fill back up naturally.
+> >
+> > > On my Android device, policies are fixed before system image release =
+and
+> > > don't change or load dynamically during system running. Using kernel
+> > > parameters for adjustment ensures no additional locks or checks are n=
+eede=3D
+> > d
+> > > during runtime table access, maintaining simplicity and efficiency of=
+ the
+> > > lookup code.
+> >
+> > If your system does not update its policy over the course of a single
+> > boot, and presumably doesn't drastically change its behavior during
+> > that time, there is another, simpler option that we should consider:
+> > setting AVC_CACHE_SLOTS at compile time based on a Kconfig tunable.
+> > The code change would essentially be one line:
+> >
+> >  #define AVC_CACHE_SLOTS   (2 << CONFIG_SECURITY_SELINUX_AVC_HASH_BITS)
+> >
+> > ... with a corresponding entry in security/selinux/Kconfig.  That
+> > should be a very easy change, and if you set the default value such
+> > that AVC_CACHE_SLOTS remains at 512, there should be no impact on
+> > existing systems.
+>
+> Alright=EF=BC=8CI will add a CONFIG_SECURITY_SELINUX_AVC_HASH_BITS in
+> security/selinux/Kconfig, the range is between 9 and 14 (512 : 16384),
+> with a default value of 9. And then I will send a new patchset version.
 
-I'm confused now as well. I'd like to review, will there be a v3 that 
-only contains patch #2+#3?
+That seems reasonable.  I'm sure you've seen it already, but you'll
+likely need to modify AVC_DEF_CACHE_THRESHOLD as well ... or honestly
+just remove it in favor of AVC_CACHE_SLOTS, it's only used to set an
+initial value for the cache threshold.
 
-Thanks!
+> I will try to submit the final version in Q1 2026 based on the discussion
+> (Because I have some planned Q4 work that hasn't been completed yet).
 
--- 
-Cheers
+No worries, thank you!
 
-David / dhildenb
-
+--=20
+paul-moore.com
 
