@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-863201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DB4BF73E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:05:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B6ABF73B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE6A188A76B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883053ADE70
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C302342CA9;
-	Tue, 21 Oct 2025 15:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49113431FF;
+	Tue, 21 Oct 2025 15:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ps4sZMz5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DC5ZNzoC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C207D342C80
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA42341ABF
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761058861; cv=none; b=hPSYKvMoDEwnIwZ1AFIZa0CuoE2q+U2Zbnf4ZtY97zTBgLln/pbs/i+45AmLvCWAHAUSIt3xECJsZPLMfOeyKtBLDF3J4+jJ/s0u+PERKHPJkK3ceSxcX8uwDqR32nx6Xn9nSa+5XIjzrKrxpGL3H49mtxBhFj5spQC4acxKIVk=
+	t=1761058866; cv=none; b=NSisWiyvUC7tqYLIiZJiaqXk93cWg1+X8JADgXzQlp0vsIWc94UWWynvbIMC1P0KdZJR1shgNIJRhSnIxBrxBvSl4zDl5ZM+z4de0dJkRnXy/ARiRrO5rAd7RdF3f8NEy3E/EoX4u+13azVvTckr8ePK26SZach3nxjXKk1raKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761058861; c=relaxed/simple;
-	bh=UwyM5R0KhWLgF6qfrYdIVk7mDfPJ06uK23mjZEGNIoA=;
+	s=arc-20240116; t=1761058866; c=relaxed/simple;
+	bh=ulLWxUh8EsRrOFrJv2gdzbq5iaYJxZBYyWiTN0ivhT4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aZj5UmOwmH7E2LHaj3CAsVAJxtE4bFe25bZ2Xxr/heBOluMYmbUN+zAGzVVUIP/aPDC4prNnx2mqM8U4oXjiTlJGoXKabkcJ79UCQO5/ZK3m7wG/i8/FkylUAAQMv4eiZ3IVrDR1/QbdcpzAbdpAYLtojShxCCMBGs3DKJsgJAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ps4sZMz5; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=jxa+behz6MX+awIz+TZBubikF2tT/dth/7slSeA35EY6HrDhIlQI6/xdWsUwG108Hg8BsSMgx+/InWlZPtQi2PuaVoBlAWA4iQ34VXjuvbst9VXKWp4FKnaJURMcRbOw9IiNLvouxe8hnvqslq6Qj97NbZqyOljtuNFNE1ATNuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DC5ZNzoC; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761058858;
+	s=mimecast20190719; t=1761058862;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IxeaoFY2Zid2XlBwuhP3Cbqf0hU6HwUeKjXEu5WpZgc=;
-	b=Ps4sZMz5Eo0Ta7N7bSc4wQb6ssAVtXgoLLKB/7U+/c7JSFdbQNOaoV/t6P2Zv7qaf5I3In
-	RWsUP1d+q7eO2KD28kwds4CbAWULAI/+R6t9i6HXpd0QTn6iwPJM3GY4HYfueHshNUVubF
-	QS/pbbP35LumzsR24foPo+tDcuAPDo4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=lRubUKoIKZa05nEVw7UJ7l9fUFkh873Slwn5354MkBU=;
+	b=DC5ZNzoCloaM4gJybh2QuRzDO6C6sBdas1D49js/VQ8qVWMfn0KStHyp3B5wH+t5c1LUb5
+	B8Bjs+URrI5LSaLiVhB2FNZ4PDqWC9qsBUwncS/fcfhTkkFBa5BuwmTa9tEn8z87PZKIDm
+	Ux62NLDnYV2GkNgljduZSwVw73d5Dd8=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-zJ1kW_1WPq6iGeMJjK_iZA-1; Tue, 21 Oct 2025 11:00:57 -0400
-X-MC-Unique: zJ1kW_1WPq6iGeMJjK_iZA-1
-X-Mimecast-MFC-AGG-ID: zJ1kW_1WPq6iGeMJjK_iZA_1761058855
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e4cb3e4deso21049335e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:00:56 -0700 (PDT)
+ us-mta-367-flGlgBHSMFmVyQ0Lan-uQg-1; Tue, 21 Oct 2025 11:00:58 -0400
+X-MC-Unique: flGlgBHSMFmVyQ0Lan-uQg-1
+X-Mimecast-MFC-AGG-ID: flGlgBHSMFmVyQ0Lan-uQg_1761058858
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4270848ceffso5759683f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:00:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761058855; x=1761663655;
+        d=1e100.net; s=20230601; t=1761058857; x=1761663657;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IxeaoFY2Zid2XlBwuhP3Cbqf0hU6HwUeKjXEu5WpZgc=;
-        b=eQXNFLUADA6/HKpAI7iDKlymWw5mV+8zZyKco+HwZWLmpN2xUrVHjV+3f93s7VovZp
-         IiS6JujUotmRHKjpoxj5f9xOvVKphaFy9fI/WJ2WZNJALrkV4SCj8VsNUKEl3Jx3TxCX
-         3czvLt+I9ECmocexp1XSg41met5xpcGUpilJ8xAYJsQqwDYnKH2aBfNQvZ6Zdf4FX5S2
-         VdgH2/8z9GQiiPfn/fUFYe7eG50Jc3HMwBOw9oT+qmDu4Ds8VSdMtcUr9/o6K4ISkxuC
-         /JCbuQRnw3tJhoKydl9JeXs+dYqs7+CCN8qVNfeq0qvL2ZJLrSLZviXKN9JNM4Ksikia
-         hlLA==
-X-Gm-Message-State: AOJu0Yx7VUzneOGASGyzsQaEnuETqQj014UvINlSrsQqTgngn9cz8+D/
-	U/z83TkdOB9E8dkjr4rdU0QVI3k77R05EQgS79lK+HNwa1Qbix/b/4WWunAobw/e2bwvRo9fWQ5
-	NZoZgoP6Cn+NBeoAk5+M/S++9r7zbHtD3jObbRjtBsIhVWk3leeU6vbwyH4dsoiNSgADED8pRgq
-	eJNmoWgQFFJ1U5uGTAD4fXyq8I/ymJLYjq+ujb8i4Rh74UOQ==
-X-Gm-Gg: ASbGncuNB1Sur525y0uSveZiG1u8wtzyrBG4VeHvee0k15EqBAUYqWpWvvij4XmN7xv
-	ceuIvpd2cyqFWQKlEH8vKjoIojEHFVTsPBB3yL9tXJboBEvIoN7Acc3ncs7im4MXY8SCbGoHbC0
-	6BO7zi7uP2ObLpfLsWl+cPxKs7Sgc4ZThbfN9+OtWfKdUSncwoFRl0OQ4k3dXH43PChWOgVeS+M
-	w+PxmtIYVuC/DZ1MSApHNfqiJfM3u32P17n5NVlRwm/sTH4ADaHTt0lmxqiysIQlLT0pZPZt0uA
-	VNA7wDc3lv9ZDjQJeRkuqwiSHz9m9vZwkCgH7SAXNrPgD8jGI3AEglzPYAlUximcwnGDkqZ7J9n
-	pCTWjnw040ttU6yu2F/bmbRmEoXxhCi6z4UbZ9QXiH6YExgImd3J29M7MJRes
-X-Received: by 2002:a05:600c:6d87:b0:46f:cdfe:cd39 with SMTP id 5b1f17b1804b1-475c3ee145emr177325e9.16.1761058855052;
-        Tue, 21 Oct 2025 08:00:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTNQTiGz5xAhZ5fsddDZjV1qS7LKojQZq7D4oRaNBiv/doXb8XOAkbt7nBaFlt+DyqmCX9Sw==
-X-Received: by 2002:a05:600c:6d87:b0:46f:cdfe:cd39 with SMTP id 5b1f17b1804b1-475c3ee145emr176645e9.16.1761058854422;
-        Tue, 21 Oct 2025 08:00:54 -0700 (PDT)
+        bh=lRubUKoIKZa05nEVw7UJ7l9fUFkh873Slwn5354MkBU=;
+        b=srUwLn4TVy6PY5kMgTjJenfi1IkZHL0JDZQy0dEnRj3hrFZ8158w3vlVlpzPVsc5DC
+         uYQ4c2xpFU1nvHhBlT3QcXFesfwfktPCDMicZBbNxaZ5r1kPqFX2LqAU3IuXZ1vwk6wS
+         fEAja5Gf5u9k8UnMd3hlxcRNuZvL63woIVOrPu+U70sWRIsRQ+eoZUSLWGwtDCHu/Ypl
+         0QezTmlKTFspzCJ2fMmmMdk2S+qye5TX1kzDIDiqRgXHpb+M7rW9yQ26JdsSFtgmQTzG
+         SREoonnw7CT6DCmSwJpSC7rJMbj3yHhrnRwau5nXSw6Jm6cipWsf2ODlEEMGjoWF04CZ
+         mh2w==
+X-Gm-Message-State: AOJu0YyAtUydfoPwLyFQi252kl3eVXkcDiZAX5hoo54qrRMNk2F2wHyz
+	VA6jqUxf7bdQ0vvQkG9pq9q2EpAk3a6Wrj5fRYCShCJoEOiqtzVlCzQSNblh3ore+KvEnJmbPBR
+	ZrzAK/nMbINyko97xf3QlTabTxZr/s1Wm3EgAv7lSd34xfJyFyIRtsMb3qcRKnYlH9iM0UMSpo6
+	T2vR5YJT2y1XIoyB8tNe0LCwufl7L6vi/7mhEACbZj1BzWaA==
+X-Gm-Gg: ASbGncuvtRv6P2uYhI3rhrxB5BOxGDoSFuobDlaa7sO+DzWlyoZ+or+sW15uI75paWL
+	l0HtVuVsIbD7zNSMnQ8HlPtGMJVBlk9w08B8ivderqSTgmRxooT5caj2d3a+tGU50+CQLsfwTLM
+	vMkldd4oqUIn2STrRyw4MS42P2oNVlFHiosvQo8+bazhD/g2P10qxca5gYlN9YAcjamDnqJWpcL
+	V4znfwMxC85afjMQrSRDLvpj2o4oOTb5LZgH0v6o2i9oM8eqYqpJIl86hgw1WCZTWuHYmrp4x8i
+	EWla86z7sSX2LqvM2rRVfhs1FxQh8be0QPYhZuhOUjkb1d3h39SVorCni4/M+C/zlQjPb4WJ5tq
+	/LOF/p2A5Ls4r4Y4VsqEMUTjGwXXiLP7HCD0VE4WiAwOQg2OfZ8HI/n8DwddY
+X-Received: by 2002:a5d:5d05:0:b0:427:809:eff5 with SMTP id ffacd0b85a97d-4270809f252mr11795607f8f.53.1761058857530;
+        Tue, 21 Oct 2025 08:00:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGuNdQq7IEo7xmxPaMqWMcC8QeroaNoRnXCBpBegLE0FB0KNfhJhInOomIlaVikmeTIuzyODg==
+X-Received: by 2002:a5d:5d05:0:b0:427:809:eff5 with SMTP id ffacd0b85a97d-4270809f252mr11795534f8f.53.1761058856848;
+        Tue, 21 Oct 2025 08:00:56 -0700 (PDT)
 Received: from localhost (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-471144c82b8sm285435185e9.15.2025.10.21.08.00.53
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f009a78csm20793541f8f.26.2025.10.21.08.00.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:00:53 -0700 (PDT)
+        Tue, 21 Oct 2025 08:00:56 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -108,9 +108,9 @@ Cc: linux-mm@kvack.org,
 	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
 	Zi Yan <ziy@nvidia.com>,
 	David Hildenbrand <david@redhat.com>
-Subject: [PATCH v1 22/23] mm: rename CONFIG_MEMORY_BALLOON -> CONFIG_BALLOON
-Date: Tue, 21 Oct 2025 17:00:39 +0200
-Message-ID: <20251021150040.498160-6-david@redhat.com>
+Subject: [PATCH v1 23/23] MAINTAINERS: move memory balloon infrastructure to "MEMORY MANAGEMENT - BALLOON"
+Date: Tue, 21 Oct 2025 17:00:40 +0200
+Message-ID: <20251021150040.498160-7-david@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251021150040.498160-1-david@redhat.com>
 References: <20251021125929.377194-1-david@redhat.com>
@@ -123,136 +123,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Let's make it consistent with the naming of the files but also with the
-naming of CONFIG_BALLOON_MIGRATION.
+Nowadays, there is nothing virtio-balloon special anymore about these
+files, the basic infrastructure is used by multiple memory balloon
+drivers.
 
-While at it, add a "/* CONFIG_BALLOON */".
+For now we'll route it through Andrew's tree, maybe in some future it
+makes sense to route this through a separate tree.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/powerpc/platforms/pseries/Kconfig | 2 +-
- drivers/misc/Kconfig                   | 2 +-
- drivers/virtio/Kconfig                 | 2 +-
- include/linux/vm_event_item.h          | 4 ++--
- mm/Kconfig                             | 4 ++--
- mm/Makefile                            | 2 +-
- mm/vmstat.c                            | 4 ++--
- 7 files changed, 10 insertions(+), 10 deletions(-)
+ MAINTAINERS | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/Kconfig b/arch/powerpc/platforms/pseries/Kconfig
-index 3e042218d6cd8..f7052b131a4c5 100644
---- a/arch/powerpc/platforms/pseries/Kconfig
-+++ b/arch/powerpc/platforms/pseries/Kconfig
-@@ -120,7 +120,7 @@ config PPC_SMLPAR
- config CMM
- 	tristate "Collaborative memory management"
- 	depends on PPC_SMLPAR
--	select MEMORY_BALLOON
-+	select BALLOON
- 	default y
- 	help
- 	  Select this option, if you want to enable the kernel interface
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index b9c11f67315f0..47da8dfcffc2b 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -411,7 +411,7 @@ config DS1682
- config VMWARE_BALLOON
- 	tristate "VMware Balloon Driver"
- 	depends on VMWARE_VMCI && X86 && HYPERVISOR_GUEST
--	select MEMORY_BALLOON
-+	select BALLOON
- 	help
- 	  This is VMware physical memory management driver which acts
- 	  like a "balloon" that can be inflated to reclaim physical pages
-diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-index 6db5235a7693d..ce5bc0d9ea287 100644
---- a/drivers/virtio/Kconfig
-+++ b/drivers/virtio/Kconfig
-@@ -112,7 +112,7 @@ config VIRTIO_PMEM
- config VIRTIO_BALLOON
- 	tristate "Virtio balloon driver"
- 	depends on VIRTIO
--	select MEMORY_BALLOON
-+	select BALLOON
- 	select PAGE_REPORTING
- 	help
- 	 This driver supports increasing and decreasing the amount
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index fca34d3473b6b..22a139f82d75f 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -122,13 +122,13 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		THP_SWPOUT,
- 		THP_SWPOUT_FALLBACK,
- #endif
--#ifdef CONFIG_MEMORY_BALLOON
-+#ifdef CONFIG_BALLOON
- 		BALLOON_INFLATE,
- 		BALLOON_DEFLATE,
- #ifdef CONFIG_BALLOON_MIGRATION
- 		BALLOON_MIGRATE,
- #endif /* CONFIG_BALLOON_MIGRATION */
--#endif
-+#endif /* CONFIG_BALLOON */
- #ifdef CONFIG_DEBUG_TLBFLUSH
- 		NR_TLB_REMOTE_FLUSH,	/* cpu tried to flush others' tlbs */
- 		NR_TLB_REMOTE_FLUSH_RECEIVED,/* cpu received ipi for flush */
-diff --git a/mm/Kconfig b/mm/Kconfig
-index c058a65080d1e..73e352bb82653 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -593,7 +593,7 @@ config SPLIT_PMD_PTLOCKS
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 878e53d0f65ed..17fbf5c1ea2fb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16225,6 +16225,16 @@ T:	quilt git://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new
+ F:	mm/
+ F:	tools/mm/
  
- #
- # support for memory balloon
--config MEMORY_BALLOON
-+config BALLOON
- 	bool
++MEMORY MANAGEMENT - BALLOON
++M:	Andrew Morton <akpm@linux-foundation.org>
++M:	David Hildenbrand <david@redhat.com>
++L:	linux-mm@kvack.org
++S:	Maintained
++W:	http://www.linux-mm.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
++F:	include/linux/balloon.h
++F:	mm/balloon.c
++
+ MEMORY MANAGEMENT - CORE
+ M:	Andrew Morton <akpm@linux-foundation.org>
+ M:	David Hildenbrand <david@redhat.com>
+@@ -27062,9 +27072,7 @@ M:	David Hildenbrand <david@redhat.com>
+ L:	virtualization@lists.linux.dev
+ S:	Maintained
+ F:	drivers/virtio/virtio_balloon.c
+-F:	include/linux/balloon.h
+ F:	include/uapi/linux/virtio_balloon.h
+-F:	mm/balloon.c
  
- #
-@@ -601,7 +601,7 @@ config MEMORY_BALLOON
- config BALLOON_MIGRATION
- 	bool "Allow for balloon memory migration"
- 	default y
--	depends on MIGRATION && MEMORY_BALLOON
-+	depends on MIGRATION && BALLOON
- 	help
- 	  Allow for migration of pages inflated in a memory balloon such that
- 	  they can be allocated from memory areas only available for movable
-diff --git a/mm/Makefile b/mm/Makefile
-index ab012157b5109..315aec23d78f5 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -121,7 +121,7 @@ obj-$(CONFIG_CMA)	+= cma.o
- obj-$(CONFIG_NUMA) += numa.o
- obj-$(CONFIG_NUMA_MEMBLKS) += numa_memblks.o
- obj-$(CONFIG_NUMA_EMU) += numa_emulation.o
--obj-$(CONFIG_MEMORY_BALLOON) += balloon.o
-+obj-$(CONFIG_BALLOON) += balloon.o
- obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
- obj-$(CONFIG_PAGE_TABLE_CHECK) += page_table_check.o
- obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 8843a8c4914c4..542378df0bf75 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1431,13 +1431,13 @@ const char * const vmstat_text[] = {
- 	[I(THP_SWPOUT)]				= "thp_swpout",
- 	[I(THP_SWPOUT_FALLBACK)]		= "thp_swpout_fallback",
- #endif
--#ifdef CONFIG_MEMORY_BALLOON
-+#ifdef CONFIG_BALLOON
- 	[I(BALLOON_INFLATE)]			= "balloon_inflate",
- 	[I(BALLOON_DEFLATE)]			= "balloon_deflate",
- #ifdef CONFIG_BALLOON_MIGRATION
- 	[I(BALLOON_MIGRATE)]			= "balloon_migrate",
- #endif /* CONFIG_BALLOON_MIGRATION */
--#endif /* CONFIG_MEMORY_BALLOON */
-+#endif /* CONFIG_BALLOON */
- #ifdef CONFIG_DEBUG_TLBFLUSH
- 	[I(NR_TLB_REMOTE_FLUSH)]		= "nr_tlb_remote_flush",
- 	[I(NR_TLB_REMOTE_FLUSH_RECEIVED)]	= "nr_tlb_remote_flush_received",
+ VIRTIO BLOCK AND SCSI DRIVERS
+ M:	"Michael S. Tsirkin" <mst@redhat.com>
 -- 
 2.51.0
 
