@@ -1,248 +1,120 @@
-Return-Path: <linux-kernel+bounces-862966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98508BF6A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:06:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357C1BF6A96
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3981F19A4ADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:06:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D50C8355BAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1357334692;
-	Tue, 21 Oct 2025 13:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7553E7DA66;
+	Tue, 21 Oct 2025 13:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmVm6iiF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xd6pG1eD"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAE82F49E3;
-	Tue, 21 Oct 2025 13:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC4D2F2606
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761051946; cv=none; b=f88tqZV8ZzDQATP139FGexUBFz4mdzWYL+YvnzHhspRfzwhxLiSl+syqI7y6QbLKlMeVPHAU43UQRvS9Unuts2iDCjQ2bgvxwliuuX2xhMv6JBHpnQeJmiOj2vF7d0L/vmkBljKm7Pn79uYh7k4sTE4hApFdbR+NSDrZZvfHqhs=
+	t=1761052014; cv=none; b=n3OZJKlIces6+ZBdqrdoxq/FxQhmhDUzGoRAUGdrbsO/k5fbcwgTLDSHYkZS8Rb7TjCFU6ZGpqZ+e63XUjrD6UipZ440hUEQTr5aGFqOvpS/c8DaJFHgnjZz0FMo6hOBNCdJrTxk3LnM8EfFfbk4S+rRgH358ze5m5uMH77zwuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761051946; c=relaxed/simple;
-	bh=2j2nO3EgyZKblgDRpc+2rhG8AcAKEEabgVHZG2MOf3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7dpufJTOk4UOWTY2JF2WS2za+Mh87kBTMnXb/ng9fcTVz81Tuyxt6hPfywLLIOKAtbjg8y9hqZXGO4Whqhnos70l2YXJgK68cuLvEjwFsjySwkHgzFbwuvIVvw66Je8S2fStuBjdqGEM3lB8gjZS9wGxgC/gZGsVxzsesHTveo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmVm6iiF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FDC7C4CEF1;
-	Tue, 21 Oct 2025 13:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761051945;
-	bh=2j2nO3EgyZKblgDRpc+2rhG8AcAKEEabgVHZG2MOf3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TmVm6iiFaz6anEm3kd0My8ZIfUCldrigV+ZcegItWYdxZrA9XcebcFYT1MscZ+Bfk
-	 VEdyNailQh9YtaHUbFy98sCS778OwbHwgxhCuVIyUlL+RnCqrZV+wlUXkxus8vkmmH
-	 wTfZRmnd8ZoxO8NFhXD2KkWxbPWgLkHE43O/4dn2DzKF/G6XO5nLBrRIOLmsOs063A
-	 aVdE8UKPA/mxr3ZwMDkZNOeVf35jw4VyuWcbrzlcnDe5R/JkHHiQSUHe90cjFoE6KX
-	 A+IPfDmrVlX+aH3+RJDyQNAHVobVFUrcgzbB98Z/822kUNM/+WUfAraNn3ZSsrvcz2
-	 tJXHoYFb+417g==
-Date: Tue, 21 Oct 2025 15:05:35 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Askar Safin <safinaskar@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>, 
-	Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, linux-block@vger.kernel.org, 
-	initramfs@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Michal Simek <monstr@monstr.eu>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>, 
-	Heiko Carstens <hca@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Dave Young <dyoung@redhat.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Jessica Clarke <jrtc27@jrtc27.com>, 
-	Nicolas Schichan <nschichan@freebox.fr>, David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
-Subject: Re: [PATCH v3 0/3] initrd: remove half of classic initrd support
-Message-ID: <20251021-bannmeile-arkaden-ae2ea9264b85@brauner>
-References: <20251017060956.1151347-1-safinaskar@gmail.com>
+	s=arc-20240116; t=1761052014; c=relaxed/simple;
+	bh=hscfUleXInkjfy7hd7tdmwZngxO3bR0028e/tHVvvPc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=R5282K7AHTs504EKEWT2PhkJSyHvi20hBEjAuR71Bg2ep6jynOYqe+TdO0MGd8Wh4cZXU0KsOYt/o4eMBupkbfvAcIkDvQbw4t5h2GG7D3hAa2JZFbegyVK3cW6XyxW1Wsjqu7wr4Kd08WDEhAhnZkuiAiGJ7WE5fmKdS8evlw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xd6pG1eD; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4710c04a403so58748125e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761052011; x=1761656811; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vytLTdIwa+WbtX24vkTZ/PerhXM2X8ctk8Nuy74R66I=;
+        b=xd6pG1eDI88rC+diF7c1q7X2PdWvXSIs6M9J8X0B+UQAnGVOcrRy5/V8Yi2481uZwQ
+         x2Z6PTBGQ9xFJLxSzD+mCRGUZ4QeTCPW4NIQJjEeqpVxxl/TSzTN9eKFCPnsb7UyOasg
+         87La4fJAoKafsOQlJha5aXf4eVRfnY+MzTysRlWNFTUn4AV2HZIqJsNcoEeVR802U8GX
+         GgPxxaE72YBwcJD/FzS8Thph95WwOb3JapMnnt1BO95N3pzvsZvCiYHWQFXPvF2G83NO
+         xI3YJSd4c0NxqV5r1X2HNLUO+dUcQgU20ASEztIYJ40JOOKfNePKiYqODRmgtUABT766
+         HD4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761052011; x=1761656811;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vytLTdIwa+WbtX24vkTZ/PerhXM2X8ctk8Nuy74R66I=;
+        b=b8Y1P/0/jE1caygRL4bXgfFyemGZRRTOMwe6bgFiRGlUT+WWi8PD/vQ+jUo2nIISca
+         LIcbULR40pH1X/IFS+DsgIlL2K4gSq3s/EopdqIi9LpLQuL0C5cTRacQdJu/jBkWkCR7
+         pyQhliOfGh6SWELDXczQRQFFpGRUhQQD2nRZGky8b7Vl5JtXVmB59ku4203KpVg7Xgy/
+         lZTvLEDxoSZUMpKDLmib4aB1QJz1GpTuPHI/T/T/M8tSU8H7SoaXd8oSIsMONtpPICD7
+         yKbne3gpW2Y8oZsIrPly7posjkUIo3CThK0dBIUeXZgqqb0OnyvdGr/iP/bNr9JtUOqs
+         ZLkg==
+X-Gm-Message-State: AOJu0Yy/wH77KCbVBu72HhzbLesNzjrtOEn01tMTBVVGt/BPbqfD3Gz3
+	7RIgGqXGal2f3n6GW55Zxyuls7uFxFoh/7UUDegL2mXBnbYNlsAsi3waWSs5WJScaqDpBixvs/V
+	pnyNKQF3bDCPe8Q==
+X-Google-Smtp-Source: AGHT+IGSzs7iMqYPLU0YiHOe8puE6jF7fJT/LuwZuqToX62az6sZMIwqFnCidiR1lX4NWk3y/UexY9EKcN4gHw==
+X-Received: from wmaz8.prod.google.com ([2002:a05:600c:6d88:b0:46e:2f78:5910])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3e8f:b0:45f:2919:5e6c with SMTP id 5b1f17b1804b1-471178b123fmr129426775e9.16.1761052011576;
+ Tue, 21 Oct 2025 06:06:51 -0700 (PDT)
+Date: Tue, 21 Oct 2025 13:06:50 +0000
+In-Reply-To: <20251003-x86-init-cleanup-v1-0-f2b7994c2ad6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251017060956.1151347-1-safinaskar@gmail.com>
+Mime-Version: 1.0
+References: <20251003-x86-init-cleanup-v1-0-f2b7994c2ad6@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDO0U51QORMC.2UIDZU10FAFH0@google.com>
+Subject: Re: [PATCH 0/4] x86/mm: some cleanups for pagetable setup code
+From: Brendan Jackman <jackmanb@google.com>
+To: Brendan Jackman <jackmanb@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 17, 2025 at 06:09:53AM +0000, Askar Safin wrote:
-> Intro
-> ====
-> This patchset removes half of classic initrd (initial RAM disk) support,
-> i. e. linuxrc code path, which was deprecated in 2020.
-> Initramfs still stays, RAM disk itself (brd) still stays.
-> And other half of initrd stays, too.
-> init/do_mounts* are listed in VFS entry in
-> MAINTAINERS, so I think this patchset should go through VFS tree.
-> I tested the patchset on 8 (!!!) archs in Qemu (see details below).
-> If you still use initrd, see below for workaround.
-> 
-> In 2020 deprecation notice was put to linuxrc initrd code path.
-> In v1 I tried to remove initrd
-> fully, but Nicolas Schichan reported that he still uses
-> other code path (root=/dev/ram0 one) on million devices [4].
-> root=/dev/ram0 code path did not contain deprecation notice.
+On Fri Oct 3, 2025 at 4:56 PM UTC, Brendan Jackman wrote:
+> Per discussion in [0] I'm looking for ways to refactor this code to make
+> ASI easier to deal with. But, while looking, I found some little things
+> that seem like just straightforward cleanups without any real
+> refactoring needed. So let's start there.
+>
+> The last two patches are closely related and could potentially be
+> squashed, but I've split it in two because the first half is trivial,
+> the second is more tricky and likely to be wrong.
+>
+> This applies to tip/master.
+>
+> [0] https://lore.kernel.org/all/20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com/T/#t
+>
+> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+> ---
+> Brendan Jackman (4):
+>       x86/mm: delete disabled debug code
+>       x86/mm: harmonize return value of phys_pte_init()
+>       x86/mm: drop unused return from pgtable setup functions
+>       x86/mm: simplify calculation of max_pfn_mapped
+>
+>  arch/x86/include/asm/pgtable.h |  3 +-
+>  arch/x86/mm/init.c             | 19 ++++----
+>  arch/x86/mm/init_32.c          |  5 +--
+>  arch/x86/mm/init_64.c          | 99 ++++++++++++++----------------------------
+>  arch/x86/mm/mm_internal.h      | 11 ++---
+>  5 files changed, 48 insertions(+), 89 deletions(-)
+> ---
+> base-commit: 47870f1fa057a411519108f0833dd2603179234f
+> change-id: 20251003-x86-init-cleanup-0ad754910bac
+>
+> Best regards,
 
-Without Acks or buy-in from other maintainers this is not a change we
-can just do given that a few people already piped up and expressed
-reservations that this would be doable for them.
-
-@Christoph, you marked this as deprecated years ago.
-What's your take on this?
-
-> 
-> So, in this version of patchset I remove deprecated code path,
-> i. e. linuxrc one, while keeping other, i. e. root=/dev/ram0 one.
-> 
-> Also I put deprecation notice to remaining code path, i. e. to
-> root=/dev/ram0 one. I plan to send patches for full removal
-> of initrd after one year, i. e. in September 2026 (of course,
-> initramfs will still work).
-> 
-> Also, I tried to make this patchset small to make sure it
-> can be reverted easily. I plan to send cleanups later.
-> 
-> Details
-> ====
-> Other user-visible changes:
-> 
-> - Removed kernel command line parameters "load_ramdisk" and
-> "prompt_ramdisk", which did nothing and were deprecated
-> - Removed /proc/sys/kernel/real-root-dev . It was used
-> for initrd only
-> - Command line parameters "noinitrd" and "ramdisk_start=" are deprecated
-> 
-> This patchset is based on v6.18-rc1.
-> 
-> Testing
-> ====
-> I tested my patchset on many architectures in Qemu using my Rust
-> program, heavily based on mkroot [1].
-> 
-> I used the following cross-compilers:
-> 
-> aarch64-linux-musleabi
-> armv4l-linux-musleabihf
-> armv5l-linux-musleabihf
-> armv7l-linux-musleabihf
-> i486-linux-musl
-> i686-linux-musl
-> mips-linux-musl
-> mips64-linux-musl
-> mipsel-linux-musl
-> powerpc-linux-musl
-> powerpc64-linux-musl
-> powerpc64le-linux-musl
-> riscv32-linux-musl
-> riscv64-linux-musl
-> s390x-linux-musl
-> sh4-linux-musl
-> sh4eb-linux-musl
-> x86_64-linux-musl
-> 
-> taken from this directory [2].
-> 
-> So, as you can see, there are 18 triplets, which correspond to 8 subdirs in arch/.
-> 
-> For every triplet I tested that:
-> - Initramfs still works (both builtin and external)
-> - Direct boot from disk still works
-> - Remaining initrd code path (root=/dev/ram0) still works
-> 
-> Workaround
-> ====
-> If "retain_initrd" is passed to kernel, then initramfs/initrd,
-> passed by bootloader, is retained and becomes available after boot
-> as read-only magic file /sys/firmware/initrd [3].
-> 
-> No copies are involved. I. e. /sys/firmware/initrd is simply
-> a reference to original blob passed by bootloader.
-> 
-> This works even if initrd/initramfs is not recognized by kernel
-> in any way, i. e. even if it is not valid cpio archive, nor
-> a fs image supported by classic initrd.
-> 
-> This works both with my patchset and without it.
-> 
-> This means that you can emulate classic initrd so:
-> link builtin initramfs to kernel; in /init in this initramfs
-> copy /sys/firmware/initrd to some file in / and loop-mount it.
-> 
-> This is even better than classic initrd, because:
-> - You can use fs not supported by classic initrd, for example erofs
-> - One copy is involved (from /sys/firmware/initrd to some file in /)
-> as opposed to two when using classic initrd
-> 
-> Still, I don't recommend using this workaround, because
-> I want everyone to migrate to proper modern initramfs.
-> But still you can use this workaround if you want.
-> 
-> Also: it is not possible to directly loop-mount
-> /sys/firmware/initrd . Theoretically kernel can be changed
-> to allow this (and/or to make it writable), but I think nobody needs this.
-> And I don't want to implement this.
-> 
-> On Qemu's -initrd and GRUB's initrd
-> ====
-> Don't panic, this patchset doesn't remove initramfs
-> (which is used by nearly all Linux distros). And I don't
-> have plans to remove it.
-> 
-> Qemu's -initrd option and GRUB's initrd command refer
-> to initrd bootloader mechanism, which is used to
-> load both initrd and (external) initramfs.
-> 
-> So, if you use Qemu's -initrd or GRUB's initrd,
-> then you likely use them to pass initramfs, and thus
-> you are safe.
-> 
-> v1: https://lore.kernel.org/lkml/20250913003842.41944-1-safinaskar@gmail.com/
-> 
-> v1 -> v2 changes:
-> - A lot. I removed most patches, see cover letter for details
-> 
-> v2: https://lore.kernel.org/lkml/20251010094047.3111495-1-safinaskar@gmail.com/
-> 
-> v2 -> v3 changes:
-> - Commit messages
-> - Expanded docs for "noinitrd"
-> - Added link to /sys/firmware/initrd workaround to pr_warn
-> 
-> [1] https://github.com/landley/toybox/tree/master/mkroot
-> [2] https://landley.net/toybox/downloads/binaries/toolchains/latest
-> [3] https://lore.kernel.org/all/20231207235654.16622-1-graf@amazon.com/
-> [4] https://lore.kernel.org/lkml/20250918152830.438554-1-nschichan@freebox.fr/
-> 
-> Askar Safin (3):
->   init: remove deprecated "load_ramdisk" and "prompt_ramdisk" command
->     line parameters
->   initrd: remove deprecated code path (linuxrc)
->   init: remove /proc/sys/kernel/real-root-dev
-> 
->  .../admin-guide/kernel-parameters.txt         |  12 +-
->  Documentation/admin-guide/sysctl/kernel.rst   |   6 -
->  arch/arm/configs/neponset_defconfig           |   2 +-
->  fs/init.c                                     |  14 ---
->  include/linux/init_syscalls.h                 |   1 -
->  include/linux/initrd.h                        |   2 -
->  include/uapi/linux/sysctl.h                   |   1 -
->  init/do_mounts.c                              |  11 +-
->  init/do_mounts.h                              |  18 +--
->  init/do_mounts_initrd.c                       | 107 ++----------------
->  init/do_mounts_rd.c                           |  24 +---
->  11 files changed, 23 insertions(+), 175 deletions(-)
-> 
-> 
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> -- 
-> 2.47.3
-> 
+Hey, is anyone able to take a look at this?
 
