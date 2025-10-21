@@ -1,88 +1,87 @@
-Return-Path: <linux-kernel+bounces-863263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A50EBF76B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EA3BF76C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1FB22354105
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5DC188737F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C9A35503E;
-	Tue, 21 Oct 2025 15:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1122F32E6A7;
+	Tue, 21 Oct 2025 15:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HhIumMNl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V3Vt+tK4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDFA42056
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85733355054
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761061051; cv=none; b=sRI4ITwh0DAD2Sf1m4pLfHT3fV32CJS0VkqwiLuPK96DrG8zZOg2/miLqvUOXqGNvOFuf4vgUN0/8kl7PR3d7uNHJZGKxP9Fqs7BKtotnwke3MQV84RlfPD+ns3uCcf+gxN8GgNd5/wlRCxVo5591JfCUGroQEQc+IQEmTAj/H8=
+	t=1761061078; cv=none; b=g/b5JF8AQl7bofz9p3kMMkcrE8ppa26dEewauBNOaIvcCpGFV8kttfJ6e1YAKLEZO6E4sX707qqFkMGE3KdgCWEyHSCMRHwW7ZLesqISqCa6ehBbGNDks+nUpeaycSmlPXdKc1HCMHNHIrVku2jpPfWkAADz7DG+PZ1NyB2kQLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761061051; c=relaxed/simple;
-	bh=4/l4+SlVpPCgIYTsJGQ2gH2usjlH2XkI4YAp9vdUzqQ=;
+	s=arc-20240116; t=1761061078; c=relaxed/simple;
+	bh=8sJl3kVKaUChUtEmcByVQ+X5gAV5wcgI3nIvexX4qbw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qtrcGutTfrTY99/CEY22Hh1zkYWgQ0QiME381v34RBhJVwZN9w72IqoTvWEC+rKo/S6zFH6kAhIYjqK3+chj17a5Ys0GLpxW9WxkkZkoAOT9yky0ZsHTvO+DKFhtO2TlkLuy7Tj2WixPMXL/9MMwg98aCL4uH5ANkkKD0c0inB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HhIumMNl; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=XHC7HVml5YotwFh/knieT3dt7aAUnvuXLSTBGtnlz1J//ibOqPj/AmPXkyT7Qhf7qXVaspAAwdZkzKfWu0SaJyc9tLh1cN6XS8n3p2m4RbVhVE5QsS+ga8DLm+cDBOjLU9PI9LzOSqR7kLtYhqSQMs4XEMYPDWt9IZWqcd+FMVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V3Vt+tK4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761061046;
+	s=mimecast20190719; t=1761061075;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=L4XNx7SmcphwVa2FHvlNJ8vIAO/gR3f+gwX24U6J0nk=;
-	b=HhIumMNl2gyENemX9mVeKdrj1/oG703ip3fm3G9lRRI5KH4n9nt509ZPuliHxOrjzFWTD6
-	YsYkKi2MZ0S0PqrXI/eb7LKiiAw7nfuMPktAf8mQkTVnSDGHBTzyvWIzP2wZVZ1XCrfm7J
-	3d3zhU8TTwzQfNadt8HhxJqmDfb8cCI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=E/7c5A5jjBJdHFU5IeWULrzoKt5LxZ5pQlNBoEOn3xM=;
+	b=V3Vt+tK4eIBZh7vQIztje4geFZtKhxZ/WLWMdNmbY7Px7jXumQafdveKF5xRBWy+1Cgy72
+	mp/WyEmujxO3LsPh2q0ANr7kibPNoTrD2Aps0ahD0E8e+ygC1mgI/4N+1AflkNhgquGKNH
+	BBIXzZBK6h2E5ZjklyOn2BuLObAcPew=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-173-Y89oougvO8iEYrbuf9jaEA-1; Tue, 21 Oct 2025 11:37:25 -0400
-X-MC-Unique: Y89oougvO8iEYrbuf9jaEA-1
-X-Mimecast-MFC-AGG-ID: Y89oougvO8iEYrbuf9jaEA_1761061044
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4710c04a403so60178215e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:37:24 -0700 (PDT)
+ us-mta-644-BVeKYsm8MeO-e6KBwJqcNQ-1; Tue, 21 Oct 2025 11:37:51 -0400
+X-MC-Unique: BVeKYsm8MeO-e6KBwJqcNQ-1
+X-Mimecast-MFC-AGG-ID: BVeKYsm8MeO-e6KBwJqcNQ_1761061070
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f6b44ab789so2991964f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:37:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761061044; x=1761665844;
+        d=1e100.net; s=20230601; t=1761061070; x=1761665870;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=L4XNx7SmcphwVa2FHvlNJ8vIAO/gR3f+gwX24U6J0nk=;
-        b=Gyi/MM8svdcIVNvJYc46BusaHOWL5NW0jrWeU+eaHVINanjX2W12DZGGo+vUoo5EW8
-         G1lupjNHBkM7PIpBxHmSC6dUYwc/DOoTDFnZDCYJKAWF7lMr7x1iUW+2SGS/UsCZi8Lc
-         jSTAtnX6eTdTl4GuRo3Jvv8CwHyQ8guUwK+X+7djzTjKgbxDNtHo4qKLxkTWmrq9Na18
-         sSpnB8qP1dVh8ykBovb0nBrk7es4Ll59Xv4wDR8jEVQW+ZWMNtjhuUjibTwxnb4ELn/Z
-         VoFeCidEsxpqNutd1N8lYEdpvyHNrAsmf366UdKpEYw/ciChVvQS44W6pHl/rdtcFDky
-         OJgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu24UZEVZl0l7hkgsjkC759k17Vw3fGB6NeOLA0zlrwAeeHIP8/Wz3OTogjHwuDEuQVIHJAzyoSJBalv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlDrgH7lmwsyMhIfsUs6L0VWvqYHlYPz7BmaU5/in2Zw54Rr5R
-	4+c5j+ACsy2C7TD4AV+iu+g8mUiS62bnLraxyQP7f01tLyRXoEHFf7SfXEM+OqPqnpZng5HQnqH
-	VHfi8z1/5RuksfXPeSl5q6zbtGFOpwI+IRhwhIsDUPYUupA4RUPgPgqBc0U9C0ilwkQ==
-X-Gm-Gg: ASbGnctEir2GSZpPKogP/LtsYNriX9XqDjYlepv5OTq16KNqK4PxTWUJXZZnF+u4eKA
-	71agsLDYBufm+0tLaALyrUc+nnmcWyJSebpkBvHhpw/5ZgpiYtJKzPTE1JAq6ytLG2xLWVb4iHt
-	VTzkmOC6bQlzmxMFioi0bFaklixAinViVKi8mFm2q/v6BssoPLz574FDOoFxWF9fgGgX6sJydjS
-	sWUFowftdXi1ux+UhmJ3A/sfpO2V8WgpAnAMNO9THqLnSsYJtKY04Jghudl+09EJDpQgTM21iCg
-	184NKFcyJvu5rbqniyRWuTg/1Eo6IcWu32wE9v4mrGoLq848fiXjQ6hvPeVUtcJC8IJtygNbPH9
-	trd+Q21JBtZxVlHAb3vh/VyunZCI5Hdu/d0PeQr+JQeusUu5Vw5W/VPBTHKWdoSjUjbzU2CYGym
-	p4hkCaBpOzC1Qvq5C9upkmbzRFitE=
-X-Received: by 2002:a05:600c:1e1f:b0:46f:b42e:e38d with SMTP id 5b1f17b1804b1-4711792a2admr124898875e9.40.1761061043902;
-        Tue, 21 Oct 2025 08:37:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGC3Ou7fO+S2/Nmjwjz5SUjJ9OhpSFk+6BtYv7TJRJbyItQGBbbudeiO9N85CmNh9nSNHimAQ==
-X-Received: by 2002:a05:600c:1e1f:b0:46f:b42e:e38d with SMTP id 5b1f17b1804b1-4711792a2admr124898525e9.40.1761061043399;
-        Tue, 21 Oct 2025 08:37:23 -0700 (PDT)
+        bh=E/7c5A5jjBJdHFU5IeWULrzoKt5LxZ5pQlNBoEOn3xM=;
+        b=p5Kb4GrJ5X2Q46Pupn2PyZ5P7rCg1p1gJgdGvRDo22CtsgfBEe1ZGnEokrEMOta8w0
+         1UcuFGO126WgzWsETdO7xbVReqpktxH+TmpMJUb92mLe38h0ufkIeg2UHpvvsqVPWoZJ
+         q5g8q6XXk+x4d2AHxBKhdd3Zx5H+n+gkM77oLC7VGHgqxITZqQBgkGzmsr6/TT0AFk1k
+         ZsUGHX/UO5HA0EZwoGMqtMvqmDsCnVBcAMYxoFx0C5cFHM2TnKGStQMEMyBbYIuBdXTb
+         M7Y3l10aC6drXNk2N6MXBDW4VJDwfmOTGErswGGfujgKjsr1A7+jugZMZrW1czLT7Avj
+         x+yg==
+X-Gm-Message-State: AOJu0YwEeGkiWkCzx2t9uWeBIaymbJuJL5L3tojN7p+smGTqpvEd1MO3
+	ouK8+hokzWVlc8sbTHHQxySBpt1y4onIOC/5nWNKYtLp+Km02uZUt3OtDSUeybtuU25gjWVVplH
+	DQ80Lts4hkzCWz8JTrVgjFsM4kkM6fvMsD/X9JKsCEKU5KvzaxsAAgCfWj3CFzb8fsQ==
+X-Gm-Gg: ASbGncuAXPQEYGKLPZWhx5s9yTOn5txTieJkwp3b60V07/M8vxe1gHxwlZmbHWGR9M0
+	Xf4emMCE4V2ivfE0DVO5zNuDzRkPK6D6tmlvMn8ZqJOOnvughLoTDxvsLeqvH8UCCCnVkCGT0pf
+	6ngV5eLikS10rvVEJvHhckmrJsGPKAvnFVuZeViPwpCTLvvytgP3PXDA0Aah3yJB45nc7s9vgkp
+	uhfT5/ifMgTMQ3RF64F4rsiQqaygPZnE1GrXDa3mosA8vFAKztRq05sty6QjM+nAWoE0xcs+Fwx
+	8ctyBelKy+khhzY6fuNSOnOGleQO9LSar6SPcp3brNk7x9hiAs0u23mjyThKSZv6S3oHP6Tg145
+	n3jEa98ZqXMURuaMNlYsQqKVvDXTQZPJeLWbSXC5eBhdVZjCjq5f1ABgXy+TPn5kCXNGxT0S3CL
+	CafHTbDBJ5QI0BzNee2kv5VSl+GJM=
+X-Received: by 2002:a05:6000:2dc7:b0:428:4354:aa36 with SMTP id ffacd0b85a97d-4284354abd1mr6785969f8f.58.1761061069823;
+        Tue, 21 Oct 2025 08:37:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGV8Htnc2zerYOltHWq7nqPdBH+VgpCEEL3l5nIU7iiXfnT5bpNfFWhrGmLn4T4UZuxhmt8jQ==
+X-Received: by 2002:a05:6000:2dc7:b0:428:4354:aa36 with SMTP id ffacd0b85a97d-4284354abd1mr6785942f8f.58.1761061069356;
+        Tue, 21 Oct 2025 08:37:49 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496afd459sm19717555e9.1.2025.10.21.08.37.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a6c5sm21478704f8f.28.2025.10.21.08.37.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:37:22 -0700 (PDT)
-Message-ID: <042629f9-f295-494e-8fbd-e8751fcbe7c0@redhat.com>
-Date: Tue, 21 Oct 2025 17:37:20 +0200
+        Tue, 21 Oct 2025 08:37:48 -0700 (PDT)
+Message-ID: <79f01115-3c9e-4316-92d5-bd050eeb3b76@redhat.com>
+Date: Tue, 21 Oct 2025 17:37:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,19 +89,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 PATCH 1/3] Documentation: add guidelines for writing
- testable code specifications
-To: Chuck Wolber <chuckwolber@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Gabriele Paoloni <gpaoloni@redhat.com>,
- shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-mm@kvack.org,
- safety-architecture@lists.elisa.tech, acarmina@redhat.com,
- kstewart@linuxfoundation.org, chuck@wolber.net
-References: <20250910170000.6475-1-gpaoloni@redhat.com>
- <20250910170000.6475-2-gpaoloni@redhat.com> <878qifgxbj.fsf@trenco.lwn.net>
- <85166a8a-ad54-42d0-a09f-43e0044cf4f4@redhat.com>
- <CAB=6tBQP3aCDWch4ZcEYMqFsJ4OKXSyC_hb9V9hA7ZZty7vFeQ@mail.gmail.com>
+Subject: Re: [PATCH v1 14/23] mm/balloon_compaction: move internal helpers to
+ memory_compaction.c
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linuxppc-dev@lists.ozlabs.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-doc@vger.kernel.org,
+ virtualization@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann
+ <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>
+References: <20251021125929.377194-1-david@redhat.com>
+ <20251021125929.377194-15-david@redhat.com>
+ <C2893E27-CA03-4416-9444-62929A740691@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -149,67 +159,27 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <CAB=6tBQP3aCDWch4ZcEYMqFsJ4OKXSyC_hb9V9hA7ZZty7vFeQ@mail.gmail.com>
+In-Reply-To: <C2893E27-CA03-4416-9444-62929A740691@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 20.10.25 23:02, Chuck Wolber wrote:
-> [Reposting with apologies for the dup and those inflicted by the broken Gmail
-> defaults. I have migrated away from Gmail, but some threads are still stuck
-> there.]
+On 21.10.25 17:36, Zi Yan wrote:
+> On 21 Oct 2025, at 8:59, David Hildenbrand wrote:
 > 
-> On Mon, Oct 20, 2025 at 7:35 PM David Hildenbrand <david@redhat.com> wrote:
+>> Let's move the helpers that are not required by drivers anymore.
 >>
->>>> +------------
->>>> +The Documentation/doc-guide/kernel-doc.rst chapter describes how to document the code using the kernel-doc format, however it does not specify the criteria to be followed for writing testable specifications; i.e. specifications that can be used to for the semantic description of low level requirements.
->>>
->>> Please, for any future versions, stick to the 80-column limit; this is
->>> especially important for text files that you want humans to read.
->>>
->>> As a nit, you don't need to start by saying what other documents don't
->>> do, just describe the purpose of *this* document.
->>>
->>> More substantially ... I got a way into this document before realizing
->>> that you were describing an addition to the format of kerneldoc
->>> comments.  That would be good to make clear from the outset.
->>>
->>> What I still don't really understand is what is the *purpose* of this
->>> formalized text?  What will be consuming it?  You're asking for a fair
->>> amount of effort to write and maintain these descriptions; what's in it
->>> for the people who do that work?
+>> While at it, drop the doc of balloon_page_device() as it is trivial.
 >>
->> I might be wrong, but sounds to me like someone intends to feed this to
->> AI to generate tests or code.
-> 
-> Absolutely not the intent. This is about the lossy process of converting human
-> ideas to code. Reliably going from code to test requires an understanding of
-> what was lost in translation. This project is about filling that gap.
-
-Thanks for clarifying. I rang my alarm bells too early :)
-
-I saw the LPC talk on this topic:
-
-https://lpc.events/event/19/contributions/2085/
-
-With things like "a test case can be derived from the testable 
-expectation" one wonders how we get from the the doc to an actual test case.
-
-IIRC, with things like formal verification we usually don't write  in 
-natural language, because it's too imprecise. But my formal verification 
-knowledge is a bit rusty.
-
-> 
-> 
->> In that case, no thanks.
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   include/linux/balloon_compaction.h | 44 ------------------------------
+>>   mm/balloon_compaction.c            | 38 ++++++++++++++++++++++++++
+>>   2 files changed, 38 insertions(+), 44 deletions(-)
 >>
->> I'm pretty sure we don't want this.
 > 
-> Nor I. If you find any references in our work that amount to a validation of
-> your concerns, please bring them to our attention.
+> In the email subject, s/memory_compaction/balloon_compaction/
 
-I guess, as the discussion with me and Jonathan showed, the cover letter 
-is a bit short on the motivation, making people like me speculate a bit 
-too much about the intentions.
+Indeed, thanks!
 
 -- 
 Cheers
