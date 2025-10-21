@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-862292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068C6BF4EAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA962BF4EC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99B33505399
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:14:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05A1D505684
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B442E274666;
-	Tue, 21 Oct 2025 07:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044B525A2AE;
+	Tue, 21 Oct 2025 07:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b8z9VVcO"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mnw2Mttz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B9D1C3F36
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41FE26C3B6
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030831; cv=none; b=rC7IJskA6xq6ifERa7NxTZi4DYvkgGeXRIh89gMk+32pHTMAwmkb5HIg9JNWAwwm0/AIPbr8garhbNONDLiGfYU1KZq7N/METjAKxAM9pIU3RnQ3G8hYzaDn6alsuH7P5HymnwxUJ4Va3Mtae/ywB+cXNTM/ZN4AQardcp/pyPE=
+	t=1761030886; cv=none; b=hTwiqq8uTclJreOsG9FmH2MCB+YInYJjdZfuvCas6euIOSoVRAnG2tHIPJt6HA+5SbIzHE+XiW8Mced2DDIEWrn92WsEW0kxziwORx/ajMzv5NtVS/PH0JpRLAaSgM5JU6xZmFwZxa9/U2yw5Hr7qjbzCaQlIRGd6Z3z14bDmKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030831; c=relaxed/simple;
-	bh=shnocEozDkLvjkbbYpfPCYmb3LZ8IOs5v0zgxrtXZUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NRwp1ScNC52PE2LhKVG1qEuh8/KrKqfI5QFGM6eP1mOZvu/0XJow0+28cv74IbiV92cIVMimjcmXOKzy1aasbRvyFMNzLaU3xo4Bq6BkiyWH6soR/TWpmiZvYqfxwYXIAAn1WN7tvzF/wGg8b+DxVYqba8+ke8iz4K46m1hFpxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b8z9VVcO; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3778144a440so61960321fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:13:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761030827; x=1761635627; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AuafyjGQlDm3fykSpNADHjSfG+tYdvPkfZzAXtiw/Co=;
-        b=b8z9VVcOmmTUtezm8NH6uyAlUgkYd3nhzDiMQfBc/a998Q55CuP4YskghZ3rr4OyPp
-         VvvPx+pfflk55QdmUM0iHBu3FCkLjWVluHP+tDFR9iJpGREP6ViN392s37StstEM2285
-         aWbrzFcrCfPqB5peC7ChUkk5UkIgR1pfiAasAALOD571jgXg1THRB7ij65LHN8glO/Dp
-         MIQQ3DIXB4onaD8yTFFNoaLaW2kReUXR/rDBqQ5ate2w7NQFDtfy//w2Icphk8eXkDtb
-         iA1wla7kmHEZSEjcNzt/14DmXufVALtH4WUZ0gceiTCl7zwnWmL2sb9flC98dsNwsiqB
-         x9wA==
+	s=arc-20240116; t=1761030886; c=relaxed/simple;
+	bh=+B2pxE/i3SpbGCZgmKAbV6E4BQeWooWjeCR64E75cc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NCBY6/WAWqk3G59Plg4/578RdJFIZF70q0Z4h5ihWeoe5X0faDoKdJ9TOZuIV5khpvYNy8rS1hXPxrEuqxWlaRiauZJhRDiQ3ncwLT20cMc40kc9APMYsigXhCIhhlCMnITd8s4R40Z2dMhJEFMYgayKZMYT329/vS7u5/BsfK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mnw2Mttz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761030883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P3VpVCv3g+Sg2rw7HqhbXAeRhRk3VZinAbv22WqGX9s=;
+	b=Mnw2MttzGR6BKtIJwSGOCbLSCAfEl/DLZY+XGQbROTw7LsDUhdWU/03JbOgkSwtSc+39Pl
+	lZLoki8dH+WcndxythhkDzkgK6hNDX/dY3CX4cDMY7AXr1VrDg7vJkZGLXBAuF1Z/VdK/4
+	lfD8/0fsz8dNw0nOSL07wWiroQ6G9Y4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-538-CyRxekzFOrC1qOgqpGTIBA-1; Tue, 21 Oct 2025 03:14:42 -0400
+X-MC-Unique: CyRxekzFOrC1qOgqpGTIBA-1
+X-Mimecast-MFC-AGG-ID: CyRxekzFOrC1qOgqpGTIBA_1761030881
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47114018621so25767255e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:14:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761030827; x=1761635627;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AuafyjGQlDm3fykSpNADHjSfG+tYdvPkfZzAXtiw/Co=;
-        b=khYwhNMFwweYJsLNlwM62H52FbvaM94VvsJCQBGulDGUjla4qiOwbT41L7k8kGgm3F
-         s8xJmthtICEhkwHmuecgX/8St+1DMMVMNA8YaN96KuFJWvSKUKxiZzHoeMjSMl8boGMw
-         tUjKByK187AlB9NZyEqbfUstAM65SFb+ymHS9JUkDvKJqcT3/plQ23IPewHmidTMaDrf
-         SG8daFCnspbsxQEqRSuymqv75th+v1fPjoUPf4UMh+/Q2Iu/liTjYTJweU9DTcp/5sq4
-         CnJc9EPfMLUPiR1GWaZYy+fn7DBCKcBEfAOcdF3Pm9vo9dTZ/QzYL6F4jWEv8Q9HP0fn
-         Igrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhdmp8O7D3nIYFjwbAS7Q8DWeQYgb4hNPAXzNomZ+fVOllGxomHI2KiFRIFVZmnOioKfOtasQvMjr+JFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+FhlePYgsvadHkYC4i4loX5SJFSiVuo+Cp5NCyb1dB6XPBqL5
-	aTV2yi8qcb6DCPogToAMZSCZ5byURipzjhQyjx4ptI1iiEuwmPo5/7o2zJ95+ufDhppxnb0GUaG
-	sdJpKANIZ7vYnhiSTJPDz9v4hSD/QNV7z/f25i9yK5A==
-X-Gm-Gg: ASbGncvA/5Mh3HJ433P1wBAaQjldjBaPqPTpmyMTYX7vbk5jaPeSxHI38pe6MFYVDcE
-	lILwpJK3/yvykpGzgnQ/DeCpSC1hZ61GF0b6HoO1+9U1O0aA6A06WOxT7odRk4COXWyC9xMc3YY
-	hXiaDPW3fpeWHpZud0c6yc49hzePdJzdd1DrAfcFMLqEJvNCmxG/3BWPdD7TVHTEAkPL1cAe1Dy
-	026RsQ6iNlUNStFYAmaD18G5wUUITkyhoiM0rGmyDKj4Fna1Q/WmEenBowU3yaODW4VeUA=
-X-Google-Smtp-Source: AGHT+IFXewE5inD7CgvvKJbWyXxMNEGciqb/dhdvor+BMXV8b4ojerJafcr1lFElVmRq6Yah9RSUyGHsXMPY7mK9Yhs=
-X-Received: by 2002:a05:651c:1118:10b0:376:2802:84c2 with SMTP id
- 38308e7fff4ca-377822498eemr50953931fa.23.1761030827133; Tue, 21 Oct 2025
- 00:13:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761030881; x=1761635681;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P3VpVCv3g+Sg2rw7HqhbXAeRhRk3VZinAbv22WqGX9s=;
+        b=iQV2UmXSPHpq0IAg3Xyl/msr0Wd3snNft9oqA3Fm6V0Ty/RHrGXX+vkK+394oRUE3U
+         +lHkyRyFF8VLlRqPl8vhbmkQkpcuplg3PWBMNRun2NECNPiFO47xH7fM56KM4jXM53xQ
+         v7SlLsc3s7TmBh2XzqXHa2DGme8Sc0RPh/iYFL6Cp5O+3tGNXnlZ8zU9oxe1hGM7e3n5
+         Z8eN70dDvtNiP+B85IjptBX0Q8LqoaQvsihLFFg5YtpPeV46zT06qSj/Di71jRm1bvyy
+         G5Sj3ilxWuXqlekKjTLNHTwcczaAwNXMRPS3qMJAj5ZraZtxibr6KKvL9C+Fa6lpjjjG
+         3SYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmsKQ/Qf52KqusejwbHHWgPp+G+9rOjmVUbvL9IICVnSV3Sl8OoBkq29G9MhwmbKcRhX5veWFQPkJEA3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfCkKcf2LjBXIgC5M28wbAc6tkYJnsqczMJ2Zpg0CfL2fT5gx3
+	a/tzO8SuRbrWEEru66ZpNRhcEcDRzugWzW4m2PuTV5aS205FbtIvL4NkT55YNor53tiDVFlI2uE
+	UJzzAhKoyQMgLWdqmAB124VZJIRk+3odPVCBqvHIHuQGkUyX0c3YyH0sxtQtPslIsIA==
+X-Gm-Gg: ASbGnctKx2RM1ZE0bCRCeA2dVifoTAxU5qM7gSVXljTDee1YFuxeNMlw2bDzCqkdPwU
+	RSbkfJAkVwLUOgLirADztAj0U7FxaVjRxntHDGrBtVx0G7mRRQVJv9YPuZZ6+wZHZLz5wAQQnoQ
+	4c4Dr1eoSqulvMYQFYlL0+yZrh7e3V4+UBw+mMyJ2ndR4+YHV6jGNtbpkB4cxlPd/YfQIybksO2
+	rNw5xfa2OavqXnKpMwRqlDtUr/MM9s6YBZLhDVECUNDXgvzs8cvwTR/bQ5flS0mQz5pma2G8ZSv
+	7+ca3043ZjlFN4Si1RGHU6YV2t9da5B09axo+2UHL5Y0pbZCRIh3F2WMAYmU/MF7PWr12iJsx2i
+	qY9ZAAkJKUS/rmlZZ1hbOhZeeb2KEEacHKbolFedj0d4NnWY=
+X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr122888435e9.33.1761030880625;
+        Tue, 21 Oct 2025 00:14:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAbONMD+QOMnDrNKO8RV6QYb7ZpSXAEjBfkQuhDaa4d7qoOlbgykLKNXPsi+4U3b+ujGw+cQ==
+X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr122888225e9.33.1761030880241;
+        Tue, 21 Oct 2025 00:14:40 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b9f9dsm18907741f8f.39.2025.10.21.00.14.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 00:14:39 -0700 (PDT)
+Message-ID: <be03d7a5-8839-4c84-9e16-b96e52f6983a@redhat.com>
+Date: Tue, 21 Oct 2025 09:14:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020080648.13452-1-herve.codina@bootlin.com>
-In-Reply-To: <20251020080648.13452-1-herve.codina@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 21 Oct 2025 09:13:36 +0200
-X-Gm-Features: AS18NWCX83cFiM9B--nMGIfUIvsXguic5HJGZGgd7PDtP7ogZyhxvv6xui0ko10
-Message-ID: <CACRpkdYwG_rQn7eF9QNfApo+h-BGuC8Q_nPyeAKvcuUh+Bf=Xg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/8] gpio: renesas: Add support for GPIO and related
- interrupts in RZ/N1 SoC
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/8] net: enetc: Add i.MX94 ENETC support
+To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
+ xiaoning.wang@nxp.com, Frank.Li@nxp.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ richardcochran@gmail.com
+Cc: imx@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251016102020.3218579-1-wei.fang@nxp.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251016102020.3218579-1-wei.fang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Herve,
+On 10/16/25 12:20 PM, Wei Fang wrote:
+> i.MX94 NETC has two kinds of ENETCs, one is the same as i.MX95, which
+> can be used as a standalone network port. The other one is an internal
+> ENETC, it connects to the CPU port of NETC switch through the pseudo
+> MAC. Also, i.MX94 have multiple PTP Timers, which is different from
+> i.MX95. Any PTP Timer can be bound to a specified standalone ENETC by
+> the IERB ETBCR registers. Currently, this patch only add ENETC support
+> and Timer support for i.MX94. The switch will be added by a separate
+> patch set.
+> 
+> ---
+> Note that the DTS patch (patch 8/8) is just for referenece, it will be
+> removed from this patch set when the dt-bindings patches have been
+> reviewed. It will be sent for review by another thread in the future.
 
-On Mon, Oct 20, 2025 at 10:07=E2=80=AFAM Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
+Note that such patch is (AFAICS) breaking Robert's tests. Including it
+in this series will possibly/likely prevent (or at least slow down) acks
+on the initial dst patches. I suggest omitting such patch in the next
+iteration.
 
-> The first patches in this series are related to a new helper introduced
-> to parse an interrupt-map property.
->   - patch 1: Introduce the helper (for_each_of_imap_item)
->   - patch 2: Add a unittest for the new helper
->   - patch 3 and 4: convert existing drivers to use this new helper
->
-> Patch 5 adds support for GPIO (device-tree description)
->
-> The last patches (6, 7 and 8) of the series are related to GPIO
-> interrupts and GPIO IRQ multiplexer.
->
-> In the RZ/N1 SoCs, GPIO interrupts are wired to a GPIO IRQ multiplexer.
->
-> This multiplexer does nothing but select 8 GPIO IRQ lines out of the 96
-> available to wire them to the GIC input lines.
+Thanks,
 
-I had my worries about the multiplexer but seeing the whole picture
-and the nice refactoring with for_each_of_imap_item() I have to
-say the patch series looks very nice.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Paolo
 
-Yours,
-Linus Walleij
 
