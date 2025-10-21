@@ -1,191 +1,143 @@
-Return-Path: <linux-kernel+bounces-863512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D49BF8063
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5DFBF8075
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E79034E4715
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:13:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A292E408286
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C83350296;
-	Tue, 21 Oct 2025 18:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E0B35028A;
+	Tue, 21 Oct 2025 18:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJktEg+v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZgZdRXf"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B90134F27C;
-	Tue, 21 Oct 2025 18:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B61355815
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761070383; cv=none; b=BYM3UElhZZPr7g4xI6S+mi7cKdp4DeWMdSH9jyxyyEvReKpQmZKuqvfWJBHew1YYPk7ZS0oKBRA/z0fjxJ3tAGRrtotdaWOW45edf3C83TIZVQvtW1hT0rePT28kD6QbqK/jnmszzQGHMbWYrqfQcBLLdfgkt4wT6unr0BYsfyk=
+	t=1761070473; cv=none; b=XUNuUREXLMJ2YI9dAm3FaDrrP87N2N6y/2EonZq6rBaFzbQ9oYZsSzhLTGORhDFRKNlHXgkikUj9I9U2PuFakFqOf9xdcfloVgpxMo4JP54zpbR1PpygctcgbzE97pCzOrJecGJoSHBCNb6Jgl3fzGNnYFDGA+wzand2Tngek9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761070383; c=relaxed/simple;
-	bh=qEtRyFu2JyRfkeVJISTlGQJFGZB8HDaIGH3H4eIHZGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H2U3QqniY5Zp9N+Mbq/Huja+gHdeLt+hmwTPHVmqgUN5wmaaNe60JDMXLHJs+DMWlyLcLheQewXYh2STeISDzRFidFy0G2r6zdRPhE+lajJd0VIcHKQGWBa8YzU11Mug7L8uTUVKCrmGb25lQKxbf/DdNsC8YmIwGx+JENlc3ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJktEg+v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA51C4CEF1;
-	Tue, 21 Oct 2025 18:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761070382;
-	bh=qEtRyFu2JyRfkeVJISTlGQJFGZB8HDaIGH3H4eIHZGM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mJktEg+venEXDoxzg7uNpbWr6Tdota/l/YUnHyQDd8UUtHFfnEXWD0qRhhqvi0nzD
-	 +qvzRayzCQrHIQCNqXVEFBI4dc4B0gExeSkhHVKMRBbNjZMH9ELwKAQQHxhWihePxV
-	 NTZOJOzEosnv8gbbFL8UoDYVokn4h4EEmqnKpT/A47ZYArdvCdfop6wT/PR8bhq1bT
-	 ENWNW1uYeAHgoNIgqO/6+7YFr70ZjwKdJgpb85kTqYHptTw8BaBo/JtnjY9t8j3Rn9
-	 mGuLGlnKnzifM1CRJ2Apz7qQy1nHX4vOZWY3o6UlEw1zz8eXKHanVA+AZakg8Yya8f
-	 0PdotYY5jyVOA==
-Date: Tue, 21 Oct 2025 19:12:57 +0100
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] KVM: Avoid a few dozen -Wflex-array-member-not-at-end
- warnings
-Message-ID: <aPfNKRpLfhmhYqfP@kspp>
+	s=arc-20240116; t=1761070473; c=relaxed/simple;
+	bh=o9rNbSpNBoVUUMGd/35JWT2yVORpEzqBAt8IfqSL+OM=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=N2riHX2fLfbMve/9v7GctrrQgdF42Y+Ja55vsycm30JwGeFYwmT1Hgn1LtZ5b/yHVSJxifWHfekEmr5hJhOHVbHHE/aIEfdf1bj67Zls2NXCX972XZRXoUPj0cn/+7loyW32+rRkq0t3bVLTCRvANp543C/lcB6+6qnL1/o2pMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZgZdRXf; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47106fc51faso70103345e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761070470; x=1761675270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=itonLB/q/YNj/+GW+x4yL234j0gIzsFzNZWWY3KjRnM=;
+        b=AZgZdRXfCGNjnn4d2/o8GMrApTfxRf3NDmaAE23wvoDDE9Bax+0P9Jvxx4ctLAxvS0
+         djzG8OyFWemnGl6TIUr6dhm53OfflMURZhAPqMc51LH9zXWse8VBh17jh+QwT8JNs/bd
+         ugLNYddyBmRRZ6fZYD9thWf/5RDoRc7X4s0s4d+McqXYtxg/dIvmUSYG/xvjWy/FsOYu
+         gq6FM5ftW+3SWUfE7ri6TA4E2FPRlQKld1y3I0dbw8NRrY3VZG+JHlOvFVbgc0BU1InU
+         KvtiON98N/JB32Y9Z1/o/Ll6HK3ZyxaTyas3cs4tlDp6JaR7DKDW+xqrSlEoXPPjTJWF
+         OV7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761070470; x=1761675270;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=itonLB/q/YNj/+GW+x4yL234j0gIzsFzNZWWY3KjRnM=;
+        b=VJCoSNO/LEdfkDkYFjGC0XPKXjfiqU5gWPzDbH42tINPIri335rqT0UM+tdq1JuA39
+         SiMMfrr9NPOtIHBsYDcGBxT+7dNJc13ujDVDge+zUvKzTmrYrCzcPPSBMTnHBOLjiqyH
+         5WY4x04KXyD6BU9OjeFQdVQiGQpBq9mzN9knliYVHHbl+IK/5WJHlt7bbRMDKdbiegDK
+         9YmXyuTFoAWdOMkXjctjHgUA1mlMFGsp0BN2xOfPLqw8MtuN9I2OEfWzU96NhVEVZHh0
+         uD+4JHEUz8nD+UmuKbjX7Rm0pJIlwpp8Fy9anJVg9MKNerDyJQ24WOn8DCR64/VpYE8p
+         tY3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIWZ8lAvxICeoTh5ldvuDTIv3AhJ/kkA5umut0b4/Y0QGd096fbdl+L7/1bjs59tWHegVyqfx0j6vUviA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNKhqBrDcxtWHx0/aFRfKKa/ikZduKY7h9vbDQmFiuznLkR9R8
+	5Djsnwpcf9hTr2/g96gxavEkOtKxaKskcN9FawWQ1DgWegRYwcnbWnTy
+X-Gm-Gg: ASbGncuLWF4Wqf5967tpyl4BnLJ/bAYzEyvA1pH+ew2RYcNB831U8Ij2xT26MZt6xYs
+	dc+MaFeBvUfiOyJIsJa72MwNtwAvTUczdOcydkteUtgQWEY3KMBv24es+ctBR5sivCoRtYgR/S3
+	dZTFdlJbp98Ee7H+Ba0IjVsZMJCtyyk9tqinGmFNBSVChqg4+HbYNqsRpq2+qArFoAeEXhJj070
+	J0/VTBvG16/5E/0O4IRoYSUrsfrA6896XATpkDaGx5mRAHxsTpR7HF9X4AvIzEwqex2lIDYs8Y9
+	1PnZRNtvIO8gxiuAh+J/EREwuZOboACt0dK42xOatnIcSQDeNgQpGbJ7o/GBo7+bBmEOChAzhQy
+	sn/bSbKI4VgMqVNLwSMV0V4IcL8wiZXnfv8UKvJYodwXW6ISluR3eqg89ocjKcPuvmANnuwXqHd
+	5puVoXEO3I1SoyMbveHbMoL8ZCij2ipjqXNKn64d+2
+X-Google-Smtp-Source: AGHT+IGxG8umXjHtMY/AKkPJqS0tl8j3kkDrEFb8xVPLNpxauF5mV6ALBrumlAi1xAT02B74F8Hj3Q==
+X-Received: by 2002:a05:600c:3541:b0:471:16b1:b824 with SMTP id 5b1f17b1804b1-47117917452mr138852985e9.28.1761070469513;
+        Tue, 21 Oct 2025 11:14:29 -0700 (PDT)
+Received: from localhost (85-250-87-71.bb.netvision.net.il. [85.250.87.71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c428e9b2sm4313505e9.5.2025.10.21.11.14.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 11:14:29 -0700 (PDT)
+From: Vlad Kulikov <vlad.kulikov.c@gmail.com>
+X-Google-Original-From: Vlad Kulikov <vlad_kulikov_c@pm.me>
+To: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	David Hildenbrand <david@redhat.com>,
+	Simon Schuster <schuster.simon@siemens-energy.com>,
+	Vlad Kulikov <vlad_kulikov_c@pm.me>,
+	Ma Wupeng <mawupeng1@huawei.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ipc: create_ipc_ns: drop mqueue mount on sysctl setup failure
+Date: Tue, 21 Oct 2025 21:13:39 +0300
+Message-Id: <20251021181341.670297-1-vlad_kulikov_c@pm.me>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+If setup_mq_sysctls(ns) fails after mq_init_ns(ns) succeeds, the error
+path skipped releasing the internal kernel mqueue mount kept in
+ns->mq_mnt. That leaves the vfsmount/superblock referenced until final
+namespace teardown, i.e. a resource leak on this rare failure edge.
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of multiple other structs, we use the `__struct_group()` helper
-to separate the flexible array from the rest of the members in the
-flexible structure, and use the tagged `struct kvm_stats_desc_hdr`
-instead of `struct kvm_stats_desc`.
+Unwind it by calling mntput(ns->mq_mnt) before dropping user_ns and
+freeing the IPC namespace. This mirrors the normal ordering used in
+free_ipc_ns().
 
-So, with these changes, fix 51 instances of the following type of
-warning:
-
-49 ./include/linux/kvm_host.h:1923:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-1 .../include/linux/kvm_host.h:1923:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-1 +./include/linux/kvm_host.h:1923:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Notice that, before and after the changes, struct sizes and member offsets
-remain unchanged:
-
-BEFORE
-
-struct kvm_stats_desc {
-        __u32                      flags;                /*     0     4 */
-        __s16                      exponent;             /*     4     2 */
-        __u16                      size;                 /*     6     2 */
-        __u32                      offset;               /*     8     4 */
-        __u32                      bucket_size;          /*    12     4 */
-        char                       name[];               /*    16     0 */
-
-        /* size: 16, cachelines: 1, members: 6 */
-        /* last cacheline: 16 bytes */
-};
-
-struct _kvm_stats_desc {
-        struct kvm_stats_desc      desc;                 /*     0    16 */
-        char                       name[48];             /*    16    48 */
-
-        /* size: 64, cachelines: 1, members: 2 */
-};
-
-AFTER:
-
-struct kvm_stats_desc {
-        union {
-                struct {
-                        __u32      flags;                /*     0     4 */
-                        __s16      exponent;             /*     4     2 */
-                        __u16      size;                 /*     6     2 */
-                        __u32      offset;               /*     8     4 */
-                        __u32      bucket_size;          /*    12     4 */
-                };                                       /*     0    16 */
-                struct kvm_stats_desc_hdr __hdr;         /*     0    16 */
-        };                                               /*     0    16 */
-        char                       name[];               /*    16     0 */
-
-        /* size: 16, cachelines: 1, members: 2 */
-        /* last cacheline: 16 bytes */
-};
-
-struct _kvm_stats_desc {
-        struct kvm_stats_desc_hdr  desc;                 /*     0    16 */
-        char                       name[48];             /*    16    48 */
-
-        /* size: 64, cachelines: 1, members: 2 */
-};
-
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Signed-off-by: Vlad Kulikov <vlad_kulikov_c@pm.me>
 ---
- include/uapi/linux/kvm.h | 21 ++++++++++++++++-----
- include/linux/kvm_host.h |  2 +-
- 2 files changed, 17 insertions(+), 6 deletions(-)
+ ipc/namespace.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 6efa98a57ec1..99d13ebc5e82 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -14,6 +14,12 @@
- #include <linux/ioctl.h>
- #include <asm/kvm.h>
+diff --git a/ipc/namespace.c b/ipc/namespace.c
+index 59b12fcb40bd..cf62d11a09b9 100644
+--- a/ipc/namespace.c
++++ b/ipc/namespace.c
+@@ -75,10 +75,10 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
  
-+#ifdef __KERNEL__
-+#include <linux/stddef.h>       /* for offsetof */
-+#else
-+#include <stddef.h>             /* for offsetof */
-+#endif
-+
- #define KVM_API_VERSION 12
+ 	err = -ENOMEM;
+ 	if (!setup_mq_sysctls(ns))
+-		goto fail_put;
++		goto fail_mq_mount;
  
- /*
-@@ -1563,13 +1569,18 @@ struct kvm_stats_header {
-  *        &kvm_stats_header->name_size.
-  */
- struct kvm_stats_desc {
--	__u32 flags;
--	__s16 exponent;
--	__u16 size;
--	__u32 offset;
--	__u32 bucket_size;
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(kvm_stats_desc_hdr, __hdr, /* no attrs */,
-+		__u32 flags;
-+		__s16 exponent;
-+		__u16 size;
-+		__u32 offset;
-+		__u32 bucket_size;
-+	);
- 	char name[];
- };
-+_Static_assert(offsetof(struct kvm_stats_desc, name) == sizeof(struct kvm_stats_desc_hdr),
-+	       "struct member likely outside of __struct_group()");
+ 	if (!setup_ipc_sysctls(ns))
+-		goto fail_mq;
++		goto fail_mq_sysctls;
  
- #define KVM_GET_STATS_FD  _IO(KVMIO,  0xce)
+ 	err = msg_init_ns(ns);
+ 	if (err)
+@@ -92,9 +92,10 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
  
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index fa36e70df088..c630991f72be 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1920,7 +1920,7 @@ struct kvm_stat_data {
- };
- 
- struct _kvm_stats_desc {
--	struct kvm_stats_desc desc;
-+	struct kvm_stats_desc_hdr desc;
- 	char name[KVM_STATS_NAME_SIZE];
- };
- 
+ fail_ipc:
+ 	retire_ipc_sysctls(ns);
+-fail_mq:
++fail_mq_sysctls:
+ 	retire_mq_sysctls(ns);
+-
++fail_mq_mount:
++	mntput(ns->mq_mnt);
+ fail_put:
+ 	put_user_ns(ns->user_ns);
+ 	ns_common_free(ns);
 -- 
-2.43.0
+2.32.0
 
 
