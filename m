@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-862657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34F6BF5DA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:41:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4933BF5DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8A21890849
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52891466738
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1702F1FCC;
-	Tue, 21 Oct 2025 10:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDC22ED167;
+	Tue, 21 Oct 2025 10:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ksczU2zu"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0Dqe4uw"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35C52EBDD7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF83625A659
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761043284; cv=none; b=MCrxOiv+G5xvwv5/QZpEdfHHdarqZnP7sLB+uYR9rfA6uUHpTTkeER022BnKTjUuS3FrAZsfPwfFJXpQSWM9Oal/N19ylChpBkzXcz0KWcPi+AJvmvE1KhHYR74wLDvuFG3MJEqunzew6dn/IB3UX7UNDgPpn6kW4qi4omCygc8=
+	t=1761043465; cv=none; b=kooSXch7EvXFm+bb03bNjEU13RHLr8Pt0GHDX0rSYyufXaoVHI+tfaAFnQiYSAJCCiih4jAKHcRFtOPbBy8s4yL90B04m0twUbfG1fwwfi5DcwF7yeyogAYzAHPTekDjfJbjkuM0xBEplCWCIi1sIpRbYBIwfFsxb+LuwRIsaSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761043284; c=relaxed/simple;
-	bh=wFmGNq5wecu2rvPoLeVjeu8DJ3fyC5NSXcnwFpmBNmE=;
+	s=arc-20240116; t=1761043465; c=relaxed/simple;
+	bh=e3IMvVedBqfEjFLCSEowShucMDlxYs8t/v7ILi0x3V8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=URht4o3Ejz6w6EBMrxZBx4vn1qho2s+pVsrqysOsSIyZ3vkNGtlc0LA7a4C7hgCQhIHVNB044tu79swLIprPyAuf1s1HUH/eY8pDo1kfqazz1j42b8YuhjobgU+34Fh6iAHzC0CCCG+Gw2VxzdLJXtY5qjW8xoZXA89u3Yiah8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ksczU2zu; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:Content-Type; b=WT7/jR/ZhnTc9WyLV3XEWoyD7+MiYjzXInnpUpReWDq3iK/UgGMn1X8kkzhTymDqCv35lzfUM258aEOtgBu5RZeoapDAMnCkys7x0wwOdBQtucYM5yxFqA96vwrHzSH0OVPWE6DoDjnuqr9BT/qvMRg0bOrWZQywYCJrzQ/kvAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G0Dqe4uw; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-471810a77c1so4637645e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:41:22 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-471810a77c1so4639955e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:44:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761043281; x=1761648081; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761043462; x=1761648262; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8h9RVKYmCLG6RA4AVN/czLNpFQmu0nfw+mf3zct6TSM=;
-        b=ksczU2zucDrsUCDewHHQLM/tFu2LMmtfnhjuGDzow+Xg2LDB1jYr/KT/inZDZU+Ysw
-         DdTtdq3bSX3CUjHJ79tSNfg0ejgnDqrByPmIT9FjWvLQIPHDS//qm6djWZECRwS9TqPz
-         Qr+WLI8u+40NL1gg2IvuMpC/H32eRLox/IvLbH6hy1xOsaUVGC7HqFwXTATSc4YqYuXl
-         DNuEpY3ekVJ7LYtmP8SDx9+NLAGGF+eBVzwuiEz7QtLKZrZOH1DZCaT1FreOYMNHAlgo
-         /u9kZww6WwbGH46brG8cioMFCdjhvOjXdfYC156RVHSc5rwDEjEf00JlyGIlWPnfuBD4
-         lVMA==
+        bh=0f/FYjEk/V+C1sQ52NQZj2N9GUstTQXv62cwWX4veF4=;
+        b=G0Dqe4uw1sc+7zZvCcTkdK5kHEs1FDbkYZz/7WdMSEuxYFhlkMKn/NmoRqFseikDjq
+         MAx1SLHHevRY3v8ryKZAWWvCiZFeLtoDOHkKzBZgXaBm/4BZiiFYY2xdj6G3fhIK+xhk
+         lIUp2uECBHKVgN7jZhL9CHXCrc0iRFwAGIkA/yDrm/Ir7M8Qe/ee7We02Fc4WEH56Mte
+         eeToGT9zBAgCRMn2oa6ESNSyfbOp/E6ujjaBQzOVjdMt2OpQbU19KdQP8yi1wB+7OiAE
+         QoAMd72nNzYYMY6ZWwbjVZfYu/ZLulFqA2KhdKohOeLm00QBTg3y/SCOBC9574deLklO
+         YIoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761043281; x=1761648081;
+        d=1e100.net; s=20230601; t=1761043462; x=1761648262;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8h9RVKYmCLG6RA4AVN/czLNpFQmu0nfw+mf3zct6TSM=;
-        b=PW2ZDP6J0TWv6a2hxNrthOpC10/d7h6vBbAj03mDohCCCp++mevOiuZQhTUCw5wHCi
-         rJc2wiEohNmhJKhf8h0W9Lqucu59gvkBZN74VEqGj6XnfktnV++9GNC6Cv4OCoW/H7I5
-         nFHBK0ttAxjT7iJ1tw5yz9XFwxLFpmMHPURTY+AXlPNnWmy4IxJ4fXJ0w9st31EISnGn
-         VBk3IsRmO+Pcc8vO4/kK2UHzzoA3DO3tnann5Fdx0BK9BND8GI56Xg3Vf9aux4ZCp7eq
-         2+QsXomA9LErl86msf8YSDlLNIZkX06LTXP7WRHT2JXni1XbvoSRo2iYHOLE+V32W1uO
-         ShYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUA9R2/uYPGiLcjo+qwmFrW2wSFhNO62FBy5Nt78jhI1qTbqEUaR3Elvmxswr+L2wdImQhIYCUkIcGdPP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUKSiGy2KW5jBW33s4/HL1hlieLgPiYegwvWEbrmsHvdynMn9P
-	ymOMkwxhrNpunrSztgqwjLBx6y5ehmMRbu8RuhUxgVLmdA/EiokHprw36KLrpnFwRr4=
-X-Gm-Gg: ASbGncuqRR8q1wx7uvGnvbGJOcRr17gemgjUsp1GIg9u0IlpUTTcgD6SgOz1xa4jSjY
-	1vg9eeGxqoYw0z4/DaZuBP0+JeVMF/5U2ncRg6E8L5SlCiXGN8lRprTRLSHkAEjQYKQ58ZHLCnR
-	PP1r1aoJxPJ8F6uBRvbx1QYHhd4tEwZXm2TJtFFA88mZxSY2ASXmyaGfNyfwoEuveDY+Q4gZlfS
-	gzbnm0JTw8D0QZhEuKytMs616hhttJ1ixwn+EMMpUF2p/8c/QqBNJDOxOxHDQRlwJ/dDh6n1Y0Q
-	XsNnQTwvGw03faBV+BX4DC+Pcyp5fKedL2FOCKG1Osx2ytoiK1HOmdDwl2vxxA5tVoWY4C98YnC
-	l/a0zDbOG/0La7mrqyHaQb3vUV2cENaBJ40yEEXGYvpA0eLT3YUobujxrgtnUu/C/5S7//mmDJh
-	5WHBMBcoxDzeeGrEhFXaNWjUs+yHNnd3w=
-X-Google-Smtp-Source: AGHT+IECO48MCyAWWL4svfEUvqpukC59xZ6C8+7QQlfqE6JHbxEe2N27PJvUVo0dNpXHT9b+pQH4Qw==
-X-Received: by 2002:a05:600c:3b8d:b0:471:703:c206 with SMTP id 5b1f17b1804b1-47117917718mr68186215e9.5.1761043280919;
-        Tue, 21 Oct 2025 03:41:20 -0700 (PDT)
+        bh=0f/FYjEk/V+C1sQ52NQZj2N9GUstTQXv62cwWX4veF4=;
+        b=e6BdS2n6Uyxjp3YaqLQWnAnPDzMAfBXv1NFMRoSulo2ZnGIGG98CEb+7fdgqz9yGXA
+         PsAm7cUybxU8RTW56LV9ZZXvmf+BliYoL+CznAMRphpbz/Y5l/KdXAchkvDkaONYOK1U
+         r2Now5WrTqC0I8xqg7FpngzSf5QMXn+i5vqeu2bLhWmZHLb8guZ7DN2/8IZJsDXaS42o
+         BadfxXfgCI8gDLlfABX/8cifK9DhhC4/utVp4Oe5uTd+d4T68SF6rmCjGZMQZp3DZdVK
+         9Rs0UCHTl7HJ7v00U81X0/i5VUz9NRZqCbWNcMLarCRO73KFlex8VtRNoNVH9AE0nz2b
+         bCPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNIcBeb5kJNAfFX33UkWWLH+wuno2eOxj/SwQM6qSbtit/g+27b/bGNow67loI+ERPW6XQJgzjR9qKWOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiwNnqqEVyoL1kO9b6ODtKzKjaLeIHkAHEKC8CCvYvxRnvNN1g
+	IFmAxOYnVixx6Xs8Aw7+8K7a9NZvtScIkJpItYOYeSczjaJ6LnYeTSeHj2kkbnt0YVs=
+X-Gm-Gg: ASbGncv7SdWigSAFu/qaVaZjEMn7qskysC+mMz8qWyGWMFlZdTlw9GrtpdyQWElG/DC
+	ZHrjepWlJTABfqX7hcYzJxV5ULvBbhm73vWBHhsijPZ6atC7uKSe6LFctwxE8gPmsKph5BXs37w
+	7by5KhyOeob8nB553mCTfEWVBiFdxUBmiJBS8nsb8tNe6AZSRglAE1z2EBE3ZJ2CxJKAUivQi2h
+	bFRrs1rhQ7XAyEIi7T00rM8YdDaR6j/mHdtDN0rsy9jgxSOEY/OPSSP9rLtssF+uCfNRC/fX52K
+	8JoiU76TikhfhWLugqYmZCigdy0l8QGq7PiYTp0l6ECaUOpUgR6z+ZaXb+pMsmLK04lRFRXlPWi
+	7iQOARXYTe0GLNs4gqW/wfuvf6e52x6WrnO2oWWkwfBhW94GDRj5+aPnmtP2ey+cJX5DRpv0HKC
+	7B1doVnhYWWmIjeYfN0hYw5U/3Yv8aWgG54jeKs9LZRA==
+X-Google-Smtp-Source: AGHT+IF3NSziRPrbhxXTm98kuwwXO/z1y6F/Hzp2XZIk65XU/KBHeRfxgcDMUYvJ1ZAMA1FDO2S4JQ==
+X-Received: by 2002:a05:6000:4009:b0:3e6:270e:3f64 with SMTP id ffacd0b85a97d-42704dc3594mr6050259f8f.8.1761043462033;
+        Tue, 21 Oct 2025 03:44:22 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a797sm19705970f8f.27.2025.10.21.03.41.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b9fa8sm20075497f8f.38.2025.10.21.03.44.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 03:41:20 -0700 (PDT)
-Message-ID: <89f4378f-c876-4c0e-8484-1a6144a6edfe@linaro.org>
-Date: Tue, 21 Oct 2025 12:41:19 +0200
+        Tue, 21 Oct 2025 03:44:21 -0700 (PDT)
+Message-ID: <c7630eb1-2686-491e-81ed-fb43fff2dd31@linaro.org>
+Date: Tue, 21 Oct 2025 12:44:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,8 +82,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] watchdog: sony-cronos-smc: Add watchdog driver for
- Sony Cronos SMC
+Subject: Re: [PATCH v4 1/4] dt-bindings: mfd: Add sony,cronos-smc
 To: Timothy Pearson <tpearson@raptorengineering.com>,
  devicetree <devicetree@vger.kernel.org>,
  linux-kernel <linux-kernel@vger.kernel.org>, Rob Herring
@@ -92,9 +91,6 @@ To: Timothy Pearson <tpearson@raptorengineering.com>,
  Lee Jones <lee@kernel.org>, Georgy Yakovlev <Georgy.Yakovlev@sony.com>
 References: <1787448596.1802034.1760983830792.JavaMail.zimbra@raptorengineeringinc.com>
  <1587929609.1802041.1760983921227.JavaMail.zimbra@raptorengineeringinc.com>
- <13657666.1802042.1760984066594.JavaMail.zimbra@raptorengineeringinc.com>
- <69142127.1802045.1760984091439.JavaMail.zimbra@raptorengineeringinc.com>
- <1149130558.1802047.1760984113046.JavaMail.zimbra@raptorengineeringinc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -141,63 +137,126 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <1149130558.1802047.1760984113046.JavaMail.zimbra@raptorengineeringinc.com>
+In-Reply-To: <1587929609.1802041.1760983921227.JavaMail.zimbra@raptorengineeringinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/10/2025 20:15, Timothy Pearson wrote:
-> The Sony Cronos Platform Controller is a multi-purpose platform controller with
-> an integrated watchdog.  Add the watchdog driver for the Cronos SMC.
+On 20/10/2025 20:12, Timothy Pearson wrote:
+> +
+> +properties:
+> +  compatible:
+> +    const: sony,cronos-smc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  timeout-sec: true
 
-
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
-> 
-> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
-> ---
-
-...
-
+Drop, not needed.
 
 > +
-> +static const struct of_device_id sony_cronos_compatible_id_table[] = {
-> +	{
-> +		.compatible = "sony,cronos-watchdog",
-
-Undocumented compatible, drop entire table.
-
-> +	},
-> +	{},
-> +};
+> +  leds:
+> +    type: object
+> +    additionalProperties: false
+> +    description: |
+> +      The Cronos LED controller is a subfunction of the Cronos platform
+> +      controller, which is a multi-function device.
 > +
+> +      Each led is represented as a child node of sony,cronos-led. Fifteen RGB
+> +      LEDs are supported by the platform.
 
-
-
-...
+Fifteen?
 
 > +
-> +static SIMPLE_DEV_PM_OPS(sony_cronos_wdt_pm_ops, sony_cronos_wdt_suspend, sony_cronos_wdt_resume);
+> +    properties:
+> +      compatible:
+> +        const: sony,cronos-led
 > +
-> +static struct platform_driver sony_cronos_wdt_driver = {
-> +	.probe = sony_cronos_wdt_probe,
-> +	.driver = {
-> +		.name = "sony-cronos-watchdog",
-> +		.pm = &sony_cronos_wdt_pm_ops,
-> +		.of_match_table = sony_cronos_compatible_id_table,
-
-Either this or platform module alias, not both. Since you do not have
-compatibles, then drop this and keep the alias.
-
-> +	},
-> +};
-> +module_platform_driver(sony_cronos_wdt_driver);
+> +      reg:
+> +        maxItems: 1
 > +
-> +MODULE_AUTHOR("Raptor Engineering, LLC <tpearson@raptorengineering.com>");
-> +MODULE_DESCRIPTION("WDT device driver for Sony Cronos SMCs");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:sony-cronos-watchdog");
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^multi-led@[0-15]$":
+
+Unit addresses are hex.
+
+> +        type: object
+> +        $ref: leds-class-multicolor.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          reg:
+> +            description:
+> +              LED channel number (0..15)
+
+but here is sixteen...
+
+> +            minimum: 0
+> +            maximum: 15
+> +
+> +        required:
+> +          - reg
+> +
+> +    required:
+> +      - compatible
+> +      - "#address-cells"
+> +      - "#size-cells"
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - $ref: /schemas/watchdog/watchdog.yaml
+
+Come with sensible, generic node name and update the schema like I did.
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      smc@3f {
+> +        compatible = "sony,cronos-smc";
+> +        reg = <0x3f>;
+> +
+> +        timeout-sec = <20>;
+> +
+> +        leds {
+> +            compatible = "sony,cronos-led";
+
+Keep consistent indentation. Use 4 spaces for example indentation.
+
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            multi-led@0 {
+> +                /*
+> +                 * No subnodes are needed, this controller only supports RGB
+> +                 * LEDs.
+> +                 */
+> +                reg = <0>;
+> +                color = <LED_COLOR_ID_MULTI>;
+> +                function = LED_FUNCTION_STATUS;
+> +            };
+> +        };
+> +      };
+> +    };
+
 
 Best regards,
 Krzysztof
