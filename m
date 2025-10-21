@@ -1,118 +1,151 @@
-Return-Path: <linux-kernel+bounces-862563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76348BF59BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:48:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FABEBF590D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6AF01980BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:48:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8838C4FAFFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CB032AADB;
-	Tue, 21 Oct 2025 09:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C250630216C;
+	Tue, 21 Oct 2025 09:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="j/wRoNwR"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cYxy82pA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEEB23BF9C;
-	Tue, 21 Oct 2025 09:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761040004; cv=pass; b=dxR+BhQGkEjy4cc846K5QSIlvoeYKpt/UXfZONiROw6h0dmMf6GdK7xnFIQIPTFJsffFYr/nUUIvboQAUQZsSIpfgiBAUTcQ89xaqkgOovoLL571X7lB/jOR+j7IC1L53j2pwSRtDsUs5JcGd/luTj999z8zomkn8tCZNRk+Pes=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761040004; c=relaxed/simple;
-	bh=BT1BbYf1Y5yXL3hJlz/v6ZRCueJkWknoQha5McKnBcs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A5r+yPrF2VBrdkxVuwm5a6/ibAJXEFOdOwmstmCyQ47C6BkmGHngX2fV1hoI9O532HarQIdHZhtHhTrsy2J7OUqbBFKT5yK93/SLRuQt2M0Aw3tj9U5MyKrzlybCyfaJwFy30V47Z7dLV0rLOcngUT8T8CgUuFO/r5VZ1CA1SEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=j/wRoNwR; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1761039979; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mSP5o11emiP2ro00kcTDnJIawgB51rtVQfA//mCOOsvGn1ArSHWMVlvbA79H9zeRwZsRdXNBUtDSYTYRug5W9/gJ451tx/s/4jt2huNIJ4wm1zVwSMj7+ujmvAiSHX9k6fSIu1EC6Ix2yGClH2BECsXJo0SBw6gEuzm0W011m8g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761039979; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=fM/OFmnj6so77IHYlA1fi4R93kba5pRm23lZo7zfC2g=; 
-	b=gXeLq88jQe415g4hLSIb8sa9cLHPByswYiqYZZdE9M5JcDsAQd2QeXe9thQxKBaN+rxM1kIfR7wpAuf3iIjvlIgSMnKocrBAdtZyDR+HI2m4PblBHq0r1YApLANTjzKCUsgzu6Nm7lXiPjTFC66qu8Nt+FoSm/D1ElhgkXSWemw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761039979;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=fM/OFmnj6so77IHYlA1fi4R93kba5pRm23lZo7zfC2g=;
-	b=j/wRoNwRzVGbWhyuuP5wJ3+hG3OY9kc3SreZFpaBr4/jbGPhMn7jTBQ2y+3Hv+Cp
-	85XjVIultHSc8GviJdenuXONcPaoR2EgMkEZlQ3NQDYnFvHyvq2GjqLwcKgoWESueDv
-	aiyk8lQaaJmxGr6YzuTNs8eftvSZUw4yR2e9RlO8=
-Received: by mx.zohomail.com with SMTPS id 176103997777640.235295843942595;
-	Tue, 21 Oct 2025 02:46:17 -0700 (PDT)
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Tue, 21 Oct 2025 17:41:48 +0800
-Subject: [PATCH v3 13/13] riscv: defconfig: Enable Anlogic SoC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504962E7659
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761039761; cv=none; b=NI0OQk3o4xwGosbxkrgulddNIBWreZJGpJJGciAhgTC5cX/MVfv9j5wl0K4SAndwsC/LppzpXAaU5BgYd6zCPQ34fRxq0Aa9MeJt1TemAdhdwPWM5NGySa/OOlvm28dHj6WV9ML4lvh0o3RbyrwjsE77qnu6K6L8bOY2BzpDt08=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761039761; c=relaxed/simple;
+	bh=MSVMapS+wT8A48mbedXknuF6hMRfcMnPOR8fjkLNzBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=efdF7IpwQexQmrYeU9bfB3iNqadUl4QxLq3hmBE2wam6ECrh/RVv9wFaEy6xEYgEG8uoIUHB+kh6b1D3vDdaYKK03odwMN3NeMPpsTTyjK/J6IXFia/wYp7X7xP7XApco0OD34OdE9AMytbUd2GNmvyKwQKXcLVmqk4D4eHM4Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cYxy82pA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761039757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UHjS/qyeeKcJ3eN+7yFgpurORtwwe8MoT2GpgobO51M=;
+	b=cYxy82pA+fjtnSs8kfgHcNsl0wGBbBsMQRBG41ACA+7CSNb/OBrgqAsEvNwLN+uFxeSpKC
+	vYQaljoIpmyKo7wWCx5axfcPv0WBde3JufWEFIttmhBsoZCjqcgvTBdiXpvwMOo+2s6ojQ
+	47yTjQROpASezdVVcLzBmaTKGKh7+bw=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-645-Q_rUA6ljOBu0yyCHh9PudA-1; Tue, 21 Oct 2025 05:42:36 -0400
+X-MC-Unique: Q_rUA6ljOBu0yyCHh9PudA-1
+X-Mimecast-MFC-AGG-ID: Q_rUA6ljOBu0yyCHh9PudA_1761039755
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8787a94467cso214131936d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:42:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761039755; x=1761644555;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UHjS/qyeeKcJ3eN+7yFgpurORtwwe8MoT2GpgobO51M=;
+        b=wk6lzulnb9W8/A0f8tr9wxBoCYjIr2z4OWqr+gJFFpQfMRvl/98UUSw5NZDWzuknW4
+         UxUMWGH7QFO7ppdp90Z47fW4wkB6ZLqcYKUmNj1xme24aWHmP+HMklDMW7lrVSQJ2HzG
+         LoDCWbTiD5rS+m/k7Yd2RirQuw2t4ja4YQxRykv08kulm2R/6nze0sXxCUZjww/RpPSX
+         m17pGqNerKn4Ebf6I7Zoz5S4Y54FdA7tFREhlOsxphFMsNgMmRHaiQu25m8LWNJ5NIjV
+         wfX7dh9+CTOdqlmVIMIZLyveJKIuC6e1Px7v4zq6y+2GRKp88ClY9oxv7eFJzlTNB49Z
+         PykQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUcl+9iFEPH9mdT1K7LwJjZ4Mvaou+w6l1IiuvXg8K7rvSgXwv8Lr3HeIqrU7W/x2PSEVrt9/PIzNjtnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZSLbQRpTiuyFqQUF0xr++OKEPj7EBysTu8+J2mVmlPLSN71Yi
+	QIyMOxmFXzu3zVg96q6hIts+Im5hsNvlYgHOH+HzKtRF8sxWuzenER+bwDm8nj+uAKtfx0n8RA+
+	QSjs1N078sWXzonjFePgZcKr7SNJYf53f27zjeRrE63wb6NwWqmIa42+vdWTHrSL3HUjNeddqpu
+	Dcd3AzcAn32Xgz4R/diasgHG2eI6gUuA9w49H3XfJxjyV74h9X
+X-Gm-Gg: ASbGnctQoUfb1eVD8z92jh3+peTcZ4bQR5/49l/BTFeX0ds07PC4dz4bYbcTul9fCpc
+	GuH9EFM7eg09mlpfxFBKNon4LaFE5KtOsj81PVozajiZFEv/jB4TXDDqbqr6xPbXXhvSh0fIbLB
+	vAVK9mvAQ1rUBWerIC5DnxYUK1dyPoYmQPUxoQVOyCIgn0vtz+VXVvrXi0ZUOqdk168s0E/0huc
+	3Y8MH13yM0DmmsW
+X-Received: by 2002:ac8:5712:0:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4e8b679b7a2mr115979261cf.52.1761039755352;
+        Tue, 21 Oct 2025 02:42:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtJWXOjke0RTmK0/xZXoqnt4Ou0KacBj/M07aRFHuZEpUI1vDSqa7DdT8a6/Yrxfq2QlaYBVOMZ0kPdqztzzI=
+X-Received: by 2002:ac8:5712:0:b0:4b0:6205:d22b with SMTP id
+ d75a77b69052e-4e8b679b7a2mr115979131cf.52.1761039755012; Tue, 21 Oct 2025
+ 02:42:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-dr1v90-basic-dt-v3-13-5478db4f664a@pigmoral.tech>
-References: <20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech>
-In-Reply-To: <20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Junhui Liu <junhui.liu@pigmoral.tech>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
- linux-riscv@lists.infradead.org, Inochi Amaoto <inochiama@outlook.com>, 
- sophgo@lists.linux.dev, linux-serial@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761039846; l=773;
- i=junhui.liu@pigmoral.tech; s=20250910; h=from:subject:message-id;
- bh=BT1BbYf1Y5yXL3hJlz/v6ZRCueJkWknoQha5McKnBcs=;
- b=jcnGaIRVMmeBHgf8lPTP3BWGl5CDI1pC/z14YdPdQ5DLNGbyxSnAFXo+G1X3o/6cqyFe0nlOZ
- 6vuZFktycyWCCFp4fUDiPh/HVNOxMJAchZ3OH302AXEO3yUlN118mig
-X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
- pk=cgATWSU1KfGWmdwNmkPyHGnWgofhqqhE8Vts58wyxe4=
-X-ZohoMailClient: External
+References: <20250910170000.6475-1-gpaoloni@redhat.com> <2025102111-facility-dismay-322e@gregkh>
+In-Reply-To: <2025102111-facility-dismay-322e@gregkh>
+From: Gabriele Paoloni <gpaoloni@redhat.com>
+Date: Tue, 21 Oct 2025 11:42:24 +0200
+X-Gm-Features: AS18NWBpQWaCgTUPFKBGe-mp83ffIdDKrAgAWm46CipP2yYr5wYthLbhuHqwos0
+Message-ID: <CA+wEVJZEho_9kvaGYstc=5f6iHGi69x=_0zT+jrC2EqSFUQMWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/3] Add testable code specifications
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, safety-architecture@lists.elisa.tech, acarmina@redhat.com, 
+	kstewart@linuxfoundation.org, chuckwolber@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable Anlogic SoC config in defconfig to allow the default upstream
-kernel booting on Milianke MLKPAI-FS01 board.
+Hi Greg
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
----
- arch/riscv/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Oct 21, 2025 at 9:35=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Wed, Sep 10, 2025 at 06:59:57PM +0200, Gabriele Paoloni wrote:
+> > [1] was an initial proposal defining testable code specifications for
+> > some functions in /drivers/char/mem.c.
+> > However a Guideline to write such specifications was missing and test
+> > cases tracing to such specifications were missing.
+> > This patchset represents a next step and is organised as follows:
+> > - patch 1/3 contains the Guideline for writing code specifications
+> > - patch 2/3 contains examples of code specfications defined for some
+> >   functions of drivers/char/mem.c
+> > - patch 3/3 contains examples of selftests that map to some code
+> >   specifications of patch 2/3
+> >
+> > [1] https://lore.kernel.org/all/20250821170419.70668-1-gpaoloni@redhat.=
+com/
+>
+> "RFC" implies there is a request.  I don't see that here, am I missing
+> that?  Or is this "good to go" and want us to seriously consider
+> accepting this?
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index fc2725cbca1879c181d179a3d59ac3a0ce206061..14b82f770efe1dc8abe1ef68b523023d89d1f4e5 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -23,6 +23,7 @@ CONFIG_CHECKPOINT_RESTORE=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_PROFILING=y
- CONFIG_ARCH_ANDES=y
-+CONFIG_ARCH_ANLOGIC=y
- CONFIG_ARCH_MICROCHIP=y
- CONFIG_ARCH_SIFIVE=y
- CONFIG_ARCH_SOPHGO=y
+I assumed that an RFC (as in request for comments) that comes with proposed
+changes to upstream files would be interpreted as a request for feedbacks
+associated with the proposed changes (what is wrong or what is missing);
+next time I will communicate the request explicitly.
 
--- 
-2.51.1
+WRT this specific patchset, the intent is to introduce formalism in specify=
+ing
+code behavior (so that the same formalism can also be used to write and
+review test cases), so my high level asks would be:
+
+1) In the first part of patch 1/3 we explain why we are doing this and the =
+high
+level goals. Do you agree with these? Are these clear?
+
+2) In the rest of the patchset we introduce the formalism, we propose some
+specs (in patch 2) and associated selftests (in patch 3). Please let us kno=
+w
+if there is something wrong, missing or to be improved.
+
+Thanks and kind regards
+Gab
+
+>
+> thanks,
+>
+> greg k-h
+>
 
 
