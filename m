@@ -1,166 +1,79 @@
-Return-Path: <linux-kernel+bounces-863658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03C9BF8BC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:38:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E67BF8BC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5B3AE346549
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9990C19A7090
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D54327FB37;
-	Tue, 21 Oct 2025 20:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496DA27FD72;
+	Tue, 21 Oct 2025 20:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rSyoE7eE"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxqvCWVP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9EF27FD76
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E47278E47;
+	Tue, 21 Oct 2025 20:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761079094; cv=none; b=iB+iiAh72NfIai2wofewFFD0POy8zByPNvIe7ae2z13o5iDxj66LK0lhYrk8H8ppHz1RY9+QSWvlsISUC9c9pycjrKb+ZzqMaKIydCTwiIchM/0koKnPokvoRhKSC4PXvlhN6LoFf0xTv/+ZmM3mmKPQB10VuRgt5RvEpce1UQg=
+	t=1761079091; cv=none; b=uyJpuYKlGwab9uX1MHtRvz+bshS8kTSIsHJorHy5XS+7SdLvbjA5T1zDG+KCaOKVM2vLx2Oi9Zn6j0L+FWL5e3a5WJY7bedTBliJR/vAdUWDrlxAih8BKltrsDRziDRdgLheyLAJm1YPegDGeGMi84g0wZz4FtCg0hbynbAucl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761079094; c=relaxed/simple;
-	bh=2UzUPa0O7wVHv85721B5teO1x+rf4QPSmTIVyKZAjHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=e2Cm0niJGh7Z6LoWw+/uX64u3meVpG6rApCsNveP51Q0snvgCV4KxMIpwleXcgxsznUJKbFrm5gbuNAydFRssy4KSNK5ru+y8izydOQFiPACoh1Xn4vzHTCddebWFS0DJI7V8HPkpzTQAV2c92sb8m6yFTVuknC0BnOFKkfUWQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rSyoE7eE; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251021203805euoutp01c03d8e4b46295315dce6514087e193d3~wnBkASDD20591505915euoutp01q
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:38:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251021203805euoutp01c03d8e4b46295315dce6514087e193d3~wnBkASDD20591505915euoutp01q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761079085;
-	bh=WkfTpNuqej1UoTarvASJEkiFQ49zLY0qzCQi5FcT4uM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=rSyoE7eEsLXh9M8Vms1QePG23J8dvTd+XqkgCf2aNnIF06Guc00f+AK4hNUbm+XLw
-	 pJfmkcyYy9OpTo5HtJVNtSFgUe7ZKlhsHWf2/tt/kDnr4zYtaVbCXvNif9xY70br9D
-	 /h2cMy3Hj9X/n0N535wxwcgZt96u+dAS1Heq4SpQ=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251021203804eucas1p2c091f1cce52c4d08eeacf8c36604f1fb~wnBisd64H0197501975eucas1p21;
-	Tue, 21 Oct 2025 20:38:04 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251021203802eusmtip23e28f0f310780cc696c497752fb587eb~wnBhWTpKN1353213532eusmtip2A;
-	Tue, 21 Oct 2025 20:38:02 +0000 (GMT)
-Message-ID: <2e38e6c2-0548-432f-ae34-daf3972877ac@samsung.com>
-Date: Tue, 21 Oct 2025 22:38:01 +0200
+	s=arc-20240116; t=1761079091; c=relaxed/simple;
+	bh=ia3Nc+aBiEWsw6lzxIwHJIH6FTSei7DoOMNQPMRgNQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0SFNN5PJYt5Lo66cMmQUZIaH6gYqANp142jJJLT2uRjcssxDOFGMuKq2eS0EKtuAzZ9U9xWWOu8zZ5JjTOBvAgujmn6hYt3cljaKRnQt121OVf7fZS94raFlddRjVLjKrN3tinOaRBYj9Q49afjVL0jugYJFUQhLtJ3c3f2Qm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxqvCWVP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1742C4CEF1;
+	Tue, 21 Oct 2025 20:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761079090;
+	bh=ia3Nc+aBiEWsw6lzxIwHJIH6FTSei7DoOMNQPMRgNQU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QxqvCWVP0bNfEZlCEnqcRk0d7+zRQq1ttyM5+JY19EUytZ8YqqcGgSv+V59PrNoKE
+	 eFU+Ca46qgGuUStEMts8ZwrdtoqWi6ifcZKDW/2ghKpMpgWE7my5JHfsVgBYK3+4Bt
+	 IxUedaI2zyp5Y41G2HD6C3uuGrbIGI4hla678mkWfi10fWSfE7aafQMz8aCBTP/Kl1
+	 PCkJJUw1W9HJxXUotJrur/QtJJ1b9IR9zJ8I/MythhzOJRjry7/CQgo/ONCFVkk9uy
+	 bRVlZyYbWyhhL6klUdu39l4ZFQWu55Tu/3p+Q5Gyw2ZrkY619BEwyL4mNJ9xcx7iGd
+	 GABHbkBDaat8Q==
+Date: Tue, 21 Oct 2025 15:38:08 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: devicetree@vger.kernel.org, davem@davemloft.net,
+	richardcochran@gmail.com, linux-kernel@vger.kernel.org,
+	kuba@kernel.org, Frank.Li@nxp.com, netdev@vger.kernel.org,
+	vladimir.oltean@nxp.com, krzk+dt@kernel.org, andrew+netdev@lunn.ch,
+	claudiu.manoil@nxp.com, imx@lists.linux.dev, conor+dt@kernel.org,
+	pabeni@redhat.com, edumazet@google.com, xiaoning.wang@nxp.com
+Subject: Re: [PATCH net-next 1/8] dt-bindings: net: netc-blk-ctrl: add
+ compatible string for i.MX94 platforms
+Message-ID: <176107908528.775814.3309266572882987703.robh@kernel.org>
+References: <20251016102020.3218579-1-wei.fang@nxp.com>
+ <20251016102020.3218579-2-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v3 06/10] pmdomain: samsung: convert to
- regmap_read_poll_timeout()
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>,
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20251016-gs101-pd-v3-6-7b30797396e7@linaro.org>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251021203804eucas1p2c091f1cce52c4d08eeacf8c36604f1fb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251016155855eucas1p2ccc516861548e963761133fc52fc560e
-X-EPHeader: CA
-X-CMS-RootMailID: 20251016155855eucas1p2ccc516861548e963761133fc52fc560e
-References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
-	<CGME20251016155855eucas1p2ccc516861548e963761133fc52fc560e@eucas1p2.samsung.com>
-	<20251016-gs101-pd-v3-6-7b30797396e7@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016102020.3218579-2-wei.fang@nxp.com>
 
-On 16.10.2025 17:58, André Draszik wrote:
-> Replace the open-coded PD status polling with
-> regmap_read_poll_timeout(). This change simplifies the code without
-> altering functionality.
->
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+
+On Thu, 16 Oct 2025 18:20:12 +0800, Wei Fang wrote:
+> Add the compatible string "nxp,imx95-netc-blk-ctrl" for i.MX94 platforms.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
->   drivers/pmdomain/samsung/exynos-pm-domains.c | 29 ++++++++--------------------
->   1 file changed, 8 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-> index 383126245811cb8e4dbae3b99ced3f06d3093f35..431548ad9a7e40c0a77ac6672081b600c90ddd4e 100644
-> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-> @@ -13,7 +13,6 @@
->   #include <linux/platform_device.h>
->   #include <linux/slab.h>
->   #include <linux/pm_domain.h>
-> -#include <linux/delay.h>
->   #include <linux/of.h>
->   #include <linux/pm_runtime.h>
->   #include <linux/regmap.h>
-> @@ -35,7 +34,8 @@ struct exynos_pm_domain {
->   static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
->   {
->   	struct exynos_pm_domain *pd;
-> -	u32 timeout, pwr;
-> +	unsigned int val;
-> +	u32 pwr;
->   	int err;
->   
->   	pd = container_of(domain, struct exynos_pm_domain, pd);
-> @@ -45,25 +45,12 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
->   	if (err)
->   		return err;
->   
-> -	/* Wait max 1ms */
-> -	timeout = 10;
-> -	while (timeout-- > 0) {
-> -		unsigned int val;
-> -
-> -		err = regmap_read(pd->regmap, 0x4, &val);
-> -		if (err || ((val & pd->local_pwr_cfg) != pwr)) {
-> -			cpu_relax();
-> -			usleep_range(80, 100);
-> -			continue;
-> -		}
-> -
-> -		return 0;
-> -	}
-> -
-> -	if (!err)
-> -		err = -ETIMEDOUT;
-> -	pr_err("Power domain %s %sable failed: %d\n", domain->name,
-> -	       power_on ? "en" : "dis", err);
-> +	err = regmap_read_poll_timeout(pd->regmap, 0x4, val,
-> +				       (val & pd->local_pwr_cfg) == pwr,
-> +				       100, 1 * USEC_PER_MSEC);
-> +	if (err)
-> +		pr_err("Power domain %s %sable failed: %d (%#.2x)\n",
-> +		       domain->name, power_on ? "en" : "dis", err, val);
+>  Documentation/devicetree/bindings/net/nxp,netc-blk-ctrl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-I've posted my 'tested-by' tag for this patchset, but in meantime I 
-found that this patch causes regression from time to time on old Exynos 
-SoCs (especially when all debugs are disabled). It looks that there are 
-some subtle differences between reading the status register up to 10 
-times with cpu_relax()+usleep_range() and the 
-regmap_read_poll_timeout(). I will try to analyze this a bit more and 
-provide details, but I suspect that the old loop might take a bit longer 
-than the 1ms from the comment above this code.
-
-
->   	return err;
->   }
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
