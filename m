@@ -1,184 +1,133 @@
-Return-Path: <linux-kernel+bounces-863570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99A1BF830C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:04:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9ADBF8312
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17D5A4276E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:04:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CFD34F6ADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3A7264612;
-	Tue, 21 Oct 2025 19:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqebElYu"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A0834A3A3;
+	Tue, 21 Oct 2025 19:05:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238292586C8
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D37D26AAAB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761073492; cv=none; b=f7ZW3f4Hi/nVV+BZcGlKk/mA3vrrtFgVqDH7nykkfnk1MwTs7zMSR1B1GDvd3PC2SvYFSz628IOO5JbdrpyALBBMSpuEw/oJFj4c/TPudrFf2PKpNbZ31hJJB7fbMHHqvyDtwPXaiJVj6fLU32q09R1UsKZFfwEB20GjazmMqAg=
+	t=1761073556; cv=none; b=KnHBzzgTAaYzPew9qo8d1l8azZN1Y4uaWabaNhJzoehP/9EnfiPFoWj77y7NthyNlhDAXQhzWSUjqj7vM91m0LFhXow+5ONKCMl63YIgIUL+k74n3DgOXVrBG/g2XwMblX40ekGe2L/S0ffJe9og5ID3ms2sN4eQZnFa7LNaogw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761073492; c=relaxed/simple;
-	bh=q11VqPhISxAq83SdAd0VRiD2EuJuQ7IvglCXKCEFYKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a91Yq3pRSEiNEVnTxRe836amu8HHBG/mRG6hfhbVHTkzPcbmPgsYIG62QVEMDK+CyZOBBynP3C8bN7nW8k5WENi1alqSeZODp5M7M++FWSLrfhGlhZ/M4YwVGNVY8wzTH4nWo9J3Zwvtb0o4bnwYVeVQqxSpwE4l0yaG5atNg+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kqebElYu; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-290ac2ef203so59202855ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761073490; x=1761678290; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ISZWYz7jwfSXd9tq4inzuqOWmGJUHyHpKimpAOEt6OY=;
-        b=kqebElYuOlYJNumYFTw1asnsmq8yZDSltsM6ONFo+C6Gm72w7xccRCkXQ9dLcUKecC
-         m+57wsUYiBYNOCm/626ue3KMLeSNfcJ1mas+VzcwuB3uwYpPKiSJOPLy4UwS21d7OQ1E
-         Khzxh6ZDVIxADvRb2BojG5aH1BN94DN4aC4o1CIv0Y7o8mba6wqM1xZi5hvMwlIXnL4J
-         t1DMNYPNOvadyeMRf/GIHGU8A6mRottlgJfkZRTvUSEQghoCsFrRq8oeeO1untZtGTNw
-         w5tlMvoKWBiFIRcFaaLPRtIiXtYJmexE6FkFqAca4aloixqFLVSku1i9N5wsF60Q8wje
-         g2oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761073490; x=1761678290;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ISZWYz7jwfSXd9tq4inzuqOWmGJUHyHpKimpAOEt6OY=;
-        b=WaPGtFYQpJJZertoz7JVGHrNZf28+TvA9FypwUKTwnjTeLjDyvyF6NOA55PJV8mcTF
-         KLm14z1tE0GAYYqKDBEYcnEpSR2H7Xsf34dDhqVlohuSwBb8iqPpdYIWUwrK7OWts8Sg
-         OJ6euV7hfM5ugEt1oiHpk3oC66BnIrW5rPGUAFviXhfaZQvJUe6X5yATT+hKrTcwCKgw
-         BfpRra84APZxLknYXJMjEwUbK1ElLzJNiI8ZBvuoQ2VkO1UO/5SDJYflkulEZODoqRAe
-         ecHfK5DjOJ2xi8rlDQ850j2zfH0c6JbtPajXF4mqvO26vLJYry8WWCrXJHVGovDSTvqj
-         fjLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSVVkDq66NHV0f4h4AA9Fk/iIsHalN93+Okcz0daEs8cygoJ8ZnC5UCdh1JHXCdAkuvpgkXwyFjysHkUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ7glyFbOyC+ckj4YEST9hj21Q/RMV3iSX95p5dSO+eOA+bI0J
-	25YeFsMRTRzirrmKe1msFMwDf8qDfQeR8CtCX/uR56MhN3VtMMOpGd8M
-X-Gm-Gg: ASbGnctqYsNZ7uCyK+mTUZOSKfK3UPCn2twjxBAk2OhFZ7m5SbSTweUcCYfe48ZTllL
-	8P1ypUTuHJ/M4VsbIEZAWyAq1WuraSEVpugnij0GEeRTZia3w89bShxuOElSuaLAolrhkUulMrh
-	bQmIIQw/iRvZiqCanhA0+6jE2YNo918yO5DSq6rAWynlB5yn1yWoQNwr9CjxxaUQhnd+5sjCWtO
-	/uUofxA75OX4GrHNa18VsUdsVFT8Lijll8mP3qpuXo5DmOE72PDxw53LmgRUwVMBbgCUMGbtjW7
-	sVhS4/M8Go2uncbtZpnNNW+rY4NiYkXn/PAUgs5OPY0nMjJaJkyy5V64BF9Rmh8hcxhvP+vQaCa
-	Rhxos1Qq5dOEr07gMKzM+dYMihdnUKzdfzUXsucC3il/Xr1/YoIYRAws/s13w0wLwItG5wei00c
-	SkCxHmeIFULROe5W/UG5rVEzmfYj/X/64=
-X-Google-Smtp-Source: AGHT+IHkT8UoFnBBi1CBq+2YccEgjqBI+DLZKtcKn0a9UNxsMkVcsdd6kuH2vJPgljjD95mJq5TuRg==
-X-Received: by 2002:a17:902:fc8e:b0:27e:ef96:c153 with SMTP id d9443c01a7336-290c9ca73a0mr247432075ad.19.1761073490421;
-        Tue, 21 Oct 2025 12:04:50 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebca5csm117664615ad.19.2025.10.21.12.04.45
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 21 Oct 2025 12:04:49 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Hugh Dickins <hughd@google.com>,
-	Dev Jain <dev.jain@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Liam Howlett <liam.howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Mariano Pache <npache@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mm/shmem: fix THP allocation size check and fallback
-Date: Wed, 22 Oct 2025 03:04:36 +0800
-Message-ID: <20251021190436.81682-1-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.51.0
-Reply-To: Kairui Song <ryncsn@gmail.com>
+	s=arc-20240116; t=1761073556; c=relaxed/simple;
+	bh=cyjIpRia7tGxgqWvmt5ulD0c6nEC1XXz3/lvCMwASN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZShfc7h2TTz1gzhi4m/beVubt6fG+NUbf4vx07fCmfZduikAba1Een26R2zPcuHOOOQBfXIBQV1CbSzIuqAar+eqZPOL+pjvwUlitb7UVI5FUXihoxElnMna8uMYLkfYWaqKA96uiIFa0zXeyRBmaOq98+NA70o8gEoanAPy4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vBHg0-0007Uk-CW; Tue, 21 Oct 2025 21:05:44 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vBHfx-004lj2-1M;
+	Tue, 21 Oct 2025 21:05:41 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 1A08448C708;
+	Tue, 21 Oct 2025 19:05:41 +0000 (UTC)
+Date: Tue, 21 Oct 2025 21:05:40 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol@kernel.org>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@pengutronix.de
+Subject: Re: [PATCH 0/7] can: m_can: various cleanups
+Message-ID: <20251021-friendly-onyx-capybara-10ee0e-mkl@pengutronix.de>
+References: <20251008-m_can-cleanups-v1-0-1784a18eaa84@pengutronix.de>
+ <20251017-fervent-encouraging-oxpecker-3b09d4-mkl@pengutronix.de>
+ <DDO89HU3O3J7.1OORIVD4XMXSL@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zdmuckotgjygd6zq"
+Content-Disposition: inline
+In-Reply-To: <DDO89HU3O3J7.1OORIVD4XMXSL@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Kairui Song <kasong@tencent.com>
 
-There are some problems with the code implementations of THP fallback.
-suitable_orders could be zero, and calling highest_order on a zero value
-returns an overflowed size. And the order check loop is updating the
-index value on every loop which may cause the index to be aligned by a
-larger value while the loop shrinks the order. And it forgot to try order
-0 after the final loop.
+--zdmuckotgjygd6zq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/7] can: m_can: various cleanups
+MIME-Version: 1.0
 
-This is usually fine because shmem_add_to_page_cache ensures the shmem
-mapping is still sane, but it might cause many potential issues like
-allocating random folios into the random position in the map or return
--ENOMEM by accident. This triggered some strange userspace errors [1],
-and shouldn't have happened in the first place.
+On 21.10.2025 20:56:01, Markus Schneider-Pargmann wrote:
+> On Fri Oct 17, 2025 at 4:22 PM CEST, Marc Kleine-Budde wrote:
+> > On 08.10.2025 21:07:35, Marc Kleine-Budde wrote:
+> >> While working on the m_can driver, I created several cleanups commits,=
+ make
+> >> m_can_init_ram() static, rename hrtimer function, convert debugging and
+> >> error output to netdev_(), replace open coded register write by
+> >> m_can_write(), remove not needed error messages and sanity checks and =
+don't
+> >> wake up hte controller during m_can_get_berr_counter() if the interfac=
+e is
+> >> down.
+> >>=20
+> >> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> >
+> > Applied to linux-can-next.
+> >
+> > Marc
+>=20
+> Sorry, a bit late due to vacation. The patches look good to me.
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/linux-mm/CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n4-Hqpgottedy0S6YYeUw@mail.gmail.com/ [1]
-Fixes: e7a2ab7b3bb5d ("mm: shmem: add mTHP support for anonymous shmem")
-Signed-off-by: Kairui Song <kasong@tencent.com>
----
- mm/shmem.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+Hope you all had a good vacation!
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b50ce7dbc84a..25303711f123 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1824,6 +1824,9 @@ static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault
- 	unsigned long pages;
- 	int order;
- 
-+	if (!orders)
-+		return 0;
-+
- 	if (vma) {
- 		orders = thp_vma_suitable_orders(vma, vmf->address, orders);
- 		if (!orders)
-@@ -1888,27 +1891,28 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
- 		orders = 0;
- 
--	if (orders > 0) {
--		suitable_orders = shmem_suitable_orders(inode, vmf,
--							mapping, index, orders);
-+	suitable_orders = shmem_suitable_orders(inode, vmf,
-+						mapping, index, orders);
- 
-+	if (suitable_orders) {
- 		order = highest_order(suitable_orders);
--		while (suitable_orders) {
-+		do {
- 			pages = 1UL << order;
--			index = round_down(index, pages);
--			folio = shmem_alloc_folio(gfp, order, info, index);
--			if (folio)
-+			folio = shmem_alloc_folio(gfp, order, info, round_down(index, pages));
-+			if (folio) {
-+				index = round_down(index, pages);
- 				goto allocated;
-+			}
- 
- 			if (pages == HPAGE_PMD_NR)
- 				count_vm_event(THP_FILE_FALLBACK);
- 			count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
- 			order = next_order(&suitable_orders, order);
--		}
--	} else {
--		pages = 1;
--		folio = shmem_alloc_folio(gfp, 0, info, index);
-+		} while (suitable_orders);
- 	}
-+
-+	pages = 1;
-+	folio = shmem_alloc_folio(gfp, 0, info, index);
- 	if (!folio)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.51.0
+> Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
+Thanks, it's already in net-next :)
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--zdmuckotgjygd6zq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmj32X0ACgkQDHRl3/mQ
+kZwquAf/aP3R2FIFUHH+ke8u0fmjGDwAzgyDWjN0v6Pb5iAWUbW4yBL+gPJ6Y7OU
+Nn/C5QYTXlLkQIz+xmo7JJytiYu6T15wTkXjTtkUWi4Ic4CdI8KaeX+mw3xP9qBY
+HT0b/zWJMappQXiUe8FWTVBXS6/KWaqzY8F/rKFDVZsq+kbdFf+2Qe7Qhg8lUxAp
+HuvfchYiAn4dFxHjyrA/uCSV4kvLFK5Ss2D5U+8QeSWtE35bb6h5YPeC0cUl6P4m
+R8JOioYFtrH7CqK+twY8TL9MdFaOds5WWjiXEAvx5SzccLEQyHII+1Pw6c0wuRgZ
+SekO1ajPiH/dVq+gKQW2yO2jCKW5lg==
+=hNJE
+-----END PGP SIGNATURE-----
+
+--zdmuckotgjygd6zq--
 
