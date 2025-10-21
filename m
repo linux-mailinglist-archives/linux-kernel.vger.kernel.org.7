@@ -1,117 +1,312 @@
-Return-Path: <linux-kernel+bounces-863819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E80BF92E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:07:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B608BF92EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 399EE35607B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:07:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6654F4E7154
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3622BE053;
-	Tue, 21 Oct 2025 23:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D629B20A;
+	Tue, 21 Oct 2025 23:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKxnu4tB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga0DejZF"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E2915CD74;
-	Tue, 21 Oct 2025 23:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7BA286D40
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761088068; cv=none; b=WdEFZglJ5i2rZzRaJLTVwYYb3lPmm8zbt1CPzMLMkyVmFvqGZm8Alxk4/Tu3owMGBJpwtjdp6MESe8Prndnn0RuoFr/2qicIuaN+0kbn5XMglznAOP6R4uTJ2z4VWST0KuFpBOVjpmHg8Ak8vxCHKJLsxoRcmmQsI5ruif8rn5g=
+	t=1761088087; cv=none; b=G6WOU3cEu3fr21Acn/Mr3+ADESfM7FT4jOWDoJk6xrc6SvPEf812rPW8ua7/c3ujJke8+RscKg4LFxO9pBSm+W0y4rjT6vEHsUf5trDYzFvnNNhm8K84q02NNeo/umqp8fxm88QHH+e+slVV8PmimHdiaFdUvueG9eFxxGjT8mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761088068; c=relaxed/simple;
-	bh=pyMV3cdwE0Pa3g75ct4gXzBftCoQzFcqhaO3cwgS6tU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oYyn53uYhJPm6wc2gDQGZKJw+u3GQTYpMIvWgt+Ff768HARFFwC5XMECWzlVxkkVtObMVhwTIbH4XJUMbZqWGeltoqO2gUefcNdt1MS/Dk+qfzuwT5b36HpzzdS54WXHBlA7P8eHC7i+BJ1v+iMzqvzzN71vgOFo1BcmaQAmO94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKxnu4tB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE225C4CEFF;
-	Tue, 21 Oct 2025 23:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761088067;
-	bh=pyMV3cdwE0Pa3g75ct4gXzBftCoQzFcqhaO3cwgS6tU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qKxnu4tBvDWczzaNbMvL6MgO7srWwr2R2NWK6PQ29OXfBHnL0Q75w1gb+iIh06ldb
-	 q9jnd7SL+AJc1RyM+V7OJogymmCcOo77oGK0CirceecroybbTZPjOJ9uy6W8pgiE1a
-	 zb75gBm8GMSnkXB0VvCeueLXtBgKGIf6mKuT+XyUAIT6DUV0uh4CML1VPM20QqJrm0
-	 ObBr7vdEhamOW5+93LG5opwSlhKO/b4FmQaVi0A+xhgq+enOS7/HMAgomNCYzpGU/X
-	 Ho59UWkBFqmGnAj5AwUxMpkNCOiqrOJQufLjNDMVMIqH0cO9+kYMn+iNvKTVTee/IJ
-	 CHupcw3yTd+0A==
-Date: Tue, 21 Oct 2025 16:07:45 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, "Simon
- Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Alexander Lobakin <aleksander.lobakin@intel.com>, <netdev@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mohammad Heib
- <mheib@redhat.com>, Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
- Rafal Romanowski <rafal.romanowski@intel.com>
-Subject: Re: [PATCH net-next v2 02/14] i40e: support generic devlink param
- "max_mac_per_vf"
-Message-ID: <20251021160745.7ff31970@kernel.org>
-In-Reply-To: <d39fc2bd-56bf-4c5b-99a2-398433238220@intel.com>
-References: <20251016-jk-iwl-next-2025-10-15-v2-0-ff3a390d9fc6@intel.com>
-	<20251016-jk-iwl-next-2025-10-15-v2-2-ff3a390d9fc6@intel.com>
-	<20251020182515.457ad11c@kernel.org>
-	<d39fc2bd-56bf-4c5b-99a2-398433238220@intel.com>
+	s=arc-20240116; t=1761088087; c=relaxed/simple;
+	bh=3yIkC31zTPm26HmRa1gMyTn340ExM3qt76dwCqyKOPI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c4gxHGXM6a89wLUYLmooZh5pC1xxIaCCYxrWEWHUl2vqh0V9mY6MEbnctW89jqCNgQ32wc33fX1wujYdtAWv+VSQo4AGs9gGJmUKoAIsTuzT/97Tl7vQlSFW5QftGUI8NPoOJyjEp0UPjl9oBW0cmngWOL+0r68Zioa+TRWIoOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ga0DejZF; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42706c3b7cfso2109282f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:08:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761088084; x=1761692884; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H37xO2Fy8H7/W951P5nhrd9q2BRvh9lu87ubrZUHMGY=;
+        b=ga0DejZFPxKbqQJs0juok5ivMMlsgsOoeg3nahGR1X8POzCZfdGvir1MSQjs9QdRxH
+         91BFjbhMXoG4rRpCurJ7FCs3L6srZurgLQBOT2ILMKKoqtnJKeBolaElbKc+w4vetRSa
+         asXeVmKqsznyNclgaZeQVu4VFprnnX42KCny1aPkf6uJApEYSBk5IM2jd5QALsiB/5DU
+         bphfm1VEZ3wqFxwNbjkmmwKDiqwsM0TV+mctve6O27+S8Wf5/XveApGykDZMOGvjRoid
+         /IXPyGk3yjg845eXOqXYrQipP+spqWYLiCiqIVfPAU6oMGAa24top4tKn5pBPkzGfsHv
+         LFJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761088084; x=1761692884;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H37xO2Fy8H7/W951P5nhrd9q2BRvh9lu87ubrZUHMGY=;
+        b=OrJR7ZwkKlZCLv7pE48k5sIBFCQagltYcKmbFfdok7Rg2z+32Ml7cYlBhPhkGiq7Gw
+         ddTE+Coy3cK9suNu9YZuOKLmRvlE13qqMYl4d/eVd2qWY2COTDSoKesjsOpxqTVsu+UC
+         RUka9HAkg1aCDdbfRcoSEA6NGobtmZG6bDd93LgU4ETuLok6LwVpwzB6ZhCsJJpvU2HB
+         CMqb0186D9YM3gFvm6RUDe9T5vqkz/ciWwqLT5zFzsn5O3QLkFRYcMXfjpIpolROvYSo
+         n4uBNLZ5MxCM2Vu8oEzdjHr5fOV9vdhuAivBG7iZi7AAEFzpTyXVyVIZPK5X1R8ASyJh
+         UGcw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0g14hU6g+otd0iFh8m+wlG2wPCjT7dtWVzuuOODVVYOQ44zwN84ZhEB9bZjoqA6QZjtV7/sDF5Dhyw7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpENvg34l54ItFjkIO/Mg/YmHroCJUBm4foXvvg2TxRlijkSHt
+	zRYFnMyfV0zEN+BCHKZX9lOJR2xdt2t4JvJbAesnMmCFB3R2teeU4JyHSmDo58pK8JqsxY0rtsB
+	qaqcw00WFQfUPtKO+eY+Mf+CMLnhkI4c=
+X-Gm-Gg: ASbGncuf7ZS3uX4TbL0ZI9s31MiNl7AzPSnpXF1k9KknUoCK3wAvTp0UjZS7jG5BI0u
+	vzIVaCV96pJU44YNCfAzCsiA/ybhtPd7I+WHHOG7MTCCakgo85WeOsn4x9b0FmsYJOgPsoN84ay
+	kck2d51NGY8U98LInd/HZOoKTdmbExvRAk3Br+KaePrAvTTHwf8dxW3037CNGEsXedGrjwFrtNK
+	JysTY2jLTaGV5/n4lZ80kQRYHhhsOsGfUe8wSieb3FlNU3KdkPImMbSFkL8ze+bNQHL7Qig+TOM
+	a5Ml3ZhTgu/9o1/tJXo=
+X-Google-Smtp-Source: AGHT+IEWPj2I0xxnPz4/dkJe7RhQBxRU9fyNVOntXO7PLacZpfmaJiw0Rgj9CHaIbpqxxcmt9zLxveNrifPcF4PaPoQ=
+X-Received: by 2002:a05:6000:22c6:b0:405:3028:1bf0 with SMTP id
+ ffacd0b85a97d-42704d49805mr12349472f8f.10.1761088084218; Tue, 21 Oct 2025
+ 16:08:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251009155403.1379150-1-snovitoll@gmail.com> <20251009155403.1379150-3-snovitoll@gmail.com>
+In-Reply-To: <20251009155403.1379150-3-snovitoll@gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Wed, 22 Oct 2025 01:07:52 +0200
+X-Gm-Features: AS18NWA2pgO8GYU1ySDNiDCWOQnFDbtDo8I_YJWXlOsSYh4kVXxVQK2mbQ2GsTM
+Message-ID: <CA+fCnZeqtp2jqa7YTzDSbCkhso3dAaMGSEcmVtzU+Mrobark8w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kasan: cleanup of kasan_enabled() checks
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, dvyukov@google.com, 
+	vincenzo.frascino@arm.com, akpm@linux-foundation.org, bhe@redhat.com, 
+	christophe.leroy@csgroup.eu, ritesh.list@gmail.com, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 Oct 2025 13:39:27 -0700 Jacob Keller wrote:
-> On 10/20/2025 6:25 PM, Jakub Kicinski wrote:
-> > On Thu, 16 Oct 2025 23:08:31 -0700 Jacob Keller wrote:  
-> >> - The configured value is a theoretical maximum. Hardware limits may
-> >>   still prevent additional MAC addresses from being added, even if the
-> >>   parameter allows it.  
-> > 
-> > Is "administrative policy" better than "theoretical max" ?
-> 
-> That could be a bit more accurate.
-> 
-> > Also -- should we be scanning the existing state to check if some VM
-> > hasn't violated the new setting and error or at least return a extack
-> > to the user to warn that the policy is not currently adhered to?  
-> 
-> My understanding here is that this enforces the VF to never go *above*
-> this value, but its possible some other hardware restriction (i.e. out
-> of filters) could prevent a VF from adding more filters even if the
-> value is set higher.
-> 
-> Basically, this sets the maximum allowed number of filters, but doesn't
-> guarantee that many filters are actually available, at least on X710
-> where filters are a shared resource and we do not have a good mechanism
-> to coordinate across PFs to confirm how many have been made available or
-> reserved already. (Until firmware rejects adding a filter because
-> resources are capped)
-> 
-> Thus, I don't think we need to scan to check anything here. VFs should
-> be unable to exceed this limit, and thats checked on filter add.
+On Thu, Oct 9, 2025 at 5:54=E2=80=AFPM Sabyrzhan Tasbolatov <snovitoll@gmai=
+l.com> wrote:
+>
+> Deduplication of kasan_enabled() checks which are already used by callers=
+.
+>
+> * Altered functions:
+>
+> check_page_allocation
+>         Delete the check because callers have it already in __wrappers in
+>         include/linux/kasan.h:
+>                 __kasan_kfree_large
+>                 __kasan_mempool_poison_pages
+>                 __kasan_mempool_poison_object
+>
+> kasan_populate_vmalloc, kasan_release_vmalloc
+>         Add __wrappers in include/linux/kasan.h.
+>         They are called externally in mm/vmalloc.c.
+>
+> __kasan_unpoison_vmalloc, __kasan_poison_vmalloc
+>         Delete checks because there're already kasan_enabled() checks
+>         in respective __wrappers in include/linux/kasan.h.
+>
+> release_free_meta -- Delete the check because the higher caller path
+>         has it already. See the stack trace:
+>
+>         __kasan_slab_free -- has the check already
+>         __kasan_mempool_poison_object -- has the check already
+>                 poison_slab_object
+>                         kasan_save_free_info
+>                                 release_free_meta
+>                                         kasan_enabled() -- Delete here
+>
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> ---
+>  include/linux/kasan.h | 20 ++++++++++++++++++--
+>  mm/kasan/common.c     |  3 ---
+>  mm/kasan/generic.c    |  3 ---
+>  mm/kasan/shadow.c     | 20 ++++----------------
+>  4 files changed, 22 insertions(+), 24 deletions(-)
+>
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index d12e1a5f5a9..f335c1d7b61 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -571,11 +571,27 @@ static inline void kasan_init_hw_tags(void) { }
+>  #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
+>
+>  void kasan_populate_early_vm_area_shadow(void *start, unsigned long size=
+);
+> -int kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t=
+ gfp_mask);
+> -void kasan_release_vmalloc(unsigned long start, unsigned long end,
+> +int __kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp=
+_t gfp_mask);
+> +static inline int kasan_populate_vmalloc(unsigned long addr,
+> +                                        unsigned long size, gfp_t gfp_ma=
+sk)
+> +{
+> +       if (kasan_enabled())
+> +               return __kasan_populate_vmalloc(addr, size, gfp_mask);
+> +       return 0;
+> +}
+> +void __kasan_release_vmalloc(unsigned long start, unsigned long end,
+>                            unsigned long free_region_start,
+>                            unsigned long free_region_end,
+>                            unsigned long flags);
+> +static inline void kasan_release_vmalloc(unsigned long start, unsigned l=
+ong end,
+> +                          unsigned long free_region_start,
+> +                          unsigned long free_region_end,
+> +                          unsigned long flags)
+> +{
+> +       if (kasan_enabled())
+> +               return __kasan_release_vmalloc(start, end, free_region_st=
+art,
+> +                                        free_region_end, flags);
+> +}
+>
+>  #else /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
+>
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index d4c14359fea..22e5d67ff06 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -305,9 +305,6 @@ bool __kasan_slab_free(struct kmem_cache *cache, void=
+ *object, bool init,
+>
+>  static inline bool check_page_allocation(void *ptr, unsigned long ip)
+>  {
+> -       if (!kasan_enabled())
+> -               return false;
+> -
+>         if (ptr !=3D page_address(virt_to_head_page(ptr))) {
+>                 kasan_report_invalid_free(ptr, ip, KASAN_REPORT_INVALID_F=
+REE);
+>                 return true;
+> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> index 516b49accc4..2b8e73f5f6a 100644
+> --- a/mm/kasan/generic.c
+> +++ b/mm/kasan/generic.c
+> @@ -506,9 +506,6 @@ static void release_alloc_meta(struct kasan_alloc_met=
+a *meta)
+>
+>  static void release_free_meta(const void *object, struct kasan_free_meta=
+ *meta)
+>  {
+> -       if (!kasan_enabled())
+> -               return;
+> -
+>         /* Check if free meta is valid. */
+>         if (*(u8 *)kasan_mem_to_shadow(object) !=3D KASAN_SLAB_FREE_META)
+>                 return;
+> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+> index 5d2a876035d..cf842b620a2 100644
+> --- a/mm/kasan/shadow.c
+> +++ b/mm/kasan/shadow.c
+> @@ -354,7 +354,7 @@ static int ___alloc_pages_bulk(struct page **pages, i=
+nt nr_pages, gfp_t gfp_mask
+>         return 0;
+>  }
+>
+> -static int __kasan_populate_vmalloc(unsigned long start, unsigned long e=
+nd, gfp_t gfp_mask)
+> +static int __kasan_populate_vmalloc_do(unsigned long start, unsigned lon=
+g end, gfp_t gfp_mask)
+>  {
+>         unsigned long nr_pages, nr_total =3D PFN_UP(end - start);
+>         struct vmalloc_populate_data data;
+> @@ -403,14 +403,11 @@ static int __kasan_populate_vmalloc(unsigned long s=
+tart, unsigned long end, gfp_
+>         return ret;
+>  }
+>
+> -int kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t=
+ gfp_mask)
+> +int __kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp=
+_t gfp_mask)
+>  {
+>         unsigned long shadow_start, shadow_end;
+>         int ret;
+>
+> -       if (!kasan_enabled())
+> -               return 0;
+> -
+>         if (!is_vmalloc_or_module_addr((void *)addr))
+>                 return 0;
+>
+> @@ -432,7 +429,7 @@ int kasan_populate_vmalloc(unsigned long addr, unsign=
+ed long size, gfp_t gfp_mas
+>         shadow_start =3D PAGE_ALIGN_DOWN(shadow_start);
+>         shadow_end =3D PAGE_ALIGN(shadow_end);
+>
+> -       ret =3D __kasan_populate_vmalloc(shadow_start, shadow_end, gfp_ma=
+sk);
+> +       ret =3D __kasan_populate_vmalloc_do(shadow_start, shadow_end, gfp=
+_mask);
+>         if (ret)
+>                 return ret;
+>
+> @@ -574,7 +571,7 @@ static int kasan_depopulate_vmalloc_pte(pte_t *ptep, =
+unsigned long addr,
+>   * pages entirely covered by the free region, we will not run in to any
+>   * trouble - any simultaneous allocations will be for disjoint regions.
+>   */
+> -void kasan_release_vmalloc(unsigned long start, unsigned long end,
+> +void __kasan_release_vmalloc(unsigned long start, unsigned long end,
+>                            unsigned long free_region_start,
+>                            unsigned long free_region_end,
+>                            unsigned long flags)
+> @@ -583,9 +580,6 @@ void kasan_release_vmalloc(unsigned long start, unsig=
+ned long end,
+>         unsigned long region_start, region_end;
+>         unsigned long size;
+>
+> -       if (!kasan_enabled())
+> -               return;
+> -
+>         region_start =3D ALIGN(start, KASAN_MEMORY_PER_SHADOW_PAGE);
+>         region_end =3D ALIGN_DOWN(end, KASAN_MEMORY_PER_SHADOW_PAGE);
+>
+> @@ -634,9 +628,6 @@ void *__kasan_unpoison_vmalloc(const void *start, uns=
+igned long size,
+>          * with setting memory tags, so the KASAN_VMALLOC_INIT flag is ig=
+nored.
+>          */
+>
+> -       if (!kasan_enabled())
+> -               return (void *)start;
+> -
+>         if (!is_vmalloc_or_module_addr(start))
+>                 return (void *)start;
+>
+> @@ -659,9 +650,6 @@ void *__kasan_unpoison_vmalloc(const void *start, uns=
+igned long size,
+>   */
+>  void __kasan_poison_vmalloc(const void *start, unsigned long size)
+>  {
+> -       if (!kasan_enabled())
+> -               return;
+> -
+>         if (!is_vmalloc_or_module_addr(start))
+>                 return;
+>
+> --
+> 2.34.1
+>
 
-Sorry, just to be clear -- this comment is independent on the comment
-about "policy" vs "theoretical".
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
 
-What if:
- - max is set to 4
- - VF 1 adds 4 filters
- - (some time later) user asks to decrease max to 2
+Awesome, thank you!
 
-The devlink param is CMODE_RUNTIME so I'm assuming it can be tweaked 
-at any point in time.
+I believe the check in kasan_byte_accessible() can be just removed as
+well? If you do, please run the tests to be sure.
 
-We probably don't want to prevent lowering the max as admin has no way
-to flush the filters. Either we don't let the knob be turned when SRIOV
-is enabled or we should warn if some VF has more filters than the new
-max?
+As for the other three (check_inline_region(), kasan_poison(), and
+kasan_poison_last_granule()) - perhaps, we can leave them be.
+Otherwise, we would need to duplicate the kasan_enabled() checks in a
+lot of compiler-inserted functions.
 
