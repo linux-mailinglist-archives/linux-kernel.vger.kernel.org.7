@@ -1,168 +1,158 @@
-Return-Path: <linux-kernel+bounces-863253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D273BBF767E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:35:12 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B54BF7624
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 842E950710C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:31:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E88D2355E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2F343D6E;
-	Tue, 21 Oct 2025 15:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABC4345CA4;
+	Tue, 21 Oct 2025 15:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmuHWM1d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="illozJEc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zDZnIRCs"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB3D342C81
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F118F40;
+	Tue, 21 Oct 2025 15:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761060485; cv=none; b=hfFgySEkWcdAxskr6SkHWGb8Bhb5vX+GGunYh9ul5GSNnugQVyvRC4JiGMJrlrTQggOsuq802VvELE7xpmYYktDcCipLqKmJfbkZvUvRqTnC00Ru+H4/pnUGJbEsMtDYY+eVpd400jy0yEsbLa7zfa2WzQmCuRe5STLR/WgWZeU=
+	t=1761060517; cv=none; b=dzOlHhSuXk6QR33YXLFuSfA1ATgXeXjpQbWJayISvduh2B+z4/WmNr9r9quQXbbZRnv16Cf/GRAj8qC8h9I7kSGeYyE5zyQlMtvmt4Ja7XThL1Fq1rlQqCY6usIrPCqHgJpuP5WqRnt8BYvQhubV0M22PDS089wR7e0Hyc7m9JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761060485; c=relaxed/simple;
-	bh=WMbjQNf+/6fBiKLcm2bw8S34Kgq52o5ZMkrYeVMZGuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j0hTUnySldfWgewxc2CV1FVuNBT9NlGhsHtNZYHcc8fBQsQsqshcZyIr022K1pohVAW4DfWD156EqcYC6NlJHG0kOSSMsJE4niRSn0GLpG1gGF+8R5EMn+InvAdUZxiIVlcob+j8BGfojv97d3doeNkMi+ThKO356HDku5RFILs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmuHWM1d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0831BC19423
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761060485;
-	bh=WMbjQNf+/6fBiKLcm2bw8S34Kgq52o5ZMkrYeVMZGuE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HmuHWM1dCEMkQEuNjQv0XBBPq6oZ2G3mrQ+kjKzsLZyVNkVghb85j9HKAkAV4juMe
-	 Ho8u+SFRQfAOiM7ZZMhfvby7fH7oCb752Ao37hwmuZuCUItwt49qVAq/gyxAlg4QAh
-	 m+g8tkEK4KtxcQbJ4I/ZH8xVdimW6byRuvnLsAiin/r6F/ODnWKvl4az3Mm86iVmjZ
-	 qKfHn/FKVbDkX2Uheh1wFOUkZ+WY4DJBYJdC7jFGQj64s3rBHuC5G/RWr19JhOPmyb
-	 Vtb4KcS0MMkNxaybqMLncMbIRlzp/PDC9c9DLlu97TXS23tWuICJQmccrgfB1nCEfr
-	 XryhxEP3J/BQw==
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4711f156326so44290475e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:28:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5ftS6nLlRt2J1PiqKUO1r72yIHqskGy9Exr8YwQM0lYd9998Aarvpjm+yeK3d+nKigRcMeaTe5K6ZKAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhrngikN85ocaYGqiuBpT7FtBW1Yoyu7auQ5j23LmmeKHhJf0S
-	A1Fh+o96rsnywSRh4E3F5UmOKeniv3fFgZXcqNdrzBykAzaXpQtBJaGtLesMlHDeoz8oJWnpccO
-	aVW8SUl2JwLESRai/msboKyTPtocckTA=
-X-Google-Smtp-Source: AGHT+IHRoCdSFqTwXlcQgKf1IBsD/W3re0yM+Mwfei0lXknc2hlfjdQNBmIPRhDMhPEHa/Lq+5tmuCu1/kOCqlcbuEE=
-X-Received: by 2002:a05:600c:870e:b0:46e:37a7:48d1 with SMTP id
- 5b1f17b1804b1-4711791f94dmr163749325e9.34.1761060483386; Tue, 21 Oct 2025
- 08:28:03 -0700 (PDT)
+	s=arc-20240116; t=1761060517; c=relaxed/simple;
+	bh=U49MvGVLzCqO4hQorwFLQBzFnxw3haJO6lOXYCje+Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ACrOggPGOCosOVXKqBmwPvtUdHaY8fGjYTJdu72Zyv0AnFeBqsU9WBD7+Ex9oznceuynsxzF76f2yRt3RKfQ+q5NbN6zy5kDUsamGUL+SIgSHhjeFIXR8tpmpFukdGOyL8VkyiMlREScstr/iJD1xBior1AzLBWbUPdTINuA6X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=illozJEc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zDZnIRCs; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 678BE7A00F6;
+	Tue, 21 Oct 2025 11:28:33 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Tue, 21 Oct 2025 11:28:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1761060513; x=
+	1761146913; bh=RsSUkrCMKOIZxBieiWhZiSAasxCCl0dZ3IycAPFI1Z8=; b=i
+	llozJEcDwTEnTUNBLxxSbL1ju1AXDFkwFINDkDMWCBSN3cQsCrUY0xMqldTjyXbk
+	mb9EU5kmUtbGKe8x7WUtHPvWWJffwERZBQD10EYu203QoMLjEZ0ft52k3URqoAVD
+	4QWlsWgFeSd4GL3Y8nXKJH2JS7g1MRGXbaF71wpUxPr15WMSnI5imFrRFpLL7bEQ
+	hT1Qx+BI7MzU+T0HlkztqLL0VBbQW5xx5cl5VXkuSMSGBhXR4pGpDfb1DkZaEc3d
+	tnYLOPj2q4dxabsreQBW0WO896QuXm+fzUaw6VUerUSzTlXpFINztKf4pWMN8r8p
+	uixCkNbwoHih4MRY2oZkA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761060513; x=1761146913; bh=RsSUkrCMKOIZxBieiWhZiSAasxCCl0dZ3Iy
+	cAPFI1Z8=; b=zDZnIRCsLrpj8ykWp5MruUFvf3HmG6nJy+rqSYJGpubpU7w4vyz
+	KyI+bBDWx7BmteyeGwO4ZyfxrkZ1qXBGenGJyPJKU7MYEke1LGBYnMOHWpQHZWEY
+	aQA7XJPoCZSm5pOZAPRGbJ5IzVoRa25HKmLT0J4uxjiuRwZ/htBTzVVV4tsbjTQ2
+	+FsS1K176ynrE2kqlF3i2i1W+vZ7D6cO0e8BDBQfEvInuV7vIDyS0yvdpVFWI8Pi
+	5wPRaGWsqDKZBB9eXmpcFLqTilbAIAHTtmM/mqKH6TEvCgXMcn9fm+rSG+PN03t6
+	E1SNmtyrtJNcoHTVz9UCzW+dCHY9poEqE1A==
+X-ME-Sender: <xms:oKb3aEo5xXABWs-iE0--njefAg-uXIOKF2pu0xHSGVkDPqcapFKDOw>
+    <xme:oKb3aKEEEU1dO_gCJtJfwteF0iM6emprr2phWf1W0Vsvjfme8yYD4HDOPW_haPVBu
+    9hIFIJZ9S8S_s8cMlYM0tHZg0hl5iZlvWxCfI6hucKnbc30dvBZxUA>
+X-ME-Received: <xmr:oKb3aKSj_pDb_MxuG7PXdoVURPvzKUZ3ztVguQ2o7W14AYBDlPnpisnIFxFe>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedutdeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
+    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeduhedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepthgrrhhiqhhtsehnvhhiughirgdrtghomh
+    dprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohep
+    khhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrg
+    htrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdp
+    rhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepsh
+    grvggvughmsehnvhhiughirgdrtghomhdprhgtphhtthhopehlvghonheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepmhgslhhotghhsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:oKb3aAN4S8qGvgOjOjb0k6yxZQelzEGCPd2UrZh2WKG8nN7fZ7i71w>
+    <xmx:oKb3aHk7nI2ULWYKx2-5v7GPRvrYjeTqlCxwSOz3wN8n_PCHmNeinA>
+    <xmx:oKb3aCbYEcENiDKWuZ0jL08Z3ruuT23N8OraPXUDJcpemp8KizMKkQ>
+    <xmx:oKb3aNQ2fo5pV4tLQD5rKPm9iVxvLxa4YT4kqykVtJsshJPYxJ8mPw>
+    <xmx:oab3aAOR1ilAtzKsOP-KQ7oavNqnP634HWbezqw5opN9CUkSbGs1jOgP>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 11:28:32 -0400 (EDT)
+Date: Tue, 21 Oct 2025 17:28:30 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>,
+	Shahar Shitrit <shshitrit@nvidia.com>
+Subject: Re: [PATCH net V2 2/3] net: tls: Cancel RX async resync request on
+ rdc_delta overflow
+Message-ID: <aPemno8TB-McfE24@krikkit>
+References: <1760943954-909301-1-git-send-email-tariqt@nvidia.com>
+ <1760943954-909301-3-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020130801.68356-1-fangyu.yu@linux.alibaba.com>
-In-Reply-To: <20251020130801.68356-1-fangyu.yu@linux.alibaba.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Tue, 21 Oct 2025 08:27:50 -0700
-X-Gmail-Original-Message-ID: <CAJF2gTRwHJsA7jFvAXbqy-6LyfaVTqfsFXgHfAeOZ8M3JNsikg@mail.gmail.com>
-X-Gm-Features: AS18NWAxsjIpybjWNUteC13IenF-VTwNuRsft_RJ2w2vZiotn8Q2h6SsETn4OI4
-Message-ID: <CAJF2gTRwHJsA7jFvAXbqy-6LyfaVTqfsFXgHfAeOZ8M3JNsikg@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: KVM: Remove automatic I/O mapping for VM_PFNMAP
-To: fangyu.yu@linux.alibaba.com
-Cc: anup@brainfault.org, atish.patra@linux.dev, pjw@kernel.org, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, pbonzini@redhat.com, 
-	jiangyifei@huawei.com, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, jgg@nvidia.com, 
-	alex.williamson@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1760943954-909301-3-git-send-email-tariqt@nvidia.com>
 
-On Mon, Oct 20, 2025 at 6:08=E2=80=AFAM <fangyu.yu@linux.alibaba.com> wrote=
-:
->
-> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->
-> As of commit aac6db75a9fc ("vfio/pci: Use unmap_mapping_range()"),
-> vm_pgoff may no longer guaranteed to hold the PFN for VM_PFNMAP
-> regions. Using vma->vm_pgoff to derive the HPA here may therefore
-> produce incorrect mappings.
->
-> Instead, I/O mappings for such regions can be established on-demand
-> during g-stage page faults, making the upfront ioremap in this path
-> is unnecessary.
->
-> Fixes: 9d05c1fee837 ("RISC-V: KVM: Implement stage2 page table programmin=
-g")
-The Fixes tag should be 'commit aac6db75a9fc ("vfio/pci: Use
-unmap_mapping_range()")'.
-
-A stable tree necessitates minimizing the "Fixes tag" interference.
-
-We also need to
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-For review.
-
-> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
-> ---
->  arch/riscv/kvm/mmu.c | 20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
->
-> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> index 525fb5a330c0..84c04c8f0892 100644
-> --- a/arch/riscv/kvm/mmu.c
-> +++ b/arch/riscv/kvm/mmu.c
-> @@ -197,8 +197,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
->
->         /*
->          * A memory region could potentially cover multiple VMAs, and
-> -        * any holes between them, so iterate over all of them to find
-> -        * out if we can map any of them right now.
-> +        * any holes between them, so iterate over all of them.
->          *
->          *     +--------------------------------------------+
->          * +---------------+----------------+   +----------------+
-> @@ -229,32 +228,15 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
->                 vm_end =3D min(reg_end, vma->vm_end);
->
->                 if (vma->vm_flags & VM_PFNMAP) {
-> -                       gpa_t gpa =3D base_gpa + (vm_start - hva);
-> -                       phys_addr_t pa;
-> -
-> -                       pa =3D (phys_addr_t)vma->vm_pgoff << PAGE_SHIFT;
-> -                       pa +=3D vm_start - vma->vm_start;
-> -
->                         /* IO region dirty page logging not allowed */
->                         if (new->flags & KVM_MEM_LOG_DIRTY_PAGES) {
->                                 ret =3D -EINVAL;
->                                 goto out;
->                         }
-> -
-> -                       ret =3D kvm_riscv_mmu_ioremap(kvm, gpa, pa, vm_en=
-d - vm_start,
-> -                                                   writable, false);
-> -                       if (ret)
-> -                               break;
-Defering the ioremap to the g-stage page fault looks good to me, as it
-simplifies the implementation here.
-
-Acked-by: Guo Ren <guoren@kernel.org>
-
->                 }
->                 hva =3D vm_end;
->         } while (hva < reg_end);
->
-> -       if (change =3D=3D KVM_MR_FLAGS_ONLY)
-> -               goto out;
-> -
-> -       if (ret)
-> -               kvm_riscv_mmu_iounmap(kvm, base_gpa, size);
-> -
->  out:
->         mmap_read_unlock(current->mm);
->         return ret;
-> --
-> 2.50.1
->
+nit if you end up respinning, there's a typo in the subject:
+s/rdc_delta/rcd_delta/
 
 
---=20
-Best Regards
- Guo Ren
+2025-10-20, 10:05:53 +0300, Tariq Toukan wrote:
+> From: Shahar Shitrit <shshitrit@nvidia.com>
+> 
+> When a netdev issues a RX async resync request for a TLS connection,
+> the TLS module handles it by logging record headers and attempting to
+> match them to the tcp_sn provided by the device. If a match is found,
+> the TLS module approves the tcp_sn for resynchronization.
+> 
+> While waiting for a device response, the TLS module also increments
+> rcd_delta each time a new TLS record is received, tracking the distance
+> from the original resync request.
+> 
+> However, if the device response is delayed or fails (e.g due to
+> unstable connection and device getting out of tracking, hardware
+> errors, resource exhaustion etc.), the TLS module keeps logging and
+> incrementing, which can lead to a WARN() when rcd_delta exceeds the
+> threshold.
+> 
+> To address this, introduce tls_offload_rx_resync_async_request_cancel()
+> to explicitly cancel resync requests when a device response failure is
+> detected. Call this helper also as a final safeguard when rcd_delta
+> crosses its threshold, as reaching this point implies that earlier
+> cancellation did not occur.
+> 
+> Fixes: 138559b9f99d ("net/tls: Fix wrong record sn in async mode of device resync")
+
+The patch itself looks good, but what issue is fixed within this
+patch? The helper will be useful in the next patch, but right now
+we're only resetting the resync_async status. The only change I see
+(without patch 3) is that we won't call tls_device_rx_resync_async()
+next time we decrypt a record in SW, but it wouldn't have done
+anything.
+
+Actually, also in patch 1/3, there is no "fix" is in that patch.
+
+-- 
+Sabrina
 
