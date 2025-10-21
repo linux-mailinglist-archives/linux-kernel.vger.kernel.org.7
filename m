@@ -1,181 +1,500 @@
-Return-Path: <linux-kernel+bounces-863309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFF2BF7837
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A13E6BF783D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3177A1884EA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D7A18858DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00BF3431ED;
-	Tue, 21 Oct 2025 15:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970BF343207;
+	Tue, 21 Oct 2025 15:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GqVcjBgv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jqr731hy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B992315A86D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE5F337B8C;
+	Tue, 21 Oct 2025 15:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062096; cv=none; b=NM/SVQ+hWOG/+WZTf9Yd7xcUoJUvOcqSwe/0zdSDPPdeba/Qv+JHHpzAlEHVtQrKcFvS1hCVGRFnWvp533PE3QN9W2Ntd7Qalvfa3WBaVKqQnFiKLwzmUSvWPeiX/O5/a4tAyVEVjVL3qUIYPmBB9bCqGN9rep6miTWEZMWEN6c=
+	t=1761062106; cv=none; b=lA5CoVouzJDzxFTQ9LwtI+KZ5qveh7MjSal9llDzGUCCDPS//xj+AEliXtMVC6fCnlqfRzHTfFvLCQU1HshhqCI42aT0MxVoMvqWVGJwsYfTzar+gROGbqGXCOH8FRSqrpj/0N089/OHbIa3RI15nO8UvTmkej3u5nm52x30CC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062096; c=relaxed/simple;
-	bh=R+/Y3cKidgg8Pz09BG0nl39J+/VNa967FE5tqC4qY84=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ChzQcoXztcQZZSQflOXYvXMxT2u7wwxzMObjbLAVG4Tk2/x7dk7ObPovPkk/Tce3KBEKG8QuhrTZZS2QjRr4ZrPa2VzAMZ1sk+7vLIHEHUr5dZCH80kcC28M/1eC2SSSh6VGOlGSkAk76gV2YBlYyRc9DjCKPpz7MDdkOGnU2jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GqVcjBgv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761062093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KICcCCzwh6CAD3LYQzTxrECTgISFOrla0fpaF0z/dPc=;
-	b=GqVcjBgv55hvdRr4KgImlXHo3nutQZWV8LODiVb/vfvEefNP4ZBTS3WtJBnOgx8HJG4xnD
-	GE+qBZCZjdB8kfMLf3OxkmBJ/VPUPIgtMZMAa2lsvyrL6/OJld8Sze+2WLN/5HH3DpQsJq
-	6P7xNAtdpf+CAXruiug8BWGFWqZn8sk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-634-Smdiry0WPrOgudLd3IfPUQ-1; Tue, 21 Oct 2025 11:54:52 -0400
-X-MC-Unique: Smdiry0WPrOgudLd3IfPUQ-1
-X-Mimecast-MFC-AGG-ID: Smdiry0WPrOgudLd3IfPUQ_1761062091
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46eee58d405so28450415e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:54:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761062091; x=1761666891;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KICcCCzwh6CAD3LYQzTxrECTgISFOrla0fpaF0z/dPc=;
-        b=dRWi7x8ujHS3864pzstiC0V4nsnY2P8fMfE2D/yR6u5Mz9ObZRGRG2xHzRFbDxgZyw
-         F+17hxwBBL71gS87ArJhzWSvUaOa3A4n6LHcmYlJLrIb+yV/dkNiJBmhRZQycg0Ar3HB
-         9hNsUutWL3jM75sctlDr+Twg9XIbao2uqRo50pixHdTPoSkFe4+Sq+FlcelUsP+x3HmG
-         6uV4fyHndjA+mFTjfn2sTdIrduzcXghG5A7ILgYNZDdW6Sz303AIYSEs4yjDtTcEcgYo
-         3lUQUKWmCXl/HlQN/M+MOWS56Fa7Tvi+pSVkic9ucosP4B0WroCqfz65elnRIKRUwji1
-         VkoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0/d2dlQXXMETAP8loa7Vx90FWpBEPMVMqgkH3GsNKnwTNDFGoDhRZRymb3ajBU29a7at9ZY00ncAaL2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDzWZ1XEeVXorduEtN0xICMNX4hWNexDnLh/lpJHwirLOTy16m
-	j/ADR61oPuiNwuwMVswMVXfoPAVrlKzRdpuLuaEQqivS7ww+qKEANNjUoaqtemX+xvCcBNHMKhI
-	41T2TcBKFBrRCsyrV6h1GIs7DQymjqVVNeb4T9k6bxanfx6qTRdksMwTecfTyce2GUQ==
-X-Gm-Gg: ASbGncvtBhT3onLnZs/agWqcx3lwXWDqXH2Gs9pkmvd/2qCQ+iSbJe9tQ12ZZWG/7S/
-	Pw/IrHRmg4cX7a4X+b3Vr3dYn/ZFV3/6iZDNYRtTOzM29ld6VpNHh8FTJJ+lGIzVy/dEjmRhwTX
-	sKmVE1VDGGsZoTk9qR9Q/X7HNPFdj2/jkHy0mJgYBlEO4F6UKWMhbSmxkWRYLhEL0VDCofqOF2i
-	aCcoTJhBGUoTmYZi116StlHwVGK5ZPgWm1WArDU3+LmxReb4LFQclKp2qSVsv4YmxdQf9KOW6PL
-	XQzlE9cLFFyPS5dnHbKS6eJ6WWftgpuuFa8uQEsFBDYTsK5YYUzFnxKR/VxpVgwC7QPwhepHpRU
-	1ekJvTz33koqbbK8j0Z5N+j/0
-X-Received: by 2002:a05:600c:64cf:b0:46e:3b81:c3f9 with SMTP id 5b1f17b1804b1-471178a80f7mr121691135e9.17.1761062090903;
-        Tue, 21 Oct 2025 08:54:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8lxM/JFIrZe0gCiI3+DDDOAAYMMzRvDvH3Q6BMXVzzLrqfeZc4/96Yrfb6Kg7hAmNU9XU/w==
-X-Received: by 2002:a05:600c:64cf:b0:46e:3b81:c3f9 with SMTP id 5b1f17b1804b1-471178a80f7mr121690965e9.17.1761062090495;
-        Tue, 21 Oct 2025 08:54:50 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496d4b923sm18092205e9.14.2025.10.21.08.54.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 08:54:50 -0700 (PDT)
-Message-ID: <866f10440f9edde8acd34e5a5d2965719ae5d723.camel@redhat.com>
-Subject: Re: [PATCH v2 18/20] rv: Add support for per-object monitors in
- DA/HA
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, Steven
- Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
- Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Date: Tue, 21 Oct 2025 17:54:48 +0200
-In-Reply-To: <87plag1nb6.fsf@yellow.woof>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
-	 <20250919140954.104920-19-gmonaco@redhat.com> <87plag1nb6.fsf@yellow.woof>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
- cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
- T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
- eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
- 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761062106; c=relaxed/simple;
+	bh=ilZDTLVRiQkmqHDkZ6wa4NbJWRwpFkMow3QEv0pJSzk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A8PW19thYEfAct6yz4/YnWhUxaoT/nIScWPEmcERvrNkZJQdbu6iFvdGnqJbjQahhtQ1PzFce+UQaykK67FBZcKSayTCzl+DI1wUuj5smgIXMYj1i0Qv0bZps2J8FYj/OGpsH5Tpx+A3LZXSM9JCsC+F0EFHaeoDlAY0N4aFNoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jqr731hy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0B9C4CEF1;
+	Tue, 21 Oct 2025 15:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761062106;
+	bh=ilZDTLVRiQkmqHDkZ6wa4NbJWRwpFkMow3QEv0pJSzk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Jqr731hyVBMaVNe0psNMusceKDIQ4eueHHYLenYogb8TFkt45aZ2iq96fVpkR74fs
+	 AIjwpbQXMHhi+TJvcxOhN8DzjhlN6/spIalZ0sFF3M6ZakOPz3Bi2khObD8e0T6h7/
+	 DPD0Gi+QPL6btrN2vwLNR1HsDNXAlIpl3dBnoLwnIXzQE1iMtEUe/Jd6PN2EYmyalT
+	 1yrE65K/a5CW36WJM0FEa7wZV1rUDME6WzUpYOgUxkJsJsMkDzkDZfcMXAkans72M4
+	 bvxfXrfvO/myT1ZprNoVmN7G0wJp9FEJv+rk2PvzT2M17bnwVygiZpLRsJJmOnzUxW
+	 F0D1eRkOunkpg==
+From: Vincent Mailhol <mailhol@kernel.org>
+Date: Tue, 21 Oct 2025 17:54:54 +0200
+Subject: [PATCH v2] can: add dummy_can driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251021-dummy_can-v2-1-307f5927b8b6@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAM2s92gC/22PwW6DMBBEfwX53I3WxoXCqf9RRcg2S2IFm9QYK
+ 1HEv9fAoT30OLs7b2debKZgaWZt8WKBkp3t5LMQbwUzV+UvBLbPmgkU7xx5Cf3i3LMzyoNoVIM
+ oalRqYPn+Hmiwj531dT50oO8lI+Mx/CXmBzsPSwjkpkSQgd2x7lxcgJCMNKgHIt0mzv7G2c2SC
+ 9FsrscInuJo/Q20qSSqgWNVl20Sm0mrObMn52xsi1Sd+AcEI9gW72rnOIXn3jx/2PL9UzJx4DA
+ 0tZCkG+y1/LxR8DSepnBh53VdfwD2KQ/3QgEAAA==
+X-Change-ID: 20251013-dummy_can-29a900270aaf
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Vincent Mailhol <mailhol@kernel.org>, 
+ =?utf-8?q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>, 
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>, 
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13273; i=mailhol@kernel.org;
+ h=from:subject:message-id; bh=ilZDTLVRiQkmqHDkZ6wa4NbJWRwpFkMow3QEv0pJSzk=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDBnf11xJ+7ygv9PRuuvBjn1tbq5OkZrd8imXV6k8W+zON
+ nvGukT2jlIWBjEuBlkxRZZl5ZzcCh2F3mGH/lrCzGFlAhnCwMUpABPhvsbIcLE+YPrXw6t2b9pb
+ 8OzsvqeWmssnNXzcEmXA9dDwSP+nnZ8YGXrSvx7ZYHdI2M/q/+vvXxIneG289NGCS7bZ4VOWy+L
+ 8PCYA
+X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 
-On Tue, 2025-10-21 at 13:55 +0200, Nam Cao wrote:
-> Gabriele Monaco <gmonaco@redhat.com> writes:
-> > +static inline struct da_monitor *da_create_storage(da_id_type id,
-> > +						=C2=A0=C2=A0 monitor_target target,
-> > +						=C2=A0=C2=A0 struct da_monitor
-> > *da_mon,
-> > +						=C2=A0=C2=A0 gfp_t flags)
-> > +{
-> > +	struct da_monitor_storage *mon_storage;
-> > +
-> > +	if (da_mon)
-> > +		return da_mon;
->=20
-> I think this 'if' should be moved to da_create_conditional() instead,
-> because the "conditional" part should be implemented in the function
-> whose name includes "conditional". I think that would make the code
-> easier to follow, because one would already have a good guess what the
-> function does without looking into the details.
+During the development of CAN XL, we found the need of creating a
+dummy CAN XL driver in order to test the new netlink interface. While
+this code was initially intended to be some throwaway, it received
+some positive feedback.
 
-I get this is confusing and poorly documented, also the _conditional functi=
-on is
-not more conditional than the other, so I'd really need to rethink the name=
- (if
-it really needs to stay).
+Add the dummy_can driver. This driver acts similarly to the vcan
+interface in the sense that it will echo back any packet it receives.
+The difference is that it exposes a set on bittiming parameters as a
+real device would and thus must be configured as if it was a real
+physical interface.
 
-The main purpose of the functions under da_monitor_start_hook is to return =
-a
-(possibly new) storage, it's perfectly possible, even likely, that the da_m=
-on is
-not null, in such case we don't do any further allocation.
+The driver comes with a debug mode. If debug message are enabled (for
+example by enabling CONFIG_CAN_DEBUG_DEVICES), it will print in the
+kernel log all the bittiming values, similar to what a:
 
-Ignoring the vagueness of the name, the two implementations of this hook ar=
-e to
-call an allocation (yes, always conditionally) or just assign the target to=
- a
-pre-allocated storage.
-Your suggestion of da_monitor_prepare_storage might fit both descriptions.
+  ip --details link show can0
 
-In fact, having something like kmalloc_nolock (if it works as I expect it w=
-ould)
-might save this gymnastics as we may not even care about pre-allocating, I'=
-m
-going to try it out and perhaps re-think this entire mess.
+would do.
 
-> > +static inline bool da_handle_start_event(da_id_type id, monitor_target
-> > target,
-> > +					 enum events event)
-> > +{
-> > +	struct da_monitor *da_mon;
-> > +
-> > +	if (!da_monitor_enabled())
-> > +		return 0;
-> > +	guard(rcu)();
-> > +	da_mon =3D da_get_monitor(id, target);
-> > +	da_mon =3D da_monitor_start_hook(id, target, da_mon);
->=20
-> Do you plan this da_monitor_start_hook() macro to do anything other than
-> storage preparation? If not, perhaps it is better to name it
-> da_monitor_prepare_storage() or something like that, so that this is
-> easier to follow.
+This driver is mostly intended for debugging and testing, but some
+developers also may want to look at it as a simple reference
+implementation.
 
-That's a good point, this appears already only in per-object code, the gene=
-ral
-name is really just pointless.
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+---
+Initially, I did not intend this to be merged. Oliver suggested that
+this may still be mainlined under a different name (e.g. can_nltest):
 
-Thanks,
-Gabriele
+  https://lore.kernel.org/linux-can/ea52eb8f-c59d-445a-bf4d-26f2772f7426@hartkopp.net/
+
+Looking at what the net tree did, I saw the drivers/net/dummy.c driver
+and decided to mimic this as much as feasible.
+
+Despite not being convinced by my own driver at the beginning, over
+time, I tend to find this more useful than initially anticipated. So
+after a bit of clean-up, I am resubmitting, this time to make it
+mainstream. I will let you guys decide if you want to merge this.
+
+Meanwhile, please use this for your CAN XL testing!
+---
+Changes in v2:
+
+  - Move the debug message code out of dummy_can_netdev_open() into a
+    new function: dummy_can_print_bittiming_info().
+
+Link to v1: https://lore.kernel.org/r/20251013-dummy_can-v1-1-f9724eb90db4@kernel.org
+
+Change in v1:
+
+  - This was initially part of the CAN XL RFC. Cherry-pick it and make
+    it a stand-alone patch.
+
+  - Renamed from dummyxl to dummy_can.
+
+  - Add PMW.
+
+  - The driver is now silent by default. Enable debug mode to show all
+    the bittimming information.
+
+  - Any frames it receives are now looped-back.
+
+  - Miscellaneous changes in the code (add PMW, refactor…)
+
+  - Add a proper Kconfig entry.
+
+Link to RFC: https://lore.kernel.org/linux-can/20241110155902.72807-30-mailhol.vincent@wanadoo.fr/
+---
+ drivers/net/can/Kconfig     |  17 +++
+ drivers/net/can/Makefile    |   1 +
+ drivers/net/can/dummy_can.c | 282 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 300 insertions(+)
+
+diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
+index d43d56694667..e15e320db476 100644
+--- a/drivers/net/can/Kconfig
++++ b/drivers/net/can/Kconfig
+@@ -124,6 +124,23 @@ config CAN_CAN327
+ 
+ 	  If this driver is built as a module, it will be called can327.
+ 
++config CAN_DUMMY
++	tristate "Dummy CAN"
++	help
++	  A dummy CAN module supporting Classical CAN, CAN FD and CAN XL. It
++	  exposes bittiming values which can be configured through the netlink
++	  interface.
++
++	  The module will simply echo any frame sent to it. If debug messages
++	  are activated, it prints all the CAN bittiming information in the
++	  kernel log. Aside from that it does nothing.
++
++	  This is convenient for testing the CAN netlink interface. Most of the
++	  users will never need this. If unsure, say NO.
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called dummy-can.
++
+ config CAN_FLEXCAN
+ 	tristate "Support for Freescale FLEXCAN based chips"
+ 	depends on OF || COLDFIRE || COMPILE_TEST
+diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
+index 56138d8ddfd2..d7bc10a6b8ea 100644
+--- a/drivers/net/can/Makefile
++++ b/drivers/net/can/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_CAN_CAN327)	+= can327.o
+ obj-$(CONFIG_CAN_CC770)		+= cc770/
+ obj-$(CONFIG_CAN_C_CAN)		+= c_can/
+ obj-$(CONFIG_CAN_CTUCANFD)	+= ctucanfd/
++obj-$(CONFIG_CAN_DUMMY)		+= dummy_can.o
+ obj-$(CONFIG_CAN_FLEXCAN)	+= flexcan/
+ obj-$(CONFIG_CAN_GRCAN)		+= grcan.o
+ obj-$(CONFIG_CAN_IFI_CANFD)	+= ifi_canfd/
+diff --git a/drivers/net/can/dummy_can.c b/drivers/net/can/dummy_can.c
+new file mode 100644
+index 000000000000..076ec585f369
+--- /dev/null
++++ b/drivers/net/can/dummy_can.c
+@@ -0,0 +1,282 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/* Copyright (c) 2025 Vincent Mailhol <mailhol@kernel.org> */
++
++#include <linux/array_size.h>
++#include <linux/errno.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/netdevice.h>
++#include <linux/units.h>
++
++#include <linux/can.h>
++#include <linux/can/bittiming.h>
++#include <linux/can/dev.h>
++#include <linux/can/skb.h>
++
++struct dummy_can {
++	struct can_priv can;
++	struct net_device *dev;
++};
++
++static struct dummy_can *dummy_can;
++
++static const struct can_bittiming_const dummy_can_bittiming_const = {
++	.name = "dummy_can CC",
++	.tseg1_min = 2,
++	.tseg1_max = 256,
++	.tseg2_min = 2,
++	.tseg2_max = 128,
++	.sjw_max = 128,
++	.brp_min = 1,
++	.brp_max = 512,
++	.brp_inc = 1
++};
++
++static const struct can_bittiming_const dummy_can_fd_databittiming_const = {
++	.name = "dummy_can FD",
++	.tseg1_min = 2,
++	.tseg1_max = 256,
++	.tseg2_min = 2,
++	.tseg2_max = 128,
++	.sjw_max = 128,
++	.brp_min = 1,
++	.brp_max = 512,
++	.brp_inc = 1
++};
++
++static const struct can_tdc_const dummy_can_fd_tdc_const = {
++	.tdcv_min = 0,
++	.tdcv_max = 0, /* Manual mode not supported. */
++	.tdco_min = 0,
++	.tdco_max = 127,
++	.tdcf_min = 0,
++	.tdcf_max = 127
++};
++
++static const struct can_bittiming_const dummy_can_xl_databittiming_const = {
++	.name = "dummy_can XL",
++	.tseg1_min = 2,
++	.tseg1_max = 256,
++	.tseg2_min = 2,
++	.tseg2_max = 128,
++	.sjw_max = 128,
++	.brp_min = 1,
++	.brp_max = 512,
++	.brp_inc = 1
++};
++
++static const struct can_tdc_const dummy_can_xl_tdc_const = {
++	.tdcv_min = 0,
++	.tdcv_max = 0, /* Manual mode not supported. */
++	.tdco_min = 0,
++	.tdco_max = 127,
++	.tdcf_min = 0,
++	.tdcf_max = 127
++};
++
++static const struct can_pwm_const dummy_can_pwm_const = {
++	.pwms_min = 1,
++	.pwms_max = 8,
++	.pwml_min = 2,
++	.pwml_max = 24,
++	.pwmo_min = 0,
++	.pwmo_max = 16,
++};
++
++static void dummy_can_print_bittiming(struct net_device *dev,
++				      struct can_bittiming *bt)
++{
++	netdev_dbg(dev, "\tbitrate: %u\n", bt->bitrate);
++	netdev_dbg(dev, "\tsample_point: %u\n", bt->sample_point);
++	netdev_dbg(dev, "\ttq: %u\n", bt->tq);
++	netdev_dbg(dev, "\tprop_seg: %u\n", bt->prop_seg);
++	netdev_dbg(dev, "\tphase_seg1: %u\n", bt->phase_seg1);
++	netdev_dbg(dev, "\tphase_seg2: %u\n", bt->phase_seg2);
++	netdev_dbg(dev, "\tsjw: %u\n", bt->sjw);
++	netdev_dbg(dev, "\tbrp: %u\n", bt->brp);
++}
++
++static void dummy_can_print_tdc(struct net_device *dev, struct can_tdc *tdc)
++{
++	netdev_dbg(dev, "\t\ttdcv: %u\n", tdc->tdcv);
++	netdev_dbg(dev, "\t\ttdco: %u\n", tdc->tdco);
++	netdev_dbg(dev, "\t\ttdcf: %u\n", tdc->tdcf);
++}
++
++static void dummy_can_print_pwm(struct net_device *dev, struct can_pwm *pwm,
++				struct can_bittiming *dbt)
++{
++	netdev_dbg(dev, "\t\tpwms: %u\n", pwm->pwms);
++	netdev_dbg(dev, "\t\tpwml: %u\n", pwm->pwml);
++	netdev_dbg(dev, "\t\tpwmo: %u\n", pwm->pwmo);
++}
++
++static void dummy_can_print_ctrlmode(struct net_device *dev)
++{
++	struct dummy_can *priv = netdev_priv(dev);
++	struct can_priv *can_priv = &priv->can;
++	unsigned long supported = can_priv->ctrlmode_supported;
++	u32 enabled = can_priv->ctrlmode;
++
++	netdev_dbg(dev, "Control modes:\n");
++	netdev_dbg(dev, "\tsupported: 0x%08x\n", (u32)supported);
++	netdev_dbg(dev, "\tenabled: 0x%08x\n", enabled);
++
++	if (supported) {
++		int idx;
++
++		netdev_dbg(dev, "\tlist:");
++		for_each_set_bit(idx, &supported, BITS_PER_TYPE(u32))
++			netdev_dbg(dev, "\t\t%s: %s\n",
++				   can_get_ctrlmode_str(BIT(idx)),
++				   enabled & BIT(idx) ? "on" : "off");
++	}
++}
++
++static void dummy_can_print_bittiming_info(struct net_device *dev)
++{
++	struct dummy_can *priv = netdev_priv(dev);
++	struct can_priv *can_priv = &priv->can;
++
++	netdev_dbg(dev, "Clock frequency: %u\n", can_priv->clock.freq);
++	netdev_dbg(dev, "Maximum bitrate: %u\n", can_priv->bitrate_max);
++	netdev_dbg(dev, "MTU: %u\n", dev->mtu);
++	netdev_dbg(dev, "\n");
++
++	dummy_can_print_ctrlmode(dev);
++	netdev_dbg(dev, "\n");
++
++	netdev_dbg(dev, "Classical CAN nominal bittiming:\n");
++	dummy_can_print_bittiming(dev, &can_priv->bittiming);
++	netdev_dbg(dev, "\n");
++
++	if (can_priv->ctrlmode & CAN_CTRLMODE_FD) {
++		netdev_dbg(dev, "CAN FD databittiming:\n");
++		dummy_can_print_bittiming(dev, &can_priv->fd.data_bittiming);
++		if (can_fd_tdc_is_enabled(can_priv)) {
++			netdev_dbg(dev, "\tCAN FD TDC:\n");
++			dummy_can_print_tdc(dev, &can_priv->fd.tdc);
++		}
++	}
++	netdev_dbg(dev, "\n");
++
++	if (can_priv->ctrlmode & CAN_CTRLMODE_XL) {
++		netdev_dbg(dev, "CAN XL databittiming:\n");
++		dummy_can_print_bittiming(dev, &can_priv->xl.data_bittiming);
++		if (can_xl_tdc_is_enabled(can_priv)) {
++			netdev_dbg(dev, "\tCAN XL TDC:\n");
++			dummy_can_print_tdc(dev, &can_priv->xl.tdc);
++		}
++		if (can_priv->ctrlmode & CAN_CTRLMODE_XL_TMS) {
++			netdev_dbg(dev, "\tCAN XL PWM:\n");
++			dummy_can_print_pwm(dev, &can_priv->xl.pwm,
++					    &can_priv->xl.data_bittiming);
++		}
++	}
++	netdev_dbg(dev, "\n");
++}
++
++static int dummy_can_netdev_open(struct net_device *dev)
++{
++	int ret;
++
++	dummy_can_print_bittiming_info(dev);
++
++	ret = open_candev(dev);
++	if (ret)
++		return ret;
++	netif_start_queue(dev);
++	netdev_dbg(dev, "dummy-can is up\n");
++
++	return 0;
++}
++
++static int dummy_can_netdev_close(struct net_device *dev)
++{
++	netif_stop_queue(dev);
++	close_candev(dev);
++	netdev_dbg(dev, "dummy-can is down\n");
++
++	return 0;
++}
++
++static netdev_tx_t dummy_can_start_xmit(struct sk_buff *skb,
++					struct net_device *dev)
++{
++	if (can_dev_dropped_skb(dev, skb))
++		return NETDEV_TX_OK;
++
++	can_put_echo_skb(skb, dev, 0, 0);
++	dev->stats.tx_packets++;
++	dev->stats.tx_bytes += can_get_echo_skb(dev, 0, NULL);
++
++	return NETDEV_TX_OK;
++}
++
++static const struct net_device_ops dummy_can_netdev_ops = {
++	.ndo_open = dummy_can_netdev_open,
++	.ndo_stop = dummy_can_netdev_close,
++	.ndo_start_xmit = dummy_can_start_xmit,
++};
++
++static const struct ethtool_ops dummy_can_ethtool_ops = {
++	.get_ts_info = ethtool_op_get_ts_info,
++};
++
++static int __init dummy_can_init(void)
++{
++	struct net_device *dev;
++	struct dummy_can *priv;
++	int ret;
++
++	dev = alloc_candev(sizeof(*priv), 1);
++	if (!dev)
++		return -ENOMEM;
++
++	dev->netdev_ops = &dummy_can_netdev_ops;
++	dev->ethtool_ops = &dummy_can_ethtool_ops;
++	priv = netdev_priv(dev);
++	priv->can.bittiming_const = &dummy_can_bittiming_const;
++	priv->can.bitrate_max = 20 * MEGA /* BPS */;
++	priv->can.clock.freq = 160 * MEGA /* Hz */;
++	priv->can.fd.data_bittiming_const = &dummy_can_fd_databittiming_const;
++	priv->can.fd.tdc_const = &dummy_can_fd_tdc_const;
++	priv->can.xl.data_bittiming_const = &dummy_can_xl_databittiming_const;
++	priv->can.xl.tdc_const = &dummy_can_xl_tdc_const;
++	priv->can.xl.pwm_const = &dummy_can_pwm_const;
++	priv->can.ctrlmode_supported = CAN_CTRLMODE_LISTENONLY |
++		CAN_CTRLMODE_FD | CAN_CTRLMODE_TDC_AUTO |
++		CAN_CTRLMODE_RESTRICTED | CAN_CTRLMODE_XL |
++		CAN_CTRLMODE_XL_TDC_AUTO | CAN_CTRLMODE_XL_TMS |
++		CAN_CTRLMODE_XL_ERR_SIGNAL;
++	priv->dev = dev;
++
++	ret = register_candev(priv->dev);
++	if (ret) {
++		free_candev(priv->dev);
++		return ret;
++	}
++
++	dummy_can = priv;
++	netdev_dbg(dev, "dummy-can ready\n");
++
++	return 0;
++}
++
++static void __exit dummy_can_exit(void)
++{
++	struct net_device *dev = dummy_can->dev;
++
++	netdev_dbg(dev, "dummy-can bye bye\n");
++	unregister_candev(dev);
++	free_candev(dev);
++}
++
++module_init(dummy_can_init);
++module_exit(dummy_can_exit);
++
++MODULE_DESCRIPTION("A dummy CAN driver, mainly to test the netlink interface");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Vincent Mailhol <mailhol@kernel.org>");
+
+---
+base-commit: ffee675aceb9f44b0502a8bec912abb0c4f4af62
+change-id: 20251013-dummy_can-29a900270aaf
+prerequisite-change-id: 20251003-remove-can_change_mtu-e0ec4c0bfeeb:v1
+prerequisite-patch-id: 6b3294205bd76b38257516c63b7001ab242c9b62
+prerequisite-change-id: 20241229-canxl-netlink-bc640af10673:v2
+prerequisite-patch-id: 6b3294205bd76b38257516c63b7001ab242c9b62
+prerequisite-patch-id: 56431d12edcc0f325cf5204bb6868742c462c0ed
+prerequisite-patch-id: 1547fd7ea8f1937f0491cfc0996b09890f850991
+prerequisite-patch-id: 1dae270b0454352e46b927f71d1b47ff2bf7a49e
+prerequisite-patch-id: e4d43de873dfdefc023a0b86e397b37ea2b9e9a3
+prerequisite-patch-id: 4f3db477ff411effe70075c59ae6eac04fc65600
+prerequisite-patch-id: 148dbfce9d3bb09537087ee93e60bb7819bdadee
+prerequisite-patch-id: 7996539e26d449e8db260425c7287b4dce8cdf35
+prerequisite-patch-id: 42215044df6a63fff07c7a7d771d7dc375cc8b0e
+prerequisite-patch-id: 640ebf8ac8a1d114dcb91e6c05b9414bd09416fc
+prerequisite-patch-id: 84ee5e4f937f8e4cd97833d601affea78fe55914
+
+Best regards,
+-- 
+Vincent Mailhol <mailhol@kernel.org>
 
 
