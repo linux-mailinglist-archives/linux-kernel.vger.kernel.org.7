@@ -1,329 +1,162 @@
-Return-Path: <linux-kernel+bounces-862521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C58BF5838
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:30:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BC9BF581E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E47CB18C73B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:30:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCD934FEB37
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35A132BF24;
-	Tue, 21 Oct 2025 09:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310EA32ABFD;
+	Tue, 21 Oct 2025 09:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0mU7F9S"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eEsB44ae"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FC232B9BF
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124A232A3CF
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761038989; cv=none; b=KHceTKyanISuBZ4Qf7u8ua0TrQOH3pBfm0T53YuSUbv3cgdbm07i1wHtP9u1dzoUsthpHUB7+S6dV6BPhtUx8dp91qr3bpembjarDmh6ZXHQce7xOwZc3DCQDQlDWNERhk27kcYrLoPfH/5nEbVH7HNyXPP5jSy0CjANP+Tyctk=
+	t=1761038969; cv=none; b=CUluolBd31zJ6hLVf6N2yME9NXZYyjnOvkFE2MlpEAljHDhW3D2GSCWwk6wvJbmlrrkx8MevjYB2rWVbI39c/fqii6NGu1CH1ZBKuab8J1150zNBgVB4VBGo4dnGsLet6KtecDRqRxd3hGJxnajg7ot7NJt5LdXqez6+Z6dUE/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761038989; c=relaxed/simple;
-	bh=a0aYEnjhpTG92+dnI0WBlUVlRCWAmJ8S6jfAl5OV3b0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nSCiTDCxVXbxxk78cGQsOU2nvErWNG8HWXzxmhHLuMHSdPw9iYfz4YYcQZtGTuGyVp22v0ciVOTHp0rP4qebCM7Tp+8LF0vCk7IJ7LSDANrNZkw5b18r2oT09So91UwbwEw20lxqntndEyi1ZiGAO51fcrIh5VgPDrX2/vR+isI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0mU7F9S; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-290a3a4c7ecso57368735ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761038986; x=1761643786; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xvR5jT1gTJqYZoXGVwpmZ3jCtyBD10kX3ZPMFN21KF0=;
-        b=m0mU7F9ScuY9yV0ke51OMEnR8mn6fnRzvNVB1pZPpObxmNZOcRhNAY4ic7cKPqwGsW
-         RepEORdMPadhq7RyuDkxN0eYNGjjc7DelhO10IMeKcvf9ms0banPOZeOIOBy9vy78o6R
-         kWBTA1bl1zpoTDKttQTaNfvTOfODb6uSOCLanSc9Zwdz2diOEFYZo+/nQCUQNqTcl0vN
-         WybJLuIxSGnxdzqb1H9/x3fUVeWMU1xhRL1/RqC7+WDEQDAufDWjN9C9VPcXshUrMwi6
-         i/HU2VXaoGbYqu22edL+lmM+wMRq3rcwAmPqbaka6CT12IvbRJr9JeirO7JP4a7+75iq
-         dnyA==
+	s=arc-20240116; t=1761038969; c=relaxed/simple;
+	bh=Lgkx5HPDkqjxZ87HJBcNSye0fzmxDpuWBWFLKUcBuJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y5Hto3r2B9S5Pudr+KSR1pHX+eiOvzWpYzerT3D6px2uALpPEBHABtocn6X9hH3eU7aQZdsnDN+UnFb2GidSPsgOzojSFRzaDF/t9ztP0lpbSndjYB6dRE4GPCwDMTDa6ELr7jx5eUm9DUovrr/kTSHMjhFtjnV0JIQeKUBnIYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eEsB44ae; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8MSuY010752
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:29:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vchtIDKRTnCYbic8XdnIHZKcKNAB2qHtd73EA57D55U=; b=eEsB44aefSWI41BE
+	W7FmzAAbWsxaqRsbY7BhATESzbG+ZjNUet20iA02h/pSCGzDK8Cl7N4LFSjHrzcY
+	TFpRLlQwPy8xCqxuF427bUZbU8FpV/rgC+OObwb6mIF3z4tmDfRa2DSaGuyVF05p
+	OIaeAKGOt5KfegvFUMq4RJsDVsJaGCsX7CZWervhYAPmVYc+G0WrF272NJZ/bjwi
+	tYXms/jvasWANdWp/n1Y3QC/8h/xkR/27oQxcFsjtByow+wQBUFmyjOegxMZbfKd
+	woLJa06Zf/ocJtCOWGIXIxj2wgmEKNpJ6H8qtP1SZ4t610GcIeU+i0tp9oibIiUS
+	SY+NJQ==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49wtgetdpq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:29:26 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290da17197eso69373835ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:29:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761038986; x=1761643786;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xvR5jT1gTJqYZoXGVwpmZ3jCtyBD10kX3ZPMFN21KF0=;
-        b=WzULfc3eMJAVnG8vM/jDwQny0G5dwc3UUpqOyOLDqBSBOFcRHcurNBNeqLfX5zRaV5
-         06n9W79X8cv8moiiXZr6j1V7nNdamEqvQ2LXLa6N0h9+kL56FD2GgGllhkCc1Z4K28cG
-         ydTzXe5i2yMmsrJJ1aLdzrM+gBiWidzJA92og9yZEdtTFgWGHJZYrEQufBy+XX2GOl3z
-         5xTdDR21FzXi5QTCcjwJWjpZilY4stLtovQpwR9nkw/NJPONSwP5UW8yomBetnNJ7ygA
-         P600xBrLgLEQr5pzDJNzcCpuIGUNlb9SMVkVsMhJ/YkIltJMHMbMy4NItbtVxnCeGJD2
-         O4gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkzOyyH1T1Id4vG1usWvm2H657YBGlx2YW7jkWX69AHSXbQB9vQ79laPufff+3K8gT80vgML1I0suKv7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJLE0wBHMTfFG7MCfX1QfP764H4v7AjwShjO90/xUZfVyTg9rS
-	+vqRh+1uYP6spmPt2+WGPJV9dccYdaMUijWD4AbcgKPYM393kU2JFI6q
-X-Gm-Gg: ASbGncu5zJDHsKe85O/fEZDT0/F66NEUqYXcTUDvBmb3/scejSC/83j6uehmEXd38i0
-	CfuPUc/4zyzKOuDmm5nEyHexHSxMrPx3qr48Tp55YtZoze+BsV9qhhd1xZECuLjfw8A3LnHR3UJ
-	+hPldkkCvYFpYIuCn0EmdnVE04jOyTKR20QsuA9dcbZNBNubIAY0zU6RlPtAOUlc7Y2azKdbAWD
-	rmZWx8Yg3IooFgSrT9OsqlkzejPHtn3TxtrH4xWAiq94g1MXQ0pBuusvI/0gWG/DTOdgIqPEg8y
-	nkCP5qmvNzEVENvaSXbvV2QYeaylVR70ls7IGBqMNkxrX1o2zl4p9lCuSgcm/Ss1W37+y2AQH9x
-	g3dlTWi9tNZLDhzUITxZUwaCl1KK07T0APyv8cUrg8N/etjRQuFv1rmVAsp/Dv9JPjLQIvU5+vq
-	hYmvL9bEFhIRbhByU=
-X-Google-Smtp-Source: AGHT+IGNpCqiz7TPzWCbt9/AmNXXOBYfhN0gHSeI/H2uNi+8T0qW2fZHA/ppMSHGKcSUDizFe+92aA==
-X-Received: by 2002:a17:902:c942:b0:264:a34c:c6d with SMTP id d9443c01a7336-290ca121a65mr193635025ad.37.1761038985547;
-        Tue, 21 Oct 2025 02:29:45 -0700 (PDT)
-Received: from fedora ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fcc83esm104497195ad.38.2025.10.21.02.29.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 02:29:45 -0700 (PDT)
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Simon Horman <horms@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Shuah Khan <shuah@kernel.org>,
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>
-Subject: [PATCH net-next v7 2/2] selftests: tls: add tls record_size_limit test
-Date: Tue, 21 Oct 2025 19:29:18 +1000
-Message-ID: <20251021092917.386645-3-wilfred.opensource@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251021092917.386645-2-wilfred.opensource@gmail.com>
-References: <20251021092917.386645-2-wilfred.opensource@gmail.com>
+        d=1e100.net; s=20230601; t=1761038966; x=1761643766;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vchtIDKRTnCYbic8XdnIHZKcKNAB2qHtd73EA57D55U=;
+        b=hHLztHAD+gTqO4ydSNqqvps5/0OJV90rkEE6cml5sgb1hNzjOdgU9jXegdajHi+pbv
+         IQl0I/XdEHLbzK4iAKW4qtE5LovBeH/cWitLeqU8rp2MgOS8/t/4qTXObjB6HJYjzX58
+         3sGJOIG83ixCbakRlKxpUCahNaNwdgSKPRDcJPQyt7ThtQn6iI8OTh4ejr6E45IfWLkS
+         RjF/W77J+PJDpNaYD70CB5uYPYUGFFwOThxQXMVi1HinIz0rOlHEqGHdFZavH0F71m09
+         b5wxUKwxF4O53wQhtyFiBrTNWEpKwFKDDb0ShwQnflBYuYxLR8+vHBb/Bb+UCvD7JTGN
+         yhhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfG5MR/y+WNGqvzc0GDndt2Ae5y7u41ce2ZJFW2X8hWusqPuhnbaDd9rJUOkoOCD+mQJydh3LtvJdVh2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybcFQ+y+SRrnhK32mPiriCbcpHkd1Hc9ae4A/p6pavfZkdbLUi
+	NudNg8bzXLNMMR63yFrkY0vdlhvHcX58YP3Wr6AAP5GPUMlExRWP85fQ59p3rlJYKfLMY/SQmpX
+	xqqPWKBPffE/3E6c5EOLn6rlPalLNphQaK8+fWrXPYp/kE5/7iJjnWUKjJqc4rX4exec=
+X-Gm-Gg: ASbGnctInuWPqpFLdHkd5IXIzl/7U0W3OVnWOKMhj2S3NJIqI7WN7Rpe86zh6iYIzRF
+	16SjFOPzP2NkXJ8ysO3z7Z2PDy3LEvzcE6/X16XkjVdBn0XKt2jgonGnbdrygN1+LTCeTNrgc9R
+	Ycmpapo7/yoFjquCh0EZpkrr/tTLJNtgZ5F+IT5u01R0bVwkUTZJOthAH8Y35ueqYztM9t0lhOS
+	LPE9SgA8OWA/b+NjU7t6+iHVfO963R6N++X+RM3uUlufh5Xb4CKGjxnBPStQyg12dy85tF7XHA0
+	mhW/UPZHJss5TWp1JxXeHZFc+nUrrIC+QEhk6OAi8sabO5Tmnn1gTKD8/b9XBJYGEc1rLFo4uvz
+	lQZ5rCCNSZYKt6hop2EqSyRWpeGM=
+X-Received: by 2002:a17:902:ce0e:b0:292:324e:24bc with SMTP id d9443c01a7336-292324e26damr175702105ad.16.1761038965716;
+        Tue, 21 Oct 2025 02:29:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOGC7PHugaE2XtwN/5ogJH3Nu6q4RR8mM10kZpgisPKy4YenMfCVuiNGzBa4/+043w5e9f1w==
+X-Received: by 2002:a17:902:ce0e:b0:292:324e:24bc with SMTP id d9443c01a7336-292324e26damr175701785ad.16.1761038964961;
+        Tue, 21 Oct 2025 02:29:24 -0700 (PDT)
+Received: from [10.217.217.147] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebcde4sm104829805ad.5.2025.10.21.02.29.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 02:29:24 -0700 (PDT)
+Message-ID: <fda2da11-719b-4552-ab5c-d197c9f29092@oss.qualcomm.com>
+Date: Tue, 21 Oct 2025 14:59:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Enable runtime PM
+To: Val Packett <val@packett.cool>, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251012230822.16825-1-val@packett.cool>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <20251012230822.16825-1-val@packett.cool>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: cllXo_SGBAz6y95Vcd9K1c0UmZD32V0C
+X-Authority-Analysis: v=2.4 cv=JeaxbEKV c=1 sm=1 tr=0 ts=68f75277 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Ol272ZaqoCEH_NYozqoA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: cllXo_SGBAz6y95Vcd9K1c0UmZD32V0C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDE1NCBTYWx0ZWRfX96pMHq5JEhlK
+ sbT+rRwxkzgJBll9t5icQ99asgirMMIybDlQV9lWuClGdyQa0tsPnw6Syt7vLOsvukZPdlB/Kbp
+ WWMJ3E7Ie6uADpp/nHGsGu72kpXEI9FZMQlEsbQOWvqOupi32WSsa1PgSiytX2q5LftOqy5SoPF
+ Oksr7vaiNzomjbe49dTTlWVaVc6sJ695SLSX1YpvCUP0Bi5hebyF65a7WWBIGeHIRDljaXxn9j0
+ LtihpX3muPuhN1zMtbdbdl2RnEYfEL0T/RC3pSI9bRp09DU/CiKH8SKXdbGVRFw5lYwZ4/er2b3
+ lhNBHe3lAIdpBe1y1gW00TAJGmPNKF+NAHF1IWilvUg3kpGaQKBRhM+suiieBUH1BClIKG1EH+R
+ zgYZv1rFNft/0SUkJbXCrj9NWuPA8w==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 malwarescore=0 impostorscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510200154
 
-From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
-Test that outgoing plaintext records respect the tls TLS_TX_MAX_PAYLOAD_LEN
-set using setsockopt(). The limit is set to be 128, thus, in all received
-records, the plaintext must not exceed this amount.
 
-Also test that setting a new record size limit whilst a pending open
-record exists is handled correctly by discarding the request.
+On 10/13/2025 4:36 AM, Val Packett wrote:
+> Enable the main clock controller driver to participate in runtime
+> power management.
+> 
+> Signed-off-by: Val Packett <val@packett.cool>
+> ---
+> Seems like this would be one of the prerequisites for actually reaching
+> deeper power states.. I've been running with this patch on a Dell
+> Latitude 7455 for quite a while, did not see any harm for sure.
+> ---
+>  drivers/clk/qcom/gcc-x1e80100.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+> index 301fc9fc32d8..96bb604c6378 100644
+> --- a/drivers/clk/qcom/gcc-x1e80100.c
+> +++ b/drivers/clk/qcom/gcc-x1e80100.c
+> @@ -6721,6 +6721,7 @@ static const struct qcom_cc_desc gcc_x1e80100_desc = {
+>  	.num_resets = ARRAY_SIZE(gcc_x1e80100_resets),
+>  	.gdscs = gcc_x1e80100_gdscs,
+>  	.num_gdscs = ARRAY_SIZE(gcc_x1e80100_gdscs),
+> +	.use_rpm = true,
 
-Suggested-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
----
-V6 -> V7:
- - Added a TLS 1.3 test case
----
- tools/testing/selftests/net/tls.c | 192 ++++++++++++++++++++++++++++++
- 1 file changed, 192 insertions(+)
+This is not required to be set for the global clock controller as 'CX'
+is the rail powering this clock controller.
 
-diff --git a/tools/testing/selftests/net/tls.c b/tools/testing/selftests/net/tls.c
-index 5c6d8215021c..d256668b35bf 100644
---- a/tools/testing/selftests/net/tls.c
-+++ b/tools/testing/selftests/net/tls.c
-@@ -2856,6 +2856,198 @@ TEST_F(tls_err, oob_pressure)
- 		EXPECT_EQ(send(self->fd2, buf, 5, MSG_OOB), 5);
- }
- 
-+/*
-+ * Parse a stream of TLS records and ensure that each record respects
-+ * the specified @max_payload_len.
-+ */
-+static size_t parse_tls_records(struct __test_metadata *_metadata,
-+				const __u8 *rx_buf, int rx_len, int overhead,
-+				__u16 max_payload_len)
-+{
-+	const __u8 *rec = rx_buf;
-+	size_t total_plaintext_rx = 0;
-+	const __u8 rec_header_len = 5;
-+
-+	while (rec < rx_buf + rx_len) {
-+		__u16 record_payload_len;
-+		__u16 plaintext_len;
-+
-+		/* Sanity check that it's a TLS header for application data */
-+		ASSERT_EQ(rec[0], 23);
-+		ASSERT_EQ(rec[1], 0x3);
-+		ASSERT_EQ(rec[2], 0x3);
-+
-+		memcpy(&record_payload_len, rec + 3, 2);
-+		record_payload_len = ntohs(record_payload_len);
-+		ASSERT_GE(record_payload_len, overhead);
-+
-+		plaintext_len = record_payload_len - overhead;
-+		total_plaintext_rx += plaintext_len;
-+
-+		/* Plaintext must not exceed the specified limit */
-+		ASSERT_LE(plaintext_len, max_payload_len);
-+		rec += rec_header_len + record_payload_len;
-+	}
-+
-+	return total_plaintext_rx;
-+}
-+
-+TEST(tls_12_tx_max_payload_len)
-+{
-+	struct tls_crypto_info_keys tls12;
-+	int cfd, ret, fd, overhead;
-+	size_t total_plaintext_rx = 0;
-+	__u8 tx[1024], rx[2000];
-+	__u16 limit = 128;
-+	__u16 opt = 0;
-+	unsigned int optlen = sizeof(opt);
-+	bool notls;
-+
-+	tls_crypto_info_init(TLS_1_2_VERSION, TLS_CIPHER_AES_CCM_128,
-+			     &tls12, 0);
-+
-+	ulp_sock_pair(_metadata, &fd, &cfd, &notls);
-+
-+	if (notls)
-+		exit(KSFT_SKIP);
-+
-+	/* Don't install keys on fd, we'll parse raw records */
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX, &tls12, tls12.len);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &limit,
-+			 sizeof(limit));
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = getsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &opt, &optlen);
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(limit, opt);
-+	EXPECT_EQ(optlen, sizeof(limit));
-+
-+	memset(tx, 0, sizeof(tx));
-+	ASSERT_EQ(send(cfd, tx, sizeof(tx), 0), sizeof(tx));
-+	close(cfd);
-+
-+	ret = recv(fd, rx, sizeof(rx), 0);
-+
-+	/*
-+	 * 16B tag + 8B IV -- record header (5B) is not counted but we'll
-+	 * need it to walk the record stream
-+	 */
-+	overhead = 16 + 8;
-+	total_plaintext_rx = parse_tls_records(_metadata, rx, ret, overhead,
-+					       limit);
-+
-+	ASSERT_EQ(total_plaintext_rx, sizeof(tx));
-+	close(fd);
-+}
-+
-+TEST(tls_13_tx_max_payload_len)
-+{
-+	struct tls_crypto_info_keys tls13;
-+	int cfd, ret, fd, overhead;
-+	size_t total_plaintext_rx = 0;
-+	__u8 tx[1024], rx[2000];
-+	__u16 limit = 63;
-+	__u16 opt = 0;
-+	unsigned int optlen = sizeof(opt);
-+	bool notls;
-+
-+	tls_crypto_info_init(TLS_1_3_VERSION, TLS_CIPHER_AES_CCM_128,
-+			     &tls13, 0);
-+
-+	ulp_sock_pair(_metadata, &fd, &cfd, &notls);
-+
-+	if (notls)
-+		exit(KSFT_SKIP);
-+
-+	/* Don't install keys on fd, we'll parse raw records */
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX, &tls13, tls13.len);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &limit,
-+			 sizeof(limit));
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = getsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &opt, &optlen);
-+	EXPECT_EQ(ret, 0);
-+	/* TLS 1.3: plaintext length should contain the ContentType byte */
-+	EXPECT_EQ(limit + 1, opt);
-+	EXPECT_EQ(optlen, sizeof(limit));
-+
-+	memset(tx, 0, sizeof(tx));
-+	ASSERT_EQ(send(cfd, tx, sizeof(tx), 0), sizeof(tx));
-+	close(cfd);
-+
-+	ret = recv(fd, rx, sizeof(rx), 0);
-+
-+	/*
-+	 * 16B tag + 1B ContentType -- record header (5B) is not counted but
-+	 * we'll need it to walk the record stream
-+	 */
-+	overhead = 16 + 1;
-+	total_plaintext_rx = parse_tls_records(_metadata, rx, ret, overhead,
-+					       opt);
-+
-+	ASSERT_EQ(total_plaintext_rx, sizeof(tx));
-+	close(fd);
-+}
-+
-+TEST(tls_12_tx_max_payload_len_open_rec)
-+{
-+	struct tls_crypto_info_keys tls12;
-+	int cfd, ret, fd, overhead;
-+	size_t total_plaintext_rx = 0;
-+	__u8 tx[1024], rx[2000];
-+	__u16 tx_partial = 256;
-+	__u16 og_limit = 512, limit = 128;
-+	bool notls;
-+
-+	tls_crypto_info_init(TLS_1_2_VERSION, TLS_CIPHER_AES_CCM_128,
-+			     &tls12, 0);
-+
-+	ulp_sock_pair(_metadata, &fd, &cfd, &notls);
-+
-+	if (notls)
-+		exit(KSFT_SKIP);
-+
-+	/* Don't install keys on fd, we'll parse raw records */
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX, &tls12, tls12.len);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &og_limit,
-+			 sizeof(og_limit));
-+	ASSERT_EQ(ret, 0);
-+
-+	memset(tx, 0, sizeof(tx));
-+	ASSERT_EQ(send(cfd, tx, tx_partial, MSG_MORE), tx_partial);
-+
-+	/*
-+	 * Changing the payload limit with a pending open record should
-+	 * not be allowed.
-+	 */
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &limit,
-+			 sizeof(limit));
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EBUSY);
-+
-+	ASSERT_EQ(send(cfd, tx + tx_partial, sizeof(tx) - tx_partial, MSG_EOR),
-+		  sizeof(tx) - tx_partial);
-+	close(cfd);
-+
-+	ret = recv(fd, rx, sizeof(rx), 0);
-+
-+	/*
-+	 * 16B tag + 8B IV -- record header (5B) is not counted but we'll
-+	 * need it to walk the record stream
-+	 */
-+	overhead = 16 + 8;
-+	total_plaintext_rx = parse_tls_records(_metadata, rx, ret, overhead,
-+					       og_limit);
-+	ASSERT_EQ(total_plaintext_rx, sizeof(tx));
-+	close(fd);
-+}
-+
- TEST(non_established) {
- 	struct tls12_crypto_info_aes_gcm_256 tls12;
- 	struct sockaddr_in addr;
+>  };
+>  
+>  static const struct of_device_id gcc_x1e80100_match_table[] = {
+
 -- 
-2.51.0
+Thanks,
+Taniya Das
 
 
