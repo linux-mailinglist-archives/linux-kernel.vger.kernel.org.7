@@ -1,297 +1,322 @@
-Return-Path: <linux-kernel+bounces-863745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D37BF8FFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:07:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5C7BF9007
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBF884E8E2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0FB19C257B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACF42236F3;
-	Tue, 21 Oct 2025 22:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10B828B7EA;
+	Tue, 21 Oct 2025 22:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qp5JK6Z1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="Yu/uGOfa";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="nP4cWOwF"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DFB17A318
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49BE2690D1;
+	Tue, 21 Oct 2025 22:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.0
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761084423; cv=fail; b=a9PVuNw9j5NPooUD31FBVPmTqnDLWncAIzVklLqrQX/STq8+2oH7sEVSWj+gEd3gXGqaFqcdxi8nrNajzJHWAvShNHfgFXNPw/ehOAmBKZyPOlcRKNPrDEY15scQkWQHvGplqeTXiYbPDsBmCz0QMHjphUPXQPkli/s6ZoREdi0=
+	t=1761084455; cv=pass; b=Nb49Z0wGTFjCkOVpATnDEZEoVG0+OR4v+UfTxdWHGQoq933n41TGEokEvTXoZUxxTvyaRwoGRqW00c0ZZPmEpOxLaMHu4mxJHABU5hxVRIju+hQ91/3a96gJmZMPMkkpIKs5Bz8G9wCoQ9FCifUeiTXK2OLdXobtWz31OQB5BwA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761084423; c=relaxed/simple;
-	bh=e1o03QrE/zs/bCpGVOuABRvoYRuQtuLUuvmUWsxtF0c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G/ZEs8gFtLEljQqp+9ZwWXO1qoPoAWvJQ57P/eepdlhgCA3K1NIKFXGL6dW21BMk9JpEDUSZe3egh4sMJ/bvbJw/u1kYlwhFYlxrmiTxREeKeu0ufyfPL1Yh51Dk7upFnVOjvzEq6xJfKj2ab3q6HCs2XZSvCj8t4U3gYJGBqoE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qp5JK6Z1; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761084422; x=1792620422;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=e1o03QrE/zs/bCpGVOuABRvoYRuQtuLUuvmUWsxtF0c=;
-  b=Qp5JK6Z1G+qWR+c5P7JHHpRK0/W++ECDrEpWB3PZ+IXvDUoDOSq6njKe
-   pq0XyUqjGDFbpBSFiWcMNv8D4QuJCsk+cEvZsM98KJ1X121uN+ppJSd8q
-   zDzsaHjy/Tc4BN2k/RIOSdzkT/EmTzci0RpSPvjWzO3ATV++gVnpbMAol
-   VJH57iA2PDOlu4QV0i/P3uJk7z3Fz08wf3CfEZqgSLo+pVxILWHygQy4p
-   XUMhoHGkIz2IIbjHRc0mt9GiWvZt2tmoL8lg7+JJoJiM0kwfS8VkDpnZ4
-   Q3ipf87RvZ9g2iLeuqxm7vKUm98YyAHiXY1AxnodUhQ2Al23NX02JVmTl
-   A==;
-X-CSE-ConnectionGUID: Bnz1yDn1Rz6o7bGOTSy8bA==
-X-CSE-MsgGUID: LfTF38T1T6GX524wa8Dcbw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63133476"
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="63133476"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 15:07:01 -0700
-X-CSE-ConnectionGUID: DcaGwzWkQ92PfMQCbnkuqw==
-X-CSE-MsgGUID: nCvxQyC6TZWkFHsOoI+ctA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="188983606"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 15:07:01 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 21 Oct 2025 15:07:00 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 21 Oct 2025 15:07:00 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.40)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 21 Oct 2025 15:07:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gj5qTjubsDtRhnCmcRd/QiBgUwwPqtZU+YVaU2mUe6OnkjkneiSIbjPv6RdcuqIL7OP4/N7bhKX6RpyTZCwJJ6A9kjh60g1uq7UHLlYeE7VZdDdjSqOIdQ13v0Aa3MTd6UjWS1EBH9cavly1S1ZePa7tBshNnxvyJVo5VkoK3n8KJ1mmK2c4ya7ZMVZTuOtl5XL3ZB1wJUTsVXOiQwWZpqwlZv4xZuczLVWO+waAQFea+6/LYTxNEA6HWmBmTXubMi+iZDnp7ZL5Sw/0Ji664x6I6cQhdbbcuV1LlnLta/Ktoxlqou7jr49+AwK7FDfUvnQr74n8zB3+ziKItp3Ogg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fxGUxIfZZcroliACPgV6pH+0oi3EM7+wgiedeqZvPuE=;
- b=mCiqgEae6kzAW1lFufvfy/cAGq6wEj4O/0l0A5pSVHjcqBMW/k5qwaLy56QC0hs3gvyRPLql+SDC7d2/q8tJVZ1wIpfRItOoEBhEI8z4VDkQLGAKPuGbUkz+JRIEwsdbbDBqvhYPIibk3C7Q7LsgTqalis3U3usElpfOhqNv0c6SVkWJDxonZXxjWlvPIJ2bM1wKd05wc/vT5cLlj1x52io/ULGFRnauoQ1pYGUodFsuWw7d+mO4bc9vQvE+LEKwhNZaEOt4CS/2tyVzDAZajKMBl2iHoh7yGa3BSMLfsewoYIz94187zACS3fNYFLCfbwBUOudnIdEr1KQuw0ysVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by SJ0PR11MB5868.namprd11.prod.outlook.com (2603:10b6:a03:42b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Tue, 21 Oct
- 2025 22:06:58 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%3]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 22:06:58 +0000
-Date: Tue, 21 Oct 2025 15:06:55 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: Tejun Heo <tj@kernel.org>
-CC: <intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <jiangshanlai@gmail.com>,
-	<simona.vetter@ffwll.ch>, <christian.koenig@amd.com>, <pstanner@redhat.com>,
-	<dakr@kernel.org>
-Subject: Re: [RFC PATCH 1/3] workqueue: Add an interface to taint workqueue
- lockdep with reclaim
-Message-ID: <aPgD/3d7lJKoSzI8@lstrano-desk.jf.intel.com>
-References: <20251021213952.746900-1-matthew.brost@intel.com>
- <20251021213952.746900-2-matthew.brost@intel.com>
- <aPgBjmIm6n9H-R_u@slm.duckdns.org>
- <aPgDXsQY5qAfU0Tv@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPgDXsQY5qAfU0Tv@lstrano-desk.jf.intel.com>
-X-ClientProxiedBy: MW4PR03CA0150.namprd03.prod.outlook.com
- (2603:10b6:303:8c::35) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	s=arc-20240116; t=1761084455; c=relaxed/simple;
+	bh=z8lTYmn/IjleiyKM3+XordSbBa5Pmo7yUKfsFcwffCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ocueWwxy5pzuEIusVKOIJkXRahvqU4KH0H4RIyUuSgjCjYPMB9O+L5MQozwK5xsS5kWap1ePKfgDPMkWEWySeVdFmb6cOkuRJlS4i8WAtlTdfpoCzM/2ROx42Z5ctj2yxTMBbHBDxPU42RGAEUAm5T8Mn/1zANyxtcVBepZftT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=Yu/uGOfa; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=nP4cWOwF; arc=pass smtp.client-ip=185.56.87.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-qjnz.prod.antispam.mailspamprotection.com; s=arckey; t=1761084453;
+	 b=vixKUkUrm6fxCu+uyjiYiCfaJkxaBA3oubjnRi8A+700vZGUvTt943r04p0k+cb1wr6zKEDUH6
+	  xYzJDr6nYAvrbNbXdky0YGDKHFWTkOAuh3foUVf5+3OgqMO4nF33K7DPAnNBkEPtKrN9R906Gy
+	  6+fHosCcqt3IkZvTKfVLM8N5i5bqBAAoM6260EndDrfmTeK4GPivlI7DLLE39C8vbIGhZIGfgj
+	  ++TH+VBtxMrhWaOcBTA5u0qT6yv+2St+j8xteOh0bH/HwBRPefE8ub1UvSFWkzxW714TARDz1u
+	  dd95wT0ukf7vV/EBaAghaIIk1jRzEuobj3DKjKYzhau2Yw==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-qjnz.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-qjnz.prod.antispam.mailspamprotection.com; s=arckey; t=1761084453;
+	bh=z8lTYmn/IjleiyKM3+XordSbBa5Pmo7yUKfsFcwffCg=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	  Message-ID:Date:Subject:Cc:To:From:DKIM-Signature:DKIM-Signature;
+	b=v2U1U1MbBGVfo8LL4/DnmbWP2sHyZGQwplIA1HqEUdq8DtAt6sFK4TgKoeRwM5Tkj1pQ/z8vvB
+	  WBefqSwZskohHPgVhkkSVwRykxuMMnPs+g2BA9sDeLPMcdYAU9POP/0Foix9DGGf8Z3t+dLTbg
+	  vgTKeyRgGocUCqTXb0FfRC75pS3zqdJXtqARObzpCngW9upYgtk3yyoypBboN0tek3enAUKwTs
+	  uAtsTteASTaAwxze5Sq4ybASlJRemALRgGRdzjv2ZzlmisDnmkNu0DkQ87FHRmoc+Dh1Yd991I
+	  ul85+1lnjSGXg27MNytMWm4PIUANs2M6uncDgPZBvFCNwg==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Reply-To:List-Unsubscribe;
+	bh=EPZOChOksZI5m9+TlSbFkGPQEFsrhm2ZHMS2Z33YhXc=; b=Yu/uGOfaoX5qXm6T447Ff9QzYi
+	db+QJbI44qrbOwPKFOhc4gahNvFPOvGUZMW4ma3SQgyEjgRWQD5ZzF2akWi8SlrHUnhdbT9hMmF5W
+	eEsVd9tvfEwmO2TaBcnh1m89ltcfSO/J88Rs1MPu24zUa0LSyWJOF9o4TZPXt/BtOdlM=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-qjnz.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vBKVq-00000005w9w-2xHW;
+	Tue, 21 Oct 2025 22:07:29 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=EPZOChOksZI5m9+TlSbFkGPQEFsrhm2ZHMS2Z33YhXc=; b=nP4cWOwFctK573Zdz4YS5fQNd4
+	XOqvj6fKkRcIAHu7eR6nAAYQC+nJUvegGhE9CIVk1pOvnXI1VvMyikpZH+0lLjkklqkV61PkgL/ys
+	gMmynQS6YCEnteF5db1Rm7tMZ9RSNEaMkqhNgDCtGnL5lBDGS1mdgUqmP8MKQxTLF8CE=;
+Received: from [95.239.58.48] (port=60623 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vBKVa-00000000PRL-4C5j;
+	Tue, 21 Oct 2025 22:07:11 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Paul Menzel <pmenzel@molgen.mpg.de>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [BUG] Erratic behavior in btnxpuart on v6.18-rc2 - and a possible
+ solution
+Date: Wed, 22 Oct 2025 00:07:10 +0200
+Message-ID: <2569250.XAFRqVoOGU@fedora.fritz.box>
+In-Reply-To: <aPf7Vz5K6P7frdlf@mozart.vkv.me>
+References:
+ <6837167.ZASKD2KPVS@fedora.fritz.box> <aPf5DZVYrc2YAXXT@mozart.vkv.me>
+ <aPf7Vz5K6P7frdlf@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SJ0PR11MB5868:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7d18d8a-41ed-4b16-30d5-08de10ee278d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bmdXR0xqeG52TWVpOUFqRkFtQUs3Q2svUFIxL1A4S0JlZXNDaUNFeGZJbUJu?=
- =?utf-8?B?eE45Z0dyYk52MlA3S3dkT3RnYytyQkJpK2V6anRrNi9pN2ZxcUZidCtVU2JI?=
- =?utf-8?B?ek51b1pXbW1GKzhCbml5ZnNxbjdhYzMxYTl0VEk2ZTY4Y1Y3TXNpdC8yQmF0?=
- =?utf-8?B?OExDcDdpbVNpZXZtbmVydjBZRGlpRFRvc0J3eWlSbUNOamIzWmdVK3E0MDFC?=
- =?utf-8?B?WkRZSVZoWkswbnJpUFBFTVZscUpDd29mRy9TNytOanBDM3RZeW5MeTBBai9L?=
- =?utf-8?B?QVJ0Q2tlRmhiRS8xRDNjcUxMQldKWVNydEJRM0dQTmswd0J0MUpXaksveFlr?=
- =?utf-8?B?T3lFSXhGMVcyQ2tpc3kza1I0YnN6dzY2d29IbVMrbThrbmRpNHNSanQ0NXNa?=
- =?utf-8?B?NDV4MWdzbUl2ajh5b3NsMFJSSHhoS2xyaFpnNXNHcjljVVhZdC9HLzJaakJj?=
- =?utf-8?B?ZXhYS1hlRVhpY1NXT0ZLTXl6WGNMSGRtS21UQVAvaDNtYm0zUUQ1L1NXY2R2?=
- =?utf-8?B?akhGOHE5b1pld1JBZThZUHpYWWx5Lzg4dzdQSVRXakd6a1QrQTQrZmFtZ2JE?=
- =?utf-8?B?UUlJN0NJMXdjeHZMTWdkL3RZbDBqOSs5enJpU2Q0YTBTWmVuN1luT3RKaW9O?=
- =?utf-8?B?NEFTODVpdmhVZTVzaGZGQUNBV295YWFENDNRZTJNejFzbTg3cTBGT2dJNnQ2?=
- =?utf-8?B?SWZ3UzQ1NDlEMC9nWUpPUmVEbEFucVlLZmV3M2d3MFdPaTFBRXFJSDc2MnRs?=
- =?utf-8?B?eHk4WSt6Z21ibE13UlY5Tmo2RGMxVklUcjBVQXdCR2ZZMENpSXJzVHRYOVlt?=
- =?utf-8?B?VmU0ZUFkRE9SVEZzSXBZMnZtOXAwOUtRbjVEY0F3RG1YYXRiK3YxMHJQUUt1?=
- =?utf-8?B?alZGNDA1dWsxVStSTUgzNHNGSURqUnF1WmhtUFlTUnN1b3FCQnNUblAwdUha?=
- =?utf-8?B?cG1NVUE2ZGtaYzdEM0UzWDQyODZXZWdRazJsWklieGVoM1VLZFJsRmZZRURT?=
- =?utf-8?B?ejk5clRucUNPTGNrc1pzQmUreVJ5cTJ0Z2R2NGgzc0ZUNGs0dXhRUGs1Yk9F?=
- =?utf-8?B?cHlTS1pxNGphNlAyWldadzlWMGl5TStpTFNtdnJ1N2VXTnlmM0toRXA4M0hB?=
- =?utf-8?B?T2p2RXE3QlFNMU4zcTlWVlBUMnZnRkRsY21xVkFGcFNtbGJxaUpubGZKZno3?=
- =?utf-8?B?YkZiTk8yNXZtU3paSU9xamdzNkplUXdJSGJIci8xSjBPcUFrMkIxaDJBMHR3?=
- =?utf-8?B?M0tUUi85ZEMrSEhxMFRRRHUvMzZERjRPaXJqU2d3SGh1WmNxQWJKWEpLeThh?=
- =?utf-8?B?MjZXZStDL3RVdmw2ZjdoczVKbkRSemNIckFaWTdYNU9WbTh3REFOa0tEUllU?=
- =?utf-8?B?Q2djcmFlRDh5djdkS0JrSnNuSllFUWNBdzZJbkRjY2lqQ29XTDc5b2R5OExU?=
- =?utf-8?B?SnNkRzFlM2tVaEtJajNka0h3RGdMd0VvREh0UHh6ZFFkSmRQNFJXcUpCR0Vz?=
- =?utf-8?B?c2dZbVFqY1VsMXZtVlBmSVFkNnFBSk9TemhWd3BuUGNMYnczMjFTZUQrMmQr?=
- =?utf-8?B?WTl5TWhoTTZ1bWVNK1h4cEh4UHhzbkpXdHFPMW1HRVBNN0VkKzhKeWRWODd2?=
- =?utf-8?B?M2lnbC9MeTVCY0pOZnZKV2h2dHljcXdISlpEZkpQK2JSME1tNTFmM0JLQVlV?=
- =?utf-8?B?ektQTVVkRG5tM0tOWDdEWjRWaDkxV3hyV3ducXp5OTRwMmRnb0tXTXJZYkpM?=
- =?utf-8?B?R0NjM2FtRnlmTEtJaVNBcGI4Q2EzNVJGaWRmaHFoa2tIVmY5ZHZKN1U2cFE2?=
- =?utf-8?B?K3F6WmxnOFFkOXFMc1pzUXloNGo0QWRkM0Q4WVdwOTA5ckEyOGVlZXFPN3Vq?=
- =?utf-8?B?blM0U0dYTUd2Z0ZwL2ZaWjJYTnB5MG9CWDh2QW44WE9vTk5SNkZMRVZ0Q2hX?=
- =?utf-8?Q?XMLY6CPVy0Qd1cSHyt9eW99Q4s0XRnk/?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d1lYbzNnWnZWQzdpUWNEWS85UXpZTklocktuNjd1c29lVStCMXZTN3lVYlVi?=
- =?utf-8?B?OENEcmYwSGNYS01BU1VaT295K2h1MDZIb3hsV0xTdXNEUVd5eWZZYVJ2Ly9o?=
- =?utf-8?B?aVZUVjluMm5WVE5JYi8zdWkrald4NEdCN01UZDd4VWJNVTRkRlRscVNkSDBu?=
- =?utf-8?B?S0VWYStOcFJ4d1R0cEwzVERzSWEwSzMyQkVnNTMvT3pvLzJxL0p2bjdHQlVX?=
- =?utf-8?B?L0NVNDdlTlJYMlJnaVcrUE03T3B6NTViaHlEbDFSUlJsOUZCZThLS1JsdmJK?=
- =?utf-8?B?ditYYTRjYkdIdlliUUxlSys1Mjl1MlBoelBoUU5VdFdwcFIrd2JMTEpUWW5s?=
- =?utf-8?B?VHQ0OVBxdGU4WXZaV0xoaFlkbVZPUjZQb0oxb05LUFBzMThiRVUxcjVGZjRQ?=
- =?utf-8?B?dWhMRHdML2g5VUVzbnNLVGt3U0RieXF1VnNpaTI0L2dMK1BwcGFzZlhKWUJ3?=
- =?utf-8?B?Z0NwNmcyQndtSFc4VHhyVFRGcW5OU29FekhaUmo4c3VWakRSWG8rRUhxM3pJ?=
- =?utf-8?B?YmNtQmRQVmRaSndJVm05amRHb2JTVmJNVUdYd0MvSkJJc3EybnZQZ2xTaFZh?=
- =?utf-8?B?dGpYNGYrSDBicWFzVHBRQVdUUE1qbEx2bCtETlQ1YVkxbEJna2FzRVdRU3BF?=
- =?utf-8?B?SGlRaFVXalpuQ0VKMC9XZFpIbzdzQ2MyclJXNmFSMkNFNTlKbExmTFBaMHYx?=
- =?utf-8?B?UmpXNFF6NEw3cWFnTUFVTUJOdWJ1eFhXY01aUDJzV0hZQzhsQlRvWEprc0cy?=
- =?utf-8?B?K2pUU0lFSmhVVHBzKzFOLy9kREFkSEd0UE5xVWlvS2p6amkyd1V6RzRucFp5?=
- =?utf-8?B?WCswQ0xtTlJWT0NaODBwdnJHRHBzWjFzZW1YbTFWS0UzTVgxWWhvQURjVzJs?=
- =?utf-8?B?Y2MzZ1MzOWloemlrVXZoM3NHLzg4VzFGTStQckE1VS8wamY3UXd0WkZZckZQ?=
- =?utf-8?B?RWp5YkZpZGN2WHhJRUZyZUFFYkc3UTA2aGtDQitDbE5IRk55bFYxbUZFU05o?=
- =?utf-8?B?bmFxak9CY0h1N1l6MldLMkw3UzlEMGVQaEJEaUhVUWRicjRpVyt6TDBrNTFD?=
- =?utf-8?B?bjkxQXdKTm8xR3VPdFM2ZFF1bHI3ZjJGYUJpaGFCM01LMHR1VkVTUkw1WUhX?=
- =?utf-8?B?ZGMwRXFDRlROZGk4dzh5RTZtV0NocTBoak8xZjV5TFJzbWdGbnFQWWM5Yk15?=
- =?utf-8?B?RVZoZFovdkF0a2d4bGhmL0QyRlQvcmROYkRjUld0aTFTMDlPd1YxVHptbmZq?=
- =?utf-8?B?WnZFSDlNb252SlE4aDZZbnBzTzUvblZSeC9CZytJcjAzTFlxMS9EQjRZYUxt?=
- =?utf-8?B?cTd5SVFLSnMxL2lFS1dDZ2ticzgvdlZPY056S2dOUTFla3hOSkd6aHQzcURW?=
- =?utf-8?B?YU5TczQ3SHZMNXdoYmU4Zmx5S2szQ084YUROZTRQdmI3anFRNGVhbEo0SmpV?=
- =?utf-8?B?Nkhyb2dDZ3IvT0RHWDFwVDVhZVJEdzI0RHJvQks1dEZ1TUkvdUIybVdSOFB3?=
- =?utf-8?B?SGQrOEdtendFUG5tLzFDOGc1MTJacXlyRWszdGJYdXhSYVJTcXJyUGwxS3hL?=
- =?utf-8?B?ak9ZSWtJdjU2aTVUTmpkaW16RE9MSDJRQzEyK2JlNTZralh5aWdZK3BzQnpl?=
- =?utf-8?B?eDM4bTdkOFQ4UnpXem5naC9KQWFBZHl1YnZFVDJuQjRpWGpHdmNyNEFhMG81?=
- =?utf-8?B?bzMxbTI2Zkk2N1drYmxTeUx0TCtTcTlxeWlvejQwYkF6UGFianJwNHJKNU5C?=
- =?utf-8?B?dFZJVTFWOEhveEl1ZFNRMFd5cDNaRHc3eC94YjliWUU4eGZaSEwzSUFTcks1?=
- =?utf-8?B?L1YyOFllK1IwUHFsM0M3Zjd6YlM4UytOaW11c3Q1dUhGKzhEVHE2aWxpbkRO?=
- =?utf-8?B?NjdmbFdZYVd1L1lOZW5jMldLTHpHampGcWdGdXpUS2I3WDhBclU1WlZzdlk1?=
- =?utf-8?B?SXNpd1B2QThiZlBkd1lIa2ZYaGhNa0VFcWdRS1ZSK2hOaVFHOGowd1puOFVa?=
- =?utf-8?B?dDFZMTd6cDdmMkN5WlZyOXdqM1BoSjU5aW84Z2xIcWV5NzU5TVBWbjMxYUZT?=
- =?utf-8?B?bHZ4dSsyV2s0M1BWaHNLQTBnS0tqSzd4OHkwNU5ROGFDZTZJOUExUk8rcThU?=
- =?utf-8?B?Rm4rd0VwZHYycHRPOWc1VjlXbU9CMnNCdkI5SEZKb3E2WmdoNk5pWEtRU0hi?=
- =?utf-8?B?bGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7d18d8a-41ed-4b16-30d5-08de10ee278d
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 22:06:58.6461
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m1QIH6wHubLpFKbr3dXYVS28MWnHnjNzi7WzVFsZJPOJrM+r+Go4FWEPSbVlIbRTYEN1oddKMKs+goGag8UJew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5868
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: c8993f67c266e8dbc9b7c02c1db19444
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1vBKVq-00000005w9w-2xHW-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-qjnz.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-On Tue, Oct 21, 2025 at 03:04:14PM -0700, Matthew Brost wrote:
-> On Tue, Oct 21, 2025 at 11:56:30AM -1000, Tejun Heo wrote:
-> > Hello,
-
-Missed a comment.
-
-> > 
-> > On Tue, Oct 21, 2025 at 02:39:50PM -0700, Matthew Brost wrote:
-> > > Drivers often use workqueues that are in the reclaim path (e.g., DRM
-> > > scheduler workqueues). It is useful to teach lockdep that memory cannot
-> > > be allocated on these workqueues. Add an interface to taint workqueue
-> > > lockdep with reclaim.
-> > 
-> > Given that it's about reclaim, "memory cannot be allocated" may be a bit
-> > misleading. Can you make the description more accurate? Also, it'd be great
-
-Can fix the comment. The rule is memory cannot be allocated in the
-context of reclaim (e.g., GFP_KERNEL).
-
-> > if you can include an example lockdep splat for reference.
-
-My driver (Xe) doesn't break anything but can hack to trigger a lockdep
-warning and include it.
-
-Matt
-
-> > 
-> > > Cc: Tejun Heo <tj@kernel.org>
-> > > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> > > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> > > ---
-> > >  include/linux/workqueue.h | 19 +++++++++++++++++++
-> > >  kernel/workqueue.c        |  9 +++++++++
-> > >  2 files changed, 28 insertions(+)
+On Tuesday, 21 October 2025 at 23:29:59 Calvin Owens <calvin@wbinvd.org> wrote:
+> On Tuesday 10/21 at 14:20 -0700, Calvin Owens wrote:
+> > On Tuesday 10/21 at 22:53 +0200, Francesco Valla wrote:
+> > > Hello,
 > > > 
-> > > diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-> > > index dabc351cc127..954c7eb7e225 100644
-> > > --- a/include/linux/workqueue.h
-> > > +++ b/include/linux/workqueue.h
-> > > @@ -553,6 +553,25 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
-> > >  						1, lockdep_map, ##args))
-> > >  #endif
-> > >  
-> > > +
-> > > +#ifdef CONFIG_LOCKDEP
-> > > +/**
-> > > + * taint_reclaim_workqueue - taint workqueue lockdep map with reclaim
-> > > + * @wq: workqueue to taint with reclaim
-> > > + * gfp: gfp taint
-> >       ^@
+> > > while testing Bluetooth on my NXP i.MX93 FRDM, which is equipped with an IW612
+> > > Bluetooth chipset from NXP, I encountered an erratic bug during initialization.
+> > > 
+> > > While the firmware download always completed without errors, subsequent HCI
+> > > communication would fail most of the time with:
+> > > 
+> > >     Frame reassembly failed (-84)
+> > > 
+> > > After some debug, I found the culprit to be this patch that was integrated as
+> > > part of the current (v6.18) cycle:
+> > > 
+> > >     93f06f8f0daf Bluetooth: remove duplicate h4_recv_buf() in header [1]
+> > > 
+> > > The reason is simple: the h4_recv_buf() function from hci_h4.c, which is now
+> > > used instead the "duplicated" one in the (now removed) h4_recv_buf.h, assumes
+> > > that the private drvdata for the input struct hci_dev is a pointer to a
+> > > struct hci_uart, but that's not the case for the btnxpuart driver. In this
+> > > case, the information about padding and alignment are pretty random and
+> > > depend on the content of the data that was incorrectly casted as a
+> > > struct hci_uart.
+> > > 
+> > > The bug should impact also the other platforms that were touched by the
+> > > same patch. 
 > > 
-> > > + *
-> > > + * Drivers often use workqueues that are in the reclaim path (e.g., DRM
-> > > + * scheduler workqueues). It is useful to teach lockdep that memory cannot be
-> > > + * allocated on these workqueues.
-> > > + */
-> > > +extern void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp);
-> > > +#else
-> > > +static inline void taint_reclaim_workqueue(struct workqueue_struct *wq,
-> > > +					   gfp_t gfp)
+> > Hi Francesco,
 > > 
-> > Would a more direct name work better, maybe something like
-> > workqueue_warn_on_reclaim()?
+> > Thanks for investigating, this makes sense to me.
 > > 
-> 
-> Can rename, but perhaps not needed depending on what we land on below.
-> 
-> > Hmm... would it make sense to tie this to WQ_MEM_RECLAIM - ie. enable it
-> > implicitly on workqueues w/ the flag set?
+> > Funny enough, I specifically tested this on btnxpuart and saw no
+> > problems. I suppose some kconfig difference or some other innocuous
+> > patch moved structure fields around such that it triggered for you?
+> > Not that it really matters...
 > > 
-> 
-> I had considered this, and for a while I thought WQ_MEM_RECLAIM already
-> did what I'm suggesting—especially since I’ve spotted bugs in drivers
-> where I would have expected lockdep to catch them.
-> 
-> In my opinion, this approach is better, but it has a broader kernel-wide
-> scope and could potentially break some things. My subsequent patches
-> will likely break one or two DRM drivers, so it might not be a concern
-> to fix everything that breaks across the kernel. It's up to you which
-> route we want to take here.
-> 
-> Matt 
-> 
-> > Thanks.
+> > > For the time being, I'd then propose to revert the commit.
 > > 
-> > -- 
-> > tejun
+> > Adding back all the duplicate code is not the right way forward, IMHO.
+> > There must be some way to "mask" the problematic behavior for the
+> > drivers which stash the different structure in drvdata, right?
+> 
+> Actually, the right approach is probably to tweak these drivers to do
+> what the Intel driver does:
+> 
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/bluetooth/hci_intel.c#n869
+> 
+>     static int intel_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+>     {
+>             struct hci_uart *hu = hci_get_drvdata(hdev);
+>             struct intel_data *intel = hu->priv;
+> 
+> I'll spin that up unless I hear better from anyone else :)
+>
+
+Hi, thanks for the quick response!
+
+That was my first thought, but the Intel driver actually _uses_ the hci_uart
+structure, while btnxpuart and such would only piggy-back on it to be able to
+use h4_recv_buf() (and struct hci_uart is huge!).
+
+One possible solution would be to define an "inner" __h4_recv_buf() function
+that accepts alignment and padding as arguments, and use that directly on
+drivers that don't use struct hci_uart (PoC attached - I don't like the
+__h4_recv_buf name but I don't really know how it should be called).
+
+Regards,
+Francesco
+
+---
+
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index d5153fed0518..02511ef1a841 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -1756,8 +1756,9 @@ static size_t btnxpuart_receive_buf(struct serdev_device *serdev,
+ 
+        ps_start_timer(nxpdev);
+ 
+-       nxpdev->rx_skb = h4_recv_buf(nxpdev->hdev, nxpdev->rx_skb, data, count,
+-                                    nxp_recv_pkts, ARRAY_SIZE(nxp_recv_pkts));
++       nxpdev->rx_skb = __h4_recv_buf(nxpdev->hdev, nxpdev->rx_skb, data, count,
++                                      nxp_recv_pkts, ARRAY_SIZE(nxp_recv_pkts),
++                                      0, NULL);
+        if (IS_ERR(nxpdev->rx_skb)) {
+                int err = PTR_ERR(nxpdev->rx_skb);
+                /* Safe to ignore out-of-sync bootloader signatures */
+diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
+index 9070e31a68bf..c83c266ba506 100644
+--- a/drivers/bluetooth/hci_h4.c
++++ b/drivers/bluetooth/hci_h4.c
+@@ -151,27 +151,32 @@ int __exit h4_deinit(void)
+        return hci_uart_unregister_proto(&h4p);
+ }
+ 
+-struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+-                           const unsigned char *buffer, int count,
+-                           const struct h4_recv_pkt *pkts, int pkts_count)
++struct sk_buff *__h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
++                             const unsigned char *buffer, int count,
++                             const struct h4_recv_pkt *pkts, int pkts_count,
++                             u8 alignment, u8 *padding)
+ {
+-       struct hci_uart *hu = hci_get_drvdata(hdev);
+-       u8 alignment = hu->alignment ? hu->alignment : 1;
+-
+        /* Check for error from previous call */
+        if (IS_ERR(skb))
+                skb = NULL;
+ 
++       if (alignment == 0)
++               alignment = 1;
++
++       WARN_ON_ONCE(alignment > 1 && !padding);
++
+        while (count) {
+                int i, len;
+ 
+                /* remove padding bytes from buffer */
+-               for (; hu->padding && count > 0; hu->padding--) {
+-                       count--;
+-                       buffer++;
++               if (padding) {
++                       for (; *padding && count > 0; *padding = *padding - 1) {
++                               count--;
++                               buffer++;
++                       }
++                       if (!count)
++                               break;
+                }
+-               if (!count)
+-                       break;
+ 
+                if (!skb) {
+                        for (i = 0; i < pkts_count; i++) {
+@@ -252,16 +257,20 @@ struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+                        }
+ 
+                        if (!dlen) {
+-                               hu->padding = (skb->len + 1) % alignment;
+-                               hu->padding = (alignment - hu->padding) % alignment;
++                               if (padding) {
++                                       *padding = (skb->len + 1) % alignment;
++                                       *padding = (alignment - *padding) % alignment;
++                               }
+ 
+                                /* No more data, complete frame */
+                                (&pkts[i])->recv(hdev, skb);
+                                skb = NULL;
+                        }
+                } else {
+-                       hu->padding = (skb->len + 1) % alignment;
+-                       hu->padding = (alignment - hu->padding) % alignment;
++                       if (padding) {
++                               *padding = (skb->len + 1) % alignment;
++                               *padding = (alignment - *padding) % alignment;
++                       }
+ 
+                        /* Complete frame */
+                        (&pkts[i])->recv(hdev, skb);
+@@ -271,4 +280,16 @@ struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+ 
+        return skb;
+ }
++EXPORT_SYMBOL_GPL(__h4_recv_buf);
++
++struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
++                           const unsigned char *buffer, int count,
++                           const struct h4_recv_pkt *pkts, int pkts_count)
++{
++       struct hci_uart *hu = hci_get_drvdata(hdev);
++       u8 alignment = hu->alignment ? hu->alignment : 1;
++
++       return __h4_recv_buf(hdev, skb, buffer, count, pkts, pkts_count,
++                            alignment, &hu->padding);
++}
+ EXPORT_SYMBOL_GPL(h4_recv_buf);
+diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
+index cbbe79b241ce..0b61ee953fa4 100644
+--- a/drivers/bluetooth/hci_uart.h
++++ b/drivers/bluetooth/hci_uart.h
+@@ -162,6 +162,11 @@ struct h4_recv_pkt {
+ int h4_init(void);
+ int h4_deinit(void);
+ 
++struct sk_buff *__h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
++                             const unsigned char *buffer, int count,
++                             const struct h4_recv_pkt *pkts, int pkts_count,
++                             u8 alignment, u8 *padding);
++
+ struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+                            const unsigned char *buffer, int count,
+                            const struct h4_recv_pkt *pkts, int pkts_count);
+
+
+
+
 
