@@ -1,98 +1,150 @@
-Return-Path: <linux-kernel+bounces-862443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D169FBF549F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E737BF54EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B623D188DDEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B941E3A4A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0235305042;
-	Tue, 21 Oct 2025 08:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4D030CDA5;
+	Tue, 21 Oct 2025 08:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gx36LVtm"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="iEdMi9lI"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A533729BDB6
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F52311953;
+	Tue, 21 Oct 2025 08:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035866; cv=none; b=qAiMG6mp+CDsP10AD5mdR952DaJJ30ZshniOXIQUMwYosGOnQTs9hz85dggZd+5qTKXS3ptBwYGILaM1B4VaTkkuvLgGh4CQe7cnlAa6mNZxUMdrdhbd+Sy70HVNFtKVu6ed+8M1+G0vte3m0Cf7w1yE480D8f6jABRTUdZJnRw=
+	t=1761035937; cv=none; b=nCgi+94vADBMbTM8THAOOGHlr35gM73+3a6i0D1VsAGqJz3GJaJ+21Dn0h/hpEoldZpNMGbds4iO3vPn9eXgLWS+a9/A5sZaDo8jL4inopeRvKN/Kvbd5qAOQt8PrYz0D8iRNGq5U9aJvdowN4DosIzM5dtjy+v7mpS0SbcF8/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035866; c=relaxed/simple;
-	bh=QjyCWM2eaOA0G4njqmL1QXzj7R90sfd0dteSirTsca4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ExEqzVYp5QUknQvsmHqXfcZKwPQw8zJlOKfJDLCdntEL8w2cYdc9e4PIdKr6GEnpC64Is14bOlWWgZXQ8YKil8dTzGZbIq96CEGMzS1gjauuDFWGckRIwTRb37sxp1XFY7f5UM9Dp7y+0/xCa53Sm0tzdNPske8VTvz2HXyUUM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gx36LVtm; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b403bb7843eso984410266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761035863; x=1761640663; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjyCWM2eaOA0G4njqmL1QXzj7R90sfd0dteSirTsca4=;
-        b=Gx36LVtmNIzqM8hPLu5g2RBt9sKc3Xr8z4YXyajQafsm8z+85hYTIcZUHC4o0qHgzw
-         Kmj4C2v6qaauSPZnF1wYOt78WB9dJvsiwmXjHEkLP76V45M/cpZdTyu4wAXkPHR6YJGB
-         KQ1Ab2eZp5Pl1oUxuF5xZdR64/uQNax2P4tEs0gM9s9m4wGfUAX9ZQnWzf8G9kIARh/3
-         Jmd7yHDN5Ipy5P1irI+lgmGQYYyYwUfZYj2+Vjg9JcD4lBIVMoGlQtYWC4JBfgiu7fUU
-         w+hY+fNdmrx3FAr54JWk/0CPr52x3/qktPr6h6nbJf4R2wP+R1pBQrU8wxnuS/1lz28L
-         UeTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761035863; x=1761640663;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QjyCWM2eaOA0G4njqmL1QXzj7R90sfd0dteSirTsca4=;
-        b=UgRKZypX6uw6pv0/GOF3ZyhVbNe26BK/yR1CVxZmEJlaB4YGP0YrOzCayihJDQNrh7
-         z7z/UAWOKa3QyIRymAryrWdwf/UwLLAnPYvHhEBnst6w7xA8+3+e+xodvWBSnNnSD0aO
-         FwqV+k7JzFsi/HMacElMH+NnwLva1567dotRi9Uptiz+3RBxyN/8GpzXVOJjyxRsDMw1
-         Br4UPQWilRjXvrgmUTVgffEUFlCGklC+ndYm5Gm3WbNMRD6PBPQFQIrmDgKDWdoazqsC
-         8a8Li7T7fV5LH5zZRTfUyfqIlGdlcvpYjHaxOhnjUJiWTbsTWz+kIWyvRULZfqcp2e9w
-         uJJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtv61dahunZP1qpI6PHtJkln3oPJ6+fyPZCgA4JShzdflmA4b6mlTuJe0YUimtO7W6xcfMpnApTN5P4L0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKN6ryeZrQPmhnh+Ae/GBmV5fHqi3T/VMNZMThMYhYymf9Ld2J
-	qEbzAjXDlitfG8RNFjIO9O6VrdTc245RX0/sbIKjcnEFNjLI1pBU2hU3Xaj5lgE7vw47PuAS4aA
-	ZfoPd3IwhmZhGsQGXPNLPTUd0BA+x8Q==
-X-Gm-Gg: ASbGncsXJh6qiUH9EEbYFXa41nxxnTdmT64Fw1RyIdvgWezzkF1wWaLQx8JK2suZJv5
-	wsM5mNFe3R9/K+TWInKT+4k0Y3DFEUMdYLl7KlVyucFGE1ZkBNX1yK+WLoZls6FrBX0eXUa5uJS
-	GCmFmJIoev05lk2S5Wz57tjSmd/lqzj2TOrVzb0p5vkLN1qDARnSg2nUQlelDTW0JHrlahptJnV
-	1H4rdHTMrz7ZgfqvjVLgjtk4+62+9bdRUC+VnnZPP1VQTeNHtEQFDe9yw==
-X-Google-Smtp-Source: AGHT+IEtZxUVPjSc2WqOyAjA7Fte4RrVXHEh4i2Gbt2zB79A/SDrGDESaIChW2EoFUntYRwCfCiMlt+Yi0KqlqbopSU=
-X-Received: by 2002:a17:907:3dac:b0:b45:8370:ef10 with SMTP id
- a640c23a62f3a-b647245845bmr1951550566b.22.1761035862848; Tue, 21 Oct 2025
- 01:37:42 -0700 (PDT)
+	s=arc-20240116; t=1761035937; c=relaxed/simple;
+	bh=OkTTOs8u5Z/zCBGUclr/sqSWwZZH1BXU6gWLVeYZeYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GX7Qd3F/+urxoP+B+JAI5kj93EvsEMG+XyOEUPmGAdWA6Ik+J/vjbn6T7jnGuUpiO+d+9wdMn37poVswCIzRFEz+KOUFTCYgqd/2SGF/+c/5FV/arC+ImUEfB+uDJn0Al10C30J6QAjl7VnpVLXbYxiFs4iAB3bCFBdzJx+Yypo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=iEdMi9lI; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=GXbqGEqtn7uQLSJTDpkbfTb/HIT9zRnLyNNGASNhKDc=; b=iEdMi9lIca+YqotIqGbMIEpwR8
+	z073jtgmRswef6NyTJsXqw8tvedCaf67afY5Up+KyW2MoL+XrmFr6G0+2reuEJ1HdXbvIuA/ePs9r
+	4HuGjGADqCQMBO5DJUxD9RGGTzwtzzVZQbtXvdCyc+Og6PCT8aRmiSeSIibQK9GdBz9a7q4OfO/Qv
+	LYiRKWrveDlm8s1T2cmeKVum+KxCcyQ2QAagVs+BL5OKQGhMuMNl+hWVX6tHFAydUkonqZo6hQctF
+	OWPz21P82+fVZd+CujyborfqXwX5kOqBvc+Rt7XmC5ST7WdLe3S3mT1nEbi8LQhEXwSxW4HrXf3gx
+	uaNGptCA==;
+Received: from [212.111.240.218] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vB7tH-0001Ua-Sv; Tue, 21 Oct 2025 10:38:47 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ zhangqing@rock-chips.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, Elaine Zhang <zhangqing@rock-chips.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+ finley.xiao@rock-chips.com, Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: clock, reset: Add support for rv1126b
+Date: Tue, 21 Oct 2025 10:38:46 +0200
+Message-ID: <4463339.ejJDZkT8p0@phil>
+In-Reply-To: <20251021065232.2201500-3-zhangqing@rock-chips.com>
+References:
+ <20251021065232.2201500-1-zhangqing@rock-chips.com>
+ <20251021065232.2201500-3-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016103609.33897-2-bagasdotme@gmail.com> <aa388d29-b83b-454e-a686-638c80c6a7bf@infradead.org>
- <CAH2-hc+XQR7v9Z28yH_CTWZ4ieaF5eQFKBVut1idULP=4w03fQ@mail.gmail.com> <6b8e7935-6b80-4f00-9a44-7003071d1a21@infradead.org>
-In-Reply-To: <6b8e7935-6b80-4f00-9a44-7003071d1a21@infradead.org>
-From: =?UTF-8?B?VG9tw6HFoSBNdWRydcWIa2E=?= <tomas.mudrunka@gmail.com>
-Date: Tue, 21 Oct 2025 10:37:30 +0200
-X-Gm-Features: AS18NWAkzMEdIZQ7IEi0fFSxQKz8uPinwHCWF-5cnXsFVeY8YpgVfIMAZOdWQSE
-Message-ID: <CAH2-hc+M-CyXL1HtHkD9o_Q_8PP_OkYLvjqhdBiCnHVBQspedQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation: sysrq: Rewrite /proc/sysrq-trigger usage
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Documentation <linux-doc@vger.kernel.org>, Linux Serial <linux-serial@vger.kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Cengiz Can <cengiz@kernel.wtf>, Jiri Slaby <jirislaby@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-In that case, can we use some short form? Something like
-"extra characters are ignored for now, which might change in future".
+Hi Elaine,
 
-Thing is that i wanted to add handling of extra characters, but
-maintainer said it cannot be done because people might currently rely
-on characters being ignored as written in documentation.
+Am Dienstag, 21. Oktober 2025, 08:52:27 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Elaine Zhang:
+> Add clock and reset ID defines for rv1126b.
+> Also add documentation for the rv1126b CRU core.
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../bindings/clock/rockchip,rv1126b-cru.yaml  |  52 +++
+>  .../dt-bindings/clock/rockchip,rv1126b-cru.h  | 392 +++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rv1126b-cru.h  | 405 ++++++++++++++++++
+>  3 files changed, 849 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv11=
+26b-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru=
+=2Eyaml b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+> new file mode 100644
+> index 000000000000..04b0a5c51e4e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,rv1126b-cru.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip RV1126B Clock and Reset Unit
+> +
+> +maintainers:
+> +  - Elaine Zhang <zhangqing@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +description:
+> +  The rv1126b clock controller generates the clock and also implements a
+> +  reset controller for SoC peripherals.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - rockchip,rv1126b-cru
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: xin24m
+
+I think we're missing the optional
+
+   rockchip,grf:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       Phandle to the syscon managing the "general register files" (GRF),
+       if missing pll rates are not changeable, due to the missing pll
+       lock status.
+
+
+because RV1126B_GRF_SOC_STATUS0 contains the PLL lock status.
+
+
+Heiko
+
+
+
 
