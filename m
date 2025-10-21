@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-863717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C5ABF8E99
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313FFBF8EAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58B374FA992
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:12:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0CD15649E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49149287265;
-	Tue, 21 Oct 2025 21:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C913287265;
+	Tue, 21 Oct 2025 21:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTIHK7sK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BaR7OxGX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97826280308;
-	Tue, 21 Oct 2025 21:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1874A27FD5D;
+	Tue, 21 Oct 2025 21:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761081142; cv=none; b=EdJ98DtWzTTrjQmPVmkQyGCvkRLuKtLRVqTtyDZykr6DBinwdT/USppJxy6XaAgb/hmtpvh0VNnkjq014T4k1/S85aOOqaz4ktWgcNenjEz8Ap83FeYHRc5sUGRzBatC/1IBgCs/MGlbWfVokYY9nirhWD7Sg6L9xoSaurjxI8s=
+	t=1761081282; cv=none; b=NK9pRNlrULbLrf4bfz9eFLcC9NhSfVqKjBQgD9BCqEy45uvyE4oTOIA2PYPebUzaqXvAijbwgLRSaVd+B+WTGFYKxPzAbYqm9GhqPFk0Hy2CtoafBJV5MznKFo1sSKi0y28S24BEbLEPtVqM7Qw/xGzJ6I2OuWdnSvMG+kg9tsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761081142; c=relaxed/simple;
-	bh=uACZEAVySp9vh+DxTCIfkIUewQNFDjmyapYv1iuSR/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yx7Ks0KFCYLx9Gziy6SLa1RjMSxZ3hqb5qx1dXWzMM88bq2fd60dxYDcul/ceNjz1SM4oGGxT3lgFTYDIxRnxakDtuZxLPtEpoS4B0jdANSr6qsgban3vCkEwtnBtnSPffZALF0m1cGrnJDKsMBrelRTBNok5A9CKvPpww+KmQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTIHK7sK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65068C4CEF1;
-	Tue, 21 Oct 2025 21:12:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761081141;
-	bh=uACZEAVySp9vh+DxTCIfkIUewQNFDjmyapYv1iuSR/U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hTIHK7sK/hQXFD663p/SfuxsBbpnA4IyGPA8y4dpT8qW3hsfsM1CgRDWiGrD+NLQx
-	 sY516T92duqBF/MqRjLXUh4ykzn5fLvlRK/F2oLBWqvgPZiNP3RuNB/AllpmXDQjNq
-	 o66cfww8W3jT4h1QfERQBUcGrrNPYlq8fO3YDCGzHEQR1Jbc12SdQKMpVZAUWgcGq2
-	 tAiSrMqjFV9MAT0M9onn+MTt66ufzPy41HeIT2Z2YMJq8zn2XxIt+m1sCecCWbWFq4
-	 5IryYgxRGWzEaU9DMexjULNRxTIc/cJ714QGud3CPXcaw6CT0Cb6HM5PBbnMI7fq3v
-	 ulZQINhVxu67A==
-Message-ID: <c1c72b45-1f0b-48da-98e5-47f5d63463a2@kernel.org>
-Date: Tue, 21 Oct 2025 16:12:19 -0500
+	s=arc-20240116; t=1761081282; c=relaxed/simple;
+	bh=YQidWeBQThI4lFjuPpKQQPtrlVPDUTen2IXLFencNZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aw9791Z8X+2/ZSRyvAJ+vqEB9A9BSLmsYM9rEdhW2L8GiqiSzd6hKlVYoDmXLnP+ijgr7ivBb4kViIj/WIwU/pWs7vC/+AEWxByvxzrhFb3VvZxmH0rJ2DyeBOJGbYWYAzN8nfRJ/E1c91qmOf+4AnTx3rTnx9f0xSX3kYQSR14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BaR7OxGX; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761081281; x=1792617281;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YQidWeBQThI4lFjuPpKQQPtrlVPDUTen2IXLFencNZg=;
+  b=BaR7OxGXHHT/mVpNv2Y6U7cCO/dPAjk3r001s6swgow+40dalA++6tsl
+   R0g2lv/uNRVnVAznmgsGTDU5vZM/UcgGm0GXbgjnJ33WvWmDoMUzx7hIQ
+   rKhR0gfVhyw5dRWhUB48AgqBwkXVQTqViB1/wsPe3aysSY+2KjWSY3ptV
+   aOhTg0AYzztcQ/r5YeTf4AXzpIQrC19PnkBoI6QOt0XCtR7P535XV8NNL
+   znVzIwQTgau3E49SvoMeHXEshkAy2Eew22waCCcbV+s7P+DPPCiqMVy24
+   5uFLRQEwyNCJkjeV89NUZnvTkkp84xYtk1VhGM+0o9kFIF/bjyc4hfoCh
+   g==;
+X-CSE-ConnectionGUID: G6Zgw3joRQCDOPp24MfpdQ==
+X-CSE-MsgGUID: MI38fL+bS6uI2Jk3XgGoUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67055832"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67055832"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 14:14:40 -0700
+X-CSE-ConnectionGUID: GNdgFLJ0Ta2cVivOZcsn6A==
+X-CSE-MsgGUID: N2vP9ISWSX2pfQevM9jjTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="187959834"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 21 Oct 2025 14:14:35 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBJgf-000Bm5-1n;
+	Tue, 21 Oct 2025 21:14:33 +0000
+Date: Wed, 22 Oct 2025 05:14:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-sunxi@lists.linux.dev,
+	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/11] [EXAMPLE] arm64: dts: allwinner: a527-cubie-a5e:
+ Enable I2S and SPDIF output
+Message-ID: <202510220453.UbrhVlRH-lkp@intel.com>
+References: <20251020171059.2786070-12-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/4] ACPI: button: Cancel hibernation if button is pressed
- during hibernation
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Pavel Machek <pavel@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-input@vger.kernel.org
-Cc: kernel@collabora.com
-References: <20251018142114.897445-1-usama.anjum@collabora.com>
- <20251018142114.897445-3-usama.anjum@collabora.com>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <20251018142114.897445-3-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020171059.2786070-12-wens@kernel.org>
 
+Hi Chen-Yu,
 
+kernel test robot noticed the following build errors:
 
-On 10/18/2025 9:21 AM, Muhammad Usama Anjum wrote:
-> acpi_pm_wakeup_event() is called from acpi_button_notify() which is
-> called when power button is pressed. But system doesn't wake up as
-> pm_wakeup_dev_event() isn't called with hard parameter set in case of
-> hibernation. It gets set only for s2idle cases.
-> 
-> Call acpi_pm_wakeup_event() if power button is pressed and hibernation
-> is in progress. Set the hard parameter such that pm_system_wakeup()
-> gets called which increments pm_abort_suspend counter. Hence hibernation
-> would be cancelled as in hibernation path, this counter is checked if it
-> should be aborted.
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->   drivers/acpi/button.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-> index 0a70260401882..4a2575c0c44e3 100644
-> --- a/drivers/acpi/button.c
-> +++ b/drivers/acpi/button.c
-> @@ -20,6 +20,7 @@
->   #include <linux/acpi.h>
->   #include <linux/dmi.h>
->   #include <acpi/button.h>
-> +#include <linux/suspend.h>
->   
->   #define ACPI_BUTTON_CLASS		"button"
->   #define ACPI_BUTTON_FILE_STATE		"state"
-> @@ -458,11 +459,16 @@ static void acpi_button_notify(acpi_handle handle, u32 event, void *data)
->   	acpi_pm_wakeup_event(&device->dev);
->   
->   	button = acpi_driver_data(device);
-> -	if (button->suspended || event == ACPI_BUTTON_NOTIFY_WAKE)
-> -		return;
-> -
->   	input = button->input;
->   	keycode = test_bit(KEY_SLEEP, input->keybit) ? KEY_SLEEP : KEY_POWER;
-> +	if (event == ACPI_BUTTON_NOTIFY_STATUS && keycode == KEY_POWER &&
-> +	    hibernation_in_progress()) {
-> +		pm_wakeup_dev_event(&device->dev, 0, true);
+[auto build test ERROR on sunxi/sunxi/for-next]
+[also build test ERROR on broonie-sound/for-next vkoul-dmaengine/next linus/master v6.18-rc2 next-20251021]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The comments for pm_wakeup_dev_event() say that hard is used 
-specifically for suspend to idle, but now you're overloading it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/dt-bindings-dma-allwinner-sun50i-a64-dma-Add-compatibles-for-A523/20251021-011340
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git sunxi/for-next
+patch link:    https://lore.kernel.org/r/20251020171059.2786070-12-wens%40kernel.org
+patch subject: [PATCH 11/11] [EXAMPLE] arm64: dts: allwinner: a527-cubie-a5e: Enable I2S and SPDIF output
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20251022/202510220453.UbrhVlRH-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510220453.UbrhVlRH-lkp@intel.com/reproduce)
 
-So I think the comment in pm_wakeup_dev_event() needs to be updated if 
-this is the way forward.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510220453.UbrhVlRH-lkp@intel.com/
 
-> +		return;
-> +	}
-> +
-> +	if (button->suspended || event == ACPI_BUTTON_NOTIFY_WAKE)
-> +		return;
->   
->   	input_report_key(input, keycode, 1);
->   	input_sync(input);
+All errors (new ones prefixed by >>):
 
+   also defined at arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts:393.8-397.3
+>> ERROR: Input tree has errors, aborting (use -f to force output)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
