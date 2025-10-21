@@ -1,173 +1,226 @@
-Return-Path: <linux-kernel+bounces-862975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7C0BF6B47
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3974BF6B5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F03E19A488C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE0C19A4F40
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A6E334C13;
-	Tue, 21 Oct 2025 13:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C094A336EC9;
+	Tue, 21 Oct 2025 13:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="THN0jJkn"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QE8wYcCP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9701433375D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554A51DD9AC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052493; cv=none; b=LYU0EXff/PQrAlXMV86W5gUyTidR1CrQIfQNjxEWwHQlNIvtg/NUC/sjxBNN35+63Nn9HNRKXvL6pZGcyHOPsx9zRyH1aDAlQvR1xP4zndHuoisCk4t6f/tGDWzIUVnpaHh1uvcCL6/asG2iDLfKCUNSxmzigu3tERIblLps7sY=
+	t=1761052534; cv=none; b=stJzIe1/V/+aQYt1H21AgXoKqFdQCiC8JjlUd5WxZ5BOYrkcMr9ET3iwh9dwSYviAVXBat0+W9RIldt23wOG1sFLL0+JCoHIv/ZJnKKkxmuKZ7cTF3gu8NCHLhtygXNlWRVUHjSb35JsM5YB/323Rot/SOTSSiESlgdU/D9mBe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052493; c=relaxed/simple;
-	bh=nnyXNR+db/8rGh9UGzSckVae75EOQEb5y+wYUf5/M3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U5g26I4zlywVwCGZ4uV2Hvr2rPzK2sQ2OqxMFtWTPRZuQ70K45OFJ4LMmleQcGcwwHYzzQqvsRaJ/YetAppiMy9K6RIUOj/pQHVZUp9NIZtC5YUe6vSddbpsdvjuzhmR1HoZzIbPpyI8Jn6wFN1BOeZ0brQI/ne67BLuvmx9U0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=THN0jJkn; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D42211A158A;
-	Tue, 21 Oct 2025 13:14:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 97C2F60680;
-	Tue, 21 Oct 2025 13:14:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2E6FA102F2403;
-	Tue, 21 Oct 2025 15:14:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761052487; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=lKeQTm9TBCdl3jhEh30xKHzcJ/AvP84waFAJQyNp9dQ=;
-	b=THN0jJknB2+qSSzRX7sNi1IniQBFcb6kSYu5+ANMhlR6MFFP01X2sqo7gqWEVKQjTdzrXw
-	2NpAajNFdCjkJrceZhVvo1Wc8G3OycyhpZbNImBZCLgyIKRwvMOFKNNIPlRoZb+Bo19gWc
-	MgPByYkndtpcmunCfQXY7/Qn9f7RMfP/2Zn5Mem9I5qZJGtHpHPSSYcjOr9oUvf1js43ZS
-	WQl4vwvcH/wWLkf8hmXjRUwGctHb7cez4GZMDO/p0hjwEXWkVZ1QlCDZzYn7meg3nSPufl
-	2RjRKJh0wZctq+3kZ7tlo5TPfs2m2c58nmcn2QDRpc+znhm4sLo41A0zcfLtLw==
-Date: Tue, 21 Oct 2025 15:14:35 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Douglas Anderson
- <dianders@chromium.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Bajjuri Praneeth <praneeth@ti.com>, Louis
- Chauvet <louis.chauvet@bootlin.com>, thomas.petazzoni@bootlin.com, Jyri
- Sarha <jyri.sarha@iki.fi>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>
-Subject: Re: [PATCH] drm/tilcdc: Fix removal actions in case of failed probe
-Message-ID: <20251021151435.23a03b85@kmaincent-XPS-13-7390>
-In-Reply-To: <20251014182122.5f63b027@kmaincent-XPS-13-7390>
-References: <20251014143229.559564-1-kory.maincent@bootlin.com>
-	<p4u2goyadub3dfuz4empf3g7a44b2ausy4hjjkcwj7nzgeochx@xztpij2i2lao>
-	<20251014182122.5f63b027@kmaincent-XPS-13-7390>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761052534; c=relaxed/simple;
+	bh=4lLcQvMnunkz+GAunoPU58cpUiOPw7liFAGLkEBA6QU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KVHl7A0rFhgLttEaRlOOwWu9ZuwMXhQqHFMnMwJOjwX1Pmsu2L06fILzxFNTcciPUl2a6BkLU6aUa6dZBsqKbAObu0sNJShdwdhsTwO9ZEQ+ZQIgXrGpNkPSx1tuKQesOW33Bf8c+tsMHwmfY+a3TBpJMtUwpNPQw0dNmBqQBGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QE8wYcCP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761052531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=paa6y0Umm0pxhPmdABIWbZ6KYckQ88Ey6Dsg8Oz34GA=;
+	b=QE8wYcCPeB+kyaSrRTbqgojlmvxYRFod6sEzZ/SpTDuPj8on9A2LXiKNIV/zdRXRwE0XF5
+	meSArvKyq6uAdfuerdmvnqG9qcdROeJsubNNnzDAQlmXwNEobA6HBe92BuxoRwClb4zEpo
+	FkQK4wyzrJfXENOXrHNwKW5BOHodj9c=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-84-_BpW9W8cMxqJfiFTOFOuYQ-1; Tue, 21 Oct 2025 09:15:30 -0400
+X-MC-Unique: _BpW9W8cMxqJfiFTOFOuYQ-1
+X-Mimecast-MFC-AGG-ID: _BpW9W8cMxqJfiFTOFOuYQ_1761052529
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46fb328a60eso33093695e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:15:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761052529; x=1761657329;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=paa6y0Umm0pxhPmdABIWbZ6KYckQ88Ey6Dsg8Oz34GA=;
+        b=bdfUaLIBaSjpk5wI85nTpaa0eV7/dSHulBmuSv8KGqnPJxCo8jn46N0HKuhUfL453S
+         VnGYoZKT0ntMo9IFJ49oCINTW4ELwGu63COuPjyB3pXXmFro0kFxkRBah8+TXt+P31OP
+         hfgzGvg0AuMrVSCbXYR6AYfRABRJuhFnj5ov/hhipSY6sEJr9tliwXsplNqzr8sOQxhE
+         fvwN4BeFXgLryr/sz3DBicfmgv73/DMjllLnDGrVA2myPM1hVy0Rja7rVzT94fQKvS3w
+         IVJ+CrMgAfmuo4Yf1a/CjwVeYbLalr/KwgD31YgCcYYvD6q4QGAm1mcyRvrprQIlvAy2
+         rjWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYzoIu6X5uZB0gjCds8biY8c2V59uEE0h/SROPqOdvLDRDPuRmUdhPaLxuvibm1+HMZt9gHF3MMc4riC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6w51Wz0eUPSOHngp94KqXeLlb74cE+WCLMw2hhYR7s+aULegi
+	UW7GZy7m7LYpKnHA6LEv3OpoAXASpaH5BQCzSDdG+ygGlySMRb/e4hG3WEspinROqZVgFm8VqiE
+	o1h1EUwwbq6FHagzwBrswg8ebpCLUfdNmg30gwcgGco04KielvRkDjUQ3m8mI9wBvZA==
+X-Gm-Gg: ASbGncth1IIitYmx5+jNrcYMi+XnJxdHhTk/9S9v1clopNj5ekfXQ1wQnqyGG+TvhLC
+	Jl7iYI/2kfKTs3N6ViiHX+dxP6aXVjRbBunqhKkyitIXLhXNT2dhRZQEj7AAhtd4jmpet0NN8QU
+	MzFI5lEG0RLTu/qep+bNW0TUV/wdCd4G8vgUjN/w2d355PsCjW75UMQ2ywiMl9iQBcci3Dvh7MV
+	G/Upw48ANKAnovNNk0LHE1IIXHxW+GzzABb6OtEndhkSAw5dky+O3HanWzACsFinNO6ZUtkGoph
+	kyi9frJMi+Cg+41UeyrxkWCxJv5cuEW0FGxjtWSwED+b1QHLJaRCJF/1i2QhuJ2CNRzv
+X-Received: by 2002:a05:6000:4013:b0:3d1:61f0:d26c with SMTP id ffacd0b85a97d-42704dce7bdmr12202122f8f.54.1761052528659;
+        Tue, 21 Oct 2025 06:15:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHtT4dHlzzmepxbEEmjHJkJHD2FwCKCqSVsiJy1urptxBGYwBKtZyQJidvDZgwFYhtUThLA/A==
+X-Received: by 2002:a05:6000:4013:b0:3d1:61f0:d26c with SMTP id ffacd0b85a97d-42704dce7bdmr12202091f8f.54.1761052528186;
+        Tue, 21 Oct 2025 06:15:28 -0700 (PDT)
+Received: from fedora ([2a01:e0a:257:8c60:80f1:cdf8:48d0:b0a1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4731c95efb9sm164559345e9.8.2025.10.21.06.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 06:15:27 -0700 (PDT)
+Date: Tue, 21 Oct 2025 15:15:24 +0200
+From: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
+To: Francesco Valla <francesco@valla.it>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
+	Harald Mommer <harald.mommer@opensynergy.com>,
+	Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>,
+	Wolfgang Grandegger <wg@grandegger.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>,
+	linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, virtualization@lists.linux.dev,
+	development@redaril.me
+Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
+Message-ID: <aPeHbKES6yHkh5Rj@fedora>
+References: <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
+ <27327622.1r3eYUQgxm@fedora.fritz.box>
+ <aPdU93e2RQy5MHQr@fedora>
+ <28156189.1r3eYUQgxm@fedora.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28156189.1r3eYUQgxm@fedora.fritz.box>
 
-On Tue, 14 Oct 2025 18:21:22 +0200
-Kory Maincent <kory.maincent@bootlin.com> wrote:
+On Tue, Oct 21, 2025 at 02:08:35PM +0200, Francesco Valla wrote:
+> On Tuesday, 21 October 2025 at 11:40:07 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
+> > On Mon, Oct 20, 2025 at 11:24:15PM +0200, Francesco Valla wrote:
+> > > On Monday, 20 October 2025 at 16:56:08 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
+> > > > On Tue, Oct 14, 2025 at 06:01:07PM +0200, Francesco Valla wrote:
+> > > > > On Tuesday, 14 October 2025 at 12:15:12 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
+> > > > > > On Thu, Sep 11, 2025 at 10:59:40PM +0200, Francesco Valla wrote:
+> > > > > > > Hello Mikhail, Harald,
+> > > > > > > 
+> > > > > > > hoping there will be a v6 of this patch soon, a few comments:
+> > > > > > > 
+> > > > > > > On Monday, 8 January 2024 at 14:10:35 Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com> wrote:
+> > > > > > > 
+> > > > > > > [...]
+> > > > > > > > +
+> > > > > > > > +/* Compare with m_can.c/m_can_echo_tx_event() */
+> > > > > > > > +static int virtio_can_read_tx_queue(struct virtqueue *vq)
+> > > > > > > > +{
+> > > > > > > > +	struct virtio_can_priv *can_priv = vq->vdev->priv;
+> > > > > > > > +	struct net_device *dev = can_priv->dev;
+> > > > > > > > +	struct virtio_can_tx *can_tx_msg;
+> > > > > > > > +	struct net_device_stats *stats;
+> > > > > > > > +	unsigned long flags;
+> > > > > > > > +	unsigned int len;
+> > > > > > > > +	u8 result;
+> > > > > > > > +
+> > > > > > > > +	stats = &dev->stats;
+> > > > > > > > +
+> > > > > > > > +	/* Protect list and virtio queue operations */
+> > > > > > > > +	spin_lock_irqsave(&can_priv->tx_lock, flags);
+> > > > > > > > +
+> > > > > > > > +	can_tx_msg = virtqueue_get_buf(vq, &len);
+> > > > > > > > +	if (!can_tx_msg) {
+> > > > > > > > +		spin_unlock_irqrestore(&can_priv->tx_lock, flags);
+> > > > > > > > +		return 0; /* No more data */
+> > > > > > > > +	}
+> > > > > > > > +
+> > > > > > > > +	if (unlikely(len < sizeof(struct virtio_can_tx_in))) {
+> > > > > > > > +		netdev_err(dev, "TX ACK: Device sent no result code\n");
+> > > > > > > > +		result = VIRTIO_CAN_RESULT_NOT_OK; /* Keep things going */
+> > > > > > > > +	} else {
+> > > > > > > > +		result = can_tx_msg->tx_in.result;
+> > > > > > > > +	}
+> > > > > > > > +
+> > > > > > > > +	if (can_priv->can.state < CAN_STATE_BUS_OFF) {
+> > > > > > > > +		/* Here also frames with result != VIRTIO_CAN_RESULT_OK are
+> > > > > > > > +		 * echoed. Intentional to bring a waiting process in an upper
+> > > > > > > > +		 * layer to an end.
+> > > > > > > > +		 * TODO: Any better means to indicate a problem here?
+> > > > > > > > +		 */
+> > > > > > > > +		if (result != VIRTIO_CAN_RESULT_OK)
+> > > > > > > > +			netdev_warn(dev, "TX ACK: Result = %u\n", result);
+> > > > > > > 
+> > > > > > > Maybe an error frame reporting CAN_ERR_CRTL_UNSPEC would be better?
+> > > > > > > 
+> > > > > > I am not sure. In xilinx_can.c, CAN_ERR_CRTL_UNSPEC is indicated during
+> > > > > > a problem in the rx path and this is the tx path. I think the comment
+> > > > > > refers to improving the way the driver informs this error to the user
+> > > > > > but I may be wrong.
+> > > > > > 
+> > > > > 
+> > > > > Since we have no detail of what went wrong here, I suggested
+> > > > > CAN_ERR_CRTL_UNSPEC as it is "unspecified error", to be coupled with a
+> > > > > controller error with id CAN_ERR_CRTL; however, a different error might be
+> > > > > more appropriate.
+> > > > > 
+> > > > > For sure, at least in my experience, having a warn printed to kmsg is *not*
+> > > > > enough, as the application sending the message(s) would not be able to detect
+> > > > > the error.
+> > > > > 
+> > > > > 
+> > > > > > > For sure, counting the known errors as valid tx_packets and tx_bytes
+> > > > > > > is misleading.
+> > > > > > > 
+> > > > > > 
+> > > > > > I'll remove the counters below.
+> > > > > > 
+> > > > > 
+> > > > > We don't really know what's wrong here - the packet might have been sent and
+> > > > > and then not ACK'ed, as well as any other error condition (as it happens in the
+> > > > > reference implementation from the original authors [1]). Echoing the packet
+> > > > > only "to bring a waiting process in an upper layer to an end" and incrementing
+> > > > > counters feels wrong, but maybe someone more expert than me can advise better
+> > > > > here.
+> > > > > 
+> > > > > 
+> > > > 
+> > > > I agree. IIUC, in case there has been a problem during transmission, I
+> > > > should 1) indicate this by injecting a CAN_ERR_CRTL_UNSPEC package with
+> > > > netif_rx() and 2) use can_free_echo_skb() and increment the tx_error
+> > > > stats. Is this correct?
+> > > > 
+> > > > Matias
+> > > > 
+> > > > 
+> > > 
+> > > That's my understanding too! stats->tx_dropped should be the right value to
+> > > increment (see for example [1]).
+> > > 
+> > > [1] https://elixir.bootlin.com/linux/v6.17.3/source/drivers/net/can/ctucanfd/ctucanfd_base.c#L1035
+> > > 
+> > 
+> > I think the counter to increment would be stats->tx_errors in this case ...
+> > 
+> 
+> I don't fully agree. tx_errors is for CAN frames that got transmitted but then
+> lead to an error (e.g.: no ACK), while here we might be dealing with frames
+> that didn't even manage to reach the transmission queue [1].
+> 
+Let's use tx_dropped then, I honestly do not have an strong opinion
+about it. We can change that later if we are not happy.
 
-> Hello Maxime,
->=20
-> On Tue, 14 Oct 2025 17:36:47 +0200
-> Maxime Ripard <mripard@kernel.org> wrote:
->=20
-> > On Tue, Oct 14, 2025 at 04:32:28PM +0200, Kory Maincent wrote: =20
-> > > From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
-> > >=20
-> > > The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() helpe=
-rs
-> > > should only be called when the device has been successfully registere=
-d.
-> > > Currently, these functions are called unconditionally in tilcdc_fini(=
-),
-> > > which causes warnings during probe deferral scenarios.
-> > >=20
-> > > [    7.972317] WARNING: CPU: 0 PID: 23 at
-> > > drivers/gpu/drm/drm_atomic_state_helper.c:175
-> > > drm_atomic_helper_crtc_duplicate_state+0x60/0x68 ... [    8.005820]
-> > > drm_atomic_helper_crtc_duplicate_state from
-> > > drm_atomic_get_crtc_state+0x68/0x108 [    8.005858]
-> > > drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0x1=
-c8 [
-> > >  8.005885]  drm_atomic_helper_disable_all from
-> > > drm_atomic_helper_shutdown+0x90/0x144 [    8.005911]
-> > > drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc] [
-> > > 8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [ti=
-lcdc]
-> > >=20
-> > > Fix this by moving both drm_kms_helper_poll_fini() and
-> > > drm_atomic_helper_shutdown() inside the priv->is_registered condition=
-al
-> > > block, ensuring they only execute after successful device registratio=
-n.
-> > >=20
-> > > Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at
-> > > shutdown/remove time for misc drivers") Signed-off-by: Kory Maincent
-> > > (TI.com) <kory.maincent@bootlin.com> ---
-> > >  drivers/gpu/drm/tilcdc/tilcdc_drv.c | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> > > b/drivers/gpu/drm/tilcdc/tilcdc_drv.c index 7caec4d38ddf..2031267a3490
-> > > 100644 --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> > > +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> > > @@ -172,11 +172,11 @@ static void tilcdc_fini(struct drm_device *dev)
-> > >  	if (priv->crtc)
-> > >  		tilcdc_crtc_shutdown(priv->crtc);
-> > > =20
-> > > -	if (priv->is_registered)
-> > > +	if (priv->is_registered) {
-> > >  		drm_dev_unregister(dev);
-> > > -
-> > > -	drm_kms_helper_poll_fini(dev);
-> > > -	drm_atomic_helper_shutdown(dev);
-> > > +		drm_kms_helper_poll_fini(dev);
-> > > +		drm_atomic_helper_shutdown(dev);
-> > > +	}
-> > >  	tilcdc_irq_uninstall(dev);
-> > >  	drm_mode_config_cleanup(dev);   =20
-> >=20
-> > I don't think that's the right fix. tilcdc_fini is pretty complex
-> > because it gets called from multiple locations with various level of
-> > initialisation.
-> >=20
-> > This is done because tilcdc_init is using a bunch of deprecated
-> > functions with better alternatives now, and those would make the job of
-> > tilcdc_fini much easier.
-> >=20
-> > That's what we should be focusing on. =20
->=20
-> I am also currently focusing on improving this driver (which has indeed s=
-ome
-> weird code leftover), but this work will land in drm misc next while this=
- is a
-> fix for the current implementation which fix an unwanted warning.
+Matias
 
-Maxime is it okay to merge this to the right drm fix branch as I am current=
-ly
-working on the tilcdc cleaning process that will land into drm misc next.
-
-Also I intend to remove the tilcdc panel subdriver and its binding as it
-can be replaced by the simple panel driver. I know it is unusual to remove a
-binding but the driver and the binding are crappy and legacy. What do you t=
-hink?
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
