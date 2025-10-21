@@ -1,159 +1,271 @@
-Return-Path: <linux-kernel+bounces-863655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08ABDBF8BA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:34:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A15BF8BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 227BD4EFBCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:34:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D5E74E7973
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1227B324;
-	Tue, 21 Oct 2025 20:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6963B27B324;
+	Tue, 21 Oct 2025 20:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Me/IKRPF"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E1F350A3C;
-	Tue, 21 Oct 2025 20:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lMv+yxXz"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9232350A38
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761078872; cv=none; b=E2UPRGC677bUJjhm1lyZ4kYChrFtbhRODykyqbkzr1MfVeq657qQ45ZJAbqiKiHhhOKk+6ZPXXeiEhrgrxv2XefU50HWN3/87/AlsRHdJ0lqlt+Pr1DGMWi7IIRKT9zo4uXys8dMQjB67gDM5kHCBdq94d8wYHlmNqfTeUtEBcQ=
+	t=1761079075; cv=none; b=bSwkLnXiQ2svPPmHmLUmYoVxN1FAz9CCwN2QVHVjw5OaQlS3LK1HHr4OR+T7effiitNj2OsALhKIGUvlxfHGEfWrJsaXwHS9Z8DR90eAhk7CaTxWIXf83Y2+Ta99+SaqpI7uBtZV18nuPWijlMdg4AQqVBy8CnLFY8Ngz3QeGu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761078872; c=relaxed/simple;
-	bh=MmyGVz514tYF4CV16vMrOST0EOpGoH8FznP6p3BreJE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3y5rKKeWxy+dtacI4vy1Fo1B2m1sgb8DRpDq0RCM5pYH2vICGKiaq0kapZa+blLrvUtZwy97UXEj+spyGT75K1CtykdUrSX+WMkKhjwsoSYh0ngxf7MmU/ytooA85ipMKlPEFl2OvnZKGD1y7BN54Q52p67XC4D6byNqhMzR6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Me/IKRPF; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LJcdJd016484;
-	Tue, 21 Oct 2025 20:34:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=YBqJ9h
-	NCe/TNzh8IBcphbZ08wR6W/jXosPlBKB2QCtU=; b=Me/IKRPFImZE2XW65m8a3A
-	Rx8NlcR+7R7Tlo41GfLKJw/g4LW0Y4AQwkMYMOMJzxYhcge8RgDgrPhjEHIyyVe2
-	A0cDx4vK5/96RNkw7SrSbDx7rJVI7qW8CRYBn81UOai4KL85GcpD+XphSPlmPBwT
-	TnUIaMvut8fdnHq/NH/PSq2ewqkHdxBj/lEtKxJgnMuoo2XsJeKJQ19bhWNg3NdH
-	UUAhTGuFtBMb1rT8mhsp1WTwX13+7ofXDzWauqZEJ+zbwUzed8Y67VKiwOtV7YkK
-	hCTX6lUalptw2f5F7H7dQ60nIZu+GfJ/ow1dZMhNv+Zqxw48E7e7M0+b1+xMH/xA
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31s17n1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 20:34:28 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59LIr1d6032099;
-	Tue, 21 Oct 2025 20:34:27 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vp7mvqjt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 20:34:27 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LKYQtD32047760
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 20:34:26 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E2F4758043;
-	Tue, 21 Oct 2025 20:34:25 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 64C575805D;
-	Tue, 21 Oct 2025 20:34:25 +0000 (GMT)
-Received: from [9.61.241.19] (unknown [9.61.241.19])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 21 Oct 2025 20:34:25 +0000 (GMT)
-Message-ID: <bd54ee4b-8349-4447-9cbb-484439df2473@linux.ibm.com>
-Date: Tue, 21 Oct 2025 13:34:20 -0700
+	s=arc-20240116; t=1761079075; c=relaxed/simple;
+	bh=HmECysQgda6YvOetuuCfUSWxczoogPdzJj9upSFshvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QOp7X2WROdH+wYXENV5RAHD5vMmRbmqcsRqArkQZp4iYgOgBVKj8jgsMRHF5sSe3B5muX1mc31JlI6m8SbMBMMGlt1i6ESFW3ZpIeGIEOKfvsqkbnoaIwbECiotiLPSmfTGGBoQfiFuL8LbnJnJTjgXkYgWoQpxU829YJ4qBX3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lMv+yxXz; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [20.236.11.29])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7F39C201DAC8;
+	Tue, 21 Oct 2025 13:37:52 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7F39C201DAC8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761079072;
+	bh=3phraGjaS/C+izoBKBNrnVVsq7XHeGxq+f7PQUzmclc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lMv+yxXz1CbhzOPWDBnC7UAsZnKpAQQHrwV9evjF+MLEJOXyxchubKGxBXqLNkkfS
+	 mfGJ03b0TsoofcZeB0ZBkRS45BoTjGWP37kHve+PcnYEY7F1SQGoGJZdo3xQsuqoW1
+	 qfBSUvZFhO4ATsMK/x2gTDau/sSv7KRNnaUv68QY=
+Date: Tue, 21 Oct 2025 13:37:51 -0700
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>, Will Deacon
+ <will@kernel.org>, Nicolin Chen <nicolinc@nvidia.com>, Zhang Yu
+ <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+ <jean-philippe@linaro.org>, Alexander Grest
+ <Alexander.Grest@microsoft.com>, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 0/2] SMMU v3 CMDQ fix and improvement
+Message-ID: <20251021133751.0000418f@linux.microsoft.com>
+In-Reply-To: <336c5a8a-ac2c-4e4c-b2f9-a0bc056aa498@arm.com>
+References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+	<aPIhMGnzHiBkIEam@google.com>
+	<20251017135145.GL3901471@nvidia.com>
+	<20251017095031.00000b84@linux.microsoft.com>
+	<20251020120240.GI316284@nvidia.com>
+	<20251020115710.0000258b@linux.microsoft.com>
+	<336c5a8a-ac2c-4e4c-b2f9-a0bc056aa498@arm.com>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] s390/pci: Restore IRQ unconditionally for the zPCI
- device
-To: Matthew Rosato <mjrosato@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: helgaas@kernel.org, stable@vger.kernel.org, schnelle@linux.ibm.com
-References: <20251020190200.1365-1-alifm@linux.ibm.com>
- <20251020190200.1365-4-alifm@linux.ibm.com>
- <0170a16a-aadd-450f-be9a-9b60dfd5c8e7@linux.ibm.com>
-Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <0170a16a-aadd-450f-be9a-9b60dfd5c8e7@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9C5iDtqoMPTxK4BkehnyndoAc1uGLBzL
-X-Proofpoint-GUID: 9C5iDtqoMPTxK4BkehnyndoAc1uGLBzL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX+izsYzK45nLf
- EqxKialKvFX3L92UzYcFwkARRtLPBVtkauwbfHO1PUbzVYJ5o6uYxqtR42pn46AAn6xhjxyR81Q
- zmBbske0eKSVvefmmivLfZr0mYBpLmxE5oTm+z0kPQLTDsc6lSKfxljQSD2RGHVLuBqXAHdx7qx
- PGnM/UGa053g7IPGQaVzPw+fuAbub7+WfU9SgWiDGBQaLwsfUAH0DhVm4bwohJ5eEH9BqcvOWsb
- t1WIzy7izKr1N3ZBHOyqPkyN1SkkmEY5OwxVQ/MajVWlpMKeCHXPzhzLJaantpn19ljBfEGr60E
- cIDCkSptKuiMiOQ12VFMO3ZGBSN0Mc0Tct8jjeJhTU1E1dQ7Z5CDKijZK2e3lhaiyd6ZVvDub9v
- FGNn98YzZs0SudneCFPY40YGGG2SQg==
-X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f7ee54 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=OYQa30pwPum5nJitelwA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+
+On Tue, 21 Oct 2025 12:45:48 +0100
+Robin Murphy <robin.murphy@arm.com> wrote:
+
+> On 2025-10-20 7:57 pm, Jacob Pan wrote:
+> > On Mon, 20 Oct 2025 09:02:40 -0300
+> > Jason Gunthorpe <jgg@nvidia.com> wrote:
+> >   
+> >> On Fri, Oct 17, 2025 at 09:50:31AM -0700, Jacob Pan wrote:  
+> >>> On Fri, 17 Oct 2025 10:51:45 -0300
+> >>> Jason Gunthorpe <jgg@nvidia.com> wrote:
+> >>>      
+> >>>> On Fri, Oct 17, 2025 at 10:57:52AM +0000, Mostafa Saleh wrote:  
+> >>>>> On Wed, Sep 24, 2025 at 10:54:36AM -0700, Jacob Pan wrote:  
+> >>>>>> Hi Will et al,
+> >>>>>>
+> >>>>>> These two patches are derived from testing SMMU driver with
+> >>>>>> smaller CMDQ sizes where we see soft lockups.
+> >>>>>>
+> >>>>>> This happens on HyperV emulated SMMU v3 as well as baremetal
+> >>>>>> ARM servers with artificially reduced queue size and
+> >>>>>> microbenchmark to stress test concurrency.  
+> >>>>>
+> >>>>> Is it possible to share what are the artificial sizes and does
+> >>>>> the HW/emulation support range invalidation (IRD3.RIL)?
+> >>>>>
+> >>>>> I'd expect it would be really hard to overwhelm the command
+> >>>>> queue, unless the HW doesn't support range invalidation and/or
+> >>>>> the queue entries are close to the number of CPUs.  
+> >>>>
+> >>>> At least on Jacob's system there is no RIL and there are 72/144
+> >>>> CPU cores potentially banging on this.
+> >>>>
+> >>>> I think it is combination of lots of required invalidation
+> >>>> commands, low queue depth and slow retirement of commands that
+> >>>> make it easier to create a queue full condition.
+> >>>>
+> >>>> Without RIL one SVA invalidation may take out the entire small
+> >>>> queue, for example.  
+> >>> Right, no range invalidation and queue depth is 256 in this case.
+> >>>  
+> >>
+> >> I think Robin is asking you to justify why the queue depth is 256
+> >> when ARM is recommending much larger depths specifically to fix
+> >> issues like this?  
+> > The smaller queue depth is chosen for CMD_SYNC latency reasons. But
+> > I don't know the implementation details of HyperV and host SMMU
+> > driver.  
+> 
+> TBH that sounds highly dubious. The only way I could imagine CMDQ
+> size bearing any relation to CMD_SYNC at all is if a hypervisor is
+> emulating a stage 1 vCMDQ in such a naive and lazy manner that a)
+> performance is already off the table, and b) it has a good chance of
+> being broken anyway.
+> 
+> For the hardware to actually process, say, 1023 invalidations
+> followed by a sync takes as long as it takes, based on how busy the
+> SMMU is. The only difference in issuing that sequence of commands on
+> a 256-entry queue vs. a 1024-entry queue is that in the latter case,
+> software does not have to sit waiting for the first 768 to actually
+> be consumed before it can finish the submission and potentially get
+> on with something else until the sync completes. Yes, one could claim
+> that technically the time between *issuing* the CMD_SYNC and its
+> completion is then lower, but only because that extra time has now
+> been wasted in a polling loop waiting for CMDQ space instead - it's a
+> meaningless distinction overall.
+I agree that a smaller emulated queue size does not change the
+time took the physical IOMMU to do the invalidation. I am not defending
+the current emulation which I think can be improved overtime
+transparent to the guest.
+
+> > IMHO, queue size is orthogonal to what this patch is trying to
+> > address, which is a specific locking problem and improve efficiency.
+> > e.g. eliminated cmpxchg
+> > -	do {
+> > -		val = atomic_cond_read_relaxed(&cmdq->lock, VAL >=
+> > 0);
+> > -	} while (atomic_cmpxchg_relaxed(&cmdq->lock, val, val + 1)
+> > != val);
+> > +	atomic_cond_read_relaxed(&cmdq->lock, VAL > 0);
+> > 
+> > Even on BM with restricted queue size, this patch reduces latency of
+> > concurrent madvise(MADV_DONTNEED) from multiple CPUs (I tested 32
+> > CPUs, cutting 50% latency unmap 1GB buffer in 2MB chucks per CPU).  
+> My point is that a 50% improvement on nonsense is likely still
+> nonsense. With only 256 entries, every single one of those 2MB unmaps
+> needs to fill the entire CMDQ more than twice over. 32 CPUs all
+> jostling to issue about 34x as many commands as the queue can hold
+> *each* is a ridiculous level of contention. If a hypervisor is
+> advertising an SMMU_IDR1.CMDQS value that is absurdly tiny for the
+> size of the VM then that represents such an obvious bottleneck that
+> it's hardly mainline Linux's responsibility to maintain code to help
+> "debug" it. As for "BM with restricted queue size", like I said, just
+> don't do that.
+I don't think we are asking the mainline Linux to debug our emulation
+problem, quite the contrary, this setup helped to exposed mainline
+Linux's bug (Patch 1/2 clearly shows that the queue space contention
+has not been adequately tested)
+
+This madvise test is intended to show:
+a) the locking change is functionally sound, no harm to existing
+mainline users
+b) create extreme contentions that expose the problems with the current
+code
+c) performance differences
+
+> What is the difference on an un-hacked bare-metal system with a 
+> normally-sized queue? Is it even measurable?
+Not measurable on my BM system with a large cmdq size. The condition
+!queue_has_space() is rarely met, so the exclusive lock is almost never
+acquired.
+
+> That's what's actually 
+> interesting. Furthermore, what exactly does that measurement even
+> mean?
+I agree this is not a measurement of real workload performance, but the
+test shows:
+a) no more occasional soft lockup as shared lock is no longer starved
+b) shared lock can be taken quickly as we get rid of the unnecessary
+cmpxchg.
+
+> If we're still issuing the same number of commands I struggle
+> to believe we could lose 50% of the *overall* time just bouncing a
+> cacheline between shared and exclusive state - is this actually just
+> the *maximum* per-CPU latency going down, at the cost of the minimum
+> latency correspondingly increasing just as much (if not comparatively
+> more) due to better fairness? And if so, how important is that
+> really? I can imagine there are equally cases where other callers
+> might prefer a lower minimum/mean latency at the price of some longer
+> outliers.
+The importance is that this change avoided a soft lockup where
+exclusive lock is taken all the time. It is not about bouncing a
+cacheline between shared and exclusive state. I have tried to flush the
+lock cacheline after shared lock winning the cmpxchg but it didn't help
+avoiding the lockup.
+
+> Note I'm not saying I'm necessarily against making these changes,
+> just that I'm against making them without a believable justification
+> that it is actually beneficial to mainline users.
+The benefit to mainline users ( I assume you meant SMMUs with large cmdq
+size), at the minium, is that shared lock can be taken quicker when it
+is released from the exclusive state.
+
+> > -	do {
+> > -		val = atomic_cond_read_relaxed(&cmdq->lock, VAL >=
+> > 0);
+> > -	} while (atomic_cmpxchg_relaxed(&cmdq->lock, val, val + 1)
+> > != val);
+> > +	atomic_cond_read_relaxed(&cmdq->lock, VAL > 0);
+
+Here is the assembly code diff :
+
+BEFORE:
+    27bc:       14000008        b       27dc
+<arm_smmu_cmdq_issue_cmdlist+0x364> val =
+atomic_cond_read_relaxed(&cmdq->lock, VAL >= 0); 27c0:       93407c00
+     sxtw    x0, w0 __CMPWAIT_CASE(w,  , 32);
+    27c4:       d50320bf        sevl
+    27c8:       d503205f        wfe
+    27cc:       885f7c22        ldxr    w2, [x1]
+    27d0:       4a000042        eor     w2, w2, w0
+    27d4:       35000042        cbnz    w2, 27dc
+<arm_smmu_cmdq_issue_cmdlist+0x364> 27d8:       d503205f        wfe
+    27dc:       b940ce60        ldr     w0, [x19, #204]
+    27e0:       37ffff00        tbnz    w0, #31, 27c0
+<arm_smmu_cmdq_issue_cmdlist+0x348> } while
+(atomic_cmpxchg_relaxed(&cmdq->lock, val, val + 1) != val); 27e4:
+11000403        add     w3, w0, #0x1 27e8:       14000004        b
+ 27f8 <arm_smmu_cmdq_issue_cmdlist+0x380> __CMPXCHG_CASE(w,  ,     ,
+32,   ) 27ec:       2a0003e2        mov     w2, w0
+    27f0:       88a27c23        cas     w2, w3, [x1]
+    27f4:       14000008        b       2814
+<arm_smmu_cmdq_issue_cmdlist+0x39c> __CMPXCHG_CASE(    , 32)
+    27f8:       93407c04        sxtw    x4, w0
+__CMPXCHG_CASE(w,  ,     , 32,        ,  ,  ,         , K)
+    27fc:       f9800031        prfm    pstl1strm, [x1]
+    2800:       885f7c22        ldxr    w2, [x1]
+    2804:       4a040045        eor     w5, w2, w4
+    2808:       35000065        cbnz    w5, 2814
+<arm_smmu_cmdq_issue_cmdlist+0x39c> 280c:       88057c23        stxr
+w5, w3, [x1] 2810:       35ffff85        cbnz    w5, 2800
+<arm_smmu_cmdq_issue_cmdlist+0x388> 2814:       6b02001f        cmp
+w0, w2 2818:       54fffe21        b.ne    27dc
+<arm_smmu_cmdq_issue_cmdlist+0x364>  // b.any
+
+AFTER:
+        atomic_cond_read_relaxed(&cmdq->lock, VAL > 0);
+    27bc:       b940ce60        ldr     w0, [x19, #204]
+    27c0:       7100001f        cmp     w0, #0x0
+    27c4:       5400006d        b.le    27d0
+<arm_smmu_cmdq_issue_cmdlist+0x358>
 
 
-On 10/21/2025 7:07 AM, Matthew Rosato wrote:
-> On 10/20/25 3:02 PM, Farhan Ali wrote:
->> Commit c1e18c17bda6 ("s390/pci: add zpci_set_irq()/zpci_clear_irq()"),
->> introduced the zpci_set_irq() and zpci_clear_irq(), to be used while
->> resetting a zPCI device.
->>
->> Commit da995d538d3a ("s390/pci: implement reset_slot for hotplug slot"),
->> mentions zpci_clear_irq() being called in the path for zpci_hot_reset_device().
->> But that is not the case anymore and these functions are not called
->> outside of this file. Instead zpci_hot_reset_device() relies on
->> zpci_disable_device() also clearing the IRQs, but misses to reset the
->> zdev->irqs_registered flag.
->>
->> However after a CLP disable/enable reset, the device's IRQ are
->> unregistered, but the flag zdev->irq_registered does not get cleared. It
->> creates an inconsistent state and so arch_restore_msi_irqs() doesn't
->> correctly restore the device's IRQ. This becomes a problem when a PCI
->> driver tries to restore the state of the device through
->> pci_restore_state(). Restore IRQ unconditionally for the device and remove
->> the irq_registered flag as its redundant.
->>
->> Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
->> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-> Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
->
-> But one question: Unlike the other 2 patches in this series, this only touches s390 code.  It doesn't depend on the other 2 patches in this series, right?
->
-> If not then shouldn't this one go thru s390 rather than PCI subsystem?  Note: none of the s390 arch maintainers are on CC.
 
-Yes I think this could go through s390 tree as it just changes s390/pci 
-code. Will submit this as a separate patch from this series.
 
-Thanks
 
-Farhan
 
->
->> ---
->>   arch/s390/include/asm/pci.h | 1 -
->>   arch/s390/pci/pci_irq.c     | 9 +--------
->>   2 files changed, 1 insertion(+), 9 deletions(-)
->>
+> Thanks,
+> Robin.
+
 
