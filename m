@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-862471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2106BF561C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:00:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413B5BF563D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF3154EC803
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:00:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E989F352541
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F18329C47;
-	Tue, 21 Oct 2025 09:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="QS6xDKom"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E159F32A3D4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D5E32AAD8;
+	Tue, 21 Oct 2025 09:00:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB5D2E1F0A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037215; cv=none; b=JNo/cO5XQE2PBbqb80bPZBuskdBCYGzpp13wthQPv2yq4q2P8LqZC9PReaLiBv6YQ5zl53Zoa/2rCQYSuzpd26QOmewgAJAPHo4zSHNjqN0ERywVYGJEVAPbG+WCipkB0hqqVNVSBHPPvZiiDZj0vxnjGaGw9n7L8EQNhv99ZIc=
+	t=1761037240; cv=none; b=Nbpci/Wpw3HjpA9mBS++BYdP/9GlmqP7iWF0VBcNgJhjQeQLrzMy9WHYfzaBeAILA0hvjgJq8RKlm5GQKycFX8n/WSW20V9l2zRpA/TanaYWZcnGl9FAviaZTsSbdQ5G7IiXNXjjpmfYGmSQcQB3z0w75/G4T1VbHruNqRhGtu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037215; c=relaxed/simple;
-	bh=FY66GgTDOIoB9mS2HFOFn+lKyUzk7ReEJSz06q2JKqM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pb1Spfzky0xT2Y1urefhA+hNDtHUw36WaGwSZYIPS1jAI2/9QABCWez7bmtOMgDXtQiJhKWI30X8DJZyxtcO6BzUEKoUoZg2CbA9L96hy5B3vU4Bt0uC8iG34Xfek7896VpoeUbOb5SXmffsRWV5lVY6InNHRsVghu09d8ufGlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=QS6xDKom; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id A16C4689CBF;
-	Tue, 21 Oct 2025 11:00:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1761037211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y986KfT3B0zrxnVKXVm/ZB2eNF2myKB1y4plYJDTzQg=;
-	b=QS6xDKom75MGyfUmlX6mzLCM3Cs1qnQp+Azwij7nq6dDoHz7pifTaSQ1qgzDJFLjD0zQQ5
-	980IHMra3TFwbrXRQ17Qc6OTTn8wHLpaNsJavqoxLwDdmKHi7tzUNfjF2asI6q+BpxGect
-	x2XF0Ck/GQCped4sPOWWyEEzS71IDfKBwcAzGMo9ODW6PtRVnjfWDT6+T7HBGr/r41Fvup
-	Ur7FqEhSsCP1fn9dR1QohdqR1Z2CkvFF8BfaT2edkWSZ45hibf8iBkwRBGtFdUy8S+CYiD
-	8waEN8oIvPqRE3rpnaPjr8R6bBdQCOP7ElF0YWOqQ0qwiICNbCVq2mn0rK39Gg==
-Message-ID: <bfab980197bfd845cce360d2dbd12ef716f8b727.camel@svanheule.net>
-Subject: Re: [RFC PATCH 1/2] gpio: regmap: Force writes for aliased data regs
-From: Sander Vanheule <sander@svanheule.net>
-To: Michael Walle <mwalle@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>,  Bartosz Golaszewski	 <brgl@bgdev.pl>,
- linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Tue, 21 Oct 2025 11:00:10 +0200
-In-Reply-To: <DDNTQLB5YRM3.39C226E0QO6X9@kernel.org>
-References: <20251020115636.55417-1-sander@svanheule.net>
-	 <20251020115636.55417-2-sander@svanheule.net>
-	 <DDNTQLB5YRM3.39C226E0QO6X9@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761037240; c=relaxed/simple;
+	bh=lv9c03O8j0aOw9yokKu2khhzwUjROQHnbJfhnWDKLGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H5Q3A4V7WK2jqyctVxEV77Aqgv6SZ5nWF5YFY4UPxkdYzKhuXOG8IxgirCbWHbwoPk6FiQTsUzgwEar6uBoWpRuhyBZ5EvRa9mnOaDF3d27rm7CJPCfVafg9jUl1ccxeZk6yzuu+Tu1CW7tggEcVJ36/NDsSRujIin/MxjOngUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A5D91063;
+	Tue, 21 Oct 2025 02:00:29 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B89573F66E;
+	Tue, 21 Oct 2025 02:00:36 -0700 (PDT)
+Message-ID: <1148d823-5a89-4f32-911b-f009a8ea5641@arm.com>
+Date: Tue, 21 Oct 2025 10:00:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64/mm: Add remaining TLBI_XXX_MASK macros
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20251021052022.2898275-1-anshuman.khandual@arm.com>
+ <20251021052022.2898275-3-anshuman.khandual@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251021052022.2898275-3-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Michael,
+Hi Anshuman,
 
-On Tue, 2025-10-21 at 09:33 +0200, Michael Walle wrote:
-> > +	/* ignore input values which shadow the old output value */
-> > +	if (gpio->reg_dat_base =3D=3D gpio->reg_set_base)
-> > +		ret =3D regmap_write_bits(gpio->regmap, reg, mask, mask_val);
-> > +	else
-> > +		ret =3D regmap_update_bits(gpio->regmap, reg, mask,
-> > mask_val);
->=20
-> I wonder if we should just switch to regmap_write_bits() entirely.
+On 10/21/25 06:20, Anshuman Khandual wrote:
+> Add remaining TLBI_XXX_MASK macros and replace current open encoded fields.
+> While here replace hard coded page size based shifts but with derived ones
+> via ilog2() thus adding some required context.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/include/asm/tlbflush.h | 26 ++++++++++++++++++--------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+> index 131096094f5b..cf75fc2a06c3 100644
+> --- a/arch/arm64/include/asm/tlbflush.h
+> +++ b/arch/arm64/include/asm/tlbflush.h
+> @@ -57,9 +57,10 @@
+>  /* This macro creates a properly formatted VA operand for the TLBI */
+>  #define __TLBI_VADDR(addr, asid)				\
+>  	({							\
+> -		unsigned long __ta = (addr) >> 12;		\
+> -		__ta &= GENMASK_ULL(43, 0);			\
+> -		__ta |= (unsigned long)(asid) << 48;		\
+> +		unsigned long __ta = (addr) >> ilog2(SZ_4K);	\
+> +		__ta &= TLBI_BADDR_MASK;			\
+> +		__ta &= ~TLBI_ASID_MASK;			\
+> +		__ta |= FIELD_PREP(TLBI_ASID_MASK, asid);	\
+>  		__ta;						\
+>  	})
+>  
+> @@ -100,8 +101,17 @@ static inline unsigned long get_trans_granule(void)
+>   *
+>   * For Stage-2 invalidation, use the level values provided to that effect
+>   * in asm/stage2_pgtable.h.
+> + *
+> + * +----------+------+-------+--------------------------------------+
+> + * |   ASID   |  TG  |  TTL  |                 BADDR                |
+> + * +-----------------+-------+--------------------------------------+
+> + * |63      48|47  46|45   44|43                                   0|
+> + * +----------+------+-------+--------------------------------------+
+>   */
+> -#define TLBI_TTL_MASK		GENMASK_ULL(47, 44)
+> +#define TLBI_ASID_MASK		GENMASK_ULL(63, 48)
+> +#define TLBI_TG_MASK		GENMASK_ULL(47, 46)
+> +#define TLBI_TTL_MASK		GENMASK_ULL(45, 44)
 
-It would certainly make the code simpler, but it may impact performance a b=
-it.
-E.g. a bit-banged I2C bus doesn't need to update the output value (only the
-direction), so using regmap_update_bits() saves half the writes when the ou=
-tput
-data register can be properly cached.
+The definition of TLBI_TTL_MASK changes here. This might be the correct
+thing to do but it should be mentioned in the commit message and the
+other user, arch/arm64/kvm/nested.c, needs to be updated in tandem.
 
-Similar to gpio-mmio.c, gpio-regmap.c could also provide multiple setters, =
-so
-the branch(es) in this call would only occur once at init, to sacrifice cod=
-e
-size for a bit of performance. Feel free to let me know what your preferenc=
-e is,
-otherwise I'll keep the patch as-is.
+> +#define TLBI_BADDR_MASK		GENMASK_ULL(43, 0)
+>  
+>  #define TLBI_TTL_UNKNOWN	INT_MAX
+>  
 
->=20
-> In patch 2, you've wrote:
->=20
-> > The generic gpiochip implementation stores a shadow value of the
-> > pin output data, which is updated and written to hardware on output
-> > data changes. Pin input values are always obtained by reading the
-> > aliased data register from hardware.
->=20
-> I couldn't find that in the code though. But if the gpiolib only
-> updates the output register on changes, the write part in
-> regmap_update_bits() would always occur.
+Thanks,
 
-I was referring to bgpio_set(). AFAICT gpiod_direction_input() and
-gpiod_direction_output() call the driver unconditionally, without checking =
-if
-the gpiolib state would change for this pin.
+Ben
 
->=20
-> In any case, feel free to add.
->=20
-> Reviewed-by: Michael Walle <mwalle@kernel.org>
-
-Thanks!
-
-Best,
-Sander
 
