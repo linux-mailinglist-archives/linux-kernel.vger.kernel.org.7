@@ -1,144 +1,226 @@
-Return-Path: <linux-kernel+bounces-863418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B29BF7D67
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E27BF7D6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1F0189839A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6564F19C16FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE9834B192;
-	Tue, 21 Oct 2025 17:14:19 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA57934B192;
+	Tue, 21 Oct 2025 17:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="N5h+7Phz"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0E934B186
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8343134B185
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066859; cv=none; b=D4ywrDLeNopXQBcSaEsDB+qP++K2J66LYbDDOQVPalvUHiJ87iM8BP9HanePw34VK9yq70Mqj8idMfScbOG1hk9l0t7iLR4W0i6hR0/L9IPvnbQHXPU0F/YuZGJv/WFlZfc4TmMw9BonB7ckUotXBNy1yPUyv/5fCMMA+w8WIsQ=
+	t=1761066899; cv=none; b=RAn+/c/XptJRtojZ3wDhgbiEggR0Nb9PxL4Y/4ElEFGcPFaKEvT9kkp4/c52741jyQHPYoo/sFaWpWQtvwTW6q5GKZ50KL3Dx0yduq+hHUa7LttGCN2gAFDIJVrZByVHY+xEmCPR/pVpSBgasD5nZO8lkzsWmqdK9LvHJVMB4DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066859; c=relaxed/simple;
-	bh=m9I51bYY1m0WNs/hOiA/JO2dxI3lUIwza6OUCjsL2hU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fCnxgt28FQ9VQnNi2YRM/16dHpMcZf84hMJi7cZ/b+LecNW2gEbooG+fJYusXYDQY/FoI6Qsb+GajSw88tgB3XFCLW915CJT09TXk7r1tnIZnsgsVjZP9/09V+habrcCsqSy5JF99TP7C5X0lfODV8uJlMmrzl7Fep/z/XTJpAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430db6d358bso98113705ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:14:16 -0700 (PDT)
+	s=arc-20240116; t=1761066899; c=relaxed/simple;
+	bh=wHtx+6PJVL+KqxRsDUtN8kFqV3WQRw08tAAOotnZQrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G5tDuPkAM2e3/94cWfShycX6WkDWys3hTZMZ3RAdkJ627rBP6uBmepYvo9aT0nbYpoKggqzExUxIBNQLPi3lWPwWDS/eNyQktSKCcOYKkeoXJJG9KOqc0BpMzd0GrB+pngOQAlVUJFAefWnJIggiKH1J1qvnFIis6zX5lv6x0ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=N5h+7Phz; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27ee41e074dso69286315ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ssn.edu.in; s=ssn; t=1761066893; x=1761671693; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=o8BAnbX2/NbCI5ltmg3hGUxFJ1NakIlGpy+wfgJpxpU=;
+        b=N5h+7PhzgFB+Vzm1mQ1m7oknsbrY8VcOzKXOoGmhsd3Gmj2c3s2wpeIpH/L2/7hKT5
+         gH3hy1x6b3XKr6ybrqLJrgke6Dqu6vwptOYdyURxP5i+vFMU2xQfWQliL2uxBEAe7oAM
+         UVsRomuEqn9Hjh6EfQukE6efVr2f8r/uugLWg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761066856; x=1761671656;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6IzUxC1g+9YHJve3PM4ojm62q86eibiPXknM8z0/u0U=;
-        b=sBzzM8+Toq7ZAyMK7gP3oR429xuH8GAKvlPRcWibmYGLtwLJklbWRQF4yjvP4In5bj
-         Y5LCN+LIhfEtJRnYhkRUW65uB2Arw/n+9cSQyIh65q1frBSR2erjT/nVUYPgQGdHFBoT
-         iMqnU9Hw0Etq4kSwJQoqqJrftb9KQDzZPhD8u/xNfowVY5amZyEnnJF1THiKtCU7qvaN
-         eb+n//+gQnSXVr83Jm2sUL0/zmxc+43Qg5poaC9EFVnTRL3WEFjKbTqudUyMDY7calv5
-         sVT9Gx+6JMKxGzsW+bCW8t+tMAUmteB1OA4yPBUpOrDxFrgrxOMsIkO3pRwql1IpXnoG
-         yIcg==
-X-Gm-Message-State: AOJu0Ywxi12yb+1MzcGwShF7OGW47dw/orgjjZaQc0hkJBMx1n8rpb6o
-	eMcv1HO1h2wRg44NpkApeFriaY+Ivth2MqEYDK0iOWdpCXtgd7a2/l8K6j5FNlC8E9RPZqo0b7N
-	RZoL+K9T1XbY9FwiPh5a7jKNCNj3HL3PPIfG2OXWq96Pk1076x7uUMfrf7b0hog==
-X-Google-Smtp-Source: AGHT+IEbCecws4o5ZNPdTx6Mc2K419p4OBioUSvhE5KlKdV6tVTzu8M0pQ7fqIfcSQm5dqVFMdvQcjniU4ykLceymB95gsneGMJh
+        d=1e100.net; s=20230601; t=1761066893; x=1761671693;
+        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o8BAnbX2/NbCI5ltmg3hGUxFJ1NakIlGpy+wfgJpxpU=;
+        b=E7yGqBXAsDtpzhSqx4by5hYYFANCIFEoYBsn2zAgO4KrVRi2xjsW5aqjUfChXcXurE
+         N/tE5O/k6ix1Evowme2FPB7JBWv9mhBod6FvhhVLzg3/9dNQlMGaIK+/Wf3eUVO7EzgU
+         CkHNnzPXcrcyYQPGWxAHhh8ikyRXoTmcz1FDn+oQxrpiWptNHjF7sGgcvXRSJJokIJkc
+         NAAiQzL84Km0C+YPulUKGHGiLfFsP7S+Nmzsr4PUWVo3QbJRvnUrQRa84gTu6z6cwCLR
+         CQ/P3QVlnBFKDqpA8UEw2LAbeh7mvuld4msyeyncf9mN9MnypLwtOeCH1dVQ9IYE71Et
+         rrLQ==
+X-Gm-Message-State: AOJu0YwjHZ31GX4W7n2+jjgd29GMfXbJRzrL9czfA2PfyWqCMX7pYq6r
+	les0DuYJPpXrbN2kok/8c9trSlV6dEm1Nvj2dmQgNzTuAkonARJIF6mWmPwUsXoIVcrMTTc3SOr
+	E+bc3B7krH9tC7bpxz5q2U4b6J/Nu4n1xg4GjCL2d/Z6a3AToaxisQ6pfI48lL+qiRkoM3L6494
+	M=
+X-Gm-Gg: ASbGncvKfVwSYzyLKDpor+jQVWje/x4iLOxr+oLXgegR4cOelnlMXsBfWdIaGlMCGDy
+	fEgefZoFq46LVwlrA+E3og+jMcYWpQ4BCfDmlssBxRe80b7TMX3J0X7aa0Cnp7v0130Nmz6sufa
+	hjO20Pek+7qqI7nwjzULgvgd62n5qsydwRjzXr/nP4hztMVnVpykCUuWJFBpRCJh8RZTHnNM18i
+	t809Rc59wK/bhnKfETaGKoDS6MrgKk44zQW3sXN3hWyEIlY+62Q4PzGNe5NJTOJ6Vp/nKUEvZ8J
+	4dFIYWLCp8pHvV+IKw6iDnYCriK/ZlsROK4lSKBRKmwKeLwHFGBQjnSiOAoe462UbhsKZ7KkZZf
+	HtEAR/H2iJh3H+5DpRLt4ox4CWxBFg1ZAOv71Q6F1g1f6SmBEpL+kfMFfTqu87wnOBjZNR2jvDj
+	iqQy8a6kV8mbCLDehiiOfTxv4OGyCR0UvCkH2gZWqrLkGFTcm64i3NlEB9tSO6Psg324gVcrJVK
+	lWdr6C8UQSCXhI=
+X-Google-Smtp-Source: AGHT+IF4RFGVZ1xNCOZTc0WkLly84dkjOvQDjI5ImpsM+CowNe+eAoByzAS57YHCF6/tlccf+qJ3kg==
+X-Received: by 2002:a17:903:2309:b0:272:c95c:866 with SMTP id d9443c01a7336-290c9cb6305mr249301215ad.20.1761066893264;
+        Tue, 21 Oct 2025 10:14:53 -0700 (PDT)
+Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:33f3:d5f3:33d1:a1e0:46bc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fdcf9sm113994935ad.91.2025.10.21.10.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 10:14:53 -0700 (PDT)
+From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+To: linux-kernel@vger.kernel.org
+Cc: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Subject: [PATCH] Kconfig:Uses glibc so strscpy has to be manually- added
+Date: Tue, 21 Oct 2025 22:44:46 +0530
+Message-ID: <20251021171446.46942-1-biancaa2210329@ssn.edu.in>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1445:b0:430:b6a3:53b4 with SMTP id
- e9e14a558f8ab-430c52343f1mr283815495ab.3.1761066856292; Tue, 21 Oct 2025
- 10:14:16 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:14:16 -0700
-In-Reply-To: <68f6a48f.050a0220.91a22.0453.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f7bf68.050a0220.346f24.0022.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
-From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+---
+ scripts/kconfig/confdata.c | 16 +++++++++++++++-
+ scripts/kconfig/symbol.c   | 16 +++++++++++++++-
+ scripts/kconfig/util.c     | 17 ++++++++++++++++-
+ 3 files changed, 46 insertions(+), 3 deletions(-)
 
-***
-
-Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
-Author: listout@listout.xyz
-
-On 20.10.2025 14:07, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    98ac9cc4b445 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16be6734580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
-> dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111e7dcd980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1223a492580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f8ad8459a8da/disk-98ac9cc4.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/28720fa307c1/vmlinux-98ac9cc4.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e4f310acec99/bzImage-98ac9cc4.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com
-> 
-> mac80211_hwsim hwsim5 wlan1: entered allmulticast mode
-> =====================================================
-
-#syz test
-
-diff --git a/net/wireless/util.c b/net/wireless/util.c
-index 56724b33af04..05bb49afd5ef 100644
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -938,9 +938,9 @@ EXPORT_SYMBOL(ieee80211_amsdu_to_8023s);
- unsigned int cfg80211_classify8021d(struct sk_buff *skb,
- 				    struct cfg80211_qos_map *qos_map)
- {
--	unsigned int dscp;
--	unsigned char vlan_priority;
--	unsigned int ret;
-+	unsigned int dscp = 0;
-+	unsigned char vlan_priority = 0;
-+	unsigned int ret = 0;
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index 9599a0408862..c0fef4cd6b60 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -22,6 +22,20 @@
+ #include "internal.h"
+ #include "lkc.h"
  
- 	/* skb->priority values from 256->263 are magic values to
- 	 * directly indicate a specific 802.1d priority.  This is used
-@@ -963,10 +963,18 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
++#define HAVE_STRSCPY 0
++#ifndef HAVE_STRSCPY
++static size_t strscpy(char *dest, const char *src, size_t count)
++{
++    size_t i;
++    if (count == 0)
++        return 0;
++    for (i = 0; i < count - 1 && src[i]; i++)
++        dest[i] = src[i];
++    dest[i] = '\0';
++    return i;
++}
++#endif
++
+ struct gstr autoconf_cmd;
  
- 	switch (skb->protocol) {
- 	case htons(ETH_P_IP):
--		dscp = ipv4_get_dsfield(ip_hdr(skb)) & 0xfc;
-+		if (skb_network_header_len(skb) >= sizeof(struct iphdr)) {
-+			struct iphdr *iph = ip_hdr(skb);
-+			if (iph)
-+				dscp = ipv4_get_dsfield(iph) & 0xfc;
-+		}
- 		break;
- 	case htons(ETH_P_IPV6):
--		dscp = ipv6_get_dsfield(ipv6_hdr(skb)) & 0xfc;
-+		if (skb_network_header_len(skb) >= sizeof(struct ipv6hdr)) {
-+			struct ipv6hdr *ip6h = ipv6_hdr(skb);
-+			if (ip6h)
-+				dscp = ipv6_get_dsfield(ip6h) & 0xfc;
-+		}
- 		break;
- 	case htons(ETH_P_MPLS_UC):
- 	case htons(ETH_P_MPLS_MC): {
+ /* return true if 'path' exists, false otherwise */
+@@ -140,7 +154,7 @@ static int conf_touch_dep(const char *name)
+ 	if (depfile_prefix_len + strlen(name) + 1 > sizeof(depfile_path))
+ 		return -1;
+ 
+-	strcpy(depfile_path + depfile_prefix_len, name);
++	strscpy(depfile_path + depfile_prefix_len, name);
+ 
+ 	fd = open(depfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+ 	if (fd == -1)
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 7e81b3676ee9..0c6746854617 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -14,6 +14,20 @@
+ #include "internal.h"
+ #include "lkc.h"
+ 
++#define HAVE_STRSCPY 0
++#ifndef HAVE_STRSCPY
++static size_t strscpy(char *dest, const char *src, size_t count)
++{
++    size_t i;
++    if (count == 0)
++        return 0;
++    for (i = 0; i < count - 1 && src[i]; i++)
++        dest[i] = src[i];
++    dest[i] = '\0';
++    return i;
++}
++#endif
++
+ struct symbol symbol_yes = {
+ 	.name = "y",
+ 	.type = S_TRISTATE,
+@@ -795,7 +809,7 @@ bool sym_set_string_value(struct symbol *sym, const char *newval)
+ 	else
+ 		return true;
+ 
+-	strcpy(val, newval);
++	strscpy(val, newval);
+ 	free((void *)oldval);
+ 	sym_clear_all_valid();
+ 
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index 5cdcee144b58..176ec03bb3f0 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -13,6 +13,21 @@
+ #include <xalloc.h>
+ #include "lkc.h"
+ 
++#define HAVE_STRSCPY 0
++#ifndef HAVE_STRSCPY
++static size_t strscpy(char *dest, const char *src, size_t count)
++{
++    size_t i;
++    if (count == 0)
++        return 0;
++    for (i = 0; i < count - 1 && src[i]; i++)
++        dest[i] = src[i];
++    dest[i] = '\0';
++    return i;
++}
++#endif
++
++
+ /* hash table of all parsed Kconfig files */
+ static HASHTABLE_DEFINE(file_hashtable, 1U << 11);
+ 
+@@ -52,7 +67,7 @@ struct gstr str_new(void)
+ 	gs.s = xmalloc(sizeof(char) * 64);
+ 	gs.len = 64;
+ 	gs.max_width = 0;
+-	strcpy(gs.s, "\0");
++	strscpy(gs.s, "\0");
+ 	return gs;
+ }
+ 
+-- 
+2.43.0
+
 
 -- 
-Regards,
-listout
+::DISCLAIMER::
+
+---------------------------------------------------------------------
+The 
+contents of this e-mail and any attachment(s) are confidential and
+intended 
+for the named recipient(s) only. Views or opinions, if any,
+presented in 
+this email are solely those of the author and may not
+necessarily reflect 
+the views or opinions of SSN Institutions (SSN) or its
+affiliates. Any form 
+of reproduction, dissemination, copying, disclosure,
+modification, 
+distribution and / or publication of this message without the
+prior written 
+consent of authorized representative of SSN is strictly
+prohibited. If you 
+have received this email in error please delete it and
+notify the sender 
+immediately.
+---------------------------------------------------------------------
+Header of this mail should have a valid DKIM signature for the domain 
+ssn.edu.in <http://www.ssn.edu.in/>
 
