@@ -1,242 +1,160 @@
-Return-Path: <linux-kernel+bounces-863225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC75FBF749A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:21:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6A8BF74AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA8B4058C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:21:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B94E4F4342
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA36341AD8;
-	Tue, 21 Oct 2025 15:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279AD340A76;
+	Tue, 21 Oct 2025 15:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d/haoI2D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GpAGrqyA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DD5175A5;
-	Tue, 21 Oct 2025 15:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159C3175A5;
+	Tue, 21 Oct 2025 15:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761060061; cv=none; b=KciqlxwTBzB8k3MXg0903LWSrW78QyhjoXwvuMjYNzF+itf05CgpDyQ8/OUPgMnXPoM4zwNoDpMj9AUUSuxSwvR0xMGv988mtum/xQ55+66GW636baQ36g7VKZpBn7UhFORAQYMBD8QUyJBS71Cad6HTY8YdaafQ+HubTL4zyFI=
+	t=1761060117; cv=none; b=b+0L1Liv4NMHxPI2d2wiMN/HNm6zMOvd+nIBygUX+S8+WNxIUy0NhLezbEPbUXgxQyAhebV+d7WPFIq3YJ/QGBiGcDQEyvpPSjvY36ODhFeS7P+FYSpQUGY1kiRJoLVP9dKtvy/Y8hnT7pLNligy98tMLZk26zCDTyH5z6CQ37M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761060061; c=relaxed/simple;
-	bh=WMiGD5hddPzM8cfebkgUj5fxaHTk5wF5HlqRL6rO1Pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPse+0N0WuL1Eiro666p5eS57XnqJ51Cxem2YTYUaR0YGI+h671DAyrQORUv1BdW+hc0nxZM1Uxl5gBKEAe+yhjUB8lagZPRjvS2DCepzo9ESJ4f9YKBOyVG6bPBar4eHYdb+ma2u2tcCOVzVT7rqqatbqrJP+uAHMnMYPfiQyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d/haoI2D; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1761060117; c=relaxed/simple;
+	bh=UXgrTKJ/4W3zTkrSFbj7mihos+C8e6d3y7L4u+JlBsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lybxkq9WVEruO1p9Ha/oAaii//HPdqAfHUw2hbyBg1aVS1VsEgYr4WnZQqIfGSkr5bLWlHDR7URX9cFGueTIMAwFqwPFjONLX9lsS2RPXSnLcT+wtX+Idlxm2O7KW6u8cNMDgwUVtQl2eAGPYzwrYYR93q1+vZHKcHRS7jFovZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GpAGrqyA; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761060060; x=1792596060;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WMiGD5hddPzM8cfebkgUj5fxaHTk5wF5HlqRL6rO1Pg=;
-  b=d/haoI2D9h+virSnpAwYjxRiPo4zWefQNP08aK67eMBjvD3+slK6JUXI
-   V1CGidodxVO7cn8qI45Yy2sv0CX1zODtnPrfvxVS7u3dvih3ttrIEgSHr
-   1Pw311995+hpQQDedf6nBT+Gt8FwvUuSGbYFWFdpHr6wKPTQlNIpPcnTX
-   dlZrhPCQSMac9DXvhEBFL32kIB2yZYqVi0KVoX2kuVXruGPl2iCFjfIW+
-   oe5kzu3yDKL9ybtUd8xq2yYc229o/MM9xaQ7bKqcBs1y5dyJTNNxnYndD
-   nmee1DebYDlBDgyn8JfW7Rnoc6oAPG8AfTDzZMwIRwy9L/70lPgjs4oEQ
-   g==;
-X-CSE-ConnectionGUID: 8oGMnwSPTxGe5bv+VfVQsQ==
-X-CSE-MsgGUID: i+DWGNXNQFuToFkG/mzNKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88656154"
+  t=1761060116; x=1792596116;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UXgrTKJ/4W3zTkrSFbj7mihos+C8e6d3y7L4u+JlBsU=;
+  b=GpAGrqyA+RBStlx2pTvY9gMVEyIKHjROIfp/OQwHPAIf1CndyOCMLXkR
+   bnSh6RaOx0zTANGDh4RgPbvZnZh+uHAWzE4GSB6XwzCF84Pplhvh5lIAj
+   Ht0jFmEs3UyGXqn3ISPEym+3j/AQNVVuUKsSjlgIlZit9Pw7AiHF8Jqb1
+   9gpdXgCZb7ezJ02RpHnUdq+AY7vubkdUhx9+HclrPT7orh2JOfd5p0zmQ
+   pwll7pjVRGtgN1QQitl0XGpHuZIFeCbZMX+Yl1Yzt2VF8v7pn+cGSxIMJ
+   WQmS6Y7iGn5fwmsp8gFwMPROPmvdLXCrhy0Ox3obwIeBtShXHwmwVoC+i
+   w==;
+X-CSE-ConnectionGUID: 095QDA25SbuRWZ4Mu5RqAg==
+X-CSE-MsgGUID: BL+7XLh5St2AgmdEBBKidA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62891063"
 X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="88656154"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 08:20:59 -0700
-X-CSE-ConnectionGUID: UROx0HfPSC2FQZ8NlxkCgw==
-X-CSE-MsgGUID: GZIbf8neSJ+S7D3yTMQ7hA==
+   d="scan'208";a="62891063"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 08:21:55 -0700
+X-CSE-ConnectionGUID: kUOabx+hTVSzHj1gJ2uM5Q==
+X-CSE-MsgGUID: iMoqPCwhQgO08Y0dYOwtjQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="182778213"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.148])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 08:20:55 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vBEAO-00000001WlQ-1Zoy;
-	Tue, 21 Oct 2025 18:20:52 +0300
-Date: Tue, 21 Oct 2025 18:20:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: jic23@kernel.org, dlechner@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH v3 2/2] iio: pressure: adp810: Add driver for adp810
- sensor
-Message-ID: <aPek1GqhhyOWFfLG@smile.fi.intel.com>
-References: <cover.1761022919.git.akhilesh@ee.iitb.ac.in>
- <5cf1419bff57b906faeb942c5d782d7fe70ad41d.1761022919.git.akhilesh@ee.iitb.ac.in>
+   d="scan'208";a="184100379"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.108.149]) ([10.125.108.149])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 08:21:54 -0700
+Message-ID: <67cdba64-d1e7-4f18-b790-4ecd2c573bb0@intel.com>
+Date: Tue, 21 Oct 2025 08:21:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cf1419bff57b906faeb942c5d782d7fe70ad41d.1761022919.git.akhilesh@ee.iitb.ac.in>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/its: use Sapphire Rapids+ feature to opt out
+To: Jon Kohler <jon@nutanix.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
+ <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Brian Gerst <brgerst@gmail.com>, Brendan Jackman <jackmanb@google.com>,
+ "Ahmed S. Darwish" <darwi@linutronix.de>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251017011253.2937710-1-jon@nutanix.com>
+ <20251020194446.w2s5f6nr7i7vw4ve@desk>
+ <EA2E1D80-07A3-459D-B330-A667821E7C05@nutanix.com>
+ <20251020204026.a7xuhnagsqo4otpx@desk>
+ <225134fd-033f-4d63-b88c-772179054694@intel.com>
+ <20251020224159.xkhfs3phai5o6rzb@desk>
+ <1D952EBC-CA16-49FE-8AD0-48BCE038332B@nutanix.com>
+ <73a22a19-c492-4a75-8352-a4cfac47d812@intel.com>
+ <883EDC14-1A26-46F4-B9E9-C75A6DF07195@nutanix.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <883EDC14-1A26-46F4-B9E9-C75A6DF07195@nutanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 11:20:30AM +0530, Akhilesh Patil wrote:
-> Add driver for Aosong adp810 differential pressure and temperature sensor.
-> This sensor provides an I2C interface for reading data.
-> Calculate CRC of the data received using standard crc8 library to verify
-> data integrity.
+On 10/21/25 07:39, Jon Kohler wrote:
+> For BHI_CTRL, depending on what QEMU the VM was originally *started* on,
+> the guest may have access to Sapphire Rapids models, but BHI_CTRL may
+> not have existed in the QEMU source at that time, as those were introduced
+> into two different timeframes.
 
-Thanks for an update! Looks almost good to me, some comments below.
+I have two solutions for you here, and neither of them involves patching
+the kernel.
 
-...
+First, I personally volunteer to travel to your customers' homes to
+provide in-person education with my "education stick" about why updating
+software is important.
 
-> +M:	Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
-
-Putting it here makes checkpatch unhappy. If someone thinks that is a false
-positive of the tool, perhaps one needs to fix that.
-
-> +F:	drivers/iio/pressure/adp810.c
-
-...
-
->  # When adding new entries keep the list in alphabetical order
->  obj-$(CONFIG_ABP060MG) += abp060mg.o
-> +obj-$(CONFIG_ADP810) += adp810.o
->  obj-$(CONFIG_ROHM_BM1390) += rohm-bm1390.o
->  obj-$(CONFIG_BMP280) += bmp280.o
->  bmp280-objs := bmp280-core.o bmp280-regmap.o
-> @@ -15,6 +16,7 @@ obj-$(CONFIG_DPS310) += dps310.o
->  obj-$(CONFIG_IIO_CROS_EC_BARO) += cros_ec_baro.o
->  obj-$(CONFIG_HID_SENSOR_PRESS)   += hid-sensor-press.o
->  obj-$(CONFIG_HP03) += hp03.o
-> +obj-$(CONFIG_HP206C) += hp206c.o
->  obj-$(CONFIG_HSC030PA) += hsc030pa.o
->  obj-$(CONFIG_HSC030PA_I2C) += hsc030pa_i2c.o
->  obj-$(CONFIG_HSC030PA_SPI) += hsc030pa_spi.o
-> @@ -34,11 +36,9 @@ obj-$(CONFIG_SDP500) += sdp500.o
->  obj-$(CONFIG_IIO_ST_PRESS) += st_pressure.o
->  st_pressure-y := st_pressure_core.o
->  st_pressure-$(CONFIG_IIO_BUFFER) += st_pressure_buffer.o
-> +obj-$(CONFIG_IIO_ST_PRESS_I2C) += st_pressure_i2c.o
-> +obj-$(CONFIG_IIO_ST_PRESS_SPI) += st_pressure_spi.o
->  obj-$(CONFIG_T5403) += t5403.o
-> -obj-$(CONFIG_HP206C) += hp206c.o
->  obj-$(CONFIG_ZPA2326) += zpa2326.o
->  obj-$(CONFIG_ZPA2326_I2C) += zpa2326_i2c.o
->  obj-$(CONFIG_ZPA2326_SPI) += zpa2326_spi.o
-> -
-> -obj-$(CONFIG_IIO_ST_PRESS_I2C) += st_pressure_i2c.o
-> -obj-$(CONFIG_IIO_ST_PRESS_SPI) += st_pressure_spi.o
-
-I would split order fix into a separate change, but if maintainers are okay
-with this approach, I would not object.
-
-...
-
-> +#include <linux/cleanup.h>
-> +#include <linux/crc8.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/mutex.h>
-> +#include <linux/unaligned.h>
-
-Something is still missing.
-
-...
-
-> +struct adp810_read_buf {
-> +	__be16 dp;
-> +	u8 dp_crc;
-> +	__be16 tmp;
-> +	u8 tmp_crc;
-> +	__be16 sf;
-> +	u8 sf_crc;
-
-All these types are provided in types.h
-
-> +} __packed;
-
-...
-
-> +static int adp810_measure(struct adp810_data *data, struct adp810_read_buf *buf)
-> +{
-> +	struct i2c_client *client = data->client;
-> +	struct device *dev = &client->dev;
-> +	int ret;
-> +	u16 trig_cmd = ADP810_TRIGGER_COMMAND;
-
-Shouldn't this be __be16 or __le16? Or is that really a full 16-bit command?
-I have a gut feeling that this should be u8 x[2] = { ... }; instead.
-
-> +	/* Send trigger to the sensor for measurement */
-> +	ret = i2c_master_send(client, (char *)&trig_cmd, sizeof(trig_cmd));
-> +	if (ret < 0) {
-> +		dev_err(dev, "Error sending trigger command\n");
-> +		return ret;
-> +	}
-> +	if (ret != sizeof(trig_cmd))
-> +		return -EIO;
-
--EIO is defined down from linux/errno.h.
-
-> +	/*
-> +	 * Wait for the sensor to acquire data. As per datasheet section 5.3.1,
-> +	 * wait for at least 10ms before reading measurements from the sensor.
-> +	 */
-> +	msleep(ADP810_MEASURE_LATENCY_MS);
-> +
-> +	/* Read sensor values */
-> +	ret = i2c_master_recv(client, (char *)buf, sizeof(*buf));
-> +	if (ret < 0) {
-> +		dev_err(dev, "Error reading from sensor\n");
-> +		return ret;
-> +	}
-> +	if (ret != sizeof(*buf))
-> +		return -EIO;
-> +
-> +	/* CRC checks */
-> +	crc8_populate_msb(crc_table, ADP810_CRC8_POLYNOMIAL);
-> +	if (buf->dp_crc != crc8(crc_table, (u8 *)&buf->dp, 0x2, CRC8_INIT_VALUE)) {
-> +		dev_err(dev, "CRC error for pressure\n");
-> +		return -EIO;
-> +	}
-> +
-> +	if (buf->tmp_crc != crc8(crc_table, (u8 *)&buf->tmp, 0x2, CRC8_INIT_VALUE)) {
-> +		dev_err(dev, "CRC error for temperature\n");
-> +		return -EIO;
-> +	}
-> +
-> +	if (buf->sf_crc != crc8(crc_table, (u8 *)&buf->sf, 0x2, CRC8_INIT_VALUE)) {
-> +		dev_err(dev, "CRC error for scale\n");
-> +		return -EIO;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +	indio_dev->num_channels = ARRAY_SIZE(adp810_channels);
-
-ARRAY_SIZE() is defined in a specific header.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Second, if they continue to be education-resistant, I offer to
+personally travel to the datacenters where these VMs are running to
+inspect the racks where they run and brainstorm solutions. A warning,
+though: I am quite clumsy and I've been known to bump into power cables
+and circuit breakers.
 
 
 
