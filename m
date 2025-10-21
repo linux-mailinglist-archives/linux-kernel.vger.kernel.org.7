@@ -1,101 +1,86 @@
-Return-Path: <linux-kernel+bounces-862699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1573BF5EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:01:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F326BBF5F01
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7BD5503384
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:00:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DED2501A77
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74CA2F2616;
-	Tue, 21 Oct 2025 11:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1RuJlce"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0AD2ED86F;
+	Tue, 21 Oct 2025 11:01:10 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E5823A9AD;
-	Tue, 21 Oct 2025 11:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298CB23E340
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761044425; cv=none; b=ty13RhHVYLuAkp4Nql0mB3qwQuiGEODcBbSrumVAjgvyHNFWp7IqeIaEh3VOVfS/q+PeVYSzDfZTAG0StYFps9zewS1Bi60to6nBXdMTrOPWH+Titfl/BiBY+UVWZmJily5GNmZiuyOQGPEswZXpAqEj2kQLQ+Ycy/SIpy10rYU=
+	t=1761044469; cv=none; b=qi54V640/A6Rpw19ZR0AobbmRGXAhVFFfck9UXOVH4brLBR7RXBszNJIkVPqgga2DL+zuouINx+ImVYINo2SCva97t2t0Hg9JMJNGQP3w5r/XNv9meM1TZRjStRdrAY9mTdF/EvGXkzHhapBfrQmQdfmewUXkxwujyXf7Dm3mWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761044425; c=relaxed/simple;
-	bh=E40pDycN9c1n5k4vstf/G5bJm+GhzdWRH5+oryKYsv8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=i6NHRf38fnaW5GTFb0zCV1Haxj0mQSoH0rWyQ82cTUvExF2R1mKHhaijJzHSLjs3OHhNtGvX67bljzfLiH+57URQrt7yHhiBok0+/0x6hfUGrBxfHezX02RMbrBEOpLTFHHFpYskLWnoByrZEx9SFeTKFFYxtNtwybvYivEFq6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1RuJlce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BAA6C4CEF1;
-	Tue, 21 Oct 2025 11:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761044424;
-	bh=E40pDycN9c1n5k4vstf/G5bJm+GhzdWRH5+oryKYsv8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=k1RuJlceXigmNTRC9YsGSTy0x5z+IUVuy9nXu4HMJEYubc8J7XAczu/0GsJ6kERNP
-	 YLZzGPypKalYJR/4XvddvK34zmkp3B+Bz3NUgFyOlvpM5YK0vCSYrJkL0z+CNHqjrX
-	 SgUn1j8MkGw4dxTgJ1sjEM7nsdjuHxxAf8lG5nLZ1v+Z4iXC2zLjEN55l4ZvDXZ/Jn
-	 ubf9XpDEKojaHbz6uGUax4NF8kf5GAh2z+Bir7Keikg1lk9jlki3i0kI+y53jRqSNJ
-	 2Y0g254Xh6bPrcl8x6VKnbnfFFAzdsUNSKEQDrsR1df/uOPkgGKPHy1jb81waB+93Z
-	 rfnPtcpy00hKQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F423A55ECC;
-	Tue, 21 Oct 2025 11:00:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1761044469; c=relaxed/simple;
+	bh=boaW3BsIFYLo4ZNWQVNEMFXOlgPefgDpFSHcFzSNYtQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Oaxm+oUo+jd5z1Hc7N2/HXTA4h+byjlSRKsj+Rmj/9aFNhmpS9dKKHVQD7Hl6Z1XYFLGJ2EVecbN34rnhrIaMqFN9rXT5Dk0jZZvGCmNSJ7zTfjcievLTRuPxgIInuF/yKrfuPXGr5cDT1x6LcXOP41+v188m5Pl88RelSXuFeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430bee303f7so173088475ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:01:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761044466; x=1761649266;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xqECeflw3i2zVSpUQV8RnVKS2ggV03DQT8rqmCJtiqM=;
+        b=qZEMvo5Nq3cKiFnuPdHvrljjt9Rh8+PlLt8PKoFTh82a+3meadgKdWVvRNe4+SMtJS
+         IdTvGOFAeD9Lkt1E+mhKcDm3kWH2fYfJwFZVTyZbuQAbItI4WTiGOBCxTMxyYMWG8l88
+         c79WyWemeByr4zjVpbVyOpY4eGNWm9WeVHsBHJCdY0VORfxVUXnIMKHXkGP4V6rn/r2H
+         tJFBKvk3wkeyC3cqC9O5wJEXxDKSGKMQzDRR6S5qq5NvUzZ8RQTC0dvAkyeR40KGTMQx
+         htvgKkXKkSm3rz3kYe4hqVIgSK7WWRmIhvMiF1Nx+KLjnABALmLkLDM3wgckl9Xq4VJY
+         dVSQ==
+X-Gm-Message-State: AOJu0YwfuFWKYBaY4d57RKgBQP2x0Pqkk7vG/ukW/u248uCNCzkQtt0s
+	lHYfJ4pKiNUgx9j4Itz9N6i1rW4KDXCKV2fpYiLUqRJFyRUolwXdXHnXwn6I14MAIV/Ig3RUYCV
+	RWmWOuyz6mS2f0/UKHFOUP+rFG5udu79qrOVygbHO+lu7J15hON5i7tv2F6c=
+X-Google-Smtp-Source: AGHT+IG9ZLle7zD+zrOTFrwzZtCxPMd/BTArvTXaDrUFGsxiuK1q46vLts3RolXuGQ5HWrSCodvlS5aMcaJWWf2uKEcFbL2LE/gW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: ethernet: ti: am65-cpts: fix timestamp loss
- due
- to race conditions
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176104440629.1025140.2694526170701445525.git-patchwork-notify@kernel.org>
-Date: Tue, 21 Oct 2025 11:00:06 +0000
-References: <20251016115755.1123646-1-a-garg7@ti.com>
-In-Reply-To: <20251016115755.1123646-1-a-garg7@ti.com>
-To: Aksh Garg <a-garg7@ti.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, edumazet@google.com,
- linux-kernel@vger.kernel.org, c-vankar@ti.com, s-vadapalli@ti.com,
- danishanwar@ti.com
+X-Received: by 2002:a05:6e02:148a:b0:430:a183:7b with SMTP id
+ e9e14a558f8ab-430c5208006mr58553525ab.3.1761044466175; Tue, 21 Oct 2025
+ 04:01:06 -0700 (PDT)
+Date: Tue, 21 Oct 2025 04:01:06 -0700
+In-Reply-To: <8950a6e1-287c-43c7-b36a-cc42ca7e267c@I-love.SAKURA.ne.jp>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f767f2.050a0220.346f24.0013.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] [ocfs2?] possible deadlock in dqget
+From: syzbot <syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Hello,
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Thu, 16 Oct 2025 17:27:55 +0530 you wrote:
-> Resolve race conditions in timestamp events list handling between TX
-> and RX paths causing missed timestamps.
-> 
-> The current implementation uses a single events list for both TX and RX
-> timestamps. The am65_cpts_find_ts() function acquires the lock,
-> splices all events (TX as well as RX events) to a temporary list,
-> and releases the lock. This function performs matching of timestamps
-> for TX packets only. Before it acquires the lock again to put the
-> non-TX events back to the main events list, a concurrent RX
-> processing thread could acquire the lock (as observed in practice),
-> find an empty events list, and fail to attach timestamp to it,
-> even though a relevant event exists in the spliced list which is yet to
-> be restored to the main list.
-> 
-> [...]
+Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+Tested-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
 
-Here is the summary with links:
-  - [net,v2] net: ethernet: ti: am65-cpts: fix timestamp loss due to race conditions
-    https://git.kernel.org/netdev/net/c/49d34f3dd851
+Tested on:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+commit:         6548d364 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b35734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=568e69ca0c2fa75
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1644c3cd980000
 
-
+Note: testing is done by a robot and is best-effort only.
 
