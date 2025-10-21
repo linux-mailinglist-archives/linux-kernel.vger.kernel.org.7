@@ -1,157 +1,199 @@
-Return-Path: <linux-kernel+bounces-863433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D54BF7DA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF8CBF7E01
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BFBF4F7D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:20:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3088504A44
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ECB34D4E3;
-	Tue, 21 Oct 2025 17:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2BE353ACF;
+	Tue, 21 Oct 2025 17:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bt8qWHyW"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cjHCmx+d"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4B234C14B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3D1352FAE
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067145; cv=none; b=T/hpwcLzXfMoxNRvbutLRZI6OcK9tNdEO1YBS4QR97dYdOosTHmXUoYnaAAypLFGRTl1v6oFpy8DsXg6Js4ATQJ6Su+gRhwRIFKh17uWFnqJaKRmmEsgTeFqD8+MYMCUY59GTbKc8+9WYMc1rdgCN00VcWAaFzz6tGRTxflfa9U=
+	t=1761067155; cv=none; b=ZjPIGIksfku4IjC88Cxej2xjlKQMoWTakwUXcigv0iTxYOScGUZVUz1Zbdihi6mxF4w6qpC2K6kMiUDOIjpKNesw1uSGGOM9XW8v4tCZn8SLqy6pSHLcF35BrYSPIjGU8X21rLH7ir16DdrzP4ZM/eugGyTwyhj624+Me1yIUZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067145; c=relaxed/simple;
-	bh=QVeIHe8wp+XSkFvTJTwxSxMlsxElL9549AtRpwOzeTg=;
+	s=arc-20240116; t=1761067155; c=relaxed/simple;
+	bh=cnD/H/0gNm98pqZbQfHq8ymYqO3lWuk3CMpCEik4/lU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gh/LTUb4ccUBnIuJcDGk/zmtsFeO0cKCqh5NkooGW1q2PHqmRE/+/42Qx0Ad0g8q2EMe7vWNGsyMyXqsuns4TOJm1DQdfX8gH00z2O4tvyVDCfF/MIpM8bEaLJcKi2iIIgvVwbwYrBVTm30/Zk/b/f7f4ZMy8aLAFXRYwWjxwPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Bt8qWHyW; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type:Content-Disposition:In-Reply-To; b=qK7dv37q6dpSp6JbDJv85NNBOBd8hi2lJPp/rgCi40Pk3mZcm+hTaZJQBwW6HeNmVuT8B6WRTnYfhTkm/oWry/eFi3ge633Dks6x5NyKLYxVpICR4QiNMca0UAzfD/IecnYgt9JYlZrncYSEjVjIJOoScl8c6a7d5qSXQ/4Z3Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cjHCmx+d; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/JAZY6IA3QeQGlbKWIZX6CcoK0Tgv+6p4IsbxyVVnYk=; b=Bt8qWHyWM7RblPPDbkI2JPuWXT
-	IgTjsBpgbmHqZJgUdqDwxeqQ8sZsLHzd8QpYgutY4zdEvdIIBDMXt59AEl0aIafNkm6GaTsXGd/XL
-	JXn7cPg6MH9FVaLL3HX3rttaO5ajrzEYuVG0CKtnb+qGpkNyew2z5Ie9qpghw9KQYwbvODa17iTBj
-	JuLBY6PTQwn/Q3utL+OukMZ6D0/+Sx86Wn+gmAUqym1IeIlaBD71ZrHYki2AXRVwL+6nP/+Lyl7o/
-	bBLZLG6GPs4zg2rhRdq/sCNa+l73F4evU35QYSUCtL54LFfCpCKB/n8um5lGGs6iu+4OiVlH1RLJX
-	z+pwx3XA==;
+	bh=M+Kr7F5xXeMkJk76WZuYzSfsdDFuThSvbzE/jrNSXJg=; b=cjHCmx+dW9qBiQIWU/ZwIATd7e
+	mtPJQTQytSkRTQ/t9+YrdxDzoN2sIDh1BGK3rdIxMA1IzrOg6XZ0wNgpK3jV/SnTyL6Ic1b88OEzX
+	zIDeqSUod4D6nlPqYGCUaJ/nxcnvnWEnqjdSzVlWG7nDlBFM5AofvYxdxiAO3lXNljcKChaswMmSl
+	lVepzpR15DZVaneWOOAqOQ8L28/RPuoxbwIIuzotLpBU15EYjoIUp5aCJ99TrPwgsqNSzF2ZbXTde
+	OZe88lyv9WcrscrOEnUUpVLuU+8ZrBI4TSC5o9m+jR/ELEK6a8vq6FQmNBol5KNajuj7L5pHw+5sH
+	DcXfT5TA==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
 	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBF8s-00000000tC0-1Okm;
-	Tue, 21 Oct 2025 16:23:25 +0000
+	id 1vBF8y-00000000tCG-2GS7;
+	Tue, 21 Oct 2025 16:23:29 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 986AD30319D; Tue, 21 Oct 2025 14:35:34 +0200 (CEST)
-Date: Tue, 21 Oct 2025 14:35:34 +0200
+	id 43048303194; Tue, 21 Oct 2025 15:30:18 +0200 (CEST)
+Date: Tue, 21 Oct 2025 15:30:18 +0200
 From: Peter Zijlstra <peterz@infradead.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	syzbot <syzbot+8b3a2e23253b50098164@syzkaller.appspotmail.com>,
-	anna-maria@linutronix.de, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Juri Lelli <jlelli@redhat.com>
-Subject: Re: [syzbot] [kernel?] WARNING in hrtimer_forward (4)
-Message-ID: <20251021123534.GU3419281@noisy.programming.kicks-ass.net>
-References: <68b25b42.a70a0220.1c57d1.00f6.GAE@google.com>
- <87qzwers0e.ffs@tglx>
- <aMKTHKfegBk4DgjA@jlelli-thinkpadt14gen4.remote.csb>
- <17915467-06de-46f1-9032-3af258ff1aee@linux.ibm.com>
- <aPd6A7Gj3lg-EDzq@jlelli-thinkpadt14gen4.remote.csb>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+	Breno Leitao <leitao@debian.org>,
+	Kriish Sharma <kriish.sharma2006@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org, Menglong Dong <menglong8.dong@gmail.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Aditya Gollamudi <adigollamudi@gmail.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dan Carpenter <error27@gmail.com>
+Subject: Re: [PATCH] sched: remove unused cpumask variable in mm_cid_get()
+Message-ID: <20251021133018.GV3419281@noisy.programming.kicks-ass.net>
+References: <20251009194818.1587650-1-kriish.sharma2006@gmail.com>
+ <v3zyf7pp64yd4kakqniq4thjf2egb3kavkwzgoqt6ye5cuqkys@jmkcwst6lrn2>
+ <67e75a68-7a03-46bb-ae40-b1a8f24c0b16@suse.cz>
+ <20251014103439.GU3245006@noisy.programming.kicks-ass.net>
+ <yc3bcn76b6jcdcbnoegwi6bigccor32fuevg66o2lqdewem7dc@nvujb2gazknq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fxymkO5VxfNQA8+a"
 Content-Disposition: inline
-In-Reply-To: <aPd6A7Gj3lg-EDzq@jlelli-thinkpadt14gen4.remote.csb>
+In-Reply-To: <yc3bcn76b6jcdcbnoegwi6bigccor32fuevg66o2lqdewem7dc@nvujb2gazknq>
 
-On Tue, Oct 21, 2025 at 02:18:11PM +0200, Juri Lelli wrote:
-> On 21/10/25 10:12, Shrikanth Hegde wrote:
-> > 
-> > 
-> > On 9/11/25 2:45 PM, Juri Lelli wrote:
-> > > On 10/09/25 22:07, Thomas Gleixner wrote:
-> > > > On Fri, Aug 29 2025 at 19:00, syzbot wrote:
-> > > > 
-> > > > > HEAD commit:    b6add54ba618 Merge tag 'pinctrl-v6.17-2' of git://git.kern..
-> > > > > git tree:       upstream
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1130eef0580000
-> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=8b3a2e23253b50098164
-> > > > > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> > > > > 
-> > > > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > > > 
-> > > > > Downloadable assets:
-> > > > > disk image: https://storage.googleapis.com/syzbot-assets/102656909b6f/disk-b6add54b.raw.xz
-> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/fa30d1d80a47/vmlinux-b6add54b.xz
-> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/c25ee8abf30a/bzImage-b6add54b.xz
-> > > > > 
-> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > > Reported-by: syzbot+8b3a2e23253b50098164@syzkaller.appspotmail.com
-> > > > > 
-> > > > > ------------[ cut here ]------------
-> > > > > WARNING: CPU: 1 PID: 1186 at kernel/time/hrtimer.c:1052 hrtimer_forward+0x1d6/0x2b0 kernel/time/hrtimer.c:1052
-> > > > > Modules linked in:
-> > > > > CPU: 1 UID: 0 PID: 1186 Comm: irq/33-virtio1- Not tainted syzkaller #0 PREEMPT_{RT,(full)}
-> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> > > > > RIP: 0010:hrtimer_forward+0x1d6/0x2b0 kernel/time/hrtimer.c:1052
-> > > > 
-> > > > It compains that the timer is enqueued when it is attempted to be forwarded
-> > > > 
-> > > > > Code: 4c 89 33 48 8b 04 24 eb 07 e8 86 34 12 00 31 c0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 01 d8 4d 09 cc e8 6b 34 12 00 90 <0f> 0b 90 eb df 48 89 e8 4c 09 f8 48 c1 e8 20 74 0a 48 89 e8 31 d2
-> > > > > RSP: 0018:ffffc90000a78bd0 EFLAGS: 00010006
-> > > > > RAX: ffffffff81ac27e5 RBX: ffff8880b883b508 RCX: ffff888026c19dc0
-> > > > > RDX: 0000000000000100 RSI: 0000000000010000 RDI: 0000000000010100
-> > > > > RBP: 000000000009d057 R08: 0000000000010000 R09: 0000000000010100
-> > > > > R10: dffffc0000000000 R11: ffffffff8167a890 R12: ffff8880b883b520
-> > > > > R13: 0000000000184487 R14: 1ffff110171076a4 R15: 0000000000000001
-> > > > > FS:  0000000000000000(0000) GS:ffff8881269c2000(0000) knlGS:0000000000000000
-> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > CR2: 00007f95323cbf98 CR3: 0000000064088000 CR4: 00000000003526f0
-> > > > > Call Trace:
-> > > > >   <IRQ>
-> > > > >   hrtimer_forward_now include/linux/hrtimer.h:366 [inline]
-> > > > >   dl_server_timer kernel/sched/deadline.c:1193 [inline]
-> > > > 
-> > > > which is strange as this is with the timer callback itself, so it
-> > > > shouldn't be enqueued, unless there is a possiblilty to have:
-> > > > 
-> > > >     CPU0                       CPU1
-> > > >     timer_expires()
-> > > >        callback()              ????
-> > > >          dl_task_timer()       rq_lock()
-> > > >            rq_lock()             hrtimer_start()
-> > > >                                rq_unlock()
-> > > >             hrtimer_forward()
-> > > > 
-> > > > No idea whether that's possible, but that's the only sensible
-> > > > explanation.
-> > > 
-> > > So, a dl_server_start() could be your ????, but it should see
-> > > dl_server_active and just return if the dl_server callback is running.
-> > > Unless a dl_server_stop() somehow interleaved as well and cleared it.
-> > > 
-> > 
-> > isn't dl_server timer per CPU?
-> 
-> Indeed you have a point. Also dl-server timers handling has changed
-> recently with several fixes from Peter.
 
-Can still be a remote wakeup trying to start the timer.
+--fxymkO5VxfNQA8+a
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anyway, yeah, we've changed a bit around here, but we're still not quite
-done -- there is that issue from Gabriel.
+On Tue, Oct 21, 2025 at 02:01:42PM +0200, Uwe Kleine-K=F6nig wrote:
 
-Also, every time I look at this code I get confused, so perhaps that
-needs fixing too.
+> There are several other submissions of the same patch with different
+> commit logs; I found:
+>=20
+> https://lore.kernel.org/all/20251002-sched-w1-v1-1-a6fdf549d179@linaro.or=
+g/
+> https://lore.kernel.org/all/20251009194818.1587650-1-kriish.sharma2006@gm=
+ail.com/
+> https://lore.kernel.org/all/20251015091935.2977229-1-andriy.shevchenko@li=
+nux.intel.com/
+> https://lore.kernel.org/all/20251020221728.177983-1-adigollamudi@gmail.co=
+m/
+> https://lore.kernel.org/all/20251017073050.2411988-1-kevin.brodsky@arm.co=
+m/=20
 
-I'll poke at it some.
+I know right, I seem to be getting at least one a day. If only people
+were as good in testing -next I suppose. It also shows people can't be
+arsed to search the archive :/
+
+> Also Krzysztof's build bot is very unhappy:
+> https://krzk.eu/#/builders/135
+
+Not familiar with that thing.
+
+> > People using W=3D1 and WERROR can keep the pieces. Anyway, this is a mu=
+ch
+> > more coherent explanation that the original patch.
+>=20
+> Can we please get this fixed even though you don't bother about W=3D1
+> builds? There seem to be others who do. And note that even
+>=20
+> 	make W=3D1 drivers/pwm/
+>=20
+> is broken due to that, so it affects also maintainers who only want W=3D1
+> for their own subtree.
+
+Only if you have WERROR=3Dy, which really you shouldn't have if you use
+W>0.
+
+> Regarding the Fixes line: Vlastimil Babka bisected it to 378b7708194f
+> ("sched: Make migrate_{en,dis}able() inline"), but I think this is just
+> the commit that made the compiler notice that. IMHO Andy identified the
+> more plausible commit with:
+>=20
+> Fixes: 223baf9d17f2 ("sched: Fix performance regression introduced by mm_=
+cid")
+
+Right, as said, Thomas is rewriting all that. His first patch is a
+revert of that commit:
+
+  https://lkml.kernel.org/r/20251015164952.694882104@linutronix.de
+
+> Note there is a lkp report about Andr=E9's patch (i.e. the first in my
+> list above) at
+> https://lore.kernel.org/all/202510041546.DvhFLp2x-lkp@intel.com/#t. I
+> don't understand the issue found there, but maybe someone should before
+> the patch is applied.
+
+That's unrelated to the patch in question -- it is the robot
+re-reporting a smatch thing because the code changed and the new report
+no longer exactly matches the old report or something.
+
+smatch wasn't able to discover the relation between next->mm and
+next->mm_cid_active and warns us that next->mm can be NULL (per a
+previous test for that) and that feeding said NULL into mm_cid_get() is
+a problem -- it would be, except next->mm_cid_active cannot be set if
+!next->mm.
+
+*sigh*, it just means Thomas will have to rebase his series -- not the
+end of the world I suppose but I really don't get this obsession with
+W=3D1.
+
+The problem is really that I'm now mandated to keep the scheduler W=3D1
+clean, and I really, as in *really* don't care for W=3D1. A number of
+warnings there are just not sane, like that ludicrous unused static
+inline warning.
+
+But sure -- send a patch for this, with a coherent changelog. I'll be a
+bigger pain in the arse the moment the 'fix' really doesn't make sense.
+I'll probably propose removing the warnings from W=3D1, like here:
+
+  https://lkml.kernel.org/r/20250813152142.GP4067720@noisy.programming.kick=
+s-ass.net
+
+--fxymkO5VxfNQA8+a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmj3itwACgkQdkfhpEvA
+5LqukQ//U6FTdN7g4gs5PZH899K0jewxOjjhSoLXYvBMlfWUuSs3G3UmbvEd6zqy
+KiEUtgOkSfuOu6Qe0tvBIX1i/p414KLdielKjukm4zSflHZPLUWIRKv8eQRU/lV3
+8dHIPsIpr/K9a+jOg7Yq0uS520yCH5dXKvV4Mjdd7Dq0QakGpVNNyTg67PVV0aoL
+j4L7ojLHK8qI2jBUYP2LG4QlA/NXUnzhvkYgq8Tsu/6jKbiD8UTY2YqwUmTGyZRO
+fAh4iZsZRG86Fq4iWAz+LpXuxjnW4LFP6aE5bLAZFcV2qYxDrMqvNX3n/0FpXGJI
+ibWAvhW8yAWfYF1Ynrr/pfZxgrpTxz3jv5mb6g/Y7hEYniux3JtchvXSV2LJQx/N
+e45SpLDuGC4xWVSIeTLR+Offij1vPuTH6AdjbcgJ6qB1DNMp/Xzi38/fB+wgr2Q8
+NnMCMF57ePCewqKUFEbHRwiDTdfv30dtYp21y23mCdN8zeBuk+696w4ykoEerq7W
+Rs3NNntvgq2tGJeIvqa9MzQssSjRoF4322iOviscKop/re/OJAcQjpr7a0BMhw1e
+DnATBPqZjhxsrmOpwcLtSheSZnG1YVt3K39/oYfIjX8PyNH2IuD/Nst2eNut7suh
+zR3OdbJYYdLiWy27mhiNQinVyQ9JzSG06lwKiBFwBZe+S2K7/3M=
+=B1wy
+-----END PGP SIGNATURE-----
+
+--fxymkO5VxfNQA8+a--
 
