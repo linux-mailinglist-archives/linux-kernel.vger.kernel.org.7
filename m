@@ -1,182 +1,124 @@
-Return-Path: <linux-kernel+bounces-862933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2D3BF68F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:53:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD8EBF68FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13D83BB23B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:53:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 458784FFBE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A81A33343C;
-	Tue, 21 Oct 2025 12:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F0B333731;
+	Tue, 21 Oct 2025 12:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8Cs6anh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MK13Bz8u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA09333430
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2084E2F0C79;
+	Tue, 21 Oct 2025 12:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761051207; cv=none; b=dKFYuicuJEVdFzLTL+Ny+wWdGYZMZHYd4d70m8t1530dS2TZlzi0q40ycuxoBHY/pGVz2hVZJO7egq0hzkODDZm76hAfUOJ99GymXWM32eiaREmkNLJBrpC6CYTHXsp93HZaQvO2paKNnDd0e9Jk7XUJ8tg2rkSH1FYrr8xtbrY=
+	t=1761051235; cv=none; b=EJMNwK9v1YIfMlNmEvYR9WToCj0apNwJEYhEROMHdlD6d9oStMXNCIk0Ozw8N5ENRbVdPeaKNzW4bg1+pgZSDxc//ZW/MifATvoFtFhVug19p+3UTXZ7W5wz+RqBNHXt6NAKpQEnlTanVXo66gzUi720G4eLbdWlu0dpu6VdbyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761051207; c=relaxed/simple;
-	bh=JRMgqzMCkRarxTqmjB25RB2qN3M2EvcJMAfE3kwGsSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NOLcB33D5K5996qvNaTBEnjqwNV+BaesvR0nbdgqAdDADDRIGH44ypQbXg2S9eVeL1Nd9YAAWUrzTSTvMk4kuf3GxRDk56KAN0EokO7tge+V+gDoU9tz0XxCe+cxPC5sCpMuMT69fBah12HPoZG3eAiRa1IRj1EIoBa/OLaETLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8Cs6anh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FBDBC4CEF1
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:53:27 +0000 (UTC)
+	s=arc-20240116; t=1761051235; c=relaxed/simple;
+	bh=UY2OSllcqRDaiG/AFNpJ3ozdueOD0RXvdE2EaOV+UH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k6Ae0DfyKLNKlPwMIV/1IhvbR5Km22hEVsiDrX0KzriqXqjDrWiTQy8XRcwDO1yJd7uByVaiWaEsItCgnF+Ni90Mvp6rJFCrDVdHhXPoKnmJ4u0udlqW03Z1rBWToOVJpzGtjuyLX+tXfgm7VaUsXQBF8bkXuQcsHt7DFWTGvxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MK13Bz8u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55553C4CEF1;
+	Tue, 21 Oct 2025 12:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761051207;
-	bh=JRMgqzMCkRarxTqmjB25RB2qN3M2EvcJMAfE3kwGsSw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p8Cs6anh7MxhwqhAo26mJSRzuftK40TA4a6UF4EhaaR3j7eaP0M3gFUqpYosDs697
-	 ySlEGZGWbDR3UmWIvMBLGUXBlovIrkZwdS+8dZnjjF+v9vgiw0GnZGyBq2qx2AbyIY
-	 rF02Y2wRMNB3yqrU026qp1+N2Ob+iqa3SDUm4+vLgQwBPOeRmdyCSUP787/6YAgxSa
-	 w/sVW1QDCtEOzhT7EekrP2z3ektze5KSU1QIgdHOawXzn9FvCEXBti4FRZqG9v5IQ+
-	 2EyRMs1TgCGNM6V+Rqv7C0g7ZMMZp7Quc7wP4aWhAGLbkSyq+bmUHXoNECDvw3Bjv/
-	 93WrkNZwm/2xw==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-4444887d8d1so1514154b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:53:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWPXJYgQs0sbwbpFGg1Y4ky0wYiBkBN5f+zO+jI2eYDc83RDBrD6afqdxmfe8Rfln9WJgxGqjElLN8wxok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdjqOMKeb4jCd95lEA2k2RVSJP3bSXIb1FBuRh2LhhTG1NxYqg
-	cQtUV0IWgsXZR/YzCxnsGT86ZE3AgmD0QcVBIh0e99eAN1fZTwH38b5j5spp2aj+z8DbDBB/69H
-	0RY6fOnQ7YoiLDZqwxXHPogo131I9DI8=
-X-Google-Smtp-Source: AGHT+IELKAJn+CpJ5d/x/lg53OE74Osp3H7VB9TLdb1TgTTX0AqIbjmO0KqDlLu2W8HZjjlDl3/ySjO9XTu3OKhlfNQ=
-X-Received: by 2002:a05:6808:18a7:b0:43f:7a87:b39 with SMTP id
- 5614622812f47-443a2f6a7c2mr6912539b6e.28.1761051206442; Tue, 21 Oct 2025
- 05:53:26 -0700 (PDT)
+	s=k20201202; t=1761051234;
+	bh=UY2OSllcqRDaiG/AFNpJ3ozdueOD0RXvdE2EaOV+UH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MK13Bz8u0aFDcU4UaydmuPJ94/RJsUSk49QV9YFFxyqro787NvORkZoXkPqM8E0Or
+	 CcLkp8Kp/iS+s/2nVgTWhzegXbjFKaG0dQnO4B6QFI1ixEDoPBJOt7XSEtVyWXmW/9
+	 qKmvDCQDJqrwKvumbdyVJKcuXpfHUfwwRDi51VQT4mskKM6g5KasWj5mm7PRLqrE6c
+	 B3CXCoFC5SN3tUmZYJSoGHIhQnDn1PoTiBLDFfvYKSSvnaVl4L60rXy8axwUHaedHu
+	 j8Yx061Fz6PO6hC23FWr0/8ddRTTlSHTU5475hpeZjVw44HqQt6f44aw9jA8WSg+3y
+	 KYUTqxRmLDd2w==
+Date: Tue, 21 Oct 2025 18:23:29 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andy@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+Message-ID: <ibdmghl5dg3oda2j5ejp35ydky4xkazewhdvskm7p32vstdegr@36pj32b6dt44>
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <hyzzrjn7jzo3tt3oyg7azijouawe3zopfjzq6zfhoo6e6z2m4t@ssl5vl4g557e>
+ <zk4ea5cibrkp4vttuy4evrqybf76b3nop5lnyck4ws4nyf2yc4@ghj2eyswsoow>
+ <CAMRc=MdWmO4wvX6zpzN0-LZF1pF5Y2=sS8fBwr=CKMGWHg+shA@mail.gmail.com>
+ <rfr5cou6jr7wmtxixfgjxhnda6yywlsxsei7md7ne3qge7r3gk@xv6n5pvcjzrm>
+ <CAMRc=Me9Td5G9qZV8A98XkGROKw1D2UeQHpFzt8uApF8995MZw@mail.gmail.com>
+ <rvsyll4u6v4tpaxs4z3k4pbusoktkaocq4o3g6rjt6d2zrzqst@raiuch3hu3ce>
+ <CAMRc=Me+4H6G+-Qj_Gz2cv2MgRHOmrjMyNwJr+ardDR1ndYHvQ@mail.gmail.com>
+ <fydmplp5z4hjic2wlmvcy6yr3s5t5u4qsgo7yzbqq3xu2g6hdk@v4tzjj3ww4s6>
+ <CAMRc=McGuNX42k_HdV20zW+buACBTmTZEHWgS-ddRYsvnfwDSg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
- <aPH_B7SiJ8KnIAwJ@wunner.de> <67381f3b-4aee-a314-b5dd-2b7d987a7794@linux.intel.com>
- <aPKANja_k1gogTAU@google.com> <08976178-298f-79d9-1d63-cff5a4e56cc3@linux.intel.com>
- <aPaFACsVupPOe67G@google.com> <06cd0121-819d-652d-afa7-eece15bf82a2@linux.intel.com>
-In-Reply-To: <06cd0121-819d-652d-afa7-eece15bf82a2@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 21 Oct 2025 14:53:13 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0giOw54L6M8rj-Q8ZELpFHx9LPKS2fAnsHHjHfhW_LZWw@mail.gmail.com>
-X-Gm-Features: AS18NWCQj4vpYEf3m-BM318rLr21HBYlYKoNpN244opR4NeobUnk_Cp4bjPsdg0
-Message-ID: <CAJZ5v0giOw54L6M8rj-Q8ZELpFHx9LPKS2fAnsHHjHfhW_LZWw@mail.gmail.com>
-Subject: Re: [PATCH] PCI/PM: Prevent runtime suspend before devices are fully initialized
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Brian Norris <briannorris@chromium.org>, Lukas Wunner <lukas@wunner.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-pm@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McGuNX42k_HdV20zW+buACBTmTZEHWgS-ddRYsvnfwDSg@mail.gmail.com>
 
-On Tue, Oct 21, 2025 at 1:27=E2=80=AFPM Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Mon, 20 Oct 2025, Brian Norris wrote:
->
-> > Hi Ilpo,
+On Tue, Oct 21, 2025 at 02:22:46PM +0200, Bartosz Golaszewski wrote:
+> On Tue, Oct 21, 2025 at 2:20 PM Manivannan Sadhasivam <mani@kernel.org> wrote:
 > >
-> > On Mon, Oct 20, 2025 at 06:56:41PM +0300, Ilpo J=C3=A4rvinen wrote:
-> > > On Fri, 17 Oct 2025, Brian Norris wrote:
 > > >
-> > > > On Fri, Oct 17, 2025 at 02:49:35PM +0300, Ilpo J=C3=A4rvinen wrote:
-> > > > > On Fri, 17 Oct 2025, Lukas Wunner wrote:
-> > > > >
-> > > > > > [cc +=3D Ilpo]
-> > > > > >
-> > > > > > On Thu, Oct 16, 2025 at 03:53:35PM -0700, Brian Norris wrote:
-> > > > > > > PCI devices are created via pci_scan_slot() and similar, and =
-are
-> > > > > > > promptly configured for runtime PM (pci_pm_init()). They are =
-initially
-> > > > > > > prevented from suspending by way of pm_runtime_forbid(); howe=
-ver, it's
-> > > > > > > expected that user space may override this via sysfs [1].
-> > > > >
-> > > > > Is this true as pm_runtime_forbid() also increases PM usage count=
-?
-> > > >
-> > > > Yes it's true. See below.
-> > > >
-> > > > > "void pm_runtime_forbid(struct device *dev);
-> > > > >
-> > > > > unset the power.runtime_auto flag for the device and increase its
-> > > > > usage counter (used by the /sys/devices/.../power/control interfa=
-ce to
-> > > > > effectively prevent the device from being power managed at run ti=
-me)"
-> >
-> > I see this doc line confused you, and I can sympathize.
-> >
-> > IIUC, the parenthetical means that sysfs *uses* pm_runtime_forbid() to
-> > "effectively prevent runtime power management"; pm_runtime_forbid() doe=
-s
-> > not block user space from doing anything.
-> >
-> > > > Right, but sysfs `echo auto > .../power/control` performs the inver=
-se --
-> > > > pm_runtime_allow() -- which decrements that count.
+> > > And with the implementation this series proposes it would mean that
+> > > the perst signal will go high after the first endpoint pwrctl driver
+> > > sets it to high and only go down once the last driver sets it to low.
+> > > The only thing I'm not sure about is the synchronization between the
+> > > endpoints - how do we wait for all of them to be powered-up before
+> > > calling the last gpiod_set_value()?
 > > >
-> > > Fair enough, I didn't check what it does.
-> > >
-> > > IMO, the details about how the usage count behaves should be part of =
-the
-> > > changelog as that documentation I quoted sounded like user control is
-> > > prevented when forbidden.
 > >
-> > I tried to elaborate on the API doc confusion above. But frankly, I'm
-> > not sure how best to explain runtime PM.
+> > That will be handled by the pwrctrl core. Not today, but in the coming days.
 > >
-> > > I see you've put this part of the explanation
-> > > into the v2 as well so I suggest you explain the usage count in the c=
-hange
-> > > so it is recorded in the commit if somebody has to look at this commi=
-t
-> > > years from now.
-> >
-> > Both v1 and v2 mention that the sysfs 'power/control' file can override
-> > the kernel calling pm_runtime_forbid(). They don't mention the usage
-> > count, since that's an implementation detail IMO. (To me, the mental
-> > model works best if "usage count" (usually get()/put()) is considered
-> > mostly orthogonal to forbid()/allow()/sysfs, because "forbid()" can be
-> > overridden at any time.)
-> >
-> > This is also covered here:
-> >
-> > https://docs.kernel.org/power/runtime_pm.html#runtime-pm-initialization=
--device-probing-and-removal
-> >
-> > "In principle, this mechanism may also be used by the driver to
-> > effectively turn off the runtime power management of the device until
-> > the user space turns it on."
->
-> The problem is already rooted into the function name, when a function is
-> called "forbid", anyone unfamiliar will think it really forbids
-> something.
+> 
+> But is this the right approach or are you doing it this way *because*
+> there's no support for enable-counted GPIOs as of yet?
+> 
 
-And it does, until the "allow" counterpart of it is called.
+This is the right approach since as of today, pwrctrl core scans the bus, tries
+to probe the pwrctrl driver (if one exists for the device to be scanned), powers
+it ON, and deasserts the PERST#. If the device is a PCI bridge/switch, then the
+devices underneath the downstream bus will only be powered ON after the further
+rescan of the downstream bus. But the pwrctrl drivers for those devices might
+get loaded at any time (even after the bus rescan).
 
-The confusing part here is that the "allow" counterpart is called from
-a sysfs attribute.
+This causes several issues with the PCI core as this behavior sort of emulates
+the PCI hot-plug (devices showing up at random times after bus scan). If the
+upstream PCI bridge/switch is not hot-plug capable, then the devices that were
+showing up later will fail to enumerate due to lack of resources. The failure
+is due to PCI core limiting the resources for non hot-plug PCI bridges as it
+doesn't expect the devices to show up later in the downstream port.
 
-> The docs just further reinforced the idea and the fact that it
-> also increments usage count.
->
-> It is quite unexpected and feels quite illogical (for non-PM person like
-> me) that user interface then goes to reverse that usage count increase,
-> what would be the logical reason why there now are less users for it when
-> user wants to turn on PM? (I understand things are done that way, no need
-> to explain that further, but there are quite a few misleading things in
-> this entire scenario, not just that parenthesis part of the docs.)
+One way to fix this issue is by making sure all the pwrctrl capable devices
+underneath a PCI bridge getting probed, powered ON, and finally deasserting the
+PERST# for each one of them. If the PERST# happens to be shared, it will be
+deasserted once at the last. And this order has to be ensured by the pwrctrl
+core irrespective of the shared PERST#.
 
-So the purpose of this "forbid" call in pci_pm_init() is to "block"
-runtime PM for PCI devices by default, but allow user space to
-"unblock" it later.
+- Mani
 
-Would adding a comment to that effect next to that call be useful?
+-- 
+மணிவண்ணன் சதாசிவம்
 
