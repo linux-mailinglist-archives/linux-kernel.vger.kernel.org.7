@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-862762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804BCBF617B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A76BF617E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDB1619A1474
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:38:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE49919A14EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869ED32E13D;
-	Tue, 21 Oct 2025 11:37:54 +0000 (UTC)
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31762F3607;
+	Tue, 21 Oct 2025 11:37:58 +0000 (UTC)
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF2D2F3607
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00F532E6A8
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761046673; cv=none; b=UNmdLyw+VBkTTRv5MLkeukJX/Erqt/IcrkUdnh1XLTWnqFOTlJ5+cmejRTya2Rv3Tv+8cXIOipDMT/CvTpMGpGaKZm8jr3qwFV93IUV3ncEHevVXSxvZ8AkDDEI5hRP1EsRMt9+ayh6EK4/RX+f3Ud2Pesz5b3rBRr4qsyihBJk=
+	t=1761046678; cv=none; b=Tac06UGcWaRddEASviRqybchu5Iz/Xk51qo9nKVvz6a9oz2mqKoV7l+CtUab3ylZ+VFEhUj5/YJT9cdTnxzjmfw8WxTldrc6agZa2PgdRPvkbcUIgyLA5QRV3WgnHEXjuqnMiTPfTb1ZIUTkE//Zdil/BJnwYAqcDjBv+CpEVTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761046673; c=relaxed/simple;
-	bh=kuoE1FUvLeKFmLsCoNqOIkjJG2dB4pdTppXQYQPWGsQ=;
+	s=arc-20240116; t=1761046678; c=relaxed/simple;
+	bh=LwlKlFHSEbNrVRvKsond5796RbxaXrrqKSRSObBmQZs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EJf45bCrJfxzBT+u9BXadyC5WcdFhpxvdPxG1uD59qFBv86HJ6Y0opZtMzt/F8kEptg6ARGy29EpCBDr+dhFWCpcJ4Vpc8VLYAak04xrxAMWFcNxmjiszsfh2PFfi/gMlMUMadJH/IMZdLuCLON7Aq6JygmX33Q3PrTQ0ySd8aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.195
+	 MIME-Version; b=HM/hVxheAajgN6oNOaZXKaMnpbu0O7LlYju8+90RT3RQBWdc7DOtfsGs3f6TIiOQze8+7g9VKQmQCg9Hx6tbn3hIVC5RXf6ns86T3qjJJ6H2Gs8gnFZpe1CffpkXwJ1h6c+WEA8LT85RiPf6ZPYYPo5xh4SUU6i/RopGE6QLkgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b6a7d3040efso2023142a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:37:51 -0700 (PDT)
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-269af38418aso66787925ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:37:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761046671; x=1761651471;
+        d=1e100.net; s=20230601; t=1761046676; x=1761651476;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AKqpzOqhN5Ccg89sMbSx3T7qxxa8RixMmw1THiek4uU=;
-        b=fDmljkoiCpD3FwQaD77AjwtBRvmJ2UVhNRvDGIJaUDctH6BoAOM7hMjZ2P8j1gGhO6
-         hSQPc3jG+myIv/CDkpWaVZ4swM0+QbHsNvN+OlOOgwgbYctL6uqdTQ37NaQJy80ljOe7
-         MB1tY+HtpH+qxYRyKyL9HHoFqocsta56VCf6QXLC4296Tf0IkzrMgnLIOnnVRLWiY4qW
-         UsOMnZ8X0caMfU1wRph6TYUbVVnGLs2eS8/1auI5KvkNTF9az/GdJSW0Rj3iGaPZAg0Q
-         3ADQcz+k4gnr/sOdcFn2k1Q4iuxG+WyQKhvsUmXiiH291Lkz/DpyMK0qY50MvMl3Z/xy
-         R6MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnvvYPQ56gcXOCE6MMj7Jzaktc/EUdwRfwrPkg/3v1yE8nS+CjP02TnIypY+OJiK4XU6UKRq0gNBmRtNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7K4E0vG1jg1tiiUnfB1TCGcmYoZoPRXQCRxCBIqoWVTOGSwrb
-	/k+oxVeD9RUugrghxTZCoMJNiWl3iL/ZoNSmXDSDZLNs/svilh7pysQM
-X-Gm-Gg: ASbGncvX/sJmRE1go0X5oTclUdhURHDqWin7wU0iyq9XU1zgFcvPeGo5P1FZb6139Wl
-	VnSybSP5iCSWYNvIMab4wHu5AXOPOR1CW3rM7lT24CwdRVq8BQyk/+QZY5y98LCjqJn9tWtGH/f
-	bXKmHF3wJaTV9XDN0oDGstvDaooHwHhG77PXUvFGgJDyaH/xrwhuMJt+IppYizcPJABDBfBBoNK
-	bdt9MvWqs+sqg+9ZlmHc5FkCIWKsNhAONvo5vpFXGGIs6fsfNzdJrJqB0PhCqT/X6mgsGWBC9pu
-	efYqA7A/5p7FsEnf0Jr29k1EQkwhMqtTYEi8h8WPYgaMlpkUfRbgqAaxl1jLdMDv4VN/RvJu2uz
-	Nh5lK0TbaOFk1GB2RkZHEIcneT0gRZk+1/I2uPhb443DDIbYo5o+He1lwk8qflOxNTR7IuEheVJ
-	nfPLiB3zBYfXA8sSCqcRNFFTI=
-X-Google-Smtp-Source: AGHT+IH0BjuvaA5viZ+OWbEEkQERqLhKzGcP5Kn0KUqxKXxImmXjbveExVU5QFyUBAqvyYVzJR7WmA==
-X-Received: by 2002:a17:902:f78b:b0:290:ab61:6a5e with SMTP id d9443c01a7336-290c9ce0ad2mr206036055ad.27.1761046671460;
-        Tue, 21 Oct 2025 04:37:51 -0700 (PDT)
+        bh=zb/P39EN0zTHeWlEc7WRQeworU4Q/PPx2G1j0YfRkmU=;
+        b=SQi+2NxpGf26hxrazSqmG2wgHmUGeQI5683ii2ItiEUp2tN0gulxLg+60PIyXylNAA
+         R3cQvnBLYCJZNDuwlN0mJ5ejf3BWTjLIJFy34ElVVfVtRu5P5+Y53ydEqjeUF9toUAPb
+         MRieMpOCf+N9/fSkqoInZJLN+G4AK7jbINfB0LUO3BEga2C1MBuaTNJD7tLJz6x3txio
+         Z8HGUo00ltpj2DAj2M+G/CX/fF3mjKGwP2jfB/lK6ovJXj/5hbbxakj4wTiPKVAG4Dq3
+         wgUWBWe7Gsqf55sUpbWBTg1PgauD2HOgREESNwXm6E/834VoEOL8HcqODbqTdk8GQpLz
+         WvQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdc9wqLzhRLsIHE1abZFsTAG40KLW/sNndQH76YX31l21SetezJ6EtPrX/t/kl6QujfkVEz+171Y3wKYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaM4ANr3tKQMxadjj6feFEWrj262yq2mm9LmzotO1wMdsmBgj2
+	v95mD0T9ZWXEbQITs9fYWcC55cnkHQy/Dua2601erNLgiSSy381qWzFT
+X-Gm-Gg: ASbGncva384RtcEehHz8WxmdsCySacp169A2zmHTDsiDEPrqSK8AvgbmZT6JhdMjlzn
+	o/vxIcjoHvtrcNzrb/c04LgOp+sfpJdBBgv7q94LS6QGaezJF3JCzsqVYr5pmlUxi/cWlNlOoZ4
+	tIV/TR0Dg1xchey7XSBF94Cje863zrp6ue5A0j2toOPyP+jatDDdnUmf/jaiQzOPWxg4wM/lJEV
+	w+o61MvwMoC0HcoTCMxJh62gwLjjrNmerr3mRLB3+oLY9Aei3GDowLB1nZ9we+GSGjeA2ytez63
+	ZNTJc9tX22pmPcV3ZB4dNR6qbzXJ8Mr/WFuI095V+SqJEg2qy19GB17HaagPNceE9gl9Br47+LQ
+	9Tun96ENsy49bH7tlsdYauIBUGXo4iVbYAv/0vnnTY20A9+0CZBm2x7q+alwffzwJwGxk9nWPwf
+	i4jPiXKUrS6PVMV56aVo4alkhtMA4gXPIbCA==
+X-Google-Smtp-Source: AGHT+IF6cl/LBwyaFNUn13dpXkGP8NioeG262Y8OPcKXHmKGNZPKgVCEeAVM6LjaxPs3Wd2eic9dVQ==
+X-Received: by 2002:a17:903:287:b0:24b:4a9a:703a with SMTP id d9443c01a7336-290c9cbc0d7mr203876085ad.17.1761046676061;
+        Tue, 21 Oct 2025 04:37:56 -0700 (PDT)
 Received: from power-ThinkBook-15-G2-ITL.. ([116.128.244.171])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d5874sm107138825ad.54.2025.10.21.04.37.48
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d5874sm107138825ad.54.2025.10.21.04.37.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 04:37:51 -0700 (PDT)
+        Tue, 21 Oct 2025 04:37:55 -0700 (PDT)
 From: Xueqin Luo <luoxueqin@kylinos.cn>
 To: rafael@kernel.org,
 	pavel@kernel.org,
@@ -66,9 +66,9 @@ To: rafael@kernel.org,
 	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [PATCH v5 2/3] PM: hibernate: make compression threads configurable
-Date: Tue, 21 Oct 2025 19:37:27 +0800
-Message-ID: <f24b3ca6416e230a515a154ed4c121d72a7e05a6.1761046167.git.luoxueqin@kylinos.cn>
+Subject: [PATCH v5 3/3] PM: hibernate: add sysfs interface for hibernate_compression_threads
+Date: Tue, 21 Oct 2025 19:37:28 +0800
+Message-ID: <c68c62f97fabf32507b8794ad8c16cd22ee656ac.1761046167.git.luoxueqin@kylinos.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1761046167.git.luoxueqin@kylinos.cn>
 References: <cover.1761046167.git.luoxueqin@kylinos.cn>
@@ -78,114 +78,102 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The number of compression/decompression threads has a direct impact on
-hibernate image generation and resume latency. Using more threads can
-reduce overall resume time, but on systems with fewer CPU cores it may
-also introduce contention and reduce efficiency.
+Add a sysfs attribute `/sys/power/hibernate_compression_threads` to
+allow runtime configuration of the number of threads used for
+compressing and decompressing hibernation images.
 
-Performance was evaluated on an 8-core ARM system, averaged over 10 runs:
+The new sysfs interface enables dynamic adjustment at runtime:
 
-    Threads  Hibernate(s)  Resume(s)
-    --------------------------------
-       3         12.14       18.86
-       4         12.28       17.48
-       5         11.09       16.77
-       6         11.08       16.44
+    # cat /sys/power/hibernate_compression_threads
+    3
+    # echo 4 > /sys/power/hibernate_compression_threads
 
-With 5–6 threads, resume latency improves by approximately 12% compared
-to the default 3-thread configuration, with negligible impact on
-hibernate time.
-
-Introduce a new kernel parameter `hibernate_compression_threads=` that
-allows users and integrators to tune the number of
-compression/decompression threads at boot. This provides a way to
-balance performance and CPU utilization across a wide range of hardware
-without recompiling the kernel.
+This change provides greater flexibility for debugging and performance
+tuning of hibernation without requiring a reboot.
 
 Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
 ---
- .../admin-guide/kernel-parameters.txt         | 10 ++++++++
- kernel/power/swap.c                           | 25 ++++++++++++++++---
- 2 files changed, 31 insertions(+), 4 deletions(-)
+ Documentation/ABI/testing/sysfs-power | 16 +++++++++++
+ kernel/power/swap.c                   | 38 +++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index db84a629f7b1..fb577fb2c893 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1889,6 +1889,16 @@
- 			/sys/power/pm_test). Only available when CONFIG_PM_DEBUG
- 			is set. Default value is 5.
- 
-+	hibernate_compression_threads=
-+			[HIBERNATION]
-+			Set the number of threads used for compressing or decompressing
-+			hibernation images.
+diff --git a/Documentation/ABI/testing/sysfs-power b/Documentation/ABI/testing/sysfs-power
+index 4d8e1ad020f0..d38da077905a 100644
+--- a/Documentation/ABI/testing/sysfs-power
++++ b/Documentation/ABI/testing/sysfs-power
+@@ -454,3 +454,19 @@ Description:
+ 		disables it.  Reads from the file return the current value.
+ 		The default is "1" if the build-time "SUSPEND_SKIP_SYNC" config
+ 		flag is unset, or "0" otherwise.
 +
-+			Format: <integer>
-+			Default: 3
-+			Minimum: 1
-+			Example: hibernate_compression_threads=4
++What:           /sys/power/hibernate_compression_threads
++Date:           October 2025
++Contact:        <luoxueqin@kylinos.cn>
++Description:
++                Controls the number of threads used for compression
++                and decompression of hibernation images.
 +
- 	highmem=nn[KMG]	[KNL,BOOT,EARLY] forces the highmem zone to have an exact
- 			size of <nn>. This works even on boxes that have no
- 			highmem otherwise. This also works to reduce highmem
++                The value can be adjusted at runtime to balance
++                performance and CPU utilization.
++
++                The change takes effect on the next hibernation or
++                resume operation.
++
++                Minimum value: 1
++                Default value: 3
 diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index f8c13f5672ec..aa11576e92a9 100644
+index aa11576e92a9..d173e276b494 100644
 --- a/kernel/power/swap.c
 +++ b/kernel/power/swap.c
-@@ -519,8 +519,9 @@ static int swap_writer_finish(struct swap_map_handle *handle,
- 				CMP_HEADER, PAGE_SIZE)
- #define CMP_SIZE	(CMP_PAGES * PAGE_SIZE)
- 
--/* Maximum number of threads for compression/decompression. */
--#define CMP_THREADS	3
-+/* Default number of threads for compression/decompression. */
-+#define CMP_THREADS    3
-+static unsigned int hibernate_compression_threads = CMP_THREADS;
- 
- /* Minimum/maximum number of pages for read buffering. */
- #define CMP_MIN_RD_PAGES	1024
-@@ -741,7 +742,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, hibernate_compression_threads);
- 
- 	page = (void *)__get_free_page(GFP_NOIO | __GFP_HIGH);
- 	if (!page) {
-@@ -1257,7 +1258,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, hibernate_compression_threads);
- 
- 	page = vmalloc_array(CMP_MAX_RD_PAGES, sizeof(*page));
- 	if (!page) {
-@@ -1697,3 +1698,19 @@ static int __init swsusp_header_init(void)
+@@ -1689,8 +1689,46 @@ int swsusp_unmark(void)
  }
+ #endif
  
- core_initcall(swsusp_header_init);
-+
-+static int __init hibernate_compression_threads_setup(char *str)
++static ssize_t hibernate_compression_threads_show(struct kobject *kobj,
++				struct kobj_attribute *attr, char *buf)
 +{
-+	int rc = kstrtouint(str, 0, &hibernate_compression_threads);
-+
-+	if (rc)
-+		return rc;
-+
-+	if (hibernate_compression_threads < 1)
-+		hibernate_compression_threads = CMP_THREADS;
-+
-+	return 1;
-+
++	return sysfs_emit(buf, "%d\n", hibernate_compression_threads);
 +}
 +
-+__setup("hibernate_compression_threads=", hibernate_compression_threads_setup);
++static ssize_t hibernate_compression_threads_store(struct kobject *kobj,
++				struct kobj_attribute *attr,
++				const char *buf, size_t n)
++{
++	unsigned long val;
++
++	if (kstrtoul(buf, 0, &val))
++		return -EINVAL;
++
++	if (val < 1)
++		return -EINVAL;
++
++	hibernate_compression_threads = val;
++	return n;
++}
++power_attr(hibernate_compression_threads);
++
++static struct attribute *g[] = {
++	&hibernate_compression_threads_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group attr_group = {
++	.attrs = g,
++};
++
+ static int __init swsusp_header_init(void)
+ {
++	int error;
++
++	error = sysfs_create_group(power_kobj, &attr_group);
++	if (error)
++		return -ENOMEM;
++
+ 	swsusp_header = (struct swsusp_header*) __get_free_page(GFP_KERNEL);
+ 	if (!swsusp_header)
+ 		panic("Could not allocate memory for swsusp_header\n");
 -- 
 2.43.0
 
