@@ -1,164 +1,117 @@
-Return-Path: <linux-kernel+bounces-863818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0660CBF92DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:07:28 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E80BF92E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCCDB4E5992
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:07:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 399EE35607B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAED829D265;
-	Tue, 21 Oct 2025 23:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3622BE053;
+	Tue, 21 Oct 2025 23:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7GTEhoP"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKxnu4tB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC14285CB3
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E2915CD74;
+	Tue, 21 Oct 2025 23:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761088042; cv=none; b=eZFdzvFpllxwLEfDZaZTruEI3Pk7HPsk8EhU1r43V0cKaX7nM6inxxwVT3yJ54jdt2wuDvORbznXkXmwaLRqTFh7P7ZIdp73KG7MvaOxrMKMCYLBHB4oTejomH5L0ORZIv/VR2rxVGrh7VKl+D67ZFPbn7VJQk8c2h2G2sSRB/4=
+	t=1761088068; cv=none; b=WdEFZglJ5i2rZzRaJLTVwYYb3lPmm8zbt1CPzMLMkyVmFvqGZm8Alxk4/Tu3owMGBJpwtjdp6MESe8Prndnn0RuoFr/2qicIuaN+0kbn5XMglznAOP6R4uTJ2z4VWST0KuFpBOVjpmHg8Ak8vxCHKJLsxoRcmmQsI5ruif8rn5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761088042; c=relaxed/simple;
-	bh=cBoLl85vfWagd/V7d3FnABx4PFfGYLtSHJ30MR7eXUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f7GTRDM7UYyzNYWkqvq25OHo58uTnRiJnRogXIKAVWywthnO2t6RFCKgAQZVtVNbqN8JjdbvYcLW3xQOhR8vncIdU1WiPSRvjCI8ayHe7jl8GjDde4a4SjRq6X178ZbBJYKg67pvXOVODR/ajZfTtKc+nO32q2gzezbpLOF3ZL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7GTEhoP; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4285169c005so522167f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761088038; x=1761692838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TUs/wuT0kfUsxmbimw3WNKm4HpGep0rE6iJ3jKWwffE=;
-        b=L7GTEhoPUSuaxLifvZUlUPAQBE62w0qsB7IRIGvIPiZ9v/ztwHg3q0ZI0xU4qjf3QK
-         HmveGM+BrElR7vM12SyQmrKz4/1jxxqDF62cONRHhBRqnCcfmAfpF+7NX3UQDew6XAys
-         zNNbwEBo8UuLI9qfpbEaGv1f8EUeoJWqe934KIRYGI+GjquTm63G/FtmRE4Tzd/BmDZ4
-         TbRDaMb2Y+traHZHQQBq1RLbY8no0mCzFVI5SciuOcLrI5fRLung2JZK2eod63ya3Ymq
-         YIcjPXMeIUXnzp2oTA6M81LGN6ublLqmMUj9dDMO7W2e0sh8/MbMnH0KHqhS0OUoFxnw
-         Z0lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761088038; x=1761692838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TUs/wuT0kfUsxmbimw3WNKm4HpGep0rE6iJ3jKWwffE=;
-        b=i8hxbsce1UYCoLC1D/fnTfptqtTCqXU3toLBKo6ZFAYEXBnmv5NBNCwPyHN4xLi/FB
-         UPX1AFACeNo8/W+oUWuHlcIC6jK9wT/4KoW7rXLmZm9bPb1xlsxCjnKtfLhwC0ygLUDh
-         dczU2tmRL4msIFPj11wheB0MQqWWWg6s09SeqUU84tXb4ZHdyKQ6HAsNxY8ajiV0NJH4
-         FD02tlW6p5ATsk5GlKSceTB0LjcCj9Djs5dgOGOMy0XaALPIydYu/G/NQAsIBeHiFfZK
-         gcZxpTRiCLv0i+44pnth7jTg2jjLnOFY29As156RHoEa3dO1F9gmw1CIq/178QPL9/w6
-         ESHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEObcck9Ax5lqbKIO7OgZvooqhc2bdOieqBUyKU/4R2r8h0R/lFRW3K3FtZOV5SNCXLG8ZyaXisNXSNuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpyLxC9J4PbirsLux/Hov+EfEConqBZtc0Ox7ejErOyVNtqHCk
-	WYVLkxAef7au5CS1f6f3kJ481Azx3wjnPdTzP65mwoz116Tk+vSEhoWqd8XDKtuwlivg2ZDchS6
-	9EFsERqB3bFbLT2GwQIi8ws7DTxk4er0=
-X-Gm-Gg: ASbGncvpo4GpFrH9cyewzPAGU3csbnCszQPRROfnWQfLkl7nDknsZ7lLPzaScwarxCQ
-	2uTWeQBuQZznBIjQsim/AvS/w1Bxyw1V+JZ/ViOuEUCj/jEny0hkXIFXmFJ5PuwTMTvgF18lc3L
-	uz97bLnFcuH781fSUZ1SyksutpGGD4Q9jIX1gAdWCuihlLXw29VSwQmDr9/PUz38XkNTotsnXtm
-	IkTJ1Ox3cq7Af6TY7l7JrIlFqcQpMboW2jEsaC2wVxRQ9oEedFnrTYnB3+byj3vepntvTKIa9jX
-	WSD/HXhzzV2KzSPS+lNV4+Hz+d1+UK1qP3WuMNxj
-X-Google-Smtp-Source: AGHT+IGQHFZvIWqZUrqUsZZZ+Q/stC/g2UdHpo6nn0sLp1JYS0sru3nHrLYk6NYzKyTl+sxTOdX9V4AdnflXA+OxrLY=
-X-Received: by 2002:a05:6000:4703:b0:427:690:1d84 with SMTP id
- ffacd0b85a97d-42706901d9fmr10929644f8f.32.1761088038428; Tue, 21 Oct 2025
- 16:07:18 -0700 (PDT)
+	s=arc-20240116; t=1761088068; c=relaxed/simple;
+	bh=pyMV3cdwE0Pa3g75ct4gXzBftCoQzFcqhaO3cwgS6tU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oYyn53uYhJPm6wc2gDQGZKJw+u3GQTYpMIvWgt+Ff768HARFFwC5XMECWzlVxkkVtObMVhwTIbH4XJUMbZqWGeltoqO2gUefcNdt1MS/Dk+qfzuwT5b36HpzzdS54WXHBlA7P8eHC7i+BJ1v+iMzqvzzN71vgOFo1BcmaQAmO94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKxnu4tB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE225C4CEFF;
+	Tue, 21 Oct 2025 23:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761088067;
+	bh=pyMV3cdwE0Pa3g75ct4gXzBftCoQzFcqhaO3cwgS6tU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qKxnu4tBvDWczzaNbMvL6MgO7srWwr2R2NWK6PQ29OXfBHnL0Q75w1gb+iIh06ldb
+	 q9jnd7SL+AJc1RyM+V7OJogymmCcOo77oGK0CirceecroybbTZPjOJ9uy6W8pgiE1a
+	 zb75gBm8GMSnkXB0VvCeueLXtBgKGIf6mKuT+XyUAIT6DUV0uh4CML1VPM20QqJrm0
+	 ObBr7vdEhamOW5+93LG5opwSlhKO/b4FmQaVi0A+xhgq+enOS7/HMAgomNCYzpGU/X
+	 Ho59UWkBFqmGnAj5AwUxMpkNCOiqrOJQufLjNDMVMIqH0cO9+kYMn+iNvKTVTee/IJ
+	 CHupcw3yTd+0A==
+Date: Tue, 21 Oct 2025 16:07:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, "Simon
+ Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, <netdev@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mohammad Heib
+ <mheib@redhat.com>, Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+ Rafal Romanowski <rafal.romanowski@intel.com>
+Subject: Re: [PATCH net-next v2 02/14] i40e: support generic devlink param
+ "max_mac_per_vf"
+Message-ID: <20251021160745.7ff31970@kernel.org>
+In-Reply-To: <d39fc2bd-56bf-4c5b-99a2-398433238220@intel.com>
+References: <20251016-jk-iwl-next-2025-10-15-v2-0-ff3a390d9fc6@intel.com>
+	<20251016-jk-iwl-next-2025-10-15-v2-2-ff3a390d9fc6@intel.com>
+	<20251020182515.457ad11c@kernel.org>
+	<d39fc2bd-56bf-4c5b-99a2-398433238220@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009155403.1379150-1-snovitoll@gmail.com> <20251009155403.1379150-2-snovitoll@gmail.com>
-In-Reply-To: <20251009155403.1379150-2-snovitoll@gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Wed, 22 Oct 2025 01:07:07 +0200
-X-Gm-Features: AS18NWCmo3ddiV-eCF44oMWKYeYFjMfIoy4ZgUCJRQ4FNMTlti9w47Jhqig1JNY
-Message-ID: <CA+fCnZfwPU0_LJQsCbatD3kd8vLE-ep06vZikNaR0W6-6UrkDQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kasan: remove __kasan_save_free_info wrapper
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, dvyukov@google.com, 
-	vincenzo.frascino@arm.com, akpm@linux-foundation.org, bhe@redhat.com, 
-	christophe.leroy@csgroup.eu, ritesh.list@gmail.com, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 9, 2025 at 5:54=E2=80=AFPM Sabyrzhan Tasbolatov <snovitoll@gmai=
-l.com> wrote:
->
-> We don't need a kasan_enabled() check in
-> kasan_save_free_info() at all. Both the higher level paths
-> (kasan_slab_free and kasan_mempool_poison_object) already contain this
-> check. Therefore, remove the __wrapper.
->
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> Fixes: 1e338f4d99e6 ("kasan: introduce ARCH_DEFER_KASAN and unify static =
-key across modes")
-> ---
->  mm/kasan/generic.c | 2 +-
->  mm/kasan/kasan.h   | 7 +------
->  mm/kasan/tags.c    | 2 +-
->  3 files changed, 3 insertions(+), 8 deletions(-)
->
-> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-> index b413c46b3e0..516b49accc4 100644
-> --- a/mm/kasan/generic.c
-> +++ b/mm/kasan/generic.c
-> @@ -573,7 +573,7 @@ void kasan_save_alloc_info(struct kmem_cache *cache, =
-void *object, gfp_t flags)
->         kasan_save_track(&alloc_meta->alloc_track, flags);
->  }
->
-> -void __kasan_save_free_info(struct kmem_cache *cache, void *object)
-> +void kasan_save_free_info(struct kmem_cache *cache, void *object)
->  {
->         struct kasan_free_meta *free_meta;
->
-> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-> index 07fa7375a84..fc9169a5476 100644
-> --- a/mm/kasan/kasan.h
-> +++ b/mm/kasan/kasan.h
-> @@ -399,12 +399,7 @@ void kasan_set_track(struct kasan_track *track, depo=
-t_stack_handle_t stack);
->  void kasan_save_track(struct kasan_track *track, gfp_t flags);
->  void kasan_save_alloc_info(struct kmem_cache *cache, void *object, gfp_t=
- flags);
->
-> -void __kasan_save_free_info(struct kmem_cache *cache, void *object);
-> -static inline void kasan_save_free_info(struct kmem_cache *cache, void *=
-object)
-> -{
-> -       if (kasan_enabled())
-> -               __kasan_save_free_info(cache, object);
-> -}
-> +void kasan_save_free_info(struct kmem_cache *cache, void *object);
->
->  #ifdef CONFIG_KASAN_GENERIC
->  bool kasan_quarantine_put(struct kmem_cache *cache, void *object);
-> diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
-> index b9f31293622..d65d48b85f9 100644
-> --- a/mm/kasan/tags.c
-> +++ b/mm/kasan/tags.c
-> @@ -142,7 +142,7 @@ void kasan_save_alloc_info(struct kmem_cache *cache, =
-void *object, gfp_t flags)
->         save_stack_info(cache, object, flags, false);
->  }
->
-> -void __kasan_save_free_info(struct kmem_cache *cache, void *object)
-> +void kasan_save_free_info(struct kmem_cache *cache, void *object)
->  {
->         save_stack_info(cache, object, 0, true);
->  }
-> --
-> 2.34.1
->
+On Tue, 21 Oct 2025 13:39:27 -0700 Jacob Keller wrote:
+> On 10/20/2025 6:25 PM, Jakub Kicinski wrote:
+> > On Thu, 16 Oct 2025 23:08:31 -0700 Jacob Keller wrote:  
+> >> - The configured value is a theoretical maximum. Hardware limits may
+> >>   still prevent additional MAC addresses from being added, even if the
+> >>   parameter allows it.  
+> > 
+> > Is "administrative policy" better than "theoretical max" ?
+> 
+> That could be a bit more accurate.
+> 
+> > Also -- should we be scanning the existing state to check if some VM
+> > hasn't violated the new setting and error or at least return a extack
+> > to the user to warn that the policy is not currently adhered to?  
+> 
+> My understanding here is that this enforces the VF to never go *above*
+> this value, but its possible some other hardware restriction (i.e. out
+> of filters) could prevent a VF from adding more filters even if the
+> value is set higher.
+> 
+> Basically, this sets the maximum allowed number of filters, but doesn't
+> guarantee that many filters are actually available, at least on X710
+> where filters are a shared resource and we do not have a good mechanism
+> to coordinate across PFs to confirm how many have been made available or
+> reserved already. (Until firmware rejects adding a filter because
+> resources are capped)
+> 
+> Thus, I don't think we need to scan to check anything here. VFs should
+> be unable to exceed this limit, and thats checked on filter add.
 
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+Sorry, just to be clear -- this comment is independent on the comment
+about "policy" vs "theoretical".
+
+What if:
+ - max is set to 4
+ - VF 1 adds 4 filters
+ - (some time later) user asks to decrease max to 2
+
+The devlink param is CMODE_RUNTIME so I'm assuming it can be tweaked 
+at any point in time.
+
+We probably don't want to prevent lowering the max as admin has no way
+to flush the filters. Either we don't let the knob be turned when SRIOV
+is enabled or we should warn if some VF has more filters than the new
+max?
 
