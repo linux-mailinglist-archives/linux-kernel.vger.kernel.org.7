@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-862158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A86BF48E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB44BF48EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE5AD4E5E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:57:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 201D44F5AB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D1422A817;
-	Tue, 21 Oct 2025 03:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0391222DF9E;
+	Tue, 21 Oct 2025 04:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H3rfyRuU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="fqG04iT6"
+Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68EBD515
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF0819F41C;
+	Tue, 21 Oct 2025 04:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.1.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761019040; cv=none; b=CCc7h6K//m5L/PWF0Vcn9XtLdMzsrItHdajms8EaTrgQ3Jl1+jnXZeSjP62oC3jPF7ts4RcG68YP6U6/dgCpXEaAQMJm3GXPiva72MA70QEJlH5GLM4UhDNY6OMrKMlGgg7vaMpEkMASzZPH4Z/S1IB13C4wRxrmlvrds8Ard1o=
+	t=1761019219; cv=none; b=mibgzQ6PZUOVSXTwipXSCfcWs7ZCRs10TGQzX73JrQ1xXxv6FES1qY3TKo157CefhuXDG2iD+t8j8svxSY1vIvBvYtMNfIzuabeHVm5ezeMfHkBmMqnWegoevPPoIjgnu5y9/8uskHUPP9ZKu/soiZ+UNbQ1cNIxtLjbppq7GLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761019040; c=relaxed/simple;
-	bh=avAnboTjW6tMpgAJHhMAVvcyuciRZrXEfhoaUrC+C7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KwxRIjS8jms9tXicKZgfzhomZ9ztA+09Y6ipxEQAh9CP9yULKt0R4OFqE9LWSyimrqMHLTDs0ie4Sz8oisOW5KeuuvdUB5noeX/Asrz/9vwcXWag1i8TLxQtaPwfpqWYYQ7RSEUYuoKGInwauU1CDxqtAXDRLlogMrXy3HhPXcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H3rfyRuU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761019037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=avAnboTjW6tMpgAJHhMAVvcyuciRZrXEfhoaUrC+C7g=;
-	b=H3rfyRuUUslppo0td/r0zKcgf8dJ6DZFUw7STobdMcegUgcF2ZPWleM4pAM6tMwnXtz1An
-	5y6GqYb/bm4S+P/TUEN1i1G6M+keaorkdv/99AgdglHQbuFQljYUYFDBwt3BtfpQxB756V
-	n3Csajlhk4jbyouG1bpD07U56DqJvMc=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-84-Zt2rw2EVOFCqXDTZ4SFFGQ-1; Mon, 20 Oct 2025 23:57:16 -0400
-X-MC-Unique: Zt2rw2EVOFCqXDTZ4SFFGQ-1
-X-Mimecast-MFC-AGG-ID: Zt2rw2EVOFCqXDTZ4SFFGQ_1761019035
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3324538ceb0so9361117a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:57:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761019035; x=1761623835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=avAnboTjW6tMpgAJHhMAVvcyuciRZrXEfhoaUrC+C7g=;
-        b=vxG0rgztkG36o5pCvHzsIc68gBipzExJCCkkSLdy4eIbTCDSvVZO3x+uVL99tVyKmp
-         +6gDVg1PllHyhE1L8qrjI0OUID123G6JsXgyVRHb03Zk5oHYYd+povz0xzNnIbUeWd9d
-         MzD+OZFcPLKC7v7/lKDQJVFpyOJHNszFPiDPqZtJv7ADAS1rA5w818V775FYVMYNoS1y
-         +QARNpLz9NX2wkMhRWUIfBQYBJXeh54YjgOowpmnZTbQPjLIv0k5oCFLiFhC3IMerrmL
-         O3Na8vNXjKnZhBG4JAx4vYo2UbQUzbKM19w7yiIufciUoQdyG2JQA/tVR1Uzor6M3TwF
-         /WWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgOCAuUPUsUQbIab9ACqMaVQjgjmgMkE92f/KEYPozMbGGTLpELkjWZzwl9G0zXSp4PD83JuzHpk9936o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaxAanQEd+lcM3CfQuBH+Nl2iZMvCSKpHjC3TZDxBkqsz3ksSq
-	9+w6Fp+LCcvbN6+rHyNOYPTD1Uc20r/zh9n2ZyhFcynXVq9WR0igteAFmdjx8MwcIOhjhnIBiGJ
-	pM8JpwEVI+nouzxYe6KF+GdciqsPBeAXJmMmvMraqQqb8ht27ytX2GM7KJaN3Sl/b8uBhRwKIqW
-	Q7ABHpvfyGyDhPE1e078IINWsKj0ysMPr/9kVGFcMf
-X-Gm-Gg: ASbGncthzBH3txxgbhegm4CJTh32+z/u3+ZeH50B3iK5AW4C7OJDXfWo+2rvfc9CLFk
-	E3RSHJJmIRdl1h3M86hJQaC/w9jPbIKxzTxOujjwWWxsnIFhUcxgOPstORR/9F05cz+Z+o+u/Vt
-	1Wg5JWdFhyOi8dOnr9bkr30GHwEhZQm6FlR0gdb1UWowh02WjGJz4toK3L
-X-Received: by 2002:a17:90b:38c7:b0:338:3cea:608e with SMTP id 98e67ed59e1d1-33bcf9080f6mr17871944a91.31.1761019035291;
-        Mon, 20 Oct 2025 20:57:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2AQ5ooNC2Kw7cDDlHQHODRbiZf6YTTMcGqTJDIYsLuIjekqTxqXC2ulUIAMgLEFP40yd7yWnPZVSHbOEH18k=
-X-Received: by 2002:a17:90b:38c7:b0:338:3cea:608e with SMTP id
- 98e67ed59e1d1-33bcf9080f6mr17871928a91.31.1761019034912; Mon, 20 Oct 2025
- 20:57:14 -0700 (PDT)
+	s=arc-20240116; t=1761019219; c=relaxed/simple;
+	bh=XdZ+bSwZitbUWOlq5HzK0v+64/RHdlaknUCUZVBOaTw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PmGugFRTwVb1pXrxoJod7p6oTtrR9Ck+UY7umA6kqr3LVZky49YzDa7anaZBGAxQ1XyZdsOuSfm2N2FEEc/dQBnXQVDKrvzQcdihnYIAaqqYMyYaMkwej/p9vKB5IXv33jsDVD1iexLeo30T4ohVDm65fNJaQ5g/W1OGOAZ+dWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=fqG04iT6; arc=none smtp.client-ip=44.246.1.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1761019217; x=1792555217;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KTzOv9/b1xNagjNFcLWg7luH3jx9poz7xbR0D710bEY=;
+  b=fqG04iT6zLB3NjCsdMTfNZv1WNGOe5Ee2MTwkXzVod98mI6jYBjDwfmQ
+   naOWHlqizcHEC674H5bEOI8pVLHfMKuePODZmgAYcC+1wA8jZSukDrg5T
+   cWsfQssYm+CPR3waiLjdyQDOhEGeVfEXIOKsY26Wcw+tFNSw0SC8dvZGz
+   Cx26RasjLyLclrWr5rbhzSr5zL8ESFY/CjW8JjhVVu0M2tOsFYHRvGmSA
+   OOcxMMJJHTXcZozK3tJB1NTWp9w8RyIVm9fhbwFUrR6bsWCViw1fGJ91k
+   jHw3iHiSKt8gb4aYDDthb/CnNCFn6FvxnuEXzWJffUC+pKkCs5lTFoOi1
+   g==;
+X-CSE-ConnectionGUID: FOWWBHa8SpORO7ARxemC/w==
+X-CSE-MsgGUID: 820b810wSsWhi59t+ZFK8Q==
+X-IronPort-AV: E=Sophos;i="6.18,281,1751241600"; 
+   d="scan'208";a="5301474"
+Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
+  by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 04:00:13 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:13820]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.191:2525] with esmtp (Farcaster)
+ id 9f5b59e0-db79-4614-aa8a-fa0e9880c6ac; Tue, 21 Oct 2025 04:00:13 +0000 (UTC)
+X-Farcaster-Flow-ID: 9f5b59e0-db79-4614-aa8a-fa0e9880c6ac
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 21 Oct 2025 04:00:13 +0000
+Received: from b0be8375a521.amazon.com (10.37.245.8) by
+ EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 21 Oct 2025 04:00:09 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <kuba@kernel.org>
+CC: <aleksander.lobakin@intel.com>, <andrew+netdev@lunn.ch>,
+	<anthony.l.nguyen@intel.com>, <corbet@lwn.net>, <davem@davemloft.net>,
+	<edumazet@google.com>, <enjuk@amazon.com>, <horms@kernel.org>,
+	<jacob.e.keller@intel.com>, <jiri@resnulli.us>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>, <sx.rinitha@intel.com>
+Subject: Re: [PATCH net-next v2 13/14] ixgbe: preserve RSS indirection table across admin down/up
+Date: Tue, 21 Oct 2025 12:59:34 +0900
+Message-ID: <20251021040000.15434-1-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251020183246.481e08f1@kernel.org>
+References: <20251020183246.481e08f1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925103708.44589-1-jasowang@redhat.com> <20250925103708.44589-16-jasowang@redhat.com>
- <20251020190537-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20251020190537-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 21 Oct 2025 11:57:03 +0800
-X-Gm-Features: AS18NWBjFmb6ytc1dmje5mqVvtGdnhFl8MQMgGfdH1ywtzn-hKtlF48bMq1pbd8
-Message-ID: <CACGkMEuLgO55NbLVFC_RiwEqX+RATrf90UOMQ=+8npPuvusYUQ@mail.gmail.com>
-Subject: Re: [PATCH V7 15/19] virtio_ring: factor out core logic of buffer detaching
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D046UWB001.ant.amazon.com (10.13.139.187) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Tue, Oct 21, 2025 at 7:06=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Thu, Sep 25, 2025 at 06:37:04PM +0800, Jason Wang wrote:
-> > Factor out core logic of buffer detaching and leave the id population
->
->
-> "id population" here really means "free list management".
->
->
-> > to the caller so in order can just call the core logic.
->
->
-> in order -> in_order
->
+On Mon, 20 Oct 2025 18:32:46 -0700, Jakub Kicinski wrote:
 
-All fixed.
+>On Thu, 16 Oct 2025 23:08:42 -0700 Jacob Keller wrote:
+>> Currently, the RSS indirection table configured by user via ethtool is
+>> reinitialized to default values during interface resets (e.g., admin
+>> down/up, MTU change). As for RSS hash key, commit 3dfbfc7ebb95 ("ixgbe:
+>> Check for RSS key before setting value") made it persistent across
+>> interface resets.
+>> 
+>> Adopt the same approach used in igc and igb drivers which reinitializes
+>> the RSS indirection table only when the queue count changes. Since the
+>> number of RETA entries can also change in ixgbe, let's make user
+>> configuration persistent as long as both queue count and the number of
+>> RETA entries remain unchanged.
+>
+>We should take this a step further and also not reinitialize if 
+>netif_is_rxfh_configured(). Or am I missing something?
 
-Thanks
+Hi Jakub, thank you for reviewing.
 
+Actually, you raise a good point about netif_is_rxfh_configured().
+
+However, we can't determine whether we should reinitialize or not based
+solely on netif_is_rxfh_configured(), since the RETA table is determined
+by (1) the queue count and (2) the size of RETA table.
+
+So, simply skipping reinitialization on netif_is_rxfh_configured() would
+leave invalid RETA entries when those parameters are to be changed.
+
+For example, consider a scenario where the queue count is 8 with user
+configuration containing values from 0 to 7. When queue count changes
+from 8 to 4 and we skip the reinitialization in this scenario, entries
+pointing to queues 4-7 become invalid. The same issue applies when the
+RETA table size changes.
+
+Furthermore, IIUC, adding netif_is_rxfh_configured() to the current
+condition wouldn't provide additional benefit. When parameters remain
+unchanged, regardless of netif_is_rxfh_configured(), we already preserve
+the RETA entries which might be user-configured or default values, 
+
+Therefore I believe the current logic is correct as is, and we should
+reinitialize the RETA entries when either parameter changes, regardless
+of netif_is_rxfh_configured().
 
