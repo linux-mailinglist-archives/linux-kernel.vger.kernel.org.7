@@ -1,88 +1,58 @@
-Return-Path: <linux-kernel+bounces-862244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0978ABF4C2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:54:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02685BF4C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2D924EC34C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C131897B36
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3DB26B764;
-	Tue, 21 Oct 2025 06:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FD326E71C;
+	Tue, 21 Oct 2025 06:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XzFP7tjr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hof/auDC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E628D21CC4D;
-	Tue, 21 Oct 2025 06:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C466521CC4D;
+	Tue, 21 Oct 2025 06:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761029670; cv=none; b=LALN2nFeNylHJwdX1ZSeQnSSRCEPMii0GlRulHCeU9SfceIZZdX7HX2oxHedriIppewv+SyCFLMphdqFGo49nWTtPWdf9JmeUNLfUuVxpVkQCAfAzmnN5jjBcWKzDQD669r+4O9cOFzZG6btIHI6Qug79+FMb3R5XU21KrndzEY=
+	t=1761029674; cv=none; b=m4u4sBSDmKuW4eRzytcvOhyzx/mwLiOBFZseZJzUzdicNBvVMOvTGsT4++Jl9nFkD04UbQSKeZEZ8gkxjlUf+1Du5nMeTevHLsknDh+NUPSHYxVIFqGdj5WY0GDYBVX/x84yGgSCEe7YDzf1JNvqSMMRFrAJU/TwKRt7qpB1M4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761029670; c=relaxed/simple;
-	bh=vkMgVinL1FWJax5SX3F9UQ4Nigg3RGZN5Nl0dik2QxU=;
+	s=arc-20240116; t=1761029674; c=relaxed/simple;
+	bh=9WB4EVogPdGF0Akrmle9uP/wAUzch7W/R+uufjJAdRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUG1Wh7NgOx5Qhiy80VXPJFoWGvihjyGxb8MF0QVifkCbIDWaKGMZoxbSnqYGLRSLUxs3e1IZJoB2+5YxK8vcqI9LAqIb+Q2vPqvVX6fbFwjs6pAOTxsg3rEMl5MAPCzJ+KGOUWMft9HrDI9nlzYLgkb0k4x+owo5N3gEYXApRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XzFP7tjr; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761029669; x=1792565669;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=vkMgVinL1FWJax5SX3F9UQ4Nigg3RGZN5Nl0dik2QxU=;
-  b=XzFP7tjr+BKXep8frvdSEPFCaW6WDg0HnpF7OTofmSzAzVl3SKtCYZ1V
-   udTihOs6PfoZvCBG52CoicyF7/+7seA2Ylz9o4Kcj6YTvKN1hsDlsuxA8
-   o5OkdByhvHAyaYZuP1Djtu9ir/LtE/KYkMQIXvf3fBUhNJv8iC6a2WwRT
-   Qakkatbde2rMKh+Ye+0ZYjAN/HHyUs6Qedl6xJzYl2K7VeorFjY940tbe
-   QjYOZGavIwRt/PBtWr2XXTnwFW/nvpleNilQPTfLZRoJuYUkirCSlPueg
-   SB758d0RsuJ1PO52JlzFZzHdHZQIsuKozUpDxCNCNuAjrptpxuSGFdOfE
-   g==;
-X-CSE-ConnectionGUID: 2pXPLhm2QEa5ZqYeqr0uDQ==
-X-CSE-MsgGUID: j0XHH7wLQjyxCXNpFXBk2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80588517"
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="80588517"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 23:54:28 -0700
-X-CSE-ConnectionGUID: tYWKjjtsTyam8fPAp6flPw==
-X-CSE-MsgGUID: w/bwCdy6Qvil0IP3vj40Uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="183999477"
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.134])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 23:54:25 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 861E411FCC3;
-	Tue, 21 Oct 2025 09:54:22 +0300 (EEST)
-Date: Tue, 21 Oct 2025 09:54:22 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 3/9] software node: allow referencing firmware nodes
-Message-ID: <aPcuHpYCM22NZ7S_@kekkonen.localdomain>
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
- <20251006-reset-gpios-swnodes-v1-3-6d3325b9af42@linaro.org>
- <aO1dBgPZfDJTsPfE@smile.fi.intel.com>
- <CAMRc=MfOoHn+mLRpQBEsC3g5sM=VZBgVffsm68CAXJBHffPxdA@mail.gmail.com>
- <aPYJeqFY_9YV9AQn@ashevche-desk.local>
- <CAMRc=McBTgnQXkPoOUYC=PDDwFXuVqfMFuiwZTW7ODb6owJbeg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nj9/9Deat1XEWAltt3vpxglTclUPhZyASJUGuW34SRpUTT+eKcutTYQZILNOz3jeFN34ZniMg5kUbh/UH5KHVNonU4Tv4QzIK8FibMeSWCDf/KBsMIeaKrRvpSFu73ZwhK5+klz29Fk9nJJ6WwctiVaJL/f8ptUMdZWYuWqdGeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hof/auDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108ACC4CEF1;
+	Tue, 21 Oct 2025 06:54:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761029674;
+	bh=9WB4EVogPdGF0Akrmle9uP/wAUzch7W/R+uufjJAdRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hof/auDCKl8/8cKpsSdADoojtDXT2jnghuG1iYHdnGBkve22m90p5LLo4IZFIod5X
+	 8T3Hp4BWDBmeydKF9GFVFsRz1ofJ0QnqXzBhKcjJ85XSiqURlyTcxU12bhND69PPM8
+	 HE1LQOSK1jjtsPns+yUAtNgF0wLehsFUorePPPrixi/FfzBibNvMd4BKP82AQ7pJUJ
+	 7EIh0st62KlWPbVD2JDbwe58CiCq5yiR5l5FzfXgGxO0ssLdWpipZyeblt1GpZwfjh
+	 YH2g/5jTUPCVWIMfKa4nYSjheXmaeS1MLM4FMolUl5CZvWk0/eNMcUeIdRPvmU1VFp
+	 j7IHR1cp8VWkQ==
+Date: Tue, 21 Oct 2025 08:54:32 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: thermal: Convert brcm,sr-thermal to DT
+ schema
+Message-ID: <20251021-arrogant-horned-auk-e1fab7@kuoka>
+References: <20251013215810.783006-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,42 +61,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McBTgnQXkPoOUYC=PDDwFXuVqfMFuiwZTW7ODb6owJbeg@mail.gmail.com>
+In-Reply-To: <20251013215810.783006-1-robh@kernel.org>
 
-Hi Bartosz, Andy,
-
-On Mon, Oct 20, 2025 at 01:26:59PM +0200, Bartosz Golaszewski wrote:
-> On Mon, Oct 20, 2025 at 12:05 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > > >
-> > > > Can't we always have an fwnode reference?
-> > >
-> > > Unfortunately no. A const struct software_node is not yet a full
-> > > fwnode, it's just a template that becomes an actual firmware node when
-> > > it's registered with the swnode framework. However in order to allow
-> > > creating a graph of software nodes before we register them, we need a
-> > > way to reference those templates and then look them up internally in
-> > > swnode code.
-> >
-> > Strange that you need this way. The IPU3 bridge driver (that creates a graph of
-> > fwnodes at run-time for being consumed by the respective parts of v4l2
-> > framework) IIRC has no such issue. Why your case is different?
-> >
+On Mon, Oct 13, 2025 at 04:58:09PM -0500, Rob Herring (Arm) wrote:
+> Convert the brcm,sr-thermal binding to DT schema format. It's a
+> straight-forward conversion. "polling-delay", "thermal-sensors", and
+> "temperature" all apply to the thermal zones, not the sensor node.
 > 
-> From what I can tell the ipu-bridge driver only references software
-> nodes (as struct software_node) from other software nodes. I need to
-> reference ANY implementation of firmware node from a software node.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/thermal/brcm,sr-thermal.txt      | 105 ---------------
+>  .../bindings/thermal/brcm,sr-thermal.yaml     | 121 ++++++++++++++++++
+>  2 files changed, 121 insertions(+), 105 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+>  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.yaml
 
-Yes, the IPU bridge only references software nodes.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I might use two distinct pointers instead of an union and an integer field
-that tells which type is the right one. I don't expect more such cases
-here; it's either a software node or an fwnode handle (ACPI or OF node).
+Best regards,
+Krzysztof
 
--- 
-Regards,
-
-Sakari Ailus
 
