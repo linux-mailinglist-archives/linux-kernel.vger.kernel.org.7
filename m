@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-863707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C37BF8E36
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AB0BF8E48
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DD0B35445B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AA743AEB15
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33E4280A5A;
-	Tue, 21 Oct 2025 21:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4714A285CAE;
+	Tue, 21 Oct 2025 21:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vh1guTcP"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zz5lIda6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF52C27281C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743CE283151;
+	Tue, 21 Oct 2025 21:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761080755; cv=none; b=qh4Rq+OeiTBchkt7vB3tdO8aNdu8nwmMNUhMpbg91GPl8N0QkBt1CrQrs/ryflfMvdwbHuE0B1WxeJTJw36/lWx3WgBInGMZOP/w443MtPem++Pt96pNg9A3OczQeXYNxsQsch6rUJSOB4+maX6j10waz2IUrRUZcRHPVYu6cL4=
+	t=1761080860; cv=none; b=UzHDd/nxZ2lPfRFTUEsSR0R4e7cO8qJGskl4eoocIwWIx74O/eK6RfVLH+azPqFbe9PwEu9VSlqVXMw1o0d1RIDIwm04AT0L7JLDRvMp/QcMKiI2FXQARWT3KaVZ4nr3P+w9B9JgifHWahEl+/XjQMaCjO4SzX1rxMi55jXwKFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761080755; c=relaxed/simple;
-	bh=lmgxMPK/b3rGKECnlJXXfebD4fVGZtbiAlKPc84ROo8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=EQrKKAiJRC2V3kSUmhmr6x6r1vU3LxY+ITQOUbm8etBHc2V77ew+B9VaWIggiQb/snLWZ08nTLVxT0LwA/MiTw+BuolthYfVQOnwvedCIwXv+7CCre3Kwei8umLcWl6v6Si3e8xv1rQcOhdowtDOSHfko9CKm5rvnh+loQ4DWvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vh1guTcP; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 470B8C0B8A2;
-	Tue, 21 Oct 2025 21:05:32 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B7AEE60680;
-	Tue, 21 Oct 2025 21:05:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 63CB1102F2416;
-	Tue, 21 Oct 2025 23:05:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761080750; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=lmgxMPK/b3rGKECnlJXXfebD4fVGZtbiAlKPc84ROo8=;
-	b=Vh1guTcPS4hWMVnatliJa78v3xzxuw/wSvsuAO6vEwhYUsiF7o/Lmlk5NmxThHpnXbwAEc
-	84LuPDG/YkHVEkiwTIfj17DST9tZ9grQzC846/36Hf8bWyNNPDlpLiAKHVGW+TiNgDW/qw
-	UmXvgjKeoO0Th4LJKK+/6E14GbC70QLvyOuzmdFIgrxjKdR8DNqXlzeTRdmhsI9mNmjHeA
-	IV41rZYCqYHSNz4JoDkXMFkWpK/qkSgULk0gRaiVoa+7rNJU/Ze75/cSUvhkuzcTBAh0rX
-	ih1sAanMWRWiQDxBoWH3iTo1RAzDDHaL7sD4KTlTJ/E+W6VtXbkbReKCfKMzDg==
+	s=arc-20240116; t=1761080860; c=relaxed/simple;
+	bh=6rVJs5rEus5FZiX6tLPh68lB2YG/8X+bTkHWX4sobcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jdCoVcAYCdYh9kAJKQhDBb9SRHBhbjl4NBN6FNzDTCUjBMts1fqPLm4uVYyUPNq5kiQUcgrzFTXOb2v3K6+eBZt6IDl+lvpzn8IzqqNbh3SkocAoLvuVvBOfwjNQdlbeaiZtUjdUSb8F+2yNNHhoIRWPebyVnpadfBoN7wGnB+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zz5lIda6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79900C4CEF1;
+	Tue, 21 Oct 2025 21:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761080859;
+	bh=6rVJs5rEus5FZiX6tLPh68lB2YG/8X+bTkHWX4sobcw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zz5lIda6FiJqRCcOuvAe6jpfmgvIRlDcUJPg6A7KLUB/usFIoOYlKO3p39IS8cH4J
+	 WHSWsEBok/a4/UOcncVeWqc5gUAckLw+K2skYwHRlX+SNQMQ/lf22ghbWvyG/GPN6P
+	 Ipaw60tbWs2gVFGAbEGJNV09hWyn2S+u/apyJYDPFoIq8ulYNUgLUEJdQKnYuMa7MA
+	 du+bJ/n9VukM8CfdOBBdZ2Dcz9Vvn3HivweFDqPGtCIGIeel71CLfQjOA1BV8oxrx3
+	 oIrREX7eZmVsh7vc2Pljbq16I0vH+4lUQ7gcn/Cg0JpaMTHw2HQmM8jwUNj3YL5sKy
+	 ohjd2L/d+GtdA==
+Message-ID: <68a8c1ba-275c-4908-a4c8-2e8b83367703@kernel.org>
+Date: Tue, 21 Oct 2025 16:07:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 Oct 2025 23:05:45 +0200
-Message-Id: <DDOB0TVD1B9Z.23U6EH06F38NV@bootlin.com>
-Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] drm/bridge: enforce drm_bridge_add() before
- drm_bridge_attach()
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: =?utf-8?q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>, "Alain
- Volmat" <alain.volmat@foss.st.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-0-92fb40d27704@bootlin.com> <f3904ae1-bf1b-455f-b5ba-5d625b76222f@gmail.com>
-In-Reply-To: <f3904ae1-bf1b-455f-b5ba-5d625b76222f@gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 1/4] PM: hibernate: export hibernation_in_progress()
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Pavel Machek <pavel@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-input@vger.kernel.org
+Cc: kernel@collabora.com
+References: <20251018142114.897445-1-usama.anjum@collabora.com>
+ <20251018142114.897445-2-usama.anjum@collabora.com>
+Content-Language: en-US
+From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
+In-Reply-To: <20251018142114.897445-2-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Rapha=C3=ABl,
 
-On Sat Oct 18, 2025 at 2:49 PM CEST, Rapha=C3=ABl Gallais-Pou wrote:
->
->
-> Le 03/10/2025 =C3=A0 10:59, Luca Ceresoli a =C3=A9crit=C2=A0:
->> This small series enforces that DRM bridges must be added before they ar=
-e
->> attached as discussed in [1].
 
-Thanks for reviewing this series!
+On 10/18/2025 9:21 AM, Muhammad Usama Anjum wrote:
+> Export hibernation_in_progress() to be used by other modules. Add its
+> signature when hibernation config isn't enabled as well.
 
-I just sent v2 which only adds a new patch with an additional check, which
-I realized being useful after receiving a regression report.
+I wonder if you actually want to have pm_sleep_transition_in_progress() 
+exported instead.  "Logically" I would expect cancelling a hibernate and 
+cancelling a suspend should work similarly.
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>   include/linux/suspend.h  | 2 ++
+>   kernel/power/hibernate.c | 1 +
+>   2 files changed, 3 insertions(+)
+> 
+> diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+> index b02876f1ae38a..348831cdb60e4 100644
+> --- a/include/linux/suspend.h
+> +++ b/include/linux/suspend.h
+> @@ -393,6 +393,7 @@ extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
+>   extern int hibernate(void);
+>   extern bool system_entering_hibernation(void);
+>   extern bool hibernation_available(void);
+> +extern bool hibernation_in_progress(void);
+>   asmlinkage int swsusp_save(void);
+>   extern struct pbe *restore_pblist;
+>   int pfn_is_nosave(unsigned long pfn);
+> @@ -412,6 +413,7 @@ static inline void hibernation_set_ops(const struct platform_hibernation_ops *op
+>   static inline int hibernate(void) { return -ENOSYS; }
+>   static inline bool system_entering_hibernation(void) { return false; }
+>   static inline bool hibernation_available(void) { return false; }
+> +static inline bool hibernation_in_progress(void) { return false; }
+>   
+>   static inline int hibernate_quiet_exec(int (*func)(void *data), void *data) {
+>   	return -ENOTSUPP;
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index 14e85ff235512..aadf82f57e868 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -105,6 +105,7 @@ bool hibernation_in_progress(void)
+>   {
+>   	return !atomic_read(&hibernate_atomic);
+>   }
+> +EXPORT_SYMBOL_GPL(hibernation_in_progress);
+>   
+>   bool hibernation_available(void)
+>   {
 
-All the details at
-https://lore.kernel.org/r/20251021-b4-drm-bridge-alloc-add-before-attach-v2=
--0-c17cc1bbff72@bootlin.com
-
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
