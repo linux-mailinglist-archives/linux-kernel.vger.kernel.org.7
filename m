@@ -1,191 +1,133 @@
-Return-Path: <linux-kernel+bounces-863471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47941BF7E96
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:32:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D131BBF7E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E244345FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86ECB3B1EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1EF34C819;
-	Tue, 21 Oct 2025 17:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F6234B181;
+	Tue, 21 Oct 2025 17:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7LGBQ3E"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fjrQ3hqk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371D34B674
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488FF346E5D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067939; cv=none; b=hLmp7WX8oR6scg4jv++STOZM1P6q+bdAfavfVNUNCCyMjLFMj6AsobBoYzYGnxmiubW3YBRRe7EMfXhG7zZYOFOX5AKJlTZscrWAGBKoVEYah7FuaIoK/1/CSAsqfaVeW0PnsO/7JoNm9yDgeGhFUVf7u9wdzTTmvsgxFE/tmBU=
+	t=1761067929; cv=none; b=NpCC7aFC9PjW6gysWacfncHMOy1S8yKh7OsClAxoGSrhIXpim67zTK+KvpI89/CHaJy58hoYQxuxpl7EFvt4hKhRknzTjR/tGfckL/Jv4VoULnO3FpLEfsMhg4eI3YcwmBZFChIrpmEdqNaUdCjAipdw6xyjRFgoTH0hhYNBYiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067939; c=relaxed/simple;
-	bh=LWmEWjRyeCjLG1cMy0JCFnlQjX+UfVSwvPnfh+zdDvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hmBK/+EAbcWZdsCIrdN6mvP6yn8DMoggoNVXfjy3YtoQuu4MkiICN/WNfHzIjgl8LgLSol1fGPEd9hJMJ+lZZsx4rh2EyY8hY5Jhrx0683C9ThO6CyBdwRAHE3gPjveNjJHlSHE7WoLWASP3CL+ahLdDaRdL/8dL+uwuDj9Dlwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7LGBQ3E; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7833765433cso7335149b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761067937; x=1761672737; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W32bDqvyR7vujxfMeW9XwQgpRLc26l7oP7qKEtb01No=;
-        b=Y7LGBQ3Eu306T0aGNRBFKPOr4ENkYud1JYkAp3ik7YU6dlFxfLIkDAM0a2y5bMLSBo
-         Zu6MLlzerY683jwzk35LECn+2TaRwld2EsiyyzQYWwBzEdV3BwsQjVTOCVB+ZJjmFvI5
-         T8d8jReqZy2cjlUAAUXHWjg4aj8aXH3ZOnenyS9tzrYpXtFhVl/mQ7Mvym1ZaUpKI4hh
-         zXzYibJ/hCCSVdUI/PG9XZ0WmrG7arnMljArqad6w5/wvgGJKiEQmJZPsUqmwRgpROQv
-         WKZeBkhWvFZOHXyd+elu00bk/qjD5aGn+kVIz8Dcp1ATnvSLVspE2hsRsGjS5QfyFlNK
-         GAOQ==
+	s=arc-20240116; t=1761067929; c=relaxed/simple;
+	bh=EngUYBDeJ5g/HtyhoZs57nS9oho3E0UOeyU2yBNu30o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XOX4dei+kKn7jgISOUjn3jsdafRS/TFGWchT2MGjq7OYimfr+ABFilXpjrmy2LygJumv8fp9xLEFR8g7crCYwEDLEeWpoQUqXm9nzP8LOV7ekO7WWFuDwgh2ZFd1s2urgOmNr4wZnf4hkt0JPfFLwpMQ4uIURiOSjzCLYCnNPEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fjrQ3hqk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761067927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EngUYBDeJ5g/HtyhoZs57nS9oho3E0UOeyU2yBNu30o=;
+	b=fjrQ3hqkgKWY07keImJEIxujn3gxxFjxzNEdxIuYxtGcZWC7dlnBQszKiohBmjVqIxmoS4
+	qVtSrMHy2NUk/BNb3BaOgslFKkq6bKggZAFMHznDaPUUsQjb/TVDq1UDDgGS3Y0cVBBBLS
+	ejgXHMBwFtwurtFCL5GwZhIFsYd/TK0=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-503-njgxaVDvOgWwZnGSKG_IwQ-1; Tue, 21 Oct 2025 13:32:04 -0400
+X-MC-Unique: njgxaVDvOgWwZnGSKG_IwQ-1
+X-Mimecast-MFC-AGG-ID: njgxaVDvOgWwZnGSKG_IwQ_1761067924
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-88d842aa73aso233062085a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:32:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761067937; x=1761672737;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W32bDqvyR7vujxfMeW9XwQgpRLc26l7oP7qKEtb01No=;
-        b=rG4lxV3ZLBTwYoUP8rv/SDwIQX8p5fXGkkNK6nLa8aKdh8mzMziZMM7bQKVO3/itv4
-         F/DKxbteImc79mPGzLz4Zmvhz+UyplTtFUOkmmfLKUM7P7Nf8ijHdCFYTbFycrqPmcAx
-         iSBC9RgDX0yIngwEaO7405xkR7KkhUcc3vZiJk6vreAVoGSYplbPEa3evmV5hK7GnA82
-         D25p4v1XP6uoYhlYUanNrH5hjm0FLJWtvicI45ZHt6SX3FqFU+ip/tWvwMA6m3zpV8it
-         TL6QRRWjuNj5A+xET1DCLvKYmfy3lcAwwwmicbLN6z2EDB6D/6Mr9BFTb5mBZYpnWvuZ
-         kRpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvQnbGhzUg4CtizaiZ5jKGoW3h5A3d/OU84KH7LyVg8lZOU81IXxfVTj58joq5xD8tiASpSL3+KTWRxlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU4br5orTLWh6MdTpZp8wfSiGXe9kSa7EiDAyvT/T16zkE/c73
-	I4R+wGh62zsO66r22WMPl/i1pDBT2eJ2Q7OR5s9YLlluyzDk56JsbJBM
-X-Gm-Gg: ASbGnctwFG14N4YvCQU2ol4mqwhggk0cKkGWj6ijl49nj8WUOVJdyhbPFoowO+dD1RP
-	tqsq41ZY1uYcAtu4pwgPsV6CYMj7nowlsfy9j9slaawFyGXVuBEu3FtOZRusF0nl+vnvSfwrWJw
-	TIxvu4yw4MmNOoKGLrg8FkBViqOjiWiE854gz0Fr6Z+wtL8iBhMHLA8f4k8a2YFokzqitzAFsJK
-	dV41LzdYDEWkVf/iMKjj/Eiq+Il1l85gYq650B6AIBbnBxTmQDbSERD6sS63vwnkmNmgQpa/OkY
-	n474sWE+y1WPldUlkFJ9RW+/oYtIwfOpMT+nx5ptGSQ7j4PuhBAYT7m3BdRmQ8cX/C7/pnIqcBx
-	vER+vgT4AHPMVRWXC/2OzM9Q2HwP+DJpPzkMsSfEHheThiKoZIUPAxcux5ktGqHFTZsn725yc6f
-	Xc0ejFpZ/OGQWfRQ==
-X-Google-Smtp-Source: AGHT+IGJnLDF4X5uEtsa2xDyV0cUHKx8VFYNG1No6zJf1JQmgFUvBau7xsPVnXixxXlAbB/zCJrVMg==
-X-Received: by 2002:a05:6a21:9986:b0:320:3da8:34d7 with SMTP id adf61e73a8af0-334a85661b7mr22334007637.22.1761067936853;
-        Tue, 21 Oct 2025 10:32:16 -0700 (PDT)
-Received: from 192.168.1.4 ([104.28.246.147])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b346aasm10941006a12.20.2025.10.21.10.32.11
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 21 Oct 2025 10:32:16 -0700 (PDT)
-From: Alessandro Decina <alessandro.d@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Tirthendu Sarkar <tirthendu.sarkar@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	bpf@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Alessandro Decina <alessandro.d@gmail.com>
-Subject: [PATCH net v2 1/1] i40e: xsk: advance next_to_clean on status descriptors
-Date: Wed, 22 Oct 2025 00:32:00 +0700
-Message-Id: <20251021173200.7908-2-alessandro.d@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20251021173200.7908-1-alessandro.d@gmail.com>
-References: <20251021173200.7908-1-alessandro.d@gmail.com>
+        d=1e100.net; s=20230601; t=1761067924; x=1761672724;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EngUYBDeJ5g/HtyhoZs57nS9oho3E0UOeyU2yBNu30o=;
+        b=X1Io3FXW2YMy/JZnlY968NUGO7U1j3xFCnxdzmOh1KmyOFNplkg4ztEK4A/4450AqF
+         umFzOb1t7iaf6nMhkNDGa/R8qQFaWvzPpiKfNH3HUiTALz4pgFM7VoE+LiyQ0BlQYN5N
+         MJq7vR4Xlml8qd3QpKWxkqIHwC8THtLgNYtQzLnVXUXldn73NZZap60VFXVmGecx3uaV
+         MuH/1zxihQMQUDiJSIJYIj4ST/5lFkepfE1t+xDDm/kWz5iNFvWL8uY5FRWT6JYR9tKW
+         UrISlelGchtYM7QSn5KvQI9bUM3fRVSrkdPcSjydhCxjuzM976rN2sCVvAKHL9SUj2rG
+         tcDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJw1LAonzCGcm/qscjkHB5+akauFcBag9e7XZzGSKljRcJSdrXXa7eylgPBSUfBmbu5pp/ETixyIUBmlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSzC7dJ+Hncvj+qxRkUyJFeKLH+f7C6/MloewQhzKs1tr53AI5
+	Ttzvb80yesgMdSqVxScTNAP7qmtzBOGOFUNN1kdbW8Gssb8GX/IyPGRx8l7VrlgpudUUTKn3mX3
+	HYN+0LuJHHw7XB9+iu1b/nzRmjSuFBs6DjIWyHmzv5YWMuGB5uSXmBhZHxCN5PqtPkA==
+X-Gm-Gg: ASbGnct6I891uv4H23d4zz4fU8kILgASBaVR+kgcicS0pTHkweMiQVTI7cwZfxfS17r
+	TeEWri/Kdl1r9P7CdNSW9ibdQDGIKjf4s9iTSeNSRKiGXHuGhp4KOaoPqlQLMvm/Tn2MTwHk0UE
+	QEv+Ec6/Nh8LEp/RKLMKjYsMVWHeCaOvugOYQzCfRKe0LctDxLBYbIw3gDEEl97d1UgfAcNPFSb
+	54rb16TAwK8YeBt84Fl7wye58gWPvjgwM5seuwqk9C9DCHFK5muedoOrKQ31g8a/+Fe6LLowlt/
+	vWCI4+zUVYGvyDZZnuu7+mdNixjNLNnGdOsomsskiK6SAzmMvsyC32B5CyvBYeM4sILzHJrprma
+	2ihkLz9Sy8jZGtLvNuXOZorFidfhsfdQ=
+X-Received: by 2002:a05:620a:319f:b0:891:c248:a513 with SMTP id af79cd13be357-891c248a792mr1509680985a.66.1761067924067;
+        Tue, 21 Oct 2025 10:32:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJnTDhJjNQ1qpexZXHyE5h/wTUDGSCb6wrNmM2suFXRMcNKfVQbc8YiNqvmKsKuM3t83MyBw==
+X-Received: by 2002:a05:620a:319f:b0:891:c248:a513 with SMTP id af79cd13be357-891c248a792mr1509677585a.66.1761067923717;
+        Tue, 21 Oct 2025 10:32:03 -0700 (PDT)
+Received: from crwood-thinkpadp16vgen1.minnmso.csb ([2601:447:c680:2b50:ee6f:85c2:7e3e:ee98])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cc8d5d8bsm804157285a.8.2025.10.21.10.32.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 10:32:03 -0700 (PDT)
+Message-ID: <321181e1e5060f0c68e0430d69e0e89688b08235.camel@redhat.com>
+Subject: Re: [PATCH 3/4] rtla/timerlat: Add example for BPF action program
+From: Crystal Wood <crwood@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tomas Glozar <tglozar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, John Kacur
+ <jkacur@redhat.com>, Luis Goncalves	 <lgoncalv@redhat.com>, Costa Shulyupin
+ <costa.shul@redhat.com>, Wander Lairson Costa <wander@redhat.com>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>
+Date: Tue, 21 Oct 2025 12:32:01 -0500
+In-Reply-To: <20251021130232.2ca75863@gandalf.local.home>
+References: <20251017144650.663238-1-tglozar@redhat.com>
+		<20251017144650.663238-4-tglozar@redhat.com>
+		<c52490c9c2f682fd3c30d6f8a198be2ba408c4fe.camel@redhat.com>
+		<CAP4=nvT8VGpYrqQDztmB1WJPEb6JXvUuL201ksWq6eSV7kn-oA@mail.gmail.com>
+		<aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
+	 <20251021130232.2ca75863@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Whenever a status descriptor is received, i40e processes and skips over
-it, correctly updating next_to_process but forgetting to update
-next_to_clean. In the next iteration this accidentally causes the
-creation of an invalid multi-buffer xdp_buff where the first fragment
-is the status descriptor.
+On Tue, 2025-10-21 at 13:02 -0400, Steven Rostedt wrote:
+> On Tue, 21 Oct 2025 10:58:06 -0500
+> Crystal Wood <crwood@redhat.com> wrote:
+>=20
+> > Huh, so I guess BPF is an exception to the "no generic printk to the
+> > global trace instance except for debugging that generates a big boot
+> > splat" rule?
+>=20
+> bpf_printk() is an event and not the generic trace_printk() that would
+> cause that splat. You can turn it off.
 
-If then a skb is constructed from such an invalid buffer - because the
-eBPF program returns XDP_PASS - a panic occurs:
+Ah, I see.
 
-[ 5866.367317] BUG: unable to handle page fault for address: ffd31c37eab1c980
-[ 5866.375050] #PF: supervisor read access in kernel mode
-[ 5866.380825] #PF: error_code(0x0000) - not-present page
-[ 5866.386602] PGD 0
-[ 5866.388867] Oops: Oops: 0000 [#1] SMP NOPTI
-[ 5866.393575] CPU: 34 UID: 0 PID: 0 Comm: swapper/34 Not tainted 6.17.0-custom #1 PREEMPT(voluntary)
-[ 5866.403740] Hardware name: Supermicro AS -2115GT-HNTR/H13SST-G, BIOS 3.2 03/20/2025
-[ 5866.412339] RIP: 0010:memcpy+0x8/0x10
-[ 5866.416454] Code: cc cc 90 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 90 48 89 f8 48 89 d1 <f3> a4 e9 fc 26 c0 fe 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-[ 5866.437538] RSP: 0018:ff428d9ec0bb0ca8 EFLAGS: 00010286
-[ 5866.443415] RAX: ff2dd26dbd8f0000 RBX: ff2dd265ad161400 RCX: 00000000000004e1
-[ 5866.451435] RDX: 00000000000004e1 RSI: ffd31c37eab1c980 RDI: ff2dd26dbd8f0000
-[ 5866.459454] RBP: ff428d9ec0bb0d40 R08: 0000000000000000 R09: 0000000000000000
-[ 5866.467470] R10: 0000000000000000 R11: 0000000000000000 R12: ff428d9eec726ef8
-[ 5866.475490] R13: ff2dd26dbd8f0000 R14: ff2dd265ca2f9fc0 R15: ff2dd26548548b80
-[ 5866.483509] FS:  0000000000000000(0000) GS:ff2dd2c363592000(0000) knlGS:0000000000000000
-[ 5866.492600] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 5866.499060] CR2: ffd31c37eab1c980 CR3: 0000000178d7b040 CR4: 0000000000f71ef0
-[ 5866.507079] PKRU: 55555554
-[ 5866.510125] Call Trace:
-[ 5866.512867]  <IRQ>
-[ 5866.515132]  ? i40e_clean_rx_irq_zc+0xc50/0xe60 [i40e]
-[ 5866.520921]  i40e_napi_poll+0x2d8/0x1890 [i40e]
-[ 5866.526022]  ? srso_alias_return_thunk+0x5/0xfbef5
-[ 5866.531408]  ? raise_softirq+0x24/0x70
-[ 5866.535623]  ? srso_alias_return_thunk+0x5/0xfbef5
-[ 5866.541011]  ? srso_alias_return_thunk+0x5/0xfbef5
-[ 5866.546397]  ? rcu_sched_clock_irq+0x225/0x1800
-[ 5866.551493]  __napi_poll+0x30/0x230
-[ 5866.555423]  net_rx_action+0x20b/0x3f0
-[ 5866.559643]  handle_softirqs+0xe4/0x340
-[ 5866.563962]  __irq_exit_rcu+0x10e/0x130
-[ 5866.568283]  irq_exit_rcu+0xe/0x20
-[ 5866.572110]  common_interrupt+0xb6/0xe0
-[ 5866.576425]  </IRQ>
-[ 5866.578791]  <TASK>
+> > Speaking of which, why doesn't trace_osnoise.c call
+> > trace_array_init_printk() given that it uses trace_array_printk_buf()?
+>=20
+> Note, trace_array_printk() (which trace_array_init_printk()) only works f=
+or
+> instances and does not print into the top level trace buffer.
 
-Advance next_to_clean to ensure invalid xdp_buff(s) aren't created.
+Yes, it's for instances, such as the ones rtla creates.
 
-Fixes: 1c9ba9c14658 ("i40e: xsk: add RX multi-buffer support")
-Signed-off-by: Alessandro Decina <alessandro.d@gmail.com>
----
- drivers/net/ethernet/intel/i40e/i40e_xsk.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-index 9f47388eaba5..dbc19083bbb7 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-@@ -441,13 +441,18 @@ int i40e_clean_rx_irq_zc(struct i40e_ring *rx_ring, int budget)
- 		dma_rmb();
- 
- 		if (i40e_rx_is_programming_status(qword)) {
-+			u16 ntp;
-+
- 			i40e_clean_programming_status(rx_ring,
- 						      rx_desc->raw.qword[0],
- 						      qword);
- 			bi = *i40e_rx_bi(rx_ring, next_to_process);
- 			xsk_buff_free(bi);
--			if (++next_to_process == count)
-+			ntp = next_to_process++;
-+			if (next_to_process == count)
- 				next_to_process = 0;
-+			if (next_to_clean == ntp)
-+				next_to_clean = next_to_process;
- 			continue;
- 		}
- 
--- 
-2.43.0
+-Crystal
 
 
