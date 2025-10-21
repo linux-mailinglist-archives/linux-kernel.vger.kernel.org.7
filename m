@@ -1,116 +1,95 @@
-Return-Path: <linux-kernel+bounces-863826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73BEBF9323
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:17:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B801FBF9326
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21C6586C45
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7723C189F2B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF012BE053;
-	Tue, 21 Oct 2025 23:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E2D2BE053;
+	Tue, 21 Oct 2025 23:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="jwn/V6Ii"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC0D1B7F4;
-	Tue, 21 Oct 2025 23:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gSlVmWxz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F6F27BF7C;
+	Tue, 21 Oct 2025 23:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761088643; cv=none; b=oBLZnSxzXjbtTlRTLdGNf9Hiz5AkGNnVxZW3sSWmvMbCxY1NJ8Tdwhuu16hhYIFg2xcFdFc/C/8rLFK6h7V1EYhPAXNrfp1DUdzE56KxYnO9Xjuk4ngM9ahpU4uacu7whHJVwGNPDh4Zss2xfCXaJwOcPm7xIVRO/n4VnTV846A=
+	t=1761088720; cv=none; b=WCLzmUVURcS843qVJhJ+KNaxJQ8XpSx3R2LQe7vw8dhPy6A5hS3tLWsG2ulvXxBHq08kphrk3v+RbRJ8lHewZ6GAK4/7yFfuOVy0fkcO/fEOJ4NXv1uORD6wlPQdR2v2RGW8+fez/RLz18vKGkOtXqf4DT9aJuFs3TmELjHU9YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761088643; c=relaxed/simple;
-	bh=TA9Z2xjXmSPik79pd2nczCKbtFRPJOsg1yrzP0azcSQ=;
+	s=arc-20240116; t=1761088720; c=relaxed/simple;
+	bh=5NroiVkaikWWHu19OQjjcQ2Dp/7no3wz4Nn5cDugRl4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VrCagGIEmLwrfOhzjRr76zcW/cmNm+iywbScWrzkMi1zEMO0w4MHKN6jA0kTR9ZGdek1NdimqikPJaqTb1N2RHaY/1EAiMLTZsPFTJOBFFUXKK6U/Em0m8YRIFzslz7OSvegJzwvoxO11JYw9nnjRy133VsNuuAnl2ZVgFzhLK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=jwn/V6Ii; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id C8C9714C2D3;
-	Wed, 22 Oct 2025 01:17:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1761088635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WvdSOJwgRRDHWmISrEiJpRZTFo/MJ+TFfDsA9nuP/9Y=;
-	b=jwn/V6Ii+on6aH/1miOeIiq0m1L3XX0jqMPiKZ+zTpSjH5aD3yRayNilm/4UIMKjlYP7dF
-	zoOz+v0GrJ05h7I8SppFbiQpeyLssfgTHjZ8FtO4lk7MP8fykqRX2dg3lJEuE0ZEzUebif
-	gR+jgU0xci9klWEuZnGFi+sUYtmfviiKj3sUi2OYxwa5hB71B26VKaZyDKXrwCmYn10gZx
-	iJYmJmBuNb6+bFojVZ7vADN4auWx8tM5cGWPObQCeIlltxQ4/9HjGxUtLjySHbCfbaVsTV
-	Hf/r9S9LKG4XRQPNZwbLh/Pev+o8HLa0MPQO5APw926IK3BRKDTBJ7pQN1A5DA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 4ac624d5;
-	Tue, 21 Oct 2025 23:17:11 +0000 (UTC)
-Date: Wed, 22 Oct 2025 08:16:56 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Tingmao Wang <m@maowtm.org>, Alexei Starovoitov <ast@kernel.org>,
-	linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
-	bpf@vger.kernel.org
-Subject: [GIT PULL] 9p cache=mmap regression fix (for 6.18-rc3)
-Message-ID: <aPgUaFE1oUq8e1F-@codewreck.org>
-References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
- <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8s7AhIzEiOWFaB0BJiubAF9nzj66N3zFmNeI01P0zZuaVmNGWMPy8W4AW8inyZOAURfYzyJf81YUvpYoW2A80kEfpj4gHJJD2f3ggwYc9zf57iPOZFBvUunkkT3BMcEREAsg1ZVLpvAGffYhp2KObA80nlSNFRcAjhaIG+NCtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gSlVmWxz; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761088718; x=1792624718;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5NroiVkaikWWHu19OQjjcQ2Dp/7no3wz4Nn5cDugRl4=;
+  b=gSlVmWxzeF5sryM9KGwZMajy/s1ys3cgd6wJZ4nqDTR1OMD6mJa38slI
+   B0vK6xrc3IeVtyRJDF2LGPkBRvc/GqMnTUKtjcvf6pUbMq0Ld9bgUXTCT
+   zMFIngsden+BGVmArCdvca1zpL4Hh/TZWlbdgLlrCZqr2FNMPY03kn08q
+   79DrTZyCZWMQgRdB1ckGNM4A96mkBYuYUnRqXEpCswr3crqEVWrRD6FaR
+   OMlbeLmyuDakLcB+YTGFpKfuED8nkwiIZ2Bfiqu8NJU6/UIKycunxyr68
+   iB6DfCSVocjsJmKgdWMfx0kYLIEwV5sg3atfyUpoA4gLvMizFLun4j0wH
+   A==;
+X-CSE-ConnectionGUID: YdW33UBmSV2rjS3SIt80mQ==
+X-CSE-MsgGUID: zLCMYoW7R2SNBQWNa4AU2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62435632"
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="62435632"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 16:18:37 -0700
+X-CSE-ConnectionGUID: /cnXQnTrRUy0K6o4mM8R3A==
+X-CSE-MsgGUID: TcyLRb7QTCGYmrCsF4Uv0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="207389220"
+Received: from bkammerd-mobl.amr.corp.intel.com (HELO desk) ([10.124.220.246])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 16:18:37 -0700
+Date: Tue, 21 Oct 2025 16:18:31 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D
+ cache flush is skipped
+Message-ID: <20251021231831.lofzy6frinusrd5s@desk>
+References: <20251016200417.97003-1-seanjc@google.com>
+ <20251016200417.97003-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
+In-Reply-To: <20251016200417.97003-2-seanjc@google.com>
 
-Hi Linus,
+On Thu, Oct 16, 2025 at 01:04:14PM -0700, Sean Christopherson wrote:
+> If the L1D flush for L1TF is conditionally enabled, flush CPU buffers to
+> mitigate MMIO Stale Data as needed if KVM skips the L1D flush, e.g.
+> because none of the "heavy" paths that trigger an L1D flush were tripped
+> since the last VM-Enter.
+>
+> Note, the flaw goes back to the introduction of the MDS mitigation.
 
-We had a regression with cache=mmap that impacted quite a few people so
-I'm sending a fix less than a couple of hours after making the commit.
+I don't think it is a flaw. If L1D flush was skipped because VMexit did not
+touch any interested data, then there shouldn't be any need to flush CPU
+buffers.
 
-If it turns out there are other side effects I'd suggest just reverting
-commit 290434474c33 ("fs/9p: Refresh metadata in d_revalidate for
-uncached mode too") first, but the fix is rather minimal so I think it's
-ok to try falling forward -- let me know if you prefer a revert and I'll
-send one instead (there's a minor conflict)
-
-Thanks to Sung Liu for the minimal reproducer and testing, as well as
-Alexei/Andrii and everyone else who looked at it.
-
-
-
-The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
-
-  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
-
-are available in the Git repository at:
-
-  https://github.com/martinetd/linux tags/9p-for-6.18-rc3
-
-for you to fetch changes up to 2776e27d404684bc43acf023d7ca15255e96b3e3:
-
-  fs/9p: don't use cached metadata in revalidate for cache=mmap (2025-10-22 08:04:05 +0900)
-
-----------------------------------------------------------------
-Fix regression with cache=mmap in 6.18-rc1
-
-Will do some more testing as time allows but this fixes the immediate
-issue minimally (only impacts cache=mmap), and is therefore an
-improvement good enough to send right away.
-
-----------------------------------------------------------------
-Dominique Martinet (1):
-      fs/9p: don't use cached metadata in revalidate for cache=mmap
-
- fs/9p/vfs_dentry.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
--- 
-Dominique Martinet | Asmadeus
+Secondly, when L1D flush is skipped, flushing MDS affected buffers is of no
+use, because the data could still be extracted from L1D cache using L1TF.
+Isn't it?
 
