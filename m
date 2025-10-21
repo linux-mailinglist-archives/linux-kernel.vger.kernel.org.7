@@ -1,89 +1,107 @@
-Return-Path: <linux-kernel+bounces-863353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE5BBF7A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:23:58 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9303BF8024
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 024263AA728
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:23:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2FD52343353
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9286C3491CA;
-	Tue, 21 Oct 2025 16:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D5534F241;
+	Tue, 21 Oct 2025 18:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZtKaCLV"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbB68hLe"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ED425EFB6
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CF5246798
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761063833; cv=none; b=VLRQQcUpSmes9aidnt7hFbr2SGGLCb9ov3N3CehkDrWmDroyasy5nhE1n9Fj1Rct9r7W9fId7akVuNTPUxLaAiogs9ejIHGRkUX4C64e3wOv5e4zKXdsNACXtlyGQq4arERHLGdU0UNrYV4xa+lUsEzgIzpTHqlWZX+NrY3C0FA=
+	t=1761069885; cv=none; b=aG2IgjxN/JdJgy9crh4zu0SXPDhr5HbJCK8sKExO0Uo5bArRywXwpldHpv2GFAq4HdmQfGoF5O8Ttt2P8dbk6cHsi2Jasfsal97BkqB1xqn3wERFdI79GmatnxXrmXxKXBS6gvtrDEPmaDwgkTmhiyPos+zlmEc7j2HdBLZXOWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761063833; c=relaxed/simple;
-	bh=PXx5eLkbxk9JSDFEIVcWzFW4mmXCb7V+VCISbaH2UAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jl+fywGEsWVOl69ph/RHpsyc+JR00m//r1BM+qri4qvqS07Blb1fG7PKgbjEPFt4AnKwqXvhGQHUvFds3npAgP49c23qUSIao96vwJdoLxzfSHvB1BIAxkr8YvO+2tIUZFi2K+vsKncgV5I9fdxgbbOMgUjXn4zgZTthBvJBIy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZtKaCLV; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1761069885; c=relaxed/simple;
+	bh=np7tVhYEGy+oYVadx3C8u7TbzxNr9+KS+hG5SAI5vGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=O7MKuLBzS1fQ1+1Ei+F0wxW5Pdoj/40JDdF0zJ1+SqLHdfsjVfodN7cfSrgUW3bgLm6J5sYrvTCCa9yG5ETmNREN/RzZNJzkZRFAVH8yiHezCaC6BAq3xx3Fd6q5ULMPArD6YrdTfl9ssTCtRbGAD2r19GIDrmrU+jHY3ugSlCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AbB68hLe; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-290aaff555eso56385965ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:23:51 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so5498250b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:04:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761063831; x=1761668631; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+rHjyJNySjOtG/oaWeyGKlZi0ukwWvydylLz+ummOiU=;
-        b=hZtKaCLVqeCha9eEmT2+yIO4dbf4Z8I4OGpX8v0jtx+78+JGNJAQUNEGutAaiGNZZp
-         koDfoXmVy0lUmU1MXAbFOjPUzqLV3c+srgnm6QgY80cxo2Gq+U3NDhV2omDxLMyrxRsE
-         Jkii1+gRP3Om09KytBA3P5tNDvOpMeh5jW49j2ZQPWb7Bl0vn9aHq/d6LP4sRCqa/6nd
-         8eXked2Zy0mUDlDII8DSgIfT1nsqgXCyHAQe2lEzj4gRKrxONhc5yXh5L8DsTv/p29sd
-         nIqjQ0C/mZ7YU5noXxiD5N2Ty/2Si4LRATLaTXLRwfdsyFr7N9ry2l/aQOcZvO//Gw33
-         hciQ==
+        d=gmail.com; s=20230601; t=1761069883; x=1761674683; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v4iCI3a+n92vgiAmJChfOmOa2AiYR85oxFU1VLd511A=;
+        b=AbB68hLeyYdln5Vh352wVR2XKt4K1iP4lIqMju6LyOnpKv85K/yoo8e66G53pVa2FD
+         BQnhwBeV/SL6J1xULfz4RRJgbXVCNLm0B08Pa+VtI3ssK2VwLBQipNTAqMGV7zYfO7Es
+         Wcg0WikgVXBpw/eYlPHUaZuJuZxfDy3PfGZmYj5MaoGDFp6djiusuIy7ZQSFzrdlSmYY
+         L0xWSg5mxGMxsrmawNzQA7wHp8WUuSgvcRAAyI1wOsqfWppBd9DiAzvE0MRFE1/ue2pB
+         1LMVaapbcwl5ei9DOFOTGT7uM2MbWw0HjmhbcQsv2psRll9cyXY3ONh/tvBIaRoxcllp
+         JtsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761063831; x=1761668631;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+rHjyJNySjOtG/oaWeyGKlZi0ukwWvydylLz+ummOiU=;
-        b=NQXR0bhxtibChOMp8Dr3JnqHo+XnY2rs4Vel7fx9J0f3IBQ8Yl3pWCiogXyhrxiclY
-         8EtU/W90hLyzeNj975nnce87OJOpD4uaoFBySCPEWMckWfoe8Jy33ugoJDa0ucecKv+/
-         p+0WpZc4+h/gILiQTmMmGuVF0IZNt9DxcJGeE7D1KswcvS7ziLCvpcsH1Auh8vs9sYwj
-         2P59o9A3Q6qgvB2OwTOn6xosCjsLtFPBkORmDRsTmgC2KI5ISpbxH794JArnP454JJOB
-         74zBUce1Tyy831kkTICdvBkzOgy15YRxXYN3vN9CAbnhnDJo9iE4QKnMicmyQEwJMg6F
-         tO5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWk5Aewl3d6kFTFhENPbDHz+GQuLCZQ+Qf9airFu0drh6mo6/OXwnOYhdNlzSDVWyX4QZyuznD8Q/yDO1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDARJStXTDw9J+KCG/QFMzejvSfGJQhBOBdrM/xhFr7MuAcRog
-	lwtHERHtW7LRmj1Nv4W6vt8xt4cCOIcqE16IegfCGX5ZVJ7rYmCBqq0Z
-X-Gm-Gg: ASbGncvAIzxkwkax7e+tpk/x8hABKz7CdIx0dMhTuAxMNn8Jx1Pz/zI4LXe4QfvkUd8
-	NQHu6CpXCRtYLJYKScqodlCBs3cBGIPpRtEhPxj/oyEBWoNGC/696OrakUHbrVuDLni9qvoz/2b
-	WHdvY7vtO+wSjxKgvhLzzWsnqRA2jQX81vcgko3v0aINJL8hoJmueOQPdmQn/hdCKcE9pY9GwCP
-	plQA6dKcfurf3WNTMJVQgNcAo6N3II0gXcJ+OdjQ9ULO8Z8XUreZ+7aBBL0sBfDmhjZbqPSkdGf
-	77z++yZAsvdbv5TsTsVg/4oqwYaigWYgAILZYeZsyodQBN68GEHh5jcF9X0qxnQoBD734gR4+SX
-	TXQzD6GDnCdpbMTzhexffAo9M3WoGjKSFBbsRhlylLkM5MGiOLch/YnABp0cGsAy8tTJEwnBMlI
-	5bcSAvlNW52Kfk55FEwik=
-X-Google-Smtp-Source: AGHT+IHkHuRO/cGncKISQZWD1qXwaE7w5T+jTVF2YE5Hm+JwJpfutTKAmSOGddAAEiei3b1lnpM3QA==
-X-Received: by 2002:a17:902:f64a:b0:269:9e4d:4c8b with SMTP id d9443c01a7336-290ca403110mr218424325ad.21.1761063830609;
-        Tue, 21 Oct 2025 09:23:50 -0700 (PDT)
-Received: from LilGuy ([2409:40c2:1050:6e5a:c22e:8b12:2301:3845])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-292471d5938sm113390265ad.58.2025.10.21.09.23.46
+        d=1e100.net; s=20230601; t=1761069883; x=1761674683;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v4iCI3a+n92vgiAmJChfOmOa2AiYR85oxFU1VLd511A=;
+        b=tqx5jQqG/QZmacz7jUCPk7QFLDEN8ftfcqlFEzSGDmVbDjKxLvRobm2GNDqcWAcdGn
+         ga4/Go5J64RxkiJbfL+kXET6t73GJzo37hMKHchUKU70uSkEq8R+0LKmYCFTVnkCzhB1
+         eR7rEhlnhvs5XTpbSFzqMJNXq4cWsgg6G+dknH+FyYgGmzJDIKy24/Wk5u80G41TXz7u
+         tWINZfvAsecVG5xH9RmpnSQ03rNZp6maWZTjYaDleEPi3t5Y6luIRQvJ9PA640toid0F
+         K2KJl8jNQfmOiXn8tlMMhJ+a3NUjZcLikt3YCO1qIlk3VmoD1TaDo8By5gtu6KZoaOou
+         9PVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUym9sA2Qc6DCAe/yRk3Z+DhWTBuJRctyoXya/gDOAwqBts/St5B9AKJ1Ufsh0QjrBVQOMU97mDY8ei4Js=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpn17VdU5Z99fezBZNCdgmvFK+n8ukGWAzJ/QsoREPXaNGTteC
+	yYAVpdSAXMaPsL1w9fMzdKagQ8f/ACrNaO4iUSVDXBkFfIFI7yU6OHY3
+X-Gm-Gg: ASbGnctoPOXWrcqCtiWmS9MZ5nM1wkUqFXXMDLyu068EWWUbcQxg5ic9gmT7f0eH0Eq
+	H6MbY5VOlw2LD5AQ668PQPyK76iz1O1qeGww8HAUwunwIwXVDYxkbyvAW81RLqdiuc6QzDDgdqJ
+	3uXqI8RS9oiaq3MYpV0ylBF/0uAilRlq29eVIB6WDnyZ7Lgafee92/D8hDGnm/gtpUzzainTWTW
+	UQ5E/97nA5THpiQ/LZS6sDe2yTp1Ecipw4LirUNd6fGpnrzO2OzDLUpCzBqqUSZ8fxLiVkWS1am
+	Xo9mUkfClm/8XT/Hx1FTxSFQkxNtQf9vN0XrO7//wJJdP+a418IlVKJKEBB3NlAV3qbu0jswMa8
+	0JJ2hfgE2zbpUCfaamDZoRPJewmpKzkF/I+U2dQp0rVF74vGPGnjOTJXm6uJkoe/c3pZVISWchS
+	RtTF0=
+X-Google-Smtp-Source: AGHT+IFfvvRkT1o2E+LzW6g4zp1WME2u+yySBZYFy4r0G2UY/dg1eygrIwDL+LUnDjEL11Se4Le+KQ==
+X-Received: by 2002:a05:6a20:42a3:b0:32a:91c6:e085 with SMTP id adf61e73a8af0-334a8504812mr20539937637.11.1761069882926;
+        Tue, 21 Oct 2025 11:04:42 -0700 (PDT)
+Received: from daniel.. ([221.218.137.209])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff34e72sm12016944b3a.24.2025.10.21.11.04.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 09:23:50 -0700 (PDT)
-From: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-To: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev (open list:DAMON),
-	linux-mm@kvack.org (open list:DAMON),
-	linux-kernel@vger.kernel.org (open list)
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-Subject: [PATCH] mm/damon/sysfs: Remove misleading todo comment in nid_show()
-Date: Tue, 21 Oct 2025 21:53:24 +0000
-Message-ID: <20251021215323.29734-2-swarajgaikwad1925@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Tue, 21 Oct 2025 11:04:42 -0700 (PDT)
+From: jinji zhong <jinji.z.zhong@gmail.com>
+To: joshua.hahnjy@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	axelrasmussen@google.com,
+	david@redhat.com,
+	feng.han@honor.com,
+	hannes@cmpxchg.org,
+	jackmanb@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	liulu.liu@honor.com,
+	lorenzo.stoakes@oracle.com,
+	mhocko@suse.com,
+	rppt@kernel.org,
+	shakeel.butt@linux.dev,
+	surenb@google.com,
+	vbabka@suse.cz,
+	weixugc@google.com,
+	yuanchu@google.com,
+	zhengqi.arch@bytedance.com,
+	zhongjinji@honor.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH] mm/page_alloc: Consider PCP pages as part of
+Date: Tue, 21 Oct 2025 18:04:35 +0000
+Message-ID: <20251021180435.11789-1-jinji.z.zhong@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251021145427.3580609-1-joshua.hahnjy@gmail.com>
+References: <20251021145427.3580609-1-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,47 +110,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TODO comment in nid_show() suggested returning an error if the goal was
-not using nid. However, this comment was found to be inaccurate and
-misleading.This patch removes the TODO comment without changing any
-existing behavior.
+> Zhongjinji, thank you for your patch!
+>
+>> When free_pages becomes critically low, the kernel prevents other tasks
+>> from entering the slow path to ensure that reclaiming tasks can
+>> successfully allocate memory.
+>> 
+>> This blocking is important to avoid memory contention with reclaiming
+>> tasks. However, in some cases it is unnecessary because the PCP list may
+>> already contain sufficient pages, as freed pages are first placed there
+>> and are not immediately visible to the buddy system.
+>
+>Based on my limiting understanding of pcp free pages, I had a concern here
+>on whether this would really provide the desired effect. That is, the pages
+>in the pcp are not available to the buddy allocator unless we drain the pcp
+>lists (and this operation is not free), I was unsure if there was a clear
+>benefit to allowing the system to go unblocked.
 
-This change follows feedback from SJ who pointed out [1] that wiring-order
-independence is expected and the function should simply show the last
-set value. and [2] checkpatch.pl complain about number of chars per line
+The purpose of this patch is to account for the memory in the pcp list
+within memalloc_reserve, which would allow more tasks to enter the slow
+path. For critical tasks, entering the slow path represents a better
+alternative than being throttled until kswapd wakes up.
 
-No functional code changes were made.
+>If we are already at the point where we need the pcp pages to have enough
+>free pages to go over the watermark, perhaps it makes sense to just block
+>tasks for now, and enter direct reclaim? Allowing more allocations might
+>lead the system to be in a worse state than before, and will have to
+>go through direct reclaim anyways.
+>
+>Please let me know if this makes sense!
+> 
+>> By accounting PCP pages as part of pfmemalloc_reserve, we can reduce
+>> unnecessary blocking and improve system responsiveness under low-memory
+>> conditions.
+>> 
+>> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+>
+>[...snip...]
+>
+>> +int zone_pcp_pages_count(struct zone *zone)
+>> +{
+>> +	struct per_cpu_pages *pcp;
+>> +	int total_pcp_pages = 0;
+>> +	int cpu;
+>> +
+>> +	for_each_online_cpu(cpu) {
+>> +		pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
+>> +		total_pcp_pages += pcp->count;
+>
+>Could this be racy? What is stopping the pcp count from decreasing while we
+>are iterating over each online cpu, over each managed zone? Under the
+>memory pressure conditions that this patch is aiming to fix, I think that
+>there is a good chance the numer we get here will be very outdated by the time
+>we try to take action based on it, and we may require the system to be
+>further stalled since we don't take action to reclaim memory.
 
-Tested with KUnit:
-- Built kernel with KUnit and DAMON sysfs tests enabled.
-- Executed KUnit tests:
-  ./tools/testing/kunit/kunit.py run --kunitconfig ./mm/damon/tests/
-- All 25 tests passed, including damon_sysfs_test_add_targets.
+Thank you, Joshua. Indeed, the pcp->count might be outdated by the time. 
+And kswapd will fail to allocate memory if the pages in the pcp lists are
+on other CPUs. While drain_all_pages() may be triggered by direct reclaim
+on other CPUs, some hard-to-predict scenarios might still exist.
 
-Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-Suggested-by: SeongJae Park <sj@kernel.org>
+Perhaps performing drain_all_pages() before actually calling
+throttle_direct_reclaim() would be better.
 
-[1] https://lore.kernel.org/lkml/20251020151315.66260-1-sj@kernel.org/
-[2] https://lore.kernel.org/lkml/20251021010847.68473-1-sj@kernel.org/
----
- mm/damon/sysfs-schemes.c | 1 -
- 1 file changed, 1 deletion(-)
+Like the following code.
 
-diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index 6536f16006c9..760279092b4f 100644
---- a/mm/damon/sysfs-schemes.c
-+++ b/mm/damon/sysfs-schemes.c
-@@ -1112,7 +1112,6 @@ static ssize_t nid_show(struct kobject *kobj,
- 	struct damos_sysfs_quota_goal *goal = container_of(kobj, struct
- 			damos_sysfs_quota_goal, kobj);
+@@ -6535,6 +6535,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
+ static bool throttle_direct_reclaim(gfp_t gfp_mask, struct zonelist *zonelist,
+ 					nodemask_t *nodemask)
+ {
++	bool drained = false;
+ 	struct zoneref *z;
+ 	struct zone *zone;
+ 	pg_data_t *pgdat = NULL;
+@@ -6570,6 +6571,7 @@ static bool throttle_direct_reclaim(gfp_t gfp_mask, struct zonelist *zonelist,
+ 	 * for remote pfmemalloc reserves and processes on different nodes
+ 	 * should make reasonable progress.
+ 	 */
++retry:
+ 	for_each_zone_zonelist_nodemask(zone, z, zonelist,
+ 					gfp_zone(gfp_mask), nodemask) {
+ 		if (zone_idx(zone) > ZONE_NORMAL)
+@@ -6586,6 +6588,12 @@ static bool throttle_direct_reclaim(gfp_t gfp_mask, struct zonelist *zonelist,
+ 	if (!pgdat)
+ 		goto out;
+ 
++	if (!drained) {
++		drained = true;
++		drain_all_pages(NULL);
++		goto retry;
++	}
++
+ 	/* Account for the throttling */
+ 	count_vm_event(PGSCAN_DIRECT_THROTTLE);
 
--	/* todo: return error if the goal is not using nid */
-
- 	return sysfs_emit(buf, "%d\n", goal->nid);
- }
-
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
---
-2.51.0
-
+>[...snip...]
+>
+>Please feel free to let me know if I am missing something obvious. Again,
+>I am not very familiar with the pcp code, so there is a good chance that
+>you are seeing something that I am not : -)
+>
+>Thank you for the patch, I hope you have a great day!
+>Joshua
+>
 
