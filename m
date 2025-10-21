@@ -1,113 +1,100 @@
-Return-Path: <linux-kernel+bounces-863615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F39BF84ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:47:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6C1BF84F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7892C4EF66D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:47:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2EAE19A24A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F6F26B0BE;
-	Tue, 21 Oct 2025 19:47:23 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24E326E6E5;
+	Tue, 21 Oct 2025 19:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QAr1UBUT"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C77125B1DA;
-	Tue, 21 Oct 2025 19:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E8F350A00;
+	Tue, 21 Oct 2025 19:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761076043; cv=none; b=aOOdWJGIchz/9PcU79KfTpbzrlWWsj3RaqbQF5oz/D2PlRkN1/UA9ctmAAM9TvANPPV6Dw/7R9sW3XlQx9lAZIsnt9FzMKTzBk86XyyRztkEb3aVpSQEzFmtz7C5NyEYJIBlfyfZwskw4wdDC3b2QVCq9c7BClfgxMJjaqSlwZw=
+	t=1761076073; cv=none; b=uJy6G9mGHSbeZPiuKzB/N0Byqm8GtrYs2pQgscjy9ZwIKmRovyEh6sxIkqJrnQlCxFdVVH2KwdTJZ8Q1eqYYPVV96tsUkW6aDkigHcz+iF4mg8YWyRW3yyfdjORPkfo94VYpNTsy+cRd8PeFehn2tV1ZK3j0SzRCBh56WepSG48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761076043; c=relaxed/simple;
-	bh=vjm3dE9/IKpod5P0ZC6/pXwY8a7TnoBYoU+Ea8E0nQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J7hGxjiORXMRLOaQawJGeu9pi6qN0wSrKRqJM+0U3pqvnChW62Rhl8PAHVndr9l5qVt6vsYG5Z5ypt9W781ufOCZ4Wo5siWYy/D0y3+oWy2pT1iew/jhSRVL90qquZ6+LEqYL0cpU/SsDmwyiV/imYmdfRGk3I9UL6lYmoEDZoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 3E001B9E75;
-	Tue, 21 Oct 2025 19:47:18 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id D1B7832;
-	Tue, 21 Oct 2025 19:47:14 +0000 (UTC)
-Date: Tue, 21 Oct 2025 15:47:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Nicolas Schier <nsc@kernel.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada
- <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <nick.desaulniers+lkml@gmail.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell
- <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v9 2/4] tracing: Add a tracepoint verification check at
- build time
-Message-ID: <20251021154737.77377790@gandalf.local.home>
-In-Reply-To: <aPKj2Ilnq7F0xLFx@levanger>
-References: <20251015203842.618059565@kernel.org>
-	<20251015203924.391455037@kernel.org>
-	<aPKj2Ilnq7F0xLFx@levanger>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761076073; c=relaxed/simple;
+	bh=99XOQ8/c1bSey+JyTeJXM1222mQtTxFiwkbfFTqMK2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=josDSFVtjteloEGdIz+PIJBWu1y0sSBW/v2XLvlPkkp5KcwToOLwAxsiNd4wgXNnWbjk5ZsF6Z5Pxl4UNSCu11NevqB8y865bOj8HndwKupQun+spVvrH0XYdNXLFxsZBriPFG8y/QyHBNm0wcXKs/UG6TrMhEj3RNjxwUfqpB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QAr1UBUT; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <951141f8-f26b-4d0e-bf54-5c7f4e0b99af@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761076066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eD409e6hY+qRd6MhDEDpdC+HWvW0mADRZZeGBzPBkr0=;
+	b=QAr1UBUTj+UKkxgh0C2c9YUBV+RQz1HEYGs1x5JNXxVw+2+O9PLK6BxsFYX7L8U2HGs+rU
+	8f2E2RgI7rwvVz4kt8cbUJxoNvkFJHSPHtzOuGHRejAFMoeYoneOQH1uMUb2awkvAOpP/t
+	kTR81ogxPV+L51RlvQKJUFs2oOxy7dA=
+Date: Tue, 21 Oct 2025 20:47:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH] ptp: ocp: Fix typo using index 1 instead of i in SMA
+ initialization loop
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251021182456.9729-1-jiashengjiangcool@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20251021182456.9729-1-jiashengjiangcool@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: yjfsxrh3gy8g91p7nad311cbso9t3sbo
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: D1B7832
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/flYNkAmboTsYT3r6DHHdcV5Gz6/AmDAo=
-X-HE-Tag: 1761076034-53474
-X-HE-Meta: U2FsdGVkX18B9EjrayZv+hXuypmrQkGMt43qexIIwD10HRSDrWuiM0dBBByW7r7rd/wzdU6XcOVbtO9gJRYdLeLT7DbyNk6fyki8AzGh4Jk1tEXtPPHXt924rz0J6oVIiDRQnoU/V0jIkk5n45fOferJU+PSq9d6EDR1pMxDn3blFzZUd871dTWZagvmjwnQmZ0lMbOuJ8NS05+r6/1Ql1OBg2QWLUZ5EudeGfwyq6bhNk2VMoRtW7ARyqPwMs5vh8NpQKA5z/mZbGqCCJ7GB9clnQrNgtDUyORrcoylg9jKK6LAiw3ZqyLNptPofNGFk+SD44/ucNWKzOJXaw2lNi3ehsSJ0fZV
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 17 Oct 2025 22:15:20 +0200
-Nicolas Schier <nsc@kernel.org> wrote:
-
-> > +# To check for unused tracepoints (tracepoints that are defined but never
-> > +# called), run with:
-> > +#
-> > +# make UT=1
-> > +#
-> > +# Each unused tracepoints can take up to 5KB of memory in the running kernel.
-> > +# It is best to remove any that are not used.
-> > +
-> > +ifeq ("$(origin UT)", "command line")
-> > +  WARN_ON_UNUSED_TRACEPOINTS := $(UT)
-> > +endif
-> > +
-> > +export WARN_ON_UNUSED_TRACEPOINTS  
+On 21/10/2025 19:24, Jiasheng Jiang wrote:
+> In ptp_ocp_sma_fb_init(), the code mistakenly used bp->sma[1]
+> instead of bp->sma[i] inside a for-loop, which caused only SMA[1]
+> to have its DIRECTION_CAN_CHANGE capability cleared. This led to
+> inconsistent capability flags across SMA pins.
 > 
-> Is there a special reason why you chose to introduce a new command-line
-> variable instead of extending KBUILD_EXTRA_WARN / W ?
+> Fixes: 09eeb3aecc6c ("ptp_ocp: implement DPLL ops")
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> ---
+>   drivers/ptp/ptp_ocp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> index 794ec6e71990..a5c363252986 100644
+> --- a/drivers/ptp/ptp_ocp.c
+> +++ b/drivers/ptp/ptp_ocp.c
+> @@ -2548,7 +2548,7 @@ ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
+>   		for (i = 0; i < OCP_SMA_NUM; i++) {
+>   			bp->sma[i].fixed_fcn = true;
+>   			bp->sma[i].fixed_dir = true;
+> -			bp->sma[1].dpll_prop.capabilities &=
+> +			bp->sma[i].dpll_prop.capabilities &=
+>   				~DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE;
+>   		}
+>   		return;
 
-Honestly, I didn't think about using KBUILD_EXTRA_WARN. I also want this
-option to go away after we remove the current unused tracepoints so that
-any new ones will always cause a warning.
+Thanks!
 
-The only reason not to make it always warn is because I don't want to add
-warnings for the existing code. I'm working on having outreachy projects to
-remove the currently unused tracepoints. Once that is done, then this
-option is going to go away and the build will always warn on unused
-tracepoints.
-
-I thought it might be easier to remove it without any issues if it's a new
-command line that goes away in the future.
-
-Looking at EXTRA_WARN, it appears to be for basic issues with the code and
-adds new C compiler warning flags. This isn't exactly the same.
-
-If you think it makes sense to extend EXTRA_WARN, I can still go ahead and
-do that.
-
--- Steve
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
