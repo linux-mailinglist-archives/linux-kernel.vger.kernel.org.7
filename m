@@ -1,88 +1,74 @@
-Return-Path: <linux-kernel+bounces-862646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A10EBF5D3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 430B2BF5D68
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3993C4EB00C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:39:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3556F4E7CD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9AF32AAA6;
-	Tue, 21 Oct 2025 10:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C64303A0B;
+	Tue, 21 Oct 2025 10:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fI4IDXhU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="humALt/d"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1898B32E738;
-	Tue, 21 Oct 2025 10:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F582EC55E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761043047; cv=none; b=QzcFhGsASQc9nzvRx9cXcam9kfQjkOGYcy8mGMjNjZsiFvRgWzprgS6R+awvVgtTQWu1kCJjk57L0WBJq9t9QYSraG2O0ee9eDh+BUTE71r0KLl+Fi5+uwZF7TtiZCZV5qRRH8+uEMLFHuKBIBJ8w8qmWwT18gKPWl6O/b3fEP8=
+	t=1761043084; cv=none; b=LmM2+J/k6YmjbnNROLcRMBckUgK+CNDnhsxqs022FSyprqnHNirSCYx03GoonIt7r9AnWnGo9csEyunp2uD4tj9w1lQWUedc2qyBJbohgCMi3BEjSJ5Ub5N0C9WoWtDyhdoqtabindFlbZmQPOrLf3iQv1l4KHQJsWIQjpq8Upg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761043047; c=relaxed/simple;
-	bh=Wv4YlboMbpQNw6u3IhV6GaaoBps8Bfhjrkcb7CsF0xc=;
+	s=arc-20240116; t=1761043084; c=relaxed/simple;
+	bh=YozL1yuui2ZFLBKlN3rUM17uNCImsDwY07x6lcrRP2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QwN9+4WRr8nEq4io0ByWR4qsfw6CKco9Xn8xcdaKBkrrtCQDfDQQNObfHHhTr28snuPXuVmEPms/TOOxJ4ThF8pebBvF5gu/8zeEfkcelWbBjku/oDf5fZtCSJ/S3kEtA7XZAnz2/uFJqUo6T5Ehf2raz8qoAHJG9Xd4JEY9CTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fI4IDXhU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27116C19421;
-	Tue, 21 Oct 2025 10:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761043046;
-	bh=Wv4YlboMbpQNw6u3IhV6GaaoBps8Bfhjrkcb7CsF0xc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lrldz14cvMVwTdGxkCxUZq/F2f2xT5j6NhzACiBb1+4wxpO1Tfevf9pX/HgzZ8RcvRobMQ7iKNTSz51x8zSTRhyxVGpnQykgM+wiJib96zcEtMRRzZm79qxtKRdbqYvNAMDIQWAbNx1W2kcytT5W7FAaujqla1HxAoGjpTh6u4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=humALt/d; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0BE8340E0200;
+	Tue, 21 Oct 2025 10:37:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id e_PJ_AkA1ZS9; Tue, 21 Oct 2025 10:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761043073; bh=1MK3o86LJlLe9PuKDl0p9VdpDRU6sKV/uVIIEPz4Gd0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fI4IDXhUCP7sgAbKQnnlEnGS+mH6+q/DVxfBVgsj499VkGJQLro2SipZv+UsgT+zu
-	 8B9BQ/N8PLADF+mv0npm2WR18SHOSCTkY6IIWB+/4KWxdz0HaqNaCd+VpwNF+jRHei
-	 3ov8wsowSbIjE7ehwZJQCM5XDSZ8yb88yR9ym4/iD1GrsxZuohsf4L75d3zn6Oo8ZL
-	 n/EM6KAHijRdlgGUc7o7fjyhsti167l3ftZbDgbosTZ+9qyXpVrt8OKaPBS6REela5
-	 1PzcamUK2QhpQhPmKuhJ64ytVkT/HOGaF6eImS7MwUdj0xA7m9KQpsd53N7fkQp+0Z
-	 1s/kfAndNZ8Fg==
-Date: Tue, 21 Oct 2025 11:37:15 +0100
-From: Lee Jones <lee@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
-Message-ID: <20251021103715.GA475031@google.com>
-References: <20251015232015.846282-1-robh@kernel.org>
+	b=humALt/ddM9w1KWSpbABujd4dkw0zR7zZmuuD1MJRCOktqzqcvBDMlcSh54V/QNaS
+	 4u69jXQmJMrPcUCeW+hYgSK4TMa3F0pVJc7rjSPU8VKpwTogiTbQEAxmUv7Uwi/uM1
+	 C2RgEv4fHdB8dzCG1545TI5XA4RJGp1mmwASMgGAtlSB1fRRqRvdwTrsp+pTFCC81B
+	 oj2j/UQzueHKxPki6O7A5KtqZXiXBit5O/q3LJ4/otPQg86mla5IOrSuaJmFBR1/wu
+	 Tcn03FQ45wJV3MgUiPWR/ur1Md6NxTCcJFPC7uxhhxjwSmIvxntzjfzkR+0BAS9NcX
+	 H6aPeHktQE7vTKKChG4xTW932vGJU8R0QqlYD3ndXStDR3JuiBUY3efHo/cljoQ5l9
+	 6RiJ0yhYoZ7Whg1oKSYRLlZeRymPcvTPvouFtqf40cG0r7h3eWpckhlmP/54M83rZC
+	 gofuNh3diqUvhVMUT9Y6agqhZfDQZjcmHBBTeHjKryHBiZmgUjb0Kf8oivsrUBg9sz
+	 p6GMFv6FyhSb4WhRMvgoF5I+on5nT2h2L+4URSr9QuEFZOJuOejtVsOzhBoLzQt/32
+	 /G449eCNHLIEJUscfzjmTkEmiIGQ+SQ0Q+U7IKGRzev+55C2vpCB2GlqL+eFv6/MkJ
+	 FrrKo8cfigENRnvZNTK5rAvE=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 90E5240E019B;
+	Tue, 21 Oct 2025 10:37:46 +0000 (UTC)
+Date: Tue, 21 Oct 2025 12:37:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Kael D'Alcamo <dev@kael-k.io>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/cpu: Fix kernel-doc for 'centaur_get_free_region'
+Message-ID: <20251021103739.GBaPdic1JTakX2bA9i@fat_crate.local>
+References: <20251005204200.191346-1-dev@kael-k.io>
+ <20251005204200.191346-3-dev@kael-k.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,50 +77,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251015232015.846282-1-robh@kernel.org>
+In-Reply-To: <20251005204200.191346-3-dev@kael-k.io>
 
-On Wed, 15 Oct 2025, Rob Herring (Arm) wrote:
-
-> yamllint has gained a new check which checks for inconsistent quoting
-> (mixed " and ' quotes within a file). Fix all the cases yamllint found
-> so we can enable the check (once the check is in a release). Use
-> whichever quoting is dominate in the file.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Sun, Oct 05, 2025 at 10:41:21PM +0200, Kael D'Alcamo wrote:
+> Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
 > ---
->  .../arm/altera/socfpga-clk-manager.yaml       |  4 ++--
->  .../bindings/clock/nvidia,tegra124-car.yaml   |  8 ++++----
->  .../bindings/clock/nvidia,tegra20-car.yaml    |  6 +++---
->  .../devicetree/bindings/gpio/gpio-mxs.yaml    |  9 +++++----
->  .../bindings/gpio/snps,dw-apb-gpio.yaml       |  4 ++--
->  .../bindings/iio/temperature/adi,ltc2983.yaml | 20 +++++++++----------
->  .../mailbox/qcom,apcs-kpss-global.yaml        | 16 +++++++--------
->  .../mailbox/xlnx,zynqmp-ipi-mailbox.yaml      |  2 +-
->  .../bindings/media/fsl,imx6q-vdoa.yaml        |  2 +-
+>  arch/x86/kernel/cpu/mtrr/centaur.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/mtrr/centaur.c b/arch/x86/kernel/cpu/mtrr/centaur.c
+> index 6f6c3ae92943..f4c72402c284 100644
+> --- a/arch/x86/kernel/cpu/mtrr/centaur.c
+> +++ b/arch/x86/kernel/cpu/mtrr/centaur.c
+> @@ -20,6 +20,7 @@ static u8 centaur_mcr_type;	/* 0 for winchip, 1 for winchip2 */
+>   *
+>   * @base: The starting (base) address of the region.
+>   * @size: The size (in bytes) of the region.
+> + * @replace_reg: mtrr index to be replaced; set to invalid value if none.
 
->  .../devicetree/bindings/mfd/aspeed-lpc.yaml   |  4 ++--
->  .../devicetree/bindings/mfd/ti,twl.yaml       |  4 ++--
+I'm afraid I can't follow here what invalid value you mean...
 
-Acked-by: Lee Jones <lee@kernel.org>
+In any case, pls merge those two into a single patch and make sure it has
+a commit message.
 
->  .../bindings/net/ethernet-switch.yaml         |  2 +-
->  .../pci/plda,xpressrich3-axi-common.yaml      |  2 +-
->  .../bindings/phy/motorola,cpcap-usb-phy.yaml  |  4 ++--
->  .../pinctrl/microchip,sparx5-sgpio.yaml       | 12 +++++------
->  .../bindings/pinctrl/qcom,pmic-gpio.yaml      | 10 +++++-----
->  .../bindings/pinctrl/qcom,pmic-mpp.yaml       |  6 +++---
->  .../bindings/pinctrl/renesas,pfc.yaml         |  4 ++--
->  .../bindings/pinctrl/renesas,rza1-ports.yaml  |  2 +-
->  .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  2 +-
->  .../pinctrl/renesas,rzv2m-pinctrl.yaml        |  2 +-
->  .../bindings/power/renesas,sysc-rmobile.yaml  |  4 ++--
->  .../soc/microchip/atmel,at91rm9200-tcb.yaml   |  8 ++++----
->  .../soc/tegra/nvidia,tegra20-pmc.yaml         | 12 +++++------
->  24 files changed, 75 insertions(+), 74 deletions(-)
-
-[...]
+Thx.
 
 -- 
-Lee Jones [李琼斯]
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
