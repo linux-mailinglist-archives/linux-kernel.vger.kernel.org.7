@@ -1,52 +1,78 @@
-Return-Path: <linux-kernel+bounces-862590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF92BF5B2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FAABF5B3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 12C7F3435F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E254621D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797EA31329A;
-	Tue, 21 Oct 2025 10:08:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02D21DE3A4;
-	Tue, 21 Oct 2025 10:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBA232ABC3;
+	Tue, 21 Oct 2025 10:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MzCdiHNq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5101E5B71;
+	Tue, 21 Oct 2025 10:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041303; cv=none; b=iEhMeY9ffgTeaTIlrpR8qQPni+qPdQat40VCeBrRDf+0Rf+lo57ILA+YMjbMW8qiIfBXXmCFzs1XzanCYggEKzeSRFNp8tmOxn/+q70RFSSCUHJilBpeh5ye/Z29JM4LzHGEUBT7+DaaTE0mlnRd7qe5/dqcGlhFTBVshhlJV70=
+	t=1761041348; cv=none; b=U79PiEEGeLSL6yJ5ZSkaTk14ONp6xy5v9PWVSjqKzhNs8vmS2Q6vMWn7uD1ako10Xnt89J5InHTZk69hu+AHZzAEIZ2VVjKPbEDu+pRK5LEy7XYagBUrkkMOtDzBRPySDm2GXXIIh3WDaGps53/zfRRPLuThkokTJchXaz1cO/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041303; c=relaxed/simple;
-	bh=5F/pG4fVXXeht79zb9qGffvhKHMbfDy4Mh1CYkQ96qo=;
+	s=arc-20240116; t=1761041348; c=relaxed/simple;
+	bh=3IkoSazez8ElCAf7vNq4LiZ5Hk3FfC92/I68aQg1P+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4G1wtOo9yCwvG9HUNWzR8dzsKBaqOEtnsJDRPE/HTtmGkyGmXDYoPK8PPjKwQ4M1y23xOeMe8mGrn7lq82RW7Vft8P6EJt5svTf1Zu9lTySKmo7KEFqvUuXhLQOQvM6Nms68hXmRssu0uiUJUX1UExqCdQ2HB99NpUtUN9wZL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21CC01007;
-	Tue, 21 Oct 2025 03:08:13 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 871993F63F;
-	Tue, 21 Oct 2025 03:08:18 -0700 (PDT)
-Date: Tue, 21 Oct 2025 11:08:16 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org, d-gole@ti.com, souvik.chakravarty@arm.com
-Subject: Re: [PATCH 05/10] firmware: arm_scmi: Add Telemetry protocol support
-Message-ID: <aPdbkHixRsWjsZ3d@pluto>
-References: <20250925203554.482371-1-cristian.marussi@arm.com>
- <20250925203554.482371-6-cristian.marussi@arm.com>
- <20251017163725.0000149e@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=liYOhVGcj8QTcBJSv94wwZEQzYp3xy7OLqjTFd8NsPkuGLAwzmDLal+o2Yz9+0mntKe4pu/UlJHWKimhjILFbFAMOA546E15TGOKgCrI0CaxsOzaSEpvlA64t/h0cA2wURnB4l+TUpyc4AlS96HN7S9dpRiYyp3vPuQrP3CvxVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MzCdiHNq; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761041346; x=1792577346;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3IkoSazez8ElCAf7vNq4LiZ5Hk3FfC92/I68aQg1P+s=;
+  b=MzCdiHNqUCQ6OY3gn1i0H25TZE0nhvmJqSmbS7Y+iSx63/utoQkK1RiW
+   51+6g2l6aRyXQwS9jHXkmxRYK45mosybStgW9qPc8N8PL5/vZj9H4IGA6
+   q4wUVg+5UTQo4qnXRyjsdaLAlHoHMRE/0tHWUHeBWDEELGYg8WNCDXD//
+   Yg6gdVVXHW8vBU3TwShXmPTbXasNv0rbfASedeC2oAf8V1o3AvT4urq2n
+   2NVup0c5k9bU/6aq1+BAHfYOuuMLNUk5lfx9iiKaZ5uM6RtgbaoPCJzWM
+   qKniWOZaUFWuMQXst+wPjkcVP1q5msTUUNbb1thCLTdPXVOrSjKVjXG5z
+   w==;
+X-CSE-ConnectionGUID: AaMn8ZHpS8SP2OHvDP7b6g==
+X-CSE-MsgGUID: C/n+QPuiRfKqllPX8yRx8w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63204112"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="63204112"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 03:09:05 -0700
+X-CSE-ConnectionGUID: +kRsYGyUSpyirDU+nfxltw==
+X-CSE-MsgGUID: mlr9IvkQR8S/DIFYFMbZmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="214187185"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.224])
+  by orviesa002.jf.intel.com with SMTP; 21 Oct 2025 03:09:01 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 Oct 2025 13:09:00 +0300
+Date: Tue, 21 Oct 2025 13:09:00 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-usb@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Anand Moon <linux.amoon@gmail.com>,
+	Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] usb: typec-mux: ptn36502: Omit a variable reassignment
+ in ptn36502_probe()
+Message-ID: <aPdbvC6Fz4kZ9x8q@kuha.fi.intel.com>
+References: <b33ac7ab-e66f-4407-ba3e-ec4c70636fcf@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,271 +81,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017163725.0000149e@huawei.com>
+In-Reply-To: <b33ac7ab-e66f-4407-ba3e-ec4c70636fcf@web.de>
 
-On Fri, Oct 17, 2025 at 04:37:25PM +0100, Jonathan Cameron wrote:
-> On Thu, 25 Sep 2025 21:35:49 +0100
-> Cristian Marussi <cristian.marussi@arm.com> wrote:
+On Mon, Oct 20, 2025 at 06:00:06PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 20 Oct 2025 17:50:12 +0200
 > 
-> > Add basic support for SCMI V4.0-alpha_0 Telemetry protocol including SHMTI,
-> > FastChannels, Notifications and Single Sample Reads collection methods.
-> > 
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> An error code was assigned to a variable and checked accordingly.
+> This value was passed to a dev_err_probe() call in an if branch.
+> This function is documented in the way that the same value is returned.
+> Thus delete a redundant variable reassignment.
 > 
-> Hi,
+> The source code was transformed by using the Coccinelle software.
 > 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Hi thanks for having a look
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-> This is very much in the superficial drive by category as reviews
-> go.  A few things noted but I've not looked at the code in enough
-> detail.
+> ---
+>  drivers/usb/typec/mux/ptn36502.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/mux/ptn36502.c b/drivers/usb/typec/mux/ptn36502.c
+> index 129d9d24b932..b1a2977b974c 100644
+> --- a/drivers/usb/typec/mux/ptn36502.c
+> +++ b/drivers/usb/typec/mux/ptn36502.c
+> @@ -339,7 +339,7 @@ static int ptn36502_probe(struct i2c_client *client)
+>  
+>  	ret = regulator_enable(ptn->vdd18_supply);
+>  	if (ret) {
+> -		ret = dev_err_probe(dev, ret, "Failed to enable vdd18\n");
+> +		dev_err_probe(dev, ret, "Failed to enable vdd18\n");
+>  		goto err_mux_put;
+>  	}
+>  
+> -- 
+> 2.51.1
 
-...this is still very early days as a series since I moved across a few
-different implementations in the previous RFCs, so as noted in the
-cover-letter there are in general lots of open-issues...
-
-...BUT I am sure there will be more after this review :P
-
-Thanks for the feedback in the meantime.
-
-> 
-> Jonathan
-> 
-> 
-> > diff --git a/drivers/firmware/arm_scmi/telemetry.c b/drivers/firmware/arm_scmi/telemetry.c
-> > new file mode 100644
-> > index 000000000000..f03000c173c2
-> > --- /dev/null
-> > +++ b/drivers/firmware/arm_scmi/telemetry.c
-> > @@ -0,0 +1,2117 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * System Control and Management Interface (SCMI) Telemetry Protocol
-> > + *
-> > + * Copyright (C) 2025 ARM Ltd.
-> > + *
-> My favorite trivial comment applies.  What does this blank line add
-> to readability? I'd drop it.
-> 
-
-... I would say..at the moment felt right :P ... but there is no need
-and I wil drop it.
-
-> > + */
-> 
-> > +
-> > +struct scmi_de_desc {
-> > +	__le32 id;
-> > +	__le32 grp_id;
-> > +	__le32 data_sz;
-> > +	__le32 attr_1;
-> > +#define	IS_NAME_SUPPORTED(d)	((d)->attr_1 & BIT(31))
-> > +#define	IS_FC_SUPPORTED(d)	((d)->attr_1 & BIT(30))
-> > +#define	GET_DE_TYPE(d)		(le32_get_bits((d)->attr_1, GENMASK(29, 22)))
-> > +#define	IS_PERSISTENT(d)	((d)->attr_1 & BIT(21))
-> > +#define GET_DE_UNIT_EXP(d)						\
-> > +	({								\
-> > +		int __signed_exp =					\
-> > +			le32_get_bits((d)->attr_1, GENMASK(20, 13));	\
-> > +									\
-> > +		if (__signed_exp & BIT(7))				\
-> > +			__signed_exp |= GENMASK(31, 8);			\
-> > +		__signed_exp;						\
-> > +	})
-> > +#define	GET_DE_UNIT(d)		(le32_get_bits((d)->attr_1, GENMASK(12, 5)))
-> > +
-> > +#define GET_DE_TSTAMP_EXP(d)						\
-> > +	({								\
-> > +		int __signed_exp =					\
-> > +			FIELD_GET(GENMASK(4, 1), (d)->attr_1);		\
-> > +									\
-> > +		if (__signed_exp & BIT(3))				\
-> > +			__signed_exp |= GENMASK(31, 4);			\
-> > +		__signed_exp;						\
-> See below for sign_extend32() using code to replace these.
-> 
-
-Sadly enough, in the past I am sure I have also searched for something similar
-and did not find it despite being merged since 2010 apparently... :<
-
-> 
-> > +
-> > +struct scmi_msg_resp_telemetry_reading_complete {
-> > +	__le32 num_dwords;
-> > +	__le32 dwords[];
-> __counted_by(num_word);
->
-
-Mmmm, this is really used to cast to a variable sized received message
-payload..is the __counted_by gonna work as intended in this case ?
-..because this means a bad sizing could be triggered by a bad FW...
-
-(I suppose I will find my answer looking better at __counted_by inner workings...)
-
-I will check anyway the processing of this var size message...
- 
-> > +};
-> > +
-> > +/* TDCF */
-> > +
-> > +#define TO_CPU_64(h, l)	(((u64)le32_to_cpu((h)) << 32) | le32_to_cpu((l)))
-> Some of this stuff sounds very generic and isn't at all.
-> 
-> Personally I think I'd just drop this one as it may be better to see
-> the implementation wherever it is used.
-
-Ok ...it was to avoid a bit of duplication in some macros down below
-and made the intent more clear from the name..
-
-> 
-> > +static int scmi_telemetry_tdcf_line_parse(struct telemetry_info *ti,
-> > +					  struct payload __iomem *payld,
-> > +					  struct telemetry_shmti *shmti,
-> > +					  bool update)
-> > +{
-> > +	int used_qwords;
-> > +
-> > +	used_qwords = (USE_LINE_TS(payld) && TS_VALID(payld)) ?
-> > +		QWORDS_TS_LINE_DATA_PAYLD : QWORDS_LINE_DATA_PAYLD;
-> > +
-> > +	/*Invalid lines are not an error, could simply be disabled DEs */
-> 
-> Check for inconsistent comment syntax etc.
-
-Ok.
-
-> 
-> > +	if (DATA_INVALID(payld))
-> > +		return used_qwords;
-> 
-> > +
-> > +static int scmi_telemetry_shmti_scan(struct telemetry_info *ti,
-> > +				     unsigned int shmti_id, u64 ts,
-> > +				     bool update)
-> > +{
-> > +	struct telemetry_shmti *shmti = &ti->shmti[shmti_id];
-> > +	struct tdcf __iomem *tdcf = shmti->base;
-> > +	int retries = SCMI_TLM_TDCF_MAX_RETRIES;
-> > +	u64 startm = 0, endm = 0xffffffffffffffff;
-> 
-> No one likes counting fs.  Use a GENMASK probably.
-
-Yes definitely better, even though is not really a mask but just a fixed
-invalid value to use at start...
-
-> 
-> > +	void *eplg = SHMTI_EPLG(shmti);
-> 
-> 
-> > +static void
-> > +scmi_telemetry_msg_payld_process(struct telemetry_info *ti,
-> > +				 unsigned int num_dwords, unsigned int *dwords,
-> 
-> I'd kind of expect something called dwords to have a fixed size. u32, u64 or
-> whatever.
-
-Yes I agree.
-
-> 
-> > +				 ktime_t timestamp)
-> > +{
-> > +	u32 next = 0;
-> > +
-> > +	while (next < num_dwords) {
-> > +		struct payload *payld = (struct payload *)&dwords[next];
-> > +		struct scmi_telemetry_de *de;
-> > +		struct telemetry_de *tde;
-> > +		u32 de_id;
-> > +
-> > +		next += USE_LINE_TS(payld) ?
-> > +			TS_LINE_DATA_PAYLD_WORDS : LINE_DATA_PAYLD_WORDS;
-> > +
-> > +		if (DATA_INVALID(payld)) {
-> > +			dev_err(ti->dev, "MSG - Received INVALID DATA line\n");
-> > +			continue;
-> > +		}
-> > +
-> > +		de_id = le32_to_cpu(payld->id);
-> > +		de = xa_load(&ti->xa_des, de_id);
-> > +		if (!de || !de->enabled) {
-> > +			dev_err(ti->dev,
-> > +				"MSG - Received INVALID DE - ID:%u  enabled:%d\n",
-> > +				de_id, de ? (de->enabled ? 'Y' : 'N') : 'X');
-> > +			continue;
-> > +		}
-> > +
-> > +		tde = to_tde(de);
-> > +		guard(mutex)(&tde->mtx);
-> > +		tde->cached = true;
-> > +		tde->last_val = LINE_DATA_GET(&payld->tsl);
-> > +		//TODO BLK_TS in notification payloads
-> > +		if (USE_LINE_TS(payld) && TS_VALID(payld))
-> > +			tde->last_ts = LINE_TSTAMP_GET(&payld->tsl);
-> > +		else
-> > +			tde->last_ts = 0;
-> > +	}
-> > +}
-> 
-> 
-> > diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-> > index 59527193d6dd..6c6db95d0089 100644
-> > --- a/include/linux/scmi_protocol.h
-> > +++ b/include/linux/scmi_protocol.h
-> 
-> ...
-> 
-> > +#define	SCMI_TLM_GET_UPDATE_INTERVAL_SECS(x)				\
-> > +	(le32_get_bits((x), GENMASK(20, 5)))
-> Why is this one little endian specific and the next just uses assumption of
-> CPU Endian?
-
-Mmmm is not becasue the next one extract a 5 bit value that being < 8bit
-has no endianity issue ?
-
-....haviong said that...I think this version has a lot of endian issue to be
-fixed as pointed out also by the kernel bots...
-
-> 
-> > +#define SCMI_TLM_GET_UPDATE_INTERVAL_EXP(x)				\
-> > +	({								\
-> > +		int __signed_exp = FIELD_GET(GENMASK(4, 0), (x));	\
-> > +									\
-> > +		if (__signed_exp & BIT(4))				\
-> > +			__signed_exp |= GENMASK(31, 5);			\
-> sign_extend32() from bitops.h should work here and is much more self explanatory.
-> That would then make this something like
-> 
-> #define SCMI_TLM_GET_UPDATE_INTERVAL_EXP(x) \
->  	sign_extend32(x, 4);
-> or you can mask it first if you like but I don't think it makes any difference
-> in practice.
-
-Yes using well known helpers is much better...I will rework and
-test...just in case :D
-
-> 
-> > +		__signed_exp;						\
-> > +	})
-> > +
-> > +#define SCMI_TLM_BUILD_UPDATE_INTERVAL(s, e)				    \
-> > +	(FIELD_PREP(GENMASK(20, 5), (s)) | FIELD_PREP(GENMASK(4, 0), (e)))
-> 
-> > +
-> > +struct scmi_telemetry_update_report {
-> > +	ktime_t		timestamp;
-> > +	unsigned int	agent_id;
-> > +	int		status;
-> > +	unsigned int	num_dwords;
-> > +	unsigned int	dwords[];
-> 
-> More places where __counted_by is appropriate. I'll not comment on any others and
-> just assume you'll add them wherever appropriate.
-> 
-
-Sure, but, as said above, I will reason a bit on the places where the struct is used
-to cast a received FW payload (which is NOT the case in this latter example...)
-
-Thanks,
-Crisian
+-- 
+heikki
 
