@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-863614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B303CBF84E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:47:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F39BF84ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF1C188AEB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:47:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7892C4EF66D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F58C26738B;
-	Tue, 21 Oct 2025 19:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttonAvUB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F6F26B0BE;
+	Tue, 21 Oct 2025 19:47:23 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4876350A00;
-	Tue, 21 Oct 2025 19:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C77125B1DA;
+	Tue, 21 Oct 2025 19:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761076031; cv=none; b=MjtDy5gBcqUb3EPoeMxA/27Prttzc8oTZhxB1pkF1lHuvqrYtEn/DA3ydnjtec575+YZONx3cP7YcHZ81+KEIpVIJJXeLFvGHH9zPP5VwWeLWiO9uDG61/k6jjf8JeeY7aOjrakNh9faxy8pdEKNsVUF7qWZb956StpujBeB+bk=
+	t=1761076043; cv=none; b=aOOdWJGIchz/9PcU79KfTpbzrlWWsj3RaqbQF5oz/D2PlRkN1/UA9ctmAAM9TvANPPV6Dw/7R9sW3XlQx9lAZIsnt9FzMKTzBk86XyyRztkEb3aVpSQEzFmtz7C5NyEYJIBlfyfZwskw4wdDC3b2QVCq9c7BClfgxMJjaqSlwZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761076031; c=relaxed/simple;
-	bh=hDZb4pyqS83PXcuQ5I2j7XXbTUMJgMNauRG0Gmqa7K8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BIdHaCXNN75Exf7RnnWEEkdmGraftr8EhiA866aOBbMonpKjwP+YvfUZYLJM9lh6aRnfZ5WE3GjzDvBVASuyLbC825Qsm49U/l9EpJUimd8GznkCRFtk3BJcR2Vz3Ob+KTdaD0yKiqVmoNvRU7L/O98ZnSdbKYBKJQQZ6HvLUvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttonAvUB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 58E80C4CEF1;
-	Tue, 21 Oct 2025 19:47:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761076028;
-	bh=hDZb4pyqS83PXcuQ5I2j7XXbTUMJgMNauRG0Gmqa7K8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ttonAvUBvwtQtZB/mn3LpRSYT02+MKNYgEsHlhz6UQ06Dw5Lj2JPa1LCKXZ3EMZHl
-	 FBiMyim0Q4B/G2Nhehv1NdcRUVfxtyaF4ASlKjwsIiZ52aw9RiBUxbGAdQ4dAo2TRz
-	 bWvnbF/2PMuMtAJq+jST0m8c3chCCik2zVnv5lLslk46fMHBSL6VIiLQ5DzBLIRlw1
-	 Fqj3Xzd+aeYCdiUld/mWM7K5wTuhJuvy2Q4+ZmtrDkisnAfGF3318H1M+QLVMxBu/r
-	 On/cwjxb+F/yyrYvclnpiNCfAZROIoxW2G2mCfqC2oUnwJGoiZTYds4mvnLdKWEF7h
-	 iqhiX9AWZ+fCw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49791CCD1AF;
-	Tue, 21 Oct 2025 19:47:08 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 21 Oct 2025 14:47:06 -0500
-Subject: [PATCH] memory: tegra210: Fix incorrect client ids
+	s=arc-20240116; t=1761076043; c=relaxed/simple;
+	bh=vjm3dE9/IKpod5P0ZC6/pXwY8a7TnoBYoU+Ea8E0nQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J7hGxjiORXMRLOaQawJGeu9pi6qN0wSrKRqJM+0U3pqvnChW62Rhl8PAHVndr9l5qVt6vsYG5Z5ypt9W781ufOCZ4Wo5siWYy/D0y3+oWy2pT1iew/jhSRVL90qquZ6+LEqYL0cpU/SsDmwyiV/imYmdfRGk3I9UL6lYmoEDZoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 3E001B9E75;
+	Tue, 21 Oct 2025 19:47:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id D1B7832;
+	Tue, 21 Oct 2025 19:47:14 +0000 (UTC)
+Date: Tue, 21 Oct 2025 15:47:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada
+ <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <nick.desaulniers+lkml@gmail.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell
+ <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v9 2/4] tracing: Add a tracepoint verification check at
+ build time
+Message-ID: <20251021154737.77377790@gandalf.local.home>
+In-Reply-To: <aPKj2Ilnq7F0xLFx@levanger>
+References: <20251015203842.618059565@kernel.org>
+	<20251015203924.391455037@kernel.org>
+	<aPKj2Ilnq7F0xLFx@levanger>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-t210-mem-clientid-fixup-v1-1-5094946faa31@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADnj92gC/x2MQQqAIBAAvxJ7bsE1FOor0aF0q4Wy0Iog+nvSc
- RhmHkgchRM0xQORL0myhQxUFuDmPkyM4jODVtqQ0oSHJoUrr+gW4XCIx1Huc0frjeN6GKyqCHK
- 9R87iP7fd+35l7UmeaQAAAA==
-X-Change-ID: 20251021-t210-mem-clientid-fixup-6d5ce9bb6031
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761076027; l=1235;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=LT4M0FZugp2BvBr6W8Smqc6NSDGFFyx1kOqJIqzRmDo=;
- b=Y7UbDNdsPxaxd6U4wZtJN2c+50XyeiJkpq1l16Ni3Vr0iTDH8dMmMvv2On+fjKVXPPAbnx0dJ
- tVnE8a45EgHCw+A8SginP61YLlGxpQ1xHdzPN9YFPWBoPrCcgqS2xxp
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+X-Stat-Signature: yjfsxrh3gy8g91p7nad311cbso9t3sbo
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: D1B7832
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/flYNkAmboTsYT3r6DHHdcV5Gz6/AmDAo=
+X-HE-Tag: 1761076034-53474
+X-HE-Meta: U2FsdGVkX18B9EjrayZv+hXuypmrQkGMt43qexIIwD10HRSDrWuiM0dBBByW7r7rd/wzdU6XcOVbtO9gJRYdLeLT7DbyNk6fyki8AzGh4Jk1tEXtPPHXt924rz0J6oVIiDRQnoU/V0jIkk5n45fOferJU+PSq9d6EDR1pMxDn3blFzZUd871dTWZagvmjwnQmZ0lMbOuJ8NS05+r6/1Ql1OBg2QWLUZ5EudeGfwyq6bhNk2VMoRtW7ARyqPwMs5vh8NpQKA5z/mZbGqCCJ7GB9clnQrNgtDUyORrcoylg9jKK6LAiw3ZqyLNptPofNGFk+SD44/ucNWKzOJXaw2lNi3ehsSJ0fZV
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On Fri, 17 Oct 2025 22:15:20 +0200
+Nicolas Schier <nsc@kernel.org> wrote:
 
-The original commit had typos for two of the memory client ids. Fix them
-to reference the correct bindings.
+> > +# To check for unused tracepoints (tracepoints that are defined but never
+> > +# called), run with:
+> > +#
+> > +# make UT=1
+> > +#
+> > +# Each unused tracepoints can take up to 5KB of memory in the running kernel.
+> > +# It is best to remove any that are not used.
+> > +
+> > +ifeq ("$(origin UT)", "command line")
+> > +  WARN_ON_UNUSED_TRACEPOINTS := $(UT)
+> > +endif
+> > +
+> > +export WARN_ON_UNUSED_TRACEPOINTS  
+> 
+> Is there a special reason why you chose to introduce a new command-line
+> variable instead of extending KBUILD_EXTRA_WARN / W ?
 
-Fixes: 3804cef4c597 ("memory: tegra210: Use bindings for client ids")
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/memory/tegra/tegra210.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Honestly, I didn't think about using KBUILD_EXTRA_WARN. I also want this
+option to go away after we remove the current unused tracepoints so that
+any new ones will always cause a warning.
 
-diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
-index cfa61dd885577a8fbd79c396a1316101197ca1f2..3c2949c16fdef4911682da5e3cbfb91899e34c87 100644
---- a/drivers/memory/tegra/tegra210.c
-+++ b/drivers/memory/tegra/tegra210.c
-@@ -1015,7 +1015,7 @@ static const struct tegra_mc_client tegra210_mc_clients[] = {
- 			},
- 		},
- 	}, {
--		.id = TEGRA210_MC_SESRD,
-+		.id = TEGRA210_MC_SESWR,
- 		.name = "seswr",
- 		.swgroup = TEGRA_SWGROUP_SE,
- 		.regs = {
-@@ -1079,7 +1079,7 @@ static const struct tegra_mc_client tegra210_mc_clients[] = {
- 			},
- 		},
- 	}, {
--		.id = TEGRA210_MC_ETRR,
-+		.id = TEGRA210_MC_ETRW,
- 		.name = "etrw",
- 		.swgroup = TEGRA_SWGROUP_ETR,
- 		.regs = {
+The only reason not to make it always warn is because I don't want to add
+warnings for the existing code. I'm working on having outreachy projects to
+remove the currently unused tracepoints. Once that is done, then this
+option is going to go away and the build will always warn on unused
+tracepoints.
 
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251021-t210-mem-clientid-fixup-6d5ce9bb6031
+I thought it might be easier to remove it without any issues if it's a new
+command line that goes away in the future.
 
-Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
+Looking at EXTRA_WARN, it appears to be for basic issues with the code and
+adds new C compiler warning flags. This isn't exactly the same.
 
+If you think it makes sense to extend EXTRA_WARN, I can still go ahead and
+do that.
 
+-- Steve
 
