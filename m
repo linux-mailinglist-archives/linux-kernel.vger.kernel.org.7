@@ -1,92 +1,149 @@
-Return-Path: <linux-kernel+bounces-862986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B36BF6BB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:21:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49760BF6BC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C74D50364C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:21:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCAA487713
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59CE334C38;
-	Tue, 21 Oct 2025 13:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1E0337115;
+	Tue, 21 Oct 2025 13:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Hm68QhlU"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRZ9V5QZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B9D32861B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF38143C61;
+	Tue, 21 Oct 2025 13:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052871; cv=none; b=krcpm6vC3bbrKN97+EZ8/fOfxSeR9o107sDys+SCVdEByuKFX1ArQ2XCocCtOkYPr2Ep++qgFu7vbDBoazsyKNcd5UWq2bv7jJhcDbaIqcLLQ0pTPTGgSlIrL8tRnxngqX44dwDTERa8DRk5JInMsPHTXJZn0myf756p4bS8iH8=
+	t=1761052875; cv=none; b=MIJ87pg2SBqMg5inMXEi7Ohh99Re3PLLF/iLkx/NFuoyB1E5y5Yd2RJU3LUNrvRI2+NZBcihmI9mNNuVDaA7A0QBeG3XaR2xdWeHV9YQrBGnXBrtYLpAanQ9Txe8lb5b+WeXfE66H56Mq7mJWqRm80iIcHzl5lf4jleKUsLhvKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052871; c=relaxed/simple;
-	bh=AkHBvluqEAhBVuY5qakHEhb8DpY+qUwXRRCxYI3Rcw4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BAuXgwygs40vc3ZQyjV3TIRG2AE9n8v6iJXGJ5cb2NRb9itExYBYsx4LjxUxx2pEcfAiJizuzXQBYRRuPjX5fUyq3HHlhoAGhbJ4QwrlZLKPxdRArwGeLpaTrWLP129wCkm12cLabN3fzDl5V21/32D56An+JgAe5avSeXOgwPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Hm68QhlU; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=AkHBvluqEAhBVuY5qakHEhb8DpY+qUwXRRCxYI3Rcw4=;
-	t=1761052869; x=1762262469; b=Hm68QhlUQmqCYF4BdTGukV1WQzvmoNT4JBx46IjxkBvCEXe
-	9e4KNZscMTSR6bbep5sMICTqJGYKB0e+0io43h2hAgEkwaiUhtBqzjHeyJHrqlURREdhnaMw8cHmR
-	TEXZcNQD+kLoEzU7n2YgHe2qTdc/PgrzqUYu0hXSucBog6147oBGLDAjK7rmz1ROdvWqwBdOHJCpw
-	xzgySTWK0u7WyQGJp7W8GRjOF7T557Nlih9kQZcWnfrEfYo1TuDjszI8mlBTH1SK2rI/HUoTQQcQ2
-	MdBrawPpDHppu6XT7L6kLV0xpyLsBxO46Sa5f1sA1sSSfTqbCjC+/sNNSwTsJaMQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vBCII-0000000BrDl-3dF6;
-	Tue, 21 Oct 2025 15:20:55 +0200
-Message-ID: <fc93795ff03dc767a800a18a6ef33ff778f13b5d.camel@sipsolutions.net>
-Subject: Re: [PATCH v2 03/10] um: vdso: Implement __vdso_getcpu() via syscall
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com, benjamin@sipsolutions.net, arnd@arndb.de, 
-	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	tiwei.btw@antgroup.com
-Date: Tue, 21 Oct 2025 15:20:54 +0200
-In-Reply-To: <96ae8e726480a36a37d472106b761a141394e845.camel@sipsolutions.net>
-References: <1568f254-7963-4015-91ed-7630d5d87881@t-8ch.de>
-		 <20250922045020.48158-1-tiwei.bie@linux.dev>
-		 <495a5594-8ac6-4b7d-be6b-7c176b741c21@t-8ch.de>
-		 <76b5ba35f864764100c9a5a00d50d8fa4276cd98.camel@sipsolutions.net>
-		 <21755635-74d4-4fa4-8ffd-371c17630fdf@t-8ch.de>
-		 <366bb558c3fd23b9a80008d923f29ed0234e17b9.camel@sipsolutions.net>
-		 <61ae09df-d65b-4c9d-a0c1-7de915246590@t-8ch.de>
-		 (sfid-20250922_180452_263852_EC16D5FF) <96ae8e726480a36a37d472106b761a141394e845.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761052875; c=relaxed/simple;
+	bh=lvcRb/61yamx9Ux8qcx+0p2Z2oz7rIaAXsUA3+G6uXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGyZmSRzukedmvUwd8gdYjG3PJBvcmouNE12WwxtZSG/Sd+7iTjQswTt1jG9AsTMrxpCI7qqN0c8S+clRAnBslXJaw9YMhuaKTh+iL5xZqH+ZTxP0ujrmdMmBUpT4lIfcDa9uy+T88OdvkAfxvi3/+34MGR3DCankINYbJwk20s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRZ9V5QZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2FD8C4CEF1;
+	Tue, 21 Oct 2025 13:21:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761052874;
+	bh=lvcRb/61yamx9Ux8qcx+0p2Z2oz7rIaAXsUA3+G6uXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qRZ9V5QZIibDOsO9wccPJdCMBqXt9+lUebH4uqUNlwIGaqGNPHXtxgk83a1Rg6KX0
+	 On7CO7L3CH3u8UM6MvMznOHukWIxAJmmtkHpKXyhyZyJqLiWZ1FKnz29oi4S51rxfY
+	 U8OpG0vUpUy3PCNi3RE7Ig91WHeNU40tA6FKiN2OLmobeH0i8fNPxGHWx6HrBm5H3C
+	 NP7kIxANp5Xch80kwvtZUuiP512KcySpiGdz00wgSDZfP/6zuEXUITgFZxPWFwM0YC
+	 d505f4KOmvU7NF1GiN3FKzl3LXlMZqpVyiF5mt7NvobjAQYvJVbvuOW4JgdbR4MhIt
+	 i3QIg217Yj6ZA==
+Date: Tue, 21 Oct 2025 15:21:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Cyril Hrubis <chrubis@suse.cz>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, LTP List <ltp@lists.linux.it>, 
+	Andrey Albershteyn <aalbersh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	Petr Vorel <pvorel@suse.cz>, Andrea Cervesato <andrea.cervesato@suse.com>
+Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
+ PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
+Message-ID: <20251021-wollust-biografie-c4d97486c587@brauner>
+References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
+ <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
+ <aPIPGeWo8gtxVxQX@yuki.lan>
+ <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
 
-On Mon, 2025-09-22 at 19:07 +0200, Johannes Berg wrote:
->=20
-> I actually have half a patch somewhere that rejiggers the UM vDSO to be
-> more like normal architectures, using lib/vdso/gettimeofday.c and making
-> the build more regular etc. Maybe I should dig that up and try to make
-> it work entirely - it was part of a previous attempt of adding the time-
-> travel thing I mentioned.
+On Fri, Oct 17, 2025 at 02:43:14PM +0200, Jan Kara wrote:
+> On Fri 17-10-25 11:40:41, Cyril Hrubis wrote:
+> > Hi!
+> > > > ## Test error log
+> > > > tst_buffers.c:57: TINFO: Test is using guarded buffers
+> > > > tst_test.c:2021: TINFO: LTP version: 20250930
+> > > > tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
+> > > > @1760657272 aarch64
+> > > > tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+> > > > tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
+> > > > which might slow the execution
+> > > > tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
+> > > > ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
+> > > > ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
+> > > > info_invalid) expected EINVAL: ENOTTY (25)
+> > 
+> > Looking closely this is a different problem.
+> > 
+> > What we do in the test is that we pass PIDFD_IOCTL_INFO whith invalid
+> > size with:
+> > 
+> > struct pidfd_info_invalid {
+> >         uint32_t dummy;
+> > };
+> > 
+> > #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info_invalid)
+> > 
+> > 
+> > And we expect to hit:
+> > 
+> >         if (usize < PIDFD_INFO_SIZE_VER0)
+> >                 return -EINVAL; /* First version, no smaller struct possible */
+> > 
+> > in fs/pidfs.c
+> > 
+> > 
+> > And apparently the return value was changed in:
+> > 
+> > commit 3c17001b21b9f168c957ced9384abe969019b609
+> > Author: Christian Brauner <brauner@kernel.org>
+> > Date:   Fri Sep 12 13:52:24 2025 +0200
+> > 
+> >     pidfs: validate extensible ioctls
+> >     
+> >     Validate extensible ioctls stricter than we do now.
+> >     
+> >     Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+> >     Reviewed-by: Jan Kara <jack@suse.cz>
+> >     Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > 
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index edc35522d75c..0a5083b9cce5 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
+> >                  * erronously mistook the file descriptor for a pidfd.
+> >                  * This is not perfect but will catch most cases.
+> >                  */
+> > -               return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
+> > +               return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
+> >         }
+> >  
+> >         return false;
+> > 
+> > 
+> > So kernel has changed error it returns, if this is a regression or not
+> > is for kernel developers to decide.
+> 
+> Yes, it's mostly a question to Christian whether if passed size for
+> extensible ioctl is smaller than minimal, we should be returning
+> ENOIOCTLCMD or EINVAL. I think EINVAL would make more sense but Christian
+> is our "extensible ioctl expert" :).
 
-So that patch is almost 5 years old and with all the VDSO rework since
-then, there's no way I can make that work again right now ... I guess
-it'd be better to start from scratch and make a real VDSO for UML.
+You're asking difficult questions actually. :D
+I think it would be completely fine to return EINVAL in this case.
+But traditionally ENOTTY has been taken to mean that this is not a
+supported ioctl. This translation is done by the VFS layer itself iirc.
 
-I'll take a look at your cleanups though.
-
-joahnnes
 
