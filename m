@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-863213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76048BF742F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:11:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB396BF7451
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A6AB50772A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F16422B69
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42212343218;
-	Tue, 21 Oct 2025 15:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2CB3431F0;
+	Tue, 21 Oct 2025 15:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sWV0ZhOh"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDmQNpyl"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D2C342CBF;
-	Tue, 21 Oct 2025 15:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEADD342C95
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761059301; cv=none; b=IiVKeZAmb6D5RSfj/Hro/BUCN9Vqej+EfoKA1xWx7Gy3tlsMp0Ky7lBVVYI+lNzvkMXB9qqDF3gN6idIR1aCzJCYW+bK5XZOB9UVIGcNakpzgo6JfGTMtt8yXf8BDxooJ7N4bYC3PtSUdyiJowE+tcGrJYZ3kUD0qVtIK7uYLfw=
+	t=1761059310; cv=none; b=MSdZRQFSxxUQUQx+gWtAphSKe4i2T+0aCJrR/pF5g25s/gRp/sL7qz6O+thB99vrd56X4qredHtcK78yUfhdfZrNu2RBvTwXVxy/nGkPe9sVBhYjLOVw9CqdzgBWEee2Jcuxh3Zucv7+3bF2/b8CExpVnWmdjkhKhORSNPTKvVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761059301; c=relaxed/simple;
-	bh=IGjOUBUClndtvZGsgegWC43Da37BaC6DfKMErVwR34Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jxP4z8oOn3hGLQ5AZZOGneSnkxBfji/jKXDjP2yNhC6zVg3Cjnh7yipyUWcOYJxg1iXFYQN3FtQnKsJElASd8PEj4G9bSau0nIq2gUvLkL/F5Apg+ACz18L9R9s6X86RmAx/uZqbm5Rg4qrufbHJzg/Id44Wh8b6rPrDYv1Q944=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sWV0ZhOh; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7A52A4E41246;
-	Tue, 21 Oct 2025 15:08:15 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 423FE60680;
-	Tue, 21 Oct 2025 15:08:15 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58768102F2401;
-	Tue, 21 Oct 2025 17:07:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761059293; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=7SnhTdf3/ZnBb/Auo/xtgJWFGAq+ocBosOYhh6RlpME=;
-	b=sWV0ZhOhrBGkxxTsVko6gsm7SFgXKpZfniXDYQ+53CvCE3bHfz1UVt9V/FoRu3uemhbpzp
-	jB+jLCo/zHeHi7GnJ2VUZzLrIe6TBV78WrURJ1VwRc0uUPQ64as+OQbLKQoVQSfSgmZ2Wv
-	NEvux7I9qCCmbdTowGnMeiVgVc/sLqcv1vMUXRiFIzQIw7y2vnemItpnsTUE7oh1k7QWMJ
-	xGi3s/FR3fDgX4bdRPhMmRXkspskq4ULH6LiADl/zV1zQMb/1yYfNREBBPfcZU/bhQogZF
-	Ek3DxRNL14OEAxh47i2QrP+RiFYWdUtv+urGqqcVAIbuOn++ipgHmo+WQhzA9Q==
-Message-ID: <0e71d2b2-a08d-4ec9-b0d3-9094d3802065@bootlin.com>
-Date: Tue, 21 Oct 2025 17:07:52 +0200
+	s=arc-20240116; t=1761059310; c=relaxed/simple;
+	bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOCiOg8NtETW+rFXKf91wIol/zdJ7nv5IapAaHbgrjn3DtSbk2OrnhEjRh0Skd1zqsrjRm5rgO4U5F+V8oARRb/Wt0tfyvxlwS3hnhHufJ0fu00KK1GF2ZBqQHeJiCJ+4yJCfbJA2UU1ASnTngE9d2ymvSSbb1IurA62icwjtdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDmQNpyl; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-27eca7297a7so7438765ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761059308; x=1761664108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
+        b=GDmQNpylqDx1ao5zQVD847VGaErTwC9mikxRVUvxuQkmWPTmtaWf00RSlc40/i+kQo
+         XKfjdgsq9RUAcjdjyrXvf+g7lvZwAmLrzH21U2JZsI8Xe4hG5BUajmvHwJ5B37tiri+e
+         VRviq/6rBOC0/4MIRCOD64U7lRo6Bndb/9TMH3MYtcRcp0Zr+B3gRkD6VV/pVOPwPrgr
+         X3Prcmrwnx3CHQz48nQJ/PlpbEwBdRWpL7hOFaNLxEyaXi0qJtkMkg86nlHDtJM7uIKG
+         iXtTUI3s3UWtP6mL5uqDpvIz1wlIaIfYgF5MYOon2T5l3wxvrI9N3G+9DPze33/14P75
+         MTEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761059308; x=1761664108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
+        b=q0CsnCR5vJNDZagQIJUWllFqG6aoGP16SJzgshlIm4QpL1gM7D7ACgFOHruGhL8IX8
+         IT/mN5q9qZaimGgmwh5uvBvuN9iH2jmrSnU3CSmqMcF4yqiNtAXHDeRfxAjLuPB4dPtU
+         hR94EYlvPANetGFOvqi1CLvZhrlb1lct4UB+On4cRnSlmo2KyXH1kXeUyOs1pIlDLlGq
+         lP01GlDnOvUuHXK4haRj8TF0bzSusBz/EYWY4eM1xF1G6/vAUrwI+74SzA5MzkRcUVbI
+         H/qJTuubpzi7PfgT0/GjdmmrMEeYBA5Lmy/XAUHZxmk+gsv/1EsPQx+IrrjcjgdPcfnp
+         AWgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/C5ik5enDMwuAc/iXvNnZWTQImyfM27SkcX09UmFtL89xrO2BoXCXq8UWqDV115aXj5TLKi8UDSvFd5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJliSTegjASJgb3LrfNFm5Gcd1j6nVTZYGgjAUqMTWB6SMTfGU
+	/nkXKcYeXQgG1BAJ1YSbAOHLv4algNgbNkhryyyked3enAhDYAzb/4WlabfT7cR0+JRoQOhi7B9
+	x5XHNRDEc0TBtA0CG3JRbOThNOVwJNHg=
+X-Gm-Gg: ASbGnctm2r1peWVkN9RSY6UD0bWwtRobR1FskftoW+PU7i7B+LwYp0aN5IJV7BbmIVp
+	PRrIwuY9sqxoB0yLdV8YADHr+JauVTFmTSWPD5LGBelK407N8mwdI2L7ZFUJASdkclJnKX26nCh
+	fsiS6L4gLxKNZcixKxfLlV74VDH1qWf9MHEpOnNzCLL+7WkqFqn/1Xwec3Y73ZdUO3VUA8FN5Q7
+	byX0pJUVO+T/FXSdAt5iZoRJ6E2qh90QT+CzaSomKld9jJ6pi3XTQobu6+KPcVNf/8RWUVKhcxG
+	tulEnuQvyd9bRFFGZ1ImGaP9olK+xlKWlGTCFEhM4+ijWZV3aSOSSxYDU8uUdIwj/IUQyzERB/r
+	CWa4=
+X-Google-Smtp-Source: AGHT+IFreHdov+uVhNjI+vb4zuqGdoRtHfpLdbPpRiyIyY5EB+5Z0lQXG7LeNg1R8D52vs+phURtS3CNMV6Qy7+3LW0=
+X-Received: by 2002:a17:903:22cc:b0:26b:1871:1f70 with SMTP id
+ d9443c01a7336-292d3f7212amr26756455ad.5.1761059307987; Tue, 21 Oct 2025
+ 08:08:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v14 00/16] net: phy: Introduce PHY ports
- representation
-To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Russell King <linux@armlinux.org.uk>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-References: <20251013143146.364919-1-maxime.chevallier@bootlin.com>
- <20251020185249.32d93799@kernel.org>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251020185249.32d93799@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
+In-Reply-To: <20251020222722.240473-2-dakr@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 21 Oct 2025 17:08:14 +0200
+X-Gm-Features: AS18NWCCy2kjmOIA6ceL9V6OXhZcSR6v5l_FF-ORfDMjRgq5VddXOb7GOLYgjmY
+Message-ID: <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, mmaurer@google.com, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jakub, Andrew, Rusell, Heiner,
+On Tue, Oct 21, 2025 at 12:27=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
+> avoid using raw bindings types, this seems to be the better alternative
+> compared to just using i64.
 
-On 21/10/2025 03:52, Jakub Kicinski wrote:
-> On Mon, 13 Oct 2025 16:31:26 +0200 Maxime Chevallier wrote:
->> Hi everyone,
->>
->> Here is a V14 for the phy_port work, aiming at representing the
->> connectors and outputs of PHY devices.
-> 
-> I can't help but read the lack of replies from PHY maintainers
-> here as a tacit rejection. Not entirely sure what to do here.
-> Should we discuss this at the netdev call tomorrow (8:30am PT)?
-> Would any PHY maintainer be willing to share their opinion?
+Would a newtype be too painful?
 
-I may have gotten my timezones wrong, but this call is in ~20 minutes,
-right ?
+Note: I didn't actually check if it is a sensible idea, but when I see
+an alias I tend to ask myself that so it would be nice to know the
+pros/cons (we could ideally mention why in the commit message in cases
+like this).
 
-I didn't see any annouce for this netdev call, it may be of too short
-notice for the PHY folks ? I'd be happy to discuss that in any manner :)
+Thanks!
 
-Maxime
+Cheers,
+Miguel
 
