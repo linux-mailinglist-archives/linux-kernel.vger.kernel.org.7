@@ -1,321 +1,169 @@
-Return-Path: <linux-kernel+bounces-862062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56759BF4581
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:04:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EEBBF4593
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF03918C5E37
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2283F46831A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40222638BC;
-	Tue, 21 Oct 2025 02:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950702773D8;
+	Tue, 21 Oct 2025 02:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="al8mMGzi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="EWJG35kv"
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6862192F4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32FA24A058;
+	Tue, 21 Oct 2025 02:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761012245; cv=none; b=SXC5l0U2M5pgST02SXEChJ94vUlqFq0FshI3udiMtrqx/TM10tV3cRpIUeEAXFBggGyLVZ02hrA3CDihJns/6R0rCP05nmXvqtEdb4nKUOPwerggeMz+uLkO1zGDdAIsftGnOtU6Ga5qPsghkk99XhT5sTv1XkvLcqtfvg9kgXQ=
+	t=1761012355; cv=none; b=Rzl2lCEp0kuvj0nPEyizPEIUEUbFtb0IYVtnsMCxvo2l6nDcAPsZPJB86u3+KA7x/pbHLiwv4Eg6anxRq+4a5tVwsCwYmg38mWEd6ah40dIp4SerLOAJ2hFwrJw4P4dqGwVlpXF8f5QNT/VC9bYKwFHZLlhHhuFzHh/QzXosxYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761012245; c=relaxed/simple;
-	bh=eNcccu+vEler5KVtBYch1RB+GYjLC2GuJ1NINrrxge4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RwgTsH0dbRq24Rr1cnLfGL0QxJYLWPzPmZ4yME3PKrlXDS3BKI6hYVhUSVpGDrZpFoMt9W5mN9HKCXPo/pG5RaEWCqm7Qq7cehbgKf6cuabv8DlBf55Vy8xj4oXTliD2dnHaCpTWpZLsk/5PRbPUsuOJIhCHqilxB42fDUSs49c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=al8mMGzi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761012243;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lRwLFO4AfNVfpht0Ivo8PlAeY+jBh+blR/+rewkE7wA=;
-	b=al8mMGziUSi9x2ihf3/eN5twQmHyepzzko66X6SLW/rtrxjbXG7FrIQ4GIT1pLAjd92G47
-	/9qSVAjH5yO5s0U2ZmYYRocxshXCpHZknW5nqqgaePPjFZpeKq9j2Vu+ive/0fNAtF/XTy
-	YaIlhmjEKcOcoIpOnTLz5D3Cdy6iV10=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-269-cG0oCSc0MDyQBP7OIrSSAQ-1; Mon,
- 20 Oct 2025 22:03:56 -0400
-X-MC-Unique: cG0oCSc0MDyQBP7OIrSSAQ-1
-X-Mimecast-MFC-AGG-ID: cG0oCSc0MDyQBP7OIrSSAQ_1761012234
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5D01195608A;
-	Tue, 21 Oct 2025 02:03:54 +0000 (UTC)
-Received: from cmirabil.redhat.com (unknown [10.22.64.45])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EA9E9180035A;
-	Tue, 21 Oct 2025 02:03:52 +0000 (UTC)
-From: Charles Mirabile <cmirabil@redhat.com>
-To: samuel.holland@sifive.com
-Cc: bhelgaas@google.com,
-	jingoohan1@gmail.com,
-	kwilczynski@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	Charles Mirabile <cmirabil@redhat.com>
-Subject: Re: [PATCH] PCI: dwc: Use multiple ATU regions for large bridge windows
-Date: Mon, 20 Oct 2025 22:03:40 -0400
-Message-ID: <20251021020345.151202-1-cmirabil@redhat.com>
-In-Reply-To: <20251015231707.3862179-1-samuel.holland@sifive.com>
-References: <20251015231707.3862179-1-samuel.holland@sifive.com>
+	s=arc-20240116; t=1761012355; c=relaxed/simple;
+	bh=f771sbmADVzs9LQeaRMK13QS6eL9wIksvSbwZ0HJ7h4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eZxOM/9aZVli3xDgiCCB+5SGy9LkJc3MukvksRQzTxRWgPd0j8Sv2Anb1TO73qLmZjxs42+9+yc6Z5ngoriO+zNslXCj46cx4OgNZYH8c2HG6F+ji9T8EH/5li3mTKWpZquLBGmdzfm8FBRzyNyrom7bfp0G5COJa/gw+VTM2u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=EWJG35kv; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59KNo2OS3070029;
+	Tue, 21 Oct 2025 02:05:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	PPS06212021; bh=BL5f/Hmeb5kOwkwf+4l6waB6+ZBgZpieNxgNqnBtByg=; b=
+	EWJG35kvwc5G/L+X3nWjtLgccmAGIemwrZ1OIvji2mV7NugfjUIqXTkQfkU6wGXo
+	etgB2XXcywaea5SEkBn3Yy+H6ZHR3crGEeDa8Hi92PiyZLpS+Y65XiSqIHHBQrnv
+	/h8P/whj7VFiWjcHg+hlkzDI8nbSH/Up1R6QaxnhX//A6kGk7edP5jYRgf8oAYyo
+	2QPps1wL3K0QVbGZIVKFdZ78QNukPfjbgZhftNRldWeFBwhE5T3Sl7t7TIBopROr
+	9WbUGoJSUsiC/6X7lfS0ERBgJ/iSSQ8P7xbnakFykRiz64eh4nCzjJD6CReX3MPD
+	1LsLAwsVqlhJF4DUxf+y6A==
+Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49v1v5akgt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 21 Oct 2025 02:05:37 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Mon, 20 Oct 2025 19:05:36 -0700
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Mon, 20 Oct 2025 19:05:34 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <dan.carpenter@linaro.org>
+CC: <lizhi.xu@windriver.com>, <davem@davemloft.net>, <edumazet@google.com>,
+        <horms@kernel.org>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <pabeni@redhat.com>,
+        <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH V2] netrom: Prevent race conditions between multiple add route
+Date: Tue, 21 Oct 2025 10:05:33 +0800
+Message-ID: <20251021020533.1234755-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aPZ4fLKBiCCIGr9e@stanley.mountain>
+References: <aPZ4fLKBiCCIGr9e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDAxNSBTYWx0ZWRfX878suZql/q9N
+ QGNajCu1lXaG+56F8nAQDz4dIBS56QujxQBcj/Nb2Sn6NXhlZUEZZFocgV5N0qXN2MuFrPbf0ef
+ MiyaGYhsowChs4QLttXn1/zB0tp9Xi7LHInsO4yEusOz5Iml9ItRFCNxPK3Lg30lAnV7+T8iOCT
+ IcqyEC6aC/DGb7aTxHIyhZCWkSDTAmam8kqTQipVruw2ddP9FZPxU7SkjzoJpcNUYk5M2sz89hx
+ gXfWHBGgEFnzE9aGNvv0CBnOwzNWkBiltSEy718SmUBx5QfAtbzgyD8iAWsJq+BI/6FIZx7gyqj
+ qEV7ElgiiAtkTL6dbEI0/1c1//bke7WyyLN5FuCrX8BzmzfCCYvYUpZifmfiztTARDuM6arlc+V
+ FWA6AvRJ89bq6fkkl5RdZ8UfqzCeEQ==
+X-Proofpoint-GUID: FAgoz_CITOh0pcZ0grgHcl-G_46ABxAW
+X-Proofpoint-ORIG-GUID: FAgoz_CITOh0pcZ0grgHcl-G_46ABxAW
+X-Authority-Analysis: v=2.4 cv=ANdmIO46 c=1 sm=1 tr=0 ts=68f6ea72 cx=c_pps
+ a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=AKGgawUbhjWeLciGq18A:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510210015
 
-Hi Samuel—
-
-On Wed, Oct 15, 2025 at 04:15:01PM -0700, Samuel Holland wrote:
-> Some SoCs may allocate more address space for a bridge window than can
-> be covered by a single ATU region. Allow using a larger bridge window
-> by allocating multiple adjacent ATU regions.
-
-I had a similar patch floating around that I wanted to upstream, but I
-figured I should take a look at lore before sending it in case someone
-else had the same idea. Looks like great mind think alike :^). I have
-attached my version the patch to this email and will leave some feedback
-inline. If you want to incorporate some of my changes, feel free to add
-
-Acked-by: Charles Mirabile <cmirabil@redhat.com>
-
-or even a Co-developed-by and my DCO.
-
+On Mon, 20 Oct 2025 20:59:24 +0300, Dan Carpenter wrote:
+> On Mon, Oct 20, 2025 at 09:49:12PM +0800, Lizhi Xu wrote:
+> > On Mon, 20 Oct 2025 21:34:56 +0800, Lizhi Xu wrote:
+> > > > Task0					Task1						Task2
+> > > > =====					=====						=====
+> > > > [97] nr_add_node()
+> > > > [113] nr_neigh_get_dev()		[97] nr_add_node()
+> > > > 					[214] nr_node_lock()
+> > > > 					[245] nr_node->routes[2].neighbour->count--
+> > > > 					[246] nr_neigh_put(nr_node->routes[2].neighbour);
+> > > > 					[248] nr_remove_neigh(nr_node->routes[2].neighbour)
+> > > > 					[283] nr_node_unlock()
+> > > > [214] nr_node_lock()
+> > > > [253] nr_node->routes[2].neighbour = nr_neigh
+> > > > [254] nr_neigh_hold(nr_neigh);							[97] nr_add_node()
+> > > > 											[XXX] nr_neigh_put()
+> > > >                                                                                         ^^^^^^^^^^^^^^^^^^^^
+> > > >
+> > > > These charts are supposed to be chronological so [XXX] is wrong because the
+> > > > use after free happens on line [248].  Do we really need three threads to
+> > > > make this race work?
+> > > The UAF problem occurs in Task2. Task1 sets the refcount of nr_neigh to 1,
+> > > then Task0 adds it to routes[2]. Task2 releases routes[2].neighbour after
+> > > executing [XXX]nr_neigh_put().
+> > Execution Order:
+> > 1 -> Task0
+> > [113] nr_neigh_get_dev() // After execution, the refcount value is 3
+> >
+> > 2 -> Task1
+> > [246] nr_neigh_put(nr_node->routes[2].neighbour);   // After execution, the refcount value is 2
+> > [248] nr_remove_neigh(nr_node->routes[2].neighbour) // After execution, the refcount value is 1
+> >
+> > 3 -> Task0
+> > [253] nr_node->routes[2].neighbour = nr_neigh       // nr_neigh's refcount value is 1 and add it to routes[2]
+> >
+> > 4 -> Task2
+> > [XXX] nr_neigh_put(nr_node->routes[2].neighbour)    // After execution, neighhour is freed
+> > if (nr_node->routes[2].neighbour->count == 0 && !nr_node->routes[2].neighbour->locked)  // Uaf occurs this line when accessing neighbour->count
 > 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
-> An example of where this is needed is the ESWIN EIC7700 SoC[1]. The SoC
-> decodes 128 GiB of address space to the PCIe controller. Without this
-> change, only 8 GiB is usable; after this change 48 GiB (6 ATU regions)
-> is usable, which allows using PCIe cards with >8 GiB BARs:
+> Let's step back a bit and look at the bigger picture design.  (Which is
+> completely undocumented so we're just guessing).
 > 
-> eic7700-pcie 54000000.pcie: host bridge /soc/pcie@54000000 ranges:
-> eic7700-pcie 54000000.pcie:       IO 0x0040800000..0x0040ffffff -> 0x0040800000
-> eic7700-pcie 54000000.pcie:      MEM 0x0041000000..0x004fffffff -> 0x0041000000
-> eic7700-pcie 54000000.pcie:      MEM 0x8000000000..0x89ffffffff -> 0x8000000000
-> eic7700-pcie 54000000.pcie: iATU: unroll T, 8 ob, 4 ib, align 4K, limit 8G
-> eic7700-pcie 54000000.pcie: PCIe Gen.2 x1 link up
-> eic7700-pcie 54000000.pcie: PCI host bridge to bus 0000:00
+> When we put nr_neigh into nr_node->routes[] we bump the nr_neigh_hold()
+> reference count and nr_neigh->count++, then when we remove it from
+> ->routes[] we drop the reference and do nr_neigh->count--.
 > 
-> [1]: https://lore.kernel.org/linux-pci/20250923120946.1218-1-zhangsenchuan@eswincomputing.com/
+> If it's the last reference (and we are not holding ->locked) then we
+> remove it from the &nr_neigh_list and drop the reference count again and
+> free it.  So we drop the reference count twice.  This is a complicated
+> design with three variables: nr_neigh_hold(), nr_neigh->count and
+> ->locked.  Why can it not just be one counter nr_neigh_hold().  So
+> instead of setting locked = true we would just take an extra reference?
+> The nr_neigh->count++ would be replaced with nr_neigh_hold() as well.
+locked controls whether the neighbor quality can be automatically updated;
+count controls the number of different routes a neighbor is linked to;
+refcount is simply used to manage the neighbor lifecycle.
 > 
->  .../pci/controller/dwc/pcie-designware-host.c | 34 ++++++++++++-------
->  1 file changed, 22 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 20c9333bcb1c..148076331d7b 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -873,30 +873,40 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
->  
->  	i = 0;
->  	resource_list_for_each_entry(entry, &pp->bridge->windows) {
-> +		u64 total_size;
+> Because that's fundamentally the problem, right?  We call
+> nr_neigh_get_dev() so we think we're holding a reference and we're
+> safe, but we don't realize that calling neighbour->count-- can
+> result in dropping two references.
+After nr_neigh_get_dev() retrieves a neighbor, there shouldn't be an
+unfinished nr_add_node() call operating on the neighbor in the route.
+Therefore, we need to use a lock before the nr_neigh_get_dev() operation
+begins to ensure that the neighbor is added atomically to the routing table.
 
-`resource_size_t` might be a better fit for this
-
-> +
->  		if (resource_type(entry->res) != IORESOURCE_MEM)
->  			continue;
->  
-> -		if (pci->num_ob_windows <= ++i)
-> -			break;
-> -
-> -		atu.index = i;
->  		atu.type = PCIE_ATU_TYPE_MEM;
->  		atu.parent_bus_addr = entry->res->start - pci->parent_bus_offset;
->  		atu.pci_addr = entry->res->start - entry->offset;
->  
->  		/* Adjust iATU size if MSG TLP region was allocated before */
->  		if (pp->msg_res && pp->msg_res->parent == entry->res)
-> -			atu.size = resource_size(entry->res) -
-> +			total_size = resource_size(entry->res) -
->  					resource_size(pp->msg_res);
->  		else
-> -			atu.size = resource_size(entry->res);
-> +			total_size = resource_size(entry->res);
->  
-> -		ret = dw_pcie_prog_outbound_atu(pci, &atu);
-> -		if (ret) {
-> -			dev_err(pci->dev, "Failed to set MEM range %pr\n",
-> -				entry->res);
-> -			return ret;
-> -		}
-> +		do {
-> +			if (pci->num_ob_windows <= ++i)
-> +				break;
-
-I think it might be bad if you were to only able to partially map a given
-resource. In my version, I keep the original check outside the loop with
-merely `break`, but return an error from probe in this check.
-
-> +
-> +			atu.index = i;
-> +			atu.size = min(total_size, pci->region_limit + 1);
-
-I had to look up the difference because I couldn't remember—I used `MIN`
-here instead of `min`. I think `MIN` is approriate, but I am not sure it
-really matters so you could keep `min`. 
-
-> +
-> +			ret = dw_pcie_prog_outbound_atu(pci, &atu);
-> +			if (ret) {
-> +				dev_err(pci->dev, "Failed to set MEM range %pr\n",
-> +					entry->res);
-> +				return ret;
-> +			}
-> +
-> +			atu.parent_bus_addr += atu.size;
-> +			atu.pci_addr += atu.size;
-> +			total_size -= atu.size;
-> +		} while (total_size);
->  	}
->  
->  	if (pp->io_size) {
-> -- 
-> 2.47.2
-> 
-> base-commit: 5a6f65d1502551f84c158789e5d89299c78907c7
-> branch: up/pci-bridge-window
-
-I also included an attempt at the inbound window version after seeing
-Nilkas's feedback.
-
-Best—Charlie
-
-Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
----
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 20c9333bcb1c..f30961482799 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -873,29 +873,49 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
- 
- 	i = 0;
- 	resource_list_for_each_entry(entry, &pp->bridge->windows) {
-+		resource_size_t res_size;
-+
- 		if (resource_type(entry->res) != IORESOURCE_MEM)
- 			continue;
- 
--		if (pci->num_ob_windows <= ++i)
-+		if (pci->num_ob_windows <= i + 1)
- 			break;
- 
--		atu.index = i;
- 		atu.type = PCIE_ATU_TYPE_MEM;
- 		atu.parent_bus_addr = entry->res->start - pci->parent_bus_offset;
- 		atu.pci_addr = entry->res->start - entry->offset;
- 
- 		/* Adjust iATU size if MSG TLP region was allocated before */
- 		if (pp->msg_res && pp->msg_res->parent == entry->res)
--			atu.size = resource_size(entry->res) -
-+			res_size = resource_size(entry->res) -
- 					resource_size(pp->msg_res);
- 		else
--			atu.size = resource_size(entry->res);
-+			res_size = resource_size(entry->res);
-+
-+		while (res_size > 0) {
-+			/*
-+			 * Make sure to fail probe if we run out of windows
-+			 * in the middle and we would end up only partially
-+			 * mapping a single resource
-+			 */
-+			if (pci->num_ob_windows <= ++i) {
-+				dev_err(pci->dev, "Exhausted outbound windows mapping %pr\n",
-+					entry->res);
-+				return -ENOMEM;
-+			}
-+			atu.index = i;
-+			atu.size = MIN(pci->region_limit + 1, res_size);
- 
--		ret = dw_pcie_prog_outbound_atu(pci, &atu);
--		if (ret) {
--			dev_err(pci->dev, "Failed to set MEM range %pr\n",
--				entry->res);
--			return ret;
-+			ret = dw_pcie_prog_outbound_atu(pci, &atu);
-+			if (ret) {
-+				dev_err(pci->dev, "Failed to set MEM range %pr\n",
-+					entry->res);
-+				return ret;
-+			}
-+
-+			atu.parent_bus_addr += atu.size;
-+			atu.pci_addr += atu.size;
-+			res_size -= atu.size;
- 		}
- 	}
- 
-@@ -926,20 +946,38 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
- 
- 	i = 0;
- 	resource_list_for_each_entry(entry, &pp->bridge->dma_ranges) {
-+		resource_size_t res_start, res_size, window_size;
-+
- 		if (resource_type(entry->res) != IORESOURCE_MEM)
- 			continue;
- 
- 		if (pci->num_ib_windows <= i)
- 			break;
- 
--		ret = dw_pcie_prog_inbound_atu(pci, i++, PCIE_ATU_TYPE_MEM,
--					       entry->res->start,
--					       entry->res->start - entry->offset,
--					       resource_size(entry->res));
--		if (ret) {
--			dev_err(pci->dev, "Failed to set DMA range %pr\n",
--				entry->res);
--			return ret;
-+		res_size = resource_size(entry->res);
-+		res_start = entry->res->start;
-+		while (res_size >= 0) {
-+			/*
-+			 * Make sure to fail probe if we run out of windows
-+			 * in the middle and we would end up only partially
-+			 * mapping a single resource
-+			 */
-+			if (pci->num_ib_windows <= i) {
-+				dev_err(pci->dev, "Exhausted inbound windows mapping %pr\n",
-+					entry->res);
-+				return -ENOMEM;
-+			}
-+			window_size = MIN(pci->region_limit + 1, res_size);
-+			ret = dw_pcie_prog_inbound_atu(pci, i++, PCIE_ATU_TYPE_MEM, res_start,
-+						       res_start - entry->offset, window_size);
-+			if (ret) {
-+				dev_err(pci->dev, "Failed to set DMA range %pr\n",
-+					entry->res);
-+				return ret;
-+			}
-+
-+			res_start += window_size;
-+			res_size -= window_size;
- 		}
- 	}
- 
--- 
-2.43.0
-
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-
+BR,
+Lizhi
 
