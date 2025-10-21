@@ -1,219 +1,255 @@
-Return-Path: <linux-kernel+bounces-862643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675D7BF5CF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:38:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAE6BF5D1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BA304F8BA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845D1188978B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0932D32D432;
-	Tue, 21 Oct 2025 10:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E6D32D447;
+	Tue, 21 Oct 2025 10:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ewrOJUn6"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fVVVHy8s"
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3760132D0FD
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A38C2EFD8F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761042983; cv=none; b=iPVUpGg3HN1E0VUvDwGeRgjMJ13LT+meOmVLxexR74HlJ8kH7Jq6Na97Zgh4+lswdAc8W43NWWuNwrfGgFAsnwfigUAJd7+ex/OQr7VnbF8FsGOpMhxRsM3qe9G5PewU3am719O3F466HGDLnagk14lZ/uYs7/0kQjyYuLf5r6I=
+	t=1761043038; cv=none; b=pCaEkqH5zjp+UIP7GQYBL+NTwsdu9XV3yTLgS3ZKXF+98wEgyLMqkhVirc6s1BrtHcqYihqAIiCwX1aVAvhAxnQokYBnns0lpD/Mxz1OX+BdhqPWTbNHadpaLyPkbijKuq+G+ox7wL0QWLVDC9qLyP7Zl6IB0eYkLpiHjIETCL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761042983; c=relaxed/simple;
-	bh=mu/cr0ccCQhZG4HUcvVpPbQl30IkLO8o/gI0SvZrpZ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qr/R/TeSWd+v+lDXSXFcurrzPtE3AaqsetMCGvWWwuR1AcK6Z5Dh/u0iwEmxZF8woNFYOGFLGzf8JiJ/E2bKHx72ubnJsGRVIE40/0i7StEPE1C/X+xFC/HHCMqa6Q4EYZJvKTDtDVZZd1aGzsmg7OCwmkLeKO0Xjblwhg3qpeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ewrOJUn6; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-591c98ebe90so6025102e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:36:20 -0700 (PDT)
+	s=arc-20240116; t=1761043038; c=relaxed/simple;
+	bh=q2nB0DwM2YccZrwzAwnGe8JbGMPoOZkWXyOBvo6HqOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ns7dF8I4NbjXj8VZSLjS8cJMOrraRw6jawXHD/rgLJwTtIC5Iz2ufyb0Z8vUMX2+d5ItYIiGL0ngPZXxLChBKXcd6l/qo7IkoZdf/PnLWY47k1i/uh2GK8YrouRQxfmqr43UvVjE7J6zJ+Y696QiNuCpNImUitIm15mndO4S+X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fVVVHy8s; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63e3568f90dso2315333d50.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:37:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761042979; x=1761647779; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/TafpqYvz7n63SFC71twwiYhEsv21pktmNXXlISP5Ho=;
-        b=ewrOJUn6MwR5+0lFAAMHA8o9z9Liz6JolyrjOxVFtAf9V8SKaldjSf16KsNjDHYM0Z
-         rIkxT9nW5lFYjylWHgyObBOQUGonvviQa+Ft2Hmkjd7/nrY+p3lpZF9SI0x4BYySS+FY
-         pTY+wnD5muAqx+MTYMKqtKMg+cWenyiMw61j0=
+        d=linaro.org; s=google; t=1761043034; x=1761647834; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ph/ecut6A6hic5K1NGZ8Pu7nJ7zUO/n0Ty1uOi3Gzxk=;
+        b=fVVVHy8sLoQob27t0rEA0gaFAsTwrvZWMtiHra06oGlAgVvBRbCvi9Q0R5PsssM2VP
+         3opZzsj2yjl4mZN0m0fQOUCFaPGUlU0hdJQVEOAICP/F9edy4PeFxMDNRgqqE+vWlBwq
+         gRo4WOltCc2x1w7tzNmnsiUe7DLW4Wk385fOAjvx4xAjIy6N//5jx7kmheOrtwD7tWpE
+         2Ptn2+1PdgjD7SRm8u6GwWspp5Qow93y+PUJ1zdNcZ+cXFL0Hl9twy5pncYwDDJCM4IE
+         DPQhhySXv3aD4ZgJwdVFZNuZDXb8ihiBpVJW+A5z81zJ6Ce1m/3ygAE/YqYBEV2Yts0D
+         y4xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761042979; x=1761647779;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761043034; x=1761647834;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/TafpqYvz7n63SFC71twwiYhEsv21pktmNXXlISP5Ho=;
-        b=JARgzxrES/eWQfaq8C67aJdAmcP5gYlm3pQFncFig3QtuuP0Sn/sgBs7PR7dtdLqUr
-         hY/FtZwFf8ql/r/dtYoA9YUWsbGccDp60VMrjy1/Zkh5lRFXcaBoSj2iLK9pw7FYOjnG
-         Zw8tATj0c7eLXUfpECfynPfnSRZfUTuVXo4fx0xN2uVSJbKbpvRz7ZLbW1LUxXLxB9EF
-         YwwayNjZw8loXzp/uyQj79lmwQ4yr3w7PJlSVeGQEZal6fShxxKt03YmQibKT7T5Pm9p
-         8nYW2n4Ahzrrf2xKhL1EsWbxZKkORvhG/rJrIS9rAwYdI3qiTa6vKMRyfhQbslq/rDv3
-         Wyow==
-X-Forwarded-Encrypted: i=1; AJvYcCVDMdZlkIhLjzfi7tuvlAXGb0dECqWF9lbuIawS+FSia0MLy9p4iKNVrZSogcz4/+9VCBrrEY5p2EwXUgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO5bm2dKUlMz7cyG3S1c3MtnvqVIJ6E2iBNSZ70jeF+Vub29M+
-	Dn2XSzA+TNl5UrMx605sXny4w5BjhoVSdWQwFEPGtVwxhke/R+XOFvuk3IEgkIq96ra+egWkkpu
-	Z5TI=
-X-Gm-Gg: ASbGnctKN/PmpIf64hILcViKrxPrzRQpA4f8A8SRDTeedzoezHsPjl4WeIIYsRvdnSE
-	7JXigmd7Ebno1yPKiCgZr1K+p40u+1x0d9X7huSI3ILJOS0bL7eTP2oLoV0Ft4Wq/6XDXK/+erv
-	TGwDnOxY/fry9BBacshyNADSQ0MUlfoPCi1ohLFifVeCpow91/0Gc7xQHTfuQfehLgfGGi2XSIq
-	FPOQ9acUC8GRaWBOJ9X7e3vpKMRAZnCetTMfo+6WBE4wD76T2rL/FefjK3LJQfMNlFUGaU7SHvH
-	80hy7bHBw++EyG3I+MUlSodbf+q2imHAIIQgbyjZ7q/EwFhaJlh8BAJo163DS+CaY2xXFPzbe1C
-	t6sbpLQ8tPFUGxraK/gMz4QT2FEBYokSYW/kRfNAY0n/8xYjiscmlTbqpa1GE8MzufhUc3A0Tfh
-	uaZ3FdnC/ud84KUD0pQ9vUotoLqrjH6a2sn+6vnM8sk/hybNhsvGEarGorCSTlDL/Iyw==
-X-Google-Smtp-Source: AGHT+IFY8+5yWsF2/+yXKzUgKDznuSxR53YAociIJKjxctfTBbridZE9yYWajB+gH0DDhnuJ0uI+6g==
-X-Received: by 2002:a05:651c:b2c:b0:36f:77e6:d25a with SMTP id 38308e7fff4ca-37797a8fa40mr51550211fa.43.1761042978949;
-        Tue, 21 Oct 2025 03:36:18 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a950635csm27946251fa.30.2025.10.21.03.36.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 03:36:18 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 21 Oct 2025 10:36:17 +0000
-Subject: [PATCH v2] media: uvcvideo: Use heuristic to find stream entity
+        bh=Ph/ecut6A6hic5K1NGZ8Pu7nJ7zUO/n0Ty1uOi3Gzxk=;
+        b=MhV0hYbRELqwtVsXNR31EKRGrkwXrsvuVhRywSrFuIyAgSAiODTSI59z9FciYWVhOM
+         NF8R2u7b2Gci2ff2LDvMXdmG/R0Gj3lQqQAYd2cUVfP4KUc1trxVt4Yca2zPP2jT9j73
+         sRrnzYp+26v52y4EQhB+d/oJ+tn2uWq+Qcrvd5jIhIjjm7YPHvQUeXyIV/BGN6dFkGm8
+         Kog62vEScPjfdfsaK2iXTSiPgA3aHykeW7adCgRQgh339SoNBDE+hBxjITP05YzpMssd
+         pOTDZT2pfHbKjpPSyfJSsAs41uwaNWxIgMrI1G7sMTXJGeWHz3oEo1pu/ZTPFsSXndD/
+         eeNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBJMsreVooVfXNC4S0iHhvBLhPIZf4N3q+Ga8h9YFYdzt5B6Yzu/k6ZRFKAow7iDDMg9sp9gcsREzkvrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJN1I9R70OfzTA5jD0c07XghdEBpC7uDlMSBSFGrCMvFMhm0qs
+	gJqJLpfqtGUpt+6hG99xcotaJwQV03wFtCWAVFXFrJ2Mb1O2w0ORR0eo8nh/QQgd3oShsXjBO0r
+	qXo/NdkEYJlJydnBfrCQ2o3rSnApmbF3T6cGUM0jnPA==
+X-Gm-Gg: ASbGncubn+/SF2qKYDOLDjKSKljbJ03yra8bDLOlH5IenUagOdS7SQ7F4DlTay7yheI
+	VwB4jFDWPpKMHnLLA/IbJ8knDs0m2DlpMoEVsBrA/2qk1wN6yGZktuELErw+1r14nIBUO1siARG
+	uW3B3pWOSkH3Ip6kEZMvVpclmOKr8mpRWsQJ4KCqwLUOY+Mp8+YYoCCVR5S3AV0n2z6K9sH1pif
+	HWCHt10EJ/xsxYND7bGjHaQzFtNPkxC2CM3oQLj0Z09o7uw3gwVnSn4hLtAEKq3mE9W7toS
+X-Google-Smtp-Source: AGHT+IFNWe0p4ctoYWfajWc50aGmHTb0xLSf46n4ozIzG6IhVoLkeVF1uvz+zd4LTY4qziEKltpM47W2yp2BVV5LtGg=
+X-Received: by 2002:a05:690e:1c1d:b0:63f:2123:f966 with SMTP id
+ 956f58d0204a3-63f2123f9b3mr679700d50.69.1761043034054; Tue, 21 Oct 2025
+ 03:37:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-uvc-grandstream-v2-1-6a74a44f4419@chromium.org>
-X-B4-Tracking: v=1; b=H4sIACBi92gC/3WNQQ6CMBBFr0JmbU1nDNq48h6ERS0DzAJqptBoC
- He3snf5XvLf3yCxCie4VxsoZ0kS5wJ0qiCMfh7YSFcYyFKNltCsOZhB/dylRdlPxtYcekvO9Ve
- Csnop9/I+ik1beJS0RP0cBxl/9n8ro0HjLPKls+5JN3yEUeMk63SOOkC77/sXXAG6MrEAAAA=
-X-Change-ID: 20251021-uvc-grandstream-05ecf0288f62
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil+cisco@kernel.org>, 
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
- Angel4005 <ooara1337@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+References: <20251015071420.1173068-1-herve.codina@bootlin.com> <20251015071420.1173068-3-herve.codina@bootlin.com>
+In-Reply-To: <20251015071420.1173068-3-herve.codina@bootlin.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 21 Oct 2025 12:36:38 +0200
+X-Gm-Features: AS18NWAASdG0xF_SzF3JiceFgjGSp70iEL12-_KJqlp8PTGQyhYi7YmRbNtNg04
+Message-ID: <CAPDyKFqKfCTab2OcY9Sj9xS949o+y5PpJvO0CP80eV2qr-0sdg@mail.gmail.com>
+Subject: Re: [PATCH v4 02/29] driver core: Rename get_dev_from_fwnode()
+ wrapper to get_device_from_fwnode()
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Some devices, like the Grandstream GUV3100 webcam, have an invalid UVC
-descriptor where multiple entities share the same ID, this is invalid
-and makes it impossible to make a proper entity tree without heuristics.
+On Wed, 15 Oct 2025 at 09:16, Herve Codina <herve.codina@bootlin.com> wrote:
+>
+> get_dev_from_fwnode() calls get_device() and so it acquires a reference
+> on the device returned.
+>
+> In order to be more obvious that this wrapper is a get_device() variant,
+> rename it to get_device_from_fwnode().
+>
+> Suggested-by: Mark Brown <broonie@kernel.org>
+> Link: https://lore.kernel.org/lkml/CAGETcx97QjnjVR8Z5g0ndLHpK96hLd4aYSV=iEkKPNbNOccYmA@mail.gmail.com/
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Saravana Kannan <saravanak@google.com>
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-We have recently introduced a change in the way that we handle invalid
-entities that has caused a regression on broken devices.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Implement a new heuristic to handle these devices properly.
+Kind regards
+Uffe
 
-Reported-by: Angel4005 <ooara1337@gmail.com>
-Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
-Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID")
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-I have managed to get my hands into a Grandstream GUV3100 and
-implemented a new heuristics. (Thanks Yunke and Hidenori!).
 
-With this heuristics we can use this camera again (see the /dev/video0
-in the topology).
-
-I have tested this change in a 6.6 kernel. Because the notebook that I
-used for testing has some issues running master. But for the purpose of
-this change this test should work.
-
-~ # media-ctl --print-topology
-Media controller API version 6.6.99
-
-Media device information
-------------------------
-driver          uvcvideo
-model           GRANDSTREAM GUV3100: GRANDSTREA
-serial
-bus info        usb-0000:00:14.0-9
-hw revision     0x409
-driver version  6.6.99
-
-Device topology
-- entity 1: GRANDSTREAM GUV3100: GRANDSTREA (1 pad, 1 link)
-            type Node subtype V4L flags 1
-            device node name /dev/video0
-        pad0: SINK
-                <- "Extension 3":1 [ENABLED,IMMUTABLE]
-
-- entity 4: GRANDSTREAM GUV3100: GRANDSTREA (0 pad, 0 link)
-            type Node subtype V4L flags 0
-            device node name /dev/video1
-
-- entity 8: Extension 3 (2 pads, 2 links, 0 routes)
-            type V4L2 subdev subtype Unknown flags 0
-        pad0: SINK
-                <- "Processing 2":1 [ENABLED,IMMUTABLE]
-        pad1: SOURCE
-                -> "GRANDSTREAM GUV3100: GRANDSTREA":0 [ENABLED,IMMUTABLE]
-
-- entity 11: Processing 2 (2 pads, 3 links, 0 routes)
-             type V4L2 subdev subtype Unknown flags 0
-        pad0: SINK
-                <- "Camera 1":0 [ENABLED,IMMUTABLE]
-        pad1: SOURCE
-                -> "Extension 3":0 [ENABLED,IMMUTABLE]
-                -> "Extension 4":0 [ENABLED,IMMUTABLE]
-
-- entity 14: Extension 4 (2 pads, 1 link, 0 routes)
-             type V4L2 subdev subtype Unknown flags 0
-        pad0: SINK
-                <- "Processing 2":1 [ENABLED,IMMUTABLE]
-        pad1: SOURCE
-
-- entity 17: Camera 1 (1 pad, 1 link, 0 routes)
-             type V4L2 subdev subtype Sensor flags 0
-        pad0: SOURCE
-                -> "Processing 2":0 [ENABLED,IMMUTABLE]
----
-Changes in v2:
-- Fix : invalid reference to the index variable of the iterator.
-- Link to v1: https://lore.kernel.org/r/20251021-uvc-grandstream-v1-1-801e3d08b271@chromium.org
----
- drivers/media/usb/uvc/uvc_driver.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..ee4f54d6834962414979a046afc59c5036455124 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -167,13 +167,26 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
- 
- static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
- {
--	struct uvc_streaming *stream;
-+	struct uvc_streaming *stream, *last_stream;
-+	unsigned int count = 0;
- 
- 	list_for_each_entry(stream, &dev->streams, list) {
-+		count += 1;
-+		last_stream = stream;
- 		if (stream->header.bTerminalLink == id)
- 			return stream;
- 	}
- 
-+	/*
-+	 * If the streaming entity is referenced by an invalid ID, notify the
-+	 * user and use heuristics to guess the correct entity.
-+	 */
-+	if (count == 1 && id == UVC_INVALID_ENTITY_ID) {
-+		dev_warn(&dev->intf->dev,
-+			 "UVC non compliance: Invalid USB header. The streaming entity has an invalid ID, guessing the correct one.");
-+		return last_stream;
-+	}
-+
- 	return NULL;
- }
- 
-
----
-base-commit: ea299a2164262ff787c9d33f46049acccd120672
-change-id: 20251021-uvc-grandstream-05ecf0288f62
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+> ---
+>  drivers/base/core.c     | 18 +++++++++---------
+>  drivers/pmdomain/core.c |  4 ++--
+>  include/linux/device.h  |  2 +-
+>  3 files changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 3c533dab8fa5..334f5a4fbb9e 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1888,7 +1888,7 @@ static bool fwnode_init_without_drv(struct fwnode_handle *fwnode)
+>         if (!(fwnode->flags & FWNODE_FLAG_INITIALIZED))
+>                 return false;
+>
+> -       dev = get_dev_from_fwnode(fwnode);
+> +       dev = get_device_from_fwnode(fwnode);
+>         ret = !dev || dev->links.status == DL_DEV_NO_DRIVER;
+>         put_device(dev);
+>
+> @@ -1957,7 +1957,7 @@ static struct device *fwnode_get_next_parent_dev(const struct fwnode_handle *fwn
+>         struct device *dev;
+>
+>         fwnode_for_each_parent_node(fwnode, parent) {
+> -               dev = get_dev_from_fwnode(parent);
+> +               dev = get_device_from_fwnode(parent);
+>                 if (dev) {
+>                         fwnode_handle_put(parent);
+>                         return dev;
+> @@ -2013,8 +2013,8 @@ static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_handle,
+>                 goto out;
+>         }
+>
+> -       sup_dev = get_dev_from_fwnode(sup_handle);
+> -       con_dev = get_dev_from_fwnode(con_handle);
+> +       sup_dev = get_device_from_fwnode(sup_handle);
+> +       con_dev = get_device_from_fwnode(con_handle);
+>         /*
+>          * If sup_dev is bound to a driver and @con hasn't started binding to a
+>          * driver, sup_dev can't be a consumer of @con. So, no need to check
+> @@ -2153,7 +2153,7 @@ static int fw_devlink_create_devlink(struct device *con,
+>         if (sup_handle->flags & FWNODE_FLAG_NOT_DEVICE)
+>                 sup_dev = fwnode_get_next_parent_dev(sup_handle);
+>         else
+> -               sup_dev = get_dev_from_fwnode(sup_handle);
+> +               sup_dev = get_device_from_fwnode(sup_handle);
+>
+>         if (sup_dev) {
+>                 /*
+> @@ -2222,7 +2222,7 @@ static void __fw_devlink_link_to_consumers(struct device *dev)
+>                 bool own_link = true;
+>                 int ret;
+>
+> -               con_dev = get_dev_from_fwnode(link->consumer);
+> +               con_dev = get_device_from_fwnode(link->consumer);
+>                 /*
+>                  * If consumer device is not available yet, make a "proxy"
+>                  * SYNC_STATE_ONLY link from the consumer's parent device to
+> @@ -5279,7 +5279,7 @@ void device_set_node(struct device *dev, struct fwnode_handle *fwnode)
+>  EXPORT_SYMBOL_GPL(device_set_node);
+>
+>  /**
+> - * get_dev_from_fwnode - Obtain a reference count of the struct device the
+> + * get_device_from_fwnode - Obtain a reference count of the struct device the
+>   * struct fwnode_handle is associated with.
+>   * @fwnode: The pointer to the struct fwnode_handle to obtain the struct device
+>   * reference count of.
+> @@ -5297,11 +5297,11 @@ EXPORT_SYMBOL_GPL(device_set_node);
+>   * This is possible since struct fwnode_handle has its own reference count and
+>   * hence can out-live the struct device it is associated with.
+>   */
+> -struct device *get_dev_from_fwnode(struct fwnode_handle *fwnode)
+> +struct device *get_device_from_fwnode(struct fwnode_handle *fwnode)
+>  {
+>         return get_device((fwnode)->dev);
+>  }
+> -EXPORT_SYMBOL_GPL(get_dev_from_fwnode);
+> +EXPORT_SYMBOL_GPL(get_device_from_fwnode);
+>
+>  int device_match_name(struct device *dev, const void *name)
+>  {
+> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> index 61c2277c9ce3..5a7822de5d8a 100644
+> --- a/drivers/pmdomain/core.c
+> +++ b/drivers/pmdomain/core.c
+> @@ -2678,7 +2678,7 @@ int of_genpd_add_provider_simple(struct device_node *np,
+>         genpd->dev.of_node = np;
+>
+>         fwnode = of_fwnode_handle(np);
+> -       dev = get_dev_from_fwnode(fwnode);
+> +       dev = get_device_from_fwnode(fwnode);
+>         if (!dev && !genpd_is_no_sync_state(genpd)) {
+>                 genpd->sync_state = GENPD_SYNC_STATE_SIMPLE;
+>                 device_set_node(&genpd->dev, fwnode);
+> @@ -2753,7 +2753,7 @@ int of_genpd_add_provider_onecell(struct device_node *np,
+>                 data->xlate = genpd_xlate_onecell;
+>
+>         fwnode = of_fwnode_handle(np);
+> -       dev = get_dev_from_fwnode(fwnode);
+> +       dev = get_device_from_fwnode(fwnode);
+>         if (!dev)
+>                 sync_state = true;
+>         else
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index b031ff71a5bd..d8906136c086 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1090,7 +1090,7 @@ void device_set_node(struct device *dev, struct fwnode_handle *fwnode);
+>  int device_add_of_node(struct device *dev, struct device_node *of_node);
+>  void device_remove_of_node(struct device *dev);
+>  void device_set_of_node_from_dev(struct device *dev, const struct device *dev2);
+> -struct device *get_dev_from_fwnode(struct fwnode_handle *fwnode);
+> +struct device *get_device_from_fwnode(struct fwnode_handle *fwnode);
+>
+>  static inline struct device_node *dev_of_node(struct device *dev)
+>  {
+> --
+> 2.51.0
+>
 
