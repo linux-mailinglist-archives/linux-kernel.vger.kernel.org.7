@@ -1,110 +1,175 @@
-Return-Path: <linux-kernel+bounces-862648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430B2BF5D68
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298D5BF5D6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3556F4E7CD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:39:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F52188F420
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C64303A0B;
-	Tue, 21 Oct 2025 10:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="humALt/d"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2627E2DFA21;
+	Tue, 21 Oct 2025 10:38:42 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F582EC55E
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880B729ACD7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761043084; cv=none; b=LmM2+J/k6YmjbnNROLcRMBckUgK+CNDnhsxqs022FSyprqnHNirSCYx03GoonIt7r9AnWnGo9csEyunp2uD4tj9w1lQWUedc2qyBJbohgCMi3BEjSJ5Ub5N0C9WoWtDyhdoqtabindFlbZmQPOrLf3iQv1l4KHQJsWIQjpq8Upg=
+	t=1761043121; cv=none; b=X8A6DVOmQ9YAY9ZoAvA7Bt8d8cRjMsitbPzfCnHfl6pp3CXNFpwEjdw6xzDNyFLTFzodRqCvgiaIvEMovE33A+SfI99h2jy/i53dxTCHNHFhCwU33/qMtykiBxngfcRbnEdN4fZVQQsBEr/BJlKrQ2Sm49IeAssY+vMJtEbbBUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761043084; c=relaxed/simple;
-	bh=YozL1yuui2ZFLBKlN3rUM17uNCImsDwY07x6lcrRP2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lrldz14cvMVwTdGxkCxUZq/F2f2xT5j6NhzACiBb1+4wxpO1Tfevf9pX/HgzZ8RcvRobMQ7iKNTSz51x8zSTRhyxVGpnQykgM+wiJib96zcEtMRRzZm79qxtKRdbqYvNAMDIQWAbNx1W2kcytT5W7FAaujqla1HxAoGjpTh6u4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=humALt/d; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0BE8340E0200;
-	Tue, 21 Oct 2025 10:37:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id e_PJ_AkA1ZS9; Tue, 21 Oct 2025 10:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761043073; bh=1MK3o86LJlLe9PuKDl0p9VdpDRU6sKV/uVIIEPz4Gd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=humALt/ddM9w1KWSpbABujd4dkw0zR7zZmuuD1MJRCOktqzqcvBDMlcSh54V/QNaS
-	 4u69jXQmJMrPcUCeW+hYgSK4TMa3F0pVJc7rjSPU8VKpwTogiTbQEAxmUv7Uwi/uM1
-	 C2RgEv4fHdB8dzCG1545TI5XA4RJGp1mmwASMgGAtlSB1fRRqRvdwTrsp+pTFCC81B
-	 oj2j/UQzueHKxPki6O7A5KtqZXiXBit5O/q3LJ4/otPQg86mla5IOrSuaJmFBR1/wu
-	 Tcn03FQ45wJV3MgUiPWR/ur1Md6NxTCcJFPC7uxhhxjwSmIvxntzjfzkR+0BAS9NcX
-	 H6aPeHktQE7vTKKChG4xTW932vGJU8R0QqlYD3ndXStDR3JuiBUY3efHo/cljoQ5l9
-	 6RiJ0yhYoZ7Whg1oKSYRLlZeRymPcvTPvouFtqf40cG0r7h3eWpckhlmP/54M83rZC
-	 gofuNh3diqUvhVMUT9Y6agqhZfDQZjcmHBBTeHjKryHBiZmgUjb0Kf8oivsrUBg9sz
-	 p6GMFv6FyhSb4WhRMvgoF5I+on5nT2h2L+4URSr9QuEFZOJuOejtVsOzhBoLzQt/32
-	 /G449eCNHLIEJUscfzjmTkEmiIGQ+SQ0Q+U7IKGRzev+55C2vpCB2GlqL+eFv6/MkJ
-	 FrrKo8cfigENRnvZNTK5rAvE=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 90E5240E019B;
-	Tue, 21 Oct 2025 10:37:46 +0000 (UTC)
-Date: Tue, 21 Oct 2025 12:37:39 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kael D'Alcamo <dev@kael-k.io>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/cpu: Fix kernel-doc for 'centaur_get_free_region'
-Message-ID: <20251021103739.GBaPdic1JTakX2bA9i@fat_crate.local>
-References: <20251005204200.191346-1-dev@kael-k.io>
- <20251005204200.191346-3-dev@kael-k.io>
+	s=arc-20240116; t=1761043121; c=relaxed/simple;
+	bh=m6LtaOPjDuKE9+CIi+VZ0gDP2hqWyqRiXZ2VT+5Db/k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=dIvulyxchBXdS+/Sfda8yJuZaSW8zZQpH4DAJb1Mb8KJrY7pCOTP3gKD6Y5PKLejYo1s/C00dtdhQx8mUJD4thkdrBiEYjJxMqxqzUwUA9w7nzqhLUd7ajM4UnoSEstVDrpFlZ21Xk6yK4DK95j2yJRhCnRSewCZhU5hqOmpY2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59LAcXs6002071;
+	Tue, 21 Oct 2025 19:38:33 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59LAcXEI002068
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 21 Oct 2025 19:38:33 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8950a6e1-287c-43c7-b36a-cc42ca7e267c@I-love.SAKURA.ne.jp>
+Date: Tue, 21 Oct 2025 19:38:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251005204200.191346-3-dev@kael-k.io>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [ext4?] [ocfs2?] possible deadlock in dqget
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: syzbot <syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <66fbae37.050a0220.6bad9.0050.GAE@google.com>
+ <76a62d90-d13f-4657-8a38-2a07abc83c65@I-love.SAKURA.ne.jp>
+ <7b1f58cb-d42f-4357-816b-22d65792f041@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <7b1f58cb-d42f-4357-816b-22d65792f041@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Sun, Oct 05, 2025 at 10:41:21PM +0200, Kael D'Alcamo wrote:
-> Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
-> ---
->  arch/x86/kernel/cpu/mtrr/centaur.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/mtrr/centaur.c b/arch/x86/kernel/cpu/mtrr/centaur.c
-> index 6f6c3ae92943..f4c72402c284 100644
-> --- a/arch/x86/kernel/cpu/mtrr/centaur.c
-> +++ b/arch/x86/kernel/cpu/mtrr/centaur.c
-> @@ -20,6 +20,7 @@ static u8 centaur_mcr_type;	/* 0 for winchip, 1 for winchip2 */
->   *
->   * @base: The starting (base) address of the region.
->   * @size: The size (in bytes) of the region.
-> + * @replace_reg: mtrr index to be replaced; set to invalid value if none.
+#syz test
 
-I'm afraid I can't follow here what invalid value you mean...
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index d480b94117cd..097c0dd24000 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -1521,7 +1521,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 			struct block_device *fs_dev,
+ 			unsigned long long start, int len, int blocksize)
+ {
+-	static struct lock_class_key jbd2_trans_commit_key;
+ 	journal_t *journal;
+ 	int err;
+ 	int n;
+@@ -1530,6 +1529,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 	if (!journal)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	lockdep_register_key(&journal->jbd2_trans_commit_key);
++	lockdep_register_key(&journal->j_abort_mutex_key);
++	mutex_init_with_key(&journal->j_abort_mutex, &journal->j_abort_mutex_key);
++	lockdep_register_key(&journal->j_barrier_key);
++	mutex_init_with_key(&journal->j_barrier, &journal->j_barrier_key);
++	lockdep_register_key(&journal->j_checkpoint_mutex_key);
++	mutex_init_with_key(&journal->j_checkpoint_mutex, &journal->j_checkpoint_mutex_key);
+ 	journal->j_blocksize = blocksize;
+ 	journal->j_dev = bdev;
+ 	journal->j_fs_dev = fs_dev;
+@@ -1547,9 +1553,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 	init_waitqueue_head(&journal->j_wait_updates);
+ 	init_waitqueue_head(&journal->j_wait_reserved);
+ 	init_waitqueue_head(&journal->j_fc_wait);
+-	mutex_init(&journal->j_abort_mutex);
+-	mutex_init(&journal->j_barrier);
+-	mutex_init(&journal->j_checkpoint_mutex);
+ 	spin_lock_init(&journal->j_revoke_lock);
+ 	spin_lock_init(&journal->j_list_lock);
+ 	spin_lock_init(&journal->j_history_lock);
+@@ -1560,7 +1563,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 	journal->j_max_batch_time = 15000; /* 15ms */
+ 	atomic_set(&journal->j_reserved_credits, 0);
+ 	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
+-			 &jbd2_trans_commit_key, 0);
++			 &journal->jbd2_trans_commit_key, 0);
+ 
+ 	/* The journal is marked for error until we succeed with recovery! */
+ 	journal->j_flags = JBD2_ABORT;
+@@ -1611,6 +1614,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 	kfree(journal->j_wbuf);
+ 	jbd2_journal_destroy_revoke(journal);
+ 	journal_fail_superblock(journal);
++	mutex_destroy(&journal->j_abort_mutex);
++	lockdep_unregister_key(&journal->j_abort_mutex_key);
++	mutex_destroy(&journal->j_barrier);
++	lockdep_unregister_key(&journal->j_barrier_key);
++	mutex_destroy(&journal->j_checkpoint_mutex);
++	lockdep_unregister_key(&journal->j_checkpoint_mutex_key);
++	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+ 	kfree(journal);
+ 	return ERR_PTR(err);
+ }
+@@ -2187,6 +2197,13 @@ int jbd2_journal_destroy(journal_t *journal)
+ 		jbd2_journal_destroy_revoke(journal);
+ 	kfree(journal->j_fc_wbuf);
+ 	kfree(journal->j_wbuf);
++	mutex_destroy(&journal->j_abort_mutex);
++	lockdep_unregister_key(&journal->j_abort_mutex_key);
++	mutex_destroy(&journal->j_barrier);
++	lockdep_unregister_key(&journal->j_barrier_key);
++	mutex_destroy(&journal->j_checkpoint_mutex);
++	lockdep_unregister_key(&journal->j_checkpoint_mutex_key);
++	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+ 	kfree(journal);
+ 
+ 	return err;
+diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+index 43b9297fe8a7..c6d497219e1c 100644
+--- a/include/linux/jbd2.h
++++ b/include/linux/jbd2.h
+@@ -1253,6 +1253,30 @@ struct journal_s
+ 	 */
+ 	struct lockdep_map	j_trans_commit_map;
+ #endif
++	/**
++	 * @jbd2_trans_commit_key:
++	 *
++	 * "struct lock_class_key" for @j_trans_commit_map
++	 */
++	struct lock_class_key	jbd2_trans_commit_key;
++	/**
++	 * @j_abort_mutex_key:
++	 *
++	 * "struct lock_class_key" for @j_abort_mutex
++	 */
++	struct lock_class_key	j_abort_mutex_key;
++	/**
++	 * @j_barrier_key:
++	 *
++	 * "struct lock_class_key" for @j_barrier
++	 */
++	struct lock_class_key	j_barrier_key;
++	/**
++	 * @j_checkpoint_mutex_key:
++	 *
++	 * "struct lock_class_key" for @j_checkpoint_mutex
++	 */
++	struct lock_class_key	j_checkpoint_mutex_key;
+ 
+ 	/**
+ 	 * @j_fc_cleanup_callback:
 
-In any case, pls merge those two into a single patch and make sure it has
-a commit message.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
