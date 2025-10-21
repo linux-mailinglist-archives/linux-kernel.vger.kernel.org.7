@@ -1,181 +1,152 @@
-Return-Path: <linux-kernel+bounces-862313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FBABF4FA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:33:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083E2BF4FAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C24684E81E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:33:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE60A3B67EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E126A280023;
-	Tue, 21 Oct 2025 07:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/hY+F5v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2A527FD5B;
+	Tue, 21 Oct 2025 07:34:12 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB33274B37;
-	Tue, 21 Oct 2025 07:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE97524678F;
+	Tue, 21 Oct 2025 07:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032010; cv=none; b=Syp6kzjgfxVUQuCF/3GMSSehJAPJl5WbCIICJz4xaofzUK+GUlpmGsbfN0ivxiJwaVD34E/KUYOQNGFfIC+Kkd9pzOptPoFg/WRtEiojkUCJUnAnHGFQTvtaOzzw9SPNRCpN3TBA1Oecp2Wb+1yaYp66FyVcYxBkts85RlybBi8=
+	t=1761032051; cv=none; b=n0/X8rS5zhHmVPhh8pKwK2fCG17W56ZX19Pe0EFgb/muETq2djPg1NLE7TH4X94ERqnStRobxJyRJQV/clNQ0SFJyxs4McT8V1G1Tmnvyd7uz7qvrSvXRBAhvmeZipw6S4UqoUtYtuVhvO7cG1okJ5jVi7Dt74wpdUcu/sKYboc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032010; c=relaxed/simple;
-	bh=+mStnn3HPi6kjUfpST2uFpAvmbn8K6R4UaMlJ2X3oSE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LboknfwjpigDjgZNkrkxExqYlmKNMRfc42Sb1NQ9HalrawV+N3oSE+ZbX23+r9FJO/ko+51vBlNJ5iQzdv/vQ8AZdvNVUwm6vqpa49gVwUDVrxpBN9mZO1vfWqZwqlYjSjQHCXuyK8E1gEn1y5CgapaCOpNKOPTbaKAeahZizhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/hY+F5v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AF788C4CEF1;
-	Tue, 21 Oct 2025 07:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761032009;
-	bh=+mStnn3HPi6kjUfpST2uFpAvmbn8K6R4UaMlJ2X3oSE=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=l/hY+F5vyMD+XVWeaZ224w1o6v9I+kaGNzSfbVSMHvRy71ptwu1ohChPpDYOIzR/6
-	 agN0VIxsfKJZuya7ngp09Gp2cusgJNqs/ows/J++GPZeg+/wKO4sRUFwZfVb3P4KC2
-	 cADrJbq/RQsXjSKxN/rctvQ2jes/se9RCFvA0E6UqoBeUBFQ7bbjg6FII/weh0XLvj
-	 4M0D/O5i4FFUbxlo5oqlSVtjXoPUa0Z50oNZlEKOzTKoeVZrD0DyeQBLb1lZcALJW8
-	 PnX2hmxN/rucD60hepiys+tm2EV7L4xIEfeHUXMzW7nAqeiYBWZEfp0bLsEC/e3lU8
-	 yYdZeDto/Smyg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F302CCD184;
-	Tue, 21 Oct 2025 07:33:29 +0000 (UTC)
-From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
-Date: Tue, 21 Oct 2025 02:33:23 -0500
-Subject: [PATCH] backlight: qcom-wled: fix unbalanced ovp irq enable
+	s=arc-20240116; t=1761032051; c=relaxed/simple;
+	bh=7Wa28TlMvvSz0WtFrF634en46SUmD/vMXOOAEphY/e0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bI/4caVjIHndA8oYETLioTwpb3/aEeeTc4yF0YnR6mlmbb88avKPOeTgqkG9TlPUU9OwQllN7Vtsiyiu1iu+gDhNhssI+6ozVcjx5fwv2by/Dkfk+nJaQeF+4QB5XUeyyEL7sykOf9avVJrgJp0Cf39kU0LEY4B9zFyH+b52+pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 4da09824ae5011f0a38c85956e01ac42-20251021
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:e5b7ec79-23f7-4beb-8f9d-b617b2f56104,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:41a275d11e71e244c82dd71ca429188e,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 4da09824ae5011f0a38c85956e01ac42-20251021
+X-User: xiaopei01@kylinos.cn
+Received: from [10.42.12.251] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 1792766674; Tue, 21 Oct 2025 15:33:57 +0800
+Message-ID: <37764538-c4c9-482b-9cd0-8895fb973325@kylinos.cn>
+Date: Tue, 21 Oct 2025 15:33:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-v1-1-edd304d165a5@joelselvaraj.com>
-X-B4-Tracking: v=1; b=H4sIAEI392gC/x3NQQrCMBCF4auUWTuQhDagVxEXk2TUgZi0CdZC6
- d07uPwW/3s7dG7CHW7DDo1X6VKLwl4GiG8qL0ZJanDGTdY4i0usH/xlTviUDb8lUKYSlXWdUdq
- CXChkxmkcfbDGU7p60LW5sQb/p/vjOE5zlSnweQAAAA==
-X-Change-ID: 20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-5446b106ad96
-To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Joel Selvaraj <foss@joelselvaraj.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761032009; l=3415;
- i=foss@joelselvaraj.com; s=20250919; h=from:subject:message-id;
- bh=TgO0CVPZO00Cf30CCD6Yj7u97D72h24ioMyPxeIISiA=;
- b=yX/Y7aeTGZuyQpEDbLe8dX/oAgeOGDp2FkygKfpZZ62PMf7+MuuNncznQinNhRQ3og0ZjqdTy
- 1Xe2rZJ1399BBHxdszQPKd4v164bVEHrCwKZc2Qtw8ur1ehxF1x82SE
-X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
- pk=BBMos4ph15apUFh2AkG9rLZIrBWl5LD4egPOhEv63X0=
-X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20250919 with
- auth_id=529
-X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
-Reply-To: foss@joelselvaraj.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lib/crypto: poly1305: fix uninit-value in poly1305_blocks
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Jason@zx2c4.com, ardb@kernel.org, ubizjak@gmail.com,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+References: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
+ <20251021061511.GA2385@sol>
+From: Pei Xiao <xiaopei01@kylinos.cn>
+In-Reply-To: <20251021061511.GA2385@sol>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Joel Selvaraj <foss@joelselvaraj.com>
 
-In Xiaomi Poco F1 and at least few other devices, the qcom wled driver
-triggers unbalanced ovp irq enable warning like the following during
-boot up.
+在 2025/10/21 14:15, Eric Biggers 写道:
+> On Tue, Oct 21, 2025 at 02:01:20PM +0800, Pei Xiao wrote:
+>> syzbot reports uninit-value in poly1305_blocks:
+>>
+>> BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+>>  poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+>>  poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
+>>  poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
+>>  poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
+>>  chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
+>>  chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
+>>  crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
+>>  tls_do_encryption net/tls/tls_sw.c:582 [inline]
+>>  tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
+>>  bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
+>>  tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
+>>  tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
+>>  inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
+>>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>>  __sock_sendmsg+0x145/0x3d0 net/socket.c:742
+>>  sock_write_iter+0x3a6/0x420 net/socket.c:1195
+>>  do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
+>>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+>>  do_writev+0x1b5/0x580 fs/read_write.c:1103
+>>  __do_sys_writev fs/read_write.c:1171 [inline]
+>>  __se_sys_writev fs/read_write.c:1168 [inline]
+>>  __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
+>>  x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
+>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>
+>> in poly1305_blocks, ctx->is_base2_26 is uninit-value, ctx init in：
+>> poly1305_init ->
+>>      poly1305_block_init
+>>
+>> so add memset in poly1305_block_init, then use poly1305_init_x86_64 to init
+>> by asm.
+>>
+>> Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+>> Tested-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+>> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+>> ---
+> Thanks for the bug report.  It will first need to be confirmed that this
+> is actually an issue in lib/crypto/ rather than the calling code, and if
+> so, why poly1305_kunit doesn't catch it (even when run on an KMSAN
+> enabled kernel, which I've done).  
+Is this related to the compiler type? I see it was compiled with
 
-[    1.151677] ------------[ cut here ]------------
-[    1.151680] Unbalanced enable for IRQ 176
-[    1.151693] WARNING: CPU: 0 PID: 160 at kernel/irq/manage.c:774 __enable_irq+0x50/0x80
-[    1.151710] Modules linked in:
-[    1.151717] CPU: 0 PID: 160 Comm: kworker/0:11 Not tainted 5.17.0-sdm845 #4
-[    1.151724] Hardware name: Xiaomi Pocophone F1 (DT)
-[    1.151728] Workqueue: events wled_ovp_work
-...<snip>...
-[    1.151833] Call trace:
-[    1.151836]  __enable_irq+0x50/0x80
-[    1.151841]  enable_irq+0x48/0xa0
-[    1.151846]  wled_ovp_work+0x18/0x24
-[    1.151850]  process_one_work+0x1d0/0x350
-[    1.151858]  worker_thread+0x13c/0x460
-[    1.151862]  kthread+0x110/0x114
-[    1.151868]  ret_from_fork+0x10/0x20
-[    1.151876] ---[ end trace 0000000000000000 ]---
+Debian clang version 20.1.8
 
-Fix it by storing and checking the state of ovp irq before enabling and
-disabling it.
+> And which commit it fixes.  I'm
+> guessing it's most likely a KMSAN false positive that was exposed by
+> commit b646b782e522 dropping the dependency of the
+> architecture-optimized Poly1305 code on !KMSAN.  KMSAN doesn't know
+> about memory initialization done by assembly code.  But I'll double
+> check this, if you don't get around to it first.
+>
+> The hash algorithms generally don't need a dependency on !KMSAN, as
+> their assembly code doesn't initialize memory.  It looks like the
+> Poly1305 code is an exception to that though, and I missed it.  If so,
+> the proper solution (IMO) is to use kmsan_unpoison_memory() right after
+> the assembly function that initializes the memory is called.  See
+> sha256_finup_2x_arch() for an example of that.  Note that more than one
+> architecture may need this. 
+So may  I send a patch by use 
 
-Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
----
-I am not entirely sure if this is the ideal fix. But this patch provides
-an okayish stopgap solution till we can properly fix it. I am open to 
-try a different approach if there is any suggestion.
----
- drivers/video/backlight/qcom-wled.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+kmsan_unpoison_memory(out1, SHA256_DIGEST_SIZE); ?
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index a63bb42c8f8b0333cd6d0ddc5bda93916da3fef3..36e2fe5c5fa37cfb8750254a75eff612741983c8 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -197,6 +197,7 @@ struct wled {
- 	bool disabled_by_short;
- 	bool has_short_detect;
- 	bool cabc_disabled;
-+	bool ovp_irq_disabled;
- 	int short_irq;
- 	int ovp_irq;
- 
-@@ -294,7 +295,10 @@ static void wled_ovp_work(struct work_struct *work)
- {
- 	struct wled *wled = container_of(work,
- 					 struct wled, ovp_work.work);
--	enable_irq(wled->ovp_irq);
-+	if (wled->ovp_irq_disabled) {
-+		enable_irq(wled->ovp_irq);
-+		wled->ovp_irq_disabled = false;
-+	}
- }
- 
- static int wled_module_enable(struct wled *wled, int val)
-@@ -321,8 +325,10 @@ static int wled_module_enable(struct wled *wled, int val)
- 			 */
- 			schedule_delayed_work(&wled->ovp_work, HZ / 100);
- 		} else {
--			if (!cancel_delayed_work_sync(&wled->ovp_work))
-+			if (!cancel_delayed_work_sync(&wled->ovp_work) && !wled->ovp_irq_disabled) {
- 				disable_irq(wled->ovp_irq);
-+				wled->ovp_irq_disabled = true;
-+			}
- 		}
- 	}
- 
-@@ -1613,8 +1619,10 @@ static int wled_configure_ovp_irq(struct wled *wled,
- 		return rc;
- 
- 	/* Keep OVP irq disabled until module is enabled */
--	if (!(val & WLED3_CTRL_REG_MOD_EN_MASK))
-+	if (!(val & WLED3_CTRL_REG_MOD_EN_MASK)) {
- 		disable_irq(wled->ovp_irq);
-+		wled->ovp_irq_disabled = true;
-+	}
- 
- 	return 0;
- }
-@@ -1727,6 +1735,7 @@ static void wled_remove(struct platform_device *pdev)
- 	cancel_delayed_work_sync(&wled->ovp_work);
- 	disable_irq(wled->short_irq);
- 	disable_irq(wled->ovp_irq);
-+	wled->ovp_irq_disabled = true;
- }
- 
- static const struct of_device_id wled_match_table[] = {
 
----
-base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
-change-id: 20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-5446b106ad96
+>  If it ends up being too inconvenient, we
+> can make the architecture-optimized Poly1305 code depend on !KMSAN
+> again.  But preserving KMSAN coverage is preferable.
+>
+> - Eric
 
-Best regards,
--- 
-Joel Selvaraj <foss@joelselvaraj.com>
+thanks！
 
+Pei.
 
 
