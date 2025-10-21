@@ -1,51 +1,80 @@
-Return-Path: <linux-kernel+bounces-862213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277FDBF4B1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:21:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA1FBF4B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B94B4EDC0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:21:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DF664621C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422D425C822;
-	Tue, 21 Oct 2025 06:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408AA25E44E;
+	Tue, 21 Oct 2025 06:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lshdYMU4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bkkJsVvK"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6692746A;
-	Tue, 21 Oct 2025 06:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D03D1B808
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761027668; cv=none; b=TLfK8s6PYT5DyQutUuSJW/pgcz/wDm1xE3UqVG/u/x16mF0C6tnh1JG2F0gEPFjX3opqRO17EpKus0dSdXfbLac7KhdkR6cTyfOI8YQqqFgMNqzurqajsWQdXzhP16F3R1miiVTtTa6wBlQhq5qabHO2STHTTnGuMrKfPewBv00=
+	t=1761027711; cv=none; b=MefYwBdP9C5ihCeBkxQrMg1AV4Z7X+lJcinyWr5hJN+D22p70/0YsWOgefIIeZ/WZqwzYNrrYSfUzHVs+6vH77wXCZXnriPqmOTzEWl/elgdcJ4oI/AqCCko/X1ESGjDeuz57aSU+od/GBm3e+zIW4EHd+Xqpu1XE4s+xZq9Qr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761027668; c=relaxed/simple;
-	bh=W+d5UueuksbVZ5B897EhjH3ZfVq/4dvSVyHlFR39x7E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RIy26J6cTCwFG0Yv7AIT0v+/aeq3xVjBR9NEX7bx3kr2qUotHq9a8qR8fU9ZEKAaTEu+wunWwtzZVVsLESlzSw+6llijGL1hhAS4D7UYmJpwywABPHuvPU7IuNskSkdA/Lp0LTIEt+AX4yEdyPaL9v9XeOskRpbbJE8MCOeuxP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lshdYMU4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E9AC1C4CEF1;
-	Tue, 21 Oct 2025 06:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761027668;
-	bh=W+d5UueuksbVZ5B897EhjH3ZfVq/4dvSVyHlFR39x7E=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=lshdYMU4mKyeIHgI1BjEMsUjoZZz1p0/BzAL2zxNooL0Sa6kjhN8BPlAz9hL+u+fL
-	 O4uP2wZZ9EaDulK9tibjNWrYOnQp1SfJH6LRR3khruFEw9VRDtC6bD0bG41GhDnkQT
-	 n0iZ7YicdFUpKBrxHc+bMVA+fOSBqhJS+j8OhOoD4dwbpRYZmf63/kW2lepHuR6Gg5
-	 gT0CguM+C4HXXquObKsNJNY+NKBB9FhzouIaGgYFjHSobocLyc4kusvtOSNjPIoa6v
-	 md4uRllNg110La/GzpjK/WWmHAoaDnn3ttKl4SLpdEEi8BEl21cZX8+d3EVSbUIA9a
-	 svCWhoI+GXmeA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1B0CCD1A7;
-	Tue, 21 Oct 2025 06:21:07 +0000 (UTC)
-From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
-Date: Tue, 21 Oct 2025 01:20:49 -0500
-Subject: [PATCH v2] arm64: dts: qcom: sdm845-shift-axolotl: fix touchscreen
- properties
+	s=arc-20240116; t=1761027711; c=relaxed/simple;
+	bh=dZkozO8XQpdvjUFyuS+7gnOquHi4UayCDzsqXQhtNTM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YBUR/wY+CrbHPziNDM8EjQIrDdInHCflVaMnNziUnSc/lnjjfVqddFP2vb1QPef2odg0gTtdJORJJLg2vDDVymt3bSDq+ROqRtOsbAl59ti/xk9ir0e6dc9mBHug3nCClYmZyewfHPK9cY9Jkr6PuCzzTu9uUvEaYKnWQ+fbAb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bkkJsVvK; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-290a33bfea6so6961615ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 23:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761027709; x=1761632509; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HQlJPMwH7nXKBtlf8BayDPI5AZLW0pym1gUfIZRSMBg=;
+        b=bkkJsVvKdR/rIwtEKElyk4tkPoGo6sqyo/cl1+TmwRdmg5kwkL6//oFq6uznK7+yyM
+         9LDctKkgekmjmlSds0JW0GVT4LffEQfdDUHxpb03nFrZ2gAHp+CH7EKEZhQnq94ZnFTC
+         PJbN+trSGn03bx8yXTFWdB33FcQzKEQAeER/SFiEv510kMP2FoBc2BbGrEb9E/UThcI8
+         wdA8f5+3wy4f2F6l37LZvoHISrW01RXi90MPTz1Ii62cxv4oAIb85WMnxEMO3yvFjyi4
+         BIVzGmnMeBqwalFj8O5VEC/4SzlXZvLdsuP2TW4tNTvjDNfKdpPdUHwZPiz5UvrMx4sW
+         H4jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761027709; x=1761632509;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HQlJPMwH7nXKBtlf8BayDPI5AZLW0pym1gUfIZRSMBg=;
+        b=emaZSrw7bzVQrY/uO9BrCrb97wunQVlxVEQ3TNXZpRtGb8Z6BnY8yS9YJ7LMo0mhBR
+         5W3eORYYQh9mT0X/7R/WPgsX1Q/KpQSqI3p1LEsM67nMT1jP6fu6KpEO4AgtEdq8nkY6
+         MtxVsWsfBMXdPJjfrywt5GX1Q1B3farIyVEeQePFJ5CY+RVfwWb5fM3e3yqcopfMHT4+
+         5kDxVoNi8hAcw32i0yamZaOQgYn7GPsLEXBy6uPE7WyRBMUjTt0tdOOj4dsm+rgyD4BC
+         9WhlSCWU3nzm16Tx/kmw56rG1XFudLOIHBwKIccv+abuAdMG7YnDZjbdy9WjR23TB9+P
+         dlaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbjLkSy2pIUNrtvty/7pGjEl9WCVAB9a0gGFFOObZmN5PU12oOcK1nAC6SZPRD3gDo/V0hV/5hfH7WbJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAfCOMthOwIroQ3S1A5LrzS9N+ms25ejk941VxKgDzoFP+k5fx
+	rxQUuV740beQ/L/QNMhEGI2E3vXfKZjaWiL4TYxySmK2rDeg02B/bB/9E8sdZzrE
+X-Gm-Gg: ASbGncslLwzvMX/UFUbmtIOMcvfnkpVXJl+zdPc32Qyw/kyt+4rS16b8ZqrWqyyPZTI
+	O/dy/BSgFD9I9LR8QBA9n3ScW4bxyVZmCXk7twa+258Ef8v6WNsauYS4fXI2FFj7NNoCkg8HRao
+	ZA2ITagx+3rl4a1LCuatJ1BtFrGZF7+xk0zzZyv7UAbi5kJ/WtT6sQKcrE+5WJbtdyQuO16X1Hs
+	PxeJV6+D72RGS+gcaUkif/M/18OZVha0P/gfnj/uBlhLeQbr1dun3zPqUembnWCbUqP/+EpyjHP
+	O0naFwtLhBClE0HSnS0mBDMmbMBaFS5lB9nPJk+1R5XuNJy8MvyxrsIFMsMyzTxMjJu1Lf7Sj08
+	UoFcrilPjYcfefzn4Kn7q8HruZrvT+DFLBcXIhWvp/g3cWc1fn6dEdsMFdDjonheT30f2TiUUtb
+	PCWhdlMVyGOBlG9GZLJLHg9ucIHWlwwp8y33QKuS2EXfD8db486b7G
+X-Google-Smtp-Source: AGHT+IFnYKU1IWC3pFF4gig1+6sBxnYeOxYc6mKh5U5SUBS7wKSrjBE45ao1Z4z/gFoNYWrq+4Y5Ag==
+X-Received: by 2002:a17:902:cecb:b0:258:a3a1:9aa5 with SMTP id d9443c01a7336-290c9ae1a2emr116032215ad.0.1761027709371;
+        Mon, 20 Oct 2025 23:21:49 -0700 (PDT)
+Received: from [127.0.1.1] ([2401:4900:c8fb:fb07:ee78:675f:132b:f68f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fd7675sm99312855ad.26.2025.10.20.23.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 23:21:48 -0700 (PDT)
+From: Ranganath V N <vnranganath.20@gmail.com>
+Date: Tue, 21 Oct 2025 11:51:42 +0530
+Subject: [PATCH] drivers: block: rnbd: Handle generic ERR_PTR returns
+ safely in find_and_get_or_create_sess()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,99 +83,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-shift-axolotl-fix-touchscreen-dts-v2-1-e94727f0aa7e@joelselvaraj.com>
-X-B4-Tracking: v=1; b=H4sIAEAm92gC/5WNQQ7CIBBFr9KwdgzQWq0r72G6IDAVGiyGQVLTc
- HexN3D5fn7e2xhhdEjs2mwsYnbkwlJBHhqmrVoeCM5UZpLLEx/EAGTdlECtwYfkYXIrpPDWlnR
- EXMAkAjUpee60bFuDrHpeEettb9zHytZRCvGzJ7P4rf/YswABPUfZK9Mhby+3OaAn9FlFNR91e
- LKxlPIFtwQ4J9kAAAA=
-X-Change-ID: 20250919-shift-axolotl-fix-touchscreen-dts-afa274c233de
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Joel Selvaraj <foss@joelselvaraj.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761027667; l=2603;
- i=foss@joelselvaraj.com; s=20250919; h=from:subject:message-id;
- bh=U0sTpFpcrFN55z2alpABRqP+EG7oJWABVi8Wsg5kAeU=;
- b=uNkxTO4CLk55xQaPOMprWB4EgvcEz8dLQcg3oddM5f0Abu3ebTofFDa/+dwsxgZ2hm8z8vfna
- kK/SV5o0VXMCF1nQckuwBHJTdgr8+GM2GqSrBGOgaogjHVDpFpMq5n+
-X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
- pk=BBMos4ph15apUFh2AkG9rLZIrBWl5LD4egPOhEv63X0=
-X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20250919 with
- auth_id=529
-X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
-Reply-To: foss@joelselvaraj.com
+Message-Id: <20251021-rnbd_fix-v1-1-71559ee26e2b@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHUm92gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyND3aK8pJT4tMwKXcskE3OLtCRTIxMDYyWg8oKiVKAw2Kjo2NpaAAu
+ FoCdaAAAA
+To: "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
+ Jack Wang <jinpu.wang@ionos.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
+ linux-kernel-mentees@lists.linuxfoundation.org, 
+ Ranganath V N <vnranganath.20@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761027705; l=1897;
+ i=vnranganath.20@gmail.com; s=20250816; h=from:subject:message-id;
+ bh=dZkozO8XQpdvjUFyuS+7gnOquHi4UayCDzsqXQhtNTM=;
+ b=8QUpn5dec1JVYKDwU5Xa1XxbcjpL/7KR847ZaE/4RWlNjTTdoPSifgcOluNBdI7zuQwTPonq4
+ Lg9bICQrhrcCzpXhzvyxmrDrJeId3eud/lrfZjDvtA7HsqesYfvmus+
+X-Developer-Key: i=vnranganath.20@gmail.com; a=ed25519;
+ pk=7mxHFYWOcIJ5Ls8etzgLkcB0M8/hxmOh8pH6Mce5Z1A=
 
-From: Joel Selvaraj <foss@joelselvaraj.com>
+Fix the issue detected by the smatch tool.
+drivers/block/rnbd/rnbd-clt.c:1241 find_and_get_or_create_sess()
+error: 'sess' dereferencing possible ERR_PTR()
 
-The touchscreen properties previously upstreamed was based on downstream
-touchscreen driver. We ended up adapting upstream edt_ft5x06 driver to
-support the touchscreen controller used in this device. Update the
-touchscreen properties to match with the upstream edt_ft5x06
-driver.
+find_and_get_or_create_sess() only checks for ERR_PTR(-ENOMEM) after
+calling find_or_create_sess(). In other encoded failures, the code
+may dereference the error pointer when accessing sess->nr_poll_queues,
+resulting ina kernel oops.
 
-Also, the touchscreen controller used in this device is ft5452 and not
-fts8719. Fix the compatible string accordingly.
+By preserving the existing -ENOMEM behaviour and log unexpected
+errors to assist in debugging. This change eliminates a potential
+invalid pointer dereference without altering the function's logic
+or intenet.
 
-The wakeup-source property was removed as it prevents the touchscreen's
-regulators and irq from being disabled when the device is suspended and
-could lead to unexpected battery drain. Once low power mode and
-tap-to-wake functionality is properly implemented and tested to be
-working, we can add it back, if needed.
+Tested by compiling using smatch tool.
 
-Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
 ---
-Changes in v2:
-- Split the commit message into multiple paragraphs. (Konrad Dybcio)
-- Add explanation for removing the wakeup-source property. (Konrad Dybcio)
-- Link to v1: https://lore.kernel.org/r/20250919-shift-axolotl-fix-touchscreen-dts-v1-1-60e26ad4e038@joelselvaraj.com
----
- arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/block/rnbd/rnbd-clt.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-index 89260fce6513937224f76a94e1833a5a8d59faa4..d4062844234e33b0d501bcb7d0b6d5386c822937 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-@@ -434,20 +434,19 @@ &i2c5 {
- 	status = "okay";
+diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
+index f1409e54010a..57ca694210b9 100644
+--- a/drivers/block/rnbd/rnbd-clt.c
++++ b/drivers/block/rnbd/rnbd-clt.c
+@@ -1236,9 +1236,14 @@ find_and_get_or_create_sess(const char *sessname,
+ 	struct rtrs_clt_ops rtrs_ops;
  
- 	touchscreen@38 {
--		compatible = "focaltech,fts8719";
-+		compatible = "focaltech,ft5452";
- 		reg = <0x38>;
--		wakeup-source;
--		interrupt-parent = <&tlmm>;
--		interrupts = <125 IRQ_TYPE_EDGE_FALLING>;
--		vdd-supply = <&vreg_l28a_3p0>;
--		vcc-i2c-supply = <&vreg_l14a_1p88>;
- 
--		pinctrl-names = "default", "suspend";
-+		interrupts-extended = <&tlmm 125 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
-+
-+		vcc-supply = <&vreg_l28a_3p0>;
-+		iovcc-supply = <&vreg_l14a_1p88>;
-+
- 		pinctrl-0 = <&ts_int_active &ts_reset_active>;
- 		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
-+		pinctrl-names = "default", "suspend";
- 
--		reset-gpio = <&tlmm 99 GPIO_ACTIVE_HIGH>;
--		irq-gpio = <&tlmm 125 GPIO_TRANSITORY>;
- 		touchscreen-size-x = <1080>;
- 		touchscreen-size-y = <2160>;
- 	};
+ 	sess = find_or_create_sess(sessname, &first);
+-	if (sess == ERR_PTR(-ENOMEM)) {
+-		return ERR_PTR(-ENOMEM);
+-	} else if ((nr_poll_queues && !first) ||  (!nr_poll_queues && sess->nr_poll_queues)) {
++	if (IS_ERR(sess)) {
++		err = PTR_ERR(sess);
++		if (err != -ENOMEM)
++			pr_warn("rndb: find_or_create_sess(%s) failed with %d\n",
++				sessname, err);
++		return ERR_PTR(err);
++	}
++	if ((nr_poll_queues && !first) ||  (!nr_poll_queues && sess->nr_poll_queues)) {
+ 		/*
+ 		 * A device MUST have its own session to use the polling-mode.
+ 		 * It must fail to map new device with the same session.
 
 ---
-base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
-change-id: 20250919-shift-axolotl-fix-touchscreen-dts-afa274c233de
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251021-rnbd_fix-9b478fb52403
 
 Best regards,
 -- 
-Joel Selvaraj <foss@joelselvaraj.com>
-
+Ranganath V N <vnranganath.20@gmail.com>
 
 
