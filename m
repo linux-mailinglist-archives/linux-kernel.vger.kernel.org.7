@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-862816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14E6BF646D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B4EBF6491
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29F09189B799
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0055E19A24AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE10A34DCE9;
-	Tue, 21 Oct 2025 11:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E8B36CDF6;
+	Tue, 21 Oct 2025 11:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D73ZWQfv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDgbSmwq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F8B330B3A;
-	Tue, 21 Oct 2025 11:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698543385A5;
+	Tue, 21 Oct 2025 11:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047253; cv=none; b=AozA/Hak02aF+yh6GxxzNin4AUwFekwIV9wa1anhp//cF1wMInAlZ04h/6hNGU3g9jefVyz4A4tI8Nl+paWQ4enGjFIpHPRqcg3LvabBGlOJ9C3Nt5dCKpGnMPN5OaxzH2egrifulq6IOC8/XVWIHCrUl+u/OshIxGlDFxEo2Is=
+	t=1761047277; cv=none; b=nMjZNFPHnFrPzlpwP8N832LP27uatWGO21FO2bRSrgQxIqwRBtRNpeQ++ir1QNIoj4r990BTsnBJspgeecJxkLvgUjrLKOwXXhC66hqtfOBMyDCwKo7/qFT/A62TNrCWGuSBEYuFyzr+5tRgAE4kfzxEANVx36rATEidB7M8d6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047253; c=relaxed/simple;
-	bh=V4fLSyijbME7l6bI490uSVspsEhpOL9UHRqTJM6dwA8=;
+	s=arc-20240116; t=1761047277; c=relaxed/simple;
+	bh=+NPTtaVGIJjtOfL6a6/pXZ3Jnd+MAnJdtzTqZX7/Ujw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TNRFLUXL1x1iKsznP5KMtlFHe4PXnDQw3WhJsoPWfe50r4DCO1AXfrLPCOCoDuU5e2/Zm+t7p3nIZNfB9X54vE25zROIKqfzpuFCD6Y8NaYFKqP67C03VSn7ZWBu7JL9ZrkXa3jP43p/UAsR8JgGhzRm1EH3nhIT0WYt604SFQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D73ZWQfv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92650C4CEF5;
-	Tue, 21 Oct 2025 11:47:27 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=I5et0nRdARzrmT7W2qxWaw8IUyc0XqAz218WXbn2xU8caHQjECZlSLXPVu+W95gxZCWsO2VoEvjKp84fn5dEHK+uERqhKUZdFRT0sW+2AhJ4seGv+1Xb3EPNcNgB/iMNh2689ErBoBf76lhnqqAqadKSb27XFwiqHMGmMsG7O3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDgbSmwq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2173C4CEFF;
+	Tue, 21 Oct 2025 11:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047252;
-	bh=V4fLSyijbME7l6bI490uSVspsEhpOL9UHRqTJM6dwA8=;
+	s=k20201202; t=1761047277;
+	bh=+NPTtaVGIJjtOfL6a6/pXZ3Jnd+MAnJdtzTqZX7/Ujw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=D73ZWQfvX6+4O7OBuostsMUjIKoA+fPF9ThEtDNzqoHLAGVj60UtQh/lRDo0GI08z
-	 KTU430P7bLfq+4gx+9wG0zus/Ud7/+ua6t3moptUk11/jyccMOMxwLSNOJYvwCnsgX
-	 GkY8Pc4fF76zu7cTYoVZeoOhjgn/g0RuW+FTPYGYpd9baVzVbiM+IH8kRPNPf14f/T
-	 AVsoWsQeOrKdvA6bfFj0GGka22rjG4/zZPCgoIf+BxIi0ez+V9I+axyqDeJFMcx1oB
-	 DSz46SNKHw++wV7JnCDKb96Kcl21iMYMJ85CXzTW+XXCuxZgGIPRPilJNj/AytuOir
-	 6/AwnIIKMl6Iw==
+	b=sDgbSmwq898kGjkUjUwVIwoEkgrf7TcaAc55pOq4cCKu3wKjPA1gdS4QJ7T8EXg5Q
+	 Rtn7VCQHzcNgDlGdTwOv2P7wCmujE65XhP3tlW5ViHy7EN4qee0hV42d1XPXOTDwRs
+	 YTelbwE79ucRHxmV2qGKTm8VrfvKeK5CgKUGl4pEvEi8Yy1+ucW4ZAk+R6GHOcprnO
+	 dpNerNU7R2jbZ0DVRKymzrKOwWPMHPL/GqAfMQ91RONRIpzpqAhZ2VFnTq8m3m1fme
+	 vEOpMX7nUny83mVla4JT6CagyVHkvb8T5ECepC1bbXkHzDTzXsvLAIOo1goVh17P3x
+	 HSoNDJJ3gKSlQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:48 +0200
-Subject: [PATCH RFC DRAFT 42/50] selftests/namespaces: ninth listns() test
+Date: Tue, 21 Oct 2025 13:43:53 +0200
+Subject: [PATCH RFC DRAFT 47/50] selftests/namespaces: fourth listns()
+ permission test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-42-ad44261a8a5b@kernel.org>
+Message-Id: <20251021-work-namespace-nstree-listns-v1-47-ad44261a8a5b@kernel.org>
 References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -68,53 +69,42 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3882; i=brauner@kernel.org;
- h=from:subject:message-id; bh=V4fLSyijbME7l6bI490uSVspsEhpOL9UHRqTJM6dwA8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3x3KVv9/jlrgRVS2gd7f2sUeL5bGCN1KfTFBVHJe
- 3FXOrPDOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSOIWR4dq2c2XrX3SsWDzP
- b/uhoxNXaGVdM+RmzEoRFfK+naTpNZuR4deqefOc1Ap3ndhyfWP/X50FT/dwt5Y7P3waeVnj0ex
- /p/kA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2557; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=+NPTtaVGIJjtOfL6a6/pXZ3Jnd+MAnJdtzTqZX7/Ujw=;
+ b=kA0DAAoWkcYbwGV43KIByyZiAGj3ce+grmB2YsNoDeIhC/++jqy+s2ytfxIZeAqtBH+rpl649
+ Ih1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmj3ce8ACgkQkcYbwGV43KLLJgD/SwaS
+ xBs0dYddjUyS2N3tRkV+AmeLq+Zm2hikXtm7duIA+wU7pfQwovCuoj28FprhidsfVOsBQoWQ1yv
+ cn0eMYJMO
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that hierarchical active reference propagation keeps parent
-user namespaces visible in listns().
+Test permission checking with LISTNS_CURRENT_USER.
+Verify that listing with LISTNS_CURRENT_USER respects permissions.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/listns_test.c | 135 +++++++++++++++++++++++
- 1 file changed, 135 insertions(+)
+ .../selftests/namespaces/listns_permissions_test.c | 79 ++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/tools/testing/selftests/namespaces/listns_test.c b/tools/testing/selftests/namespaces/listns_test.c
-index 6afffddf9764..ddf4509d5cd6 100644
---- a/tools/testing/selftests/namespaces/listns_test.c
-+++ b/tools/testing/selftests/namespaces/listns_test.c
-@@ -467,4 +467,139 @@ TEST(listns_multiple_types)
- 		TH_LOG("  [%zd] ns_id: %llu", i, (unsigned long long)ns_ids[i]);
+diff --git a/tools/testing/selftests/namespaces/listns_permissions_test.c b/tools/testing/selftests/namespaces/listns_permissions_test.c
+index 4e47b4c82c56..ff42109779ca 100644
+--- a/tools/testing/selftests/namespaces/listns_permissions_test.c
++++ b/tools/testing/selftests/namespaces/listns_permissions_test.c
+@@ -372,4 +372,83 @@ TEST(listns_cannot_see_sibling_userns_namespaces)
+ 	TH_LOG("User namespace B correctly could not see sibling namespace A's network namespace");
  }
  
 +/*
-+ * Test that hierarchical active reference propagation keeps parent
-+ * user namespaces visible in listns().
++ * Test permission checking with LISTNS_CURRENT_USER.
++ * Verify that listing with LISTNS_CURRENT_USER respects permissions.
 + */
-+TEST(listns_hierarchical_visibility)
++TEST(listns_current_user_permissions)
 +{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = CLONE_NEWUSER,
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	__u64 parent_ns_id = 0, child_ns_id = 0;
 +	int pipefd[2];
 +	pid_t pid;
 +	int status;
-+	int bytes;
-+	__u64 ns_ids[100];
-+	ssize_t ret;
-+	bool found_parent, found_child;
++	bool success;
++	ssize_t count;
 +
 +	ASSERT_EQ(pipe(pipefd), 0);
 +
@@ -122,55 +112,43 @@ index 6afffddf9764..ddf4509d5cd6 100644
 +	ASSERT_GE(pid, 0);
 +
 +	if (pid == 0) {
-+		int fd;
-+		char buf;
++		struct ns_id_req req = {
++			.size = sizeof(req),
++			.spare = 0,
++			.ns_id = 0,
++			.ns_type = 0,
++			.spare2 = 0,
++			.user_ns_id = LISTNS_CURRENT_USER,
++		};
++		__u64 ns_ids[100];
++		ssize_t ret;
++		bool success;
 +
 +		close(pipefd[0]);
 +
-+		/* Create parent user namespace */
++		/* Create user namespace */
 +		if (setup_userns() < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (fd < 0) {
++		/* Create some namespaces owned by this user namespace */
++		if (unshare(CLONE_NEWNET) < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		if (ioctl(fd, NS_GET_ID, &parent_ns_id) < 0) {
-+			close(fd);
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+		close(fd);
-+
-+		/* Create child user namespace */
-+		if (setup_userns() < 0) {
++		if (unshare(CLONE_NEWUTS) < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (fd < 0) {
-+			close(pipefd[1]);
-+			exit(1);
-+		}
++		/* List with LISTNS_CURRENT_USER - should see our owned namespaces */
++		ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
 +
-+		if (ioctl(fd, NS_GET_ID, &child_ns_id) < 0) {
-+			close(fd);
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+		close(fd);
-+
-+		/* Send both IDs to parent */
-+		write(pipefd[1], &parent_ns_id, sizeof(parent_ns_id));
-+		write(pipefd[1], &child_ns_id, sizeof(child_ns_id));
-+
-+		/* Wait for parent signal */
-+		read(pipefd[1], &buf, 1);
++		success = (ret >= 3);  /* At least user, net, uts */
++		write(pipefd[1], &success, sizeof(success));
++		write(pipefd[1], &ret, sizeof(ret));
 +		close(pipefd[1]);
 +		exit(0);
 +	}
@@ -178,54 +156,21 @@ index 6afffddf9764..ddf4509d5cd6 100644
 +	/* Parent */
 +	close(pipefd[1]);
 +
-+	/* Read both namespace IDs */
-+	bytes = read(pipefd[0], &parent_ns_id, sizeof(parent_ns_id));
-+	bytes += read(pipefd[0], &child_ns_id, sizeof(child_ns_id));
-+
-+	if (bytes != (int)(2 * sizeof(__u64))) {
-+		close(pipefd[0]);
-+		kill(pid, SIGKILL);
-+		waitpid(pid, NULL, 0);
-+		SKIP(return, "Failed to get namespace IDs from child");
-+	}
-+
-+	TH_LOG("Parent user namespace ID: %llu", (unsigned long long)parent_ns_id);
-+	TH_LOG("Child user namespace ID: %llu", (unsigned long long)child_ns_id);
-+
-+	/* List all user namespaces */
-+	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
-+
-+	if (ret < 0 && errno == ENOSYS) {
-+		close(pipefd[0]);
-+		kill(pid, SIGKILL);
-+		waitpid(pid, NULL, 0);
-+		SKIP(return, "listns() not supported");
-+	}
-+
-+	ASSERT_GE(ret, 0);
-+	TH_LOG("Found %zd active user namespaces", ret);
-+
-+	/* Both parent and child should be visible (active due to child process) */
-+	found_parent = false;
-+	found_child = false;
-+	for (ssize_t i = 0; i < ret; i++) {
-+		if (ns_ids[i] == parent_ns_id)
-+			found_parent = true;
-+		if (ns_ids[i] == child_ns_id)
-+			found_child = true;
-+	}
-+
-+	TH_LOG("Parent namespace %s, child namespace %s",
-+	       found_parent ? "found" : "NOT FOUND",
-+	       found_child ? "found" : "NOT FOUND");
-+
-+	ASSERT_TRUE(found_child);
-+	/* With hierarchical propagation, parent should also be active */
-+	ASSERT_TRUE(found_parent);
-+
-+	/* Signal child to exit */
++	success = false;
++	count = 0;
++	read(pipefd[0], &success, sizeof(success));
++	read(pipefd[0], &count, sizeof(count));
 +	close(pipefd[0]);
++
 +	waitpid(pid, &status, 0);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	if (WEXITSTATUS(status) != 0) {
++		SKIP(return, "Child failed to setup namespaces");
++	}
++
++	ASSERT_TRUE(success);
++	TH_LOG("LISTNS_CURRENT_USER returned %zd namespaces", count);
 +}
 +
  TEST_HARNESS_MAIN
