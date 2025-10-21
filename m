@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-862355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C1ABF512E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:50:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91739BF5128
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC003A4D17
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12EAA18C6837
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84E828D829;
-	Tue, 21 Oct 2025 07:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06F62C026E;
+	Tue, 21 Oct 2025 07:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KRP1DvZy"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X6tYdIR1"
 Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106E027A107
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C724F296BB2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032920; cv=none; b=Wb0HC0NOvLIVdrnLy04SdVjFs8/zZvaary4QIoWGmINdbJ+f7BpjM79Ly9CoTm7k0cT7s48Fv75BSwp6kB6DdPPy+7WF1v3n7AqzfbGXTT8ZUn324XR2tHpDteK+GBvu6NZ5UrHVux4bTO+qBZ4DhRUQ4ojZpN6rhWrtmSzUe3A=
+	t=1761032922; cv=none; b=li5flxG4XyEaLBLTtn3zq1mTJ4i09Egnh+dM1uASFEMaf3jQGlGFUAyn3S9WbCS7m/TJ3CchhARDthE1dcwOtT33r02wMrr1W6kvcNhUX6TfYOfqd6SATENy0FPjVY0ta4j+5Zouy9TEPhxtV0RUXq3Lvw4WXdqCaJaN2VqKGzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032920; c=relaxed/simple;
-	bh=AuvEhvIJR3xZSW/fboQgnttC+/rNhF/c1gYAcgwTFic=;
+	s=arc-20240116; t=1761032922; c=relaxed/simple;
+	bh=rCagEhe5Z1joYR3E+FP00tUc6rHYfQXWv8K7pMjbJ+I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oPrllAEdw3EdD67qOdIW9Lru7r/O/a6+HRMZMNvjKidyIORl4eBScRUEJvkGg0/9MO4wSWeSjy/ovoazEaSaveDY/3nx0V2fK3MUcsvD6sQl6LwTFpewgOgpCgy79rp5NNr8hjJ/tpiOhViF/dbnXRw0zVYg/+PrYmU1AjYdIes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KRP1DvZy; arc=none smtp.client-ip=95.215.58.187
+	 MIME-Version; b=f+a0RgSzfsZmhcVbcyrr98v0kbC43t1ux9ia5Ia2B7HktUxMiwhAIp7SCZagiXDydEDDgS0zF7aZUdnhtjy6t+8TzO/NqDw8YliS+2ceznBNC8UbEd7VPgAzZ8Ec5nUZ6mMJP2WnsG+CO30+sopsDqVk6H8O0YAnU7m9DGKnEB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X6tYdIR1; arc=none smtp.client-ip=95.215.58.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761032913;
+	t=1761032915;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TVpVX05niv4fkQ2AMp5Au3Rmh+KHdWv7OtN3c3soNew=;
-	b=KRP1DvZyXBtXBEO1mUafQoINxkKSqK1QOimkIrGPK3goW4V6oZwVdy03sjnBnXzyai5lRd
-	0Iy3A2j9qeTC0h2QUMN5KfKP8RFWaRGjqRVSI0wJnpuxI6pQvjFiKAztCr4E5X1X1FDmQ3
-	wyg/fLeacWtYezcEOfsunUTHrbo4Ox4=
+	bh=JcQR03IuKB4fcV0BsXwSI30gbdeQ80y8fSCq4J5LmSk=;
+	b=X6tYdIR1JNgenqWgF7NGDAebOCFz5tOQfuuIwwb4t1vA7hiA/sPsjB5MPpdDxKuDOv50Mt
+	R8qTe5WsA/0bdMR3NM37cz/KqK9SupLLxJbDSAKsh4vg++4omekYCCM1Igm40mVqNnHLuK
+	m/JerC3UsRchDdkQzc/xNooIFyY0rbE=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -48,9 +48,9 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH v2 06/23] KVM: selftests: Extend nested_invalid_cr3_test to cover SVM
-Date: Tue, 21 Oct 2025 07:47:19 +0000
-Message-ID: <20251021074736.1324328-7-yosry.ahmed@linux.dev>
+Subject: [PATCH v2 07/23] KVM: selftests: Extend vmx_tsc_adjust_test to cover SVM
+Date: Tue, 21 Oct 2025 07:47:20 +0000
+Message-ID: <20251021074736.1324328-8-yosry.ahmed@linux.dev>
 In-Reply-To: <20251021074736.1324328-1-yosry.ahmed@linux.dev>
 References: <20251021074736.1324328-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -65,86 +65,151 @@ X-Migadu-Flow: FLOW_OUT
 Add SVM L1 code to run the nested guest, and allow the test to run with
 SVM as well as VMX.
 
+Reviewed-by: Jim Mattson <jmattson@google.com>
+
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- .../kvm/x86/nested_invalid_cr3_test.c         | 43 +++++++++++++++++--
- 1 file changed, 40 insertions(+), 3 deletions(-)
+ tools/testing/selftests/kvm/Makefile.kvm      |  2 +-
+ ...adjust_test.c => nested_tsc_adjust_test.c} | 69 ++++++++++++-------
+ 2 files changed, 46 insertions(+), 25 deletions(-)
+ rename tools/testing/selftests/kvm/x86/{vmx_tsc_adjust_test.c => nested_tsc_adjust_test.c} (61%)
 
-diff --git a/tools/testing/selftests/kvm/x86/nested_invalid_cr3_test.c b/tools/testing/selftests/kvm/x86/nested_invalid_cr3_test.c
-index b9853ab532cfe..2a472440cb962 100644
---- a/tools/testing/selftests/kvm/x86/nested_invalid_cr3_test.c
-+++ b/tools/testing/selftests/kvm/x86/nested_invalid_cr3_test.c
-@@ -9,6 +9,7 @@
-  */
+diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+index b78700c574fc7..6625ac53545e8 100644
+--- a/tools/testing/selftests/kvm/Makefile.kvm
++++ b/tools/testing/selftests/kvm/Makefile.kvm
+@@ -119,7 +119,7 @@ TEST_GEN_PROGS_x86 += x86/vmx_exception_with_invalid_guest_state
+ TEST_GEN_PROGS_x86 += x86/vmx_msrs_test
+ TEST_GEN_PROGS_x86 += x86/vmx_invalid_nested_guest_state
+ TEST_GEN_PROGS_x86 += x86/vmx_la57_nested_state_test
+-TEST_GEN_PROGS_x86 += x86/vmx_tsc_adjust_test
++TEST_GEN_PROGS_x86 += x86/nested_tsc_adjust_test
+ TEST_GEN_PROGS_x86 += x86/nested_tsc_scaling_test
+ TEST_GEN_PROGS_x86 += x86/apic_bus_clock_test
+ TEST_GEN_PROGS_x86 += x86/xapic_ipi_test
+diff --git a/tools/testing/selftests/kvm/x86/vmx_tsc_adjust_test.c b/tools/testing/selftests/kvm/x86/nested_tsc_adjust_test.c
+similarity index 61%
+rename from tools/testing/selftests/kvm/x86/vmx_tsc_adjust_test.c
+rename to tools/testing/selftests/kvm/x86/nested_tsc_adjust_test.c
+index 2dcc0306a0d9b..cc825a0b41dbf 100644
+--- a/tools/testing/selftests/kvm/x86/vmx_tsc_adjust_test.c
++++ b/tools/testing/selftests/kvm/x86/nested_tsc_adjust_test.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * vmx_tsc_adjust_test
++ * nested_tsc_adjust_test
+  *
+  * Copyright (C) 2018, Google LLC.
+  *
+@@ -22,6 +22,7 @@
  #include "kvm_util.h"
+ #include "processor.h"
  #include "vmx.h"
 +#include "svm_util.h"
- #include "kselftest.h"
  
+ #include <string.h>
+ #include <sys/ioctl.h>
+@@ -35,6 +36,8 @@
+ #define TSC_ADJUST_VALUE (1ll << 32)
+ #define TSC_OFFSET_VALUE -(1ll << 48)
  
-@@ -19,6 +20,28 @@ static void l2_guest_code(void)
- 	vmcall();
++#define L2_GUEST_STACK_SIZE 64
++
+ enum {
+ 	PORT_ABORT = 0x1000,
+ 	PORT_REPORT,
+@@ -72,32 +75,47 @@ static void l2_guest_code(void)
+ 	__asm__ __volatile__("vmcall");
  }
  
-+static void l1_svm_code(struct svm_test_data *svm)
-+{
-+	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
-+	uintptr_t save_cr3;
-+
-+	generic_svm_setup(svm, l2_guest_code,
-+			  &l2_guest_stack[L2_GUEST_STACK_SIZE]);
-+
-+	/* Try to run L2 with invalid CR3 and make sure it fails */
-+	save_cr3 = svm->vmcb->save.cr3;
-+	svm->vmcb->save.cr3 = -1ull;
-+	run_guest(svm->vmcb, svm->vmcb_gpa);
-+	GUEST_ASSERT(svm->vmcb->control.exit_code == SVM_EXIT_ERR);
-+
-+	/* Now restore CR3 and make sure L2 runs successfully */
-+	svm->vmcb->save.cr3 = save_cr3;
-+	run_guest(svm->vmcb, svm->vmcb_gpa);
-+	GUEST_ASSERT(svm->vmcb->control.exit_code == SVM_EXIT_VMMCALL);
-+
-+	GUEST_DONE();
-+}
-+
- static void l1_vmx_code(struct vmx_pages *vmx_pages)
+-static void l1_guest_code(struct vmx_pages *vmx_pages)
++static void l1_guest_code(void *data)
  {
+-#define L2_GUEST_STACK_SIZE 64
  	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
-@@ -45,16 +68,30 @@ static void l1_vmx_code(struct vmx_pages *vmx_pages)
+-	uint32_t control;
+ 
++	/* Set TSC from L1 and make sure TSC_ADJUST is updated correctly */
+ 	GUEST_ASSERT(rdtsc() < TSC_ADJUST_VALUE);
+ 	wrmsr(MSR_IA32_TSC, rdtsc() - TSC_ADJUST_VALUE);
+ 	check_ia32_tsc_adjust(-1 * TSC_ADJUST_VALUE);
+ 
+-	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
+-	GUEST_ASSERT(load_vmcs(vmx_pages));
+-
+-	/* Prepare the VMCS for L2 execution. */
+-	prepare_vmcs(vmx_pages, l2_guest_code,
+-		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
+-	control = vmreadz(CPU_BASED_VM_EXEC_CONTROL);
+-	control |= CPU_BASED_USE_MSR_BITMAPS | CPU_BASED_USE_TSC_OFFSETTING;
+-	vmwrite(CPU_BASED_VM_EXEC_CONTROL, control);
+-	vmwrite(TSC_OFFSET, TSC_OFFSET_VALUE);
+-
+-	GUEST_ASSERT(!vmlaunch());
+-	GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
++	/*
++	 * Run L2 with TSC_OFFSET. L2 will write to TSC, and L1 is not
++	 * intercepting the write so it should update L1's TSC_ADJUST.
++	 */
++	if (this_cpu_has(X86_FEATURE_VMX)) {
++		struct vmx_pages *vmx_pages = data;
++		uint32_t control;
++
++		GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
++		GUEST_ASSERT(load_vmcs(vmx_pages));
++
++		prepare_vmcs(vmx_pages, l2_guest_code,
++			     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
++		control = vmreadz(CPU_BASED_VM_EXEC_CONTROL);
++		control |= CPU_BASED_USE_MSR_BITMAPS | CPU_BASED_USE_TSC_OFFSETTING;
++		vmwrite(CPU_BASED_VM_EXEC_CONTROL, control);
++		vmwrite(TSC_OFFSET, TSC_OFFSET_VALUE);
++
++		GUEST_ASSERT(!vmlaunch());
++		GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
++	} else {
++		struct svm_test_data *svm = data;
++
++		generic_svm_setup(svm, l2_guest_code,
++				  &l2_guest_stack[L2_GUEST_STACK_SIZE]);
++
++		svm->vmcb->control.tsc_offset = TSC_OFFSET_VALUE;
++		run_guest(svm->vmcb, svm->vmcb_gpa);
++		GUEST_ASSERT(svm->vmcb->control.exit_code == SVM_EXIT_VMMCALL);
++	}
+ 
+ 	check_ia32_tsc_adjust(-2 * TSC_ADJUST_VALUE);
+-
  	GUEST_DONE();
  }
  
-+static void l1_guest_code(void *data)
-+{
-+	if (this_cpu_has(X86_FEATURE_VMX))
-+		l1_vmx_code(data);
-+	else
-+		l1_svm_code(data);
-+}
-+
+@@ -109,16 +127,19 @@ static void report(int64_t val)
+ 
  int main(int argc, char *argv[])
  {
+-	vm_vaddr_t vmx_pages_gva;
++	vm_vaddr_t nested_gva;
  	struct kvm_vcpu *vcpu;
- 	struct kvm_vm *vm;
- 	vm_vaddr_t guest_gva = 0;
  
 -	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX));
 +	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX) ||
 +		     kvm_cpu_has(X86_FEATURE_SVM));
-+
-+	vm = vm_create_with_one_vcpu(&vcpu, l1_guest_code);
-+
-+	if (kvm_cpu_has(X86_FEATURE_VMX))
-+		vcpu_alloc_vmx(vm, &guest_gva);
-+	else
-+		vcpu_alloc_svm(vm, &guest_gva);
  
--	vm = vm_create_with_one_vcpu(&vcpu, l1_vmx_code);
--	vcpu_alloc_vmx(vm, &guest_gva);
- 	vcpu_args_set(vcpu, 1, guest_gva);
+-	vm = vm_create_with_one_vcpu(&vcpu, (void *) l1_guest_code);
++	vm = vm_create_with_one_vcpu(&vcpu, l1_guest_code);
++	if (kvm_cpu_has(X86_FEATURE_VMX))
++		vcpu_alloc_vmx(vm, &nested_gva);
++	else
++		vcpu_alloc_svm(vm, &nested_gva);
+ 
+-	/* Allocate VMX pages and shared descriptors (vmx_pages). */
+-	vcpu_alloc_vmx(vm, &vmx_pages_gva);
+-	vcpu_args_set(vcpu, 1, vmx_pages_gva);
++	vcpu_args_set(vcpu, 1, nested_gva);
  
  	for (;;) {
+ 		struct ucall uc;
 -- 
 2.51.0.869.ge66316f041-goog
 
