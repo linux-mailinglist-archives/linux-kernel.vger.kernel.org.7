@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-863413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C698FBF7D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:07:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C10BF7D3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572A219A0006
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:07:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4FF42354AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC6E346D9F;
-	Tue, 21 Oct 2025 17:07:10 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27473347BD8;
+	Tue, 21 Oct 2025 17:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oxzam6cW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5564F2D0C7D;
-	Tue, 21 Oct 2025 17:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1128348449;
+	Tue, 21 Oct 2025 17:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066429; cv=none; b=kp7R76rWJTOmhbytD92wrwh3Xdl5yLVhhk3eOQNhdAcpKXdgxh+EKa953Q0sxzCG/NCPL+v1PzaeDX6YGkPJMttuqh1lw0d5JXTollaLFZcN/gnbfT+43SxRDe9/Q2xSeAmdskURG/zw09kY/2eSfk5J6hNEEVPVO1Up/xvCmAs=
+	t=1761066536; cv=none; b=sxK0r38XxepPBTlnEAYuFs09tnfLIJVPM/g5MG5vYFdnJ/haKcV0WuuYlDf2pAA56fJafGbTCk7iPQZ99FEuPH+RPFDwIQT9ivOevGqStXwTKSINKqgLdGh4+yc71aWRi7jZeKBRqUf1LISjAvm5UDfFxM6XkYFk2Yzn/9L2sDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066429; c=relaxed/simple;
-	bh=SfujZNGCUwdHXhnw5KtfoR9q5ts6/wY+0OdokUskIMU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lViFY1yRE0ym/+gfMiGgH/X6WkFMDlECPZV8D2fU80kSu0496D/qOdNTde6d+vn0inN9sAdtc9xox3az9s5JwmgUZxm7J6V02RLUdy1qGUC8ys0KUnbD/XxRmo7PV0jdmeZMo0hsn31k6OJ3X1b+OGHkFwpLAdyS0OWMBwk5OCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id ACE04C05CB;
-	Tue, 21 Oct 2025 17:06:56 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf02.hostedemail.com (Postfix) with ESMTPA id 2365B80009;
-	Tue, 21 Oct 2025 17:06:53 +0000 (UTC)
-Message-ID: <5e11f1bacb6430e1331f02e3e0e326a78e5b0d12.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: add uninitialized pointer with __free
- attribute check
-From: Joe Perches <joe@perches.com>
-To: Ally Heev <allyheev@gmail.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
-  Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Andy Whitcroft <apw@canonical.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
- David Hunter <david.hunter.linux@gmail.com>, Shuah Khan
- <skhan@linuxfoundation.org>, Viresh Kumar	 <vireshk@kernel.org>, Nishanth
- Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,  linux-pm
- <linux-pm@vger.kernel.org>
-Date: Tue, 21 Oct 2025 10:06:52 -0700
-In-Reply-To: <20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com>
-References: 
-	<20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761066536; c=relaxed/simple;
+	bh=meQZQN+ChkxLiWJPwtbw+FBdxr/oRbXCmIoNYfnM4Dc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pn1JGx8wG635ciHuqXptsV3kjfFIAXaPOBcCOFdFZsR+LAQz/0gm6cMvq1Pfh6pDCgcLSyI3IU3jfGldKY2o/rfyk7dRT4EIZCqJrYSSD1hUDCjFlJ36mLMehycDxYA6IImYGg+SzlO/N6pYKSmfxFaa7ytU+WPhkIWsvdDfhTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oxzam6cW; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761066535; x=1792602535;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=meQZQN+ChkxLiWJPwtbw+FBdxr/oRbXCmIoNYfnM4Dc=;
+  b=Oxzam6cWN68zZRVkdRB30gC4z/nGODl2rV+nHX36Y7UrjxQE0I9r1I3n
+   pYJ7g73ChZWDA7V7938Puxtb4uziBFcwX+HDmFJNVMh67GTzP7Bb4yelF
+   +3p8T0F4nGbHGCq0mZRTCxOm/B6js1+FJu8au+GKhwj0+45cVADy0SRMj
+   53U3IUVT2mIIh7TJPT/erdNMmCz+4WyWVlUAzBniIU6stIR/2I2DBGl0o
+   04NPCnXGQaKDROUEDjW/nrA75ZgcIInPPEHmzpEI/D9nRWva4He1a1UC8
+   8/9z0yLbmyjMrqThlWMV7dOadOJBI1TTWmnmq4wDowsZhVId8qVqpOFvc
+   Q==;
+X-CSE-ConnectionGUID: NdUDLd/PQam1zIfPsy3Lfg==
+X-CSE-MsgGUID: HZ1Ka8+eRNuaLdI6W0YLgw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62231665"
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="62231665"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 10:08:54 -0700
+X-CSE-ConnectionGUID: wYgqZl0LSLK/DxIMp0Pi2A==
+X-CSE-MsgGUID: YZlbHOmkRuS0Jnhg4hREPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="184129323"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.108.149]) ([10.125.108.149])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 10:08:53 -0700
+Message-ID: <08d64b6e-64f2-46e3-b9ef-87b731556ee4@intel.com>
+Date: Tue, 21 Oct 2025 10:08:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 2365B80009
-X-Stat-Signature: rtipdxzuuspsu4ye6rx1eywenjf4xmbm
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/aK9PuxmffjsTgMj+7z4sgkWUk2J9UG3M=
-X-HE-Tag: 1761066413-389271
-X-HE-Meta: U2FsdGVkX180ftX0W8yiVUd9MfsrdAPQRpyGK5++Zp8ivAXNqnmopqHV64+/SigWNggHzzW7JK87cKTebQm6lUXOd7Ezd4w/lnclCGEtyolye3dNDuFfgCz3Hs4VypC2IH5Jzp8Iv1DwTdSnOiXqZXa4BChHuoGCd2iEt1m6btxx/57curR3NDrqcnDBDmPrCUxSwWUGKP22CYp8VUZGkojDiJ+CnlnKUw9YJUNopTfsA9BOoIpw4hkUN5l4XNqst3pbp/gvcYtZvMVE8qbivsDrS4bHFglsPNZn+cY8QAB0x9/lJGQVQ777+DxamNSr
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Juergen Gross <jgross@suse.com>,
+ "Reshetova, Elena" <elena.reshetova@intel.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+ "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, "Gao, Chao"
+ <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>,
+ "Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
+References: <20250901160930.1785244-1-pbonzini@redhat.com>
+ <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+ <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
+ <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
+ <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
+ <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
+ <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
+ <5b007887-d475-4970-b01d-008631621192@intel.com>
+ <CAGtprH-WE2_ADCCqm2uCvuDVbx61PRpcqy-+krq13rss2T_OSg@mail.gmail.com>
+ <CAGtprH_sedWE_MYmfp3z3RKY_Viq1GGV4qiA0H5g2g=W9LwiXA@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAGtprH_sedWE_MYmfp3z3RKY_Viq1GGV4qiA0H5g2g=W9LwiXA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-10-21 at 17:00 +0530, Ally Heev wrote:
-> uninitialized pointers with __free attribute can cause undefined
-> behaviour as the memory allocated to the pointer is freed
-> automatically when the pointer goes out of scope.
-> add check in checkpatch to detect such issues
+On 10/18/25 08:54, Vishal Annapurve wrote:
+> Circling bank on this topic, I would like to iterate a few points:
+> 1) Google has been running workloads with the series [1] for ~2 years
+> now, we haven't seen any issues with kdump functionality across kernel
+> bugs, real hardware issues, private memory corruption etc.
 
-Seems sensible.  Couple minor points below:
+Great points and great info!
 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -7721,6 +7721,12 @@ sub process {
->  				ERROR("MISSING_SENTINEL", "missing sentinel in ID array\n" . "$here\=
-n$stat\n");
->  			}
->  		}
-> +
-> +# check for uninitialized pointers with __free attribute
-> +		if ($line =3D~ /\s*$Type\s*($Ident)\s+__free\s*\(\s*$Ident\s*\)\s*;/) =
-{
-
-The leading \s* isn't useful, but \b should be used.
-
-Perhaps verify that $Type is a pointer as well
-
-		if ($line =3D~ /\b($Type)\s*($Ident)\s*__free\s*\(\s*$Ident\s*\)\s*;/ &&
-		    $1 =3D~ /\*\s*$/) {
-
-to avoid things like:
-
-drivers/net/ethernet/microsoft/mana/gdma_main.c:	cpumask_var_t cpus __free(=
-free_cpumask_var);
-
-
-> +			WARN("UNINITIALIZED_PTR_WITH_FREE",
-> +			      "pointer '$1' with __free attribute should be initialized\n" . =
-$herecurr);
-
-			pointer '$2' etc
-
-And this would not find uses like the below where another definition
-is done before a definition with __free on the same line:
-
-crypto/testmgr.c:       u8 *ptr, *key __free(kfree);
-
-There are many uses in drivers/opp/ that could be updated where
-the initialization is done after the definition like the below:
-(I've added the opp maintainers to the cc's)
-
-drivers/opp/core.c-unsigned long dev_pm_opp_get_max_clock_latency(struct de=
-vice *dev)
-drivers/opp/core.c-{
-drivers/opp/core.c:     struct opp_table *opp_table __free(put_opp_table);
-drivers/opp/core.c-
-drivers/opp/core.c-     opp_table =3D _find_opp_table(dev);
-
-An aside found while using grep:
-
-There are uses of DEFINE_FREE that seem to have an unnecessary trailing ;
-
-$ git grep -w DEFINE_FREE | grep ';'
-drivers/firmware/efi/libstub/efistub.h:DEFINE_FREE(efi_pool, void *, if (_T=
-) efi_bs_call(free_pool, _T));
-drivers/fwctl/mlx5/main.c:DEFINE_FREE(mlx5ctl, struct mlx5ctl_dev *, if (_T=
-) fwctl_put(&_T->fwctl));
-drivers/pci/msi/msi.c:DEFINE_FREE(free_msi_irqs, struct pci_dev *, if (_T) =
-pci_free_msi_irqs(_T));
-drivers/tty/vt/vc_screen.c:DEFINE_FREE(free_page_ptr, void *, if (_T) free_=
-page((unsigned long)_T));
-fs/pstore/inode.c:DEFINE_FREE(pstore_private, struct pstore_private *, free=
-_pstore_private(_T));
-include/linux/cpumask.h:DEFINE_FREE(free_cpumask_var, struct cpumask *, if =
-(_T) free_cpumask_var(_T));
-include/linux/execmem.h:DEFINE_FREE(execmem, void *, if (_T) execmem_free(_=
-T));
-include/linux/fwctl.h:DEFINE_FREE(fwctl, struct fwctl_device *, if (_T) fwc=
-tl_put(_T));
-net/core/dev.h:DEFINE_FREE(netdev_unlock, struct net_device *, if (_T) netd=
-ev_unlock(_T));
+As a next step, I'd expect someone (at Google) to take this into
+consideration and put together a series to have the kernel comprehend
+those points.
 
