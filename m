@@ -1,138 +1,147 @@
-Return-Path: <linux-kernel+bounces-863585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42CBBF83CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:22:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB3BBF83D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C2CB4EBF69
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141D318A6247
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABEA351FD5;
-	Tue, 21 Oct 2025 19:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC11A351FBD;
+	Tue, 21 Oct 2025 19:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSF1yFGA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LE5ecSBK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0447351FA1;
-	Tue, 21 Oct 2025 19:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CE8338903;
+	Tue, 21 Oct 2025 19:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761074559; cv=none; b=rfpCd2M5KDcqZGPmtu4I5boVHeScLTRtwzWHpW+TfKKSk7iILWF/4/cYTEeVQ/AlCGkS4YgqzuIyWUdq0eEf72W1ESygDA3zludwsnSRJJQmqt4mYrCL6swFrem/xHUH6GXtzP+xCMiHx1aTF9F1f/YaxEEOJjMLV8bSqnPtj/o=
+	t=1761074646; cv=none; b=oB9ppqAjbTu0GmNId9dAM0fbiZcEK5p6I7EmF24t91aBLnrNEAva1oINHdkzlHgDZ4nsG12dXUIobIZ0Itsjv9azmMeIezas7j02kyLf62Sk/lS2/W4afDPPX4wyhKEki7PEUp7kgE7kCkyrjrLWglstRgstzRNmkTo08wHdqfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761074559; c=relaxed/simple;
-	bh=kLQuZ77APTbGac5pbyjhPnx3O7zXM+2TL9oYOXoVcaA=;
+	s=arc-20240116; t=1761074646; c=relaxed/simple;
+	bh=E3LGhnnjVgNQvzdUA+dKvbHT5vkuigF/kle9qkfRNJk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7WxXotF/IxsbXNE4L0DJcVUdbDfZGdnVhWLRiIfn0HM0qO71r8IVvbA7tnrj/qTihWfzk8eZSlkJbx++65Noxh2DiGwuHJN4se9Q8K+BNs+B/NMs06GMqg1oIN2lUR/jRQjg3RRKH9zqGyLgIqgYIgjBvyBFoAzs4RoUCPgJUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSF1yFGA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A024C4CEF1;
-	Tue, 21 Oct 2025 19:22:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CPk0S5B4Cpj7aLcSs4BMjUlYfCSdy2F+G1g/NviG3rIZMt0Thz++jbbG2nyLMcVb+sMUsEYAN2pJTPVk8n2lkbyBeVWr5RzGxP2ZjVwgDWkaC1bDaKhm7Pf1m+w8UoQk/h/OaCS2oC7hLSQDhlkwiVH/dO4+xpqWV73kFhZd5Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LE5ecSBK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A887C4CEF1;
+	Tue, 21 Oct 2025 19:24:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761074558;
-	bh=kLQuZ77APTbGac5pbyjhPnx3O7zXM+2TL9oYOXoVcaA=;
+	s=k20201202; t=1761074646;
+	bh=E3LGhnnjVgNQvzdUA+dKvbHT5vkuigF/kle9qkfRNJk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XSF1yFGAgyigzdVw99xrgCcGbbjXdnIUa003MIJBj4ylEg24A+tkpzeCuVHFA5ycd
-	 jxreQ/tWeCavNXjT6wJA8bz3HcUNfe1l818hKm9f9XONLVjlmHS6bCQgEaotYXBV7y
-	 6YiCBNlzjrR5dHFsSg3tGUABit4yTxpqV/Ao1sgqy9zYa/S/sHgqS14FCKSwdnT0fX
-	 CEfAZ5Mw5SLX+ZeXfsv9QJIgSZGL1uaTouGGRyAhwvxLSHrwvZqG6o8sGBYzwEoyr4
-	 bLgz3UV6Ah4fimNpBa2Dgx3M/u0B4DJQExGeJj3p1f3ckDQ9Dx1CBSqn9UWjsBPJyK
-	 h/kX0B+zBreSg==
-Date: Tue, 21 Oct 2025 20:22:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sascha Bischoff <Sascha.Bischoff@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, nd <nd@arm.com>,
-	Mark Rutland <Mark.Rutland@arm.com>,
-	Catalin Marinas <Catalin.Marinas@arm.com>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	Joey Gouly <Joey.Gouly@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>
-Subject: Re: [PATCH v2 2/4] arm64/sysreg: Support feature-specific fields
- with 'Prefix' descriptor
-Message-ID: <c835fd10-5590-42de-b968-4696917b41be@sirena.org.uk>
-References: <20251009165427.437379-1-sascha.bischoff@arm.com>
- <20251009165427.437379-3-sascha.bischoff@arm.com>
+	b=LE5ecSBK83GkzI4Wj0VJBYE3yUZcsAyqzGy4/AgxqYwGy99uSaMSETMrytq3M8AuU
+	 WK6GyDqqQWMcsaMa/luqgFcpOoF1S5wB7sHWT7xNe0r8zG+owalEYFXov8teus/o22
+	 dG0dZyyQCs2m3hr5eUCMeHa70L3X/Tr+yvCjsCggxYgPPf3dWIGr906YwjKwliA1QF
+	 zHrNJBobcqoYjRC/NfXzE4kOp2RGKaIxBNA59pDfukTP5wVa2D0zpBt3YO/wuBqjc8
+	 7Wyc6gPsLjbhCyBq2jk2qADfhIlfUgsYvajgcTXSipNhXrl3hB0YXyPWhOfu19IcWR
+	 okJq8kAypmH/w==
+Date: Tue, 21 Oct 2025 12:24:05 -0700
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Marco Elver <elver@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
+	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Shuah Khan <shuah@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	kernel test robot <lkp@intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Marc Herbert <Marc.Herbert@linux.intel.com>,
+	Christopher Ferris <cferris@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Jeff Xu <jeffxu@chromium.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
+Message-ID: <202510211210.84D670D1C@keescook>
+References: <20251020220005.work.095-kees@kernel.org>
+ <20251020220118.1226740-1-kees@kernel.org>
+ <20251021095447.GL3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3FiDR95fQGlL7dSr"
-Content-Disposition: inline
-In-Reply-To: <20251009165427.437379-3-sascha.bischoff@arm.com>
-X-Cookie: Accordion, n.:
-
-
---3FiDR95fQGlL7dSr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251021095447.GL3245006@noisy.programming.kicks-ass.net>
 
-On Thu, Oct 09, 2025 at 04:54:48PM +0000, Sascha Bischoff wrote:
+On Tue, Oct 21, 2025 at 11:54:47AM +0200, Peter Zijlstra wrote:
+> On Mon, Oct 20, 2025 at 03:01:15PM -0700, Kees Cook wrote:
+> > Introduce __counted_by_ptr(), which works like __counted_by(), but for
+> > pointer struct members:
+> > 
+> > struct foo {
+> > 	int a, b, c;
+> > 	char *buffer __counted_by_ptr(bytes);
+> > 	short nr_bars;
+> > 	struct bar *bars __counted_by_ptr(nr_bars);
+> > 	size_t bytes;
+> > };
+> > 
+> > Since "counted_by" can only be applied to pointer members in very recent
+> > compiler versions, its application ends up needing to be distinct from
+> > flexible array "counted_by" annotations, hence a separate macro.
+> > 
+> > Unfortunately, this annotation cannot be used for "void *" members
+> > (since such a member is considered a pointer to an incomplete type,
+> > and neither Clang nor GCC developers could be convinced otherwise[1],
+> > even in the face of the GNU extension that "void *" has size "1 byte"
+> > for pointer arithmetic). For "void *" members, we must use the coming
+> > "sized_by" attribute.
+> 
+> So why do we need both __counted_by_ptr() and this __sized_by(), won't
+> one be good enough?
 
-> The Prefix descriptor can be used in the following way:
->=20
->         Sysreg  EXAMPLE 0    1    2    3    4
->         Prefix    FEAT_A
-> 	Field   63:0    Foo
-> 	EndPrefix
-> 	Prefix    FEAT_B
-> 	Field   63:1    Bar
->  	Res0    0
->         EndPrefix
->         Field   63:0    Baz
->         EndSysreg
+I remain extraordinarily frustrated that counted_by can't be used with
+"void *". I hit a brick wall on this, though, and don't know how to
+convince either GCC or Clang devs to fix it. It's so obviously correct
+to me: "void *" uses a 1 byte iterator for arithmetic... so asking how
+big a given allocation is should be byte sized!
 
-This seems like a reasonable solution to the practical problem, and the
-implementation seems OK:
+Let me take another stab at it...
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+> Also, given the existing __counted_by() is really only usable with
+> >=19.1.3 and we're now at 22-ish, do we really need two of these?
+> 
+> That is, I'm really hating the idea we need 3 different annotations for
+> what is effectively the same thing and feel we should try *really* hard
+> to make it 1.
 
-I think trying to do too much more would open up far too many cans of
-worms to be reasonable to block things on.
+As for avoiding __counted_by_ptr(), we could just raise the minimum
+Clang and GCC versions to require this, but that means dropping existing
+coverage (e.g GCC 15 supports only flexible array counted_by).
 
-One nit:
+Maybe we could do a global __counted_by_ptr -> __counted_by replacement
+once GCC 16 is released?
 
->  # Parse a "<msb>[:<lsb>]" string into the global variables @msb and @lsb
-> @@ -132,10 +149,7 @@ $1 =3D=3D "EndSysregFields" && block_current() =3D=
-=3D "SysregFields" {
->  	if (next_bit >=3D 0)
->  		fatal("Unspecified bits in " reg)
-> =20
-> -	define(reg "_RES0", "(" res0 ")")
-> -	define(reg "_RES1", "(" res1 ")")
-> -	define(reg "_UNKN", "(" unkn ")")
-> -	print ""
-> +	define_resx_unkn(prefix, reg, res0, res1, unkn)
-
-This refactoring into a function seems like it could usefully have been
-a separate patch.
-
---3FiDR95fQGlL7dSr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj33XcACgkQJNaLcl1U
-h9Cyhwf/YsjdawmSEFXnz/ThgkSJaPvHJwggse623h6Bi/49edb4f21ET1S3ThkF
-bFxUYa0RApCMFMiYaLsHHihwrO5JoZRxXUyeqRezt9sGxk/RbO+ii/hOZp0OpZ1q
-hgrM0srqSvxRqpXuDBWLS0tzGQaviyvWAIlN3xVQBwoNdQTVKYQSjtzyEFoC6pJp
-LIZ5mCLSSQcE6+kgDFSMenCY4xp5eiVIo1FwftEm0RilTpCMvHrdBV02ncIqcwn2
-Tb9iX7KoyX6Y/EUnqwHhdvhioeqwCk7YkQlzHC1ihPKntAVLutzjb6lCfSDTZa2J
-odMHxKAzSvAvp4UTXOo98nuAKnlQDw==
-=BAQL
------END PGP SIGNATURE-----
-
---3FiDR95fQGlL7dSr--
+-- 
+Kees Cook
 
