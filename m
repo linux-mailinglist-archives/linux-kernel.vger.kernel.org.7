@@ -1,221 +1,146 @@
-Return-Path: <linux-kernel+bounces-862613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B90BF5C03
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D759BF5C09
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEFE04660C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F64484F75
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBC832D425;
-	Tue, 21 Oct 2025 10:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B993032D7FF;
+	Tue, 21 Oct 2025 10:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kIGkpJlA"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6OE5897"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22C032B9BB
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1186032D443;
+	Tue, 21 Oct 2025 10:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041981; cv=none; b=Ao36z7LJTGwGiUMk2e0dIo9E8zW7nZpFkKWFFF1oDtyz2oQ/klqpBnAOO44g/FORmD0NLJUQXim9ry367yXio1m+qMeNB7oOktxxNzi+Fc+OySXaoUvM3pbOplh0d93mxJCxL4vbXQ8MR8Vl9Nj638ybQXow9DD3yW5IKbE5eFk=
+	t=1761041983; cv=none; b=ZdlJgLt5dPteFXmB8U1CpbYZDW1BPKqqbMjc6C+fU3gsBK3LGG/xEVb7hMGwXr1VrHvGQ/YkMgix+z85+A6IUHKGXXxpAfbi8EF/3XZC3iRDRLDmdC5W7sWQ5+jG/tstPtKuz29vw70CtGrKDSHMUcTKsFnA4atbyh3Vasdqr+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041981; c=relaxed/simple;
-	bh=Oq23yGZ/GtFdV1bxn1QAep1nMXJorSEThDKlDL/e8Ec=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SzMqxH0GRbWOAwCuqe4qBoBJvX1i7IoobgLzjGtZidyxc9HBPz+nBYtLeNZeMmeCYVyLAZjAdJABByf+IiA19XVXhv1qpA4DpD9FAlSA+zlmbk0du2azKQSy6z1lKWgCX5bMxlrzxJLCnBEpcXP2/Xj70zOsouAgPfjmcANEY00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kIGkpJlA; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761041972;
-	bh=Oq23yGZ/GtFdV1bxn1QAep1nMXJorSEThDKlDL/e8Ec=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kIGkpJlAeylMJRXzfCmSUMtS0keJbPqm8Z9JcspzOjrzHj46Er9JoxjYPE1fVI9q7
-	 H1XO4dqZDTAQwwOa5Vf8v6YziT5LVO05qpUi6IPaXJXKAmoPYpNO+X5kjgrxt/U249
-	 QEe11QEAQz8RpY/FDBm/m18V0bxJEN1miKxToZ935lhji3LE/PsxCgOSoQXkSE1drh
-	 0/ZNacYRTkyOe8lBz0bMJFh82bPxalZ3IkzR5G4oKpjGzFh6yQJoNHhXItyJ9fV0Y8
-	 dZhxEthXWlFqmjYFRoqMTD35idig58BL8W8sWVYAnAe+h1Y8aY+NWWOu79K3gLDL3w
-	 GuRwu8p2jwQbg==
-Received: from localhost (unknown [82.79.138.145])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 2F35217E1414;
-	Tue, 21 Oct 2025 12:19:32 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 21 Oct 2025 13:19:18 +0300
-Subject: [PATCH v3 5/5] drm/rockchip: dw_hdmi_qp: Add high color depth
- support
+	s=arc-20240116; t=1761041983; c=relaxed/simple;
+	bh=f0g5THhK54dybF5dmkHuBFG1blG84WxDpg/JuwhhxA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBF3JZwr9PwfnirTJe9+WD/OKUQpOM2/aalGU3kdycN4FpZl0M+xARzl9599lapvnBfibXQW7gHXKT06QWQ6WFIwgETqUkHei7oPA6+3avacQDbF/9yiQL24aOx0tBB+ZJEQLBFrTXRZos5KDqI0/1FA5QhHAJl3V4t8nKPid54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6OE5897; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275DFC4CEF1;
+	Tue, 21 Oct 2025 10:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761041982;
+	bh=f0g5THhK54dybF5dmkHuBFG1blG84WxDpg/JuwhhxA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U6OE5897LDLOTzsdByMLlf3cZIKKK+9G2+OQqUV8uwL/SfvbyNnrnzC7iphEvNAyW
+	 HRvgyY/sIT57az/O2/Ma5mV8514MycfoR0UY6N8v0/JNL0hJyem/odm5qkuzNcfdjL
+	 WQuuWeWgbg4cHQZoXwSOjjZEn132BSkJrmAwC4YVvDLwu4/8213WdCi07poFX2Yphm
+	 aZqy3qv7mcLHOwobhWcnQ3gWXQTYheQCWo1TPu/D3KKZR8pNnB7m25Xu9+IgO6Ok7A
+	 4E7sU/DQpbkBko27LGssTL+sN6s0cdGwHDx3mRUlJirURLwrFa67gmGJtlONF1mdW/
+	 GVjC4VuCfNirg==
+Date: Tue, 21 Oct 2025 12:19:39 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Martyn Welch <martyn.welch@collabora.com>
+Cc: kernel@collabora.com, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pwm: rz-mtu3: Share parent device node to MTU3 PWM
+Message-ID: <7uuuqhmkmmucmeeo5fybzld62rybyq6fjxwqqnxqr6eufis2ze@xfc2owdzfcs5>
+References: <20251009162445.701589-1-martyn.welch@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-rk3588-10bpc-v3-5-3d3eed00a6db@collabora.com>
-References: <20251021-rk3588-10bpc-v3-0-3d3eed00a6db@collabora.com>
-In-Reply-To: <20251021-rk3588-10bpc-v3-0-3d3eed00a6db@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>
-X-Mailer: b4 0.14.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hn2y6sgc6bhpdjch"
+Content-Disposition: inline
+In-Reply-To: <20251009162445.701589-1-martyn.welch@collabora.com>
 
-Since both RK3576 and RK3588 SoCs are capable of handling 10 bpc color
-depth, introduce a pair of new helpers to program the necessary
-registers, as well as passing bpc at PHY configuration level.
 
-Note max_bpc is unconditionally set to 10 before initializing the QP
-bridge library, as there is no need to adjust it dynamically, i.e. per
-SoC variant, for now.
+--hn2y6sgc6bhpdjch
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: rz-mtu3: Share parent device node to MTU3 PWM
+MIME-Version: 1.0
 
-While setting up .enc_init() callbacks of rockchip_hdmi_qp_ctrl_ops,
-also replace the unnecessary whitespace chars before .irq_callback()
-assignments.
+Hello,
 
-Acked-by: Daniel Stone <daniels@collabora.com>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 54 ++++++++++++++++++++++++--
- 1 file changed, 51 insertions(+), 3 deletions(-)
+[adding maintainers of drivers/of and Krzysztof to Cc:]
 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-index ac5ec697b9a2..ca3fa3965302 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-@@ -70,6 +70,12 @@
- #define RK3588_HDMI1_LEVEL_INT		BIT(24)
- #define RK3588_GRF_VO1_CON3		0x000c
- #define RK3588_GRF_VO1_CON6		0x0018
-+#define RK3588_COLOR_DEPTH_MASK		GENMASK(7, 4)
-+#define RK3588_8BPC			0x0
-+#define RK3588_10BPC			0x6
-+#define RK3588_COLOR_FORMAT_MASK	GENMASK(3, 0)
-+#define RK3588_RGB			0x0
-+#define RK3588_YUV420			0x3
- #define RK3588_SCLIN_MASK		BIT(9)
- #define RK3588_SDAIN_MASK		BIT(10)
- #define RK3588_MODE_MASK		BIT(11)
-@@ -97,6 +103,7 @@ struct rockchip_hdmi_qp {
- 
- struct rockchip_hdmi_qp_ctrl_ops {
- 	void (*io_init)(struct rockchip_hdmi_qp *hdmi);
-+	void (*enc_init)(struct rockchip_hdmi_qp *hdmi, struct rockchip_crtc_state *state);
- 	irqreturn_t (*irq_callback)(int irq, void *dev_id);
- 	irqreturn_t (*hardirq_callback)(int irq, void *dev_id);
- };
-@@ -111,9 +118,16 @@ static struct rockchip_hdmi_qp *to_rockchip_hdmi_qp(struct drm_encoder *encoder)
- static void dw_hdmi_qp_rockchip_encoder_enable(struct drm_encoder *encoder)
- {
- 	struct rockchip_hdmi_qp *hdmi = to_rockchip_hdmi_qp(encoder);
-+	struct drm_crtc *crtc = encoder->crtc;
- 
- 	/* Unconditionally switch to TMDS as FRL is not yet supported */
- 	gpiod_set_value(hdmi->enable_gpio, 1);
-+
-+	if (!crtc || !crtc->state)
-+		return;
-+
-+	if (hdmi->ctrl_ops->enc_init)
-+		hdmi->ctrl_ops->enc_init(hdmi, to_rockchip_crtc_state(crtc->state));
- }
- 
- static int
-@@ -126,16 +140,19 @@ dw_hdmi_qp_rockchip_encoder_atomic_check(struct drm_encoder *encoder,
- 	union phy_configure_opts phy_cfg = {};
- 	int ret;
- 
--	if (hdmi->tmds_char_rate == conn_state->hdmi.tmds_char_rate)
-+	if (hdmi->tmds_char_rate == conn_state->hdmi.tmds_char_rate &&
-+	    s->output_bpc == conn_state->hdmi.output_bpc)
- 		return 0;
- 
- 	phy_cfg.hdmi.tmds_char_rate = conn_state->hdmi.tmds_char_rate;
-+	phy_cfg.hdmi.bpc = conn_state->hdmi.output_bpc;
- 
- 	ret = phy_configure(hdmi->phy, &phy_cfg);
- 	if (!ret) {
- 		hdmi->tmds_char_rate = conn_state->hdmi.tmds_char_rate;
- 		s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
- 		s->output_type = DRM_MODE_CONNECTOR_HDMIA;
-+		s->output_bpc = conn_state->hdmi.output_bpc;
- 	} else {
- 		dev_err(hdmi->dev, "Failed to configure phy: %d\n", ret);
- 	}
-@@ -371,15 +388,45 @@ static void dw_hdmi_qp_rk3588_io_init(struct rockchip_hdmi_qp *hdmi)
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- }
- 
-+static void dw_hdmi_qp_rk3576_enc_init(struct rockchip_hdmi_qp *hdmi,
-+				       struct rockchip_crtc_state *state)
-+{
-+	u32 val;
-+
-+	if (state->output_bpc == 10)
-+		val = FIELD_PREP_WM16(RK3576_COLOR_DEPTH_MASK, RK3576_10BPC);
-+	else
-+		val = FIELD_PREP_WM16(RK3576_COLOR_DEPTH_MASK, RK3576_8BPC);
-+
-+	regmap_write(hdmi->vo_regmap, RK3576_VO0_GRF_SOC_CON8, val);
-+}
-+
-+static void dw_hdmi_qp_rk3588_enc_init(struct rockchip_hdmi_qp *hdmi,
-+				       struct rockchip_crtc_state *state)
-+{
-+	u32 val;
-+
-+	if (state->output_bpc == 10)
-+		val = FIELD_PREP_WM16(RK3588_COLOR_DEPTH_MASK, RK3588_10BPC);
-+	else
-+		val = FIELD_PREP_WM16(RK3588_COLOR_DEPTH_MASK, RK3588_8BPC);
-+
-+	regmap_write(hdmi->vo_regmap,
-+		     hdmi->port_id ? RK3588_GRF_VO1_CON6 : RK3588_GRF_VO1_CON3,
-+		     val);
-+}
-+
- static const struct rockchip_hdmi_qp_ctrl_ops rk3576_hdmi_ctrl_ops = {
- 	.io_init		= dw_hdmi_qp_rk3576_io_init,
--	.irq_callback	        = dw_hdmi_qp_rk3576_irq,
-+	.enc_init		= dw_hdmi_qp_rk3576_enc_init,
-+	.irq_callback		= dw_hdmi_qp_rk3576_irq,
- 	.hardirq_callback	= dw_hdmi_qp_rk3576_hardirq,
- };
- 
- static const struct rockchip_hdmi_qp_ctrl_ops rk3588_hdmi_ctrl_ops = {
- 	.io_init		= dw_hdmi_qp_rk3588_io_init,
--	.irq_callback	        = dw_hdmi_qp_rk3588_irq,
-+	.enc_init		= dw_hdmi_qp_rk3588_enc_init,
-+	.irq_callback		= dw_hdmi_qp_rk3588_irq,
- 	.hardirq_callback	= dw_hdmi_qp_rk3588_hardirq,
- };
- 
-@@ -472,6 +519,7 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
- 
- 	plat_data.phy_ops = cfg->phy_ops;
- 	plat_data.phy_data = hdmi;
-+	plat_data.max_bpc = 10;
- 
- 	encoder = &hdmi->encoder.encoder;
- 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+On Thu, Oct 09, 2025 at 05:24:44PM +0100, Martyn Welch wrote:
+> The PWM currently functions, however if we try to utilise the pwn in a
+> device tree, for example as a pwm-backlight:
+>=20
+>         lcd_bl: backlight {
+>                 compatible =3D "pwm-backlight";
+>                 pwms =3D <&mtu3 3 833333>;
+> 		...
+>=20
+> This fails:
+>=20
+> [   15.603948] platform backlight: deferred probe pending: pwm-backlight:=
+ unable to request PWM
+>=20
+> The PWM driver forms part of the Renesas Multi-Function Timer Pulse Unit
+> 3. The PWM does not have a DT node of it's own. Share the DT node of the
+> parent MFD device, so that the PWM channels can be referenced via phandle=
+s.
+>=20
+> Co-developed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> ---
+>  drivers/pwm/pwm-rz-mtu3.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/pwm/pwm-rz-mtu3.c b/drivers/pwm/pwm-rz-mtu3.c
+> index ab39bd37edafc..5825875fa0128 100644
+> --- a/drivers/pwm/pwm-rz-mtu3.c
+> +++ b/drivers/pwm/pwm-rz-mtu3.c
+> @@ -523,6 +523,12 @@ static int rz_mtu3_pwm_probe(struct platform_device =
+*pdev)
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> +	/*
+> +	 * There is only one DT node, get it from the parent MFD device, so
+> +	 * that the PWM channels can be referenced via phandles
+> +	 */
+> +	dev->of_node =3D dev->parent->of_node;
+> +
 
--- 
-2.51.0
+I (very quickly) talked to Krzysztof about this. He said that
+of_node_get() should probably be used here. I wonder if
+device_add_of_node() is the right function to use (which uses
+of_node_get(), also handles fwnode and implements some safeguards).
 
+>  	chip->ops =3D &rz_mtu3_pwm_ops;
+>  	ret =3D devm_pwmchip_add(&pdev->dev, chip);
+>  	if (ret)
+
+Best regards
+Uwe
+
+--hn2y6sgc6bhpdjch
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj3XjgACgkQj4D7WH0S
+/k5fRQgApfWLCG1uFRgeJaGb2nN+t9ay4j5ItEu/+8762mGY1jnzg9VeM3/DRBuk
+NUF5Pjyd4s/n4AO7IhMVvBFWfcX38zoxvheUA13nwhIne6Rz4KdkDGwfb8iVL7C+
+/HyaBt1xTF38HkZ77zq3ODmVoYaQh9MZhiUJPRAf32nh7mfwh61p2+A2dGYXGDtH
+ZDe+tCH2iME7A8Yx8McpmDT5omp11QcPj+vf4rGE6nl1obmVyZv0H9PL1WCwC9On
+bTT2HQZJsA3cJJJfl8qm8wYUkBm8VUuJCCode0phQNZgSLI1937fiSUptk29LAkC
+OEODR5YY2encI4GgCuRfMc6Rj0jknQ==
+=l7bX
+-----END PGP SIGNATURE-----
+
+--hn2y6sgc6bhpdjch--
 
