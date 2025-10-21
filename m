@@ -1,196 +1,144 @@
-Return-Path: <linux-kernel+bounces-862217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D02BF4B36
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:24:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47887BF4B3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D1318C3E9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:24:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03EF54EC436
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3149D25D540;
-	Tue, 21 Oct 2025 06:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD06325D540;
+	Tue, 21 Oct 2025 06:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jwhu+A4v"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="EkSwrTMb"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFE825B31B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3DC1FBEAC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761027834; cv=none; b=Th4RuhERln9ELv6q0hMb7NwSixeO/knaN8zO/2puCGT7S1ZKUKzQr6mH9ZCW+7dKrsD3Pf89W/S9uVtQpxm2umff3oKrgaMlgSCduHErVeHZl4MgSTAmjgI7t8FQ8JWP4Pza5KTcPoU7FrW8WiAWwT9ycxdyfooREY69aBROtLw=
+	t=1761027934; cv=none; b=CCDIZ6iVCNXArHy/zqlHSDwW9T3x8cr2iROufn8uoCRNqn5EgoE6FgqHCsfMJhjq7lcBav7Y0wlk8Q9f4EcpfF9gr3VAbtEPYlUIYJqGthi/Q0V3v0bPcQjrAHIisBzSvSV81KolEVbELaRV/rWUmEaR5P3l9jOzqn3OqqrVkKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761027834; c=relaxed/simple;
-	bh=7IH4Ryd6nfRF/cdkd9Cj41f8zlBCsdWwuDdjxbxkkqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=odLnU3DU7pFSrn/JuSk6KeyetnGiQWeBGJgBYZa42Cqvseep9CN4AghazDT4DdXvX98qz8d8oxu2ECq44NSl0wya/bT6xJyAtgUYCO4JHhPDoQ0tvcihwPNzal2YAiZFU5CJqhZBdGI4xD7/JcP7B3jcxfXTFQstXyzTVv9K1mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jwhu+A4v; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-88f27b67744so733668085a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 23:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761027832; x=1761632632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QLjXkk9G7S5NJjjLjfl1k4f4v5rB5l07o4uqGq0JEHw=;
-        b=Jwhu+A4v/pKeiAn7XZZYml+d2FIc1OSnGHojCaSb93otZHBidajjFPrRHsM6cEFvUY
-         LJw/+DiPB4RAC9etOV5E8SZpjfyPg7QzZmITU8EXCRy9RrqN76E1nwYufrtH3HVEbN67
-         MIjk0uFQy2iRIW6g1FAmGjpleJCtF/sV9RvNVo8TErK1zDuy5WQ2Q8lzEgUvwFU05KeM
-         Cpu+xr04QQARKvDOxnuw5EI9AWtCoumh7aPE+2rHeCxj3En58O9mpngF1aAszeXTbkn9
-         wMOHXe2zTy279j8Y7u3SZBlQKmwexguDQHPn4Wpx2ACrwWdlhN76rRo+CMo3smEKBIGl
-         zmOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761027832; x=1761632632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QLjXkk9G7S5NJjjLjfl1k4f4v5rB5l07o4uqGq0JEHw=;
-        b=I0fd2zW0mBSU7p5iYpaCdUVA0jWK1huAJeND8K+7ESzH7mk0ftdd6xrueV8zrCwCzC
-         A9UB1QXo8yQx/vgjy6I/bQbkwylracTT7r00JJb8LKE1eCTPnDtyZ7/LNtkE/S+Hwdbm
-         3RS7+7x/ar6YF9Ln8zrY+pTF7zmYJUX7RheWzim9NXFc1jHq3/rzx+wCIEmunzY8F31X
-         1Iik1STEz8V/dHaq+wC9FtEQGB1hX10KJuOEtpDNWdwVvqmTOT6UoiauIBl3lAvSbefj
-         ux2/VzGwKO5r5Ves8ciEcmDZz2t3PsIa2C2e66hhFLAN75ZyJWcALqdR3O0h26043aBu
-         mnzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDPscaq7VDlEF6pAHi64eWcEz8iTMot+r6nyH/RvKGo/BKruISl0duHKWu8lQGA/FAx3VVXsC41OpwItw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvvMN7+uPY87e2050/YCc4g771fC6IS8HWDdsEjDyjCfUm0isy
-	GdPKA9Lrav9FOV97iHvHfFuN8XnHKa6m8Fb2onD1JJPLu9wPQaod7GCnrCObRRE6E2OQ89EB3r9
-	xiIWo427rF3X1OK99HtL3vfaxArj+gcU=
-X-Gm-Gg: ASbGncuSCPOjdKpOsjmv63WrdGHIoUTLn89dir6McK+aH7mhMkQT0US5WVzWC7HSBs0
-	9wc7mInhmJxQ8iPs/mYHgoMKusKcySWXISM6pcuyJNGezAo2pOroaxWvFobq1nwILseeZGKERZQ
-	xx40yR7K/pmdXc33J4rpVp3fDFrSo+RQQeKX0OwoNY2FP4qybLRHg80muPbwNG8WzKO89JZ0fDI
-	b2WCYBAT8ujUiDAjVD4RXcAlTamFZlp0R3Y23v4x7a1RDN3BokQtNDvmGyQUWDG2wJg6J2AQCUs
-	i4V9X9Z32FokH9Td5EYxRdIWXbU=
-X-Google-Smtp-Source: AGHT+IEejdz2oiuxm0bEp46aC7xYCSy0m6Th5nMlB8ZWlLLKrCeYcXoDqqGzkkBeDM18tdXFLdLO9S2MHY39zpFN/lc=
-X-Received: by 2002:a05:620a:2907:b0:892:76c6:8356 with SMTP id
- af79cd13be357-89276c68516mr1190962985a.81.1761027831487; Mon, 20 Oct 2025
- 23:23:51 -0700 (PDT)
+	s=arc-20240116; t=1761027934; c=relaxed/simple;
+	bh=bjbe/jPnfpLIQqKd46j3XOAXZZmzkHUTjyI1dD9z+I0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q/Bq3pGuancWh0coIyGJd5T9Lb4XOINPTwCpGumjRmPabJIjvUmyhs/jKSRrbVk59fxaVIMMwyLRmgEBinL5LDCwBLZRA3f5a9Q+RyMf9pBynzcc0UZlhb8X+IFcCUnPXsK+Ht+wZdKLMcsS0U65wwgviromhaudzFGamdFKBeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=EkSwrTMb; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=6iGRnKroU96QX8SNpSFCWJ657gZxLhZ+b45rznhLZgU=; t=1761027932;
+	x=1761459932; b=EkSwrTMbUpOTzTSW4BkZI0JIuzuj3jbrUh8Ga8Md22IG7JNHVZq/ouKbt4Khy
+	vy0ue2coyhrFoZSSS6CL/ILAs3iJJ4DxdANB6iJ0eFxpRVKWl6utX3e8iFrTjtolavyj5Kxc9vkaA
+	+ioJgHVVLZ2lrBAZ9tJad4XrxRy5K7o+CumKj5NKb+2OeSNcaMTQSlTkFfaA28U43UqzW5agmKPII
+	P9CI9wU1QnZtP+8VCKK2gyTx9nQpwnazfUT3J1ezLuEL/6HTQ6fhIdGZKi9/wBQ3f33r9FurxF2vW
+	+BetBxc2gpGDdj+gGUEaN4b/kjrJBEa/zaZNeW5kLMxAKmE7aA==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1vB5o5-001mBm-1g;
+	Tue, 21 Oct 2025 08:25:17 +0200
+Message-ID: <d51ff72b-3d98-4dd3-99fe-80ccdc71913d@leemhuis.info>
+Date: Tue, 21 Oct 2025 08:25:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021011739.1468912-1-xiaqinxin@huawei.com>
- <CAGsJ_4zF4JOPXpkzmR+invqefLstcaB=xaGEfueHEQRSg2oLOg@mail.gmail.com> <47cc4984-a424-410d-a1b8-9947c1a42ccb@huawei.com>
-In-Reply-To: <47cc4984-a424-410d-a1b8-9947c1a42ccb@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 21 Oct 2025 19:23:40 +1300
-X-Gm-Features: AS18NWDG-m0bOlArM3Uv4n8n97lC2PURCatQf_aAqUx-Doqvx3jG08RzBBhZCIE
-Message-ID: <CAGsJ_4zf31seJif1N93yk_mUaEYh4SzwedASK9VPnPm_JJ6t3Q@mail.gmail.com>
-Subject: Re: [PATCH v3] tools/dma: move dma_map_benchmark from selftests to tools/dma
-To: Qinxin Xia <xiaqinxin@huawei.com>
-Cc: m.szyprowski@samsung.com, robin.murphy@arm.com, prime.zeng@huawei.com, 
-	fanghao11@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	wangzhou1@hisilicon.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf build: Fix perf build issues with fixdep
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Arthur Marsh
+ <arthur.marsh@internode.on.net>, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+References: <8881bc3321bd9fa58802e4f36286eefe3667806b.1760992391.git.jpoimboe@kernel.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 MEK4
+In-Reply-To: <8881bc3321bd9fa58802e4f36286eefe3667806b.1760992391.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1761027932;559d79cf;
+X-HE-SMSGID: 1vB5o5-001mBm-1g
 
-On Tue, Oct 21, 2025 at 6:16=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> w=
-rote:
->
->
->
-> On 2025/10/21 10:59:05, Barry Song <21cnbao@gmail.com> wrote:
-> >> @@ -0,0 +1,2 @@
-> >> +# SPDX-License-Identifier: GPL-2.0-only
-> >> +dma_map_benchmark
-> >> diff --git a/tools/dma/Makefile b/tools/dma/Makefile
-> >> new file mode 100644
-> >> index 000000000000..4acbd9e00cfa
-> >> --- /dev/null
-> >> +++ b/tools/dma/Makefile
-> >> @@ -0,0 +1,17 @@
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +bindir ?=3D /usr/bin
-> >> +
-> >> +CFLAGS +=3D -idirafter../../include/uapi
-> >
-> > I'm a bit confused =E2=80=94 it seems you haven=E2=80=99t tried to unde=
-rstand what the issue
-> > was in v1 [1]. You were using -I for kernel header files (under
-> > include/linux but not uapi), which caused those kernel headers to take
-> > precedence over the system headers, leading to build errors. The uapi
-> > headers, however, are specifically designed to be installed into the sy=
-stem by
-> > the toolchain.
-> > So that=E2=80=99s no longer the case =E2=80=94 -idirafter is not the co=
-rrect flag for uapi.
-> >
-> Hello Barry :
-> If I delete -idirafter, like:
->
-> CFLAGS +=3D -I../../include/uapi
->
-> It will get warning info:
->
-> [xiaqinxin@localhost dma]$ make
-> cc -I../../include/uapi dma_map_benchmark.c -o dma_map_benchmark
-> In file included from ../../include/uapi/linux/map_benchmark.h:9,
->                   from dma_map_benchmark.c:13:
-> ../../include/uapi/linux/types.h:10:2: warning: #warning "Attempt to use
-> kernel headers from user space, see https://kernelnewbies.org/
-> KernelHeaders" [-Wcpp]
->     10 | #warning "Attempt to use kernel headers from user space, see
-> https://kernelnewbies.org/KernelHeaders"
->
-> So I keep -idirafter there.
->
-> There's another way, like:
->
-> CFLAGS +=3D -I../../usr/include
-> (need make headers_install first)
->
-> Maybe I haven=E2=80=99t thought it through.
-> If you have a better way, you can give an example.:)
 
-I see =E2=80=94 the uapi headers haven=E2=80=99t been installed yet. This i=
-ssue will
-automatically resolve once the toolchain is upgraded. Before that, we
-can try the following:
 
-tools/gpio/Makefile
+On 10/20/25 22:33, Josh Poimboeuf wrote:
+> Commit a808a2b35f66 ("tools build: Fix fixdep dependencies") broke the
+> perf build ("make -C tools/perf") by introducing two inadvertent
+> conflicts:
+> 
+>   1) tools/build/Makefile includes tools/build/Makefile.include, which
+>      defines a phony 'fixdep' target.  This conflicts with the $(FIXDEP)
+>      file target in tools/build/Makefile when OUTPUT is empty, causing
+>      make to report duplicate recipes for the same target.
+> 
+>   2) The FIXDEP variable in tools/build/Makefile conflicts with the
+>      previously existing one in tools/perf/Makefile.perf.
+> 
+> Remove the unnecessary include of tools/build/Makefile.include from
+> tools/build/Makefile, and rename the FIXDEP variable in
+> tools/perf/Makefile.perf to FIXDEP_BUILT.
+> 
+> Fixes: a808a2b35f66 ("tools build: Fix fixdep dependencies")
+> Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
 
-#
-# We need the following to be outside of kernel tree
-#
-$(OUTPUT)include/linux/gpio.h: ../../include/uapi/linux/gpio.h
-        mkdir -p $(OUTPUT)include/linux 2>&1 || true
-        ln -sf $(CURDIR)/../../include/uapi/linux/gpio.h $@
+Many thx, that did the trick for me.
 
-prepare: $(OUTPUT)include/linux/gpio.h
+Closes:
+https://lore.kernel.org/all/c1d395c6-2d3b-4504-befe-6e67c7ed96fc@leemhuis.info/
+Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
 
-I guess we could copy and paste GPIO=E2=80=99s Makefile and make a few mino=
-r
-modifications?
+Ciao, Thorsten
 
->
-> >> index b12f1f9babf8..5474a450863c 100644
-> >> --- a/tools/testing/selftests/dma/dma_map_benchmark.c
-> >> +++ b/tools/dma/dma_map_benchmark.c
-> >> @@ -10,7 +10,6 @@
-> >>   #include <unistd.h>
-> >>   #include <sys/ioctl.h>
-> >>   #include <sys/mman.h>
-> >> -#include <linux/types.h>
-> >
-> > What=E2=80=99s the reason for this? Is it to work around a build error?
-> > If so, no =E2=80=94 please keep it.
-> >
-> >>   #include <linux/map_benchmark.h>
-> >
->
-> Moved it to map_benchmark.h, otherwise some x86_64 build errors
-> would occur.
-
-Let=E2=80=99s avoid moving types.h =E2=80=94 that feels more like a workaro=
-und than a
-proper fix.
-
-Thanks
-Barry
 
