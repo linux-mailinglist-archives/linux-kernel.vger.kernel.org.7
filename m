@@ -1,113 +1,98 @@
-Return-Path: <linux-kernel+bounces-862066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF8FBF45A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:07:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CABBF459C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53ADD4F5436
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B870404B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7B725A35E;
-	Tue, 21 Oct 2025 02:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8/9UGAm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC3D27466D;
+	Tue, 21 Oct 2025 02:07:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932B62773D8;
-	Tue, 21 Oct 2025 02:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD89C260588;
+	Tue, 21 Oct 2025 02:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761012426; cv=none; b=VMYAiXiRXzealMOri5oxnwprVrMXRTHuLSL5nckjhW59BNg8g4Lm8FGYlxCQyOlznVSSL/JF87q9FAqCzs08SoIg8/ZXVopg3JD8sjuGqFl3b4ldPrtyVCcxscCBhm50RRFoBcS/6LSMuTiDHQFwqEsl4Ebk7vHmpjKmJcUwVo8=
+	t=1761012423; cv=none; b=IJYAYTI8Jw+5PWe57W6p0sd6j0Rew1xaaFFl4oXwoG2sxWCmHJDTq8te08zrbCBnXg8T7HDLje7UDkh1+KgiYpRZN/KtwBofrEG7AIHEYxMtdhcM6aefxXOWfk9sDP2GSkkfo+Rl77RVmAqGT5x7jj6rQZTF9XkZkg/XF9s5qSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761012426; c=relaxed/simple;
-	bh=lea45PnhCbZ2sLHs3xr7ltskoeSEMmGeuwyEfGGX1Go=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMZjDQLzmcutDlkPZ44YNS6yn7TSNz9jzHL95FMS4aMv3wwcJKEBrDYL6w43K+9Ds+M2Z4Kc1YZebfIjJ1cs86oXWGMytAaucvGOdO0xeubd5LUNoLb3wugQefNWXvEmTbBVFlUtmc31FK+aH4Z1Ah5MjbNa0aXFCuVPMKoX2Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8/9UGAm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57556C4CEFB;
-	Tue, 21 Oct 2025 02:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761012426;
-	bh=lea45PnhCbZ2sLHs3xr7ltskoeSEMmGeuwyEfGGX1Go=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r8/9UGAmepYo0j9vJ4bIkQchuenciclVLqqFLNwcxiSeAsEdrcZ/puGGlF1EieTyh
-	 MqVVDlTmIw4CZbu6TSZfeSRy7hhE6Kr7/oMmbELETlm2HZfzPlHAbGH4R9AZETTyDu
-	 77FaoE1BBY8O7lULyKNmDydHVPSg1N1Ch6bI1mMRklSilmeQ3g1IURNjZru2bJfsFx
-	 SqwxMWxlHB5i/MJqmNpNjIjj5YHTCNjuaRwFqZSqfTcezJ4m56xMF1TonyNHpcUWwZ
-	 /C9UaEMCIHl4yna0JpGX5pZAeL/4FC0L6vaxmRunMGx96+HzffBho6PPghAAQ5hrt2
-	 r2J41Ks44Rhhw==
-Date: Tue, 21 Oct 2025 07:36:55 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Vitor Soares <ivitro@gmail.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Vitor Soares <vitor.soares@toradex.com>, 
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] PCI: j721e: Add support for optional regulator
- supplies
-Message-ID: <p3l2p2raecqqkpdjswiddkthpxzvhm3rl4cw56y2epgcxfiwbb@gsieef3yqvpk>
-References: <20251014112553.398845-1-ivitro@gmail.com>
- <20251014112553.398845-3-ivitro@gmail.com>
+	s=arc-20240116; t=1761012423; c=relaxed/simple;
+	bh=gsv6wYpwHsa2ypz+ieX/qsHbEyQ66O+HRwfEzN9+g3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fazru42g1YgCO2XBVI2flC/xajrMeluKcGEuYsK5iU94ji7+UjiyXFUh3J8EU9gac5teknAtmPOicuZSzgXGGnxELQD3xcCsKbrjtQiBoDbl5Nq35BGyNy5eXpYOEJiic1PwBzVUZYVetGOmXrkOE1neni7oXajajWDKJni/TAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4crFyP63bHzYQtnB;
+	Tue, 21 Oct 2025 10:06:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id BD8ED1A0DD5;
+	Tue, 21 Oct 2025 10:06:57 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP1 (Coremail) with SMTP id cCh0CgB36UzB6vZoorY9BA--.42417S2;
+	Tue, 21 Oct 2025 10:06:57 +0800 (CST)
+Message-ID: <f72068f2-f0d7-40be-89c4-af48538b369d@huaweicloud.com>
+Date: Tue, 21 Oct 2025 10:06:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014112553.398845-3-ivitro@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] cgroup/cpuset: Don't track # of local child
+ partitions
+To: Tejun Heo <tj@kernel.org>
+Cc: Waiman Long <longman@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Chen Ridong <chenridong@huawei.com>
+References: <20251020023207.177809-1-longman@redhat.com>
+ <20251020023207.177809-2-longman@redhat.com>
+ <57cf1fbe-8356-4c5d-864a-20b07d63de72@huaweicloud.com>
+ <aPZrPh1NoyncWPA8@slm.duckdns.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <aPZrPh1NoyncWPA8@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgB36UzB6vZoorY9BA--.42417S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYb7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF
+	54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQzV
+	bUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Tue, Oct 14, 2025 at 12:25:49PM +0100, Vitor Soares wrote:
-> From: Vitor Soares <vitor.soares@toradex.com>
-> 
-> Some boards require external regulators to power PCIe endpoints.
-> Add support for optional 1.5V, 3.3V, and 12V supplies, which may be
-> defined in the device tree as vpcie1v5-supply, vpcie3v3-supply, and
-> vpcie12v-supply.
-> 
-> Use devm_regulator_get_enable_optional() to obtain and enable each
-> supply, so it will be automatically disabled when the driver is
-> removed.
-> 
-> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
-> ---
->  drivers/pci/controller/cadence/pci-j721e.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> index 5bc5ab20aa6d..f29ce2aef04e 100644
-> --- a/drivers/pci/controller/cadence/pci-j721e.c
-> +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> @@ -21,6 +21,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #include "../../pci.h"
->  #include "pcie-cadence.h"
-> @@ -467,6 +468,10 @@ static const struct of_device_id of_j721e_pcie_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, of_j721e_pcie_match);
->  
-> +static const char * const j721e_pcie_supplies[] = {
-> +	"vpcie12v", "vpcie3v3", "vpcie1v5"
-> +};
 
-Please don't hardcode the supplies in driver. The DT binding should make sure
-the relevant supplies are passed (including the optional ones). Just use
-of_regulator_bulk_get_all() to acquire all the passed supplies.
 
-- Mani
+On 2025/10/21 1:02, Tejun Heo wrote:
+> On Mon, Oct 20, 2025 at 02:57:38PM +0800, Chen Ridong wrote:
+>> LGTM
+> 
+> Can you please use either Acked-by or Reviewed-by in the future?
+> 
+> Thanks.
+> 
+
+Sure, will do.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Best regards,
+Ridong
+
 
