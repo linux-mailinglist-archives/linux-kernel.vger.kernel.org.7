@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-862577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B628BF5A81
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B598BF5AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C95188CD4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CD648456B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C372F25F2;
-	Tue, 21 Oct 2025 09:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F295328B69;
+	Tue, 21 Oct 2025 09:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPjgrZ+Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVbRG9Gb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B846E2D77F7;
-	Tue, 21 Oct 2025 09:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4532E303A0F;
+	Tue, 21 Oct 2025 09:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761040594; cv=none; b=a0SuktBxNI4ZmaiiekmpeXF4sK93p06dzg6MuTZ7W/npw+nKYTZy3iFb2ancb7DUbc/pounsdyoZLJcboS/0ESgl4zFeF/Z8tO+iSLZtPU8v1Dl/xOvZngITyS1cSw391uStK1kLXIVCqK09U2fvI+Bl+vjY2eosEd9YONEyDQ4=
+	t=1761040734; cv=none; b=jLwytwa06xFsGWvsPE0i0LzIiq5Im2Em66EhujMhBHrP6QRw3AFEHCFRSxQbGrGJ15D7v6oW+HWFT8LUFRRq86lG5flXYjW3ZXB5+KnwWR1rXUhA84UT15A9YRPxrEK+2Z0Sfk7LzlqWEgvPAkTO3yK+OtY1D8Dje+/iVWnCZFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761040594; c=relaxed/simple;
-	bh=5Rm81nIKRtPBRA3BFntrFY6s5Mpud2dDBun1ALVD8d4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rhyXodCVlwxPf0j7cYbfUwartUtbjuwqYJpIlD49KP7UoRgxvEF5VifTvHIEeG06LTKaqFylkYIkGZ67IpDN+j1aoumRIF3HEH/30hfNucNcPd1RSfIR2juQY0lQF12HlquGInZvS2IUD6GegKQ5qnSx+boo782koy7/+qnzyXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPjgrZ+Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D772C4CEF1;
-	Tue, 21 Oct 2025 09:56:32 +0000 (UTC)
+	s=arc-20240116; t=1761040734; c=relaxed/simple;
+	bh=VhDUw5yaJciCbjfTsfry0m5nlobkCPkxCtvaLJ84lD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XzowYOP7bPD8stO14+MwPnoxzbnca9cvvqIPv959/mAzgMSG7mxOm0fsdcjdvZeSB1EGufaJSWn3j0IF11x2VdHIczaei9OoEu8zeZhdBnJRGaw4oNfBwENqXV7SAd8dJsRiMnwwpJlhrTnM1ZBcedOBN8vZAoPwdw3K6gqBfwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVbRG9Gb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EE6C4CEF1;
+	Tue, 21 Oct 2025 09:58:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761040594;
-	bh=5Rm81nIKRtPBRA3BFntrFY6s5Mpud2dDBun1ALVD8d4=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=TPjgrZ+ZaAcHNg/Cf8O76DLSZphZpSGUpJBhliSKiC3X6LPwVGgRCMsES/Z7RFANr
-	 VyQNhX++xTTRzpYuwcKZV2SLH5wLa3jdwUN6nZ0CjeaQz3S/wt7tVSplkR8nlXjs8q
-	 hisqHedVWgC5NWXYFUStHNnGFD0+rFPpeP8Hb5cVn2ZcpHxNby05xwj69cRLBbfda9
-	 GTnPkNIeoopDSyihJ5Dq917ImGvkrE93AVAW49jTJmO+KCsSZrGD0dbCvQQcayzDFE
-	 VZyvERmx5R/zQSwkvs5xiz1TSBhHArsTCURc+9i8x9ovMwhNw8T0BSC5p334Hd0kCO
-	 A9o+v2Zjwsoyw==
-Message-ID: <9996520a-fbad-4f02-9630-7de85f04c286@kernel.org>
-Date: Tue, 21 Oct 2025 11:56:29 +0200
+	s=k20201202; t=1761040733;
+	bh=VhDUw5yaJciCbjfTsfry0m5nlobkCPkxCtvaLJ84lD4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fVbRG9GbDK6/ieSHto40kPeuu6XPHaOIOH1TfPp40DLh04ClrQkXcLAfMYi15nrWM
+	 RF0gYHXtjcSOV/g4Ol9W7n0kedJjQc8fS5E/b13RsIS5VqiP2YbOB8m8ZOa/ApqoY5
+	 HVv2Tg2YBVcLJXZqjL60S6XYyvaSbexkpc/5kPcHv+2npHbB5ShUhs4/S8q8Zc/BH9
+	 hHn2s2GExtwi5f6dMh55LaVpxSlG9OxYP1YKkxTD2l/xL86/4M8cjVdfLojesC8ZQb
+	 +FTS8ecxs5ibaaCvzDvjMPF48DgwTv2WOE8QVA7yKBhT4RPOD20fIdjj8Z37HlWYa7
+	 +RaO3UewzxrVg==
+Message-ID: <beabb9f7-fcf4-4c1d-a259-6c48e82fbcf5@kernel.org>
+Date: Tue, 21 Oct 2025 11:58:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,75 +49,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v2] media: videobuf2: forbid remove_bufs when legacy
- fileio is active
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org,
- Shuangpeng Bai <SJB7183@psu.edu>
-References: <CGME20251020160135eucas1p29eb8517e240f188f102e77713f85e29d@eucas1p2.samsung.com>
- <20251020160121.1985354-1-m.szyprowski@samsung.com>
-Content-Language: en-US, nl
-In-Reply-To: <20251020160121.1985354-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: twl: enable power button also for
+ twl603x
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: akemnade@kernel.org, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tony Lindgren
+ <tony@atomide.com>, Kevin Hilman <khilman@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20251020-twl6030-button-v1-0-93e4644ac974@kernel.org>
+ <20251020-twl6030-button-v1-1-93e4644ac974@kernel.org>
+ <5fd43d2c-3a08-4a51-abb6-38883ee86bf2@kernel.org>
+ <20251021104515.5e25bec1@kemnade.info>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251021104515.5e25bec1@kemnade.info>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Marek,
-
-On 20/10/2025 18:01, Marek Szyprowski wrote:
-> vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
-> potentially overwriting some pointers used by the legacy fileio access
-> mode. Add a vb2_verify_memory_type() check symmetrical to
-> vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
-> protect internal queue state between subsequent read/write calls.
+On 21/10/2025 10:45, Andreas Kemnade wrote:
+> On Tue, 21 Oct 2025 09:10:28 +0200
+> Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > 
-> CC: stable@vger.kernel.org
-> Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
-> Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
-> Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> On 20/10/2025 14:31, akemnade@kernel.org wrote:
+>>> From: Andreas Kemnade <andreas@kemnade.info>
+>>>
+>>> TWL603x has also a power button, so add the corresponding subnode.  
+>>
+>> No, we don't add subnodes just because there is a power button. This
+>> needs broader explanation, see also my further comment.
+>>
+> Hmm, what is the general pattern to follow if a mfd device has some
+> functionality which depends on some optional external components?
 
-I'll pick this up as a fix for v6.18. I think this is important enough to
-not wait for v6.19.
+Please describe it better - how these nodes depend on external
+component? The power button logic/IC is in this device always. It is not
+optional.
 
-Regards,
-
-	Hans
-
-> ---
-> v2:
-> - dropped a change to vb2_ioctl_create_bufs(), as it is already handled
->   by the vb2_verify_memory_type() call
-> - replaced queue->type check in vb2_ioctl_remove_bufs() by a call to
->   vb2_verify_memory_type() which covers all cases
+> The might be a power button connected to it or not. I find it ugly
+> to have non-existent stuff in the system.
+> In general, yes I understand the argument against the subnode.
 > 
-> v1: https://lore.kernel.org/all/20251016111154.993949-1-m.szyprowski@samsung.com/
-> ---
->  drivers/media/common/videobuf2/videobuf2-v4l2.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>> ---
+>>>  Documentation/devicetree/bindings/mfd/ti,twl.yaml | 40 ++++++++++++++++++-----
+>>>  1 file changed, 32 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+>>> index 776b04e182cb2..3527fee32cb07 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+>>> @@ -55,6 +55,15 @@ allOf:
+>>>  
+>>>          gpadc: false
+>>>  
+>>> +        pwrbutton:
+>>> +          properties:
+>>> +            compatible:
+>>> +              const: ti,twl4030-pwrbutton
+>>> +            interrupts:
+>>> +              items:
+>>> +                - items:
+>>> +                    const: 8  
+>>
+>> What is the point of defining const interrupts? If they are const, then
+>> it is implied by compatible and defined in the driver.
+>>
+>> Anyway, double items does not look right here. This is an odd syntax.
+>>
+> Quoting Rob:
+> As 'interrupts' is a matrix, this needs to be:
 > 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> index d911021c1bb0..0de7490292fe 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> @@ -1000,9 +1000,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
->  			  struct v4l2_remove_buffers *d)
->  {
->  	struct video_device *vdev = video_devdata(file);
-> +	int res;
->  
-> -	if (vdev->queue->type != d->type)
-> -		return -EINVAL;
-> +	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
-> +	if (res)
-> +		return res;
->  
->  	if (d->count == 0)
->  		return 0;
+> interrupts:
+>   items:
+>     - items:
+>         - const: 8
+> 
+> https://lore.kernel.org/linux-omap/20240318150750.GA4000895-robh@kernel.org/
 
+
+OK, this answers second part but I don't understand why even having this
+in DT. If this is fixed, should be implied by the compatible?
+
+
+Best regards,
+Krzysztof
 
