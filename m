@@ -1,115 +1,157 @@
-Return-Path: <linux-kernel+bounces-862380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2C9BF5203
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:59:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68683BF5226
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EDB64F2CA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A77B402699
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C680E2877FC;
-	Tue, 21 Oct 2025 07:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2A9269AEE;
+	Tue, 21 Oct 2025 08:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DPYnrdyH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="DRrWZumJ"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19422874F0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A969281356
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761033518; cv=none; b=PjpBwRAk1oJ8c+LAie4y7T2BwW/YBb/YlQRoyrhCOvlWPuafmh6di/w6DSSKuxv6lOfBMqT65y3bjmgKOC98vYOfmG+cYnBurgp1V/t9NmjW8B1VrFbiOGY2Y1dOqngsHtOmyZYH/LUGdlkbJhmshZ2aRRgDNQIsfGkwC8wHSvw=
+	t=1761033733; cv=none; b=AOjuUESKRTOtB3Gw+mUacqT8QzhLpziz3OsrDnCUA6LqgF6t6TqVheZ3NGZl4rvLMogAiWnu376CXQhvQeNl/KeCo7/rIaSmYHXQDOArai5XJdamhAyxYfP9XPX9Pe8ZpQKg1XnEzjnZ4+KNaf9ve7qL2CUiffcXjb6LfccdU1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761033518; c=relaxed/simple;
-	bh=mjvBaJHGfy9bQLWbCLTTwB+4pIKUwbXpvvTlIuu0Res=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pnL3ljwuFZScdpihJTrAHypOYstPFz5M3axF8eHr871DegUif5M9sJZttTRsiHby8NFtDv72HIHg9rud8MGPSI2+GYMyVwzaJPJVtZHHZJjOp7qHDY3bqNLBnJv85kvMwzV3A1n0uPo0ezoVj7IukwSv4ln6xn+7XWasjAY7kGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DPYnrdyH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761033515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mjvBaJHGfy9bQLWbCLTTwB+4pIKUwbXpvvTlIuu0Res=;
-	b=DPYnrdyHRN6GFUbgRfHym5s4H2bBY9Kr9mxr+8AN3mjHcpt7jn3d6MPhg2Xzm4SYDnIAvB
-	FXtD1w9c94oRY/Npxg1hVvxt8T6wyyhy94l1QZjMOH6D281k3RwbFpv6gDLkWm0OgWBmNf
-	6qDYhCdCKh5tCAr8+9IQ2T0SewmseIg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-428-UN_BiSVdM4u10eDjGr0SLA-1; Tue, 21 Oct 2025 03:58:33 -0400
-X-MC-Unique: UN_BiSVdM4u10eDjGr0SLA-1
-X-Mimecast-MFC-AGG-ID: UN_BiSVdM4u10eDjGr0SLA_1761033512
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e39567579so31670595e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:58:33 -0700 (PDT)
+	s=arc-20240116; t=1761033733; c=relaxed/simple;
+	bh=i+m3PusaxM6Zgin3C3En/lGk4W/S63Hvd6XwDnbd7Ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zz+ZnO0QX1JpXVzPnjKr1Qx1J8BrcMT0TQdlpzW1ChQADWEbO+N7odkldh6B6nm1+KKUhPnatZdWT/QmyQUPbLS8f/kK9SHhZYGms12GMgGKxMB6u/Sfm0oNHgPEOXlvL5wQxd6nbqobXgETF2ZKQVcDZNgtYHZevTdheO5V33Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=DRrWZumJ; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b43a3b1ae1fso129212266b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:02:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1761033729; x=1761638529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k0VWPqCHv6+ZQuDCTFQQ2tUl50NtMLOJ2aVBSBufBxc=;
+        b=DRrWZumJLWlQQYVAwwdZ9UjK/OX3tFtqQIygVaobmULxIhz8TsmMGwWjugbCyJG/TT
+         n1DisF41E2n7SCCu5Ow4O85jzTnWfSXt8lKZihDJo8KVtRsMVaD2hKDmMuIhBsbaYTxE
+         rEO04c4IOVa60P52jb5mBgRIvD3zpJn6BePYm34wJNSrHC9n/jM5CtHEih+v5cF8Vk0w
+         UMgg7XcMxykPPAcbgYAfFVy+kn5kUR0tXv5Bmys+Bw4+gt9Os5YLpsLf+6i0/GutnOxM
+         1gvVIP5sj2M1i3gRJOmmgiQ6dgBYKdI4BRFe3e5P8g8lEyZF2VfN2cR1LesjLs8Dd/vy
+         MW9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761033511; x=1761638311;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mjvBaJHGfy9bQLWbCLTTwB+4pIKUwbXpvvTlIuu0Res=;
-        b=ZqhepS1NWCes/BTsjuGI8QbAlTwfcLz5CVNA16ckIUYpp7yX4Z1XEfKDhsviRLXAaR
-         INS8l3pUR7LFfBbcRYASJ9vayKG21OMKyr5yRuP028orhF+MUwOBVQdo8F7X5JBQuEsa
-         /GRJE3BCs4sv44LG/KRW1jP17j6ArL/tZXKUatRDFpn4YKWIOzqD/gmEupNTEeSXfHgb
-         cq2s3z0lSP8h9G/kaOyNFRlxUhTN6jm/xjhW1BjJy/Mpnd5LEw+VgVncDTp4vBspfvtd
-         OAgR9NplTD53cRsA3frccPZusFE/wkOaD1kYio6V96syIcyjnFI0GMv2gUmQLLZZZV3y
-         5u+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW3sGzT41o8mwFY9uzE/e95L8NHoVMA60yxrWpx+nQm7lY3ZWC5tJPHwgCD6mr/9mK3zPy15xg1DXkjc9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHNzH6DXeZtV5Lg2NScio3tmo5ukGTB9vj4NFfT27kZ4JZrFOc
-	dFVM5L0orgeU9s/hBmyYDYVFKTqMOlfCdknnOJS39p3SmFK0P1EVHdN3geSiU5Iqzdu3UAHKdF9
-	X6bFdUTqGhkd4XTwRVw6ffJTkfDx2cGkf0ESBLGzTQ4VkES8YuwOYvGU3BcxpG8S/BI1Uzi646r
-	rN/DOjs6QEDBWrTWo6jT8oHadSSZKELaXuYBgziI36i3CGRtnJUw==
-X-Gm-Gg: ASbGncvymE8Pq2+z6qqB2d0CgCdG9uJvVlNz6yFKcZVCGfvrweR8nf/mAoU4lMgmiQ3
-	YZ436itUunRhcT/TB18JlsH86b3H/V7Z4rIsMwzjsC0hVqsxmtkKx02ZJWKliJ+zzXWrp9PRYI4
-	Km21cJaGadaHWsmDmzI0+J0PLPb4t45az5/DHDjmFT0sysDUVcbK6cqQu+6M/tnjXIH1254fPcq
-	7z0R6AlhBxLua17loiMZIL4ELoMPn+iYi0ayrJUhwUCVYRwlbiISPwwr1tzbDQmN33XUxGa5LLm
-	wKf4AqR5ZD6mhyW5xVqzN+cXjFzkCcLtwZlowXy5eMxyQyDpLKBQmOZbZKevRMt7Z7STtRC/rV/
-	+Ahk5cN/rmpM5WdWlv0lqrq0hGtIPwwhbX+fdUZED222SmK/7iKP5VH+ldi/H
-X-Received: by 2002:a05:6000:40ca:b0:427:a3d:71ff with SMTP id ffacd0b85a97d-4270a3d7470mr8519409f8f.58.1761033511123;
-        Tue, 21 Oct 2025 00:58:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCwIT++Gjy8YaInsSTn0foSDjK81YGWL3IdFs0wngfxFg9r/8F2CY+eiU9q0Dc2DGG9DULRA==
-X-Received: by 2002:a05:6000:40ca:b0:427:a3d:71ff with SMTP id ffacd0b85a97d-4270a3d7470mr8519384f8f.58.1761033510693;
-        Tue, 21 Oct 2025 00:58:30 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a6c5sm19554247f8f.28.2025.10.21.00.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 00:58:30 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Aditya Gollamudi <adigollamudi@gmail.com>, mingo@redhat.com
-Cc: adigollamudi@gmail.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kernel/sched: removed unused *cpumask ptr in
- kernel/sched/sched.h
-In-Reply-To: <20251020221728.177983-1-adigollamudi@gmail.com>
-References: <20251020220601.176639-1-adigollamudi@gmail.com>
- <20251020221728.177983-1-adigollamudi@gmail.com>
-Date: Tue, 21 Oct 2025 09:58:29 +0200
-Message-ID: <xhsmho6q0lm8q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1761033729; x=1761638529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k0VWPqCHv6+ZQuDCTFQQ2tUl50NtMLOJ2aVBSBufBxc=;
+        b=kKVkPN05LqE6kONYRbZhikJDDaxqbrgsv4iexy0qk1FGYiQLiAvjU5N1xKdOsR1MmY
+         fRM5UPIV9t06BYgg8QlqRMU85lrNZ4wSDBStBYXkwYPte6GVAoem2QTW5BJEQj7mK90W
+         Kthu0wp4I50ewGeU0FzJbK6GxiCsOGbvoW4Ww6PT4nOi4L73mcW0IJ4Rn+1Q/Kc7pfra
+         qLFwMoypaNMh4gNlvwKpldKSqp5+VpcUyjvJ4RuNCKRFJQzQhRLJ9Eq9RDccM23AAPTs
+         0CgEAtwwXBp2+DYhGwHNr0tEjRIP/fEDTcoR2E7bO5eLNRBS9fy8yKJRd/7FIwgB1Hwm
+         5QmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVe2/kwMcy87TyE6xart3HPqdINtHiZzObJgQqGkFlw2qHjOWJIEO09qt46Hl8qAfvhEWxv3V8FHn44h9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLZUtiYtf/pBDp6UM21TdeX6rqfR5Kd2yS6zhPoIAeIZifCaWO
+	CsGxC0Uem4Pzlfm951+0BCDR8vggZBstnS/ERzu4b+ZC8/Cfl5/0liN/6GOSDHCWD5fsOYM0WDt
+	Nbj5eyo79fUQwFlkyny4MaWxYQ67QojZPcCEmMrupmg==
+X-Gm-Gg: ASbGncszv/qh+r/WvoqZuWBuVWEV1JxmUQugN+T7dlipt6GPrf/gFzvkyMGuOfhGSTo
+	kX8G4AEKKVyPE8s0CBwBJzN0VbsDILI7o0UN21aJWei2T3kJ/WfKsbfs9bUboWYZAqRdirrbyKK
+	fKZzT4MzeZ3SMJmt1h9HPyW3FKnZfqPgUI14OFHfnOwygXpk/IrX7cz9C77JMJhz7+slpMlQ60n
+	G1U1tdlAOKWeXw9MUNKdfe9VfqHdfzioc7X2MYn8Agn9Mwt0XLEbkzbqUqO
+X-Google-Smtp-Source: AGHT+IEQfgvHZuihlbBSJlVb+dcEnjFV14dIS2e3QeU28hCgVySmEX3k7+tkYGmNfEgLKxBR2Hkp3zdbZ2HHX0oRDVA=
+X-Received: by 2002:a05:6402:2115:b0:638:e8af:35c7 with SMTP id
+ 4fb4d7f45d1cf-63d16af7935mr1354397a12.2.1761033728661; Tue, 21 Oct 2025
+ 01:02:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20251021-rnbd_fix-v1-1-71559ee26e2b@gmail.com>
+In-Reply-To: <20251021-rnbd_fix-v1-1-71559ee26e2b@gmail.com>
+From: Jinpu Wang <jinpu.wang@ionos.com>
+Date: Tue, 21 Oct 2025 10:01:57 +0200
+X-Gm-Features: AS18NWAjr1vMpIROYlrNqm-3ej7s5Tkh074kVV9erysvDSTuNEiz5Pc19hwQJzo
+Message-ID: <CAMGffEmsJjeqW8DGnKapVyM0Gporn_UuDB2xNosRmD2GduGgzg@mail.gmail.com>
+Subject: Re: [PATCH] drivers: block: rnbd: Handle generic ERR_PTR returns
+ safely in find_and_get_or_create_sess()
+To: Ranganath V N <vnranganath.20@gmail.com>
+Cc: "Md. Haris Iqbal" <haris.iqbal@ionos.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	david.hunter.linux@gmail.com, khalid@kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/10/25 15:17, Aditya Gollamudi wrote:
-> From: Adi Gollamudi <adigollamudi@gmail.com>
+On Tue, Oct 21, 2025 at 8:21=E2=80=AFAM Ranganath V N <vnranganath.20@gmail=
+.com> wrote:
 >
-> v2: fix formatting and style errors found by checkpatch.pl. no actual functional changes
+> Fix the issue detected by the smatch tool.
+> drivers/block/rnbd/rnbd-clt.c:1241 find_and_get_or_create_sess()
+> error: 'sess' dereferencing possible ERR_PTR()
 >
-> v1: remove use of cpumask ptr initialized at the top of the mm_cid_get() function to nothing.
-> remove initialization of cpumask ptr in the same function, "cpumask = mm_cidmask(mm);" because
-> it is not used later.
+> find_and_get_or_create_sess() only checks for ERR_PTR(-ENOMEM) after
+> calling find_or_create_sess(). In other encoded failures, the code
+> may dereference the error pointer when accessing sess->nr_poll_queues,
+> resulting ina kernel oops.
 >
-
-Please see Documentation/process/submitting-patches; the version changelogs
-don't belong in the patch body but should rather be put after the '---'
-marker line.
-
+> By preserving the existing -ENOMEM behaviour and log unexpected
+> errors to assist in debugging. This change eliminates a potential
+> invalid pointer dereference without altering the function's logic
+> or intenet.
+>
+> Tested by compiling using smatch tool.
+Thx for the patch.
+But I read the code again, find_or_create_sess -> alloc_sess, which
+only return ERR_PTR(-ENOMEM) or a valid pointer.
+I think this is just a false positive.
+>
+> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+> ---
+>  drivers/block/rnbd/rnbd-clt.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.=
+c
+> index f1409e54010a..57ca694210b9 100644
+> --- a/drivers/block/rnbd/rnbd-clt.c
+> +++ b/drivers/block/rnbd/rnbd-clt.c
+> @@ -1236,9 +1236,14 @@ find_and_get_or_create_sess(const char *sessname,
+>         struct rtrs_clt_ops rtrs_ops;
+>
+>         sess =3D find_or_create_sess(sessname, &first);
+> -       if (sess =3D=3D ERR_PTR(-ENOMEM)) {
+> -               return ERR_PTR(-ENOMEM);
+> -       } else if ((nr_poll_queues && !first) ||  (!nr_poll_queues && ses=
+s->nr_poll_queues)) {
+> +       if (IS_ERR(sess)) {
+> +               err =3D PTR_ERR(sess);
+> +               if (err !=3D -ENOMEM)
+> +                       pr_warn("rndb: find_or_create_sess(%s) failed wit=
+h %d\n",
+> +                               sessname, err);
+> +               return ERR_PTR(err);
+> +       }
+> +       if ((nr_poll_queues && !first) ||  (!nr_poll_queues && sess->nr_p=
+oll_queues)) {
+>                 /*
+>                  * A device MUST have its own session to use the polling-=
+mode.
+>                  * It must fail to map new device with the same session.
+>
+> ---
+> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+> change-id: 20251021-rnbd_fix-9b478fb52403
+>
+> Best regards,
+> --
+> Ranganath V N <vnranganath.20@gmail.com>
+>
 
