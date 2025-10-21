@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-863357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20677BF7A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:27:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF1DBF7A76
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B5304F6071
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:27:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 453F9506CD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6743E3491E6;
-	Tue, 21 Oct 2025 16:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LfcSrQDC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A66D3491EB;
+	Tue, 21 Oct 2025 16:27:01 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F283451B5;
-	Tue, 21 Oct 2025 16:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E353491F8
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761064016; cv=none; b=emGCWoSEbJuVcMeG7jiXr9FKF9FjzPVh9KPMlypG2ewjz95Lgtspe7p7Lf0X88gSbQpHwGSveEbDQFdx/olwcQ6/YmiMCtIrRO76EQ1jKuiATBUDsD9p+CYhlMmpPonCEm/g7XXN0SEjuEK42527fOe2G8qFrTQ/WuWI9kgRF4I=
+	t=1761064021; cv=none; b=RmHfvxjLwFt8Y46V7wqCBGDtIMlKcmuLCMpnFTAtahpNsKpOGn779mW41FgFi8URuwmnyiWVP+rE9j3BDvumj1JAzgeOkLEEH9MkuSE0nUChD3mnFQhTw5O8oQDj9RERvPduWem1HJ3tlxv7Zr8HZA9RFv7N9QKZG39LdY5w8MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761064016; c=relaxed/simple;
-	bh=s3oZkA4nJ7dcSOY1YyzCYB73ZTlasatK8ZPHkJrRTVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FS1WC5G5GmWNc3cFBhH6MDGHkzmUle6Ao+RxpLF+IYVGz1ZIWqxVzpKIM08T1IqNaFNRx0ms8SmpyhOKU23zU2EtyKsbzbcSbIfN1TS8FakSdy/nw19DlbKxExXG04hun3fVyQdwoRDwq2WNpzIKWkbxxaVDzXMPUdc+DsEO1T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LfcSrQDC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE4ACC4CEF1;
-	Tue, 21 Oct 2025 16:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761064016;
-	bh=s3oZkA4nJ7dcSOY1YyzCYB73ZTlasatK8ZPHkJrRTVY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LfcSrQDCHwNzt4RPoijyP5r0oK8HcWQBlbSmOFbeqL9mn8i0lkkTjAwvLzcDbuUwM
-	 vE9SUCijeOuSDKyKmh3PhrCBrDmRLLzE10f5QYAIvtOEoTOwiX+godV6ke7jqvIKVd
-	 AbVhNANUvKUi4MT9Vbog25sWcreBAckm2pKGxgDk=
-Date: Tue, 21 Oct 2025 18:26:53 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: hch@infradead.org, jirislaby@kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, tj@kernel.org
-Subject: Re: [PATCH v1 2/2] serial: 8250_dma: add parameter to queue work on
- specific cpu
-Message-ID: <2025102107-player-baggie-37fc@gregkh>
-References: <2025102157-goal-grandma-36d4@gregkh>
- <20251021130513.871830-1-jackzxcui1989@163.com>
+	s=arc-20240116; t=1761064021; c=relaxed/simple;
+	bh=UJrHEvcSfi/Pka2cgWnZ3GgnBH7EVZquQA2PoG2f1vg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cNs1lk+89IpuCM9b9v25H1yPOuCEHoJ4FSFoECQPzKTb/zDZ9BKTF/8ckzqWg/DkHheP0H+jeuo7Jo46Bnkn0E6aFt9QrZ+2QaeUG1latDLDycYgxCoyAoe4jM9Hkf6sg3kKiG6z66mEqyGmTXL50x/5sQaJl46zPosNyziWv6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430db6d36c6so95778345ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:26:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761064018; x=1761668818;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pFdC+aSTmJfkazoCMziwNnodu4GwgClZcM8jfns2mRc=;
+        b=manfSOzpPms638sUdtGywAG5N1TfNejzZNASUifYGlK9bwfHu/EYn7DJG/bYfz4Tbf
+         ibDGn00ftVU5Jkbomz9yB9e/d9Wk09FhRnB1mXZflZgl0Z/1iPVlkkYHURJ6QgW9oGt4
+         RHzacWPVFhaNlULt5VMKtX2u0q59ITqSQSaO3QlsKLkhqAVe6VizGpk1EjbxEgthEsI2
+         i/CsFF2+3hKLoP9FbddLHL9RlUWsYS2sXr7hs0/hTNfSSj7jHMQ7CSB+0Pf7c5QOpYbS
+         EJDC3oBbeg9cL5IYsNXuad4lLipHI5LPYjtr3YuXdwQbtiH4hij/Qv6nXVcB/c+HcXmU
+         sDQw==
+X-Gm-Message-State: AOJu0Yw7pDL7knGR9f2zC6jb2lu1+w4EuKMHClknzqM29dWDWAF7ybSz
+	2hGR0NReQzbBeGwP8nbUeBn7xs98IY+BmdLj5cHnGiXA6AJdxPTFs5KiCRwJo3ZIieVnsmoXu+w
+	BS+On8Qfz7gXldvFL9Up4f7FfhGwsLc6tmvJQNox7nDFS8Sx1GfdBbhCGAv29uw==
+X-Google-Smtp-Source: AGHT+IExqRJuHMdWm4oqScDfjCwF+h4BUlmYlDFFwMuP1PgIslh+gllR0FhSzvM3zHhc+/iQPZVsBCiXpRaGRg+Z8E8PMx1aoBsT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021130513.871830-1-jackzxcui1989@163.com>
+X-Received: by 2002:a05:6e02:1b02:b0:427:a3ef:5701 with SMTP id
+ e9e14a558f8ab-430c5232b53mr279873095ab.14.1761064018604; Tue, 21 Oct 2025
+ 09:26:58 -0700 (PDT)
+Date: Tue, 21 Oct 2025 09:26:58 -0700
+In-Reply-To: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f7b452.a70a0220.3bf6c6.0008.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
+From: syzbot <syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 21, 2025 at 09:05:13PM +0800, Xin Zhao wrote:
-> On Tue, 21 Oct 2025 13:28:46 +0200 Greg KH <gregkh@linuxfoundation.org> wrote:
-> 
-> > Meta-comment, this is a v2, and was not threaded with patch 1/1.  Please
-> > use a tool like b4 or git send-email to send patches out so that we can
-> > properly review/apply them.
-> 
-> I did use git send-email to send the patches. I have successfully used the
-> git send-email tool to send a series of patches before, and that series was
-> later merged into 6.18-rc1. Therefore, I feel that my usage of git send-email
-> should not be an issue. The only difference of my current submission is that
-> after sending each patch with git send-email, I waited for the patches to
-> appear on lkml.org before sending the next one. I had encountered issues before
-> where sending multiple patches in a row caused only some of them to appear on
-> lkml.org, with others taking a long time to show up. That's why I specifically
-> decided to wait a bit after each patch this time. I'm really not sure why the
-> system didn't group my three patches together; it's quite puzzling to me.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I do not know, but it was not threaded :(
+***
 
-Try sending it to yourself and see if the delay maybe caused a problem?
-there should not be an issue sending just 3 messages at once.
+Subject: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
+Author: chandna.sahil@gmail.com
 
-> > Are you using the RT kernel?  It seems odd that this is just coming up
-> > now, given our normal latency issues in the tty layer.  What changed to
-> > cause this?
-> 
-> > > In our system, the processing interval for each frame of IMU data
-> > > transmitted via UART can experience significant jitter due to this issue.
-> > > Instead of the expected 10 to 15 ms frame processing interval, we see
-> > > spikes up to 30 to 35 ms. Moreover, in just one or two hours, there can
-> > > be 2 to 3 occurrences of such high jitter, which is quite frequent. This
-> > > jitter exceeds the software's tolerable limit of 20 ms.
-> > 
-> > Again, are you using the RT kernel?  If not, can you try that?
-> 
-> Our system is indeed RT-Linux, version 6.1.146-rt53. Our project has been
-> ongoing for about 2 years, and we hadn't paid close attention to these jitter
-> issues before. It is only recently that we needed to focus on them specifically.
+On Mon, Oct 20, 2025 at 02:08:24PM -0700, syzbot wrote:
+>Hello,
+>
+>syzbot found the following issue on:
+>
+>HEAD commit:    a1e83d4c0361 selftests/bpf: Fix redefinition of 'off' as d..
+>git tree:       bpf
+>console output: https://syzkaller.appspot.com/x/log.txt?x=12d21de2580000
+>kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
+>dashboard link: https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb
+>compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160cf542580000
+>C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128d5c58580000
+>
+>Downloadable assets:
+>disk image: https://storage.googleapis.com/syzbot-assets/2f6a7a0cd1b7/disk-a1e83d4c.raw.xz
+>vmlinux: https://storage.googleapis.com/syzbot-assets/873984cfc71e/vmlinux-a1e83d4c.xz
+>kernel image: https://storage.googleapis.com/syzbot-assets/16711d84070c/bzImage-a1e83d4c.xz
+>
+>The issue was bisected to:
+>
+>commit 7c33e97a6ef5d84e98b892c3e00c6d1678d20395
+>Author: Sahil Chandna <chandna.sahil@gmail.com>
+>Date:   Tue Oct 14 18:56:35 2025 +0000
+>
+>    bpf: Do not disable preemption in bpf_test_run().
+>
+>bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=172fe492580000
+>final oops:     https://syzkaller.appspot.com/x/report.txt?x=14afe492580000
+>console output: https://syzkaller.appspot.com/x/log.txt?x=10afe492580000
+>
+>IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>Reported-by: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com
+>Fixes: 7c33e97a6ef5 ("bpf: Do not disable preemption in bpf_test_run().")
+#syz test
 
-6.1 is very old, please try the latest 6.17.y release, or 6.18-rc1.
-Lots and lots of RT stuff has been fixed since 6.1.
-
-> > This is not the 1990's, we don't add new module parameters :)
-> > 
-> > This will not work for systems with multiple tty devices/drivers, please
-> > use a correct api for this if you really really need it.
-> > 
-> > But again, I think this might not be needed if you use the RT kernel
-> > issue.
-> 
-> If user-configurable CPUs are really needed for queueing, do you have any
-> recommendations on how to implement this? Would it be appropriate to create
-> a new node under /sys/devices/platform/serial8250/tty/ttyS*?
-> As mentioned earlier, our system is an RT-Linux system. As you say that
-> using an RT kernel may not encounter this issue, are you implying that RT-Linux
-> has priority inheritance logic?
-
-I'm saying that the RT selection should cause you not to have those
-larger variants in delays.  Try a newer kernel and see.
-
-> However, the logic within work items isn't
-> always protected by locks. Even if everything is under lock protection, when a
-> work item starts executing and hasn't yet entered the lock, it can still be
-> preempted by real-time tasks. In an RT-Linux system, such preemption of kworker
-> by real-time tasks is more common compared to a standard kernel.
-
-True, which is something that the rt changes should have addressed.
-This sounds like an overall rt issue, not a serial port issue.  Have you
-asked about this on the rt mailing list?
-
-> > So you just bound ALL tty devices to the same cpu?  That feels very
-> > wrong, how will that work with multiple devices on different interrupts
-> > coming in on different cpus?
-> > 
-> > Why not just queue this up on the cpu that the irq happened on instead?
-> 
-> If possible, I will later add a node to separately configure each tty/ttyS*
-> device. The approach I intend to use is to add this tty_flip_cpu node under
-> /sys/devices/platform/serial8250/tty/ttyS*. Is it OK?
-> Based on our project, the DMA RX complete events for tty are almost evenly
-> distributed across each core.
-
-This should come from a hardware definition somewhere in your DT, not as
-a user-selectable option.  And again, why not just tie it to the cpu
-where the irq came from automatically?
-
-> I believe it is necessary to increase the
-> flexibility of the queue_work to be located on a specific CPU, as it is difficult
-> to predict whether a core is running many long-duration real-time tasks based on
-> the driver code or low-level logic strategy.
-
-That's a system design issue, not a kernel issue :)
-
-thanks,
-
-greg k-h
+diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+index 1b61bb25ba0e..6a128179a26f 100644
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -1021,7 +1021,9 @@ u32 bpf_flow_dissect(struct bpf_prog *prog, struct bpf_flow_dissector *ctx,
+  		     (int)FLOW_DISSECTOR_F_STOP_AT_ENCAP);
+  	flow_keys->flags = flags;
+  
++	preempt_disable();
+  	result = bpf_prog_run_pin_on_cpu(prog, ctx);
++	preempt_enable();
+  
+  	flow_keys->nhoff = clamp_t(u16, flow_keys->nhoff, nhoff, hlen);
+  	flow_keys->thoff = clamp_t(u16, flow_keys->thoff,
+-- 
 
