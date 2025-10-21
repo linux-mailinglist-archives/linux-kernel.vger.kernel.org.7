@@ -1,151 +1,183 @@
-Return-Path: <linux-kernel+bounces-862896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FBEBF6796
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB35BF6790
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA4304F0A08
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7C919A110C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA301F3D56;
-	Tue, 21 Oct 2025 12:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8421632E6A6;
+	Tue, 21 Oct 2025 12:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YJm9uCKn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5Xs1FJ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C28B32ED24;
-	Tue, 21 Oct 2025 12:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3AD1F956;
+	Tue, 21 Oct 2025 12:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050128; cv=none; b=TSexJHBzqZ3nmLzZae4Vv8eo+IPhHs6tRzrGAnkLnDZqf+Sc5tDTpPymgmypU2/Nx6SbVFrm4bBhIUnEqtCNmSgpG8LzUnxiP9kvotu56N/r80gxer1jFqsBOGEDsJBk8zXkwYQOQZTIG2jsj/JKIheAyOrh/pFKnMdzrPBoxKc=
+	t=1761050123; cv=none; b=gRVFgbmPQsD3uFeAXuA5PPSlnPmHuI8pgXh6qhRNqaJ61ZNKfFXup9ZbTi33xxPz5f4C+O4DJSzscQzzgv8Akgo4MB551myOnoRIui5X3WBVH/x+DiDLqz8XG43ZE3Nz2my3GZf/inAqpzRBygP6u4etpl3NNhJ7i8pCdq60sSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050128; c=relaxed/simple;
-	bh=V8ojkgLybtZ5Y872QcEoFC6y33wkXENgdMlPGFwqi6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nQOM6CxOrmD7xuGfuCkwJZ8u77/1Vx5ieTJo9f13oiKTfJVowt44ebvaa8JqdLPSJ3Tewk2E24r7AZfmkISkGedjr9kHpYdBPUeM0TjNDna13R3x7kLH7xiTrS2I/TuTcnkUegBe550cG+sEvryJHbadVPle7cb1th+LtfdSrwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YJm9uCKn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8BdZo029817;
-	Tue, 21 Oct 2025 12:35:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1P5hepNjzkMZLkylt62MKjPLYr+HOOcamjKRQWyTs+E=; b=YJm9uCKn0Rx9UN6o
-	WIb+s7kSUiLOqgiDkaA5AMS4U1UXDVAJlcgPqZMT/gi4lwtKLB1v1Mf2BHTh9V5L
-	F6VeZfKLrvSAmoyyCwlF2UL8LNmSdwedHaa0FWgR3neCediKfYkYccK8DKd7N1Ak
-	jDe+hNG2SaWZP6eoYz4lqYGXAkjPLpKd/uz6CIQvDQ9ua9e2Dm4qEDx6qAXoxNXr
-	BmfNPDtKsAnKNrrX+OGuA5x9ntrMdNksetoWpBey7UDOmADYpGR+RuaVAJVRTsh0
-	UREyUgK6nj0VQqAApqF+KTTeGQw2N4Ch9JuU/TaVkIVq87YH4tleggZn/hqoX5E1
-	SwA37Q==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v2ge0pee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 12:35:22 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59LCZKh1012046
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 12:35:20 GMT
-Received: from [10.217.223.199] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 21 Oct
- 2025 05:35:18 -0700
-Message-ID: <413d84ad-0858-4e96-94e5-c0a2ed68e6a2@quicinc.com>
-Date: Tue, 21 Oct 2025 18:04:56 +0530
+	s=arc-20240116; t=1761050123; c=relaxed/simple;
+	bh=vFnVtSPbyPTEjkoeyLNfM/J8eCQptnRUb2kkNBw5Jqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ryC/CUPyDJFgtqq97kgd0YM6nEQC79OjbYNG5EsThQ6qzn5zbk4kLDOYR+nqgC1M8jqqk0EMnVPeNXv7pDYQeiqHXo7JxexdOlY54pkJeRs9AtcmGIyL7tFeZtEntY37215yzK1eDXvCpldRNpKwRhzM82SLVKKRyVqsO7O1KV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5Xs1FJ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42AC5C4CEF1;
+	Tue, 21 Oct 2025 12:35:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761050123;
+	bh=vFnVtSPbyPTEjkoeyLNfM/J8eCQptnRUb2kkNBw5Jqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c5Xs1FJ6oLvLfbf3Z6LEFGNGr4+moq83sE9b9oR70Zt76s8I94g66zVPpdgxywQk2
+	 r+3KJeYjhU43AaRnoHn84XBlAv/+Zq/ukl3H21cq00HkfG7xxkW8cmFYF0ktaFfrel
+	 zLYeo46wCIvyI1IzmBYXuxMcAUNdeM8rd0QWRZb/3AHeRlP/cXx13O+FdFU/XBfk8k
+	 KjJo6V/Yd69P7qzkC6czt19QhZWP6xgEW5kiL8gNF9tUuXymLAJN3ALdYY7voRuL4C
+	 bdPUjwfQUZTUf3i/PqU6L8unYDMqFOPp4x+t7TAf1HZUgBhVZ6K3iZvGfEbKD43y0p
+	 B2S1FB6Uw69DQ==
+Date: Tue, 21 Oct 2025 18:05:07 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Christian Zigotzky <chzigotzky@xenosoft.de>, FUKAUMI Naoki <naoki@radxa.com>, linux-rockchip@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
+Message-ID: <2wv7662f23seqtifn4zkud6xlecfhpeso4rn72syn6q2ts6sm5@cllw6gyv2xwx>
+References: <20251020221217.1164153-1-helgaas@kernel.org>
+ <lmkrtyq6uzhzlz5ttvajnmojegrbfgaz3e3kkwej5qar2lkeof@r5gdlvesm6xl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] qcom: ice: Prevent client probe failures on unsupported
- ICE
-Content-Language: en-GB
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <quic_neersoni@quicinc.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20251021040337.787980-1-quic_dmukhopa@quicinc.com>
- <89150929-873f-4d09-9cec-727f92572d17@oss.qualcomm.com>
-From: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>
-In-Reply-To: <89150929-873f-4d09-9cec-727f92572d17@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMCBTYWx0ZWRfXyEjT2tCMCDID
- 5Xw0gQvOtWastKMMgjsz342DNA8UoqMrBO4cGr/dIxllLLGR2EOb5rItQ52NHQJ6XyxVbDVAjvw
- GFNvHTVNZIeudacOnld0UypHK1ROPgv3J6B3j1Z3FvaUJlUicg+JCgziLA/d/YOWijgLl3IoTB8
- XgFuNACvGupaiM2ylPJnlyklDdlLYI1AixOEZlhuOQxh97YLp6N4SjTWCxb9yOjeMxLRwzHjoAA
- evR/QI924C45rctKtpl8zjA2We8/zHdZkUbyd2dT0nVZ7BaJ0AiXVyxgPQ6vMWPWrXJaxJ2q+UE
- fGl/Z7yuYiVRY11wIF6pPDDXEmSoVW8I4m0WtCTBY3NFpianCllOjMWPWGTyrHi+MsKhnLPlz1X
- 7SW1DG9XYNl67myiyZgf5qYi5BK9kw==
-X-Authority-Analysis: v=2.4 cv=KqFAGGWN c=1 sm=1 tr=0 ts=68f77e0b cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=D4aVSg9HDBEUpO1k-lYA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 50PRCV7EWvA_vaPa5IddaNmag6cH101u
-X-Proofpoint-ORIG-GUID: 50PRCV7EWvA_vaPa5IddaNmag6cH101u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180020
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <lmkrtyq6uzhzlz5ttvajnmojegrbfgaz3e3kkwej5qar2lkeof@r5gdlvesm6xl>
 
-Hi Konrad,
+On Tue, Oct 21, 2025 at 09:31:32AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Oct 20, 2025 at 05:12:07PM -0500, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
+> > platforms") enabled Clock Power Management and L1 Substates, but that
+> > caused regressions because these features depend on CLKREQ#, and not all
+> > devices and form factors support it.
+> 
+> I believe we haven't concluded that CLKREQ# is the cluprit here. It is probably
+> the best bet, but there could be the device specific issues as well.
+> 
+> > 
+> > Enable only ASPM L0s and L1, and only when both ends of the link advertise
+> > support for them.
+> > 
+> > Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+> > Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+> > Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
+> 
+> Closes?
+> 
+> > Reported-by: FUKAUMI Naoki <naoki@radxa.com>
+> > Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
+> 
+> Same here.
+> 
+> > ---
+> > 
+> > Mani, not sure what you think we should do here.  Here's a stab at it as a
+> > strawman and in case anybody can test it.
+> > 
+> 
+> Thanks Bjorn! I had a similar change slated to be sent post Diwali, but you beat
+> me to it.
+> 
+> > Not sure about the message log message.  Maybe OK for testing, but might be
+> > overly verbose ultimately.
+> > 
+> 
+> Let's have it for sometime, so we have some clue when someone reports issue with
+> ASPM.
+> 
+> > ---
+> >  drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
+> >  1 file changed, 9 insertions(+), 25 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index 7cc8281e7011..dbc74cc85bcb 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -243,8 +243,7 @@ struct pcie_link_state {
+> >  	/* Clock PM state */
+> >  	u32 clkpm_capable:1;		/* Clock PM capable? */
+> >  	u32 clkpm_enabled:1;		/* Current Clock PM state */
+> > -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+> > -					   override */
+> > +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+> >  	u32 clkpm_disable:1;		/* Clock PM disabled */
+> >  };
+> >  
+> > @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+> >  	pcie_set_clkpm_nocheck(link, enable);
+> >  }
+> >  
+> > -static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+> > -						   int enabled)
+> > -{
+> > -	struct pci_dev *pdev = link->downstream;
+> > -
+> > -	/* For devicetree platforms, enable ClockPM by default */
+> > -	if (of_have_populated_dt() && !enabled) {
+> > -		link->clkpm_default = 1;
+> > -		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
+> > -	}
+> > -}
+> > -
+> >  static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+> >  {
+> >  	int capable = 1, enabled = 1;
+> > @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+> >  	}
+> >  	link->clkpm_enabled = enabled;
+> >  	link->clkpm_default = enabled;
+> > -	pcie_clkpm_override_default_link_state(link, enabled);
+> >  	link->clkpm_capable = capable;
+> >  	link->clkpm_disable = blacklist ? 1 : 0;
+> >  }
+> > @@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+> >  	struct pci_dev *pdev = link->downstream;
+> >  	u32 override;
+> >  
+> > -	/* For devicetree platforms, enable all ASPM states by default */
+> > +	/* For devicetree platforms, enable L0s and L1 by default */
+> >  	if (of_have_populated_dt()) {
+> > -		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> > +		if (link->aspm_support & PCIE_LINK_STATE_L0S)
+> > +			link->aspm_default |= PCIE_LINK_STATE_L0S;
+> > +		if (link->aspm_support & PCIE_LINK_STATE_L1)
+> > +			link->aspm_default |= PCIE_LINK_STATE_L1;
+> 
+> Not sure if it is worth setting these states conditionally. Link state
+> enablement code should make use of the cached ASPM cap in 'link->aspm_capable'.
+> 
 
-Thanks for your comment. Please find my response inline below.
+I see the point now. Without the check, we falsely claim that the ASPM states
+are getting enabled. But we cannot be sure until the register write to LNKCTL
+happens, which will depend on many factors (own device capability,
+upstream/downstream port capability,...)
 
+To avoid ambiguity, can we reword the log to something like,
 
-On 10/21/2025 2:57 PM, Konrad Dybcio wrote:
-> On 10/21/25 6:03 AM, Debraj Mukhopadhyay wrote:
->> Storage clients (ex. UFS and MMC) invoke of_qcom_ice_get() to obtain the
->> handle from ICE (Inline Crypto Engine) driver. Currently if ICE is
->> unsupported, the return code from probe could prevent the client
->> initialization which is a bug. To fix this a new flag
->> qcom_ice_create_error is introduced which caches the error encountered
->> during ICE probe.
-> Probe currently only happens if the ICE node is present in the DT and
-> referred to from the storage controller. What does this patch solve?
->
-> Konrad
+	"ASPM: Overridding default states %s%s\n"
 
-Even if the DT node is present it is possible that The SCM support for 
-ICE is unavailable in the underlying TZ framework. With the existing 
-logic, qcom_scm_ice_available() would have failed in such cases, 
-returning NULL to storage clients where the clients like storage may 
-keep retrying which potentially can cause boot up issues. This patch 
-corrects that behavior by explicitly returning -EOPNOTSUPP to the 
-clients. I will update the commit message accordingly.
+- Mani
 
-Thanks,
-
-Debraj
-
->
->> The qcom_ice_create() and of_qcom_ice_get() functions are updated to
->> return -EOPNOTSUPP when ICE is unsupported, allowing clients to proceed
->> without ICE.
->>
->> For other failures, such as ICE not yet initialized, the existing
->> behavior (e.g., -EPROBE_DEFER) is retained to ensure proper error
->> handling.
->>
->> This improves error signaling and ensures that client initialization is
->> not blocked unnecessarily.
->>
->> Signed-off-by: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>
->> ---
+-- 
+மணிவண்ணன் சதாசிவம்
 
