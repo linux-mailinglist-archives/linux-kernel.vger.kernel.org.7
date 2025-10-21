@@ -1,103 +1,130 @@
-Return-Path: <linux-kernel+bounces-862863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF30ABF66BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:23:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846C6BF66CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2201542267
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16943542A0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E4A258ED5;
-	Tue, 21 Oct 2025 12:16:02 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412206BB5B;
-	Tue, 21 Oct 2025 12:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28A42459F7;
+	Tue, 21 Oct 2025 12:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzFOPIPe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32ACF2253EB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761048962; cv=none; b=S/1Y/YP323K9u7LyL9RIUHzWSOYig0jAzamdx/eccy6wOtuieD1cmxb3NgDEGFB6v8y754wIeDVIXd+Vip0nAjj1HXEkbFDbc5Zbdju4lMJW4m8lry/iM0jpMhScH2v5Gukl42vkcfhJFMZo2qwUTEEdqgWPmO7tWvTkCXewcKw=
+	t=1761048967; cv=none; b=uiRIc8hZcCiygOvOIuO+1x7HiP5NXv2wHcV0AehkzevaFlZfWuCOk6+krZu6d34soBS0lBl2l/JQD+iXr38I2WEpEmCJwv90M46Qq3/w5USSjxD8aCdarZPNpYGviInfgJnX1GKZxJExSRd1qRDWVOyHNKRJl9Jnmwzzxxi9B80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761048962; c=relaxed/simple;
-	bh=EdWXsHmmqwuhqUifnjdtEASSh8bC7pcsjZQVWMANaVs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OmtRD0Cv7Tg/IOhbm/aVQ42ZvKp+rR0EHiI+Hq15wavw1kwmL47tASEmiQhcQqFtZUHhMCx9P7IKV+R3HqkQkAZC8gBMsOj588oH/605jF924fyBOdy1rNi4QLI+LeBDeaQmKPQg60pT7CWRraK6EydaXkP/ASarkmWT9oHBB8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 8401792009C; Tue, 21 Oct 2025 14:15:51 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 7DACD92009B;
-	Tue, 21 Oct 2025 13:15:51 +0100 (BST)
-Date: Tue, 21 Oct 2025 13:15:51 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-pci@vger.kernel.org, 
-    Guenter Roeck <linux@roeck-us.net>, Bjorn Helgaas <bhelgaas@google.com>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] MIPS: Malta: Use pcibios_align_resource() to
- block io range
-In-Reply-To: <20251020223714.GA1165320@bhelgaas>
-Message-ID: <alpine.DEB.2.21.2510210145260.8377@angie.orcam.me.uk>
-References: <20251020223714.GA1165320@bhelgaas>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1761048967; c=relaxed/simple;
+	bh=afZ9LYjd3nXPgO7A1CJ8B6ceDU96mc91oikI4RgUCjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=guaR0EitosMxkPYtBN5DNu3Iyx/a35KjC3Y2q36rumM1RF5vI7jybvsxMCCYMsWIrldVig66CfSEk0xE60Ll1DA8A/LiJc1u+3E0da3mFm0kBTtV01LxDCaG3sxXCVIVPA6vFur+UmOCsUmsuHz+8jBRpF1HeiXTAY6NxdUNVGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzFOPIPe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB2EC19423
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761048966;
+	bh=afZ9LYjd3nXPgO7A1CJ8B6ceDU96mc91oikI4RgUCjE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZzFOPIPe/CIJyCZzZS5xDCOU6fb9z5+niTUJu2f8nz3yhyIuvbfquK4urojZ6W7RK
+	 QI61caoK/RX3VirzOJ975dczZ65ziZVmC+yyPjsoPBE5iYBfWFKHbQHN3zs4IO7R5s
+	 ZLt2HMJ2uYxOq//IBo6TRnQratgTnDvrfaviDON5U9nb8Z/y6K2f8o648lEGTX11X2
+	 rxsYOU2RFX8YkazroUHdo7g4fmAS9fFqU7SkdZJ0JIy3UpzQrp2rjgogt0LXDPPWkx
+	 HtYrpl3MftltAZmMXxsQL5Sxn/zSsdNyYdHCx9qXuLBVEBaKxVGjqetnM9CfTqcffJ
+	 yImIwoc6dhvmA==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c45c11be7so6204293a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:16:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU24S4DrsbBgsUjIU7PVJ5G41yaK5SWfpDCZ8lY8cR0XmVUgdtIBrB6OBK9Sx7Ig/f0ylt46IYUKtIuZYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXVMgcGIP8VtKWARGgejQ7Q8FNjsn0i2vB/KNmCGxo82BIhX1d
+	hyazSt5iPkHVta+0W0VFawWPJ9UB0PngWthJLHPQKHEJhwvT8z35d+3aZ9IiVAVCyFT8yrRckI7
+	r9PKmFRQqWGKqkJEzhIs1Z6Vc+qwn8tU=
+X-Google-Smtp-Source: AGHT+IEehxa0VVriHcp2h3pPnTDlb8T/F5FMqzRVzT7FPHkMVaKDIi/rjGcv9KvbFvUKwGOelOx0U0eBViPra1u4cao=
+X-Received: by 2002:a05:6402:440f:b0:63b:fbd9:3d9c with SMTP id
+ 4fb4d7f45d1cf-63c1f66c82dmr15228151a12.15.1761048965319; Tue, 21 Oct 2025
+ 05:16:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20251021092825.822007-1-xry111@xry111.site>
+In-Reply-To: <20251021092825.822007-1-xry111@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 21 Oct 2025 20:15:53 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5e-U+nxHkSjE_3_PcoOuaHTqJWnYm9OZXVwuWvh3N5ZQ@mail.gmail.com>
+X-Gm-Features: AS18NWBcCXTydL281tEwc29bBx_Sgj2MfqdSDFPAw33oyAwgRfjsz5gyo8nMyNs
+Message-ID: <CAAhV-H5e-U+nxHkSjE_3_PcoOuaHTqJWnYm9OZXVwuWvh3N5ZQ@mail.gmail.com>
+Subject: Re: [PATCH] acpica: Work around bogus -Wstringop-overread warning
+ since GCC 11
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, loongarch@lists.linux.dev, 
+	Mingcong Bai <jeffbai@aosc.io>, Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org, 
+	Saket Dumbre <saket.dumbre@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>, 
+	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <linux-acpi@vger.kernel.org>, 
+	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <acpica-devel@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 20 Oct 2025, Bjorn Helgaas wrote:
+On Tue, Oct 21, 2025 at 5:28=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> When ACPI_MISALIGNMENT_NOT_SUPPORTED, GCC can produce a bogus
+> -Wstringop-overread warning, see https://gcc.gnu.org/PR122073.
+>
+> To me it's very clear that we have a compiler bug here, thus just
+> disable the warning.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: a9d13433fe17 ("LoongArch: Align ACPI structures if ARCH_STRICT_ALI=
+GN enabled")
+> Link: https://lore.kernel.org/all/899f2dec-e8b9-44f4-ab8d-001e160a2aed@ro=
+eck-us.net/
+> Link: https://github.com/acpica/acpica/commit/abf5b573
+> Co-developed-by: Saket Dumbre <saket.dumbre@intel.com>
+> Signed-off-by: Saket Dumbre <saket.dumbre@intel.com>
+> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+Acked-by: Huacai Chen <chenhuacai@loongson.cn>
 
-> > Since ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()") came
-> > through the PCI tree, I'd be happy to merge this as well, given your
-> > ack, Thomas.  It would be ideal to have a tested-by from Guenter.
-> > 
-> > I provisionally put it on pci/for-linus to facilitate testing.  If it
-> > doesn't solve the problem or you'd rather take it, Thomas, I'll be
-> > glad to drop it.
-> 
-> Added:
-> 
->   Tested-by: Guenter Roeck <linux@roeck-us.net>
->   Tested-by: Maciej W. Rozycki <macro@orcam.me.uk>
->   Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> 
-> and dropped the Fixes: aa0980b80908 ("Fixes for system controllers for
-> Atlas/Malta core cards.")
-> 
-> If the missing resource reservations (dma1, tiger, dma page reg)
-> mentioned by Maciej are an issue or can be fixed up, let me know and
-> we can amend this.
-
- NB this comes from `plat_mem_setup' in arch/mips/mti-malta/malta-setup.c 
-iterating over `standard_io_resources'.  ISTR now this being my original 
-reason to come up with the approach taken with commit aa0980b80908 rather 
-than using PCIBIOS_MIN_IO.  Since the ranges are now owned by the PCI host 
-bridge, calls to `request_resource' referring `ioport_resource' fail.
-
- I'm not sure offhand how to get a hold on the right handle under the new 
-arrangement in this platform code, but clearly it must be doable as x86 
-gets it right (and conversely Alpha gets it totally wrong).
-
- Also I think we should reserve the PCI port I/O window in the MMIO space 
-as well; something that I pondered back those 20 years ago already.  For 
-the system I've used here that'd show up as:
-
-10000000-1affffff : MSC PCI MEM
-  10000000-100fffff : 0000:00:0b.0
-  [...]
-  10142080-1014209f : 0000:00:0b.0
-1b000000-1bffffff : MSC PCI I/O
-1e000000-1e3fffff : 1e000000.flash flash@1e000000
-
-Most non-x86 PCI host bridges have one, but I haven't come across a Linux
-platform that would report it.
-
-  Maciej
+> ---
+>  drivers/acpi/acpica/tbprint.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/acpi/acpica/tbprint.c b/drivers/acpi/acpica/tbprint.=
+c
+> index 049f6c2f1e32..e5631027f7f1 100644
+> --- a/drivers/acpi/acpica/tbprint.c
+> +++ b/drivers/acpi/acpica/tbprint.c
+> @@ -95,6 +95,11 @@ acpi_tb_print_table_header(acpi_physical_address addre=
+ss,
+>  {
+>         struct acpi_table_header local_header;
+>
+> +#pragma GCC diagnostic push
+> +#if defined(__GNUC__) && __GNUC__ >=3D 11
+> +#pragma GCC diagnostic ignored "-Wstringop-overread"
+> +#endif
+> +
+>         if (ACPI_COMPARE_NAMESEG(header->signature, ACPI_SIG_FACS)) {
+>
+>                 /* FACS only has signature and length fields */
+> @@ -143,4 +148,5 @@ acpi_tb_print_table_header(acpi_physical_address addr=
+ess,
+>                            local_header.asl_compiler_id,
+>                            local_header.asl_compiler_revision));
+>         }
+> +#pragma GCC diagnostic pop
+>  }
+> --
+> 2.51.1
+>
 
