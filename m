@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-862120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBD0BF477A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:13:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7F2BF474A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AB8F234D9F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 978AF1884ED6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98426212B2F;
-	Tue, 21 Oct 2025 03:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223C3257848;
+	Tue, 21 Oct 2025 03:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="U83UYt06"
-Received: from mail-m1973181.qiye.163.com (mail-m1973181.qiye.163.com [220.197.31.81])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="YaEynfXY"
+Received: from mail-m49232.qiye.163.com (mail-m49232.qiye.163.com [45.254.49.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF2A19F12A;
-	Tue, 21 Oct 2025 03:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724891E51EA;
+	Tue, 21 Oct 2025 03:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761016433; cv=none; b=EpdLxWMpllkwaMkSJpOh8KY63H7zPW6XHGW0S85cQHXD9+SGht2VW8GSG93mZLB4YTU84OjQOWVaj+yJMPvo6UGYsLipmKxbuiAIpkL2TewMi0QF8BnN8gfvowh1pIHH9S+zhAOxriys0XLjXCM1Eou5nCvHuvCa3Qdkk6J8vnc=
+	t=1761015836; cv=none; b=IyiLJVCJXb4XHYN/Lbp/iogxX45/ksn4K9bPvtSPqt2lJWeXtV3TMFVz1OkRyhMPQBRzVk3BJjd9bVuuc2ebfczZT4ONiU2K1cK+2P54SWjANma9PnKKHUvKoVvI820qqZnzpAOyOmdPKE8UdL7DM7GAiWVCXs4z4hOd1lrJd3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761016433; c=relaxed/simple;
-	bh=8QfuAvEEzuXKWNLusNGCIafLxSN96y35AjIfUY8M1/4=;
+	s=arc-20240116; t=1761015836; c=relaxed/simple;
+	bh=X8V+3lT/WzedEpZimxBRtvz3UJjXtDiKYc1JvalKpK0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mT4EmEBbhlzOHQXvkkpTYBziQ+cgckmlixr932jd3TOg+H4ZjhdzDo1aohRU8SYxV02JWgSticdDtFgYJyDxvNToZbnglyAiOLKTlNqcbmMs/ct2QnKcTpUQA/TsA/COjKTXnLrpJrCZYSYGg6/nAUsX6rp9vHXPbI1/rff5V98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=U83UYt06; arc=none smtp.client-ip=220.197.31.81
+	 MIME-Version; b=VLaXnyJa+f/ZgHG7LxbymbLb3BMFzC6kmRQyv5chNRKU4GLKBzSENq41glpmQL5u0sBF9LQg9BXG7Xa6RoFL52hbaSFncTIEUpIATdaAysSnJ3aT4nEEiz8CXpT0dVOU4is/pGqMnD5wQ2GsEAUFovSQEZp+q1aJ5O0eSWS4bFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=YaEynfXY; arc=none smtp.client-ip=45.254.49.232
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2697bbb99;
-	Tue, 21 Oct 2025 10:58:22 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2697bbbed;
+	Tue, 21 Oct 2025 10:58:34 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -71,9 +71,9 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v7 13/18] drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
-Date: Tue, 21 Oct 2025 10:56:59 +0800
-Message-Id: <20251021025701.1524229-6-damon.ding@rock-chips.com>
+Subject: [PATCH v7 14/18] drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
+Date: Tue, 21 Oct 2025 10:57:00 +0800
+Message-Id: <20251021025701.1524229-7-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251021025701.1524229-1-damon.ding@rock-chips.com>
 References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
@@ -85,146 +85,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a04b4188e03a3kunmcdd3bf8c5a4743
+X-HM-Tid: 0a9a04b443ff03a3kunmcdd3bf8c5a48b9
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkJLQlZNH0hJGk9JThpCS0tWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxpOTFZPTkxLSxpKGR1CSU9WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=U83UYt06ieBEd3GQrtvD44AGBu+fdZUSwPFjOqn/eG2BKUrNt+CAJllx8G2iyrUPaMjPs9SsXRX7l2t99oxBnY5lhUyzvrvVDCChiFJ0QGV5/rKdxvlcqtbJRVayBufxUwHwzMmutIHFsA0fMq5DZqKn/arbds+P0yCah4QpA/g=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=b4eLcONxj3fXb5R2acgcxDhVDGBywKwE0CE0kXriyQY=;
+	b=YaEynfXY23Oub9XICo1+FkgrLlH11F1g+dBOl0CWOSl+awSiligI5wFbVBgxkuT0TUp3+uHZAG9Lp8oPvhXpYUKdWJ3iXLPqSKuwymz//1qXmbiWQm06D+AQwX6oOMC4ALXNHxwpuw/aM99yyWAhLahvbXSsqDbsFajCtIxGIVw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=QvZ4HUQAMtPnMu23/b94zBMRRF7ubPr1onbf1FIrmU4=;
 	h=date:mime-version:subject:message-id:from;
 
-Since the panel/bridge should logically be positioned behind the
-Analogix bridge in the display pipeline, it makes sense to handle
-the panel/bridge parsing on the Analogix side. Therefore, we add
-a new API analogix_dp_finish_probe(), which combines the panel/bridge
-parsing with component addition, to do it.
+Apply analogix_dp_finish_probe() in order to move the panel/bridge
+parsing from Rockchip side to the Analogix side.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 ---
 
 Changes in v4:
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge.
-- Remame API analogix_dp_find_panel_or_bridge() to
+- Rename analogix_dp_find_panel_or_bridge() to
   analogix_dp_finish_probe().
 
 Changes in v5:
-- Select DRM_DISPLAY_DP_AUX_BUS for DRM_ANALOGIX_DP.
+- Remove DRM_DISPLAY_DP_AUX_BUS for ROCKCHIP_ANALOGIX_DP
 ---
- drivers/gpu/drm/bridge/analogix/Kconfig       |  1 +
- .../drm/bridge/analogix/analogix_dp_core.c    | 48 +++++++++++++++++++
- include/drm/bridge/analogix_dp.h              |  2 +
- 3 files changed, 51 insertions(+)
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 38 +------------------
+ 1 file changed, 2 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/bridge/analogix/Kconfig
-index 4846b2e9be7c..964122b5bd39 100644
---- a/drivers/gpu/drm/bridge/analogix/Kconfig
-+++ b/drivers/gpu/drm/bridge/analogix/Kconfig
-@@ -29,6 +29,7 @@ config DRM_ANALOGIX_ANX78XX
- config DRM_ANALOGIX_DP
- 	tristate
- 	depends on DRM
-+	select DRM_DISPLAY_DP_AUX_BUS
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 3b6b2d3ca5d1..0784f19a2ed9 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -21,14 +21,12 @@
+ #include <video/of_videomode.h>
+ #include <video/videomode.h>
  
- config DRM_ANALOGIX_ANX7625
- 	tristate "Analogix Anx7625 MIPI to DP interface support"
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 81c6e81dd352..933f1843777f 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -20,12 +20,14 @@
- #include <linux/platform_device.h>
- 
- #include <drm/bridge/analogix_dp.h>
-+#include <drm/display/drm_dp_aux_bus.h>
+-#include <drm/display/drm_dp_aux_bus.h>
+ #include <drm/display/drm_dp_helper.h>
  #include <drm/drm_atomic.h>
  #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_device.h>
- #include <drm/drm_edid.h>
-+#include <drm/drm_of.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_print.h>
+ #include <drm/drm_bridge_connector.h>
+ #include <drm/bridge/analogix_dp.h>
+ #include <drm/drm_of.h>
+-#include <drm/drm_panel.h>
  #include <drm/drm_probe_helper.h>
-@@ -1581,6 +1583,52 @@ struct drm_dp_aux *analogix_dp_get_aux(struct analogix_dp_device *dp)
+ #include <drm/drm_simple_kms_helper.h>
+ 
+@@ -416,24 +414,6 @@ static const struct component_ops rockchip_dp_component_ops = {
+ 	.unbind = rockchip_dp_unbind,
+ };
+ 
+-static int rockchip_dp_link_panel(struct drm_dp_aux *aux)
+-{
+-	struct analogix_dp_plat_data *plat_data = analogix_dp_aux_to_plat_data(aux);
+-	struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
+-	int ret;
+-
+-	/*
+-	 * If drm_of_find_panel_or_bridge() returns -ENODEV, there may be no valid panel
+-	 * or bridge nodes. The driver should go on for the driver-free bridge or the DP
+-	 * mode applications.
+-	 */
+-	ret = drm_of_find_panel_or_bridge(dp->dev->of_node, 1, 0, &plat_data->panel, NULL);
+-	if (ret && ret != -ENODEV)
+-		return ret;
+-
+-	return component_add(dp->dev, &rockchip_dp_component_ops);
+-}
+-
+ static int rockchip_dp_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -472,6 +452,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+ 	dp->plat_data.dev_type = dp->data->chip_type;
+ 	dp->plat_data.power_on = rockchip_dp_poweron;
+ 	dp->plat_data.power_off = rockchip_dp_powerdown;
++	dp->plat_data.ops = &rockchip_dp_component_ops;
+ 
+ 	ret = rockchip_dp_of_probe(dp);
+ 	if (ret < 0)
+@@ -483,22 +464,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dp->adp))
+ 		return PTR_ERR(dp->adp);
+ 
+-	ret = devm_of_dp_aux_populate_bus(analogix_dp_get_aux(dp->adp), rockchip_dp_link_panel);
+-	if (ret) {
+-		/*
+-		 * If devm_of_dp_aux_populate_bus() returns -ENODEV, the done_probing() will not
+-		 * be called because there are no EP devices. Then the rockchip_dp_link_panel()
+-		 * will be called directly in order to support the other valid DT configurations.
+-		 *
+-		 * NOTE: The devm_of_dp_aux_populate_bus() is allowed to return -EPROBE_DEFER.
+-		 */
+-		if (ret != -ENODEV)
+-			return dev_err_probe(dp->dev, ret, "failed to populate aux bus\n");
+-
+-		return rockchip_dp_link_panel(analogix_dp_get_aux(dp->adp));
+-	}
+-
+-	return 0;
++	return analogix_dp_finish_probe(dp->adp);
  }
- EXPORT_SYMBOL_GPL(analogix_dp_get_aux);
  
-+static int analogix_dp_aux_done_probing(struct drm_dp_aux *aux)
-+{
-+	struct analogix_dp_device *dp = to_dp(aux);
-+	struct analogix_dp_plat_data *plat_data = dp->plat_data;
-+	int port = plat_data->dev_type == EXYNOS_DP ? 0 : 1;
-+	int ret;
-+
-+	/*
-+	 * If drm_of_find_panel_or_bridge() returns -ENODEV, there may be no valid panel
-+	 * or bridge nodes. The driver should go on for the driver-free bridge or the DP
-+	 * mode applications.
-+	 */
-+	ret = drm_of_find_panel_or_bridge(dp->dev->of_node, port, 0,
-+					  &plat_data->panel, &plat_data->next_bridge);
-+	if (ret && ret != -ENODEV)
-+		return ret;
-+
-+	return component_add(dp->dev, plat_data->ops);
-+}
-+
-+int analogix_dp_finish_probe(struct analogix_dp_device *dp)
-+{
-+	int ret;
-+
-+	ret = devm_of_dp_aux_populate_bus(&dp->aux, analogix_dp_aux_done_probing);
-+	if (ret) {
-+		/*
-+		 * If devm_of_dp_aux_populate_bus() returns -ENODEV, the done_probing() will
-+		 * not be called because there are no EP devices. Then the callback function
-+		 * analogix_dp_aux_done_probing() will be called directly in order to support
-+		 * the other valid DT configurations.
-+		 *
-+		 * NOTE: The devm_of_dp_aux_populate_bus() is allowed to return -EPROBE_DEFER.
-+		 */
-+		if (ret != -ENODEV) {
-+			dev_err(dp->dev, "failed to populate aux bus\n");
-+			return ret;
-+		}
-+
-+		return analogix_dp_aux_done_probing(&dp->aux);
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(analogix_dp_finish_probe);
-+
- MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
- MODULE_DESCRIPTION("Analogix DP Core Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 3428ffff24c5..bae969dec63a 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -30,6 +30,7 @@ struct analogix_dp_plat_data {
- 	struct drm_bridge *next_bridge;
- 	struct drm_encoder *encoder;
- 	struct drm_connector *connector;
-+	const struct component_ops *ops;
- 
- 	int (*power_on)(struct analogix_dp_plat_data *);
- 	int (*power_off)(struct analogix_dp_plat_data *);
-@@ -49,5 +50,6 @@ int analogix_dp_stop_crc(struct drm_connector *connector);
- 
- struct analogix_dp_plat_data *analogix_dp_aux_to_plat_data(struct drm_dp_aux *aux);
- struct drm_dp_aux *analogix_dp_get_aux(struct analogix_dp_device *dp);
-+int analogix_dp_finish_probe(struct analogix_dp_device *dp);
- 
- #endif /* _ANALOGIX_DP_H_ */
+ static void rockchip_dp_remove(struct platform_device *pdev)
 -- 
 2.34.1
 
