@@ -1,553 +1,1020 @@
-Return-Path: <linux-kernel+bounces-862129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9799ABF47F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E42BF47FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DC014EAF03
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9A74676D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250DE231A3B;
-	Tue, 21 Oct 2025 03:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D63E224AEF;
+	Tue, 21 Oct 2025 03:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLAZkkV8"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HdBM2LxM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F69157493
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA4E191F66
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761016824; cv=none; b=cCuMC6H1Pvv84TJx7XZ/mTYyMWg99vzaBsAUXRAXAyn9QGbBE7ZaWSBSEpDlKJ1QZY5rfIoNdBKXL5NOkb09lIl+Z7YtXbBqjbFIDnets/kRTroJguBbT4erHiWq2Z46flN7C+xPxAVvYRVo4JHn89PK+bEdRWjlTYPz3ul+mS8=
+	t=1761016926; cv=none; b=MmrmwkWQ/x9jm3mndlzjgTZNfnvmhvjhak8BRbuxNiQZ4OB5GIBtnHdpwLZn5JP7TJVDsaGKy5Jy5/Jxx9SoH3/itSa5VwfiefsYdOS2tMpFI9PEPNzE27JYeGzNw/G3ziPA+5IGWrzfVuejInkBbH8CkM2ZqAz4yLifY+6t6NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761016824; c=relaxed/simple;
-	bh=DxUQv/9ds5xNkXtmgS/LZl6/6F3j7jAb05ovJhOTnLs=;
+	s=arc-20240116; t=1761016926; c=relaxed/simple;
+	bh=erkW1KTSIwxuHi3Wqh2oODhT0lopT0ZDvAd3XDlbF6c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V0e9X/fYVZn08NHm45bV2Ok2lsQZVro9iypBmV0fcqgXJe3yYgXMi6Nw7gJIXp4RtccAWRd+ZgAkd8T51MUpeNECSVYxdFynWcgkw1YYfAdFdJ48ohCU42KWMGy1MRqrpA4mXpwDa4wcQDUyyHaIiOHrSmwsLYByjWsCno7TxnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLAZkkV8; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c3c7d3d53so5628364a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761016820; x=1761621620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CCNvyw8m2QX1VIGFb99RS6GnyHPuBwl16dP0YQiFQRk=;
-        b=ZLAZkkV8V0F9GNY4jxS6Npn80vMvGNe3mUTl6uXiDIeHJggoGmb1zb8c1/ZI8BD/VP
-         7q5ykB5GPnjcmvja9SRcGdffgZFTBBqZAueOr18vY8PcKngi6qmwcG2ThiPFcpw3uyl1
-         0xjg/CBn5UQfjVQE9L6S2/pJtLAL76BWCzFxf989gQgAkmba/3iZMpy81fO5iT5UAigM
-         UCXIjFstQ15eADwGj7fFxBWxJ8GQn4ERDKjn8WGiKFGh6MG4MGB8NmC2dw4C4wYz2Yc4
-         CW4+X1uyNEBYdT/33S4HJUd1tDzlGQrF5XtcjzaD2bfJkDWg4e4H2U2ooOil0QAv7UjJ
-         KUEg==
+	 To:Cc:Content-Type; b=LFh2Om3B6IeWre7wzEp8L9lrryHq7DRHuwtb7Zb6iPYQpnwYNztjK+I5j2srjm+rB/IzOGM1+GiCDK/EN5l+UcfKkjTmGnb7oxxkAtwQTlehXAUDqNFHp3Cgbz5E2jPupt8T7LzZjIDeI8gN2azVtFd3kFIwWvFpvJKOLE7kbys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HdBM2LxM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761016922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rRUfPsgwsj/KjPpuBmVFYilvOa8QEPRJKgZd71wjw9w=;
+	b=HdBM2LxMnctKw11jJAKpiPKWFFJrxp5MUcSrgTEW7Qj07qdwz5MU5jgcRqOD8D8mvlxJNg
+	tvHcBIIu2HSQu7gvXD7mNTPe4oW4x1wfKKfGKBlnEBEisQ6Ed+rgE6+P883zP7l7rojZFN
+	uFK0kVLeTyTa0b+TV1aS2se3ss49cyc=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-463-kTL2XNVePvmdWQsyhln0Lw-1; Mon, 20 Oct 2025 23:22:00 -0400
+X-MC-Unique: kTL2XNVePvmdWQsyhln0Lw-1
+X-Mimecast-MFC-AGG-ID: kTL2XNVePvmdWQsyhln0Lw_1761016919
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-33428befbbaso5854196a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:22:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761016820; x=1761621620;
+        d=1e100.net; s=20230601; t=1761016919; x=1761621719;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CCNvyw8m2QX1VIGFb99RS6GnyHPuBwl16dP0YQiFQRk=;
-        b=SvrTZEV0EHhZfEIVXGGhvTWm8aR605Jv2W7CZkyP0qZbFvDxn8zKkQhQ71k4pVd9nj
-         15UsRZ5EMpIkVUH8AouVECtVTw82ZULEVFZKUyi+HBhKYWL4IMbl/AYBN2CRyBhHaqSt
-         8xzlLVaifaxGtLJQ+At9Ab3gS8BvK/ftRlLgXhqO8Ye/N7j3qxY2JymGf/pqJYk1vhXm
-         N4Q6ZCDcoOTcVZosqmooCElKlEFqeoNULAYmdDvjwaI6B3xJ68KekUYAUKjpVuuuIIc5
-         H2gyZxVn1n1UbXiBki/3wSDiYXq3mqz+A7X/LTIKqUgVap8xgeSX7qK58yC/waVYCGOC
-         NPPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw1b5zCa5U1o9C9eanqiQ4NRijDnXtQZngESzHJXttSKTbRa+EesCDq3VRciJ4zXNflYVBhZKBd+y/ymU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmMItDlKfhGI+z0BsRF23raHSqS+UauMlo5EDlQ3zd+HgvrG8G
-	lw34rT5jSioQpfWi4YWXYVraQ90m43mfKh4O9YGApnXaguCPs720O5/95k7iEavXvgKIzRbC4Zy
-	xnxqfyVkIm3FQhbs6JJHcqy7TWK1u0O8=
-X-Gm-Gg: ASbGncs3rIRKmWg1fIzG6naCLmocmKislDy5KSOJzeVD0NAFNUwf/ITrpErXuCj495p
-	pvYbYXKJW8jyozMzLHUtUGRtHpA5SKd0+AiMabVd0QIJACqx3vFKC7W39HhmZVFXZlPXlspsvgj
-	FDHDKJsu7mQL28bZacWIoF8dgOnytOc2q5Lso8U+oD3xrGJDXZoxV1dXAx48Er3XggukPIL3yDw
-	Jky1ZhhHc/zObX0bkLxrzRN70Ky+Zl33bjrTNuq9ZgLgjsJWwvNgKXUc30GQ/VxtJTtRIXKTJBp
-	sZNnnQDNsv/HfA9eatxKC/Rsjg==
-X-Google-Smtp-Source: AGHT+IEsnmHK88912XQyF+ULc5HjsHFjFCxHsTm5vWc53Obeo6iDSP0Fs5p3c4KR3eNywOjh1EZStCqv8ly1yB9KL/k=
-X-Received: by 2002:a05:6402:354f:b0:63c:6537:43d2 with SMTP id
- 4fb4d7f45d1cf-63c65374608mr7802783a12.38.1761016819680; Mon, 20 Oct 2025
- 20:20:19 -0700 (PDT)
+        bh=rRUfPsgwsj/KjPpuBmVFYilvOa8QEPRJKgZd71wjw9w=;
+        b=bJ/sk6/ltZK94vhmvHCQTH/0J1NwPR86zfO9xAtHTIMHL7FwCvy8qyrFeh0ZlXsbWa
+         zmGk07cXLMM6utV5ZVgICiARNY0epr8EClQwzZXtxG4Cw31apdjKkXz3DgwQUIGh92M5
+         XZrp8cA5cUfiIOwJ64L7jROZb8uQCOkc/a3Jdt+KIadJLsYSdZzK8bUDv0GmeQCZ3hZQ
+         xiFtD7SNlAmP3ciw2wtYDnRkxmIGlHqN7yxNEM1yZG7MmQTeaJAm/ig0jIog6sxuOEUA
+         dkzs4vvePI3CTFLj2bcnnVgh/FpwU0HS03uUdrHz/4u0bUnpKNXj2u6XZEHFuiHAkokE
+         jDZg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1sXypSgaZHy08FRuD9at6Z7fIa8FGW9uf5Vm6I+Ir7f8kKfOSSOattHMt1tMZb98Xu5/bEBG2l1cBmLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTYRsxOB0F45HpvU3/ZhW7D1jO2BMg1uS18bPyBYWSDpKFyL07
+	IUoKvDCVIPqc0kwdvPxINKq4ScMiWOdsyQEtIJzfSwXuEGysndDQwWiZyIqVk7meOoQVeQDWIHp
+	Uz4tVc4Fe120yA0hmaQJTUbM5mihzT4wuiKxLe5cyDI61M/lDNuLP8ShsonqGCejYFqYaMASWQ8
+	e4cq0AsV7qWQ65U9BWVrgEF0ll2q6F7DldGr4J1zSy
+X-Gm-Gg: ASbGncvqCe3yrudsaqLDAKNnX01OVgAnWLvVepunciGv7rECmZOWPmxpfz/g+EWN7Aj
+	iARgDzFieaqlLjVA0GEhtqq9u2xyDiKkSXilTRn1RPMeUJhVdcu45AcgqSjsC83GQwQ3CoG5L7S
+	6Or8WhBMTPm2/4PeMk16BcwWfdMcP4LXgNK5nb277nXwGupXF3Y6dcIVNY
+X-Received: by 2002:a17:90b:6cd:b0:32e:87f6:f5a6 with SMTP id 98e67ed59e1d1-33bceb1eb5emr18602230a91.0.1761016919007;
+        Mon, 20 Oct 2025 20:21:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGx2mm6nQN8rs2Oq78KNadBFLODQfiO2r+yVlsezvxnfC5JYzMJbQcQdfM8NA36rE2gxC/6/q+A4iHZFXgKzTk=
+X-Received: by 2002:a17:90b:6cd:b0:32e:87f6:f5a6 with SMTP id
+ 98e67ed59e1d1-33bceb1eb5emr18602192a91.0.1761016918336; Mon, 20 Oct 2025
+ 20:21:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017042312.1271322-1-alistair.francis@wdc.com>
- <20251017042312.1271322-5-alistair.francis@wdc.com> <e7d46c17-5ffd-4816-acd2-2125ca259d20@suse.de>
-In-Reply-To: <e7d46c17-5ffd-4816-acd2-2125ca259d20@suse.de>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Tue, 21 Oct 2025 13:19:53 +1000
-X-Gm-Features: AS18NWAyhNaTenQO2sZ2HNxBD0TNSlf23hB-sIzI2xuCGrNnY_zE8OZIe2AJIGI
-Message-ID: <CAKmqyKMsYUPLz9hVmM_rjXKSo52cMEtn8qVwbSs=UknxRWaQUw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] net/handshake: Support KeyUpdate message types
-To: Hannes Reinecke <hare@suse.de>
-Cc: chuck.lever@oracle.com, hare@kernel.org, 
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
-	Alistair Francis <alistair.francis@wdc.com>
+References: <20251020071003.28834-1-jasowang@redhat.com> <20251020071003.28834-20-jasowang@redhat.com>
+ <20251020043646-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20251020043646-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 21 Oct 2025 11:21:47 +0800
+X-Gm-Features: AS18NWBclU7PvZyOiAL5cceEAU8SmTE27hMILk4bM5_GMShPOzgzz6heHBWom0I
+Message-ID: <CACGkMEs71BL0rwWnXPbNu4T=tusPM_Lmj_ah6VSnZ6DFPfVRug@mail.gmail.com>
+Subject: Re: [PATCH V8 19/19] virtio_ring: add in order support
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 4:09=E2=80=AFPM Hannes Reinecke <hare@suse.de> wrot=
-e:
+On Mon, Oct 20, 2025 at 5:09=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
 >
-> On 10/17/25 06:23, alistair23@gmail.com wrote:
-> > From: Alistair Francis <alistair.francis@wdc.com>
+> On Mon, Oct 20, 2025 at 03:10:03PM +0800, Jason Wang wrote:
+> > This patch implements in order support for both split virtqueue and
+> > packed virtqueue. Performance could be gained for the device where the
+> > memory access could be expensive (e.g vhost-net or a real PCI device):
 > >
-> > When reporting the msg-type to userspace let's also support reporting
-> > KeyUpdate events. This supports reporting a client/server event and if
-> > the other side requested a KeyUpdateRequest.
+> > Benchmark with KVM guest:
 > >
-> > Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> > Vhost-net on the host: (pktgen + XDP_DROP):
+> >
+> >          in_order=3Doff | in_order=3Don | +%
+> >     TX:  5.20Mpps     | 6.20Mpps    | +19%
+> >     RX:  3.47Mpps     | 3.61Mpps    | + 4%
+> >
+> > Vhost-user(testpmd) on the host: (pktgen/XDP_DROP):
+> >
+> > For split virtqueue:
+> >
+> >          in_order=3Doff | in_order=3Don | +%
+> >     TX:  5.60Mpps     | 5.60Mpps    | +0.0%
+> >     RX:  9.16Mpps     | 9.61Mpps    | +4.9%
+> >
+> > For packed virtqueue:
+> >
+> >          in_order=3Doff | in_order=3Don | +%
+> >     TX:  5.60Mpps     | 5.70Mpps    | +1.7%
+> >     RX:  10.6Mpps     | 10.8Mpps    | +1.8%
+> >
+> > Benchmark also shows no performance impact for in_order=3Doff for queue
+> > size with 256 and 1024.
+> >
+> > Signed-off-by: Jason Wang <jasowang@redhat.com>
 > > ---
-> > v4:
-> >   - Don't overload existing functions, instead create new ones
-> > v3:
-> >   - Fixup yamllint and kernel-doc failures
+> >  drivers/virtio/virtio_ring.c | 440 +++++++++++++++++++++++++++++++++--
+> >  1 file changed, 416 insertions(+), 24 deletions(-)
 > >
-> >   Documentation/netlink/specs/handshake.yaml | 16 ++++-
-> >   drivers/nvme/host/tcp.c                    | 15 +++-
-> >   drivers/nvme/target/tcp.c                  | 10 ++-
-> >   include/net/handshake.h                    |  8 +++
-> >   include/uapi/linux/handshake.h             | 13 ++++
-> >   net/handshake/tlshd.c                      | 83 +++++++++++++++++++++=
--
-> >   6 files changed, 137 insertions(+), 8 deletions(-)
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.=
+c
+> > index 96d7f165ec88..411bfa31707d 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -70,6 +70,8 @@
+> >  enum vq_layout {
+> >       SPLIT =3D 0,
+> >       PACKED,
+> > +     SPLIT_IN_ORDER,
+> > +     PACKED_IN_ORDER,
+> >       VQ_TYPE_MAX,
+> >  };
 > >
-> > diff --git a/Documentation/netlink/specs/handshake.yaml b/Documentation=
-/netlink/specs/handshake.yaml
-> > index a273bc74d26f..c72ec8fa7d7a 100644
-> > --- a/Documentation/netlink/specs/handshake.yaml
-> > +++ b/Documentation/netlink/specs/handshake.yaml
-> > @@ -21,12 +21,18 @@ definitions:
-> >       type: enum
-> >       name: msg-type
-> >       value-start: 0
-> > -    entries: [unspec, clienthello, serverhello]
-> > +    entries: [unspec, clienthello, serverhello, clientkeyupdate,
-> > +              clientkeyupdaterequest, serverkeyupdate, serverkeyupdate=
-request]
-> >     -
->
-> Why do we need the 'keyupdate' and 'keyupdaterequest' types?
-
-msg-type indicates if it's a client or server and hello or keyupdate,
-the idea being
-
-client:
- - Hello
- - KeyUpdate
-
-server:
- - Hello
- - KeyUpdate
-
-I'll drop clientkeyupdaterequest and serverkeyupdaterequest
-
-> Isn't the 'keyupdate' type enough, and can we specify anything
-> else via the update type?
-
-Once we know if it's a client or server KeyUpdate we need to know if
-we are receiving one, sending one or receiving one with the
-request_update flag set, hence key-update-type
-
->
-> >       type: enum
-> >       name: auth
-> >       value-start: 0
-> >       entries: [unspec, unauth, psk, x509]
-> > +  -
-> > +    type: enum
-> > +    name: key-update-type
-> > +    value-start: 0
-> > +    entries: [unspec, send, received, received_request_update]
->
-> See above.
->
+> > @@ -80,6 +82,7 @@ struct vring_desc_state_split {
+> >        * allocated together. So we won't stress more to the memory allo=
+cator.
+> >        */
+> >       struct vring_desc *indir_desc;
+> > +     u32 total_len;                  /* Buffer Length */
+> >  };
 > >
-> >   attribute-sets:
-> >     -
-> > @@ -74,6 +80,13 @@ attribute-sets:
-> >         -
-> >           name: keyring
-> >           type: u32
-> > +      -
-> > +        name: key-update-request
-> > +        type: u32
-> > +        enum: key-update-type
-> > +      -
-> > +        name: key-serial
-> > +        type: u32
->
-> Not sure if I like key-serial. Yes, it is a key serial number,
-> but it's not the serial number of the updated key (rather the serial
-> number of the key holding the session information).
-> Maybe 'key-update-serial' ?
->
-> >     -
-> >       name: done
-> >       attributes:
-> > @@ -116,6 +129,7 @@ operations:
-> >               - certificate
-> >               - peername
-> >               - keyring
-> > +            - key-serial
-> >       -
-> >         name: done
-> >         doc: Handler reports handshake completion
-> > diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> > index 611be56f8013..2696bf97dfac 100644
-> > --- a/drivers/nvme/host/tcp.c
-> > +++ b/drivers/nvme/host/tcp.c
-> > @@ -20,6 +20,7 @@
-> >   #include <linux/iov_iter.h>
-> >   #include <net/busy_poll.h>
-> >   #include <trace/events/sock.h>
-> > +#include <uapi/linux/handshake.h>
-> >
-> >   #include "nvme.h"
-> >   #include "fabrics.h"
-> > @@ -206,6 +207,10 @@ static struct workqueue_struct *nvme_tcp_wq;
-> >   static const struct blk_mq_ops nvme_tcp_mq_ops;
-> >   static const struct blk_mq_ops nvme_tcp_admin_mq_ops;
-> >   static int nvme_tcp_try_send(struct nvme_tcp_queue *queue);
-> > +static int nvme_tcp_start_tls(struct nvme_ctrl *nctrl,
-> > +                           struct nvme_tcp_queue *queue,
-> > +                           key_serial_t pskid,
-> > +                           handshake_key_update_type keyupdate);
-> >
-> >   static inline struct nvme_tcp_ctrl *to_tcp_ctrl(struct nvme_ctrl *ctr=
-l)
-> >   {
-> > @@ -1726,7 +1731,8 @@ static void nvme_tcp_tls_done(void *data, int sta=
-tus, key_serial_t pskid,
-> >
-> >   static int nvme_tcp_start_tls(struct nvme_ctrl *nctrl,
-> >                             struct nvme_tcp_queue *queue,
-> > -                           key_serial_t pskid)
-> > +                           key_serial_t pskid,
-> > +                           handshake_key_update_type keyupdate)
-> >   {
-> >       int qid =3D nvme_tcp_queue_id(queue);
-> >       int ret;
-> > @@ -1748,7 +1754,10 @@ static int nvme_tcp_start_tls(struct nvme_ctrl *=
-nctrl,
-> >       args.ta_timeout_ms =3D tls_handshake_timeout * 1000;
-> >       queue->tls_err =3D -EOPNOTSUPP;
-> >       init_completion(&queue->tls_complete);
-> > -     ret =3D tls_client_hello_psk(&args, GFP_KERNEL);
-> > +     if (keyupdate =3D=3D HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC)
-> > +             ret =3D tls_client_hello_psk(&args, GFP_KERNEL);
-> > +     else
-> > +             ret =3D tls_client_keyupdate_psk(&args, GFP_KERNEL, keyup=
-date);
-> >       if (ret) {
-> >               dev_err(nctrl->device, "queue %d: failed to start TLS: %d=
-\n",
-> >                       qid, ret);
-> > @@ -1898,7 +1907,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl =
-*nctrl, int qid,
-> >
-> >       /* If PSKs are configured try to start TLS */
-> >       if (nvme_tcp_tls_configured(nctrl) && pskid) {
-> > -             ret =3D nvme_tcp_start_tls(nctrl, queue, pskid);
-> > +             ret =3D nvme_tcp_start_tls(nctrl, queue, pskid, HANDSHAKE=
-_KEY_UPDATE_TYPE_UNSPEC);
-> >               if (ret)
-> >                       goto err_init_connect;
-> >       }
-> > diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-> > index 4ef4dd140ada..8aeec4a7f136 100644
-> > --- a/drivers/nvme/target/tcp.c
-> > +++ b/drivers/nvme/target/tcp.c
-> > @@ -1833,7 +1833,8 @@ static void nvmet_tcp_tls_handshake_timeout(struc=
-t work_struct *w)
-> >       kref_put(&queue->kref, nvmet_tcp_release_queue);
-> >   }
-> >
-> > -static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue)
-> > +static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
-> > +     handshake_key_update_type keyupdate)
-> >   {
-> >       int ret =3D -EOPNOTSUPP;
-> >       struct tls_handshake_args args;
-> > @@ -1852,7 +1853,10 @@ static int nvmet_tcp_tls_handshake(struct nvmet_=
-tcp_queue *queue)
-> >       args.ta_keyring =3D key_serial(queue->port->nport->keyring);
-> >       args.ta_timeout_ms =3D tls_handshake_timeout * 1000;
-> >
-> > -     ret =3D tls_server_hello_psk(&args, GFP_KERNEL);
-> > +     if (keyupdate =3D=3D HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC)
-> > +             ret =3D tls_server_hello_psk(&args, GFP_KERNEL);
-> > +     else
-> > +             ret =3D tls_server_keyupdate_psk(&args, GFP_KERNEL, keyup=
-date);
-> >       if (ret) {
-> >               kref_put(&queue->kref, nvmet_tcp_release_queue);
-> >               pr_err("failed to start TLS, err=3D%d\n", ret);
-> > @@ -1934,7 +1938,7 @@ static void nvmet_tcp_alloc_queue(struct nvmet_tc=
-p_port *port,
-> >               sk->sk_data_ready =3D port->data_ready;
-> >               write_unlock_bh(&sk->sk_callback_lock);
-> >               if (!nvmet_tcp_try_peek_pdu(queue)) {
-> > -                     if (!nvmet_tcp_tls_handshake(queue))
-> > +                     if (!nvmet_tcp_tls_handshake(queue, HANDSHAKE_KEY=
-_UPDATE_TYPE_UNSPEC))
-> >                               return;
-> >                       /* TLS handshake failed, terminate the connection=
+> >  struct vring_desc_state_packed {
+> > @@ -91,6 +94,7 @@ struct vring_desc_state_packed {
+> >       struct vring_packed_desc *indir_desc;
+> >       u16 num;                        /* Descriptor list length. */
+> >       u16 last;                       /* The last desc state in a list.=
  */
-> >                       goto out_destroy_sq;
-> > diff --git a/include/net/handshake.h b/include/net/handshake.h
-> > index dc2222fd6d99..084c92a20b68 100644
-> > --- a/include/net/handshake.h
-> > +++ b/include/net/handshake.h
-> > @@ -10,6 +10,10 @@
-> >   #ifndef _NET_HANDSHAKE_H
-> >   #define _NET_HANDSHAKE_H
+> > +     u32 total_len;                  /* Buffer Length */
+> >  };
 > >
-> > +#include <uapi/linux/handshake.h>
+> >  struct vring_desc_extra {
+> > @@ -168,7 +172,7 @@ struct vring_virtqueue_packed {
+> >  struct vring_virtqueue;
+> >
+> >  struct virtqueue_ops {
+> > -     int (*add)(struct vring_virtqueue *_vq, struct scatterlist *sgs[]=
+,
+> > +     int (*add)(struct vring_virtqueue *vq, struct scatterlist *sgs[],
+> >                  unsigned int total_sg, unsigned int out_sgs,
+> >                  unsigned int in_sgs, void *data,
+> >                  void *ctx, bool premapped, gfp_t gfp);
+> > @@ -205,8 +209,23 @@ struct vring_virtqueue {
+> >
+> >       enum vq_layout layout;
+> >
+> > -     /* Head of free buffer list. */
+> > +     /*
+> > +      * Without IN_ORDER it's the head of free buffer list. With
+> > +      * IN_ORDER and SPLIT, it's the next available buffer
+> > +      * index. With IN_ORDER and PACKED, it's unused.
+> > +      */
+> >       unsigned int free_head;
 > > +
-> > +#define handshake_key_update_type u32
-> > +
-> Huh?
-> You define it as 'u32' here
+> > +     /*
+> > +      * With IN_ORDER, devices write a single used ring entry with
+> > +      * the id corresponding to the head entry of the descriptor chain
+> > +      * describing the last buffer in the batch
 >
-> >   enum {
-> >       TLS_NO_KEYRING =3D 0,
-> >       TLS_NO_PEERID =3D 0,
-> > @@ -38,8 +42,12 @@ struct tls_handshake_args {
-> >   int tls_client_hello_anon(const struct tls_handshake_args *args, gfp_=
-t flags);
-> >   int tls_client_hello_x509(const struct tls_handshake_args *args, gfp_=
-t flags);
-> >   int tls_client_hello_psk(const struct tls_handshake_args *args, gfp_t=
- flags);
-> > +int tls_client_keyupdate_psk(const struct tls_handshake_args *args, gf=
-p_t flags,
-> > +                          handshake_key_update_type keyupdate);
-> >   int tls_server_hello_x509(const struct tls_handshake_args *args, gfp_=
-t flags);
-> >   int tls_server_hello_psk(const struct tls_handshake_args *args, gfp_t=
- flags);
-> > +int tls_server_keyupdate_psk(const struct tls_handshake_args *args, gf=
-p_t flags,
-> > +                          handshake_key_update_type keyupdate);
+> In the spec, yes, but I don't get it, so what does this field do?
+> This should say something like:
+> "once we see an in-order batch, this stores this last
+>  entry, and until we return the last buffer.
+>  After this, id is set to vq.num to mark it invalid.
+>  Unused without IN_ORDER.
+> "
+
+Right, let me tweak it as you suggested here.
+
+>
+>
+>
+>
+> > +      */
+> > +     struct used_entry {
+> > +             u32 id;
+> > +             u32 len;
+> > +     } batch_last;
+> > +
+> >       /* Number we've added since last sync. */
+> >       unsigned int num_added;
 > >
-> >   bool tls_handshake_cancel(struct sock *sk);
-> >   void tls_handshake_close(struct socket *sock);
-> > diff --git a/include/uapi/linux/handshake.h b/include/uapi/linux/handsh=
-ake.h
-> > index b68ffbaa5f31..b691530073c6 100644
-> > --- a/include/uapi/linux/handshake.h
-> > +++ b/include/uapi/linux/handshake.h
-> > @@ -19,6 +19,10 @@ enum handshake_msg_type {
-> >       HANDSHAKE_MSG_TYPE_UNSPEC,
-> >       HANDSHAKE_MSG_TYPE_CLIENTHELLO,
-> >       HANDSHAKE_MSG_TYPE_SERVERHELLO,
-> > +     HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE,
-> > +     HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATEREQUEST,
-> > +     HANDSHAKE_MSG_TYPE_SERVERKEYUPDATE,
-> > +     HANDSHAKE_MSG_TYPE_SERVERKEYUPDATEREQUEST,
-> >   };
+> > @@ -259,7 +278,12 @@ static void vring_free(struct virtqueue *_vq);
 > >
-> >   enum handshake_auth {
-> > @@ -28,6 +32,13 @@ enum handshake_auth {
-> >       HANDSHAKE_AUTH_X509,
-> >   };
+> >  static inline bool virtqueue_is_packed(const struct vring_virtqueue *v=
+q)
+> >  {
+> > -     return vq->layout =3D=3D PACKED;
+> > +     return vq->layout =3D=3D PACKED || vq->layout =3D=3D PACKED_IN_OR=
+DER;
+> > +}
+> > +
+> > +static inline bool virtqueue_is_in_order(const struct vring_virtqueue =
+*vq)
+> > +{
+> > +     return vq->layout =3D=3D SPLIT_IN_ORDER || vq->layout =3D=3D PACK=
+ED_IN_ORDER;
+> >  }
 > >
-> > +enum handshake_key_update_type {
-> > +     HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC,
-> > +     HANDSHAKE_KEY_UPDATE_TYPE_SEND,
-> > +     HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED,
-> > +     HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED_REQUEST_UPDATE,
+> >  static bool virtqueue_use_indirect(const struct vring_virtqueue *vq,
+> > @@ -576,6 +600,8 @@ static inline int virtqueue_add_split(struct vring_=
+virtqueue *vq,
+> >       struct scatterlist *sg;
+> >       struct vring_desc *desc;
+> >       unsigned int i, n, avail, descs_used, err_idx, c =3D 0;
+> > +     /* Total length for in-order */
+> > +     unsigned int total_len =3D 0;
+> >       int head;
+> >       bool indirect;
+> >
+> > @@ -645,6 +671,7 @@ static inline int virtqueue_add_split(struct vring_=
+virtqueue *vq,
+> >                       i =3D virtqueue_add_desc_split(vq, desc, extra, i=
+, addr, len,
+> >                                                    ++c =3D=3D total_sg =
+? 0 : VRING_DESC_F_NEXT,
+> >                                                    premapped);
+> > +                     total_len +=3D len;
+> >               }
+> >       }
+> >       for (; n < (out_sgs + in_sgs); n++) {
+> > @@ -662,6 +689,7 @@ static inline int virtqueue_add_split(struct vring_=
+virtqueue *vq,
+> >                               i, addr, len,
+> >                               (++c =3D=3D total_sg ? 0 : VRING_DESC_F_N=
+EXT) |
+> >                               VRING_DESC_F_WRITE, premapped);
+> > +                     total_len +=3D len;
+> >               }
+> >       }
+> >
+> > @@ -684,7 +712,12 @@ static inline int virtqueue_add_split(struct vring=
+_virtqueue *vq,
+> >       vq->vq.num_free -=3D descs_used;
+> >
+> >       /* Update free pointer */
+> > -     if (indirect)
+> > +     if (virtqueue_is_in_order(vq)) {
+> > +             vq->free_head +=3D descs_used;
+> > +             if (vq->free_head >=3D vq->split.vring.num)
+> > +                     vq->free_head -=3D vq->split.vring.num;
+> > +             vq->split.desc_state[head].total_len =3D total_len;;
+>
+> what's with ;; ?
+
+Let me drop the extra ';' here.
+
+>
+>
+> > +     } else if (indirect)
+> >               vq->free_head =3D vq->split.desc_extra[head].next;
+> >       else
+> >               vq->free_head =3D i;
+> > @@ -858,6 +891,14 @@ static bool more_used_split(const struct vring_vir=
+tqueue *vq)
+> >       return virtqueue_poll_split(vq, vq->last_used_idx);
+> >  }
+> >
+> > +static bool more_used_split_in_order(const struct vring_virtqueue *vq)
+> > +{
+> > +     if (vq->batch_last.id !=3D vq->split.vring.num)
+>
+> So why not use ~0x0 to mark the id invalid?
+> Will save a vring num read making the code a bit
+> more compact, no? worth trying.
+
+Yes, let me try it in the next version.
+
+>
+>
+> > +             return true;
+> > +
+> > +     return virtqueue_poll_split(vq, vq->last_used_idx);
+> > +}
+> > +
+> >  static void *virtqueue_get_buf_ctx_split(struct vring_virtqueue *vq,
+> >                                        unsigned int *len,
+> >                                        void **ctx)
+>
+> So now we have both more_used_split and more_used_split_in_order
+> and it's confusing that more_used_split is not a superset
+> of more_used_split_in_order.
+>
+> I think fundamentally out of order code will have to be
+> renamed with _ooo suffix.
+>
+>
+> Not a blocker for now.
+
+Ok.
+
+>
+>
+>
+> > @@ -915,6 +956,73 @@ static void *virtqueue_get_buf_ctx_split(struct vr=
+ing_virtqueue *vq,
+> >       return ret;
+> >  }
+> >
+> > +static void *virtqueue_get_buf_ctx_split_in_order(struct vring_virtque=
+ue *vq,
+> > +                                               unsigned int *len,
+> > +                                               void **ctx)
+> > +{
+> > +     void *ret;
+> > +     unsigned int num =3D vq->split.vring.num;
+> > +     u16 last_used;
+> > +
+> > +     START_USE(vq);
+> > +
+> > +     if (unlikely(vq->broken)) {
+> > +             END_USE(vq);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     last_used =3D (vq->last_used_idx & (vq->split.vring.num - 1));
+>
+> just (num - 1) ?
+
+Right.
+
+>
+>
+> > +
+> > +     if (vq->batch_last.id =3D=3D num) {
+> > +             if (!more_used_split(vq)) {
+>
+>
+> Well this works technically but it is really confusing.
+> Better to call more_used_split_in_order consistently.
+
+Fixed.
+
+>
+>
+> > +                     pr_debug("No more buffers in queue\n");
+> > +                     END_USE(vq);
+> > +                     return NULL;
+> > +             }
+> > +
+> > +             /* Only get used array entries after they have been
+> > +              * exposed by host. */
+>
+> /*
+>  * Always format multiline comments
+>  * like this.
+>  */
+>
+> /* Never
+>  * like this */
+
+Fixed.
+
+>
+>
+>
+> > +             virtio_rmb(vq->weak_barriers);
+> > +             vq->batch_last.id =3D virtio32_to_cpu(vq->vq.vdev,
+> > +                                 vq->split.vring.used->ring[last_used]=
+.id);
+> > +             vq->batch_last.len =3D virtio32_to_cpu(vq->vq.vdev,
+> > +                                  vq->split.vring.used->ring[last_used=
+].len);
+> > +     }
+> > +
+> > +     if (vq->batch_last.id =3D=3D last_used) {
+> > +             vq->batch_last.id =3D num;
+> > +             *len =3D vq->batch_last.len;
+> > +     } else
+> > +             *len =3D vq->split.desc_state[last_used].total_len;
+> > +
+> > +     if (unlikely(last_used >=3D num)) {
+> > +             BAD_RING(vq, "id %u out of range\n", last_used);
+> > +             return NULL;
+> > +     }
+> > +     if (unlikely(!vq->split.desc_state[last_used].data)) {
+> > +             BAD_RING(vq, "id %u is not a head!\n", last_used);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     /* detach_buf_split clears data, so grab it now. */
+> > +     ret =3D vq->split.desc_state[last_used].data;
+> > +     detach_buf_split_in_order(vq, last_used, ctx);
+> > +
+> > +     vq->last_used_idx++;
+> > +     /* If we expect an interrupt for the next entry, tell host
+> > +      * by writing event index and flush out the write before
+> > +      * the read in the next get_buf call. */
+> > +     if (!(vq->split.avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT))
+> > +             virtio_store_mb(vq->weak_barriers,
+> > +                             &vring_used_event(&vq->split.vring),
+> > +                             cpu_to_virtio16(vq->vq.vdev, vq->last_use=
+d_idx));
+> > +
+> > +     LAST_ADD_TIME_INVALID(vq);
+> > +
+> > +     END_USE(vq);
+> > +     return ret;
+> > +}
+> > +
+> >  static void virtqueue_disable_cb_split(struct vring_virtqueue *vq)
+> >  {
+> >       if (!(vq->split.avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT))=
+ {
+> > @@ -1008,7 +1116,10 @@ static void *virtqueue_detach_unused_buf_split(s=
+truct vring_virtqueue *vq)
+> >                       continue;
+> >               /* detach_buf_split clears data, so grab it now. */
+> >               buf =3D vq->split.desc_state[i].data;
+> > -             detach_buf_split(vq, i, NULL);
+> > +             if (virtqueue_is_in_order(vq))
+> > +                     detach_buf_split_in_order(vq, i, NULL);
+> > +             else
+> > +                     detach_buf_split(vq, i, NULL);
+> >               vq->split.avail_idx_shadow--;
+> >               vq->split.vring.avail->idx =3D cpu_to_virtio16(vq->vq.vde=
+v,
+> >                               vq->split.avail_idx_shadow);
+> > @@ -1071,6 +1182,7 @@ static void virtqueue_vring_attach_split(struct v=
+ring_virtqueue *vq,
+> >
+> >       /* Put everything in free lists. */
+> >       vq->free_head =3D 0;
+> > +     vq->batch_last.id =3D vq->split.vring.num;
+> >  }
+> >
+> >  static int vring_alloc_state_extra_split(struct vring_virtqueue_split =
+*vring_split)
+> > @@ -1182,7 +1294,6 @@ static struct virtqueue *__vring_new_virtqueue_sp=
+lit(unsigned int index,
+> >       if (!vq)
+> >               return NULL;
+> >
+> > -     vq->layout =3D SPLIT;
+> >       vq->vq.callback =3D callback;
+> >       vq->vq.vdev =3D vdev;
+> >       vq->vq.name =3D name;
+> > @@ -1202,6 +1313,8 @@ static struct virtqueue *__vring_new_virtqueue_sp=
+lit(unsigned int index,
+> >       vq->indirect =3D virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_=
+DESC) &&
+> >               !context;
+> >       vq->event =3D virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> > +     vq->layout =3D virtio_has_feature(vdev, VIRTIO_F_IN_ORDER) ?
+> > +                  SPLIT_IN_ORDER : SPLIT;
+> >
+> >       if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+> >               vq->weak_barriers =3D false;
+>
+> Same comments for packed below, I don't repeat them.
+>
+
+I've switched to calling more_used_packed_in_order() in
+virtqueue_get_buf_ctx_packed_in_order().
+
+>
+>
+>
+> > @@ -1359,13 +1472,14 @@ static int virtqueue_add_indirect_packed(struct=
+ vring_virtqueue *vq,
+> >                                        unsigned int in_sgs,
+> >                                        void *data,
+> >                                        bool premapped,
+> > -                                      gfp_t gfp)
+> > +                                      gfp_t gfp,
+> > +                                      u16 id)
+> >  {
+> >       struct vring_desc_extra *extra;
+> >       struct vring_packed_desc *desc;
+> >       struct scatterlist *sg;
+> > -     unsigned int i, n, err_idx, len;
+> > -     u16 head, id;
+> > +     unsigned int i, n, err_idx, len, total_len =3D 0;
+> > +     u16 head;
+> >       dma_addr_t addr;
+> >
+> >       head =3D vq->packed.next_avail_idx;
+> > @@ -1383,8 +1497,6 @@ static int virtqueue_add_indirect_packed(struct v=
+ring_virtqueue *vq,
+> >       }
+> >
+> >       i =3D 0;
+> > -     id =3D vq->free_head;
+> > -     BUG_ON(id =3D=3D vq->packed.vring.num);
+> >
+> >       for (n =3D 0; n < out_sgs + in_sgs; n++) {
+> >               for (sg =3D sgs[n]; sg; sg =3D sg_next(sg)) {
+> > @@ -1404,6 +1516,7 @@ static int virtqueue_add_indirect_packed(struct v=
+ring_virtqueue *vq,
+> >                               extra[i].flags =3D n < out_sgs ?  0 : VRI=
+NG_DESC_F_WRITE;
+> >                       }
+> >
+> > +                     total_len +=3D len;
+> >                       i++;
+> >               }
+> >       }
+> > @@ -1450,13 +1563,15 @@ static int virtqueue_add_indirect_packed(struct=
+ vring_virtqueue *vq,
+> >                               1 << VRING_PACKED_DESC_F_USED;
+> >       }
+> >       vq->packed.next_avail_idx =3D n;
+> > -     vq->free_head =3D vq->packed.desc_extra[id].next;
+> > +     if (!virtqueue_is_in_order(vq))
+> > +             vq->free_head =3D vq->packed.desc_extra[id].next;
+> >
+> >       /* Store token and indirect buffer state. */
+> >       vq->packed.desc_state[id].num =3D 1;
+> >       vq->packed.desc_state[id].data =3D data;
+> >       vq->packed.desc_state[id].indir_desc =3D desc;
+> >       vq->packed.desc_state[id].last =3D id;
+> > +     vq->packed.desc_state[id].total_len =3D total_len;
+> >
+> >       vq->num_added +=3D 1;
+> >
+> > @@ -1509,8 +1624,11 @@ static inline int virtqueue_add_packed(struct vr=
+ing_virtqueue *vq,
+> >       BUG_ON(total_sg =3D=3D 0);
+> >
+> >       if (virtqueue_use_indirect(vq, total_sg)) {
+> > +             id =3D vq->free_head;
+> > +             BUG_ON(id =3D=3D vq->packed.vring.num);
+> >               err =3D virtqueue_add_indirect_packed(vq, sgs, total_sg, =
+out_sgs,
+> > -                                                 in_sgs, data, premapp=
+ed, gfp);
+> > +                                                 in_sgs, data, premapp=
+ed,
+> > +                                                 gfp, id);
+> >               if (err !=3D -ENOMEM) {
+> >                       END_USE(vq);
+> >                       return err;
+> > @@ -1631,6 +1749,152 @@ static inline int virtqueue_add_packed(struct v=
+ring_virtqueue *vq,
+> >       return -EIO;
+> >  }
+> >
+> > +static inline int virtqueue_add_packed_in_order(struct vring_virtqueue=
+ *vq,
+> > +                                             struct scatterlist *sgs[]=
+,
+> > +                                             unsigned int total_sg,
+> > +                                             unsigned int out_sgs,
+> > +                                             unsigned int in_sgs,
+> > +                                             void *data,
+> > +                                             void *ctx,
+> > +                                             bool premapped,
+> > +                                             gfp_t gfp)
+> > +{
+> > +     struct vring_packed_desc *desc;
+> > +     struct scatterlist *sg;
+> > +     unsigned int i, n, c, err_idx, total_len =3D 0;
+> > +     __le16 head_flags, flags;
+> > +     u16 head, avail_used_flags;
+> > +     int err;
+> > +
+> > +     START_USE(vq);
+> > +
+> > +     BUG_ON(data =3D=3D NULL);
+> > +     BUG_ON(ctx && vq->indirect);
+> > +
+> > +     if (unlikely(vq->broken)) {
+> > +             END_USE(vq);
+> > +             return -EIO;
+> > +     }
+> > +
+> > +     LAST_ADD_TIME_UPDATE(vq);
+> > +
+> > +     BUG_ON(total_sg =3D=3D 0);
+> > +
+> > +     if (virtqueue_use_indirect(vq, total_sg)) {
+> > +             err =3D virtqueue_add_indirect_packed(vq, sgs, total_sg, =
+out_sgs,
+> > +                                                 in_sgs, data, premapp=
+ed, gfp,
+> > +                                                 vq->packed.next_avail=
+_idx);
+> > +             if (err !=3D -ENOMEM) {
+> > +                     END_USE(vq);
+> > +                     return err;
+> > +             }
+> > +
+> > +             /* fall back on direct */
+> > +     }
+> > +
+> > +     head =3D vq->packed.next_avail_idx;
+> > +     avail_used_flags =3D vq->packed.avail_used_flags;
+> > +
+> > +     WARN_ON_ONCE(total_sg > vq->packed.vring.num && !vq->indirect);
+> > +
+> > +     desc =3D vq->packed.vring.desc;
+> > +     i =3D head;
+> > +
+> > +     if (unlikely(vq->vq.num_free < total_sg)) {
+> > +             pr_debug("Can't add buf len %i - avail =3D %i\n",
+> > +                      total_sg, vq->vq.num_free);
+> > +             END_USE(vq);
+> > +             return -ENOSPC;
+> > +     }
+> > +
+> > +     c =3D 0;
+> > +     for (n =3D 0; n < out_sgs + in_sgs; n++) {
+> > +             for (sg =3D sgs[n]; sg; sg =3D sg_next(sg)) {
+> > +                     dma_addr_t addr;
+> > +                     u32 len;
+> > +
+> > +                     if (vring_map_one_sg(vq, sg, n < out_sgs ?
+> > +                                          DMA_TO_DEVICE : DMA_FROM_DEV=
+ICE,
+> > +                                          &addr, &len, premapped))
+> > +                             goto unmap_release;
+> > +
+> > +                     flags =3D cpu_to_le16(vq->packed.avail_used_flags=
+ |
+> > +                                 (++c =3D=3D total_sg ? 0 : VRING_DESC=
+_F_NEXT) |
+> > +                                 (n < out_sgs ? 0 : VRING_DESC_F_WRITE=
+));
+> > +                     if (i =3D=3D head)
+> > +                             head_flags =3D flags;
+> > +                     else
+> > +                             desc[i].flags =3D flags;
+> > +
+> > +
+> > +                     desc[i].addr =3D cpu_to_le64(addr);
+> > +                     desc[i].len =3D cpu_to_le32(len);
+> > +                     desc[i].id =3D cpu_to_le16(head);
+> > +
+> > +                     if (unlikely(vq->use_map_api)) {
+> > +                             vq->packed.desc_extra[i].addr =3D premapp=
+ed ?
+> > +                                   DMA_MAPPING_ERROR: addr;
+> > +                             vq->packed.desc_extra[i].len =3D len;
+> > +                             vq->packed.desc_extra[i].flags =3D
+> > +                                     le16_to_cpu(flags);
+> > +                     }
+> > +
+> > +                     if ((unlikely(++i >=3D vq->packed.vring.num))) {
+> > +                             i =3D 0;
+> > +                             vq->packed.avail_used_flags ^=3D
+> > +                                     1 << VRING_PACKED_DESC_F_AVAIL |
+> > +                                     1 << VRING_PACKED_DESC_F_USED;
+> > +                             vq->packed.avail_wrap_counter ^=3D 1;
+> > +                     }
+> > +
+> > +                     total_len +=3D len;
+> > +             }
+> > +     }
+> > +
+> > +     /* We're using some buffers from the free list. */
+> > +     vq->vq.num_free -=3D total_sg;
+> > +
+> > +     /* Update free pointer */
+> > +     vq->packed.next_avail_idx =3D i;
+> > +
+> > +     /* Store token. */
+> > +     vq->packed.desc_state[head].num =3D total_sg;
+> > +     vq->packed.desc_state[head].data =3D data;
+> > +     vq->packed.desc_state[head].indir_desc =3D ctx;
+> > +     vq->packed.desc_state[head].total_len =3D total_len;
+> > +
+> > +     /*
+> > +      * A driver MUST NOT make the first descriptor in the list
+> > +      * available before all subsequent descriptors comprising
+> > +      * the list are made available.
+> > +      */
+> > +     virtio_wmb(vq->weak_barriers);
+> > +     vq->packed.vring.desc[head].flags =3D head_flags;
+> > +     vq->num_added +=3D total_sg;
+> > +
+> > +     pr_debug("Added buffer head %i to %p\n", head, vq);
+> > +     END_USE(vq);
+> > +
+> > +     return 0;
+> > +
+> > +unmap_release:
+> > +     err_idx =3D i;
+> > +     i =3D head;
+> > +     vq->packed.avail_used_flags =3D avail_used_flags;
+> > +
+> > +     for (n =3D 0; n < total_sg; n++) {
+> > +             if (i =3D=3D err_idx)
+> > +                     break;
+> > +             vring_unmap_extra_packed(vq, &vq->packed.desc_extra[i]);
+> > +             i++;
+> > +             if (i >=3D vq->packed.vring.num)
+> > +                     i =3D 0;
+> > +     }
+> > +
+> > +     END_USE(vq);
+> > +     return -EIO;
+> > +}
+> > +
+> >  static bool virtqueue_kick_prepare_packed(struct vring_virtqueue *vq)
+> >  {
+> >       u16 new, old, off_wrap, flags, wrap_counter, event_idx;
+> > @@ -1792,10 +2056,81 @@ static void update_last_used_idx_packed(struct =
+vring_virtqueue *vq,
+> >                               cpu_to_le16(vq->last_used_idx));
+> >  }
+> >
+> > +static bool more_used_packed_in_order(const struct vring_virtqueue *vq=
+)
+> > +{
+> > +     if (vq->batch_last.id !=3D vq->packed.vring.num)
+> > +             return true;
+> > +
+> > +     return virtqueue_poll_packed(vq, READ_ONCE(vq->last_used_idx));
+> > +}
+> > +
+> > +static void *virtqueue_get_buf_ctx_packed_in_order(struct vring_virtqu=
+eue *vq,
+> > +                                                unsigned int *len,
+> > +                                                void **ctx)
+> > +{
+> > +     unsigned int num =3D vq->packed.vring.num;
+> > +     u16 last_used, last_used_idx;
+> > +     bool used_wrap_counter;
+> > +     void *ret;
+> > +
+> > +     START_USE(vq);
+> > +
+> > +     if (unlikely(vq->broken)) {
+> > +             END_USE(vq);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     last_used_idx =3D vq->last_used_idx;
+> > +     used_wrap_counter =3D packed_used_wrap_counter(last_used_idx);
+> > +     last_used =3D packed_last_used(last_used_idx);
+> > +
+> > +     if (vq->batch_last.id =3D=3D num) {
+> > +             if (!more_used_packed(vq)) {
+> > +                     pr_debug("No more buffers in queue\n");
+> > +                     END_USE(vq);
+> > +                     return NULL;
+> > +             }
+> > +             /* Only get used elements after they have been exposed by=
+ host. */
+> > +             virtio_rmb(vq->weak_barriers);
+> > +             vq->batch_last.id =3D
+> > +                     le16_to_cpu(vq->packed.vring.desc[last_used].id);
+> > +             vq->batch_last.len =3D
+> > +                     le32_to_cpu(vq->packed.vring.desc[last_used].len)=
+;
+> > +     }
+> > +
+> > +     if (vq->batch_last.id =3D=3D last_used) {
+> > +             vq->batch_last.id =3D num;
+> > +             *len =3D vq->batch_last.len;
+> > +     } else
+> > +             *len =3D vq->packed.desc_state[last_used].total_len;
+> > +
+> > +     if (unlikely(last_used >=3D num)) {
+> > +             BAD_RING(vq, "id %u out of range\n", last_used);
+> > +             return NULL;
+> > +     }
+> > +     if (unlikely(!vq->packed.desc_state[last_used].data)) {
+> > +             BAD_RING(vq, "id %u is not a head!\n", last_used);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     /* detach_buf_packed clears data, so grab it now. */
+> > +     ret =3D vq->packed.desc_state[last_used].data;
+> > +     detach_buf_packed_in_order(vq, last_used, ctx);
+> > +
+> > +     update_last_used_idx_packed(vq, last_used, last_used,
+> > +                                 used_wrap_counter);
+> > +
+> > +     LAST_ADD_TIME_INVALID(vq);
+> > +
+> > +     END_USE(vq);
+> > +     return ret;
+> > +}
+> > +
+> >  static void *virtqueue_get_buf_ctx_packed(struct vring_virtqueue *vq,
+> >                                         unsigned int *len,
+> >                                         void **ctx)
+> >  {
+> > +     unsigned int num =3D vq->packed.vring.num;
+> >       u16 last_used, id, last_used_idx;
+> >       bool used_wrap_counter;
+> >       void *ret;
+> > @@ -1822,7 +2157,7 @@ static void *virtqueue_get_buf_ctx_packed(struct =
+vring_virtqueue *vq,
+> >       id =3D le16_to_cpu(vq->packed.vring.desc[last_used].id);
+> >       *len =3D le32_to_cpu(vq->packed.vring.desc[last_used].len);
+> >
+> > -     if (unlikely(id >=3D vq->packed.vring.num)) {
+> > +     if (unlikely(id >=3D num)) {
+> >               BAD_RING(vq, "id %u out of range\n", id);
+> >               return NULL;
+> >       }
+> > @@ -1963,7 +2298,10 @@ static void *virtqueue_detach_unused_buf_packed(=
+struct vring_virtqueue *vq)
+> >                       continue;
+> >               /* detach_buf clears data, so grab it now. */
+> >               buf =3D vq->packed.desc_state[i].data;
+> > -             detach_buf_packed(vq, i, NULL);
+> > +             if (virtqueue_is_in_order(vq))
+> > +                     detach_buf_packed_in_order(vq, i, NULL);
+> > +             else
+> > +                     detach_buf_packed(vq, i, NULL);
+> >               END_USE(vq);
+> >               return buf;
+> >       }
+> > @@ -1989,6 +2327,8 @@ static struct vring_desc_extra *vring_alloc_desc_=
+extra(unsigned int num)
+> >       for (i =3D 0; i < num - 1; i++)
+> >               desc_extra[i].next =3D i + 1;
+> >
+> > +     desc_extra[num - 1].next =3D 0;
+> > +
+> >       return desc_extra;
+> >  }
+> >
+> > @@ -2120,10 +2460,17 @@ static void virtqueue_vring_attach_packed(struc=
+t vring_virtqueue *vq,
+> >  {
+> >       vq->packed =3D *vring_packed;
+> >
+> > -     /* Put everything in free lists. */
+> > -     vq->free_head =3D 0;
+> > +     if (virtqueue_is_in_order(vq))
+> > +             vq->batch_last.id =3D vq->packed.vring.num;
+> > +     else {
+>
+> coding style violation:
+>
+>         This does not apply if only one branch of a conditional statement=
+ is a single
+>         statement; in the latter case use braces in both branches:
+>
+>         .. code-block:: c
+>
+>                 if (condition) {
+>                         do_this();
+>                         do_that();
+>                 } else {
+>                         otherwise();
+>                 }
+>
+>
+
+Right, fixed.
+
+>
+>
+>
+> > +             /*
+> > +              * Put everything in free lists. Note that
+> > +              * next_avail_idx is sufficient with IN_ORDER so
+> > +              * free_head is unused.
+> > +              */
+> > +             vq->free_head =3D 0 ;
+>
+> extra space here
+>
+>
+
+And this as well.
+
+>
+> > +     }
+> >  }
+> > -
+> >  static void virtqueue_reset_packed(struct vring_virtqueue *vq)
+> >  {
+> >       memset(vq->packed.vring.device, 0, vq->packed.event_size_in_bytes=
+);
+> > @@ -2168,13 +2515,14 @@ static struct virtqueue *__vring_new_virtqueue_=
+packed(unsigned int index,
+> >  #else
+> >       vq->broken =3D false;
+> >  #endif
+> > -     vq->layout =3D PACKED;
+> >       vq->map =3D map;
+> >       vq->use_map_api =3D vring_use_map_api(vdev);
+> >
+> >       vq->indirect =3D virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_=
+DESC) &&
+> >               !context;
+> >       vq->event =3D virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> > +     vq->layout =3D virtio_has_feature(vdev, VIRTIO_F_IN_ORDER) ?
+> > +                  PACKED_IN_ORDER : PACKED;
+> >
+> >       if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+> >               vq->weak_barriers =3D false;
+> > @@ -2284,9 +2632,39 @@ static const struct virtqueue_ops packed_ops =3D=
+ {
+> >       .reset =3D virtqueue_reset_packed,
+> >  };
+> >
+> > +static const struct virtqueue_ops split_in_order_ops =3D {
+> > +     .add =3D virtqueue_add_split,
+> > +     .get =3D virtqueue_get_buf_ctx_split_in_order,
+> > +     .kick_prepare =3D virtqueue_kick_prepare_split,
+> > +     .disable_cb =3D virtqueue_disable_cb_split,
+> > +     .enable_cb_delayed =3D virtqueue_enable_cb_delayed_split,
+> > +     .enable_cb_prepare =3D virtqueue_enable_cb_prepare_split,
+> > +     .poll =3D virtqueue_poll_split,
+> > +     .detach_unused_buf =3D virtqueue_detach_unused_buf_split,
+> > +     .more_used =3D more_used_split_in_order,
+> > +     .resize =3D virtqueue_resize_split,
+> > +     .reset =3D virtqueue_reset_split,
 > > +};
 > > +
+> > +static const struct virtqueue_ops packed_in_order_ops =3D {
+> > +     .add =3D virtqueue_add_packed_in_order,
+> > +     .get =3D virtqueue_get_buf_ctx_packed_in_order,
+> > +     .kick_prepare =3D virtqueue_kick_prepare_packed,
+> > +     .disable_cb =3D virtqueue_disable_cb_packed,
+> > +     .enable_cb_delayed =3D virtqueue_enable_cb_delayed_packed,
+> > +     .enable_cb_prepare =3D virtqueue_enable_cb_prepare_packed,
+> > +     .poll =3D virtqueue_poll_packed,
+> > +     .detach_unused_buf =3D virtqueue_detach_unused_buf_packed,
+> > +     .more_used =3D more_used_packed_in_order,
+> > +     .resize =3D virtqueue_resize_packed,
+> > +     .reset =3D virtqueue_reset_packed,
+> > +};
+> > +
+> >  static const struct virtqueue_ops *const all_ops[VQ_TYPE_MAX] =3D {
+> >       [SPLIT] =3D &split_ops,
+> > -     [PACKED] =3D &packed_ops
+> > +     [PACKED] =3D &packed_ops,
+> > +     [SPLIT_IN_ORDER] =3D &split_in_order_ops,
+> > +     [PACKED_IN_ORDER] =3D &packed_in_order_ops,
+> >  };
+> >
+> >  static int virtqueue_disable_and_recycle(struct virtqueue *_vq,
+> > @@ -2342,6 +2720,12 @@ static int virtqueue_enable_after_reset(struct v=
+irtqueue *_vq)
+> >       case PACKED:                                                    \
+> >               ret =3D all_ops[PACKED]->op(vq, ##__VA_ARGS__);          =
+ \
+> >               break;                                                  \
+> > +     case SPLIT_IN_ORDER:                                            \
+> > +             ret =3D all_ops[SPLIT_IN_ORDER]->op(vq, ##__VA_ARGS__);  =
+ \
+> > +             break;                                                  \
+> > +     case PACKED_IN_ORDER:                                           \
+> > +             ret =3D all_ops[PACKED_IN_ORDER]->op(vq, ##__VA_ARGS__); =
+ \
+> > +             break;                                                  \
+> >       default:                                                        \
+> >               BUG();                                                  \
+> >               break;                                                  \
+> > @@ -2358,10 +2742,16 @@ static int virtqueue_enable_after_reset(struct =
+virtqueue *_vq)
+> >       case PACKED:                                    \
+> >               all_ops[PACKED]->op(vq, ##__VA_ARGS__); \
+> >               break;                                  \
+> > -     default:                                        \
+> > -             BUG();                                  \
+> > -             break;                                  \
+> > -     }                                               \
+> > +     case SPLIT_IN_ORDER:                                            \
+> > +             all_ops[SPLIT_IN_ORDER]->op(vq, ##__VA_ARGS__); \
+> > +             break;                                                  \
+> > +     case PACKED_IN_ORDER:                                           \
+> > +             all_ops[PACKED_IN_ORDER]->op(vq, ##__VA_ARGS__);        \
+> > +             break;                                                  \
+> > +     default:                                                        \
+> > +             BUG();                                                  \
+> > +             break;                                                  \
+> > +     }                                                               \
+> >  })
+> >
+> >  static inline int virtqueue_add(struct virtqueue *_vq,
+> > @@ -3078,6 +3468,8 @@ void vring_transport_features(struct virtio_devic=
+e *vdev)
+> >                       break;
+> >               case VIRTIO_F_NOTIFICATION_DATA:
+> >                       break;
+> > +             case VIRTIO_F_IN_ORDER:
+> > +                     break;
+> >               default:
+> >                       /* We don't understand this bit. */
+> >                       __virtio_clear_bit(vdev, i);
+> > --
+> > 2.31.1
 >
-> and here it's an enum. Please kill the first declaration.
->
-> >   enum {
-> >       HANDSHAKE_A_X509_CERT =3D 1,
-> >       HANDSHAKE_A_X509_PRIVKEY,
-> > @@ -46,6 +57,8 @@ enum {
-> >       HANDSHAKE_A_ACCEPT_CERTIFICATE,
-> >       HANDSHAKE_A_ACCEPT_PEERNAME,
-> >       HANDSHAKE_A_ACCEPT_KEYRING,
-> > +     HANDSHAKE_A_ACCEPT_KEY_UPDATE_REQUEST,
-> > +     HANDSHAKE_A_ACCEPT_KEY_SERIAL,
-> >
-> >       __HANDSHAKE_A_ACCEPT_MAX,
-> >       HANDSHAKE_A_ACCEPT_MAX =3D (__HANDSHAKE_A_ACCEPT_MAX - 1)
-> > diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
-> > index 2549c5dbccd8..c40839977ab9 100644
-> > --- a/net/handshake/tlshd.c
-> > +++ b/net/handshake/tlshd.c
-> > @@ -41,6 +41,7 @@ struct tls_handshake_req {
-> >       unsigned int            th_num_peerids;
-> >       key_serial_t            th_peerid[5];
-> >
-> > +     int                     th_key_update_request;
-> >       key_serial_t            user_session_id;
-> >   };
-> >
-> Why 'int' ? Can it be negative?
-> If not please make it an 'unsigned int'
->
-> > @@ -58,7 +59,8 @@ tls_handshake_req_init(struct handshake_req *req,
-> >       treq->th_num_peerids =3D 0;
-> >       treq->th_certificate =3D TLS_NO_CERT;
-> >       treq->th_privkey =3D TLS_NO_PRIVKEY;
-> > -     treq->user_session_id =3D TLS_NO_PRIVKEY;
-> > +     treq->user_session_id =3D args->user_session_id;
-> > +
-> >       return treq;
-> >   }
-> >
-> > @@ -265,6 +267,16 @@ static int tls_handshake_accept(struct handshake_r=
-eq *req,
-> >               break;
-> >       }
-> >
-> > +     ret =3D nla_put_u32(msg, HANDSHAKE_A_ACCEPT_KEY_SERIAL,
-> > +                       treq->user_session_id);
-> > +     if (ret < 0)
-> > +             goto out_cancel;
-> > +
-> > +     ret =3D nla_put_u32(msg, HANDSHAKE_A_ACCEPT_KEY_UPDATE_REQUEST,
-> > +                       treq->th_key_update_request);
-> > +     if (ret < 0)
-> > +             goto out_cancel;
-> > +
-> >       genlmsg_end(msg, hdr);
-> >       return genlmsg_reply(msg, info);
-> >
-> > @@ -372,6 +384,44 @@ int tls_client_hello_psk(const struct tls_handshak=
-e_args *args, gfp_t flags)
-> >   }
-> >   EXPORT_SYMBOL(tls_client_hello_psk);
-> >
-> > +/**
-> > + * tls_client_keyupdate_psk - request a PSK-based TLS handshake on a s=
-ocket
-> > + * @args: socket and handshake parameters for this request
-> > + * @flags: memory allocation control flags
-> > + * @keyupdate: specifies the type of KeyUpdate operation
-> > + *
-> > + * Return values:
-> > + *   %0: Handshake request enqueue; ->done will be called when complet=
-e
-> > + *   %-EINVAL: Wrong number of local peer IDs
-> > + *   %-ESRCH: No user agent is available
-> > + *   %-ENOMEM: Memory allocation failed
-> > + */
-> > +int tls_client_keyupdate_psk(const struct tls_handshake_args *args, gf=
-p_t flags,
-> > +                          handshake_key_update_type keyupdate)
-> > +{
-> > +     struct tls_handshake_req *treq;
-> > +     struct handshake_req *req;
-> > +     unsigned int i;
-> > +
-> > +     if (!args->ta_num_peerids ||
-> > +         args->ta_num_peerids > ARRAY_SIZE(treq->th_peerid))
-> > +             return -EINVAL;
-> > +
-> > +     req =3D handshake_req_alloc(&tls_handshake_proto, flags);
-> > +     if (!req)
-> > +             return -ENOMEM;
-> > +     treq =3D tls_handshake_req_init(req, args);
-> > +     treq->th_type =3D HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE;
-> > +     treq->th_key_update_request =3D keyupdate;
-> > +     treq->th_auth_mode =3D HANDSHAKE_AUTH_PSK;
-> > +     treq->th_num_peerids =3D args->ta_num_peerids;
-> > +     for (i =3D 0; i < args->ta_num_peerids; i++)
-> > +             treq->th_peerid[i] =3D args->ta_my_peerids[i];
-> Hmm?
-> Do we use the 'peerids'?
 
-We don't, this is just copied from the
-tls_client_hello_psk()/tls_server_hello_psk() to provide the same
-information to keep things more consistent.
+Thanks
 
-I can remove setting these
-
-> I thought that the information was encoded in the session, ie
-> the 'user_session_id' ?
->
-> > +
-> > +     return handshake_req_submit(args->ta_sock, req, flags);
-> > +}
-> > +EXPORT_SYMBOL(tls_client_keyupdate_psk);
-> > +
-> >   /**
-> >    * tls_server_hello_x509 - request a server TLS handshake on a socket
-> >    * @args: socket and handshake parameters for this request
-> > @@ -428,6 +478,37 @@ int tls_server_hello_psk(const struct tls_handshak=
-e_args *args, gfp_t flags)
-> >   }
-> >   EXPORT_SYMBOL(tls_server_hello_psk);
-> >
-> > +/**
-> > + * tls_server_keyupdate_psk - request a server TLS KeyUpdate on a sock=
-et
-> > + * @args: socket and handshake parameters for this request
-> > + * @flags: memory allocation control flags
-> > + * @keyupdate: specifies the type of KeyUpdate operation
-> > + *
-> > + * Return values:
-> > + *   %0: Handshake request enqueue; ->done will be called when complet=
-e
-> > + *   %-ESRCH: No user agent is available
-> > + *   %-ENOMEM: Memory allocation failed
-> > + */
-> > +int tls_server_keyupdate_psk(const struct tls_handshake_args *args, gf=
-p_t flags,
-> > +                          handshake_key_update_type keyupdate)
-> > +{
-> > +     struct tls_handshake_req *treq;
-> > +     struct handshake_req *req;
-> > +
-> > +     req =3D handshake_req_alloc(&tls_handshake_proto, flags);
-> > +     if (!req)
-> > +             return -ENOMEM;
-> > +     treq =3D tls_handshake_req_init(req, args);
-> > +     treq->th_type =3D HANDSHAKE_MSG_TYPE_SERVERKEYUPDATE;
-> > +     treq->th_key_update_request =3D keyupdate;
-> > +     treq->th_auth_mode =3D HANDSHAKE_AUTH_PSK;
-> > +     treq->th_num_peerids =3D 1;
-> > +     treq->th_peerid[0] =3D args->ta_my_peerids[0];
->
-> Same here. Why do we need to set 'peerid'?
->
-> > +
-> > +     return handshake_req_submit(args->ta_sock, req, flags);
-> > +}
-> > +EXPORT_SYMBOL(tls_server_keyupdate_psk);
-> > +
-> >   /**
-> >    * tls_handshake_cancel - cancel a pending handshake
-> >    * @sk: socket on which there is an ongoing handshake
-> Nit: we _could_ overload 'peerid' with the user_session_id,then we
-> wouldn't need to specify a new field in the handshake
-> request.
-> But that's arguably quite hackish.
-
-Oh no! Let's not do that. That just seems prone to confusion
-
-Alistair
-
->
-> Cheers,
->
-> Hannes
-> --
-> Dr. Hannes Reinecke                  Kernel Storage Architect
-> hare@suse.de                                +49 911 74053 688
-> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
-> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
