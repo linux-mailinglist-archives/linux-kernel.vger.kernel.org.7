@@ -1,176 +1,124 @@
-Return-Path: <linux-kernel+bounces-863587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FF3BF83E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:25:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3562BF83F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B23C33B02AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:25:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 88F4F4EBB44
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F19351FB7;
-	Tue, 21 Oct 2025 19:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026A0351FCE;
+	Tue, 21 Oct 2025 19:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9UkZCiT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RjfCV8K2"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808FF351FB0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45E1351FB7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761074734; cv=none; b=HP4qp/4DOAtJFkh8bxwB1C4CwCqWAT0rxJe0UqcqCeQhbKxJGMxpvsGQrVC5hHS8BkEMqzSyFceqsBz2uQ1ddDTdJfYfJn7H/8v7MLlWU7Wa+wD20qez6xwnRv0UweF2Wbjx9C/bj03FixUwIzowJEbK01+pq58DMCiAQCuIffk=
+	t=1761074832; cv=none; b=OIQqJ0ZWo4zHd0PzNd2uCAmk4bQKLe+bmSNYKh7WFnniDDOiC4pBWgdTCThMUJN3GbXuhTcOtSfAHswwiiMAtrmD2rfOj+9TeJeDScPbFZCpMCq+BKzD0wO/PnRlq7gIddlZeSWavDIps9Q11edKN0m0yrkQ0FOF7kYTg4cRPWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761074734; c=relaxed/simple;
-	bh=ZBF6Sb+cThRkUXiAy5cx8gb0t4QYBOQD5Da7vH3eOV8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Znr2WxZsHLzg7Vk5yK7FvaBmtkX1Kbq0zFhkS3q2StBS6s+2G4ulJAeH4v0RFx6cXHV6FiVCwYjEaE1zI78yQZ/hCaH72VPEeo4pwiItLuis/SSdQ016HEsaBCy9iC0jjed116PTat8QHlL2eyvudWOhClTWlIO39lJf6GqPqbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9UkZCiT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F593C4CEF1
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761074734;
-	bh=ZBF6Sb+cThRkUXiAy5cx8gb0t4QYBOQD5Da7vH3eOV8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f9UkZCiTqkbQUkw9AqLwqf3fnZzTRZPnXo/w8T43slZmXYcj9OPM3blv8JCPHgM/T
-	 3J1qFp/oqsZpj0lgIn/nJjSZHwxRp0NXXvDzBosM1ecvGcrAiKFopy2zsKhKBYWtcK
-	 ZiTP0mtNW6hzjvkQV6RPQoCQ01xs2x/m7ZQ6Jc80pDWw6L73TD9RzMD6CEW3FyY0/r
-	 SNXeUbvQMXfgR6+P2KH5rYlS0WO8cax3NQov+So5nrXnl18+3ZBhhpqeLkTx1F3wcp
-	 LCNHtAhCtWns/vy1JcI0886vGmhi8/aTwhixKz5eSEIGC5KQHSQWim8AR8i1QktWjB
-	 im8Z/eSJegiZg==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7c0e357ab51so4936016a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:25:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUelX8oBwz8t7FSKPxJoCuSx5227mmyOosV1ZNYcbTeczh8ebbJE0rgaAV+Zu+E+SGtWpzQDU6aafxOkyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2ywg1bd8wDlyZ9OutckFE655/Vx/Nlhr2ILXNHTbSHRd1y6j1
-	w/uq4qu25k4C6JNXj5tOkhxSnh7s816RCD+PEV7LVXaTOuf7K0GRugeedUqgyzRl+u5hL2AwTcJ
-	g1YZeBzUmcVShOq2cHaZFPjpphw3dxMU=
-X-Google-Smtp-Source: AGHT+IE/08QSQyp9X0ccFhg4UFvUOgwCgdeciymPiqm4mIxF4c8LobqZKfy8Ajho/BYpHKCpe1Dso5SMqC5wRfFNnKo=
-X-Received: by 2002:a05:6808:2211:b0:438:bdb0:89b6 with SMTP id
- 5614622812f47-443a3095328mr7294620b6e.34.1761074733638; Tue, 21 Oct 2025
- 12:25:33 -0700 (PDT)
+	s=arc-20240116; t=1761074832; c=relaxed/simple;
+	bh=H7mmLnyjS4IJj8j/5Cfb777523++/Yd9MxdaxBFMvi4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Xt1fwYoWKoFivIHiym1e+Z+2q0yESQHtFW+sS0wkE17VuJT9WDPOqryEYGCM7U+VJiy0hr+HUqArUdguAczbSSuVihqkxu2RTEXiu8D7P/W/HEZPMobzMCmq4gIuuaHsTSglDeLe4zB5Djpn3M8OHqNUfBaTjbGehPdvq47LsTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RjfCV8K2; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-427054641f0so897314f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761074827; x=1761679627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ibZxuBONFvP6tEfHo6ray/hwM+JhW2wvVnRgxqq2YE=;
+        b=RjfCV8K29Df2WMDDautePGhbt4yPIGXXLemqb9cmy/qDY+kqtUaInAUH8IXOAVwNM8
+         4vVC+BfmXn243+566kVfTaanfMYJR/4icPDIi9JbUzHP51+LWdHAlOkZARxGx8Ow1Lwe
+         aNVUMdhDaYwxVynnhUegwo2e6k0xRK/rtTCQbUUNgb/RyPoSJHBttg96nrt2GeEBFiwd
+         TGFV+QtblNI2Uq83wHfYmWFx1slMcXUFHKUP8P6n1DS+yzg+xZOOEf+I/DbWu/q2N8d2
+         ei7n9iL6vZYQTB53u6lnrhjTOk2AimvAMxYH9+IVAGsNlI65to1b1ssO1HtShwo0VRRn
+         HCNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761074827; x=1761679627;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1ibZxuBONFvP6tEfHo6ray/hwM+JhW2wvVnRgxqq2YE=;
+        b=algTuKfo85dQHz325Ujh1ubGeUHlPU/SRZ7JkjYgmSxv6dsXyupkI9uZQSe9itFN89
+         MT6fk/9p/oMiR2zT/b7fIXVh/PnEhUYOJplWZP1n+4qLH8LLMdGupEmIO/Eh0c0h1EG+
+         PHslw45yKTids3cDVfxrVgRbzrbQrw8TMMdbsYuvEeZ4TOHjNdjQMt5RRAukS6jrVlsr
+         U7jRxJV6j8VhokQ3CsuOXS1nmv8hhaJSsCAhP1xXhoFsT4KPvtlBnMovsPfm7bLPcMHF
+         M699KI1FZS4zKG2URAWe2OKk19EoUpWY4Ag4bEnJ1Hq5Lx2kw7OfOhp/SjRIOWzhQ+sR
+         ZtBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9fHcnPxWiAG0mXgBlD0CEaF8t91+l7eNtUsLtf/AYc7a2OSeUUJUd1N4Fv1LAxyrC0FQhqvlzFqdH0x4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGr5xt0x0drlGztSE8EhZRtj9NelCa/iMlIjhHz63RpTeXeQH7
+	0ScBIfq+IK64j5h92iwaImUO+98Bh+tB9iHm4Oyx0K2o8AWChL/SNPLhJLPV8xJdOwM=
+X-Gm-Gg: ASbGncu4jwIDLmuaTA8vDXnJmKDXnmAcPOwlaYWJAgBHacb3fyFv6GbQuRYQBT72Plq
+	rfIhujsDPNalGOffJ8zlfbD9smwZ2Eyg+NXqK9cMyEevC412zDOcbNm9jGs9ZwHDOOL+gfvF81g
+	k4l6qsTNzXuVPlNFwxbxvOyxaV6cGbR8a6Y2+B206VGxYlqAf1ZY4NPzAnnqvRRgLpQSREzSJnO
+	Fndf8zsPgw8RaL9JHyxaKnK8fGa0NTwfCuTPL+mzByY2PUwKs3CTYJPyYbSg+B7GKtiIo6VQP7v
+	liY5DnIfa9Nn4ZkKxMWRMOvaJHVhS4h7X1+kOX4lsucJ0qYEaW7u9PnDuZt5YTPc0wZOpJYNvL+
+	3acq2HxMZynZHOcjbDAIrZtcZ958rswZ7lMGhb5fn8HoPWh3BztCsbXRAqD318/WipO9PSd5THt
+	66tooOj5WgA20KTW1At+iJqY0Z0K0=
+X-Google-Smtp-Source: AGHT+IFxRo7mh1kCIiwBlgFSzvscGIsov6AOIfRYcDiKlEW/2CZnKxnmXX+fOq8J1wvQblUD1sFg2A==
+X-Received: by 2002:a05:600c:3106:b0:46e:31a1:c07d with SMTP id 5b1f17b1804b1-474942605damr21467615e9.2.1761074826918;
+        Tue, 21 Oct 2025 12:27:06 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c42b48c9sm7839115e9.15.2025.10.21.12.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 12:27:06 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ kernel-team@android.com
+In-Reply-To: <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
+ <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+Subject: Re: (subset) [PATCH 1/9] dt-bindings: soc: samsung: exynos-sysreg:
+ add gs101 hsi0 and misc compatibles
+Message-Id: <176107482513.33931.5052547244710731509.b4-ty@linaro.org>
+Date: Tue, 21 Oct 2025 21:27:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006013954.17972-1-aboorvad@linux.ibm.com>
-In-Reply-To: <20251006013954.17972-1-aboorvad@linux.ibm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 21 Oct 2025 21:25:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hCvvMzPCy+8N34vCt_d4mdeuMVHR9dQbs4cHwQDOpYrw@mail.gmail.com>
-X-Gm-Features: AS18NWBMycXoaeD05VXzOVH8lO1ntRK70bBfzIJ49OyblOMmInRKm-CI_7G6PUg
-Message-ID: <CAJZ5v0hCvvMzPCy+8N34vCt_d4mdeuMVHR9dQbs4cHwQDOpYrw@mail.gmail.com>
-Subject: Re: [PATCH v4] cpuidle: menu: Use residency threshold in polling
- state override decisions
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: rafael@kernel.org, christian.loehle@arm.com, daniel.lezcano@linaro.org, 
-	gautam@linux.ibm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Mon, Oct 6, 2025 at 3:40=E2=80=AFAM Aboorva Devarajan <aboorvad@linux.ib=
-m.com> wrote:
->
-> On virtualized PowerPC (pseries) systems, where only one polling state
-> (Snooze) and one deep state (CEDE) are available, selecting CEDE when
-> the predicted idle duration is less than the target residency of CEDE
-> state can hurt performance. In such cases, the entry/exit overhead of
-> CEDE outweighs the power savings, leading to unnecessary state
-> transitions and higher latency.
->
-> Menu governor currently contains a special-case rule that prioritizes
-> the first non-polling state over polling, even when its target residency
-> is much longer than the predicted idle duration. On PowerPC/pseries,
-> where the gap between the polling state (Snooze) and the first non-pollin=
-g
-> state (CEDE) is large, this behavior causes performance regressions.
->
-> This patch refines the special case by adding an extra requirement:
-> the first non-polling state can only be chosen if its
-> target residency is below the defined RESIDENCY_THRESHOLD_NS. If
-> this condition is not satisfied, polling is allowed instead, avoiding
-> suboptimal non-polling state entries.
->
-> This change is limited to the single special-case rule for the first
-> non-polling state. The general non-polling state selection logic in the
-> menu governor remains unchanged.
->
-> Performance improvement observed with pgbench on PowerPC (pseries)
-> system:
-> +---------------------------+------------+------------+------------+
-> | Metric                    | Baseline   | Patched    | Change (%) |
-> +---------------------------+------------+------------+------------+
-> | Transactions/sec (TPS)    | 495,210    | 536,982    | +8.45%     |
-> | Avg latency (ms)          | 0.163      | 0.150      | -7.98%     |
-> +---------------------------+------------+------------+------------+
-> CPUIdle state usage:
-> +--------------+--------------+-------------+
-> | Metric       | Baseline     | Patched     |
-> +--------------+--------------+-------------+
-> | Total usage  | 12,735,820   | 13,918,442  |
-> | Above usage  | 11,401,520   | 1,598,210   |
-> | Below usage  | 20,145       | 702,395     |
-> +--------------+--------------+-------------+
->
-> Above/Total and Below/Total usage percentages:
-> +------------------------+-----------+---------+
-> | Metric                 | Baseline  | Patched |
-> +------------------------+-----------+---------+
-> | Above % (Above/Total)  | 89.56%    | 11.49%  |
-> | Below % (Below/Total)  | 0.16%     | 5.05%   |
-> | Total cpuidle miss (%) | 89.72%    | 16.54%  |
-> +------------------------+-----------+---------+
->
-> The results indicate that restricting CEDE selection to cases where
-> its residency matches the predicted idle time reduces mispredictions,
-> lowers unnecessary state transitions, and improves overall throughput.
->
-> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> ---
->
-> v3: https://lore.kernel.org/all/20250908075443.208570-1-aboorvad@linux.ib=
-m.com/
->
-> v3 -> v4
->
-> - Rebased onto the linux-pm/pm branch.
-> - Updated commit message and comments based on review feedback.
-> - Reordered condition checks as recommended in review.
-> - Added Reviewed-by tag from Christian.
->
-> ---
->  drivers/cpuidle/governors/menu.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors=
-/menu.c
-> index 4d9aa5ce31f0..6a98a724442e 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -320,10 +320,12 @@ static int menu_select(struct cpuidle_driver *drv, =
-struct cpuidle_device *dev,
->                 }
->
->                 /*
-> -                * Use a physical idle state, not busy polling, unless a =
-timer
-> -                * is going to trigger soon enough.
-> +                * Use a physical idle state instead of busy polling as l=
-ong as
-> +                * its target residency is below the residency threshold =
-and the
-> +                * next timer doesn't expire soon.
->                  */
->                 if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> +                   s->target_residency_ns < RESIDENCY_THRESHOLD_NS &&
->                     s->target_residency_ns <=3D data->next_timer_ns) {
->                         predicted_ns =3D s->target_residency_ns;
->                         idx =3D i;
-> --
 
-Applied as 6.19 material, thanks!
+On Mon, 13 Oct 2025 21:51:30 +0100, Peter Griffin wrote:
+> Add dedicated compatibles for gs101 hsi0 and misc sysreg controllers to the
+> documentation.
+> 
+> 
+
+Applied, thanks!
+
+[1/9] dt-bindings: soc: samsung: exynos-sysreg: add gs101 hsi0 and misc compatibles
+      https://git.kernel.org/krzk/linux/c/33fd5a7103959113ea3b60389a7582ec0cc2f15e
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
