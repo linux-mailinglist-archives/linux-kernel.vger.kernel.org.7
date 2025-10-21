@@ -1,135 +1,308 @@
-Return-Path: <linux-kernel+bounces-862855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF01BF660C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:15:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7ABBF6618
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81F05502900
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:12:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 092D1503116
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD8835502B;
-	Tue, 21 Oct 2025 12:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8CB2F290E;
+	Tue, 21 Oct 2025 12:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wDcIHRtd"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/ofNM8d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0879355031
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F7821578D;
+	Tue, 21 Oct 2025 12:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761048661; cv=none; b=YJpfniJmHFI0QoPRJZlSZqiqYqr6ZBIKWY6UJsKndXOmhPIsYmQIsnBqbjOjS7YWGggkiyjB+8efyymNQNymOAE7o+tpKBcoHlbMH4rSaCP34US78XHdPh/asYbdELwRTs/SUzK1PCfoHHJErR3xaGRhQQv33poHOSW7vGEKlNA=
+	t=1761048684; cv=none; b=m4/GSAq3AFrkjU6di7m9yuoRFKj/nSfsyx2hgzvwnuvfBnyL+wygBiKnZygCqkEBtEH52YkK6V++ljY+Xl2wLpd0n4ipPd4cI/EOcJW2UCCeZy5+SiU/aqWocPyxVYyUWRwJFkmq5FcbAvfz1khFUDZCi0q7F4arkw0hevIjvn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761048661; c=relaxed/simple;
-	bh=SaL5Hdd+AlAzhu7CLNV0IFeRBUqzc12u5Qcc72oUets=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qhd3C41iTldV1VhSM111Eqodl3ol6wQN57j6ntWv7TrcGLSY62ISMy+J6TB0wpYjun6ni750fcva5kYMvE3edGPAEcvdGuXV2BRf0OBwcqJXkJm+PFdomYRmgVyT1SBVyhJ/QI7Rb83W05eRDWt97U8GZfUCxDwQv/tGSgkllk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wDcIHRtd; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-471075c0a18so57969265e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:10:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761048657; x=1761653457; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gtxly3kQYxnRyXoIDVW2wTlRezx+MmDctdv2f14Gy50=;
-        b=wDcIHRtdz6Eicqkz54qp5JjwZkpVBuKzO3/rfbxH1a7hE5NCere7366EtYn09gLwgq
-         XSAjSzEpvvLpxCNsHb3x1tAMDiujVkHaZCZcIY+0iHhQVf5IKwZcpXYTQI/6Ou3L+ltR
-         EDmtw1lnNCDoC/8Cb70N9EtKJjchq0roHhmaZu4jsu6Nf1LklfaM4z9pjLw1Xn6ic0cL
-         TO9+np3eJUpZ+rvVm4EZSGZp3r7oKSNvdczA29T7S/q2BSeZolq3JZ83rq2SqgRBZ7rr
-         tk2kIkRLMCyBfbi8ghalf03jkTwYrT23dyWXe2aAxmIjgTQ/dYGRj4yMw+6b+4wdwgYk
-         kwdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761048657; x=1761653457;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gtxly3kQYxnRyXoIDVW2wTlRezx+MmDctdv2f14Gy50=;
-        b=k9VMPZMF1mov5LXNa1BKkqRJ06IT5xVjIs2E7gWtWJOFVH/vB3DxFaCQqPuALpJ+3G
-         XdufpIFqcWi+JS1ptsxmp01xVLFScVTUyVbcsCMYkxFteLgd4/i+RHicbDoo+bMg0CKB
-         qU7L6wBnHIpZg83mWYMoYCYLK6UY0xtyUTb5+v50ziFQLAg1mAeRTqK+BZsLaqTnNWad
-         Ap8E4CtMPAy6tkJ/ICjGtHNL7k+DMy14tZ86Rw9IpnGhWj0eUpRpDKAXjXqMGiOxVqDQ
-         qu+vrljHwgRR9MLa/hLbl40JtM4qEnV53L7U3zti6a7qQ67aKmXgg3khoJfsjtS9fg+s
-         YgIA==
-X-Gm-Message-State: AOJu0Yxyo9FA++5C5I63MeDtccGXEDKmMCxwhPXXAKDbbxIIL1BqtOop
-	mUMw9N78/qBTGoo20IdVqpZJKD23ZLbTh7UwDbqI+YjwbJe3JCtP2EvDJH2DV9XJM0BNpzIK7NJ
-	KdgjnHmF9NA==
-X-Gm-Gg: ASbGncsG1Yn/L99HHNZsQC0X/jH1WaMukp/n4ON0ReqtnOs7B/ywprLdrvFGFrvRu7L
-	iAe8MweP1JVyW10AEzyR1ai+bpucmQV2S1C3dGxn0gdKxrlBsNOsH5x24470zewSstRzRmn+2dD
-	Cby9GaYZ/SSvgP43iUs2QgPQJfjYL/7Muy07csTPGIV2MDYWlnWC8pDwjGOE1HIMpXw9p2EoUsr
-	ke/Ybq7hREtCI7r+TlO+4gI1w//vIDN/+7VJjtrSa1JDlod/w0n+kx3n1ry5lpH4yWD5JobF71a
-	+5wOC3qRORfzPxntrIjsB0a88EM10L0XreZclvD5MUmgNVwdXYJlBB9bG6aVSPj7dpv6pNGtC9z
-	oBZL6YZvHs4DkvZniPE3rIt7gvHgqL8O5JuoAQLfD41XDfcgPGAXtub9ZXQ939YEuoRGJSRfWsA
-	W6mg==
-X-Google-Smtp-Source: AGHT+IHhcHl2PtK3D7ZC0ypOA/rvfMUFfHo341+xc//oeoL6V5waS6eofKQEiAaatQp+riu9Ujue0w==
-X-Received: by 2002:a05:600c:350b:b0:46e:19f8:88d8 with SMTP id 5b1f17b1804b1-4711791cd8fmr159636965e9.34.1761048656876;
-        Tue, 21 Oct 2025 05:10:56 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2979:9ff9:6677:97c6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496bee326sm15474005e9.3.2025.10.21.05.10.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 05:10:56 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-kernel@vger.kernel.org,
-	Mary Strodl <mstrodl@csh.rit.edu>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	tzungbi@kernel.org,
-	dan.carpenter@linaro.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] gpio: mpsse: add support for bryx brik
-Date: Tue, 21 Oct 2025 14:10:55 +0200
-Message-ID: <176104865318.22669.16904591051236557444.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251014133530.3592716-1-mstrodl@csh.rit.edu>
-References: <20251014133530.3592716-1-mstrodl@csh.rit.edu>
+	s=arc-20240116; t=1761048684; c=relaxed/simple;
+	bh=/eyJC7fFL048bFoOv3Vd5zRpz+YmvbCWpbBDrYeqJ4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4JNkKnpbZB0xS+G+cqD+rc8prjE0NURVHMO6aqgJX17gMkxJkz5PRFkZYc36vqsatKR+3N01C5/W/WdyXQQ5KpjzAw0onNP7rktpwj1CGGDAAliY1Oa+bnqAOzZGZgWcvWzdRWO21eXGLwfKHBVqGIK4a+5mdjj61TuVzKz39I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/ofNM8d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61AE3C4CEF1;
+	Tue, 21 Oct 2025 12:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761048683;
+	bh=/eyJC7fFL048bFoOv3Vd5zRpz+YmvbCWpbBDrYeqJ4I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/ofNM8dLE4QN47TBergBYTAz+pzCCiMxRGUsPpvr8R66SjiUBIsGKzbm8aZ1dvtN
+	 tAQR5OY7NKxHAEWP5pPaoyEwehxgjBI1YtbZz102AOT9/S5LLOshs6PzH0mbBFmkfv
+	 1Za3X8ToV9J6GlEOUG3Z/B4EXeCzB4KSVBIyFEyVjE4xPSDFHwbrnP39qIYKa9ulBp
+	 EKq6DQChiDEL5RN7bYZUMOLnTFdh2TNV1BwY4UpEeSUnTmujffW6ebNRgzWzGtja1X
+	 k7caRPnGg/yVV5XWkqQU2e+xXeHynMWhGAN4xf2HlsqtV9lg0nFYJ3mzGtHmDdN8NG
+	 TeHcLFUeU23PA==
+Date: Tue, 21 Oct 2025 14:11:17 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Bhavik Sachdev <b.sachdev1904@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>, 
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, Andrei Vagin <avagin@gmail.com>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH v2 1/1] statmount: accept fd as a parameter
+Message-ID: <20251021-blaumeise-verfassen-b8361569b6aa@brauner>
+References: <20251011124753.1820802-1-b.sachdev1904@gmail.com>
+ <20251011124753.1820802-2-b.sachdev1904@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251011124753.1820802-2-b.sachdev1904@gmail.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Tue, 14 Oct 2025 09:35:26 -0400, Mary Strodl wrote:
-> Hey all,
+On Sat, Oct 11, 2025 at 06:16:11PM +0530, Bhavik Sachdev wrote:
+> Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_FD
+> flag. When a valid fd is provided and STATMOUNT_FD is set, statmount
+> will return mountinfo about the mount the fd is on.
 > 
-> This series adds support for the Bryx Radio Interface Kit to the gpio-mpsse
-> driver
+> This even works for "unmounted" mounts (mounts that have been umounted
+> using umount2(mnt, MNT_DETACH)), if you have access to a file descriptor
+> on that mount. These "umounted" mounts will have no mountpoint hence we
+> return "[detached]" and the mnt_ns_id to be 0.
 > 
-> Here are some of the major differences compared to the sealevel device this
-> driver currently supports:
-> * Uses an FT232HL chip instead of FT2232HL (this is easy, just populates as
->   only one interface rather than two)
-> * There are only two exposed GPIO lines, and each is hardware restricted to
->   a particular direction.
-> * This is an external device, therefore hotpluggable. This caused me to
->   discover the race condition in the polling worker teradown, which
->   accounts for the bulk of the changes.
+> Co-developed-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
+> ---
+>  fs/namespace.c             | 80 ++++++++++++++++++++++++++++----------
+>  include/uapi/linux/mount.h |  8 ++++
+>  2 files changed, 67 insertions(+), 21 deletions(-)
 > 
-> [...]
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..eb82a22cffd5 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5207,6 +5207,12 @@ static int statmount_mnt_root(struct kstatmount *s, struct seq_file *seq)
+>  	return 0;
+>  }
+>  
+> +static int statmount_mnt_point_detached(struct kstatmount *s, struct seq_file *seq)
+> +{
+> +	seq_puts(seq, "[detached]");
+> +	return 0;
+> +}
+> +
+>  static int statmount_mnt_point(struct kstatmount *s, struct seq_file *seq)
+>  {
+>  	struct vfsmount *mnt = s->mnt;
+> @@ -5262,7 +5268,10 @@ static int statmount_sb_source(struct kstatmount *s, struct seq_file *seq)
+>  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
+>  {
+>  	s->sm.mask |= STATMOUNT_MNT_NS_ID;
+> -	s->sm.mnt_ns_id = ns->ns.ns_id;
+> +	if (ns)
+> +		s->sm.mnt_ns_id = ns->ns.ns_id;
+> +	else
+> +		s->sm.mnt_ns_id = 0;
+>  }
+>  
+>  static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
+> @@ -5431,7 +5440,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  		break;
+>  	case STATMOUNT_MNT_POINT:
+>  		offp = &sm->mnt_point;
+> -		ret = statmount_mnt_point(s, seq);
+> +		if (!s->root.mnt && !s->root.dentry)
+> +			ret = statmount_mnt_point_detached(s, seq);
+> +		else
+> +			ret = statmount_mnt_point(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_OPTS:
+>  		offp = &sm->mnt_opts;
+> @@ -5572,29 +5584,33 @@ static int grab_requested_root(struct mnt_namespace *ns, struct path *root)
+>  
+>  /* locks: namespace_shared */
+>  static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+> -			struct mnt_namespace *ns)
+> +			struct mnt_namespace *ns, unsigned int flags)
+>  {
+>  	struct mount *m;
+>  	int err;
+>  
+>  	/* Has the namespace already been emptied? */
+> -	if (mnt_ns_id && mnt_ns_empty(ns))
+> +	if (!(flags & STATMOUNT_FD) && mnt_ns_id && mnt_ns_empty(ns))
+>  		return -ENOENT;
+>  
+> -	s->mnt = lookup_mnt_in_ns(mnt_id, ns);
+> -	if (!s->mnt)
+> -		return -ENOENT;
+> +	if (!(flags & STATMOUNT_FD)) {
+> +		s->mnt = lookup_mnt_in_ns(mnt_id, ns);
+> +		if (!s->mnt)
+> +			return -ENOENT;
+> +	}
+>  
+> -	err = grab_requested_root(ns, &s->root);
+> -	if (err)
+> -		return err;
+> +	if (ns) {
+> +		err = grab_requested_root(ns, &s->root);
+> +		if (err)
+> +			return err;
+> +	}
+>  
+>  	/*
+>  	 * Don't trigger audit denials. We just want to determine what
+>  	 * mounts to show users.
+>  	 */
+>  	m = real_mount(s->mnt);
+> -	if (!is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
+> +	if (ns && !is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
+>  	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+> @@ -5718,12 +5734,12 @@ static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+>  }
+>  
+>  static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+> -			   struct mnt_id_req *kreq)
+> +			   struct mnt_id_req *kreq, unsigned int flags)
+>  {
+>  	int ret;
+>  	size_t usize;
+>  
+> -	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER1);
+> +	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER2);
+>  
+>  	ret = get_user(usize, &req->size);
+>  	if (ret)
+> @@ -5738,6 +5754,11 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+>  		return ret;
+>  	if (kreq->spare != 0)
+>  		return -EINVAL;
+> +	if (flags & STATMOUNT_FD) {
+> +		if (kreq->fd < 0)
+> +			return -EINVAL;
+> +		return 0;
+> +	}
+>  	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
+>  	if (kreq->mnt_id <= MNT_UNIQUE_ID_OFFSET)
+>  		return -EINVAL;
+> @@ -5788,23 +5809,37 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+>  {
+>  	struct mnt_namespace *ns __free(mnt_ns_release) = NULL;
+>  	struct kstatmount *ks __free(kfree) = NULL;
+> +	struct vfsmount *fd_mnt;
+>  	struct mnt_id_req kreq;
+>  	/* We currently support retrieval of 3 strings. */
+>  	size_t seq_size = 3 * PATH_MAX;
+>  	int ret;
+>  
+> -	if (flags)
+> +	if (flags & ~STATMOUNT_FD)
+>  		return -EINVAL;
+>  
+> -	ret = copy_mnt_id_req(req, &kreq);
+> +	ret = copy_mnt_id_req(req, &kreq, flags);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ns = grab_requested_mnt_ns(&kreq);
+> -	if (!ns)
+> -		return -ENOENT;
+> +	if (flags & STATMOUNT_FD) {
+> +		CLASS(fd_raw, f)(kreq.fd);
+> +		if (fd_empty(f))
+> +			return -EBADF;
+> +		fd_mnt = fd_file(f)->f_path.mnt;
+> +		ns = real_mount(fd_mnt)->mnt_ns;
+> +		if (ns)
+> +			refcount_inc(&ns->passive);
+> +		else
+> +			if (!ns_capable_noaudit(fd_file(f)->f_cred->user_ns, CAP_SYS_ADMIN))
+> +				return -ENOENT;
+> +	} else {
+> +		ns = grab_requested_mnt_ns(&kreq);
+> +		if (!ns)
+> +			return -ENOENT;
+> +	}
+>  
+> -	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
+> +	if (ns && (ns != current->nsproxy->mnt_ns) &&
+>  	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+>  		return -ENOENT;
+>  
+> @@ -5817,8 +5852,11 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (flags & STATMOUNT_FD)
+> +		ks->mnt = fd_mnt;
 
-Applied, thanks!
+The reference to fd_mount is bound to the scope of CLASS(fd_raw, f)(kreq.fd) above.
+That means you don't hold a reference to fd_mnt here and so this is a UAF waiting to happen.
 
-[1/4] gpio: mpsse: propagate error from direction_input
-      https://git.kernel.org/brgl/linux/c/523ebae1cdcf8056dfe090f31284d1e5f5d1b73f
-[2/4] gpio: mpsse: ensure worker is torn down
-      https://git.kernel.org/brgl/linux/c/179ef1127d7a4f09f0e741fa9f30b8a8e7886271
-[3/4] gpio: mpsse: add quirk support
-      https://git.kernel.org/brgl/linux/c/f13b0f72af238d63bb9a2e417657da8b45d72544
-[4/4] gpio: mpsse: support bryx radio interface kit
-      https://git.kernel.org/brgl/linux/c/03ac8183c9a5f0a635184d3f4eceb47480fcd4a7
+> +
+>  	scoped_guard(namespace_shared)
+> -		ret = do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns);
+> +		ret = do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns, flags);
+>  
+>  	if (!ret)
+>  		ret = copy_statmount_to_user(ks);
+> @@ -5957,7 +5995,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+>  	if (!access_ok(mnt_ids, nr_mnt_ids * sizeof(*mnt_ids)))
+>  		return -EFAULT;
+>  
+> -	ret = copy_mnt_id_req(req, &kreq);
+> +	ret = copy_mnt_id_req(req, &kreq, 0);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 7fa67c2031a5..dfe8b8e7fa8d 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -201,11 +201,14 @@ struct mnt_id_req {
+>  	__u64 mnt_id;
+>  	__u64 param;
+>  	__u64 mnt_ns_id;
+> +	__s32 fd;
+> +	__u32 spare2;
+>  };
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hm, do you really need a new field? You could just use the @spare
+parameter in struct mnt_id_req. It's currently validated of not being
+allowed to be non-zero in copy_mnt_id_req() which is used by both
+statmount() and listmount().
+
+I think you could just reuse it for this purpose in statmount(). And
+then maybe the flag should be STATMOUNT_BY_FD?
+
+Otherwise I think this could work.
+
+>  
+>  /* List of all mnt_id_req versions. */
+>  #define MNT_ID_REQ_SIZE_VER0	24 /* sizeof first published struct */
+>  #define MNT_ID_REQ_SIZE_VER1	32 /* sizeof second published struct */
+> +#define MNT_ID_REQ_SIZE_VER2	40 /* sizeof third published struct */
+>  
+>  /*
+>   * @mask bits for statmount(2)
+> @@ -232,4 +235,9 @@ struct mnt_id_req {
+>  #define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+>  #define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
+>  
+> +/*
+> + * @flag bits for statmount(2)
+> + */
+> +#define STATMOUNT_FD		0x0000001U /* want mountinfo for given fd */
+> +
+>  #endif /* _UAPI_LINUX_MOUNT_H */
+> -- 
+> 2.51.0
+> 
 
