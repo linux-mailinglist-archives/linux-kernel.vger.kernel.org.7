@@ -1,85 +1,66 @@
-Return-Path: <linux-kernel+bounces-863451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4450BF7E19
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AE2BF7D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6BB4581346
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:24:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B07B546E02
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB9D355803;
-	Tue, 21 Oct 2025 17:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E231534C820;
+	Tue, 21 Oct 2025 17:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sH0HieRS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fdtNtaiJ"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E281355804;
-	Tue, 21 Oct 2025 17:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC75234B69A;
+	Tue, 21 Oct 2025 17:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067163; cv=none; b=NHJcQ0uvYW/ll+bkvoYTu5/v+t+N/DXmTaiw7AgXlivQ9CgIsQgmmBnb1ATPxKkJoStd7m+y62pgHeJGGJ84NqMS5mOMe7xhh8y1Nukha4lPoX9x2NX1pMObY+vTsl1vIACTJwHaeorBkgy82/JXOewuOLtq1E5miPtm5YWb64A=
+	t=1761067143; cv=none; b=fmGWKFjKIz4r48zj0G7qJAMjTORzKe46wdSLuNiEIgxUF/UPK8BD9PZih8oI4pwiyNng/LyTMuZ1gnKXt/C/IAEWBWYd6PIXREkNm2YjIEjVl+Yp0SWMDgFPZijUvKJ/0BzQKtMaOZ3iQYKukIpNC5QnLJA7klenWHgZbqKSE9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067163; c=relaxed/simple;
-	bh=GiBz0AD+U5higfP54JTIWbURN7LMLdXTQYQaOgJ+Bl0=;
+	s=arc-20240116; t=1761067143; c=relaxed/simple;
+	bh=VqQpvww5/bfc5HRnT2W6/kK7doCRuXSbhiOxXfmOcZM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PEp5SvGEepR0EtpKIBga6AoVlNW+OakiRjn2TAyD+AIcNzuITFJcjOQEKjb4FhZCQWKISpaCR3lhgSGVlRj6skAYgOFc/ao/PvYeZ+ObpCWLk99ZB2cuWzmawbTRlFu6FrnK7Zcuzr6OVYt3umZoF+hcWsPcybxNN72kHa51FFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sH0HieRS; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUl4cYFE8CoYI6hQAWiYupas3Gblx1JafVG56BXqXuPeQ4naax9Le5FhfM/WRN0PQC4Of7aZa4I+XQJgigmnx7uoT5vPkImCeWaL+gEphjTb5j9m0XcFMs1fiIVDSy1p+Hsjhp9Q73yC7P/kFAlEAmVvhyoJnmiwnb37huUnoXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fdtNtaiJ; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GiBz0AD+U5higfP54JTIWbURN7LMLdXTQYQaOgJ+Bl0=; b=sH0HieRSdZyPzGqjC4vCbXfpKm
-	yJYGFutbqau5ccJh8yltYVSlMxcWDKcGbOGU4jJV41RHFabFrviYfBHkfbfgHkEhT65jW/+WtN/BL
-	/JZBkhTiW1CQiN61+JYIPfkeX6l7+16NHnxi9t5Stb5JTGZE+MLm2+Spsne7Sf5XZhUrTnDMLwfSB
-	ubssjtmD6B6nzIu2WKaMg7Ara+KYNFOyr8oi0Rk2NLElQQamfPbvsKOYiPJIpjTB+WhyawvIwepF1
-	MyB4q32gQfgNBHsGLOaN8szWOf/1dB+Wy+JdaoUCsRYypGjKRUX6jnpoN3m9m1Qod3sGovfmn720/
-	OZ4MifGg==;
+	bh=pZqlg7NWx2eBUhWu5OH2HtZkdmQ7Q5RonVfRGAJCOoI=; b=fdtNtaiJ2KtUICUHyIHkrIhVgr
+	XNMtJ0td3p9Cs93OMUzV00Ulf74sYHXDq37pHwX73x+T/XupjLwSpUkAjdvcyOVmbrje7eV30Y2L1
+	a/vGkc4a5wX3btFSdesYJGznE0yCFUu6iFWYmW39NkK+c/nNC1QXBClZ5vSV/KvXNETCBmMKcdeAy
+	8/TKUmHcKNkwWNx4kdDXuQyr6ylyGjiZX54tg5TFRyEGoBG0xL8JjaJLd/onYfJYNiAg861o+Us/z
+	v+OcTKgj5iw/jjLRmR5NxSfGxV9qyYQQz40zMvX2nzlXA7lJQzVg8BdRL6hHuNOodEwVW+G8FD/gg
+	BWTN3DhQ==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBG0e-0000000DsZ0-2xKs;
-	Tue, 21 Oct 2025 17:18:58 +0000
+	id 1vBG0c-0000000DsWh-1jzd;
+	Tue, 21 Oct 2025 17:18:56 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F40E13031AF; Tue, 21 Oct 2025 16:44:35 +0200 (CEST)
-Date: Tue, 21 Oct 2025 16:44:35 +0200
+	id 00CCE3031B4; Tue, 21 Oct 2025 16:47:51 +0200 (CEST)
+Date: Tue, 21 Oct 2025 16:47:51 +0200
 From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Laight <david.laight.linux@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
- regions
-Message-ID: <20251021144435.GG4067720@noisy.programming.kicks-ass.net>
-References: <20251017085938.150569636@linutronix.de>
- <20251017093030.253004391@linutronix.de>
- <20251020192859.640d7f0a@pumpkin>
- <877bwoz5sp.ffs@tglx>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+	Octavia Togami <octavia.togami@gmail.com>
+Subject: Re: [PATCH] perf: Fix system hang caused by cpu-clock
+Message-ID: <20251021144751.GQ3245006@noisy.programming.kicks-ass.net>
+References: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,12 +69,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <877bwoz5sp.ffs@tglx>
+In-Reply-To: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
 
-On Tue, Oct 21, 2025 at 04:29:58PM +0200, Thomas Gleixner wrote:
+On Wed, Oct 15, 2025 at 01:18:28PM +0800, Dapeng Mi wrote:
+> A system hang issue caused by cpu-clock is reported and bisection
+> indicates the commit 18dbcbfabfff ("perf: Fix the POLL_HUP delivery
+>  breakage") causes this issue.
+> 
+> The root cause of the hang issue is that cpu-clock is a specific SW
+> event which relies on the hrtimer. The __perf_event_overflow()
+> is invoked from the hrtimer handler for cpu-clock event, and
+> __perf_event_overflow() tries to call event stop callback
+> (cpu_clock_event_stop()) to stop the event, and cpu_clock_event_stop()
+> calls htimer_cancel() to cancel the hrtimer. But unfortunately the
+> hrtimer callback is currently executing and then traps into deadlock.
+> 
+> To avoid this deadlock, use hrtimer_try_to_cancel() instead of
+> hrtimer_cancel() to cancel the hrtimer, and set PERF_HES_STOPPED flag
+> for the stopping events. perf_swevent_hrtimer() would stop the event
+> hrtimer once it detects the PERF_HES_STOPPED flag.
+> 
+> Reported-by: Octavia Togami <octavia.togami@gmail.com>
+> Closes: https://lore.kernel.org/all/CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com/
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Fixes: 18dbcbfabfff ("perf: Fix the POLL_HUP delivery breakage")
+> Tested-by: Octavia Togami <octavia.togami@gmail.com>
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  kernel/events/core.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 7541f6f85fcb..f90105d5f26a 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11773,7 +11773,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
+>  
+>  	event = container_of(hrtimer, struct perf_event, hw.hrtimer);
+>  
+> -	if (event->state != PERF_EVENT_STATE_ACTIVE)
+> +	if (event->state != PERF_EVENT_STATE_ACTIVE ||
+> +	    event->hw.state & PERF_HES_STOPPED)
+>  		return HRTIMER_NORESTART;
+>  
+>  	event->pmu->read(event);
 
-> So simply naming it scoped_user_$MODE_access() is probably the least
-> confusing of all.
+I was wondering if we need a HES_STOPPED check after calling
+__perf_event_overflow(), but typically that will return 1 when it does
+the stop itself, which then already does NORESTART.
 
-Yeah, that makes sense.
+So yeah, I suppose this works. Let me go queue this up.
+
+Thanks!
 
