@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-863657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E67BF8BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:38:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE85BF8BCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9990C19A7090
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE0519A71D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496DA27FD72;
-	Tue, 21 Oct 2025 20:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EBA27FD43;
+	Tue, 21 Oct 2025 20:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxqvCWVP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5nmKkED"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E47278E47;
-	Tue, 21 Oct 2025 20:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FEF266584;
+	Tue, 21 Oct 2025 20:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761079091; cv=none; b=uyJpuYKlGwab9uX1MHtRvz+bshS8kTSIsHJorHy5XS+7SdLvbjA5T1zDG+KCaOKVM2vLx2Oi9Zn6j0L+FWL5e3a5WJY7bedTBliJR/vAdUWDrlxAih8BKltrsDRziDRdgLheyLAJm1YPegDGeGMi84g0wZz4FtCg0hbynbAucl4=
+	t=1761079119; cv=none; b=L4gNLdG2Imqlu4p5Hul7ughNEzZdhzUng5zOBK5TjlN9lBjghUlbR3+xAnoNFkyK3ycF0GNO2t8ZM3VUfxXJqzn3klH2p5htWuPXfz0zVg/MVcjYvWN+BYyf9XUC8WMuGv5E/9TasF2hEYzl0Jwczeh4alP77GlGmmM4HKfZfPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761079091; c=relaxed/simple;
-	bh=ia3Nc+aBiEWsw6lzxIwHJIH6FTSei7DoOMNQPMRgNQU=;
+	s=arc-20240116; t=1761079119; c=relaxed/simple;
+	bh=xyumwPl30ONfVpygpOsANWfqQ6zL+CFhHbz/wrjnXZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0SFNN5PJYt5Lo66cMmQUZIaH6gYqANp142jJJLT2uRjcssxDOFGMuKq2eS0EKtuAzZ9U9xWWOu8zZ5JjTOBvAgujmn6hYt3cljaKRnQt121OVf7fZS94raFlddRjVLjKrN3tinOaRBYj9Q49afjVL0jugYJFUQhLtJ3c3f2Qm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxqvCWVP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1742C4CEF1;
-	Tue, 21 Oct 2025 20:38:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SM4EBVc70AlSc/sgDxR/WlsJHkNa1Mf52n9QirXL8Y79qtDk4GYz2w8c2XUhEVxNiJeOs5TJ7UNvqTfMwZpfEDbrMFxqi8uucbLOKJiMBj5iSMJ7rA7IEEQgARUdSA2pYk8ignNeY2o6bKQGRFKzM7vlhLWM6LH/MQWIgItjlOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5nmKkED; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1C7C4CEF7;
+	Tue, 21 Oct 2025 20:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761079090;
-	bh=ia3Nc+aBiEWsw6lzxIwHJIH6FTSei7DoOMNQPMRgNQU=;
+	s=k20201202; t=1761079119;
+	bh=xyumwPl30ONfVpygpOsANWfqQ6zL+CFhHbz/wrjnXZ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QxqvCWVP0bNfEZlCEnqcRk0d7+zRQq1ttyM5+JY19EUytZ8YqqcGgSv+V59PrNoKE
-	 eFU+Ca46qgGuUStEMts8ZwrdtoqWi6ifcZKDW/2ghKpMpgWE7my5JHfsVgBYK3+4Bt
-	 IxUedaI2zyp5Y41G2HD6C3uuGrbIGI4hla678mkWfi10fWSfE7aafQMz8aCBTP/Kl1
-	 PCkJJUw1W9HJxXUotJrur/QtJJ1b9IR9zJ8I/MythhzOJRjry7/CQgo/ONCFVkk9uy
-	 bRVlZyYbWyhhL6klUdu39l4ZFQWu55Tu/3p+Q5Gyw2ZrkY619BEwyL4mNJ9xcx7iGd
-	 GABHbkBDaat8Q==
-Date: Tue, 21 Oct 2025 15:38:08 -0500
+	b=o5nmKkEDRJHFaP+t6tHpF1Fz6BEGKwprNB+kVEm84f5YASXW2LlucA2GhXAe8EgBy
+	 GfPr7HyEv+D1+mcpH2BDc2J6IFwp7u0fzwIwYjYYhy9quGSXyhSmBx7ezidoW7NChv
+	 P0d6Q9t3W/pPG04I5+P/HaXdifMOu2CUZBRfZg7o/5FZJkiQxprMwU1a9SIr7QfYMd
+	 ALQcBvZslt7LcsBs1gffNSGDtFgtuEVVMbtEdNFF8C25ExIpyeuBbGxnZ4tugTeTjT
+	 vt1U176/pGk/PBQ5NAf+trUe8RZ4kkg/5pmszl4uWnEBYvAmqizi49SsKfIWf9IMv0
+	 H8A+4v2dvRb8Q==
+Date: Tue, 21 Oct 2025 15:38:37 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Wei Fang <wei.fang@nxp.com>
-Cc: devicetree@vger.kernel.org, davem@davemloft.net,
-	richardcochran@gmail.com, linux-kernel@vger.kernel.org,
-	kuba@kernel.org, Frank.Li@nxp.com, netdev@vger.kernel.org,
-	vladimir.oltean@nxp.com, krzk+dt@kernel.org, andrew+netdev@lunn.ch,
-	claudiu.manoil@nxp.com, imx@lists.linux.dev, conor+dt@kernel.org,
-	pabeni@redhat.com, edumazet@google.com, xiaoning.wang@nxp.com
-Subject: Re: [PATCH net-next 1/8] dt-bindings: net: netc-blk-ctrl: add
- compatible string for i.MX94 platforms
-Message-ID: <176107908528.775814.3309266572882987703.robh@kernel.org>
+Cc: pabeni@redhat.com, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	krzk+dt@kernel.org, netdev@vger.kernel.org, Frank.Li@nxp.com,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	richardcochran@gmail.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, conor+dt@kernel.org, vladimir.oltean@nxp.com,
+	davem@davemloft.net, edumazet@google.com, claudiu.manoil@nxp.com
+Subject: Re: [PATCH net-next 2/8] dt-bindings: net: enetc: add compatible
+ string for ENETC with pseduo MAC
+Message-ID: <176107911426.776450.9549460321528011782.robh@kernel.org>
 References: <20251016102020.3218579-1-wei.fang@nxp.com>
- <20251016102020.3218579-2-wei.fang@nxp.com>
+ <20251016102020.3218579-3-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +62,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251016102020.3218579-2-wei.fang@nxp.com>
+In-Reply-To: <20251016102020.3218579-3-wei.fang@nxp.com>
 
 
-On Thu, 16 Oct 2025 18:20:12 +0800, Wei Fang wrote:
-> Add the compatible string "nxp,imx95-netc-blk-ctrl" for i.MX94 platforms.
+On Thu, 16 Oct 2025 18:20:13 +0800, Wei Fang wrote:
+> The ENETC with pseudo MAC is used to connect to the CPU port of the NETC
+> switch. This ENETC has a different PCI device ID, so add a standard PCI
+> device compatible string to it.
 > 
 > Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
->  Documentation/devicetree/bindings/net/nxp,netc-blk-ctrl.yaml | 1 +
+>  Documentation/devicetree/bindings/net/fsl,enetc.yaml | 1 +
 >  1 file changed, 1 insertion(+)
 > 
 
