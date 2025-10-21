@@ -1,209 +1,178 @@
-Return-Path: <linux-kernel+bounces-863004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BF2BF6C50
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205D5BF6B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99BCA505607
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B761891268
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE03C3370FA;
-	Tue, 21 Oct 2025 13:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E553321DC;
+	Tue, 21 Oct 2025 13:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="OHbYA/0v";
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="i1f5X8KM"
-Received: from mailhub11-fb.kaspersky-labs.com (mailhub11-fb.kaspersky-labs.com [81.19.104.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jJLk6CRp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F42E337113
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.104.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EE61DD9AC;
+	Tue, 21 Oct 2025 13:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053259; cv=none; b=iG77FQTS3fP1Xudp/F8zhIgi0556q7YFntI6nJn5yzVmEU75mjTn1sN/8r0ZBjSxeQhGR+azG6xZokYfxlP8cexu+WqVsOwzT4vLDF9I07vGosWZWaxZEW9ys4ZiHXe6BuB0HuvWNCVS+P4XPf7N1J67GIXDf2Lnil8Jt3f0AQs=
+	t=1761052661; cv=none; b=ItZzy08Wx94fWHJ4bnC07cjDrPlFJa1SmmVbiMIcXjjfVF371XsfPiOYqocRH6S4zSRdBI1XI77YwdV8cTeH2i8nCZe/nCTHzJD+2q/DN39lZTNxyuiMQo8la3QmO9wBvMVDEqK57SBREwyit/0JRzhKdSvX4KfQzSU2Tz/2AAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053259; c=relaxed/simple;
-	bh=IFOdNNDjqCDKwjLczwKxkaVfl6+h9/xu9tERcTtswZE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZfEYWaKPspeypWFVOqjV6Y/vfpuJbmzFtWjr2mJuMzmzxidg87AwpYEFq9BFLoKYMG+SeTlg8QyRCStw/Svkzu6n7spOahrmo9KS15iPZE9pQ+cEj03EzbOTtjqVPVLfgIjhAsnMm0QmThJt82CbwBGvuIUfQ6JP8SROcFXVa5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=OHbYA/0v; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=i1f5X8KM; arc=none smtp.client-ip=81.19.104.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1761052646;
-	bh=kz4mk2hoq8dtJYJ9cdE0KmjYVt5ckk4LauO3uUI1C9Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=OHbYA/0v8fCvW3SaF+xmEIOqllMfsTnj7tJlTmzwQfDBhCCv/d1A3Y1fB450OKWcl
-	 3pEcpLbwkKvJV3wGCUHbLlnVjNp95k5sQeMWrEtLzGzrDSc3Dbo6De4FOfOYkJvjVk
-	 TuOuaPsKT2W6hnDYyX8OG8yqJvWPWJ5pQzR2UCMRNtjg+MaaOrZUcabGcm65VrWlXf
-	 lVgV/Toz3wH8wm0OD6v8Inw69T1mM7pnzjHq93yZvs2yuKXgVjdd7Tp7JSNUHkgbIu
-	 kLD0qY2u+CY/Y20DW8GS/ygJkrknRdgXwQly+hn8CGQaHv1DwHF+9c+Zd+0UOZ0+Il
-	 3zME2afbqrxNg==
-Received: from mailhub11-fb.kaspersky-labs.com (localhost [127.0.0.1])
-	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTP id 2E9CAE80D7C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:17:26 +0300 (MSK)
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "mx13.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTPS id DA65FE866FE
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:17:25 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1761052637;
-	bh=kz4mk2hoq8dtJYJ9cdE0KmjYVt5ckk4LauO3uUI1C9Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=i1f5X8KMWv3SRjeWU/XaJnjB0KToHYyMyiCl8gK6W5Gk+WaThbYq45EYy+LzE1Meu
-	 LgI6hVUbduOGu8fEEt8yc+ky3EkgFyqvX3b9UYpgycxcvtHfJlrXDm1RDLiRi8wys3
-	 u5YZOBh6/6prqF6QcAkQmNRNAsWO9dljEmeCHd7XYMn5LeZ8aBVKw2vpHks/09UiMm
-	 qas2qXDJtuyOT8aInFxCDuC6pGr6Yd8Ose9ZSuULdcttZ5xA6AGYvn70PGIf9CJCLb
-	 nrM/HZlYTOtNxQyGQHZ5EW5JEicO0js4mAcKJQ4vWHSSQa6bOdTXipBEUtX3Va8hCQ
-	 A1uEb1ELjYlRw==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id A72E53E23E9;
-	Tue, 21 Oct 2025 16:17:17 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 4B2443E243E;
-	Tue, 21 Oct 2025 16:17:17 +0300 (MSK)
-Received: from votokina.avp.ru (10.16.104.187) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 21 Oct
- 2025 16:16:36 +0300
-From: Victoria Votokina <Victoria.Votokina@kaspersky.com>
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-CC: Victoria Votokina <Victoria.Votokina@kaspersky.com>, Christian Gromm
-	<christian.gromm@microchip.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <Oleg.Kazakov@kaspersky.com>
-Subject: [PATCH v2 2/2] most: usb: hdm_probe: fix calling put_device() before device_initialize()
-Date: Tue, 21 Oct 2025 16:16:25 +0300
-Message-ID: <20251021131625.2707245-2-Victoria.Votokina@kaspersky.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20251021131625.2707245-1-Victoria.Votokina@kaspersky.com>
-References: <20251021131625.2707245-1-Victoria.Votokina@kaspersky.com>
+	s=arc-20240116; t=1761052661; c=relaxed/simple;
+	bh=ktO4m9jvZD/rIB4n95XBwqKHwPZqPVtiRfnNM1GVTG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7SzsIex5ex5/Yp6yWah9CfJHBmQnSYqet1nY+1evMTLCRBjypPBpAqTDGMWT19QF6X6u//rcMtQw19g84Gts6Z22BtxO5LITBBNWD2VSJdsh0K8YJB06LK1rXQK1/rSL1l/pABwi513gOGThHEhgP1GGL42BrrbF2d88KCKJeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jJLk6CRp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L6ljY7006853;
+	Tue, 21 Oct 2025 13:16:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=59kDhs
+	xHhCui/zE6BV0zbA2HLqf5J0MKFlP8k3AlIVc=; b=jJLk6CRpjdktmNUTiwy22T
+	1y8JkX5W6b1XDWWQuC30HJRqu0iUkILyxvN0YpLemJD6k/0zoMkcZuFSH1UQqd+a
+	B5MxdEwHTXNkdjeLFQG5Y9e9c6U0h+fBVNOkMDktRwG16pKtYe03ix+4OmYpayST
+	FwBeJ/zt5FWphwVvFdMX338k5ODEWSxRuMaHFgguyV1Ih6kqmFgGp1kqbAv3pXo1
+	D/AgA24z1BFmMVj80HD5HT3KTidgkHHRWdW0JF6XA8jxQD/iooZm1FjfSTCZzhg/
+	HMqvlWQnLZwMpMQ0TrdUAbRsn3L95GblXjHnDGFrYMu/erSTgbqb5ozEH5uV5hwQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vntfp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 13:16:39 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59LDGdhT028829;
+	Tue, 21 Oct 2025 13:16:39 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vntfm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 13:16:39 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59LB2Gjw017081;
+	Tue, 21 Oct 2025 13:16:38 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vnkxu02j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 13:16:38 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LDGacB50135394
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Oct 2025 13:16:36 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 56C1620043;
+	Tue, 21 Oct 2025 13:16:36 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A8E0F20040;
+	Tue, 21 Oct 2025 13:16:35 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 21 Oct 2025 13:16:35 +0000 (GMT)
+Date: Tue, 21 Oct 2025 15:16:33 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Doug Anderson <dianders@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Andrew Chant <achant@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Francesco Valla <francesco@valla.it>,
+        Guo Weikang <guoweikang.kernel@gmail.com>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu <jeffxu@chromium.org>,
+        Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: [PATCH] init/main.c: Wrap long kernel cmdline when printing to
+ logs
+Message-ID: <20251021131633.26700Dd6-hca@linux.ibm.com>
+References: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
+ <2d514d61-121d-44fc-aec7-637dd0920de8@infradead.org>
+ <CAD=FV=VNyt1zG_8pS64wgV8VkZWiWJymnZ-XCfkrfaAhhFSKcA@mail.gmail.com>
+ <CAMuHMdVT-_UVAO=1jvTPEjKO0zy7H1rUrQz1ubMfHivF4HWJNA@mail.gmail.com>
+ <CAD=FV=WeXOj_hyA=V9hMLHOJ_m9ui5mP6cRv2DpjXnR62_nd2w@mail.gmail.com>
+ <CAMuHMdWGb0jVt9ziBtWdHWC9omPAFMHVPBHDpv0F1XzvR0THpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV2.avp.ru (10.64.57.52) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/21/2025 12:46:21
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 197285 [Oct 21 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Victoria.Votokina@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 72 0.3.72
- 80ff96170b649fb7ebd1aa4cb544c36c109810bd
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: votokina.avp.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;kaspersky.com:7.1.1,5.0.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: {Tracking_References_header_contains_1_msgid}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 10/21/2025 12:48:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 10/21/2025 11:07:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/21 11:28:00 #27790297
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+In-Reply-To: <CAMuHMdWGb0jVt9ziBtWdHWC9omPAFMHVPBHDpv0F1XzvR0THpg@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: I-TIS4kR6Ou-Mb55i_Ay1degV3_Mx5Fl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX6yB+urCIgoIi
+ 6bgTPbTtxdzNQuDNbAlPfWyFzsZP0czUuCRqBrGQ88yR0qkjrAKBbvZFihPM5atVCrL1llTI+4E
+ yFBwgZI0xe/HCzDvfZNVZ+8m9FiJCObDMlhwTgFw2D7vXWN5wHTFrscIsKQxg+BdtX++42p8u3a
+ yTeRh81CNcqc4r8/eat0UTCsZ4yQNAQuI4oLrXukmeHQmfu9Dm1LRnlZvCB0IIj5hbjLbxV7ZoX
+ BjeVDEU+uwGEc2V7KalslNq9VLJVmwGBkgtd3JFns3p9crNjSOnNQbJu/80R9aauto1pZoW3YsU
+ gEPo2uFohFGSMDV+qM2UuWXJFODG1WHy4N7beZGdchGF8Qp+VF4qFija1D5Q9FrxZclXZQQyGlh
+ Pruam5GVj+kawSChWFczG/9Qv9qq3Q==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f787b7 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=cm27Pg_UAAAA:8 a=tBb2bbeoAAAA:8 a=EHDhFRfyqMhxxtNxYo4A:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=nl4s5V0KI7Kw-pW0DWrs:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: vs11V-hue1blIi2oIbSzP3wDj86PAYS3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1011 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Early failures in hdm_probe() could jump to err_free_mdev before 
-&mdev->dev was initialized with device_initialize(), which triggered 
-a device core WARN and kref_put() on an uninitialized kobject. 
-Free the private struct directly in this pre-initialization path.
+On Tue, Oct 21, 2025 at 09:05:48AM +0200, Geert Uytterhoeven wrote:
+> On Mon, 20 Oct 2025 at 18:04, Doug Anderson <dianders@chromium.org> wrote:
+> > On Mon, Oct 20, 2025 at 8:42 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Mon, 20 Oct 2025 at 17:33, Doug Anderson <dianders@chromium.org> wrote:
+> > > > Printing the command line to the kernel log buffer is one of the very
+> > > > rare cases where:
+> > > > * There's a legitimate reason to print a (potentially) very long
+> > > > string to the kernel buffer.
+> > >
+> > > arch/s390/Kconfig:
+> > >
+> > >     config COMMAND_LINE_SIZE
+> > >             int "Maximum size of kernel command line"
+> > >             default 4096
+> > >             range 896 1048576
+> > >
+> > > Yummy...
+> >
+> > Wow, what are they expecting to stuff in there? An encoded initramfs
+> > or something? I kinda feel like the 1MB number isn't something anyone
+> > expects but is a number picked to effectively be "unlimited".
+> 
+> Dunno, commit 622021cd6c560ce7 ("s390: make command line configurable")
+> lacks the "why" part.
 
-While here, replace a few unnecessary goto-based unwinds with 
-direct returns and drop the now-unused err_free_dci label. On
-device_register() failure, call put_device(&mdev->dci->dev) 
-before returning to keep the reference model correct.
+That was just a follow-on patch of commit 5ecb2da660ab ("s390: support command
+lines longer than 896 bytes") which solved the real problem with a too short
+maximum command line size back then. In order to never have to deal with this
+sort of problem again it was made configurable.
 
-This removes the WARNING and simplifies the error paths 
-without changing the success path behavior.
-
-
-Fixes: 97a6f772f36b ("drivers: most: add USB adapter driver")
-Signed-off-by: Victoria Votokina <Victoria.Votokina@kaspersky.com>
----
-v2: Fixed error path for initialized interfaces requiring 
-    most_deregister_interface
-
- drivers/most/most_usb.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/most/most_usb.c b/drivers/most/most_usb.c
-index 3d8163bb7b46d..9d0a62023551c 100644
---- a/drivers/most/most_usb.c
-+++ b/drivers/most/most_usb.c
-@@ -1068,8 +1068,7 @@ hdm_probe(struct usb_interface *interface, const struct usb_device_id *id)
- 		if (!mdev->dci) {
- 			mutex_unlock(&mdev->io_mutex);
- 			most_deregister_interface(&mdev->iface);
--			ret = -ENOMEM;
--			goto err_free_busy_urbs;
-+			return -ENOMEM;
- 		}
- 
- 		mdev->dci->dev.init_name = "dci";
-@@ -1078,16 +1077,14 @@ hdm_probe(struct usb_interface *interface, const struct usb_device_id *id)
- 		mdev->dci->dev.release = release_dci;
- 		if (device_register(&mdev->dci->dev)) {
- 			mutex_unlock(&mdev->io_mutex);
-+			put_device(&mdev->dci->dev);
- 			most_deregister_interface(&mdev->iface);
--			ret = -ENOMEM;
--			goto err_free_dci;
-+			return -ENOMEM;
- 		}
- 		mdev->dci->usb_device = mdev->usb_device;
- 	}
- 	mutex_unlock(&mdev->io_mutex);
- 	return 0;
--err_free_dci:
--	put_device(&mdev->dci->dev);
- err_free_busy_urbs:
- 	kfree(mdev->busy_urbs);
- err_free_ep_address:
-@@ -1097,7 +1094,7 @@ hdm_probe(struct usb_interface *interface, const struct usb_device_id *id)
- err_free_conf:
- 	kfree(mdev->conf);
- err_free_mdev:
--	put_device(&mdev->dev);
-+	kfree(mdev);
- 	return ret;
- }
- 
--- 
-2.30.2
-
+But I doubt that anybody will change the default ever.
 
