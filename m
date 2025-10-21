@@ -1,40 +1,47 @@
-Return-Path: <linux-kernel+bounces-862281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E85FBF4D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60418BF4D91
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C4E3B351E9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:11:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6D70351D41
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B789274B2E;
-	Tue, 21 Oct 2025 07:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1A4275844;
+	Tue, 21 Oct 2025 07:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Xos0oDM9"
-Received: from mail-m49194.qiye.163.com (mail-m49194.qiye.163.com [45.254.49.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5nfTjW7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB261CAA79;
-	Tue, 21 Oct 2025 07:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E8F27381C;
+	Tue, 21 Oct 2025 07:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030623; cv=none; b=m7EDN8mIoe12ErnQcipb1lTld+o0c+NLq9XnLtj3EGcbipv7kIJtP9x+xAHhYzfPSOvv0GE8v7XYWlxNiW/nmyhy2Cttuci979hVOZ2aSpvg7x1bk3x2wpXSZ9Lm3h0eYxQyFMjlzNVKcGjW4g2FiaVpKUCB7+Gi5iGd8DtdigI=
+	t=1761030634; cv=none; b=dDsjFTv2t+uP5stSqTCGO6CmVy+Voqi5oZvHo7OuLoBPj2aM+hkqj/JoTuRbglL70ikIRXHFWn6Zrz5pa/KKNoqL/VVre/QXsB/OlUF1hd+xjRFqsK3Rk0WmpZ1rIQuYVJIKpYhOG7pMQU0Kren9x5RffsWx4fh6pK2XcgfRrug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030623; c=relaxed/simple;
-	bh=0MrkHmknRf9JrFvfo52AyrGTJ4OnsKy/bcpUsw0zSIg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qCu9m1J5tBxcV+WxP+misiXFnp87xlhwFhVagcw0stdj3tRvhAyvAZHM+NviDB3s2gdEjrEx1ummCH/rL8bqiuibg3MAA0aBt/j/47/81SSkxYi6sVyuEV/155BytV0ZMnxdY1KxW9pywD4fc3LYuHJr0Nhn3Cd9UQVdV2TXgo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Xos0oDM9; arc=none smtp.client-ip=45.254.49.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 26a04dd28;
-	Tue, 21 Oct 2025 15:10:15 +0800 (GMT+08:00)
-Message-ID: <6e87b611-13ea-4d89-8dbf-85510dd86fa6@rock-chips.com>
-Date: Tue, 21 Oct 2025 15:10:13 +0800
+	s=arc-20240116; t=1761030634; c=relaxed/simple;
+	bh=IexipIKPz84paGV54JGuViZnlN5Ti5JlqTrlKqDNRGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aPZcRu6hg2VjndcbuypgDKUeb0E8VmxoiFhpb5+2YFu09TZPqDa+SX2ucp7po5JF2aGUuHfzaf6bnS65Y2I3oFm3f6h2B2NezsPIRC7ZVXDYpV/WzmQDpxHfpKwMvLzonlf/gzEdLJoI3US32IPAYzJPxs9PzL63I2BQv2WWQ98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5nfTjW7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A467BC4CEF1;
+	Tue, 21 Oct 2025 07:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761030633;
+	bh=IexipIKPz84paGV54JGuViZnlN5Ti5JlqTrlKqDNRGc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R5nfTjW7JOAMQiRnB4KgDvGf1N7KIvBzpdiew7DDnt/6/upan9vZ2Xeh2Sq3j6qHZ
+	 RDwzLCSIrugu99iJVlisBmMnMu4z1CZICq54RgzadKKmbRiPgD7i9gh47aSAKw1lef
+	 2KiSRT6fTc9+DbDi3np5dcV7CK25pKJWh7rQk4rLvWrKo7JBIjp/Z8gW8cQIHg7Pex
+	 ATR1ViliWqzY1KAUOfsh080zuLLStqrSTwqHhP8nA1Q3F+Uv+6vLpbUnTPq14bWpsh
+	 8LDZ+TiDV6a1gjiXcHiSVq1GwlrZaQ9eLJ+6c/NXTczNQmMvw1k6G/GfeMxTXf9anp
+	 0lItMAMTZ2ckA==
+Message-ID: <5fd43d2c-3a08-4a51-abb6-38883ee86bf2@kernel.org>
+Date: Tue, 21 Oct 2025 09:10:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,147 +49,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Damien Le Moal <dlemoal@kernel.org>,
- Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
-To: FUKAUMI Naoki <naoki@radxa.com>, Niklas Cassel <cassel@kernel.org>
-References: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
- <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a059ab03d09cckunm368fe7546378e8
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlMHlZMGEkdT0oYHUhDQx5WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=Xos0oDM9U+/0NylMEL8BB6RuBd69z3lnV+GumxjkBut/AP4cPRzd/vEwQFu9Y0yZl9ylfTifD4WYmtQLfDFSTfDUOm6IrlAU9x4wRdv7I2pZ6NGG00jyiBi+qLpg8afql3x9baCOQsYhc1URYAHef4Q4vfCHixVaDZf/eS4A/cQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=FqKFwJTtAHqh86lEqRIcwq3CBA+ub4FQsb9uC2nRB3g=;
-	h=date:mime-version:subject:message-id:from;
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: twl: enable power button also for
+ twl603x
+To: akemnade@kernel.org, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andreas Kemnade <andreas@kemnade.info>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tony Lindgren
+ <tony@atomide.com>, Kevin Hilman <khilman@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20251020-twl6030-button-v1-0-93e4644ac974@kernel.org>
+ <20251020-twl6030-button-v1-1-93e4644ac974@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251020-twl6030-button-v1-1-93e4644ac974@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-在 2025/10/21 星期二 12:26, FUKAUMI Naoki 写道:
-> Hi Niklas, Bjorn,
+On 20/10/2025 14:31, akemnade@kernel.org wrote:
+> From: Andreas Kemnade <andreas@kemnade.info>
 > 
-> I noticed an issue on the Rockchip RK3588S SoC using the ASMedia ASM2806 
-> PCIe bridge where devices behind the bridge fail to probe since v6.14.
-> Specifically, this started happening after commit 
-> 647d69605c70368d54fc012fce8a43e8e5955b04.
-> dmesg logs from before and after this commit are available at:
->   https://gist.github.com/RadxaNaoki/fca2bfca2ee80fefee7b00c7967d2e3d
-> 
-> I have confirmed that reverting the following commits fixes the issue:
->   commit ec9fd499b9c6 ("PCI: dw-rockchip: Don't wait for link since we 
-> can detect Link Up")
->   commit 0e0b45ab5d77 ("PCI: dw-rockchip: Enumerate endpoints based on 
-> dll_link_up IRQ")
-> 
+> TWL603x has also a power button, so add the corresponding subnode.
 
-Then these two commits would like to reply on link up irq instead of
-fixed delay in dwc framework. Here is a not very precise timeline
-description.
+No, we don't add subnodes just because there is a power button. This
+needs broader explanation, see also my further comment.
 
-time(ms) |  dw_pcie_wait_for_link（）     | sys irq_thread() | Hot reset
--------------------------------------------------------------------------
-0:       |  dw_pcie_link_up return false  |  link up irq     |
-1x       |  Physical link up happend      |                  |
-90:      |  dw_pcie_link_up return true   |                  |
-100:     |                                |  msleep(100) done|
-10x:     |                                |  pci_rescan_bus  |
-1xx:     |                                |                  | <==occur
-190:     |  msleep(90) done               |                  |
-19x:     |  pci_host_probe                |                  |
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  Documentation/devicetree/bindings/mfd/ti,twl.yaml | 40 ++++++++++++++++++-----
+>  1 file changed, 32 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> index 776b04e182cb2..3527fee32cb07 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> @@ -55,6 +55,15 @@ allOf:
+>  
+>          gpadc: false
+>  
+> +        pwrbutton:
+> +          properties:
+> +            compatible:
+> +              const: ti,twl4030-pwrbutton
+> +            interrupts:
+> +              items:
+> +                - items:
+> +                    const: 8
 
-What if the hot reset happens when pci_rescan_bus() starts. I think
-scan devices possible fail when seeing 0xffffffff from cfg read. But
-a 90ms delay perfectly avoids this event in dw_pcie_wait_for_link(), and 
-by the time the 90ms delay is completed, the link is actually in an
-accessible state.
+What is the point of defining const interrupts? If they are const, then
+it is implied by compatible and defined in the driver.
 
-> On v6.18-rc2, the cold boot behavior has changed somewhat, and I have 
-> observed the following three behaviors so far:
-> 
-> - Probe succeeds
-> - Probe fails
-> - Kernel oops
-> 
-> There seems to be no pattern to these three behaviors. During a warm 
-> boot, a successful probe does not seem to occur.
-> 
-> If commit ec9fd499b9c6 is reverted on v6.18-rc2, I have observed the 
-> following two behaviors so far:
-> 
-> - Probe succeeds
-> - Kernel oops
-> 
-> "Probe fails" has not been observed so far.
-> 
-> The dmesg for the kernel oops is available at:
->   https://gist.github.com/RadxaNaoki/4b2dcd5e41b09004eda2fdeb80ae5e15
-> 
-> Can you please help me with this issue?
-> 
-> Best regards,
-> 
-> -- 
-> FUKAUMI Naoki
-> Radxa Computer (Shenzhen) Co., Ltd.
-> 
-> On 1/13/25 19:59, Niklas Cassel wrote:
->> The Root Complex specific device tree binding for pcie-dw-rockchip has 
->> the
->> 'sys' interrupt marked as required.
->>
->> The driver requests the 'sys' IRQ unconditionally, and errors out if not
->> provided.
->>
->> Thus, we can unconditionally set use_linkup_irq before calling
->> dw_pcie_host_init().
->>
->> This will skip the wait for link up (since the bus will be enumerated 
->> once
->> the link up IRQ is triggered), which reduces the bootup time.
->>
->> Signed-off-by: Niklas Cassel <cassel@kernel.org>
->> ---
->>   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->>
->> ---
->> base-commit: 2adda4102931b152f35d054055497631ed97fe73
->> change-id: 20250113-rockchip-no-wait-403ffbc42313
->>
->> Best regards,
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/ 
->> pci/controller/dwc/pcie-dw-rockchip.c
->> index 
->> 1170e1107508bd793b610949b0afe98516c177a4..62034affb95fbb965aad3cebc613a83e31c90aee 100644
->> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
->> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
->> @@ -435,6 +435,7 @@ static int rockchip_pcie_configure_rc(struct 
->> rockchip_pcie *rockchip)
->>       pp = &rockchip->pci.pp;
->>       pp->ops = &rockchip_pcie_host_ops;
->> +    pp->use_linkup_irq = true;
->>       return dw_pcie_host_init(pp);
->>   }
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> 
+Anyway, double items does not look right here. This is an odd syntax.
 
+> +
+>          usb-comparator: false
+>  
+>    - if:
+> @@ -95,7 +104,14 @@ allOf:
+>              compatible:
+>                const: ti,twl6030-gpadc
+>  
+> -        pwrbutton: false
+> +        pwrbutton:
+> +          properties:
+> +            compatible:
+> +              const: ti,twl6030-pwrbutton
+> +            interrupts:
+> +              items:
+> +                - items:
+> +                    const: 0
+
+So everywhere interrupt is defined by parent compatible.
+
+BTW, you do not have any resources here, so the child node should be
+folded into the parent.
+
+Best regards,
+Krzysztof
 
