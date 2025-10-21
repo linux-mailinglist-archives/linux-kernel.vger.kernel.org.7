@@ -1,87 +1,94 @@
-Return-Path: <linux-kernel+bounces-863407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A39BF7CE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:02:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100E0BF7D1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75837488851
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3E519C1324
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70ADD34847C;
-	Tue, 21 Oct 2025 17:02:17 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391B732E73B;
+	Tue, 21 Oct 2025 17:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yLc8NOn6"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F03A15D1;
-	Tue, 21 Oct 2025 17:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE621DFD8B;
+	Tue, 21 Oct 2025 17:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066137; cv=none; b=P45Kc2BY4XI6Q7xwXCfHzkX98PNHQPILjR55EhmyO4drVMheOGWt0krnWKPiC7x/hA0Gu4GSfzSQWurdR3BOn/fL4yDmKGEXejFaZHm5nnELx3AOWhVtzSr+gNQjluirKns3PoLXOS0IwLGlpbkuBxOPq1GHHbm0+/Vj+TlnZBE=
+	t=1761066304; cv=none; b=M+Mvpyt6N7R3tYRSQNMPFlEogZ57J+44KcqArGCrRE/ro58mW/Rbkk4c8l7tju5/TA4CVnJ24eRHwjl8pP+0sVmKDMlVt7yL/U8pQG6RgWnqUeOVb1hXKNotd2wJ9QVJl2Iti7UScwwaBI7ZGi6dGxgkodxG/ajLaCp15A0byp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066137; c=relaxed/simple;
-	bh=KZq62huST1C1LOMNc9ke5GpImEBxzStX4a672owPssY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NmKp2T3/T03vX5MvpUGmVOLlfuqmFJj9BP5gAwPcct1aQjTD2fttWXZ+RpmUs8hu+XiPW0et6O9Miba7xhdOccqm/RMG4BmVUVtSMOuW0+MuhXbWWyU7vS00xzlY/aZiXMMpK++NFvm74TTmJio3v5gA/h644zrrxDedwSAnBjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 879D111A93A;
-	Tue, 21 Oct 2025 17:02:12 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 5B4AC20023;
-	Tue, 21 Oct 2025 17:02:10 +0000 (UTC)
-Date: Tue, 21 Oct 2025 13:02:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Crystal Wood <crwood@redhat.com>
-Cc: Tomas Glozar <tglozar@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, John Kacur
- <jkacur@redhat.com>, Luis Goncalves	 <lgoncalv@redhat.com>, Costa Shulyupin
- <costa.shul@redhat.com>, Wander Lairson Costa <wander@redhat.com>, Arnaldo
- Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH 3/4] rtla/timerlat: Add example for BPF action program
-Message-ID: <20251021130232.2ca75863@gandalf.local.home>
-In-Reply-To: <aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
-References: <20251017144650.663238-1-tglozar@redhat.com>
-	<20251017144650.663238-4-tglozar@redhat.com>
-	<c52490c9c2f682fd3c30d6f8a198be2ba408c4fe.camel@redhat.com>
-	<CAP4=nvT8VGpYrqQDztmB1WJPEb6JXvUuL201ksWq6eSV7kn-oA@mail.gmail.com>
-	<aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761066304; c=relaxed/simple;
+	bh=+kwjXs839N2xZLvTKn1xWQBqDurYxN4cpyyYVCuhJQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RJ9wBmbrs+HdNudk+Ys9h68jn8YIWdYW9SmAotMM0HoEDUp/DX8AS4GHgjYBh9zxc2zzVMA+mQSGChCqKkvGqdBSdjtwVN4S8YPN60FPmvq1jbtMofGjScjDeArlgkthTV3OJjXQDVEzqV8CWasA1rt7ebHoZKoTzklkQTP75BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yLc8NOn6; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=mY4olOqNwciXe7P6w4zygG2fd6hYPFXexwywwvO9rNg=; b=yLc8NOn6zLdKsEf7KabiGkt9X/
+	7vuHgpZD5UlV3y7zbIFj0smh5mqG9oNn6JDdf64xbA4LRVPkVHG+ywm0dc+yan9RFHcc4sORYhdiN
+	BoqaP6hlHeKbKpTyQpMAw3AEcb4pFid0F5rFr2aOBNWxOh72xUCdqEWbm5pCGpU+O2l+z6t87CK0h
+	1apmLiU/y2neZ/vi1SiPJDo+AdBA4FzY7RFjCq4PHb+G9b0KHHKcTZCCveiJS6WDjxBkBPr9zAGNb
+	ECjpc2sie/SdFHLezJ9g7ylS8sTM74HdsB2c5194DDF0SRnJ0UeLGQwg74gjLVyaiBT8vQyq2Gj+b
+	jKWjJY5Q==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBFn9-00000000Bc3-2NeN;
+	Tue, 21 Oct 2025 17:04:59 +0000
+Message-ID: <1b0acbf2-8ce4-4c8d-a088-1f271233e60a@infradead.org>
+Date: Tue, 21 Oct 2025 10:04:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 5B4AC20023
-X-Stat-Signature: duma3o7b1mwz8tsmhakoe188h5je1qgx
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18Wx+hdjaU3Mf/09d4jAkqKraymKj658mQ=
-X-HE-Tag: 1761066130-190712
-X-HE-Meta: U2FsdGVkX1+10I92SV9iwd+/rtQagPAL8prZGBKFCrcQl/B9PZ3coPwgdbmhxR9FTY7VmYGbwt9nNvx+4KM5BAblX0asaKfUwzM7Td6rGj0dqqYoY/BUumMMefRKK2aFU8m9aXV7rq7kOb9mpkZCArCa/UpyQPu+/2xET/AaThCG9f8xQQbQ7ezhVsI1IsOTgRbX+m/2kSajqTBKx8QWNRS4YFxjBGgdaEKTgPucbU1wBZ4AjzLvdczlWQbglwxGSucUBvnjwAJqzd71k/y/kxF1ZTI73rD24/euo3EsQL6XDDYOIf74aESjVmn2uRl+QeE8lDm7+sVjUpf6/08dQUkcpXL2ja9R
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Documentation: sysrq: Rewrite /proc/sysrq-trigger
+ usage
+To: =?UTF-8?B?VG9tw6HFoSBNdWRydcWIa2E=?= <tomas.mudrunka@gmail.com>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Serial <linux-serial@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Cengiz Can <cengiz@kernel.wtf>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
+References: <20251016103609.33897-2-bagasdotme@gmail.com>
+ <aa388d29-b83b-454e-a686-638c80c6a7bf@infradead.org>
+ <CAH2-hc+XQR7v9Z28yH_CTWZ4ieaF5eQFKBVut1idULP=4w03fQ@mail.gmail.com>
+ <6b8e7935-6b80-4f00-9a44-7003071d1a21@infradead.org>
+ <CAH2-hc+M-CyXL1HtHkD9o_Q_8PP_OkYLvjqhdBiCnHVBQspedQ@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAH2-hc+M-CyXL1HtHkD9o_Q_8PP_OkYLvjqhdBiCnHVBQspedQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 21 Oct 2025 10:58:06 -0500
-Crystal Wood <crwood@redhat.com> wrote:
 
-> Huh, so I guess BPF is an exception to the "no generic printk to the
-> global trace instance except for debugging that generates a big boot
-> splat" rule?
 
-bpf_printk() is an event and not the generic trace_printk() that would
-cause that splat. You can turn it off.
-
+On 10/21/25 1:37 AM, Tomáš Mudruňka wrote:
+> In that case, can we use some short form? Something like
+> "extra characters are ignored for now, which might change in future".
 > 
-> Speaking of which, why doesn't trace_osnoise.c call
-> trace_array_init_printk() given that it uses trace_array_printk_buf()?
+> Thing is that i wanted to add handling of extra characters, but
+> maintainer said it cannot be done because people might currently rely
+> on characters being ignored as written in documentation.
 
-Note, trace_array_printk() (which trace_array_init_printk()) only works for
-instances and does not print into the top level trace buffer.
+Sure, OK with me.
+Thanks.
 
--- Steve
+-- 
+~Randy
+
 
