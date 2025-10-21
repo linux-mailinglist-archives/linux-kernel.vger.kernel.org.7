@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-862170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5AFBF496A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:22:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E4EBF497B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049CD18C4A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543384668C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A42E245033;
-	Tue, 21 Oct 2025 04:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GcsOE29M"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0290724678F;
+	Tue, 21 Oct 2025 04:27:16 +0000 (UTC)
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.65.254])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4381D7999;
-	Tue, 21 Oct 2025 04:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EB523BD01;
+	Tue, 21 Oct 2025 04:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.65.254
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761020516; cv=none; b=ad8LxQijxLnAHxQ7Ft7/DdJhRJkydmC6cKFhHZvYWnX7jMsyQ0JDNEx54tu2gyZ9jShIgPr7zTzhnahynpH+qkvEEl4+TuaMSTws8D09AGYXbFATM/NQvYijtA38nrXKLbkj4pUk0ZurBXuct3RySvY13ue+3AqHhg27Msu9LRM=
+	t=1761020835; cv=none; b=QygL1kAHNbbJcyreYZshHqsB7SJtfAzJpj4t9TZIwVjcPoeRjXZ6lR/jOk+/iC85CzRjVpFTNjuX5YRE7R1TBYWNgvC9Y7X2gMjjqtKXfPrSr2MZ9NT8pBHkPts+hV59HBc5qoY3lg1kReyPSG7JCo1G3D2tOCcLSafBfF0KO8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761020516; c=relaxed/simple;
-	bh=z/FznAyJJD+XkPA6ofbpMdSSIv1UvmK05KeZAE/Tyf4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g50WLW0rkD1Uloqzs9Ja6xHeDcg5UmYZKqsnHLA71J1h6lQXrh9l1+4dx8WkH1A2JLsgoMV1TBd82Rg/M3415e/LEo6yCFhrHxja7rxG6jgVPDj5XiYtHizU7FCdw6D6eZMxrhVkElVf8EAkpAbHpmJ/9hnac0MtLWojK2BIIRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GcsOE29M; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=iH
-	fcNb5kIRSrZ27NuOVbIJWLzlrVXSiZIpHFNkZUGeI=; b=GcsOE29MRmZD4tdVOE
-	0kApFp9Q+I7spJJGJqe0tCSDcgrl2liqy24vav5Ig4S7BNMYmiIt36oofPQFtdOh
-	6ry4+y2pMMtMvR8JNKVACfrPvsTj+WoIH4+9kEMgy4zZV56VFst71aGeIi6ZGeqn
-	jlKUzlIPmxjS/GkZ2h7ONRGak=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDn_7k4Cvdo4jKpAA--.23897S2;
-	Tue, 21 Oct 2025 12:21:13 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	tj@kernel.org,
-	hch@infradead.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH] tty: tty_buffer: add interface to queue work on specific wq and cpu
-Date: Tue, 21 Oct 2025 12:21:10 +0800
-Message-Id: <20251021042110.513095-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761020835; c=relaxed/simple;
+	bh=K6zXAQZdpNuumB1G+bS9Vwoj3dBgntKcmMtAG1phyOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZonnAHFXB32iwKe40wr1uoVIhkzTNV/1S2SHN15qiUolB3lqdXlt8PYSilSrhhm4K/Tti+MIn1OMo41SP1g8Ptb2xFnsGdUAPZ/2WmL8XvKbkAYiFTHACThoI8MNIoA82qmhZ93jWkcj1SEQBgWhl6mQkGoMBzCODmLcatwhicQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=43.155.65.254
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip2t1761020794t6063e055
+X-QQ-Originating-IP: vMCkboM9fsdjPAzo91wrsqh4saIlE7UDpjoWy4czKSc=
+Received: from [IPV6:240f:10b:7440:1:21fe:b84: ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 21 Oct 2025 12:26:26 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1327726975815582351
+Message-ID: <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
+Date: Tue, 21 Oct 2025 13:26:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn_7k4Cvdo4jKpAA--.23897S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXryxGF1UXr47XFyDtw47urg_yoW5KFWUpF
-	s0krn0qFs8Jay2krsrGr1xJay3u3Zagry7urWIg3y3trn8Ja4kuFnFgFya9rykCrs3Ww1a
-	vrWF9398CFy2vFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziEdgAUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibgntCmj3AzKXQwAAs6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
+To: Niklas Cassel <cassel@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Heiko Stuebner <heiko@sntech.de>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Anand Moon <linux.amoon@gmail.com>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org
+References: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: M+0YV038q5N1qZdC/xUgQ5d/cL55WGNcfOwvaKGBN9Ao5ICtHpEt/jLB
+	5os0RbZm2ZxSIgP1xC5ZjbGpAVcj91dOm08OQBd+Ovp2J4jR+Q5ybjgxZOB2z6+AaFJrYGO
+	OtChVv/ZHk1CkJnHZqXO3R/bLQqmNUEj1vmVzIHduQXiItoKJGlXAF5gOdJltcG0An5RIn0
+	EPhR5W2x0BZ9dn4tCa1Sj7FnYtJ9T25KcT2N8NrjX/VytL81V2fPXI4G3xTSdDXZUZ83DUa
+	w2TCwc3lmhxdWNLz1BjlV8mPvujBc2OEQ3HJK2t9PebsDC2aLWfhd4rgpX2J5l+TVfIE5vE
+	80DThFzNi36Oac+/dk71MT/NGKUvNplZoLjHC4JejrA92OrwIslA3AAi9KPLHev6r8+Bf9+
+	UOtwboMG9wfJoK9yWzr7Y7oNmFT2UdNbC/p9f/F7IH2MaJirPX+IVdC+0MetH7yux/f4sUp
+	9dkQBgAqBcI6+Ry+jJmqUyg8XUt1IS1YgvFk6SP/bre77WcN0swnBtLeO9RXH6Bffkn+tgT
+	xWmMBEoO7EcaL5yHnNCUi533PJLmhMO2mZunEPazN0eBrcwz0uVrcGxcoMspy2Yxz7w71i3
+	4H0Ic1zHh57df5UzKJuTw8+N+QveO5+FdlER6KMGQsdsXltjoKkUF8anr5k+P55OgLAIKQ6
+	h0Gv2uDmnlvkEskMeNXj8acWxIjy8y6q8x+R5W4B6bMZMWzcQNkB0FpcMzzC77PAlKYdOWq
+	xD/Cp6Ivh1zdacbTIin8wPChY/RrlRxaFQ4k36uagVX91Wy3kWt3TcoprJ/60TxagVV9XQF
+	Ia6+5QW8BYH/cmPFLc78EbFrIHv0Bf4zvr+f4KmKOKeNXRjg6g7i74E89RK2rHqzbNhuSvf
+	00XAwMYqX5QMcf6NCEp9o3TlMUr5AbVKIt6Ik5tPtYshoUsXZVP/resSdxprS+6yF1eC26t
+	vCEdJeoHvIzllCIw6oDDfW437lgkL1YXS2+kWimxsUk7PhgJd5Jn7wxZUEBg7Wb8Luq+CR1
+	bL86+ucYpE4saY/08c
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-SPAM: true
+X-QQ-RECHKSPAM: 3
 
-On the embedded platform, certain critical data, such as IMU data, is
-transmitted through UART. We have customized our own 8250 driver, but
-we still need to reuse the kernel's TTY layer. The tty_flip_buffer_push
-interface in the TTY layer uses system_unbound_wq to handle the flipping
-of the TTY buffer. Although the unbound workqueue can create new threads
-on demand and wake up the kworker thread on an idle CPU, the priority of
-the kworker thread itself is not high. Even if the CPU running this work
-was idle just a moment ago, it may be preempted by real-time tasks or
-other high-priority tasks.
-In our system, the processing interval for each frame of IMU data
-transmitted via UART can experience significant jitter due to this issue.
-Instead of the expected 10 to 15 ms frame processing interval, we see
-spikes up to 30 to 35 ms. Moreover, in just one or two hours, there can
-be 2 to 3 occurrences of such high jitter, which is quite frequent. This
-jitter exceeds the software's tolerable limit of 20 ms.
-Adding the tty_flip_buffer_push_wq interface would allow our 8250 driver
-code to push work to a specified CPU. Since CPU tasks, especially real-time
-tasks, often have a certain distribution pattern in the system, we found
-that by pushing to a specified CPU with a WQ_HIGHPRI workqueue, we can
-stably eliminate the jitter and ensure that the frame processing interval
-remains between 10 and 15 ms. Furthermore, if we implement an RT workqueue
-based on this, using the tty_flip_buffer_push_wq interface to push to the
-RT workqueue(FIFO 1) we can further stabilize the processing interval,
-significantly reducing the occurrences of 14-15 ms intervals and increasing
-the frequency of 11-12 ms intervals.
+Hi Niklas, Bjorn,
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
- drivers/tty/tty_buffer.c | 23 +++++++++++++++++++++++
- include/linux/tty_flip.h |  3 +++
- 2 files changed, 26 insertions(+)
+I noticed an issue on the Rockchip RK3588S SoC using the ASMedia ASM2806 
+PCIe bridge where devices behind the bridge fail to probe since v6.14.
+Specifically, this started happening after commit 
+647d69605c70368d54fc012fce8a43e8e5955b04.
+dmesg logs from before and after this commit are available at:
+  https://gist.github.com/RadxaNaoki/fca2bfca2ee80fefee7b00c7967d2e3d
 
-diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
-index 67271fc0b..112a650e2 100644
---- a/drivers/tty/tty_buffer.c
-+++ b/drivers/tty/tty_buffer.c
-@@ -534,6 +534,29 @@ void tty_flip_buffer_push(struct tty_port *port)
- }
- EXPORT_SYMBOL(tty_flip_buffer_push);
- 
-+/**
-+ * tty_flip_buffer_push		-	push terminal buffers
-+ * @port: tty port to push
-+ * @wq: workqueue on which to queue work
-+ * @cpu: cpu on which to queue work
-+ *
-+ * Queue a push of the terminal flip buffers to the line discipline. Can be
-+ * called from IRQ/atomic context.
-+ *
-+ * In the event of the queue being busy for flipping the work will be held off
-+ * and retried later.
-+ */
-+void tty_flip_buffer_push_wq(struct tty_port *port,
-+			     struct workqueue_struct *wq,
-+			     int cpu)
-+{
-+	struct tty_bufhead *buf = &port->buf;
-+
-+	tty_flip_buffer_commit(buf->tail);
-+	queue_work_on(cpu, wq, &buf->work);
-+}
-+EXPORT_SYMBOL(tty_flip_buffer_push_wq);
-+
- /**
-  * tty_insert_flip_string_and_push_buffer - add characters to the tty buffer and
-  *	push
-diff --git a/include/linux/tty_flip.h b/include/linux/tty_flip.h
-index af4fce98f..0138b6bfb 100644
---- a/include/linux/tty_flip.h
-+++ b/include/linux/tty_flip.h
-@@ -15,6 +15,9 @@ size_t __tty_insert_flip_string_flags(struct tty_port *port, const u8 *chars,
- 				      size_t size);
- size_t tty_prepare_flip_string(struct tty_port *port, u8 **chars, size_t size);
- void tty_flip_buffer_push(struct tty_port *port);
-+void tty_flip_buffer_push_wq(struct tty_port *port,
-+			     struct workqueue_struct *wq,
-+			     int cpu);
- 
- /**
-  * tty_insert_flip_string_fixed_flag - add characters to the tty buffer
--- 
-2.34.1
+I have confirmed that reverting the following commits fixes the issue:
+  commit ec9fd499b9c6 ("PCI: dw-rockchip: Don't wait for link since we 
+can detect Link Up")
+  commit 0e0b45ab5d77 ("PCI: dw-rockchip: Enumerate endpoints based on 
+dll_link_up IRQ")
+
+On v6.18-rc2, the cold boot behavior has changed somewhat, and I have 
+observed the following three behaviors so far:
+
+- Probe succeeds
+- Probe fails
+- Kernel oops
+
+There seems to be no pattern to these three behaviors. During a warm 
+boot, a successful probe does not seem to occur.
+
+If commit ec9fd499b9c6 is reverted on v6.18-rc2, I have observed the 
+following two behaviors so far:
+
+- Probe succeeds
+- Kernel oops
+
+"Probe fails" has not been observed so far.
+
+The dmesg for the kernel oops is available at:
+  https://gist.github.com/RadxaNaoki/4b2dcd5e41b09004eda2fdeb80ae5e15
+
+Can you please help me with this issue?
+
+Best regards,
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+On 1/13/25 19:59, Niklas Cassel wrote:
+> The Root Complex specific device tree binding for pcie-dw-rockchip has the
+> 'sys' interrupt marked as required.
+> 
+> The driver requests the 'sys' IRQ unconditionally, and errors out if not
+> provided.
+> 
+> Thus, we can unconditionally set use_linkup_irq before calling
+> dw_pcie_host_init().
+> 
+> This will skip the wait for link up (since the bus will be enumerated once
+> the link up IRQ is triggered), which reduces the bootup time.
+> 
+> Signed-off-by: Niklas Cassel <cassel@kernel.org>
+> ---
+>   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> 
+> ---
+> base-commit: 2adda4102931b152f35d054055497631ed97fe73
+> change-id: 20250113-rockchip-no-wait-403ffbc42313
+> 
+> Best regards,
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> index 1170e1107508bd793b610949b0afe98516c177a4..62034affb95fbb965aad3cebc613a83e31c90aee 100644
+> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> @@ -435,6 +435,7 @@ static int rockchip_pcie_configure_rc(struct rockchip_pcie *rockchip)
+>   
+>   	pp = &rockchip->pci.pp;
+>   	pp->ops = &rockchip_pcie_host_ops;
+> +	pp->use_linkup_irq = true;
+>   
+>   	return dw_pcie_host_init(pp);
+>   }
 
 
