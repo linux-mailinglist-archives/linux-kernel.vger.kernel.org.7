@@ -1,163 +1,140 @@
-Return-Path: <linux-kernel+bounces-862662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F16BF5DE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA37BF5DEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D013B8D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE0619806C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A779B2EC57F;
-	Tue, 21 Oct 2025 10:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE3432A3FF;
+	Tue, 21 Oct 2025 10:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWqLQRTh"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9xcWVJC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078623D7FB
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87390221FC8;
+	Tue, 21 Oct 2025 10:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761043662; cv=none; b=D+AFVZEquI86dwq31p9swoZqyf1TD/c0wQjdC1kEAjkSyDZDr/QICbdRrwfdaodr9Z6PD0lzvsCn0Niv4WoAGTC3cixq6SgM6kWK7KfB8ljCGYBc43sBZS76lN2guxEQcih7cZzxNmYcKeG4kxqJ+9PgqXjYBbTGog0JjRKsO0k=
+	t=1761043677; cv=none; b=Z04bn4X7ZzOxJ3CiLgo89b5NYHSCqx1xgTaQA5lrVvefQ+ZK/aAHY1S1hcpWX/41SO++lTkPSstSVvI/vkB+opVajZ1MR+lJXXY1BUQA/BVZNSBVKoON4lUbI+uu2grDEMdGEnKi5R6RXtHNmXx8XyN+vUhRipLOFOpFgUjNC9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761043662; c=relaxed/simple;
-	bh=KY8k4nF64QEkqmy8wovcrxZNfcYQnDFhLdMboWwvqjA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qGoydqShj6Mjq5d8VkxmgIrXbVjAov3BwZh8CHugXjX7t9RvboSC1ADXfsRM6mK4cAgi9GsUGdv2RhOodolK5zL2sRiNPXcthMdv6GdS1KEpySCHeJHLT8M/7Inb0wmvs+03IboR6v7Glr+UCatT669hxwt28TxhSK1DEpzRsbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWqLQRTh; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5d3fb34ba53so4612975137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:47:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761043659; x=1761648459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Xs/eUdQtWZwGGmABaXwPLNP+gh3Pns6jIW82WHCxmU=;
-        b=VWqLQRTh3voCfdAX76sAVEwunYGgmbfB8xaI6uDcnyBci7jRsTmoWSZ8dD0+5bEthS
-         0eIQUPPHKcnyKGI2qBhyGhOMsZNkJn83CpIt24COjehxE/fuMTVucHLDjt4ZJM4bK1Yq
-         +eRayaWhfO8MmuBupZdaJ6AB+bqxM+1HfgynUkDoqXd3RuTDS2uXQ2pX2hm2+3onj0s2
-         XLSixj0phHFR0wkjq/b9cU3kjDjOKdVuejoHjAdc6bDfymnmoYl7KaphK3hRKNNqzb5o
-         9EkKPeTWP/L3783fpkNBOBw5vx1d6vXigvN7VSr9LhtJt+qsTxWciDe7Q4wU/blPozK+
-         sHRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761043659; x=1761648459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Xs/eUdQtWZwGGmABaXwPLNP+gh3Pns6jIW82WHCxmU=;
-        b=DNQ4XzycXLHT0jbqdLYE3fk620J2iS+XOebpGnaaSN97OoWUsK4EW6suyG/zQPOuTP
-         6Cc6QKJ4EbQN/eU9pUu1iix7xg73SM5MXZBrZwkKEAgEwRt8VyW33ZJxxI36VNMArCf/
-         aV/lLuOyKZAZ8opdvnsQX2hYSHNM3HdugJWg3UZA8RAQBtgWAbR0uS3XtKX+YRdx/w2K
-         x6DkYArIm4+y2Wq5UdujgavQwHUeRsF+UNHnteCPSKvSAY6Xs6RjXAC6QWmDJoYdeovZ
-         NMYeIcL08ySy4uNq9d6Kjyq0Cy11sA6kZJaEfLNzfpYxE+3M9m0terW2Q6ZmxMelDNe2
-         KFxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Rx6aUKbGp3VWo8g/6yHEew+EImxJteQufKPLTAf4mm7Vqu1hG5jMcnAy8O4EtcK9msCaij32CfMuWGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcuBHJQCvc8SYXiLxu4wd7qXqlfspfrRWyiAIqmlmo8R63vUhn
-	AHHHskOMqbLgLmoVITXSsgvt1MAb7ueHU2tqO9h1jE96o2+X03qIgfYh6lVE6JU+RiGlC1H4GQb
-	S0ul3UZ8y02MAJj1scJWHJi3pJ8a7jw4=
-X-Gm-Gg: ASbGncuYYxpV22AXA+AquVVe5i1ZmCmm5qKGGGsCN8IoVTGPEfVCDYofMnF+d1oADVK
-	1Lh1z/pmCYOKP65lusDG7J4BgE9P4bFIxJzluxP8pNY5UxNByiinBnU+W/ByBZhH7s5fJWDVFwJ
-	rR0RSMjg5j0pw0RpFcUTeuaxGZtnsER0Y19H3oBLQ4S8x9xenLx5LNKajXeQbb7Hokvq66MGogA
-	CodgFmhDcjSJpxJS1j6lQdun86698oDKvaYJd77rSIHJu79tfZhCUOYzkS/kI20FyIbLRg/tH6H
-	tTb7hKIFE02m+Qru278wemC3D3E3ZS6ECcXvEzJs991SszM=
-X-Google-Smtp-Source: AGHT+IHjOFVe1O3tzFMP0gIYtx24HziWgzB3Gjmf9Kpo5gAt5z3gqUWF8osLugzeNby1AvQDK8RZVGBJJaUvMp2ukaM=
-X-Received: by 2002:a05:6102:3e8e:b0:5ba:4f5c:874e with SMTP id
- ada2fe7eead31-5d7dd6d6684mr5462466137.31.1761043659295; Tue, 21 Oct 2025
- 03:47:39 -0700 (PDT)
+	s=arc-20240116; t=1761043677; c=relaxed/simple;
+	bh=Er3rC4K67KcfOOZ9kFeULF6yyYyRLlEqI1cu686pGgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R+fFtN5SNwx3OKBnOLMUBwGmesYqXf/QwVpE8JBZUGLJUV0bPw1S8qINH2CY3OoCZA3cZgb0osTbSyH0ocPfgyh3cw8bHlZAzgRxcWuY+lQAy9ArRxgtsahQ8dKr/fRm/EwOuncVpQcCkzFUaSfI0lLPxicdEuuXnwfxWWlso4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9xcWVJC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC3EC4CEF1;
+	Tue, 21 Oct 2025 10:47:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761043677;
+	bh=Er3rC4K67KcfOOZ9kFeULF6yyYyRLlEqI1cu686pGgg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T9xcWVJCFQ5WgexCAZcZ0UP0rkbrUojuml04Itj+1UGT3FEZWYmbfbvgDkQETKTMm
+	 E/8USDX1pjetJVyJfNtq1ansJfULtZ0aNCHg7ngWMdq9ueugd6qNwPPQY+53poKJ7K
+	 y4fsy+cMb3C2JjDH0AxFhHrjg5fvzpusaQ8suY0TwyKfaZlXGxyQ8II4mTiBbk+cbH
+	 HVhHbwN2WvedLBZfg/i9UsLWrjdOlatqG3WE/vF2D5pd65EntRC0hOcNPHcGYRAFJA
+	 vwgiOtsFQGLy7HDWOw1dju3QIv4zMS/IhCdg/yNG5shZM4FDTTGO3roj1sA6XEye+R
+	 J9lWqwbsf/52A==
+Message-ID: <b041fde6-afea-4233-b00b-4e8cbb294c4a@kernel.org>
+Date: Tue, 21 Oct 2025 12:47:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015133642.3dede646.michal.pecio@gmail.com>
-In-Reply-To: <20251015133642.3dede646.michal.pecio@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Tue, 21 Oct 2025 12:47:23 +0200
-X-Gm-Features: AS18NWBtKNtvNmDcTFIqNnPFoGF6drRttrc9akQyRbVQmrOOvK9ecsEJNzeSKcQ
-Message-ID: <CAPybu_0O10SsPp4G8SfcsbCP5k1gXQJ5Hmhw4kMFTZguEZ7iBQ@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Return queued buffers on
- start_streaming() failure
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pwm: rz-mtu3: Share parent device node to MTU3 PWM
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Martyn Welch <martyn.welch@collabora.com>
+Cc: kernel@collabora.com, Sebastian Reichel
+ <sebastian.reichel@collabora.com>, linux-pwm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org
+References: <20251009162445.701589-1-martyn.welch@collabora.com>
+ <7uuuqhmkmmucmeeo5fybzld62rybyq6fjxwqqnxqr6eufis2ze@xfc2owdzfcs5>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <7uuuqhmkmmucmeeo5fybzld62rybyq6fjxwqqnxqr6eufis2ze@xfc2owdzfcs5>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Michal
-
-It seems that the device was disconnected while doing streamon. That
-caused uvc_pm_get() to fail and exit without returning the buffers.
-
-Your patch is not going to help to fix:
-xhci_hcd 0000:09:00.0: HC died; cleaning up
-usb 13-2: USB disconnect, device number 2
-
-But it is fixing an issue. thanks :)
-
-On Wed, Oct 15, 2025 at 1:36=E2=80=AFPM Michal Pecio <michal.pecio@gmail.co=
-m> wrote:
->
-> Return buffers if streaming fails to start due to uvc_pm_get() error.
->
-> This bug may be responsible for a warning I got running
->
->     while :; do yavta -c3 /dev/video0; done
->
-> on an xHCI controller which failed under this workload.
-> I had no luck reproducing this warning again to confirm.
->
-> xhci_hcd 0000:09:00.0: HC died; cleaning up
-> usb 13-2: USB disconnect, device number 2
-> WARNING: CPU: 2 PID: 29386 at drivers/media/common/videobuf2/videobuf2-co=
-re.c:1803 vb2_start_streaming+0xac/0x120
->
-> Fixes: 7dd56c47784a ("media: uvcvideo: Remove stream->is_streaming field"=
-)
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
-
-> ---
->  drivers/media/usb/uvc/uvc_queue.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uv=
-c_queue.c
-> index 790184c9843d..f49c538618bc 100644
-> --- a/drivers/media/usb/uvc/uvc_queue.c
-> +++ b/drivers/media/usb/uvc/uvc_queue.c
-> @@ -177,7 +177,7 @@ static int uvc_start_streaming_video(struct vb2_queue=
- *vq, unsigned int count)
->
->         ret =3D uvc_pm_get(stream->dev);
->         if (ret)
-> -               return ret;
-> +               goto return_buffers;
->
->         queue->buf_used =3D 0;
->
-> @@ -187,6 +187,7 @@ static int uvc_start_streaming_video(struct vb2_queue=
- *vq, unsigned int count)
->
->         uvc_pm_put(stream->dev);
->
-> +return_buffers:
->         uvc_queue_return_buffers(queue, UVC_BUF_STATE_QUEUED);
->
->         return ret;
-> --
-> 2.48.1
->
+On 21/10/2025 12:19, Uwe Kleine-König wrote:
+>> diff --git a/drivers/pwm/pwm-rz-mtu3.c b/drivers/pwm/pwm-rz-mtu3.c
+>> index ab39bd37edafc..5825875fa0128 100644
+>> --- a/drivers/pwm/pwm-rz-mtu3.c
+>> +++ b/drivers/pwm/pwm-rz-mtu3.c
+>> @@ -523,6 +523,12 @@ static int rz_mtu3_pwm_probe(struct platform_device *pdev)
+>>  	if (ret < 0)
+>>  		return ret;
+>>  
+>> +	/*
+>> +	 * There is only one DT node, get it from the parent MFD device, so
+>> +	 * that the PWM channels can be referenced via phandles
+>> +	 */
+>> +	dev->of_node = dev->parent->of_node;
+>> +
+> 
+> I (very quickly) talked to Krzysztof about this. He said that
+> of_node_get() should probably be used here. I wonder if
+> device_add_of_node() is the right function to use (which uses
+> of_node_get(), also handles fwnode and implements some safeguards).
 
 
---
-Ricardo Ribalda
+I am not so sure about device_add_of_node(). You do not need to
+get_device(), because reference is already hold. Although setting
+dev->fwnode might make sense... But, not that important I think, works
+with me.
+
+
+Best regards,
+Krzysztof
 
