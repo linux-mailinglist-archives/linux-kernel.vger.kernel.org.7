@@ -1,302 +1,248 @@
-Return-Path: <linux-kernel+bounces-862967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7EFBF6A8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98508BF6A93
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 85556355BD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3981F19A4ADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6921D334C3D;
-	Tue, 21 Oct 2025 13:05:56 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1357334692;
+	Tue, 21 Oct 2025 13:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmVm6iiF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4675C27A465
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAE82F49E3;
+	Tue, 21 Oct 2025 13:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761051955; cv=none; b=UWiDcfPR/EI6LToflV1DVzFzKetMDO8PpUDGAnfYRZ5Ms0gq4fR1sGj94jZjQ9twhY5YYzUymxXZgvpuUOPO3bOz1/PNF/WFqwWF1gpTKL4EFYGFYipM/ZQ3HKauyee2yMLxndT+LViZZIft/GkIkMI3mhaTejnqnkq2bmwKIG0=
+	t=1761051946; cv=none; b=f88tqZV8ZzDQATP139FGexUBFz4mdzWYL+YvnzHhspRfzwhxLiSl+syqI7y6QbLKlMeVPHAU43UQRvS9Unuts2iDCjQ2bgvxwliuuX2xhMv6JBHpnQeJmiOj2vF7d0L/vmkBljKm7Pn79uYh7k4sTE4hApFdbR+NSDrZZvfHqhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761051955; c=relaxed/simple;
-	bh=Q1RZe4eaNh7MwrmMBQ7FwMrDLkohnjS8UmB/443+xYc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Im9yih2sZ2FDgPcio0J6Semi0pMtl6qYIC7LSN8/WpOsMLlMmDa6in/JD8qmLTxY4uxQdEHmY+gcdyBmzBUEaZ3Xb1zKPYiR/ySZ07FAXvvPCdpwoOyORnVOLadeqJNGTBGql+toIMwJg5bmMccrHm24YM7Bk8ZztYVrFxo8eyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-54bc04b9d07so2180456e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:05:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761051952; x=1761656752;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eonbC2VlgxUdqhXCyRQKUYPV5tl9WpWc7iwEwuNOPtM=;
-        b=v5iQdX1Jsdve7n7MhbxKSXjvQ4D9QMTqRb/nLKUM1NUZuLPQYt8xLx0r+K6Zf1s7YX
-         gg1OTumZoy1pq3vGh84fJlebxLMrzXw0+pIuFgxVy85N+4+0hEQinWVQn2UVsm2w2Mm7
-         J3w/5M8tdq95gvjA/TNi4gLSCmyFZJn3eOmc4tUkEw9BPX9dX2gMaTg+sAgaZsclh3ZF
-         VQUpCACTDjAcQ+NJlc8nmeGic/mmBGEAz/tDTziLZ/3N/oSHa1iJMX8b1SsHotnoSpNy
-         k2OUR3qW4i8V3bEwQuzfctasmeYrgQ9mtNMj3qpxD8sDyhSMSXpqcdp1EaTx3KY3hy1d
-         BhNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk9CzSKaQfqAl8Vl8PmfvWu62gt1GQ2X1xHPOtoB2z71Vu3nzZpKOYDhxJKD19lzGssop8bBKu+niCuSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQrslyl3W21L8SauTtU8ZfTdUc3p3nRtrTfwSMbSncWuj8O3PD
-	ToUvWRJp5u0KHT4Yp60Mi2jpZjYGjWex0UwgTXSVDd1mF6YfHtSeK71+o6sP7ehk
-X-Gm-Gg: ASbGncvcM7e/Han9Fx1XoIcAaQTwD/3+qWNNeIyjiF0laPOhq9pavWABwnyPhp2vpBm
-	qns1ALDhHnf08GtxYmeq4IsMC6z8z5AMpdJpXocd7ZkK4nq0Ho4wlQPTZUO0JQThJO3/yx4iryR
-	DqzbbN6mTYshgELtoFG1Ckwfe/xwXctThHBdoTI17flj+VuksMIYMpW6O3ZDSnEJkvdyQPFB+EP
-	ClicfCmjhkk1QW9UrHlOV85/xRRWsutDWpFefxlJbfbNxKON1R7eC85VF/iCozg2zihpgcLZLhE
-	gTE51BOYNqEjNctQrka1J5s/E4itf2qQj0XJxEjRCMYLOoRjF2WuZuiIRym4bxatVnSyI1IIaX9
-	QyHgRkXG5afNcDLqF+QyOsweilENnPukcI3hwyThfTL4yU11UAsO1JSl8mF17yvSGmBcVCgG/wS
-	Q9u25f5v6jdmPYlzzgG5cVNCD7v9L9+Pp0kOFidA==
-X-Google-Smtp-Source: AGHT+IHIkYchYOMBlUqO0znalqE/A5j+Lms9ELQnXukhuqmCJ6vK6DLV8XWKj4i1lEC5jWYeletJPg==
-X-Received: by 2002:a05:6122:3118:b0:54c:da0:f708 with SMTP id 71dfb90a1353d-5564ef33b69mr4387590e0c.9.1761051951727;
-        Tue, 21 Oct 2025 06:05:51 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-556620a637asm3332001e0c.16.2025.10.21.06.05.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 06:05:48 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5d5f8e95d5eso2400599137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:05:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEvEOLhSUO8yLjlVMN4E6CQGSaOYtDCNpGAKqXYHnHn2ZAvKPFp1zf7WQ9+pfu7nij5B3ziyzjby8kQRs=@vger.kernel.org
-X-Received: by 2002:a05:6102:32d3:b0:5d5:f912:f891 with SMTP id
- ada2fe7eead31-5d7dd5698efmr4572794137.19.1761051947101; Tue, 21 Oct 2025
- 06:05:47 -0700 (PDT)
+	s=arc-20240116; t=1761051946; c=relaxed/simple;
+	bh=2j2nO3EgyZKblgDRpc+2rhG8AcAKEEabgVHZG2MOf3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7dpufJTOk4UOWTY2JF2WS2za+Mh87kBTMnXb/ng9fcTVz81Tuyxt6hPfywLLIOKAtbjg8y9hqZXGO4Whqhnos70l2YXJgK68cuLvEjwFsjySwkHgzFbwuvIVvw66Je8S2fStuBjdqGEM3lB8gjZS9wGxgC/gZGsVxzsesHTveo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmVm6iiF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FDC7C4CEF1;
+	Tue, 21 Oct 2025 13:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761051945;
+	bh=2j2nO3EgyZKblgDRpc+2rhG8AcAKEEabgVHZG2MOf3o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TmVm6iiFaz6anEm3kd0My8ZIfUCldrigV+ZcegItWYdxZrA9XcebcFYT1MscZ+Bfk
+	 VEdyNailQh9YtaHUbFy98sCS778OwbHwgxhCuVIyUlL+RnCqrZV+wlUXkxus8vkmmH
+	 wTfZRmnd8ZoxO8NFhXD2KkWxbPWgLkHE43O/4dn2DzKF/G6XO5nLBrRIOLmsOs063A
+	 aVdE8UKPA/mxr3ZwMDkZNOeVf35jw4VyuWcbrzlcnDe5R/JkHHiQSUHe90cjFoE6KX
+	 A+IPfDmrVlX+aH3+RJDyQNAHVobVFUrcgzbB98Z/822kUNM/+WUfAraNn3ZSsrvcz2
+	 tJXHoYFb+417g==
+Date: Tue, 21 Oct 2025 15:05:35 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
+	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>, 
+	Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, linux-block@vger.kernel.org, 
+	initramfs@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Michal Simek <monstr@monstr.eu>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>, 
+	Heiko Carstens <hca@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Dave Young <dyoung@redhat.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Jessica Clarke <jrtc27@jrtc27.com>, 
+	Nicolas Schichan <nschichan@freebox.fr>, David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
+Subject: Re: [PATCH v3 0/3] initrd: remove half of classic initrd support
+Message-ID: <20251021-bannmeile-arkaden-ae2ea9264b85@brauner>
+References: <20251017060956.1151347-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020080648.13452-1-herve.codina@bootlin.com> <20251020080648.13452-8-herve.codina@bootlin.com>
-In-Reply-To: <20251020080648.13452-8-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Oct 2025 15:05:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
-X-Gm-Features: AS18NWDjAG4aijeipPHaID1cVN2ka14-uHYH7CPeT_DzHMmVdCqMU2sk8q9lr4k
-Message-ID: <CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, 
-	Serge Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251017060956.1151347-1-safinaskar@gmail.com>
 
-Hi Herv=C3=A9,
+On Fri, Oct 17, 2025 at 06:09:53AM +0000, Askar Safin wrote:
+> Intro
+> ====
+> This patchset removes half of classic initrd (initial RAM disk) support,
+> i. e. linuxrc code path, which was deprecated in 2020.
+> Initramfs still stays, RAM disk itself (brd) still stays.
+> And other half of initrd stays, too.
+> init/do_mounts* are listed in VFS entry in
+> MAINTAINERS, so I think this patchset should go through VFS tree.
+> I tested the patchset on 8 (!!!) archs in Qemu (see details below).
+> If you still use initrd, see below for workaround.
+> 
+> In 2020 deprecation notice was put to linuxrc initrd code path.
+> In v1 I tried to remove initrd
+> fully, but Nicolas Schichan reported that he still uses
+> other code path (root=/dev/ram0 one) on million devices [4].
+> root=/dev/ram0 code path did not contain deprecation notice.
 
-On Mon, 20 Oct 2025 at 10:08, Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
-> On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
-> order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
->
-> The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> IRQ lines out of the 96 available to wire them to the GIC input lines.
->
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
-m>
+Without Acks or buy-in from other maintainers this is not a change we
+can just do given that a few people already piped up and expressed
+reservations that this would be doable for them.
 
-Thanks for your patch!
+@Christoph, you marked this as deprecated years ago.
+What's your take on this?
 
-> --- a/drivers/soc/renesas/Makefile
-> +++ b/drivers/soc/renesas/Makefile
-> @@ -14,4 +14,5 @@ obj-$(CONFIG_SYS_R9A09G057)   +=3D r9a09g057-sys.o
->  # Family
->  obj-$(CONFIG_PWC_RZV2M)                +=3D pwc-rzv2m.o
->  obj-$(CONFIG_RST_RCAR)         +=3D rcar-rst.o
-> +obj-$(CONFIG_RZN1_IRQMUX)              +=3D rzn1_irqmux.o
-
-One TAB too much.
-
-> --- /dev/null
-> +++ b/drivers/soc/renesas/rzn1_irqmux.c
-> @@ -0,0 +1,150 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * RZ/N1 GPIO Interrupt Multiplexer
-> + *
-> + * Copyright 2025 Schneider Electric
-> + * Author: Herve Codina <herve.codina@bootlin.com>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/build_bug.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/*
-> + * The array index is the output line index, the value at the index is t=
-he
-> + * GIC SPI interrupt number the output line is connected to.
-> + */
-> +static const u32 rzn1_irqmux_output_lines[] =3D {
-> +       103, 104, 105, 106, 107, 108, 109, 110
-> +};
-
-I did read the discussion with Wolfram, but the flexibility (and
-overhead) provided by this array sounds a bit overkill to me.
-
-What about just defining:
-
-    #define RZN1_IRQMUX_SPI_BASE    103
-    #define RZN1_IRQMUX_NUM_IRQS    8
-
-?
-
-If/when a new SoC with a similar setup ever arrives, you can probably
-just replace the constants above by variables inside SoC-specific
-match data.  And if the new mapping would be non-contiguous, you can
-still revive this array ;-)
-
-More about this below...
-
-> +
-> +static int rzn1_irqmux_parent_args_to_line_index(struct device *dev,
-> +                                                const struct of_phandle_=
-args *parent_args,
-> +                                                const u32 output_lines[]=
-,
-> +                                                unsigned int output_line=
-s_count)
-> +{
-> +       unsigned int i;
-> +
-> +       /*
-> +        * The parent interrupt should be one of the GIC controller.
-> +        * Three arguments must be provided.
-> +        *  - args[0]: GIC_SPI
-> +        *  - args[1]: The GIC interrupt number
-> +        *  - args[2]: The interrupt flags
-> +        *
-> +        * We retrieve the line index based on the GIC interrupt number
-> +        * provided and rzn1_irqmux_output_line[] mapping array.
-> +        */
-> +
-> +       if (parent_args->args_count !=3D 3 ||
-> +           parent_args->args[0] !=3D GIC_SPI) {
-> +               dev_err(dev, "Invalid interrupt-map item\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       for (i =3D 0; i < output_lines_count; i++) {
-> +               if (parent_args->args[1] =3D=3D output_lines[i])
-> +                       return i;
-> +       }
-
-... then this loop can be replaced by two simple comparisons.
-
-> +
-> +       dev_err(dev, "Invalid GIC interrupt %u\n", parent_args->args[1]);
-> +       return -EINVAL;
-> +}
-> +
-> +static int rzn1_irqmux_setup(struct device *dev, struct device_node *np,=
- u32 __iomem *regs)
-> +{
-> +       struct of_imap_parser imap_parser;
-> +       struct of_imap_item imap_item;
-> +       unsigned long index_done =3D 0;
-
-Perhaps "DECLARE_BITMAP(index_done, RZN1_IRQMUX_NUM_IRQS)",
-so the BITS_PER_LONG limit can be lifted, without any cost?
-
-> +       int index;
-> +       int ret;
-> +       u32 tmp;
-> +
-> +       /* We support only #interrupt-cells =3D <1> and #address-cells =
-=3D <0> */
-> +       ret =3D of_property_read_u32(np, "#interrupt-cells", &tmp);
-> +       if (ret)
-> +               return ret;
-> +       if (tmp !=3D 1)
-> +               return -EINVAL;
-> +
-> +       ret =3D of_property_read_u32(np, "#address-cells", &tmp);
-> +       if (ret)
-> +               return ret;
-> +       if (tmp !=3D 0)
-> +               return -EINVAL;
-> +
-> +       ret =3D of_imap_parser_init(&imap_parser, np, &imap_item);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* 8 output lines are available */
-> +       BUILD_BUG_ON(ARRAY_SIZE(rzn1_irqmux_output_lines) !=3D 8);
-
-... then this check can be removed, too.
-
-> +
-> +       /*
-> +        * index_done is an unsigned long integer. Be sure that no buffer
-> +        * overflow can occur.
-> +        */
-> +       BUILD_BUG_ON(ARRAY_SIZE(rzn1_irqmux_output_lines) > BITS_PER_LONG=
-);
-
-Currently this is less strict than the check above, so a bit useless?
-
-> +
-> +       for_each_of_imap_item(&imap_parser, &imap_item) {
-> +               index =3D rzn1_irqmux_parent_args_to_line_index(dev,
-> +                                                             &imap_item.=
-parent_args,
-> +                                                             rzn1_irqmux=
-_output_lines,
-> +                                                             ARRAY_SIZE(=
-rzn1_irqmux_output_lines));
-> +               if (index < 0) {
-> +                       of_node_put(imap_item.parent_args.np);
-> +                       return index;
-> +               }
-> +
-> +               if (test_and_set_bit(index, &index_done)) {
-> +                       of_node_put(imap_item.parent_args.np);
-> +                       dev_err(dev, "Mux output line already defined\n")=
-;
-> +                       return -EINVAL;
-> +               }
-> +
-> +               /*
-> +                * The child #address-cells is 0 (already checked). The f=
-irst
-> +                * value in imap item is the src hwirq.
-> +                */
-> +               writel(imap_item.child_imap[0], regs + index);
-> +       }
-> +
-> +       return 0;
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+> So, in this version of patchset I remove deprecated code path,
+> i. e. linuxrc one, while keeping other, i. e. root=/dev/ram0 one.
+> 
+> Also I put deprecation notice to remaining code path, i. e. to
+> root=/dev/ram0 one. I plan to send patches for full removal
+> of initrd after one year, i. e. in September 2026 (of course,
+> initramfs will still work).
+> 
+> Also, I tried to make this patchset small to make sure it
+> can be reverted easily. I plan to send cleanups later.
+> 
+> Details
+> ====
+> Other user-visible changes:
+> 
+> - Removed kernel command line parameters "load_ramdisk" and
+> "prompt_ramdisk", which did nothing and were deprecated
+> - Removed /proc/sys/kernel/real-root-dev . It was used
+> for initrd only
+> - Command line parameters "noinitrd" and "ramdisk_start=" are deprecated
+> 
+> This patchset is based on v6.18-rc1.
+> 
+> Testing
+> ====
+> I tested my patchset on many architectures in Qemu using my Rust
+> program, heavily based on mkroot [1].
+> 
+> I used the following cross-compilers:
+> 
+> aarch64-linux-musleabi
+> armv4l-linux-musleabihf
+> armv5l-linux-musleabihf
+> armv7l-linux-musleabihf
+> i486-linux-musl
+> i686-linux-musl
+> mips-linux-musl
+> mips64-linux-musl
+> mipsel-linux-musl
+> powerpc-linux-musl
+> powerpc64-linux-musl
+> powerpc64le-linux-musl
+> riscv32-linux-musl
+> riscv64-linux-musl
+> s390x-linux-musl
+> sh4-linux-musl
+> sh4eb-linux-musl
+> x86_64-linux-musl
+> 
+> taken from this directory [2].
+> 
+> So, as you can see, there are 18 triplets, which correspond to 8 subdirs in arch/.
+> 
+> For every triplet I tested that:
+> - Initramfs still works (both builtin and external)
+> - Direct boot from disk still works
+> - Remaining initrd code path (root=/dev/ram0) still works
+> 
+> Workaround
+> ====
+> If "retain_initrd" is passed to kernel, then initramfs/initrd,
+> passed by bootloader, is retained and becomes available after boot
+> as read-only magic file /sys/firmware/initrd [3].
+> 
+> No copies are involved. I. e. /sys/firmware/initrd is simply
+> a reference to original blob passed by bootloader.
+> 
+> This works even if initrd/initramfs is not recognized by kernel
+> in any way, i. e. even if it is not valid cpio archive, nor
+> a fs image supported by classic initrd.
+> 
+> This works both with my patchset and without it.
+> 
+> This means that you can emulate classic initrd so:
+> link builtin initramfs to kernel; in /init in this initramfs
+> copy /sys/firmware/initrd to some file in / and loop-mount it.
+> 
+> This is even better than classic initrd, because:
+> - You can use fs not supported by classic initrd, for example erofs
+> - One copy is involved (from /sys/firmware/initrd to some file in /)
+> as opposed to two when using classic initrd
+> 
+> Still, I don't recommend using this workaround, because
+> I want everyone to migrate to proper modern initramfs.
+> But still you can use this workaround if you want.
+> 
+> Also: it is not possible to directly loop-mount
+> /sys/firmware/initrd . Theoretically kernel can be changed
+> to allow this (and/or to make it writable), but I think nobody needs this.
+> And I don't want to implement this.
+> 
+> On Qemu's -initrd and GRUB's initrd
+> ====
+> Don't panic, this patchset doesn't remove initramfs
+> (which is used by nearly all Linux distros). And I don't
+> have plans to remove it.
+> 
+> Qemu's -initrd option and GRUB's initrd command refer
+> to initrd bootloader mechanism, which is used to
+> load both initrd and (external) initramfs.
+> 
+> So, if you use Qemu's -initrd or GRUB's initrd,
+> then you likely use them to pass initramfs, and thus
+> you are safe.
+> 
+> v1: https://lore.kernel.org/lkml/20250913003842.41944-1-safinaskar@gmail.com/
+> 
+> v1 -> v2 changes:
+> - A lot. I removed most patches, see cover letter for details
+> 
+> v2: https://lore.kernel.org/lkml/20251010094047.3111495-1-safinaskar@gmail.com/
+> 
+> v2 -> v3 changes:
+> - Commit messages
+> - Expanded docs for "noinitrd"
+> - Added link to /sys/firmware/initrd workaround to pr_warn
+> 
+> [1] https://github.com/landley/toybox/tree/master/mkroot
+> [2] https://landley.net/toybox/downloads/binaries/toolchains/latest
+> [3] https://lore.kernel.org/all/20231207235654.16622-1-graf@amazon.com/
+> [4] https://lore.kernel.org/lkml/20250918152830.438554-1-nschichan@freebox.fr/
+> 
+> Askar Safin (3):
+>   init: remove deprecated "load_ramdisk" and "prompt_ramdisk" command
+>     line parameters
+>   initrd: remove deprecated code path (linuxrc)
+>   init: remove /proc/sys/kernel/real-root-dev
+> 
+>  .../admin-guide/kernel-parameters.txt         |  12 +-
+>  Documentation/admin-guide/sysctl/kernel.rst   |   6 -
+>  arch/arm/configs/neponset_defconfig           |   2 +-
+>  fs/init.c                                     |  14 ---
+>  include/linux/init_syscalls.h                 |   1 -
+>  include/linux/initrd.h                        |   2 -
+>  include/uapi/linux/sysctl.h                   |   1 -
+>  init/do_mounts.c                              |  11 +-
+>  init/do_mounts.h                              |  18 +--
+>  init/do_mounts_initrd.c                       | 107 ++----------------
+>  init/do_mounts_rd.c                           |  24 +---
+>  11 files changed, 23 insertions(+), 175 deletions(-)
+> 
+> 
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> -- 
+> 2.47.3
+> 
 
