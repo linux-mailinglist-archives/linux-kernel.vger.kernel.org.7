@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-863607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D81BF848C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:42:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B42BF8496
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DBD19C3913
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A5F5474C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFB326F478;
-	Tue, 21 Oct 2025 19:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409A326F443;
+	Tue, 21 Oct 2025 19:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6+4sQMv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frBFQiUZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D77225761;
-	Tue, 21 Oct 2025 19:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B98A26F292
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761075731; cv=none; b=iIIJZXMla7eOMtUjP9HLMJwt1OJrhu4H2zMmqp2aZSzSCdjlCBL1urnfbnPQahlLq3gaaVqzGs3SA3QGjfSDAvhKdU5S6N1taN0ggd96Y25rHZwm6NtZPHQFaRBkf8McDl3nd5osT0yLaX51PPD8f/ckbxWtZ019a9lFA5YTPpo=
+	t=1761075763; cv=none; b=A9S5ks96Z04bis+39YndwwlI2WdTkcOEGT93BLdbq578YCse8rNcyxDzrCBD8+Epaqv3TlnSk55H6X6rmRrPHeoajkkLSPSCKM+nfWJhyzoxU/nryBJB8gVIaccKRfCv1dAMHj7tmJ460CeahyQkoh6YiSw/fps4TXGjUfmVtck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761075731; c=relaxed/simple;
-	bh=eGVocM0DQBl2qPI9FUGWA58zJ38JkhcoJ7N7a2UjFQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2qeGpEmYU7ioPBByKMTHmmLh/pjCEmGXm2c+OIaHh1s/YFjbmZAKx09G0CbzE5b+ouyRgluwFDMVcb7X8n3G6deBIrBaL9eeXoJ2dyoCxrbRtOQjwlj3H8HUOrndRCuuAWNHqV6LnRtX1+Oym0+VozIMqRjKDdSf3h7JQI1lWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6+4sQMv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A187C4CEF1;
-	Tue, 21 Oct 2025 19:42:11 +0000 (UTC)
+	s=arc-20240116; t=1761075763; c=relaxed/simple;
+	bh=S1jyD/WBZntauXdBXy1HgYF7lZZ27heHxJXbaqCcUe4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e0uecgKAMpEt8TzWJznnvRBuWmd4NJvd1tFOcNvTNOCw/22EQRhEz9PMTlo0stUiEqPmHlIDdQIeVTjRCNQBJZCcd+odaY6vtAIkj5EmlDn2+dSTEndApzILPnbj/IMFbyMNhFnT4PwnkbWsIsbqgjWlaiW1X8XcinfiZGZekuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frBFQiUZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C899C4CEF5
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761075731;
-	bh=eGVocM0DQBl2qPI9FUGWA58zJ38JkhcoJ7N7a2UjFQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d6+4sQMvhUimGHIK1nPetkCrJVVSOtCes8Qf4GEREJFkNiG4tmp/OGcdPsZKZJ4Gn
-	 rj1WUrpqoQkyXZ9eA6Oh2l5n0ABLUprAtIlBlr7O/tWdTMT4t/vRX/QMjeWV+hHtoG
-	 zUlsxKRoxbvXaAXUef9xwdTkS9WTiceuCHGssxF8OOzwt1+Mj4dIrheB14lpqzwRMt
-	 IKXTkkTw+uBfLG86Bjh99RijkIN1NLuesht+WVNtEw1zlLWBXVmIaOLI81u0XARW/m
-	 aiS9LNoKFZvEg6edN0ifyGkPGOnaBpqx1boYxwZiEoOBTNWkOH2GGRue5YwaeBedL2
-	 Z7nTXSIHQgbUg==
-Date: Tue, 21 Oct 2025 12:42:10 -0700
-From: Kees Cook <kees@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 1/9] net: Add struct sockaddr_unspec for sockaddr of
- unknown length
-Message-ID: <202510211232.77A0F8A@keescook>
-References: <20251020212125.make.115-kees@kernel.org>
- <20251020212639.1223484-1-kees@kernel.org>
- <20251021102600.2838d216@pumpkin>
+	s=k20201202; t=1761075763;
+	bh=S1jyD/WBZntauXdBXy1HgYF7lZZ27heHxJXbaqCcUe4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=frBFQiUZWO4C/NQ550H8WVRHcfC5wdraqI1e6OrJHdlywsOK5mxpZvr0ws+ECIgQ2
+	 /c957msMTHI8agWo/5MqOGxAYGFxGD0p1wEhONuvMln/NQ3LiFicOgj7+Ws3DMGUWS
+	 N1/hk1jXqpzvv5K0VHGhTY6fQlGfwi95iEMTn6/1uxScQKiy4LsJIlAWKshbfZq3Eq
+	 y+VPIhxfPpG4K43j8TtAJpG7cNJwSl3kddunbK3WZn80TSBY71zzW5FUPPaddOuyym
+	 q+3RvNgs5SeYrFe4/RMBjb0GLG2IDYGuIUHrh1l1S6jVxf2qJgL5qARFUJsC27rU34
+	 RXNg1Hwu93Dpw==
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-4439f1cb764so3070739b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:42:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWX51XNCf2eGJid92XYXkTUrm78cHSCekjvAiLb3DhGJF8Vi+1PuEFIYuoIRmtiZvVH7OMWXIAkxwR9KO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy6Xdia/c1CcirslWQ1JAfRs1HdTinq4YMn6f8eyUMOxhzIswl
+	lhY2f9Ho4uzBS8KXLvVXPSeEBsn5zZo8sQumku88ZpaAmWn1PXxGzlIpHO+7Cs8DOmUISxiLdij
+	3IFooRULxtIz+gEGN933s/0UoJUt/GQ4=
+X-Google-Smtp-Source: AGHT+IHozIIKPYpq1SpFZpCeNm2HB6U4jf9vpelRNteF6YFFmlNvUOuJR+fbO/rzL6Wvkjd8jI7rjc24upq8kuSJZgs=
+X-Received: by 2002:a05:6808:6901:b0:443:9f95:44f6 with SMTP id
+ 5614622812f47-443a31c09f5mr8745627b6e.64.1761075762600; Tue, 21 Oct 2025
+ 12:42:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021102600.2838d216@pumpkin>
+References: <20250929093754.3998136-1-lihuisong@huawei.com> <20250929093754.3998136-6-lihuisong@huawei.com>
+In-Reply-To: <20250929093754.3998136-6-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 21:42:30 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iLt7rnXBaTBv=-ztKro39h1hECQS_Ov9Cn1eBcfhXDaQ@mail.gmail.com>
+X-Gm-Features: AS18NWB_LKKMQPtnBLFUN9NQtvUlaQPOoxPTkb-m4-HoW2qNikB7XtcOZ14hqhQ
+Message-ID: <CAJZ5v0iLt7rnXBaTBv=-ztKro39h1hECQS_Ov9Cn1eBcfhXDaQ@mail.gmail.com>
+Subject: Re: [PATCH v1 5/9] ACPI: processor: idle: Add the verification of
+ processor FFH LPI state
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 10:26:00AM +0100, David Laight wrote:
-> On Mon, 20 Oct 2025 14:26:30 -0700
-> Kees Cook <kees@kernel.org> wrote:
-> 
-> > Add flexible sockaddr structure to support addresses longer than the
-> > traditional 14-byte struct sockaddr::sa_data limitation without
-> > requiring the full 128-byte sa_data of struct sockaddr_storage. This
-> > allows the network APIs to pass around a pointer to an object that
-> > isn't lying to the compiler about how big it is, but must be accompanied
-> > by its actual size as an additional parameter.
-> > 
-> > It's possible we may way to migrate to including the size with the
-> > struct in the future, e.g.:
-> > 
-> > struct sockaddr_unspec {
-> > 	u16 sa_data_len;
-> > 	u16 sa_family;
-> > 	u8  sa_data[] __counted_by(sa_data_len);
-> > };
-> 
-> One on the historic Unix implementations split the 'sa_family'
-> field into two single byte fields - the second one containing the length.
-> That might work - although care would be needed not to pass a length
-> back to userspace.
+On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei.com> =
+wrote:
+>
+> Both ARM64 and RISCV architecture would validate Entry Method of LPI
+> state and SBI HSM or PSCI cpu suspend. Driver should return failure
+> if FFH of LPI state are not ok.
 
-I think this is just asking for trouble -- leaving that inline could
-be hard to track down places that needed filtering out.
+First of all, I cannot parse this changelog, so I don't know the
+motivation for the change.
 
-It might be easier to move to a separate struct like I suggest above,
-though maybe as:
+Second, if _LPI is ever used on x86, the
+acpi_processor_ffh_lpi_probe() in acpi_processor_get_power_info() will
+get in the way.
 
-struct sockaddr_sized {
-    u16 sa_data_len;
-    struct {
-        u16 sa_family;
-        u8  sa_data[] __counted_by(sa_data_len);
-    } sa_unspec;
-};
+Why does the evaluation in acpi_processor_setup_cpuidle_dev() not work?
 
-(So it's easier to cast between implementation-specific sockaddr and the
-"sa_unspec" member.)
-
-And then pass that around. But I think that'll require a LOT of
-refactoring. But that could happen separately from this change, which is
-to just get us back to the existing state of passing around an unknown
-sized object but now we're not lying to the compiler about its size.
-
--- 
-Kees Cook
+> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Id=
+le(LPI) states")
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_idle.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 5684925338b3..b0d6b51ee363 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -1264,7 +1264,7 @@ static int acpi_processor_setup_cpuidle_dev(struct =
+acpi_processor *pr,
+>
+>         dev->cpu =3D pr->id;
+>         if (pr->flags.has_lpi)
+> -               return acpi_processor_ffh_lpi_probe(pr->id);
+> +               return 0;
+>
+>         return acpi_processor_setup_cpuidle_cx(pr, dev);
+>  }
+> @@ -1275,7 +1275,13 @@ static int acpi_processor_get_power_info(struct ac=
+pi_processor *pr)
+>
+>         ret =3D acpi_processor_get_lpi_info(pr);
+>         if (ret)
+> -               ret =3D acpi_processor_get_cstate_info(pr);
+> +               return acpi_processor_get_cstate_info(pr);
+> +
+> +       if (pr->flags.has_lpi) {
+> +               ret =3D acpi_processor_ffh_lpi_probe(pr->id);
+> +               if (ret)
+> +                       pr_err("Processor FFH LPI state is invalid.\n");
+> +       }
+>
+>         return ret;
+>  }
+> --
+> 2.33.0
+>
 
