@@ -1,450 +1,133 @@
-Return-Path: <linux-kernel+bounces-862512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85D4BF57F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:27:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19B8BF57FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76FBD1888DB0
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5069A4F3818
 	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF341329C7C;
-	Tue, 21 Oct 2025 09:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7E832ABC3;
+	Tue, 21 Oct 2025 09:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Af6GZtjj"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="V4hWNgts"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13F11B7F4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAF8221FCF
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761038840; cv=none; b=crRzuog83q1w6vLgo5uL1wpeTloRiEPDnUO25hsNhiB5CcnFZYZj4jJHrHrg5EX3qEZ2QwQ9l+L49DIyehBJk1nXUZ0+7UBY11rPwrbIlV118eblKcVgPIJz9dNT0ZYBGJMSRW0Urw+tpK0lD2cMbu9XT937qOe0Tgt10Q1WoBI=
+	t=1761038862; cv=none; b=If13Jbbu1+mHgmjHYFodpnCcmV+2DCmsRR6Qmz92u7BZRfu85JPFt7SlBLQB5Kg4UKkTq+61X03XssKXiE0PXb4yoior4Hod6rYUO+ExWoUhYltu8ws5SBCIUwfBIyQZ7AEX+ME5jRT8IxfFMlLpKZkz123wRHGuaMidHFkctnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761038840; c=relaxed/simple;
-	bh=C3UFtYPvhCa/7kR/n6nBhvuRYdUyMeuCywmoKDG2E+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUf+PlMAgUtBY5CP7Y4KxLBeOepoQ+HOckEpJ7iDjfznQ3l2PJvhZOFdUFb8zueCHCDiGRfghmArJCf8GrxcZXem1rsSr9AZoda22S04SL0iSpZb9gY4yh2jL31GLWuMSxpKoVMVJIVE77SeQKm7cAgvj1GxnMoL0CbsGvob6pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Af6GZtjj; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so1083070566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:27:18 -0700 (PDT)
+	s=arc-20240116; t=1761038862; c=relaxed/simple;
+	bh=P7z2gScypkXsCTEfcWrJhYzB1SDqV1mmRGQM3Gk7S9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VqrpiPlCgmJHhxia+lWkYJeveUgedtfooGD6u2NGoFSs5a/Y6NSCOETMzAWoWgLBhICrGgTCweW9BDkakVAgEcmPf9F2DIJopQ9tQVeqYvZ4hahPOjlj8VzOoQmYGM9jl5n03m3fXmcM+/y4TAkYfMWoe5/D2fqNWPnXr1hPf3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=V4hWNgts; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-36295d53a10so45297201fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:27:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1761038837; x=1761643637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8fiak3iwfikjarVQ22RTf8mHmUiPs3Zv+6ZrupgeqTg=;
-        b=Af6GZtjjuklVSjPNuHHrETPjdHNgBn4+0edspvFOBDkKxfl6lsP1BSx4KZoDJk/Jlq
-         Xgv4LVZuTF1MBgg4BUVVnpiLfZ2PclAHnmKQT5g0X9Q6IxXk6KGOsRWph+V7TgQCkI9i
-         3KmiR8ZOMVQWz1fhhURSznYJ+pWmLDg+w75WY=
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761038859; x=1761643659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P7z2gScypkXsCTEfcWrJhYzB1SDqV1mmRGQM3Gk7S9E=;
+        b=V4hWNgtsX0nHo9y30R/HNtN9/pw0rP1dvKo53R3ZkLgztA3ZFZNjjDovB2FC0LZb1w
+         Hmghorx8Bxgur7UZnh9duRWwpgabzGbpkt3QXpUJAs5Es765Aa6nxc0BbJIkmACCqs3n
+         2p665rwgEo+z+D/AOCk7mbTHPUudelhc3cIhURZuG35gWVjVkrWPcS0Q0r858e4Z0esy
+         TdIm85vXWGk90+65zICj4gT7wmHduAg1Qc8igkKbXaK+QZBt0guQy/uoFwtOyuyXGl5/
+         DN7oi43gI1+BqK7QTOSt1iuA1jhf5WH2epmlxd9Yf0gbG9fvB6jcBg23XkLzeeiAtZ/m
+         YStA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761038837; x=1761643637;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8fiak3iwfikjarVQ22RTf8mHmUiPs3Zv+6ZrupgeqTg=;
-        b=nKYgW59xhtJ1oFnzmTYlZbn4V3EGx0r8YzL9b9G8taosFRugXwqvPmQesF5lnj0D7L
-         Ef4me6yW7oGVZzCKmnH+iRK7zMInL9LNpO3Ukz1T+J61af+o7HYWBcLooIk2oum68ib1
-         s37vqMxsmeMtha5UlfFkmiZ9ZTenJkKPAdhVbGJuTQb3/1cV6/oTnhAbIuG783U4oBcN
-         6MN/oJHS6d/FVHAPbS2pOBB9X/+gdnePheeW+znM8S2QA1HK3yrvVslSk9v2dHMm7dgL
-         Z8BM+YIf2B17uN1GeKntJa6JT1dlcBIE87HM/ximd5LfNOaa+/qXn5+Eaaxnz1b4hp9j
-         6fnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUT1swqdbPsOkGn7y8msPacKmKzRU2urCHNQNO9UB0QvolMfEN03i09RsDUQLI7IY8GrGO6ILEpi0VDxnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW9J2fyuMBeQMJApMCGIBN2DAQFCAF7y7tDM16CrXYF+lHEh3G
-	xaVZ5z316UOgjtgcZK26myVEh9F5S9Y9QQ0ebLRe6U7jTY2WWNSqzNCEd2RTK/B0AJQ=
-X-Gm-Gg: ASbGncsJoAP5jNEbMg9naDsrjT49+Xw/NuzpqFyRm22vCVIOgnsZAQi/KgeeYSTzykR
-	bvgIn/px5O6tH/ImTM6q/tOs+pT1bXTSQIy/vEPW3wPOoXE6aooIQR6nfCe6d0m26cqBY4XjMFD
-	awnORsJrUWW9C5THMzwWUJOxgD4c9opNOAZiVZH6BcvPVV7RBcuTDz9wQ2C0NCPzRa5GUTAEc9K
-	3kxbYqubsdr6H6jiDa4gvAdhiE1gVa5tBaI1/zqJijY9DVTLtojZV68k7XXjLwCTr8MRUNuRy+q
-	d6tIwUfIXGJtZhS07MDLThpAcDuW7YI8Dnp2uIi0Vn94yVu+0Ym+miNjcK/7pqWmCzfIGLipU1p
-	JAixrNJWwXleTUW+MWrodi1QvNibnqvkwy3fha03Z+LBfhT1kdHc7O5iO77CHIEkWIBJMTknDde
-	mepCAV8QpjQt3AKCDHFLU2lRZF86tNjACu
-X-Google-Smtp-Source: AGHT+IFm/KoayqzspHd8mI9RnV0dy/J2zGNTNE3AaiHK0wTHFJ8JnK4adD4zkjoh9BLc4aS8jUaUfw==
-X-Received: by 2002:a17:907:d08:b0:b60:18d5:429a with SMTP id a640c23a62f3a-b647323fac1mr1812094666b.22.1761038836822;
-        Tue, 21 Oct 2025 02:27:16 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e896f904sm1044786866b.35.2025.10.21.02.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 02:27:16 -0700 (PDT)
-Date: Tue, 21 Oct 2025 11:27:14 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/29] drm/atomic_helper: Compare actual and readout
- states once the commit is done
-Message-ID: <aPdR8g53oqJlHmYa@phenom.ffwll.local>
-Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-13-14ad5315da3f@kernel.org>
+        d=1e100.net; s=20230601; t=1761038859; x=1761643659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P7z2gScypkXsCTEfcWrJhYzB1SDqV1mmRGQM3Gk7S9E=;
+        b=PsvV+jWB/t+wHle4OjDJx2/W2VBERnjXPZCJPDi07h5hYLHlQELm/xMAxpSVo93xY2
+         YS6Us90sa5nA9BJtBfg4eSDalnkY5ZF+4+1S7q/xVZ2D20My/pigRBhNS/XUAeQBclmG
+         5LrUiaPlpjr+qtXmDebivMPJ2fJjme/A16/Dc7SoSjS4KNCW76IKbDPUXtm3T4SNz3YJ
+         bW2tTuRfO0S4Ucnd1o4vFkXeL4l+0YZZsMdDzpha7zcw2YfADW/lqqwzlb0PJ6vdwcGG
+         gJRsRrftBL5a1gF1cmbh0SLwHexqiWNNj2KwV22VSAdpa8IAAwEL9e1X4g2tv9OMEUS3
+         eMxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUj1GRF83OmVGjIaCMVDIJAEvDq2c6s7RFHrk8lK3RXR18jLFmHOoAAXrABGv7pKEugh2skzT3c76orL4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVrJhG+5Gd1dW2biYUa9pnBRzkkwp1Nqa/DOkgRJf1ww7HSX3l
+	wEi5DOmHT2L+Pgfm3CLzAHYqYyOoSmTkvD2uZwCPBXPtPEEBz1qob19Ns7Y/PpFefUCIQ34Gjsw
+	rOix9LHwJ7IyHEKhUAOlvj6njvKlOeVJF0OgHOeM7Qw==
+X-Gm-Gg: ASbGncscXMl8PTHElK4iVXR1mBvCjXwT+30Xt1/RIQVJ2YeJHVSsaBm3oDyC7A2QV+2
+	Sm7831Xnpz1VJeDfRSBNJ3JbeflQw+B/s6NJM6lfGB8TvKKFN3vdrgSGo9O9Ze/mMJTUtusymLo
+	reSizmFv6dPEC88kD42jYuTsDYIeETi4rCCTTpqPz913D+Xr6CT3eeeHnLmlPvx4sbgoI65uN99
+	EyLC7fjqusZFZdeaYymkl7l6QEuqAhLG2cNbGs8vtFBTJzIJxujdJe0rpNA8Xxh0TBCU1ToJ4de
+	Teuk4ncxu4p3EDihkQ3hNBP2c3M=
+X-Google-Smtp-Source: AGHT+IGcqahLfKSaPq3awX9rBHq412FeWkuYZKlnUWbJU5x4mCNhy4NKrxE77gwoikcyWR8JVYkFw8yaJVdN+5pc3a4=
+X-Received: by 2002:a05:651c:1ca:b0:36d:bcc:bfaa with SMTP id
+ 38308e7fff4ca-37797a5f17cmr50360261fa.40.1761038859288; Tue, 21 Oct 2025
+ 02:27:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902-drm-state-readout-v1-13-14ad5315da3f@kernel.org>
-X-Operating-System: Linux phenom 6.12.38+deb13-amd64 
+References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
+ <20251006-reset-gpios-swnodes-v1-7-6d3325b9af42@linaro.org>
+ <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
+ <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com> <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
+In-Reply-To: <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 21 Oct 2025 11:27:27 +0200
+X-Gm-Features: AS18NWAqzshJ751MyC_I5LHfM-95oy0012vlyyZ7HFzAJN8zex77zf83nZAiBoE
+Message-ID: <CAMRc=Md4DUSuwv07EuBVDJbY1Uzezq+TONxyCvLtOHD=iFXrcQ@mail.gmail.com>
+Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent of
+ the reset device
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 02, 2025 at 10:32:41AM +0200, Maxime Ripard wrote:
-> The new atomic state readout infrastructure can be hard to test because
-> getting access to every firmware variation is hard, but also because
-> most firmware setup will be pretty basic and won't test a wide range of
-> features. Noticing whether it was sucessful or not is also not very
-> convenient.
-> 
-> In order to make it easier, we can however provide some infrastructure
-> to read out a new state every time a non-blocking commit is made, and
-> compare the readout one with the committed one. And since we do this
-> only on non-blocking commits, the time penalty doesn't matter.
-> 
-> To do so, we introduce a new hook for every state, atomic_compare_state,
-> that takes two state instances and is supposed to return whether they
-> are identical or not.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c | 113 ++++++++++++++++++++++++++++++++++++
->  include/drm/drm_atomic.h            |  14 +++++
->  include/drm/drm_bridge.h            |  14 +++++
->  include/drm/drm_connector.h         |  14 +++++
->  include/drm/drm_crtc.h              |  14 +++++
->  include/drm/drm_plane.h             |  14 +++++
->  6 files changed, 183 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 14d9bc282ca570964e494936090898b2dc6bee31..aa8f52b5d5a5e6146a6472eebaf02e675c35ccd2 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -428,10 +428,120 @@ void drm_atomic_helper_readout_state(struct drm_device *dev)
->  	drm_atomic_helper_install_readout_state(state);
->  	drm_atomic_state_put(state);
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_readout_state);
->  
-> +static bool drm_atomic_helper_readout_compare(struct drm_atomic_state *committed_state)
-> +{
-> +	struct drm_device *dev = committed_state->dev;
-> +	struct drm_printer p = drm_err_printer(dev, NULL);
-> +	struct drm_private_state *new_obj_state;
-> +	struct drm_private_obj *obj;
-> +	struct drm_plane_state *new_plane_state;
-> +	struct drm_plane *plane;
-> +	struct drm_crtc_state *new_crtc_state;
-> +	struct drm_crtc *crtc;
-> +	struct drm_connector_state *new_conn_state;
-> +	struct drm_connector *conn;
-> +	struct drm_atomic_state *readout_state;
-> +	unsigned int i;
-> +	bool identical = true;
-> +
-> +	readout_state = drm_atomic_build_readout_state(dev);
-> +	if (WARN_ON(IS_ERR(readout_state)))
-> +		return false;
-> +
-> +	for_each_new_plane_in_state(committed_state, plane, new_plane_state, i) {
-> +		const struct drm_plane_funcs *plane_funcs =
-> +			plane->funcs;
-> +		struct drm_plane_state *readout_plane_state;
-> +
-> +		readout_plane_state = drm_atomic_get_old_plane_state(readout_state, plane);
-> +		if (!readout_plane_state) {
-> +			identical = false;
-> +			continue;
-> +		}
-> +
-> +		if (!plane_funcs->atomic_compare_state)
-> +			continue;
-> +
-> +		if (!plane_funcs->atomic_compare_state(plane, &p, new_plane_state, readout_plane_state)) {
-> +			drm_warn(dev, "[PLANE:%d:%s] Committed and Readout PLANE state don't match\n",
-> +				 plane->base.id, plane->name);
-> +			identical = false;
-> +			continue;
-> +		}
-> +	}
-> +
-> +	for_each_new_crtc_in_state(committed_state, crtc, new_crtc_state, i) {
-> +		const struct drm_crtc_funcs *crtc_funcs = crtc->funcs;
-> +		struct drm_crtc_state *readout_crtc_state;
-> +
-> +		readout_crtc_state = drm_atomic_get_old_crtc_state(readout_state, crtc);
-> +		if (!readout_crtc_state) {
-> +			identical = false;
-> +			continue;
-> +		}
-> +
-> +		if (!crtc_funcs->atomic_compare_state)
-> +			continue;
-> +
-> +		if (!crtc_funcs->atomic_compare_state(crtc, &p, new_crtc_state, readout_crtc_state)) {
-> +			drm_warn(dev, "[CRTC:%d:%s] Committed and Readout CRTC state don't match\n",
-> +				 crtc->base.id, crtc->name);
-> +			identical = false;
-> +			continue;
-> +		}
-> +	}
-> +
-> +	for_each_new_connector_in_state(committed_state, conn, new_conn_state, i) {
-> +		const struct drm_connector_funcs *conn_funcs =
-> +			conn->funcs;
-> +		struct drm_connector_state *readout_conn_state;
-> +
-> +		readout_conn_state = drm_atomic_get_old_connector_state(readout_state, conn);
-> +		if (!readout_conn_state) {
-> +			identical = false;
-> +			continue;
-> +		}
-> +
-> +		if (!conn_funcs->atomic_compare_state)
-> +			continue;
-> +
-> +		if (!conn_funcs->atomic_compare_state(conn, &p, new_conn_state, readout_conn_state)) {
-> +			drm_warn(dev, "[CONNECTOR:%d:%s] Committed and Readout connector state don't match\n",
-> +				 conn->base.id, conn->name);
-> +			identical = false;
-> +			continue;
-> +		}
-> +	}
-> +
-> +	for_each_new_private_obj_in_state(committed_state, obj, new_obj_state, i) {
-> +		const struct drm_private_state_funcs *obj_funcs = obj->funcs;
-> +		struct drm_private_state *readout_obj_state;
-> +
-> +		readout_obj_state = drm_atomic_get_old_private_obj_state(readout_state, obj);
-> +		if (!readout_obj_state) {
-> +			identical = false;
-> +			continue;
-> +		}
-> +
-> +		if (!obj_funcs->atomic_compare_state)
-> +			continue;
-> +
-> +		if (!obj_funcs->atomic_compare_state(obj, &p, new_obj_state, readout_obj_state)) {
-> +			drm_warn(dev, "Committed and Readout private object state don't match\n");
-> +			identical = false;
-> +			continue;
-> +		}
-> +	}
-> +
-> +	drm_atomic_state_put(readout_state);
-> +
-> +	return identical;
-> +}
-> +
->  /**
->   * DOC: overview
->   *
->   * This helper library provides implementations of check and commit functions on
->   * top of the CRTC modeset helper callbacks and the plane helper callbacks. It
-> @@ -2382,10 +2492,13 @@ static void commit_tail(struct drm_atomic_state *state, bool nonblock)
->  						 (unsigned long)commit_time_ms,
->  						 new_self_refresh_mask);
->  
->  	drm_atomic_helper_commit_cleanup_done(state);
->  
+On Tue, Oct 21, 2025 at 11:17=E2=80=AFAM Philipp Zabel <p.zabel@pengutronix=
+.de> wrote:
+>
+> On Mo, 2025-10-20 at 17:25 +0200, Bartosz Golaszewski wrote:
+> > On Mon, Oct 6, 2025 at 5:19=E2=80=AFPM Philipp Zabel <p.zabel@pengutron=
+ix.de> wrote:
+> > > [...] could you take this
+> > > opportunity to prepend a patch that splits the part under guard() int=
+o
+> > > a separate function?
+> >
+> > If I'm being honest, I'd just make everything else use __free() as
+> > well. Except for IDA, it's possible.
+> >
+> > That being said: I have another thing in the works, namely converting
+> > the OF code to fwnode in reset core. I may address this there as I'll
+> > be moving stuff around. Does this make sense?
+>
+> Yes. There was already a previous attempt at fwnode support [1], but we
+> abandoned that when there was no use case anymore.
+>
+> [1] https://lore.kernel.org/r/20220323095022.453708-3-clement.leger@bootl=
+in.com
+>
 
-Over the w/e I've had a bit a panic about GFP_KERNEL allocations in the
-readout code and how that's a problem if it's in the fence critical path.
-But you've already implemented the same solution I've come up with (and
-also what I've come up with for i915 way back), so all good.
+Ah, what was the exact reason for abandoning this? It's not clear from
+the email thread.
 
-I think a comment to explain why we can only do this after all the
-completion signalling has been done but while we still hold all the
-modeset locks, and how this check achieves that, would be great here.
+To be clear: I think that we can convert the core reset code to fwnode
+without necessarily converting all the drivers right away.
 
-Cheers, Sima
-
-> +	if (!nonblock)
-> +		drm_atomic_helper_readout_compare(state);
-> +
->  	drm_atomic_state_put(state);
->  }
->  
->  static void commit_work(struct work_struct *work)
->  {
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index f13f926d21047e42bb9ac692c2dd4b88f2ebd91c..d75a9c7e23adf7fa264df766b47526f75e9cc753 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -226,10 +226,24 @@ struct drm_private_state_funcs {
->  	 * Frees the private object state created with @atomic_duplicate_state.
->  	 */
->  	void (*atomic_destroy_state)(struct drm_private_obj *obj,
->  				     struct drm_private_state *state);
->  
-> +	/**
-> +	 * @atomic_compare_state
-> +	 *
-> +	 * Compares two &struct drm_private_state instances.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * True if the states are identical, false otherwise.
-> +	 */
-> +	bool (*atomic_compare_state)(struct drm_private_obj *obj,
-> +				     struct drm_printer *p,
-> +				     struct drm_private_state *a,
-> +				     struct drm_private_state *b);
-> +
->  	/**
->  	 * @atomic_print_state:
->  	 *
->  	 * If driver subclasses &struct drm_private_state, it should implement
->  	 * this optional hook for printing additional driver specific state.
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 15b63053f01869786831936ba28b7efc1e55e2e8..5ea63b51a4dd4cb00468afcf7d126c774f63ade0 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -511,10 +511,24 @@ struct drm_bridge_funcs {
->  	int (*atomic_readout_state)(struct drm_bridge *bridge,
->  				    struct drm_bridge_state *bridge_state,
->  				    struct drm_crtc_state *crtc_state,
->  				    struct drm_connector_state *conn_state);
->  
-> +	/**
-> +	 * @atomic_compare_state
-> +	 *
-> +	 * Compares two &struct drm_bridge_state instances.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * True if the states are identical, false otherwise.
-> +	 */
-> +	bool (*atomic_compare_state)(struct drm_bridge *bridge,
-> +				     struct drm_printer *p,
-> +				     struct drm_bridge_state *a,
-> +				     struct drm_bridge_state *b);
-> +
->  	/**
->  	 * @atomic_duplicate_state:
->  	 *
->  	 * Duplicate the current bridge state object (which is guaranteed to be
->  	 * non-NULL).
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index f68bd9627c085c6d2463b847aaa245ccc651f27b..dc2c77b04df9010cbfb2028de8ef8c747003c489 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -1534,10 +1534,24 @@ struct drm_connector_funcs {
->  	 * This callback is mandatory for atomic drivers.
->  	 */
->  	void (*atomic_destroy_state)(struct drm_connector *connector,
->  				     struct drm_connector_state *state);
->  
-> +	/**
-> +	 * @atomic_compare_state
-> +	 *
-> +	 * Compares two &struct drm_connector_state instances.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * True if the states are identical, false otherwise.
-> +	 */
-> +	bool (*atomic_compare_state)(struct drm_connector *connector,
-> +				     struct drm_printer *p,
-> +				     struct drm_connector_state *a,
-> +				     struct drm_connector_state *b);
-> +
->  	/**
->  	 * @atomic_set_property:
->  	 *
->  	 * Decode a driver-private property value and store the decoded value
->  	 * into the passed-in state structure. Since the atomic core decodes all
-> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> index 11e3299cfad1572c6e507918c7cceae7a28ba4cf..21c20ecdda40f3d155d3c140e06b3801270f5262 100644
-> --- a/include/drm/drm_crtc.h
-> +++ b/include/drm/drm_crtc.h
-> @@ -676,10 +676,24 @@ struct drm_crtc_funcs {
->  	 * This callback is mandatory for atomic drivers.
->  	 */
->  	void (*atomic_destroy_state)(struct drm_crtc *crtc,
->  				     struct drm_crtc_state *state);
->  
-> +	/**
-> +	 * @atomic_compare_state
-> +	 *
-> +	 * Compares two &struct drm_crtc_state instances.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * True if the states are identical, false otherwise.
-> +	 */
-> +	bool (*atomic_compare_state)(struct drm_crtc *crtc,
-> +				     struct drm_printer *p,
-> +				     struct drm_crtc_state *a,
-> +				     struct drm_crtc_state *b);
-> +
->  	/**
->  	 * @atomic_set_property:
->  	 *
->  	 * Decode a driver-private property value and store the decoded value
->  	 * into the passed-in state structure. Since the atomic core decodes all
-> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> index 691a267c857a228f674ef02a63fb6d1ff9e379a8..c24c10ccc8e8f2ba23e77e279aef61ae86e320c7 100644
-> --- a/include/drm/drm_plane.h
-> +++ b/include/drm/drm_plane.h
-> @@ -449,10 +449,24 @@ struct drm_plane_funcs {
->  	 * This callback is mandatory for atomic drivers.
->  	 */
->  	void (*atomic_destroy_state)(struct drm_plane *plane,
->  				     struct drm_plane_state *state);
->  
-> +	/**
-> +	 * @atomic_compare_state
-> +	 *
-> +	 * Compares two &struct drm_plane_state instances.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * True if the states are identical, false otherwise.
-> +	 */
-> +	bool (*atomic_compare_state)(struct drm_plane *plane,
-> +				     struct drm_printer *p,
-> +				     struct drm_plane_state *a,
-> +				     struct drm_plane_state *b);
-> +
->  	/**
->  	 * @atomic_set_property:
->  	 *
->  	 * Decode a driver-private property value and store the decoded value
->  	 * into the passed-in state structure. Since the atomic core decodes all
-> 
-> -- 
-> 2.50.1
-> 
-
--- 
-Simona Vetter
-Software Engineer
-http://blog.ffwll.ch
+Bart
 
