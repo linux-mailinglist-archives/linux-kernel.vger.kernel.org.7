@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-863651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A31ABF8B43
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239D6BF8C0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A1D21357A66
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9701019A7D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB7227B331;
-	Tue, 21 Oct 2025 20:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D554A27FD49;
+	Tue, 21 Oct 2025 20:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hBV30zSU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="r2CVWWUu"
+Received: from sonic308-9.consmr.mail.ne1.yahoo.com (sonic308-9.consmr.mail.ne1.yahoo.com [66.163.187.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D35229B2A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BAF280025
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761078121; cv=none; b=Cs2IWeEIrisrdzJsuNOi7+xhv/p18XOhBc5Kn/0r28y2TMEfF6fjH0pI5DGyiqCIP74o8YtWzVHveD4P84F4kF5T1MFgONFWu7mEY/G/jA4/0GjkcjzzzATYXcVMxwObrQgfHI0TlpjJMP7dnt19+oqCEqr7yAGzcez44iQzE7c=
+	t=1761079389; cv=none; b=ojBzZFCWnYTbC7bBhmjJ8kxyG4am4KmaSnsjIds3mPTMSnNsFSFkycA956F4syEjkiYuJ+g6cl8qVJdvP0XUwqsZr2FK9FVSF9O1fjolmRmrYMruQeSlKY3db7KDSTGkSHYVSIwURw213gdBzDV+PPfNXAsuoKlLDppqKYjhrJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761078121; c=relaxed/simple;
-	bh=mEZXhTwzQ6zamixvVZuTYhTDWMuXgP7sdkSYV/2gvAM=;
+	s=arc-20240116; t=1761079389; c=relaxed/simple;
+	bh=XlqfIXuaMRD0eFhOGou17ZQR3uRj8Whl02Jp5BzhT5k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qHNNJuEVK19kExyXGYuXBZtpa3+Pn67vlycrWxN9pQtco6WQytVaAJtCx7F/QgMZpChIDae/HTYvJqqMQ4WgJ5Jdan4oB5FMwbRUuz/7VdbxbmEPlYr5V3PO6p3W1H5ySBe/PZbHRQRvQgcKymrrmxjsYLmjRS8PJRzLFQ+3yRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hBV30zSU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LEpk3I010753
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:21:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eM8vsS1Fj2EgGJzHKnEsypCDm1Za4pqWpIHUVJFKPDk=; b=hBV30zSUakfpmIbx
-	5/HlyYtqhz4d70KQwHniE9dhqdldMs7St0cNT5qfSmx2HxK13EMW5fCQxDSgD88Q
-	OOdJGLedLJTLrD/8ROvetPWsHmS7HeV2S4Z8HRrfmE2ZHZlyO1KLbUQ3obTsssQe
-	troOM3BUgjUE9n2KPS1duTW1OD1HjVG1xM+YCxUg7qLUH43SvreytEOiauMjrU6z
-	NXg8eKiZwKhZAvsajQbOpSP2tTLz8jsoM21Xsa3xvePZJtSeCb6Jnjc1i0yto6t9
-	i2Q6bZtmzR9XWvTXbzsc6LpfYcuvZkk5n+UBZp4FgJ2lHNTVFDhXl1Tx6zH83pbB
-	3OWN5Q==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49wtgevc3a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:21:58 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e8bb76ee59so9395011cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:21:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761078117; x=1761682917;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eM8vsS1Fj2EgGJzHKnEsypCDm1Za4pqWpIHUVJFKPDk=;
-        b=esz23lVQc5K69+/l7RxYy3rc9pgCB09yaAOUJBe/vA0C5JjR/zGamwrATC87GybM2C
-         hjkARc8UGvhuoVD90hRmjX0xAkW78jXsdufFLXJeAJAOSydVgbWk84QKDwbwRN2rVfJG
-         +ZnTnP4+X5btspyNfFmrUwFoFKegZ3yHz8RH2wXDclqBFHmgAK0Dk9kYYewW5mddbc73
-         AatN2dqtf2OjlWLvLJC96SYhnuiH3KxZ7wbnGo7LlILfx71YUTipXjwyquhBqorVJvxp
-         Gl5OZkFWezuCGGAn92qFZnLzdc7wqMCL931Ua99rFy1FaR49ZqGl9ZLWxor57YMeueRU
-         7P6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJa7M9W0+GMMWCRSa0a0o3can6j3MQxahGeIc6VOZH6V8ERBBzJ/lErpGL5urT0RGhSgNTVz8JrML5aKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKLT6mDUN8P76DLjjVG6JliNtey+JSuPUj7QA5SExCmrDE0Fii
-	4dtf+snpCKYt2CXbBUPf8FPYXUSze64Pw0MM9Y3FLE3RKr+R9Ae7TvUwsnJSJOraXjhRqq6yaZR
-	LCT9sYRjbJ4rkKSspP9UP6qDzQYdmRJD2JPnfK1MBsPc/wzHMDSKjev6kpyiS4aYI/Jk=
-X-Gm-Gg: ASbGncvJyYl595ZKEBpstJefjahFscJxkd8YUINiuHlJsIt4AwhsoupcsLhTVVPDZh7
-	NZUIH4qnX29xEzVgpZFrVpl2X+Fe8nmYWOTS2vARrHEKZ+qiJg3pcLU58MJVKPxqwHxZhJq1k1r
-	A/FZHE5HoiBA05ZSqyRJ08OUAMODvFIQhCNd6T9iswQ6DhoIWIEF+cbDwkb+Kys7WKAMA3GmZlH
-	OCMTX9jUZEOW28v78wArsKhJ/KGizMS98/gaxXIitwr2gnkuqr5KRziF3RB0YwNQ9nA5VACZLDN
-	AY0gBS19Wpr3AAUzwxzvBmGsonRay2iG0rP50fynU4C5UnLu8k0NoQwS19vrRsfiC/OjwKvJn9o
-	T9o2rx6WHBuepJwwZEfZLlN3nJg==
-X-Received: by 2002:ac8:5d56:0:b0:4e8:9a7d:90eb with SMTP id d75a77b69052e-4e8c1ab2c39mr118226771cf.38.1761078117505;
-        Tue, 21 Oct 2025 13:21:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHixFYbK42Dq8yGad0erFEwbVWJxy1epl4bH074jwzXpoHLLA1EBx5YyFLZLspcYCGSJAFyvA==
-X-Received: by 2002:ac8:5d56:0:b0:4e8:9a7d:90eb with SMTP id d75a77b69052e-4e8c1ab2c39mr118226431cf.38.1761078116987;
-        Tue, 21 Oct 2025 13:21:56 -0700 (PDT)
-Received: from [192.168.68.121] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c56sm22096646f8f.18.2025.10.21.13.21.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 13:21:55 -0700 (PDT)
-Message-ID: <29d6d523-020a-4eb3-80da-b83e7797d2a2@oss.qualcomm.com>
-Date: Tue, 21 Oct 2025 21:21:54 +0100
+	 In-Reply-To:Content-Type; b=GiXDMn/glressa3GFD8PaQXpVQfxYRPuW9mphxiQsyEe84K5RXPKJ12nYT4EcNw5ck6Z+hBU2nIsaePEjDn42+5ven6/ij9FnV/bTTCdRVORvEvxO/Ydn4S+V7Pq+UW2rK+hAcrAUPfrEbvi0WCi73VpyOzBvdwIoBeULJL+0zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=r2CVWWUu; arc=none smtp.client-ip=66.163.187.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761079378; bh=+qU2vcN541UGYB33IHwPZz2xTN7BvKjf4TwHbds2f04=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=r2CVWWUu7Pi0XCYFTUTq40/7/bE1t5jPDfoi5vVV01eQ9V/wVDE1Ucgxn52K7cz/6BZEJwrCPS3g3FpKuS7MINxL00rtzVCtWmOOR81TnjrkO41VpPpEMrIfHclxIggtEWi+t/xiuJXi6W72XM1ptKeycEykYPqU/LYircBCJ9sbfUxTf3WnqY7gxoz83tK0LrXNSYx01EHErakXQ8z6kjPZrhXX2LmR+AqgWMRLrXLeoOtLKV/tsCrEqsQmavu8Ca+rxbdawJK3e75YkJQtCGZZq+/Lu9m2mg40y2kIH509KI6tdyE8so1OLjR3ZaG8M4Vm5+evfX9EY2zaKjW/Bg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761079378; bh=gy3nSjXqB4obiSFjmrWmHLXG23AIMSjGdqQtLZNiINx=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OwaYZFyEA7CM85NlPKMusnSmb9FG6PhH+vq9lWlXNrUwALGohg5zQC98VEqTKgB/6C0B6h7KwVixXHbhW1IElmDgX6CPMGD2u76II4c3zFVFqmkMbBmasv8kf7IUPPHHfUEKMwO3W2lK87lytXwXDq6dEbg8wlG7TDg/V4azvlccIQHKZrtkKdbRBSHlEVorkoTywqPbtCmxzEq18L7IGm0/tJS7s+3kGbUEV07bFfDYxbsRozrjhJrepzQDqlIVOTs3B12YLecGpiKKqKwYjIjyRBmcBu7C0pj1a9BJS3h2DFp/no3FgEg6e8Dtxx0kIhCKirGFl4GlYzuy2qKIMA==
+X-YMail-OSG: 4xvKBJMVM1kehxOE8bOYQU15B.LpwrJNx.kBwYcopwuPmyUgUIV86fLx53VYQGr
+ 5RxWOf95G5VqewfQmNu5lUu.ipsxHP7og8xLnwuwlvU5t42b09cGctI1h5EzDo7X89x8JFJPPc84
+ rTd22QuYAjGlN5TnQqe08WJhksMFF5olIljVYhX8sdqIDKlv34qtWxGtFKOO9iuNVQTVZL39o4Zx
+ RBJPTEq7UJAjmaAkvQuyIM9g_GECnudTPVACq5boyytdjzUfNnviSV2lR9GFVPlIPqZaB1QP26Y3
+ 9aKtcWEsGh_qIZfgaGWXXTLds9EKvcWjmpHcmd8bLTLFTvyBX57x_jTebfzopMTbKT3c8wKxIWcG
+ ciFwpQOwuvmYnQZWDJiKUsL1IOSalrCiM8SswSlbUZNO7hVJEqMsgpfzE7WpIX2HGai0DQoptEo9
+ 7DYt74TIbeJo8UyRXEIYc.7mOOa3ZKA_OER6h2ZCbQk5Z_p8d03RuB_xXfJdWOQ_AnCNk_MLquf.
+ pVzBp12xrm9Bk55YCJoY6BaYOVWLRzZAITN1efdgHl9jd4PvaIrgjsSdIPB6_mvtab7LCF.WGLW7
+ LmNb.L687BaGjw6TlhZhC7I5U6SVTHwFKow8gBaQCeClqG7R81Dn6.z8j9erIrfEI_yJnQITM0eM
+ ddXMmKrc9hx5PsQ1tYUSvrevkKMJaiEepglu2blseU.UBTBU0O1pzlgLCyZ8Lk2Q.IMTSx_uUSIr
+ DeGJTGfKwhmBT9E17pPZB50L35J5t6ZBFTTPdjHYZui3Xg_cAZITHXnoC7YgSOzlYOxp71csKjj6
+ QiL.9cqCWuuErOL20VAuakyohs9fBvwq3kOWXMK2iFXUONvukFZsXp6Sh0GKkpBzNA_UlvyVlQvb
+ o931TKmI7VMKi7fajgZjY8FmPNvq.ZTNduiMIU_Qa65oAecTUg5HmLfFpm4P3yzhPJIwwkn1_zw9
+ hnQNKwOrvReimCZKqM75atDYJLNJASIKaZp90G8ahu7bUcDKb2Meah048b67t5YB1x1SYfHEOIdb
+ 80xRFAnpfTWq2V27hzwp.4QNjp27KGGY579NJKKbBVopGMjJm3R1s0sD2NOgaKJmFrDxA7pVmRCW
+ Hmb7yFflJtm7dtPFoyaQY5HGuLzFCbDpyQj7xuI24cI2hVd8bEn_ASuJYgRSOGOp4E6zIKFPEJ2.
+ mZlRURUvcesV4ligy9q5V92AJSm5SkwV3T3rwwiYvXt4RVcOEBiGwRFgnMg3NRk6XVgkObXGcBgw
+ x1eBEEDqaVkbvfPFgHrV92HRO5JZWy4wJgcE2s0rhGg_yhrmHPpLpnqxu8tSrkh0SPTgS17NQ8pp
+ DamNQCONkWbjISGzpvbVN4jgeFUWQMXVFDrONeAZlof6hWCqLHWiOxA_rP07rjPe8R.1koGoA94W
+ zerFZI.tCttnGznA4M0gTPhhVTc76Bqg5p5jvY6lX1G65yjZxcx4uUaQ0WQ1sTd71eeKCYZcA7SN
+ I_Xr3.ZreCHRbhOsLpQ0P_dEBTxJelOSSVBjklCaGa049dKdA0o2Ir31vWxN0e_vraLUsD0_SOlX
+ .IwZqypZZZJ7UlZ3XZE9C_atW6dKsSKWl.ye3WjhtL.nCx8vfRpRGTsME8T4NtuF49JGC.uqooPa
+ doDhq.EMv6VnjHY8fCq_2WdRNYEu6LK1IKE5xoe16rUORkOwVi_f9jJFNXFzZ2j58Sgl0.Y7p6pk
+ p31NbtG873dCMsDFW3qdYOhMJw2mviMMa6ZSXXMypphJbVqAB4JhgshYBOXAB1ENc9EYI3eQiaz.
+ Vepl5z7FEXUuwE7NrD5MUYiCXvG1i3qKup5QahRlZyem_vF_KI.fh5Vi7mRbE.JU7hX5z83thwAj
+ Gl6KgCU6OlVL.eqsqZYv1GEvW3nywc9ZLmXh06PopwBZHCEximekXhpSbVxK0LCl7Yml.nNdUp0u
+ yedjo7k7lsEGzQhOKQD_VM5u0KKUxXB_Hve6Mr_HW1EjwKolOmp.izvNkdG4V33PIQsPL8fjpJBd
+ 5pAeZb.wsp7GKDvo_46VC7ilCVDP98D4Vztt9i7Jz_6aBQDUGcVsFD.KGukUDJR4vOFcMcwvqrtR
+ cqPhq_W5TIx_W.OOf_tiBzi2O.k_DHBSaqPZ8Nbbcz4eERi7An7B83Dey.4XxCx07afZ5FYuh4AX
+ SOkwcI5Uk.U7MTHdr8MhwpAESH0D5tQH.PJsBIOXM6j7XXjQjeJf_BgOv01qCzhOlVVzkKEjQPUh
+ woB3kAEMKl5.P8iNS8HeTYKsWAgvDPzMH4iTlZbbsXrsY8ilQ6DJnijBxagi6kGKIIFvZ_C10j5C
+ i2vj0L3E7QYlxWYVEVVgT9kQ6wuYr7rkN2ORkfG9g
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: f67d61b1-ada2-42a2-8af5-224d50fac4d8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Oct 2025 20:42:58 +0000
+Received: by hermes--production-bf1-554b85575-dfm4w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5ac397cd68ad3abcccfcc5e9735fbabb;
+          Tue, 21 Oct 2025 20:22:41 +0000 (UTC)
+Message-ID: <0e93a7f9-ae77-471a-b14d-2626cca0fb0e@yahoo.com>
+Date: Tue, 21 Oct 2025 21:22:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,89 +78,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] ASoC: qcom: x1e80100: Add sound card support for
- Dell XPS13 9345
-To: Abel Vesa <abel.vesa@linaro.org>, Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-References: <20251021-dell-xps13-9345-enable-audio-v1-0-6f3f6bbd977b@linaro.org>
+Subject: Re: [PATCH] drm: rename drm_ioctl_flags() to drm_ioctl_get_flags() to
+ fix kernel-doc name conflict
+To: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ zack.rusin@broadcom.com
+Cc: bcm-kernel-feedback-list@broadcom.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
+ skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251010002520.359824-1-adelodunolaoluwa.ref@yahoo.com>
+ <20251010002520.359824-1-adelodunolaoluwa@yahoo.com>
 Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20251021-dell-xps13-9345-enable-audio-v1-0-6f3f6bbd977b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: CZLadDDFg0uvW6dUk3Ecgml40t-g2Me7
-X-Authority-Analysis: v=2.4 cv=JeaxbEKV c=1 sm=1 tr=0 ts=68f7eb66 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=KKAkSRfTAAAA:8 a=5VL5Wpq1lgPoopIZa9UA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: CZLadDDFg0uvW6dUk3Ecgml40t-g2Me7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDE1NCBTYWx0ZWRfXyxTarZEgT/6u
- K8LaWyjIy87CV/4oHKuNDGzXbS7/nQZXmFkeQJCl0LDtTF+S6KBnA012vRPCShQ9byCHE5QgPk+
- 1i28pMK6V0My8MKuclRAWnY8oZ0dNe4+D/bIDvEjAgX96PHx+KVheiIBPsaNXiHrU5pg9JrjkTH
- cle8IgRPGyBfby7ldKrYNJAQCqhAQ5qLbgr/iqb8+te2ec1SVfhOdJt0Od4PX9Tt0CF/QmqNJtq
- pwGbxVxXL74BXtcWTd5QCs1g9cKamfJnmBBP29SBF5glY/DuRedgy3JZLwpMzVc0hHYIJ18btwP
- Xv+xk1oCdy+QjUXE6CRo88GrilmCUekNWKBuuSdp8hzQq34QHQgB4UxqNhhSyEuYi6aNunuZKcP
- TiNp8gzLEJvZb+JoIu5UEXPNsDJyBA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 malwarescore=0 impostorscore=0 spamscore=0
- bulkscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510200154
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+In-Reply-To: <20251010002520.359824-1-adelodunolaoluwa@yahoo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Thanks Abel for sending this one out.
-
-On 10/21/25 2:50 PM, Abel Vesa wrote:
-> The current X Elite driver for sound card is mapping the channels from
-> left to right on all X Elite based laptops. The Dell XPS13 9345 seems to
-> be the one-off when the speakers/tweeters are mapped starting from right
-> to left.
-> 
-> So rework the driver to bring in a swapped mapping for 4 channels setups
-> and use it with the dedicated XPS13 compatible.
-> 
-> The devicetree node is included for proof-of-concept purposes.
-> 
-> Sending this as an RFC since it probably will need more discussion
-> before settling on the approach on how to handle this properly on future
-> devices.
-We have few options here, one is the way that you have done, other way
-is to add a mixer control in the machine driver which should allow xps
-ucm to select correct channel map.
-This should also allow bit more flexibility incase any other machines
-have different wiring of tweeters and main speakers.
-
---srini
-
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+On 10/10/25 01:25, Sunday Adelodun wrote:
+> The function `drm_ioctl_flags()` defined in `drm_ioctl.c` shares the same
+> identifier name as the `enum drm_ioctl_flags` defined in
+> `drm_ioctl.h`. Although this naming overlap is perfectly valid in C —
+> since functions and enumerations exist in separate namespaces and do
+> not affect compilation or linkage — it causes a symbol collision in the
+> kernel-doc build system.
+>
+> During `make htmldocs`, Sphinx reports the following warning:
+>    ./Documentation/gpu/drm-uapi:574: ./drivers/gpu/drm/drm_ioctl.c:915:
+>    WARNING: Duplicate C declaration, also defined at gpu/drm-uapi:69.
+>    Declaration is '.. c:function::
+>    bool drm_ioctl_flags (unsigned int nr, unsigned int *flags)'.
+>
+> This happens because kernel-doc processes both identifiers (the enum and
+> the function) under the same name, leading to a duplicate symbol entry
+> in the generated documentation index. The build system therefore treats
+> them as conflicting declarations, even though they represent different
+> entities in code.
+>
+> To resolve this, the function has been renamed to
+> `drm_ioctl_get_flags()`, which both removes the naming collision and
+> better describes the function’s purpose—retrieving ioctl permission
+> flags associated with a given command number.
+>
+> All affected references have been updated accordingly in:
+>    - `drivers/gpu/drm/drm_ioctl.c`
+>    - `drivers/gpu/drm/vmwgfx/vmwgfx_drv.c`
+>    - `include/drm/drm_ioctl.h`
+>
+> No other symbols or behavior are modified.
+>
+> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
 > ---
-> Abel Vesa (2):
->       ASoC: dt-bindings: qcom,sm8250: Add Dell XPS13 9345 sound card
->       ASoC: qcom: x1e80100: Add Dell XPS13 9345 support
-> 
-> Sibi Sankar (1):
->       arm64: dts: qcom: x1e80100-dell-xps13-9345: Add Left/Right Speakers and Tweeter
-> 
->  .../devicetree/bindings/sound/qcom,sm8250.yaml     |   1 +
->  .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts     | 139 +++++++++++++++++++++
->  sound/soc/qcom/x1e80100.c                          |  49 +++++++-
->  3 files changed, 184 insertions(+), 5 deletions(-)
-> ---
-> base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
-> change-id: 20251021-dell-xps13-9345-enable-audio-799bfbd7e7ed
-> 
-> Best regards,
+>   drivers/gpu/drm/drm_ioctl.c         | 6 +++---
+>   drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 2 +-
+>   include/drm/drm_ioctl.h             | 2 +-
+>   3 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+> index f593dc569d31..313e8bb7986a 100644
+> --- a/drivers/gpu/drm/drm_ioctl.c
+> +++ b/drivers/gpu/drm/drm_ioctl.c
+> @@ -912,7 +912,7 @@ long drm_ioctl(struct file *filp,
+>   EXPORT_SYMBOL(drm_ioctl);
+>   
+>   /**
+> - * drm_ioctl_flags - Check for core ioctl and return ioctl permission flags
+> + * drm_ioctl_get_flags - Check for core ioctl and return ioctl permission flags
+>    * @nr: ioctl number
+>    * @flags: where to return the ioctl permission flags
+>    *
+> @@ -923,7 +923,7 @@ EXPORT_SYMBOL(drm_ioctl);
+>    * Returns:
+>    * True if the @nr corresponds to a DRM core ioctl number, false otherwise.
+>    */
+> -bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
+> +bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags)
+>   {
+>   	if (nr >= DRM_COMMAND_BASE && nr < DRM_COMMAND_END)
+>   		return false;
+> @@ -935,4 +935,4 @@ bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
+>   	*flags = drm_ioctls[nr].flags;
+>   	return true;
+>   }
+> -EXPORT_SYMBOL(drm_ioctl_flags);
+> +EXPORT_SYMBOL(drm_ioctl_get_flags);
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> index 8ff958d119be..fa4644067d46 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> @@ -1257,7 +1257,7 @@ static long vmw_generic_ioctl(struct file *filp, unsigned int cmd,
+>   			goto out_io_encoding;
+>   
+>   		flags = ioctl->flags;
+> -	} else if (!drm_ioctl_flags(nr, &flags))
+> +	} else if (!drm_ioctl_get_flags(nr, &flags))
+>   		return -EINVAL;
+>   
+>   	return ioctl_func(filp, cmd, arg);
+> diff --git a/include/drm/drm_ioctl.h b/include/drm/drm_ioctl.h
+> index 171760b6c4a1..585dda7550b0 100644
+> --- a/include/drm/drm_ioctl.h
+> +++ b/include/drm/drm_ioctl.h
+> @@ -164,7 +164,7 @@ long drm_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+>   /* Let drm_compat_ioctl be assigned to .compat_ioctl unconditionally */
+>   #define drm_compat_ioctl NULL
+>   #endif
+> -bool drm_ioctl_flags(unsigned int nr, unsigned int *flags);
+> +bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags);
+>   
+>   int drm_noop(struct drm_device *dev, void *data,
+>   	     struct drm_file *file_priv);
+
+Hi all,
+
+Just a gentle ping on this patch,
+please let me know if there’s any feedback or further changes needed.
+
+Thanks,
+Sunday
 
 
