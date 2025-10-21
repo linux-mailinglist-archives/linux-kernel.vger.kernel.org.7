@@ -1,192 +1,112 @@
-Return-Path: <linux-kernel+bounces-863537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C06BF8142
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:31:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A01BF816F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF0D24F9AF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:31:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395BF4600FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A3923E347;
-	Tue, 21 Oct 2025 18:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306AC34D927;
+	Tue, 21 Oct 2025 18:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Gv1MUfjT"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010020.outbound.protection.outlook.com [52.101.193.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2w6avEZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C46B202960;
-	Tue, 21 Oct 2025 18:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761071420; cv=fail; b=iB7n1yXLyqLUadCEUNJF57qDtn5ZlSbam9PYtYjsZT3LOS8jTRYDC25ANJ6rHbb1C3uKynQTkxoqV/I1cBB+ntAMoh9bYVJD0QPWdSRCznMXxfdGcrKMjYnl2QbH0WmnPGlTpnoc0ACKvXRYXlhnYMEzgBl5c9gqusdpjtajM7Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761071420; c=relaxed/simple;
-	bh=qwg7fXBV51P0szhN9pegkNw54/HzrplOd1cIfFyAVog=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PIkHJxBWQ4PPd1r99Y+oVhKtiXLeBGbLBDXMcK1WPodrE/KjvLloFT1AMnL4w4x+9HmUYLO1U9NDL5jkGrI8pOYeYG2n3XLnq704l0cZPEBvYqpSvhHVMGBlDpwRZ6Zmn1x1OfiMOv/+3Yuaf0Gq8NR/frpdduyIhh2Y9kBDwgY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Gv1MUfjT; arc=fail smtp.client-ip=52.101.193.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jv0MIOMeeZiAUB0/VbOyfqC2vb1dUt3aPWIxLeKpRycAIZcKV/aj2h6aTOpPeR7bzhQnrKtszkmuDuogoVVqOy46i68g5z/Upt/rdkJhTQmfPtcbdmHif7SZCtje7x/0D5TcenvUKKEw6myQcRLZDBgWISQx3W42UInbnJCk4mbH19zjBllYOqSCXAzwBP/l3U/VvNzG710ZIJrj96IpBVNNifVUWZ0+IiRlf9M2BfIN7COT+Ak5Sth9hW0k953s543Uso60eSXoTXJUvcZdeqSliriuLT0eLW/CuPvWIwEMbeH0EtjV9dlpSUvRTgd/RswcbSdVzgLQXMNdRQQZVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Usx1Sr1FDAlweubt1VdxDA9QuQOcgnDZzd5QvIx5ws8=;
- b=C+bg/EhUu2PpRFoufuryN75SJKg/w0SQ6VLzefkBco/kzM5IN2D+fwdQXKZLTQhQmOCfk0J+sx8zKicwirhB9CFmNpWc1WHQrUGrKCHXY5sjRxrJMpAwxdT//KNA5QVurO1PvES2ITzuSS7avNcmJcBdbtNbd0lrzybXrrViJ1u31P7D+Us1V8wKmZy0q1M2B7iyGbB2cmnH4yKTTGdexxIZOA0mhm+l1hp/XyqjdAriKpz6IM6hXJgs1DBq68yBMq7wBfy+dm9IkHXjErQ3u4kw6/L6wPp8/BMyYZjWkZBBSJfm/DOO8I5VLU5cWDIQt/mSsPFKpDe37BhwTtjlXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Usx1Sr1FDAlweubt1VdxDA9QuQOcgnDZzd5QvIx5ws8=;
- b=Gv1MUfjTXBHlmWNSTPgCBNwxFSjKwtTmGQKuXy8R6rKewbFVsDOH2VVYKByn2oWQBSstbnagx7/1rukmDt5PK1mx8Du64/8hE6bFdLDCI78tpEB1a/BpBR1Utye+ALr87xsw8vYa/ivRvmdpRNgcuBK3/yiMjb5YogfZxjHQHQs=
-Received: from CH2PR16CA0030.namprd16.prod.outlook.com (2603:10b6:610:50::40)
- by LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Tue, 21 Oct
- 2025 18:30:12 +0000
-Received: from CH2PEPF00000099.namprd02.prod.outlook.com
- (2603:10b6:610:50:cafe::5b) by CH2PR16CA0030.outlook.office365.com
- (2603:10b6:610:50::40) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.12 via Frontend Transport; Tue,
- 21 Oct 2025 18:30:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- CH2PEPF00000099.mail.protection.outlook.com (10.167.244.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Tue, 21 Oct 2025 18:30:11 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 21 Oct
- 2025 11:30:08 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 21 Oct
- 2025 13:30:08 -0500
-Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 21 Oct 2025 11:30:06 -0700
-From: Suraj Gupta <suraj.gupta2@amd.com>
-To: <vkoul@kernel.org>, <radhey.shyam.pandey@amd.com>, <michal.simek@amd.com>
-CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND] dmaengine: xilinx_dma: Fix uninitialized addr_width when "xlnx,addrwidth" property is missing
-Date: Wed, 22 Oct 2025 00:00:06 +0530
-Message-ID: <20251021183006.3434495-1-suraj.gupta2@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7268634D904;
+	Tue, 21 Oct 2025 18:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761071493; cv=none; b=FQG8USy+5D6EzgJB1SgjFuBsHGKqsmDVoXBzBCZjqamgz/BJFE2lygKv4Y1Cpte0Oe202HehVLo8PWtF6I1AuvvFYamtpnuTry6nEzv8AZ1GR46j2rvLQ5tGIlsqVi0C9DdiD6kDqhboqAdhmfrAx6rw0dZvRpt4g1BEddL2cxo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761071493; c=relaxed/simple;
+	bh=foOzd1ErH9G7EZaY83TpuvCawP/IuYOE5JCvotPcJ6c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GoxlQZPrRQWiKpRkN7jKaK0B/J+DXrTO+bqPYADejhta/2LNhXJjx63kSyZRqiDyKaXRk58aVbvDsUGCf4D86HhymimJ5rGvp3xV9qBOgSnn0ArQHpbjEFwPrbUNvdyLj4PexHeJlqWDTibLr28rGhKASGshcxVELHl7dPUIesU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2w6avEZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4F92BC4CEF1;
+	Tue, 21 Oct 2025 18:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761071493;
+	bh=foOzd1ErH9G7EZaY83TpuvCawP/IuYOE5JCvotPcJ6c=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=h2w6avEZVMQPgMJWfGohu8I5XNtSFDyw4Nke5xc1evZ17YeqrIIX/vSgwLV27XTJy
+	 kWks35WWRL3XkG03hgO2tgAtvCA43tbpibyIGgC/LmV+6ZPXDQOglqO+zs7tiXFBOT
+	 9JG4G3SpDINx9X5B3jUz7+xbNnf0JzthDC4k4oE6jmDFOTSBAar5VMBk4ytkpd1TUa
+	 Rx7mLV+0LU+52nKITfserOl61UJh9a8CmEyQ56smYZrI8/ke2U/xbdflJPiV8FPqKv
+	 3CruB97jVlGOLkKAZ5XHzkACzqtsFPQo9ZQGY+yzVNnxOSUR4qk0EZV8ltR3pFDXib
+	 8QR0VCLLwktrw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1DECCD1B9;
+	Tue, 21 Oct 2025 18:31:33 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/2] arm64: tegra: Add CPU OPP tables for Tegra186/Tegra194
+Date: Tue, 21 Oct 2025 13:31:26 -0500
+Message-Id: <20251021-tegra186-icc-p3-v1-0-0c313968b77b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000099:EE_|LV2PR12MB5968:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99a4c4c7-729a-4992-54d4-08de10cfdf09
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bvqFlkvPcce5GCNVCWqiOmK0ZYtIwOKk09HfubD53rKSkU3eb1Bd8WXy9T8Y?=
- =?us-ascii?Q?5kSnohz0nNVnA9KTmWsavON9KHbXqEP19VrYf5/4Pkj6OANyo7q3jpck7ExS?=
- =?us-ascii?Q?OYD2IpayDnpV3YAu8DK6zR0+66GMmlGjXwNfsdqBmDToQ9N0tPmxCgCzMVyZ?=
- =?us-ascii?Q?91blWSg6UfYjfrrb1Q/RxlvcAPtCKJMCBZlBjXy9+H7Qz6yCuYSHxZ/l+JPL?=
- =?us-ascii?Q?93Ceq5jKyCbCO/qqAIppt0gHESsYoI5xBCKl7wC+AL4XEVjbRFxh3C5hdIba?=
- =?us-ascii?Q?T900/jDQ2ltHcqUzQkCKrxaoA55yXNVhQkXvdZEfecFqV9CiZ3qd8uftmW7j?=
- =?us-ascii?Q?jAD48jstSrA4F34k7MnH3oqMXKgL7dyXu63ANtLVtAi9nyPS2Aizsl44gaQu?=
- =?us-ascii?Q?2xXFNfwQNqp2knYrbRPSKhqKqrEXZk5E1yOs/yJmtD4BFfsGvG3fDGeoSRMs?=
- =?us-ascii?Q?zVsD2b7uC1hE9UEsjuuEVZnhVLDKGEF7PlVLirQb9uI5i0+Fi/ktvdnVE/VQ?=
- =?us-ascii?Q?UdOuCd6pBpjkPwEI6jHVGqAhHod7/wiYnVo74zJ6ehpYbsYKqftjAz/fRfUk?=
- =?us-ascii?Q?VifPkRCwRsFFrpITQx4tPtlVD6RPe/7rppA5ag/6E6FVZ47nLHEEzXENZISr?=
- =?us-ascii?Q?yyyq+NyFwoSd5NHOwZkUzeAk8DTs7R3Z+oCDdyVKsjgNvUlhjlSOoDl1K2wS?=
- =?us-ascii?Q?VxUbLltc7psCYpXvICqylyF82dKhaTSZDSX8G6m1X2uG/R2DEfXXOtGR1tPK?=
- =?us-ascii?Q?fVerXr/U9VYnb08Lyu5t3Zpu/KhQhPiIhf/ErC4OlyJKIlgYqH/Q73b0VKCJ?=
- =?us-ascii?Q?L7mTKNnBqhK07xGRljvWxB7hfMAGotI0SgtEy7jKY7n1PtaXKPfm/ofxzfi/?=
- =?us-ascii?Q?EfhvMx0qi+sF9B1nwuTTgGGWxKggiMWj4GFZY4emhjg329HPs0YJnONWFif5?=
- =?us-ascii?Q?b4jpyhGrTvDe2OKRBgTzJdVbH7vVypmFrz5ke9q/+CqGcOqK3O88IRosPJNH?=
- =?us-ascii?Q?Jw1l1ZMhsnHkZdsYMqM6IvZ0e9RTbMmig/CEBS3hY5v3dDPKA91R52yh0sOF?=
- =?us-ascii?Q?SbueTPHwqGmrJt7SM4RpOaPBWzIlHjZLg3h6M0nx4ARM9+d/ABIdxpZzqUYN?=
- =?us-ascii?Q?0Fi9Rn3fDZyp9a0SPiAtDDsQZAvTALFfDeu8qorDxiU/aePieY594sPKZC9w?=
- =?us-ascii?Q?cwqYY7vM6LUDbSR0ZH/ZXlnbUhQUhFFXwgNJatF4unsVvSaR5jSAWnz/flxL?=
- =?us-ascii?Q?kLQfZ480Ll9297GH2tYakIYXXmjlAUSOKJpmDphvzlVs6PCMYgvnqKi6+wCB?=
- =?us-ascii?Q?X7+Q7SDttiU9M3dDNEkilH4A0yEHdFCeNN6Q+s8UfmkzhhKNMYAB9WAMMIx+?=
- =?us-ascii?Q?yba0QrzujHZmduQXXbfQ8QLv5E1IIl2b8w2Zu+/fX/oEunYmLk6Sr4ao6C0F?=
- =?us-ascii?Q?PfaJoSwCRz1zdy//TSkydaBmMBKkokRmd/F8t7fSlM3EB4cJHnsa065WE16h?=
- =?us-ascii?Q?e7MBwzVvzmeqiiCVv1+T1Ax7c1lYDeKkaSJQUpr5hc/RlbiJ8C+VVngixz4P?=
- =?us-ascii?Q?MxCbG8sWh/PAYAxyNKc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 18:30:11.9080
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99a4c4c7-729a-4992-54d4-08de10cfdf09
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000099.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5968
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH7R92gC/3WOSwoCMRAFrzJkbSDd6Q5xriIuYrqjWfjLjCKId
+ zeooBuX9aCKdzeTtqqTGYe7aXqtUz0eOsBiMHmXDlu1VTobdMjgEOys25YgBltztidvfQnEJIk
+ 1k+nWqWmpt1dxtX5z0/Olh+f3+O2Ow58q2EjMGkCIvYxXML93/mpoY6AiMSCH5fKjbdKkNh/3+
+ zp3EUBE1EX0BYhQKYljTFi8K44dEOecJJn14/EEEpeithsBAAA=
+X-Change-ID: 20251021-tegra186-icc-p3-3f6454da5ec4
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761071492; l=1249;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=foOzd1ErH9G7EZaY83TpuvCawP/IuYOE5JCvotPcJ6c=;
+ b=1ljVV/hSyLq08Gx+hrZftn5e9mALHnzMcU+smzxpkS1aUmXYJhCRO+M2svqmkZhEqdRwnuT93
+ EqoEWGq36ppDk2uwvtM3CFyx+U20sjkBdVsrbQhIlVtbIrR/qgaGNdx
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-When device tree lacks optional "xlnx,addrwidth" property, the addr_width
-variable remained uninitialized with garbage values, causing incorrect
-DMA mask configuration and subsequent probe failure. The fix ensures a
-fallback to the default 32-bit address width when this property is missing.
+This was original part of a larger series [0], but it was requested to
+be split into smaller series.
+    
+[0] https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-09413724e781@gmail.com
 
-Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-Fixes: b72db4005fe4 ("dmaengine: vdma: Add 64 bit addressing support to the driver")
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Reviewed-by: Folker Schwesinger <dev@folker-schwesinger.de>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/dma/xilinx/xilinx_dma.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Aaron Kling (2):
+      arm64: tegra: Add CPU OPP tables for Tegra186
+      arm64: tegra: Add CPU OPP tables for Tegra194
 
-diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
-index fabff602065f..89a8254d9cdc 100644
---- a/drivers/dma/xilinx/xilinx_dma.c
-+++ b/drivers/dma/xilinx/xilinx_dma.c
-@@ -131,6 +131,7 @@
- #define XILINX_MCDMA_MAX_CHANS_PER_DEVICE	0x20
- #define XILINX_DMA_MAX_CHANS_PER_DEVICE		0x2
- #define XILINX_CDMA_MAX_CHANS_PER_DEVICE	0x1
-+#define XILINX_DMA_DFAULT_ADDRWIDTH		0x20
- 
- #define XILINX_DMA_DMAXR_ALL_IRQ_MASK	\
- 		(XILINX_DMA_DMASR_FRM_CNT_IRQ | \
-@@ -3159,7 +3160,7 @@ static int xilinx_dma_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	struct xilinx_dma_device *xdev;
- 	struct device_node *child, *np = pdev->dev.of_node;
--	u32 num_frames, addr_width, len_width;
-+	u32 num_frames, addr_width = XILINX_DMA_DFAULT_ADDRWIDTH, len_width;
- 	int i, err;
- 
- 	/* Allocate and initialize the DMA engine structure */
-@@ -3235,7 +3236,9 @@ static int xilinx_dma_probe(struct platform_device *pdev)
- 
- 	err = of_property_read_u32(node, "xlnx,addrwidth", &addr_width);
- 	if (err < 0)
--		dev_warn(xdev->dev, "missing xlnx,addrwidth property\n");
-+		dev_warn(xdev->dev,
-+			 "missing xlnx,addrwidth property, using default value %d\n",
-+			 XILINX_DMA_DFAULT_ADDRWIDTH);
- 
- 	if (addr_width > 32)
- 		xdev->ext_addr = true;
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 636 +++++++++++++++++++++++++++++++
+ 2 files changed, 953 insertions(+)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251021-tegra186-icc-p3-3f6454da5ec4
+prerequisite-change-id: 20251021-tegra186-icc-p1-8455e61d453d:v1
+prerequisite-patch-id: 79b5490cea531a49046c96e8b5240dbbe490e16a
+prerequisite-change-id: 20251021-tegra186-icc-p2-864fd8625699:v1
+prerequisite-patch-id: 470c94ee34569e507d14e65dd989e708955f1512
+prerequisite-patch-id: 64f466efb923428edb27b4360ac41bda5c990311
+prerequisite-patch-id: 6a99ee6dbcae73fcbfab52009fd600b2618f3d5a
+prerequisite-patch-id: e05146355f318629f1511fa972c1b1f92ee98064
+prerequisite-patch-id: 5754b9afa57bdf187d8779a3354fdbc36e539af9
+
+Best regards,
 -- 
-2.25.1
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
