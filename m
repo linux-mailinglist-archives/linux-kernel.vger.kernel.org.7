@@ -1,83 +1,102 @@
-Return-Path: <linux-kernel+bounces-863682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99154BF8D3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:54:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB12CBF8D49
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F2A94FB230
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95F91898C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB643280025;
-	Tue, 21 Oct 2025 20:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB442836B1;
+	Tue, 21 Oct 2025 20:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NaqmZhs9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnoNEZk+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13BB245014;
-	Tue, 21 Oct 2025 20:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9680B245014;
+	Tue, 21 Oct 2025 20:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761080014; cv=none; b=P5y+KhgtESUe+msMgoCnaYch9ZniIz2geNxrOtbLONMceT+FMCZe69hwpqzbKvbe7gLwI7QBRlNDXCExVvLvrPHsjYFAkIPSjoUFCEXBKePzRBeWFPUjsAV4LP7qmaGodts9YWXVAmEdw1UEaBVcAK3NT5KhbAE2dcwqc7u2Sw0=
+	t=1761080055; cv=none; b=aEAsClcdwqLDQWk6x7yAgnEiFKYltP+erO4JfaqR+PTl/nnIDdcTVpl+5AnxbwyCbogUelTDNdmJxkz0oPLjVKgrLMRKE3f1FZWy7IQiH+zsODQ+keIHBh8N3+lsB573+ySz9t5Ii3dp/Oe9jqxuviPkwj8HffUL4uQcHgbvTuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761080014; c=relaxed/simple;
-	bh=fI+yNyL288oWuuAQXpDX1oeqM1MuN31aastcVe2xSe0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CO3UUU3B1MTPGihkGBbDdL+q4NV1I96kduhEQoe8oz9wK+lk6UOzkRv1kwg5pyp+bQjrfuNSLGD34dyZx05m2DvHaUx4Cb0/MqoUnv0OGN70zmx+q9oxL+fprRuiEjXNfmx+xByRVgi7dj59Y9J6tcfUKonszwcW/6UqiEn3kGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NaqmZhs9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1330C4CEF1;
-	Tue, 21 Oct 2025 20:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761080013;
-	bh=fI+yNyL288oWuuAQXpDX1oeqM1MuN31aastcVe2xSe0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NaqmZhs9s1YlmtvVI28BxFJ2yKuSAVgnxi9HuDWs+o9qn+J9FaCTxHYWqazwysrO2
-	 swjyZvmX4vEjQbufrh+1Z1Lsn7JNmpzMP3YTVAbD5B9PNppdLLLdPfNyOrFYjGnPOa
-	 u7bH6DvBPMHNDngTkwER1bydv9MHMeXRrNPdE9ZY=
-Date: Tue, 21 Oct 2025 13:53:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Mike Rapoport <rppt@kernel.org>, brauner@kernel.org, corbet@lwn.net,
- graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org,
- ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, jasonmiu@google.com, dmatlack@google.com,
- skhawaja@google.com
-Subject: Re: [PATCH v3 0/3] KHO: kfence + KHO memory corruption fix
-Message-Id: <20251021135331.8e0185a173a5fa40add60802@linux-foundation.org>
-In-Reply-To: <CA+CK2bAHH1tzMEGxAwbmrLnLTzJANMntRu=cp0J8-n101ER7Pw@mail.gmail.com>
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
-	<aPchmxfh4ACM0vY2@kernel.org>
-	<CA+CK2bAHH1tzMEGxAwbmrLnLTzJANMntRu=cp0J8-n101ER7Pw@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761080055; c=relaxed/simple;
+	bh=dRiFpxTJbkAWY2xShml44h/se09s+hdG//dKBrBp1W8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8tcrJEoW3YY3BnNw79ys3XPFvoxOTE9GA3U2xfPq90T9Xpu5ak8adSeKn1tLLAStMCBh1ujyQ/tCZ+pF/pLd8hdmuil72wwtn/niebFg/eW0NMg5TifFN361Uk/0mUmXnqItdmWCKsrPiIhp/tZuOkJUuFOc0/yjKiDn/MF1HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnoNEZk+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B89C4CEF1;
+	Tue, 21 Oct 2025 20:54:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761080055;
+	bh=dRiFpxTJbkAWY2xShml44h/se09s+hdG//dKBrBp1W8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cnoNEZk+xG2YhvWPZ/O2tCFpBmF1eyA4Rk67SR12ZWhqZb3VGuaPWO2wBVGREfT09
+	 0wgVSbQhcqaBJvDHjxSRApqpPBd3mbjElAQwk/Zt2TnuYlhrMhsRvJzpCs+qr+BetO
+	 y+ku9sM9FFhAOZIt9U8pl3/H52+q/akkg+DRai5Nhm2ncxsK9lvikjeErLsxaaBbPg
+	 RPTOaQ/mXKI5uaVdqcMRJl7vFq9LeATS0FkvPBSDus9quczmf0d3f4cCSbLTPiwALE
+	 C6AfBJo8tr4b+OVgT2Pk/l1YHlAzm2DUTQ/H/SOiL2wjT1+itWn7Uf53iV/cLoBRmw
+	 B8mkGOJ9e8Ygw==
+Message-ID: <7a366bbf-49e9-4b53-bbd4-4a28454f8f90@kernel.org>
+Date: Wed, 22 Oct 2025 05:54:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/16] blktrace: differentiate between blk_io_trace
+ versions
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>, axboe@kernel.dk
+Cc: chaitanyak@nvidia.com, hare@suse.de, hch@lst.de, john.g.garry@oracle.com,
+ linux-block@vger.kernel.org, linux-btrace@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ martin.petersen@oracle.com, mathieu.desnoyers@efficios.com,
+ mhiramat@kernel.org, naohiro.aota@wdc.com, rostedt@goodmis.org,
+ shinichiro.kawasaki@wdc.com
+References: <20251020134123.119058-1-johannes.thumshirn@wdc.com>
+ <20251020134123.119058-11-johannes.thumshirn@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20251020134123.119058-11-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 21 Oct 2025 12:04:47 -0400 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
-
-> > With liveupdate: dropped from the subjects
+On 10/20/25 22:41, Johannes Thumshirn wrote:
+> Differentiate between blk_io_trace and blk_io_trace2 when relaying to
+> user-space depending on which version has been requested by the blktrace
+> utility.
 > 
-> I noticed "liveupdate: " subject prefix left over only after sending
-> these patches. Andrew, would you like me to resend them, or could you
-> remove the prefix from these patches?
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-No problem.
+One nit below.
 
-What should we do about -stable kernels?
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-It doesn't seem worthwhile to backport a 3-patch series for a pretty
-obscure bug.  Perhaps we could merge a patch which disables this
-combination in Kconfig, as a 6.18-rcX hotfix with a cc:stable.
+> @@ -146,8 +202,8 @@ static void trace_note(struct blk_trace *bt, pid_t pid, u64 action,
+>  	if (!bt->rchan)
+>  		return;
+>  
+> -	relay_blktrace_event(bt, 0, pid, cpu, 0, 0, action, 0, cgid,
+> -			     cgid_len, (void *)data, len);
+> +	relay_blktrace_event(bt, 0, pid, cpu, 0, 0, action, 0, cgid, cgid_len,
+> +			     (void *)data, len);
 
-Then for 6.19-rc1 we add this series and a fourth patch which undoes
-that Kconfig change?
+You are not changing anything here, so this is just churn...
+Not a huge problem, but not needed.
+
+>  }
+>  
+>  /*
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
