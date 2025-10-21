@@ -1,93 +1,155 @@
-Return-Path: <linux-kernel+bounces-863644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46E6BF8B0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:17:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27244BF8B13
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5853B9187
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:16:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF310502AFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2B523EA9B;
-	Tue, 21 Oct 2025 20:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46654274B30;
+	Tue, 21 Oct 2025 20:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="UQbAnwAu"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="VY4ouE8g"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81821E1E04;
-	Tue, 21 Oct 2025 20:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6B71BFE00
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761077793; cv=none; b=uNZTOPfHo4NlSSfPvUjoYwYUNpMRNwSuoO8MehJvOgERERkyCeK7ny4acccQou1cODJEhyv6Dm4cQ5gugzmPhvOM793kL4W0DTR1shCwwRfa2ttcvi6X6GCAyreJJxOfxdFU7HJ/5U5vSmlvdN10vr2efFX3FCpG+jZKj6il9Sk=
+	t=1761077839; cv=none; b=CyldJhQhOAIim/dVjbx1RPqVC2BF/uO5y8hp7SzPB7hAMdJCZR28NfJd3TF0sJ0cgkVCbyZp06G3fXjOQ092wK3tJ2OQMI83mLW8kdDa7tY7sU7N/6hs8lYXXrsj9lih96q3S12P/ulxX6ndzEOzIfhCGKWe2DQyNeDKB9msdDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761077793; c=relaxed/simple;
-	bh=2FwEsDAVTL0eZF75eYcjfklo+HwL71jjw92AWzeQXJw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QNBnsqbmwxSSgysX4kHz39B1fJxIlo6JiwdlKhgZ+x0KJsg7xAB74hphS5fADIPaHVBpCP8VOzA+6bD6lgOc2xCZh97JVlxCm2ozM8zEBDnbYwk0BWq3j7VHraauCg4uEvglF4FCOvDQeDH9GlN3iSA0ZdgNySXFg5+p8E6q08U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=UQbAnwAu; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C8EDC40B28
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761077785; bh=0BofnvVgBKRkg6q6c8Lc5V1aHmXwTaOpVq7t0+nXVyE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UQbAnwAuJNZ8wAcyDEnsV679hVb3jLF3NhC8F/EjKr0QdUJHh4JGxugBRmG3qPTmY
-	 XmQm1An4VKyBGqDHQ/HJ0XWIauy+0ybX+phfHMnAm1AzSj8QdHoBdsx8cuW+uCfKwG
-	 a1/O/F7VbE8HARW0vE5ByeH5MSXyZzoNFXohEl7oKfSEufmZndvIuGajpqWoYIBhYO
-	 80wwBrBhJdFPlqF8a+Tt7b+OobQuTBdkfLd9PchdQhJo0pBBr9ScCvsy+jEaKt4nGU
-	 NBvdwglYa8McmdVBmcUAZcE1fBWvaDh35npikHt9eV56hKhc9Uberfa6QVSlOv/8Ed
-	 F99USlYGtKxSQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id C8EDC40B28;
-	Tue, 21 Oct 2025 20:16:24 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Ally Heev <allyheev@gmail.com>, Alex Shi <alexs@kernel.org>, Yanteng Si
- <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>, Hu Haowen
- <2023002089@link.tyut.edu.cn>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, Ally Heev
- <allyheev@gmail.com>
-Subject: Re: [PATCH v2] Documentation: fix dev-tools broken links in
- translations
-In-Reply-To: <20251020-aheev-fix-docs-dev-tools-broken-links-v2-1-7db64bf0405a@gmail.com>
-References: <20251020-aheev-fix-docs-dev-tools-broken-links-v2-1-7db64bf0405a@gmail.com>
-Date: Tue, 21 Oct 2025 14:16:23 -0600
-Message-ID: <87qzuwt3hk.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1761077839; c=relaxed/simple;
+	bh=3s9Hg8jMoBX9CiCTXq1M6Thci0WpmJxF38Djz8L/WlI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iO2x99n67O68SM5dbNd5RT/rpxL5f5cJAwgK2+HBDvun/88a5y1TytLLNpKuHli4e36yfzAXNBf95vmwd3dG+zAIITmJ9U40Y0hp+5ynYlruahC/nyBf00Tkxibd9AXo38ft1RTMjA+PA3dQ6zYCx5ibAWtpBOVKJ5GVaWVz9OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=VY4ouE8g; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so79530815ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:17:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ssn.edu.in; s=ssn; t=1761077831; x=1761682631; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fboqJCjCw6RVWXir/DI4EBNfbHyerzjrKQ29FGZhy8U=;
+        b=VY4ouE8g6lRoGEcdfzSFyRucVnLYvEa3o1mMkK9RlCxpeIuXOVIrzP2zo2YO7Foy7B
+         aLQpln3ucruxIjOhnNkBigAtHsN77nQ8QyyIfF+ShiJfSnHMoMZjZXeboKcZzzodhiwD
+         mHkqKZqczv+RIXdScqbxGJrHmT3IJIdEMgjIM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761077831; x=1761682631;
+        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fboqJCjCw6RVWXir/DI4EBNfbHyerzjrKQ29FGZhy8U=;
+        b=TKpOGG5j8SDXnk4huFSg7nfO3gRcip7MI5sJeegR74tZuGHuq6S5WVwrUg+bYnkjt3
+         Ew3RPaHviD49VvFSavpB9cjNWNTn6I2JBd4/B66W4XlufoAbAdr9lyBsqtt8ipSnoovI
+         CpiK2ZvbpELVyYqAdywvodcd0c+DWOh4sl6OOrZxPvqCWUdVkhgFogtwZqtZ/2p0BT7x
+         D87d077tkOLdd5+GcO2N/TCJJrzBr3G/2DiUNUtMvhd5hRotH18a2UmNrQtKQhvXkRiX
+         WN7iSbyuKS2PGOJAVuv7aGx+tJZEMTOTGDVQjDjN+Gfu5UYy47ZAZjcsvqSiPPm+rLLd
+         Jipg==
+X-Gm-Message-State: AOJu0YxGtG5XSLEhJakLlYDjAN5+wuXF0Fc5ihGfmC1ym1F04MGWYMAh
+	8Epzi2arEG1fwP5NimWXBGVi2JUTSHyPQvL5+/tebrzsInPhhcKAAsJ6RaVkSKArnEr2vEpFaDX
+	swtxqUUDinZWrIRgniXMX28sucqWhkmtKqbTTig3aHfjYmEY59f20dL6Hog01iT9xUpKonxPx+b
+	qmlQ==
+X-Gm-Gg: ASbGncsz/WKaIbByzDZCKFlbTGNGigD+t8FI8LSO17gt4eWpmT6OHGfdwgqAbXGBcWY
+	5ztkmVcre2jOdFyYKRpva6rhdJPY2BHJMRzPkCMT5nmnCSdsRCAh9jLnwmdLfUCy+bcfktQS7/c
+	14CdtMn3RO55RlZgreApqLIZ5bn4qV6jyT2fgz+4TOEODkVlARr9nbWensf9u8HSzcHTImQPcpc
+	4U/h8kHMIOTLcFbIxLFzYuC6gMFQogdz6m2+E/1tPWwVrZob6B9MlMGOvRsHJFiFDWKEItlthtr
+	7zidrYyXUOBrTlQz5XoKYlsb7O96p9XBFDGO98IY8Z1BIS88i1QYhOAjud0i8Mn6p4qqO50lpNP
+	4+c9vmIz7+oWWvkhs8fa519mDvlKc2EIWzhPFE/YlTQjEHRb0rgZMcca4btswygnuqMewk9ImTy
+	7FKN+3qsqv6yL+Zm/099fkc/Q8Ctyc0q/Mu0M9BNfqodVx9RfcmdC26aSsxvt5hhyLCAlS+MeSI
+	i2O9VhIEFEcdUs=
+X-Google-Smtp-Source: AGHT+IEUy/ejndszEfjZ3DhOlo0RzlR6VaDcA1yz8MEsmxWgkx1tI42kbduExxRtzT6d7bynvLJJAw==
+X-Received: by 2002:a17:902:f681:b0:290:d0fb:55c0 with SMTP id d9443c01a7336-290d0fb5971mr217778985ad.43.1761077831617;
+        Tue, 21 Oct 2025 13:17:11 -0700 (PDT)
+Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:33f3:d5f3:33d1:a1e0:46bc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fdd10sm117171835ad.83.2025.10.21.13.17.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 13:17:11 -0700 (PDT)
+From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+To: linux-kernel@vger.kernel.org
+Cc: awalls@md.metrocast.net,
+	mchehab@kernel.org,
+	linux-media@vger.kernel.org,
+	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Subject: [PATCH] kernel memory safety check in a block
+Date: Wed, 22 Oct 2025 01:47:04 +0530
+Message-ID: <20251021201704.178535-1-biancaa2210329@ssn.edu.in>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
 
-Ally Heev <allyheev@gmail.com> writes:
+Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+[PATCH] media: cx18: fix potential double free in cx18_stream_alloc
 
-> gdb and kgdb debugging documentation were moved to
-> Documentation/process/debugging/ as a part of
-> Commit d5af79c05e9382d38b8546dc5362381ce07ba3d1 ("Documentation: move
-> dev-tools debugging files to process/debugging/"), but translations/
-> were not updated. Fix them
->
-> ---
-> Link: https://lore.kernel.org/all/20241210000041.305477-1-rdunlap@infradead.org/
-> Signed-off-by: Ally Heev <allyheev@gmail.com>
-> ---
-> Changes in v2:
-> - fix kgdb doc path in zh_TW/admin-guide/README.rst
-> - Please drop v1 of the patch. It is malformed. Link to v1: https://lore.kernel.org/r/20251020-aheev-fix-docs-dev-tools-broken-links-v1-1-5d127efec0b2@gmail.com
+The function cx18_stream_alloc() may free buf->buf and buf multiple times
+if dma_mapping_error() occurs. This patch:
 
-Putting your signoff after the "---" line caused the tooling to not
-include it in the resulting commit.  I've fixed that up this time, and
-added a Fixes: tag as well.
+- Adds checks before kfree() to avoid double free
+- Sets pointers to NULL after free to make accidental double free less likely
+- Improves overall memory safety and robustness in error paths
+---
+ drivers/media/pci/cx18/cx18-queue.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Applied, thanks,
+diff --git a/drivers/media/pci/cx18/cx18-queue.c b/drivers/media/pci/cx18/cx18-queue.c
+index eeb5513b1d52..025ba4e6e4be 100644
+--- a/drivers/media/pci/cx18/cx18-queue.c
++++ b/drivers/media/pci/cx18/cx18-queue.c
+@@ -383,9 +383,16 @@ int cx18_stream_alloc(struct cx18_stream *s)
+ 						 buf->buf, s->buf_size,
+ 						 s->dma);
+ 		if (dma_mapping_error(&s->cx->pci_dev->dev, buf->dma_handle)) {
+-			kfree(buf->buf);
++			if (buf) {
++        		if (buf->buf){
++            	kfree(buf->buf);
++				buf->buf =NULL;
++				}
++        		kfree(buf);
++				buf=NULL;
++    		}
+ 			kfree(mdl);
+-			kfree(buf);
++			//makes accidental double free less possible
+ 			break;
+ 		}
+ 
+-- 
+2.43.0
 
-jon
+
+-- 
+::DISCLAIMER::
+
+---------------------------------------------------------------------
+The 
+contents of this e-mail and any attachment(s) are confidential and
+intended 
+for the named recipient(s) only. Views or opinions, if any,
+presented in 
+this email are solely those of the author and may not
+necessarily reflect 
+the views or opinions of SSN Institutions (SSN) or its
+affiliates. Any form 
+of reproduction, dissemination, copying, disclosure,
+modification, 
+distribution and / or publication of this message without the
+prior written 
+consent of authorized representative of SSN is strictly
+prohibited. If you 
+have received this email in error please delete it and
+notify the sender 
+immediately.
+---------------------------------------------------------------------
+Header of this mail should have a valid DKIM signature for the domain 
+ssn.edu.in <http://www.ssn.edu.in/>
 
