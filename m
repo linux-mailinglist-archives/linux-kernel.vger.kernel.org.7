@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-863408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A87BF7CF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:03:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A39BF7CE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EADB04F3C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75837488851
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5D034846C;
-	Tue, 21 Oct 2025 17:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="mwlRwnKK"
-Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70ADD34847C;
+	Tue, 21 Oct 2025 17:02:17 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB9A231836;
-	Tue, 21 Oct 2025 17:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066183; cv=pass; b=LsyElFyCjX8IxY+rDaLU0csGAm01pi2gxXTiRZR7TDcDO+MfqzrZs+Uvw4hVHkjMAXCH6WEgvbzw7A++6H0c7dnVqna4r+d1ms9FAUpjIjnBbwUp1D+vr3aUrZTI7kg/rY2x/fhqGKr5G1rJ8SUP6/4EwWu+rXcqATM2x+GZE7o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066183; c=relaxed/simple;
-	bh=8oaAN5ILJ5mMnbm08raXrGbj91i5i/wpOE8fO77jvJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyaOTw2LlQf9DlYAlLxbupFkasxVWRDm7uEp9WjOuOBAfLW7kTg2dVM5u787ZVbfe8Ys84aB0iC29ndWagundMikhO02MUxl08RPXNi0AZ3Z5HOwMFv+sH2H4hXsllA3OunicHUgA7uYggSA0R0Tl0Sy8C6Gy00b9SYN3u35vSY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=mwlRwnKK; arc=pass smtp.client-ip=143.89.41.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
-Received: from chcpu18 (191host009.mobilenet.cse.ust.hk [143.89.191.9])
-	(authenticated bits=0)
-	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59LH2V42779999
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 01:02:37 +0800
-ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1761066158; cv=none;
-	b=T/+4lEACQsGHm9udGaaM8aihrcqTVOZWFMG5F6JFTX6O29X4zQZJiKQrzOHaxLRU+TYJsGkQRHU3tjXryqiqgGc7KJk2elxnVrcyA/Mvoeibz+Pzj33l0AGvdmVwNOYeUAo+cwO8r6eqmBR6wuzCErqMQUWX8CAoTbSlOoiytpg=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
-	t=1761066158; c=relaxed/relaxed;
-	bh=FRVfiD6X5NXLrHjgmPEma2QRAwCTtDTlCJMspqk53gA=;
-	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=raDpEqVXBRFjJ+wUSmpp+P5YZX13JFY763EFGLojsAm+RjHi87pcnobAFrsD0vwZkLzLTY9hubuslyhvuNW5z01X8BeF0ajY4UpCh0pSIIVj2fi22fA913vR9n9oweBRKicWL+VqmC7A9gTlrtAnKEldHMr8xkv4tp+EMdPi+Do=
-ARC-Authentication-Results: i=1; cse.ust.hk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
-	s=cseusthk; t=1761066158;
-	bh=FRVfiD6X5NXLrHjgmPEma2QRAwCTtDTlCJMspqk53gA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mwlRwnKKPlBkjp3sWnD8EgVcbM/N++9LiW8IlROkRqjbjbzRlLTmg7lQJHzbrG2qW
-	 aIDSzRBg1+MM2UqOgD5pJyEa7zPj1JEgLuPN7A15TuOAsATKh1i4izXe+Qm8kqJVOe
-	 s2FCrgZbTxk+vgaMx9KSo5SixHbjlgQ3wOXoZzLY=
-Date: Tue, 21 Oct 2025 17:02:26 +0000
-From: Shuhao Fu <sfual@cse.ust.hk>
-To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/nouveau: Fix refcount leak in
- nouveau_connector_detect
-Message-ID: <aPe8optzxlZ8Rwf5@chcpu18>
-References: <aOPy5aCiRTqb9kjR@homelab>
- <aOXYV5pgilTvqMxR@osx.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F03A15D1;
+	Tue, 21 Oct 2025 17:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761066137; cv=none; b=P45Kc2BY4XI6Q7xwXCfHzkX98PNHQPILjR55EhmyO4drVMheOGWt0krnWKPiC7x/hA0Gu4GSfzSQWurdR3BOn/fL4yDmKGEXejFaZHm5nnELx3AOWhVtzSr+gNQjluirKns3PoLXOS0IwLGlpbkuBxOPq1GHHbm0+/Vj+TlnZBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761066137; c=relaxed/simple;
+	bh=KZq62huST1C1LOMNc9ke5GpImEBxzStX4a672owPssY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NmKp2T3/T03vX5MvpUGmVOLlfuqmFJj9BP5gAwPcct1aQjTD2fttWXZ+RpmUs8hu+XiPW0et6O9Miba7xhdOccqm/RMG4BmVUVtSMOuW0+MuhXbWWyU7vS00xzlY/aZiXMMpK++NFvm74TTmJio3v5gA/h644zrrxDedwSAnBjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 879D111A93A;
+	Tue, 21 Oct 2025 17:02:12 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 5B4AC20023;
+	Tue, 21 Oct 2025 17:02:10 +0000 (UTC)
+Date: Tue, 21 Oct 2025 13:02:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Crystal Wood <crwood@redhat.com>
+Cc: Tomas Glozar <tglozar@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, John Kacur
+ <jkacur@redhat.com>, Luis Goncalves	 <lgoncalv@redhat.com>, Costa Shulyupin
+ <costa.shul@redhat.com>, Wander Lairson Costa <wander@redhat.com>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH 3/4] rtla/timerlat: Add example for BPF action program
+Message-ID: <20251021130232.2ca75863@gandalf.local.home>
+In-Reply-To: <aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
+References: <20251017144650.663238-1-tglozar@redhat.com>
+	<20251017144650.663238-4-tglozar@redhat.com>
+	<c52490c9c2f682fd3c30d6f8a198be2ba408c4fe.camel@redhat.com>
+	<CAP4=nvT8VGpYrqQDztmB1WJPEb6JXvUuL201ksWq6eSV7kn-oA@mail.gmail.com>
+	<aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOXYV5pgilTvqMxR@osx.local>
-X-Env-From: sfual
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 5B4AC20023
+X-Stat-Signature: duma3o7b1mwz8tsmhakoe188h5je1qgx
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18Wx+hdjaU3Mf/09d4jAkqKraymKj658mQ=
+X-HE-Tag: 1761066130-190712
+X-HE-Meta: U2FsdGVkX1+10I92SV9iwd+/rtQagPAL8prZGBKFCrcQl/B9PZ3coPwgdbmhxR9FTY7VmYGbwt9nNvx+4KM5BAblX0asaKfUwzM7Td6rGj0dqqYoY/BUumMMefRKK2aFU8m9aXV7rq7kOb9mpkZCArCa/UpyQPu+/2xET/AaThCG9f8xQQbQ7ezhVsI1IsOTgRbX+m/2kSajqTBKx8QWNRS4YFxjBGgdaEKTgPucbU1wBZ4AjzLvdczlWQbglwxGSucUBvnjwAJqzd71k/y/kxF1ZTI73rD24/euo3EsQL6XDDYOIf74aESjVmn2uRl+QeE8lDm7+sVjUpf6/08dQUkcpXL2ja9R
 
-Hi, this is a friendly reminder of this patch. Please do let me know if
-it needs any rework.
+On Tue, 21 Oct 2025 10:58:06 -0500
+Crystal Wood <crwood@redhat.com> wrote:
 
-On Wed, Oct 08, 2025 at 11:20:15AM +0800, Shuhao Fu wrote:
-> A possible inconsistent refcount update has been identified in function
-> `nouveau_connector_detect`, which may cause a resource leak.
+> Huh, so I guess BPF is an exception to the "no generic printk to the
+> global trace instance except for debugging that generates a big boot
+> splat" rule?
+
+bpf_printk() is an event and not the generic trace_printk() that would
+cause that splat. You can turn it off.
+
 > 
-> After calling `pm_runtime_get_*(dev->dev)`, the usage counter of `dev->dev`
-> gets increased. In case function `nvif_outp_edid_get` returns negative,
-> function `nouveau_connector_detect` returns without decreasing the usage
-> counter of `dev->dev`, causing a refcount inconsistency.
-> 
-> Closes: https://gitlab.freedesktop.org/drm/nouveau/-/issues/450
-> Fixes: 0cd7e0718139 ("drm/nouveau/disp: add output method to fetch edid")
-> Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
-> Cc: stable@vger.kernel.org
-> 
-> Change in v3:
-> - Cc stable
-> Change in v2:
-> - Add "Fixes" and "Cc" tags
-> ---
->  drivers/gpu/drm/nouveau/nouveau_connector.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> index 63621b151..45caccade 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> @@ -600,8 +600,10 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
->                                 new_edid = drm_get_edid(connector, nv_encoder->i2c);
->                 } else {
->                         ret = nvif_outp_edid_get(&nv_encoder->outp, (u8 **)&new_edid);
-> -                       if (ret < 0)
-> -                               return connector_status_disconnected;
-> +                       if (ret < 0) {
-> +                               conn_status = connector_status_disconnected;
-> +                               goto out;
-> +                       }
->                 }
-> 
->                 nouveau_connector_set_edid(nv_connector, new_edid);
-> --
-> 2.39.5
-> 
+> Speaking of which, why doesn't trace_osnoise.c call
+> trace_array_init_printk() given that it uses trace_array_printk_buf()?
+
+Note, trace_array_printk() (which trace_array_init_printk()) only works for
+instances and does not print into the top level trace buffer.
+
+-- Steve
 
