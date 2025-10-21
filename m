@@ -1,132 +1,163 @@
-Return-Path: <linux-kernel+bounces-863219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05535BF7485
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:17:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8987BBF7475
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22EC61883CD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:14:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A913506177
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21669342CBA;
-	Tue, 21 Oct 2025 15:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235A13431E5;
+	Tue, 21 Oct 2025 15:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J+PfDRZf"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nI7b+1ka"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3627B4AEE2
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72385224B04;
+	Tue, 21 Oct 2025 15:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761059614; cv=none; b=haoPuT80nj6ENE23BeQXJFQsca1ki4D3wtjmWVZwwR/lE2JXGK7UL9Tx8q3zaHdtvF3aFmwlGc1+JVnhNY/Q9cX0rVJXGwHG1X2a91SyhMxCziaFNOzPtsY2ZGtRXAh7VDiYD/Py/8r60Z8fpqCBD7Li5zF7p0X5vce3eSHC1b8=
+	t=1761059707; cv=none; b=W1Cn2xFsJcbtBLkJSBFmtkwdW/d+jg8UYc2B4QTelKbWDpHExfCXxw1+qqrIolsHn/WL72Ss2o58Vtn05yyk5pBTJ8XHMOrMT3nTNmk23KYcZdjLXxgKt90XOobR781dpXYWrAcauH/WzYrLHO7XhoCvyIUuxXOJ0phma31pca4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761059614; c=relaxed/simple;
-	bh=57ydvuAT7vxuO11JefcYN70B9F3zvGHN9xiN6uZbz34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J+i5elvme/WCsURlqQlftygqB5ms4EHQpwLlxyLIFkS9mR5moETj1Ms83a/o80/cXOw//oPZCLb+N3aPV3VuiVpW5XGS2HtYqE+EE4KUxMFP10zOA6CikFEL7nviPETb/onbL/5q01kV7a3eb1ycnNlQ8QdTuOJ798Pb6scgqsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J+PfDRZf; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-29094f23eedso7776355ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:13:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761059612; x=1761664412; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=57ydvuAT7vxuO11JefcYN70B9F3zvGHN9xiN6uZbz34=;
-        b=J+PfDRZfyQrl9gN0jqZT86cvoa/KD8k0VQe+czqxptT+zH0wMyVL0xHMmHWx8jZXho
-         bX1YEKOP75N1tK99gm50cySJHAgL4hrEqoemf1YlwSfVikmn6juCxcAjTc3QRtMBTPHi
-         p8XkITS41sQi8/3CwnrU4myS3XlCXrM/6P+yxYisgAav3e/wHkuqQ6gvGpkE9calstfl
-         Sx9qSFR7/U/xg2Qx7XY8THl2MIGigW/joLCs9owXaACk735wS5gvcjrIXIqjj64zloyR
-         8KsjhxPG4+dTpSFUaSKJm3s+8JapdKUFl/MxH8hv5QXitFMCVRRntYF3grIvE7i9nktl
-         Z+WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761059612; x=1761664412;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=57ydvuAT7vxuO11JefcYN70B9F3zvGHN9xiN6uZbz34=;
-        b=F3lkFKma8o5BklOfSbwme6E22n38KteKFuzkbmza1XB2GlbOUFRMgh5/BtEU4GdJfw
-         8tLlvwoj8T+Am34T2nNMpQCEWtZtICtHq7ggsctDRMLWWDdxSBkre1oM2PCCHgcq5LLp
-         z234uVZ6IaRcFVXfXQqIiXNzjRDrOcQ/UXVAHdZLGYKHZY8FFq5xJUR+rJ72rQm9kAgO
-         cMZBaYXWNmfbM0KSJXAA1JLEYfAI5K5qGYi9eGgwztgIfytsHL8tEitUlcKTnHNC4Duw
-         RhFeANY0kFYyvvy1BsW07bQ7qmxz9UCRGnASbz8Ghol9xKR7zv/oaZuIg2Hy64NNiZUN
-         CHeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBNKzD7lI8aqBZLgLjIXnHi240MfPH0w/g5aEgse6V0wsDUjWBRP/KmtP43HD90pKjVfmt126N50MLddU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsDiogfFB+bKSw1ZskPl54rYd5dEFkepLHzjUcarf+nsfgQc0m
-	qSrEA/ouDkjUYTNyZH2bj5WnIj+JlEX31iBttLxgI3u4enCwI+0Thzmx/pk8X+cWP+H2KqMWTtv
-	ukfZ/OyYHBvswilNwniEeSkulf7gjrwU=
-X-Gm-Gg: ASbGnctO4828XjQipFT1BOrGasNtO1u4GWwd94nX/6iSKkYXsvkzX2Q6IPO5aLpO1x0
-	n1coqpAwZjrEPxJ1VmDNrPrPrjXxvh4BPCL8hXHjUseyHBc+dbLniaZLxwfqJYlw+2waYFRdYsZ
-	E3vw1hyZWeG2V2hYTAZ4ZCs+oL97ALX4IxZ4DmYU3qcBUo8Lz5Oiv7zE2kTvrFEp37ml6d8uB1X
-	50h1A7tBRwPmF0UHt0aHsSu86p3cP8MDd8Jmy4jaO8h9YrecRxOHjpdWP9B66UJSzJ5/oBeGCPb
-	U8t8eioc/wfwxRRDZIAkeMow0kL5rSR/awzG7nzyc44/1EcHARUJL4WGqlsWt5Ly7ujLDgo+/JJ
-	f+SUQaeZ/er9A0A==
-X-Google-Smtp-Source: AGHT+IGgqiWCyvNeB4hPlMOrHURKLRGVAx/W44tWY3fpOgVc0+3DFhE9hXxgb3jRu16vu0k1lq4PNekfLfhW94/L/b0=
-X-Received: by 2002:a17:903:1a0b:b0:27e:eb9b:b80f with SMTP id
- d9443c01a7336-292d3e50f14mr22906285ad.2.1761059612469; Tue, 21 Oct 2025
- 08:13:32 -0700 (PDT)
+	s=arc-20240116; t=1761059707; c=relaxed/simple;
+	bh=FkggGhjBM3Wf31NTL63CL0AZAUsTipg1tYg1f7Y++9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xy/WoMSS47+bnRsoTOK8Mg82NzRNfC+r/0DlT8lbvllTQ2NRGNnMQXYqBEbMiFIlsd3zIh4z1bKI9S9B4UBt3OVmz1ybxmVZ68wbWE1e57yTR2C/tN8pdf2afI2xNBN3pOTISfRNCtvC+HGasSW/ZFfW26JALH+Tc4hEZuhuvjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nI7b+1ka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FE6AC4CEF1;
+	Tue, 21 Oct 2025 15:15:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761059706;
+	bh=FkggGhjBM3Wf31NTL63CL0AZAUsTipg1tYg1f7Y++9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nI7b+1ka/rCb8YKV80aMeD9WzjHSLFqEhsVgQjCmUna9sDkzQTcMmqG5yLUgcgNYO
+	 p7h4bg6abmWe4uRtIA2I36AUoU62VHX2U9S+oQgP1gDKiVwhRbSupYxXvU4XkSepRi
+	 EdY3LsNevqcvf8txb0zcrp1WzMc6BSiQFQpBWSq10qDy5qQhcPurqzMqMbTjP4ZEj3
+	 ChKnkHREXAwOJMKydyNmhT27xiuOwGPjXh/GtUPBD68FPGkKjhoEbrNKrjJjlHs3sz
+	 opHwMpEvw7w1hlfu4verVIstd/EO5xtThUXz4B5r+jCJGnuFDkBe9IVfhUP1N+Hz6l
+	 P1cD21NGxW5Ug==
+Date: Tue, 21 Oct 2025 08:14:55 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+Subject: Re: [PATCH] lib/crypto: poly1305: fix uninit-value in poly1305_blocks
+Message-ID: <20251021151455.GB1644@quark>
+References: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
+ <20251021061511.GA2385@sol>
+ <e1b1df10-ce40-4135-93fc-69a1c6d9f32f@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021071146.2357069-1-fujita.tomonori@gmail.com>
- <20251021071146.2357069-2-fujita.tomonori@gmail.com> <DDNZL452A8JR.K1AA7LHZEXW8@kernel.org>
- <CANiq72m+uAWyRf6y6vAKjCQnwsMqVVGQx3VrHW1yAp4a-5eWew@mail.gmail.com>
- <54328318-c235-413a-a069-5ea93f1dcb2b@kernel.org> <CANiq72=eOYk=WM5xfMkHj-REYjedYiYNakVvfto-AUL5E0O8qA@mail.gmail.com>
- <DDO3G26SIZTK.1KV7Q0PQXHWTA@kernel.org>
-In-Reply-To: <DDO3G26SIZTK.1KV7Q0PQXHWTA@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 21 Oct 2025 17:13:20 +0200
-X-Gm-Features: AS18NWCXx7ypRBqMiH9LNo1SlX1iEiuxCpYwgdy8Fb6LtbgnqAlrqPRp8MG7hQ0
-Message-ID: <CANiq72nUiizxo3YFgxUZ1jiczRNbY2ATao2YUBiCEC7k5hbv6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: add udelay() function
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, aliceryhl@google.com, 
-	daniel.almeida@collabora.com, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
-	ojeda@kernel.org, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, frederic@kernel.org, gary@garyguo.net, 
-	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
-	tglx@linutronix.de, tmgross@umich.edu, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e1b1df10-ce40-4135-93fc-69a1c6d9f32f@kylinos.cn>
 
-On Tue, Oct 21, 2025 at 5:09=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> I'm not even sure we want that necessarily. I'd probably go for just docu=
-menting
-> that the value will be clamped to 0 <=3D value <=3D MAX_UDELAY_MS plus an=
- internal
-> pr_debug!().
->
-> This way the function can also explicitly used in cases where the driver =
-isn't
-> sure whether the value is in range and use it without duplicating the cla=
-mp
-> logic that the function already does internally anyways.
+On Tue, Oct 21, 2025 at 04:40:47PM +0800, Pei Xiao wrote:
+> 
+> 在 2025/10/21 14:15, Eric Biggers 写道:
+> > On Tue, Oct 21, 2025 at 02:01:20PM +0800, Pei Xiao wrote:
+> >> syzbot reports uninit-value in poly1305_blocks:
+> >>
+> >> BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+> >>  poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+> >>  poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
+> >>  poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
+> >>  poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
+> >>  chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
+> >>  chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
+> >>  crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
+> >>  tls_do_encryption net/tls/tls_sw.c:582 [inline]
+> >>  tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
+> >>  bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
+> >>  tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
+> >>  tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
+> >>  inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
+> >>  sock_sendmsg_nosec net/socket.c:727 [inline]
+> >>  __sock_sendmsg+0x145/0x3d0 net/socket.c:742
+> >>  sock_write_iter+0x3a6/0x420 net/socket.c:1195
+> >>  do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
+> >>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+> >>  do_writev+0x1b5/0x580 fs/read_write.c:1103
+> >>  __do_sys_writev fs/read_write.c:1171 [inline]
+> >>  __se_sys_writev fs/read_write.c:1168 [inline]
+> >>  __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
+> >>  x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
+> >>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+> >>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >>
+> >> in poly1305_blocks, ctx->is_base2_26 is uninit-value, ctx init in：
+> >> poly1305_init ->
+> >>      poly1305_block_init
+> >>
+> >> so add memset in poly1305_block_init, then use poly1305_init_x86_64 to init
+> >> by asm.
+> >>
+> >> Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+> >> Tested-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+> >> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> >> ---
+> 
+> hi Eric,
+> 
+>     thanks for your responce.
+> 
+> > Thanks for the bug report.  It will first need to be confirmed that this
+> > is actually an issue in lib/crypto/ rather than the calling code, and if
+> > so, why poly1305_kunit doesn't catch it (even when run on an KMSAN
+> > enabled kernel, which I've done).  And which commit it fixes.  I'm
+> > guessing it's most likely a KMSAN false positive that was exposed by
+> > commit b646b782e522 dropping the dependency of the
+> > architecture-optimized Poly1305 code on !KMSAN.  KMSAN doesn't know
+> > about memory initialization done by assembly code.  But I'll double
+> > check this, if you don't get around to it first.
+> >
+> > The hash algorithms generally don't need a dependency on !KMSAN, as
+> > their assembly code doesn't initialize memory.  It looks like the
+> > Poly1305 code is an exception to that though, and I missed it.  If so,
+> > the proper solution (IMO) is to use kmsan_unpoison_memory() right after
+> > the assembly function that initializes the memory is called.  See
+> > sha256_finup_2x_arch() for an example of that.  Note that more than one
+> > architecture may need this. 
+> 
+> --- a/lib/crypto/poly1305.c
+> +++ b/lib/crypto/poly1305.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/module.h>
+>  #include <linux/string.h>
+>  #include <linux/unaligned.h>
+> +#include <linux/kmsan.h>
+> 
+>  #ifdef CONFIG_CRYPTO_LIB_POLY1305_ARCH
+>  #include "poly1305.h" /* $(SRCARCH)/poly1305.h */
+> @@ -31,6 +32,7 @@ void poly1305_init(struct poly1305_desc_ctx *desc,
+>         desc->s[3] = get_unaligned_le32(key + 28);
+>         desc->buflen = 0;
+>         poly1305_block_init(&desc->state, key);
+> +       kmsan_unpoison_memory(desc, sizeof(struct poly1305_desc_ctx));
+>  }
+>  EXPORT_SYMBOL(poly1305_init)
+> 
+> how about this ? 
+> 
 
-That would mean we cannot catch bugs in the common case where I would
-expect callers to know what the delay range is.
+It should only be after the specific assembly functions that need it.
+I haven't had a chance to look into this since your first email, but
+again, I would like to confirm that (a) this is actually the issue, (b)
+before we suppress the warnings, that all the assembly functions
+actually initialize all the memory they're supposed to, and (c) which
+places in the Poly1305 code actually need this.  If (c) ends up being
+too many places (I think it might), we probably should just make
+CRYPTO_LIB_POLY1305_ARCH depend on !KMSAN again.
 
-i.e. if they aren't sure what the value is, then I would prefer they
-clamp it explicitly on the callee side (or we provide an explicitly
-clamped version if it is a common case, but it seems to me runtime
-values are already the minority).
-
-i.e. EB is useful because it allows us to catch bugs. If we remove the
-EB, then it means things are more ambiguous and thus bugs cannot be
-easily be caught anymore because one can actually rely on the
-behavior.
-
-Cheers,
-Miguel
+- Eric
 
