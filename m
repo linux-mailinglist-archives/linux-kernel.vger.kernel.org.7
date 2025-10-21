@@ -1,108 +1,143 @@
-Return-Path: <linux-kernel+bounces-862319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97BEBF4FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:35:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCEB3BF51C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89BBD468309
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:35:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 737F2481FBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB23280A58;
-	Tue, 21 Oct 2025 07:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="eNo5ym2N"
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4CA29BDA4;
+	Tue, 21 Oct 2025 07:49:54 +0000 (UTC)
+Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E85227FD7D;
-	Tue, 21 Oct 2025 07:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441D32989BC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032091; cv=none; b=C1xfr64Qg+sHCJxVSnuvgwbrXwomQDYM5ri1sEWZlXb+rwDOGFvMcH5Nwa5+zwASE1s0qRXGR9971g35gkQ6U3AnJXcbUm9Az8tdH/uxtMNlfV3KD2fvCsa8lSaAMCdzQ3T303V9swZXB1yeDuk/CPfh32OfxdHaOy1Zyr7j5Js=
+	t=1761032994; cv=none; b=tmOEkQc4AGERtgpQ/w2aC5YDSFF26+bwTK39kpAyrE5nu3bLXTM5ZxDMnpJ08uKfO0FACyeDSV1bMytLH4lEbv02sGVCh/iwjXyiXF1Szs5xQdnsJnZe3jnVrHiSK5uqubBTiratb7MqPlb8KonaHViCkWZz3X4EpnF/gQ57VA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032091; c=relaxed/simple;
-	bh=hC5tvKb13w9Pzr2Uh3ekORCYcLYXBgnL/lruhyAesrw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I6/gcu8eCgeywzOD17SQs3CXoHtJ84JiNlmW7DcqJdIMdC+L/r0nrFiV4p+IKidMX9vfh7MOkiiTc9jrsFTPTemZ1ty03vD+0fysbMxMSZK5Ir3jKoHjF+JIjLmoI3+CxDpOkK06xvgn9h/KLAhhDZeKlT5eNdvcp+zAgwYWl2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=eNo5ym2N; arc=none smtp.client-ip=113.46.200.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=6esKAayHAT9WjDVN0yl0ek5qzPVL6tQl6OyfEkc/dgw=;
-	b=eNo5ym2N2Ijmr8f3YXwIH7T5aqaFjTEHnzqYGxktYwSOFsgEOszwQfIhqFYzQ4vsQNeXuaVy0
-	+qupDOAukPNwMmrXtsdbtkDHFcTca7WDz08G39a0rdiO5cES7ao0kZBNPC3ZcJY1AgKqRAwGf21
-	TdSoYCqXEKHBYHENRTMnR+A=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4crPF42sCrz1K96c;
-	Tue, 21 Oct 2025 15:34:16 +0800 (CST)
-Received: from kwepemj100018.china.huawei.com (unknown [7.202.194.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9A0C51A016C;
-	Tue, 21 Oct 2025 15:34:39 +0800 (CST)
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemj100018.china.huawei.com (7.202.194.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 21 Oct 2025 15:34:38 +0800
-From: Xingui Yang <yangxingui@huawei.com>
-To: <john.g.garry@oracle.com>, <yanaijie@huawei.com>, <jejb@linux.ibm.com>,
-	<martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <liyihang9@h-partners.com>, <yangxingui@huawei.com>,
-	<liuyonglong@huawei.com>, <kangfenglong@huawei.com>
-Subject: [PATCH] Revert "scsi: libsas: Fix exp-attached device scan after probe failure scanned in again after probe failed"
-Date: Tue, 21 Oct 2025 15:34:38 +0800
-Message-ID: <20251021073438.3441934-1-yangxingui@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1761032994; c=relaxed/simple;
+	bh=i9umFpVj3RMNqoGjHUhbGQ/qX5kyHsqAU+M5PTEXSK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UiwN8eNbW9SgXyQEBtq+BS91S+QeFLjLtpuuSq/txwdYRtJojAxKmj1bhotoYoT6RmwmDx9k58prpPV6pKHGF+3pBF1ymnwNgL1xfxojg61qZoT1Xu16DgxzYyQ7Pm26WsxzbKxdry+CGnHLSLmEm6ON1KvqOQNbp2tUWpQOY58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.103 with ESMTP; 21 Oct 2025 16:34:46 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Tue, 21 Oct 2025 16:34:46 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Chris Li <chrisl@kernel.org>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during
+ allocation
+Message-ID: <aPc3lmbJEVTXoV6h@yjaykim-PowerEdge-T330>
+References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
+ <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
+ <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
+ <CAMgjq7BD6SOgALj2jv2SVtNjWLJpT=1UhuaL=qxvDCMKUy68Hw@mail.gmail.com>
+ <CACePvbVEGgtTqkMPqsf69C7qUD52yVcC56POed8Pdt674Pn68A@mail.gmail.com>
+ <CACePvbWu0P+8Sv-sS7AnG+ESdnJdnFE_teC9NF9Rkn1HegQ9_Q@mail.gmail.com>
+ <CAMgjq7BJcxGzrnr+EeO6_ZC7dAn0_WmWn8DX8gSPfyYiY4S3Ug@mail.gmail.com>
+ <CAMgjq7CsYhEjvtN85XGkrONYAJxve7gG593TFeOGV-oax++kWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemj100018.china.huawei.com (7.202.194.12)
+In-Reply-To: <CAMgjq7CsYhEjvtN85XGkrONYAJxve7gG593TFeOGV-oax++kWA@mail.gmail.com>
 
-This reverts commit ab2068a6fb84751836a84c26ca72b3beb349619d.
+> > Thanks, I was composing a reply on this and just saw your new comment.
+> > I agree with this.
+> 
+> Hmm, it turns out modifying V1 to handle non-order 0 allocation
+> failure also has some minor issues. Every mTHP SWAP allocation failure
+> will have a slight higher overhead due to the discard check. V1 is
+> fine since it only checks discard for order 0, and order 0 alloc
+> failure is uncommon and usually means OOM already.
 
-As the disk may fall into an abnormal loop of probe when it fails to probe
-due to physical reasons and cannot be repaired.
+Looking at the original proposed patch.
 
-Signed-off-by: Xingui Yang <yangxingui@huawei.com>
----
- drivers/scsi/libsas/sas_internal.h | 14 --------------
- 1 file changed, 14 deletions(-)
+ +	spin_lock(&swap_avail_lock);
+ +	plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail_lists[nid]) {
+ +		spin_unlock(&swap_avail_lock);
+ +		if (get_swap_device_info(si)) {
+ +			if (si->flags & SWP_PAGE_DISCARD)
+ +				ret = swap_do_scheduled_discard(si);
+ +			put_swap_device(si);
+ +		}
+ +		if (ret)
+ +			break;
 
-diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
-index 03d6ec1eb970..85948963fb97 100644
---- a/drivers/scsi/libsas/sas_internal.h
-+++ b/drivers/scsi/libsas/sas_internal.h
-@@ -145,20 +145,6 @@ static inline void sas_fail_probe(struct domain_device *dev, const char *func, i
- 		func, dev->parent ? "exp-attached" :
- 		"direct-attached",
- 		SAS_ADDR(dev->sas_addr), err);
--
--	/*
--	 * If the device probe failed, the expander phy attached address
--	 * needs to be reset so that the phy will not be treated as flutter
--	 * in the next revalidation
--	 */
--	if (dev->parent && !dev_is_expander(dev->dev_type)) {
--		struct sas_phy *phy = dev->phy;
--		struct domain_device *parent = dev->parent;
--		struct ex_phy *ex_phy = &parent->ex_dev.ex_phy[phy->number];
--
--		memset(ex_phy->attached_sas_addr, 0, SAS_ADDR_SIZE);
--	}
--
- 	sas_unregister_dev(dev->port, dev);
- }
- 
--- 
-2.33.0
+if ret is true and we break, 
+wouldn’t that cause spin_unlock to run without the lock being held?
 
+ +		spin_lock(&swap_avail_lock);
+ +	}
+ +	spin_unlock(&swap_avail_lock); <- unlocked without lock grab.
+ +
+ +	return ret;
+ +}
+
+> I'm not saying V1 is the final solution, but I think maybe we can just
+> keep V1 as it is? That's easier for a stable backport too, and this is
+> doing far better than what it was like. The sync discard was added in
+> 2013 and the later added percpu cluster at the same year never treated
+> it carefully. And the discard during allocation after recent swap
+> allocator rework has been kind of broken for a while.
+> 
+> To optimize it further in a clean way, we have to reverse the
+> allocator's handling order of the plist and fast / slow path. Current
+> order is local_lock -> fast -> slow (plist).
+> We can walk the plist first, then do the fast / slow path: plist (or
+> maybe something faster than plist but handles the priority) ->
+> local_lock -> fast -> slow (bonus: this is more friendly to RT kernels
+
+I think the idea is good, but when approaching it that way, 
+I am curious about rotation handling.
+
+In the current code, rotation is always done when traversing the plist in the slow path.
+If we traverse the plist first, how should rotation be handled?
+
+1. Do a naive rotation at plist traversal time. 
+(But then fast path might allocate from an si we didn’t select.)
+2. Rotate when allocating in the slow path. 
+(But between releasing swap_avail_lock, we might access an si that wasn’t rotated.)
+
+Both cases could break rotation behavior — what do you think?
+
+> too I think). That way we don't need to rewalk the plist after
+> releasing the local_lock and save a lot of trouble. I remember I
+> discussed with Youngjun on this sometime ago in the mail list, I know
+
+Recapping your earlier idea: cache only the swap device per cgroup in percpu, 
+and keep the cluster inside the swap device.
+Applied to swap tiers, cache only the percpu si per tier, 
+and keep the cluster in the swap device.
+This seems to fit well with your previous suggestion.
+
+However, since we shifted from per-cgroup swap priority to swap tier, 
+and will re-submit RFC for swap tier, we’ll need to revisit the discussion.
+
+Youngjun Park
 
