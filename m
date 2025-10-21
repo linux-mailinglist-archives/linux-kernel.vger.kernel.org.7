@@ -1,215 +1,107 @@
-Return-Path: <linux-kernel+bounces-862885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49FCCBF6754
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:31:28 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AD3BF6736
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952A83B19B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:28:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 93E0834F9C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE05B328629;
-	Tue, 21 Oct 2025 12:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423452441A6;
+	Tue, 21 Oct 2025 12:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="NkdawpGa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vfABFsS/"
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D6NyzFZq"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3147535502D;
-	Tue, 21 Oct 2025 12:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697B235502D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049711; cv=none; b=iL6F84160IT1F+ckFW6HwJrXmPOE9cr67eBl3dfzmAgg0FDqZR9zXa0EiHxXU5dUMsws1iB7lCIupDyvKiKSLaa65R24RcmNv9bS/jY/XZOtzYLnA8MTSDmLCfb/vQnA4Lpgh7sFysVumRPQwZCfgA9H1zuy9YXgCNl1q5yQccY=
+	t=1761049769; cv=none; b=XCcUCYLW53s+r/Z0udDfFui4jzCPlxjnF6w//u0M/RP3JbMphyIbE1/plbA/Cjb5ZH8gpWNnwzNE+Mxhkd7dTP1QOJM0s9f7p3x5LEQzDMkhgzli56sB77RiX9Dm7TBNn2GgDjKkia7oic6Iyi1DBOCdrV6zINDTtaiyIZQjZL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049711; c=relaxed/simple;
-	bh=Hg+5HNqCADCJdoRHEh2O2qpjtgGgYV5VpFfgAZ3FcEM=;
+	s=arc-20240116; t=1761049769; c=relaxed/simple;
+	bh=4FxX4SOoXyMpZHaNWphk7xsS/z0dtEhSqeW2fEIgxno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvtwstZgOl+5kEIr/kWI+DpF9VgRHoqbMRO7jYBeW/f51NGGjyQaTc3xJdAFGIwfl8FGFVBf5sS+7IZ4eRJfrw0XjeQL3qyD2RVbPGJviuxucWmxB0/gqsbNmCsMediBC+LYO/sR0moyeE3UTHZFuhenhcqTBNlf2ivFL2LyXAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=NkdawpGa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vfABFsS/; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.stl.internal (Postfix) with ESMTP id 3A3D71300A45;
-	Tue, 21 Oct 2025 08:28:28 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 21 Oct 2025 08:28:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761049708; x=
-	1761056908; bh=VwJV6k7KAy5PyI+RrheQP6UoFSX5NksO95Gumi0SSf4=; b=N
-	kdawpGarW9mlGtlWvGFIharRVGnVhfcQVPTqQN6DxNcGoah6JyH45a5+dBj2Cozm
-	dX3EUU7ZQ3qgzNtH94TnFQxGavpK1YxP1T7UsS3ffMfZplynyGEkT0LGpFmIlvQ+
-	hyZG1xlkDru8fGi/YgsAbbHFuWwxAcAqKCZcLbKLwE+y/PQtmbpFSI0seGqiabY4
-	RMYp63IfYvGyoSF8B1dR2vDm6JgJrdB5B0iW2erf0bs7anLmO70l9BplG2QJGNnj
-	Zq0whnamzEVGgfQJjlXLYowOwWHBgRXjSrBeuhWNU/z5CaJ7AJyX+lMVA9o/BXXd
-	vYtGKtuJq6nUg1DNgeYyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761049708; x=1761056908; bh=VwJV6k7KAy5PyI+RrheQP6UoFSX5NksO95G
-	umi0SSf4=; b=vfABFsS/HHAWcMErFRnvQF5oA5FLojAadKCcRRDx3VQPw1YdmAW
-	TXhvAVC+NvRFevUPeV0aPnW65ohgmqaBjkO3BCfqlJYytS4rlSTKRx1zisjU6q9d
-	X5bINWQUDvDugE/emiCU1+kHd40jMReBb6cgXOjg0AVzsRcYYA/pc/sRysWuTk0b
-	c5NXvLN+lNU6GAhc8vrpcwq2b6VO5U8sHhxkammKbHWkoQB0ZfIZLm1OLyTt+vfl
-	QuJsQl6t+Uts71FLaIJ8We5R/dV7jWdcTR5DTuLFpcsTnGBhrmVX956Iq/x4AY7V
-	uVl0e1KW1QApkbCahMVEuuoQXAue14mvuhA==
-X-ME-Sender: <xms:a3z3aGN0srF7acnD0h97O8_3FXDVwcuaDB_cUCLUqnW69AHOfhoqcw>
-    <xme:a3z3aBIsdQVGY50Ppx6nKnLD-8d7p1zEQiWpN35nRXsClcu8CRhkX6X8MJio3yn0h
-    t_M6rQhj3ZQiBbnHHJOmeQFkLGaFG2q_kSo-G1iPRv_SqxjGp__m2ta>
-X-ME-Received: <xmr:a3z3aEZW5Nla8tBAIu5ZyDfXtmBmVTJAwlCeZz4sB74fmbfmbeHk5LzigdbItg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedtieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
-    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:a3z3aCQCzxYNVjBVDx8Z2rH2suuu5qxBLjs7h9T3g7fBT3ZCXKLQbw>
-    <xmx:a3z3aPzgs8QGIGF0VdO9pJZKtSIr4lv-BNedlzmZF03OYzzIMbbmRA>
-    <xmx:a3z3aAcJxn58t_mVWYCY-9Y23U1h-AT52j7CEPF1gTJ7sE8Re7Gqpg>
-    <xmx:a3z3aNlUz-dat0UHVi5BADrS-vP-M9UjR9-NiCS28tiCkwpEBsQ9Nw>
-    <xmx:bHz3aImgp9TZtPbdaxirqYGnhMuVOwvujC0eW9ojJNvpy3H2VX6x218o>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 08:28:26 -0400 (EDT)
-Date: Tue, 21 Oct 2025 13:28:24 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm/memory: Do not populate page table entries beyond
- i_size.
-Message-ID: <esiue5bbvksdlopvt4wvzs24cvhh45xtf2jfyhqxi44w2r5f65@xw2ufks6rjdt>
-References: <20251021063509.1101728-1-kirill@shutemov.name>
- <8379d8cb-aec5-44f7-a5f0-2356b8aaaf00@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6qZOgOv9fICoF62I4h3vlD6jcM/thSEoKG0aH0GqsHx+DPHTaveTZZoxXr/8gI4tzxIEB0PDEuci0K+xfLSqsh9hhrk9pWhZmyZeVBTMPIWAbUDt2Zi5A28XfPD4PoNSI0xYqegVclgWiyuYYsZzdKJkAEuTZufIYDQgjpOHwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D6NyzFZq; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 68DB340E019B;
+	Tue, 21 Oct 2025 12:29:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Q28TeI9IJRJq; Tue, 21 Oct 2025 12:29:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761049761; bh=du3nF2z7pYFyug9u/5SUIAXbdnhDxdtTScUH/d8650A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D6NyzFZqjI4vKijE5gfS3Eg8KVm0c3VSIpQ1eJQ0JYBbX3XGFmarjMF/nRav5lnEx
+	 5pfh7y36rotINHdDgU9qu6m+I/92oXIlPyfrwQSNKd8a8/PQ+W2DeGd1xPGf8CqVVJ
+	 KBIKXMA+EnY3YUDuVhpqgtbypPMp2avLbeq0b1blgSCKAs5iklMe4zORmKXRQiiJKI
+	 yL+IoDH8pknDV0wVZYMktDZ2J7IVSysg0H2tT6C+qedS77tu6IwMVj+bHQSk1zg2CF
+	 P3vsQ9JvTwkZjAhVKF9zBljsTtRRX3vuGxJg0Ns6T9AnQ1w7Wd8E5hwet+n49i03Dz
+	 +5OvFHfogy8FtcPVJNg7FhVStvX4tSTOOAdQOeoo4K2vpmAMF6Vem/CgxipaWSCpk9
+	 /VPBP9g998BU5tgXJkstk67A6gTsAbALo483GEfb21k/rpksLwkRfS/Qx0Ct4UJPHx
+	 mMMbVOYwm3xEQ6QU1VPJXP8tLrr8RSdwtsk6THA9Tiqv047ama/3T/kwLMHIniUh4Z
+	 7W6PSmOtKly6vpEYPFFJ73X42tMrNmRyvSNYY0+7oKWN0Yk8RKe92z++AEtkZ9XXVX
+	 9TrbHUJn7Wm+jTU4ClfuH2xM6Zdo70/+avZfwdgoWgrYMm8zQpOM8JCJmvIhGHY67x
+	 ER0yBNzCKOElsGALCXrPKLM4=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D815640E016E;
+	Tue, 21 Oct 2025 12:29:15 +0000 (UTC)
+Date: Tue, 21 Oct 2025 14:29:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Filip Barczyk <filip.barczyk@pico.net>
+Subject: Re: [PATCH 1/2] x86/amd_node: Fix AMD root device caching
+Message-ID: <20251021122909.GKaPd8ldoGqAf5JPfQ@fat_crate.local>
+References: <20250930-fix-amd-root-v1-0-ce28731c349f@amd.com>
+ <20250930-fix-amd-root-v1-1-ce28731c349f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8379d8cb-aec5-44f7-a5f0-2356b8aaaf00@redhat.com>
+In-Reply-To: <20250930-fix-amd-root-v1-1-ce28731c349f@amd.com>
 
-On Tue, Oct 21, 2025 at 02:08:44PM +0200, David Hildenbrand wrote:
-> On 21.10.25 08:35, Kiryl Shutsemau wrote:
-> > From: Kiryl Shutsemau <kas@kernel.org>
+On Tue, Sep 30, 2025 at 04:45:45PM +0000, Yazen Ghannam wrote:
+> Recent AMD node rework removed the "search and count" method of caching
+> AMD root devices. This depended on the value from a Data Fabric register
+> that was expected to hold the PCI bus of one of the root devices
+> attached to that fabric.
 > 
-> Subject: I'd drop the trailing "."
+> However, this expectation is incorrect. The register, when read from PCI
+> config space, returns the bitwise-OR of the buses of all attached root
+> devices.
+> 
+> This behavior is benign on AMD reference design boards, since the bus
+> numbers are aligned. This results in a bitwise-OR value matching one of
+> the buses. For example, 0x00 | 0x40 | 0xA0 | 0xE0 = 0xE0.
+> 
+> This behavior breaks on boards where the bus numbers are not exactly
+> aligned. For example, 0x00 | 0x07 | 0xE0 | 0x15 = 0x1F.
 
-Ack.
-
-> > 
-> > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-> > supposed to generate SIGBUS.
-> > 
-> > Recent changes attempted to fault in full folio where possible. They did
-> > not respect i_size, which led to populating PTEs beyond i_size and
-> > breaking SIGBUS semantics.
-> > 
-> > Darrick reported generic/749 breakage because of this.
-> > 
-> > However, the problem existed before the recent changes. With huge=always
-> > tmpfs, any write to a file leads to PMD-size allocation. Following the
-> > fault-in of the folio will install PMD mapping regardless of i_size.
-> 
-> Right, there are some legacy oddities with shmem in that area (e.g.,
-> "within_size" vs. "always" THP allocation control).
-> 
-> Let me CC Hugh: the behavior for shmem seems to date back to 2016.
-
-Yes, it is my huge tmpfs implementation that introduced this.
-
-And Hugh is on CC.
-
-> > 
-> > Fix filemap_map_pages() and finish_fault() to not install:
-> >    - PTEs beyond i_size;
-> >    - PMD mappings across i_size;
-> 
-> Makes sense to me.
-> 
-> 
-> [...]
-> 
-> > +++ b/mm/memory.c
-> > @@ -5480,6 +5480,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
-> >   	int type, nr_pages;
-> >   	unsigned long addr;
-> >   	bool needs_fallback = false;
-> > +	pgoff_t file_end = -1UL;
-> >   fallback:
-> >   	addr = vmf->address;
-> > @@ -5501,8 +5502,14 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
-> >   			return ret;
-> >   	}
-> > +	if (vma->vm_file) {
-> > +		struct inode *inode = vma->vm_file->f_mapping->host;
-> 
-> empty line pleae
-
-Ack.
-
-> 
-> > +		file_end = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-> > +	}
-> > +
-> >   	if (pmd_none(*vmf->pmd)) {
-> > -		if (folio_test_pmd_mappable(folio)) {
-> > +		if (folio_test_pmd_mappable(folio) &&
-> > +		    file_end >= folio_next_index(folio)) {
-> >   			ret = do_set_pmd(vmf, folio, page);
-> >   			if (ret != VM_FAULT_FALLBACK)
-> >   				return ret;
-> > @@ -5533,7 +5540,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
-> >   		if (unlikely(vma_off < idx ||
-> >   			    vma_off + (nr_pages - idx) > vma_pages(vma) ||
-> >   			    pte_off < idx ||
-> > -			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE)) {
-> > +			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE ||
-> 
-> While at it you could fix the double space before the ">".
-
-Okay.
-
-
-> > +			    file_end < folio_next_index(folio))) {
-> >   			nr_pages = 1;
-> >   		} else {
-> >   			/* Now we can set mappings for the whole large folio. */
-> 
-> Nothing else jumped at me.
-> 
-> -- 
-> Cheers
-> 
-> David / dhildenb
-> 
+Do I see it correctly that one of the root device's PCI bus is always 0x0 so
+you can simply read that one and you can keep the current code?
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
