@@ -1,226 +1,124 @@
-Return-Path: <linux-kernel+bounces-863609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1E6BF8499
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:43:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7918CBF8475
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C7619C3A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:43:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A1634F3774
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C15026F462;
-	Tue, 21 Oct 2025 19:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A634726CE34;
+	Tue, 21 Oct 2025 19:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Y7PiUUfk"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzKmvT3U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E9A26CE34;
-	Tue, 21 Oct 2025 19:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA9326CE22
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761075802; cv=none; b=lgX93h+mL7fsbcCuX1Ce+eiQsiXAXGvBdE2tljCxmPXSFZ8LmP9OTBEH3fHxDjgJG6d9aoa9deAF1Ci/cTS3HbXWbjUIVjUQlsk+mGjXFGiGEp9qo7Jk2Us9fxOYBA6xWyPayHeQSdF/hbxf9g5zmhnCQS6PPoL+goIr+WeztlY=
+	t=1761075409; cv=none; b=jsIUw7ZhobxJYGhe2jcKrnqK6MjSL9MujbrIUWFpgO1MWOvFP+tUn1hWNGkaiAIK2I/r+5CQgNCSBL3gGOnEZ3YEQ8yKXAsCIK1fYhRq6iaIFlOUj7w3m2TSSRPDkPUhIkyH3Ve0g1E1zw85H7n4CDoXNrEediNiotwv4bSMQ98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761075802; c=relaxed/simple;
-	bh=cF/2qvNbGtFEaf7MiC2FviRqJj6MFqKh2TuH/gNL7eg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cDDbwr+kmNzIR6jl/fdfS3GFmpGz+xQb6IS7vkLJSxIvizjipgpQGMrltv272ABsHfb9YCkh/QwJRJIGkivI2MlOeFpFk6uA2a7KV0iJMdF657evFtxdHSi5WUU6fH4EIC7KtutWiNDxbS0SG+52NfrbQen/tHjTpTga7zfHMwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Y7PiUUfk; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-98.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-98.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:1ba8:0:640:1638:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 48623C10F2;
-	Tue, 21 Oct 2025 22:36:30 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-98.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NacLXP4R7qM0-90ID0sod;
-	Tue, 21 Oct 2025 22:36:29 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1761075389;
-	bh=k8bA4+TKeLiyStyiCxAgIP8Qak5Le/08vM/x7MqG1kQ=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=Y7PiUUfkUrK5IeD/sEEPyok1JtXbfxwOIaw7D31S9U29PPEmUEkC0ldVKbKIYaPZ7
-	 xbtnFR9Zmb+fLTFgfCKzrEBh1qpW21TZn4JTAzGoX3fVY4WfYnJgp3x69gIgP+XuV/
-	 4kClmfW5uV7W8vgPG94ECfRBwoKwgNISIDU80IdE=
-Authentication-Results: mail-nwsmtp-smtp-production-main-98.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Tue, 21 Oct 2025 22:36:21 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- lossin@kernel.org, lyude@redhat.com, ojeda@kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
- dakr@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org,
- longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev,
- bjorn3_gh@protonmail.com
-Subject: Re: [PATCH v6 6/7] rust: ww_mutex/exec: add high-level API
-Message-ID: <20251021223621.46a12324@nimda.home>
-In-Reply-To: <20250907113817.768acf3d@nimda.home>
-References: <20250903131313.4365-1-work@onurozkan.dev>
-	<20250903131313.4365-7-work@onurozkan.dev>
-	<6D30FEF7-07E7-4851-A7A2-76649AD0B217@collabora.com>
-	<20250906141310.2c29aa8e@nimda.home>
-	<2B16DBF4-1F6C-4025-8373-5651867B7D49@collabora.com>
-	<20250907112006.6bdbb478@nimda.home>
-	<20250907113817.768acf3d@nimda.home>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1761075409; c=relaxed/simple;
+	bh=fD53NSeheVGD5ilvGQlQJ3w4BfULuDpC7tDXATvYvyk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I3DuMdJSiFbnmLpYUlmAPTy8nfrdWDFvyO3Gezw9SonAA0yLgh+wzXgiCbGk5rOoGBEWsUIQO4/b/T2G3l3wC0lP9W92g+VXX1qXL8bG6lO3uOBZK9I7RHhh0OuveR+v7JJPInWtQO0IqGikKDrv18P20tXPD/8QJZwB7XsxB74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzKmvT3U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E01C4CEF5
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761075408;
+	bh=fD53NSeheVGD5ilvGQlQJ3w4BfULuDpC7tDXATvYvyk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BzKmvT3UVMf1vnnvtxIKl+hWheRSPxOu+MLvYWAXBkCArnEtqo0TH59hk3dHcIeeh
+	 g5TDL6Ty0t1ODwlEU2T+50yP9ubr0DoyjNXRNJyqNNdMcBcgFEWKpe5zEaNDt3fkt6
+	 7qaQFMg9TT8EYHUUcCHku+LZM6BAeNppFuFr9wrEnw7QeMirKm3HZ8dWoS9amhGpPr
+	 s0RgDjm/lgRtVJzqXxw7rI89rN8GrsTtOiHp6ouTuVdRw3g5MrT/ARHxTwGF3USGun
+	 19VxRMPnl2kZ75TGtZQBDkEiJDerwL1NKWSZUWXkMUzv6lefSt4Hd+ZDu76XPlgiWE
+	 dun9LCAJ63o+g==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-651cda151f0so2476279eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:36:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUsdy0tpsn9R1QNbbLWo8E9ioJ7cHgEBGU+w8sfAY+DNdffadE5ZRH3+i1h34Dsakz3Z7hx6kT0oAfQzKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqANMjb1jsv0VFQBXPVmH5uHh4KG8gPOgR1/5D4ZB9VLoNHvKq
+	yo83p6kt9Gn1ZU0vXw62+eALig8eDOnAdPtf6SKLq5j9uVZ/4hMoI3NMDcGsvhU9lUitEew4om8
+	6qSwdcHsHxUZ5HuImDLXb9HemJd0p0lo=
+X-Google-Smtp-Source: AGHT+IFdFB1NU8Lb0ZeOSJsZphamzHl+1d7l1lG6nQ5xDsp8+ZzuFVZhzR2PIKrxfCr0ImNXbNZc4JLg4AlB6LaMaFs=
+X-Received: by 2002:a05:6808:6c88:b0:439:b9b4:2d77 with SMTP id
+ 5614622812f47-443a30e144amr7768970b6e.34.1761075408021; Tue, 21 Oct 2025
+ 12:36:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250929093754.3998136-1-lihuisong@huawei.com> <20250929093754.3998136-4-lihuisong@huawei.com>
+In-Reply-To: <20250929093754.3998136-4-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 21:36:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hNj817g=rr8+YTGaeBkkfNuuU7FGuZyyb1j61BMOKTGA@mail.gmail.com>
+X-Gm-Features: AS18NWDKUPYpjMI2_yN8FWJU_8eX0_kVDFH6sFPwxkCyjIdFMyu8WfmwbxaPnyw
+Message-ID: <CAJZ5v0hNj817g=rr8+YTGaeBkkfNuuU7FGuZyyb1j61BMOKTGA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/9] ACPI: processor: idle: Return failure when get
+ lpi_state->arch_flags failed
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 7 Sep 2025 11:38:17 +0300
-Onur <work@onurozkan.dev> wrote:
+On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei.com> =
+wrote:
+>
+> The architecture specific context loss flags is important for ARM.
+> And this flag is used to control the execution of different code
+> flows in acpi_processor_ffh_lpi_enter().
+>
+> So it is better to return failure when get lpi_state->arch_flags
+> failed.
 
-> On Sun, 7 Sep 2025 11:20:06 +0300
-> Onur <work@onurozkan.dev> wrote:
->=20
-> > On Sat, 6 Sep 2025 12:04:34 -0300
-> > Daniel Almeida <daniel.almeida@collabora.com> wrote:
-> >=20
-> > >=20
-> > >=20
-> > > > On 6 Sep 2025, at 08:13, Onur <work@onurozkan.dev> wrote:
-> > > >=20
-> > > > On Fri, 5 Sep 2025 16:42:09 -0300
-> > > > Daniel Almeida <daniel.almeida@collabora.com> wrote:
-> > > >=20
-> > > >> Hi Onur,
-> > > >>=20
-> > > >>> On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev>
-> > > >>> wrote:
-> > > >>>=20
-> > > >>> `ExecContext` is a helper built on top of ww_mutex
-> > > >>=20
-> > > >> Again, I wonder what people think about this particular name.
-> > > >>=20
-> > > >>> that provides a retrying interface for lock acquisition.
-> > > >>> When `EDEADLK` is hit, it drops all held locks, resets
-> > > >>> the acquire context and retries the given (by the user)
-> > > >>> locking algorithm until it succeeds.
-> > > >>>=20
-> > > >>> The API keeps track of acquired locks, cleans them up
-> > > >>> automatically and allows data access to the protected
-> > > >>> data through `with_locked()`. The `lock_all()` helper
-> > > >>> allows implementing multi-mutex algorithms in a simpler
-> > > >>> and less error-prone way while keeping the ww_mutex
-> > > >>> semantics.
-> > > >>>=20
-> > > >>=20
-> > > >> Great, this was exactly what I was looking for! :)
-> > > >>=20
-> > > >>> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> > > >>> ---
-> > > >>> rust/kernel/sync/lock/ww_mutex.rs      |   2 +
-> > > >>> rust/kernel/sync/lock/ww_mutex/exec.rs | 176
-> > > >>> +++++++++++++++++++++++++ 2 files changed, 178 insertions(+)
-> > > >>> create mode 100644 rust/kernel/sync/lock/ww_mutex/exec.rs
-> > > >>>=20
-> > > >>> diff --git a/rust/kernel/sync/lock/ww_mutex.rs
-> > > >>> b/rust/kernel/sync/lock/ww_mutex.rs index
-> > > >>> b415d6deae9b..7de6578513e5 100644 ---
-> > > >>> a/rust/kernel/sync/lock/ww_mutex.rs +++
-> > > >>> b/rust/kernel/sync/lock/ww_mutex.rs @@ -16,6 +16,8 @@
-> > > >>> use core::cell::UnsafeCell;
-> > > >>> use core::marker::PhantomData;
-> > > >>>=20
-> > > >>> +pub mod exec;
-> > > >>> +
-> > > >>> /// Create static [`WwClass`] instances.
-> > > >>> ///
-> > > >>> /// # Examples
-> > > >>> diff --git a/rust/kernel/sync/lock/ww_mutex/exec.rs
-> > > >>> b/rust/kernel/sync/lock/ww_mutex/exec.rs new file mode 100644
-> > > >>> index 000000000000..2f1fc540f0b8
-> > > >>> --- /dev/null
-> > > >>> +++ b/rust/kernel/sync/lock/ww_mutex/exec.rs
-> > > >>> @@ -0,0 +1,176 @@
-> > > >>> +// SPDX-License-Identifier: GPL-2.0
-> > > >>> +
-> > > >>> +//! A high-level [`WwMutex`] execution helper.
-> > > >>> +//!
-> > > >>> +//! Provides a retrying lock mechanism on top of [`WwMutex`]
-> > > >>> and [`WwAcquireCtx`]. +//! It detects [`EDEADLK`] and handles
-> > > >>> it by rolling back and retrying the +//! user-supplied locking
-> > > >>> algorithm until success. +
-> > > >>> +use crate::prelude::*;
-> > > >>> +use crate::sync::lock::ww_mutex::{WwAcquireCtx, WwClass,
-> > > >>> WwMutex, WwMutexGuard}; +use core::ptr;
-> > > >>> +
-> > > >>> +/// High-level execution type for ww_mutex.
-> > > >>> +///
-> > > >>> +/// Tracks a series of locks acquired under a common
-> > > >>> [`WwAcquireCtx`]. +/// It ensures proper cleanup and retry
-> > > >>> mechanism on deadlocks and provides +/// type-safe access to
-> > > >>> locked data via [`with_locked`]. +///
-> > > >>> +/// Typical usage is through [`lock_all`], which retries a
-> > > >>> user-supplied +/// locking algorithm until it succeeds without
-> > > >>> deadlock. +pub struct ExecContext<'a> {
-> > > >>> +    class: &'a WwClass,
-> > > >>> +    acquire: Pin<KBox<WwAcquireCtx<'a>>>,
-> > > >>> +    taken: KVec<WwMutexGuard<'a, ()>>,
-> > > >>> +}
-> > > >>> +
-> > > >>> +impl<'a> Drop for ExecContext<'a> {
-> > > >>> +    fn drop(&mut self) {
-> > > >>> +        self.release_all_locks();
-> > > >>=20
-> > > >> If we move this to the acquire context, then we can do away
-> > > >> with this drop impl.
-> > > >>=20
-> > > >>> +    }
-> > > >>> +}
-> > > >>> +
-> > > >>> +impl<'a> ExecContext<'a> {
-> > > >>> +    /// Creates a new [`ExecContext`] for the given lock
-> > > >>> class.
-> > > >>> +    ///
-> > > >>> +    /// All locks taken through this context must belong to
-> > > >>> the same class.
-> > > >>> +    ///
-> > > >>> +    /// TODO: Add some safety mechanism to ensure classes are
-> > > >>> not different.
-> > > >>=20
-> > > >> core::ptr::eq()?
-> > > >>=20
-> > > >=20
-> > > > I was thinking more of a type-level mechanism to do ensure that.
-> > >=20
-> > > Why?
-> > >=20
-> >=20
-> > So that wait-wound and wait-die classes don't get mixed up in the
-> > same `ExecContext` by using type validation at compile time.
-> >=20
-> > Of course, `core::ptr::eq()` is still useful/required when the
-> > classes are of the same type but not exactly the same value. Maybe
-> > we can do both.
-> >=20
-> >=20
-> > Thanks,
-> > Onur
->=20
-> I will also look into whether it's possible to remove the class from
-> the mutex and instead derive it from ExecContext and WwAcquireCtx.
-> This would fix both issues at once in a better way.
+A failure means no idle states at all.
 
-This is not possible due to limitations in the C implementation. :(
+Wouldn't it be better to skip the state with invalid arch flags?
 
-A mutex must be initialized with a specific class (or without one if
-it's just a regular mutex) and this cannot be changed later.
-
-I noted this to revisit the C side and see if we can make this possible
-in the future (once this patch has landed).
-
-Regards,
-Onur
-
->=20
->  -Onur=20
->=20
+> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Id=
+le(LPI) states")
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_idle.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 681587f2614b..f36f9514b6c7 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -984,8 +984,11 @@ static int acpi_processor_evaluate_lpi(acpi_handle h=
+andle,
+>                 if (obj_get_integer(pkg_elem + 2, &lpi_state->flags))
+>                         lpi_state->flags =3D 0;
+>
+> -               if (obj_get_integer(pkg_elem + 3, &lpi_state->arch_flags)=
+)
+> -                       lpi_state->arch_flags =3D 0;
+> +               if (obj_get_integer(pkg_elem + 3, &lpi_state->arch_flags)=
+) {
+> +                       pr_err("Get architecture specific context loss fl=
+ags failed.\n");
+> +                       ret =3D -EINVAL;
+> +                       goto end;
+> +               }
+>
+>                 if (obj_get_integer(pkg_elem + 4, &lpi_state->res_cnt_fre=
+q))
+>                         lpi_state->res_cnt_freq =3D 1;
+> --
+> 2.33.0
+>
 
