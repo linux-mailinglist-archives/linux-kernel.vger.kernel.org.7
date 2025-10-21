@@ -1,93 +1,83 @@
-Return-Path: <linux-kernel+bounces-862439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D500CBF54C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B014BF54CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 726884600A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:36:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56EF466557
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EBD31E10D;
-	Tue, 21 Oct 2025 08:35:28 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69ED304BA0;
+	Tue, 21 Oct 2025 08:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="j+3sVkH7"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516C230217D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917B8302766;
+	Tue, 21 Oct 2025 08:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035728; cv=none; b=HtxwkMPTBHtqNnD9fQKY8+Zlw4Ga3OBwqkJorbmHoS/y4FMHVT7T2kRLQbMrWlQh6siCurcl0S8ibL/daFUpfs6h3vlv83aWWTsQIK9bmHrz5WP0iC87x8bLHAicBumgNpYI2QZmd6BjFOVPXhyy6QVBMTY6R4zrc5OWTMdhijI=
+	t=1761035788; cv=none; b=KWQNdNjB+joTjkd8kz0xdVxG4WvRS8LrdhDpiuK/CUG6K/3SFc4I/Nq1MsrN0oHAjcyVUynwv+TL6NvxBAbzdmh21byRe/qU8t7V78/Ydd6AxpvHbLrGDLhaBErauUwx7uGlAgg3cc1srSf2awcNXCMeTtJBX6zEBW015XXS/vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035728; c=relaxed/simple;
-	bh=HLINWFpfI7LpIEpgOwz4kJy1SwKhM/fLjwdO3SOoBuc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zms/6z4iidX2l4Ez7kBJjV/4szf3GV4Z9yjQdupE654iu5ECW8J4zkFhk4cKwt0pgT1coEAmVy4CoPtuRKQqHjc1QLj36n9dSpMZWvK0W/pKAaFYhyPASARxTZ9jhEFSp9S0rvHno3z5ZE8W9KHofZCQnxEaRiSpEg3kUGhw1d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: de4d9faeae5811f0a38c85956e01ac42-20251021
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:55a1b00c-6e44-48ed-a0b3-2b9901d408c0,IP:0,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:a9d874c,CLOUDID:05906bd3a5cf6e35e9b4fb187992aed3,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: de4d9faeae5811f0a38c85956e01ac42-20251021
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1795378596; Tue, 21 Oct 2025 16:35:15 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH] syz test
-Date: Tue, 21 Oct 2025 16:35:06 +0800
-Message-Id: <6c4d42542afeed40435ba0abb94e753e1d259ce1.1761035574.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1761035788; c=relaxed/simple;
+	bh=z0EChtbTRbAgKVGMYygnvZxX+CLrEvNftM16zQ/G+20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qv3b2cmsK3Frcrzz2VxJz7Y/c+YD4NnZE1d2raUK3XFfCASx67EAsKfN1rhpBOqc7yTsDhQ1WFEwPxdJIFgNsjg7Z8lHW9ixuyzSTCiKtOc6pkN0mBqsplB+F5yDaSV6xhevEtR/I16gsYNjdB/W8hwMGN5MowrrDlhrq8SXnGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=j+3sVkH7; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=stZPJ4M5bQxptRayTgT6RtHDQjZgxyXiEdqip2m/sjE=;
+	b=j+3sVkH7/mAopbBYTH6PAu7sSTkSJr1IQPilH/1KWstydxQt5nMQ+nOgDLjt8I
+	8y4azlN1xpwgyxcEBIOIyUbIvmU+tTQP5NgzSp0QBW/urQ5w7d60DqSpayCm5JZl
+	U6gdlw77C4sR7aWUP8yMJUipBVEArrQ022eLTm0G6L9PY=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDnB5LjRfdoaIdeAA--.44314S3;
+	Tue, 21 Oct 2025 16:35:49 +0800 (CST)
+Date: Tue, 21 Oct 2025 16:35:47 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Haibo Chen <haibo.chen@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Walle <michael@walle.cc>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <frank.li@nxp.com>, Marco Felsch <m.felsch@pengutronix.de>,
+	Han Xu <han.xu@nxp.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] arm64: dts: imx: correct the flexspi compatible
+ string to match with yaml
+Message-ID: <aPdF4yR9iGFInJeV@dragon>
+References: <20251017-flexspi-dts-v4-1-330fc467f489@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017-flexspi-dts-v4-1-330fc467f489@nxp.com>
+X-CM-TRANSID:Mc8vCgDnB5LjRfdoaIdeAA--.44314S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU7Z2-UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIQaiCGj3ReamqQAA3+
 
-#syz test
----
- lib/crypto/poly1305.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Fri, Oct 17, 2025 at 05:25:41PM +0800, Haibo Chen wrote:
+> According to Documentation/devicetree/bindings/spi/spi-nxp-fspi.yaml,
+> imx93/imx95 should use it's own compatible string and fallback
+> compatible with imx8mm.
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 
-diff --git a/lib/crypto/poly1305.c b/lib/crypto/poly1305.c
-index f313ccc4b4dd..25018e3fb487 100644
---- a/lib/crypto/poly1305.c
-+++ b/lib/crypto/poly1305.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
-+#include <linux/kmsan.h>
- 
- #ifdef CONFIG_CRYPTO_LIB_POLY1305_ARCH
- #include "poly1305.h" /* $(SRCARCH)/poly1305.h */
-@@ -31,6 +32,7 @@ void poly1305_init(struct poly1305_desc_ctx *desc,
- 	desc->s[3] = get_unaligned_le32(key + 28);
- 	desc->buflen = 0;
- 	poly1305_block_init(&desc->state, key);
-+	kmsan_unpoison_memory(desc, sizeof(struct poly1305_desc_ctx));
- }
- EXPORT_SYMBOL(poly1305_init);
- 
--- 
-2.25.1
+Applied, thanks!
 
 
