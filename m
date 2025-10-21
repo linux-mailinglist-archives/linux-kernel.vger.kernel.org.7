@@ -1,144 +1,191 @@
-Return-Path: <linux-kernel+bounces-863511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFF8BF805D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:10:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D49BF8063
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF51408417
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:10:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E79034E4715
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C85350287;
-	Tue, 21 Oct 2025 18:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C83350296;
+	Tue, 21 Oct 2025 18:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="sh1xbfEs"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJktEg+v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704A8350292
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B90134F27C;
+	Tue, 21 Oct 2025 18:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761070194; cv=none; b=oNpYYJqrauU1eURHxxqcb0TtKI/k/zy2lT8d8D7zKwSi3ORBWG5eg+qFBRWySAeRlHp+JcpYXSKkeZMpcVwfQPtmDRefWax4tvoAHNW9kQgJbkdK0WIy5rgfBnPPRdgkEjz7cCclUoYVHJlA5JT9zjJW/LLV3WLtEw4zZKkEIE8=
+	t=1761070383; cv=none; b=BYM3UElhZZPr7g4xI6S+mi7cKdp4DeWMdSH9jyxyyEvReKpQmZKuqvfWJBHew1YYPk7ZS0oKBRA/z0fjxJ3tAGRrtotdaWOW45edf3C83TIZVQvtW1hT0rePT28kD6QbqK/jnmszzQGHMbWYrqfQcBLLdfgkt4wT6unr0BYsfyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761070194; c=relaxed/simple;
-	bh=2Eq9A/AKwnR3gDsuZiWxdapYlfrJ603IEtmRzywXGso=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B/+Co129J4FXmwoVws0DJFCCFuCWnQ/gjVp9Wa2fS1llKqukCH1B4DjSqxF0HcddlLDV1tS4sJreTaAUkSgIsq8sh5C8Iy67ONyp1NZzlVXR1hD2jqjmW8f+CguqT+3mJ309XdjbfvPaO9BL0a5rCC7OBSjrSHfU+JT1R9rPhBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=sh1xbfEs; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b5a8184144dso965059666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:09:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1761070191; x=1761674991; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fZfW33wDtMvPrY5GE5lKPaP3JYy6uTE6Yvy/BumW9Tk=;
-        b=sh1xbfEsyxanZhnJmfRlO51HBynpowWXhNcWWzxCls8DOoxtH+tF+SMuDv4h0N+zIw
-         Q9VFMeD5DXWVUxy7814uTRkzm03NGgEXi+uiAaiU8oi8awVUu4tBhavwhUpEF/Tw1TXl
-         HQvEuZN3qsGAq/3ST+y50EfczyPtH4Xp9g+zhDYCRTMRUBTjBmbM7puP+8R0nBoFDZqZ
-         XNqUQVrb2WvXEgk0rQN+jUU8+q3EHHa5JQO7oyUP1CNIA5UFkGwAFbE6u0daksFN5TSr
-         IHk+SaXCU7z1lWtlGyUuHpQBKYUeqv5M0DHDYFvCl3PprphxtMvr5idP92uN9yrRmj/O
-         oVcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761070191; x=1761674991;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fZfW33wDtMvPrY5GE5lKPaP3JYy6uTE6Yvy/BumW9Tk=;
-        b=vRSnuYKqVg0eXq/SadAokAxHlErabmxHXFsegBQmwyJaBxahxOVG/C9uGXEi3Qie2Y
-         97+MZgnmXgA6it6idY1lRqqzMluktLLYadP8hSGx6Y9DINAgQ77MH87me1gL22FqJpc3
-         we+TWuL+KE2yaPPCCqW/iCQRWdh78avceNPY9Oel7BmhKZH3/jMR4n1FcSeXFc97dUyn
-         f0JQLJR+BRVd0wmzSUSdk2d+nKePQmkxhzB9u90Yijhw0soeJ/UYt8TNp+mVII7WkprN
-         OQ+DEJ/RgSN1W+gzVThDNShedzOSjjN4nAmBseXW6p5VyA8NHuX+7nRSKzM5ecFZjQEb
-         /cdA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+4Ep3Zv1uyVm6H/egfnUSmbvH/4sD9k0bp8ww7XbtHHlIfqGnNsHoNuYBXiE0cdXsNW+YMM4RS3O/+tU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqewqFCDns1EJysjxitiMJYC9S0cov7ZtRQsLxDQ8z250Gm1X3
-	SsU+vV2FtGs/jHsFw8OFwjwke963KZ9MCBIB6Zfy9G78ANRs+sqxr4I6B4k6Y2jd5Ow=
-X-Gm-Gg: ASbGnctScNAbaua2cnerKFt9J71xoaEsfxoqZ94uK1W+bWDFmwGJxKRZlLUoCs831h0
-	fejd8MRkc5tJEm/ZytIOXa4Uh7GMmmuYoa5XU4uVfi64VV68Yeb/pAlHW/0rt7ivHOz9+D4N5kC
-	e/E43TjM23PAv2OqEsw/7AUvOJ5RiTfMmEnLcUauUM/kmGl2dwwAaNY/i7nmASnuIiJ4zlt5B5x
-	hIPdi3qz4NlZiOXCK+ynuN+MejHb9/dGZY0etmFOzIB/VYBkbT6yM0B2fEtYOwVVaUGlR4VA7HF
-	JsgR+VC99t0nb6N7QQGeihx+Rtfj6G1gnp++OY+s72GMQhr5CrWYnfOWl+5IgxvzsYOLgmnAK5S
-	Cpe9AxWQOiQdNFRSXqnEexb3ZZAdub9V4d3L9+DLK5AebaQYNYKLhT+rAuVQLPl25SVP3EgFol6
-	tGHg78JfI=
-X-Google-Smtp-Source: AGHT+IEtlpg7hHwYviAs9wYaJ8CDpbBGpkeU1rbRL5K3RYBz0JwLkuE1x94/3J0jWIixwOjEj4tdUA==
-X-Received: by 2002:a17:907:9288:b0:b3c:a161:6843 with SMTP id a640c23a62f3a-b647403a56amr2215928266b.4.1761070190578;
-        Tue, 21 Oct 2025 11:09:50 -0700 (PDT)
-Received: from otso.local ([213.208.157.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e8393778sm1116758166b.24.2025.10.21.11.09.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 11:09:50 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Tue, 21 Oct 2025 20:08:55 +0200
-Subject: [PATCH 2/2] clk: qcom: camcc-sm7150: Fix PLL config of PLL2
+	s=arc-20240116; t=1761070383; c=relaxed/simple;
+	bh=qEtRyFu2JyRfkeVJISTlGQJFGZB8HDaIGH3H4eIHZGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H2U3QqniY5Zp9N+Mbq/Huja+gHdeLt+hmwTPHVmqgUN5wmaaNe60JDMXLHJs+DMWlyLcLheQewXYh2STeISDzRFidFy0G2r6zdRPhE+lajJd0VIcHKQGWBa8YzU11Mug7L8uTUVKCrmGb25lQKxbf/DdNsC8YmIwGx+JENlc3ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJktEg+v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA51C4CEF1;
+	Tue, 21 Oct 2025 18:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761070382;
+	bh=qEtRyFu2JyRfkeVJISTlGQJFGZB8HDaIGH3H4eIHZGM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mJktEg+venEXDoxzg7uNpbWr6Tdota/l/YUnHyQDd8UUtHFfnEXWD0qRhhqvi0nzD
+	 +qvzRayzCQrHIQCNqXVEFBI4dc4B0gExeSkhHVKMRBbNjZMH9ELwKAQQHxhWihePxV
+	 NTZOJOzEosnv8gbbFL8UoDYVokn4h4EEmqnKpT/A47ZYArdvCdfop6wT/PR8bhq1bT
+	 ENWNW1uYeAHgoNIgqO/6+7YFr70ZjwKdJgpb85kTqYHptTw8BaBo/JtnjY9t8j3Rn9
+	 mGuLGlnKnzifM1CRJ2Apz7qQy1nHX4vOZWY3o6UlEw1zz8eXKHanVA+AZakg8Yya8f
+	 0PdotYY5jyVOA==
+Date: Tue, 21 Oct 2025 19:12:57 +0100
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] KVM: Avoid a few dozen -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <aPfNKRpLfhmhYqfP@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-agera-pll-fixups-v1-2-8c1d8aff4afc@fairphone.com>
-References: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
-In-Reply-To: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Danila Tikhonov <danila@jiaxyga.com>, 
- Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761070183; l=1299;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=2Eq9A/AKwnR3gDsuZiWxdapYlfrJ603IEtmRzywXGso=;
- b=f6OVJw7dVaXmR3bN8+qrmYA4vRl/NtjHLvMpHGDllO4eZ6Umrt9okj7FpWsAidTFfMYCwvrIZ
- iLD5F0UgX4PAioKrJoBKaV0jcuvrWD9MRfX9FRK+H0QYJ90gLRud5yX
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The 'Agera' PLLs (with clk_agera_pll_configure) do not take some of the
-parameters that are provided in the vendor driver. Instead the upstream
-configuration should provide the final user_ctl value that is written to
-the USER_CTL register.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Fix the config so that the PLL is configured correctly.
+So, in order to avoid ending up with a flexible-array member in the
+middle of multiple other structs, we use the `__struct_group()` helper
+to separate the flexible array from the rest of the members in the
+flexible structure, and use the tagged `struct kvm_stats_desc_hdr`
+instead of `struct kvm_stats_desc`.
 
-Fixes: 9f0532da4226 ("clk: qcom: Add Camera Clock Controller driver for SM7150")
-Suggested-by: Taniya Das <taniya.das@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+So, with these changes, fix 51 instances of the following type of
+warning:
+
+49 ./include/linux/kvm_host.h:1923:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+1 .../include/linux/kvm_host.h:1923:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+1 +./include/linux/kvm_host.h:1923:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Notice that, before and after the changes, struct sizes and member offsets
+remain unchanged:
+
+BEFORE
+
+struct kvm_stats_desc {
+        __u32                      flags;                /*     0     4 */
+        __s16                      exponent;             /*     4     2 */
+        __u16                      size;                 /*     6     2 */
+        __u32                      offset;               /*     8     4 */
+        __u32                      bucket_size;          /*    12     4 */
+        char                       name[];               /*    16     0 */
+
+        /* size: 16, cachelines: 1, members: 6 */
+        /* last cacheline: 16 bytes */
+};
+
+struct _kvm_stats_desc {
+        struct kvm_stats_desc      desc;                 /*     0    16 */
+        char                       name[48];             /*    16    48 */
+
+        /* size: 64, cachelines: 1, members: 2 */
+};
+
+AFTER:
+
+struct kvm_stats_desc {
+        union {
+                struct {
+                        __u32      flags;                /*     0     4 */
+                        __s16      exponent;             /*     4     2 */
+                        __u16      size;                 /*     6     2 */
+                        __u32      offset;               /*     8     4 */
+                        __u32      bucket_size;          /*    12     4 */
+                };                                       /*     0    16 */
+                struct kvm_stats_desc_hdr __hdr;         /*     0    16 */
+        };                                               /*     0    16 */
+        char                       name[];               /*    16     0 */
+
+        /* size: 16, cachelines: 1, members: 2 */
+        /* last cacheline: 16 bytes */
+};
+
+struct _kvm_stats_desc {
+        struct kvm_stats_desc_hdr  desc;                 /*     0    16 */
+        char                       name[48];             /*    16    48 */
+
+        /* size: 64, cachelines: 1, members: 2 */
+};
+
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- drivers/clk/qcom/camcc-sm7150.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ include/uapi/linux/kvm.h | 21 ++++++++++++++++-----
+ include/linux/kvm_host.h |  2 +-
+ 2 files changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/qcom/camcc-sm7150.c b/drivers/clk/qcom/camcc-sm7150.c
-index 4a3baf5d8e85..590548cac45b 100644
---- a/drivers/clk/qcom/camcc-sm7150.c
-+++ b/drivers/clk/qcom/camcc-sm7150.c
-@@ -139,13 +139,9 @@ static struct clk_fixed_factor camcc_pll1_out_even = {
- /* 1920MHz configuration */
- static const struct alpha_pll_config camcc_pll2_config = {
- 	.l = 0x64,
--	.post_div_val = 0x3 << 8,
--	.post_div_mask = 0x3 << 8,
--	.early_output_mask = BIT(3),
--	.aux_output_mask = BIT(1),
--	.main_output_mask = BIT(0),
- 	.config_ctl_hi_val = 0x400003d6,
- 	.config_ctl_val = 0x20000954,
-+	.user_ctl_val = 0x0000030b,
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 6efa98a57ec1..99d13ebc5e82 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -14,6 +14,12 @@
+ #include <linux/ioctl.h>
+ #include <asm/kvm.h>
+ 
++#ifdef __KERNEL__
++#include <linux/stddef.h>       /* for offsetof */
++#else
++#include <stddef.h>             /* for offsetof */
++#endif
++
+ #define KVM_API_VERSION 12
+ 
+ /*
+@@ -1563,13 +1569,18 @@ struct kvm_stats_header {
+  *        &kvm_stats_header->name_size.
+  */
+ struct kvm_stats_desc {
+-	__u32 flags;
+-	__s16 exponent;
+-	__u16 size;
+-	__u32 offset;
+-	__u32 bucket_size;
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(kvm_stats_desc_hdr, __hdr, /* no attrs */,
++		__u32 flags;
++		__s16 exponent;
++		__u16 size;
++		__u32 offset;
++		__u32 bucket_size;
++	);
+ 	char name[];
+ };
++_Static_assert(offsetof(struct kvm_stats_desc, name) == sizeof(struct kvm_stats_desc_hdr),
++	       "struct member likely outside of __struct_group()");
+ 
+ #define KVM_GET_STATS_FD  _IO(KVMIO,  0xce)
+ 
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index fa36e70df088..c630991f72be 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1920,7 +1920,7 @@ struct kvm_stat_data {
  };
  
- static struct clk_alpha_pll camcc_pll2 = {
-
+ struct _kvm_stats_desc {
+-	struct kvm_stats_desc desc;
++	struct kvm_stats_desc_hdr desc;
+ 	char name[KVM_STATS_NAME_SIZE];
+ };
+ 
 -- 
-2.51.1
+2.43.0
 
 
