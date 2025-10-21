@@ -1,300 +1,224 @@
-Return-Path: <linux-kernel+bounces-862150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D111BF4899
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:49:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEB8BF48A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB06C18A377F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406CD467CA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B751EB193;
-	Tue, 21 Oct 2025 03:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF141DED49;
+	Tue, 21 Oct 2025 03:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+sFxb7r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XvboJjdm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75460F9D9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197BC1EB193
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761018554; cv=none; b=s6DJ1/ibxAQqOfusl/spPUnDn8tTwvB6dpTm8r6TDvN+UFZoK2LCPymGxuhmrPwmR02OxhqLAuC/Ija8qwNwcQQ2cHI/R8NMC40ttvbkW0UChOLQo4zJ1Zk2eHTK4OTEtC1vJubTYzaCX8T9/vyQnWkyXYFqEQH9S13Y40hygxk=
+	t=1761018603; cv=none; b=KPvdL+S2lSXur4PjVDFZmIgqvQMQ+UPhJjzI9u72eEgqFV5Hn7alwo51JnV0Iz04p51Rgv+oFt0KubFd84NwTy/MptiQG3tGcoIownduEq3vIpvj13uqH5YqV2rVEsNb9Kh2zr8agzmMbmgJOS+Ht0f2VKGz7DS4SV5x9Lohcxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761018554; c=relaxed/simple;
-	bh=KZS7cq/vuI/ulQnddfok70iczFDO7Lzw583yX6X6SFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T77q3ppfInAf3QO9Ycwwr2rlDhRIJhRLqLEc622QTl3XOLxKV/YFVk9BD3KzdvrhMw1vEqYaI94jsEDEeuMGPAszma3kVRKb5asBkImsf90E7ZZsK2YF5hMxbV2fIEctejwrN8i04L2Y80BbQMZM5CZOqE+loin0KT9Ho/nwYrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+sFxb7r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE2B5C4CEF1;
-	Tue, 21 Oct 2025 03:49:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761018554;
-	bh=KZS7cq/vuI/ulQnddfok70iczFDO7Lzw583yX6X6SFQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=n+sFxb7r+/t+uTbsDHv77fnwrDcwSVbvjMeuwMvPuT1HhNPr6RIsdr710a+K+4G/9
-	 8aNTBnCndGYJf10wyL020xtNTjxzgK4VJiVXuZWC/1RzkqvwyvE5TiNM8pqQFFu/iZ
-	 ApOd+jCLXzRaqRCnqplErvOB2Ywnf7NyTYh7pBOVsqG3JQnje58suFn5WMfxdHGpYp
-	 lBoXUEx/Goe2UL1h9TSTHCPiOW+2UCj77byquUfonnX74yy/pflzGDp1m/3iIobp9Z
-	 QdM4ysgmZdX4rOraqNn1JH5PHREgERuYSoqdlWgt3adFtuMzALMr6N7ClGbppJ4Ste
-	 CmkUtBq8lxfhw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	stable@kernel.org,
-	Hong Yun <yhong@link.cuhk.edu.hk>
-Subject: [PATCH v2] f2fs: use global inline_xattr_slab instead of per-sb slab cache
-Date: Tue, 21 Oct 2025 11:48:56 +0800
-Message-ID: <20251021034856.739272-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
+	s=arc-20240116; t=1761018603; c=relaxed/simple;
+	bh=5wHRWII5YqV0H1234MXs40PJ+FJPQo2Fuwf1/Zu6dL8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Zk7K0Gb633FywPnyCUwLlWpZo7H4Dbteoi2c1xoRccZdHzGnGRC60d4T/L/KNXnIpFBJ0NV5UWzFFgOq018yUWfd+qhW2aluFdtmzvPc6OggWZMj3VupKoZmwERVv7zV1l1/uvxF/1DSMqul+0u323U7KZRnYNBu6TrcOkFk0KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XvboJjdm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761018601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YvtwqFSdwBIJ1DhFupvj6yUOG7znXFLvI8hL6gZ8038=;
+	b=XvboJjdmIihWo7+/gD2ilhJTaBrTcn4A0qwoTl5RF4qI9zYm+3/je/YNW7YUIP2I34iRjn
+	gDX6kL8qArUK7ieyziZVn0ntJsNbgeGbKQx/Kbu+rLA31+vX+22uC5dOACrdCRl2++un2c
+	Ukw3O8ZRzLKCWRwaJEdFW91baLwkivI=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-384-1Rliy7jNPHiE7cyQXYjeLg-1; Mon, 20 Oct 2025 23:49:59 -0400
+X-MC-Unique: 1Rliy7jNPHiE7cyQXYjeLg-1
+X-Mimecast-MFC-AGG-ID: 1Rliy7jNPHiE7cyQXYjeLg_1761018599
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87c1f435b6bso81354926d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:49:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761018599; x=1761623399;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YvtwqFSdwBIJ1DhFupvj6yUOG7znXFLvI8hL6gZ8038=;
+        b=ibkf19stpE1fIbZXO33fP7ycyUSG9kEzxAFOQmoyaQ/M7AF3eqvvNpYeUBJQYODyKy
+         a3gSe/upi5yOg40imzk03G2oG5iZR7/D8p2YhphLAVy6GhRX5bgI7CtZKlJzF5V/gAjS
+         6EAOaANClvPF8nn8+kIKwqqNDV8KXAE+dC6XTvtW9JnysEi5hLBMR6jotqjJp8/tyA8C
+         ZrQbAvAnKHrUV4vkw03XPIib34cVQorutVdCfMqBdhF0dx8hx3xnlqweNuRqPUJ/QiXQ
+         YMV6+V00QIGjYL/u368qL878byT8l4i4z0zujxug3d1G/B30zx6hVVjOB1U7ThKGttOQ
+         PGyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTJBa2fRkTJszc4oI5wkpy+qm+Qne6A8C0x+xkcSgBctGlvcuLib2U9XHjJhIu9cKknnqtUST6YPAdyow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydC27M2u0vExDllpwRHGzMUMwKqgE8hGC3yo+UyLrr4T50N3Uc
+	+H4XDeeaJQdQKtLHZpk761+oQdOgF4u0kefNfXC+cOBB0FSVhI/jNSVxs7ZQst+iUq1Ofi5Ikh+
+	0hdv5dTacEtn/3kmk5lz6IGIwzJXWWfz6twsuNzb0HsrplTxOUJlg4B3L+bwUMZm3HA==
+X-Gm-Gg: ASbGncu2erEGPC8sNvsd/beSO2a1lNk8juJ2iGlK7iFSiN/zEdOFsRtX3A0obKlJyk+
+	HPaF0P5ucH24NZbb90Rh9oaKxVV2RM50l3P96G29jbjQosNHwRJ4gy4gVeZwFud1LUaesZp+4CU
+	LDDxJHI5HC+zooYZy32Owsr/BRnH0NuruRRm3Md3NixhN3QbIFx78eXIgYA9+VAPTS1es7JrWoD
+	+DXhfsiGhtPJwRrHRsnJh2s1xfw//L9birQNvGR80ymFtgSlyxSJ0QdfTQdSkA9eqdQSWYHCXfD
+	w+9r2l1xIgf2WJVYNyDoqes1IErxT/PcFTXEYZ9ZjMvHV10IzRFgX+oQxTeb2A9xq98SMYRpEPW
+	ajH58PV3B5ZoqFQAAMBSUNeAhRmnUoGp10G9yr1v9ToxO0w==
+X-Received: by 2002:a05:622a:14d1:b0:4e8:ac66:ee45 with SMTP id d75a77b69052e-4e8ac66f422mr138856371cf.43.1761018598788;
+        Mon, 20 Oct 2025 20:49:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzYxTQpPj871EoIMw1y246oGNNWS2hGT92x0DCSyPVsnjuqhhKKjEAvaY7EAUAoH4h5eayPQ==
+X-Received: by 2002:a05:622a:14d1:b0:4e8:ac66:ee45 with SMTP id d75a77b69052e-4e8ac66f422mr138856231cf.43.1761018598358;
+        Mon, 20 Oct 2025 20:49:58 -0700 (PDT)
+Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cd6717desm684147885a.26.2025.10.20.20.49.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 20:49:57 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <083388fb-3240-4329-ad49-b81cd89acffd@redhat.com>
+Date: Mon, 20 Oct 2025 23:49:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/33] sched/isolation: Convert housekeeping cpumasks to
+ rcu pointers
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
+ <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-block@vger.kernel.org, linux-mm@kvack.org, linux-pci@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20251013203146.10162-1-frederic@kernel.org>
+ <20251013203146.10162-13-frederic@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251013203146.10162-13-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-As Hong Yun reported in mailing list:
 
-loop7: detected capacity change from 0 to 131072
-------------[ cut here ]------------
-kmem_cache of name 'f2fs_xattr_entry-7:7' already exists
-WARNING: CPU: 0 PID: 24426 at mm/slab_common.c:110 kmem_cache_sanity_check mm/slab_common.c:109 [inline]
-WARNING: CPU: 0 PID: 24426 at mm/slab_common.c:110 __kmem_cache_create_args+0xa6/0x320 mm/slab_common.c:307
-CPU: 0 UID: 0 PID: 24426 Comm: syz.7.1370 Not tainted 6.17.0-rc4 #1 PREEMPT(full)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:109 [inline]
-RIP: 0010:__kmem_cache_create_args+0xa6/0x320 mm/slab_common.c:307
-Call Trace:
- __kmem_cache_create include/linux/slab.h:353 [inline]
- f2fs_kmem_cache_create fs/f2fs/f2fs.h:2943 [inline]
- f2fs_init_xattr_caches+0xa5/0xe0 fs/f2fs/xattr.c:843
- f2fs_fill_super+0x1645/0x2620 fs/f2fs/super.c:4918
- get_tree_bdev_flags+0x1fb/0x260 fs/super.c:1692
- vfs_get_tree+0x43/0x140 fs/super.c:1815
- do_new_mount+0x201/0x550 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x298/0x2f0 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x8e/0x3a0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
+> HK_TYPE_DOMAIN's cpumask will soon be made modifyable by cpuset.
+> A synchronization mechanism is then needed to synchronize the updates
+> with the housekeeping cpumask readers.
+>
+> Turn the housekeeping cpumasks into RCU pointers. Once a housekeeping
+> cpumask will be modified, the update side will wait for an RCU grace
+> period and propagate the change to interested subsystem when deemed
+> necessary.
+>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>   kernel/sched/isolation.c | 58 +++++++++++++++++++++++++---------------
+>   kernel/sched/sched.h     |  1 +
+>   2 files changed, 37 insertions(+), 22 deletions(-)
+>
+> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> index 8690fb705089..b46c20b5437f 100644
+> --- a/kernel/sched/isolation.c
+> +++ b/kernel/sched/isolation.c
+> @@ -21,7 +21,7 @@ DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
+>   EXPORT_SYMBOL_GPL(housekeeping_overridden);
+>   
+>   struct housekeeping {
+> -	cpumask_var_t cpumasks[HK_TYPE_MAX];
+> +	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
+>   	unsigned long flags;
+>   };
+>   
+> @@ -33,17 +33,28 @@ bool housekeeping_enabled(enum hk_type type)
+>   }
+>   EXPORT_SYMBOL_GPL(housekeeping_enabled);
+>   
+> +const struct cpumask *housekeeping_cpumask(enum hk_type type)
+> +{
+> +	if (static_branch_unlikely(&housekeeping_overridden)) {
+> +		if (housekeeping.flags & BIT(type)) {
+> +			return rcu_dereference_check(housekeeping.cpumasks[type], 1);
+> +		}
+> +	}
+> +	return cpu_possible_mask;
+> +}
+> +EXPORT_SYMBOL_GPL(housekeeping_cpumask);
+> +
+>   int housekeeping_any_cpu(enum hk_type type)
+>   {
+>   	int cpu;
+>   
+>   	if (static_branch_unlikely(&housekeeping_overridden)) {
+>   		if (housekeeping.flags & BIT(type)) {
+> -			cpu = sched_numa_find_closest(housekeeping.cpumasks[type], smp_processor_id());
+> +			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
+>   			if (cpu < nr_cpu_ids)
+>   				return cpu;
+>   
+> -			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
+> +			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
+>   			if (likely(cpu < nr_cpu_ids))
+>   				return cpu;
+>   			/*
+> @@ -59,28 +70,18 @@ int housekeeping_any_cpu(enum hk_type type)
+>   }
+>   EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
+>   
+> -const struct cpumask *housekeeping_cpumask(enum hk_type type)
+> -{
+> -	if (static_branch_unlikely(&housekeeping_overridden))
+> -		if (housekeeping.flags & BIT(type))
+> -			return housekeeping.cpumasks[type];
+> -	return cpu_possible_mask;
+> -}
+> -EXPORT_SYMBOL_GPL(housekeeping_cpumask);
+> -
+>   void housekeeping_affine(struct task_struct *t, enum hk_type type)
+>   {
+>   	if (static_branch_unlikely(&housekeeping_overridden))
+>   		if (housekeeping.flags & BIT(type))
+> -			set_cpus_allowed_ptr(t, housekeeping.cpumasks[type]);
+> +			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
+>   }
+>   EXPORT_SYMBOL_GPL(housekeeping_affine);
+>   
+>   bool housekeeping_test_cpu(int cpu, enum hk_type type)
+>   {
+> -	if (static_branch_unlikely(&housekeeping_overridden))
+> -		if (housekeeping.flags & BIT(type))
+> -			return cpumask_test_cpu(cpu, housekeeping.cpumasks[type]);
+> +	if (housekeeping.flags & BIT(type))
+> +		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
+>   	return true;
+>   }
 
-The bug can be reproduced w/ below scripts:
-- mount /dev/vdb /mnt1
-- mount /dev/vdc /mnt2
-- umount /mnt1
-- mounnt /dev/vdb /mnt1
+The housekeeping_overridden static key check is kept in other places 
+except this one. Should we keep it for consistency?
 
-The reason is if we created two slab caches, named f2fs_xattr_entry-7:3
-and f2fs_xattr_entry-7:7, and they have the same slab size. Actually,
-slab system will only create one slab cache core structure which has
-slab name of "f2fs_xattr_entry-7:3", and two slab caches share the same
-structure and cache address.
-
-So, if we destroy f2fs_xattr_entry-7:3 cache w/ cache address, it will
-decrease reference count of slab cache, rather than release slab cache
-entirely, since there is one more user has referenced the cache.
-
-Then, if we try to create slab cache w/ name "f2fs_xattr_entry-7:3" again,
-slab system will find that there is existed cache which has the same name
-and trigger the warning.
-
-Let's changes to use global inline_xattr_slab instead of per-sb slab cache
-for fixing.
-
-Fixes: a999150f4fe3 ("f2fs: use kmem_cache pool during inline xattr lookups")
-Cc: stable@kernel.org
-Reported-by: Hong Yun <yhong@link.cuhk.edu.hk>
-Tested-by: Hong Yun <yhong@link.cuhk.edu.hk>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- add static for inline_xattr_slab to avoid sparse warning
- fs/f2fs/f2fs.h  |  3 ---
- fs/f2fs/super.c | 17 ++++++++---------
- fs/f2fs/xattr.c | 32 +++++++++++---------------------
- fs/f2fs/xattr.h | 10 ++++++----
- 4 files changed, 25 insertions(+), 37 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8e4bb7976309..b167d71292b2 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1892,9 +1892,6 @@ struct f2fs_sb_info {
- 	spinlock_t error_lock;			/* protect errors/stop_reason array */
- 	bool error_dirty;			/* errors of sb is dirty */
- 
--	struct kmem_cache *inline_xattr_slab;	/* inline xattr entry */
--	unsigned int inline_xattr_slab_size;	/* default inline xattr slab size */
--
- 	/* For reclaimed segs statistics per each GC mode */
- 	unsigned int gc_segment_mode;		/* GC state for reclaimed segments */
- 	unsigned int gc_reclaimed_segs[MAX_GC_MODE];	/* Reclaimed segs for each mode */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index db7afb806411..53b0827c75f1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2026,7 +2026,6 @@ static void f2fs_put_super(struct super_block *sb)
- 	kfree(sbi->raw_super);
- 
- 	f2fs_destroy_page_array_cache(sbi);
--	f2fs_destroy_xattr_caches(sbi);
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < MAXQUOTAS; i++)
- 		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
-@@ -5015,13 +5014,9 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (err)
- 		goto free_iostat;
- 
--	/* init per sbi slab cache */
--	err = f2fs_init_xattr_caches(sbi);
--	if (err)
--		goto free_percpu;
- 	err = f2fs_init_page_array_cache(sbi);
- 	if (err)
--		goto free_xattr_cache;
-+		goto free_percpu;
- 
- 	/* get an inode for meta space */
- 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
-@@ -5350,8 +5345,6 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sbi->meta_inode = NULL;
- free_page_array_cache:
- 	f2fs_destroy_page_array_cache(sbi);
--free_xattr_cache:
--	f2fs_destroy_xattr_caches(sbi);
- free_percpu:
- 	destroy_percpu_info(sbi);
- free_iostat:
-@@ -5554,10 +5547,15 @@ static int __init init_f2fs_fs(void)
- 	err = f2fs_create_casefold_cache();
- 	if (err)
- 		goto free_compress_cache;
--	err = register_filesystem(&f2fs_fs_type);
-+	err = f2fs_init_xattr_cache();
- 	if (err)
- 		goto free_casefold_cache;
-+	err = register_filesystem(&f2fs_fs_type);
-+	if (err)
-+		goto free_xattr_cache;
- 	return 0;
-+free_xattr_cache:
-+	f2fs_destroy_xattr_cache();
- free_casefold_cache:
- 	f2fs_destroy_casefold_cache();
- free_compress_cache:
-@@ -5598,6 +5596,7 @@ static int __init init_f2fs_fs(void)
- static void __exit exit_f2fs_fs(void)
- {
- 	unregister_filesystem(&f2fs_fs_type);
-+	f2fs_destroy_xattr_cache();
- 	f2fs_destroy_casefold_cache();
- 	f2fs_destroy_compress_cache();
- 	f2fs_destroy_compress_mempool();
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 58632a2b6613..b4e5c406632f 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -23,11 +23,12 @@
- #include "xattr.h"
- #include "segment.h"
- 
-+static struct kmem_cache *inline_xattr_slab;
- static void *xattr_alloc(struct f2fs_sb_info *sbi, int size, bool *is_inline)
- {
--	if (likely(size == sbi->inline_xattr_slab_size)) {
-+	if (likely(size == DEFAULT_XATTR_SLAB_SIZE)) {
- 		*is_inline = true;
--		return f2fs_kmem_cache_alloc(sbi->inline_xattr_slab,
-+		return f2fs_kmem_cache_alloc(inline_xattr_slab,
- 					GFP_F2FS_ZERO, false, sbi);
- 	}
- 	*is_inline = false;
-@@ -38,7 +39,7 @@ static void xattr_free(struct f2fs_sb_info *sbi, void *xattr_addr,
- 							bool is_inline)
- {
- 	if (is_inline)
--		kmem_cache_free(sbi->inline_xattr_slab, xattr_addr);
-+		kmem_cache_free(inline_xattr_slab, xattr_addr);
- 	else
- 		kfree(xattr_addr);
- }
-@@ -830,25 +831,14 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
- 	return err;
- }
- 
--int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi)
-+int __init f2fs_init_xattr_cache(void)
- {
--	dev_t dev = sbi->sb->s_bdev->bd_dev;
--	char slab_name[32];
--
--	sprintf(slab_name, "f2fs_xattr_entry-%u:%u", MAJOR(dev), MINOR(dev));
--
--	sbi->inline_xattr_slab_size = F2FS_OPTION(sbi).inline_xattr_size *
--					sizeof(__le32) + XATTR_PADDING_SIZE;
--
--	sbi->inline_xattr_slab = f2fs_kmem_cache_create(slab_name,
--					sbi->inline_xattr_slab_size);
--	if (!sbi->inline_xattr_slab)
--		return -ENOMEM;
--
--	return 0;
-+	inline_xattr_slab = f2fs_kmem_cache_create("f2fs_xattr_entry",
-+					DEFAULT_XATTR_SLAB_SIZE);
-+	return inline_xattr_slab ? 0 : -ENOMEM;
- }
- 
--void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi)
-+void f2fs_destroy_xattr_cache(void)
- {
--	kmem_cache_destroy(sbi->inline_xattr_slab);
--}
-+	kmem_cache_destroy(inline_xattr_slab);
-+}
-\ No newline at end of file
-diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-index 4fc0b2305fbd..bce3d93e4755 100644
---- a/fs/f2fs/xattr.h
-+++ b/fs/f2fs/xattr.h
-@@ -89,6 +89,8 @@ struct f2fs_xattr_entry {
- 			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -	\
- 			DEF_INLINE_RESERVED_SIZE -			\
- 			MIN_INLINE_DENTRY_SIZE / sizeof(__le32))
-+#define DEFAULT_XATTR_SLAB_SIZE	(DEFAULT_INLINE_XATTR_ADDRS *		\
-+				sizeof(__le32) + XATTR_PADDING_SIZE)
- 
- /*
-  * On-disk structure of f2fs_xattr
-@@ -132,8 +134,8 @@ int f2fs_setxattr(struct inode *, int, const char *, const void *,
- int f2fs_getxattr(struct inode *, int, const char *, void *,
- 		size_t, struct folio *);
- ssize_t f2fs_listxattr(struct dentry *, char *, size_t);
--int f2fs_init_xattr_caches(struct f2fs_sb_info *);
--void f2fs_destroy_xattr_caches(struct f2fs_sb_info *);
-+int __init f2fs_init_xattr_cache(void);
-+void f2fs_destroy_xattr_cache(void);
- #else
- 
- #define f2fs_xattr_handlers	NULL
-@@ -150,8 +152,8 @@ static inline int f2fs_getxattr(struct inode *inode, int index,
- {
- 	return -EOPNOTSUPP;
- }
--static inline int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi) { return 0; }
--static inline void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi) { }
-+static inline int __init f2fs_init_xattr_cache(void) { return 0; }
-+static inline void f2fs_destroy_xattr_cache(void) { }
- #endif
- 
- #ifdef CONFIG_F2FS_FS_SECURITY
--- 
-2.49.0
+Cheers,
+Longman
 
 
