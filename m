@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-863601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833B8BF8463
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:34:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EE4BF8469
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3146F356ED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B6319C1123
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971C8271441;
-	Tue, 21 Oct 2025 19:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3411350A00;
+	Tue, 21 Oct 2025 19:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="34gvDIYm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D7ERKdmk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P89UT1ZC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655B026F477
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A049242D6A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761075256; cv=none; b=Q1ntuVWfQGZpvqfwRs1VRq3jALq4u8PujznvjMlMnNmpW+wD5rCBpYJHRSV6YcVpOsqZfx+B3Apjv7ZmSI892FwvR5FTk8eyH0LcR1WHYNSAasVtov776fnWEe3rcymuBH0bGpigRjfirzb4EfWPkqcW81dqExXypPhuHihvv6w=
+	t=1761075266; cv=none; b=GVwzQrshs1T7h3FTx2mhDyEv/8Ey9FFRFXj33HkfG5O//ruA2wGLuEiCDvou/RDKE2PRVLb1khcVTaKMksX87xhISNduNT0gN2OLjSbDurzt4GIp1Tvw1wuX0XKY79Eehid6AvYgRHYallCJFuy/sJ+u8Ga1o0Pv3Sv3MO/Om7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761075256; c=relaxed/simple;
-	bh=WMkVzCHb/pcFbkhVA6vjN1ycycnndL0cxlAL9SzTFy4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OVwCJyOInqN/5x5TD3lTQHMYR40wiXXslLOaxrkLJWyW0jqGJ2UsDX6IKDdLbWghzt69ql9IsUsXpUiB49LpOZFBtDIq3k9dcJqH4vBcsFV84715lHm9r0UhfGVYGD6BoihTZQJ/AjasiMycEprioJ/Wt+BY/craJjFO7KoFmIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=34gvDIYm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D7ERKdmk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761075251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pCVeSrJNNtYjD79kUZsMuEgap1A7KQye/Hxn2Fcry1s=;
-	b=34gvDIYm/MQITbz7+4egNKkE4eVdMukAqRWKx1KO9Jw202J1ov+FoCZKH/GQeUN86Mvc1Q
-	D9wMDqu6oxqYpVNFMyLmvo8z/YataxJeRyRU3uNOxzA5BBpElIS6lzoxBdTGQqi38qv19S
-	y07R6jLZE+C9qoY8JdgjKz/ZqNSnHgLbWy4kOC6vaorh2dkn1iTvKrDArleN5MPMaGbhiX
-	96PrOqTHNKY2HDTWQjR+WPcFlwUoY0UgopSh2ZPqqj+kO1bFK1HT7ZSrDJqgFM7RMwnx6+
-	GOOafTBDq1q8P1DKq9qhRjSRUuti+EUw2dDL8Rx+Ngx2oP60cb/E57ZVshLWyw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761075251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pCVeSrJNNtYjD79kUZsMuEgap1A7KQye/Hxn2Fcry1s=;
-	b=D7ERKdmkLc9fVQG1wvFKGcbSQJYvjB5DGsc0RcDDlLdU5L7839lB8PwuG74KvBueNpKnWS
-	tA1d13YA9WgARECQ==
-To: Yury Norov <yury.norov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Gabriele Monaco <gmonaco@redhat.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Michael Jeanson
- <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>, "Paul E. McKenney"
- <paulmck@kernel.org>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
- TCMalloc Team <tcmalloc-eng@google.com>
-Subject: Re: [patch 07/19] cpumask: Introduce cpumask_or_weight()
-In-Reply-To: <aO_c3lTmvJyzsOdE@yury>
-References: <20251015164952.694882104@linutronix.de>
- <20251015172834.757776587@linutronix.de> <aO_c3lTmvJyzsOdE@yury>
-Date: Tue, 21 Oct 2025 21:34:09 +0200
-Message-ID: <87plagxd5a.ffs@tglx>
+	s=arc-20240116; t=1761075266; c=relaxed/simple;
+	bh=V5qBLi3zK77pXgOVJaV6ksMZC32XpEnGEdrJWDwYmY0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j9swWUMwrh/i15ixYdY1xmXRgZXUU9b47QVadTU6TMxqrnUpYnoFmEFp9ADC5f7SUSOMRFpPi0rsuJ54zRQpo9ZwhrWP/8uf+Yd5zH/HHBCqogekWtkGoAxA0W6Izb9IeBqOKXV7FsFizbVxXYEBAzhcPf/v8DKFkriQyYGgSvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P89UT1ZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF3BC4AF0B
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761075265;
+	bh=V5qBLi3zK77pXgOVJaV6ksMZC32XpEnGEdrJWDwYmY0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=P89UT1ZCRzeTW0VeLj7ijZRnK+wnC8EzhHG9fU98VmqZ0bpkzhSCQFB/6IVZd35W/
+	 I2jwIz1yZIiKUG8ShKT+gBSH3BaU03mlRuq3NJWt6zLmndNACRKQOqq6WDpxG3wAaV
+	 2rM8aqYOO4lz92Oxf0H0eSm56kXFKKkQ2PiWdM7ew+EweOOJc4jrBFeeU0VtP1Pvrx
+	 g3UB95Z+XrsIJjmeZLDiApy9BlA8qdUuQHe1M52+V8To+Y6avEaXDgDMZkPdsCJIBX
+	 Xp6BDN88SShFtcKqvBc7kDryfs/b77lPaJM15Ty+HMMU6GYXiIrvedcRcd3pD1okL7
+	 m0x5uB3RwiHhQ==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-651d30a5bebso2162256eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:34:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXo9CvXVYtlnZ13gHGBfeXRaGounih1GA/1o2nQ/rGEBnPIvN50cvQNaXVb+AfxKz6YMdSW+u7LEPo27ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq7OVfGw53PcA0irvNerSn0kvS6yHrXSD9he4sydXryoTZQflz
+	1+MFenJqNIRG5hbFwDZjlOWBpI7Oj27SrYBj3L01m+JPdYvATL+akT3Q6MGuoQ7LvNhK0Lg98/r
+	TuHtmPx9pYZPuO2g7nXHFn+mfNemHics=
+X-Google-Smtp-Source: AGHT+IEjJ240LLD4aWTURSy3Kpfjl2K/yWW+oTYgs4nkYbRCFKp2r4stFggEJLs+i2X79N/a8vB54125GN5q2x352V0=
+X-Received: by 2002:a05:6808:2508:b0:441:8f74:fba with SMTP id
+ 5614622812f47-443a319b0d4mr8130709b6e.55.1761075265025; Tue, 21 Oct 2025
+ 12:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250929093754.3998136-1-lihuisong@huawei.com> <20250929093754.3998136-3-lihuisong@huawei.com>
+In-Reply-To: <20250929093754.3998136-3-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 21:34:13 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ikPpwKA4WLvwon3p+e8+53fOQuudOioOr-KD-Ee-E0dA@mail.gmail.com>
+X-Gm-Features: AS18NWDwIWNmRUJAP79s28jwKq8U8tt1PZxDilox8o7Jt0mZ-BpZaOIJ7hov73E
+Message-ID: <CAJZ5v0ikPpwKA4WLvwon3p+e8+53fOQuudOioOr-KD-Ee-E0dA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] ACPI: processor: idle: Return failure if entry
+ method is not buffer or integer type
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yury!
-
-On Wed, Oct 15 2025 at 13:41, Yury Norov wrote:
-> On Wed, Oct 15, 2025 at 07:29:36PM +0200, Thomas Gleixner wrote:
->> +unsigned int __bitmap_or_weight(unsigned long *dst, const unsigned long *bitmap1,
->> +				const unsigned long *bitmap2, unsigned int bits)
->> +{
->> +	unsigned int k, w = 0;
->> +
->> +	for (k = 0; k < bits / BITS_PER_LONG; k++) {
->> +		dst[k] = bitmap1[k] | bitmap2[k];
->> +		w += hweight_long(dst[k]);
->> +	}
->> +
->> +	if (bits % BITS_PER_LONG) {
->> +		dst[k] = bitmap1[k] | bitmap2[k];
->> +		w += hweight_long(dst[k] & BITMAP_LAST_WORD_MASK(bits));
->> +	}
->> +	return w;
->> +}
+On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei.com> =
+wrote:
 >
-> We've got bitmap_weight_and() and bitmap_weight_andnot() already. Can
-> you align naming with the existing scheme: bitmap_weight_or().
+> According to ACPI spec, entry method in LPI sub-package must be buffer
+> or integer. However, acpi_processor_evaluate_lpi() regeards it as success
+> and treat it as an effective LPI state.
 
-That's not the same thing. bitmap_weight_and/not() calculate the weight
-of the AND resp. ANDNOT of the two bitmaps w/o modifying them:
+Is that the case?  AFAICS, it just gets to the next state in this case
+and what's wrong with that?
 
-   for (...)
-       w += hweight(map1[k] & map2[k]);
-
-While the above does:
-
-   for (...) {
-       dst[k] = map1[k] | map2[k];
-       w += hweight(dst[k]);
-   }
-
-The whole point of this as explained in the change log is to avoid
-walking the resulting bitmap after doing the OR operation. The compiler
-is clever enough to do the or operation in a register, write it to dst
-and then do the hweight calculation with it.
-
-> Also, for outline implementation, can you employ the BITMAP_WEIGHT()
-> macro?
-
-If you insist on this ugly:
-
-  return BITMAP_WEIGHT(({dst[idx] = bitmap1[idx] | bitmap2[idx]; dst[idx]; }), bits);
-
-Sure.
-
-Thanks,
-
-        tglx
+> This is unreasonable and needs to
+> return failure to prevent other problems from occurring.
+>
+> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Id=
+le(LPI) states")
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_idle.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 5acf12a0441f..681587f2614b 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -958,7 +958,9 @@ static int acpi_processor_evaluate_lpi(acpi_handle ha=
+ndle,
+>                         lpi_state->entry_method =3D ACPI_CSTATE_INTEGER;
+>                         lpi_state->address =3D obj->integer.value;
+>                 } else {
+> -                       continue;
+> +                       pr_err("Entry method in LPI sub-package must be b=
+uffer or integer.\n");
+> +                       ret =3D -EINVAL;
+> +                       goto end;
+>                 }
+>
+>                 /* elements[7,8] skipped for now i.e. Residency/Usage cou=
+nter*/
+> --
 
