@@ -1,188 +1,115 @@
-Return-Path: <linux-kernel+bounces-863000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FB4BF6C2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:27:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B236BF6C0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7201483373
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BECC018C73ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DF221D590;
-	Tue, 21 Oct 2025 13:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E775D33711A;
+	Tue, 21 Oct 2025 13:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="czQ0UXwF"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uschmAth"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C223B334C28
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D60334C38;
+	Tue, 21 Oct 2025 13:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053110; cv=none; b=IJJHzaTCVbRTZyOoBLC94qC8hZQnpBrCOVVD61FoQNqCu3cF8IfJZbqP9ipqw2djcbTmiJnfUvLA/89P8B1DZoe/CU3mBWUUsNTZUxWW5io0TYTRaqMBwM4fmTTbfRwW2RISJqS5WrZwHxsR5AGhLJhs71xgpStIAi/a1qQrdY4=
+	t=1761053131; cv=none; b=IID/gbBOoRD+a5V8gnJK0sEQng7xqquYxJurUuo5/Xkkvrkw8ge5+g0YqExraZfP0y1i4IAKl5IVOQlDAbohp+dshARF3nMM/bRpT7t5v0bD1o2ilgchr0HW4RKAnNB1f4dYh5fqDo3+AiuqI8FZn95kN2v/aMCLWnmHqRXi1Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053110; c=relaxed/simple;
-	bh=kiNqiVIfSory3z3e8ycMVEmSuhU+p709nuG3eFpGoOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aOvqv+SENaxS1N4y+nEq/GjNxjC+65ilIkzYb+68IwsQBFgTjqMeiY/hpVoCg0VJU4Yp655Z9Z/qdjvM9hAqRbfoCX2iiG8zZoum9xy3nsgNUmsIZoQkuGgSfDktH6rfDVjdGm8zR3IWeL2ZG/BWlV2stg2w+6CvlQvePDNGotI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=czQ0UXwF; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-430caa71278so566305ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761053108; x=1761657908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AN91pXwgqIQMxfVu6MiKIAGYOkS4a8BITP1vquLMZVQ=;
-        b=czQ0UXwFgPQsJ9x6M589G9UJA1EDemR3l+Ouw3iPZ4JPjVh0t7oRbn3mAj/V94cGC5
-         F52tM/8GYQbki5VYyGIMCQYTHf7Gh+nIcoaV0Q/cgUwHS+Cqeu+Xjjy7ZUcHSDi74+L2
-         vRhwTSJY/adheOXHGluEpqm6B28Mkz3mBGk+z0t/QYx1V40mH4epaKNtDyCWy7ck6PzT
-         6shPhiu+z8F1ZdnZ4U9bI1wFp4NZ7AWIKAstHiim6p+Qo6whBudWc4msn+GjDaddAXuw
-         IKEgoIwsbzSeqLsWltzpaG6lcVaTWPuLDOlqt8AQ6o2HyQ4K3N6q9ueD0PjwZ5XG2Ebz
-         VVmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761053108; x=1761657908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AN91pXwgqIQMxfVu6MiKIAGYOkS4a8BITP1vquLMZVQ=;
-        b=QQWz9bodfPOJQwwP6oq3wrv15iXwDkjpIS8xB1Jn3sygpu45MUGDBW3HOMmAfs2dP0
-         VSFqRoGnABxaCsVjpjBzFWwNlSYGLG+zH2xeIjaqEGTwqm9In2AUza6P3O+FwaTxQbiH
-         M6muyt8pconpK4fPxUjzeAvXL6A8eEFUR5yKMAnreDcSQBB4H8D9zRp7BlxgFCJCoK51
-         xml1c7cjD8fpa9lWe2jr+TbYh5+eLFNqSncmyTqBshigMn+Ffa7pyyRH3wCAQIISXupc
-         n15m8lp4QI5XqEbQoJ68JjLWnJtlReUqNDbrezPZuc/AhQwQKJLEPbYI2I+IOd3WvzFX
-         4ryw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7mYx7VMg9Z9oWHS6c5BDTF7GzK6AMDp6+dc/aFdYb1eA03GG/A34QgJByIIl24lEjJlzl5CNwWpNcYM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw18bhHhqM9yKQB8/lcltjIDOehabO417sClyDP7jOkfdoNtid
-	wP3JwsoKI/AlEYGD3WKS328AYOmyVj1YXBUTwI/1JPKTj7TGiISPwpeVnqNDTYbaGEb+fUqDAXB
-	RDSgphtMLEeDXmSMOctv9c088D5a+IzGlUE+2HUdn
-X-Gm-Gg: ASbGncujmirq8kwH2eKJZcSiVr3PppWs078KRnlwwQQ0lHA2+WLJrxoR0SPaAArewJo
-	nWPYagkOyqtJoo7QWMDBY0lxAXIDWoI9z3EEUEEFJUWGXE8plQG/0dSG7B13fKhxd9OcopzOK3X
-	vZbJchgaTUhELeQrRGMaHMq/Hy7BJc1htIC9L0hhKiKimDazB0mD3472qMepHH9doj8/Mch1RIF
-	vmem/WoKdgZT+pAIU5UFU4+QlQ40ahFmZkZO+vY21adlJJg4VSvuWa0iwVixygDDJG5Ar8=
-X-Google-Smtp-Source: AGHT+IEY3/tL9248AlNmzuOMolz/CQv5WsxYicH+FzqLOvMDH2FmXvH2tkQitr3keOXC46BpA4ai0otA6bymkuK1obw=
-X-Received: by 2002:ac8:5c90:0:b0:4b5:d6bb:f29b with SMTP id
- d75a77b69052e-4ea11f78f5bmr1896601cf.8.1761053107372; Tue, 21 Oct 2025
- 06:25:07 -0700 (PDT)
+	s=arc-20240116; t=1761053131; c=relaxed/simple;
+	bh=UxdXMpBkmMYt2F6O9GJR6GOTDbEq+GfjCaarrbDuIcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MDfBCh4mdK70XDW+RL8pfKQKUsX3Qn1gojP1jLmpZ8Qx4UkUjBG4rR7hxGAwRAFdPDG7QG/WbJYI8q8bzRq/RBTXIRNpo6kAfHkSX2CPE4NnEuFhkPbiFeIkoicSZdTXDsz0mQckYGK6RGnQBCGpzLVhHLEXP4BLnv/hf6YsY+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uschmAth; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2610C4CEF1;
+	Tue, 21 Oct 2025 13:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761053131;
+	bh=UxdXMpBkmMYt2F6O9GJR6GOTDbEq+GfjCaarrbDuIcA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uschmAthkJJF9k8kw65HohAiVw4eODormgudhOZ+JwsTTMIwLd6b81t5E1UjNFy6Z
+	 fkUsZ9fu18JMnNkSNxZE7XN6MAP62TfkbjeXQUMqA9L3nATor5/FUAl5m1SiMmdtbb
+	 zpYiU5wCmoqKYPBTCMM2OBnrPOexV+twe/YjETCjXWpi7KaBVswMARAT6hbffEMQni
+	 XuMV/K1ojumVbGg9cBqnd/5ayA70j/RXwKcDIJ71R5Dt56pR3GvkWsZzM7rEQfk1qf
+	 GtYrx1IMMTR+/aqpJOvO96S29gBMN9AHDPXvjgn8+XkK18rFyo5R6w1xEzktq+WJeP
+	 FpQkHk7dxqsKw==
+Date: Tue, 21 Oct 2025 08:25:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH v1 0/2 RESEND] i2c: muxes: Add GPIO-detected hotplug I2C
+Message-ID: <20251021132529.GA4133357-robh@kernel.org>
+References: <20251013060018.43851-1-clamor95@gmail.com>
+ <w3bn5bqxqjhf4uvxov47rwlvmnbic6xnlk25xbpnbmi2eyup7q@tjuiu7pl3mmo>
+ <CAPVz0n1-jN5WLFq4e0CZrneExrN_A=GNeGTwGHTCj14NAta+jQ@mail.gmail.com>
+ <aPCfiJxyKOXsgNJe@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021010353.1187193-1-hao.ge@linux.dev> <1e1376fd-1d38-4dde-918a-d4e937d4feac@suse.cz>
-In-Reply-To: <1e1376fd-1d38-4dde-918a-d4e937d4feac@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 21 Oct 2025 06:24:53 -0700
-X-Gm-Features: AS18NWBq-WflSIhn0eZIg3ZJV7hVJZWkIF7eJkNyEtLKL0lBLjGKZ_AOqjdE04E
-Message-ID: <CAJuCfpFto6=Z0kPdjNP6WeOYUB0uMKom9+HFg+ugA=ZjsNhewA@mail.gmail.com>
-Subject: Re: [PATCH v3] slab: Avoid race on slab->obj_exts in alloc_slab_obj_exts
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Hao Ge <hao.ge@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Hao Ge <gehao@kylinos.cn>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPCfiJxyKOXsgNJe@shikoro>
 
-On Tue, Oct 21, 2025 at 12:04=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
-rote:
->
-> On 10/21/25 03:03, Hao Ge wrote:
-> > From: Hao Ge <gehao@kylinos.cn>
-> >
-> > If two competing threads enter alloc_slab_obj_exts() and one of them
-> > fails to allocate the object extension vector, it might override the
-> > valid slab->obj_exts allocated by the other thread with
-> > OBJEXTS_ALLOC_FAIL. This will cause the thread that lost this race and
-> > expects a valid pointer to dereference a NULL pointer later on.
-> >
-> > Update slab->obj_exts atomically using cmpxchg() to avoid
-> > slab->obj_exts overrides by racing threads.
-> >
-> > Thanks for Vlastimil and Suren's help with debugging.
-> >
-> > Fixes: f7381b911640 ("slab: mark slab->obj_exts allocation failures unc=
-onditionally")
-> > Cc: <stable@vger.kernel.org>
-> > Suggested-by: Suren Baghdasaryan <surenb@google.com>
-> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
+On Thu, Oct 16, 2025 at 09:32:24AM +0200, Wolfram Sang wrote:
+> Hi Svyatoslav,
+> 
+> > Herve and Luca did not come up with anything meaningful, they provided
+> > just a few rough ideas. It will take an inconsiderate amount of time
+> 
+> Well, IIRC they said that your use case can be mapped onto their
+> approach. Which is meaningful in my book.
+> 
+> > before there will be any consensus between them and schema
+> > maintainers, and even more time would be requited to settle this into
+> > schemas and implement into drivers. Why should I suffer from this? Why
+> > should changes I need be halted due to some incomplete 'ideas'? This
+> > driver uses existing i2c mux framework and fits into it just fine.
+> 
+> I am sorry to bring you bad news, but you need to suffer because this is
+> how development goes. If I get presented a generic solution (see Herve's
+> mail) and a specific solution (your driver), for this case I as a
+> maintainer will prefer the generic solution. Generic solutions need more
+> time because there are more things to handle, of course. This is typical
+> for development, I would say, it is not Linux or Free Software specific.
+> 
+> I appreciate that you tackled your issue and were open to share it with
+> the community. I see the work being done there. However, there are so
+> many things going on independently that I can't really prevent double
+> development from happening despite it having a high priority for me. As
+> soon as I get aware of people working on similar issues, I connect them.
+> That's what I did here as well.
+> 
+> So, if you want upstream supported I2C hot-plugging, you need to wait
+> for Luca's and Herve's work being accepted. Or provide a superior
+> solution. Or, if you want, join the ride. You already have experience in
+> this field (and hardware plus use case), you would be a very welcome
+> contributor, I would say.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Agreed.
 
-Thanks for the fix, Hao!
+What really slows things down is when there is only 1 user of a new 
+binding. Too many times have I accepted one only for the 2nd user to 
+show up right after accepting it and wanting something different. So 
+now I just require more than 1 user and it is on the submitter(s) to do 
+that. After all, it is their itch, not mine.
 
->
-> Added to slab/for-next-fixes, thanks!
->
-> > ---
-> > v3: According to Suren's suggestion, simplify the commit message and th=
-e code comments.
-> >     Thanks for Suren.
-> >
-> > v2: Incorporate handling for the scenario where, if mark_failed_objexts=
-_alloc wins the race,
-> >     the other process (that previously succeeded in allocation) will lo=
-se the race, based on Suren's suggestion.
-> >     Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  mm/slub.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index 2e4340c75be2..d4403341c9df 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -2054,7 +2054,7 @@ static inline void mark_objexts_empty(struct slab=
-obj_ext *obj_exts)
-> >
-> >  static inline void mark_failed_objexts_alloc(struct slab *slab)
-> >  {
-> > -     slab->obj_exts =3D OBJEXTS_ALLOC_FAIL;
-> > +     cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
-> >  }
-> >
-> >  static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
-> > @@ -2136,6 +2136,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct=
- kmem_cache *s,
-> >  #ifdef CONFIG_MEMCG
-> >       new_exts |=3D MEMCG_DATA_OBJEXTS;
-> >  #endif
-> > +retry:
-> >       old_exts =3D READ_ONCE(slab->obj_exts);
-> >       handle_failed_objexts_alloc(old_exts, vec, objects);
-> >       if (new_slab) {
-> > @@ -2145,8 +2146,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct=
- kmem_cache *s,
-> >                * be simply assigned.
-> >                */
-> >               slab->obj_exts =3D new_exts;
-> > -     } else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
-> > -                cmpxchg(&slab->obj_exts, old_exts, new_exts) !=3D old_=
-exts) {
-> > +     } else if (old_exts & ~OBJEXTS_FLAGS_MASK) {
-> >               /*
-> >                * If the slab is already in use, somebody can allocate a=
-nd
-> >                * assign slabobj_exts in parallel. In this case the exis=
-ting
-> > @@ -2158,6 +2158,9 @@ int alloc_slab_obj_exts(struct slab *slab, struct=
- kmem_cache *s,
-> >               else
-> >                       kfree(vec);
-> >               return 0;
-> > +     } else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) !=3D old_=
-exts) {
-> > +             /* Retry if a racing thread changed slab->obj_exts from u=
-nder us. */
-> > +             goto retry;
-> >       }
-> >
-> >       if (allow_spin)
->
+Rob
 
