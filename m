@@ -1,138 +1,152 @@
-Return-Path: <linux-kernel+bounces-862212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC77BF4B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:17:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277FDBF4B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B5618C3CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:17:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B94B4EDC0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83241DD9AD;
-	Tue, 21 Oct 2025 06:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422D425C822;
+	Tue, 21 Oct 2025 06:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="jBkDXb9F";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SwGlFmQy"
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lshdYMU4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45650282EB;
-	Tue, 21 Oct 2025 06:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6692746A;
+	Tue, 21 Oct 2025 06:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761027439; cv=none; b=BZZNTSklASCsS4iLwPhtmdvc3JstSVWds9yx3Incsl/2NhsFqsEQss/JGn4rlFMHeVV9cIbKBw/B/AHqKAyyPkNyfvLdh2Xgvl0wibWvrEeej1FPivQK7BIL8EGB8DNVYZZtGpZV82mS9r5/QEK15te8+/Z/WfvkSgZs/DTi4MA=
+	t=1761027668; cv=none; b=TLfK8s6PYT5DyQutUuSJW/pgcz/wDm1xE3UqVG/u/x16mF0C6tnh1JG2F0gEPFjX3opqRO17EpKus0dSdXfbLac7KhdkR6cTyfOI8YQqqFgMNqzurqajsWQdXzhP16F3R1miiVTtTa6wBlQhq5qabHO2STHTTnGuMrKfPewBv00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761027439; c=relaxed/simple;
-	bh=F7uqWGDgVNfGLCmA9wNOF3IKuzda97s6QrCWLFxW7pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODViFudKiYBD4wCn/TOhzGLvemxkwazoacq/fEY5NMCESwmVSQsTjrjHPHrOudo5SVYS/6vGP+tfwJbdmgkVyUNwQmbBv6JdmZXnxWh5XjpBHW3PA07HF/XFrNkV1bQJ8el0rS4bwj8PxQwe+nV6RSemqRagrbWkxc8nTMn2nOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=jBkDXb9F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SwGlFmQy; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailflow.stl.internal (Postfix) with ESMTP id 0887A1300ACC;
-	Tue, 21 Oct 2025 02:17:15 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Tue, 21 Oct 2025 02:17:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761027434; x=
-	1761034634; bh=ThkdY/C21GPPtmJaBNezXHfzXuqV664YAK8ByLyyrfs=; b=j
-	BkDXb9FTfW5u1Pbb6r2Zr3VIG72LKLw9nP9YQOlOupyXBz0s755d9Um35dkpZN63
-	I0Uef+OM6YOOlLsIcEoJtikl3xyLapw96UV1ssVhuz5QXCPo2hIR3HHuq7tMDGY2
-	58mQjV9AmE9WkO5v87YTKv3WvXTH0Mzuv6GrHXpLrn5wVp+uHl9G/UtGuSCPnuZw
-	vwEQaWyTRz1KV5apsZKdY+Fq3glU/Km7NFtk1WlTD7H88AOGfKkXC/iENwUf2PPx
-	jtjeK0o5qqx8Kh9PGTS744xDLujWknV2MNIOIHRFXPn3GPDa9C4CFI1NHQ1lvMBt
-	CSb12LPEGkaw74oFKuCyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761027434; x=1761034634; bh=ThkdY/C21GPPtmJaBNezXHfzXuqV664YAK8
-	ByLyyrfs=; b=SwGlFmQyJV/PUgWB9SDj8yguYqU6M02H/iwHNvXmSHlFlJWSi3H
-	kIShHsNjDTPJvlQR1G0NkOXLVQQnarKseCczRENjeW4f2/jTVqqrDnx99y1xAXwD
-	7aH71MEqkok1ZR86ML/9a7+bnbqZxsxDD4Xbuf7+uJ3iNt30RCnrRiFrixypWMZJ
-	7hn4PFxDdp3x9LU/kfyTjNnUxVFPdp5+uxLLuMNV+oqpqgVqdelQ8yCOFQoMS+Bx
-	tQVgcSObMnUNEKS/RRs639uYCuVsXuAy8goq318P6gQSvQsVxv6C6Ev8BEbF13qc
-	QtR7z9k+yFXihMGqPAq3DbMQTPF9AoL+qhg==
-X-ME-Sender: <xms:aiX3aKJUQ4w9jII6ojRPfsoLw8bmWwE-vMOPiDCVSmdCc_Ma17RgmQ>
-    <xme:aiX3aDqx03n7NVDXm4A-71ZXHDANSiXBKGt83n_YX-1pOKqaX2_bd89uKQH9X5lqa
-    8rTARffDzmTe9-t-m3BrYAlGNlLG-N5AIfFDyslM2xEczBFctud>
-X-ME-Received: <xmr:aiX3aDUg7XIAOg7-dyN3dlAFXSuQfRptLP4PiBaTif9kcg3A516IjBkhKedgew>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeelleeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopegurghvihgusehfrhhomhhorhgsihhtrdgtohhmpdhrtghp
-    thhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtth
-    hopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehhuhhghhgusehgohho
-    ghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpd
-    hrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphht
-    thhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhrvghnii
-    hordhsthhorghkvghssehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:aiX3aBZnG-ZV_4luYvFZpInhDnYtfDRG7P0tDbPX9MWlT8uXaFOc-w>
-    <xmx:aiX3aEviEPwclsfWJ_0iXO_8_Aa55qLyoEWI7vz1M23KTlSqCEu7zw>
-    <xmx:aiX3aIoBf-j0YZ_FDUN6TmK2qmANbmPNVQmdG3dyGIdOKBUNaBAt2w>
-    <xmx:aiX3aEKaDNlUXOJmV5ONHKDtWHioydnBD5JTyYQJOwskcyh9ar4HbA>
-    <xmx:aiX3aOz0zFfSTrsVWO04AryR85bzqMmoIOXlNHl2tcwU4ZwddTs2TMLq>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 02:17:13 -0400 (EDT)
-Date: Tue, 21 Oct 2025 07:17:11 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC, PATCH 0/2] Large folios vs. SIGBUS semantics
-Message-ID: <cas6g5sw6bffqo5e634tmyivdamcagoynztic7s53634mv2kwk@6a552oryikew>
-References: <20251020163054.1063646-1-kirill@shutemov.name>
- <aPbFgnW1ewPzpBGz@dread.disaster.area>
- <aPckWHAGfH2i3ssV@infradead.org>
+	s=arc-20240116; t=1761027668; c=relaxed/simple;
+	bh=W+d5UueuksbVZ5B897EhjH3ZfVq/4dvSVyHlFR39x7E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RIy26J6cTCwFG0Yv7AIT0v+/aeq3xVjBR9NEX7bx3kr2qUotHq9a8qR8fU9ZEKAaTEu+wunWwtzZVVsLESlzSw+6llijGL1hhAS4D7UYmJpwywABPHuvPU7IuNskSkdA/Lp0LTIEt+AX4yEdyPaL9v9XeOskRpbbJE8MCOeuxP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lshdYMU4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E9AC1C4CEF1;
+	Tue, 21 Oct 2025 06:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761027668;
+	bh=W+d5UueuksbVZ5B897EhjH3ZfVq/4dvSVyHlFR39x7E=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=lshdYMU4mKyeIHgI1BjEMsUjoZZz1p0/BzAL2zxNooL0Sa6kjhN8BPlAz9hL+u+fL
+	 O4uP2wZZ9EaDulK9tibjNWrYOnQp1SfJH6LRR3khruFEw9VRDtC6bD0bG41GhDnkQT
+	 n0iZ7YicdFUpKBrxHc+bMVA+fOSBqhJS+j8OhOoD4dwbpRYZmf63/kW2lepHuR6Gg5
+	 gT0CguM+C4HXXquObKsNJNY+NKBB9FhzouIaGgYFjHSobocLyc4kusvtOSNjPIoa6v
+	 md4uRllNg110La/GzpjK/WWmHAoaDnn3ttKl4SLpdEEi8BEl21cZX8+d3EVSbUIA9a
+	 svCWhoI+GXmeA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1B0CCD1A7;
+	Tue, 21 Oct 2025 06:21:07 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
+Date: Tue, 21 Oct 2025 01:20:49 -0500
+Subject: [PATCH v2] arm64: dts: qcom: sdm845-shift-axolotl: fix touchscreen
+ properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPckWHAGfH2i3ssV@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-shift-axolotl-fix-touchscreen-dts-v2-1-e94727f0aa7e@joelselvaraj.com>
+X-B4-Tracking: v=1; b=H4sIAEAm92gC/5WNQQ7CIBBFr9KwdgzQWq0r72G6IDAVGiyGQVLTc
+ HexN3D5fn7e2xhhdEjs2mwsYnbkwlJBHhqmrVoeCM5UZpLLEx/EAGTdlECtwYfkYXIrpPDWlnR
+ EXMAkAjUpee60bFuDrHpeEettb9zHytZRCvGzJ7P4rf/YswABPUfZK9Mhby+3OaAn9FlFNR91e
+ LKxlPIFtwQ4J9kAAAA=
+X-Change-ID: 20250919-shift-axolotl-fix-touchscreen-dts-afa274c233de
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Joel Selvaraj <foss@joelselvaraj.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761027667; l=2603;
+ i=foss@joelselvaraj.com; s=20250919; h=from:subject:message-id;
+ bh=U0sTpFpcrFN55z2alpABRqP+EG7oJWABVi8Wsg5kAeU=;
+ b=uNkxTO4CLk55xQaPOMprWB4EgvcEz8dLQcg3oddM5f0Abu3ebTofFDa/+dwsxgZ2hm8z8vfna
+ kK/SV5o0VXMCF1nQckuwBHJTdgr8+GM2GqSrBGOgaogjHVDpFpMq5n+
+X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
+ pk=BBMos4ph15apUFh2AkG9rLZIrBWl5LD4egPOhEv63X0=
+X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20250919 with
+ auth_id=529
+X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
+Reply-To: foss@joelselvaraj.com
 
-On Mon, Oct 20, 2025 at 11:12:40PM -0700, Christoph Hellwig wrote:
-> On Tue, Oct 21, 2025 at 10:28:02AM +1100, Dave Chinner wrote:
-> > Fundamentally, we really don't care about the mapping/tlb
-> > performance of the PTE fragments at EOF. Anyone using files large
-> > enough to notice the TLB overhead improvements from mapping large
-> > folios is not going to notice that the EOF mapping has a slightly
-> > higher TLB miss overhead than everywhere else in the file.
-> > 
-> > Please jsut fix the regression.
-> 
-> Yeah.  I'm not even sure why we're having this discussion.  The
-> behavior is mandated, we have test cases for it and there is
-> literally no practical upside in changing the behavior from what
-> we've done forever and what is mandated in Posix.
+From: Joel Selvaraj <foss@joelselvaraj.com>
 
-Okay, will fix.
+The touchscreen properties previously upstreamed was based on downstream
+touchscreen driver. We ended up adapting upstream edt_ft5x06 driver to
+support the touchscreen controller used in this device. Update the
+touchscreen properties to match with the upstream edt_ft5x06
+driver.
 
+Also, the touchscreen controller used in this device is ft5452 and not
+fts8719. Fix the compatible string accordingly.
+
+The wakeup-source property was removed as it prevents the touchscreen's
+regulators and irq from being disabled when the device is suspended and
+could lead to unexpected battery drain. Once low power mode and
+tap-to-wake functionality is properly implemented and tested to be
+working, we can add it back, if needed.
+
+Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+---
+Changes in v2:
+- Split the commit message into multiple paragraphs. (Konrad Dybcio)
+- Add explanation for removing the wakeup-source property. (Konrad Dybcio)
+- Link to v1: https://lore.kernel.org/r/20250919-shift-axolotl-fix-touchscreen-dts-v1-1-60e26ad4e038@joelselvaraj.com
+---
+ arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+index 89260fce6513937224f76a94e1833a5a8d59faa4..d4062844234e33b0d501bcb7d0b6d5386c822937 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+@@ -434,20 +434,19 @@ &i2c5 {
+ 	status = "okay";
+ 
+ 	touchscreen@38 {
+-		compatible = "focaltech,fts8719";
++		compatible = "focaltech,ft5452";
+ 		reg = <0x38>;
+-		wakeup-source;
+-		interrupt-parent = <&tlmm>;
+-		interrupts = <125 IRQ_TYPE_EDGE_FALLING>;
+-		vdd-supply = <&vreg_l28a_3p0>;
+-		vcc-i2c-supply = <&vreg_l14a_1p88>;
+ 
+-		pinctrl-names = "default", "suspend";
++		interrupts-extended = <&tlmm 125 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
++
++		vcc-supply = <&vreg_l28a_3p0>;
++		iovcc-supply = <&vreg_l14a_1p88>;
++
+ 		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+ 		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
++		pinctrl-names = "default", "suspend";
+ 
+-		reset-gpio = <&tlmm 99 GPIO_ACTIVE_HIGH>;
+-		irq-gpio = <&tlmm 125 GPIO_TRANSITORY>;
+ 		touchscreen-size-x = <1080>;
+ 		touchscreen-size-y = <2160>;
+ 	};
+
+---
+base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
+change-id: 20250919-shift-axolotl-fix-touchscreen-dts-afa274c233de
+
+Best regards,
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Joel Selvaraj <foss@joelselvaraj.com>
+
+
 
