@@ -1,190 +1,76 @@
-Return-Path: <linux-kernel+bounces-863747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7886BBF900C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F44BF901C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA98E4E6BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:08:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AACAF19C25D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0FB28031D;
-	Tue, 21 Oct 2025 22:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQLjlWE0"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FA628000F;
+	Tue, 21 Oct 2025 22:08:58 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AAD1D799D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B971D799D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761084490; cv=none; b=lmjYOET3Tnw7FcjghGFGgVfW4Y8vjChJmyTCT9d1Z4YUZhtyDlpgsX+YBeGNIbc/fR09PmXZHw6OCWNqUqcnEaszxNBQdQb3fDi1FNkEprmq5ZutWDIJxVKaUvYI+jtOGRrg3WowHBHDu7EEgLUrz3i5f5TdY/qN5ngke/zurU0=
+	t=1761084537; cv=none; b=XggTG8j7SpNdOGyHjj/1qlKS7YLMp3jKoC980sgT5w83tTUCZTO10QV/30alB7LVAbImbJhkJNwglfAxVlJMoU3pEVH+lhknMnJ7rFJrQwDdOtMTvoAojFPqEls9G7KasQq1ALYqSfSrnIlBATd7S5IdFDBDZmGE00neLNSaMrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761084490; c=relaxed/simple;
-	bh=4qsm8FsP0dtmKdU9vOdB19fzdAVoHtjGAmNhKECK0Kw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ae33gIV98UrCxX/ihu8JwmEg5YoqOUNwCPBJbZLAMAR7qrQ45E2IK/TmZxCfL5Nro3cilX/wibbTrdzLIhqWeQW+Up41bi6EDnLTdgFo4ChNxpGMeygpXp7owpXXPnvEeF/HL9Q4jV5KsRxcI9aCoZX6pYEpPueJEuQLODnkKn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQLjlWE0; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b40f11a1027so1197566466b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761084487; x=1761689287; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1SJXvV85x5jMosgE1Az7dDeZnp5kW+qnV7kl2NORTrk=;
-        b=mQLjlWE0dIFFiAN4RuSUfRVuVWA9+O0EnrMRjw+vmqkuujP36P81AA1E/L8STyRuaV
-         FBHk7ukG8ouVD1zAGhiqlf1COUVo1eNcHuXl/KvR3sf4m8aEVwmlbufQ5B5OlqhvkQhp
-         GHNoI9QTGK7yn4Vi2Y84A8OiWsgK5+/BuNWP+UZ7Sz6iz+AiXRUKjx1nkq3BqzjRvKsV
-         CPVywmtaxndaOTNWk2scYlkxxmsWXuyxnVr22waX/gaK8Ju/0Y+wk7OM/fijATy32M5r
-         Tpml7cSCsFjbhZniJTTxpgGFSK8wTkvLfAwbH62emZGASJMe/kVANlUUz++EWRUNFbaz
-         uQCA==
+	s=arc-20240116; t=1761084537; c=relaxed/simple;
+	bh=BRkGrLQrNSh8R9z5Glb4y5FFkCpIsIQK4TzAzzM+zTM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ibOk4/egbqnXkjNNl57Rt8m6yaiCpKnmG+DRUAiKz0/HD8zCRYOJoOa0eg/TuRMGPFzxs/9ma3nSn2N+52o2CuUyidyOBXt2GSEOw0M1m1mQIM/aQfPrlOfOE350FVqmTGAgyofPYvfJ6uNmYHzse5XM+93snXA/5ut/8altwTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430c1cbd1f2so64550775ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:08:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761084487; x=1761689287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1SJXvV85x5jMosgE1Az7dDeZnp5kW+qnV7kl2NORTrk=;
-        b=d1ckXBBuBdCsSlbtt16xRI0wiXYgrWIc3DM/4hEIQcCCuL0/Wyq6oQEYERTZwBe7wC
-         3QJdNrH4dCJXPdoU4Qc/8sqPqVVTOzoy9Gw90eOxXp6zEbNqHoWBfRADeAnBZ/O/lFEi
-         OflvsPVyjMn0M8xDs5urF+HmMqyhGnhSJ6towv54HFtFGt1zFaHLL/6u7QLRSN3N5/+N
-         xLRvqhV+KTrf1U7jihayMZL7KFZHs6uhBUXDASYLw382EHkqO618609Qx6Q8B1fS7spP
-         mmysXIn4dqmvNuCGZZ2O7PmV93GNmsrjVCqptj3h5sjQjnwCJTdjd5Is9498dhtNJFNf
-         ZI3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWx++RN0gwHeHUpKj45gddFwzvgIFiKXIJCC4myqyK0L/rylCJEyabuInFDhVjIqdz+rpW7L/UHXQkIOs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLPw87IzatP3yLzL1Bd1XTghHsfvQ99vt5H1LcXJijjx54Sr6J
-	giiPDg85VbZ1aG6npwnYxLkFiwEFC0Gj6UuJmzJ2CzGzwdisV3WW3VGSrRiG3a42rewf2wYYotr
-	42BIbrsofIwj9vuxWKa9rT89pUd10pEI=
-X-Gm-Gg: ASbGncuwh9UJUTYSVpVRpQmFcD7Chwx6qiZ4UVn13moQp9RhS9mLKgIDBflcUUcz8hy
-	N/sQowcq6b3tFjcz/v242oVIkOtWUXqGfauphxKk5tTUoIh8OrLw0xdOTGnIw5AbfSSaLdFHK3k
-	ayctwByR0g2eFtPwfzyJX0bY+g9A3q/CPfQGFSWWFM+WPlbsd9E/2NhLxZ9TDN+VkSs2zaEEbeZ
-	QRWAvYkYCbwWCZM5uhTdcpUreEk6deJbvRPO4grnWED9k2VPbCZ/dGmug==
-X-Google-Smtp-Source: AGHT+IGDo+j3YXKHOCH7efiHHOrt3v6TVVXF/wuEOE3mxT2beymntSTmRW6G/B3jC0eiwCHDf4Q5xC6fF6QnKR0lv5g=
-X-Received: by 2002:a17:906:dc92:b0:b4f:ee15:8af4 with SMTP id
- a640c23a62f3a-b6474b35fe6mr2129834666b.34.1761084486712; Tue, 21 Oct 2025
- 15:08:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761084535; x=1761689335;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BRkGrLQrNSh8R9z5Glb4y5FFkCpIsIQK4TzAzzM+zTM=;
+        b=lwAlq4CMC5HbnfeQnTGHHUSZwUyqIKXHo7zS7tOL2+y/JhhZEkESrxgXPZnsEfNZgG
+         LKvjM9XKjmmnKfM6DH3GcyzBOTzI5pxUcvhQuwLUt2vcndPATGUlPT/Lfb6WP2fRUzBK
+         OjFrpCj/PA31EnzCtWHUMRDiRKXW/e1smms2Q8bDePbT5wdfLOSbIHPegB1TaeDPa8JD
+         3r9x06J8DMXbRloaYrRokXLOnOM4Z8kHSqLCVwaQS0cs8Bw8UIIKNnoLGCQXQrto8xsn
+         IlZ0zQRLGEH3rwb7ke29+x5uMlK5JLveaxkZj0AisRWst7lPVm9lcb2+YfoU45lUdd5g
+         MJvA==
+X-Gm-Message-State: AOJu0YykpumYBa9vPeWeOjO354+Dgr36jSQsXqA0Qb2Ycz7wvXRJTKU0
+	bwAKM51PUsie7p+LF6rhzoSXwBn2O9OXNZYBLefoChrA6pGLODpaKKPV/5oP1rPqcpcJWrpYzgC
+	5JsEVrH3oU7UBBBVIzvzHVRTZ8LldiXhsxqV+d2QZI2OkIWZGb3n1gVoL8tQ=
+X-Google-Smtp-Source: AGHT+IHwWWFpAUJgXbj9ADp28kaD+pgRaUO5HqgMVVPArmCceS+vL1eAhJiUfkKHzPC9ED0t3La/J0VIVjOkCS3g/jDU2pYQC+cf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007115840.2320557-1-geomatsi@gmail.com> <20251007115840.2320557-7-geomatsi@gmail.com>
- <CAFTtA3PyEnscQx+JtM3wBb0YZJxFjoJp4JB6QJQXbN6q3HVFyA@mail.gmail.com> <aPVba5_moA6g-0Uo@curiosity>
-In-Reply-To: <aPVba5_moA6g-0Uo@curiosity>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Tue, 21 Oct 2025 17:07:55 -0500
-X-Gm-Features: AS18NWBxOA6BKOJR9HnSchM5A8gYAiLSQ89wMSBHMqfEeBqTwrIduyXHCKRwkyg
-Message-ID: <CAFTtA3NW=8JDnr=JN2X9q9YwYLihsF3zE06VTGSzg7kVjDLJZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] riscv: vector: initialize vlenb on the first
- context switch
-To: Sergey Matyukevich <geomatsi@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Oleg Nesterov <oleg@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Thomas Huth <thuth@redhat.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Han Gao <rabenda.cn@gmail.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Nam Cao <namcao@linutronix.de>, 
-	Joel Granados <joel.granados@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
+X-Received: by 2002:a05:6e02:19ce:b0:430:bee3:34a with SMTP id
+ e9e14a558f8ab-430c52b5b09mr239291495ab.20.1761084535425; Tue, 21 Oct 2025
+ 15:08:55 -0700 (PDT)
+Date: Tue, 21 Oct 2025 15:08:55 -0700
+In-Reply-To: <67389a73.050a0220.bb738.000a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f80477.050a0220.346f24.002c.GAE@google.com>
+Subject: Forwarded: test fix
+From: syzbot <syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 19, 2025 at 4:43=E2=80=AFPM Sergey Matyukevich <geomatsi@gmail.=
-com> wrote:
->
-> On Wed, Oct 15, 2025 at 02:54:39PM -0500, Andy Chiu wrote:
-> > Hi Sergey,
-> >
-> > On Tue, Oct 7, 2025 at 6:58=E2=80=AFAM Sergey Matyukevich <geomatsi@gma=
-il.com> wrote:
-> > >
-> > > The vstate in thread_struct is zeroed when the vector context is
-> > > initialized. That includes read-only register vlenb, which holds
-> > > the vector register length in bytes. This zeroed state persists
-> > > until mstatus.VS becomes 'dirty' and a context switch saves the
-> > > actual hardware values.
-> > >
-> > > This can expose the zero vlenb value to the user-space in early
-> > > debug scenarios, e.g. when ptrace attaches to a traced process
-> > > early, before any vector instruction except the first one was
-> > > executed.
-> > >
-> > > Fix this by forcing the vector context save on the first context swit=
-ch.
-> > >
-> > > Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
-> > > ---
-> > >  arch/riscv/kernel/vector.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-> > > index 901e67adf576..3dd22a71aa18 100644
-> > > --- a/arch/riscv/kernel/vector.c
-> > > +++ b/arch/riscv/kernel/vector.c
-> > > @@ -120,6 +120,7 @@ static int riscv_v_thread_zalloc(struct kmem_cach=
-e *cache,
-> > >
-> > >         ctx->datap =3D datap;
-> > >         memset(ctx, 0, offsetof(struct __riscv_v_ext_state, datap));
-> > > +
-> > >         return 0;
-> > >  }
-> > >
-> > > @@ -216,8 +217,11 @@ bool riscv_v_first_use_handler(struct pt_regs *r=
-egs)
-> > >                 force_sig(SIGBUS);
-> > >                 return true;
-> > >         }
-> > > +
-> > >         riscv_v_vstate_on(regs);
-> > >         riscv_v_vstate_set_restore(current, regs);
-> > > +       set_tsk_thread_flag(current, TIF_RISCV_V_FORCE_SAVE);
-> > > +
-> >
-> > I am afraid that this approach can result in a security issue where a
-> > context switch happens before the v-restore part of the current
-> > process, cheating the kernel to store stale v-regs onto the current
-> > context memory. Please note that this handler is run with irq enabled
-> > so preemption is allowed.
-> >
-> > I would expect simply initializing the vleb in riscv_v_thread_zalloc,
-> > perhaps dropping the "z" in the name to prevent confusion.
->
-> Ok, so we can just set 'ctx->vlenb =3D riscv_v_vsize / 32' in the renamed
-> riscv_v_thread_alloc function. But note, that w/o forced context save
-> we implicitly reset the vector configuration to 'all zeros', overwriting
-> the hardware defaults.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Resetting all vregs to zero is desired as otherwise we may
-unintentionally leak stale states from other users or the kernel to
-the user process.
+***
 
->
-> By the way, could you please elaborate a little bit more about your secur=
-ity
-> concerns with the TIF_RISCV_V_FORCE_SAVE approach ? The atomic and per-pr=
-ocess
-> flag modification looks safe to me, so I'd like to understand what I am
-> missing.
->
+Subject: test fix
+Author: rpthibeault@gmail.com
 
-The concern is information leak. A context switch can happen right
-after the FORCE_SAVE bit is set. At this point the kernel saves live
-vregs on the machine to the context memory (vstate) of that process.
-The content of live registers may come from another process, or stale
-value of in-kernel Vector uses, since we don't flush registers at
-every ownership change. When we switch back to the original process
-and return to the user space, the saved stale content is restored back
-to registers. As a result, the user space can read Vector registers
-from other contexts.
-
-Thanks,
-Andy
+#syz test
 
