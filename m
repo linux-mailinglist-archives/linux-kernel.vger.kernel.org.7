@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-862374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF93BF51CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FCABF51A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36B7481D63
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31303188A423
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3782C159A;
-	Tue, 21 Oct 2025 07:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EDE2BE655;
+	Tue, 21 Oct 2025 07:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKp8C6Kk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DPiBy/9i"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E69428DB71;
-	Tue, 21 Oct 2025 07:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474E82874E4
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761033026; cv=none; b=usGL4Frrkv4x6R3U1ixg7khmr3+tHzLwnkmdpX/aIHxwcTcLd1s2VTRThaZkFe7ahIqzgcQKsfZGXLRn1/693TDZ1zZHFYqT2avGTLM7KkKdtjkcKUTbUebGuhc8mT5DiONZwpBduKSBWaTEYK9U9ws6y+TXhCMNs34HKepGVUs=
+	t=1761033073; cv=none; b=DFozJ0+kVapKO8SJl6ADZuN9xo2/6AE5UahR24VaUlVc6+VkSAXJtBQiqTwppM5vpv87xllZ+s8TJRTEe55TMXm2AFu6lTIVRuqWNZBGdmWJ6g+Amw0FwNczCYhRMQQI684NoqmVLAq0ZnisXD+xY+zRrjCMlY3s5s5gOf+i/1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761033026; c=relaxed/simple;
-	bh=wcjQXdXyz4a64xPChG6OrBbIDGawzNQC7URHkyMcw9s=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c01mGMhl+PdCPiySvgOG/z1uzQRTAlS4ycJJ+t+jx8HQKVHggqc9sREhZgak3gv0f0O3bu2rHcaICh0jeBegVrAwOPC5uXTC6LsmjprrN4XUVrECdnVpZbvq4RIlE0ySUSm9mYws5E56CJfL/FYe0sT1OtgdeEgtxjwvoAyisDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKp8C6Kk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99228C4CEF7;
-	Tue, 21 Oct 2025 07:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761033025;
-	bh=wcjQXdXyz4a64xPChG6OrBbIDGawzNQC7URHkyMcw9s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mKp8C6KkuWJAne+5zLlmaPxKLDRxc161Dmorh/7VwBWhIa4rOhvF+9t5O7TfUkGVN
-	 5J8AZxqfUW3IoY6cvJCxl3akQySI1hE1HTLiqI81hBekdUbevEBVf6wMOpBFCvC4RB
-	 fJK80tE4UebXUiYLIb86fa5viFBux7BXSb+APfw2aW6K7hirWZAP5kC5kJQUaDbXEf
-	 D3+4ubqnMq76+F5kSiWBuuYzKPsHyGvQM5K+bhGM0B6h9NJq29ui1zi8Kz/6un/Y+W
-	 egkYBE9PEBsU0dQDzK+pfmBvipreHtG5jeD0a3d90cYvS/ZpzijvYK7WapUUBhC3kQ
-	 wVKrkvEKqxnYA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vB78R-0000000FkvS-0gGO;
-	Tue, 21 Oct 2025 07:50:23 +0000
-Date: Tue, 21 Oct 2025 08:50:22 +0100
-Message-ID: <86frbcwv5t.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Sascha Bischoff <Sascha.Bischoff@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	nd <nd@arm.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	Joey Gouly <Joey.Gouly@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Aishwarya.TCV@arm.com
-Subject: Re: [PATCH] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3 or v3 guests
-In-Reply-To: <23072856-6b8c-41e2-93d1-ea8a240a7079@sirena.org.uk>
-References: <20251007160704.1673584-1-sascha.bischoff@arm.com>
-	<23072856-6b8c-41e2-93d1-ea8a240a7079@sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1761033073; c=relaxed/simple;
+	bh=YTsIbx04l5qgIFskYWd59hgzfuTSY/THNv/uSHG8Xqs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Uq2aj7+gA4UZ+GkoA4pHhwzY1B5Iagf2uSHmH6zj2ubWSO1w7Km64NDiv9DJgheaf9cj09nWIQcr9G+/92mzXhSeQgfLbPbHuxTn/IJlc7WgyproS+6Xm/ntCT711neDKQJ1sPakcFtQ2GsVY81iCzsgbeSWNSyHiLTmQs+pOHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DPiBy/9i; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761033070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1h6fa2qbHoy++SvDQf77xOSpwekaCSKBmi7FZ2f1xQY=;
+	b=DPiBy/9iPpWv6wJZ2mYKnhsjh8DUYZ0F9ZxMwNS++1NJk0MrWJiBMwU1QXw8jhmLWAUFUW
+	gQlxlj7KhzVNeaFvSyPrDEHlRnQ1anjl/aabQz7EHMX4CiLQHeet29/F9p1fRY27AgcBs0
+	1mv+3NQmZbTEcT1daTwptvnMc07q9YY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-100-IxMY83J9NpywQ651aTL1VA-1; Tue, 21 Oct 2025 03:51:08 -0400
+X-MC-Unique: IxMY83J9NpywQ651aTL1VA-1
+X-Mimecast-MFC-AGG-ID: IxMY83J9NpywQ651aTL1VA_1761033067
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-40cfb98eddbso3027757f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:51:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761033067; x=1761637867;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1h6fa2qbHoy++SvDQf77xOSpwekaCSKBmi7FZ2f1xQY=;
+        b=Spsii/NUv5C45/insDI6kJuiB9+2veYzO9yb2yme4BGw9qxNwsolREnKID+3eMo1at
+         pBKohmDSHM4sOlaCdRlyyOxQy2ymAPjOYdUSFmZJNglKjYQP1w1b4YoGd40ep3ljvLVJ
+         y4ZxvVltSUrfBQZ8ndtKAC+2J+sraQU8rcjpXup5iBGnYhjK33fIRyq/qo8Ch60HQp4d
+         5l1F6jvctFg1haHbgvu4zwOn17+2ksTCly7LrGQsOVPEzpu6keaKn8VEI7V+Sihvs6dg
+         DVoVvRRl47gezaMlnotjfGB+HCHG12RKBxAeqtkG82SacH42picQCCz/HO8JtcV76gL9
+         LVCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUML/RhsU3Z6W09E1CluI2atWwh9jdTm487VIMs6CnnBG6oNAEfpcMerYPlqDvgWbYV98tslM/fjgCoIVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi4E4qlXTCHde0pe1vNwRSg4Pmg0ghrgViMJy0jUHX16SmaeJy
+	1ticILrsYz5lU9r3VmOZx+H7nFjAae33pvQ7hVCeZxOlkCLsVeRd2gAmcNy9B+aHSGqRi7avrZJ
+	h24IcJpydJEbSWZTfd1h+AYZCJKWh74o8Rj/Ys26jb0G/uMl/WCcvRQRVMQJ1/mdrEg==
+X-Gm-Gg: ASbGncuwg7XATomx8s4T6++UQxUTVbw70hmhsNiCaEFcQtG4OGK8WGVCjgy/mSszrvl
+	YnxKNV9ruVrfC8G0tL0uMvxmy4ThuBvDB8QzCNwFgoSlfBj5/X/Fu9QZ6lpVQB767x2Kcq7LTkJ
+	2T7O6go2tfi3gHpTSWC4ovrBHJYlybh47Z7vMEcrzE43sYy4UlInAZXfh5tsR3NSnfrlqmtHM8G
+	l+KM1itWhIXmINEZKL2xucWF8akQO0GvzbbbxopH8s+yEg1oFyX7dC9i4VBePH+4XFppGvCsE9B
+	kkkcHVqRr8Ui6R+1JmD6xSJfawVh2XWNdKEXUZ5qX6obdWU2Y27TH9SedEEuqZOQwRmIpLKJuOd
+	6W00vlvPs6oQW9IHwguidkt3tQnwGC/S+4bgcU0DkvV4Ey04msCs2bzn6rw==
+X-Received: by 2002:a5d:64e7:0:b0:3e7:428f:d33 with SMTP id ffacd0b85a97d-42704bc0e86mr14036924f8f.16.1761033067215;
+        Tue, 21 Oct 2025 00:51:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHz8/veJYRT8JadPcK7SQ32pn8LgrM+ivv/Y11OS7FOCN/IU1aUPsxB4lxzjs+wdp1rzZtnZQ==
+X-Received: by 2002:a5d:64e7:0:b0:3e7:428f:d33 with SMTP id ffacd0b85a97d-42704bc0e86mr14036895f8f.16.1761033066816;
+        Tue, 21 Oct 2025 00:51:06 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427e1be5d6csm18888806f8f.0.2025.10.21.00.51.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 00:51:06 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>, Shuah Khan
+ <skhan@linuxfoundation.org>, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] drm/solomon: Use kmalloc_array() instead of kmalloc()
+In-Reply-To: <8dc12a18-58ee-4df6-a9f3-12d8c05a0954@gmail.com>
+References: <20251019145927.167544-1-mehdi.benhadjkhelifa@gmail.com>
+ <2541f99c-1081-4253-ae58-97654694cd78@linuxfoundation.org>
+ <e4f0290b-5d15-472f-acee-e1e1b0629ec0@gmail.com>
+ <3f523293-8a8d-4136-b4bc-4ad0d4a50c59@linuxfoundation.org>
+ <8dc12a18-58ee-4df6-a9f3-12d8c05a0954@gmail.com>
+Date: Tue, 21 Oct 2025 09:51:05 +0200
+Message-ID: <878qh4ae1i.fsf@ocarina.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, Sascha.Bischoff@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, nd@arm.com, oliver.upton@linux.dev, Joey.Gouly@arm.com, Suzuki.Poulose@arm.com, yuzenghui@huawei.com, pbonzini@redhat.com, torvalds@linux-foundation.org, Aishwarya.TCV@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue, 21 Oct 2025 01:21:56 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> On Tue, Oct 07, 2025 at 04:07:13PM +0000, Sascha Bischoff wrote:
-> > The ICH_HCR_EL2 traps are used when running on GICv3 hardware, or when
-> > running a GICv3-based guest using FEAT_GCIE_LEGACY on GICv5
-> > hardware. When running a GICv2 guest on GICv3 hardware the traps are
-> > used to ensure that the guest never sees any part of GICv3 (only GICv2
-> > is visible to the guest), and when running a GICv3 guest they are used
-> > to trap in specific scenarios. They are not applicable for a
-> > GICv2-native guest, and won't be applicable for a(n upcoming) GICv5
-> > guest.
-> 
-> v6.18-rc2 introduces a failure in the KVM no-vgic-v3 selftest on what
-> appears to be all arm64 platforms with a GICv3 in all of VHE, nVHE and
-> pKVM modes:
-> 
-> # selftests: kvm: no-vgic-v3
-> # Random seed: 0x6b8b4567
-> # ==== Test Assertion Failure ====
-> #   arm64/no-vgic-v3.c:66: handled
-> #   pid=3469 tid=3469 errno=4 - Interrupted system call
-> #      1	0x0000000000402ff7: test_run_vcpu at no-vgic-v3.c:128
-> #      2	0x0000000000402213: test_guest_no_gicv3 at no-vgic-v3.c:155
-> #      3	 (inlined by) main at no-vgic-v3.c:174
-> #      4	0x0000ffff7fca7543: ?? ??:0
-> #      5	0x0000ffff7fca7617: ?? ??:0
-> #      6	0x00000000004023af: _start at ??:?
-> #   ICC_PMR_EL1 no read trap
-> not ok 25 selftests: kvm: no-vgic-v3 # exit=254
-> 
-> introduced by this patch, which is commit 3193287ddffb and which never
-> appeared in -next prior to being merged into mainline.
-> 
-> It didn't appear in -next since the arm64 KVM fixes tree is not directly
-> in -next and it was only pulled into Paolo's tree on Saturday, a few
-> hours before Paolo sent his pull request to Linus, so there was no
-> opportunity for it to be picked up.  As I've previously suggested it
-> does seem like it would be a good idea to include the fixes branches for
-> the KVM arch trees in -next (s390 is there, but I don't see the others),
+Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com> writes:
 
-As I explained to you more than once, the answer is still no. We keep
-the two branches separate for good reasons -- for a start, they are
-manager by different people.
+Hello Mehdi,
 
-If you want to manage a -fixes tree, go for it. If you want to take
-the -fixes branch in your CI, I have no objection.  Do I support this?
-Absolutely not.
+> On 10/20/25 9:56 PM, Shuah Khan wrote:
 
-	M.
+[...]
+
+>>> I have a raspberrypi zero 2 wh that i'm using in combination with the 
+>>> ssd1306 OLED panel via I2C to test it's rendering and it's working 
+>>> properly by using modetest and seeing no regressions or warnings in 
+>>> dmesg.
+>>>
+>> 
+>> Send v2 with all these details and why this change is needed
+>> in the first place.
+>> 
+> Okay, I will do that as soon as possible.> When and how does this 
+> potential problem trigger? Is this a
+>> theoretical or does this happen in this code path and how?
+>> Next time include all of these details people understand the
+>> problem better.
+>> 
+> We'll do in the next iteration.Thanks
+>
+
+A similar patch was posted by another developer a couple of weeks
+ago and is now queued already in the drm-misc-next branch:
+
+https://cgit.freedesktop.org/drm/drm-misc/commit/?id=940dd88c5f5bdb1f3e19873a856a677ebada63a9
 
 -- 
-Without deviation from the norm, progress is not possible.
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
