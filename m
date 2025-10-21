@@ -1,343 +1,199 @@
-Return-Path: <linux-kernel+bounces-863828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F45BF932F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:19:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE635BF9371
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF7B586C06
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300123AE241
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700832C0279;
-	Tue, 21 Oct 2025 23:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D7D2BE05B;
+	Tue, 21 Oct 2025 23:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="gjvg272/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pXr/+K2y"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="WbHJlTOQ"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC4728CF66;
-	Tue, 21 Oct 2025 23:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E45F23AB8A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761088736; cv=none; b=NcAz6YSlWvLhUgwc+EHH7w9ouJ6U8Nle/Myj7jzQ0PcbwEjjsFU9uZ50K3sFhQrD8ifVLMMXgWI4h+4GLRT7XJLpZ1LjqGZEwnuwPvg1vem+LquuTYhkLEnPxvM+tv86gkuQdJq4V0Ar580rmSseM/kOXI5Lr5sxsZPjR3vfDJA=
+	t=1761088906; cv=none; b=CzRJ1P+hsQDAFAABVUJxJFbSEFAKLWFBogA6wgjz276wfGJxxceovrzUFH4LMYLt2bWq/L/s4cvAjrsWhC2Q1CcAG34j4dAn4+BZ0uyF+DI7FMdGJ40yFPprhxqjB9ypsNd1dwGLIdKRGvY8T/uKJklhhLIX+UN0wxmatC2nOik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761088736; c=relaxed/simple;
-	bh=B4HDYUTcgrI28lCumPPrBJUSwFQspl6U9kC4EaeO0tQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gUwAXoMTVi/KBN9IT8tigXT6HZad97ZRPsQ/LlYV5lrpwIxIFPTO/PdJOEdK2DDmDm8047kdRNxicHFl9IqO/yca1dBAlcTEUrwAqrm/lc7NxmEmNb2DlKekQ4Qq2jVXis5hONIc/bhXMWh947CJl9/vBQRpVZ4PXFqqekRmqA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=gjvg272/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pXr/+K2y; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 17C92EC0176;
-	Tue, 21 Oct 2025 19:18:53 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 21 Oct 2025 19:18:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761088733;
-	 x=1761175133; bh=nT/d7pA+6mCx8029HxB41nfMMHiCmLKVqxIlm2Vg1OQ=; b=
-	gjvg272/lNHVY04Oe45OJeFgkqIchxjL1xzxELT+IOV/tJJRjRLgM4NDsE9Ga0UT
-	26jnW0xpPIKo17EJq3RMeTGEJislwrHF315aHaY4Qf9O5miEb0d3LTlupldkTSo0
-	hVo2EvDVmJGQS7hl//0VPXQCIZgomba1aSGnYyh1m9Ab1KIm24/8kZCrUOWS+Wj2
-	yI+pObyjcvHTTi0DKV68HPOGH4uAdEX2eGAs54EV9f0s8LefypNh3VaY+I8/xPAx
-	PAgVPm4SydXU+uzfFm7NqHvQJ4dQyl5LfPvfFWSB0Ex48dd9udP5ZtyBkc2Bb+cs
-	EwkYehLTf+pkMr6NgCT8Ng==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761088733; x=
-	1761175133; bh=nT/d7pA+6mCx8029HxB41nfMMHiCmLKVqxIlm2Vg1OQ=; b=p
-	Xr/+K2yYksXd3xjVTjEty0773VJPCDKaKtZ7yWJpnG3rU6A0icrBrjERq7EPXR2p
-	G03jsBl0qfGzQjtKCFEXNZpE2K9uyw96GVuHv3NcEasQbEkOJyXuv/7GCAxQvGwY
-	SvW76OEK3G0fkC9qlSdNhBUyWgp3iZW2+WhKamAFKj3y3/fVd8yYbfrUST2AuiPa
-	Mf04qnc6Qo2y9fiduKOtLJviCsg93hofO9tghqS4xi6Duevvjr7mFiOugPaRWfGc
-	KTLdob0vF1sPaJwf2aXsae9S9ZPhNEC4bbNqENZWHiAML8nsxvevwd++85DYSeSH
-	xzVZrdUPn1pWS2pKLUpFQ==
-X-ME-Sender: <xms:3BT4aGRJd6wzKiLbDtaagdl2Ez54QQQlamJGeESZMkTnON0hHJpR5Q>
-    <xme:3BT4aByP7NNHNvTDjcQrXBn2nMNPZPR4YFyEMlbeQF9vEvhuvtZr1lTVb_4dVTyZ7
-    ubwOrfm4PhzyNIlKkBREmAN5g2611P4fdDLgl5L8IkS-4nKLUU2LpA>
-X-ME-Received: <xmr:3BT4aOp_3I3iz5T-DOA9TNy5_v_cn_1__JPMR7PwLlJybwZ31H9EGICDe508sxirH4w7vn9vmdsXqH1ZPbDPKVb_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvtddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepff
-    ffveffieethfdviedthfdvjefhueeiffffheffvdegheeggedvudfggeehgedunecuffho
-    mhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohep
-    uddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrshhmrgguvghushestghoug
-    gvfihrvggtkhdrohhrghdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprghnughrihhirdhnrghkrhihihhkohesghhmrghilhdrtghomhdprhgtph
-    htthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhutghhohes
-    ihhonhhkohhvrdhnvghtpdhrtghpthhtoheplhhinhhugigpohhsshestghruhguvggshi
-    htvgdrtghomhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehvlehfsheslhhishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:3BT4aE3D-BsIhBJPZrnDFI_3ggSd8eVuI6-iIaW62Vnio5Ogu72QFw>
-    <xmx:3BT4aOwX2cIEaCk0B8Rhmrx-DX6R8wvBm6uS2xr7A74lqhLt5QZMWA>
-    <xmx:3BT4aIi99RnHZE-mU8WvOfZ_pcprTEdQXF0cSdOKwhvW5KVWXzrIwA>
-    <xmx:3BT4aJommHZNQrYPDn1Y3PB0Mvvmo5PXUjpKRQLpYGp_E0F0swczww>
-    <xmx:3RT4aGsqBYVmjgNNAjWybr8aYj5Zu6v4-HDstFaUXQHkRlTbrUJmH0WS>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 19:18:51 -0400 (EDT)
-Message-ID: <6c74ad63-3afc-4549-9ac6-494b9a63e839@maowtm.org>
-Date: Wed, 22 Oct 2025 00:18:48 +0100
+	s=arc-20240116; t=1761088906; c=relaxed/simple;
+	bh=u88KUCgo0Toso4SvWzwWeFAxYjLKdxDftme8WjUD5Vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMcruNn5ZnLM/0+vd25O9rsnfHm9qx0+bF1ziNotCK26ye1E4dDKtWnKccwB5fEvKdmaYYCmoZyyN/SGmF9/qUW2BXCVjr3tjyOuyYfTMo/2Ty/JM9Ko6NEepazsmHF2CJC4WbRzG9AH5qKiWDxpXUM8vglYRbranOb8p/gCc20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=WbHJlTOQ; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so3923217a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:21:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1761088903; x=1761693703; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I/sG1jk/D7r3ClCgjL60On0j3McaW8ML4Lr1KS/4bzw=;
+        b=WbHJlTOQlzMPpFWgKtRmBkrGvLFbFmp73UWY1zlxS2+ucRw1wmi0i/PS9DpEm5YJgh
+         QXZjktYaJbuP9UpAERyJoq6aGVDT/53iJ8ZWwd8DVMz/rYG58L01Hye1UzvPOEVbYG7b
+         MgwZ9kuLWPzPkKM60RGZx3ka3qJzRFc5NSO44LOXV6FXxAVohJtLK38NPLiLXWNDhv7S
+         VvK/7cNEf2tP0zM+7p28UVpf2Z4211Q3JiRQrksWJmW031BAJGj8BP93lV02htcFqfv3
+         5JcqtrIiYwWpkALk0KixtjMjEenbHH08CifgwVTEPDq4sJybYKVFM/7fraIIbK6ej8gb
+         kz/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761088903; x=1761693703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I/sG1jk/D7r3ClCgjL60On0j3McaW8ML4Lr1KS/4bzw=;
+        b=h65scBChbVwDV512BjEVA6y2vV2r72p98sw4pvWvHXTM3ZJl0tHAsFNjQ2dMMQXNvg
+         N37N/wrlduwiwYyTuDjjoKvzSF00GSHJ+8Ndhp3qG/vx8zk4hyUZk1r4ICx9cQmoM8kC
+         QZM5/nPEHZGtDO1Kudh4EkHoOLkbohFOQ346fowHZHveh5Xlm6Gg2dr18UKKU6t+lsdj
+         wWEW3ur2/afV8fyQVQKUdQxGkvQD91IK5f2XmsiBJF8uuerYQlBR79bLjhCP62P7qsUu
+         NkJkYxPL+TN3meF2aiVk0Gj1uZWtrQtg3Zxuj10OLntz8SdRsX8AgDOT66X55/lF9r3+
+         fJiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeT8TRQDt5KRiVU7wXW4k5h8gPeFUocgLUy8CyemingjApX8rqPgcSDCrHdoLXNg6ThRW5zkfKkbtC6Sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv9PQChJkFjvzOtGt6Sg+aO7FOoaSK1vSXD5gGSOQ6qbWiaWCU
+	s5RlvHAQKEQHVJK/vbj1KsfsF2qa/ZT9cQrO67484iBA2UWBMS5P73oP0rjh7orSzpc=
+X-Gm-Gg: ASbGncso0pW7ZW8pB3kezY6Kwgg/hmxgbtoSvcaa3OpzpzKhEqcI8O+j+Sl+7XMoyln
+	1WRy/vkwSpgSJThcHax+Al9hQUzkZ/uh7StMnajnldmzxqLPQXTRX5HQLXLUh8+gB+zrTltPY5n
+	A51SS+oN5QPhagdydjhEEO/Lily6d1HG7HMd144AlOGWydmAAmlQLXn9dwCVig2LAkyxW0vdHCu
+	lEbPN2rkVRdgl1UQCsZ+IsfiJq0nhE633cTELkQyWbeqR1GnRLg5o6zYGnUJg/NjTvQsy52tzMZ
+	LMtTCkVeHFfIl6/FbojcYmyBnkB/2rRU/60PTbBFtp4EcA9If3/gSBtqOoslhUnIZBSmvPUmBCi
+	fpapyEfqjxOywQ7pCgrwsO6jtr1Sx6GlS09I1doANyuaKThGALiVe/lqNsVHZfo635gZNrakWGj
+	FI7OhFGM/k56ek
+X-Google-Smtp-Source: AGHT+IE6NQoNLTk3Nz7GLQHnJMwF2PBGrN0ifVkPryTJs6MYiO3iNqHLbbOvp74DNY+7bQCnliJ3OA==
+X-Received: by 2002:a17:902:ecc6:b0:290:7e29:f59f with SMTP id d9443c01a7336-290c9cf34f1mr242661745ad.27.1761088903517;
+        Tue, 21 Oct 2025 16:21:43 -0700 (PDT)
+Received: from localhost ([208.115.86.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e2247a359sm662800a91.12.2025.10.21.16.21.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 16:21:43 -0700 (PDT)
+Date: Tue, 21 Oct 2025 16:21:42 -0700
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
+Cc: alex@ghiti.fr, alexghiti@rivosinc.com, aou@eecs.berkeley.edu, 
+	cleger@rivosinc.com, evan@rivosinc.com, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, palmer@dabbelt.com, pjw@kernel.org, samuel.holland@sifive.com, 
+	shuah@kernel.org, zhangyin2018@iscas.ac.cn, zihongyao@outlook.com
+Subject: Re: [PATCH v3 1/2] riscv: hwprobe: Expose Zicbop extension and its
+ block size
+Message-ID: <20251021-be53f84c246523b7c4e31917@orel>
+References: <20251020152924.64551-1-zihong.plct@isrc.iscas.ac.cn>
+ <20251020153309.68267-1-zihong.plct@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/9p: don't use cached metadata in revalidate for
- cache=mmap
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Christian Schoenebeck <linux_oss@crudebyte.com>,
- Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org,
- v9fs@lists.linux.dev, bpf@vger.kernel.org
-References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020153309.68267-1-zihong.plct@isrc.iscas.ac.cn>
 
-I do apologize for missing this initially... (I wonder if it would have
-been caught by xfstests in cache=mmap mode)
-
-On 10/21/25 23:09, Dominique Martinet via B4 Relay wrote:
-> From: Dominique Martinet <asmadeus@codewreck.org>
+On Mon, Oct 20, 2025 at 11:33:08PM +0800, Yao Zihong wrote:
+> - Add `RISCV_HWPROBE_EXT_ZICBOP` to report the presence of the
+>   Zicbop extension.
+> - Add `RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE` to expose the block
+>   size (in bytes) when Zicbop is supported.
+> - Update hwprobe.rst to document the new extension bit and block
+>   size key, following the existing Zicbom/Zicboz style.
 > 
-> cache=mmap is a mode that doesn't cache metadata, but still has
-> writeback cache.
-> In commit 290434474c33 ("fs/9p: Refresh metadata in d_revalidate
-> for uncached mode too") we considered metadata cache to be enough to
-> not look at the server, but in writeback cache too looking at the server
-> size would make the vfs consider the file has been truncated before the
-> data has been flushed out, making the following repro fail (nothing is
-> ever read back, the resulting file ends up with no data written)
-> 
+> Signed-off-by: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
 > ---
-> I was suspecting cache=mmap when I saw vmtest used that, and it's
-> confirmed with Song's reproducer...
-> This makes the repro work, would one of you be able to confirm this?
-> Once confirmed I'll send this to Linus directly
+>  Documentation/arch/riscv/hwprobe.rst  | 8 +++++++-
+>  arch/riscv/include/asm/hwprobe.h      | 2 +-
+>  arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
+>  arch/riscv/kernel/sys_hwprobe.c       | 6 ++++++
+>  4 files changed, 16 insertions(+), 2 deletions(-)
 > 
-> Thanks again and sorry for lack of cache=mmap tests :/
-> 
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> ---
-> #include <fcntl.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> 
-> char buf[4096];
-> 
-> int main(int argc, char *argv[])
-> {
->         int ret, i;
->         int fdw, fdr;
-> 
->         if (argc < 2)
->                 return 1;
-> 
->         fdw = openat(AT_FDCWD, argv[1], O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC, 0600);
->         if (fdw < 0) {
->                 fprintf(stderr, "cannot open fdw\n");
->                 return 1;
->         }
->         write(fdw, buf, sizeof(buf));
-> 
->         fdr = openat(AT_FDCWD, argv[1], O_RDONLY|O_CLOEXEC);
-> 
->         if (fdr < 0) {
->                 fprintf(stderr, "cannot open fdr\n");
->                 close(fdw);
->                 return 1;
->         }
-> 
->         for (i = 0; i < 10; i++) {
->                 ret = read(fdr, buf, sizeof(buf));
->                 fprintf(stderr, "i: %d, read returns %d\n", i, ret);
->         }
-> 
->         close(fdr);
->         close(fdw);
->         return 0;
-> }
-> ---
-> 
-> Reported-by: Song Liu <song@kernel.org>
-> Link: https://lkml.kernel.org/r/CAHzjS_u_SYdt5=2gYO_dxzMKXzGMt-TfdE_ueowg-Hq5tRCAiw@mail.gmail.com
-> Reported-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Link: https://lore.kernel.org/bpf/CAEf4BzZbCE4tLoDZyUf_aASpgAGFj75QMfSXX4a4dLYixnOiLg@mail.gmail.com/
-> Fixes: 290434474c33 ("fs/9p: Refresh metadata in d_revalidate for uncached mode too")
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> ---
->  fs/9p/vfs_dentry.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
-> index f3248a3e54023489054337bf98e87a1d7b1fbafc..2f3654bf6275ffa802dc25b9a84bd61a62d5723c 100644
-> --- a/fs/9p/vfs_dentry.c
-> +++ b/fs/9p/vfs_dentry.c
-> @@ -78,7 +78,11 @@ static int __v9fs_lookup_revalidate(struct dentry *dentry, unsigned int flags)
->  	v9inode = V9FS_I(inode);
->  	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 2f449c9b15bd..52f12af43b9d 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -275,6 +275,9 @@ The following keys are defined:
+>         ratified in commit 49f49c842ff9 ("Update to Rafified state") of
+>         riscv-zabha.
 >  
-> -	cached = v9ses->cache & (CACHE_META | CACHE_LOOSE);
-> +	/* We also don't want to refresh attr here in writeback cache mode,
-> +	 * otherwise a write that hasn't been propagated to server would
-> +	 * incorrectly get the old size back and truncate the file before
-> +	 * the write happens */
-> +	cached = v9ses->cache & (CACHE_META | CACHE_WRITEBACK | CACHE_LOOSE);
-
-This makes sense, but I was also wondering about this bit in
-v9fs_refresh_inode / ..._dotl:
-
-	flags = (v9ses->cache & CACHE_LOOSE) ?
-		V9FS_STAT2INODE_KEEP_ISIZE : 0;
-
-I do wonder what else can cause us to end up mistakenly updating the
-i_size, since the condition below would also pass if
-v9inode->cache_validity & V9FS_INO_INVALID_ATTR is true, even in cached
-mode:
-
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZICBOP`: The Zicbop extension is supported, as
+> +       ratified in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
+> +
+>  * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated.  Returns similar values to
+>       :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_SCALAR_PERF`, but the key was
+>       mistakenly classified as a bitmask rather than a value.
+> @@ -369,4 +372,7 @@ The following keys are defined:
 >  
->  	if (!cached || v9inode->cache_validity & V9FS_INO_INVALID_ATTR) {
->  		int retval;
+>      * :c:macro:`RISCV_HWPROBE_VENDOR_EXT_XSFVFWMACCQQQ`: The Xsfvfwmaccqqq
+>          vendor extension is supported in version 1.0 of Matrix Multiply Accumulate
+> -	Instruction Extensions Specification.
+> \ No newline at end of file
+> +	Instruction Extensions Specification.
+> +
+> +* :c:macro:`RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE`: An unsigned int which
+> +  represents the size of the Zicbop block in bytes.
+> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+> index 948d2b34e94e..2f278c395af9 100644
+> --- a/arch/riscv/include/asm/hwprobe.h
+> +++ b/arch/riscv/include/asm/hwprobe.h
+> @@ -8,7 +8,7 @@
+>  
+>  #include <uapi/asm/hwprobe.h>
+>  
+> -#define RISCV_HWPROBE_MAX_KEY 14
+> +#define RISCV_HWPROBE_MAX_KEY 15
+>  
+>  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
+>  {
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> index 5d30a4fae37a..9cc508be54c5 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -82,6 +82,7 @@ struct riscv_hwprobe {
+>  #define		RISCV_HWPROBE_EXT_ZAAMO		(1ULL << 56)
+>  #define		RISCV_HWPROBE_EXT_ZALRSC	(1ULL << 57)
+>  #define		RISCV_HWPROBE_EXT_ZABHA		(1ULL << 58)
+> +#define		RISCV_HWPROBE_EXT_ZICBOP	(1ULL << 59)
+>  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
+>  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
+>  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
+> @@ -107,6 +108,7 @@ struct riscv_hwprobe {
+>  #define RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE	12
+>  #define RISCV_HWPROBE_KEY_VENDOR_EXT_SIFIVE_0	13
+>  #define RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0	14
+> +#define RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE	15
+>  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+>  
+>  /* Flags */
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> index 000f4451a9d8..7a6ae1327504 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -113,6 +113,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+>  		EXT_KEY(ZCB);
+>  		EXT_KEY(ZCMOP);
+>  		EXT_KEY(ZICBOM);
+> +		EXT_KEY(ZICBOP);
+>  		EXT_KEY(ZICBOZ);
+>  		EXT_KEY(ZICNTR);
+>  		EXT_KEY(ZICOND);
+> @@ -293,6 +294,11 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+>  		if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOM))
+>  			pair->value = riscv_cbom_block_size;
+>  		break;
+> +	case RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE:
+> +		pair->value = 0;
+> +		if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOP))
+> +			pair->value = riscv_cbop_block_size;
+> +		break;
+>  	case RISCV_HWPROBE_KEY_HIGHEST_VIRT_ADDRESS:
+>  		pair->value = user_max_virt_addr();
+>  		break;
+> -- 
+> 2.47.2
+>
 
-One instances where we set this invalid flag is in v9fs_vfs_rename.  With
-the program pasted below, which adds an additional renaming of the file
-written before reading, this seems to still cause truncation, even with
-this fix:
-
-#define _GNU_SOURCE
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/stat.h>
-
-char buf[4096];
-
-int main(int argc, char *argv[])
-{
-	int ret, i;
-	int fdw, fdr;
-	struct stat statbuf;
-
-	if (argc < 3)
-		return 1;
-
-	fdw = openat(AT_FDCWD, argv[1], O_RDWR | O_CREAT | O_EXCL | O_CLOEXEC,
-		     0600);
-	if (fdw < 0) {
-		fprintf(stderr, "cannot open fdw\n");
-		return 1;
-	}
-	ret = write(fdw, buf, sizeof(buf));
-	if (ret < 0) {
-		fprintf(stderr, "write failed\n");
-		return 1;
-	}
-
-	ret = renameat(AT_FDCWD, argv[1], AT_FDCWD, argv[2]);
-	if (ret < 0) {
-		fprintf(stderr, "renameat failed\n");
-		return 1;
-	}
-
-	fdr = openat(AT_FDCWD, argv[2], O_RDONLY | O_CLOEXEC);
-
-	if (fdr < 0) {
-		fprintf(stderr, "cannot open fdr\n");
-		return 1;
-	}
-
-	ret = read(fdr, buf, sizeof(buf));
-	fprintf(stderr, "read returns %d\n", ret);
-
-	ret = fstat(fdr, &statbuf);
-	if (ret < 0) {
-		fprintf(stderr, "fstat failed\n");
-		return 1;
-	}
-	fprintf(stderr, "fstat: size = %lld\n", statbuf.st_size);
-
-	close(fdr);
-	unlink(argv[1]);
-	unlink(argv[2]);
-	return 0;
-}
-
-Output:
-
-    root@v6.18-rc2:/# ./reproducer /tmp/9p/a /tmp/9p/b
-    read returns 0
-    fstat: size = 0
-
-    root@v6.18-rc2:/# ./reproducer.orig /tmp/9p/a /tmp/9p/b # the original reproducer does work
-    i: 0, read returns 4096
-    i: 1, read returns 0
-    ...
-
-Before the "Refresh metadata in d_revalidate for uncached mode too" patch
-series, it happened that in cache=mmap, v9fs_lookup_revalidate would not
-be called at all, since it's not used for "uncached" mode, where uncached
-is defined as !(CACHE_META|CACHE_LOOSE) in v9fs_mount.  Therefore this is
-probably still a regression introduced by that series :(
-
-The below change fixes both reproducer:
-
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 69f378a83775..316fc41513d7 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -1352,7 +1352,7 @@ int v9fs_refresh_inode(struct p9_fid *fid, struct inode *inode)
- 	 * We don't want to refresh inode->i_size,
- 	 * because we may have cached data
- 	 */
--	flags = (v9ses->cache & CACHE_LOOSE) ?
-+	flags = (v9ses->cache & (CACHE_LOOSE | CACHE_WRITEBACK)) ?
- 		V9FS_STAT2INODE_KEEP_ISIZE : 0;
- 	v9fs_stat2inode(st, inode, inode->i_sb, flags);
- out:
-@@ -1399,4 +1399,3 @@ static const struct inode_operations v9fs_symlink_inode_operations = {
- 	.getattr = v9fs_vfs_getattr,
- 	.setattr = v9fs_vfs_setattr,
- };
--
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 0b404e8484d2..500d8e922f07 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -910,7 +910,7 @@ int v9fs_refresh_inode_dotl(struct p9_fid *fid, struct inode *inode)
- 	 * We don't want to refresh inode->i_size,
- 	 * because we may have cached data
- 	 */
--	flags = (v9ses->cache & CACHE_LOOSE) ?
-+	flags = (v9ses->cache & (CACHE_LOOSE | CACHE_WRITEBACK)) ?
- 		V9FS_STAT2INODE_KEEP_ISIZE : 0;
- 	v9fs_stat2inode_dotl(st, inode, flags);
- out:
-
-Should we change this too?  (Well, in fact, the change above alone makes
-both issue disappear, but I'm not 100% sure about the implication of
-updating metadata aside from i_size for inodes with cached data)
-
-
-Kind regards,
-Tingmao
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
