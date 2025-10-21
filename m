@@ -1,146 +1,210 @@
-Return-Path: <linux-kernel+bounces-862450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B030ABF5517
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:43:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCF8BF5520
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E58D188C64C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:43:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F17B4ECD7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8986831E101;
-	Tue, 21 Oct 2025 08:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B2F320394;
+	Tue, 21 Oct 2025 08:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Rcdo1r2b"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="uRN1/4/r"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E9A31DDAE;
-	Tue, 21 Oct 2025 08:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761036191; cv=none; b=bLDVWbWlurJ6mls64OBOI+7GvPr3nRQ4Cy/AHhugDv/tgJcTAcZxO/Qz9tM7YbRyOIlP1UFYT6pIOWXrz7l67nOBmxW1XSgKMIvs+UlZodhavzk0P7tzIpNO6sITKUvZHbChxKauEbc9FEzHQmM8Ttu+tcaD/stL0utY2YE7afA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761036191; c=relaxed/simple;
-	bh=mFgPWXuf7wL9HKCJ5zTGJU2zg/9a843RYmcCkmybAOE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MTkI6bo41HAjnOyC9NsEq5o0VTHFQauCgcwMIqJiwRvoiqR3C7gDYVTtQHpPwHvUhNbcqvLSQMdSsT7zXpCZUv+2MNcAEPVOm2JmE4QkhG8hvB0jVGJBBMDqwlkTpSjHfLE2PT72PivP3I+KYKgmWyknMsPtbsQDPArxH8P5Fis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Rcdo1r2b; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L2cFG6018793;
-	Tue, 21 Oct 2025 08:43:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=m+PGxg
-	H4B1ba9aPC0MCTfuQEhemc8eYzkzRGLtN3e2Q=; b=Rcdo1r2bzj1jwvmC9T0vq/
-	xqq8N1gQ7ORmhthAy1Rr+IqNttolJq4p0BUdSzM664+wuvdvYPcJPpVoojOXTcAA
-	yPBbjtzC6+/f18cD2LuaaeP4za5O0cwKRTNeHbzQFWYDVugtZVdVMONOU0W72/xg
-	1w2uV2oCRDJR9gyiwekoLV2vhhyBUgAGW7z7NqCuEe3Y4/7QZnpVELNwM+gBRBTn
-	nEs2rjd7pKlN3t18saRfLXiDWRIsiLo3QTnAviffu6wrmMgo1/GnwAK9MRZgUjU3
-	aeA5aTso91UiwdpFH3b7rMtf9d+tn1x5e2tH72Qu2WflZjEMkvj4uAoW68M1LI2A
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v326nysc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 08:43:04 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59L88EoD024677;
-	Tue, 21 Oct 2025 08:43:03 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqjss2d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 08:43:02 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59L8h0GD12583286
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 08:43:01 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DA39320043;
-	Tue, 21 Oct 2025 08:43:00 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A326520040;
-	Tue, 21 Oct 2025 08:43:00 +0000 (GMT)
-Received: from [9.111.135.235] (unknown [9.111.135.235])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 21 Oct 2025 08:43:00 +0000 (GMT)
-Message-ID: <5895ed68-dd6e-4f3d-9e6f-c27459556ff7@linux.ibm.com>
-Date: Tue, 21 Oct 2025 10:43:00 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD62F291C13;
+	Tue, 21 Oct 2025 08:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761036210; cv=pass; b=hYo+BnPguTmeXVzAeKAqF8ywpxzBzX33650KgBCP88vwz9SkhBkAVR9J2+1Qy+ZqrM76UMX8PxAfy9aWjbslIs0cLKoNGsJCQg2kNfWJ+akqNJE61kCgtXO2M2MyaYe5CDcIW1rK038WPkkyHA3WnNoDSqUcL2QaWQd2Jmy8FTc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761036210; c=relaxed/simple;
+	bh=QNnCBOcY3yHr19UPu3nZg7aYzp3w9guPQWqSaxqQ3l4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1nvJa51VkkUGv49ONMieX1b64vpCZD0GN8cQnA+Y4MOEjRnmQ7a4a+cKLAr+spjdoUyrPTvxMffFQPhAgwOavCAgMlkkkHKXivO+bCAF3gAc1CDapXx6FyuImWL913F6dWhqq17GyGtqVLMijinluHcwn38ytEgSWanNRL0BIQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=uRN1/4/r; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4crQmn2H8Dz49PvY;
+	Tue, 21 Oct 2025 11:43:21 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1761036201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JyUGRQ6PJ1u2Lm1BLA85pJa1fVlOswvc3tUZzsrCrdg=;
+	b=uRN1/4/rGbbNYgdk2xKnZYZA7mcA4+7atkPJgSc1Wog6ZV5fbnOB7YjCo+cHd/MLQV2Usl
+	U3smYEFr8gsnU4z4Cbvo+U7oLR47YYu8tlgbVSHYEOnr+YUOW8vjpu9/f5R4rScV3Ld965
+	12v3Q46Py9nZx+iUn/pSqcUTthx73KeVuw9x41eccEVzd2Rwao3O9I82qklA/vNyUWCnTI
+	BiJqkq7bol51sugtl4YVRoaORXw8z8LUl7qHMv8pfWwuxV36wMnCGz43vJYWXVwOwxPKbL
+	6CyLARtxUfVh8bJNb2/+O0sZcVxt6RYT5XDpo+NvNdILcsgSm9itd0vTMI1SIg==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1761036201; a=rsa-sha256;
+	cv=none;
+	b=iIph07gtLHPqINNfeZGDQZfYhC1XYF4a8OVJ488t1pef7vpCbWqxKz/cSZpT48EGB90PqM
+	rNRI8ZVBwG6NqyO+j8j0bDcs2NiRAPqxYAcQYD2gCogwVYdYzMXgUWBLGuxur5GzY6xQaP
+	BXhdKIM7SUJ2qARVEw7ls4v7Ohw15S67yBT5qBh9/IvmYxnOF8+rryT+xMKaAZhTT3q4SN
+	ECLphayXZJPmDQN+XmbhMO8WRW5ad1BWG6tGebCIYLPW/XGNCbJB/Ewn4w/EbqQxB9Ygjp
+	G83CXq8ER5zKynn7K2gxlLO1DrQRdsF3nB4BuVkCbbXUJDHc6v7DqxX0xcGjFg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1761036201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JyUGRQ6PJ1u2Lm1BLA85pJa1fVlOswvc3tUZzsrCrdg=;
+	b=I4H/OSphBn5ICfI4SkGBg/37ZrU31t8CKZbnPpQByqm8vaDSWQXb9fVoDYjL3heuFHKHyE
+	3DOv232zwYqknNUVNx+2FMf4zxBu1H8Ulc4x6g7sZ0qrMb7nn3bAF+GefCBIIhqt6tegP+
+	7Oin7MWqWQZ/ZAS/S42fEMggsC6sGytPJqMI/Fl/LywSb9YwaQATZogdxcHm08/itSBlcR
+	ELaF543Y3FOM9FT1VQbeW4NEHd8+HVHSqsiNyZZny+I5iUVHx1egW56gtM2bvBhhAPRTik
+	RcwdM9NjOyEBhsZNXQXD3p/etB6p3/TwMeowOW3syIC+wn8WXDzLH+DoSv5hqw==
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id C42C7634C50;
+	Tue, 21 Oct 2025 11:43:20 +0300 (EEST)
+Date: Tue, 21 Oct 2025 11:43:20 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Nicholas Roth <nicholas@rothemail.net>,
+	"open list:OV2659 OMNIVISION SENSOR DRIVER" <linux-media@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] media: dt-bindings: move ovti,ov2659.txt into
+ ovti,ov8858.yaml
+Message-ID: <aPdHqCWNdmVkch7S@valkosipuli.retiisi.eu>
+References: <20250912183003.1115957-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/17] lib/crypto: s390/sha3: Migrate optimized code into
- library
-From: Holger Dengler <dengler@linux.ibm.com>
-To: Eric Biggers <ebiggers@kernel.org>,
-        Harald Freudenberger <freude@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-crypto@vger.kernel.org
-References: <20251020005038.661542-1-ebiggers@kernel.org>
- <20251020005038.661542-16-ebiggers@kernel.org>
- <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
- <20251020175736.GC1644@sol>
- <29e766ca-54e4-453d-9dfc-ea47e2a1f860@linux.ibm.com>
-Content-Language: de-DE
-In-Reply-To: <29e766ca-54e4-453d-9dfc-ea47e2a1f860@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68f74798 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=w4HzK-rsqA_2YikTyBoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX8j24ejwHFVb9
- F2wIjL2oSQTN4WzBz8x+S+mSBTjDI5wQ8epCJHQMTbtcwJZFGvvXSK71SuQMre3/JuQt9V3vIQ4
- HqcOXA0J1jmQ3eaRnnhi3jdOU2OsdvbvHX2RevYDlrk687vDT2o9yelcXco4ek/pZ/EurTgNkeB
- 82iL//vWaEM7Kxe7nIEPDHvIHDt4dLVOWihhZhAgrayMgl8JxHqYhwv2+ZqzSmsICQ3DSCmnUhb
- 9gXxeZPZB6cqCGwHtmNVa7E6iFO9Bq2gcOLtKW8HWyYgEgl7nxU4Fado3fNSgNNDjIafOp6yUWE
- eLHpLRy+PgJFoj9VwRUkYYxpVaa2FsY862fDl3UijlUCiiRyx6+IFl0XYZGTTzlfC53E745j52x
- ppzGxl/1LeVGdU9qd07hy9mEGkP7ZA==
-X-Proofpoint-GUID: R9cfW4_GrmPKJX5GD5hk9lL8OIjZ1tLv
-X-Proofpoint-ORIG-GUID: R9cfW4_GrmPKJX5GD5hk9lL8OIjZ1tLv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912183003.1115957-1-Frank.Li@nxp.com>
 
-Hi Eric,
+Hi Frank,
 
-On 21/10/2025 09:24, Holger Dengler wrote:
-> On 20/10/2025 19:57, Eric Biggers wrote:
-[...]>> - Risk of bugs.  QEMU doesn't support the s390 SHA-3 instructions, so no
->>   one except the s390 folks can test the code.  I can try to write code
->>   for you, but I can't test it.  And the s390 SHA-3 code has had bugs;
->>   see commits 992b7066800f, 68279380266a5, 73c2437109c3.
->>
->>   The first priority should be correctness.
+Thanks for the patch.
+
+On Fri, Sep 12, 2025 at 02:30:02PM -0400, Frank Li wrote:
+> The properties in ovti,ov2659.txt are the same as ovti,ov8858. So move it
+> to this yaml file.
 > 
-> Let me figure out, if me and my colleagues can do the testing for you.
-> Unfortunately, I'll be unavailable for the next two weeks. But I'll come back
-> with a solution for the testing.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/media/i2c/ovti,ov2659.txt        | 47 -------------------
+>  .../bindings/media/i2c/ovti,ov8858.yaml       |  4 +-
+>  2 files changed, 3 insertions(+), 48 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov2659.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov2659.txt b/Documentation/devicetree/bindings/media/i2c/ovti,ov2659.txt
+> deleted file mode 100644
+> index 92989a619f292..0000000000000
+> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov2659.txt
+> +++ /dev/null
+> @@ -1,47 +0,0 @@
+> -* OV2659 1/5-Inch 2Mp SOC Camera
+> -
+> -The Omnivision OV2659 is a 1/5-inch SOC camera, with an active array size of
+> -1632H x 1212V. It is programmable through a SCCB. The OV2659 sensor supports
+> -multiple resolutions output, such as UXGA, SVGA, 720p. It also can support
+> -YUV422, RGB565/555 or raw RGB output formats.
 
-I talked to Harald: we can do the testing for you on our development machines.
-Please send new series to us or provide them in your git repo.
+I don't object merging this with the ov8858 bindings as such but the
+differences between the sensors should be taken into account. Something
+like the text above should be added to those bindings, which now describe
+the ov8858 only. Also, the number of lanes is probably different between
+the two.
+
+What about the regulators? The ov2659 doesn't control any right now, but
+that's probably an oversight (and whatever regulators connected on the
+platform used were hard-wired).
+
+Overall, it might be easier to keep the two bindings separate rather than
+have some number of ifs in the bindings.
+
+You can drop clock-names as there's just a single clock (the same goes for
+the driver naturally).
+
+> -
+> -Required Properties:
+> -- compatible: Must be "ovti,ov2659"
+> -- reg: I2C slave address
+> -- clocks: reference to the xvclk input clock.
+> -- clock-names: should be "xvclk".
+> -- link-frequencies: target pixel clock frequency.
+> -
+> -Optional Properties:
+> -- powerdown-gpios: reference to the GPIO connected to the pwdn pin, if any.
+> -  Active high with internal pull down resistor.
+> -- reset-gpios: reference to the GPIO connected to the resetb pin, if any.
+> -  Active low with internal pull up resistor.
+> -
+> -For further reading on port node refer to
+> -Documentation/devicetree/bindings/media/video-interfaces.txt.
+> -
+> -Example:
+> -
+> -	i2c0@1c22000 {
+> -		...
+> -		...
+> -		 ov2659@30 {
+> -			compatible = "ovti,ov2659";
+> -			reg = <0x30>;
+> -
+> -			clocks = <&clk_ov2659 0>;
+> -			clock-names = "xvclk";
+> -
+> -			powerdown-gpios = <&gpio6 14 GPIO_ACTIVE_HIGH>;
+> -			reset-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
+> -
+> -			port {
+> -				ov2659_0: endpoint {
+> -					remote-endpoint = <&vpfe_ep>;
+> -					link-frequencies = /bits/ 64 <70000000>;
+> -				};
+> -			};
+> -		};
+> -		...
+> -	};
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov8858.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov8858.yaml
+> index 491f2931e6bcd..d7059dbee7fca 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov8858.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov8858.yaml
+> @@ -19,7 +19,9 @@ $ref: /schemas/media/video-interface-devices.yaml#
+>  
+>  properties:
+>    compatible:
+> -    const: ovti,ov8858
+> +    enum:
+> +      - ovti,ov2659
+> +      - ovti,ov8858
+>  
+>    reg:
+>      maxItems: 1
 
 -- 
-Mit freundlichen Grüßen / Kind regards
-Holger Dengler
---
-IBM Systems, Linux on IBM Z Development
-dengler@linux.ibm.com
+Kind regards,
 
+Sakari Ailus
 
