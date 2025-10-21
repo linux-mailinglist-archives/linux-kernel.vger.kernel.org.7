@@ -1,257 +1,161 @@
-Return-Path: <linux-kernel+bounces-862651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A608BF5D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6934FBF5DA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD2118963EF
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0848A3A1616
 	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E997FA926;
-	Tue, 21 Oct 2025 10:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2572332C939;
+	Tue, 21 Oct 2025 10:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mCO8/qph"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SXJfatr3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BF22E7F0D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFA12F068E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761043198; cv=none; b=SAfg8QTN5InYRdGR+Pv7n3om1PsD6X/fzECEJKkZfOqRbslXaowEVPeo5pd/ExYs9X7FiZbzcSX396e3unAJPmqepwiRqf2/jXBSEZSWabrZhq9pjtLmQtaOU0ImDgya/R/hOQQbMc//Egiimv1avKymIYZcnmYiyRyeCGQYxu4=
+	t=1761043218; cv=none; b=Ihjte9DSYhB+w1FksQ98HyAyD+RvqHKzK8LYW0mMeA8i0vPhCsN9X3YBGzGc09QNw/5H287GtXpwxjYkJup6/Uhu7VNCjvMgqX/WzMUaErSSv1CimTmC+36WAu+KJPdbbJZEB9qVDfWriWvrEkb6BQfkYaRjS1lBLP/hJ17wVY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761043198; c=relaxed/simple;
-	bh=HiT61yHt9RlARiij/oOCBEVR1Y9KWEKKGEyCGUCBbRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=d5JbVoS5APMShi+s55eACyC8PXt8R/IUejUhJL2sGh1C4gN4uLpOiVUhWofXlqIY94lsPdHBe8Oei2EApbBWvhdR4rmAh6/NEh6QyhEezkDSTvFGhTRdMm/Wh6cNyLyOVC7GYa8AowVgKz85m7XuE5vyiqg89zDk9qmC9T6gVh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mCO8/qph; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47103531eeeso2546885e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761043194; x=1761647994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A/OnagZOd49kquzcKUZUnNV3KCB913TBK/QbnvmKKOM=;
-        b=mCO8/qph7cpNcr/3B5f+NwRs9AhdYFgh5R4lH+D4j/uc5dsiTkjdMJ4wpujqZhMF6y
-         LLAA3m5zeXvDaHx279Fv0LH7L+rjK5J9FTuQOJodOnx/RftngyPmsJ9WW1930yoJyUma
-         a/GbvjNvClUag33MxijW1bi05TMQvQikCiZ3nE5BFvL3IbQLyrRMhSoNvvVZl84P5BNS
-         LUrQ8wkIa2qEWnvbH/IaLqJ3WT4+p2QWh4/cOr7sHFSqSGCBgt46J46hemFQ2JaRY4IB
-         MCOhrZ4qBni2ms4MDipVdLfSkkKx8GoT++0GeRbiszdvC0M7JJynzA6JKG3U6mLw3JA4
-         xFMA==
+	s=arc-20240116; t=1761043218; c=relaxed/simple;
+	bh=0U8hAB45yH8EGsTy3EJNkB+JbnjcAFL7FugSc4yQ26c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H1Hs7w7MDGsA+uPSt2g22JzO4Xd4Etc/mBlXweMNxUmdMFqW4AAgx90jWdpfRTd4IFwL7agiqi8t9TpijznSMN0Pg2nk72Y7jzPNNIr/9uREI7CBhu+J7Vs9VonzGTlJC/xCidiHIjaAiJiiPvb/NBaJtks6kO70TKiEu9IAI3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SXJfatr3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8NCSJ018763
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:40:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=EbXFKjfP9YV4IPAFXNS5yLFyAT4bZfexbjP
+	y0N72g9w=; b=SXJfatr3apnPlPBnqM8wKB0PoiyDlgDFs09jgJ2elDGlV/PTeqB
+	vK8qBrm+1bPX0AdzYNCMXzPU4KXl9UVQQiwm+n9OxutRPfwWidOdDKIY8a65ckhZ
+	7a+iyrVy3QmixHEpg1+WeyB57BeJNQXgiNTXbXdrkjM4Ho0cVSToBaf84vutvTfa
+	l2h/rou3aeRxnBTv7Tf/hDkvt2FfrNhg4nqk+Ebm0g69XI5hJcqcbV1zDXW2HLG8
+	HYm9EgrmGKB5o7AEYPF3lj0jRP+vdCXnWPs8goDGHwMBL0nVR3UtgKPY7fEuS1U0
+	JEMB9SmF2ZlqGHzwHsHg/cQwyop2wX9voEg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v469g9ud-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:40:15 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8908a248048so796092385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:40:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761043194; x=1761647994;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A/OnagZOd49kquzcKUZUnNV3KCB913TBK/QbnvmKKOM=;
-        b=oiln6RIWZ/VVJcMNSCGm3/PVnuE3OhGjdVcq0jbuNmP5NaHMFfCGwY9BQsTh20k7u8
-         VWTZXYXkT3vhGYxIUeczE2Vxf19SP0akBzjCtdeIdNwlMQNDD5KTkFfhHt2EkDIFXeXB
-         GNH8GJAURtY76tUfmtGZlNxOs51/yCtQb+qFCKnwvjs4s+QlP6fusrp54l6MYenPD2A6
-         434cyIsVtWWAGpoWah/rnh9sWGXsj1nlpDZVECKpTrmwOYQXZq9eSJfT/ONvdj/snp6e
-         aK3JEg/t2bKqdOaN6zRfOs1EAWPQ21APqRCQje3ZafnTVkK7aHCi0j3vZvxK6EMC2qbP
-         quFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk2P/i2+9JOmt5hXedH/tBE5DMPlVrMCMEcSngscjuhAnFssA/ZTIU8c+g4CNrjER9pwZ7ufEQKzXEOo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbC+ey3Nx+aIBN96AXVKNrqOJXe+k5I0agVTGk6N8PBxIe5Tp+
-	hAMRRit2n7suj809RqZGyhUE9KWo3ce1eKmt/ByoYlvc7WM/gr+LdszmzjhB7aGOWRo=
-X-Gm-Gg: ASbGncs8FapVC5wnekfw6DePUwnF12mR0Cg7QCWI9TOuFzLdMAt2vC2UzVYI/0a0jWH
-	bIlga616SlK8XHM2PxMw+ZLpFOTzisCB+iOsqZIBRYadwv43Nxib/1zAyEAHTockmzmEor+UWTn
-	F7DetCZK2pvDEKEv8BsmaUK2+2ByGTGznMX9WX4dc1TCyqyobUZsxir1Gu4Auipks1KFI24AmHS
-	CSTOk46scRir/Ee01MY+2NnKbSHjBSJ6YT3UPEmgJPWTfUKAwMa8ej2g2s1ssjybyiVNFiU0Vub
-	jKw0n1r72Fy8Sf2FE9O4DJL0ch7NMns5qOUPffNsS956m3PaMXpFCguJF+IYmKmIdt1Se3shXF0
-	mzW49lAqlp6FewCtncoRm4qqwbLufR4jjpLEytLaUAAf6er+KMm2U3HOat1o3nHlLlDryfPbMvf
-	F7XtKEYN6ATP9oxgQSbMhy/9de2Cg9z8I=
-X-Google-Smtp-Source: AGHT+IGKmEbIyGIWYasVJF582yyEbV5sDX37Ylv4mXv7hL6gmWX36S89JOQB3kSZ/4mOFvKH7u8hEA==
-X-Received: by 2002:a05:600c:1d25:b0:471:152a:e574 with SMTP id 5b1f17b1804b1-474942c4fa0mr15074935e9.2.1761043194470;
-        Tue, 21 Oct 2025 03:39:54 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496c43f68sm14035415e9.5.2025.10.21.03.39.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 03:39:53 -0700 (PDT)
-Message-ID: <406c40be-757b-44d1-b6a1-a5d6d4d07e6f@linaro.org>
-Date: Tue, 21 Oct 2025 12:39:52 +0200
+        d=1e100.net; s=20230601; t=1761043207; x=1761648007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EbXFKjfP9YV4IPAFXNS5yLFyAT4bZfexbjPy0N72g9w=;
+        b=ieRjscueV4klVlTwrKh5Gu2B8idwmBfd4ztVVznaPyQ9pP32cG+BHIFQH/lnDDCCUK
+         GNbhFXdStWifxxgaKh9tUUCTQCDsKVXpfDcmy1Yf+FGdzx2c7ee9hU3ULUrFvArIXwJN
+         bOH8vJBFBVYlDibpAUGjuPdWJPqh8DX1aMqx7Um2hcakKD37ezeyuNP9oPwOhbElP45w
+         idktuIvuybMOkpR7KwEd5jNHOSds21NjaoKpxCNaZzuPqC94BAF5zlDfCts7Cbeax4rw
+         VSprS66RcHRnlEL6QZIVZ8pjNWWk44DVP2TibiifR+YUXzLq6kThaxCp14EWKhxx/kHs
+         ZwFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeNsHPYs3y80HRnEPCQ6A2YUCdaEIDwjruZi7vHZrr3yTPhbfrqH2X+ByHwUo79wk6UUE1jlhchlanLzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmtB2brxK2Ezj2BrbqwSMNwBCfplbSE96zpHPERioN9oKOCQ+g
+	gjKLnwatWatBopWA6WJm/d+vq3wzHwzhNGsgxAd6AYTSAJxuZr5vElTfv1nujPELYmxyYZcxlwR
+	rssYZxOgRBzGryskpnLRMEAbbB1n093VF1J76UlRpCuHBS/w5dEbUDEauCg77254y+10=
+X-Gm-Gg: ASbGncsULKKeaHwk1Vw+AkAKr7etMeiB29cPV9ubVPbmvoBuqrm+X6BPmz88Dsmiwxh
+	sMR7VJAq4Q1nil4jQisyG5ypiM+dL6thlHMjXa7VVDSQT3DKLtq//+Awl+5pI5r74gEisGRIISq
+	tAI7O1aF26e5JalL5+XFdJk9nl9cTiaEhB86VMj0scPKsUfw4QGzbiYxybSWaku+3oTkpkDWlbR
+	EgbLHCykPbN5M1gkXq7Gp6unZBNxcRwgKGJZnkwbgwIAAfcB5aQzue0tHXK7Pg61wLINAe3QqvM
+	LstTAhbJ5N766sb+Yuk9pt1ylEe9Dm74wd/zRUVYR7uH5Kc4LDwmXwvb2VqXegJwi/+VzqoqWiy
+	1BA+qzE735AyK
+X-Received: by 2002:ac8:5a11:0:b0:4e8:b55f:af22 with SMTP id d75a77b69052e-4e8b55fb2d4mr121141781cf.53.1761043206564;
+        Tue, 21 Oct 2025 03:40:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEK7ENmoHQ2RT/4VjoSrYVZ4wOzzLy46jV66xunwwgH1MxVbYZONvkuQCmOMnkT2v/D3Mvg2Q==
+X-Received: by 2002:ac8:5a11:0:b0:4e8:b55f:af22 with SMTP id d75a77b69052e-4e8b55fb2d4mr121141551cf.53.1761043206041;
+        Tue, 21 Oct 2025 03:40:06 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a976sm20087938f8f.32.2025.10.21.03.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 03:40:05 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: broonie@kernel.org
+Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH v2 0/4] ASoC: qcom: sdw: fix memory leak
+Date: Tue, 21 Oct 2025 11:39:58 +0100
+Message-ID: <20251021104002.249745-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] mfd: sony-cronos-smc: Add driver for Sony Cronos
- SMC
-To: Timothy Pearson <tpearson@raptorengineering.com>,
- devicetree <devicetree@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Lee Jones <lee@kernel.org>, Georgy Yakovlev <Georgy.Yakovlev@sony.com>
-References: <1787448596.1802034.1760983830792.JavaMail.zimbra@raptorengineeringinc.com>
- <1587929609.1802041.1760983921227.JavaMail.zimbra@raptorengineeringinc.com>
- <13657666.1802042.1760984066594.JavaMail.zimbra@raptorengineeringinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <13657666.1802042.1760984066594.JavaMail.zimbra@raptorengineeringinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: RL9F47AQd6299yqnbnUvq8LF5IPwcoq9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMiBTYWx0ZWRfXx51Z4iX/YZJN
+ Wc9KxIC3b+02/0O2K/jQrOmiSa83viS1v3xeRydkrjeqrbq4FIwCnIxVmqM3Icz1DINaS1PT805
+ EmU0O6CDzhKrdxAguIprkYUNISkb314F+fdeGyTsMyHW5IzlnCY5V/DDVRvBOXL4rz1ET8AyOIK
+ 5fkzJOUI7t0zsxU0o5AFMyXL4uXUeNWz1CcmXnQNYW8r19ukhfFqcWeoaKV4kZ53QYPcNeWHUc9
+ pI1xOU1kEwCLi7epxhTAu42DEtep6pCK0VfAAhNhflx8ncfURXJFTk9etRlQOSJ3Iknv/5KRnqq
+ VliiVLxGYf3f2xLXbK2AkXtxbDN8mup0hdnYRccx3nfwWJt/IQEfdZvpR3YWphl0mxFGsuWAKpf
+ 0NdWBl1Y9xIER+DY0wqP8IJbNIT/5w==
+X-Authority-Analysis: v=2.4 cv=U8qfzOru c=1 sm=1 tr=0 ts=68f7630f cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Tmn-ty_kyiCvGlHJeRgA:9
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: RL9F47AQd6299yqnbnUvq8LF5IPwcoq9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
+ spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180032
 
-On 20/10/2025 20:14, Timothy Pearson wrote:
-> The Sony Cronos Platform Controller is a multi-purpose platform controller
-> that provides both a watchdog timer and an LED controller for the Sony
-> Interactive Entertainment Cronos x86 server platform. As both functions
-> are provided by the same CPLD, a multi-function device is exposed as the
-> parent of both functions.
-> 
-> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
-> Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
+For some reason we endedup allocating sdw_stream_runtime for every cpu dai,
+this has two issues.
+    1. we never set snd_soc_dai_set_stream for non soundwire dai, which
+       means there is no way that we can free this, resulting in memory leak
+    2. startup and shutdown callbacks can be called without
+       hw_params callback called. This combination results in memory leak
+    because machine driver sruntime array pointer is only set in hw_params
+    callback.
+    
+All the machine drivers have these memory leaks, so cleanup the mess and
+make them use common helpers from sdw.c
 
-Your threading is completely broken. git format-patch -v4 -4 --cover-letter.
+This patch series fix the issue, and while we are at it, it also remove
+some redundant code from machine drivers.
 
-Or just use b4.
+Thanks,
+Srini
 
-https://elixir.bootlin.com/linux/v6.16-rc2/source/Documentation/process/submitting-patches.rst#L830
+Changes since v1:
+	- added missing dais for sdm845
+	- moved all the machine drivers (sdm845 and sc7280) to use
+	  common helpers to avoid memory leaks.
 
-> ---
->  MAINTAINERS                     |   7 ++
->  drivers/mfd/Kconfig             |  11 ++
->  drivers/mfd/Makefile            |   2 +
->  drivers/mfd/sony-cronos-smc.c   | 212 ++++++++++++++++++++++++++++++++
->  include/linux/mfd/sony-cronos.h |  61 +++++++++
->  5 files changed, 293 insertions(+)
->  create mode 100644 drivers/mfd/sony-cronos-smc.c
->  create mode 100644 include/linux/mfd/sony-cronos.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 545a4776795e..8570b12a3f66 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23881,6 +23881,13 @@ S:	Maintained
->  F:	drivers/ssb/
->  F:	include/linux/ssb/
->  
-> +SONY CRONOS SMC DRIVER
-> +M:	Georgy Yakovlev <Georgy.Yakovlev@sony.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/mfd/sony,cronos-smc.yaml
-> +F:	drivers/mfd/sony-cronos-smc.c
-> +F:	include/linux/mfd/sony-cronos.h
-> +
->  SONY IMX208 SENSOR DRIVER
->  M:	Sakari Ailus <sakari.ailus@linux.intel.com>
->  L:	linux-media@vger.kernel.org
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6cec1858947b..1b08f5ae648d 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2382,6 +2382,17 @@ config MFD_QCOM_PM8008
->  	  under it in the device tree. Additional drivers must be enabled in
->  	  order to use the functionality of the device.
->  
-> +config MFD_SONY_CRONOS_SMC
-> +	tristate "Sony Cronos System Management Controller"
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	depends on I2C && OF
-> +	help
-> +      Support for the Sony Cronos system controller. Additional drivers must
-> +      be enabled in order to use the functionality of the device, including LED
-> +      control and the system watchdog. The controller itself is a custom design
-> +      tailored to the specific needs of the Sony Cronos hardware platform.
-> +
->  menu "Multimedia Capabilities Port drivers"
->  	depends on ARCH_SA1100
->  
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 865e9f12faff..99700f423fe7 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -300,6 +300,8 @@ obj-$(CONFIG_MFD_QNAP_MCU)	+= qnap-mcu.o
->  obj-$(CONFIG_MFD_RSMU_I2C)	+= rsmu_i2c.o rsmu_core.o
->  obj-$(CONFIG_MFD_RSMU_SPI)	+= rsmu_spi.o rsmu_core.o
->  
-> +obj-$(CONFIG_MFD_SONY_CRONOS_SMC)	+= sony-cronos-smc.o
-> +
->  obj-$(CONFIG_MFD_UPBOARD_FPGA)	+= upboard-fpga.o
->  
->  obj-$(CONFIG_MFD_LOONGSON_SE)	+= loongson-se.o
-> diff --git a/drivers/mfd/sony-cronos-smc.c b/drivers/mfd/sony-cronos-smc.c
-> new file mode 100644
-> index 000000000000..9d9b5402f89b
-> --- /dev/null
-> +++ b/drivers/mfd/sony-cronos-smc.c
-> @@ -0,0 +1,212 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Device driver for Sony Cronos SMCs
-> + * Copyright (C) 2015-2017  Dialog Semiconductor
-> + * Copyright (C) 2022-2025  Raptor Engineering, LLC
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/i2c.h>
-> +#include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/sony-cronos.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +
-> +static const struct mfd_cell cronos_smc_devs[] = {
-> +	{
-> +		.name = "cronos-watchdog",
-> +		.of_compatible = "sony,cronos-watchdog",
+Srinivas Kandagatla (4):
+  ASoC: qcom: sdw: fix memory leak for sdw_stream_runtime
+  ASoC: qcom: sdw: remove redundant code
+  ASoC: qcom: sdm845: make use of common helpers
+  ASoC: qcom: sc7280: make use of common helpers
 
-Undocumented compatible drop.
+ sound/soc/qcom/sc7280.c   |  67 +-------------------
+ sound/soc/qcom/sc8280xp.c |  33 +---------
+ sound/soc/qcom/sdm845.c   |  53 +---------------
+ sound/soc/qcom/sdw.c      | 127 ++++++++++++++++++++++----------------
+ sound/soc/qcom/sdw.h      |   7 +--
+ sound/soc/qcom/sm8250.c   |  33 +---------
+ sound/soc/qcom/x1e80100.c |  33 +---------
+ 7 files changed, 92 insertions(+), 261 deletions(-)
 
-Best regards,
-Krzysztof
+-- 
+2.51.0
+
 
