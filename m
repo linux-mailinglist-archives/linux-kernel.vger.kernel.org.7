@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-863218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585B3BF746C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05535BF7485
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C9B1884061
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22EC61883CD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEFE342CBA;
-	Tue, 21 Oct 2025 15:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21669342CBA;
+	Tue, 21 Oct 2025 15:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qHs96uoW"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J+PfDRZf"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24565340A5D;
-	Tue, 21 Oct 2025 15:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3627B4AEE2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761059459; cv=none; b=G/BiXzRaf1aMhGw2A790gZ1xKojsJu97DVqdIhTGrbz7gtKt6y2g2kJQ/h1shAD941d6LZUNc6vE3WmBEX7rQouPV4eceL+K9yJ4gpzl7aNwDcun/74mBjT4kqvyukdOeJNv7IGxFFDYKSm8OGiQUsm7TYLGYkcL/NfV42IEXZM=
+	t=1761059614; cv=none; b=haoPuT80nj6ENE23BeQXJFQsca1ki4D3wtjmWVZwwR/lE2JXGK7UL9Tx8q3zaHdtvF3aFmwlGc1+JVnhNY/Q9cX0rVJXGwHG1X2a91SyhMxCziaFNOzPtsY2ZGtRXAh7VDiYD/Py/8r60Z8fpqCBD7Li5zF7p0X5vce3eSHC1b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761059459; c=relaxed/simple;
-	bh=8UX2AOYcc1pJvShjqCkumWUTvtIN49sR3TGCRj1P9TQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=itv5SrPllFK8g1vU8VQPqst9/2yFV+XSVQ1zVpemXjyOzLqxHaulRzen73OiyNhh0mDBxUlIAGPLdl148xj8TBLL0mwwZeJBph5vAYQT3AkYjo8hnpw9lvJU27n1QbA2Ymi3V/e6y8T4BFczABY7kznIq0aA/F15FMcxas/hU+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qHs96uoW; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59LFAmIT1185633;
-	Tue, 21 Oct 2025 10:10:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761059448;
-	bh=THUgBVvFZqvoUFLNnGVZTqBXS6eet/3dT4lK761pWwk=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=qHs96uoWj/odh6QDja+Otn5aKic8lwd/12QMeCs6vKkskiNvhiNzM4Kyks1OT442h
-	 I+H5FlQb9nI/sBaHcKbF7ALAEdwE0gRWl3OVyp5LMa/0VVVVpzMr6XwuOCywk25pNk
-	 mJYHgaoalq5C/vDxaEZGaR13caJ8bB5UYvaco/H8=
-Received: from DFLE208.ent.ti.com (dfle208.ent.ti.com [10.64.6.66])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59LFAm1n1653813
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 21 Oct 2025 10:10:48 -0500
-Received: from DFLE214.ent.ti.com (10.64.6.72) by DFLE208.ent.ti.com
- (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 21 Oct
- 2025 10:10:48 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE214.ent.ti.com
- (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 21 Oct 2025 10:10:48 -0500
-Received: from [10.249.129.179] ([10.249.129.179])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59LFAfcC3922619;
-	Tue, 21 Oct 2025 10:10:43 -0500
-Message-ID: <c76843e9-e644-4b9b-803f-b9eb9a31b89c@ti.com>
-Date: Tue, 21 Oct 2025 20:40:40 +0530
+	s=arc-20240116; t=1761059614; c=relaxed/simple;
+	bh=57ydvuAT7vxuO11JefcYN70B9F3zvGHN9xiN6uZbz34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J+i5elvme/WCsURlqQlftygqB5ms4EHQpwLlxyLIFkS9mR5moETj1Ms83a/o80/cXOw//oPZCLb+N3aPV3VuiVpW5XGS2HtYqE+EE4KUxMFP10zOA6CikFEL7nviPETb/onbL/5q01kV7a3eb1ycnNlQ8QdTuOJ798Pb6scgqsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J+PfDRZf; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-29094f23eedso7776355ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:13:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761059612; x=1761664412; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=57ydvuAT7vxuO11JefcYN70B9F3zvGHN9xiN6uZbz34=;
+        b=J+PfDRZfyQrl9gN0jqZT86cvoa/KD8k0VQe+czqxptT+zH0wMyVL0xHMmHWx8jZXho
+         bX1YEKOP75N1tK99gm50cySJHAgL4hrEqoemf1YlwSfVikmn6juCxcAjTc3QRtMBTPHi
+         p8XkITS41sQi8/3CwnrU4myS3XlCXrM/6P+yxYisgAav3e/wHkuqQ6gvGpkE9calstfl
+         Sx9qSFR7/U/xg2Qx7XY8THl2MIGigW/joLCs9owXaACk735wS5gvcjrIXIqjj64zloyR
+         8KsjhxPG4+dTpSFUaSKJm3s+8JapdKUFl/MxH8hv5QXitFMCVRRntYF3grIvE7i9nktl
+         Z+WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761059612; x=1761664412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=57ydvuAT7vxuO11JefcYN70B9F3zvGHN9xiN6uZbz34=;
+        b=F3lkFKma8o5BklOfSbwme6E22n38KteKFuzkbmza1XB2GlbOUFRMgh5/BtEU4GdJfw
+         8tLlvwoj8T+Am34T2nNMpQCEWtZtICtHq7ggsctDRMLWWDdxSBkre1oM2PCCHgcq5LLp
+         z234uVZ6IaRcFVXfXQqIiXNzjRDrOcQ/UXVAHdZLGYKHZY8FFq5xJUR+rJ72rQm9kAgO
+         cMZBaYXWNmfbM0KSJXAA1JLEYfAI5K5qGYi9eGgwztgIfytsHL8tEitUlcKTnHNC4Duw
+         RhFeANY0kFYyvvy1BsW07bQ7qmxz9UCRGnASbz8Ghol9xKR7zv/oaZuIg2Hy64NNiZUN
+         CHeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBNKzD7lI8aqBZLgLjIXnHi240MfPH0w/g5aEgse6V0wsDUjWBRP/KmtP43HD90pKjVfmt126N50MLddU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsDiogfFB+bKSw1ZskPl54rYd5dEFkepLHzjUcarf+nsfgQc0m
+	qSrEA/ouDkjUYTNyZH2bj5WnIj+JlEX31iBttLxgI3u4enCwI+0Thzmx/pk8X+cWP+H2KqMWTtv
+	ukfZ/OyYHBvswilNwniEeSkulf7gjrwU=
+X-Gm-Gg: ASbGnctO4828XjQipFT1BOrGasNtO1u4GWwd94nX/6iSKkYXsvkzX2Q6IPO5aLpO1x0
+	n1coqpAwZjrEPxJ1VmDNrPrPrjXxvh4BPCL8hXHjUseyHBc+dbLniaZLxwfqJYlw+2waYFRdYsZ
+	E3vw1hyZWeG2V2hYTAZ4ZCs+oL97ALX4IxZ4DmYU3qcBUo8Lz5Oiv7zE2kTvrFEp37ml6d8uB1X
+	50h1A7tBRwPmF0UHt0aHsSu86p3cP8MDd8Jmy4jaO8h9YrecRxOHjpdWP9B66UJSzJ5/oBeGCPb
+	U8t8eioc/wfwxRRDZIAkeMow0kL5rSR/awzG7nzyc44/1EcHARUJL4WGqlsWt5Ly7ujLDgo+/JJ
+	f+SUQaeZ/er9A0A==
+X-Google-Smtp-Source: AGHT+IGgqiWCyvNeB4hPlMOrHURKLRGVAx/W44tWY3fpOgVc0+3DFhE9hXxgb3jRu16vu0k1lq4PNekfLfhW94/L/b0=
+X-Received: by 2002:a17:903:1a0b:b0:27e:eb9b:b80f with SMTP id
+ d9443c01a7336-292d3e50f14mr22906285ad.2.1761059612469; Tue, 21 Oct 2025
+ 08:13:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] crypto: ti - Add support for AES-XTS in DTHEv2
- driver
-From: T Pratham <t-pratham@ti.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Manorit Chawdhry
-	<m-chawdhry@ti.com>,
-        Kamlesh Gurudasani <kamlesh@ti.com>,
-        Shiva Tripathi
-	<s-tripathi1@ti.com>,
-        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
-        Vishal
- Mahaveer <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20251009111727.911738-1-t-pratham@ti.com>
- <20251009111727.911738-2-t-pratham@ti.com>
- <aPHW_zyWwA36Usy1@gondor.apana.org.au>
- <07032efd-52a2-44e1-89bd-81602be9eb32@ti.com>
-Content-Language: en-US
-In-Reply-To: <07032efd-52a2-44e1-89bd-81602be9eb32@ti.com>
+References: <20251021071146.2357069-1-fujita.tomonori@gmail.com>
+ <20251021071146.2357069-2-fujita.tomonori@gmail.com> <DDNZL452A8JR.K1AA7LHZEXW8@kernel.org>
+ <CANiq72m+uAWyRf6y6vAKjCQnwsMqVVGQx3VrHW1yAp4a-5eWew@mail.gmail.com>
+ <54328318-c235-413a-a069-5ea93f1dcb2b@kernel.org> <CANiq72=eOYk=WM5xfMkHj-REYjedYiYNakVvfto-AUL5E0O8qA@mail.gmail.com>
+ <DDO3G26SIZTK.1KV7Q0PQXHWTA@kernel.org>
+In-Reply-To: <DDO3G26SIZTK.1KV7Q0PQXHWTA@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 21 Oct 2025 17:13:20 +0200
+X-Gm-Features: AS18NWCXx7ypRBqMiH9LNo1SlX1iEiuxCpYwgdy8Fb6LtbgnqAlrqPRp8MG7hQ0
+Message-ID: <CANiq72nUiizxo3YFgxUZ1jiczRNbY2ATao2YUBiCEC7k5hbv6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: add udelay() function
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, aliceryhl@google.com, 
+	daniel.almeida@collabora.com, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
+	ojeda@kernel.org, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, frederic@kernel.org, gary@garyguo.net, 
+	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
+	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
+	tglx@linutronix.de, tmgross@umich.edu, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
-On 17-10-2025 22:13, T Pratham wrote:
-> On 17-10-2025 11:11, Herbert Xu wrote:
->> On Thu, Oct 09, 2025 at 04:11:31PM +0530, T Pratham wrote:
->>>
->>
->> You should allocate a fallback that is synchronous only.  Then you
->> can store the sub-request on the stack with SYNC_SKCIPHER_REQUEST_ON_STACK.
->> Otherwise the sub-request reqsize may overflow your request object.
-> 
-> Understood. Will correct this.
+On Tue, Oct 21, 2025 at 5:09=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> I'm not even sure we want that necessarily. I'd probably go for just docu=
+menting
+> that the value will be clamped to 0 <=3D value <=3D MAX_UDELAY_MS plus an=
+ internal
+> pr_debug!().
+>
+> This way the function can also explicitly used in cases where the driver =
+isn't
+> sure whether the value is in range and use it without duplicating the cla=
+mp
+> logic that the function already does internally anyways.
 
-Since a similar mechanism is not available for AEADs, I was wondering if
-doing the following in the tfm_init functions of AEAD algs (PATCH 3/4
-and 4/4 of this series) is acceptable, esp. since setting reqsize is
-moved to the algorithm struct field cra_reqsize.
+That would mean we cannot catch bugs in the common case where I would
+expect callers to know what the delay range is.
 
-+       unsigned int reqsize = crypto_aead_reqsize(tfm);
-+       crypto_aead_set_reqsize(tfm, reqsize +
-crypto_aead_reqsize(ctx->aead_fb));
+i.e. if they aren't sure what the value is, then I would prefer they
+clamp it explicitly on the callee side (or we provide an explicitly
+clamped version if it is a common case, but it seems to me runtime
+values are already the minority).
 
+i.e. EB is useful because it allows us to catch bugs. If we remove the
+EB, then it means things are more ambiguous and thus bugs cannot be
+easily be caught anymore because one can actually rely on the
+behavior.
 
-I noticed all older existing drivers using a fallback do something
-similar, and was wondering if you'll still accept new drivers which use
-crypto_*_set_reqsize() to modify reqsize for fallback use-cases?
-
--- 
-Regards
-T Prathm <t-pratham@ti.com>
+Cheers,
+Miguel
 
