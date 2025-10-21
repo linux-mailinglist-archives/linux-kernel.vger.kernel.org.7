@@ -1,204 +1,128 @@
-Return-Path: <linux-kernel+bounces-862876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F107BF66AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:23:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031D3BF66B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DBC18A47D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B955318A4C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299712F3C1C;
-	Tue, 21 Oct 2025 12:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516412F7AC5;
+	Tue, 21 Oct 2025 12:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TtoFpAgr"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RL+4kPXj"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851F21578D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B1E1FC0E2
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049373; cv=none; b=XfQrVREqqZxv/3e5IgfRSCLsf4uaK4OWcV3wQ3WFFPGBIUjKvLGRqBwQvnYYqyCat86LRRFaonWci/AZo3FvOi78CXu7kKeBukbCJorscP0UaMDS00U/+5d3o5wPYhNyjPbx0q9GiJBe/E5GnNUCI1xsSNRu12BlOpLOhV4hXhE=
+	t=1761049388; cv=none; b=JGUMWQ35ccXlVTB8rZ/gtCSFqj710MIPjN9mJ0GUg5/skTNp2/i2wweOlqIv9ya3dzWFGbaSV3wfyXkxIFzVwpXlgEfeONeLs/izAQy+9MHnFW3dinmMMpHaaBL91/gY8U2Efh4pQ5xnN/T5Oa0KmskdlHEPw4oC9UJsN2WOuLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049373; c=relaxed/simple;
-	bh=f3De6rNTLERtBCHNMZ22urpVrMEnrkSKkBp8ZJH0Ey0=;
+	s=arc-20240116; t=1761049388; c=relaxed/simple;
+	bh=cA++Y4BdYjrrMDCbEY24nDpSsRxi5eGjbT1W1CqHJP4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RMl+oT71xCv1nXR0AqGxxFS6OI+kYDWd7y4RKFELDt8sd+DNgmmCMc3bktIHBXJV5gRxS6rYqweBCGCBIFqUbK/VQjFtzDbH75MdTMpo9cPKWzB8HeUfWBEY66neUVvaipNKqpNz0RQ3BF1DrdwjRsG7gxqQhDqk5AEIBnOFaEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TtoFpAgr; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7847ee5f59dso43183087b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:22:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=nX3pQzRgF55EO5QJV6y9fP3TjLI26OVmE15fW+OFhgCZeS5suZvdeDWlf6sh8elawFBtVKLvxFHv1fs9yIS+vz3iB+9DM+ZhehXfQtwczgMwHWh7/8IelQWYEDJIQtiq3QI3ZUwQMVjx80F4ppmJFdW796qOD1Vjo3JfnwlyCBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RL+4kPXj; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57bd482dfd2so5305564e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761049370; x=1761654170; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gsO0Mv1FrcyGXkqaqLTVsEMXbut/odQDvF8E5ZP8zg=;
-        b=TtoFpAgr9EvntFhc0LWUKCHatbEH+caEZo4EJERzFHvdgEZ435S+nNHROPl0IAYd+k
-         sVmMOlEAdxm3e9IaZzJD4xUzSrfyV99GKaMkGVFioYvU2ZHHMOTRqmJNuOs1bjnGK2UE
-         LX6E9RBByJFXuE7uCDXc4enjwrYVuWbtom6kBXhR8wl3PlvqA8/v4208U9y2jWMQpTrr
-         +YXtHmo5dvsH3yJGWHHtjcFNcNkggoGWxjbwpdsATMLfoGQbW47rzsiQKby2eGfN12AB
-         KnVexQom0e4V8BDfgWImOuLLu/ljhJoAlHNATfdVHJeAktbmcdUnFwQxq3l/HCMRfcjH
-         d5yQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761049379; x=1761654179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cA++Y4BdYjrrMDCbEY24nDpSsRxi5eGjbT1W1CqHJP4=;
+        b=RL+4kPXjFsX0wXlPPiJ5544+gQZ4r6l666llWohriyz3njEhG3+oC5Qtxesk6esIe+
+         P5XMRnaAbbKBi6THsgxTO8jRGzCy+Zme7OrYvEmw0i7n6NgGBfYbkLr2Z64Q2o5s4YJn
+         xOrrIeSlLDuGUQZ2Fxb//x0joj6sP/BxA1YaMNayXomt2cuw3FghGC+v1Pz3nyQbHcq9
+         6w/j/hayOEZYQUP+DARX+J/TWA4CXbDFy5mFspNwqkZKhvSBkNo5SUx+e89J62CiWdGJ
+         BcGdXW7qHf5aGjMloBUKX6wVuo3w+hg18Qo7+2KEzuFQ6MAgzrMm1X72FHz49SJw8C30
+         JKpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761049370; x=1761654170;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0gsO0Mv1FrcyGXkqaqLTVsEMXbut/odQDvF8E5ZP8zg=;
-        b=bpxjp4GM+8Z6qkHk7KKHzSbSpHTCFGo5e2RJrM8lNq04sAzN8ZpytvMfmFkEex6JjE
-         5l0kmRj+ALJsoCxAhS2T5PxhC0Vuldi5wZmRHddPskmLgSl9macWoxodbktBBlpzkCP2
-         A7j7tBprc+3kNsfgd1Er2SEdprRMsrv2BObYwa9l3GifaClXmatiIB7chpeERHLGoCBy
-         KwctAZB59A9n8r3Fnq/6jyABPw17O6aY2aJ6AWMx2GkyAbEXzMR/LCei3dH+JO7cjUJt
-         ncYqoD9gUccSvMyfNxtguQBKLsCtn8JWM9ublGXbySV5HS724cy443O6VmRBWLIMeXmr
-         65WA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOGRV7Cl3Mnr50yyzpM9mv6U5RU0cVVdPH6Gwo6Up82kB6MUfdg64ip0hn0yB9n8/y47u5Y6CfZjayUgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlb6YyudSRzkDO80BA5TBygEt/wN9nmVXbjenrhtLC4iCb95K4
-	6s0LSugvcRqhlPNVfphlN6/EJkJrVMaRNggn+BTasbHPufGwtpcAn+OjkVe20+Lr8yU2DExGN/O
-	GMBzb9cX1BQp5A6ShUPzctJRYWMSl3PUk7gqurcRXge1aHkcm5V+B228=
-X-Gm-Gg: ASbGnctQtKyE8IS3bOJMyHW0w0oj0g1F+TuyrtFEDUhjEmCi2UcekC9vN0252bMSDmK
-	vDr9BCgSiEmXBKcfLa2oWabgkZmj3AEI3x8L6H759+nbMe9bSXeFS++Rdl26BjGwFfk6qx9FD9t
-	fcWyjoqRuQHt7Bi5c68Srsbo5/NEiAIgHi7KXL4aHzHjFyT5zae9igaK/NwQjVrZRVE3e58IbzL
-	QeM+Ucu/guAaUyYr5mg49mofSIBTlM6dZeneb+s+XJ91tWZ/RA694gtt+KtopdZhouSlEoL
-X-Google-Smtp-Source: AGHT+IEjsTRnovw4ePg20FTB4OUKNJwNiI+HcgpJ0npXrx4jgsZXBfmlUSYcGf7LNK6sqZ0vKa1Fghky5U1mlT7+5do=
-X-Received: by 2002:a53:acd5:0:20b0:63e:102f:e00e with SMTP id
- 956f58d0204a3-63e1625aee1mr12332024d50.53.1761049369570; Tue, 21 Oct 2025
- 05:22:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761049379; x=1761654179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cA++Y4BdYjrrMDCbEY24nDpSsRxi5eGjbT1W1CqHJP4=;
+        b=pFPE3f9dXbVKNAcMU/T0vGDXTmWFsTYtPbl7jcYRtyi381zOohLY+Jvk5E66z8iLYJ
+         DC7ZYWnOM2DTw1Z6VUrkxB/pGsZCqxqzYdIjZ6/ae9k9SIs9IRHtG2hYATOgVYzjq+kM
+         sGYfKz62QvYXbxWvN9yXpCgQF/X55fNE6Ui7WA4AGWKdv6vQ23lkge148G4/YUbjVp1f
+         9/BUZaFdhxsc5pH6pA4gLV9T6BpIbQIt2Ajr3ftBnGTdVkF3YvWAfBRdjPyt/19DPLFG
+         UB0iS1TEvNHZTWZHYXrGmGAl6YNKB7R4Q3RbXBCGganGkXhz9Xzy06l7wm49tZEaoZbA
+         4H/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkXwFKuAfXDVtwYM8mGLi2uMWZI0oHZnTfG3eBIOvkStWiFcFXcHxV7JwyJCue3oB5286+KETRvUDVNIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjar1KuyGJYNh4RIICLykzhpW4dq1xbb1PZNOtQSSnCPlTGrlV
+	uRagOrozm8PGX+bXCcrZsmA+AHwivE01VdaP/FlCDep7X6/ThsDZdfj8Z8jGdMCX3o+SdRLa3Kd
+	tc+n58DZR9/iuq40/jxux7xw4dPC4uO28ONkTMbGDaA==
+X-Gm-Gg: ASbGnct2nbD1KnSx+oezKW/X+lxUliTQ4w0vnR9xJ41oCALII6Jd8LFQYjwERtFaXJQ
+	PVfnHMfkgYt10xSlvk2Fp2o6c/GjiHgTxMfAUKU7uRnYvcq4+fHbNvfmyfq7UEf/mMVALfEov5X
+	9TxXMM47sOkyBm7klyvhyo2nZKSuKZDnu6q3LZqYQLJhzyyS6OlG19KnLCKQk83pEhRroWRhiSf
+	0wxVPkXNv4p48xTZ2zYJPLwk4aL//fgwtwyTcBcMzsZJ7sgAxu12FRbzS1Fr0LHCwDbZrBkEmXd
+	1X0Ip3jFuht+08Hbd1qobfbDnu4=
+X-Google-Smtp-Source: AGHT+IFwqbCzl1LvRrGVBsJkNxyTepKCymSn3z4xLOoxxtlzHnxQDfI8sBh0KLELngrOm4B0AY63u0QkMaZ4C4nL/Tc=
+X-Received: by 2002:a05:6512:6d0:b0:585:1ca7:1b7b with SMTP id
+ 2adb3069b0e04-591d853530amr5944540e87.31.1761049378748; Tue, 21 Oct 2025
+ 05:22:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-uart-daisy-chain-pmdomain-v2-1-6d0215f4af32@ti.com>
-In-Reply-To: <20250910-uart-daisy-chain-pmdomain-v2-1-6d0215f4af32@ti.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 21 Oct 2025 14:22:13 +0200
-X-Gm-Features: AS18NWBw6aYnNOt7sX3hV723CfvlVkoslKqfPhuE6iOIYmHabXQ8nFw-lI3bkVE
-Message-ID: <CAPDyKFrOjFeZDOs84egaCAmRwtnXcj5bZLniOb1gkDkDH0214g@mail.gmail.com>
-Subject: Re: [PATCH v2] pmdomain: ti_sci: Handle wakeup constraint if device
- has pinctrl wakeup state
-To: Kendall Willis <k-willis@ti.com>, khilman@baylibre.com
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, d-gole@ti.com, 
-	vishalm@ti.com, sebin.francis@ti.com, msp@baylibre.com, a-kaur@ti.com
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <hyzzrjn7jzo3tt3oyg7azijouawe3zopfjzq6zfhoo6e6z2m4t@ssl5vl4g557e>
+ <zk4ea5cibrkp4vttuy4evrqybf76b3nop5lnyck4ws4nyf2yc4@ghj2eyswsoow>
+ <CAMRc=MdWmO4wvX6zpzN0-LZF1pF5Y2=sS8fBwr=CKMGWHg+shA@mail.gmail.com>
+ <rfr5cou6jr7wmtxixfgjxhnda6yywlsxsei7md7ne3qge7r3gk@xv6n5pvcjzrm>
+ <CAMRc=Me9Td5G9qZV8A98XkGROKw1D2UeQHpFzt8uApF8995MZw@mail.gmail.com>
+ <rvsyll4u6v4tpaxs4z3k4pbusoktkaocq4o3g6rjt6d2zrzqst@raiuch3hu3ce>
+ <CAMRc=Me+4H6G+-Qj_Gz2cv2MgRHOmrjMyNwJr+ardDR1ndYHvQ@mail.gmail.com> <fydmplp5z4hjic2wlmvcy6yr3s5t5u4qsgo7yzbqq3xu2g6hdk@v4tzjj3ww4s6>
+In-Reply-To: <fydmplp5z4hjic2wlmvcy6yr3s5t5u4qsgo7yzbqq3xu2g6hdk@v4tzjj3ww4s6>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 21 Oct 2025 14:22:46 +0200
+X-Gm-Features: AS18NWBF0GY_y5H5_yrBjx5aMTjq-BCBKISyHH-S44AO8cdbNH0Bf9m_yOfn5F8
+Message-ID: <CAMRc=McGuNX42k_HdV20zW+buACBTmTZEHWgS-ddRYsvnfwDSg@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>, 
+	Mika Westerberg <westeri@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Sept 2025 at 23:16, Kendall Willis <k-willis@ti.com> wrote:
+On Tue, Oct 21, 2025 at 2:20=E2=80=AFPM Manivannan Sadhasivam <mani@kernel.=
+org> wrote:
 >
-> For TI K3 SoCs with IO daisy-chaining using pinctrl wakeup state, avoid
-> sending wakeup constraints to the PM co-processor. This allows the SoC to
-> enter deeper low power states while still maintaining wakeup capability
-> for peripherals using IO daisy-chain wakeup via pinctrl wakeup state,
-> similar to the existing wake IRQ mechanism added in commit b06bc47279919
-> ("pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups").
+> >
+> > And with the implementation this series proposes it would mean that
+> > the perst signal will go high after the first endpoint pwrctl driver
+> > sets it to high and only go down once the last driver sets it to low.
+> > The only thing I'm not sure about is the synchronization between the
+> > endpoints - how do we wait for all of them to be powered-up before
+> > calling the last gpiod_set_value()?
+> >
 >
-> Detect the pinctrl wakeup state in the suspend path, and if it exists,
-> skip sending the constraint.
->
-> Signed-off-by: Kendall Willis <k-willis@ti.com>
-> ---
-> Implementation
-> --------------
-> This patch is intended to be implemented along with the following
-> series. This patch has no dependencies on any of the other series:
->
-> 1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
->    wakeup state": (this patch) skips setting constraints for wakeup
->    sources that use pinctrl state 'wakeup'.
->
-> 2. "serial: 8250: omap: Add wakeup support": Implements wakeup from
->    the UARTs for TI K3 SoCs
->    https://github.com/kwillis01/linux/tree/b4/uart-daisy-chain-8250-omap
->
-> 3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": Implements the
->    functionality to wakeup the system from the Main UART
->    https://github.com/kwillis01/linux/tree/b4/uart-daisy-chain-dts
->
-> Testing
-> -------
-> Tested on a AM62P SK EVM board with all series and dependencies
-> implemented. Suspend/resume verified with the Main UART wakeup source
-> by entering a keypress on the console.
->
-> This github branch has all the necessary patches to test the series
-> using linux-next:
-> https://github.com/kwillis01/linux/tree/uart-daisy-chain
->
-> Version History
-> ---------------
-> Changes from v1 to v2:
->  - Reworded commit message to be concise and to reference commit
->    b06bc47279919
->
-> v1: https://lore.kernel.org/all/20250904211607.3725897-1-k-willis@ti.com/
-> ---
->  drivers/pmdomain/ti/ti_sci_pm_domains.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> index 82df7e44250bb64f9c4a2108b5e97bd782a5976d..884905fd0686c1b94aba68c03da038e577428adf 100644
-> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> @@ -10,6 +10,7 @@
->  #include <linux/err.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_qos.h>
-> @@ -84,9 +85,24 @@ static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
->         struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
->         struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
->         const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-> +       struct pinctrl *pinctrl = devm_pinctrl_get(dev);
-> +       struct pinctrl_state *pinctrl_state_wakeup;
->         int ret;
->
->         if (device_may_wakeup(dev)) {
-> +               /*
-> +                * If device can wakeup using pinctrl wakeup state,
-> +                * we do not want to set a constraint
-> +                */
-> +               if (!IS_ERR_OR_NULL(pinctrl)) {
-> +                       pinctrl_state_wakeup = pinctrl_lookup_state(pinctrl, "wakeup");
-> +                       if (!IS_ERR_OR_NULL(pinctrl_state_wakeup)) {
-> +                               dev_dbg(dev, "%s: has wake pinctrl wakeup state, not setting " \
-> +                                               "constraints\n", __func__);
-> +                               return;
-> +                       }
-> +               }
-
-Relying on the above condition and the wakeirq check that was added in
-b06bc47279919, seems fragile and doesn't really seem like the best
-approach to me.
-
-I would rather think that we should rely on the driver for the
-consumer device to successfully have completed its parts, by enabling
-the out-band system-wakeup IRQ. In other words, make the consumer
-driver to call device_set_out_band_wakeup() and then use
-device_out_band_wakeup() instead of the pinctrl+wakeirq check above,
-to understand if QoS constraints shall be sent to the FW or not.
-
-> +
->                 /*
->                  * If device can wakeup using IO daisy chain wakeups,
->                  * we do not want to set a constraint.
->
-> ---
-> base-commit: 5f540c4aade9f1d58fb7b9490b4b7d5214ec9746
-> change-id: 20250910-uart-daisy-chain-pmdomain-b83b2db2c3cc
->
-> Best regards,
-> --
-> Kendall Willis <k-willis@ti.com>
+> That will be handled by the pwrctrl core. Not today, but in the coming da=
+ys.
 >
 
-Kind regards
-Uffe
+But is this the right approach or are you doing it this way *because*
+there's no support for enable-counted GPIOs as of yet?
+
+Bart
 
