@@ -1,170 +1,166 @@
-Return-Path: <linux-kernel+bounces-862124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9B0BF47A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:18:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E929FBF47E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EDB303507FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:18:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB03E4804B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320B2202F9C;
-	Tue, 21 Oct 2025 03:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8586627466D;
+	Tue, 21 Oct 2025 03:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VveLCn15"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnqrSbzR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF93B1F16B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A871D72618;
+	Tue, 21 Oct 2025 03:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761016683; cv=none; b=nUe9am17EoisC2hspMsQU5a7gGHwasGwXV2ZUDZvJ+I+Z0/Lcx3P73DT85SZHZpuE6SoTIKFDTo3iiaHziF3PM7b/Zzaa2HharYPPDr6Bd358cSOHVKj7lDH/CLq8H2ERjowhY70WYJCb/m9NoEJ2UmGF5xKdSCjwfq8ZCS/GkU=
+	t=1761016708; cv=none; b=uCbus1j/dU7ctUbzgaw3WrOdwo+UZXkz8XyYtZSnx6wJ6uiAaVMmpjcxmVALfjB8HD4X8BbwXgR+JKqQ+EjEM1Xr5/U7Ff7rC0OgEsxbiExzJftlzsQwPO4zTwdkiLtvmIXSPRIJMvuiPOgKqRRVr2h3YUCCb7BJEo2w8zWuKPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761016683; c=relaxed/simple;
-	bh=sfQfeeJSIBOGYQeQglmRX/1uHnkqyry3lbhoV7QNqE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h5jN2epeQRSIHvarj27ufleCo5ULPc22ABOCIF853Qm8xe91ZTmr98rYhNlsz6rUDdlNPS8RB+ej181qDj5glRtP0zsnMdhVIuMcFZgkSloYZdlOAl+UnSELZxwXUMDnusTevkPTdIOKdIQzhpItrBGtpiHmvQZErvvpicbuC4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VveLCn15; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-85a4ceb4c3dso709803885a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761016681; x=1761621481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IKp8K5lCZ3dpAyDEqf6jcNNDcXUsYhzNGDh14Qf0pAE=;
-        b=VveLCn15TD+xby9ReQc5oxqgPGrqCJSWTi13Fk8KAI6qSXNKiSxLND6yuqgzPRxVkL
-         fWsTG4x09G+7Kt5GzJHhMUcKan8i4q7TfV9eHIctFukRqV1Kn/DB2NUUfYOh3QZj7FXF
-         1umfnz2QEdgxyDtaLdkMAoEcXvg1n4j9S4DdZ/4aEx3X0c7vBFoknsThK8o8hpEn/veS
-         086Pe7fuXXh4zRAbhJV2FL2JOjug4IUH1HigCYpAwDox7D2kPicQfAWSLmRk2xOC2Z3x
-         wUbvumnXwW5fH27m9Yipe4CK/kUdeYUAMsDX7yRfOerJPQTx7fxDwvsB1rajzQAv5Qu+
-         JYmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761016681; x=1761621481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IKp8K5lCZ3dpAyDEqf6jcNNDcXUsYhzNGDh14Qf0pAE=;
-        b=c19QZfE1IxaTVurMu+lEfnCkvPwXkgRXnAhqCydX8XeMf/8oHuI4j/nm7UHgoUYx+U
-         swBlIYTau3aHi4epSuW27MZpV2+9gIGz/7hpYbjRiXWRObpoQCc/zhevKMHGv9rr4VmA
-         9ozC58Di42hKCVGrUbzSRTLrXNmPzKojf5x4stkJWET6kodpeKimf3cwVxrwCKiGEUux
-         BK98F3hSDKqOsfBXTmnJul5TlWeBCz89nG9CHtGS/+X4xBYWAfm+MTHxLcny5d8GjAUL
-         OTQ1Xa4y7HP90J2qJ/fi0HmEpjWwGsyE4Ik0N5c57KgHvEUPORJzC8hCu8exQSLKX7JY
-         nPiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcvRwIQy2BDXgocLdYIf0lrAGy1CTcnohFIC8NqhH9onXg2Y0hOMES8HtWjLECii7NILF5HDxR7rjQH9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKuSyrmaeDo3l34EeydA6zdOXU8Nrtp8ONPatlDdsan4wy8BNr
-	SEdsbOy22Fsrmib6l4LzckPRabdLwBGih4YI5Y1x/cQNDS6mYFUgaysw0YH9te7WooyCrL3N17U
-	nSOp5UNUaHEF8DpoQYXzmwqmbteBK4XfifZcLNdM=
-X-Gm-Gg: ASbGncuzjfeVFIrwnz9lawOvucFtOjvUDLMhzj3batqBKPLXxMOI7nfM34eUVOK0V8M
-	VdiN5926mzpgkf6fvJuTxmNl3fGImFquOpoKV1dZN+Z0Mrr3AreUqQApHyc2FtlUszX3FkPsJAk
-	G674P3EBFuIxrxrfcX+hyXItZDOi3Xsm0eG2Ne+6EwszYwD6yvun11k7fmFPa5ras+L6tl28LCj
-	/REqtH6VlS2Uwj+Q/SZmjKtHboymTfNex75cjd8/aqsXoAEEHE7ZYMt5oey2YAsvpEVX8tv7JUy
-	N7gbUJKbbzXH5AUQC2nUTCQSzAUbsw+vlW0N1g==
-X-Google-Smtp-Source: AGHT+IEISLt1R8Tq3GUFGAlLRQg2JU0sPn1UxM/cYxwrh/JtX54j7bP+h6dE4yyysVO1BfHw279yngY5UxCTBJDhC+g=
-X-Received: by 2002:a05:620a:2950:b0:80d:4088:82dd with SMTP id
- af79cd13be357-8906b7aaec6mr1842418985a.0.1761016680601; Mon, 20 Oct 2025
- 20:18:00 -0700 (PDT)
+	s=arc-20240116; t=1761016708; c=relaxed/simple;
+	bh=8w/R8eSiIH88AvVwjsFZLEjod8iCl8HZVcBE0+UvQ7c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GXDLfBBps7tHMM4RInSANwQZBmGf9ND16cPAuNOGZryixTmiurP0iCH7sil2mdjSp57oaZCJWl6OBCS9vWcatXvPKB++8awImEEYNmDm8zXuuVeAyrY4Q1eahAFbkaHZ7gAPPvjsDDwGZJRXBWF3VrNY870imEH12YD1vHyaJpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnqrSbzR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 247A1C4CEFB;
+	Tue, 21 Oct 2025 03:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761016708;
+	bh=8w/R8eSiIH88AvVwjsFZLEjod8iCl8HZVcBE0+UvQ7c=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ZnqrSbzRoglTdk8roCwlS2Sjb+FB6Hl8cqj34K/4UHWHxXxSlz8DC0FU12toYouCb
+	 LHLraFRsjOGF1bEI5u9gmLsyymS50fQKuv/kOVU8MQgraUjUMwiVX3gj0mSiKF1hgR
+	 nFYvN1DoxheSekYj4TeQOSGB2P27dVoI7U3nOYAN550fywsZ35QkbPxzg9GWYy5UW8
+	 UEOgvd692YLkEAMlln751k/vWxhIgkT/UJyIH5c/TTn2/yBVJQV8Py42t7dfD0mml+
+	 nZkCoxOCkGUifMqUe1Kh7qsJZTwntKpyg4IU/Ht1VHtquC8Vyk+z/wIR8t+3s5Y2rj
+	 0nwxbDAawBBxQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF6ACCD193;
+	Tue, 21 Oct 2025 03:18:28 +0000 (UTC)
+From: Xiangxu Yin via B4 Relay <devnull+xiangxu.yin.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v5 0/3] Add DisplayPort support to QCS615 devicetree
+Date: Tue, 21 Oct 2025 11:18:06 +0800
+Message-Id: <20251021-add-displayport-support-to-qcs615-devicetree-v5-0-92f0f3bf469f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017160251.96717-1-dev.jain@arm.com>
-In-Reply-To: <20251017160251.96717-1-dev.jain@arm.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 21 Oct 2025 16:17:48 +1300
-X-Gm-Features: AS18NWDI6AbZQPBjErDyOP8dFS6M9xx3Z6lnBR5rWfIWS85iIEUyVJpIZk0sZ5U
-Message-ID: <CAGsJ_4xwS9Q_5e8-F6PmyHm_1OyuHuTKnnzH_WPNiOmVzkkmdw@mail.gmail.com>
-Subject: Re: [RESEND] [PATCH v2] arm64/mm: Elide TLB flush in certain pte
- protection transitions
-To: Dev Jain <dev.jain@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, anshuman.khandual@arm.com, 
-	wangkefeng.wang@huawei.com, ryan.roberts@arm.com, pjaroszynski@nvidia.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHH79mgC/6XSzWrDMAwH8FcJOc/Fdm0nKWP0PcYOsq2shiRO7
+ TSslL77nJRuHUthHycjHfRDf/mURwwOY77JTnnA0UXnu1TIhyw3O+hekTib6pxTLhllgoC1xLr
+ YN3DsfRhIPPTzO3iyN1ExSWwaY3AIiAQNgFW8AFpDnkb2AWv3NnPPL6neuTj4cJz1kU3dCRKMM
+ /o7aGSEEsrrUkDFjRB6uz844zqzMr7NJ2rk1/F/2GPkaTzjtLJ1IaxgdOtjXO0P0KTx7aex/o+
+ xTkYh0FRKQ8mEuGOIW0P+0hDJAOBGl6KgWNkF43y5U8CUYHTD5Vh5izHC/Bs22eOE04qub/EPu
+ PbhKqf+kMqWjOW0W1UwQ6VlXPFv7tP0PRYQpi5IT4zvhuCbBsMXKrZJolN6jFirKGptUzD4Y4G
+ ruxkurlKkVayRaAGMMlwvQxoikqnjhk2mqLIgtWZKyhTw+R1SC9GFdgMAAA==
+X-Change-ID: 20251014-add-displayport-support-to-qcs615-devicetree-ecaad627a0fa
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, fange.zhang@oss.qualcomm.com, 
+ yongxing.mou@oss.qualcomm.com, li.liu@oss.qualcomm.com, 
+ Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761016706; l=3836;
+ i=xiangxu.yin@oss.qualcomm.com; s=20241125; h=from:subject:message-id;
+ bh=8w/R8eSiIH88AvVwjsFZLEjod8iCl8HZVcBE0+UvQ7c=;
+ b=tvf88zGjZkiYq1fV+tn3zjt0yR7gpglqH1BX/qqwrFkhH4yNpTaswQRY0Nbui6/yMp0kD43JB
+ iaFMFWvXN2iDhoy2LkdXzcc6MuXOhYgzO/OhphUiM4VFi6xystI3UH/
+X-Developer-Key: i=xiangxu.yin@oss.qualcomm.com; a=ed25519;
+ pk=F1TwipJzpywfbt3n/RPi4l/A4AVF+QC89XzCHgZYaOc=
+X-Endpoint-Received: by B4 Relay for xiangxu.yin@oss.qualcomm.com/20241125
+ with auth_id=542
+X-Original-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Reply-To: xiangxu.yin@oss.qualcomm.com
 
-On Sun, Oct 19, 2025 at 12:36=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
->
-> Currently arm64 does an unconditional TLB flush in mprotect(). This is no=
-t
-> required for some cases, for example, when changing from PROT_NONE to
-> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulat=
-e
-> growing into the non-main heaps), and unsetting uffd-wp in a range.
+This series enables DisplayPort functionality on QCS615 platforms.
+It introduces the required bindings, updates SM6150 dtsi for DP controller
+and QMP USB3-DP PHY, and enables DP on the QCS615 Ride board with
+connector and link configuration.
 
-I recall seeing this pattern frequently in multi-threaded programs. The sta=
-cks
-for the threads can be observed by running strace on a multi-threaded app:
+Depends-on:
+https://lore.kernel.org/all/20250903-add-display-support-for-qcs615-platform-v8-1-7971c05d1262@oss.qualcomm.com/
+https://lore.kernel.org/all/20250916-add-dp-controller-support-for-sm6150-v3-1-dd60ebbd101e@oss.qualcomm.com/
+https://lore.kernel.org/all/20250926-add-displayport-support-for-qcs615-platform-v7-1-dc5edaac6c2b@oss.qualcomm.com/
 
-mmap(NULL, 20480, PROT_NONE,
-MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) =3D 0x7fbfcd14c000
-mprotect(0x7fbfcd14d000, 16384, PROT_READ|PROT_WRITE) =3D 0
+Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+---
+Changes in v5:
+- Update commit message and fix example indentation in binding [Krzysztof]
+- Update order in dtsi includes [Krzysztof]
+- Link to v4: https://lore.kernel.org/r/20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com
 
-The stack guard page in the mmap region remains non-READ/WRITE, while the
-rest of the area is set to RW after initially being PROT_NONE.
+Changes in v4:
+- Update commit message to reflect data-lanes changes.
+- Link to v3: https://lore.kernel.org/r/20251014-add-displayport-support-to-qcs615-devicetree-v3-0-74ec96ba8144@oss.qualcomm.com
 
->
-> Therefore, implement pte_needs_flush() for arm64, which is already
-> implemented by some other arches as well.
->
-> Running a userspace program changing permissions back and forth between
-> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time take=
-n
-> for the none->rw transition, I get a reduction from 3.2 microseconds to
-> 2.85 microseconds, giving a 12.3% improvement.
->
-> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+Changes in v3:
+- Move data-lanes from board DTS to SoC DTS [Dmitry]
+- Add missing assigned-clock PIXEL1_CLK_SRC [Dmitry]
+- Update subject prefix to qcom: qcs615-ride: for DTS patch [Konrad]
+- Link to v2: https://lore.kernel.org/r/20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com
 
-The patch seems to make a lot of sense to me, but I=E2=80=99m not an ARM ar=
-chitecture
-expert and cannot judge whether __pte_flags_need_flush() is correct. I=E2=
-=80=99ll leave
-that to Will and Catalin.
+Changes in v2:
+- Update register padding and ordering [Dmitry]
+- Rebase the series on the latest driver
+- Link to v1: https://lore.kernel.org/all/20241210-add-displayport-support-to-qcs615-devicetree-v1-0-02f84a92c44b@quicinc.com/
 
-> ---
-> mm-selftests pass. Based on 6.18-rc1.
->
-> v1->v2:
->  - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
->    pteval_t, return !!diff (Ryan)
->
->  arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/t=
-lbflush.h
-> index 18a5dc0c9a54..40df783ba09a 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct =
-arch_tlbflush_unmap_batch *b
->  {
->         __flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
->  }
-> +
-> +static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newv=
-al)
-> +{
-> +       ptdesc_t diff =3D oldval ^ newval;
-> +
-> +       /* invalid to valid transition requires no flush */
-> +       if (!(oldval & PTE_VALID))
-> +               return false;
-> +
-> +       /* Transition in the SW bits requires no flush */
-> +       diff &=3D ~PTE_SWBITS_MASK;
-> +
-> +       return !!diff;
-> +}
+---
+Xiangxu Yin (3):
+      dt-bindings: display/msm: Add SM6150 DisplayPort controller
+      arm64: dts: qcom: Add DisplayPort and QMP USB3DP PHY for SM6150
+      arm64: dts: qcom: qcs615-ride: Enable DisplayPort
 
-Thanks
-Barry
+ .../bindings/display/msm/qcom,sm6150-mdss.yaml     |  13 ++-
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts           |  30 ++++++
+ arch/arm64/boot/dts/qcom/sm6150.dtsi               | 113 ++++++++++++++++++++-
+ 3 files changed, 153 insertions(+), 3 deletions(-)
+---
+base-commit: 606da5bb165594c052ee11de79bf05bc38bc1aa6
+change-id: 20251014-add-displayport-support-to-qcs615-devicetree-ecaad627a0fa
+prerequisite-message-id: <20250903-add-display-support-for-qcs615-platform-v8-0-7971c05d1262@oss.qualcomm.com>
+prerequisite-patch-id: 58be7053007469980bd7cc9fe315b66bbe021c31
+prerequisite-patch-id: 3c2120117f72c64f69beff32c0239fbc7f808f36
+prerequisite-message-id: <20250916-add-dp-controller-support-for-sm6150-v3-1-dd60ebbd101e@oss.qualcomm.com>
+prerequisite-patch-id: eb07ea58347e77ee18fb6dade040affb0ab68954
+prerequisite-message-id: <20250926-add-displayport-support-for-qcs615-platform-v7-0-dc5edaac6c2b@oss.qualcomm.com>
+prerequisite-patch-id: 8c6c905df7ee55a92a4e52362c8fa7cd9742de04
+prerequisite-patch-id: 0dba0fafd032bbd6cd117175f61efd1e56ae9228
+prerequisite-patch-id: d954b18774cfc0cfdb23de09aab3c56cefb8e1ea
+prerequisite-patch-id: 13f2d2efbcee6337001b5f8519a6da9a41d05276
+prerequisite-patch-id: 3a7144645ede23ccc7d54420e5a32e5bfa3bb776
+prerequisite-patch-id: b3ea55e92953c1526eaf7c5c21d939a5f8502711
+prerequisite-patch-id: 977189ef7cecbe7237175a8ef611fffb814193b0
+prerequisite-patch-id: 3a12c1b4f00eb1d074e51d586f2dae3a44de0613
+prerequisite-patch-id: 7f80e93057c1fd088ac6b4b0652cdfe2ea221cd5
+prerequisite-patch-id: 8b29d292717782982e4450a509f4428fe6e895f2
+prerequisite-patch-id: 621c3ba6bcf5b5782a5264faed72fdadfd47c630
+prerequisite-patch-id: 9c63f2c5bb39527e3031b2d168e3c9419441e8df
+prerequisite-patch-id: 364f6a7d8f4e1bc79a8f236b8d5a2425ffd225fe
+prerequisite-patch-id: eb09ea48625b5c0d39ffb37babe7d8c32a4b3122
+
+Best regards,
+-- 
+Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+
+
 
