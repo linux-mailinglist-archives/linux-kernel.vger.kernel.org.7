@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-862260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C5CBF4CB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BBBBF4D97
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F1EC4F74E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:03:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312CB4F6472
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB36F2737F8;
-	Tue, 21 Oct 2025 07:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E78274B5F;
+	Tue, 21 Oct 2025 07:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQ6Aic7a"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="HVC87p1a"
+Received: from fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.74.81.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6651726E6FF
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18CC25A623;
+	Tue, 21 Oct 2025 07:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.74.81.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030193; cv=none; b=RJVgyM4DCQ3YLE1lGRu6fReIIX6xxBCjxyRbwfcr/x94agLEtN194U1TJYKlT+UDJuR5Tp6ImWlK+7BYVOJPeSAQWxpnPpo77B+QqVw0P07I3rRd+/sX9h1ImuLzH9ISxoPKYkvXC+2ejHt5yPMBFUWfd9KQXK1fJniAsCm+XM4=
+	t=1761030554; cv=none; b=StjrkF2+zizVPYASEiz7WaDfXVYhDVhYOe5v38c1HIub5nemvq8iW+Xc9H0D8tSM5swpPxlV304AEn7jOgvYe4sD8FKFHmlCZvw2sUghB7pZ8B0mhxlA5ndmBNeL5hFCSO8H7cX8ZDzKEwFySKPzuWva56QNNh4aUSll7XnGZbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030193; c=relaxed/simple;
-	bh=Trt9/WBbPE+M4yerJ3ajCCIXdwVs8rCRfWuIswNj814=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=egdfTyfHcW1iWodLQCfJWWkgWf63bwb8lTaNyEC2veajuv2pvmDHuKQO9WL24y7OI5n1DJFQPZyk2VqRrfjT1VnnjOhI0ctHKuegM3ml+iGuoGHCD8KfEbZf8A2tKf9RbZ4am9VhAsLzMpQAjxjO76fmlPdvpc940FRp9JDk68w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQ6Aic7a; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso4650302b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:03:12 -0700 (PDT)
+	s=arc-20240116; t=1761030554; c=relaxed/simple;
+	bh=hV+SdjKKzEi70TyGpPZCe2pK7qZK2WxjRRL1B1KcNTM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GieyvBiGRqXfJyvizVr3dcB54JKhpnnuNkk8OiGfPa1Z1cQh0If02pE4kAkRP8YF7M95PuJ8KJOWS9wSczzoQ6rEu0gyruQ9pHQtHMGm2ju6vCT/PMtwYJZSUHdupmZTdGFLYZGEQ5/ko80HPGBgruO4G9tq5XunfR43lKSw4j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=HVC87p1a; arc=none smtp.client-ip=3.74.81.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761030192; x=1761634992; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ytwICgmHnNiFmycdKKSg7V7bV41hOS/rk94HNVcG15I=;
-        b=VQ6Aic7aIBN7BvnAi+E3SsHA9dsx9Z83eobHy7WN41mtbJgzzdH5YKhZNsZmrKwEDR
-         /hsD1Ty1NCCQJceRKRM4md/ZMABuwOGvHMmBicmpsQb6mtDpDrhSQ6wDUNnHTNH3M/9r
-         li2IScUP4a+mBit3WTHaxkTrvfFCJhFunUh+f7kSWgU717xJBGjVOuQnTbIXpudZcMgh
-         yMnRm3GNDHBbgq8iqYJSJRnjkB7UUbWjTTROtyrLIKW6nk8ymu10Cg0w9XJE5Z/l6ruR
-         p+D1y+peF2SQw47DmvcT+0D76LReujNUaHQV+n2er8qs5p7DBkXDka11Hua7jN7EuMik
-         B/VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761030192; x=1761634992;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ytwICgmHnNiFmycdKKSg7V7bV41hOS/rk94HNVcG15I=;
-        b=an9BgGItISsoE0ZZ31xAK5s16DiPnEnwfPB4MuBvgfg8TarQHbUPQq1sPcnjTsu9Mj
-         W5lqjEn+n3Xz7HeI0wnboURe86/XG1EJzvHFp7NJfchdZ9IRfcdudKucpgULOMp0nAms
-         R7Y9tEV4JU0ZeY3ohrrf0SCagyH1k7b0Bb/gxLbY0rvHCWrTMPZHYxQ+6rB5kvYTfDn8
-         COJJXaqLsFlsNxyL7+IskMOMOCjpxXaRL+ZQtH5g2GAd2xDBvfzBigzzv9e0P8yL7oeU
-         mL8mcIvFO2pF2G1KQjFIFGLNF1l2yUc6LfyUcbk6hw3d/VAUb4cEf0FWi39i31M3jL5Q
-         Q7aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULGNWfg+JkyWhW52wK0ZKMTGQgAMPPuvvKf/ESFpCC380lXctnMWrp0pFe7cAX2fW5MCnjCLvfUIeyNTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUpBm4VFGvTh5UfpDN2gQJMIrWoE8IXNvdEtnS063Nyam4Gpvv
-	ebSK4TUBOaAwNUfX1bqsziGDrzV/Lfpm9k33SdQsJa9e0NJjRaiK0hNa
-X-Gm-Gg: ASbGncuFfK7p8t4nqXxrJjGwsr5fTG9cddiI3JEnh9Xf79OZHMMS5ir4IEfd7xUMM2L
-	s2s5IfUDXOKKWXO6guY1/iIu4KgDlF8qmEyWy8okavSWvaZa2VQxNx0dC9x8YNSXyfbstuD3EB4
-	5pz1e4I1/gzmS3SQZlIabVa/JCr3MDyRvJ4KnmY3Gtc8zvxkLVhgecpkhA4YRNHYuY90klPpQHa
-	4Sx2KDu6/H01WoXuqdUZTez0m1OzivnyUEVsaJiSBRYKJJYaw8fITQ54W9EGEPS4jScN3HRsGkb
-	2gI6KaZC9YZF9yBOg6FtpFEkbdPYNtH1Z8Mx8S/X2KtlokbFHOW6M5UoJfEf9krpGhhra4O1OT5
-	wOBpfBH3LmKFRqzRIRDDHOgFATRjkBAzEkzyan2O5X//fweU6o/sWJ0ZpfcIzvOr/gb+rsrKXrz
-	jxRZvDi6ApbrpxfK6HSYQQ3cI=
-X-Google-Smtp-Source: AGHT+IEY2zmPOwhscx1EDdtuLAginTFIvWQhGpHhHiYdyy7zAELaeMJCOQiAd3k0JqmBbx5zBDOJkg==
-X-Received: by 2002:a17:903:3bce:b0:24b:1625:5fa5 with SMTP id d9443c01a7336-290c9c89d97mr186476275ad.11.1761030191637;
-        Tue, 21 Oct 2025 00:03:11 -0700 (PDT)
-Received: from [172.17.49.162] ([103.218.174.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29247223a3csm99924915ad.112.2025.10.21.00.03.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 00:03:10 -0700 (PDT)
-Message-ID: <291a0fb6-12e1-42a8-8cd4-0171ec996ef8@gmail.com>
-Date: Tue, 21 Oct 2025 12:33:05 +0530
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1761030552; x=1792566552;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4aKg8jaea9UUgjVGAZ9pvPl/2rw7Jg81FmzroUsdh8U=;
+  b=HVC87p1aBmQ4gE7O4jCj6ingqjU5/wx1ks+x6YUQxcnxcz7KPdkYbbS6
+   y0y6AgAOA1l0fSqRJzp6YLtPL3bBk+w2Lauh57SSZGBd4rfmq3XL9a9l2
+   mFPvdsmpoAARb7rBeD2K7SGt0N8t7twqpPQMCFdWr2zC86pHJ5FQtHbhT
+   cEvYGqIkY4hpeWaNIdDHpZmEx5kjzNOz4v69Hl6YtS2Gr8IoznIFZLB8J
+   Y5OZZ85SUSbuOufHNLsB7dlJ/vL+9c+mdNMYY1Ck5vPn3hCxfE3r3vAAT
+   84Dtrj753DUrD6Gc307KTN0K1q49/fN/PeWCTu3gGxIqN8yJCoNUNDtaE
+   A==;
+X-CSE-ConnectionGUID: xhZ9wZyxSpmrCzcqqePl8A==
+X-CSE-MsgGUID: 8WykqeV0SPuRFwAH0TlCVw==
+X-IronPort-AV: E=Sophos;i="6.19,244,1754956800"; 
+   d="scan'208";a="3934174"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:08:59 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:10631]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.15.22:2525] with esmtp (Farcaster)
+ id 3750a0e3-50a3-4ee5-985b-1ddb7d86a82d; Tue, 21 Oct 2025 07:08:59 +0000 (UTC)
+X-Farcaster-Flow-ID: 3750a0e3-50a3-4ee5-985b-1ddb7d86a82d
+Received: from EX19D013EUB004.ant.amazon.com (10.252.51.92) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 21 Oct 2025 07:08:58 +0000
+Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com
+ (10.253.107.175) by EX19D013EUB004.ant.amazon.com (10.252.51.92) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 21 Oct 2025
+ 07:08:50 +0000
+From: Mahmoud Adam <mngyadam@amazon.de>
+To: <stable@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <nagy@khwaternagy.com>, Jens Axboe
+	<axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov
+	<idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+	<adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
+	<chao@kernel.org>, Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
+	<djwong@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, "Anna
+ Schumaker" <anna@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, Damien Le Moal
+	<dlemoal@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ceph-devel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+	<linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+	<linux-nilfs@vger.kernel.org>, <linux-mm@kvack.org>
+Subject: [PATCH 6.1 0/8] Backporting CVE-2025-38073 fix patch
+Date: Tue, 21 Oct 2025 09:03:35 +0200
+Message-ID: <20251021070353.96705-2-mngyadam@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: talos-evk: Add ADV7535 DSI-to-HDMI
- bridge
-To: Krzysztof Kozlowski <krzk@kernel.org>, andersson@kernel.org
-Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251015122808.1986627-1-tessolveupstream@gmail.com>
- <1689b441-89f1-4f2e-a528-be0b91d34b36@kernel.org>
-Content-Language: en-US
-From: Tessolve Upstream <tessolveupstream@gmail.com>
-In-Reply-To: <1689b441-89f1-4f2e-a528-be0b91d34b36@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+X-ClientProxiedBy: EX19D037UWC004.ant.amazon.com (10.13.139.254) To
+ EX19D013EUB004.ant.amazon.com (10.252.51.92)
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 
+This series aims to fix the CVE-2025-38073 for 6.1 LTS. Which is fixed
+by c0e473a0d226 ("block: fix race between set_blocksize and read
+paths"). This patch is built on top multiple refactors that where
+merged on 6.6. The needed dependecies are:
+
+  - e003f74afbd2 ("filemap: add a kiocb_invalidate_pages helper")
+  - c402a9a9430b ("filemap: add a kiocb_invalidate_post_direct_write
+    helper")
+  - 182c25e9c157 ("filemap: update ki_pos in generic_perform_write")
+  - 44fff0fa08ec ("fs: factor out a direct_write_fallback helper")
+  - 727cfe976758 ("block: open code __generic_file_write_iter for
+    blkdev writes")
+
+Also backport follow up fixes:
+- fb881cd76045 ("nilfs2: fix deadlock warnings caused by lock
+  dependency in init_nilfs()").
+- 8287474aa5ff ("direct_write_fallback(): on error revert the ->ki_pos
+  update from buffered write")
+
+Thanks,
+MNAdam
+
+Al Viro (1):
+  direct_write_fallback(): on error revert the ->ki_pos update from
+    buffered write
+
+Christoph Hellwig (5):
+  filemap: add a kiocb_invalidate_pages helper
+  filemap: add a kiocb_invalidate_post_direct_write helper
+  filemap: update ki_pos in generic_perform_write
+  fs: factor out a direct_write_fallback helper
+  block: open code __generic_file_write_iter for blkdev writes
+
+Darrick J. Wong (1):
+  block: fix race between set_blocksize and read paths
+
+Ryusuke Konishi (1):
+  nilfs2: fix deadlock warnings caused by lock dependency in
+    init_nilfs()
+
+ block/bdev.c            |  17 +++++
+ block/blk-zoned.c       |   5 +-
+ block/fops.c            |  61 +++++++++++++++-
+ block/ioctl.c           |   6 ++
+ fs/ceph/file.c          |   2 -
+ fs/direct-io.c          |  10 +--
+ fs/ext4/file.c          |   9 +--
+ fs/f2fs/file.c          |   1 -
+ fs/iomap/direct-io.c    |  12 +---
+ fs/libfs.c              |  42 +++++++++++
+ fs/nfs/file.c           |   1 -
+ fs/nilfs2/the_nilfs.c   |   3 -
+ include/linux/fs.h      |   7 +-
+ include/linux/pagemap.h |   2 +
+ mm/filemap.c            | 154 +++++++++++++++++-----------------------
+ 15 files changed, 205 insertions(+), 127 deletions(-)
+
+-- 
+2.47.3
 
 
-On 17/10/25 18:50, Krzysztof Kozlowski wrote:
-> On 15/10/2025 14:28, Sudarshan Shetty wrote:
->> Hook up the ADV7535 DSI-to-HDMI bridge on the QCS615 Talos EVK board.
->> This provides HDMI output through the external DSI-to-HDMI converter.
->>
->> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
->> ---
->>  arch/arm64/boot/dts/qcom/talos-evk-som.dtsi | 21 ++++++
->>  arch/arm64/boot/dts/qcom/talos-evk.dts      | 76 +++++++++++++++++++++
->>  2 files changed, 97 insertions(+)
-> 
-> There is no such file.
-> 
-> You need to squash it into original posting.
 
-Thanks for the review and guidance!
-Understood! I will squash it into original post.
-> 
-> Best regards,
-> Krzysztof
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
