@@ -1,125 +1,305 @@
-Return-Path: <linux-kernel+bounces-863192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD417BF7366
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:00:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A2EBF7394
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86DAB504B0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71D218A0072
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB04340A76;
-	Tue, 21 Oct 2025 14:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F092234167C;
+	Tue, 21 Oct 2025 14:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVIOfilx"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCqn6gBm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318622D061C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216CC34166E;
+	Tue, 21 Oct 2025 14:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761058726; cv=none; b=lmcuvEZH8Q9aLA6F9+lwXM5pJ2XdQRu+lQ6WnC+4UHB/l7OPXqniiQORSh6naZaK1fIcUjEWGxANIHIBsCVoleIlhAma1hMk5GF0RYdAQKK4Hfd2mvYNTDJQXbkE2bpbu9JBoICDlQOW0pst9K+sObQPzFacPup7a9ivq6D7VNU=
+	t=1761058755; cv=none; b=qKflnI0ZwQ6FN5DMZ/XG3IunyiGD+JFIMPR9qJ8HIA2SyJQ+Ss4a1MeaFjmKnAEiFvi4yDaiNfLiwpmG1zUPitzMNabLopnztf47rK4vdmYzoSvUdBao/RIhS2WurulzDtIciDHL9pdejZn76BwaMJow/PtDq8w213MyIf2/nos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761058726; c=relaxed/simple;
-	bh=Gyq+NjhiKqVLnuujXH69Hqyu6MFhqZ78VaI+VUb+2E8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V9ah3OZt2MEyhgkQ7D7zaqFcPqu+gMIg9jrBaYMMcOvIUUFzPuE/pcqSN/dGvCexHDnhJVWR85HYJJh8fdcdToHGP/t+nuOTK1kLFE1l2iQRxJ7eVE5ZYkE7zTQaCyIxO6tBgdUAs5enZsrLmnk7PijGdP4K+fN7suBwR1Wpvh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVIOfilx; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33bb66c96a1so1553095a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761058724; x=1761663524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gyq+NjhiKqVLnuujXH69Hqyu6MFhqZ78VaI+VUb+2E8=;
-        b=RVIOfilxT7vxYb4x6snRYd8d/y6G/FudKfAxPUTZfn+2ZWZwDIwP5lAvAReELTbnqv
-         H4ybI72f5a0j6SOW268kgDXwTJ+eAVWlhEEnOyP26fplCqeYpqxTB7p/rfZb57Ibw7f8
-         re2rhVoNQIgZpO1qZsXSVrmQkLv9U0uJSZ6/loaxTAp2K2pO9PQjGxYwGbRqqq1N18ju
-         dIdRxiAt/nznHZOaOKT7LQYeK74ek/3E/23+WFmq7JVdn3XcBDcVHW7M7KrFtHoXenYD
-         E3ooBA4MslSofOwDX3wtlKIwkj1DTk/g2AxVKe0RiiPSek5jJ0OQsHsmP4EwFf5kNhg8
-         wfMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761058724; x=1761663524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gyq+NjhiKqVLnuujXH69Hqyu6MFhqZ78VaI+VUb+2E8=;
-        b=u3IyyIg/5/XXMdSl0nKculkyZf2r9NtPsPxB7P7di74ZP6qQU9+V4RgGrcQa7/kTNr
-         1o12HpcQr8a9aigMXGH4ADu7fYGc92EF9jdJ1EQci4i1uX4N+jz9C/6yVH5MXVcEia2i
-         aHk0abRDLMOD+P7hRGlWlfMoqDW3dTMhzRSc6EI13UpsbmxO1UpQAt+atPisFNMDwfH8
-         SOLb0lkSJbJp78hMdw4MmDIDq/PBgYShodnfkVGJy4Db2tmKrwOXx7B9ZDj0lC9ZFNWU
-         77APMyeG7Pc2Fi4gIOfzSZnYuBfYA/mCf6KnTwzVvVihB1BoB4NrzjWRgwTk00H8NGjM
-         8fyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLQYXnbR24gFxA1EaFHM8Z99Ay6+wLiTHKR6Tos/ASQz9VxhxUflH8kfaC68y+Rtmp+9bZeGxvcwJxxB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhxCv6xpCr6EioBpoCFtTNkLnYw8e5XGT6QhRIq94/cLfe+eKT
-	ZY15osgdTh3u4brj80IBUfn/5THZ+pm+ZXOCzBklh75Fz/u9Kde6A8hPQt2ZseNjgDYnDA2C10q
-	Y7g4oLKpPRnv1lEa1zQ90LUgneIOhaVc=
-X-Gm-Gg: ASbGnct1zX5t39DKujVYVi44AVgD/6WqgvgT75Yv0NhWVpm6nLQrRyxnvA5TPWXkJn8
-	Gy3eW9bQl4CFMibDz9gfO97grQQsK9hQVD6djFMdSwVWsEgTBmmE6nvY+cpw9fmB3M9mL0t0/v4
-	ysj8uq08Wigdzj8ioKbmGl3pMp/3EGnNPyiW8ty61begXN63FKIYoUpfXsZSMaeoeHP98rViYjs
-	TaoggIb2bqc/gDtAla6Mra5EoVSfPy5uPH66JjedZhiBlEByXm6k/7YIXRZt6VsEZc/fn+vRN4b
-	/4PGk899uJqq+9BSslg8q3b8FSAjbxzN8Az3Z2Yi1qRBfXOC8v1dgdQYSa7JAoRK7jllVNnLm7F
-	Uzr8=
-X-Google-Smtp-Source: AGHT+IF8U7aHVuqLNukPYI1Z6fbz7kccYaz5TMejDf5NetEDaXPajidIApPI7hCnWhm6BSXxWODHy3+BBqh1rlaFwGs=
-X-Received: by 2002:a17:903:2bcc:b0:269:85aa:3776 with SMTP id
- d9443c01a7336-292d3feca86mr22781715ad.11.1761058724495; Tue, 21 Oct 2025
- 07:58:44 -0700 (PDT)
+	s=arc-20240116; t=1761058755; c=relaxed/simple;
+	bh=kgIjj9uR8Jvjy33POPBKd/lc3YtLEJRDArJqooGp22c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfHQnUAn+6Oo1zls+NavdMoOZPJjfKflwMPPVGF8sYQSLV2UaYP0ppCYR68txyCaz5QkUPC5V29i5CPpMCWFiW55zMZJABCi2ze61t6oS12tP4CTT+RjZSBa0qmApNRK8EYDVNZzH5Gv1AIKmXluvQcdu4FVnjn2M5u+tIW8kWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCqn6gBm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF70C4CEF1;
+	Tue, 21 Oct 2025 14:59:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761058753;
+	bh=kgIjj9uR8Jvjy33POPBKd/lc3YtLEJRDArJqooGp22c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pCqn6gBmVvgQCojwdIjqSMKnW6EvNR8FWpX7heL36fMOgouCzKkr5EQOjxOY2yXkr
+	 5jDTzNMustvfBVFFX3uqVSVtYzrFF3651I5JcJmt4WPaCoOloW+fzmevhEFyJL7xrP
+	 9wc3gk8vHc6PuHmESE73rRNyaufoBf6o/Xl6yUMEJAXZ8jGORqW+a1bHsNGe3n+jUi
+	 Bsgd/1/8eUusChHn+D8cyMXmbLSY7Keg0VqpgKtCYznZ4TkwmO4pOD6T2gpzcIIzeo
+	 Mc3X0pm27z45uIh+g9RNCyW5gd8zLMDwbs8m1ppG623zp7OoiA311lNPf3DOgJZKjc
+	 JRM/mFXybT3Vw==
+Date: Tue, 21 Oct 2025 15:59:09 +0100
+From: Lee Jones <lee@kernel.org>
+To: Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>
+Cc: Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/3] mfd: sprd-sc27xx: Integrate power off and reboot
+ support
+Message-ID: <20251021145909.GI475031@google.com>
+References: <20251007-sc27xx-mfd-poweroff-v1-0-89a2f919b731@abscue.de>
+ <20251007-sc27xx-mfd-poweroff-v1-1-89a2f919b731@abscue.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021071146.2357069-1-fujita.tomonori@gmail.com>
- <20251021071146.2357069-2-fujita.tomonori@gmail.com> <DDNZL452A8JR.K1AA7LHZEXW8@kernel.org>
- <CANiq72m+uAWyRf6y6vAKjCQnwsMqVVGQx3VrHW1yAp4a-5eWew@mail.gmail.com> <54328318-c235-413a-a069-5ea93f1dcb2b@kernel.org>
-In-Reply-To: <54328318-c235-413a-a069-5ea93f1dcb2b@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 21 Oct 2025 16:58:31 +0200
-X-Gm-Features: AS18NWB0fLmSfGSi59zQ3L8rJftxfYIoazmWWuxcCF_4YjbrFrne7KAPBys4oJA
-Message-ID: <CANiq72=eOYk=WM5xfMkHj-REYjedYiYNakVvfto-AUL5E0O8qA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: add udelay() function
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, aliceryhl@google.com, 
-	daniel.almeida@collabora.com, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
-	ojeda@kernel.org, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, frederic@kernel.org, gary@garyguo.net, 
-	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
-	tglx@linutronix.de, tmgross@umich.edu, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251007-sc27xx-mfd-poweroff-v1-1-89a2f919b731@abscue.de>
 
-On Tue, Oct 21, 2025 at 4:46=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> Given that we'd have a WARN() for any value passed that is > MAX_UDELAY_M=
-S, and
-> given that WARN() is considered a vulnerability if hit (Greg, please corr=
-ect me
-> if that's wrong), this would literally become a vulnerability generator. =
-:)
+On Tue, 07 Oct 2025, Otto Pflüger wrote:
 
-Yes, but only if hit in a way that can be triggered by an attacker,
-e.g. user actions, not in general.
+> The SC27xx PMICs allow restarting and powering off the device. Since
+> this functionality is rather simple and not configurable in any way,
+> make it part of the main PMIC driver.
+> 
+> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+> ---
+>  drivers/mfd/sprd-sc27xx-spi.c | 152 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 152 insertions(+)
+> 
+> diff --git a/drivers/mfd/sprd-sc27xx-spi.c b/drivers/mfd/sprd-sc27xx-spi.c
+> index d6b4350779e6aecfa19d9fa21b9174447d589e33..28dc82002e3c8eb7748c45f9f1bdadea4feb8206 100644
+> --- a/drivers/mfd/sprd-sc27xx-spi.c
+> +++ b/drivers/mfd/sprd-sc27xx-spi.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/mfd/sc27xx-pmic.h>
+>  #include <linux/of.h>
+>  #include <linux/of_platform.h>
+> +#include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/spi/spi.h>
+>  #include <uapi/linux/usb/charger.h>
+> @@ -21,10 +22,48 @@
+>  #define SPRD_SC2730_IRQ_BASE		0x80
+>  #define SPRD_SC2730_IRQ_NUMS		10
+>  #define SPRD_SC2730_CHG_DET		0x1b9c
+> +
+> +#define SPRD_SC2730_PWR_PD_HW		0x1820
+> +#define SPRD_SC2730_SOFT_RST_HW		0x1824
+> +#define SPRD_SC2730_SLP_CTRL		0x1a48
+> +#define SPRD_SC2730_RST_STATUS		0x1bac
+> +#define SPRD_SC2730_SWRST_CTRL0		0x1bf8
+> +
+>  #define SPRD_SC2731_IRQ_BASE		0x140
+>  #define SPRD_SC2731_IRQ_NUMS		16
+>  #define SPRD_SC2731_CHG_DET		0xedc
+>  
+> +#define SPRD_SC2731_PWR_PD_HW		0xc2c
+> +#define SPRD_SC2731_SLP_CTRL		0xdf0
+> +#define SPRD_SC2731_RST_STATUS		0xee8
+> +
+> +/* PMIC power off and reset definition */
+> +#define SPRD_SC2730_LDO_XTL_EN		BIT(2)
+> +#define SPRD_SC2730_SLP_LDO_PD_EN	BIT(0)
+> +
+> +#define SPRD_SC2731_LDO_XTL_EN		BIT(3)
+> +#define SPRD_SC2731_SLP_LDO_PD_EN	BIT(0)
+> +
+> +#define SPRD_PMIC_PWR_OFF		BIT(0)
+> +#define SPRD_PMIC_RESET			BIT(0)
+> +#define SPRD_PMIC_SOFT_RST_EN		BIT(4)
+> +
+> +#define HWRST_STATUS_SECURITY		0x02
+> +#define HWRST_STATUS_RECOVERY		0x20
+> +#define HWRST_STATUS_NORMAL		0x40
+> +#define HWRST_STATUS_ALARM		0x50
+> +#define HWRST_STATUS_SLEEP		0x60
+> +#define HWRST_STATUS_FASTBOOT		0x30
+> +#define HWRST_STATUS_SPECIAL		0x70
+> +#define HWRST_STATUS_PANIC		0x80
+> +#define HWRST_STATUS_CFTREBOOT		0x90
+> +#define HWRST_STATUS_AUTODLOADER	0xa0
+> +#define HWRST_STATUS_IQMODE		0xb0
+> +#define HWRST_STATUS_SPRDISK		0xc0
+> +#define HWRST_STATUS_FACTORYTEST	0xe0
+> +#define HWRST_STATUS_WATCHDOG		0xf0
+> +#define HWRST_STATUS_MASK		0xff
+> +
+>  /* PMIC charger detection definition */
+>  #define SPRD_PMIC_CHG_DET_DELAY_US	200000
+>  #define SPRD_PMIC_CHG_DET_TIMEOUT	2000000
+> @@ -48,6 +87,14 @@ struct sprd_pmic_data {
+>  	u32 irq_base;
+>  	u32 num_irqs;
+>  	u32 charger_det;
+> +
+> +	u32 poweroff_reg;
+> +	u32 slp_ctrl_reg;
+> +	u32 slp_ctrl_mask;
+> +
+> +	u32 reset_reg;
+> +	u32 rst_sts_reg;
+> +	u32 swrst_ctrl_reg;
+>  };
+>  
+>  /*
+> @@ -59,12 +106,26 @@ static const struct sprd_pmic_data sc2730_data = {
+>  	.irq_base = SPRD_SC2730_IRQ_BASE,
+>  	.num_irqs = SPRD_SC2730_IRQ_NUMS,
+>  	.charger_det = SPRD_SC2730_CHG_DET,
+> +
+> +	.poweroff_reg = SPRD_SC2730_PWR_PD_HW,
+> +	.slp_ctrl_reg = SPRD_SC2730_SLP_CTRL,
+> +	.slp_ctrl_mask = SPRD_SC2730_LDO_XTL_EN | SPRD_SC2730_SLP_LDO_PD_EN,
+> +
+> +	.reset_reg = SPRD_SC2730_SOFT_RST_HW,
+> +	.rst_sts_reg = SPRD_SC2730_RST_STATUS,
+> +	.swrst_ctrl_reg = SPRD_SC2730_SWRST_CTRL0,
+>  };
+>  
+>  static const struct sprd_pmic_data sc2731_data = {
+>  	.irq_base = SPRD_SC2731_IRQ_BASE,
+>  	.num_irqs = SPRD_SC2731_IRQ_NUMS,
+>  	.charger_det = SPRD_SC2731_CHG_DET,
+> +
+> +	.poweroff_reg = SPRD_SC2731_PWR_PD_HW,
+> +	.slp_ctrl_reg = SPRD_SC2731_SLP_CTRL,
+> +	.slp_ctrl_mask = SPRD_SC2731_LDO_XTL_EN | SPRD_SC2731_SLP_LDO_PD_EN,
+> +
+> +	.rst_sts_reg = SPRD_SC2731_RST_STATUS,
+>  };
+>  
+>  enum usb_charger_type sprd_pmic_detect_charger_type(struct device *dev)
+> @@ -149,6 +210,79 @@ static const struct regmap_config sprd_pmic_config = {
+>  	.max_register = 0xffff,
+>  };
+>  
+> +static int sprd_pmic_poweroff(struct sys_off_data *off_data)
+> +{
+> +	struct sprd_pmic *ddata = off_data->cb_data;
+> +	const struct sprd_pmic_data *pdata = ddata->pdata;
+> +
+> +	regmap_clear_bits(ddata->regmap, pdata->slp_ctrl_reg,
+> +			  pdata->slp_ctrl_mask);
+> +
+> +	regmap_write(ddata->regmap, pdata->poweroff_reg, SPRD_PMIC_PWR_OFF);
+> +
+> +	mdelay(1000);
+> +
+> +	pr_emerg("Unable to poweroff system\n");
 
-i.e. that is why I was saying that someone could end up calculating a
-delay value based on something e.g. user controlled, and then gets an
-edge case wrong, and hits the `WARN()`, which is the "bad case" and a
-CVE would be assigned.
+Why not dev_err()?
 
-A `pr_warn_once!` plus `debug_assert!` (or similar) should be a fine
-way for having EB in functions, which is a useful concept without
-leaving it UB liek in C nor going with a full `Result`. I can document
-that combo.
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int sprd_pmic_restart(struct sys_off_data *off_data)
+> +{
+> +	struct sprd_pmic *ddata = off_data->cb_data;
+> +	const struct sprd_pmic_data *pdata = ddata->pdata;
+> +	u32 reboot_mode;
+> +
+> +	if (!off_data->cmd)
+> +		reboot_mode = HWRST_STATUS_NORMAL;
+> +	else if (!strcmp(off_data->cmd, "recovery"))
+> +		reboot_mode = HWRST_STATUS_RECOVERY;
+> +	else if (!strcmp(off_data->cmd, "alarm"))
+> +		reboot_mode = HWRST_STATUS_ALARM;
+> +	else if (!strcmp(off_data->cmd, "fastsleep"))
+> +		reboot_mode = HWRST_STATUS_SLEEP;
+> +	else if (!strcmp(off_data->cmd, "bootloader"))
+> +		reboot_mode = HWRST_STATUS_FASTBOOT;
+> +	else if (!strcmp(off_data->cmd, "panic"))
+> +		reboot_mode = HWRST_STATUS_PANIC;
+> +	else if (!strcmp(off_data->cmd, "special"))
+> +		reboot_mode = HWRST_STATUS_SPECIAL;
+> +	else if (!strcmp(off_data->cmd, "cftreboot"))
+> +		reboot_mode = HWRST_STATUS_CFTREBOOT;
+> +	else if (!strcmp(off_data->cmd, "autodloader"))
+> +		reboot_mode = HWRST_STATUS_AUTODLOADER;
+> +	else if (!strcmp(off_data->cmd, "iqmode"))
+> +		reboot_mode = HWRST_STATUS_IQMODE;
+> +	else if (!strcmp(off_data->cmd, "sprdisk"))
+> +		reboot_mode = HWRST_STATUS_SPRDISK;
+> +	else if (!strcmp(off_data->cmd, "tospanic"))
+> +		reboot_mode = HWRST_STATUS_SECURITY;
+> +	else if (!strcmp(off_data->cmd, "factorytest"))
+> +		reboot_mode = HWRST_STATUS_FACTORYTEST;
+> +	else
+> +		reboot_mode = HWRST_STATUS_NORMAL;
+> +
+> +	regmap_update_bits(ddata->regmap, pdata->rst_sts_reg,
+> +			   HWRST_STATUS_MASK, reboot_mode);
+> +
+> +	/*
+> +	 * On SC2731, this part is skipped because there is no reset register
+> +	 * and the restart must be performed using the watchdog.
+> +	 */
+> +	if (pdata->reset_reg) {
+> +		regmap_set_bits(ddata->regmap, pdata->swrst_ctrl_reg,
+> +				SPRD_PMIC_SOFT_RST_EN);
+> +
+> +		regmap_write(ddata->regmap, pdata->reset_reg, SPRD_PMIC_RESET);
+> +
+> +		mdelay(1000);
+> +
+> +		pr_emerg("Unable to restart system\n");
 
-Cheers,
-Miguel
+dev_err()
+
+> +	}
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+>  static int sprd_pmic_probe(struct spi_device *spi)
+>  {
+>  	struct sprd_pmic *ddata;
+> @@ -204,6 +338,24 @@ static int sprd_pmic_probe(struct spi_device *spi)
+>  		return ret;
+>  	}
+>  
+> +	ret = devm_register_sys_off_handler(&spi->dev, SYS_OFF_MODE_RESTART,
+> +					    192, sprd_pmic_restart, ddata);
+
+Define all magic numbers.
+
+> +	if (ret) {
+> +		dev_err(&spi->dev, "Failed to register restart handler: %d\n",
+> +			ret);
+
+Use 100-chars everywhere to prevent these line feeds.
+
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_register_sys_off_handler(&spi->dev,
+> +					    SYS_OFF_MODE_POWER_OFF,
+> +					    SYS_OFF_PRIO_DEFAULT,
+> +					    sprd_pmic_poweroff, ddata);
+> +	if (ret) {
+> +		dev_err(&spi->dev, "Failed to register poweroff handler: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+>  	ret = devm_of_platform_populate(&spi->dev);
+>  	if (ret) {
+>  		dev_err(&spi->dev, "Failed to populate sub-devices %d\n", ret);
+> 
+> -- 
+> 2.50.0
+> 
+
+-- 
+Lee Jones [李琼斯]
 
