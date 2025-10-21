@@ -1,147 +1,247 @@
-Return-Path: <linux-kernel+bounces-862733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09464BF6037
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:26:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C30CBF604C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBD1A19A134A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF3418905F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66862FBDF6;
-	Tue, 21 Oct 2025 11:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B8F32C33E;
+	Tue, 21 Oct 2025 11:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="hRoJ/yl9"
-Received: from mx-relay138-hz1.antispameurope.com (mx-relay138-hz1.antispameurope.com [94.100.132.197])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="arDyYrOn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D71302CDB
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.132.197
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761045966; cv=pass; b=mpmIzZs+ihdJNBtaAOwwalIHaESURI3TU4eXUIQM+u82+YUT55qeXM4/mLdwNpZA6LhavXsEZzv6ObA+/sQIvoYzpcG2jIoeeL4HoB44iYmh4wy+tC1eTpPRPlFZp3v1Bnx4IdDuWfBYSFiubS6l+64E/xSpJ6jxE9rXOeKxJYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761045966; c=relaxed/simple;
-	bh=n4mhlRhzzFm3V7tkh8PEoEN4chx5mQY5EISlduNBssk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C94ziRP/FiHzO3WXmIFLCTXnrIQHPBmBV9X3HSJMQCRM4lRRJXTosePveQ/VBtMee5587PDevcN/stL419BHihm1pTqdMJpCZtCoYStXsRQZ9I7ndMPUjeDgSGaaYkwtB2kOrnmRZEnmPtm0F8M3gjDpSfNanFqprCTa1j2lxyI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=hRoJ/yl9; arc=pass smtp.client-ip=94.100.132.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate138-hz1.hornetsecurity.com 1;
- spf=pass reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
- dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=qPRSdSQE0bLnU693LJLxkchAwzL3R1o8wQQaHCAimXE=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1761045914;
- b=LuByLqB8XY2tsdEQ1xs+u1IRMmUGwwv7LO6ToIhizQsaRdXqVp4kIYpK2RMiSepl7YGINyZQ
- O+KgNyE9FTmPxg3uIqB6emnQtSk+PyVTb0jFPbYPLFOaN0zOcfBfbPyg7bnjUOUVnz6UHeOkZJ0
- zMyiwo+TMHaINxefzgfOatjChP0/7elbRjpjIWog7zXnrAnWBp039jEUF07KOFZrZwOAfqyy8xd
- yLqOw7lNE9TBoxe219j0T1rx8pfjcMwJSlryn4/FmoHUeee2/g4QIEoje5yW4TC+efyWW4WNUWt
- Q+ThykToeQpw3v7+RgakSCzNCR4qZ40cXldCBqhw23DsA==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1761045914;
- b=rEZQseNOOFqDNf7FWczfwfE4s//BnoNq0K6K8R9NA6xsV+T0dY+rurFXs9OmSmKsR2XWSEYf
- McS8AU+FbbHhDA8C8HxZ+w5UVj/ZP30DVQf61JTboQIEscDdpkFKfgLq7OhSwuW/hyRrrv7AoS2
- Rll5BiuXhqC+zdEzi6c3GhhlXYValt783VDM0DWHJCGaqkLjP+n9NW6vqErACMqFwInKg6vTthH
- 6YpUTUs22TCCI+ylddfWPm936pCV2nYA5bJuhIe8YchKUFcZjAwPtqAF/KDZtYg9aNSWiwvIotg
- C3xioYQFh2xdGAFx31O01edhcsVAP82dlkh1x5nobGuyQ==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay138-hz1.antispameurope.com;
- Tue, 21 Oct 2025 13:25:14 +0200
-Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 56DCEA404BD;
-	Tue, 21 Oct 2025 13:24:53 +0200 (CEST)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Gregor Herburger <gregor.herburger@tq-group.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-Subject:
- Re: [PATCH v2 2/2] arm64: dts: ls1028a: Add mbls1028a and mbls1028a-ind
- devicetrees
-Date: Tue, 21 Oct 2025 13:24:52 +0200
-Message-ID: <13873811.uLZWGnKmhe@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <14f52170-cc5b-4808-8fc1-28685ba349dd@lunn.ch>
-References:
- <20251020133536.303471-1-alexander.stein@ew.tq-group.com>
- <20251020133536.303471-2-alexander.stein@ew.tq-group.com>
- <14f52170-cc5b-4808-8fc1-28685ba349dd@lunn.ch>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99DB2F4A1B;
+	Tue, 21 Oct 2025 11:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761046038; cv=none; b=frGgCyFY4q2RHNO4ceAmQnXzJZwnUipa0dj8jIOAfDwY6EwP2UPIUSql+MRsG6FgkVC1lJMGnsP0sFh6Whkf+6Kgm0mMQ21ojry2LkvEb85VJj0tXj0RMy95j+UX3d1dyA3wXzeqXDGrOwIrKtUU/aT37VXheko6/5FAzx25/8U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761046038; c=relaxed/simple;
+	bh=Mcw/R5C/1blOsSXxSnYelYotH/+tXWkrAqT9RAUEjyc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iuZynDft8VW2H5ltSwoikNcywllLrzFc7HDHVSemGUAmB+DEug1HMf9+sMMFjDt9Be6iOk9/4fssjqzxdYMChKKM2h91TNTGHoU2/nFBVY7GLWBLL0H8Ifmk2Pqwe7MU47LyruZQ1zcYObWykbzTPPVPrIMqjXe3qFSsJPgXgY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=arDyYrOn; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761046036; x=1792582036;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=Mcw/R5C/1blOsSXxSnYelYotH/+tXWkrAqT9RAUEjyc=;
+  b=arDyYrOnGQwZJqtpCN+aUFD6I686n+AS6eqxYzaZ4tytTefGzriEjtHR
+   1t3E5+B+l5aeXocEh+8PPYHJtfsxIkjZPBU3qaAL1agYWFzHBZN9MZCSt
+   IpCxGjtile+cl7TBvhMXDsZS/O0gY+ZU6OsYsQmvbGMZ1yuIoErVzGSfi
+   LchlDnd7ou7Jz44iiBwom9rii1mkaEAIcHxwWWoYJjeTl5Zn+2rbRtfn8
+   ZBVf2KpRL6KsvlSASWc9ZLqs6BCIec0X9swXksUhbns0KFptM0p4/QqD7
+   M3ONCma5HroswZpZX4Wuw68RIXQWaJ2epLvp6Fy1bTq2psecqDaj+jq5d
+   A==;
+X-CSE-ConnectionGUID: bU20rhQCSfSlKCPwrfwyzg==
+X-CSE-MsgGUID: zIs7Qh5YT9KYh+nuJBjKdw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65784623"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="65784623"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 04:27:16 -0700
+X-CSE-ConnectionGUID: bDCDmVJ5TrC9gC94ZZ8SAA==
+X-CSE-MsgGUID: MlYojyCSQQGE4SV5i27/1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="184049803"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 04:27:13 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 21 Oct 2025 14:27:09 +0300 (EEST)
+To: Brian Norris <briannorris@chromium.org>
+cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI/PM: Prevent runtime suspend before devices are fully
+ initialized
+In-Reply-To: <aPaFACsVupPOe67G@google.com>
+Message-ID: <06cd0121-819d-652d-afa7-eece15bf82a2@linux.intel.com>
+References: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid> <aPH_B7SiJ8KnIAwJ@wunner.de> <67381f3b-4aee-a314-b5dd-2b7d987a7794@linux.intel.com> <aPKANja_k1gogTAU@google.com> <08976178-298f-79d9-1d63-cff5a4e56cc3@linux.intel.com>
+ <aPaFACsVupPOe67G@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay138-hz1.antispameurope.com with 4crVMB1Y5zz1NGLl
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:0a6c4bbb931b6e0c1b6e99bc4c54eeb4
-X-cloud-security:scantime:2.297
-DKIM-Signature: a=rsa-sha256;
- bh=qPRSdSQE0bLnU693LJLxkchAwzL3R1o8wQQaHCAimXE=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1761045914; v=1;
- b=hRoJ/yl9e7TfSsYErdF0tkYk6kFCc3txXOGT8dYKIB6MgUA0CWOH9GEMCh19/445QYV7s7B+
- xvrGd4DUWPEQeIUxItHmCORscltnPa6MtPyKSMteQZQYaoPILHOsyO6VMRERlDH5pgW0X0l2szl
- ITLlHgzIibTPSgVTSLDNLirSGoUw4y/3j/2t8fuRSRozXB1Z8AU7d4RsASy4Hq7aeqeCQnasFwg
- wyqC/AIRe/9JUSrnwvfe6XrJDs6WHHtX+3J1IzeR6qyikx7/9d5qFuDuBzQ22GS+imnFppSSr8J
- muzNhjXwC1rF7Ow12WE2r+afbRD9s/F0y3UbdHqevddxw==
+Content-Type: multipart/mixed; BOUNDARY="8323328-479427486-1761044931=:1018"
+Content-ID: <49460876-f5af-65c3-c424-466755820541@linux.intel.com>
 
-Hi Andrew,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Am Montag, 20. Oktober 2025, 20:34:16 CEST schrieb Andrew Lunn:
-> > +&enetc_mdio_pf3 {
-> > +	mdio0_rgmii_phy00: ethernet-phy@0 {
-> > +		compatible =3D "ethernet-phy-ieee802.3-c22";
-> > +		reg =3D <0x00>;
-> > +		reset-gpios =3D <&gpio_exp_1v8 1 GPIO_ACTIVE_LOW>;
-> > +		reset-assert-us =3D <1>;
-> > +		reset-deassert-us =3D <200>;
-> > +		interrupt-parent =3D <&gpio_exp_1v8>;
-> > +		interrupts =3D <0 IRQ_TYPE_EDGE_FALLING>;
+--8323328-479427486-1761044931=:1018
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <706a33bd-aa0c-b5a8-88b0-500979f8acc2@linux.intel.com>
+
+On Mon, 20 Oct 2025, Brian Norris wrote:
+
+> Hi Ilpo,
 >=20
-> PHY interrupts are generally level not edge. So this is probably
-> wrong.
-
-Thanks for the pointer.
-
-> > +		ti,rx-internal-delay =3D <DP83867_RGMIIDCTL_2_50_NS>;
-> > +		ti,tx-internal-delay =3D <DP83867_RGMIIDCTL_2_00_NS>;
-> > +		ti,led-function =3D <0x05b0>;
-> > +		ti,led-ctrl =3D <0x1001>;
+> On Mon, Oct 20, 2025 at 06:56:41PM +0300, Ilpo J=E4rvinen wrote:
+> > On Fri, 17 Oct 2025, Brian Norris wrote:
+> >=20
+> > > On Fri, Oct 17, 2025 at 02:49:35PM +0300, Ilpo J=E4rvinen wrote:
+> > > > On Fri, 17 Oct 2025, Lukas Wunner wrote:
+> > > >=20
+> > > > > [cc +=3D Ilpo]
+> > > > >=20
+> > > > > On Thu, Oct 16, 2025 at 03:53:35PM -0700, Brian Norris wrote:
+> > > > > > PCI devices are created via pci_scan_slot() and similar, and ar=
+e
+> > > > > > promptly configured for runtime PM (pci_pm_init()). They are in=
+itially
+> > > > > > prevented from suspending by way of pm_runtime_forbid(); howeve=
+r, it's
+> > > > > > expected that user space may override this via sysfs [1].
+> > > >=20
+> > > > Is this true as pm_runtime_forbid() also increases PM usage count?
+> > >=20
+> > > Yes it's true. See below.
+> > >=20
+> > > > "void pm_runtime_forbid(struct device *dev);
+> > > >=20
+> > > > unset the power.runtime_auto flag for the device and increase its=
+=20
+> > > > usage counter (used by the /sys/devices/.../power/control interface=
+ to=20
+> > > > effectively prevent the device from being power managed at run time=
+)"
 >=20
-> I really would prefer /sys/class/leds was used. In fact, these are not
-> documented, and don't even seem to be implemented in mainline. So you
-> need to drop them.
+> I see this doc line confused you, and I can sympathize.
+>=20
+> IIUC, the parenthetical means that sysfs *uses* pm_runtime_forbid() to
+> "effectively prevent runtime power management"; pm_runtime_forbid() does
+> not block user space from doing anything.
+>
+> > > Right, but sysfs `echo auto > .../power/control` performs the inverse=
+ --
+> > > pm_runtime_allow() -- which decrements that count.
+> >=20
+> > Fair enough, I didn't check what it does.
+> >=20
+> > IMO, the details about how the usage count behaves should be part of th=
+e=20
+> > changelog as that documentation I quoted sounded like user control is=
+=20
+> > prevented when forbidden.
+>=20
+> I tried to elaborate on the API doc confusion above. But frankly, I'm
+> not sure how best to explain runtime PM.
+>=20
+> > I see you've put this part of the explanation=20
+> > into the v2 as well so I suggest you explain the usage count in the cha=
+nge=20
+> > so it is recorded in the commit if somebody has to look at this commit=
+=20
+> > years from now.
+>=20
+> Both v1 and v2 mention that the sysfs 'power/control' file can override
+> the kernel calling pm_runtime_forbid(). They don't mention the usage
+> count, since that's an implementation detail IMO. (To me, the mental
+> model works best if "usage count" (usually get()/put()) is considered
+> mostly orthogonal to forbid()/allow()/sysfs, because "forbid()" can be
+> overridden at any time.)
+>=20
+> This is also covered here:
+>=20
+> https://docs.kernel.org/power/runtime_pm.html#runtime-pm-initialization-d=
+evice-probing-and-removal
+>=20
+> "In principle, this mechanism may also be used by the driver to
+> effectively turn off the runtime power management of the device until
+> the user space turns it on."
 
-Ah, sorry, this slipped in from downstream kernel. Will be removed.
+The problem is already rooted into the function name, when a function is=20
+called "forbid", anyone unfamiliar will think it really forbids=20
+something. The docs just further reinforced the idea and the fact that it=
+=20
+also increments usage count.
 
-Thanks and best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+It is quite unexpected and feels quite illogical (for non-PM person like=20
+me) that user interface then goes to reverse that usage count increase,=20
+what would be the logical reason why there now are less users for it when=
+=20
+user wants to turn on PM? (I understand things are done that way, no need=
+=20
+to explain that further, but there are quite a few misleading things in=20
+this entire scenario, not just that parenthesis part of the docs.)
 
+> But admittedly, I find the runtime PM API surface to be enormous, and
+> its documentation ... not very helpful to outsiders. It's pretty much
+> written by and for PM experts. Case in point: you read and quoted the
+> appropriate docs, but it still misled you quite a bit :(
+>=20
+> I'm more tempted to try to improve the runtime PM docs than to try to
+> make up for them in the commit message, but maybe I can be convinced
+> otherwise.
 
+My personal approach is that if something comes up during review, it=20
+likely is something also the next person to look at this change (from=20
+history, maybe years from now) could similarly stumbles on when trying to=
+=20
+understand the change. Thus, it often is worth to mention such things in=20
+the changelog too.
+
+While I'm definitely not against improvements to docs too, the changelog=20
+for any patch should help to understand why the change was made. And=20
+IMO, this unexpected "internal detail" related to usage count which is=20
+quite significant here, if user interface wouldn't lower it, runtime PM=20
+would remain forbidden as forbid() promised.
+
+> > > > > Patch LGTM in principle, but adding Ilpo to cc who is refactoring=
+ PCI
+> > > > > resource allocation and may judge whether this can actually happe=
+n.
+> > > >=20
+> > > > I can see there could be other failure modes besides just saving wr=
+ong=20
+> > > > config if devices get suspended underneath the resource assignment=
+=20
+> > > > algorithm.
+> > > >=20
+> > > > Besides hotplug, also BAR resize does changes the resources and BAR=
+s.
+> > > > This case is not helped by this patch.
+> > >=20
+> > > Is that the 'resource_N_resize' sysfs attributes? Becuase that holds =
+PM
+> > > references (pci_config_pm_runtime_{get,put}()) and therefore should n=
+ot
+> > > generally have the same problem.
+> >=20
+> > Okay, seem fine for the PCI core part.
+> >=20
+> > Driver's can also trigger BAR resize by calling pci_resize_resource()=
+=20
+> > directly but I've no idea how the usage counts behave (TBH, PM isn't my=
+=20
+> > strongest forte even if Lukas pulled me in to comment).
+>=20
+> There are only 3 drivers that call pci_resize_resource(). I looked into
+> them, and it looks like they all hold pm_runtime_* references while
+> doing this, or are calling it during pci_driver probe(), which docs say
+> will hold a reference.
+>=20
+> https://docs.kernel.org/power/pci.html#device-runtime-power-management
+>=20
+> So they should all be OK too.
+
+Thanks for checking.
+
+--=20
+ i.
+--8323328-479427486-1761044931=:1018--
 
