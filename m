@@ -1,89 +1,163 @@
-Return-Path: <linux-kernel+bounces-862507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8FFBF57B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:23:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA7FBF57C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2CD93B559A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:23:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02C684F6A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBAA328B69;
-	Tue, 21 Oct 2025 09:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25EA329C50;
+	Tue, 21 Oct 2025 09:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5L/s+Ep"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Waxd1GKO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB7E8F48
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC428F48
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761038601; cv=none; b=Me3/WxEG3VcKKi9JEiGQMkG6mZ+WjpMyZwruAtg2jnFd1WFFNRb6N4crjUH3VmedZZ+56el071IloXrwyR3LvjkWof5j27KdLyvNKyFYpMmlzaNxKSmqY5NiTPXvUYnYFyblkQ1hz1TPY3nlTKj0zQ+w5oDEh9y0KLUpD0NVlk0=
+	t=1761038714; cv=none; b=UTirHTR5+m+wkADYwr4ZC0BADEzKe4g83GC0mmD+84zaChqX7rA0rBexUbl0Jf82xtpqAfFgH222+oQQbXTFuBYhLQwhRd8ZTO694Dd10tkm5AtQZEHhrqMEZjq5bXoCTPI6F0zz/0gULiAzCghlosVHm63bRMnKbF1/3p3skV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761038601; c=relaxed/simple;
-	bh=siT4dHhFRtLHmzf8No1g5rI39nMLHFOVTlqBlC6FJXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFpL+H1MP2a8MZhWfB0kWbDDqOl8hMx6e/xr1hXFS94Xp6Dlq5dt8Jt0GoUaVALQPevFce2u1uuEpmBHWMOW5PGXbpSN4UYOw4rgiyfMPotzzImlXDN5z0cRw8uZycP9HLVTmEZGzi3FZRk3r4pomIVSRTH+wQZ664fvz1IrmCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5L/s+Ep; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9F0C113D0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761038601;
-	bh=siT4dHhFRtLHmzf8No1g5rI39nMLHFOVTlqBlC6FJXs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=M5L/s+Ep11ydt2PRNb3z4WGQu0duCzFC6bkMI6VSuNmnKbW3bf+PG/xkiW33RaEee
-	 UeFQZHX5oyBtiTNYr2FLdf642kT96XPDDCwU1RA6ujE0ugU3u1Q0eNy04/ug8U/oeG
-	 ANNW6H0qgiyjhP9ScDzI+uejpOaN/WFWEkrj9T/UxAZQfcmequSNhtbT8vifY90146
-	 CGx1x6hzjna19WhLC9MApMd5PHlf9yf4YGqdstakWavkOsPuhqK7aP/6757wRLN9Og
-	 myqEYLK82dIcqEa7vDwdzKLBK/lrIoVkhVR5uOZbPMufTfCwxilzMZRnmUbt7y7hiW
-	 oBitQhsed3y4g==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3717780ea70so58872211fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:23:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWoyyVe8y6qcC8ptHVZUiHTErVCkUFWwQbLwtskNFDGcDorjkLokMxYN/YxiZgOx/ii78uQ2CxGRewO0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZFpKWE+c5Njf3JGSEXgQvr24ug6EDUqws16pgUvuL0mn+FJ/z
-	W/zKHJFsOFF2PlW5owFPcOI5VSgWLO4EH+HMYLBHfNQyffyUyAoQYP9CCecBs36VGLd59GoDPUM
-	qDVIbUAVO78q15XrRlHhUFpSUcOHYqH8=
-X-Google-Smtp-Source: AGHT+IHehuvAcUwnsIKlc9SJ9pUrJQPiH4zAJPIHBzDcdeKYlo32G+eo1Enryh1Wkpbz7ueaSkFJqyOvAILxG0Azntw=
-X-Received: by 2002:a2e:9fc9:0:b0:336:72be:3339 with SMTP id
- 38308e7fff4ca-377979feb62mr54976441fa.28.1761038599616; Tue, 21 Oct 2025
- 02:23:19 -0700 (PDT)
+	s=arc-20240116; t=1761038714; c=relaxed/simple;
+	bh=70fh7l0TLwEingT0Dlsm17GX58QH+efSGCknR2mPUfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OOlBcxEj3OK1IkNbVMJdsPM9UUghBLcCW5cTQkngZ5df3C2eFXqPBSjPbh81biyW0d6Rsd47AOfES8astCVbt5230tsWDAw2mPSd9oH57r55u+pPsSWUckZM7p4LlcLxVESKc/y8zCoyVj3ioM73iAj2iFqkNJbOgsSl3Fr9KFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Waxd1GKO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761038711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4RANMdE5VJt3ZJzx3yGMY3tj7r6cm2tCoc3fFUR1o9c=;
+	b=Waxd1GKOmZORm9wGxuuEenpLRd2wDC8mu12YYx9O64VnlQmArRyZP/38VnH+9QcmD1ejBF
+	wVVFwo9qQw+Gk8hULL+UHrAKCLqwUEFyhxfweH3nZtxRq7XGYlYiDDq4W2TTzyppgwI3+i
+	FDXLq/h0uoF/SAtrHp8q4asvx5CPbM4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-182-f1qVaJjxNwmh7SwNkU4S-Q-1; Tue, 21 Oct 2025 05:25:10 -0400
+X-MC-Unique: f1qVaJjxNwmh7SwNkU4S-Q-1
+X-Mimecast-MFC-AGG-ID: f1qVaJjxNwmh7SwNkU4S-Q_1761038709
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ecdb10a612so6016468f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:25:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761038709; x=1761643509;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4RANMdE5VJt3ZJzx3yGMY3tj7r6cm2tCoc3fFUR1o9c=;
+        b=B8NWrqJnCm4eq0IBYcInb9rdbvsQmqmMv5cHrLCsaL3Y13izNTg5onZ6Pyna6aAPM2
+         wMe4CpUEWr8ZFiw6cweLM4YFaDRAz2syzmb34axtyjemmgxCLy4JeHjpY1tik+sGN++D
+         AamQb/7g3AuFSTCTJrrjueBkJI7JHf2SmDHrnE4f7+T5PXUwtQU084i1fYkFwTOcSEIW
+         AVwSHephyxvP14V/cYfhTFlTK7OuSFhrBr4Ll3KoINXoxpynA8tNuT8TShiQ0uk0Ux8e
+         EwjrK1tYymIhuoSlh7tP+GQO2KS/Ou240k/FzpONX1Cfk4l+w5eJ2ADuj+K2Dxh/Cq2Z
+         Ra9g==
+X-Gm-Message-State: AOJu0Yy7cv6i1lyuxy+LGAlVUie5ZmURcsM/pbks0742GlKakuYecnt1
+	X8Sgq8LhxAF+R7Qt8G2InfhjxhHQu/7vJlSbdzFnYHxNyV6Y50+Icb8lVF/dUOH6DvOhwttE41f
+	Uw8K4hrK/RRrkWWstTht0gIerInKU3S4Qzix8N7MH7Y+d/EROu8+LZ8qLoikNtfF/Jw==
+X-Gm-Gg: ASbGncufvX3ANavdx23u3tUxwCcgR1quJxH1d06lyeDYnrR89N+C8BC8L2H5TJq8IBr
+	Kvi/cJPecbOOp5g7kYV0T5a7SpaZFttlo/lyqZwyWisPMx/CV0sJbBfdMZvcWkzqxVJQW1R65L2
+	ereH1XhsI7tQ4r3a92qjFBX+YWukHkBbjdJzcK1o9B8aGOZbr9rV+J/V0ux7zaz36qllDGqZJZx
+	0wVvysdy27aKVq0loC/M/FUJ2nP2Pvt12J3fjbh0GmN6MUWLgRmBcdn5+J30fc6XwFTYxN+EGtT
+	pWiKjiHwW6XwW5BHahaHwsErx2JWie10xc9GVojw9gQYPYpgsG9t0uI4/+KjhWtFbJI97GGJpC7
+	fv6XhPyxFirPcOOdw1AoDVUxE/z0J2ezyu1uT6aevboRMW/o=
+X-Received: by 2002:a05:6000:22c6:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-42704dc9395mr11530736f8f.45.1761038709187;
+        Tue, 21 Oct 2025 02:25:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEW/8VpN7+oRVVI2gacXOhu1lhYOkSBU8WbVYkhEZvqfdiTjdCOVwmyWkwuv1K6C+wnD9GcTg==
+X-Received: by 2002:a05:6000:22c6:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-42704dc9395mr11530698f8f.45.1761038708787;
+        Tue, 21 Oct 2025 02:25:08 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0f88sm18692002f8f.7.2025.10.21.02.25.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 02:25:08 -0700 (PDT)
+Message-ID: <c2534ab3-a843-43db-9447-19954467e2ed@redhat.com>
+Date: Tue, 21 Oct 2025 11:25:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008154533.3089255-23-ardb+git@google.com> <20251017170718.GE1566@sol>
-In-Reply-To: <20251017170718.GE1566@sol>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 21 Oct 2025 11:23:08 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEBworuqfQiGpekTdDsa1R5y3jCmS_U91vGCHyhY9QLxg@mail.gmail.com>
-X-Gm-Features: AS18NWDbKfRq249JXG9Iltw5RC8ZRy2b5DJyiPJTBssBM0JuWkoLHIllDHXeA3U
-Message-ID: <CAMj1kXEBworuqfQiGpekTdDsa1R5y3jCmS_U91vGCHyhY9QLxg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/21] arm64: Move kernel mode FPSIMD buffer to the stack
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	herbert@gondor.apana.org.au, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v02 2/6] hinic3: Add PF management interfaces
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Markus.Elfring@web.de, pavan.chebbi@broadcom.com
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ luosifu <luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>,
+ Shen Chenyang <shenchenyang1@hisilicon.com>,
+ Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+ Shi Jing <shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>,
+ Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>
+References: <cover.1760685059.git.zhuyikai1@h-partners.com>
+ <8ad645360ce86569ec9c2c6532441352c06bc44a.1760685059.git.zhuyikai1@h-partners.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <8ad645360ce86569ec9c2c6532441352c06bc44a.1760685059.git.zhuyikai1@h-partners.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 17 Oct 2025 at 19:08, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Wed, Oct 08, 2025 at 05:45:34PM +0200, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
-> > context switch out of struct thread_struct, and onto the stack, so that
-> > the memory cost is not imposed needlessly on all tasks in the system.
->
-> This patchset needs the following fixup to build:
->
+On 10/17/25 10:30 AM, Fan Gong wrote:
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
+> index 78cface6ddd7..58c0c0b55097 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
+> @@ -39,24 +39,25 @@ struct hinic3_pcidev {
+>  };
+>  
+>  struct hinic3_hwdev {
+> -	struct hinic3_pcidev        *adapter;
+> -	struct pci_dev              *pdev;
+> -	struct device               *dev;
+> -	int                         dev_id;
+> -	struct hinic3_hwif          *hwif;
+> -	struct hinic3_cfg_mgmt_info *cfg_mgmt;
+> -	struct hinic3_aeqs          *aeqs;
+> -	struct hinic3_ceqs          *ceqs;
+> -	struct hinic3_mbox          *mbox;
+> -	struct hinic3_cmdqs         *cmdqs;
+> -	struct delayed_work         sync_time_task;
+> -	struct workqueue_struct     *workq;
+> -	/* protect channel init and uninit */
+> -	spinlock_t                  channel_lock;
+> -	u64                         features[COMM_MAX_FEATURE_QWORD];
+> -	u32                         wq_page_size;
+> -	u8                          max_cmdq;
+> -	ulong                       func_state;
+> +	struct hinic3_pcidev         *adapter;
+> +	struct pci_dev               *pdev;
+> +	struct device                *dev;
+> +	int                          dev_id;
+> +	struct hinic3_hwif           *hwif;
+> +	struct hinic3_cfg_mgmt_info  *cfg_mgmt;
+> +	struct hinic3_aeqs           *aeqs;
+> +	struct hinic3_ceqs           *ceqs;
+> +	struct hinic3_mbox           *mbox;
+> +	struct hinic3_msg_pf_to_mgmt *pf_to_mgmt;
+> +	struct hinic3_cmdqs          *cmdqs;
+> +	struct delayed_work          sync_time_task;
+> +	struct workqueue_struct      *workq;
+> +	/* protect hwdev channel init and uninit */
+> +	spinlock_t                   channel_lock;
+> +	u64                          features[COMM_MAX_FEATURE_QWORD];
+> +	u32                          wq_page_size;
+> +	u8                           max_cmdq;
+> +	ulong                        func_state;
 
-Indeed - thanks for the head's up, although the robots already
-informed me as well.
+The above is a nice way to hide a single line addition. Please either
+avoid the reformatting entirely (preferred) or do the re-indentation in
+a separate pre-req patch.
+
+/P
+
 
