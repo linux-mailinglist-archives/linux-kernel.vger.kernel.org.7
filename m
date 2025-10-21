@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-863517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13C4BF808B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B7CBF8097
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 941224E5C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:22:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A835C18A5A0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3578734F259;
-	Tue, 21 Oct 2025 18:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F6F34F25E;
+	Tue, 21 Oct 2025 18:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="upxYl89n"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q7dCUf8Q";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wr1DZ8xo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3740221FDA
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19E233C503
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761070925; cv=none; b=tWDf1FQSI8+z4Wln1Bsy6amYxAb5yS6/g656FLHGNwiGA4c53HF9Lg7pyRpkcXPtPwRXj00YcY3n72nO0anFONuZBnvGsyFqb37l247amSfsOAXw60ns/T/SVjfFjt8zYyVY95ovCSNU2xCyKPOQl86dICt/kybh3fiEf5043OM=
+	t=1761071043; cv=none; b=EHUJexPkkgEbt2E5uh+B8SmVU+iG17eYqVku3Xrk9lmev+baxM0Y9DMCyzIoPzPuvVxGLArv08vWODGUOg4TfMX2QrnHEUY7c8SfeToJZw7I/EW3wGxIzQolMr72m8x5Azwz359g7j0I3Rxy62nmP0vetHv/pfeJfe6MdwmgOrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761070925; c=relaxed/simple;
-	bh=79ji3lRxCDVH2zpvzp7RBs9o8422wf8mQPe676ijU8Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VY+Gu12VjGcZMA19DphheyzXFSaB+FCsenNh2I9WH02SuS8OoHgWXom0+bKkr0gB6STTiPVPJEK2FNAqX6oFXzmpmOMfDwRXNyws6FQ2xytBLLFrurvU792zkJqqhlcRWgYjoaeD7OuRsNQJ+CkyRnGzBS4hDbGC0SdPOCEgXt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=upxYl89n; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-93e830d84d6so390447839f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761070922; x=1761675722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hwb5AIrReUvMBmNj6v22zzS4g0svF5NEcsjcLOGLDJE=;
-        b=upxYl89nX7S3ZT4RtV1vgms/KWj5gS2hsHQGpfQLkxcw6RWrCZXdGv1AyzITSsffGz
-         wao/gn9BaDEVK1gb4SN96e7y24ndTldRbTUYtf7nnqBn/BbLLG2Qs8yft83dA8pl+0d8
-         IUTSycmJytvCwyaqO6BRSzRD/p9r0fByBJec9B27Dp2pWE0ZOF7+akUTgUs3OnIIxhO0
-         3vBCzalSH6iOEtW0MIywa/Nih5hg5j+oqQb+Et4/bGJv3KUlYq6tABwyv41mdf0/Ukg7
-         BAQbtxGDTt5pWxtOElzX+jClNHSwsZbU5D86FUAwWqZCiBRb1/Ptz2rtAt2OJ5OPWj8H
-         Toyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761070922; x=1761675722;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hwb5AIrReUvMBmNj6v22zzS4g0svF5NEcsjcLOGLDJE=;
-        b=TcB1Dk7Dle7ViVoaNT9LqCVIBckzM1WRUimk26cgOHidEydP8WG5Cvo8CyPcQMIMDA
-         zEQkNgscYR0ox9eivjWrhcPjVf8jzjYt8LwddV+HSUQ30A2R18yKV6WUhu3S5iqwc3nq
-         eT6CDlIBiHmCF1sitwHz+dUmpv7OfadabzQ/FVOf/oJILUP3AbvJ0oBdkTgrcOhF54PG
-         EYUP8456yMeOoSzS6Q5ZJRpjiSPHASPXuWCxiw/sFyjfdE8SM6GWGG/jjnAXoHNKF/TX
-         M5tucVPVFCdzVHyOSuDeh/gou8jJH41MT029folPwCBO+pKrMVQvuv3dBxkKlMdj1pSu
-         nSFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ2Dfga7hP+MMs/dd+7vIrR6Uyi798PbBcIlgONyNRkAScu3dBjdkBh83z60K3SryDuGnCc8/wSMRhgV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGrPwcVmXOm31Sy9a5E7kds4QiMfdDUe19vfagIz9BZIHQ9C+6
-	70iSXEVyAm6kZezK1MZecTsS5UN5Mtru6dZMM+kd1Vdj8LViTKb472a+RlC8bfwzppY=
-X-Gm-Gg: ASbGncsXJb2sqoNXEAmKCbc3xnxOedcbbYjbMdKKanClJjr001Q6DbeHAti5GxtaZSR
-	04nImlQ4/HHOzXqTsWW17FQ1f/TfZsD2Y+yVLct/Krl8g8T5dRPRfx2hCAQ7jX7wGYGg0Oqp3Ym
-	7c1fyr4jB87suPURZgayPLPvNLnUk02Xc+Ls8eVnOx272xzSvINX5PqWuw4brH2O5TLrOWVOObh
-	BnhirQMUdXoCM+ua0g0pknwtmuq9r8o+RZhxaOHBqviKeGici6hrNLr6Vpp4AM4n4aaucckftX8
-	NYkSc2xoh9LXSxA3JRtm/XfK/FloH3mfGDe9zg9jETGI2PqvpNNGPtUaUtL3Nh+aj+XDp+RLq1J
-	OoZn/8TqNeQqSAquUoGLMDZd3UI3bFCrNVDOmGK4XMAdpUzCFARJbfxZV/YSDqCcmFiGlL5t1TD
-	hHyA==
-X-Google-Smtp-Source: AGHT+IFgvS4Hrtx9ZCCqnSX34c4rLtA7kZh40GCk23wzu2Dl6Bq3N1MD4Xw6Te/SetuH8H3DDeCNtg==
-X-Received: by 2002:a05:6e02:1c01:b0:430:a14f:314c with SMTP id e9e14a558f8ab-430c5205699mr254831015ab.7.1761070921883;
-        Tue, 21 Oct 2025 11:22:01 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9630a45sm4346361173.20.2025.10.21.11.22.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 11:22:01 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ranganath V N <vnranganath.20@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251021-fix_indentation-v1-1-efe8157bd862@gmail.com>
-References: <20251021-fix_indentation-v1-1-efe8157bd862@gmail.com>
-Subject: Re: [PATCH] io_uring: Fix code indentation error
-Message-Id: <176107092101.199360.7637020500608445837.b4-ty@kernel.dk>
-Date: Tue, 21 Oct 2025 12:22:01 -0600
+	s=arc-20240116; t=1761071043; c=relaxed/simple;
+	bh=YtC9FVB6RTwsgQhZ5GJw+dlk0DK/jvxC/CT3+eOfgxw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=t8JjiKV8sITb8lQswIiXuiuvKcksdonh9UQbMNSW1+Yx7gLxCLUyL4WI0wmSW4UgWLr7ED1zHIoN1jfScQYgOkwBk+5YKrU8dz7Rttkiy4IyWK6+C2zc6qZxPudF7EMXNFjWaaP+klD8BmEWWoMgB7l+7zykYTHwyluuoUoQW0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q7dCUf8Q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wr1DZ8xo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761071039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qsB5rMhwuhp8pA17tWoe/hsQh2JLMaKKsffP1S6G2jk=;
+	b=q7dCUf8Qvn7NfXlik7h4bBI9b/ZtUrH8mHy0eWjPMgEOrvF6SQv6v4uC/nBhedp/j4dGyO
+	3baeSimlOvyiucac5Wa1cSWBLd4jcJ6mLQyTpoGOk3xwGocbOUHJNYdwWk8sLRRSxNCPof
+	QdlGLZCpbpUX+FcJ7lde0enTbNE2m6MU7P6y9xSbjpU/JZLU1DRg4wq8XqD3RZ2fEv0JGo
+	3zWMGsQEWeywU78g6LApl+4KmKf52sNEgeuClE5BA011GmDTM2gY3etA7j6y5vPTn3pFNf
+	6x7oKRDetnfHNHj6x08QpFPMe0yBkleowiNdMDSD7hMJi77yYS0d1GJIPpDscg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761071039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qsB5rMhwuhp8pA17tWoe/hsQh2JLMaKKsffP1S6G2jk=;
+	b=wr1DZ8xomQztHUwIWV70tnSbYbqyS2AHPDlohzIs/i9hS+QRmBCECsOTm5fVSlckICQyI3
+	izw2ohDKSceGkTDw==
+To: Troy Mitchell <troy.mitchell@linux.dev>, Troy Mitchell
+ <troy.mitchell@linux.dev>, Paul Walmsley <pjw@kernel.org>, Samuel Holland
+ <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert
+ Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] irqchip/sifive-plic: use hartid as context_id in OF to
+ fix AMP conflicts
+In-Reply-To: <aPbeb1SEZr7CG2eN@kernel.org>
+References: <20251020-fix-plic-amp-v1-1-defe2a99ab80@linux.dev>
+ <87bjm1zcvc.ffs@tglx> <aPbeb1SEZr7CG2eN@kernel.org>
+Date: Tue, 21 Oct 2025 20:23:58 +0200
+Message-ID: <87y0p4xge9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 21 2025 at 09:14, Troy Mitchell wrote:
+> On Mon, Oct 20, 2025 at 07:44:55PM +0200, Thomas Gleixner wrote:
+>> On Mon, Oct 20 2025 at 11:49, Troy Mitchell wrote:
+>> > In asymmetric multi-processing (AMP) scenarios, the original PLIC
+>> > driver used the context loop index 'i' as context_id for OF (device
+>>=20
+>> Which original driver and when did it stop to use the context loop index?
+>>=20
+>> > tree) platforms. This caused multiple contexts from different harts
+>> > (e.g., core0 and core4) to share the same enable_base, leading to
+>> > conflicts when initializing the PLIC.
+>>=20
+>> When did it stop to cause the issues? And if the issues have been
+>> already resolved, what is this patch about?
+> The issue still exists in the current driver.
+> The PLIC driver for OF-based platforms assigns context_id =3D i inside
+> the context loop, which assumes that all harts are numbered contiguously
+> starting from 0.
+>
+> In AMP systems (e.g., when Linux boots from hart4 while hart0 runs anothe=
+r OS),
+> this assumption breaks =E2=80=94 multiple contexts from different cluster=
+s share the same
+> enable_base(e.g., core4's enable_base =3D core0's enable_base), causing c=
+onflicts.
+>
+> This patch fixes the problem by assigning context_id based on the actual =
+hartid,
+> ensuring that each hart context maps to a unique enable region,
+> while preserving behavior on SMP and UP systems.
+>
+> Does it make sense? I'll update my commit message in the next version.
 
-On Tue, 21 Oct 2025 22:59:30 +0530, Ranganath V N wrote:
-> Fix the indentation to ensure consistent code style and improve
-> readability and to fix the errors:
-> ERROR: code indent should use tabs where possible
-> +               return io_net_import_vec(req, kmsg, sr->buf, sr->len, ITER_SOURCE);$
-> 
-> ERROR: code indent should use tabs where possible
-> +^I^I^I           struct io_big_cqe *big_cqe)$
-> 
-> [...]
+Yes. Though this still applies:
+=20
+>> # git grep 'This patch' Documentation/process/
 
-Applied, thanks!
+Thanks,
 
-[1/1] io_uring: Fix code indentation error
-      commit: ea3ba56a6f0b66d3e6cc01692d5a83a6d96797bf
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+        tglx
 
