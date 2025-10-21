@@ -1,125 +1,167 @@
-Return-Path: <linux-kernel+bounces-862311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85A4BF4F8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:32:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECAABF4F98
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F10E64F72BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6369218C0840
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F50280025;
-	Tue, 21 Oct 2025 07:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828F024678F;
+	Tue, 21 Oct 2025 07:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dW0gTjge"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZlXlZ8D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6194C27FD6E;
-	Tue, 21 Oct 2025 07:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AAB246762;
+	Tue, 21 Oct 2025 07:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761031912; cv=none; b=pRyKHs+ves04BLkmSLBa7zUoYf1daT6JwRsNhGR3j2M8NgDKxiSPYZYFTGkKjvJnoPXMzPePSA76MdAzoV4ovUg0LvH/728AEaaCK09VJs3RTCXgLteWXiHF6AyZlzksrRnyzy3Lo2apQaPptB7pd369Vu2UswE2QctJF6vWPHI=
+	t=1761031989; cv=none; b=pYv+Wq2ERG966eSV61/La+/vfPeWp+PFdn63rJdkv0NY26COBa7rsTSkslOESD2ZIcew6kIekZ47VF/3e39sC2vE78vGA9eJ0Fj3TtVC/k5Kpd2PE8EFNmYjgmNgr1kF29q8DZpsYYXeao12AsZcvi4CLprxWsAQNKTRoMiFYnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761031912; c=relaxed/simple;
-	bh=qr9XyEgoKDrOvlQ/a4EvmrD00l7EvEI7RmtYodAKgIY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GRI1thHU5jXSxX6IqGsx2eVDApEcWlsW5Qn0ym1ltJbgG9Q/eKWfHf2jbSLo0lqbsXWVGYAS7T2WGIg90G9MAgiWZgmsTLRJUTdKR/pdPw7+qfh6dEd53Q1RYU+QA51s3Ny9iAoIKtl4R8lMNvdYgV2x4j/PSX1/ZZ3xnjOFAYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dW0gTjge; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761031908;
-	bh=qr9XyEgoKDrOvlQ/a4EvmrD00l7EvEI7RmtYodAKgIY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=dW0gTjgeOApqnGqmEI57D2DqO0dLmHAF2ruzdQQoe0xxt+dy4PLcasIdyPbR6HG0M
-	 Lv0N9El/lXwuwcdtP3baYFAASpLznKjJVFzGHzrrPddXI9d+GrifdBJQbgOWd84CnD
-	 tsHOVG1yVeJ/xvC8z/hKQgKS7jT6ZsP+OIlj+U7pAXZOHFZRVl+PehVydDi6yZPSOH
-	 6C2kEb9w8JrpQkWd1cznIflMWViMXLIleiCQvxdFWgRZbsTfJFoet1qAajhlcEOZ4t
-	 EbqWu00tZ+ZkOYHrGfaLS3nYoixj0yblyor/1v6rnjZGReJ9HcLYNmPen+TxPfZqra
-	 GXqqXZXkldPPg==
-Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AF99D17E1404;
-	Tue, 21 Oct 2025 09:31:47 +0200 (CEST)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Tue, 21 Oct 2025 09:30:53 +0200
-Subject: [PATCH v2 3/3] arm64: dts: mediatek: mt8365-evk: Enable GPU
- support
+	s=arc-20240116; t=1761031989; c=relaxed/simple;
+	bh=XbheeYVcu+eWSj83TG8XUBPLwc0y4ngILfkU6mRhd2k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
+	 References:In-Reply-To; b=OgUxckKVMxG1A9Nlb/2iEXypZjyKB2PbbD223H8DTKfd1SPkwSQdzWFu2534ZyORcopQIH2NtlOqgFllVh7lqge9JrXp9piM9E1K77/LdnYdlglygi5959riPFoZ+rab1N2wTp0L3Zf1ERc7QlpAvgzJjthEWXdBG2HqTq/NjoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZlXlZ8D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0AB4C4CEF1;
+	Tue, 21 Oct 2025 07:33:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761031989;
+	bh=XbheeYVcu+eWSj83TG8XUBPLwc0y4ngILfkU6mRhd2k=;
+	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
+	b=RZlXlZ8DnKlN6Lwiaq5eHxGTAMB6bajTUYOaSncUWSyvlAC6kGLqvDIBX7wHvbncY
+	 71TzWkcUu5iCJCGr1LQpJBKPIXA282YQ1DAKo7qDc6j2xAQa+12Kof5/BFihmlaCee
+	 s2I85ycMt4fskAumZJqCKzRrFwy0XVvgzQgWKXrMIxBf2psl2qqfzSFMxg/KD0jCYp
+	 3FgLSf4kFLokNWQOFRZs4+ZxgzkiLmEnzEQH8OaqrmtFBKEDmyRYhad2VbkV2OGs5f
+	 8uPwVvArsrlX8BIG4qkIFx9WNSqBrKx5u4AAj1jBE7hFDDffjqsoFsrnzwhRXbZNvi
+	 LgC4FoKMvT+Ew==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-mt8365-enable-gpu-v2-3-17e05cff2c86@collabora.com>
-References: <20251021-mt8365-enable-gpu-v2-0-17e05cff2c86@collabora.com>
-In-Reply-To: <20251021-mt8365-enable-gpu-v2-0-17e05cff2c86@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761031905; l=1137;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=qr9XyEgoKDrOvlQ/a4EvmrD00l7EvEI7RmtYodAKgIY=;
- b=BTk5evTjx76vWj0BG4kqs51CoKzKQA0I1u53jD7R8c+No3fzOaD/cj8PcW5jg7FGhngEcjNh5
- lfTS+ARGzmiB2mjtHq+TygszS/qCGstK24Iinm/XVo45JtYMCefdsmE
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=5a96699aa7bce8cff3c065f27f0a06d176682fa96de5831cad390e619421;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Tue, 21 Oct 2025 09:33:04 +0200
+Message-Id: <DDNTQLB5YRM3.39C226E0QO6X9@kernel.org>
+To: "Sander Vanheule" <sander@svanheule.net>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ <linux-gpio@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/2] gpio: regmap: Force writes for aliased data
+ regs
+Cc: <linux-kernel@vger.kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20251020115636.55417-1-sander@svanheule.net>
+ <20251020115636.55417-2-sander@svanheule.net>
+In-Reply-To: <20251020115636.55417-2-sander@svanheule.net>
 
-Enable for the Mediatek Genio 350-EVK board the support of the
-Arm Mali G52 MC1 GPU integrated in the MT8365 SoC.
+--5a96699aa7bce8cff3c065f27f0a06d176682fa96de5831cad390e619421
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hi,
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-index 3de04ae70cc5fcd203a9cb745dfb3575ace66801..92ecde96dfeb4bdbc85a8fd869b405ef6cc1cdc0 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-@@ -284,6 +284,11 @@ eth_phy: ethernet-phy@0 {
- 	};
- };
- 
-+&gpu {
-+	mali-supply = <&mt6357_vcore_reg>;
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	clock-frequency = <100000>;
- 	pinctrl-0 = <&i2c0_pins>;
-@@ -354,6 +359,10 @@ touchscreen@5d {
- 	};
- };
- 
-+&mfg {
-+	domain-supply = <&mt6357_vsram_others_reg>;
-+};
-+
- &mmc0 {
- 	assigned-clock-parents = <&topckgen CLK_TOP_MSDCPLL>;
- 	assigned-clocks = <&topckgen CLK_TOP_MSDC50_0_SEL>;
+On Mon Oct 20, 2025 at 1:56 PM CEST, Sander Vanheule wrote:
+> GPIO chips often have data input and output fields aliased to the same
+> offset. Since gpio-regmap performs a value update before the direction
+> update (to prevent glitches), a pin currently configured as input may
+> cause regmap_update_bits() to not perform a write.
+>
+> This may cause unexpected line states when the current input state
+> equals the requested output state:
+>
+>         OUT   IN      OUT
+>     DIR ''''''\...|.../''''''
+>
+>     pin ....../'''|'''\......
+>              (1) (2) (3)
+>
+>     1. Line was configurad as out-low, but is reconfigured to input.
+>        External logic results in high value.
+>     2. Set output value high. regmap_update_bits() sees the value is
+>        already high and discards the register write.
+>     3. Line is switched to output, maintaining the stale output config
+>        (low) instead of the requested config (high).
+>
+> By switching to regmap_write_bits(), a write of the requested output
+> value can be forced, irrespective of the read state. Do this only for
+> aliased registers, so the more efficient regmap_update_bits() can still
+> be used for distinct registers.
+>
+> Signed-off-by: Sander Vanheule <sander@svanheule.net>
+> ---
+>  drivers/gpio/gpio-regmap.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> index ab9e4077fa60..ba3c19206ccf 100644
+> --- a/drivers/gpio/gpio-regmap.c
+> +++ b/drivers/gpio/gpio-regmap.c
+> @@ -93,7 +93,7 @@ static int gpio_regmap_set(struct gpio_chip *chip, unsi=
+gned int offset,
+>  {
+>  	struct gpio_regmap *gpio =3D gpiochip_get_data(chip);
+>  	unsigned int base =3D gpio_regmap_addr(gpio->reg_set_base);
+> -	unsigned int reg, mask;
+> +	unsigned int reg, mask, mask_val;
+>  	int ret;
+> =20
+>  	ret =3D gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+> @@ -101,9 +101,15 @@ static int gpio_regmap_set(struct gpio_chip *chip, u=
+nsigned int offset,
+>  		return ret;
+> =20
+>  	if (val)
+> -		ret =3D regmap_update_bits(gpio->regmap, reg, mask, mask);
+> +		mask_val =3D mask;
+>  	else
+> -		ret =3D regmap_update_bits(gpio->regmap, reg, mask, 0);
+> +		mask_val =3D 0;
+> +
+> +	/* ignore input values which shadow the old output value */
+> +	if (gpio->reg_dat_base =3D=3D gpio->reg_set_base)
+> +		ret =3D regmap_write_bits(gpio->regmap, reg, mask, mask_val);
+> +	else
+> +		ret =3D regmap_update_bits(gpio->regmap, reg, mask, mask_val);
 
--- 
-2.51.0
+I wonder if we should just switch to regmap_write_bits() entirely.
 
+In patch 2, you've wrote:
+
+> The generic gpiochip implementation stores a shadow value of the
+> pin output data, which is updated and written to hardware on output
+> data changes. Pin input values are always obtained by reading the
+> aliased data register from hardware.
+
+I couldn't find that in the code though. But if the gpiolib only
+updates the output register on changes, the write part in
+regmap_update_bits() would always occur.
+
+In any case, feel free to add.
+
+Reviewed-by: Michael Walle <mwalle@kernel.org>
+
+-michael
+
+--5a96699aa7bce8cff3c065f27f0a06d176682fa96de5831cad390e619421
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaPc3MRIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/j/kwF/bIZorni+ajmT4gREj7sDrBRoFGqrZr4+
++Jb5htHw4G2KNKE0ag3j13k5ujnBrq7HAYCKmmzc0S9bjRG+NIr5Q9Qp0WPM5et1
+sCCEaoOOwy6HlHIYfWl1KJl+Xzt+UlaUU20=
+=CdCx
+-----END PGP SIGNATURE-----
+
+--5a96699aa7bce8cff3c065f27f0a06d176682fa96de5831cad390e619421--
 
