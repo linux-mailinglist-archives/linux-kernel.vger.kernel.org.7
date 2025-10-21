@@ -1,181 +1,160 @@
-Return-Path: <linux-kernel+bounces-863341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E66FBF797F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:09:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50B6BF798B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979624269E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:08:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE0519A45EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7F83446C3;
-	Tue, 21 Oct 2025 16:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34653451DE;
+	Tue, 21 Oct 2025 16:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="QOcYgzWP"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QXMXkh7N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15661F5EA
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFE215A86D;
+	Tue, 21 Oct 2025 16:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062922; cv=none; b=ZMxEHmmKIERTaNkISYBjCa9EL7eV1NSSqzlx8fjWq2zf3FzPdkCko5+trL5xK8SzlXBiVLWlcVgDCIFEa+F9NPWwvT2z4qCfizaiq7gwGqH/RvluJYtDzhmjVXdrCTO+IMhXpDTKaPlyv79XT4FBmTpjt0H6mioJiWR6UKyU7rs=
+	t=1761062951; cv=none; b=efBpVz7VfS6Fcg14iV921JhWPfGvgbvrrA1F3b60yPXDVzA53D+PS4HrwPqsFr0yhf6HST0JKCjHSJcwGx2vajQDFa3E8DfuRj1iLX8yYihr5WrX4O8PmZa5Yf05PURl+IPR/mb1N6H7Zo41x3SQNzcVrNoIM/LfKxs/hQeCrjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062922; c=relaxed/simple;
-	bh=5u+TcudwikdJNDByxDFVDrH4Mrn0KzJNwyJDRm/gPc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gYR4RZtTASsxspoPLmqvKe5guwtTVb+STCaos5NEU2VT0ec8JvT6j0DY+bggXEazJVWeJ1106HTtKE3L1q9ogodBGOvh/nS9O+fgL1jOEkChcPWBCc8UcMQ3BgVFJJGlVunYItOjY86qfSw3AorNpGlUxIAPal4flBTBfMBsEfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=QOcYgzWP; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso10469407a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:08:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1761062919; x=1761667719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jxaUYavdFNgjliOqAPTDoGj/sgS4UHn62o4psiKVfI4=;
-        b=QOcYgzWPBkIW+aImCI4XlR+l6J8W+mVOtWtjDHpcTIM64QQFdeFNRuL0q4ksV9leSC
-         ZHIo3UVUdxWLqjCZRzJRLOnRev6HYr7fij2i4HVr3JgaaUxEG3Hk/ExEuNWt6zGL7Epr
-         JbH1ia5blmrpchg+hQQwZ/+YxIhkWDsTy//xOzSybrGHTVwePRdQ4FZuKKZxtA+EDDFq
-         PeDJaYcDsEK87sNNSpCtUNkoEAVgCwl0XgdzGz+t4Y8dyFPlA5R85YyiLzrkDr53AU31
-         /ywd1KhhB6GzLVXyukna8q6HNPdg2bpk4i32H0JAqudCiEbLPiUq3rIJwWOXC2u+itZZ
-         iV/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761062919; x=1761667719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jxaUYavdFNgjliOqAPTDoGj/sgS4UHn62o4psiKVfI4=;
-        b=ZuB40CoYCsZup9zHmSRBxdKx15WaVOzyr3ZiTYpQTBapvApL8lKbLSj6yVDrwbjyKn
-         l9cKPXXBnOGXfTQ2kmYx70WQdZQ9JTKncT2kzpfL99D4u8MFW+V0itNms/Ao1093WwSd
-         wyX2KtVsLy7rS6ME+KK7TVzFrehUE5fxeoEjIHWiZO9rydiu09GQZrqU779am+mGnaGM
-         bOXdWhlzV9RAhNJg0NbZ+QCqTVRTt8CoT+6dHTM2MOV40m2sc1fSxv4Th1GJmuPEjcFG
-         WhNOSTYy+r5bG8teUO/YURkk+ZerE+Tw5XjglJifWAa70TqT7dx0hGsTs7b2HRYW38zv
-         OvSg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2tBOuUq1epDS6xJtXQNPpapnBlOOPGoDGrM8MloxeWvX7xlhQJzaSU9IT3GaNnHfRZlzNF4qHzxB9hTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCYQpvh3RoyyR3mfe7XHu0kX05zBPGcLldmWih4YvpINUUjsG9
-	/ANOtJO6a1etl0w1imULJAGcRqVo20LkxW3jnXofqHqe95/cOP0PGH5R/Nnc7mvWRjvB1r5RoMG
-	9OJ57FFeZbOJkxA3SOq3KgMAHTv25D34JNN5rkhbezA==
-X-Gm-Gg: ASbGncvUIgN5njlpxC9TbZQ9e4WRBoeRTKDyHVKrYz/HFo1Y768vvg55mVgHf0rQjIA
-	CQbUQIQZ7ngrmfmg3GChkhieBfNNHhnFuSYfOdgI7nholwNY2/wR9IG8fukIvLHwyK3DyPE9Swq
-	dwIlP9vjTNW1LnkCDXODv3SwGr2CAb1UW43du2b/zkSVP8kaCThzPpu9lDTJ6WocUXIOkY6F7nZ
-	W/kyCorev7J7Yq/A8OS3khR1Hh9L1J8YgOfEKCWDSXOANsfY18MGr9U6V9q7zK9wYgBzCTEz3VZ
-	fOE=
-X-Google-Smtp-Source: AGHT+IGYvj0cBBq3wGSoiNp1CoIJkYDF8ytokgZ/O7ati7otorbUHmL5FNnl4y1k4W4RaajJu5WCCQ85CcQM/eQSHZw=
-X-Received: by 2002:a05:6402:40c5:b0:637:e4d1:af00 with SMTP id
- 4fb4d7f45d1cf-63c1f677665mr17049736a12.10.1761062919175; Tue, 21 Oct 2025
- 09:08:39 -0700 (PDT)
+	s=arc-20240116; t=1761062951; c=relaxed/simple;
+	bh=lVqQrwLR73VLxhzhfYZr/XwLwv9Q8Qc3d8tpW+zVY50=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=PMsxPHoNztvn1mbok7g8sWHqBOZBQ7QobRPQ+pq9aF5lPvUmvOGtGeDPY7FIoGC9Gu3Fd2uNS+GhNSij2e4PoQgLTuJP42zlxw3Vz5Kel0kNMGdm0sDSgeEDfILvgs7t3WpSj28K/Kobo7aaJPoVP2bamedW7rCcmdSh+JQSkMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QXMXkh7N; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761062949; x=1792598949;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=lVqQrwLR73VLxhzhfYZr/XwLwv9Q8Qc3d8tpW+zVY50=;
+  b=QXMXkh7N3nl85fUIlGOuRnJ2Y9zENIfuFsOjYG/ud1yFyx3KQluO2Bim
+   Fgcu+y+hmD9Y3IFTVZdzzrzXF2ieFRcnP3BMMBw2YOSH6d6e8oWrRC9fH
+   9rxLKQrNJHo4zHcgnVwFrI2JMFGY6EGUBvTjF8Zus96c5LGqjwtUPljeV
+   60+IW17EieR37pgqF7bDmS9lwUzesltyKpta4puzkF5TY4WZV9Iy/fMCW
+   sVP7j1B+pfGlAh062IkXtuhq3ubRZ4WbzTzV3FFfVamfAmWqpvbAqfBCe
+   pN1Vsle1aN/Vklr/h8zg0IsaT6pHQR8NvJ03H8IFv7D7DIzYbwNBhFmja
+   Q==;
+X-CSE-ConnectionGUID: lnGQVeddQXq5sjvMlfGbEA==
+X-CSE-MsgGUID: aGoLW4QFQMqm4k8XVBsowQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80632879"
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="80632879"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 09:09:08 -0700
+X-CSE-ConnectionGUID: pZ1Di52HTfKXEn/kKrcMtQ==
+X-CSE-MsgGUID: 7xPC94pVSTu43fM4cKQEOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="187665402"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 09:09:04 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 21 Oct 2025 19:09:00 +0300 (EEST)
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-pci@vger.kernel.org, 
+    Bjorn Helgaas <bhelgaas@google.com>, Kai-Heng Feng <kaihengf@nvidia.com>, 
+    Rob Herring <robh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 0/3] PCI & resource: Make coalescing host bridge windows
+ safer
+In-Reply-To: <aPerdPErjXANiBOl@smile.fi.intel.com>
+Message-ID: <6abf371f-b5b0-bdb7-56cf-c012e20ffc73@linux.intel.com>
+References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com> <CAMuHMdVwAkC0XOU_SZ0HeH0+oT-j5SvKyRcFcJbbes624Yu9uQ@mail.gmail.com> <89a20c14-dd0f-22ae-d998-da511a94664a@linux.intel.com> <CAMuHMdUbseFEY8AGOxm2T8W-64qT9OSvfmvu+hyTJUT+WE2cVw@mail.gmail.com>
+ <20844374-d3df-cc39-a265-44a3008a3bcb@linux.intel.com> <aPerdPErjXANiBOl@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018171756.1724191-1-pasha.tatashin@soleen.com>
- <20251018171756.1724191-2-pasha.tatashin@soleen.com> <aPXoKRVAyGWCNj8I@kernel.org>
-In-Reply-To: <aPXoKRVAyGWCNj8I@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 21 Oct 2025 12:08:02 -0400
-X-Gm-Features: AS18NWBcHGkJXGG0ZFCeY6uu-eAVSgeT1z_110jp41TVdiVY4QWXrqa-qnZgrXU
-Message-ID: <CA+CK2bD9RHEWZd+t7kWFxofOjBVLd-e+gQTheNJxZbSFy84rfA@mail.gmail.com>
-Subject: Re: [PATCH v6 01/10] kho: allow to drive kho from within kernel
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-497485051-1761062940=:1018"
 
-On Mon, Oct 20, 2025 at 3:43=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Sat, Oct 18, 2025 at 01:17:47PM -0400, Pasha Tatashin wrote:
-> > Allow to do finalize and abort from kernel modules, so LUO could
->
-> We surely don't want modules being able to drive that. Maybe
->
->    allow kernel to drive finalize and abort without requiring triggers
->    from the userspace
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-done
+--8323328-497485051-1761062940=:1018
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
->
-> > drive the KHO sequence via its own state machine.
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-> > ---
-> >  include/linux/kexec_handover.h | 15 +++++++
-> >  kernel/kexec_handover.c        | 74 ++++++++++++++++++++--------------
-> >  2 files changed, 59 insertions(+), 30 deletions(-)
->
+On Tue, 21 Oct 2025, Andy Shevchenko wrote:
+
+> On Tue, Oct 21, 2025 at 02:54:03PM +0300, Ilpo J=E4rvinen wrote:
+> > On Tue, 21 Oct 2025, Geert Uytterhoeven wrote:
+>=20
 > ...
->
-> > diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> > index 76f0940fb485..76c34ea923f0 100644
-> > --- a/kernel/kexec_handover.c
-> > +++ b/kernel/kexec_handover.c
-> > @@ -1067,7 +1067,7 @@ static int kho_out_update_debugfs_fdt(void)
-> >       return err;
-> >  }
-> >
-> > -static int kho_abort(void)
-> > +static int __kho_abort(void)
-> >  {
-> >       int err;
-> >       unsigned long order;
-> > @@ -1100,7 +1100,27 @@ static int kho_abort(void)
-> >       return err;
-> >  }
-> >
-> > -static int kho_finalize(void)
-> > +int kho_abort(void)
-> > +{
-> > +     int ret =3D 0;
-> > +
-> > +     if (!kho_enable)
-> > +             return -EOPNOTSUPP;
-> > +
-> > +     guard(mutex)(&kho_out.lock);
->
-> Please include linux/cleanup.h explicitly
+>=20
+> > I'm sorry, it's indeed a bit confusing as some of these patches never=
+=20
+> > have been in Linus' tree.
+> >=20
+> > So I'm interested on what's the result with these changes/series togeth=
+er:
+> >=20
+> > [PATCH 1/2] PCI: Setup bridge resources earlier=20
+> > [PATCH 2/2] PCI: Resources outside their window must set IORESOURCE_UNS=
+ET=20
+> > [PATCH 1/1] PCI: rcar-gen2: Add BAR0 into host bridge resources
+> > [PATCH 1/3] PCI: Refactor host bridge window coalescing loop to use pre=
+v=20
+> > [PATCH 2/3] PCI: Do not coalesce host bridge resource structs in place
+> > [PATCH 3/3] resource, kunit: add test case for resource_coalesce()
+> >=20
+> > You might also want to change that pci_dbg() in the IORESOURCE_UNSET pa=
+tch=20
+> > to pci_info() (as otherwise dyndbg is necessary to make it visible).
+> >=20
+> > Lore links to these series/patches:
+> >=20
+> > https://lore.kernel.org/linux-pci/20250924134228.1663-1-ilpo.jarvinen@l=
+inux.intel.com/
+> > https://lore.kernel.org/linux-pci/7640a03e-dfea-db9c-80f5-d80fa2c505b7@=
+linux.intel.com/
+> > https://lore.kernel.org/linux-pci/20251010144231.15773-1-ilpo.jarvinen@=
+linux.intel.com/
+> >=20
+> > The expected result is that those usb resources are properly parented a=
+nd=20
+> > the ee080000-ee08ffff and ee090000-ee090bff are not coalesced together =
+(as=20
+> > that would destroy information). So something along the lines of:
+> >=20
+> >     ee080000-ee08ffff : pci@ee090000
+>=20
+> For my pedantic eye, the naming is a bit confusing here. Is this a mistak=
+e in
+> the code or in the example?
+>=20
+> >       ee080000-ee080fff : 0000:00:01.0
+> >         ee080000-ee080fff : ohci_hcd
+> >       ee081000-ee0810ff : 0000:00:02.0
+> >         ee081000-ee0810ff : ehci_hcd
+> >     ee090000-ee090bff : ee090000.pci pci@ee090000
 
-That is going to be included via kfence fixes which will come before this p=
-atch.
+I tried to copy them from here:
 
->
-> > +     if (!kho_out.finalized)
-> > +             return -ENOENT;
-> > +
->
-> ...
->
-> > -unlock:
-> > -     mutex_unlock(&kho_out.lock);
-> > -     return ret;
-> > +     return (!!_val) ? kho_finalize() : kho_abort();
->
-> An 'if' would be cleared IMO:
->
->         if (val)
->                 return kho_finalize();
->         else
->                 return kho_abort();
->
-> and we can rename u64 _val to u64 val as we are dropping the boolean.
+https://lore.kernel.org/linux-pci/CAMuHMdUbaQDXsowZETimLJ-=3DgLCofeP+LnJp_t=
+xetuBQ0hmcPQ@mail.gmail.com/
 
-done
+So my answer is, from code.
 
->
-> >  }
->
-> --
-> Sincerely yours,
-> Mike.
+I'm not trying to change the names here, they are what they are.
+
+Why things work that way in DT platform (ee08 vs @ee09), don't ask me as I=
+=20
+unfortunately don't know the answers.
+
+--=20
+ i.
+
+--8323328-497485051-1761062940=:1018--
 
