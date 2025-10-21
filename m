@@ -1,162 +1,156 @@
-Return-Path: <linux-kernel+bounces-862751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F951BF6128
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:33:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F115BF6136
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B490F18A2BC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:33:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E4474ED674
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433C7333740;
-	Tue, 21 Oct 2025 11:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128EB32E74E;
+	Tue, 21 Oct 2025 11:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iKj1EaCG"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="VtVOLEBl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aFvs788V"
+Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C7F332EBC;
-	Tue, 21 Oct 2025 11:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1556332E13D;
+	Tue, 21 Oct 2025 11:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761046271; cv=none; b=H3705FM/TSoL8BmnQUpKtYjaZJlLA+yr0oPcAE+OMH4EEttrOy7D1GE2Uim6jljrR3kcwTWqWSWrnYyDrXaUXeBP9OvUWU29tGyQvEnepvijIy51udjkNr8eA3wHaKzj4GJewArdYGxZNYrvvO10HMLCGZoae8oOG1H07djgOiA=
+	t=1761046279; cv=none; b=uGsz1DExPzMmuRoQbrhAtWribXBnwirnEMLIk0ePUFDp1MdayV2WAqD5oP8vekgj5eYv7qgcekKRMN1yVaaA5eBbvY98c6W+0o8fMHo7Uv2WSm7J7dXg9ljJ4IQk8srkvXAMuqK6DntxTBBQFxKZ0PFbvEb2Ma7WdKw1eBHeUuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761046271; c=relaxed/simple;
-	bh=p24aKtUnOv8fOlBIkkg8gEu+LqJuafLvKyczTp6ZjwE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EEu9D0boHJq/eKvczgtZyVTwIok4yyeU9x8totWW7cK8T9OPkcfwBePcsThfsT9lDhh7g4yEYQnqIJLh/QEhIwIB8aVr3rHArkDy0iog7bIILgSukj6PQeTOEd04CR8KJln8Prh2mCwyc8elb5Jj5oqD4bvfC8uaW8aTy8JQJic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iKj1EaCG; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761046267;
-	bh=p24aKtUnOv8fOlBIkkg8gEu+LqJuafLvKyczTp6ZjwE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iKj1EaCGNTsPETrUe1acWT3vmK9qn/ywFOv/YCxZDwL+hs9ub3cAFcGJo2vdx5riY
-	 almv8+xbUHu+/4zbSVqz6d/uyyMEcog7ReB8MOHdwVxOHje5lPnAViqmea6QSkQILS
-	 KoH9ThSTjTF0KXo8po71Ehfap7297h05xXFxl0UxZhocpanWarLMtKM694SjxTJ5a6
-	 G3uvUqza7ACZLNO7WNgwJnyx13jwf0lzemdWWanDkBa5jphjjOm3DseWwPuV5wvi5h
-	 H+zHtLwBMzdMr3kBUts6BSpayKeR+SIaVEwXplBjHINiqkSbhQOtL2RfAvo7a89oWf
-	 dyEilM977S4XA==
-Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:826d:bc07:e98c:84a])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EA72117E1404;
-	Tue, 21 Oct 2025 13:31:06 +0200 (CEST)
-From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	=?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	=?UTF-8?q?Miko=C5=82aj=20Wasiak?= <mikolaj.wasiak@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Christopher Healy <healych@amazon.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v5 12/12] Documentation/gpu/drm-mm: Add THP paragraph to GEM mapping section
-Date: Tue, 21 Oct 2025 13:30:49 +0200
-Message-ID: <20251021113049.17242-13-loic.molinari@collabora.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251021113049.17242-1-loic.molinari@collabora.com>
-References: <20251021113049.17242-1-loic.molinari@collabora.com>
+	s=arc-20240116; t=1761046279; c=relaxed/simple;
+	bh=i2ypIgVxR5XKVj6oglN5eSqLYS95V5/BxaV2psQ371E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YrlIeNztNlDQUO/4U0HGKU1GlTNfF8dnC/Xudwpo+JcG8xcpqYCatPgl/klcImJh6WlOOnlBPj999N/+6CbVVlo3aQzpNVYu/RqXxgSo992s03fYtn2ZKp7B6FEi2m3J9TKMjS2lU9vVUIFvjRAekbx6vAq6jAjH27MnF9KQrJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=VtVOLEBl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aFvs788V; arc=none smtp.client-ip=202.12.124.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.stl.internal (Postfix) with ESMTP id 0D7891300099;
+	Tue, 21 Oct 2025 07:31:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 21 Oct 2025 07:31:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761046274; x=
+	1761053474; bh=BLuUH66s5GK5mvKmYkyR8CP4H6QviMHTV/wP+OAXiXQ=; b=V
+	tVOLEBljxFSK4E4lhTxWAlL/ba9qwZSnEFWSqacoI5R7kgVCiKIxoZsvON95LFmE
+	xoDya60LWDBFSR1e1bw30/GlLZL3o4nfz3qXpuIXZEZVRo/ViKE0F5YjvaFfPGnj
+	XuEsBzH/m+N0VrP2WS3y34OTx9W1ecGRywFMNkHd313pgpswYEpYIvtCa2h4KzmP
+	iWGxHm3fAIJTRvKerXuOFdhRQ8qD59t87gxFH1nIuj4q17xFdxHTYLA7o8cLH/nR
+	erdQBTUQA0O6ettsJnUL8VXnCLZ9t6LktqKOwd99TTuN3yQ8M5JUjTglXwWHz02r
+	ktf+vlegg3qaaGpJCXowQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761046274; x=1761053474; bh=BLuUH66s5GK5mvKmYkyR8CP4H6QviMHTV/w
+	P+OAXiXQ=; b=aFvs788VrXnd8g82PJYeNvUI53vVxwk18Ndv2uvKvtvljy15OTR
+	h4WYYBHrrO+OwztFJwlVUS3amF90w4OU3xannSAyfXNZZyFBGuqKZz0TPO3GNtd7
+	LiBz9h62+fvFY/U77VleCHyLpxXsueVua3dTMnsPnipA+ss0hGUKvYE0Mf0KiRBY
+	Sgk9YXLNRYO/jp8C2ZihSvz5d/tszQz5kDaAzAni8tstEoQVQ+4BaHllZ6+lxQkP
+	D5LVzU8oBa06CeB9a8Mxj9LiULXttMUuOH8q0IxAYzTW2606yBTDoRA3PI46DEj8
+	lNL9R3RMlSX7og8eRViJsCCsaaHBhdM5PDQ==
+X-ME-Sender: <xms:AG_3aJ1aLBz_kNGW9nRdGfmahw6U8DwgfJ-dJoX4CCAQyD3ZfiQqqQ>
+    <xme:AG_3aMROrGlYnv_olSTsAAGcoyItemt7cJPJvcTK9R9s_oEUVHjjsk29KztSIwSlb
+    vqT7hiXnfY_JMBBL4u9p_ubgE9t-AmVcNL0IwiFGc50tzmOeX8-EA>
+X-ME-Received: <xmr:AG_3aBAIomb4Gm8dpNjkqNcOf7uDGKAk-0FfSyVR-jQv_6heE_eHP6-bnedBGQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedtheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
+    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
+    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
+    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
+    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
+    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:AG_3aCYxh4OsdSuannxhKiVcXTYN90LbuhkeFf2kpQu-BoU26k4U2g>
+    <xmx:AG_3aNawM5tTZoyPJCGn-YFXzTHP4sTIeYfby4T22uZYJj1m-X7Pqg>
+    <xmx:AG_3aNlk51B-HQP3ueaKimaqsrIvO87dFdtNhnYUcmr32cJyis5SDA>
+    <xmx:AG_3aEMZGhoCb0mdqmLKXuelhtzyUKqbNAiPRiAxuewOAMFhzPgfhg>
+    <xmx:Am_3aE5rG7YeIoEvLbRvVYLoTuCMmIb3LpXFvKkmi-ujHwsAIlZVxTEF>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 07:31:12 -0400 (EDT)
+Date: Tue, 21 Oct 2025 12:31:10 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm/truncate: Unmap large folio on split failure
+Message-ID: <eokncpih37zm7ypt6gn5xyetx6jlemhvvfdzpmdlxleqlsqcr4@45h5w5ahwugs>
+References: <20251021063509.1101728-1-kirill@shutemov.name>
+ <20251021063509.1101728-2-kirill@shutemov.name>
+ <a013f044-1dc6-4c2c-9d9a-99f223157c69@redhat.com>
+ <37ceab54-c4b2-449e-aa46-ffaefe525737@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37ceab54-c4b2-449e-aa46-ffaefe525737@redhat.com>
 
-Add a paragraph to the GEM objects mapping section explaining how
-transparent huge pages are handled by GEM.
+On Tue, Oct 21, 2025 at 11:47:11AM +0200, David Hildenbrand wrote:
+> On 21.10.25 11:44, David Hildenbrand wrote:
+> > On 21.10.25 08:35, Kiryl Shutsemau wrote:
+> > > From: Kiryl Shutsemau <kas@kernel.org>
+> > > 
+> > > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> > > supposed to generate SIGBUS.
+> > > 
+> > > This behavior might not be respected on truncation.
+> > > 
+> > > During truncation, the kernel splits a large folio in order to reclaim
+> > > memory. As a side effect, it unmaps the folio and destroys PMD mappings
+> > > of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
+> > > are preserved.
+> > > 
+> > > However, if the split fails, PMD mappings are preserved and the user
+> > > will not receive SIGBUS on any accesses within the PMD.
+> > > 
+> > > Unmap the folio on split failure. It will lead to refault as PTEs and
+> > > preserve SIGBUS semantics.
+> > 
+> > Was the discussion on the old patch set already done? I can spot that
+> > you send this series 20min after asking Dave
 
-v4:
-- fix wording after huge_pages handler removal
+Based on feedback from Dave and Christoph on this patchset as well as
+comments form Matthew and Darrick ont the report thread I see that my
+idea to relax SIGBUS semantics for large folios will not fly :/
 
-Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/gpu/drm-mm.rst | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+But if you want to weigh in...
 
-diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
-index d55751cad67c..3d6176adc7ca 100644
---- a/Documentation/gpu/drm-mm.rst
-+++ b/Documentation/gpu/drm-mm.rst
-@@ -283,6 +283,9 @@ made up of several fields, the more interesting ones being:
- 		void (*open)(struct vm_area_struct * area);
- 		void (*close)(struct vm_area_struct * area);
- 		vm_fault_t (*fault)(struct vm_fault *vmf);
-+		vm_fault_t (*map_pages)(struct vm_fault *vmf,
-+					pgoff_t start_pgoff,
-+					pgoff_t end_pgoff);
- 	};
- 
- 
-@@ -290,15 +293,27 @@ The open and close operations must update the GEM object reference
- count. Drivers can use the drm_gem_vm_open() and drm_gem_vm_close() helper
- functions directly as open and close handlers.
- 
--The fault operation handler is responsible for mapping individual pages
--to userspace when a page fault occurs. Depending on the memory
--allocation scheme, drivers can allocate pages at fault time, or can
--decide to allocate memory for the GEM object at the time the object is
--created.
-+The fault and map_pages operations are responsible for mapping pages to
-+userspace when a page fault occurs. Depending on the memory allocation
-+scheme, drivers can allocate pages at fault time, or can decide to
-+allocate memory for the GEM object at the time the object is created.
- 
- Drivers that want to map the GEM object upfront instead of handling page
- faults can implement their own mmap file operation handler.
- 
-+In order to reduce page table overhead, if the internal shmem mountpoint
-+"shm_mnt" is configured to use transparent huge pages (for builds with
-+CONFIG_TRANSPARENT_HUGEPAGE enabled) and if the shmem backing store
-+managed to allocate a huge page for a faulty address, the fault and
-+map_pages handlers will first attempt to insert that huge page into the
-+VMA before falling back to individual page insertion. mmap() user
-+address alignment for GEM objects is handled by providing a custom
-+get_unmapped_area file operation which forwards to the shmem backing
-+store. For most drivers, which don't create a huge mountpoint by default
-+or through a module parameter, transparent huge pages can be enabled by
-+either setting the "transparent_hugepage_shmem" kernel parameter or the
-+"/sys/kernel/mm/transparent_hugepage/shmem_enabled" sysfs knob.
-+
- For platforms without MMU the GEM core provides a helper method
- drm_gem_dma_get_unmapped_area(). The mmap() routines will call this to get a
- proposed address for the mapping.
+> Also, please send a proper patch series including cover letter that
+> describes the changes since the last RFC.
+
+There is no change besides Signed-off-bys.
+
 -- 
-2.47.3
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
