@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-863606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04867BF8487
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:38:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D81BF848C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 835164F1954
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DBD19C3913
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB93226E6EB;
-	Tue, 21 Oct 2025 19:38:32 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BC6350A2C;
-	Tue, 21 Oct 2025 19:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFB326F478;
+	Tue, 21 Oct 2025 19:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6+4sQMv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D77225761;
+	Tue, 21 Oct 2025 19:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761075512; cv=none; b=oXTDiDig7imhUb826slXtXErQ/GS20nOEMYo65Gu2XayjvXrUd5D22S2h8T84iVPAnNvvYPG0vBofljfxICK0UKELr5OaTPrs0d5lBRBndaB9ZXXQrF9BDhtB8zNQV5pT9W0798eXHS+GEKZu4vlliyylYhSMloMD3mjn2xKnrw=
+	t=1761075731; cv=none; b=iIIJZXMla7eOMtUjP9HLMJwt1OJrhu4H2zMmqp2aZSzSCdjlCBL1urnfbnPQahlLq3gaaVqzGs3SA3QGjfSDAvhKdU5S6N1taN0ggd96Y25rHZwm6NtZPHQFaRBkf8McDl3nd5osT0yLaX51PPD8f/ckbxWtZ019a9lFA5YTPpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761075512; c=relaxed/simple;
-	bh=6O/9qaWfEjlTYlM+TIrDzQlfkmfnsByO+S4xXrLWKFk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=iQILQCyBWPu3lBtDpo9XeUNA4KDq8ms54y3JL1kvu7LCzjlIrsby3qmavQDLBUJf6cAfZlz6BxbDUxhKlPZEKnrmoYBfheol+5H9afNylQfkdNh8xD6y1DqPhUZNCeFeEqVaR8UnyhvR0m6r0dWri9FKHgO+j0TxQKVnDPWYC4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 9F5E092009C; Tue, 21 Oct 2025 21:38:29 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 9B03592009B;
-	Tue, 21 Oct 2025 20:38:29 +0100 (BST)
-Date: Tue, 21 Oct 2025 20:38:29 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Bjorn Helgaas <helgaas@kernel.org>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>, linux-mips@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] MIPS: Malta: Fix PCI southbridge legacy resource
- reservations
-In-Reply-To: <alpine.DEB.2.21.2510211901530.8377@angie.orcam.me.uk>
-Message-ID: <alpine.DEB.2.21.2510212001250.8377@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2510211901530.8377@angie.orcam.me.uk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1761075731; c=relaxed/simple;
+	bh=eGVocM0DQBl2qPI9FUGWA58zJ38JkhcoJ7N7a2UjFQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2qeGpEmYU7ioPBByKMTHmmLh/pjCEmGXm2c+OIaHh1s/YFjbmZAKx09G0CbzE5b+ouyRgluwFDMVcb7X8n3G6deBIrBaL9eeXoJ2dyoCxrbRtOQjwlj3H8HUOrndRCuuAWNHqV6LnRtX1+Oym0+VozIMqRjKDdSf3h7JQI1lWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6+4sQMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A187C4CEF1;
+	Tue, 21 Oct 2025 19:42:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761075731;
+	bh=eGVocM0DQBl2qPI9FUGWA58zJ38JkhcoJ7N7a2UjFQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6+4sQMvhUimGHIK1nPetkCrJVVSOtCes8Qf4GEREJFkNiG4tmp/OGcdPsZKZJ4Gn
+	 rj1WUrpqoQkyXZ9eA6Oh2l5n0ABLUprAtIlBlr7O/tWdTMT4t/vRX/QMjeWV+hHtoG
+	 zUlsxKRoxbvXaAXUef9xwdTkS9WTiceuCHGssxF8OOzwt1+Mj4dIrheB14lpqzwRMt
+	 IKXTkkTw+uBfLG86Bjh99RijkIN1NLuesht+WVNtEw1zlLWBXVmIaOLI81u0XARW/m
+	 aiS9LNoKFZvEg6edN0ifyGkPGOnaBpqx1boYxwZiEoOBTNWkOH2GGRue5YwaeBedL2
+	 Z7nTXSIHQgbUg==
+Date: Tue, 21 Oct 2025 12:42:10 -0700
+From: Kees Cook <kees@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] net: Add struct sockaddr_unspec for sockaddr of
+ unknown length
+Message-ID: <202510211232.77A0F8A@keescook>
+References: <20251020212125.make.115-kees@kernel.org>
+ <20251020212639.1223484-1-kees@kernel.org>
+ <20251021102600.2838d216@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021102600.2838d216@pumpkin>
 
-Covering the PCI southbridge legacy port I/O range with a northbridge 
-resource reservation prevents MIPS Malta platform code from claiming its 
-standard legacy resources.  This is because request_resource() calls 
-cause a clash with the previous reservation and consequently fail.
+On Tue, Oct 21, 2025 at 10:26:00AM +0100, David Laight wrote:
+> On Mon, 20 Oct 2025 14:26:30 -0700
+> Kees Cook <kees@kernel.org> wrote:
+> 
+> > Add flexible sockaddr structure to support addresses longer than the
+> > traditional 14-byte struct sockaddr::sa_data limitation without
+> > requiring the full 128-byte sa_data of struct sockaddr_storage. This
+> > allows the network APIs to pass around a pointer to an object that
+> > isn't lying to the compiler about how big it is, but must be accompanied
+> > by its actual size as an additional parameter.
+> > 
+> > It's possible we may way to migrate to including the size with the
+> > struct in the future, e.g.:
+> > 
+> > struct sockaddr_unspec {
+> > 	u16 sa_data_len;
+> > 	u16 sa_family;
+> > 	u8  sa_data[] __counted_by(sa_data_len);
+> > };
+> 
+> One on the historic Unix implementations split the 'sa_family'
+> field into two single byte fields - the second one containing the length.
+> That might work - although care would be needed not to pass a length
+> back to userspace.
 
-Change to using insert_resource() so as to prevent the clash, switching 
-the legacy reservations from:
+I think this is just asking for trouble -- leaving that inline could
+be hard to track down places that needed filtering out.
 
-00000000-00ffffff : MSC PCI I/O
-  00000020-00000021 : pic1
-  00000070-00000077 : rtc0
-  000000a0-000000a1 : pic2
-  [...]
+It might be easier to move to a separate struct like I suggest above,
+though maybe as:
 
-to:
+struct sockaddr_sized {
+    u16 sa_data_len;
+    struct {
+        u16 sa_family;
+        u8  sa_data[] __counted_by(sa_data_len);
+    } sa_unspec;
+};
 
-00000000-00ffffff : MSC PCI I/O
-  00000000-0000001f : dma1
-  00000020-00000021 : pic1
-  00000040-0000005f : timer
-  00000060-0000006f : keyboard
-  00000070-00000077 : rtc0
-  00000080-0000008f : dma page reg
-  000000a0-000000a1 : pic2
-  000000c0-000000df : dma2
-  [...]
+(So it's easier to cast between implementation-specific sockaddr and the
+"sa_unspec" member.)
 
-Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-Fixes: ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-Cc: stable@vger.kernel.org # v6.18+
----
- arch/mips/mti-malta/malta-setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+And then pass that around. But I think that'll require a LOT of
+refactoring. But that could happen separately from this change, which is
+to just get us back to the existing state of passing around an unknown
+sized object but now we're not lying to the compiler about its size.
 
-linux-mips-malta-setup-insert-resource.diff
-Index: linux-macro/arch/mips/mti-malta/malta-setup.c
-===================================================================
---- linux-macro.orig/arch/mips/mti-malta/malta-setup.c
-+++ linux-macro/arch/mips/mti-malta/malta-setup.c
-@@ -213,7 +213,7 @@ void __init plat_mem_setup(void)
- 
- 	/* Request I/O space for devices used on the Malta board. */
- 	for (i = 0; i < ARRAY_SIZE(standard_io_resources); i++)
--		request_resource(&ioport_resource, standard_io_resources+i);
-+		insert_resource(&ioport_resource, standard_io_resources + i);
- 
- 	/*
- 	 * Enable DMA channel 4 (cascade channel) in the PIIX4 south bridge.
+-- 
+Kees Cook
 
