@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-862002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1C2BF4390
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:06:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8FF8BF4395
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D16764E51A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:06:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 531424E5246
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9AA221D92;
-	Tue, 21 Oct 2025 01:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71A5220F5D;
+	Tue, 21 Oct 2025 01:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UZyDha2B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WvgMIthJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B49716CD33;
-	Tue, 21 Oct 2025 01:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B421632;
+	Tue, 21 Oct 2025 01:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761008796; cv=none; b=nUVt3YFHLSSs+jZ3DWhLX+YzfvyLrKi6kZxKvf21ALIIDeZlWxhusJKqRxG9G1NGBcdHA02UYXEaPmnFB/LNIxr3WHfORvK/wU1PkDeW+FtEM+91Lv6rE/uXByeO5D5IabR/7BvZvnbQT500h0KTSV94mWe/Rc8MvMpnhZRT8uA=
+	t=1761008931; cv=none; b=JTgsHHtFSjGEgW38UmujSJAnwmhkxoRzNrqxlBpxMDyl7XimbVZW4/VUnHSo/0g9g10pFFDnEM+Qv3q2apV7sBjdfmSJ1duaSY6Iwegn/o3V16fhZXGFKpBGq8paNE4QS3rpV12JstHVZSMq0Kb9Xh2BsHxE1OZnF70sQM1OnDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761008796; c=relaxed/simple;
-	bh=9FgjtWRQhn4mqAKvRrsk7CBm/hwklJdaemm2NrmTSy0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tXCkFySWBkBaYKLJ/vbJT7G58FBIKaruirImR7/Nj198x8MJIDq//ni1V+LvifjNXXLtTiFg5Nj63gS2Bn265ysorKAHaSeScunmHGKj2rOBeHHVU1Icewdvb5F7u6lv5fnbUhGY2g1QAT+0PlyvTVHIOzyp3EnMycX9bGOerYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UZyDha2B; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761008796; x=1792544796;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=9FgjtWRQhn4mqAKvRrsk7CBm/hwklJdaemm2NrmTSy0=;
-  b=UZyDha2BnuVsIVsqMpDlRXsO5DzCToyQNJJKr0lVE1l+/BnCwkRYSGf1
-   pidjjsH3wJUxs+B05O3firxYoPIvktZAO/kVTb5Zdtv4Dg30xuDc9whh7
-   DDlZQuB6giEPfXy6e1uEAuCLh1RTi8U0qNLCNQ7iuU9w/He+YJHfWLrFd
-   zFH5833pD3Iq1cpZsr8hZaWsm09hkQw+7uaDks3g6NaQC2oJ1NwreY35a
-   AdZZgzvcdlmw2Lc5IRtcmqm/EEAV/Ui4BHF8LNutFtVpD7id1Ugjfqf1V
-   vMcwEtzYUMtD55puQI0bBrIBay5FdvfQ8xw4wdh5zPlE/vdDJjuoWuxsg
-   g==;
-X-CSE-ConnectionGUID: 14/SfHXRS9KWkjqXHdPtdA==
-X-CSE-MsgGUID: TSsAFEcAS1SGFUZnZePlSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74475334"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="74475334"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 18:06:35 -0700
-X-CSE-ConnectionGUID: 3RVYNCZSRtKscq20ThIqaw==
-X-CSE-MsgGUID: RPdKOahXQL+QCYUDaaopKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="182659172"
-Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.88.27.140])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 18:06:34 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, Dan
- Williams <dan.j.williams@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] dmaengine: idxd: Memory leak and FLR fixes
-In-Reply-To: <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-0-595d48fa065c@intel.com>
-References: <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-0-595d48fa065c@intel.com>
-Date: Mon, 20 Oct 2025 18:06:48 -0700
-Message-ID: <871pmxkqqf.fsf@intel.com>
+	s=arc-20240116; t=1761008931; c=relaxed/simple;
+	bh=oxV6DkSuzv67RKygZK1LFo8YEpvX0EUdzoFetLXu8UY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ooa5DdD7dq4aMhfdZsQHUcHY97BTixiwbh/YLiu/mLikDjHtkE+/HZwiFQBWdIsnmtyC+e3Q+5gfNE+3bk4FyU89rV9COxw2MjjIozi96zvtawGZZmqFF/zvygxYbrT8mDGHQt7IVAaZoS1eryp5o4t73fgKdafwM3sakAjqCJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WvgMIthJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08544C4CEFB;
+	Tue, 21 Oct 2025 01:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761008929;
+	bh=oxV6DkSuzv67RKygZK1LFo8YEpvX0EUdzoFetLXu8UY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WvgMIthJ9SQxyaW3JpAr/WZsuYjZratdc9EjcLbPJRzPyBIU8k7kz2hbJVE8jrfWO
+	 sHdgVx2arHT2FYNVnnsyrjunuNXpDv4Y/QjK029h/y0y/LZYGpFlsNlXb+9ENj4NNi
+	 scNqrMwb8zEHl6Uw3Dw1Ql8WHfd16eoNbMP7beU495GzI34VcegiXTji4VVfb5tvHN
+	 KqyNGx5mgBCrsttYPbdzmtqfJ3I1STv3Vz7jW/jxPkVAvfVwupJAlOE2QTTgnDoLQg
+	 lia+48SNFDWzC5xbe4z3ZYglHnxmMAqbMgSHEXLlD6w0jVeXNKo4iJDL3+bpB5OXsA
+	 byM0UDe8/TRbw==
+From: SeongJae Park <sj@kernel.org>
+To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev (open list:DAMON),
+	linux-mm@kvack.org (open list:DAMON),
+	linux-kernel@vger.kernel.org (open list),
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: Re: [PATCH] mm/damon/sysfs: Remove misleading todo comment in nid_show()
+Date: Mon, 20 Oct 2025 18:08:46 -0700
+Message-ID: <20251021010847.68473-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251021021712.59017-2-swarajgaikwad1925@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Hi Vinod,
+Hello Swaraj,
 
-Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
+On Tue, 21 Oct 2025 02:17:13 +0000 Swaraj Gaikwad <swarajgaikwad1925@gmail.com> wrote:
 
-> Hi,
->
-> During testing some not so happy code paths in a debugging (lockdep,
-> kmemleak, etc) kernel, found a few issues.
->
-> There's still a crash that happens when doing a PCI unbind, but I
-> don't have a patch at this time.
->
-> Cheers,
->
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> ---
-> Changes in v2:
-> - Fixed messing up the definition of FLR (Function Level
->   Reset) (Nathan Lynch)
-> - Simplified callers of idxd_device_config(), moved a common check,
->   and locking to inside the function (Dave Jiang);
-> - For idxd DMA backend, ->terminate_all() now flushes all pending
->   descriptors (Dave Jiang);
-> - For idxd DMA backend, ->device_synchronize() now waits for submitted
->   operations to finish (Dave Jiang);
-> - Link to v1: https://lore.kernel.org/r/20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com
->
+> The TODO comment in nid_show() suggested returning an error if the goal was
+> not using nid. However, this comment was found to be inaccurate and misleading.
+> This patch removes the TODO comment without changing any existing behavior.
 
-Gentle ping. If anything is missing/could be improved, glad to fix.
+checkpatch.pl complains as below.
+
+    WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+    #10:
+    not using nid. However, this comment was found to be inaccurate and misleading.
+
+> 
+> This change follows feedback from SJ who pointed out that wiring-order
+
+s/wiring/writing/
+
+Also, giving a pointer to the previous discussion could be a good practice, in
+my opinion.  E.g.,
+
+   This change follows feedback from SJ who pointed out [1] that ...
+   [...]
+   [1] https://lore.kernel.org/20251020151315.66260-1-sj@kernel.org
+
+> independence is expected and the function should simply show the last set value.
+> 
+> No functional code changes were made.
+> 
+> Tested with KUnit:
+> - Built kernel with KUnit and DAMON sysfs tests enabled.
+> - Executed KUnit tests:
+>   ./kunit.py run --kunitconfig ./mm/mm/damon/tests/.kunitconfig
+
+Not an important thing, but...  if you were doing this on the root of
+unmodified linux tree, the command you executed would be,
+
+./tools/testing/kunit/kunit.py run --kunitconfig ./mm/damon/tests
+
+I guess it was just a simple copy-and-pasta mistake and I don't really mind,
+though.
+
+> - All 25 tests passed, including damon_sysfs_test_add_targets.
+> 
+> Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+> Suggested-by: SeongJae Park <sj@kernel.org>
+
+Other than the abovely mentioned trivial things, so nice patch, thank you!  For
+another version of this patch that the above trivial things are fixed, please
+feel free to add below.
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
 
-Cheers,
--- 
-Vinicius
+Thanks,
+SJ
+
+[...]
 
