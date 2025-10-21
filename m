@@ -1,116 +1,78 @@
-Return-Path: <linux-kernel+bounces-861958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065FBBF4208
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DE8BF4217
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8190118C53FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:12:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4E418C45EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1EF18DB37;
-	Tue, 21 Oct 2025 00:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070A61D516C;
+	Tue, 21 Oct 2025 00:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eEk08tBG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvg+NYI0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F07800;
-	Tue, 21 Oct 2025 00:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AD615624B;
+	Tue, 21 Oct 2025 00:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761005532; cv=none; b=BK3w1iTQvKC2ZvCHy8wZYbOEMntUgl1/apGUzsjqBG3wTl1sWaaEWtqkT8C2WsVGxyUOLmafsrXNCOsbCn2cwis0Sj+GanWpa+H7AwaTfwzgu1cM9kYEeFyy0mdmM8D+l8YI0Lm38Ly6xFlrUc6+vZOq+ugV9yvbKb83VhvIOxg=
+	t=1761005791; cv=none; b=ERCE5bTJkql3/FXjioPyv0CP8O8FCpIt1UavmebkpAujdj+ScXd1fecJEYMxhL4muvDiZR8ba1xZ8q56TME9x9kR7a8q7CobN+/PIqLL5SsGVfH9jeK1Sl5TJxuYcOgT1UBkdPoc8tXS4QshRw2P9e9VJPjTF6rGIXsqhWCckzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761005532; c=relaxed/simple;
-	bh=9tDbOcwOA7GDWYSQKMP6J7OtQ2IoXgXktiqMfQGa/ZE=;
+	s=arc-20240116; t=1761005791; c=relaxed/simple;
+	bh=byVn4gwFjcc3i22Bio1fto4stbFidQ3PbKdyebP0pYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VZ3lix+ejoRqjBYEtdyPNEc2ZYu4mxofERwLREzGRuX/hi5MLtlVba5Yh8XJjmpoeiHNJIudNDjnPD3c3Xesufn4GUFHV8mhVVJz/Q79B1G/bslum9BXG81Q00EsB4c4WEuX36oWhijMO7l6DMJd5Rr43/WuCnkw8hkSyn9l83M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eEk08tBG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761005526;
-	bh=JpNIfASPanXKVDHjuQv9IM9sDkORHHX4iamOn9bGm7o=;
+	 MIME-Version:Content-Type; b=G8J1oov2ZKHd1i1eXsi0tL5LnAZywE5rI2b+26LCWV3qIlw6fumD/DA5h2EnHVKwVEm3Q+aMg4Tho1ZCEmyJ8jeIps2xgH5HRt5r8OHNjVWTPBA2P63Xz0VIPch/4y3I9eZcWB3Ow2U3iPVcHWI4PFQq0+Z5aKYOQz2UPgBngVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvg+NYI0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DDC7C4CEFB;
+	Tue, 21 Oct 2025 00:16:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761005791;
+	bh=byVn4gwFjcc3i22Bio1fto4stbFidQ3PbKdyebP0pYc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eEk08tBGX/1ZkTreg/9UiBGsr3RIfR9UmhaIpHb7ONUAsRHokjSxVTNIJguD6D8F6
-	 Bu3qv5zE1nti3hd7hHv76Esb/XiSsNYbhHU84vMS3ZXLCZnCBJU1QTWyPa85Z4LLSZ
-	 Yu7vmZU37Z5RULyg4QxtqYZhEX3zTKSA6alRQzmbAHtQIJ4kHO4f4uyBRNGc1ifBkz
-	 O8zO3yo6ve+MF0Nrnag9P4W7bRJI37zp8/ImvyxIod+nhr5MFqlCk4YGugb3dowsWj
-	 XwOmo0G5Z4NeC3P6dcKVB+C4xQp4faWfZjS20AaeLbW5UFuq4DuVzAhKqIcCz4s15x
-	 jXT4tOd2o4Fgw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4crCQt154Qz4wB4;
-	Tue, 21 Oct 2025 11:12:05 +1100 (AEDT)
-Date: Tue, 21 Oct 2025 11:12:05 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Serge Hallyn <sergeh@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: failed to fetch the capabilities-next tree
-Message-ID: <20251021111205.4c7e9706@canb.auug.org.au>
-In-Reply-To: <20251021074654.25a18582@canb.auug.org.au>
-References: <20251020075738.2de7288c@canb.auug.org.au>
-	<aPWPWEfPpyE94qcs@mail.hallyn.com>
-	<20251020140947.0dfa07c9@canb.auug.org.au>
-	<aPaUj1rENWJr+fvX@mail.hallyn.com>
-	<20251021074654.25a18582@canb.auug.org.au>
+	b=hvg+NYI0GAjUoeaiQw19JnA2aSWvm1WAy2BVRyHdEDkzgK2WeUk60O4vlADEAdUNt
+	 T1Pe31ZbiIW4NNEsFNl+JIxy57W5ozUoJ8Zp6p3YGG2ZI/o2xlIisKVmNxHw+yALxq
+	 652130m/4xM1sMfa7No3U3Kvv621sdtFCClbSKJTcBommAhs2/coKFBALoekwTsUgg
+	 mLxK7kWIxpFqCAKLqCcoopPEzgSqOERkCLnM6SXia89iFvULvvC9s/9/M0n+IAk1R8
+	 BYpWe5sHOnDiuHBH3M3n8FAKE3q/0oqpM0wpPTUBkpiIzTFqJaFQSxOgqvI9w6rSpr
+	 E6wmBuogNc32g==
+Date: Mon, 20 Oct 2025 17:16:29 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux
+ Documentation <linux-doc@vger.kernel.org>, Linux Networking
+ <netdev@vger.kernel.org>, Subash Abhinov Kasiviswanathan
+ <subash.a.kasiviswanathan@oss.qualcomm.com>, Sean Tranchetti
+ <sean.tranchetti@oss.qualcomm.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>
+Subject: Re: [PATCH net-next] net: rmnet: Use section heading for packet
+ format subsections
+Message-ID: <20251020171629.0c2c5f5e@kernel.org>
+In-Reply-To: <20251016092552.27053-1-bagasdotme@gmail.com>
+References: <20251016092552.27053-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/g6Lk1S3Pi_ogTtP7ze6rurI";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/g6Lk1S3Pi_ogTtP7ze6rurI
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi Serge,
+On Thu, 16 Oct 2025 16:25:52 +0700 Bagas Sanjaya wrote:
+> -a. MAP packet v1 (data / control)
+> +A. MAP packet v1 (data / control)
+> +---------------------------------
 
-On Tue, 21 Oct 2025 07:46:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Mon, 20 Oct 2025 14:59:11 -0500 "Serge E. Hallyn" <serge@hallyn.com> w=
-rote:
-> >
-> > Done, and I'm adding a note to my process notes so I don't forget.  Sor=
-ry
-> > for the inconvenience. =20
->=20
-> Thanks.  It is not a big problem, it just gets flagged when I fetch and
-> I use the version of the tree I have (which may be out of date).
-
-It appears you now have a branch called "next" and a tag called
-"caps-next", but I expect a branch called "caps-next" - unless you
-would prefer I change to use the "next" branch.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/g6Lk1S3Pi_ogTtP7ze6rurI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj2z9UACgkQAVBC80lX
-0Gy4QwgAhVc9aHN0xw7uGKv5rnHiwHTt6YImOJTzTAHTbOwlEsE5nvieR0ksPFAT
-70dIHPl/AJxoYXNci9GTKKSqFdfjm0+xKSXrU7CTPtmbdeE+sMbRBJBFHtluRkFV
-D2uBQbkH0PKTxp/ExmkXCCUe68QfjLEDN/CzkGD2nL9jFqxVLCgPwlGgrZLP7LWU
-XPMTHcRCuSt7/T2KoS/knNTIcwsqR3Ou5wLB51u/OGMsgr4ecm/wg6GFikcVD12k
-4OofET6/7ms2GgGZy22qRIJlGYZ9hSCK1KVgHvfJGmVwo+/Rdp+ZwDwWgqMKst6+
-DDuAwYkqTgdv9dOfmVM8P5gBXWaHvA==
-=no8O
------END PGP SIGNATURE-----
-
---Sig_/g6Lk1S3Pi_ogTtP7ze6rurI--
+Why capitalize the "A" here? it could have stayed the way it was, IMO
+lowercase is actually more common and (at least my) Sphinx doesn't seem
+to detect this leading letter as in any way special.
+-- 
+pw-bot: cr
 
