@@ -1,226 +1,200 @@
-Return-Path: <linux-kernel+bounces-862976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3974BF6B5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:15:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE470BF6C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE0C19A4F40
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:16:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D7A95034AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C094A336EC9;
-	Tue, 21 Oct 2025 13:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0943A337109;
+	Tue, 21 Oct 2025 13:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QE8wYcCP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="fZaAxkTn";
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="mL5RJNEl"
+Received: from mailhub11-fb.kaspersky-labs.com (mailhub11-fb.kaspersky-labs.com [81.19.104.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554A51DD9AC
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D4F333733
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.104.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052534; cv=none; b=stJzIe1/V/+aQYt1H21AgXoKqFdQCiC8JjlUd5WxZ5BOYrkcMr9ET3iwh9dwSYviAVXBat0+W9RIldt23wOG1sFLL0+JCoHIv/ZJnKKkxmuKZ7cTF3gu8NCHLhtygXNlWRVUHjSb35JsM5YB/323Rot/SOTSSiESlgdU/D9mBe8=
+	t=1761053255; cv=none; b=GofvNXm74jsnAATAdVQt80+BYLEicbzs8RpVte8+NDnECdPmUV8AXWeGtlZAlkI+ahj+s9+ZP8P/2P7ltimd8Rcv76dteeyE+l7NtquAI+GZgfUOLdtzVfl+62+CbtsY3sgNkX7fpRPjo5T8w0y5Q3/IjAfpdwZlo5rkGox2qMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052534; c=relaxed/simple;
-	bh=4lLcQvMnunkz+GAunoPU58cpUiOPw7liFAGLkEBA6QU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVHl7A0rFhgLttEaRlOOwWu9ZuwMXhQqHFMnMwJOjwX1Pmsu2L06fILzxFNTcciPUl2a6BkLU6aUa6dZBsqKbAObu0sNJShdwdhsTwO9ZEQ+ZQIgXrGpNkPSx1tuKQesOW33Bf8c+tsMHwmfY+a3TBpJMtUwpNPQw0dNmBqQBGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QE8wYcCP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761052531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=paa6y0Umm0pxhPmdABIWbZ6KYckQ88Ey6Dsg8Oz34GA=;
-	b=QE8wYcCPeB+kyaSrRTbqgojlmvxYRFod6sEzZ/SpTDuPj8on9A2LXiKNIV/zdRXRwE0XF5
-	meSArvKyq6uAdfuerdmvnqG9qcdROeJsubNNnzDAQlmXwNEobA6HBe92BuxoRwClb4zEpo
-	FkQK4wyzrJfXENOXrHNwKW5BOHodj9c=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-84-_BpW9W8cMxqJfiFTOFOuYQ-1; Tue, 21 Oct 2025 09:15:30 -0400
-X-MC-Unique: _BpW9W8cMxqJfiFTOFOuYQ-1
-X-Mimecast-MFC-AGG-ID: _BpW9W8cMxqJfiFTOFOuYQ_1761052529
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46fb328a60eso33093695e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:15:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761052529; x=1761657329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=paa6y0Umm0pxhPmdABIWbZ6KYckQ88Ey6Dsg8Oz34GA=;
-        b=bdfUaLIBaSjpk5wI85nTpaa0eV7/dSHulBmuSv8KGqnPJxCo8jn46N0HKuhUfL453S
-         VnGYoZKT0ntMo9IFJ49oCINTW4ELwGu63COuPjyB3pXXmFro0kFxkRBah8+TXt+P31OP
-         hfgzGvg0AuMrVSCbXYR6AYfRABRJuhFnj5ov/hhipSY6sEJr9tliwXsplNqzr8sOQxhE
-         fvwN4BeFXgLryr/sz3DBicfmgv73/DMjllLnDGrVA2myPM1hVy0Rja7rVzT94fQKvS3w
-         IVJ+CrMgAfmuo4Yf1a/CjwVeYbLalr/KwgD31YgCcYYvD6q4QGAm1mcyRvrprQIlvAy2
-         rjWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYzoIu6X5uZB0gjCds8biY8c2V59uEE0h/SROPqOdvLDRDPuRmUdhPaLxuvibm1+HMZt9gHF3MMc4riC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6w51Wz0eUPSOHngp94KqXeLlb74cE+WCLMw2hhYR7s+aULegi
-	UW7GZy7m7LYpKnHA6LEv3OpoAXASpaH5BQCzSDdG+ygGlySMRb/e4hG3WEspinROqZVgFm8VqiE
-	o1h1EUwwbq6FHagzwBrswg8ebpCLUfdNmg30gwcgGco04KielvRkDjUQ3m8mI9wBvZA==
-X-Gm-Gg: ASbGncth1IIitYmx5+jNrcYMi+XnJxdHhTk/9S9v1clopNj5ekfXQ1wQnqyGG+TvhLC
-	Jl7iYI/2kfKTs3N6ViiHX+dxP6aXVjRbBunqhKkyitIXLhXNT2dhRZQEj7AAhtd4jmpet0NN8QU
-	MzFI5lEG0RLTu/qep+bNW0TUV/wdCd4G8vgUjN/w2d355PsCjW75UMQ2ywiMl9iQBcci3Dvh7MV
-	G/Upw48ANKAnovNNk0LHE1IIXHxW+GzzABb6OtEndhkSAw5dky+O3HanWzACsFinNO6ZUtkGoph
-	kyi9frJMi+Cg+41UeyrxkWCxJv5cuEW0FGxjtWSwED+b1QHLJaRCJF/1i2QhuJ2CNRzv
-X-Received: by 2002:a05:6000:4013:b0:3d1:61f0:d26c with SMTP id ffacd0b85a97d-42704dce7bdmr12202122f8f.54.1761052528659;
-        Tue, 21 Oct 2025 06:15:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtT4dHlzzmepxbEEmjHJkJHD2FwCKCqSVsiJy1urptxBGYwBKtZyQJidvDZgwFYhtUThLA/A==
-X-Received: by 2002:a05:6000:4013:b0:3d1:61f0:d26c with SMTP id ffacd0b85a97d-42704dce7bdmr12202091f8f.54.1761052528186;
-        Tue, 21 Oct 2025 06:15:28 -0700 (PDT)
-Received: from fedora ([2a01:e0a:257:8c60:80f1:cdf8:48d0:b0a1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4731c95efb9sm164559345e9.8.2025.10.21.06.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 06:15:27 -0700 (PDT)
-Date: Tue, 21 Oct 2025 15:15:24 +0200
-From: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-To: Francesco Valla <francesco@valla.it>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
-	Harald Mommer <harald.mommer@opensynergy.com>,
-	Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>,
-	linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, virtualization@lists.linux.dev,
-	development@redaril.me
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-Message-ID: <aPeHbKES6yHkh5Rj@fedora>
-References: <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
- <27327622.1r3eYUQgxm@fedora.fritz.box>
- <aPdU93e2RQy5MHQr@fedora>
- <28156189.1r3eYUQgxm@fedora.fritz.box>
+	s=arc-20240116; t=1761053255; c=relaxed/simple;
+	bh=HgtVxvLsM2Y04i9cD3E1Pb5w5+YwriGOWaBQnbm09l0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S1Pt1D7I3pQ+b7hZfC4o9ESnanUaifa7PnsGvzp2c8fFyGYrpbEpef9+RomJ5hPFsLLIKBDgQ3bTQuTVeDXWnCZgcchL++WXnLxz95j0/4NYKZS31vvG+XtHVkQkzVRCbEmzRYfbt0NHvyv5iy9rvwFn6XXWV3+S7SzhrBaPyH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=fZaAxkTn; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=mL5RJNEl; arc=none smtp.client-ip=81.19.104.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1761052646;
+	bh=PclPcpn1MS39EVb55l2NxWn34CNSSLPIBLb4ulkm+kg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=fZaAxkTnm3mOKla5EK1nl4ClB5Vbkbni3QFKqtx9IgqD0/ZmZuLtSkUidCIhLOPQk
+	 3Mxt8DDSJmIjF96QrBmGV1C0tk5rO6GLVtj4hhNN9vG1d/r3jl/UqYGTJoe0IOImoO
+	 1VZIYf0lzeVeqNYZFr96rXHdjjWI/yRlIvZZ8rx91LWr2ydOsFg4iYvy/dkArICd+T
+	 3LHNjuBppPNvO2KoHJ4SX9m3SiFIWgZs/Ur553kvdrDzHaVDiqI+eQQsB1d5wLPAt1
+	 mtQ769+M7SpmrOamXvlE76JaRoF0SlJleNqR00Hd2kj/obAWvMRyki1YoRLKToKVpn
+	 SArUpVD8oi0zQ==
+Received: from mailhub11-fb.kaspersky-labs.com (localhost [127.0.0.1])
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTP id 170FFE867A8
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:17:26 +0300 (MSK)
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "mx13.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTPS id D96CBE80D7C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:17:25 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1761052637;
+	bh=PclPcpn1MS39EVb55l2NxWn34CNSSLPIBLb4ulkm+kg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=mL5RJNElDLlAopUSQ0lqIKBo4MTeupIZmIPuGDMCCNO4bLCRXSbseOqcbSu91ZCAM
+	 3JQGI4y4syBBdwNd9gQLDQwV1Tz0zPgt6xwvmOraANAKrddRwlQ55rQL0W4yU+AOQy
+	 2bzK7tNCz1WctCU+pZ3KEgXEcAljIv3pK0MFQ23ySYxxIhN1N7nz586IRJAcEY5228
+	 5AXjWFiTv5fwqDAQ67uEKQIHaWJfVvh4vAQsxLqlkzfOOcHPviRQsohAZ2jVHoFxET
+	 ZfxyWOXakpjlfu9RymUybEv2Vw3PPQ4mHj7z/4LOTcC3WDBlzpO8yW/TkAAr6oG95u
+	 DiuTP0f9OZK4w==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id AC2873E458A;
+	Tue, 21 Oct 2025 16:17:17 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id D252E3E2468;
+	Tue, 21 Oct 2025 16:17:16 +0300 (MSK)
+Received: from votokina.avp.ru (10.16.104.187) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 21 Oct
+ 2025 16:16:33 +0300
+From: Victoria Votokina <Victoria.Votokina@kaspersky.com>
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+CC: Victoria Votokina <Victoria.Votokina@kaspersky.com>, Christian Gromm
+	<christian.gromm@microchip.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, <Oleg.Kazakov@kaspersky.com>,
+	<syzbot+916742d5d24f6c254761@syzkaller.appspotmail.com>
+Subject: [PATCH v2 1/2] most: usb: fix use-after-free/double-free in hdm_disconnect
+Date: Tue, 21 Oct 2025 16:16:24 +0300
+Message-ID: <20251021131625.2707245-1-Victoria.Votokina@kaspersky.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28156189.1r3eYUQgxm@fedora.fritz.box>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV2.avp.ru (10.64.57.52) To HQMAILSRV2.avp.ru
+ (10.64.57.52)
+X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/21/2025 12:46:21
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 197285 [Oct 21 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Victoria.Votokina@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 72 0.3.72
+ 80ff96170b649fb7ebd1aa4cb544c36c109810bd
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_one_url}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: votokina.avp.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;kaspersky.com:7.1.1,5.0.1;syzkaller.appspot.com:7.1.1,5.0.1
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 10/21/2025 12:48:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 10/21/2025 11:07:00 AM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected, bases: 2025/10/21 12:37:00
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/21 11:28:00 #27790297
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected, bases: 2025/10/21 12:37:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-On Tue, Oct 21, 2025 at 02:08:35PM +0200, Francesco Valla wrote:
-> On Tuesday, 21 October 2025 at 11:40:07 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> > On Mon, Oct 20, 2025 at 11:24:15PM +0200, Francesco Valla wrote:
-> > > On Monday, 20 October 2025 at 16:56:08 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> > > > On Tue, Oct 14, 2025 at 06:01:07PM +0200, Francesco Valla wrote:
-> > > > > On Tuesday, 14 October 2025 at 12:15:12 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> > > > > > On Thu, Sep 11, 2025 at 10:59:40PM +0200, Francesco Valla wrote:
-> > > > > > > Hello Mikhail, Harald,
-> > > > > > > 
-> > > > > > > hoping there will be a v6 of this patch soon, a few comments:
-> > > > > > > 
-> > > > > > > On Monday, 8 January 2024 at 14:10:35 Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com> wrote:
-> > > > > > > 
-> > > > > > > [...]
-> > > > > > > > +
-> > > > > > > > +/* Compare with m_can.c/m_can_echo_tx_event() */
-> > > > > > > > +static int virtio_can_read_tx_queue(struct virtqueue *vq)
-> > > > > > > > +{
-> > > > > > > > +	struct virtio_can_priv *can_priv = vq->vdev->priv;
-> > > > > > > > +	struct net_device *dev = can_priv->dev;
-> > > > > > > > +	struct virtio_can_tx *can_tx_msg;
-> > > > > > > > +	struct net_device_stats *stats;
-> > > > > > > > +	unsigned long flags;
-> > > > > > > > +	unsigned int len;
-> > > > > > > > +	u8 result;
-> > > > > > > > +
-> > > > > > > > +	stats = &dev->stats;
-> > > > > > > > +
-> > > > > > > > +	/* Protect list and virtio queue operations */
-> > > > > > > > +	spin_lock_irqsave(&can_priv->tx_lock, flags);
-> > > > > > > > +
-> > > > > > > > +	can_tx_msg = virtqueue_get_buf(vq, &len);
-> > > > > > > > +	if (!can_tx_msg) {
-> > > > > > > > +		spin_unlock_irqrestore(&can_priv->tx_lock, flags);
-> > > > > > > > +		return 0; /* No more data */
-> > > > > > > > +	}
-> > > > > > > > +
-> > > > > > > > +	if (unlikely(len < sizeof(struct virtio_can_tx_in))) {
-> > > > > > > > +		netdev_err(dev, "TX ACK: Device sent no result code\n");
-> > > > > > > > +		result = VIRTIO_CAN_RESULT_NOT_OK; /* Keep things going */
-> > > > > > > > +	} else {
-> > > > > > > > +		result = can_tx_msg->tx_in.result;
-> > > > > > > > +	}
-> > > > > > > > +
-> > > > > > > > +	if (can_priv->can.state < CAN_STATE_BUS_OFF) {
-> > > > > > > > +		/* Here also frames with result != VIRTIO_CAN_RESULT_OK are
-> > > > > > > > +		 * echoed. Intentional to bring a waiting process in an upper
-> > > > > > > > +		 * layer to an end.
-> > > > > > > > +		 * TODO: Any better means to indicate a problem here?
-> > > > > > > > +		 */
-> > > > > > > > +		if (result != VIRTIO_CAN_RESULT_OK)
-> > > > > > > > +			netdev_warn(dev, "TX ACK: Result = %u\n", result);
-> > > > > > > 
-> > > > > > > Maybe an error frame reporting CAN_ERR_CRTL_UNSPEC would be better?
-> > > > > > > 
-> > > > > > I am not sure. In xilinx_can.c, CAN_ERR_CRTL_UNSPEC is indicated during
-> > > > > > a problem in the rx path and this is the tx path. I think the comment
-> > > > > > refers to improving the way the driver informs this error to the user
-> > > > > > but I may be wrong.
-> > > > > > 
-> > > > > 
-> > > > > Since we have no detail of what went wrong here, I suggested
-> > > > > CAN_ERR_CRTL_UNSPEC as it is "unspecified error", to be coupled with a
-> > > > > controller error with id CAN_ERR_CRTL; however, a different error might be
-> > > > > more appropriate.
-> > > > > 
-> > > > > For sure, at least in my experience, having a warn printed to kmsg is *not*
-> > > > > enough, as the application sending the message(s) would not be able to detect
-> > > > > the error.
-> > > > > 
-> > > > > 
-> > > > > > > For sure, counting the known errors as valid tx_packets and tx_bytes
-> > > > > > > is misleading.
-> > > > > > > 
-> > > > > > 
-> > > > > > I'll remove the counters below.
-> > > > > > 
-> > > > > 
-> > > > > We don't really know what's wrong here - the packet might have been sent and
-> > > > > and then not ACK'ed, as well as any other error condition (as it happens in the
-> > > > > reference implementation from the original authors [1]). Echoing the packet
-> > > > > only "to bring a waiting process in an upper layer to an end" and incrementing
-> > > > > counters feels wrong, but maybe someone more expert than me can advise better
-> > > > > here.
-> > > > > 
-> > > > > 
-> > > > 
-> > > > I agree. IIUC, in case there has been a problem during transmission, I
-> > > > should 1) indicate this by injecting a CAN_ERR_CRTL_UNSPEC package with
-> > > > netif_rx() and 2) use can_free_echo_skb() and increment the tx_error
-> > > > stats. Is this correct?
-> > > > 
-> > > > Matias
-> > > > 
-> > > > 
-> > > 
-> > > That's my understanding too! stats->tx_dropped should be the right value to
-> > > increment (see for example [1]).
-> > > 
-> > > [1] https://elixir.bootlin.com/linux/v6.17.3/source/drivers/net/can/ctucanfd/ctucanfd_base.c#L1035
-> > > 
-> > 
-> > I think the counter to increment would be stats->tx_errors in this case ...
-> > 
-> 
-> I don't fully agree. tx_errors is for CAN frames that got transmitted but then
-> lead to an error (e.g.: no ACK), while here we might be dealing with frames
-> that didn't even manage to reach the transmission queue [1].
-> 
-Let's use tx_dropped then, I honestly do not have an strong opinion
-about it. We can change that later if we are not happy.
+hdm_disconnect() calls most_deregister_interface(), which eventually
+unregisters the MOST interface device with device_unregister(iface->dev).
+If that drops the last reference, the device core may call release_mdev()
+immediately while hdm_disconnect() is still executing.
 
-Matias
+The old code also freed several mdev-owned allocations in
+hdm_disconnect() and then performed additional put_device() calls.
+Depending on refcount order, this could lead to use-after-free or
+double-free when release_mdev() ran (or when unregister paths also
+performed puts).
+
+Fix by moving the frees of mdev-owned allocations into release_mdev(),
+so they happen exactly once when the device is truly released, and by
+dropping the extra put_device() calls in hdm_disconnect() that are
+redundant after device_unregister() and most_deregister_interface().
+
+This addresses the KASAN slab-use-after-free reported by syzbot in
+hdm_disconnect(). See report and stack traces in the bug link below.
+
+Reported-by: syzbot+916742d5d24f6c254761@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=916742d5d24f6c254761
+Fixes: 97a6f772f36b ("drivers: most: add USB adapter driver")
+Signed-off-by: Victoria Votokina <Victoria.Votokina@kaspersky.com>
+---
+v2: Nothing changed
+
+ drivers/most/most_usb.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/most/most_usb.c b/drivers/most/most_usb.c
+index cf5be9c449a55..3d8163bb7b46d 100644
+--- a/drivers/most/most_usb.c
++++ b/drivers/most/most_usb.c
+@@ -929,6 +929,10 @@ static void release_mdev(struct device *dev)
+ {
+ 	struct most_dev *mdev = to_mdev_from_dev(dev);
+ 
++	kfree(mdev->busy_urbs);
++	kfree(mdev->cap);
++	kfree(mdev->conf);
++	kfree(mdev->ep_address);
+ 	kfree(mdev);
+ }
+ /**
+@@ -1121,13 +1125,6 @@ static void hdm_disconnect(struct usb_interface *interface)
+ 	if (mdev->dci)
+ 		device_unregister(&mdev->dci->dev);
+ 	most_deregister_interface(&mdev->iface);
+-
+-	kfree(mdev->busy_urbs);
+-	kfree(mdev->cap);
+-	kfree(mdev->conf);
+-	kfree(mdev->ep_address);
+-	put_device(&mdev->dci->dev);
+-	put_device(&mdev->dev);
+ }
+ 
+ static int hdm_suspend(struct usb_interface *interface, pm_message_t message)
+-- 
+2.30.2
 
 
