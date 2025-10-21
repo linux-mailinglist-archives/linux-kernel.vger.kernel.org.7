@@ -1,165 +1,213 @@
-Return-Path: <linux-kernel+bounces-863265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86C5BF76C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CA5BF7702
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4F0CF3493E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C37C746315C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AE53431F0;
-	Tue, 21 Oct 2025 15:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1739A33F8BD;
+	Tue, 21 Oct 2025 15:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKnWa5x7"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7piabgI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882F542056
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E06D36B;
+	Tue, 21 Oct 2025 15:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761061085; cv=none; b=LmGYJoH//l25zsyQ9s4NP1X28ylheAKCWAJ/VOyCqg9l7KFRNhmQh5tEbevecwvCkwGJ/S58x3AQJEmMo5leLXRLPYq1XReHZTLvR+lLMjiGb3toUPXDF9obmJh+qkHkndMQfcAHGorgfYaR/KdQjTGMeEoepvL/nO5yqfpCQ7o=
+	t=1761061138; cv=none; b=kT0SRMTGi6WE7FkJPjzrEQ5Y/mtuIfx3DzuwDgxqGQRt+udr8h4MNdKHMUb7bFXDKLJaXGvhpdu9V7c4WSpgPY3mVAircpSnjkQqHO+yliu7lLeuUIpkz5N8k5NUSpX+9lhl5QU1xbwuVU6E6xd492h9mRyZfGQS9pFZm+Etwjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761061085; c=relaxed/simple;
-	bh=Xltkqvk9wsNCSS6fJ/DElH7YNzWxHVeWC/z2Swu7qwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MokFChjiH0frQVeeSClhTuuzc+sMAbSfaWsjOZ+9srrPqyps2BjvTuCYYS+0gnATSFJiXDBbk7dLWDIpRT5zo74D2A73+RkpoMLvdxUddA7jjqKtU1XzQQxD2blS337bU4Wa/verd3EzeHL/idurKEUTeWjJk6efqeueTqgE7Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKnWa5x7; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b6a73db16efso3488919a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761061083; x=1761665883; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HTPDHRHyFpbb4wO3dMS1kqyE3mXJLkbAQA5zC5/qZy0=;
-        b=MKnWa5x74NJNdK8EA+xr+ZCaoAhNT6baCeR7bAM4PBpD5qD2qJwfFPPNqSOrQyFejg
-         mcvOJjHU8+kIsG7PV5GUMaqgfpV7DbqvEC9A5Oe0JCY5PFtWmLNm5LZYf8w886Pl+tk5
-         8hz0mp0hcD9TE1MFcdKvxoUTI5ZQMne9wj1lmvFT6F3z2duSn0Cxz4Fk77yYoTQEmWpS
-         govtLk07bxflSLDXmT66u6IwHzj7lqXLSJv06ksq+rdM/A/zJxVQVlmy1c9mlpqWPnhz
-         bKgCq/63T0nJGfyCwfB01LwhPlhng5II3O7GPEClaKCWHnSQ3szHcPcrFNmUrqnDdLkH
-         uueQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761061083; x=1761665883;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HTPDHRHyFpbb4wO3dMS1kqyE3mXJLkbAQA5zC5/qZy0=;
-        b=wCegOrtaAmZHRQ8p1bXy8eUrZbpO4MnkaVY/UzBdjB0fpi/2/ELdnl0SqOpqHf9PI/
-         Tgp7zzP0N5xhhm1zKo+yT5hMNwLzIDvKhi5+IhidZqrwG6VmNbmVJuLLcZ3Vm04oJ1yE
-         tHWx8GOCm1lDVQdLgiWwobQtbN8hQwE5NsJDhEtg52oK5sJSScLTF1v2uDj1prl6bHrk
-         DHsh81o9vd16Su9cSqKWc6PXx9yCAcRcZLSKTKSZLNGL2Ahyg4A3sGSGBGqOeFfFj+0U
-         UwbXWQCm96rOOBFy4ntNbxkOivw9vm9dXepeXeSDi6w2qrFt3/txuOwl3i5lPOlRB07k
-         vGjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQEJU4CFPwQCPhy7CoBUHFxyjDs3TuT8+nkvoltgf+l47Jp2hfswgZFPXG9MU331byJ8ps+C0V6UWhE3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysIWGXaVzb89gL339oQ27ITpbxXF/FtBRADUlmtzMiY1q8BK+i
-	i3xSwkXewB6lONfzuVGDLDWuHBdYhB8Om+YowQ2wPc5r5dzo9SCq1+oF
-X-Gm-Gg: ASbGncuBppsqJxZFWEg6KS2txcUZw2XiluGtajAlN0AIQN3IRwXITMPdEeAhfmISUuU
-	0SVdkt/2Qp4DTHsxgOe6ci/3ijzZnFF1RwRGfVCdsf8xZdYEJLvRyor4y+mkiApX6j+qjOpW6dr
-	EBOuNgsls/fVmwTCXYhU5KYZIumSEaIA5bS2JacrqXm+Zkr6djj7TzTGmohP6CZ71pQD67Mha+6
-	6D6iSsyBVkgH9EJoQZaWMhXXWMJaOEK0BX9egdqTYLQEri1gFGcNMawUbABBdhoC2M4yaXf8v7N
-	NVfs0wxndQvHt8ITwfAHeEN16n4NpwJ2tbaYDw53+f5BeSUJb/aAV6RzUZWgc1EvOpGTB/kCyR5
-	Y5G5xKO0i8HFFdDf7N03o0C36SMtQ1J8WqOeo2kQQSUsmDRYejKrR+gTNMwBv1aMV/0gZrKYRiV
-	QH2gLjxLGJmw==
-X-Google-Smtp-Source: AGHT+IFD5nLuJkhct3AKTxoFVtA9YBDMtterxMe030U32OIMqiYbVASma+GE98S4msp7WNMY/wSxSQ==
-X-Received: by 2002:a17:903:1a0e:b0:26a:23c7:68da with SMTP id d9443c01a7336-290ca02353emr215062845ad.25.1761061082785;
-        Tue, 21 Oct 2025 08:38:02 -0700 (PDT)
-Received: from [10.253.78.230] ([129.227.63.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29247207788sm112311755ad.99.2025.10.21.08.37.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:38:02 -0700 (PDT)
-Message-ID: <5f35565e-ddda-4b3e-954d-7f865baede05@gmail.com>
-Date: Tue, 21 Oct 2025 23:37:57 +0800
+	s=arc-20240116; t=1761061138; c=relaxed/simple;
+	bh=XLeQYak413CtBI3jcHC674M9UA1GVPE1UqJrMh7w2Ns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pvsABwajZMkwLw/g/mzyx+RfqXLrWZRIq0s/ZhzaNwjnK5TUi2MZLeb06RsF3MJ5AYmLHiPLRpfTHin2prAiVHfOopRBiP+lcl6olBjAq9+xB6FNMaoQJX/F9gxB8K2PgBhKbhkkeB00FohHQg9zp9ZOhdVjKlmf73f9w+YJH5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7piabgI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AFB3C4CEF1;
+	Tue, 21 Oct 2025 15:38:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761061137;
+	bh=XLeQYak413CtBI3jcHC674M9UA1GVPE1UqJrMh7w2Ns=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V7piabgI1bWhCF95A9brwFN0p4hcGLyPsPXALNZjPWF1E6zNXVvwTcCYr2FldeE/D
+	 gLsoGdsOdmJo4ySXSqpTTQNZj5mmnyBB5+0EAXkLH8SCa/Bu5KuLi+OZnWd6oFacUZ
+	 IejZzvSQgBKh0xL8kABVHI8NDmjeI1Vhr7o944CEj3YW6SpbRT14ccjXkKs0V2CMqV
+	 by/fWEXqZhtYKU0H3H3DAYxbykSqlxoENYobVy3IVv1rcQTsS0xzxgiReSlEEj0p8Y
+	 IMy2gVqGTwMO62l4J/5oiFiGcsGzignqQc1ZWSbFhEmP9wMcuX4uCkAG+v85TrDZGv
+	 0gK0JUW1KP2CA==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	stable@vger.kernel.org,
+	Valentina.FernandezAlanis@microchip.com,
+	Cyril.Jean@microchip.com,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Jamie Gibbons <jamie.gibbons@microchip.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] riscv: dts: microchip: remove BeagleV Fire fabric.dtsi
+Date: Tue, 21 Oct 2025 16:38:37 +0100
+Message-ID: <20251021-dastardly-washbowl-b8c4ec1745db@spud>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] avoid hv timer fallback to sw timer if delay
- exceeds period
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, yu chen <chen.yu@easystack.com>,
- dongxu zhang <dongxu.zhang@easystack.com>
-References: <20251013125117.87739-1-fuqiang.wng@gmail.com>
- <aO2LV-ipewL59LC6@google.com>
- <c87d11a7-b4dd-463e-b40a-188fd2219b3b@gmail.com>
- <aPJnxDj4mFSJc0tV@google.com>
-From: fuqiang wang <fuqiang.wng@gmail.com>
-In-Reply-To: <aPJnxDj4mFSJc0tV@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4872; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=tyhyGYHv/CwA3yfRKyi9p1HyzXfeQhJxBatLuQlCYLs=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnfV/zpXPZYImjSnd01gmdzeFWtpt/7+tpx8dHLPrdbb 8868aZFo6OUhUGMi0FWTJEl8XZfi9T6Py47nHvewsxhZQIZwsDFKQATcZjG8N9pjtpyhUmnlOJm 9c2bHdxpWNX2I6vg7kLv5JZ37ye8++TP8Fd4RtVRv2tpqgXX1Mo0RNr0sgPYTNe9Pln2PFLf55+ CJD8A
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-On 10/17/25 11:59 PM, Sean Christopherson wrote:
+From: Conor Dooley <conor.dooley@microchip.com>
 
->> ====
->> IMHO
->> ====
->>
->> 1. for period timer
->> ===================
->>
->> I think for periodic timers emulation, the expiration time is already adjusted
->> to compensate for the delays introduced by timer emulation, so don't need this
->> feature to adjust again. But after use the feature, the first timer expiration
->> may be relatively accurate.
->>
->> E.g., At time 0, start a periodic task (period: 10,000 ns) with a simulated
->> delay of 100 ns.
->>
->> With this feature enabled and reasonably accurate prediction, the expiration
->> time set seen by the guest are: 10000, 20000, 30000...
->>
->> With this feature not enabled, the expiration times set: 10100, 20100, 30100...
->>
->> But IMHO, for periodic timers, accuracy of the period seems to be the main
->> concern, because it does not frequently start and stop. The incorrect period
->> caused by the first timer expiration can be ignored.
->
-> I agree it's superfluous, but applying the advancement also does no harm, and
-> avoiding it would be moreeffort than simply letting KVM predict the first expiration.
->
+At the time of adding the fabric.dtsi for the BeagleV Fire, we thought
+that the fabric nodes in the Beagle supplied images were stable. They
+are not, which has lead to nodes present in the devicetree that are not
+in the programmed FPGA images. This is obviously problematic, and these
+nodes must be removed.
 
-Yes, that’s indeed the case.
+CC: stable@vger.kernel.org
+Fixes: 3f41368fbfe1 ("riscv: dts: microchip: add an initial devicetree for the BeagleV Fire")
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+--
+CC: Valentina.FernandezAlanis@microchip.com
+CC: Cyril.Jean@microchip.com
+CC: Conor Dooley <conor@kernel.org>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Jamie Gibbons <jamie.gibbons@microchip.com>
+CC: linux-riscv@lists.infradead.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ .../microchip/mpfs-beaglev-fire-fabric.dtsi   | 82 -------------------
+ .../boot/dts/microchip/mpfs-beaglev-fire.dts  |  5 --
+ 2 files changed, 87 deletions(-)
+ delete mode 100644 arch/riscv/boot/dts/microchip/mpfs-beaglev-fire-fabric.dtsi
 
-> KVM unconditionally emulates TSC-deadline mode, and AFAIK every real-world kernel
-> prefers TSC-deadline over one-shot, and so in practice the benefits of applying
-> the advancement to one-shot hrtimers.  That was also the way the world was headed
-> back when Marcelo first implemented the support.  I don't know for sure why the
-> initial implementation targeted only TSC-deadline mode, but I think it's safe to
-> assume that the use case Marcelo was targeting exclusively used TSC-deadline.
+diff --git a/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire-fabric.dtsi b/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire-fabric.dtsi
+deleted file mode 100644
+index e153eaf9b90e..000000000000
+--- a/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire-fabric.dtsi
++++ /dev/null
+@@ -1,82 +0,0 @@
+-// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+-
+-/ {
+-	fabric_clk3: fabric-clk3 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <50000000>;
+-	};
+-
+-	fabric_clk1: fabric-clk1 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <125000000>;
+-	};
+-
+-	fabric-bus@40000000 {
+-		compatible = "simple-bus";
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges = <0x0 0x40000000 0x0 0x40000000 0x0 0x20000000>, /* FIC3-FAB */
+-			 <0x0 0x60000000 0x0 0x60000000 0x0 0x20000000>, /* FIC0, LO */
+-			 <0x0 0xe0000000 0x0 0xe0000000 0x0 0x20000000>, /* FIC1, LO */
+-			 <0x20 0x0 0x20 0x0 0x10 0x0>, /* FIC0,HI */
+-			 <0x30 0x0 0x30 0x0 0x10 0x0>; /* FIC1,HI */
+-
+-		cape_gpios_p8: gpio@41100000 {
+-			compatible = "microchip,coregpio-rtl-v3";
+-			reg = <0x0 0x41100000 0x0 0x1000>;
+-			clocks = <&fabric_clk3>;
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-			ngpios = <16>;
+-			gpio-line-names = "P8_PIN31", "P8_PIN32", "P8_PIN33", "P8_PIN34",
+-					  "P8_PIN35", "P8_PIN36", "P8_PIN37", "P8_PIN38",
+-					  "P8_PIN39", "P8_PIN40", "P8_PIN41", "P8_PIN42",
+-					  "P8_PIN43", "P8_PIN44", "P8_PIN45", "P8_PIN46";
+-		};
+-
+-		cape_gpios_p9: gpio@41200000 {
+-			compatible = "microchip,coregpio-rtl-v3";
+-			reg = <0x0 0x41200000 0x0 0x1000>;
+-			clocks = <&fabric_clk3>;
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-			ngpios = <20>;
+-			gpio-line-names = "P9_PIN11", "P9_PIN12", "P9_PIN13", "P9_PIN14",
+-					  "P9_PIN15", "P9_PIN16", "P9_PIN17", "P9_PIN18",
+-					  "P9_PIN21", "P9_PIN22", "P9_PIN23", "P9_PIN24",
+-					  "P9_PIN25", "P9_PIN26", "P9_PIN27", "P9_PIN28",
+-					  "P9_PIN29", "P9_PIN31", "P9_PIN41", "P9_PIN42";
+-		};
+-
+-		hsi_gpios: gpio@44000000 {
+-			compatible = "microchip,coregpio-rtl-v3";
+-			reg = <0x0 0x44000000 0x0 0x1000>;
+-			clocks = <&fabric_clk3>;
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-			ngpios = <20>;
+-			gpio-line-names = "B0_HSIO70N", "B0_HSIO71N", "B0_HSIO83N",
+-					  "B0_HSIO73N_C2P_CLKN", "B0_HSIO70P", "B0_HSIO71P",
+-					  "B0_HSIO83P", "B0_HSIO73N_C2P_CLKP", "XCVR1_RX_VALID",
+-					  "XCVR1_LOCK", "XCVR1_ERROR", "XCVR2_RX_VALID",
+-					  "XCVR2_LOCK", "XCVR2_ERROR", "XCVR3_RX_VALID",
+-					  "XCVR3_LOCK", "XCVR3_ERROR", "XCVR_0B_REF_CLK_PLL_LOCK",
+-					  "XCVR_0C_REF_CLK_PLL_LOCK", "B0_HSIO81N";
+-		};
+-	};
+-
+-	refclk_ccc: cccrefclk {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-	};
+-};
+-
+-&ccc_nw {
+-	clocks = <&refclk_ccc>, <&refclk_ccc>, <&refclk_ccc>, <&refclk_ccc>,
+-		 <&refclk_ccc>, <&refclk_ccc>;
+-	clock-names = "pll0_ref0", "pll0_ref1", "pll1_ref0", "pll1_ref1",
+-		      "dll0_ref", "dll1_ref";
+-	status = "okay";
+-};
+diff --git a/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts b/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts
+index 47cf693beb68..aae239d79162 100644
+--- a/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts
++++ b/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts
+@@ -5,7 +5,6 @@
+ 
+ #include <dt-bindings/gpio/gpio.h>
+ #include "mpfs.dtsi"
+-#include "mpfs-beaglev-fire-fabric.dtsi"
+ 
+ /* Clock frequency (in Hz) of MTIMER */
+ #define MTIMER_FREQ		1000000
+@@ -183,10 +182,6 @@ &refclk {
+ 	clock-frequency = <125000000>;
+ };
+ 
+-&refclk_ccc {
+-	clock-frequency = <50000000>;
+-};
+-
+ &rtc {
+ 	status = "okay";
+ };
+-- 
+2.51.0
 
-Yes, it appears that focusing on TSC-deadline emulation fits the current use
-cases.
-
->
-> I'm not entirely opposed to playing the advancement games with one-shot hrtimers,
-> but it's also not clear to me that it's worth doing.  E.g. supporting one-shot
-> hrtimers would likely require a bit of extra complexity to juggle the different
-> time domains.  And if the only use cases that are truly sensitive to timer
-> programming latency exclusively use TSC-deadline mode (because one-shot mode is
-> inherently "fuzzy"), then any amount of extra complexity is effectively dead weight.
->
->> should not be applied to:
->> sw/hv period
->
-> I wouldn't say "should not be applied to", I think it's more "doesn't provide much
-> benefit to".
-
-Thanks again for your clear explanation and insights. This really helped me
-understand the design choices better. :)
-
-Regards,
-fuqiang
 
