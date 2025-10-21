@@ -1,250 +1,184 @@
-Return-Path: <linux-kernel+bounces-862860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D77DBF65D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:13:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFFDBF668B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149E91893D0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD8F46433A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA46355058;
-	Tue, 21 Oct 2025 12:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EBD355057;
+	Tue, 21 Oct 2025 12:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="faTPRRly"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mxrTZpeI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4328B355033
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAA335503E;
+	Tue, 21 Oct 2025 12:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761048768; cv=none; b=WEkRqJC0OBMsdnVEqKHbxQPnn/N1SJzzy6VjNoGQS53n2+YZXHzPbbdzhS705C9vEdxMo8HxJgFvY6MCVOvQ15StkPyFVJQShmuUOXMBi88pqP4gUUSkMvihMCFvDGaN0ynRhpMKjOlMORUthF597dyOzQY4fJ8VeGi4f+0Bad8=
+	t=1761048877; cv=none; b=Ooi4gsZygPeqXIAK3xEEOo8hN8UBkC2OGk+WlPulhZ5dMfD79+G7cI8YMTIUVHK9+/0aWqMipcZ7AwqTbU+cw7qhq4p3/Cry/Ek8f8wKG8yfef+GG1uoI3hOrrBXhIJOMKnTvfdUsPkO/kRIEEWfBTY77xcjSGw1FxBX9PuqIM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761048768; c=relaxed/simple;
-	bh=HHLuhyjdrpYP+6RicMRAMeMaT9Q8fxefq0Y4Q+tK25c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pnqlJli/MypT4y3tVg4HAoDybRmY8JNiUjDZZRC5HkTpZ1VtydN+CqikhOzhNrhOsYCCFJGjoU7gcHk79WDgzXhc/asZsd4rS1piP4E/w9D6W7yVAM5geCm+WOsvnKj9W0NlO0CAxsqpTt+hZdHXuWouL3wxZUKSxQ1pbjoXE60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=faTPRRly; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8L1Jj005242
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:12:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oWb0iuOCvOXjqmawB9cZBO7fb4qJEEBrLs9e6I4+SuQ=; b=faTPRRly9aEUDETA
-	UdqguB2P24J6VOE828KBDpzjEnexwxydEUI3mLr5MxSZs4AoLB5I2doqw8LqLDsR
-	Iyksvbcw38r3OY0JjDZFAPy/BBZBeR3BrNNYMO8Ceg6j/WtNtEO9bEkhXW2r+twV
-	T1O22IFUqBePw9lvcVzzgGlPQrSwohey8GrUOS1MnnQfgXE9fg795pC3IJM+fhVU
-	lXLBoeQ5g5eeo5hlAuyMQp42rv4g7mXNFSCsjKV0sVsgczUrwabw0JDEdTYR2Ppe
-	T0LcP6xmDCrqI/a+0v3nrr1QmXqf0+GabEHyXhcr+PIiOEqo0XZVa22IzgmagRcz
-	It3tkw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3nfgjj3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:12:45 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-28a5b8b12bbso138705565ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:12:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761048764; x=1761653564;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWb0iuOCvOXjqmawB9cZBO7fb4qJEEBrLs9e6I4+SuQ=;
-        b=Sc+/aHMyM0bSBuS73xXhO78wFIXiX0Rr1eD6yWAYvKihq4htMSNH5MR2DL3Ltpirsg
-         hDX7JX4UxQjzAPMllRTvBl6GmFq8sM2cREqfMHcX40w92kWtjlr3roBgAQiPLsQmTxr5
-         xHWOvZFjqsCg3dnA0l9ZaSGxHN44XLsiSVxYGxpxY7B7QdpDSO8zeWZ8J9O/l68IDKD4
-         G257PT5XhFddI4BdEneBDB7TZaioKAtCNq4IWPtBQgVerfqEasTWf1ApN4hrjYNoiEO8
-         YwYkxWLz5An8EUtGemAp/1J83Z4cRxXBe40ttNdG0toH8vRfqJwwivH4p0tGMbMbmz/2
-         V69g==
-X-Forwarded-Encrypted: i=1; AJvYcCXXE2GPo+JhWRGTZZXqbl/UKS8Cc8Xc/sur0fJbbnw7V/QvdNTUz27MbXRpSQScuZPQRVKIGrPPHNc7wvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHYc5o1/cNf23GdACBptdD/f4KBPABgbfT757dij0ZcbclAF/7
-	v6RhBU0NTO4tHkA9PbBZq8sgMe1/Vhrr3Aruq+SekEMkZd7Hp9wDMxLuMKGIks+f2mVePdLYdx/
-	LacNHmL9+ayDdlSmswsLXB5Fdjj2yK8C7ifwR7C9QRbRFJcRzkOGrhKpRINnoK8MT0EY=
-X-Gm-Gg: ASbGncvz3SMNZcLhE+sclfSRnc11RLAsJi0Dkxor+erUGIq6xIxCuybYiJg19nFE/pp
-	hjba/ek3YaqgJ6U0akb+PmIAhURaXmCvWL2v8ZJT5WTNlg1eApTOxPaD30QNuRTngNfy86QFLJY
-	3Hjh1XvB5YVpSmVbzeaxRCTnHb+9HK2jmZw25ckwTOp+tIXtFH7rTdUdJaxm/ZDg7vMepHm17ax
-	U08vNNOZrVUosJMoQZxyjm5AIMF8TOCiI+WDYF8vIPvNlZu3lSEXTfPF/Lu2sQhsUxu39AABCW+
-	cs15/3aNUF3f9A69lt92ybt9W+MjyvtuHiGXRU+D/KZTnnvVCwVezGtGmfDipDWCrb8hqo482PP
-	HbIJLMCsU0F0trCdDHi+nNXI2K1ECfXku
-X-Received: by 2002:a17:902:ef4f:b0:275:b1cf:6ddc with SMTP id d9443c01a7336-290c9cf8f20mr213534465ad.5.1761048764452;
-        Tue, 21 Oct 2025 05:12:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEv6jCOOD6llWl3c+F3lpCgLyEVyjBbNEywAKQpMvm+VMkm9TzNfqWByG3kTLSRh2pz87DfHQ==
-X-Received: by 2002:a17:902:ef4f:b0:275:b1cf:6ddc with SMTP id d9443c01a7336-290c9cf8f20mr213534125ad.5.1761048763979;
-        Tue, 21 Oct 2025 05:12:43 -0700 (PDT)
-Received: from [10.218.42.132] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b77bf6sm10254761a12.41.2025.10.21.05.12.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 05:12:43 -0700 (PDT)
-Message-ID: <f80e1d58-cae1-4f3b-8b66-fc920ad4c5ba@oss.qualcomm.com>
-Date: Tue, 21 Oct 2025 17:42:39 +0530
+	s=arc-20240116; t=1761048877; c=relaxed/simple;
+	bh=ElSiGl51SENdQy+zgYpYwRZ/ED2yT+tL43Wf5Uo2oRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ffkUlMd+UOd3cCW4yAfNfC6MBsmCXB/aO9iKrv6qhGc+XxOLrFecuPV2yQ4nrZLNCF+QIZNuKCYeNCdosQsHjcjRlSSsqhEcX3geEm0gTk9sl5f7aPlFMfDiamllN3wyQcaFm9eQCoiUrns4ogQ3cLtTflUVj7SliS5+bW/9tXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mxrTZpeI; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761048876; x=1792584876;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ElSiGl51SENdQy+zgYpYwRZ/ED2yT+tL43Wf5Uo2oRo=;
+  b=mxrTZpeIG0TipS+JUltNkZQ9839b6xS7l2ixzrHg9vZ5rZrPe34hBpWO
+   y3dzR56Hqsiixu9WTqRMXaGHYHrSu3RDcM0uAE931p0QVfOUVyhbWMlss
+   3yS13TGwiGkBPnWASW5Pg7N5SRlVGIfIpJic5SPhTOasF0IPsWTKZ5KGQ
+   F0a5lCXJeR4HlORwlATD2LLzbI7hvK3JzSXS3fEiOyHcdhcRmBrXZnVsL
+   Jx/ELusRbCyWmesVDVI2weJ8ia7N1iyB+sXZKg1Dj2nlBmMYOM5CwUoNv
+   3qNo2EJ+RjJnCbU6ORjcr9mJh10uPFbuVev+ovBr89caD7+NSUa4nm9mp
+   Q==;
+X-CSE-ConnectionGUID: NcrZt546TyiBiGmzv3RB5A==
+X-CSE-MsgGUID: tZvMHudGTBKjrL0XPtUj3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73843859"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="73843859"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 05:14:35 -0700
+X-CSE-ConnectionGUID: mFYrMzXCR0aGuLvRqYMPBA==
+X-CSE-MsgGUID: ucocjoz3QIGLiRJSkgBqFg==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 21 Oct 2025 05:14:32 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBBG1-000AoJ-2c;
+	Tue, 21 Oct 2025 12:14:29 +0000
+Date: Tue, 21 Oct 2025 20:14:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aditya Dutt <duttaditya18@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Frank Zago <frank@zago.net>
+Cc: oe-kbuild-all@lists.linux.dev, Aditya Dutt <duttaditya18@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: position: Add support for ams AS5600 angle
+ sensor
+Message-ID: <202510211910.UK1wOVjv-lkp@intel.com>
+References: <20251020201653.86181-3-duttaditya18@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] PCI: dwc: Fix ECAM enablement when used with vendor
- drivers
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam
- <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Ron Economos <re@w6rz.net>
-References: <20251017191005.GA1041995@bhelgaas>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20251017191005.GA1041995@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: a9EO4stqKQOChrQcgthTAQqMa7cIJTzA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyNyBTYWx0ZWRfX+YJMncfGKb7f
- t3kU/nEi+B7nVvq01tP9D/FXzXQgzYQPd6YJ8dG0Tu/fa67EQW0Pel7s051bZe2rt1axU9xMfIb
- svSX56pGfHgwuY6T8u7Lmrbgb9mh1OpOG5SJy2B8gbwXmu8Bw7MZQB2AQT1nB+WPq3Yi+diMyht
- dTKcT4/CUXzHF9s2AkbQmfRl7eG+f2SXDQwgMrHbLpSrt65ckVXxsSFMjSS5OD+Ajx2pAeS7xi2
- MKFIW1F80DMVuw45AfViInV8g1vc5Js3D0pHvZw/mF2JF/0nkqo/EgbGcrZYP4Tl6IPisT6cLJ2
- KIDEWS7rzySzO7GfpzrD8aLdT/wYGnmoyYSTlCG3dqrtsVe4+CFQU7+pOcogboQS4F11gwcOJzs
- zj/Dl/VWpXgq2EZ86w5DBfG4g78/jg==
-X-Proofpoint-GUID: a9EO4stqKQOChrQcgthTAQqMa7cIJTzA
-X-Authority-Analysis: v=2.4 cv=EYjFgfmC c=1 sm=1 tr=0 ts=68f778bd cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8 a=EUspDBNiAAAA:8 a=fRNJI3KV-S8XUuZoZUwA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22 a=nmWuMzfKamIsx3l42hEX:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 spamscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020201653.86181-3-duttaditya18@gmail.com>
+
+Hi Aditya,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on robh/for-next linus/master v6.18-rc2 next-20251021]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Aditya-Dutt/dt-bindings-iio-position-Add-ams-AS5600-Position-Sensor/20251021-042001
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20251020201653.86181-3-duttaditya18%40gmail.com
+patch subject: [PATCH 2/2] iio: position: Add support for ams AS5600 angle sensor
+config: powerpc-randconfig-r073-20251021 (https://download.01.org/0day-ci/archive/20251021/202510211910.UK1wOVjv-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251021/202510211910.UK1wOVjv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510211910.UK1wOVjv-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/position/as5600.c:127:12: warning: implicit conversion from 'long long' to 'int' changes value from 4096000000 to -198967296 [-Wconstant-conversion]
+                           *val2 = 4096000000;
+                                 ~ ^~~~~~~~~~
+   1 warning generated.
 
 
+vim +127 drivers/iio/position/as5600.c
 
-On 10/18/2025 12:40 AM, Bjorn Helgaas wrote:
-> On Fri, Oct 17, 2025 at 05:10:53PM +0530, Krishna Chaitanya Chundru wrote:
->> When the vendor configuration space is 256MB aligned, the DesignWare
->> PCIe host driver enables ECAM access and sets the DBI base to the start
->> of the config space. This causes vendor drivers to incorrectly program
->> iATU regions, as they rely on the DBI address for internal accesses.
->>
->> To fix this, avoid overwriting the DBI base when ECAM is enabled.
->> Instead, introduce a custom ECAM PCI ops implementation that accesses
->> the DBI region directly for bus 0 and uses ECAM for other buses.
->>
->> Fixes: f6fd357f7afb ("PCI: dwc: Prepare the driver for enabling ECAM mechanism using iATU 'CFG Shift Feature'")
->> Reported-by: Ron Economos <re@w6rz.net>
->> Closes: https://lore.kernel.org/all/eac81c57-1164-4d74-a1b4-6f353c577731@w6rz.net/
->> Suggested-by: Manivannan Sadhasivam <mani@kernel.org>
->> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-designware-host.c | 28 +++++++++++++++++++----
->>   1 file changed, 24 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
->> index 20c9333bcb1c4812e2fd96047a49944574df1e6f..e92513c5bda51bde3a7157033ddbd73afa370d78 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
->> @@ -23,6 +23,7 @@
->>   #include "pcie-designware.h"
->>   
->>   static struct pci_ops dw_pcie_ops;
->> +static struct pci_ops dw_pcie_ecam_ops;
->>   static struct pci_ops dw_child_pcie_ops;
->>   
->>   #define DW_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS		| \
->> @@ -471,9 +472,6 @@ static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *re
->>   	if (IS_ERR(pp->cfg))
->>   		return PTR_ERR(pp->cfg);
->>   
->> -	pci->dbi_base = pp->cfg->win;
->> -	pci->dbi_phys_addr = res->start;
->> -
->>   	return 0;
->>   }
->>   
->> @@ -529,7 +527,7 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
->>   		if (ret)
->>   			return ret;
->>   
->> -		pp->bridge->ops = (struct pci_ops *)&pci_generic_ecam_ops.pci_ops;
->> +		pp->bridge->ops = &dw_pcie_ecam_ops;
->>   		pp->bridge->sysdata = pp->cfg;
->>   		pp->cfg->priv = pp;
->>   	} else {
->> @@ -842,12 +840,34 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
->>   }
->>   EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
->>   
->> +static void __iomem *dw_pcie_ecam_conf_map_bus(struct pci_bus *bus, unsigned int devfn, int where)
->> +{
->> +	struct pci_config_window *cfg = bus->sysdata;
->> +	struct dw_pcie_rp *pp = cfg->priv;
->> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> +	unsigned int busn = bus->number;
->> +
->> +	if (busn > 0)
->> +		return pci_ecam_map_bus(bus, devfn, where);
-> 
-> Is there a way to avoid the "root bus is bus 00" assumption here?  It
-> looks like something like this might work (it inverts the condition
-> to take care of the root bus special case first):
-> 
->    if (bus == pp->bridge->bus) {
->      if (PCI_SLOT(devfn) > 0)
->        return NULL;
-> 
->      return pci->dbi_base + where;
->    }
-> 
->    return pci_ecam_map_bus(bus, devfn, where);
-> This is working fine Bjorn, shall I send v2 with this change.
+    93	
+    94	static int as5600_read_raw(struct iio_dev *indio_dev,
+    95				   struct iio_chan_spec const *chan,
+    96				   int *val, int *val2, long mask)
+    97	{
+    98		struct as5600_priv *priv = iio_priv(indio_dev);
+    99		u16 bitmask;
+   100		s32 ret;
+   101		u16 reg;
+   102	
+   103		switch (mask) {
+   104		case IIO_CHAN_INFO_RAW:
+   105			if (chan->channel == 0) {
+   106				reg = AS5600_REG_RAW_ANGLE;
+   107				bitmask = AS5600_FIELD_RAW_ANGLE;
+   108			} else {
+   109				reg = AS5600_REG_ANGLE;
+   110				bitmask = AS5600_FIELD_ANGLE;
+   111			}
+   112			ret = i2c_smbus_read_word_swapped(priv->client, reg);
+   113	
+   114			if (ret < 0)
+   115				return ret;
+   116			*val = ret & bitmask;
+   117	
+   118			return IIO_VAL_INT;
+   119	
+   120		case IIO_CHAN_INFO_SCALE:
+   121			/* Always 4096 steps, but angle range varies between
+   122			 * 18 and 360 degrees.
+   123			 */
+   124			if (chan->channel == 0) {
+   125				/* Whole angle range = 2*pi / 4096 */
+   126				*val = 2 * 3141592;
+ > 127				*val2 = 4096000000;
+   128			} else {
+   129				s32 range;
+   130	
+   131				/* MPOS - ZPOS defines the active angle selection */
+   132				/* Partial angle = (range / 4096) * (2*pi / 4096) */
+   133				mutex_lock(&priv->lock);
+   134				range = priv->mpos - priv->zpos;
+   135				mutex_unlock(&priv->lock);
+   136				if (range <= 0)
+   137					range += 4096;
+   138	
+   139				*val = range * 2 * 314159;
+   140				*val /= 4096;
+   141				*val2 = 409600000;
+   142			}
+   143	
+   144			return IIO_VAL_FRACTIONAL;
+   145	
+   146		default:
+   147			return -EINVAL;
+   148		}
+   149	}
+   150	
 
-- Krishna Chaitanya.
->> +	if (PCI_SLOT(devfn) > 0)
->> +		return NULL;
-> 
-> This essentially says only one function (00.0) can be on the root bus.
-> I assume that someday that will be relaxed and there may be multiple
-> Root Ports and maybe RCiEPs on the root bus, so it would be nice if we
-> didn't have to have this check.
-> 
-> What happens without it?  Does the IP return the ~0 data that the PCI
-> core would interpret as "there's no device here"?
-> 
-> Regardless, I love this series because it removes quite a bit of code
-> and seems so much cleaner.
-> 
->> +	return pci->dbi_base + where;
->> +}
->> +
->>   static struct pci_ops dw_pcie_ops = {
->>   	.map_bus = dw_pcie_own_conf_map_bus,
->>   	.read = pci_generic_config_read,
->>   	.write = pci_generic_config_write,
->>   };
->>   
->> +static struct pci_ops dw_pcie_ecam_ops = {
->> +	.map_bus = dw_pcie_ecam_conf_map_bus,
->> +	.read = pci_generic_config_read,
->> +	.write = pci_generic_config_write,
->> +};
->> +
->>   static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
->>   {
->>   	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->>
->> -- 
->> 2.34.1
->>
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
