@@ -1,149 +1,375 @@
-Return-Path: <linux-kernel+bounces-863577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B71BF8346
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:12:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5522BF8357
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89714662F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:12:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A1FC3BCD25
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6941B350290;
-	Tue, 21 Oct 2025 19:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6E83502B7;
+	Tue, 21 Oct 2025 19:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrlaPjw/"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="RT2ai21c"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2373D34A3D6
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27AE34D93A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761073938; cv=none; b=AdryEcKqDKqXoBy4EPrGJq7gKAaE0F4yNKPk5Lgt+4TF9E7vgJk8384YtFQvc/kzbMMW2wj9ZmMlXofLsFxLHCyEEFVjNbs/v/vSLn9ymFdPsE8rsftju6PrwdHt2N/tE2LbH6hx+wVD7/nEiYol0Tp4LhGpFkSKpPM55L5ekuU=
+	t=1761074016; cv=none; b=XOLJKWHIC0+1S0STi6eb56ThISzWBNEmR2LlMdff0JyhdhJd0AmHixx9CIu5D9Jg1goLWcxS7por8tg6bd34x2oLuZ3QGWJmZ9xaMB0cnvRphX6HgiKJSb7ZiIhAU7IdVgjz0/5krkIyB2lua9/kWoAPtfDG3B16Ep6/TM0NkPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761073938; c=relaxed/simple;
-	bh=hstBXS/TVUOaaiIRmLPtbLaaswkp/Zt78i4TpWCCmEw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZljrKechhDGxZeQ1aTmeYl/7PXRczzFs+ZIZLLoAxnu2bL3HmevaIF7XO7I6ln4i6Vtgek5dXbctDH8VFpSYZ29rFUAKespGJQycvj/m2elFh/BkiWJ9/Xx/RDJj6LaIRQzy1Nb2QT7O7zbfTA36wg+3zTrF+iq0ypuKVOHJb68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KrlaPjw/; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso10220954a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761073935; x=1761678735; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hstBXS/TVUOaaiIRmLPtbLaaswkp/Zt78i4TpWCCmEw=;
-        b=KrlaPjw/zw83E0ZbRGZ0Td1jS6BrwjCH6V1EXhGzJF/Writem6G3OOPRA1cx4kzrDC
-         uP2sHV+R58D51KsXZEc9Wm0rp6q4cdHKl8t5mbztfxbpy6KGhal5lG5mqd0KHu+6u2qI
-         6pUDBWgh+DLkX61WWTOVbHkWXu2n0z/jrw/TcHvHTpa9SlpUtO9YIAMWjYo5NnYHhuQn
-         nB0bWhkFTSOb6kY2VYBFxKAnzfjF0pJcYb+UDbGxYpP6hN9WdnsRklvxVqnnCxj7Y72a
-         TPKKnVwAwMGGQVwMkKtLN6YqJdYUWHCL75OHVbLmafpIbda6fzGD/eNAlhuGL7Z86FIj
-         nfHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761073935; x=1761678735;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hstBXS/TVUOaaiIRmLPtbLaaswkp/Zt78i4TpWCCmEw=;
-        b=YbGAii31e8sSSIPwTeOOvGmELn77faq6j12YhExClCNZgfgkZ19Pc09UHSuTaI69bA
-         QoJKDMLlYE5SJtto7wKvXtkon+g29Bi5Y9+O/HTJLldadOAKqM1evbbibFUfwgqdRjm0
-         6Ze5ROmqxrUBI3OqJ7hQ+uxBJMG25LgloDpjmqm+rZfKm16EnLmbKAcYpdDcx6MJOj2K
-         7C/F0FsfIFArgWZoIk4zPI6B8NpzuH4nPK0abHWBUF8HJ4u7mpNTm4E83/6oy8NCQtXu
-         urqDkCkEncchb7ZSpjqZSvNvfvmvL/Z7Ejhq/zswmteTw4QYeRu7+OUKf+YXHhFw1f5V
-         uxnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA1Ri/fAQ8y9HF6Q+qUVCqUjdSAulkjpnEIzrDweNlZWa3xoAJlufVkz58P83L28OurCQjO4ZABuDuKxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywirgif7DjbB2krIVK5t3ly2YmYgPm3Kd15U+6SisGT6y6VFW6J
-	0tqQFIoumUj7YarWjfb32d4O1VLGT2sEHplRzxqWPzkPqRw8wlF4jQMJ
-X-Gm-Gg: ASbGncu9Ok/OFnS2R61i6e3J+lOQbKuav3fs+TIWQ78gxYgaKH9Gp1CyzVl6tFLU6Y8
-	hVzNc5RQ1XRxNJs00RfXOFpbBCMHXBJW+xC1hhJMPTiuHoHEih9ZnTML+dPCzLzid7UdvCHwSzJ
-	f38e4ch0AH1pll3EvuVcxNs7Se0ARu/B4ggjc0eudsmawREaC3P+YLAbh3w4/dyONK7ozKiINcx
-	nwlqqrpAYysVLekPBFIIA1K7u2tOfs6srLpK+baNWZTa2jwqkcIwadzwCLt5yxSPdVmXgHIsvFv
-	A+hua9m0ET1sQmrJIpLXq5NvuwTQ8H/Ko5N+IBCLBwguFFN7FBQD4lSo/C9dyKXl2xVXIdeswt5
-	lshK0cWo2dD5+WxkMlfSYfmGjmLe5xRKA1uln77pRIID2LXud5rgKm1NpjvlFhQi6OozBNMp9A+
-	9KIZ6qk/wybQJUOgcIhZ3gbqrHwdzSOD+g3tKO4809DH6qugaQoeR0niDO
-X-Google-Smtp-Source: AGHT+IF/mcKyBnV5vQ1RTt10Y+TO7vaXwW267VWXkDS1GyTMV+9b8aBDdkZD6aV3L8pfV3t1oFBifw==
-X-Received: by 2002:a05:6402:1d49:b0:63c:43e6:16f7 with SMTP id 4fb4d7f45d1cf-63c43e618d3mr16489930a12.26.1761073935222;
-        Tue, 21 Oct 2025 12:12:15 -0700 (PDT)
-Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4945ef35sm10305713a12.28.2025.10.21.12.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 12:12:14 -0700 (PDT)
-Message-ID: <e7873e6ce07cd92f4b5ce8880aa81b12c2a08ed3.camel@gmail.com>
-Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
- automatic module loading
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Javier Martinez Canillas <javierm@redhat.com>, Wolfram Sang	
- <wsa@the-dreams.de>, Herve Codina <herve.codina@bootlin.com>, David Rhodes	
- <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>,  Nikita Shubin <nikita.shubin@maquefel.me>, Axel Lin
- <axel.lin@ingics.com>, Brian Austin	 <brian.austin@cirrus.com>,
- linux-sound@vger.kernel.org, 	patches@opensource.cirrus.com,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Date: Tue, 21 Oct 2025 21:12:13 +0200
-In-Reply-To: <42f11845-35f2-40e0-b860-c25ba6f8d503@sirena.org.uk>
-References: <20251016130340.1442090-1-herve.codina@bootlin.com>
-	 <20251016130340.1442090-2-herve.codina@bootlin.com>
-	 <60fbaaef249e6f5af602fe4087eab31cd70905de.camel@gmail.com>
-	 <20251017083232.31e53478@bootlin.com>
-	 <d6bd466a5d11b016183db0ac3c25185fad3036fc.camel@gmail.com>
-	 <4b851d47bf1d03988a27671ae21208cdeed76837.camel@gmail.com>
-	 <5f2aeb66-97d6-41b7-8c80-87674c1b14d8@sirena.org.uk>
-	 <d51a3e4e0ea960df60d5ba91817ae50eba0a4026.camel@gmail.com>
-	 <42f11845-35f2-40e0-b860-c25ba6f8d503@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1761074016; c=relaxed/simple;
+	bh=9BGFqgvQpwRzugKQDwtv8oq6Y9R6QMH395rdLNU+/Ak=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=plUUGGseWhYvTKjExmAPao0yzSYlvhew36aVKlAcDejtZTrrfitFInxydgR0Ffx23H+U7UhkX5CLcKFckkgqqFiJXTV4jT741EqKJaXYyPHdGn/2J6+4iowwgZUj1NrUOPmJz4IuG5tu4ChyCiUr8u09eTtVOAnkcaEf9zn4xKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=RT2ai21c; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59LGE6X93453679
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:13:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=CRMDwFVND7XBdOIj4TyxKg+K8DJ1yTSK2JyyRAuwtnQ=; b=RT2ai21c21e4
+	9Fdv+/ELtkFCdPgh7ynth4iQJClg6JQdm59hM8KaPNhAsVlrPkEri+sZ/56YNjJ2
+	v4acHIAlqjrR/OBMLMllsItz1P0K+/JQOzz+QKkMby237Nsk74n9ikCm8wN/bNSN
+	vtEP4FqsJ8kBD84fO1drnfNL3GN7a2KYHSyv6cUovdl8fv0ZJ/T3jvERp8JgtR92
+	v6EkDr7lil6IvnJgvbqx7V53UJx2Tlac2k2RfJV+A5GU2BAOUQ6OAVxhisHMHts4
+	g8xZVRSjJffpiboDFwOE4rLZl7Kn60TfnO5MZ3WNGL+lycdIEzyeh9zGCftrXg17
+	9hwphWZJ0w==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49xdh29txf-11
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:13:32 -0700 (PDT)
+Received: from twshared42488.16.frc2.facebook.com (2620:10d:c0a8:1b::2d) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Tue, 21 Oct 2025 19:13:28 +0000
+Received: by devgpu012.nha5.facebook.com (Postfix, from userid 23751)
+	id 0C3C14EA2D6; Tue, 21 Oct 2025 12:13:23 -0700 (PDT)
+Date: Tue, 21 Oct 2025 12:13:23 -0700
+From: Alex Mastro <amastro@fb.com>
+To: David Matlack <dmatlack@google.com>
+CC: Alex Williamson <alex@shazbot.org>,
+        Alejandro Jimenez
+	<alejandro.j.jimenez@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
+ limit
+Message-ID: <aPfbU4rYkSUDG4D0@devgpu012.nha5.facebook.com>
+References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
+ <20251015132452.321477fa@shazbot.org>
+ <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
+ <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
+ <20251016160138.374c8cfb@shazbot.org>
+ <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
+ <20251020153633.33bf6de4@shazbot.org>
+ <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
+ <CALzav=ebeVvg5jyFjkAN-Ud==6xS9y1afszSE10mpa9PUOu+Dw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <CALzav=ebeVvg5jyFjkAN-Ud==6xS9y1afszSE10mpa9PUOu+Dw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+X-Proofpoint-ORIG-GUID: 6meoE2pSSmA3cibZnfV_1lQyayyHCfjv
+X-Authority-Analysis: v=2.4 cv=RbGdyltv c=1 sm=1 tr=0 ts=68f7db5c cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FOH2dFAWAAAA:8 a=XGgmd8J1ZICZxjAZIHAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE1MyBTYWx0ZWRfXx7cf4NxEMf79
+ jtzsw6irtsi2Pu68tm9xW6ob4GPHol0FIHBIZ1Kw1hWwpEDSCCnkz24tQVTVNUP3M10njSr4Jpe
+ usOjuo6sNkgDZlQi863ht48ilIjEUHBuuSiuZMuvSWRpliAnvhxqX8BjWztDG67lGyBMAJ0k2tK
+ qEUlYFWDA+glpA/3zQXdmJloUOpr/fLhJ9Qb08E2ka9g+jl6Oen7brV2IB48Crz5nluIZQELdw4
+ 4uL9IQ58hnt9N07rxya+1wzvfcxj42IXWaQ22W/0mijGdy1970GSYdSLqKURGQyTmbqmlvw/iDd
+ 88k38vFLO0V313SrPexuEdWdxHK8CYNlhUJar/58vAj/9QP/77iYAWZngsVithZa6dB//jwkfs8
+ 4hf0/fBeQCqd8et6A+WxBR7sCy/A/A==
+X-Proofpoint-GUID: 6meoE2pSSmA3cibZnfV_1lQyayyHCfjv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
 
-Hi Mark!
-
-On Tue, 2025-10-21 at 20:00 +0100, Mark Brown wrote:
-> On Fri, Oct 17, 2025 at 08:14:43PM +0200, Alexander Sverdlin wrote:
+On Tue, Oct 21, 2025 at 09:31:59AM -0700, David Matlack wrote:
+> On Tue, Oct 21, 2025 at 9:26=E2=80=AFAM Alex Mastro <amastro@fb.com> wr=
+ote:
+> > On Mon, Oct 20, 2025 at 03:36:33PM -0600, Alex Williamson wrote:
+> > > Should we also therefore expand the DMA mapping tests in
+> > > tools/testing/selftests/vfio to include an end of address space tes=
+t?
+> >
+> > Yes. I will append such a commit to the end of the series in v5. Our =
+VFIO tests
+> > are built on top of a hermetic rust wrapper library over VFIO ioctls,=
+ but they
+> > aren't quite ready to be open sourced yet.
 >=20
-> > "Reparing" them as Herve proposed would result in I2C modules being
-> > loaded only via "of:" style modalias and SPI still via "spi:". Which
-> > sounds all but consistent.
->=20
-> > If SPI ever adopts the same of_device_uevent_modalias(), both backends
-> > would require "of:" prefixed modalias, and it will not be possible to
-> > load the proper one for the corresponding bus type.
->=20
-> > What are your thoughs on this?
->=20
-> Or at least you'd get both modules loaded with one being redundant.=C2=A0=
- TBH
+> Feel free to reach out if you have any questions about writing or
+> running the VFIO selftests.
 
-I'm quite confident that udev/modprobe will load only the first module
-from modules.alias file.
+Thanks David. I built and ran using below. I am not too familiar with
+kselftests, so open to tips.
 
-> I'm very reluctant to touch this stuff for SPI without some very careful
-> analysis that it's not going to cause things to explode on people, right
-> now things seem to be working well enough so I'm not clear we'd be
-> solving an actual problem.
+$ make LLVM=3D1 -j kselftest-install INSTALL_PATH=3D/tmp/kst TARGETS=3D"v=
+fio"
+$ VFIO_SELFTESTS_BDF=3D0000:05:00.0 /tmp/kst/run_kselftest.sh
 
-The actual problem is that i2c-core is producing "of:" prefixed uevents
-instead of "i2c:" prefixed uevents starting from v4.18.
+I added the following. Is this the right direction? Is multiple fixtures =
+per
+file OK? Seems related enough to vfio_dma_mapping_test.c to keep together=
+.
 
-Most of the dual-bus ASoC CODECs are affected.
+I updated the *_unmap function signatures to return the count of bytes un=
+mapped,
+since that is part of the test pass criteria. Also added unmap_all flavor=
+s,
+since those exercise different code paths than range-based unmap.
 
-Now declaring "of:" to be the new I2C bus prefix for uevents starting from
-Linux v4.18 sounds strange.
+Relevant test output:
 
---=20
-Alexander Sverdlin.
+# #  RUN           vfio_dma_map_limit_test.vfio_type1_iommu.end_of_addres=
+s_space ...
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# #            OK  vfio_dma_map_limit_test.vfio_type1_iommu.end_of_addres=
+s_space
+# ok 16 vfio_dma_map_limit_test.vfio_type1_iommu.end_of_address_space
+# #  RUN           vfio_dma_map_limit_test.vfio_type1v2_iommu.end_of_addr=
+ess_space ...
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# #            OK  vfio_dma_map_limit_test.vfio_type1v2_iommu.end_of_addr=
+ess_space
+# ok 17 vfio_dma_map_limit_test.vfio_type1v2_iommu.end_of_address_space
+# #  RUN           vfio_dma_map_limit_test.iommufd_compat_type1.end_of_ad=
+dress_space ...
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# #            OK  vfio_dma_map_limit_test.iommufd_compat_type1.end_of_ad=
+dress_space
+# ok 18 vfio_dma_map_limit_test.iommufd_compat_type1.end_of_address_space
+# #  RUN           vfio_dma_map_limit_test.iommufd_compat_type1v2.end_of_=
+address_space ...
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# #            OK  vfio_dma_map_limit_test.iommufd_compat_type1v2.end_of_=
+address_space
+# ok 19 vfio_dma_map_limit_test.iommufd_compat_type1v2.end_of_address_spa=
+ce
+# #  RUN           vfio_dma_map_limit_test.iommufd.end_of_address_space .=
+..
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+# Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+
+diff --git a/tools/testing/selftests/vfio/lib/include/vfio_util.h b/tools=
+/testing/selftests/vfio/lib/include/vfio_util.h
+index ed31606e01b7..8e9d40845ccc 100644
+--- a/tools/testing/selftests/vfio/lib/include/vfio_util.h
++++ b/tools/testing/selftests/vfio/lib/include/vfio_util.h
+@@ -208,8 +208,9 @@ void vfio_pci_device_reset(struct vfio_pci_device *de=
+vice);
+=20
+ void vfio_pci_dma_map(struct vfio_pci_device *device,
+ 		      struct vfio_dma_region *region);
+-void vfio_pci_dma_unmap(struct vfio_pci_device *device,
+-			struct vfio_dma_region *region);
++u64 vfio_pci_dma_unmap(struct vfio_pci_device *device,
++                       struct vfio_dma_region *region);
++u64 vfio_pci_dma_unmap_all(struct vfio_pci_device *device);
+=20
+ void vfio_pci_config_access(struct vfio_pci_device *device, bool write,
+ 			    size_t config, size_t size, void *data);
+diff --git a/tools/testing/selftests/vfio/lib/vfio_pci_device.c b/tools/t=
+esting/selftests/vfio/lib/vfio_pci_device.c
+index 0921b2451ba5..f5ae68a7df9c 100644
+--- a/tools/testing/selftests/vfio/lib/vfio_pci_device.c
++++ b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+@@ -183,7 +183,7 @@ void vfio_pci_dma_map(struct vfio_pci_device *device,
+ 	list_add(&region->link, &device->dma_regions);
+ }
+=20
+-static void vfio_iommu_dma_unmap(struct vfio_pci_device *device,
++static u64 vfio_iommu_dma_unmap(struct vfio_pci_device *device,
+ 				 struct vfio_dma_region *region)
+ {
+ 	struct vfio_iommu_type1_dma_unmap args =3D {
+@@ -193,9 +193,25 @@ static void vfio_iommu_dma_unmap(struct vfio_pci_dev=
+ice *device,
+ 	};
+=20
+ 	ioctl_assert(device->container_fd, VFIO_IOMMU_UNMAP_DMA, &args);
++
++	return args.size;
++}
++
++static u64 vfio_iommu_dma_unmap_all(struct vfio_pci_device *device)
++{
++	struct vfio_iommu_type1_dma_unmap args =3D {
++		.argsz =3D sizeof(args),
++		.iova =3D 0,
++		.size =3D 0,
++		.flags =3D VFIO_DMA_UNMAP_FLAG_ALL,
++	};
++
++	ioctl_assert(device->container_fd, VFIO_IOMMU_UNMAP_DMA, &args);
++
++	return args.size;
+ }
+=20
+-static void iommufd_dma_unmap(struct vfio_pci_device *device,
++static u64 iommufd_dma_unmap(struct vfio_pci_device *device,
+ 			      struct vfio_dma_region *region)
+ {
+ 	struct iommu_ioas_unmap args =3D {
+@@ -206,17 +222,54 @@ static void iommufd_dma_unmap(struct vfio_pci_devic=
+e *device,
+ 	};
+=20
+ 	ioctl_assert(device->iommufd, IOMMU_IOAS_UNMAP, &args);
++
++	return args.length;
++}
++
++static u64 iommufd_dma_unmap_all(struct vfio_pci_device *device)
++{
++	struct iommu_ioas_unmap args =3D {
++		.size =3D sizeof(args),
++		.iova =3D 0,
++		.length =3D UINT64_MAX,
++		.ioas_id =3D device->ioas_id,
++	};
++
++	ioctl_assert(device->iommufd, IOMMU_IOAS_UNMAP, &args);
++
++	return args.length;
+ }
+=20
+-void vfio_pci_dma_unmap(struct vfio_pci_device *device,
++u64 vfio_pci_dma_unmap(struct vfio_pci_device *device,
+ 			struct vfio_dma_region *region)
+ {
++	u64 unmapped;
++
+ 	if (device->iommufd)
+-		iommufd_dma_unmap(device, region);
++		unmapped =3D iommufd_dma_unmap(device, region);
+ 	else
+-		vfio_iommu_dma_unmap(device, region);
++		unmapped =3D vfio_iommu_dma_unmap(device, region);
+=20
+ 	list_del(&region->link);
++
++	return unmapped;
++}
++
++u64 vfio_pci_dma_unmap_all(struct vfio_pci_device *device)
++{
++	u64 unmapped;
++	struct vfio_dma_region *curr, *next;
++
++	if (device->iommufd)
++		unmapped =3D iommufd_dma_unmap_all(device);
++	else
++		unmapped =3D vfio_iommu_dma_unmap_all(device);
++
++	list_for_each_entry_safe(curr, next, &device->dma_regions, link) {
++		list_del(&curr->link);
++	}
++
++	return unmapped;
+ }
+=20
+ static void vfio_pci_region_get(struct vfio_pci_device *device, int inde=
+x,
+diff --git a/tools/testing/selftests/vfio/vfio_dma_mapping_test.c b/tools=
+/testing/selftests/vfio/vfio_dma_mapping_test.c
+index ab19c54a774d..e908c1fe7103 100644
+--- a/tools/testing/selftests/vfio/vfio_dma_mapping_test.c
++++ b/tools/testing/selftests/vfio/vfio_dma_mapping_test.c
+@@ -122,6 +122,8 @@ FIXTURE_TEARDOWN(vfio_dma_mapping_test)
+ 	vfio_pci_device_cleanup(self->device);
+ }
+=20
++#undef FIXTURE_VARIANT_ADD_IOMMU_MODE
++
+ TEST_F(vfio_dma_mapping_test, dma_map_unmap)
+ {
+ 	const u64 size =3D variant->size ?: getpagesize();
+@@ -192,6 +194,61 @@ TEST_F(vfio_dma_mapping_test, dma_map_unmap)
+ 	ASSERT_TRUE(!munmap(region.vaddr, size));
+ }
+=20
++FIXTURE(vfio_dma_map_limit_test) {
++	struct vfio_pci_device *device;
++};
++
++FIXTURE_VARIANT(vfio_dma_map_limit_test) {
++	const char *iommu_mode;
++};
++
++#define FIXTURE_VARIANT_ADD_IOMMU_MODE(_iommu_mode)                     =
+       \
++FIXTURE_VARIANT_ADD(vfio_dma_map_limit_test, _iommu_mode) {             =
+       \
++	.iommu_mode =3D #_iommu_mode,					       \
++}
++
++FIXTURE_VARIANT_ADD_ALL_IOMMU_MODES();
++
++FIXTURE_SETUP(vfio_dma_map_limit_test)
++{
++	self->device =3D vfio_pci_device_init(device_bdf, variant->iommu_mode);
++}
++
++FIXTURE_TEARDOWN(vfio_dma_map_limit_test)
++{
++	vfio_pci_device_cleanup(self->device);
++}
++
++#undef FIXTURE_VARIANT_ADD_IOMMU_MODE
++
++TEST_F(vfio_dma_map_limit_test, end_of_address_space)
++{
++	struct vfio_dma_region region =3D {};
++	u64 size =3D getpagesize();
++	u64 unmapped;
++
++	region.vaddr =3D mmap(NULL, size, PROT_READ | PROT_WRITE,
++	                    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++	ASSERT_NE(region.vaddr, MAP_FAILED);
++
++	region.iova =3D ~(iova_t)0 & ~(size - 1);
++	region.size =3D size;
++
++	vfio_pci_dma_map(self->device, &region);
++	printf("Mapped HVA %p (size 0x%lx) at IOVA 0x%lx\n", region.vaddr, size=
+, region.iova);
++	ASSERT_EQ(region.iova, to_iova(self->device, region.vaddr));
++
++	unmapped =3D vfio_pci_dma_unmap(self->device, &region);
++	ASSERT_EQ(unmapped, size);
++
++	vfio_pci_dma_map(self->device, &region);
++	printf("Mapped HVA %p (size 0x%lx) at IOVA 0x%lx\n", region.vaddr, size=
+, region.iova);
++	ASSERT_EQ(region.iova, to_iova(self->device, region.vaddr));
++
++	unmapped =3D vfio_pci_dma_unmap_all(self->device);
++	ASSERT_EQ(unmapped, size);
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	device_bdf =3D vfio_selftests_get_bdf(&argc, argv);
 
