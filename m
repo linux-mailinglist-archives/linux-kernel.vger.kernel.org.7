@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-863397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BEF0BF7C74
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:48:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E75BF7C77
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F08014F866B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:48:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4DEAB34835A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DD3345CBF;
-	Tue, 21 Oct 2025 16:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375E934A762;
+	Tue, 21 Oct 2025 16:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3RF94Vp"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xs3cnIO/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4959D346E79
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6FD346E6E;
+	Tue, 21 Oct 2025 16:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761065276; cv=none; b=V/wR6027gPYyYhVVA+6+5M9WvrhZLSQ9PR1LNeN9Zb4qxeo8MdhgviUofrVnyloufnhdSIvl/+PI8xPug2U4evcVwMaJdhf8arfo4TC+GiELHcp5BUQyXQc7NbJLcgEo/A4Ict+GKAXgnC5VtggvflhZEzpt/JWogj7iFza1Qws=
+	t=1761065278; cv=none; b=BFXIYvDz+2UgliDMILZIidQZDVGEM+TLXBa8GwXZenA8tjFZ+tcRoBCNFLSr4/hxaq7dJFJP9+4IuiekpETjjnoTx4Rog23Lav/pGHw3sLnmcPPH9PynTE/YoFVbqPitJmIJVe/l+431TF9PsMBUPBs4IE0OJ6YdhAi14zWZdkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761065276; c=relaxed/simple;
-	bh=28qNQ7rQ0dZK2hZ0bRbYpkKxEWOFNpR8yAeDonqWFt8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XhMXTjCmHE8TLMMpl5YMBL1zjzePEFia+ZPNrk+fMxI74XG7CY9rSBMBSAk7LgNJpuOxqpfTUjGduxqtU1PisMVpWv4xIiA8IlyMdxN3x2ZZ5F8m9T2a7eqpQsN406JgKrpjhVK9ICgGHX3+8ZyRs+4dN9ZFEqrFPA8o8kMyC50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3RF94Vp; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b67c74c7f20so299690a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761065275; x=1761670075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d1ntUXOmnFmu9OCpv+5ZoMXNluJmcwruKsf9+rVDB5c=;
-        b=l3RF94VprvV6KITv6p+3Js5R4E5hsBVCrEeIEIq9uezdVSa5MnPxbfjYZovA5M7+St
-         WZrlfzcLfakojt0grFSLMDUdPWLrwW1cpE/GBOwx3eEmtwmUFU9IViyB8Out+3TFVbj7
-         1IyXXNgva09CT+3SNL+cxPvL3fV2dZsMfvcIkMHMVHX90hJVRAPk61i4Q5mpNkxVQwwT
-         NgVRCt8SSgUNmRSDqyCrXS/5yylyA+hmHO8yrMNryvTxGuDYCfAKhbknrZSc7IohgP1Z
-         KbVsdcPXiCOASCZBdXHjAMZuOag583xtsGjU6HoLJzT0WQs1/BOatJW4UmpOmv/rfwCV
-         SO1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761065275; x=1761670075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d1ntUXOmnFmu9OCpv+5ZoMXNluJmcwruKsf9+rVDB5c=;
-        b=bvqK35Z/R/lI/Ebe6LTsprslV071sG6/uY3mZgMDljLsrvpOQyyklZS20FkZitvknq
-         cKfIV4L8KYtVjE2vAqVVyXMbmVUTzoKSUfJFaAW4BJywgciSWWfVsh5aMuEIk79LvyIp
-         NsxzwHZBSC9IxaL9wzggx6m131jq1abpGqmY0hwZcAPkY8jN1fu9vIRgsAxR1x+RyT2u
-         U0z8EcJj94mMqxjWfXHRZqJBDEyI4V3NVsRbLh2hX7FeQorxKYB0aDxBSP3lfik8WKNd
-         PVvlJEosMmFv2pSDEPd7slaJcZ2oYouDnKmuTDTuwjj2TQeNOsbjbwCgjwq/MvuKSzv9
-         bP1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXJuB6Qo79JjouppXPggAEXT16R3DhixWOSqBw3FAzOTy+aMVOeHHMQgnz3GqaqV9984w2+scGIsFnsqXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGhGK3UF6DJGkLQ9tDODr7ifyHFU+ltKIZ/nnI+eV+mNcRQMpg
-	CjaezV+v0PF3fF9Ye6s9jfZiD7zxA3GGtDwso70Ew+FopnSeaXMs+rIyb6zGCEcxodqwBH22IQ3
-	C2YZ62HkO1gcBJ9HRYz1wVoy65eR3lMc=
-X-Gm-Gg: ASbGncvBFv68KGfR0LP85X7rNKEIFGuQDk82TUVUY3+pAo9UVt4A4BY9yNj/+u5i1/S
-	IGcAA83OiHa4RpH12EaO8XGM654SnGwmqgvxW42Ycj//+b5hMglrv5FQn6uQ47hwZDEuMB3pNOY
-	0cRQfXh9JfS8nxdhWTtlSvDwJYQpM5k/12ezyraEFf6LE6W+FPsYEh7/CePqVZK1nkknwwIK9vf
-	BIgwVx+ZcCVWySiyQgh9YTFypdZUo9oQkzXx3q49F4X02JbNTt/6ZUXxafXVzcb2NgvXV5H7XTN
-	O4UKpQdbHGqP/6OzJfqIV51HvxB5KxgdETX7t86LdQ6oOVxEWEFzk1JBALKkuZZ9PH0CjcGdk92
-	CjEBW1/ZIEkhrDA==
-X-Google-Smtp-Source: AGHT+IE6+zr2kq6R0XUbG0FThRLhPuL0rneOx9WE7IygbOP6VOZmHKd2PRk5rs9w/gQWQpmwElugiOYl8XVdOqXeB9E=
-X-Received: by 2002:a17:903:19e6:b0:27a:186f:53ec with SMTP id
- d9443c01a7336-290cc2023d8mr130241865ad.9.1761065274551; Tue, 21 Oct 2025
- 09:47:54 -0700 (PDT)
+	s=arc-20240116; t=1761065278; c=relaxed/simple;
+	bh=fOOg7+3J7rwGg8btrPOiTJvE5JmCHKDybAWrBt8TS0A=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=DmulXbYd88J7/KX9WHhRDlZshoVp8/Pu7NLdbN//nFs4eYOkBN/7jevA6NYT4Jm3g9LN9A7YSAQT9BlCtJ6gaMElvKf1oxVcFXAzG4aQzOcclFDoxIrEz0PBQrelbuNx+revU3DRnw9duRXGCrJm878/Wdi6Y2xZlX0Z/6NGaK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xs3cnIO/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E288FC4CEF1;
+	Tue, 21 Oct 2025 16:47:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761065278;
+	bh=fOOg7+3J7rwGg8btrPOiTJvE5JmCHKDybAWrBt8TS0A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Xs3cnIO/aQ+miCGfM2oV12t+hEMfdb/wUwz8l0ng/UkfdSiNpW15KXY6eGPFDaQU3
+	 bwvGX5XkYBrhLsi+/Pw2cUSvT+i73IjAojzqJGrWHyTukAtSMDNPo6zPVj42M74vS3
+	 eqnrXlnDibB8YeM9fGXCo06apBh8eQuXtGoX8XFDuW6+Ut2kAfKRdyCGxL1rZiRzcn
+	 0B5TyHHUp/hNb7Ksy7J/9kVXYtPzVzVyAbThXZmHEE5GhxL0cAjTPCTJS/q5yFLzC6
+	 zjooe1JUjrD90E8ol1d9Pid2yA+TdtbrVga1JItajlsIO/q8frzdMMcMNJJey8GVHw
+	 ZCgNsABrHcOUQ==
+Date: Tue, 21 Oct 2025 06:47:57 -1000
+Message-ID: <c860cc12b4b0da311fa8cbbbe17f8199@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
+Cc: sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.19] sched_ext: Fix scx_bpf_dsq_insert() backward binary compatibility
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
- <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
- <DDO3T1NMVRJR.3OPF5GW5UQAGH@kernel.org> <CANiq72k-_=nhJAfzSV3rX7Tgz5KcmTdqwU9+j4M9V3rPYRmg+A@mail.gmail.com>
- <DDO521751WXE.11AAYWCL2CMP0@kernel.org>
-In-Reply-To: <DDO521751WXE.11AAYWCL2CMP0@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 21 Oct 2025 18:47:41 +0200
-X-Gm-Features: AS18NWD6A3w6PR4fvS3IEgI9kkvx3dHP14ZgUtZuoQwDL0enZmy2MlsAuUPXLUw
-Message-ID: <CANiq72=N+--1bhg+nSTDhvx3mFDcvppXo9Jxa__OPQRiSgEo2w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, mmaurer@google.com, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 6:25=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> We need arithmetic operations (e.g. checked_add()) and type conversions (=
-e.g.
-> from/into usize). That'd be quite some code to write that just forwards t=
-o the
-> inner primitive.
+commit cded46d97159 ("sched_ext: Make scx_bpf_dsq_insert*() return bool")
+introduced a new bool-returning scx_bpf_dsq_insert() and renamed the old
+void-returning version to scx_bpf_dsq_insert___compat, with the expectation
+that libbpf would match old binaries to the ___compat variant, maintaining
+backward binary compatibility. However, while libbpf ignores ___suffix on
+the BPF side when matching symbols, it doesn't do so for kernel-side
+symbols. Old binaries compiled with the original scx_bpf_dsq_insert() could
+no longer resolve the symbol.
 
-If it is just e.g. add/sub and a few from/into, then it sounds ideal
-(i.e. I am worried if it wants to be used as essentially a primitive,
-in which case I agree it would need to be automated to some degree).
+Fix by reversing the naming: Keep scx_bpf_dsq_insert() as the old
+void-returning interface and add ___new to the new bool-returning version.
+This allows old binaries to continue working while new code can use the
+___new variant. Once libbpf is updated to ignore kernel-side ___suffix, the
+___new suffix can be dropped when the compat interface is removed.
 
-> So, I think as by now a new type makes sense if there is some reasonable
-> additional semantics to capture.
+Fixes: cded46d97159 ("sched_ext: Make scx_bpf_dsq_insert*() return bool")
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/sched/ext.c                       |    8 ++++----
+ tools/sched_ext/include/scx/compat.bpf.h |    4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-To me, part of that is restricting what can be done with the type to
-prevent mistakes.
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5407,7 +5407,7 @@ __bpf_kfunc_start_defs();
+  * scheduler, %false return triggers scheduler abort and the caller doesn't need
+  * to check the return value.
+  */
+-__bpf_kfunc bool scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice,
++__bpf_kfunc bool scx_bpf_dsq_insert___new(struct task_struct *p, u64 dsq_id, u64 slice,
+ 				    u64 enq_flags)
+ {
+ 	struct scx_sched *sch;
+@@ -5433,10 +5433,10 @@ __bpf_kfunc bool scx_bpf_dsq_insert(stru
+ /*
+  * COMPAT: Will be removed in v6.23.
+  */
+-__bpf_kfunc void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id,
++__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id,
+ 					     u64 slice, u64 enq_flags)
+ {
+-	scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags);
++	scx_bpf_dsq_insert___new(p, dsq_id, slice, enq_flags);
+ }
 
-i.e. a type alias is essentially the wild west, and this kind of
-type/concept is common enough that it sounds a good idea to pay the
-price to provide a proper type for it.
+ static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
+@@ -5532,7 +5532,7 @@ __bpf_kfunc_end_defs();
 
-> Maybe the action to take from this is to add this to the list of (good fi=
-rst)
-> issues (not sure this is actually a _good first_ issue though :).
+ BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
+ BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_RCU)
+-BTF_ID_FLAGS(func, scx_bpf_dsq_insert___compat, KF_RCU)
++BTF_ID_FLAGS(func, scx_bpf_dsq_insert___new, KF_RCU)
+ BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_RCU)
+ BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
+ BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
+--- a/tools/sched_ext/include/scx/compat.bpf.h
++++ b/tools/sched_ext/include/scx/compat.bpf.h
+@@ -239,7 +239,7 @@ scx_bpf_dsq_insert_vtime(struct task_str
+  * scx_bpf_dsq_insert() decl to common.bpf.h and drop compat helper after v6.22.
+  */
+ bool scx_bpf_dsq_insert___new(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+-void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
++void scx_bpf_dsq_insert___old(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
 
-So I don't want to delay real work, and as long as we do it early
-enough that we don't have many users, that sounds like a good idea to
-me -- done:
-
-    https://github.com/Rust-for-Linux/linux/issues/1198
-
-Also took the chance to ask for a couple examples/tests.
-
-I hope that helps.
-
-Cheers,
-Miguel
+ static inline bool
+ scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags)
+@@ -247,7 +247,7 @@ scx_bpf_dsq_insert(struct task_struct *p
+ 	if (bpf_ksym_exists(scx_bpf_dsq_insert___new)) {
+ 		return scx_bpf_dsq_insert___new(p, dsq_id, slice, enq_flags);
+ 	} else {
+-		scx_bpf_dsq_insert___compat(p, dsq_id, slice, enq_flags);
++		scx_bpf_dsq_insert___old(p, dsq_id, slice, enq_flags);
+ 		return true;
+ 	}
+ }
 
