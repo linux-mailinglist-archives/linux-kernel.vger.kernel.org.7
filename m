@@ -1,542 +1,164 @@
-Return-Path: <linux-kernel+bounces-861997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A55ABF4368
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:00:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30CABF4371
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C346A3A9C56
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:00:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E80E54E6042
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C343214210;
-	Tue, 21 Oct 2025 01:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FFB21CC47;
+	Tue, 21 Oct 2025 01:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OfxJUUcH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sf+6tmfG"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9F3224D6;
-	Tue, 21 Oct 2025 01:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761008433; cv=fail; b=DvE1THktNotO5SeWsrFLgorwDfz8IMhK7QP3c8RQ0KqhXZfelLzgean5gbiqaLYkZC8jR9T8V3e0qIpnyL8m0Xu+TnqpzygsYDkizh9s6n04ZsVXQ5YIW6ssX4isLnpoTXE8ouzrlYk7b1X9hEPNNqnNS2M5+5juoNfxzFyo8+U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761008433; c=relaxed/simple;
-	bh=enV84fIzX0U1xtU9meg9cxsAytin+TbOlYqwXSH1X7g=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sqjtsMLtAa92T2hobbBQtNxLRiKzlnVAQgOq64VyXP4VQZhGPdJahxDJ1bqgwBNSEjAzZo2V/4VqiPMofwJ0zPtTWtiDH/PJ+N1GAfRd7EjPA6ZDcrJeI5ZmvxkMuA6AMbxcTAZoyFSCcC7MAE2tYku+7HkOSlXT1SVUmanJslU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OfxJUUcH; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761008431; x=1792544431;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=enV84fIzX0U1xtU9meg9cxsAytin+TbOlYqwXSH1X7g=;
-  b=OfxJUUcHxedG4J+KccijOvdLLP1TMJUI5kiC1eFkr32EgFecwn0QYTaB
-   NA8zKnnaPZRSVjkt8O77h+L8/+inKv7nRk4m3YcOAsru8hrmptrFZBKxU
-   Y5UxPsT4/NbdLYbFBC2tJrgQiVGkQfChyai07XUamSOlYMLDWb63ApXQ2
-   MeSa+regfq7mOhg1GOzWXfEPL7p7Ow7YjLRgnJTZvX8LMfEtRkuGa3Bje
-   456LTLkRnIGBtfU2Y+Uhqi+d2ffL+oQwU0q8OEUn38I3CkJVPVqA5cFOg
-   NnDbcjzk9zj/FxwRUHwpClIEb02LABfsNEGy4RPPHR45fU91DIalFblDn
-   w==;
-X-CSE-ConnectionGUID: 9JsEMO4cSg6dZAkizXX7jA==
-X-CSE-MsgGUID: 64TpTS/rQbW46pWR0mTzJg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74474868"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="74474868"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 18:00:30 -0700
-X-CSE-ConnectionGUID: rigKMJeLQXStsMhgPptRgg==
-X-CSE-MsgGUID: SzzMkHbTRtuKMKFARHvRhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="207141346"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 18:00:29 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 20 Oct 2025 18:00:29 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 20 Oct 2025 18:00:29 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.71) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 20 Oct 2025 18:00:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ibL8ApI1w5sE/tpnhJQst850JXAbcUJWPL1AEmai+Kvq7Oonnd6D6yKMZn7WlwMTO3QDMt1NZbp6XP578g50UAt0zDQLr7U63TyJYXewpnmDosotjOH1bjkHJFbeiR5y5imvsPPyPgqrr6IuzozTv34AkgBERN9BuIYN6kQGiCKKnTdDMq804wYE84TVDeFBTHLbfmWMXzlPeaNJnivW8hC18RYSq2F0Pe7O9n5Z2YasE3pFvoWYtH1XTqHGsF2dvi8OSO02XBKGUhyeuq5lHTQgM+mx+9G5E0CSHPyGdaum8Tv//Qw6Kg65nffd70JESN3Hf8IJ5vqAaQWQBEqS1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AFBoZ0N4b+HeHBE1NULwmlRFMMh97pXDts+KI/o4fic=;
- b=mSN/ohuO0o6LWqEQpA2XB0HZRQggC7fQ2DbddZKmuU165ne90DLCrf3RJBO1QTdeiO41IuUPRwbMQnC/KE6n5Lxv2DY9R84lSapcJHW4+8xJuLptOeaIF989jCXdmapruAy0vmbXZgi/jVBygkfnpQ6WeTOLuVU6uXUr04maoToqtAwRrj59f8MMw61cCoGn5tgsu/vgvVYXTFVWrM3vCyYSf+y9/Ra7R2DlqB7YUrfCTo+bGoGj7T04KCQqEIHh0d9IEyko3CXwCJ0CNrXWO6OucjUvhNJi6Hi64v2d8qluf/jJxUMkj7UKDp2YIhjy2XTq0HzGS7591elq/A4lDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
- DM3PPF1A07FAA60.namprd11.prod.outlook.com (2603:10b6:f:fc00::f0d) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Tue, 21 Oct
- 2025 01:00:27 +0000
-Received: from DM4PR11MB5373.namprd11.prod.outlook.com
- ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
- ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.9228.016; Tue, 21 Oct 2025
- 01:00:26 +0000
-Date: Tue, 21 Oct 2025 03:00:23 +0200
-From: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-To: Michal Wajdeczko <michal.wajdeczko@intel.com>
-CC: Alex Williamson <alex.williamson@redhat.com>, Lucas De Marchi
-	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
-	<kevin.tian@intel.com>, Shameer Kolothum
-	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, Matthew Brost <matthew.brost@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
- Laguna" <lukasz.laguna@intel.com>
-Subject: Re: [PATCH 17/26] drm/xe/pf: Add helpers for VF GGTT migration data
- handling
-Message-ID: <j4o3s67polhkv6yf25sovuntambga6ic32iq3i6j4wmenkacs7@gi64crxi3o5b>
-References: <20251011193847.1836454-1-michal.winiarski@intel.com>
- <20251011193847.1836454-18-michal.winiarski@intel.com>
- <83f83d86-a89d-4315-aa01-9c48e782bd60@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <83f83d86-a89d-4315-aa01-9c48e782bd60@intel.com>
-X-ClientProxiedBy: BE1P281CA0265.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:86::19) To DM4PR11MB5373.namprd11.prod.outlook.com
- (2603:10b6:5:394::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB9286347
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761008534; cv=none; b=JL1qWKgH1RHbght6eRGW9otQvwI4hD8hhjh6u3MvDf8KWLQ1KRboIhBDh0OdkINl/AgFn9vwMv3GiWiAu1mw5b1BXRzUJaRmOjVyCC4pKO1gzKCKKk5TfeKzF/JHqL0SrpZ/Ssbyb49/gwrOO+2QApcQkevmJQ8afGCYR9UJKQU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761008534; c=relaxed/simple;
+	bh=qZLBj6arx9QOTLUUblWHZMf3JCAP1L/JUAsq+xSZU/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q8SuPAzUSbTakQFd8FtE63qG3yAQr7z3RVyAy0ATePLwF9hQlnlNYkvKbykk5wMZT1XzeedevHZQ9iJyvZHF5X3KGyafMOdq00Nxf8BGiuJYiva2wFamp2/zs+PdxweaL19N5ij9SOHUtUfCSWHWehlEcc6x6VqXyxEHn1TZgME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sf+6tmfG; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3ee18913c0so956745266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761008531; x=1761613331; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qdrgppHkZAyxxVFGpYMxDncigVmTn7Xgn5GmJmM4fFM=;
+        b=Sf+6tmfGpZDcI/M0c62kkU5qeaG/2FJJK5UAolk3tRNhBAOm9fD7xllxZXs93aSczH
+         2DXzyVC6B75L7qaLqaqGSQSQ+gUXPllOtdPnS/BmxAccVCAa8WGt4D1l8vGuBXuiKdD+
+         q5vbFhUvD1i8N52HiSj4F1TYmGeSlghHKiPMjDBdMMz50l4SoFnCOKfrNi0ZvSQ10nWQ
+         dtw1kZ9GDeDIB7BIu+PRZXnxzALM/JhTUzSr6ohNGGhlVRxhercxLD8zeCKLqBI+zNTJ
+         xCQwgAMz3szZQawuYe+Q8U6er4lCpu8VNS9mVGECfAw6ImjZOi1I9xox//02avtmC9fD
+         e3MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761008531; x=1761613331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qdrgppHkZAyxxVFGpYMxDncigVmTn7Xgn5GmJmM4fFM=;
+        b=bAuQmZ1FKIKuUanN6DOJbEg79Smj/SY+cS1ukH+pMLflvdwYP/j+HYq3A6bL/K9teo
+         Gb8c+vK2ma+N3LbYGGCzCqdEMEI2+9JmyEiNG0T+AgnwgFPKQJXwsHYuoGfNff0twfSA
+         aBUtAJAfiONIQywNtZTd/aMriYtO0bGVlCtoeqMwKuG1txXApxkEQ9Thog5SIBGcq4Va
+         StUoPW2HGmF9qqkdf9wDj/KEUCY0nGajJCydKdoVfh4IZE8F15MDfRHQ2c6avb41m16+
+         HRpepLmsYrhcLTBQz68xrDZCi969f8e7xiX16Np/uaUN/re3mJOjDp8baM5pZdSNOLlB
+         7BUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2unMcuI0xF0bN6Y74GiRr1tI3z/4bO6eF13DJrQ2UPSHHgEa2/7c8kxAFxjfL69OLxtrYGFZiWkTadQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxMKRicDyhkVodX2Yb2n5jPors+P/p0GLQvPy0RH6CAht0IfID
+	pbTEDMsdktY6MA2NUFEMWxBs1K07qxTTAN7CKKo0Nd5dYCVkhGfcOmHEnNLvN3Gr8k7bhe6P+6S
+	97J8ljVMP75wq9c6BlPSqHhUXFbMR0xU=
+X-Gm-Gg: ASbGncup5l7BF5k80ksQd+nUqvvp4RJ3C68I3ZQsIX0cQh765CsINnRTX3s4Y8fKPy9
+	9r1dYIHVlyqG9oeBvDVhur5aaZuYQIPfUQ7TGj8Sll3F0+LnJz3oANtvE635EnjuNuVP63CVgbH
+	u5YMv8+nLVPf/PUTosqrUu9V7s4MtEKch+krLzRxqiV5EX3MHNJ7GlEtH4gYy0I1Pw0BXoNcuB1
+	+3kBLc3VTdwiYmBb4Igs+nVdPOgxAl4zZ6pznVJlb65npaVdaJDHPddbDJ6bSXTjv5vG6wUJ62H
+	pIPYBNYXjN+r81s=
+X-Google-Smtp-Source: AGHT+IEKUvPReN1WIc8WWqIkjL1j43sIvxC4HgtgT3kVUG9Iyo7fRBo0aTHcqpyZOi9DM/GsvtqbZf+qS2DkcF9tE4g=
+X-Received: by 2002:a17:907:a07:b0:b3b:f19:ac7c with SMTP id
+ a640c23a62f3a-b647443cef7mr1691282766b.36.1761008531342; Mon, 20 Oct 2025
+ 18:02:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|DM3PPF1A07FAA60:EE_
-X-MS-Office365-Filtering-Correlation-Id: 685b0f42-6441-4236-f055-08de103d38d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VXJwdmJURExmdjVxcjdJT0IxZFQrK1luWXhUbmxpZXVjbFBSQU8xNnVBOTNH?=
- =?utf-8?B?WDl2UE1LMDU2cy9Bd0FlRkd6MUt1UDdOQ1hUSTNvZFpwdHVJSTZjWFlUVnln?=
- =?utf-8?B?Q0djcm53T0lhdDJkL2ZxZ1luMkk5ejlJMDhhVnZONUp4WlFjR01rdDZuVWZ2?=
- =?utf-8?B?Z0M1bndjeTF6UEZDblVBOVBHenlFb1pyKzJjYitXTXF5SVdabFhNK1E2ZVd6?=
- =?utf-8?B?WVNvTzNxRGQ0YjZGRks0OVl2ZWZUTDFJM01YdFA3cTVPWms3SkdSdEthZVBk?=
- =?utf-8?B?QjFtYWJ4Slc0TDA0YTBIL0lsbWJ3NGRybGs0cUExQUhpa3M2TUt4T3J1T1gz?=
- =?utf-8?B?WHUrenovR0k3cjh5ZGs3SDNSSW9EVU4yM2RDMHk5eDZMdlFBdkxPeUJROXhF?=
- =?utf-8?B?dHp1dHRwaEZaWUVnT0IrQ3dLR05seTdzK0ZvWmtJRVdoZ24xMHZMc1BHREhG?=
- =?utf-8?B?a0Y2KzV2Rll3REhnbmJENEVZeGpQWWkxM08yUzFuV0tGWDhDenFRd1RFRjEv?=
- =?utf-8?B?MzA2cmJKRC9HR3E0K0FSc3ZZYklOby9LUEhRM0t4K0VhMmJIcllrWGlpT0Yx?=
- =?utf-8?B?WWtrVGMxK3A2b1lWcXplaDBaZEoyNnV0aVFtcWxJTU0xVjh5NTk1UE5PSWE1?=
- =?utf-8?B?U3hYbE5IQXdUUFV0bkYwb2hUbkFYb1lya2s5TnJVRVR0OXNFelZFcW1Pdzkx?=
- =?utf-8?B?WkZaR3JCbGhFS2FzQkx6bmhIazdmRDVvR01kSkM0dE1VYnBHc1lidzRXOUFR?=
- =?utf-8?B?S1F2YW1aQkhhMUlMdlcvSWp4U21JYUY5TWJ6SFVoUVdaVlVPdmkxU1o3MmVW?=
- =?utf-8?B?dlMrbko5WnpxaVZTMGczZUJXWlpNditWOVlXQ1IxYmZGMWtTWnRPaW9CVExr?=
- =?utf-8?B?ZmllSWpyc1diRUMrWG1vK0NSazlUNVowVE9CTlFZbnVnZjFyVXUwVkpJM2lp?=
- =?utf-8?B?T2t6THVobFBDcThsSnY1Y3UxR1ZaWnlnejFiY1J2WllMdldqaWg1bkxiQjdF?=
- =?utf-8?B?ZEh0bmgyYXg1MFZKMmF5djRNT25Hd3BSWmZERm1RV0xBblZXaTNzc0dXUjQ0?=
- =?utf-8?B?VHo2dUVtVDdMQ0tYcHM5SlFSclh6cEE4ZTdWNVZWMmMyUWZ3K1pBTkdxd1pi?=
- =?utf-8?B?YnRwVEVNTmRqZDVXeC92SWFxTkdWRVRtL2k0THdLRFBzS0lDV1Q1bVFobjZj?=
- =?utf-8?B?bW1SdnVPUWFuY2F6MmlYRytaMW1hNVFUL1JmeGRZWHpUSDU0SWkxWExUNTA3?=
- =?utf-8?B?MUJ1eEEzUDJOazhWZ0RUeGxuWisrVG9Ba0lUczNFUWhhQ2pUdGcrMkF1Zm5B?=
- =?utf-8?B?dnk2TmZpZUpJN3MrNmVXNytOWFJtYlhtZmk1Y3I3WEZUSEJtMDhUSitiQ3BF?=
- =?utf-8?B?S3BGWjZZUFJoWExWOU85SXp3YUNzVFJ0WWtZcEJsNGY1WXAyRzQyTHZLOUE1?=
- =?utf-8?B?ZVVlUzlOTVNJWFdaOG9hVUtSdUcvSXAycGtsQmFnMWtFai9iMWpKNzdzTy9w?=
- =?utf-8?B?b0svOTY2elpQYjhRYTVZWVlIOVRYWlBYcWM3cSsxWjVQTGhhK0JSNWZKb3E1?=
- =?utf-8?B?VC9kMzZ1U2tyN2N2WU40YnhvUnIrbWZFZklHUVU0c291UC91OVBlQ1V0NEtk?=
- =?utf-8?B?ZlljWjdlTFNFc2dQY05sS2gzUWlYc2trNEFlUjB5RjV5aWVTYjdNd09xWVRF?=
- =?utf-8?B?dXFLZ3BKRGVZNVhDbHJ3WHQraEZWTE9QT2RFWjF6VDQreW9uN3h2RDUxZjZw?=
- =?utf-8?B?UXhTempNS1NMTmNheDVwbFlXeDlBTWVyVC94ajNMM2NWRmkrcmtINTFySFky?=
- =?utf-8?B?MXMzUUhCVng0eWd2NDVkSTFzcVAydXRkV3dEdG9SeFBzVFBIV0doVEYvRHND?=
- =?utf-8?B?Y1pWZ21qZHgzamJyWk5QUE1CdkhFbHkvWEdpajlTd29ta3YvSmJkNHZNZXc2?=
- =?utf-8?Q?v9d/AOEkA1RJSVMKKOrQoBIifqXmNpix?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NDlpVWk3ZUxQNytWVnprTW8vcXZNT3RWYWo4bDdSQzlKdFJ4cFRISkllVWxO?=
- =?utf-8?B?UlNPRE1IeUord3BDUzlneUdleVlMZDdHTFpHbkpEbkdJbjJ1Sm5aUlRuTFF4?=
- =?utf-8?B?Wk5kUTc3SkRzRmUxbVROVVE1TDJSNWJ6ZlVWR0t5RE9SUTVBMkJTTVdET0p1?=
- =?utf-8?B?QXpMKzcwdEtyRVRVVzdqVEtVWWZEQis0emZJU2NYdjJTU3JHa0dId1V6OStC?=
- =?utf-8?B?MW00TW5xTTcwL21ra09GTzcwYW1sNHFPS2pVVGlKZWhPNUkrdUtVWG9ObmdE?=
- =?utf-8?B?YW9NZEVVUlZ1TFZzRVpFVHMydW1RcVdQT0pvL21lbi9vY01nc052ZUJjbHB5?=
- =?utf-8?B?U3lOVzdnZEFjNzFxNzArVFFKeVJ6bmY1TGJvcFBxTDZxQVlnWjM2bjByYzgx?=
- =?utf-8?B?Ym9Ob3pNUFNuc083WXFvQnF1bXZYZSs4emxERUZkdEJTRTlaUUVUUmpoQ1lL?=
- =?utf-8?B?SStKWU1wVC9ac0l6cnh5eGRCNkVaaTlNdXo2MGt0d1FyVGRtSW1SSG9JZ3Vi?=
- =?utf-8?B?VjgrZHZCNFZWUnp5NkNadUxma2hsb3Z3Rzh0eUFxRi9RZFkxakpSMitmYTFX?=
- =?utf-8?B?VkxSMWlBOVRMUkU5alRRRmoxanJ0ejdXVU5VYUprMnNMeDVIYlJpR3hDa3VK?=
- =?utf-8?B?c2VId3FyeTZlVmdHTGFVR0JMb2kzVEQzdHNvOE02SVNPdm8rWVZXZzNiaFJN?=
- =?utf-8?B?aXJIOFAyeWJkTnVaYzdPb3U4bW1RaTVGTFY4WmwrMy9OK0M4MnNDQVZoK3J0?=
- =?utf-8?B?MWdhNGRvM20ya08zVGN3VEZlL2xJNnhucWpkSGYvdUNYMUpISWpsdkhrdGM1?=
- =?utf-8?B?ckh3aThGcEZ4Qm1HV0g4a0hQamRUV0x0ckdSbTc2NVV0QTVXeS9oTC9RUGto?=
- =?utf-8?B?WGcrMDdBNUZPVDNzeFh0VGZYMlNvdXdtVERyMnJFR3h0WThqd0JKdjZpZGZS?=
- =?utf-8?B?SzdpbzNhak5DKzVpc1JDUU1nbytLT3dYQjY2WS9RdFNIRmFseWRWY3B4Uy9Q?=
- =?utf-8?B?bldyczJIdm5hZ3k2U3p3SFBaS3N5bTJ4SUpwaVJtbVlFcjNyOHdqR0hGbVl6?=
- =?utf-8?B?ajJCcHdhQUZpOVVGamE5SnAwQmw1c1RsUk9hMkVUWGpleFJiMGVWWEFhc2FN?=
- =?utf-8?B?SHNGMVdiQUN5NkFuNDEvbEl2SlA2VjR2S29GSTJiRjUwK2hHdExmUjJhMzdV?=
- =?utf-8?B?ajZQVWhzeXAwd2dyUkl1c04rQktUODV6R2lQcEl0MlZsRUZiZ0pJbDJEMWtF?=
- =?utf-8?B?T3laR2h6VzkxR1cyUHplSzA0SkVaL3ErSjR4Qk8xRmRmS2ZNeitLekhxSVBT?=
- =?utf-8?B?MktGSGcwN2lPc1ZZcmtwV3YxTjVTRlFHL3NONlFDaUtvTktJQm95NW5Pc3dW?=
- =?utf-8?B?cWxjbHhETHRTelIyMFR5V2w2aTRtOVlKTmVUUy9aOS9xNHBxN0VBVklodndM?=
- =?utf-8?B?NDNtNnVSME8zVVR6T1RucS9Lb3Y4anAxZXFzOGhGL0dBczNoQVV4ZExHK290?=
- =?utf-8?B?WmVzR1pwMTY4R0pQclozb2d1OU5CVnh2REZqZkR2Z3g0aHVkeXUwU0d4aHlj?=
- =?utf-8?B?a1I4T2xMdWxHWlArQ21acDFZKytBUHl1RSs0MGVLZFAwOTRGUi9RWFFOL2Jo?=
- =?utf-8?B?RE1zMzFUcFhVK3VKZnBJempGZmNHRVhTcEhiRUJnWGhFYnpTTHp5V2hCYTR0?=
- =?utf-8?B?UVNtWEYwM1VDMTVkVmhxNEQ3bXBzcUVWam03bTVzY3hORXlRNGxRYU9kWUVW?=
- =?utf-8?B?Q0UxYSt2enE3WHl0cFNxQmJCUFRjNmVGc0J6bDM1ck5QTlRYcmtxdEdoY2dT?=
- =?utf-8?B?cW1YdVM2YWxBMkZjTC92S295QWdlbmd0YWp1UFZhNzJoYVZTaUZweTE1bUt0?=
- =?utf-8?B?WWJ0YmZtRXNBczc2d3lNcWVnYkp0SEJaSE1qV2tTUFFpbTZwanU1V3FsODJs?=
- =?utf-8?B?dzlpTmFSOUNFVmpFT0xROW0zb1dKWTcwYVI0cDF5WDFUSjhCa3FwRHY5UzB0?=
- =?utf-8?B?Y0pWUjRwaEFabW9Ed00zclhKMUZlb2FRRXRYRmdvNW1XK0dDNlZQOWJ5Wm5v?=
- =?utf-8?B?OWNaR3hQanZPcXBPWFc2VlpHd0c0VFJERy9IWkRGTXY2MnJYZWduWFd1dmt0?=
- =?utf-8?B?bFJNaFdvNmUyTlNneVFldmVKeVllcUdtaU5EeTU3MlZxT0tTNFVUR0trSnlV?=
- =?utf-8?B?K2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 685b0f42-6441-4236-f055-08de103d38d6
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 01:00:26.8771
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jmawtOsMo1XnnJmwDjyuinYyRgbt9DZiOZqrbdvPeVmGOYvBGNf9sNfrZ90zw1lf8Uo5+uV4vz31C0DHntKR2tM/hl75oEWP57wQsIKZD/8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF1A07FAA60
-X-OriginatorOrg: intel.com
+References: <20251017042312.1271322-1-alistair.francis@wdc.com> <fe16288e-e3f2-4de3-838e-181bbb0ce3ee@suse.de>
+In-Reply-To: <fe16288e-e3f2-4de3-838e-181bbb0ce3ee@suse.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 21 Oct 2025 11:01:45 +1000
+X-Gm-Features: AS18NWDiepjJ-jRwTWQwDakRt00NDvcpR1iprtqV_ILiMUcAXQFVJU3hWPRHcZA
+Message-ID: <CAKmqyKP0eB_WTZtMqtaNELPE4Bs9Ln-0U+_Oqk8fuJXTay_DPg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] nvme-tcp: Support receiving KeyUpdate requests
+To: Hannes Reinecke <hare@suse.de>
+Cc: chuck.lever@oracle.com, hare@kernel.org, 
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 02:17:56PM +0200, Michal Wajdeczko wrote:
-> 
-> 
-> On 10/11/2025 9:38 PM, Michał Winiarski wrote:
-> > In an upcoming change, the VF GGTT migration data will be handled as
-> > part of VF control state machine. Add the necessary helpers to allow the
-> > migration data transfer to/from the HW GGTT resource.
-> > 
-> > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
-> > ---
-> >  drivers/gpu/drm/xe/xe_ggtt.c               | 92 ++++++++++++++++++++++
-> >  drivers/gpu/drm/xe/xe_ggtt.h               |  2 +
-> >  drivers/gpu/drm/xe/xe_ggtt_types.h         |  2 +
-> >  drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c | 64 +++++++++++++++
-> >  drivers/gpu/drm/xe/xe_gt_sriov_pf_config.h |  5 ++
-> >  5 files changed, 165 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/xe/xe_ggtt.c b/drivers/gpu/drm/xe/xe_ggtt.c
-> > index aca7ae5489b91..89c0ad56c6a8a 100644
-> > --- a/drivers/gpu/drm/xe/xe_ggtt.c
-> > +++ b/drivers/gpu/drm/xe/xe_ggtt.c
-> > @@ -138,6 +138,14 @@ static void xe_ggtt_set_pte_and_flush(struct xe_ggtt *ggtt, u64 addr, u64 pte)
-> >  	ggtt_update_access_counter(ggtt);
-> >  }
-> >  
-> > +static u64 xe_ggtt_get_pte(struct xe_ggtt *ggtt, u64 addr)
-> > +{
-> > +	xe_tile_assert(ggtt->tile, !(addr & XE_PTE_MASK));
-> > +	xe_tile_assert(ggtt->tile, addr < ggtt->size);
-> > +
-> > +	return readq(&ggtt->gsm[addr >> XE_PTE_SHIFT]);
-> > +}
-> > +
-> >  static void xe_ggtt_clear(struct xe_ggtt *ggtt, u64 start, u64 size)
-> >  {
-> >  	u16 pat_index = tile_to_xe(ggtt->tile)->pat.idx[XE_CACHE_WB];
-> > @@ -220,16 +228,19 @@ void xe_ggtt_might_lock(struct xe_ggtt *ggtt)
-> >  static const struct xe_ggtt_pt_ops xelp_pt_ops = {
-> >  	.pte_encode_flags = xelp_ggtt_pte_flags,
-> >  	.ggtt_set_pte = xe_ggtt_set_pte,
-> > +	.ggtt_get_pte = xe_ggtt_get_pte,
-> >  };
-> >  
-> >  static const struct xe_ggtt_pt_ops xelpg_pt_ops = {
-> >  	.pte_encode_flags = xelpg_ggtt_pte_flags,
-> >  	.ggtt_set_pte = xe_ggtt_set_pte,
-> > +	.ggtt_get_pte = xe_ggtt_get_pte,
-> >  };
-> >  
-> >  static const struct xe_ggtt_pt_ops xelpg_pt_wa_ops = {
-> >  	.pte_encode_flags = xelpg_ggtt_pte_flags,
-> >  	.ggtt_set_pte = xe_ggtt_set_pte_and_flush,
-> > +	.ggtt_get_pte = xe_ggtt_get_pte,
-> >  };
-> >  
-> >  static void __xe_ggtt_init_early(struct xe_ggtt *ggtt, u32 reserved)
-> > @@ -914,6 +925,87 @@ void xe_ggtt_assign(const struct xe_ggtt_node *node, u16 vfid)
-> >  	xe_ggtt_assign_locked(node->ggtt, &node->base, vfid);
-> >  	mutex_unlock(&node->ggtt->lock);
-> >  }
-> > +
-> > +/**
-> > + * xe_ggtt_node_save - Save a &struct xe_ggtt_node to a buffer
-> > + * @node: the &struct xe_ggtt_node to be saved
-> > + * @dst: destination buffer
-> 
-> correct me: this is buffer for the PTEs
-> 
-> > + * @size: destination buffer size in bytes
-> 
-> and this is size of above buffer
-> 
-> > + *
-> > + * Return: 0 on success or a negative error code on failure.
-> > + */
-> > +int xe_ggtt_node_save(struct xe_ggtt_node *node, void *dst, size_t size)
-> > +{
-> > +	struct xe_ggtt *ggtt;
-> > +	u64 start, end;
-> > +	u64 *buf = dst;
-> > +
-> > +	if (!node || !node->ggtt)
-> > +		return -ENOENT;
-> 
-> hmm, non-NULL node must be initialized by xe_ggtt_node_init() which sets the .ggtt so this second check is redundant
+On Tue, Oct 21, 2025 at 3:46=E2=80=AFAM Hannes Reinecke <hare@suse.de> wrot=
+e:
+>
+> On 10/17/25 06:23, alistair23@gmail.com wrote:
+> > From: Alistair Francis <alistair.francis@wdc.com>
+> >
+> > The TLS 1.3 specification allows the TLS client or server to send a
+> > KeyUpdate. This is generally used when the sequence is about to
+> > overflow or after a certain amount of bytes have been encrypted.
+> >
+> > The TLS spec doesn't mandate the conditions though, so a KeyUpdate
+> > can be sent by the TLS client or server at any time. This includes
+> > when running NVMe-OF over a TLS 1.3 connection.
+> >
+> > As such Linux should be able to handle a KeyUpdate event, as the
+> > other NVMe side could initiate a KeyUpdate.
+> >
+> > Upcoming WD NVMe-TCP hardware controllers implement TLS support
+> > and send KeyUpdate requests.
+> >
+> > This series builds on top of the existing TLS EKEYEXPIRED work,
+> > which already detects a KeyUpdate request. We can now pass that
+> > information up to the NVMe layer (target and host) and then pass
+> > it up to userspace.
+> >
+> > Userspace (ktls-utils) will need to save the connection state
+> > in the keyring during the initial handshake. The kernel then
+> > provides the key serial back to userspace when handling a
+> > KeyUpdate. Userspace can use this to restore the connection
+> > information and then update the keys, this final process
+> > is similar to the initial handshake.
+> >
+>
+> I am rather sceptical at the current tlshd implementation.
+> At which place do you update the sending keys?
 
-Ok.
+The sending keys are updated as part of gnutls_session_key_update().
 
-> 
-> > +
-> > +	mutex_lock(&node->ggtt->lock);
-> 
-> 	guard(mutex)(&node->ggtt->lock);
+gnutls_session_key_update() calls update_sending_key() which updates
+the sending keys.
 
-Ok.
+The idea is that when the sequence number is about to overflow the
+kernel will request userspace to update the sending keys via the
+HANDSHAKE_KEY_UPDATE_TYPE_SEND key_update_type. Userspace updates the
+keys and initiates a KeyUpdate.
 
-> 
-> > +
-> > +	ggtt = node->ggtt;
-> > +	start = node->base.start;
-> > +	end = start + node->base.size - 1;
-> > +
-> > +	if (node->base.size < size) {
-> 
-> so that's looks wrong, we are about to save 64bit PTEs of that node
-> 
-> we should compare size of all PTEs not the size of address space allocated by this node
+> I'm only seeing a call to 'gnutls_handhake_update_receiving_key()'.
+>
+> But I haven't found the matching function
+> 'gnutls_handshake_update_sending_key()' in current gnutls.
+> So how does updating of the sending keys work?
 
-I'll replace it with
+gnutls_session_key_update() calls update_sending_key() which updates
+the sending keys.
 
-if (xe_ggtt_pte_size(ggtt, size: node->base.size) > size)
-	return -EINVAL;
+When updating the sending keys we want to send a KeyUpdate request,
+which is why it's a different flow.
 
-> 
-> > +		mutex_unlock(&node->ggtt->lock);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	while (start < end) {
-> > +		*buf++ = ggtt->pt_ops->ggtt_get_pte(ggtt, start) & ~GGTT_PTE_VFID;
-> > +		start += XE_PAGE_SIZE;
-> > +	}
-> > +
-> > +	mutex_unlock(&node->ggtt->lock);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * xe_ggtt_node_load - Load a &struct xe_ggtt_node from a buffer
-> > + * @node: the &struct xe_ggtt_node to be loaded
-> > + * @src: source buffer
-> > + * @size: source buffer size in bytes
-> > + * @vfid: VF identifier
-> > + *
-> > + * Return: 0 on success or a negative error code on failure.
-> > + */
-> > +int xe_ggtt_node_load(struct xe_ggtt_node *node, const void *src, size_t size, u16 vfid)
-> > +{
-> > +	struct xe_ggtt *ggtt;
-> > +	u64 start, end;
-> > +	const u64 *buf = src;
-> > +	u64 vfid_pte = xe_encode_vfid_pte(vfid);
-> 
-> try to define vars in reverse xmas tree order
+Alistair
 
-Ok.
-
-> 
-> > +
-> > +	if (!node || !node->ggtt)
-> > +		return -ENOENT;
-> > +
-> > +	mutex_lock(&node->ggtt->lock);
-> 
-> use guard(mutex)
-
-Ok.
-
-> 
-> > +
-> > +	ggtt = node->ggtt;
-> > +	start = node->base.start;
-> > +	end = start + size - 1;
-> > +
-> > +	if (node->base.size != size) {
-> > +		mutex_unlock(&node->ggtt->lock);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	while (start < end) {
-> > +		ggtt->pt_ops->ggtt_set_pte(ggtt, start, (*buf & ~GGTT_PTE_VFID) | vfid_pte);
-> > +		start += XE_PAGE_SIZE;
-> > +		buf++;
-> > +	}
-> > +	xe_ggtt_invalidate(ggtt);
-> > +
-> > +	mutex_unlock(&node->ggtt->lock);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  #endif
-> >  
-> >  /**
-> > diff --git a/drivers/gpu/drm/xe/xe_ggtt.h b/drivers/gpu/drm/xe/xe_ggtt.h
-> > index 75fc7a1efea76..469b3a6ca14b4 100644
-> > --- a/drivers/gpu/drm/xe/xe_ggtt.h
-> > +++ b/drivers/gpu/drm/xe/xe_ggtt.h
-> > @@ -43,6 +43,8 @@ u64 xe_ggtt_print_holes(struct xe_ggtt *ggtt, u64 alignment, struct drm_printer
-> >  
-> >  #ifdef CONFIG_PCI_IOV
-> >  void xe_ggtt_assign(const struct xe_ggtt_node *node, u16 vfid);
-> > +int xe_ggtt_node_save(struct xe_ggtt_node *node, void *dst, size_t size);
-> > +int xe_ggtt_node_load(struct xe_ggtt_node *node, const void *src, size_t size, u16 vfid);
-> >  #endif
-> >  
-> >  #ifndef CONFIG_LOCKDEP
-> > diff --git a/drivers/gpu/drm/xe/xe_ggtt_types.h b/drivers/gpu/drm/xe/xe_ggtt_types.h
-> > index c5e999d58ff2a..dacd796f81844 100644
-> > --- a/drivers/gpu/drm/xe/xe_ggtt_types.h
-> > +++ b/drivers/gpu/drm/xe/xe_ggtt_types.h
-> > @@ -78,6 +78,8 @@ struct xe_ggtt_pt_ops {
-> >  	u64 (*pte_encode_flags)(struct xe_bo *bo, u16 pat_index);
-> >  	/** @ggtt_set_pte: Directly write into GGTT's PTE */
-> >  	void (*ggtt_set_pte)(struct xe_ggtt *ggtt, u64 addr, u64 pte);
-> > +	/** @ggtt_get_pte: Directly read from GGTT's PTE */
-> > +	u64 (*ggtt_get_pte)(struct xe_ggtt *ggtt, u64 addr);
-> >  };
-> >  
-> >  #endif
-> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-> > index b2e5c52978e6a..51027921b2988 100644
-> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-> > @@ -726,6 +726,70 @@ int xe_gt_sriov_pf_config_set_fair_ggtt(struct xe_gt *gt, unsigned int vfid,
-> >  	return xe_gt_sriov_pf_config_bulk_set_ggtt(gt, vfid, num_vfs, fair);
-> >  }
-> >  
-> > +/**
-> > + * xe_gt_sriov_pf_config_ggtt_save - Save a VF provisioned GGTT data into a buffer.
-> > + * @gt: the &struct xe_gt
-> > + * @vfid: VF identifier
-> > + * @buf: the GGTT data destination buffer
-> > + * @size: the size of the buffer
-> > + *
-> > + * This function can only be called on PF.
-> > + *
-> > + * Return: 0 on success or a negative error code on failure.
-> > + */
-> > +int xe_gt_sriov_pf_config_ggtt_save(struct xe_gt *gt, unsigned int vfid,
-> > +				    void *buf, size_t size)
-> > +{
-> > +	struct xe_gt_sriov_config *config;
-> > +	ssize_t ret;
-> 
-> int
-> 
-> > +
-> > +	xe_gt_assert(gt, IS_SRIOV_PF(gt_to_xe(gt)));
-> > +	xe_gt_assert(gt, vfid);
-> > +	xe_gt_assert(gt, !(!buf ^ !size));
-> 
-> there seems to be no "query" option for this call, so both buf & size must be valid
-> 
-> > +
-> > +	mutex_lock(xe_gt_sriov_pf_master_mutex(gt));
-> > +	config = pf_pick_vf_config(gt, vfid);
-> > +	size = size / sizeof(u64) * XE_PAGE_SIZE;
-> 
-> ?? something is wrong here - why do we have to change the size of the buf?
-
-Should be simplified after tweaking the logic with size conversions
-to/from PTE.
-
-> 
-> > +
-> > +	ret = xe_ggtt_node_save(config->ggtt_region, buf, size);
-> > +
-> > +	mutex_unlock(xe_gt_sriov_pf_master_mutex(gt));
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * xe_gt_sriov_pf_config_ggtt_restore - Restore a VF provisioned GGTT data from a buffer.
-> > + * @gt: the &struct xe_gt
-> > + * @vfid: VF identifier
-> > + * @buf: the GGTT data source buffer
-> > + * @size: the size of the buffer
-> > + *
-> > + * This function can only be called on PF.
-> > + *
-> > + * Return: 0 on success or a negative error code on failure.
-> > + */
-> > +int xe_gt_sriov_pf_config_ggtt_restore(struct xe_gt *gt, unsigned int vfid,
-> > +				       const void *buf, size_t size)
-> > +{
-> > +	struct xe_gt_sriov_config *config;
-> > +	ssize_t ret;
-> > +
-> > +	xe_gt_assert(gt, IS_SRIOV_PF(gt_to_xe(gt)));
-> > +	xe_gt_assert(gt, vfid);
-> > +	xe_gt_assert(gt, !(!buf ^ !size));
-> > +
-> > +	mutex_lock(xe_gt_sriov_pf_master_mutex(gt));
-> > +	config = pf_pick_vf_config(gt, vfid);
-> > +	size = size / sizeof(u64) * XE_PAGE_SIZE;
-> > +
-> > +	ret = xe_ggtt_node_load(config->ggtt_region, buf, size, vfid);
-> > +
-> > +	mutex_unlock(xe_gt_sriov_pf_master_mutex(gt));
-> > +
-> > +	return ret;
-> > +}
-> 
-> ditto
-
-Ok.
-
-Thanks,
--Michał
-
-> 
-> > +
-> >  static u32 pf_get_min_spare_ctxs(struct xe_gt *gt)
-> >  {
-> >  	/* XXX: preliminary */
-> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.h
-> > index 513e6512a575b..6916b8f58ebf2 100644
-> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.h
-> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.h
-> > @@ -61,6 +61,11 @@ ssize_t xe_gt_sriov_pf_config_save(struct xe_gt *gt, unsigned int vfid, void *bu
-> >  int xe_gt_sriov_pf_config_restore(struct xe_gt *gt, unsigned int vfid,
-> >  				  const void *buf, size_t size);
-> >  
-> > +int xe_gt_sriov_pf_config_ggtt_save(struct xe_gt *gt, unsigned int vfid,
-> > +				    void *buf, size_t size);
-> > +int xe_gt_sriov_pf_config_ggtt_restore(struct xe_gt *gt, unsigned int vfid,
-> > +				       const void *buf, size_t size);
-> > +
-> >  bool xe_gt_sriov_pf_config_is_empty(struct xe_gt *gt, unsigned int vfid);
-> >  
-> >  int xe_gt_sriov_pf_config_init(struct xe_gt *gt);
-> 
+>
+> Cheers,
+>
+> Hannes
+> --
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
+> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
