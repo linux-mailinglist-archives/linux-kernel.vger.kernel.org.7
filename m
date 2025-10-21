@@ -1,173 +1,168 @@
-Return-Path: <linux-kernel+bounces-863630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC8EBF8851
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B06DBF883C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 895204FC840
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:04:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 247634FB11C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C310624A047;
-	Tue, 21 Oct 2025 20:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C76F279918;
+	Tue, 21 Oct 2025 20:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PJ3NI30V"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eWugX/bA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D4E265CDD;
-	Tue, 21 Oct 2025 20:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15970279798;
+	Tue, 21 Oct 2025 20:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761077054; cv=none; b=apkseQWx+mjBSZL6xqhuO88LL4zlFzwfiU4xNmSNMwYFIxflqVCa6FGo1EAXtolMxGjx9Bu2dWymbVhTAHHuQtKlgr3KEV3cvBjGfMeYk3Oe79zUPNmA8IOePInk5aHDtKjSsHAWh/k1jws+62tqV4JdeaPBaxT3/e0am4zrBks=
+	t=1761077042; cv=none; b=h61bJEL4N/ud3HtN3thbmABN7MaTUdhHL9Km+ehtRXno4ASrfXZIYZTSaPBqmIznJXUagHbBBNMKPexA7hDllBLKHTfka/xwtSeNVoMzP3G3we1yZ7hmhs9SRbFDMmTLaLb1Quxa0TiPn34FXOXEEsnxobKeTeVBlV0aY7CnbI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761077054; c=relaxed/simple;
-	bh=bvu1hCgaEBFxQCkOQvdBmkEXVLNwGj+rEy6N7mDSE50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLmC9LjTsw5+Fv9lc/MZP/CafUOkbGZLx/rb2ycVglkTj2R/VjciI130gXkjN1sp0jX2Y8rLKSdvtMgEjet5DuT9DU8AEnDfIp/L37VpqXEDfRLH8DGDPInL5Ey5LXs3JKzi+xNPSp+RrW4PwQemQpL0BZGkxyAnxOwYcB4H4oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PJ3NI30V; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B231440E0200;
-	Tue, 21 Oct 2025 20:04:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mxa2GnDdAkJI; Tue, 21 Oct 2025 20:04:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761077042; bh=LqOuAOc3c7dD6s8nXNoTSnIZ/kx2X/BfM4B8Od2Qvyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PJ3NI30VjTbiCHLcday5QU5CsF9G471l400Jgnt1HOwLo0i/09RYT9raBOJ60PCjC
-	 rQzvQaU81lQAGNpp1MTXQxGeuYPgotECVjVemhaw6guaJo5o5TDd2TYZMRjf3SNjc0
-	 6bFPTYWTti0SGsU/u5/fhEw6z/vdpcAdBga5fHN/z6AumO+oR81IdmgijdvUUKIYOY
-	 /yB2dkzr/Xag9kVwgq4uRIIV6wI3ntLyXdMiUR09i8karqhVK3qeXUe2vKWQACchqD
-	 MYGuTqvAwSzELanRpRNk0ahO4wklMYcNcNHojJow1dcC2E9CrAfzyGQkSKISeryn0L
-	 DS7kxKMNbhx9NAp0vqxCkZ2LIwk06hb1DPb7gsR/OdcUxzYrz6LqdYR6j1/Dsl2+LB
-	 fErSDdjgFa5EFWoNtusMCE6RGupdmH1cb+xMlFMtDXStmwZo9BN0oUjeR6m3K/6qBm
-	 1CJ7YTVeAadaH3XM/UZFroSLUqjKjWEdq0XckT9pCgdegXLtDfsZHuYyQSkOO5CV1S
-	 eCdbbiha8/KADB0QBLJnF3XHXmfgokLhmw0ANVswfDGRgXps32tExX4ixCpQmy9GE+
-	 Z8Oqeniw13ojdDv4SNvXWo6rx9uO/cOGkIW31WW1HaYKj9sVUq0osyBZU74+m57nLQ
-	 LhzJPl4FfVAzC7JgyN2regiI=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E33A640E00DE;
-	Tue, 21 Oct 2025 20:03:34 +0000 (UTC)
-Date: Tue, 21 Oct 2025 22:03:28 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Sean Christopherson <seanjc@google.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v10 03/15] x86/alternatives: Disable LASS when patching
- kernel alternatives
-Message-ID: <20251021200328.GMaPfnEDibnBrhNTmQ@fat_crate.local>
-References: <20251007065119.148605-1-sohil.mehta@intel.com>
- <20251007065119.148605-4-sohil.mehta@intel.com>
+	s=arc-20240116; t=1761077042; c=relaxed/simple;
+	bh=uhSuasC7qgF2zmotCjudEp9V1eE0GEMNvRxw2MHVLKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uBA1/qstMEKcrcFGhikxCbaDcE7m3v1dsuBXwhSNjmW+LQ5/jyHL1K8C/gksPzITJjIzP6L7kPqIFMuGpNM286C56OYC8Je60cb0AQclkJRuHWpt6pYBNsqzVn1sIzczv1OOnn86Qd9BLm3HRcydLb+PBiPi7TcGe6zgJLucO5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eWugX/bA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LDL3ii007202;
+	Tue, 21 Oct 2025 20:03:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NRP0tC
+	eYnVDlm62E339Oy5tdWhMiGMfV0Piwa5uDGM8=; b=eWugX/bAPc5iMFy91G2qLR
+	KWVRHXmxtoc/fGA3VLEaL5V9hhtsZ0HByE8h+gOqUG5IFftGGWooFrK8DHoiw1aw
+	YzfphMwPq5KSqeoXV8S8eIPqhxlGyu3ygM6M5yVqR9TvJRXdbj2Ku0Uea+UHDGtY
+	gK0z34hlL1ZtvNqs5HwStp2I9ldhfpBob9Th+bjUOzkyov30p6xj1q8/d0d7U0Xl
+	2GejBwnX70G0ELcUY8/Umvapr5H9xOXFg+Gfu5tKaHfe073NwhBIAaapnbgaThn7
+	DaN6RrTMA/00IwDSXgVdTjhYBREk/YVI5k2Qd3Z5wuy6kvc2ZmQLh54kfbz3e8jA
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vqpj4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 20:03:38 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59LIeCPI032142;
+	Tue, 21 Oct 2025 20:03:37 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vp7mvknt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 20:03:37 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LK3aQl22414030
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Oct 2025 20:03:36 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96BAE5805E;
+	Tue, 21 Oct 2025 20:03:36 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B69D658043;
+	Tue, 21 Oct 2025 20:03:35 +0000 (GMT)
+Received: from [9.61.241.19] (unknown [9.61.241.19])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 21 Oct 2025 20:03:35 +0000 (GMT)
+Message-ID: <a4e7c14c-112d-4ac4-9ff7-74efebc26321@linux.ibm.com>
+Date: Tue, 21 Oct 2025 13:03:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251007065119.148605-4-sohil.mehta@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] PM: runtime: Fix conditional guard definitions
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Zhang Qilong <zhangqilong3@huawei.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
+        Dhruva Gole <d-gole@ti.com>, Dan Williams <dan.j.williams@intel.com>
+References: <5943878.DvuYhMxLoT@rafael.j.wysocki>
+Content-Language: en-US
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <5943878.DvuYhMxLoT@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 49au64DJ3FCr4lpbS1J-iqZbDEv48HrO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXyDaAPYrbJYNY
+ MOYAheoFEBoTNzl4UsJ0NHtQ4haFSFCWwpEAMAEocD3/U9ATpwCFCa7GAi6lQfLev81MWqrUHka
+ WEUWO+Yh/XwLC4zogxrxaUUxSvSANGWe/0BybNM9eDhJC4XYMak+4hKdWnvQTJ39hEVZH+6uWbW
+ KlAxcsjXzPrkSETpIr5elguVBiqoS/uozg4S0uMibHMATc3VLj3ztykhDjnpimPvVp5lXIaBvn0
+ AEs6ZZNoL30ymwW8Wt3xxxH3K0ovw55l7FwyXT1DRj8AKWYmejV6dOy0KcRXcd2aERjG3Wwa2t0
+ b9oqD9IbXfoUL7fN1FVp2c0/BOCqbokLNRss6ddVjwZftuz1CJMSIT/YeGPiJjwjul2SumiuoHP
+ BgpiLtqu2t245z65+AVF68ASlHdL6w==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f7e71a cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=VnNF1IyMAAAA:8 a=O-QSBXc3A0Oyl9V8qwYA:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 49au64DJ3FCr4lpbS1J-iqZbDEv48HrO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1011 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Mon, Oct 06, 2025 at 11:51:07PM -0700, Sohil Mehta wrote:
-> +static __always_inline void lass_clac(void)
-> +{
-> +	alternative("", "clac", X86_FEATURE_LASS);
-> +}
-> +
-> +static __always_inline void lass_stac(void)
-> +{
-> +	alternative("", "stac", X86_FEATURE_LASS);
-> +}
 
-So I probably missed the whole discussion on how we arrived at
-lass_{stac,clac}() but just in case, those names sound silly.
+On 10/20/2025 8:03 AM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Since pm_runtime_get_active() returns 0 on success, all of the
+> DEFINE_GUARD_COND() macros in pm_runtime.h need the "_RET == 0"
+> condition at the end of the argument list or they would not work
+> correctly.
+>
+> Fixes: 9a0abc39450a ("PM: runtime: Add auto-cleanup macros for "resume and get" operations")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Link: https://lore.kernel.org/linux-pm/202510191529.BCyjKlLQ-lkp@intel.com/
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>   include/linux/pm_runtime.h |    8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -629,13 +629,13 @@ DEFINE_GUARD(pm_runtime_active_auto, str
+>    * device.
+>    */
+>   DEFINE_GUARD_COND(pm_runtime_active, _try,
+> -		  pm_runtime_get_active(_T, RPM_TRANSPARENT))
+> +		  pm_runtime_get_active(_T, RPM_TRANSPARENT), _RET == 0)
+>   DEFINE_GUARD_COND(pm_runtime_active, _try_enabled,
+> -		  pm_runtime_resume_and_get(_T))
+> +		  pm_runtime_resume_and_get(_T), _RET == 0)
+>   DEFINE_GUARD_COND(pm_runtime_active_auto, _try,
+> -		  pm_runtime_get_active(_T, RPM_TRANSPARENT))
+> +		  pm_runtime_get_active(_T, RPM_TRANSPARENT), _RET == 0)
+>   DEFINE_GUARD_COND(pm_runtime_active_auto, _try_enabled,
+> -		  pm_runtime_resume_and_get(_T))
+> +		  pm_runtime_resume_and_get(_T), _RET == 0)
+>   
+>   /**
+>    * pm_runtime_put_sync - Drop device usage counter and run "idle check" if 0.
+>
+>
+This does fix the issue for me mentioned here 
+https://lore.kernel.org/all/25435d82-575d-495f-ae61-bd38570ff9ad@linux.ibm.com/
 
-IOW, I'd do this ontop:
+Feel free to add
 
-diff --git a/arch/x86/include/asm/smap.h b/arch/x86/include/asm/smap.h
-index 3ecb4b0de1f9..066d83a6b1ff 100644
---- a/arch/x86/include/asm/smap.h
-+++ b/arch/x86/include/asm/smap.h
-@@ -55,16 +55,8 @@ static __always_inline void stac(void)
-  * Use lass_stac()/lass_clac() when accessing kernel mappings
-  * (!_PAGE_USER) in the lower half of the address space.
-  */
--
--static __always_inline void lass_clac(void)
--{
--	alternative("", "clac", X86_FEATURE_LASS);
--}
--
--static __always_inline void lass_stac(void)
--{
--	alternative("", "stac", X86_FEATURE_LASS);
--}
-+#define lass_disable()		stac()
-+#define lass_enable()		clac()
- 
- static __always_inline unsigned long smap_save(void)
- {
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 6a96dbc60bf1..6cdf5c226c51 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -2487,18 +2487,18 @@ __ro_after_init unsigned long text_poke_mm_addr;
- 
- static void text_poke_memcpy(void *dst, const void *src, size_t len)
- {
--	lass_stac();
-+	lass_disable();
- 	__inline_memcpy(dst, src, len);
--	lass_clac();
-+	lass_enable();
- }
- 
- static void text_poke_memset(void *dst, const void *src, size_t len)
- {
- 	int c = *(const int *)src;
- 
--	lass_stac();
-+	lass_disable();
- 	__inline_memset(dst, c, len);
--	lass_clac();
-+	lass_enable();
- }
- 
- typedef void text_poke_f(void *dst, const void *src, size_t len);
+Tested-by: Farhan Ali <alifm@linux.ibm.com>
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
