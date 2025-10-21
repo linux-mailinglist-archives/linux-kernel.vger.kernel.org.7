@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-863722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5327BF8EDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:21:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19350BF8EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7840C42626B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F401898D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B752882B8;
-	Tue, 21 Oct 2025 21:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83041285418;
+	Tue, 21 Oct 2025 21:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffTyfdad"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="naUnP9uo"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D476527BF7C;
-	Tue, 21 Oct 2025 21:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85808288C24
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761081692; cv=none; b=azC7h5nlgc1WEF7HwmIAESwG/pcsL6a8nglba4ThOwo6C1/xLgzNfFb8EcGIF71KVDGtJ2Zy+JhbdCYmV07laZrPyOCcEUxAR4XrnR2FERAKccZbc7qSJds1QTjjH689E6EHehWoYhJLX2yoLE9mEjk/xp3QRcJPNzTyrecvqTw=
+	t=1761081766; cv=none; b=XAYHYflndcm9CcohI6tkkm1QTXCDJd0TAwOqWVnE60FcVLV5hVihdpvOWHhe3WaG4YHyKSoO9vypa7Ta+94E4VXL7+QJ5zzY3cCig/zv/gYRUbmTsDBJ2W35HsfAsYfqZPTgoqGSD1LVzWecHjqvMTtZICxSyofqb1S/14Im/n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761081692; c=relaxed/simple;
-	bh=qlFUOSDCpv5Vk45f8TeWwUOHvvUhZJo7QoIYDia+ISE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PmtkGGga/vo30/+CTrlhEpBounSTFSAwXJI5mP/D+hv3UVoFgXnsN/TcNlpZUEtZBLc8Gld4G4g2NUnKnoeYMW34nBU7cgPVh/7po7AoQPpK7Yxdh1R+La2RSO8RTi2LyQkS41hcE7eiC9ivGVIpdJthAZXMrZzChqSHiOy04VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffTyfdad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08174C4CEF1;
-	Tue, 21 Oct 2025 21:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761081692;
-	bh=qlFUOSDCpv5Vk45f8TeWwUOHvvUhZJo7QoIYDia+ISE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ffTyfdadAlq85eK0DEDZfwxO9AXJ771s11UzEGvWpmmzUshBCZb4wTOZP4X2Pde33
-	 /iNe2nz5KxG4j/q79qcLH0Ab7V3NLZbXqczUyuvrNgbtRNUMNC87+GqVe1QmDITpfj
-	 uBKXKGsjkDdwyvzUFx2YnSafFmAzzDDvT2WugjRzb6Pcw1dKGAJrsf7JDKrEe41uxg
-	 aYRumPgimTeOc6+ImUlmtpnR+9ce4npH+64JIAy/Qjs9T/oTSFjMB3PnDZoZg4Ctbh
-	 U5MX0ZiHOAfCH6MsVfW/ljJuarAeYNe0Sk/GbEkUjn2JZZhYVlsCCJ4xABp24NlNV7
-	 khwcrXbHTrw5Q==
-Date: Tue, 21 Oct 2025 23:21:17 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v9 2/4] tracing: Add a tracepoint verification check at
- build time
-Message-ID: <aPf5TVismRLkQQOE@levanger>
-References: <20251015203842.618059565@kernel.org>
- <20251015203924.391455037@kernel.org>
- <aPKj2Ilnq7F0xLFx@levanger>
- <20251021154737.77377790@gandalf.local.home>
+	s=arc-20240116; t=1761081766; c=relaxed/simple;
+	bh=Ybx4CHPsOLmvIHdoWKQOvulc/D18NFbbASMThaWnL/U=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=GjZplP+eSQLl72XA/FlIpfa8+cZgicoM/y8YnSMtQcEagsTbk8wscrFwOJiHXVBAGeK8+FVNtmnPNtxb7ZXzoVj2VhdVt1DpzpkGw2tjx9d2WnDoQUpM5YZRR4KFOwdxjW9AAD8vV1Sag66UqSjTJu9YK+dr22YvxBRSUeDw2xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=naUnP9uo; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761081761;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ipMH4TfKfLmOBsuRBlv/yfe75TXdRF1bje+9o/VW4f4=;
+	b=naUnP9uo2aKuco80ByGsaq15l9rdYxK13SqP5udZzatzjZKd9TDPSxm+egZXnct4pHrK51
+	viZDCOApUhXEwT/q96p+BvaXteHVxRpSmCdkUmHSylF3N0Le+YoZVEKT6X9Y+/3WlKTk29
+	ZYLgeycXTLcEksTI5qECpM3AsuIimeA=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021154737.77377790@gandalf.local.home>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] w1: therm: Replace deprecated strcpy with strscpy in
+ alarms_store
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <db33871a-26ad-44f2-8e4b-046aa34f6477@kernel.org>
+Date: Tue, 21 Oct 2025 23:22:05 +0200
+Cc: Huisong Li <lihuisong@huawei.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <1BFDA086-7B8E-4FD9-8A8A-B7D23A5FE5CF@linux.dev>
+References: <20251017170047.114224-2-thorsten.blum@linux.dev>
+ <db33871a-26ad-44f2-8e4b-046aa34f6477@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 21, 2025 at 03:47:37PM -0400, Steven Rostedt wrote:
-> On Fri, 17 Oct 2025 22:15:20 +0200
-> Nicolas Schier <nsc@kernel.org> wrote:
+On 20. Oct 2025, at 09:01, Krzysztof Kozlowski wrote:
+> On 17/10/2025 19:00, Thorsten Blum wrote:
+>> strcpy() is deprecated because it can overflow when the destination
+>> buffer is not large enough for the source string. Replace it with
 > 
-> > > +# To check for unused tracepoints (tracepoints that are defined but never
-> > > +# called), run with:
-> > > +#
-> > > +# make UT=1
-> > > +#
-> > > +# Each unused tracepoints can take up to 5KB of memory in the running kernel.
-> > > +# It is best to remove any that are not used.
-> > > +
-> > > +ifeq ("$(origin UT)", "command line")
-> > > +  WARN_ON_UNUSED_TRACEPOINTS := $(UT)
-> > > +endif
-> > > +
-> > > +export WARN_ON_UNUSED_TRACEPOINTS  
-> > 
-> > Is there a special reason why you chose to introduce a new command-line
-> > variable instead of extending KBUILD_EXTRA_WARN / W ?
-> 
-> Honestly, I didn't think about using KBUILD_EXTRA_WARN. I also want this
-> option to go away after we remove the current unused tracepoints so that
-> any new ones will always cause a warning.
-> 
-> The only reason not to make it always warn is because I don't want to add
-> warnings for the existing code. I'm working on having outreachy projects to
-> remove the currently unused tracepoints. Once that is done, then this
-> option is going to go away and the build will always warn on unused
-> tracepoints.
-> 
-> I thought it might be easier to remove it without any issues if it's a new
-> command line that goes away in the future.
-> 
-> Looking at EXTRA_WARN, it appears to be for basic issues with the code and
-> adds new C compiler warning flags. This isn't exactly the same.
-> 
-> If you think it makes sense to extend EXTRA_WARN, I can still go ahead and
-> do that.
+> It cannot overflow. Look at the code - memory is allocated for the size.
 
-thanks for clarification!  For completeness: KBUILD_EXTRA_WARN is also
-used for non-C related checks (cp. scripts/misc-check).
-I somehow missed that UT= shall exist temporarily only - if this is
-still the plan, I don't see a strong reason to put to much work into
-integration in KBUILD_EXTRA_WARN.
+The sysfs buffer passed to alarms_store() is allocated with 'size + 1'
+bytes to include a NUL terminator. However, the 'size' argument does not
+account for this extra byte.
 
-Kind regards
-Nicolas
+And since 'p_args' is allocated with only 'size' bytes and strcpy()
+copies 'buf' until the first '\0' at index 'size', strcpy() writes one
+byte past the end of 'p_args'.
+
+Using kstrdup() fixes this issue, as it allocates 'strlen(buf) + 1'
+bytes and copies the NUL terminator safely.
+
+I would also remove the misleading comment, drop dev_warn(), and return
+-ENOMEM on allocation failure.
+
+Would this work for you?
+
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index 9ccedb3264fb..94512f8b60f5 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -1841,15 +1841,9 @@ static ssize_t alarms_store(struct device *device,
+	s8 tl, th;	/* 1 byte per value + temp ring order */
+	char *p_args, *orig;
+
+-	p_args = orig = kmalloc(size, GFP_KERNEL);
+-	/* Safe string copys as buf is const */
+-	if (!p_args) {
+-		dev_warn(device,
+-			"%s: error unable to allocate memory %d\n",
+-			__func__, -ENOMEM);
+-		return size;
+-	}
+-	strcpy(p_args, buf);
++	p_args = orig = kstrdup(buf, GFP_KERNEL);
++	if (!p_args)
++		return -ENOMEM;
+
+	/* Split string using space char */
+	token = strsep(&p_args, " ");
+
 
