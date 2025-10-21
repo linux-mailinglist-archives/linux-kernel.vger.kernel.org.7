@@ -1,232 +1,196 @@
-Return-Path: <linux-kernel+bounces-862216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A94BF4B33
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:23:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D02BF4B36
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 52143351AA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:23:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D1318C3E9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF90F25F973;
-	Tue, 21 Oct 2025 06:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3149D25D540;
+	Tue, 21 Oct 2025 06:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ry0pm+G9"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011006.outbound.protection.outlook.com [52.101.57.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jwhu+A4v"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694E4223DDD;
-	Tue, 21 Oct 2025 06:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761027806; cv=fail; b=ACQV+//hjrUoOlYqsY7WbbBjPBnxH009Waa3KCxdqC7NSBrSduRBWsdki7BwZuM7rKXtxC7Y06UqUf3nJb6fKx61J/4d9FmuaUTZUUkTNCufMoeCPdWHuLeMPvOjCpljhBBGekJPCJ3tFTU9VEb8QlRB2SHFYwhPbwX68ffjw6Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761027806; c=relaxed/simple;
-	bh=J/FEreLYqdI3bqXgNSWTeS5esP4b7McdgAcKxPsI9rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dMF0Hgb9tgQGYAIz1BuN8dqsPv0p/9Yk6iNytfp5wrdf5G9ZbKKg/Ly/oWCvhTQFvEmcTKORcUhQXDiJsJtV6eaJ4B/EZZu3e13F8kB9hM4Lv1zUVHSXOMUQSsZrvR3xd65aXspHd2SIwVEObQFkKra14UpROO9EgFOxD0RS1lU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ry0pm+G9; arc=fail smtp.client-ip=52.101.57.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Sx4axM8tuIyKQwGY6L5AAfd9ADPutYvPBla13h8+qOYzMPkqjcZlwUoigSayZL32itmeMWBKF/NdfmcJ/pCCgtdzD0vt2v3V6vlaDua6ApUgL/QWPZuxw8znEJTUhVRcObELIC7/yYhSoR3bAx7qYiwH364GXciCPmNZ0sSsBhAwx3x0PK5IaGoIDHVmCQpq10ORhHQIYg/8CRA1pw7riGURe+ySjD9l/Ea7wwof+Mz5ixqSoIYx0D64Q//SR3d1QIEJd4bwUQtVwHhmjvfn7fsiMVw31ApdtHtqq2syeDhtOC/Y2YeSJ3Zu8BTYyZBlr/HM+Tsp2zykf0GcxRpT1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eJwPjxzHgQCW+j1BdEUKFZUH47ge4CFZq786+Fgph4M=;
- b=d6vRzD+LbZI39uJrbz60laOEmqH1oJ4Rt5NxFDscuc3/YOzd+y2ZX8jOYj47mO//iD1hEcNBiLg+wQkMZSpanN26xPxj6NS04DhmVlSsslthtf+NYacv6cAK4hYNgE9qFcD+SHDaKWWfQOPOwWaH51wtrkwr/RSblrQzf0R68uQ+CpJA18uORCV1a+OeZvVHSNH+66eVVYsAvZQxN2UYSweTEUEWdhd/SXMrvrDd57DB78p5EbN1sq9GCiK0bbv/SvANTxFBnx9ytaEg3G0ZGr0LJIdyFU7LktPBBEypkEohNdVIRjcgRP/ZwV9+DFyFCb8jVEYyrypCvjFGFATlyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eJwPjxzHgQCW+j1BdEUKFZUH47ge4CFZq786+Fgph4M=;
- b=ry0pm+G9kEFza7Vgxj30nXF1l3zqHW7xKXNfPnfdZSyzIsLHwnynOnBQAs+//o1PFyunC+WZsSc2kDUSp7mFuDvxgnRwY8sao3JLmVi6oeHf4YREU0/+F/DY4yoDw1llvvOdSAkskX3YNrS1ftc8UXx9OkU1Hc3bdG9/z2k1wqKWs3J5m4vjh5e7bg0O27H/OOzusVj+dMc7f8pSDJIB1c9YNDU2Uary/LQ2Hu6drOjm79XqbOLZcnpxPJiwbwHnON7bAcd6N/aPua9udbfMrByVZLuSXOPH0/qslUhQ09tQW4vYmoP5Kt0P/gl1D/wQdD/t09kiZdUKDtwgmBFRow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by MW4PR12MB7468.namprd12.prod.outlook.com (2603:10b6:303:212::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Tue, 21 Oct
- 2025 06:23:20 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 06:23:13 +0000
-Date: Tue, 21 Oct 2025 08:23:09 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/14] sched/debug: Add support to change sched_ext
- server params
-Message-ID: <aPcmzc9ZX3O-wBUU@gpd4>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-8-arighi@nvidia.com>
- <aPYu_obVO4QjbqUL@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPYu_obVO4QjbqUL@jlelli-thinkpadt14gen4.remote.csb>
-X-ClientProxiedBy: ZR0P278CA0197.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:44::8) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFE825B31B
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761027834; cv=none; b=Th4RuhERln9ELv6q0hMb7NwSixeO/knaN8zO/2puCGT7S1ZKUKzQr6mH9ZCW+7dKrsD3Pf89W/S9uVtQpxm2umff3oKrgaMlgSCduHErVeHZl4MgSTAmjgI7t8FQ8JWP4Pza5KTcPoU7FrW8WiAWwT9ycxdyfooREY69aBROtLw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761027834; c=relaxed/simple;
+	bh=7IH4Ryd6nfRF/cdkd9Cj41f8zlBCsdWwuDdjxbxkkqA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=odLnU3DU7pFSrn/JuSk6KeyetnGiQWeBGJgBYZa42Cqvseep9CN4AghazDT4DdXvX98qz8d8oxu2ECq44NSl0wya/bT6xJyAtgUYCO4JHhPDoQ0tvcihwPNzal2YAiZFU5CJqhZBdGI4xD7/JcP7B3jcxfXTFQstXyzTVv9K1mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jwhu+A4v; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-88f27b67744so733668085a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 23:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761027832; x=1761632632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QLjXkk9G7S5NJjjLjfl1k4f4v5rB5l07o4uqGq0JEHw=;
+        b=Jwhu+A4v/pKeiAn7XZZYml+d2FIc1OSnGHojCaSb93otZHBidajjFPrRHsM6cEFvUY
+         LJw/+DiPB4RAC9etOV5E8SZpjfyPg7QzZmITU8EXCRy9RrqN76E1nwYufrtH3HVEbN67
+         MIjk0uFQy2iRIW6g1FAmGjpleJCtF/sV9RvNVo8TErK1zDuy5WQ2Q8lzEgUvwFU05KeM
+         Cpu+xr04QQARKvDOxnuw5EI9AWtCoumh7aPE+2rHeCxj3En58O9mpngF1aAszeXTbkn9
+         wMOHXe2zTy279j8Y7u3SZBlQKmwexguDQHPn4Wpx2ACrwWdlhN76rRo+CMo3smEKBIGl
+         zmOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761027832; x=1761632632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QLjXkk9G7S5NJjjLjfl1k4f4v5rB5l07o4uqGq0JEHw=;
+        b=I0fd2zW0mBSU7p5iYpaCdUVA0jWK1huAJeND8K+7ESzH7mk0ftdd6xrueV8zrCwCzC
+         A9UB1QXo8yQx/vgjy6I/bQbkwylracTT7r00JJb8LKE1eCTPnDtyZ7/LNtkE/S+Hwdbm
+         3RS7+7x/ar6YF9Ln8zrY+pTF7zmYJUX7RheWzim9NXFc1jHq3/rzx+wCIEmunzY8F31X
+         1Iik1STEz8V/dHaq+wC9FtEQGB1hX10KJuOEtpDNWdwVvqmTOT6UoiauIBl3lAvSbefj
+         ux2/VzGwKO5r5Ves8ciEcmDZz2t3PsIa2C2e66hhFLAN75ZyJWcALqdR3O0h26043aBu
+         mnzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDPscaq7VDlEF6pAHi64eWcEz8iTMot+r6nyH/RvKGo/BKruISl0duHKWu8lQGA/FAx3VVXsC41OpwItw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvvMN7+uPY87e2050/YCc4g771fC6IS8HWDdsEjDyjCfUm0isy
+	GdPKA9Lrav9FOV97iHvHfFuN8XnHKa6m8Fb2onD1JJPLu9wPQaod7GCnrCObRRE6E2OQ89EB3r9
+	xiIWo427rF3X1OK99HtL3vfaxArj+gcU=
+X-Gm-Gg: ASbGncuSCPOjdKpOsjmv63WrdGHIoUTLn89dir6McK+aH7mhMkQT0US5WVzWC7HSBs0
+	9wc7mInhmJxQ8iPs/mYHgoMKusKcySWXISM6pcuyJNGezAo2pOroaxWvFobq1nwILseeZGKERZQ
+	xx40yR7K/pmdXc33J4rpVp3fDFrSo+RQQeKX0OwoNY2FP4qybLRHg80muPbwNG8WzKO89JZ0fDI
+	b2WCYBAT8ujUiDAjVD4RXcAlTamFZlp0R3Y23v4x7a1RDN3BokQtNDvmGyQUWDG2wJg6J2AQCUs
+	i4V9X9Z32FokH9Td5EYxRdIWXbU=
+X-Google-Smtp-Source: AGHT+IEejdz2oiuxm0bEp46aC7xYCSy0m6Th5nMlB8ZWlLLKrCeYcXoDqqGzkkBeDM18tdXFLdLO9S2MHY39zpFN/lc=
+X-Received: by 2002:a05:620a:2907:b0:892:76c6:8356 with SMTP id
+ af79cd13be357-89276c68516mr1190962985a.81.1761027831487; Mon, 20 Oct 2025
+ 23:23:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MW4PR12MB7468:EE_
-X-MS-Office365-Filtering-Correlation-Id: 48e4ae19-6c44-4f2c-c6c7-08de106a5064
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xy2+evLwJKB/HSiqb2y8f8BFZVXxuwJ4UAekCmWpEcG3RDjtX7eXTY6BHK3t?=
- =?us-ascii?Q?YXagGD2sNmuhjgE1/fW92rqYYsb6/4+hKoDARQbhYkjHr7cgeRltw8vAMXf3?=
- =?us-ascii?Q?GbmbgUofeYFNbOI1AIrz/yLMMdtZwJVK1iuXZW9BVRqnOErFkJsm1mDg1FC+?=
- =?us-ascii?Q?Y88uSmM3osgh6vqVztgxNAYKVeprxLZXhIhitr1ALuCPX9JqALMUfbE5FpII?=
- =?us-ascii?Q?IoZxza11+mLlR8oQuF5KZe/3oCwFJaifeDS5hhznWbLYOlk8KL9hu4oYPalo?=
- =?us-ascii?Q?xs4fapbUy0isragUIurIxTsnFq7if3WVwFgIG5PwFMLupVBJ+kZnaUBKjjUj?=
- =?us-ascii?Q?n9wtKlc9iPHU/I9WfEC+q1L8jjR0459X8F02LBQKidRSAJy0OimlfhyOIgt5?=
- =?us-ascii?Q?jUXEdGkqP8ii102FsMX2QTKVvnFUnFKrpFdvbZUMiwLkjh++b8SkUlMzQ1zF?=
- =?us-ascii?Q?WCyTU7/B09dXYgWmmSMzlhncN89eRRRzuaxllcfKnMU2AaOlgaX+DsHHalz2?=
- =?us-ascii?Q?PledZHhL0GBUt6Vmm2ODKQ/BlpKyzyYg1Vqu8v9P7YHeyTooJ28M/KbqUoJ/?=
- =?us-ascii?Q?y9P7/Ynw6D8FVX0VrY0gbsMqmYlBb6uzPK/Rwrwb1rs/aWjIK4EBAR0u36Ve?=
- =?us-ascii?Q?JvElI2IeQIB8qY3wFaMVbL6Zk6IGGE/rXFQzK3rLoaQ8guztTy7zvUGNV88S?=
- =?us-ascii?Q?w+8kkpGdOxg6ifgcql7cnTKjnVK8Lwdevd6Aq2DwQWD15bPjhWN3MDG/GDMm?=
- =?us-ascii?Q?ofE+UpRcD8ZsJoyJvtBk7Wzm0OUE6oYRI2yM5o79YNZ1ucEFuo0c9z4pt9tk?=
- =?us-ascii?Q?vVUuu2Lgoe0Mu/J5y8VtjvDwW0OKsX1E63Pkwa6tNcsanSg0l2739/lyiqVo?=
- =?us-ascii?Q?7PaIOpf5zipwBiR8isPJbcDZw6Rc8eDfpaqCDNg31nslYKPBMEmyvfygbgIa?=
- =?us-ascii?Q?eeXzwDZ47anIo58sb2zBYQX4bnkrgURXJ3kP7hwYHEnybVsoALVSckY19vd9?=
- =?us-ascii?Q?7nzMvTzUQpkom2viU/fnZRBT2clohC/oaKaC4A5fxY8E8dTMNcDfb8WCNfkR?=
- =?us-ascii?Q?6LAxMdmvA0yDt0CPer6JtWSI+PPfQ55j7cs3cGUzRglvUxs6RbbhCmx+Bi3T?=
- =?us-ascii?Q?31QUUCLowUFoz3/O7rR0K90th9MM6htiBQobAhUgr+VMFTeS6qBxkplVQPrR?=
- =?us-ascii?Q?V7b3aopmbnnUJpabZk8CqhTWUWWFrsTRr/G2y6ngRNq+Mnzjc9YGmTPA6554?=
- =?us-ascii?Q?tvQqmX9xJFDLokAKSgwX1QuiJaeoHY35xS4YXO/6gjePzfGx8Pv3pCRqjnwC?=
- =?us-ascii?Q?Cz1MrAi3krUlM9E25qJlS2euE87jyLs/lq9v2cwaMQsYTZRhZxHwuYktaqp0?=
- =?us-ascii?Q?D5INpH4NJjT6n8DJJtC5rz5ii8imKzjEgcOvWfjzgSyP/2irbP3rQ88K47P1?=
- =?us-ascii?Q?LqzDvRzuP/W0tVwGpF1dFem6fhtwk2Le?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nACOhBzMxs7xyBYBfsfwIfNTDI1Zc2Nm3nwRKaIbPWlQPRsio2ILU5XX8Va9?=
- =?us-ascii?Q?iS2DHK3EcU39D/DvGHvMe9OwIMV3WDlu2uqHdjRVYo8RDa9sXydZnoBV2wJU?=
- =?us-ascii?Q?axrpj/28lkiwsQJLD1QvW6ip3RTQv9sIoemmzzDm+jWoV5cdqsLIeDDuL8qR?=
- =?us-ascii?Q?11hGyz1NqGajN3QTLytArmVpVLo3RbHftqB55kTygA+CUdzPVFq1cvcnYrDp?=
- =?us-ascii?Q?BZINJq2IdD//2Y1p29MPZSZtzP8F4m16T4ibhackz9SoysbdNszp5vIYuiz+?=
- =?us-ascii?Q?tfasEO2NVXpEttJ7+1HFHdCrViHBtUb6blxp+sVu/sO1PrmR3z+tw3Os3uZz?=
- =?us-ascii?Q?zRs2Sw7DdvExuCoGe/HA5eqlgWv3gjAcT7ieVwP5ITO/ZafJSwoxS2+w0+JO?=
- =?us-ascii?Q?44/yWnrNN0Zgf3wiLAj1FhjWJSSazr35GEiWXU9iHlVAEbXqxbAuG0tg/wOA?=
- =?us-ascii?Q?7miVsIcO8pkQNrrFsDH+DdUvU9SofT+y+rRlfUyC+o3QraN7NOirK8s2jrA2?=
- =?us-ascii?Q?DKGu364pkQxhmHqmB6bdr1Ob2KyR2beHB1WH9n376sgsHsTa/qjK08DE86au?=
- =?us-ascii?Q?conMi/ebJo2ttkiFEK/rF7hYsQWcNmPKbAnbykA6a8FflYFtqaY1bIbadzIh?=
- =?us-ascii?Q?Cvn3rAwHaz76lxpYEzIhzUhqGa76Io4tJSph3AXvzAcoIL4gl0Ipp2nO8mVp?=
- =?us-ascii?Q?CvtT99sPP57dTRLGzMFCqBhWJyzQ/jU7lIHC9nJOP0+md9SvvzYV5/1CEhK2?=
- =?us-ascii?Q?2Hc2rn+zyXS8b3ObvhzeqMU53qt+5i0Op3KGTabkeQwjFJgIGh0YWzI5nSbT?=
- =?us-ascii?Q?2Z9T5j7jRZN+jrTcdik1ULVav//RwDU3QubOD7wa8QGmbdlWJigWi1rd5mCu?=
- =?us-ascii?Q?iHlHGy080Q6A2S210G/s0gPR/y3TpHKr1gqpvKSgLhuQsfWpY/XUjRhlrxce?=
- =?us-ascii?Q?6veKiytXCnDgrwpSpeLYrNmjV/tmyAUgRWVeA5ffUg3BZzoYWMgX6H3hwCKy?=
- =?us-ascii?Q?aZyOFK0JH9pr38uyHKW+VS3gdHz1hlk1e9ZMuHKWKub1ocC+hoY3qoy8MqtS?=
- =?us-ascii?Q?RpXZbAYmw2ikfsT28SDnwk/XBYuQ0SSoC5PQcfzIg28AfT0ZYUKVBlmXt+C+?=
- =?us-ascii?Q?juLOTDc4Ca+RTB0cWS/WgxU9warNzRXrn1UduRfib+Hw5kDz9pbRp2TcpUP9?=
- =?us-ascii?Q?lfgaCUTvjRSrhoN19A6Zc/lOe+pI8VP0UT8MTYCVIMqb48QLRTdQIz6EldKa?=
- =?us-ascii?Q?ooxL3pOGszLotN4nRXq3RSHMVoAX6+w28uZfOQpyc7Za4DJcDmG85ZGnhWB6?=
- =?us-ascii?Q?EAkp2weVoYjFYZ82nRCgweChAhp9AKNxygbEVKVsJFDCZPUCZVQkVKQ9qa3K?=
- =?us-ascii?Q?0mNoqwFRdooFT8UqIA9pmjPzmNB0RIjVwS6mhbpdgjFBas9ukPVm2DLHP/8+?=
- =?us-ascii?Q?PBl/CkWcSDKtRx55wWCf7DsJtmxPj96xYfndChSJJv/bdjBLKOoHtTmFI7lk?=
- =?us-ascii?Q?RckH4JXj2sKoNa33CcYmRMAxCMgOyf8rfFt4oxMiLBArEoChf7oYDiqcbnVZ?=
- =?us-ascii?Q?uYQbr6JkIdoCUerc4Jkgb1jKkUIBT+fa8APGul2A?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48e4ae19-6c44-4f2c-c6c7-08de106a5064
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 06:23:13.6502
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zetcnteje2GHwmD5q1NLcJrQGMrSUQS5t6+H6IbNgpmnWGwZLbqONtsTzCcMQhCRjfQSrGbpJqj0rKzAYMs4qw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7468
+References: <20251021011739.1468912-1-xiaqinxin@huawei.com>
+ <CAGsJ_4zF4JOPXpkzmR+invqefLstcaB=xaGEfueHEQRSg2oLOg@mail.gmail.com> <47cc4984-a424-410d-a1b8-9947c1a42ccb@huawei.com>
+In-Reply-To: <47cc4984-a424-410d-a1b8-9947c1a42ccb@huawei.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 21 Oct 2025 19:23:40 +1300
+X-Gm-Features: AS18NWDG-m0bOlArM3Uv4n8n97lC2PURCatQf_aAqUx-Doqvx3jG08RzBBhZCIE
+Message-ID: <CAGsJ_4zf31seJif1N93yk_mUaEYh4SzwedASK9VPnPm_JJ6t3Q@mail.gmail.com>
+Subject: Re: [PATCH v3] tools/dma: move dma_map_benchmark from selftests to tools/dma
+To: Qinxin Xia <xiaqinxin@huawei.com>
+Cc: m.szyprowski@samsung.com, robin.murphy@arm.com, prime.zeng@huawei.com, 
+	fanghao11@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	wangzhou1@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 02:45:50PM +0200, Juri Lelli wrote:
-> Hi!
-> 
-> On 17/10/25 11:25, Andrea Righi wrote:
-> > From: Joel Fernandes <joelagnelf@nvidia.com>
-> > 
-> > When a sched_ext server is loaded, tasks in CFS are converted to run in
-> > sched_ext class. Add support to modify the ext server parameters similar
-> > to how the fair server parameters are modified.
-> > 
-> > Re-use common code between ext and fair servers as needed.
-> > 
-> > [ arighi: Use dl_se->dl_server to determine if dl_se is a DL server, as
-> >           suggested by PeterZ. ]
-> > 
-> > Co-developed-by: Andrea Righi <arighi@nvidia.com>
-> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > ---
-> 
-> ...
-> 
-> > @@ -373,25 +375,25 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
-> >  		}
-> >  
-> >  		if (runtime > period ||
-> > -		    period > fair_server_period_max ||
-> > -		    period < fair_server_period_min) {
-> > +		    period > dl_server_period_max ||
-> > +		    period < dl_server_period_min) {
-> >  			return  -EINVAL;
-> >  		}
-> >  
-> > -		is_active = dl_server_active(&rq->fair_server);
-> > +		is_active = dl_server_active(dl_se);
-> >  		if (is_active) {
-> >  			update_rq_clock(rq);
-> > -			dl_server_stop(&rq->fair_server);
-> > +			dl_server_stop(dl_se);
-> >  		}
-> >  
-> > -		retval = dl_server_apply_params(&rq->fair_server, runtime, period, 0);
-> > +		retval = dl_server_apply_params(dl_se, runtime, period, 0);
-> >  
-> >  		if (!runtime)
-> > -			printk_deferred("Fair server disabled in CPU %d, system may crash due to starvation.\n",
-> > -					cpu_of(rq));
-> > +			printk_deferred("%s server disabled on CPU %d, system may crash due to starvation.\n",
-> > +					server == &rq->fair_server ? "Fair" : "Ext", cpu_of(rq));
-> 
-> Guess this might get convoluted if are ever going to add an additional
-> dl-server, but I fail to see that happening atm (to service what?).
+On Tue, Oct 21, 2025 at 6:16=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> w=
+rote:
+>
+>
+>
+> On 2025/10/21 10:59:05, Barry Song <21cnbao@gmail.com> wrote:
+> >> @@ -0,0 +1,2 @@
+> >> +# SPDX-License-Identifier: GPL-2.0-only
+> >> +dma_map_benchmark
+> >> diff --git a/tools/dma/Makefile b/tools/dma/Makefile
+> >> new file mode 100644
+> >> index 000000000000..4acbd9e00cfa
+> >> --- /dev/null
+> >> +++ b/tools/dma/Makefile
+> >> @@ -0,0 +1,17 @@
+> >> +# SPDX-License-Identifier: GPL-2.0
+> >> +bindir ?=3D /usr/bin
+> >> +
+> >> +CFLAGS +=3D -idirafter../../include/uapi
+> >
+> > I'm a bit confused =E2=80=94 it seems you haven=E2=80=99t tried to unde=
+rstand what the issue
+> > was in v1 [1]. You were using -I for kernel header files (under
+> > include/linux but not uapi), which caused those kernel headers to take
+> > precedence over the system headers, leading to build errors. The uapi
+> > headers, however, are specifically designed to be installed into the sy=
+stem by
+> > the toolchain.
+> > So that=E2=80=99s no longer the case =E2=80=94 -idirafter is not the co=
+rrect flag for uapi.
+> >
+> Hello Barry :
+> If I delete -idirafter, like:
+>
+> CFLAGS +=3D -I../../include/uapi
+>
+> It will get warning info:
+>
+> [xiaqinxin@localhost dma]$ make
+> cc -I../../include/uapi dma_map_benchmark.c -o dma_map_benchmark
+> In file included from ../../include/uapi/linux/map_benchmark.h:9,
+>                   from dma_map_benchmark.c:13:
+> ../../include/uapi/linux/types.h:10:2: warning: #warning "Attempt to use
+> kernel headers from user space, see https://kernelnewbies.org/
+> KernelHeaders" [-Wcpp]
+>     10 | #warning "Attempt to use kernel headers from user space, see
+> https://kernelnewbies.org/KernelHeaders"
+>
+> So I keep -idirafter there.
+>
+> There's another way, like:
+>
+> CFLAGS +=3D -I../../usr/include
+> (need make headers_install first)
+>
+> Maybe I haven=E2=80=99t thought it through.
+> If you have a better way, you can give an example.:)
 
-We could add a ->server_class() method that returns the name or something
-similar, but it's probably a bit overkill, since we have just two dl
-servers at the moment (and I don't see any use case to have more...).
+I see =E2=80=94 the uapi headers haven=E2=80=99t been installed yet. This i=
+ssue will
+automatically resolve once the toolchain is upgraded. Before that, we
+can try the following:
 
-Thanks,
--Andrea
+tools/gpio/Makefile
 
-> 
-> Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
-> 
-> Thanks,
-> Juri
-> 
+#
+# We need the following to be outside of kernel tree
+#
+$(OUTPUT)include/linux/gpio.h: ../../include/uapi/linux/gpio.h
+        mkdir -p $(OUTPUT)include/linux 2>&1 || true
+        ln -sf $(CURDIR)/../../include/uapi/linux/gpio.h $@
+
+prepare: $(OUTPUT)include/linux/gpio.h
+
+I guess we could copy and paste GPIO=E2=80=99s Makefile and make a few mino=
+r
+modifications?
+
+>
+> >> index b12f1f9babf8..5474a450863c 100644
+> >> --- a/tools/testing/selftests/dma/dma_map_benchmark.c
+> >> +++ b/tools/dma/dma_map_benchmark.c
+> >> @@ -10,7 +10,6 @@
+> >>   #include <unistd.h>
+> >>   #include <sys/ioctl.h>
+> >>   #include <sys/mman.h>
+> >> -#include <linux/types.h>
+> >
+> > What=E2=80=99s the reason for this? Is it to work around a build error?
+> > If so, no =E2=80=94 please keep it.
+> >
+> >>   #include <linux/map_benchmark.h>
+> >
+>
+> Moved it to map_benchmark.h, otherwise some x86_64 build errors
+> would occur.
+
+Let=E2=80=99s avoid moving types.h =E2=80=94 that feels more like a workaro=
+und than a
+proper fix.
+
+Thanks
+Barry
 
