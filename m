@@ -1,107 +1,152 @@
-Return-Path: <linux-kernel+bounces-863618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CAABF8505
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:48:21 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C6DBF8511
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2B419A2475
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:48:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCA00347511
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15F626FDBD;
-	Tue, 21 Oct 2025 19:48:04 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3921126F2BD;
+	Tue, 21 Oct 2025 19:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pf6Sfpm/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E69D1DF269;
-	Tue, 21 Oct 2025 19:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B3A26B0BE
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761076084; cv=none; b=Ms9Z5hUpffIhSun5zn9Nak3fE9xeOb+W3kcf9xj1y4SdW2B6NamEM+ZKvl+V5bZ6rCBC5HZrMnsJeddRrSgGA4yKX7g6H6Vi3uR9gCYJgWvqQWe9eR9YSR/q1sBZzmYeiPRR5wE4wze7b79GKfQKcrMJLS5tx3ZNVwLI6bRZiQE=
+	t=1761076153; cv=none; b=JIURYRxvM44BNnwWhPv6mjEMMBFJCQkqLwjxldN2QohI/SWJ3nIJ/xUiYRcm8vN8BrI5tgtoTNLmuy9i+JuVibBRlSXslAI2ij8/mc3hoXqbSYQheJuoXRbH0C3vfFgyOri13Xp7PmMy/7MnD/IpVXcJrC+UiHIdxztB+kNf9SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761076084; c=relaxed/simple;
-	bh=hxLpV0EOxu4GQBIqttLySiMrCFWfhH4tkx+ydujGqxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HcJG6RdAra3l+lcY/htqfTPqyrlzJRgQWvj8FKLHKv7QweDJf9PnR2Ok9L47ZWvmw2207eGUxq0dlyoF6Rq7sY6Pa5JKeywN8VN6kc3dwXi7qqpLT2I0GI7Qv+RK2phtnOXYqEGUUFRwvXTg9XTjFe8WPQoNDcvy4fLcRRgvW+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id F0E5B1A0651;
-	Tue, 21 Oct 2025 19:47:53 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 9752620023;
-	Tue, 21 Oct 2025 19:47:50 +0000 (UTC)
-Date: Tue, 21 Oct 2025 15:48:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Nicolas Schier <nsc@kernel.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada
- <masahiroy@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v9 4/4] tracing: Add warnings for unused tracepoints for
- modules
-Message-ID: <20251021154813.4b77822a@gandalf.local.home>
-In-Reply-To: <aPKliHl3k26RO0YJ@levanger>
-References: <20251015203842.618059565@kernel.org>
-	<20251015203924.731213165@kernel.org>
-	<20251015231928.GC3943617@ax162>
-	<aPKliHl3k26RO0YJ@levanger>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761076153; c=relaxed/simple;
+	bh=Nymk+VhegVFJqCBDqoCr+/+CwR8rmRcHJjtErx2Jnp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A5oXdGFoX0KIp3YSodNEzrXfv52luEktvQWGMjwKz90IY1pitpE0k8gMDN4H6pAfjL8FuvfqINe+OYXvDSflGpWfe3+Lwa/7MCRDBch7puK4gyxQMKLm/2/shubla7aBjGQLZ8+OHho+Be5BLfbeEvg4axsZlbBbpzLlgJY/ZCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pf6Sfpm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA55C116B1
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761076153;
+	bh=Nymk+VhegVFJqCBDqoCr+/+CwR8rmRcHJjtErx2Jnp8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Pf6Sfpm/nFwnX+KgkkBNRXxDCxreNz1bNW6KVkApAG1MyEBxu0K+DX5cG3rwcEWCw
+	 7vODOy2iUsVnBatdEGAzHVd2NPDL5O/HUM4DMAAO0UW5jC1rBYEWD3eNZRlXc7E1rF
+	 M/ZmkrF2XB3eT4Ehj/vJRwxe/K3nT1SCD/vo0Hqdfb5jNlJZdAJTRlZf9w2q+dNOTL
+	 9dljsXpTLSEoANW4SxSaQEMAYa3Lhf3ttyW9UqwIc1fs4Ezfxtsa1EL1ay9bZFSmXc
+	 AxTpUsyC4Ooz3tNDqd3RrDrUVP9PU2CG5Whh1cFdLexH4N9NCUrn2P3XlC4UwRm1kp
+	 i+h4zb29iOCVA==
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-443afb2334bso2168063b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:49:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXsQqyeUDl1tIG91kar1hHn1FWA+6sEKUqxzzRXxLUdxD1HEoSgzve4n4qEFPP9wqePQjLS2PWz+c9+Yek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfQA0HYOyOZYkaFhfasz+Nhh8x0b/sJ7WKW+/IfG6jvkYFigJ/
+	1Zy5porW3ApUuOaFr21gy7EpiAVnTVWQNiQjfLvpIKYUWk3DKIMcUEqDuFPLhm/ozsokGHU8X3o
+	Cm4uXPmRJ6dHBwgvvKenvsuEPnK2AE2c=
+X-Google-Smtp-Source: AGHT+IGB3cTbXskvve7WDx8ING8sV7p9/P1zgRPCqYXexpfcldfpJBfn8oDKRQevxqvK43r0BH46/5JgUXcf9r7/8A8=
+X-Received: by 2002:a05:6808:5086:b0:441:8f74:f10 with SMTP id
+ 5614622812f47-443a30e6210mr8203603b6e.58.1761076152229; Tue, 21 Oct 2025
+ 12:49:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 3bx6u9tf5n4qs3gsczbm48jkabzbmxxn
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 9752620023
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/Zz+gNK15SC9atC7bLzBKBN+K6uLGaxcE=
-X-HE-Tag: 1761076070-191965
-X-HE-Meta: U2FsdGVkX19kry9/Mjb2SwEc69CHZfHj6rlyyq27d9g3EYmyqmKu4W/H9ta4ezVs6afeQnt02IszQf3+JV+aC1Gsf6XzPjJ2fpotLhCxKgGas5giw9eGQoZj8211mLKOOBBhAmIo8ygmENgqvUf1g3eoIoEZbaI2b2KwXwPQNXqVpDGoKWzSbY1Mv+dukasXJO/5HYyrNWwumtZliTc3/c91qmggXE5c+uYx9y5kjpc2t8xokr1joIS6pzI0K+RiEqcCLU9VxTJooe5RxrMCefBROPKzlnIwbLKBYREk1E7UuzayIYbZsEfiaxMmhCXWTYaCCqJrOAfm0LhK5/jwCDMooN/dVc1f
+References: <20250929093754.3998136-1-lihuisong@huawei.com> <20250929093754.3998136-7-lihuisong@huawei.com>
+In-Reply-To: <20250929093754.3998136-7-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 21:49:01 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jBqPLjK2v7A-8Qd6ERhwz47jP3YCiTHJhD8vAgRHVjcQ@mail.gmail.com>
+X-Gm-Features: AS18NWCLxDWuc8JFmVbKZHbKfQkeF5DFL9BTHlIwRqNTYKDQ-dm1DZjJaTKzFfo
+Message-ID: <CAJZ5v0jBqPLjK2v7A-8Qd6ERhwz47jP3YCiTHJhD8vAgRHVjcQ@mail.gmail.com>
+Subject: Re: [PATCH v1 6/9] ACPI: processor: idle: Do not change power states
+ if get power info failed
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 17 Oct 2025 22:22:32 +0200
-Nicolas Schier <nsc@kernel.org> wrote:
+On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei.com> =
+wrote:
+>
+> Driver will update power states when processor power states have been
+> changed. To prevent any other abnormal issues, here add the verification
+> for the result of getting power information, don't change power states
+> and one error log when get power information failed.
 
-> On Wed, Oct 15, 2025 at 04:19:28PM -0700, Nathan Chancellor wrote:
-> > Hi Steve,
-> > 
-> > On Wed, Oct 15, 2025 at 04:38:46PM -0400, Steven Rostedt wrote:  
-> > > diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-> > > index 542ba462ed3e..6f909979af91 100644
-> > > --- a/scripts/Makefile.modfinal
-> > > +++ b/scripts/Makefile.modfinal
-> > > @@ -28,6 +28,12 @@ ccflags-remove-y := $(CC_FLAGS_CFI)
-> > >  .module-common.o: $(srctree)/scripts/module-common.c FORCE
-> > >  	$(call if_changed_rule,cc_o_c)
-> > >  
-> > > +ifneq ($(WARN_ON_UNUSED_TRACEPOINTS),"")  
-> > 
-> > Drop the "", nowhere else in Kbuild appears to do this.
-> >   
-> > > +cmd_check_tracepoint = ${objtree}/scripts/tracepoint-update $<;  
-> > 
-> > Please use $(objtree) to be consistent with the rest of Kbuild.
-> >   
-> > > +else
-> > > +cmd_check_tracepoint =
-> > > +endif  
-> 
-> The else part is not required, cp. definition of e.g. cmd_checkdoc in
-> scripts/Makefile.build.
+But the old states may not be usable any more in that case.
 
-Thanks, will do.
+If you want to check the acpi_processor_get_power_info(), it should
+disable ACPi idle entirely on failures.
 
--- Steve
+> Fixes: f427e5f1cf75 ("ACPI / processor: Get power info before updating th=
+e C-states")
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_idle.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index b0d6b51ee363..92b231f5d514 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -1315,6 +1315,7 @@ int acpi_processor_power_state_has_changed(struct a=
+cpi_processor *pr)
+>         int cpu;
+>         struct acpi_processor *_pr;
+>         struct cpuidle_device *dev;
+> +       int ret =3D 0;
+>
+>         if (disabled_by_idle_boot_param())
+>                 return 0;
+> @@ -1344,16 +1345,20 @@ int acpi_processor_power_state_has_changed(struct=
+ acpi_processor *pr)
+>                 }
+>
+>                 /* Populate Updated C-state information */
+> -               acpi_processor_get_power_info(pr);
+> -               acpi_processor_setup_cpuidle_states(pr);
+> +               ret =3D acpi_processor_get_power_info(pr);
+> +               if (ret)
+> +                       pr_err("Get processor-%u power information failed=
+.\n",
+> +                              pr->id);
+> +               else
+> +                       acpi_processor_setup_cpuidle_states(pr);
+>
+>                 /* Enable all cpuidle devices */
+>                 for_each_online_cpu(cpu) {
+>                         _pr =3D per_cpu(processors, cpu);
+>                         if (!_pr || !_pr->flags.power_setup_done)
+>                                 continue;
+> -                       acpi_processor_get_power_info(_pr);
+> -                       if (_pr->flags.power) {
+> +                       ret =3D acpi_processor_get_power_info(_pr);
+> +                       if (!ret && _pr->flags.power) {
+>                                 dev =3D per_cpu(acpi_cpuidle_device, cpu)=
+;
+>                                 acpi_processor_setup_cpuidle_dev(_pr, dev=
+);
+>                                 cpuidle_enable_device(dev);
+> @@ -1363,7 +1368,7 @@ int acpi_processor_power_state_has_changed(struct a=
+cpi_processor *pr)
+>                 cpus_read_unlock();
+>         }
+>
+> -       return 0;
+> +       return ret;
+>  }
+>
+>  void acpi_processor_register_idle_driver(void)
+> --
+> 2.33.0
+>
 
