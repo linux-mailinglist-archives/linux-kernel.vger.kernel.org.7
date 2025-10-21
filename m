@@ -1,154 +1,157 @@
-Return-Path: <linux-kernel+bounces-862767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B419CBF61AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:42:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C52ABF5DDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09013A5AA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:41:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13E584F6F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EFF32E73B;
-	Tue, 21 Oct 2025 11:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB1E2ED848;
+	Tue, 21 Oct 2025 10:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KREqtfoj"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LV0b1/D9"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CED23F424;
-	Tue, 21 Oct 2025 11:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A278123D7FB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761046875; cv=none; b=QcCCJYzaILfeEbODLxlTMSDhB682hix1FkzqZPO1hNkhN12gZzezsfZX45M49Pf06bor/0LMy7d6BmYMH2fDlua24VYNstVsM9PSP81IFm4VtW/s3CR0pOOyA6/yE2IHNLU7ZlF0HMQ2gmZgkizKg0JomaYfMB1SzYhEcw3Aih8=
+	t=1761043654; cv=none; b=blmxdD3TAFhzfmL17ZqXcYIbndwk43uUDtRZaw2Q8JQ8qSm42z/TMh4TbvOvwFxXK5yc+y4DS8o0uMLRchQqpK6BKKUb7/zHzdonYtKagSu5aXbxOiORJcs3phkQXkAyHYcU59tBYuL0baTSU7hRXtvY2qzZKjVKkyHbI9Rmfvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761046875; c=relaxed/simple;
-	bh=9sYuvI7CEeyOifAAPVDV+AmPzekD759B0QYeLpEGUCI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JnV0kKNk0EGhKTVjp+JmdYeTnpDkh/ZaoD3zz2h/nwtggYPjrVQIRa9kQZZA26usoAj3qROCj4c6RM3Vutq/o11N+svP5ZS76Dyw4Y2rGWv+66mTckzrr6Lb0DIS5EicMIDAC4TjiddTvaW0p7Z0yNcD1JGpeoirhzxdWvNhpxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KREqtfoj; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id C610D1A1584;
-	Tue, 21 Oct 2025 11:41:09 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 95D0F60680;
-	Tue, 21 Oct 2025 11:41:09 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 65A7A102F23E9;
-	Tue, 21 Oct 2025 13:40:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761046868; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=/aZ90aQifoTGdx/4SW58GhR5Eihj+AcxbbGAfR/vODk=;
-	b=KREqtfojYKz+RqSJdaE5Q9ChNT9xLrT3xG810Ty2/IqKj+039qfFpPNtBnC6ppesSHTW+i
-	km5xE+YWGWWwpZ2tEgwPPfMJ4jhbMH9tIvGOqUfXHRa18kcVvn78N2+j1zUtmDtSrpyx6V
-	JFb/Wu5Z7ZPpCH3OaFqqvv403sgv8PeqLhVlgw7YT+c3v4gwixn1J0WyzU1LqdLh+o4n6k
-	K4O+kfQmUj7K36l4m5svE1GomH3AeXFnb0kx2hlE4BJiBekEPsRGqkBjeTU7Sr8oJ7OUsu
-	JrqA3+Kt9FevtqAOV9UxEEA5jzvDakd+aO5fumJR4Ug661kwliKPHv1yCVx2tg==
-Message-ID: <eb98c4ea-6f12-42b0-a2a2-1f53963d4e52@bootlin.com>
-Date: Tue, 21 Oct 2025 13:40:52 +0200
+	s=arc-20240116; t=1761043654; c=relaxed/simple;
+	bh=u3x+mZ9WYaMzDykMD4wrOaaWSHSxUpyWrVYfEbgeV3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eRDOgwnskmBdrod7Ak1tssns46VCGyL8j3X2xc+ewFf/vA98fr7RDtwGlK2+Q/qwfvyO2F4gzhcwb2miOpGioboWjyUVxDXg1AIvbXKiS+vLdC1oAHM8zouAexjVz/y3XEDGRqKTBOl8hBuBuRFiqRBQMrU3enQhBRvMuD/huio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LV0b1/D9; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3e8f400f79so92836966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:47:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761043651; x=1761648451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hYQSYXxT3vBEQ3060Gmkoau5FySMDvalsTXJ7MNV5UM=;
+        b=LV0b1/D95OJkJLKTxOL0hM48Qp9nyNgkGGl0y2QALvRjfJOVW65LHLubfJjLT7XdKV
+         yt7yWfZfGL30LuOe/jTElJFWM55nwk5w/Z1FP4li/UyJu4nB7tD+ZYByotrXkDcoJQuT
+         AMf9OkW1rWNJ5Ot2/F8hMOHKzhkwc2NjyWIUeakRq7U0cclGwUv99S9QS5CsyuOnmfN9
+         rh+GvZHS0597r8iYDzBP6lZCYM/KcHPdBacK14QoIJ/MAKsQBn3NekmwuuGADvdyEYPL
+         T++csfR2qqXSh50+Vyy671WVM+byd8Z7ZZ8x/e+g8lsMl0eSAPNMlnXMGMlyYJggZAvw
+         j2xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761043651; x=1761648451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hYQSYXxT3vBEQ3060Gmkoau5FySMDvalsTXJ7MNV5UM=;
+        b=MlvCS4vl2aKzy8TdopatIcL9WQ8K93vnc+H2RlP31O1oyFFuqBBR28NAlZNsRhzHko
+         KI+CxwWPG/BDiaAzclXBORKmSN2e5RGaDR2TbYldVXScPrMKNwAJfkJHOda3vYpfi2Ic
+         me8G/M1Y1zpvFxXKm29fxMPRyfYyTYd2pAxSkfezeXFHaIClHva3W0BYX6qIQ4xXPmWh
+         aOjWV6Q2kVqqWpSS00+OWWxkYpD8WrLYGj/SLaxiwIEprqW3iw0lN7Gg+TJ16OyiwTh9
+         PHopUnE4d4UwAEGiRBjlQvLWATgqE/egcwkwZJ1cFSYsS5lmXTzFPPCU9F5i528nEGkQ
+         WKLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbqMm1d5+RRUj1cZrqZw9VArM+42kA1pJVtGWdOt0B+0F0WGB8Kq9L/aRNQuc3mdJ412u//OxCcazLpL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxoy8nZjIXCxeZXFvD54jhax3qINAmmxSb6+FFR6IYevJJ2xrpM
+	vBTRgiAq40RWo7hGu/b02jsJm48Jtct7/McaUiNQkrh9zqI1nzCpAKF1
+X-Gm-Gg: ASbGnctqxOpj8Kd29BsV2HbA87uJEwgpvwDSpl+KUcmh/OAdog77b16sDpiXVHGyMc1
+	YPa5csKAtf33cRgoI09v37D76Wpnb0x8ZfCZY1xGN7BlXh83iNb4T6aSTD3LJ4k4nHsLJVfsiUV
+	858p3u2Rr96QtbzQbNfBI4Nz7UvepjCknJxviEQe68AJvn0V2iFkwQUyjPI5w4u2jtTPybVwOoK
+	wRm9tVplOjIcoTB7QbMqJq+heSLr1U7nvFAjChGTdskOZIJ653p6O+rp+jWkBiYugn6kCQcrlsz
+	D8mpBA8qKJ8Wk/Ws0v+OPZ4gMYNyIDCdrdAYcaw+R+XSBZ9rmfNSZ0HI2gElwynNQ0WMuybNEK2
+	DiuLj9GVrE3YOGyrlq87O0cddgoR5RkcOBskrJcRbVMOi0BO6wI9MQy/RqTGEDF9DnSwL/2RpRV
+	yDwFQ+/OFK1zV/
+X-Google-Smtp-Source: AGHT+IEVgz7zYtsnpcehMAmhlB3OUMARV4++YtUV332nKXGeBC2HoEB9fppwF5GU/sp0jIUet5ebFg==
+X-Received: by 2002:a17:906:4fd5:b0:afe:a7e3:522e with SMTP id a640c23a62f3a-b6c798e7a68mr191581266b.8.1761043650805;
+        Tue, 21 Oct 2025 03:47:30 -0700 (PDT)
+Received: from bhk ([165.50.73.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da2c5dsm1029123566b.15.2025.10.21.03.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 03:47:30 -0700 (PDT)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	sdf@fomichev.me,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH bpf-next v3] bpf/cpumap.c: Remove unnecessary TODO comment
+Date: Tue, 21 Oct 2025 12:41:24 +0100
+Message-ID: <20251021114714.1757372-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: Re: [PATCH bpf-next v5 00/15] selftests/bpf: Integrate test_xsk.c to
- test_progs framework
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexis Lothore <alexis.lothore@bootlin.com>,
- Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20251016-xsk-v5-0-662c95eb8005@bootlin.com>
- <CAADnVQLLBrawW6N4BcPvhYD2Cg_qaxSZDRU53Jq31QxR3mPDkw@mail.gmail.com>
- <aPN1dy1OVaNiB5IB@boxer>
-Content-Language: en-US
-In-Reply-To: <aPN1dy1OVaNiB5IB@boxer>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi
+After discussion with bpf maintainers[1], queue_index could
+be propagated to the remote XDP program by the xdp_md struct[2]
+which makes this todo a misguide for future effort.
 
-On 10/18/25 1:09 PM, Maciej Fijalkowski wrote:
-> On Fri, Oct 17, 2025 at 11:27:26AM -0700, Alexei Starovoitov wrote:
->> On Thu, Oct 16, 2025 at 12:45 AM Bastien Curutchet (eBPF Foundation)
->> <bastien.curutchet@bootlin.com> wrote:
->>>
->>> Hi all,
->>>
->>> Now that the merge window is over, here's a respin of the previous
->>> iteration rebased on the latest bpf-next_base. The bug triggering the
->>> XDP_ADJUST_TAIL_SHRINK_MULTI_BUFF failure when CONFIG_DEBUG_VM is
->>> enabled hasn't been fixed yet so I've moved the test to the flaky
->>> table.
->>>
->>> The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
->>> are defined in xksxceiver.c. Since this script is used to test real
->>> hardware, the goal here is to leave it as it is, and only integrate the
->>> tests that run on veth peers into the test_progs framework.
->>>
->>> Some tests are flaky so they can't be integrated in the CI as they are.
->>> I think that fixing their flakyness would require a significant amount of
->>> work. So, as first step, I've excluded them from the list of tests
->>> migrated to the CI (cf PATCH 14). If these tests get fixed at some
->>> point, integrating them into the CI will be straightforward.
->>>
->>> PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
->>> tests available to test_progs.
->>> PATCH 2 to 7 fix small issues in the current test
->>> PATCH 8 to 13 handle all errors to release resources instead of calling
->>> exit() when any error occurs.
->>> PATCH 14 isolates some flaky tests
->>> PATCH 15 integrate the non-flaky tests to the test_progs framework
->>
->> Looks good, but why does it take so long to run?
->>
->> time ./test_progs -t xsk
->> Summary: 2/66 PASSED, 0 SKIPPED, 0 FAILED
->>
->> real    0m29.031s
->> user    0m4.414s
->> sys     0m20.893s
->>
->> That's a big addition to overall test_progs time.
->> Could you reduce it to a couple seconds?
-> 
-> it's because veth pair is setup per each test case from what i recall when
-> i was pointing this out during review. it does not scale. it would be
-> better to have veth created once for whole test suite. HTH.
-> 
+[1]:https://lore.kernel.org/all/87y0q23j2w.fsf@cloudflare.com/
+[2]:https://docs.ebpf.io/linux/helper-function/bpf_xdp_adjust_meta/
 
-The initial test_xsk.sh was already quite long, the test migration 
-hasn't affected its execution time on my side.
-I've tried setting up the veth peers once for all the subtests, as 
-suggested by Maciej; this results in about a 35% speed gain on my setup, 
-but unfortunately, it’s still not enough to bring it down to a couple of 
-seconds.
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+---
+Changelog:
 
-I'll investigate it further.
+Changes from v2:
 
+-Corrected the new comment
 
-Best regards,
-Bastien
+Link:https://lore.kernel.org/all/20251020170254.14622-1-mehdi.benhadjkhelifa@gmail.com/
+
+Changes from v1:
+
+-Added a comment to clarify that RX queue_index is lost after the frame
+redirection.
+
+Link:https://lore.kernel.org/bpf/d9819687-5b0d-4bfa-9aec-aef71b847383@gmail.com/T/#mcb6a0315f174d02db3c9bc4fa556cc939c87a706
+
+ kernel/bpf/cpumap.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
+index 703e5df1f4ef..ee37186fea35 100644
+--- a/kernel/bpf/cpumap.c
++++ b/kernel/bpf/cpumap.c
+@@ -195,8 +195,10 @@ static int cpu_map_bpf_prog_run_xdp(struct bpf_cpu_map_entry *rcpu,
+ 
+ 		rxq.dev = xdpf->dev_rx;
+ 		rxq.mem.type = xdpf->mem_type;
+-		/* TODO: report queue_index to xdp_rxq_info */
+-
++		/* RX queue_index is not preserved after redirection.
++		 * If needed, the sender can embed it in XDP metadata
++		 * (via bpf_xdp_adjust_meta) for the remote program.
++		 */
+ 		xdp_convert_frame_to_buff(xdpf, &xdp);
+ 
+ 		act = bpf_prog_run_xdp(rcpu->prog, &xdp);
+-- 
+2.51.1.dirty
 
 
