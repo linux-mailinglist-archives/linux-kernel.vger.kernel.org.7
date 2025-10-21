@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-862209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509B9BF4AFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:13:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7EEBF4B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3754718C1995
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20E44275E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C003C25BEF2;
-	Tue, 21 Oct 2025 06:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2DF2586C8;
+	Tue, 21 Oct 2025 06:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ShKdqzOl"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkChOBJJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC0D2F872;
-	Tue, 21 Oct 2025 06:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05231BFE00;
+	Tue, 21 Oct 2025 06:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761027175; cv=none; b=qpCq+oqFpOjvCe2ctebngCdh5QiePsmuTciD29xy1CK2gDeu5YLZ9ORbzDVluG/Hv4F7VyJ7yD8GViv2DPbKtkDf2N+hSDQDURt4MTM8q1TBZqIBeCrcMVhwbn2fu+S6hK1eLkKVdR3sDkc52gvnKNrA9MIZrIx45I4awn6HQ0I=
+	t=1761027405; cv=none; b=utrxsK6QEsZlM5mFPcoaJL0vPHHSetWTe9sWOm/YytucDUgK2AqZSG2vYPfeTJ9/sXYV92SZ6K1xaHwzPcHG2DE9mjoX74cRXZWOo5BHKjizjaRNSSKpztxjikAcLlueGuR7O9kNS8DR57gGlnCH5akkD2+wAn+tNYYBgeLeHTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761027175; c=relaxed/simple;
-	bh=+QmnY748EjRGKjWLnl5sIMZrRRpbF0hAi5qW5DwTCqc=;
+	s=arc-20240116; t=1761027405; c=relaxed/simple;
+	bh=sHVDezBW/0XeR+MuiIcfO2lFWrFm8vlJ9rDoT6rXIx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzDyKaNCWha+ZUJV+skjbCr/7BBCg7PhWrHxIVSz7NmBuorEY+DbzaM3r2cKqdYYwY7hDWuNJq67VI+OpvPHKM4gTSGzJ52Wj1Leb1xDrbyiqnHlJpNa6nZQzHhSbZBfDCjeB6n2m4GNbTbLl2Xz4yiXD1J1OQ+Qv0PWmoIBz/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ShKdqzOl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=32WXsKzxggeOILJADAf0lJ/XcojNDUkG87T7LB0uMmU=; b=ShKdqzOlsJZJ5PGyNK+WPgm08w
-	YG05J6HLCcDbwjPvnI2QKbkgv/jKp9ozm4cWjoblrSDJhZ0TR5nkyWesExrjXvzpM5nGgaQuqd7V1
-	rvdQqa2snXe2hDLHng9fXY1sngvgapiVGUyprKX0IWXegzyi4+aXuZzyermYeCXnmCFdpp6bV3QWw
-	jmh71KufOM6iT9U0CiMBHCGz2dLUYPXWZXk/5EZwARAimiB+s6wR5K0TATS6/PXzPHCVaGsqYJ1xL
-	pgs4ZgTZum8hJdzxZYaGmGzcbeZaXKkXgzvEnVgYuB/0TWX9ayxP052nFyV78namlJzodSv305bya
-	CnN0oLeg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vB5bs-0000000FuQQ-39F3;
-	Tue, 21 Oct 2025 06:12:40 +0000
-Date: Mon, 20 Oct 2025 23:12:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [RFC, PATCH 0/2] Large folios vs. SIGBUS semantics
-Message-ID: <aPckWHAGfH2i3ssV@infradead.org>
-References: <20251020163054.1063646-1-kirill@shutemov.name>
- <aPbFgnW1ewPzpBGz@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=En5ZcM2VnPecuqTXT6ks3ZGb6SdOUq0/YJc/PyM9ikNwaajhvNLU+tSW2iN2aPto0iE8FEoc7qbL1ZkfTjkoA9/BMS2RkuuBrrbz45svm1QS2VYlj7+gYlGO7jiD398Sa91iNyLR3nk1/sLumlIojmswIHiCTzgcyUrXXw4E3fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkChOBJJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A8BC4CEF5;
+	Tue, 21 Oct 2025 06:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761027404;
+	bh=sHVDezBW/0XeR+MuiIcfO2lFWrFm8vlJ9rDoT6rXIx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nkChOBJJ34v9yCZhDABPQ2Exco6ONGqtlS7vuEPsxKuaokFLY50PQrKGB01bK1lk0
+	 1PROc0X8u2UCCPookYv3I/21RFZWhprJDabYxnDLkweRzhZLkAx54S7qleHTCQH2l9
+	 1MNLnO41akdFH5JCjaPbF1T3rCgRadZrliL6/fkF/ytvM2y9as5lJg1oY5FfUugYlp
+	 yF88z7Kq5oQ/4s7diEO2DIpN5cCf8xfMci4ni9aHlFt3phiojC4tdwgs6KYzAIlCuS
+	 sY8WwZPEDZdWtBFb4PiPgvGZcB3foVSoFnMlrYS1hFVYkrCR/H09KP1sPIBAqHkrHW
+	 nfFRaUo6tEosA==
+Date: Mon, 20 Oct 2025 23:15:11 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: Jason@zx2c4.com, ardb@kernel.org, ubizjak@gmail.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+Subject: Re: [PATCH] lib/crypto: poly1305: fix uninit-value in poly1305_blocks
+Message-ID: <20251021061511.GA2385@sol>
+References: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aPbFgnW1ewPzpBGz@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
 
-On Tue, Oct 21, 2025 at 10:28:02AM +1100, Dave Chinner wrote:
-> Fundamentally, we really don't care about the mapping/tlb
-> performance of the PTE fragments at EOF. Anyone using files large
-> enough to notice the TLB overhead improvements from mapping large
-> folios is not going to notice that the EOF mapping has a slightly
-> higher TLB miss overhead than everywhere else in the file.
+On Tue, Oct 21, 2025 at 02:01:20PM +0800, Pei Xiao wrote:
+> syzbot reports uninit-value in poly1305_blocks:
 > 
-> Please jsut fix the regression.
+> BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+>  poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+>  poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
+>  poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
+>  poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
+>  chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
+>  chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
+>  crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
+>  tls_do_encryption net/tls/tls_sw.c:582 [inline]
+>  tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
+>  bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
+>  tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
+>  tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
+>  inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
+>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>  __sock_sendmsg+0x145/0x3d0 net/socket.c:742
+>  sock_write_iter+0x3a6/0x420 net/socket.c:1195
+>  do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
+>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+>  do_writev+0x1b5/0x580 fs/read_write.c:1103
+>  __do_sys_writev fs/read_write.c:1171 [inline]
+>  __se_sys_writev fs/read_write.c:1168 [inline]
+>  __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
+>  x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> in poly1305_blocks, ctx->is_base2_26 is uninit-value, ctx init in：
+> poly1305_init ->
+>      poly1305_block_init
+> 
+> so add memset in poly1305_block_init, then use poly1305_init_x86_64 to init
+> by asm.
+> 
+> Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+> Tested-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> ---
 
-Yeah.  I'm not even sure why we're having this discussion.  The
-behavior is mandated, we have test cases for it and there is
-literally no practical upside in changing the behavior from what
-we've done forever and what is mandated in Posix.
+Thanks for the bug report.  It will first need to be confirmed that this
+is actually an issue in lib/crypto/ rather than the calling code, and if
+so, why poly1305_kunit doesn't catch it (even when run on an KMSAN
+enabled kernel, which I've done).  And which commit it fixes.  I'm
+guessing it's most likely a KMSAN false positive that was exposed by
+commit b646b782e522 dropping the dependency of the
+architecture-optimized Poly1305 code on !KMSAN.  KMSAN doesn't know
+about memory initialization done by assembly code.  But I'll double
+check this, if you don't get around to it first.
 
+The hash algorithms generally don't need a dependency on !KMSAN, as
+their assembly code doesn't initialize memory.  It looks like the
+Poly1305 code is an exception to that though, and I missed it.  If so,
+the proper solution (IMO) is to use kmsan_unpoison_memory() right after
+the assembly function that initializes the memory is called.  See
+sha256_finup_2x_arch() for an example of that.  Note that more than one
+architecture may need this.  If it ends up being too inconvenient, we
+can make the architecture-optimized Poly1305 code depend on !KMSAN
+again.  But preserving KMSAN coverage is preferable.
+
+- Eric
 
