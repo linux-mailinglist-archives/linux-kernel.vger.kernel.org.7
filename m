@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-862868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B911BF6709
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:27:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9ADBF6685
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA225445BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:17:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0AB6504F02
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82831E7C23;
-	Tue, 21 Oct 2025 12:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042552F12CE;
+	Tue, 21 Oct 2025 12:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b="QjUXlhej"
+	dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b="LqyQMGdK"
 Received: from MTA-08-4.privateemail.com (mta-08-4.privateemail.com [198.54.122.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EDB2F12CE
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440FA23F424
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.122.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049050; cv=none; b=LFQsVAsHdRw8VZ7EbshawO2tcGhwk1pxZar6cIoC1WXEG23tWlyIw8rqdp5u6MXYYhbCwR/gCwq6YVw6BcMnKxPI99WPT16IzsSkaBdAJCNGR/mA6P37NLGj9y3Duu+c0/mpmv8GRWirbOVtdSs501AVP3aI8iRSPYGbXs7Lwp8=
+	t=1761049060; cv=none; b=kV7V5JYkEbTVselZ9jSmVwS29cMicYaqEmebZrJ4av7Uk+krtA7zoiPGgBiytQg67Ic7wAaE8FLjhwznnjslSVZ0JUoa2fWBzGECXTf/2BJBECxFKSwGyaip5TC2B/YBHDvJQxeccDE++dnvALDclbx2CCvHMgLkk0HRmW/dJPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049050; c=relaxed/simple;
-	bh=w+GW5NbNovoY2ZgC174ZtXRXKIMdtt5c2zCoL8WbMIA=;
+	s=arc-20240116; t=1761049060; c=relaxed/simple;
+	bh=EQ2mAkbfUcR1AbZvzRKx7HHNMZ/kBLbls2HmoypncFU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Uehe1Pn9uyse4dZDMPbRAVeqswevPEtcr+P29GHU20/3cQCvGPNw18LyyqmYBJ8hHmVg/ZVKnlSTu9xXbURkdi/qY0vxHarabe7XTAb343n/+imOV4jiPLeT7hbP/MQIujxsbSQy8unHGloqyFLNVHe9HMdy25slD8Mpva7s7Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lukowski.dev; spf=pass smtp.mailfrom=lukowski.dev; dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b=QjUXlhej; arc=none smtp.client-ip=198.54.122.147
+	 In-Reply-To:To:Cc; b=EtpXAFXl+n46mMzgFhpJA4vHe/eNW5gAfoI14AuzSgDPF3L7BpnnSkyuJYqfmtmHXi9rW7cWXJJvJYS8h7PLTTd1RtWXZvQcbjb76mCcsvk4gyt/aJxoAnQZcl4wrztxyl92E0ssaMHRrmGNsZ3jaU4Bp3rHd+qlhkus0eOTnZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lukowski.dev; spf=pass smtp.mailfrom=lukowski.dev; dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b=LqyQMGdK; arc=none smtp.client-ip=198.54.122.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lukowski.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lukowski.dev
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lukowski.dev;
-	s=default; t=1761049044;
-	bh=w+GW5NbNovoY2ZgC174ZtXRXKIMdtt5c2zCoL8WbMIA=;
+	s=default; t=1761049053;
+	bh=EQ2mAkbfUcR1AbZvzRKx7HHNMZ/kBLbls2HmoypncFU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QjUXlhejuWzVLDPd8xKTIVOgXFw77XXHJrcZkU1ltBU2J2rz/qBdgmrjNqH71npH+
-	 doMHkMG1tqHSh00lcFT9Hqw/dIhQFutj4lur7J9Ccqe7nb0zteApYhC+KjpQilbVi6
-	 cQXLnhNe6siSevirQiMed9Fv8QggCEip91Jt2mN/isToQX/Hb/m2Fub7hkF8dpat7D
-	 E6ira6Jp3e+Nss0fVO2tLeBAq3Wxiz2A2RaG/93tLa1xxrOfJkgoa+qZl6mxab9Qlu
-	 19Tt1TYhz+MIwncalCB7M0WE31Qr2WTokzu81ihbvc3dba+9kjsCeqGmqk4baoDNd6
-	 OTU0tBDU/SPmw==
+	b=LqyQMGdKz6c84oIYELA+k5M6blxFQ64M3+/kzI/+mTvf1NlbLrQbW5T1iaom48Qf3
+	 4BHBgSf2wuSqISCHTUqeJwBr7CFtnycib+Xk4V3s/IR0bDHtp+lQGaNFdNrnAm0vQX
+	 vHWojL92vSQ1MgBjFHhSCdzG1gd1L6vSd4BAvit8Dzf3zw8dkQY9MCIcCby8VxoM7R
+	 ANK7jz6HR7RzTwK0IA82a8ket/7qdM024QL4OBDe+f5VnzhSRrsNzIR9GHvBqq/jFn
+	 XvzQhpLrdogAupRZVhH9TcjrjK+eMNvsSysKLztKvZrL99V9TKg1qe37g0P13dTBFP
+	 KhjHk1pyqxEgg==
 Received: from mta-08.privateemail.com (localhost [127.0.0.1])
-	by mta-08.privateemail.com (Postfix) with ESMTP id 4crWWm5BLBz3hhTc;
-	Tue, 21 Oct 2025 08:17:24 -0400 (EDT)
+	by mta-08.privateemail.com (Postfix) with ESMTP id 4crWWx5KJ2z3hhTc;
+	Tue, 21 Oct 2025 08:17:33 -0400 (EDT)
 Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa (unknown [150.228.61.72])
 	by mta-08.privateemail.com (Postfix) with ESMTPA;
-	Tue, 21 Oct 2025 08:17:16 -0400 (EDT)
+	Tue, 21 Oct 2025 08:17:25 -0400 (EDT)
 From: Olle Lukowski <olle@lukowski.dev>
-Date: Tue, 21 Oct 2025 15:16:28 +0300
-Subject: [PATCH 2/3] staging: most: dim2: replace BUG_ON() with
- WARN_ON_ONCE() and proper error returns
+Date: Tue, 21 Oct 2025 15:16:29 +0300
+Subject: [PATCH 3/3] staging: most: video: replace BUG_ON() with
+ WARN_ON_ONCE()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-staging-most-warn-v1-2-4cdd3745bbdc@lukowski.dev>
+Message-Id: <20251021-staging-most-warn-v1-3-4cdd3745bbdc@lukowski.dev>
 References: <20251021-staging-most-warn-v1-0-4cdd3745bbdc@lukowski.dev>
 In-Reply-To: <20251021-staging-most-warn-v1-0-4cdd3745bbdc@lukowski.dev>
 To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
@@ -69,88 +69,27 @@ Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.14.3
 X-Virus-Scanned: ClamAV using ClamSMTP
 
-Replace BUG_ON() calls with WARN_ON_ONCE() to prevent unnecessary kernel
-panics. Return appropriate error codes (-EINVAL or -EFAULT) instead of
-crashing the system.
+Replace a BUG_ON() call with WARN_ON_ONCE() to prevent an unnecessary
+kernel panic.
 
 Signed-off-by: Olle Lukowski <olle@lukowski.dev>
 ---
- drivers/staging/most/dim2/dim2.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ drivers/staging/most/video/video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/most/dim2/dim2.c b/drivers/staging/most/dim2/dim2.c
-index dad2abe6c..a9dc3765b 100644
---- a/drivers/staging/most/dim2/dim2.c
-+++ b/drivers/staging/most/dim2/dim2.c
-@@ -166,8 +166,10 @@ static int try_start_dim_transfer(struct hdm_channel *hdm_ch)
- 	unsigned long flags;
- 	struct dim_ch_state st;
+diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
+index 32f71d9a9..3a622bd59 100644
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@ -575,7 +575,7 @@ static void __exit comp_exit(void)
  
--	BUG_ON(!hdm_ch);
--	BUG_ON(!hdm_ch->is_initialized);
-+	if (WARN_ON_ONCE(!hdm_ch))
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(!hdm_ch->is_initialized))
-+		return -EINVAL;
+ 	most_deregister_configfs_subsys(&comp);
+ 	most_deregister_component(&comp);
+-	BUG_ON(!list_empty(&video_devices));
++	WARN_ON_ONCE(!list_empty(&video_devices));
+ }
  
- 	spin_lock_irqsave(&dim_lock, flags);
- 	if (list_empty(head)) {
-@@ -188,7 +190,11 @@ static int try_start_dim_transfer(struct hdm_channel *hdm_ch)
- 		return -EAGAIN;
- 	}
- 
--	BUG_ON(mbo->bus_address == 0);
-+	if (WARN_ON_ONCE(mbo->bus_address == 0)) {
-+		spin_unlock_irqrestore(&dim_lock, flags);
-+		return -EFAULT;
-+	}
-+
- 	if (!dim_enqueue_buffer(&hdm_ch->ch, mbo->bus_address, buf_size)) {
- 		list_del(head->next);
- 		spin_unlock_irqrestore(&dim_lock, flags);
-@@ -269,8 +275,10 @@ static void service_done_flag(struct dim2_hdm *dev, int ch_idx)
- 	unsigned long flags;
- 	u8 *data;
- 
--	BUG_ON(!hdm_ch);
--	BUG_ON(!hdm_ch->is_initialized);
-+	if (WARN_ON_ONCE(!hdm_ch))
-+		return;
-+	if (WARN_ON_ONCE(!hdm_ch->is_initialized))
-+		return;
- 
- 	spin_lock_irqsave(&dim_lock, flags);
- 
-@@ -455,7 +463,8 @@ static int configure_channel(struct most_interface *most_iface, int ch_idx,
- 	int const ch_addr = ch_idx * 2 + 2;
- 	struct hdm_channel *const hdm_ch = dev->hch + ch_idx;
- 
--	BUG_ON(ch_idx < 0 || ch_idx >= DMA_CHANNELS);
-+	if (WARN_ON_ONCE(ch_idx < 0 || ch_idx >= DMA_CHANNELS))
-+		return -EINVAL;
- 
- 	if (hdm_ch->is_initialized)
- 		return -EPERM;
-@@ -567,7 +576,8 @@ static int enqueue(struct most_interface *most_iface, int ch_idx,
- 	struct hdm_channel *hdm_ch = dev->hch + ch_idx;
- 	unsigned long flags;
- 
--	BUG_ON(ch_idx < 0 || ch_idx >= DMA_CHANNELS);
-+	if (WARN_ON_ONCE(ch_idx < 0 || ch_idx >= DMA_CHANNELS))
-+		return -EINVAL;
- 
- 	if (!hdm_ch->is_initialized)
- 		return -EPERM;
-@@ -643,7 +653,8 @@ static int poison_channel(struct most_interface *most_iface, int ch_idx)
- 	u8 hal_ret;
- 	int ret = 0;
- 
--	BUG_ON(ch_idx < 0 || ch_idx >= DMA_CHANNELS);
-+	if (WARN_ON_ONCE(ch_idx < 0 || ch_idx >= DMA_CHANNELS))
-+		return -EINVAL;
- 
- 	if (!hdm_ch->is_initialized)
- 		return -EPERM;
+ module_init(comp_init);
 
 -- 
 2.51.1
