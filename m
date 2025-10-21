@@ -1,136 +1,171 @@
-Return-Path: <linux-kernel+bounces-862910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80501BF682C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:44:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3153BF682F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0F3D505B4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:42:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8050A427364
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49EF330331;
-	Tue, 21 Oct 2025 12:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA7D330B29;
+	Tue, 21 Oct 2025 12:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="W0oSm8ss"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="UlBMAr3r"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE5F355040
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050544; cv=none; b=FNhLTru3v61X8fELgX2SJQI6oybaOOdzwuQKxO9w2/TY5dH+NswvwzbbJ5XvTcs0q11XL/WlvWJBRRCr1az7G7oRdM1EDgrv80nFRWqrVnmPVBc5ERFPJpg7qpR7QEhTr0OqwBape9nyobQJkJOJ6jT2EqThUm9eTrXJ7EsPf8M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050544; c=relaxed/simple;
-	bh=kZl7K/EZ0V7AqsFLwQW2yci0m3Jf7pMTBFK1AheIjOE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hhd9qu+HWdYaEdI67j1cv5wdOLQqXH1qNKw6Rzo2dvsEDtXDUfg9LuwplYtqypvru9vTChneRVUm4ehX/MJZBRBvuoNyKDfl+BUhaPAhuKkyUK35erQ8i6h7kuAg0Vi08K0dkQfdaOPVmlc5N1D1DIpKlgBRv/xk/IWT9A+hq0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=W0oSm8ss; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so4486107b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ssn.edu.in; s=ssn; t=1761050540; x=1761655340; darn=vger.kernel.org;
-        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aOn3UfMwHh1btp/pv4pFbIJEXlaH8RnvbklOwiTYonE=;
-        b=W0oSm8ssV2AjbCZqzIzzEfGt5iGG5MhFQE/6p9JdxLenQQcaKZuUzxnvoBY0IzRdLG
-         FBkpxJ+4cbXgMFRjejm/4RqF2/Sy7oOHqi3FSqmSfn/S2dQsUvWGckXKm0rJyLtl+yDp
-         8SClCTLktir0MHkx85bkOEmTY+CkBzHz3c3do=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761050540; x=1761655340;
-        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aOn3UfMwHh1btp/pv4pFbIJEXlaH8RnvbklOwiTYonE=;
-        b=RGxEIRrVu+OZoksRsrCGDwX5e2r2ytb6weTNWjlfRMDNKJ2wztZSgC5jMQld2be+de
-         6gliQ8NMuaO8CUP02Y0uFE9uQeXvTDWY9nz8OBrYY5O0kPgYnMXuZJjxhLrUFq8pA5v2
-         Xe7hjiNLpUFdtDfzgjg29eavHnAOADCwcYDyldenlw+eKSgRHKQQCPA2v/P/y6NpWDTs
-         3wyCOkDp+um8lm/0cTXLKHMKlPfQpnTg017JAgMvREZKfCJj7kce/y4oa0FRoxt4it5T
-         /TchXXUEKwRHF7Txp2AeqFMOdvb4JNrHEjDMb3nErZDmMB9qFPp2jNJPX7yimQivSiJE
-         YhGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ3CsoTe07Bi/5LklufiTdx96Izu7LXJ0/bDOWoZnjAyISlhOuEGAVfjUeJsYiG2t5I7TktDuF5OzXNqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS6j69sr3paHOhfWqxtMvU1An/0as6WO/XDouH6DRJED+OgUh6
-	sCUuX84MMbwid68nOqnfmZ27JrQZXPopCG7GtI9XQFR9u3rrUHOsAt3eqwaUjZpM9M5Jas2Z42m
-	eRZ3JU+M+EW2YWF0eIEEUJKDEomj49B1t+moXEzkzpyYzJKrhCzcIsggl
-X-Gm-Gg: ASbGnct460k89sSuT2xiamiWi6vwuiPP+sA+1xL8N8Drne2b/CR4swzCejj3l8VgTX6
-	X0G0J2uz3CrwID/pCB5gxuTzRH2eXOd0zimWXOz9QhvoO+bLG6bbC//M2VSK+fU2iaF/2K68jzN
-	dRUqh+B2Qn8Olc1WT8IoIH9YaPUOyJ1x2fXt3ZhjdptkdBp+4Iqsib1oy9Amkl25nB9DVKaNlsJ
-	sNCohArqvPyhf7mtcUUH4WLAKBDlDW6SE8VvHx5yfW+SPU/QZrkjewA9v8ZmmA9/dJQFSSeP5uB
-	ihofHGCYsysLC5Goz0V9PsyqOM3O7wkrE4SE8Ch0t5lMRELJwC/oyViEu+zp1ZpEequvdiHICe8
-	5jB1d63I40UMclrAp116C5nzi9CdyIAsOdARLdwxMSnkrDVY6pw//w8JfpBGQT8z8/+Zx7K4U7h
-	SBqaQtcFxgbnbOyH+W09FGwGVWwV0QwmC3O5CLaGpMP4LU+NgwLUazPfSm6ZiFUdJq+8FxZRPQ1
-	IhX
-X-Google-Smtp-Source: AGHT+IEdeUXEXYB4HW+XJo5SGpW27qmFvB4vzdwV++QmVAp0pZvJ7IJ1FNn2t13Bf9YjqW/yklyShg==
-X-Received: by 2002:a05:6a00:b96:b0:77f:1ef8:8acb with SMTP id d2e1a72fcca58-7a220a57f31mr18163889b3a.13.1761050540290;
-        Tue, 21 Oct 2025 05:42:20 -0700 (PDT)
-Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:33f3:d5f3:33d1:a1e0:46bc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a2300f159csm11264417b3a.46.2025.10.21.05.42.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 05:42:20 -0700 (PDT)
-From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-To: jpoimboe@kernel.org
-Cc: peterz@infradead.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AF132ED3B;
+	Tue, 21 Oct 2025 12:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.165
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761050596; cv=pass; b=JDrydGKMPOe6WnkawOoukDVv3j2fLNjIzEXsNO1HHRkNd8tiSbwf6G8oKaRinHegbmBhgRqC/zFSIj3zYRbkVIM/PgdHT48Rid/0V7bcGlOzoEDl4VstdTqPqigC6D34B/VxfB6idmwsueBbZvswaHR/u/wnK4yZIEyX9uHcoMc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761050596; c=relaxed/simple;
+	bh=JFplx2YsQO7K7/79S9p6/kUM59z2gy5vyGKGATJNt3Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=U5wfxcwJrI/WyRIl+rXVR8mDeikYhlTLVo3LPBqaGxji8Py+t6/yPa6kEeYVaQAfz/5C0zif1VMfptjEu492RCCXCvOKpFKJ1317aLx2cOSybjh8fmyjVTNX5SrcDkfeDe5Qc0LbhNIO7C7F4SfnU5xlFXmfmupc9LEXAg8J9TY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=UlBMAr3r; arc=pass smtp.client-ip=81.169.146.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1761050584; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=ROGweOHKUM+vtm7HWbBKrHi+91eCRZSQ70zcNpAPHo2uAT0cVGFchZs+P4tv70F2at
+    y73iAYwwerDasDEAd9SkBdRyH94fXGdRpKXpMtLbymdamHyv3TnFgaYPNJodippMPufG
+    nQDDhno5iBpEdbwlcmIEENv84nMve7M9KNa123HDp6q+oUPbOqG4lILuLCMWWsfrwgXn
+    VB+EQeyEJCcjdx7WYfFHSg+R+W3hMpENaIA5rvSvgBJG23cnNyTAV4d4ydLWhmxbXEsE
+    OOoJIWOFtA3z4SNXrJ4VKiX5Et4QSOx1hOnVhMyRhHPoFw80HJt9O5jgeoHzNh4FDB90
+    p9RA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1761050584;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=VpD+9VLUVwYq18hTNtWoDpMdfiJgqdeoLLm6Mns/AYY=;
+    b=rsmz4HrngKtEpZPAZ2/vbgsD2Of+6Ry/NOKCPZrzTw0iNC/iA3y8rJGKFXWHbHou9o
+    +KUTnhWBa9XNLcPUsurJDyRxzwxiYaiESjUYoPI5Krr6TXd7FlR7mUGUXP4o7rnTxDkm
+    EQ9k06Twe5VQeLU4TaAsj0A8rajwIo9oh1AASbYmGcWMqCJPEYTsedoXvCZebUCZP5a+
+    7M73lLRGDYk+guqsj22UeYFuE72necB6nfekJdsa8SuJfRMwlxGdQPJ/qgPhXxIgdc6c
+    rdsr0/3pkFpkVZ+50cFqgosSi+Ofo+OCpucORoCf7JFDls7mFxwtNhoV/KRHPFIwjDhR
+    sEzQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1761050584;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=VpD+9VLUVwYq18hTNtWoDpMdfiJgqdeoLLm6Mns/AYY=;
+    b=UlBMAr3rEtiLYGdJIGDqEHZsj1NZciqhByQSNm6icU4isrMQfefylqsvLALAgeAFQW
+    ThlLTaqBA4eBrVFMH2m2mK4IJAzh1K41bh3oBNwRGWtFCDRKYyDpXtbPMEjFz1AFoW3w
+    xPYh06H9xv4MJu9QtXgngkEhoJ+DOSzLmnm3uDpEznFOUhFmD72wUmCfHyfER1lqa5nF
+    Y2sBlzIMlK5ThW0TnE3bk45d96OdFy15duLVqo8DHag7+TAZyPpvhkMAQdfy+jUNXE3Y
+    e8V0oKTjppY5WcUltAf0/faxQKNUK5XtFHBAzwXanSdXn/uUe1ZMtiakGX+NAuBiRj47
+    c1Fw==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSfNuhhDSDt3O2J2YOom0XQaPis+nU/5K"
+Received: from Munilab01-lab.micron.com
+    by smtp.strato.de (RZmta 53.4.2 AUTH)
+    with ESMTPSA id z293fb19LCh3112
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 21 Oct 2025 14:43:03 +0200 (CEST)
+From: Bean Huo <beanhuo@iokpp.de>
+To: avri.altman@wdc.com,
+	avri.altman@sandisk.com,
+	bvanassche@acm.org,
+	alim.akhtar@samsung.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	can.guo@oss.qualcomm.com,
+	ulf.hansson@linaro.org,
+	beanhuo@micron.com,
+	jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Subject: [PATCH] objtool: Fix warning in check.c when validating stack frames
-Date: Tue, 21 Oct 2025 18:12:13 +0530
-Message-ID: <20251021124214.25276-1-biancaa2210329@ssn.edu.in>
-X-Mailer: git-send-email 2.43.0
+	Bean Huo <beanhuo@iokpp.de>
+Subject: [PATCH v5 0/3] Add OP-TEE based RPMB driver for UFS devices
+Date: Tue, 21 Oct 2025 14:42:51 +0200
+Message-Id: <20251021124254.1120214-1-beanhuo@iokpp.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
----
- tools/objtool/check.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch series introduces OP-TEE based RPMB (Replay Protected Memory Block)
+support for UFS devices, extending the kernel-level secure storage capabilities
+that are currently available for eMMC devices.
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index a5770570b106..64c54225f875 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -3947,7 +3947,7 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
- 			return 0;
- 
- 		if (!next) {
--			WARN_INSN(insn, "teh end!");
-+			WARN_INSN(insn, "the end!");
- 			return 1;
- 		}
- 		insn = next;
+Previously, OP-TEE required a userspace supplicant to access RPMB partitions,
+which created complex dependencies and reliability issues, especially during
+early boot scenarios. Recent work by Linaro has moved core supplicant
+functionality directly into the Linux kernel for eMMC devices, eliminating
+userspace dependencies and enabling immediate secure storage access. This series
+extends the same approach to UFS devices, which are used in enterprise and mobile
+applications that require secure storage capabilities.
+
+Benefits:
+- Eliminates dependency on userspace supplicant for UFS RPMB access
+- Enables early boot secure storage access (e.g., fTPM, secure UEFI variables)
+- Provides kernel-level RPMB access as soon as UFS driver is initialized
+- Removes complex initramfs dependencies and boot ordering requirements
+- Ensures reliable and deterministic secure storage operations
+- Supports both built-in and modular fTPM configurations.
+
+
+v4 -- v5:
+      1. Added helper function ufshcd_create_device_id() to generate unique device
+      	 identifier by combining manufacturer ID, specification version, model name,
+	 serial number (as hex), device version, and manufacture date.
+      2. Added device_id field to struct ufs_dev_info for storing allocated unique device
+      	 identifier string.
+      3. Modified UFS RPMB driver to use device_id instead of just serial_number for creating
+         unique RPMB device identifiers
+v3 -- v4:
+    1. Replaced patch "scsi: ufs: core: Remove duplicate macro definitions" with
+       "scsi: ufs: core: Convert string descriptor format macros to enum" based on
+       feedback from Bart Van Assche
+    2. Converted SD_ASCII_STD and SD_RAW from boolean macros to enum type for
+       improved code readability
+    3. Moved ufshcd_read_string_desc() declaration from include/ufs/ufshcd.h to
+       drivers/ufs/core/ufshcd-priv.h since it's not exported
+
+v2 -- v3:
+    1. Removed patch "rpmb: move rpmb_frame struct and constants to common header". since it
+       has been queued in mmc tree, and added a new patch:
+       "scsi: ufs: core: Remove duplicate macro definitions"
+    2. Incorporated suggestions from Jens
+    3. Added check if Advanced RPMB is enabled, if enabled we will not register UFS OP-TEE RPMB.
+
+v1 -- v2:
+    1. Added fix tag for patch [2/3]
+    2. Incorporated feedback and suggestions from Bart
+
+RFC v1 -- v1:
+    1. Added support for all UFS RPMB regions based on https://github.com/OP-TEE/optee_os/issues/7532
+    2. Incorporated feedback and suggestions from Bart
+
+
+Bean Huo (3):
+  scsi: ufs: core: Convert string descriptor format macros to enum
+  scsi: ufs: core: fix incorrect buffer duplication in
+    ufshcd_read_string_desc()
+  scsi: ufs: core: Add OP-TEE based RPMB driver for UFS devices
+
+ drivers/misc/Kconfig           |   2 +-
+ drivers/ufs/core/Makefile      |   1 +
+ drivers/ufs/core/ufs-rpmb.c    | 254 +++++++++++++++++++++++++++++++++
+ drivers/ufs/core/ufshcd-priv.h |  27 +++-
+ drivers/ufs/core/ufshcd.c      |  92 ++++++++++--
+ include/ufs/ufs.h              |   5 +
+ include/ufs/ufshcd.h           |  12 +-
+ 7 files changed, 372 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/ufs/core/ufs-rpmb.c
+
 -- 
-2.43.0
+2.34.1
 
-
--- 
-::DISCLAIMER::
-
----------------------------------------------------------------------
-The 
-contents of this e-mail and any attachment(s) are confidential and
-intended 
-for the named recipient(s) only. Views or opinions, if any,
-presented in 
-this email are solely those of the author and may not
-necessarily reflect 
-the views or opinions of SSN Institutions (SSN) or its
-affiliates. Any form 
-of reproduction, dissemination, copying, disclosure,
-modification, 
-distribution and / or publication of this message without the
-prior written 
-consent of authorized representative of SSN is strictly
-prohibited. If you 
-have received this email in error please delete it and
-notify the sender 
-immediately.
----------------------------------------------------------------------
-Header of this mail should have a valid DKIM signature for the domain 
-ssn.edu.in <http://www.ssn.edu.in/>
 
