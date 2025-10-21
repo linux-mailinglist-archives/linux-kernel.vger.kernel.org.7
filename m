@@ -1,138 +1,170 @@
-Return-Path: <linux-kernel+bounces-862205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D64EBF4AD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:01:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34353BF4B3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74B8418A2600
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:02:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98AF3B9480
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F6C25B1DA;
-	Tue, 21 Oct 2025 06:01:37 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87F025D540;
+	Tue, 21 Oct 2025 06:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Ihq7T4wb"
+Received: from mail-m49202.qiye.163.com (mail-m49202.qiye.163.com [45.254.49.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5CE1A23AC;
-	Tue, 21 Oct 2025 06:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08EF1D516C;
+	Tue, 21 Oct 2025 06:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761026497; cv=none; b=L14oZUeArHKeAct1hYY5QIqvbKBi9vGhd0a83shs0jGcYYpwjPMvKZAuwT7nxjQHFAR48vjbnmJou0t0iyZsjwqGOG0x8KwzgnIwbg2fJwgP+2ehtJJzobS5+7RJaQbbvTptgkJ8A2rKMyMEDAd8zRXAAOO6nQpspqP2Ey0rW9s=
+	t=1761027867; cv=none; b=LfynNyxHHcVmWW2tUYc4gMp2YNRwZhEhyJ0hvQmMhsf9WcxkOfuhNhvtyeTyRQRfQPWsCrtpdhgWz97YdlfB1x1Oq/l3ILiFIWgVdwUm2/2ZER4WGWaXSBxHxrIN3+DlaIcHk/X916h8oXmENG+fEtI7usPqgmuudvlCHiOUOKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761026497; c=relaxed/simple;
-	bh=Y352Bel61Zm8i1QWPYkSlbQPAribwoB36DafzkL3EiE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=i4pqiOsnu7G/PPKIyy5GALrTzH08ymNNXCLrNdc63mE88s7aDyk24UA3nq7CWfLdHQaDQwC9sgXb5lOgvCPBznLl4ivw9KIJ9v891pgYIxeNkwHgQxlbhGRKS4dK2rB7dsyADjcqZ4hqkE/jYR7Ry6CI8CMFpmCf06CKgN4stX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 60d40906ae4311f0a38c85956e01ac42-20251021
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:2c54c30f-57e7-44a5-a4b0-d2e66808cd77,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:f5c685ca54730ba201b475cdf8606913,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 60d40906ae4311f0a38c85956e01ac42-20251021
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1039226372; Tue, 21 Oct 2025 14:01:25 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: ebiggers@kernel.org,
-	Jason@zx2c4.com,
-	ardb@kernel.org,
-	ubizjak@gmail.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pei Xiao <xiaopei01@kylinos.cn>,
-	syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
-Subject: [PATCH] lib/crypto: poly1305: fix uninit-value in poly1305_blocks
-Date: Tue, 21 Oct 2025 14:01:20 +0800
-Message-Id: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1761027867; c=relaxed/simple;
+	bh=/q0kTwWKFTLm1cm9apCMKczHyTtWD1QrOaP5F1fiFUM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FjEUoIFsqedlVeq2n8HqugIISGOVeZjX422O/UqDsrBAto0dSZISusotIBVTA3DTs3Ifs4VY044OZ65TURzNvIe+Ysilz/guqBYWzMjjmBj34JrBnQmIne589q/hWdJTC3nIcb5+pEhGI6s6KN6pfk9MsPju+tLHqhyJ3Jy7n0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Ihq7T4wb; arc=none smtp.client-ip=45.254.49.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 26979c34f;
+	Tue, 21 Oct 2025 10:55:07 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	jingoohan1@gmail.com,
+	p.zabel@pengutronix.de,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dianders@chromium.org,
+	m.szyprowski@samsung.com,
+	luca.ceresoli@bootlin.com,
+	jani.nikula@intel.com,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v7 06/18] drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
+Date: Tue, 21 Oct 2025 10:52:39 +0800
+Message-Id: <20251021025240.1524169-4-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251021025240.1524169-1-damon.ding@rock-chips.com>
+References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
+ <20251021025240.1524169-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a04b11e2203a3kunmb53d69df5a32ed
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhpLHlZDGhgfTR4YHUkfGktWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=Ihq7T4wbb1C0ot5hmRh/2EhEZ1UvqVqdty+NDkRDknY4gjjn/QUKkJni2Y7bKTYYoffRSto/rJH6GIm0b/I78BNMn5XQ7IAdTjFnN4cw4R/AMQcmptQzI/1lcMp60XQ2n3NWTQHAbI2sIUKbfJ++pkdxsxki9k6q2dB8vfETXXc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=k+hsBTo1cF7B1n6771fI4pZV7uwBzh/cvLCWbFf2xZQ=;
+	h=date:mime-version:subject:message-id:from;
 
-syzbot reports uninit-value in poly1305_blocks:
+Use &analogix_dp_plat_data.bridge instead of &exynos_dp_device.ptn_bridge
+directly.
 
-BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
- poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
- poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
- poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
- poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
- chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
- chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
- crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
- tls_do_encryption net/tls/tls_sw.c:582 [inline]
- tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
- bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
- tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
- tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
- inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x145/0x3d0 net/socket.c:742
- sock_write_iter+0x3a6/0x420 net/socket.c:1195
- do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_writev+0x1b5/0x580 fs/read_write.c:1103
- __do_sys_writev fs/read_write.c:1171 [inline]
- __se_sys_writev fs/read_write.c:1168 [inline]
- __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
- x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-in poly1305_blocks, ctx->is_base2_26 is uninit-value, ctx init in：
-poly1305_init ->
-     poly1305_block_init
+------
 
-so add memset in poly1305_block_init, then use poly1305_init_x86_64 to init
-by asm.
+Changes in v3:
+- Fix the typographical error for &dp->plat_data.bridge.
 
-Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
-Tested-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+Changes in v4:
+- Rename the &analogix_dp_plat_data.bridge to
+  &analogix_dp_plat_data.next_bridge.
 ---
- lib/crypto/x86/poly1305.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_dp.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/lib/crypto/x86/poly1305.h b/lib/crypto/x86/poly1305.h
-index ee92e3740a78..3b9f1024a18d 100644
---- a/lib/crypto/x86/poly1305.h
-+++ b/lib/crypto/x86/poly1305.h
-@@ -8,6 +8,7 @@
- #include <linux/jump_label.h>
- #include <linux/kernel.h>
- #include <linux/sizes.h>
-+#include <linux/string.h>
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 5bcf41e0bd04..f469ac5b3c2a 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -36,7 +36,6 @@
+ struct exynos_dp_device {
+ 	struct drm_encoder         encoder;
+ 	struct drm_connector       *connector;
+-	struct drm_bridge          *ptn_bridge;
+ 	struct drm_device          *drm_dev;
+ 	struct device              *dev;
  
- struct poly1305_arch_internal {
- 	union {
-@@ -86,6 +87,7 @@ static __ro_after_init DEFINE_STATIC_KEY_FALSE(poly1305_use_avx512);
- static void poly1305_block_init(struct poly1305_block_state *state,
- 				const u8 raw_key[POLY1305_BLOCK_SIZE])
- {
-+	memset(state, 0, sizeof(struct poly1305_block_state));
- 	poly1305_init_x86_64(state, raw_key);
- }
+@@ -106,8 +105,8 @@ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+ 	dp->connector = connector;
  
+ 	/* Pre-empt DP connector creation if there's a bridge */
+-	if (dp->ptn_bridge) {
+-		ret = drm_bridge_attach(&dp->encoder, dp->ptn_bridge, bridge,
++	if (plat_data->next_bridge) {
++		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
+ 					0);
+ 		if (ret)
+ 			return ret;
+@@ -155,7 +154,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	dp->drm_dev = drm_dev;
+ 
+-	if (!dp->plat_data.panel && !dp->ptn_bridge) {
++	if (!dp->plat_data.panel && !dp->plat_data.next_bridge) {
+ 		ret = exynos_dp_dt_parse_panel(dp);
+ 		if (ret)
+ 			return ret;
+@@ -232,6 +231,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 
+ 	/* The remote port can be either a panel or a bridge */
+ 	dp->plat_data.panel = panel;
++	dp->plat_data.next_bridge = bridge;
+ 	dp->plat_data.dev_type = EXYNOS_DP;
+ 	dp->plat_data.power_on = exynos_dp_poweron;
+ 	dp->plat_data.power_off = exynos_dp_poweroff;
+@@ -239,8 +239,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	dp->plat_data.get_modes = exynos_dp_get_modes;
+ 	dp->plat_data.skip_connector = !!bridge;
+ 
+-	dp->ptn_bridge = bridge;
+-
+ out:
+ 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+ 	if (IS_ERR(dp->adp))
 -- 
-2.25.1
+2.34.1
 
 
