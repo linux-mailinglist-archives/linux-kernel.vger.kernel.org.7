@@ -1,120 +1,217 @@
-Return-Path: <linux-kernel+bounces-863457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A64BF7E34
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:26:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DC3BF7E3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F328E3ACB02
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:26:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A59025071AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEF634D4D1;
-	Tue, 21 Oct 2025 17:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4413B34B661;
+	Tue, 21 Oct 2025 17:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZjJF+4r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsGdt7Em"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7670934D4D9;
-	Tue, 21 Oct 2025 17:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD50355807
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067391; cv=none; b=H7UqmITucjMiAI3r2Iqtn6yuAxEz7FJmXmwGsRzPJhWMOeTlav02uXqkyy34s+J8w/FrNHz0hfuxJ040/3spVYp31RhNlWM6GdJrhqteqtlPq+dSe1+j4ZSNtFBOgtxuXNl9PusGjzSDdFfV83p0YWzP/nAVldz9BD89DhZ3o68=
+	t=1761067525; cv=none; b=nbHKyNUYjPm1/+DZBfRo8oGQcXOZgKvRs5c/4GJxSXToSeguc80Qi+FJawyvRFwkBzFf49TsSRw5S7sU3QKI4BwWqNyCHBjEdtDb/duALHXcqfw0frWTDjg1y/XuQLEYJDLqSgDP8M34RF5aCqNsLfyunVjX3hGQlukTv1kvv24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067391; c=relaxed/simple;
-	bh=WtDAPjj2uGIdoRAWnE+iIkBURVgXeLBKvep422kdXHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NZa8lOsmwqyF6Uck6Mp2lYAxIlE+ok3ZX3t59upEMPHL4CJmyOU52stgNWyJz3ylNzWj6r6hjSB+cGI5XGyag8ukX0t6Aul4jdSpWkGlS/TaVkOLZe8bDXL0jKgY/o6NLxyV3K84sf6gdFCX3fcAvSFW6ZfCK0Z7AdIjbkF6zJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZjJF+4r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E29C4CEF1;
-	Tue, 21 Oct 2025 17:23:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761067390;
-	bh=WtDAPjj2uGIdoRAWnE+iIkBURVgXeLBKvep422kdXHE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=FZjJF+4r91jouTqR4ZCGqzgg0rVgTjnvGMOtExNJniwX5dWlP4jCwmBXfEbVJuqti
-	 7IXt4pidP071Ogg9iGMBn38tmDXu75p9f2J92QJqiccOw/kxe0mEufMpxqK+n/b6dM
-	 JQAKYV8Ne/rBstqxIewQZaV49n8p7GNi8MD9GN0UDraKVCTlcY1S4/GjbsiBtM/wzp
-	 46uYfybDE61g6tR53qeFxSYdNJeFgsV+m+ov7nVifWmTKiUzdoU5abyz9XKoCaj+2l
-	 zIsZH9Tdg/O/QqQ2UaxeiOqnNWBbkVyDpD702xmI0jgsENuk+XdJ+za6yM1daKa4Aa
-	 hOm1C5wxr6JfQ==
-Date: Tue, 21 Oct 2025 12:23:09 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ravi Kumar Bandi <ravib@amazon.com>
-Cc: mani@kernel.org, thippeswamy.havalige@amd.com, lpieralisi@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	kwilczynski@kernel.org, robh@kernel.org, michal.simek@amd.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Stefan Roese <stefan.roese@mailbox.org>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Message-ID: <20251021172309.GA1198438@bhelgaas>
+	s=arc-20240116; t=1761067525; c=relaxed/simple;
+	bh=j+uEg91Z64lRz+on1N9wDt4oXxA5V8KS5iF980bpGGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k9n7DbirB6cDST7wHvEh0erRuYQDmx6p7QTBwqAb8PxCO18p4/paGtuYb5IUq7//0Jo6IUNib7IQR8NyHbaHMy8Yfw85OrJCA3PFtegNLpbsov8TYhLJXad8+hN2eYUdjxLEY6Cz0NNPLEln9I5Zp/A3kwD6CqttP6Y0RYO9rqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsGdt7Em; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63e18829aa7so60152a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:25:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761067521; x=1761672321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uXi6CRB3+931Kx2XZXckBgFrdC+g3QWN9I9coq5d304=;
+        b=bsGdt7EmlrCu5kdIRtjBIDe5cinPhB+InG0/VKRKJ5TzewlHjV5x5GnsxpMWMsT+im
+         co9oOT8klRfpcwjLJAGd3t/1n9RUEZysvpC/hRf5q/jiOcqLCj39DX0E/LkR2xegcu6N
+         oJZG4ABc7foJxtH9CXXElMw39dcOrHq80d1If30ZjpuOZxCYgD7oDLksYnsM5ZHu5y4X
+         8EMaZjbmU78kyzEyo1KFL9uG9Kn7ewC4FpOPWkWrVvMtdsvTSlvfqrOyR/ieLvjFj3ID
+         2iPVhTpaB/71Yh8LElhpsVKY8avaQRoVr+XxxhV9wbQvk6chtsYNOTQu0ZliYnJYv7aU
+         c9Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761067521; x=1761672321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uXi6CRB3+931Kx2XZXckBgFrdC+g3QWN9I9coq5d304=;
+        b=b9/h5vRCKgOzq/VCiN2xrYkZCcXMFJeVeCUZfj2FfkUebQA1UF7im2MGtqIRROv950
+         9ofMLlM1tZF723OWlwVtx1fzwi0SPNVJFRU+uoY1Mp0Cq0et+pdge47Yf6RkASmt1xKN
+         LohyJhLTS+tRsA3bU4IF/rhtHsf1pWBEyihwPUNzOET6xkZKt80u8N2Dct1FsfkR/HS4
+         2shYOauDfVus+wiADwHhNdikvLV/MS42Wuyn4HX3qCTriRiJdSZ6oi/9D5CeFQM2ISyU
+         8TdIpEHlytXvy9k1tQRPWAtKG0e4ErVIz+6Q+iPsbZL+dASKYdLLTz/3vWPu0B2hlXMO
+         6Raw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdXhaS5lxddNMgXkcDDAbKAh0peLEgGI8C56yYKgugcamjQgI0B/4wARSb/5rx1IoHvDpb27MIP+tqYn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziXuvRQnFofT5Vb8W8oF3PjjHgBJjvBhSIubXOe6whJNKVIATG
+	z1eIJjBky2f0/D5UOf9HYjT5YmM4eomKQpAOEpxcow8pNCAdVrZKSovW2KhojqA+ZdnbwMsD8jC
+	NRuZZWkYR8ZXM21SfCJw4eslib5E5T5k=
+X-Gm-Gg: ASbGncurlzTjhK2dCQsNcPa387il2VFon2yBvRAbezuUVjvBaPWYTNI2C+C+mYQFdNl
+	7P43B4SSlJh17YDrBqwYCm3pxX0KqyF/XOcRhtp8yXjhu+6MEIBAxvITsFFiJcpoElIUVjEB8S5
+	hQSPeaIVCp7HKKNaS0RlpIdggQJf876k+nezlMGyYDVChTSYJTraBqNTvZQCQRlWb8KYlDHUnWR
+	huljV+3khB7pIIJgzr2HmNo4VvzTt8+PUBVvX3CqCjZuT4LuTa7lapfxjEAt6VX0vEPtns=
+X-Google-Smtp-Source: AGHT+IHFTFFLc8SGslhJN9Wcay9cG8tXSMifwIHJtttGuFS4CWix+uKRWQgP5Ud3SpMMmQW5vq10q8hPaDNaqszw2i0=
+X-Received: by 2002:a05:6402:13ca:b0:637:f07d:e80f with SMTP id
+ 4fb4d7f45d1cf-63c1f58c0d3mr17646406a12.0.1761067520747; Tue, 21 Oct 2025
+ 10:25:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250920225232.18757-1-ravib@amazon.com>
+References: <10e7ac6cebe6535c137c064d5c5a235643eebb4a.1756888965.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <10e7ac6cebe6535c137c064d5c5a235643eebb4a.1756888965.git.baolin.wang@linux.alibaba.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 22 Oct 2025 01:24:43 +0800
+X-Gm-Features: AS18NWD0g9OMCk8OjX7Ue4MmhAY_mpmnguPj7-qsu-gFqHtjguKPTiKDRTKElcI
+Message-ID: <CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n4-Hqpgottedy0S6YYeUw@mail.gmail.com>
+Subject: Re: [PATCH] mm: shmem: fix the strategy for the tmpfs 'huge=' options
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
+	david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
+	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
+	dev.jain@arm.com, baohua@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[+cc Stefan, Sean]
-
-On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi wrote:
-> The pcie-xilinx-dma-pl driver does not enable INTx interrupts
-> after initializing the port, preventing INTx interrupts from
-> PCIe endpoints from flowing through the Xilinx XDMA root port
-> bridge. This issue affects kernel 6.6.0 and later versions.
-> 
-> This patch allows INTx interrupts generated by PCIe endpoints
-> to flow through the root port. Tested the fix on a board with
-> two endpoints generating INTx interrupts. Interrupts are
-> properly detected and serviced. The /proc/interrupts output
-> shows:
-> 
-> [...]
-> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
-> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
-> [...]
-> 
-> Changes since v1::
-> - Fixed commit message per reviewer's comments
-> 
-> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
-
-Hi Ravi, obviously you tested this, but I don't know how to reconcile
-this with Stefan's INTx fix at
-https://lore.kernel.org/r/20251021154322.973640-1-stefan.roese@mailbox.org
-
-Does Stefan's fix need to be squashed into this patch?
-
+On Wed, Sep 3, 2025 at 4:59=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"=
+),
+> we have extended tmpfs to allow any sized large folios, rather than just
+> PMD-sized large folios.
+>
+> The strategy discussed previously was:
+> "
+> Considering that tmpfs already has the 'huge=3D' option to control the
+> PMD-sized large folios allocation, we can extend the 'huge=3D' option to
+> allow any sized large folios.  The semantics of the 'huge=3D' mount optio=
+n
+> are:
+>
+>     huge=3Dnever: no any sized large folios
+>     huge=3Dalways: any sized large folios
+>     huge=3Dwithin_size: like 'always' but respect the i_size
+>     huge=3Dadvise: like 'always' if requested with madvise()
+>
+> Note: for tmpfs mmap() faults, due to the lack of a write size hint, stil=
+l
+> allocate the PMD-sized huge folios if huge=3Dalways/within_size/advise is
+> set.
+>
+> Moreover, the 'deny' and 'force' testing options controlled by
+> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the sam=
+e
+> semantics.  The 'deny' can disable any sized large folios for tmpfs, whil=
+e
+> the 'force' can enable PMD sized large folios for tmpfs.
+> "
+>
+> This means that when tmpfs is mounted with 'huge=3Dalways' or 'huge=3Dwit=
+hin_size',
+> tmpfs will allow getting a highest order hint based on the size of write(=
+) and
+> fallocate() paths. It will then try each allowable large order, rather th=
+an
+> continually attempting to allocate PMD-sized large folios as before.
+>
+> However, this might break some user scenarios for those who want to use
+> PMD-sized large folios, such as the i915 driver which did not supply a wr=
+ite
+> size hint when allocating shmem [1].
+>
+> Moreover, Hugh also complained that this will cause a regression in users=
+pace
+> with 'huge=3Dalways' or 'huge=3Dwithin_size'.
+>
+> So, let's revisit the strategy for tmpfs large page allocation. A simple =
+fix
+> would be to always try PMD-sized large folios first, and if that fails, f=
+all
+> back to smaller large folios. This approach differs from the strategy for
+> large folio allocation used by other file systems, however, tmpfs is some=
+what
+> different from other file systems, as quoted from David's opinion:
+> "
+> There were opinions in the past that tmpfs should just behave like any ot=
+her fs,
+> and I think that's what we tried to satisfy here: use the write size as a=
+n
+> indication.
+>
+> I assume there will be workloads where either approach will be beneficial=
+. I also
+> assume that workloads that use ordinary fs'es could benefit from the same=
+ strategy
+> (start with PMD), while others will clearly not.
+> "
+>
+> [1] https://lore.kernel.org/lkml/0d734549d5ed073c80b11601da3abdd5223e1889=
+.1753689802.git.baolin.wang@linux.alibaba.com/
+> Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 > ---
->  drivers/pci/controller/pcie-xilinx-dma-pl.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-xilinx-dma-pl.c b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-> index b037c8f315e4..cc539292d10a 100644
-> --- a/drivers/pci/controller/pcie-xilinx-dma-pl.c
-> +++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-> @@ -659,6 +659,12 @@ static int xilinx_pl_dma_pcie_setup_irq(struct pl_dma_pcie *port)
->  		return err;
->  	}
->  
-> +	/* Enable interrupts */
-> +	pcie_write(port, XILINX_PCIE_DMA_IMR_ALL_MASK,
-> +		   XILINX_PCIE_DMA_REG_IMR);
-> +	pcie_write(port, XILINX_PCIE_DMA_IDRN_MASK,
-> +		   XILINX_PCIE_DMA_REG_IDRN_MASK);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.47.3
-> 
+> Changes from RFC:
+>  - Update the commit message.
+
+Hi Baolin
+
+I'm seeing userspace errors after this commit. I'm using
+"transparent_hugepage_tmpfs=3Dwithin_size/always" and build kernel test
+on top of tmpfs with swap on ZRAM, both within_size / always
+results in same failure:
+
+The error I'm seeing is when build the kernel gcc always fail with:
+ld: kernel/workqueue.o:(.data..read_mostly+0x28): multiple definition
+of `no symbol'; kernel/workqueue.o:(.data..read_mostly+0x30): first
+defined here
+ld: kernel/workqueue.o:(.data..read_mostly+0x20): multiple definition
+of `no symbol'; kernel/workqueue.o:(.data..read_mostly+0x30): first
+defined here
+ld: kernel/workqueue.o:(.data..read_mostly+0x18): multiple definition
+of `no symbol'; kernel/workqueue.o:(.data..read_mostly+0x30): first
+defined here
+ld: kernel/workqueue.o:(.data..read_mostly+0x10): multiple definition
+of `no symbol'; kernel/workqueue.o:(.data..read_mostly+0x30): first
+defined here
+ld: kernel/workqueue.o:(.data..read_mostly+0x8): multiple definition
+of `no symbol'; kernel/workqueue.o:(.data..read_mostly+0x30): first
+defined here
+ld: kernel/workqueue.o:(.data..read_mostly+0x0): multiple definition
+of `no symbol'; kernel/workqueue.o:(.data..read_mostly+0x30): first
+defined here
+ld: kernel/workqueue.o: in function `no symbol':
+:(.text+0x3760): multiple definition of `no symbol';
+kernel/workqueue.o:(.data..read_mostly+0x30): first defined here
+ld: kernel/workqueue.o: in function `no symbol':
+:(.text+0x38c0): multiple definition of `no symbol';
+kernel/workqueue.o:(.data..read_mostly+0x30): first defined here
+ld: kernel/workqueue.o: in function `no symbol':
+
+... <hundreds of lines of error like this on different files>...
+
+After reverting this commit, the error is gone. I have a very stable
+reproduce rate locally with different cgroup / memory pressure with
+this patch applied, error logs are basically the same.
+
+I'm still not sure what is causing this, a kernel bug or some
+userspace bug is triggered by this. Changing the compiler to clang
+then the problem is also gone. Still investigating.
 
