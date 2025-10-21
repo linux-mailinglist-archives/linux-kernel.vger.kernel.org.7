@@ -1,179 +1,115 @@
-Return-Path: <linux-kernel+bounces-863009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B379BF6C70
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:30:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 752FCBF6C94
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B53B19A30B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16AD5418BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D3F33859C;
-	Tue, 21 Oct 2025 13:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D786337BA7;
+	Tue, 21 Oct 2025 13:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrCDX60S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hp1PBvV4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1C122B8CB;
-	Tue, 21 Oct 2025 13:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BD8333742
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053422; cv=none; b=YlMBejXTEijw+UchkEi3loMG0bKmj5GhFAUo1URUfPYNe8MseObu/8VHNqxsbAAn24LZYkqX1dWYI3fRPk2iB4nOFD6gkFTCmChvoq/vBMXkYivFKIOqRcoL2J74KMwWf8m+KKrxtP1oOnqjQBfGCQbq3ja8y3WBbI+vRhxsNrg=
+	t=1761053442; cv=none; b=laUE+7dELpXPMGBsBLMZ0oFLpCSdyJGyCkK0wvHQkofAMsDUbBBLMnrR/9sjjxsyVLYiCqYca5LquR0YJhtHPWn00bKgR61z5/IkmNf6XuQjV5J3uFlpwb50iAhfvGc1SGT9JmYXApaeSo8Ex3Irig0C75FwmDOWi/wLMftgnu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053422; c=relaxed/simple;
-	bh=TYwNPmQgCPJl15/tu+lF46PWA2zAyxHpdfqlwEfJl4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tCDDKJQV1N8/lKzPCwgJ0bqT/2dlfsIJrAx8UQ/BzF4wSEPP/8Ny++5yIOuludmvbuHYINwAnCC0Aj1N3WUhH+RzP06i9N58V4smRVl2X1gH2bywyb9xs2Iw/Jxc5Mdk6MMWsXGDtffah0PjqFHzwDp5riGIuS9iy9rbfSOwjGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrCDX60S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F2ACC4CEF1;
-	Tue, 21 Oct 2025 13:30:20 +0000 (UTC)
+	s=arc-20240116; t=1761053442; c=relaxed/simple;
+	bh=ay0dkHqOFJnTOzLrDz4wmOz05b8apRwAqDk0W+FLKTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=esPuSFSvCOwA/NR/Pdqo0/pjxykwhU7RJWUUbAgHax28KSkdzitQ0mKYNk61RjUp8jFZh8JZeeeO2K7m0Voi62xjptnoj2v+dMQV4ibQjKNNAGNXo2cZ3heh29hhgnY+9CrVKirDyFof7Lg/CVYzkt9vKMWHZ8DQrmNitoCJZQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hp1PBvV4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F50C4CEFF
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761053420;
-	bh=TYwNPmQgCPJl15/tu+lF46PWA2zAyxHpdfqlwEfJl4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PrCDX60SgwFPULyfPpayppmJ0fqejs4Do7UsqATkShfhF5rxG1k4uEylrzMJm+m3B
-	 1l688jkyk/D8vvN+0J1fS70ZtplBnD7m/I/eLqBJ1mCaNYoIW9Np7Q+/p4NEBekV4c
-	 +D9gWhjlve317aEJdKadfeUwvydjCYfXsMNssAnL5q3ECMvINcKZW8poc5bO5oioT4
-	 TE/n9HHwauOHVcE31U4zSyp8hmg2zM6RqXKViYYX8nq/pL+3ePslNhzfY4bK1jHtQ7
-	 MOrTN4U3P0C07h+IgOj5nJMhJKYljKbxG+ESXMcFBVrwlOqu9gmfve50I89KsCxQ4C
-	 zcE7dmx7mfG7A==
-Date: Tue, 21 Oct 2025 08:30:18 -0500
-From: Rob Herring <robh@kernel.org>
-To: Randolph Lin <randolph@andestech.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alex@ghiti.fr, aou@eecs.berkeley.edu,
-	palmer@dabbelt.com, paul.walmsley@sifive.com, ben717@andestech.com,
-	inochiama@gmail.com, thippeswamy.havalige@amd.com,
-	namcao@linutronix.de, shradha.t@samsung.com, pjw@kernel.org,
-	randolph.sklin@gmail.com, tim609@andestech.com
-Subject: Re: [PATCH v8 2/5] dt-bindings: PCI: Add Andes QiLai PCIe support
-Message-ID: <20251021133018.GA13337-robh@kernel.org>
-References: <20251014120349.656553-1-randolph@andestech.com>
- <20251014120349.656553-3-randolph@andestech.com>
+	s=k20201202; t=1761053442;
+	bh=ay0dkHqOFJnTOzLrDz4wmOz05b8apRwAqDk0W+FLKTU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hp1PBvV4+tq046FEMR5dgEMKjgabfxyXWSw1BEEpNXDJmVz6MpRxct5ivoccBU2c7
+	 dS1CtDQFrw4KBarF1mUxo1delfbLDI5h4F3uiHpQ27YGihoYOHeoJp7NkqPpaqBB7T
+	 JedZWJG2BjIpGj5wCqnePBRYqj3S+Ild0pdRIOjz7xU/NV/MIsAkkcIAe0CLW1IpTk
+	 nGYfrKHLrC2wTkYATf0YvFQX/aNgTBfeIXTrvI7G14vCC2u9YpPAbssB0IkSSe1gc6
+	 mWfsDA2dIeN3pbAy5oqn3g7+QS9C9hqvcF8vlk3DBud3PCjFcV8D1Ie0MU8ayMczRK
+	 ujrSid2vJIF4g==
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-4441ccde23dso1486412b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:30:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVw3HLlm/3R7it6DHR5O3BgHTkZOnISs4GVmvuhFIOuPBF/6ZenWI3R8c7lzgA3O9Q6cTmGEoE5+7ipGq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqoQgp4jldiV59C5kBXw8oxNQ1B3UdEOO6n3H/sjwwRE29EbKL
+	owsbyosaZkVkkx8WvS7vjso+JAxOLmOCMIIJPqYr8xmeWLvNdCEZ97l98kIXRGyKsudK3Ouu50H
+	TKDrbi2gwvBaUZ6eSvUUYnqcWAqVgsd4=
+X-Google-Smtp-Source: AGHT+IGFhGzPHkp7KHrtFrf46EU6VcCHGco92a8d17NVHe5Iy2VfivAqQSu+O7l6C7wxe0BCu6GsLwBmi9WDsPKls2I=
+X-Received: by 2002:a05:6808:1383:b0:43f:5b28:f0a6 with SMTP id
+ 5614622812f47-443a2ee46d2mr7110230b6e.1.1761053441631; Tue, 21 Oct 2025
+ 06:30:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014120349.656553-3-randolph@andestech.com>
+References: <20250913023224.39281-1-xueshuai@linux.alibaba.com>
+ <20250915093549.00006109@huawei.com> <45d5e6a9-d561-4df9-96d4-285f2ca12888@linux.alibaba.com>
+In-Reply-To: <45d5e6a9-d561-4df9-96d4-285f2ca12888@linux.alibaba.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 15:30:30 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0grihVDor12BXU3-tAiQ5WH6rK+AZK8aTtaUa3cq1i0jA@mail.gmail.com>
+X-Gm-Features: AS18NWD0-ds4ABTfWcbmmDfPfj8D2z4ySeNwPPcVfbR-MR_mvQUUJz_X2TJ-HPw
+Message-ID: <CAJZ5v0grihVDor12BXU3-tAiQ5WH6rK+AZK8aTtaUa3cq1i0jA@mail.gmail.com>
+Subject: Re: [PATCH v2] acpi,srat: Fix incorrect device handle check for
+ Generic Initiator
+To: Shuai Xue <xueshuai@linux.alibaba.com>, Dave Jiang <dave.jiang@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, robert.moore@intel.com, 
+	andrew@kernel.org, bfaccini@nvidia.com, eahariha@linux.microsoft.com, 
+	dan.j.williams@intel.com, thorsten.blum@linux.dev, gourry@gourry.net, 
+	nunodasneves@linux.microsoft.com, wangyuquan1236@phytium.com.cn, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 08:03:46PM +0800, Randolph Lin wrote:
-> Add the Andes QiLai PCIe node, which includes 3 Root Complexes.
-> Only one example is required in the DTS bindings YAML file.
-> 
-> Signed-off-by: Randolph Lin <randolph@andestech.com>
-> ---
->  .../bindings/pci/andestech,qilai-pcie.yaml    | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml b/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-> new file mode 100644
-> index 000000000000..ca444e4766ec
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/andestech,qilai-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Andes QiLai PCIe host controller
-> +
-> +description:
-> +  Andes QiLai PCIe host controller is based on the Synopsys DesignWare
-> +  PCI core. It shares common features with the PCIe DesignWare core and
-> +  inherits common properties defined in
-> +  Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
+On Tue, Oct 21, 2025 at 8:55=E2=80=AFAM Shuai Xue <xueshuai@linux.alibaba.c=
+om> wrote:
+>
+>
+>
+> =E5=9C=A8 2025/9/15 16:35, Jonathan Cameron =E5=86=99=E9=81=93:
+> > On Sat, 13 Sep 2025 10:32:24 +0800
+> > Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+> >
+> >> The Generic Initiator Affinity Structure in SRAT table uses device
+> >> handle type field to indicate the device type. According to ACPI
+> >> specification, the device handle type value of 1 represents PCI device=
+,
+> >> not 0.
+> >>
+> >> Fixes: 894c26a1c274 ("ACPI: Support Generic Initiator only domains")
+> >> Reported-by: Wu Zongyong <wuzongyong@linux.alibaba.com>
+> >> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> >
+> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> >
+> > Thanks!
+> >
+> >> ---
+> >> changes since v1: drop changes in actbl3.h to make it easy to progress=
+ per Jonathan
+> >> ---
+>
+>
+> Hi, Rafael,
+>
+> Gentle ping.
+>
+> Are you happy to pick this bugfix up in this cycle?
 
-Drop the 2nd sentence as the schema says the same thing with the $ref.
-
-> +
-> +maintainers:
-> +  - Randolph Lin <randolph@andestech.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: andestech,qilai-pcie
-> +
-> +  reg:
-> +    items:
-> +      - description: Data Bus Interface (DBI) registers.
-> +      - description: APB registers.
-> +      - description: PCIe configuration space region.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: apb
-> +      - const: config
-> +
-> +  ranges:
-> +    maxItems: 2
-> +
-> +  interrupts:
-> +    maxItems: 1
-
-interrupt-names:
-  const: msi
-
-> +
-> +required:
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - interrupt-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    soc {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      pcie@80000000 {
-> +        compatible = "andestech,qilai-pcie";
-> +        device_type = "pci";
-> +        reg = <0x0 0x80000000 0x0 0x20000000>,
-> +              <0x0 0x04000000 0x0 0x00001000>,
-> +              <0x0 0x00000000 0x0 0x00010000>;
-> +        reg-names = "dbi", "apb", "config";
-> +
-> +        linux,pci-domain = <0>;
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +        ranges = <0x02000000 0x00 0x10000000 0x00 0x10000000 0x0 0xf0000000>,
-> +                 <0x43000000 0x01 0x00000000 0x01 0x0000000 0x1f 0x00000000>;
-> +
-> +        #interrupt-cells = <1>;
-> +        interrupts = <0xf>;
-> +        interrupt-names = "msi";
-> +        interrupt-parent = <&plic0>;
-> +        interrupt-map-mask = <0 0 0 7>;
-> +        interrupt-map = <0 0 0 1 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
-> +                        <0 0 0 2 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
-> +                        <0 0 0 3 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
-> +                        <0 0 0 4 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>;
-> +      };
-> +    };
-> +...
-> -- 
-> 2.34.1
-> 
+drives/acpi/numa/ is maintained by Dave.
 
