@@ -1,97 +1,145 @@
-Return-Path: <linux-kernel+bounces-862871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9ADBF6685
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8FEBF6658
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0AB6504F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:18:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E67B35039B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042552F12CE;
-	Tue, 21 Oct 2025 12:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2552E7BDF;
+	Tue, 21 Oct 2025 12:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b="LqyQMGdK"
-Received: from MTA-08-4.privateemail.com (mta-08-4.privateemail.com [198.54.122.147])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HKL5p3Pz"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440FA23F424
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.122.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D4E355033;
+	Tue, 21 Oct 2025 12:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049060; cv=none; b=kV7V5JYkEbTVselZ9jSmVwS29cMicYaqEmebZrJ4av7Uk+krtA7zoiPGgBiytQg67Ic7wAaE8FLjhwznnjslSVZ0JUoa2fWBzGECXTf/2BJBECxFKSwGyaip5TC2B/YBHDvJQxeccDE++dnvALDclbx2CCvHMgLkk0HRmW/dJPA=
+	t=1761049017; cv=none; b=ualKqkcrJmbLA1h5EnlFqy2EFUqe8LOk09sJauTq8cKHZMfEcaGx7y5jfp1WjOu+3REkpRgilpq6z5+X7RTTfjrdrrY+aAgGj7l3rKSVBsAMDm147mPqIkx564v7cwdpvWp9flOCKF9N2WYc+KpbwW6oxcDTvX2XSeFBvkEPFVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049060; c=relaxed/simple;
-	bh=EQ2mAkbfUcR1AbZvzRKx7HHNMZ/kBLbls2HmoypncFU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EtpXAFXl+n46mMzgFhpJA4vHe/eNW5gAfoI14AuzSgDPF3L7BpnnSkyuJYqfmtmHXi9rW7cWXJJvJYS8h7PLTTd1RtWXZvQcbjb76mCcsvk4gyt/aJxoAnQZcl4wrztxyl92E0ssaMHRrmGNsZ3jaU4Bp3rHd+qlhkus0eOTnZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lukowski.dev; spf=pass smtp.mailfrom=lukowski.dev; dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b=LqyQMGdK; arc=none smtp.client-ip=198.54.122.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lukowski.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lukowski.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lukowski.dev;
-	s=default; t=1761049053;
-	bh=EQ2mAkbfUcR1AbZvzRKx7HHNMZ/kBLbls2HmoypncFU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LqyQMGdKz6c84oIYELA+k5M6blxFQ64M3+/kzI/+mTvf1NlbLrQbW5T1iaom48Qf3
-	 4BHBgSf2wuSqISCHTUqeJwBr7CFtnycib+Xk4V3s/IR0bDHtp+lQGaNFdNrnAm0vQX
-	 vHWojL92vSQ1MgBjFHhSCdzG1gd1L6vSd4BAvit8Dzf3zw8dkQY9MCIcCby8VxoM7R
-	 ANK7jz6HR7RzTwK0IA82a8ket/7qdM024QL4OBDe+f5VnzhSRrsNzIR9GHvBqq/jFn
-	 XvzQhpLrdogAupRZVhH9TcjrjK+eMNvsSysKLztKvZrL99V9TKg1qe37g0P13dTBFP
-	 KhjHk1pyqxEgg==
-Received: from mta-08.privateemail.com (localhost [127.0.0.1])
-	by mta-08.privateemail.com (Postfix) with ESMTP id 4crWWx5KJ2z3hhTc;
-	Tue, 21 Oct 2025 08:17:33 -0400 (EDT)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa (unknown [150.228.61.72])
-	by mta-08.privateemail.com (Postfix) with ESMTPA;
-	Tue, 21 Oct 2025 08:17:25 -0400 (EDT)
-From: Olle Lukowski <olle@lukowski.dev>
-Date: Tue, 21 Oct 2025 15:16:29 +0300
-Subject: [PATCH 3/3] staging: most: video: replace BUG_ON() with
- WARN_ON_ONCE()
+	s=arc-20240116; t=1761049017; c=relaxed/simple;
+	bh=PZPgEIrqSEsFtFBAc9XPMhwq3tBIfsIZD0Sxnshjqx8=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=TIkcQNtYZ0XO5MWCqcybhCNyj6c8LnSV5a6VdToGHG4s9rcFyRO3Jx0VPx2gbtWHjxJ9R15sbmEtXaNkulR7t29G7TqzYiANRXIIwHlZELjJ1zYDy4JEv7nR/4fSZWBzJcPyuPeiImQ45gHLXBM/qP3/OnBYY2A7EkSJPGP63WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HKL5p3Pz; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761049003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zYvStWX6Ci/N/2j+0vFU9W5LcAG8n9087r7VsvwlyY4=;
+	b=HKL5p3PzWCZI9q1Dgkjkaz8op07T5e3Xs3ru6Ia2dbqiu0C3py7r9TnSNZAmgS71junlgo
+	hbFLl5R4TcEXK2/SW8anS5goRXfCJoHSf0V58rYDUnEPTXng0dCSraKUuI4oSMPVaDMIM0
+	cVVoFcUI1EeF/ctDh/G0mUu0e9UwbCQ=
+Date: Tue, 21 Oct 2025 12:16:33 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-staging-most-warn-v1-3-4cdd3745bbdc@lukowski.dev>
-References: <20251021-staging-most-warn-v1-0-4cdd3745bbdc@lukowski.dev>
-In-Reply-To: <20251021-staging-most-warn-v1-0-4cdd3745bbdc@lukowski.dev>
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
- Christian Gromm <christian.gromm@microchip.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Olle Lukowski <olle@lukowski.dev>
-X-Mailer: b4 0.14.3
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <f03db434053928c2bc19fe8ffbae06cd06425668@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH net v2 2/3] bpf,sockmap: disallow MPTCP sockets from
+ sockmap updates
+To: "Jakub Sitnicki" <jakub@cloudflare.com>
+Cc: mptcp@lists.linux.dev, netdev@vger.kernel.org, bpf@vger.kernel.org, "Eric
+ Dumazet" <edumazet@google.com>, "Kuniyuki Iwashima" <kuniyu@google.com>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Willem de Bruijn"
+ <willemb@google.com>, "John Fastabend" <john.fastabend@gmail.com>, "David
+  S. Miller" <davem@davemloft.net>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Simon Horman" <horms@kernel.org>, "Matthieu Baerts"
+ <matttbe@kernel.org>, "Mat Martineau" <martineau@kernel.org>, "Geliang
+ Tang" <geliang@kernel.org>, "Alexei Starovoitov" <ast@kernel.org>,
+ "Daniel Borkmann" <daniel@iogearbox.net>, "Andrii Nakryiko"
+ <andrii@kernel.org>, "Martin  KaFai Lau" <martin.lau@linux.dev>, "Eduard
+ Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
+ Song" <yonghong.song@linux.dev>, "KP  Singh" <kpsingh@kernel.org>,
+ "Stanislav Fomichev" <sdf@fomichev.me>, "Hao  Luo" <haoluo@google.com>,
+ "Jiri Olsa" <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>, "Florian
+ Westphal" <fw@strlen.de>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+In-Reply-To: <87cy6gwmvk.fsf@cloudflare.com>
+References: <20251020060503.325369-1-jiayuan.chen@linux.dev>
+ <20251020060503.325369-3-jiayuan.chen@linux.dev>
+ <87cy6gwmvk.fsf@cloudflare.com>
+X-Migadu-Flow: FLOW_OUT
 
-Replace a BUG_ON() call with WARN_ON_ONCE() to prevent an unnecessary
-kernel panic.
+October 21, 2025 at 18:49, "Jakub Sitnicki" <jakub@cloudflare.com mailto:=
+jakub@cloudflare.com?to=3D%22Jakub%20Sitnicki%22%20%3Cjakub%40cloudflare.=
+com%3E > wrote:
 
-Signed-off-by: Olle Lukowski <olle@lukowski.dev>
----
- drivers/staging/most/video/video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+>=20On Mon, Oct 20, 2025 at 02:04 PM +08, Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> MPTCP creates subflows for data transmission, and these sockets sho=
+uld not
+> >  be added to sockmap because MPTCP sets specialized data_ready handle=
+rs
+> >  that would be overridden by sockmap.
+> >=20
+>=20>  Additionally, for the parent socket of MPTCP subflows (plain TCP s=
+ocket),
+> >  MPTCP sk requires specific protocol handling that conflicts with soc=
+kmap's
+> >  operation(mptcp_prot).
+> >=20
+>=20>  This patch adds proper checks to reject MPTCP subflows and their p=
+arent
+> >  sockets from being added to sockmap, while preserving compatibility =
+with
+> >  reuseport functionality for listening MPTCP sockets.
+> >=20
+>=20>  Fixes: 0b4f33def7bb ("mptcp: fix tcp fallback crash")
+> >  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> >  ---
+> >  net/core/sock_map.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >=20
+>=20>  diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+> >  index 5947b38e4f8b..da21deb970b3 100644
+> >  --- a/net/core/sock_map.c
+> >  +++ b/net/core/sock_map.c
+> >  @@ -535,6 +535,15 @@ static bool sock_map_redirect_allowed(const str=
+uct sock *sk)
+> >=20=20
+>=20>  static bool sock_map_sk_is_suitable(const struct sock *sk)
+> >  {
+> >  + if ((sk_is_tcp(sk) && sk_is_mptcp(sk)) /* subflow */ ||
+> >  + (sk->sk_protocol =3D=3D IPPROTO_MPTCP && sk->sk_state !=3D TCP_LIS=
+TEN)) {
+> >  + /* Disallow MPTCP subflows and their parent socket.
+> >  + * However, a TCP_LISTEN MPTCP socket is permitted because
+> >  + * sockmap can also serve for reuseport socket selection.
+> >  + */
+> >  + pr_err_once("sockmap: MPTCP sockets are not supported\n");
+> >  + return false;
+> >  + }
+> >  return !!sk->sk_prot->psock_update_sk_prot;
+> >  }
+> >=20
+>=20You're checking sk_state without sk_lock held. That doesn't seem righ=
+t.
+> Take a look how we always call sock_map_sk_state_allowed() after
+> grabbing the lock.
+> Same might apply to sk_is_mptcp(). Please double check.
+>
 
-diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
-index 32f71d9a9..3a622bd59 100644
---- a/drivers/staging/most/video/video.c
-+++ b/drivers/staging/most/video/video.c
-@@ -575,7 +575,7 @@ static void __exit comp_exit(void)
- 
- 	most_deregister_configfs_subsys(&comp);
- 	most_deregister_component(&comp);
--	BUG_ON(!list_empty(&video_devices));
-+	WARN_ON_ONCE(!list_empty(&video_devices));
- }
- 
- module_init(comp_init);
-
--- 
-2.51.1
-
+Thank you for the suggestion. It seems more appropriate to place this log=
+ic
+inside sock_map_sk_state_allowed().
 
