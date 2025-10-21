@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-862458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89145BF559E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:48:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABA0BF55A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0E98C351317
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:48:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 30BC3352052
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F266313297;
-	Tue, 21 Oct 2025 08:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA1D328B51;
+	Tue, 21 Oct 2025 08:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IFNWexuG"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sMUMWAXX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F015B42A9D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E306C303A15;
+	Tue, 21 Oct 2025 08:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761036506; cv=none; b=Tz1AaUplhJXNec8FYzYUpLyDKaIQdYxVZOb1wPdqKebzhGUpHE0upZij2UWaaYySy3MLt6a9v7AtSXaaWo8HLGDONty7valmNZNt3SUxBL1vNRhaoN8XVElRPzIAanrUm35n4+FIGJibQ2B09kdCL1N8ACgpYaMuSN4LJA/7viM=
+	t=1761036526; cv=none; b=df1Y8yoeTI6PLC8r/RKf43S9dzleTACjbphyuqmLXxt8nuJGl59ffh+18otfugNj5V0UGUlQ+SXh8X0KhoSriAnCuRbGqpQjY3Jz1K+6/W58ztFvm5tpiPt0dBYNesxkXir21fE+/RhxPk4rDMJTAgjT2F0kKjz8dofNREw+gJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761036506; c=relaxed/simple;
-	bh=GMptF+S5n4kiasdmKEC8kIdkkuMH6YPuyPq0nTtQcdY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mGLUZUrKYKz6Xxq1nrYY9eDpnG5Rd/peFNMfD8Hv5NDA4JvARFxg5NEOF7Em04R0NTgnFWHhCnmtpNasS8V8z+x4ocOujucoiEOGl/TsMQn4Bzq8jan+4fdKnst29fx+k3+sMqTT07iXPBxmLLweoR05dlO2BAzwfv/3LYhokW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IFNWexuG; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b50645ecfbbso1048143566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761036503; x=1761641303; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GMptF+S5n4kiasdmKEC8kIdkkuMH6YPuyPq0nTtQcdY=;
-        b=IFNWexuG+YmO9k1O8ix0SQiu7VNsF+yI+/Tx9UPOSTR1NC5ljQw79AqJYu+7Py8ELn
-         c01g3bGNYzoMbeuemGvKnW6wOTJCaCSbvuysKDEWJiEV4lQs7I+uJD18X+yMrRdFJPwJ
-         KnSx5lhDEs5os8Wp3r1V4SSAANOU9NTZQDIQ3X1Bl1G4UA2rcY9qMr4kFxGEyca78PIx
-         iKTvsJJKEexsIaxK2lemsP/pgrEBTx+cOHx5+3zRjRq+fLhN0ghsKifz0/Bw+6pzD/7F
-         StRcVykc7ihNn0QOTPXyqY0qIJDZ2wUhHldghC6Fy2xACwkBSbmPbzcOGrzzFtOsmGhn
-         Fw1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761036503; x=1761641303;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMptF+S5n4kiasdmKEC8kIdkkuMH6YPuyPq0nTtQcdY=;
-        b=kri0F2fXQIiNCsfVWFAliVIDfC3LYXXTnl/7a6dvynq9B/MXobw3XVJazBQwbEk+kb
-         AFhLDWtN0q2RzcXWGJT+OtaGXI0syYEA1snVyxyBsqPJNyIkNyqgE/X/k9EgFJYeKPyY
-         W7R++s0fC2hguH0xaXFhhBKcrJpan6lpwNPSwm6pJTVsO2K3DcxNugaecVMtcsvaFzWU
-         NxA1d6WyvxuXLu+wibO8CY24xUbL4Tfcy4QM0qafGiuvAo8A75gddrVKoodp3ZTHoChi
-         Js6dJ4zbUPtPQ+EDOIo8tv4q9VYYtzchgGLCPWeTzEgce7YBDFOA47H7QdUNNLlyDmnw
-         mRKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2aDhhosdUXIjdBrbCYY9+h5XDhKVSakGF7RO59I9fQzM3NGm2XlX5AVjadMIJQbEJAj6DytpVBFKPpfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIDrn1zEYu4qnOEC2XftMeDuIxbkx5tUrEygJZpFSZEQBWnxYG
-	HJcrOG5fFw+A9oCSw8wS5XcSv/bY4EYoQVKc+UF1bcxm41vBSd8Uwg0aipmAI6RLLaw=
-X-Gm-Gg: ASbGncvgrPbtYkPy0mwEnCNQPSyGirKk8Sf18nWMMAMe2znGbWlRnZ+vPSnKyyXKMaH
-	VYUCChJSCU/iDJDJ8VxB+RkzTNFoi6rvBcB99iRUHMFB9oj3K3juQ/fSY3NhJkr/D39/IbdtVFq
-	6+WIaVMBA7QnrDhmWMGv6T1TPHnaF9MS5+FDteCUZuS7aNlBj2NdXXpa9YxUFImQWdLaumCIn+S
-	EACw+KaXh5eKILqk/kggMcr8RN0/dPUypcYXKIEQGBFcUmK71ZynBvA6/eJbvKdFtwiGRGe4BJE
-	rJHI85jQOGPFqs94dn4pWtvgkWG4aeRjel4+tf0QZZbkogqyaRZAjJAQBjK6UuARezrH+wm0m5G
-	4UIKG9po22dqBaoGsjESk1r90TjSAiXbee7Y7IrxqLDq0EVPuw0+oPzVzI0YO07NaKk+lRkDyCm
-	wrt+/FWeT1
-X-Google-Smtp-Source: AGHT+IH3muwvgQ58m7ty39MBJBhT3+RPeMROjQFDi1D9gzlnGyA7jawb6s+g2ZtLjD3cP/PD/Xl8sQ==
-X-Received: by 2002:a17:907:7f88:b0:b07:e3a8:5194 with SMTP id a640c23a62f3a-b6473144281mr1821120566b.22.1761036503084;
-        Tue, 21 Oct 2025 01:48:23 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb52603fsm1033527266b.57.2025.10.21.01.48.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 01:48:22 -0700 (PDT)
-Message-ID: <dc27ae49-d60b-447e-971c-6b5b51ab9f29@tuxon.dev>
-Date: Tue, 21 Oct 2025 11:48:20 +0300
+	s=arc-20240116; t=1761036526; c=relaxed/simple;
+	bh=0vRwJbUYs0Gu/VJYQ2xfMLpSFAeGteIkNSPUVasCNE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IdsajJHmMc9NzHQs8Bv3reHf9+IWDFfhBztVKj1KbO8WIa1M8uHG/8P5NHmGliCGQe/IndkbA7ccaE4oF4rRVyfvteJykik5yCoHoGPup5zgGtpvI5DlvNqBLwAYwh8NrYT9yrkzdaTFFrmCTgah3L/kk/GlA1tC2FmKUC7Skuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sMUMWAXX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L5lgc1020450;
+	Tue, 21 Oct 2025 08:48:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=z7oyuGf+YmrdjdAlCdljzaOoBcmjt3
+	nedZ0w+/dyCrI=; b=sMUMWAXX/8sY8Do1huxbrboQr5eFVQnwPlBEki6stGqniW
+	ldYu1HZKhMzVPDElU1aXezrbtB4lgLP8ckyaP/GumTFfxl2oZrCEBQQqbhm4UcN3
+	LFaGusmctrYMbp18Tvh8JsC0xmCrJ3TfUinBLPP2/NsjVyMa+mFTZWpsC+CfwlMs
+	w3YcPLvERjs41TDcxL8HAEhvLtHRZQFTHZCklpYDCImAxYdisewiSNb+G3gA8cOZ
+	iaJresCsFCo7vBE5SNattGsJ0uX6iv7hgIYsiDjUeIsjMRQ7LRuiVVzXMd3jLuoH
+	Z+0jFkX+m/p6lcWSKuc2N99ZxVl1E9s7o5IZ1p9A==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31c4sc8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 08:48:25 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59L6CiX8014658;
+	Tue, 21 Oct 2025 08:48:24 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vn7s22hc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 08:48:24 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59L8mMtt16974242
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Oct 2025 08:48:22 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 653A120043;
+	Tue, 21 Oct 2025 08:48:22 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5C9720040;
+	Tue, 21 Oct 2025 08:48:21 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.111.75.81])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 21 Oct 2025 08:48:21 +0000 (GMT)
+Date: Tue, 21 Oct 2025 10:48:20 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        virtualization@lists.linux.dev
+Subject: Re: [PATCH] mm: Make INVALID_PHYS_ADDR a generic macro
+Message-ID: <8ef6bea9-5905-4d15-be77-f58645d967d0-agordeev@linux.ibm.com>
+References: <20251021025638.2420216-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
- PWRRDY
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Philipp Zabel <p.zabel@pengutronix.de>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
- <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
- <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
- <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
- <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
- <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
- <6d4bc69c-1571-4d98-b0d4-214c68be118e@tuxon.dev>
- <c1099a8e422abbc5d12bf3f325cb9f2140c8c006.camel@pengutronix.de>
- <77678dd6-071b-4911-a5c5-f1519c92e91a@tuxon.dev>
- <6ba1fd1f07753c9b98a57c87bffbbee16971da7a.camel@pengutronix.de>
- <19746f65-bf10-4687-9e2b-b259220a9ea8@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <19746f65-bf10-4687-9e2b-b259220a9ea8@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021025638.2420216-1-anshuman.khandual@arm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: SFsr08sj6VOHWyp68BfmatDwsVOqiBAF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXybe+b5Oqvt21
+ 7nQzCRWt0Qdz0L6NetKOeEaFWC9/bRTheXys9Jo0yPruZzS8K1X5soLFYF64NcSmqjVmSyDC5k7
+ ecAg26cW+S87fUIL3yYns3aen8OVIZD9HAosIUS/itSROuTxJahgvxsQ9eTLyCOX3V+9XbM18Ux
+ srZPJXF0zBCi/JPzlDtS6TSEVgZ8QMfo9UBC3MMgfAsge8DoTecVq1HmUygmZIYfkQHQ1VBWHr4
+ MkNT+sO9OhvDdmRk9hEKXAmmD0Z+/PVMR94eMBvCLLoe9Pedp+1Eh5J7uwYNuoGZ8FKyYreVc7L
+ MISNLC2tSYEN2woAfEBhoNkzvNR0Cg5qmF16Lu+Rj2FPXRxwP241fYzx4PO6UF+Z7hfl1eOTFgk
+ OALOr+UD8heOc/vPfeqdN+n37aFx9Q==
+X-Proofpoint-GUID: SFsr08sj6VOHWyp68BfmatDwsVOqiBAF
+X-Authority-Analysis: v=2.4 cv=SKNPlevH c=1 sm=1 tr=0 ts=68f748d9 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=37rDS-QxAAAA:8 a=JfrnYn6hAAAA:8 a=7CQSdrXTAAAA:8
+ a=VnNF1IyMAAAA:8 a=mrUCOdJJ3iSU8PumKu0A:9 a=CjuIK1q_8ugA:10
+ a=k1Nq6YrhK2t884LQW06G:22 a=1CNFftbPRP8L7MoqJWF3:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 suspectscore=0 clxscore=1011 priorityscore=1501
+ spamscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Hi, Philipp,
+On Tue, Oct 21, 2025 at 03:56:38AM +0100, Anshuman Khandual wrote:
+> INVALID_PHYS_ADDR has very similar definitions across the code base. Hence
+> just move that inside header <liux/mm.h> for more generic usage. Also drop
+> the now redundant ones which are no longer required.
+> 
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: iommu@lists.linux.dev
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: virtualization@lists.linux.dev
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/mm/mmu.c                  | 2 --
+>  arch/s390/boot/vmem.c                | 1 -
+>  drivers/vdpa/vdpa_user/iova_domain.h | 2 --
+>  include/linux/mm.h                   | 2 ++
+>  kernel/dma/swiotlb.c                 | 2 --
+>  5 files changed, 2 insertions(+), 7 deletions(-)
+...
+> diff --git a/arch/s390/boot/vmem.c b/arch/s390/boot/vmem.c
+> index cea3de4dce8c..fbe64ffdfb96 100644
+> --- a/arch/s390/boot/vmem.c
+> +++ b/arch/s390/boot/vmem.c
+> @@ -16,7 +16,6 @@
+>  #include "decompressor.h"
+>  #include "boot.h"
+>  
+> -#define INVALID_PHYS_ADDR (~(phys_addr_t)0)
+>  struct ctlreg __bootdata_preserved(s390_invalid_asce);
+>  
+>  #ifdef CONFIG_PROC_FS
 
-On 10/15/25 11:19, Claudiu Beznea wrote:
->>>>>>> I see v2 and v3 tried to control the bit from the PHY drivers, and in
->>>>>>> v4 we were are already back to the reset driver.
->>>>>> v2 passed the system controller (SYSC) phandle to the USB PHYs only (though
->>>>>> renesas,sysc-signals DT property) where the PWRRDY bit was set. The PWRRDY
->>>>>> bit was referenced counted in the SYSC driver though regmap APIs.
->>>>>>
->>>>>> v3 used the approach from v2 but passed the renesas,sysc-signals to all the
->>>>>> USB related drivers.
->>>>>>
->>>>>> Then, in v4, the PWRRDY refcounting was dropped and passed
->>>>>> renesas,sysc-signals only to the USB PHY CTRL DT node in the idea that this
->>>>>> is the node that will always be probed first as all the other USB blocks
->>>>>> need it and request resets from it.
->>>>>>
->>>>>> v5 and v6 kept the approach from v4 and only addressed misc comments or
->>>>>> things that I noticed.
->>>>> Could you please let me know if you are OK with the approach proposed in
->>>>> v7, so that I can start preparing a new version addressing your comments?
->>>> If the PWRRDY signal is an input to the USB2PHY control block, and not
->>>> only to the PHY blocks, I have no issue with this being handled in the
->>>> usb2phy reset driver -
->>> Yes, this is how the Renesas HW team confirmed they are related.
->> Ok, understood. I concur that usb2phy-ctrl is the right place for the
->> sysc property then.
->>
->>>> iff it is not sensible to just control the
->>>> signal from the power domain driver.
->>> As mentioned above, that can be done as well but, passing a SYSC phandle to
->>> the CPG DT node will not be valid from the HW description point of view.
->>>
->>>> If we have to handle it in the reset driver, I'd prefer to see this
->>>> controlled with a dev_pm_genpd_add_notifier(). If that is not possible,
->>>> I'd like to understand why.
->>> From the code inspection I did, that can be done. From what I can tell at
->>> the moment, I'll have to register a gepnd notifier from
->>> reset-rzg2l-usbphy-ctrl, before runtime resuming the device and control the
->>> SYSC PWRRDY from it.
->> I'd like that.
-> Now, that we found the genpd notifier is not a solution, could you please
-> let me know how would you like me to proceed?
+Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>	# s390
 
-After discussing all the possible (known) solutions, could you please let
-me know if you are OK with the approach in this series?
-
-Thank you,
-Claudiu
+Thanks!
 
