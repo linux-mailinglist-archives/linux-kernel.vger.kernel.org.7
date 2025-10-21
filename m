@@ -1,216 +1,214 @@
-Return-Path: <linux-kernel+bounces-862152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2116BF48B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:50:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90779BF48BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DADA18A44D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50011421D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470111F8691;
-	Tue, 21 Oct 2025 03:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A107223ABA1;
+	Tue, 21 Oct 2025 03:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bZRFPcf4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVgViDMk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B2E1EB193
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD7E224245
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761018617; cv=none; b=ae18smYrPxnmiLsPQAmbZaIA1dP3GymZfCm1HF977EpOLkrOaL6ujXA/Ys+ecqCycsXZ7Yj+hpoUrgao/uHou/zJBjH6h77AzLt+JjsbOn4CWMn3o18cEbCaJwFp2wtzdx3bnMsz3WYJ59Bt92P0d/VXyCimvZhalWzMxfa8qb4=
+	t=1761018664; cv=none; b=kVnCf60bj4BnAN2gHSZP8yyentl4kjXUo6iXx9SWPIW7e+jSUUKRglUpws37LKcQz7cDqBzLJNtqDSBiCfx62snVyUpVCGy5qGnJTVNyWjD2q8NI6HIRtZ5UylrkyO34/rYHV1rWpt1UuDzwlkbnbv/pUR8qVFd3Lwsp6pHRCN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761018617; c=relaxed/simple;
-	bh=Xfxq/oFV+aTELzv9gVB9dGW1s+QNsPVm9t1CvgjbBkk=;
+	s=arc-20240116; t=1761018664; c=relaxed/simple;
+	bh=aJyeINSKb1G3tVPbGfkA5Oqt5hmeaylrgY+aIoalhhg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HGFnjruDUXLlSgidm0c5cTAxl/T40jULe9nKwXbfFkF26y+NT28zDErb9jSd1pXr9GMUHjuWC7HJb4sKadjczndUdXujsyyiold6tAoFTsAflLkVG4WTFyb5kKSwmH3hCcdzIDJy3Q4vbyeIi6rjT+ek8Vj03A9Vfc3809czp08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bZRFPcf4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761018615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qw5zwI6nIdmmTVggeM042sXBfaS2xsKHK0fC70nczqM=;
-	b=bZRFPcf4shvUBujMgQhNnX0lmCiSyN4iPR2E+0CDkJOXC5tjthJVnUxKaCxofXNKrgWjle
-	B8B0cCv1n4qmzuz1k4dcXkEARq1cAZZk1Y7FlUIPIEdXx5pVvYHWqCSksa1a0nS9pN6y+l
-	sWG9D40Aa9L1WInNenTxq6LxpbrtC2E=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-493-QEZggCJiMLyc4ocKyOTT8Q-1; Mon, 20 Oct 2025 23:50:13 -0400
-X-MC-Unique: QEZggCJiMLyc4ocKyOTT8Q-1
-X-Mimecast-MFC-AGG-ID: QEZggCJiMLyc4ocKyOTT8Q_1761018612
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-33baef12edaso4684242a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:50:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761018612; x=1761623412;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qw5zwI6nIdmmTVggeM042sXBfaS2xsKHK0fC70nczqM=;
-        b=SGejIyQtZBH/ZjHi0UKPltYOsMVLSwQfLVUfzKcHEnG9lpT1qCqa9mAM74z1eaons9
-         N9OW83D1yJCnfHJYOWj9Cdt+8c7CZyPykpFs3koFfR+7CNPUtvTrkhJKL51GSWn1rM/R
-         GIjCR+SFkK+lcpeOQzncIEwtzQqKhxsZijjf1DLeDIjzD6q54ZPMnQS5Z0FD3S/R81P9
-         sN/JOnAr0SVnkBlyMbUG6cuIcmkK77dMYo2T/GOitkkFPsHs7ZYiitSShaG5TY/UYZJZ
-         hzr4s9bWBFE1clzc0KybzdcEUDtgEIfms76svtZwYxuoYkrJn4tIssLzlk6d67OTRQkB
-         PpDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmKggCphVmVzQOBublsQI79oJBnJQpEU2CBwsGD0CaWLa7yEzfIgK0r5yBHnEUVuTVe0lkRTNfYXuOXGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEKLHZyWaBFJgQykCv1q2XSljuOHONtiID57TlXAhXBxYR1IVD
-	MS1Q5OVKL1Sce3hzaozxBTiMRkptmYyo3hOXK46l91gTL/LyLiTAU6IRj7xnu3/BA9kDi3ChvCU
-	toM1rMAbNPwfrSGquSNjll6rKtVkBK0ezBMFiW4U88K5vgIvs1yVDOVyYs8bUzf5nqMh75nfU8z
-	IGcRdPre5+2aOeaWgA7tiJMVBMSXT8vm1GmXMPfDEC
-X-Gm-Gg: ASbGncvP7E1vlQ6HKiP/v6hbNgQTUf4lyBRXAnqENKrkPH0T/VzPzfKRF5nyR/bCn+0
-	z8GORJujwtJfLkwWbeUprPgsraytsF0bvCsoD4b/65ayX0ftWbH12JxNXa3NEuQGjQSsv1WvnSF
-	iVlHImln6ttVKnefjqqsDDJotEA+Gu9HOOlp/2/A7favaiETiX8wvaehGf
-X-Received: by 2002:a17:90b:3144:b0:335:2b86:f319 with SMTP id 98e67ed59e1d1-33bcf919094mr22073968a91.35.1761018612508;
-        Mon, 20 Oct 2025 20:50:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFiW89JHyRgjBJd+Udk0unIJh6QXaxXTExxg7fwIdXno/4/+Q7xMsTY49eKTY4mDRvsZ7nlfwueJ+hsmtaNq7o=
-X-Received: by 2002:a17:90b:3144:b0:335:2b86:f319 with SMTP id
- 98e67ed59e1d1-33bcf919094mr22073949a91.35.1761018612014; Mon, 20 Oct 2025
- 20:50:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=Qyt8X3SUO3jAAfvZK26M/mYK7Hg8Ikm3GbspebRcG7AJUztGw2JzWIkFPJbC3EGh/ZIK0J1v9/pkK8DSB/aUu2FkranAbhQfZBW4Yk/rndJSECzl0wRi5T0tOqEB9KoiUT9FKa6721udd8VQd0MevFQ2Lvq1IH49flVE50bUlEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVgViDMk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52C9C2BC87
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761018663;
+	bh=aJyeINSKb1G3tVPbGfkA5Oqt5hmeaylrgY+aIoalhhg=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=HVgViDMkKZyvApVhmfWv3KaZ8/4va6fCYtgkcHLXNQ7NMfudTTrSY5nHZ4EadmT/9
+	 XwBmth48HLf8nsMOU5qd0efJHOyRa89Y9z72n1dfnMt4DLM/8gqMn9Pix024YQu4RX
+	 5KPKEsfohJLWL9nLdcYixumNDgSRT722sxa8fLY0i83WAIgo7ePG7FZ9F/ir2iRYmy
+	 cG4swh7viqYBG+yUcLIN5Yx6x+seEABCcMcQHdbG3l8Cjx+xJkOlrKMaz/SkjIOfk/
+	 tqjmJKrP7t3jKNYeBUtXjkngniGzDxyiS7POP002wvICcSY2sRx9XWGtYEvfl3Lp+u
+	 yWPkTkLyxh/8A==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-367874aeeacso62431941fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:51:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVWDTV2zlEWNvHIJkwqYZmrDNJcZMMIZhy4QBvuZ/aKo/884PvND9sdLH16nJttghL/cMNjrQZKsxgqjaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPQltvFMehirqNGoPswP3WG162CgRaCdd1c6MSfgkbaItzFrOP
+	GaYBuHn+SmDDUOxmmlC5JFGkgY02lDliU8kg0fnTvEXc1hLXSCRf+gAjBu7vI8xUoI0FBjei3g5
+	OJFQoBj6C/rJOZQfhOCswF3N+XnH0ylo=
+X-Google-Smtp-Source: AGHT+IG8vasmm5hWdGe7KBlLp5chhcRp+eBr/myvEiV96lMVwrmDdir100cF1onLwBZjh0GCzdDPuKXAZ1yS7H+1U/g=
+X-Received: by 2002:a2e:bc81:0:b0:372:9e15:8970 with SMTP id
+ 38308e7fff4ca-37797a0ca11mr52596901fa.23.1761018661756; Mon, 20 Oct 2025
+ 20:51:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020071003.28834-1-jasowang@redhat.com> <20251020071003.28834-15-jasowang@redhat.com>
- <20251020110341-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20251020110341-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 21 Oct 2025 11:50:00 +0800
-X-Gm-Features: AS18NWAFgiublYtZtymjvvy_TkrPj7X9nHtH0g-39Ijsh0Qn-VjDfUh-f-84E_M
-Message-ID: <CACGkMEseL0g8Y2=UfH8Gktgfjazr9L4pM-TqWOj7M1iGNZPh-A@mail.gmail.com>
-Subject: Re: [PATCH V8 14/19] virtio_ring: determine descriptor flags at one time
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251020171059.2786070-1-wens@kernel.org> <20251020171059.2786070-5-wens@kernel.org>
+ <13867454.uLZWGnKmhe@jernej-laptop>
+In-Reply-To: <13867454.uLZWGnKmhe@jernej-laptop>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 21 Oct 2025 11:50:48 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65+U2L8=HM6DimzVw=saK6rbR4Bzg7Nwz0Jyq6UXJkf=g@mail.gmail.com>
+X-Gm-Features: AS18NWBDmVKtQm8S428O1qs2kjY6UgewUb3LycjUD4uEQoxwe6OCMS4j1ARdxWY
+Message-ID: <CAGb2v65+U2L8=HM6DimzVw=saK6rbR4Bzg7Nwz0Jyq6UXJkf=g@mail.gmail.com>
+Subject: Re: [PATCH 04/11] ASoC: sun4i-spdif: Support SPDIF output on A523 family
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	linux-sunxi@lists.linux.dev, linux-sound@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 11:18=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com=
-> wrote:
+On Tue, Oct 21, 2025 at 1:49=E2=80=AFAM Jernej =C5=A0krabec <jernej.skrabec=
+@gmail.com> wrote:
 >
-> On Mon, Oct 20, 2025 at 03:09:58PM +0800, Jason Wang wrote:
-> > Let's determine the last descriptor by counting the number of sg. This
-> > would be consistent with packed virtqueue implementation and ease the
-> > future in-order implementation.
+> Hi,
+>
+> Dne ponedeljek, 20. oktober 2025 ob 19:10:50 Srednjeevropski poletni =C4=
+=8Das je Chen-Yu Tsai napisal(a):
+> > The TX side of the SPDIF block on the A523 is almost the same the
+> > previous generations, the only difference being that it has separate
+> > module clock inputs for the TX and RX side.
 > >
-> > Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > Since this driver currently only supports TX, add support for a
+> > different clock name so that TX and RX clocks can be separated
+> > if RX support is ever added. Then add support for the A523.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 > > ---
-> >  drivers/virtio/virtio_ring.c | 19 ++++++-------------
-> >  1 file changed, 6 insertions(+), 13 deletions(-)
+> >  sound/soc/sunxi/sun4i-spdif.c | 28 +++++++++++++++++++++++++---
+> >  1 file changed, 25 insertions(+), 3 deletions(-)
 > >
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.=
-c
-> > index 37b16ef906a4..20bc48b1241e 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -575,7 +575,7 @@ static inline int virtqueue_add_split(struct vring_=
-virtqueue *vq,
-> >       struct vring_desc_extra *extra;
-> >       struct scatterlist *sg;
-> >       struct vring_desc *desc;
-> > -     unsigned int i, n, avail, descs_used, prev, err_idx;
-> > +     unsigned int i, n, avail, descs_used, err_idx, c =3D 0;
-> >       int head;
-> >       bool indirect;
+> > diff --git a/sound/soc/sunxi/sun4i-spdif.c b/sound/soc/sunxi/sun4i-spdi=
+f.c
+> > index 34e5bd94e9af..6a58dc4311de 100644
+> > --- a/sound/soc/sunxi/sun4i-spdif.c
+> > +++ b/sound/soc/sunxi/sun4i-spdif.c
+> > @@ -177,6 +177,7 @@ struct sun4i_spdif_quirks {
+> >       bool has_reset;
+> >       unsigned int val_fctl_ftx;
+> >       unsigned int mclk_multiplier;
+> > +     const char *tx_clk_name;
+> >  };
 > >
->
-> c is not a great variable name. Maybe sg_count?
-
-Probably, I did the same as what has been done in
-virtqueue_add_packed() which uses c. I will change it to sg_count.
-
->
-> same in patch 19 actually.
-
-Fixed.
-
->
->
-> > @@ -639,12 +639,11 @@ static inline int virtqueue_add_split(struct vrin=
-g_virtqueue *vq,
-> >                       if (vring_map_one_sg(vq, sg, DMA_TO_DEVICE, &addr=
-, &len, premapped))
-> >                               goto unmap_release;
-> >
-> > -                     prev =3D i;
-> >                       /* Note that we trust indirect descriptor
-> >                        * table since it use stream DMA mapping.
-> >                        */
-> >                       i =3D virtqueue_add_desc_split(vq, desc, extra, i=
-, addr, len,
-> > -                                                  VRING_DESC_F_NEXT,
-> > +                                                  ++c =3D=3D total_sg =
-? 0 : VRING_DESC_F_NEXT,
-> >                                                    premapped);
-> >               }
+> >  struct sun4i_spdif_dev {
+> > @@ -323,6 +324,7 @@ static int sun4i_spdif_hw_params(struct snd_pcm_sub=
+stream *substream,
 > >       }
-> > @@ -656,21 +655,15 @@ static inline int virtqueue_add_split(struct vrin=
-g_virtqueue *vq,
-> >                       if (vring_map_one_sg(vq, sg, DMA_FROM_DEVICE, &ad=
-dr, &len, premapped))
-> >                               goto unmap_release;
+> >       mclk *=3D host->quirks->mclk_multiplier;
 > >
-> > -                     prev =3D i;
-> >                       /* Note that we trust indirect descriptor
-> >                        * table since it use stream DMA mapping.
-> >                        */
-> > -                     i =3D virtqueue_add_desc_split(vq, desc, extra, i=
-, addr, len,
-> > -                                                  VRING_DESC_F_NEXT |
-> > -                                                  VRING_DESC_F_WRITE,
-> > -                                                  premapped);
-> > +                     i =3D virtqueue_add_desc_split(vq, desc, extra,
-> > +                             i, addr, len,
-> > +                             (++c =3D=3D total_sg ? 0 : VRING_DESC_F_N=
-EXT) |
-> > +                             VRING_DESC_F_WRITE, premapped);
+> > +     dev_info(&pdev->dev, "Setting SPDIF clock rate to %u\n", mclk);
+> >       ret =3D clk_set_rate(host->spdif_clk, mclk);
+> >       if (ret < 0) {
+> >               dev_err(&pdev->dev,
+> > @@ -542,7 +544,6 @@ static struct snd_soc_dai_driver sun4i_spdif_dai =
+=3D {
+> >               .formats =3D SUN4I_FORMATS,
+> >       },
+> >       .ops =3D &sun4i_spdif_dai_ops,
+> > -     .name =3D "spdif",
 >
-> this continuation line should be indented more,
-> and maybe premapped on a line by itself.
-> Alternatively use a variable for flags.
+> Why this change?
 
-I switch to use flags like:
+Now that you mention it, this looks bogus to me as well. I'll drop it.
 
-                        u16 flags =3D VRING_DESC_F_WRITE;
-
-                        if (++sg_count !=3D total_sg)
-                                flags |=3D VRING_DESC_F_NEXT;
-
-...
-
-                        i =3D virtqueue_add_desc_split(vq, desc, extra, i, =
-addr,
-                                                     len, flags, premapped)=
-;
-
-Thanks
-
+> >  };
+> >
+> >  static const struct sun4i_spdif_quirks sun4i_a10_spdif_quirks =3D {
+> > @@ -572,6 +573,14 @@ static const struct sun4i_spdif_quirks sun50i_h6_s=
+pdif_quirks =3D {
+> >       .mclk_multiplier =3D 1,
+> >  };
+> >
+> > +static const struct sun4i_spdif_quirks sun55i_a523_spdif_quirks =3D {
+> > +     .reg_dac_txdata =3D SUN8I_SPDIF_TXFIFO,
+> > +     .val_fctl_ftx   =3D SUN50I_H6_SPDIF_FCTL_FTX,
+> > +     .has_reset      =3D true,
+> > +     .mclk_multiplier =3D 1,
+> > +     .tx_clk_name    =3D "tx",
+> > +};
+> > +
+> >  static const struct of_device_id sun4i_spdif_of_match[] =3D {
+> >       {
+> >               .compatible =3D "allwinner,sun4i-a10-spdif",
+> > @@ -594,6 +603,15 @@ static const struct of_device_id sun4i_spdif_of_ma=
+tch[] =3D {
+> >               /* Essentially the same as the H6, but without RX */
+> >               .data =3D &sun50i_h6_spdif_quirks,
+> >       },
+> > +     {
+> > +             .compatible =3D "allwinner,sun55i-a523-spdif",
+> > +             /*
+> > +              * Almost the same as H6, but has split the TX and RX clo=
+cks,
+> > +              * has a separate reset bit for the RX side, and has some
+> > +              * expanded features for the RX side.
+> > +              */
+> > +             .data =3D &sun55i_a523_spdif_quirks,
+> > +     },
+> >       { /* sentinel */ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, sun4i_spdif_of_match);
+> > @@ -635,6 +653,7 @@ static int sun4i_spdif_probe(struct platform_device=
+ *pdev)
+> >       const struct sun4i_spdif_quirks *quirks;
+> >       int ret;
+> >       void __iomem *base;
+> > +     const char *tx_clk_name =3D "spdif";
 >
-> >               }
+> Reverse tree?
+
+I think that only applies to the network tree.
+
+> Otherwise it looks good.
+
+Thanks!
+
+ChenYu
+
+> Best regards,
+> Jernej
+>
+> >
+> >       dev_dbg(&pdev->dev, "Entered %s\n", __func__);
+> >
+> > @@ -671,9 +690,12 @@ static int sun4i_spdif_probe(struct platform_devic=
+e *pdev)
+> >               return PTR_ERR(host->apb_clk);
 > >       }
-> > -     /* Last one doesn't continue. */
-> > -     desc[prev].flags &=3D cpu_to_virtio16(vq->vq.vdev, ~VRING_DESC_F_=
-NEXT);
-> > -     if (!indirect && vring_need_unmap_buffer(vq, &extra[prev]))
-> > -             vq->split.desc_extra[prev & (vq->split.vring.num - 1)].fl=
-ags &=3D
-> > -                     ~VRING_DESC_F_NEXT;
 > >
-> >       if (indirect) {
-> >               /* Now that the indirect table is filled in, map it. */
-> > --
-> > 2.31.1
+> > -     host->spdif_clk =3D devm_clk_get(&pdev->dev, "spdif");
+> > +     if (quirks->tx_clk_name)
+> > +             tx_clk_name =3D quirks->tx_clk_name;
+> > +     host->spdif_clk =3D devm_clk_get(&pdev->dev, tx_clk_name);
+> >       if (IS_ERR(host->spdif_clk)) {
+> > -             dev_err(&pdev->dev, "failed to get a spdif clock.\n");
+> > +             dev_err(&pdev->dev, "failed to get the \"%s\" clock.\n",
+> > +                     tx_clk_name);
+> >               return PTR_ERR(host->spdif_clk);
+> >       }
+> >
+> >
 >
-
+>
+>
+>
 
