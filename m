@@ -1,141 +1,149 @@
-Return-Path: <linux-kernel+bounces-862029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3FDBF44A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:44:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277B5BF44C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B813C4E9F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:44:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8143AAB0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B707124677A;
-	Tue, 21 Oct 2025 01:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3CD283FFB;
+	Tue, 21 Oct 2025 01:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTlt2Lad"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NdwV/EL3"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0609515D1;
-	Tue, 21 Oct 2025 01:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4DA2566F2;
+	Tue, 21 Oct 2025 01:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761011034; cv=none; b=OXEZPFY0lniTH26SFf7uUOTXD9zRO21jZrGRotBl8QJLCDoDTuAzZQhAcl087acOaCPPpKc0+6KkrDELe477sUU6UR2mnX8gIRqXn0057V5qm9bDtxWPw9dXMep0SvuzQP2DsxWGSxFREFISqmeCJHceyrfvvpwK92vDih+umNU=
+	t=1761011087; cv=none; b=rX4sGKSmidt7sumLgLDqSqicVJj74IFACB+xaU11JAAj30P8PWH8/7SVc2ZSwRU2j8qDKNsQC703BRtP+pnxn79ObXrrPC5NByLTDvARAN4nn6G6+vbkBX73wDB9fYa69AllXV31aoh+Qu8aU6mxj1/4c27x3r9QjAUScyb6RE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761011034; c=relaxed/simple;
-	bh=1WKtCB5AhrFfORNLMEgBu5CyX6aGiLkLwQM4OsgYaIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=laHnyfPU220iCfQOoRHEsBdQBReuLQjKd7rbKIpB9SB4UcEBnY169oMuE1X8q/jP3Zh4+BEigkP8xg2Q/wMBKgPerYm7YfVnT32nw1QjI7YFjMI/OTs8igdKS6dTTmjRr9lkFqXx4NvHl123LcefqndZPhH5O5Od90QtSIvJEcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTlt2Lad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF57C4CEFB;
-	Tue, 21 Oct 2025 01:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761011032;
-	bh=1WKtCB5AhrFfORNLMEgBu5CyX6aGiLkLwQM4OsgYaIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FTlt2Lad2t1VZP8oQUT1/MYv3J4mNf6kz5yhAGlr1hg9W1ruLo/PbwKhzmt8vOS8W
-	 pjcMvdYuMAe3w6+AqCkrpT7wMrfTaKQjtpNfaduKniIm66uHtBFbdljUpOxaMOfxWG
-	 CbTdMkgfKnc2BMIf4eWIpT6aVgRxQTO03JDi1KlwQ/qHdG4gESii2TVSgfQp9d86N9
-	 0+XjTPRP5892Lwia9r5/wB9A7XevUxjpm/7gk/x+n0H16LpHugp3QcMbc+lDwBet2u
-	 bJvDoLSUzM+Vnj4FMciVd9dymGQQ/0Biy6NsnQO6PShOtVFw/IdFYlxzI6x1pYK3R6
-	 qt0REkGfU5Fhg==
-Date: Tue, 21 Oct 2025 07:13:41 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v1 3/5] PCI: tegra: Use readl_poll_timeout() for link
- status polling
-Message-ID: <6eqqafz2dojo533fw2j7say3p37simug5bol2s5dvcpac77jzb@2x22ekyl4qdq>
-References: <20250926072905.126737-1-linux.amoon@gmail.com>
- <20250926072905.126737-4-linux.amoon@gmail.com>
- <ose3ww7me26byqwsyk33tipylkx3kolnc3mjwrlmjwsmza2zf3@os7lkt4svaqi>
- <CANAwSgT0VRFFpKv3saJTAA99oGoAHhP+bx6Xe-QGf5b4Dgik=A@mail.gmail.com>
+	s=arc-20240116; t=1761011087; c=relaxed/simple;
+	bh=HOt8jXCUUtE5E4qZPLYHszE6eZo0KCLI3v3FuC9v3z8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=II6MKL8+zKVUWL24O0D6l8VQw0JXS1ORBGldLUqgFDUztHDjhnjKvbBZv/HpbEKHBoe5iXV9hBMF44oWYnybZpc6KYItiv6N0jShXQwIY2YDfV9kqznQU4/ZnX8ampi7zSC2p/PfFPK2/f6g/9EiEC3Kw/yj3eYra7ZiIZjWwlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NdwV/EL3; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761011081; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=3rggCTCwug85NvywRQ6sf6WRszwDZIZt8nJfB05isZ0=;
+	b=NdwV/EL3R9bGv/nT6qJRJqE1R2Ku33X2IIQ2AULC1OFX2LSi4eUNDomVBRZbHTDEAQiqEDzIQu2zFRFz+yzpfQ3+AdHjLU28jPhk9+oR0XZwQC4bXyE9YTo05JRrq5xddWfNS3dIbmm473Yn9de1f+Iil+vlvtw5U6rS4MG6PTw=
+Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0Wqh4M2p_1761011078 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 21 Oct 2025 09:44:39 +0800
+From: fangyu.yu@linux.alibaba.com
+To: dbarboza@ventanamicro.com
+Cc: alex@ghiti.fr,
+	anup@brainfault.org,
+	aou@eecs.berkeley.edu,
+	atish.patra@linux.dev,
+	fangyu.yu@linux.alibaba.com,
+	guoren@kernel.org,
+	jiangyifei@huawei.com,
+	kvm-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com,
+	pbonzini@redhat.com,
+	pjw@kernel.org
+Subject: Re: Re: [PATCH] RISC-V: KVM: Remove automatic I/O mapping for VM_PFNMAP 
+Date: Tue, 21 Oct 2025 09:44:37 +0800
+Message-Id: <20251021014437.850-1-fangyu.yu@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+In-Reply-To: <ca6a8e5a-f14d-4017-90dc-be566d594eee@ventanamicro.com>
+References: <ca6a8e5a-f14d-4017-90dc-be566d594eee@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANAwSgT0VRFFpKv3saJTAA99oGoAHhP+bx6Xe-QGf5b4Dgik=A@mail.gmail.com>
 
-On Mon, Oct 20, 2025 at 05:47:15PM +0530, Anand Moon wrote:
-> Hi Manivannan,
-> 
-> Thanks for your review comment.
-> 
-> On Sun, 19 Oct 2025 at 13:20, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> >
-> > On Fri, Sep 26, 2025 at 12:57:44PM +0530, Anand Moon wrote:
-> > > Replace the manual `do-while` polling loops with the readl_poll_timeout()
-> > > helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
-> > > during link bring-up. This simplifies the code by removing the open-coded
-> > > timeout logic in favor of the standard, more robust iopoll framework.
-> > > The change improves readability and reduces code duplication.
-> > >
-> > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > > v1: dropped the include  <linux/iopoll.h> header file.
-> > > ---
-> > >  drivers/pci/controller/pci-tegra.c | 37 +++++++++++-------------------
-> > >  1 file changed, 14 insertions(+), 23 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> > > index 07a61d902eae..b0056818a203 100644
-> > > --- a/drivers/pci/controller/pci-tegra.c
-> > > +++ b/drivers/pci/controller/pci-tegra.c
-> > > @@ -2169,37 +2169,28 @@ static bool tegra_pcie_port_check_link(struct tegra_pcie_port *port)
-> > >       value |= RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
-> > >       writel(value, port->base + RP_PRIV_MISC);
-> > >
-> > > -     do {
-> > > -             unsigned int timeout = TEGRA_PCIE_LINKUP_TIMEOUT;
-> > > +     while (retries--) {
-> > > +             int err;
-> > >
-> > > -             do {
-> > > -                     value = readl(port->base + RP_VEND_XP);
-> > > -
-> > > -                     if (value & RP_VEND_XP_DL_UP)
-> > > -                             break;
-> > > -
-> > > -                     usleep_range(1000, 2000);
-> > > -             } while (--timeout);
-> > > -
-> > > -             if (!timeout) {
-> > > +             err = readl_poll_timeout(port->base + RP_VEND_XP, value,
-> > > +                                      value & RP_VEND_XP_DL_UP,
-> > > +                                      1000,
-> >
-> > The delay between the iterations had range of (1000, 2000), now it will become
-> > (250, 1000). How can you ensure that this delay is sufficient?
-> >
-> I asked if the timeout should be increased for the loops, but Mikko
-> Perttunen said that 200ms delay is fine.
-> 
+>> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+>> 
+>> As of commit aac6db75a9fc ("vfio/pci: Use unmap_mapping_range()"),
+>> vm_pgoff may no longer guaranteed to hold the PFN for VM_PFNMAP
+>> regions. Using vma->vm_pgoff to derive the HPA here may therefore
+>> produce incorrect mappings.
+>> 
+>> Instead, I/O mappings for such regions can be established on-demand
+>> during g-stage page faults, making the upfront ioremap in this path
+>> is unnecessary.
+>> 
+>> Fixes: 9d05c1fee837 ("RISC-V: KVM: Implement stage2 page table programming")
+>> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+>> ---
+>
+>Hi,
+>
+>This patch fixes the issue observed by Drew in [1]. I was helping Drew
+>debug it using a QEMU guest inside an emulated risc-v host with the
+>'virt' machine + IOMMU enabled.
 
-readl_poll_timeout() internally uses usleep_range(), which transforms the 1000us
-delay into, usleep_range(251, 1000). So the delay *could* theoretically be 251us
-* 200 = ~50ms.
+Thank you for testing this patch.
+As you can see below, because of the previous HPA calculation error,
+the GVA is mapped to an incorrect HPA, and finally a store amo/access
+exception occurs.
 
-So I doubt it will be sifficient, as from the old code, it looks like the
-hardware could take around 200ms to complete link up.
+>
+>Using the patches from [2], without the workaround patch (18), booting a
+>guest with a passed-through PCI device fails with a store amo fault and a
+>kernel oops:
+>
+>[    3.304776] Oops - store (or AMO) access fault [#1]
+>[    3.305159] Modules linked in:
+>[    3.305603] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc4 #39
+>[    3.305988] Hardware name: riscv-virtio,qemu (DT)
+>[    3.306140] epc : __ew32+0x34/0xba
+>[    3.307910]  ra : e1000_irq_disable+0x1e/0x9a
+>[    3.307984] epc : ffffffff806ebfbe ra : ffffffff806ee3f8 sp : ff2000000000baf0
+>[    3.308022]  gp : ffffffff81719938 tp : ff600000018b8000 t0 : ff60000002c3b480
+>[    3.308055]  t1 : 0000000000000065 t2 : 3030206530303031 s0 : ff2000000000bb30
+>[    3.308086]  s1 : ff60000002a50a00 a0 : ff60000002a50fb8 a1 : 00000000000000d8
+>[    3.308118]  a2 : ffffffffffffffff a3 : 0000000000000002 a4 : 0000000000003000
+>[    3.308161]  a5 : ff200000001e00d8 a6 : 0000000000000008 a7 : 0000000000000038
+>[    3.308195]  s2 : ff60000002a50fb8 s3 : ff60000001865000 s4 : 00000000000000d8
+>[    3.308226]  s5 : ffffffffffffffff s6 : ff60000002a50a00 s7 : ffffffff812d2760
+>[    3.308258]  s8 : 0000000000000a00 s9 : 0000000000001000 s10: ff60000002a51000
+>[    3.308288]  s11: ff60000002a54000 t3 : ffffffff8172ec4f t4 : ffffffff8172ec4f
+>[    3.308475]  t5 : ffffffff8172ec50 t6 : ff2000000000b848
+>[    3.308763] status: 0000000200000120 badaddr: ff200000001e00d8 cause: 0000000000000007
+>[    3.308975] [<ffffffff806ebfbe>] __ew32+0x34/0xba
+>[    3.309196] [<ffffffff806ee3f8>] e1000_irq_disable+0x1e/0x9a
+>[    3.309241] [<ffffffff806f1e12>] e1000_probe+0x3b6/0xb50
+>[    3.309279] [<ffffffff80510554>] pci_device_probe+0x7e/0xf8
+>[    3.310001] [<ffffffff80610344>] really_probe+0x82/0x202
+>[    3.310409] [<ffffffff80610520>] __driver_probe_device+0x5c/0xd0
+>[    3.310622] [<ffffffff806105c0>] driver_probe_device+0x2c/0xb0
+>(...)
+>
+>
+>Further debugging showed that, as far as QEMU goes, the store fault happens in an
+>"unassigned io region", i.e. a region where there's no IO memory region mapped by
+>any device. There is no IOMMU faults being logged and, at least as far as I've
+>observed, no IOMMU translation bugs in the QEMU side as well.
+>
+>
+>Thanks for the fix!
+>
+>
+>Tested-by: Daniel Henrique Barboza <dbarboza@ventanamicro.com>
+>
+>
+>
+>[1] https://lore.kernel.org/all/20250920203851.2205115-38-ajones@ventanamicro.com/
+>[2] https://lore.kernel.org/all/20250920203851.2205115-20-ajones@ventanamicro.com/
+>
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks,
+Fangyu
 
