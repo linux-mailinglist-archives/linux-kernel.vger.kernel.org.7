@@ -1,270 +1,162 @@
-Return-Path: <linux-kernel+bounces-862800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EDCBF6377
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:55:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369D1BF635B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA7D19A2346
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:56:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D60C44FE25E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28769343214;
-	Tue, 21 Oct 2025 11:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="X75QaTCh"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA82342CA9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8615A333742;
+	Tue, 21 Oct 2025 11:45:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511C132E752
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047171; cv=none; b=Rd431xoeKv8QzKdi7zpqxV904oG2MMcYekodI+41bSzfOw/H1Q4A46JWxF1f2T97TwKNBLl06xByxQl+7JduRQ5Ba3wrmtUc8i3C4v6ULwKQPYh51oeG+2Yn6Hs1OMBcA/yG4lkjd6gniKBqYxN1kAGR+TlaTWX2LwdRDEJgDIo=
+	t=1761047155; cv=none; b=ZcB8lS+879IlAx9RcQB8U1wwVkLXgw8oPB/AsjB+YCqjKVSF4tjAd+IimY+jnV5Ki7zQaGmB+oAq1p7OgCD4TIxcj6Fp5uIJ3ji4Uv4SezWqV/os85K4doWS1GoB5cZoDMaSRsJc8NRtUWaOUnipHpECiwUavTmSfgeduJfYTXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047171; c=relaxed/simple;
-	bh=zMIhkhz3h7k4JTdPmYQDau/zLc7Og9w1ZJqQb/3IURQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKnZIcp78vxlaco982FGBHOrpwhDYSrP8aJr5oXH3hZHLEkl1NS3h2GPCClWZAMUDzA7So9UGtprR+QUb8SV4YSuxz594aSHCUFcMuqNHNoEpIZJ63hSyre538Msvi2Y4dY9O9oOnIpwR9lZWxG2kSgbrhyDkCmdERoWQDprffY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=X75QaTCh; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B75F840E00DE;
-	Tue, 21 Oct 2025 11:46:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 0W_APc-Z99YH; Tue, 21 Oct 2025 11:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761047159; bh=yxV1oJp1tA9xOSRaGwAzu03hV2SSPLA2YN4EeBVpoaw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X75QaTCh8Kc++ZTy+upzA0kBjn0JD13W7icC4Hjub/wuf/kgi8bhItN5zY4THbJVu
-	 jq5nvHbnuTDTrmXPiPPGcv5SM8sngyRynCb/KyvL1SxuI7MUdAsTKf/w7b0IyitO7H
-	 LA7lu7ltvIpbOn4tQDkKCwPlkXR8BIqO4FtwJSxMdCPPFWKoX0C9ekCtlD+ZmzVBK3
-	 4VIXWiyjasu5pagjnAY09tGnTDCM7ackBhUzGNJIh5Zy2M6uvBAucZTYa7EgPv2K3L
-	 x8kvey610sIUQb0mF4kjZSew/G2FSoeFyIPm4llsFdw4IDNyvuPODg94odpzGKyovZ
-	 F5hxNVngPxWPZtzVQSaWdvXqzPHmudwJb5JAczzmDSSkkZ19sO/v+u2BcOR5gZvMWp
-	 +vsHQqHu+Q8q+3lEBG0q/zxYnS9Y7401XutgyDjLa9j08YPAUQEfgkmwaep2PrTmDy
-	 f6O+ocFLbIxa5s24fXskn/DrEN7M4Ls44k7Q3URDg2Bms4jfY4ZGsf/bC+RFZ7wLja
-	 vnXUwCOPhQPvMKBEKtUcZgh0k0Hh+xDYPlwrvTOphEAXH6f0HLbypfWdCzgpG1FgHV
-	 nKP5XDEXVDa24uKH3TtkDHfdeUyW1ZE2QLiV25qi+cWNV8hdEzLOk1vgDVZkMHHNr1
-	 LbpPnpTZhZItsBnREd8zRSto=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5877740E01A5;
-	Tue, 21 Oct 2025 11:45:52 +0000 (UTC)
-Date: Tue, 21 Oct 2025 13:45:46 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2] x86/alternative: Patch a single alternative location
- only once
-Message-ID: <20251021114546.GCaPdyaobVuEDvt_yi@fat_crate.local>
-References: <20251015093001.14840-1-jgross@suse.com>
+	s=arc-20240116; t=1761047155; c=relaxed/simple;
+	bh=ihkESXXFhGEMGxotWCa/rtAXS2eUXkMN05EckVch9Mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EiPhx3lSXb+L6CCxQDQq/TL7xuGOOet7Zj5firu7n4u9JC31QQbw5/LZdiPoMWyA/UQUNtipte7p1u/vm4jdFh7obu+BHCN6CwIrz+YyyNZ9swJjyL7CvrQu4KbfF85IRg2IgPi+H61RPW/4O4H1HtOV4B4r/6Ejx8WgXEc9YbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0D941063;
+	Tue, 21 Oct 2025 04:45:44 -0700 (PDT)
+Received: from [10.57.37.65] (unknown [10.57.37.65])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7D2C3F63F;
+	Tue, 21 Oct 2025 04:45:50 -0700 (PDT)
+Message-ID: <336c5a8a-ac2c-4e4c-b2f9-a0bc056aa498@arm.com>
+Date: Tue, 21 Oct 2025 12:45:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251015093001.14840-1-jgross@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] SMMU v3 CMDQ fix and improvement
+To: Jacob Pan <jacob.pan@linux.microsoft.com>
+Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ Will Deacon <will@kernel.org>, Nicolin Chen <nicolinc@nvidia.com>,
+ Zhang Yu <zhangyu1@linux.microsoft.com>,
+ Jean Philippe-Brucker <jean-philippe@linaro.org>,
+ Alexander Grest <Alexander.Grest@microsoft.com>,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+ <aPIhMGnzHiBkIEam@google.com> <20251017135145.GL3901471@nvidia.com>
+ <20251017095031.00000b84@linux.microsoft.com>
+ <20251020120240.GI316284@nvidia.com>
+ <20251020115710.0000258b@linux.microsoft.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251020115710.0000258b@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 15, 2025 at 11:30:01AM +0200, Juergen Gross wrote:
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 4f3ea50e41e8..b6b2fa59eaa9 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -642,57 +642,62 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
->  	 * So be careful if you want to change the scan order to any other
->  	 * order.
->  	 */
-> -	for (a = start; a < end; a++) {
-> +	for (a = start; a < end; a = b) {
-				^^^^^^^
+On 2025-10-20 7:57 pm, Jacob Pan wrote:
+> On Mon, 20 Oct 2025 09:02:40 -0300
+> Jason Gunthorpe <jgg@nvidia.com> wrote:
+> 
+>> On Fri, Oct 17, 2025 at 09:50:31AM -0700, Jacob Pan wrote:
+>>> On Fri, 17 Oct 2025 10:51:45 -0300
+>>> Jason Gunthorpe <jgg@nvidia.com> wrote:
+>>>    
+>>>> On Fri, Oct 17, 2025 at 10:57:52AM +0000, Mostafa Saleh wrote:
+>>>>> On Wed, Sep 24, 2025 at 10:54:36AM -0700, Jacob Pan wrote:
+>>>>>> Hi Will et al,
+>>>>>>
+>>>>>> These two patches are derived from testing SMMU driver with
+>>>>>> smaller CMDQ sizes where we see soft lockups.
+>>>>>>
+>>>>>> This happens on HyperV emulated SMMU v3 as well as baremetal
+>>>>>> ARM servers with artificially reduced queue size and
+>>>>>> microbenchmark to stress test concurrency.
+>>>>>
+>>>>> Is it possible to share what are the artificial sizes and does
+>>>>> the HW/emulation support range invalidation (IRD3.RIL)?
+>>>>>
+>>>>> I'd expect it would be really hard to overwhelm the command
+>>>>> queue, unless the HW doesn't support range invalidation and/or
+>>>>> the queue entries are close to the number of CPUs.
+>>>>
+>>>> At least on Jacob's system there is no RIL and there are 72/144
+>>>> CPU cores potentially banging on this.
+>>>>
+>>>> I think it is combination of lots of required invalidation
+>>>> commands, low queue depth and slow retirement of commands that
+>>>> make it easier to create a queue full condition.
+>>>>
+>>>> Without RIL one SVA invalidation may take out the entire small
+>>>> queue, for example.
+>>> Right, no range invalidation and queue depth is 256 in this case.
+>>
+>> I think Robin is asking you to justify why the queue depth is 256 when
+>> ARM is recommending much larger depths specifically to fix issues like
+>> this?
+> The smaller queue depth is chosen for CMD_SYNC latency reasons. But I
+> don't know the implementation details of HyperV and host SMMU driver.
 
+TBH that sounds highly dubious. The only way I could imagine CMDQ size 
+bearing any relation to CMD_SYNC at all is if a hypervisor is emulating 
+a stage 1 vCMDQ in such a naive and lazy manner that a) performance is 
+already off the table, and b) it has a good chance of being broken anyway.
 
->  		unsigned int insn_buff_sz = 0;
-> +		struct alt_instr *p = NULL;
-> +		u8 len = 0;
->  
->  		/*
->  		 * In case of nested ALTERNATIVE()s the outer alternative might
->  		 * add more padding. To ensure consistent patching find the max
->  		 * padding for all alt_instr entries for this site (nested
->  		 * alternatives result in consecutive entries).
-> +		 * Find the last alt_instr eligible for patching at the site.
->  		 */
-> -		for (b = a+1; b < end && instr_va(b) == instr_va(a); b++) {
-		     ^^^^^^^^^^^
+For the hardware to actually process, say, 1023 invalidations followed 
+by a sync takes as long as it takes, based on how busy the SMMU is. The 
+only difference in issuing that sequence of commands on a 256-entry 
+queue vs. a 1024-entry queue is that in the latter case, software does 
+not have to sit waiting for the first 768 to actually be consumed before 
+it can finish the submission and potentially get on with something else 
+until the sync completes. Yes, one could claim that technically the time 
+between *issuing* the CMD_SYNC and its completion is then lower, but 
+only because that extra time has now been wasted in a polling loop 
+waiting for CMDQ space instead - it's a meaningless distinction overall.
 
-No,  this is not a contest in how to make an already obfuscated code more
-obfucated.
+> IMHO, queue size is orthogonal to what this patch is trying to
+> address, which is a specific locking problem and improve efficiency.
+> e.g. eliminated cmpxchg
+> -	do {
+> -		val = atomic_cond_read_relaxed(&cmdq->lock, VAL >= 0);
+> -	} while (atomic_cmpxchg_relaxed(&cmdq->lock, val, val + 1) != val);
+> +	atomic_cond_read_relaxed(&cmdq->lock, VAL > 0);
+> 
+> Even on BM with restricted queue size, this patch reduces latency of
+> concurrent madvise(MADV_DONTNEED) from multiple CPUs (I tested 32 CPUs,
+> cutting 50% latency unmap 1GB buffer in 2MB chucks per CPU).
+My point is that a 50% improvement on nonsense is likely still nonsense. 
+With only 256 entries, every single one of those 2MB unmaps needs to 
+fill the entire CMDQ more than twice over. 32 CPUs all jostling to issue 
+about 34x as many commands as the queue can hold *each* is a ridiculous 
+level of contention. If a hypervisor is advertising an SMMU_IDR1.CMDQS 
+value that is absurdly tiny for the size of the VM then that represents 
+such an obvious bottleneck that it's hardly mainline Linux's 
+responsibility to maintain code to help "debug" it. As for "BM with 
+restricted queue size", like I said, just don't do that.
 
-And I already told you to use helper functions...
+What is the difference on an un-hacked bare-metal system with a 
+normally-sized queue? Is it even measurable? That's what's actually 
+interesting. Furthermore, what exactly does that measurement even mean? 
+If we're still issuing the same number of commands I struggle to believe 
+we could lose 50% of the *overall* time just bouncing a cacheline 
+between shared and exclusive state - is this actually just the *maximum* 
+per-CPU latency going down, at the cost of the minimum latency 
+correspondingly increasing just as much (if not comparatively more) due 
+to better fairness? And if so, how important is that really? I can 
+imagine there are equally cases where other callers might prefer a lower 
+minimum/mean latency at the price of some longer outliers.
 
-The intent is to separate this loop logically into helper functions so that it
-is easily extendable and understandable. What it is becoming now, is
-unreadable mess.
+Note I'm not saying I'm necessarily against making these changes, just 
+that I'm against making them without a believable justification that it 
+is actually beneficial to mainline users.
 
-And piling up more and more hackery ontop doesn't make it better.
-
-Here's what I mean below.
-
-- you carve out the logic which analyzes the patch sites into a separate
-  function and you do all the analysis there
-
-- The struct patch_site is there to carry results which we copy back to the
-  loop variables for easier review so that the diff doesn't become unwieldy.
-  There's no problem to switch to using a patch_site everywhere in the loop as
-  the actual info collecting structure which controls the patching on each
-  iteration
-
-- In other patches, you can carve out the actual patching into a separate
-  function. There you can add the patch_one_site function to make it even more
-  clear
-
-Can it be made even simpler? 
-
-Sure, this was my first attempt.
-
-Just don't make an already complex dance even more complex.
-
-Thx.
-
----
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index e377b06e70e3..f8e4679b7638 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -586,6 +586,34 @@ static inline u8 * instr_va(struct alt_instr *i)
- 	return (u8 *)&i->instr_offset + i->instr_offset;
- }
- 
-+struct patch_site {
-+	u8 len;
-+	u8 *instr_va;
-+	u8 *repl_va;
-+};
-+
-+/*
-+ * In case of nested ALTERNATIVE()s the outer alternative might add more
-+ * padding. To ensure consistent patching find the max padding for all
-+ * alt_instr entries for this site (nested alternatives result in
-+ * consecutive entries).
-+ */
-+static void __init_or_module analyze_patch_site(struct patch_site *ps, struct alt_instr *p,
-+						struct alt_instr *end)
-+{
-+	struct alt_instr *tmp;
-+
-+	ps->len = p->instrlen;
-+
-+	for (tmp = p+1; tmp < end && instr_va(tmp) == instr_va(p); tmp++)
-+		ps->len = max(p->instrlen, tmp->instrlen);
-+
-+	BUG_ON(ps->len > MAX_PATCH_LEN);
-+
-+	ps->instr_va = instr_va(p);
-+	ps->repl_va  = (u8 *)&p->repl_offset + p->repl_offset;
-+}
-+
- /*
-  * Replace instructions with better alternatives for this CPU type. This runs
-  * before SMP is initialized to avoid SMP problems with self modifying code.
-@@ -601,7 +629,7 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- {
- 	u8 insn_buff[MAX_PATCH_LEN];
- 	u8 *instr, *replacement;
--	struct alt_instr *a, *b;
-+	struct alt_instr *a;
- 
- 	DPRINTK(ALT, "alt table %px, -> %px", start, end);
- 
-@@ -626,23 +654,17 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 	 */
- 	for (a = start; a < end; a++) {
- 		unsigned int insn_buff_sz = 0;
-+		struct patch_site ps = {};
-+		u8 len;
- 
--		/*
--		 * In case of nested ALTERNATIVE()s the outer alternative might
--		 * add more padding. To ensure consistent patching find the max
--		 * padding for all alt_instr entries for this site (nested
--		 * alternatives result in consecutive entries).
--		 */
--		for (b = a+1; b < end && instr_va(b) == instr_va(a); b++) {
--			u8 len = max(a->instrlen, b->instrlen);
--			a->instrlen = b->instrlen = len;
--		}
--
--		instr = instr_va(a);
--		replacement = (u8 *)&a->repl_offset + a->repl_offset;
--		BUG_ON(a->instrlen > sizeof(insn_buff));
- 		BUG_ON(a->cpuid >= (NCAPINTS + NBUGINTS) * 32);
- 
-+		analyze_patch_site(&ps, a, end);
-+
-+		instr = ps.instr_va;
-+		len = ps.len;
-+		replacement = ps.repl_va;
-+
- 		/*
- 		 * Patch if either:
- 		 * - feature is present
-@@ -650,16 +672,16 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 		 *   patch if feature is *NOT* present.
- 		 */
- 		if (!boot_cpu_has(a->cpuid) == !(a->flags & ALT_FLAG_NOT)) {
--			memcpy(insn_buff, instr, a->instrlen);
--			optimize_nops(instr, insn_buff, a->instrlen);
--			text_poke_early(instr, insn_buff, a->instrlen);
-+			memcpy(insn_buff, instr, len);
-+			optimize_nops(instr, insn_buff, len);
-+			text_poke_early(instr, insn_buff, len);
- 			continue;
- 		}
- 
- 		DPRINTK(ALT, "feat: %d*32+%d, old: (%pS (%px) len: %d), repl: (%px, len: %d) flags: 0x%x",
- 			a->cpuid >> 5,
- 			a->cpuid & 0x1f,
--			instr, instr, a->instrlen,
-+			instr, instr, len,
- 			replacement, a->replacementlen, a->flags);
- 
- 		memcpy(insn_buff, replacement, a->replacementlen);
-@@ -668,12 +690,12 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 		if (a->flags & ALT_FLAG_DIRECT_CALL)
- 			insn_buff_sz = alt_replace_call(instr, insn_buff, a);
- 
--		for (; insn_buff_sz < a->instrlen; insn_buff_sz++)
-+		for (; insn_buff_sz < len; insn_buff_sz++)
- 			insn_buff[insn_buff_sz] = 0x90;
- 
--		text_poke_apply_relocation(insn_buff, instr, a->instrlen, replacement, a->replacementlen);
-+		text_poke_apply_relocation(insn_buff, instr, len, replacement, a->replacementlen);
- 
--		DUMP_BYTES(ALT, instr, a->instrlen, "%px:   old_insn: ", instr);
-+		DUMP_BYTES(ALT, instr, len, "%px:   old_insn: ", instr);
- 		DUMP_BYTES(ALT, replacement, a->replacementlen, "%px:   rpl_insn: ", replacement);
- 		DUMP_BYTES(ALT, insn_buff, insn_buff_sz, "%px: final_insn: ", instr);
- 
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Robin.
 
