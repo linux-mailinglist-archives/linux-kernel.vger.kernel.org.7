@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-862988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E98ABF6BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:22:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC54BF6BE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A3FA425735
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A69A541850
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FEA336EE2;
-	Tue, 21 Oct 2025 13:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2F1336EC5;
+	Tue, 21 Oct 2025 13:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KxDEMFrQ"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="R7UUFjUQ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161CE33506F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681672F0C79
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052902; cv=none; b=dg6gfiWas/W9cEush2xtWidn7Wnt3aPOkWR12MVNBNbGIP/36ElCFNQfJbSXfZvsVnVGq+nJFTNM4U8VvAN1N64jPmLkQwbS2Ek9kQ+EJJcmJgVzXIGoHn9jWcnndHJkwwdM9Q3wt0kruORrqL/G0OZnM5/Jq1tCFPRKNTFOD7c=
+	t=1761053015; cv=none; b=gBCzUHcVgG6+QiZsxJNMmoVDVS4sjCEsHN4w7jCFaBqGBG2k17vNIdhUvSMaeqrgmjIMNI9pc3WdSw+CCxQY6L7sD3TmwwK7M3F1x/+t+MDdvJ8yjPGhCBPI2DD7FG8pPOHm7X2q//pNGsKlUWYOeK5XCyZq5X6+LiqyLQuHLaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052902; c=relaxed/simple;
-	bh=skb9hQ3bPDQ//+qmxKEwi9qpg4pair4gGJB5W3yGr4o=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C4LbLG0cwA9iMGKcOWo9/BOSqKahNUI8O2XjFxVPdyGNvmdUMLljqAZcn34rD42oT1LY5DlCQNjEox75u3L/ibwwNZgDjZAeRg7XAXkc6uP72zQ9oaQLVU7ToZasKGz0LUVpLVAxFFyf3E5la9mUCtTyL6NXUoCNd0f+LvPU7dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KxDEMFrQ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-591c74fd958so6963098e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761052899; x=1761657699; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QB/8i9gcDwYx9MPZY12QJM3i5Ad8FHrbygJGWykWY6U=;
-        b=KxDEMFrQoC2JLkZqQg0/N/oQcpw+fH8JIqkDdOdzxrevNjMrv/dC+IzEf1xYhiOP2b
-         Hjh5aCNtbM3thD5FBUtbW/42/nD5gA9PHTJj71Gw/6m4YQhgfih6S0zJu3lGMC44cB2E
-         4oaS30vxwTj0Ch9aryiWDR2rArlcE07z2/x+JIradcTjetFoViMJWib257+/C6JHvEJA
-         82voJqIoj7OfSq4wkUxNr1i67gcRqBCGTRUhGSI/lv5Ll+rjVlVuVBQizv9o5KqiCeXU
-         jOjw+rmsVjHWJ49BYX8IAPeucQp0MoEpPGWgUFXlcFNy7+GlV3Syq2rqAQ99NVCbIYFp
-         +wrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761052899; x=1761657699;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QB/8i9gcDwYx9MPZY12QJM3i5Ad8FHrbygJGWykWY6U=;
-        b=czgYisSNRZQnLyf1t5+FMwCs7rpvXWOAxxZNzvTkTaeGSYWd2iLqWPQBQ0ZNv2iWgT
-         A3blpCuKwNh2PAMTExN4H3ZA46968gtzqWLASp9Xg7s0R/cHksTrAQJhIdlkMeTec1ve
-         yPbU1riHnoQVDzKBATHItobRpE4kgElSy33m/4Hl0WpT5afz3IahbnE/UwTPG3kTEqbu
-         2w2KQNiprz0cxIH5mbg9dsoMV6Dwp0BgeefYTZ9H1YSRNqfnVC6Btx/CiT4ynOrO4K9Y
-         ylpIORK6edqgwvrQ7srSLmC5chkgRLfFftnv27lWsFhlrCagK6rli4xW3Se49AAr530f
-         M1Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8BADoTJH3NliRir8F4WFJc7wbKz6Cv0uvXzAOwiFfoHJoXu58UGAtwV6mCN25UtGQ1MdT8zPLApPOkfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHKkVcMz5572Jf3Oq5ODgltIJgqd7nx7ITU/iC3VpbR397IO7L
-	4KqFx+b9glqZJxRvbQsIbY9TBsVVCAKQIMpxYguLE9Jjtcyrm2zqm/0NPSYmPSGKoCl+u+ILnRE
-	on7KvDhK0MLO3y9m7XWEaMazGKXt+g9pNxZoxuLvy5A==
-X-Gm-Gg: ASbGnct9hIpDX8FwTgJmUzPgylxCiSlOpQcwXGkMEOh6+MUq288kEljNDp+9c7+BWb1
-	S6OwMhHc7MjWC0W2Fjqo2q0bRvLtitLr3GlRcaT/RLvEbaKr2GyacLJrvA6PEPUDZdAANCQ7CKE
-	FKnmQh4nJklJ5Ld5DEL7uPhpE0fh1K1TK5fZvlaBTelE+5kQjBvUP24u0x/IUC+ePedSmXbb78J
-	5HNPM7haY9jxPXbV7YFPKnT/xVOGS5cVSoLnR+1NhkkI1dGBoLKJ8S7JuAjwofRoLV7mO71naUo
-	diqaoEvSe/kYGpTSdd32HZ9w4/I=
-X-Google-Smtp-Source: AGHT+IFU9Qs1FF3tvhuZ5QNpuWHEjsct+r642wNfUlzflw0GmkJA6bzYaO33fmeXk7R1wFoOfbXFWOTQ8VOF5mms5iA=
-X-Received: by 2002:a05:6512:ea8:b0:55f:489d:7bd with SMTP id
- 2adb3069b0e04-591d84689e0mr5110249e87.0.1761052899116; Tue, 21 Oct 2025
- 06:21:39 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 21 Oct 2025 09:21:38 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 21 Oct 2025 09:21:38 -0400
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <20251020-fix-gpio-idio-16-regmap-v2-3-ebeb50e93c33@kernel.org>
+	s=arc-20240116; t=1761053015; c=relaxed/simple;
+	bh=Y9ZTONpm589+RojL1lzdfFuJkRYHnz4HWW2urQfAi4Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MIgkdkdJ1klxL7kINxfFF3tX3cUAG+OmxtFBxYTJ8dKlI7/mPb9z1TnByPJyamnQyYFk4K4LsIKlRZOvi8FZC2m3y0J/dNvvWwUfayI1NdM2/h8g2OTbIUoED0k4tCTZLU7SusOzx7BWQhqjsGjx2hWKAe9bv8XRfd/NFv4vMeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=R7UUFjUQ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DAE426A6;
+	Tue, 21 Oct 2025 15:21:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761052906;
+	bh=Y9ZTONpm589+RojL1lzdfFuJkRYHnz4HWW2urQfAi4Q=;
+	h=From:Subject:Date:To:Cc:From;
+	b=R7UUFjUQlXPZ0QyWEZrIDzGV0sI2mekpKrCarcrkZW6l2wZ+eLwAlCry+4KCmQNw+
+	 7ojaEBNNxZ+bqw95BMS1nbqdKmzfnWQQEMPlc7dYNzDKJq6v/dZwGLUxJo2OOb5nBE
+	 gSiO3o9yxUW3irBXF4zldSDRPUQUEZ+WaEEfEy3Y=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH 0/7] drm/bridge: tc358768: Long command support
+Date: Tue, 21 Oct 2025 16:22:56 +0300
+Message-Id: <20251021-tc358768-v1-0-d590dc6a1a0c@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020-fix-gpio-idio-16-regmap-v2-0-ebeb50e93c33@kernel.org> <20251020-fix-gpio-idio-16-regmap-v2-3-ebeb50e93c33@kernel.org>
-Date: Tue, 21 Oct 2025 09:21:38 -0400
-X-Gm-Features: AS18NWA1C6wtwpPuGtGISwiqHUwqLrfrlE6ZnSP2lWK50cndlklyKCnzfgz1HbQ
-Message-ID: <CAMRc=MeFZTDk4cgzEJNnkrJOEneFUBLwtKjkpV3-cLSm=xsxNg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] gpio: idio-16: Define fixed direction of the GPIO lines
-To: William Breathitt Gray <wbg@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Michael Walle <mwalle@kernel.org>, 
-	Ioana Ciornei <ioana.ciornei@nxp.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mark Cave-Ayland <mark.caveayland@nutanix.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADGJ92gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyND3ZJkY1MLczMLXUvj1CQjYzMLyyTzRCWg8oKi1LTMCrBR0bG1tQC
+ vsKS/WgAAAA==
+X-Change-ID: 20251021-tc358768-93eb23689b7a
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Parth Pancholi <parth.pancholi@toradex.com>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Dmitry Osipenko <digetx@gmail.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2092;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=Y9ZTONpm589+RojL1lzdfFuJkRYHnz4HWW2urQfAi4Q=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBo94lJfRq1+7S5Yp12KN+JPMIwAcqW0ah6q/eeh
+ 9Xe9O2vHdiJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaPeJSQAKCRD6PaqMvJYe
+ 9XcXD/45MM0PpEJDhfDQNr2SZEfVvu/KDnfjua5bjeMxE5dZMuwKE/vsXau1mkrt0d+TEoAyAfu
+ 96o2IZVO90Dt1xC+wpYkoTZ+m0WYcsew1JMpSse7kT4aF+fsSQ+Qn1zbHIrymfnXC1zgi89oSqU
+ 6VLUNTlIImM6jf+F5oMya7SMDJHR9SATx503IfMCW67Syf29+yVQ3dCi6fuIu1NrsoGTBmAN0UC
+ fD5VQFpt4OXRUkQ3rN5i3od/Y4WCyCuEkhY5bE/cwRr4UQ2zbIj5E80Xj9FxVJadG8VCRPsx5N6
+ MT3oD3VL9ZcMTIy+v/azeae53YavGN93sB1GKUmZU1nFMSeR+Dby28Xkp2rRZcU/40LcaSpQDxX
+ RsayzaENXW9H+AWjYtbTifHgDrzRjN8L/cKz1alqBmgNntr/K8B//uXyN87dEzRN9hDq+fqf1uW
+ uYWFK8B6La1uZNHldwSrmzZi5VFLRezsBc7CUnDbvgtSvVJc+QTwnbWoZei9CnEkSCFYsajfosl
+ 5EEF2SL34YX5WlfPbCcQ3bNbuQTBZdC+0eMKBw8q9A8N0y6ruegky1rbs0AYDcGtjOJ77cAfqQ2
+ HLa/AAH5hCdYodPCEI4kXtyd3ida1q07JK0gxuBvKpJL60oFVJ6caNwgtdajJQ04o6hU5/XVCnV
+ DMJNIkwcViO6k3w==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Mon, 20 Oct 2025 10:51:46 +0200, William Breathitt Gray
-<wbg@kernel.org> said:
-> The direction of the IDIO-16 GPIO lines is fixed with the first 16 lines
-> as output and the remaining 16 lines as input. Set the gpio_config
-> fixed_direction_output member to represent the fixed direction of the
-> GPIO lines.
->
-> Fixes: db02247827ef ("gpio: idio-16: Migrate to the regmap API")
-> Reported-by: Mark Cave-Ayland <mark.caveayland@nutanix.com>
-> Closes: https://lore.kernel.org/r/9b0375fd-235f-4ee1-a7fa-daca296ef6bf@nutanix.com
-> Suggested-by: Michael Walle <mwalle@kernel.org>
-> Cc: stable@vger.kernel.org # ae495810cffe: gpio: regmap: add the .fixed_direction_output configuration parameter
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: William Breathitt Gray <wbg@kernel.org>
-> ---
->  drivers/gpio/gpio-idio-16.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-idio-16.c b/drivers/gpio/gpio-idio-16.c
-> index 0103be977c66bb8d165c1c92123368be6832d120..4fbae6f6a49727df40f2793b42ca207d78ec272b 100644
-> --- a/drivers/gpio/gpio-idio-16.c
-> +++ b/drivers/gpio/gpio-idio-16.c
-> @@ -6,6 +6,7 @@
->
->  #define DEFAULT_SYMBOL_NAMESPACE "GPIO_IDIO_16"
->
-> +#include <linux/bitmap.h>
->  #include <linux/bits.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> @@ -107,6 +108,7 @@ int devm_idio_16_regmap_register(struct device *const dev,
->  	struct idio_16_data *data;
->  	struct regmap_irq_chip *chip;
->  	struct regmap_irq_chip_data *chip_data;
-> +	DECLARE_BITMAP(fixed_direction_output, IDIO_16_NGPIO);
->
->  	if (!config->parent)
->  		return -EINVAL;
-> @@ -164,6 +166,9 @@ int devm_idio_16_regmap_register(struct device *const dev,
->  	gpio_config.irq_domain = regmap_irq_get_domain(chip_data);
->  	gpio_config.reg_mask_xlate = idio_16_reg_mask_xlate;
->
-> +	bitmap_from_u64(fixed_direction_output, GENMASK_U64(15, 0));
-> +	gpio_config.fixed_direction_output = fixed_direction_output;
-> +
->  	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
->  }
->  EXPORT_SYMBOL_GPL(devm_idio_16_regmap_register);
->
-> --
-> 2.51.0
->
->
+This series makes some small improvements to the tc358768 driver, and
+then adds support for long commands, commands that have more than 8
+bytes of payload.
 
-Turns out, this requires commit ae495810cffe ("gpio: regmap: add the
-.fixed_direction_output configuration parameter") so I cannot queue it for
-v6.18. What do you want me to do? Send the first two ones upstream and apply
-this for v6.19?
+This has been tested on Toradex Verdin AM62 board, with a ST7703 based
+DSI panel which requires initial configuration using commands that have
+8+ bytes.
 
-Bartosz
+I tested the following combinations, by observing the panel visually and
+the DSI lanes with an oscilloscope:
+
+- HS command transfer, continuous clock
+- HS command transfer, non-continuous clock
+- LP command transfer, continuous clock
+- LP command transfer, non-continuous clock
+
+All except LP + continuous clock work fine. While observing the lanes
+with normal oscilloscope is a very high level and vague view of what
+exactly is going on the lanes, it still looks good to me: initial
+commands are sent in LP, and then video data is being sent in HS, and
+clock lane is continuous. However, the panel stays black, so something
+is not quite right.
+
+As it doesn't make sense to send commands in LP during initial
+configuration, especially with longer commands, I will leave that
+particular combination unresolved. I'd be interested to hear if it works
+on some other panel.
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Parth Pancholi (1):
+      drm/bridge: tc358768: Set pre_enable_prev_first for reverse order
+
+Tomi Valkeinen (6):
+      drm/bridge: tc358768: Fix typo in TC358768_DSI_CONTROL_DIS_MODE
+      drm/bridge: tc358768: Separate indirect register writes
+      drm/bridge: tc358768: Support non-continuous clock
+      drm/bridge: tc358768: Add LP mode command support
+      drm/bridge: tc358768: Separate video format config
+      drm/bridge: tc358768: Add support for long command tx via video buffer
+
+ drivers/gpu/drm/bridge/tc358768.c | 202 +++++++++++++++++++++++++++++---------
+ 1 file changed, 157 insertions(+), 45 deletions(-)
+---
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+change-id: 20251021-tc358768-93eb23689b7a
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
