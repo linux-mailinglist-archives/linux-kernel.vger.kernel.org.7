@@ -1,120 +1,113 @@
-Return-Path: <linux-kernel+bounces-862968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357C1BF6A96
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 104F8BF6ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D50C8355BAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:07:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 870D234934E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7553E7DA66;
-	Tue, 21 Oct 2025 13:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD04335068;
+	Tue, 21 Oct 2025 13:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xd6pG1eD"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b="STk6F8Kp"
+Received: from MTA-10-3.privateemail.com (mta-10-3.privateemail.com [198.54.127.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC4D2F2606
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38F125B2E7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052014; cv=none; b=n3OZJKlIces6+ZBdqrdoxq/FxQhmhDUzGoRAUGdrbsO/k5fbcwgTLDSHYkZS8Rb7TjCFU6ZGpqZ+e63XUjrD6UipZ440hUEQTr5aGFqOvpS/c8DaJFHgnjZz0FMo6hOBNCdJrTxk3LnM8EfFfbk4S+rRgH358ze5m5uMH77zwuc=
+	t=1761052197; cv=none; b=rCMtkrnYG4E/OxiKdWBk8CR8j83+iNDnbMc11GLtj9ma64wIka4G7kFtCSFUNZ55eEgbO9LlLaaUTDtjhhKsSJ+xwZi26dKMhBJ/HsRtG4YxzL/oDICyJBLRYmE2hsszlzZHyM5+jnnBCoNG1XCgI/MXcKDOfuJeGfxuo0Ymk1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052014; c=relaxed/simple;
-	bh=hscfUleXInkjfy7hd7tdmwZngxO3bR0028e/tHVvvPc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=R5282K7AHTs504EKEWT2PhkJSyHvi20hBEjAuR71Bg2ep6jynOYqe+TdO0MGd8Wh4cZXU0KsOYt/o4eMBupkbfvAcIkDvQbw4t5h2GG7D3hAa2JZFbegyVK3cW6XyxW1Wsjqu7wr4Kd08WDEhAhnZkuiAiGJ7WE5fmKdS8evlw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xd6pG1eD; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4710c04a403so58748125e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761052011; x=1761656811; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vytLTdIwa+WbtX24vkTZ/PerhXM2X8ctk8Nuy74R66I=;
-        b=xd6pG1eDI88rC+diF7c1q7X2PdWvXSIs6M9J8X0B+UQAnGVOcrRy5/V8Yi2481uZwQ
-         x2Z6PTBGQ9xFJLxSzD+mCRGUZ4QeTCPW4NIQJjEeqpVxxl/TSzTN9eKFCPnsb7UyOasg
-         87La4fJAoKafsOQlJha5aXf4eVRfnY+MzTysRlWNFTUn4AV2HZIqJsNcoEeVR802U8GX
-         GgPxxaE72YBwcJD/FzS8Thph95WwOb3JapMnnt1BO95N3pzvsZvCiYHWQFXPvF2G83NO
-         xI3YJSd4c0NxqV5r1X2HNLUO+dUcQgU20ASEztIYJ40JOOKfNePKiYqODRmgtUABT766
-         HD4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761052011; x=1761656811;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vytLTdIwa+WbtX24vkTZ/PerhXM2X8ctk8Nuy74R66I=;
-        b=b8Y1P/0/jE1caygRL4bXgfFyemGZRRTOMwe6bgFiRGlUT+WWi8PD/vQ+jUo2nIISca
-         LIcbULR40pH1X/IFS+DsgIlL2K4gSq3s/EopdqIi9LpLQuL0C5cTRacQdJu/jBkWkCR7
-         pyQhliOfGh6SWELDXczQRQFFpGRUhQQD2nRZGky8b7Vl5JtXVmB59ku4203KpVg7Xgy/
-         lZTvLEDxoSZUMpKDLmib4aB1QJz1GpTuPHI/T/T/M8tSU8H7SoaXd8oSIsMONtpPICD7
-         yKbne3gpW2Y8oZsIrPly7posjkUIo3CThK0dBIUeXZgqqb0OnyvdGr/iP/bNr9JtUOqs
-         ZLkg==
-X-Gm-Message-State: AOJu0Yy/wH77KCbVBu72HhzbLesNzjrtOEn01tMTBVVGt/BPbqfD3Gz3
-	7RIgGqXGal2f3n6GW55Zxyuls7uFxFoh/7UUDegL2mXBnbYNlsAsi3waWSs5WJScaqDpBixvs/V
-	pnyNKQF3bDCPe8Q==
-X-Google-Smtp-Source: AGHT+IGSzs7iMqYPLU0YiHOe8puE6jF7fJT/LuwZuqToX62az6sZMIwqFnCidiR1lX4NWk3y/UexY9EKcN4gHw==
-X-Received: from wmaz8.prod.google.com ([2002:a05:600c:6d88:b0:46e:2f78:5910])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3e8f:b0:45f:2919:5e6c with SMTP id 5b1f17b1804b1-471178b123fmr129426775e9.16.1761052011576;
- Tue, 21 Oct 2025 06:06:51 -0700 (PDT)
-Date: Tue, 21 Oct 2025 13:06:50 +0000
-In-Reply-To: <20251003-x86-init-cleanup-v1-0-f2b7994c2ad6@google.com>
+	s=arc-20240116; t=1761052197; c=relaxed/simple;
+	bh=8cc/fv7/OOSomgfno6O4D90HKCc6nbLeOKP6JrzujBY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DKKqGKFJH9dS/WDcTFUHAseZTare5jrW8Mcq7wxazHbdKsO4j3vzlHO6o2xDEZK7CO0MnqVryv9/i6OYkUxGGVLJ9O06DjJJJrdJm2bI5I3V3mAG2LMqnoNwl4JkyBXFlKb4InZYKMxZERRff7nIds1L95txiaGkXDRNaNM3//A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lukowski.dev; spf=pass smtp.mailfrom=lukowski.dev; dkim=pass (2048-bit key) header.d=lukowski.dev header.i=@lukowski.dev header.b=STk6F8Kp; arc=none smtp.client-ip=198.54.127.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lukowski.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lukowski.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lukowski.dev;
+	s=default; t=1761052193;
+	bh=8cc/fv7/OOSomgfno6O4D90HKCc6nbLeOKP6JrzujBY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=STk6F8KpfijOKfpPhTMQRl9QE0wiwaa+PSkwzOwGM9EbzoaBpF72BX5NvcQ/r1qCm
+	 15JUDmGHQTOgFn7UPB3KqMwGF0w23QjZaegh5QN6Ppdu0tErWlQh6bmB6mghQzanEO
+	 xILyI7Js9BDCw8r9AzvwrmB4VXibbsAzc4HXMPttV6vwrXfA7hzmh4ALetsvKCbYKQ
+	 1xfeiLV1PZmTYO5I/TBdCyUodoywhcUgMZ8Vl4a+GqMd2i1QjE92BaT6tx2eaqdkQT
+	 kTbpjOLIdHoWGrOHENPkuxjTm9/VWjTElIFgPsU0F91aBbUDucW4YmNyfiFwE2CAhd
+	 pS851kgCpzXfQ==
+Received: from mta-10.privateemail.com (localhost [127.0.0.1])
+	by mta-10.privateemail.com (Postfix) with ESMTP id 4crXhK5bBhz3hhV0;
+	Tue, 21 Oct 2025 09:09:53 -0400 (EDT)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa (unknown [150.228.61.72])
+	by mta-10.privateemail.com (Postfix) with ESMTPA;
+	Tue, 21 Oct 2025 09:09:46 -0400 (EDT)
+From: Olle Lukowski <olle@lukowski.dev>
+Subject: [PATCH v2 0/3] staging: most: replace BUG_ON() with proper error
+ handling
+Date: Tue, 21 Oct 2025 16:09:27 +0300
+Message-Id: <20251021-staging-most-warn-v2-0-cd51e1e717f6@lukowski.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003-x86-init-cleanup-v1-0-f2b7994c2ad6@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDO0U51QORMC.2UIDZU10FAFH0@google.com>
-Subject: Re: [PATCH 0/4] x86/mm: some cleanups for pagetable setup code
-From: Brendan Jackman <jackmanb@google.com>
-To: Brendan Jackman <jackmanb@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32NQQ6CMBBFr0Jm7Rha25i48h6GRaEjTNDWdKBoC
+ He3cgCX7yX//RWEEpPApVohUWbhGAroQwXd4EJPyL4w6FpbVWuFMrmeQ4/PKBMuLgW0ylOryVj
+ jHJTdK9Gd33vz1hQeWKaYPvtFVj/7r5YV1mg6709nY9vWd9fHPMZFRj56ytBs2/YFEOz7xLUAA
+ AA=
+X-Change-ID: 20251021-staging-most-warn-51deb2e454aa
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
+ Christian Gromm <christian.gromm@microchip.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Olle Lukowski <olle@lukowski.dev>
+X-Mailer: b4 0.14.3
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Fri Oct 3, 2025 at 4:56 PM UTC, Brendan Jackman wrote:
-> Per discussion in [0] I'm looking for ways to refactor this code to make
-> ASI easier to deal with. But, while looking, I found some little things
-> that seem like just straightforward cleanups without any real
-> refactoring needed. So let's start there.
->
-> The last two patches are closely related and could potentially be
-> squashed, but I've split it in two because the first half is trivial,
-> the second is more tricky and likely to be wrong.
->
-> This applies to tip/master.
->
-> [0] https://lore.kernel.org/all/20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com/T/#t
->
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-> ---
-> Brendan Jackman (4):
->       x86/mm: delete disabled debug code
->       x86/mm: harmonize return value of phys_pte_init()
->       x86/mm: drop unused return from pgtable setup functions
->       x86/mm: simplify calculation of max_pfn_mapped
->
->  arch/x86/include/asm/pgtable.h |  3 +-
->  arch/x86/mm/init.c             | 19 ++++----
->  arch/x86/mm/init_32.c          |  5 +--
->  arch/x86/mm/init_64.c          | 99 ++++++++++++++----------------------------
->  arch/x86/mm/mm_internal.h      | 11 ++---
->  5 files changed, 48 insertions(+), 89 deletions(-)
-> ---
-> base-commit: 47870f1fa057a411519108f0833dd2603179234f
-> change-id: 20251003-x86-init-cleanup-0ad754910bac
->
-> Best regards,
+This small series replaces BUG_ON() calls in three staging MOST drivers
+with appropriate error handling.
 
-Hey, is anyone able to take a look at this?
+The affected drivers are:
+
+  - drivers/staging/most/i2c/i2c.c
+  - drivers/staging/most/dim2/dim2.c
+  - drivers/staging/most/video/video.c
+
+All changes are mechanical and do not alter runtime behavior, except that
+the kernel won't panic if a driver invariant is violated.
+
+Tested with checkpatch.pl and compile-tested (make M=drivers/staging/most).
+
+Signed-off-by: Olle Lukowski <olle@lukowski.dev>
+---
+Changes in v2:
+- Drop WARN_ON_ONCE() per review (Greg KH). Many systems enable
+  panic_on_warn; use plain checks + error returns instead.
+- Link to v1: https://lore.kernel.org/r/20251021-staging-most-warn-v1-0-4cdd3745bbdc@lukowski.dev
+
+---
+Olle Lukowski (3):
+      staging: most: i2c: replace BUG_ON() with proper checks and error returns
+      staging: most: dim2: replace BUG_ON() with proper checks and error returns
+      staging: most: video: replace BUG_ON() with proper check
+
+ drivers/staging/most/dim2/dim2.c   | 27 +++++++++++++++++++--------
+ drivers/staging/most/i2c/i2c.c     |  9 ++++++---
+ drivers/staging/most/video/video.c |  3 ++-
+ 3 files changed, 27 insertions(+), 12 deletions(-)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251021-staging-most-warn-51deb2e454aa
+
+Best regards,
+-- 
+Olle Lukowski <olle@lukowski.dev>
+
 
