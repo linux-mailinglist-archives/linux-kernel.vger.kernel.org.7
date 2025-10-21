@@ -1,152 +1,97 @@
-Return-Path: <linux-kernel+bounces-863126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4ABBF712F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4850EBF723E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FBAB504FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212E618868A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC3733DED1;
-	Tue, 21 Oct 2025 14:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744BB2749C5;
+	Tue, 21 Oct 2025 14:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="0tYh6Nke"
-Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
+	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="F0J6y++B"
+Received: from mail19.out.titan.email (mail19.out.titan.email [3.64.226.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABBE33CEB1;
-	Tue, 21 Oct 2025 14:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AE822FE0E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.226.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761056913; cv=none; b=KhRbdb6sJmWiDv+TVIrvbPsxBQ/0pAq10G+P0rlrrsL6G4D+EZJ3haSp4BfCHYk8EI5K/bZjLCMTh2ivIICcjIu0bZe/kRfeJ24yMhL6ypmzA7JnhepYKtk69vNJ3b7A3Egd1ykchSO0v/GWiqWWPShGMjwBZYRbdC9vnCVCAVM=
+	t=1761057935; cv=none; b=myJsgmk+wCsb2a1etq5ZKL/ldGpTKdnfkERvrfvD+3diobQ/mQrYvDrJ5kZOva9JxFdjrPJ8pmKIgUZSiWlN+0qFkJywNcSSmhp52NNwA5RB/Louw6Vv/B2HC/YZnuOD2D3A5vSRbj8hIkcnOU4ZQCMPSl9V40dBuveinizokQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761056913; c=relaxed/simple;
-	bh=kIjr2ON/PurIYOXE+LNsjEc2BbF67/ys+PB2KDggH2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XG4HtzRGDRvA71lhbdCyJnLz/nxL70ibueySqhqBQyqrRgf2Ke+Q+7OhCs/Jt3uciuQiwqLGK3aLml+96EurVG5fhpDHk0b7jLCqod/R2DHY34D1MCjp5n1kYR2RwJe46c9I3RnYGSKdFea1oX43WUjGkZsXh2ze6LCVPFbkBZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=0tYh6Nke; arc=none smtp.client-ip=91.198.250.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4crZR00gqLz9ttm;
-	Tue, 21 Oct 2025 16:28:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1761056908;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5x3oERtMwu9v6VSR766wyFue1jS0wUt8HyF2GQPQzSU=;
-	b=0tYh6Nke7uPFz4pSjzTyBWQIujeuYe1lOoJ1S34z3MEvEPb7Pq8wPBCw2+ohmACoU2NoJv
-	AHceXXjHrP4aQ9pfQDgD6Jx+b/CZPUSo9LyHGYe4rMwrRhkM5gC9QdezN+0jV8/iIFUKNM
-	TSfTPlh7pr7BCOEmgJouEAxFsAmUAdqS3YGIKmtLWP9cvSkWTwEDKAc+kd5KKe1d53cXLe
-	UpB3t0OU0X597GqQ1/nZery7UGM4GYMLFSw3H1dtrByD3cRzT5WHJblfR/0jXYUkcBTS1E
-	hmwYe4kZ+IjhOlN+gh+ik75GiVVX7yXXvUcmxG5TXdWBRruC4jfgXmOYkBY7Lg==
-From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
-To: linux-btrfs@vger.kernel.org
-Cc: clm@fb.com,
-	dsterba@suse.com,
-	johannes.thumshirn@wdc.com,
-	fdmanana@suse.com,
-	boris@bur.io,
-	wqu@suse.com,
-	neal@gompa.dev,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
-Subject: [PATCH 4/4] btrfs: add ASSERTs on prealloc in qgroup functions
-Date: Tue, 21 Oct 2025 16:27:49 +0200
-Message-ID: <20251021142749.642956-5-mssola@mssola.com>
-In-Reply-To: <20251021142749.642956-1-mssola@mssola.com>
-References: <20251021142749.642956-1-mssola@mssola.com>
+	s=arc-20240116; t=1761057935; c=relaxed/simple;
+	bh=AveatL9pt5Ba1OWtudoGfLD4mfWX2mDy+IqL3/ucg3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bzLeJ8oTX13XQC1zlD4uE3kzRU8VCD1E9mudYcK1mK+OPAIbdK0n9NXEpshG9lK2pjqRswrVBdszgvEpCT1Qdb67rvN0lTpHg+MuY7mlQHqGJedgPdkGKrgmKPyRRtfV83E14zmnyRIliOcikd/9IbVDazch9B84ha8p+kU55vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=F0J6y++B; arc=none smtp.client-ip=3.64.226.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out0101.titan.email (Postfix) with ESMTP id 4crZRG5WC2z4vxJ;
+	Tue, 21 Oct 2025 14:28:42 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=FT6F8lxdsXIxZJ5Uz5oR0Tp97ixFg9xUf4/QWCRvvM4=;
+	c=relaxed/relaxed; d=techsingularity.net;
+	h=from:message-id:mime-version:cc:subject:to:date:from:to:cc:subject:date:message-id:in-reply-to:reply-to:references;
+	q=dns/txt; s=titan1; t=1761056922; v=1;
+	b=F0J6y++BM6PQ1Y5ac9nn8uS9DDNbNiAG1BTqeusCXqE5AcY9wm4m/MxQsIGAgRTLs29EMcMe
+	7mx0Fs6+42wx+llq9Wt0/u5R990ioOSdGcsRRwnpYA9LVx3yxW8Xim7DfbG8nU5SaGegONbQc9I
+	OfiO6LzrNiSode8VxiU4Neqo=
+Received: from morpheus.112glenside.lan (ip-84-203-16-53.broadband.digiweb.ie [84.203.16.53])
+	by smtp-out0101.titan.email (Postfix) with ESMTPA id 4crZRF3nhpz4vxF;
+	Tue, 21 Oct 2025 14:28:41 +0000 (UTC)
+Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
+From: Mel Gorman <mgorman@techsingularity.net>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chris Mason <clm@meta.com>,
+	Mel Gorman <mgorman@techsingularity.net>
+Subject: [RFC PATCH 0/2] Reintroduce NEXT_BUDDY for EEVDF v2
+Date: Tue, 21 Oct 2025 15:28:22 +0100
+Message-ID: <20251021142824.3747201-1-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1761056922593006664.2237.8990852766471748465@prod-euc1-smtp-out1002.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=Rqw/LDmK c=1 sm=1 tr=0 ts=68f7989a
+	a=SAet2ifMzLisiRUXZwfs3w==:117 a=SAet2ifMzLisiRUXZwfs3w==:17
+	a=CEWIc4RMnpUA:10 a=QcgZxE_Df_qfIiiupLUA:9 a=zgiPjhLxNE0A:10
 
-The prealloc variable in these functions is always initialized to
-NULL. Whenever we allocate memory for it, if it fails then NULL is
-preserved, otherwise we delegate the ownership of the pointer to
-add_qgroup_rb() and set it right after to NULL
+I've been chasing down a number of schedule issues recently like many
+others and found they were broadly grouped as
 
-Since in any case the pointer ends up being NULL at the end of its
-usage, we can safely remove calls to kfree() for it, while adding an
-ASSERT as an extra check.
+1. Failure to boost CPU frequency with powersave/ondemand governors
+2. Processors entering idle states that are too deep
+3. Differences in wakeup latencies for wakeup-intensive workloads
 
-Signed-off-by: Miquel Sabaté Solà <mssola@mssola.com>
----
- fs/btrfs/qgroup.c | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+Adding topology into account means that there is a lot of
+machine-specific behaviour which may explain why some discussions
+recently have reproduction problems. Nevertheless, the removal of
+LAST_BUDDY and NEXT_BUDDY being disabled has an impact on wakeup
+latencies.
 
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index 6adb57d5c958..664135240803 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -1263,7 +1263,14 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_info,
- 		btrfs_end_transaction(trans);
- 	else if (trans)
- 		ret = btrfs_end_transaction(trans);
--	kfree(prealloc);
-+
-+	/*
-+	 * At this point we either failed at allocating prealloc, or we
-+	 * succeeded and passed the ownership to it to add_qgroup_rb(). In any
-+	 * case, this needs to be NULL or there is something wrong.
-+	 */
-+	ASSERT(prealloc == NULL);
-+
- 	return ret;
- }
- 
-@@ -1693,7 +1700,12 @@ int btrfs_create_qgroup(struct btrfs_trans_handle *trans, u64 qgroupid)
- 	ret = btrfs_sysfs_add_one_qgroup(fs_info, qgroup);
- out:
- 	mutex_unlock(&fs_info->qgroup_ioctl_lock);
--	kfree(prealloc);
-+	/*
-+	 * At this point we either failed at allocating prealloc, or we
-+	 * succeeded and passed the ownership to it to add_qgroup_rb(). In any
-+	 * case, this needs to be NULL or there is something wrong.
-+	 */
-+	ASSERT(prealloc == NULL);
- 	return ret;
- }
- 
-@@ -3301,7 +3313,7 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
- 	struct btrfs_root *quota_root;
- 	struct btrfs_qgroup *srcgroup;
- 	struct btrfs_qgroup *dstgroup;
--	struct btrfs_qgroup *prealloc;
-+	struct btrfs_qgroup *prealloc = NULL;
- 	struct btrfs_qgroup_list **qlist_prealloc = NULL;
- 	bool free_inherit = false;
- 	bool need_rescan = false;
-@@ -3542,7 +3554,14 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
- 	}
- 	if (free_inherit)
- 		kfree(inherit);
--	kfree(prealloc);
-+
-+	/*
-+	 * At this point we either failed at allocating prealloc, or we
-+	 * succeeded and passed the ownership to it to add_qgroup_rb(). In any
-+	 * case, this needs to be NULL or there is something wrong.
-+	 */
-+	ASSERT(prealloc == NULL);
-+
- 	return ret;
- }
- 
+This RFC is to determine if this is valid approach to prefer selecting
+a wakee if it's eligible to run even though other unrelated tasks are
+more eligible.
+
+ kernel/sched/fair.c     | 131 ++++++++++++++++++++++++++++++++++------
+ kernel/sched/features.h |   2 +-
+ 2 files changed, 112 insertions(+), 21 deletions(-)
+
 -- 
-2.51.1
+2.51.0
 
 
