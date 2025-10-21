@@ -1,225 +1,139 @@
-Return-Path: <linux-kernel+bounces-863402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFC3BF7CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:54:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B000BF7CB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D390D19A58C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:55:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4AF74ED8F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA43348873;
-	Tue, 21 Oct 2025 16:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA8B34A770;
+	Tue, 21 Oct 2025 16:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="LDmR2LIF"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNRc5cnX"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ADD2417C6
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D67347BDF
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761065677; cv=none; b=UnHhTaHJ/cjTAVt/S82BGVWrKYgNBvGgCt+rOkLS62S/urRSsC4BEZtwt1wm3gd4X6Ry+do7V2SUKxw6OOppTHLHsNxsLmGxOrXwv4s5v3dyf6xRgiXf1LB7JZxcIELEfYQ4sOHf4WnEj3XXy4DYluPvJKU4Z3ubcm2pfcJs+SM=
+	t=1761065707; cv=none; b=DqLccU4HwwdGSrTatgoiDTRqcmA2PnWgYVHhZQ94h9GvT5wiCJ7koaEn3rbrT71nIoxUPrajf9vUgOJy1B8rJpG3iyHLErq0XuKoQeAkRJ3w2/FTwp56eu2mP50dqQMaayD0G9W3SrxMoRw1pYlmc7UjyBlGg8MKALezuAu4htU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761065677; c=relaxed/simple;
-	bh=XURSssHuftoDoe3E17yrlio+PLVS3suZlc0AWmmwdMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z+d37NzSl7yvAAMkvAHYjjMRSPu86RuLqre5zTMlHL2RiCojpqNZwBaxWuBxpllXW7vgUGgeZfHiQDsLeiKCdgM/VMeSLqR5hw3B+tPoCqifn5AFCuNx7S6eWAxlv2X5i81LRUSrBP0Ad117O/XKBKegcFBpNZ36WLRU7+soITg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=LDmR2LIF; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6501434bd3aso132954eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:54:35 -0700 (PDT)
+	s=arc-20240116; t=1761065707; c=relaxed/simple;
+	bh=MD15u5LqqmayWloxdzFGq0sNLTBc1b1Ii0ATLOQcv8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qhNFx56vWnC3sWUk0pfIgMI0ZYu2QROFSaicsY+E2pwhv8pNXnXhkM5eZDejfO5bzfTiGVTMZjJl22p3Fnxs6ArtYB3BIajsr4r+lCff/6cN4bwqB8U4GvdrNkNIu9Bf53iykdpwmcidTuZBRFxum53pkj+6CGM1JmPUEIocock=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNRc5cnX; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso46578f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1761065675; x=1761670475; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oNy+j4PmwvmvY+OsbiHCo48pl2iOpTBysiMrSrZOctk=;
-        b=LDmR2LIFiorjnvFSDEiETVsifGkKQXNq65m5hJ4Njv+piD/J0xqvOe8BCCX2Q9jUrc
-         rD1BnySo0/0qhXivAO0Mu0heRXJUZn45ARONqjJdg3OKg0TzTPME+0GeSUPAMLwSnuMQ
-         Znw6EWOcbcv2F9Gq1FZV2DNef5cR2o4iJgKZtXl2LSGmnilfkOPXg1HZvZlxE3VYUiAF
-         65bth5QBxNJxgHGq7dfZlGB0zrKcrxjWmd1+PljkLU5qeUxEix8f3PgSqdCkxJ9Eiz4t
-         41L0PHQtsXnfMmcdIpv1YQ7gMOo6bWvpTxZjR04Voo8bSfQakyEiWD2qO2D9lvERIqnl
-         Da+Q==
+        d=gmail.com; s=20230601; t=1761065704; x=1761670504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qn9OLNMyl8gChDp28IqA1MLvsXpL32JwaHFC00xTtCc=;
+        b=NNRc5cnXLfbWheS5JvW+1vO5mWwePGxYnLtn01PAfA8vOtmQgEH3BXpgbYE8SclLYk
+         8a4pbZfjxmSgujPZLxwhP4zb96V/v8PsjkxYq1YdTF7DUAnudpRCWr0wK4tJOu59Hc0G
+         09WR0FfLVoRl0GkpwNk+vbcDMiSEGpRwRZ84fgxqepsGR4WGySjqrbof4L8qqRsutft4
+         ndac/Fn9/YZEYqqiLSXOskn3N0ca1MHiHvZOZQMHxqqE+zgiIlcm5aQMd4QGEx7qktQH
+         g1opwS5cWzwg2yrN7pyEQq5CR+69rPX0HDQBjYnXAISKd8JS4rrhIh0DjmEPMDfGXccI
+         dy/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761065675; x=1761670475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oNy+j4PmwvmvY+OsbiHCo48pl2iOpTBysiMrSrZOctk=;
-        b=A9S5oDNxt3S90pd6ForUL1TM+5MNJlmjsXoLEEo1JUMdT9AwUOXxCpDr4Q9IRbhinO
-         ot8F/BP1jvvfOlzwyItiWqU2lHrSkKxQi2ETr4UxZm1veZ/UtB/xVuh7S5ygpbuX/xFm
-         5/f3PKbdgO5EEpmy3aLmH1yfz6Mge/tg7pcZDgr2iFBhF/wTSbWDH0DQm8tbLBoU69x9
-         mpcEIXg/9AOxHc2Zqo6PEwnm6ZJP7zpyPsi+StLExUBD1exiiLagJiUcNSVu/JYUkAvz
-         jMyE6bRiRfSje8cbb2DIjUtGD/H9IwAwaTjERb3z7e2ZKDyS2axWkmlaOtVkywDCmKta
-         DcDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgCMUsp/N6rxJaUQGBSLseIwquc/QWx5FCWAzUEdkbX1u0t1AcppslWk3b4W+UhnZbg/cFrqIuxinxg3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdSYp/FIb7197sVCTJeLv+gBD6yZh8rReuCLwXYKrAlnEF99aU
-	/a/n7GGzA7Ie9Fg9w6f+ianjHYn1Z8aEWK0gnZhPKq3ODiLjpGqlXwtLhv9yixvy1BNBYh6GN1P
-	s7kgXkmTn7YJ7wa2uxIEq/olkdCjMUlWowfh9zlly
-X-Gm-Gg: ASbGncsrj9evrspbIyYeWvhSh2Lv4/YwTSuZ+/dDeTbjcQjbjxGZ9aDHipUZr6hralG
-	m0tyk5k+NA3hL6HpGiIMOop81nYmcOPHh/5akgJKZck3i2yzBt0DBHYbMzfXf6juWSifPZPcbng
-	SLoKaDaxngqihGMRqjo9jSsS6LaVAub5j0Sbnz4yq6nVkUS4ZA3j9HZmAYxJh1hcfHjoHCWOivU
-	rTyT/VAX+flFTZ6+oZ1tHgYY47rFuE9KBMHd2UZQTYJEIjwVt8xxdiBa2vMudh2LyEb8nkn6CpO
-	1pbpymE4pUbTHLf7w19TIxtlg6036w==
-X-Google-Smtp-Source: AGHT+IHd+N85W3tNQEdP2S6Rfb+pCua46m8SSDvZmUaeZyp6Sbd1DD3c8I9EgfZgOajQFAujwfV04LkWWVcBVgHwfFU=
-X-Received: by 2002:a05:6871:a90b:b0:3c9:88eb:39ba with SMTP id
- 586e51a60fabf-3cd88b2efabmr830250fac.2.1761065674736; Tue, 21 Oct 2025
- 09:54:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761065704; x=1761670504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qn9OLNMyl8gChDp28IqA1MLvsXpL32JwaHFC00xTtCc=;
+        b=I/ywBxrQTR7LcKQ5gFxeLDzUFctuD3lxl1gIZ5g6293NMVOsn55/skHu+f1YIlHAJx
+         UCbUPzzeU2QElDQNe6NGuKsgN4R6fn7UHAZu1dC6XVrCtdq2rVLyFmVE3by0C4xg4Gdt
+         +WCSufVbpjaCEV1EI8/Riv/ftXLT69Axfvbto3qHctrJUw4dN1aqjtTsShD31A4NqlJ2
+         wajwzsjzY+0JWjZlGqEDquc0PfjRZo1MJ+BLi5rvmCtjeYx4jNMKMzEJNKptgP9L0p6l
+         er11JJ4i66Ynrl32NU+sFCxeNGMCvioZgu9Uzr7xMqdotoUm8ywefTGI9uvxVjEE0bLV
+         gp2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXbIjA64x5sZXf2dh6YnOLDksI5Ggkb9docOI5B22DWZm2e21FI4G9uY6wLY/bb2yQ5dEoUQmVGJwElX9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3SkFzPRZnt4fpjZZmzKqLb/wU4tvaJo0Pyf7P1pypH1YVs86D
+	RA+PsAjwhgFrYYee+Ww2aBDwMyPGbiaSrHJWpDJ4WgpXU4tl47VCH2mb
+X-Gm-Gg: ASbGncsk5Y7w0ERmjwVG8AVzEHLOB5KXqWC17yu6N/mi9fgKz8AuN4bsl8IbdtnqMe7
+	y+wkupYOLozv3NiKUzY1P9lnkblUyeIbLGq+yT6kJIWaM0isgwpVtwRKWOjxwyHCO1vb8Vp2qkq
+	7QRmYKgTI1Q1XIiEbT/evyndo/P3FWARIAqpP2p2wAgW80kEy0zgzWBP2MdkEhsBdBabGZwYTNA
+	LtGmasAMm6dGHkgCkrQVCTK+eSJqMMV+X+Czwv8a3ubfF1GFvU/cqz3KJieBppldE6C03dQ9Q/s
+	m4yrASWcFEVLLtTDajFwfHTqidxoHq/wSa9vO3FmyOdCZeEofFmgmg1D2FLxytWbZH4tAXWGtu0
+	5XS1UhP4Nypehh1vcfEevlB/jYDCSD44U5l4rCVhM9Z1gu4+6/gABoF6qbR6ocMcpM61ZS9MG/G
+	8HN4Pg+Uyg79tWOxUAaU+iOXnqJDptxnrlE2fhiEscObiqewU7+15imc0BbETa/pYib+SZWg==
+X-Google-Smtp-Source: AGHT+IFB8n84f69J64AkWR9VGuZDwOZaYOeLxR1PP9RJZ4VLcpx4xH2b3szKu1AMRcrRkxak/JLlHg==
+X-Received: by 2002:a5d:5847:0:b0:3dc:1473:17fb with SMTP id ffacd0b85a97d-428531c8828mr255369f8f.20.1761065704306;
+        Tue, 21 Oct 2025 09:55:04 -0700 (PDT)
+Received: from alessandro-pc.station (net-2-37-207-41.cust.vodafonedsl.it. [2.37.207.41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c427f77bsm1649005e9.3.2025.10.21.09.55.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 09:55:04 -0700 (PDT)
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftest: net: prevent use of uninitialized variable
+Date: Tue, 21 Oct 2025 18:54:33 +0200
+Message-ID: <20251021165451.32984-1-alessandro.zanni87@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926155612.2737443-1-adriana@arista.com>
-In-Reply-To: <20250926155612.2737443-1-adriana@arista.com>
-From: Adriana Nicolae <adriana@arista.com>
-Date: Tue, 21 Oct 2025 19:54:23 +0300
-X-Gm-Features: AS18NWAE34AW-EBbE9MlZrdkKS3cRaCCpN7jIooL-2OOkopjMrwBGF8_e1m_gQQ
-Message-ID: <CAERbo5z81zhxzu3+BAd23QzgpFoCMH6-AsYm4sBfoA0YXO3TOg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] DMI: Scan for DMI tbale from DTS info
-To: jdelvare@suse.com, linux-kernel@vger.kernel.org
-Cc: Vasiliy Khoruzhick <vasilykh@arista.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello maintainers,
+Fix to avoid the usage of the `ret` variable uninitialized in the
+following macro expansions.
 
-Following up on this patch, I was wondering if there have been any
-prior discussions or similar requests?
+It solves the following warning:
 
-I would also appreciate your feedback on the proposed changes.
+In file included from netlink-dumps.c:21:
+netlink-dumps.c: In function ‘dump_extack’:
+../kselftest_harness.h:788:35: warning: ‘ret’ may be used uninitialized [-Wmaybe-uninitialized]
+  788 |                         intmax_t  __exp_print = (intmax_t)__exp; \
+      |                                   ^~~~~~~~~~~
+../kselftest_harness.h:631:9: note: in expansion of macro ‘__EXPECT’
+  631 |         __EXPECT(expected, #expected, seen, #seen, ==, 0)
+      |         ^~~~~~~~
+netlink-dumps.c:169:9: note: in expansion of macro ‘EXPECT_EQ’
+  169 |         EXPECT_EQ(ret, FOUND_EXTACK);
+      |         ^~~~~~~~~
 
-Thank you,
-Adriana
+The issue can be reproduced, building the tests, with the command:
+make -C tools/testing/selftests TARGETS=net
 
-On Fri, Sep 26, 2025 at 6:56=E2=80=AFPM adriana <adriana@arista.com> wrote:
->
-> Allow DMI decoding to use custom addresses stored in Device Tree
->
-> Some bootloaders like U-boot, particularly for the ARM architecture,
-> provide SMBIOS/DMI tables at a specific memory address. However, these
-> systems often do not boot using a full UEFI environment, which means the
-> kernel's standard EFI DMI scanner cannot find these tables.
->
-> The bootloader can specify the physical addresses of the SMBIOS and
-> SMBIOS3 tables in the /chosen node using the "linux,smbios-table" and
-> linux,smbios3-table properties. This patch hooks into the DMI
-> initialization process to read these properties, map the tables,
-> and parse the DMI information.
->
-> This extra scan is performed after the standard EFI check fails but
-> before the fallback memory scan, not to alter the order of DMI scanning
-> for current implementation.
->
-> Signed-off-by: Adriana Nicolae <adriana@arista.com>
->
-> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-> index 70d39adf50dc..ea3ed40d0370 100644
-> --- a/drivers/firmware/dmi_scan.c
-> +++ b/drivers/firmware/dmi_scan.c
-> @@ -10,6 +10,9 @@
->  #include <linux/random.h>
->  #include <asm/dmi.h>
->  #include <linux/unaligned.h>
-> +#if IS_ENABLED(CONFIG_OF)
-> +#include <linux/of.h>
-> +#endif
->
->  #ifndef SMBIOS_ENTRY_POINT_SCAN_START
->  #define SMBIOS_ENTRY_POINT_SCAN_START 0xF0000
-> @@ -670,6 +673,70 @@ static int __init dmi_smbios3_present(const u8 *buf)
->         return 1;
->  }
->
-> +#if IS_ENABLED(CONFIG_OF)
-> +/**
-> + * dmi_scan_from_dt - Find and parse DMI/SMBIOS tables from the Device T=
-ree
-> + *
-> + * Checks if the bootloader has passed SMBIOS table addresses via the /c=
-hosen
-> + * node in the Device Tree. This follows the standard kernel DT bindings=
- and
-> + * assumes a fixed 32-byte mapping for the entry point.
-> + * Returns true if a valid table is found and successfully parsed.
-> + */
-> +static bool __init dmi_scan_from_dt(void)
-> +{
-> +       struct device_node *chosen;
-> +       const __be64 *prop;
-> +       char buf[32];
-> +       void __iomem *p;
-> +       bool dmi_available =3D false;
-> +       u64 addr;
-> +       int len;
-> +
-> +       chosen =3D of_find_node_by_path("/chosen");
-> +       if (!chosen)
-> +               return false;
-> +
-> +       /* SMBIOSv3 (64-bit entry point) has priority */
-> +       prop =3D of_get_property(chosen, "linux,smbios3-table", &len);
-> +       if (prop && len >=3D sizeof(u64)) {
-> +               addr =3D be64_to_cpup(prop);
-> +
-> +               p =3D dmi_early_remap(addr, 32);
-> +               if (p =3D=3D NULL)
-> +                       goto out;
-> +
-> +               memcpy_fromio(buf, p, sizeof(buf));
-> +               dmi_early_unmap(p, 32);
-> +
-> +               if (!dmi_smbios3_present(buf)) {
-> +                       dmi_available =3D true;
-> +                       goto out;
-> +               }
-> +       }
-> +
-> +       prop =3D of_get_property(chosen, "linux,smbios-table", &len);
-> +       if (prop && len >=3D sizeof(u64)) {
-> +               addr =3D be64_to_cpup(prop);
-> +
-> +               p =3D dmi_early_remap(addr, 32);
-> +               if (p =3D=3D NULL)
-> +                       goto out;
-> +
-> +               memcpy_fromio(buf, p, sizeof(buf));
-> +               dmi_early_unmap(p, 32);
-> +
-> +               if (!dmi_present(buf))
-> +                       dmi_available =3D true;
-> +       }
-> +
-> +out:
-> +       of_node_put(chosen);
-> +       return dmi_available;
-> +}
-> +#else
-> +static bool __init dmi_scan_from_dt(void) { return false; }
-> +#endif /* IS_ENABLED(CONFIG_OF) */
-> +
->  static void __init dmi_scan_machine(void)
->  {
->         char __iomem *p, *q;
-> @@ -718,6 +785,13 @@ static void __init dmi_scan_machine(void)
->                         dmi_available =3D 1;
->                         return;
->                 }
-> +       } else if (IS_ENABLED(CONFIG_OF) && dmi_scan_from_dt()) {
-> +               /*
-> +                * If EFI is not present or failed, try getting SMBIOS
-> +                * tables from the Device Tree.
-> +                */
-> +               dmi_available =3D 1;
-> +               return;
->         } else if (IS_ENABLED(CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK)) =
-{
->                 p =3D dmi_early_remap(SMBIOS_ENTRY_POINT_SCAN_START, 0x10=
-000);
->                 if (p =3D=3D NULL)
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+---
+ tools/testing/selftests/net/netlink-dumps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/net/netlink-dumps.c b/tools/testing/selftests/net/netlink-dumps.c
+index 7618ebe528a4..8ebb8b1b9c5c 100644
+--- a/tools/testing/selftests/net/netlink-dumps.c
++++ b/tools/testing/selftests/net/netlink-dumps.c
+@@ -112,7 +112,7 @@ static const struct {
+ TEST(dump_extack)
+ {
+ 	int netlink_sock;
+-	int i, cnt, ret;
++	int i, cnt, ret = 0;
+ 	char buf[8192];
+ 	int one = 1;
+ 	ssize_t n;
+-- 
+2.43.0
+
 
