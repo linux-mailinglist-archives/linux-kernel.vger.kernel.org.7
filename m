@@ -1,106 +1,135 @@
-Return-Path: <linux-kernel+bounces-863841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDE5BF93F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B378DBF93FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337AE18C77A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B4218C7848
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085062BD58A;
-	Tue, 21 Oct 2025 23:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249562BE7AB;
+	Tue, 21 Oct 2025 23:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mXfgdhU6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="RXGheFX+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dfg1W+co"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E6C272811;
-	Tue, 21 Oct 2025 23:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98273272811;
+	Tue, 21 Oct 2025 23:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761089595; cv=none; b=IBWEmbhIR2frO5qTMvmm6btcoYjICEiBt9Z9Dx+XGHVWCUIisb8elrNdqAUdbv1NyOEjDr8AJ2nNXSMbtOBeVhzA51aZiPkW1vFCwlLSYX15YYIB/ZdzQ0RsrFh56rwh3V9cbCYayGQ8qCCBZApcGOTx1IC58rynkvW/7wsYVWI=
+	t=1761089659; cv=none; b=ZxVOFMoIK2IS+l4D9gA1iXdk5yTZv3u8pGmmJpgfSzc5sxcgw3ObonwfC0WJkp2DKHPB9HcxvxD7WyQ3AEsRLcaMiZgyLJVGQCV9fctnXIN29fGkXmrow3Nd2fptOnneXtl7vJ3Oqg13GzJt+tkHRilmZRCbz6yJg+77y5aBvUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761089595; c=relaxed/simple;
-	bh=AJaVbX4mgWucjzYIHmh9A+dLYHj2n5htJHv7lvWxxGE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dwppBgTIRieXYJlwWRtq6E7XBh1wqS/M61Kb06mtyvsbyucNyC+REQYnbOLNZ0wUJR/R81r992F2YjYFuHWCtXPw8HUtIRBgS+n1ZwBZTFkGCaJA1syfU1kvjF00lXzyDMGAVYi7abINDVEce2QLplmwYsi5O/3rGR1YqOzNMMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mXfgdhU6; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761089594; x=1792625594;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=AJaVbX4mgWucjzYIHmh9A+dLYHj2n5htJHv7lvWxxGE=;
-  b=mXfgdhU6yPCDi9L345+1N9AHeaNnQV4p1SNu4JQNzdN0VtWKLH5PlX/V
-   y5rB6EkVFHXHDhA12Dw2dHGcg/zBV0mmczSXLog6rlmRlyyJif4jLlEtn
-   MbZWtXBs4AQQjQPCilVTIrChad5NUPmJjUZe5k/tZVsJ0QIP3Lx0EiutI
-   vuXH5aqAVQgbAdVzaMRO1ingH5xxaR0+pJH3W5hkxBmUmWdMl6NY7i+ZQ
-   IaNTxib9z/r1ICALvsigSz7s5lHJD/4oaeefsPKeQz6x1t2kFc+RcqSBv
-   +sOyM2BIZYDStmUCTFYHVpgZt1hvEL+pfIFnLKs4Bsjo2fUhgZcj0oU8+
-   w==;
-X-CSE-ConnectionGUID: i/gPhJ2jRrOD4pwEMSmgsw==
-X-CSE-MsgGUID: p/leEhOsRU2FJwxsTljItw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88696284"
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="88696284"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 16:33:13 -0700
-X-CSE-ConnectionGUID: 4Yop0g7DQdaZFeD19mD7AQ==
-X-CSE-MsgGUID: ZWWD1EG+Qke9lWgDIjslQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="220895849"
-Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.88.27.140])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 16:33:14 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>, Dan
- Williams <dan.j.williams@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] dmaengine: idxd: Fix lockdep warnings when
- calling idxd_device_config()
-In-Reply-To: <c7a454f4-c471-49d5-ac35-5375a45a6610@intel.com>
-References: <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-0-595d48fa065c@intel.com>
- <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-1-595d48fa065c@intel.com>
- <c7a454f4-c471-49d5-ac35-5375a45a6610@intel.com>
-Date: Tue, 21 Oct 2025 16:33:26 -0700
-Message-ID: <878qh3keyh.fsf@intel.com>
+	s=arc-20240116; t=1761089659; c=relaxed/simple;
+	bh=iKQ6NZjIVGt6CXrDIvmK58j1AiuGRqwmeZkLZFuYnks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UvvqR0+VbS/IEQrdU6B+glPxmNadt8fVny9+fxDnV8GQXnMvbWZskc02MGZqo32LaGYT8nWNaU+ulOfEx5nyPGrMeq2qciLIlZZGwduwTVQJJwNVdikv6NKPUY6daq/cdv7SkpXFrIKQPK5oh4oR7kRtkT2kxp66JossvJAnOVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=RXGheFX+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dfg1W+co; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A9F4314000E6;
+	Tue, 21 Oct 2025 19:34:16 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 21 Oct 2025 19:34:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761089656;
+	 x=1761176056; bh=Kb22k5eTEI944/lmkAd6Z30JOXuRH68q0Ki+lxe8kgs=; b=
+	RXGheFX+Ffh9kCWC2hK7JYwYmK3agGq3iCGqemImOwc5fmpL9TwVExu405Di3l0V
+	QBANKDCZCAwOQQWVvC73LMcG0WOXBt5ZguEgqvOn3ZEu46sDY+qJzF52j4HCmr1l
+	1yWkpeZk8nvvr2eLRxE1253vZhZRGFUAaURlB7hP/RbTZMRWP1Yd6B7y1o1kBiEg
+	seUDuZd+yyMEryr7MjabZq4y8XVnT3bJk3jyjyAPCKYPGBpPEuDFKaH4Hfk+r+Ik
+	slx+GTK1wmyk+W0OAs727OeDbC9O6MlEE5AncXcDi2hGY6DmhxMtaCwzDILju81M
+	kTQq2YbpM9PDBqCP6M0pRQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761089656; x=
+	1761176056; bh=Kb22k5eTEI944/lmkAd6Z30JOXuRH68q0Ki+lxe8kgs=; b=d
+	fg1W+conZcCs7jx5QVJBjXy8NFftwuGcnOUjTOzYqVbJO0Y059IRowK8xwo8kshq
+	w6v9CDEkwwoNlFQPiwVszt0tLKjpXiALU2CTRxAdFAlOJ2uGwrXc+zJaNQ3BKssJ
+	WLU1qoqQU/Z/FhzDp/XOr0I6u0cjmim8byW9ilc90sNx8/OKRz/xf8arQiORbVSc
+	5Zc2h/5nh1vuPoKDe4THJm9RHrrDi9nR5QIccMbYNVSkCIEcAalVkuwRZaAH4JFQ
+	4phafeODAsucfNJxzSY6YXRPlAWPlnyYS+2/b0TjyemDMFywJ6r6EiAR/DBOnYBB
+	UfbNRKxVGH3ZlfKzykRpA==
+X-ME-Sender: <xms:eBj4aK3iNXSfuMJ35rukxGlmt4ifxmsGbqhmb2vV0lNDNdhFH1KD9g>
+    <xme:eBj4aI_E-dhbiloGhPVYhrM-xtE2Fh9HLlIVU42Paj_YvJS6RrCvDNzs3FhJNsZfq
+    ZfUlem_lIwcnSCz0wyY_XzZ9bwLwFvY8TuYewb-v4A73WZzya3o6g>
+X-ME-Received: <xmr:eBj4aP5FkM7gaSX4O27_16y1hWEEgnA4zZjMuTfTk_JwBiyiFQKBhePDmwxZVXFiKkc40qce-pBq0CXGpQwY2g1V>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvtdegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefvihhnghhm
+    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepff
+    ffveffieethfdviedthfdvjefhueeiffffheffvdegheeggedvudfggeehgedunecuffho
+    mhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohep
+    uddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrshhmrgguvghushestghoug
+    gvfihrvggtkhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhho
+    uhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegrnhgurhhiihdrnhgrkhhrhihikhhosehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepvghrihgtvhhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgthh
+    hosehiohhnkhhovhdrnhgvthdprhgtphhtthhopehlihhnuhigpghoshhssegtrhhuuggv
+    sgihthgvrdgtohhmpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:eBj4aAtsqRlbLqsoBRKIzk8HX6kb1wRnzHyi0yFpkg15QFv4J9aVXA>
+    <xmx:eBj4aB0cqhC2FM-hTWCcKtlJXpUMBelC0CMbdj3fV3TJpMUaOIfkFw>
+    <xmx:eBj4aJpDGjFu98qwyJGxyby3Fi3ALG3s-kavSezJ5XJkg-FPgy3qjA>
+    <xmx:eBj4aBK7baVHPqC6hWb87Cqe7de_d2aq98D8RAUoLYt8So1FiMDiCw>
+    <xmx:eBj4aAs56Pxt6s_lz2Zb1jy-rz-80LLFOFLx9kZDY99JqR3-vXo3tGwW>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 19:34:14 -0400 (EDT)
+Message-ID: <39116c81-1798-4cc1-945c-a05d0ac7d8d9@maowtm.org>
+Date: Wed, 22 Oct 2025 00:34:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] 9p cache=mmap regression fix (for 6.18-rc3)
+To: Dominique Martinet <asmadeus@codewreck.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, Christian Schoenebeck <linux_oss@crudebyte.com>,
+ Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org,
+ v9fs@lists.linux.dev, bpf@vger.kernel.org
+References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
+ <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
+ <aPgUaFE1oUq8e1F-@codewreck.org>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <aPgUaFE1oUq8e1F-@codewreck.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 10/22/25 00:16, Dominique Martinet wrote:
+> Hi Linus,
+> 
+> We had a regression with cache=mmap that impacted quite a few people so
+> I'm sending a fix less than a couple of hours after making the commit.
+> 
+> If it turns out there are other side effects I'd suggest just reverting
+> commit 290434474c33 ("fs/9p: Refresh metadata in d_revalidate for
+> uncached mode too") first, but the fix is rather minimal so I think it's
+> ok to try falling forward -- let me know if you prefer a revert and I'll
+> send one instead (there's a minor conflict)
 
-Dave Hansen <dave.hansen@intel.com> writes:
+See the reply to the original patch [1] (posted right after, and before
+seeing, this message) - there is indeed more side effects, and I wouldn't
+mind a revert for now.  0172a934747f ("fs/9p: Invalidate dentry if inode
+type change detected in cached mode") will need to be reverted too.
 
-> On 8/21/25 15:59, Vinicius Costa Gomes wrote:
->> Move the check for IDXD_FLAG_CONFIGURABLE and the locking to "inside"
->> idxd_device_config(), as this is common to all callers, and the one
->> that wasn't holding the lock was an error (that was causing the
->> lockdep warning).
->
-> What is "the lockdep error"? I don't see any details about an error in
-> the changelog here or the cover letter?
-
-I should have added the lockdep splat here, idxd_reset_done() is calling
-idxd_device_config() without holding the lock, and the lockdep assert
-inside idxd_device_config() complains about that.
-
-I thought the commit message ("one wasn't holding") and the code would
-be clear enough. In case of a another version the series, I will add the
-information here.
-
-
-Cheers,
--- 
-Vinicius
+[1]: https://lore.kernel.org/v9fs/6c74ad63-3afc-4549-9ac6-494b9a63e839@maowtm.org/
 
