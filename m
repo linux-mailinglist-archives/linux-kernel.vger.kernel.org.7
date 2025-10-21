@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-863108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC48BF7084
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:22:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F56BF70AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B3F14E8B7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6133B207F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FC32D6E67;
-	Tue, 21 Oct 2025 14:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7831833B94C;
+	Tue, 21 Oct 2025 14:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xOkxskzi"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="Wy6RUOp6"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8774B283C83
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75F01C5D7D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761056518; cv=none; b=KGVKuIF/mBdg20UK57kGd3TE/lCW8KKsYbXmAoxDQUBAP9jTe5gjhFcBVhnwrk5JPcJWAbw4FOPColpWmucyVyspxsbOMhxgOY9ZEZh/1dOIyyOp52cIquyNBn/X2iQ6jaAN1mDeJh+Ih9kNOsipL+IY35vD3ssbTUGdXz5r1Xw=
+	t=1761056674; cv=none; b=VE3yW/Qt09N5Cq93esQk9w0he9V6gRkxTeO9v8V0i/5UjBb+jumHeBSYJGNi9+SynyOov+9rVP3jGg+Rp3uRliMDa8nubXikmm8E4RW8mGLqYymg8FD7X0oO4G/IEzGID2kBQpR81IWPxcYq6ijL5kfPx2NvhNnM/aKLSj2D2Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761056518; c=relaxed/simple;
-	bh=6K+Ya9AoUD4PI0lKdjjQSEvFS7cWapIsir5GAcL14js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLUmFiHMTVSNh5rqFGyvrztpIyQ9i+zA2Z/fmDOJP1ME/+1v+7R/6lMSe047N8cOhUm3mjb/JZwKsPoHtZA0BZ46n858uud5dUieHdnR/ZOCsFT+/naKqkQ4A1uzEtYkipk0lz1v/y5aRfaFkauwIQmt9x05LinSIpJNtmoJpfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xOkxskzi; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-475c1f433d8so2669185e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761056515; x=1761661315; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P2UPlKlBMRgDPmUCzuIFXxKg63hxPHeMGbfNf2loeFc=;
-        b=xOkxskzioce3lQEoalZkrzKD3R5XHVi9qE97WB+cR5KCdBzQix/MGRly7XXG+BFZ+h
-         vtBWPZUH04AZayOkK9XJkIcnpC85DjGiPCdpPJsL/zFQMaYREAOtM9mBYOhicr+eHK6u
-         BPEdJ1OfQkXFF/D2FaVAqe703dc98Jg+ejmaLRO82GOecoPIu8V0XSlDZu5DNEiypA6D
-         Ey/BmKV8ZeD8Veg63etcwX1rzoQh83F0JwLwIXhq5ZpzbzMDVhi1UCPR/UxdOq5Ka/VK
-         fLuCSO3A7cHvN5wdE4h2ZqLOWxle9w/tor4BSoPSbpiiL6f6nfgwkT4wZOTt0cGjTAQT
-         DSzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761056515; x=1761661315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P2UPlKlBMRgDPmUCzuIFXxKg63hxPHeMGbfNf2loeFc=;
-        b=obPW+FM4BDc8AlgLfp8lAsJCIgMYOHayDUZMIueHG3MZmJ0hckO8uBSVjdmFxvtnnq
-         rH7MIznpV46IBmETjAa5mqE5EjIWeux9kgnBeP18MurewD17X43/DP/w9xYXJUXEuQRi
-         jZN3hC+raPpPhA2h+yFt6tdAluAXOsy0GYDBCd2VeUhbO9ZdfJdJ1DOgN+OauGt4a1Mz
-         XuGc2WkTFDEiLQ4WivUKSl12hHUhpSX77QPOZWZlmDXZWGOSglL9rPXCKXHNHxFyQwbt
-         1C0mpJif8LsMNStEy4TE0IDXytt1XlZknXZZ1Cl42dm8aiUA3bZU8JJfcdyEdJGNv8+O
-         dp5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUCz87Jn8duzEJEABQ0fWiLb+KY7faT/gsosYuRFHClFRZSp3o9a4imTfFjwNoDgdEO3UY+GFlYVji74TY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiEi5DzypHPbh4Q7vp9qBnbv4X6v8PdGia55cIEoJfZyQaRP3v
-	ODfKhLj3Sh8QWm7bPao2LzVLalKOGmXovNQ7jBU6bVUJsl02izIvvoI4APaRTB5Zyqg=
-X-Gm-Gg: ASbGncsQyw8iJklKuXSNDf5DnkgeC3GfA22g2JCMsqm4ygkb3Js5N5KYb+ziUv0Y+iT
-	NCjJlKr+rZUz/bMM891wG1oisJ3oNNPpyPmzYDukDsymmm3h00kKDPWNwsdXa7YuLkD1CY3jClf
-	n0PR2ZXz5wgAIT8LDVk/WfV+d1z/KbE7rVNagLYUUY5Kzwfz2YUrTeLUfXGYnYQtKEaCrQQQ9Xp
-	GPMLFuJlGRQuY61RfLOjUwsCaYh5u6TGnRe8DMd3ZL2lJo46KkLr+jRVU/z3wmBRsVTOkoERidK
-	FuYU7Nucw+JGLgPbxUIYe07Bib3QsgZkzXmZviXAagxF7AO2EiEfg9rVaLL7plJhN/THT13B14Y
-	am6+uXElZ8hRPvH8eA3dVWqT7JU6hMEOuAw9uC9IsIIJwqQYiXZTmsQgVlDo5xVTIGJ2rgRu3
-X-Google-Smtp-Source: AGHT+IFgUwtFyMQzVFuUZ9DJK1ExlofFZ2ywTH/htMIthIxsBbbqiw9fs64De3rLyJVpj6OFqtdPYw==
-X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr133669265e9.33.1761056514836;
-        Tue, 21 Oct 2025 07:21:54 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4714fb1b668sm229301885e9.0.2025.10.21.07.21.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 07:21:54 -0700 (PDT)
-Date: Tue, 21 Oct 2025 17:21:51 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org, 
-	krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com, linux-arm-msm@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org, 
-	casey.connolly@linaro.org, Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v7 07/10] phy: qualcomm: eusb2-repeater: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-Message-ID: <yyllvqn2i5mqyetf4c5c3k5xyrz2yfxwbkun22zhx6poumt7dn@k2pt6rcemfdf>
-References: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
- <20251021083219.17382-8-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1761056674; c=relaxed/simple;
+	bh=ohQxc9QRortHfyjylGhHg5pwqrzIoB+7Amrx3g6gjTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a3RZs56YGGIlbIxllxfYI5DfuaTa4cKnaYwJsfEoBB78lAMEZp3M1qvWKU0rTlVYC+1JkvAzR8cRdSifA+2gcioQspm9xewotlec8nETMnc9fpaSY/dClJIGFyLtdq3YeCyaQFU+6ytf74y9RoImq8OFQ0I1yloHQigC4487598=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=Wy6RUOp6; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from terra.vega.svanheule.net (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id CA54D68A1CB;
+	Tue, 21 Oct 2025 16:24:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1761056671;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eDBcuRTLNpGudD5KeS5Seips/GXVRZi09VXovBDipw4=;
+	b=Wy6RUOp61nyTt1Csv+GVjrswLkebZvZq+WUqh2RdKiHDS4AL36zEc/vvSAuh70QZFP/dxf
+	Cs8KPg75TZ0rbYQV0VtINTX5qevEghXH9sBzl9Rjby37MIdESARee7Th8Q8m8pOJWPe0cH
+	HNGA/ZvzFAR5jJ0vtah6IH9fEeRbNuWSHrtSTshtijR27sEstdcDvtfMRR+OR02e1P1yaz
+	LMiIzVjAl+5bwBDS5hBfj0nuXfdqemvm6jtttznB5aEt/XHYbULm2YGjmrMKrDvksxKdO+
+	54iZr/oALFLgVmLHMbcylyZ2KydktBrS9iPY3zwBwir87r63BfW8Nx2wCp2xQg==
+From: Sander Vanheule <sander@svanheule.net>
+To: Michael Walle <mwalle@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v6 0/8] RTL8231 GPIO expander support
+Date: Tue, 21 Oct 2025 16:23:55 +0200
+Message-ID: <20251021142407.307753-1-sander@svanheule.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021083219.17382-8-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 25-10-21 10:32:16, AngeloGioacchino Del Regno wrote:
-> Some Qualcomm PMICs integrate an USB Repeater device, used to
-> convert between eUSB2 and USB 2.0 signaling levels, reachable
-> in a specific address range over SPMI.
-> 
-> Instead of using the parent SPMI device (the main PMIC) as a kind
-> of syscon in this driver, register a new SPMI sub-device for EUSB2
-> and initialize its own regmap with this sub-device's specific base
-> address, retrieved from the devicetree.
-> 
-> This allows to stop manually adding the register base address to
-> every R/W call in this driver, as this can be, and is now, handled
-> by the regmap API instead.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+The RTL8231 GPIO and LED expander can be configured for use as an MDIO
+or SMI bus device. Currently only the MDIO mode is supported, although
+SMI mode support should be fairly straightforward, once an SMI bus
+driver is available.
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Provided features by the RTL8231:
+  - Up to 37 GPIOs
+    - Configurable drive strength: 8mA or 4mA (currently unsupported)
+    - Input debouncing on GPIOs 31-36
+  - Up to 88 LEDs in multiple scan matrix groups
+    - On, off, or one of six toggling intervals
+    - "single-color mode": 2×36 single color LEDs + 8 bi-color LEDs
+    - "bi-color mode": (12 + 2×6) bi-color LEDs + 24 single color LEDs
+  - Up to one PWM output (currently unsupported)
+    - Fixed duty cycle, 8 selectable frequencies (1.2kHz - 4.8kHz)
+
+The patches have been in use downstream by OpenWrt for some months. As
+the original patches are already a few years old, I would like to request
+all patches to be reviewed again (and I've dropped all provided tags and
+changelogs).
+---
+RFC for gpio-regmap changes:
+Link: https://lore.kernel.org/lkml/20251020115636.55417-1-sander@svanheule.net/
+
+Patch series v5 (June 2021):
+Link: https://lore.kernel.org/lkml/cover.1623532208.git.sander@svanheule.net/
+
+Sander Vanheule (8):
+  gpio: regmap: Force writes for aliased data regs
+  gpio: regmap: Bypass cache for aliased inputs
+  dt-bindings: leds: Binding for RTL8231 scan matrix
+  dt-bindings: mfd: Binding for RTL8231
+  mfd: Add RTL8231 core device
+  pinctrl: Add RTL8231 pin control and GPIO support
+  leds: Add support for RTL8231 LED scan matrix
+  MAINTAINERS: Add RTL8231 MFD driver
+
+ .../bindings/leds/realtek,rtl8231-leds.yaml   | 167 ++++++
+ .../bindings/mfd/realtek,rtl8231.yaml         | 189 ++++++
+ MAINTAINERS                                   |  10 +
+ drivers/gpio/gpio-regmap.c                    |  18 +-
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-rtl8231.c                   | 285 ++++++++++
+ drivers/mfd/Kconfig                           |   9 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/rtl8231.c                         | 193 +++++++
+ drivers/pinctrl/Kconfig                       |  11 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rtl8231.c             | 538 ++++++++++++++++++
+ include/linux/mfd/rtl8231.h                   |  71 +++
+ 14 files changed, 1500 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+ create mode 100644 drivers/leds/leds-rtl8231.c
+ create mode 100644 drivers/mfd/rtl8231.c
+ create mode 100644 drivers/pinctrl/pinctrl-rtl8231.c
+ create mode 100644 include/linux/mfd/rtl8231.h
+
+-- 
+2.51.0
+
 
