@@ -1,163 +1,129 @@
-Return-Path: <linux-kernel+bounces-862448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D0CBF54E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:41:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F555BF5500
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DEAE1883F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:41:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 507954E3AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214A93128AD;
-	Tue, 21 Oct 2025 08:40:59 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A744231DDAE;
+	Tue, 21 Oct 2025 08:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="H/mY+hIM"
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D428314A;
-	Tue, 21 Oct 2025 08:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761036058; cv=none; b=PHQsVIXeQ+oU3pFraOOjOfipC0sL/QmBfse0EJlBt5ISQSU1b1TNppa3SyN8wEUyMncT+/+HXKwNAHCuAVBvYU+6fd4UjbD9e44pVtivp/3REqa7GjDVJCYWZCocEtDEJFsfio/1v8dyTPObkSOTN+MTDiSNYnWtHhwbFHipw4w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761036058; c=relaxed/simple;
-	bh=hb5VcV0ET3l0QzSsWclmOpjmwF9VwY1uM8U2V3HfyDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sh4u+IanLEeJyGmTmPDDj+6h96ejgVStCSLP2IsYAx8i77ucrNd1NBfNOXyG6KlutVVT1RU2w5O4vavORvIRrOi12Phi4TgQkNVljQM/yQ/W0uwr9Jpp10c2JAS4XjcG27/vg6f8DDFubjIHdvpJ+CpxMo8/Z1Zb1J3bTEUkt4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a59aa16aae5911f0a38c85956e01ac42-20251021
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:5b1bc7ac-4984-447d-92b2-fdfde16de3db,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:847313a20b3d4fb0a5562c6197ee2905,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: a59aa16aae5911f0a38c85956e01ac42-20251021
-X-User: xiaopei01@kylinos.cn
-Received: from [10.42.12.251] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 109458862; Tue, 21 Oct 2025 16:40:50 +0800
-Message-ID: <e1b1df10-ce40-4135-93fc-69a1c6d9f32f@kylinos.cn>
-Date: Tue, 21 Oct 2025 16:40:47 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32443164AF;
+	Tue, 21 Oct 2025 08:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761036172; cv=pass; b=eJYwUSuyULtwVYUTe8t/Gpowd88vUyHkgCQrmhZBYQSwwq8qbNwPggbjAspmSCWRdW4rT2oxTBLc1xiTLLAR229fb2DvKVtNtx0JjsTsC3VJpyt8FQENd6QxMdw19pmynwPgo8lWGcPYn97wM7ygBHZeYkel7r9GEW7FTKNU84g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761036172; c=relaxed/simple;
+	bh=f4/slYl+iwPHP2mr3qpO+dNTUUS42GlntrdKBm3V37s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F81AT6r0eYDyN92LOV1oNUkpCmOkUzfNdYBmeu+Ai8dD/cvNNflINWbSSeEKnPuG2X5uooZmTQ4V7eurTDcYhiIvN3K5lq0MIaNIOpTYDvNY05apVqEc95aHe/+yxrDSn6Mbp8cPYMJbD+u7L6DA2VRuoVFuBHCg7MK8KsGSMt8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=H/mY+hIM; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from osx.local (ecs-119-8-240-30.compute.hwclouds-dns.com [119.8.240.30] (may be forged))
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59L8gXwn703536
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 16:42:38 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1761036159; cv=none;
+	b=bE3ErNzk+Uq9SeNC25K7SRzQFcNn/QLXYDQLchi4SzFGNjh4RRD7vElCLohH/7kTE4SaT70chKg/q+qqeSZmJOKSMC48PFjwc5cQub6VvuUVvpZre4BDXPS/cWQVvhqV14TE/gt+F/O+5WxsbOL2NOHoXZX9+GRTYr7780XH6kM=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1761036159; c=relaxed/relaxed;
+	bh=UpSO+x+gL+yq4q/lzAAL/INRINWUbd3sIquDFP2xMXQ=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=tO2j95LRSWvWXkf7XXERuOjlzJwDsoOYMihZpPcKlJac+5Wi2kS30Y1jgl95KBROoZTZzlAFHIbnNvTzNUE8H9sxi5PVHI/gBJkyOnqurxD08LtY2mzHYLfaKIu6OBJql+HA/S2j/j+vMm08KdS1t7tsyBaQ++m0xlljeVQ6KKQ=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1761036159;
+	bh=UpSO+x+gL+yq4q/lzAAL/INRINWUbd3sIquDFP2xMXQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=H/mY+hIMplznVzAZvdtvgiyK7TanaVBeb6wvZO4fjis8oGEdfR7k/YiYKtulYdoEC
+	 XEgnJEApnk8siezdEiw9fEA7XaSkYoNI2IXaOWxilYIZ6F4FVroD1bYEbbnIIu4hwM
+	 mLmGGvi7DhWlc0cbRoWsomF/sLxqU2I0Q7UVY2tU=
+Date: Tue, 21 Oct 2025 16:42:28 +0800
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>
+Cc: Yuezhang Mo <yuezhang.mo@sony.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] exfat: fix refcount leak in exfat_find
+Message-ID: <aPdHWFiCupwDRiFM@osx.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib/crypto: poly1305: fix uninit-value in poly1305_blocks
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
-References: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
- <20251021061511.GA2385@sol>
-From: Pei Xiao <xiaopei01@kylinos.cn>
-In-Reply-To: <20251021061511.GA2385@sol>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Env-From: sfual
 
+Fix refcount leaks in `exfat_find` related to `exfat_get_dentry_set`.
 
-在 2025/10/21 14:15, Eric Biggers 写道:
-> On Tue, Oct 21, 2025 at 02:01:20PM +0800, Pei Xiao wrote:
->> syzbot reports uninit-value in poly1305_blocks:
->>
->> BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
->>  poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
->>  poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
->>  poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
->>  poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
->>  chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
->>  chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
->>  crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
->>  tls_do_encryption net/tls/tls_sw.c:582 [inline]
->>  tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
->>  bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
->>  tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
->>  tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
->>  inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
->>  sock_sendmsg_nosec net/socket.c:727 [inline]
->>  __sock_sendmsg+0x145/0x3d0 net/socket.c:742
->>  sock_write_iter+0x3a6/0x420 net/socket.c:1195
->>  do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
->>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
->>  do_writev+0x1b5/0x580 fs/read_write.c:1103
->>  __do_sys_writev fs/read_write.c:1171 [inline]
->>  __se_sys_writev fs/read_write.c:1168 [inline]
->>  __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
->>  x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
->>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> in poly1305_blocks, ctx->is_base2_26 is uninit-value, ctx init in：
->> poly1305_init ->
->>      poly1305_block_init
->>
->> so add memset in poly1305_block_init, then use poly1305_init_x86_64 to init
->> by asm.
->>
->> Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
->> Tested-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
->> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
->> ---
+Function `exfat_get_dentry_set` would increase the reference counter of 
+`es->bh` on success. Therefore, `exfat_put_dentry_set` must be called
+after `exfat_get_dentry_set` to ensure refcount consistency. This patch
+relocate two checks to avoid possible leaks.
 
-hi Eric,
+Fixes: 82ebecdc74ff ("exfat: fix improper check of dentry.stream.valid_size")
+Fixes: 13940cef9549 ("exfat: add a check for invalid data size")
+Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+---
+Change to v1: [1]
+- relocate two checks
 
-    thanks for your responce.
+[1] https://lore.kernel.org/linux-fsdevel/aPZOpRfVPZCP8vPw@chcpu18/
+---
+ fs/exfat/namei.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-> Thanks for the bug report.  It will first need to be confirmed that this
-> is actually an issue in lib/crypto/ rather than the calling code, and if
-> so, why poly1305_kunit doesn't catch it (even when run on an KMSAN
-> enabled kernel, which I've done).  And which commit it fixes.  I'm
-> guessing it's most likely a KMSAN false positive that was exposed by
-> commit b646b782e522 dropping the dependency of the
-> architecture-optimized Poly1305 code on !KMSAN.  KMSAN doesn't know
-> about memory initialization done by assembly code.  But I'll double
-> check this, if you don't get around to it first.
->
-> The hash algorithms generally don't need a dependency on !KMSAN, as
-> their assembly code doesn't initialize memory.  It looks like the
-> Poly1305 code is an exception to that though, and I missed it.  If so,
-> the proper solution (IMO) is to use kmsan_unpoison_memory() right after
-> the assembly function that initializes the memory is called.  See
-> sha256_finup_2x_arch() for an example of that.  Note that more than one
-> architecture may need this. 
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 745dce29d..dfe957493 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -645,16 +645,6 @@ static int exfat_find(struct inode *dir, const struct qstr *qname,
+ 	info->valid_size = le64_to_cpu(ep2->dentry.stream.valid_size);
+ 	info->size = le64_to_cpu(ep2->dentry.stream.size);
+ 
+-	if (info->valid_size < 0) {
+-		exfat_fs_error(sb, "data valid size is invalid(%lld)", info->valid_size);
+-		return -EIO;
+-	}
+-
+-	if (unlikely(EXFAT_B_TO_CLU_ROUND_UP(info->size, sbi) > sbi->used_clusters)) {
+-		exfat_fs_error(sb, "data size is invalid(%lld)", info->size);
+-		return -EIO;
+-	}
+-
+ 	info->start_clu = le32_to_cpu(ep2->dentry.stream.start_clu);
+ 	if (!is_valid_cluster(sbi, info->start_clu) && info->size) {
+ 		exfat_warn(sb, "start_clu is invalid cluster(0x%x)",
+@@ -692,6 +682,16 @@ static int exfat_find(struct inode *dir, const struct qstr *qname,
+ 			     0);
+ 	exfat_put_dentry_set(&es, false);
+ 
++	if (info->valid_size < 0) {
++		exfat_fs_error(sb, "data valid size is invalid(%lld)", info->valid_size);
++		return -EIO;
++	}
++
++	if (unlikely(EXFAT_B_TO_CLU_ROUND_UP(info->size, sbi) > sbi->used_clusters)) {
++		exfat_fs_error(sb, "data size is invalid(%lld)", info->size);
++		return -EIO;
++	}
++
+ 	if (ei->start_clu == EXFAT_FREE_CLUSTER) {
+ 		exfat_fs_error(sb,
+ 			       "non-zero size file starts with zero cluster (size : %llu, p_dir : %u, entry : 0x%08x)",
+-- 
+2.39.5 (Apple Git-154)
 
---- a/lib/crypto/poly1305.c
-+++ b/lib/crypto/poly1305.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
-+#include <linux/kmsan.h>
-
- #ifdef CONFIG_CRYPTO_LIB_POLY1305_ARCH
- #include "poly1305.h" /* $(SRCARCH)/poly1305.h */
-@@ -31,6 +32,7 @@ void poly1305_init(struct poly1305_desc_ctx *desc,
-        desc->s[3] = get_unaligned_le32(key + 28);
-        desc->buflen = 0;
-        poly1305_block_init(&desc->state, key);
-+       kmsan_unpoison_memory(desc, sizeof(struct poly1305_desc_ctx));
- }
- EXPORT_SYMBOL(poly1305_init)
-
-how about this ? 
-
->  If it ends up being too inconvenient, we
-> can make the architecture-optimized Poly1305 code depend on !KMSAN
-> again.  But preserving KMSAN coverage is preferable.
->
-> - Eric
-thanks!
 
