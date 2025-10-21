@@ -1,369 +1,139 @@
-Return-Path: <linux-kernel+bounces-862166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6A4BF493C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:09:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432FABF4930
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F347F18C53D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B0518C51DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12524C676;
-	Tue, 21 Oct 2025 04:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB210246BB0;
+	Tue, 21 Oct 2025 04:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cvlLyCup"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="M8h10v7q"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC8A1EB5FD;
-	Tue, 21 Oct 2025 04:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761019743; cv=fail; b=b3p5J8toocqZDEcEKfH0XLUjVDgbamqBiMek2hOOF1kP80GvmG/tuO/msW1r7d2THrYr5LiN378niVi4EoB7g/czxMV3s2L3BsJDUzhPlegObrV/6okuVMoAK4qjJY1nhE/TT11hd2of90dioiwlissCreQisztx7oP+n6+iHvY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761019743; c=relaxed/simple;
-	bh=L47OiHBXBe380poBuH7nuFhhF9IJ4xFdGbem4KTP6kU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aBhCONM9cs720tKRiaVeVogTF/y/5x4DVBNYxoe4B/1CDW0ZvWCDHZCe0UfrhdQr3CADIgqwdFGZ4rbTgzzwFOdV9gw3+jL21OX26k1sSdNvxGZZPrcQ5oolwg+gajCcXyXzI0aBlRblsf5offQjMv/HsfZhjL3Aae0cwWdTuFU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cvlLyCup; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761019741; x=1792555741;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=L47OiHBXBe380poBuH7nuFhhF9IJ4xFdGbem4KTP6kU=;
-  b=cvlLyCupIo6HLFrVQ3lyH2e1in+AMePv5CBR+mddCOvMsHkVMvO2vpdQ
-   soJDAlCYde43ke9WGCNrf4yAhVDTZBA0+MVGwCSgog0CaJkbrrJqaWLP5
-   q8Fss1/ORzSDny48Pp1TKoHYniso0wUIKeGOSZ3gVw8qKwUh3ji6GRl/l
-   Exj+3haQgK4T/UMggdCvGGicvQsECCbZOMwU0OXeKwpom6zBB2dohuXDe
-   D8Y+ocPRIZOFNp+Yx/mqfc0e6Nuelv5fkmcO+6EJVtNObbpM63sA+OoMn
-   W/yk07G/awNMPNfdz/KOepEiU8suPodYgGIjPkv85rvLDUqp66FnhlCtY
-   Q==;
-X-CSE-ConnectionGUID: Pf3VAd+yTFKOG1DnGB/9OQ==
-X-CSE-MsgGUID: 3X0kDNOyQu2HHSwmOs1YXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67004807"
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="67004807"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 21:09:00 -0700
-X-CSE-ConnectionGUID: yYcYeic1R/OkMsuLATu+Mw==
-X-CSE-MsgGUID: as9fsLapSv+kr41LIkc3qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="214116142"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 21:09:00 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 20 Oct 2025 21:08:59 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 20 Oct 2025 21:08:59 -0700
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.15) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 20 Oct 2025 21:08:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xqs5RhdgTwSrpaebHs2/v1dZMfAoxZDlfw+P41AbrAtpFHgZxZV48x5Sv8QR11D8eIxeRbdOncJWH5gZ9ox0m9p+4lgHnDef/7l6r58vBigcBFgOijA0yGxJqtsKMq6puAaMPPmDUD+EZiKIGAC5ZHsF8jOWon4p3zolJh9JBLP/nMWggTBgBbFTLGVNe7EBOXJ8KeJnvrudHsleXAHeX8Sa4ECESgW0nG+rhxYRG4fy14v11o/oFHuwXmftjYmjAWyLIgjpEsXmoQxdUplFcvIz2RidM6cUtWLZbXqSA0quIPTUxblIaeKKSs1Kk+B2AopVAusliFasv95uBljWjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ifi6FzgI1ycRclmmJV790rJS8TJHTSfD7Ay0MVnruqc=;
- b=AkS3k7LJxKZEv+vGbzhRR/gD1c/g7ZjHdY2w76Nxy4JLiyDsL+0AzYTUkCUqpHrHDzEXoWBpiFeopmfGQAFvcN3pnA6/e2wNTVLL3MK07dHKj/gwTnqAAnIQAfjkuZ2SSfo2IHz1rkgsUkigug7QNjt1C2jv985XApmhVyEuKX7EwcKnt7FLHEfgpPikSmEX28l6/53BIYUmmGrlchouJ2E0NyN3bRdZbQMV3oQs6bQ/NlNXLxa9Bkn3+tIJqT8IbdVRKCfun9b7MB0ZPvjv3+xNZXbHwgp92kEF5DJ0iCURFjdoqJLsoU4x7pG2JDx0Iz/OMuTlIvuLYz1LXvhoaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SA1PR11MB7087.namprd11.prod.outlook.com (2603:10b6:806:2b5::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Tue, 21 Oct
- 2025 04:08:51 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 04:08:50 +0000
-Date: Tue, 21 Oct 2025 12:06:52 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda
-	<imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, "Kirill A.
- Shutemov" <kas@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<kvmarm@lists.linux.dev>, <kvm@vger.kernel.org>, <loongarch@lists.linux.dev>,
-	<linux-mips@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<kvm-riscv@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
-	<x86@kernel.org>, <linux-coco@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, Kai Huang
-	<kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>, Vishal Annapurve
-	<vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Ackerley Tng <ackerleytng@google.com>, Binbin Wu <binbin.wu@linux.intel.com>
-Subject: Re: [PATCH v3 04/25] KVM: x86/mmu: Add dedicated API to map
- guest_memfd pfn into TDP MMU
-Message-ID: <aPcG3LMA0qX5H5YI@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20251017003244.186495-1-seanjc@google.com>
- <20251017003244.186495-5-seanjc@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251017003244.186495-5-seanjc@google.com>
-X-ClientProxiedBy: KL1PR0401CA0012.apcprd04.prod.outlook.com
- (2603:1096:820:f::17) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1F11EB5DB;
+	Tue, 21 Oct 2025 04:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761019692; cv=none; b=nA6zPRUHOraW53NdB6AS2i76dz9wPVsgKpgmD9r+mTtnBzWba/vuLyhrt4Iy5EbBOCnJe8Iw7CC8EZRiiOb00A/mzv8ZXYKyUc4L2aPlSDXaz2Eh6jGK9pokVEJqufTqK1qvOyIt/69sTPLKbaZLq+2LS5Pht8dZ6KZCNfr9rO0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761019692; c=relaxed/simple;
+	bh=otCA/DNdOW+b41rKqMPvBAFFOBff1X+BHKvz77ZSenk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKM+Tt9FtZheea7GMxaATsbD1uRnpujwxtyNBLuM1KoFXAs6G4iDm1BISrd9v9TUrmJlPDeRLXe83oeEEsfoNeeqDHTaVEb+OmUDyZudfwZRHE31uDdzyIzhbzXeFdhYhwTHTS1g07yKeNqMCQwNHlkPPwLSCb7QsjwSK16EyWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=M8h10v7q; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
+	from:content-type:reply-to; bh=FFfJ1T3gGeeywcD/IcU+HActRpSmxrKsGyO5NhVaCvU=; 
+	b=M8h10v7q9f5AGT5gKkSuaDbHCdisDtDGyY+dgX+D1L60SumcC4ZD4dqOz85VS/VJWQA04l0LNic
+	kBSiroNiN2e6tph/2kSuBLx9d6OcO30/U/QJTFYxwT1pg7Jw2974mXcZQkkUNESEFjQZiR7qoYR2g
+	TJLyMppS2wKL+gdqEEXjF/ePQlu7rJaxRBgjiLyYdsU2FhLI57Fp0Ld6pHbfPrFxFUKpdqc0ibkph
+	img2dTMvEgCVZitTgh7Kh7B2lJVzvdB/HD/dZEwP15yAHi1ToLEmd30lM2U7ToI8Aenrbsz3Hzgdx
+	Gyd6ASpb0L2/cF4e3icaAuUPduPf7V9uejYA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1vB3fA-00EEef-2N;
+	Tue, 21 Oct 2025 12:07:57 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 21 Oct 2025 12:07:56 +0800
+Date: Tue, 21 Oct 2025 12:07:56 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Linux Crypto List <linux-crypto@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: [PATCH] KEYS: trusted: Pass argument by pointer in dump_options
+Message-ID: <aPcHHJ29mTHCzVjM@gondor.apana.org.au>
+References: <20251020140735.39084e85@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SA1PR11MB7087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e098889-4d24-46e9-dd08-08de10578a8d
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9sN25FzY8AbMpnLOAmcJOzpeqUzJLs9uEPXvTkWoonORC5cFeIWH0s49W1Ck?=
- =?us-ascii?Q?xO/ssu0tL/fYPcB4+Hb9pcc2IqZ/Xke6RZB04IHLx/RpaHdS0ybvrMBnc5K0?=
- =?us-ascii?Q?B6oxsc/m/UB1s0Eh7N9Nyzy3CtZwhkm/b+rdH2ooG6jOOBRpi8kqhiEjO55E?=
- =?us-ascii?Q?8ljhJ8ABlK54Ub8mitNKB5fxu/INUS/tPBeBO58o2SWNf1cR1ccYct9Q+AGk?=
- =?us-ascii?Q?4IOYucMsFpqprJnCb9jTqrFRlJm3a3Gv5KBcRa/mlOFyCJZgrF3ADHAd2ze6?=
- =?us-ascii?Q?q5AUL7b288B7zYJHL3tAu388V2cue0X+fRyog1q/pEy1kyqPY0Q/X5MOtHwu?=
- =?us-ascii?Q?MVLbCeF7p/25AFYlqPmsp+5nDJqH96xI2CJdU3Kza23ltDt0jCmlKTQdj7fc?=
- =?us-ascii?Q?x/QfYV+FyXGPHzMYKS3VhEsPmQvIs/u6V+3MCLhpkDEAxzgRND0r6IoliXCw?=
- =?us-ascii?Q?lbvaI+gEb2AguLUcgy4lFjBrYNlywNP/51QvYjU3oCoXLxpGg6/lJroNc/8E?=
- =?us-ascii?Q?riJEFvr3KZmf+V503B/W8NF0InFe4t7tcmiYr/pbedhKCuzYj+FR0PeQr9Dc?=
- =?us-ascii?Q?KGG2z6rQwQWx0ef719BOy//lk/UCP8QRKIVtrLLzgy/lVXD8prHjyVrg952O?=
- =?us-ascii?Q?8zgngJAja8G3gIm+dZKWfqjYYZDIJfwroDZ7hQLks27uWKbaOuEE5i7zbhnR?=
- =?us-ascii?Q?FpYX2ZoUNFohLCuN0HoHVIPteXyFiZhd6EOOWpge3PaBByskUh3yK0GpOPdL?=
- =?us-ascii?Q?XLObogB4MrpmGU5iUJrVvgJAsxJ3RIn8UYkIW2GwA2JRpqEkpq2LbeAMN/yE?=
- =?us-ascii?Q?jCVeFQTTU87nsC3PcbwXrAXeIhgucb1BVwJCzIUL2ETuCPEPsOwiM7YQUkY5?=
- =?us-ascii?Q?yNHG/i+8PtMwqCcJhYePm22DYlthfCM1vvAxYwvFuI2MgxF5MJMR/MgzrFqj?=
- =?us-ascii?Q?vNoIJ0oEBqb/M5oh65Yx89rKWN9n2Ix4mWHYQICy7je61IoNWBc0swkmhtqV?=
- =?us-ascii?Q?2OAnUcfIc4C5FZsbzrfvHpRmhssZzVDvP3LWJTAHc/x4z+cJu4odo5aqsa+2?=
- =?us-ascii?Q?z0RhUFv1MrJMnLOYtGQJQT2llFNvMrPpBOiY4W18SkNDE5ROXX1OCh5cEs2T?=
- =?us-ascii?Q?EY/Lf7QIbkbFwGAblhcAAPS7OYiA4AliYYI3bmCwFkwqDprAsNtOibvf+KKh?=
- =?us-ascii?Q?9D8l/vSPbwapkygD7ndqU2MX8Mw3GCJ1O6WKC+K3wcV/3UPKQ8MLcuOR3Qcq?=
- =?us-ascii?Q?/sWRmUF/8PoaETkw//XEyqs8qf17veg5roR+t83JLUJOCihAEPFZPxWtOz0a?=
- =?us-ascii?Q?qHD1uygVhLnESYXn6gXjpkdRVEkO5R6JFP/533VDLJLWu4qbLeaP8SQg3XBA?=
- =?us-ascii?Q?O6+NSEDdYv5L3e3JhbfisLwRk6EDsEb6M8jsYpeIodZhvW3QUJcdo7h7yE9n?=
- =?us-ascii?Q?4MwXxpLcTcuBVngkc3Ug2ZQzN/uyPtNC?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uJq0KgsCSwPiWHhRJka5L8dtnu4YIHpKDcGb+fnavfoE6z2lFGl1WTn3g2He?=
- =?us-ascii?Q?MoN/J2luVeo/A/kCUrPpj3C4EQp3SJC0n7ueJa+y5x+9uJ5IeXd3e6b5WRny?=
- =?us-ascii?Q?Gu9WX5Rd1/YNA59xAL8KAwun57kcLdPtq6not/IIMU2YmpsKkQEzthz5RACf?=
- =?us-ascii?Q?g1SdRrU++DZqYQh7frE09dAzl3PiR4xeYFB7lDBUC8EESPrb2QvHOMUp1WbU?=
- =?us-ascii?Q?oFaVCe/8OFJZKn0lMasfrDVg01jIQArwyizWAGTkwnOjOekhxU96JNE/laqj?=
- =?us-ascii?Q?1+/KutmikBy1rQVcf4ZkBnT+NnExlRZxadPQmpnjApMv26pSt2j8+I7yreb+?=
- =?us-ascii?Q?6vUTqYPa8vViKta8KGdEAAC1v77NrvBS/iea57tgLzfVcoaZtxiqmKuadTr0?=
- =?us-ascii?Q?EYu6XZ69wIICg2nrtOZRiF4M8otAgUicVB4BQIKidjJKQIIpKCbBOhOYBzWI?=
- =?us-ascii?Q?4Pw3V/6IbzgeZ4gSNpjJ2SmFsUZeC93S2155EqI1+h19g3wqpylg0VXlgJKB?=
- =?us-ascii?Q?DKDfRw0mxmT5dBBGl2ZQziQVNGAuI+sAZ9N6AaKd6wv8LLt4yHcmETElUz8N?=
- =?us-ascii?Q?CqjVF2rV6f1Bd81jfhd3DDAGTU/XZGkhrKxI0wY6cLP7ubZItq2CkXagUaMm?=
- =?us-ascii?Q?pD6JmPOETa0Y96dgM97bEk4+hmBWjn88clKQE6k7V3NJDu/LlHpczRLHM0YQ?=
- =?us-ascii?Q?QmO/SThLYPfjhox0iRkzIkBZjMJAVRzpyz9gg/r3GbsHDgiIqx0YcXp4n7Pn?=
- =?us-ascii?Q?1z1nC9Ckt66Jfv7fYMJvBaLgh+wEpJo74dCqLcUDlJwBOOTDcCmwwVQFbSu+?=
- =?us-ascii?Q?ZZCM29EEXRRdLklgDeTycyePJrrtU3C1n5DadeDyHtfNm9dBiUlKFsFLKL0y?=
- =?us-ascii?Q?QWvSl8Kf6CJw0fq5kMq2mNpEWvSR5HHKddMU7jKiep1p8L1wuD/YfijY3/Ip?=
- =?us-ascii?Q?T29oAdIQFZueL5HIcbbU/+pEdZvQWFWqxMI9FenkaCqyYpnSkWukE1kQY2Av?=
- =?us-ascii?Q?7MkrnnTumZW6jowgJweIy/Za/UUqRTEnh+0XVe5lVQi6U87CxIAGCKjGY0rj?=
- =?us-ascii?Q?NC7vRveMWY7N7mgRXu2fNpOqcnouKSPkeVkvhDTH5+ouHSmaM+vkA9HmNL0+?=
- =?us-ascii?Q?k1h9ELY7z9tc9nWjuLWaN2HAtvDIMH++e4QAO7qzD+YDIwLreFtNAEHt+JxQ?=
- =?us-ascii?Q?tgNTcIAguO/igMArgP2n326PmNuMcNFLcHFgkGVFqBjp80Y5gPKAdTASQA+b?=
- =?us-ascii?Q?I2JnZsH8ltmolkMNzxttYIaRpjJAvY2FM6xoI7ASOzWnqDtX3MvtSI+rSSnt?=
- =?us-ascii?Q?D+hLPTsuByfo9Fnjws171K3tNyt+48wMKtXJ7RZz4L9ZfYDjSZtL7xzSnlp0?=
- =?us-ascii?Q?MnCCwvjZFlA5dDtSNi1MytgcjQJSMFeHU9KihTUl8O+SF0oLv4IjfIUXP6Ko?=
- =?us-ascii?Q?SG/TfLLTGZWXPHBhi36lBMo0YRR3FuCnXJC6v//WLISK4YYXkQZW6G4dvFmJ?=
- =?us-ascii?Q?lOUQvSoOblMQmSmuG00oFroB8xz9teH0SFZgBmmOlFGWcVrj2Nn647pOr4tp?=
- =?us-ascii?Q?B1xrOLztuO9XH9LewZJ48qq2OVjNl5GrmaQC6u5U?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e098889-4d24-46e9-dd08-08de10578a8d
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 04:08:50.7978
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0leKKKNfpe3FOF2Wyg8kBZyGFOtR6A9rZGsI/YixEjygwwFaO8QMIcxZJ2hstsPAkG1TInbvdNRU448SeZSyeg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7087
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020140735.39084e85@canb.auug.org.au>
 
-On Thu, Oct 16, 2025 at 05:32:22PM -0700, Sean Christopherson wrote:
-> Add and use a new API for mapping a private pfn from guest_memfd into the
-> TDP MMU from TDX's post-populate hook instead of partially open-coding the
-> functionality into the TDX code.  Sharing code with the pre-fault path
-> sounded good on paper, but it's fatally flawed as simulating a fault loses
-> the pfn, and calling back into gmem to re-retrieve the pfn creates locking
-> problems, e.g. kvm_gmem_populate() already holds the gmem invalidation
-> lock.
+On Mon, Oct 20, 2025 at 02:07:35PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Providing a dedicated API will also removing several MMU exports that
-> ideally would not be exposed outside of the MMU, let alone to vendor code.
-> On that topic, opportunistically drop the kvm_mmu_load() export.  Leave
-> kvm_tdp_mmu_gpa_is_mapped() alone for now; the entire commit that added
-> kvm_tdp_mmu_gpa_is_mapped() will be removed in the near future.
+> After merging the crypto tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
-> Cc: Michael Roth <michael.roth@amd.com>
-> Cc: Yan Zhao <yan.y.zhao@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Vishal Annapurve <vannapurve@google.com>
-> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Link: https://lore.kernel.org/all/20250709232103.zwmufocd3l7sqk7y@amd.com
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/mmu.h     |  1 +
->  arch/x86/kvm/mmu/mmu.c | 60 +++++++++++++++++++++++++++++++++++++++++-
->  arch/x86/kvm/vmx/tdx.c | 10 +++----
->  3 files changed, 63 insertions(+), 8 deletions(-)
+> security/keys/trusted-keys/trusted_caam.c: In function 'dump_options':
+> security/keys/trusted-keys/trusted_caam.c:37:20: note: the ABI of passing struct with a flexible array member has changed in GCC 4.4
+>    37 | static inline void dump_options(struct caam_pkey_info pkey_info)
+>       |                    ^~~~~~~~~~~~
 > 
-> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-> index f63074048ec6..2f108e381959 100644
-> --- a/arch/x86/kvm/mmu.h
-> +++ b/arch/x86/kvm/mmu.h
-> @@ -259,6 +259,7 @@ extern bool tdp_mmu_enabled;
->  
->  bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa);
->  int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level);
-> +int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn);
->  
->  static inline bool kvm_memslots_have_rmaps(struct kvm *kvm)
->  {
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 18d69d48bc55..ba5cca825a7f 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -5014,6 +5014,65 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
->  	return min(range->size, end - range->gpa);
->  }
->  
-> +int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
-> +{
-> +	struct kvm_page_fault fault = {
-> +		.addr = gfn_to_gpa(gfn),
-> +		.error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS,
-> +		.prefetch = true,
-> +		.is_tdp = true,
-> +		.nx_huge_page_workaround_enabled = is_nx_huge_page_enabled(vcpu->kvm),
-> +
-> +		.max_level = PG_LEVEL_4K,
-> +		.req_level = PG_LEVEL_4K,
-> +		.goal_level = PG_LEVEL_4K,
-> +		.is_private = true,
-> +
-> +		.gfn = gfn,
-> +		.slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn),
-> +		.pfn = pfn,
-> +		.map_writable = true,
-> +	};
-> +	struct kvm *kvm = vcpu->kvm;
-> +	int r;
-> +
-> +	lockdep_assert_held(&kvm->slots_lock);
-Do we need to assert that filemap_invalidate_lock() is held as well?
-Otherwise, a concurrent kvm_gmem_punch_hole(), which does not hold slots_lock,
-could make the pfn stale.
+> Introduced by commit
+> 
+>   9eb25ca6c973 ("KEYS: trusted: caam based protected key")
+> 
+> I am not sure what to do about this.  It would be nice if we could
+> suppress the note as we do not support gcc 4.4 any more.  Otherwise,
+> I suspect that converting the pkey_info argument to a pointer will get
+> rid of the note.
 
-Or check for stale mapping?
-> +
-> +	if (KVM_BUG_ON(!tdp_mmu_enabled, kvm))
-> +		return -EIO;
-> +
-> +	if (kvm_gfn_is_write_tracked(kvm, fault.slot, fault.gfn))
-> +		return -EPERM;
-> +
-> +	r = kvm_mmu_reload(vcpu);
-> +	if (r)
-> +		return r;
-> +
-> +	r = mmu_topup_memory_caches(vcpu, false);
-> +	if (r)
-> +		return r;
-> +
-> +	do {
-> +		if (signal_pending(current))
-> +			return -EINTR;
-> +
-> +		if (kvm_test_request(KVM_REQ_VM_DEAD, vcpu))
-> +			return -EIO;
-> +
-> +		cond_resched();
-> +
-> +		guard(read_lock)(&kvm->mmu_lock);
-> +
-> +		r = kvm_tdp_mmu_map(vcpu, &fault);
-> +	} while (r == RET_PF_RETRY);
-> +
-> +	if (r != RET_PF_FIXED)
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_tdp_mmu_map_private_pfn);
-> +
->  static void nonpaging_init_context(struct kvm_mmu *context)
->  {
->  	context->page_fault = nonpaging_page_fault;
-> @@ -5997,7 +6056,6 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
->  out:
->  	return r;
->  }
-> -EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_mmu_load);
->  
->  void kvm_mmu_unload(struct kvm_vcpu *vcpu)
->  {
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 4c3014befe9f..29f344af4cc2 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -3157,15 +3157,12 @@ struct tdx_gmem_post_populate_arg {
->  static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
->  				  void __user *src, int order, void *_arg)
->  {
-> -	u64 error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS;
-> -	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
->  	struct tdx_gmem_post_populate_arg *arg = _arg;
-> -	struct kvm_vcpu *vcpu = arg->vcpu;
-> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> +	u64 err, entry, level_state;
->  	gpa_t gpa = gfn_to_gpa(gfn);
-> -	u8 level = PG_LEVEL_4K;
->  	struct page *src_page;
->  	int ret, i;
-> -	u64 err, entry, level_state;
->  
->  	/*
->  	 * Get the source page if it has been faulted in. Return failure if the
-> @@ -3177,7 +3174,7 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
->  	if (ret != 1)
->  		return -ENOMEM;
->  
-> -	ret = kvm_tdp_map_page(vcpu, gpa, error_code, &level);
-> +	ret = kvm_tdp_mmu_map_private_pfn(arg->vcpu, gfn, pfn);
->  	if (ret < 0)
->  		goto out;
->  
-> @@ -3240,7 +3237,6 @@ static int tdx_vcpu_init_mem_region(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *c
->  	    !vt_is_tdx_private_gpa(kvm, region.gpa + (region.nr_pages << PAGE_SHIFT) - 1))
->  		return -EINVAL;
->  
-> -	kvm_mmu_reload(vcpu);
->  	ret = 0;
->  	while (region.nr_pages) {
->  		if (signal_pending(current)) {
-> -- 
-> 2.51.0.858.gf9c4a03a3a-goog
-> 
+Yes let's change that into a pointer:
+
+---8<---
+Instead of passing pkey_info into dump_options by value, using a
+pointer instead.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
+index 090099d1b04d..601943ce0d60 100644
+--- a/security/keys/trusted-keys/trusted_caam.c
++++ b/security/keys/trusted-keys/trusted_caam.c
+@@ -29,12 +29,12 @@ static const match_table_t key_tokens = {
+ };
+ 
+ #ifdef CAAM_DEBUG
+-static inline void dump_options(struct caam_pkey_info pkey_info)
++static inline void dump_options(const struct caam_pkey_info *pkey_info)
+ {
+-	pr_info("key encryption algo %d\n", pkey_info.key_enc_algo);
++	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
+ }
+ #else
+-static inline void dump_options(struct caam_pkey_info pkey_info)
++static inline void dump_options(const struct caam_pkey_info *pkey_info)
+ {
+ }
+ #endif
+@@ -108,7 +108,7 @@ static int trusted_caam_seal(struct trusted_key_payload *p, char *datablob)
+ 		ret = get_pkey_options(datablob, &info.pkey_info);
+ 		if (ret < 0)
+ 			return 0;
+-		dump_options(info.pkey_info);
++		dump_options(&info.pkey_info);
+ 	}
+ 
+ 	ret = caam_encap_blob(blobifier, &info);
+@@ -140,7 +140,7 @@ static int trusted_caam_unseal(struct trusted_key_payload *p, char *datablob)
+ 		ret = get_pkey_options(datablob, &info.pkey_info);
+ 		if (ret < 0)
+ 			return 0;
+-		dump_options(info.pkey_info);
++		dump_options(&info.pkey_info);
+ 
+ 		p->key_len = p->blob_len + sizeof(struct caam_pkey_info);
+ 		memcpy(p->key, &info.pkey_info, sizeof(struct caam_pkey_info));
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
