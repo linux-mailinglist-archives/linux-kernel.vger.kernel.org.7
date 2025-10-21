@@ -1,151 +1,169 @@
-Return-Path: <linux-kernel+bounces-862683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD70BF5E5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:54:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 181A1BF5E53
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742F91887010
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:54:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5281983530
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA25B32ABC3;
-	Tue, 21 Oct 2025 10:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VFuRWM7i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BE332D448;
+	Tue, 21 Oct 2025 10:52:26 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AAD2F2603
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7DF32AADD
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761044032; cv=none; b=uDIElN1tmJ/wKgMfEFiuF26kxqgB1go/VM+Kp+rFhWF7tgpIxTqH4bFDqBRLXBAcNhS+BJAzqh/y14f+wBclA14dyjBbRagfoEoxKqvRhfv+25twuZLGrP+628O5D/8eAWi7P8wp/ssP6KP9GcTkW/6QGmonxraWqbobIPxpTqE=
+	t=1761043945; cv=none; b=rkEJP+3fHRdn0fPU9duuXERF3DxbagwCM63dO7bzgNmc2SXDVppFQtmYrrzXEyTdNn+Gi9w91z9RgyBCR2Hn+XqrRvmhJbaSm8rIZWW9M/eAouWVqp4BFzUHhF3ztYQ5KZDWEvgBte9W718aWX8Cv2Y0izcwcAkYmNRq/z6NUtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761044032; c=relaxed/simple;
-	bh=z9W08tFakR4rntFVt2C/QolkYErlrqGUGVDVL7R2suo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUhvF7xVKZjE5J3xpAyl6JVNaIhsujVeI5Egn9VCZm3L96TlD1UCBEkYYuLTRywOfhpZOFO4HIEAf4byZkd1l034hvYNGgMOT4C/sCnIXWygx+rXnH4qblYNFU7q9XKp0s40mgdMMxjmaTKq5+JSylZXGio0L37492mUUDezEEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VFuRWM7i; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761044031; x=1792580031;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z9W08tFakR4rntFVt2C/QolkYErlrqGUGVDVL7R2suo=;
-  b=VFuRWM7inN9EWwGoiZgTG54YR6q8Bb41//DpK1yiRJgINOgpy/j6F0dA
-   QjRIkPGSBbs4HWe/z3op/gDK2FVeIk3eCJsHugY5YZx57ETgzdx1dlsy1
-   EMSUeNhlQbZ8rR+is7dMjYxSmMuGwXYi21VKovf0pBUqROWfoKrlQkVp/
-   WCwG/7/yhHzYuqA7jiTle2ULdHCw95IrfKIPER6Q+qZFAyIE9vjTzBM4Q
-   lEQ6LtX8ZGX1fTeiJag6SOXDkXgVEdR6cS1cZQpgTMWhpMzgOiyMUjSaX
-   +ih/7ZRkXjITl34ja1ziwwuI34fcI8+qv2K9NjnyiNM8qQbVIqt7feE7R
-   A==;
-X-CSE-ConnectionGUID: rZRy6c0lSPKvvq2yKyMfqw==
-X-CSE-MsgGUID: iYAvuaamQMazCsbXFp8NjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62198271"
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="62198271"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 03:53:49 -0700
-X-CSE-ConnectionGUID: FuZJDGqQRaWI+/fMpYk8RA==
-X-CSE-MsgGUID: srHAXlx1TWm6LrffBOZKlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="214194137"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 21 Oct 2025 03:53:47 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vB9zS-000AkP-09;
-	Tue, 21 Oct 2025 10:53:26 +0000
-Date: Tue, 21 Oct 2025 18:52:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: zhoumin <teczm@foxmail.com>, mingo@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	zhoumin <teczm@foxmail.com>
-Subject: Re: [PATCH] cputime:make function static
-Message-ID: <202510211821.9NudzdNn-lkp@intel.com>
-References: <tencent_C04F39CA166C38A5502D7CF206688E191307@qq.com>
+	s=arc-20240116; t=1761043945; c=relaxed/simple;
+	bh=k4+x/4Pc5WbcPGrx/Ued/YG0FZK+SVVlfYq/U4m/crg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=az66Br+U4yiPmZFl1/sKv4jqHj7EOV8kgjgZ4FeEP5itOQRoi09mX2RlL7vlIjGUV2hUgLNLL88sfG8HUHP38nlzlz7+TQ50cpserK+hDGT79ET9sR8DrGW8ePWnTQ6od4hzMmFlVZU4M46DyRjomRwUu8EIIzZucGmGGEtLjPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-93e4da7a183so512388639f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:52:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761043943; x=1761648743;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XGGkkMNkHmC4tm1IO7kdwE41Uv9388JAygyHw2qBF5E=;
+        b=mxizSU1cJJThMgb45l8hAhMyvKsrOUCB6ZVrUpxNV1Ulk5IjSvxg7Ti/WlSB5iUT1b
+         pN1CY/uIIEjnLuQY93CeCc0nJaQDdLkJVMbUcmEEZphHB2bz+m5mVZf+sDgq+cMH5+tV
+         gv4pu5bUEPPtAy09ws2f4aQfT601AVaoFwgyh3lqwJYqi1cTYs1d/G+f9JCaYeLQ87E6
+         miagzvE0G6xobYvKDb/H6iumB0PsAvhMc44tzAp3JJEx+NMyYirXtQSr1pMHqLddAZI9
+         4GdErpE5C/ZWSoG7BrPuEN0JAW8JMIhjj4+xuwfhJy3fRSBZ6YXgR9B9wC+I3MU41HuB
+         crDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnYkN4rnPXnWoDvG/K6nyLy6xJDNWbg5EY6MXcqExGcrXTKofZBC1BHBRjIvp/FdgVt5wAmUDOLbzKziU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx29rpYEz0PdK8DdpetkHZjVFBhetifAreNDPZDXCLXPmAVbkQK
+	Mwewc01eCNnL1aFEe0bKVIEhoY09POS4SoyXb5fDOal3vx5DHRzt7Svo6alkDA6tUH02cs38cji
+	ZFLmaz77Ck3N4uLWs2y7ea3p52vZDRt0ZZjpaUltWNtyTpEoTS+a4TWpX4wA=
+X-Google-Smtp-Source: AGHT+IGZl/z9F3NGvnVY+4zx0T3/5eRzUDTVNeEAVsxrcpu9Kl75QHk4JVAqg9mnWOqdC1rEv0pCnJdsDiI880v7ISAFskicLI5i
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_C04F39CA166C38A5502D7CF206688E191307@qq.com>
+X-Received: by 2002:a05:6602:1651:b0:940:d1b4:1089 with SMTP id
+ ca18e2360f4ac-940d1b41221mr1519079439f.1.1761043943425; Tue, 21 Oct 2025
+ 03:52:23 -0700 (PDT)
+Date: Tue, 21 Oct 2025 03:52:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f765e7.050a0220.346f24.0012.GAE@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in btrfs_backref_release_cache (2)
+From: syzbot <syzbot+6dafaff006dcd512c3af@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi zhoumin,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on tip/sched/core]
-[also build test WARNING on linus/master v6.18-rc2 next-20251021]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    98ac9cc4b445 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15facb04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2d7b4143707d3a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=6dafaff006dcd512c3af
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-url:    https://github.com/intel-lab-lkp/linux/commits/zhoumin/cputime-make-function-static/20251020-235256
-base:   tip/sched/core
-patch link:    https://lore.kernel.org/r/tencent_C04F39CA166C38A5502D7CF206688E191307%40qq.com
-patch subject: [PATCH] cputime:make function static
-config: s390-randconfig-002-20251021 (https://download.01.org/0day-ci/archive/20251021/202510211821.9NudzdNn-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251021/202510211821.9NudzdNn-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510211821.9NudzdNn-lkp@intel.com/
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-98ac9cc4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4a2afc96e189/vmlinux-98ac9cc4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/92d24cde05de/bzImage-98ac9cc4.xz
 
-All warnings (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6dafaff006dcd512c3af@syzkaller.appspotmail.com
 
-   In file included from kernel/sched/build_policy.c:57:
->> kernel/sched/cputime.c:189:13: warning: 'account_system_time' defined but not used [-Wunused-function]
-     189 | static void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
-         |             ^~~~~~~~~~~~~~~~~~~
+BTRFS info (device loop0): balance: start -d -m
+BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
+BTRFS info (device loop0): found 1 extents, stage: move data extents
+BTRFS info (device loop0): relocating block group 5242880 flags data|metadata
+BTRFS info (device loop0): found 9 extents, stage: move data extents
+assertion failed: !cache->nr_nodes :: 0, in fs/btrfs/backref.c:3160
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/backref.c:3160!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5319 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btrfs_backref_release_cache+0x1ef/0x220 fs/btrfs/backref.c:3160
+Code: 0f 0b e8 84 5f d7 fd 48 c7 c7 80 16 b0 8b 48 c7 c6 20 1f b0 8b 31 d2 48 c7 c1 20 17 b0 8b 41 b8 58 0c 00 00 e8 22 9d 3e fd 90 <0f> 0b e8 5a 5f d7 fd 48 c7 c7 80 16 b0 8b 48 c7 c6 60 1f b0 8b 31
+RSP: 0018:ffffc9000d5c7830 EFLAGS: 00010246
+RAX: 0000000000000043 RBX: ffff88801f4f2020 RCX: 85e0f5a888a8ee00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa650 R12: 1ffff11003e9e421
+R13: 00000000fffffffe R14: ffff88801f4f20f0 R15: dffffc0000000000
+FS:  00007faaa33d86c0(0000) GS:ffff88808d300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5176a4e949 CR3: 000000001fd36000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ relocate_block_group+0xac6/0xd70 fs/btrfs/relocation.c:3638
+ btrfs_relocate_block_group+0x6bc/0xc60 fs/btrfs/relocation.c:3983
+ btrfs_relocate_chunk+0x12f/0x5c0 fs/btrfs/volumes.c:3451
+ __btrfs_balance+0x1860/0x23f0 fs/btrfs/volumes.c:4227
+ btrfs_balance+0xac2/0x11b0 fs/btrfs/volumes.c:4604
+ btrfs_ioctl_balance+0x3d3/0x610 fs/btrfs/ioctl.c:3577
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faaa258efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007faaa33d8038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007faaa27e6090 RCX: 00007faaa258efc9
+RDX: 0000200000000180 RSI: 00000000c4009420 RDI: 0000000000000005
+RBP: 00007faaa2611f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007faaa27e6128 R14: 00007faaa27e6090 R15: 00007ffe79b9d7c8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:btrfs_backref_release_cache+0x1ef/0x220 fs/btrfs/backref.c:3160
+Code: 0f 0b e8 84 5f d7 fd 48 c7 c7 80 16 b0 8b 48 c7 c6 20 1f b0 8b 31 d2 48 c7 c1 20 17 b0 8b 41 b8 58 0c 00 00 e8 22 9d 3e fd 90 <0f> 0b e8 5a 5f d7 fd 48 c7 c7 80 16 b0 8b 48 c7 c6 60 1f b0 8b 31
+RSP: 0018:ffffc9000d5c7830 EFLAGS: 00010246
+RAX: 0000000000000043 RBX: ffff88801f4f2020 RCX: 85e0f5a888a8ee00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa650 R12: 1ffff11003e9e421
+R13: 00000000fffffffe R14: ffff88801f4f20f0 R15: dffffc0000000000
+FS:  00007faaa33d86c0(0000) GS:ffff88808d300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5176a5bae0 CR3: 000000001fd36000 CR4: 0000000000352ef0
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for I2C_K1
-   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
-   Selected by [y]:
-   - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-vim +/account_system_time +189 kernel/sched/cputime.c
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-   182	
-   183	/*
-   184	 * Account system CPU time to a process.
-   185	 * @p: the process that the CPU time gets accounted to
-   186	 * @hardirq_offset: the offset to subtract from hardirq_count()
-   187	 * @cputime: the CPU time spent in kernel space since the last update
-   188	 */
- > 189	static void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
-   190	{
-   191		int index;
-   192	
-   193		if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
-   194			account_guest_time(p, cputime);
-   195			return;
-   196		}
-   197	
-   198		if (hardirq_count() - hardirq_offset)
-   199			index = CPUTIME_IRQ;
-   200		else if (in_serving_softirq())
-   201			index = CPUTIME_SOFTIRQ;
-   202		else
-   203			index = CPUTIME_SYSTEM;
-   204	
-   205		account_system_index_time(p, cputime, index);
-   206	}
-   207	
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
