@@ -1,166 +1,160 @@
-Return-Path: <linux-kernel+bounces-862916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B118BF6844
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:45:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB33BF6848
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A4719A3BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90BED19A3A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8516E333432;
-	Tue, 21 Oct 2025 12:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iu0n0IjZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FCA3328E0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B65333454;
+	Tue, 21 Oct 2025 12:45:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF8D332904
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050713; cv=none; b=nWTSKSaNxHr7lA/LUKBRScWd2p/PE+Jnp3u9BXnhgVUd0K4onYvLg30tjTF2KM0E3Sd9f1LDCOyFYIie35cKu31yo8aXpYMXluf5rot3L+999uBQdVHfnaJgwHvCwN4p40znwN+8rA9wb3KuiAQacTl5r9gRbdq/IbvbdHVshO8=
+	t=1761050717; cv=none; b=H2ClCagNuT41Zqai8xlQgUerdEe9bkATMaP8yphSxEXdFuLDTS/YGEsJW6G6iIBYJ5jyIHSq9Iw5uQ3s2O8VFwZeFq8MwgjltCqr6uxOGFPYya9cN/kFKC7+pDG8nCO7IZxgL+dNiYuHKCdlYSGPClo4ealiao/v6nDxs8ZfNEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050713; c=relaxed/simple;
-	bh=fNqD+B6s469Yj7Uuf2+D0qytTYH3QsTqcGglEXhywPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=be7Z9J8hq25TatgBzPQLvURt1v6fZSzNRsLHcDKVONCCsCqJ8Isj2vSGKz/1o+fdaaBrb+xyGPBOXMPCzKIAWVSFaJplP2xihGLRuCANa6pXfv239GF8MvKXNQUa6eFe2wiE0eVlHvJBMVvsJjUkhPQRblE76ACPy985PURiL6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iu0n0IjZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D34C4CEF1
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761050713;
-	bh=fNqD+B6s469Yj7Uuf2+D0qytTYH3QsTqcGglEXhywPQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Iu0n0IjZdJ1BkmkUfib/wrwtDaZ6xxHsH/c9fcxkTJjMAdwzqS98vY2XcO/fnDlZp
-	 w3jJfmFgk+1Px+pty5cxR0VQczTngpA2iuD22WeZm98XvhzSCPuJYTXDbFuJXUXUM1
-	 sdws1JBJcySlRx3SqYvtwrpL2rqFaHzXDCzooFesdHaB6NNtPefPtIfdsfGMwupJrC
-	 3u0Uk0umvEPeP/Ei35P/BRrFymRIDy/uNLraeQX2nAxGbHlG+0kNp4HFW7jLoM28ec
-	 kAoRz8OcCUravdQt/zI4VWy0/VrLeTWbg+xWB7UesTOpYB4aRKhD/L05DtyCkprZFy
-	 aBVoJ4agTixUA==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-651c743b2d9so2465948eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:45:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQLJm+nboqaglUC+JQ1rIY4kJL1TpIRZm3KlMUPZwa11bPAVqS/jMYmSJ3fe2VFHU49BkyRnqXcANU+4E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5wv8keFPtKLEfAPzty++YBME+k2tsASaaGri+hegtNZTmzZuf
-	AhdDNhZhk7pmlKw/zS4FQIORVBzLDvaGZBzberFYkoVDyTZhTggmpjYMLtn8qhFpcJWX24zjDa0
-	YHlok/1qjSyf0WaItRU+A2keMNceWiCY=
-X-Google-Smtp-Source: AGHT+IH6obx8zcmEauqGoNYLVkeBLUIIr0ww8RYLI2qsmTsgyzzB7QT2RsZlbIpSX2hhGlD1fpjflbZtgs/poJLEHoA=
-X-Received: by 2002:a05:6808:1383:b0:43f:5b28:f0a6 with SMTP id
- 5614622812f47-443a2ee46d2mr7050078b6e.1.1761050712765; Tue, 21 Oct 2025
- 05:45:12 -0700 (PDT)
+	s=arc-20240116; t=1761050717; c=relaxed/simple;
+	bh=28RKf66LPtSayYSSXWVREAv8SkwWCrEhi0jpBieScHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYy8BLU5jJi631voap9nACsn3wD/C4sYqDNNHNPSRYFKdqHtTcUxBUs/70RwYJMGaTiLJ7UANs6vnLuMtl3ZbSPNyZ4drUftmgTsApxffKHYYhgw1QQXdgcVVohgr8SaBcIsdr9i336IiDldxOJPfL12PWtPjY3OEBYBLxrnNLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5EE91063;
+	Tue, 21 Oct 2025 05:45:05 -0700 (PDT)
+Received: from [10.163.39.61] (unknown [10.163.39.61])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E89333F66E;
+	Tue, 21 Oct 2025 05:45:11 -0700 (PDT)
+Message-ID: <875f379a-c3eb-4b1b-bb42-46183a879d69@arm.com>
+Date: Tue, 21 Oct 2025 18:15:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6196611.lOV4Wx5bFT@rafael.j.wysocki> <2323750.iZASKD2KPV@rafael.j.wysocki>
- <25435d82-575d-495f-ae61-bd38570ff9ad@linux.ibm.com>
-In-Reply-To: <25435d82-575d-495f-ae61-bd38570ff9ad@linux.ibm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 21 Oct 2025 14:44:59 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iC-Lz59iu+5Ps-T9W5Ow__pm_0-txF2mDERypPFQYFsw@mail.gmail.com>
-X-Gm-Features: AS18NWBovxp0gk85Y0l34CMY9sPShK1oLNJ-hGiHVklLTkmzTqdfgdStD1r2e9w
-Message-ID: <CAJZ5v0iC-Lz59iu+5Ps-T9W5Ow__pm_0-txF2mDERypPFQYFsw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] PCI/sysfs: Use runtime PM guard macro for auto-cleanup
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PCI <linux-pci@vger.kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
-	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>, 
-	Niklas Schnelle <schnelle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64/mm: Add remaining TLBI_XXX_MASK macros
+To: Ben Horgan <ben.horgan@arm.com>, linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20251021052022.2898275-1-anshuman.khandual@arm.com>
+ <20251021052022.2898275-3-anshuman.khandual@arm.com>
+ <1148d823-5a89-4f32-911b-f009a8ea5641@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <1148d823-5a89-4f32-911b-f009a8ea5641@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 12:07=E2=80=AFAM Farhan Ali <alifm@linux.ibm.com> w=
-rote:
->
->
-> On 9/26/2025 9:24 AM, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Use the newly introduced pm_runtime_active_try guard to simplify
-> > the code and add the proper error handling for PM runtime resume
-> > errors.
-> >
-> > Based on an earlier patch from Takashi Iwai <tiwai@suse.de> [1].
-> >
-> > Link: https://patch.msgid.link/20250919163147.4743-3-tiwai@suse.de [1]
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v3 -> v4:
-> >     * Use ACQUIRE()/ACQUIRE_ERR() (Jonathan)
-> >     * Adjust subject and changelog
-> >     * Take patch ownership (it's all different now)
-> >     * Pick up Bjorn's ACK from v3 (Bjorn, please let me know if that's =
-not OK)
-> >
-> > v2 -> v3: No changes
-> >
-> > v1 -> v2:
-> >     * Adjust the name of the class to handle the disabled runtime PM ca=
-se
-> >       transparently (like the original code).
-> >
-> > ---
-> >   drivers/pci/pci-sysfs.c |    5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > --- a/drivers/pci/pci-sysfs.c
-> > +++ b/drivers/pci/pci-sysfs.c
-> > @@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct
-> >               return count;
-> >       }
-> >
-> > -     pm_runtime_get_sync(dev);
-> > -     struct device *pmdev __free(pm_runtime_put) =3D dev;
-> > +     ACQUIRE(pm_runtime_active_try, pm)(dev);
-> > +     if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
-> > +             return -ENXIO;
-> >
-> >       if (sysfs_streq(buf, "default")) {
-> >               pci_init_reset_methods(pdev);
-> >
-> >
-> Hi Rafael,
->
-> This patch breaks updating the 'reset_method' sysfs file on s390. If we
-> try to update the reset_method, we are hitting the ENXIO error. eg:
->
-> echo 'bus' > /sys/bus/pci/devices/0007\:00\:10.1/reset_method
-> -bash: echo: write error: No such device or address
->
-> I don't think s390 does anything different in this path, so this could
-> also impact other platforms? Changing this to something like this fixes i=
-t
->
->
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 9d6f74bd95f8..d7fc0dc81c30 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -1517,8 +1517,8 @@ static ssize_t reset_method_store(struct device *de=
-v,
->                  return count;
->          }
->
-> -       ACQUIRE(pm_runtime_active_try, pm)(dev);
-> -       if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
-> +       ACQUIRE(pm_runtime_active, pm)(dev);
-> +       if (ACQUIRE_ERR(pm_runtime_active, &pm))
->                  return -ENXIO;
->
-> This changes the logic to what it was previously which used
-> pm_runtime_get_sync and pm_runtime_put. But I am not familiar with the
-> PM runtime code, so not sure what would be the right fix here.
 
-Can you please check if this helps:
 
-https://lore.kernel.org/linux-pm/5943878.DvuYhMxLoT@rafael.j.wysocki/
+On 21/10/25 2:30 PM, Ben Horgan wrote:
+> Hi Anshuman,
+> 
+> On 10/21/25 06:20, Anshuman Khandual wrote:
+>> Add remaining TLBI_XXX_MASK macros and replace current open encoded fields.
+>> While here replace hard coded page size based shifts but with derived ones
+>> via ilog2() thus adding some required context.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/include/asm/tlbflush.h | 26 ++++++++++++++++++--------
+>>  1 file changed, 18 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+>> index 131096094f5b..cf75fc2a06c3 100644
+>> --- a/arch/arm64/include/asm/tlbflush.h
+>> +++ b/arch/arm64/include/asm/tlbflush.h
+>> @@ -57,9 +57,10 @@
+>>  /* This macro creates a properly formatted VA operand for the TLBI */
+>>  #define __TLBI_VADDR(addr, asid)				\
+>>  	({							\
+>> -		unsigned long __ta = (addr) >> 12;		\
+>> -		__ta &= GENMASK_ULL(43, 0);			\
+>> -		__ta |= (unsigned long)(asid) << 48;		\
+>> +		unsigned long __ta = (addr) >> ilog2(SZ_4K);	\
+>> +		__ta &= TLBI_BADDR_MASK;			\
+>> +		__ta &= ~TLBI_ASID_MASK;			\
+>> +		__ta |= FIELD_PREP(TLBI_ASID_MASK, asid);	\
+>>  		__ta;						\
+>>  	})
+>>  
+>> @@ -100,8 +101,17 @@ static inline unsigned long get_trans_granule(void)
+>>   *
+>>   * For Stage-2 invalidation, use the level values provided to that effect
+>>   * in asm/stage2_pgtable.h.
+>> + *
+>> + * +----------+------+-------+--------------------------------------+
+>> + * |   ASID   |  TG  |  TTL  |                 BADDR                |
+>> + * +-----------------+-------+--------------------------------------+
+>> + * |63      48|47  46|45   44|43                                   0|
+>> + * +----------+------+-------+--------------------------------------+
+>>   */
+>> -#define TLBI_TTL_MASK		GENMASK_ULL(47, 44)
+>> +#define TLBI_ASID_MASK		GENMASK_ULL(63, 48)
+>> +#define TLBI_TG_MASK		GENMASK_ULL(47, 46)
+>> +#define TLBI_TTL_MASK		GENMASK_ULL(45, 44)
+> 
+> The definition of TLBI_TTL_MASK changes here. This might be the correct
+> thing to do but it should be mentioned in the commit message and the
+
+Sure, will update the commit message.
+> other user, arch/arm64/kvm/nested.c, needs to be updated in tandem.
+
+Right, missed that one. Probably something like the following change
+might do it for KVM without much code churn.
+
+--- a/arch/arm64/kvm/nested.c
++++ b/arch/arm64/kvm/nested.c
+@@ -540,7 +540,7 @@ unsigned long compute_tlb_inval_range(struct kvm_s2_mmu *mmu, u64 val)
+        unsigned long max_size;
+        u8 ttl;
+
+-       ttl = FIELD_GET(TLBI_TTL_MASK, val);
++       ttl = FIELD_GET(TLBI_TTL_MASK, val) | FIELD_GET(TLBI_TG_MASK, val);
+
+        if (!ttl || !kvm_has_feat(kvm, ID_AA64MMFR2_EL1, TTL, IMP)) {
+                /* No TTL, check the shadow S2 for a hint */
+@@ -963,7 +963,7 @@ static void compute_s1_tlbi_range(struct kvm_vcpu *vcpu, u32 inst, u64 val,
+        case OP_TLBI_VALE1ISNXS:
+        case OP_TLBI_VALE1OSNXS:
+                scope->type = TLBI_VA;
+-               scope->size = ttl_to_size(FIELD_GET(TLBI_TTL_MASK, val));
++               scope->size = ttl_to_size(FIELD_GET(TLBI_TTL_MASK, val) | FIELD_GET(TLBI_TG_MASK, val));
+                if (!scope->size)
+                        scope->size = SZ_1G;
+                scope->va = tlbi_va_s1_to_va(val) & ~(scope->size - 1);
+@@ -991,7 +991,7 @@ static void compute_s1_tlbi_range(struct kvm_vcpu *vcpu, u32 inst, u64 val,
+        case OP_TLBI_VAALE1ISNXS:
+        case OP_TLBI_VAALE1OSNXS:
+                scope->type = TLBI_VAA;
+-               scope->size = ttl_to_size(FIELD_GET(TLBI_TTL_MASK, val));
++               scope->size = ttl_to_size(FIELD_GET(TLBI_TTL_MASK, val) | FIELD_GET(TLBI_TG_MASK, val));
+                if (!scope->size)
+                        scope->size = SZ_1G;
+                scope->va = tlbi_va_s1_to_va(val) & ~(scope->size - 1);
+
+> 
+>> +#define TLBI_BADDR_MASK		GENMASK_ULL(43, 0)
+>>  
+>>  #define TLBI_TTL_UNKNOWN	INT_MAX
+>>  
+> 
+> Thanks,
+> 
+> Ben
+> 
+
 
