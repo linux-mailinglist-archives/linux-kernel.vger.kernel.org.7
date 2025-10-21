@@ -1,152 +1,281 @@
-Return-Path: <linux-kernel+bounces-862891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127CFBF6766
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:32:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C94FBF68E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BADE63557FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 615754251A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AC732E73D;
-	Tue, 21 Oct 2025 12:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814CE17BB35;
+	Tue, 21 Oct 2025 12:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q5f5FCtJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F8Ikbf72"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7639A32E741
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE7533343C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049942; cv=none; b=CKD1FU8G02z6/eSfJyeDXFlS3lvgyPnokJiLGtHLH0beR8k4ElDbaPuyI+3Q3tpnx9p4G03PbrIvGgWdPhK0rvTnemNDnC0KuxyxmsVUCrlywTSJWRWxjHLLhKuSlaLVopPsHz1R1/9LTekf/JediYFxrKAvbbWQUNYOBxkJrtk=
+	t=1761051089; cv=none; b=seW8mvq0sUmYCeAXP7RSTkYG5OxGHQ6/Df7xozVQigUUpBJaxifYDxOjcPq1eDghDa6RSmdfCoXI533qlsa0oQthqznNEXdeNY/y/xAIk3DS47DZL++oKlOoqUw9peAwK/KVn2evEhL4vWv0GEoT9wTtwgFvySNI8fENFI8rUgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049942; c=relaxed/simple;
-	bh=ccp1VoQpjJs+I5YqP3Z87X9N7Yw3gj2MXIMQRc8Nclw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d7iWgpiVsYiqZd8YKM8z4iLdQv5uHWhhfHamDEQBeZdUfItqMD7CcEGNCwaM+PmtZKzAPosXoIdM+QEHG90R5J6zDOgcS+dt6/1eV2DHgbkNZlEhHwBPb6AOFAs899KfkmqXWEx4JTO4eH3R39Q7IiAeYusq75xTY/0Lx/9Q1qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q5f5FCtJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761049939;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=snHXFbUKVcqPgriwKGeD9+p0jAafcLSmWXFrDke0XWU=;
-	b=Q5f5FCtJJGGvLTlc5sBqaZpeBhHJfR9TXIEvFTOO9GXaKFCyVkd8bvlR3TTrQmi4TCfI9v
-	qe7Cs24QAMvzSefti1RGLNeju19CLSkid8CfRcEnolbXNn1tzpBjm8kX+oNksmpyrOPAEz
-	OPG5FrnQGqoOiL43egViHjcM9/WZvMQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-473-QipAItZ2PhmEoAs2qV7qrA-1; Tue, 21 Oct 2025 08:32:18 -0400
-X-MC-Unique: QipAItZ2PhmEoAs2qV7qrA-1
-X-Mimecast-MFC-AGG-ID: QipAItZ2PhmEoAs2qV7qrA_1761049937
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee130237e1so2418534f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:32:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761049937; x=1761654737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=snHXFbUKVcqPgriwKGeD9+p0jAafcLSmWXFrDke0XWU=;
-        b=DbMC8sMbJi4JJAnOwd3oAa/3Z5AApelwe57ALtQLlmlIBd+fZPxD8/08t1Yrq13P+s
-         xC/FRocDwmqFtKOdO2LH81kj2b5da1/Lvd7RBgEO4Nl4eDGsOwuXKLcvgs+D0/Sz3sG4
-         rnrkyLXkty+fKjHkhbMN8ukmNaeUkzA0DuikPwBgbQAErsS7KMNV70S0lxmY53+tjFwc
-         dKvQmY+LFc29YztM0gBZPuu7O4xysnOYauZk5duzM7bsvzRLkY1XP4LQWe58rzMCP9gf
-         mWFBWQdvEhACDcc/RGIshwqnmWCkLY12SOuqo2Vj36WBEY6r/lbE96oEuAfu22XgmumE
-         tqvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAX4P/u6smV4ko1MJUSnFlvR9pnQtZrJpi8/WaOpr/h4+VFHsF/xwoDGzaOHaz8hg/s1zTeUWIRrRvsCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1GQtE0LP5I1NLmbhjRa4iKLYOR3psjQTlVPAMgyVNfjWfPOb3
-	BQnuJr6votpiwL2OWNriiHejMxPKCvRP1rH5lGlO5uyzI4XnJkX9OOQA3MFZuRUDWVBJr9qFrd2
-	PUviQ3PW+QBAsDMuayxSa8U4XxIt1NH3blLf36mvDIPQMiXXUpoekdfPCFx76d6yLxw==
-X-Gm-Gg: ASbGncv6YN2gN03bwGuLJEkY+ZytzAzK//25szpckbPxwPQBmgn0W9aNzUQloNF9Hc4
-	MfF2B8Z1dBadEZaa077CUj5CCrVIFxi5l6xAIHWUlfwt3Yn6sCoaeZ7G+fexIpj0YTDAEECuYas
-	NnTSoyf8dVsErProTdku3yEgAbK5rkrx4dhLfbh3hOjpl0Ro1boeIEsgcaulvhPaWlOayUnFXsV
-	ZqD7Abo5XHMLJFuOUsbnGqJtzEXXKenjKJOTsTrmf+9NLYoA+QzaqqKdYKI1me3iC+p0pDnCeW3
-	Cie2ATkn+KfbtMO3Rj81rpg6X1eTr3UBrRvWLXV2jYc4iXvtkjExJkMsV8ycMzjkUcr+LrW2uh7
-	0eq4+TeZtp0O08sx8kfTKfoYa3FdHiZOJhpDdp2M=
-X-Received: by 2002:a05:6000:2305:b0:427:928:7888 with SMTP id ffacd0b85a97d-42709287b06mr8917170f8f.55.1761049936852;
-        Tue, 21 Oct 2025 05:32:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBU6pyNtgJdNbG8KrDXp4BEjrSCFEszvqCmaWd2PrAFmOwM+9q033VKMpwkTA1TH8Zuz1XMA==
-X-Received: by 2002:a05:6000:2305:b0:427:928:7888 with SMTP id ffacd0b85a97d-42709287b06mr8917142f8f.55.1761049936420;
-        Tue, 21 Oct 2025 05:32:16 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce586sm20603530f8f.49.2025.10.21.05.32.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 05:32:16 -0700 (PDT)
-Message-ID: <2819877d-610f-42cf-9b3c-ee2d836e2df0@redhat.com>
-Date: Tue, 21 Oct 2025 14:32:14 +0200
+	s=arc-20240116; t=1761051089; c=relaxed/simple;
+	bh=jcnd0yDPXv2FFZ0tUi7p+G4qgcA41pgSy7DuPQOxb9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lan6aYBvaLW7APtQOEUHmw0XjGhv8CCW+YNXLfxfEfF/D69iIcqZyjyNTppoHACZ74qctkzvvbAY0UPyfLv/uk6hfWCp+qBQ1TOywK+3fSmdvbw+Te+5GgGYfYCpCJg60BTc2r6VRbeSxO7xfNG4hoO6Sr/6J08bPTyA7BjxsRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F8Ikbf72; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761051087; x=1792587087;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jcnd0yDPXv2FFZ0tUi7p+G4qgcA41pgSy7DuPQOxb9c=;
+  b=F8Ikbf72IqECbxrE9EWN4Ji1E/ZgnWECZ75SE0gumfV4sd0xHtO5MCO7
+   ZXoxNhrPM0sDB1jzd43V3R6L4qo00PhnTzpe4lD5pd0D5mTbDXsmw2rtm
+   6fIXlZK8jdbgONkrhCX53I9GC294ampK4eE+zTd73z+A8OSlQBr30RL9/
+   SdgZYfl4Q5iQ9YLTdK4/UeipmtB0jnNkcWz5yDIwxLKNv4Wkvd+vLpYaY
+   Do9O7ybLTbDL3Hlyo/g81T0cxIp1C1uGolKPgHOGPcjzvg3xJ4IREpPuw
+   9WmuF/goP/nUsp+HUeP5KPsQyFoH3WXOuFOgK7z1EgQcTdMAZbK0745Mr
+   Q==;
+X-CSE-ConnectionGUID: kxU97QXfQCiKcqoNWCLu1A==
+X-CSE-MsgGUID: bzyB7sxsSW6JGUg8TrpziA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74294550"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="74294550"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 05:51:27 -0700
+X-CSE-ConnectionGUID: /bFMHN06SAeVDS7Jvez1xA==
+X-CSE-MsgGUID: o08R1Yq0S4qNQ4KK+ydQgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="214539998"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 05:51:24 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Reuven Abliyev <reuven.abliyev@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: [PATCH v2] mtd: intel-dg: wake card on operations
+Date: Tue, 21 Oct 2025 15:32:46 +0300
+Message-ID: <20251021123246.3629282-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] drm/panic: Fixes found with kunit.
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org
-References: <20251009122955.562888-1-jfalempe@redhat.com>
- <f8f1e0ec-46fe-4d71-94aa-bdd081ec35fb@redhat.com>
- <13bc66cd-a63b-44b9-92fb-98b5b36ce2dd@suse.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <13bc66cd-a63b-44b9-92fb-98b5b36ce2dd@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 21/10/2025 13:24, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 21.10.25 um 11:35 schrieb Jocelyn Falempe:
->> On 09/10/2025 14:24, Jocelyn Falempe wrote:
->>> A few fixes for drm panic, that I found when writing unit tests with 
->>> kunit.
->>
->> Pushed to drm-misc-fixes.
-> 
-> There are many patches without Fixes tag here. Commits in -fixes should 
-> preferably have a Fixes tag to help with backporting. No need to revert, 
-> but something to keep in mind for next time.
+The Intel DG cards do not have separate power control for
+persistent memory.
+The memory is available when the whole card is awake.
 
-Ok, sorry for that. I'll add it next time.
+Enable runtime PM in mtd driver to notify parent graphics driver
+that whole card should be kept awake while nvm operations are
+performed through this driver.
 
-Best regards,
+CC: Lucas De Marchi <lucas.demarchi@intel.com>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+---
 
+V2: Address review comments (Andrey S)
+
+ drivers/mtd/devices/mtd_intel_dg.c | 70 +++++++++++++++++++++++++-----
+ 1 file changed, 58 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
+index b438ee5aacc3..d1916ec5e087 100644
+--- a/drivers/mtd/devices/mtd_intel_dg.c
++++ b/drivers/mtd/devices/mtd_intel_dg.c
+@@ -15,14 +15,18 @@
+ #include <linux/module.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
++#include <linux/pm_runtime.h>
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/sizes.h>
+ #include <linux/types.h>
+ 
++#define INTEL_DG_NVM_RPM_TIMEOUT_MS 500
++
+ struct intel_dg_nvm {
+ 	struct kref refcnt;
+ 	struct mtd_info mtd;
++	struct device *dev;
+ 	struct mutex lock; /* region access lock */
+ 	void __iomem *base;
+ 	void __iomem *base2;
+@@ -421,6 +425,8 @@ static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device,
+ 	unsigned int i, n;
+ 	int ret;
+ 
++	nvm->dev = device;
++
+ 	/* clean error register, previous errors are ignored */
+ 	idg_nvm_error(nvm);
+ 
+@@ -498,6 +504,7 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
+ 	size_t len;
+ 	u8 region;
+ 	u64 addr;
++	int ret;
+ 
+ 	if (WARN_ON(!nvm))
+ 		return -EINVAL;
+@@ -512,20 +519,29 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
+ 	total_len = info->len;
+ 	addr = info->addr;
+ 
++	ret = pm_runtime_resume_and_get(nvm->dev);
++	if (ret < 0) {
++		dev_err(&mtd->dev, "rpm: get failed %d\n", ret);
++		return ret;
++	}
++
++	ret = 0;
+ 	guard(mutex)(&nvm->lock);
+ 
+ 	while (total_len > 0) {
+ 		if (!IS_ALIGNED(addr, SZ_4K) || !IS_ALIGNED(total_len, SZ_4K)) {
+ 			dev_err(&mtd->dev, "unaligned erase %llx %zx\n", addr, total_len);
+ 			info->fail_addr = addr;
+-			return -ERANGE;
++			ret = -ERANGE;
++			break;
+ 		}
+ 
+ 		idx = idg_nvm_get_region(nvm, addr);
+ 		if (idx >= nvm->nregions) {
+ 			dev_err(&mtd->dev, "out of range");
+ 			info->fail_addr = MTD_FAIL_ADDR_UNKNOWN;
+-			return -ERANGE;
++			ret = -ERANGE;
++			break;
+ 		}
+ 
+ 		from = addr - nvm->regions[idx].offset;
+@@ -541,14 +557,16 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
+ 		if (bytes < 0) {
+ 			dev_dbg(&mtd->dev, "erase failed with %zd\n", bytes);
+ 			info->fail_addr += nvm->regions[idx].offset;
+-			return bytes;
++			ret = bytes;
++			break;
+ 		}
+ 
+ 		addr += len;
+ 		total_len -= len;
+ 	}
+ 
+-	return 0;
++	pm_runtime_put_autosuspend(nvm->dev);
++	return ret;
+ }
+ 
+ static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
+@@ -577,17 +595,24 @@ static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 	if (len > nvm->regions[idx].size - from)
+ 		len = nvm->regions[idx].size - from;
+ 
++	ret = pm_runtime_resume_and_get(nvm->dev);
++	if (ret < 0) {
++		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
++		return ret;
++	}
++
+ 	guard(mutex)(&nvm->lock);
+ 
+ 	ret = idg_read(nvm, region, from, len, buf);
+ 	if (ret < 0) {
+ 		dev_dbg(&mtd->dev, "read failed with %zd\n", ret);
+-		return ret;
++	} else {
++		*retlen = ret;
++		ret = 0;
+ 	}
+ 
+-	*retlen = ret;
+-
+-	return 0;
++	pm_runtime_put_autosuspend(nvm->dev);
++	return ret;
+ }
+ 
+ static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
+@@ -616,17 +641,24 @@ static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 	if (len > nvm->regions[idx].size - to)
+ 		len = nvm->regions[idx].size - to;
+ 
++	ret = pm_runtime_resume_and_get(nvm->dev);
++	if (ret < 0) {
++		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
++		return ret;
++	}
++
+ 	guard(mutex)(&nvm->lock);
+ 
+ 	ret = idg_write(nvm, region, to, len, buf);
+ 	if (ret < 0) {
+ 		dev_dbg(&mtd->dev, "write failed with %zd\n", ret);
+-		return ret;
++	} else {
++		*retlen = ret;
++		ret = 0;
+ 	}
+ 
+-	*retlen = ret;
+-
+-	return 0;
++	pm_runtime_put_autosuspend(nvm->dev);
++	return ret;
+ }
+ 
+ static void intel_dg_nvm_release(struct kref *kref)
+@@ -753,6 +785,17 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
+ 	}
+ 	nvm->nregions = n; /* in case where kasprintf fail */
+ 
++	devm_pm_runtime_enable(device);
++
++	pm_runtime_set_autosuspend_delay(device, INTEL_DG_NVM_RPM_TIMEOUT_MS);
++	pm_runtime_use_autosuspend(device);
++
++	ret = pm_runtime_resume_and_get(device);
++	if (ret < 0) {
++		dev_err(device, "rpm: get failed %d\n", ret);
++		goto err_norpm;
++	}
++
+ 	nvm->base = devm_ioremap_resource(device, &invm->bar);
+ 	if (IS_ERR(nvm->base)) {
+ 		ret = PTR_ERR(nvm->base);
+@@ -781,9 +824,12 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
+ 
+ 	dev_set_drvdata(&aux_dev->dev, nvm);
+ 
++	pm_runtime_put(device);
+ 	return 0;
+ 
+ err:
++	pm_runtime_put(device);
++err_norpm:
+ 	kref_put(&nvm->refcnt, intel_dg_nvm_release);
+ 	return ret;
+ }
 -- 
-
-Jocelyn>
-> Best regards
-> Thomas
-> 
->>
->> Thanks Javier for your reviews.
->>
->>>
->>> Jocelyn Falempe (6):
->>>    drm/panic: Fix drawing the logo on a small narrow screen
->>>    drm/panic: Fix overlap between qr code and logo
->>>    drm/panic: Fix qr_code, ensure vmargin is positive
->>>    drm/panic: Fix kmsg text drawing rectangle
->>>    drm/panic: Fix divide by 0 if the screen width < font width
->>>    drm/panic: Fix 24bit pixel crossing page boundaries
->>>
->>>   drivers/gpu/drm/drm_panic.c | 60 +++++++++++++++++++++++++++++++++----
->>>   1 file changed, 54 insertions(+), 6 deletions(-)
->>>
->>>
->>> base-commit: e4bea919584ff292c9156cf7d641a2ab3cbe27b0
->>
-> 
+2.43.0
 
 
