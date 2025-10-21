@@ -1,209 +1,134 @@
-Return-Path: <linux-kernel+bounces-863393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559C2BF7C62
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:47:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C44DBF7C56
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D9383A96B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:46:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E8A94E7AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AB92417C6;
-	Tue, 21 Oct 2025 16:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4E7345CC7;
+	Tue, 21 Oct 2025 16:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rldnopNS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dc/cVxzw"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7457346E73;
-	Tue, 21 Oct 2025 16:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52F2235360
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761065157; cv=none; b=Fa37l+hWkiziXsTHTdNAEouY5JQAVjZn1BXT8NCVh0GZDXx2tnhH2ybRgKBegz6dcBabBZ90vLvtxaKuzPK9Cx2JdHLjoizbSsCYJZvOJyn3Kb3CKGgBZOlncVTOH5xBxpGa1D1BUhaJ1m2rEiPnT5BuG/TsygY2OdjjZPdsO8Q=
+	t=1761065196; cv=none; b=sA8HEHwaS2S23mQ4iQsjoNyLnOJKt4k/VDNfVWWLj8NIe1Or7F0xCTQcJ2HjeFwXGXSNT92V3vDphlroxeF325iOTZYCUXSs4ASTTWxQGJ7Xk42OJVOcxTNgawgSRRvaWgRI2C0YgUtMRfw9K3ctQy9F4DHH+ft4FFYxT6yCxbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761065157; c=relaxed/simple;
-	bh=U+bAyEa/s/ufg7GQfiphb9pILU1hUMBXSa5h/33VtQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xe809V8hW0TyJIdh2R3vzXgYv/xetqFUGU9epCEHl6wFRhTEOwNil9M2oGKrVAKckg1daa/pt15oDeEznt3If5MmQWWU1i/Sx5TMztSfeoXVc74iOR6cEJBKLAnagBiaGkwUBj4XKcIpQ40DBiI8mmf8PtdMsEnFxC+nm0grJdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rldnopNS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (87-94-110-32.bb.dnainternet.fi [87.94.110.32])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9CFE46F9;
-	Tue, 21 Oct 2025 18:44:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761065050;
-	bh=U+bAyEa/s/ufg7GQfiphb9pILU1hUMBXSa5h/33VtQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rldnopNShKVoV6xVlUVcDd4w951MjEQxvBt1M8s491tZSp9Tkcw5p0HepHhV/ayIS
-	 Slh+gWxwYjyAcIV0Y6TpV2p0udkt6YYnyWNPQIK+7kHhsmadM8F80zfO725Q62Vrjw
-	 O5yj0xC2iNPsSu4xU0OWe6gWqryjeRe6yIeR6MYY=
-Date: Tue, 21 Oct 2025 19:45:42 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	Angel4005 <ooara1337@gmail.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: uvcvideo: Use heuristic to find stream entity
-Message-ID: <20251021164542.GB727@pendragon.ideasonboard.com>
-References: <20251021-uvc-grandstream-v2-1-6a74a44f4419@chromium.org>
- <b282f6ef-fd91-44ea-bf51-187cf2c56fc6@kernel.org>
- <CANiDSCvr-BR7wZVK2gW0wYEQjyFHTpZv7nnR4JVi6bMUyGNCoQ@mail.gmail.com>
+	s=arc-20240116; t=1761065196; c=relaxed/simple;
+	bh=MzCSlF7JPYH2kOHDFsTdRATR2yhvHJ8O9b6vUSpv794=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dpCtZIgu3V8c8DPB+YHOK4LoGesluG+fxQPmQ0Be0nebG4iNx3D7Vxfgm1ad9aA8rQlS/BOnHYW7vWRa8F+V/BXFfflFlqCr79lczpYYZlHI9jyZZZ17nByckU2O/HCDrsO9oTSPLm0oQuU/iQrMZgM4qrNJwJSu1mO0oWkAGG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dc/cVxzw; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33be01bcda8so5104876a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761065194; x=1761669994; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ILJtTbb3p1RSJdwFph32qlzFNqhYFB7y760KFco4Owo=;
+        b=Dc/cVxzwuupDTZOD1m0/l7YoyzamyY1dDl+GPk1FpQ95P8bJ2+5PbrYth35NFWyZeu
+         4QZN1QVfzGaseoJdvuT4C5waAk/s/zsTL4l4VwXzGp8f0KgbJiYxIGcsrxJBy/SBk2Js
+         0UbXz3LNUAIuR15Cd4h5eJW1dwCWH9M4olPTC/uCTj5k7+kWqxnbAa+uj17wxIc4bp0i
+         pv6Wai70Gv3dw9pG2tFnbuYYAqGt/PPl/7tWnnL/4KMU0Ao0usPlet7JeFSYP/Agw2Wu
+         117XjbCHcyhAZuccCLVI9Zbs5/bAUXdQd+9MfKGQeTbh7kXqUhIwVkk7v0wT1u3vWRKW
+         l2ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761065194; x=1761669994;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ILJtTbb3p1RSJdwFph32qlzFNqhYFB7y760KFco4Owo=;
+        b=cb4e3f4GmvymdlG95gT31GB+y0HWOZUogLhl2IkhxRxAStM6CRs6yiHFStHIwkY5PD
+         yAnFfVBO354wNYOJw2y6tlvGbvGZ8SH2nQqMX/UvyVpPU3c4uvShm3NI0i6/BJ2fk9qZ
+         pGbDott++Ud9nHOqFosLB48alCN+7tSNLKXkP5q/e2kItz9eRYbIGN8jEfuJjwZfEE1C
+         rSxoXBb6Ur6Os3JRzbByFZvLbZcQHtA2jg+a5QqI1rDzdX7UcvGH+pKYrG8qKJqedMMC
+         O48dCtEOw+mNczTUxXNVGMaDjKXzk4iuDEnZ9NFBmFsOa9I/37ORTA1R5iiUa+3wF1ZO
+         GqYA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4tnXQZqTrDvNLvOA0342U6yGy1fiWLmKb5ro/Ru9OZQn5PhyKC6or9Gr6wGNujJPJeAt05WpDQZ3ew0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQzj2+p9MpQnbUFrMUz9v9yTVV4uQIQuvDyHj27A13SFEcZiom
+	046MVdKlpB03O2xye+9RuC+DeQo8+Ry4+Gw0tMMH+7mz0hgrSHD7c9DhdFqj5yPM76CMcdaJzrk
+	vqIi2hQ==
+X-Google-Smtp-Source: AGHT+IHQC8FnTeE31bDovIZahN02vzwA1aMcIa7ISNfuievKsucJKLKlotq+V3A/k5eE93pnT90GbMf/PEo=
+X-Received: from pjbtd12.prod.google.com ([2002:a17:90b:544c:b0:330:b9e9:7acc])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:17cb:b0:32a:34d8:33d3
+ with SMTP id 98e67ed59e1d1-33bcec1abbfmr19826042a91.0.1761065194119; Tue, 21
+ Oct 2025 09:46:34 -0700 (PDT)
+Date: Tue, 21 Oct 2025 09:46:32 -0700
+In-Reply-To: <4841c40b-47b0-4b1b-985f-d1a16cbe81fa@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCvr-BR7wZVK2gW0wYEQjyFHTpZv7nnR4JVi6bMUyGNCoQ@mail.gmail.com>
+Mime-Version: 1.0
+References: <20251016222816.141523-1-seanjc@google.com> <20251016222816.141523-2-seanjc@google.com>
+ <e16f198e6af0b03fb0f9cfcc5fd4e7a9047aeee1.camel@intel.com>
+ <d1628f0e-bbe9-48b0-8881-ad451d4ce9c5@intel.com> <aPehbDzbMHZTEtMa@google.com>
+ <4841c40b-47b0-4b1b-985f-d1a16cbe81fa@intel.com>
+Message-ID: <aPe46Ev0wWks6Hz2@google.com>
+Subject: Re: [PATCH v4 1/4] KVM: TDX: Synchronize user-return MSRs immediately
+ after VP.ENTER
+From: Sean Christopherson <seanjc@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"kas@kernel.org" <kas@kernel.org>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"x86@kernel.org" <x86@kernel.org>, wenlong hou <houwenlong.hwl@antgroup.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Oct 21, 2025 at 06:15:54PM +0200, Ricardo Ribalda wrote:
-> Hi Hans(es)
+On Tue, Oct 21, 2025, Adrian Hunter wrote:
+> On 21/10/2025 18:06, Sean Christopherson wrote:
+> > On Tue, Oct 21, 2025, Adrian Hunter wrote:
+> >> On 21/10/2025 01:55, Edgecombe, Rick P wrote:
+> >>>> +	 * Several of KVM's user-return MSRs are clobbered by the TDX-Module if
+> >>>> +	 * VP.ENTER succeeds, i.e. on TD-Exit.  Mark those MSRs as needing an
+> >>>> +	 * update to synchronize the "current" value in KVM's cache with the
+> >>>> +	 * value in hardware (loaded by the TDX-Module).
+> >>>> +	 */
+> >>>
+> >>> I think we should be synchronizing only after a successful VP.ENTER with a real
+> >>> TD exit, but today instead we synchronize after any attempt to VP.ENTER.
+> > 
+> > Well this is all completely @#($*#.  Looking at the TDX-Module source, if the
+> > TDX-Module synthesizes an exit, e.g. because it suspects a zero-step attack, it
+> > will signal a "normal" exit but not "restore" VMM state.
+> > 
+> >> If the MSR's do not get clobbered, does it matter whether or not they get
+> >> restored.
+> > 
+> > It matters because KVM needs to know the actual value in hardware.  If KVM thinks
+> > an MSR is 'X', but it's actually 'Y', then KVM could fail to write the correct
+> > value into hardware when returning to userspace and/or when running a different
+> > vCPU.
 > 
-> On Tue, 21 Oct 2025 at 18:07, Hans de Goede <hansg@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > On 21-Oct-25 12:36, Ricardo Ribalda wrote:
-> > > Some devices, like the Grandstream GUV3100 webcam, have an invalid UVC
-> > > descriptor where multiple entities share the same ID, this is invalid
-> > > and makes it impossible to make a proper entity tree without heuristics.
-> > >
-> > > We have recently introduced a change in the way that we handle invalid
-> > > entities that has caused a regression on broken devices.
-> > >
-> > > Implement a new heuristic to handle these devices properly.
-> > >
-> > > Reported-by: Angel4005 <ooara1337@gmail.com>
-> > > Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
-> > > Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID")
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >
-> > Thanks, patch looks good to me:
-> >
-> > Reviewed-by: Hans de Goede <hansg@kernel.org>
-> 
-> Thanks for the prompt reply.
-> 
-> @Hverkil I think you are planning to push to /fixes soon. I believe
-> this patch should also land there.
+> I don't quite follow:  if an MSR does not get clobbered, where does the
+> incorrect value come from?
 
-Review is still ongoing :-) I've just sent comments, let's finish the
-discussion first.
+kvm_set_user_return_msr() elides the WRMSR if the current value in hardware matches
+the new, desired value.  If KVM thinks the MSR is 'X', and KVM wants to set the MSR
+to 'X', then KVM will skip the WRMSR and continue on with the wrong value.
 
-> > > ---
-> > > I have managed to get my hands into a Grandstream GUV3100 and
-> > > implemented a new heuristics. (Thanks Yunke and Hidenori!).
-> > >
-> > > With this heuristics we can use this camera again (see the /dev/video0
-> > > in the topology).
-> > >
-> > > I have tested this change in a 6.6 kernel. Because the notebook that I
-> > > used for testing has some issues running master. But for the purpose of
-> > > this change this test should work.
-> > >
-> > > ~ # media-ctl --print-topology
-> > > Media controller API version 6.6.99
-> > >
-> > > Media device information
-> > > ------------------------
-> > > driver          uvcvideo
-> > > model           GRANDSTREAM GUV3100: GRANDSTREA
-> > > serial
-> > > bus info        usb-0000:00:14.0-9
-> > > hw revision     0x409
-> > > driver version  6.6.99
-> > >
-> > > Device topology
-> > > - entity 1: GRANDSTREAM GUV3100: GRANDSTREA (1 pad, 1 link)
-> > >             type Node subtype V4L flags 1
-> > >             device node name /dev/video0
-> > >         pad0: SINK
-> > >                 <- "Extension 3":1 [ENABLED,IMMUTABLE]
-> > >
-> > > - entity 4: GRANDSTREAM GUV3100: GRANDSTREA (0 pad, 0 link)
-> > >             type Node subtype V4L flags 0
-> > >             device node name /dev/video1
-> > >
-> > > - entity 8: Extension 3 (2 pads, 2 links, 0 routes)
-> > >             type V4L2 subdev subtype Unknown flags 0
-> > >         pad0: SINK
-> > >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
-> > >         pad1: SOURCE
-> > >                 -> "GRANDSTREAM GUV3100: GRANDSTREA":0 [ENABLED,IMMUTABLE]
-> > >
-> > > - entity 11: Processing 2 (2 pads, 3 links, 0 routes)
-> > >              type V4L2 subdev subtype Unknown flags 0
-> > >         pad0: SINK
-> > >                 <- "Camera 1":0 [ENABLED,IMMUTABLE]
-> > >         pad1: SOURCE
-> > >                 -> "Extension 3":0 [ENABLED,IMMUTABLE]
-> > >                 -> "Extension 4":0 [ENABLED,IMMUTABLE]
-> > >
-> > > - entity 14: Extension 4 (2 pads, 1 link, 0 routes)
-> > >              type V4L2 subdev subtype Unknown flags 0
-> > >         pad0: SINK
-> > >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
-> > >         pad1: SOURCE
-> > >
-> > > - entity 17: Camera 1 (1 pad, 1 link, 0 routes)
-> > >              type V4L2 subdev subtype Sensor flags 0
-> > >         pad0: SOURCE
-> > >                 -> "Processing 2":0 [ENABLED,IMMUTABLE]
-> > > ---
-> > > Changes in v2:
-> > > - Fix : invalid reference to the index variable of the iterator.
-> > > - Link to v1: https://lore.kernel.org/r/20251021-uvc-grandstream-v1-1-801e3d08b271@chromium.org
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_driver.c | 15 ++++++++++++++-
-> > >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..ee4f54d6834962414979a046afc59c5036455124 100644
-> > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > @@ -167,13 +167,26 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
-> > >
-> > >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
-> > >  {
-> > > -     struct uvc_streaming *stream;
-> > > +     struct uvc_streaming *stream, *last_stream;
-> > > +     unsigned int count = 0;
-> > >
-> > >       list_for_each_entry(stream, &dev->streams, list) {
-> > > +             count += 1;
-> > > +             last_stream = stream;
-> > >               if (stream->header.bTerminalLink == id)
-> > >                       return stream;
-> > >       }
-> > >
-> > > +     /*
-> > > +      * If the streaming entity is referenced by an invalid ID, notify the
-> > > +      * user and use heuristics to guess the correct entity.
-> > > +      */
-> > > +     if (count == 1 && id == UVC_INVALID_ENTITY_ID) {
-> > > +             dev_warn(&dev->intf->dev,
-> > > +                      "UVC non compliance: Invalid USB header. The streaming entity has an invalid ID, guessing the correct one.");
-> > > +             return last_stream;
-> > > +     }
-> > > +
-> > >       return NULL;
-> > >  }
-> > >
-> > >
-> > > ---
-> > > base-commit: ea299a2164262ff787c9d33f46049acccd120672
-> > > change-id: 20251021-uvc-grandstream-05ecf0288f62
+Using MSR_TSC_AUX as an example, let's say the vCPU task is running on CPU1, and
+that there's a non-TDX vCPU (with guest-side CPU=0) also scheduled on CPU1.  Before
+VP.ENTER, MSR_TSC_AUX=user_return_msrs[slot].curr=1 (the host's CPU1 value).  After
+a *failed* VP.ENTER, MSR_TSC_AUX will still be '1', but it's "curr" value in
+user_return_msrs will be '0' due to kvm_user_return_msr_update_cache() incorrectly
+thinking the TDX-Module clobbered the MSR to '0'
 
--- 
-Regards,
-
-Laurent Pinchart
+When KVM runs the non-TDX vCPU, which wants to run with MSR_TSC_AUX=0, then
+kvm_set_user_return_msr() will see msrs->values[slot].curr==value==0 and not do
+the WRMSR.  KVM will then run the non-TDX vCPU with MSR_TSC_AUX=1 and corrupt the
+guest.
 
