@@ -1,39 +1,80 @@
-Return-Path: <linux-kernel+bounces-863843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B214ABF9403
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:35:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E59BF940F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D796581E5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:35:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CD544ECEFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FF02BE655;
-	Tue, 21 Oct 2025 23:35:17 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770522C21E6;
+	Tue, 21 Oct 2025 23:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zhFgDvNn"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D39350A02;
-	Tue, 21 Oct 2025 23:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D9729A309
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761089717; cv=none; b=anXfKfaeEzdUl5/kxTv2unseIR71YfoiYNwf7jf6h0TUYiu2hrD4qnq9raawXJj8MiH5z4Khk7rTAWMVkUPn4ejjPINbbgNV4xq549K/ZZ0L2GGT3RdWka9XlGe77FnWkmX1c/MlnJ1aSHad9HJ95hzETAHMmKF2y+0cRu7vpGE=
+	t=1761089732; cv=none; b=HZAAGjVs9rvYiU3GodtJo68G7PNSmZXQ28VZmbAokCZNMBzGG+Rkr0CkI+ObqBJAncyvgrUKwpMqh34XfXl3l1LA5YsepSOzKvw9RAuUxMEDB/CZpYrLwFOlk5ejJ8+NDv0oCEpVT3QSewdwvh/2G8cZ+KHR1lgpAEa1jBofCmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761089717; c=relaxed/simple;
-	bh=r+m8U0iErE67jQlOhGvNAC61ytioTgA98Z2QAM1yMrY=;
+	s=arc-20240116; t=1761089732; c=relaxed/simple;
+	bh=d0rri72HUDD7sLN8He2gM8MVhsCdzHnM4aRPUZ7Wp4k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z95cRltjpv5YZJpYz3Kw8gWaOQ2liZ/I9YMS5xf4IKYX3EVC47gTtwkKkf74pzKqJGa5xG+mhsdV2Bbuo1ZEmpQbyFpfqCRGmPixlL7DbHevHiCYVD9VBkjanNOc40gHkV4/tlqROhd2U8eQlwT+ttmwkNrmBo3BvlxMPhm0zTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [192.168.2.54] (unknown [216.234.200.240])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id E38E5B220DAA;
-	Wed, 22 Oct 2025 01:35:03 +0200 (CEST)
-Message-ID: <cbb18fb1-200f-40b4-89a1-c29522fdaae5@freeshell.de>
-Date: Tue, 21 Oct 2025 16:35:02 -0700
+	 In-Reply-To:Content-Type; b=ddvqIgfw0QSdHoN0BJK6ni3bTGdDj9v90RDOeuSLyg8V3e3m1m6IwklrowrKrLLAQTbXzSAPv7Bh7op27AD0tMMf2x3AGt6aFzgBNjjmYntJfO9/+TQ2NdReZkPfDN2jJ99xUQ7d/+df0HrH2EFFPBHFGrl3nwlx9jZnEVaKX2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zhFgDvNn; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-426edfffc66so273746f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761089729; x=1761694529; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xCXGcVVHwvNBqgCg7ypa7rVa+Pb3fcXZRoAO3UaaUjc=;
+        b=zhFgDvNn+hyp9BQmFTgF5mrlXX36gbkNbP62cIhSVknHLzU6XPGCnuZxg+F8AFEn9p
+         8cq3DvJ7EfbI8r+avwJeZ3TVE2W5CvwbExFKgOTDNnQYAg6k9gAGmuYN1N0qQM8+KpTL
+         RuyDF8Y64WnUUJOmw0xvu+iQuKxhRJTrMLDm1ZnSOYDNKBQIytP6rrybVlQQ5e4TtOU+
+         L0TOWuHdtT5TKMLc46nUKA0cieoJdgmZ7NTzEDQV01l8yVb1f/Vz7FjIBR8qTW/mXUEy
+         gnpYEEgxJgXUH6EAto6XyfHevUO/YjfuHCtTrK+vaTXjwMLFn/7qqvDmuXWI6gBz8CUE
+         +XPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761089729; x=1761694529;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xCXGcVVHwvNBqgCg7ypa7rVa+Pb3fcXZRoAO3UaaUjc=;
+        b=ncTqw+hFpUZAf2V/CS0OSiHiBOxPkWzkOKgVDs+oa0HBQq9H4b88jRnZcpvBOeEboR
+         Swc4wGLqTty+D1AdFT417NjaJkj2UXwIFGms7qd6ZnrDM0fMHcQHWZOcYw4P1sboV4DM
+         oZWLsgzLDSAJQSZfr67FGWtE1Fh78aUBgJ1IFZshaJ0Us9+EzI36FHIeMRKcyQJzinDE
+         wT7c4XR18mk5P9Uj8p/Gg+MzK/0WQz56Msa5uObBcgZU8EBtI1PvZgz1Ax1h417QIcsL
+         GxW9c5fO40bQI4YGUwMwvqpdHEuHdKpHXi1m7mkMOGU8G6RCmuUnncs9IiWXfFqd6LUB
+         lsuw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6kTzOjBzq4EOjfgrvGWGpFUrM9UjV5SJqUdURxBWDaGDJC2G0yY6Pg5beD5gk7jZM/MTrLs+Xq3AKh0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7WKF0LWMBOxIsWIaZM4nSQVRu3Gb4ipbvgaQuwkHNXiP8/O9M
+	9wQSxbu7IIq7mYhYf73k79UrnIkmVhbxeLGAxMjek+1vqMmpTYMzJERiinZu8423x0s=
+X-Gm-Gg: ASbGncsm9un/IjP/r1rzEejGWMLETYjNAqsSiixyL3oe4GhnVfK+ra/HQPwQQOWfuFZ
+	KB8o1Tb1VGFLobGwQ4SeP1EO/FJGPBCgUASQcf/0dVWZ1KNaaOZ/TtTefQeVLePmazJv7sawfqQ
+	E2z3Jd+tmYxGuioDaFCRUgMpmhFFQ4JtBthYOXkbLkoU0GzfqzyB0pTe0hyDQ0H6Xrnjm+PEM4j
+	PW23NSGvlVTRRwrok7AzWQznwij+/6aQcQD5XJhS3Vs0mAtJ8xGdD20cacjCGuNAIpmXO04CEma
+	5/w07/40HY2vPnIIKnYpBgcEKZ+knWElGNr/t02Vy/37QfBLXEkzjsu8Wpe2pULdh3QjH9NmEZ4
+	lgy+cLeki4bYmHCQY0C6At86V8a38dOYqFho2lj8vCsvCezSBsF7gFq16gngoQekwj1rzS0bumq
+	Pd5CRetiNmajQtcetKWVCzrstrEHY6bZh8IFfS0BKi2mHlCDwNmPpi7w==
+X-Google-Smtp-Source: AGHT+IGAFLCl48Lc20o0k175qMA8ECYoPcsbHgJr1TYSq+qDL1SyBGQ/3qEO66SBlR5lpciSN2paDA==
+X-Received: by 2002:a05:6000:4012:b0:3df:9ba8:21a3 with SMTP id ffacd0b85a97d-4285326765cmr879407f8f.18.1761089728509;
+        Tue, 21 Oct 2025 16:35:28 -0700 (PDT)
+Received: from [192.168.0.163] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c56sm22616463f8f.18.2025.10.21.16.35.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 16:35:27 -0700 (PDT)
+Message-ID: <9e71bd5c-e4d9-4b2b-bec9-95b101bdd91c@linaro.org>
+Date: Wed, 22 Oct 2025 00:35:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,277 +82,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] riscv: dts: starfive: add DT for Orange Pi RV
-To: Icenowy Zheng <uwu@icenowy.me>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 3/8] media: iris: Add support for multiple TZ content
+ protection(CP) configs
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>,
- Michael Zhu <michael.zhu@starfivetech.com>,
- Drew Fustini <drew@beagleboard.org>, Yao Zi <ziyao@disroot.org>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250930100318.2131968-1-uwu@icenowy.me>
- <20250930100318.2131968-2-uwu@icenowy.me>
- <579dad6b4ab0c981b8d51383af2db3a9f4394609.camel@icenowy.me>
- <b8db0cdf-163e-416d-94b8-c9e1f10c8011@freeshell.de>
- <2e6ce092996f2717bc274e1c82873c42b2ab18ce.camel@icenowy.me>
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vishnu Reddy <quic_bvisredd@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
+ <vWebMQzqRdPJMtF45GS9wvdpHGc4w0O4Ft0KSmDAC54LhULoJZ_uNAW8KkJ8tbK4WKwvUVdeYtDuyZCH3Z_BBA==@protonmail.internalid>
+ <20251017-knp_video-v2-3-f568ce1a4be3@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <2e6ce092996f2717bc274e1c82873c42b2ab18ce.camel@icenowy.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017-knp_video-v2-3-f568ce1a4be3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 10/6/25 00:39, Icenowy Zheng wrote:
-> 在 2025-10-05星期日的 11:47 -0700，E Shattow写道：
->> Hi Icenowy,
->>
->> On 9/30/25 08:51, Icenowy Zheng wrote:
->>> 在 2025-09-30星期二的 18:03 +0800，Icenowy Zheng写道：
->>>> Orange Pi RV is a newly released SBC with JH7110 SoC, single GbE
->>>> port
->>>> (connected to JH7110 GMAC0 via a YT8531 PHY), 4 USB ports (via a
->>>> VL805
->>>> PCIe USB controller connected to JH7110 PCIE0), a M.2 M-key slot
->>>> (connected to JH7110 PCIE1), a HDMI video output, a 3.5mm audio
->>>> output
->>>> and a microSD slot.
->>>>
->>>> Other Onboard peripherals contain a SPI NOR (which contains the
->>>> U-
->>>> Boot
->>>> firmware), a 24c02 EEPROM storing some StarFive-specific
->>>> information
->>>> (factory programmed and read only by default) and an Ampak AP6256
->>>> SDIO
->>>> Wi-Fi module.
->>>>
->>>> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
->>>> ---
->>>> Changes in v2:
->>>> - Property order change mentioned in the review of v1.
->>>> - Added Wi-Fi (along with the always on VCC3V3_PCIE regulator,
->>>> which
->>>> is
->>>>   used to power up WIFI_3V3). The OOB IRQ is still not possible
->>>> to
->>>> use
->>>>   because of some incompatibility between StarFive pinctrl driver
->>>> and
->>>>   brcmfmac.
->>>> - Removed the LED because it's in common DTSI.
->>>>
->>>>  arch/riscv/boot/dts/starfive/Makefile         |  1 +
->>>>  .../boot/dts/starfive/jh7110-orangepi-rv.dts  | 87
->>>> +++++++++++++++++++
->>>>  2 files changed, 88 insertions(+)
->>>>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-orangepi-
->>>> rv.dts
->>>>
->>>> diff --git a/arch/riscv/boot/dts/starfive/Makefile
->>>> b/arch/riscv/boot/dts/starfive/Makefile
->>>> index b3bb12f78e7d5..24f1a44828350 100644
->>>> --- a/arch/riscv/boot/dts/starfive/Makefile
->>>> +++ b/arch/riscv/boot/dts/starfive/Makefile
->>>> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-
->>>> visionfive-v1.dtb
->>>>  
->>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
->>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
->>>> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-orangepi-rv.dtb
->>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
->>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
->>>> v1.2a.dtb
->>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
->>>> v1.3b.dtb
->>>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
->>>> b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
->>>> new file mode 100644
->>>> index 0000000000000..5a917b7db6f78
->>>> --- /dev/null
->>>> +++ b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
->>>> @@ -0,0 +1,87 @@
->>>> +// SPDX-License-Identifier: GPL-2.0 OR MIT
->>>> +/*
->>>> + * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
->>>> + */
->>>> +
->>>> +/dts-v1/;
->>>> +#include "jh7110-common.dtsi"
->>>> +
->>>> +/ {
->>>> +       model = "Xunlong Orange Pi RV";
->>>> +       compatible = "xunlong,orangepi-rv", "starfive,jh7110";
->>>> +
->>>> +       /* This regulator is always on by hardware */
->>>> +       reg_vcc3v3_pcie: regulator-vcc3v3-pcie {
->>>> +               compatible = "regulator-fixed";
->>>> +               regulator-name = "vcc3v3-pcie";
->>>> +               regulator-min-microvolt = <3300000>;
->>>> +               regulator-max-microvolt = <3300000>;
->>>> +               regulator-always-on;
->>>> +       };
->>>> +
->>>> +       wifi_pwrseq: wifi-pwrseq {
->>>> +               compatible = "mmc-pwrseq-simple";
->>>> +               reset-gpios = <&sysgpio 62 GPIO_ACTIVE_LOW>;
->>>> +       };
->>>> +};
->>>> +
->>>> +&gmac0 {
->>>> +       assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
->>>> +       assigned-clock-parents = <&aoncrg
->>>> JH7110_AONCLK_GMAC0_RMII_RTX>;
->>>> +       starfive,tx-use-rgmii-clk;
->>>> +       status = "okay";
->>>> +};
->>>> +
->>>> +&mmc0 {
->>>> +       #address-cells = <1>;
->>>> +       #size-cells = <0>;
->>>> +       cap-sd-highspeed;
->>>> +       mmc-pwrseq = <&wifi_pwrseq>;
->>>> +       vmmc-supply = <&reg_vcc3v3_pcie>;
->>>> +       vqmmc-supply = <&vcc_3v3>;
->>>> +       status = "okay";
->>>> +
->>>> +       ap6256: wifi@1 {
->>>> +               compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-
->>>> fmac";
->>>> +               reg = <1>;
->>>> +               /* TODO: out-of-band IRQ on GPIO21 */
->>>> +       };
->>>> +};
->>>> +
->>
->>>> +&mmc0_pins {
->>>> +       /*
->>>> +        * As the MMC0 bus is used to connect a SDIO Wi-Fi card
->>>> instead of
->>>> +        * an eMMC card, and the eMMC RST is repurposed to be an
->>>> enablement
->>>> +        * pin of the SDIO Wi-Fi, remove it from the pinctrl node
->>>> and
->>>> manage
->>>> +        * it as a GPIO instead.
->>>> +        */
->>>> +       /delete-node/ rst-pins;
->>>> +};
->>>> +
->>
->> Listed on the schematic [1] as:
->> Default function SDIO0 RSTn GPIO62 for eMMC:J9
->> Highlighted (non-default?) function GPIO62 D17 << WIFI_EN_H_GPIO62
->> WIFI_EN_H_GPIO62 >> WIFI_PWREN (pin 12 WL_REG_ON of module AP6256)
->>
->> I've sent a patch [2] to portion out mmc0 reset pins from jh7110-
->> common.dtsi
->>
->>>> +&mmc1 {
->>>> +       /delete-property/ cd-gpios;
->>>> +       broken-cd;
->>>
->>> Well it's found that the card detect is working, although with
->>> different polarity with other boards.
->>>
->>> Here should be:
->>> ```
->>>         cd-gpios = <&sysgpio 41 GPIO_ACTIVE_HIGH>;
->>> ```
->>>
->>> Will be fixed in the next revision.
->>
->> Yes, listed on the schematic [1] as:
->> SD SDIO0 CD GPIO41 for MicroSD:J10
->>
->> There is not a mention of active high or active low on the schematic
->> label, however there is listed a 10Kohm pull-up to +Vdd1.833 for the
->> circuit diagram of the Micro SD Card. The card holder is referenced
->> to
->> ground and could reasonably be N/O or N/C switch operation depending
->> on
->> the exact part selected for manufacture.
->>
->>>
->>>> +};
->>>> +
->>>> +&pcie0 {
->>>> +       status = "okay";
->>>> +};
->>>> +
->>>> +&pcie1 {
->>>> +       status = "okay";
->>>> +};
->>>> +
->>
->>>> +&phy0 {
->>>> +       rx-internal-delay-ps = <1500>;
->>>> +       tx-internal-delay-ps = <1500>;
->>>> +       motorcomm,tx-clk-adj-enabled;
->>>> +       motorcomm,tx-clk-10-inverted;
->>>> +       motorcomm,tx-clk-100-inverted;
->>>> +       motorcomm,tx-clk-1000-inverted;
->>>> +       motorcomm,rx-clk-drv-microamp = <3970>;
->>>> +       motorcomm,rx-data-drv-microamp = <2910>;
->>>> +};
->>
->> 'motorcomm,rx' before 'motorcomm,tx' in `LANG=C sort` of vendor-
->> specific
->> properties.
->>
->>>> +
->>>> +&pwmdac {
->>>> +       status = "okay";
->>>> +};
->>>
->> Additional non-default GPIO as listed in the Orange Pi design:
->> GPIO21 WIFI_WAKE_HOST_H /* default vf2 function PCIE_PWREN_H_GPIO21
->> */
->> GPIO22 >> BT_UART_RXD /* default vf2 function MIPI_PWR_EN */
->> GPIO23 << BT_UART_TXD /* default vf2 function LCD RESET */
->> GPIO24 << BT_UART_CTS /* default vf2 function MIPI_LCD_BL */
->> GPIO25 << BT_UART_RTS /* default vf2 function TP_DET_GPIO25 */
->> GPIO30 << BT_EN_H_GPIO30 /* default vf2 function TP_INT_L */
->> GPIO31 << BT_WAKE_GPIO31 /* default vf2 function TP_RST_L */
->>
->> Of all the above, GPIO21 is defined in jh7110-common.dtsi
->> &pcie1_pins/wake-pins and may need consideration.
->>
->> There is a note about "PMIC_PWRON as Key" and so does this have the
->> meaning of it is used as an input device?
->>
->> Also noted is that the USB over-current circuit appears to be
->> implemented, different than being absent in other VF2 designs.
->>
->> 1:
->> http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-RV.html
->> 2:
->> https://lore.kernel.org/lkml/20251005174450.1949110-1-e@freeshell.de/
->>
->> With the card detect describing hardware corrected, and clean up the
->> vendor property sort, then please confirm if you think GPIO21 is
->> described correctly.
+On 17/10/2025 15:16, Vikash Garodia wrote:
+> vpu4 needs an additional configuration with respect to CP regions. Make
+> the CP configuration as array such that the multiple configuration can be
+> managed per platform.
 > 
-> Well yes, GPIO21 should be splitted from PCIe pinctrl and assigned to
-> be the out-of-band IRQ of the Wi-Fi module. My DT omits this because
-> the jh7110 pinctrl driver is currently not compatible with brcmfmac
-> out-of-band IRQ code.
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Co-developed-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
+> Signed-off-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
+> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+> ---
+>   drivers/media/platform/qcom/iris/iris_firmware.c   | 23 ++++++++++++---------
+>   .../platform/qcom/iris/iris_platform_common.h      |  3 ++-
+>   .../media/platform/qcom/iris/iris_platform_gen2.c  | 24 ++++++++++++++--------
+>   .../platform/qcom/iris/iris_platform_sm8250.c      | 15 ++++++++------
+>   4 files changed, 39 insertions(+), 26 deletions(-)
 > 
-> Should I add /delete-node/ for it?
+> diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
+> index 9ab499fad946446a87036720f49c9c8d311f3060..9186e0144dc0df4045c9995adc5fc93993cc3fba 100644
+> --- a/drivers/media/platform/qcom/iris/iris_firmware.c
+> +++ b/drivers/media/platform/qcom/iris/iris_firmware.c
+> @@ -70,9 +70,9 @@ static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
 > 
-
-No, and thank you for the confirmation. This special change for GPIO21
-can be something for future fix/enhancement. The "dts: starfive:
-jh7110-common: split out mmc0 reset pins from common into boards" patch
-has landed in riscv-dt-for-next so it is good now to address the other
-review comments and send v3.
-
->>
->> Acked-by: E Shattow <e@freeshell.de>
->>
+>   int iris_fw_load(struct iris_core *core)
+>   {
+> -	struct tz_cp_config *cp_config = core->iris_platform_data->tz_cp_config_data;
+> +	const struct tz_cp_config *cp_config;
+>   	const char *fwpath = NULL;
+> -	int ret;
+> +	int i, ret;
 > 
-
--E
+>   	ret = of_property_read_string_index(core->dev->of_node, "firmware-name", 0,
+>   					    &fwpath);
+> @@ -91,14 +91,17 @@ int iris_fw_load(struct iris_core *core)
+>   		return ret;
+>   	}
+> 
+> -	ret = qcom_scm_mem_protect_video_var(cp_config->cp_start,
+> -					     cp_config->cp_size,
+> -					     cp_config->cp_nonpixel_start,
+> -					     cp_config->cp_nonpixel_size);
+> -	if (ret) {
+> -		dev_err(core->dev, "protect memory failed\n");
+> -		qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
+> -		return ret;
+> +	for (i = 0; i < core->iris_platform_data->tz_cp_config_data_size; i++) {
+> +		cp_config = &core->iris_platform_data->tz_cp_config_data[i];
+> +		ret = qcom_scm_mem_protect_video_var(cp_config->cp_start,
+> +						     cp_config->cp_size,
+> +						     cp_config->cp_nonpixel_start,
+> +						     cp_config->cp_nonpixel_size);
+> +		if (ret) {
+> +			dev_err(core->dev, "qcom_scm_mem_protect_video_var failed: %d\n", ret);
+> +			qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
+> +			return ret;
+> +		}
+>   	}
+> 
+>   	return ret;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index df03de08c44839c1b6c137874eb7273c638d5f2c..ae49e95ba2252fc1442f7c81d8010dbfd86da0da 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -220,7 +220,8 @@ struct iris_platform_data {
+>   	u32 inst_fw_caps_dec_size;
+>   	struct platform_inst_fw_cap *inst_fw_caps_enc;
+>   	u32 inst_fw_caps_enc_size;
+> -	struct tz_cp_config *tz_cp_config_data;
+> +	const struct tz_cp_config *tz_cp_config_data;
+> +	u32 tz_cp_config_data_size;
+>   	u32 core_arch;
+>   	u32 hw_response_timeout;
+>   	struct ubwc_config_data *ubwc_config;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index fea800811a389a58388175c733ad31c4d9c636b0..00c6b9021b98aac80612b1bb9734c8dac8146bd9 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -648,11 +648,13 @@ static struct ubwc_config_data ubwc_config_sm8550 = {
+>   	.bank_spreading = 1,
+>   };
+> 
+> -static struct tz_cp_config tz_cp_config_sm8550 = {
+> -	.cp_start = 0,
+> -	.cp_size = 0x25800000,
+> -	.cp_nonpixel_start = 0x01000000,
+> -	.cp_nonpixel_size = 0x24800000,
+> +static const struct tz_cp_config tz_cp_config_sm8550[] = {
+> +	{
+> +		.cp_start = 0,
+> +		.cp_size = 0x25800000,
+> +		.cp_nonpixel_start = 0x01000000,
+> +		.cp_nonpixel_size = 0x24800000,
+> +	},
+>   };
+> 
+>   static const u32 sm8550_vdec_input_config_params_default[] = {
+> @@ -771,7 +773,8 @@ struct iris_platform_data sm8550_data = {
+>   	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
+>   	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
+>   	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
+> -	.tz_cp_config_data = &tz_cp_config_sm8550,
+> +	.tz_cp_config_data = tz_cp_config_sm8550,
+> +	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
+>   	.core_arch = VIDEO_ARCH_LX,
+>   	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+>   	.ubwc_config = &ubwc_config_sm8550,
+> @@ -864,7 +867,8 @@ struct iris_platform_data sm8650_data = {
+>   	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
+>   	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
+>   	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
+> -	.tz_cp_config_data = &tz_cp_config_sm8550,
+> +	.tz_cp_config_data = tz_cp_config_sm8550,
+> +	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
+>   	.core_arch = VIDEO_ARCH_LX,
+>   	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+>   	.ubwc_config = &ubwc_config_sm8550,
+> @@ -947,7 +951,8 @@ struct iris_platform_data sm8750_data = {
+>   	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
+>   	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
+>   	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
+> -	.tz_cp_config_data = &tz_cp_config_sm8550,
+> +	.tz_cp_config_data = tz_cp_config_sm8550,
+> +	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
+>   	.core_arch = VIDEO_ARCH_LX,
+>   	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+>   	.ubwc_config = &ubwc_config_sm8550,
+> @@ -1035,7 +1040,8 @@ struct iris_platform_data qcs8300_data = {
+>   	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_qcs8300_dec),
+>   	.inst_fw_caps_enc = inst_fw_cap_qcs8300_enc,
+>   	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_qcs8300_enc),
+> -	.tz_cp_config_data = &tz_cp_config_sm8550,
+> +	.tz_cp_config_data = tz_cp_config_sm8550,
+> +	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
+>   	.core_arch = VIDEO_ARCH_LX,
+>   	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+>   	.ubwc_config = &ubwc_config_sm8550,
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> index 1b1b6aa751106ee0b0bc71bb0df2e78340190e66..8927c3ff59dab59c7d2cbcd92550f9ee3a2b5c1e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> @@ -278,11 +278,13 @@ static const char * const sm8250_opp_clk_table[] = {
+>   	NULL,
+>   };
+> 
+> -static struct tz_cp_config tz_cp_config_sm8250 = {
+> -	.cp_start = 0,
+> -	.cp_size = 0x25800000,
+> -	.cp_nonpixel_start = 0x01000000,
+> -	.cp_nonpixel_size = 0x24800000,
+> +static const struct tz_cp_config tz_cp_config_sm8250[] = {
+> +	{
+> +		.cp_start = 0,
+> +		.cp_size = 0x25800000,
+> +		.cp_nonpixel_start = 0x01000000,
+> +		.cp_nonpixel_size = 0x24800000,
+> +	},
+>   };
+> 
+>   static const u32 sm8250_vdec_input_config_param_default[] = {
+> @@ -348,7 +350,8 @@ struct iris_platform_data sm8250_data = {
+>   	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8250_dec),
+>   	.inst_fw_caps_enc = inst_fw_cap_sm8250_enc,
+>   	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8250_enc),
+> -	.tz_cp_config_data = &tz_cp_config_sm8250,
+> +	.tz_cp_config_data = tz_cp_config_sm8250,
+> +	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8250),
+>   	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+>   	.num_vpp_pipe = 4,
+>   	.max_session_count = 16,
+> 
+> --
+> 2.34.1
+> 
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
