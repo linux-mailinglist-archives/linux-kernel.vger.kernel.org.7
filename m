@@ -1,126 +1,278 @@
-Return-Path: <linux-kernel+bounces-863583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD515BF83AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BED7CBF83A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA7C3B66DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7E43AFE70
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA962351FD7;
-	Tue, 21 Oct 2025 19:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35744351FBB;
+	Tue, 21 Oct 2025 19:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJzp5mEe"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lQPmCT2J"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C76351FC4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C4C34B697
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761074407; cv=none; b=eMVbnYFY+JxpT/juPdxifcTnzVF+I2Fn+oP/TJslwYsTxqICNP40jm9D8FlU2mxzS9bz9P0cUrkDWQDfphRdLKNQCaZqwG/d62i2eBBuCw8iKB2AaqXpdsAaYhq0FwIpib7JfMFo94nsk3Z++MLyTW4CMxoE7LxhtGhZ1e77tuk=
+	t=1761074404; cv=none; b=awpSrKl3vHH/Yv7JeCQ2zzSOwQMbB1j4FseMsdKH3bAFnrd4e+Z6KIMo6OyyF2vox4MS44kr641Z4Zwd8YF6Z0QhUHBaFdWgBEE0LLVkQgPRQcmxAAoWwL2d9KcZJujMiHhe3pjd0NnfCpcU3uW8LuGxJPwCUtWlNI0cawB1Yfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761074407; c=relaxed/simple;
-	bh=XF8lCN147t5Xy+RNN4uA2G5rBZdwuSV7eZQQMLT017w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ut+KQwq/uhyR6rQ05t8085wKNe5et4RUlW8Z1oERsSChKVMQ7bwZkXHC2m+zc5aufCDMscAs68mhzJq0l8bZ1rj0CNgIuzfW+0Fnanm1AhzJKFWy8EHS+eURuvPy1dz/FROgGflgGXXbrIv1dyCDGZ2B5O9PL9jZt20PkRfSdVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJzp5mEe; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-591eb980286so1526499e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:20:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761074402; x=1761679202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XF8lCN147t5Xy+RNN4uA2G5rBZdwuSV7eZQQMLT017w=;
-        b=KJzp5mEeYdJzzxlbjsQEUTFlebHJG8X9iqasxhpDiJjOyHQVv8yr6M5jC19Ug90/jF
-         8QVJxqseckDiji0y3dB9+X7jsZTWWWCgSW+ZicH+YxC97GT6Aw+CJ4KY9IH2v2RtsznM
-         HlQD5njAaUEaRmRk/e99i/t5Qi6Ghu9YlQ07AvI34/W7gy4uTsa17BItBcOUvcU7j5wp
-         dh90R6vrw+OHPNcXGEk358SGpOsV0+usztbhfaR7UJWVEL1ieaNlHc6YrAxWc18ia3L1
-         erQMtyHcq9805U0nCintbV5EiXyVKfP9OeUccXUUWTsTp/4t5RfpjWIZ9chAKE0JTyng
-         BIUg==
+	s=arc-20240116; t=1761074404; c=relaxed/simple;
+	bh=icdfz+0C3epGfwWHPEjvmyz6WsUsB5GdRxqjMmyOUg4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ssw6zmd6CjJCfNpBqaJSuwKkPGP93yaON2FmtfLslBbjuRSszuHn3MshNQlexzzm7/mThGZpdtQTGUD4WXmeQtSplA92MwobftwOHhopinrosQ+PwSo9G1Yz3FjVAaqowZng3mKs1NpJdJYDKsk6ambzXi84VobeD3IGGNu2vC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lQPmCT2J; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LEWNPH020555
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:20:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tb17VQBk2tdCoY70urDMdkOeUUuDTnyLp9/IV4Atljk=; b=lQPmCT2JsChx0D3u
+	+rzdRCFgNfQ9fvw1QwwRrLSGUbtkSzbFxPu+XQyJeYem2azGxjJr1pDfMkH8uCpj
+	d1BcmvL0xlY25FJW1WXYZS8Hp+ombTpwQg5Mot1UrcCxNHL2WFvUM/2uIOH/uL9x
+	R5AdcVYrOoJ4SGCk18sz9rQ3ezlwqJbUP0lY3B5PZ6VpD2pJdKK5V51AZwQBnL/I
+	0KNMcD0cH2sPWBxCk3gQ2sZsQHUsuWInVfSBCB3CrMrK7wjtszcNLOhwZffUHA+w
+	MEIiLkfokYNEwmG0WwI7lJ7dD4Asisvl8yuMde5QIQLYii9vDafjBW3YoWa+J/vC
+	ZNdcqw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3441y14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:20:01 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-28c58e009d1so133082925ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:20:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761074402; x=1761679202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XF8lCN147t5Xy+RNN4uA2G5rBZdwuSV7eZQQMLT017w=;
-        b=PacUMxxmvexnXS+BVvFs2tzPfTFyyKzZ3x3EfHZ4CaBt5F96PLVdLV7Yvw1WRy7PQM
-         TLgCgW4sTyiqV0AYtsJc2gxiwaPv5aBDF1Bq3GdXsuPaGyz/vR+Lx3SaZAUIwd31/eut
-         5FaZN8/Ox2h7TA6KQWbNTtQdeRshy9iinw+dRIXGG41k9yOfdoIlEwswblVcq4XoobmD
-         PbxPvqbvJQGCvvZEiOZWHpTRgICt6cIcnPx9vQWxx2qb2MVpNMgUrOLqZQ4G3/preG5/
-         jN9eantPNsFHpDwbPGKVygzCIcLQgcZwKIjjcNPCEodxJzN0QbuCEDZcC9vUGGV9c0vn
-         MRaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtMIz68ZF90uFXU9YMFenERy+RzvmQEizhR4KNzpW6xQ/5gCRJ0jfgSPk8yqL5OXfCWW2p+6yclUwMpfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwOp4UROEFTU2QL3SYYwpTPFhbPRPyIqKShHOgi2kIYdqMxWOg
-	JFBzA4C4f2i0jmUYQonaU+qejxZw6xom9yfDg8Q7paAlgJ/uFLLY1wUkpaXoB3gDU3ioikK9szE
-	0YeqpwmbENaqc7+WWLmmd0Juti+UoWUg=
-X-Gm-Gg: ASbGncvbsKU+ixX3vVewhFAxy1ZZd8uG/WoTbdt05UGBS8BXfMo93vVRnh7/FUkO1LI
-	ZzKtk6UmG+0g8SarrnhoCcWcTPvVhFL7+zm5GJCXp1ARkpHfEmHzPD91PhN5kXH03VeVwniSXi2
-	6dHjkww50vYyBz/B/xO/syhvh8FwilB2nQMykD5q6fglcNlqpKfQhl77S2385R10KjKrGw7Ft6A
-	KJULBNu3jkFGyCHbafZfpJVjSqOq+HP8BYwnbdt21lKJapg3VmRmBxwgihP
-X-Google-Smtp-Source: AGHT+IHwT8B0R5exz7jadTBxGXmtid9llIfQluzOLS1CeZTO457I56feeO6M9WQOY+sC87UPLBULcwRCSiIfs5oVYqw=
-X-Received: by 2002:a05:6512:ac9:b0:57e:6aef:3ffc with SMTP id
- 2adb3069b0e04-591d84e3c8emr6604351e87.4.1761074401398; Tue, 21 Oct 2025
- 12:20:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761074401; x=1761679201;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tb17VQBk2tdCoY70urDMdkOeUUuDTnyLp9/IV4Atljk=;
+        b=HVQ00HU+JkSC31xeEv3ckTjeKD51AiFxe3U1yMTjHEq3i45JtkCxC5DqUfpULswtJu
+         1XIgnjeBDaUKlP4kK3w8cfTj240xCrHiXeXt7nNnJVFUXyw1Gvp11g3GIB2TRUXcXNYz
+         DifJo0TX1FUfe2iRsSmPt5J7pP4uV0o7muuJDnnpXwaq30BAHmv4jdCJpKk7totElnZC
+         onAaxQevn0LCrUep6krhiCvhbD5wk8FwWn28rU2bbzIcwUyYQz5QdhekVEqp73qMNh7Z
+         2eXRaNYjnabCu92XEeAs1jx6XPVRMNnEq+vRxmRrA5BdEgYKL2K5HnwBOsbpktig0jHq
+         Dv4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUjMv0je11zM2ZGc/JPsIjlpbadcJknB81a8jgqPT9SRDPMazJbZ1wubDSv7ah5UCPRHhSLXd0XZG0SGFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYSRnDCTqDQwA6/qz1mLNFZ2wv6atrJCk8A/EVflCZAXlgV4e3
+	04mS+j8rNyOCxP552/QGq/1IW7GbL49GGIDWvCqXUFgjC4hi1sINRCfKwnQj4ZkjDsfui0lSrb6
+	OVQs5/uWZILY8e6fQKvNslm30hg5oIDGJ5vi2PwDKkdEMPk76K08A/4DmqnWVQDQE1RQ=
+X-Gm-Gg: ASbGnctfqvzAskhUNN0NkJmUm1SVl0SbCG+AZA4tyrjQCQmJcENqfaWpq9ou7uJ22Ce
+	F7QgkSR8yVG8q8FN07Tu0VvYMAQcGl/Cdx8n+PLMvuMyDxpQWKp4mBqEx0UjvkaYcs2h8SMEraF
+	tHrJqZenJgcJcQYCIA1CwZhu172BduZtFUIYEAjDU4nDKBROMD1LOwgx5JgClOqyc9IRtHoad3t
+	t0Khl+6B+H/GawkijICB4GtcTN4afpFSj1lfxi1WlXerahuLGVSvG2bxjdUmk+gtnZFz8LxWrnb
+	oh0elRPXz25rse6zZW1smrNQ3bEWTJbPQ76xRAbNP0f9AUXlhmzEDTzJvvYHMs2Umwho/2NT4ij
+	fRSTYg3hQQaPt0Rh/bVU27ftiF/UO2svYnrMr7RfrnAg1Ea5qxToJhA==
+X-Received: by 2002:a17:903:1212:b0:290:c5c8:941c with SMTP id d9443c01a7336-290cb9477a3mr243681075ad.29.1761074400774;
+        Tue, 21 Oct 2025 12:20:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5FuKV5UWNZi1AF0AqP4B0g+2U1MpHnnZaZ9py0QpSNnOIDjRJ9J1f99apbxEL2gYYXrIhcQ==
+X-Received: by 2002:a17:903:1212:b0:290:c5c8:941c with SMTP id d9443c01a7336-290cb9477a3mr243680395ad.29.1761074400065;
+        Tue, 21 Oct 2025 12:20:00 -0700 (PDT)
+Received: from [10.62.37.19] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ec20a4sm116942875ad.7.2025.10.21.12.19.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 12:19:59 -0700 (PDT)
+Message-ID: <6efe686a-fdd5-4f17-a0dd-d44a16a67a36@oss.qualcomm.com>
+Date: Tue, 21 Oct 2025 12:19:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com> <ee6b80a7-4505-466e-a433-5f186d747945@kernel.org>
-In-Reply-To: <ee6b80a7-4505-466e-a433-5f186d747945@kernel.org>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 21 Oct 2025 14:19:49 -0500
-X-Gm-Features: AS18NWBtcweEvCq46SenFYFanpeRQLBTS4t1fv5OY1UgDaihsUSCmyvFCcSEBGM
-Message-ID: <CALHNRZ9nXYRgjmpbR5KiQpsSf4hu4=qcgoh8F9_5b9yXF_5Btw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] memory: tegra: Support EMC dfs on Tegra186/Tegra194
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Enable setting the rate to
+ camnoc_rt_axi clock
+From: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Robert Foss <rfoss@kernel.org>,
+        Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        Bryan O'Donoghue <bod@kernel.org>
+References: <20251014-add-new-clock-in-vfe-matching-list-v1-1-0d965ccc8a3a@oss.qualcomm.com>
+ <9984bc23-05ef-4d46-aeb8-feb0a18e5762@kernel.org>
+ <bc0caeb8-c99b-4bef-a69e-5ce433e6b890@oss.qualcomm.com>
+ <c4fd6bfc-cc9a-4f37-99b3-f36466691a1e@linaro.org>
+ <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
+ <33513b43-f6d1-4c76-887b-39611a75e1f4@kernel.org>
+ <WnfCknsSyJK68PQZkE2q7COZHRpsLOFlr3dcbwiVR6SBWtF9iRQ4MGzp_9q31O0kyhZwoncQWfHjJQvpz7nyfw==@protonmail.internalid>
+ <ab43c5c9-edc5-459e-8ef7-2aa8bec559c0@oss.qualcomm.com>
+ <0e6e1b8a-d9ae-42d1-b1ad-4314e0d76ab7@kernel.org>
+ <2c0011d3-a692-457c-9ac0-a445fc82df37@oss.qualcomm.com>
+ <48bede40-584a-409a-9bca-7ae3cc420667@linaro.org>
+ <124be1cd-1cc8-4c04-8aca-eede808e736c@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <124be1cd-1cc8-4c04-8aca-eede808e736c@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: vRN0XwqAfHJ08x_lcaHeEZfEg8tjYMhy
+X-Proofpoint-ORIG-GUID: vRN0XwqAfHJ08x_lcaHeEZfEg8tjYMhy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX5+jnAUH7UJ9h
+ KcJmgi8HEaLeZT1QJc2c5BFeThgwbhdD6alQzVrKqJn0sf3l9QnSx0Mcc0vX+hgZGzau2gaYZxC
+ 3O0yPV7QX7zDJaVCTCXvEgX+Ia20yvahw72xgu+Rj4knoZbZMxxa/YfnYjLlKD6bKHJW+rz94Z2
+ kdVz1BKdDtR3VU1GxZnwnSgq02q92G/CjVKNBGsZAwQFmDFRvhTardAm4bjvcJEmROuHba1gFIJ
+ YO/mUWXEUmbrBrYzNSN6SlsmgK5M5N2+QjmEQ/+jqzQYZroTgzxdYR0/t98HzMVAaOFKRdX1S0E
+ CfL2ugJCSoxdQdw9HITzX6GXeR3aZKSzkRYwt+K23GLfZeaY9gt+MyxgAQPD1r5+x5XJapiRFEr
+ lrJ1WokeV6SSqK9pxW44R+nuGZEQHg==
+X-Authority-Analysis: v=2.4 cv=E/vAZKdl c=1 sm=1 tr=0 ts=68f7dce1 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=nXZdPX8rIRQHg8fUIg0A:9 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180023
 
-On Tue, Oct 21, 2025 at 2:11=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 21/10/2025 20:29, Aaron Kling via B4 Relay wrote:
-> > This series borrows the concept used on Tegra234 to scale EMC based on
-> > CPU frequency and applies it to Tegra186 and Tegra194. Except that the
-> > bpmp on those archs does not support bandwidth manager, so the scaling
-> > iteself is handled similar to how Tegra124 currently works.
-> >
-> > This was originally part of a larger series [0], but it was requested t=
-o
-> > be split into smaller series.
-> >
-> > [0] https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-09413724e781@g=
-mail.com
->
-> Please keep correct versioning and changelog in the future. Try yourself:
->
-> b4 diff '<20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>'
-> Grabbing thread from
-> lore.kernel.org/all/20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com/=
-t.mbox.gz
-> ---
-> Analyzing 6 messages in the thread
-> Could not find lower series to compare against.
->
-> I think I emphasized last time how important is to make it readable and
-> easy for maintainers.
 
-You said to split it, which I don't see how that means anything other
-than 'make new series'. How am I supposed to keep versioning when I
-had to make three entirely new series?
+On 10/20/2025 6:46 AM, Vijay Kumar Tumati wrote:
+>
+> On 10/20/2025 6:35 AM, Vladimir Zapolskiy wrote:
+>> Hi Hangxiang.
+>>
+>> On 10/20/25 06:23, Hangxiang Ma wrote:
+>>> On 10/17/2025 7:41 PM, Bryan O'Donoghue wrote:
+>>>> On 16/10/2025 21:53, Vijay Kumar Tumati wrote:
+>>>>>
+>>>>> On 10/16/2025 8:31 AM, Bryan O'Donoghue wrote:
+>>>>>> On 16/10/2025 13:22, Loic Poulain wrote:
+>>>>>>>> I'm - perhaps naively - assuming this clock really is required 
+>>>>>>>> ... and
+>>>>>>>> that both will be needed concurrently.
+>>>>>>> AFAIU, the NRT clock is not in use for the capture part, and only
+>>>>>>> required for the offline processing engine (IPE, OPE), which will
+>>>>>>> likely be described as a separated node.
+>>>>>>
+>>>>>> Maybe yeah though we already have bindings.
+>>>>>>
+>>>>>> @Hangxiang I thought we had discussed this clock was required for 
+>>>>>> your
+>>>>>> setup.
+>>>>>>
+>>>>>> Can you confirm with a test and then
+>>>>>>
+>>>>>> 1. Repost with my RB - I assume you included this on purpose
+>>>>>> 2. Respond that you can live without it.
+>>>>>>
+>>>>>> ---
+>>>>>> bod
+>>>>>>
+>>>>> @Bryan and others, sorry, I am just trying to understand the exact 
+>>>>> ask
+>>>>> here. Just to add a bit more detail here, On certain architectures,
+>>>>> there is one CAMNOC module that connects all of the camera modules 
+>>>>> (RT
+>>>>> and NRT) to MMNOC. In these, there is one 'camnoc_axi' clock that 
+>>>>> needs
+>>>>> to be enabled for it's operation. However, on the newer 
+>>>>> architectures,
+>>>>> this single CAMNOC is split into two, one for RT modules (TFEs and 
+>>>>> IFE
+>>>>> Lites) and the other for NRT (IPE and OFE). So, on a given 
+>>>>> architecture,
+>>>>> we either require 'camnoc_axi' or 'camnoc_rt_axi' for RT 
+>>>>> operation, not
+>>>>> both. And yes, one of them is a must. As you know, adding the support
+>>>>> for the newer clock in "vfe_match_clock_names" will only enable the
+>>>>> newer chip sets to define this in it's resource information and 
+>>>>> set the
+>>>>> rate to it based on the pixel clock. In kaanapali vfe resources, 
+>>>>> we do
+>>>>> not give the 'camnoc_axi_clk'. Hopefully we are all on the same page
+>>>>> now, is it the suggestion to use 'camnoc_axi_clk' name for
+>>>>> CAM_CC_CAMNOC_RT_AXI_CLK ? We thought it would be clearer to use the
+>>>>> name the matches the exact clock. Please advise and thank you.
+>>>>
+>>>> The ask is to make sure this clock is needed @ the same time as the
+>>>> other camnoc clock.
+>>>>
+>>>> If so then update the commit log on v2 to address the concerns given
+>>>> that it may not be necessary.
+>>>>
+>>>> If not then just pining back to this patch "we checked and its not
+>>>> needed" will do.
+>>>>
+>>>> ---
+>>>> bod
+>>>
+>>> @Bryan, I test two scenarios individually that also consider 
+>>> @Vladimir's
+>>> concern. I confirm this clock rate setting is necessary.
+>>> 1. Remove 'camnoc_rt_axi' from the vfe clock matching function.
+>>> 2. Remove 'camnoc_nrt_axi' from the vfe clock resources in camss.c.
+>>> Both of them block the image buffer write operation. More clearly, we
+>>> will stuck at the stage when all buffers acquired but CAMSS takes no 
+>>> action.
+>>>
+>>> I agree with @Vijay to keep 'camnoc_rt_axi' to distinguish between the
+>>> new one and 'camnoc_axi'. The disagreement concerns how to standardize
+>>> the camnoc clock name or how to differentiate between RT and NRT clock
+>>> names if a new RT clock name is introduced. Other chips like sm8550,
+>>> sm8775p depend on 'camnoc_axi'. Meanwhile, 'camnoc_rt_axi' and
+>>> 'camnoc_nrt_axi' are both necessary for QCM2290 and X1E80100. But chips
+>>> like QCM2290 and X1E80100 may not need to set the clock rate but
+>>> Kaanapali needs. @Vladimir
+>>
+>> Thank you so much for performing the tests.
+>>
+>> I would want to add that I've made right the same tests for SM8650 
+>> CAMSS,
+>> which also has two 'camnoc_rt_axi' and 'camnoc_nrt_axi' clocks, and due
+>> to my tests the latter one is not needed for the raw image producing, 
+>> you
+>> may notice that I've excluded it from the v3 series sent for review:
+> I agree. The NRT AXI clock shouldn't be required even for Kaanapali 
+> for RT blocks. @Hangxiang, can we please try to understand this 
+> better? Either way, I think the NRT clock part is not connected to 
+> this patch series I guess? Just as Bryan advised, we confirm that the 
+> 'camnoc_axi_clk' is not required for Kaanapali to close out the 
+> comments on this series. Perhaps, we can continue the discussion on 
+> the NRT AXI clock in the Kaanapali patch series? Please advise.
 
-Aaron
+Some more clarification on this . Starting Kaanapali, we have PDX NOC 
+after RT / NRT CAMNOCs and before MMNOC for domain crossing. Our HW team 
+has confirmed that, for the PDX NOC to ensure that there is no traffic 
+from either RT or NRT at the beginning of a session (it's called 
+qchannel handshake) and start functioning, we need both the RT AXI and 
+NRT AXI clocks. So two things,
+
+1. Like I said, this patch is required regardless as it is about RT_AXI 
+clock, which is required for Kaanapali.
+
+2. In the other Kaanapali patch series, we will keep the NRT AXI clock 
+in the VFE resources.
+
+Hope this clarifies. Please let us know if you have any further 
+questions. Thank you very much.
+
+>>
+>> https://lore.kernel.org/linux-media/20251017031131.2232687-2-vladimir.zapolskiy@linaro.org 
+>>
+>>
+>>> We now prefer to add 'camnoc_rt_axi' (Right?). Maybe its better to add
+>>> comment lines to remove the ambiguity whether 'camnoc_axi' denotes 
+>>> to RT
+>>> or NRT. Please advise and correct me. Willing to receive feedback and
+>>> suggestions. Thanks you for all.
+>>
 
