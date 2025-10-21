@@ -1,129 +1,215 @@
-Return-Path: <linux-kernel+bounces-862884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728DCBF674B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FCCBF6754
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021E93B6EE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952A83B19B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579835502D;
-	Tue, 21 Oct 2025 12:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE05B328629;
+	Tue, 21 Oct 2025 12:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r0/StCo2"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="NkdawpGa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vfABFsS/"
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7048B35504D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3147535502D;
+	Tue, 21 Oct 2025 12:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049625; cv=none; b=Hz5pa2VzDLePw8Shb8L5FHq+Muw7XZ+xopgdvdtCXfhTGwcssz6TF4JS9z5ucxc+8hsqWM/ObjpnF9fjG0MkT7W3k/IZLnibm2N3H/830lfM0MB5YIY1qID8SvwcZUxE1mN2UwtmSYnvdcL0ZeWjRkk1XJOOQMx81Ltx9hn1Lak=
+	t=1761049711; cv=none; b=iL6F84160IT1F+ckFW6HwJrXmPOE9cr67eBl3dfzmAgg0FDqZR9zXa0EiHxXU5dUMsws1iB7lCIupDyvKiKSLaa65R24RcmNv9bS/jY/XZOtzYLnA8MTSDmLCfb/vQnA4Lpgh7sFysVumRPQwZCfgA9H1zuy9YXgCNl1q5yQccY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049625; c=relaxed/simple;
-	bh=dRItKHoHeP/Luyk8nQVlzb7QSwUwBxc0c3xCNUrv3pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fEKPnMwAdqmNevFGEizCjRXarOQyio4VMTQNherczKYbi2V+ZbO5BNHFfeoCfszL4R2KCbZU5ysn9iD6ODxwwSnh5N+bwv6sjab/4vPGtcoZ5NNd3utbePwuMTGY8e61/SFSkhTUF6MHwdUn1LiolbwqSxv2FJVwN+blaH7R1s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r0/StCo2; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-58affa66f2bso6499002e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:27:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761049622; x=1761654422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dRItKHoHeP/Luyk8nQVlzb7QSwUwBxc0c3xCNUrv3pc=;
-        b=r0/StCo2w3u2g1qjxUqJxjSWxI5xD+2jLMCNUc+662zrhY8ojQlsvc87YLoPg9+0mv
-         vGSPc6Mfaf9pIQb0SYY7vnQTqMA+PtHklGv4peBLNWPojybYtB7DZ1GHJK+zto4qW+nk
-         zM4jMCvTfLI8NGdVlaabwuiqyfAc37YBC1ev10xwIMb/9uxOVcxpvHSDeUV2uijW9XBq
-         AWf5vu/jh6UV8nY2PJzJrLzOSVT1AOtQy84LJMidS00cH8TWo5nBp+NAysYtvO+gl+4Z
-         YzG2uhUwyY0caIF87dwG5doNpECRXFJc1Z8/WcL8LDPSeoa781zY/zdm6Mg83S7OL+eK
-         6laQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761049622; x=1761654422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dRItKHoHeP/Luyk8nQVlzb7QSwUwBxc0c3xCNUrv3pc=;
-        b=ZcP0m8mXxd3Had0xLjOwSmbyYu9wnFxKkPs4EXpnAfxpphDHHCdjyDilbHnbAnPiux
-         AS5BkR0jqQhfrgJMiv4rYIQeBFvqpJBqbQrZ5GNTdC/BRlQLKXCKcmVqoI9lOdpzrwOE
-         NaKVbXPRokeNUICi2Nhsh+A3myQB7eQngyu6X3XoDLQWl/ozPATUmZftc0GTfWq7H+qO
-         vgx51uBdGCU+eHrth7tJBL0g+yYhcxRRA+uirT+4jrsCniPCL6rzXd77ijEstAv8EBPi
-         LP7xJMDrBynrE5zYKpHGiWZ2hrgTal/ZxAttHgEJVMUXgmaMnpia2ZhVqH5wcgbd9f9Q
-         AT0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHrPWHJNQSURD0p6WxjddV8cnaDkWexP7aRkdGSaVZ+hHl2pCvQh+ZmK/vQ/8b8ZH3Z4ir2iiMu7/84Nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd3QM7vmjsecnaBSWoyTcDFIXGvk70LDP0NqaWUh13kZxQHGkK
-	JTl2HP0fhO/4Ew5aSecDlujZXTKBY3ssj2Yeef0dF5ljxNNIHZgZNtFuBcfirAtuXZM1i7bG6NB
-	d2PuZZt8/9b7s+lC+ydgBwGZSeBftDuVu81AJBHn1cpi6+rR7hbAy
-X-Gm-Gg: ASbGncsK4LeKmYKy+NBjeD8Vmng9zn8vSs2WcOR2uceuyJXFb0aFUWIBh3BCA0uqdXZ
-	hZug+PEwfgPLcob4B94HLMXdOY7LNe0Mseg+TLqM1iwbyN2mvs0sZ0RU9YzaCWi1Wk6yVdGiXvd
-	hipS6Ul3EzGzpLxcnkhJvPisVxgsUOeq99dekX3zFVuWB20T3R0RRjRtJvPOMqUzXjTd/9HJRao
-	SupL4a3zNUqz9y9iwRvw83hEDBMD2Fn31N/XwVSG0LPUuTFctximo9Cq8+WCqv0W0f/41an72WI
-	a6p3og==
-X-Google-Smtp-Source: AGHT+IGxlVJN2rvaLyj+Brv4icN7nCu4VjMGW+HovXJOGOXiS4L6UUAPV/sCXKFATKrxTJyz9wkyawu1OYIvSs1RR4k=
-X-Received: by 2002:a05:6512:ba1:b0:591:c8d7:c03b with SMTP id
- 2adb3069b0e04-591d850cf22mr5196408e87.8.1761049621481; Tue, 21 Oct 2025
- 05:27:01 -0700 (PDT)
+	s=arc-20240116; t=1761049711; c=relaxed/simple;
+	bh=Hg+5HNqCADCJdoRHEh2O2qpjtgGgYV5VpFfgAZ3FcEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvtwstZgOl+5kEIr/kWI+DpF9VgRHoqbMRO7jYBeW/f51NGGjyQaTc3xJdAFGIwfl8FGFVBf5sS+7IZ4eRJfrw0XjeQL3qyD2RVbPGJviuxucWmxB0/gqsbNmCsMediBC+LYO/sR0moyeE3UTHZFuhenhcqTBNlf2ivFL2LyXAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=NkdawpGa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vfABFsS/; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailflow.stl.internal (Postfix) with ESMTP id 3A3D71300A45;
+	Tue, 21 Oct 2025 08:28:28 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 21 Oct 2025 08:28:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761049708; x=
+	1761056908; bh=VwJV6k7KAy5PyI+RrheQP6UoFSX5NksO95Gumi0SSf4=; b=N
+	kdawpGarW9mlGtlWvGFIharRVGnVhfcQVPTqQN6DxNcGoah6JyH45a5+dBj2Cozm
+	dX3EUU7ZQ3qgzNtH94TnFQxGavpK1YxP1T7UsS3ffMfZplynyGEkT0LGpFmIlvQ+
+	hyZG1xlkDru8fGi/YgsAbbHFuWwxAcAqKCZcLbKLwE+y/PQtmbpFSI0seGqiabY4
+	RMYp63IfYvGyoSF8B1dR2vDm6JgJrdB5B0iW2erf0bs7anLmO70l9BplG2QJGNnj
+	Zq0whnamzEVGgfQJjlXLYowOwWHBgRXjSrBeuhWNU/z5CaJ7AJyX+lMVA9o/BXXd
+	vYtGKtuJq6nUg1DNgeYyQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761049708; x=1761056908; bh=VwJV6k7KAy5PyI+RrheQP6UoFSX5NksO95G
+	umi0SSf4=; b=vfABFsS/HHAWcMErFRnvQF5oA5FLojAadKCcRRDx3VQPw1YdmAW
+	TXhvAVC+NvRFevUPeV0aPnW65ohgmqaBjkO3BCfqlJYytS4rlSTKRx1zisjU6q9d
+	X5bINWQUDvDugE/emiCU1+kHd40jMReBb6cgXOjg0AVzsRcYYA/pc/sRysWuTk0b
+	c5NXvLN+lNU6GAhc8vrpcwq2b6VO5U8sHhxkammKbHWkoQB0ZfIZLm1OLyTt+vfl
+	QuJsQl6t+Uts71FLaIJ8We5R/dV7jWdcTR5DTuLFpcsTnGBhrmVX956Iq/x4AY7V
+	uVl0e1KW1QApkbCahMVEuuoQXAue14mvuhA==
+X-ME-Sender: <xms:a3z3aGN0srF7acnD0h97O8_3FXDVwcuaDB_cUCLUqnW69AHOfhoqcw>
+    <xme:a3z3aBIsdQVGY50Ppx6nKnLD-8d7p1zEQiWpN35nRXsClcu8CRhkX6X8MJio3yn0h
+    t_M6rQhj3ZQiBbnHHJOmeQFkLGaFG2q_kSo-G1iPRv_SqxjGp__m2ta>
+X-ME-Received: <xmr:a3z3aEZW5Nla8tBAIu5ZyDfXtmBmVTJAwlCeZz4sB74fmbfmbeHk5LzigdbItg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedtieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
+    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
+    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
+    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
+    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
+    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:a3z3aCQCzxYNVjBVDx8Z2rH2suuu5qxBLjs7h9T3g7fBT3ZCXKLQbw>
+    <xmx:a3z3aPzgs8QGIGF0VdO9pJZKtSIr4lv-BNedlzmZF03OYzzIMbbmRA>
+    <xmx:a3z3aAcJxn58t_mVWYCY-9Y23U1h-AT52j7CEPF1gTJ7sE8Re7Gqpg>
+    <xmx:a3z3aNlUz-dat0UHVi5BADrS-vP-M9UjR9-NiCS28tiCkwpEBsQ9Nw>
+    <xmx:bHz3aImgp9TZtPbdaxirqYGnhMuVOwvujC0eW9ojJNvpy3H2VX6x218o>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 08:28:26 -0400 (EDT)
+Date: Tue, 21 Oct 2025 13:28:24 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm/memory: Do not populate page table entries beyond
+ i_size.
+Message-ID: <esiue5bbvksdlopvt4wvzs24cvhh45xtf2jfyhqxi44w2r5f65@xw2ufks6rjdt>
+References: <20251021063509.1101728-1-kirill@shutemov.name>
+ <8379d8cb-aec5-44f7-a5f0-2356b8aaaf00@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
- <20251014140451.1009969-10-antonio.borneo@foss.st.com> <20251014-affection-voltage-8b1764273a06@spud>
- <b4eca95eaa0e6f27fc07479d5eab2131d20eb270.camel@foss.st.com>
- <20251015-headstand-impulse-95aa736e7633@spud> <0826a055f6b2e3e6b50a5961e60d1b57d1d596c6.camel@foss.st.com>
- <CACRpkdbeaiNGfOFfVfDNZ=u=4yhCykcdSdHUv-td_DVyr3aWaQ@mail.gmail.com> <9dfdf02b7e5a99c515aff3c6528e2d5f70517201.camel@foss.st.com>
-In-Reply-To: <9dfdf02b7e5a99c515aff3c6528e2d5f70517201.camel@foss.st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 21 Oct 2025 14:26:50 +0200
-X-Gm-Features: AS18NWCW8_rg5qtH2LgaZCS86vARi5jbxP9hbx6C1qjmUJ3MwBUVy8SVIqQU3O4
-Message-ID: <CACRpkdYRUcQLc07o4epJs41BMkweHp+hKr4KQbBeFW1ZNS3RJw@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] dt-bindings: pinctrl: stm32: Support I/O
- synchronization parameters
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, 
-	Fabien Dessenne <fabien.dessenne@foss.st.com>, Valentin Caron <valentin.caron@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8379d8cb-aec5-44f7-a5f0-2356b8aaaf00@redhat.com>
 
-On Tue, Oct 21, 2025 at 1:49=E2=80=AFPM Antonio Borneo
-<antonio.borneo@foss.st.com> wrote:
+On Tue, Oct 21, 2025 at 02:08:44PM +0200, David Hildenbrand wrote:
+> On 21.10.25 08:35, Kiryl Shutsemau wrote:
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> 
+> Subject: I'd drop the trailing "."
 
-> The issue is that parse_dt_cfg(), called by the above mentioned pinconf_g=
-eneric_parse_dt_config(),
-> only uses of_property_read_u32() to get the value of the property.
-> Conor's proposal for replacing my
-> st,io-sync =3D <0>;
-> with
-> st,io-sync =3D "pass-through";
-> doesn't fit in!
->
-> For my use case I'm going to extend parse_dt_cfg() with fwnode_property_m=
-atch_property_string() to extract the index from an array of strings.
-> Then such index would be used for pinconf_to_config_packed().
-> Does this approach look reasonable?
+Ack.
 
-Aha I see the issue.
+> > 
+> > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> > supposed to generate SIGBUS.
+> > 
+> > Recent changes attempted to fault in full folio where possible. They did
+> > not respect i_size, which led to populating PTEs beyond i_size and
+> > breaking SIGBUS semantics.
+> > 
+> > Darrick reported generic/749 breakage because of this.
+> > 
+> > However, the problem existed before the recent changes. With huge=always
+> > tmpfs, any write to a file leads to PMD-size allocation. Following the
+> > fault-in of the folio will install PMD mapping regardless of i_size.
+> 
+> Right, there are some legacy oddities with shmem in that area (e.g.,
+> "within_size" vs. "always" THP allocation control).
+> 
+> Let me CC Hugh: the behavior for shmem seems to date back to 2016.
 
-Hard for me to tell how this will play out since you are the first to try t=
-his,
-but it seems like this could work.
+Yes, it is my huge tmpfs implementation that introduced this.
 
-Let's see how the code looks!
+And Hugh is on CC.
 
-Yours,
-Linus Walleij
+> > 
+> > Fix filemap_map_pages() and finish_fault() to not install:
+> >    - PTEs beyond i_size;
+> >    - PMD mappings across i_size;
+> 
+> Makes sense to me.
+> 
+> 
+> [...]
+> 
+> > +++ b/mm/memory.c
+> > @@ -5480,6 +5480,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+> >   	int type, nr_pages;
+> >   	unsigned long addr;
+> >   	bool needs_fallback = false;
+> > +	pgoff_t file_end = -1UL;
+> >   fallback:
+> >   	addr = vmf->address;
+> > @@ -5501,8 +5502,14 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+> >   			return ret;
+> >   	}
+> > +	if (vma->vm_file) {
+> > +		struct inode *inode = vma->vm_file->f_mapping->host;
+> 
+> empty line pleae
+
+Ack.
+
+> 
+> > +		file_end = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> > +	}
+> > +
+> >   	if (pmd_none(*vmf->pmd)) {
+> > -		if (folio_test_pmd_mappable(folio)) {
+> > +		if (folio_test_pmd_mappable(folio) &&
+> > +		    file_end >= folio_next_index(folio)) {
+> >   			ret = do_set_pmd(vmf, folio, page);
+> >   			if (ret != VM_FAULT_FALLBACK)
+> >   				return ret;
+> > @@ -5533,7 +5540,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+> >   		if (unlikely(vma_off < idx ||
+> >   			    vma_off + (nr_pages - idx) > vma_pages(vma) ||
+> >   			    pte_off < idx ||
+> > -			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE)) {
+> > +			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE ||
+> 
+> While at it you could fix the double space before the ">".
+
+Okay.
+
+
+> > +			    file_end < folio_next_index(folio))) {
+> >   			nr_pages = 1;
+> >   		} else {
+> >   			/* Now we can set mappings for the whole large folio. */
+> 
+> Nothing else jumped at me.
+> 
+> -- 
+> Cheers
+> 
+> David / dhildenb
+> 
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
