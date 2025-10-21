@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-863398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E75BF7C77
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:48:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03637BF7C7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4DEAB34835A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B28189C465
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375E934A762;
-	Tue, 21 Oct 2025 16:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A692FD691;
+	Tue, 21 Oct 2025 16:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xs3cnIO/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MyajYB+A"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6FD346E6E;
-	Tue, 21 Oct 2025 16:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF6D346E5A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761065278; cv=none; b=BFXIYvDz+2UgliDMILZIidQZDVGEM+TLXBa8GwXZenA8tjFZ+tcRoBCNFLSr4/hxaq7dJFJP9+4IuiekpETjjnoTx4Rog23Lav/pGHw3sLnmcPPH9PynTE/YoFVbqPitJmIJVe/l+431TF9PsMBUPBs4IE0OJ6YdhAi14zWZdkE=
+	t=1761065313; cv=none; b=RDdxGKobW20rgi9nKKnhQQuLYfRiDR1B0JKL4AwgADCwnQzapDQP7+W8MAbvyDqoW+ube8k32WiIiF5nqgvXlRfOidz8bzJRHZA/k0J+cvqS+nO38QVFm3AEJpyKtRPrmemGLco6v7sOh6oWX6Sh+7eQIns6THYEYkB8c3OKkn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761065278; c=relaxed/simple;
-	bh=fOOg7+3J7rwGg8btrPOiTJvE5JmCHKDybAWrBt8TS0A=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=DmulXbYd88J7/KX9WHhRDlZshoVp8/Pu7NLdbN//nFs4eYOkBN/7jevA6NYT4Jm3g9LN9A7YSAQT9BlCtJ6gaMElvKf1oxVcFXAzG4aQzOcclFDoxIrEz0PBQrelbuNx+revU3DRnw9duRXGCrJm878/Wdi6Y2xZlX0Z/6NGaK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xs3cnIO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E288FC4CEF1;
-	Tue, 21 Oct 2025 16:47:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761065278;
-	bh=fOOg7+3J7rwGg8btrPOiTJvE5JmCHKDybAWrBt8TS0A=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Xs3cnIO/aQ+miCGfM2oV12t+hEMfdb/wUwz8l0ng/UkfdSiNpW15KXY6eGPFDaQU3
-	 bwvGX5XkYBrhLsi+/Pw2cUSvT+i73IjAojzqJGrWHyTukAtSMDNPo6zPVj42M74vS3
-	 eqnrXlnDibB8YeM9fGXCo06apBh8eQuXtGoX8XFDuW6+Ut2kAfKRdyCGxL1rZiRzcn
-	 0B5TyHHUp/hNb7Ksy7J/9kVXYtPzVzVyAbThXZmHEE5GhxL0cAjTPCTJS/q5yFLzC6
-	 zjooe1JUjrD90E8ol1d9Pid2yA+TdtbrVga1JItajlsIO/q8frzdMMcMNJJey8GVHw
-	 ZCgNsABrHcOUQ==
-Date: Tue, 21 Oct 2025 06:47:57 -1000
-Message-ID: <c860cc12b4b0da311fa8cbbbe17f8199@kernel.org>
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
-Cc: sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.19] sched_ext: Fix scx_bpf_dsq_insert() backward binary compatibility
+	s=arc-20240116; t=1761065313; c=relaxed/simple;
+	bh=qNuz2BhbrPuJtjUlueV/PTGi0i61jZnzkjuzIcaTMSU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TO1tQYG408P0VySlSVVGQ06Aon90Z1Qo0l6B0BIrc2dEwn4vgxEqRwdvwBG23bt/LiaePGoUcX0zgKt0TwuKwF5jDVv0A0JwmiAfMtVKSyMiHS3yh0ZQNHuLPafgsCMJDUkal6OGW6jMuUEckwJr/FH1qgMKNf2B8QQUF3R3oIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MyajYB+A; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb18b5500so9613677a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:48:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761065312; x=1761670112; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5pwugCQDX5Fa9uMyMSiPompvEUK7ReL7M9ApQQ2FgUQ=;
+        b=MyajYB+AkuPM5jrLzxAgUXpp9jAuZetrHKAoSiJHcwfdwPpekTPOe3Vsa5ZSRgcO0y
+         49CNGGkk8fyg8mvqi5s7lk2ns7WB5Bc23Bvo78+t775gt1keRJAuC/fHN6PwW7sizOZb
+         X0cc2QgViv0GoVqLQ8gSzDCNTYSb17y/L/u+TVBhdfq1U+5vQfPT+5iw6WaLpkxZrSUy
+         CA2xlDYRJz78UGYpXd+ttt5809GE1dcm2i4r8VyMF6n+ZJ8rqgCU9rnahGQmQP26Hj7n
+         YaKGpXV0OhFzSrgOXry4S5W961mi5hm5FbhMWQ9RMh4zLBlQRxLyo/g6CTb1H+rjtX08
+         iMBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761065312; x=1761670112;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5pwugCQDX5Fa9uMyMSiPompvEUK7ReL7M9ApQQ2FgUQ=;
+        b=CNVr0ezhE8trxLKGQIX5TbgHZywot0uGwpDvnNw3Q9KTprdBVghqvSZgI1LMrRDe+b
+         5AjfMn7puCFPedLBhN0tjK2iq8lcd73wIHIEg1q/VMweDRqrj0Fy5gAPIsxBfM0S3XjQ
+         PXu6Fp6fevNjwM5hVgWgbn6qqcV2GQ/ac0vc2lilDtYtN/+B1IAT15764J9bNcvMyBaU
+         /uyy34Uj3Y06/ApovSRaUcFZ1q9WGPSOizYCZO/onvyPlFeS1gZ7ez49nwCn5lH2I7LV
+         H373j8jbnR/z+oO4xiAsoQX6a+NXnE0GDNGacpmG7UDx9pyFkO9EYyUVc2iimpoBvqg/
+         ZVEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1I4+TkRzPHRdOoIjnkP2qlN5rzrb2oFhamn8y0E63ONhcPBj+qeb5F5VpqjMUZNs0qEg2Ul3/iKSd78I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws7wdVPRF6pkPaIfjAKTiniA8ppbrkIBy9kmig3qJqdUCyeLpq
+	lFB/IVLAWOLT3qi+JVuBPD5sr6p5I7yi/LvBvaAo1j48u3mSo6aDvSB0AlsPkN5BsG23SWrkwed
+	RMr8Txw==
+X-Google-Smtp-Source: AGHT+IFTe4URBA8XHN2+Qq9s8GixG6Z7wvrTVQCbQJYOjxumGBtb8NxaGtW3DTPqFM4psX9kQ4XK36VDvmU=
+X-Received: from pjvp12.prod.google.com ([2002:a17:90a:df8c:b0:334:1843:ee45])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3ec6:b0:33b:be31:8194
+ with SMTP id 98e67ed59e1d1-33bcf90ca94mr21952921a91.34.1761065311784; Tue, 21
+ Oct 2025 09:48:31 -0700 (PDT)
+Date: Tue, 21 Oct 2025 09:48:30 -0700
+In-Reply-To: <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20251016200417.97003-1-seanjc@google.com> <20251016200417.97003-2-seanjc@google.com>
+ <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com>
+Message-ID: <aPe5XpjqItip9KbP@google.com>
+Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D cache
+ flush is skipped
+From: Sean Christopherson <seanjc@google.com>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-commit cded46d97159 ("sched_ext: Make scx_bpf_dsq_insert*() return bool")
-introduced a new bool-returning scx_bpf_dsq_insert() and renamed the old
-void-returning version to scx_bpf_dsq_insert___compat, with the expectation
-that libbpf would match old binaries to the ___compat variant, maintaining
-backward binary compatibility. However, while libbpf ignores ___suffix on
-the BPF side when matching symbols, it doesn't do so for kernel-side
-symbols. Old binaries compiled with the original scx_bpf_dsq_insert() could
-no longer resolve the symbol.
+On Tue, Oct 21, 2025, Brendan Jackman wrote:
+> On Thu Oct 16, 2025 at 8:04 PM UTC, Sean Christopherson wrote:
+> > If the L1D flush for L1TF is conditionally enabled, flush CPU buffers to
+> > mitigate MMIO Stale Data as needed if KVM skips the L1D flush, e.g.
+> > because none of the "heavy" paths that trigger an L1D flush were tripped
+> > since the last VM-Enter.
+> 
+> Presumably the assumption here was that the L1TF conditionality is good
+> enough for the MMIO stale data vuln too? I'm not qualified to assess if
+> that assumption is true, but also even if it's a good one it's
+> definitely not obvious to users that the mitigation you pick for L1TF
+> has this side-effect. So I think I'm on board with calling this a bug.
 
-Fix by reversing the naming: Keep scx_bpf_dsq_insert() as the old
-void-returning interface and add ___new to the new bool-returning version.
-This allows old binaries to continue working while new code can use the
-___new variant. Once libbpf is updated to ignore kernel-side ___suffix, the
-___new suffix can be dropped when the compat interface is removed.
+Yeah, that's where I'm at as well.
 
-Fixes: cded46d97159 ("sched_ext: Make scx_bpf_dsq_insert*() return bool")
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/ext.c                       |    8 ++++----
- tools/sched_ext/include/scx/compat.bpf.h |    4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+> If anyone turns out to be depending on the current behaviour for
+> performance I think they should probably add it back as a separate flag.
 
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5407,7 +5407,7 @@ __bpf_kfunc_start_defs();
-  * scheduler, %false return triggers scheduler abort and the caller doesn't need
-  * to check the return value.
-  */
--__bpf_kfunc bool scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice,
-+__bpf_kfunc bool scx_bpf_dsq_insert___new(struct task_struct *p, u64 dsq_id, u64 slice,
- 				    u64 enq_flags)
- {
- 	struct scx_sched *sch;
-@@ -5433,10 +5433,10 @@ __bpf_kfunc bool scx_bpf_dsq_insert(stru
- /*
-  * COMPAT: Will be removed in v6.23.
-  */
--__bpf_kfunc void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id,
-+__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id,
- 					     u64 slice, u64 enq_flags)
- {
--	scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags);
-+	scx_bpf_dsq_insert___new(p, dsq_id, slice, enq_flags);
- }
+...
 
- static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
-@@ -5532,7 +5532,7 @@ __bpf_kfunc_end_defs();
+> > @@ -6722,6 +6722,7 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
+> >  		:: [flush_pages] "r" (vmx_l1d_flush_pages),
+> >  		    [size] "r" (size)
+> >  		: "eax", "ebx", "ecx", "edx");
+> > +	return true;
+> 
+> The comment in the caller says the L1D flush "includes CPU buffer clear
+> to mitigate MDS" - do we actually know that this software sequence
+> mitigates the MMIO stale data vuln like the verw does? (Do we even know if
+> it mitigates MDS?)
+> 
+> Anyway, if this is an issue, it's orthogonal to this patch.
 
- BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
- BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_RCU)
--BTF_ID_FLAGS(func, scx_bpf_dsq_insert___compat, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_insert___new, KF_RCU)
- BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
---- a/tools/sched_ext/include/scx/compat.bpf.h
-+++ b/tools/sched_ext/include/scx/compat.bpf.h
-@@ -239,7 +239,7 @@ scx_bpf_dsq_insert_vtime(struct task_str
-  * scx_bpf_dsq_insert() decl to common.bpf.h and drop compat helper after v6.22.
-  */
- bool scx_bpf_dsq_insert___new(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
--void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
-+void scx_bpf_dsq_insert___old(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
-
- static inline bool
- scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags)
-@@ -247,7 +247,7 @@ scx_bpf_dsq_insert(struct task_struct *p
- 	if (bpf_ksym_exists(scx_bpf_dsq_insert___new)) {
- 		return scx_bpf_dsq_insert___new(p, dsq_id, slice, enq_flags);
- 	} else {
--		scx_bpf_dsq_insert___compat(p, dsq_id, slice, enq_flags);
-+		scx_bpf_dsq_insert___old(p, dsq_id, slice, enq_flags);
- 		return true;
- 	}
- }
+Pawan, any idea?
 
