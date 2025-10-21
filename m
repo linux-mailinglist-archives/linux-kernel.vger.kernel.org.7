@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-862585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED90BF5B09
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7FEEBF5B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D24E34FCFAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:06:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46B555015A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F069D328B68;
-	Tue, 21 Oct 2025 10:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D67F32B9A3;
+	Tue, 21 Oct 2025 10:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9yWX3oW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GHD2EcBL"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE662EFDB7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DA230E0F5
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041175; cv=none; b=oDOkIjIbW82E0LU0QLqBbhhBNxCizbomymRv2Afw1DJRWS7ny/xWVFJRP90lP08Ccie1vo3+iXCdb4kUQR6AMTSNUYjahs4K9oUZ8wNIumJ4B02/FmH2kcUnqWH82CEI+SB8GIrIl5dKq/X9mNit3xN3fUJSHoiRG03SHQRKFIw=
+	t=1761041177; cv=none; b=A7fP26IQVDEp/Yrvo+rcCyBGuFM501dLtS/aU+t+i6RnI2B/7jZ1lNtuBa7kcdmDGzlrPc2Eb9bA8keG6zRvbmwhpB02N5xcx+Xr2jvouy4E8+OT6retOsYBIaTFQvfPC8oUPYHuOfb5N02OdkEZORhMV50gfkPicZE47EL42GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041175; c=relaxed/simple;
-	bh=Rlz15NwRFPQTBUDVi4l5FhQHO8GJgGPJzTN86dt50M8=;
+	s=arc-20240116; t=1761041177; c=relaxed/simple;
+	bh=JHx3RzN7ekZXT5s/kmXgxoDVrb+4PO8Z4TdtKCJjRPY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AgTEYcWKJdVWkdKErFQG8YSlxHVFNopUK8Gwt1Pz/ZqoMmBJ2rJA4LrCdp58jedKtwmFuJtkETlqW3ilxXBk0IJ6khuMn+2LxhYcjx7krChz/uvJDnxkAJPzPdxEy91Jd19Uh74m5UeYXWfZ97pbWo9JQIk7R6A1isZ49XdoyGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9yWX3oW; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=AZcpWCCabjjr3dwCFNfDm+lpHJzU25b9cBXryQzQc0PQwFMWxQ/DMdQjHnLbGLSkUf2lbePOzFeQzpJdHnmP6eRCiQi68I46lxUtPLiAidD2r9N0Zf08geXfDBCyozFEsOQXsATgNRwTO/Mn+yT5JQW8VbS+IeFB0qrmoEKnkqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GHD2EcBL; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761041172;
+	s=mimecast20190719; t=1761041174;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/5MqLTGooWfwQQt8bVLn3RBEegrtdNGSt5bbFt4WvjM=;
-	b=C9yWX3oWeTOr5o2m9V/DlqqAJvk2QSbEHJj3L/vkEUdorR9elnj89K+fEM6HZo6oc8ydi+
-	m2xZH7oEWfOro9vPluow4OcjNQizmp2Ghwy3Zeu3AeUgO7uAalrh82T8FEbuK2MDfsxXQm
-	VCg5yuXbk+wldI4Bv6DLF4cGB93RKZQ=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=AcIk1u1LFpf3b4C6lDAgUzkv/HVOGHxfz0isd+tTMcE=;
+	b=GHD2EcBL5DYwLQpWsIUoVtBijP/98cWjT+JfinI++4QZXaYjefJlrv/3rSwtiN6hFzbClB
+	sC5FI4ytTH8WkIL2kAvQVyBIv7vrZIFXVtvE8R7nWayB2Aph7AWQnZbFsvfZfKwoGuw4I6
+	QA/90cD1Xq97q3z5XWFYpCvBE38uQuQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-404-DuM2AmTOMPuAtAp0g30dZQ-1; Tue, 21 Oct 2025 06:06:11 -0400
-X-MC-Unique: DuM2AmTOMPuAtAp0g30dZQ-1
-X-Mimecast-MFC-AGG-ID: DuM2AmTOMPuAtAp0g30dZQ_1761041170
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-40fd1b17d2bso3106799f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:06:11 -0700 (PDT)
+ us-mta-678-v465gXGhNOq1d3oZtsfg_w-1; Tue, 21 Oct 2025 06:06:13 -0400
+X-MC-Unique: v465gXGhNOq1d3oZtsfg_w-1
+X-Mimecast-MFC-AGG-ID: v465gXGhNOq1d3oZtsfg_w_1761041172
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47111dc7c35so37341975e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:06:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761041170; x=1761645970;
+        d=1e100.net; s=20230601; t=1761041172; x=1761645972;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/5MqLTGooWfwQQt8bVLn3RBEegrtdNGSt5bbFt4WvjM=;
-        b=W7Awnj0CDnVOFfi25GejyXw3FsTNwd6V+NTsz1R6l5WGUSZcTCWjThCFgVF2OfmZVt
-         THlmBivphePz+xWRMFruv/T7cGiu8aL4fjjs33e4cpROjuK2eLCOSWRalB7r6FfQhidq
-         G5bJ+g8L5fu086NKkZE6OcyIUyJgkRvMDLzV6nYpcxXDLVTGzQsdE4uCAsL884rXQ7RG
-         kRP7Kj4QLou8DSGpMpZX0D5CWDVmIeEl7ulgaibhx+kckw1C38VLD8vW2AkcUQuPahEZ
-         DC6Jbq/mVBrKP01UfpJodKBhI2cboGQ6hCrN7HiCIrrcOyhNP/OyZKlf72alW9SNF1qz
-         dVLw==
-X-Gm-Message-State: AOJu0YzJW/hbKZ3hAEpcwftBnZgo4pcU2cEhQJLaqG5bSYIHWEkkvKTU
-	fHRyHTUwy1L8rgJDZXQyG1lwkQiHa0KizytiIZ7KukXQh/8w/enzwOlU6BQm5ZrlZ6TiKr/+YA4
-	qxw2n1vyLZX65/z1jNV8a2w7s/hg3JlBjwRPsAR/zXD4dAQoxSerqTeZ7KfaWjetwC8Ea9KRTuM
-	NI0jr34VBIfdhuhssy8R7PID9/O5DAqIOrGgrPEQGo/UKRoA==
-X-Gm-Gg: ASbGnctIhehmmyyf1UetbAjks1XArlPSsv/HrU6S/s15PxECe6ga0kmYukMN0rcaTo5
-	AzgXo6fDCJfi7XUcqgmxItDh3Q5kJHFl11FxQMiVnvAT3+25pwqwrXCLfw+X2IXEpHGbJFN/rX8
-	3hXmtg047FfmXn5XyCtnO7Frz7lpO7WXsVMwNHCZAiutD7PJmMo7H8ygpIYFUJa7M2fGO22Q/K7
-	lpzf0GaIzt8uFOsr9t+OPPcjNqamSCVBd90SBbTWWcfkrHiTorphXhPo8QMRMLzsE0NOErdYDT2
-	7xgfPpyV4ThAtwesUVDBrdwDFLvcqdsees/WF1+BJ+KUH21fyWSWwtuDPUeRtCZZ5jybPGfUH23
-	iKmvrnet61S09Hl/93SxWPWNJosalmMhdfjPnjoX5QB7YQaA1KOLDDIEM2KJw
-X-Received: by 2002:a05:6000:4b08:b0:427:526:16a3 with SMTP id ffacd0b85a97d-4270526183emr13034338f8f.29.1761041170195;
-        Tue, 21 Oct 2025 03:06:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdWAfWri+zwLuauv8PrjZF1aMCEwE+dY3BrO7HzQ43FnWYZr7+OQSBPRdaLGioAsiSvfA5Zg==
-X-Received: by 2002:a05:6000:4b08:b0:427:526:16a3 with SMTP id ffacd0b85a97d-4270526183emr13034300f8f.29.1761041169744;
-        Tue, 21 Oct 2025 03:06:09 -0700 (PDT)
+        bh=AcIk1u1LFpf3b4C6lDAgUzkv/HVOGHxfz0isd+tTMcE=;
+        b=EvbxkuMWG61gG+mcr/S9be+sGfysxJJmtnd6Hvxxi1YLCzYGfPjO/vnrCIbI3EouI0
+         4VPTXUmv8xp+vmAKqfnnuLlCpgi8h3DmFldTrkifF/ehHNXxxY7u0FnoJDnar0yEnPmx
+         djuiBV8oNC+pmroGtxghWcw84EvXkTisr7PmBe2PcJtUaM+QJkmvtDUr42OoUeVRg+X0
+         z+Z0isJPK6bLQFUiU6RL30pSfFnIf2dzkd7n2Gnfo/ACxjQOkdULNTQC/y+GXUycAx3S
+         jUHMwdwi/u9RVlsmqFDASEDIlSYUNjCrIQhfzmFANlzhBQOP0kCnP17oBWKIFck+5PKH
+         5FoQ==
+X-Gm-Message-State: AOJu0YwhGukmXzxKKoCf8zlJrMm95ykBTdHOwlC9dflhl7Rn4l0O04qQ
+	dw0kz8lrrWm3Ttlbb07UoKRaAq7nDdzwGAiBpZTiPkr0rrTWFxHabzUnI3pGLJz3Zs8fdMrWTj7
+	ybCt/tZH/rTfvUDvwDAzSLADlgUXgpZ4H8+DR0ztM+JJfcBFldmiUADx0xnsU15bgJPmpDixCpq
+	7LfrdDH8yYX88Iw2bVpq0ryjC4pKkEqveJLF67GVXsxhf9PA==
+X-Gm-Gg: ASbGncsHOx4aFSjAJdscWXx4uFZiN9j4GbB1NUS64GYABqDdHZJIAKZuNk4qwawKV9T
+	wU/C7wdJfkpzmG1iphqBs9ljpLZonBFBPvsQXkZc0XAxZWpU0yZQTFjEda/Oqx4L+U/AWblbYkV
+	NbltLVNHxogrRAvBk0xfMU+0s2g6mtYY0JN5jOefBmzfdhXJBj3M+tlFaQH83Wso1HJm55cu6VS
+	/2gYAzQnznqLo7YQzpoIgWOPmnphruUQSTux4UKnBzzmBAIt3cNG/j2ei9BsvZa3tFQh/hhZETj
+	lCZ2BuR9LDrkS5Bjo5J4SI/beFgaiMbgFJLSvgQntpbSrwBreic6wZVH+6DU2gDPu9EH4KKAHaF
+	BpAsCvbFbbUxCjlKs9Hxm4vysgGA5oc6hjlPW/a6EOgCQoSr4CgWq1sASinkN
+X-Received: by 2002:a05:600c:8214:b0:46e:2d8a:d1a1 with SMTP id 5b1f17b1804b1-4711787c09fmr119128045e9.10.1761041172049;
+        Tue, 21 Oct 2025 03:06:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF73SD0i6hnV9Jjn1RH+PBFk3w9kuXlrYaFhYZPnbx3J0Nn0xcYgxIdbLFvh84woZnc9xYOlQ==
+X-Received: by 2002:a05:600c:8214:b0:46e:2d8a:d1a1 with SMTP id 5b1f17b1804b1-4711787c09fmr119127665e9.10.1761041171514;
+        Tue, 21 Oct 2025 03:06:11 -0700 (PDT)
 Received: from localhost (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427ea5a1505sm19854508f8f.8.2025.10.21.03.06.08
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47496c2c9dasm13567195e9.4.2025.10.21.03.06.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 03:06:09 -0700 (PDT)
+        Tue, 21 Oct 2025 03:06:11 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -90,9 +90,9 @@ Cc: linux-mm@kvack.org,
 	Nicholas Piggin <npiggin@gmail.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	stable@vger.kernel.org
-Subject: [PATCH v1 1/2] powerpc/pseries/cmm: call balloon_devinfo_init() also without CONFIG_BALLOON_COMPACTION
-Date: Tue, 21 Oct 2025 12:06:05 +0200
-Message-ID: <20251021100606.148294-2-david@redhat.com>
+Subject: [PATCH v1 2/2] powerpc/pseries/cmm: adjust BALLOON_MIGRATE when migrating pages
+Date: Tue, 21 Oct 2025 12:06:06 +0200
+Message-ID: <20251021100606.148294-3-david@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251021100606.148294-1-david@redhat.com>
 References: <20251021100606.148294-1-david@redhat.com>
@@ -104,12 +104,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We always have to initialize the balloon_dev_info, even when compaction
-is not configured in: otherwise the containing list and the lock are
-left uninitialized.
+Let's properly adjust BALLOON_MIGRATE like the other drivers.
 
-Likely not many such configs exist in practice, but let's CC stable to
-be sure.
+Note that the INFLATE/DEFLATE events are triggered from the core when
+enqueueing/dequeueing pages.
+
+Not completely sure whether really is stable material, but the fix is
+trivial so let's just CC stable.
 
 This was found by code inspection.
 
@@ -117,29 +118,21 @@ Fixes: fe030c9b85e6 ("powerpc/pseries/cmm: Implement balloon compaction")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/powerpc/platforms/pseries/cmm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/cmm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/powerpc/platforms/pseries/cmm.c b/arch/powerpc/platforms/pseries/cmm.c
-index 0823fa2da1516..688f5fa1c7245 100644
+index 688f5fa1c7245..310dab4bc8679 100644
 --- a/arch/powerpc/platforms/pseries/cmm.c
 +++ b/arch/powerpc/platforms/pseries/cmm.c
-@@ -550,7 +550,6 @@ static int cmm_migratepage(struct balloon_dev_info *b_dev_info,
+@@ -532,6 +532,7 @@ static int cmm_migratepage(struct balloon_dev_info *b_dev_info,
  
- static void cmm_balloon_compaction_init(void)
- {
--	balloon_devinfo_init(&b_dev_info);
- 	b_dev_info.migratepage = cmm_migratepage;
- }
- #else /* CONFIG_BALLOON_COMPACTION */
-@@ -572,6 +571,7 @@ static int cmm_init(void)
- 	if (!firmware_has_feature(FW_FEATURE_CMO) && !simulate)
- 		return -EOPNOTSUPP;
+ 	spin_lock_irqsave(&b_dev_info->pages_lock, flags);
+ 	balloon_page_insert(b_dev_info, newpage);
++	__count_vm_event(BALLOON_MIGRATE);
+ 	b_dev_info->isolated_pages--;
+ 	spin_unlock_irqrestore(&b_dev_info->pages_lock, flags);
  
-+	balloon_devinfo_init(&b_dev_info);
- 	cmm_balloon_compaction_init();
- 
- 	rc = register_oom_notifier(&cmm_oom_nb);
 -- 
 2.51.0
 
