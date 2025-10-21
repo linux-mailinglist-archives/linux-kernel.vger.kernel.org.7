@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-862004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED5CBF439C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43926BF43A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 913E84ED587
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36DC18A63A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7187E22259A;
-	Tue, 21 Oct 2025 01:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46BF221D9E;
+	Tue, 21 Oct 2025 01:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CEItOGrG"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aN4tkXaX"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF631632;
-	Tue, 21 Oct 2025 01:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25791219E0
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761009070; cv=none; b=hT19M7nQS/R9Zdg4cb55vgsO2/mgz2Db6j8Uj0afxc1/2DsX/fYVZQv5cyRr4uf8SqO1pi8XWsvfOk4l8JynqAdA+tu3CVN4Dkq7E3zp09q2TVp8MpraGixKGPfljd2fzGXnSSgI6N9wvzqFV/cKM3YCWmiYJ1nsDuOTmo6ARd8=
+	t=1761009273; cv=none; b=O5lWhKC/COkR6ZQbdYOTUd5iBeBlRr+7iM3lTOASU836Bw9atXTNcvvCYwzTvzWVHcWA1TllPDAJvQUnnefz1r1AzlCb7enqTbQaEJcZr1ODWUVXzr/h6eUzYNdsKEE0ziBP4rftyOx4jsRhrr9ymkPyU03pMxdL1D/Zmvvwddg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761009070; c=relaxed/simple;
-	bh=DrL2WwRNEFOK1bJtIv9ky7I7c7G4ou42pOsCGy3RwiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y2baSpGJwnBkPxdWKGn2VL0aUhnY9yttFFfHN73R1izpUdje8xFNO1t8tEbLe7aKkBu/5ddjZigpnkpS0WjpiA1kCwJYUnCvPOWYY7EBidY4U/eqD53Y5p6fOvE9BSSrcUCXgqwVbz4nrEXNnFEVKsp+Vj2paXjp3BJTiAkxKC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CEItOGrG; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761009063; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=OBImoBy0givvKDy/jG9fhQjUBUsrZdSED+mmJaxLZFs=;
-	b=CEItOGrGIYNqWwtFBYvGn83mI7sHF5uBTwX7W4b/V/Tm+fKQhnv0RWCfdTUzTLS/c3fTcYT0hvEjD1lUgDzRJw2VsIPdRNadBtIXY0TwIH3yd8nRozWYL1wBUV+aJa+HClIjwQU9pzXGyKUP5c6EMYo+CO+Ar98Y+ippP5LCzGU=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WqgnWHu_1761009059 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 21 Oct 2025 09:11:01 +0800
-From: fangyu.yu@linux.alibaba.com
-To: ajones@ventanamicro.com
-Cc: alex.williamson@redhat.com,
-	alex@ghiti.fr,
-	anup@brainfault.org,
-	atish.patra@linux.dev,
-	iommu@lists.linux.dev,
-	jgg@nvidia.com,
-	joro@8bytes.org,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robin.murphy@arm.com,
-	tglx@linutronix.de,
-	tjeznach@rivosinc.com,
-	will@kernel.org,
-	zong.li@sifive.com
-Subject: Re: [RFC PATCH v2 18/18] DO NOT UPSTREAM: RISC-V: KVM: Workaround kvm_riscv_gstage_ioremap() bug 
-Date: Tue, 21 Oct 2025 09:10:58 +0800
-Message-Id: <20251021011058.96077-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20250920203851.2205115-38-ajones@ventanamicro.com>
-References: <20250920203851.2205115-38-ajones@ventanamicro.com>
+	s=arc-20240116; t=1761009273; c=relaxed/simple;
+	bh=ve03aCWXr1QzXG8Xq8fbriqiWKoRGyDKqZT+FrLPAOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QD9qx2PVglBRDJsLsOyr1t0xPg+cRcHDtubZnDGry2FFoOfY789VaZQZf3+0RPUTblWwLqm1fsjZQV0TJgI1xdJhZjp6D1c1VcmbTRs/xY753F/xujGRslhQ3/6TkprAwXemRLphEU0P69OVrJBhCUIDlDP8hbImpstACzvh06M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aN4tkXaX; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 21 Oct 2025 09:14:23 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761009269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wNqPFAFWjOS8rFTBULhpUJlwsnHqnNO3gS5VK6HeogQ=;
+	b=aN4tkXaXqI/EoT3MGjlUvVhfrN1KQDzuJZRYn4OwWcklpziN+f3Qz6bl7ui9E0kghQNgTc
+	VjK7/0Erq2hakeKEBU1yDyAFrTniDIf4eQQh0rAVL6gwxEVRyD8bmwIeOiHWE/7hBR5Jt1
+	xISKq+nLInnGbTKGBul1shtfi5z/H44=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Troy Mitchell <troy.mitchell@linux.dev>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Troy Mitchell <troy.mitchell@linux.dev>,
+	Paul Walmsley <pjw@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] irqchip/sifive-plic: use hartid as context_id in OF to
+ fix AMP conflicts
+Message-ID: <aPbeb1SEZr7CG2eN@kernel.org>
+References: <20251020-fix-plic-amp-v1-1-defe2a99ab80@linux.dev>
+ <87bjm1zcvc.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <87bjm1zcvc.ffs@tglx>
+X-Migadu-Flow: FLOW_OUT
 
->Workaround a bug that breaks guest booting with device assignment that
->was introduced with commit 9bca8be646e0 ("RISC-V: KVM: Fix pte settings
->within kvm_riscv_gstage_ioremap()")
-
-The root cause of the guest booting failure is that an HPA is obtained
-in the kvm_arch_prepare_memory_region.
-
-Here [1] might be the correct fixes for this issue.
-[1] https://lore.kernel.org/linux-riscv/20251020130801.68356-1-fangyu.yu@linux.alibaba.com/T/#u
-
->---
-> arch/riscv/kvm/mmu.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
->index 525fb5a330c0..994f18b92143 100644
->--- a/arch/riscv/kvm/mmu.c
->+++ b/arch/riscv/kvm/mmu.c
->@@ -56,7 +56,7 @@ int kvm_riscv_mmu_ioremap(struct kvm *kvm, gpa_t gpa, phys_addr_t hpa,
+On Mon, Oct 20, 2025 at 07:44:55PM +0200, Thomas Gleixner wrote:
+> On Mon, Oct 20 2025 at 11:49, Troy Mitchell wrote:
+> > In asymmetric multi-processing (AMP) scenarios, the original PLIC
+> > driver used the context loop index 'i' as context_id for OF (device
 > 
-> 	end = (gpa + size + PAGE_SIZE - 1) & PAGE_MASK;
-> 	pfn = __phys_to_pfn(hpa);
->-	prot = pgprot_noncached(PAGE_WRITE);
->+	prot = pgprot_noncached(__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_READ | _PAGE_WRITE));
+> Which original driver and when did it stop to use the context loop index?
 > 
-> 	for (addr = gpa; addr < end; addr += PAGE_SIZE) {
-> 		map.addr = addr;
->-- 
->2.49.0
+> > tree) platforms. This caused multiple contexts from different harts
+> > (e.g., core0 and core4) to share the same enable_base, leading to
+> > conflicts when initializing the PLIC.
+> 
+> When did it stop to cause the issues? And if the issues have been
+> already resolved, what is this patch about?
+The issue still exists in the current driver.
+The PLIC driver for OF-based platforms assigns context_id = i inside
+the context loop, which assumes that all harts are numbered contiguously
+starting from 0.
 
-Thanks,
-Fangyu
+In AMP systems (e.g., when Linux boots from hart4 while hart0 runs another OS),
+this assumption breaks — multiple contexts from different clusters share the same
+enable_base(e.g., core4's enable_base = core0's enable_base), causing conflicts.
+
+This patch fixes the problem by assigning context_id based on the actual hartid,
+ensuring that each hart context maps to a unique enable region,
+while preserving behavior on SMP and UP systems.
+
+Does it make sense? I'll update my commit message in the next version.
+> 
+> > This patch resolves enable_base conflicts on AMP platforms while
+> 
+> # git grep 'This patch' Documentation/process/
+> 
+> > maintaining SMP/UP behavior.
+> 
+> There is zero explanation what this patch does to resolve the issue.
+> 
+> See also:
+> 
+>   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+Thanks for your link!
+> 
+> >  
+> >  		if (is_of_node(fwnode)) {
+> > -			context_id = i;
+> > +			context_id = hartid * 2 + i % 2;
+> 
+> This is incomprehensible and will cause head scratching 6 weeks down the
+> road. This needs a proper comment with an explanation what this is
+> about and why it is correct under all circumstances.
+I will add comments here. Thanks!
+
+                        - Troy
+> 
+> Thanks,
+> 
+>         tglx
 
