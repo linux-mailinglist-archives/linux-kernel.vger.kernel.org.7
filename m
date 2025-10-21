@@ -1,234 +1,159 @@
-Return-Path: <linux-kernel+bounces-863044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5E7BF6DBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:46:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82626BF6DCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4434F354FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:46:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C1318A2070
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C711A3178;
-	Tue, 21 Oct 2025 13:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA60733892A;
+	Tue, 21 Oct 2025 13:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cZOmie8t"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012012.outbound.protection.outlook.com [40.93.195.12])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Mlh89lu7"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6501623EA85;
-	Tue, 21 Oct 2025 13:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761054403; cv=fail; b=Zgy1dOiYN3oHqKF7U+OrCEpKc8DYH1+PqBnlyAGAM8nqIq1aZlaQKpYRLmNEss9ENbtccl4NXl0wPxKk32wkBDvH9xK2IqrwYxXZiwDolnMDW2elTINdgWYPrNb2AeqIy6FSUdF+h58ppPBYynBh5pJaU4aZ7uKZmAUmJ2RpVCA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761054403; c=relaxed/simple;
-	bh=to7udOvavfpslXPixvbyYVKGwrdINxB3QFJU4XXDzzo=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=RaYgNaynDT6NHidZ6DrHA/x5fDudFDI9E71JPrZNstSf95WR/cRM7VMQo2cxyC/m9lHNvrxAS4crX6i20jyWE2wER30eVvYjFo68+GJk97EI3fF//yv8ZTPwlUxWSdIUySbT9MOj/vGgSPHfcgZnrFUILcA5p6d/IWuj/U/W3/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cZOmie8t; arc=fail smtp.client-ip=40.93.195.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F1wY/GcVx9RDjA0ju4YAEFXL4gwlx1x6kcp8h4umf9D6mPOvlAiz3+v85csL5NKLbDgIW13vXz6g7ifHTKtb7YEOHg6fMHRzXu/mtytnAvIPGE5eOiMGIfgNe68wNOpBpncmZC7A+cUdopzK/FX4RruE499a9Ki+SE6uVTJAVKjAwr5xgrPxVEatBvFNoAvzemAe8lUcwoC1W3Kbm1Tm9BqFcvkF1K1N8PU7dRTMHX5ynre6ScjZKavK+wiphQRT5XvnYgfsESAOQP/+abYx2kxNklsuubPGUKtCeoiLhNulaziJIZ6FBZGfSoocA/GhU2WzBfBo2Z5mjRx8EruSew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=to7udOvavfpslXPixvbyYVKGwrdINxB3QFJU4XXDzzo=;
- b=bCqw7X5K/vigQXGhe9psPecne0m1X+eb4ayzuWJmdrRGczzSbHUrkeVP5lookEjaDCOYMNCx7x99Chh1Pyf9DbJH+MoNVrRka/lEBGvWn5PDWXNYv1/KQVWyI+YYCvSf20rv0fslTjQWa1Vn64oaHgxX2uLMzY5JcH6jKDzrd9USnlhVR0V4K3lIAs9GsHqz19RiWDxSZLTjiDQC86puDm9JCcWdlVU/EAohOPIolbB5BQV63+5driqdOYcTQ9E+4iOYiMdv5TF1a2fffYLgGIaoqY+2NzYVaXwrQoWmyYkSUDPOY/VMb73IRLXOLgp3AVwTu9mrM3DNRIQoqTVl2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=to7udOvavfpslXPixvbyYVKGwrdINxB3QFJU4XXDzzo=;
- b=cZOmie8tZZY8Cmmk7CfvZ5XC/wZEoStuP+UeS+fNUaUm87J/FJ4St7ueZisbcZpa3xE3AiJnDaBxykWFWFYSVpLl9LiQCte2WyyI95aYlxCrPen3jqraQz+J5E2b1VPPjTl8/beLPtFzIV7/v+22zkh0xLkNa1Hn6nUsxs7E/h0Jh489IvquGeh5YL3qy4QFfWZKhOTHSffzNZ2drlP3dLlcgMQ2vCJXHYVRT9qsmz+0CUytEJarcrW6EYA3wmaTlTS70b2P/NPy+evKACDgb0Y/4adGrgYTqN0zITysvclAIo39K2cPMAyMpX4HxjfxTSkwT1KsM+1frwWuOUAi9Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
- by CH3PR12MB8332.namprd12.prod.outlook.com (2603:10b6:610:131::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Tue, 21 Oct
- 2025 13:46:36 +0000
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316%4]) with mapi id 15.20.9228.016; Tue, 21 Oct 2025
- 13:46:35 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 Oct 2025 22:46:01 +0900
-Message-Id: <DDO1O4XLJVHR.1642YK4GK85CT@nvidia.com>
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, "Alistair Popple" <apopple@nvidia.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
- Norov" <yury.norov@gmail.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH v7.1 0/4] bitfield initial refactor within nova-core
- (RESEND)
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251016151323.1201196-1-joelagnelf@nvidia.com>
- <DDLHP1ABV9BA.3V0NXW3RWHGL6@nvidia.com>
- <059912ef-6023-4af4-a8df-f4b34fe98e71@kernel.org>
-In-Reply-To: <059912ef-6023-4af4-a8df-f4b34fe98e71@kernel.org>
-X-ClientProxiedBy: TYCPR01CA0004.jpnprd01.prod.outlook.com (2603:1096:405::16)
- To CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5233126E6F4;
+	Tue, 21 Oct 2025 13:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761054442; cv=none; b=t+idbib8/yLYzWmjQpdQbUvJFYpOKHYPNub0nsJ6+P1Ko01eblb8c0+APikhCWuSzVtOe4PSbbPFvoamxuvYgEhBeCLLvA2Z7uCt61aqPhxGGRChmp0yNh/AEGeqiWUREWwAOZ/l/1hrSqFc+0X3lqyhxAZ19mlrs62187Qi3Ss=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761054442; c=relaxed/simple;
+	bh=neT4o96+sfJPtM07jwlTFJkt0YWT2tPvX9k+nMmP5RU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p1KP6tNwOZTvs/2dbcZF0RxHhCuPQtjzHSMFscVxJiOM+qzQi11k/WcnQ/OoIZqhRY4oINf5wiA3MfpcqcQSSEnGWDSkE4wAXsZlPf9GBAEXBkJbiJwiLei1kayBD/J3DmYXbTDp7CLr+BelvAzemmPcQNBOBLdf+WdP4foireA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Mlh89lu7; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=aok4Q7VCeJwiry1qOMn1QTGAWgJx8h8keP6SSm7tHlQ=; b=Mlh89lu7wtQLx4mdH9MuwJQYFv
+	XjIltf3atCUoXi+p5e7lCcYpM4UyPbUFJm+8eFFY+UGuhKQeQyluZp0Rp4Gf4KwNQsQVqVsmdQKY+
+	QfyOik/etf8+aeNaxMM/M03AgFlf+oK63yjolN12SLXGnWrPaev6B6BdbNe2fOhTph+snLAMKMkhY
+	tcRNX0V96K6d+lekXsAm4R1AqXuq0oeJ40GsiSjyl8xqwkVAVmp1V1ul5J5fikDlL9QxhJDmoJg67
+	DL6D3FDSRj9khpecMAgByuCCTkYyfhzqrDg4gHSGMBAQLBa3rTWPA0cNDLF1L2DZ2nEzDHOmZ2UG1
+	ltdW8tjw==;
+Received: from i53875b19.versanet.de ([83.135.91.25] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vBChk-0003Zt-HY; Tue, 21 Oct 2025 15:47:12 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ zhangqing@rock-chips.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, Elaine Zhang <zhangqing@rock-chips.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+ finley.xiao@rock-chips.com
+Subject: Re: [PATCH v4 5/7] clk: rockchip: add support for pvtpll clk
+Date: Tue, 21 Oct 2025 15:47:11 +0200
+Message-ID: <13871591.dW097sEU6C@phil>
+In-Reply-To: <20251021065232.2201500-6-zhangqing@rock-chips.com>
+References:
+ <20251021065232.2201500-1-zhangqing@rock-chips.com>
+ <20251021065232.2201500-6-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|CH3PR12MB8332:EE_
-X-MS-Office365-Filtering-Correlation-Id: b77dc1f9-3094-46b4-31a1-08de10a8322e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2FBbTZHVm1sYVJlK0czWjlNV1dpZEdHczJnUE5RRE0xOWNwbWRyZVhway9h?=
- =?utf-8?B?bkV2NEIwVzZvSGdKV25PTFJ1Wlo2NTdCb3ltWlBzS2ZnbjEwai96UUJId3dR?=
- =?utf-8?B?UkxoWjVZM0RlbWY2Kzk0SG5qa20rMkFiR3loNWNnRDhvMGg1eXpaUHdxVDNo?=
- =?utf-8?B?UTFKK3pCNVQvVjBiYzJGREk4RW12QWFDcWZ0clE0WlA3VWRVUjFvcE9sYVR4?=
- =?utf-8?B?UmRUak9rOXpvS2duR0RZakxZTEFrcWJ1anh3MGJvc0lldUNpRjJlQ1NVQmtU?=
- =?utf-8?B?WVNuUlNVdFdwK1JYSVN2QWRMcHJBVUpvUk5nTVpVQmFHeEdUYkZYa3lZbDQ2?=
- =?utf-8?B?SWttcEc2aHM3Y1NNZWVYZzRsOVlSQzBJaFNVZE1KYWNiSUVGaVZHQitPZUQ2?=
- =?utf-8?B?MEpGRTZRVk9DVGZlaXRudDE3dWIrVmVjaVhNMWtaUnJ3T2tVUGswWjZ0RFRF?=
- =?utf-8?B?Z2pJTkZIUUdTSWlzaElaUWpaM2xsSGlSUU9iQi9DT3k1SWUycHR0R1h1cURa?=
- =?utf-8?B?clM1WlZJRHljcmtyb2ZET2w0V0pGRzZHVVBGeHQ0QjZYaUVEWlUzaURtUnNa?=
- =?utf-8?B?R2xzOHlndTBPbWNOOFlub2I5SjNEeEdUR0t6SHUrNUpQNUFhaXlwbjNTY0w4?=
- =?utf-8?B?blRLQmpwTGhDbVQxaEthYXVZTE1pcmZUU2t2T2tTZ253NUNRZWMrSHN5QjZQ?=
- =?utf-8?B?S1A2R2RiUW1OanRaYmFaQXpTL1VZM04wN2pnQnBVR0ZPZ1JxYXZEME5SUHpW?=
- =?utf-8?B?QWxLK1lYaEFMandGVnA0U1lSRDJNcTBGb0QyTzFCM21MK1JnV3l2Q0l3NUhp?=
- =?utf-8?B?dGdlYzVFc28rdHZXb1Z0TXNVdzdQQ1FZUi8wOXdjN1JvRUR6NFRrZWxOR2lS?=
- =?utf-8?B?c2JZalFxV1R0cEZ3NUF4aDV1NHc1UWNUbSt1MmVNVWZGRjc0QnMzN1FaT2FZ?=
- =?utf-8?B?QU5BeHQ0NVJmM0NNandPcVR6UnhXeHJxQ0dhMVAwa1NrWlZmWk1rUWZZaEtT?=
- =?utf-8?B?ZEgva1pMMzgyaGZVdzVUU21aS09GVkxkcFZUeDFkcjlhL1JIaDVHbzkrd1c5?=
- =?utf-8?B?cDR1S2VVTzE3cjBxK0M4QUVORTBTaG1wOEg0QWRtZG9SOTE2WS9aRS9BQm81?=
- =?utf-8?B?dWxVNit5R0lkRHp2aFlVUFhqQ1NRUHhwSzFNTzhVYUwraEdwWUM0cC9CMFRT?=
- =?utf-8?B?S0RVeWV4dzVVTGVhSGFjcGhjSnZuWWJLb04wN3F6S3JDRHUxeXhla1l6R0Rv?=
- =?utf-8?B?TzRXWUgwK0lXK2JLQ04yY1duRTRTK3R4KytlcXVpa01SLytmdElUN3BlYmNh?=
- =?utf-8?B?Z3ZyRjFjSU5DSFRxNExuS3hJSitDejVwcVpndGJUWmJOTWg3azBlQ2JhMy9r?=
- =?utf-8?B?dEtWWU1adDJ4MlJPRGdoa3dVZFlxSVJmc1o4ZDYzRDF3K21jMkZCQkhCdHp0?=
- =?utf-8?B?c2k5MmtaR283dEVnUTRUM2hkdGFnTWFLRXdISVV2NGpPazhkSkhzcXVDdUU2?=
- =?utf-8?B?OWhkWEhxYnNJekx1TzY2SS9RSVdUd2YzaGFIaTNyQ3Z5bi82SUVOMFBpN09F?=
- =?utf-8?B?eFhHL04zM3hFbUlQMGdHQzlPODJ3N0U3MXVxRkFkYVlRTFRrc0ZYU2YvNzB1?=
- =?utf-8?B?UzNJQWlaODl5UDJ2eWZ1ZTk3M2FHK3pmV3Z3U1VJS3hSWFZ3WmNxMnhvQXpG?=
- =?utf-8?B?ZERVVnBKVm4xUkZ6MFZnbm42YlVxbUxpR0VOWkUyU2E4b2QrOVd3OGlwVGtE?=
- =?utf-8?B?YUd6S3QzaUY1NE9qL2lUU3dCR0xSVDRzb1pzZlVaL1VMOFZNM1I4T0RuVFgy?=
- =?utf-8?B?V2R6ZWIyZXVTditoY2VVQWF2V0QrUk9zVThqK2hsc1NNWng2R2pNSG4zeno0?=
- =?utf-8?B?MkdCaFNVSC8zZGlsdnVGak5uMnVvVXVJT0MzRHB5WkZQS2VrZWtuN1lYcWJS?=
- =?utf-8?Q?87idhu5aObKTCZEcUcT/CHTIq77VxFIB?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Snh6ZlNBaUlwNWhRNGVYWTRtWU5LOTVQTGk0RVk4S1RDREpNcW9wTGptbU1Q?=
- =?utf-8?B?UlgyWXArdVFMOW1DeW5oZGp5WnNnR1g5Tnh0WVFRSUIzRURmekI3dUhERFM0?=
- =?utf-8?B?emk1YXZuTktOdWttQTF1d21lTVM4dThZWm9abEFBVkFHL2VvNnBhK1FDMklp?=
- =?utf-8?B?MEhwSHhZWGpHRUhhWHBENlFMYkVHekgveTVOZjF1akowbmhKUUxiZ1hPTkNP?=
- =?utf-8?B?NktvcG9ET0xoeGtMSlBQQ3ZnUmsrRjJsMk1BWnBucUNsKzAyMCtMcGtPOVM1?=
- =?utf-8?B?QTBBMzlSc3psWTlMUW9xN3B2OVBNY05xNFdJeUtvQitvbDQ2ZzJyVHJoTFFD?=
- =?utf-8?B?d3YyVHZRYU9IT3Q0TEpQd05IQnFia3hWTFplT1B0bG5sUEdua0Q2SFNvY0Fz?=
- =?utf-8?B?YXhpOTFyQ3Y0WlFxQU9oZFprSVRtSFRWaVNxd3ZBMUhIZlBXcGpwUWdEM0xT?=
- =?utf-8?B?V3YrL2twclV2VDg5RE0zbW90R0srZXFoZWxQYnNqYlFsZDVkdGhmNXNqVEpj?=
- =?utf-8?B?OVFZUXNGcGk3YVhobmwyT2lMSEZlOW1JTUdDdDlHY00yUzJPdlljYndEYys1?=
- =?utf-8?B?czZQREhWWlRxa25NdmFuTDdKTzZ5RXFuQzNHOEZPTW5YbENSQ0lEYm15cUkv?=
- =?utf-8?B?QUkxOXhxODRuL0NkY1dsRUQwSUZQb0dGSi82TXU3NWxIQmFadTlQbUFjZjds?=
- =?utf-8?B?RDhGeTlOS3VlK29uWUViRXhMdzc1eGd3Y254S1BLNVFWN3NGTmtLbW5ha2Jv?=
- =?utf-8?B?UzhrRUdVS2pLVmNsQllmRC9iZjdRUXVudGhOTlBKdlBpb0VHM21hWDk2NUNJ?=
- =?utf-8?B?c2VIMXFmbzkzTTRsUGZmd2l4VFlXTGVyTmE4KzdjVHNoNUlaWDFCMGJ4dTY0?=
- =?utf-8?B?cFlXUitJNHZabHZ1Qkc3UDZZNDJndzJWVVhTTWF2TGVVRjN0VDNZWUxkZUpp?=
- =?utf-8?B?NXR5SDhIVGNqVVRyb1pmUWJUYkxucytmL3E2RE9lR1BRYjVzblhNbnhjZzF3?=
- =?utf-8?B?NmdnemFEY3RVdU5sdUpkZkRJUENXNjBVYTh0WUNpVmxmZmxEdkpaa2EveWZR?=
- =?utf-8?B?TjU2VW9YQzRtc21Wb1ZTR2paNWFySzFIeUtlbm1nYmxXNDd3eDQxR09tU08y?=
- =?utf-8?B?YzJrTnZINWtpT09wazNpcXVvTlhPN0N4WWVrb2Raa215WFY5MW5XM0RIZkdm?=
- =?utf-8?B?R0ZobURzcFdIWElVTGZkTkRiZ0ZPUUxlSTNFSDN6VVFaR3Y4MmZEVEtqWWND?=
- =?utf-8?B?bUhQL216NXJnVWpzNE5tQ2FEUUhONVpCL2NETHdvNE1uZkNQcGVackNJY0pp?=
- =?utf-8?B?UGI0QlRxSkFxTFRBWVhKNEJwVFF0eTQwcE11Q216bzIyZ1RRN1lHOEtXSHZU?=
- =?utf-8?B?ekpZeisyNzFzNzhRdlJ2MlBEMlhib2htZGFMN2pFMHd1bi80ZDlzK1ZNUWlE?=
- =?utf-8?B?a2JIRHFzcVZqU1o0WVArcXNVT0hRZnFYSXR5WnFNUTI4djBURi9VdVI5UG9r?=
- =?utf-8?B?SXpwbmY3SXNqZHVrbUprTDRYS0tKVkZXSEpaZFZaUWZiMFNtQVRTaEEvSHpK?=
- =?utf-8?B?SDBUWmozMC9BclBaVFhtTUM5alRBRmFxMG9HdzhIR01KVU53SVFCZXZNeElS?=
- =?utf-8?B?ZWdqZEZUcWZuVFJ1M1JQZ0JGdWxNN3VRb1hoWnE2WTRTajd6bnhydHJqR096?=
- =?utf-8?B?ZFd4V2thSGtkbHBETXBRaFB0L0pYLzdyaTkrVmt3UFdOZXcxTzBDZVR1em9F?=
- =?utf-8?B?bDZIQWpKcU9hTjIwL0RkWFhLdjFIWHNYRkNab0J5NS84bjR1R1hPSWNHYk5Z?=
- =?utf-8?B?WXNHYzdJOHZSbzNqYmthMllzYlJkcDNkR2dQMG1MNU94WGpVSXgwZGczb2xK?=
- =?utf-8?B?bXZ2VVZ3YjlHQTR5VG1rZG9kclNmajEweWduaEZ5MVZWR2ErOUFnNC9SeHRH?=
- =?utf-8?B?VjZ3WnNJeVZEcDY2VjhjSTlxNkF3T1ZYSy9RWnJoSUNlRlp6NWNWTmx2OEw2?=
- =?utf-8?B?ZDNmUEdtbmphV1gzTXAwK3VBTUNWc1g4aXo2dkN2dCtpeWYrejh1ckhEVVdt?=
- =?utf-8?B?cElZOVZmVlcvVjNzNXRLaDdiMkYvZkJ4Y3pmSnBNSi9Zam5PWlgzcWt1Zi9S?=
- =?utf-8?B?TXVKelVLQUR1azRLOTcyRlVGZGdsZS9EeHBudGdEeTU4RTNaaDE0VnVCWWhX?=
- =?utf-8?Q?u5ahwwpFAaX4hBOGF0zi3ivrQNgysyiI2vCbj/Md7BAB?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b77dc1f9-3094-46b4-31a1-08de10a8322e
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 13:46:35.4063
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qXgomwxH5/PX9gBOXkSS5cuaVMY2JjggzttCcfcdRhzPk0ExOdBx7e5iRP95tiQzptnKSpeIBEZM2TwV1z2YPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8332
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Tue Oct 21, 2025 at 8:44 AM JST, Danilo Krummrich wrote:
-> On 10/18/25 3:41 PM, Alexandre Courbot wrote:
->> On Fri Oct 17, 2025 at 12:13 AM JST, Joel Fernandes wrote:
->>> (Resending due to some commit message mistakes (missing SOB etc). Thank=
-s!).
->>>
->>> These patches implement the initial refactoring and few improvements to=
- the
->>> register and bitfield macros. Rebased on drm-rust-next.
->>>
->>> Main difference from the previous series [1] is dropped the moving out =
-of
->>> nova-core pending BoundedInt changes:
->>> https://lore.kernel.org/all/20251003154748.1687160-1-joelagnelf@nvidia.=
-com/
->>> Other than that, added tags, resolved conflict with kernel::fmt changes=
- and
->>> rebased on drm-rust-next.
->>=20
->> Thanks, this version is looking pretty good, and works as intended.
->>=20
->> I plan on pushing these 4 patches soonish after fixing the line length
->> issues and the other few problems reported by checkpatch.
->>=20
->> Danilo, please let me know if you think this is premature, but imho it
->> is good to set this part in stone to avoid merge conflicts with future
->> patches that will want to modify the register macro.
->
-> SGTM, we can keep discussing the hi:lo ascending / descending topic for
-> nova-core independently.
->
-> However, for the sample code that, eventually, we'll move out of nova-cor=
-e, we
-> should stick to what's common.
->
-> With that,
->
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
+Am Dienstag, 21. Oktober 2025, 08:52:30 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Elaine Zhang:
+> Support to adjust pvtpll by volt-sel and otp.
+> Support calibrate pvtpll init frequency.
+>=20
+> PVTPLL is used to monitor the chip performance variance caused by chip
+> process, voltage and temperature, and generate a set of reference signals
+> for adjusting the voltage of the chip.
+>=20
+> PVTPLL supports the following features:
+>=20
+> 1. A clock oscillation ring is integrated and used to generate a clock
+> like signal (osc_clk),the frequency of this clock is determined
+> by the cell delay value of clock oscillation ring circuit
+>=20
+> 2. A frequency counter(osc_cnt) is used to measure the frequency of osc_c=
+lk.
+>=20
+> 3. A externally input clock (ref_clk) is used as a reference clock for
+> detecting the frequency of osc_clk.
+>=20
+> 4. A calculation counter uses ref_clk to generate a configurable
+> periodic timing window.
+>=20
+> 5. Two clock counters are used to measure the frequency of the clock
+> generated by OSC_WRAPPER?
+>=20
+> 6. Support for dividing the ref_clk and osc_clk
+>=20
+> 7. Support for configuring the effective polarity of the voltage
+> regulator signal 'OUT'
+>=20
+> The clock path of cpu used pvtpll:
+>=20
+>     --gpll--|--\
+>             |   \                                 | \
+>             |    \                                |  \
+>             |     \                               |   \
+>    --v0pll--| mux |--[gate]--[div]--clk_core_src--|mux |--clk_core
+>             |     /                               |   /
+>             |    /   --ref_clk--[div]-cpu_pvtpll--|  /
+>    --v1pll--|   /                                 | /
+>             |--/
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-Pushed to drm-rust-next after fixing the checkpatch errors and
-reordering the sample code in descending order.
+[...]
 
-... and as dim was pushing, I noticed I forgot to add your Acked-by. >_<
-Apologies for that.
+> +	pvtpll->regmap_cru =3D syscon_regmap_lookup_by_phandle_optional(np, "ro=
+ckchip,cru");
+
+Not convinced about that :-) .
+
+(1) the cru itself already ioremaps the CRU memory, so having a syscon
+    there would ioremap that memory a second time.
+(2) we should definitly not expose the whole CRU io-memory to other
+    drivers to write "random" stuff to. This will just invited further
+    hacks, where people want to take shortcuts with clock settings.
+
+Also this seems highly specific to the rv1126b.
+
+Looking at the registers, this is a clk-mux between that deepslow clock
+and the actual pvtpll output and the config function really only
+reparents to the pvtpll in all cases.
+
+So I believe this should in the worst case just be mux clock, but also
+I see that the "correct" setting will already be set by the
+
+        /* pvtpll src init */
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_CORECLKSEL=
+_CON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_NPUCLKSEL_=
+CON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VICLKSEL_C=
+ON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VEPUCLKSEL=
+_CON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VCPCLKSEL_=
+CON(0));
+
+in the rv1126b clock driver?
+
+So that whole mode setting should not be necessary at all maybe?
+
+Thanks
+Heiko
+
+
 
