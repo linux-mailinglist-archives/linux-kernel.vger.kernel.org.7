@@ -1,117 +1,119 @@
-Return-Path: <linux-kernel+bounces-862155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13640BF48CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:53:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C08BF48D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 021D24F2167
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720AB425EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC34224245;
-	Tue, 21 Oct 2025 03:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AD521255A;
+	Tue, 21 Oct 2025 03:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KwFsJy/X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Zb4tyoiG"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B51A3029
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597B7D515
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761018801; cv=none; b=KHyNYwe+zxjvT5NVvdy9RW5ddqfcwcSkDC8Gvsf/Te0fzKuJ1DjU8QrPaSHBKsK8LrkJc4VqUsTSkIxmUpem740Ausz1LugGBbM3bIi0ag7KAATewT+OyguNytpt+M7NRGE6BYCGbQ2p/A5CxmMMF/TnyLbq3Xz2EXWpASE0Il0=
+	t=1761018857; cv=none; b=vFbrr71HsVDamhRZxJBS/FHezaZ4fC1Ay3l+S9co7geX9HXPMwZ0CAmvRNjVzCk/LgE29KQO258ET1R+ywW9eSAns4rKR3x7eR8Wnui4BaWlSBugBhLe9THHY7VcV10zJMsiBlMehAmxYZy9Q9TrfbaEo+vXvvkW4+F2Eq5PBJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761018801; c=relaxed/simple;
-	bh=megv8kjqooQLM1LiiG/kSBFGq/XM7K7Yev+NGYD2q24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o4d+Ncp93bPllbuwpobYA42LPWNwXEDM5LBoWULPzEFMh07jOT2fZ1a3XzZGsoHgYbYq9PFvASA7uXep5ezjhMQt1uzMnuSXvVJxKj2XnFNCsjJzWPhqGeocM70/1MYgC2u2j8xWdmr6NpQzFKhJggGjuU69Nl9eeUJU7wpiFLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KwFsJy/X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761018799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=megv8kjqooQLM1LiiG/kSBFGq/XM7K7Yev+NGYD2q24=;
-	b=KwFsJy/X3tYf+Mq/nq1qcWEfmfHyFpGRuj1/Mfw8vHKlBysiFu8GubM6BPa4Ob/zu/Kn1A
-	P5mohyLXsXtzkM+sg9ZM6jCW17+Guuv8h/3SP+WPCrXia0uVmT9fXQw+eYqzS1OGIzHmV/
-	b3Fr2STyhftFFCEHz4EDvUL0Zlw/LvM=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-320-q1j9oEPAOyuAFqEd1R6NMQ-1; Mon, 20 Oct 2025 23:53:17 -0400
-X-MC-Unique: q1j9oEPAOyuAFqEd1R6NMQ-1
-X-Mimecast-MFC-AGG-ID: q1j9oEPAOyuAFqEd1R6NMQ_1761018797
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b522037281bso3249300a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:53:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761018797; x=1761623597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=megv8kjqooQLM1LiiG/kSBFGq/XM7K7Yev+NGYD2q24=;
-        b=xJI8pgHFwnTAM+NLctu8BLIGpQjU3SRLvD+fvY5Y4mwrel6wZDBa9AkP6yqjJjtOVQ
-         K9FYW6o1BpePT7IhpHzyOoRju/N/kGB8KsX+SbOEaNNVISLJ4W9Sw27exZDgsKIYMMol
-         w3rVcYC5nvlJlxs2m5UddTkMnW8jBdi6Anyrs0YyEwNVrfTSdvQRdA9hTibTkec4cWrQ
-         oLAneMYKa1flBy+O1IPRgVruT7763sAV53kQkuwvGphTQDX81vRKbvVMEwMZiYFEaVWC
-         EtwUbhDjLJUnLWXGoylKKOksV36xJgrJZnlvZn+rqOT8aQeojL9IWFnKP1ZTrgldej4t
-         K+Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHfAt3CSqZ+m5n+XYE4qjVVsM3DwuezRfSHqJ2TlO+8IOgSlNKmx1hq9tcMuTiVnaUGydgeafXPbI6O4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygpFGiNlD+4IE/IhoE3pSdCzwBhtU3ENYYQJWrIXk4BFax6GBz
-	12cslvTqnB2IfTIl4cwyYPZ+OBCtQCc6kWvFR6NxB0ENdc0m/3otet+sCMa8oCxQ4WJegmbgxTX
-	mT7nVqesDMTyPx7HW2xXdlWPNSxAE4aG9jYrXv2015Ve+mBGFltDj+p3fxZuVFkfbjs++/Yv0Ca
-	PYljzhal3bYg5we4VY9S2CPCsrzXc2HcYZEB6YUuLj
-X-Gm-Gg: ASbGncvWfoD62eQQ0VQ3B261HzwKZxVCOWvvl0MMR6ehxZ9mztX6b/f+7fpg3iGMAZI
-	qmk5SdJnXmFH+FTptdAYc8lBWmYoHbIq0Vi0xqD5L6MZYSO+jjDrWcf157EmzA1B1F9BuFJZlTw
-	jjb5XcfCKG1VXto1zQBHV646qEX6z0Mh6RPJRwmf1JgLI2xNV+fkefDkBB
-X-Received: by 2002:a17:90a:ec8b:b0:32e:a10b:ce48 with SMTP id 98e67ed59e1d1-33bcf86c996mr22095233a91.12.1761018796675;
-        Mon, 20 Oct 2025 20:53:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEi63QOhdHl4+reIhpkfkeZ3DFMCEMmLNOYUhqCbJ0GGlA69CO3fwpDd+0dlzdH1WDw4MmaLl9VyqbUS+6tor4=
-X-Received: by 2002:a17:90a:ec8b:b0:32e:a10b:ce48 with SMTP id
- 98e67ed59e1d1-33bcf86c996mr22095216a91.12.1761018796279; Mon, 20 Oct 2025
- 20:53:16 -0700 (PDT)
+	s=arc-20240116; t=1761018857; c=relaxed/simple;
+	bh=ld1mk8mFPuUiH3BODYxL699bG8tU1Ec3figtxcSMx9g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GrjhssW7O+I/iBES0W83aOou/0gHqzMR8exJNpPZx1PiB1Xzd0+MY7oHLLci9yjtseHU1lRurrhZXSIaqV3n8zg4THg/S8vrnadyIJKaE4FzBJtnKgWvI08KLP2/Deaw/MEKEmGqXE0iuCUtG5vMEW+3w8puqR+bJT8ocORnDQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Zb4tyoiG; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761018844; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=8DqkQFzbLJRAr2/bah4u5arNYsIBZs+B2Fh0nUeM2Ec=;
+	b=Zb4tyoiGX3Y6fdCV8UDF2avF5vEmm1Mf4UaTdYF7s4ujh0B2zaIPp4lGPOG1HvWJjUm3zM1rCMf2q8TWLLdFzt7hmRiSarN7XmqhGd/dV9JINJ4Eq6lKsb8qF5tF46XeKFUpKhCLSi0JCKufTvzkBl4xlWjUuRNV4naTiSJP+Z0=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WqhQHqT_1761018843 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 21 Oct 2025 11:54:04 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-mm@kvack.org,  Andrew Morton <akpm@linux-foundation.org>,  David
+ Hildenbrand <david@redhat.com>,  linux-kernel@vger.kernel.org,  Catalin
+ Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] mm/debug_vm_pgtable: Add [pte|pmd]_mkwrite_novma() tests
+In-Reply-To: <20251021024424.2390325-1-anshuman.khandual@arm.com> (Anshuman
+	Khandual's message of "Tue, 21 Oct 2025 03:44:24 +0100")
+References: <20251021024424.2390325-1-anshuman.khandual@arm.com>
+Date: Tue, 21 Oct 2025 11:54:03 +0800
+Message-ID: <875xc8ap0k.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020071003.28834-1-jasowang@redhat.com> <20251020071003.28834-13-jasowang@redhat.com>
- <20251020121235-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20251020121235-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 21 Oct 2025 11:53:04 +0800
-X-Gm-Features: AS18NWBgdkWVsfyCxmNXmG3s1Y-9ydjIcrYq3r5CHZCpP7XV_l0SWs9P9nh4UAA
-Message-ID: <CACGkMEuXrVnO_TdVrw5JRFeBaGgW0U_KEWMcktj4JtBgNH9VPg@mail.gmail.com>
-Subject: Re: [PATCH V8 12/19] virtio_ring: switch to use unsigned int for virtqueue_poll_packed()
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ascii
 
-On Tue, Oct 21, 2025 at 12:15=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com=
-> wrote:
->
-> On Mon, Oct 20, 2025 at 03:09:56PM +0800, Jason Wang wrote:
-> > Switch to use unsigned int for virtqueue_poll_packed() to match
-> > virtqueue_poll() and virtqueue_poll_split() and ease
->
-> and to ease
->
-> > the abstraction
-> > the virtqueue ops.
->
-> of the virtqueue ops
->
->
+Anshuman Khandual <anshuman.khandual@arm.com> writes:
 
-Fixed.
+> Add some [pte|pmd]_mkwrite_novma() relevant tests.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Huang Ying <ying.huang@linux.alibaba.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> These tests clear on arm64 platform after the following recent patch.
+>
+> https://lore.kernel.org/all/20251015023712.46598-1-ying.huang@linux.alibaba.com/
+>
+>  mm/debug_vm_pgtable.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> index 830107b6dd08..b9cae1580782 100644
+> --- a/mm/debug_vm_pgtable.c
+> +++ b/mm/debug_vm_pgtable.c
+> @@ -102,6 +102,11 @@ static void __init pte_basic_tests(struct pgtable_debug_args *args, int idx)
+>  	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite(pte, args->vma))));
+>  	WARN_ON(pte_dirty(pte_wrprotect(pte_mkclean(pte))));
+>  	WARN_ON(!pte_dirty(pte_wrprotect(pte_mkdirty(pte))));
+> +
+> +	WARN_ON(pte_dirty(pte_mkwrite_novma(pte_mkclean(pte))));
 
-Thanks
+Why not use: pte_mkwrite(pte, args->vma)?
 
+Maybe add
+
+        WARN_ON(!pte_dirty(pte_mkwrite_novma(pte_mkdirty(pte))));
+
+> +	WARN_ON(!pte_write(pte_mkdirty(pte_mkwrite_novma(pte))));
+> +	WARN_ON(!pte_write(pte_mkwrite_novma(pte_wrprotect(pte))));
+> +	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite_novma(pte))));
+>  }
+>  
+>  static void __init pte_advanced_tests(struct pgtable_debug_args *args)
+> @@ -195,6 +200,11 @@ static void __init pmd_basic_tests(struct pgtable_debug_args *args, int idx)
+>  	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite(pmd, args->vma))));
+>  	WARN_ON(pmd_dirty(pmd_wrprotect(pmd_mkclean(pmd))));
+>  	WARN_ON(!pmd_dirty(pmd_wrprotect(pmd_mkdirty(pmd))));
+> +
+> +	WARN_ON(pmd_dirty(pmd_mkwrite_novma(pmd_mkclean(pmd))));
+> +	WARN_ON(!pmd_write(pmd_mkdirty(pmd_mkwrite_novma(pmd))));
+> +	WARN_ON(!pmd_write(pmd_mkwrite_novma(pmd_wrprotect(pmd))));
+> +	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite_novma(pmd))));
+>  	/*
+>  	 * A huge page does not point to next level page table
+>  	 * entry. Hence this must qualify as pmd_bad().
+
+---
+Best Regards,
+Huang, Ying
 
