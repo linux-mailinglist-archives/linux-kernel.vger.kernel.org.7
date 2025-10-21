@@ -1,246 +1,246 @@
-Return-Path: <linux-kernel+bounces-863344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC6EBF7991
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:10:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A54EBF79A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B6518893D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:11:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 012D54E67A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB6130F7F7;
-	Tue, 21 Oct 2025 16:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44739345CBA;
+	Tue, 21 Oct 2025 16:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ig2Rghmz";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ODcf9/uj"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eRqFA7nx"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7671DFF7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761063043; cv=fail; b=oLZJRWcUIZhwTMavfqkkW6DYst/1I6tB97D+NC+6aaMCDG0WgcVKQIFexR1l8v/RXSshQcAu1gY/3nlMqPrKOMBELseBnJzr8aX6h/+rTPe0CdoylXtlnvnoPHayg9LrPgKLYTihCcuMB5/me+j8CShp9qNFSTpBc3n95x9UAlM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761063043; c=relaxed/simple;
-	bh=IfHmIuVXkuFswkaoVsR/hBDjTvOmGTNUsSkB671fvVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MFCo/Gf0xGAHx4vDV6ZSQAWKQYWUD7qDL4R3aIhoAcuHvwBPXWFaXz0TLp+QYdAffQu/d7rd4QpmsPl/GIZkssHZKvNX/44KOnH9KElZkYAu/WkcuwK6PDp9ocNs3wQligolrA9+z2r5aouM2hxXu+Mw7r+uQD0D85emoOrstwc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ig2Rghmz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ODcf9/uj; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LEJ6L8031112;
-	Tue, 21 Oct 2025 16:10:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=0OzXMbgNGTS+jVI1pj
-	UJL9hGyGw6Q/XMHk/Ap2Oog7s=; b=Ig2Rghmzu2pRFYogQYwuGY2HIcyckPcirA
-	k6DLFKNCK7nsfMkTuWoRntDZ54zabEnQ+MM5Pzu3AvzAgSRSeFc4EjjYKE142Nj/
-	9Dh10eJcYZkUdOH9VgpfkIQQUoicN2YIxbfuBfMAOlTLzSSxujqU3s//L1fwnodb
-	adWhTY45UXSB+dZf6UY2hrmnV1fj4kkVq0Cp0Bt1W+FaMadq95Sq/TgVbljTEd5T
-	EGiN3s2kckiLmJsNGeBMqMnVTmCPl0zTXGJpNmePY8MK3qNBd6QhlCrkc1/2Ps31
-	8BniN3nMG2yVvKFcfEMhjSdYxlhA/rIuUcDlqOCjUFaEMthtXr3Q==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49v2ypwwnp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 16:10:21 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59LFOOsg032277;
-	Tue, 21 Oct 2025 16:10:20 GMT
-Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013047.outbound.protection.outlook.com [40.93.196.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bd2mwp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 16:10:20 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V/dIO618y8oY16TDx7YV9GH+rq0HdrHmzo41R8qmRf7HsCVPNGEahe8cMrq9Mp843sc8PreF7cm/W2D09gHOCZGFGvWuQqFGigkYFjyBED5e+VtCdQznGAGlcPP9HaTTbwZnkMa3YIZYuWFkgcUutSEllykPk0A36wfUZDOpqhloKhsV+8KHW06XEdXc+bNF1JUC8dAopP26CcZV1JjNCq1R1nIJ22iPUahlNxEnqdWXx9dvCnnB2F9kLZtAdf9XdMgxp5HH1FluS1EHhTygOkMgfzwCc0P1F2VkCsmXhPskkaL+BtUnA8/IOTRnmGgwJh9Nf7iQlJlpnZ3iL+3/Zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0OzXMbgNGTS+jVI1pjUJL9hGyGw6Q/XMHk/Ap2Oog7s=;
- b=CxvleoU276bxFyBnkub/dTULXxAiJ5SYoOon3GSX+vRxz6JIVPYkvZWtnu29gytJZtoitV92bDcF5swxFXPBfEc4nSMMV0s/WK4kS4qhZ5sqAYk99WSoiJke8cp93h8D9EH3fKc20cQsvdN7TVCy2/AR626lT2pY8jJRGNkHfjFMkYz/wF2/Fco88smyqkvrpGLbXA+XRmaroej2QHra34bi47tISkmp8uBYCr7PVSy5kJwIK+fJk5s0qvz9fHyKQjPKejZbsUW6ubItKyaabspfQJP5SuAu17I7PkPWKTEQMZzTAXfM9LUk9MtlFJwRiDejpNuQaFJCUsOfEcIoNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA32E340D87
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761063251; cv=none; b=cGXT8bI2MzLexA2J59BxFUim1ea8Gy0ayCnPsce9I7/HI0IObhIb87l8ppNbFmc1xfXsYxOHvX8H0NzDMQvQ0pae2PPbDC5+1O1GbxXu39utsHQ3tt0Ac9jfXhiG+dfX8tn9sGAD/FqlR3jPyc54ybKI98oda89thJ+m+SmPIlQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761063251; c=relaxed/simple;
+	bh=jwALCPRFruFeYmRfrp9Ri+SEZYzWo8ADyILKji9+IIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kv6ZFQbz1TMjoYSp9ILSRfQnRTGzRU8VDMdkng1W5KLosR1yLTu9ziCqdnmFjROBoJVH7bT8iWeryp1ir1rwi7KtnMh/4kuM1JYifcTF+EXE9eUzgGa/q4W1L6d3ujP5uzjNBj0uXqB9Fxak0jphA+zMo5ynqfu5phphVJE2rQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eRqFA7nx; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-471005e2ba9so69965e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0OzXMbgNGTS+jVI1pjUJL9hGyGw6Q/XMHk/Ap2Oog7s=;
- b=ODcf9/uj9ZjnXDeqnBPumCVZJ2FeRQYUgBV5kRiatTZunkgSKNIJmkV4wzcY3pyB6kOuZn//y/w8CyvWtCidxSKgkR0XcUKAQPNjKsL6WD4pbGEkkTJ7d91pixXpcEBhpGLFUEaK3Kd5arAGfypdPfqy0+AoipFZb53EQd/QyOA=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by DM4PR10MB6253.namprd10.prod.outlook.com (2603:10b6:8:b7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Tue, 21 Oct
- 2025 16:10:17 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%7]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 16:10:17 +0000
-Date: Tue, 21 Oct 2025 12:10:14 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
-        rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        jinnasujing@gmail.com
-Subject: Re: [PATCH] mm/vmstat: Fix indentation in fold_diff function.
-Message-ID: <bx5zarozwnlogznjai2242und55z5jxs4bpgliswuo7shezbma@ri2ocyj7n4q7>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, jinnasujing@gmail.com
-References: <aPc4I/8zXCGyiapN@pilot-ThinkCentre-M930t-N000>
- <b0c6c6d7-843a-48e9-bafc-f2595b059d32@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0c6c6d7-843a-48e9-bafc-f2595b059d32@suse.cz>
-User-Agent: NeoMutt/20250905
-X-ClientProxiedBy: YT2PR01CA0022.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:38::27) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+        d=google.com; s=20230601; t=1761063247; x=1761668047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fzW2rY1I2AKLs/LU+wRizdzQ22+SHdlJ/3qusxmFBDE=;
+        b=eRqFA7nxiXlxzFYyinrIjOWTfDELwsBV1AoSpBTUDGBy0te9x+pKr07ARmFVjeYxfI
+         izlXOK933UZb5MVMGBpJ0ruVHZmx6+cwFAbwGtyVoKu8iUl/TyyCKt00HY2i2apYwgpe
+         qRcuVS3SJxTNpJeqSl/JEK2CQOG/eyh7HuxBG0WCQkw5v7X687un532/lAwiCWq+OkjR
+         N5dMASSffNPpOlAjMR3tBv0amjaWbC3btwEGFFodZ0qz0QF9VljRtEGmpE8jai/0HuAB
+         ANtRKE+yxZmA/jBiE+BfdjV+AXAxcqKgObe/CcATfkxBbS4IJN9Mq1iwKc9673U3fFaX
+         1aKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761063247; x=1761668047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fzW2rY1I2AKLs/LU+wRizdzQ22+SHdlJ/3qusxmFBDE=;
+        b=QCz00HDELX85vlzdkgX+THBq2oWhujON5B3mi/yWRu7zdoto6ik3Ynj1kUhM56ZZJB
+         WSJqkASHfFUlKm0lid7KMKBvnMnmrsfCUm6YYoRIHO47GKk4Oj+M9GePy9xyApoT/dMp
+         pM5SzK4/6YE5W2cLSdLwui86qHwX6QivkUbyfFtLafYaFxG0iL+mFMiU9tEilxMZ25a8
+         leB+kDsU8XJRYdU2jqQWI3omWvNqgKjpJOOG8bkxNQIHWEsD5qtF/4tKmQ97TgC9PtH8
+         EjN8sfiQ7m6ZVCT6Q/X4GMQCcp1oJV605/2zM9L+0ujOWY+odX5XWRMvqliSaoewsb83
+         NVpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZbxgJt/dwK9YjiQzgykM+xCqdZi258Hy3TncheadIagq6CVQJZPEVQQaCM1Me8S8I08zQJ6v+QiCCMcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHrMLtpvSSJUDLa/m9hilBCiAKblqYJihe1N9x/88bG44PdmUM
+	8WnE8+sxAHLyX1MLKCTpHhTVUpZ4Syoh6W3jPSxA6Lgw6HRhlT+BCkXH6pcLiIw0BQUR4FLg31t
+	Wn/tQxlQK+kUmccMvLuGyBWOikAKVTKtaWmt0QYub
+X-Gm-Gg: ASbGncsassTArHQ4uR4Rn/qBQopHmmhitzY8kFHakY6cZqcUKgSOY9D+nSkqWhLOCEG
+	sNsD6mv9Eh4bD5bp+U+vVvBcY+fwnmVWCWZfinGYDi5g6KgAi1zHSTZUu5D/4LvhpMjZ+2obtLy
+	8L+x8Z8Gmkbk/kdGr/xaU+khAZAc+QmwvCoeu00XfeG4IcpidmRjFqJkx9tdIc1yaej6F6+DAY8
+	sRPnj9yPZeLAujODvIqnkL3QIxYJoFC9F+/UiVHbu1rHDz5FaCHT1reaO0ibIe06BHTKN/OoyOj
+	kB6x/pjv7ThU8b4q
+X-Google-Smtp-Source: AGHT+IE14qTEBghQgzjgcliX4306euS6iolIBF3AxWlF2cEnTAIMms5VkABvdFJelKcvqwketyvRe6yUthJZ0L6j/JI=
+X-Received: by 2002:a05:600c:8719:b0:46f:aa9f:e345 with SMTP id
+ 5b1f17b1804b1-47497744bccmr724965e9.7.1761063246555; Tue, 21 Oct 2025
+ 09:14:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|DM4PR10MB6253:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e6856dc-1321-4dec-b461-08de10bc535c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?AurcXEfbT8Yub3NUrWe5ZhpUsSMk43aRNOvXtVB1KCTmD72JiU1HvpWUh8yc?=
- =?us-ascii?Q?+Xo5IvfquoiLd7398M2t/1oMqapYQEUpifaRL1kZkEdf0TqKdr1NFsegRkvT?=
- =?us-ascii?Q?tIO2LuUm0TOrRBg9DXRzUr+Hvub5xWUrf0Gc3Q7PVo3amJoSPVHXWyywzi/X?=
- =?us-ascii?Q?S9QrLZwvaX78cYMNdXdWM92IBWou0iVNVh0h82egbjUOj6VWj/PJw4tVLJaW?=
- =?us-ascii?Q?BhrPGZamNdmwYI0HA5capf/GBfmEmWFEmeBnHmJERcjMfPj6chiHk2Ze7XGD?=
- =?us-ascii?Q?TMNTamRZ4MuxrJ0ROUpAMVah2nBJOJLs7vlucjZlzwFA3vmyfVYdtSgGP/n/?=
- =?us-ascii?Q?1zqXmjfT4qbFPu7i+KlpJpDSRECYmry/+wKSIasPoLoXO2z9A+IjEZeliw+2?=
- =?us-ascii?Q?t/KP8pVrqxSC0NYP8IYdQFWxmsV81B/IRQL3Wf35PEf6SJn9Mcq+ReW7EJMw?=
- =?us-ascii?Q?C0+/BJtFIOJ1YBpzkFM+oh0WboOzy9uoyx3ODQa2zTz6mONlgxJxDLkkXSI0?=
- =?us-ascii?Q?+//FQ5ouda3Pm37cWLEbMXHaXTLqIlR0s6eK3R8peKNH35soG+el4N5Q+gwI?=
- =?us-ascii?Q?mPOjqx9vThvU3ASkwuxSgi41YJQn7gQLiTvirLRtdS1u8IsiNlp9hDkosZIq?=
- =?us-ascii?Q?uGJYWe7qEhcF2Mj8sIR8O7TcMuIohN0YJBBFAdsOQYs5hUQh9gkGcju3FS6b?=
- =?us-ascii?Q?ygxlNxVh2VT5xkrdV5QawrXZ7tvY8XxInaI4eo4HzCvHY8tFaZioMfJYYEu6?=
- =?us-ascii?Q?hkPy7X2EG8m24mvGU3dN71N0tLnriT1HLH1Gdgh0X4sFcT+TLLvENrqgxFKC?=
- =?us-ascii?Q?ZxLrvlknTHTYO6NckYS7399Jfknl9D9bc+czxFTGbQ2GpXtYRk+92N2afGp4?=
- =?us-ascii?Q?KiW5MK3T99yrmBLWDaTwUEuy6llKjC1uRCtlQFhlyfCFUOOFiehTTinu7H7I?=
- =?us-ascii?Q?aLag/DYAkqbnHcJFI8L9teCSgpkw5ppgjqts0ut5ITGr17p7p5Ze/G5cz1et?=
- =?us-ascii?Q?ko+lo3iGGfrUOn3urM+bbrOEx1QvZ43m4Lxm8N9RNSbH+G2y8K0ehLZyA80k?=
- =?us-ascii?Q?D+LGACkLB7rsWg6ov6nR9CnRc4+9br4mzjTquP85sLkqmx1t47rlbOUiBjJh?=
- =?us-ascii?Q?hpZdIGoMvzjrN9B0c3gWmO0rgCY5ybP8T7neFGZbltZanwdndsxqHjN1nx9Y?=
- =?us-ascii?Q?8C7AK14WiK6kEXebVpcinf3CLN108/S0l6AzCnoBUfFW48m2CA0S1IY6KtsE?=
- =?us-ascii?Q?D58e9kIDvzy9YRN69LS0TWttTEFKZzV/lrHLGEm/RIEBBqvI2L6dlKHudfJn?=
- =?us-ascii?Q?1n/Uo3Jx90DKXQMRwphbKDPt9R0FmyhT0+jO/EHl+d95S5ofSbQhspDLbQsQ?=
- =?us-ascii?Q?NvHOEezL1F/vygzQ0bhN3LkkH/dau8jES8t3hmylYIi3+wxPX1OUIhWSR7Nx?=
- =?us-ascii?Q?iAxpdPLIzsJ9j7SvXEz3oNbIsFdRw0AH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CmpHzw8FRAl2gbQWXRUiRAsS3BJSVM+DjXVZwtMN9lO5Uabu/Opr5HeBS1IB?=
- =?us-ascii?Q?JCCU9SkaYLCYxz5jxZNlXxZ4wC86H2YTxxxAUs1XO8C8iyummxUstz7uoi+5?=
- =?us-ascii?Q?t5kDz1cqO5rWqT5DgiJTgUSFEI9wKyr+RKzbGOgBcI7g6zEUdzhZYQXkWVta?=
- =?us-ascii?Q?VWAgReDozQuvKmhm4S1zi94pVlDIANmrx2gdxHGzgZhn6tsMIp+diURTKQt7?=
- =?us-ascii?Q?FfZ38VnI66wBJxsLnGfuFHFXbROQnVgNa2MBYwyl2CcbnF/Fhwpm1is6KFJw?=
- =?us-ascii?Q?kAT/it8gNlxgxi5dMEDt/+eDiSKWpJ9A4ZAukgiFuM3a77QDtmPzguAk5uls?=
- =?us-ascii?Q?Ayks7444S57AgXiavbNsE+B6CdgqvfxP2+PlyugHsQ3WWL7op4ueeoDMKR8E?=
- =?us-ascii?Q?erKxdISU0MiTYu4cr9IGCJEFsulig8i+wa3mjwK9YEcnSd+6IhKws7NEAHyH?=
- =?us-ascii?Q?oex1rmOWvgOCZ52ScgVl5jdA8seJgUTeDMp/Gs6wYYytk6Jz8quIcdHFpe2a?=
- =?us-ascii?Q?UpS145VUTQXUN6aGqXoxpKN7VE10itErUFXESK71Frl7ps5I02N48p6PHoCR?=
- =?us-ascii?Q?7haRRPwfahIfVh/Wtf7sMr6HtYeozUvXGoZ+flZouPxKIhRZbunVFNSTwhSb?=
- =?us-ascii?Q?SS0W4JPLJddnvJq3qA8VO1bdv/J2EntYXOIVJOZO0mEQBpakSsA3K9IOZwEG?=
- =?us-ascii?Q?QHHFJUtdaxE/HUxCzpFTLowFsLdq282UL2yZ5qa4lyTOIpoYwdN7WvsaF7CL?=
- =?us-ascii?Q?fYylRKqg0g1FYdmLJmQuvGtrLKSP4hTCmJMeMZbnRU9c3plIccHPcLtXQi3W?=
- =?us-ascii?Q?xn0oE7rPD9ONcYqHwBBQGT373oM3h8fBtaXAQBoKDNKrRCJb/RTA18jd+Q0D?=
- =?us-ascii?Q?nIWRlCVtiiSqjA9tEPc/Q5JnFz1BQwQXVF7t094f8j5Him7WHxEbg8oX0neu?=
- =?us-ascii?Q?tAfJNXRAvjkDXG+iVgB1tS2ZIxvekDMswZgT/Ji8xpZZQ/DYIrEua/AtiSbN?=
- =?us-ascii?Q?zPHsZUIMicPxmABo1jP0QQ+M0yZ1upXIxPVpegSRiJGt/lAOkR3Xs6kB+l0t?=
- =?us-ascii?Q?HWwf+6/YH9qBjYgUHV8+8g0vSAzUo0FzJoipNx0nxAcEKsDKDh1OWW0Qu2Ab?=
- =?us-ascii?Q?J5q3j2/1Ruaoz25z+2BdfUe1BYizrj5evQ/TlBCqjx5WwY4ee6tKhwshWome?=
- =?us-ascii?Q?/pUtYMnacEt8djTxwEz823EZlFE9HoXwNoLTrOkVNaHxhmyMVygQJZeWPApL?=
- =?us-ascii?Q?ZSSevUHrxnMPa9W3BYHJBKbR3pnYWbCn9pEitt0+3U0WdUwPGCYQZxBIKWQQ?=
- =?us-ascii?Q?bJ57AY4pVc3GHsY34tAbFwoMNRF3hCBk3qqm0BOV+Dxxy+Fq437AyG8iUqHC?=
- =?us-ascii?Q?9bpDBUUH17CVt3tqhNphaYLeHa6XVScp1D/ndi7Ma+SqJv904tBRLk7+fllY?=
- =?us-ascii?Q?ZvdqIP59QdfjWdJFu+7KXeAMXRIbOyiihOU7km6mX5Kr6MEW9eu/nNcPL64o?=
- =?us-ascii?Q?YyOYmpuz7hyMMUCmB2+2KklBQIgzt/86AFYOVAUlMoQlFPMB7YDyAQLlPdqM?=
- =?us-ascii?Q?/KiIQLzMK2rnf5Ox6pQNLa35j9VMqow3jh+xhsaa?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	etnGLTgwGzEur0YIZ29a00bShQB+ZjiyASeQ6UyopC/pmkJsgbmW4VUjm634aTdPcvZs7usuQBU75C+vhGM6FHZjjXzhiS3px0N0xR0ZnMfdqk45Z7LxV0xDA5eoTORn+6+e6OcVT0OtQ4hyNDSKh88+QcJ/ICNAr0PhmaA87+FI9mfRBfjIH2NuFn/0ZWbj30K6Ozphc4jqtmwCWwSV/sJ1Y0w8mg8YdyPzU8wrvmVsnFFYmcp7z6HQGAZHtRFWEzGylM7HJXEhWppqd+uhRkU+PtOetf4LXPfH4mjk/9y/2Np+j0zk9IX9Xb3dob4vU2dc8ywXq0KxjxkgalMTaeKsOp/q4ZoSPtK+8LsWAmYLYOsmEAYVa86a+RKqFsW/g40DwvUnr2MdFzVOorFzAsxka3MWTBkI1pShfOxUt4rIPal+iZS+xYk11nTm/MtNOTQIf57Mje6uU/BQkb93MnBpHKq+05Na+aKgkQEMptChh8FsQJ9hnUgTNUHzB9cw6NKsKmx8e5j324cXLEUlPJXEBeZ5SBnae+X+uvrHKikzjZpLtEFzU2sSPS1AGc9yYJlpcO9xtfSUUJ5sh0vomwAkSgUimTMO/NWb0S4tGsU=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e6856dc-1321-4dec-b461-08de10bc535c
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 16:10:17.3638
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rcq8J7ZDaTcMfaf8ygFGiw9zEOWAsijqGU5TuxwmEwbdEghYznPBogIhNQ7qGmoJ4tjYARZhHN/tyci2Du2bNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6253
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=854
- phishscore=0 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510210127
-X-Proofpoint-GUID: hkoNIDE0ZKtEh4GjErlFMk65T3Yr6I90
-X-Proofpoint-ORIG-GUID: hkoNIDE0ZKtEh4GjErlFMk65T3Yr6I90
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX8JvIwgtLfvRj
- RyvAAdsJLqVJv8Ap2ZAm+JxkTCwaxwS8cXHmEh8JZdk8K35Nf5Fq38Ig3UlvX4cf3SiMUEJA5ah
- srqszD84kvInhPH3BZtxevP4/878uOZ8WD9QMzsY0XWfUP4x2ZW9inTX+EgCfdrROkoIw+vVYdL
- qIwl0+m9djcVw9D7rQvvUkJXApbn5BI6b9T9QWQYv00Nzpjh2kNulsL/F46d4h4LtjGZrvNHtXP
- 0kY20pi6BqbS/hVNG1QBfX9bEWQf/Ssld9TxTOBZn85qjNAPQPs2xlagSELJZ+KYUMd7rFw/F15
- gvrQGxBkd80/oJG8nZxnSllOtXSBk+3qRBWB4+SVq9CYZgi5fJXkZlweuCuYUQXdl423t3Co8SI
- lmI7VxuzUBohrzgUqgnXHf8GVteWAhKNZ/s7IouLz/Cu2NrQu8E=
-X-Authority-Analysis: v=2.4 cv=Nu7cssdJ c=1 sm=1 tr=0 ts=68f7b06d b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=DyMV3BnNAAAA:8 a=WNATdb9X_FuPhw2xLy8A:9 a=CjuIK1q_8ugA:10 cc=ntf
- awl=host:13624
+References: <20251013185903.1372553-1-jiaqiyan@google.com> <20251013185903.1372553-4-jiaqiyan@google.com>
+ <3efcf624-58f1-4390-b6e2-a0aa5e62a9a3@infradead.org>
+In-Reply-To: <3efcf624-58f1-4390-b6e2-a0aa5e62a9a3@infradead.org>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Tue, 21 Oct 2025 09:13:55 -0700
+X-Gm-Features: AS18NWBrgiqcwjUkY7yriOgg09EsrU9gzSKpZPzp6diSIUTDX5ipeIw05uqw6vQ
+Message-ID: <CACw3F53cqiwtGyeJw+baS23sK3byenC8R5ddzW6Q1e_Bzk8tJA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] Documentation: kvm: new UAPI for handling SEA
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: maz@kernel.org, oliver.upton@linux.dev, duenwen@google.com, 
+	rananta@google.com, jthoughton@google.com, vsethi@nvidia.com, jgg@nvidia.com, 
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Vlastimil Babka <vbabka@suse.cz> [251021 05:03]:
-> On 10/21/25 09:37, Jing Su wrote:
-> > Adjust misaligned braces in the fold_diff function to improve
-> > code readability and maintain consistent coding style.
-> > 
-> > Signed-off-by: Jing Su <jingsusu@didiglobal.com>
+On Mon, Oct 13, 2025 at 6:51=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+>
+>
+>
+> On 10/13/25 11:59 AM, Jiaqi Yan wrote:
+> > Document the new userspace-visible features and APIs for handling
+> > synchronous external abort (SEA)
+> > - KVM_CAP_ARM_SEA_TO_USER: How userspace enables the new feature.
+> > - KVM_EXIT_ARM_SEA: exit userspace gets when it needs to handle SEA
+> >   and what userspace gets while taking the SEA.
+> >
+> > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
 > > ---
-> >  mm/vmstat.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/mm/vmstat.c b/mm/vmstat.c
-> > index bb09c032eecf..63860c3d22e6 100644
-> > --- a/mm/vmstat.c
-> > +++ b/mm/vmstat.c
-> > @@ -782,13 +782,13 @@ static int fold_diff(int *zone_diff, int *node_diff)
-> >  		if (zone_diff[i]) {
-> >  			atomic_long_add(zone_diff[i], &vm_zone_stat[i]);
-> >  			changes++;
-> > -	}
-> > +		}
-> >  
-> >  	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
-> >  		if (node_diff[i]) {
-> >  			atomic_long_add(node_diff[i], &vm_node_stat[i]);
-> >  			changes++;
-> > -	}
-> > +		}
-> >  	return changes;
-> >  }
-> 
-> Thanks. IMHO it would be even more readable if the for () also had {
-> }brackets.
+> >  Documentation/virt/kvm/api.rst | 61 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 61 insertions(+)
+> >
+> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/ap=
+i.rst
+> > index 6ae24c5ca5598..43bc2a1d78e01 100644
+> > --- a/Documentation/virt/kvm/api.rst
+> > +++ b/Documentation/virt/kvm/api.rst
+> > @@ -7272,6 +7272,55 @@ exit, even without calls to ``KVM_ENABLE_CAP`` o=
+r similar.  In this case,
+> >  it will enter with output fields already valid; in the common case, th=
+e
+> >  ``unknown.ret`` field of the union will be ``TDVMCALL_STATUS_SUBFUNC_U=
+NSUPPORTED``.
+> >  Userspace need not do anything if it does not wish to support a TDVMCA=
+LL.
+> > +
+> > +::
+> > +             /* KVM_EXIT_ARM_SEA */
+> > +             struct {
+> > +  #define KVM_EXIT_ARM_SEA_FLAG_GPA_VALID   (1ULL << 0)
+> > +                     __u64 flags;
+> > +                     __u64 esr;
+> > +                     __u64 gva;
+> > +                     __u64 gpa;
+> > +             } arm_sea;
+> > +
+> > +Used on arm64 systems. When the VM capability KVM_CAP_ARM_SEA_TO_USER =
+is
+> > +enabled, a VM exit is generated if guest causes a synchronous external=
+ abort
+> > +(SEA) and the host APEI fails to handle the SEA.
+> > +
+> > +Historically KVM handles SEA by first delegating the SEA to host APEI =
+as there
+> > +is high chance that the SEA is caused by consuming uncorrected memory =
+error.
+> > +However, not all platforms support SEA handling in APEI, and KVM's fal=
+lback
+> > +is to inject an asynchronous SError into the guest, which usually pani=
+cs
+> > +guest kernel unpleasantly. As an alternative, userspace can participat=
+e into
+>
+>                                                                          =
+  in
+>
+> > +the SEA handling by enabling KVM_CAP_ARM_SEA_TO_USER at VM creation, a=
+fter
+> > +querying the capability. Once enabled, when KVM has to handle the gues=
+t
+>
+>                                                                      gues=
+t-
+> > +caused SEA, it returns to userspace with KVM_EXIT_ARM_SEA, with detail=
+s
+> > +about the SEA available in 'arm_sea'.
+> > +
+> > +The 'esr' field holds the value of the exception syndrome register (ES=
+R) while
+> > +KVM taking the SEA, which tells userspace the character of the current=
+ SEA,
+>    KVM takes
+>
+> > +such as its Exception Class, Synchronous Error Type, Fault Specific Co=
+de and
+> > +so on. For more details on ESR, check the Arm Architecture Registers
+> > +documentation.
+> > +
+> > +The following values are defined for the 'flags' field
+>
+> Above needs an ending like '.' or ':'.
+> (or maybe "::" depending how it is processed by Sphinx)
+>
+> > +
+> > +  - KVM_EXIT_ARM_SEA_FLAG_GPA_VALID -- the faulting guest physical add=
+ress
+> > +    is valid and userspace can get its value in the 'gpa' field.
+> > +
+> > +Note userspace can tell whether the faulting guest virtual address is =
+valid
+> > +from the FnV bit in 'esr' field. If FnV bit in 'esr' field is not set,=
+ the
+> > +'gva' field hols the valid faulting guest virtual address.
+>
+>                holds (or contains)> +
+> > +Userspace needs to take actions to handle guest SEA synchronously, nam=
+ely in
+> > +the same thread that runs KVM_RUN and receives KVM_EXIT_ARM_SEA. One o=
+f the
+> > +encouraged approaches is to utilize the KVM_SET_VCPU_EVENTS to inject =
+the SEA
+> > +to the faulting VCPU. This way, the guest has the opportunity to keep =
+running
+> > +and limit the blast radius of the SEA to the particular guest applicat=
+ion that
+> > +caused the SEA. Userspace may also emulate the SEA to VM by itself usi=
+ng the
+> > +KVM_SET_ONE_REG API. In this case, it can use the valid values from 'g=
+va' and
+> > +'gpa' fields to manipulate VCPU's registers (e.g. FAR_EL1, HPFAR_EL1).
+> > +
+> >  ::
+> >
+> >               /* Fix the size of the union. */
+> > @@ -8689,6 +8738,18 @@ This capability indicate to the userspace whethe=
+r a PFNMAP memory region
+> >  can be safely mapped as cacheable. This relies on the presence of
+> >  force write back (FWB) feature support on the hardware.
+> >
+> > +7.45 KVM_CAP_ARM_SEA_TO_USER
+> > +----------------------------
+> > +
+> > +:Architecture: arm64
+> > +:Target: VM
+> > +:Parameters: none
+> > +:Returns: 0 on success, -EINVAL if unsupported.
+> > +
+> > +This capability, if KVM_CHECK_EXTENSION indicates that it is available=
+, means
+> > +that KVM has an implementation that allows userspace to participate in=
+ handling
+> > +synchronous external abort caused by VM, by an exit of KVM_EXIT_ARM_SE=
+A.
+> > +
+> >  8. Other capabilities.
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+>
+> --
+> ~Randy
+>
 
-Yes, I agree.  That's probably how this happened in the first place.
-
-
+Thanks for your quick review, Randy. I have queued fixes and am
+waiting for reviews on other commits in this PATCH.
 
