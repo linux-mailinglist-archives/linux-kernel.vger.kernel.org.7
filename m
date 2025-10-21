@@ -1,212 +1,163 @@
-Return-Path: <linux-kernel+bounces-862447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88CEBF54D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:40:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D0CBF54E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D5D64F3F5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DEAE1883F75
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0223128AC;
-	Tue, 21 Oct 2025 08:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="REuyJlIH"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214A93128AD;
+	Tue, 21 Oct 2025 08:40:59 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0E530EF96;
-	Tue, 21 Oct 2025 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D428314A;
+	Tue, 21 Oct 2025 08:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761036020; cv=none; b=THzFxx0XRQhIjAvvI7yaD2sjG70Mp9rCD8etBK0nJePbDBRmJPTgTApNpPC27hHeAIFMHoT+sWNighkBRWZjwP8FByJnFkfryJUjkkyJ0G9xn/yfQWgoPkb2WasE6tOgSvoHxdYg5NImFfvFzcVkv0IImnJW8TaVLnI9v4t45s4=
+	t=1761036058; cv=none; b=PHQsVIXeQ+oU3pFraOOjOfipC0sL/QmBfse0EJlBt5ISQSU1b1TNppa3SyN8wEUyMncT+/+HXKwNAHCuAVBvYU+6fd4UjbD9e44pVtivp/3REqa7GjDVJCYWZCocEtDEJFsfio/1v8dyTPObkSOTN+MTDiSNYnWtHhwbFHipw4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761036020; c=relaxed/simple;
-	bh=6GvszD4k30k14LRU5kjplPeEIsOAoPLv5KEhnBxMU4s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OYrzGL+BjQC0DlPZtrkdIZKcFc3zwG+rpbkm1SES1zMK8ySwLrroFSw7puNddASQmoUAxZwordFGGMpvYrDtRtMgE8U89yEgGzEsYNynJLt8PKg++Wj52Zl2EFr/TYRzs+9mido7mXuoqtPEt3Ekx2++i/76C/LmX8vZKwK7t3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=REuyJlIH; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=k7
-	jOLgF/O1DqtBwLXTDxtFPlJqI0+MQTD0oEBqIYiSE=; b=REuyJlIHYT306cKcsE
-	TyPmc1AOe7HxMBV8WFL2PQ26B3IateowLg/kVstmhdLTwkUF2aTYiD1+EXlYaTPU
-	/TE3BWsDmrtAFqUgDRyL3oVf/bJscfwWMY0BeHSsu8S9JRqSMTZAkApvvVbIK/uC
-	cb0/MxeAF1Vwk4TbiTCvCeXzQ=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCnrdzVRvdotXAZBw--.8968S2;
-	Tue, 21 Oct 2025 16:39:50 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	tj@kernel.org,
-	hch@infradead.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH v1 2/2] serial: 8250_dma: add parameter to queue work on specific cpu
-Date: Tue, 21 Oct 2025 16:39:47 +0800
-Message-Id: <20251021083947.705135-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761036058; c=relaxed/simple;
+	bh=hb5VcV0ET3l0QzSsWclmOpjmwF9VwY1uM8U2V3HfyDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sh4u+IanLEeJyGmTmPDDj+6h96ejgVStCSLP2IsYAx8i77ucrNd1NBfNOXyG6KlutVVT1RU2w5O4vavORvIRrOi12Phi4TgQkNVljQM/yQ/W0uwr9Jpp10c2JAS4XjcG27/vg6f8DDFubjIHdvpJ+CpxMo8/Z1Zb1J3bTEUkt4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: a59aa16aae5911f0a38c85956e01ac42-20251021
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:5b1bc7ac-4984-447d-92b2-fdfde16de3db,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:847313a20b3d4fb0a5562c6197ee2905,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: a59aa16aae5911f0a38c85956e01ac42-20251021
+X-User: xiaopei01@kylinos.cn
+Received: from [10.42.12.251] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 109458862; Tue, 21 Oct 2025 16:40:50 +0800
+Message-ID: <e1b1df10-ce40-4135-93fc-69a1c6d9f32f@kylinos.cn>
+Date: Tue, 21 Oct 2025 16:40:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lib/crypto: poly1305: fix uninit-value in poly1305_blocks
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+References: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
+ <20251021061511.GA2385@sol>
+From: Pei Xiao <xiaopei01@kylinos.cn>
+In-Reply-To: <20251021061511.GA2385@sol>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnrdzVRvdotXAZBw--.8968S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3GFWDAw1fuF1DAw4fCryxuFg_yoW7ArWkpF
-	4rArWqvry8tasFyw1kGr4xXw4fZayftr47ur97K34SyFn0yF909Fs3KFWF9rWkCF95Xr1a
-	vFZ09F1UC3W2vrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziqg4DUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRxPtCmj3QkFeZQAAsU
 
-On the embedded platform, certain critical data, such as IMU data, is
-transmitted through UART. The tty_flip_buffer_push interface in the TTY
-layer uses system_unbound_wq to handle the flipping of the TTY buffer.
-Although the unbound workqueue can create new threads on demand and wake
-up the kworker thread on an idle CPU, the priority of the kworker thread
-itself is not high. Even if the CPU running this work was idle just a
-moment ago, it may be preempted by real-time tasks or other high-priority
-tasks.
-In our system, the processing interval for each frame of IMU data
-transmitted via UART can experience significant jitter due to this issue.
-Instead of the expected 10 to 15 ms frame processing interval, we see
-spikes up to 30 to 35 ms. Moreover, in just one or two hours, there can
-be 2 to 3 occurrences of such high jitter, which is quite frequent. This
-jitter exceeds the software's tolerable limit of 20 ms.
-Add module param tty_flip_cpu to queue rx complete work on the specific
-cpu by tty_flip_buffer_push_wq. The default value of tty_flip_cpu is
-WORK_CPU_UNBOUND which means using the default system_unbound_wq called
-by tty_flip_buffer_push, otherwise we use the newly added workqueue
-wq_tty_flip which is set to WQ_HIGHPRI to promote performance.
-We set tty_flip_cpu to a specific CPU core that has relatively few
-real-time tasks running continuously for long periods. Additionally,
-tasks on this core have some correlation with the UART data related to
-the 8250 DMA operation. After queuing work to this designated CPU and
-set workqueue to WQ_HIGHPRI, we can stably eliminate the jitter and
-ensure that the frame processing interval remains between 10 and 15 ms.
-If we do not add the WQ_HIGHPRI flag, our testing on the platform shows
-that there are still spikes occurring approximately once every hour.
-Considering that projects utilizing this optimization feature must have
-encountered similar issues to ours, just add the WQ_HIGHPRI flag in the
-patch, without adding new module parameters for selection.
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
- drivers/tty/serial/8250/8250.h     |  2 ++
- drivers/tty/serial/8250/8250_dma.c | 46 ++++++++++++++++++++++++++++--
- 2 files changed, 46 insertions(+), 2 deletions(-)
+在 2025/10/21 14:15, Eric Biggers 写道:
+> On Tue, Oct 21, 2025 at 02:01:20PM +0800, Pei Xiao wrote:
+>> syzbot reports uninit-value in poly1305_blocks:
+>>
+>> BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+>>  poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+>>  poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
+>>  poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
+>>  poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
+>>  chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
+>>  chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
+>>  crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
+>>  tls_do_encryption net/tls/tls_sw.c:582 [inline]
+>>  tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
+>>  bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
+>>  tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
+>>  tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
+>>  inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
+>>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>>  __sock_sendmsg+0x145/0x3d0 net/socket.c:742
+>>  sock_write_iter+0x3a6/0x420 net/socket.c:1195
+>>  do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
+>>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+>>  do_writev+0x1b5/0x580 fs/read_write.c:1103
+>>  __do_sys_writev fs/read_write.c:1171 [inline]
+>>  __se_sys_writev fs/read_write.c:1168 [inline]
+>>  __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
+>>  x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
+>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>
+>> in poly1305_blocks, ctx->is_base2_26 is uninit-value, ctx init in：
+>> poly1305_init ->
+>>      poly1305_block_init
+>>
+>> so add memset in poly1305_block_init, then use poly1305_init_x86_64 to init
+>> by asm.
+>>
+>> Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+>> Tested-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+>> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+>> ---
 
-diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
-index cfe6ba286..e6da925df 100644
---- a/drivers/tty/serial/8250/8250.h
-+++ b/drivers/tty/serial/8250/8250.h
-@@ -20,6 +20,8 @@ struct uart_8250_dma {
- 	void (*prepare_tx_dma)(struct uart_8250_port *p);
- 	void (*prepare_rx_dma)(struct uart_8250_port *p);
- 
-+	struct workqueue_struct *wq_tty_flip;
-+
- 	/* Filter function */
- 	dma_filter_fn		fn;
- 	/* Parameter to the filter function */
-diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
-index bdd26c9f3..9a0abee62 100644
---- a/drivers/tty/serial/8250/8250_dma.c
-+++ b/drivers/tty/serial/8250/8250_dma.c
-@@ -38,6 +38,35 @@ static void __dma_tx_complete(void *param)
- 	uart_port_unlock_irqrestore(&p->port, flags);
- }
- 
-+#define TTY_FLIP_WORK_CPU		WORK_CPU_UNBOUND
-+
-+static int wq_tty_flip_cpu = TTY_FLIP_WORK_CPU;
-+
-+static int param_set_tty_flip_cpu(const char *val,
-+					const struct kernel_param *kp)
-+{
-+	int cpu;
-+	int ret;
-+
-+	ret = kstrtoint(val, 0, &cpu);
-+	if (ret)
-+		return ret;
-+
-+	if ((cpu >= 0 && cpu < nr_cpu_ids) || cpu == WORK_CPU_UNBOUND)
-+		wq_tty_flip_cpu = cpu;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static const struct kernel_param_ops tty_flip_cpu_ops = {
-+	.set	= param_set_tty_flip_cpu,
-+	.get	= param_get_int,
-+};
-+
-+module_param_cb(tty_flip_cpu, &tty_flip_cpu_ops, &wq_tty_flip_cpu, 0644);
-+
- static void __dma_rx_complete(struct uart_8250_port *p)
- {
- 	struct uart_8250_dma	*dma = p->dma;
-@@ -61,7 +90,10 @@ static void __dma_rx_complete(struct uart_8250_port *p)
- 	p->port.icount.rx += count;
- 	dma->rx_running = 0;
- 
--	tty_flip_buffer_push(tty_port);
-+	if (wq_tty_flip_cpu == WORK_CPU_UNBOUND)
-+		tty_flip_buffer_push(tty_port);
-+	else
-+		tty_flip_buffer_push_wq(tty_port, dma->wq_tty_flip, wq_tty_flip_cpu);
- }
- 
- static void dma_rx_complete(void *param)
-@@ -244,6 +276,12 @@ int serial8250_request_dma(struct uart_8250_port *p)
- 		goto release_rx;
- 	}
- 
-+	dma->wq_tty_flip = alloc_workqueue("wq_tty_flip", WQ_PERCPU | WQ_HIGHPRI, 0);
-+	if (!dma->wq_tty_flip) {
-+		ret = -ENOMEM;
-+		goto release_rx;
-+	}
-+
- 	dmaengine_slave_config(dma->rxchan, &dma->rxconf);
- 
- 	/* Get a channel for TX */
-@@ -252,7 +290,7 @@ int serial8250_request_dma(struct uart_8250_port *p)
- 						       p->port.dev, "tx");
- 	if (!dma->txchan) {
- 		ret = -ENODEV;
--		goto release_rx;
-+		goto release_rx_wq;
- 	}
- 
- 	/* 8250 tx dma requires dmaengine driver to support terminate */
-@@ -294,6 +332,8 @@ int serial8250_request_dma(struct uart_8250_port *p)
- 	return 0;
- err:
- 	dma_release_channel(dma->txchan);
-+release_rx_wq:
-+	destroy_workqueue(dma->wq_tty_flip);
- release_rx:
- 	dma_release_channel(dma->rxchan);
- 	return ret;
-@@ -322,6 +362,8 @@ void serial8250_release_dma(struct uart_8250_port *p)
- 	dma->txchan = NULL;
- 	dma->tx_running = 0;
- 
-+	destroy_workqueue(dma->wq_tty_flip);
-+
- 	dev_dbg_ratelimited(p->port.dev, "dma channels released\n");
- }
- EXPORT_SYMBOL_GPL(serial8250_release_dma);
--- 
-2.34.1
+hi Eric,
 
+    thanks for your responce.
+
+> Thanks for the bug report.  It will first need to be confirmed that this
+> is actually an issue in lib/crypto/ rather than the calling code, and if
+> so, why poly1305_kunit doesn't catch it (even when run on an KMSAN
+> enabled kernel, which I've done).  And which commit it fixes.  I'm
+> guessing it's most likely a KMSAN false positive that was exposed by
+> commit b646b782e522 dropping the dependency of the
+> architecture-optimized Poly1305 code on !KMSAN.  KMSAN doesn't know
+> about memory initialization done by assembly code.  But I'll double
+> check this, if you don't get around to it first.
+>
+> The hash algorithms generally don't need a dependency on !KMSAN, as
+> their assembly code doesn't initialize memory.  It looks like the
+> Poly1305 code is an exception to that though, and I missed it.  If so,
+> the proper solution (IMO) is to use kmsan_unpoison_memory() right after
+> the assembly function that initializes the memory is called.  See
+> sha256_finup_2x_arch() for an example of that.  Note that more than one
+> architecture may need this. 
+
+--- a/lib/crypto/poly1305.c
++++ b/lib/crypto/poly1305.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/string.h>
+ #include <linux/unaligned.h>
++#include <linux/kmsan.h>
+
+ #ifdef CONFIG_CRYPTO_LIB_POLY1305_ARCH
+ #include "poly1305.h" /* $(SRCARCH)/poly1305.h */
+@@ -31,6 +32,7 @@ void poly1305_init(struct poly1305_desc_ctx *desc,
+        desc->s[3] = get_unaligned_le32(key + 28);
+        desc->buflen = 0;
+        poly1305_block_init(&desc->state, key);
++       kmsan_unpoison_memory(desc, sizeof(struct poly1305_desc_ctx));
+ }
+ EXPORT_SYMBOL(poly1305_init)
+
+how about this ? 
+
+>  If it ends up being too inconvenient, we
+> can make the architecture-optimized Poly1305 code depend on !KMSAN
+> again.  But preserving KMSAN coverage is preferable.
+>
+> - Eric
+thanks!
 
