@@ -1,300 +1,148 @@
-Return-Path: <linux-kernel+bounces-862413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D7CBF5394
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E5EBF539A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A363A8BE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92EB73ABFB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9845E303A15;
-	Tue, 21 Oct 2025 08:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675AA303A0B;
+	Tue, 21 Oct 2025 08:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KfW8AN84"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TtiB+EBC"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABF72BF015
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0245302758
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035275; cv=none; b=IQCPmnXWR9nsxb4JWeStNqhlkMJAtYKsq5lAUveAdo47/8XtFEAkVBTbqms4Wzs6QYKe0kS03ZPzkwQkh/6kkAPTlkKagt/bVb2PdowwYnG3IhBPMqUR/JVXG1MdhgwVaf8Tevz4ciV5kH9IYrFzLE3fgbNSge7RoYAcs3HtTgg=
+	t=1761035301; cv=none; b=ckUU6wWGxEI+F9P+D/xtmiHiQXF6cf1LpH/JnM1Al5CS0w1lHJ14YeMTIrmfQOY01e5EgEH1vqcEOGhp+jRxDfwrWlJxvfXD8BroyTmiLSNLgNgM48KdEzQlb/yO/VH2Iw1Vzgiox+Gr1EwO8SGja3gM0heoL7CnTWI8n7nILP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035275; c=relaxed/simple;
-	bh=VNODx/HaklHD3t9XKv5ayfNCvTqm2/znumo71rMHvZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jd/VeddYHt4Kt/xnZLZGW5F6Ui1Djw+oYpKpO6+fhawPZ76MVW1F3RaYXdH079S0q+593EFjzXHUS1oUSi+UqxCSU4rKAi61ubJUFMWmUEqKQPKNNhkPV6twEBiPRiIjeMLBozpN2hZK2n+8xEtp3wGq/VcMJ3PtPNx45HF9StA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KfW8AN84; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761035271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rXjgjEJV0R26d68vKPPbMezY41IiNglwJMANKlvSw4o=;
-	b=KfW8AN84TrOPBZYjvAWQ3rVR4yDuskX2dITwTt7IRLcmirmaj7zXhXftS6UfnIurgIzKCF
-	59lGO931nka7brxvEiz1AckwhtZZgyIfo+NRoyki+LKlO/PYy0ukx1kOSfyjlTDuce4VAv
-	OcOv7pSqjeVdI6SrQ/SRqRA2UKxhfEM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-343-OjzIi6w2Mua7m0zycjuNWg-1; Tue, 21 Oct 2025 04:27:50 -0400
-X-MC-Unique: OjzIi6w2Mua7m0zycjuNWg-1
-X-Mimecast-MFC-AGG-ID: OjzIi6w2Mua7m0zycjuNWg_1761035269
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4710d174c31so54466835e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:27:50 -0700 (PDT)
+	s=arc-20240116; t=1761035301; c=relaxed/simple;
+	bh=bzpOktbYO2tYBTucV155BxXIDpmGKecPOHUkItg8BLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R+yPY0PLTg65eu9ouzr8hg5K8+6L8vLpoPV+cXEOrCr0dXAkNIaZ7KV9Vq5w6Z6I2I9Fpve7rqlMX0F/OJr/KPZ+OafKPS85JDpdbDa1ONbVsrQvY0U8iM2Dy79YK+xyMy20QcYeUYq3G3twaDcho8J2TboKZyESZTybNom6P1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TtiB+EBC; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47495477241so4952325e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761035298; x=1761640098; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b52ybaDxDJQAgpDd+OquVpENnANEDzFwPJdoTxwdyo0=;
+        b=TtiB+EBC6khzycTQDXFF0pZrO8uAvItn2dZX9PM0j0+F2KbUXquqVxw5H9YVDcpq2v
+         WUIct6ryQjNYskp+AEpX/Z+pNAjOVJ5NhQf4NAzIn+tRAp8zqv7xbgP9N8hW62Wj30bm
+         votBplHAmtYbQcl7M9OKGL82Zg3S+gHoiOcXLTZL02G/SUS0aC6df0ehEDm9vMD1EXGy
+         O51F96nKYFuZpi2eHqPBGW/Uj5Co2wRXpZ57TMlviNpuPxPljpvnNe9eNGox6WoaSwMC
+         SE84YFsb0PAWH+4ovJEOy0j8jmJBJ6aaoanMkVslbwk35vYjAHRQXT5/4CfQKI/Ds50u
+         9rCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761035268; x=1761640068;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rXjgjEJV0R26d68vKPPbMezY41IiNglwJMANKlvSw4o=;
-        b=LReJMmnFddwMOkzvVyC4mq8J3NGDxZeY3zBb6rI4iUrbE6KDkO4ChPCy+aR4+tGtj2
-         PyPyv2IU+bWukl9BT7QODw2D7pv4vyg1SsXyb4FipEFQy5ile3Wve2FwSmoZ7vX/wzMy
-         9YbL8RqIyhsGhe+lp1tf/a7gFzLCezNFD+40mjf6ud/jSebG2e0TzgYj3nFnjXXnMdQP
-         viCxcDlTPU5Us8FB6/Qgo0XDGjvnN4vHkDcAyQwysvaReGD0ZIYWo795/bvbATUzdWYl
-         bdQG476sg59qBOEO79cd+d/f3A3a9qGtqUAVYb8p2Zv2OGSLX6pich48vFHXkvpyemKA
-         x6dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMGfnZ51+N3zmrbN4VUS306jD6kNlG6IeQj3j/ursXgwDfI6qb1LOxbUmnTyYFrHXl4kc7N0/nS9gNFno=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu++/haMUL2aTepm7ux72wL98opDjdG+qhmcPmLVDPKptRJUrY
-	Hgx2JR5ZzAflrn5a91+gtBL5jMXc8p+BnbjMqZ487bCKHyA/323qsLTLlOoVX+fuDXrIHeD1AG1
-	un/nuBPr4bxpP3IX5BcmGUQUwtTI0M4oXRJiFl1TBtixw0oiitJEiR0t8mF116i1pxA==
-X-Gm-Gg: ASbGncso6HgLAmI/8C1VXW1/hFeyZQYSKd+2Z4F7TYLrylT7Jd5RFLUomqkqEhC/mBP
-	4v9V5A+IcfRI+vDLgTqd0PW1YwuAPKkt175YshtnUTl9D99w24w2eo6wWUgXiizEMiduDFtmpqR
-	LbRtiukvFQte+wPJc1TmDKk+t61IiEWbkh/BwOcdEdyH+RIzKJFRdZTLbNBTZXBMnHytase05uV
-	YRCOw9YnJE0TSYq4jTvu4XTXCb9owdEG58chZB4VwS81ZIxnGj8zMq+tkf+UW8Arasu+XR63bqO
-	ipKcZLGX8JcI2n2vGfVe5nHp3kRt5IOdfc4a2LldkQE6dKt9QCPN7OUjauCptCMnOP3/aepJ1on
-	xrNSae9rb5HI19Dbq4/hHbCyWEmqxYspFDD/Ev4dGMYBvzSgnIho=
-X-Received: by 2002:a05:600c:818f:b0:46f:b42e:ed86 with SMTP id 5b1f17b1804b1-4711791fbdemr109053025e9.39.1761035267903;
-        Tue, 21 Oct 2025 01:27:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxLGyAkJwNwmi09pKR+RPoEkOxJgFzFbtoNAsFJr9kt9UwUMZqxcBb8wCBCLNMnB3tg2dusQ==
-X-Received: by 2002:a05:600c:818f:b0:46f:b42e:ed86 with SMTP id 5b1f17b1804b1-4711791fbdemr109052755e9.39.1761035267279;
-        Tue, 21 Oct 2025 01:27:47 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47114423862sm272405965e9.1.2025.10.21.01.27.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 01:27:46 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:27:41 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: syzbot <syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com>, 
-	Michal Luczaj <mhal@rbox.co>
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev
-Subject: Re: [syzbot] [virt?] [net?] possible deadlock in vsock_linger
-Message-ID: <pehr4umqwjv3a7p4uudrz3uuqacu3ut66kmazw2ovm73gimyry@oevxmd4o664k>
-References: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
+        d=1e100.net; s=20230601; t=1761035298; x=1761640098;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b52ybaDxDJQAgpDd+OquVpENnANEDzFwPJdoTxwdyo0=;
+        b=OfeLvzfO2Mf+ZgIqPbwUBZTRfz0ylV8f1j4bjyoRzBQqmBpG0k2Bg14w+X8arWInCE
+         55me3PUaHjmUIPiguPjYSe/R7DuDkQppHRnypoYQM+HZaeKdI87UFRS0wG0d65vh/Nug
+         rgthCq6Grepj+l7pMf6kLQAVmGDltdxsNwRtuq0tOr9a3oO2DEtGm7hrcA9ezUa6Ey4w
+         TohUnSUYMnId0UWe6zjH1KgUl5QrciaLMUGE1zlaBf7jbvq4TAq8FVn34mX5rAOE6yvV
+         ZRI0bh2vqwPrHCJMBwnE1ZCIjpylY8qyGg8zwUxQWVeFgLXrdxj4R1A5RAmSTG5DQ71Z
+         obFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSy4uWODiHScEj+4ykVGlqipjT4DnCYKieo3ngzhO5xm0P6NtfHjnxSM8LHkI/Sj4otyftljTyH3oK/Ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlleocU1dbPMlOXkQR51+rrxYSVgqzE46Kxc4UxAVqgiydCOnT
+	V69e84LTCjJE0iNXT6z5of/JtE0BqftDnjOnIvRjc8JuBcxBaEg/ECo2z++oV7Fv3VY=
+X-Gm-Gg: ASbGncsZJ5KrBxK7YS6oDfYakK4gNDtCqo0Z45sWDQb9pjnnWQBAWQpY5wh6hMqxPPY
+	Ef1boZPkCXeQ3cYiroX78qVQWlPOaon47h/DjrfFTry/QLiv6skEHVnCoRpYF3/QiVXDO5D3Ggc
+	ZWToNfHDt50hHh9XVgiB9RTSpXKu0eiZ/1ix+r402uFVn09gOrMX/SO/mXtuIq27oCKfe9Asd+5
+	jhkz8hWzq040gvqZwj3xoz8YY4XnSCc4pQCLeI0B4oKsTNDMiUuR2QS8XDa+zc5MLqaG7TvTzKU
+	wOViLc5odD3nwnN08MH+3RZBp0Yy0m1HAbabzn7wd09ewQKADf53qlY4CNcW2V8U4fmZH+//hte
+	kYl71uxS6tkXuM3c5Iqh7sF+RrcJfY5lekqp5plkJ3/VIbBqWMAvEPFJAji/eOGR4Vcwn38PdXl
+	GCJgoAg7gl44RVHN2B
+X-Google-Smtp-Source: AGHT+IEf+14wrIR+AkVBMF4pU21DeYP3U2sM85qOJiSGJSUOr3M9WjJk+DnUtO/N8Z7K2WyYMosFog==
+X-Received: by 2002:a05:600c:1994:b0:471:a73:9c49 with SMTP id 5b1f17b1804b1-471178745fdmr135759115e9.2.1761035298036;
+        Tue, 21 Oct 2025 01:28:18 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5bab52sm18943601f8f.22.2025.10.21.01.28.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 01:28:17 -0700 (PDT)
+Message-ID: <de62f91e-b081-4cf5-8052-0b910ccf1b41@linaro.org>
+Date: Tue, 21 Oct 2025 09:28:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
-
-Hi Michal,
-
-On Mon, Oct 20, 2025 at 05:02:56PM -0700, syzbot wrote:
->Hello,
->
->syzbot found the following issue on:
->
->HEAD commit:    d9043c79ba68 Merge tag 'sched_urgent_for_v6.18_rc2' of git..
->git tree:       upstream
->console output: https://syzkaller.appspot.com/x/log.txt?x=130983cd980000
->kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
->dashboard link: https://syzkaller.appspot.com/bug?extid=10e35716f8e4929681fa
->compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f0f52f980000
->C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ea9734580000
->
->Downloadable assets:
->disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-d9043c79.raw.xz
->vmlinux: https://storage.googleapis.com/syzbot-assets/0546b6eaf1aa/vmlinux-d9043c79.xz
->kernel image: https://storage.googleapis.com/syzbot-assets/81285b4ada51/bzImage-d9043c79.xz
->
->IMPORTANT: if you fix the issue, please add the following tag to the commit:
->Reported-by: syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com
->
->======================================================
->WARNING: possible circular locking dependency detected
->syzkaller #0 Not tainted
->------------------------------------------------------
->syz.0.17/6098 is trying to acquire lock:
->ffff8880363b8258 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
->ffff8880363b8258 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1066
-
-Could this be related to our recent work on linger in vsock?
-
->
->but task is already holding lock:
->ffffffff906260a8 (vsock_register_mutex){+.+.}-{4:4}, at: vsock_assign_transport+0xf2/0x900 net/vmw_vsock/af_vsock.c:469
->
->which lock already depends on the new lock.
->
->
->the existing dependency chain (in reverse order) is:
->
->-> #1 (vsock_register_mutex){+.+.}-{4:4}:
->       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
->       __mutex_lock+0x193/0x1060 kernel/locking/mutex.c:760
->       vsock_registered_transport_cid net/vmw_vsock/af_vsock.c:560 [inline]
-
-Ah, no maybe this is related to commit 209fd720838a ("vsock:
-Fix transport_{g2h,h2g} TOCTOU") where we added locking in
-vsock_find_cid().
-
-Maybe we can just move the checks on top of __vsock_bind() to the
-caller. I mean:
-
-	/* First ensure this socket isn't already bound. */
-	if (vsock_addr_bound(&vsk->local_addr))
-		return -EINVAL;
-
-	/* Now bind to the provided address or select appropriate values if
-	 * none are provided (VMADDR_CID_ANY and VMADDR_PORT_ANY).  Note that
-	 * like AF_INET prevents binding to a non-local IP address (in most
-	 * cases), we only allow binding to a local CID.
-	 */
-	if (addr->svm_cid != VMADDR_CID_ANY && !vsock_find_cid(addr->svm_cid))
-		return -EADDRNOTAVAIL;
-
-We have 2 callers: vsock_auto_bind() and vsock_bind().
-
-vsock_auto_bind() is already checking if the socket is already bound,
-if not is setting VMADDR_CID_ANY, so we can skip those checks.
-
-In vsock_bind() we can do the checks before lock_sock(sk), at least the
-checks on vm_addr, calling vsock_find_cid().
-
-I'm preparing a patch to do this.
-
-Stefano
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] perf jevents: Fix build when there are other json
+ files in the tree
+To: Leo Yan <leo.yan@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251020-james-perf-fix-json-find-v1-0-627b938ccf0d@linaro.org>
+ <20251020-james-perf-fix-json-find-v1-1-627b938ccf0d@linaro.org>
+ <20251020163835.GI281971@e132581.arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20251020163835.GI281971@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
->       vsock_find_cid net/vmw_vsock/af_vsock.c:570 [inline]
->       __vsock_bind+0x1b5/0xa10 net/vmw_vsock/af_vsock.c:752
->       vsock_bind+0xc6/0x120 net/vmw_vsock/af_vsock.c:1002
->       __sys_bind_socket net/socket.c:1874 [inline]
->       __sys_bind_socket net/socket.c:1866 [inline]
->       __sys_bind+0x1a7/0x260 net/socket.c:1905
->       __do_sys_bind net/socket.c:1910 [inline]
->       __se_sys_bind net/socket.c:1908 [inline]
->       __x64_sys_bind+0x72/0xb0 net/socket.c:1908
->       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
->       entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
->-> #0 (sk_lock-AF_VSOCK){+.+.}-{0:0}:
->       check_prev_add kernel/locking/lockdep.c:3165 [inline]
->       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
->       validate_chain kernel/locking/lockdep.c:3908 [inline]
->       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
->       lock_acquire kernel/locking/lockdep.c:5868 [inline]
->       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
->       lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
->       lock_sock include/net/sock.h:1679 [inline]
->       vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1066
->       virtio_transport_close net/vmw_vsock/virtio_transport_common.c:1271 [inline]
->       virtio_transport_release+0x52a/0x640 net/vmw_vsock/virtio_transport_common.c:1291
->       vsock_assign_transport+0x320/0x900 net/vmw_vsock/af_vsock.c:502
->       vsock_connect+0x201/0xee0 net/vmw_vsock/af_vsock.c:1578
->       __sys_connect_file+0x141/0x1a0 net/socket.c:2102
->       __sys_connect+0x13b/0x160 net/socket.c:2121
->       __do_sys_connect net/socket.c:2127 [inline]
->       __se_sys_connect net/socket.c:2124 [inline]
->       __x64_sys_connect+0x72/0xb0 net/socket.c:2124
->       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
->       entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
->other info that might help us debug this:
->
-> Possible unsafe locking scenario:
->
->       CPU0                    CPU1
->       ----                    ----
->  lock(vsock_register_mutex);
->                               lock(sk_lock-AF_VSOCK);
->                               lock(vsock_register_mutex);
->  lock(sk_lock-AF_VSOCK);
->
-> *** DEADLOCK ***
->
->1 lock held by syz.0.17/6098:
-> #0: ffffffff906260a8 (vsock_register_mutex){+.+.}-{4:4}, at: vsock_assign_transport+0xf2/0x900 net/vmw_vsock/af_vsock.c:469
->
->stack backtrace:
->CPU: 3 UID: 0 PID: 6098 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
->Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
->Call Trace:
-> <TASK>
-> __dump_stack lib/dump_stack.c:94 [inline]
-> dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
-> print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2043
-> check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2175
-> check_prev_add kernel/locking/lockdep.c:3165 [inline]
-> check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-> validate_chain kernel/locking/lockdep.c:3908 [inline]
-> __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
-> lock_acquire kernel/locking/lockdep.c:5868 [inline]
-> lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
-> lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
-> lock_sock include/net/sock.h:1679 [inline]
-> vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1066
-> virtio_transport_close net/vmw_vsock/virtio_transport_common.c:1271 [inline]
-> virtio_transport_release+0x52a/0x640 net/vmw_vsock/virtio_transport_common.c:1291
-> vsock_assign_transport+0x320/0x900 net/vmw_vsock/af_vsock.c:502
-> vsock_connect+0x201/0xee0 net/vmw_vsock/af_vsock.c:1578
-> __sys_connect_file+0x141/0x1a0 net/socket.c:2102
-> __sys_connect+0x13b/0x160 net/socket.c:2121
-> __do_sys_connect net/socket.c:2127 [inline]
-> __se_sys_connect net/socket.c:2124 [inline]
-> __x64_sys_connect+0x72/0xb0 net/socket.c:2124
-> do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->RIP: 0033:0x7f767bf8efc9
->Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
->RSP: 002b:00007fff0a2857b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
->RAX: ffffffffffffffda RBX: 00007f767c1e5fa0 RCX: 00007f767bf8efc9
->RDX: 0000000000000010 RSI: 0000200000000000 RDI: 0000000000000004
->RBP: 00007f767c011f91 R08: 0000000000000000 R09: 0000000000000000
->R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->R13: 00007f767c1e5fa0 R14: 00007f767c1e5fa0 R15: 0000000000000003
-> </TASK>
->
->
->---
->This report is generated by a bot. It may contain errors.
->See https://goo.gl/tpsmEJ for more information about syzbot.
->syzbot engineers can be reached at syzkaller@googlegroups.com.
->
->syzbot will keep track of this issue. See:
->https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
->If the report is already addressed, let syzbot know by replying with:
->#syz fix: exact-commit-title
->
->If you want syzbot to run the reproducer, reply with:
->#syz test: git://repo/address.git branch-or-commit-hash
->If you attach or paste a git patch, syzbot will apply it before testing.
->
->If you want to overwrite report's subsystems, reply with:
->#syz set subsystems: new-subsystem
->(See the list of subsystem names on the web dashboard)
->
->If the report is a duplicate of another one, reply with:
->#syz dup: exact-subject-of-another-report
->
->If you want to undo deduplication, reply with:
->#syz undup
->
+
+On 20/10/2025 5:38 pm, Leo Yan wrote:
+> On Mon, Oct 20, 2025 at 05:08:26PM +0100, James Clark wrote:
+>> The unquoted glob *.json will expand to a real file if, for example,
+>> there is any file in the Perf source ending in .json. This can happen
+>> when using tools like Bear and clangd which generate a
+>> compile_commands.json file. With the glob already expanded by the shell,
+>> the find command will fail to wildcard any real json events files.
+>>
+>> Fix it by wrapping the star in quotes so it's passed to find rather than
+>> the shell.
+>>
+>> This fixes the following build error (most of the diff output omitted):
+>>
+>>    $ make V=1 -C tools/perf O=/tmp/perf_build_with_json
+>>
+>>    TEST    /tmp/perf_build_with_json/pmu-events/empty-pmu-events.log
+>>    ...
+>>     /* offset=121053 */ "node-access\000legacy cache\000Local memory read accesses\000legacy-cache-config=6\000\00010\000\000\000\000\000"
+>>     /* offset=121135 */ "node-misses\000legacy cache\000Local memory read misses\000legacy-cache-config=0x10006\000\00010\000\000\000\000\000"
+>>     /* offset=121221 */ "node-miss\000legacy cache\000Local memory read misses\000legacy-cache-config=0x10006\000\00010\000\000\000\000\000"
+>>    ...
+>>    -       {
+>>                    .event_table = { 0, 0 },
+>>                    .metric_table = { 0, 0 },
+>>            },
+>>    make[3]: *** [pmu-events/Build:54: /tmp/perf_build_with_json/pmu-events/empty-pmu-events.log] Error 1
+>>
+>> Fixes: 4bb55de4ff03 ("perf jevents: Support copying the source json files to OUTPUT")
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+> 
+> Searched a bit, if without quotes, the wildcard will be expanded by make
+> but not by shell.  It makes sense for me to fix it with quotes.
+> 
+
+I think it is the shell. The only * expanded by make is file names on 
+the right hand side of rules. Either way it only makes a difference to 
+the commit message.
+
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+
+Thanks for the review.
 
 
