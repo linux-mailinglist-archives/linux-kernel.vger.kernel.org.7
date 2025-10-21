@@ -1,146 +1,149 @@
-Return-Path: <linux-kernel+bounces-862614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D759BF5C09
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:20:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A91BF5C0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F64484F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4ADC18A691F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B993032D7FF;
-	Tue, 21 Oct 2025 10:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF9232038D;
+	Tue, 21 Oct 2025 10:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6OE5897"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="hU6Z46wj"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1186032D443;
-	Tue, 21 Oct 2025 10:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E2D2E88B7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041983; cv=none; b=ZdlJgLt5dPteFXmB8U1CpbYZDW1BPKqqbMjc6C+fU3gsBK3LGG/xEVb7hMGwXr1VrHvGQ/YkMgix+z85+A6IUHKGXXxpAfbi8EF/3XZC3iRDRLDmdC5W7sWQ5+jG/tstPtKuz29vw70CtGrKDSHMUcTKsFnA4atbyh3Vasdqr+4=
+	t=1761042132; cv=none; b=bhzh/t85S/OQLdzf94T8KDOrNDImHVSjZa9MR6bk5X7P2o3NUDBlMcUWzu7WYyI32sz+ndcDIWBywt77M9UiUCJjzIAieIWjRjJb5MAcQ0yp8XpkGULrG9c7MGP1Z+A7tDiyNFEv8ZBhVQ85jXrB+j/dP8ljhT/Az+rmYfiUJWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041983; c=relaxed/simple;
-	bh=f0g5THhK54dybF5dmkHuBFG1blG84WxDpg/JuwhhxA0=;
+	s=arc-20240116; t=1761042132; c=relaxed/simple;
+	bh=jOWFbBkmo9QcpQZXDKONhCCGG1D62pkQPjUSP9O+sIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBF3JZwr9PwfnirTJe9+WD/OKUQpOM2/aalGU3kdycN4FpZl0M+xARzl9599lapvnBfibXQW7gHXKT06QWQ6WFIwgETqUkHei7oPA6+3avacQDbF/9yiQL24aOx0tBB+ZJEQLBFrTXRZos5KDqI0/1FA5QhHAJl3V4t8nKPid54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6OE5897; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275DFC4CEF1;
-	Tue, 21 Oct 2025 10:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761041982;
-	bh=f0g5THhK54dybF5dmkHuBFG1blG84WxDpg/JuwhhxA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U6OE5897LDLOTzsdByMLlf3cZIKKK+9G2+OQqUV8uwL/SfvbyNnrnzC7iphEvNAyW
-	 HRvgyY/sIT57az/O2/Ma5mV8514MycfoR0UY6N8v0/JNL0hJyem/odm5qkuzNcfdjL
-	 WQuuWeWgbg4cHQZoXwSOjjZEn132BSkJrmAwC4YVvDLwu4/8213WdCi07poFX2Yphm
-	 aZqy3qv7mcLHOwobhWcnQ3gWXQTYheQCWo1TPu/D3KKZR8pNnB7m25Xu9+IgO6Ok7A
-	 4E7sU/DQpbkBko27LGssTL+sN6s0cdGwHDx3mRUlJirURLwrFa67gmGJtlONF1mdW/
-	 GVjC4VuCfNirg==
-Date: Tue, 21 Oct 2025 12:19:39 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Martyn Welch <martyn.welch@collabora.com>
-Cc: kernel@collabora.com, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pwm: rz-mtu3: Share parent device node to MTU3 PWM
-Message-ID: <7uuuqhmkmmucmeeo5fybzld62rybyq6fjxwqqnxqr6eufis2ze@xfc2owdzfcs5>
-References: <20251009162445.701589-1-martyn.welch@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9SJlNN9QYF1zigowOkAsv76adqSi/Zkf3PUiT/73XZw2QdKWDlbne8EoOTqOdboEHCtXvqXGxHtnUVlxKDByW5xPpGLGku/9MCkvNCAFXJrhVLvep5fk0eCYTOaDy9p93xQgfoJgkCc6WZ3ffgQmHDmZNkHtBwZyErzu5eBIXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=hU6Z46wj; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 30124 invoked from network); 21 Oct 2025 12:22:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1761042120; bh=SF6LoAXfZ7sHzYrQeTZS5IqAbBi9Ehzr8C6mmjUXlSU=;
+          h=From:To:Cc:Subject;
+          b=hU6Z46wjQqZI4Pmno7++IBcA9vPzzs6Rvw041D29d0QOmSyrdp2F+JXE/ujepE9Vm
+           +RLHfcNHH0grj4p9dF7BPeJHT+kQ3LuXDWjFX2dvrJC+zo//1JJ7L9ZLUB87afup9W
+           lwpVmIqZWazLbSgEDRzEGKch1aspA9DePhCgRvIaLBVsFmP+APcFkzWZyrzQjPuP1+
+           1Ovy5FRieZHDV/aDVTDYnxxhXTOUtOd7fdHKcc8VhfM8LWKa2QV2JcoUglyJFa9s9J
+           W5/zz2Zx94fjFeVVQhSB0O+siQlcoxLFxh2KiZslcRMZdloaNbWKv/dex+U3px01Gp
+           DWclhKi7JMDZA==
+Received: from 89-64-9-53.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.53])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <rosenp@gmail.com>; 21 Oct 2025 12:22:00 +0200
+Date: Tue, 21 Oct 2025 12:21:59 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] wifi: rt2x00: check retval for of_get_mac_address
+Message-ID: <20251021102159.GA14793@wp.pl>
+References: <20251014050833.46377-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hn2y6sgc6bhpdjch"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009162445.701589-1-martyn.welch@collabora.com>
+In-Reply-To: <20251014050833.46377-1-rosenp@gmail.com>
+X-WP-MailID: 70b5e08b3428e12d1b1a4af11f1c2643
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [geOx]                               
 
+Hi
 
---hn2y6sgc6bhpdjch
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pwm: rz-mtu3: Share parent device node to MTU3 PWM
-MIME-Version: 1.0
+On Mon, Oct 13, 2025 at 10:08:33PM -0700, Rosen Penev wrote:
+> of_get_mac_address can return -EPROBE_DEFER when nvmem is not probed yet
+> for whatever reason. In this case, nvmem mac assignments will not work.
+> 
+> Based on the function path, this change only has effect for rt2800soc.c
+> and rt2800pci.c. The former tends to use nvmem for assignments.
 
-Hello,
+What you mean? The USB probing also goes through
+rt2800_validate_eeprom().
 
-[adding maintainers of drivers/of and Krzysztof to Cc:]
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-On Thu, Oct 09, 2025 at 05:24:44PM +0100, Martyn Welch wrote:
-> The PWM currently functions, however if we try to utilise the pwn in a
-> device tree, for example as a pwm-backlight:
->=20
->         lcd_bl: backlight {
->                 compatible =3D "pwm-backlight";
->                 pwms =3D <&mtu3 3 833333>;
-> 		...
->=20
-> This fails:
->=20
-> [   15.603948] platform backlight: deferred probe pending: pwm-backlight:=
- unable to request PWM
->=20
-> The PWM driver forms part of the Renesas Multi-Function Timer Pulse Unit
-> 3. The PWM does not have a DT node of it's own. Share the DT node of the
-> parent MFD device, so that the PWM channels can be referenced via phandle=
-s.
->=20
-> Co-developed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> ---
->  drivers/pwm/pwm-rz-mtu3.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/pwm/pwm-rz-mtu3.c b/drivers/pwm/pwm-rz-mtu3.c
-> index ab39bd37edafc..5825875fa0128 100644
-> --- a/drivers/pwm/pwm-rz-mtu3.c
-> +++ b/drivers/pwm/pwm-rz-mtu3.c
-> @@ -523,6 +523,12 @@ static int rz_mtu3_pwm_probe(struct platform_device =
-*pdev)
->  	if (ret < 0)
->  		return ret;
-> =20
-> +	/*
-> +	 * There is only one DT node, get it from the parent MFD device, so
-> +	 * that the PWM channels can be referenced via phandles
-> +	 */
-> +	dev->of_node =3D dev->parent->of_node;
+Anyway patch looks ok for me.
+
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+
+>  drivers/net/wireless/ralink/rt2x00/rt2800lib.c |  4 +++-
+>  drivers/net/wireless/ralink/rt2x00/rt2x00.h    |  2 +-
+>  drivers/net/wireless/ralink/rt2x00/rt2x00dev.c | 10 ++++++++--
+>  3 files changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+> index b312b40f4aa3..af19153697ed 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+> @@ -11010,7 +11010,9 @@ static int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
+>  	 * Start validation of the data that has been read.
+>  	 */
+>  	mac = rt2800_eeprom_addr(rt2x00dev, EEPROM_MAC_ADDR_0);
+> -	rt2x00lib_set_mac_address(rt2x00dev, mac);
+> +	retval = rt2x00lib_set_mac_address(rt2x00dev, mac);
+> +	if (retval)
+> +		return retval;
+>  
+>  	word = rt2800_eeprom_read(rt2x00dev, EEPROM_NIC_CONF0);
+>  	if (word == 0xffff) {
+> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00.h b/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+> index 0b67b09695b6..4d6437deaa9a 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+> +++ b/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+> @@ -1416,7 +1416,7 @@ static inline void rt2x00debug_dump_frame(struct rt2x00_dev *rt2x00dev,
+>   */
+>  u32 rt2x00lib_get_bssidx(struct rt2x00_dev *rt2x00dev,
+>  			 struct ieee80211_vif *vif);
+> -void rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr);
+> +int rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr);
+>  
+>  /*
+>   * Interrupt context handlers.
+> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+> index ee667e1a7937..4af132acadb6 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+> +++ b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+> @@ -984,14 +984,20 @@ static void rt2x00lib_rate(struct ieee80211_rate *entry,
+>  		entry->flags |= IEEE80211_RATE_SHORT_PREAMBLE;
+>  }
+>  
+> -void rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr)
+> +int rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr)
+>  {
+> -	of_get_mac_address(rt2x00dev->dev->of_node, eeprom_mac_addr);
+> +	int ret;
 > +
-
-I (very quickly) talked to Krzysztof about this. He said that
-of_node_get() should probably be used here. I wonder if
-device_add_of_node() is the right function to use (which uses
-of_node_get(), also handles fwnode and implements some safeguards).
-
->  	chip->ops =3D &rz_mtu3_pwm_ops;
->  	ret =3D devm_pwmchip_add(&pdev->dev, chip);
->  	if (ret)
-
-Best regards
-Uwe
-
---hn2y6sgc6bhpdjch
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj3XjgACgkQj4D7WH0S
-/k5fRQgApfWLCG1uFRgeJaGb2nN+t9ay4j5ItEu/+8762mGY1jnzg9VeM3/DRBuk
-NUF5Pjyd4s/n4AO7IhMVvBFWfcX38zoxvheUA13nwhIne6Rz4KdkDGwfb8iVL7C+
-/HyaBt1xTF38HkZ77zq3ODmVoYaQh9MZhiUJPRAf32nh7mfwh61p2+A2dGYXGDtH
-ZDe+tCH2iME7A8Yx8McpmDT5omp11QcPj+vf4rGE6nl1obmVyZv0H9PL1WCwC9On
-bTT2HQZJsA3cJJJfl8qm8wYUkBm8VUuJCCode0phQNZgSLI1937fiSUptk29LAkC
-OEODR5YY2encI4GgCuRfMc6Rj0jknQ==
-=l7bX
------END PGP SIGNATURE-----
-
---hn2y6sgc6bhpdjch--
+> +	ret = of_get_mac_address(rt2x00dev->dev->of_node, eeprom_mac_addr);
+> +	if (ret == -EPROBE_DEFER)
+> +		return ret;
+>  
+>  	if (!is_valid_ether_addr(eeprom_mac_addr)) {
+>  		eth_random_addr(eeprom_mac_addr);
+>  		rt2x00_eeprom_dbg(rt2x00dev, "MAC: %pM\n", eeprom_mac_addr);
+>  	}
+> +
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(rt2x00lib_set_mac_address);
+>  
+> -- 
+> 2.51.0
+> 
 
