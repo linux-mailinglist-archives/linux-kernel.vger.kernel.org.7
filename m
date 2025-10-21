@@ -1,174 +1,124 @@
-Return-Path: <linux-kernel+bounces-862301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF87BF4EF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:24:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F02C1BF4F0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3236C40488C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:24:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 762F14F7210
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8457227C866;
-	Tue, 21 Oct 2025 07:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E3827B331;
+	Tue, 21 Oct 2025 07:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hrcX/nfW"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="L8LwHCG6"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2BE27B331;
-	Tue, 21 Oct 2025 07:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4B227B32C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761031478; cv=none; b=IkbIOCxRyTMWMHn31fTXiL03oijSuiCZoorZ5P3bW4IlMDjTRXxy9euP9Eb8xxf3eb0ptnfmW6rbuPHde+CUfwyBrHSaznI/yjNVGo0uibFj+17CMI5DlqH6PERqorJkhACFGsoAjbkVYREw/YaR6jSK59e0rkjnr+pBZWqgPBM=
+	t=1761031501; cv=none; b=cM9w7cdcIZd0793mnZu3BZMEm14D5Jo6CeOFe0FB8w865pWAGlSy5JGBbYtFr5iTYSpGfQ4M8BplADIkEF4k11mOwAo2zqji2PgTRmHoihm2WxzDpjbyh6Z2KjSs+yKWDCjZHzYeL5fiOrLF9SCvAAACPvWGiZn1wZ4JozngoYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761031478; c=relaxed/simple;
-	bh=wrvOnxEGwa6S6SGZDKdNUB9ChPEBhfrsVSb4fcPlT1c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6wAH2JS9+cNzxD5MiKBbu+SJnFfPPa46RlFdvzlI8a3MrNLMOUFXODwtBL1eVxDml4Zm4n+XffjWUkPJaKCY1MukAiS6j46QJUV3PzJZ04St3pDhSvQ5WnXsW1uyOSpC8PAE5Wxwtihz7yG+xQYZslGqTdM2S+9WjFnM7KRfNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hrcX/nfW; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C2919A0771;
-	Tue, 21 Oct 2025 09:24:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-type:content-type:date:from:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to; s=mail; bh=gsdios+6sipJyD9KcVqTCicUa97jHb3NO/XyOWAPPI4=; b=
-	hrcX/nfWwny5slj7IbVSHwDZC0FpGCjJs/fSFr6JWlPCMmJMwxzoRI7cJpkHBNoM
-	5dr8juZmzbqkMCzonEKep9K6KuFKKW2UdLu70ezcyJ42e8DkSOTBy4g4qyCijRa0
-	63V5XPUkkuEuI9hit+YPRK9s9wUNwjvLVrpoLv0VX7gcw83BiDSnhAj6KPOzBxYo
-	NsvO0APOpXyxD4YNxg9JDT29/E+QWfIN3/MIHPvD4hWneMgWBNOcUeUR8i8VSqWE
-	xMmKDU1qIswfg4D1rU4oyvYY/GHE6ZR8C5RTTvoICH5eglsAclcTlk1R/dgLPSGC
-	cOG3U7LLwen+eWjnEN5lPFAFuE78FMO4a7XxE7X+WDVnhFrUMZO0PdHpsd585pzu
-	RTCmrf66thOR0Ni20BSA6VJJtBsEZDL7YjMnSkx93Vm0e0S8eV5lKcvJJF0Eomf7
-	jCXciCnzaTGJLMATo1BvoevFw7Y+O5zLbM3Z41dYkHX6Ncrcdi+tK3YOwum+iF1K
-	vAWR+jlcHh10ysIx+IOMbd3TCluCHuXlVikVvZ9vGbdVYVPKFcHCVLkbgfCwAU9o
-	QDiBC610x6W4NHjJ4WC6nMEILMw3h9zG1BKt0ZyZPQyF3zOGMB0wLDRw1ijk4tDi
-	rFyOYln3LXpQHd477lCDv2F3Z5BOuBAanGbpHzRb4xk=
-Date: Tue, 21 Oct 2025 09:24:18 +0200
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-CC: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 4/4] net: mdio: reset PHY before attempting
- to access registers in fwnode_mdiobus_register_phy
-Message-ID: <aPc1Ii7eVFRaXy4-@debianbuilder>
-References: <cover.1760620093.git.buday.csaba@prolan.hu>
- <cb6640fa11e4b148f51d4c8553fe177d5bdb4d37.1760620093.git.buday.csaba@prolan.hu>
- <af5211fbb818c873f22b6622526fa8e0c9eb2fde.camel@pengutronix.de>
+	s=arc-20240116; t=1761031501; c=relaxed/simple;
+	bh=T6QU9qfWd8XxEqHaPu2yKIrWr4Eupu0qKSG3FOUJNvE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=aBudHGelG4dPQvh7WhmiI1W2nkPeeUwkNT3iP2QhEQACFe9pZr6tGp91xsrpkJ1ktQKoNDucYnBUy23y4pjYaUzIDJIYsHr6dKEgCrNAQcBIzMHA0ob8yG74d1hcpkQ6IbiSfxa3CATLoKhw5PYfY7FYIU4+PYX6stiswS4mhL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=L8LwHCG6; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso3401494a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1761031499; x=1761636299; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dcjwoMNg8xapeElJXeStXRuTW96curqBa1UPKQuiCy4=;
+        b=L8LwHCG6fe1oPmzjD0ed5340+QGbl6rlw8Ac19uSjE2MDNBlDUjncfIcmt62UwSKWA
+         XStq1Cq4WyQzAxi08T8KvJfvNh7BVyMfy+ZiNP6Y/s4jRWPb/RZ8pQcVqKfsY8T8zu/r
+         Ae3Qhr5suz7N7XXmQMH4etEalpOqoBuAQ15atNDbX0JJ/F65SzQq2z/f8gB5tnpeYXxM
+         ZolzS9WtpX6FzHhnt13TmardSP72LA4oPvqH80mQtu6p67++tq58hbJkT/iHMOxg/XZI
+         fAD/VgByvSfyYUle0m8s8VJRSz+k5uNsans5jA0+1UyWWyw0N0YOgWUyElci2u8p+Idn
+         OFZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761031499; x=1761636299;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dcjwoMNg8xapeElJXeStXRuTW96curqBa1UPKQuiCy4=;
+        b=CfsYV0iECFwEntNMzL2XDoaSjMqIdJyLIhBT1Ku5U7pOurBTNRCwSDmYVtVpB+3w6e
+         jW+ZDaeDiyb56oV/H3NGELAj90vMM9p/WTNujpuDSrG/CmFjhOWb6316vCNGA0tvbuq7
+         u0aPW3Dcxhr5C4XBo7TKc00xngBQaGDKALxz5x+VKdb9ZbV6jA2oTtARSfEQgoUdgas7
+         w6NPOtS8gt9hQvU8a36mRcZaV69mqlJKIK06lfM4dZfyN26+OI9Z68rFQcneJXm8Af3t
+         IswvgucgaLW2i3gKb7MnsAzLoGbL4++AyZyo0eVkbRbCyCxtaX7O+JHOg95jiCdArqvt
+         6osw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwyiJOEgdpCGZiFB/cGRvoPTVmuFGBsti/CbJ6g70x2bJnn8b+rRrOq0IX2dBR4cQtpqoy8FkpMuWYgu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAEMxEIL8dOs0lQhDeP6GHiLjKEg31dkfZQSvsALi4lmokOp5O
+	ZI6gkdOnNo11HTt29AOumHWdqqhqN1XvsZ0dhuHjkU4vpz7i1caAksooqMZPrBk/cCU=
+X-Gm-Gg: ASbGnct1/0e9rB4jYVjuwB41DISQ9QpuyYA9rn5EYxD3KO6kLI7zqHw9Pp0mVj1vfmd
+	6tB0VO+Cf3prOF/lMouK37zlYhZbMOgzVHGuEbBgsvEMpyHTpGzxz51X58EA9Biq0UWOXde6hr2
+	1b7fY2ObQ3X1EVptuqDVIRYv/u+yPQziyUbTdv5pVyDKIC+vmJmOhOT+VqxPVzdB4RzV2IJjmWX
+	PSSgpc14njBOzgcjKgmpfhxwabkW8Bso8/JSA6TLxrDmx7L7g6EXM36IhRe+MDfnM0TI0V7bu0f
+	F5XEkDD7eJTfUvrT8J9/BxoL4f9bMcVSP4/Gt2OQ+RHjOdtYH6M/duBbaC1wHsw00fndQNME+5G
+	sjYgzalHxLoK2Qz8Mky7C+PVNug3spUdI0jgNx6CIyN4bDpvF7XuV94UeNDzUA7e4Ir0/VS1LD7
+	dvN/A03vTdhmMAAxcKLd8KlTlnAzLB1uIETg==
+X-Google-Smtp-Source: AGHT+IFzWgrQVZzVX7nEOgExqLtglKwMQ47s3V8pusPPGP8s1DH1p6CnhaKMiVW+v7YKyJQGnw64Hg==
+X-Received: by 2002:a17:902:f548:b0:276:76e1:2e84 with SMTP id d9443c01a7336-290c9c8941dmr195197375ad.3.1761031498734;
+        Tue, 21 Oct 2025 00:24:58 -0700 (PDT)
+Received: from 5CG3510V44-KVS.bytedance.net ([203.208.189.14])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fdbe35sm100207415ad.46.2025.10.21.00.24.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 00:24:58 -0700 (PDT)
+From: Jinhui Guo <guojinhui.liam@bytedance.com>
+To: mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	jsd@semihalf.com,
+	andi.shyti@kernel.org
+Cc: guojinhui.liam@bytedance.com,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] i2c: designware: Fix SMBUS Master interrupts storms
+Date: Tue, 21 Oct 2025 15:24:30 +0800
+Message-Id: <20251021072431.3427-1-guojinhui.liam@bytedance.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <af5211fbb818c873f22b6622526fa8e0c9eb2fde.camel@pengutronix.de>
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761031466;VERSION=8000;MC=1079157708;ID=129845;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155F64736A
 
-Thank you!
-I do not know how that slipped.
-I will fix it in v4.
+Hi all,
 
-Regards,
-Csaba
+We hit interrupt storms on the SMBus master extend-clock timeout IRQ
+and SMBUS Slave Clock Extend Timeout IRQ because broken firmware left
+IC_SMBUS=1 while the driver IRQ handler never services SMBus events.
 
-On Mon, Oct 20, 2025 at 11:16:11AM +0200, Philipp Zabel wrote:
-> On Fr, 2025-10-17 at 18:10 +0200, Buday Csaba wrote:
-> > Implement support for the `phy-id-read-needs-reset` device tree
-> > property.
-> > 
-> > When the ID of an ethernet PHY is not provided by the 'compatible'
-> > string in the device tree, its actual ID is read via the MDIO bus.
-> > For some PHYs this could be unsafe, since a hard reset may be
-> > necessary to safely access the MDIO registers.
-> > 
-> > This patch performs the hard-reset before attempting to read the ID,
-> > when the mentioned device tree property is present.
-> > 
-> > Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
-> > ---
-> > V2 -> V3: kernel-doc replaced with a comment (fixed warning)
-> > V1 -> V2:
-> >  - renamed DT property `reset-phy-before-probe` to
-> >   `phy-id-read-needs-reset`
-> 
-> Not completely, see below.
-> 
-> >  - renamed fwnode_reset_phy_before_probe() to
-> >    fwnode_reset_phy()
-> >  - added kernel-doc for fwnode_reset_phy()
-> >  - improved error handling in fwnode_reset_phy()
-> > ---
-> >  drivers/net/mdio/fwnode_mdio.c | 35 +++++++++++++++++++++++++++++++++-
-> >  1 file changed, 34 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/mdio/fwnode_mdio.c b/drivers/net/mdio/fwnode_mdio.c
-> > index ba7091518..8e8f9182a 100644
-> > --- a/drivers/net/mdio/fwnode_mdio.c
-> > +++ b/drivers/net/mdio/fwnode_mdio.c
-> > @@ -114,6 +114,36 @@ int fwnode_mdiobus_phy_device_register(struct mii_bus *mdio,
-> >  }
-> >  EXPORT_SYMBOL(fwnode_mdiobus_phy_device_register);
-> >  
-> > +/* Hard-reset a PHY before registration */
-> > +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
-> > +			    struct fwnode_handle *phy_node)
-> > +{
-> > +	struct mdio_device *tmpdev;
-> > +	int err;
-> > +
-> > +	tmpdev = mdio_device_create(bus, addr);
-> > +	if (IS_ERR(tmpdev))
-> > +		return PTR_ERR(tmpdev);
-> > +
-> > +	fwnode_handle_get(phy_node);
-> > +	device_set_node(&tmpdev->dev, phy_node);
-> > +	err = mdio_device_register_reset(tmpdev);
-> > +	if (err) {
-> > +		mdio_device_free(tmpdev);
-> > +		return err;
-> > +	}
-> > +
-> > +	mdio_device_reset(tmpdev, 1);
-> > +	mdio_device_reset(tmpdev, 0);
-> > +
-> > +	mdio_device_unregister_reset(tmpdev);
-> > +
-> > +	mdio_device_free(tmpdev);
-> > +	fwnode_handle_put(phy_node);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  int fwnode_mdiobus_register_phy(struct mii_bus *bus,
-> >  				struct fwnode_handle *child, u32 addr)
-> >  {
-> > @@ -129,8 +159,11 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
-> >  		return PTR_ERR(mii_ts);
-> >  
-> >  	is_c45 = fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45");
-> > -	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
-> > +	if (is_c45 || fwnode_get_phy_id(child, &phy_id)) {
-> > +		if (fwnode_property_present(child, "reset-phy-before-probe"))
-> 
-> Commit message says this should be "phy-id-read-needs-reset" now.
-> 
-> regards
-> Philipp
-> 
+Since we cannot disable IC_SMBUS directly, mask its interrupts to
+prevent floods and make the driver more robust.
+
+Thanks,
+Jinhui
+
+---
+v1: https://lore.kernel.org/all/20251011073057.2959-1-guojinhui.liam@bytedance.com/
+
+Changelog in v1 -> v2 (suggested by Mika and Andy Shevchenko)
+ - Drop the stand-alone i2c_dw_disable_smbus_intr() wrapper and mask
+   the SMBus interrupt directly in i2c_dw_init_master() after the
+   adapter is disabled. [Tested]
+ - Align the DW_IC_SMBUS_INTR_MASK macro definition to three TABs so
+   that it matches the surrounding macro indentation style.
+
+Jinhui Guo (1):
+  i2c: designware: Disable SMBus interrupts to prevent storms from
+    mis-configured firmware
+
+ drivers/i2c/busses/i2c-designware-core.h   | 1 +
+ drivers/i2c/busses/i2c-designware-master.c | 7 +++++++
+ 2 files changed, 8 insertions(+)
+
+-- 
+2.20.1
 
 
