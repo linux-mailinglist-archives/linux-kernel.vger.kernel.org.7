@@ -1,233 +1,174 @@
-Return-Path: <linux-kernel+bounces-862300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5F6BF4EF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:24:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF87BF4EF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD2818C08AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3236C40488C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AB627B355;
-	Tue, 21 Oct 2025 07:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8457227C866;
+	Tue, 21 Oct 2025 07:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XZOn2LlO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hrcX/nfW"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BCE279DB7;
-	Tue, 21 Oct 2025 07:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2BE27B331;
+	Tue, 21 Oct 2025 07:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761031464; cv=none; b=nYfkeAfbamiSlv8ddSUImOATfcFdf7T+LliY72F/VhuUipbmUxzx7tcRA54D72BgD4iDqxTJGV5EDk9QO9eUZvT2SDgfQ0CfCuu9k0BMOYWXo5hiWNyowVLa/7NInyJGhWSoZKUrqngKFHH+Zan+TJv9j7X7zW0q5rrxHUdb5bs=
+	t=1761031478; cv=none; b=IkbIOCxRyTMWMHn31fTXiL03oijSuiCZoorZ5P3bW4IlMDjTRXxy9euP9Eb8xxf3eb0ptnfmW6rbuPHde+CUfwyBrHSaznI/yjNVGo0uibFj+17CMI5DlqH6PERqorJkhACFGsoAjbkVYREw/YaR6jSK59e0rkjnr+pBZWqgPBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761031464; c=relaxed/simple;
-	bh=8FGv4hC6mcrzGKjeCbtsNd848JfuRjL+XHZUY+SVF0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEfqIRldUCXSt8qHDlui+yiCcUJXnlrvBOxpQpKu26BGMZZKJjUFt+Z3icb+k2wHY5F9L3587lM8IM3vNPPujOjCQZuf7xxqvyPWJMUtIpR3gER2szKgaSuYHXM6Ioalxf6CMOdwn0kuN15huyvHd1IKKrx03sz/LU5On2nU1LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XZOn2LlO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L20BGw018800;
-	Tue, 21 Oct 2025 07:24:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HXWI+T
-	s8pCwgXlqF9ZX9c6QddSbtqcgR4wef2xM111k=; b=XZOn2LlOvM6qvoqbJmxE9I
-	m4ahI8rTLcbTLW89JgfMRUd76WCDAdhV4Re0fYa4hAhVurGbx015Kr7Epp7PPM7V
-	/sEofMOiX4bT05Qn7VFEvC1ZGozLmQDvCwBmlCIT6bedUFp23EDoWWr+QvGWe+Jl
-	CD4lopNDsxOxxwf63UrBYeBYoE7kv4SGSrFRVb7Bh/leiIGtN7k/+yIzkuM6/oUj
-	RNe4RZHvSgvZCC+cwyOfdOxZtiRk814bETwB39R5opogKq7vyFmWM3ema1j8z+cY
-	IJ9xzJ8oeP1rsnMSBtqlLhEJLm1C1G52oCFyTDMcXTGNj7dpY7crPrY+iIogzO9w
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rwn5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 07:24:10 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59L4iK3P011020;
-	Tue, 21 Oct 2025 07:24:09 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqx11aem-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 07:24:09 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59L7O7ts57410014
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 07:24:07 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A02220043;
-	Tue, 21 Oct 2025 07:24:07 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 62F4420040;
-	Tue, 21 Oct 2025 07:24:07 +0000 (GMT)
-Received: from [9.111.135.235] (unknown [9.111.135.235])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 21 Oct 2025 07:24:07 +0000 (GMT)
-Message-ID: <29e766ca-54e4-453d-9dfc-ea47e2a1f860@linux.ibm.com>
-Date: Tue, 21 Oct 2025 09:24:06 +0200
+	s=arc-20240116; t=1761031478; c=relaxed/simple;
+	bh=wrvOnxEGwa6S6SGZDKdNUB9ChPEBhfrsVSb4fcPlT1c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6wAH2JS9+cNzxD5MiKBbu+SJnFfPPa46RlFdvzlI8a3MrNLMOUFXODwtBL1eVxDml4Zm4n+XffjWUkPJaKCY1MukAiS6j46QJUV3PzJZ04St3pDhSvQ5WnXsW1uyOSpC8PAE5Wxwtihz7yG+xQYZslGqTdM2S+9WjFnM7KRfNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hrcX/nfW; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C2919A0771;
+	Tue, 21 Oct 2025 09:24:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-type:content-type:date:from:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=mail; bh=gsdios+6sipJyD9KcVqTCicUa97jHb3NO/XyOWAPPI4=; b=
+	hrcX/nfWwny5slj7IbVSHwDZC0FpGCjJs/fSFr6JWlPCMmJMwxzoRI7cJpkHBNoM
+	5dr8juZmzbqkMCzonEKep9K6KuFKKW2UdLu70ezcyJ42e8DkSOTBy4g4qyCijRa0
+	63V5XPUkkuEuI9hit+YPRK9s9wUNwjvLVrpoLv0VX7gcw83BiDSnhAj6KPOzBxYo
+	NsvO0APOpXyxD4YNxg9JDT29/E+QWfIN3/MIHPvD4hWneMgWBNOcUeUR8i8VSqWE
+	xMmKDU1qIswfg4D1rU4oyvYY/GHE6ZR8C5RTTvoICH5eglsAclcTlk1R/dgLPSGC
+	cOG3U7LLwen+eWjnEN5lPFAFuE78FMO4a7XxE7X+WDVnhFrUMZO0PdHpsd585pzu
+	RTCmrf66thOR0Ni20BSA6VJJtBsEZDL7YjMnSkx93Vm0e0S8eV5lKcvJJF0Eomf7
+	jCXciCnzaTGJLMATo1BvoevFw7Y+O5zLbM3Z41dYkHX6Ncrcdi+tK3YOwum+iF1K
+	vAWR+jlcHh10ysIx+IOMbd3TCluCHuXlVikVvZ9vGbdVYVPKFcHCVLkbgfCwAU9o
+	QDiBC610x6W4NHjJ4WC6nMEILMw3h9zG1BKt0ZyZPQyF3zOGMB0wLDRw1ijk4tDi
+	rFyOYln3LXpQHd477lCDv2F3Z5BOuBAanGbpHzRb4xk=
+Date: Tue, 21 Oct 2025 09:24:18 +0200
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+CC: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 4/4] net: mdio: reset PHY before attempting
+ to access registers in fwnode_mdiobus_register_phy
+Message-ID: <aPc1Ii7eVFRaXy4-@debianbuilder>
+References: <cover.1760620093.git.buday.csaba@prolan.hu>
+ <cb6640fa11e4b148f51d4c8553fe177d5bdb4d37.1760620093.git.buday.csaba@prolan.hu>
+ <af5211fbb818c873f22b6622526fa8e0c9eb2fde.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/17] lib/crypto: s390/sha3: Migrate optimized code into
- library
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>
-References: <20251020005038.661542-1-ebiggers@kernel.org>
- <20251020005038.661542-16-ebiggers@kernel.org>
- <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
- <20251020175736.GC1644@sol>
-From: Holger Dengler <dengler@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20251020175736.GC1644@sol>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: zT6buMclKWapWi4nnatfkPLQYCGf-j05
-X-Proofpoint-GUID: zT6buMclKWapWi4nnatfkPLQYCGf-j05
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX321FNgZAcduS
- SdqJvBMeFQRxpszMW1n5bOfEQgQ8fDxDBqytFvndUsVQOND990+XWCFt88GZCq6kjsAkWj7/QNQ
- t/ffVRUrQD+NdMDPZtWYHKG/gh1Tx89yw6eZI7LyaP5ggY2hpe03aQsO4mtA1TSwbtGD4EW4C5Z
- qF50iXcsC5yaCIySujOzUY1XEwb06+DqeIyVwJ6oJqM2zcF4dy4mz4LR/Bb7cLFjwLlpcxI+8c9
- a8X68CcmXuHKYN3juKdom4GVr6bOtZoE9p5i3X599IHoUFXAowsf/3u8zvUzlc42znfcHd6O/0N
- sRUOP7jz8DffEffmRGOBvnZXcWBvK3e+PCJcLCdrR814lJngfyn0A7tVSIRNqZfQXADAq8XIDVA
- jZIjqvkuy/mbbjbUam4sMSPkFMGpAg==
-X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f7351a cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=otLEo-FC9tDJaZkyYbEA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <af5211fbb818c873f22b6622526fa8e0c9eb2fde.camel@pengutronix.de>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761031466;VERSION=8000;MC=1079157708;ID=129845;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155F64736A
 
-On 20/10/2025 19:57, Eric Biggers wrote:
-> On Mon, Oct 20, 2025 at 04:00:42PM +0200, Holger Dengler wrote:
->> On 20/10/2025 02:50, Eric Biggers wrote:
->>> Instead of exposing the s390-optimized SHA-3 code via s390-specific
->>> crypto_shash algorithms, instead just implement the sha3_absorb_blocks()
->>> and sha3_keccakf() library functions.  This is much simpler, it makes
->>> the SHA-3 library functions be s390-optimized, and it fixes the
->>> longstanding issue where the s390-optimized SHA-3 code was disabled by
->>> default.  SHA-3 still remains available through crypto_shash, but
->>> individual architectures no longer need to handle it.
->>>
->>> Note that the existing code used both CPACF_KIMD_SHA3_224 and
->>> CPACF_KIMD_SHA3_256 after checking for just CPACF_KIMD_SHA3_256, and
->>> similarly for 384 and 512.  I've preserved that behavior.
->>>
->>> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
->> The current code also cover a performance feature, which allows (on
->> supported hardware, e.g. z17) to skip the ICV initialization.
-> 
-> I'm not sure if by "ICV" you mean "Integrity Check Value" or "Initial
-> Chaining Value", but SHA-3 doesn't have either of those.  It just starts
-> with a state of all zeroes.  I assume that skipping the
-> zero-initialization of the state is what you're referring to?
+Thank you!
+I do not know how that slipped.
+I will fix it in v4.
 
-I meant "Initial Chaining Value". On s390, this memory is set to zero by the
-KIMD/KLMD instructions so that it can be skipped in the init() calls.
+Regards,
+Csaba
 
->> support has been introduced with 88c02b3f79a6 ("s390/sha3: Support
->> sha3 performance enhancements"). Unfortunately, this patch removes
->> this support. Was this intended?
+On Mon, Oct 20, 2025 at 11:16:11AM +0200, Philipp Zabel wrote:
+> On Fr, 2025-10-17 at 18:10 +0200, Buday Csaba wrote:
+> > Implement support for the `phy-id-read-needs-reset` device tree
+> > property.
+> > 
+> > When the ID of an ethernet PHY is not provided by the 'compatible'
+> > string in the device tree, its actual ID is read via the MDIO bus.
+> > For some PHYs this could be unsafe, since a hard reset may be
+> > necessary to safely access the MDIO registers.
+> > 
+> > This patch performs the hard-reset before attempting to read the ID,
+> > when the mentioned device tree property is present.
+> > 
+> > Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+> > ---
+> > V2 -> V3: kernel-doc replaced with a comment (fixed warning)
+> > V1 -> V2:
+> >  - renamed DT property `reset-phy-before-probe` to
+> >   `phy-id-read-needs-reset`
 > 
-> For now, yes.  I should have explained more in the patch, sorry.
+> Not completely, see below.
 > 
-> As currently proposed, lib/crypto/sha3.c supports arch-specific
-> overrides of sha3_absorb_blocks() and sha3_keccakf().  Those cover the
-> Keccak-f permutation which is by far the most performance critical part.
-> This strategy is working well in the SHA-2, SHA-1, and MD5 libraries,
-> which support the same level of arch overrides.
+> >  - renamed fwnode_reset_phy_before_probe() to
+> >    fwnode_reset_phy()
+> >  - added kernel-doc for fwnode_reset_phy()
+> >  - improved error handling in fwnode_reset_phy()
+> > ---
+> >  drivers/net/mdio/fwnode_mdio.c | 35 +++++++++++++++++++++++++++++++++-
+> >  1 file changed, 34 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/mdio/fwnode_mdio.c b/drivers/net/mdio/fwnode_mdio.c
+> > index ba7091518..8e8f9182a 100644
+> > --- a/drivers/net/mdio/fwnode_mdio.c
+> > +++ b/drivers/net/mdio/fwnode_mdio.c
+> > @@ -114,6 +114,36 @@ int fwnode_mdiobus_phy_device_register(struct mii_bus *mdio,
+> >  }
+> >  EXPORT_SYMBOL(fwnode_mdiobus_phy_device_register);
+> >  
+> > +/* Hard-reset a PHY before registration */
+> > +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
+> > +			    struct fwnode_handle *phy_node)
+> > +{
+> > +	struct mdio_device *tmpdev;
+> > +	int err;
+> > +
+> > +	tmpdev = mdio_device_create(bus, addr);
+> > +	if (IS_ERR(tmpdev))
+> > +		return PTR_ERR(tmpdev);
+> > +
+> > +	fwnode_handle_get(phy_node);
+> > +	device_set_node(&tmpdev->dev, phy_node);
+> > +	err = mdio_device_register_reset(tmpdev);
+> > +	if (err) {
+> > +		mdio_device_free(tmpdev);
+> > +		return err;
+> > +	}
+> > +
+> > +	mdio_device_reset(tmpdev, 1);
+> > +	mdio_device_reset(tmpdev, 0);
+> > +
+> > +	mdio_device_unregister_reset(tmpdev);
+> > +
+> > +	mdio_device_free(tmpdev);
+> > +	fwnode_handle_put(phy_node);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  int fwnode_mdiobus_register_phy(struct mii_bus *bus,
+> >  				struct fwnode_handle *child, u32 addr)
+> >  {
+> > @@ -129,8 +159,11 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
+> >  		return PTR_ERR(mii_ts);
+> >  
+> >  	is_c45 = fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45");
+> > -	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
+> > +	if (is_c45 || fwnode_get_phy_id(child, &phy_id)) {
+> > +		if (fwnode_property_present(child, "reset-phy-before-probe"))
 > 
-> We could update lib/crypto/sha3.c to allow architectures to override
-> more of the code.  But we need to consider the tradeoffs:
+> Commit message says this should be "phy-id-read-needs-reset" now.
 > 
-> - Risk of bugs.  QEMU doesn't support the s390 SHA-3 instructions, so no
->   one except the s390 folks can test the code.  I can try to write code
->   for you, but I can't test it.  And the s390 SHA-3 code has had bugs;
->   see commits 992b7066800f, 68279380266a5, 73c2437109c3.
+> regards
+> Philipp
 > 
->   The first priority should be correctness.
-
-Let me figure out, if me and my colleagues can do the testing for you.
-Unfortunately, I'll be unavailable for the next two weeks. But I'll come back
-with a solution for the testing.
-
-> - The proposed change to the init functions would cause the format of
->   'struct __sha3_ctx' to be architecture-dependent.  While we can do
->   that if really needed, it's something that's best avoided for
->   simplicity.  It opens up more opportunity for error.
-
-Would it make sense to provide a delayed zeroize mechanism of the initial
-chaining value (ICV), and architectures may implement it or not? The feature
-on s390 is exactly that: a delayed zeroize of the ICV, done by the instruction.
-
-> - As I mentioned, Keccak-f is by far the most performance critical part
->   anyway.  The initial state is just all zeroes, and initializing it is
->   very lightweight.  Also consider that these contexts are often on the
->   stack, and people increasingly set the "init all stack variables to
->   zero" kernel hardening option anyway.
-> 
->   I'll also note that commit 88c02b3f79a6 has no performance data in it.
->   So it's not clear that it actually helped much.
-> 
-> - The library has an optimization to greatly reduce the size of the
->   context: instead of buffering data separately, it just XOR's data into
->   the state.  So, if there's a sha3_*_init() followed by a sha3_update()
->   of less than 1 block, it will have to initialize the state anyway.  We
->   can delay it until that point on s390.  But again: complexity.
-> 
-> - These potential additional s390 optimizations would presumably help
->   the most on short messages.  However, on short messages, merely
->   switching to the library often gives a large performance improvement
->   due to eliminating the very slow call to crypto_alloc_shash().  That's
->   actually a lot more important.
-> 
-> I would suggest that we drop the sha3_*_init() optimization from
-> consideration for now.  Providing overrides for the one-shot functions
-> sha3_{224,256,384,512}() should be simpler as well as possibly a bit
-> more useful, and I would suggest exploring that.
-
-Ok, sounds reasonable.
-
-> I guess I can try to write the code for you again.  But again, without
-> QEMU support I cannot test it.  The first priority in cryptography code
-> is correctness, so that's not a great position to be in.
-> 
-> Note that for new optimized code I'm requiring QEMU support for the
-> instructions it uses.  This one would only be allowed because code that
-> used these instructions already existed in arch/s390/crypto/.
-
-Ok, I'll come back to you on that.
-
->> Please also add me and Harald Freudenberger to the cc: list for this patch.
-> 
-> Will do, thanks.
-> 
-> - Eric
-
--- 
-Mit freundlichen Grüßen / Kind regards
-Holger Dengler
---
-IBM Systems, Linux on IBM Z Development
-dengler@linux.ibm.com
 
 
