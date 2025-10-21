@@ -1,160 +1,92 @@
-Return-Path: <linux-kernel+bounces-863342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50B6BF798B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:10:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB549BF798E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE0519A45EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946B41888DBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34653451DE;
-	Tue, 21 Oct 2025 16:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727B8336ECD;
+	Tue, 21 Oct 2025 16:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QXMXkh7N"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EmgMJHjN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFE215A86D;
-	Tue, 21 Oct 2025 16:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0D33451B7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062951; cv=none; b=efBpVz7VfS6Fcg14iV921JhWPfGvgbvrrA1F3b60yPXDVzA53D+PS4HrwPqsFr0yhf6HST0JKCjHSJcwGx2vajQDFa3E8DfuRj1iLX8yYihr5WrX4O8PmZa5Yf05PURl+IPR/mb1N6H7Zo41x3SQNzcVrNoIM/LfKxs/hQeCrjA=
+	t=1761063011; cv=none; b=naRJVlCl91pwcpL4xPrXfidkYXHpAKUUPMH/OJgS60+PS5Z0m1ABJSYLrjYcZj3f5LOHAVb6w1fQQKD//oYFIGO/Ty2Vrlh8yUTGvj3cwcBlDMxuMEGjScUzk+w+EyRVRdHfq+aGvyq4DvbAs8IzYkqr1swWXScnTtWjcHyR3nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062951; c=relaxed/simple;
-	bh=lVqQrwLR73VLxhzhfYZr/XwLwv9Q8Qc3d8tpW+zVY50=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PMsxPHoNztvn1mbok7g8sWHqBOZBQ7QobRPQ+pq9aF5lPvUmvOGtGeDPY7FIoGC9Gu3Fd2uNS+GhNSij2e4PoQgLTuJP42zlxw3Vz5Kel0kNMGdm0sDSgeEDfILvgs7t3WpSj28K/Kobo7aaJPoVP2bamedW7rCcmdSh+JQSkMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QXMXkh7N; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761062949; x=1792598949;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=lVqQrwLR73VLxhzhfYZr/XwLwv9Q8Qc3d8tpW+zVY50=;
-  b=QXMXkh7N3nl85fUIlGOuRnJ2Y9zENIfuFsOjYG/ud1yFyx3KQluO2Bim
-   Fgcu+y+hmD9Y3IFTVZdzzrzXF2ieFRcnP3BMMBw2YOSH6d6e8oWrRC9fH
-   9rxLKQrNJHo4zHcgnVwFrI2JMFGY6EGUBvTjF8Zus96c5LGqjwtUPljeV
-   60+IW17EieR37pgqF7bDmS9lwUzesltyKpta4puzkF5TY4WZV9Iy/fMCW
-   sVP7j1B+pfGlAh062IkXtuhq3ubRZ4WbzTzV3FFfVamfAmWqpvbAqfBCe
-   pN1Vsle1aN/Vklr/h8zg0IsaT6pHQR8NvJ03H8IFv7D7DIzYbwNBhFmja
-   Q==;
-X-CSE-ConnectionGUID: lnGQVeddQXq5sjvMlfGbEA==
-X-CSE-MsgGUID: aGoLW4QFQMqm4k8XVBsowQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80632879"
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="80632879"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 09:09:08 -0700
-X-CSE-ConnectionGUID: pZ1Di52HTfKXEn/kKrcMtQ==
-X-CSE-MsgGUID: 7xPC94pVSTu43fM4cKQEOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="187665402"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 09:09:04 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 21 Oct 2025 19:09:00 +0300 (EEST)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-pci@vger.kernel.org, 
-    Bjorn Helgaas <bhelgaas@google.com>, Kai-Heng Feng <kaihengf@nvidia.com>, 
-    Rob Herring <robh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 0/3] PCI & resource: Make coalescing host bridge windows
- safer
-In-Reply-To: <aPerdPErjXANiBOl@smile.fi.intel.com>
-Message-ID: <6abf371f-b5b0-bdb7-56cf-c012e20ffc73@linux.intel.com>
-References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com> <CAMuHMdVwAkC0XOU_SZ0HeH0+oT-j5SvKyRcFcJbbes624Yu9uQ@mail.gmail.com> <89a20c14-dd0f-22ae-d998-da511a94664a@linux.intel.com> <CAMuHMdUbseFEY8AGOxm2T8W-64qT9OSvfmvu+hyTJUT+WE2cVw@mail.gmail.com>
- <20844374-d3df-cc39-a265-44a3008a3bcb@linux.intel.com> <aPerdPErjXANiBOl@smile.fi.intel.com>
+	s=arc-20240116; t=1761063011; c=relaxed/simple;
+	bh=BOLZET7uAD9zh+dubKf/A4hN7cOu6OCJzMG3H/wDM+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kMv6lDt2jtQjLY4Ib3BSW83bFqq3NSEs9KOogMgQ+PnmN768kgqFPIezmeM97L0IG3zQc2TPeZgiT3uVl+Gcgc2wallU+Mn56euIiW8mEaX39SL7mfGOzMz6IWS8kgOH+bQr0oWV7GUmoIv3pU1VhTQrl9xeVinEXlmbGkCL4IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EmgMJHjN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761063007;
+	bh=BOLZET7uAD9zh+dubKf/A4hN7cOu6OCJzMG3H/wDM+E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EmgMJHjNFuBFEOTQ43z9I7IzqphKuFzwSymSQ1F0wsAiQiW32onhhVirZ9wwY0HyH
+	 NyL6mMDtgymMZfx5KUSxBT2D28exAZe9n/8SkMzCKpsnpTdS0Rfwi28i/CwURhKzwq
+	 MKDPOUit6EMsOz7bRzIRHPRGCDN6Vwep3MtvYhZXJf7Dd7YvaRFWKk7AlVdbR7yhUU
+	 VKjU0jluctXIjr7cuS0mAU0tmMd2iYmPWm62y9ZMJUWcxuln50U3EDh9iVTwTGp9uu
+	 43MQAcqqCRs2/53obHVlLt5I/l50XMgxAxiwiim/vbHK9XeYaig5GZqsjYmEU/gNGG
+	 SpgnmrXETTThg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7B1BA17E0CA3;
+	Tue, 21 Oct 2025 18:10:07 +0200 (CEST)
+Date: Tue, 21 Oct 2025 18:09:38 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven Price
+ <steven.price@arm.com>, kernel@collabora.com, Liviu Dudau
+ <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
+Message-ID: <20251021180938.7a674618@fedora>
+In-Reply-To: <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
+References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
+	<bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-497485051-1761062940=:1018"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, 21 Oct 2025 15:32:45 +0100
+Akash Goel <akash.goel@arm.com> wrote:
 
---8323328-497485051-1761062940=:1018
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Tue, 21 Oct 2025, Andy Shevchenko wrote:
-
-> On Tue, Oct 21, 2025 at 02:54:03PM +0300, Ilpo J=E4rvinen wrote:
-> > On Tue, 21 Oct 2025, Geert Uytterhoeven wrote:
+> On 10/19/25 04:19, Adri=C3=A1n Larumbe wrote:
+> > Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
+> > behavior") did away with the treatment of partial unmaps of huge IOPTEs.
+> >  =20
 >=20
-> ...
+> Sorry have a doubt.
 >=20
-> > I'm sorry, it's indeed a bit confusing as some of these patches never=
-=20
-> > have been in Linus' tree.
-> >=20
-> > So I'm interested on what's the result with these changes/series togeth=
-er:
-> >=20
-> > [PATCH 1/2] PCI: Setup bridge resources earlier=20
-> > [PATCH 2/2] PCI: Resources outside their window must set IORESOURCE_UNS=
-ET=20
-> > [PATCH 1/1] PCI: rcar-gen2: Add BAR0 into host bridge resources
-> > [PATCH 1/3] PCI: Refactor host bridge window coalescing loop to use pre=
-v=20
-> > [PATCH 2/3] PCI: Do not coalesce host bridge resource structs in place
-> > [PATCH 3/3] resource, kunit: add test case for resource_coalesce()
-> >=20
-> > You might also want to change that pci_dbg() in the IORESOURCE_UNSET pa=
-tch=20
-> > to pci_info() (as otherwise dyndbg is necessary to make it visible).
-> >=20
-> > Lore links to these series/patches:
-> >=20
-> > https://lore.kernel.org/linux-pci/20250924134228.1663-1-ilpo.jarvinen@l=
-inux.intel.com/
-> > https://lore.kernel.org/linux-pci/7640a03e-dfea-db9c-80f5-d80fa2c505b7@=
-linux.intel.com/
-> > https://lore.kernel.org/linux-pci/20251010144231.15773-1-ilpo.jarvinen@=
-linux.intel.com/
-> >=20
-> > The expected result is that those usb resources are properly parented a=
-nd=20
-> > the ee080000-ee08ffff and ee090000-ee090bff are not coalesced together =
-(as=20
-> > that would destroy information). So something along the lines of:
-> >=20
-> >     ee080000-ee08ffff : pci@ee090000
->=20
-> For my pedantic eye, the naming is a bit confusing here. Is this a mistak=
-e in
-> the code or in the example?
->=20
-> >       ee080000-ee080fff : 0000:00:01.0
-> >         ee080000-ee080fff : ohci_hcd
-> >       ee081000-ee0810ff : 0000:00:02.0
-> >         ee081000-ee0810ff : ehci_hcd
-> >     ee090000-ee090bff : ee090000.pci pci@ee090000
+> Corresponding to the commit 33729a5fc0ca, can we now remove the code to=20
+> pre-allocate L3 page table pages i.e. 'op_ctx->rsvd_page_tables.pages'=20
+> inside panthor_vm_prepare_unmap_op_ctx() ?.
 
-I tried to copy them from here:
-
-https://lore.kernel.org/linux-pci/CAMuHMdUbaQDXsowZETimLJ-=3DgLCofeP+LnJp_t=
-xetuBQ0hmcPQ@mail.gmail.com/
-
-So my answer is, from code.
-
-I'm not trying to change the names here, they are what they are.
-
-Why things work that way in DT platform (ee08 vs @ee09), don't ask me as I=
-=20
-unfortunately don't know the answers.
-
---=20
- i.
-
---8323328-497485051-1761062940=:1018--
+Well, not if we want to support partial unmaps of huge pages at a non-2M
+boundary.
 
