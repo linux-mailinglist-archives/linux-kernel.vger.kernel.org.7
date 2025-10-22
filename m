@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-864927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088E9BFBE16
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:36:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF227BFBE25
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCC3D4FF4D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF34C3AB228
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48254344044;
-	Wed, 22 Oct 2025 12:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632C4344053;
+	Wed, 22 Oct 2025 12:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QSk6D6ZI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mS1KI9z7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C8A19CC28;
-	Wed, 22 Oct 2025 12:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED5130FF25;
+	Wed, 22 Oct 2025 12:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761136558; cv=none; b=BF0NVjX1LcWR4aueGWQhWFloToLW/H54QQsBnoHpldmMznk78U8KMT79S86APQ2M7AdJv+hWbsdLDtIGFuJfwrR6xyCfduIAWWNCtcbA85aChvQN6jbfDdouHIZy1qa/uNjZS4aK70Eir49jYNhw53/ZNSW+0EMq938t6IohEuU=
+	t=1761136617; cv=none; b=L8TaNbYw/vBDgBO1UNyvyGhjpcle+tj1AWfEC9Napco/PehS51yi2ts6KyBuWs0kFPK+KLBk294V0vCjzhJWYHgylvdHrkF3Yr7vAePG3RnaQs0yu5SO909wHCRMvtiP2uSP4PK0wvzodbp6PQG+JdwJEEEPpzqeSUM5QBkEKXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761136558; c=relaxed/simple;
-	bh=6GygRBHvxfcqGXnEi/9P3tlsxMuta/koSy98GYmAOXs=;
+	s=arc-20240116; t=1761136617; c=relaxed/simple;
+	bh=519d0VeYen3U872nHK3UtETEouG+0WfQUT+bzdECclI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ta7dioEumgRbe1s+cbkhqVR37yu7sUa0P23kykPgHhVICe2hs1sBXJRuSIC7rlm69VrBwKdRM7CYAYBfqjY61UL871TBgUGrwEC9FSuRGa89YiETxRB7H7BLAZ77OwsGbGXUkrT6zmIYCVpgIsMXLGzHF2K6omQkAWTi0NMtSWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QSk6D6ZI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=R95DGcQ4LYALHG8T4SNxi7BAAXg7er7ggzkRbLh42No=; b=QSk6D6ZIL39KWQjpQVXzyu/daU
-	CkHCg8qd7kd0YqSVIzxh2OYFZ1Gtf6Zy1PMvilS2ibzw5vrduZP1N74w4P6Tj1JfPOXck0ka2IkIN
-	G3R9KHuq/zrSWxPK36Hjw1+QvspeXZMa8vN0KtQZWpHSk2jPm3N1Cw59r3FE3Ov57v3Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vBY3w-00Bkxo-MY; Wed, 22 Oct 2025 14:35:32 +0200
-Date: Wed, 22 Oct 2025 14:35:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sjoerd Simons <sjoerd@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	kernel@collabora.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-phy@lists.infradead.org, netdev@vger.kernel.org,
-	Daniel Golle <daniel@makrotopia.org>,
-	Bryan Hinton <bryan@bryanhinton.com>
-Subject: Re: [PATCH 15/15] arm64: dts: mediatek: mt7981b-openwrt-one: Enable
- leds
-Message-ID: <9ecffb7f-839c-4e4d-bef1-f59747d020b2@lunn.ch>
-References: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
- <20251016-openwrt-one-network-v1-15-de259719b6f2@collabora.com>
- <d8077ee4-21c2-43c5-b130-7ff270b09791@lunn.ch>
- <79d4a7379bce245d22b56c677fd7b3a263836239.camel@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eqJPr//LdKHiEBluXwcO0ksqIrGzYxmLQsfj9L+EgdehJKyr2Bo9umBc80hXPz7a7u5qvFBeyxbKVtxYKXHD/RbnwkQHOO6hv9XW6NFD8pC4D27PLl2LmSVI3riiL21c55Vh9juvpQxqn2OxpN6bFsLRQsVFS+Zaem2UUTBjeU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mS1KI9z7; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761136616; x=1792672616;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=519d0VeYen3U872nHK3UtETEouG+0WfQUT+bzdECclI=;
+  b=mS1KI9z7iWIwZMrLmJMBp3fTe9H95fmtf7uluYiTjsQ3Fa2JSB3RFrgP
+   0f1tC8mVpW8PUiNLgZqwQPdljEz2COIE1+4riEwc4k/VVpHIT5SmRq5eh
+   D/p619DFik4S3RYZoKja1J5TYwnB8ERgijn9IFZwbxqFGcPH9Lt1ri1Au
+   FL1lJJNKAlXYnWSj8q7b/9BJsoLV4n3ZPxhQ0Fu7zArJYAmwW6QUd9SQJ
+   POlSFlGYXhpFdhGCht0FB3Q1tkyzvkNbwuk2HAjARYumB5ZTN9eQcTTnb
+   Vl2B5GBspgkMDQUehau/Ky73jiEeAkOnnoG0OMewscola5tSalkdR4OeF
+   g==;
+X-CSE-ConnectionGUID: 1soOzrU0Tf2hdAEGMOnLQw==
+X-CSE-MsgGUID: ki9pwadZSmGL77mHkNgFPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63184641"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63184641"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 05:36:56 -0700
+X-CSE-ConnectionGUID: O2hLd3INQPOD774tkoyccg==
+X-CSE-MsgGUID: MLP6/TwuRmqmdl5S69L/3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="189138728"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 22 Oct 2025 05:36:53 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBY58-000CMN-0Z;
+	Wed, 22 Oct 2025 12:36:47 +0000
+Date: Wed, 22 Oct 2025 20:35:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	David Collins <david.collins@oss.qualcomm.com>
+Subject: Re: [PATCH v2 3/4] regulator: qcom-rpmh: Add support to read
+ regulator settings
+Message-ID: <202510222018.4wv8ONuO-lkp@intel.com>
+References: <20251022-add-rpmh-read-support-v2-3-5c7a8e4df601@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,48 +84,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79d4a7379bce245d22b56c677fd7b3a263836239.camel@collabora.com>
+In-Reply-To: <20251022-add-rpmh-read-support-v2-3-5c7a8e4df601@oss.qualcomm.com>
 
-On Wed, Oct 22, 2025 at 09:26:11AM +0200, Sjoerd Simons wrote:
-> Hey,
-> 
-> On Fri, 2025-10-17 at 19:35 +0200, Andrew Lunn wrote:
-> > On Thu, Oct 16, 2025 at 12:08:51PM +0200, Sjoerd Simons wrote:
-> > > The Openwrt One has 3 status leds at the front (red, white, green) as
-> > > well as 2 software controlled leds for the LAN jack (amber, green).
-> > 
-> > A previous patch in this series added 2 PHY LEDs. Are they connected
-> > to a LAN jack? Are there multiple RJ45 connectors? Is it clear from
-> > /sys/class/leds what LED is what?
-> 
-> Yeah there are two RJ45 jacks. One referred to as WAN in the openwrt one
-> documentation (2.5G), which uses phy integrated leds. One referred to as LAN,
-> which for some reason is using software controlled leds rather then the phy's
-> led controller, which this patch adds support for.
-> 
-> When applying this set you'll get:
-> ```
-> root@openwrt-debian:/sys/class/leds# ls -1                                     
-> amber:lan                                                                      
-> green:lan                                                                      
-> green:status                                                                   
-> mdio-bus:0f:amber:wan                                                          
-> mdio-bus:0f:green:wan                                                          
-> mt76-phy0                                                                      
-> mt76-phy1                                                                      
-> red:status                                                                     
-> white:status                       
-> ```
-> 
-> Which is hopefully clear enough
+Hi Kamal,
 
-You can also get to the LEDs associated to a MAC via
-/sys/class/net/eth42/leds, or a subdirectory.
+kernel test robot noticed the following build warnings:
 
-Please could you expand the commit message with more details of the
-different RJ45 connectors, and how the different LEDs map to them.
+[auto build test WARNING on fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70]
 
-Thanks
+url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Wadhwa/regulator-rpmh-regulator-Fix-PMIC5-BOB-bypass-mode-handling/20251022-051042
+base:   fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
+patch link:    https://lore.kernel.org/r/20251022-add-rpmh-read-support-v2-3-5c7a8e4df601%40oss.qualcomm.com
+patch subject: [PATCH v2 3/4] regulator: qcom-rpmh: Add support to read regulator settings
+config: i386-buildonly-randconfig-002-20251022 (https://download.01.org/0day-ci/archive/20251022/202510222018.4wv8ONuO-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510222018.4wv8ONuO-lkp@intel.com/reproduce)
 
-	Andrew
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510222018.4wv8ONuO-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/regulator/qcom-rpmh-regulator.c:177 struct member 'status' not described in 'rpmh_vreg'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
