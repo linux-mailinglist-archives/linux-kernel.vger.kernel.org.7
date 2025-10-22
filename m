@@ -1,360 +1,231 @@
-Return-Path: <linux-kernel+bounces-864834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA6ABFBA92
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BCDBFBAB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BDDB19C8938
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A6E18C6999
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E359A33DED1;
-	Wed, 22 Oct 2025 11:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F374D33F8AB;
+	Wed, 22 Oct 2025 11:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhVgqssI"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Wk3ZUkaH"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010005.outbound.protection.outlook.com [52.101.61.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B850A33DEDD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761132907; cv=none; b=GiVaJA0bewVk0zvTxlZ491awYAp0FT+pe5ODc0j3+jT0KRDagjTM1xnIe+kP/QBM+9Z2dDwdGwChiOi7TWbuheBrYi2MmZcu7hAATy22AAdkoIg3gYhc5kdD5AMTIxJzLDaBST5j2Zz0hadQODXc5JQLBlyCDUbNF8iqW+/M/xA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761132907; c=relaxed/simple;
-	bh=+1jzj1FdbPB3v8jHy8/PMSpKosEhgj1bHkqnLiEO5sY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FK/nLGssU35btUkjxzV905VqNXZIYA++iPadwa9saT+UFbQiuEP2L4JpIaYk690EhkpywCk/LTQF8OQMM+k4L4axpQpyQ5xtUa0wyrVLCSAUYZcc6voKWdNnuPTaOK7izvYFLY3wYA4CyDtrsHYvy9oLJks9bG4eiiTeL3onMTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhVgqssI; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso1209995966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761132903; x=1761737703; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yO34qPsn7QHCTVDfDKcQas0jsSh3wLko8YufcBfx8as=;
-        b=jhVgqssI2ahk4Mi1fx3tWr2Gdz4nrLrxm7NjUwiGCgWCzxnSecnj2k9i4D8X71uX2f
-         7JW53WO5RJE4wxttW1XJnk2jLncrgB5O67k/iH/05KKnZhVMqZQtz4/rHb31WDbl4/IV
-         tfaEOk3VPlthvvwNCOzel7WIPMSYE97gEh+TPd6BpNxx5d3pfnM5A8xlFCLVb+spnbxz
-         hwa7reTtNXzEXD1dd6Cb7C777T3r+++OrVSzvL3/6Kxn4hRUR9/xYgW+OoqSngOOTji4
-         O2muijnz/HU4BVPRFEPIg9zCxicHrmBSNCpcDvn0+1gQDN6GsM7Bb5OyPm4m894c/3IO
-         mFGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761132903; x=1761737703;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yO34qPsn7QHCTVDfDKcQas0jsSh3wLko8YufcBfx8as=;
-        b=BpAIsQcJct2LeSCm9QK15ESA1yLaLRY2HLAnZo/+4W41ZMSUXTxVvV5C7c8QSqK3yS
-         MrZDwGKhOT1CCZ8Kw7+seC/qkTn2lYVvJcRXvD+od6voiRukpuBQ0OESmQZFD99vPY9g
-         OZT2R4rSkP+hW4ZYtRpq8clEC/qTtnhWQYEwHXQh4n0WMwlrl1uTHxPLBOyk3K0z3Sy2
-         wGeZhc0fMtVC6gEGKEhsS+FvZmtNYCl2Uw5MONouNeAIS3eEM+yqT38eauT4KsIHH3m9
-         FXZeXMJ6w+C0Tipuw4oypLuwDZoLIoEq5NjOF2u7id0FdsVAKDHIDOWWYPHlG/eJEaj3
-         rjvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZi+ML4BR5SbmmUDtHZRDO/MWVH8oVoXCIKr+U9QNCrQUtHxPpcvtcV1D+3adbfPJY9QN3d5bgq/HBe1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1Akd7Jb6rq3FevrF7neu9UP/x0o82O/a5p588gj1WtMC5YYlQ
-	X4t/Et2uTKvW/6IHvwvU5yRQHEIbv3JKIXfPHPHH7KZaUWuzSVnnP1v3
-X-Gm-Gg: ASbGncvi+erKJW86LC6qqmJODYIBBUkggUpNhf9LouzxqrCiaj57b92rJr7MNFpPYBT
-	1iMpBBSh68CPC2l7ewhz7bC4SxeFup32wcCqPGfzOGMqej6/tioaJynABEFHwN4/FNN/03A/rFy
-	gzIxuLdaa1oP3nsXuAuSUoKpK3Xjh9Up4jausj7TFpzo5l/q/yRdIJtAjjzXP5ZWMH6mU/VBoJk
-	jcrkCAPdRKvh1cc64TLr6A4vz7UQf6dFtdkOpe80eG8WB1JzCoC5luyj1qq8xbYsvY1p9sbWEUy
-	069gTjdMxD/1s+PDNGo2j5pA06nBILEEkuB0ZIROeqH4enSp2aVEY69jvsrCXFbWnlgUOLJpyf8
-	u039xbOuitOX1gj9BkWTp5mS0ZVFvM+VkJRkSJgJhfkT0WQicf7gsgdPWMmb9guDPTD9+8LblHB
-	WZ0It8agyimWdtvhnojBi2eBLgglvGANyoVT5BKTDP8B4=
-X-Google-Smtp-Source: AGHT+IHfqiWBy7zfGoCqLQpI11jm6dwQ/WE7NiaPb8Gr8GzjB9HYaKJgVjiXf/jFs4wJwPRiCS9gYA==
-X-Received: by 2002:a17:907:1c82:b0:b4e:a47f:715d with SMTP id a640c23a62f3a-b6472a6a145mr2430377866b.17.1761132902443;
-        Wed, 22 Oct 2025 04:35:02 -0700 (PDT)
-Received: from [10.25.209.134] ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65ebb4dcf2sm1303250766b.75.2025.10.22.04.35.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:35:02 -0700 (PDT)
-Message-ID: <804dd1f5-7e79-4bfa-b777-c97bb89a713a@gmail.com>
-Date: Wed, 22 Oct 2025 04:35:00 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA0132A3E5;
+	Wed, 22 Oct 2025 11:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761133105; cv=fail; b=N85zPHVKiqlF0BPcmZtn1Nkwq3moYc3bH09YcLuJVOeDQ15rDFMf0iDdxxGXq9pxaPM15EPTsS+aCzs/shX8AT2qWPRau6t3E6wsFjqEwGxqng7RMz3toA/WNQA6cw1WuM0/GmgnUcYvuprBfdOGbz6HbbJ8fbRtJf+Ry6pdHTU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761133105; c=relaxed/simple;
+	bh=QD5sKv+t+FkdFQ9bNLJlZ1s+ryO36WpM/UoCnXPqNJo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ta576te1rIwsLHM1Rl2z2xoSUolwgq9FBalLVbvjMj9k9ua5Df3VpaAahsUC8jXyujdbJEIpHzgm+5zvBADHFWONEVBox3ki4zRagmzbCm/0+4X4CDDI8/OCYSyHjc/j2MrXMxUZaQBcJ1su4gWRNnpTIuHtsIC6k6O4Jj88PT8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Wk3ZUkaH; arc=fail smtp.client-ip=52.101.61.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O3O7fg1ii4N5neFtzUj8jkHznWYktmyBoHerOBBifPFxdWw/XCRpuLnaIDrD56W6ltIr21dL3cHzTAfbfiR1pDucV53+Ueia42XHEbc2RPRvBhJj84vhnIMOk5EgC4arEVNsqOhTP7fRt73DOitVhcdeWVVTwH/cYyaH9dSn/eeIoq1wh724GeyYwB5ffVGEZIfij9PC8dsPRAA2wnNBiz/EGDXeMlyiz6Vjd0SiavyIGR3TckrPwXcapDJlF1ANlh/bplIbmfhNxjwR6Vny2h83YXxnKIEbeX5XUpKZwP1I6DqBZCIzLX8ykhKrUoSFvFOlqaG0zugma7R9cu1B7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QjHYUnntTKHvZLJJhPO2JhDY5/OopOUCuY0HJbQE8AY=;
+ b=weMG3LUMqoj4jwpbC+b86YFOeTE95KHQDeVbt2e2xh2/wAAFy/C94miGkvNgl0g1jct2D8gS170J26e+lvWSGBoZvZ8/YP/9QrXZ7LOhgdLm1cChuTLtTHQmJJpDe1nJjMWoaamEVQJdSMiaBCsR8zJRJfipn8pr5bl1suOSVfuodV/Ntj4UN/289D/3bPTDzqvAVxd82kASWiqhQc0REXfPZHEc/zs6lroR8d6wkiKWButnXhWJ4x516+3/b4Vs9Yi2NSBRdoIrL9ATyHZepyEo1Qck6h5gFS+p0AYxX/217nYoQr8cuGdjsqAl83N/aLd7eI1DS6xjSgJVU5DDKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QjHYUnntTKHvZLJJhPO2JhDY5/OopOUCuY0HJbQE8AY=;
+ b=Wk3ZUkaHqW9ykZbf3Fy/ijGpdpKazJONWoJicvcfoBV+eV0XjA0hfsSbajv8z2fxMslrdfBWYQL3v+ZtZhNoKtKDJDqu6vZ+WJnWll+tBjsziMc15o0CJedmdZfhEhWS9D+cyaT0pIEOOr2g0l/sBstfvJLCbE37RRwO0Y085JH/Ssx3PazdwJV1cfiU1q5TKztdIpUF6aPAlY9t0WcS1LDIzlgR3rp+FWKTt25q/kOZcDDlYGvLG1CBPfqKBZWRuDT6XM9hmTxsBN7nOb9cKzogzHTvxlrARKYvJvMuWwcKLk/6VGU7YI6rDjBFaBIuTLfHxEbILUL14VTIgIej5g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL0PR12MB5505.namprd12.prod.outlook.com (2603:10b6:208:1ce::7)
+ by DS0PR12MB7654.namprd12.prod.outlook.com (2603:10b6:8:11d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 11:38:20 +0000
+Received: from BL0PR12MB5505.namprd12.prod.outlook.com
+ ([fe80::9329:96cf:507a:eb21]) by BL0PR12MB5505.namprd12.prod.outlook.com
+ ([fe80::9329:96cf:507a:eb21%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 11:38:20 +0000
+Message-ID: <ae854fd5-dda1-416a-9327-ac8f9f7d25ba@nvidia.com>
+Date: Wed, 22 Oct 2025 14:38:17 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net V2 2/3] net: tls: Cancel RX async resync request on
+ rdc_delta overflow
+To: Sabrina Dubroca <sd@queasysnail.net>, Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+ John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gal Pressman <gal@nvidia.com>
+References: <1760943954-909301-1-git-send-email-tariqt@nvidia.com>
+ <1760943954-909301-3-git-send-email-tariqt@nvidia.com>
+ <aPemno8TB-McfE24@krikkit>
+Content-Language: en-US
+From: Shahar Shitrit <shshitrit@nvidia.com>
+In-Reply-To: <aPemno8TB-McfE24@krikkit>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TL0P290CA0001.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:5::15) To BL0PR12MB5505.namprd12.prod.outlook.com
+ (2603:10b6:208:1ce::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] reset: imx8mp-audiomix: Switch to using regmap API
-To: Frank Li <Frank.li@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
- <20251017112025.11997-6-laurentiumihalcea111@gmail.com>
- <aPJXdPVrofYGQgIP@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <aPJXdPVrofYGQgIP@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL0PR12MB5505:EE_|DS0PR12MB7654:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52311fd6-4bde-408b-5bd4-08de115f7fff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R3F6NnZqbWR5cFpzNUNIdDloemh4YVZvSmxFZFdLdzlOQU1BS3lYSThDYWZU?=
+ =?utf-8?B?eUxIQTVxbU5vK0hxelR0VDlKVXZKMkR3QmFFSUZUZ0g3d3B6YWVFM0ZBalFj?=
+ =?utf-8?B?T2xUd3kzcVZrR1VtNERkNnUyOXVjZ1VWYStxWmpFdExlUzA1Q1ZzTTBpUG1x?=
+ =?utf-8?B?WG1NUGxBemRzUitkcXpMemwzdG04Ry8rRVhhcGZRNWlNdnhEN0pEeTRIcVJi?=
+ =?utf-8?B?VVZIclh3RGRHd0pJNEpzNGllcHQ5eVVCUUZRWTJBNWdOSHRyaENMTEsvNS84?=
+ =?utf-8?B?LzNncFJ0NFIwR2lSN3hma0JVc1U1Q0VNMXVUaWhlU3FIZ2JoV2VoRU4yQ3B3?=
+ =?utf-8?B?S1NHekl3SlVDQUFkMVhmc1hsTGo3a2ZmSm5GWm5nRW5QakZuMGdabTc5Uk51?=
+ =?utf-8?B?WHZIT3U1NTZYQjhLRmJUdHd5d3JnOUdKa2EybllTTW5xVXB3VEt4ZGpvRkVO?=
+ =?utf-8?B?TDIvdkdOTHVwUkZOMEI0RWwxOGtSdGNsV3hyYXRnOCtVTFVmZFl4SmNBaFMz?=
+ =?utf-8?B?b3VJVTMxdkIzdmN1R0gvc2NZQVluUkpvMjk2cFd0VTh5TXJLejJGTmV3TGNj?=
+ =?utf-8?B?SVJJL1pMalRuK2JtaXVKNlA3ZllYc2ZBMkZ5YkN4R2h2dXJEZUtRSjFEYlhi?=
+ =?utf-8?B?T0N2alJkR0wrdWJuREI1aCtTSHBTbENUUmhLVnJDa2MxNXMwODlDRlZ5UmF5?=
+ =?utf-8?B?Q2srM3NkNmZCdWFRZytOZ0VaeFFwYUYvVHpiazA3SG1WMmFrZ3NSTEg4TmxH?=
+ =?utf-8?B?NkFTRFFscTFRRWlMRVBhSW52ODN5ZDFFeFUyWWdsU0J5YzhHeHd6UjdyNFNw?=
+ =?utf-8?B?UTZaaVNDaDRCOHRoeGY0RU95c3A1RDZvTmJOc3ZNaFF2aXo0ZGVxajU2aHR3?=
+ =?utf-8?B?SjcwSVFobnlMbXNGaFZNZWdIT054cWdFSHFQbUJEZzUyNTM2V0FWMlJFMVdC?=
+ =?utf-8?B?WHVsOHorazdZUXZGYlhyNGd3V2FLS2JhQ2xGK2RhWVpIMllJVlhhK0ZacWpU?=
+ =?utf-8?B?UW9XV3J6SlRnVlNGVlBmbTZvY05GMC85OFJFejVzMm9nTHFzaHd2ZDZxMFRD?=
+ =?utf-8?B?anlFbG5yZGtDMjFUNjZKcE4rNUZFZjhjVzVFMFpnVGFEay9HY0hCUHVybkw0?=
+ =?utf-8?B?ZTZ4WEZZNWRVbGRsTlA0RHlqVlJXeDgycmlveEE2dE1mcjB3Y0ZVMlF1WUo5?=
+ =?utf-8?B?Nk5sN3MyVHhubmxSOFlNUjluM2JseFQzNkh0aVU0MmlaWWJMUVRHSXZQOU1Z?=
+ =?utf-8?B?TWxHS3dXMDVyN0NQZDRKc0dJbE9tSVhuV0g3WDBjRGZxejBJdWJCZ0RuWTRP?=
+ =?utf-8?B?MWw1UWc0MFZFblkxYy9pa1J3M1gvSWlLc1FaQW9CbVppNEY0NVlBYmI2blVD?=
+ =?utf-8?B?SkJNYlhseUpUN2M4K0Y5TkVDTUZEQkI4NVJCd1o4WVUybXU5a0VTdGhMSnor?=
+ =?utf-8?B?MWdBUHNmUjRsVXIzZ3hWZ0w2aWtPbUtFeUd5WjhxT2l4Vm5udFJMQXJvdlF6?=
+ =?utf-8?B?U2g1aGxuanQ2UmJJZXVCTVZDR0MxMFJLUWFqVXlLN01FTFltaytiQnF0WXpz?=
+ =?utf-8?B?Y1lMMnNYVTF5NWFINHM2SmtCNlozR3hob1N5c2tZbGRMWXNOMXRYeDB2MzhF?=
+ =?utf-8?B?cGtRSm40bzc2bGtwN2FrV0ZuUTVkY05HTUNPUzJIeE1ObjlNMVYvUllia1Jk?=
+ =?utf-8?B?Y2FBSi81RTNsT1NEeW92SlFQYUJOdjVha3BhSmVBck9pZWlkMW9qc0x3WUll?=
+ =?utf-8?B?MEVnRDZHbm40a0Y4Ty9HLzJCSEp0S25iTG8rbDNsS0JDOSthTnN5LzVYQW5r?=
+ =?utf-8?B?OGFNUjJPRFNySFExV0R1UEcxVUZSQlFLN2pKdlBkUkFrUEhoZkxUQ1VoQWZY?=
+ =?utf-8?B?MDdKTG82TElhMFNGdXljY0xJR0ZyR3pRcFdPTHNYYXU1ckl5N3FVUkdBWVFy?=
+ =?utf-8?Q?2EqB7aYpWzqQFX/M+jxulUcdLgArWzNX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB5505.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QmZOTlZzZGxnd3RvUnRYZ0hJMEowTWNsQW8vdU5XeGhIek1OeG9ZelFxN2pl?=
+ =?utf-8?B?cGZaOHlSenFVa2RJZjVSeVU2dWNDS1pidXRmaW1kdU1aeEIwczZGOWQyZVl6?=
+ =?utf-8?B?T1JacjNENUR3VVBYUWRsdkNJeFdCeEtaMnRHL1VUZmpxRTVMNThFVDhWdkpu?=
+ =?utf-8?B?M2VRRFFReC9zWjJTekhzUlROc0FJR1kwVlg0bk8zWkVYZjZ5cUdPck9VZ2ho?=
+ =?utf-8?B?SVc0Q3dGZXJ2WlZQN1RrSnRwOFNSc2FYL1RzOU5LQW14NElkVjhzcUMvQWhC?=
+ =?utf-8?B?cVRaQkQxRlhtWHBrU1FEbkFBVUZObzYzOWxxVWdBSEpCekFadnV5SFNPejRR?=
+ =?utf-8?B?QkkxT1NUTVR1OGxKeVRXQkU1NjhUZWI1YUZFZkRSUTVxODJtZkRpL2hiNncy?=
+ =?utf-8?B?STJMV1NsdW0ydXpJblk0dHJVL3diU0JkLzV0QVhITmRWWTEyZjF5SmJWMVhW?=
+ =?utf-8?B?SEI3cnNFM0tJL1ZFMDcrYm1pSFk0NW8vR0lvUlY2a1VtZWpyTTNkMENMNDhF?=
+ =?utf-8?B?MCtteHVPa2U3Y3FzeXNHcldsUmdQaklvNEJ4RUhFeWRkdWxEZy9BdWgrMEla?=
+ =?utf-8?B?RExyYWN3UEJPMTNyVWpiTUlrY1hVOTg2alJBeEkzWkdXTFF2YjVMYlFlUm8v?=
+ =?utf-8?B?ZG8xYzNHTWtwQk1IOWh2V0dVQzQ2MnE5OVFnc2diUERHaVdsMjRQR2RlS2Uv?=
+ =?utf-8?B?b2FLUnltc1JmM0V3ZTg2RDd2Y0FVT2VZZkpyVTR5a1A2bndiMnIwZzA5dUVE?=
+ =?utf-8?B?aU8yN253b1F6QnMyamRudFlWOGxVc3ZXaFlNU24zVWVNc0VjZUc3V0tUOUx0?=
+ =?utf-8?B?SDVRUXBPNFNYc3lBaG9RRkUwTm1KNlcxUW1TU1JlWXhmY0F4VjRKTUpzL3BC?=
+ =?utf-8?B?Z0E4WUpuNm1hVWFwdmxFUnNnT3Z5OWRPTGdOMEJRMm9yTTI5TGhnekdTdmZj?=
+ =?utf-8?B?OW9CK3BZcGU5Sjlmc20rbVM5TFVjRlhRZTkzaFg0a1gwbEZISlhRcFMwSlRz?=
+ =?utf-8?B?QXFmMnhmUjI1aUw5QjRrdUxCQ3ZwZzJ6cmJKOVV3YmVLaE1KeGhoY2VZQTlL?=
+ =?utf-8?B?WGgxVFhQUGNTVjNLTm96OU9sekZVNWFWTjRLRnJ6QlpkZE90QnJmVXViV0Ni?=
+ =?utf-8?B?TU1Xb1duRDRDSmZzTmoxdk83aVVUNzA1THRic2ZMY1F3ektPeG9RYnZEV1E1?=
+ =?utf-8?B?bEdTczNhRjVGRitBdEQybWwvbVFadm5iYTA1bUhqd2dOZ3dDVXhxWDFkYlcv?=
+ =?utf-8?B?L29GbzJGcVhSMDIwbHJRQjRhNjlkQTNZbFIxRldPRTFnZkErS2pLcS9NMGpL?=
+ =?utf-8?B?dHZGS214YmhJZzAxdWlEY2NuVHBtU0JQZ3J3VEVtMFpRdWw3YnhYTEpvYmdQ?=
+ =?utf-8?B?V0E5OWlkWURYV1VScDU5WllUQ0RqVm5OOThYSnhkZXpCODZwdjJqdE5EUkJE?=
+ =?utf-8?B?RExsVVN2OFZsQmtuT0k3QnNLR3VGbS82L3FzZUVJb0hTSFBiR1pBUC9FdU1z?=
+ =?utf-8?B?eitkTW5vRmdCR2g1OURTbUpmeEdoTDEvTmVuOVUvdE0wOGJVZG5CL3dwcy9I?=
+ =?utf-8?B?MHREcEF1VG9GQU5IR21wVW44NkRYRFAydThUZUNGSmY2WDNEWkxrOGRUcjdE?=
+ =?utf-8?B?Rll0UWpCRExqbnR6cXRtUkt5MmtIZ0xreDRFNXpRQWt3Lzk0dnVidHFESDMw?=
+ =?utf-8?B?VFNFS0NsTzZlbGttRUdhOFpZN0FmMGFTYXRtMDA5UTVSUHhSQUpvc3VKNFRl?=
+ =?utf-8?B?cS9FdE9EVUNHU0kyM3ltdW5XNDM3YkVFOWRSak1XYkQ3dkxvejhhZW45L1gy?=
+ =?utf-8?B?VWdQb2kwYWJSTlQxT0FCVGlhMWlxV3pKSlg5MVVUS0dnT2RzUzVtZTYwQW9I?=
+ =?utf-8?B?amp3V0Y4d1NFUWxLdzhJcVJaZm9WbkZqWGxwRk5uNWtGRWZiVWNYbTFDcWNI?=
+ =?utf-8?B?dWsrNlVnczNNT3JUcVI1dEg4SE9HTkdVR01ZdG9XbnUySFlBNGFpdWZKNlh1?=
+ =?utf-8?B?UEd0Mkhvemg3Q2VYTjBLZno0V0NiWHlEdkdTSitoL245Mk5uK0FtaklockNY?=
+ =?utf-8?B?bXhTSkdUN1A1dklWRGdqdnFpNDZEeUoxZU5rR2ZRNUphM1NDMHdTeHoyeURU?=
+ =?utf-8?Q?dBfdu0bpHVB9DsN3R7EZFz5/9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52311fd6-4bde-408b-5bd4-08de115f7fff
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB5505.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 11:38:20.2638
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k/g1nRgZ0Jd6dZTNXyr57RuH7JFz3nV9HDYSh/sMxRQC5dqToYD0i+9orfr4MED1mBIRDNaFf/Uwbji9jBStLg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7654
 
 
-On 10/17/2025 7:49 AM, Frank Li wrote:
-> On Fri, Oct 17, 2025 at 04:20:22AM -0700, Laurentiu Mihalcea wrote:
->> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>
->> As far as the Linux kernel is concerned, block devices such as i.MX8MP's
->> AUDIOMIX block control or i.MX8ULP's SIM LPAV can simultaneously act as
->> clock controllers, reset controllers or mux controllers. Since these IPs
->> offer different functionalities through different subsystem APIs, it's
->> important to make sure that the register R-M-W cycles are performed under
->> the same lock across all subsystem APIs. This will ensure that registers
->> will not end up with the wrong values because of race conditions (e.g.
->> clock consumer tries to update block control register A, while, at the
->> same time, reset consumer tries to update the same block control register).
->>
->> However, the aforementioned race conditions will only impact block control
->> IPs which use the same register for multiple functionalities. For example,
->> i.MX8MP's AUDIOMIX block control IP provides clock gating functionalities
->> and reset control functionalities through different registers. This is why
->> the current approach (i.e. clock control and reset control work using
->> different locks) has worked well so far.
->>
->> Since we want to extend this driver to be usable for i.MX8ULP's SIM LPAV
->> block control IP, we need to make sure that clock control, reset control,
->> and mux control APIs use the same lock since all of these functionalities
->> are performed using the SYSCTRL0 register.
->>
->> To do so, we need to switch to the regmap API and, if possible, use the
->> parent device's regmap, which, in the case of i.MX8ULP, will be the clock
->> controller. This way, we can make sure that the clock gates and the reset
->> controller will use the same lock to perform the register R-M-W cycles.
->>
->> This change will also work fine for cases where we don't really need to
->> share the lock across multiple APIs (e.g. i.MX8MP's AUDIOMIX block
->> control) since regmap will take care of the locking we were previously
->> explicitly performing in the driver.
->>
->> The transition to the regmap API also involves some cleanup. Specifically,
->> we can make use of devres to unmap the device's memory and get rid of the
->> memory mapping-related error paths and the remove() function altogether.
->>
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> ---
->>  drivers/reset/reset-imx8mp-audiomix.c | 95 +++++++++++++++++----------
->>  1 file changed, 61 insertions(+), 34 deletions(-)
->>
->> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
->> index e9643365a62c..c74ce6e04177 100644
->> --- a/drivers/reset/reset-imx8mp-audiomix.c
->> +++ b/drivers/reset/reset-imx8mp-audiomix.c
->> @@ -11,6 +11,7 @@
->>  #include <linux/module.h>
->>  #include <linux/of.h>
->>  #include <linux/of_address.h>
->> +#include <linux/regmap.h>
->>  #include <linux/reset-controller.h>
->>
->>  #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
->> @@ -19,6 +20,7 @@
->>  struct imx8mp_reset_map {
->>  	unsigned int offset;
->>  	unsigned int mask;
->> +	unsigned int shift;
->>  	bool active_low;
->>  };
->>
->> @@ -26,24 +28,27 @@ static const struct imx8mp_reset_map reset_map[] = {
->>  	[IMX8MP_AUDIOMIX_EARC_RESET] = {
->>  		.offset	= IMX8MP_AUDIOMIX_EARC_RESET_OFFSET,
->>  		.mask = BIT(0),
->> +		.shift = 0,
->>  		.active_low = true,
->>  	},
->>  	[IMX8MP_AUDIOMIX_EARC_PHY_RESET] = {
->>  		.offset	= IMX8MP_AUDIOMIX_EARC_RESET_OFFSET,
->>  		.mask = BIT(1),
->> +		.shift = 1,
->>  		.active_low = true,
->>  	},
->>  	[IMX8MP_AUDIOMIX_DSP_RUNSTALL] = {
->>  		.offset	= IMX8MP_AUDIOMIX_DSP_RUNSTALL_OFFSET,
->>  		.mask = BIT(5),
->> +		.shift = 5,
-> why need shift?  you can use ffs(mask) to get shift.
->
->>  		.active_low = false,
->>  	},
->>  };
->>
->>  struct imx8mp_audiomix_reset {
->>  	struct reset_controller_dev rcdev;
->> -	spinlock_t lock; /* protect register read-modify-write cycle */
->>  	void __iomem *base;
->> +	struct regmap *regmap;
->>  };
->>
->>  static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct reset_controller_dev *rcdev)
->> @@ -55,26 +60,15 @@ static int imx8mp_audiomix_update(struct reset_controller_dev *rcdev,
->>  				  unsigned long id, bool assert)
->>  {
->>  	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
->> -	void __iomem *reg_addr = priv->base;
->> -	unsigned int mask, offset, active_low;
->> -	unsigned long reg, flags;
->> +	unsigned int mask, offset, active_low, shift, val;
->>
->>  	mask = reset_map[id].mask;
->>  	offset = reset_map[id].offset;
->>  	active_low = reset_map[id].active_low;
->> +	shift = reset_map[id].shift;
->> +	val = (active_low ^ assert) << shift;
->>
->> -	spin_lock_irqsave(&priv->lock, flags);
->> -
->> -	reg = readl(reg_addr + offset);
->> -	if (active_low ^ assert)
->> -		reg |= mask;
->> -	else
->> -		reg &= ~mask;
->> -	writel(reg, reg_addr + offset);
->> -
->> -	spin_unlock_irqrestore(&priv->lock, flags);
->> -
->> -	return 0;
->> +	return regmap_update_bits(priv->regmap, offset, mask, val);
->>  }
->>
->>  static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
->> @@ -94,6 +88,50 @@ static const struct reset_control_ops imx8mp_audiomix_reset_ops = {
->>  	.deassert = imx8mp_audiomix_reset_deassert,
->>  };
->>
->> +static const struct regmap_config regmap_config = {
->> +	.reg_bits = 32,
->> +	.val_bits = 32,
->> +	.reg_stride = 4,
->> +};
->> +
->> +/* assumption: registered only if not using parent regmap */
->> +static void imx8mp_audiomix_reset_iounmap(void *data)
->> +{
->> +	struct imx8mp_audiomix_reset *priv = dev_get_drvdata(data);
->> +
->> +	iounmap(priv->base);
->> +}
->> +
->> +/* assumption: dev_set_drvdata() is called before this */
->> +static int imx8mp_audiomix_reset_get_regmap(struct device *dev)
->> +{
->> +	struct imx8mp_audiomix_reset *priv;
->> +	int ret;
->> +
->> +	priv = dev_get_drvdata(dev);
->> +
->> +	/* try to use the parent's regmap */
->> +	priv->regmap = dev_get_regmap(dev->parent, NULL);
->> +	if (priv->regmap)
->> +		return 0;
->> +
->> +	/* ... if that's not possible then initialize the regmap right now */
->> +	priv->base = of_iomap(dev->parent->of_node, 0);
->> +	if (!priv->base)
->> +		return dev_err_probe(dev, -ENOMEM, "failed to iomap address space\n");
->> +
->> +	ret = devm_add_action_or_reset(dev, imx8mp_audiomix_reset_iounmap, dev);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "failed to register action\n");
->> +
->> +	priv->regmap = devm_regmap_init_mmio(dev, priv->base, &regmap_config);
->> +	if (IS_ERR(priv->regmap))
->> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
->> +				     "failed to initialize regmap\n");
->> +
->> +	return 0;
->> +}
->> +
->>  static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
->>  				       const struct auxiliary_device_id *id)
->>  {
->> @@ -105,36 +143,26 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
->>  	if (!priv)
->>  		return -ENOMEM;
->>
->> -	spin_lock_init(&priv->lock);
->> -
->>  	priv->rcdev.owner     = THIS_MODULE;
->>  	priv->rcdev.nr_resets = ARRAY_SIZE(reset_map);
->>  	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
->>  	priv->rcdev.of_node   = dev->parent->of_node;
->>  	priv->rcdev.dev	      = dev;
->>  	priv->rcdev.of_reset_n_cells = 1;
->> -	priv->base            = of_iomap(dev->parent->of_node, 0);
->> -	if (!priv->base)
->> -		return -ENOMEM;
->>
->> +	/* keep before call to imx8mp_audiomix_reset_init_regmap() */
->>  	dev_set_drvdata(dev, priv);
->>
->> +	ret = imx8mp_audiomix_reset_get_regmap(dev);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "failed to get regmap\n");
->> +
->>  	ret = devm_reset_controller_register(dev, &priv->rcdev);
->>  	if (ret)
->> -		goto out_unmap;
->> +		return dev_err_probe(dev, ret,
->> +				     "failed to register reset controller\n");
->>
->>  	return 0;
->> -
->> -out_unmap:
->> -	iounmap(priv->base);
->> -	return ret;
->> -}
->> -
->> -static void imx8mp_audiomix_reset_remove(struct auxiliary_device *adev)
->> -{
->> -	struct imx8mp_audiomix_reset *priv = dev_get_drvdata(&adev->dev);
->> -
->> -	iounmap(priv->base);
->>  }
->>
->>  static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
->> @@ -147,7 +175,6 @@ MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
->>
->>  static struct auxiliary_driver imx8mp_audiomix_reset_driver = {
->>  	.probe		= imx8mp_audiomix_reset_probe,
->> -	.remove		= imx8mp_audiomix_reset_remove,
-> cleanup imx8mp_audiomix_reset_remove need seperate patch.
 
-
-as things stand now, this bit belongs in the same patch as the switch to the regmap
-
-API because of the introduction of imx8mp_audiomix_reset_get_regmap(), which
-
-uses devres. This makes the remove() function incorrect and, thus, needs to be dropped.
-
-
-since the cleanup is quite trivial, I don't think this would justify purposely
-
-making imx8mp_audiomix_reset_get_regmap() not use devres in this patch
-
-and then transitioning to it in a subsequent patch.
-
-
->
-> Frank
->
->>  	.id_table	= imx8mp_audiomix_reset_ids,
->>  };
+On 21/10/2025 18:28, Sabrina Dubroca wrote:
+> nit if you end up respinning, there's a typo in the subject:
+> s/rdc_delta/rcd_delta/
+> 
+> 
+> 2025-10-20, 10:05:53 +0300, Tariq Toukan wrote:
+>> From: Shahar Shitrit <shshitrit@nvidia.com>
 >>
->> --
->> 2.43.0
+>> When a netdev issues a RX async resync request for a TLS connection,
+>> the TLS module handles it by logging record headers and attempting to
+>> match them to the tcp_sn provided by the device. If a match is found,
+>> the TLS module approves the tcp_sn for resynchronization.
 >>
+>> While waiting for a device response, the TLS module also increments
+>> rcd_delta each time a new TLS record is received, tracking the distance
+>> from the original resync request.
+>>
+>> However, if the device response is delayed or fails (e.g due to
+>> unstable connection and device getting out of tracking, hardware
+>> errors, resource exhaustion etc.), the TLS module keeps logging and
+>> incrementing, which can lead to a WARN() when rcd_delta exceeds the
+>> threshold.
+>>
+>> To address this, introduce tls_offload_rx_resync_async_request_cancel()
+>> to explicitly cancel resync requests when a device response failure is
+>> detected. Call this helper also as a final safeguard when rcd_delta
+>> crosses its threshold, as reaching this point implies that earlier
+>> cancellation did not occur.
+>>
+>> Fixes: 138559b9f99d ("net/tls: Fix wrong record sn in async mode of device resync")
+> 
+> The patch itself looks good, but what issue is fixed within this
+> patch? The helper will be useful in the next patch, but right now
+> we're only resetting the resync_async status. The only change I see
+> (without patch 3) is that we won't call tls_device_rx_resync_async()
+> next time we decrypt a record in SW, but it wouldn't have done
+> anything.
+> 
+> Actually, also in patch 1/3, there is no "fix" is in that patch.
+> 
+
+I agree about patch 1/3 so I'll remove the fixes tag.
+
+For this patch, indeed at this point the WARN() was already fired,
+however, the bug being addressed is the unnecessary work the TLS module
+continues to do. For my liking, the wasted CPU cycles and resources
+alone justify the fix, even if we've already issued a warning.
+What do you think?
 
