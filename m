@@ -1,89 +1,55 @@
-Return-Path: <linux-kernel+bounces-864041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499D8BF9C7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:06:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADAF1BF9C81
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2C218C78F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:06:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CB774E7416
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC5D224893;
-	Wed, 22 Oct 2025 03:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5018224AF9;
+	Wed, 22 Oct 2025 03:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1ILQ9Gy"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXygpsp2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABEEBA3F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E61222597
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102362; cv=none; b=UL8P5nfL0NSi4+q2xHzucMyX1ePYtKhsRyaRiyKR+IhE6n+c36gCyf8nZu7vuumK/RYCj/9pa+MeqIiYChClLo25O8W9sPaRWMRiDjKmzzx6gfh7h+JxncGUQU6VJuuiGjd5r66TSSR0wHf1qz4oJhKaIQpSBA1+t2t3MbAHLo0=
+	t=1761102407; cv=none; b=jxJOR5R9wWKpvQce+md4YRWzuUxXceYG5K9p5naOnEq2pmCYob+NU90+X2GtJ5AGCAlNOQk/VJtt344ugNnxVLWj1jQmOplphNdwGH1hQyMeZDXgpxRyNxIFBW/m87CnUnFJ0/pkPJnyPOKvYk+QA4WCb4p49BwraYkETnCLiUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102362; c=relaxed/simple;
-	bh=hDKcO+6tpTx+vDwFCsnE/KqKIMKRHk43B2xmWcILIeI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pkLscbm8FkEHWGdWErME5xUUwhYQtPGipYkMXL2WLFqAoFOSGxp1NUoc+6mfYM4dHVpGS1giwM0MgSXgX9yjSHYBX/d4rq/Hua6WAwWzh1V3zqopdqFVcvTfzJX1UAIqXSpk2XTUsFgmx4tWUhbWeQr4GiS4LuAhItdlXpj8zZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N1ILQ9Gy; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-940e06b4184so257353739f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761102360; x=1761707160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ISiPvSTNn3o9NNdr1WqejjfJYooOZ4Dr+K+ubbeMFdo=;
-        b=N1ILQ9GyoYWu78c+23T3lRiFF3AuRglExibXz+8nVLA4fxWBCxM01aaZGlO8fYecla
-         h6UEyXfjNKUtxdBdgOSPnFTtoWxJgx4/lCbiKmy5BvhgliviBW+76NTKXvMz0hW7eG59
-         RrbXHFrJdbbvuWUF1e7KJRIJbNANoTugQapJmSWir+Rzr0q8qVIkMSNJjx+3sUk0XSri
-         CIPY8WvYcMnC8RFzIyaYDw0GjQWD1XgkUVzoWvepSSldoJa7bqqQEnN7lIIQfA4/oOvU
-         gQb3BVIDqTQp//jVVbTplSz2IcqOiYBT7N5UlBBo63wjJDn3ize+mQvMFlJQd7dQSuh3
-         YBzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761102360; x=1761707160;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ISiPvSTNn3o9NNdr1WqejjfJYooOZ4Dr+K+ubbeMFdo=;
-        b=e93tf7ARqQyTMjS81zegqjbKboaQmxpgTRC60qBGGvSLfWxPZ4+3DxUpNyXOAjNQzT
-         5tsngHd+5VpMgn2pTZj/CGQJPT8IGzV8h7aL8AQMOdrSeyr/q1osQK4yyGSsE8G9i364
-         8fdjn8AJ+fQ2XaE3ZrvE2BfUg2ZmvQL2mxeJ0nZmChaqRsrPCHMH0JWm7OSggqkUsjvg
-         J+pLZ7tAvKcOAgCBODE1xJZuzoqM1wZR6TA5wV4BBCp4oCLNjGeVdGSbDnIyq8vJ8QCf
-         w+zEoUIhmMLRoNNzUWMm8pZ4/cm/ngYuwerH+jdVA58qUdsIZY+u4CL4QSrHA8kgzAUP
-         oYpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQp7ggfTaWG01SmklqV0TkZcnLuvRB1iCo2oII6Fo+kmC0t2GnLsXySSTYbkUaOt9TbEeZSpsNLLZIiDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkpH8Un1/oI8BRvhaE5u7RiagpgxK/Nk8MQLqqYk2EmYkT0Ztp
-	lVi5QPkJTA9cqAtYa0Omf/9iLY2l7x9Xh93Y37X65lJezvHQOyKsRfz/
-X-Gm-Gg: ASbGncshMzmb5i6PEUsdUZMZSAUI7x37h45Zu3b8wq5FMM5bHfDHnKIn0sylE3IpFYG
-	gXWvzMVEfD1mvkcoCsI5nNFtJ/tMprqzglmeZIoJgollR/j4splE8IPx8bIexIWQn0wWXM7khoe
-	6CHe6CBre7MiSnup1Cyn7cV1LNtMEceFjnA7TY/PcTafhuZJnnBcEc7F59iCXp/Fp4kQGvzPWGh
-	nGrzzrHBUwjWLdOpNSF/X3EahQrVGI0OMzLCAoJX/oW3LwpVLNkU/5O3QmcT64YERn1W/fSTJVM
-	bzW15aQLWntmnhf3y2j8UxMVGWxSs1z5XH25GeBxpKLnWZd0F3JwtxVnE/9wKceOHCxUI2503PZ
-	g8tcbWhxNZKiiyz/e5r6sYGdlRRWDTr16tzKx8icatG9IZ1WLkWMIsVWwC5G0ck4HCa5YfK4Bgu
-	hk/zwJ76lM9QhqtOTjgB/1kIFMyiK6PdBtBsRjO/4V9kV/MaxpgTca8Y5rvpWZOVhoHJ007f0Nq
-	GHiSD82WmhiYkM=
-X-Google-Smtp-Source: AGHT+IFpvoNVvIuGVZW7pKGl+iuAsqMxWnZwpLG8jZoAPt99z8wOXTWWP+d/25uNt9wvltkWSFCgDw==
-X-Received: by 2002:a05:6e02:1945:b0:430:ae8a:40ae with SMTP id e9e14a558f8ab-430c5293567mr299326415ab.15.1761102360195;
-        Tue, 21 Oct 2025 20:06:00 -0700 (PDT)
-Received: from abc-virtual-machine.localdomain (c-76-150-86-52.hsd1.il.comcast.net. [76.150.86.52])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9629c16sm4660189173.27.2025.10.21.20.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 20:05:59 -0700 (PDT)
-From: Yuhao Jiang <danisjiang@gmail.com>
-To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>
-Cc: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1761102407; c=relaxed/simple;
+	bh=C2T8blYeAw5+4O5Gq/29YuKOCnPK4DgIvnbGqZbsyVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kl99VovNhA9so89F45o/3lqZA0hJYAXMpMrxvqBaofZ+mJGDHd/YTwLUyYOtlbmTt8Psx1Olxo+PEi7xpJFw1RwTGlgdYxGYlOk3FUypCTlZ3Zq/syx/EbJ18qAZ4zc4pOWKvLCyyZQYjQtQriHW5Dm1yPq/gT9JZU0iY2dD/AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXygpsp2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2708C4CEF1;
+	Wed, 22 Oct 2025 03:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761102406;
+	bh=C2T8blYeAw5+4O5Gq/29YuKOCnPK4DgIvnbGqZbsyVg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HXygpsp2J9nP6sBQtmPhkNoc7SsMRsrrI4XlzGSrBcibleHaFVQTWHVR2Pn1kFHcy
+	 7BnQuYCadTXBQnEzqzxOgJ6ERIzwHvzRmc/hoFLLm0BBb0oZ+RyCjNsDU5H4IYDd7o
+	 T+CcTp51cs7SE9kSymxfvD9GtkoGGgM+Ka+DBHbLC47icc+914Ub4LvxrZfAcik3y/
+	 QmEv1IQfO2j+gQNs4V4Yhwckz9zorQvTPg9X0hKjpbmDH0cXWCsR+qzwaQRNdGH+YT
+	 R/ks3SKT41mFHhulTDHd+LX2ol8Ex+RnGiUJmU6lqDeJmRDpngdo0SnGndmcw53V+W
+	 xZ51FtuU0g1UA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	Yuhao Jiang <danisjiang@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] scsi: aacraid: Fix DMA mapping leak in aac_send_raw_srb error paths
-Date: Tue, 21 Oct 2025 22:05:37 -0500
-Message-Id: <20251022030537.1298395-1-danisjiang@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Chao Yu <chao@kernel.org>,
+	stable@kernel.org,
+	"Bai, Shuangpeng" <sjb7183@psu.edu>
+Subject: [PATCH v2] f2fs: fix to avoid updating compression context during writeback
+Date: Wed, 22 Oct 2025 11:06:36 +0800
+Message-ID: <20251022030636.1194244-1-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.915.g61a8936c21-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,97 +58,165 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The aac_send_raw_srb function creates DMA mappings for scatter-gather
-buffers but fails to unmap them in most error paths, leading to DMA
-mapping resource leaks.
+Bai, Shuangpeng <sjb7183@psu.edu> reported a bug as below:
 
-This patch fixes all error paths except -ERESTARTSYS. The -ERESTARTSYS
-case is a known design issue where resources cannot be safely freed
-(hardware may still be accessing them) but also cannot be properly
-tracked for later cleanup (they are local variables).
+Oops: divide error: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 11441 Comm: syz.0.46 Not tainted 6.17.0 #1 PREEMPT(full)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:f2fs_all_cluster_page_ready+0x106/0x550 fs/f2fs/compress.c:857
+Call Trace:
+ <TASK>
+ f2fs_write_cache_pages fs/f2fs/data.c:3078 [inline]
+ __f2fs_write_data_pages fs/f2fs/data.c:3290 [inline]
+ f2fs_write_data_pages+0x1c19/0x3600 fs/f2fs/data.c:3317
+ do_writepages+0x38e/0x640 mm/page-writeback.c:2634
+ filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:419 [inline]
+ file_write_and_wait_range+0x2ba/0x3e0 mm/filemap.c:794
+ f2fs_do_sync_file+0x6e6/0x1b00 fs/f2fs/file.c:294
+ generic_write_sync include/linux/fs.h:3043 [inline]
+ f2fs_file_write_iter+0x76e/0x2700 fs/f2fs/file.c:5259
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x7e9/0xe00 fs/read_write.c:686
+ ksys_write+0x19d/0x2d0 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf7/0x470 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Fixed paths:
-- copy_from_user failures during SG buffer setup
-- aac_hba_send/aac_fib_send errors after DMA mapping
-- copy_to_user failures after successful command execution
+The bug was triggered w/ below race condition:
 
-Fixes: 423400e64d377 ("scsi: aacraid: Include HBA direct interface")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
+fsync				setattr			ioctl
+- f2fs_do_sync_file
+ - file_write_and_wait_range
+  - f2fs_write_cache_pages
+  : inode is non-compressed
+  : cc.cluster_size =
+    F2FS_I(inode)->i_cluster_size = 0
+   - tag_pages_for_writeback
+				- f2fs_setattr
+				 - truncate_setsize
+				 - f2fs_truncate
+							- f2fs_fileattr_set
+							 - f2fs_setflags_common
+							  - set_compress_context
+							  : F2FS_I(inode)->i_cluster_size = 4
+							  : set_inode_flag(inode, FI_COMPRESSED_FILE)
+   - f2fs_compressed_file
+   : return true
+   - f2fs_all_cluster_page_ready
+   : "pgidx % cc->cluster_size" trigger dividing 0 issue
+
+Let's change as below to fix this issue:
+- introduce a new atomic type variable .writeback in structure f2fs_inode_info
+to track the number of threads which calling f2fs_write_cache_pages().
+- use .i_sem lock to protect .writeback update.
+- check .writeback before update compression context in f2fs_setflags_common()
+to avoid race w/ ->writepages.
+
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Cc: stable@kernel.org
+Reported-by: Bai, Shuangpeng <sjb7183@psu.edu>
+Tested-by: Bai, Shuangpeng <sjb7183@psu.edu>
+Closes: https://lore.kernel.org/lkml/44D8F7B3-68AD-425F-9915-65D27591F93F@psu.edu
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- drivers/scsi/aacraid/commctrl.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+v2:
+- add Tested-by flag for Bai, Shuangpeng
+ fs/f2fs/data.c  | 17 +++++++++++++++++
+ fs/f2fs/f2fs.h  |  3 ++-
+ fs/f2fs/file.c  |  5 +++--
+ fs/f2fs/super.c |  1 +
+ 4 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 68240d6f27ab..e0495f278e2e 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -493,6 +493,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 	void __user *sg_user[HBA_MAX_SG_EMBEDDED];
- 	void *sg_list[HBA_MAX_SG_EMBEDDED];
- 	u32 sg_count[HBA_MAX_SG_EMBEDDED];
-+	dma_addr_t sg_dma_addr[HBA_MAX_SG_EMBEDDED];
-+	int sg_dma_last_mapped = -1;
- 	u32 sg_indx = 0;
- 	u32 byte_count = 0;
- 	u32 actual_fibsize64, actual_fibsize = 0;
-@@ -690,6 +692,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 1e2e8ea81a6f..1f090c018f1b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3231,6 +3231,19 @@ static inline bool __should_serialize_io(struct inode *inode,
+ 	return false;
+ }
+ 
++static inline void account_writeback(struct inode *inode, bool inc)
++{
++	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
++		return;
++
++	f2fs_down_read(&F2FS_I(inode)->i_sem);
++	if (inc)
++		atomic_inc(&F2FS_I(inode)->writeback);
++	else
++		atomic_dec(&F2FS_I(inode)->writeback);
++	f2fs_up_read(&F2FS_I(inode)->i_sem);
++}
++
+ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 						struct writeback_control *wbc,
+ 						enum iostat_type io_type)
+@@ -3276,10 +3289,14 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 		locked = true;
+ 	}
+ 
++	account_writeback(inode, true);
++
+ 	blk_start_plug(&plug);
+ 	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+ 	blk_finish_plug(&plug);
+ 
++	account_writeback(inode, false);
++
+ 	if (locked)
+ 		mutex_unlock(&sbi->writepages);
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d295dc6bad84..94eb9a2d3a73 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -947,6 +947,7 @@ struct f2fs_inode_info {
+ 	unsigned char i_compress_level;		/* compress level (lz4hc,zstd) */
+ 	unsigned char i_compress_flag;		/* compress flag */
+ 	unsigned int i_cluster_size;		/* cluster size */
++	atomic_t writeback;			/* count # of writeback thread */
+ 
+ 	unsigned int atomic_write_cnt;
+ 	loff_t original_i_size;		/* original i_size before atomic write */
+@@ -4671,7 +4672,7 @@ static inline bool f2fs_disable_compressed_file(struct inode *inode)
+ 		f2fs_up_write(&fi->i_sem);
+ 		return true;
+ 	}
+-	if (f2fs_is_mmap_file(inode) ||
++	if (f2fs_is_mmap_file(inode) || atomic_read(&fi->writeback) ||
+ 		(S_ISREG(inode->i_mode) && F2FS_HAS_BLOCKS(inode))) {
+ 		f2fs_up_write(&fi->i_sem);
+ 		return false;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c045e38e60ee..6d42e2d28861 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2128,8 +2128,9 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+ 
+ 			f2fs_down_write(&fi->i_sem);
+ 			if (!f2fs_may_compress(inode) ||
+-					(S_ISREG(inode->i_mode) &&
+-					F2FS_HAS_BLOCKS(inode))) {
++				atomic_read(&fi->writeback) ||
++				(S_ISREG(inode->i_mode) &&
++				F2FS_HAS_BLOCKS(inode))) {
+ 				f2fs_up_write(&fi->i_sem);
+ 				return -EINVAL;
  			}
- 			addr = dma_map_single(&dev->pdev->dev, p, sg_count[i],
- 					      data_dir);
-+			sg_dma_addr[i] = addr;
-+			sg_dma_last_mapped = i;
- 			hbacmd->sge[i].addr_hi = cpu_to_le32((u32)(addr>>32));
- 			hbacmd->sge[i].addr_lo = cpu_to_le32(
- 						(u32)(addr & 0xffffffff));
-@@ -752,6 +756,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 				}
- 				addr = dma_map_single(&dev->pdev->dev, p,
- 						      sg_count[i], data_dir);
-+				sg_dma_addr[i] = addr;
-+				sg_dma_last_mapped = i;
- 
- 				psg->sg[i].addr[0] = cpu_to_le32(addr & 0xffffffff);
- 				psg->sg[i].addr[1] = cpu_to_le32(addr>>32);
-@@ -808,6 +814,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 				}
- 				addr = dma_map_single(&dev->pdev->dev, p,
- 						      sg_count[i], data_dir);
-+				sg_dma_addr[i] = addr;
-+				sg_dma_last_mapped = i;
- 
- 				psg->sg[i].addr[0] = cpu_to_le32(addr & 0xffffffff);
- 				psg->sg[i].addr[1] = cpu_to_le32(addr>>32);
-@@ -865,6 +873,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 				addr = dma_map_single(&dev->pdev->dev, p,
- 						      usg->sg[i].count,
- 						      data_dir);
-+				sg_dma_addr[i] = addr;
-+				sg_dma_last_mapped = i;
- 
- 				psg->sg[i].addr = cpu_to_le32(addr & 0xffffffff);
- 				byte_count += usg->sg[i].count;
-@@ -905,6 +915,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 				}
- 				addr = dma_map_single(&dev->pdev->dev, p,
- 						      sg_count[i], data_dir);
-+				sg_dma_addr[i] = addr;
-+				sg_dma_last_mapped = i;
- 
- 				psg->sg[i].addr = cpu_to_le32(addr);
- 				byte_count += sg_count[i];
-@@ -986,6 +998,10 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- cleanup:
- 	kfree(user_srbcmd);
- 	if (rcode != -ERESTARTSYS) {
-+		for (i = 0; i <= sg_dma_last_mapped; i++) {
-+			dma_unmap_single(&dev->pdev->dev, sg_dma_addr[i],
-+					 sg_count[i], data_dir);
-+		}
- 		for (i = 0; i <= sg_indx; i++)
- 			kfree(sg_list[i]);
- 		aac_fib_complete(srbfib);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4c7da160ca27..f76ba2b08be0 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1759,6 +1759,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	atomic_set(&fi->dirty_pages, 0);
+ 	atomic_set(&fi->i_compr_blocks, 0);
+ 	atomic_set(&fi->open_count, 0);
++	atomic_set(&fi->writeback, 0);
+ 	init_f2fs_rwsem(&fi->i_sem);
+ 	spin_lock_init(&fi->i_size_lock);
+ 	INIT_LIST_HEAD(&fi->dirty_list);
 -- 
-2.34.1
+2.49.0
 
 
