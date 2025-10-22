@@ -1,208 +1,158 @@
-Return-Path: <linux-kernel+bounces-864005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8278BF9B1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:16:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7363CBF9B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10F173563EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:16:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CE454FA765
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700401D5AD4;
-	Wed, 22 Oct 2025 02:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB2821FF30;
+	Wed, 22 Oct 2025 02:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9sc0WbR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGvnAwwZ"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C8C21019C;
-	Wed, 22 Oct 2025 02:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BAD21773F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761099353; cv=none; b=Gyj4+20q5/vwp0Oy8C8GodZ/XpbsHz2nZDXTvsRhFEDPFt+SMapWTxYqVq9Vh5rhoY5jgiwhtkJ0Zx+qUQJFpbkJNCxpN6+/m+ORHfDCapRJGY2hsa3Qg07LZ46a+bi+/p/zWnKqt4eZz37EkSH5YwCnOIxpF23aqhuQ6retfuI=
+	t=1761099366; cv=none; b=GzZMiwH1z0GbOtKR5WLmuiF1q4fCmpEjy1pZHfBL6VGqb7dBJaRNRJ1YHI09qpBjfn5KlZULtEUacw8Q7ED9fLWt5gyhscIGuesd7SllJrKjXNReVaW6ry3M2ppX8Fxu3qMx4A+7DQ2TJW5E3acVNcwJ4q4lZ9mMArL218krKVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761099353; c=relaxed/simple;
-	bh=K8KyPpuWFb8QcJ7XXOwUi5j8hUUNg/w4R0Rxk5mqPqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d1dd5rUox79LdoK5FWvOfnBuIdMEsxrF7sijVmqkhKLpGKBBWYD/etwjNghHV3OUVgctfwT6Vd3xg09vlq69TmkEd1XCewCbLb4+m1oJPaG92zPXf2p7qdEsqs2TqIc2lrCQ2e+HNK39f8saJcDMfBxSRScI/nkf3w1RoW8l64A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9sc0WbR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA5EC4CEF1;
-	Wed, 22 Oct 2025 02:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761099352;
-	bh=K8KyPpuWFb8QcJ7XXOwUi5j8hUUNg/w4R0Rxk5mqPqg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z9sc0WbR5vWlhZcCkAalZUcE8a6choXCT7cZiw3CKT+J/5fC9T7v5u8AnSqXnYbsV
-	 P7P2b6ik+JssEgaNDkNe2XnMW4PsoELzAWa2A70O8bYwKlVoCYveujBcfn2DN4GtuH
-	 MtHpRjUE6qp40ZhvgbtLft0TF6MRQ4LrPNFHLLcWBElzO1sWuP5sZDzcxyqfyB6kKd
-	 elTIYyj9yvVuubI/W/MSif1lULq9VXO5m4e9ogOmWMceGRX4NKD8H9fwlcT7ds2NBq
-	 W+tjZ3+hUcvB8bsnj7q6LbFpYZppFs72qrTfn98svYFY45qzgLUFnjHr+RByRQO4aA
-	 r1dgolbERzVsQ==
-From: SeongJae Park <sj@kernel.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: SeongJae Park <sj@kernel.org>,
+	s=arc-20240116; t=1761099366; c=relaxed/simple;
+	bh=ZNYpaJWfK2uX7fNuNpV/cydFuI7wkAz8CLs/mB6yfTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNLMcCd4Xl/k2icNdV9r+jEV86tHLQdwOSXtkceyThSdOUEuJ8t8ZoUrpUoiw56cGb+iL2KOC5Adnd+TuEdq2lJcEtJipyo/CPdmGgcVoneOhIiABYRvZzoMN57nf6bil1CmLPSRRwzMo9Cflc+z510QR4YJDJQJVUEZF2ogc88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGvnAwwZ; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7a265a02477so308168b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:16:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761099363; x=1761704163; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+yFbQwKVrg4ulSzHTYcdE0/YBPiD7WzPZ8N0zJ6yfUg=;
+        b=dGvnAwwZt24nsiLUJRQ+UeeMvxr4qhMK7hbIRNA/JtjRZm+MyX5aOyGPmAE9+aG63s
+         sIPjbmktHkBIYrux7vtL2hYmwgKy0ZO3SrjGJoinbBzGJ0vhWAzp3oFa2NwKF+6HSpaF
+         U33/acgsn/aL38aB64HDrZvRVH3aNZwo/M+146H2/AR8b2/2Bsd1Sx4Ti5+ucnXNz4rP
+         jDfYjgKGeoOKPPUszAjZK8/F2YJ5RlC+Z7nmDvQ5Hymjjng1sFkw+m7TSR13ClGpOhwb
+         mWuP6aVNTUZKshV9RAdycFKEF39Uue+m3oIL87XatFOPv0ffaBxrpAiEi6kShMe0dkda
+         r2sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761099363; x=1761704163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+yFbQwKVrg4ulSzHTYcdE0/YBPiD7WzPZ8N0zJ6yfUg=;
+        b=YWsVBSu4KEWcv2eAG37jkzXkJ3NHLxUvdvBEF+6Y24Hro26sX1FwgxmjhRkfc9iYd/
+         Gkwo0zK1q9hAiKPot93veklyn1jb5PSeypz83L6XYi99QgiPaCJ/dfs4H3wEUi8dDvFa
+         4NYjhakRmLxRJckka6ZLMWES+rBqUoDd0ZDajtFwRRc4vGiEcUM4ntMOt+e6vpB3U/KT
+         zP2294i17e7mYTTdQhaE2r//hfloKweudt0M5jbp3ToWrFvavMnK1V1bueYQhsk0a1hw
+         wHOtuneASbO8OdKQ6LkqWdo03o8fHA7ruPmuN696n3RKyINQDuyVR6ptKT5syCdbPfwW
+         uPUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVA7QZr5+Y2SP9w5yTKtgSbELG0w5bDQg7OJV13HO7owKs5RWLjLClC+MeK6KJw33gwb4W9iOl3OX45a+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSVypN8akHuvVBNqmUWCl3PN+tqgiO/yqIY30ZKPI3kgr19M4D
+	/F6YV/wGA7fQm2Ionl2BbjKOnP+SMI/YGQmj8RKcFuedmrLy4sNAUw8C
+X-Gm-Gg: ASbGncsLzUvg0g3W+7k3AFkIEGav5mwQIp0zGsIwoiJ0M9w9crMyoI964inhke7RfpR
+	VO3ESvGxwza0PoBJ1IaHSluPA1rvZPAnbPhaXPI2IkAb/Ig93b1fxkAHV7spF2p6H/iBZhAJBsV
+	p8Onw+wiU21pn+/ccbyZXU8od3mEpwjJuD2aJNmuSN8tlMvIaQ2imknLu9n1/KTeu4ksra9vw4u
+	IZ2Z8fmpb36raJ2EhGtSV1qOVtQH+HQOaZXfGU7hQDZ5s3M8nsyb2n3TwDSLEQ2G47u0xkO1j/p
+	n8vcZofuF6a5gpNPTz08vnXTqn2nxbuJpDQx01csfGUNRHZxFLT6ZERIb+DvYxtIdjuQW+f+C1s
+	JISX5SNXVH+XjN//h2is2Sp+j9EkK8wI6dJvUetCFZbtcqS08IKb9osoPeSmodcU0mAdPdEuR+P
+	7cPKkPcZD1s16d
+X-Google-Smtp-Source: AGHT+IHgcLczGY0gNkz46ZH3wqYDdp+xytg9WZxLoXNNek71M0Z3I+LEtQXMo7LSXlQTlq9C1XGtow==
+X-Received: by 2002:a05:6a20:5493:b0:304:4f7c:df90 with SMTP id adf61e73a8af0-334a861852amr26222250637.50.1761099363079;
+        Tue, 21 Oct 2025 19:16:03 -0700 (PDT)
+Received: from archie.me ([103.124.138.80])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a23010da0bsm12753936b3a.55.2025.10.21.19.16.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 19:16:02 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 48C344209E4B; Wed, 22 Oct 2025 09:16:00 +0700 (WIB)
+Date: Wed, 22 Oct 2025 09:16:00 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Art Nikpal <email2tema@gmail.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: manually uninline __memcg_memory_event
-Date: Tue, 21 Oct 2025 19:15:49 -0700
-Message-ID: <20251022021549.129413-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <3h26sozqgksxn4fvh7i6qjhtbnrtzit6eluyieyhsvycs3fbs5@ddblsq2crkit>
-References: 
+	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	linux-arch@vger.kernel.org, linux-block@vger.kernel.org,
+	initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-doc@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Heiko Carstens <hca@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Dave Young <dyoung@redhat.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Jessica Clarke <jrtc27@jrtc27.com>,
+	Nicolas Schichan <nschichan@freebox.fr>,
+	David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
+Subject: Re: [PATCH v3 2/3] initrd: remove deprecated code path (linuxrc)
+Message-ID: <aPg-YF2pcyI-HusN@archie.me>
+References: <20251017060956.1151347-1-safinaskar@gmail.com>
+ <20251017060956.1151347-3-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-On Tue, 21 Oct 2025 18:28:02 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-
-> On Tue, Oct 21, 2025 at 05:58:00PM -0700, SeongJae Park wrote:
-> > On Tue, 21 Oct 2025 16:44:25 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > 
-> > > The function __memcg_memory_event has been unnecessarily marked inline
-> > > even when it is not really performance critical. It is usually called
-> > > to track extreme conditions. Over the time, it has evolved to include
-> > > more functionality and inlining it is causing more harm.
-> > > 
-> > > Before the patch:
-> > > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
-> > >    text    data     bss     dec     hex filename
-> > >   35645   10574    4192   50411    c4eb mm/memcontrol.o
-> > >   54738    1658       0   56396    dc4c net/ipv4/tcp_input.o
-> > >   34644    1065       0   35709    8b7d net/ipv4/tcp_output.o
-> > > 
-> > > After the patch:
-> > > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
-> > >    text    data     bss     dec     hex filename
-> > >   35137   10446    4192   49775    c26f mm/memcontrol.o
-> > >   54322    1562       0   55884    da4c net/ipv4/tcp_input.o
-> > >   34492    1017       0   35509    8ab5 net/ipv4/tcp_output.o
-> > > 
-> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > > ---
-> > >  include/linux/memcontrol.h | 32 ++------------------------------
-> > >  mm/memcontrol.c            | 31 +++++++++++++++++++++++++++++++
-> > >  2 files changed, 33 insertions(+), 30 deletions(-)
-> > > 
-> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > > index d37e7c93bb8c..8d2e250535a8 100644
-> > > --- a/include/linux/memcontrol.h
-> > > +++ b/include/linux/memcontrol.h
-> > > @@ -1002,36 +1002,8 @@ static inline void count_memcg_event_mm(struct mm_struct *mm,
-> > >  	count_memcg_events_mm(mm, idx, 1);
-> > >  }
-> > >  
-> > > -static inline void __memcg_memory_event(struct mem_cgroup *memcg,
-> > > -					enum memcg_memory_event event,
-> > > -					bool allow_spinning)
-> > > -{
-> > > -	bool swap_event = event == MEMCG_SWAP_HIGH || event == MEMCG_SWAP_MAX ||
-> > > -			  event == MEMCG_SWAP_FAIL;
-> > > -
-> > > -	/* For now only MEMCG_MAX can happen with !allow_spinning context. */
-> > > -	VM_WARN_ON_ONCE(!allow_spinning && event != MEMCG_MAX);
-> > > -
-> > > -	atomic_long_inc(&memcg->memory_events_local[event]);
-> > > -	if (!swap_event && allow_spinning)
-> > > -		cgroup_file_notify(&memcg->events_local_file);
-> > > -
-> > > -	do {
-> > > -		atomic_long_inc(&memcg->memory_events[event]);
-> > > -		if (allow_spinning) {
-> > > -			if (swap_event)
-> > > -				cgroup_file_notify(&memcg->swap_events_file);
-> > > -			else
-> > > -				cgroup_file_notify(&memcg->events_file);
-> > > -		}
-> > > -
-> > > -		if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
-> > > -			break;
-> > > -		if (cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_LOCAL_EVENTS)
-> > > -			break;
-> > > -	} while ((memcg = parent_mem_cgroup(memcg)) &&
-> > > -		 !mem_cgroup_is_root(memcg));
-> > > -}
-> > > +void __memcg_memory_event(struct mem_cgroup *memcg,
-> > > +			  enum memcg_memory_event event, bool allow_spinning);
-> > >  
-> > >  static inline void memcg_memory_event(struct mem_cgroup *memcg,
-> > >  				      enum memcg_memory_event event)
-> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > > index 1a95049d8b88..93f7c76f0ce9 100644
-> > > --- a/mm/memcontrol.c
-> > > +++ b/mm/memcontrol.c
-> > > @@ -1626,6 +1626,37 @@ unsigned long mem_cgroup_size(struct mem_cgroup *memcg)
-> > >  	return page_counter_read(&memcg->memory);
-> > >  }
-> > >  
-> > > +void __memcg_memory_event(struct mem_cgroup *memcg,
-> > > +			  enum memcg_memory_event event, bool allow_spinning)
-> > 
-> > Seems this function is called only from memcontrol.c.  Why not making it a
-> > static function?
-> 
-> There is a recent code where this is called (indirectly) from networking
-> stack for MEMCG_SOCK_THROTTLED.
-
-Thank you for enlightening me.  Apparently the code is from
-https://lore.kernel.org/20251016161035.86161-1-shakeel.butt@linux.dev.
-
-> 
-> > 
-> > > +{
-> > > +	bool swap_event = event == MEMCG_SWAP_HIGH || event == MEMCG_SWAP_MAX ||
-> > > +			  event == MEMCG_SWAP_FAIL;
-> > > +
-> > > +	/* For now only MEMCG_MAX can happen with !allow_spinning context. */
-> > > +	VM_WARN_ON_ONCE(!allow_spinning && event != MEMCG_MAX);
-> > > +
-> > > +	atomic_long_inc(&memcg->memory_events_local[event]);
-> > > +	if (!swap_event && allow_spinning)
-> > > +		cgroup_file_notify(&memcg->events_local_file);
-> > > +
-> > > +	do {
-> > > +		atomic_long_inc(&memcg->memory_events[event]);
-> > > +		if (allow_spinning) {
-> > > +			if (swap_event)
-> > > +				cgroup_file_notify(&memcg->swap_events_file);
-> > > +			else
-> > > +				cgroup_file_notify(&memcg->events_file);
-> > > +		}
-> > > +
-> > > +		if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
-> > > +			break;
-> > > +		if (cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_LOCAL_EVENTS)
-> > > +			break;
-> > > +	} while ((memcg = parent_mem_cgroup(memcg)) &&
-> > > +		 !mem_cgroup_is_root(memcg));
-> > > +}
-> > > +EXPORT_SYMBOL(__memcg_memory_event);
-> > 
-> > Also, seems there is no reason to export this symbol?
-> 
-> The networking code needs this export.
-> 
-> Thanks for taking a look.
-
-Again, thank you for clarifying.
-
-Acked-by: SeongJae Park <sj@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m/ueW+980/ea0Wf8"
+Content-Disposition: inline
+In-Reply-To: <20251017060956.1151347-3-safinaskar@gmail.com>
 
 
-Thanks,
-SJ
+--m/ueW+980/ea0Wf8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+On Fri, Oct 17, 2025 at 06:09:55AM +0000, Askar Safin wrote:
+> +		if (rd_load_image()) {
+> +			pr_warn("using deprecated initrd support, will be removed in Septembe=
+r 2026; "
+> +				"use initramfs instead or (as a last resort) /sys/firmware/initrd; "
+> +				"see section \"Workaround\" in "
+> +				"https://lore.kernel.org/lkml/20251010094047.3111495-1-safinaskar@gm=
+ail.com\n");
+>  		}
+
+Do you mean that initrd support will be removed in LTS kernel release of 20=
+26?
+
+Thanks.=20
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--m/ueW+980/ea0Wf8
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPg+YAAKCRD2uYlJVVFO
+o9OtAQCr/giTF4+FVt9hiDGkb1l4yn/kE0D0NKGYI1gigRnAqAEAhLIU0ssllGOB
+IgSBphGX7ddV9bgZvHiqagtFYOgJwwo=
+=plLG
+-----END PGP SIGNATURE-----
+
+--m/ueW+980/ea0Wf8--
 
