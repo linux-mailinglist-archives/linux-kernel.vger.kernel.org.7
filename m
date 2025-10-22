@@ -1,212 +1,204 @@
-Return-Path: <linux-kernel+bounces-865686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF26EBFDBFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:00:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CBFFBFDBFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 376C435863B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A72C189B3D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCA02E7BB4;
-	Wed, 22 Oct 2025 18:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S5Ws6VZD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="h8uIG2fp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fVjNoCkz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oPGTYGUM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3A12E7637;
+	Wed, 22 Oct 2025 18:00:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD092BEFED
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0FA24634F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761156001; cv=none; b=H1wi8eXxDKXzy8pobbMEcfJz7edRBKXvtw8vbSPyZqf7zYgC68c3goaGhq1jJyIebFDDImlYKbX1XOZS2CWUlh+iLL2ehrj+GMwpjm8Cfw1ZIHcUBm9TbxWN2U/Ds6rYvgOf9qtAqHjc0CY6FeDPkToM5ts0GKJMnB2D0DwKFoE=
+	t=1761156007; cv=none; b=ZXdXWXuycwmQZgVD9Oir4UVaupczW6Bxsj7ZuHLoU4dnm+UTFDuhQlLFa+TjwD6bRguDiCUB+5OymE3M5Zoc1MHc/p9N8xsKwyCl5FWow1D0sXs0WJCTa0pqVZIzxJpDvQqajjq0SG47RdrTLNAJ8CoaC0X4O96f66CpzSc3OGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761156001; c=relaxed/simple;
-	bh=bPFSyO8wYZ+aftzQWiED0d7GI5d9zJJvUeAFRY5v6lM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oe65s5gLsNlVblg9AtMnrxPqgToPmMrdgp1tuh9BKUrogQbZvJ1fDiIvJW7uE9Z9M9mnKYfLL1moA/v8yYIK7hQsvYaXFEj963HrgmERwUbw7eeevKSIylVTI2cz0Ufp0w2kQguo0nkCaxnhrgziiuU943Cnp6jFkorwb92z4Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S5Ws6VZD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=h8uIG2fp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fVjNoCkz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oPGTYGUM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C0B0B211EF;
-	Wed, 22 Oct 2025 17:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761155993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
-	b=S5Ws6VZDQpXUs8hKP+1klrluTXUmm6/DbdW1+GWKalcN8mugpKRJKMO7hoANcuhEVb+Ff2
-	Zr0wH7ArFZWUm7ROsBMAMofen30N1jABYTSr451WX/Mms4BahGeve5g9F9crkSFQDEFITT
-	SEGzNqv7vMK4D6EPsC7RGAdeS/4i+bE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761155993;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
-	b=h8uIG2fpLajdmf8JJafwm4+maTWMS3GAbkprZ80DGDcJpkLjAJZVvXTWfYGE9S2Q2NQSTy
-	StjMcAkVMdsremDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fVjNoCkz;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oPGTYGUM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761155989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
-	b=fVjNoCkz/IH+9cRgyV5by3uyVhZZPW5zcsdv7lWndUrJtcEHk/utbOXmCYmJnmLcvT+n0w
-	H7zrcE+CdCSr+UV38CT4S/ErNBVXCnnbfjf1pFiRArbcD/IM8B3r6OaC+pvwX9NDdl0+GC
-	Ig5qytRywayPc7jZ6sqyvbUJlD3JQzg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761155989;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
-	b=oPGTYGUMgMXb5U22xD4oi3PE9iIkNU0DqZgGrjK3t0ll2b8jAbu/Y79cvyr7oEwQ9rRAuR
-	knhdYvyyGyry0UBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AD30213A29;
-	Wed, 22 Oct 2025 17:59:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id B3ruKZUb+WhebAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 22 Oct 2025 17:59:49 +0000
-Message-ID: <53f0cc42-e19a-4b84-8631-390cc5b178f5@suse.cz>
-Date: Wed, 22 Oct 2025 19:59:49 +0200
+	s=arc-20240116; t=1761156007; c=relaxed/simple;
+	bh=Iy23dOk2Xws00AQtshp2ZfIqszeR9BuoSWSsqdFbTVc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rGgKQcDfZa3iQYylz0WinCnXyfOHe4z65gCRksoKNQ9oMYXl188rMMQs5kNOHQIOuFjlpE6YefxJPjJyxgAeLHHO4FfRNh21U3vvt8aSDqwr6col8e6VjrGcrNpzcqlD8p3EFPzAQ/Hyg/ruhHewAHuOIpICcePJF2+BXiO/HVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430e1a4a129so52256715ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:00:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761156004; x=1761760804;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I6TRX+0wa09P5DS+E74Lm/QP3pffhgmywZN35ZMF9YM=;
+        b=kW/r5N5uE7UYJ2vbseRGZ+Zp36sZvg18yRXKSvQJXPc9jyOsUsqcqQE/OE75/bl3hF
+         nkZkbxpOm7y3/winis1Y6e3731T461VyiPOS0bIbcLLv7RU77nX1rifm0EeLzyFa0HMB
+         vJPHLmO0UVS48S/zqlxjPYmsHJ/4aVpbJ0zuZxEtsUpdqKYKM8kiEQUXKUvGi2zF8RBe
+         oTJBcbfCbYHBpiEHU0wMlDkYAU8AgIDczakoQC4mO/H2RO89KyjeRQeZ3vRroyMpvsTA
+         MpxiE4faPH5QfXkGZqdr54neWYzZehs0f/SF+n/PIO4cRA8nzojOUW0kWVVunvT93k71
+         syMQ==
+X-Gm-Message-State: AOJu0YxAh+l50c6VZ9P/VAXTVH4J7iNk93HBIp4+955Gd/JUqTHRkca7
+	i4K1ubxqCeHA+XGGxu7R8CkCkosFaSBD/Y7vjPHMhzcuP6JEvV0o+FXbWV9DKxFhQE0/rVjpUr6
+	CiqsjMqTv2zXi0lveYmCPxF48YpIiGVmpnkvMYLpd5179Z+/jdrbEJgcdZDE=
+X-Google-Smtp-Source: AGHT+IG4rN14vgA5HcFiSADqEn3X4IKsIXdKFBt36khE0pl5tJKuQPSBg/F0aJP467viLwzjjhrH76w3TYiC0WjAq69QqJbQuoxM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: perform inc_slabs_node() as part of new_slab()
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Alexei Starovoitov <ast@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20251022-fix-slab-accounting-v1-1-27870ec363ce@suse.cz>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251022-fix-slab-accounting-v1-1-27870ec363ce@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: C0B0B211EF
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+X-Received: by 2002:a05:6e02:1745:b0:42f:91aa:510b with SMTP id
+ e9e14a558f8ab-430c51eac3dmr281711575ab.4.1761156004367; Wed, 22 Oct 2025
+ 11:00:04 -0700 (PDT)
+Date: Wed, 22 Oct 2025 11:00:04 -0700
+In-Reply-To: <68f659cd.050a0220.91a22.044c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f91ba4.050a0220.346f24.005f.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
+From: syzbot <syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/22/25 19:23, Vlastimil Babka wrote:
-> Since commit af92793e52c3 ("slab: Introduce kmalloc_nolock() and
-> kfree_nolock().") there's a possibility in alloc_single_from_new_slab()
-> that we discard the newly allocated slab if we can't spin and we fail to
-> trylock. As a result we don't perform inc_slabs_node() later in the
-> function. Instead we perform a deferred deactivate_slab() which can
-> either put the unacounted slab on partial list, or discard it
-> immediately while performing dec_slabs_node(). Either way will cause an
-> accounting imbalance.
-> 
-> Fix this and also make the code more robust by performing
-> inc_slabs_node() in new_slab() itself, and removing it from its callers.
-> As a side effect, in the theoretical case where the new slab is
-> immediately leaked due to debugging consistency check failure, it will
-> be accounted (as full) in /proc/slabinfo anyway, which is not wrong.
-> 
-> The exceptional caller is early_kmem_cache_node_alloc() where the node
-> for stats is not yet initialized. We can handle it by using
-> allocate_slab() there as the gfp flags are known and fixed and we don't
-> need need new_slab()'s fixups.
-> 
-> Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Pushed to slab/for-next-fixes for testing.
+***
 
-Note I haven't seen the imbalance happening. During the ongoing development
-work I caused a very deterministic underflow elsewhere, decided to make the
-code more robust by creating this patch, and when going through new_slab()
-callers I realized it fixes an existing issue.
+Subject: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
+Author: vnranganath.20@gmail.com
+
+#syz test
+
+On Wed, Oct 22, 2025 at 5:23=E2=80=AFPM syzbot <
+syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com> wrote:
+
+> Hello,
+>
+> syzbot has tested the proposed patch but the reproducer is still
+> triggering an issue:
+> KMSAN: uninit-value in sctp_inq_pop
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in sctp_inq_pop+0x159c/0x1aa0
+> net/sctp/inqueue.c:213
+>  sctp_inq_pop+0x159c/0x1aa0 net/sctp/inqueue.c:213
+>  sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
+>  sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
+>  sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
+>  sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
+>  __release_sock+0x1ef/0x380 net/core/sock.c:3180
+>  release_sock+0x6b/0x270 net/core/sock.c:3735
+>  sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
+>  inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
+>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>  __sock_sendmsg+0x278/0x3d0 net/socket.c:742
+>  sock_sendmsg+0x170/0x280 net/socket.c:765
+>  splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
+>  do_splice_from fs/splice.c:938 [inline]
+>  do_splice+0x1fd2/0x30d0 fs/splice.c:1351
+>  __do_splice fs/splice.c:1433 [inline]
+>  __do_sys_splice fs/splice.c:1636 [inline]
+>  __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
+>  __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
+>  x64_sys_call+0x3140/0x3e30
+> arch/x86/include/generated/asm/syscalls_64.h:276
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was stored to memory at:
+>  sctp_inq_pop+0x150b/0x1aa0 net/sctp/inqueue.c:209
+>  sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
+>  sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
+>  sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
+>  sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
+>  __release_sock+0x1ef/0x380 net/core/sock.c:3180
+>  release_sock+0x6b/0x270 net/core/sock.c:3735
+>  sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
+>  inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
+>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>  __sock_sendmsg+0x278/0x3d0 net/socket.c:742
+>  sock_sendmsg+0x170/0x280 net/socket.c:765
+>  splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
+>  do_splice_from fs/splice.c:938 [inline]
+>  do_splice+0x1fd2/0x30d0 fs/splice.c:1351
+>  __do_splice fs/splice.c:1433 [inline]
+>  __do_sys_splice fs/splice.c:1636 [inline]
+>  __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
+>  __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
+>  x64_sys_call+0x3140/0x3e30
+> arch/x86/include/generated/asm/syscalls_64.h:276
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was created at:
+>  slab_post_alloc_hook mm/slub.c:4969 [inline]
+>  slab_alloc_node mm/slub.c:5272 [inline]
+>  kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
+>  kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
+>  __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
+>  alloc_skb include/linux/skbuff.h:1383 [inline]
+>  sctp_packet_transmit+0x44b/0x46d0 net/sctp/output.c:598
+>  sctp_outq_flush_transports net/sctp/outqueue.c:1173 [inline]
+>  sctp_outq_flush+0x1c7d/0x67c0 net/sctp/outqueue.c:1221
+>  sctp_outq_uncork+0x9e/0xc0 net/sctp/outqueue.c:764
+>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:-1 [inline]
+>  sctp_side_effects net/sctp/sm_sideeffect.c:1204 [inline]
+>  sctp_do_sm+0x8c8e/0x9720 net/sctp/sm_sideeffect.c:1175
+>  sctp_primitive_SEND+0xd7/0x110 net/sctp/primitive.c:163
+>  sctp_sendmsg_to_asoc+0x1db8/0x2250 net/sctp/socket.c:1873
+>  sctp_sendmsg+0x3910/0x49f0 net/sctp/socket.c:2031
+>  inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
+>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>  __sock_sendmsg+0x278/0x3d0 net/socket.c:742
+>  sock_sendmsg+0x170/0x280 net/socket.c:765
+>  splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
+>  do_splice_from fs/splice.c:938 [inline]
+>  do_splice+0x1fd2/0x30d0 fs/splice.c:1351
+>  __do_splice fs/splice.c:1433 [inline]
+>  __do_sys_splice fs/splice.c:1636 [inline]
+>  __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
+>  __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
+>  x64_sys_call+0x3140/0x3e30
+> arch/x86/include/generated/asm/syscalls_64.h:276
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> CPU: 1 UID: 0 PID: 6609 Comm: syz.0.18 Not tainted syzkaller #0
+> PREEMPT(none)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 10/02/2025
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>
+>
+> Tested on:
+>
+> commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D145e2d4258000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbbd3e7f3c2e28=
+265
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3Dd101e12bccd4095460e7
+> compiler:       Debian clang version 20.1.8
+> (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.=
+1.8
+> patch:
+> https://syzkaller.appspot.com/x/patch.diff?x=3D165fd734580000
+>
+>
 
