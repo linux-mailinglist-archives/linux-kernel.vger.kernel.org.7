@@ -1,153 +1,172 @@
-Return-Path: <linux-kernel+bounces-864879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7B3BFBC1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:02:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BA7BFBBB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 09B4D353817
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:02:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D77C94E7152
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B7E342CBC;
-	Wed, 22 Oct 2025 12:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="v4tTF88F"
-Received: from smtp101.iad3a.emailsrvr.com (smtp101.iad3a.emailsrvr.com [173.203.187.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C3533F8C8;
+	Wed, 22 Oct 2025 11:53:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CAA32E12F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C043A33EB0A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134509; cv=none; b=GYjo/2Y26ZL1zC2dFJj/JO7uDAmyAtuHSM/DnIR9dCFwMir2GJ2eyW8RSFaGuv5UQHZPF/mO1+c7ycB8Fcj/7U23zZUfb4FTJxYjvgIpCQ4INX196KvSjh0SNHFBzoOASksrsied5ZkGLZWSxG+YftA+nZA9DX5PTvSQoW55s/0=
+	t=1761133984; cv=none; b=BmQ0/PT6MJdrGtXsxrz9tC6GdgER+8+KDq3bNIm44KrPtL7X5xVcIX+vRT+Faq188pUq6+pISGDqSard6lyk9i93DDuqJ2Slbm05DUjcvgHNoBKDdGnfN39ddjKcd6C/1QVVjdSz2vlbzZq5z2VsEfKZVP1W74DnY/ni5FEWAAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134509; c=relaxed/simple;
-	bh=NEueq3Avk4gQfB2zNcLsQ9mHX3JZQHi8T4qdGRMkVLY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HgHGG222+YHY/c24/kNFFT52azvxzTf0K/rOi27TBaBgto5vYb9EWewfI3yvAYUm06NH3JDFa4DhXZ2/gS6qEiC/RzGksXnpipQ5Nt67vqK2GiUDCXrVK7RaPh9cwTd+LYjOlzM/piCrEiX4qTRqDEhgriSFSB5Qnp9o927472w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=v4tTF88F; arc=none smtp.client-ip=173.203.187.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1761133917;
-	bh=NEueq3Avk4gQfB2zNcLsQ9mHX3JZQHi8T4qdGRMkVLY=;
-	h=Date:Subject:From:To:From;
-	b=v4tTF88F1oR4EObnvmC+9AW2nwwNPSKqOsbuVxGk/vJXaqpDaMGwWYDh4OPdM+8ox
-	 equKVGxb3qS4RzN7fePry+ixlR4WIHqSyqs9aoh5dWYCcvOaOF0+I6wV541nndvMt0
-	 zquuoxE86jn4XvDItI47g7dvE4vgBjwLMD11gjxY=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp29.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id B21182503B;
-	Wed, 22 Oct 2025 07:51:56 -0400 (EDT)
-Message-ID: <df307a5e-811b-479d-a287-7a670a337bb2@mev.co.uk>
-Date: Wed, 22 Oct 2025 12:51:55 +0100
+	s=arc-20240116; t=1761133984; c=relaxed/simple;
+	bh=xITn8FgPNzTngTKdZsYQy1UkUjtiW64ALWolI/P+5HI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HovpChKidEhClqZ2fzbz9OX8iW4kZ3PpPmpnpI/30CnMFDHaP83AMD+x7u20G+rytO30+lOIeD5rFFk3yO/kX4MqQWq9E55AirAt2y1IHn4T40mWQvgAinRTJundUOQv+AoPuiJo7Vy/mZN5CrYY7KUp+VWy6XlWslHs6Ln3m8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430d789ee5aso47346495ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:53:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761133982; x=1761738782;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J2uS3XrNGTpKV2VbD+d8nSHpOKfghfR+E94LknWDOsQ=;
+        b=PEkMw2ox7YMyxRndmMn+8298WbL3o/NRn2In45uU5B9kZQcLmR3dkjyFKrH5dLFoUy
+         IiFCvDJXapHq5vIy9AKtxHH394v9LDOkxkYYEmf2EWvmpy5ntaEw434B2OSrkEPDAUAI
+         1aSUV2lZKzcG+mfy2p43OTF4/bXcAv1h+5JWrynPb0rjs0vyO0X7dBKpGTr9l/w0euPa
+         RJSHG/64tJMLieHyiP6R/SdZiH91iIPySNAPzhh4WOWFWoHtdZ5CH1BUtpCUPc2bqTrt
+         FtiE2FKhc5Vz+2pArJziPZL5EvaCZaHAlDbRabawcUH7Rn8cim3nySgAVBiGl+DT0f4y
+         boPA==
+X-Gm-Message-State: AOJu0YxZzv3TgjqSWes7oK55YFmHRWq5YBgHiAiM6+KTkX2xd4zyAyY9
+	ryBf3SZYhfZkaA+Tl2R86rJ4oEZXG4QkqgX7QWzCFnNLlenzqLpmFBVsHF1JGu4C4w5pp3bmHvF
+	oLkanIgWj62Hsxo0W/yGvw18Z4iBg1RJNpdn6ZdJClaFsAVSUuR83ZMNsYqY=
+X-Google-Smtp-Source: AGHT+IETae1A1mSFKNPbMUVS49YYlh0XAFFI3I6G6oxTEtjr/+naJYUywAYIVGzwR2Ql0fzSxDB5MZGguI/Bxt9nl/Ttm39gyqeE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] comedi: drivers: do not detach device if driv->attach()
- fails
-From: Ian Abbott <abbotti@mev.co.uk>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
- H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Hillf Danton <hdanton@sina.com>,
- syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com,
- lvc-project@linuxtesting.org
-References: <20251021131656.164783-1-n.zhandarovich@fintech.ru>
- <fb39d407-622b-4480-a146-2e754f74bcbf@mev.co.uk>
-Content-Language: en-GB
-Organization: MEV Ltd.
-In-Reply-To: <fb39d407-622b-4480-a146-2e754f74bcbf@mev.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 77642887-f119-49c0-ae98-3730c4c71774-1-1
+X-Received: by 2002:a05:6e02:2307:b0:42f:a60a:8538 with SMTP id
+ e9e14a558f8ab-430c52b5afemr251762865ab.16.1761133981973; Wed, 22 Oct 2025
+ 04:53:01 -0700 (PDT)
+Date: Wed, 22 Oct 2025 04:53:01 -0700
+In-Reply-To: <CAMz+-CMyk977BbuBbKSu1tQOB+4=g0srcqb-EoEfKXE7exAH3w@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8c59d.050a0220.346f24.0043.GAE@google.com>
+Subject: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
+From: syzbot <syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	vnranganath.20@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 22/10/2025 11:45, Ian Abbott wrote:
-> On 21/10/2025 14:16, Nikita Zhandarovich wrote:
->> Syzbot identified an issue [1] in comedi_device_attach() that occurs
->> when kernel attempts to detach a comedi device via
->> comedi_device_detach() even if a driver-specific attach() method
->> already failed. Attempts to follow through with detaching the
->> device and unregistering the driver trigger a warning.
->>
->> Fix this by rearranging cleanup calls so that comedi_device_detach()
->> runs only if the device in question has been successfully attached.
->>
->> Original idea for this patch belongs to Hillf Danton
->> <hdanton@sina.com>.
->>
->> [1] Syzbot crash:
->> Unexpected driver unregister!
->> WARNING: CPU: 0 PID: 5970 at drivers/base/driver.c:273 
->> driver_unregister drivers/base/driver.c:273 [inline]
->> WARNING: CPU: 0 PID: 5970 at drivers/base/driver.c:273 
->> driver_unregister+0x90/0xb0 drivers/base/driver.c:270
->> ...
->> Call Trace:
->>   <TASK>
->>   comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
->>   comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
->>   comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
->>   do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
->>   comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
->>   vfs_ioctl fs/ioctl.c:51 [inline]
->>   __do_sys_ioctl fs/ioctl.c:597 [inline]
->> ...
->>
->> Reported-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=6616bba359cec7a1def1
->> Suggested-by: Hillf Danton <hdanton@sina.com>
->> Fixes: 74ece108f9e5 ("staging: comedi: move detach out of post-config")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
->> ---
->>   drivers/comedi/drivers.c | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
->> index c9ebaadc5e82..001083f96138 100644
->> --- a/drivers/comedi/drivers.c
->> +++ b/drivers/comedi/drivers.c
->> @@ -1005,10 +1005,13 @@ int comedi_device_attach(struct comedi_device 
->> *dev, struct comedi_devconfig *it)
->>       dev->board_name = dev->board_ptr ? *(const char **)dev->board_ptr
->>                        : dev->driver->driver_name;
->>       ret = driv->attach(dev, it);
->> -    if (ret >= 0)
->> +    if (ret >= 0) {
->>           ret = comedi_device_postconfig(dev);
->> -    if (ret < 0) {
->> -        comedi_device_detach(dev);
->> +        if (ret < 0) {
->> +            comedi_device_detach(dev);
->> +            module_put(driv->module);
->> +        }
->> +    } else {
->>           module_put(driv->module);
->>       }
->>       /* On success, the driver module count has been incremented. */
-> 
-> Unfortunately, the low-level drivers expect the `->detach()` handler to 
-> be called to clean up even if the `->attach()` handler returns an error. 
->   So this won't work.
-> 
+Hello,
 
-The problem seems to be the "c6xdigio" driver 
-("drivers/comedi/drivers/c6digio.c"). Its comedi `->attach()` handler 
-`c6digio_attach()` can return an error before the call to 
-`pnp_register_driver()`.  Also, it does not check the return value from 
-`pnp_register_driver()`.  On error, comedi will call the `->detach()` 
-handler `c6xdigio_detach()` which calls `pnp_unregister_driver()` 
-unconditionally, leading to the warning reported by Syzbot.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in sctp_inq_pop
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+=====================================================
+BUG: KMSAN: uninit-value in sctp_inq_pop+0x159c/0x1aa0 net/sctp/inqueue.c:213
+ sctp_inq_pop+0x159c/0x1aa0 net/sctp/inqueue.c:213
+ sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
+ sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
+ sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
+ sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
+ __release_sock+0x1ef/0x380 net/core/sock.c:3180
+ release_sock+0x6b/0x270 net/core/sock.c:3735
+ sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
+ inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x278/0x3d0 net/socket.c:742
+ sock_sendmsg+0x170/0x280 net/socket.c:765
+ splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
+ do_splice_from fs/splice.c:938 [inline]
+ do_splice+0x1fd2/0x30d0 fs/splice.c:1351
+ __do_splice fs/splice.c:1433 [inline]
+ __do_sys_splice fs/splice.c:1636 [inline]
+ __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
+ __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
+ x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ sctp_inq_pop+0x150b/0x1aa0 net/sctp/inqueue.c:209
+ sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
+ sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
+ sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
+ sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
+ __release_sock+0x1ef/0x380 net/core/sock.c:3180
+ release_sock+0x6b/0x270 net/core/sock.c:3735
+ sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
+ inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x278/0x3d0 net/socket.c:742
+ sock_sendmsg+0x170/0x280 net/socket.c:765
+ splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
+ do_splice_from fs/splice.c:938 [inline]
+ do_splice+0x1fd2/0x30d0 fs/splice.c:1351
+ __do_splice fs/splice.c:1433 [inline]
+ __do_sys_splice fs/splice.c:1636 [inline]
+ __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
+ __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
+ x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4969 [inline]
+ slab_alloc_node mm/slub.c:5272 [inline]
+ kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
+ kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
+ __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
+ alloc_skb include/linux/skbuff.h:1383 [inline]
+ sctp_packet_transmit+0x44b/0x46d0 net/sctp/output.c:598
+ sctp_outq_flush_transports net/sctp/outqueue.c:1173 [inline]
+ sctp_outq_flush+0x1c7d/0x67c0 net/sctp/outqueue.c:1221
+ sctp_outq_uncork+0x9e/0xc0 net/sctp/outqueue.c:764
+ sctp_cmd_interpreter net/sctp/sm_sideeffect.c:-1 [inline]
+ sctp_side_effects net/sctp/sm_sideeffect.c:1204 [inline]
+ sctp_do_sm+0x8c8e/0x9720 net/sctp/sm_sideeffect.c:1175
+ sctp_primitive_SEND+0xd7/0x110 net/sctp/primitive.c:163
+ sctp_sendmsg_to_asoc+0x1db8/0x2250 net/sctp/socket.c:1873
+ sctp_sendmsg+0x3910/0x49f0 net/sctp/socket.c:2031
+ inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x278/0x3d0 net/socket.c:742
+ sock_sendmsg+0x170/0x280 net/socket.c:765
+ splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
+ do_splice_from fs/splice.c:938 [inline]
+ do_splice+0x1fd2/0x30d0 fs/splice.c:1351
+ __do_splice fs/splice.c:1433 [inline]
+ __do_sys_splice fs/splice.c:1636 [inline]
+ __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
+ __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
+ x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6609 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+=====================================================
+
+
+Tested on:
+
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=145e2d42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=d101e12bccd4095460e7
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=165fd734580000
+
 
