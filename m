@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-864155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02831BFA0DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:27:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9573BFA0E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 65E163530E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D73348001E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4352EA16A;
-	Wed, 22 Oct 2025 05:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65812E8B7C;
+	Wed, 22 Oct 2025 05:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjU+3b5+"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SSXqXM42"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9302E9ECB
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3292EA146;
+	Wed, 22 Oct 2025 05:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761110825; cv=none; b=NNq1ATmMAjpMWNiQUJ+zqgddKHKS/WHYf8RwiiCFION0kzq25ACxHG7ZA/9e319Demz+DbOUqeiZMQKH9wcAtJ2G1+tIVt0TlGaVwyNCjwSzovqkpCH1K2h7/RfZx2Fh0VVxiaBFI+K18IsHTCf58JwZvTJx9I9E4WBWxak08mo=
+	t=1761110859; cv=none; b=LeAM+zcVNcAuFOywadkgbeU6jowXn9rjtKN1ZTnqT+lovglzGCWuteVi8g17w84ttByCva5XLp5LNyPDImtRW1nNEQn/YYYh9rQTr+eRiVB8WIuevuGThlO/33Yqgzz3Zac0dZJn1TNwWSrT7qxAeNBJ3KX6yaKk5YVcNKgrSL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761110825; c=relaxed/simple;
-	bh=6PcYgNUKdWIn2Ck+xpBBoxLCHwQgjGsmOR5AfWCpOFY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kOaWCCbqE2LzOHUM6SRmxj/jKoSt9Y9Yc+lkcOI/PU/6DlzqKzFx9XMY84WmxIDbSaS8MqTILx9yLqdkhOX8mBj72PtTlEHT9cj+dZN5Tv9NIRTX7os5zLfC7B31dF9Af6GpNgJ2o/cJmsqO0DL6Y6OKKzZwsRLLtXczPno77DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DjU+3b5+; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b62e55af64aso214451a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:27:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761110823; x=1761715623; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject:cc
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMy1RVx5Qy0vPfZy8HmPzaiGS+prOdh9j7/eJWslVtk=;
-        b=DjU+3b5+EOoZxqKkYKcZP3GOJgbDQR+0rNu05rvBRowGkLYi9Xa02qjbTM3bFXVpV4
-         IIfpwgtOol7FxVXekqx8yoHtZcAkNtrcWJ5ZhX1lHuHQY6LByzzIMGSuEvtDc9cYJT7n
-         Yiho/nCrbvlqWe5BTOCxmnBKCrTKfoC2ZjautrNJdbKtbxepnwstsJrx6xzDZi72p+JB
-         8wDy8a3yck0HSQJrpaPz5/AZ6bc3maTCxvKa9m2+anFLuM/t6TPzYRghomBzjn/tNSqv
-         ZmDmSoaVpsQUy/MQcIH7QI3O8KVuXeGx9sirV0fFpO3EteLNiF2x5IcZjbh1c0Sff1YN
-         XNgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761110823; x=1761715623;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject:cc
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EMy1RVx5Qy0vPfZy8HmPzaiGS+prOdh9j7/eJWslVtk=;
-        b=TVEOJzso027/SDZ9wuvWmhAUMCaO//IrPT+koM9HOY9KAjSHZXeXNGhNw3St5Csz8A
-         tmmqCYrsCCQO28sxvsBMMT4RsYq+l0W/fA4maQuvn0fu6+f6TWV2hI0OYY+mB2t/nQt+
-         U8Y0du5Ogl7xhhvQhqvjLpiQnjfFtg9KIXZ7PI2+x9lp8+BzT4hN0LUePtxYA3YvuW5V
-         7xCHLAHmUbVOMMCSRzaEMI7gNEc3oGN9sgYl+kz4Zhcl5Z1JNrtEgjW4OE3s0P5vtsgq
-         AcoEcF9OdIkg1lXsEe5gCKjjQ/aFGe250vM5RfwjUqO3TU+c1vlVnOCRc0bVAZeT2B2V
-         doxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlFIMXugp3vh5C0WuaL+HdNqOYJDAPSw80C01/Lm1CZIHuyasB7SnJbBKZAymG5xJa8eR9V0SIUEiGY4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpQDonYAvL5YijAOG2TRyyTD3Gqp/HOI22IJY29ZieadcX50QP
-	i7S76X3C185YvwAzoQH7kcw2wkFuLOrSznrP6XBeshc/+GLOVYHyk69I
-X-Gm-Gg: ASbGncsoRhzcKWi/Lx5/UGi0Lt4iqW8cPA9niVQruSK4C1RwAE2/fvj0j4VDupxGehO
-	TjD7L1UARbgHgasf1fHQd4BlY9IuuWbrOkBIbVmWsvCEgX0zwnrhQqQLgSxVQbLK6JhqhSQczku
-	m8WVL6+d7dBP5YkiFejiLuh+BhB25muH8Ru39eikGO+x31kXvaTDXUh736n6xFnHyuB0arAt7QE
-	kqoG82vTGYiynNZic1o9nijWA4bW1qWdXTfY8lRSExie+/4c3L21WGeQh9GeixyhTlThIBW7SLg
-	y5eu/zmO4O2Te7T4uF6fBO/gLPHhOxa9QfQeLu+MFlw0w87WauGWy3uZLJr57PKtt29ZZHPGuPV
-	zbs+YlEU7RxMleUR/+vDzr1A51419tslmIhauE5aVaM8Fd5ctQSsF30CGprRmAt+YVPlgR4fahy
-	ikXissMpizhUxZ9R9n
-X-Google-Smtp-Source: AGHT+IGhGdOmH2B7aouX3Oqkd7p74ev3sL8pZK6NfUPz74y/pmwymDvftWw11uDanLvIHrYSspqiBA==
-X-Received: by 2002:a05:6a00:23d6:b0:77e:543e:3f3d with SMTP id d2e1a72fcca58-7a2572e9cc8mr3676024b3a.5.1761110822910;
-        Tue, 21 Oct 2025 22:27:02 -0700 (PDT)
-Received: from [192.168.0.100] ([163.125.181.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a230121ebfsm13188175b3a.70.2025.10.21.22.26.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 22:27:02 -0700 (PDT)
-Message-ID: <1ad9d43b-fd1f-4a66-b67b-14f0b3217aec@gmail.com>
-Date: Wed, 22 Oct 2025 13:26:40 +0800
+	s=arc-20240116; t=1761110859; c=relaxed/simple;
+	bh=CMdKtjJakC4PRWfnRMn4BZN4cB1q58qD0lJeXy4UXwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h7iOc+SyUeysLsMjUy4SlRY+10jjsuZHf2vg9eCm68vs4TwSIj77fIx/kNw0sqQfjA1pzL8BTHpInrFpIfA/AF6VoEfutJt8TdlXh6RBzsbnv7O/Pb+SKgOIyVj54WVX5dUMrzhISYYfJ24KXXqHj59KaOlulqVAMLWoee6ppjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SSXqXM42; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761110857; x=1792646857;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CMdKtjJakC4PRWfnRMn4BZN4cB1q58qD0lJeXy4UXwQ=;
+  b=SSXqXM42xEueGLuB2ts/yyU5pjxKV+qXm3p+KfcpAOMrRsb43MRy50XN
+   7llFkDf+wYqoeGs8OdJBoCw35em6PTY/QuTPO6VeoVhfTNq2juJfCEjDi
+   7vXe5PD471jHDvYMjNVxqEKAipLw+nlxUazUK66jDJsPTnlBR9Y97MtIt
+   DkH/gXzQLVTcJ1+idtMVKK+JSFCWgSptIla6Ek36gXLhsG6353AxJKcSu
+   OWeZrdNxTMcqb+xo028Zp8NgBXTek6Rc1M7woBUFESo46RnJQAdB8lzSU
+   /fmaz0FzrbmbdVRV5YgdFSaXYMhUdfOloocO4Zt3cg+9nLErSmSyxg4BV
+   A==;
+X-CSE-ConnectionGUID: fmK903Z7SOqey51e6XhfxA==
+X-CSE-MsgGUID: HL7KypReSTea4ik2mCj0yQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62951365"
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="62951365"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 22:27:37 -0700
+X-CSE-ConnectionGUID: tGott0CCSv2MJ72NpdWhXg==
+X-CSE-MsgGUID: ZFBdv2q9RyK8IGEXpwM0VQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="182944771"
+Received: from unknown (HELO [10.238.3.234]) ([10.238.3.234])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 22:27:34 -0700
+Message-ID: <ba31c391-e703-4ff6-9742-4518d36bffa6@linux.intel.com>
+Date: Wed, 22 Oct 2025 13:27:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,92 +66,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: yangyccccc@gmail.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: Add kernel parameter to disable trap EL0 accesses
- to IMPDEF regs
-To: Liao Chang <liaochang1@huawei.com>, corbet@lwn.net,
- catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
- paulmck@kernel.org, pawan.kumar.gupta@linux.intel.com, mingo@kernel.org,
- bp@alien8.de, kees@kernel.org, arnd@arndb.de, fvdl@google.com,
- maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
- yeoreum.yun@arm.com, james.morse@arm.com, ardb@kernel.org,
- hardevsinh.palaniya@siliconsignals.io
-References: <20251021115428.557084-1-liaochang1@huawei.com>
-From: Yicong Yang <yangyccccc@gmail.com>
-In-Reply-To: <20251021115428.557084-1-liaochang1@huawei.com>
+Subject: Re: [Patch v8 05/12] perf/x86/intel: Initialize architectural PEBS
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
+ <20251015064422.47437-6-dapeng1.mi@linux.intel.com>
+ <20251021154349.GR3245006@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251021154349.GR3245006@noisy.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2025/10/21 19:54, Liao Chang wrote:
-> Add kernel parameter to allow system-wide EL0 access to IMPDEF system
-> regregisters and instructions without trapping to EL1/EL2. Since trap
-> overhead will compromises benefits, and it's even worse in
-> virtualization on CPU where certain IMPDEF registers and instructions
-> are designed for EL0 performance use.
+
+On 10/21/2025 11:43 PM, Peter Zijlstra wrote:
+> On Wed, Oct 15, 2025 at 02:44:15PM +0800, Dapeng Mi wrote:
+>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>> index c88bcd5d2bc4..bfb123ff7c9a 100644
+>> --- a/arch/x86/events/intel/core.c
+>> +++ b/arch/x86/events/intel/core.c
+>> @@ -5273,34 +5273,58 @@ static inline bool intel_pmu_broken_perf_cap(void)
+>>  
+>>  static void update_pmu_cap(struct pmu *pmu)
+>>  {
+>> -	unsigned int cntr, fixed_cntr, ecx, edx;
+>> -	union cpuid35_eax eax;
+>> -	union cpuid35_ebx ebx;
+>> +	unsigned int eax, ebx, ecx, edx;
+>> +	union cpuid35_eax eax_0;
+>> +	union cpuid35_ebx ebx_0;
+>> +	u64 cntrs_mask = 0;
+>> +	u64 pebs_mask = 0;
+>> +	u64 pdists_mask = 0;
+>>  
+>> -	cpuid(ARCH_PERFMON_EXT_LEAF, &eax.full, &ebx.full, &ecx, &edx);
+>> +	cpuid(ARCH_PERFMON_EXT_LEAF, &eax_0.full, &ebx_0.full, &ecx, &edx);
+>>  
+>> -	if (ebx.split.umask2)
+>> +	if (ebx_0.split.umask2)
+>>  		hybrid(pmu, config_mask) |= ARCH_PERFMON_EVENTSEL_UMASK2;
+>> -	if (ebx.split.eq)
+>> +	if (ebx_0.split.eq)
+>>  		hybrid(pmu, config_mask) |= ARCH_PERFMON_EVENTSEL_EQ;
+>>  
+>> -	if (eax.split.cntr_subleaf) {
+>> +	if (eax_0.split.cntr_subleaf) {
+>>  		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_NUM_COUNTER_LEAF,
+>> -			    &cntr, &fixed_cntr, &ecx, &edx);
+>> -		hybrid(pmu, cntr_mask64) = cntr;
+>> -		hybrid(pmu, fixed_cntr_mask64) = fixed_cntr;
+>> +			    &eax, &ebx, &ecx, &edx);
+>> +		hybrid(pmu, cntr_mask64) = eax;
+>> +		hybrid(pmu, fixed_cntr_mask64) = ebx;
+>> +		cntrs_mask = (u64)ebx << INTEL_PMC_IDX_FIXED | eax;
+>>  	}
+>>  
+>> -	if (eax.split.acr_subleaf) {
+>> +	if (eax_0.split.acr_subleaf) {
+>>  		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_ACR_LEAF,
+>> -			    &cntr, &fixed_cntr, &ecx, &edx);
+>> +			    &eax, &ebx, &ecx, &edx);
+>>  		/* The mask of the counters which can be reloaded */
+>> -		hybrid(pmu, acr_cntr_mask64) = cntr | ((u64)fixed_cntr << INTEL_PMC_IDX_FIXED);
+>> +		hybrid(pmu, acr_cntr_mask64) = eax | ((u64)ebx << INTEL_PMC_IDX_FIXED);
+>>  
+>>  		/* The mask of the counters which can cause a reload of reloadable counters */
+>>  		hybrid(pmu, acr_cause_mask64) = ecx | ((u64)edx << INTEL_PMC_IDX_FIXED);
+>>  	}
+>>  
+>> +	/* Bits[5:4] should be set simultaneously if arch-PEBS is supported */
+>> +	if (eax_0.split.pebs_caps_subleaf && eax_0.split.pebs_cnts_subleaf) {
+>> +		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_PEBS_CAP_LEAF,
+>> +			    &eax, &ebx, &ecx, &edx);
+>> +		hybrid(pmu, arch_pebs_cap).caps = (u64)ebx << 32;
+>> +
+>> +		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_PEBS_COUNTER_LEAF,
+>> +			    &eax, &ebx, &ecx, &edx);
+>> +		pebs_mask = ((u64)ecx << INTEL_PMC_IDX_FIXED) | eax;
+>> +		pdists_mask = ((u64)edx << INTEL_PMC_IDX_FIXED) | ebx;
+>> +		hybrid(pmu, arch_pebs_cap).counters = pebs_mask;
+>> +		hybrid(pmu, arch_pebs_cap).pdists = pdists_mask;
+>> +
+>> +		if (WARN_ON((pebs_mask | pdists_mask) & ~cntrs_mask))
+>> +			x86_pmu.arch_pebs = 0;
+>> +	} else {
+>> +		WARN_ON(x86_pmu.arch_pebs == 1);
+>> +		x86_pmu.arch_pebs = 0;
+>> +	}
+>> +
+>>  	if (!intel_pmu_broken_perf_cap()) {
+>>  		/* Perf Metric (Bit 15) and PEBS via PT (Bit 16) are hybrid enumeration */
+>>  		rdmsrq(MSR_IA32_PERF_CAPABILITIES, hybrid(pmu, intel_cap).capabilities);
+> I've stuck this on top.
 >
-> More early discussion could be found from link below.
->
-> Link: https://lore.kernel.org/all/24afb8de-622a-4865-bd8e-8e89ccfff8f4@huawei.com/
-> Tested-by: Xinyu Zheng <zhengxinyu6@huawei.com>
-> Signed-off-by: Liao Chang <liaochang1@huawei.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
->  arch/arm64/kernel/cpufeature.c                  | 14 +++++++++++++-
->  2 files changed, 22 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 5a7a83c411e9..11ffa9f7b972 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -326,6 +326,15 @@
->  			See Documentation/arch/arm64/asymmetric-32bit.rst for more
->  			information.
->  
-> +	no_trap_el0_impdef [Arm64,EARLY]
-> +			Allow system-wide EL0 access to IMPDEF system registers
-> +			and instructions without trapping to EL1/EL2.
-> +			Since trap overhead compromises benefits, and it's even
-> +			worse in virtualization on CPU where certain IMPDEF
-> +			registers and instructions are designed for EL0
-> +			performance use. This assumes the kernel adds the
-> +			support for Armv8.8 extension FEAT_TIDCP1.
-> +
->  	amd_iommu=	[HW,X86-64]
->  			Pass parameters to the AMD IOMMU driver in the system.
->  			Possible values are:
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index ef269a5a37e1..d12e35d799ee 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2459,9 +2459,21 @@ static bool is_kvm_protected_mode(const struct arm64_cpu_capabilities *entry, in
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -5271,6 +5271,8 @@ static inline bool intel_pmu_broken_perf
+>  	return false;
 >  }
->  #endif /* CONFIG_KVM */
 >  
-> +static bool no_trap_el0_impdef;
+> +#define counter_mask(_gp, _fixed) ((_gp) | ((u64)(_fixed) << INTEL_PMC_IDX_FIXED))
 > +
-> +static int __init parse_no_trap_el0_impdef(char *p)
-> +{
-> +	no_trap_el0_impdef = true;
-> +	return 0;
-> +}
-> +early_param("no_trap_el0_impdef", parse_no_trap_el0_impdef);
-> +
->  static void cpu_trap_el0_impdef(const struct arm64_cpu_capabilities *__unused)
+>  static void update_pmu_cap(struct pmu *pmu)
 >  {
-> -	sysreg_clear_set(sctlr_el1, 0, SCTLR_EL1_TIDCP);
-> +	if (no_trap_el0_impdef)
-> +		sysreg_clear_set(sctlr_el1, SCTLR_EL1_TIDCP, 0);
-> +	else
-> +		sysreg_clear_set(sctlr_el1, 0, SCTLR_EL1_TIDCP);
-An id override for TIDCP1 seems simpler rather than an early param, and consistent to how we disable other 
-certain features through boot option like arm64.nosve or arm64.nompam. I see Catalin also suggested in that
-way in [1],any reason we cannot do it in that way?
-
-[1] https://lore.kernel.org/all/aHqamaqueuk18NyS@arm.com/
-
-Thanks.
->  }
+>  	unsigned int eax, ebx, ecx, edx;
+> @@ -5292,17 +5294,16 @@ static void update_pmu_cap(struct pmu *p
+>  			    &eax, &ebx, &ecx, &edx);
+>  		hybrid(pmu, cntr_mask64) = eax;
+>  		hybrid(pmu, fixed_cntr_mask64) = ebx;
+> -		cntrs_mask = (u64)ebx << INTEL_PMC_IDX_FIXED | eax;
+> +		cntrs_mask = counter_mask(eax, ebx);
+>  	}
 >  
->  static void cpu_enable_dit(const struct arm64_cpu_capabilities *__unused)
+>  	if (eax_0.split.acr_subleaf) {
+>  		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_ACR_LEAF,
+>  			    &eax, &ebx, &ecx, &edx);
+>  		/* The mask of the counters which can be reloaded */
+> -		hybrid(pmu, acr_cntr_mask64) = eax | ((u64)ebx << INTEL_PMC_IDX_FIXED);
+> -
+> +		hybrid(pmu, acr_cntr_mask64) = counter_mask(eax, ebx);
+>  		/* The mask of the counters which can cause a reload of reloadable counters */
+> -		hybrid(pmu, acr_cause_mask64) = ecx | ((u64)edx << INTEL_PMC_IDX_FIXED);
+> +		hybrid(pmu, acr_cause_mask64) = counter_mask(ecx, edx);
+>  	}
+>  
+>  	/* Bits[5:4] should be set simultaneously if arch-PEBS is supported */
+> @@ -5313,8 +5314,8 @@ static void update_pmu_cap(struct pmu *p
+>  
+>  		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_PEBS_COUNTER_LEAF,
+>  			    &eax, &ebx, &ecx, &edx);
+> -		pebs_mask = ((u64)ecx << INTEL_PMC_IDX_FIXED) | eax;
+> -		pdists_mask = ((u64)edx << INTEL_PMC_IDX_FIXED) | ebx;
+> +		pebs_mask   = counter_mask(eax, ecx);
+> +		pdists_mask = counter_mask(ebx, edx);
+>  		hybrid(pmu, arch_pebs_cap).counters = pebs_mask;
+>  		hybrid(pmu, arch_pebs_cap).pdists = pdists_mask;
+
+Nice suggestion. Would do. Thanks.
+
+
+>  
 
