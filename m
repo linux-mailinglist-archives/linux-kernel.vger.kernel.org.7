@@ -1,193 +1,235 @@
-Return-Path: <linux-kernel+bounces-865543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECB9BFD55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:47:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E95DBFD596
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6BA9B358C07
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4951884911
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899B434DCE2;
-	Wed, 22 Oct 2025 16:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C74235B14C;
+	Wed, 22 Oct 2025 16:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dh5FAWp7"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013026.outbound.protection.outlook.com [52.101.72.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D9B2D47FE;
-	Wed, 22 Oct 2025 16:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761151336; cv=fail; b=Pj9kLw9E0BQvHiH+XYQtRAnJLUNIm/18G4AeNLFVmnHXbBEPSHQA4ILKfcvDqPGhyMaAMJVYkm/SUpOV16otIxSpu340Yus8TfI6xaMtKLtkQAUy6OfNHNhgiwxWliLKd7zCZPaJ2qBV9Lmj7UGiwi9IKAeXHu/zM8Zo+IW5Pr4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761151336; c=relaxed/simple;
-	bh=RC4ew+WvZkeGu2BMzGEOkfBGSkc7Vh9rwBduTJAU8XU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=eENMCM5QioCVpg7S6J934p09XpQkLq/PszaVNU0Y8uTa+UkJ9rcEqYFkfE5FpBQNJtGo6GJkpEKjshXeeZhCxFptYNHIdrdVwkv00LX/HLCONngA34JEtIZe1lvUUsf0/n6AMuHgxJDpwPUZYtOdqjF7WaB4QnElIbfhfFjl6Is=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dh5FAWp7; arc=fail smtp.client-ip=52.101.72.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OJWe+/NV9X1zrY3zdw2P2z2shEE0lz/i2EoJyRPy2knzXnp4AaYqFpYD/ivA1l9kvnEgEl+dwoWNt78206iNMhfpJXIzMJ1dNhZd+lKQDOQ+pOCL/kfSfY98CRpQq1sGRwpOF5pCTbLsieLq3hF522T1dW4ohD+wXGqAtUmggg/I1yXML8uq7478kI8KGHv/KKiaIYiQYSyAQJpTKpuXMNPoSHFTQ0d6Jja5CWp7aPDbLMOSsb2oD48zl58vBtUwn6lxTw9XDLkDWXyfhFegw7E84wxB/l2dijA9CPhnfKCQrMLKBaR6/RFvuGeLfuf/MDVIIq/XVI8gvH7UlaXPhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JE2t5O0K1tFrzQNQrYa2fkQ2y/rC1VpK3U7dkX8777E=;
- b=BrGOiXntt/E1B5cPNAr5mYixAKfH8gUWW7bGHVlrkeMqWObX29FMMjbeyAqFVDrSVAm2m/WQ7xQ9Xc56SaDjQulEU+4KM5ZIoJ2BcTfeYkR+1VPSMA/z18aPZzq8ikf6L0eQsQYbblnzpuOppCFdWYiUojv7LVZuq9PQFM3YS7YxESU48U6kGDR/AP8CgJDxyc92k/7H+YN5KOsbyiISMk2i2RaFiEVeP98TcCL4L34SJM37UVHViaj4NpeuNXfxn+ynypD3RQ3KSgJGOoGb0IZkgwfE/4jSPbGoX9+a5fAZdkCpP1OGjMaNBsIjsFGY4hbOqRE6lzi+R5DL28N4eQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JE2t5O0K1tFrzQNQrYa2fkQ2y/rC1VpK3U7dkX8777E=;
- b=dh5FAWp7MmXKYSUpWr4gNOjaLXr8sBf06TFxIIeiGHMEmP0hPiI+pY2v5u+gkO9CODNfkJeAYQ4lqpTaAAuAbwuG32tdJcydLD6nFJpkeMvgTCiVMjIZQD+5sn8ixSr520dq7waOlOFdlW9r9RjYfh7s4rfsLVFACPQHMisTrnukwtEXMexSHB6BRt4tIs9gjl1eEz2px1tbCNavMzNQBRvs+clp01TJGmdtKrQMhwYAM02/lxtoSH6Vr5VqDXmXt56ZHTe8HZkBw9PHb/ONyFlILpA2xaCIfBXiQgarft25MWtqnPvPQq9B6wMOmZsborGBY0OlGNZUIcSArLMmBA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by VE1PR04MB7293.eurprd04.prod.outlook.com (2603:10a6:800:1a8::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.15; Wed, 22 Oct
- 2025 16:42:11 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 16:42:11 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoni Pokusinski <apokusinski01@gmail.com>,
-	Vasileios Amoiridis <vassilisamir@gmail.com>,
-	Justin Weiss <justin@justinweiss.com>,
-	linux-iio@vger.kernel.org (open list:IIO SUBSYSTEM AND DRIVERS),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: iio: pressure: Remove vdd-supply and vddio-supply from required list
-Date: Wed, 22 Oct 2025 12:41:51 -0400
-Message-Id: <20251022164154.2994517-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY1P220CA0008.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:59d::16) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IAmJ8k7K"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38EA35B129;
+	Wed, 22 Oct 2025 16:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761151455; cv=none; b=EFAFwpQ49Blkn3UB3nl8ZD6gpnydgPcfiYuYGWCD6DthBfMNJRfzaydoXS7vOKwQ06GtGu+D1nwy8J4JDI210SAnXp17egiWCMZqu520qBLNVXNyH8tovTKZCYEGmyNKrE+EMK4hlMHhCuXfUEIXbaokFPxB2RF/c+aD9KY5ymU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761151455; c=relaxed/simple;
+	bh=CClu27EVIMb0L+/utii1f+p0OGlvQYvUTKRT8So2Tq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QRdaxhPvelrV8dGJqBvJ9aDmeJAd/gyKJXT417tNze4tfLQRUd4qaWYUrb6qBHzECcCTPdHx5D2vER5S3+37BuM1GdNO6t+z2GWqhsIl/qk6cK4x/BIHC05o3WjR/eeKtKAlAdTn5Rs7WvFlR/ZKPHuRQHaPcJLwAfLwpu4G1jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IAmJ8k7K; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.1.19] (unknown [103.212.145.76])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B7C7D206595A;
+	Wed, 22 Oct 2025 09:44:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B7C7D206595A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761151452;
+	bh=QD4gN2DR0xkuQGbWjt1Moftwz75l5x53sM6fqnFk+q4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IAmJ8k7KCZJwvov2ZtpqG5Dn0YM29BJq+o5gcgkdK4M9QRKnuElFrhpLHxm4njEeP
+	 7Wszxn/cro5H0MhVCV0WK8lY8Ckx26xr44bwFEqx0WImBYjaMoj8v1lEbhvaQIA7/T
+	 ADal63Odxasth2mBWNSX1UvCrJZJP1waF3/kMMLM=
+Message-ID: <cd716f3f-cb08-4ff9-8de4-25363180d7a4@linux.microsoft.com>
+Date: Wed, 22 Oct 2025 22:14:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VE1PR04MB7293:EE_
-X-MS-Office365-Filtering-Correlation-Id: db8b825e-b91e-4142-afac-08de1189f287
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|366016|376014|1800799024|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?L3C4ACPnqQNC98cYpTIKldV6+oMvi7zIzmS+HywnayNBLnbWo9bwH4lqnFZI?=
- =?us-ascii?Q?2t6GvRFuJbgR5zlRFZKLUXpeZaV9MTgyIa9c+V4X52qu9znmZTkFlhPLRkW1?=
- =?us-ascii?Q?EPBm821bZVWq1jAi+WZCEAxOLv9a7P1ITMHepoJjLtuOrn4jEPcQGQNg2eJs?=
- =?us-ascii?Q?XwBLDK6EG41ZHU1uLXS0978LfCaPfnzJf0jY4FBGXcvgmBYYZcjqtaOxkNsI?=
- =?us-ascii?Q?gE+WF2QdYD4VVtMy82sERMy0WSaaFXesgYmvEclGc0GFEDAu6OQttLBzOW51?=
- =?us-ascii?Q?1+lO0S7orUyDag19lx7gJirXlqWEuVjl9Clu6VgsHhuLJWU1ZSBAG5jE2b9X?=
- =?us-ascii?Q?6FGqoxiZ2YMlh2QbdqP/Da4JE9xMjAXz0XYQf/77EdlmS0I+PPgAgaz9CyTJ?=
- =?us-ascii?Q?tR7d6cRisKOiVfgX+DIZMumGk8A4uWd4piGv2IowZMFXx+XuJ4achYt4TnZt?=
- =?us-ascii?Q?0U6c5pK9hbqxIazTkAqRQfmFP6ISyPeIs9Huqb3WFziv+GHn7u7IJX32CUyo?=
- =?us-ascii?Q?qSGHm5BfbsiSlTAKF7RbrRo7C9o/1VOTBeRVujvyTahOVmbnpTG27PCGr0gm?=
- =?us-ascii?Q?zY9H6dfN11JBlktewrVRjGlpC5ECo66d040nh/SZyF7I693hDy4HM44f3m65?=
- =?us-ascii?Q?xWutMFmdvDUvwAlyQQ1A/sQ7/x+43W2smz5AyzHKvYG7SOcPRwGt5rPjY6cV?=
- =?us-ascii?Q?H0ARnPybH8zvyWZ4ytVv893l3YxVCyZUJ88vtKQgBGg84Ji5yspjfzeWW8U0?=
- =?us-ascii?Q?Wcd2zbn6gTbvjU4B3Ua2IxYVNTah/ryzKVdvZB+jE4B/8DbGDSgv5Q2dcjUK?=
- =?us-ascii?Q?zXAvYikwMoSczT90lO6R35UQoFPSnSY29h8JwlRHBFKc2JBSrKDZIuuimrCI?=
- =?us-ascii?Q?cNgywJPpQemkmE4FBjZg8AXBzmDR8s3M+w9B7MkvnXqM/d5vYKhvOr9u8Eh2?=
- =?us-ascii?Q?tji3zoX44wrBaR/zUf4UHoH4qCedEvHXn8WulKcOczrgOhNYZPsSiM+W7BTa?=
- =?us-ascii?Q?Pvc6tK3BbI/OmBBBwIppin0MumsXx+MMEhBuqRsJjiw4EsVZCs2Fq21P5dUT?=
- =?us-ascii?Q?CT4KsADVQj6+NQ7TWb1lBprpFMWTDoF55SWVLR6kXMWc5R9uc/keYVy64BQj?=
- =?us-ascii?Q?qUA5aHVLJZ0sjb9jlKTWcLMtqckvSmOiwkomHx1f6BuHyf6n98IM9TykOkt+?=
- =?us-ascii?Q?H3bC0aTTU9cDkBd9LVWVJfwHXaiVfH/iPyVhIq7mXsYNP19yoLJ14bZzA/Be?=
- =?us-ascii?Q?RWsknxbM7ycJ21Q1c0E/bT5lrLMkT7aHdcNI6mO4vg+DiP2hC0jufAjEUHgs?=
- =?us-ascii?Q?+quhC0p8OQmWd+GarNY6tTbZ00LErvIjI18K9PQd6lhrq8r7BG/jhYHjLerB?=
- =?us-ascii?Q?6CO/G2229CcU4YR6Ni1yEBRHxz4rnG43nnH3+9UFsvv6Dv0J/EJzd8+7x8kT?=
- =?us-ascii?Q?ktfWuGyjQO5RVufRZAWgqln6uPb1L2NeB8rV9OesYrJGQJCktxmZ7SFJzGyb?=
- =?us-ascii?Q?VeRAbwipGxCHLcA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(366016)(376014)(1800799024)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CULSUvHD48akCqDM0ghv1jSqruQEGrtAkX3Z89Zk8XPXtHe6eitW2r17alxC?=
- =?us-ascii?Q?s3M4pYPs8FrjsmHhyZfqMK6zY/TLGqfxIeZZF2bxsZl4piiFA1VnIqdFHB3a?=
- =?us-ascii?Q?BOAd6fiLRFnsa/etDAY8nodH9lKVtn+iXoXYQCyhF4lqJb2KxxtmxpSY438d?=
- =?us-ascii?Q?CH6eZNWmKG3oqBAMIPkKYmcw7Gm1P33QQd2RNvMQOmIxhqBocjHJU2hpMqK6?=
- =?us-ascii?Q?+UPU2BOPaSy0ZN0AhhYKkukc6NzcITbr/s+krvmogd9XtXoINT47amywVn/9?=
- =?us-ascii?Q?LUz9iNTvty5z7JsvY+Yf/ZenYEdMDhddhxRssWmu2uSqCIA8bc90aMsqgZiU?=
- =?us-ascii?Q?sziJMLpkfX7k0rrY8L5MxJvQwgq5RIG1Fw/HgvDxFWn5pcDEHlSBxaU4oWmE?=
- =?us-ascii?Q?IL9d6IzBAJy92p73d3QFBSc/tkm+DEL4NhFMSWfYS19zNeEIQV3BCX2IAzpw?=
- =?us-ascii?Q?8ZbpmPeqchhcqKHcxhJ3Rs5aMhV1v5WUC+SXS1vXRfypLCG0IZIdLyYyuUbD?=
- =?us-ascii?Q?oJz8+T89MTepBVSaGYGdvHw8PRL9YnuZGIgGCudYQU8TLJzNZrYox9WIkfHL?=
- =?us-ascii?Q?dhn+lIgyIjRvIDnwzNmuqrV6OvVtx7+uo8MtGPvzg5IqAl2jyt8+PDdmFJij?=
- =?us-ascii?Q?5/IpNzTGxpRsgWPQ67hwFGs5wtERfdrYhsFR13GTOzSFw2W6pKkOwrnumXLR?=
- =?us-ascii?Q?i0X/RU+ARwvFWRdlhiSKQdWPPndKW9tLIfEVl7M/Oir86vypYMO8rt0Wks+F?=
- =?us-ascii?Q?V274i9MEMs3GRVLaimI425+tcTVfSSQd7pyUYqOp/SM7AbuhmjuTGIijSIMz?=
- =?us-ascii?Q?Ve/xPNQiGE5YWmaqzRZq38xbd0R8bU5BDQaP0wofkskVFpwmpyYlckryd0Op?=
- =?us-ascii?Q?vhSCcHBzOvfWSt2ePS6tpSLLycWH15+IoWfJNZg0ImXBYMFKH96FG8qDWbHN?=
- =?us-ascii?Q?iCXzXcxapGERZ4RilL6yvQKJpoV/+BX7LZn40Ggn2AxJoyBYP2EDLF/qbMTS?=
- =?us-ascii?Q?5blj+8WqHyEqHhwKNCY8jH6+whBHlB17NhMFpG0+e7XJPd5H76Lb8WfOm9/m?=
- =?us-ascii?Q?RUPrNWkWzZ4iC5QjXqY+9Fwn+zGKM40eRNrGTfRPIlY80Tbp+JWXPlLW+OzB?=
- =?us-ascii?Q?vkedTZ0TOaIgWtikbzPFL2iTZE4UO511QUUq32D+X5fNhg/LkPOlcV8OtsOz?=
- =?us-ascii?Q?qDQTFK5H1/RVqw6j/Pkd9Wkyjj/Jbz4e+4rtoBUIz57TJ3ozywSkIsNqT3NI?=
- =?us-ascii?Q?PPxOgf56Lzsvj1Nsfnr1e0WrM5T+KJUjrCEvzHlBYKWJTYL6oKIuERlGTDKf?=
- =?us-ascii?Q?DMXyatpXGW8zTWGORoE6g4gCsRzl5bPmtVh9NnyUoru+Y0Y+Hbh8EifUAMer?=
- =?us-ascii?Q?49JWVOroZiAbCMCYyWE9/pxSfKEPELVDIckhO7X3krS0oDINL8Jf6KQ6xe2+?=
- =?us-ascii?Q?SxRWB7V+zTm9kQbqWvnDpuDAD6jNn9fdBhLSbWgp31Jlpz8usA+pmTyJvr5P?=
- =?us-ascii?Q?kThnQx6Myk/m3TlTk/2yXGNaBOizZ6Qz+7OTZ5okHhqxckDI4uyUpkWE0Kmo?=
- =?us-ascii?Q?/jf0p3fuRsACpYVfcPY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: db8b825e-b91e-4142-afac-08de1189f287
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 16:42:11.5606
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SFH5lNQ4TF+5OO51/gXg5EOTICV/k6f9YZTbPffqiotTzP7Tx1s94lxaq/3oSh6t9rinBa5/2Xb6mbmhFxDDyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7293
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: mana: Linearize SKB if TX SGEs exceeds
+ hardware limit
+To: Eric Dumazet <edumazet@google.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
+ kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com,
+ ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
+ shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, gargaditya@microsoft.com,
+ ssengar@linux.microsoft.com
+References: <20251003154724.GA15670@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CANn89iJwkbxC5HvSKmk807K-3HY+YR1kt-LhcYwnoFLAaeVVow@mail.gmail.com>
+ <9d886861-2e1f-4ea8-9f2c-604243bd751b@linux.microsoft.com>
+ <CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com>
+ <7bc327ba-0050-4d9e-86b6-1b7427a96f53@linux.microsoft.com>
+ <1d3ac973-7bc7-4abe-9fe2-6b17dbba223b@linux.microsoft.com>
+ <CANn89iKFsuUnwMb-upqwswrCYaTL-MXVwsQdxFhduZeZRAJZ2A@mail.gmail.com>
+Content-Language: en-US
+From: Aditya Garg <gargaditya@linux.microsoft.com>
+In-Reply-To: <CANn89iKFsuUnwMb-upqwswrCYaTL-MXVwsQdxFhduZeZRAJZ2A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Some board designs connect vdd and vddio to the system power supply. Remove
-these properties from the required list and make them optional, since
-drivers/iio/pressure/mpl3115.c does not use them.
+On 17-10-2025 23:36, Eric Dumazet wrote:
+> On Fri, Oct 17, 2025 at 10:41 AM Aditya Garg
+> <gargaditya@linux.microsoft.com> wrote:
+>>
+>> On 08-10-2025 20:58, Aditya Garg wrote:
+>>> On 08-10-2025 20:51, Eric Dumazet wrote:
+>>>> On Wed, Oct 8, 2025 at 8:16 AM Aditya Garg
+>>>> <gargaditya@linux.microsoft.com> wrote:
+>>>>>
+>>>>> On 03-10-2025 21:45, Eric Dumazet wrote:
+>>>>>> On Fri, Oct 3, 2025 at 8:47 AM Aditya Garg
+>>>>>> <gargaditya@linux.microsoft.com> wrote:
+>>>>>>>
+>>>>>>> The MANA hardware supports a maximum of 30 scatter-gather entries
+>>>>>>> (SGEs)
+>>>>>>> per TX WQE. In rare configurations where MAX_SKB_FRAGS + 2 exceeds
+>>>>>>> this
+>>>>>>> limit, the driver drops the skb. Add a check in mana_start_xmit() to
+>>>>>>> detect such cases and linearize the SKB before transmission.
+>>>>>>>
+>>>>>>> Return NETDEV_TX_BUSY only for -ENOSPC from
+>>>>>>> mana_gd_post_work_request(),
+>>>>>>> send other errors to free_sgl_ptr to free resources and record the tx
+>>>>>>> drop.
+>>>>>>>
+>>>>>>> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+>>>>>>> Reviewed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+>>>>>>> ---
+>>>>>>>     drivers/net/ethernet/microsoft/mana/mana_en.c | 26 +++++++++++++
+>>>>>>> ++----
+>>>>>>>     include/net/mana/gdma.h                       |  8 +++++-
+>>>>>>>     include/net/mana/mana.h                       |  1 +
+>>>>>>>     3 files changed, 29 insertions(+), 6 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/
+>>>>>>> drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>>>>> index f4fc86f20213..22605753ca84 100644
+>>>>>>> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>>>>> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>>>>> @@ -20,6 +20,7 @@
+>>>>>>>
+>>>>>>>     #include <net/mana/mana.h>
+>>>>>>>     #include <net/mana/mana_auxiliary.h>
+>>>>>>> +#include <linux/skbuff.h>
+>>>>>>>
+>>>>>>>     static DEFINE_IDA(mana_adev_ida);
+>>>>>>>
+>>>>>>> @@ -289,6 +290,19 @@ netdev_tx_t mana_start_xmit(struct sk_buff
+>>>>>>> *skb, struct net_device *ndev)
+>>>>>>>            cq = &apc->tx_qp[txq_idx].tx_cq;
+>>>>>>>            tx_stats = &txq->stats;
+>>>>>>>
+>>>>>>> +       BUILD_BUG_ON(MAX_TX_WQE_SGL_ENTRIES !=
+>>>>>>> MANA_MAX_TX_WQE_SGL_ENTRIES);
+>>>>>>> +       #if (MAX_SKB_FRAGS + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES)
+>>>>>>> +               if (skb_shinfo(skb)->nr_frags + 2 >
+>>>>>>> MANA_MAX_TX_WQE_SGL_ENTRIES) {
+>>>>>>> +                       netdev_info_once(ndev,
+>>>>>>> +                                        "nr_frags %d exceeds max
+>>>>>>> supported sge limit. Attempting skb_linearize\n",
+>>>>>>> +                                        skb_shinfo(skb)->nr_frags);
+>>>>>>> +                       if (skb_linearize(skb)) {
+>>>>>>
+>>>>>> This will fail in many cases.
+>>>>>>
+>>>>>> This sort of check is better done in ndo_features_check()
+>>>>>>
+>>>>>> Most probably this would occur for GSO packets, so can ask a software
+>>>>>> segmentation
+>>>>>> to avoid this big and risky kmalloc() by all means.
+>>>>>>
+>>>>>> Look at idpf_features_check()  which has something similar.
+>>>>>
+>>>>> Hi Eric,
+>>>>> Thank you for your review. I understand your concerns regarding the use
+>>>>> of skb_linearize() in the xmit path, as it can fail under memory
+>>>>> pressure and introduces additional overhead in the transmit path. Based
+>>>>> on your input, I will work on a v2 that will move the SGE limit check to
+>>>>> the ndo_features_check() path and for GSO skbs exceding the hw limit
+>>>>> will disable the NETIF_F_GSO_MASK to enforce software segmentation in
+>>>>> kernel before the call to xmit.
+>>>>> Also for non GSO skb exceeding the SGE hw limit should we go for using
+>>>>> skb_linearize only then or would you suggest some other approach here?
+>>>>
+>>>> I think that for non GSO, the linearization attempt is fine.
+>>>>
+>>>> Note that this is extremely unlikely for non malicious users,
+>>>> and MTU being usually small (9K or less),
+>>>> the allocation will be much smaller than a GSO packet.
+>>>
+>>> Okay. Will send a v2
+>> Hi Eric,
+>> I tested the code by disabling GSO in ndo_features_check when the number
+>> of SGEs exceeds the hardware limit, using iperf for a single TCP
+>> connection with zerocopy enabled. I noticed a significant difference in
+>> throughput compared to when we linearize the skbs.
+>> For reference, the throughput is 35.6 Gbits/sec when using
+>> skb_linearize, but drops to 6.75 Gbits/sec when disabling GSO per skb.
+> 
+> You must be doing something very wrong.
+> 
+> Difference between TSO and non TSO should not be that high.
+> 
+> ethtool -K eth0 tso on
+> netperf -H tjbp27
+> MIGRATED TCP STREAM TEST from ::0 (::) port 0 AF_INET6 to
+> tjbp27.prod.google.com () port 0 AF_INET6
+> Recv   Send    Send
+> Socket Socket  Message  Elapsed
+> Size   Size    Size     Time     Throughput
+> bytes  bytes   bytes    secs.    10^6bits/sec
+> 
+> 540000 262144 262144    10.00    92766.69
+> 
+> 
+> ethtool -K eth0 tso off
+> netperf -H tjbp27
+> MIGRATED TCP STREAM TEST from ::0 (::) port 0 AF_INET6 to
+> tjbp27.prod.google.com () port 0 AF_INET6
+> Recv   Send    Send
+> Socket Socket  Message  Elapsed
+> Size   Size    Size     Time     Throughput
+> bytes  bytes   bytes    secs.    10^6bits/sec
+> 
+> 540000 262144 262144    10.00    52218.97
+> 
+> Now if I force linearization, you can definitely see the very high
+> cost of the copies !
+> 
+> ethtool -K eth1 sg off
+> tjbp26:/home/edumazet# ./netperf -H tjbp27
+> MIGRATED TCP STREAM TEST from ::0 (::) port 0 AF_INET6 to
+> tjbp27.prod.google.com () port 0 AF_INET6
+> Recv   Send    Send
+> Socket Socket  Message  Elapsed
+> Size   Size    Size     Time     Throughput
+> bytes  bytes   bytes    secs.    10^6bits/sec
+> 
+> 540000 262144 262144    10.00    16951.32
+> 
+>>
+>> Hence, We propose to  linearizing skbs until the first failure occurs.
+> 
+> Hmm... basically hiding a bug then ?
+> 
+>> After that, we switch to a fail-safe mode by disabling GSO for SKBs with
+>>    sge > hw limit using the ndo_feature_check implementation, while
+>> continuing to apply  skb_linearize() for non-GSO packets that exceed the
+>> hardware limit. This ensures we remain on the optimal performance path
+>> initially, and only transition to the fail-safe path after encountering
+>> a failure.
+> 
+> Please post your patch (adding the check in ndo_features_check()),
+> perhaps one of us is able to help.
 
-Fix below CHECK_DTBS warnings:
-arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply' is a required property
-        from schema $id: http://devicetree.org/schemas/iio/pressure/fsl,mpl3115.yaml#
+Okay Eric, I'll Post a v2 with RFC. Please let me know.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml b/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
-index 2933c2e10695e..04703a01cf7af 100644
---- a/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
-+++ b/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
-@@ -47,8 +47,6 @@ properties:
- required:
-   - compatible
-   - reg
--  - vdd-supply
--  - vddio-supply
- 
- additionalProperties: false
- 
--- 
-2.34.1
-
+Regards,
+Aditya
 
