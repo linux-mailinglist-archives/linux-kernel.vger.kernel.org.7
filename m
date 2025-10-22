@@ -1,200 +1,232 @@
-Return-Path: <linux-kernel+bounces-865066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062CCBFC1C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:23:46 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98FABFC113
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E3655686D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:16:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 16D14357A08
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC2126ED54;
-	Wed, 22 Oct 2025 13:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAAF26ED3C;
+	Wed, 22 Oct 2025 13:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G1rVAeN7"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JbhvZV2r"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314BD26ED44
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37D226ED2F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761138755; cv=none; b=nsvXhtzq+cFHngoTikzvB77uDKCgrOKhiyzocVznDwpCkJMjyqU6JRSrgoZ3Wx9VJ3iPBPZhUvQFiAsZFlMXpYjAFmhFQSi+YD9F4lI+Rhqdu1bZhdg2JTzb07GD05Dh0IDgfKfhdsOqxGTw1srEfRX/H4dTf/n1/EqgQ0NLH3A=
+	t=1761138735; cv=none; b=YNXcpdiDHPkI8jWQWfOdWcKtPIAXCApyPfVDNg5MXC/CJqu4c/tMliFHzeyWE424b+r4kDgxjZcL21D78FAO2KzwMMkxSZ9Q5PtcJlzTXaaByZtqhab0/uVSDm4TQ8N7C/2FOz+wa/+QXo79872+pD2LEreJCgS8bwwgIJuRp8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761138755; c=relaxed/simple;
-	bh=hSf0sBKyBC6lw9CieaVALsy1+Y4K0Jcr1Hb/Wi/Wpqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fLmcCzLPjGyVsiOf1UQGmnilmnviz0u/EMKQMPyfmfD1NTf/JYNnS+nLRDVgOJ36v8k7mMgpXqTmVeCHEnQ4JuErX14iZEK93R1GnJRuS87HqmRGt9I5bpq9BxS+r8YYiU0VkO33qOLy+UxlvVlU4LpBpOtP4Ehz+U7l0ZCSX/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=G1rVAeN7; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59MDC3X61420385;
-	Wed, 22 Oct 2025 08:12:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761138723;
-	bh=m/cAaTTfbQ3qHJtzsorg06KXjTXRKukmNLthb9x5rFs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=G1rVAeN79KYWk7Jic+txu7PQrWKP6VQ4k5FW2Qiu95NA6b5g/DkvC3TygV0O9B3g7
-	 GSZPNmX8UedDkhaExyE4fPcg6aEHlESRf4xwS16GJnBaKjQ4+l/nijC+SnPWJw6Wy8
-	 +6/maDt23ZttChewIeNNbLUvgNcgshv4r5C5rEXw=
-Received: from DLEE214.ent.ti.com (dlee214.ent.ti.com [157.170.170.117])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59MDC3Wd1948730
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 Oct 2025 08:12:03 -0500
-Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
- 2025 08:12:03 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE205.ent.ti.com
- (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 22 Oct 2025 08:12:03 -0500
-Received: from [172.24.233.62] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.233.62])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59MDBxjW1230100;
-	Wed, 22 Oct 2025 08:12:00 -0500
-Message-ID: <f4b35661-24c8-4d1e-8267-6b39c0521a4a@ti.com>
-Date: Wed, 22 Oct 2025 18:41:59 +0530
+	s=arc-20240116; t=1761138735; c=relaxed/simple;
+	bh=6DxOLfAzPPsBmyRcHM8iKfOewx4AILSlI/DLm6yFybk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y62ceMvdOU6zkAqA+vtg4l5UNg7ZQuDYRYM5JpNxhtRwD5Yq6b4iPw3mF1wKLfOz+mrVCWjVuNaIxy9uNThLl25SnM61pJKM8WXvZsZwNG0y7W2jsjpgYva3Scz+XmOxjnr/N5ABpA3hdvbbCW2xD+QqcsFJd4aiSrWvJg9pYwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JbhvZV2r; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-591c98ebe90so7464055e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761138731; x=1761743531; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mfz/6BvNBJR1eZRp7K9b46D4SU+moxLeIZ/fEtZM5T8=;
+        b=JbhvZV2rxDP03QwAgZHTr6gHK8epQ9CCE1v8KtBNtiUpDiNVouhrMULkQXWPGcrclN
+         AsMzd57wXBH7fK2ngvGDRW87mVAke5aIk2AYmPgtGHGrCNsBw6fc7/7heiy5BSKTf296
+         VG6r+SU/5W4NS1WUUHs5EBVC7V+U0mLUtf7tE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761138731; x=1761743531;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mfz/6BvNBJR1eZRp7K9b46D4SU+moxLeIZ/fEtZM5T8=;
+        b=ojcMwfPLogYkHib8JX7A9Cu3yRjny6ILchEq3T+rbIl6gCIqJ/2nwujyeaPmpxkPyh
+         /Ym2/vIBlj562n3fOT4L4wiSxbGVBJdAwKhEwZCF2FdC9V4Nq9movxaRG/f6RX268H6+
+         jR3U833IsAAX2whye5xKXz215gjgvnMptEho9yQBw7gZeqJTBipQCjNCTC3V3DAHTtEr
+         VfWe8PHksiy6MavOq6OzbTLAZOd23svFkx7LeTK7I+gDg4dIuKevPs2HkbMYTp7OH5Pt
+         9FfOx3I2ceG0fM86M1seEqBtreu9jsRiim+0TpN575TU8FdVFLNEKYi9l8b3TX+OJR6L
+         6msA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHgECswVYuQmOkEZ8nZ2T2Fd6U07l23ZgOfhneSSW1YJqB2BpJwWUotL+WYqeAzDWC8dg6EgtRq0Ds0+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy7fLEVZsgyksp4nqEbRcBsdAbFuzvZuz6Q7a0fQumetHnAPYh
+	ckXXmBw4JLIUryeUwCqrCt1i89qz+oudrTXUujIppjfHiPrklh1ajXxcLc/HdkJ/DA==
+X-Gm-Gg: ASbGncs2oDcbq/cWwY4XZQ6S91NaweM1gT/zMysHYNPzx8d4R06qnmTeSaOid6/SZpT
+	uzfNoij3oq4YxZQ6MXeqzXX5xCs3338jyigIo0KbOzmRoJsSd6tTf5J+1oKx/7I4DdU9rvannWS
+	271N4U1l848r0WsGDk9t6jdq68nbeRXwhIcpey3QB0SC45Oq750sCgxANplfMMDBE9wUlTO1ozO
+	Q6mQFdjwp5Kq3eqUZtjVBmAl42b2OVKRBy0iI4hqWJ1t+55S4ZJahKZRN86FQkRg14BEnfEclS8
+	xLIdjGIAx+xzu2jMaeQdLO2AZpIwoZofjXn+wFKu4073CMM0a9460SycMADj82ST6rXdcqWQ6+A
+	Dx9FCsw46RqLo4Qw5IHTm33yxo84dhNrphVbWpEMa7nTgyx4TWro3Q4EZLqgZmJCCHikcBYCZKS
+	ko9urVTJd6lfjlvzfSXGgcqGkq0riE6U8sW4PtFB07FSfPn4c3/yWJDjc=
+X-Google-Smtp-Source: AGHT+IEzcc4qnSpWFPHmnPditQkmeA/SeX5wXg5AO3Ra9CrcWTNxZve0pghy3Q94ewLjUi8notZXwA==
+X-Received: by 2002:a05:6512:1153:b0:55c:c971:2250 with SMTP id 2adb3069b0e04-591d8577661mr6478139e87.28.1761138730666;
+        Wed, 22 Oct 2025 06:12:10 -0700 (PDT)
+Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def16a23sm4670651e87.67.2025.10.22.06.12.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 06:12:10 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Wed, 22 Oct 2025 13:12:09 +0000
+Subject: [PATCH v2] media: uvcvideo: Create a specific id namespace for
+ output entities
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/tidss: Restructure dispc_vp_prepare() and
- dispc_vp_enable()
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Jyri Sarha
-	<jyri.sarha@iki.fi>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: Pekka Paalanen <pekka.paalanen@collabora.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250905-tidss-fix-timestamp-v1-0-c2aedf31e2c9@ideasonboard.com>
- <20250905-tidss-fix-timestamp-v1-1-c2aedf31e2c9@ideasonboard.com>
-Content-Language: en-US
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <20250905-tidss-fix-timestamp-v1-1-c2aedf31e2c9@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Message-Id: <20251022-uvc-grandstream-laurent-v2-1-8c5c20d6c571@chromium.org>
+X-B4-Tracking: v=1; b=H4sIACjY+GgC/4WNQQ6CMBBFr0Jm7Zi2QARX3sOwKDDAJNKSKTQaw
+ t2tXMDle8l/f4dAwhTgnu0gFDmwdwnMJYNusm4k5D4xGGVKrYzBLXY4inV9WIXsjC+7CbkV86G
+ 2bVtZ1ZctpPUiNPD7LD+bxBOH1cvnPIr6Z/83o0aNqjblLa9sXlTFo5vEz7zNVy8jNMdxfAG0M
+ u8MwQAAAA==
+X-Change-ID: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
-On 05/09/25 19:28, Tomi Valkeinen wrote:
-> tidss_crtc.c calls dispc_vp_prepare() and dispc_vp_enable() in that
-> order, next to each other. dispc_vp_prepare() does preparations for
-> enabling the crtc, by writing some registers, and dispc_vp_enable() does
-> more preparations. As the last thing, dispc_vp_enable() enables the CRTC
-> by writing the enable bit.
-> 
-> There might have been a reason at some point in the history for this
-> split, but I can't find any point to it. They also do a bit of
-> overlapping work: both call dispc_vp_find_bus_fmt(). They could as well
-> be a single function.
-> 
-> But instead of combining them, this patch moves everything from
-> dispc_vp_enable() to dispc_vp_prepare(), except the actual CRTC enable
-> bit write. The reason for this is that unlike all the preparatory
-> register writes, CRTC enable has an immediate effect, starting the
-> timing generator and the CRTC as a whole. Thus it may be important to
-> time the enable just right (as we do in the next patch).
-> 
-> No functional changes.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Nothing can be connected to an output terminal. Which means that no
+other entity can reference an output terminal as baSourceId.
 
-Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+Use this fact to move all the output streaming entities, which have no
+controls, to a different namespace.
 
-Regards
-Devarsh
+The output entities are usually named after the dev_name() of the usb
+device, so there should not be any uAPI change from this change.
 
-> ---
->   drivers/gpu/drm/tidss/tidss_crtc.c  |  2 +-
->   drivers/gpu/drm/tidss/tidss_dispc.c | 22 ++++++----------------
->   drivers/gpu/drm/tidss/tidss_dispc.h |  3 +--
->   3 files changed, 8 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-> index da89fd01c337..1b767af8e1f6 100644
-> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> @@ -244,7 +244,7 @@ static void tidss_crtc_atomic_enable(struct drm_crtc *crtc,
->   
->   	dispc_vp_prepare(tidss->dispc, tcrtc->hw_videoport, crtc->state);
->   
-> -	dispc_vp_enable(tidss->dispc, tcrtc->hw_videoport, crtc->state);
-> +	dispc_vp_enable(tidss->dispc, tcrtc->hw_videoport);
->   
->   	spin_lock_irqsave(&ddev->event_lock, flags);
->   
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index 7c8c15a5c39b..d4762410d262 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -1161,6 +1161,9 @@ void dispc_vp_prepare(struct dispc_device *dispc, u32 hw_videoport,
->   {
->   	const struct tidss_crtc_state *tstate = to_tidss_crtc_state(state);
->   	const struct dispc_bus_format *fmt;
-> +	const struct drm_display_mode *mode = &state->adjusted_mode;
-> +	bool align, onoff, rf, ieo, ipc, ihs, ivs;
-> +	u32 hsw, hfp, hbp, vsw, vfp, vbp;
->   
->   	fmt = dispc_vp_find_bus_fmt(dispc, hw_videoport, tstate->bus_format,
->   				    tstate->bus_flags);
-> @@ -1173,22 +1176,6 @@ void dispc_vp_prepare(struct dispc_device *dispc, u32 hw_videoport,
->   
->   		dispc_enable_am65x_oldi(dispc, hw_videoport, fmt);
->   	}
-> -}
-> -
-> -void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport,
-> -		     const struct drm_crtc_state *state)
-> -{
-> -	const struct drm_display_mode *mode = &state->adjusted_mode;
-> -	const struct tidss_crtc_state *tstate = to_tidss_crtc_state(state);
-> -	bool align, onoff, rf, ieo, ipc, ihs, ivs;
-> -	const struct dispc_bus_format *fmt;
-> -	u32 hsw, hfp, hbp, vsw, vfp, vbp;
-> -
-> -	fmt = dispc_vp_find_bus_fmt(dispc, hw_videoport, tstate->bus_format,
-> -				    tstate->bus_flags);
-> -
-> -	if (WARN_ON(!fmt))
-> -		return;
->   
->   	dispc_set_num_datalines(dispc, hw_videoport, fmt->data_width);
->   
-> @@ -1244,7 +1231,10 @@ void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport,
->   				  mode->crtc_hdisplay - 1) |
->   		       FIELD_PREP(DISPC_VP_SIZE_SCREEN_VDISPLAY_MASK,
->   				  mode->crtc_vdisplay - 1));
-> +}
->   
-> +void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport)
-> +{
->   	VP_REG_FLD_MOD(dispc, hw_videoport, DISPC_VP_CONTROL, 1,
->   		       DISPC_VP_CONTROL_ENABLE_MASK);
->   }
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-> index 60c1b400eb89..f38493a70122 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-> @@ -119,8 +119,7 @@ void dispc_ovr_enable_layer(struct dispc_device *dispc,
->   
->   void dispc_vp_prepare(struct dispc_device *dispc, u32 hw_videoport,
->   		      const struct drm_crtc_state *state);
-> -void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport,
-> -		     const struct drm_crtc_state *state);
-> +void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport);
->   void dispc_vp_disable(struct dispc_device *dispc, u32 hw_videoport);
->   void dispc_vp_unprepare(struct dispc_device *dispc, u32 hw_videoport);
->   bool dispc_vp_go_busy(struct dispc_device *dispc, u32 hw_videoport);
-> 
+Although with this change we can handle some id collisions
+automagically, change the logic of uvc_alloc_new_entity() to keep
+showing a warning when a camera has invalid descriptors. Hopefully this
+message will help vendors fix their invalid descriptors.
+
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Hi, this patch fixes support for some devices with invalid USB
+descriptor.
+
+It is orthogonal to:
+https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
+
+Some devices will be fixed by the other patch, other devices will be
+fixed by this. In my opinion is worth to land both patches.
+
+Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
+---
+Changes in v2:
+- Change Macro name
+- Apply quirk only to TT_STEAMING
+- Add missing suggested by
+- uvc_stream_for_terminal
+- Note, v2 has not been tested yet in real hardware, only v1.
+- Link to v1: https://lore.kernel.org/r/20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org
+---
+ drivers/media/usb/uvc/uvc_driver.c | 31 ++++++++++++++++++++++++-------
+ drivers/media/usb/uvc/uvcvideo.h   |  3 ++-
+ 2 files changed, 26 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..c0a2c05b0f13a8c3b14018c47dfb0be2614340ce 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -165,8 +165,10 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
+ 	return NULL;
+ }
+ 
+-static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
++static struct uvc_streaming *uvc_stream_for_terminal(struct uvc_device *dev,
++						     struct uvc_entity *term)
+ {
++	u16 id = UVC_HARDWARE_ENTITY_ID(term->id);
+ 	struct uvc_streaming *stream;
+ 
+ 	list_for_each_entry(stream, &dev->streams, list) {
+@@ -810,10 +812,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
+ 	}
+ 
+ 	/* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
+-	if (uvc_entity_by_id(dev, id)) {
+-		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
++	if (uvc_entity_by_id(dev, UVC_HARDWARE_ENTITY_ID(id)))
++		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
++			UVC_HARDWARE_ENTITY_ID(id));
++
++	if (uvc_entity_by_id(dev, id))
+ 		id = UVC_INVALID_ENTITY_ID;
+-	}
+ 
+ 	extra_size = roundup(extra_size, sizeof(*entity->pads));
+ 	if (num_pads)
+@@ -969,6 +973,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+ 	struct usb_host_interface *alts = dev->intf->cur_altsetting;
+ 	unsigned int i, n, p, len;
+ 	const char *type_name;
++	unsigned int id;
+ 	u16 type;
+ 
+ 	switch (buffer[2]) {
+@@ -1107,8 +1112,20 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+ 			return 0;
+ 		}
+ 
++		id = buffer[3];
++
++		/*
++		 * Nothing can be connected to an output terminal. To avoid
++		 * entity-id's collisions in devices with invalid USB
++		 * descriptors, move the output terminal id to its own
++		 * namespace. Do this only for UVC_TT_STREAMING entities, to
++		 * avoid changing the id of terminals with controls.
++		 */
++		if (type & UVC_TT_STREAMING)
++			id |= UVC_TERM_OUTPUT;
++
+ 		term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
+-					    buffer[3], 1, 0);
++					    id, 1, 0);
+ 		if (IS_ERR(term))
+ 			return PTR_ERR(term);
+ 
+@@ -2105,8 +2122,8 @@ static int uvc_register_terms(struct uvc_device *dev,
+ 		if (UVC_ENTITY_TYPE(term) != UVC_TT_STREAMING)
+ 			continue;
+ 
+-		stream = uvc_stream_by_id(dev, term->id);
+-		if (stream == NULL) {
++		stream = uvc_stream_for_terminal(dev, term);
++		if (!stream) {
+ 			dev_info(&dev->intf->dev,
+ 				 "No streaming interface found for terminal %u.",
+ 				 term->id);
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index ed7bad31f75ca474c1037d666d5310c78dd764df..3f2e832025e712585edc324afa6cad760d4edafc 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -41,7 +41,8 @@
+ #define UVC_EXT_GPIO_UNIT		0x7ffe
+ #define UVC_EXT_GPIO_UNIT_ID		0x100
+ 
+-#define UVC_INVALID_ENTITY_ID          0xffff
++#define UVC_HARDWARE_ENTITY_ID(id)	((id) & 0xff)
++#define UVC_INVALID_ENTITY_ID		0xffff
+ 
+ /* ------------------------------------------------------------------------
+  * Driver specific constants.
+
+---
+base-commit: ea299a2164262ff787c9d33f46049acccd120672
+change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
