@@ -1,193 +1,511 @@
-Return-Path: <linux-kernel+bounces-865482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426C6BFD4E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD0CBFD58D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9E79581316
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0CDF3ADB3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D1534D4F1;
-	Wed, 22 Oct 2025 16:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D746285C9F;
+	Wed, 22 Oct 2025 16:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PQCxKTJ3"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013008.outbound.protection.outlook.com [40.107.201.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="N81VK2bz"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F272868BD;
-	Wed, 22 Oct 2025 16:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761149553; cv=fail; b=k+5p+KGPEkkTa57iHd90nkwQGc+exv280KhjGVYWE/WVQdQMUqIHhpLoYR0oz7nNFLAqrVQMF24a8P7HyENuX/ELMFEty9CU9V/m3FYcEXPE0vjI+3RgwEm5649cR0BHjIU/vtJtEyQPp+hGDG7ZUWY9vaWxg+RpnLHLlU2NbwU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761149553; c=relaxed/simple;
-	bh=cs4Gzr1JVfrNo4uAaXDi38FapKBbR+8LjaHyQVYSNUs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ipld0XBqK8l9bJ8mvYfoCPPn9VrWPH92KZ7EU/2NIqkbb4hke6GwNAvQVbVUrUbuXhs+jqG2hyA64Q800jOUFEN9jaUlNvTYRMgO5+Bn8/qf/DwgNaOxCcInQIJrzUqqjZWWysJI8K4RvDDFpjjqS1qkLc3JqEWBAjaYjyP1u6A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PQCxKTJ3; arc=fail smtp.client-ip=40.107.201.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TBtZpZaXzMCCGrAUL6E+Lq+tIBoLB15mlh89F0Ht8liit+UAHwqwrBZziwfcK+Ht5ET6ywK6PnGhs2u2pNU2DKZmNl3tJYZktIis3DW6dV7jHnKcfSn6c305zl0iK6cIt9R3IfXl5WsnRCGue34B7+hrm0ZIU5ePse58iFJvEiQJNHdSTpjO92qXor55HAJ9nh0Hy8EsHWG+BVJsG+a40Ide3zWgY5VzOal8dY0ZRyrDvc/iSYvzaUlIzUMX39qXEeDx2h8ILuxv2aYDjbmHUOP1YthEHBmut3/yI51wxkY+S6VSXeRFegr8+W2gjRwVLfriMHt2g00e04BHbVLK0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VQ48Vnt9cNZ3Hb2XI5nxFkXX+VpWGmljjghbjtW8at0=;
- b=jU/FrzpDckCHNT31qigB0hYpm0QGhpm+XkH5jpJ8qZLyEi2Et5Rw86bQKYKjSHgJD/JYuRhIv4J6K212UX8ZBpgniSbP4PHbLI5anm6aWllLtzupDxrh4MTwrz+SjigpnUG6WU87m3zUTPBsAXf3E2VQYsoqJ40DAflvUvdkqWkjAf6f0z2u0iqdlX0gqs4QztXbWw/WOwArTM8MmMWuejOUqs0am1i7Th7F00fL70EqH19/2TW6ATylKTHm4dBXVvd8j10NNoQ4o4XRmU/aMmcsieQ/0g0hgiZbDlEmea8DixGy7H+5+ZtChlG1cMmjoF64l1ijkXR5qd3DMFCWYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VQ48Vnt9cNZ3Hb2XI5nxFkXX+VpWGmljjghbjtW8at0=;
- b=PQCxKTJ3n+mluU5eADqRceV+dM28zuoN4p5b/hgRHL8+bdGnI2mJyKc5Dd+o7kgqjEwwm/t8rbwC2UVRFaSWJaXJtZU/wiIa4jweyn5Q6yWbTMQbc5UwdyJmGZnhZCAUUBI62ndfCLbmdSIvOs7BaerTVcxnN1DsLQlfRSUgqivUV09n/nqc55dY6wZY79BB6/O0e2ZG1CQkltTTZr51NRDvU0Af7I8cON47u7U25TD6OLhKzm1s6Q24B2Tfqu0qc4yaZKv2uVrsOyCOQ6UiPDa81tVZbtrN4PharDizGQzEK3/AGmV5lxCm8glUCbJjj5+fNdb/17IjDqkTp5PN5g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by MW4PR12MB7000.namprd12.prod.outlook.com (2603:10b6:303:208::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 16:12:27 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Wed, 22 Oct 2025
- 16:12:27 +0000
-Message-ID: <46447e7c-5fd6-4e81-b963-b5e1e6afbb1b@nvidia.com>
-Date: Wed, 22 Oct 2025 12:12:23 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] gpu: nova-core: bitfield: simplify expression
-To: Alexandre Courbot <acourbot@nvidia.com>,
- Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Edwin Peer <epeer@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
- Timur Tabi <ttabi@nvidia.com>, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20251022-nova-bitfield-v1-0-73bc0988667b@nvidia.com>
- <20251022-nova-bitfield-v1-2-73bc0988667b@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <20251022-nova-bitfield-v1-2-73bc0988667b@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0084.namprd03.prod.outlook.com
- (2603:10b6:a03:331::29) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031AB25DCE0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761149549; cv=none; b=df3OYVVfM4iq20Xw1os5JqkexRykTYK8uZHg0xHCQYOR3dqUHeAQpZBOMSMgidRNCqHtMrIolNu1JlGbvqCPP8VzNoxMh+oeS2IL6TkVRV/9IvVQ+Yrimd7LmGsNbZcema/y2uOEb7RSxAVP9NzaiFCUnaEM4svCR1Ellb+7Ndc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761149549; c=relaxed/simple;
+	bh=gqwSA2NSehrIkiAa3MvpQ0YrHVz97jJfVltxRd6ifCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCIfFJ+QU8UT8wEQm2d0WiyhJGLKZMZxHVm0uxS14E/Ysth4Znp8pbNZU8OMFnAMegaxh8j8zfVqPjv7o8W9mUji/kSNSOPOHnx/Fqiqd6lbTLB3nQ8t5fVlWK6CdFOzUqv0gjobEw3DGjaccSyL0HltstxTBzO1r6s5r/nKHng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=N81VK2bz; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7a27053843bso575021b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1761149546; x=1761754346; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NM7M30VT9M3+HwGFICpWImyB+LRqQz/+UE5BheMmog0=;
+        b=N81VK2bzHprvQ3GkkLFQirp+suoqT8ljfiqN7v5fYFTAnlNQH9CGGcpCzk+galDFG3
+         n4N6iHRM9IQPbb0qHMiA3DyP6nftcx/wEy5KMvED89WsjELDnwe+9s4//eGxQIdt+z9V
+         19KM/DrhuqV8RQaxBxPMPu8NOqUV/5M7rD0N7shwGgEKb88Tr8hKczB4nHkqlpHE1lgQ
+         wMFAm4bircKNnaxOttB3ldb5uiE6SO1V7OTkiREKUrRXYrfv6TvtlNLPA28auyDNz9By
+         oC7/qpj4O27W9dz+awvrvj+HDB1IUP3Q0M0mezZxQQ7sx/IrAvOzjCO7crycfq8tykwl
+         VSaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761149546; x=1761754346;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NM7M30VT9M3+HwGFICpWImyB+LRqQz/+UE5BheMmog0=;
+        b=wQApQ2qt3W9upzEKd7kA2zMOcyW+LEVnV5gCyJ3yhfjZHTkjAVvqPH7n1tTPpJPeF/
+         NyJI2XQ4/XgfNDre9mcP8U2DfZdYc8/hPK94O5GUm2HIyagbiWSDi46fIJxcnvC2R1e/
+         DcjNpvmAogldh9rSnxiBfJvCEFfYrKLjKYjoKuhbLuN5mJAQT5BIAN+tUeSadfwiNYRb
+         Ilq6/7iFooV8NOQpx1Fqv5Wd1A+JJBkYNuIlVnw5f70WGUu0dVCqPA709thbBvBnAe6A
+         bfCdqyhtv96r6kdZmUuTdvNb+IlqsDwj3Q7A6xBZYlLCQAVPDfly73Op+e881SXYc3hI
+         yJaA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0LjiR6iZ8dDVJ/KLqkWgxO32oMrjAWXD7SK7YnKRCWLWqf1f0XK4Lcb0wBuCW2zQsUpR9e/ByMj9a7Xc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz355ErorWd/ANcfkvObKQ8I9VAa6RZSy7mJhd91iqA2TYhT0gV
+	7xfzo83Kna2fQ8jA63TEqodNerZk9KIsEVnwXx74J/aud9XRIu6QhNuJ3eM6bqbYgNI=
+X-Gm-Gg: ASbGncsBiO6OBokQ0d7VLTD6Zq+QivGFfaFty73x/JIuY2n2yveFWdaw+wbXvtzY5Y2
+	pPHdSoEz7iWRcoS4utVaDkn5zv9aUfIt98IhQsoXXsXl0igjAgG9Q29410tF+AZPD20mI9VT3OS
+	VaX0Oo3f+stfuu1APAFugMja61qdchgYlBRa3j9mWmIi19gu11a94Poitjg5Gh1a4De3lfVufjv
+	UczVteDPVUr2bUOELiJC8mttZQBBojGIiovFOr4fZngd9SmQMf0ogfkri1Tsr4iGePkMLmpQYt2
+	ymRrQoW7LQiTARd+I+HaQrLG1iCshDcKV+x0+SCoh3HqeIFf48/SIL8l793PUcx6bT/r8tpGa4Q
+	ZA1LvzNzIefeHqJV/vJRHyAsG/4GYe3yFP+wqKwUaPoFz9/8PJxHU9hwgt3aXqoqjqRQ3CsSksl
+	bTLw==
+X-Google-Smtp-Source: AGHT+IHAKlv6OU0AJV6MvCP+PY0I9VRkkJMDbQuwL+3clij5MJgkRtjbaZqYfIRfeFgFO0QJzxewCg==
+X-Received: by 2002:a05:6a20:3956:b0:262:8422:5774 with SMTP id adf61e73a8af0-334a85a5543mr31397680637.39.1761149546038;
+        Wed, 22 Oct 2025 09:12:26 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.167.117])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b5a007sm13166808a12.31.2025.10.22.09.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 09:12:25 -0700 (PDT)
+Date: Wed, 22 Oct 2025 09:12:23 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] Erratic behavior in btnxpuart on v6.18-rc2 - and a
+ possible solution
+Message-ID: <aPkCZ8l4-5ffyiAe@mozart.vkv.me>
+References: <6837167.ZASKD2KPVS@fedora.fritz.box>
+ <aPf5DZVYrc2YAXXT@mozart.vkv.me>
+ <aPf7Vz5K6P7frdlf@mozart.vkv.me>
+ <2569250.XAFRqVoOGU@fedora.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MW4PR12MB7000:EE_
-X-MS-Office365-Filtering-Correlation-Id: d886676f-f049-4a88-0ae7-08de1185cb38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c09GbEltY3lYRHg0aDIxL0RtN0p3dmMwRVpPVVdMWlRqMmxOSUMxeGNKeU03?=
- =?utf-8?B?TXg1RkpwdmJIbko3WU9WV3RHQUlhQTFyNFFzNFI3QTZZSzFYR0FuOFhOVlNW?=
- =?utf-8?B?cWxNQTZCMHNUVFZGaFdoWVhzbGY2UEV5aG1naFlKL05aditlbkJrZjVDRC9u?=
- =?utf-8?B?c3MwcUN5bG56dlhxL1h1andURmNidlFIUEZCd3l1UkIvWHZiMkU4YTJXaTNC?=
- =?utf-8?B?SDRySUk2dnFHQVprMHJQMmVnT3pjN213d1FYci83Qk5SRDh5T3QwKytac05y?=
- =?utf-8?B?Q1BCcHBEcGZkUUExWTNqOHQzRjBFTE9wbzIyU2ZUTW4xRWxydy9ISHVoNW1u?=
- =?utf-8?B?T25tZmVkS3ZqY0Z6R0d4MlZESzNQdFQ2c0JZM1NJZ1NMMmp3WkhVNTh4NVF5?=
- =?utf-8?B?VTMvdmJuNjFremtmRHBJSlV6VVBKdDBaZ2p2QTl0MTZ1VUQ4bkFSSG9GbGUr?=
- =?utf-8?B?STdKbGVtTlo4cDZhUGI4TFprak4yNmZsZTZ3a1MvaWVDMEc4V1BPTXErSm90?=
- =?utf-8?B?OExuVzFibjRGc3lybXpma3doZ0l3REl2VC9BS0RNZHpObnFucHdwSjE2emdG?=
- =?utf-8?B?RHVsNlJOcS9YWHdCajN5b3QrajVlZVZvaHVFQmg3ak05TTc0dHdhTXBHWEFr?=
- =?utf-8?B?bEpRNjZtYkErNkFQakRsTTk4NWtoQ0RhYUNKZFZ0NzFiSEN3MzlUNzZKNmFS?=
- =?utf-8?B?My9GWU9pZVNycHhtVUxldmRCVGN1NEVneDhxRlFGb2NuMWk1aU5leDAxTk1t?=
- =?utf-8?B?d3RkTGwrOEVNMDBDTDhvOTZVZU9QRkt6RmNSV2RQT3RoY25uMjhpUFI1TTV0?=
- =?utf-8?B?TEljRE1QZ0NnblNlNVJOUTMyN2F4V0l3dG1JUm9XZ0JmRWttZytHVXRsRUFo?=
- =?utf-8?B?czVuN2U0STgyWWpGNFdIQ2VZcUNzQ2R2ZnZVVG1Vb0xGaDdmdXdnNXRXVm9p?=
- =?utf-8?B?cjd3cDVwckprQmVORUFBVHU4bXNFMHZEZk52RjJmMExNc21sWEFFMVkraVRU?=
- =?utf-8?B?MmxYazU3azd1bmF6SFcwTHRPdUkyV1pPOE1zc3k1eW1YSGVKQmpHbE9neWwx?=
- =?utf-8?B?WXBiMnIyTHZsV0FEUkNtY3U2eWo0QkVkb0RwS3FLcmt3OHJpZzFVRWFJMDF0?=
- =?utf-8?B?Y2dqR3JQdFZvYjZ0ZzVzaUU3SUxzQTlLL1ZyYTh6bDFYK3JsNVdJVDZoM0cz?=
- =?utf-8?B?ZWZidURSQzRCVnQ0WjJBOGdlalNkTEsxTjRvTmNLM0R4VCsrc1I2eXJRRXI2?=
- =?utf-8?B?emNKckVObWNaWXRCbXIrNHdOVmxQZnFjcUxoWWl0MmJ2b2ZvbkYxTDJqYjZr?=
- =?utf-8?B?Wk5RKzFRWTRXcmdsN2p2NHRubWY0c3pVS1JDOEdIc29GNjdNTXRmQURmNUN6?=
- =?utf-8?B?Snl4ejhkK3l2dm4rZ01jSGlvdm51ZjNUenlqbW5EeGtRTkJ1bytVd01hWkx6?=
- =?utf-8?B?VzVuOFkrZEYzZHlWbnMvME40czZQYytobmNlZFZseEZkK2FlREhLMzRTN0Zm?=
- =?utf-8?B?eTZJeWcvR0dOWUlTekhDck90alIwUVVmaStEWTl0MWlUVVAwYklWai9Xa0dk?=
- =?utf-8?B?cmFOK05qcE5YM0p5SDBIQjU0a2xRUEJ2VXc4MHJxdm1vS1V0SFFCMVlzdUF0?=
- =?utf-8?B?dk1KRVBzaWRmZHMxYW5IakxtcHhwSWo3K2ZoSFM0TW9DZ21wWXo5TVgxczZ2?=
- =?utf-8?B?RmN2OFl5OTZ1aXRpdWhHRmM2NVdZdXBrNHJnR3d2d3hKcVVjdzlJV0ZlWElq?=
- =?utf-8?B?a2draVBVN083UHNEUG9yOWdzSEc4ZEM1Z1FFeEtIbGk5OWEvbFZnblNmYUVG?=
- =?utf-8?B?TmcvQXFzMWtCVHFjQ3EwWXZVYm5aeXlVZkRGa2luWEtwTExFLzgxN1RkaVZF?=
- =?utf-8?B?NEttVHp6dE9adE5nek1GV2I0VnFPQktJVXFrdmRJTEcrd3RoR2cvb0lqdVU1?=
- =?utf-8?B?UGlhRi9MQ053UE9ZVzVIaS9jbzVRNGZLSzZlTnlXSXBJZCtvc0xLTGxBMDVF?=
- =?utf-8?B?SkhVZjFOd1dBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OXpERXBGQ2FQSlNQcTRIU0VhWnJ4OUF1ZEtvK0tGNWh2SFlQa1NMZjFadk16?=
- =?utf-8?B?eG5QNlA0SEJTMnBnR0VzMnNPMkxLbjY2R0djRXRCemNuWFRPdzlEUDZYK2VE?=
- =?utf-8?B?YTdPSm9DWnVETW5sT21LN2ZEMUF1bEwwcmhGRnUwWG1mRmx0THo5cnFHUFQy?=
- =?utf-8?B?aldXb0xQdHZ6bnZNOWQ3V3BnYWhRMWtJT3NiM1FqWWpRQ3RLd05VRGQzQkNB?=
- =?utf-8?B?T3BGRG93c01na29rdFNwdFJRazNMcHdtMEk1Z3NyUGJyRWkrRElyNlU4anBn?=
- =?utf-8?B?TFVSZ3NrVi9oQXhhdHkrTEdYTCtFWmpKVnFSTm5DK2hvdEJXZUFJbDBsQ0lE?=
- =?utf-8?B?VGtZZnovaUxYbkZZVWYxNWFzUTJ6bzlkYmdkK1dvWlB4QXlaM0M1U2QzNE1Y?=
- =?utf-8?B?dEdVc3BjVXl6bFA4L1U5M0UyYllUS1RTdFdoSnRXNk93UnlYbHNTNWNubkt5?=
- =?utf-8?B?dVJwcEN6TE82M0YzWmRyeWtyZzBzUXo2cGFjNDBVb2g5M2srazFSZ0RYVXdr?=
- =?utf-8?B?eWQvdndLM3VvV1pDeTArVXFEN3MrVnY3dHRmdGx3YWFaYm9ReWxsSE1FUjdy?=
- =?utf-8?B?WkkxUU5xMHNSaGlRNTByaTc1ZUZncHBjeS8zZUFRemRhR3hoZXV6a1dlVEFU?=
- =?utf-8?B?dHhnbk45aWtvT0J0dVZHWFNRS3l6NDQ3aDRVdms4a2JaeFVOdVFiejdLSm9K?=
- =?utf-8?B?dXBaS3Rsd2RXNFlvY00weUIxdUIrYnBaWE1JWnVEbU1HQ2hJZThIRHg5T1VZ?=
- =?utf-8?B?YWdPNWY0dUdiN1JFQnBzbHVRb0U3V3BxTXVjVnAyWWlvekNGY3V5WUYvWW1u?=
- =?utf-8?B?VWg2ZkFsNGZhdWJCTmVsRU9HUTQ5N3laa0NLcGR6MUNIOVFMamlmbUZHYkky?=
- =?utf-8?B?bXBUeVJHOE9ZZ3BUUWZxTUJOQU9XMXVYTHE3SkY1SVVMVlpPaW5qcXNWMk1j?=
- =?utf-8?B?YjU4ZlJVRXhjRWZiVDQwUjR1TXJlMzdhQmtWVDI3ZEdwc3c3WjROVHlMQ1Rq?=
- =?utf-8?B?eWRkUlR3TW9vMVZxOVlIQXV3ZTFKUjBRL2t4SzZKRHRmS3FaekpVQXNmT1NJ?=
- =?utf-8?B?WG5SMFdVOVFjNGJBVittZ2J1bUN2WjB5VEdUNU5PbnVXdGY0aHlnckxqWU1h?=
- =?utf-8?B?RXdhZVJ5alRGRXNldlVYS2EwbGVBNS9HRW5jaFFuUm9qUVRBUmlyekc2NVJj?=
- =?utf-8?B?TlBZdHRPR0M3VTVsQkVtSmYxNnNFTVNIb2pJT3NFUTM3TzhCRzI2cFdLRXly?=
- =?utf-8?B?eVpnTVdEMlV2UXNablhIMVV1ZEJVY2tDaUFUZENJUjRHYzRPeStUTmRsREJ2?=
- =?utf-8?B?Qnl3Qm1RYkZ5R0huL0NJaTZwVFJjL1gxNllHak52WUVIcUNJRjNzRUJpa3Bu?=
- =?utf-8?B?VEg3TFBNOG5XaUlNRGFkY3VqNDhXeU9NejUxR3Urcm5KaEIrZWdYdE45Q091?=
- =?utf-8?B?YVNRMko4d3cyVUIwK0hiZGw2TDZHYTVNalZFZURzQjM1VTgraCt3T3U4eWhM?=
- =?utf-8?B?Q3BHUkFCVFBxelE5dnBpUHZSMmdXYnppcUt2ZlpwaVdtVVJnSVoyQnNIYndw?=
- =?utf-8?B?NmREMnVQZnM4dk00b1hQdXpGcEhsemxRZzF4em9UNnlnYXh1WnFmeGk5YVpy?=
- =?utf-8?B?QkEvZWRTRW5ycmk4cnc5MmV4RFdmSG9ONWJsVUJTNEtkTDJkQUpBakptMEhX?=
- =?utf-8?B?U29QSkU3UTdtQzFYN253ZEhPTDRNZDhBWDU4S2FxbDFnSGVVc2pwRTM0N1FU?=
- =?utf-8?B?SVhTN2MzZUpPeHJDMk85bUEwdEd3OHFBdGlmN2huellqejZBRUExOHlyMDJJ?=
- =?utf-8?B?aXZFd1FVdUpVZTJvVTdMVHR2WWZGWjgxTFpMN2pRK1NPU05pVm9FbStjdWRj?=
- =?utf-8?B?enlIUWNuUzNYU015LzlvamNmTFRBRGpWZE9kdlJqRURjREdFMlRHS0h4VnNQ?=
- =?utf-8?B?dkJBTmNoS3Ixa2xHMGNsZzVIaHBlNHpwMmMvaGpYbWhGSjRuamlHTFZTMFJL?=
- =?utf-8?B?Wk1lSzFIeWhkNS9CdU9Ccnp5YjczTE1OWTRPb2tpUGU5NHhERE1qTWUrd1NO?=
- =?utf-8?B?Y2l0cldTdHpucXBWTWx5UFRLYTkzNlZVZVVHNXhPb3phMVlneHNWdU0vdFZy?=
- =?utf-8?B?clZuMlU2bHZnb3NsL080eXFXVDV5dWRTS1IrdmNVRklCL0loOHFkTjhUZjFp?=
- =?utf-8?B?c2c9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d886676f-f049-4a88-0ae7-08de1185cb38
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 16:12:27.3348
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1Tg0yy3VBa7zOrqjvGGUR00ErsKcC99rFmKcZzTBPkP81DIjN8MoH9jFbBr9Vga6+UoJdhfYYLcZNGbVI4TyOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7000
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2569250.XAFRqVoOGU@fedora.fritz.box>
 
-
-
-On 10/22/2025 6:50 AM, Alexandre Courbot wrote:
-> The shift is more easily expressed by the index of the lowest bit of the
-> field.
+On Wednesday 10/22 at 00:07 +0200, Francesco Valla wrote:
+> On Tuesday, 21 October 2025 at 23:29:59 Calvin Owens <calvin@wbinvd.org> wrote:
+> > On Tuesday 10/21 at 14:20 -0700, Calvin Owens wrote:
+> > > On Tuesday 10/21 at 22:53 +0200, Francesco Valla wrote:
+> > > > Hello,
+> > > > 
+> > > > while testing Bluetooth on my NXP i.MX93 FRDM, which is equipped with an IW612
+> > > > Bluetooth chipset from NXP, I encountered an erratic bug during initialization.
+> > > > 
+> > > > While the firmware download always completed without errors, subsequent HCI
+> > > > communication would fail most of the time with:
+> > > > 
+> > > >     Frame reassembly failed (-84)
+> > > > 
+> > > > After some debug, I found the culprit to be this patch that was integrated as
+> > > > part of the current (v6.18) cycle:
+> > > > 
+> > > >     93f06f8f0daf Bluetooth: remove duplicate h4_recv_buf() in header [1]
+> > > > 
+> > > > The reason is simple: the h4_recv_buf() function from hci_h4.c, which is now
+> > > > used instead the "duplicated" one in the (now removed) h4_recv_buf.h, assumes
+> > > > that the private drvdata for the input struct hci_dev is a pointer to a
+> > > > struct hci_uart, but that's not the case for the btnxpuart driver. In this
+> > > > case, the information about padding and alignment are pretty random and
+> > > > depend on the content of the data that was incorrectly casted as a
+> > > > struct hci_uart.
+> > > > 
+> > > > The bug should impact also the other platforms that were touched by the
+> > > > same patch. 
+> > > 
+> > > Hi Francesco,
+> > > 
+> > > Thanks for investigating, this makes sense to me.
+> > > 
+> > > Funny enough, I specifically tested this on btnxpuart and saw no
+> > > problems. I suppose some kconfig difference or some other innocuous
+> > > patch moved structure fields around such that it triggered for you?
+> > > Not that it really matters...
+> > > 
+> > > > For the time being, I'd then propose to revert the commit.
+> > > 
+> > > Adding back all the duplicate code is not the right way forward, IMHO.
+> > > There must be some way to "mask" the problematic behavior for the
+> > > drivers which stash the different structure in drvdata, right?
+> > 
+> > Actually, the right approach is probably to tweak these drivers to do
+> > what the Intel driver does:
+> > 
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/bluetooth/hci_intel.c#n869
+> > 
+> >     static int intel_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+> >     {
+> >             struct hci_uart *hu = hci_get_drvdata(hdev);
+> >             struct intel_data *intel = hu->priv;
+> > 
+> > I'll spin that up unless I hear better from anyone else :)
+> >
 > 
-> Reported-by: Edwin Peer <epeer@nvidia.com>
-> Link: https://lore.kernel.org/rust-for-linux/F3853912-2C1C-4F9B-89B0-3168689F35B3@nvidia.com/
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Hi, thanks for the quick response!
+> 
+> That was my first thought, but the Intel driver actually _uses_ the hci_uart
+> structure, while btnxpuart and such would only piggy-back on it to be able to
+> use h4_recv_buf() (and struct hci_uart is huge!).
 
-Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+Why is that a problem? Certainly, nobody is going to mind the extra
+bytes with that monstrosity hanging around :)
 
-Thanks.
+> One possible solution would be to define an "inner" __h4_recv_buf() function
+> that accepts alignment and padding as arguments, and use that directly on
+> drivers that don't use struct hci_uart (PoC attached - I don't like the
+> __h4_recv_buf name but I don't really know how it should be called).
+
+I don't feel super strongly about it, but IMHO the whole thing is easier
+to understand if we just put the data the core function expects where it
+expects it. I haven't had enough coffee yet, but I think
+zero-initializing hu is sufficient...
+
+Something like this, only compile tested:
+---8<---
+From: Calvin Owens <calvin@wbinvd.org>
+Subject: [PATCH] Working bugfix for bt cleanup, only for btnxpuart for now
+
+Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+---
+ drivers/bluetooth/btnxpuart.c | 74 +++++++++++++++++++----------------
+ 1 file changed, 41 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index d5153fed0518..cf464515c855 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -212,6 +212,7 @@ struct btnxpuart_dev {
+ 	struct ps_data psdata;
+ 	struct btnxpuart_data *nxp_data;
+ 	struct reset_control *pdn;
++	struct hci_uart hu;
+ };
+ 
+ #define NXP_V1_FW_REQ_PKT	0xa5
+@@ -363,6 +364,12 @@ union nxp_set_bd_addr_payload {
+ 
+ static u8 crc8_table[CRC8_TABLE_SIZE];
+ 
++static struct btnxpuart_dev *hci_get_nxpdev(struct hci_dev *hdev)
++{
++	struct hci_uart *hu = hci_get_drvdata(hdev);
++	return hu->priv;
++}
++
+ /* Default configurations */
+ #define DEFAULT_H2C_WAKEUP_MODE	WAKEUP_METHOD_BREAK
+ #define DEFAULT_PS_MODE		PS_MODE_ENABLE
+@@ -373,7 +380,7 @@ static struct sk_buff *nxp_drv_send_cmd(struct hci_dev *hdev, u16 opcode,
+ 					void *param,
+ 					bool resp)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	struct sk_buff *skb = NULL;
+ 
+@@ -426,7 +433,7 @@ static void ps_cancel_timer(struct btnxpuart_dev *nxpdev)
+ 
+ static void ps_control(struct hci_dev *hdev, u8 ps_state)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	int status = 0;
+ 
+@@ -483,7 +490,7 @@ static void ps_timeout_func(struct timer_list *t)
+ {
+ 	struct ps_data *data = timer_container_of(data, t, ps_timer);
+ 	struct hci_dev *hdev = data->hdev;
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 
+ 	if (test_bit(BTNXPUART_TX_STATE_ACTIVE, &nxpdev->tx_state)) {
+ 		ps_start_timer(nxpdev);
+@@ -502,7 +509,7 @@ static irqreturn_t ps_host_wakeup_irq_handler(int irq, void *priv)
+ }
+ static int ps_setup(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct serdev_device *serdev = nxpdev->serdev;
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	int ret;
+@@ -597,7 +604,7 @@ static void ps_cleanup(struct btnxpuart_dev *nxpdev)
+ 
+ static int send_ps_cmd(struct hci_dev *hdev, void *data)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	struct psmode_cmd_payload pcmd;
+ 	struct sk_buff *skb;
+@@ -636,7 +643,7 @@ static int send_ps_cmd(struct hci_dev *hdev, void *data)
+ 
+ static int send_wakeup_method_cmd(struct hci_dev *hdev, void *data)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	struct wakeup_cmd_payload pcmd;
+ 	struct sk_buff *skb;
+@@ -682,7 +689,7 @@ static int send_wakeup_method_cmd(struct hci_dev *hdev, void *data)
+ 
+ static void ps_init(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	u8 default_h2c_wakeup_mode = DEFAULT_H2C_WAKEUP_MODE;
+ 
+@@ -732,7 +739,7 @@ static void ps_init(struct hci_dev *hdev)
+ /* NXP Firmware Download Feature */
+ static int nxp_download_firmware(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	int err = 0;
+ 
+ 	nxpdev->fw_dnld_v1_offset = 0;
+@@ -782,7 +789,7 @@ static int nxp_download_firmware(struct hci_dev *hdev)
+ 
+ static void nxp_send_ack(u8 ack, struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	u8 ack_nak[2];
+ 	int len = 1;
+ 
+@@ -796,7 +803,7 @@ static void nxp_send_ack(u8 ack, struct hci_dev *hdev)
+ 
+ static bool nxp_fw_change_baudrate(struct hci_dev *hdev, u16 req_len)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct nxp_bootloader_cmd nxp_cmd5;
+ 	struct uart_config uart_config;
+ 	u32 clkdivaddr = CLKDIVADDR - nxpdev->boot_reg_offset;
+@@ -846,7 +853,7 @@ static bool nxp_fw_change_baudrate(struct hci_dev *hdev, u16 req_len)
+ 
+ static bool nxp_fw_change_timeout(struct hci_dev *hdev, u16 req_len)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct nxp_bootloader_cmd nxp_cmd7;
+ 
+ 	if (req_len != sizeof(nxp_cmd7))
+@@ -899,7 +906,7 @@ static bool process_boot_signature(struct btnxpuart_dev *nxpdev)
+ static int nxp_request_firmware(struct hci_dev *hdev, const char *fw_name,
+ 				const char *fw_name_old)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	const char *fw_name_dt;
+ 	int err = 0;
+ 
+@@ -931,7 +938,7 @@ static int nxp_request_firmware(struct hci_dev *hdev, const char *fw_name,
+ /* for legacy chipsets with V1 bootloader */
+ static int nxp_recv_chip_ver_v1(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct v1_start_ind *req;
+ 	__u16 chip_id;
+ 
+@@ -956,7 +963,7 @@ static int nxp_recv_chip_ver_v1(struct hci_dev *hdev, struct sk_buff *skb)
+ 
+ static int nxp_recv_fw_req_v1(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct btnxpuart_data *nxp_data = nxpdev->nxp_data;
+ 	struct v1_data_req *req;
+ 	__u16 len;
+@@ -1065,7 +1072,7 @@ static int nxp_recv_fw_req_v1(struct hci_dev *hdev, struct sk_buff *skb)
+ static char *nxp_get_fw_name_from_chipid(struct hci_dev *hdev, u16 chipid,
+ 					 u8 loader_ver)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	char *fw_name = NULL;
+ 
+ 	switch (chipid) {
+@@ -1139,7 +1146,7 @@ static char *nxp_get_old_fw_name_from_chipid(struct hci_dev *hdev, u16 chipid,
+ static int nxp_recv_chip_ver_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+ 	struct v3_start_ind *req = skb_pull_data(skb, sizeof(*req));
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	const char *fw_name;
+ 	const char *fw_name_old;
+ 	u16 chip_id;
+@@ -1163,7 +1170,7 @@ static int nxp_recv_chip_ver_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ 
+ static void nxp_handle_fw_download_error(struct hci_dev *hdev, struct v3_data_req *req)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	__u32 offset = __le32_to_cpu(req->offset);
+ 	__u16 err = __le16_to_cpu(req->error);
+ 	union nxp_v3_rx_timeout_nak_u timeout_nak_buf;
+@@ -1191,7 +1198,7 @@ static void nxp_handle_fw_download_error(struct hci_dev *hdev, struct v3_data_re
+ 
+ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct v3_data_req *req;
+ 	__u16 len = 0;
+ 	__u16 err = 0;
+@@ -1277,7 +1284,7 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ 
+ static int nxp_set_baudrate_cmd(struct hci_dev *hdev, void *data)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	__le32 new_baudrate = __cpu_to_le32(nxpdev->new_baudrate);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	struct sk_buff *skb;
+@@ -1362,7 +1369,7 @@ static int nxp_process_fw_dump(struct hci_dev *hdev, struct sk_buff *skb)
+ 	struct hci_acl_hdr *acl_hdr = (struct hci_acl_hdr *)skb_pull_data(skb,
+ 									  sizeof(*acl_hdr));
+ 	struct nxp_fw_dump_hdr *fw_dump_hdr = (struct nxp_fw_dump_hdr *)skb->data;
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	__u16 seq_num = __le16_to_cpu(fw_dump_hdr->seq_num);
+ 	__u16 buf_len = __le16_to_cpu(fw_dump_hdr->buf_len);
+ 	int err;
+@@ -1439,7 +1446,7 @@ static int nxp_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+ /* NXP protocol */
+ static int nxp_setup(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct serdev_device *serdev = nxpdev->serdev;
+ 	char device_string[30];
+ 	char event_string[50];
+@@ -1475,7 +1482,7 @@ static int nxp_setup(struct hci_dev *hdev)
+ 
+ static int nxp_post_init(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 
+ 	if (nxpdev->current_baudrate != nxpdev->secondary_baudrate) {
+@@ -1491,7 +1498,7 @@ static int nxp_post_init(struct hci_dev *hdev)
+ 
+ static void nxp_hw_err(struct hci_dev *hdev, u8 code)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 
+ 	switch (code) {
+ 	case BTNXPUART_IR_HW_ERR:
+@@ -1505,7 +1512,7 @@ static void nxp_hw_err(struct hci_dev *hdev, u8 code)
+ 
+ static int nxp_shutdown(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct sk_buff *skb;
+ 	u8 pcmd = 0;
+ 
+@@ -1529,7 +1536,7 @@ static int nxp_shutdown(struct hci_dev *hdev)
+ 
+ static bool nxp_wakeup(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 
+ 	if (psdata->c2h_wakeupmode != BT_HOST_WAKEUP_METHOD_NONE)
+@@ -1540,7 +1547,7 @@ static bool nxp_wakeup(struct hci_dev *hdev)
+ 
+ static void nxp_reset(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 
+ 	if (!ind_reset_in_progress(nxpdev) && !fw_dump_in_progress(nxpdev)) {
+ 		bt_dev_dbg(hdev, "CMD Timeout detected. Resetting.");
+@@ -1550,7 +1557,7 @@ static void nxp_reset(struct hci_dev *hdev)
+ 
+ static int btnxpuart_queue_skb(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 
+ 	/* Prepend skb with frame type */
+ 	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
+@@ -1561,7 +1568,7 @@ static int btnxpuart_queue_skb(struct hci_dev *hdev, struct sk_buff *skb)
+ 
+ static int nxp_enqueue(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+ 	struct hci_command_hdr *hdr;
+ 	struct psmode_cmd_payload ps_parm;
+@@ -1693,7 +1700,7 @@ static void btnxpuart_tx_work(struct work_struct *work)
+ 
+ static int btnxpuart_open(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	int err = 0;
+ 
+ 	err = serdev_device_open(nxpdev->serdev);
+@@ -1708,7 +1715,7 @@ static int btnxpuart_open(struct hci_dev *hdev)
+ 
+ static int btnxpuart_close(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 
+ 	serdev_device_close(nxpdev->serdev);
+ 	skb_queue_purge(&nxpdev->txq);
+@@ -1722,7 +1729,7 @@ static int btnxpuart_close(struct hci_dev *hdev)
+ 
+ static int btnxpuart_flush(struct hci_dev *hdev)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 
+ 	/* Flush any pending characters */
+ 	serdev_device_write_flush(nxpdev->serdev);
+@@ -1784,7 +1791,7 @@ static const struct serdev_device_ops btnxpuart_client_ops = {
+ 
+ static void nxp_coredump_notify(struct hci_dev *hdev, int state)
+ {
+-	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+ 	struct serdev_device *serdev = nxpdev->serdev;
+ 	char device_string[30];
+ 	char event_string[50];
+@@ -1877,7 +1884,8 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
+ 	nxpdev->hdev = hdev;
+ 
+ 	hdev->bus = HCI_UART;
+-	hci_set_drvdata(hdev, nxpdev);
++	hci_set_drvdata(hdev, &nxpdev->hu);
++	nxpdev->hu.priv = nxpdev;
+ 
+ 	hdev->manufacturer = MANUFACTURER_NXP;
+ 	hdev->open  = btnxpuart_open;
+-- 
+2.47.3
 
