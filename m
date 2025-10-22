@@ -1,185 +1,203 @@
-Return-Path: <linux-kernel+bounces-865806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81537BFE164
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:48:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8566BBFE173
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 04D1334D6F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:48:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9118F3A7CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B682F7446;
-	Wed, 22 Oct 2025 19:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1362F5A27;
+	Wed, 22 Oct 2025 19:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UB9v311P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyKiCIjg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FDE229B38;
-	Wed, 22 Oct 2025 19:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB75425F7A5;
+	Wed, 22 Oct 2025 19:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761162474; cv=none; b=EqRtR4eIDNe0c5PGabhB4xtQTWxa/KZQCEhHfoWdistKLP1576c+19epJ3HEi4GUnsOVkJhC8q+ds8VPQ2cl1slVy1oh0lU+h9HP77DnFOQEIvKo/QFuwdYClh6Y2ji4BBecCVgu9fBu/sv427RSBHU4ZL/0VU0kNWo9Mbl0EXc=
+	t=1761162582; cv=none; b=Ir1ehKKqXQueuzQ5qGetTX8ooMmnuH9Rnx1fpR6HLn4yXQupELjry2PhRqDN5rf3rHmW48vNHUBfsSsv4ONMz8YXCe4hzmXEqUGVzYtv9kQ7LXURDzT0HHeWe01b8hagX69NGGE1dcZYIt9ViEeuBuWlKfCHt8eV8yRruGgIpp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761162474; c=relaxed/simple;
-	bh=TMB/vzDd+LTd/lCIfQUrdA02dtsXU52MRguMhkvQVb8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fsQMTMyyc5B/d7Ho52KC6LKbDGMik33QJKy8MT7jH7TxtPjRhz/xTkro8LphHUDYS3QnA+tNvn1fsDAH90K6XAxOIjzgsw2ppI33ETceXXYPP8mDvvoVvq2ptWLki+0jO/iwdzTqO1nohhNFjuTPXUcn+DUnqM4Uh6fQv5vKnvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UB9v311P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B069AC4CEFD;
-	Wed, 22 Oct 2025 19:47:53 +0000 (UTC)
+	s=arc-20240116; t=1761162582; c=relaxed/simple;
+	bh=AIoAYtzLfIP2cEKmbA5wBFYBFjPPpObwFVg5kxuV8ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=djGUt+I83JidnUgeNGjKnPBSyMiz1JgtdALkb0Fy1cMRCY1vdzejBLx9ClAQt4iS9tdnGhRcII9jSGSPFG6rSIUI+6psVOtB4aYUgx7Vz4+BQh9fgWsZgKRK/+ai+eFN6D26xqaWlyP+BY51j0wezZgwM5H7zLRMl3f5+eI2aVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyKiCIjg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28BCEC4CEE7;
+	Wed, 22 Oct 2025 19:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761162473;
-	bh=TMB/vzDd+LTd/lCIfQUrdA02dtsXU52MRguMhkvQVb8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UB9v311PtmZ8PnnRfw/io6cgniNpJxDv/YprnnB2BwtlwPXX3TlMCSrxDSamfR6cw
-	 YCTqkEdYHuBOLVqQtB+YO0DSIm3uOrLH2iJSx4nz+1rNgfrjWtr81Opa0HD/c/ZMXk
-	 rH2GJm+MctyBJfVvyhoveOUH1/GPI3EoKn9k28XvejSAtOt6UEV8olKyTH4vh1Vmlf
-	 QQqF7codQelr3AK17hZSXNCnqFHGfRZhKZ9vXHX6fLYweFr7hHVnfGxRi6gQ+cokgK
-	 4lDdznv1b76jNvwuJvyFtqo8Oli6bVO6/hKTvi3xJZUNM6COT7IE/smAirZWsOhNyh
-	 vRLmKhVbc1pYA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB25CCF9E2;
-	Wed, 22 Oct 2025 19:47:53 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Wed, 22 Oct 2025 21:47:48 +0200
-Subject: [PATCH 2/2] power: supply: gpio-charger: add support for
- fast-charge timer
+	s=k20201202; t=1761162581;
+	bh=AIoAYtzLfIP2cEKmbA5wBFYBFjPPpObwFVg5kxuV8ac=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UyKiCIjgaK/V/4PpHQXmQDUztuRKPmzgURfcr0pbQ20/J6eDJBRWsxmPVdSF9498S
+	 zbv+jui8rHR/sNZJchjE9y61k2btTNo85H9iEwMi7h8pDKtgj6/DetLb8pIczXyvDe
+	 a571Xy6mUeXRv2QK6gLOpsWdv4jnl2xDbQqq3LWvIjN+CF3GcMnv1/KMkOEb9nZFrB
+	 k/QqWjnmeuLXG1NhJDoZ84XPSG88+cHPry9qJ7/56xLGL/ufgGsr7n98TtP3/xMkCC
+	 sFo1XxXUPgjY82DsvHFoZ5vHhWwY9rhPmliv87NpAY39XUbyfIo1ebWSscv6IN2Cqc
+	 e46wJHF+O7jGA==
+Date: Wed, 22 Oct 2025 14:49:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v5 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
+ driver
+Message-ID: <20251022194939.GA1223383@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-gpio-charger-timer-v1-2-b557409400f2@liebherr.com>
-References: <20251022-gpio-charger-timer-v1-0-b557409400f2@liebherr.com>
-In-Reply-To: <20251022-gpio-charger-timer-v1-0-b557409400f2@liebherr.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761162472; l=3484;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=p7cAOt/Kei0dwrov23S0iQygvZlwNI2XjIcLZTRyKRk=;
- b=VtUneGRFdgJjNlcSNgZ3ZTbrQI719MPCVYdI2APLJ8I8sP9jzrOg30kIpZiu5jYAmtRfXtPLt
- 1F5WZKPNtyvDaVCKeZ3PDOUlT7XZqb98OCgrPpXizmH/QaQUuC1hfC1
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007133657.390523-3-claudiu.beznea.uj@bp.renesas.com>
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Tue, Oct 07, 2025 at 04:36:53PM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> only as a root complex, with a single-lane (x1) configuration. The
+> controller includes Type 1 configuration registers, as well as IP
+> specific registers (called AXI registers) required for various adjustments.
 
-On some devices like TIs BQ24081 battery charger it is possible to activate
-or deactivate a fast-charge timer that provides a backup safety for charge
-termination. In case of the BQ24081 it is a fixed 7-hour timer. Add support
-for enabling/disabling the fast-charge timer via GPIO.
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -266,6 +266,14 @@ config PCI_RCAR_GEN2
+>  	  There are 3 internal PCI controllers available with a single
+>  	  built-in EHCI/OHCI host controller present on each one.
+>  
+> +config PCIE_RENESAS_RZG3S_HOST
+> +	bool "Renesas RZ/G3S PCIe host controller"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	select MFD_SYSCON
+> +	select IRQ_MSI_LIB
+> +	help
+> +	  Say Y here if you want PCIe host controller support on Renesas RZ/G3S SoC.
 
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- .../ABI/testing/sysfs-class-power-gpio-charger     | 10 ++++++
- drivers/power/supply/gpio-charger.c                | 39 ++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+Wrap to fit in 80 columns like the rest of the file.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-power-gpio-charger b/Documentation/ABI/testing/sysfs-class-power-gpio-charger
-new file mode 100644
-index 0000000000000000000000000000000000000000..95fb31ac4af3d5354bdc642c98baa7df267d150d
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-power-gpio-charger
-@@ -0,0 +1,10 @@
-+What:		/sys/class/power_supply/<supply_name>/fast_charge_timer
-+Date:		October 2025
-+KernelVersion:	6.19.0
-+Contact:	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-+Description:
-+		This entry enables or disables the timer in fast-charge mode.
-+
-+		Access: Write
-+
-+		Valid values: 0 (disabled) or 1 (enabled)
-diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
-index 2504190eba82e69b79382320e67de6b8f3dedc77..52997205879406fae600171b070a0328657fa79b 100644
---- a/drivers/power/supply/gpio-charger.c
-+++ b/drivers/power/supply/gpio-charger.c
-@@ -32,6 +32,7 @@ struct gpio_charger {
- 	struct power_supply_desc charger_desc;
- 	struct gpio_desc *gpiod;
- 	struct gpio_desc *charge_status;
-+	struct gpio_desc *timer;
- 
- 	struct gpio_descs *current_limit_gpios;
- 	struct gpio_mapping *current_limit_map;
-@@ -259,6 +260,36 @@ static int init_charge_current_limit(struct device *dev,
- 	return 0;
- }
- 
-+static ssize_t fast_charge_timer_store(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf, size_t count)
-+{
-+	struct power_supply *psy = dev_get_drvdata(dev);
-+	struct gpio_charger *gpio_charger = power_supply_get_drvdata(psy);
-+	int ret;
-+	bool en;
-+
-+	if (kstrtobool(buf, &en))
-+		return -EINVAL;
-+
-+	if (!gpio_charger->timer)
-+		return -ENODEV;
-+
-+	ret = gpiod_set_value_cansleep(gpio_charger->timer, en);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_WO(fast_charge_timer);
-+
-+static struct attribute *gpio_charger_attrs[] = {
-+	&dev_attr_fast_charge_timer.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(gpio_charger);
-+
- /*
-  * The entries will be overwritten by driver's probe routine depending
-  * on the available features. This list ensures, that the array is big
-@@ -308,6 +339,13 @@ static int gpio_charger_probe(struct platform_device *pdev)
- 		num_props++;
- 	}
- 
-+	gpio_charger->timer = devm_gpiod_get_optional(dev, "fast-charge-timer",
-+						      GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpio_charger->timer)) {
-+		return dev_err_probe(dev, PTR_ERR(gpio_charger->timer),
-+				     "error getting fast-charge timer GPIO descriptor\n");
-+	}
-+
- 	charge_status = devm_gpiod_get_optional(dev, "charge-status", GPIOD_IN);
- 	if (IS_ERR(charge_status))
- 		return PTR_ERR(charge_status);
-@@ -336,6 +374,7 @@ static int gpio_charger_probe(struct platform_device *pdev)
- 
- 	psy_cfg.fwnode = dev_fwnode(dev);
- 	psy_cfg.drv_data = gpio_charger;
-+	psy_cfg.attr_grp = gpio_charger_groups;
- 
- 	if (pdata) {
- 		charger_desc->name = pdata->name;
+> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
 
--- 
-2.39.5
+> +#define RZG3S_PCI_MSIRCVWMSKL			0x108
+> +#define RZG3S_PCI_MSIRCVWMSKL_MASK		GENMASK(31, 2)
 
+Unfortunate to have to add _MASK here when none of the other GENMASKs
+need it.  Can't think of a better name though.
 
+> +#define RZG3S_PCI_MSIRCVWMSKU			0x10c
+
+Unused.
+
+> +#define RZG3S_PCI_AMEIE				0x210
+
+Unused.
+
+> +#define RZG3S_PCI_ASEIE1			0x220
+
+Unused.
+
+> +#define RZG3S_PCI_PCSTAT2_STATE_RX_DETECT	GENMASK(15, 8)
+
+Unused.
+
+> +/* Timeouts experimentally determined. */
+
+No need for period at end.
+
+> +static int rzg3s_pcie_child_read_conf(struct rzg3s_pcie_host *host,
+> +				      struct pci_bus *bus,
+> +				      unsigned int devfn, int where,
+> +				      u32 *data)
+
+Would fit in three lines if you want.
+
+> +static int rzg3s_pcie_child_write_conf(struct rzg3s_pcie_host *host,
+> +				       struct pci_bus *bus,
+> +				       unsigned int devfn, int where,
+> +				       u32 data)
+
+Ditto.
+
+> +static int rzg3s_pcie_msi_enable(struct rzg3s_pcie_host *host)
+> +{
+> +	struct platform_device *pdev = to_platform_device(host->dev);
+> +	struct rzg3s_pcie_msi *msi = &host->msi;
+> +	struct device *dev = host->dev;
+> +	const char *devname;
+> +	int irq, ret;
+> +
+> +	ret = devm_mutex_init(dev, &msi->map_lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	msi->irq = platform_get_irq_byname(pdev, "msi");
+> +	if (msi->irq < 0)
+> +		return dev_err_probe(dev, irq ? irq : -EINVAL,
+> +				     "Failed to get MSI IRQ!\n");
+> +
+> +	devname = devm_kasprintf(dev, GFP_KERNEL, "%s-msi", dev_name(dev));
+> +	if (!devname)
+> +		return -ENOMEM;
+> +
+> +	ret = rzg3s_pcie_msi_allocate_domains(msi);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = request_irq(msi->irq, rzg3s_pcie_msi_irq, 0, devname, host);
+
+Should this be devm_request_irq()?  Most drivers use it, although
+pci-tegra.c and pcie-apple.c do not.  Maybe there's some special rule
+about using request_irq() even though the driver uses devm in general?
+I dunno.
+
+> +static int rzg3s_pcie_intx_setup(struct rzg3s_pcie_host *host)
+> +{
+> +	struct device *dev = host->dev;
+> +
+> +	for (int i = 0; i < PCI_NUM_INTX; i++) {
+> +		struct platform_device *pdev = to_platform_device(dev);
+
+Looks like this should be outside the loop.
+
+> +		char irq_name[5] = {0};
+> +		int irq;
+> +
+> +		scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + i);
+> +
+> +		irq = platform_get_irq_byname(pdev, irq_name);
+> +		if (irq < 0)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					     "Failed to parse and map INT%c IRQ\n",
+> +					     'A' + i);
+> +
+> +		host->intx_irqs[i] = irq;
+> +		irq_set_chained_handler_and_data(irq,
+> +						 rzg3s_pcie_intx_irq_handler,
+> +						 host);
+> +	}
+
+> +static int rzg3s_pcie_power_resets_deassert(struct rzg3s_pcie_host *host)
+> +{
+> +	const struct rzg3s_pcie_soc_data *data = host->data;
+> +
+> +	/*
+> +	 * According to the RZ/G3S HW manual (Rev.1.10, section
+> +	 * 34.5.1.2 De-asserting the Reset) the PCIe IP needs to wait 5ms from
+> +	 * power on to the de-assertion of reset.
+> +	 */
+> +	usleep_range(5000, 5100);
+
+Consider fsleep() so we don't have to make up the 100us interval.
 
