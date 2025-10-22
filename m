@@ -1,155 +1,136 @@
-Return-Path: <linux-kernel+bounces-864443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6FDBFACF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4CBBFACF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6969A5841B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:09:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3546583C01
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA7D3019B8;
-	Wed, 22 Oct 2025 08:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5602F363B;
+	Wed, 22 Oct 2025 08:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J4kXMwh5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxBmd546"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10C1301038
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7742DF155;
+	Wed, 22 Oct 2025 08:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120501; cv=none; b=HDdkweUbf3j3j29etvGTGtH95reFyJaX3Rqr0loiXRnzxZSO+lYDyd2/V6BodCmymRLBuSVz+CuffSmQ0xr8umqeFf3fhtMcPC6hMhEzbJ9chpQ8b51YAKr0r4aQJTb0+RgQS8KNiu6sPhWI2QXRk5zj/dVwfGKYm2HR3i2qnAg=
+	t=1761120495; cv=none; b=LHPJ/OK7uh1v7ty2ECmMMIGqKrqYl7BETDEYC6clAXD4qHg9+oxikkDgdNV7E5j8YMsgqQSpASU0InKvGWpx9a8Z7fgJ6cHq58P2OjnGEIQfozXMYILpagQC30ZjziHjs6qPWzRQmx0/y5nB5dHIFAOvFlT0g5gdM3k6DsDbFhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120501; c=relaxed/simple;
-	bh=tFK1KO4D+0gMTo4v0IBwFOBDfCPoPkcaJ3yQdNMsf7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cvSE2zt4micuTaIPLUFQITvcG3k+Wenb3Hsx11rYgoRCEuUjmmoiZo7E8kmfxw48fCjWyJkWx5ro0M/BkKYM5h/PR6tpo9lxfC5D/QGOv8/MrUbNz2bMqbMikIW4rEvHmHCIF4ctcJQd7FicMOMM6fC7TKZxbg3GwQwIC2BeuIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J4kXMwh5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761120498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tFK1KO4D+0gMTo4v0IBwFOBDfCPoPkcaJ3yQdNMsf7M=;
-	b=J4kXMwh5+O9lYhwp7kIc4fhrXGHXb+ddpmxQp4iJcX3XNUaBbXawsAnIJJUFplI0EfLO/Q
-	nS4srEWCLUQF29Cmn4YNFzeNGbP7O8BcgC/DgFOeu75latozfwBpOqqd5v8poNL5Pg+ArI
-	Z6tNkLgH5Q7IL9IlWfuZhaEv6BUtqDc=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-90-MxjTP0KeP76JvURrX645BA-1; Wed, 22 Oct 2025 04:08:16 -0400
-X-MC-Unique: MxjTP0KeP76JvURrX645BA-1
-X-Mimecast-MFC-AGG-ID: MxjTP0KeP76JvURrX645BA_1761120496
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-290cd61855eso52626155ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:08:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761120496; x=1761725296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tFK1KO4D+0gMTo4v0IBwFOBDfCPoPkcaJ3yQdNMsf7M=;
-        b=mSW5UhQ5QR+wjBuIyhQVaUy26Lev8gCV6yK2+rODys21E1DAAzT+ESPEfgKwo4qYG4
-         7RZOcpqMuGltbe3JpS/B1onP0FEGDEprLP5D7Tb/NcDU34OeSyZ5nKNZYH6/x7LZOZBk
-         3YpK6uJ4zVrcYZszVgLW+vVCVqzxuDUDgzA8RvVHh6jNoCqCPhw8YmrGxxXRLOfaeEBI
-         4YpyjR8qJgkhXE8RyFrZ1yUB6HE0x8wB+ohT4VvDCWqf+73CmgFcWSLNdQxnx2j4jF2h
-         HMI1FV2uWHBkkhUlDcC5XRk1PYUkS8FpSVfeeTqaOvfas1rr6YzrXpfIKUNFdNGwWUvx
-         Qlmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoIezb6VXViWoqZrRfJgBE6gfYO/0tkl/vzW4Vu8gZ7/Ht8tqzCPMsd3JqI13o+uWOMnChTKoSRIJ8Z5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz81ZiWeUAB1V83zrGBKETl9s+KVo1/b1Zd86La4eSjxdJTG4Gp
-	vn1aimtNI+shsPVuVhANVc7Kz1OXHzAVysltDhk2bH1LcoGeRKWsqqxWqDRPsTp7RmRwM5TZ6QO
-	NBf2tbya1l6TLAgM9rlbuKGpzlH+FWveVOn9fT9KXj5VGNcK3h6nrLTGbxMvyLdqLBDgz7n94C0
-	JbCQe+tlPqBtmkx6kfG9F+QloPg112DZd8odXQpTl6
-X-Gm-Gg: ASbGncv3kge5qVQt3Rsgp3AieOs66rvGDJqidlsJ2nZp6P7uCKVUh897MiSHrKT4Gfr
-	DZFMz3tx173uezMj9YphToIbDn3auRMjfJz7vcTllDMyVheEFZhBh0V5jzOPM1yx852aZLyWwd0
-	aivzb9t8zDjNFxGpXEUb11PJM/RluO9RJ7vH/+F5jmLwTcOd22W/oRys+od286Foq09YqoC4w2F
-	07spLUZs5A8DSG/
-X-Received: by 2002:a17:902:e5cf:b0:290:91b1:2a69 with SMTP id d9443c01a7336-290cb7560b8mr260211635ad.52.1761120495720;
-        Wed, 22 Oct 2025 01:08:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHo2XP/jVdY2pcYFKz6OnG7bzc461hULcT1/QO/xAI+P9k7vDhd+aVTkvwMGDjMEU/z3u35v2XMOR7IkEnO8xg=
-X-Received: by 2002:a17:902:e5cf:b0:290:91b1:2a69 with SMTP id
- d9443c01a7336-290cb7560b8mr260211445ad.52.1761120495404; Wed, 22 Oct 2025
- 01:08:15 -0700 (PDT)
+	s=arc-20240116; t=1761120495; c=relaxed/simple;
+	bh=4ww9RQLz9/g3IUAwovrnw3zZW4CAbBKrfAKcx3iO+to=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iq+Mt5ULUz8xAioxMGerWySuQFHUbXLkrOuVwOM5/DFMwlruCHcYi3PzSf2MkJun+AgUKquidrooyrs44ZjReeARlIRPKtbiwtJuzUFecUlzQCagn9ILagu+Z5jf0TXki6OFZ000RljSqQUQCmCuyQ+ZBM9hq0nTw7m0v/CfQow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxBmd546; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F78C4CEF7;
+	Wed, 22 Oct 2025 08:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761120494;
+	bh=4ww9RQLz9/g3IUAwovrnw3zZW4CAbBKrfAKcx3iO+to=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=sxBmd546cTg9GrvgGhMKn/T8L8WWy0DAYz5SkedDIgxVdlaz2eY46YZSP9/ga9Whr
+	 4YqiCKYOMWf4WuW9NJ/wXgmzAgb5R0hsTYzTKn0ZeMr+XGsbhrvtD3xS7TPufHUejD
+	 DHGLpeWvdocFmtG6HAqGoJsjFJlsD+0qcCUmieKL7jInOZU8hkInJ2TsYQYlL84LmP
+	 OH9dIV5nWIJ7XDaayWiKo1D3HQaOETc1AaK+6gbsTez7gSEUUCBFiyrivJO4G3XVhh
+	 J+5B5ZGFi9EzdDZuQNOwbTSHIPtT3nwwpfmwegZHwWzjFBAWuD1++RSYSiy41LP4Lf
+	 Khb28p4vqOfWA==
+Message-ID: <624530ac-078a-4312-b8da-c2a090aec7c4@kernel.org>
+Date: Wed, 22 Oct 2025 10:08:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022072729.14820-1-xion.wang@mediatek.com>
-In-Reply-To: <20251022072729.14820-1-xion.wang@mediatek.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Wed, 22 Oct 2025 10:08:04 +0200
-X-Gm-Features: AS18NWB0L38kFa0XqRBxBuxoOL0blj0prvtzV3DKxomco7xkygfsMEqvL9322_U
-Message-ID: <CAFqZXNuPqwfqA23LH8NOG6KM1Nb7WvW77wnpp-vZ5omU40j_qQ@mail.gmail.com>
-Subject: Re: [PATCH 0/1] selinux: export current_sid API for use in other
- kernel modules
-To: xion.wang@mediatek.com
-Cc: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, wsd_upstream@mediatek.com, 
-	huadian.liu@mediatek.com, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/6] dt-bindings: mfd: aspeed,ast2x00-scu: allow
+ #size-cells range
+To: Ryan Chen <ryan_chen@aspeedtech.com>, bmc-sw@aspeedtech.com,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, jk@codeconstruct.com.au,
+ Lee Jones <lee@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
+ nfraprado@collabora.com, Taniya Das <quic_tdas@quicinc.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Eric Biggers <ebiggers@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-4-ryan_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251022070543.1169173-4-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 9:43=E2=80=AFAM <xion.wang@mediatek.com> wrote:
->
-> From: Xion Wang <xion.wang@mediatek.com>
->
-> We have a kernel driver designed to monitor the status of the Android
-> userspace watchdog. The implementation works as follows: we modify the
-> Android userspace watchdog code to periodically send a "kick" signal to
-> the kernel driver via ioctl, so that the kernel driver can determine
-> whether the userspace is still responsive. If the kernel driver does not
-> receive a kick signal from the userspace watchdog within a certain
-> period, it infers that the userspace is stuck. In this case, the kernel
-> driver will dump key process information at the kernel level and trigger
-> a full system reboot.
->
-> To ensure that only the legitimate Android userspace watchdog process can
-> access the ioctl interface and perform the kick operation, and to prevent
-> malicious or unauthorized processes from spoofing the kick action (which
-> could compromise system reliability), we want to identify the calling
-> task by its security identifier (sid). By checking the sid, we can
-> effectively prevent unauthorized processes from sending kick signals.
->
-> Currently, the current_sid() function in the kernel is defined as
-> static inline and cannot be directly called from modules or drivers. We
-> propose to export this function, so that the kernel driver can call
-> current_sid() to obtain the sid of the current process and decide whether
-> to allow the kick operation.
->
-> This change will help enhance system security and robustness by
-> preventing the watchdog mechanism from being bypassed or abused.
->
-> I would like to ask the maintainers if there are any additional security
-> concerns regarding exporting current_sid() as a public API, or if there
-> are any alternative or more recommended approaches to achieve this goal.
-> Any feedback or suggestions would be greatly appreciated.
+On 22/10/2025 09:05, Ryan Chen wrote:
+> The #size-cells property in the Aspeed SCU binding is currently
+> fixed to a constant value of 1. However, newer SoCs (ex. AST2700)
+> may require two size cells to describe certain subregions or
+> subdevices.
+> 
+> This patch updates the schema to allow #size-cells values in
+> the range of 1 to 2. This makes the binding more flexible
+> while maintaining compatibility with existing platforms.
+> It also resolves dt-binding validation warnings reported
+> by `make dt_binding_check`.
 
-Couldn't you just use security_cred_getsecid() or the new
-security_cred_getlsmprop()?
+There is no such warning! I think I told you that already. Don't invent
+fake, future warnings.
 
-Untested:
-
-u32 sid;
-security_cred_getsecid(current_cred(), &sid);
-
--- or --
-
-lsm_prop prop;
-security_cred_getlsmprop(current_cred(), &prop);
-u32 sid =3D prop.selinux->secid;
-
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+Best regards,
+Krzysztof
 
