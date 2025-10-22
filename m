@@ -1,310 +1,218 @@
-Return-Path: <linux-kernel+bounces-865053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3BABFC28B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:32:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B9FBFC240
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CF6622FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:12:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9368566F32
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0C1345CBB;
-	Wed, 22 Oct 2025 13:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63792347BC2;
+	Wed, 22 Oct 2025 13:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdOkQuHj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i1FCsYHM"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB68B345749;
-	Wed, 22 Oct 2025 13:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5180A34679D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761138628; cv=none; b=fNB2PNn7jm+R38b/xJFT+BSbT47Em8vvOLxzInF74zctQZGbqxpHN1GkikRnezp2llx3IjEc6kCk1bM9kv4nHFjgq6u/KXKuO5RPU+bLScH56oId3dUDfbyjvKBqB1wElNqmAKqTWXLcz/ivv+KRBWywaJfhK17lfrzKwsNQuOU=
+	t=1761138660; cv=none; b=Zi6fTA6kuxrc8C1nw0Src4oZEnXoOiDC8RiU5KmvWrqsDS5/x6awAy7s01af3u//Zc50hpAaz/4gJcGe1OCwSyjOLOQuoQQ0+OLNMCzb/lb37q2CkFBVrWHXAbq6g/GPk0AZM69Q6YyaKV1vmJUFyq8xPLPsUeEvw5ZEJE/uY9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761138628; c=relaxed/simple;
-	bh=/Du5gzKBdKt8tqyC45JQnXFk1Z9z8QIef1GN10pPqr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lIi0xQuEDyWrom0StuSjnqsGkZLtVcLfRX82TS/q8vwt7mUBslDXu2ffzrUfDo2gNdxtbKuRZ+utfYhpb/YTXfqN75rNDaFBfjWf3jW71bGfyeuh2YOf4wh0SKptIFclQDueM4TKO+V8VmEyWFv5z+UDw/xt5bLcx51xjUXvRvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdOkQuHj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF10C4CEE7;
-	Wed, 22 Oct 2025 13:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761138628;
-	bh=/Du5gzKBdKt8tqyC45JQnXFk1Z9z8QIef1GN10pPqr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PdOkQuHjijIbrgNvUDgLeRdcApQcVl+2xdnazoVj3aGHORXg0hirLD26RyZrzLdeX
-	 +wGPxukw9liYXeK8sWXd+BGoHZoLch7IYNvV/3YQErZN0mCvMSGZGHbfVs2vAnR2az
-	 l51Jry+rGzyPjFiKs+kjaqkLKhZuzSYVvoSTizNShSwEbRwTYygKSk2MdsONIofIBn
-	 LnfEv9ao/454CBsQUeHLhyuAGESf+S0VhrXfz2U+Qx8ZTwQV0igFfn4RW70YM138Ap
-	 SIVbGaUl8sjUXCM51misK0x3Eh8FU/PtLtfMHjoB4KCXt9wfy6qMLma3iV8eMxejj3
-	 JRJPuLpWRgRZg==
-Date: Wed, 22 Oct 2025 18:40:16 +0530
-From: "mani@kernel.org" <mani@kernel.org>
-To: "Musham, Sai Krishna" <sai.krishna.musham@amd.com>
-Cc: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>, 
-	Stefan Roese <stefan.roese@mailbox.org>, Bjorn Helgaas <helgaas@kernel.org>, 
-	"Bandi, Ravi Kumar" <ravib@amazon.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"Simek, Michal" <michal.simek@amd.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, Sean Anderson <sean.anderson@linux.dev>, 
-	"Yeleswarapu, Nagaradhesh" <nagaradhesh.yeleswarapu@amd.com>
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Message-ID: <je532spw436aprfqtntmffq7faa2ghpbws2ph4zjplvbf7rnaa@gmrekmta6yh4>
-References: <20251021212801.GA1224310@bhelgaas>
- <ab1f7c51-bc41-4774-a0dc-850e53c412eb@mailbox.org>
- <3it5l556vmfpuu6kz5yvulwosi4ecmcgfbzcizrc5wi7ifddkh@mpzfxf2v6v3f>
- <72267a6c-13c7-40bd-babb-f73a28625ca4@mailbox.org>
- <SN7PR12MB7201CF621AF0A38AA905799D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
- <brekq5jmgnotwpshcksxefpg2adm4vlsbuncazdg32sdpxqjwj@annnvyzshrys>
- <SN7PR12MB7201C6B5B64F8847DD6D816D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
- <zuj6puxpqgjmaa3y3wwyixlru7e7locplnjev37i5fnh6zummw@72t5prkfsrpk>
- <DM4PR12MB6158ACBA7BCEDB99A55ACA03CDF3A@DM4PR12MB6158.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1761138660; c=relaxed/simple;
+	bh=ahWl67TQ9XpBLPshdCkjxixfaIbnhlzVC6EeMq2/mus=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QhS0P2soFabVgRDa2T5rjfGAKu01ZAnyp9tJ6/NBmN36PG4xTY4wxL+9Hrr4BvTxMkz3VSJ5i8woWHeToY6Sy3SQYeeUIPtYGptqapnZo/ZdEsvQW6sbxqd1hrcR1FGGoJi8hmoQ9IM2QUtgzCAO33EwTBqiOVfyvwTIZXdasXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i1FCsYHM; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47118259fd8so43224925e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761138657; x=1761743457; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QXbhE5WpAHG+UuY9oJTJMeHQhbXeGIA/P16dT2l+d0=;
+        b=i1FCsYHMdPJD7bStbNA/0d7P1MRbi/6RiPJRcSUSBHOhw5yWJKTleIj3hLncOPzHHB
+         FFr8QRYSTy0tciL+Uy0yhc5F0VwqmQ7sjj6LK1Zps8VdESH47efdtrF1ivBmiePwe5uT
+         35vs2olm3OTTCnk0CQRSXfpvi4FJ37IBejmY4cryCJ7U8fMFTOKuqK1qjYwXz33XCkIF
+         9iV7fAMwG8F0sv1dxwhCUWci3aX3QirchtHIDfc37sOAy6Uo1iofmAK21oC5EOdH7ZXo
+         fYbRJ+wiUmf8uIdd6c9czkvt/b9v0KvCGtUU6sOFhymw3084wA3LMST4d1ITxHteZ0md
+         q2jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761138657; x=1761743457;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6QXbhE5WpAHG+UuY9oJTJMeHQhbXeGIA/P16dT2l+d0=;
+        b=IZGWL8T8WLwbJh/Bs5SZieLUWzDwN1kjgmA5hauf9DL9qqY2QmTSKr0WNOyO19XDFO
+         SmIApZsSeDeNnLlxdTZc5l55VlHf4dtavmpIIG0Zxb+jMo2SNLm73ZCzwpMLROjA5XL7
+         wVn0ZoqgHyL9IzV/8n95Hh+rdLSbY7JDHaZxWClrZhlI0U8aY6A8oV3iWaVAKxawIn2E
+         RYsZzSqHnH/x/QPE30+Dc/rFczgr6IzQ/88p6a1+atDmretelhILCHB4ef2FXIOmncwD
+         AR+ogXlhDp00Pq/QUxc4A82sE1b10p1N/Qhc0Lp0SlZ3jC7WqqdciOUqgNGkOlPC+fqg
+         JVQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxAte+LT8wSrq3tGxaqN0P8aEiZAP4XyRPag7u0chzgI472AlDLmP51W+FD3990/46ejZeMh5nN6Ek+Ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd5fsHz1jCbgP4DXBU8BuH/mGpSLTTAqSv3Yw34j5t1JLHM2uR
+	t70F+ViBGNSn4h/HG2n64KgtZ2irN5WoujQUtSg9f3909J8RhoqLMTSM1FqYeYY6klI=
+X-Gm-Gg: ASbGnctnJTHORP93XqE0ndJXUJkKbQ3/9isxeMDujT/pOim0e3y2rNV+HkqzzlOBfyq
+	zd6k1Ss8Y5c9AtT9TFQMkGlRrw0fvx23x8xLVfK90S4NR2cSoV/DcujouZtX/KAoocJON9o3An7
+	cjT5NzmAYoKYJAqFGkiTATHcy18I49IOjS2bzVbp7aOb5CmFzjgJvxWzrZm4lUx0zoxCKQNL5cP
+	gkNnirhZrA49rYiXvpuYs9v+yQgMGRU4HimH7aSEkS1hROlJHZpde7Eyf6ZItRUTXLsfQ1ykIQQ
+	qBY2S3y3bCrtKMBPw8kzo68PIdFtpAzJtvelJfJVcopfJpxQYoL5B4TxSKTSE2gsruPpT1fGNg9
+	1LgVobRAw10tPWDqESIqXmQY2i1IWV8zttGw4hHOxSkfyVRJrWqMV0JIN7d3f9zRTYCnKZiWhmA
+	41g9FxrA==
+X-Google-Smtp-Source: AGHT+IFdFKFen7tV5F5VONCvLyYsh80AvPduy1QT8kUGqdlbVQ4K9dlnnT93BxJMM7KKevL6B+Uz8g==
+X-Received: by 2002:a05:600c:3e8f:b0:46f:a95d:e9e7 with SMTP id 5b1f17b1804b1-471177ab11dmr157009085e9.0.1761138656539;
+        Wed, 22 Oct 2025 06:10:56 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:69df:73af:f16a:eada])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496afd459sm38839905e9.1.2025.10.22.06.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 06:10:55 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 00/10] gpio: improve support for shared GPIOs
+Date: Wed, 22 Oct 2025 15:10:39 +0200
+Message-Id: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM4PR12MB6158ACBA7BCEDB99A55ACA03CDF3A@DM4PR12MB6158.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM/X+GgC/1XMywrCMBCF4VcpszaSppdEV76HdJG202RAmjKRo
+ JS8u7G4cfkfON8OEZkwwrXagTFRpLCWUKcKJm9Xh4Lm0qCk6uRFGuE2CiJ6yziLXuPUdMqYduy
+ hPDbGhV6Hdh9Ke4rPwO8DT/V3/Tmq/XNSLaTQukONC461bW4PWi2Hc2AHQ875A3Ok0EWnAAAA
+X-Change-ID: 20250908-gpio-shared-67ec352884b6
+To: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4494;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=ahWl67TQ9XpBLPshdCkjxixfaIbnhlzVC6EeMq2/mus=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo+NfYNqmF4drtJq0Z6oJq+JwZ4haDxyCaNcoG9
+ hkxD7YiG8yJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaPjX2AAKCRARpy6gFHHX
+ cpjtD/4/vho3ipov3Dx5Y/4GxVEafxt6SamY2SVevdOPyKVbKtxd61VbE+zPenLYIVbaV1oj+eL
+ ynoWZ+1NQBqGrvwkHD7glUlhTbHSgEpgwGGhw7nyG83I1fRy5dPF6nvsx5MpJfkKlxFslMi59nU
+ b/GmBNPzvOXSiNMXZpUgWHQY/ZuPYiRIEGbHh2iTaN4aY8oCiA8iKmM44xm724yXXZOeaej3uJB
+ rjH92H+R5jtpHfhWIfzUoRtfNTa9GFdNzjNyrAXstJZchwwPpdAGZ6tIeyGh6imd7jBVBHXvley
+ RcyU0+zJ+pbXAGmZEYdZVetTIOA0w1ieMwyp6XSlmVcr6u+B0fwf+rZVDNFPfcr7iIcF0b/0GJY
+ CnYRooG9rhhd5kq4/nXV1XFXT6SL5to2XrEpRMwvIQyoEIvFuCUEnj5js8aknvhlj6MQ48vrhdp
+ ctTQ55YFo4DV1UuWTJWvWwRWGW7KqewirICWUaJElWOYyCkD7ciyoAZnmULnrK1xBQ/4uLT+kQt
+ RW1l3pssUgaQ9HCLaIxbXV7SpPYeQrczIHh2g1VIDCl4yZ6gLwlMP5O6NQkBAcd+cAwfw0IOaxB
+ BFHd9m/paQktx4JHi5buXXAmR9fAarg0cDzF++xhOakTscMp1cR3toj0sGqdcNXVf1HYG8yF5/N
+ 60fFoddfTjDxa+w==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Wed, Oct 22, 2025 at 12:48:27PM +0000, Musham, Sai Krishna wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> Hi Mani,
-> 
-> > -----Original Message-----
-> > From: mani@kernel.org <mani@kernel.org>
-> > Sent: Wednesday, October 22, 2025 4:28 PM
-> > To: Havalige, Thippeswamy <thippeswamy.havalige@amd.com>
-> > Cc: Stefan Roese <stefan.roese@mailbox.org>; Bjorn Helgaas
-> > <helgaas@kernel.org>; Bandi, Ravi Kumar <ravib@amazon.com>;
-> > lpieralisi@kernel.org; bhelgaas@google.com; linux-pci@vger.kernel.org;
-> > kwilczynski@kernel.org; robh@kernel.org; Simek, Michal
-> > <michal.simek@amd.com>; linux-arm-kernel@lists.infradead.org; linux-
-> > kernel@vger.kernel.org; stable@vger.kernel.org; Sean Anderson
-> > <sean.anderson@linux.dev>; Yeleswarapu, Nagaradhesh
-> > <nagaradhesh.yeleswarapu@amd.com>; Musham, Sai Krishna
-> > <sai.krishna.musham@amd.com>
-> > Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > On Wed, Oct 22, 2025 at 10:36:28AM +0000, Havalige, Thippeswamy wrote:
-> > > [AMD Official Use Only - AMD Internal Distribution Only]
-> > >
-> > > Hi Mani,
-> > >
-> > > > -----Original Message-----
-> > > > From: mani@kernel.org <mani@kernel.org>
-> > > > Sent: Wednesday, October 22, 2025 4:02 PM
-> > > > To: Havalige, Thippeswamy <thippeswamy.havalige@amd.com>
-> > > > Cc: Stefan Roese <stefan.roese@mailbox.org>; Bjorn Helgaas
-> > > > <helgaas@kernel.org>; Bandi, Ravi Kumar <ravib@amazon.com>;
-> > > > lpieralisi@kernel.org; bhelgaas@google.com;
-> > > > linux-pci@vger.kernel.org; kwilczynski@kernel.org; robh@kernel.org;
-> > > > Simek, Michal <michal.simek@amd.com>;
-> > > > linux-arm-kernel@lists.infradead.org; linux- kernel@vger.kernel.org;
-> > > > stable@vger.kernel.org; Sean Anderson <sean.anderson@linux.dev>
-> > > > Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-> > > >
-> > > > On Wed, Oct 22, 2025 at 10:08:44AM +0000, Havalige, Thippeswamy wrote:
-> > > > > [AMD Official Use Only - AMD Internal Distribution Only]
-> > > > >
-> > > > > Hi Stefan,
-> > > > >
-> > > > > > -----Original Message-----
-> > > > > > From: Stefan Roese <stefan.roese@mailbox.org>
-> > > > > > Sent: Wednesday, October 22, 2025 3:29 PM
-> > > > > > To: mani@kernel.org
-> > > > > > Cc: Bjorn Helgaas <helgaas@kernel.org>; Bandi, Ravi Kumar
-> > > > > > <ravib@amazon.com>; Havalige, Thippeswamy
-> > > > > > <thippeswamy.havalige@amd.com>; lpieralisi@kernel.org;
-> > > > > > bhelgaas@google.com; linux-pci@vger.kernel.org;
-> > > > > > kwilczynski@kernel.org; robh@kernel.org; Simek, Michal
-> > > > > > <michal.simek@amd.com>; linux-arm- kernel@lists.infradead.org;
-> > > > > > linux-kernel@vger.kernel.org; stable@vger.kernel.org; Sean
-> > > > > > Anderson <sean.anderson@linux.dev>
-> > > > > > Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-> > > > > >
-> > > > > > On 10/22/25 11:55, mani@kernel.org wrote:
-> > > > > > > On Wed, Oct 22, 2025 at 08:59:19AM +0200, Stefan Roese wrote:
-> > > > > > >> Hi Bjorn,
-> > > > > > >> Hi Ravi,
-> > > > > > >>
-> > > > > > >> On 10/21/25 23:28, Bjorn Helgaas wrote:
-> > > > > > >>> On Tue, Oct 21, 2025 at 08:55:41PM +0000, Bandi, Ravi Kumar wrote:
-> > > > > > >>>>> On Tue, Oct 21, 2025 at 05:46:17PM +0000, Bandi, Ravi
-> > > > > > >>>>> Kumar
-> > > > wrote:
-> > > > > > >>>>>>> On Oct 21, 2025, at 10:23 AM, Bjorn Helgaas
-> > > > > > >>>>>>> <helgaas@kernel.org>
-> > > > > > wrote:
-> > > > > > >>>>>>> On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar
-> > > > > > >>>>>>> Bandi
-> > > > > > wrote:
-> > > > > > >>>>>>>> The pcie-xilinx-dma-pl driver does not enable INTx
-> > > > > > >>>>>>>> interrupts after initializing the port, preventing INTx
-> > > > > > >>>>>>>> interrupts from PCIe endpoints from flowing through the
-> > > > > > >>>>>>>> Xilinx XDMA root port bridge. This issue affects kernel
-> > > > > > >>>>>>>> 6.6.0 and
-> > > > later versions.
-> > > > > > >>>>>>>>
-> > > > > > >>>>>>>> This patch allows INTx interrupts generated by PCIe
-> > > > > > >>>>>>>> endpoints to flow through the root port. Tested the fix
-> > > > > > >>>>>>>> on a board with two endpoints generating INTx interrupts.
-> > > > > > >>>>>>>> Interrupts are properly detected and serviced. The
-> > > > > > >>>>>>>> /proc/interrupts output
-> > > > > > >>>>>>>> shows:
-> > > > > > >>>>>>>>
-> > > > > > >>>>>>>> [...]
-> > > > > > >>>>>>>> 32:        320          0  pl_dma:RC-Event  16 Level
-> > 400000000.axi-
-> > > > pcie,
-> > > > > > azdrv
-> > > > > > >>>>>>>> 52:        470          0  pl_dma:RC-Event  16 Level
-> > 500000000.axi-
-> > > > pcie,
-> > > > > > azdrv
-> > > > > > >>>>>>>> [...]
-> > > > > > >>
-> > > > > > >> First a comment on this IRQ logging:
-> > > > > > >>
-> > > > > > >> These lines do NOT refer to the INTx IRQ(s) but the
-> > > > > > >> controller internal "events" (errors etc). Please see this
-> > > > > > >> log for INTx on my Versal platform with pci_irqd_intx_xlate added:
-> > > > > > >>
-> > > > > > >>   24:          0          0  pl_dma:RC-Event   0 Level     LINK_DOWN
-> > > > > > >>   25:          0          0  pl_dma:RC-Event   3 Level     HOT_RESET
-> > > > > > >>   26:          0          0  pl_dma:RC-Event   8 Level     CFG_TIMEOUT
-> > > > > > >>   27:          0          0  pl_dma:RC-Event   9 Level     CORRECTABLE
-> > > > > > >>   28:          0          0  pl_dma:RC-Event  10 Level     NONFATAL
-> > > > > > >>   29:          0          0  pl_dma:RC-Event  11 Level     FATAL
-> > > > > > >>   30:          0          0  pl_dma:RC-Event  20 Level     SLV_UNSUPP
-> > > > > > >>   31:          0          0  pl_dma:RC-Event  21 Level     SLV_UNEXP
-> > > > > > >>   32:          0          0  pl_dma:RC-Event  22 Level     SLV_COMPL
-> > > > > > >>   33:          0          0  pl_dma:RC-Event  23 Level     SLV_ERRP
-> > > > > > >>   34:          0          0  pl_dma:RC-Event  24 Level     SLV_CMPABT
-> > > > > > >>   35:          0          0  pl_dma:RC-Event  25 Level     SLV_ILLBUR
-> > > > > > >>   36:          0          0  pl_dma:RC-Event  26 Level     MST_DECERR
-> > > > > > >>   37:          0          0  pl_dma:RC-Event  27 Level     MST_SLVERR
-> > > > > > >>   38:         94          0  pl_dma:RC-Event  16 Level     84000000.axi-pcie
-> > > > > > >>   39:         94          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
-> > > > > > >>
-> > > > > > >> The last line shows the INTx IRQs here ('pl_dma:INTx' vs
-> > > > > > >> 'pl_dma:RC- Event').
-> > > > > > >>
-> > > > > > >> More below...
-> > > > > > >>
-> > > > > > >>>>>>>>
-> > > > > > >>>>>>>> Changes since v1::
-> > > > > > >>>>>>>> - Fixed commit message per reviewer's comments
-> > > > > > >>>>>>>>
-> > > > > > >>>>>>>> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA
-> > > > > > >>>>>>>> Root Port driver")
-> > > > > > >>>>>>>> Cc: stable@vger.kernel.org
-> > > > > > >>>>>>>> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
-> > > > > > >>>>>>>
-> > > > > > >>>>>>> Hi Ravi, obviously you tested this, but I don't know how
-> > > > > > >>>>>>> to reconcile this with Stefan's INTx fix at
-> > > > > > >>>>>>> https://lore.kernel.org/r/20251021154322.973640-1-
-> > > > > > stefan.roese@m
-> > > > > > >>>>>>> ailbox.org
-> > > > > > >>>>>>>
-> > > > > > >>>>>>> Does Stefan's fix need to be squashed into this patch?
-> > > > > > >>>>>>
-> > > > > > >>>>>> Sure, we can squash Stefan’s fix into this.
-> > > > > > >>>>>
-> > > > > > >>>>> I know we *can* squash them.
-> > > > > > >>>>>
-> > > > > > >>>>> I want to know why things worked for you and Stefan when
-> > > > > > >>>>> they
-> > > > > > >>>>> *weren't* squashed:
-> > > > > > >>>>>
-> > > > > > >>>>>    - Why did INTx work for you even without Stefan's patch.  Did you
-> > > > > > >>>>>      get INTx interrupts but not the right ones, e.g., did the device
-> > > > > > >>>>>      signal INTA but it was received as INTB?
-> > > > > > >>>>
-> > > > > > >>>> I saw that interrupts were being generated by the endpoint
-> > > > > > >>>> device, but I didn’t specifically check if they were
-> > > > > > >>>> correctly translated in the controller. I noticed that the
-> > > > > > >>>> new driver wasn't explicitly enabling the interrupts, so my
-> > > > > > >>>> first approach was to enable them, which helped the interrupts flow
-> > through.
-> > > > > > >>>
-> > > > > > >>> OK, I'll assume the interrupts happened but the driver might
-> > > > > > >>> not have been able to handle them correctly, e.g., it was
-> > > > > > >>> prepared for INTA but got INTB or similar.
-> > > > > > >>>
-> > > > > > >>>>>    - Why did Stefan's patch work for him even without your patch.
-> > > > How
-> > > > > > >>>>>      could Stefan's INTx work without the CSR writes to enable
-> > > > > > >>>>>      interrupts?
-> > > > > > >>>>
-> > > > > > >>>> I'm not entirely sure if there are any other dependencies
-> > > > > > >>>> in the FPGA bitstream. I'll investigate further and get back to you.
-> > > > > > >>>
-> > > > > > >>> Stefan clarified in a private message that he had applied
-> > > > > > >>> your patch first, so this mystery is solved.
-> > > > > > >>
-> > > > > > >> Yes. I applied Ravi's patch first and still got no INTx
-> > > > > > >> delivered to the nvme driver. That's what me triggered to dig
-> > > > > > >> deeper here and resulted in this v2 patch with pci_irqd_intx_xlate added.
-> > > > > > >>
-> > > > > > >> BTW:
-> > > > > > >> I re-tested just now w/o Ravi's patch and the INTx worked.
-> > > > > > >> Still I think Ravi's patch is valid and should be applied...
-> > > > > > >
-> > > > > > > How come INTx is working without the patch from Ravi which
-> > > > > > > enabled INTx routing in the controller? Was it enabled by default in the
-> > hardware?
-> > > > > >
-> > > > > > Yes, this is my best guess right now. I could double-check here,
-> > > > > > but IMHO it makes sense to enable it "manually" as done with
-> > > > > > Ravi's patch to not rely on this default setup at all.
-> > > > > Hardware doesn't enable this bits by default, INTx didn't work
-> > > > > since there is a
-> > > > miss match in the DT property which doesn't require pci_irqd_intx_xlate.
-> > > > >
-> > > > > interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
-> > > > > <0 0 0 2 &pcie_intc_0 1>,
-> > > > > <0 0 0 3 &pcie_intc_0 2>,
-> > > > > <0 0 0 4 &pcie_intc_0 3>;
-> > > > >
-> > > >
-> > > > Ok. This makes me believe that we do not need Stefan's patch [1] and
-> > > > need just this patch from Ravi.
-> > > >
-> > > > - Mani
-> > > >
-> > > > [1] https://lore.kernel.org/linux-pci/20251021154322.973640-1-
-> > > > stefan.roese@mailbox.org/
-> > >
-> > > We even don’t need ravi patch, as we have tested this at our end it
-> > > works fine by just updating interrupt-map Property. We need to now understand the
-> > difference in design.
-> >
-> > Ok, please let us know with your findings. In the meantime, I'll keep Ravi's patch in
-> > tree, as it seems to be required on his setup.
-> >
-> 
-> We tested on Linux version 6.12.40 without applying either Stefan's or Ravi's patches.
+Problem statement: GPIOs are implemented as a strictly exclusive
+resource in the kernel but there are lots of platforms on which single
+pin is shared by multiple devices which don't communicate so need some
+way of properly sharing access to a GPIO. What we have now is the
+GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
+doesn't do any locking or arbitration of access - it literally just hand
+the same GPIO descriptor to all interested users.
 
-Please test with v6.18-rc1 kernel.
+The proposed solution is composed of three major parts: the high-level,
+shared GPIO proxy driver that arbitrates access to the shared pin and
+exposes a regular GPIO chip interface to consumers, a low-level shared
+GPIOLIB module that scans firmware nodes and creates auxiliary devices
+that attach to the proxy driver and finally a set of core GPIOLIB
+changes that plug the former into the GPIO lookup path.
 
-Any clue on what is going wrong with Ravi's setup?
-https://lore.kernel.org/linux-pci/467D7D30-DC05-4612-87BA-7E980A9C0A4A@amazon.com/
+The changes are implemented in a way that allows to seamlessly compile
+out any code related to sharing GPIOs for systems that don't need it.
 
-- Mani
+The practical use-case for this are the powerdown GPIOs shared by
+speakers on Qualcomm db845c platform, however I have also extensively
+tested it using gpio-virtuser on arm64 qemu with various DT
+configurations.
 
+I'm Cc'ing some people that may help with reviewing/be interested in
+this: OF maintainers (because the main target are OF systems initially),
+Mark Brown because most users of GPIOD_FLAGS_BIT_NONEXCLUSIVE live
+in audio or regulator drivers and one of the goals of this series is
+dropping the hand-crafted GPIO enable counting via struct
+regulator_enable_gpio in regulator core), Andy and Mika because I'd like
+to also cover ACPI (even though I don't know about any ACPI platform that
+would need this at the moment, I think it makes sense to make the
+solution complete), Dmitry (same thing but for software nodes), Mani
+(because you have a somewhat related use-case for the PERST# signal and
+I'd like to hear your input on whether this is something you can use or
+maybe it needs a separate, implicit gpio-perst driver similar to what
+Krzysztof did for reset-gpios) and Greg (because I mentioned this to you
+last week in person and I also use the auxiliary bus for the proxy
+devices).
+
+Merging strategy: patches 1-6 should go through the GPIO tree and then
+ARM-SoC, ASoC and regulator trees can pull these changes from an
+immutable branch and apply the remaining patches.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- Fix a memory leak in error path in gpiolib-shared
+- Drop the gpio-wcd934x fix that already went upstream
+- Free resources used during scanning by GPIOs that turned out to be
+  unique
+- Rework the OF property scanning
+- Add patches making the regulator subsystem aware of shared GPIOs
+  managed by GPIOLIB
+- Link to v1: https://lore.kernel.org/r/20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org
+
+---
+Bartosz Golaszewski (10):
+      string: provide strends()
+      gpiolib: define GPIOD_FLAG_SHARED
+      gpiolib: implement low-level, shared GPIO support
+      gpio: shared-proxy: implement the shared GPIO proxy driver
+      gpiolib: support shared GPIOs in core subsystem code
+      gpio: provide gpiod_is_shared()
+      arm64: select HAVE_SHARED_GPIOS for ARCH_QCOM
+      ASoC: wsa881x: drop GPIOD_FLAGS_BIT_NONEXCLUSIVE flag from GPIO lookup
+      ASoC: wsa883x: drop GPIOD_FLAGS_BIT_NONEXCLUSIVE flag from GPIO lookup
+      regulator: make the subsystem aware of shared GPIOs
+
+ arch/arm64/Kconfig.platforms     |   1 +
+ drivers/gpio/Kconfig             |  17 ++
+ drivers/gpio/Makefile            |   2 +
+ drivers/gpio/gpio-shared-proxy.c | 329 ++++++++++++++++++++++++
+ drivers/gpio/gpiolib-shared.c    | 530 +++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib-shared.h    |  71 ++++++
+ drivers/gpio/gpiolib.c           |  70 +++++-
+ drivers/gpio/gpiolib.h           |   2 +
+ drivers/regulator/core.c         |   8 +
+ include/linux/gpio/consumer.h    |   9 +
+ include/linux/string.h           |   2 +
+ lib/string.c                     |  19 ++
+ lib/tests/string_kunit.c         |  13 +
+ sound/soc/codecs/wsa881x.c       |   3 +-
+ sound/soc/codecs/wsa883x.c       |   7 +-
+ 15 files changed, 1067 insertions(+), 16 deletions(-)
+---
+base-commit: 304d18863e6e62a8f2d0350ce0a59596e2e42768
+change-id: 20250908-gpio-shared-67ec352884b6
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
