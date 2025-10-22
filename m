@@ -1,124 +1,143 @@
-Return-Path: <linux-kernel+bounces-864111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02CBBF9F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63024BF9F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888493AE23B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:25:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2FF3B015A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B2B1FBEB0;
-	Wed, 22 Oct 2025 04:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PLYDxZ0M"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E581FF7B3;
+	Wed, 22 Oct 2025 04:29:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB102153ED
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E0F1E5B68
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761107152; cv=none; b=JS1o8JNCk6sr7aAzJuRpoNLjvPfz+btSghJ1Tjh8NVhTnvbDea2Cp0q9JfBZl9M9jmas8jZUBuTULj0t0p5pVh/Q7CRWpl+gCiXq+xBTzGzVk9dQKOd9hLspwfMCCDxc0+E3tGVhfljkQ0m4fHkTMGP0chSw6USFUjlCMNYwAVU=
+	t=1761107345; cv=none; b=aMVS1oDho+ztF27FGfI41GdluRBDJAaz1u9/ZUu4SKceFCKJMDoHR6QF8TzIwUI7r3wnG6sX6gGGv1Gis7iiyiUpkyl92NooixM/stYfP/JcW+0/Uc0pI9ZfHQIR1NdXkcc2ECdKXT2dofr6zWQq/kCIRry7TlDpYzfsLy743uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761107152; c=relaxed/simple;
-	bh=hfRSNQb9rBE7UUr5J/K6aWGqynTuTf2c3cqKlfXvUig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uSYVJZwXop8M60uCgR1kuivizxduiJsG1xME/XH68uGNxJPLeTA4h7vXTFQ20ice9zLJ0iCMab6Toa6VobbKqL3ajvqe+7sEQLXHy3UFk31us9yF9xyyFKNNH3Yw5+tYA4C6fUu01OSBFrJJwGuN+duJzOCW9SB3fizOfOU4gYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PLYDxZ0M; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1231248966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:25:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761107148; x=1761711948; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfKYMPlRA7Hil19lucydJ3Oagf4wOyjxoqA3QWKCuV8=;
-        b=PLYDxZ0MIIDA3BcEQRCDkqqEoNrvpOjQZTwNcXdhZ02gfj05buWIaeXhCQTwaeQR6F
-         xEYXVbxEfEc7iV8uNCiBPC6GwnIi96xb3F5+sh9uIX272ML6zw2/Nnx0z15XcYTWXyIk
-         vFCrHVpATCoDRp66C6UMBVHlDi+B/3rfrJVM0=
+	s=arc-20240116; t=1761107345; c=relaxed/simple;
+	bh=jEmkwEUsoYdoq45jpvQ5gwbOnltLBCljy1lwipao2a8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hN/r8UoSCAGgBee/BbrQqyK/L50YkoR0k1DmiX/Q3JH/mk8+DW4OBbnRPg1OD9xtS4CwUu6r+c7TXRz7VUgXOgc4N04nXej7EZ/puBJdKf2KzKcdCDFDVQuuKqXGUimO9NtjtdsCDQmwh7fphapHxb6Ak65PO2Vswzf7fgW6LAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430e1a4a129so40631125ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:29:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761107148; x=1761711948;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UfKYMPlRA7Hil19lucydJ3Oagf4wOyjxoqA3QWKCuV8=;
-        b=GxBoXLq+swmTzFRW67OVgpReoEA3607ExX78zd63pJa9l0NNgtmK7S5JNidNSpBib2
-         zLeQCfpVxINYmgkpbxKdH4aDd6bFuaAu8Hoz2RsXRXTZKg+HkTIa8ZTBUp4Wy6gopJsm
-         nlPWnFfa0Q1R7zrv7fva3hO9XbHyQzSlOnWyNz8duWL8VkICm8feEng2u3SJEISELOYU
-         haYvxiDRdC3SwwzLZyEgxjhLs5LA3aAt9sfejtHV5zjdn8eE8AvAIgupgD8upF7BHnYy
-         7mh6kDYnOWxI1zT3xMX+z1j9Igib35mJXrwSIJ0aaLkMDSomBLirNmqY6SDn4whbEXER
-         FghA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyV65TCWmG5ARDHquxyDrTo/yfDOUpGrYjpOCxruJ3gzi1KYARZQrX+6uihyiwrOv7xFpI3q7H+T28sZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUAhtjWzlsJ3yWM3YNpVbiF9K5LsTn5RGsqlNzWZvh1FRYVWOQ
-	3yf234frkUuLPq5MPRLXcdMZsLg0xzGB4EvUPM0Fz3If5lZ5jbSkv1m+xsjDfjA8PeSFhKXEg2Y
-	9cE51YIQsqQ==
-X-Gm-Gg: ASbGncu/O66a8XoudnK/sgQB4GFKrLlBPQp3m/Csm333Z15MPLPZtl/qw1w7Kf5k2Sz
-	s9QIkNtvUSdSibjLxV9MG4J3EHxGwEBwgwC+FMLkxL9fJhlrEACSf771Ahx1nqE4+Ckn7WXvB1D
-	RNQSt7KG2xwPeROE4EiwJuxtY7UrWizPuF5gIEmgD5upKLnTPfmtAjtotDBXU91J1+EDmw3wqWz
-	8VZLjKFR/e0dSJaquDkauCq6oviNRs3Ey6GKbZ3YcYiLsc/7s7AcOrc5lr+BnsPsIjEIjSB0bBH
-	9FwENtOifcw85hBt7Acb/dFmlMAgaFkttBu+ag5o1kGbGw0lyzrJgBzCX0SIqBV2x9DPVjzhbTE
-	0FDm+y5AzLj8auEvuEf4dxr10ma2jtHNJLzuOZt3nKBnxXDxvYrWTgNK3lCc8a+o/rZ7O4RHMjD
-	qFYZ+JmPXaKqtwG2Yg/RlVb+PA0OYJy23773mMLBrNBwWbRLu9HA==
-X-Google-Smtp-Source: AGHT+IFfaJ/KersTgdzD1WjvL1euG+CnyqUjjHfNE6Xor6yUGgSqvARGph6STv+72dj8Hg9HCNbv8Q==
-X-Received: by 2002:a17:907:86a2:b0:b3d:9c3c:9ab6 with SMTP id a640c23a62f3a-b6473842ea5mr2142717266b.29.1761107148263;
-        Tue, 21 Oct 2025 21:25:48 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da1ba1sm1241794566b.14.2025.10.21.21.25.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 21:25:46 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63d6ee383bdso3725380a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:25:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuz+NoCEkRh4DoggFbPpuUeVotnP2FvFmXQLgU8jwapWsS6ZeqWhD0GkKkj1rN2PN2lGQz6X84pvwY0B4=@vger.kernel.org
-X-Received: by 2002:a05:6402:2113:b0:63b:f91e:60a2 with SMTP id
- 4fb4d7f45d1cf-63c1f6c1fc8mr18494752a12.25.1761107146449; Tue, 21 Oct 2025
- 21:25:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761107343; x=1761712143;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tDnRUPY27CcbvuQRF7H0Aai0NtnQM8sjDlN4wblAq3E=;
+        b=aUU7FlpIpZNv20+hXzWBgg3OcrlU00uXfb9Jmr1RTaQG7aZpd4eF8eMY4cM+qfg3gn
+         gk52zDxaU8XObHbRSjkXjSeo+sodxvzDajp+NO4JIMQbfCmbpQ/TzygfVgeM8z7CouUw
+         6zQmHVzTb30dHaBYAeHvDw8zScNAtsK/GewGV5Vp+4o1mQH9yQv3cPf44souJ1Qiga+t
+         F7zMB9Rz+LDwaUNV7AsKiZ8jn8PC/VpXpXbzMfqkj5HYRj9htaW1g5XxpTtcDvn4usZn
+         4YQoTHm8qWCppWfYHWhQCANlegLcJCZ2KXS16uwE/lYPB9VY6hZnyKSwCMIEz5IaEkXd
+         DjWw==
+X-Gm-Message-State: AOJu0YzvyXPptlz1O5kFzWlEzy3Z18Eb2ZOFOOrnu4SgwM6TMJGiY3A1
+	gsHbRsY2FxdnRgdZAQ+bo6yuEtxNWIxRrOaIhos2WZe1Pv2ZQr3llV6M/UCfPp6ijj52hEHcoH9
+	c2Yi+rhoAeqoPBJBj1i6TnvqoFTO8Znnamuc+y7LXPb88gFp5T4J7Xq2N/lY=
+X-Google-Smtp-Source: AGHT+IFqsPovTyQqNCbf6/qpIjvnmIuvQlqaBrXyh5jPFOoF7DQAmNHVzQiRUI0Rweke00hBlPyCiU+eiOq42mBU7RJX96f6scRh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017141536.577466-1-kirill@shutemov.name> <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
- <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa> <aPgZthYaP7Flda0z@dread.disaster.area>
-In-Reply-To: <aPgZthYaP7Flda0z@dread.disaster.area>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 21 Oct 2025 18:25:30 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
-X-Gm-Features: AS18NWB9CwG0IBKbkuN6M06jeHmD1GxcMpSycRZvl1CF5oywYvt7kYLWS-f-Gn8
-Message-ID: <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>
+X-Received: by 2002:a05:6e02:3:b0:431:d093:758d with SMTP id
+ e9e14a558f8ab-431d0937867mr51071975ab.22.1761107342906; Tue, 21 Oct 2025
+ 21:29:02 -0700 (PDT)
+Date: Tue, 21 Oct 2025 21:29:02 -0700
+In-Reply-To: <upjjyn33ilectirauf64oi6xxes7esatropyat6jtah7m5bupj@oeg67dns7bt6>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f85d8e.a70a0220.3bf6c6.000f.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
+From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, listout@listout.xyz, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 21 Oct 2025 at 13:39, Dave Chinner <david@fromorbit.com> wrote:
->
-> > > >   1. Locate a folio in XArray.
-> > > >   2. Obtain a reference on the folio using folio_try_get().
-> > > >   3. If successful, verify that the folio still belongs to
-> > > >      the mapping and has not been truncated or reclaimed.
->
-> What about if it has been hole-punched?
+Hello,
 
-The sequence number check should take care of anything like that. Do
-you have any reason to believe it doesn't?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in cfg80211_classify8021d
 
-Yes, you can get the "before or after or between" behavior, but you
-can get that with perfectly regular reads that take the refcount on
-the page.
+RBP: 00007f2e3fe11f91 R08: 00002000000001c0 R09: 0000000000000014
+R10: 0000000000000040 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f2e3ffe6038 R14: 00007f2e3ffe5fa0 R15: 00007fff6dff3448
+ </TASK>
+---[ end trace 0000000000000000 ]---
+=====================================================
+BUG: KMSAN: uninit-value in cfg80211_classify8021d+0xc2f/0x1580 net/wireless/util.c:1035
+ cfg80211_classify8021d+0xc2f/0x1580 net/wireless/util.c:1035
+ ieee80211_select_queue+0x37a/0x9e0 net/mac80211/wme.c:180
+ __ieee80211_subif_start_xmit+0x60f/0x1d90 net/mac80211/tx.c:4304
+ ieee80211_subif_start_xmit+0xa8/0x6d0 net/mac80211/tx.c:4538
+ __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5257 [inline]
+ xmit_one net/core/dev.c:3845 [inline]
+ dev_hard_start_xmit+0x22f/0xa30 net/core/dev.c:3861
+ __dev_queue_xmit+0x3c51/0x5e60 net/core/dev.c:4763
+ dev_queue_xmit include/linux/netdevice.h:3365 [inline]
+ packet_xmit+0x8f/0x710 net/packet/af_packet.c:275
+ packet_snd net/packet/af_packet.c:3076 [inline]
+ packet_sendmsg+0x9173/0xa2a0 net/packet/af_packet.c:3108
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x333/0x3d0 net/socket.c:742
+ __sys_sendto+0x593/0x720 net/socket.c:2244
+ __do_sys_sendto net/socket.c:2251 [inline]
+ __se_sys_sendto net/socket.c:2247 [inline]
+ __x64_sys_sendto+0x130/0x200 net/socket.c:2247
+ x64_sys_call+0x3924/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Reads have never taken the page lock, and have never been serialized that way.
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4969 [inline]
+ slab_alloc_node mm/slub.c:5272 [inline]
+ kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
+ kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
+ __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
+ alloc_skb include/linux/skbuff.h:1383 [inline]
+ alloc_skb_with_frags+0xc5/0xa60 net/core/skbuff.c:6671
+ sock_alloc_send_pskb+0xacc/0xc60 net/core/sock.c:2965
+ packet_alloc_skb net/packet/af_packet.c:2926 [inline]
+ packet_snd net/packet/af_packet.c:3019 [inline]
+ packet_sendmsg+0x743d/0xa2a0 net/packet/af_packet.c:3108
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x333/0x3d0 net/socket.c:742
+ __sys_sendto+0x593/0x720 net/socket.c:2244
+ __do_sys_sendto net/socket.c:2251 [inline]
+ __se_sys_sendto net/socket.c:2247 [inline]
+ __x64_sys_sendto+0x130/0x200 net/socket.c:2247
+ x64_sys_call+0x3924/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-So the fast case changes absolutely nothing in this respect that I can see.
+CPU: 1 UID: 0 PID: 6494 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT(none) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+=====================================================
 
-               Linus
+
+Tested on:
+
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=101e8d2f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1328d734580000
+
 
