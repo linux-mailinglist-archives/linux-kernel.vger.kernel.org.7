@@ -1,477 +1,142 @@
-Return-Path: <linux-kernel+bounces-865812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59019BFE18B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:51:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B98BFE188
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DD8B3A81AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:51:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC3564F4D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF532F9C37;
-	Wed, 22 Oct 2025 19:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDDCCK5a"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0A92F619C;
+	Wed, 22 Oct 2025 19:51:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FE02F60D6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412E820ADD6
 	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 19:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761162668; cv=none; b=k81zCxeGiuURlpeJQxTqao1HoZXi1Cl0No6eORpROpVynabMUlsm+HYAxKO9nkJLgZO3GR7upkPs52ffyboMWhULpIOjRrja+sGYfo4JU6zn4XEIbmCy3IB7QBYiGS+lm74dFF6LWeJOHLIQ7OBHu7ps4ztaxSNC9fnmQ4ey/x0=
+	t=1761162666; cv=none; b=pbRhFFo7DoIvZEU0YWI11mT9SvBzs2xaIHFfanz0ehhDaBAdwDBI1U2JgxVLQNo97NTjYftl2t8o4MrI9mXNgP8ik6gMzs1BGeXkGHgNM/ZnrD+AokT657DEKJInyzi0FSkb2SrTpqog7N0r+hPDONmFsGfYSnJnMdf4h53L9ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761162668; c=relaxed/simple;
-	bh=SstUcV2ZpKMxVEws3v7qyscG0YkhYLLxRaSv8i1r0po=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QlT/7s+jOvXlP8jlZJEIqX1WA39NVUvTDR7mgnVnl98DkuGQPxzX0/MDHi7R6s3GKadrwHrxON9F87IIXx7NZ6ewCRJz3vzj8ldmDrAgI5Qa3FyexHdBmqQw/JKZSf5Q7N09Om0OJRaDxsRarEAPdJqPlClHjZ0SJ1q1RF7tDZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDDCCK5a; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57bb7ee3142so13476e87.0
+	s=arc-20240116; t=1761162666; c=relaxed/simple;
+	bh=zCVOLAKCg9pnZDUjCK7muAd5bMVQoWVGQPKoyWNFKXQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QpaXGE0BoDNiWdsDyfUSd4ocyXlS9BamrDdIj+fmWzZ+6MjRIYhXrUwVniN17gbOAEUP54QAEUjOFECV24ThLVlTCznESVPxDdAbKurVC6oqfu01HyW4GFRELBIYdR8r4DwoPPzcBdVU2vhYL2o7AOglqGTEZhEoehE+hX6lQM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430c8321bc1so1144305ab.0
         for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:51:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761162664; x=1761767464; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1ZD1mq8gMBr2IRj7aFqJIJGCl9HbZeyMciW+Dg0MQqU=;
-        b=MDDCCK5aOaKl02bpwbBXLsHaaqZLzK/uSaGRICMwjuoiMIqLeO9gyslz0zcjDeeovo
-         VcCKE+ynynWw9rz0b9lWHsK7qxPZFlLlVyCbgWitd1SwA6oMagD6r/nHoYFg+QQ+lwnL
-         xJU3GphcHdEwra10HFPUw5DtT2o4+XigVgfP8TFyXQCKkQAth+xqstWb3Od7rQXY4RGm
-         XAM8NpNOM/KD3w+TPSKTy8OQjayQHgLhwTwMO4K3Oqz7k3x1JqUar9kftijyd34cvapa
-         X3Cq7tChqOOB0k2TQhphUJVK5POs09PocCe5mchba+yrmJybbvAEDDw7ji4MQSGXmLVy
-         7hSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761162664; x=1761767464;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZD1mq8gMBr2IRj7aFqJIJGCl9HbZeyMciW+Dg0MQqU=;
-        b=WRJOIrnGyov+g03rCvHP75VUuEns2OSSV5IU08JqFGdD3VR+eswBY0c+v99LfcjNdC
-         95v1loFynRnVksq6Nnh/5E6jcLgJ9UoiB4D8chT9/bf9DN/c2vHD0Q9L7knrCKIFgiL6
-         i4jWwAKlUwNIXBAToSvCHm9sCOHHypmhzt54NfSgGlhvsr8D8CdZzx3AVvYoXAM7QcYF
-         rP0RBrQREQ+JbG4g6g9YHsN7wRjkjwMKZbfHDBwQsELTZMUMjzbiqlxH4hIVlP/8fOfm
-         T7kGHCkfWXNDJ62BULfwplk3XY67jwFHpbUENLgCf68xJ74PxiT4M+sSiLNoGvJgoo++
-         AVEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVllH65uK8mtSiLpDHR6Bm9kajqVaCwjKKRecG0TBa4n0gFOY72WngGPd0eevi37ZORy1Uu/rbVVWd4vIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcbqH5kqVvZlpxMfbx4l1Q7vw598CyELKDkkrgSaagUle1FVot
-	L+1z0W/JZiIJFtBQNQ9PG0TnC0tfB1UjHks8XbxURjIKWmMV+PQ8d6ct
-X-Gm-Gg: ASbGncs6nD0qyv7g/VTCEW1TMbrWZeUiafK8Nm3CSHFy9sSjh17JaiyoJUb8wTtrqc7
-	K8XRKIXazC+OX4pjkZeejAyb9BAVCxu0sk/TNP/bbD1ak+h2AvM2ppRlBtlshSU5fcRPiaVwxei
-	kcyG0LwyKdYTAjXnNgONwc2KNZy35xwt/0Vbtkdhb00/nU8pnHKR/QmNFpVRrLpBlwzuEvWw6EK
-	op6Nc4rYoKQEXXV4rtMDR0Xw7uAajleOQS8bVrwqC0XIyQb4ZEaKx4iEk0T/tuDlsCHCc3K6VGC
-	G/FyL7qRaszvWR+xgzc4GuV1CjmuXKe8hNIYpkQG46QofMUCWzUZkMTiZ2VVQ4HnQQrz+0k5PK+
-	cnE+8oNsBhZJW2+5N8cUt+ZdDxGW9/Tj+515OpoXdSWiyPz62jB3PBR4XzTU2mY5BnKKhR4PWWI
-	rDoi+NjXUUu7rQThoT39ir610f/vLua7sWBMvr86/NqXytgWPreRkJDXudZu3PM1ucnwOSXbTmK
-	6dIYyoDIzSvsN384SmKjVc=
-X-Google-Smtp-Source: AGHT+IEDPw7SHJLDgw9i/Vf5F7SC3HLiESsRJ1Ii9tuDw3dxdME/S3zTTk+J9dl4oUyuhbFokc8GGA==
-X-Received: by 2002:a05:6512:239a:b0:57e:7040:9c77 with SMTP id 2adb3069b0e04-591d856d7d2mr6589814e87.38.1761162663350;
-        Wed, 22 Oct 2025 12:51:03 -0700 (PDT)
-Received: from t470.station.com (2001-14bb-6d3-208e-36a3-d115-fe36-2b4f.rev.dnainternet.fi. [2001:14bb:6d3:208e:36a3:d115:fe36:2b4f])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4d38714sm50764e87.105.2025.10.22.12.51.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 12:51:03 -0700 (PDT)
-Message-ID: <95685a8d1b0bc73e5d9b926c5c9de983a0802c70.camel@gmail.com>
-Subject: Re: [PATCH] afs: Fix dynamic lookup to fail on cell lookup failure
-From: markus.suvanto@gmail.com
-To: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>, Christian Brauner
-	 <christian@brauner.io>, linux-afs@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 22 Oct 2025 22:51:02 +0300
-In-Reply-To: <1784747.1761158912@warthog.procyon.org.uk>
-References: <1784747.1761158912@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PVwDEys9AQr02E5jbaiRd6B6Vn16tiIjO85cBQkdA70=;
+        b=Tls7Trt8L+86N3fMVq8smHpS413gcOjKJvjZ3GFbHB4dXlOZwV5I8nVv4butsK6VdR
+         1HcK1JypxwQyOYwtSzy5uKnbEEnyEoUv67TqrsQ7iGZaXGVrxjJ+Z85wG42nVLxexJGX
+         60N+ZlOlEJpzxbzK9TBsA7A3TvIf7n6akD1zPE9YcWTpCoYLLTZ9HDzc+CEBWliagY3t
+         I5iAGrU3AQUC8EtNOIhNhD+OTBVnDIwfOawpVHzN6rQMZkUwXBkEx0sioaMbXZCw7f6y
+         AkRwYd+46TUYZ6agr4b4nziCmsBW+wVtVUZD5ZVcUDCA+4kNEHTvK5nyjoahjjMkrr7Z
+         Xkcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdL3UkW5h87OH9HBc6FwNW5qplCL60IBDcX7I4TDGIHNmt5F48H24n0kelk8aE8w7djxG8dfFIiiFAlIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/qHpDbqSU+QDmI2K7GPCCxEVWzVbWSPL/tRRxiNaMfVH0ySsB
+	OxgDQFRzWWaWh9aOBrQVEbMvG3gXuhLOgl0MUpZt/Vb6HC3ZFRw/P8AtDAD4+8GtforgllFcZ6b
+	fm+Hxtfxd8GNw3ENNnfearaftlP0hzuUikZ/Q2G0DoCgAs9vxrlrMypzy4ko=
+X-Google-Smtp-Source: AGHT+IGbMLZUuiwUrKyXcUuW4zycngLdRguWQ8WhQV51YLmHmn/6dQc0AuBo8bBtQJMRpARGs5Y1uNF+HByUO5hrfe6R0b8E4nql
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:2197:b0:430:ae26:7c37 with SMTP id
+ e9e14a558f8ab-430c524ceb5mr313357225ab.3.1761162664436; Wed, 22 Oct 2025
+ 12:51:04 -0700 (PDT)
+Date: Wed, 22 Oct 2025 12:51:04 -0700
+In-Reply-To: <20251022150507.AgqUs%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f935a8.a70a0220.3bf6c6.0025.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-ke, 2025-10-22 kello 19:48 +0100, David Howells kirjoitti:
-> When a process tries to access an entry in /afs, normally what happens is
-> that an automount dentry is created by ->lookup() and then triggered, whi=
-ch
-> jumps through the ->d_automount() op.  Currently, afs_dynroot_lookup() do=
-es
-> not do cell DNS lookup, leaving that to afs_d_automount() to perform -
-> however, it is possible to use access() or stat() on the automount point,
-> which will always return successfully, have briefly created an afs_cell
-> record if one did not already exist.
->=20
-> This means that something like:
->=20
->         test -d "/afs/.west" && echo Directory exists
->=20
-> will print "Directory exists" even though no such cell is configured.  Th=
-is
-> breaks the "west" python module available on PIP as it expects this acces=
-s
-> to fail.
->=20
-> Now, it could be possible to make afs_dynroot_lookup() perform the DNS[*]
-> lookup, but that would make "ls --color /afs" do this for each cell in /a=
-fs
-> that is listed but not yet probed.  kafs-client, probably wrongly, preloa=
-ds
-> the entire cell database and all the known cells are then listed in /afs =
--
-> and doing ls /afs would be very, very slow, especially if any cell suppli=
-ed
-> addresses but was wholly inaccessible.
->=20
->  [*] When I say "DNS", actually read getaddrinfo(), which could use any o=
-ne
->      of a host of mechanisms.  Could also use static configuration.
->=20
-> To fix this, make the following changes:
->=20
->  (1) Create an enum to specify the origination point of a call to
->      afs_lookup_cell() and pass this value into that function in place of
->      the "excl" parameter (which can be derived from it).  There are six
->      points of origination:
->=20
->         - Cell preload through /proc/net/afs/cells
->         - Root cell config through /proc/net/afs/rootcell
->         - Lookup in dynamic root
->         - Automount trigger
->         - Direct mount with mount() syscall
->         - Alias check where YFS tells us the cell name is different
->=20
->  (2) Add an extra state into the afs_cell state machine to indicate a cel=
-l
->      that's been initialised, but not yet looked up.  This is separate fr=
-om
->      one that can be considered active and has been looked up at least
->      once.
->=20
->  (3) Make afs_lookup_cell() vary its behaviour more, depending on where i=
-t
->      was called from:
->=20
->      If called from preload or root cell config, DNS lookup will not happ=
-en
->      until we definitely want to use the cell (dynroot mount, automount,
->      direct mount or alias check).  The cell will appear in /afs but stat=
-()
->      won't trigger DNS lookup.
->=20
->      If the cell already exists, dynroot will not wait for the DNS lookup
->      to complete.  If the cell did not already exist, dynroot will wait.
->=20
->      If called from automount, direct mount or alias check, it will wait
->      for the DNS lookup to complete.
->=20
->  (4) Make afs_lookup_cell() return an error if lookup failed in one way o=
-r
->      another.  We try to return -ENOENT if the DNS says the cell does not
->      exist and -EDESTADDRREQ if we couldn't access the DNS.
->=20
-> Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220685
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> ---
->  fs/afs/cell.c     |   78 +++++++++++++++++++++++++++++++++++++++++++++--=
--------
->  fs/afs/dynroot.c  |    3 +-
->  fs/afs/internal.h |   12 +++++++-
->  fs/afs/mntpt.c    |    3 +-
->  fs/afs/proc.c     |    3 +-
->  fs/afs/super.c    |    2 -
->  fs/afs/vl_alias.c |    3 +-
->  7 files changed, 86 insertions(+), 18 deletions(-)
->=20
-> diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-> index f31359922e98..d9b6fa1088b7 100644
-> --- a/fs/afs/cell.c
-> +++ b/fs/afs/cell.c
-> @@ -229,7 +229,7 @@ static struct afs_cell *afs_alloc_cell(struct afs_net=
- *net,
->   * @name:	The name of the cell.
->   * @namesz:	The strlen of the cell name.
->   * @vllist:	A colon/comma separated list of numeric IP addresses or NULL=
-.
-> - * @excl:	T if an error should be given if the cell name already exists.
-> + * @reason:	The reason we're doing the lookup
->   * @trace:	The reason to be logged if the lookup is successful.
->   *
->   * Look up a cell record by name and query the DNS for VL server address=
-es if
-> @@ -239,7 +239,8 @@ static struct afs_cell *afs_alloc_cell(struct afs_net=
- *net,
->   */
->  struct afs_cell *afs_lookup_cell(struct afs_net *net,
->  				 const char *name, unsigned int namesz,
-> -				 const char *vllist, bool excl,
-> +				 const char *vllist,
-> +				 enum afs_lookup_cell_for reason,
->  				 enum afs_cell_trace trace)
->  {
->  	struct afs_cell *cell, *candidate, *cursor;
-> @@ -247,12 +248,18 @@ struct afs_cell *afs_lookup_cell(struct afs_net *ne=
-t,
->  	enum afs_cell_state state;
->  	int ret, n;
-> =20
-> -	_enter("%s,%s", name, vllist);
-> +	_enter("%s,%s,%u", name, vllist, reason);
-> =20
-> -	if (!excl) {
-> +	if (reason !=3D AFS_LOOKUP_CELL_PRELOAD) {
->  		cell =3D afs_find_cell(net, name, namesz, trace);
-> -		if (!IS_ERR(cell))
-> +		if (!IS_ERR(cell)) {
-> +			if (reason =3D=3D AFS_LOOKUP_CELL_DYNROOT)
-> +				goto no_wait;
-> +			if (cell->state =3D=3D AFS_CELL_SETTING_UP ||
-> +			    cell->state =3D=3D AFS_CELL_UNLOOKED)
-> +				goto lookup_cell;
->  			goto wait_for_cell;
-> +		}
->  	}
-> =20
->  	/* Assume we're probably going to create a cell and preallocate and
-> @@ -298,26 +305,69 @@ struct afs_cell *afs_lookup_cell(struct afs_net *ne=
-t,
->  	rb_insert_color(&cell->net_node, &net->cells);
->  	up_write(&net->cells_lock);
-> =20
-> -	afs_queue_cell(cell, afs_cell_trace_queue_new);
-> +lookup_cell:
-> +	if (reason !=3D AFS_LOOKUP_CELL_PRELOAD &&
-> +	    reason !=3D AFS_LOOKUP_CELL_ROOTCELL) {
-> +		set_bit(AFS_CELL_FL_DO_LOOKUP, &cell->flags);
-> +		afs_queue_cell(cell, afs_cell_trace_queue_new);
-> +	}
-> =20
->  wait_for_cell:
-> -	_debug("wait_for_cell");
->  	state =3D smp_load_acquire(&cell->state); /* vs error */
-> -	if (state !=3D AFS_CELL_ACTIVE &&
-> -	    state !=3D AFS_CELL_DEAD) {
-> +	switch (state) {
-> +	case AFS_CELL_ACTIVE:
-> +	case AFS_CELL_DEAD:
-> +		break;
-> +	case AFS_CELL_UNLOOKED:
-> +	default:
-> +		if (reason =3D=3D AFS_LOOKUP_CELL_PRELOAD ||
-> +		    reason =3D=3D AFS_LOOKUP_CELL_ROOTCELL)
-> +			break;
-> +		_debug("wait_for_cell");
->  		afs_see_cell(cell, afs_cell_trace_wait);
->  		wait_var_event(&cell->state,
->  			       ({
->  				       state =3D smp_load_acquire(&cell->state); /* vs error */
->  				       state =3D=3D AFS_CELL_ACTIVE || state =3D=3D AFS_CELL_DEAD;
->  			       }));
-> +		_debug("waited_for_cell %d %d", cell->state, cell->error);
->  	}
-> =20
-> +no_wait:
->  	/* Check the state obtained from the wait check. */
-> +	state =3D smp_load_acquire(&cell->state); /* vs error */
->  	if (state =3D=3D AFS_CELL_DEAD) {
->  		ret =3D cell->error;
->  		goto error;
->  	}
-> +	if (state =3D=3D AFS_CELL_ACTIVE) {
-> +		switch (cell->dns_status) {
-> +		case DNS_LOOKUP_NOT_DONE:
-> +			if (cell->dns_source =3D=3D DNS_RECORD_FROM_CONFIG) {
-> +				ret =3D 0;
-> +				break;
-> +			}
-> +			fallthrough;
-> +		default:
-> +			ret =3D -EIO;
-> +			goto error;
-> +		case DNS_LOOKUP_GOOD:
-> +		case DNS_LOOKUP_GOOD_WITH_BAD:
-> +			ret =3D 0;
-> +			break;
-> +		case DNS_LOOKUP_GOT_NOT_FOUND:
-> +			ret =3D -ENOENT;
-> +			goto error;
-> +		case DNS_LOOKUP_BAD:
-> +			ret =3D -EREMOTEIO;
-> +			goto error;
-> +		case DNS_LOOKUP_GOT_LOCAL_FAILURE:
-> +		case DNS_LOOKUP_GOT_TEMP_FAILURE:
-> +		case DNS_LOOKUP_GOT_NS_FAILURE:
-> +			ret =3D -EDESTADDRREQ;
-> +			goto error;
-> +		}
-> +	}
-> =20
->  	_leave(" =3D %p [cell]", cell);
->  	return cell;
-> @@ -325,7 +375,7 @@ struct afs_cell *afs_lookup_cell(struct afs_net *net,
->  cell_already_exists:
->  	_debug("cell exists");
->  	cell =3D cursor;
-> -	if (excl) {
-> +	if (reason =3D=3D AFS_LOOKUP_CELL_PRELOAD) {
->  		ret =3D -EEXIST;
->  	} else {
->  		afs_use_cell(cursor, trace);
-> @@ -384,7 +434,8 @@ int afs_cell_init(struct afs_net *net, const char *ro=
-otcell)
->  		return -EINVAL;
-> =20
->  	/* allocate a cell record for the root/workstation cell */
-> -	new_root =3D afs_lookup_cell(net, rootcell, len, vllist, false,
-> +	new_root =3D afs_lookup_cell(net, rootcell, len, vllist,
-> +				   AFS_LOOKUP_CELL_ROOTCELL,
->  				   afs_cell_trace_use_lookup_ws);
->  	if (IS_ERR(new_root)) {
->  		_leave(" =3D %ld", PTR_ERR(new_root));
-> @@ -777,6 +828,7 @@ static bool afs_manage_cell(struct afs_cell *cell)
->  	switch (cell->state) {
->  	case AFS_CELL_SETTING_UP:
->  		goto set_up_cell;
-> +	case AFS_CELL_UNLOOKED:
->  	case AFS_CELL_ACTIVE:
->  		goto cell_is_active;
->  	case AFS_CELL_REMOVING:
-> @@ -797,7 +849,7 @@ static bool afs_manage_cell(struct afs_cell *cell)
->  		goto remove_cell;
->  	}
-> =20
-> -	afs_set_cell_state(cell, AFS_CELL_ACTIVE);
-> +	afs_set_cell_state(cell, AFS_CELL_UNLOOKED);
-> =20
->  cell_is_active:
->  	if (afs_has_cell_expired(cell, &next_manage))
-> @@ -807,6 +859,8 @@ static bool afs_manage_cell(struct afs_cell *cell)
->  		ret =3D afs_update_cell(cell);
->  		if (ret < 0)
->  			cell->error =3D ret;
-> +		if (cell->state =3D=3D AFS_CELL_UNLOOKED)
-> +			afs_set_cell_state(cell, AFS_CELL_ACTIVE);
->  	}
-> =20
->  	if (next_manage < TIME64_MAX && cell->net->live) {
-> diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-> index 8c6130789fde..dc9d29e3739e 100644
-> --- a/fs/afs/dynroot.c
-> +++ b/fs/afs/dynroot.c
-> @@ -108,7 +108,8 @@ static struct dentry *afs_dynroot_lookup_cell(struct =
-inode *dir, struct dentry *
->  		dotted =3D true;
->  	}
-> =20
-> -	cell =3D afs_lookup_cell(net, name, len, NULL, false,
-> +	cell =3D afs_lookup_cell(net, name, len, NULL,
-> +			       AFS_LOOKUP_CELL_DYNROOT,
->  			       afs_cell_trace_use_lookup_dynroot);
->  	if (IS_ERR(cell)) {
->  		ret =3D PTR_ERR(cell);
-> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-> index bcbf828ba31f..a90b8ac56844 100644
-> --- a/fs/afs/internal.h
-> +++ b/fs/afs/internal.h
-> @@ -344,6 +344,7 @@ extern const char afs_init_sysname[];
-> =20
->  enum afs_cell_state {
->  	AFS_CELL_SETTING_UP,
-> +	AFS_CELL_UNLOOKED,
->  	AFS_CELL_ACTIVE,
->  	AFS_CELL_REMOVING,
->  	AFS_CELL_DEAD,
-> @@ -1050,9 +1051,18 @@ static inline bool afs_cb_is_broken(unsigned int c=
-b_break,
->  extern int afs_cell_init(struct afs_net *, const char *);
->  extern struct afs_cell *afs_find_cell(struct afs_net *, const char *, un=
-signed,
->  				      enum afs_cell_trace);
-> +enum afs_lookup_cell_for {
-> +	AFS_LOOKUP_CELL_DYNROOT,
-> +	AFS_LOOKUP_CELL_MOUNTPOINT,
-> +	AFS_LOOKUP_CELL_DIRECT_MOUNT,
-> +	AFS_LOOKUP_CELL_PRELOAD,
-> +	AFS_LOOKUP_CELL_ROOTCELL,
-> +	AFS_LOOKUP_CELL_ALIAS_CHECK,
-> +};
->  struct afs_cell *afs_lookup_cell(struct afs_net *net,
->  				 const char *name, unsigned int namesz,
-> -				 const char *vllist, bool excl,
-> +				 const char *vllist,
-> +				 enum afs_lookup_cell_for reason,
->  				 enum afs_cell_trace trace);
->  extern struct afs_cell *afs_use_cell(struct afs_cell *, enum afs_cell_tr=
-ace);
->  void afs_unuse_cell(struct afs_cell *cell, enum afs_cell_trace reason);
-> diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
-> index 1ad048e6e164..57c204a3c04e 100644
-> --- a/fs/afs/mntpt.c
-> +++ b/fs/afs/mntpt.c
-> @@ -107,7 +107,8 @@ static int afs_mntpt_set_params(struct fs_context *fc=
-, struct dentry *mntpt)
->  		if (size > AFS_MAXCELLNAME)
->  			return -ENAMETOOLONG;
-> =20
-> -		cell =3D afs_lookup_cell(ctx->net, p, size, NULL, false,
-> +		cell =3D afs_lookup_cell(ctx->net, p, size, NULL,
-> +				       AFS_LOOKUP_CELL_MOUNTPOINT,
->  				       afs_cell_trace_use_lookup_mntpt);
->  		if (IS_ERR(cell)) {
->  			pr_err("kAFS: unable to lookup cell '%pd'\n", mntpt);
-> diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-> index 40e879c8ca77..44520549b509 100644
-> --- a/fs/afs/proc.c
-> +++ b/fs/afs/proc.c
-> @@ -122,7 +122,8 @@ static int afs_proc_cells_write(struct file *file, ch=
-ar *buf, size_t size)
->  	if (strcmp(buf, "add") =3D=3D 0) {
->  		struct afs_cell *cell;
-> =20
-> -		cell =3D afs_lookup_cell(net, name, strlen(name), args, true,
-> +		cell =3D afs_lookup_cell(net, name, strlen(name), args,
-> +				       AFS_LOOKUP_CELL_PRELOAD,
->  				       afs_cell_trace_use_lookup_add);
->  		if (IS_ERR(cell)) {
->  			ret =3D PTR_ERR(cell);
-> diff --git a/fs/afs/super.c b/fs/afs/super.c
-> index 9b1d8ac39261..354090b3a7e7 100644
-> --- a/fs/afs/super.c
-> +++ b/fs/afs/super.c
-> @@ -305,7 +305,7 @@ static int afs_parse_source(struct fs_context *fc, st=
-ruct fs_parameter *param)
->  	/* lookup the cell record */
->  	if (cellname) {
->  		cell =3D afs_lookup_cell(ctx->net, cellname, cellnamesz,
-> -				       NULL, false,
-> +				       NULL, AFS_LOOKUP_CELL_DIRECT_MOUNT,
->  				       afs_cell_trace_use_lookup_mount);
->  		if (IS_ERR(cell)) {
->  			pr_err("kAFS: unable to lookup cell '%*.*s'\n",
-> diff --git a/fs/afs/vl_alias.c b/fs/afs/vl_alias.c
-> index 709b4cdb723e..fc9676abd252 100644
-> --- a/fs/afs/vl_alias.c
-> +++ b/fs/afs/vl_alias.c
-> @@ -269,7 +269,8 @@ static int yfs_check_canonical_cell_name(struct afs_c=
-ell *cell, struct key *key)
->  	if (!name_len || name_len > AFS_MAXCELLNAME)
->  		master =3D ERR_PTR(-EOPNOTSUPP);
->  	else
-> -		master =3D afs_lookup_cell(cell->net, cell_name, name_len, NULL, false=
-,
-> +		master =3D afs_lookup_cell(cell->net, cell_name, name_len, NULL,
-> +					 AFS_LOOKUP_CELL_ALIAS_CHECK,
->  					 afs_cell_trace_use_lookup_canonical);
->  	kfree(cell_name);
->  	if (IS_ERR(master))
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in ocfs2_commit_truncate
+
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/alloc.c:686!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6423 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:ocfs2_new_path fs/ocfs2/alloc.c:686 [inline]
+RIP: 0010:ocfs2_commit_truncate+0x223f/0x2250 fs/ocfs2/alloc.c:7254
+Code: 10 e8 35 f5 8b fe e9 3a fc ff ff e8 fb fc 26 fe 44 89 fe 48 c7 c7 00 ab 24 8e e8 7c 61 1f 01 e9 45 fc ff ff e8 e2 fc 26 fe 90 <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+RSP: 0018:ffffc90003e2f1a0 EFLAGS: 00010293
+RAX: ffffffff8397c64e RBX: ffff8880769bce80 RCX: ffff88802e9a9e40
+RDX: 0000000000000000 RSI: 0000000000000138 RDI: 0000000000000004
+RBP: ffffc90003e2f4d0 R08: ffffc90003e2f38f R09: 0000000000000000
+R10: ffffc90003e2f380 R11: fffff520007c5e72 R12: dffffc0000000000
+R13: 1ffff920007c5e54 R14: 0000000000000138 R15: 1ffff1100cc73e58
+FS:  0000555560f90500(0000) GS:ffff888126504000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555560fbb648 CR3: 0000000076f74000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ocfs2_truncate_for_delete fs/ocfs2/inode.c:699 [inline]
+ ocfs2_wipe_inode fs/ocfs2/inode.c:866 [inline]
+ ocfs2_delete_inode fs/ocfs2/inode.c:1155 [inline]
+ ocfs2_evict_inode+0x1138/0x4100 fs/ocfs2/inode.c:1295
+ evict+0x504/0x9c0 fs/inode.c:810
+ d_delete_notify include/linux/fsnotify.h:377 [inline]
+ vfs_rmdir+0x3ec/0x520 fs/namei.c:4561
+ do_rmdir+0x25f/0x550 fs/namei.c:4603
+ __do_sys_unlinkat fs/namei.c:4777 [inline]
+ __se_sys_unlinkat fs/namei.c:4771 [inline]
+ __x64_sys_unlinkat+0xc2/0xf0 fs/namei.c:4771
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcf61f852f7
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 07 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffed1eb5598 EFLAGS: 00000207 ORIG_RAX: 0000000000000107
+RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 00007fcf61f852f7
+RDX: 0000000000000200 RSI: 00007ffed1eb6740 RDI: 00000000ffffff9c
+RBP: 00007fcf6200180c R08: 0000555560fb366b R09: 0000000000000000
+R10: 0000000000001000 R11: 0000000000000207 R12: 00007ffed1eb6740
+R13: 00007fcf6200180c R14: 00007ffed1eb88f0 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_new_path fs/ocfs2/alloc.c:686 [inline]
+RIP: 0010:ocfs2_commit_truncate+0x223f/0x2250 fs/ocfs2/alloc.c:7254
+Code: 10 e8 35 f5 8b fe e9 3a fc ff ff e8 fb fc 26 fe 44 89 fe 48 c7 c7 00 ab 24 8e e8 7c 61 1f 01 e9 45 fc ff ff e8 e2 fc 26 fe 90 <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+RSP: 0018:ffffc90003e2f1a0 EFLAGS: 00010293
+RAX: ffffffff8397c64e RBX: ffff8880769bce80 RCX: ffff88802e9a9e40
+RDX: 0000000000000000 RSI: 0000000000000138 RDI: 0000000000000004
+RBP: ffffc90003e2f4d0 R08: ffffc90003e2f38f R09: 0000000000000000
+R10: ffffc90003e2f380 R11: fffff520007c5e72 R12: dffffc0000000000
+R13: 1ffff920007c5e54 R14: 0000000000000138 R15: 1ffff1100cc73e58
+FS:  0000555560f90500(0000) GS:ffff888126404000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c0070ed000 CR3: 0000000076f74000 CR4: 00000000003526f0
 
 
+Tested on:
 
-Tested-by: Markus Suvanto <markus.suvanto@gmail.com>
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=146b2d42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1215729170d20fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=126afc58580000
+
 
