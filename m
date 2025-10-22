@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-863923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AB7BF9835
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:46:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8459BBF983B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B839B3553B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:46:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B5F6502230
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664EF1D5CEA;
-	Wed, 22 Oct 2025 00:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C69019E82A;
+	Wed, 22 Oct 2025 00:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2w2Escy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Lo5c9baB"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81BD7262A;
-	Wed, 22 Oct 2025 00:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4076D1DB375;
+	Wed, 22 Oct 2025 00:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761094000; cv=none; b=YdsXJpoymdNs8iF7AgUNRga2K03d1jfBxNq4OjHc4aNFu+DgiIlvEianIRE7kuOLp+pNQ6czJ6FMipf5zM2iqd9RTCkKiIQyVYfzP8XzsqQo/+Vh4cF8OGT4z4L+QtyKGze1KzDnai1SQwGu+p3s/mAawl+6ggwE9FKXPdK75xE=
+	t=1761094015; cv=none; b=dMvYH3S76b0Qf5g4E5FuS2TBjXL25DmkDlpszmHfhz22bGvaJJFbO2eBixOxkEsL/3EkT97mu8iSRfR++oLc9gdtLcz/VERQAG4LFDRuEYwOgCrS56wHxsCjaEzd9BtCk9sfawud/hbEVQjzUyJZlweufP6jK7nUBMNdRhH2qYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761094000; c=relaxed/simple;
-	bh=goRiRUZ7sLTgCensnC5aP5+GySLWz9riJcQIkmhcGh0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rnibbura9g41sFXM/KEKwI8d22Ay+eXcn6uB74BqhvNSpFQQQ9bnjeJieN2hhPhqaMGMro/FvWzawDsTSZT91K8fnch5Y8l+r79N16eV/Pzdv2V87Nwj0KM0Y/OzFk6ZJQrvR+f7gp/VJLqa77dl3x11QS/mEV7ADljszNkbYow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2w2Escy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B784DC4CEF1;
-	Wed, 22 Oct 2025 00:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761094000;
-	bh=goRiRUZ7sLTgCensnC5aP5+GySLWz9riJcQIkmhcGh0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R2w2EscyYS5Hpa+kcsHfoJeHMyQAeTCA/OWsOxJNz+zmybaorMUOs7EmKx5jVImeB
-	 OKO4hZ3q0yJxaT3ecb78et9Kmx5uEwg8uxRJyTgCih+7lM0Pl4WWFMBfqbfatlSoQ6
-	 g9DsXHzlv08RiH1NFEUGzVlCB9fuxl0Xz4ysBXpDX/VE5jegPCyijZsELDzCvdrAHz
-	 jM+nQrhTmrTbflWdiKigNM67gJs7JIWlwhNDJJ324cyTqgRfc5j90DidvNRsQ6JOUo
-	 qyhlIhQnb94+EI2PC2n2ODYFmJF9aSxsuXD6+4HL1Kiy4TqWOsuqMpuQeRlIgXl2BV
-	 0pq9EduwChm8Q==
-From: SeongJae Park <sj@kernel.org>
-To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev (open list:DAMON),
-	linux-mm@kvack.org (open list:DAMON),
-	linux-kernel@vger.kernel.org (open list),
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com
-Subject: Re: [PATCH] mm/damon/sysfs: Remove misleading todo comment in nid_show()
-Date: Tue, 21 Oct 2025 17:46:36 -0700
-Message-ID: <20251022004637.119085-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251021215323.29734-2-swarajgaikwad1925@gmail.com>
-References: 
+	s=arc-20240116; t=1761094015; c=relaxed/simple;
+	bh=9zedbGfbaoM5u4ZdfcyFq3k9aBVZMXoA2Mu2j1nOf64=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=j56Hswyfe7EUDKDgiQhKR/VAGA/EyBwZjlPGIlKkIZbkyH8AsqRg7YvDpmbve6CMzYR8ZPukJSOcqfCM8MLy+Uicr4mudI0YZvdcERjBH76TR/iy3Utjv15W6teqeDJiGeOteCi1VZj77nANLuMPAV/4LiHgrA6S1JXt0OvvDEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Lo5c9baB; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761094008;
+	bh=oLTfYh7UNOirViaAmqiLX2FqwS+c10rWJSMQtVrCjqY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lo5c9baBl8tYEoT4Zy9Jpclp7rt3WhOC9yUm8jXnTauYIUHD1qEH1CjV7LL5IpX5d
+	 p4Aru4tMgLyMjWVuvuJhzbLgveSDMDhyXsoqFN9tXuVEofZIkD6gsBVZGnVR6PgXGy
+	 ISi1IZUeHg1rd6yoGtctaP2o5obvqBgDtbDo4aMSMTg6LmTJ162VZGkueyz54gMvjE
+	 Wf6lYe0CIU4xlYmrvD3EIkuHRs4iEQ3yrUadQHopH1Scl1fSr19GwsOkhZFrgJfLUv
+	 P5LP3nbKW9NDROKP19ixXKVlDw8O4Yo8vq7Te9CO7nvtxXt1GVjEiI5i+iu1/CliaI
+	 y2cziIQmurHlQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4crr8P5yZMz4wCK;
+	Wed, 22 Oct 2025 11:46:45 +1100 (AEDT)
+Date: Wed, 22 Oct 2025 11:46:44 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Daniel Almeida
+ <daniel.almeida@collabora.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <20251022114644.4437c2d9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/J40QB5wj/ZWAu7Xduaj2lu5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, 21 Oct 2025 21:53:24 +0000 Swaraj Gaikwad <swarajgaikwad1925@gmail.com> wrote:
+--Sig_/J40QB5wj/ZWAu7Xduaj2lu5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> The TODO comment in nid_show() suggested returning an error if the goal was
-> not using nid. However, this comment was found to be inaccurate and
-> misleading.This patch removes the TODO comment without changing any
-> existing behavior.
-> 
-> This change follows feedback from SJ who pointed out [1] that wiring-order
-> independence is expected and the function should simply show the last
-> set value. and [2] checkpatch.pl complain about number of chars per line
+Hi all,
 
-This is another revision of your previous patch [1], right?  Thank you for
-fixing the things I commented on.
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-That said, marking the fact that this is a new revision of other one on
-subject, for example, setting the subject prefix as "[PATCH v2]", and adding
-changelog from the previous version in commentary section could help review.
-Please consider doing so from your next patch.  Please refer to the related
-docs [2,3] for more details about that.
+error[E0594]: cannot assign to data in dereference of `lock::Guard<'_, T, M=
+utexBackend>`
+  --> rust/kernel/debugfs/traits.rs:64:9
+   |
+64 |         *self.lock() =3D val;
+   |         ^^^^^^^^^^^^ cannot assign
+   |
+   =3D help: trait `DerefMut` is required to modify through a dereference, =
+but it is not implemented for `lock::Guard<'_, T, MutexBackend>`
 
-> 
-> No functional code changes were made.
-> 
-> Tested with KUnit:
-> - Built kernel with KUnit and DAMON sysfs tests enabled.
-> - Executed KUnit tests:
->   ./tools/testing/kunit/kunit.py run --kunitconfig ./mm/damon/tests/
-> - All 25 tests passed, including damon_sysfs_test_add_targets.
-> 
-> Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-> Suggested-by: SeongJae Park <sj@kernel.org>
+error: aborting due to 1 previous error
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+For more information about this error, try `rustc --explain E0594`.
 
-> 
-> [1] https://lore.kernel.org/lkml/20251020151315.66260-1-sj@kernel.org/
-> [2] https://lore.kernel.org/lkml/20251021010847.68473-1-sj@kernel.org/
+Caused by commit
 
-And you should have put the above two lines before the above Signed-off-by:
-line.  Please consider doing so from the next time.  Again, read the document
-[1] for more details.
+  da123f0ee40f ("rust: lock: guard: Add T: Unpin bound to DerefMut")
 
-I found Andrew picked this patch on mm tree, adjusting the above two lines
-properly [4].  So no new revision would be required.  But I'm noting this for
-your next work.
+I have used the tip tree from next-20251021 for today.
 
-> ---
->  mm/damon/sysfs-schemes.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-> index 6536f16006c9..760279092b4f 100644
-> --- a/mm/damon/sysfs-schemes.c
-> +++ b/mm/damon/sysfs-schemes.c
-> @@ -1112,7 +1112,6 @@ static ssize_t nid_show(struct kobject *kobj,
->  	struct damos_sysfs_quota_goal *goal = container_of(kobj, struct
->  			damos_sysfs_quota_goal, kobj);
-> 
-> -	/* todo: return error if the goal is not using nid */
-> 
->  	return sysfs_emit(buf, "%d\n", goal->nid);
->  }
+--=20
+Cheers,
+Stephen Rothwell
 
-And this results in the code having two empty lines.  Just one single empty
-line would be enough.  But that's too trivial, so I wouldn't request a new
-revision to you, or in-queue direct fix to Andrew.
+--Sig_/J40QB5wj/ZWAu7Xduaj2lu5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-I only hope my trivial comments to help your future patches be easier to review
-and more smoothly be merged :)
+-----BEGIN PGP SIGNATURE-----
 
-So, thank you for this nice patch.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj4KXQACgkQAVBC80lX
+0GwJ8Af+Nfn7uI+nQ/YbG9Qx1tduynS+qLzBSTX6ZTjNo734Lp747Iw2lQy0AdGx
+quEV5XCQxaCAmxBjeHHGnz2bZoKiFDC3IzzAL4KA4Oz7zpK8fNekypuU6pg7OqJQ
+scMTPD4Y3pObgtL9W41IpawQtfnpLPY2pzN6UhTsQ4IogXAkpmP8ES0HozDQX+/X
+hBNqAod6q/RvXjF2OES2uHivpwE5tg1aGFPUFl1zRflYJvrkznYeLfSv7o4MXKw1
+hbN4TALFvRo7dLiHzKVtzC9nd6rnyUq2MGDRgYqo20QTDepC82Ut0pktrqA0+ZvF
+tAaJM/lgVf3CAy54xngOv1QvFbIn5A==
+=nRh+
+-----END PGP SIGNATURE-----
 
-[1] https://lore.kernel.org/20251021021712.59017-2-swarajgaikwad1925@gmail.com
-[2] https://docs.kernel.org/process/submitting-patches.html#subject-line
-[3] https://docs.kernel.org/process/submitting-patches.html#commentary
-[4] https://lore.kernel.org/20251021183613.C4A6DC4CEF7@smtp.kernel.org
-
-
-Thanks,
-SJ
-
-[...]
+--Sig_/J40QB5wj/ZWAu7Xduaj2lu5--
 
