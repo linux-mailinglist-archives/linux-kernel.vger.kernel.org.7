@@ -1,352 +1,359 @@
-Return-Path: <linux-kernel+bounces-865161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664D7BFC592
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:01:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C83BFC58C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A0B9580839
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:52:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A0645065C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B295834AB1D;
-	Wed, 22 Oct 2025 13:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E3B348454;
+	Wed, 22 Oct 2025 13:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="flPGK7q1"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gpv/Bief"
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C128347FF6
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8642B345752
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141110; cv=none; b=Ofzfn6HEZH23ZsOpvZoZ9PygXXy7DYSqQPR8bpZAhaq0l3c43MIKH7uSOe3zu2G9btzQtLUEsAZyzSI1zQjXY1RddB9wD7oA9o3t+vmPq4UuMYii4H1duNwmPhyG9gd4EQua2wt4NVGOEv7Wx2ja4+KrlA8Dr+jzwnoL+hQQoM0=
+	t=1761141207; cv=none; b=BLxpryZgmKYfArih9zgPFAfphDbbLdcmuEFMZQZR26hQXQkh2qwD2gSrNmiUYVnnRlh5qXmktywetQH48wOU9l991J5xQ5GhCLGEYQybhN30C6130CXI5vLQOmu3Nt4FqCtHemrydbadAPUzloArZAenkoAwMcp64s/xc0MA7hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141110; c=relaxed/simple;
-	bh=wZ+o+hwAKnLlNs+A0VYTT8wN6AfjaPJ6mj3D+4Vo+d8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YvrPNbSfYDsrEITsRd/RlCr8R8/jmOTLgYSw3FIB7owz0tenrU3vTU+LMmu3NylG3ADFNZJhpdRjywqoD6OmPIBsndVbo5smmSFKlNqdPKZ/LDfqFZVqS6tK70JNrdEnLaV4ySX4Aeq31qyUJCX+R+g0Ku6V6nRc2O1ghMfqSl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=flPGK7q1; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-471066cfc2aso21299635e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:51:48 -0700 (PDT)
+	s=arc-20240116; t=1761141207; c=relaxed/simple;
+	bh=9ObrGeLbZ/yBWWTeQDHDX2cQg25wEIZE78mXI85XE4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVB3MHgtslYDGa3tcDudiaFHf36fe7yVRRZSTqP9pDkZQ4OjCbXlwi8GvipJVj1FCH3icqwbr5e15ytp6ACjOSHq5wvdope67CaVJfbl0N5Z+jPXGY6KAXQKaD/alDk+gYTalCTAbVuflntit6nrfIDEx8Zq1QFD5/39w4KhUik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gpv/Bief; arc=none smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-63e35e48a27so3572523d50.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761141106; x=1761745906; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XurdmkccZ/HxUILJCt4rZndcxIWry1SfSRWQL/ewAlQ=;
-        b=flPGK7q1gtIxoJHxvMyryvUieL8cpuymk4qvsSjCkiqQWzw3pdzGa7774HUqkRrKdY
-         +sHD2l/crpMLaXo8EiNlqXgw3qAvRbyHu4yMoLIJuAwiALQTmtaU4fD3avzW8LzUFGTD
-         4S8a20u+YKLHjqqMabIMX8WucC+GELZH5dcrWvUbizSUGUiKk3kYES11NQuisWIz8var
-         rzmsIb0Ad7OZ797mP2E0v8/5bDKp6/F37DcVYUhACTltETJPXNLOIlxLLW+EQTPaonLl
-         jB4x9fvrCg4Mz2NQAgt4UtavzumdU8aIL9Lg7928WGoh/QO3dpEtLTHsl2ikvjcrHR6E
-         YiIA==
+        d=linaro.org; s=google; t=1761141204; x=1761746004; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/j5eoblv5CnkAUUpYz1QsciL/siC0nJHtFi7ofm3EM=;
+        b=Gpv/BiefRwUNKymtutEr2N1eP8lXBzTiQYTwtdrvZyOeZtu8YTj2pblfpnXCrdhacu
+         tJ36ROS6FF+sAmWypU4L+JWKMf3oOiVWydTBKjBkmIty0YNC+XHfbiRkALuf6du5dfWr
+         RULHqyWL+6A6td4srtc77hhP4uYWkLEO6z9BwdWm/w9ljMYU/ZKEfy3zD4vZffnimkBf
+         va+9TJvA0NwA/qmAd51DYgYAe+k1frvSvUtF+d8kS/zYt2e0BEtLb8qxEeU4WJP2pcTz
+         1Eq9Vi2Qmv2XE17XKoExWGuU9cCJyqigLLI6ALKTCyX+F2fmSR7ICveqZp/qaCDLFPCL
+         sVnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761141106; x=1761745906;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XurdmkccZ/HxUILJCt4rZndcxIWry1SfSRWQL/ewAlQ=;
-        b=iGcJoM07JXnPWaPf3xy1rMGj1R0/l7CuHzAYCTZkHbwtW9UK95RiOPnD9KOKKTn9RO
-         vlF5QTuZ3JuPLNVZkidBCHz41a/L6UXC9PMISa6exIh7okYpmEmyyp4DPm1juOpcTrtR
-         xwjsoM/DerT6aC59f5Romrs76aDFeELOyoztuGNnLeDZMpZvGpeQIdoxKhcfh0J145O8
-         P4O4CU83CDbAU0VQJhFWl/ify3QV8cQQyOXe5IyUNKaqi7GFZFwpwcxEXKu6y8L39G43
-         WW/OrbvZsF76ntg47P8VOvUOfJVmLL64gQ7HmmEF/MXELQ9qApnKr2+NERjfS48bGqKB
-         QBeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGJ9Amd+l0kitKlIJbwn0894Ls/Z+srD/+uXskVzSp25BDOIG+g/wdWyahcg6M+G5MbMbf2uc31GYR7BU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqC+Zs+77QyKqUDacCPANoMlX9UR9PA79Vs2lNYgZ7Ek3GDIUB
-	9aDTDFZReqy/GbX/aM4wlkdEcdK+7nef5/Aydif0sSWOYc43rXybMY79CpLCnSMk5qU=
-X-Gm-Gg: ASbGncsjORZFm9zAbH4yHfYcKXV0u157X8Rtdei+cbk+l7K49T5cJYcwZO6cE3w9JWI
-	vUl9HOdxclvkrtrE3TQrm32MXIqeabO9NQNZlcAEwsLgd/RqXwwRwOO9I1TrdgLMqvic0BqNduP
-	uHGpHsmuUBhtnB979boGf+gli/UD4uShkk+kxMBCfaCu4EiM7irlRQt/GCOplVxae3TYjufMrJI
-	I0vetDS+UfGWRUbHvme5dtyR7UAgDymHjoy4iiYzS6SGYRtEYcUq6np/qFex1ZeMNYvwfpQf7bZ
-	5GmQQpp+Rue102xJEMKHnY2grkM1iwSX7Es3Teq1eJavbUYfBu1wgXdycB1xaWDl2CvS+gYwj5o
-	vQ98ytJNG1zGDpOl9FmKBxVbI+abRiO8KNoIBqF2UGZr7Fm89gztIjXtZiAKTm0OeuO5S4Ht8dW
-	ogt6XknRA4z+6biWw=
-X-Google-Smtp-Source: AGHT+IHsZ7KZICEtERPW/M6aeAmKp4ZxpzWPoGZkMg4b46VjEQUp923eei/p89+58xNcqQn8+OeSqQ==
-X-Received: by 2002:a05:600c:871a:b0:46f:b43a:aeef with SMTP id 5b1f17b1804b1-4711791d923mr127420505e9.38.1761141106480;
-        Wed, 22 Oct 2025 06:51:46 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:69df:73af:f16a:eada])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496c2c9dasm38474625e9.4.2025.10.22.06.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 06:51:44 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 22 Oct 2025 15:51:32 +0200
-Subject: [PATCH v2 2/2] reset: remove legacy reset lookup code
+        d=1e100.net; s=20230601; t=1761141204; x=1761746004;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C/j5eoblv5CnkAUUpYz1QsciL/siC0nJHtFi7ofm3EM=;
+        b=Y2bE7pJo0NJNJ2INqNg/9fSVUm74JJGRvUD6f0ABwsvL8gwg/YAyLYB9TQ8BoPMM8h
+         uQsyel+iosleGNnxN1Cjc4vhcM4C2z0GQxCXXmjqkq/TcfhUXk8fivUYhexEt3h1hmYI
+         f7ze0CDXx2Obu4+fbIqDl3xqN8WNtIx50ZQFK5RSZF/CDUx4UTUQnaV831/txDuom5eA
+         6E4FRa7vLX03SEQb/hloUMs0bW3ntISc6qkZ8ucZPxqO345fPxT93YX1xxhVr3w0j6m5
+         NCTttn9kYPo06hd/KwwrjgdXYnGFcRxigqAgvqGQ/p57sIMzAD8KtAqKvDiHvd0R2Qn9
+         UKww==
+X-Forwarded-Encrypted: i=1; AJvYcCWAKAbd2yvCCXVeMCXzrL9GAeronhxlcrogHyxhrGPIdl+mXXsvQtwBXF+uRDzMsHdeOjMaeSHerCR17r4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVJBUH1UGYhRaw0uTtKEiMG1xiIlGcySCuSnvnUieH+OQi/+pW
+	e4By+1TnEOE/ZPRMzTtZKzswNjVb75Ar7YvOgySuYzpuxB1WeqAem9hOfwAGVGThKrZGv+mTT6r
+	9x/ZsMyk3a2TQ+XJ5TXRem6XSUpW/M4xnXHgbBr/70g==
+X-Gm-Gg: ASbGncv4oHCBvwwOh6R0j+SGqdBV43r+lSc7oHhdhQDWjGTH1vNZnBd+P/FsMB6fMwP
+	bfBhIL9qh89UxQ6uuNrT1zmQzwKtvAbemwyXo7S0OZHErSpy3A1u3VOi9wea2iC+yldi1n3m41+
+	oYLzKbodDkfJEmXRvsDZwe3UTvEXzAvbQ5JvPSa/TllVpknh0n4kx/BIzvCI0Uw+xHqlpExvgQS
+	xEIFVFU/GlMrLuWjeSU/LzzCgQunaDd86G+9YwtDNkbBVEN6ONqbIYxg9gFsw==
+X-Google-Smtp-Source: AGHT+IGkIsMiAiy0OMY9NOg/fOQ4xRzqfVIxSS0H+XRdH1ppXu5FKgzSI2Nq8vw/XDXoApTEl/vCiaN/izGRmp7a5Sk=
+X-Received: by 2002:a05:690e:1209:b0:636:1a8d:9d43 with SMTP id
+ 956f58d0204a3-63e161c65f4mr13694508d50.40.1761141194803; Wed, 22 Oct 2025
+ 06:53:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-da850-reset-lookup-v2-2-c80f03831f63@linaro.org>
-References: <20251022-da850-reset-lookup-v2-0-c80f03831f63@linaro.org>
-In-Reply-To: <20251022-da850-reset-lookup-v2-0-c80f03831f63@linaro.org>
-To: David Lechner <david@lechnology.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7207;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=Wy6M9Sm8KHFxc4nB1a90t6BthKTqvLVK5O+m0RSU8b0=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo+OFtZCqOA2nVH3fYnx4YIjHmIE3s6JOUsv4ny
- HDUwStumK+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaPjhbQAKCRARpy6gFHHX
- cicZEACe8UkAX4MUaTjkwgvn2b7lp8JqF8XQs/wdGRY9vWell7EVWF47AQ0M34giYckjMc/rPDT
- T5E1139YmFvYQ4tfLR0hUGS3bdTijOKwYhLRasy+OIyDputID9qjte3aVRnvALG3AC4WjF2bhww
- Rcs1TGkGif1utRVSYQcuReTE4q9jIhPY34zPeDRZ5sY/K//tbmUl2jFBm3EQlnT9gVAQAlyAk3X
- GzuTaUJ/OYz6s5hSa0OCKGPWcqobFIu7Vv5VunG5HB8M3+0I7jlFvHOsqZz2Mgk77gl3ixNkIBS
- /vRHQVBYdG5oL9FJQj/PgleQVZosXYN9GpkqdK5mwCuIDFMBQmG7beyIVCJgyI2x4XHROr+y4AX
- qA3RUU1oL0h+gGPw+IiZxuJ6MQPMMVz7cQ/SA3xmTBjx5ljPEndn106je18JW3V11QLFlxnl+/e
- PzijwzJdz6jVGuKlAjjQAuwxqQ90xh6pY3fg07mxOIePctzf1IM08Ew8wieovHBqYqSBD3sPEWq
- 9tP+bUrr8ncdE5SnYEFy5xG/zc8bzKfCJBNc8+E3q0N7K4aqkjlVYHr30XMKOX1/nrO24EC+QDb
- Gx3JNYWNFDPOAUdsmx1nZoIT1TaOp5CjcCGTqQIRz7LuQ1j3NKj5tRK23X7I8+ttHefiOVtvzru
- CjBpD9xPAOM4mFg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+References: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
+In-Reply-To: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 22 Oct 2025 15:52:38 +0200
+X-Gm-Features: AS18NWDAzC-C9hpZX4zqvWaqFK3hrZnGICZfjmwMGuyk72lavE7AqMKaCEuEL8w
+Message-ID: <CAPDyKFodsAR5bOAST3mPLvSVbe653QS6SdSwHr6kyraQ1cwbhQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] MT8196 GPU Frequency/Power Control Support
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, 17 Oct 2025 at 17:32, Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> This series introduces two new drivers to accomplish controlling the
+> frequency and power of the Mali GPU on MediaTek MT8196 SoCs.
+>
+> The reason why it's not as straightforward as with other SoCs is that
+> the MT8196 has quite complex glue logic in order to squeeze the maximum
+> amount of performance possible out of the silicon. There's an additional
+> MCU running a specialised firmware, which communicates with the
+> application processor through a mailbox and some reserved memory, and is
+> in charge of controlling the regulators, the PLL clocks, and the power
+> gating of the GPU, all while also being in charge of any DVFS control.
+>
+> This set of drivers is enough to communicate desired OPP index limits to
+> the aforementioned MCU, referred to as "GPUEB" from here on out. The
+> GPUEB is still free to lower the effective frequency if the GPU has no
+> jobs going on at all, even when a higher OPP is set.
+>
+> The power- and frequency control driver, mtk-mfg-pmdomain, is now
+> implemented as a power domain driver, with a set_performance_state
+> operation. It also exposes itself as a clock provider, so that panthor
+> can read the actual achieved DVFS clock rate as per the GPUEB firmware.
+>
+> This power domain approach means that panthor does not need to know
+> about how the frequency control works on this SoC, as the OPP core
+> framework already takes care of it. The only exception is that panthor
+> needs to not register OPPs from DT itself if there already is an OPP
+> table present.
+>
+> The mailbox driver is a fairly bog-standard common mailbox framework
+> driver, just specific to the firmware that runs on the GPUEB. It was
+> merged in v6.18 already.
+>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-There are no more users of this code. Let's remove the exported symbols
-and the implementation from reset core.
+This looks good to me!
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/reset/core.c             | 121 +--------------------------------------
- include/linux/reset-controller.h |  33 -----------
- 2 files changed, 3 insertions(+), 151 deletions(-)
+I can certainly pick up patch2 and patch5, but before I go ahead I
+just wanted to check what is the preferred merging strategy?
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 22f67fc77ae531c6efba3ce92cc73a2d57397762..8029e547e3db90ddb85c717dfd735bc8a314dd44 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -190,33 +190,6 @@ int devm_reset_controller_register(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_reset_controller_register);
- 
--/**
-- * reset_controller_add_lookup - register a set of lookup entries
-- * @lookup: array of reset lookup entries
-- * @num_entries: number of entries in the lookup array
-- */
--void reset_controller_add_lookup(struct reset_control_lookup *lookup,
--				 unsigned int num_entries)
--{
--	struct reset_control_lookup *entry;
--	unsigned int i;
--
--	mutex_lock(&reset_lookup_mutex);
--	for (i = 0; i < num_entries; i++) {
--		entry = &lookup[i];
--
--		if (!entry->dev_id || !entry->provider) {
--			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
--				__func__);
--			continue;
--		}
--
--		list_add_tail(&entry->list, &reset_lookup_list);
--	}
--	mutex_unlock(&reset_lookup_mutex);
--}
--EXPORT_SYMBOL_GPL(reset_controller_add_lookup);
--
- static inline struct reset_control_array *
- rstc_to_array(struct reset_control *rstc) {
- 	return container_of(rstc, struct reset_control_array, base);
-@@ -1081,75 +1054,12 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
- }
- EXPORT_SYMBOL_GPL(__of_reset_control_get);
- 
--static struct reset_controller_dev *
--__reset_controller_by_name(const char *name)
--{
--	struct reset_controller_dev *rcdev;
--
--	lockdep_assert_held(&reset_list_mutex);
--
--	list_for_each_entry(rcdev, &reset_controller_list, list) {
--		if (!rcdev->dev)
--			continue;
--
--		if (!strcmp(name, dev_name(rcdev->dev)))
--			return rcdev;
--	}
--
--	return NULL;
--}
--
--static struct reset_control *
--__reset_control_get_from_lookup(struct device *dev, const char *con_id,
--				enum reset_control_flags flags)
--{
--	bool optional = flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
--	const struct reset_control_lookup *lookup;
--	struct reset_controller_dev *rcdev;
--	const char *dev_id = dev_name(dev);
--	struct reset_control *rstc = NULL;
--
--	mutex_lock(&reset_lookup_mutex);
--
--	list_for_each_entry(lookup, &reset_lookup_list, list) {
--		if (strcmp(lookup->dev_id, dev_id))
--			continue;
--
--		if ((!con_id && !lookup->con_id) ||
--		    ((con_id && lookup->con_id) &&
--		     !strcmp(con_id, lookup->con_id))) {
--			mutex_lock(&reset_list_mutex);
--			rcdev = __reset_controller_by_name(lookup->provider);
--			if (!rcdev) {
--				mutex_unlock(&reset_list_mutex);
--				mutex_unlock(&reset_lookup_mutex);
--				/* Reset provider may not be ready yet. */
--				return ERR_PTR(-EPROBE_DEFER);
--			}
--
--			flags &= ~RESET_CONTROL_FLAGS_BIT_OPTIONAL;
--
--			rstc = __reset_control_get_internal(rcdev,
--							    lookup->index,
--							    flags);
--			mutex_unlock(&reset_list_mutex);
--			break;
--		}
--	}
--
--	mutex_unlock(&reset_lookup_mutex);
--
--	if (!rstc)
--		return optional ? NULL : ERR_PTR(-ENOENT);
--
--	return rstc;
--}
--
- struct reset_control *__reset_control_get(struct device *dev, const char *id,
- 					  int index, enum reset_control_flags flags)
- {
- 	bool shared = flags & RESET_CONTROL_FLAGS_BIT_SHARED;
- 	bool acquired = flags & RESET_CONTROL_FLAGS_BIT_ACQUIRED;
-+	bool optional = flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
- 
- 	if (WARN_ON(shared && acquired))
- 		return ERR_PTR(-EINVAL);
-@@ -1157,7 +1067,7 @@ struct reset_control *__reset_control_get(struct device *dev, const char *id,
- 	if (dev->of_node)
- 		return __of_reset_control_get(dev->of_node, id, index, flags);
- 
--	return __reset_control_get_from_lookup(dev, id, flags);
-+	return optional ? NULL : ERR_PTR(-ENOENT);
- }
- EXPORT_SYMBOL_GPL(__reset_control_get);
- 
-@@ -1492,31 +1402,6 @@ devm_reset_control_array_get(struct device *dev, enum reset_control_flags flags)
- }
- EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
- 
--static int reset_control_get_count_from_lookup(struct device *dev)
--{
--	const struct reset_control_lookup *lookup;
--	const char *dev_id;
--	int count = 0;
--
--	if (!dev)
--		return -EINVAL;
--
--	dev_id = dev_name(dev);
--	mutex_lock(&reset_lookup_mutex);
--
--	list_for_each_entry(lookup, &reset_lookup_list, list) {
--		if (!strcmp(lookup->dev_id, dev_id))
--			count++;
--	}
--
--	mutex_unlock(&reset_lookup_mutex);
--
--	if (count == 0)
--		count = -ENOENT;
--
--	return count;
--}
--
- /**
-  * reset_control_get_count - Count number of resets available with a device
-  *
-@@ -1530,6 +1415,6 @@ int reset_control_get_count(struct device *dev)
- 	if (dev->of_node)
- 		return of_reset_control_get_count(dev->of_node);
- 
--	return reset_control_get_count_from_lookup(dev);
-+	return -ENOENT;
- }
- EXPORT_SYMBOL_GPL(reset_control_get_count);
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index 357df16ede328657478eceb1ba6065f42a210ea2..46514cb1b9e0626872fe71357b24d54ff0e81a8b 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -26,31 +26,6 @@ struct module;
- struct device_node;
- struct of_phandle_args;
- 
--/**
-- * struct reset_control_lookup - represents a single lookup entry
-- *
-- * @list: internal list of all reset lookup entries
-- * @provider: name of the reset controller device controlling this reset line
-- * @index: ID of the reset controller in the reset controller device
-- * @dev_id: name of the device associated with this reset line
-- * @con_id: name of the reset line (can be NULL)
-- */
--struct reset_control_lookup {
--	struct list_head list;
--	const char *provider;
--	unsigned int index;
--	const char *dev_id;
--	const char *con_id;
--};
--
--#define RESET_LOOKUP(_provider, _index, _dev_id, _con_id)		\
--	{								\
--		.provider = _provider,					\
--		.index = _index,					\
--		.dev_id = _dev_id,					\
--		.con_id = _con_id,					\
--	}
--
- /**
-  * struct reset_controller_dev - reset controller entity that might
-  *                               provide multiple reset controls
-@@ -90,9 +65,6 @@ void reset_controller_unregister(struct reset_controller_dev *rcdev);
- struct device;
- int devm_reset_controller_register(struct device *dev,
- 				   struct reset_controller_dev *rcdev);
--
--void reset_controller_add_lookup(struct reset_control_lookup *lookup,
--				 unsigned int num_entries);
- #else
- static inline int reset_controller_register(struct reset_controller_dev *rcdev)
- {
-@@ -108,11 +80,6 @@ static inline int devm_reset_controller_register(struct device *dev,
- {
- 	return 0;
- }
--
--static inline void reset_controller_add_lookup(struct reset_control_lookup *lookup,
--					       unsigned int num_entries)
--{
--}
- #endif
- 
- #endif
+The drm/gpu patches can go independently from the pmdomain patches
+others, right? In either case, I can pick this complete series too via
+my pmdomain tree, if that makes sense for everyone. Please let me
+know.
 
--- 
-2.48.1
+Kind regards
+Uffe
 
+> ---
+> Changes in v8:
+> - mtk-mfg-pmdomain: remove unused shmem variable that caused a warning
+>   on GCC, but not clang
+> - Link to v7: https://lore.kernel.org/r/20251015-mt8196-gpufreq-v7-0-0a6435da2080@collabora.com
+>
+> Changes in v7:
+> - panthor: rename "t" to "table"
+> - panthor: add code comment explaining why an existing OPP table is
+>   being checked for
+> - mtk-mfg-pmdomain: use GF_REG_MAGIC offset for sake of consistency
+> - mtk-mfg-pmdomain: remove redundant semicolon after mtk_mfg_mt8196_init
+> - mtk-mfg-pmdomain: fix resource leaks on probe failure
+> - mtk-mfg-pmdomain: enable/disable EB clock during MT8196 init, which is
+>   needed for the register read
+> - Rebase onto next-20251014, which drops already merged patches, namely
+>   mailbox driver+bindings, and drops the ASN_HASH patch series
+>   dependency, which was also merged
+> - Link to v6: https://lore.kernel.org/r/20251003-mt8196-gpufreq-v6-0-76498ad61d9e@collabora.com
+>
+> Changes in v6:
+> - mailbox: move buf definition into if condition, as per Chia-I Wu
+> - panthor: remove the redundant NULL checks in panthor_devfreq_get_freq
+> - mtk-mfg-pmdomain: adjust return style consistency
+> - mtk-mfg-pmdomain: add docstring for mtk_mfg_send_ipi to explain it's
+>   blocking
+> - mtk-mfg-pmdomain: use CMD_FIX_DUAL_TARGET_OPPIDX instead of
+>   CMD_FIX_TARGET_OPPIDX.
+> - mtk-mfg-pmdomain: reword code comments to not be in the "we" style
+> - mtk-mfg-pmdomain: shuffle around mbox allocations as per Angelo
+> - mtk-mfg-pmdomain: don't pointlessly turn on EB clock in probe,
+>   reducing the need for a comment explaining the bookkeeping
+> - mtk-mfg-pmdomain: consistently use dev_err_probe and Capitalise first
+>   letter of error string
+> - mtk-mfg-pmdomain: get rid of redundant ret = dev_err_probe assignment
+> - mtk-mfg-pmdomain: reintroduce stack OPP table, choose min(gpu, stack)
+>   when adding frequencies. Fixes gaps in OPP levels where only stack
+>   changed, but gpu had duplicates, which resulted in choosing a too slow
+>   OPP
+> - mtk-mfg-pmdomain: stub round_rate clk op to opt out of CCF always
+>   "rounding" a devfreq rate request to the current rate
+> - Link to v5: https://lore.kernel.org/r/20250929-mt8196-gpufreq-v5-0-3056e5ecf765@collabora.com
+>
+> Changes in v5:
+> - mtk-mfg-pmdomain binding: add memory-regions property, remove shmem
+>   property, as we now correctly describe the shared memory as a regular
+>   memory region
+> - mtk-mfg-pmdomain binding: get rid of redundant |
+> - drop "dt-bindings: sram: Add compatible for
+>   mediatek,mt8196-gpufreq-sram" as part of the move to reserved memory
+> - mtk-mfg-pmdomain: move to using reserved-memory for GPUEB shared
+>   memory
+> - mtk-mfg-pmdomain: demote some types to smaller sizes in struct
+>   mtk_mfg, as per Angelo's suggestions
+> - mtk-mfg-pmdomain: use units.h for Hz-to-KHz
+> - mtk-mfg-pmdomain: change for loop in attach_dev to reduce indentation
+> - mtk-mfg-pmdomain: simplify return in mtk_mfg_power_off
+> - mtk-mfg-pmdomain: move of_device_id after probe
+> - mtk_mfg_pmdomain: map mmio by index
+> - mtk_mfg_pmdomain: add error checking to pm_genpd_init()
+> - mtk_mfg_pmdomain: add remove function
+> - mtk_mfg_pmdomain: remove last_opp member and logic, since OPP core
+>   already does that for us
+> - mtk_mfg_pmdomain: adjust comment in mtk_mfg_set_performance to explain
+>   why we're doing what we're doing
+> - mtk_mfg_pmdomain: call mtk_mfg_set_oppidx in mtk_mfg_power_on with
+>   the performance_state we deferred setting while it was powered off
+> - mtk_mfg_pmdomain: add inline function for PWR_ACK checking, as it's
+>   now used twice with the added remove function
+> - mtk-mfg-pmdomain: add suppress_bind_attrs so people don't play with
+>   that
+> - mtk-mfg-pmdomain: change KConfig from tristate to bool, as module
+>   unloading results in strange likely firmware-induced hardware state
+>   woes in the mali GPU
+> - mtk-mfg-pmdomain: read IPI magic in power_on, don't zero it after
+>   confirming that seemingly had no purpose
+> - mtk-mfg-pmdomain: misc style changes
+> - Link to v4: https://lore.kernel.org/r/20250923-mt8196-gpufreq-v4-0-6cd63ade73d6@collabora.com
+>
+> Changes in v4:
+> - rebase onto next-20250922, which includes Laura Nao's clock patches
+> - refactor mediatek_mfg into a pmdomain driver called "mtk-mfg-pmdomain"
+> - move mt8196-gpufreq binding to the power subdirectory
+> - mali-valhall-csf binding: adjust for power-domains usage
+> - mali-valhall-csf binding: use clocks on mt8196
+> - mailbox: prefix defines with "GPUEB_"
+> - mailbox: get rid of custom of_xlate
+> - mailbox: rename "CLOGGED" to "BLOCKED"
+> - mailbox: adjust send_data comment to include more technical info
+> - mailbox: misc style improvements
+> - panthor: drop "drm/panthor: devfreq: make get_dev_status use
+>   get_cur_freq", as it is now not necessary and makes the code worse
+> - panthor: drop "drm/panthor: devfreq: add pluggable devfreq providers"
+> - panthor: drop "drm/panthor: add no_clocks soc_data member for MT8196",
+>   as we now have clocks courtesy of gpufreq
+> - panthor: check for existing opp table before registering a new one
+> - mtk-mfg-pmdomain: add turbo_below variant data, which marks OPPs below
+>   a certain index as turbo for the OPP subsystem
+> - mtk-mfg-pmdomain: no longer read stack OPPs, as they weren't used
+> - mtk-mfg-pmdomain: get rid of num gpu opp != num stack opp check.
+>   That's the firmware's problem should it ever happen, not ours
+> - mtk-mfg-pmdomain: some small name and whitespace changes on the defines
+> - Link to v3: https://lore.kernel.org/r/20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com
+>
+> Changes in v3:
+> - mali-valhall-csf binding: get rid of clocks for MT8196, rebase onto
+>   Chia-I Wu's patch
+> - mt8196-gpufreq binding: rename hw_revision to hw-revision
+> - mt8196-gpufreq binding: rename clocks
+> - mt8196-gpufreq binding: drop pointless label in example
+> - mailbox binding: drop pointless label in example
+> - mailbox: whitespace changes on defines
+> - mailbox: remove rx_buf member from channel struct, use stack buffer
+> - mailbox: check in probe that no rx_len exceeds MBOX_MAX_RX_SIZE
+> - panthor: add no_clocks SoC data patch, also rebase onto Chia-I Wu's
+>   series
+> - panthor: refactor devfreq provider functionality to do allocation and
+>   initialisation of panthor_devfreq struct in panthor in all cases
+> - panthor: drop the patch that moves struct panthor_devfreq to a header
+>   file, as it no longer needs to be exposed to devfreq providers
+> - mediatek_mfg: refactor devfreq provider functionality to decouple it
+>   more from panthor itself
+> - mediatek_mfg: move SRAM magic to a #define
+> - mediatek_mfg: begrudgingly rename member "padding_lol" to "reserved"
+> - mediatek_mfg: use local struct device pointer var in more places
+> - mediatek_mfg: change wording of sleep command failure error message,
+>   but keep the format specifier because I don't want to throw bare
+>   errnos at users
+> - mediatek_mfg: remove unnecessary braces around dev_err EB power off
+>   timeout message
+> - mediatek_mfg: allocate rx_data for channels that expect a response
+> - mediatek_mfg: memcpy the rx buffer from the common mailbox framework
+>   in the rx callback to rx_data, as mssg now points to stack memory
+> - mediatek_mfg: make SRAM clearing message dev_dbg
+> - mediatek_mfg: no longer print physical address of SRAM
+> - mediatek_mfg: expand on the GF_REG_OPP_TABLE_STK comment, toning down
+>   its defeatist attitude in the process
+> - mediatek_mfg: style fixes in mtk_mfg_get_closest_opp_idx
+> - mediatek_mfg: rename clocks and hw-revision reg as per binding
+> - Link to v2: https://lore.kernel.org/r/20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com
+>
+> Changes in v2:
+> - mali-valhall-csf binding: move from performance-controller to
+>   performance-domains property
+> - mali-valhall-csf binding: fix vendor name oopsie in compatible of if
+>   condition
+> - mt8196-gpufreq binding: move from performance-controller to
+>   performance-domains by adding the cells property
+> - mt8196-gpufreq binding: rename e2_id to hw_revision
+> - mt8196-gpufreq binding: add description that mentions "MediaTek
+>   Flexible Graphics"
+> - mt8196-gpufreq binding: get rid of mailbox channels we're unlikely to
+>   use any time soon, if ever
+> - mt8196-gpufreq binding: change name of mailbox channels to use -
+>   instead of _
+> - mailbox binding: change reg-names to "data" and "ctl"
+> - drm/panthor: mediatek_mfg: rename e2_id to hw_revision
+> - drm/panthor: devfreq: switch from performance-controller to
+>   performance-domains
+> - drm/panthor: devfreq: get rid of the accidental get_cur_freq function
+>   move
+> - mailbox: rename mtk_gpueb_mbox_ch to mtk_gpueb_mbox_chan_desc
+> - mailbox: use smaller types in mtk_gpueb_mbox_chan_desc where possible
+> - mailbox: add per-channel runtime data struct
+> - mailbox: request one threaded IRQ per channel, pass channel struct as
+>   data
+> - mailbox: make num_channels in variant struct u8
+> - mailbox: get rid of no_response, as it was redundant
+> - mailbox: enable and disable clock in mailbox startup/shutdown
+> - mailbox: point con_priv of mailbox framework channel struct to this
+>   driver's channel struct
+> - mailbox: request and free the threaded IRQ in startup/shutdown
+> - mailbox: only clear IRQ bit flag once RX data has been read from MMIO
+> - mailbox: reduce needlessly large receive buffer size
+> - mailbox: handle allocation errors wherever they could pop up
+> - mailbox: style cleanups in mtk_gpueb_mbox_read_rx
+> - mailbox: call platform_get_irq earlier on in probe
+> - mailbox: set drvdata later on in probe
+> - mailbox: ioremap resources by index, not name
+> - mailbox: handle devm_mbox_controller_register errors
+> - mailbox: rename channels to correspond to bindings
+> - mailbox: document a few of the private driver structs to be kind to
+>   the next person who will look at this code
+> - Link to v1: https://lore.kernel.org/r/20250905-mt8196-gpufreq-v1-0-7b6c2d6be221@collabora.com
+>
+> ---
+> Nicolas Frattaroli (5):
+>       dt-bindings: gpu: mali-valhall-csf: add mediatek,mt8196-mali variant
+>       dt-bindings: power: Add MT8196 GPU frequency control binding
+>       drm/panthor: call into devfreq for current frequency
+>       drm/panthor: Use existing OPP table if present
+>       pmdomain: mediatek: Add support for MFlexGraphics
+>
+>  .../bindings/gpu/arm,mali-valhall-csf.yaml         |   37 +-
+>  .../bindings/power/mediatek,mt8196-gpufreq.yaml    |  117 +++
+>  drivers/gpu/drm/panthor/panthor_devfreq.c          |   62 +-
+>  drivers/gpu/drm/panthor/panthor_devfreq.h          |    2 +
+>  drivers/gpu/drm/panthor/panthor_device.h           |    3 -
+>  drivers/gpu/drm/panthor/panthor_drv.c              |    4 +-
+>  drivers/pmdomain/mediatek/Kconfig                  |   16 +
+>  drivers/pmdomain/mediatek/Makefile                 |    1 +
+>  drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c       | 1044 ++++++++++++++++++++
+>  9 files changed, 1268 insertions(+), 18 deletions(-)
+> ---
+> base-commit: 3477f49ff0433a241da12ec9cecf6c9b2bd1c6f8
+> change-id: 20250829-mt8196-gpufreq-a7645670d182
+>
+> Best regards,
+> --
+> Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+>
 
