@@ -1,84 +1,132 @@
-Return-Path: <linux-kernel+bounces-865173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3D0BFC5EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E563BFC6DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA3E9351234
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4CE862757F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CEC34B402;
-	Wed, 22 Oct 2025 14:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STCa7qfp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE38534B41A;
+	Wed, 22 Oct 2025 14:06:03 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A777342C81;
-	Wed, 22 Oct 2025 14:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD79E34B436
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141908; cv=none; b=SX6sdV/EfOeFjplHiJeqEFaphvYW+OplerVevJYJXVqC8DH65IdbNTASYbBUPt2x1FY3nAw3U9pnNUx0oVPWUafAz8gOtUN3y3+t21o6Fb60qxAZn59tWVvLGcICIBwxLmYw4DpustUyoLOE9PVXX/uvR2FhUh/klr7t/MM60jc=
+	t=1761141963; cv=none; b=auHl3afRstKRufrvYTCYyyXbTDDbyF7cl1Uyjnro6L/283jODmgKbkxUGu8T49wYRzLgP+pkNOkamNm8f0mwF7k55F0DxGHIyTPIYrig1Bqz+ra9XjPAsPLoTCy4KFhI3QhvoScepUiwZzyFYlL3U/uyAtjbstvJ67mYFLW92XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141908; c=relaxed/simple;
-	bh=Z2fhMvuqsJ3srCnp+0oTmljFG+7/qaPNlbN0encLOvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsrCWLyssKILYQp/9OoJWioYkz+XKPlUYPKD0vWs3s+pQBCg+vBGEdpnpcdZmIvDa5ZIwzaQhLDY7EBYJYLWBAJHCgsUx4x/OutK+1QCowfHBxtqjFNp0ZuVwlQtIE1swDLfz6U0Ia1itgnHzFvSFhdFyHrze560OADflVXmuXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STCa7qfp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D67BC4CEF5;
-	Wed, 22 Oct 2025 14:05:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761141903;
-	bh=Z2fhMvuqsJ3srCnp+0oTmljFG+7/qaPNlbN0encLOvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=STCa7qfpl6r6uM36aHFZSqIEcjThWmFFBHbZeEBZwFO8JG1xNRTCUnIFxQwB6AxUZ
-	 hFGYpNVAxqNd/I5p46l4Cy2SAgYZFO0TyIto+xhaTBnNIYsfvM/lV4ldsIP/iNifBq
-	 gE58Huk8mbgwiMyUZjii1IrxZV9ADPPrUHDNf9Y9C6QY8lTjbU3B0+w6cMcKIOu8Xa
-	 bEYRm1nNNEslseeSK3INJlTQ8i4LbnZT3sU3ZVCPUj+1muSl74dFB/aY2Q27r29DTd
-	 +kYcYEV9n/v4mMHuLHXl3qqCPIavBR6pW4a+gaAyKZDIdI3kb7suetdkM1v/xj4A3b
-	 Rwp0XZcyISUcg==
-Date: Wed, 22 Oct 2025 09:05:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v4 3/5] of/irq: Export of_msi_xlate() for module usage
-Message-ID: <20251022140501.GA3390144-robh@kernel.org>
-References: <20251021124103.198419-1-lpieralisi@kernel.org>
- <20251021124103.198419-4-lpieralisi@kernel.org>
+	s=arc-20240116; t=1761141963; c=relaxed/simple;
+	bh=vNt59W7eOCQQYu9m5bd21AADPf3V+70JPqFIN7Nxffo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SCZdI5lyYQyEzCsKr273VPLxTAPtMndNutn4bkkIbuM5m6+aDek+0nInQh7W0KLIFRqeIUUrSdIWC7tKavfN3TECijYQfD6cvJ+E2liBhvq0Pp+a0Vj5+r76O4UfHUZwa2FR20YmMyAITFrtnI59G2BHP2Pj7ygIEYPC2tIJ0K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude06.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::5c])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <f.pflug@pengutronix.de>)
+	id 1vBZTI-0000vR-9a; Wed, 22 Oct 2025 16:05:48 +0200
+From: Fabian Pflug <f.pflug@pengutronix.de>
+Subject: [PATCH v3 0/2] Add devicetree for NXP i.MX93 FRDM board
+Date: Wed, 22 Oct 2025 16:05:21 +0200
+Message-Id: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021124103.198419-4-lpieralisi@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKLk+GgC/33NTQ6CMBCG4auQrq3pDyXgynsYF7WdwiwoTYukh
+ nB3CysTjcv3S+aZlSSICIlcqpVEWDDh5EvIU0XMoH0PFG1pIphQTAlJXeipz4HimLtS0Y5UGcN
+ bprmzuiPlMERwmA/0di89YJqn+Dp+LHxf/3ILp4yqunkIK2vRKnUN4PvnHCeP+WyB7OYiPp3mp
+ yOKA0pbBk6DkfLL2bbtDU5DSxQBAQAA
+X-Change-ID: 20250523-fpg-nxp-imx93-frdm-5cc180a1fda9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Fabian Pflug <f.pflug@pengutronix.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Haidong Zheng <haidong.zheng@nxp.com>, Danwei Luo <danwei.luo@nxp.com>, 
+ Lei Xu <lei.xu@nxp.com>
+X-Mailer: b4 0.14.3
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::5c
+X-SA-Exim-Mail-From: f.pflug@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Oct 21, 2025 at 02:41:01PM +0200, Lorenzo Pieralisi wrote:
-> of_msi_xlate() is required by drivers that can be configured
-> as modular, export the symbol.
-> 
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Cc: Rob Herring <robh@kernel.org>
-> ---
->  drivers/of/irq.c | 1 +
->  1 file changed, 1 insertion(+)
+I could not test all features of the board, therefore a lot of stuff is
+omitted from the devicetree. but this is enough to have the board boot
+via eMMC or SD-Card, debug via debug USB connector and have a network
+connection.
 
-I guess just iproc needs this, so:
+The FRDM i.MX 93 development board is a low-cost and compact development
+board featuring the i.MX93 applications processor.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+It features:
+- Dual Cortex-A55
+- 2 GB LPDDR4X / LPDDR4
+- 32 GB eMMC5.1
+- MicroSD slot
+- GbE RJ45 x 2
+- USB2.0 1x Type C, 1x Type A
+
+This file is based upon the one provided by nxp in their own kernel and
+yocto meta layer for the device, but adapted for mainline.
+
+Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
+---
+Changes in v3:
+- Add Signed-off for original NXP contributors.
+- Fixed whitespace errors (Thanks Francesco Valla)
+- Added mu1 with status okay (Thanks Francesco Valla)
+- Removed address cells from lpi2c3 (Thanks Frank Li)
+- Configure pin for watchdog (Thanks Peng Fan)
+- Updated regulator config
+- Configure i2c0
+- Link to v2: https://lore.kernel.org/r/20250526-fpg-nxp-imx93-frdm-v2-0-e5ad0efaec33@pengutronix.de
+
+Changes in v2:
+- 1/2: remove CAN node, as it has not been tested.
+- 1/2: ran dt-format (Thanks Frank Li)
+	But also reordered some nodes afterwards again to have
+	regulator-min before regulator-max, have the pinmux at the end
+	of the file, and have the regulator-name as the first node
+	inside the regulators.
+	Re-added comments, that were deleted.
+- 1/2: changes subjet to ar64:dts (Thanks Fabio Estevan)
+- 1/2: removed reg_vdd_12v (Tanks Fabio Estevan)
+- 1/2: added aliases for rtc, emmc, serial (Thanks Fabio Estevan)
+- reordered the series to have documentation before dts. (Thanks
+  Krzystof Kozlowski)
+- Link to v1: https://lore.kernel.org/r/20250523-fpg-nxp-imx93-frdm-v1-0-546b2d342855@pengutronix.de
+
+---
+Fabian Pflug (2):
+      dt-bindings: arm: fsl: add i.MX93 11x11 FRDM board
+      arm64: dts: freescale: add support for NXP i.MX93 FRDM
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+ arch/arm64/boot/dts/freescale/Makefile             |   1 +
+ arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 658 +++++++++++++++++++++
+ 3 files changed, 660 insertions(+)
+---
+base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
+change-id: 20250523-fpg-nxp-imx93-frdm-5cc180a1fda9
+
+Best regards,
+-- 
+Fabian Pflug <f.pflug@pengutronix.de>
+
 
