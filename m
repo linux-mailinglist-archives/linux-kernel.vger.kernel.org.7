@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-864296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C145EBFA737
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:06:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6D7BFA746
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19383A3549
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:06:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D66C4FD0FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11862F5A18;
-	Wed, 22 Oct 2025 07:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837A32F60B2;
+	Wed, 22 Oct 2025 07:05:53 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ADA2F4A16;
-	Wed, 22 Oct 2025 07:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8A72F49FF;
+	Wed, 22 Oct 2025 07:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761116751; cv=none; b=APtgvJUU9vO08pe1EjzfFM47gtHrjmQuqc2mxUFnJodtKDjstzo7kX0aDRrGo/mT5+aKot08h2EdfET/C/opGJ20d5IyROurFu1E1HlqjiW/ADCVIEF4yib+TAmsU5OnuMZd/TouZEr5ZNJxqDWiYLhWc/LwQTxU+BK2aNIszPA=
+	t=1761116753; cv=none; b=pLhOod8raDBLpSt+dPDj5h6kq8Cz6G+MGiyS9Zc31RyHMGaMu8W2vVbrMyo6hyZkPOnbrAPZc1EzLMp68ml9VImkzqikZ754sCEHU5pXZI/MtyuXhPICICCIUbb3cVWRyomWSFWRfWvIJLukOJD/bk+t2OAgYTceSc20l8rJeks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761116751; c=relaxed/simple;
-	bh=p+pnkItFDIXvUygT0L+saT3mcdwqFMt1rS497ed4+jI=;
+	s=arc-20240116; t=1761116753; c=relaxed/simple;
+	bh=rs4FERLiI6+KC3XRnYw0xK9slbOeK8k0qeO0Ht3DTog=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QviHWzV2gEXZZW2K7eQIAjx08QsZzXiEIT89qLTUNqY4VD0tt4OceQ0ffyktV4jfwDUFE3Fq7nbSpVCvCRtH0iyfX6mEL5vRmUCt0YTsDdWim8YYNniz2yaqi9OEe8uWyVuzAIlO3Xq1FN/LOXFh/Zzo6JKUUUxTOLPIQivh5o8=
+	 MIME-Version:Content-Type; b=IGVc32c1AospuDpRhrOlh1GMCIXOEV3j8ywUiHXr+5xiP4MFRk1PxdCgUAebHPwZVQs2VmIlI1g5fL46kmyT9MfgJa2hZLWbmubwLaILQPY/ZZKjaTgyamaFdvK4cx55q9CnNOaSeXAzlsMJbaniE3f4S4Gh2LYS5BDu5UZrf60=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -49,9 +49,9 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, <bmc-sw@aspeedtech.com>, Rob Herring
 	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 2/6] arm64: Kconfig: Add Aspeed SoC family (ast27XX) Kconfig support
-Date: Wed, 22 Oct 2025 15:05:39 +0800
-Message-ID: <20251022070543.1169173-3-ryan_chen@aspeedtech.com>
+Subject: [PATCH v6 3/6] dt-bindings: mfd: aspeed,ast2x00-scu: allow #size-cells range
+Date: Wed, 22 Oct 2025 15:05:40 +0800
+Message-ID: <20251022070543.1169173-4-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
 References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
@@ -64,30 +64,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Support for Aspeed ast27XX 8th generation Aspeed BMCs.
+The #size-cells property in the Aspeed SCU binding is currently
+fixed to a constant value of 1. However, newer SoCs (ex. AST2700)
+may require two size cells to describe certain subregions or
+subdevices.
+
+This patch updates the schema to allow #size-cells values in
+the range of 1 to 2. This makes the binding more flexible
+while maintaining compatibility with existing platforms.
+It also resolves dt-binding validation warnings reported
+by `make dt_binding_check`.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 ---
- arch/arm64/Kconfig.platforms | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 13173795c43d..d2746107ceca 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -47,6 +47,12 @@ config ARCH_ARTPEC
- 	help
- 	   This enables support for the ARMv8 based ARTPEC SoC Family.
+diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+index da1887d7a8fe..ee7855845e97 100644
+--- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
++++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+@@ -38,7 +38,7 @@ properties:
+     maximum: 2
  
-+config ARCH_ASPEED
-+	bool "Aspeed SoC family"
-+	help
-+	  Say yes if you intend to run on an Aspeed ast27XX 8th generation
-+          Aspeed BMCs.
-+
- config ARCH_AXIADO
- 	bool "Axiado SoC Family"
- 	select GPIOLIB
+   '#size-cells':
+-    const: 1
++    enum: [1, 2]
+ 
+   '#clock-cells':
+     const: 1
 -- 
 2.34.1
 
