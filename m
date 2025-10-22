@@ -1,86 +1,161 @@
-Return-Path: <linux-kernel+bounces-865927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183FBBFE584
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:50:13 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF34BFE59C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A003A54CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:50:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 44A74349E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05736279DCD;
-	Wed, 22 Oct 2025 21:50:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A840303A30;
+	Wed, 22 Oct 2025 21:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="KuwbYWp2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mALDxU6u"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3752C1FF61E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2F027B354;
+	Wed, 22 Oct 2025 21:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761169807; cv=none; b=fs3O47HwbuflEIan+Kk4gXILe1/YEEfzJEStM5/1JdSnTUzOY97Zi7CSBq921Via8qcnvNltvvD995VuHj8VQ4HwjNs4YKMEuxyou3ylJk7hbi52g4x51kiTwR3TTFVOln87W7S+wUGqU9lOYQxP3HHLvZ+voFMheX/LL+QFIVI=
+	t=1761169876; cv=none; b=KWYTGHZ0QYoct30WUEpPCW/1HjxTkGsERv9Z7DVms99RiMlLag93HYyHvlEncXUmnYPaKsYO50IGwREVmVPxcJT6J8sVwO9nzqrrNwKmlg0ToYTt0YphYknygyALWtmddwLGqK+ofuQr5F86Lzw7+TQpDCDvxuY+AF9xpeiWR04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761169807; c=relaxed/simple;
-	bh=5Q844gZRGQ76duuf95J4vE5womQsHPiijXBO0mQnE0E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=D9A+hBM/CVtVVcA4y3BxwCPB+jO9EQxbCjKdlsl5TeYYQXH3X9KOvAtpUzkqp3aG+hMcsACV2Bbp9npKRAV/ffvbg35C0fqHVstkC90phag5FY1iK70WCMngSaeBXYfOWn6kl4f8xPPSpDE6y/VzlLHVeSZoRb3Cs8MmLaMcvOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430db6d36c6so5221735ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:50:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761169804; x=1761774604;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IMfH/Fi/M1jiphxotJ7LwQuGeAdrdIz/V8BOnDUP9MY=;
-        b=Jq31y9LZ17qMr+fcJZw45/vOwGljtfSNnWUVrtIx3PTFT2bJdkHxcZXrW2x5biAMJB
-         dXEB2sWkLJrz9OoiIxZ2/J6Kx1UawqwUKdydV9M3uRZuKehO2Phv/HijXudymRRL9esA
-         bhyT2wQ1aqpsHCHlL/3E1PfXxkeCTNOwbEvCzqpcC15phw/oDGF5A5SZmBUAr6VFEBgc
-         ymEhFwkl2Vw5ejOZT3rRn7qm6vlnebLOAbBAgIFBG/4T9x8+OgH4/XZ6SwHbsBXtOao5
-         vr2DcM5zsCWTRFLN1K7MZlAliEwfBd/cDnp9SzrIr76jp/Bn6a0Fz8REy+Kkz7q3VfXW
-         T48A==
-X-Gm-Message-State: AOJu0Yy7Tsu4jy3HlHwxYaQSFzZLMeD5Oye3YzCRECjFWifeVpl7OtsR
-	e0LPJT4g6tCJnzkM2c9LG6oXgeKJe+k0dkvWMUibd+15dpTq9gE+jsTyBOJ4v8U8mQ4sb5YpzGk
-	18+16tcIVY4aNLRzvbOUKB+hztHSOEDz8e3dEY6X/zxxn+YFbWBaxEnpe3bE=
-X-Google-Smtp-Source: AGHT+IGEKeani19/bvHRnzfZ+ybEiU6og6gOpok6yipQdIu02j7Z8ruWBmmmSeSBjFPHk0MwRwiRqygf5ECeyKzVeCtfXthm6y+E
+	s=arc-20240116; t=1761169876; c=relaxed/simple;
+	bh=dn0HwXYQmRQZXxo4hkZFxuJSWZQyybh4xR+3qIH7kd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcUmnkAXEbMppukQTSoXADUbA08id8MiUVGt4kVtq6XWXRMt8BOk+TOE/PW1rXaepRqaJDqrB4+rltyBZx+EtqaCiSJ3pTnu9IFdiyGhU1+2FJltFPeb+/7kPZ9ppTwClVKelqxO7MYSyDtOVYUXNRta+t7yf9gk55LhDC+a1Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=KuwbYWp2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mALDxU6u; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 01E337A0125;
+	Wed, 22 Oct 2025 17:51:11 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Wed, 22 Oct 2025 17:51:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1761169871; x=
+	1761256271; bh=hbG6RsnJYSgulUi4OAThtCw5VfjfNUbCoBtc+xp3w7g=; b=K
+	uwbYWp2BQH2k1UF4Gcwg2z3z1f3vZnDqoU/DhGEc+TCIB8gmohgm+Yib5XtNl2wE
+	1GiCIyPcg6UTha6jt0e1g4sSP5+FncC5fFLt4pBHrXvbFaDI4zfWPiiJX52ZTVYW
+	bKX64BcY3OYzI0Sau4mkTmx1weZI8elFj1JfaewCNzC5gm3NCXLkcqUZq7HqUbf4
+	kZj4wR6rEftZ9iQc93TNVjr2zpN+8szXdCgrpVE5Qd78qJTQ3EKW+tjCHJ8qSod8
+	dl6TFbGyuqkbyS0GVGoGsEpLC6pPLTkBcyHuRa6+xLpEhyQQn9ob8Nn2AEACM4qw
+	83fpZlpZ2Jq2HFIrHLirg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761169871; x=1761256271; bh=hbG6RsnJYSgulUi4OAThtCw5VfjfNUbCoBt
+	c+xp3w7g=; b=mALDxU6u4ug2q5nX7gWT/vJIh6d0vG9Uvc5JMYJA3uJTNvCsLib
+	Ve/F5d1pjFGtgsJEWbt7BYGmJSZeZQU21MTYI69+uvQZzKM5JkZYUFhmqTZkycKw
+	rf3oDXBD36CjqV0bbYq8HqeBZiIirFG52+9oT82iPh3eegMNFHiPirjLnj+JhcDx
+	bGS15bHLe9UFFXHnH8sSGsHrz4S6fRlQ4YhRT6TRQDhT/xVhsYBpolw9FfMB6qh9
+	4btr4QsR/5i4rRjbVnTAujM7u3vXcmN2uaSWuiI20Qk+LGTGZVQ5G4UKJEEu3t0N
+	XqdRZTIjbDCo78gxjLa+LRVCYZpIrChQ76Q==
+X-ME-Sender: <xms:z1H5aDgBeJbVpYPQc3HyDm1m0Ah4srAcBpI8-VOzzFV-WXSAwOmmtg>
+    <xme:z1H5aMZUsdIqPWc1T28tfF0nyA8jvli_GxJwWinLzoyA_F9jZoeP8V4zjdTqJY6bw
+    fE_TPBrgqcJbpO8mHjQVq_pG0tW3eDAwiHImG2ga2mnqrw1fu7ZdQ>
+X-ME-Received: <xmr:z1H5aHiN7iSEsq3N5bVg0KoKuUaTWa38zI3nI8C_UeUlzWOZ3JLT2ESyEZVy>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeegjeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtrodttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepveeileffffegueduleffgeeghefgkeffuedvhfehtdfgtdekhfetteef
+    gfejueefnecuffhomhgrihhnpehrfhgtqdgvughithhorhdrohhrghenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhn
+    rghilhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopeifihhlfhhrvggurdhophgvnhhsohhurhgtvgesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhhsvghlfhhtvghsthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuh
+    hmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:z1H5aOYggQ4Ygt1qW_XonnaI6GpJqAXPmJEWdtMUsEXG5u_hsI59Rw>
+    <xmx:z1H5aNNFWKVU6JEgDQIRy-U2SH5upapJCPrnrUE9zVJZOgke_SaOAg>
+    <xmx:z1H5aPZwPClYIXUo-WhJpHVh-Zbmq_Az_8FN_Pqko_beIQnULEbkwg>
+    <xmx:z1H5aNUhLOdncpxSvyrVjS7ZVDUND4f5K9JJ_ZQ3wPWwMKPhytDdMg>
+    <xmx:z1H5aAZZ-fbRVkflSlAuwQk-Dme9ProS48-E9p_zqIcctenE6qOEE2nK>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Oct 2025 17:51:10 -0400 (EDT)
+Date: Wed, 22 Oct 2025 23:51:09 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Simon Horman <horms@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: Re: [PATCH net-next v8 1/2] net/tls: support setting the maximum
+ payload size
+Message-ID: <aPlRzZtmnbLJNzmR@krikkit>
+References: <20251022001937.20155-1-wilfred.opensource@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152d:b0:430:ab80:66f9 with SMTP id
- e9e14a558f8ab-430c52081femr332249905ab.1.1761169804203; Wed, 22 Oct 2025
- 14:50:04 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:50:04 -0700
-In-Reply-To: <CAMz+-CNCHqKbcvi7F7J_eBDMm_9J+eWvSC2WkJVzQRHLJiy8=w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f9518c.a70a0220.3bf6c6.0029.GAE@google.com>
-Subject: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
-From: syzbot <syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	vnranganath.20@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251022001937.20155-1-wilfred.opensource@gmail.com>
 
-Hello,
+2025-10-22, 10:19:36 +1000, Wilfred Mallawa wrote:
+> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> 
+> During a handshake, an endpoint may specify a maximum record size limit.
+> Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
+> maximum record size. Meaning that, the outgoing records from the kernel
+> can exceed a lower size negotiated during the handshake. In such a case,
+> the TLS endpoint must send a fatal "record_overflow" alert [1], and
+> thus the record is discarded.
+> 
+> Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+> support. For these devices, supporting TLS record size negotiation is
+> necessary because the maximum TLS record size supported by the controller
+> is less than the default 16KB currently used by the kernel.
+> 
+> Currently, there is no way to inform the kernel of such a limit. This patch
+> adds support to a new setsockopt() option `TLS_TX_MAX_PAYLOAD_LEN` that
+> allows for setting the maximum plaintext fragment size. Once set, outgoing
+> records are no larger than the size specified. This option can be used to
+> specify the record size limit.
+> 
+> [1] https://www.rfc-editor.org/rfc/rfc8449
+> 
+> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> ---
+> V7 -> V8:
+>  - Fixup HTML doc indentation
+>  - Drop the getsockopt() change in V7 where ContentType was included in the
+>    max payload length
+> ---
+>  Documentation/networking/tls.rst | 20 ++++++++++
+>  include/net/tls.h                |  3 ++
+>  include/uapi/linux/tls.h         |  2 +
+>  net/tls/tls_device.c             |  2 +-
+>  net/tls/tls_main.c               | 64 ++++++++++++++++++++++++++++++++
+>  net/tls/tls_sw.c                 |  2 +-
+>  6 files changed, 91 insertions(+), 2 deletions(-)
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
 
-Reported-by: syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com
-Tested-by: syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com
+Thanks Wilfred.
 
-Tested on:
-
-commit:         dd72c8fc Merge tag 'platform-drivers-x86-v6.18-2' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10aed3e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
-dashboard link: https://syzkaller.appspot.com/bug?extid=d101e12bccd4095460e7
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10bee3e2580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Sabrina
 
