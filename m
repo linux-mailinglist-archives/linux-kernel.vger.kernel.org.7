@@ -1,141 +1,124 @@
-Return-Path: <linux-kernel+bounces-864110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07C6BF9EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D02CBBF9F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049304869E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888493AE23B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4958F2D4B6D;
-	Wed, 22 Oct 2025 04:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B2B1FBEB0;
+	Wed, 22 Oct 2025 04:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exoWGZHQ"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PLYDxZ0M"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B022D2398
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB102153ED
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761107126; cv=none; b=WIDnXsU3Ee3uotsbuaY7oqNI8LMNf2Y8TTX9y+zEg0nSQGUKMNT1GWWNf1B3JQyMrlR1xwjipJ0Z0VF/THOquJ4HeOfqt6pPJ3KyB+WDK/a20ZdRMQhYeLc9y44hBj+CMVP186OfE+4MGnSJSucuidvsXJ9wJACE+7r/A9umiVY=
+	t=1761107152; cv=none; b=JS1o8JNCk6sr7aAzJuRpoNLjvPfz+btSghJ1Tjh8NVhTnvbDea2Cp0q9JfBZl9M9jmas8jZUBuTULj0t0p5pVh/Q7CRWpl+gCiXq+xBTzGzVk9dQKOd9hLspwfMCCDxc0+E3tGVhfljkQ0m4fHkTMGP0chSw6USFUjlCMNYwAVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761107126; c=relaxed/simple;
-	bh=bsYa6X9KROYy7hv3d72FhLZXSqZ0WWU/HZUA1g//G3E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O+29yCZkSNRGyVlKb7fR9auQGIWG2Yf5MmSdH0jNptEYwnZzF4I+9SlNMzgpYk8mcv5pGy2VDZxDF9NKWXitJ4UNK5mgAkMkR0YZN570NHe3x1BZ/Vva1aEUn25Bb+njh6qXdwndw/9j7HGFk0BncB4DXPjZdJbpYUJ0YPDKm/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exoWGZHQ; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-430c151ca28so25135015ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:25:24 -0700 (PDT)
+	s=arc-20240116; t=1761107152; c=relaxed/simple;
+	bh=hfRSNQb9rBE7UUr5J/K6aWGqynTuTf2c3cqKlfXvUig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uSYVJZwXop8M60uCgR1kuivizxduiJsG1xME/XH68uGNxJPLeTA4h7vXTFQ20ice9zLJ0iCMab6Toa6VobbKqL3ajvqe+7sEQLXHy3UFk31us9yF9xyyFKNNH3Yw5+tYA4C6fUu01OSBFrJJwGuN+duJzOCW9SB3fizOfOU4gYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PLYDxZ0M; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1231248966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:25:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761107124; x=1761711924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t2LfB28zph799goFY4PIl5Hu2JZs6ZC/o5ejBi3O62Y=;
-        b=exoWGZHQQDbNsbubt6n5JRRZ29qcKqLgoZYz0OCI/KQnHCdc1oB4YGwFEeXT8sJIwO
-         h+ynMzFrroOOfnRd4EVAxKOy70jPHa1ttXVW5wAZXwKbpsrfnU0SAhoUhA6PI4zKS9mN
-         j0JGlV0nv7KFeSLJw0JRgWDt5qX/sBOfEUlLLuXKfzAcTnDyVXesDG5OtSn0QLM2ZcSY
-         fH2qwHlQUB/+MXGTr85NZiIwpDAAILuY/rk5afuhkQmV0guOiP+xPj8LU9aGiIfR730w
-         LdKFsfR3F/YVUeVyEsdK1/vyN0SAL8tYf1Noe0XAUKqC7hBXBqGf60GAVu8/kbVvCuVx
-         ofnQ==
+        d=linux-foundation.org; s=google; t=1761107148; x=1761711948; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UfKYMPlRA7Hil19lucydJ3Oagf4wOyjxoqA3QWKCuV8=;
+        b=PLYDxZ0MIIDA3BcEQRCDkqqEoNrvpOjQZTwNcXdhZ02gfj05buWIaeXhCQTwaeQR6F
+         xEYXVbxEfEc7iV8uNCiBPC6GwnIi96xb3F5+sh9uIX272ML6zw2/Nnx0z15XcYTWXyIk
+         vFCrHVpATCoDRp66C6UMBVHlDi+B/3rfrJVM0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761107124; x=1761711924;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761107148; x=1761711948;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t2LfB28zph799goFY4PIl5Hu2JZs6ZC/o5ejBi3O62Y=;
-        b=Qwh5IaQctpfZpc4lTr/GBmYO2FgBqnkgJspeQKv4GmEwsp9J9rvTiEBtXkagSLpME0
-         VNIc7SS6Gifz2jAHd+RSvt6cBBkdqunbe8vfpCuSrlX0dxOGQby0Sc4llQ1rz4uWsr9j
-         SfW83hVeUbiy0fNTJuL7IkrATspt1ed+a9Fl7fOCe9bXG+vau1JSzclJZu9U7nWJIqYh
-         vLqauWyDXmkqBLLfjrKAPBuIq+irpPweDJ9sE9J552u8g+vofGPMLLKqGggfIHl/jmLt
-         rStMo9Eeie/1JC4Y+oSthod3lrOHwFnu2yq7DbQOB07aPxTm/iJE825dgePnexZv7HDP
-         uy6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWqXUaC/AuYdfhzJyCKy4GI05xnMenNkHAKbr3rW1oZl+EvxcYJjViENr7HzqqfFCsp+s/zWtJqPBpgkFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXdUA+WPxbR4on7SQhwOwq6YofP5PE1lRfwe5R4KxbrNLxZzwD
-	kib/VGGsYG0yF2OYu4fsu/clPK49ap9L1+Rpr85fM6Edidw0ax7vxWRE
-X-Gm-Gg: ASbGncupgYKUWScYuZqOt02ktK2jGmcfTiaL7zt8sgkSx8XcXBeI6BExZb+H/wsYlN0
-	/BCNcfLfpsa6avFO+nQ1IJCnZ+P4tcEeMqZTwe9vC+GfQHHXPOsHspz9wpCR2aEH/5h766f55DJ
-	ssP8b3pAQsaKEvirCMA0x2gZ3goTVzQIEMd1bHG2zJe/gvqTZEXRHFnCbwHq1nayERRL//83BGl
-	hs4OPRPmyjJr6XPcfaqEuvlhMjbU+2o8YN1kzVAD6dt9znCsWmNgLlSv+sDHfSS/L+tX+OK8s9T
-	rCJNwieglBYjUB7eETHRhEkEyIAQ+GeWWaCMTmda2yWMY8ejPzMB281PGmhxlXwOsp3j1YufIjn
-	GNQdA4BznZfdbVkTdexfRvT+K7DIImD6nz3S48bJV94xg+fAzrS04gQascm3BCxCdhd7sgG1I6w
-	rrij8KDGjIykYbU06vGfhUSG03x3PTNr8LJaXWxaEgow/2xpF2+eY/5FOnCCa+7IALslj/SR/t0
-	u3gCT+40Lhh8o3Jz3vvR2PihA==
-X-Google-Smtp-Source: AGHT+IH49shBuQugYlN++wVSTOrOUhHiUw/C0tNQMZKmX9SB2vKCC6aIZVhWNKA0jz+AhfPi3lDZ1A==
-X-Received: by 2002:a05:6e02:4510:b0:430:cad8:45fc with SMTP id e9e14a558f8ab-430cad847a8mr245028055ab.29.1761107123942;
-        Tue, 21 Oct 2025 21:25:23 -0700 (PDT)
-Received: from abc-virtual-machine.localdomain (c-76-150-86-52.hsd1.il.comcast.net. [76.150.86.52])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d07ccc89sm49925505ab.40.2025.10.21.21.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 21:25:23 -0700 (PDT)
-From: Yuhao Jiang <danisjiang@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Yuhao Jiang <danisjiang@gmail.com>
-Subject: [PATCH v2] ACPI: video: Fix use-after-free in acpi_video_switch_brightness()
-Date: Tue, 21 Oct 2025 23:25:14 -0500
-Message-Id: <20251022042514.2167599-1-danisjiang@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=UfKYMPlRA7Hil19lucydJ3Oagf4wOyjxoqA3QWKCuV8=;
+        b=GxBoXLq+swmTzFRW67OVgpReoEA3607ExX78zd63pJa9l0NNgtmK7S5JNidNSpBib2
+         zLeQCfpVxINYmgkpbxKdH4aDd6bFuaAu8Hoz2RsXRXTZKg+HkTIa8ZTBUp4Wy6gopJsm
+         nlPWnFfa0Q1R7zrv7fva3hO9XbHyQzSlOnWyNz8duWL8VkICm8feEng2u3SJEISELOYU
+         haYvxiDRdC3SwwzLZyEgxjhLs5LA3aAt9sfejtHV5zjdn8eE8AvAIgupgD8upF7BHnYy
+         7mh6kDYnOWxI1zT3xMX+z1j9Igib35mJXrwSIJ0aaLkMDSomBLirNmqY6SDn4whbEXER
+         FghA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyV65TCWmG5ARDHquxyDrTo/yfDOUpGrYjpOCxruJ3gzi1KYARZQrX+6uihyiwrOv7xFpI3q7H+T28sZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUAhtjWzlsJ3yWM3YNpVbiF9K5LsTn5RGsqlNzWZvh1FRYVWOQ
+	3yf234frkUuLPq5MPRLXcdMZsLg0xzGB4EvUPM0Fz3If5lZ5jbSkv1m+xsjDfjA8PeSFhKXEg2Y
+	9cE51YIQsqQ==
+X-Gm-Gg: ASbGncu/O66a8XoudnK/sgQB4GFKrLlBPQp3m/Csm333Z15MPLPZtl/qw1w7Kf5k2Sz
+	s9QIkNtvUSdSibjLxV9MG4J3EHxGwEBwgwC+FMLkxL9fJhlrEACSf771Ahx1nqE4+Ckn7WXvB1D
+	RNQSt7KG2xwPeROE4EiwJuxtY7UrWizPuF5gIEmgD5upKLnTPfmtAjtotDBXU91J1+EDmw3wqWz
+	8VZLjKFR/e0dSJaquDkauCq6oviNRs3Ey6GKbZ3YcYiLsc/7s7AcOrc5lr+BnsPsIjEIjSB0bBH
+	9FwENtOifcw85hBt7Acb/dFmlMAgaFkttBu+ag5o1kGbGw0lyzrJgBzCX0SIqBV2x9DPVjzhbTE
+	0FDm+y5AzLj8auEvuEf4dxr10ma2jtHNJLzuOZt3nKBnxXDxvYrWTgNK3lCc8a+o/rZ7O4RHMjD
+	qFYZ+JmPXaKqtwG2Yg/RlVb+PA0OYJy23773mMLBrNBwWbRLu9HA==
+X-Google-Smtp-Source: AGHT+IFfaJ/KersTgdzD1WjvL1euG+CnyqUjjHfNE6Xor6yUGgSqvARGph6STv+72dj8Hg9HCNbv8Q==
+X-Received: by 2002:a17:907:86a2:b0:b3d:9c3c:9ab6 with SMTP id a640c23a62f3a-b6473842ea5mr2142717266b.29.1761107148263;
+        Tue, 21 Oct 2025 21:25:48 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da1ba1sm1241794566b.14.2025.10.21.21.25.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 21:25:46 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63d6ee383bdso3725380a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:25:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUuz+NoCEkRh4DoggFbPpuUeVotnP2FvFmXQLgU8jwapWsS6ZeqWhD0GkKkj1rN2PN2lGQz6X84pvwY0B4=@vger.kernel.org
+X-Received: by 2002:a05:6402:2113:b0:63b:f91e:60a2 with SMTP id
+ 4fb4d7f45d1cf-63c1f6c1fc8mr18494752a12.25.1761107146449; Tue, 21 Oct 2025
+ 21:25:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251017141536.577466-1-kirill@shutemov.name> <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
+ <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa> <aPgZthYaP7Flda0z@dread.disaster.area>
+In-Reply-To: <aPgZthYaP7Flda0z@dread.disaster.area>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 21 Oct 2025 18:25:30 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
+X-Gm-Features: AS18NWB9CwG0IBKbkuN6M06jeHmD1GxcMpSycRZvl1CF5oywYvt7kYLWS-f-Gn8
+Message-ID: <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kiryl Shutsemau <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The switch_brightness_work delayed work accesses device->brightness
-and device->backlight, which are freed by
-acpi_video_dev_unregister_backlight() during device removal.
+On Tue, 21 Oct 2025 at 13:39, Dave Chinner <david@fromorbit.com> wrote:
+>
+> > > >   1. Locate a folio in XArray.
+> > > >   2. Obtain a reference on the folio using folio_try_get().
+> > > >   3. If successful, verify that the folio still belongs to
+> > > >      the mapping and has not been truncated or reclaimed.
+>
+> What about if it has been hole-punched?
 
-If the work executes after acpi_video_bus_unregister_backlight()
-frees these resources, it causes a use-after-free when
-acpi_video_switch_brightness() dereferences device->brightness or
-device->backlight.
+The sequence number check should take care of anything like that. Do
+you have any reason to believe it doesn't?
 
-Fix this by calling cancel_delayed_work_sync() for each device's
-switch_brightness_work before unregistering its backlight resources.
-This ensures the work completes before the memory is freed.
+Yes, you can get the "before or after or between" behavior, but you
+can get that with perfectly regular reads that take the refcount on
+the page.
 
-Fixes: 8ab58e8e7e097 ("ACPI / video: Fix backlight taking 2 steps on a brightness up/down keypress")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
----
-Changes in v2:
-- Move cancel_delayed_work_sync() to acpi_video_bus_unregister_backlight()
-  instead of acpi_video_bus_put_devices() for better logic clarity and to
-  prevent potential UAF of device->brightness
-- Correct Fixes tag to point to 8ab58e8e7e097 which introduced the delayed work
-- Link to v1: https://lore.kernel.org/all/20251022040859.2102914-1-danisjiang@gmail.com
----
- drivers/acpi/acpi_video.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reads have never taken the page lock, and have never been serialized that way.
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 103f29661576..64709658bdc4 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1869,8 +1869,10 @@ static int acpi_video_bus_unregister_backlight(struct acpi_video_bus *video)
- 	error = unregister_pm_notifier(&video->pm_nb);
- 
- 	mutex_lock(&video->device_list_lock);
--	list_for_each_entry(dev, &video->video_device_list, entry)
-+	list_for_each_entry(dev, &video->video_device_list, entry) {
-+		cancel_delayed_work_sync(&dev->switch_brightness_work);
- 		acpi_video_dev_unregister_backlight(dev);
-+	}
- 	mutex_unlock(&video->device_list_lock);
- 
- 	video->backlight_registered = false;
--- 
-2.34.1
+So the fast case changes absolutely nothing in this respect that I can see.
 
+               Linus
 
