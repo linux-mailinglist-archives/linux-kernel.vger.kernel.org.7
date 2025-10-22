@@ -1,227 +1,132 @@
-Return-Path: <linux-kernel+bounces-864551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65551BFB0B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:03:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0CFBFB0CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14402188FA2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:04:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 678F04F86BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE2D311972;
-	Wed, 22 Oct 2025 09:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F069930F7F7;
+	Wed, 22 Oct 2025 09:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G9J5KCh6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="14G+ZRO8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cw4Kd4WO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q0/1LwQh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BRsA2xdL"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E9430FC36
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C58030EF88
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123819; cv=none; b=NfKSwOyV7P9wNeGq7puWnZGiqMwed6yQOLMge0hT82qptQtD/wIGuKmBYpJ8SQUFl+qYFRadHqG8Sv0J1ar+ErNAAEjip3LTbaket5M+4QBn8qNV6v1fOBJE56QYsmjPBYQ2WUSaddWrCcDbzvIZknUh3KBx0fnD7yM8om1mLbY=
+	t=1761123874; cv=none; b=EV3ykO9LufvQ9ddC5LqEqtMZFfzXHbc3HkZMsBqSavhUTWHhj3aCDjWKpc7kHCP7gCVSwhV6oVC1HXQ2W+zzlsxcKHDyYsjouJ0rZOCuvr90Ib9nK+tD9aeOy5c5I+bYM9Fdvj537/vqCdOzCJlGGBkZ9U8f9/4Y9RWLhryBv/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123819; c=relaxed/simple;
-	bh=BbjKdKJOIN11/N/Av8tRJFdvvl/rcEy0y/T/ykyBLDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7L+arLzDNXWikOl47OMKfWPI6CYlVH45upOiqXdTVgP1mkfPIU1HUlja+A+DHylamxGV4C4/s/gR5d5OMMFExG9DtE+Fs1TaaNvz05e8YcdqpIjg8jW8/iCJjyEJHcS8zuGpeSWfC0MpSsm1OFtnziBVDMcY7NCPEda4fPh97o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G9J5KCh6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=14G+ZRO8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cw4Kd4WO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q0/1LwQh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E6A691F788;
-	Wed, 22 Oct 2025 09:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761123812; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zWrRoINCj3OqAfg5PTgsjqvXeRUN3tNurbDF1UsQ+SU=;
-	b=G9J5KCh6W+1WPd/qBI48zIgYJLRNiHsHnfkiRiTP0Xzyyzdb1KHb8GuQVeUVLuJl/a8YVn
-	XNPsdB1Jx8K9KlwbDI2YFXtHvg8ZaxNxPfv17V5TwZu2vztFabLuSstPusCcqDnwgOi+8S
-	PB8Nd5XOFFeoYmMoNO6xMj8qKJiMLrA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761123812;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zWrRoINCj3OqAfg5PTgsjqvXeRUN3tNurbDF1UsQ+SU=;
-	b=14G+ZRO8KRuFHfqfYaKfca3Mg4mTGnDXIsGqDkPmz4hI/RMvdcY4XYQ1xk1lfbQytLf/uk
-	WbYvieYu0JpZciBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cw4Kd4WO;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="Q0/1LwQh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761123808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zWrRoINCj3OqAfg5PTgsjqvXeRUN3tNurbDF1UsQ+SU=;
-	b=cw4Kd4WOzTalNHRC5kCf/r86pEI4ruZ6cuuR60Cib43IhlIP4H7IfPypaa8eJQIZ8mkj7s
-	pCoATgsHVMVqio6AfMa02cN26SSVNk33Ez6Vdo6DGluRbOzllUTn07g2yyZI/8u2q6Pq+5
-	vcb55DncI+TB00+jX03tL2ElOHnubaE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761123808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zWrRoINCj3OqAfg5PTgsjqvXeRUN3tNurbDF1UsQ+SU=;
-	b=Q0/1LwQhf1vXYMN24ZHHUpKVytdg28nYw9hc6n1N6ay6PKGXvIm/kT09I7fQl0fNvl4n4k
-	OmJeQTUwvheKYoDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA47013A29;
-	Wed, 22 Oct 2025 09:03:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XmdINd+d+GisbAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 22 Oct 2025 09:03:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 43473A0990; Wed, 22 Oct 2025 11:03:19 +0200 (CEST)
-Date: Wed, 22 Oct 2025 11:03:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v3 09/13] filelock: lift the ban on directory leases in
- generic_setlease
-Message-ID: <g7r2bffekbosexqbatj5mb7ljc5rn5rw3dwfehipsxdb6hewyp@heriwuhgh3zo>
-References: <20251021-dir-deleg-ro-v3-0-a08b1cde9f4c@kernel.org>
- <20251021-dir-deleg-ro-v3-9-a08b1cde9f4c@kernel.org>
+	s=arc-20240116; t=1761123874; c=relaxed/simple;
+	bh=tIrzq1M0NfFahPodWpDUzJIAJ7FZGd03VNxP1buffCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pOx/1O+QwUxv+fJA0McJRpdLALxtCNpifpetnU1QuL/05CqO6ZvUAHM5VaEba7HLQySn01iEJ2sM3FsRz/BQZZq/B3x6mOCaDwWvjiHk2ofhPJIZt7VKiKo0esfYtnqqrbaaLmteA3LzjXSzhn/PjQCkujhILcYu0euE3I4Hp4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BRsA2xdL; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 3032FC0B8B2;
+	Wed, 22 Oct 2025 09:04:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DAFC6606DC;
+	Wed, 22 Oct 2025 09:04:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EC1EC102F2424;
+	Wed, 22 Oct 2025 11:04:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761123869; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=TPfFMBERm5dyXammymO+1vkoeJ/PAmEMHoRiaPzuWiE=;
+	b=BRsA2xdLFHxr5wkHQuVgtmzHR8hGlOzwut65jYHV16OJttkXiYP9Mk+6cA+1JL391boUKl
+	Ytxx1L4Qyh4CFndUy+Q+09ce37oPbPs52IpJVVv53gBfBfBwns/hQFIWvdrg7OHIs3c0wy
+	Ben67npuuzn+dXIEpxJlGXWdgGhHYR5gm4pOeEXnYCO2nQQGJ55vixLTewyM2Wim+zS+sQ
+	0aEuNt3dDglk6GHWI8WzCd6C7LiPyNEqL1BM+DWWHFGjrYOn6gaNbaxk0n4V5UV9UR5jTM
+	HasfWNk9NScktaUVnu/3z4coRPzBUM+cjq1VU/RyVz7v5D6eqPbwFZ0opAgpjw==
+Date: Wed, 22 Oct 2025 11:04:24 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Douglas Anderson <dianders@chromium.org>, Maxime Ripard
+ <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Bajjuri Praneeth <praneeth@ti.com>, Louis
+ Chauvet <louis.chauvet@bootlin.com>, thomas.petazzoni@bootlin.com, Jyri
+ Sarha <jyri.sarha@iki.fi>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>
+Subject: Re: [PATCH] drm/tilcdc: Fix removal actions in case of failed probe
+Message-ID: <20251022110424.36a63ad3@kmaincent-XPS-13-7390>
+In-Reply-To: <20251022105840.5e1f06bf@kmaincent-XPS-13-7390>
+References: <20251014143229.559564-1-kory.maincent@bootlin.com>
+	<5269c71a-b439-46d3-acb4-590eee2406f4@ideasonboard.com>
+	<20251022105840.5e1f06bf@kmaincent-XPS-13-7390>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021-dir-deleg-ro-v3-9-a08b1cde9f4c@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E6A691F788
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[szeredi.hu,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,manguebit.org,microsoft.com,talpey.com,linuxfoundation.org,redhat.com,tyhicks.com,brown.name,chromium.org,google.com,davemloft.net,vger.kernel.org,lists.samba.org,lists.linux.dev];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLpnapcpkwxdkc5mopt1ezhhna)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email,suse.com:email]
-X-Spam-Score: -2.51
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue 21-10-25 11:25:44, Jeff Layton wrote:
-> With the addition of the try_break_lease calls in directory changing
-> operations, allow generic_setlease to hand them out. Write leases on
-> directories are never allowed however, so continue to reject them.
-> 
-> For now, there is no API for requesting delegations from userland, so
-> ensure that userland is prevented from acquiring a lease on a directory.
-> 
-> Reviewed-by: NeilBrown <neil@brown.name>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Wed, 22 Oct 2025 10:58:40 +0200
+Kory Maincent <kory.maincent@bootlin.com> wrote:
 
-Looks good. Feel free to add:
+> On Wed, 22 Oct 2025 10:05:47 +0300
+> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+>=20
+> > Hi,
+> >=20
+> > On 14/10/2025 17:32, Kory Maincent wrote: =20
+> > > From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
+> > >=20
+> > > The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() helpe=
+rs
+> > > should only be called when the device has been successfully registere=
+d.
+> > > Currently, these functions are called unconditionally in tilcdc_fini(=
+),
+> > > which causes warnings during probe deferral scenarios.
+> > >=20
+> > > [    7.972317] WARNING: CPU: 0 PID: 23 at
+> > > drivers/gpu/drm/drm_atomic_state_helper.c:175
+> > > drm_atomic_helper_crtc_duplicate_state+0x60/0x68 ... [    8.005820]
+> > > drm_atomic_helper_crtc_duplicate_state from
+> > > drm_atomic_get_crtc_state+0x68/0x108 [    8.005858]
+> > > drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0x1=
+c8 [
+> > >  8.005885]  drm_atomic_helper_disable_all from
+> > > drm_atomic_helper_shutdown+0x90/0x144 [    8.005911]
+> > > drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc] [
+> > > 8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [ti=
+lcdc]
+> > >=20
+> > > Fix this by moving both drm_kms_helper_poll_fini() and
+> > > drm_atomic_helper_shutdown() inside the priv->is_registered condition=
+al
+> > > block, ensuring they only execute after successful device registratio=
+n.
+> > >=20
+> > > Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at
+> > > shutdown/remove time for misc drivers") Signed-off-by: Kory Maincent
+> > > (TI.com) <kory.maincent@bootlin.com>   =20
+> >=20
+> > Should this be cc: stable? =20
+>=20
+> Indeed I think so.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Should I send a new version with the stable tag included?
 
-								Honza
-
-> ---
->  fs/locks.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 0b16921fb52e602ea2e0c3de39d9d772af98ba7d..b47552106769ec5a189babfe12518e34aa59c759 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1929,14 +1929,19 @@ static int generic_delete_lease(struct file *filp, void *owner)
->  int generic_setlease(struct file *filp, int arg, struct file_lease **flp,
->  			void **priv)
->  {
-> -	if (!S_ISREG(file_inode(filp)->i_mode))
-> +	struct inode *inode = file_inode(filp);
-> +
-> +	if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
->  		return -EINVAL;
->  
->  	switch (arg) {
->  	case F_UNLCK:
->  		return generic_delete_lease(filp, *priv);
-> -	case F_RDLCK:
->  	case F_WRLCK:
-> +		if (S_ISDIR(inode->i_mode))
-> +			return -EINVAL;
-> +		fallthrough;
-> +	case F_RDLCK:
->  		if (!(*flp)->fl_lmops->lm_break) {
->  			WARN_ON_ONCE(1);
->  			return -ENOLCK;
-> @@ -2065,6 +2070,9 @@ static int do_fcntl_add_lease(unsigned int fd, struct file *filp, int arg)
->   */
->  int fcntl_setlease(unsigned int fd, struct file *filp, int arg)
->  {
-> +	if (S_ISDIR(file_inode(filp)->i_mode))
-> +		return -EINVAL;
-> +
->  	if (arg == F_UNLCK)
->  		return vfs_setlease(filp, F_UNLCK, NULL, (void **)&filp);
->  	return do_fcntl_add_lease(fd, filp, arg);
-> 
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
