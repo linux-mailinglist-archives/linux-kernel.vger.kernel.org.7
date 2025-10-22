@@ -1,105 +1,130 @@
-Return-Path: <linux-kernel+bounces-864709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB11BFB640
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:23:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401C4BFB634
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E250C19C779F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:23:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6403F4FB33A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7E732AAA8;
-	Wed, 22 Oct 2025 10:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5894F3277B8;
+	Wed, 22 Oct 2025 10:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IvJHQBfv"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1Dr+lJ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74FC328625;
-	Wed, 22 Oct 2025 10:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD35E324B3A;
+	Wed, 22 Oct 2025 10:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128564; cv=none; b=gurHCb5zD+FcBUxgZtJ5mXK0OUyozt00nTKLNUM7d+AfUqho3NPNUugsqqIPTYhCW5sAJG51E5WzUgnV9+7ISvNFkvrP4vYhcZsnfTa1PT7HCicdPr5U0UDkh9CCYmRBnoXzvO2xBcwDwcFhdycXIKAysmlHVkFS3qpaGeM/4aM=
+	t=1761128561; cv=none; b=L/OSCOeavdWGMWDlEDibKtxQ6Wi0Y1ESyG0d1YSWFqB/YsM2yicPnsLngLCpeN8BD2N7JfMZkWtktV4YPcri0Zi1xF3HYpQTWV5m9Tv6hOw/gUMfphLGnzoGzCmH1w99iCxBDjr+IJp6bT8lbV6vl7xc+qYjChtKAo4jjXiM/UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128564; c=relaxed/simple;
-	bh=YxLHFykL3sVDstB6QqAhE2alQAOsXneyIHwU8PQ/9I4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=InBtjnMbC0zxiWRqZYDC5V0D1FKa7V31UCNXAfoaw3fxdh+8qr/mtma5XVpn9CcmkiO33q1dMOA0E//5tdCT1i+uBAlB3wEYXqe6gBtKs7pSqNDeNEWvFOpugVDDBbUk1kcBzqc4idOcK5kDLXyY4u/1y2B2pI7Mc42nJJJWbD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IvJHQBfv; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from isaac-ThinkPad-T16-Gen-2.infra.iob (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C0E1A178A;
-	Wed, 22 Oct 2025 12:20:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761128456;
-	bh=YxLHFykL3sVDstB6QqAhE2alQAOsXneyIHwU8PQ/9I4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IvJHQBfv/w/CGAJCH6/+bepYpYHaqLpWXCLP+k/jTb1hrZYqrwQhIvczOXGuwrKQq
-	 FabTU3iNazT54Cyyj6Kj7Zwn4qr/yzFmqoAgTDHJPNUbvbMn3014sZp3Strl6tMY8o
-	 rroe0T+M6A6MBZgxTCey+Ei24RzPyG/DZtIQpZi0=
-From: Isaac Scott <isaac.scott@ideasonboard.com>
-To: mchehab@kernel.org
-Cc: rmfrfs@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	martink@posteo.de,
-	kernel@puri.sm,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	sakari.ailus@linux.intel.com,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Frank.Li@nxp.com,
-	Isaac Scott <isaac.scott@ideasonboard.com>
-Subject: [PATCH v5 4/4] media: imx-mipi-csis: Support active data lanes differing from maximum
-Date: Wed, 22 Oct 2025 11:22:28 +0100
-Message-ID: <20251022102228.275627-5-isaac.scott@ideasonboard.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
-References: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
+	s=arc-20240116; t=1761128561; c=relaxed/simple;
+	bh=6AdCRUuNNCz6wSJ38vTty69zF0P+UjCkFsweE0IXYnA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oafufY1ACxMvRH3m05YckwKdsvdThu2sb1X3TMAWCMXrh6xB5BE/NLP8O3K2hIGp7zNUcr07zkMgFoCxvnnI9Vy5e5+rrM8b+i5VNWWsCAaD4eSoL4RYrXIM9le0/Yr8jvxd2fQHgrWNFHvahtJs0f6Tmye+KbVDtLkmUUbrPKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1Dr+lJ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F379DC4CEF5;
+	Wed, 22 Oct 2025 10:22:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761128561;
+	bh=6AdCRUuNNCz6wSJ38vTty69zF0P+UjCkFsweE0IXYnA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Q1Dr+lJ7vBVYUS3XgbZreqF4ZRbVcHTpEQX9hPSuKZpvS7LwhYeZXf6vrTXLe1SMi
+	 6Kx1vT6oK6UH/nrp39CW3QirffvrkhheptDffM61T9n8B4X0uARwv7BWBJ+s4F4d5+
+	 8VZN6f7wvT27Q0kkHgg7OIhJjeRwe1dnaK+AM75YfMM/g32TZdxiJdHmpzGIIemtDt
+	 Mj9oOzakKjuFWH8DopyDG/JcwmKyBHc1DNtSdJWG5yI/x3wW+Frll24pssh8xjV024
+	 E9EiZAW/kYLpd4C7E1VPSK6gQqBhL7pNrn9xAQ3aFTHRhxJzaybPZFWRNRx9B7a4uU
+	 TnrzvIsU8QuhA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
+  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
+  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
+  jasonmiu@google.com,  dmatlack@google.com,  skhawaja@google.com
+Subject: Re: [PATCH v3 1/3] liveupdate: kho: warn and fail on metadata or
+ preserved memory in scratch area
+In-Reply-To: <20251021000852.2924827-2-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Mon, 20 Oct 2025 20:08:50 -0400")
+References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
+	<20251021000852.2924827-2-pasha.tatashin@soleen.com>
+Date: Wed, 22 Oct 2025 12:22:37 +0200
+Message-ID: <mafs0v7k7fd76.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Call on v4l2_get_active_data_lanes() to check if the driver reports that
-the number of lanes actively used by the MIPI CSI transmitter differs to
-the maximum defined in device tree.
+On Mon, Oct 20 2025, Pasha Tatashin wrote:
 
-If the number of active data lanes reported by the driver is invalid, or
-the operation is not supported, fall back to the number of allowed data
-lanes.
+> It is invalid for KHO metadata or preserved memory regions to be located
+> within the KHO scratch area, as this area is overwritten when the next
+> kernel is loaded, and used early in boot by the next kernel. This can
+> lead to memory corruption.
+>
+> Adds checks to kho_preserve_* and KHO's internal metadata allocators
+> (xa_load_or_alloc, new_chunk) to verify that the physical address of the
+> memory does not overlap with any defined scratch region. If an overlap
+> is detected, the operation will fail and a WARN_ON is triggered. To
+> avoid performance overhead in production kernels, these checks are
+> enabled only when CONFIG_KEXEC_HANDOVER_DEBUG is selected.
+>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+[...]
+> @@ -133,26 +135,26 @@ static struct kho_out kho_out = {
+>  
+>  static void *xa_load_or_alloc(struct xarray *xa, unsigned long index, size_t sz)
+>  {
+> -	void *elm, *res;
+> +	void *res = xa_load(xa, index);
+>  
+> -	elm = xa_load(xa, index);
+> -	if (elm)
+> -		return elm;
+> +	if (res)
+> +		return res;
+> +
+> +	void *elm __free(kfree) = kzalloc(sz, GFP_KERNEL);
+>  
+> -	elm = kzalloc(sz, GFP_KERNEL);
+>  	if (!elm)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +	if (WARN_ON(kho_scratch_overlap(virt_to_phys(elm), sz)))
+> +		return ERR_PTR(-EINVAL);
+> +
+>  	res = xa_cmpxchg(xa, index, NULL, elm, GFP_KERNEL);
+>  	if (xa_is_err(res))
+> -		res = ERR_PTR(xa_err(res));
+> -
+> -	if (res) {
+> -		kfree(elm);
+> +		return ERR_PTR(xa_err(res));
+> +	else if (res)
+>  		return res;
+> -	}
+>  
+> -	return elm;
+> +	return no_free_ptr(elm);
 
-Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
----
- drivers/media/platform/nxp/imx-mipi-csis.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Super small nit: there exists return_ptr(p) which is a tiny bit neater
+IMO but certainly not worth doing a new revision over. So,
 
-diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-index 838a1ad123b5..637ef6e614fa 100644
---- a/drivers/media/platform/nxp/imx-mipi-csis.c
-+++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-@@ -1034,6 +1034,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
- 	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
- 	csis_fmt = find_csis_format(format->code);
- 
-+	ret = v4l2_get_active_data_lanes(csis->source.pad,
-+					 csis->bus.num_data_lanes);
-+	csis->num_data_lanes = ret < 0 ? csis->bus.num_data_lanes : ret;
-+
- 	ret = mipi_csis_calculate_params(csis, csis_fmt);
- 	if (ret < 0)
- 		goto err_unlock;
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+[...]
+
 -- 
-2.43.0
-
+Regards,
+Pratyush Yadav
 
