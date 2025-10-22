@@ -1,77 +1,96 @@
-Return-Path: <linux-kernel+bounces-864720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8835BBFB676
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:28:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4F1BFB67A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C38EE34E5DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7600E3A530C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3898432252E;
-	Wed, 22 Oct 2025 10:28:10 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F242F2603;
+	Wed, 22 Oct 2025 10:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Acn6sGlr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B626F350A3F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9C830506E;
+	Wed, 22 Oct 2025 10:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128889; cv=none; b=FC6Xh+1KL56YA/2j9xLcGNRGk+mDkNsyhJjtuOdKg4jH4vF7oLobUPCiDRspd6T1+Etn4Pfsicg0krruzdBydwHGOgU8/IlR6ulj3hJqNOG7DpWuT/RFhefO16A1Q5cyuw7BtDmlDGNPtr37TIpl3qtHiDkujq1tNtpfMyFx1pI=
+	t=1761128953; cv=none; b=ATf9rs36Xt301hSqtJhw32PNVM2+qJNuQOa/cA22IS/OfoIVLI5prEWyRNwGbQwaUC02/5xeYSj1y/TeEOWLXMJrjK9kj1X8M3sODjsVQyOsMYWSt5NM2twVt7Yg0uqmJbbrqmQ9K9EgNoA7v2QksBDhFjDlnjFAlFOCQbLWofU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128889; c=relaxed/simple;
-	bh=kdSRc2n+zbf34pa4XAwNzC2gPjF4Pjl/j6NHxK3mEDw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pJS4YOk8JTcy3LLVoCLvJ/M7/zaI0bSCR8VaiHvFCmfTrjnlEH1WSN3vIOqGl5lL7fi375Zsk39KMUmzenDoQXIVirAnFDFTiNEJxHk9u8di14RdE4RrzgBGOMP0Bm81eLMpwOUw8+lbErfNc7ENiVleVprtTCDpvBaeU6gefW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93e8d8d227bso1245898439f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:28:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761128885; x=1761733685;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kdSRc2n+zbf34pa4XAwNzC2gPjF4Pjl/j6NHxK3mEDw=;
-        b=pxDx4F9VFA0SyOj/jNuH5TA3dNM4Aw+eRNrBoVYtx21SgQchpFL1TBe93ryEPHPfuX
-         KjYu3DQXAKCu59atTo00nbeps327m9C8wiPeli9sS5GQFZxcvA4JilE1U5/afW9K6Hyh
-         OsnTmy4S4ku2aJvUDZyoJHWIzuzVkBC8qzgPqyseIRDsUUwMs3ny4MZtT0SXVjJZTtfE
-         jeocV8G6F3Fx7GBo2k6qdpZCctHpHNELHuiV6mB4lxIKEv/6gi2M+SiVFzh1wSxsppzY
-         Cj5rKjkF6IKTotIOCsfAQZsnOh5Em+JFxmUzgUMa72GrBfP7KVJ4/i6Cojq7XTDRK6hg
-         YLKQ==
-X-Gm-Message-State: AOJu0Yw/u+GDXKoxdRTQc1zcJSDt/q8VbEkkSyYgrtSxOIb18pcFs6k9
-	CuXLHw6+2Ua9eu78sC8KEG76Oe/16jBV3mRxOCnp7LMDu+wkYzCH+i4jOKR9xnSc3mXJx0xAzFL
-	W0hfrhCr5EqjziZ3jE6intUT4dUEgxJ631w77kUERGfh3VCgRuUrYSvhyMWU=
-X-Google-Smtp-Source: AGHT+IH0/Mxrrle46D2hwDplpOjOEMMtM5TyHvwn3ysiJSc30GrMowMq17b4G9AGgkHlCYJbWSkD+cPWwOyXrgHe+iIOZboT9wIL
+	s=arc-20240116; t=1761128953; c=relaxed/simple;
+	bh=NURwZ9+yoDJPFK+bG6us+8Lc8UGsuMt4jWZ4VLj4MhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdH0vCq4lY93n7koKrhC+bUKh93kh/XJ6KZ3MJEoY6oTyNoEGJrA38V/v1WogvqKcRRN8tKO8ooQPb4/S8LoODTwQ0fzYKGfXFbFopYNgG51m47YUGEidN4yhi2HoAVCS1/0JtMvlt2Ccflp6usQoT0oE0aHDvxuo/djYvgiYjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Acn6sGlr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2578C4CEFF;
+	Wed, 22 Oct 2025 10:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761128953;
+	bh=NURwZ9+yoDJPFK+bG6us+8Lc8UGsuMt4jWZ4VLj4MhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Acn6sGlrFx4aDqsht8e3eIlbnM+CWMlK4YjskhT+JRU413jhiLjnIcCm1T1t7UFrH
+	 kC22xRwb/0rmeWyKsq2dQikJLY+ZCexY/wTze67vIA3AI/FdG1MuoU2yuqmA5kwJFl
+	 3ZH8IiYTHHxyBWULyWevaUMqUZ2D3mdEJStsH/Vt4TyQbVOM3YkNMUObnR4rgBln8s
+	 p1YSY9GpEetDdB8BOCyar9EgDLRLkFx0LlNB2fvSv9yeD349TbFBOsVLWjb7kSY2aB
+	 Z7extq9dGcEEfA6zAVx6sOJN+Zr8+VvGLNZIRDKQ6MwZcLVAvqb4roJOtjI7yp/Dji
+	 JGbuP1or1eKyw==
+Date: Wed, 22 Oct 2025 11:29:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: add Mark Brown as a maintainer
+Message-ID: <82000d1b-480b-46a9-9ff2-787b18893784@sirena.org.uk>
+References: <20251022163625.5df7542a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c266:0:b0:430:a5e3:fd69 with SMTP id
- e9e14a558f8ab-430c523046emr320126515ab.12.1761128884873; Wed, 22 Oct 2025
- 03:28:04 -0700 (PDT)
-Date: Wed, 22 Oct 2025 03:28:04 -0700
-In-Reply-To: <66f86aaa.050a0220.4a974.000e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8b1b4.050a0220.346f24.003f.GAE@google.com>
-Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- 552c50713f273b494ac6c77052032a49bc9255e2
-From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TNAI/aWytIUdFQZo"
+Content-Disposition: inline
+In-Reply-To: <20251022163625.5df7542a@canb.auug.org.au>
+X-Cookie: Remember the... the... uhh.....
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
+--TNAI/aWytIUdFQZo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
-Author: dmantipov@yandex.ru
+On Wed, Oct 22, 2025 at 04:36:25PM +1100, Stephen Rothwell wrote:
+>=20
+> Mark has been kindly helping fill in when I have been unavailable over
+> the past several years.  Has has also put his hand up to take over
+> linux-next maintenance when I finally decide to stop (which may be some
+> time yet ;-) ).
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--TNAI/aWytIUdFQZo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj4se8ACgkQJNaLcl1U
+h9DbYQf/dHlU9odzrAyvJUCAznXK8EEauz8/iwP1Vzfm+qulle+UumK2wvQAM5HY
+N7DudraotnvWPwIcH435BXvjAb4PliUOmCCEH1JUg8LyxakQ9bb6Q1Dd5YNabALD
+ZlShEFV8GxLh5f3CFfYclg6PJdJN4lcNxT2T3O9MlbxXgauXP9Uo+E1Vq7+ZW7dc
+d7nzXlaLQ6LSHsgoa/PH5flJ4HLd5k3ikptOW2vTBVwYZzE3P9NlsKECWfOtbQpt
+y4IqcbLmjnzMLIMXbHLeTNNbBvECou/fQk4xwyqxjsodU2kAHx/D2kEFDs+j2Cpg
+mjk5gKtKUQj6iMf8v7xED2R+SHYoKQ==
+=Nv5d
+-----END PGP SIGNATURE-----
+
+--TNAI/aWytIUdFQZo--
 
