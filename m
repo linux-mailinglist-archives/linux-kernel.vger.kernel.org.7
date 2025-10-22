@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-863897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06776BF9707
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:15:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F31EBF9714
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C165D19A8281
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:16:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86ACD4E5B1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D46472631;
-	Wed, 22 Oct 2025 00:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF02D19F13F;
+	Wed, 22 Oct 2025 00:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="G3Bqj0g0"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEYxaRC6"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AB22AE89
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322527082A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761092144; cv=none; b=QlNXtKezY9XaC4hTl+SYXd7zifO6tQxr2q7jXXi3FtVWMbH1pK1efsx/XIR+GdSPvUq7rDUdtpl2GMojdlKn55dHQfI3xpjFV6o1PXx4B7x6bBwqieZVeTuiH+7soGVasr4EbODB1gsAD2xL8cnmJByR9yULl4keT0MZsHShUhc=
+	t=1761092323; cv=none; b=umX/e6fNvkFjSKZ8ElzpUqV3eUWGWcx0+FviTMYvtQTNl3JG0jVz0Kda/4MQUxtL/k5BjIySSMJFgIe8qL3i5BxG8zSkZgcONpqHnFMJ8fhhX14AnZnlZ91MBbiPva0dBZD0uFAvJ8J5OfGWiTQB7nqel6zoZoLEx0m2o+hZrtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761092144; c=relaxed/simple;
-	bh=QYMZVxBtPxYE6EZ33C1HyrkU93u+VGFDqSaut8Tc8WU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lah+h5lPhDwHdkNj4YIGa6Oyi/fdhnsV3BYJu0WNoNushJqkDjj22VOxn4PdCMdCCj8sArjQrc78pxxAqrKWb2vl5a/HGUjo5To++Nva0JLAotkAnsPFQkR6AySxNcLVhOWUEBMjEarHmluCj/3zXiBHeg/4AmZOVs6mfYUH65k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=G3Bqj0g0; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso10531856a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:15:42 -0700 (PDT)
+	s=arc-20240116; t=1761092323; c=relaxed/simple;
+	bh=e7zZqGzrVyuJ5QFyUVE7eGJWKcfl4COyVHk9MxNeNKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ppfo/mMTiTznZQZewWViep6jOjvUolBF+bsxZcNbwg/RpRcezztsIiETGY58tozqcc+qEJse7KmFNib+EvwCPjEPkuShAfAh7h6SwLbl4V3MNZmmHCs3VXv7TqPbOBc7dXl2BotAi4/VEGcSs6H3eSjh+mm10dT/04UXVxFEx3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LEYxaRC6; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-78356c816fdso68227407b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:18:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1761092141; x=1761696941; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lLtBMolvhxZ2nYZ7lKeFnDTLrdScVQzTUS7wwB8pSBo=;
-        b=G3Bqj0g0xeWEZUc5Zh8TZGPqunr0+nw/v+B/GQzXSSE3VnxL90ic5vKhcPSEKcWZAb
-         clhmQQJLDOj1LU2nE0RfCYy2T4w/SQ0VN2DwLPOodO2R9T8ghuiX4qLm3mXAk7UH6NpS
-         qKrnE9g3avFQEuGRqq4v4uQUTd1rhIStJsFpJKlY3EDWgiYMcIV0nsPW9UL3PZT7SX8e
-         GfDescpzt0BMIt2sZY48QG+KVWBcy32yJjBoPjBcHffNyAsOxV16iVLxkVq8X2tMVi5j
-         qA9M0o6uoWEZSme5FIzzn5U3/QDqCoSKqi5zEnCVlli6RoXuKBlaE28o1mOYxZXfGMSf
-         NutA==
+        d=gmail.com; s=20230601; t=1761092320; x=1761697120; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/VVHhrbKGyn2rHkoA+yo5pqhCOh1qQTtBCOhpEVSIKI=;
+        b=LEYxaRC6RrM323rjsaoom5Qmq/bAc2SaTJQX8GJ41fF9wS6dF+ydCMuObV/5vRa9eB
+         SYzYEkaIUsxJnYJGDOSck7f5EU9vx9otxlhq1x+6sXovUgcPoHhzkS1/sr+MeTTofOqm
+         kaqUIhe3CEayD/uRA/QRjxQKOf5/hfvNSSFokoiA062H/g1f6d4cgxhk8wQ2qHOqAWA1
+         eVHfFwRFvzlDceNZFLxCxEXtyF1o/6x4+magzUtAbYoQ1/0Hwm2zFzVNHt/0gaLM4WR/
+         +Bg6rdX7+JB7kTTKBRV1FQh/ebFcOfaNMgNs1sN5dVUKU0p7jMbVBrQMcaEqRjUmbe0p
+         fT4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761092141; x=1761696941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lLtBMolvhxZ2nYZ7lKeFnDTLrdScVQzTUS7wwB8pSBo=;
-        b=aUctWXx9Xs00/VSvRZ8iVLzVdhcUrcPEB+e9hVxkFwq6VfqBs5JnzDWGGt3j2ZewHi
-         aZqYnUIweiXueTFzgHytOsZbuViJYTg0RsA/EvOfn/Zo8MmCIiGphgLhqEwHWF1tKGKE
-         2etWmpwhqvyhTb1qaeuXi4v2z4YE4dJXaKoMdWo8EZO6FweHM2t1FEeUtqXdkjFus3fa
-         58FEOkA2ITMhdm+axca5Y600Bei/nhgo5yYOywJt1yJerTXg2wM2viu2IHuZL7mpU8D2
-         Y8x6DOhhcoYYEMI3XHdaZzYtkJ8OnpR6KWr9EV8kJVz9LLaOaR7Xq3apBFCsHVC5DocP
-         58Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUj4advg0GHyrhEe54VXgYPA1Pw7/UO/8ecT8UzmCLXkyF4DUlbJfathJJzYaG4k2xk2txv/fKNOx6cXC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3zTmhIow2sLMJqJaTvHke+xEcSOEKZkIYpwIlcwSWMsCaasaT
-	1da1KN8bw7PYc9Qu0g1xOXXPiSq1XzTo+PMh7f5V++oL0wdUy/6pVnXWZSJzzu4j5l8bBBfOkFA
-	8d0xPXZbUFo0cQKw1xWf3yDZgEtRCsarAJ/msdLt5Hg==
-X-Gm-Gg: ASbGncsbd29DEYRlRw3+VUIycUuxMB6CEh8z52KLapK4qRRmu9dsk5SzGarKyTnMw6r
-	P/HdROoPuyi6iNDn6axoncAQtQ6suV36ejqu2EZBY0RKW40JFVYOLXc4CgU/0t6Bjz3Ebva2HVD
-	uas1XcvVPj/32t7COs9pUToMSuMssuH0/xTUR0rSZzq+X1c/l76vboaKsHo66MBIySqhcDhMtoG
-	nf/u7tjVKfAFV7ykqwcnjDCKs03hIcb66KrqfScVU094M8Ypn7zA3cYVhvibnEHCilIQAu/qfFL
-	WRc=
-X-Google-Smtp-Source: AGHT+IGEuNUf1RCSQwHL6z3gwL7zUADiyfawv+wMX5M61bryfLVp3bld3mKFx8Y8DLsaMjtsAzBcptrVbG9BZA3Wnzk=
-X-Received: by 2002:a05:6402:d09:b0:633:7b1e:9aa3 with SMTP id
- 4fb4d7f45d1cf-63c1f6f6269mr18383154a12.34.1761092141269; Tue, 21 Oct 2025
- 17:15:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761092320; x=1761697120;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/VVHhrbKGyn2rHkoA+yo5pqhCOh1qQTtBCOhpEVSIKI=;
+        b=vDByU7NfGe8bfaCT8fZaQtD6xt/2pS3agF9d1odcGp6jvsD7nSMYMHHntzh+QvRGZ6
+         KOhoamQDXLYeaYqy6EP/0dSHOe9Mlegphslys1RQT/o7idFICWUde1fecsrKXvuCCj9H
+         +y5OvWbaBIp33KZeR8z9IlLsWYV1TewovHjH73sclKAREHU9y8JOU6UHi+KtQJNCiZHW
+         RcqA007dp7ssRUgNpC62Gp95e04Nj65k3JtGV4dp38AmG4SlIbiQk8AGqHaU4Cg8knzM
+         UqFMJPutYq8phTE5+njXrZTRq0XFHwwymEMULQEr+dSmopmoPvOu3GDBmTHvpo4Qy1Jd
+         sg5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXeHDsTV/8tKBpYpe/BGAtsIGVlMrTWyNwL+boRbrF44xz4DHMWf8GGoq81qePrNE6jElBcowkq8dc40wY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6tvPZQEQsJcP5Td5x0HBOoBZWrKek/NsFuVFcNwXiXH0JIWJB
+	vdAnTKmIo32pCInPeQ+t/0dJ0NhWccFnVSGqfA5qAmdcnDzOReS5WisL
+X-Gm-Gg: ASbGncttUVK/yF0dodreQOvNaybfh1SP0K20Qd2OJBDkGeavXAfO0pq7N4UN8lTEb/u
+	8uIXgTUUKtly0PmcUDwwHmDdjgQ9NLGvcR1znpUyFd+J+Lynzv2kZvHeZgsLqOLapLwd8MX9RNm
+	ugkwVsipqlagGsI7xLpTOIaKqRgBnHdgAcR6yL/k9UuQc3QaoIe6VPXt6CVKyjX98xQ578pmCCt
+	eLYtHdMVXGH4DboonecFkVjSIUpAoI2r/DKvNYWJ2q1kZfMcjOb9WWFbwatniPEFBEqi8sOt/20
+	pdZ3eYsW7rpZdxjrHdMPGPckS+l/D8FsqsBPIYAXlMVQHvasm0J3ftTlQzQTEPQhvdxICjSAct/
+	ePRVoABNqWV5bJYl5Yz9za4JUXHh5kNM4y7ki3YkdnA20lZzspuKKN5uQjgG+gabB9v/U47UBHR
+	8DCzoo/KAjkg6NM6VaH0mmCzLdzV/WxQeAEQ4cX/Qat0r8nps=
+X-Google-Smtp-Source: AGHT+IEqYiiuWqadmrSa+ocB1xo5kZsyd7pE12wgODlf319TseLh48deAbNiLMyHfUUvkPdfF1Gc1A==
+X-Received: by 2002:a05:690c:45c3:b0:783:7266:58ef with SMTP id 00721157ae682-7837266619dmr152519147b3.5.1761092320133;
+        Tue, 21 Oct 2025 17:18:40 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:59::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7846a6cc14bsm32765777b3.60.2025.10.21.17.18.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 17:18:39 -0700 (PDT)
+Date: Tue, 21 Oct 2025 17:18:38 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v7 08/26] selftests/vsock: improve logging in
+ vmtest.sh
+Message-ID: <aPgi3vSJGGfBovRf@devvm11784.nha0.facebook.com>
+References: <20251021-vsock-vmtest-v7-0-0661b7b6f081@meta.com>
+ <20251021-vsock-vmtest-v7-8-0661b7b6f081@meta.com>
+ <20251021170147.7c0d96b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
- <aPchmxfh4ACM0vY2@kernel.org> <CA+CK2bAHH1tzMEGxAwbmrLnLTzJANMntRu=cp0J8-n101ER7Pw@mail.gmail.com>
- <20251021135331.8e0185a173a5fa40add60802@linux-foundation.org>
-In-Reply-To: <20251021135331.8e0185a173a5fa40add60802@linux-foundation.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 21 Oct 2025 20:15:04 -0400
-X-Gm-Features: AS18NWDlyfI6cWth3r_g0r1Pr5LDh2e3c5ckbdEBRacQjSIvh3eM9w5sLU_efF0
-Message-ID: <CA+CK2bDPLAS7EM--stHkZkx8FSgYBjDOz6FdvWBYrdHwZpZZjw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] KHO: kfence + KHO memory corruption fix
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@kernel.org>, brauner@kernel.org, corbet@lwn.net, graf@amazon.com, 
-	jgg@ziepe.ca, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, masahiroy@kernel.org, ojeda@kernel.org, 
-	pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021170147.7c0d96b2@kernel.org>
 
-On Tue, Oct 21, 2025 at 4:53=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 21 Oct 2025 12:04:47 -0400 Pasha Tatashin <pasha.tatashin@soleen.=
-com> wrote:
->
-> > > With liveupdate: dropped from the subjects
-> >
-> > I noticed "liveupdate: " subject prefix left over only after sending
-> > these patches. Andrew, would you like me to resend them, or could you
-> > remove the prefix from these patches?
->
-> No problem.
->
-> What should we do about -stable kernels?
->
-> It doesn't seem worthwhile to backport a 3-patch series for a pretty
-> obscure bug.  Perhaps we could merge a patch which disables this
+On Tue, Oct 21, 2025 at 05:01:47PM -0700, Jakub Kicinski wrote:
+> On Tue, 21 Oct 2025 16:46:51 -0700 Bobby Eshleman wrote:
+> > Improve usability of logging functions. Remove the test name prefix from
+> > logging functions so that logging calls can be made deeper into the call
+> > stack without passing down the test name or setting some global. Teach
+> > log function to accept a LOG_PREFIX variable to avoid unnecessary
+> > argument shifting.
+> > 
+> > Remove log_setup() and instead use log_host(). The host/guest prefixes
+> > are useful to show whether a failure happened on the guest or host side,
+> > but "setup" doesn't really give additional useful information. Since all
+> > log_setup() calls happen on the host, lets just use log_host() instead.
+> 
+> And this cannot be posted separately / before the rest? I don't think
+> this series has to be 26 patches long.
+> 
+> I'm dropping this from PW, please try to obey the local customs :(
 
-We are using KHO and have had obscure crashes due to this memory
-corruption, with stacks all over the place. I would prefer this fix to
-be properly backported to stable so we can also automatically consume
-it once we switch to the upstream KHO. I do not think disabling kfence
-in the Google fleet to resolve this problem would work for us, so if
-it is not going to be part of stable, we would have to backport it
-manually anyway.
+Sorry about that, since these selftest changes were all part of one
+messier patch in the previous rev, I wasn't sure if the custom was to
+keep them in the original series or break them out into another series.
 
-Thanks,
-Pasha
-
-> combination in Kconfig, as a 6.18-rcX hotfix with a cc:stable.
->
-> Then for 6.19-rc1 we add this series and a fourth patch which undoes
-> that Kconfig change?
+I'll break them out and resend.
 
