@@ -1,143 +1,138 @@
-Return-Path: <linux-kernel+bounces-864112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63024BF9F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:29:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C40ABF9F13
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2FF3B015A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3833AAC8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E581FF7B3;
-	Wed, 22 Oct 2025 04:29:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBBE2C21D8;
+	Wed, 22 Oct 2025 04:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="lcY2ZKZY"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E0F1E5B68
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005CD26561E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761107345; cv=none; b=aMVS1oDho+ztF27FGfI41GdluRBDJAaz1u9/ZUu4SKceFCKJMDoHR6QF8TzIwUI7r3wnG6sX6gGGv1Gis7iiyiUpkyl92NooixM/stYfP/JcW+0/Uc0pI9ZfHQIR1NdXkcc2ECdKXT2dofr6zWQq/kCIRry7TlDpYzfsLy743uI=
+	t=1761107443; cv=none; b=a240HvXWtc8OPO5OCsbAI9aOYY3Rp7wQ7AMEtcNPWhohX6U57CyG2J68RNo2cfpTSWdnWGh3zy/iJ+wYbjfwTr3RrPJIRjLdH6dUi7ksCF01HcjKM/Sin0VDlSutg2r3qCyw1GM3dt3PYhbEKMBZKezb57wkd74E56hWvbSlttg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761107345; c=relaxed/simple;
-	bh=jEmkwEUsoYdoq45jpvQ5gwbOnltLBCljy1lwipao2a8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hN/r8UoSCAGgBee/BbrQqyK/L50YkoR0k1DmiX/Q3JH/mk8+DW4OBbnRPg1OD9xtS4CwUu6r+c7TXRz7VUgXOgc4N04nXej7EZ/puBJdKf2KzKcdCDFDVQuuKqXGUimO9NtjtdsCDQmwh7fphapHxb6Ak65PO2Vswzf7fgW6LAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430e1a4a129so40631125ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:29:03 -0700 (PDT)
+	s=arc-20240116; t=1761107443; c=relaxed/simple;
+	bh=c3lovmv+mOVMEJUmhqHzv3/fwYfbe0mJdOLie9Y75RI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rmvzuw6t3WpBFQg9aAtqqVTZzxoKKqFum1DqFRztArIhAr0n5AV541gBRQDnnmxFjcEhyJFh+OkDkP5jYUzRej12gMMsvpHcQkVe+JLZXawvst8EwtqHQvf4EEDjX5hbFdKNTYvQNM8USFHKlPDk83Fwrgi161vdXc84cG5bqxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=lcY2ZKZY; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32ec291a325so4602466a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761107440; x=1761712240; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nTcnGjhUhb8jKzTF6L7XczC6QFzv26Nhm3lCxckjhLU=;
+        b=lcY2ZKZYN4j/EJysODpllk71q4UmmdMO6IMQZefHOnIUxt0rEWAntmkPsPmuUCMUei
+         bPq321mpEnZKuqL7CrjqjAGkZN0OTsCjxVXmM8P9zCxVfjxTmay9hSjOGBZsDk6EirWw
+         iXETPY53s5o9Wutbl8i6osTl+TGXumXGQbVPgjq9GbGKJlQ0m5qV2pE0D+hzk+msSjh9
+         J5zu6xAjM/NCBVsVFgAx/7nM1IVWaaKkZAeNX1aeegpvjbOV0t8LSE9/PXgzfG/0lNHV
+         yGuz+CZYzLQdklTHql4M7lreKJJlIJpEtfCHIy2ECyowCSzNc7hfFlMlASOzUHGzKRK6
+         Nmkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761107343; x=1761712143;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1761107440; x=1761712240;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tDnRUPY27CcbvuQRF7H0Aai0NtnQM8sjDlN4wblAq3E=;
-        b=aUU7FlpIpZNv20+hXzWBgg3OcrlU00uXfb9Jmr1RTaQG7aZpd4eF8eMY4cM+qfg3gn
-         gk52zDxaU8XObHbRSjkXjSeo+sodxvzDajp+NO4JIMQbfCmbpQ/TzygfVgeM8z7CouUw
-         6zQmHVzTb30dHaBYAeHvDw8zScNAtsK/GewGV5Vp+4o1mQH9yQv3cPf44souJ1Qiga+t
-         F7zMB9Rz+LDwaUNV7AsKiZ8jn8PC/VpXpXbzMfqkj5HYRj9htaW1g5XxpTtcDvn4usZn
-         4YQoTHm8qWCppWfYHWhQCANlegLcJCZ2KXS16uwE/lYPB9VY6hZnyKSwCMIEz5IaEkXd
-         DjWw==
-X-Gm-Message-State: AOJu0YzvyXPptlz1O5kFzWlEzy3Z18Eb2ZOFOOrnu4SgwM6TMJGiY3A1
-	gsHbRsY2FxdnRgdZAQ+bo6yuEtxNWIxRrOaIhos2WZe1Pv2ZQr3llV6M/UCfPp6ijj52hEHcoH9
-	c2Yi+rhoAeqoPBJBj1i6TnvqoFTO8Znnamuc+y7LXPb88gFp5T4J7Xq2N/lY=
-X-Google-Smtp-Source: AGHT+IFqsPovTyQqNCbf6/qpIjvnmIuvQlqaBrXyh5jPFOoF7DQAmNHVzQiRUI0Rweke00hBlPyCiU+eiOq42mBU7RJX96f6scRh
+        bh=nTcnGjhUhb8jKzTF6L7XczC6QFzv26Nhm3lCxckjhLU=;
+        b=R31zl9HWanc/k/nciPMZ9Ubsn97mNkWV61nGBMRwSdmqpRiksYqpO8cllAXzQXnat2
+         qTkZ0OKf431fG43LiRdcUzyTwp4VxcbhzNnKc3rdspdDHLTloUbpgNEjJJes8px6UPiE
+         /x1mICRh9NKV6sRhkSzDuHQd6mwDWFoBtK9PuDfQQuqVwfAurgE65LbSUNxHPiUW1DJM
+         X26yMHiQiHZRHg1Ld5bPu4/AK6u1ZZNeWdZ8U3AUyn3uwcBU77LqebI9JbppiNTzwE2O
+         90lc0NOdC26e4swmTZmZUM37Tztteh8YVFUrOS6gs2lnPB5njvPspKZCl7CYsHcnIYH2
+         th1g==
+X-Gm-Message-State: AOJu0YzLvkgpjXBU5dIs4ClmE4W4F7nD3tOleN01BpaPME+SoDyco/Ns
+	DaA/hCmXRislMlZVhScqh/rtW9RDX25pG2pKtgIoDU70eoxeq4sqDl9KVKNVW1eS2y4=
+X-Gm-Gg: ASbGncumsh1hOerYRvJEqu+j259osrdohlaRGpTwy0ra4Vt1h023sHyYBVskRtJd40h
+	4jXbQcvl0myWcOJPxDiRBw47Wq8GTDc+7ZDcBbc4480Haa7ftVR1NfoNC8Nm+7o2ClQx+t26J6J
+	1OhDvHKATamnezC4ny7OPjnIY2xrJNhb4+qrgwpKThe2M/FsvBv/JkHiFw7JC0VabiUodxGQBRR
+	z42P+6J74QSlXQeDiOxnuYLOPUoUhpMV2oAHjq1oyKd8Ogek/1Ty0ww09g4+j5nI+3R7IZ0Rb1o
+	Od1rHrR2g56SBDaq8/ZTeWyL+e6DoPNusRVoJkGZ7+VJSKpnZ8WA0BTPXcm1dH+qe/jW+kUOuZw
+	8wHQHWW8ZbNBXdiYsxQjQHxupD6QpBFNUJ9kpnxKqqoRJlq0vn2NjZevNmYMM5O4I0DeL3eUHJG
+	g4bBrX0TDwQqZstEHrX99TGgU=
+X-Google-Smtp-Source: AGHT+IHCvLgZS4hGuZBkDCjjiv46qhxkjKqpH5V3aq6Xzke+jWUJSrYYnDrBe5cM1LQ8ndK7Tc07Cg==
+X-Received: by 2002:a17:90b:3fc4:b0:33b:b453:c8f0 with SMTP id 98e67ed59e1d1-33bcf8f9008mr23774051a91.25.1761107439935;
+        Tue, 21 Oct 2025 21:30:39 -0700 (PDT)
+Received: from [10.211.55.5] ([4.28.11.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223f11e1sm1236623a91.12.2025.10.21.21.30.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 21:30:39 -0700 (PDT)
+Message-ID: <965a6f1f-37de-4029-ba16-cfd2de7895ed@riscstar.com>
+Date: Tue, 21 Oct 2025 23:30:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3:b0:431:d093:758d with SMTP id
- e9e14a558f8ab-431d0937867mr51071975ab.22.1761107342906; Tue, 21 Oct 2025
- 21:29:02 -0700 (PDT)
-Date: Tue, 21 Oct 2025 21:29:02 -0700
-In-Reply-To: <upjjyn33ilectirauf64oi6xxes7esatropyat6jtah7m5bupj@oeg67dns7bt6>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f85d8e.a70a0220.3bf6c6.000f.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
-From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, listout@listout.xyz, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mfd: simple-mfd-i2c: remove select I2C_K1
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+ Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, kernel test robot <lkp@intel.com>
+References: <20251022-p1-kconfig-fix-v1-1-c142d51e1b08@linux.spacemit.com>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20251022-p1-kconfig-fix-v1-1-c142d51e1b08@linux.spacemit.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/21/25 8:58 PM, Troy Mitchell wrote:
+> select will force a symbol to a specific value without considering
+> its dependencies. As a result, the i2c-k1 driver will fail to build
+> when OF or COMMON_CLK are disabled.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in cfg80211_classify8021d
+Should config I2C_K1 depend on COMMON_CLK then?
 
-RBP: 00007f2e3fe11f91 R08: 00002000000001c0 R09: 0000000000000014
-R10: 0000000000000040 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f2e3ffe6038 R14: 00007f2e3ffe5fa0 R15: 00007fff6dff3448
- </TASK>
----[ end trace 0000000000000000 ]---
-=====================================================
-BUG: KMSAN: uninit-value in cfg80211_classify8021d+0xc2f/0x1580 net/wireless/util.c:1035
- cfg80211_classify8021d+0xc2f/0x1580 net/wireless/util.c:1035
- ieee80211_select_queue+0x37a/0x9e0 net/mac80211/wme.c:180
- __ieee80211_subif_start_xmit+0x60f/0x1d90 net/mac80211/tx.c:4304
- ieee80211_subif_start_xmit+0xa8/0x6d0 net/mac80211/tx.c:4538
- __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
- netdev_start_xmit include/linux/netdevice.h:5257 [inline]
- xmit_one net/core/dev.c:3845 [inline]
- dev_hard_start_xmit+0x22f/0xa30 net/core/dev.c:3861
- __dev_queue_xmit+0x3c51/0x5e60 net/core/dev.c:4763
- dev_queue_xmit include/linux/netdevice.h:3365 [inline]
- packet_xmit+0x8f/0x710 net/packet/af_packet.c:275
- packet_snd net/packet/af_packet.c:3076 [inline]
- packet_sendmsg+0x9173/0xa2a0 net/packet/af_packet.c:3108
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x333/0x3d0 net/socket.c:742
- __sys_sendto+0x593/0x720 net/socket.c:2244
- __do_sys_sendto net/socket.c:2251 [inline]
- __se_sys_sendto net/socket.c:2247 [inline]
- __x64_sys_sendto+0x130/0x200 net/socket.c:2247
- x64_sys_call+0x3924/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+But you're right, the selecting config should ensure the
+dependencies of the selected one are satisfied.
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4969 [inline]
- slab_alloc_node mm/slub.c:5272 [inline]
- kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
- kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
- __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
- alloc_skb include/linux/skbuff.h:1383 [inline]
- alloc_skb_with_frags+0xc5/0xa60 net/core/skbuff.c:6671
- sock_alloc_send_pskb+0xacc/0xc60 net/core/sock.c:2965
- packet_alloc_skb net/packet/af_packet.c:2926 [inline]
- packet_snd net/packet/af_packet.c:3019 [inline]
- packet_sendmsg+0x743d/0xa2a0 net/packet/af_packet.c:3108
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x333/0x3d0 net/socket.c:742
- __sys_sendto+0x593/0x720 net/socket.c:2244
- __do_sys_sendto net/socket.c:2251 [inline]
- __se_sys_sendto net/socket.c:2247 [inline]
- __x64_sys_sendto+0x130/0x200 net/socket.c:2247
- x64_sys_call+0x3924/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> The reason for removing I2C_K1 instead of adding a depends on condition
+> is to keep the possibility for other SoCs to use this PMIC.
 
-CPU: 1 UID: 0 PID: 6494 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT(none) 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-=====================================================
+Acked-by: Alex Elder <elder@riscstar.com>
 
-
-Tested on:
-
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=101e8d2f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
-dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1328d734580000
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202510211523.sSEVqPUQ-lkp@intel.com/
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> ---
+>   drivers/mfd/Kconfig | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6cec1858947bf7ab5ee78beb730c95dabcb43a98..ea367c7e97f116d7585411fff5ba6bcd36882524 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1258,7 +1258,6 @@ config MFD_SPACEMIT_P1
+>   	tristate "SpacemiT P1 PMIC"
+>   	depends on ARCH_SPACEMIT || COMPILE_TEST
+>   	depends on I2C
+> -	select I2C_K1
+>   	select MFD_SIMPLE_MFD_I2C
+>   	help
+>   	  This option supports the I2C-based SpacemiT P1 PMIC, which
+> 
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251021-p1-kconfig-fix-6d2b59d03b8f
+> 
+> Best regards,
 
 
