@@ -1,104 +1,115 @@
-Return-Path: <linux-kernel+bounces-864530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769F0BFAFE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:54:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E39BFB003
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84971585245
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC233A3029
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5E830CDB7;
-	Wed, 22 Oct 2025 08:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B0130EF9D;
+	Wed, 22 Oct 2025 08:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qLcz8g00"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="1KaWRcOO"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBB320B7E1;
-	Wed, 22 Oct 2025 08:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19787309EF4;
+	Wed, 22 Oct 2025 08:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123288; cv=none; b=CJvkMwmjOT/wLk7aJ0agqSzQvY9K/Ynl47lE5OcObrhuIIwfQ+kH9NJ+NeBk+Iyhi2Lx1eg5x+THw/rRf29ehRXStmE2VWZj+5OhgJ8BEYQLMCElqLArNcG5uo2SNS/lMgY+Pgjd41M4obGDGKtO+lOV+hGk1VYR4tS9wZ6udwY=
+	t=1761123323; cv=none; b=DE2jc0Y23A9eMJjvIUWhJiGKNQh2O+gKwqGgrDXnSpj0CaPnhOsTY9NC4/kAPJvB0sM0wIT5CKoVXg5eUpEqEg3v2yosS88edzRlP//2QBrFqfQqpQx32se1LDtLcA5hywYRo5+RXioDixK9y/boTXK4jIqZxSi2Dz1lqFRhHAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123288; c=relaxed/simple;
-	bh=R3jzD6CzBSxf1gumv5ZW163Wkyn/4GrrIV6HRnjDdNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ExydYOmlcroZi6h4E6dgrckP/FCGXL/tf/Su2MLqi+G9SY6JXzQuEilZ50VKiMLHveBnkkojZSCjWajppzqed8rSv617DdfSQpWLqcX3WXX76ujmpUA+j6TRvHE/bVfLFsU9lgzWaYZ/sItBgiNZ5ASAHGXWOltR6Cst3J4jCvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qLcz8g00; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1761123323; c=relaxed/simple;
+	bh=LxySeUIScT7NWfE61hz2tNtsBcPsmPf5b4Rc3nNLoQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EH5JX/n7V5EJEV3B1f1zwtro4A1FSMQlhUQfnIpwZ5u+wqvkCj1IpX9Chdh856NWZ58KdN3G1UNbkvrFk+dIjc0du2ikFMw321Wly4g4Kc5THegz5vf8/CKU5St1eSvmHx4sMNcgRv08Twg2ZT8S1f9bugGoPMopdsyAIODPMZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=1KaWRcOO; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=ekrlHcjYC4m+Xa92FKOsdA1s49hcSWsjk1pkcgl5E+k=; b=qLcz8g00L1gzbpYWiRi/cu4S1p
-	usSj8RVOMmWMZgf4y2wbCSdJhgMsMX1N73GTCjukUVhY6b6sJmzuCtQ1q+PdvNK2j3jJ6gkdxrXUD
-	4PHLPPkxikg13WgqYYIy2yii8vwE3DtXYc4GizGh4pptGBzuuvGcRzWz5L7vzyBJ7fmkLphcp5BbH
-	xSkrzJDZOfLNWaEG0/5MoKNxcgKLDjb1T2lO9Stgd1pGTOTVWKWWdvpLFwblsY4hSIqhZzbD9aJyk
-	dReYdVT2/Rwq3bgM4jL0y6MXDSts9kssqRURqwMz67+sQuXFCprDicW1aGK+k9N6jTXdsc1bSXx/Q
-	kK4o/EYg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBUcE-000000029rJ-20Q7;
-	Wed, 22 Oct 2025 08:54:42 +0000
-Date: Wed, 22 Oct 2025 01:54:42 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>, intel-xe@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Matthew Brost <matthew.brost@intel.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	dri-devel@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Lukasz Laguna <lukasz.laguna@intel.com>
-Subject: Re: [PATCH v2 26/26] vfio/xe: Add vendor-specific vfio_pci driver
- for Intel graphics
-Message-ID: <aPib0tHn1yK9qx2x@infradead.org>
-References: <20251021224133.577765-1-michal.winiarski@intel.com>
- <20251021224133.577765-27-michal.winiarski@intel.com>
- <aPiDwUn-D2_oyx2T@infradead.org>
- <ilv4dmjtei7llmoamwdjb3eb32rowzg6lwpjhdtilouoi6hyop@xnpkhbezzbcv>
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=oHvZB4NwUXXPrGHOyAB04zW2NhfaHBxub/V9ezZt/vs=; b=1KaWRcOOBm9ve1gG5wAFhu0uPP
+	eXKaMPZ9KidhNXk+56C1MtoDgyLaPTyyf1EqOnaJPyvE/R7MDzBQdQTd1i0Wj/7tZhCbZK2ougha4
+	VSomg2cEoGiS/Rn684+DUoup0rsT9jFcano4bsvDdjGAcJDYu8k+Zr0SEcwIpDShsuHoPB4YZUvtp
+	Fw+7vgvNso+J8ZrKhU6w2/4hiU4RARWR5R0KwzHviggxcEgRla82xLaY1DVGfAuecMDdi2/tkWZ10
+	13ShfYCZRx6qoanodjflVQh+Fp8ANTBlpSD3Rg4chji6KZPANDomZnIDKUbVwhqq2M0LDslLBDqHU
+	XmohzhDw==;
+Date: Wed, 22 Oct 2025 10:55:16 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dmitry
+ Torokhov <dmitry.torokhov@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Kevin Hilman <khilman@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-omap@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: twl: enable power button also for
+ twl603x
+Message-ID: <20251022105516.2ffea183@kemnade.info>
+In-Reply-To: <7702e4f6-4913-4d9e-bbc4-1fb849507e4c@kernel.org>
+References: <20251020-twl6030-button-v1-0-93e4644ac974@kernel.org>
+	<20251020-twl6030-button-v1-1-93e4644ac974@kernel.org>
+	<5fd43d2c-3a08-4a51-abb6-38883ee86bf2@kernel.org>
+	<20251021104515.5e25bec1@kemnade.info>
+	<beabb9f7-fcf4-4c1d-a259-6c48e82fbcf5@kernel.org>
+	<20251021183624.6fde0a15@kemnade.info>
+	<7702e4f6-4913-4d9e-bbc4-1fb849507e4c@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ilv4dmjtei7llmoamwdjb3eb32rowzg6lwpjhdtilouoi6hyop@xnpkhbezzbcv>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 10:52:34AM +0200, Michał Winiarski wrote:
-> On Wed, Oct 22, 2025 at 12:12:01AM -0700, Christoph Hellwig wrote:
-> > There is absolutely nothing vendor-specific here, it is a device variant
-> > driver.  In fact in Linux basically nothing is ever vendor specific,
-> > because vendor is not a concept that does matter in any practical sense
-> > except for tiny details like the vendor ID as one of the IDs to match
-> > on in device probing.
-> > 
-> > I have no idea why people keep trying to inject this term again and
-> > again.
+On Tue, 21 Oct 2025 19:18:25 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+> On 21/10/2025 18:36, Andreas Kemnade wrote:
+> > On Tue, 21 Oct 2025 11:58:49 +0200
+> > Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >   
+> >> On 21/10/2025 10:45, Andreas Kemnade wrote:  
+> >>> On Tue, 21 Oct 2025 09:10:28 +0200
+> >>> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >>>     
+> >>>> On 20/10/2025 14:31, akemnade@kernel.org wrote:    
+> >>>>> From: Andreas Kemnade <andreas@kemnade.info>
+> >>>>>
+> >>>>> TWL603x has also a power button, so add the corresponding subnode.      
+> >>>>
+> >>>> No, we don't add subnodes just because there is a power button. This
+> >>>> needs broader explanation, see also my further comment.
+> >>>>    
+> >>> Hmm, what is the general pattern to follow if a mfd device has some
+> >>> functionality which depends on some optional external components?    
+> >>
+> >> Please describe it better - how these nodes depend on external
+> >> component? The power button logic/IC is in this device always. It is not
+> >> optional.
+> >>  
+> > The power button logic is always there, yes, but it depends on an optional
+> > actual mechanical button connected to a pad of this device, which is
+> > not always there. The logic will not work if I just put my finger on the PMIC,
+> > but it will work if there is a mechanical button which I can press connected to
+> > the PMIC.  
 > 
-> Hi,
 > 
-> The reasoning was that in this case we're matching vendor ID + class
-> combination to match all Intel GPUs, and not just selected device ID,
-> but I get your point.
+> Hm... how do you represent this logic now? By adding status=disabled to
+> the pwrbutton node?
+> 
+Yes, or by simply not adding tho pwrbutton node at all. Well, if we break
+the legacy pattern here, we can probably add a property for this.
 
-Which sounds like a really bad idea.  Is this going to work on i810
-devices?  Or the odd parts povervr based parts?
 
+Regards,
+Andreas
 
