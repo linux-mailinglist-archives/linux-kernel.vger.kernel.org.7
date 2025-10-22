@@ -1,172 +1,183 @@
-Return-Path: <linux-kernel+bounces-864362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288C4BFA9FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:41:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7C3BFA9D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6F0567D0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:40:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 008374F4078
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA442FD7B1;
-	Wed, 22 Oct 2025 07:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF3D2FD667;
+	Wed, 22 Oct 2025 07:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M5W3DVxt"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KukVtGGW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="veJQOarc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RBDxyTiE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QYPrHAhn"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECC22FD1BC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244792FBE1F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761118727; cv=none; b=sNkUFCE/Yfhpjn0yIrG0ufKboVQiX934lLRS1exw71vsUOOourUyDQmPYJ+0q3E+Z8al8esQBqPiyav99ZXVYhajshqIWleXv5bPDQpS0vUxuaH3yLaHk4hVKxprBqWBFDHx7EvKLzb/rgArVFqgFRM8E+PK8Agd9qA1HA4iDDY=
+	t=1761118725; cv=none; b=VCiIbA5JsQb6ClFaU+hJqsWu0Ef6WP2XInQORM9vfh6m38xVg2DrEPvX4IuaI79KaNrtK0xanS5RsxVAIKWahcpes93HlERuZEy7JdWzOz71Jgl9RDVKiVoTCOZRMi3g1Z4Ja67WD9ZcdjZ6LikU5g/rVMrELnm7K/EY+DLnS9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761118727; c=relaxed/simple;
-	bh=1ZeIIsp8tJcHFQgz2Xfvqz7CZIB2p2BXgkSO/2IVTog=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ixkTR3sa7Dj5sWPZpVPu11O+zFuE3GHhfLrtNBj4Hw+ZS7tqBqpdy2MpPkSnO71gOgxV+rY5YYVv01yTYFdOwmtSjwI3MrQvm7jmUSRrCS23SPQg1nXunIl+tz/W2XqWa9chPljqBcUQ6jZsqbLQfvf68nGtQP/7Nd5zxX9H4/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M5W3DVxt; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C830C4E41276;
-	Wed, 22 Oct 2025 07:38:43 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9F65D606DC;
-	Wed, 22 Oct 2025 07:38:43 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2841E102F242A;
-	Wed, 22 Oct 2025 09:38:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761118722; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZZVaF5BoYgXRmfee23HnDH9NWUBGz7WnOPiHHT4qsbo=;
-	b=M5W3DVxtTPW4ls9GZh6bRhB2ZbmMT71AAQO4/IdCCAKp6t+hq2RgM2GkQ1vYqFQSX7uxH5
-	Rg8WZoepgg1vQAWIaXMoeHeFkkRjcIk+EVUnlNyVhsY+4lUnnSsdBjLo17vXU6Rf4jJzZl
-	t/oiIBtTEPx16xIo6pQwudCoYgEDeyz9ymdriOcXXQjx9MDqBWswcRH5/4ufnAMujXuI3S
-	YLtdF5wSGf4GK6M5DbuzWc6CdwKESykkLre3ktSGgBhLpC/ktYr49aCVHHJt8lbPTWYZJX
-	DOoygNMoAPyNBC4FTFryRBOcJBCBxD0XOuHrFPtgk+IEmymMupbxyqMT3n/IBQ==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 22 Oct 2025 09:38:14 +0200
-Subject: [PATCH net-next v2 5/5] net: macb: Add "mobileye,eyeq5-gem"
- compatible
+	s=arc-20240116; t=1761118725; c=relaxed/simple;
+	bh=K960BDuQHcE/jBjNcwfUBPgxb8pUqAI9A3XKJlwc+js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NWeagon+mJW+WO2q33i9qWm//lxA9MjGHiVCxQiAPfLO3iLHyhCIpMKwj9WDqaPmAp7QKVh9EUl3xCrTe1FNOgY7IuzkjgLC58n+b65WeeTkQY0EmXREhbJx8FUkvSomk8bqCy1A9Wc2hPD0mu4D6HSTi8RqiLJXgBzLKtmewjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KukVtGGW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=veJQOarc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RBDxyTiE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QYPrHAhn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 399731F391;
+	Wed, 22 Oct 2025 07:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761118717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
+	b=KukVtGGWqSuem/LJklYW0q+zc5HKvfxVuJPkcHLDHZx8D7vROffVpcP73HtODiay68RRay
+	QN8gAZIdga1NdvQUAg3k1InyPvsKc8O7qNSsf4EgjVJ16tMsksmsvaU2nwQFvt7Qgs1Awz
+	hTNqcp+LKLH6PpY5Cijtjh1i7w05Wyg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761118717;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
+	b=veJQOarcKigKf26sRa6IuzSsBqRioFdBls/D4dmszIC6X38QE3qFdg7IZiEegurQGVUvZ9
+	Yc7a8PLBih3CcJCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RBDxyTiE;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QYPrHAhn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761118713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
+	b=RBDxyTiEJNM7tQqrsbbtjGRrg2f1678Z4QNrLli+dxOSiPMBbJgnOL8ogYjvPpA6JvLqqD
+	yK8Ix6a2uHQgo2neTu596fnX7CxdF645RlJCn2YJFFp6LQAr5Asv4zyQYAE+nCLOxOLnoN
+	d4pY55cHObJe9y2OsWBtn4s8B+V6D10=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761118713;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
+	b=QYPrHAhnO5Xk2QgbkFCm383lUU/0V5g5zF/efIyre3pCxn7kENc2pz342o23/KhxzU8tTe
+	4Xg11GUsOf/GhqDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6651F1339F;
+	Wed, 22 Oct 2025 07:38:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7gOsFfiJ+GiKHAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 22 Oct 2025 07:38:32 +0000
+Date: Wed, 22 Oct 2025 08:38:30 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kiryl Shutsemau <kirill@shutemov.name>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <2dyj6zrxbd2wjnor2wswis5p5z7brtfgzjnhbexhjsd3kqnvx2@y6i2wnvr6gdr>
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <zuzs6ucmgxujim4fb67tw5izp3w2t5k6dzk2ktntqyuwjva73d@tqgwkk6stpgz>
+ <CAHk-=wgw8oZwA6k8rVuzczkZUP26P2MAtFmM4k8TqdtfDr9eTg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251022-macb-eyeq5-v2-5-7c140abb0581@bootlin.com>
-References: <20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com>
-In-Reply-To: <20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Russell King <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgw8oZwA6k8rVuzczkZUP26P2MAtFmM4k8TqdtfDr9eTg@mail.gmail.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 399731F391
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MISSING_XM_UA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.01
 
-Add support for the two GEM instances inside Mobileye EyeQ5 SoCs, using
-compatible "mobileye,eyeq5-gem". With it, add a custom init sequence
-that must grab a generic PHY and initialise it.
+On Tue, Oct 21, 2025 at 09:13:28PM -1000, Linus Torvalds wrote:
+> On Tue, 21 Oct 2025 at 21:08, Pedro Falcato <pfalcato@suse.de> wrote:
+> >
+> > I think we may still have a problematic (rare, possibly theoretical) race here where:
+> >
+> >    T0                                           T1                                              T3
+> > filemap_read_fast_rcu()    |                                                    |
+> >   folio = xas_load(&xas);  |                                                    |
+> >   /* ... */                |  /* truncate or reclaim frees folio, bumps delete  |
+> >                            |     seq */                                         |       folio_alloc() from e.g secretmem
+> >                            |                                                    |       set_direct_map_invalid_noflush(!!)
+> > memcpy_from_file_folio()   |                                                    |
+> >
+> > We may have to use copy_from_kernel_nofault() here? Or is something else stopping this from happening?
+> 
+> Explain how the sequence count doesn't catch this?
+> 
+> We read the sequence count before we do the xas_load(), and we verify
+> it after we've done the memcpy_from_folio.
+> 
+> The whole *point* is that the copy itself is not race-free. That's
+> *why* we do the sequence count.
+> 
+> And only after the sequence count has been verified do we then copy
+> the result to user space.
+> 
+> So the "maybe this buffer content is garbage" happens, but it only
+> happens in the temporary kernel on-stack buffer, not visibly to the
+> user.
 
-We use bp->phy in both RGMII and SGMII cases. Tell our mode by adding a
-phy_set_mode_ext() during macb_open(), before phy_power_on(). We are
-the first users of bp->phy that use it in non-SGMII cases.
+The problem isn't that the contents might be garbage, but that the direct map
+may be swept from under us, as we don't have a reference to the folio. So the
+folio can be transparently freed under us (as designed), but some user can
+call fun stuff like set_direct_map_invalid_noflush() and we're not handling
+any "oopsie we faulted reading the folio" here. The sequence count doesn't
+help here, because we, uhh, faulted. Does this make sense?
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- drivers/net/ethernet/cadence/macb_main.c | 38 ++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 914677f30f2c..c45c6a7f42e6 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -2963,6 +2963,10 @@ static int macb_open(struct net_device *dev)
- 
- 	macb_init_hw(bp);
- 
-+	err = phy_set_mode_ext(bp->phy, PHY_MODE_ETHERNET, bp->phy_interface);
-+	if (err)
-+		goto reset_hw;
-+
- 	err = phy_power_on(bp->phy);
- 	if (err)
- 		goto reset_hw;
-@@ -5187,6 +5191,28 @@ static int init_reset_optional(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int eyeq5_init(struct platform_device *pdev)
-+{
-+	struct net_device *netdev = platform_get_drvdata(pdev);
-+	struct macb *bp = netdev_priv(netdev);
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	bp->phy = devm_phy_get(dev, NULL);
-+	if (IS_ERR(bp->phy))
-+		return dev_err_probe(dev, PTR_ERR(bp->phy),
-+				     "failed to get PHY\n");
-+
-+	ret = phy_init(bp->phy);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to init PHY\n");
-+
-+	ret = macb_init(pdev);
-+	if (ret)
-+		phy_exit(bp->phy);
-+	return ret;
-+}
-+
- static const struct macb_usrio_config sama7g5_usrio = {
- 	.mii = 0,
- 	.rmii = 1,
-@@ -5341,6 +5367,17 @@ static const struct macb_config versal_config = {
- 	.usrio = &macb_default_usrio,
- };
- 
-+static const struct macb_config eyeq5_config = {
-+	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_JUMBO |
-+		MACB_CAPS_GEM_HAS_PTP | MACB_CAPS_QUEUE_DISABLE |
-+		MACB_CAPS_NO_LSO,
-+	.dma_burst_length = 16,
-+	.clk_init = macb_clk_init,
-+	.init = eyeq5_init,
-+	.jumbo_max_len = 10240,
-+	.usrio = &macb_default_usrio,
-+};
-+
- static const struct macb_config raspberrypi_rp1_config = {
- 	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_CLK_HW_CHG |
- 		MACB_CAPS_JUMBO |
-@@ -5372,6 +5409,7 @@ static const struct of_device_id macb_dt_ids[] = {
- 	{ .compatible = "microchip,mpfs-macb", .data = &mpfs_config },
- 	{ .compatible = "microchip,sama7g5-gem", .data = &sama7g5_gem_config },
- 	{ .compatible = "microchip,sama7g5-emac", .data = &sama7g5_emac_config },
-+	{ .compatible = "mobileye,eyeq5-gem", .data = &eyeq5_config },
- 	{ .compatible = "raspberrypi,rp1-gem", .data = &raspberrypi_rp1_config },
- 	{ .compatible = "xlnx,zynqmp-gem", .data = &zynqmp_config},
- 	{ .compatible = "xlnx,zynq-gem", .data = &zynq_config },
+TL;DR I don't think it's safe to touch the direct map of folios we don't own
+without the seatbelt of a copy_from_kernel_nofault or so.
 
 -- 
-2.51.1
-
+Pedro
 
