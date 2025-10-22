@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-864540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B043BFB062
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:00:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539CABFB06F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C6C14EC4D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:00:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F3A65354C02
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDD63101D3;
-	Wed, 22 Oct 2025 09:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1099E30EF88;
+	Wed, 22 Oct 2025 09:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fEMx8uIM"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ptYYMjmX"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19259305042
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CAA274659
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123614; cv=none; b=YInkXKbGDxG8Him/vBneW3b7Jwig+3r6hx5yu2gQFMnXXxkDyBbH5WzKTYKbaP1VYwc8u1cqIAoNNKnBeqUG4ijqgYuQmvbhrF2Vi6VLRBf1uaxu7r1JO4UTVFIXcYcLxoDavpaP1dAZ4LPIxIATTw+iEqmyIu3w6g91nTAla/I=
+	t=1761123651; cv=none; b=VgfoSl1uwdQC/ataPBpHBKb1ed0SK+d8PU+/Ya4J9NjabGrz3wg2Qa4CmqIgbOr1pA0elB6iMqJtMWBXNFEEVSxwnD9iten8RmIKH7jqeN3u3a25VMN4ADqHQm39ufxHkR8LOEKw1jbQNoh4wY88TlvDJgAVVD6vmdniIln+VQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123614; c=relaxed/simple;
-	bh=nyHMc68wsGGwLDug/tIHbcAo1CB08oUJBliYMKzONHI=;
+	s=arc-20240116; t=1761123651; c=relaxed/simple;
+	bh=xM0mRvnCnxrq8qrBayle8Vn8kADKts0PdydU+a9IdEE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4upUcWG0ZrY63FOcQHCa046RbeQcnW4WbzSslqq51l9svCEhZSSaHqoXb8ZyQF4ifxISPhkpDQbL9F3gFp064g2c8d2bZlcmW1ZmOnS7p2qDnRuUAAlzNn1dnaUVKYCLesZQBlU4H2vWlR0Ea0I5Pc2IKKALakB/YSjtydywUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fEMx8uIM; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=nyHM
-	c68wsGGwLDug/tIHbcAo1CB08oUJBliYMKzONHI=; b=fEMx8uIMpiTZEBIeYB0c
-	l1qs0tu979S2+e8KbLdfW/ZPdfDPVMB8eEN7nRFvKoLDGlF6yXgZe3Bf6qRGSMA2
-	fkObS2ScDsi4o8S28nWeWfngH0q11zXv9KESrbImb1ZOAkXEhTaEHdCIL1G7NQWu
-	F47fpfnTlS9GmOVp+E/T0AiLNyiEbdGjd42NBxk3M38YeGaBa+OvHsoyypQQhk8r
-	ShJL25QJgg+wcFt7FP9LgzgVbkk5KuR89Q6KNL24b6lxg8udf781U/gHReMgqFG9
-	nEwSQfjjB/D2qTy8MHPWx02OQwMhvf5VihIUne6i1fINmtgrCdR85B8VjftOvBFt
-	ag==
-Received: (qmail 1759633 invoked from network); 22 Oct 2025 11:00:10 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Oct 2025 11:00:10 +0200
-X-UD-Smtp-Session: l3s3148p1@Jfowi7tBLBJtKPGR
-Date: Wed, 22 Oct 2025 11:00:09 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 0/8] gpio: renesas: Add support for GPIO and related
- interrupts in RZ/N1 SoC
-Message-ID: <aPidGU_4NattHKKG@shikoro>
-References: <20251020080648.13452-1-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kX0z0O7SomWTt50flSDIJONwuLrGiFIrgsXdTKDf5WVouXasZGwgVi6MBiuviHWq4oGORXHNnsDuY8RJyv4r/NRbgu6HG5eFk1apnRUeFPTKpz1PW8PdYD+Y75jgRSCQEIa0BeS6U5KhWVxG0FZ0rMKnfD/P9gALvfvVSCLJQQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ptYYMjmX; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761123640; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=dvsliT5+X3hg8ePEtHv+3tm4bcT3hp4UnhYiD7EpFVE=;
+	b=ptYYMjmXPKgBxtiRR2FcLDpyqH9vrXHcgtbt1X7WQX6o7Il+lK8Ihxw19T9TZKyQjDrdAfLG6RbYanSruc2QGXOPNzIwQ3d8uV+2ZF/84aywpv1gTSW5ffjyeiI2WhA416fp1N/Cpf9yf2s3OKInlVa2YIEGljvf/Nzb+vW0EKA=
+Received: from localhost(mailfrom:peng_wang@linux.alibaba.com fp:SMTPD_---0WqmHuQH_1761123638 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 22 Oct 2025 17:00:39 +0800
+Date: Wed, 22 Oct 2025 17:00:38 +0800
+From: Peng Wang <peng_wang@linux.alibaba.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, vdavydov.dev@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Clear ->h_load_next after hierarchical load
+Message-ID: <20251022090038.GA88368@j38d01266.eu95sqa>
+Reply-To: Peng Wang <peng_wang@linux.alibaba.com>
+References: <bc08fcd528bad11311cd25de37962eb1ce0e7879.1760530739.git.peng_wang@linux.alibaba.com>
+ <20251015124422.GD3419281@noisy.programming.kicks-ass.net>
+ <CAKfTPtD-RJoMEHSQToF_578KZ=WszR+xStxNghiWpv4asnHBoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0AwDRnA12mcMm4ja"
+Content-Type: text/plain; charset=gb2312
 Content-Disposition: inline
-In-Reply-To: <20251020080648.13452-1-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKfTPtD-RJoMEHSQToF_578KZ=WszR+xStxNghiWpv4asnHBoA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
+On Wed, Oct 15, 2025 at 03:14:37PM +0200, Vincent Guittot wrote:
+> On Wed, 15 Oct 2025 at 14:44, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Wed, Oct 15, 2025 at 08:19:50PM +0800, Peng Wang wrote:
+> >
+> > > We found that the task_group corresponding to the problematic se
+> > > is not in the parent task_group¡¯s children list, indicating that
+> > > h_load_next points to an invalid address. Consider the following
+> > > cgroup and task hierarchy:
+> > >
+> > >          A
+> > >         / \
+> > >        /   \
+> > >       B     E
+> > >      / \    |
+> > >     /   \   t2
+> > >    C     D
+> > >    |     |
+> > >    t0    t1
+> > >
+> > > Here follows a timing sequence that may be responsible for triggering
+> > > the problem:
+> > >
+> > > CPU X                   CPU Y                   CPU Z
+> > > wakeup t0
+> > > set list A->B->C
+> > > traverse A->B->C
+> > > t0 exits
+> > > destroy C
+> > >                         wakeup t2
+> > >                         set list A->E           wakeup t1
+> > >                                                 set list A->B->D
+> > >                         traverse A->B->C
+> > >                         panic
+> > >
+> > > CPU Z sets ->h_load_next list to A->B->D, but due to arm64 weaker memory
+> > > ordering, Y may observe A->B before it sees B->D, then in this time window,
+> > > it can traverse A->B->C and reach an invalid se.
+> >
+> > Hmm, I rather think we should ensure update_cfs_rq_h_load() is
+> > serialized against unregister_fair_sched_group().
+> 
+> The bug has been reported for v5.10 which probably don't have fixed
+> done "recently"
+> commit b027789e5e50 ("sched/fair: Prevent dead task groups from
+> regaining cfs_rq's")
 
---0AwDRnA12mcMm4ja
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi, Vincent and Peter,
 
-On Mon, Oct 20, 2025 at 10:06:36AM +0200, Herve Codina (Schneider Electric) wrote:
+We have already integrated this commit, but the bug persists.
 
-> This series adds support for GPIO and GPIO IRQ mux available in the
-> RZ/N1 SoCs.
+Do you think we should explicitly clear the h_load_next list?
 
-I definitely want to review and test this series. But I can do this on
-Friday earliest, more likely next Monday.
+Even though update_cfs_rq_h_load runs under an RCU lock, ARM's
+weak memory ordering could still allow readers to observe stale
+values in the list.
 
-
---0AwDRnA12mcMm4ja
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmj4nRkACgkQFA3kzBSg
-KbYW0g/+NG2O5U/YAwoYvkAQdUeheX+WSMqYJFXS8N+FL8/cnvU1sNI1CB6M250P
-dEvvUKicMpNX4+KQ6Kf1ofQ0h6e4nbNRtwLTP8Ztqh7u8ZpNsn96lcRiw7p3Mc7V
-VzeIMAY5kPugu251q6iale3EX2OQiSQmezybDxftGZeHc/PmjhJyllbi9QStbgLB
-f/IVKO2HS9g2jhC+rzRhfpuO7/fpWMkY2fiF5pQPHO7BbO2AhhwkeXaPEqS/OXwl
-FPaYyFyrWLrBIngRLO93xQsqePENC02T1AwY3u5/D2e3XQHhR2hQ04rqvdFydTzN
-A8ogtE/yh8AI191TDAkqcCZFtUhdkIg/1F2u7o4m9jCvkQTo1KZX2oS1OMuvoql+
-xQzCZVxMdYJ4y0uiPmCf7J65E5A9S8JpSMjr5zs4F/fTe2cqoAVJe5YGLKUytDtp
-aBBS0iO30iE+PYZEfvLr7Ola872oevzZJ9xaY2dhDV9FQZxYquza+axVddsaV6nu
-2+VneRPvqr0BPGhFbCN0BGZO0oHy4kH7FlKp0v0ie5PVZuOjrIvQXo/4ZTbJvRM4
-2KnxdS/z4ERRoStCST1gKFGfoKE/EZWAZdfnGdMQqUb1+1UDvpe7pI/8CJR7vWmS
-zFOAhsj1sZZUrENfCCgJGR5I1+rTiXSCer2rFajCN3sa9nrs/sU=
-=3GeV
------END PGP SIGNATURE-----
-
---0AwDRnA12mcMm4ja--
+> 
+> >
+> > And I'm thinking that really shouldn't be hard; note how
+> > sched_unregister_group() already has an RCU grace period. So all we need
+> > to ensure is that task_h_load() is called in a context that stops RCU
+> > grace periods (rcu_read_lock(), preempt_disable(), local_irq_disable(),
+> > local_bh_disable()).
+> >
+> > A very quick scan makes me think at the very least the usage in
+> >
+> >   task_numa_migrate()
+> >     task_numa_find_cpu()
+> >       task_h_load()
+> >
+> > fails here; probably more.
 
