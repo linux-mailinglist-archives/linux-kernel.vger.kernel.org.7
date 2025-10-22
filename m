@@ -1,138 +1,179 @@
-Return-Path: <linux-kernel+bounces-864113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C40ABF9F13
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:30:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3614BF9F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3833AAC8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:30:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A11C5353FD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBBE2C21D8;
-	Wed, 22 Oct 2025 04:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B082D6E43;
+	Wed, 22 Oct 2025 04:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="lcY2ZKZY"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="Qmka0NpI"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005CD26561E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643E81E492A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761107443; cv=none; b=a240HvXWtc8OPO5OCsbAI9aOYY3Rp7wQ7AMEtcNPWhohX6U57CyG2J68RNo2cfpTSWdnWGh3zy/iJ+wYbjfwTr3RrPJIRjLdH6dUi7ksCF01HcjKM/Sin0VDlSutg2r3qCyw1GM3dt3PYhbEKMBZKezb57wkd74E56hWvbSlttg=
+	t=1761107481; cv=none; b=ek41K84MaYBM9veMnAoG6lRYjgT3xdaqMfYjxFjXTGnlU1rQeHxWNM0pLZwo/wpwsdoCoEKYrUUh+goO/7FnqDFGeUcC+tR6iWRjPizrJTQebJ6v4zER1vXmwCuYEdZb1poH96syDt7cPNmhNKw60Y/yrEzUthgPpispi1SSaZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761107443; c=relaxed/simple;
-	bh=c3lovmv+mOVMEJUmhqHzv3/fwYfbe0mJdOLie9Y75RI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rmvzuw6t3WpBFQg9aAtqqVTZzxoKKqFum1DqFRztArIhAr0n5AV541gBRQDnnmxFjcEhyJFh+OkDkP5jYUzRej12gMMsvpHcQkVe+JLZXawvst8EwtqHQvf4EEDjX5hbFdKNTYvQNM8USFHKlPDk83Fwrgi161vdXc84cG5bqxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=lcY2ZKZY; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32ec291a325so4602466a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:30:40 -0700 (PDT)
+	s=arc-20240116; t=1761107481; c=relaxed/simple;
+	bh=aF9X/USAXc7qJxOd6+H5SsC0CuGg8nY892TtxEL+zRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tJ7zR4FMjL8QR9NErXkqZto7ZtsP5j+4dQc9dZ7UlRjyBO5lYcDnHRnzCXxqF08fuLqK4rFSaNFnbmLbi42EnIkFQxpzRjm3quDy3YKvaIDKj+4PZgO0ZUfnZXCQh9K20n3EWBueb+CxxDY9ctBzy8pPaN8B/iOSGbQV+uSPrRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=Qmka0NpI; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-292fd52d527so9664105ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:31:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761107440; x=1761712240; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nTcnGjhUhb8jKzTF6L7XczC6QFzv26Nhm3lCxckjhLU=;
-        b=lcY2ZKZYN4j/EJysODpllk71q4UmmdMO6IMQZefHOnIUxt0rEWAntmkPsPmuUCMUei
-         bPq321mpEnZKuqL7CrjqjAGkZN0OTsCjxVXmM8P9zCxVfjxTmay9hSjOGBZsDk6EirWw
-         iXETPY53s5o9Wutbl8i6osTl+TGXumXGQbVPgjq9GbGKJlQ0m5qV2pE0D+hzk+msSjh9
-         J5zu6xAjM/NCBVsVFgAx/7nM1IVWaaKkZAeNX1aeegpvjbOV0t8LSE9/PXgzfG/0lNHV
-         yGuz+CZYzLQdklTHql4M7lreKJJlIJpEtfCHIy2ECyowCSzNc7hfFlMlASOzUHGzKRK6
-         Nmkg==
+        d=ssn.edu.in; s=ssn; t=1761107476; x=1761712276; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9f3uvbf2qrrt/ziC3rimn8Y/fAQpzGjeRz5deOCQI/U=;
+        b=Qmka0NpI1URT7mhySqWYrcROD/IQj+OdjUBusXVqq5hK4jZmsWZNwtk2OG6W2kn0H9
+         pCfaa0fTUJje61/C4WMTWmJOo3zDohMxHnf05+iXoWHjnIVpAhGU9a34jw//SP19mpgW
+         nsrxQxgJ0h+ZLTmwgKr7koC4KqqRuzMpZ2vTw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761107440; x=1761712240;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nTcnGjhUhb8jKzTF6L7XczC6QFzv26Nhm3lCxckjhLU=;
-        b=R31zl9HWanc/k/nciPMZ9Ubsn97mNkWV61nGBMRwSdmqpRiksYqpO8cllAXzQXnat2
-         qTkZ0OKf431fG43LiRdcUzyTwp4VxcbhzNnKc3rdspdDHLTloUbpgNEjJJes8px6UPiE
-         /x1mICRh9NKV6sRhkSzDuHQd6mwDWFoBtK9PuDfQQuqVwfAurgE65LbSUNxHPiUW1DJM
-         X26yMHiQiHZRHg1Ld5bPu4/AK6u1ZZNeWdZ8U3AUyn3uwcBU77LqebI9JbppiNTzwE2O
-         90lc0NOdC26e4swmTZmZUM37Tztteh8YVFUrOS6gs2lnPB5njvPspKZCl7CYsHcnIYH2
-         th1g==
-X-Gm-Message-State: AOJu0YzLvkgpjXBU5dIs4ClmE4W4F7nD3tOleN01BpaPME+SoDyco/Ns
-	DaA/hCmXRislMlZVhScqh/rtW9RDX25pG2pKtgIoDU70eoxeq4sqDl9KVKNVW1eS2y4=
-X-Gm-Gg: ASbGncumsh1hOerYRvJEqu+j259osrdohlaRGpTwy0ra4Vt1h023sHyYBVskRtJd40h
-	4jXbQcvl0myWcOJPxDiRBw47Wq8GTDc+7ZDcBbc4480Haa7ftVR1NfoNC8Nm+7o2ClQx+t26J6J
-	1OhDvHKATamnezC4ny7OPjnIY2xrJNhb4+qrgwpKThe2M/FsvBv/JkHiFw7JC0VabiUodxGQBRR
-	z42P+6J74QSlXQeDiOxnuYLOPUoUhpMV2oAHjq1oyKd8Ogek/1Ty0ww09g4+j5nI+3R7IZ0Rb1o
-	Od1rHrR2g56SBDaq8/ZTeWyL+e6DoPNusRVoJkGZ7+VJSKpnZ8WA0BTPXcm1dH+qe/jW+kUOuZw
-	8wHQHWW8ZbNBXdiYsxQjQHxupD6QpBFNUJ9kpnxKqqoRJlq0vn2NjZevNmYMM5O4I0DeL3eUHJG
-	g4bBrX0TDwQqZstEHrX99TGgU=
-X-Google-Smtp-Source: AGHT+IHCvLgZS4hGuZBkDCjjiv46qhxkjKqpH5V3aq6Xzke+jWUJSrYYnDrBe5cM1LQ8ndK7Tc07Cg==
-X-Received: by 2002:a17:90b:3fc4:b0:33b:b453:c8f0 with SMTP id 98e67ed59e1d1-33bcf8f9008mr23774051a91.25.1761107439935;
-        Tue, 21 Oct 2025 21:30:39 -0700 (PDT)
-Received: from [10.211.55.5] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223f11e1sm1236623a91.12.2025.10.21.21.30.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 21:30:39 -0700 (PDT)
-Message-ID: <965a6f1f-37de-4029-ba16-cfd2de7895ed@riscstar.com>
-Date: Tue, 21 Oct 2025 23:30:37 -0500
+        d=1e100.net; s=20230601; t=1761107476; x=1761712276;
+        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9f3uvbf2qrrt/ziC3rimn8Y/fAQpzGjeRz5deOCQI/U=;
+        b=jpt0G8jz41sq4ez1+JYcVEEMNYbhFdNJWpHXXSZ6AUjdpxMR9jKXbgxtb8OoUV1kf+
+         1m9NxRLfjdqjyXaWg02v8YRPqE/F8U5B0ay4yJX7+YX13ksXu43oAjsm7G0vnq1DxYdX
+         pi+dOxpqxxDEeEBCwX+OX7lspQLe09f8HtTR32ANdfBGtnV218/LuJZbCXTdQNf5FXFG
+         uYDN74iN9AA8uM6AftDam11qXZD/PGjvNZNqiwCYcyQa9zf/vcWidXBAN2EVr1Tfshid
+         T5yOhjpLHrIrnTOz3JuAmkzw46/hSroKbBhj0DEe4Q+rpDppIl3kyBHyRWNEp465+i1i
+         gF2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV/QFSJlc4NsRmPAmvQoJAsIAPWk1n48+iXULRMMR81bavmo4R3mWzMLbyBQEx0AeKi84l0DkAqyHTFdkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyMHaAYEviODE74GGKayS1vlTRyElTU3Wmo1YHDp1FKpkMYfsM
+	eixzV3cu27hMWKTAHzfqDojRHwL8gygOMfJhgRW+XAvG4o7HNKfJfn2//L/+3V4TRD4SM5ZMgqn
+	RqMro2/jUw+viE9R4jxWdmWLI/4OGFKXK6F/mxF5LrmxYke1NSloYdei5
+X-Gm-Gg: ASbGncuIl7xbf/Q9vkbh8bsUMGSCt6a9lvwuWXxnaVLq7/ijsLpEiljYZdrEh/m6+f5
+	hATz0Vnabeg+2gTZd/X1Bnr3t+PltnMEkW7kojnWaKcuUapQmit9+wcgJQFG0q0hPQy3l6QMiIs
+	jBFhfo7V9AKHkiMy0WxO2RXdLw3qmrPUz1UVJK2c1z16URcElD1wkMirZ9t3eqPB5q5DapDBvVf
+	tAjmvqmu4AgUyAwTi0ifCaRtEEzvInUdmQR1izbTqJLhe50vGg26dmLVgkeCR+cHBP8q446IxEs
+	MxC3od1roAtg7ZeEBLxAF+EhAhqGoZi1TzpyaBxXuFA+uYHBaLsU916ZJP/qhiEJ6lzJSmRptH4
+	6FIBTDl9okhO3lKaBJwlJWqHXNqYnww1QWs4oIDfsjsIviua3CCtztO1BzI8eL17ecIKdj1nSe3
+	v4Ybrdxr+Br5RZVuTXQ3ySmlh4p8qlaVS4ii3i8anUX589ICMNp96HNIt41sahD8ms1S6xEGoZ9
+	9iKvXq4m95nrjg=
+X-Google-Smtp-Source: AGHT+IEd+bNYS6vl4w16DgOMSV/S7pPkiZN6xIuC+GDZaXXvAtfmV3zwE5YULJyf3rlJMlDMMOTqoQ==
+X-Received: by 2002:a17:902:ce0e:b0:273:c463:7b2c with SMTP id d9443c01a7336-290c9c89680mr216879095ad.3.1761107476259;
+        Tue, 21 Oct 2025 21:31:16 -0700 (PDT)
+Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:33f3:2f80:d146:31b0:93aa])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-293113c1f4fsm2240455ad.116.2025.10.21.21.31.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 21:31:15 -0700 (PDT)
+From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+To: sumit.semwal@linaro.org
+Cc: christian.koenig@amd.com,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org,
+	lkp@intel.com,
+	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Subject: [PATCH v2] Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Date: Wed, 22 Oct 2025 10:01:07 +0530
+Message-ID: <20251022043108.7197-1-biancaa2210329@ssn.edu.in>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: simple-mfd-i2c: remove select I2C_K1
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
- Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, kernel test robot <lkp@intel.com>
-References: <20251022-p1-kconfig-fix-v1-1-c142d51e1b08@linux.spacemit.com>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20251022-p1-kconfig-fix-v1-1-c142d51e1b08@linux.spacemit.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="US-ASCII"
 
-On 10/21/25 8:58 PM, Troy Mitchell wrote:
-> select will force a symbol to a specific value without considering
-> its dependencies. As a result, the i2c-k1 driver will fail to build
-> when OF or COMMON_CLK are disabled.
+dma-buf: improve dma_buf_show_fdinfo output
 
-Should config I2C_K1 depend on COMMON_CLK then?
+Improve the readability of /proc/<pid>/fdinfo output for DMA-BUF by
+including file flags and ensuring consistent format specifiers for size
+and other fields.
 
-But you're right, the selecting config should ensure the
-dependencies of the selected one are satisfied.
+This patch also fixes incorrect format specifiers and removes references
+to obsolete struct members (num_attachments and num_mappings) that no
+longer exist in the DMA-BUF framework.
 
-> The reason for removing I2C_K1 instead of adding a depends on condition
-> is to keep the possibility for other SoCs to use this PMIC.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510220802.svbgdYsJ-lkp@intel.com/
+---
+ drivers/dma-buf/dma-buf.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-Acked-by: Alex Elder <elder@riscstar.com>
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 1c0035601c4f..4541f8ec5d62 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -571,24 +571,22 @@ static long dma_buf_ioctl(struct file *file,
+ 	}
+ }
+ 
+-static void dma_buf_show_fdinfo(struct seq_file *s, struct file *f)
++static void dma_buf_show_fdinfo(struct seq_file *s, struct file *file)
+ {
+-    struct dma_buf *dmabuf = f->private_data;
++	struct dma_buf *dmabuf;
+ 
+-    if (!dmabuf)
+-        return;
++	dmabuf = file->private_data;
++	if (!dmabuf)
++		return;
+ 
+-    seq_printf(s, "flags:\t%lu\n", f->f_flags);
+-    seq_printf(s, "size:\t%llu\n", dmabuf->size);
+-    seq_printf(s, "count:\t%ld\n", file_count(dmabuf->file) - 1);
+-    seq_printf(s, "attachments:\t%d\n", atomic_read(&dmabuf->num_attachments));
+-    seq_printf(s, "mappings:\t%d\n", atomic_read(&dmabuf->num_mappings));
+-    seq_printf(s, "exp_name:\t%s\n", dmabuf->exp_name ? dmabuf->exp_name : "N/A");
++	seq_printf(s, "size:\t%zu\n", dmabuf->size);
++	seq_printf(s, "count:\t%ld\n", file_count(dmabuf->file) - 1);
++	seq_printf(s, "exp_name:\t%s\n", dmabuf->exp_name ? dmabuf->exp_name : "N/A");
+ 
+-    spin_lock(&dmabuf->name_lock);
+-    if (dmabuf->name)
+-        seq_printf(s, "name:\t%s\n", dmabuf->name);
+-    spin_unlock(&dmabuf->name_lock);
++	spin_lock(&dmabuf->name_lock);
++	if (dmabuf->name)
++		seq_printf(s, "name:\t%s\n", dmabuf->name);
++	spin_unlock(&dmabuf->name_lock);
+ }
+ 
+ 
+-- 
+2.43.0
 
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510211523.sSEVqPUQ-lkp@intel.com/
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->   drivers/mfd/Kconfig | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6cec1858947bf7ab5ee78beb730c95dabcb43a98..ea367c7e97f116d7585411fff5ba6bcd36882524 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1258,7 +1258,6 @@ config MFD_SPACEMIT_P1
->   	tristate "SpacemiT P1 PMIC"
->   	depends on ARCH_SPACEMIT || COMPILE_TEST
->   	depends on I2C
-> -	select I2C_K1
->   	select MFD_SIMPLE_MFD_I2C
->   	help
->   	  This option supports the I2C-based SpacemiT P1 PMIC, which
-> 
-> ---
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20251021-p1-kconfig-fix-6d2b59d03b8f
-> 
-> Best regards,
 
+-- 
+::DISCLAIMER::
+
+---------------------------------------------------------------------
+The 
+contents of this e-mail and any attachment(s) are confidential and
+intended 
+for the named recipient(s) only. Views or opinions, if any,
+presented in 
+this email are solely those of the author and may not
+necessarily reflect 
+the views or opinions of SSN Institutions (SSN) or its
+affiliates. Any form 
+of reproduction, dissemination, copying, disclosure,
+modification, 
+distribution and / or publication of this message without the
+prior written 
+consent of authorized representative of SSN is strictly
+prohibited. If you 
+have received this email in error please delete it and
+notify the sender 
+immediately.
+---------------------------------------------------------------------
+Header of this mail should have a valid DKIM signature for the domain 
+ssn.edu.in <http://www.ssn.edu.in/>
 
