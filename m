@@ -1,131 +1,221 @@
-Return-Path: <linux-kernel+bounces-865169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A064EBFC586
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:47 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6CEBFC589
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4CA8434EBBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:00:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7E1334EF5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1F73491EE;
-	Wed, 22 Oct 2025 14:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9F834B196;
+	Wed, 22 Oct 2025 14:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="g+UZKXX8"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UFs2IzEY"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6257432A3E5;
-	Wed, 22 Oct 2025 14:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8785734AB00
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141640; cv=none; b=CWJluwCYh8+cjw/X3SghN/AGV9AaRCCJCY5PP9k8eFmycyr6cio0ivSoWiUn8g9u6ZHc5kIvg1Me9u3wybBhaDG9mCYCQx9jp3buR+jKZvMkLTfdNXrG4qKyi3QjHarZzH0iNymW+WNgvcQnIVVtylhM3dtPqDe8N/nsSQt0vkI=
+	t=1761141644; cv=none; b=NmMfjBhdYdjvzzQwAhCTe4845b7l5vgqOQtZ5dMYNlbnpQHXD1UDTpzEfCBmwXpQ/gBF5vFJwrAos2/qgMa/+SoMoy8ZJ+1YSq8CAmDWa8E0Gr2eQ22n/5YEUl8vmwYUeqs+5zcJ0rr6p0ttX7I2TL4tMDdKPz9EvlCWwwwQsLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141640; c=relaxed/simple;
-	bh=zIIiNf2cHEfC9zcHd0O6OLmQhc1t9tun7LtoZJYeZag=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dEvXQqqblx4lib/Pf4+kxjwqFD7AZZGKzlsPZWqMuA5iPD2remif/3IIg87Q6LXykVLBjEnGe+6ONX2+sLQby2jnooSwOqJFFj9hcBU/BwlVATDxBCxFif4C1kGThL1Z0lFWvSK08P0Rpc7ady3+LowiPppXRjysIvbXZ0pb2II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=g+UZKXX8; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=tP
-	Xou8UozitAgzTiw07XxRNgqZCXX5BLf3Rz2g1evkQ=; b=g+UZKXX8RkjGACabyr
-	sOxVO1kWnaY5BR3PLC7k/y1Xo9eJYx/8EH7IsgS9hP8IXLtJHMjfM/j/wyXL2R9q
-	+6mjOdX1gpDvbzF05VKqNhpV2YXFlBz1RSga+bcHiznOmcx0j4gkNwM7v/ZP7fxG
-	379OokX3y6jzDG+N5o9qqWwjg=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAHjfRg4_ho4VIZCA--.7951S2;
-	Wed, 22 Oct 2025 22:00:01 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: tj@kernel.org
-Cc: gregkh@linuxfoundation.org,
-	hch@infradead.org,
-	jackzxcui1989@163.com,
-	jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] serial: 8250_dma: add parameter to queue work on specific cpu
-Date: Wed, 22 Oct 2025 21:59:59 +0800
-Message-Id: <20251022135959.127893-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aPfV6IXPk-j59AhQ@slm.duckdns.org>
-References: <aPfV6IXPk-j59AhQ@slm.duckdns.org>
+	s=arc-20240116; t=1761141644; c=relaxed/simple;
+	bh=zOPxlm/0EYVQxFC7IMu+gn/aku8ed9bw1wifjimq8ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hG6XVE5zMZOcY7Sex7L4DIwY3gFBCkXV3SYGAor2w6C68EKQYeEjpmD3CU9PPUFBXk2LUf7alHGKMfSdS/9jcvR2FDOM8nraTTZ+SpZxvr0/ScP3jbVHixbPArpTQwWKmGfWwA2IOny1qbNl9mGkfwfGn96F1s8zjFmzGM2xKjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UFs2IzEY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761141640;
+	bh=zOPxlm/0EYVQxFC7IMu+gn/aku8ed9bw1wifjimq8ZA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UFs2IzEYHyl/wYBzwTtJZpHsasZfqPT2DGYw7UqtJ95Z9lmCpnXv00k3/rcpUBCYb
+	 O22QyImKGv1R6Jp+vzXIbgYIadmYmGMRdmzDNwFZUrSyBQRUsZfOJ0uivFTH5gukva
+	 rwaWtSQ3BTH+Tg+agEbv9wDhJsd61W4csZOh6YNwrubMfgON1JU3qZhUN5KPJmauAq
+	 Ctmrm7PbSy6/8852G8Kgy4Um9E9Es+tvhBenPntXSmlVj3YR7qSaqTzP1wAj4ZmnpZ
+	 vnkvqFVliBnAndlkcq/YMxmfiPPmXNVryQXNDek2zyea3PdhCFWoc/5h/ak9aALDbz
+	 AkYLckihDyWQA==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 13E8F17E12DF;
+	Wed, 22 Oct 2025 16:00:40 +0200 (CEST)
+Date: Wed, 22 Oct 2025 16:00:33 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Ketil Johnsen <ketil.johnsen@arm.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Heiko Stuebner <heiko@sntech.de>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and
+ FW event processing
+Message-ID: <20251022160033.2f645528@fedora>
+In-Reply-To: <e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
+References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
+	<20251022143751.769c1f23@fedora>
+	<e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAHjfRg4_ho4VIZCA--.7951S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWFyDJr1fArWfCrWDWF1fCrg_yoW5Kw48pF
-	WY9FW5ta1kJa4xArZrCw4xXFyrG3y8Xr47GryfG3WUAwsIg398ZryfKFy5Xas7Crn2q34j
-	vryqk3yqya4qvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRnSdDUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/xtbCwAFpc2j442FsLgAA3L
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 21 Oct 2025 08:50:16 -1000 Tejun Heo <tj@kernel.org> wrote:
+On Wed, 22 Oct 2025 14:36:23 +0100
+Steven Price <steven.price@arm.com> wrote:
 
-> > I also agree that tasks requiring continuous real-time execution should be
-> > handled by kthread workers. However, while the ideal situation is appealing,
-> > the reality is challenging. A large amount of driver code in the system uses
-> > the system's pwq and worker_pool management, as this API is very convenient.
-> > Refactoring the code carries significant change risks, and even with a team
-> > effort, it's hard to bear such risks.
+> On 22/10/2025 13:37, Boris Brezillon wrote:
+> > On Wed, 22 Oct 2025 12:30:13 +0200
+> > Ketil Johnsen <ketil.johnsen@arm.com> wrote:
+> >   
+> >> The function panthor_fw_unplug() will free the FW memory sections.
+> >> The problem is that there could still be pending FW events which are yet
+> >> not handled at this point. process_fw_events_work() can in this case try
+> >> to access said freed memory.
+> >>
+> >> This fix introduces a destroyed state for the panthor_scheduler object,
+> >> and we check for this before processing FW events.
+> >>
+> >> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+> >> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
+> >> ---
+> >> v2:
+> >> - Followed Boris's advice and handle the race purely within the
+> >>   scheduler block (by adding a destroyed state)
+> >> ---
+> >>  drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
+> >>  1 file changed, 12 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> >> index 0cc9055f4ee52..4996f987b8183 100644
+> >> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> >> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> >> @@ -315,6 +315,13 @@ struct panthor_scheduler {
+> >>  		 */
+> >>  		struct list_head stopped_groups;
+> >>  	} reset;
+> >> +
+> >> +	/**
+> >> +	 * @destroyed: Scheduler object is (being) destroyed
+> >> +	 *
+> >> +	 * Normal scheduler operations should no longer take place.
+> >> +	 */
+> >> +	bool destroyed;  
+> > 
+> > Do we really need a new field for that? Can't we just reset
+> > panthor_device::scheduler to NULL early enough in the unplug path?
+> > I guess it's not that simple if we have works going back to ptdev
+> > and then dereferencing ptdev->scheduler, but I think it's also
+> > fundamentally broken to have scheduler works active after the
+> > scheduler teardown has started, so we might want to add some more
+> > checks in the work callbacks too.
+> >   
+> >>  };
+> >>  
+> >>  /**
+> >> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
+> >>  	u32 events = atomic_xchg(&sched->fw_events, 0);
+> >>  	struct panthor_device *ptdev = sched->ptdev;
+> >>  
+> >> -	mutex_lock(&sched->lock);
+> >> +	guard(mutex)(&sched->lock);
+> >> +
+> >> +	if (sched->destroyed)
+> >> +		return;
+> >>  
+> >>  	if (events & JOB_INT_GLOBAL_IF) {
+> >>  		sched_process_global_irq_locked(ptdev);
+> >> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
+> >>  		sched_process_csg_irq_locked(ptdev, csg_id);
+> >>  		events &= ~BIT(csg_id);
+> >>  	}
+> >> -
+> >> -	mutex_unlock(&sched->lock);
+> >>  }
+> >>  
+> >>  /**
+> >> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
+> >>  	cancel_delayed_work_sync(&sched->tick_work);
+> >>  
+> >>  	mutex_lock(&sched->lock);
+> >> +	sched->destroyed = true;
+> >>  	if (sched->pm.has_ref) {
+> >>  		pm_runtime_put(ptdev->base.dev);
+> >>  		sched->pm.has_ref = false;  
+> > 
+> > Hm, I'd really like to see a cancel_work_sync(&sched->fw_events_work)
+> > rather than letting the work execute after we've started tearing down
+> > the scheduler object.
+> > 
+> > If you follow my suggestion to reset the ptdev->scheduler field, I
+> > guess something like that would do:
+> > 
+> > void panthor_sched_unplug(struct panthor_device *ptdev)
+> > {
+> >         struct panthor_scheduler *sched = ptdev->scheduler;
+> > 
+> > 	/* We want the schedu */
+> > 	WRITE_ONCE(*ptdev->scheduler, NULL);
+> > 
+> > 	cancel_work_sync(&sched->fw_events_work);
+> >         cancel_delayed_work_sync(&sched->tick_work);
+> > 
+> >         mutex_lock(&sched->lock);
+> >         if (sched->pm.has_ref) {
+> >                 pm_runtime_put(ptdev->base.dev);
+> >                 sched->pm.has_ref = false;
+> >         }
+> >         mutex_unlock(&sched->lock);
+> > }
+> > 
+> > and
+> > 
+> > void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events) {
+> > 	struct panthor_scheduler *sched = READ_ONCE(*ptdev->scheduler);
+> > 
+> > 	/* Scheduler is not initialized, or it's gone. */
+> >         if (!sched)
+> >                 return;
+> > 
+> >         atomic_or(events, &sched->fw_events);
+> >         sched_queue_work(sched, fw_events);
+> > }  
 > 
-> kthread_work's API is really similar to workqueue to make it easy to switch
-> between the two. We probably didn't go far enough tho and it may make sense
-> to allow workqueue to always use dedicated fixed set of workers (e.g. by
-> allowing a workqueue to create a private pool of workers) when configured
-> from userspace so that this becomes a configuration problem which doesn't
-> require code changes.
+> Note there's also the path of panthor_mmu_irq_handler() calling
+> panthor_sched_report_mmu_fault() which will need to READ_ONCE() as well
+> to be safe.
 
-kthread_work's API is greate for system which do not care about throughput but
-concern with real-time performance. It is suitable for scenarios where a single
-work instance corresponds to a single workqueue. In situations where a
-workqueue corresponds to multiple different works, using kthread_work does not
-create threads as needed. To address this, we might consider adding a new
-interface, perhaps called kthread_run_workqueue. Unlike kthread_run_worker,
-this new interface would determine whether to create a new thread based on the
-pointer to the work instance passed in, ensuring that each work uniquely
-corresponds to a thread. This approach has several advantages: it allows for
-seamless switching between the existing workqueue's queue work logic and
-kthread_work, and it can help avoid missing any work associated with a particular
-workqueue, especially in large corebase containing multiple layers.
-If the kthread_work API does not provide the functionality to create different
-threads for different works, then I think a private worker pool is meaningful.
-However, it may still lead to potential blocking for subsequent works if multiple
-different works arrive concurrently while there is only one active kworker thread.
+This could be hidden behind a panthor_device_get_sched() helper, I
+guess. Anyway, it's not so much that I'm against the addition of an
+extra bool, but AFAICT, the problem is not entirely solved, as there
+could be a pending work that gets executed after sched_unplug()
+returns, and I adding this bool check just papers over the real bug
+(which is that we never cancel the fw_event work).
 
-> > Adding flags like WQ_HIGHPRI or even introducing WQ_RT from a functional
-> > development perspective doesn't pose too much concern; we just need to focus
 > 
-> WQ_RT really doesn't make sense given that you can't even tell whether any
-> given work item would have a worker ready for it. What does RT priority do
-> when you need to go and create a new kworker?
+> I agree having an extra bool is ugly, but it easier to reason about than
+> the lock-free WRITE_ONCE/READ_ONCE dance. It worries me that this will
+> be regressed in the future. I can't immediately see how to wrap this in
+> a helper to ensure this is kept correct.
 
-Indeed, WQ_RT cannot address the issue of multiple different works arriving
-concurrently in the same worker pool leading to delays, as just mentioned.
-The creation of new threads on demand in a work queue, from the perspective
-of the current code implementation, is inherently non-real-time.
-It seems that only the kthread_work mechanism can ensure that work tasks are
-executed in real-time. I will use it to solve another GPU-related kworker
-issue that I encounter in our system.
-
-> Note that workqueue property changes don't need to be hard coded. If you
-> make the code use its own workqueue and set WQ_SYSFS, you can change its
-> properties from userspace through sysfs interface.
-
-Regarding the current kworker preemption issue with 8250_dma, based on our
-current measurements, using the kworker API is sufficient. Additionally, if
-we switch to kthread_work, the tty driver layer would require significant
-modifications. Therefore, I will adopt the WQ_SYSFS approach you mentioned,
-as it is quite convenient for dynamic control from user space.
-
---
-Xin Zhao
-
+Sure, but you're not really catching cases where the work runs after
+the scheduler component has been unplugged in case someone forgot to
+cancel some works. I think I'd rather identify those cases with a
+kernel panic, than a random UAF when the work is being executed.
+Ultimately, we should probably audit all works used in the driver, to
+make sure they are properly cancelled at unplug() time by the relevant
+<component>_unplug() functions.
 
