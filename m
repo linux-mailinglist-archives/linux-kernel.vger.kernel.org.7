@@ -1,232 +1,173 @@
-Return-Path: <linux-kernel+bounces-865298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5515BFCBC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 956D8BFCC15
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CD0189236E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2FFF1882589
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBBC34C14E;
-	Wed, 22 Oct 2025 15:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2092534DB5F;
+	Wed, 22 Oct 2025 15:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TzK86C84"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010015.outbound.protection.outlook.com [52.101.84.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="p96rpe+8"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E75347BC9;
-	Wed, 22 Oct 2025 15:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761145205; cv=fail; b=LadjG9O5VNzxMZsQmeD9Ksw6eEjhFm+p0RKLEwtdHjPyjc3jNr41vQkTcO2zD1lXlpzrahxEMKKAymZ53OXTAzN5BeUnejcxLEgbzOWnkjNguBQ8dq9YPU/T8A3osu9+CDKcEs7J06g++31kfAleRKS3IeoawNvUuZLl6xn0ylE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761145205; c=relaxed/simple;
-	bh=2zpwWBAbctkmG9DmysT5r9iPWnLXysmG1eG968tdmR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=poLUZ0kl/j5y1I40ipYAoRsPdOYBemUvs7//Llgw0Zf1VW5JpXyBlwVK4Kmfofhlt0Xz+zF8sx6laUg3S004gFjdbVcNUnkJgBhMDUL2lOP3SLLt7QW6MAlvSKhRPAx5OKW7G4C3o+n64SIIswB8QO+dAx9ox7lC8f1xdDPkxZU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TzK86C84; arc=fail smtp.client-ip=52.101.84.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=norYVE520gmLlzA64Q/32A8314a23OxEcb0zCIxkxuHBmZqmO5nloA4uWdFOuAEp11pNyBPPpiGSpu3b1d9q3I5ib+HR6QBnnjbMcDPESQSOMmdE1GD7I2iGwc9GJ205xZmRV/qoibqJ8+6tFXgcK939yAYEdEFMiwhkm5o1EO0poIG7j0wxMvEM6xGYre3H5BS7Auj+n7dbQMED87CvMcG+5FSNAOE+EDOb4VlzESEoXjSHJd2YXDUEfLFZJF63ayDAsr8tVlXay85Ak4ZWQsTj8KBo7YSIWkwxh3dCRC8lSdywQbV6A5xw4CdSwAilXPmKWeCXpEmHrrfVSTU8TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HYi0eyksFfBlPTJhx+OQLxtjQIGOooxJfIeYlinU3oA=;
- b=uz8+o8thinI/R9or9/ELOJMJiisOh2Lmq1Wwwp/R3yH5mzd6auThFB9rEpLRubFel04cE5Lx1gK9sdH7JTRHfKB8pPf6X9fSgijb6XRSk6UZ3H6Z6ExW4p7icpjJySbLAMqCSYO3Pu5JFyrKDK1izAisPTt9yyxUlc4nwwdolU3syTcrDA3Gy5sfmqx8ZV9+mo6xwUO4Uv3WnCQvdjdgr+w+BBU4xse9saFM8h/2SQ3ys+U0zoeLlDnh/5Ygnzyfvw9cuA46GHE0p+LmGzUa7GKI3BjW/4BJ/2MEOEikwXr++IOg1KykKk3sTAg0wPPYEfKbLTCkX7LfiwtYNrjfZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HYi0eyksFfBlPTJhx+OQLxtjQIGOooxJfIeYlinU3oA=;
- b=TzK86C843XSm2GorSC/y/sHOKjFtj6HSRO0aPF42LPw8RIY+xIto6z6xx6m9LW9CfyibgvkYKnoZo6JN85eXd7WkXhDhMQ2+oR15Yrq1ym9vErLXnwpbdVhHLCDVr9+ePFYaasO2uFp/gQpi34YUQCRzmkTzMcq3ieVNjQBBhIiRC42UId9zsTbSNcB/xuwHp4+3DXJOL3f0WbP4lkRciIpFD/+ayU499Hxdd5ZC2joI8deltDQlq/ofadsw85AvfETHV4eom/VoKD9XDyziQaHYQF4woEGfw0veStNkQdGHl8rVRSOlw4twe2oNAo+N9l/3CBOc98AjQqlRJaMpxg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by VI0PR04MB11540.eurprd04.prod.outlook.com (2603:10a6:800:2c7::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 14:59:59 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 14:59:59 +0000
-Date: Wed, 22 Oct 2025 10:59:48 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: mchehab@kernel.org, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
-	martink@posteo.de, kernel@puri.sm, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	sakari.ailus@linux.intel.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 3/4] media: imx-mipi-csis: Add num_data_lanes to
- mipi_csis_device
-Message-ID: <aPjxZNIqDHHkZH+O@lizhi-Precision-Tower-5810>
-References: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
- <20251022102228.275627-4-isaac.scott@ideasonboard.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022102228.275627-4-isaac.scott@ideasonboard.com>
-X-ClientProxiedBy: BY5PR04CA0015.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::25) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF17C34D912;
+	Wed, 22 Oct 2025 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761145329; cv=none; b=MMh7i4bhoFeoag8e5uw7XsEcxJvW75LJnFoFDVXND0U7nvGm9fVEvi0LKJ+8W1xbtjAd58HNZQJyDiS8EcIE48TmIhctLG0wtXmR3LBDs/ctOy9I/YqnmlD0FtofqJDkKjpP3VCvGpfuktkIGaAbwzbQ+9uRLhxh3BkZVea3PUA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761145329; c=relaxed/simple;
+	bh=uD1lXLa3iERtWTFaqK+n+ldKKKAPBgWiZ0PUi7o41Ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WsMhgnQSOrYAAsnXtVmj/zFEW5ClIB54EHEG+fH0g/wI7EOduaSGVbt9q+s1xVfNTdHv8av1SFgU7Q3dnWKthUfNjQXqd+7pHya9PR4VXBkbF0OBKnz1LTHCVahrT9HLRjdM8i3MPCV/tiqj0wTQcuO8khHSe9MnQBEz/2Pi7pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=p96rpe+8; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M6xCmW014219;
+	Wed, 22 Oct 2025 15:00:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=xvzr1Y8dpMAUvoEFP57Gz835wHqBYz
+	e10hbyZJeYU3g=; b=p96rpe+8jnIvJcnNRSXnoAPg+2bPFvo3QYoRkE9XzhXOuf
+	zPU2HkzEcM1nDb3BKO3LYcNgZpWcrbVplnyT48p0FCkoweL8zrwPAlHB5CYbQm+x
+	HNS/LhTF//xKum9vf1Ddjh6D2+WHxMY+liq50P7+j32lWdYGNBWfdW5SHxC5hDcB
+	V8raLaY6GqWjC1UlIT8pdrRl3Z7fXa59vsnZeU3JQhoMYwSqKerwp8gyyf2ztLq6
+	StSUFLh4QdrGLaMAOjU/zguLq9XCZ7NAvPi5iMUMgpC5sYJB2DoYjpjZhl++qSpB
+	owKG4AFDsdS58ufnQkUH4OnqUUKl5DwfXesfF92g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vuxtj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 15:00:25 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59MEpIdh002378;
+	Wed, 22 Oct 2025 15:00:24 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vuxta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 15:00:24 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59MES37T032103;
+	Wed, 22 Oct 2025 15:00:23 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vp7n0wah-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 15:00:23 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59MF0JRG61211024
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 Oct 2025 15:00:19 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 33AEA2004B;
+	Wed, 22 Oct 2025 15:00:19 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8B81C2004D;
+	Wed, 22 Oct 2025 15:00:18 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 22 Oct 2025 15:00:18 +0000 (GMT)
+Date: Wed, 22 Oct 2025 17:00:16 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kernel test robot <lkp@intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        David Laight <david.laight.linux@gmail.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V4 06/12] s390/uaccess: Use unsafe wrappers for ASM GOTO
+Message-ID: <20251022150016.37430Aa6-hca@linux.ibm.com>
+References: <20251022102427.400699796@linutronix.de>
+ <20251022103112.232389777@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI0PR04MB11540:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8ac43b1-c566-4263-674e-08de117babd6
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|19092799006|376014|52116014|7416014|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?XnP5oHAZZBNtae/a9EmGr5oHPJBNxyt98Z+zFHCNsMnjc00Zd2e7mt+LLjhZ?=
- =?us-ascii?Q?GVuEx5hKMjJc7OqKXfeH8aF3Mnnhyml7mwjwgIXlF69bjc9RDKlYdGvKnOUT?=
- =?us-ascii?Q?olYrg9SOqtS3v90pcRhZTGabbm/e4i0Ea2uqMftambO5Qbevp6RJJSJneMSK?=
- =?us-ascii?Q?eltiTNl8Cnbz/oQpgfYedzfvjkBxUwq+QvRlW+KJlysxwGeF+NEo6uWJEvtg?=
- =?us-ascii?Q?zhTklYXxU8w7zSM/8/IwkmFNFY9lVLgcKXV0M1TuMUzRandH7MscOHJZYXv+?=
- =?us-ascii?Q?FfhGCBKsrlqYyj3N+KXn5Lr8bW88G8h6zWEfyHZZBH9jXa+njRkpW8MHfmLs?=
- =?us-ascii?Q?oaYsSj5EsT2m2oYodg6F4pX8RgUtOGkZ4FLerOmR0ZqpIlLlJBZbPphtCl7z?=
- =?us-ascii?Q?755q1calYrOqVdvZp3RxaigMEFzJN+MBYz8kOQZAG+1IcGaoUE1rfmaQjo+7?=
- =?us-ascii?Q?c74ZXJOFdi3yT/TWnQUbvguK7crV6+CivySa7qEhRKcfSJbgzLMppwxZtvvB?=
- =?us-ascii?Q?B2idpDjF5wlMAZkeF5THeAqRCgzBeCCa4RThArmQfBvQgcuz0LbrQx5vimKm?=
- =?us-ascii?Q?bD6h2yyxxQZxN4C/aqUcsjVrJ+Xu5b8BPopilpp0+YMl+9inVS5Yq4soW+Il?=
- =?us-ascii?Q?nMrTdYsOx7ta8yK4tvQzEZcG0tl4PfI5c5DywFWMiQ5lSPLIuPXO9qyxhaJd?=
- =?us-ascii?Q?/ja0sZcZRcnXp/s6wymwGwWB9GrzC8/Lts7HeXOgBpnX2uDnRia6XtFPM7pX?=
- =?us-ascii?Q?SkPSMRAk6+46Uspes1vdhwbHeFY6d5ZMCSqQt+v03BRNFJM7NeJ/0qYuqGZX?=
- =?us-ascii?Q?PiHUKLGUjsem3vwa+7y3OgBlmQ8/bjzxF4CvmSRIXVl3afHN763bLMp8yZG9?=
- =?us-ascii?Q?etzyvP7AHLr41ExLD0yFDhrrjKqHfC3Hd1jqR6W55uBrg6rMjvG7RYz+qgJy?=
- =?us-ascii?Q?NYzypq3pXdeEduajpiO7PHntq3YZTHyqOuSGKUwNqdXvuJLP72A7T1ERKdZp?=
- =?us-ascii?Q?w67pmMi/jpEccHjiVw1f8GGOArgB85PyAlFb7YEbKe8luHBLtrXfcRMtCP+p?=
- =?us-ascii?Q?CXMyfgJRKRt8JlFL3raH7SoorveYz0JnYtsu44xQQGs89mvf22Md4AwyLRQH?=
- =?us-ascii?Q?a50v7gm+eHsb9R7S71IlBSuMrAqwGjxPvp90EQu2ZUJQ1WBXcqNpIcmBAZGL?=
- =?us-ascii?Q?SwBno2JhT8r9+3Ys0K0W0bd84knTVi0ykvQ2KMQZTv9pKGoWDxgsbpMP8xN/?=
- =?us-ascii?Q?f4U4oZPu8zecAajOPUjCt1aRKbFwQTp5l3ljk5E+g9EMzLEat9wfyNmG67BO?=
- =?us-ascii?Q?UNmSG9dJQTsdbkM6gO/GuSo28tJ9cn9Tdw8Wo4Z73eouC9TGb3UiC/ZEHq6o?=
- =?us-ascii?Q?AdWs5IDFjCsHQF931YqGVz5ybvNuZ4vFbxo+qcBlcfuS8dD2z0bkU6IW53fa?=
- =?us-ascii?Q?7yvcjC2BvZHUO0dcTJDq1aRV5AXEC8+YlsQ65tNXuwvJXEvgb6/gTN4K6g5D?=
- =?us-ascii?Q?YTgLUz2FZQRU37iZYNEdeGZnDf8PkeGAgK2Q?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(52116014)(7416014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?0veP51nBFa9ZgjRQo6hj5CtuXiEW40SP1ww+11VfjUfxrTl9lvpVMmhux9R0?=
- =?us-ascii?Q?L/JG1ScUNViHlHiJDe+yHzutDoL4/Ch40Y3qV6mG0b9C/5CgELlGhteva/Kj?=
- =?us-ascii?Q?K/34hMs3hZFTxwaPJMJT6RwhqO5VQZvLP7Neb7Kl0i+CoSN3s1I67fSclhLC?=
- =?us-ascii?Q?Yu4oDndl4oZ5IvCu3Y86MtEhLesJ/BAKkNC75u/fFgCq1OSgj6zYGOErnBZf?=
- =?us-ascii?Q?0rSy87iHuwcAOePo/b8xl4VcoVNrqdGzzEYEB9aklSLD67XDbghlEV1Himj4?=
- =?us-ascii?Q?3AsbClpMXFESeaNTIwc2KtKiYR/niPTKWv7wrg4nwFpudKJIvbUiYGVPrrzw?=
- =?us-ascii?Q?Rzox7/C8dcvu7HQtPXY6ddvmaqFg0GanVbKdRzB/BvqTZ3mKURZnkuMknQAo?=
- =?us-ascii?Q?wMSzVdkpOcUqRMC56vHCWM7/HSdJJ+4kRmUzLnq4PLhAhmjoBtaaXGi1lreZ?=
- =?us-ascii?Q?RSZ9f35x/J6sp0EH3xTKDoQJIqlUZ2NWxS0jDISjoP9QraegbZeyw6PEkqL6?=
- =?us-ascii?Q?z2R/xIUXfPJZm3sfXxXWQpRxUrlRoPudfFFp6K8YanBAtvjSTIAeuic6xHaK?=
- =?us-ascii?Q?k4ndTKpJyKzjIbDgUBbVfRHYKpnM1T9zQB0Q4Zebhr+13ICyaS9zN+Nno5Wo?=
- =?us-ascii?Q?Cn4CY0Nsko2tc6ITaZTKumXFsC5T83hteP6hLZKZwyS1hesRYxJ18JghUHGq?=
- =?us-ascii?Q?T1RSAxZEwbj9TLKU/VhTkjg4IbDXoEywdpdneLe1O5NfK+00xsZcUj1JDrfz?=
- =?us-ascii?Q?+nwXbj2rcJRYWRevJxpPCehWrJ9bJ7dAtX6//oTHLq6scEaTjJfjXezfLSSp?=
- =?us-ascii?Q?G1cfFsCZGw7wLw/+FLALP7AdttBWmwGk4MXXh/Nm2qjuXkCyiTOQIuHty4Fn?=
- =?us-ascii?Q?JM+9YQfeNBAcgNaJB73r5FLtNVesdEvRVAGCfATkaMgOnDpRcMouz75ksbCK?=
- =?us-ascii?Q?C3N2McmWCJ7JHklBvfRiBDP+bbJ2AeiWkC5e9ERCIcl/PW3jpQFnJHCMyszs?=
- =?us-ascii?Q?Hf7u5gbjxXzs1bWIHEeU/9FEu23LGrS93u9GupfZJUFrA1zmAhgwE+7NxwIC?=
- =?us-ascii?Q?aIldFQOlIqEOw12mXDoSofqKpblA4vKv+HH5VXnWE0Hsr/QGx/LvD9UxafpV?=
- =?us-ascii?Q?T6T4L5qE8BWnv8gVrwBdMmu0oqNiR+5qnS/8nZDD5rrwWIvveWdiVCvxZj1L?=
- =?us-ascii?Q?RE+4s0AtxE3TpU8enhMrtlxOaGkD8jZH79wHC2O16S289ABUQDZnD81wTLs6?=
- =?us-ascii?Q?RDuNDJU009Bgl2Q4Gk5n08yu1UD6e/t0fmA+D0oDh3zLTKUZimVfY0UPCycZ?=
- =?us-ascii?Q?K5+hG1rGb2p6zimNM6Ne1w0EEOTb0BhfrVr+EVMvxw2ZAlV7bWj13xbDjJr9?=
- =?us-ascii?Q?zS8D5mLMPwa2oZToNR/FkF4/k+SLRUrHSmDaGiQn/Fcv+rfzdXiGOsz9xgZY?=
- =?us-ascii?Q?rpS9L4c+uh/f6ChpofF9O1oGvd2O9ZbhkQjuL8TdkASY9sm9pXFIjGm8DVTh?=
- =?us-ascii?Q?Iots8AuVpkbizlzLh3r6gJdsIqm+fQRoyCJEos+TSV7t6Rcivk6Xc+R9ql2g?=
- =?us-ascii?Q?TqlmHX/KJrxf6LshaB0=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8ac43b1-c566-4263-674e-08de117babd6
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 14:59:59.6496
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zq4THAx7xAY3WyH7soHYrvFmlKjBZk4pxSdu4eJmWDnDLk7+fXY+/r+A9cJH5RL9NudNfbr5hk5WtKBNkDPKRg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11540
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022103112.232389777@linutronix.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8rtbyt9zSskKlv_nEpWKeIuOG0eXKSER
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX7mGSdj579bLq
+ 8bxKzWQ1s8+btHn0jwgAP2J3vX/A4EDg/HYeBH4RsyA5X+zGAdGIwFDsszFuA+Rn1v01A0G6Yjs
+ vO6A8wck2DPsUU69VTxABi+r3WoXEdameL5QVo/RksBPiR+jb6D+2UrRoVIg2Iq/O6AsFY3wYT5
+ PNCbILR1buB2fxPv51m4yPgFagoOjPret48aJLEeRSls7plxINKeU5yrx6Yk/cvBYbkFpLuEv+2
+ cC6SaFGy3Zn+mHF6qUaOg4lQzCotveGK2C59n1pbfL63Z+o6dqfDill8gmsksaHpgwTwW2wrpK9
+ bs5ltJsCCgMlLBlcLq8bAga6P/bzqpPOPPxNDA9reMNdOvsKvMKrYr3xNsBpe4DhuMlrzQLF2L1
+ QwLoubNXcqjQwkWg6G6TPxJxCDvB2g==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f8f189 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=l-w2ndfUCpChbJJzmvYA:9 a=CjuIK1q_8ugA:10
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: uK_G6Z0fHMdC8Ou7HEH28NKPmNT2Wfej
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_06,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1011 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Wed, Oct 22, 2025 at 11:22:27AM +0100, Isaac Scott wrote:
-> Add the num_data_lanes field to the mipi_csis_device struct, and set it
-> equal to csis->bus.num_data_lanes. This is in preparation to support
-> cases when the data lanes actively used differs from the maximum
-> supported data lanes.
->
-> No functional changes intended by this commit.
->
-> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+On Wed, Oct 22, 2025 at 02:49:09PM +0200, Thomas Gleixner wrote:
+> ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
+> 
+> bool foo(u32 __user *p, u32 val)
+> {
+> 	scoped_guard(pagefault)
+> 		unsafe_put_user(val, p, efault);
+> 	return true;
+> efault:
+> 	return false;
+> }
+> 
+> It ends up leaking the pagefault disable counter in the fault path. clang
+> at least fails the build.
+> 
+> S390 is not affected for unsafe_*_user() as it uses it's own local label
+> already, but __get/put_kernel_nofault() lack that.
+> 
+> Rename them to arch_*_kernel_nofault() which makes the generic uaccess
+> header wrap it with a local label that makes both compilers emit correct
+> code.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
 > ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index 7c2a679dca2e..838a1ad123b5 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -351,6 +351,8 @@ struct mipi_csis_device {
->  	u32 hs_settle;
->  	u32 clk_settle;
->
-> +	unsigned int num_data_lanes;
-> +
->  	spinlock_t slock;	/* Protect events */
->  	struct mipi_csis_event events[MIPI_CSIS_NUM_EVENTS];
->  	struct dentry *debugfs_root;
-> @@ -573,7 +575,7 @@ static void mipi_csis_system_enable(struct mipi_csis_device *csis, int on)
->  	val = mipi_csis_read(csis, MIPI_CSIS_DPHY_CMN_CTRL);
->  	val &= ~MIPI_CSIS_DPHY_CMN_CTRL_ENABLE;
->  	if (on) {
-> -		mask = (1 << (csis->bus.num_data_lanes + 1)) - 1;
-> +		mask = (1 << (csis->num_data_lanes + 1)) - 1;
->  		val |= (mask & MIPI_CSIS_DPHY_CMN_CTRL_ENABLE);
->  	}
->  	mipi_csis_write(csis, MIPI_CSIS_DPHY_CMN_CTRL, val);
-> @@ -623,7 +625,7 @@ static int mipi_csis_calculate_params(struct mipi_csis_device *csis,
->
->  	/* Calculate the line rate from the pixel rate. */
->  	link_freq = v4l2_get_link_freq(csis->source.pad, csis_fmt->width,
-> -				       csis->bus.num_data_lanes * 2);
-> +				       csis->num_data_lanes * 2);
->  	if (link_freq < 0) {
->  		dev_err(csis->dev, "Unable to obtain link frequency: %d\n",
->  			(int)link_freq);
-> @@ -668,7 +670,7 @@ static void mipi_csis_set_params(struct mipi_csis_device *csis,
->  				 const struct v4l2_mbus_framefmt *format,
->  				 const struct csis_pix_format *csis_fmt)
->  {
-> -	int lanes = csis->bus.num_data_lanes;
-> +	int lanes = csis->num_data_lanes;
->  	u32 val;
->
->  	val = mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
-> @@ -1366,8 +1368,9 @@ static int mipi_csis_async_register(struct mipi_csis_device *csis)
->  	}
->
->  	csis->bus = vep.bus.mipi_csi2;
-> +	csis->num_data_lanes = csis->bus.num_data_lanes;
->
-> -	dev_dbg(csis->dev, "data lanes: %d\n", csis->bus.num_data_lanes);
-> +	dev_dbg(csis->dev, "max data lanes: %d\n", csis->bus.num_data_lanes);
->  	dev_dbg(csis->dev, "flags: 0x%08x\n", csis->bus.flags);
->
->  	asd = v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
-> --
-> 2.43.0
->
+>  arch/s390/include/asm/uaccess.h |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
