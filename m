@@ -1,647 +1,251 @@
-Return-Path: <linux-kernel+bounces-865748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FB3BFDE99
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:43:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB7ABFDE9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBFB2545062
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:41:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 849D14E0F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC8434EEF9;
-	Wed, 22 Oct 2025 18:41:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42E734D4DC;
-	Wed, 22 Oct 2025 18:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2D134FF50;
+	Wed, 22 Oct 2025 18:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQZ+o5oS"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE334D4FE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761158475; cv=none; b=FYe1WCPn+v/7xvkUTV56sgsgmsxOzd+wGf51sWYK80aiWcTrGLCynhD08IxeOeRUHZLWNTA1bZKevJ+FAg9Oce95N5yh6HCNTrZrVBTjYjIJaSUL7eEsfzzpR20VxFFTuoE6WhzeYzoHiHOJLZSK0MW0SzDpk/ZFOOnpHMAXxKs=
+	t=1761158477; cv=none; b=Oaw9VjS18pVSSuJq6M+ZEVzQn6Kiw9JvkE9Z1JsePT4yOORdAyendUJQ9HnfVbvWoCGXDqWkFs7noKBwXbVrmnqgiud1ip45A9VVQq/BeoKKw2onli8mU3GOrZpMGhmeJiwbdG1Qytk/8o/0YLYeTQp2JohygBExk7MDKCZsPZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761158475; c=relaxed/simple;
-	bh=zlk8IcO0YDsxjH2L2BzM3DL74LM4Eqsz/eE3j4Cocpo=;
+	s=arc-20240116; t=1761158477; c=relaxed/simple;
+	bh=Srdz0YdwKP8fBJdp00SvYH14YKC7endGqxbblYxmxmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdQGrrz+TGNRheFf0TvaX2ECJZwBf23wFiBv/pwH9qOJOOiT93KT6nr/g4vTVyIx8pGSr7V436fhSp83foMFE6DNaLrEDtL5Fq2y6cRpGg5nNEGx0lu1aX7hBFmfh11QTyX7vZMvy7SflasdbPtSDd652zjkM0xyDI+oBcQOpvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AF611655;
-	Wed, 22 Oct 2025 11:41:03 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 401E13F66E;
-	Wed, 22 Oct 2025 11:41:04 -0700 (PDT)
-Date: Wed, 22 Oct 2025 20:40:55 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, dakr@kernel.org,
-	acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Yury Norov <yury.norov@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Andrea Righi <arighi@nvidia.com>, nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v6 4/5] rust: Move register and bitfield macros out of
- Nova
-Message-ID: <aPklNydcTdOeXtdU@arm.com>
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <20251003154748.1687160-5-joelagnelf@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQAltHM9MMwD4T0heDRATXVmynnIB3002C4JouYHX0l0hvTBiwOJN1I4882aEOnQm3oNmXdHWzBdk3HCe8CnNW+Wb+tisTGhSt5Xr+ZpXen9G5d8dpOq9+oHB/Y2OyVQfsqMJ4YrP5ZFWezSxlz+VbD8/+1PJZtDP1avUANLKWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WQZ+o5oS; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2698384978dso50009505ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:41:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761158475; x=1761763275; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MwSSsIMdPEv7A4eQ3QmSWhovEg7spF/mgUkKOL7vAOA=;
+        b=WQZ+o5oScuY8GhK9TUDT+8rodUBgEbEDs1/ItuAbO1infVuX7KrbQedR7KH/BtGAkT
+         2R/vvIIlAGIj4DW9+vD0YIC+NLAItoBnsurvN3W4kTeMfjQe3TRKNSVkQTc/WXBMlGC2
+         DHH4HxAgmPLhltBL4NR3Ox6SybFeYNsZHrijZXvqTOnyMiyGUyd99p2JnA3U0WkV5MG4
+         qqMqSnTfSefIpNDOL3H+JS41rM/6e2GuhtwZvvsgNZOR1f5ZcdhPv/xHOcOEc2Mu9m1+
+         V2bxWmZ9fcAtKOQ8+lxsRWz0KLiEtu+cvZSETaTgU+3iGDQDxhJqM62QJPYfKHuLoaai
+         zZmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761158475; x=1761763275;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MwSSsIMdPEv7A4eQ3QmSWhovEg7spF/mgUkKOL7vAOA=;
+        b=V0MfGcsVka9ryVM0kf3Obo3nUhfqwP/SEJIIJS6lWeopujUcmUYHFfh8fs7YASN28U
+         wcpRZQssZC97ilLIK/sO2TnJcqzIGONU2zRshAWKDCj05ee8Hw6h1T7DImkKsjnD8kMX
+         gvEOKU31NQ5RTKQJvStoH/kk3w0A6s2FX3/woly4LLvK1aN637oVdzKWXs/m/7Z3Pm6v
+         RwdkAqLlJOQS/DLDO+He64sBtEwt89Z679NdegVaxazTw/MOJwFfW7jdR/X9kmsvLa3k
+         75/wTaALQ169IOkofno0YvuOZ5614x1mmlVJWGXB3PDnExeGDrB74N9ZaTgpjxT3icRQ
+         ntXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvPKWoxG86OXqvthgchzcGLi9Xo0Qd7l85WancINTYelnsCGi6EV4nmoDKxj+JiODCo9qynjizvgymBjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWCGeAceEXxBWY0Qv2ltsC1M+6fDY2rN5uQw2D4R8+hENvy0PG
+	5eIGhHjKvZ8EzWHvu01SPXw7DANyTcZcQHU2DGwY1lwhtOQcnIlD1jBr
+X-Gm-Gg: ASbGncvOJxA2/TnqQcQ0COWzO9k8+NLEE2Yl6Xb/meGzg8+U2uc0lzTIdo9FaWzNZCt
+	vpoqtP40w7US8FJI+9N4qQTDuBRcUZIDPTCPZlNRSTtWPzXzvgPEyXKvKpDHPBdFaeyAunSqIL3
+	fQWetVFoKPv3281jwgt0Rm4CORikO7lDKdbjQPxzqA/Z9cIs1jhJMIV/WUahUBnrX//+aZChkh4
+	gaslihlaIg8kL+qGZ1GBjBgib5gX3J1147Mc1f/CkbEPVc5+d2WE0Ac1l0NDqCXq19u0XsqcVuZ
+	LT5/xIFWzvBpEFP8HCpbAsxdmEveXn7osJMY5XFkG2I14dbVpBSSHFHCmsAYmm7/agppSC9zqzk
+	11O6XE4Ic5RAnuY2zhp9LZ7W/PdQVmZ9BT/4iR+ZfCKyuu7duMtUL7cIZsj//dfu95DPwrG+dXF
+	iNB9iA5YM8QJnMYDI=
+X-Google-Smtp-Source: AGHT+IHzrkR8kQC2JkBfpPS5AblvPCgWlm5WoPllvAcMI7Ncjl9ri4KHEv/uC8RZ1oR6PgS00gPyww==
+X-Received: by 2002:a17:902:e944:b0:290:a3b9:d4c6 with SMTP id d9443c01a7336-290caf831b6mr285229685ad.36.1761158474775;
+        Wed, 22 Oct 2025 11:41:14 -0700 (PDT)
+Received: from chandna.localdomain ([106.222.229.91])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ec20a4sm145578975ad.7.2025.10.22.11.41.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 11:41:14 -0700 (PDT)
+Date: Thu, 23 Oct 2025 00:10:59 +0530
+From: Sahil Chandna <chandna.sahil@gmail.com>
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com,
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, listout@listout.xyz,
+	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
+Message-ID: <aPklOxw0W-xUbMEI@chandna.localdomain>
+References: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
+ <14371cf8-e49a-4c68-b763-fa7563a9c764@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20251003154748.1687160-5-joelagnelf@nvidia.com>
+In-Reply-To: <14371cf8-e49a-4c68-b763-fa7563a9c764@linux.dev>
 
-Hi Joel,
-
-I know I'm chiming in a bit late, so apologies for that.
-
-The register! macro does seem to be a solid foundation for MMIO register
-definitions, thought there are few points that could be potentially
-[re]considered.
-
-The current design assumes a fixed, compile-time-known MMIO region size.
-It does not cover cases when the region size is known only at runtime.
-I do appreciate that in cases like that, we are loosing all the deliberate
-compile-time checks but it might be necessary to provide support for those as
-well (at some point at least).
-
-On the (potential) improvement side:
-
-Allowing offsets to be expressions rather than literals would make the macro
-easier to use for regions defined at a fixed base offset, where subsequent
-offsets are derived from that base, i.e:
-
-REG_1_BASE 	-> 0x100
-REG_1_STATUS 	-> REG_1_BASE + 0x0
-REG_1_CONTROL	-> REG_1_BASE + 0x04
-...
-
-The alias mechanism is a nice touch. It might be worth allowing arrays of
-registers with explicit aliases to be defined in a single macro invocation,
-instead of repeating similar definitions, smth along the lines of:
-
-  register!(
-      REG_STATUS @ 0x300[8; STRIDE] {
-          0:0 enabled as bool;
-          3:1 mode as u8;
-          7:4 flags as u8;
-      }
-      aliases {
-          REG_STATUS_ENABLED[0] {
-              0:0 enabled as bool;
-          }
-          REG_STATUS_MODE[0] {
-              3:1 mode as u8;
-          }
-          REG_STATUS_FLAGS[4] {
-              7:4 flags as u8;
-          }
-      }
-  );
-
-
-Finally, for runtime values such as indexes, it could be useful to verify once
-and then allow infallible reads/writes through some kind access token.
-That might make runtime-safe access patterns simpler and more efficient.
-I'm still pondering on how that could look like though (implementation-wise)
-
----
-BR
-Beata
-
-On Fri, Oct 03, 2025 at 11:47:47AM -0400, Joel Fernandes wrote:
-> Out of broad need for the register and bitfield macros in Rust, move
-> them out of nova into the kernel crate. Several usecases need them (Nova
-> is already using these and Tyr developers said they need them).
-> 
-> bitfield moved into kernel crate - defines bitfields in Rust.
-> register moved into io module - defines hardware registers and accessors.
-> 
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->  drivers/gpu/nova-core/falcon.rs               |  2 +-
->  drivers/gpu/nova-core/falcon/gsp.rs           |  4 +-
->  drivers/gpu/nova-core/falcon/sec2.rs          |  2 +-
->  drivers/gpu/nova-core/nova_core.rs            |  3 -
->  drivers/gpu/nova-core/regs.rs                 |  6 +-
->  .../gpu/nova-core => rust/kernel}/bitfield.rs | 27 ++++-----
->  rust/kernel/io.rs                             |  1 +
->  .../macros.rs => rust/kernel/io/register.rs   | 58 ++++++++++---------
->  rust/kernel/lib.rs                            |  1 +
->  9 files changed, 54 insertions(+), 50 deletions(-)
->  rename {drivers/gpu/nova-core => rust/kernel}/bitfield.rs (91%)
->  rename drivers/gpu/nova-core/regs/macros.rs => rust/kernel/io/register.rs (93%)
-> 
-> diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-> index 37e6298195e4..a15fa98c8614 100644
-> --- a/drivers/gpu/nova-core/falcon.rs
-> +++ b/drivers/gpu/nova-core/falcon.rs
-> @@ -6,6 +6,7 @@
->  use hal::FalconHal;
->  use kernel::device;
->  use kernel::dma::DmaAddress;
-> +use kernel::io::register::RegisterBase;
->  use kernel::prelude::*;
->  use kernel::sync::aref::ARef;
->  use kernel::time::Delta;
-> @@ -14,7 +15,6 @@
->  use crate::driver::Bar0;
->  use crate::gpu::Chipset;
->  use crate::regs;
-> -use crate::regs::macros::RegisterBase;
->  use crate::util;
->  
->  pub(crate) mod gsp;
-> diff --git a/drivers/gpu/nova-core/falcon/gsp.rs b/drivers/gpu/nova-core/falcon/gsp.rs
-> index f17599cb49fa..cd4960e997c8 100644
-> --- a/drivers/gpu/nova-core/falcon/gsp.rs
-> +++ b/drivers/gpu/nova-core/falcon/gsp.rs
-> @@ -1,9 +1,11 @@
->  // SPDX-License-Identifier: GPL-2.0
->  
-> +use kernel::io::register::RegisterBase;
-> +
->  use crate::{
->      driver::Bar0,
->      falcon::{Falcon, FalconEngine, PFalcon2Base, PFalconBase},
-> -    regs::{self, macros::RegisterBase},
-> +    regs::self,
->  };
->  
->  /// Type specifying the `Gsp` falcon engine. Cannot be instantiated.
-> diff --git a/drivers/gpu/nova-core/falcon/sec2.rs b/drivers/gpu/nova-core/falcon/sec2.rs
-> index 815786c8480d..81717868a8a8 100644
-> --- a/drivers/gpu/nova-core/falcon/sec2.rs
-> +++ b/drivers/gpu/nova-core/falcon/sec2.rs
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  
->  use crate::falcon::{FalconEngine, PFalcon2Base, PFalconBase};
-> -use crate::regs::macros::RegisterBase;
-> +use kernel::io::register::RegisterBase;
->  
->  /// Type specifying the `Sec2` falcon engine. Cannot be instantiated.
->  pub(crate) struct Sec2(());
-> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-> index 112277c7921e..fffcaee2249f 100644
-> --- a/drivers/gpu/nova-core/nova_core.rs
-> +++ b/drivers/gpu/nova-core/nova_core.rs
-> @@ -2,9 +2,6 @@
->  
->  //! Nova Core GPU Driver
->  
-> -#[macro_use]
-> -mod bitfield;
-> -
->  mod dma;
->  mod driver;
->  mod falcon;
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> index 206dab2e1335..1f08e6d4045a 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -4,15 +4,13 @@
->  // but are mapped to types.
->  #![allow(non_camel_case_types)]
->  
-> -#[macro_use]
-> -pub(crate) mod macros;
-> -
->  use crate::falcon::{
->      DmaTrfCmdSize, FalconCoreRev, FalconCoreRevSubversion, FalconFbifMemType, FalconFbifTarget,
->      FalconModSelAlgo, FalconSecurityModel, PFalcon2Base, PFalconBase, PeregrineCoreSelect,
->  };
->  use crate::gpu::{Architecture, Chipset};
->  use kernel::prelude::*;
-> +use kernel::register;
->  
->  // PMC
->  
-> @@ -331,6 +329,7 @@ pub(crate) fn mem_scrubbing_done(self) -> bool {
->  
->  pub(crate) mod gm107 {
->      // FUSE
-> +    use kernel::register;
->  
->      register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00021c04 {
->          0:0     display_disabled as bool;
-> @@ -339,6 +338,7 @@ pub(crate) mod gm107 {
->  
->  pub(crate) mod ga100 {
->      // FUSE
-> +    use kernel::register;
->  
->      register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00820c04 {
->          0:0     display_disabled as bool;
-> diff --git a/drivers/gpu/nova-core/bitfield.rs b/rust/kernel/bitfield.rs
-> similarity index 91%
-> rename from drivers/gpu/nova-core/bitfield.rs
-> rename to rust/kernel/bitfield.rs
-> index cbedbb0078f6..09cd5741598c 100644
-> --- a/drivers/gpu/nova-core/bitfield.rs
-> +++ b/rust/kernel/bitfield.rs
-> @@ -9,7 +9,7 @@
->  /// # Syntax
->  ///
->  /// ```rust
-> -/// use nova_core::bitfield;
-> +/// use kernel::bitfield;
->  ///
->  /// #[derive(Debug, Clone, Copy, Default)]
->  /// enum Mode {
-> @@ -82,10 +82,11 @@
->  ///   the result.
->  /// - `as <type> ?=> <try_into_type>` calls `<try_into_type>`'s `TryFrom::<<type>>` implementation
->  ///   and returns the result. This is useful with fields for which not all values are valid.
-> +#[macro_export]
->  macro_rules! bitfield {
->      // Main entry point - defines the bitfield struct with fields
->      ($vis:vis struct $name:ident($storage:ty) $(, $comment:literal)? { $($fields:tt)* }) => {
-> -        bitfield!(@core $vis $name $storage $(, $comment)? { $($fields)* });
-> +        ::kernel::bitfield!(@core $vis $name $storage $(, $comment)? { $($fields)* });
->      };
->  
->      // All rules below are helpers.
-> @@ -114,7 +115,7 @@ fn from(val: $name) -> $storage {
->              }
->          }
->  
-> -        bitfield!(@fields_dispatcher $vis $name $storage { $($fields)* });
-> +        ::kernel::bitfield!(@fields_dispatcher $vis $name $storage { $($fields)* });
->      };
->  
->      // Captures the fields and passes them to all the implementers that require field information.
-> @@ -130,7 +131,7 @@ fn from(val: $name) -> $storage {
->          )*
->      }
->      ) => {
-> -        bitfield!(@field_accessors $vis $name $storage {
-> +        ::kernel::bitfield!(@field_accessors $vis $name $storage {
->              $(
->                  $hi:$lo $field as $type
->                  $(?=> $try_into_type)?
-> @@ -139,8 +140,8 @@ fn from(val: $name) -> $storage {
->              ;
->              )*
->          });
-> -        bitfield!(@debug $name { $($field;)* });
-> -        bitfield!(@default $name { $($field;)* });
-> +        ::kernel::bitfield!(@debug $name { $($field;)* });
-> +        ::kernel::bitfield!(@default $name { $($field;)* });
->      };
->  
->      // Defines all the field getter/setter methods for `$name`.
-> @@ -155,13 +156,13 @@ fn from(val: $name) -> $storage {
->          }
->      ) => {
->          $(
-> -            bitfield!(@check_field_bounds $hi:$lo $field as $type);
-> +            ::kernel::bitfield!(@check_field_bounds $hi:$lo $field as $type);
->          )*
->  
->          #[allow(dead_code)]
->          impl $name {
->              $(
-> -            bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type
-> +            ::kernel::bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type
->                  $(?=> $try_into_type)?
->                  $(=> $into_type)?
->                  $(, $comment)?
-> @@ -198,7 +199,7 @@ impl $name {
->          @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool => $into_type:ty
->              $(, $comment:literal)?;
->      ) => {
-> -        bitfield!(
-> +        ::kernel::bitfield!(
->              @leaf_accessor $vis $name $storage, $hi:$lo $field
->              { |f| <$into_type>::from(if f != 0 { true } else { false }) }
->              $into_type => $into_type $(, $comment)?;
-> @@ -209,7 +210,7 @@ impl $name {
->      (
->          @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool $(, $comment:literal)?;
->      ) => {
-> -        bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;);
-> +        ::kernel::bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;);
->      };
->  
->      // Catches the `?=>` syntax for non-boolean fields.
-> @@ -217,7 +218,7 @@ impl $name {
->          @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt ?=> $try_into_type:ty
->              $(, $comment:literal)?;
->      ) => {
-> -        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-> +        ::kernel::bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
->              { |f| <$try_into_type>::try_from(f as $type) } $try_into_type =>
->              ::core::result::Result<
->                  $try_into_type,
-> @@ -231,7 +232,7 @@ impl $name {
->          @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt => $into_type:ty
->              $(, $comment:literal)?;
->      ) => {
-> -        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-> +        ::kernel::bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
->              { |f| <$into_type>::from(f as $type) } $into_type => $into_type $(, $comment)?;);
->      };
->  
-> @@ -240,7 +241,7 @@ impl $name {
->          @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
->              $(, $comment:literal)?;
->      ) => {
-> -        bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;);
-> +        ::kernel::bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;);
->      };
->  
->      // Generates the accessor methods for a single field.
-> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-> index 03b467722b86..a79b603604b1 100644
-> --- a/rust/kernel/io.rs
-> +++ b/rust/kernel/io.rs
-> @@ -8,6 +8,7 @@
->  use crate::{bindings, build_assert, ffi::c_void};
->  
->  pub mod mem;
-> +pub mod register;
->  pub mod resource;
->  
->  pub use resource::Resource;
-> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/rust/kernel/io/register.rs
-> similarity index 93%
-> rename from drivers/gpu/nova-core/regs/macros.rs
-> rename to rust/kernel/io/register.rs
-> index c0a5194e8d97..c24d956f122f 100644
-> --- a/drivers/gpu/nova-core/regs/macros.rs
-> +++ b/rust/kernel/io/register.rs
-> @@ -17,7 +17,8 @@
->  /// The `T` generic argument is used to distinguish which base to use, in case a type provides
->  /// several bases. It is given to the `register!` macro to restrict the use of the register to
->  /// implementors of this particular variant.
-> -pub(crate) trait RegisterBase<T> {
-> +pub trait RegisterBase<T> {
-> +    /// The base address for the register.
->      const BASE: usize;
->  }
->  
-> @@ -26,7 +27,7 @@ pub(crate) trait RegisterBase<T> {
->  ///
->  /// Example:
->  ///
-> -/// ```no_run
-> +/// ```ignore
->  /// register!(BOOT_0 @ 0x00000100, "Basic revision information about the GPU" {
->  ///    3:0     minor_revision as u8, "Minor revision of the chip";
->  ///    7:4     major_revision as u8, "Major revision of the chip";
-> @@ -39,7 +40,7 @@ pub(crate) trait RegisterBase<T> {
->  /// significant bits of the register. Each field can be accessed and modified using accessor
->  /// methods:
->  ///
-> -/// ```no_run
-> +/// ```ignore
->  /// // Read from the register's defined offset (0x100).
->  /// let boot0 = BOOT_0::read(&bar);
->  /// pr_info!("chip revision: {}.{}", boot0.major_revision(), boot0.minor_revision());
-> @@ -61,7 +62,7 @@ pub(crate) trait RegisterBase<T> {
->  /// It is also possible to create a alias register by using the `=> ALIAS` syntax. This is useful
->  /// for cases where a register's interpretation depends on the context:
->  ///
-> -/// ```no_run
-> +/// ```ignore
->  /// register!(SCRATCH @ 0x00000200, "Scratch register" {
->  ///    31:0     value as u32, "Raw value";
->  /// });
-> @@ -111,7 +112,7 @@ pub(crate) trait RegisterBase<T> {
->  /// this register needs to implement `RegisterBase<Base>`. Here is the above example translated
->  /// into code:
->  ///
-> -/// ```no_run
-> +/// ```ignore
->  /// // Type used to identify the base.
->  /// pub(crate) struct CpuCtlBase;
->  ///
-> @@ -162,7 +163,7 @@ pub(crate) trait RegisterBase<T> {
->  /// compile-time or runtime bound checking. Simply define their address as `Address[Size]`, and add
->  /// an `idx` parameter to their `read`, `write` and `alter` methods:
->  ///
-> -/// ```no_run
-> +/// ```ignore
->  /// # fn no_run() -> Result<(), Error> {
->  /// # fn get_scratch_idx() -> usize {
->  /// #   0x15
-> @@ -211,7 +212,7 @@ pub(crate) trait RegisterBase<T> {
->  /// Combining the two features described in the sections above, arrays of registers accessible from
->  /// a base can also be defined:
->  ///
-> -/// ```no_run
-> +/// ```ignore
->  /// # fn no_run() -> Result<(), Error> {
->  /// # fn get_scratch_idx() -> usize {
->  /// #   0x15
-> @@ -273,28 +274,29 @@ pub(crate) trait RegisterBase<T> {
->  /// # Ok(())
->  /// # }
->  /// ```
-> +#[macro_export]
->  macro_rules! register {
->      // Creates a register at a fixed offset of the MMIO space.
->      ($name:ident @ $offset:literal $(, $comment:literal)? { $($fields:tt)* } ) => {
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_fixed $name @ $offset);
->      };
->  
->      // Creates an alias register of fixed offset register `alias` with its own fields.
->      ($name:ident => $alias:ident $(, $comment:literal)? { $($fields:tt)* } ) => {
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_fixed $name @ $alias::OFFSET);
->      };
->  
->      // Creates a register at a relative offset from a base address provider.
->      ($name:ident @ $base:ty [ $offset:literal ] $(, $comment:literal)? { $($fields:tt)* } ) => {
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_relative $name @ $base [ $offset ]);
->      };
->  
->      // Creates an alias register of relative offset register `alias` with its own fields.
->      ($name:ident => $base:ty [ $alias:ident ] $(, $comment:literal)? { $($fields:tt)* }) => {
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_relative $name @ $base [ $alias::OFFSET ]);
->      };
->  
-> @@ -305,7 +307,7 @@ macro_rules! register {
->          }
->      ) => {
->          static_assert!(::core::mem::size_of::<u32>() <= $stride);
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_array $name @ $offset [ $size ; $stride ]);
->      };
->  
-> @@ -326,7 +328,7 @@ macro_rules! register {
->              $(, $comment:literal)? { $($fields:tt)* }
->      ) => {
->          static_assert!(::core::mem::size_of::<u32>() <= $stride);
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_relative_array $name @ $base [ $offset [ $size ; $stride ] ]);
->      };
->  
-> @@ -348,7 +350,7 @@ macro_rules! register {
->          }
->      ) => {
->          static_assert!($idx < $alias::SIZE);
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_relative $name @ $base [ $alias::OFFSET + $idx * $alias::STRIDE ] );
->      };
->  
-> @@ -357,7 +359,7 @@ macro_rules! register {
->      // to avoid it being interpreted in place of the relative register array alias rule.
->      ($name:ident => $alias:ident [ $idx:expr ] $(, $comment:literal)? { $($fields:tt)* }) => {
->          static_assert!($idx < $alias::SIZE);
-> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
->          register!(@io_fixed $name @ $alias::OFFSET + $idx * $alias::STRIDE );
->      };
->  
-> @@ -414,12 +416,12 @@ pub(crate) fn read<const SIZE: usize, T, B>(
->                  base: &B,
->              ) -> Self where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->              {
->                  const OFFSET: usize = $name::OFFSET;
->  
->                  let value = io.read32(
-> -                    <B as crate::regs::macros::RegisterBase<$base>>::BASE + OFFSET
-> +                    <B as ::kernel::io::register::RegisterBase<$base>>::BASE + OFFSET
->                  );
->  
->                  Self(value)
-> @@ -435,13 +437,13 @@ pub(crate) fn write<const SIZE: usize, T, B>(
->                  base: &B,
->              ) where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->              {
->                  const OFFSET: usize = $name::OFFSET;
->  
->                  io.write32(
->                      self.0,
-> -                    <B as crate::regs::macros::RegisterBase<$base>>::BASE + OFFSET
-> +                    <B as ::kernel::io::register::RegisterBase<$base>>::BASE + OFFSET
->                  );
->              }
->  
-> @@ -455,7 +457,7 @@ pub(crate) fn alter<const SIZE: usize, T, B, F>(
->                  f: F,
->              ) where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  let reg = f(Self::read(io, base));
-> @@ -600,11 +602,11 @@ pub(crate) fn read<const SIZE: usize, T, B>(
->                  idx: usize,
->              ) -> Self where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->              {
->                  build_assert!(idx < Self::SIZE);
->  
-> -                let offset = <B as crate::regs::macros::RegisterBase<$base>>::BASE +
-> +                let offset = <B as ::kernel::io::register::RegisterBase<$base>>::BASE +
->                      Self::OFFSET + (idx * Self::STRIDE);
->                  let value = io.read32(offset);
->  
-> @@ -622,11 +624,11 @@ pub(crate) fn write<const SIZE: usize, T, B>(
->                  idx: usize
->              ) where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->              {
->                  build_assert!(idx < Self::SIZE);
->  
-> -                let offset = <B as crate::regs::macros::RegisterBase<$base>>::BASE +
-> +                let offset = <B as ::kernel::io::register::RegisterBase<$base>>::BASE +
->                      Self::OFFSET + (idx * Self::STRIDE);
->  
->                  io.write32(self.0, offset);
-> @@ -643,7 +645,7 @@ pub(crate) fn alter<const SIZE: usize, T, B, F>(
->                  f: F,
->              ) where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  let reg = f(Self::read(io, base, idx));
-> @@ -662,7 +664,7 @@ pub(crate) fn try_read<const SIZE: usize, T, B>(
->                  idx: usize,
->              ) -> ::kernel::error::Result<Self> where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->              {
->                  if idx < Self::SIZE {
->                      Ok(Self::read(io, base, idx))
-> @@ -684,7 +686,7 @@ pub(crate) fn try_write<const SIZE: usize, T, B>(
->                  idx: usize,
->              ) -> ::kernel::error::Result where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->              {
->                  if idx < Self::SIZE {
->                      Ok(self.write(io, base, idx))
-> @@ -707,7 +709,7 @@ pub(crate) fn try_alter<const SIZE: usize, T, B, F>(
->                  f: F,
->              ) -> ::kernel::error::Result where
->                  T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                B: ::kernel::io::register::RegisterBase<$base>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  if idx < Self::SIZE {
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index fcffc3988a90..8f8260090c02 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -63,6 +63,7 @@
->  pub mod alloc;
->  #[cfg(CONFIG_AUXILIARY_BUS)]
->  pub mod auxiliary;
-> +pub mod bitfield;
->  pub mod bits;
->  #[cfg(CONFIG_BLOCK)]
->  pub mod block;
-> -- 
-> 2.34.1
-> 
-> 
+On Wed, Oct 22, 2025 at 09:57:22AM -0700, Yonghong Song wrote:
+>
+>
+>On 10/20/25 2:08 PM, syzbot wrote:
+>>Hello,
+>>
+>>syzbot found the following issue on:
+>>
+>>HEAD commit:    a1e83d4c0361 selftests/bpf: Fix redefinition of 'off' as d..
+>>git tree:       bpf
+>>console output: https://syzkaller.appspot.com/x/log.txt?x=12d21de2580000
+>>kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
+>>dashboard link: https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb
+>>compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>>syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160cf542580000
+>>C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128d5c58580000
+>>
+>>Downloadable assets:
+>>disk image: https://storage.googleapis.com/syzbot-assets/2f6a7a0cd1b7/disk-a1e83d4c.raw.xz
+>>vmlinux: https://storage.googleapis.com/syzbot-assets/873984cfc71e/vmlinux-a1e83d4c.xz
+>>kernel image: https://storage.googleapis.com/syzbot-assets/16711d84070c/bzImage-a1e83d4c.xz
+>>
+>>The issue was bisected to:
+>>
+>>commit 7c33e97a6ef5d84e98b892c3e00c6d1678d20395
+>>Author: Sahil Chandna <chandna.sahil@gmail.com>
+>>Date:   Tue Oct 14 18:56:35 2025 +0000
+>>
+>>     bpf: Do not disable preemption in bpf_test_run().
+>>
+>>bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=172fe492580000
+>>final oops:     https://syzkaller.appspot.com/x/report.txt?x=14afe492580000
+>>console output: https://syzkaller.appspot.com/x/log.txt?x=10afe492580000
+>>
+>>IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>Reported-by: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com
+>>Fixes: 7c33e97a6ef5 ("bpf: Do not disable preemption in bpf_test_run().")
+>>
+>>------------[ cut here ]------------
+>>WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 bpf_try_get_buffers kernel/bpf/helpers.c:781 [inline]
+>>WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 bpf_bprintf_prepare+0x12cf/0x13a0 kernel/bpf/helpers.c:834
+>
+>Okay, the warning is due to the following WARN_ON_ONCE:
+>
+>static DEFINE_PER_CPU(struct bpf_bprintf_buffers[MAX_BPRINTF_NEST_LEVEL], bpf_bprintf_bufs);
+>static DEFINE_PER_CPU(int, bpf_bprintf_nest_level);
+>
+>int bpf_try_get_buffers(struct bpf_bprintf_buffers **bufs)
+>{
+>        int nest_level;
+>
+>        nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
+>        if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
+>                this_cpu_dec(bpf_bprintf_nest_level);
+>                return -EBUSY;
+>        }
+>        *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
+>
+>        return 0;
+>}
+>
+>Basically without preempt disable, at process level, it is possible
+>more than one process may trying to take bpf_bprintf_buffers.
+>Adding softirq and nmi, it is totally likely to have more than 3
+>level for buffers. Also, more than one process with bpf_bprintf_buffers
+>will cause problem in releasing buffers, so we need to have
+>preempt_disable surrounding bpf_try_get_buffers() and
+>bpf_put_buffers().
+Right, but using preempt_disable() may impact builds with
+CONFIG_PREEMPT_RT=y, similar to bug[1]? Do you think local_lock() could be used here
+as nest level is per cpu variable and local lock semantics can work
+for both RT and non rt builds ?
+>
+>There are some kfuncs/helpers need such preempt_disable
+>protection, e.g. bpf_stream_printk, bpf_snprintf,
+>bpf_trace_printk, bpf_trace_vprintk, bpf_seq_printf.
+>But please double check.
+>
+Sure, thanks!
+>
+[1] https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
+>>Modules linked in:
+>>CPU: 1 UID: 0 PID: 6145 Comm: syz.4.53 Not tainted syzkaller #0 PREEMPT(full)
+>>Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+>>RIP: 0010:bpf_try_get_buffers kernel/bpf/helpers.c:781 [inline]
+>>RIP: 0010:bpf_bprintf_prepare+0x12cf/0x13a0 kernel/bpf/helpers.c:834
+>>Code: ff e9 ce fe ff ff e8 10 ec e0 ff e9 be fe ff ff e8 06 ec e0 ff e9 b4 fe ff ff e8 fc eb e0 ff e9 aa fe ff ff e8 f2 eb e0 ff 90 <0f> 0b 90 65 ff 0d 27 fd b2 10 b8 f0 ff ff ff e9 17 ff ff ff e8 d8
+>>RSP: 0018:ffffc90003797840 EFLAGS: 00010293
+>>RAX: ffffffff81df57fe RBX: ffffc90003797a10 RCX: ffff888026493c80
+>>RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
+>>RBP: ffffc90003797970 R08: 0000000000585870 R09: 0000000000000005
+>>R10: dffffc0000000000 R11: fffff520006f2f20 R12: dffffc0000000000
+>>R13: 0000000000000004 R14: 0000000000000003 R15: 1ffff920006f2f42
+>>FS:  00005555805f5500(0000) GS:ffff888125e0c000(0000) knlGS:0000000000000000
+>>CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>CR2: 0000000000000000 CR3: 000000007c04e000 CR4: 00000000003526f0
+>>Call Trace:
+>>  <TASK>
+>>  ____bpf_trace_printk kernel/trace/bpf_trace.c:372 [inline]
+>>  bpf_trace_printk+0xdb/0x190 kernel/trace/bpf_trace.c:362
+>>  bpf_prog_bfbd7bf4bf171090+0x41/0x5a
+>>  bpf_dispatcher_nop_func include/linux/bpf.h:1350 [inline]
+>>  __bpf_prog_run include/linux/filter.h:721 [inline]
+>>  bpf_prog_run include/linux/filter.h:728 [inline]
+>>  bpf_prog_run_pin_on_cpu include/linux/filter.h:745 [inline]
+>>  bpf_flow_dissect+0x225/0x720 net/core/flow_dissector.c:1024
+>>  bpf_prog_test_run_flow_dissector+0x37c/0x5c0 net/bpf/test_run.c:1414
+>>  bpf_prog_test_run+0x2c7/0x340 kernel/bpf/syscall.c:4688
+>>  __sys_bpf+0x562/0x860 kernel/bpf/syscall.c:6167
+>>  __do_sys_bpf kernel/bpf/syscall.c:6259 [inline]
+>>  __se_sys_bpf kernel/bpf/syscall.c:6257 [inline]
+>>  __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6257
+>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>RIP: 0033:0x7f25b0f8efc9
+>>Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+>>RSP: 002b:00007ffe036cd5e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+>>RAX: ffffffffffffffda RBX: 00007f25b11e5fa0 RCX: 00007f25b0f8efc9
+>>RDX: 0000000000000050 RSI: 0000200000000180 RDI: 000000000000000a
+>>RBP: 00007f25b1011f91 R08: 0000000000000000 R09: 0000000000000000
+>>R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+>>R13: 00007f25b11e5fa0 R14: 00007f25b11e5fa0 R15: 0000000000000003
+>>  </TASK>
+>>
+>>
+>>---
+>>This report is generated by a bot. It may contain errors.
+>>See https://goo.gl/tpsmEJ for more information about syzbot.
+>>syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>>syzbot will keep track of this issue. See:
+>>https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>>
+>>If the report is already addressed, let syzbot know by replying with:
+>>#syz fix: exact-commit-title
+>>
+>>If you want syzbot to run the reproducer, reply with:
+>>#syz test: git://repo/address.git branch-or-commit-hash
+>>If you attach or paste a git patch, syzbot will apply it before testing.
+>>
+>>If you want to overwrite report's subsystems, reply with:
+>>#syz set subsystems: new-subsystem
+>>(See the list of subsystem names on the web dashboard)
+>>
+>>If the report is a duplicate of another one, reply with:
+>>#syz dup: exact-subject-of-another-report
+>>
+>>If you want to undo deduplication, reply with:
+>>#syz undup
+>
 
