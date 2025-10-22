@@ -1,121 +1,130 @@
-Return-Path: <linux-kernel+bounces-864548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EB8BFB0A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:02:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123B3BFB0D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92F01888732
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0D142602A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6231430FC36;
-	Wed, 22 Oct 2025 09:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DB33101B8;
+	Wed, 22 Oct 2025 09:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N3c3SpV5"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="oQ+aKLRi"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FDB305967
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B4930EF9D;
+	Wed, 22 Oct 2025 09:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123766; cv=none; b=eHMDBxpkvpRUGtowd56L6aM1prVAnHHTl37LLlGvuqDd3fy8THSfNH+DXmzrpPXHbaL5pTjUNM4TZPgkQ13uNs2GW9jSl9wRZSsuurOmem3d1EMzlrbQSzZsTUKt+Kt5RdHc0TCMzYx3cpCLtKGPtLyQVqUVpjU45gUBoU5a99k=
+	t=1761123800; cv=none; b=LjpVChrLhvgjkWGyslTSjwAlUz2/4QbnbnRziCYbKdEfd8bidNpN3IBQuCCx2aH4wKVGBEukLmU+HesbXL+TdPpFQIxiHTBGFzpM+SU5X794AAZbsyiSVprr0NH2sAjSDEQzIH3zffKTe1h7fb6nHvjZ8lDJl86VZhVP8KDhAI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123766; c=relaxed/simple;
-	bh=RAn9DUN+XwBeOn/ARjMhyZhD6sfiWfeYDtT/mcFMGBs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zcg1lCARTAmcvpq8O6Fyv1mQ2+of606i3W8IYox87gp7C0UZw7zSqAzgs/H1RDJPNfRXCwdNDZqY1GjboVGh6cLYI34BOqaOJx6ns2ZBQUvf98aOw4yiiI7XF1AH8BJFNIVdYtt9a4g+VG6xlhQYta7qjIlV64jwjLHD6oYWbKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N3c3SpV5; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 87A9AC0B8B2;
-	Wed, 22 Oct 2025 09:02:21 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 36F36606DC;
-	Wed, 22 Oct 2025 09:02:41 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 00CFE102F2424;
-	Wed, 22 Oct 2025 11:02:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761123760; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=oDRCUkMoCDby5S/aZrDjp1VXkak+fQdoG5RdkGXcB4Y=;
-	b=N3c3SpV57p5/GKS5PSw7jmNA1udiZ4jXASbHWVwRfwDneehJCGrqoNujIJH7dGUKy0P8SW
-	Gwrpaj8sBhW97sO2TJlj8vA7fDjThqucjwNAkTfRgMBJkr8p00UXfw91V42W6vvZ5JfYG7
-	/JcxDVomjRkPhkCUi0EjhpriqPlXzOYXf7jxDf/1NgdjYTNRQTC49WHgvkdL2eG1X9H7uy
-	AHbENFrT5qNHYN54ydrdcpWeFSohXnMloWLAIJPKC6d0LrS9ldokxcFZ5I5ZRpgMDEtssH
-	8QdrA8u6UmMSsYRO7b6XVxk3mYwdc6y3gp651iSnUuhM67xdB46zehcfJ1INfw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Genoud <richard.genoud@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Chen-Yu Tsai
- <wens@csie.org>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Samuel
- Holland <samuel@sholland.org>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,  Wentao Liang <vulab@iscas.ac.cn>,  Johan
- Hovold <johan@kernel.org>,  Maxime Ripard <mripard@kernel.org>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  linux-mtd@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-sunxi@lists.linux.dev,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/15] mtd: rawnand: sunxi: rework pattern found
- registers
-In-Reply-To: <20251020101311.256819-6-richard.genoud@bootlin.com> (Richard
-	Genoud's message of "Mon, 20 Oct 2025 12:13:01 +0200")
-References: <20251020101311.256819-1-richard.genoud@bootlin.com>
-	<20251020101311.256819-6-richard.genoud@bootlin.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Wed, 22 Oct 2025 11:02:36 +0200
-Message-ID: <87plaftikz.fsf@bootlin.com>
+	s=arc-20240116; t=1761123800; c=relaxed/simple;
+	bh=sc8w4JADOyNs3jkCY/XLNuZVan+GiO+w5XAq+33pfa4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=i38Zp77g+05eBC2Z1VzKqrTrW3+cHX9xP3HlTRwP8ympuRryYFTJZd63LZfm9lxjqbn5osSXWsVuMXmL+/vLDKyGedL/ZQ+upwFwH3YHeOWeo9Iagc9PdOgUnJWO+n9Rb08SrssxPX8Atp+nmwbMlhOT6xVdZ4r8aC5zDWfuspY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=oQ+aKLRi; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59M9316C0370228, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1761123781; bh=5ERmHH6eFe5HuiCgWX5ctaUDeupHikqUlWUfTuPXdJY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=oQ+aKLRixTAdNCQqSzn+jMqHitC1ThEOQqpLQmUOaWxCrm6w8BmNCP4qSIHzm4nj9
+	 vojwUAKpC/SlbuTmhvQlEvk4MZndAy26jG1hfy04B8hCjunnkpQ6kcvBD8TnGrxjgp
+	 bgSiZEn8fbvwQyAFgORu+gxrbtmcikFY+lgfWQ6Y6RzFZ+mke/Sloa6PsAfeoMUmj7
+	 +WPjTun+uXhEv9uM6HbKespFTZt+WmhN5bzmjL3YZ8xYJhq8QKsJTvo9/O4T+kdVDD
+	 szyoqrpwHBBPyXhv4ugkMXqbCadXp7YhbRUtpbsBMcjzNcIUpvL79scMS1+1O2S8X3
+	 cT6adyQZbBqVA==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59M9316C0370228
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 Oct 2025 17:03:01 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 22 Oct 2025 17:03:01 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
+ 15.02.1544.027; Wed, 22 Oct 2025 17:03:01 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next v3 9/9] wifi: rtw89: process TX wait skbs for USB via C2H handler
+Thread-Topic: [PATCH rtw-next v3 9/9] wifi: rtw89: process TX wait skbs for
+ USB via C2H handler
+Thread-Index: AQHcP04D/bgw1qysWkyovzU3pi7EuLTN5fXQ
+Date: Wed, 22 Oct 2025 09:03:01 +0000
+Message-ID: <191616d9c1864814ae95129886038ad9@realtek.com>
+References: <20251017100658.66581-1-pchelkin@ispras.ru>
+ <20251017100658.66581-10-pchelkin@ispras.ru>
+In-Reply-To: <20251017100658.66581-10-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Richard,
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> TX wait skbs need to be completed when they are done.  PCIe part does thi=
+s
+> inside rtw89_pci_tx_status() during RPP processing.  Other HCIs use a
+> mechanism based on C2H firmware messages.
+>=20
+> Store TX wait skbs inside TX report queue so that it'll be possible to
+> identify completed items inside the C2H handler via private driver data o=
+f
+> skb.  Try to do this as similar to PCIe path as possible.  When the
+> corresponding TX wait skb is found inside TX report queue, unlink it from
+> there and call rtw89_core_tx_wait_complete() to mark the completion.
+>=20
+> If the callee waiting for the completion has already timed out, the TX
+> wait skb is placed into TX wait list (like PCIe part does).
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-On 20/10/2025 at 12:13:01 +02, Richard Genoud <richard.genoud@bootlin.com> =
-wrote:
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-> On H6/H616, the register ECC_PAT_FOUND is at its own address, and not
-> part of ECC status register.
-> So, introduce the pattern found register offset in sunxi_nfc_caps, along
-> with its mask.
->
-> Also, introduce a non compile-time field_get() because FIELD_GET() and
-> u32_get_bits() don't work with non compile-time constant.
-> https://lore.kernel.org/lkml/cover.1739540679.git.geert+renesas@glider.be/
->
-> No functional change.
->
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/sunxi_nand.c | 36 ++++++++++++++++++++++++++-----
->  1 file changed, 31 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sun=
-xi_nand.c
-> index 8f5d8df19e33..4cfb5d3e9c06 100644
-> --- a/drivers/mtd/nand/raw/sunxi_nand.c
-> +++ b/drivers/mtd/nand/raw/sunxi_nand.c
-> @@ -29,6 +29,9 @@
->  #include <linux/iopoll.h>
->  #include <linux/reset.h>
->=20=20
-> +/* non compile-time field get */
-> +#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) -
-> 1))
+[...]
 
-I see there are already 26 users for this, let's hope it gets merged
-soon and this one dropped.
+>  static inline
+>  void rtw89_tx_rpt_tx_status(struct rtw89_dev *rtwdev, struct sk_buff *sk=
+b, u8 tx_status)
+>  {
+> +       struct rtw89_tx_skb_data *skb_data =3D RTW89_TX_SKB_CB(skb);
+>         struct ieee80211_tx_info *info =3D IEEE80211_SKB_CB(skb);
+>=20
+> +       if (rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_status))
+> +               return;
+> +
 
-Not a blocker for me.
+nit: move 'info =3D IEEE80211_SKB_CB(skb);' here like PCIE does.
 
-Miqu=C3=A8l
+>         ieee80211_tx_info_clear_status(info);
+>         if (tx_status =3D=3D RTW89_TX_DONE)
+>                 info->flags |=3D IEEE80211_TX_STAT_ACK;
+
+
 
