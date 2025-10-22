@@ -1,153 +1,156 @@
-Return-Path: <linux-kernel+bounces-864470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23943BFADBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:21:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0623BFADB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF7644E0223
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:21:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A084F4F993E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9F03081A4;
-	Wed, 22 Oct 2025 08:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F005F309DBD;
+	Wed, 22 Oct 2025 08:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qFVaMxuX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="RQyNv3R1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sR7qicZ9"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAE830649A
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E000D3064B7;
+	Wed, 22 Oct 2025 08:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121271; cv=none; b=aJSHEHJxBVeR6rUWMknuVzSmpV5bLE9nwDCJ7/RBQ+y45odd2RZ0JHqOoFiNed2tIDIlgmVIGCMtrFrX9sjLfdv5jEEBYuQJZD0KeDzrwHeWq81c0aq4b571aIStj9J474CsdziKpCcURnv/dLhuUvoIolVsRVXqoPVD1LSwEqI=
+	t=1761121254; cv=none; b=idjNOh87OCB0S3jOq2Bl8pUChe3JWTKLK3PpWyr+xlPFKL+qk399SzZLyCtopvNNpzMV6bT5I7Pv+idVFf/orhFsU/TXAdwI6GaPGR+g1NNWB8ZH1jaxAnqAmHA6OKqjKVQnqcotXz3b3bjrhAm/5nnKhV1L+1+/cN7UmKJAY2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121271; c=relaxed/simple;
-	bh=ndK7Nv0K8owTRWCw2j30l/vYTQLzsKCCykYIlPDV6eU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KtFqDmw/36/t09b5q6efvYpTURUg5/NAJJOASzQzOnPK2VWxm/qVFppnzSC5Y18s/7Da5n3M4lxCX1JIrTK5+pCufwu7JLt7psdhcfHQrC6qotf4Q0kbDRXLJ3JpX7YPz1Br72Gb6nxMhAqm7ozeeaA78BpryHUsKl633yBVV3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qFVaMxuX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M0Z1N2022111;
-	Wed, 22 Oct 2025 08:20:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=RoDsqR
-	QtDPGVBi9bAGRBayt7QtkpTEmGZZUOBqsfBxg=; b=qFVaMxuXwGdx+CQoSMutyp
-	FR/W9M0GEmxzm4AwkgVB9ILioqcguHXGhXutB/JRBTqCk/WzUMasoLC1u6ASm/9Z
-	C7i2wwlIj1Uy7JYau6EBe2SFxR/RMNP6GpyFwrmuf7QiPM335VXRGuqqT9HpoyQy
-	tpnoCom0KrM/+nZxmiwmmdXVhKvg27VehMrDM90LxxQqmud3/JfFR8gyCQzdymta
-	ZEbtlKkug2Q7bKTBZDYVqV3Jz+j7OPbh/ojK4KeT4TIASDp3ux3iwAN4T9a0aETm
-	FIActcaU3d9pA2lXl3VdMicOCiaUsp95gV1S4yTDCIM6gaVoz4iQQ39Fprv/8Iew
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vt5md-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 08:20:44 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59M6DIwB014848;
-	Wed, 22 Oct 2025 08:20:43 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vn7s7gb2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 08:20:43 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59M8KgIi25166090
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Oct 2025 08:20:42 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 18EEB20040;
-	Wed, 22 Oct 2025 08:20:42 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 834EC20049;
-	Wed, 22 Oct 2025 08:20:41 +0000 (GMT)
-Received: from [9.87.134.81] (unknown [9.87.134.81])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 22 Oct 2025 08:20:41 +0000 (GMT)
-Message-ID: <42d3a98ec468c14f21a8e37a53df9ee93010f571.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/2] nvme-pci: Print error message on failure in
- nvme_probe
-From: Gerd Bayer <gbayer@linux.ibm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig
-	 <hch@lst.de>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Sagi
- Grimberg <sagi@grimberg.me>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Wed, 22 Oct 2025 10:20:41 +0200
-In-Reply-To: <2025102230-omega-octopus-3cf1@gregkh>
-References: <20251020-nvme_probefail-v1-0-a420046d98f0@linux.ibm.com>
-	 <20251020-nvme_probefail-v1-1-a420046d98f0@linux.ibm.com>
-	 <20251022062634.GA4790@lst.de> <2025102230-omega-octopus-3cf1@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761121254; c=relaxed/simple;
+	bh=SaXgF4JlzzCJ4zIHCtUVw5mm2cNNGDy7s63PbL/U9rc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBFD7+yjsDfZw+BnLDZAYAixaFMk/W8LhjbubhUY5p1c+e5Zuv8momNwZ0HgfuN4gaLB6+iyyE0J0wMlrINjExomh0TwA9kx5W0TVSQSsJnTcQNEWtcEd2w01Q6xVmLqdhNxt0GE4WYaaqrizSwgdcHb3SHXaeR7d8yfcK2iaLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=RQyNv3R1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sR7qicZ9; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id F27DE14001C9;
+	Wed, 22 Oct 2025 04:20:50 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Wed, 22 Oct 2025 04:20:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1761121250; x=1761207650; bh=uPC4ZvWHoZ
+	pQ0FA8oprvgTzvGpj3Enck39VjaaCP7LI=; b=RQyNv3R1jkBd77W7ENqFkirfuU
+	cvaWR7yqOgTuIVWKZUutJi41URla8X8U405KaHff63bl/kFDHR7io4U4s1gQqEz1
+	dmjmv57cZIRMdOaSxMGRArYAubdpv6NwxdYL6jp/2/4AzSSQqVTmp4g/5hl/jFRi
+	JsZWOKUyZryxPp09q0MK4Cj60gkntJG2D0F2u+lRIwe4T3oJ7PAeHMcq774KhkBK
+	bEXUFu9TlgcBr9zAbFXxZQY3hnRaj7dzLEdXtQN69yfeTsRU3CT4P76RHXaBgWpm
+	RWLqhWg1vl+y6COKrLoJFJkNTb7Tx1lbeSrI/OwUcWG6rpCmUsL/XpFBeNmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761121250; x=1761207650; bh=uPC4ZvWHoZpQ0FA8oprvgTzvGpj3Enck39V
+	jaaCP7LI=; b=sR7qicZ9c5PnxW+VxYyhsnP9XcLrBfbc/awGfiyJDlmZ4UHqarU
+	KozeOSwbOBDi+3zkskfFYy5+zJLG9OTChHYr0/4cv+83vAKFg3suBTzr5ghxGS3n
+	RLnhXtUVXnAH9h7dlmqYwJIoIFH0k3LriH2f38vLnyZPnPtUBJBFSFCXoKYOgNmO
+	jBmqBJDmqZq10y7vSKwTOyYafFD/GA3DsZWE0xlAB7eCssbWF+omWyQx3smsw5HD
+	AZ4uwvFcyAtjUQVQOdXscwtROzO2218zvdjUWt+DmZibLqGKW6xsx5O3ePlDD8qV
+	3cNAhZdHyJPGg6OZTcAiMaw5z5ohIwkFIQQ==
+X-ME-Sender: <xms:4pP4aK8jqEfwKOq4EFFZBmz3K-FD3wSscM260pKPItpWa-DaRmxcew>
+    <xme:4pP4aDcHI9eeDxqEs8dpejYouV14ZemsU65zAqAo0eoAD-I-ann5s7HGASFKmG_MP
+    011lZQSNc1MgNsJIxhkVCLtnW0kctQEQK1D0_MmMsUqwXA0JQ>
+X-ME-Received: <xmr:4pP4aOubuLV5MWkdsyEWlQONJmp9r48lo7ydBE012OtTVvQ8XfNNCC_I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeftdelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
+    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvdevvd
+    eljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
+    gtohhmpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    oheplhgvohhnrdhhfigrnhhgsehlihhnuhigrdguvghvpdhrtghpthhtohepshhtrggslh
+    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhig
+    qdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrth
+    drtghomhdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
+    tghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
+    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlrghntggvrdihrg
+    hngheslhhinhhugidruggvvh
+X-ME-Proxy: <xmx:4pP4aE0cbiTkhkpo-euO6Vi41z_T7p0U3KfwGWeBTBGyi-kv0Rvi7A>
+    <xmx:4pP4aDD6AekSYOMRUnqF6CarAHHdSQ0FrRTSh433D9lMfKOvhRCeRw>
+    <xmx:4pP4aBdd1US3YSz3iNE9mnIDaovo72ekHpXk7QR5YMlYQJaQ92jPPA>
+    <xmx:4pP4aFxWVdmYuQJJMnATsZurVvtofp8g5wbEo6ATVLcQSLvA_2prXg>
+    <xmx:4pP4aFM5tPcaZAiYWSNb-vGqUe1nU82BwY6lkKdReyMjRZp6sGJauPjH>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Oct 2025 04:20:49 -0400 (EDT)
+Date: Wed, 22 Oct 2025 10:20:48 +0200
+From: Greg KH <greg@kroah.com>
+To: Leon Hwang <leon.hwang@linux.dev>
+Cc: stable@vger.kernel.org, akpm@linux-foundation.org, david@redhat.com,
+	lorenzo.stoakes@oracle.com, shuah@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Lance Yang <lance.yang@linux.dev>
+Subject: Re: [PATCH 6.1.y] selftests/mm: Move default_huge_page_size to
+ vm_util.c
+Message-ID: <2025102210-detection-blurred-8332@gregkh>
+References: <20251022055138.375042-1-leon.hwang@linux.dev>
+ <2025102230-scoured-levitator-a530@gregkh>
+ <ff0b2bd4-2bb0-4d0b-8a9e-4a712c419331@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 9FD8qQeOnQDRobCdl1e3zFhscAzSD0QZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX7cE3NVRtZuVx
- GvlY13LoI73Z/gXSf9QAkvkyIo0S+MNjop9vLf4BKpralvAiLRKjv6SpjmpzExvEKlW/nimHqC2
- 4fMMteNjFzEIhpFtFINWfegELd/YWfusfgSIdlyi5eFgYz7ByTHDfkvITRyczFOLGHwpqT6xG5I
- XgjtIpIEgJzHKyFa7O16CseioCcK6imfLkPRI6rwwieJcJlMBIU3j6AzhCdk8ztha8/TNh/LjFa
- dA0cGDn269vpR298gNNM/jPfKh3WUjvOZ3k7dybnEL9um58go+2UrhXbLscCPkJ4Gd+J9shzY53
- mtzo9/jC/r6gcjPi2u1ofXv4ayr5vhpAb98MscvpqvPXulgSOAqwTRodYmSc/LYGtUfeKzsnbW1
- Hy6gqYw6psHNaxOCNuGDP6bhHwuzIQ==
-X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f893dc cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=nr0wtmjnT5oQp51ULx0A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 9FD8qQeOnQDRobCdl1e3zFhscAzSD0QZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- clxscore=1011 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff0b2bd4-2bb0-4d0b-8a9e-4a712c419331@linux.dev>
 
-On Wed, 2025-10-22 at 09:48 +0200, Greg Kroah-Hartman wrote:
-> On Wed, Oct 22, 2025 at 08:26:34AM +0200, Christoph Hellwig wrote:
-> > On Mon, Oct 20, 2025 at 05:29:07PM +0200, Gerd Bayer wrote:
-> > > Add a new error message like
-> > > nvme nvme0: probe failed on 2004:00:00.0 (result: -19)
-> > > that makes failures to probe visible in the kernel log.
-> >=20
-> > Is that really a thing drivers are expected to do?  If it is generally
-> > usefull I'd expect it to be in the driver core.
->=20
-> We have that already, dev_err_probe(), no need to create
-> yet-another-version of that.
+On Wed, Oct 22, 2025 at 04:08:45PM +0800, Leon Hwang wrote:
+> 
+> 
+> On 22/10/25 15:40, Greg KH wrote:
+> > On Wed, Oct 22, 2025 at 01:51:38PM +0800, Leon Hwang wrote:
+> >> Fix the build error:
+> >>
+> >> map_hugetlb.c: In function 'main':
+> >> map_hugetlb.c:79:25: warning: implicit declaration of function 'default_huge_page_size' [-Wimplicit-function-declaration]
+> >>    79 |         hugepage_size = default_huge_page_size();
+> >>       |                         ^~~~~~~~~~~~~~~~~~~~~~
+> >> /usr/bin/ld: /tmp/ccYOogvJ.o: in function 'main':
+> >> map_hugetlb.c:(.text+0x114): undefined reference to 'default_huge_page_size'
+> >>
+> >> According to the latest selftests, 'default_huge_page_size' has been
+> >> moved to 'vm_util.c'. So fix the error by the same way.
+> >>
+> >> Reviewed-by: Lance Yang <lance.yang@linux.dev>
+> >> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+> >> ---
+> >>  tools/testing/selftests/vm/Makefile      |  1 +
+> >>  tools/testing/selftests/vm/userfaultfd.c | 24 ------------------------
+> >>  tools/testing/selftests/vm/vm_util.c     | 21 +++++++++++++++++++++
+> >>  tools/testing/selftests/vm/vm_util.h     |  1 +
+> >>  4 files changed, 23 insertions(+), 24 deletions(-)
+> > 
+> > 
+> > What commit id does this fix?  And again, why not just take the original
+> 
+> Let me check which commit introduced the fix.
+> 
+> > commits instead?
+> 
+> I agree that taking the original commits would be preferable.
+> 
+> However, it might involve quite a few patches to backport, which could
+> be a bit of work.
 
-So I take this as an implict answer to the question, if drivers are
-expected to do this or the driver core: Drivers.
+We can easily take lots of patches, don't worry about the quantity.  But
+it would be good to figure out what caused this to break here, and not
+in other branches.
 
+thanks,
 
-Before learning about dev_err_probe() I was sampling a few drivers'
-probe functions and got inconclusive results regarding their verbosity
-regarding logging errors in probe. Interestingly, none of my samples
-used dev_err_probe()...
-
-While for most drivers it may be obvious that in most sytem
-configurations it will not go unnoticed that e.g. the graphics
-controller failed to probe - there may be other
-components/configurations and a centralized error reporting e.g. in
-local_pci_probe() would have its benefits. But then with so many
-drivers already using dev_err_probe(), we don't want to report this
-twice, now.
-
-Thus, I'm going to convert my patch over for a v2.
-
-Thanks,
-Gerd
+greg k-h
 
