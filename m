@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-864109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D444BF9EF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:23:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07C6BF9EFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 83EE7343A5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049304869E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09142D5408;
-	Wed, 22 Oct 2025 04:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4958F2D4B6D;
+	Wed, 22 Oct 2025 04:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CzOsVt/f"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exoWGZHQ"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BE42153ED
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B022D2398
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761106998; cv=none; b=CH1hxyFNFVOSYRftECFrSoMBgVPGfeTz6s8jAMOyxYNXxM66lCnfQyfd1Vfg+z8TvywWmLoaRGtFlQ+qiDwtTXo9AUXYrGAQGC39zoBwizgBZ16EDng/t54fRJQDtI7PbI3hU5OmTpUDte9KkFPkrpvCBh8J4+nlpV/9RfDV790=
+	t=1761107126; cv=none; b=WIDnXsU3Ee3uotsbuaY7oqNI8LMNf2Y8TTX9y+zEg0nSQGUKMNT1GWWNf1B3JQyMrlR1xwjipJ0Z0VF/THOquJ4HeOfqt6pPJ3KyB+WDK/a20ZdRMQhYeLc9y44hBj+CMVP186OfE+4MGnSJSucuidvsXJ9wJACE+7r/A9umiVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761106998; c=relaxed/simple;
-	bh=/Zs13rwyEpacp0dK+/i30k2S0FjwWy/zQPbtxe8LS3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VcNwT72m6KoxJJgy+uKxL7M5imqu8rObMZOD8pBiF4CDkjfRWiJrXDQVQ8zJKtLqJpjZLpaWZEvKm2qinel8eTdwJSyYyFJV/DVbMdOKOHhibKkQZ5CGwcilFeqy+QODawzQ/Fw3g9/QQC8BYKwOXc19eDUu7Qg2nTjieUB3IpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CzOsVt/f; arc=none smtp.client-ip=209.85.160.180
+	s=arc-20240116; t=1761107126; c=relaxed/simple;
+	bh=bsYa6X9KROYy7hv3d72FhLZXSqZ0WWU/HZUA1g//G3E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O+29yCZkSNRGyVlKb7fR9auQGIWG2Yf5MmSdH0jNptEYwnZzF4I+9SlNMzgpYk8mcv5pGy2VDZxDF9NKWXitJ4UNK5mgAkMkR0YZN570NHe3x1BZ/Vva1aEUn25Bb+njh6qXdwndw/9j7HGFk0BncB4DXPjZdJbpYUJ0YPDKm/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exoWGZHQ; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4e8850b09eeso6379721cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:23:17 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-430c151ca28so25135015ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:25:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761106996; x=1761711796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sjmqgq4oXJ6KcLliX8XpjgciioGaVT0ubuH52tHqk88=;
-        b=CzOsVt/fNCyakV/XkbSnFqy4BN1kAG0gyD00J5dz6NMK9zdn3lm/+qF4Dp9Mr49xOn
-         lV71duAGGjbEU35aD4Ri3liFIpQL0wDQzgrG7wCCPZ4u8I3E7TNz5oVPv125K39Yn1Jh
-         hVDK79GlXWsj3q95oG2MYgENo31TTi+g4e66ZFSoQzF5Rg/8N0xAeOH2pdY+nuFW1yEU
-         brdOTEBfrwGftCWbjLg0oqacWSwog7vmuBfuAAmzguB4WEolwFM7CGowS3JRyukvOpBH
-         xmBwpHuPt7oOID0hDt5R1v1hmvi+HTIoUhMVl2dPzpXT/VAAlj8ybzjizwSH5vRdU/uU
-         iXpw==
+        d=gmail.com; s=20230601; t=1761107124; x=1761711924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t2LfB28zph799goFY4PIl5Hu2JZs6ZC/o5ejBi3O62Y=;
+        b=exoWGZHQQDbNsbubt6n5JRRZ29qcKqLgoZYz0OCI/KQnHCdc1oB4YGwFEeXT8sJIwO
+         h+ynMzFrroOOfnRd4EVAxKOy70jPHa1ttXVW5wAZXwKbpsrfnU0SAhoUhA6PI4zKS9mN
+         j0JGlV0nv7KFeSLJw0JRgWDt5qX/sBOfEUlLLuXKfzAcTnDyVXesDG5OtSn0QLM2ZcSY
+         fH2qwHlQUB/+MXGTr85NZiIwpDAAILuY/rk5afuhkQmV0guOiP+xPj8LU9aGiIfR730w
+         LdKFsfR3F/YVUeVyEsdK1/vyN0SAL8tYf1Noe0XAUKqC7hBXBqGf60GAVu8/kbVvCuVx
+         ofnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761106996; x=1761711796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sjmqgq4oXJ6KcLliX8XpjgciioGaVT0ubuH52tHqk88=;
-        b=F9V2z/aTVhpYs+rmDA5HxnXP5o0ULuHYTKbB3wWR2zhBbBcqlE7tLB81kELo9mL7BY
-         aSNGp1flcdw43vKgJi6nNnN4yeEXZ55NGg4lDsJQ+cXnh7bMeT/sQ7stmeGoYGkedqaZ
-         5dXRYuYCvwoXQnVNukbrS0bzmtTdhU85H+THfkGfaicpVXhfy/0jXVgVVJzKk8efp1UI
-         hrPsHmpUrlmc318c/jSJCb6Bc6DYjwDY1slTPTJDLmKabtwS/C0vtVRzLE89pj/4Msn/
-         ARlpxAm4+S4xW2WAuKTt6WsadxWDpFDOExfoM3YayZVLPQYuO/yPdILHgDqBRU7wAK6c
-         mpow==
-X-Forwarded-Encrypted: i=1; AJvYcCWAqtJuKs57yYCbqwdKoal/V2K+z/IRXeQ1Ihvhj5myw2OMTITtXpCALK08u7yPiUT+Za6Ol67jHpKbA2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw00vvd4V6+ZF1XxS65BywEcxOksSrBlhFMORp6XKLgLzYFtcw
-	pwZPmw36+e8orIkQGObk3LhTx7d3nNa95m9OkIJah1ISq52F0MvvDpPUCpyatCuA/obyE5stNNR
-	RaGCEyuJtjO/CzE/32B46/Jh/kdiEmCY=
-X-Gm-Gg: ASbGncuhS5N+jGI+Z92DzAEW0lpfs42kU7rX5ttMgQ8HSv+JYcyEGfdMEaUjD4clQlf
-	BwiOXDeji6XGNIhhuxMpfnKFQPhUwuQLriD1GIym4BZ1z5aeQcPwP5MJJHWc7Sd5bFpq9VELla9
-	5NOD2WL0KuC9PQEskEY4shMWMD5rdOZaCIyfR2wD066ieS9HhjcHX5wnu/mp9FEWnOMRhkINg3s
-	4iBppNTttFzYsVKx8iuP5IkY+K9oLedyHYcUwoT5BJGOTOqAfYG9KYdXSlB6x4UEK3nOxgy1bFV
-	3OjxqZirljrdZVJDcN2aK3lg3c4=
-X-Google-Smtp-Source: AGHT+IET3KONaMTPsD7UN46S/d5mCN7Cml92VempLxDbxjOOdFk+rRCfF/tG/QFVrcvPqNcaPJObQ/afb8c5JEx27pc=
-X-Received: by 2002:a05:622a:2d1:b0:4e8:b42f:47c5 with SMTP id
- d75a77b69052e-4e8b42f5e12mr139992311cf.78.1761106996012; Tue, 21 Oct 2025
- 21:23:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761107124; x=1761711924;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t2LfB28zph799goFY4PIl5Hu2JZs6ZC/o5ejBi3O62Y=;
+        b=Qwh5IaQctpfZpc4lTr/GBmYO2FgBqnkgJspeQKv4GmEwsp9J9rvTiEBtXkagSLpME0
+         VNIc7SS6Gifz2jAHd+RSvt6cBBkdqunbe8vfpCuSrlX0dxOGQby0Sc4llQ1rz4uWsr9j
+         SfW83hVeUbiy0fNTJuL7IkrATspt1ed+a9Fl7fOCe9bXG+vau1JSzclJZu9U7nWJIqYh
+         vLqauWyDXmkqBLLfjrKAPBuIq+irpPweDJ9sE9J552u8g+vofGPMLLKqGggfIHl/jmLt
+         rStMo9Eeie/1JC4Y+oSthod3lrOHwFnu2yq7DbQOB07aPxTm/iJE825dgePnexZv7HDP
+         uy6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWqXUaC/AuYdfhzJyCKy4GI05xnMenNkHAKbr3rW1oZl+EvxcYJjViENr7HzqqfFCsp+s/zWtJqPBpgkFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXdUA+WPxbR4on7SQhwOwq6YofP5PE1lRfwe5R4KxbrNLxZzwD
+	kib/VGGsYG0yF2OYu4fsu/clPK49ap9L1+Rpr85fM6Edidw0ax7vxWRE
+X-Gm-Gg: ASbGncupgYKUWScYuZqOt02ktK2jGmcfTiaL7zt8sgkSx8XcXBeI6BExZb+H/wsYlN0
+	/BCNcfLfpsa6avFO+nQ1IJCnZ+P4tcEeMqZTwe9vC+GfQHHXPOsHspz9wpCR2aEH/5h766f55DJ
+	ssP8b3pAQsaKEvirCMA0x2gZ3goTVzQIEMd1bHG2zJe/gvqTZEXRHFnCbwHq1nayERRL//83BGl
+	hs4OPRPmyjJr6XPcfaqEuvlhMjbU+2o8YN1kzVAD6dt9znCsWmNgLlSv+sDHfSS/L+tX+OK8s9T
+	rCJNwieglBYjUB7eETHRhEkEyIAQ+GeWWaCMTmda2yWMY8ejPzMB281PGmhxlXwOsp3j1YufIjn
+	GNQdA4BznZfdbVkTdexfRvT+K7DIImD6nz3S48bJV94xg+fAzrS04gQascm3BCxCdhd7sgG1I6w
+	rrij8KDGjIykYbU06vGfhUSG03x3PTNr8LJaXWxaEgow/2xpF2+eY/5FOnCCa+7IALslj/SR/t0
+	u3gCT+40Lhh8o3Jz3vvR2PihA==
+X-Google-Smtp-Source: AGHT+IH49shBuQugYlN++wVSTOrOUhHiUw/C0tNQMZKmX9SB2vKCC6aIZVhWNKA0jz+AhfPi3lDZ1A==
+X-Received: by 2002:a05:6e02:4510:b0:430:cad8:45fc with SMTP id e9e14a558f8ab-430cad847a8mr245028055ab.29.1761107123942;
+        Tue, 21 Oct 2025 21:25:23 -0700 (PDT)
+Received: from abc-virtual-machine.localdomain (c-76-150-86-52.hsd1.il.comcast.net. [76.150.86.52])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d07ccc89sm49925505ab.40.2025.10.21.21.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 21:25:23 -0700 (PDT)
+From: Yuhao Jiang <danisjiang@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Yuhao Jiang <danisjiang@gmail.com>
+Subject: [PATCH v2] ACPI: video: Fix use-after-free in acpi_video_switch_brightness()
+Date: Tue, 21 Oct 2025 23:25:14 -0500
+Message-Id: <20251022042514.2167599-1-danisjiang@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022035528.1981892-1-xiaqinxin@huawei.com>
-In-Reply-To: <20251022035528.1981892-1-xiaqinxin@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 22 Oct 2025 17:23:04 +1300
-X-Gm-Features: AS18NWCLIHUfH8BzEYNpLGT7bL_umdvnAny2MMiNLDgcr_j91CPuqciAP0wO7Oc
-Message-ID: <CAGsJ_4wMtWZUTWRePK9_90LrbANUo7RcVkBRbQJ4aBEypWwtLQ@mail.gmail.com>
-Subject: Re: [PATCH v4] tools/dma: move dma_map_benchmark from selftests to tools/dma
-To: Qinxin Xia <xiaqinxin@huawei.com>
-Cc: m.szyprowski@samsung.com, robin.murphy@arm.com, prime.zeng@huawei.com, 
-	fanghao11@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	wangzhou1@hisilicon.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
->
->  #define DMA_MAP_BENCHMARK       _IOWR('d', 1, struct map_benchmark)
->  #define DMA_MAP_MAX_THREADS     1024
-> @@ -27,5 +29,7 @@ struct map_benchmark {
->         __u32 dma_dir; /* DMA data direction */
->         __u32 dma_trans_ns; /* time for DMA transmission in ns */
->         __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a ti=
-me */
-> +       __u8 expansion[76]; /* For future use */
->  };
+The switch_brightness_work delayed work accesses device->brightness
+and device->backlight, which are freed by
+acpi_video_dev_unregister_backlight() during device removal.
 
-I didn=E2=80=99t realize you were hiding a bugfix within the code cleanup.
+If the work executes after acpi_video_bus_unregister_backlight()
+frees these resources, it causes a use-after-free when
+acpi_video_switch_brightness() dereferences device->brightness or
+device->backlight.
 
-We agreed this is a hotfix that should be merged promptly[1]. Before sendin=
-g
-v5, please submit the hotfix first using the existing folder (without movin=
-g
-the code from selftest to tools). Once it is merged, resend v5 based on it.
+Fix this by calling cancel_delayed_work_sync() for each device's
+switch_brightness_work before unregistering its backlight resources.
+This ensures the work completes before the memory is freed.
 
-[1] https://lore.kernel.org/lkml/f8c0cbdc-9c68-46bb-8dad-1d7c80f3f741@samsu=
-ng.com/
+Fixes: 8ab58e8e7e097 ("ACPI / video: Fix backlight taking 2 steps on a brightness up/down keypress")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
+---
+Changes in v2:
+- Move cancel_delayed_work_sync() to acpi_video_bus_unregister_backlight()
+  instead of acpi_video_bus_put_devices() for better logic clarity and to
+  prevent potential UAF of device->brightness
+- Correct Fixes tag to point to 8ab58e8e7e097 which introduced the delayed work
+- Link to v1: https://lore.kernel.org/all/20251022040859.2102914-1-danisjiang@gmail.com
+---
+ drivers/acpi/acpi_video.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks
-Barry
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 103f29661576..64709658bdc4 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1869,8 +1869,10 @@ static int acpi_video_bus_unregister_backlight(struct acpi_video_bus *video)
+ 	error = unregister_pm_notifier(&video->pm_nb);
+ 
+ 	mutex_lock(&video->device_list_lock);
+-	list_for_each_entry(dev, &video->video_device_list, entry)
++	list_for_each_entry(dev, &video->video_device_list, entry) {
++		cancel_delayed_work_sync(&dev->switch_brightness_work);
+ 		acpi_video_dev_unregister_backlight(dev);
++	}
+ 	mutex_unlock(&video->device_list_lock);
+ 
+ 	video->backlight_registered = false;
+-- 
+2.34.1
+
 
