@@ -1,262 +1,244 @@
-Return-Path: <linux-kernel+bounces-864678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56A2BFB52B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:10:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AB9BFB56A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C584D4F3409
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B88F188DEF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11DD3191DA;
-	Wed, 22 Oct 2025 10:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A13831A042;
+	Wed, 22 Oct 2025 10:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iK7fTzVp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="D+1jIRY/"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4194F2FF660
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE7731986D;
+	Wed, 22 Oct 2025 10:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127786; cv=none; b=tTaJYW/fm9J1X3hysCVVibi5FOjvBY9/11PZ81jiZAzLGRN/r/0QO6h1iHtCLBRs0qVU/qOMVUxaS+97aLqsjevDyAxemzXVw6DyPZWXsQP0+n8gM1tCLTSxAUogpHmqXOdBzjtP3pBeC1FNyP3iMi0qgoc8IzU6IXN9Y9lX7+8=
+	t=1761127885; cv=none; b=QSQ90uc9nnrQSF08lYt4EZqZwlDKEEAY9ZRdxtMMm8EOfdeOxZgBsN4I4xPxo4oD/dV6ZYB7+WAGXDA545jGrqpCaBL8L1gFP4sU1RovypbIvLwMxO60NlyGKn3w+2EVLrq7a6g8bNKJYWroAy4FD+s7ny3XDrTNbNRkBw2sfH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127786; c=relaxed/simple;
-	bh=C9Mm2dxFST1Npvlr+6IUglDpwNOV6KogFRdlIU8hkYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GxUIwCZewmTZyZeeTbEopqtSPrbba0b12z09Vs45nVMlqP8tMvtWqhnZf0uw5pDPctnOCGwB5SqbFyiSvtsdR6H25/OtGvT6lCuHmDf7XI7a2a4f5abOYN811gSczpoNHUn/HFJ7b15phwMKG2c8ISzBgw6+uVh9ccwiaTK7SLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iK7fTzVp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761127783;
+	s=arc-20240116; t=1761127885; c=relaxed/simple;
+	bh=8nT9flPf5qon1yPzsy3KjUgmUVkgGig8MR1UYbAqBwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H+HAyDNQcmS+Mcw25JG7DeIonyr3XTkFT2Z8Uf1mX+2ZWsE2MbYBD9686lxH18A31YPITI2sdoejS7/4F+/i7AXqQIwItWxPlPX0VekVsNqgIaLadGnGYRJ9Yz+BfKFCVwEcOb/IRlavba0D4EaPfAoYSPdqwgk4drIxAIg3EC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=D+1jIRY/; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cs4gq684qz9v0N;
+	Wed, 22 Oct 2025 12:11:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761127879;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dQ6PGT7U8Zjz5PqrsvnmsOYhktAt3PvByfU6TEvf+S0=;
-	b=iK7fTzVpMAI24+38jX3dUOtuuvgpVRt8BjofS/ivHamy3HtY8rVIFyZHa481K2CZAXiuRi
-	+GpOknFD4sPzRceIJ646RIoNAw1vye3sb3knr6JKheoMaewtEk46iupBB8uvoS/dFsFUBY
-	qUDU2u5kE0Lqm4aRA8fs0ZZIwV3rw6M=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-414-XlLtjDvAOVuo77d3z5kFcw-1; Wed, 22 Oct 2025 06:09:41 -0400
-X-MC-Unique: XlLtjDvAOVuo77d3z5kFcw-1
-X-Mimecast-MFC-AGG-ID: XlLtjDvAOVuo77d3z5kFcw_1761127781
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b2d1072a9c4so650301766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:09:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761127780; x=1761732580;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dQ6PGT7U8Zjz5PqrsvnmsOYhktAt3PvByfU6TEvf+S0=;
-        b=SgYFGtUVpjWuzkQ1vDwEg7VCfal2Yol2g0KQ8FZGUvIR3pSCDCUn01O8gF783MDaOZ
-         wVd5LKl7WW5UVXLRejnIDEpIekFstbKGQcFKvZ7pb+eZM6RnUtPWckbjKS8ElxPMrhqt
-         VxwQ+7CKgk6KxX3LWUXdgu0uFpX2VWVYKKi8QuJAurmGq2jGfV/UVpu7dWOOJVYtylTG
-         M7QTYu3iG+R3nqfaw/I4l2IAxXQ+Z9YZ9DwMQVNkdzFkU1UJ7hOFxEtW9I2mgKDDyPMb
-         XrgrrogNhs6XcvpGBoxf2dfihzLEEMeU4hBPy8RSwI5gnwEtTuJbbRk4/C1PVASee7xo
-         KgWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHfVow6n1FQos7cCmBMphozNoLiOl2D9p2XlQlLfZRxDDiF9eT4gWV47Aw+8Rf9XNau90mLtKqFROe/cA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw10rHPguAn0QGFuCQqiSiGeV+QrUn3ajThZhpXfu4V7kD9wjQg
-	dPUWiSPRE/g261ypnJkfTplN+EcOBmKDEz1lvTzdiA3BtFqDyzWG9vPi9daIy1+XQrcJEXi+J9j
-	rfQBupOtp7q46nbXO5//463XhDgyhR0JQUagdsT6M5MLwmjNBhAF+e7mYSOT8IYc0kgmUc9ChMA
-	==
-X-Gm-Gg: ASbGnctFBKT25qVWjOKrM6fNwpdv0o761FRCCQGXZPk1H3hp/IlTa9XhGte6WOcfXK4
-	5SqkIsBc8Y2TLtyXacyLHP2dtmtbmu4v50nOtEpAHkOWeFjdzO+sDY8jz6s5htWoAb8EuJxv+9b
-	13eUA4k8iul7/VSY4PQURT1abUb/Wt1TnxPYnDpVLWQW8tAurznP88xV6w1rJpVvQUgI7pyDQa+
-	nPmtnB6NcDfxdN/Nfd21elDxp4kn/nsQpAWpSggFCBIIiigxo035QGkhCQ/csTrBdWtUjvzqi4n
-	hwyFJoOh0siQoDq4jOJ9B15ZY8pilXGcYa7wPgq3M2H4+x+XVm4jfo29N162nO38
-X-Received: by 2002:a17:906:ef07:b0:b57:43c1:e194 with SMTP id a640c23a62f3a-b647254f794mr2555186066b.11.1761127780152;
-        Wed, 22 Oct 2025 03:09:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXWFxmOeM7ei0B+Fi8xm1ol8UHOjWwepsbziS5ZeH0FMm1eWC/BMCVsnSG89pccSJHbOLuAg==
-X-Received: by 2002:a17:906:ef07:b0:b57:43c1:e194 with SMTP id a640c23a62f3a-b647254f794mr2555182266b.11.1761127779531;
-        Wed, 22 Oct 2025 03:09:39 -0700 (PDT)
-Received: from redhat.com ([31.187.78.209])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6aaf93a32asm853297866b.51.2025.10.22.03.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 03:09:39 -0700 (PDT)
-Date: Wed, 22 Oct 2025 06:09:36 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: Maxime Coquelin <mcoqueli@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
-Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
-Message-ID: <20251022060748-mutt-send-email-mst@kernel.org>
-References: <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
- <20251014051537-mutt-send-email-mst@kernel.org>
- <CAJaqyWe-mn4e+1egNCH+R1x4R7DB6U1SZ-mRAXYPTtA27hKCVA@mail.gmail.com>
- <20251015023020-mutt-send-email-mst@kernel.org>
- <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
- <20251015030313-mutt-send-email-mst@kernel.org>
- <CAJaqyWfRmhXM8eV+=wMVKgrc8SJ98OTtBCtNDJj8ZRUM5Y9Nmg@mail.gmail.com>
- <CAO55csx2rbjxEZk5K3aKcZ501KY3Zfs8ThEQHFqQ1ZB9RSXECA@mail.gmail.com>
- <20251015040722-mutt-send-email-mst@kernel.org>
- <CAJaqyWcf3tz17q6G=123Xb+warf8Ckg=PLaPkzLU9hYHiUy9Zg@mail.gmail.com>
+	bh=8ErvLn3u13mo4+A7grjM/q3sRkW0BQpX3vsMWipwQUM=;
+	b=D+1jIRY/qt+EBqGUAR3NXM2AsqlKgjlM/BTg8sMLQiM5u1u+byYNE18exsy4C+MQVgIcjl
+	hpgaUch6HVHvmx9PgkXvGdXm2eAAxX/2/B4Dg9R/363jX1VqnJ4+XIGgWMgn7fhPKR7oSF
+	uC2OpGl1qy4XLJ3hJEGy5P9opH2NpLtbNpN1WUA7mGVFLcwGwEhxotpOz+3yiFoA2cNtmM
+	+FJ5eegI93g+P+PQzp0PtH1oUoj9kLVKB3exlFksFFrVWpGPxqnRfSC2hzcE4mA/rMeJ5b
+	ZgNyJpqZiFS273wDiGaJddErtnHadCUz1YzoZOn1Wx6IHObcvH8ihpi40w2ezg==
+Message-ID: <bdedc85c-c82e-4513-9bfd-c6d41f945e75@mailbox.org>
+Date: Wed, 22 Oct 2025 12:11:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+To: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>,
+ "mani@kernel.org" <mani@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, "Bandi, Ravi Kumar"
+ <ravib@amazon.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Sean Anderson <sean.anderson@linux.dev>,
+ "Yeleswarapu, Nagaradhesh" <nagaradhesh.yeleswarapu@amd.com>
+References: <20251021212801.GA1224310@bhelgaas>
+ <ab1f7c51-bc41-4774-a0dc-850e53c412eb@mailbox.org>
+ <3it5l556vmfpuu6kz5yvulwosi4ecmcgfbzcizrc5wi7ifddkh@mpzfxf2v6v3f>
+ <SN7PR12MB72017ACEC56064C19C1B62938BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Stefan Roese <stefan.roese@mailbox.org>
+In-Reply-To: <SN7PR12MB72017ACEC56064C19C1B62938BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJaqyWcf3tz17q6G=123Xb+warf8Ckg=PLaPkzLU9hYHiUy9Zg@mail.gmail.com>
+X-MBO-RS-ID: 84f8ab374c5d70fa5a1
+X-MBO-RS-META: 1o1btwbatmz1tkqkx9fohdr8r5qskgi6
 
-On Wed, Oct 15, 2025 at 12:36:47PM +0200, Eugenio Perez Martin wrote:
-> On Wed, Oct 15, 2025 at 10:09 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Wed, Oct 15, 2025 at 10:03:49AM +0200, Maxime Coquelin wrote:
-> > > On Wed, Oct 15, 2025 at 9:45 AM Eugenio Perez Martin
-> > > <eperezma@redhat.com> wrote:
-> > > >
-> > > > On Wed, Oct 15, 2025 at 9:05 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > >
-> > > > > On Wed, Oct 15, 2025 at 08:52:50AM +0200, Eugenio Perez Martin wrote:
-> > > > > > On Wed, Oct 15, 2025 at 8:33 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > > >
-> > > > > > > On Wed, Oct 15, 2025 at 08:08:31AM +0200, Eugenio Perez Martin wrote:
-> > > > > > > > On Tue, Oct 14, 2025 at 11:25 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin wrote:
-> > > > > > > > > > On Tue, Oct 14, 2025 at 10:29 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio Pérez wrote:
-> > > > > > > > > > > > An userland device implemented through VDUSE could take rtnl forever if
-> > > > > > > > > > > > the virtio-net driver is running on top of virtio_vdpa.  Let's break the
-> > > > > > > > > > > > device if it does not return the buffer in a longer-than-assumible
-> > > > > > > > > > > > timeout.
-> > > > > > > > > > >
-> > > > > > > > > > > So now I can't debug qemu with gdb because guest dies :(
-> > > > > > > > > > > Let's not break valid use-cases please.
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > Instead, solve it in vduse, probably by handling cvq within
-> > > > > > > > > > > kernel.
-> > > > > > > > > >
-> > > > > > > > > > Would a shadow control virtqueue implementation in the VDUSE driver work?
-> > > > > > > > > > It would ack systematically messages sent by the Virtio-net driver,
-> > > > > > > > > > and so assume the userspace application will Ack them.
-> > > > > > > > > >
-> > > > > > > > > > When the userspace application handles the message, if the handling fails,
-> > > > > > > > > > it somehow marks the device as broken?
-> > > > > > > > > >
-> > > > > > > > > > Thanks,
-> > > > > > > > > > Maxime
-> > > > > > > > >
-> > > > > > > > > Yes but it's a bit more convoluted  than just acking them.
-> > > > > > > > > Once you use the buffer you can get another one and so on
-> > > > > > > > > with no limit.
-> > > > > > > > > One fix is to actually maintain device state in the
-> > > > > > > > > kernel, update it, and then notify userspace.
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > I thought of implementing this approach at first, but it has two drawbacks.
-> > > > > > > >
-> > > > > > > > The first one: it's racy. Let's say the driver updates the MAC filter,
-> > > > > > > > VDUSE timeout occurs, the guest receives the fail, and then the device
-> > > > > > > > replies with an OK. There is no way for the device or VDUSE to update
-> > > > > > > > the driver.
-> > > > > > >
-> > > > > > > There's no timeout. Kernel can guarantee executing all requests.
-> > > > > > >
-> > > > > >
-> > > > > > I don't follow this. How should the VDUSE kernel module act if the
-> > > > > > VDUSE userland device does not use the CVQ buffer then?
-> > > > >
-> > > > > First I am not sure a VQ is the best interface for talking to userspace.
-> > > > > But assuming yes - just avoid sending more data, send it later after
-> > > > > userspace used the buffer.
-> > > > >
-> > > >
-> > > > Let me take a step back, I think I didn't describe the scenario well enough.
-> > > >
-> > > > We have a VDUSE device, and then the same host is interacting with the
-> > > > device through the virtio_net driver over virtio_vdpa.
-> > > >
-> > > > Then, the virtio_net driver sends a control command though its CVQ, so
-> > > > it *takes the RTNL*. That command reaches the VDUSE CVQ.
-> > > >
-> > > > It does not matter if the VDUSE device in the userland processes the
-> > > > commands through a CVQ, reading the vduse character device, or another
-> > > > system. The question is: what to do if the VDUSE device does not
-> > > > process that command in a timely manner? Should we just let the RTNL
-> > > > be taken forever?
-> > > >
-> > >
-> > > My understanding is that:
-> > > 1. Virtio-net sends a control messages, waits for reply
-> > > 2. VDUSE driver dequeues it, adds it to the SCVQ, replies OK to the CVQ
-> > > 3. Userspace application dequeues the message from the SCVQ
-> > >  a. If handling is successful it replies OK
-> > >  b. If handling fails, replies ERROR
+On 10/22/25 12:04, Havalige, Thippeswamy wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> If that's the case, everything would be ok now. In both cases, the
-> RTNL is held only by that time. The problem is when the VDUSE device
-> userland does not reply.
+> Hi Mani,
 > 
-> > > 4. VDUSE driver reads the reply
-> > >  a. if OK, do nothing
-> > >  b. if ERROR, mark the device as broken?
-> > >
-> > > This is simplified as it does not take into account SCVQ overflow if
-> > > the application is stuck.
-> > > If IIUC, Michael suggests to only enqueue a single message at the time
-> > > in the SVQ,
-> > > and bufferize the pending messages in the VDUSE driver.
+>> -----Original Message-----
+>> From: mani@kernel.org <mani@kernel.org>
+>> Sent: Wednesday, October 22, 2025 3:25 PM
+>> To: Stefan Roese <stefan.roese@mailbox.org>
+>> Cc: Bjorn Helgaas <helgaas@kernel.org>; Bandi, Ravi Kumar
+>> <ravib@amazon.com>; Havalige, Thippeswamy
+>> <thippeswamy.havalige@amd.com>; lpieralisi@kernel.org;
+>> bhelgaas@google.com; linux-pci@vger.kernel.org; kwilczynski@kernel.org;
+>> robh@kernel.org; Simek, Michal <michal.simek@amd.com>; linux-arm-
+>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>> stable@vger.kernel.org; Sean Anderson <sean.anderson@linux.dev>
+>> Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+>>
+>> On Wed, Oct 22, 2025 at 08:59:19AM +0200, Stefan Roese wrote:
+>>> Hi Bjorn,
+>>> Hi Ravi,
+>>>
+>>> On 10/21/25 23:28, Bjorn Helgaas wrote:
+>>>> On Tue, Oct 21, 2025 at 08:55:41PM +0000, Bandi, Ravi Kumar wrote:
+>>>>>> On Tue, Oct 21, 2025 at 05:46:17PM +0000, Bandi, Ravi Kumar wrote:
+>>>>>>>> On Oct 21, 2025, at 10:23 AM, Bjorn Helgaas <helgaas@kernel.org>
+>> wrote:
+>>>>>>>> On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi
+>> wrote:
+>>>>>>>>> The pcie-xilinx-dma-pl driver does not enable INTx
+>>>>>>>>> interrupts after initializing the port, preventing INTx
+>>>>>>>>> interrupts from PCIe endpoints from flowing through the
+>>>>>>>>> Xilinx XDMA root port bridge. This issue affects kernel 6.6.0 and
+>> later versions.
+>>>>>>>>>
+>>>>>>>>> This patch allows INTx interrupts generated by PCIe
+>>>>>>>>> endpoints to flow through the root port. Tested the fix on
+>>>>>>>>> a board with two endpoints generating INTx interrupts.
+>>>>>>>>> Interrupts are properly detected and serviced. The
+>>>>>>>>> /proc/interrupts output
+>>>>>>>>> shows:
+>>>>>>>>>
+>>>>>>>>> [...]
+>>>>>>>>> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-
+>> pcie, azdrv
+>>>>>>>>> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-
+>> pcie, azdrv
+>>>>>>>>> [...]
+>>>
+>>> First a comment on this IRQ logging:
+>>>
+>>> These lines do NOT refer to the INTx IRQ(s) but the controller
+>>> internal "events" (errors etc). Please see this log for INTx on my
+>>> Versal platform with pci_irqd_intx_xlate added:
+>>>
+>>>   24:          0          0  pl_dma:RC-Event   0 Level     LINK_DOWN
+>>>   25:          0          0  pl_dma:RC-Event   3 Level     HOT_RESET
+>>>   26:          0          0  pl_dma:RC-Event   8 Level     CFG_TIMEOUT
+>>>   27:          0          0  pl_dma:RC-Event   9 Level     CORRECTABLE
+>>>   28:          0          0  pl_dma:RC-Event  10 Level     NONFATAL
+>>>   29:          0          0  pl_dma:RC-Event  11 Level     FATAL
+>>>   30:          0          0  pl_dma:RC-Event  20 Level     SLV_UNSUPP
+>>>   31:          0          0  pl_dma:RC-Event  21 Level     SLV_UNEXP
+>>>   32:          0          0  pl_dma:RC-Event  22 Level     SLV_COMPL
+>>>   33:          0          0  pl_dma:RC-Event  23 Level     SLV_ERRP
+>>>   34:          0          0  pl_dma:RC-Event  24 Level     SLV_CMPABT
+>>>   35:          0          0  pl_dma:RC-Event  25 Level     SLV_ILLBUR
+>>>   36:          0          0  pl_dma:RC-Event  26 Level     MST_DECERR
+>>>   37:          0          0  pl_dma:RC-Event  27 Level     MST_SLVERR
+>>>   38:         94          0  pl_dma:RC-Event  16 Level     84000000.axi-pcie
+>>>   39:         94          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
+>>>
+>>> The last line shows the INTx IRQs here ('pl_dma:INTx' vs 'pl_dma:RC-
+>>> Event').
+>>>
+>>> More below...
+>>>
+>>>>>>>>>
+>>>>>>>>> Changes since v1::
+>>>>>>>>> - Fixed commit message per reviewer's comments
+>>>>>>>>>
+>>>>>>>>> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA
+>>>>>>>>> Root Port driver")
+>>>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>>>> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
+>>>>>>>>
+>>>>>>>> Hi Ravi, obviously you tested this, but I don't know how to
+>>>>>>>> reconcile this with Stefan's INTx fix at
+>>>>>>>> https://lore.kernel.org/r/20251021154322.973640-1-stefan.roe
+>>>>>>>> se@mailbox.org
+>>>>>>>>
+>>>>>>>> Does Stefan's fix need to be squashed into this patch?
+>>>>>>>
+>>>>>>> Sure, we can squash Stefan’s fix into this.
+>>>>>>
+>>>>>> I know we *can* squash them.
+>>>>>>
+>>>>>> I want to know why things worked for you and Stefan when they
+>>>>>> *weren't* squashed:
+>>>>>>
+>>>>>>    - Why did INTx work for you even without Stefan's patch.  Did you
+>>>>>>      get INTx interrupts but not the right ones, e.g., did the device
+>>>>>>      signal INTA but it was received as INTB?
+>>>>>
+>>>>> I saw that interrupts were being generated by the endpoint device,
+>>>>> but I didn’t specifically check if they were correctly translated
+>>>>> in the controller. I noticed that the new driver wasn't explicitly
+>>>>> enabling the interrupts, so my first approach was to enable them,
+>>>>> which helped the interrupts flow through.
+>>>>
+>>>> OK, I'll assume the interrupts happened but the driver might not
+>>>> have been able to handle them correctly, e.g., it was prepared for
+>>>> INTA but got INTB or similar.
+>>>>
+>>>>>>    - Why did Stefan's patch work for him even without your patch.  How
+>>>>>>      could Stefan's INTx work without the CSR writes to enable
+>>>>>>      interrupts?
+>>>>>
+>>>>> I'm not entirely sure if there are any other dependencies in the
+>>>>> FPGA bitstream. I'll investigate further and get back to you.
+>>>>
+>>>> Stefan clarified in a private message that he had applied your patch
+>>>> first, so this mystery is solved.
+>>>
+>>> Yes. I applied Ravi's patch first and still got no INTx delivered to
+>>> the nvme driver. That's what me triggered to dig deeper here and
+>>> resulted in this v2 patch with pci_irqd_intx_xlate added.
+>>>
+>>> BTW:
+>>> I re-tested just now w/o Ravi's patch and the INTx worked. Still I
+>>> think Ravi's patch is valid and should be applied...
+>>
+>> How come INTx is working without the patch from Ravi which enabled INTx
+>> routing in the controller? Was it enabled by default in the hardware?
 > 
-> But the RTNL keeps being held in all that process, isn't it?
+> Can you please cross-check the interrupt-map property in the device tree? Currently, the driver isn’t translating (pci_irqd_intx_xlate) the INTx number.
 > 
-> >
-> > Not exactly bufferize, record.  E.g. we do not need to send
-> > 100 messages to enable/disable promisc mode - together they
-> > have no effect.
-> >
+> Here’s required DT property:
 > 
-> I still don't follow how that unlocks the RTNL. Let me put some workflows:
-> 
-> 1) MAC_TABLE_SET, what can we do if:
-> The driver sets a set of MAC addresses, (A, B, C). VDUSE device does
-> send this set to the VDUSE userland device, as we don't have more
-> information. Now, the driver sends a new table with addresses (A, B,
-> D), but the device still didn't reply to the VDUSE driver.
-> 
-> VDUSE should track that the new state is (A, B, D), and then wait for
-> the previous request to be replied by the device? What should we
-> report to the driver?
+> interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
+>                  <0 0 0 2 &pcie_intc_0 1>,
+>                  <0 0 0 3 &pcie_intc_0 2>,
+>                  <0 0 0 4 &pcie_intc_0 3>;
 
-you reply OK to the driver immediately.
+Here the auto-generated DT property (Vivado 2025.1) for our design:
 
-> If we wait for the device to reply, we're in the
-> same situation regarding the RTNL.
-> 
-> Now we receive a new state (A, B, E). We haven't sent the (A, B, D),
-> so it is good to just replace the (A, B, D) with that. and send it
-> when (A, B, C) is completed with either success or failure.
-> 
-> 2) VQ_PAIRS_SET
-> 
-> The driver starts with 1 vq pair. Now the driver sets 3 vq pairs, and
-> the VDUSE CVQ forwards the command. The driver still thinks that it is
-> using 1 vq pair. I can store that the driver request was 3, and it is
-> still in-flight. Now the timeout occurs, so the VDUSE device returns
-> fail to the driver, and the driver frees the vq regions etc. After
-> that, the device now replies OK. The memory that was sent as the new
-> vqs avail ring and descriptor ring now contains garbage, and it could
-> happen that the device start overriding unrelated memory.
-> 
-> Not even VQ_RESET protects against it as there is still a window
-> between the CMD set and the VQ reset.
+         interrupt-map = <0 0 0 1 &psv_pcie_intc_0 1>,
+                         <0 0 0 2 &psv_pcie_intc_0 2>,
+                         <0 0 0 3 &psv_pcie_intc_0 3>,
+                         <0 0 0 4 &psv_pcie_intc_0 4>;
 
-Timeouts should be up to userspace. If userspace times out
-and then gets confused, kernel is not to blame.
+So we should manually "fix" the auto-generated DT instead? I would
+rather like to skip such a step, as this is error prone with frequent
+updates from the FPGA bistream design.
 
+Thanks,
+Stefan
 
 
