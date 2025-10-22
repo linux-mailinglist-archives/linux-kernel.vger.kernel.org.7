@@ -1,149 +1,173 @@
-Return-Path: <linux-kernel+bounces-864621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0D3BFB32E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F1BBFB331
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A5A402EE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:41:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BFA0402E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8683C2D0C63;
-	Wed, 22 Oct 2025 09:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9043298CA2;
+	Wed, 22 Oct 2025 09:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="T5RI+pdR"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t9vo5ahd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3TYCux+9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oSbKmclu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QMCr60nz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E915295DB8;
-	Wed, 22 Oct 2025 09:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A500729994B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761126069; cv=none; b=UM2dDAfrMryoGRJZgaY0BZdPGJl/kVKsN1eX34HHTstHSt/Of1giOIdQ1lPUBXeoRLWUPBgFZdsOKKI6sh3xKoiS+yZYSvvVOKzsEFJLSwrlD/bt677i+A6vYaF1q305UQsadQPdy2GqLADzhrnIrdNa2Dg4Ir5t/brCFF09E8o=
+	t=1761126104; cv=none; b=FAfr0rvkUs2oZPB9Pa6s9tYuV68CoHAnpyEwapkPIoG7wjJZvGHDfCvAoU+7agwGpwr5xqWpWXmt6YGwGSBPRz8WICLXfS26PYuFtUyP69aNG9wSw3ZHyx8taBSe0iKEV63ia5la3PhtpFnKoKFikobUZdQG8wegm/75i7zdqmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761126069; c=relaxed/simple;
-	bh=DQS+3Lj6HgUTKH2FCc9SUmL9e/0g86t6TGjbhFN296o=;
+	s=arc-20240116; t=1761126104; c=relaxed/simple;
+	bh=JuJPUNbJhfoQN7skxUPxJH/M2L5l46P08n+PKvmscGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e23XFmFncI0Kp7DIwlT9knWVAWs6/3CqGBp1rhNeuP0LIwC3KiceOOK26/tYzYdX00mKsJf6xZDOM5UyHndhOMM791FSbGa6/V4SOP/8A2BtlkJc3QlBOPA9mK6KO2p3YMbGknvSJA/ZA6qVG9F5BbMCCfDJqxx5MwcRm2F/KLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=T5RI+pdR; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6CE9140E01A5;
-	Wed, 22 Oct 2025 09:41:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tymK5Eeqzp_j; Wed, 22 Oct 2025 09:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761126056; bh=U0GFp4v3c3eKRHJibnqVorD3KH7ifXU7oASjTdlgkDw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T5RI+pdRWtkGY0bmVzumnHP+wQOn8fnphNfo3caBE3jyhNTE2Niz5tTCIJ7KHvVs/
-	 26ZO5SOWkxZJuJmH2V9jl59eEmNYvv4jUJPG4xZviXVSmITBzQ3N1c40Bw6U7Dw9Sg
-	 1HGi+dzk9J/pHFb7/TnANesHiUeYtaZxVr1ZA+pZGytYD66iFDOm2lx3X9bYpY8gVu
-	 +PEYUq2ym3lCVKRecTe3m5gYMUUWSXKXjr5v7+kWDGNf/+vzc7ACGpNJkrQdD0//A4
-	 zeju34MkOCTIi7y13YA6hZzKz7tAertw+zIuRK35gIvPaOgKHceJh7nTQFx/aIEmUj
-	 sPEN4EUMa5ueQSdnrJH5QwLv8bjmrbnElhxw2FbzmS6T49dV1NdpURDCd882SneeQb
-	 LIaaEo0tpVYI98yWuqbGOb4ZXfDhUEfE3aGR4dP0gocu570Wb4Q928d0tsbu5MCbSD
-	 Ey0sMdl/ufSy7y+144cbsaS8n7hqfZGOaKaTnQHIDnYPphta2Zokv/d4ssFxhy68XF
-	 DiHiZ4KLg2k7OuqZL1bZLAPuspYO1JM+VAbOymlw2tre3ivOQz+KDPb+hy5GDDFOb/
-	 q+XkG62oVboQm4jmD333vioCBng7OFKzOwYai02xL+WUFb3jBWyzTlAGvRrQs29vRV
-	 TxGt5VmxX+B4DEQnK1TlI3ek=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	 Content-Type:Content-Disposition:In-Reply-To; b=R58FCHxZuHTvldtCC6RqHYt7uPmhQi4wibJ3JYVQQ9A0igo8nj5+8CnBk7fQAiy7szGdsf56WpC3MtOgvMPHWQQLI9DzkXszXJBDiACl0+HNEtFGPCbjsQJhvC+HE3IPim8eKi9SoZiJJFG/PurJyjVRe7UiwCmzm8LgIRliGVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t9vo5ahd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3TYCux+9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oSbKmclu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QMCr60nz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 00BF540E00DA;
-	Wed, 22 Oct 2025 09:40:28 +0000 (UTC)
-Date: Wed, 22 Oct 2025 11:40:19 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Sean Christopherson <seanjc@google.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v10 03/15] x86/alternatives: Disable LASS when patching
- kernel alternatives
-Message-ID: <20251022094019.GAaPimg3VCgRu6eELd@fat_crate.local>
-References: <20251007065119.148605-1-sohil.mehta@intel.com>
- <20251007065119.148605-4-sohil.mehta@intel.com>
- <20251021200328.GMaPfnEDibnBrhNTmQ@fat_crate.local>
- <20251022082541.GL4067720@noisy.programming.kicks-ass.net>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AF71C1F445;
+	Wed, 22 Oct 2025 09:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761126096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wVMPNnxVCiBVEkaRNyX61pBNpM3YhHjIok9iR2+4Olw=;
+	b=t9vo5ahdowM4eR/yGWn4Hcujq9sPcsLaHp9UVR5y8Y+WmEC8GhouqZlfEDGGL5mpx7yt+r
+	cUy5Rm2TtwRapDzJYmmtUNcO+e0kanARe87/6JcScVOrD6EN2vfSHUH/MgSaD9iuhFr43q
+	rNnt/NWKSPHbQ+UfRDbz0E/NPvNJkgM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761126096;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wVMPNnxVCiBVEkaRNyX61pBNpM3YhHjIok9iR2+4Olw=;
+	b=3TYCux+9oAT3GW+oh8kuoojsxHoxkqVJ7VZNTWADjh4Hx3A2hjHbVom5QYv3RXHpePpceE
+	qafFlL20GhEsN/Bw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761126092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wVMPNnxVCiBVEkaRNyX61pBNpM3YhHjIok9iR2+4Olw=;
+	b=oSbKmcluaxK+IU6pGorHF5c9fc6loxVttWljv3Wo5xWNTMNN4AyrzOYCORvRpt1Y7AQIE7
+	f9/L2TSXbfsL7Bp7+/3h6KxuywFIq/c8EfdyJgj2sNz+Vy28R704uMR6EgnIa3LMTQcYrm
+	uUDygj2wWnTvfORyH/di2XLCO3MVXyg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761126092;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wVMPNnxVCiBVEkaRNyX61pBNpM3YhHjIok9iR2+4Olw=;
+	b=QMCr60nzeJ9XBTdfLEbPDDPWu3OG/ZfDtcKdT43okU+hownj4o6LGOFWUjLautHhOpXqbB
+	WZGDstoTMG26swAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A55AA1339F;
+	Wed, 22 Oct 2025 09:41:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MVVbKMym+Gh1EgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 22 Oct 2025 09:41:32 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5AE89A0990; Wed, 22 Oct 2025 11:41:17 +0200 (CEST)
+Date: Wed, 22 Oct 2025 11:41:17 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: rework I_NEW handling to operate without fences
+Message-ID: <ndpmuv4j2ycl5w5ssagzijgsykjo7mfzwenrrlvlhnbzpszlcr@3hkkdfmc54rz>
+References: <20251010221737.1403539-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022082541.GL4067720@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251010221737.1403539-1-mjguzik@gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On Wed, Oct 22, 2025 at 10:25:41AM +0200, Peter Zijlstra wrote:
-> Initially the suggestion was to use stac/clac directly iirc; but that
-> looses the information these are for LASS only. Hence the LASS specific
-> ones.
+On Sat 11-10-25 00:17:36, Mateusz Guzik wrote:
+> In the inode hash code grab the state while ->i_lock is held. If found
+> to be set, synchronize the sleep once more with the lock held.
+> 
+> In the real world the flag is not set most of the time.
+> 
+> Apart from being simpler to reason about, it comes with a minor speed up
+> as now clearing the flag does not require the smp_mb() fence.
+> 
+> While here rename wait_on_inode() to wait_on_new_inode() to line it up
+> with __wait_on_freeing_inode().
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> This temporarily duplicated sleep code from inode_wait_for_lru_isolating().
+> This is going to get dedupped later.
+> 
+> There is high repetition of:
+> 	if (unlikely(isnew)) {
+> 		wait_on_new_inode(old);
+> 		if (unlikely(inode_unhashed(old))) {
+> 			iput(old);
+> 			goto again;
+> 		}
+> 
+> I expect this is going to go away after I post a patch to sanitize the
+> current APIs for the hash.
 
-Yap.
+Yeah, it seems all but one caller (ilookup5_nowait() which is only used by
+AFS) would be fine with waiting for I_NEW inodes as a part of hash lookup
+similarly as we wait for I_FREEING. What AFS is doing is beyond me as it
+seems to be playing weird tricks with I_NEW in afs_fetch_status_success().
 
-> (its an unfortunate arch detail that LASS and SMAP both use the AC flag
-> and all that)
+Anyway with the promise of deduplication I think this is moving in a good
+direction so feel free to add:
 
-That is an implementation detail and users of the interface shouldn't care.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> But that's not the same, stac() and clac() are FEATURE_SMAP, these are
-> FEATURE_LASS.
-
-So?
-
-Are you thinking of toggling features and then something else getting disabled
-in the process?
-
-> If you really want the _disable _enable naming that's fine with me, but
-> then perhaps we should also s/clac/smap_disable/ and s/stac/smap_enable/
-> for consistency.
-
-So the enable/disable thing is I think what makes this a lot more
-understandable when you read it this way: "disable linear address separation
-around this code". And that is regardless of how the underlying machinery does
-that toggling of LASS.
-
-As to stac/clac - I wouldn't touch them. They've been there forever so it'll
-only be unnecessary churn.
-
-Btw, if you need an example which already does that:
-
-arch/x86/include/asm/uaccess.h:37:#define __uaccess_begin() stac()
-arch/x86/include/asm/uaccess.h:38:#define __uaccess_end()   clac()
-
-So the lass_{enable,disable} will be yet another incarnation of this pattern.
-
-Thx.
-
+								Honza
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
