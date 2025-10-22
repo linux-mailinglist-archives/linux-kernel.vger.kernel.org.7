@@ -1,183 +1,213 @@
-Return-Path: <linux-kernel+bounces-865572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D6ABFD68F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:57:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278D0BFD8BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91FB31895D0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BA163BFF9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D392701D9;
-	Wed, 22 Oct 2025 16:56:36 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7C927AC4D;
+	Wed, 22 Oct 2025 16:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ric7Gw9I"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166B9252910
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEBE35B148
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761152196; cv=none; b=KE9jfs3xhAEF54G311GBn0iL8vCz3uD0x/p3ABoWbGyby01zXD9QbeSUEscx+6GtVs5s8itJYW2j+MOYtfQv4mMANOiQO+oUaAw+xU+idN+pgIXvNX+dxsqjgSZWce71TtwlvciMDygpiaicbHKXx4tiJQkxKvPPpmSaB/uj9sw=
+	t=1761152265; cv=none; b=Tc4Q9q+691oeRbiPZaLWK9GBIrJ3stPmI6AdGxNohc+Zbv/7Nlcj5e0SRsd2lcdTlZr3eWo756Kn6kuvc3v0oZ/YUKHMbG1CCYv9TcNHPL0HY39ek3vidPtZiKDFdjoq446mW9wUQeEw0InLerIAWVGthmwwQtiOSlOeWiGWj6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761152196; c=relaxed/simple;
-	bh=K5ts1zxKbtHrQeafsfwtNksBJBm9G0RAKYz1cXAJZTQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VC99ErN2NUHiJX17lVtZAHyXIBS6b5m8LSNjX67bbI9LLurZBPAz3Xnpg1kqfrRneaAhDcjRkdK9DR4bhnRkQXGFPqi/hxGWcRP5aoynzMcmB5xzTzFJqIzWBznWvgNYU+d0NN+3k0umw7pjAPXuAUgQ7oCJRJ03mEOwotZl7mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-430c1cbd1f2so74571195ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:56:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761152193; x=1761756993;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gWuTMXZEqQB35g02kJ5mUtkUDD9y4KtJo2Bhsv6c+dk=;
-        b=EVXnwwh7+gc28/TOCiAizBXCMLcWCUBQ8T6mrPyCIc49DXmjGdKm+hX4qeSUMOjBG8
-         x5YCH2OEgDDOpEHiZvNnYjf1jmZm+6RbnScvgp82qkXOxONz9A73CB1hkNV2nA4jIyoF
-         PettN80qTmlIaSkuXGrP/265dcsJciKq0ySMMqsKAC08SGP985sXFL/onaaHZEtcuqI5
-         tF31sYKUr1xuaH2Z7abVTl2oh+us+F+5x4VkUrliG1bV2OzignTGAEh6ixy7Pg3j1oG2
-         lxIbgeEuIZ0BRLSaxFpROQ+aQ5Qnn+c/dSKPlkn4R7r+MOUieZ0pnSUPSqR7JcYCL3Ph
-         w+aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ65lSF1oNiYEi6U4ZwLbtllDcwN1+S7C54Uk+u54qOAIoN1HSNsu52Yat5hN8lHtPg6XgWFXFuPEoG+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaitP0eYXBVoSUXkR4a9DedxjZpz696jiKprwicfGnz0h/NqZj
-	V1TTfAst48VWl+KSmWnGlc/sXq+ZdnlDIX8LXjQ7B99rTR0MDFvdZObVjq/jtAb0A2JkDLaB8FF
-	EybcTrtNBgIoAmmU3MqnKTjOYd7H6zTETjfsozWRSx7AozMqkgBQscpj5Bqo=
-X-Google-Smtp-Source: AGHT+IGkTDd8ScHMrfCkgkzRd1qdCMSdndpXp4ZQMprzR6E8MB/D+pIESwHsJ9MRjxHvRpBw+jcEonXRQNWMUfLRze1qKvYe64QD
+	s=arc-20240116; t=1761152265; c=relaxed/simple;
+	bh=ytm0ejnHzvO2wfwThkZuPsjyf68Bo1+nSesP3d8YWjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=msFxGvucDATI/byUBgmQ46TZHpmmANaUTeVapyjlP194OiHFM8erJGxXEhuXVXD2aODfZowjla4pOM1uXP/GIQ8DDmXww13RhU7d4elkrO8akxx7cZK+4AUc2d5fY02ye5Oz4pPfhN77V3cq6I128dT0Ho8L0rlZvEpSr081Mts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ric7Gw9I; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <14371cf8-e49a-4c68-b763-fa7563a9c764@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761152250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NFRxEnfnc4VPVFTxGFAyLIkhm0TFgIiDXqEVdaKjeWU=;
+	b=ric7Gw9IqSWQA5EEA9T60kJ2JkX47fhNif7Nk8x8lWfHx6a8ccyGLoFuCef9ytW6lmB/Ce
+	dHKi0ZDFO0O0tRIut8KK/qTu9qklJ/Fd459a4oOOra66uvj64C2JgGmVS6+2DqgxUs/9V+
+	PMZ4MrNeeXtjGgkHlQrOfWwWY58vD50=
+Date: Wed, 22 Oct 2025 09:57:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1605:b0:430:a5e3:fd70 with SMTP id
- e9e14a558f8ab-430c5253b58mr280489565ab.9.1761152193292; Wed, 22 Oct 2025
- 09:56:33 -0700 (PDT)
-Date: Wed, 22 Oct 2025 09:56:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f90cc1.a70a0220.3bf6c6.0020.GAE@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in io_uring_show_fdinfo (3)
-From: syzbot <syzbot+ea6ffa4864ebe64e7a04@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    aaa9c3550b60 Add linux-next specific files for 20251022
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=108bd734580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ad8f5526e5acd067
-dashboard link: https://syzkaller.appspot.com/bug?extid=ea6ffa4864ebe64e7a04
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176c9b04580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=173f7c58580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2fe0a8f92a64/disk-aaa9c355.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/199d2e804802/vmlinux-aaa9c355.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9371d55e359e/bzImage-aaa9c355.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ea6ffa4864ebe64e7a04@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 UID: 0 PID: 6013 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
-RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
-Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 15 3b 95 00 45 39 ee 76 11 e8 4b 39 95 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
-RSP: 0018:ffffc90003a9f928 EFLAGS: 00010293
-RAX: ffffffff812b443b RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: ffff88802ec55ac0 RSI: 0000000000000fff RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff88807aa560aa R09: 1ffff1100f54ac15
-R10: dffffc0000000000 R11: ffffed100f54ac16 R12: 0000000000000008
-R13: 0000000000000fff R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555561784500(0000) GS:ffff888125de4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30263fff CR3: 000000007ad30000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- seq_show+0x5bc/0x730 fs/proc/fd.c:68
- seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
- seq_read+0x369/0x480 fs/seq_file.c:162
- vfs_read+0x200/0xa30 fs/read_write.c:570
- ksys_read+0x145/0x250 fs/read_write.c:715
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2bf498efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff1b261a48 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00007f2bf4be5fa0 RCX: 00007f2bf498efc9
-RDX: 0000000000002020 RSI: 00002000000040c0 RDI: 0000000000000004
-RBP: 00007f2bf4a11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f2bf4be5fa0 R14: 00007f2bf4be5fa0 R15: 0000000000000003
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
-RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
-Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 15 3b 95 00 45 39 ee 76 11 e8 4b 39 95 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
-RSP: 0018:ffffc90003a9f928 EFLAGS: 00010293
-RAX: ffffffff812b443b RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: ffff88802ec55ac0 RSI: 0000000000000fff RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff88807aa560aa R09: 1ffff1100f54ac15
-R10: dffffc0000000000 R11: ffffed100f54ac16 R12: 0000000000000008
-R13: 0000000000000fff R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555561784500(0000) GS:ffff888125de4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb550764e9c CR3: 000000007ad30000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	0f 85 29 04 00 00    	jne    0x42f
-   6:	45 8b 36             	mov    (%r14),%r14d
-   9:	44 89 f7             	mov    %r14d,%edi
-   c:	44 89 ee             	mov    %r13d,%esi
-   f:	e8 15 3b 95 00       	call   0x953b29
-  14:	45 39 ee             	cmp    %r13d,%r14d
-  17:	76 11                	jbe    0x2a
-  19:	e8 4b 39 95 00       	call   0x953969
-  1e:	45 89 fd             	mov    %r15d,%r13d
-  21:	4c 8b 3c 24          	mov    (%rsp),%r15
-  25:	e9 c9 03 00 00       	jmp    0x3f3
-* 2a:	80 3b 00             	cmpb   $0x0,(%rbx) <-- trapping instruction
-  2d:	45 89 fd             	mov    %r15d,%r13d
-  30:	0f 85 17 04 00 00    	jne    0x44d
-  36:	0f b6 2c 25 00 00 00 	movzbl 0x0,%ebp
-  3d:	00
-  3e:	48                   	rex.W
-  3f:	8b                   	.byte 0x8b
+Subject: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
+Content-Language: en-GB
+To: syzbot <syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com>,
+ andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ chandna.sahil@gmail.com, daniel@iogearbox.net, eddyz87@gmail.com,
+ haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org,
+ kpsingh@kernel.org, linux-kernel@vger.kernel.org, listout@listout.xyz,
+ martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
+ song@kernel.org, syzkaller-bugs@googlegroups.com
+References: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 10/20/25 2:08 PM, syzbot wrote:
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    a1e83d4c0361 selftests/bpf: Fix redefinition of 'off' as d..
+> git tree:       bpf
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12d21de2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160cf542580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128d5c58580000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/2f6a7a0cd1b7/disk-a1e83d4c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/873984cfc71e/vmlinux-a1e83d4c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/16711d84070c/bzImage-a1e83d4c.xz
+>
+> The issue was bisected to:
+>
+> commit 7c33e97a6ef5d84e98b892c3e00c6d1678d20395
+> Author: Sahil Chandna <chandna.sahil@gmail.com>
+> Date:   Tue Oct 14 18:56:35 2025 +0000
+>
+>      bpf: Do not disable preemption in bpf_test_run().
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=172fe492580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=14afe492580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10afe492580000
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com
+> Fixes: 7c33e97a6ef5 ("bpf: Do not disable preemption in bpf_test_run().")
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 bpf_try_get_buffers kernel/bpf/helpers.c:781 [inline]
+> WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 bpf_bprintf_prepare+0x12cf/0x13a0 kernel/bpf/helpers.c:834
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Okay, the warning is due to the following WARN_ON_ONCE:
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+static DEFINE_PER_CPU(struct bpf_bprintf_buffers[MAX_BPRINTF_NEST_LEVEL], bpf_bprintf_bufs);
+static DEFINE_PER_CPU(int, bpf_bprintf_nest_level);
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+int bpf_try_get_buffers(struct bpf_bprintf_buffers **bufs)
+{
+         int nest_level;
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+         nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
+         if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
+                 this_cpu_dec(bpf_bprintf_nest_level);
+                 return -EBUSY;
+         }
+         *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
 
-If you want to undo deduplication, reply with:
-#syz undup
+         return 0;
+}
+
+Basically without preempt disable, at process level, it is possible
+more than one process may trying to take bpf_bprintf_buffers.
+Adding softirq and nmi, it is totally likely to have more than 3
+level for buffers. Also, more than one process with bpf_bprintf_buffers
+will cause problem in releasing buffers, so we need to have
+preempt_disable surrounding bpf_try_get_buffers() and
+bpf_put_buffers().
+
+There are some kfuncs/helpers need such preempt_disable
+protection, e.g. bpf_stream_printk, bpf_snprintf,
+bpf_trace_printk, bpf_trace_vprintk, bpf_seq_printf.
+But please double check.
+
+
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 6145 Comm: syz.4.53 Not tainted syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+> RIP: 0010:bpf_try_get_buffers kernel/bpf/helpers.c:781 [inline]
+> RIP: 0010:bpf_bprintf_prepare+0x12cf/0x13a0 kernel/bpf/helpers.c:834
+> Code: ff e9 ce fe ff ff e8 10 ec e0 ff e9 be fe ff ff e8 06 ec e0 ff e9 b4 fe ff ff e8 fc eb e0 ff e9 aa fe ff ff e8 f2 eb e0 ff 90 <0f> 0b 90 65 ff 0d 27 fd b2 10 b8 f0 ff ff ff e9 17 ff ff ff e8 d8
+> RSP: 0018:ffffc90003797840 EFLAGS: 00010293
+> RAX: ffffffff81df57fe RBX: ffffc90003797a10 RCX: ffff888026493c80
+> RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
+> RBP: ffffc90003797970 R08: 0000000000585870 R09: 0000000000000005
+> R10: dffffc0000000000 R11: fffff520006f2f20 R12: dffffc0000000000
+> R13: 0000000000000004 R14: 0000000000000003 R15: 1ffff920006f2f42
+> FS:  00005555805f5500(0000) GS:ffff888125e0c000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000000 CR3: 000000007c04e000 CR4: 00000000003526f0
+> Call Trace:
+>   <TASK>
+>   ____bpf_trace_printk kernel/trace/bpf_trace.c:372 [inline]
+>   bpf_trace_printk+0xdb/0x190 kernel/trace/bpf_trace.c:362
+>   bpf_prog_bfbd7bf4bf171090+0x41/0x5a
+>   bpf_dispatcher_nop_func include/linux/bpf.h:1350 [inline]
+>   __bpf_prog_run include/linux/filter.h:721 [inline]
+>   bpf_prog_run include/linux/filter.h:728 [inline]
+>   bpf_prog_run_pin_on_cpu include/linux/filter.h:745 [inline]
+>   bpf_flow_dissect+0x225/0x720 net/core/flow_dissector.c:1024
+>   bpf_prog_test_run_flow_dissector+0x37c/0x5c0 net/bpf/test_run.c:1414
+>   bpf_prog_test_run+0x2c7/0x340 kernel/bpf/syscall.c:4688
+>   __sys_bpf+0x562/0x860 kernel/bpf/syscall.c:6167
+>   __do_sys_bpf kernel/bpf/syscall.c:6259 [inline]
+>   __se_sys_bpf kernel/bpf/syscall.c:6257 [inline]
+>   __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6257
+>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>   do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f25b0f8efc9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffe036cd5e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+> RAX: ffffffffffffffda RBX: 00007f25b11e5fa0 RCX: 00007f25b0f8efc9
+> RDX: 0000000000000050 RSI: 0000200000000180 RDI: 000000000000000a
+> RBP: 00007f25b1011f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f25b11e5fa0 R14: 00007f25b11e5fa0 R15: 0000000000000003
+>   </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+
 
