@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-863975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD65EBF9A29
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:46:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7DCBF9A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B26DD4EE3DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47B0919C79EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CF91CAA92;
-	Wed, 22 Oct 2025 01:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F17E1F3B9E;
+	Wed, 22 Oct 2025 01:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="aIU7weqm"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6R32oOq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143027081F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86902288D2
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761097575; cv=none; b=GMZFg+pBKauixxxUKiqU+QrggmJZufP5vDRZ365VANpdcYGhO1aK1N4/+1KoUmxfEToHNTwoQw1+FSsiu5UoOaUI4Hd9FkVwZkHktFNQzxZ7v3NLDSCPNEnXqwxVDSyhVJ7sR7RmhZdDAcj9fnBHt9zwk3rqyTuiXZR0d8Cekkg=
+	t=1761097261; cv=none; b=aeBBoiby74f1TOLFjVJnUd2cPAUYwstvR7bEiL7FXhQBaHSJvDhlWot3ZPIhKEkHEiaKKWzJzuckg+aBA7NlkJ0kB48N9/hQ3jECRLOTUWI7PIt6HR1W+QMQgNwixYm3SJiiW6nYjr0tGafWuJE6ToQ7/f2XkjgJgYnE/3osASw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761097575; c=relaxed/simple;
-	bh=91SF0CerLZEBFUXVC7GfrfHZUrgGDtrRxmHGYgJPn3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UBo3cyALTldUPjWn7QEMfn7IDAyKrADIrQ9MsnTJaECIIse7P+PJNUM9LotDbcW548SSMoUTWaCsqYTxFBXMvGE+GJ1qpOG6NFIHea0QYp1MQo2+MDunv55nnmiS10Moj6Eqoj6hogu0QhpHYVvtN2ABaKPvGNH7oT7uZWEhFQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=aIU7weqm; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id AD7792C0241;
-	Wed, 22 Oct 2025 14:38:02 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1761097082;
-	bh=/MbsSW3+Q9BLBlm5Zj/MlkP5p2oUX/nDrISBbxMv0L4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aIU7weqmGR8oKtXCsz5CVMJA0P+t1Z1uwi4F1RxEygGoZNpoRrLxHWq1C9NSHgMCT
-	 6ek8WHH42EHM8RK+8rW6lC7hrMS79dq4EAY5qb3KY5GCe+Dim3gmD2XYMeEkw0WeK6
-	 QO3eMRitYR0IZ+hFuhVaIXGnwT2fNjf9JY4wHFEIRh/atVmmG5CaSIvnP6C9gKCd1g
-	 oq7Z8k7B9ZFQtdIOKCJU6EAuBT53d4IHX8fYXLp8vp4eZnqNYrdDpuPw2nbIy4uYnr
-	 urJUjDTXiDX4kfGaVzVUsyLtYYPjWVe8AWpiRlqz2jImpnQYN7nr000GNSybLkgXBh
-	 cHsWSj5e7pOuw==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B68f8357a0000>; Wed, 22 Oct 2025 14:38:02 +1300
-Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.12.16])
-	by pat.atlnz.lc (Postfix) with ESMTP id 79A7913EE36;
-	Wed, 22 Oct 2025 14:38:02 +1300 (NZDT)
-Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
-	id 751342A0433; Wed, 22 Oct 2025 14:38:02 +1300 (NZDT)
-From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Elad Nachman <enachman@marvell.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v0] mtd: rawnand: marvell: fix 8bit ECC layouts
-Date: Wed, 22 Oct 2025 14:37:52 +1300
-Message-ID: <20251022013752.2381694-1-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761097261; c=relaxed/simple;
+	bh=pFBBzB2arJXkNPRvMZSCJ6eRnA/xFysNEdKKlZiu1IA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NIX2qy3cAXwUdT2HK+7V548qpJZv6Wx1Dtn6B+7i1IeEHCMgYAKU53wXpL2VN8vOLydcvhRPvWKZAPIZr/R7uVCfunhEFo0Dold1XKtptiyREiy2iJg4zCrdr3mAj/L9kBTHvy2glyILkGA8rxz4p0qHr2U0f1S0jv2ahNdguPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6R32oOq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D019C4CEF1;
+	Wed, 22 Oct 2025 01:40:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761097261;
+	bh=pFBBzB2arJXkNPRvMZSCJ6eRnA/xFysNEdKKlZiu1IA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=d6R32oOqgjh3e7Ejgb67KUf7y3yistL/0VVbArQ3XlTq2vuLG4aSIamn8YoqIw2rX
+	 qpnrTOSv1Q3UIRJbNgplZQPp9QZsZwbdN2E5um551ARVWFkRRCWEX0bCfB5ZSNu1kg
+	 CRrAqr14Q3cBcUy5YDnahW48ltXD0duwPo38jkBa8EhIvT54aE0ao3PzEJt33kpNdz
+	 G5ki0cy+bkMYyLrWurXwzb4TH3djBQpEzot7JKTWqeZJlblufIHXbAOUwFjMkiKxBm
+	 tFUPOT5JjDySmsY7sG/TRFZr6RiRaM+kRRVLQCiBleiFMfpK77ua+Zp/tVHSEuQ0sQ
+	 lOlFa9KXZ/uGA==
+From: SeongJae Park <sj@kernel.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	akpm@linux-foundation.org,
+	vbabka@suse.cz,
+	surenb@google.com,
+	mhocko@suse.com,
+	jackmanb@google.com,
+	hannes@cmpxchg.org,
+	ziy@nvidia.com,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [RFC PATCH v2] page_alloc: allow migration of smaller hugepages during contig_alloc.
+Date: Tue, 21 Oct 2025 18:40:57 -0700
+Message-ID: <20251022014057.128900-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251020210816.1089910-1-gourry@gourry.net>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=NbFF1HD4 c=1 sm=1 tr=0 ts=68f8357a a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=x6icFKpwvdMA:10 a=JNAATqg39HOsAI6RquoA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
 
-These were modified to appease a check in nand_scan_tail. This change led
-to the last spare bytes never being written to or read from.
+On Mon, 20 Oct 2025 17:08:16 -0400 Gregory Price <gourry@gourry.net> wrote:
 
-Modify the fix by restoring the layouts and setting ecc->steps to the
-full_chunk_cnt value in the 8 bit ECC cases (4k and 8k page size). This
-allows the driver to continue reading/writing all chunks while also
-passing the check in nand_scan_tail.
+> We presently skip regions with hugepages entirely when trying to do
+> contiguous page allocation.  Instead, if hugepage migration is enabled,
+> consider regions with hugepages smaller than the requested allocation.
+> 
+> Compaction `isolate_migrate_pages_block()` already expects requests
+> with hugepages to originate from alloc_contig, and hugetlb code also
+> does a migratable check when isolating in `folio_isolate_hugetlb()`.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> ---
+>  mm/page_alloc.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 600d9e981c23..da2e65bf63e3 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -7048,8 +7048,19 @@ static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
+>  		if (PageReserved(page))
+>  			return false;
+>  
+> -		if (PageHuge(page))
+> -			return false;
+> +		if (PageHuge(page)) {
+> +			unsigned int order;
+> +
+> +			if (!IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION))
+> +				return false;
+> +
+> +			/* Don't consider moving same size/larger pages */
+> +			page = compound_head(page);
+> +			order = compound_order(page);
+> +			if ((order >= MAX_PAGE_ORDER) ||
+> +			    (nr_pages < (1 << order)))
+> +				return false;
 
-Fixes: e6a30d0c48a1 ("mtd: rawnand: marvell: fix layouts")
-Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
----
- drivers/mtd/nand/raw/marvell_nand.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Shouldn't the comparison of 'nr_pages' against '1 << order' use '<=' instead of
+'<', to match the commit description?
 
-diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/m=
-arvell_nand.c
-index 303b3016a070..c20feacbaca8 100644
---- a/drivers/mtd/nand/raw/marvell_nand.c
-+++ b/drivers/mtd/nand/raw/marvell_nand.c
-@@ -292,10 +292,10 @@ static const struct marvell_hw_ecc_layout marvell_n=
-fc_layouts[] =3D {
- 	MARVELL_LAYOUT( 2048,   512,  8,  2,  1, 1024,  0, 30,1024,64, 30),
- 	MARVELL_LAYOUT( 2048,   512,  16, 4,  4, 512,   0, 30,  0, 32, 30),
- 	MARVELL_LAYOUT( 4096,   512,  4,  2,  2, 2048, 32, 30,  0,  0,  0),
--	MARVELL_LAYOUT( 4096,   512,  8,  4,  4, 1024,  0, 30,  0, 64, 30),
-+	MARVELL_LAYOUT( 4096,   512,  8,  5,  4, 1024,  0, 30,  0, 64, 30),
- 	MARVELL_LAYOUT( 4096,   512,  16, 8,  8, 512,   0, 30,  0, 32, 30),
- 	MARVELL_LAYOUT( 8192,   512,  4,  4,  4, 2048,  0, 30,  0,  0,  0),
--	MARVELL_LAYOUT( 8192,   512,  8,  8,  8, 1024,  0, 30,  0, 160, 30),
-+	MARVELL_LAYOUT( 8192,   512,  8,  9,  8, 1024,  0, 30,  0, 160, 30),
- 	MARVELL_LAYOUT( 8192,   512,  16, 16, 16, 512,  0, 30,  0,  32, 30),
- };
-=20
-@@ -2286,7 +2286,16 @@ static int marvell_nand_hw_ecc_controller_init(str=
-uct mtd_info *mtd,
- 	}
-=20
- 	mtd_set_ooblayout(mtd, &marvell_nand_ooblayout_ops);
--	ecc->steps =3D l->nchunks;
-+
-+	/* Validity checks in nand_scan_tail assume even sized chunks, but in t=
-he case of 8bit
-+	 * ECC with 4k/8k page size the last chunk is spare data, which is not =
-sized to the data
-+	 * chunks. Overwrite the ecc->steps to pass this validity check, while =
-maintaining the
-+	 * correct number of chunks in-driver.
-+	 */
-+	if (ecc->strength =3D=3D 8 && mtd->writesize > SZ_2K)
-+		ecc->steps =3D l->full_chunk_cnt;
-+	else
-+		ecc->steps =3D l->nchunks;
- 	ecc->size =3D l->data_bytes;
-=20
- 	if (ecc->strength =3D=3D 1) {
---=20
-2.51.0
+> +		}
+>  	}
+>  	return true;
+>  }
+> -- 
+> 2.51.0
 
+
+Thanks,
+SJ
 
