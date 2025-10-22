@@ -1,207 +1,184 @@
-Return-Path: <linux-kernel+bounces-865950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034B0BFE668
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:21:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE69DBFE683
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1971A044E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847023A32FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094DD304964;
-	Wed, 22 Oct 2025 22:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE27B304BCB;
+	Wed, 22 Oct 2025 22:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oJWQ2Lh5"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EmYvNt9g"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BF22FF660
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC622FF660;
+	Wed, 22 Oct 2025 22:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761171660; cv=none; b=tNpytHsdm7Dw9J4b4VHa7pKboArrep5i2VzVqM+HbLAMyAHpQQqT7jPUREdp/Ea94YwwXedBZGKhAGVy0XMsiRRh3ItgCRYeeH7toN0vpDtoga+Mct2QOTs2AXwkxkEOwZcrFhVsSr5MrZw4l0ZRukgHdGfrUuWcZnwiRFWbhkQ=
+	t=1761171760; cv=none; b=p+cwOqQ2s0rJ0K/H8O2q70d/Kf2y9wH7rJHA8vXD7CQ+kzRqGHPn6PLrqreY+p3q71IlgBJ4PlkXg1Bqkt5Ky5IGhFjEBtCYDpo4MYaKXfqHswAxBUnizennjrzxSgQC8KP259apRw4+E2OiRjCfi6d4z/ofRjxcqni1cfU0SOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761171660; c=relaxed/simple;
-	bh=WqqdxK3KDsMpE/e1giw4h0keHjdtqH8gBSJ9aZrVbOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p0v6X2g60sqigr/A+sbBbqG9RDK/kJdvT1YPqzP8yi67F9/ePvBWeChjkIaHEAsYSzjMEexDoz8Bs69O9+M628oS81XXiBE6PS1oq6OG6R8adh5JvQuQ7JgY6u/tGQA8Kfn0DbYZAMVXyB6taeeR3gvSm31uVZTQrc4FA/IbwkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oJWQ2Lh5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MIeoia028831
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:20:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=i0mvZxV1MDsJnYmRbT9+6JtzjrypiHsWcbX
-	y/fmUaPY=; b=oJWQ2Lh5VafWunD4Unv+UfZakS3vkrcf0DavngbD/HJYJlHDM66
-	WLO7Who+AlUzOjhwImK5ZWis7KpLlukheN2BrBsbXVGHuhJcF0lpIsO9qZVirh4S
-	9Ql6n8rCZ37mDKMZyx8pDTElM56Nb6+amyzZ67A65RFiZcmH+3d3+kA6Yqt22MxI
-	En7hoHryEMqWqK+sL2POcJD5BNth1EBxDua0p5qPVwD+trQWJIODV5PgF6c0+8gf
-	9w8bhm51xQUImYfMMGk1GFofOwmL0sHnrtZIZmQxzLEpJXGjmQNzv9eADhDtPiZ3
-	JkQkdh6zcc9KbQaGYt55cYQXa8wsCb3+suw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08wbvtq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:20:57 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b6cd0ee184aso24351a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:20:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761171657; x=1761776457;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i0mvZxV1MDsJnYmRbT9+6JtzjrypiHsWcbXy/fmUaPY=;
-        b=icNnuTNm3t8ncrdFlAXgDAFx4HgIHKpEhLAxJU4syWSvCJhFOCNQHjhnp8xgZsPM1q
-         TfSyq/aBqGFKRpzTXok113UVlPM8DKsGmF3XZKEG2mZyuXh3fyJBA1jFMNZDWNt0dMc1
-         IHdDpP5AnfR0Ve0MyeYtLBsfHp/1k2l2TSRlTi0+e3k5+W2uaYqRr2Jb+3G6sNaUi6GF
-         xD2N7hAXuVZ+uLXx6aQdScQ+wAeKeEmMc5HLMHXR5E71274tIKd0Mq1jFovmASrMFoZR
-         Nc/aSwwa15Y8cuOftgEgA1eTV4GgXvJ0ZUVF2ZyzQWZndfbrPoSKDIzU+L3oaIddzfHe
-         McNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgpX9s7oCh9ohGfAFc1iOJuhKllCv6vnndrcq2Ozb2myFhl0ry4zHpEbfsuEG53PH5D9QOwv1WD09iUG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyokCMhpbEkagUXrcNrLhrMFOqGIgzNU9A8MEuEBI0QuTLB9rNk
-	ZL5bZNRJgJkN11qB305Dp87IVPDa+ULn+O/l6d/BGUK03CsqOuGxgUKr9/oMvBRaWpPg82AcUzb
-	zqRnyRlxxTxlYR+XPJUiKWL5Gz2xKxeB5HCYEmViKtWtutFi+ap80Lp/yGxj1OgqIZoHInOHB8O
-	w=
-X-Gm-Gg: ASbGncvhX43iJwm4r3duKggzkg1+/mYr8E3CTVBe30BDPWLfBGUF8cCTcF0DE4u2CU3
-	ZXZ83wtyzBfIO0CrwYPveDf81b1tW+/Y0GrqLjWBxNNd279JYP/kNTQPylpcYGmkdAR3NhVTPPN
-	wgJmAdZSlsPdC52Ambfn6mC+BFGUx3oNPl5OBchqK7OEZw5A+TBcP149uv/lFuTUnf0XjIlca1Y
-	dBlBpOIje+VITJNXq2/F5Nwjun7SYx47sK+JBeGwBJGjtE2sU14xcYzWXrdtJlmwq7H2yePbwLD
-	AeyxFhQi08TMOouh/5bszunkjkRRURfjz3KBshqQ0LkqZD0O2E0TRa5p1qS58NYJcKSi/sySNXP
-	Xo92EjtFNGA==
-X-Received: by 2002:a05:6a20:3945:b0:252:2bfe:b65a with SMTP id adf61e73a8af0-334a8523c3dmr29215685637.7.1761171656708;
-        Wed, 22 Oct 2025 15:20:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHcTg7biN0R67q7mojPROACusX0lr4TEu2AEKXPQxVnJV9gXrUyzRzXnKDQhdID1RaUTlQhg==
-X-Received: by 2002:a05:6a20:3945:b0:252:2bfe:b65a with SMTP id adf61e73a8af0-334a8523c3dmr29215654637.7.1761171656232;
-        Wed, 22 Oct 2025 15:20:56 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4e0a43asm115793a12.27.2025.10.22.15.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 15:20:55 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Valentine Burley <valentine.burley@collabora.com>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm: Reject MAP_NULL op if no PRR
-Date: Wed, 22 Oct 2025 15:20:51 -0700
-Message-ID: <20251022222051.10030-1-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761171760; c=relaxed/simple;
+	bh=uNQhwswo1YvUudEgOpcAJyv+vBTeIG9XZjUwtbOBhgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uoTubkeMmoYc84ir/BEMbTZ5PD/Xh8p8wO3+r04CipW9JnY0QcA/6BWERnzSO3uQ1YM6gjO9GnCSIRVfcLeetiKr7jyhqY+HlB1n31kJ++wbafwsFCYGpo2Vgpu3TgGm2xnfj1rb9H7fbqEoTpbA1PdenETCZxiJfeI3Ol8kOuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EmYvNt9g; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MKLRmI019068;
+	Wed, 22 Oct 2025 22:22:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4gHHP1JLz6sjv87V8Qo/SoKJ9Chb9A4OcU/5L2+g44o=; b=EmYvNt9gXxNj1GHr
+	+i6zaWz4J3W0CdyXfJH8IXXlXlaQ5z9BPN5b407DpP1VJj6FGTAqCnemIhfTjnOe
+	IeGYEoT7lyK1vlzSAUe03vyahmMjSDQXDBk/cfZYH647luftDZFAoAB9CQSWI7J7
+	GzC7s/VRgRJVRd9d0YirLlq8yYkf0FSdyQxZofR8BRFc6G/pn/4tobRhFkpZppCe
+	1yIzHkFNnDUpbkTIYv6GqKs6sRDODuHHvS2bClzHXyKaxYtg40Bex0cMUEELHYU4
+	uSE24cwwWsyAX5RZKueuxL+wlmB7HCMO9jCVC27cYYVZWzzm8snZJSYae9L3zM6M
+	AFpHVQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y67qg7na-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 22:22:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59MMMSFX031593
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 22:22:28 GMT
+Received: from [10.216.62.87] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 22 Oct
+ 2025 15:22:25 -0700
+Message-ID: <f03e7fa4-f49a-4d4c-8e52-867449c12ace@quicinc.com>
+Date: Thu, 23 Oct 2025 03:52:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: wlNzKQXlXPbFLe8im4FmRdDngYLDewZK
-X-Proofpoint-GUID: wlNzKQXlXPbFLe8im4FmRdDngYLDewZK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX5FIzsHzy1RGE
- NyqiVBbO7QPzFdDsDsduz1R2JlKTS3ny8EuF+5JM5BNOgLHqYSxDcPGCxyQQr5Pz8rZZQ41dzwE
- Y9Okh2NNL+L/rrUCVhjBBUan5JAugprhyt0ezFD7LK4JufHGbHvOZIb+AsOFBYhR3UPJbj0avHw
- zO0wRBnY+9p6F1NIbKPOPigRbrBpcvIfXG5nc+iEHJiNhhY2eEH2PvdV9b3zUk/2ctpDonXmMLL
- 0eEgbYVO9yaKLwt797JfnyoM8sk7IahMRP0cDb2izbXcCUM3SV2DWHZW6EktvMe9NPY6mL1M73d
- iDknwH1t6x3eCFT1OpnYr97I4vZG/4tRyg/zlxcW/H4j56j1bpmW+gQydxaqLRXj7vQqr9mCi1a
- E9r5egHbu5E2/eAPFOTOdo6ezzGISw==
-X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68f958c9 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=e5mUnYsNAAAA:8 a=QX4gbG5DAAAA:8 a=EUspDBNiAAAA:8
- a=AzObSZ8MGmcM1bWaoswA:9 a=x9snwWr2DeNwDh03kgHS:22 a=Vxmtnl_E_bksehYqCbjh:22
- a=AbAUZ8qAyYyZVLSsDulk:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1] ufs: ufs-qcom: Fix UFS OCP issue during UFS power
+ down(PC=3)
+To: Nitin Rawat <nitin.rawat@oss.qualcomm.com>, <mani@kernel.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+        <bvanassche@acm.org>, <konrad.dybcio@oss.qualcomm.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+References: <20251012173828.9880-1-nitin.rawat@oss.qualcomm.com>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <20251012173828.9880-1-nitin.rawat@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE2OCBTYWx0ZWRfX4szcw/lVdY0I
+ T2L1u/wBfMuJ7q+4w7OztW1woP7RoDfO+tSMesEuuDvl1HWYnT2LfsKv3vEjkhdt2BjjGwhqxOg
+ gmlBPwdGiLJ0dtBDhWthKHRslBahM80tA0es0mMvDUZrD8M4wJ7V5dmfOY8CNKQ2DSmr/GLdoxU
+ GNPtlfHe5YLyICgFsKt9cnFFr8M66PevvLZHZGKoSN28nCihoa2BEN+dvX0SsPpY9Vq3FU95v2e
+ 5NsYQRZgMYzq9QOxVdM+MQQNiyjHBZ70fhZ5zaVcu9G0mlam/6ckIKdHXNjRXAJamIHlHB8RFV3
+ GlADdGiURbaBQSH1EKRqku2GKzd2/V9/FIUb49j8Ln7UZtVCyhe7s9b2G7e/cK8y6UW+IQRXYNe
+ EX15c07rfJ/iTa5HuOEUhXRncWBRLQ==
+X-Authority-Analysis: v=2.4 cv=LMRrgZW9 c=1 sm=1 tr=0 ts=68f95925 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=xZ3OjXKg_-HuRwZWpiwA:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: KP754WaCl-oCOoTOaVdiwY1ItV-a86t7
+X-Proofpoint-ORIG-GUID: KP754WaCl-oCOoTOaVdiwY1ItV-a86t7
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 clxscore=1011 priorityscore=1501 impostorscore=0 phishscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220168
 
-We need PRR support in order to implement MAP_NULL.  Userspace shouldn't
-be trying to use this if it is unsupported.
 
-Reported-by: Valentine Burley <valentine.burley@collabora.com>
-Link: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/37935#note_3153730
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/adreno/adreno_gpu.c |  7 -------
- drivers/gpu/drm/msm/msm_gem_vma.c       |  6 ++++++
- drivers/gpu/drm/msm/msm_gpu.h           | 11 +++++++++++
- 3 files changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index 19181b6fddfd..f93eee67240d 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -365,13 +365,6 @@ int adreno_fault_handler(struct msm_gpu *gpu, unsigned long iova, int flags,
- 	return 0;
- }
- 
--static bool
--adreno_smmu_has_prr(struct msm_gpu *gpu)
--{
--	struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(&gpu->pdev->dev);
--	return adreno_smmu && adreno_smmu->set_prr_addr;
--}
--
- int adreno_get_param(struct msm_gpu *gpu, struct msm_context *ctx,
- 		     uint32_t param, uint64_t *value, uint32_t *len)
- {
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index 90712586faac..96925a0f3965 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -964,6 +964,7 @@ static int
- lookup_op(struct msm_vm_bind_job *job, const struct drm_msm_vm_bind_op *op)
- {
- 	struct drm_device *dev = job->vm->drm;
-+	struct msm_drm_private *priv = dev->dev_private;
- 	int i = job->nr_ops++;
- 	int ret = 0;
- 
-@@ -1010,6 +1011,11 @@ lookup_op(struct msm_vm_bind_job *job, const struct drm_msm_vm_bind_op *op)
- 		break;
- 	}
- 
-+	if ((op->op == MSM_VM_BIND_OP_MAP_NULL) &&
-+	    !adreno_smmu_has_prr(priv->gpu)) {
-+		ret = UERR(EINVAL, dev, "PRR not supported\n");
-+	}
-+
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-index a597f2bee30b..2894fc118485 100644
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -299,6 +299,17 @@ static inline struct msm_gpu *dev_to_gpu(struct device *dev)
- 	return container_of(adreno_smmu, struct msm_gpu, adreno_smmu);
- }
- 
-+static inline bool
-+adreno_smmu_has_prr(struct msm_gpu *gpu)
-+{
-+	struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(&gpu->pdev->dev);
-+
-+	if (!adreno_smmu)
-+		return false;
-+
-+	return adreno_smmu && adreno_smmu->set_prr_addr;
-+}
-+
- /* It turns out that all targets use the same ringbuffer size */
- #define MSM_GPU_RINGBUFFER_SZ SZ_32K
- #define MSM_GPU_RINGBUFFER_BLKSIZE 32
--- 
-2.51.0
+On 10/12/2025 11:08 PM, Nitin Rawat wrote:
+> According to UFS specifications, the power-off sequence for a UFS
+> device includes:
+> 
+> - Sending an SSU command with Power_Condition=3 and await a
+>    response.
+> - Asserting RST_N low.
+> - Turning off REF_CLK.
+> - Turning off VCC.
+> - Turning off VCCQ/VCCQ2.
+> 
+> As part of ufs shutdown , after the SSU command completion, asserting
+> hardware reset (HWRST) triggers the device firmware to wake up and
+> execute its reset routine. This routine initializes hardware blocks
+> and takes a few milliseconds to complete. During this time, the
+> ICCQ draws a large current.
+> 
+> This large ICCQ current may cause issues for the regulator which
+> is supplying power to UFS, because the turn off request from UFS
+> driver to the regulator framework will be immediately followed by
+> low power mode(LPM) request by regulator framework. This is done
+> by framework because UFS which is the only client is requesting
+> for disable. So if the rail is still in the process of shutting down
+> while ICCQ exceeds LPM current thresholds, and LPM mode is activated
+> in hardware during this state, it may trigger an overcurrent
+> protection (OCP) fault in the regulator.
+> 
+> To prevent this, a 10ms delay is added after asserting HWRST. This
+> allows the reset operation to complete while power rails remain active
+> and in high-power mode.
+> 
+> Currently there is no way for Host to query whether the reset is
+> completed or not and hence this the delay is based on experiments
+> with Qualcomm UFS controllers across multiple UFS vendors.
+> 
+> Signed-off-by: Nitin Rawat <nitin.rawat@oss.qualcomm.com>
+> ---
+>   drivers/ufs/host/ufs-qcom.c | 15 ++++++++++++++-
+>   1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 89a3328a7a75..cb54628be466 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -744,8 +744,21 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+> 
+> 
+>   	/* reset the connected UFS device during power down */
+> -	if (ufs_qcom_is_link_off(hba) && host->device_reset)
+> +	if (ufs_qcom_is_link_off(hba) && host->device_reset) {
+>   		ufs_qcom_device_reset_ctrl(hba, true);
+> +		/*
+> +		 * After sending the SSU command, asserting the rst_n
+> +		 * line causes the device firmware to wake up and
+> +		 * execute its reset routine.
+> +		 *
+> +		 * During this process, the device may draw current
+> +		 * beyond the permissible limit for low-power mode (LPM).
+> +		 * A 10ms delay, based on experimental observations,
+> +		 * allows the UFS device to complete its hardware reset
+> +		 * before transitioning the power rail to LPM.
+> +		 */
+> +		usleep_range(10000, 11000);
+> +	}
+> 
+>   	return ufs_qcom_ice_suspend(host);
+>   }
+> --
+> 2.50.1
+> 
+> 
+
+
+Gentle reminder for review!!
 
 
