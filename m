@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-865715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99DEBFDD4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:28:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537FBBFDDB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790B73A1C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:27:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51E244F8596
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF33340A51;
-	Wed, 22 Oct 2025 18:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0412434E75C;
+	Wed, 22 Oct 2025 18:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="fVT/R152"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y822QoUX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2188B347BBB;
-	Wed, 22 Oct 2025 18:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973A734D4ED;
+	Wed, 22 Oct 2025 18:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761157641; cv=none; b=BpJYcM2c6fGIbHDHrQC3ufcGotHkDT2i0EA9teK/j3vmBj07jPRfIQCdtMYExsdGyt5CHuacoBSdTTAHiByv431lizdw4efW2rqLhPjGCptHLdTDzSg9L2nBA8duvsDekNnc/u1vp4yrqX6qUYk3IEtrCl5gLknQTR5jGTsG3I4=
+	t=1761157780; cv=none; b=QShFZIXB+b5YqqM6EH4ISdOg/p2zziG//3lvgd2N6EV6VQyAbBsTJbzUm1U3rXDlX85vVZVEApxPXcFMEaBMK6maVL6nD5D2wpftgslf/lu0n2XOD+y5xyNKYtiWdVVxT236lFmSSUYrUlTxUOaABnRTA6cJEOfPC5wF91d+fP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761157641; c=relaxed/simple;
-	bh=bZEztPyk7BTGQIjoohhhOl7ODQE8PExaiHuzd1d/bXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mqHq1dJyKb9K3AsGPLIPr4iNQ+keHtzggMp8tENZLrSULM/n5dGID/Dza2IigvaxSJ/gXTMKGpY3ynfyK4F5sEuPR9I3q7s0DGmjzrHhKq57ZuLPkXGE5cDFJjat3XwTKE2VyFO0EwJlnXIo/vjUlBj01h5MD42up/ri8jao2oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=fVT/R152; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1761157634;
-	bh=bZEztPyk7BTGQIjoohhhOl7ODQE8PExaiHuzd1d/bXQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fVT/R152bGhLwMPLdp5Mp3v7fPx0SjpBM7gpmIGiKKIIOnRog7K7VNxXE/alT/bHl
-	 BVIog5Jy74X1QxzvmNqWiBV8stqOeC/zn4036cZwixWythFSUavJAlkYdO2W7z7EVH
-	 xLn26jXNgxT2PT0L2EpoMHMAAphdEri4ZSQMTw/MFXKnC3mfan9qSgV6MLO6DEKLzn
-	 ca/jAsuVBDmm/maNYTlEfkhD0EKsZCVdEXXnQyKWsF++rGiVdfAXV+z9JuI4/pcaTj
-	 HpJsm5ea/8KhJyt4wLGPnwwNxeobez3WTw9F5BiE5Ge6PdQwbBJv4Z11+n0sInH+E1
-	 uE54xNcxyuWyA==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id D66E460109;
-	Wed, 22 Oct 2025 18:27:14 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id C73B7202805; Wed, 22 Oct 2025 18:27:09 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next 7/7] netlink: specs: tc: set ignore-index on indexed-arrays
-Date: Wed, 22 Oct 2025 18:27:00 +0000
-Message-ID: <20251022182701.250897-8-ast@fiberby.net>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251022182701.250897-1-ast@fiberby.net>
-References: <20251022182701.250897-1-ast@fiberby.net>
+	s=arc-20240116; t=1761157780; c=relaxed/simple;
+	bh=tKK/reHlzPmVqXOpf9AgjGzyga0qVK9u1akkTrZBx1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uugO87TaxHV+k5/bm/wBwoU5AuUFeCsxjOFDen6Hzp1Z6SyUAqsBOoxWMzaPZJFI5ZpsSlX8Qww+GScNxIGy6zsEv3jmJhYgeth/l72ft/CHczWpxFjXF3nxRGXbEJJzP7VQ5A88dmpFJeO5fIYR0ocUy+zBx6PMIZmxVeVqnZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y822QoUX; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761157777; x=1792693777;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tKK/reHlzPmVqXOpf9AgjGzyga0qVK9u1akkTrZBx1s=;
+  b=Y822QoUXtHxYBVHtmWWyJHBIfPCnAbmVj3XoC/NWohQ/ETddxlS1yGKr
+   fBLgad96Vq9OrzmdMTDMGIyIW6OFkEK55BvGiwomBgM0xjTo1vdCSLPy3
+   af/bZ+Bpl14EQvcSnfucmOFMADsVH4uYVXGmrTsovMb3wUiZR3TpkH3Rt
+   9V8FU/64rLE2VzVrrbG2ftKkY52mAK2KGWJA/KEi5XJHnqE4+eIM5xvzC
+   THNFNvfduhvqK+bvJfUw1UHVBYFUA8pfQRpZ9G2ptXQPAMUZNwHjmdt+h
+   7G/NCD9N2+A1/b37/GNMGZDnWmPmRCh+6ZrcC9y8KuOy8O7+p6Oym3ziy
+   g==;
+X-CSE-ConnectionGUID: gWfIPHPES2C4Fj2O7OlpcQ==
+X-CSE-MsgGUID: 5v3dq3cpQzOGZMUOu4dbvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63356719"
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="63356719"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 11:29:37 -0700
+X-CSE-ConnectionGUID: dXekTRVYQLSfBpc91TuW2Q==
+X-CSE-MsgGUID: F4lL6WHjQMGrNdzuFwWg8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="183883082"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.83])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 11:29:35 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vBdaW-00000001lYQ-0HkO;
+	Wed, 22 Oct 2025 21:29:32 +0300
+Date: Wed, 22 Oct 2025 21:29:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jack Xu <jack.xu@intel.com>,
+	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
+	Qianfeng Rong <rongqianfeng@vivo.com>, qat-linux@intel.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: qat - use strscpy_pad to simplify buffer
+ initialization
+Message-ID: <aPkii_HgX1f0MUVc@smile.fi.intel.com>
+References: <20251022123622.349544-1-thorsten.blum@linux.dev>
+ <aPkfsuliKYy5UAbB@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPkfsuliKYy5UAbB@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The indexes in tc indexed-arrays are mostly used for defining
-the priority winin an array of actions, and when parsed by the
-kernel they must be unique, and not exceed TCA_ACT_MAX_PRIO (32).
+On Wed, Oct 22, 2025 at 09:17:22PM +0300, Andy Shevchenko wrote:
+> On Wed, Oct 22, 2025 at 02:36:19PM +0200, Thorsten Blum wrote:
+> > Use strscpy_pad() to copy the string and zero-pad the destination buffer
+> > in a single step instead of zero-initializing the buffer first and then
+> > immediately overwriting it using strscpy().
+> > 
+> > Replace the magic number 16 with sizeof(buf) and remove the redundant
+> > parentheses around kstrtoul() while we're at it.
+> 
+> I understand that you focused on strscpy*() conversions, but the below I think
+> needs a bigger refactoring, see my remarks.
 
-Therefore this patch only sets ignore-index on a single
-attribute TCA_CAKE_STATS_TIN_STATS, which is only used for
-dumping statistics, and never ingested by the kernel.
+...
 
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┓
-┃                                  ┃ out/    ┃ input/ ┃ ignore ┃
-┃ Attribute                        ┃ dump    ┃ parsed ┃ -index ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━┩
-│ TCA_BASIC_ACT                    │ 1++ (2) │ yes(3) │ no     │
-│ TCA_BPF_ACT                      │ 1++ (2) │ yes(3) │ no     │
-│ TCA_CAKE_STATS_TIN_STATS         │ 1++ (4) │ -      │ yes    │
-│ TCA_CGROUP_ACT                   │ 1++ (2) │ yes(3) │ no     │
-│ TCA_FLOWER_ACT                   │ 1++ (2) │ yes(3) │ no     │
-│ TCA_FW_ACT                       │ 1++ (2) │ yes(3) │ no     │
-│ TCA_MATCHALL_ACT                 │ 1++ (2) │ yes(3) │ no     │
-│ TCA_ROUTE4_ACT                   │ 1++ (2) │ yes(3) │ no     │
-│ TCA_U32_ACT                      │ 1++ (2) │ yes(3) │ no     │
-└──────────────────────────────────┴─────────┴────────┴────────┘
+> > -	char buf[16] = {0};
+> > +	char buf[16] = {};
+> >  	unsigned long ae = 0;
+> >  	int i;
+> >  
+> > -	strscpy(buf, str, sizeof(buf));
+> > -	for (i = 0; i < 16; i++) {
+> > +	strscpy_pad(buf, str);
+> 
+> First of all, why do we need a _pad() version here? Is the data somehow being
+> used as a whole?
+> 
+> > +	for (i = 0; i < sizeof(buf); i++) {
+> >  		if (!isdigit(buf[i])) {
+> >  			buf[i] = '\0';
+> >  			break;
+> >  		}
+> >  	}
+> > -	if ((kstrtoul(buf, 10, &ae)))
+> > +	if (kstrtoul(buf, 10, &ae))
+> >  		return -EFAULT;
 
-Where:
-  1++) incrementing index starting from 1
-  2)   All _ACT are dumped with tcf_exts_dump() calling tcf_action_dump().
-  3)   Parsed in tcf_action_init().
-  4)   Dumped in cake_dump_stats().
+On top of that the function is called only from one place and returns different
+error code, instead it would have returned what kstrtoul() gives...
 
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
----
- Documentation/netlink/specs/tc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> Looking at this, it tries to work around the kstrtoul() inability to perform
+> partial parses. Instead, this should do something like
+> 
+> 	unsigned long long x;
+> 	const char *end;
+> 
+> 	simple_strtoull(...);
+> 	if (x > UINT_MAX || end == buf)
+> 		return $ERR; // wrong input / overflow
 
-diff --git a/Documentation/netlink/specs/tc.yaml b/Documentation/netlink/specs/tc.yaml
-index b398f7a46dae1..24866fccb7d15 100644
---- a/Documentation/netlink/specs/tc.yaml
-+++ b/Documentation/netlink/specs/tc.yaml
-@@ -2188,6 +2188,7 @@ attribute-sets:
-         name: tin-stats
-         type: indexed-array
-         sub-type: nest
-+        ignore-index: true
-         nested-attributes: cake-tin-stats-attrs
-       -
-         name: deficit
+Yeah, the overflow check here is not comprehensive, it won't catch the overflow
+(wrap around) of 64-bit value. But we can add a check for the end not to be
+farther than ~19 characters from the start, which would correspond the initial
+copy of 16 characters.
+
 -- 
-2.51.0
+With Best Regards,
+Andy Shevchenko
+
 
 
