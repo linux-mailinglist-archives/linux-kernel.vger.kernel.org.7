@@ -1,134 +1,85 @@
-Return-Path: <linux-kernel+bounces-865331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8D5BFCD48
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:20:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54F7BFCCED
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9462A3AFA67
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E0C19C3053
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FCD34CFC2;
-	Wed, 22 Oct 2025 15:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XWb49xZk"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C779A34CFAE;
+	Wed, 22 Oct 2025 15:16:40 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59D634BA5C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF81334844D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146226; cv=none; b=hHP9d7OGyDXT9nyxlgcydhnmfY1CufKz61oYkGgkYXYlVs6MtCT5RHhq0HiiVN6034uzvSn9bt3EsigqfcMdtI1J/cyiXncnUAwaH7QDFHAF8I+wwb7/S30bKUFLiokZE/bQWLo/sNh2llrL0LN0dtgRxrVFxbOH7at42OnZ+5A=
+	t=1761146199; cv=none; b=AjqRTRJi0UscPbrRphPdtX+nKHOjXHsKu7m2LjyHILSbtPZBxqg3ONcrZa6Y3BTQyBbQioHsU4wqadaqxXm0gL6V17cS+1rfWc1QtLmZddAywmhFzqbHrFwp/JhxO5BT4yQt7lYybahlsnG8UGH3uy3aWFTDW6hY844YkfHayvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146226; c=relaxed/simple;
-	bh=OXIiWMPtiN+YU2NFW0i5Rjml45gOXITGkMIHm2eAIu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FypHzaRIE5P/vpLg1txL0eJtXqZtvvfweqkUkMtZ68LCOYSZDIQODBqn+BzSArtBi2yIYZQcOUnRsy9cibdlLW4BKidNj0c0tgDe/amWQmQB1AJXasnfFgVJNgP2veAQAmQ2XUj9WhvJAFZQAhw9Y87mVy771cvw11cq+LjrkEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XWb49xZk; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1364285866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761146220; x=1761751020; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y8Ks3283lFKT/3or/kKLaFk/rSeUKOKq+L7qyJbrS/M=;
-        b=XWb49xZkqRwvNoaqikXT4ffSbclUN1YiBpcudpz0Wug2keOFoY6BiaYAiC2urCEiXd
-         cuBiHFU6wkovCC/RNh16E3SvGe0tLjam72xQF7cgBBa0e0hesiKGKy9OgPi6gaThk/dG
-         t8Z9++L2F8T6v8IZZySJGU1fbhoIKyH/wEWuQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761146220; x=1761751020;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y8Ks3283lFKT/3or/kKLaFk/rSeUKOKq+L7qyJbrS/M=;
-        b=jgEVe0yTMRSnk9pvxheC7nZo8XLz3Q8U654xdq8bkBP0Km/gR/4uUdB7vhrztzVD/G
-         YeeB2ksFwfxp4bukXQONEE10VpTfAcBNbqRm8dQQbH3qU6yoVk1WD6ZjPdQFxFo3S1FF
-         QSAcMcMlfql39Emg/jlX+kMlfm6GbOVlT5fEExT3aY9/h7WiNa3534vnlmHm2bf8HXX5
-         +XJ0ZIK4ivfVx9Gkw26ALVc3+5CHQRnlIKlc8PpFfaw23JUVM5UyLYAKgiPoQQq44Sct
-         OFPLZmYv1/U1Y/nAC3QZYBodNPy3C+sbQ+z2odsuHKfJiZ3PaQ+5sBeh+//dR6BFi+lP
-         UwmQ==
-X-Gm-Message-State: AOJu0YxuGmtPigqxmmiOQb67zuNRPG3Z+Cvzrws8X32+3JML87PzMyJw
-	HtLEf09rFQff5QmNjL/Q1LVy0if7FWAScqtp6gsigKfPmIBTii51kHzhumFnptj9qmEsQwfa2cG
-	NMnmjYCA=
-X-Gm-Gg: ASbGncvmjqFTlPf+ePbiNpLmj+KnuDFiF5/qKOZOM6dqkjW7RUfbjGoC6uSJptQPc8R
-	0HLTxz3FpsGxnbczNEAW2x4mvinRKdUz4oS/YkjET3qEPGNSmWOnk3MkYqlgmekHYxK4DNh34vU
-	S1hrOyZ1n9YUTJQr5zzCndhDi3R/Ku9GAzcdqi7OZn1+f9REqXcAnbhsDm1QViR8aucjqdxBjyi
-	W9z7LFW2INkegNwp3WvCAXdOMzmW2S1/Jou3Db8qNhY6seYYjWiBAUyCLZHw7pjCgwPArADxX5k
-	iGnnVa8quaD2Gi1KpK9ncfynDwUI/aweM5E3mutNNmCEwIrLoSa4X2RbVlDZdX9zy0SpfHuCM0J
-	8i65T90u6R/tPTxZCg+1nBZNOIYbj9Gh/BoZYN7UydRaNkymFeMH1b7kowFact8gZuOoZhfWcaD
-	4zQP/nJDAOsvz3TvcmV/YV36B25PXmxQSimZ9w+hPfiK7xl1Sdkw==
-X-Google-Smtp-Source: AGHT+IE0URA9bb/aJqDxlA9Amxdpp6SdAGlAhjL6r9VR/BTeKBdIan2J3TlgsyeBWqT6KVoJXo/zzg==
-X-Received: by 2002:a17:906:7312:b0:b42:f7df:a2ec with SMTP id a640c23a62f3a-b6472d5bc00mr2473127266b.9.1761146219894;
-        Wed, 22 Oct 2025 08:16:59 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb725d80sm1366942266b.67.2025.10.22.08.16.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 08:16:57 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1364272966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:16:57 -0700 (PDT)
-X-Received: by 2002:a17:906:c144:b0:b04:48b5:6e8a with SMTP id
- a640c23a62f3a-b6472d5d715mr2448051866b.7.1761146216891; Wed, 22 Oct 2025
- 08:16:56 -0700 (PDT)
+	s=arc-20240116; t=1761146199; c=relaxed/simple;
+	bh=gNxwSEEYTn8QIrAGaT5TYqJatWbJ5xumhCwyNULplLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bAFLaSbPFWjp0p4Tzw60DmN6CQ9S15x2xRQp81jQWuDic6psLJkVo6HPOc0GJzhVA3qUKMeFqyMorBaOULKXFzLUwqM+34qBGSqKkLWm7tyIzHHp/75e8QfbFE65KmMq5ZF2nKWyse8aYtIQCiVN7tfPjTxwq6pDZVC6HHg8lxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id DC2325BA54;
+	Wed, 22 Oct 2025 15:16:30 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 3D69B20028;
+	Wed, 22 Oct 2025 15:16:29 +0000 (UTC)
+Date: Wed, 22 Oct 2025 11:16:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/12] unwind: Add comment to
+ unwind_deferred_task_exit()
+Message-ID: <20251022111653.2b04308d@gandalf.local.home>
+In-Reply-To: <20251020101602.GK3419281@noisy.programming.kicks-ass.net>
+References: <20250924075948.579302904@infradead.org>
+	<20250924080118.893367437@infradead.org>
+	<20251001113505.25281444@gandalf.local.home>
+	<20251020101602.GK3419281@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022102427.400699796@linutronix.de> <20251022103112.478876605@linutronix.de>
-In-Reply-To: <20251022103112.478876605@linutronix.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 22 Oct 2025 05:16:40 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgLAJuJ8SP8NiSGbXJQMdxiPkBN32EvAy9R8kCnva4dfg@mail.gmail.com>
-X-Gm-Features: AS18NWAqLsXEY6bsEV3yJ0KWUZmBC6kMtZXzbsnMf3ubAyGEsrR55YgMKptZqjM
-Message-ID: <CAHk-=wgLAJuJ8SP8NiSGbXJQMdxiPkBN32EvAy9R8kCnva4dfg@mail.gmail.com>
-Subject: Re: [patch V4 10/12] futex: Convert to scoped user access
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	David Laight <david.laight.linux@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
-	Nicolas Palix <nicolas.palix@imag.fr>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 3D69B20028
+X-Stat-Signature: 69jd1ty8tayawsy3bsssu3k1k6izd3hw
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/YinUgDX8Fd5ho/V/E8oQR06/xy2VvnGc=
+X-HE-Tag: 1761146189-949672
+X-HE-Meta: U2FsdGVkX1+qmMZtjFMZ6IHrJh3qaWg+4xz1ef+SdI4ugRsvWaVR/sc7lIgSkfgCDtBTSrm4/0VRGDEVu7lWoIXk2brOusghx6qrKBniWqVc6Det5fdETK3ZvTMdw/UmaQcR7ZdqgPQLgC8i6GuWhmGxhLfcX0RC9K60GZCLptQSqIpaxEb5dYh+85i5sCEvSRsNZjXNd2kIU5IvbVCefCNzu0KapYu3fZ3wRff2DFsXm/+19O1tPtWGFhR7adqk9bZMvs+FQXS+mEfTXlZ7q+FN7qHgEQT2kN21VyDAMYH14tJoka6pK4XpeM+uLinJ/8xolTxb3viDNRIOre1LWAudXkTu4wPqSNSd7r2hjXjYq/B1m3sNMh689veHDUnamr7T5/Xi/TU8ZeUbtBHXoIYqPR/w2vRbqfCWK1i/CEVz3JCz6uNyXoqMpnzB9ysp
 
-On Wed, 22 Oct 2025 at 02:49, Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> From: Thomas Gleixner <tglx@linutronix.de>
->
-> Replace the open coded implementation with the new get/put_user_scoped()
-> helpers.
+On Mon, 20 Oct 2025 12:16:02 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Well, "scoped" here makes no sense in the name, since it isn't scoped
-in any way, it just uses the scoped helpers.
+> > I would state that it also flushes any unwind that is currently pending, as
+> > exit_mm() will prevent it from happening.  
+> 
+> It now reads:
+> 
+> +       /*
+> +        * PF_EXITING (above) ensures unwind_deferred_request() will no
+> +        * longer add new unwinds. While exit_mm() (below) will destroy the
+> +        * abaility to do unwinds. So flush any pending unwinds here.
+> +        */
+> +       unwind_deferred_task_exit(tsk);
 
-I also wonder if we should just get rid of the futex_get/put_value()
-macros entirely. I did those masked user access things them long ago
-because that code used "__get_user()" and "__put_user()", and I was
-removing those helpers and making it match the pattern elsewhere, but
-I do wonder if there is any advantage left to them all.
+Thanks,
 
-On x86, just using "get_user()" and "put_user()" should work fine now.
-Yes, they check the address, but these days *those* helpers use that
-masked user address trick too, so there is no real cost to it.
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-The only cost would be the out-of-line function call, I think. Maybe
-that is a sufficiently big cost here.
-
-             Linus
+-- Steve
 
