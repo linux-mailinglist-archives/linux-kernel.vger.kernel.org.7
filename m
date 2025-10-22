@@ -1,181 +1,160 @@
-Return-Path: <linux-kernel+bounces-864826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B50BFBA1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56865BFBA20
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166FD5611BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89085649B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5891C3321DB;
-	Wed, 22 Oct 2025 11:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109993370F0;
+	Wed, 22 Oct 2025 11:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gK4c788o"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fvhbRdIY"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B324432861C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCD933711B;
+	Wed, 22 Oct 2025 11:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761132277; cv=none; b=gPy0vmRFowDoK66b/5RBATuVBTfT1Kk3J1qJyU3Aa1m0VSWRhX09RbUhz2HKDfLzmYipek35LtKrwgVqSEs6VdKOtK2hY/YKREtfg6pFWsUr2bM0/dzOKXms2awvKNTNjAYDCFvPyN0QZrj9d9r8FoFOXan0jPdM37WY6rcDP1E=
+	t=1761132282; cv=none; b=ZDa9qhhO5sXGRJcQ9pQsCP6WqnWfU86J/kKVhGfP3gJTtCIXJruI53DFRgpwVgaY66zEUje1Opqn7PNTlW44ErlrsUKVyIkN4IsF96qpwt/L9aa9LP/G+3lP6ipazOfJtryX8GnnVYz3k3n0e3d/T+RlRwJWWQxTX76/wKmmahA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761132277; c=relaxed/simple;
-	bh=4D8tvphMGIr2s84sTEq6X1ry1GAv1OlmyNqaGX6YgUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nZyrI+KgHKf+tldraYJ5EbJz3Ja7CcpFoPlqKMPnxcbaUxI/CcMuyy4fVc9Xi800/BiJXcnZLiP6/z0sAYiLj6kyb66zfEjwwHIbKZHUDqsJS7BHMCxAynlyV/gyD3OKZ9gBPKbvEXGvFGvxy6GalyadSgJlvu7CXlTbkywQ0vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gK4c788o; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-474975af41dso14397555e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761132274; x=1761737074; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NE6ALi4oCIm+yd7a3yOvtFqmufCiCdrMy/7EGT/KVX4=;
-        b=gK4c788o2dUERwLeI5fVMForfuiRyVpYluEl/tRSkBoSWiDvE+fhYQHMY4v1RDEHmW
-         Pn32t2Z9nrd2ltd0HzveMoV2j44OKM2spAJpQ/kTqrqa96vwz8mjQrHD6yztYlXqy0ek
-         UZOiaWSWatF3L5vc7Yq8Shupkx8yzWitt7geBvedGjAczs5gM5KbSAmMo5EPGFA0huQt
-         H+ED/Uy9kyRKkag3A5Iu24SLNSwT+4QWusL8lSpn+m86vQHp11JnLcL+XYAHQtTL2k+V
-         ewP+h2jtRFI+U9PrZhDMfo5eEyK2v73AAd6S0ZGQJtGgZccm4VWQ9vlhRmuhFsxFzJF0
-         p7Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761132274; x=1761737074;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NE6ALi4oCIm+yd7a3yOvtFqmufCiCdrMy/7EGT/KVX4=;
-        b=jugIML824PY46JQdrZM3PPZA7bJYxbvW5u5va9vPBoRn6YXevK1RYTZS0C+rAol8t7
-         ATB4Y4yadRAqIYfXRwzWl/L/uUfacH/+sWRAvbymORGh5HuUASg4Mp4UmvhTeh/Nqhms
-         AIL/8EUxRL/XhXc/qq17jar8U+psERGGW7FalVP3F6FvvqRiuwGtpUHF8FV1PpTPSqGS
-         4/8bqoLNBn8Wke82gTvJLEKZzXZQD+//vfooqow9BGuGuEPA81kA51sBzXqfL25k/t35
-         nvJE2Tw2HTDY6YQecVMrfPFQEN26mRZQU0wBFS0xuCu0+AslTeFW98+mK/o78WqP3lcL
-         Hx6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW9MNN/IxlCQtAklRn5i2dPkXtn5zzFJCAYXi24MJQtNhB72QsEHgAen3PPDohZsbPXkbAO6/DE68q75PE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylZxFMRFxCRSiZzSU6vjJDJ7izLBs1kXmM7UQcTpC/OQ7AHu1m
-	P3Mb6GpOTgqy0d0Q2LenkGeODo7Dx7yfbcojzPlLChhJ+B8Dy359/4sywXEHrm7HnQM=
-X-Gm-Gg: ASbGncvqcn9HYm3ZkIOGstNCHFFRiMkfbwqob0JuzFEMN1sPsGpkobE10Vs+b1l8kZN
-	qnmmgRPBR2fan0/B+vNd7csJ4a3Lp+t+hICkXoX4LrqfvI6M7UdgU2H6taMPvyH4z+WPKBlYPH6
-	xvjrNDSem2m9Rbpzjhwn/I22IvmfdA5Gpym3b2Etw3uc8HKQj5LaEF23ohX/YwZicFnmTP/Loua
-	8ssvY83Q525X81MI4xQO3FT6mcgaRAV3O6wgzI4LIJaSoOyLR5xGqaMiPaWSaXXvTTCMALzoPjy
-	CIkzSkqhr1FseCTTqsWR0m9uJOC5SaXF6yUtO24BVbAr5SL5HCqBJmluEjT5QTGi61u0wVugFQC
-	70bwrdR+tew0KqAAMAX1yyy7GSlrxPNZSRykFZssdkBgMaYxqIl63WvWU7Bem+3o1C65mqBkXPV
-	uczWiP6a2mC710wkH/ndI=
-X-Google-Smtp-Source: AGHT+IFHudZFCqpsdF3BziLjxKHgkZc7fTsjSbocAq1uyR2DAIJq/pryZEZ8IbOeeE5y3RSm6MSLNg==
-X-Received: by 2002:a05:600c:3e12:b0:45b:7d77:b592 with SMTP id 5b1f17b1804b1-471178a74demr147513535e9.12.1761132274047;
-        Wed, 22 Oct 2025 04:24:34 -0700 (PDT)
-Received: from [10.11.12.107] ([79.115.63.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c428a534sm45864405e9.6.2025.10.22.04.24.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 04:24:33 -0700 (PDT)
-Message-ID: <61813f89-3015-4fdb-a182-5c4159f7bb1e@linaro.org>
-Date: Wed, 22 Oct 2025 12:24:31 +0100
+	s=arc-20240116; t=1761132282; c=relaxed/simple;
+	bh=saJh2pYKcHbfNeU6j5aIeEhHMmEGD6ngNfMdHtFav24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gc2qrAAbdK+W3oNnl1VpJRh309/z2woDeJfe3Y2EpFGMizHkd81bRw29TnkTbd/OncOPpMeG1CzvsRwn+xCqmrbNdDvFtLUeX+cnxRsv+W/KVay4B2E83pr6OrMWxcYRh8NtjCT6bLB1vHtBPmcwoIsC68bfbskTCW5uPrfVAPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fvhbRdIY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=Hx7IMRRxA9uFUyCzmuFFLeFf+897nJgZOnLj3popP8E=; b=fvhbRdIY1zIWUU8ihlkZOHEgnE
+	MzODHMfk/jyzVyCCcMqOwN9DM4KwxFu4JWrlgqIhMLgv+3iol/YUkza4iHE/THkZU1euUlpqKtVAn
+	dYBNjMS8/MY6P6DdoQWa5No2zJVd9VrmN5qher8vFYD+eL7tJ3hfxYluYLS8iB3UxTziwDCrNPRQL
+	PqLzEc8wIGsis2nfNHIHj8iupqVRbmIO6GY5+Azdgv8ymSlChPGG1DkFfdjqY2WmhQH0hVqLmZvol
+	bsD3P0ZFZcQ3l84sE91CXlk42UtZ+oaTjcN8HOEBk6LSKwGRwY5lWTeVze2gVoHisaqmyoh9i1dDH
+	MMN3IIBQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBWxE-000000043BQ-07IZ;
+	Wed, 22 Oct 2025 11:24:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BBDE63003C4; Wed, 22 Oct 2025 13:24:32 +0200 (CEST)
+Date: Wed, 22 Oct 2025 13:24:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: Re: [Patch v8 02/12] perf/x86/intel: Fix NULL event access and
+ potential PEBS record loss
+Message-ID: <20251022112432.GN4067720@noisy.programming.kicks-ass.net>
+References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
+ <20251015064422.47437-3-dapeng1.mi@linux.intel.com>
+ <fcb09e14-970c-4ebd-82f2-a12150fe3708@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] hwrng: exynos: enable GS101 TRNG support
-To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, semen.protsenko@linaro.org,
- willmcvicker@google.com, kernel-team@android.com,
- linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251022-gs101-trng-v1-0-8817e2d7a6fc@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251022-gs101-trng-v1-0-8817e2d7a6fc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <fcb09e14-970c-4ebd-82f2-a12150fe3708@linux.intel.com>
 
+On Wed, Oct 22, 2025 at 04:12:14PM +0800, Mi, Dapeng wrote:
 
+> Just think twice about this fix, it seems current fix is incomplete.
+> Besides the PEBS handler, the basic PMI handler could encounter same issue,
+> like the below code in handle_pmi_common(),
+> 
+> † † for_each_set_bit(bit, (unsigned long *)&status, X86_PMC_IDX_MAX) {
+> † † † † struct perf_event *event = cpuc->events[bit];
+> † † † † u64 last_period;
+> 
+> † † † † handled++;
+> 
+> † † † † if (!test_bit(bit, cpuc->active_mask))
+> † † † † † † continue;
+> 
+> Although the NULL event would not be accessed by checking
+> the†cpuc->active_mask, the potential overflow process of these NULL events
+> is skipped as well, it may cause data loss.
+> 
+> Moreover, current approach defines temporary variables to snapshot the
+> active events, the temporary variables may consume too much stack memory
+> (384 bytes).
+> 
+> So I enhance the fix as below. Do you have any comment on this? Thanks.
 
-On 10/22/25 12:19 PM, Tudor Ambarus wrote:
-> Hi,
-> 
-> I propose the bindings to go through the Samsung tree as well so that we
-> can match the compatible with the schema when pulling the DT patch.
-> 
-> Thanks!
-> ta
-> 
-> ---
-> Enable GS101 TRNG support. It works well with the current Exynos850 TRNG
-> support. Tested on pixel 6 like this:
-> 
+So I didn't like the previous and I like this even less. What about
+something like this instead?
 
-the commands started with # and were removed from the cover letter.
-I fill them in to avoid a resubmit:
+I quickly went through the cpuc->event[ users and they all either check
+active_mask or, in case of the PEBS stuff, check pebs_enabled mask
+(which should be a subset of active_mask).
 
-# cat /sys/devices/virtual/misc/hw_random/rng_current> 10141400.rng
-> 
+(the PEBS last case depends on count being 0 for all counters that are
+not set in pebs_enabled)
 
-dd if=/dev/hwrng bs=100000 count=1 > /dev/null> 1+0 records in
-> 1+0 records out
-> 100000 bytes (100 kB, 98 KiB) copied, 2.03619 s, 49.1 kB/s
-> 
+WDYT?
 
-# rngtest -c 1000 < /dev/hwrng> rngtest 6.17
-> ...
-> rngtest: starting FIPS tests...
-> rngtest: bits received from input: 20000032
-> rngtest: FIPS 140-2 successes: 1000
-> rngtest: FIPS 140-2 failures: 0
-> rngtest: FIPS 140-2(2001-10-10) Monobit: 0
-> rngtest: FIPS 140-2(2001-10-10) Poker: 0
-> rngtest: FIPS 140-2(2001-10-10) Runs: 0
-> rngtest: FIPS 140-2(2001-10-10) Long run: 0
-> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-> rngtest: input channel speed: (min=380.570; avg=385.422; max=386.964)Kibits/s
-> rngtest: FIPS tests speed: (min=75.092; avg=81.784; max=84.771)Mibits/s
-> rngtest: Program run time: 50908949 microseconds
-> 
-> To: ≈Åukasz Stelmach <l.stelmach@samsung.com>
-> To: Olivia Mackall <olivia@selenic.com>
-> To: Herbert Xu <herbert@gondor.apana.org.au>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> To: Alim Akhtar <alim.akhtar@samsung.com>
-> To: Peter Griffin <peter.griffin@linaro.org>
-> To: Andr√© Draszik <andre.draszik@linaro.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: semen.protsenko@linaro.org
-> Cc: willmcvicker@google.com
-> Cc: kernel-team@android.com
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> 
-> ---
-> Tudor Ambarus (2):
->       dt-bindings: rng: add google,gs101-trng compatible
->       arm64: dts: exynos: gs101: add TRNG node
-> 
->  .../devicetree/bindings/rng/samsung,exynos5250-trng.yaml       | 10 +++++++---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi                   |  9 +++++++++
->  2 files changed, 16 insertions(+), 3 deletions(-)
-> ---
-> base-commit: 8ebc2add3e2d076adc5cc3e8c9bef268f7f1cb31
-> change-id: 20251022-gs101-trng-54b710218424
-> 
-> Best regards,
-
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 745caa6c15a3..74479f9d6eed 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1344,6 +1344,7 @@ static void x86_pmu_enable(struct pmu *pmu)
+ 				hwc->state |= PERF_HES_ARCH;
+ 
+ 			x86_pmu_stop(event, PERF_EF_UPDATE);
++			cpuc->events[hwc->idx] = NULL;
+ 		}
+ 
+ 		/*
+@@ -1365,6 +1366,7 @@ static void x86_pmu_enable(struct pmu *pmu)
+ 			 * if cpuc->enabled = 0, then no wrmsr as
+ 			 * per x86_pmu_enable_event()
+ 			 */
++			cpuc->events[hwc->idx] = event;
+ 			x86_pmu_start(event, PERF_EF_RELOAD);
+ 		}
+ 		cpuc->n_added = 0;
+@@ -1531,7 +1533,6 @@ static void x86_pmu_start(struct perf_event *event, int flags)
+ 
+ 	event->hw.state = 0;
+ 
+-	cpuc->events[idx] = event;
+ 	__set_bit(idx, cpuc->active_mask);
+ 	static_call(x86_pmu_enable)(event);
+ 	perf_event_update_userpage(event);
+@@ -1610,7 +1611,6 @@ void x86_pmu_stop(struct perf_event *event, int flags)
+ 	if (test_bit(hwc->idx, cpuc->active_mask)) {
+ 		static_call(x86_pmu_disable)(event);
+ 		__clear_bit(hwc->idx, cpuc->active_mask);
+-		cpuc->events[hwc->idx] = NULL;
+ 		WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
+ 		hwc->state |= PERF_HES_STOPPED;
+ 	}
+@@ -1648,6 +1648,7 @@ static void x86_pmu_del(struct perf_event *event, int flags)
+ 	 * Not a TXN, therefore cleanup properly.
+ 	 */
+ 	x86_pmu_stop(event, PERF_EF_UPDATE);
++	cpuc->events[event->hw.idx] = NULL;
+ 
+ 	for (i = 0; i < cpuc->n_events; i++) {
+ 		if (event == cpuc->event_list[i])
 
