@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-864614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13201BFB2E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:36:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB519BFB2FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD15C4EEEA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:36:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBC1A4EECD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16F128A1F1;
-	Wed, 22 Oct 2025 09:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ACB29994B;
+	Wed, 22 Oct 2025 09:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdaLuwN2"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HhA/VdfW"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771842877E6
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345392F39B1
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761125773; cv=none; b=ppOejQGfJBUg0s392x/fkdx9leQEvNccycygTM825/4GR/jJ6RAZ8iJLhCdrO0JmuKThotei/TOe0QGP/td4gC+dSKMbmLA19rtapcly26igni7d0AwyuLpgtu0J3BMzYbEERLMU1H0SxjYE5u2XN6BoZ16jS55XTXWG4eOCJnw=
+	t=1761125895; cv=none; b=HFk/BfSnMchYKyeI7wNDHQaRoVPSKZ/6R+uAsh15H/pBFb/Yf2Ya0gBR2hfWZldv/31VR03nzGmoiTrtkF2TGyR1Uv1n31dy99XvlpfF00ltPY4E9hUSkiv3JpdYU0JHD+5EsbcI45bUHbcxDv+HY+AA58ASjLnuF2B4AHbq5lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761125773; c=relaxed/simple;
-	bh=C88xFCOXStXuP1GEmHHJ52O6btKAi7VYGysPrZNMuyg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jk2h5I0O+BYJwwv9QitGSlrkBvBM3NtG/L+0Z2M3eGCw7GuOvQCU8tG1/HcrkVrGSC3mxiv0ZfwiWxsH371z6hkPkRGW23/Zz/AMj2+HcQA4rY69K42EIP/1aowHAsHsucC1b+eyw6ZFgaVgD4nKATlMq5Svi7Gi3My9M/1ZDK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdaLuwN2; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63c489f1e6cso1423838a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761125770; x=1761730570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C88xFCOXStXuP1GEmHHJ52O6btKAi7VYGysPrZNMuyg=;
-        b=GdaLuwN2Ln7J4l/a0cfVhLr+vpRDxbQx8/6ccG2VSbNniqvgKt2bTcgj6oQuKjAzuD
-         69aMJGcjlcZUgldDBuZQppyYjtQIhUwV3Bdby/CrgrbI8To3xt8WvxJ3NvoOOskMur3T
-         1J8V1t+97plfvW4emgAawP3m1Vp500UAoAQJo4AwKZALo6i0gxPBhvLzxu3Jo5aTIUA6
-         znwIVAuzS7GuwU6ZMiON5K72FQC9I+s/suyb05daG7gU51PT6aDYkrS9cUcgT7pISFua
-         qLsjh6sUkq/PbLnr/FeTfVKvRy5LUOXJ2XHbM76YKeGB+/9QI0VhfmoNu0AVo6f5eM2R
-         ruQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761125770; x=1761730570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C88xFCOXStXuP1GEmHHJ52O6btKAi7VYGysPrZNMuyg=;
-        b=Tv0fpoXTOBzIr4MnX2+qb3298KltgJ1Q5ZS/eg5Yuwi0JYKWMYof/jOB28oQEw1Y9h
-         FEolhEdd+aGUyDovZmgqGVHn5LiHt4Lkf4LnZ/UESUZr/ortsjlXc5Gta7ihCH5MVbsD
-         Fw+4SxQB1JYmt4VJp4cPJk5Tbv60/vv7ZpRaJbYIr4lUnolPoPKLTn5PcgU6bFPXod/+
-         1qZVTZR7c5HmBJ7sRD9Gbi2Fg5RuyXUycd0zbhTl8tLUk4XzfoH+ThH3OTRJbXPi3NZf
-         lTfeh43z6FAsvtD5I2PHjXAkWCMgT+++9HVV0gwwZXiVh50UkntpvKNlOq6T8FunaHgt
-         p2SA==
-X-Forwarded-Encrypted: i=1; AJvYcCXerRDtJAJap00c8k0h7uN0Hs9vSt5W4lrfSHt7FcPdMlyeBtRYMrQ9AECTiBiZz2Xf9vrqRAZvqLJpKEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTKUyFlfY54xldvY02BcUNaNvL25c6uEDb9qUpGf3J6zrJMldz
-	BJ+nhTOZcfFy6ySlzPPo1XCpLfmdqiFzUUIZpWpkMcD9FlwWm+QGvKO/2cdBjd3YUBDxjcyJ1Nn
-	if72f0T8aqgjtKmq9yyLOYRGufx5mScg=
-X-Gm-Gg: ASbGncsEgCirISGHjR2QkZZgTAc6rjMNj1sGMAVj2wleJbEncBBnx0rNFlklwBV5UI5
-	pIvAVEJi/TMTzbAGoVhwmgzrj3IeNf2qkO8CT5aAiBcgXhwaaAN5jyRSPiQphuN6JExMDt+I0oC
-	3R+Yua6t9fd/udvlHKHuFO8bdY3dLLiNAW8lNmUXz3JQgQ+BRsIrquG7mShpOkH/zYBkc6nNEv8
-	EgOYXkVEdShkG6vgNO0c9YBF9WPRS9asiHhF22AcPGHHqTPbeKQEk/8BFgznA==
-X-Google-Smtp-Source: AGHT+IGto3EQlisuvoE7Sasg5zwzwjSEmlEE8ttsGQiw66ca1d04S75zETC5/PIhjoAM5dxY+M9aaYxATM6s/kFKsOM=
-X-Received: by 2002:a05:6402:1454:b0:636:2699:3812 with SMTP id
- 4fb4d7f45d1cf-63e169999c3mr2842093a12.0.1761125769618; Wed, 22 Oct 2025
- 02:36:09 -0700 (PDT)
+	s=arc-20240116; t=1761125895; c=relaxed/simple;
+	bh=bxynnY7gqNmOi/aTMvKArHOmse4FQvgr7PXwb1Utuw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o2Bd3jPsKQgKkhg9G/HNOrW/dMLcxEgxiy8PEhSWtGbewrX7l7kFRR5P/u+Xc8K+mb+d2oWMMH48Y1ICydyJGJZSR1GT5hLCa9jqux7Zxxkbu43vlYlK1xGOB7WQTaR9616WL40bkdbsIEOj1QeLYO29+nluu6Z0EaHcUQc82eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HhA/VdfW; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761125889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GL864tnGf0kR+752wc1z68vVTN9MWgo9+WclWIvl49M=;
+	b=HhA/VdfWsXl45uRI7qP2es2Ham6joM7ZolFWnwcD7e1znItUk8gOFMe+K5SsLXpCotZQpx
+	QJ3O2Z74hrxfl7cfYNffczU1LIJd6dUxYJA8chst6wXtWkH9QHsGm2QITJxhLaueoGaTBv
+	rIezv6bLD49+LYRFH5j7jP0/P/mr7ZM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: replace sprintf with snprintf in aa_new_learning_profile
+Date: Wed, 22 Oct 2025 11:37:18 +0200
+Message-ID: <20251022093718.206271-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021165212.749372-1-a.shimko.dev@gmail.com> <20251022-rugged-archetypal-wallaby-ecbecf@sudeepholla>
-In-Reply-To: <20251022-rugged-archetypal-wallaby-ecbecf@sudeepholla>
-From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Wed, 22 Oct 2025 12:35:58 +0300
-X-Gm-Features: AS18NWD2CL-Yrxb3Tz9eDASZQ73ONHWrSw9NcQfoZQ6WrOD4sVc61IZW3QMRIxU
-Message-ID: <CAOPX744QeM=5qsF0_ZrkvvuumH-EsmJPDMSSs=D04zP=tie3qQ@mail.gmail.com>
-Subject: Re: [PATCH] firmware: arm_scmi: Add new sensor unit types
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 22, 2025 at 12:22=E2=80=AFPM Sudeep Holla <sudeep.holla@arm.com=
-> wrote:
+Replace unbounded sprintf() calls with snprintf() to prevent potential
+buffer overflows in aa_new_learning_profile(). While the current code
+works correctly, snprintf() is safer and follows secure coding best
+practices.  No functional changes.
 
-> It is still alpha, we don't add anything into the kernel unless it is
-> of beta quality. Do you have a use or you are just adding to match the
-> spec ?
-Hi Sudeep,
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/apparmor/policy.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-I'm adding it to meet the specifications.
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index 50d5345ff5cb..b09323867fea 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -697,24 +697,27 @@ struct aa_profile *aa_new_learning_profile(struct aa_profile *parent, bool hat,
+ 	struct aa_profile *p, *profile;
+ 	const char *bname;
+ 	char *name = NULL;
++	size_t name_sz;
+ 
+ 	AA_BUG(!parent);
+ 
+ 	if (base) {
+-		name = kmalloc(strlen(parent->base.hname) + 8 + strlen(base),
+-			       gfp);
++		name_sz = strlen(parent->base.hname) + 8 + strlen(base);
++		name = kmalloc(name_sz, gfp);
+ 		if (name) {
+-			sprintf(name, "%s//null-%s", parent->base.hname, base);
++			snprintf(name, name_sz, "%s//null-%s",
++				 parent->base.hname, base);
+ 			goto name;
+ 		}
+ 		/* fall through to try shorter uniq */
+ 	}
+ 
+-	name = kmalloc(strlen(parent->base.hname) + 2 + 7 + 8, gfp);
++	name_sz = strlen(parent->base.hname) + 2 + 7 + 8;
++	name = kmalloc(name_sz, gfp);
+ 	if (!name)
+ 		return NULL;
+-	sprintf(name, "%s//null-%x", parent->base.hname,
+-		atomic_inc_return(&parent->ns->uniq_null));
++	snprintf(name, name_sz, "%s//null-%x", parent->base.hname,
++		 atomic_inc_return(&parent->ns->uniq_null));
+ 
+ name:
+ 	/* lookup to see if this is a dup creation */
+-- 
+2.51.0
 
-Trying to be useful
-
-Thank you.
-
-Best regards,
-Artem
 
