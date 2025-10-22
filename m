@@ -1,200 +1,126 @@
-Return-Path: <linux-kernel+bounces-864448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66727BFAD23
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:12:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9595BFACF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7AC31A07198
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:10:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3ECE352B09
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF08F3016E6;
-	Wed, 22 Oct 2025 08:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bK0vQGOi"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601803009C3;
+	Wed, 22 Oct 2025 08:10:49 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593AD2FD7CE
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7E81684B0;
+	Wed, 22 Oct 2025 08:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120619; cv=none; b=kF/I4xiRWas4q9IdZtGqs+YohbKhQJtqOeoPQLHTAbWq3ewMw1O2OMYJnVl1D6KD+fUItHkAjBGvi7LoTO4zDEWd0rnl4BJZxOAu+ACCR6l4oig0V47Bm6aarFKI1xhjsiKvnb6KVZocf+sGiL8IAFiHdbl4u+2ZfieK76cgkcU=
+	t=1761120649; cv=none; b=gS9Oex501uwWINbKbBdPkG39nb0ABCGgMZPUkX7+R1VP2ehxWZoy/Z8z+lTcOgWTAIvnvwVVrs1fL7tEOyjjFw3zIVSp0pJXOh+awHgLuKwb2KrYRV5Rr3JcZTzLyHO7re3VnToaitIYNfbPeOt1IcK70TsPRnqAF7i+ON3K5b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120619; c=relaxed/simple;
-	bh=6yDqTislwGgHhuTSoCOgEAsmhSSDRdKbbzHAvrht4jA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6jPPOwBgCPHjqtS7ZC/7l7+WvRHqd2BA8/woe60OBPn045jEATp+pgtCUfo2fLbdcxDBK0sKJpodoeEentbgKRMTuqBUnfKt/3E4+jf1a+sSkXsKg4xbXbgURSNWNVkQwD23b1nWubyDL5LrYH87tIIEcCGZFdA+rdnwjLYMIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bK0vQGOi; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27eec33b737so98647495ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761120616; x=1761725416; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ePywcST/UbYHzI66VBMJAjk1GlQaMlqfpX7Q31qmueU=;
-        b=bK0vQGOiQgdls3rcrgDVlrVCXfspGHXp6Vk4+JEzCFgCn1pAVc5aRTUHqQAkh5M1oG
-         xjZ4YXrWS5RWesqsD1bZEI4L9tX9VqOZ0V+J36Fww/oIyOeMBoluWroq6kEq3jBrz6wy
-         h2nPnHppFFK/D/anQyF4Xs6pxsAgdDaX0NlNcJLPVd2+X8VH40SxYU6OCrThCDyvQeCh
-         s5P2DGkoJERQyGcQ+p+/9Z7yJQln11B/47i6ZJDhDSJnUEP1H8FHK9vmILCawzL38tXE
-         PjCna1MhgvYYWZhzqX/EK+d2oXERcKI35H+9gkZe3p7oaukm5SDXDT0rgJCjieaG1dQu
-         ysyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761120616; x=1761725416;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ePywcST/UbYHzI66VBMJAjk1GlQaMlqfpX7Q31qmueU=;
-        b=DLXGHkNEe6f7UfAutyTlHsRhtymjQTUlnLo6yUeb/H96r/LywoMjsJ8LH3HqdetdI1
-         EUMJyehx+Z/HxccMmBjK7L8lgBoRYxvGCHQLb60zK0NdEMJB9Lh/gqpgHebz4NGW7POe
-         WoaFzpA3rdJSCuqBdhnKM9+NbsbW5j8Z4PpxOBYJlxAxOVXYnGLy9XBU2x2gv/2Z+pvN
-         SkqTDkvlJl4UwHamo7G1cv5qpfo2rqVZ7KzepUQlM2/gtrJDac5UcoWU7tgX2ztGnS41
-         lBsN9C2sbnrZjjB2yMcG/+goW8hTy8wHdbTibQ0DYRKfeXNWooFwD5DGWJozOGt4AHFh
-         HHww==
-X-Forwarded-Encrypted: i=1; AJvYcCVY4EaMgJPTzVzy0E88WwqSA6TsJjM+QyXci4D7o2MfJLw8RdJSw4XaaRvCkLyOg7xYkLZMAjx5/NNE4lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyobhGLWNFMJuBW/RHyGaDaVs1rkYpUbA1LF43Ejm4Q2TtMrnN
-	d9NnAtTMb136tGMDyUVr5jaUV/CN0K/d1Ddejqefd5A946IGEqblETn2C6GocUSdIhfFf1rCIOr
-	Y0UnWCSPnj86Z9eHeLVackyZuVMW7LX+GCAOFlA58MA==
-X-Gm-Gg: ASbGncvFS4rfciq3Z8VCwXovpxSHNZd/1Zfjf3Xxoy84oBZ+iY/WGRMH7Mc19QtbYFg
-	oJ1pQ38L+UPMrp9+J5JYWarx3bGigRrt+R+OTnwEMueVZBVj3rl07sW9aWDepSiddJ26R7/qO68
-	xFAe6I0M1vJU131zOtPmxnxZF43yn1LakClv2fAEqBUSrXVVUWXUhR74hBfuXXjLyPr97ZTs4QY
-	Q62lXacehvLLuzQRpwPQo8WJXp0TsHClIz3GhL8YnKjez4wESJbGYagyqilJn53uVkus5whyG9O
-	6b9GP7yGZpXr9MFDZdtEDDig918E2XVG8+OMGB/E+lWxmWLmN72w+KpkOZvD
-X-Google-Smtp-Source: AGHT+IGj17zEPCJE5k/7tAvGPZbSPIFM4H4/9dExqXywN2nx7iL9LUcnSdV7P7vvnmjFDZ5Y7okCulPyPhag9YqyYNA=
-X-Received: by 2002:a17:903:46c8:b0:27e:e77f:57f3 with SMTP id
- d9443c01a7336-290c9cb613bmr254571115ad.14.1761120616580; Wed, 22 Oct 2025
- 01:10:16 -0700 (PDT)
+	s=arc-20240116; t=1761120649; c=relaxed/simple;
+	bh=stqOx4m9vFLsGbyVhAdnxZb+Jc7vK7BpKLYzESDs1xI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iTKoQUwZ6Ud2CnzJgkoNEooxZftShaimwWTIwET22v8pFPZl6Aqg5uBlI5PyDeJOP92Q+hWTA57x15zFokSzPC8YGS6VuviKgaw6WsF9KMRnp9YH25W5aRpo1ZGzqcS7Iv8/sA2lKYt7KAOpd9zzhXirgHtG5rukYqzL5tUNwQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.105] (unknown [114.241.85.109])
+	by APP-01 (Coremail) with SMTP id qwCowABHoaNlkfhoW8rMEw--.47485S2;
+	Wed, 22 Oct 2025 16:10:14 +0800 (CST)
+Message-ID: <d66db3f6-4c6f-4dc3-ae4f-3502d9b81c79@iscas.ac.cn>
+Date: Wed, 22 Oct 2025 16:10:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
- <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
- <aPIPGeWo8gtxVxQX@yuki.lan> <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
- <20251021-wollust-biografie-c4d97486c587@brauner> <lguqncbotw2cu2nfaf6hwgip6wtrmeg2azvyeht7l56itlomy5@uccupuql3let>
- <20251022075134.GA463176@pevik>
-In-Reply-To: <20251022075134.GA463176@pevik>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 22 Oct 2025 13:40:04 +0530
-X-Gm-Features: AS18NWBdzsxWz_QgzGvsSbF_tbzntKvd82uq9r2HYtjdHCUwx0XlbeuUCqIBmDg
-Message-ID: <CA+G9fYssAU52bWwMiQ4GiRjroWJYgA+CvEFekq6mnkd+9Z-Vng@mail.gmail.com>
-Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
- PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
-To: Petr Vorel <pvorel@suse.cz>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Cyril Hrubis <chrubis@suse.cz>, 
-	open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	LTP List <ltp@lists.linux.it>, Andrey Albershteyn <aalbersh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	Andrea Cervesato <andrea.cervesato@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] net: spacemit: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Yixun Lan <dlan@gentoo.org>
+Cc: netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aPd0YjO-oP60Lgvj@kspp>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <aPd0YjO-oP60Lgvj@kspp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qwCowABHoaNlkfhoW8rMEw--.47485S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw17trW3ArWkur1xJr4Dtwb_yoW8tr1kpa
+	y8J3s7Ar4kJrWxW3ZrAayxZay5K3y8tFZ8GryFyan5ZFnFyF45CF1FkF4rCryqk3yxGryS
+	vrs0yw1UA3Wvq37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUqiFxDUUUU
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Wed, 22 Oct 2025 at 13:21, Petr Vorel <pvorel@suse.cz> wrote:
->
-> > On Tue 21-10-25 15:21:08, Christian Brauner wrote:
-> > > On Fri, Oct 17, 2025 at 02:43:14PM +0200, Jan Kara wrote:
-> > > > On Fri 17-10-25 11:40:41, Cyril Hrubis wrote:
-> > > > > Hi!
-> > > > > > > ## Test error log
-> > > > > > > tst_buffers.c:57: TINFO: Test is using guarded buffers
-> > > > > > > tst_test.c:2021: TINFO: LTP version: 20250930
-> > > > > > > tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
-> > > > > > > @1760657272 aarch64
-> > > > > > > tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-> > > > > > > tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-> > > > > > > which might slow the execution
-> > > > > > > tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
-> > > > > > > ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
-> > > > > > > ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
-> > > > > > > info_invalid) expected EINVAL: ENOTTY (25)
->
-> > > > > Looking closely this is a different problem.
->
-> > > > > What we do in the test is that we pass PIDFD_IOCTL_INFO whith invalid
-> > > > > size with:
->
-> > > > > struct pidfd_info_invalid {
-> > > > >         uint32_t dummy;
-> > > > > };
->
-> > > > > #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info_invalid)
->
->
-> > > > > And we expect to hit:
->
-> > > > >         if (usize < PIDFD_INFO_SIZE_VER0)
-> > > > >                 return -EINVAL; /* First version, no smaller struct possible */
->
-> > > > > in fs/pidfs.c
->
->
-> > > > > And apparently the return value was changed in:
->
-> > > > > commit 3c17001b21b9f168c957ced9384abe969019b609
-> > > > > Author: Christian Brauner <brauner@kernel.org>
-> > > > > Date:   Fri Sep 12 13:52:24 2025 +0200
->
-> > > > >     pidfs: validate extensible ioctls
->
-> > > > >     Validate extensible ioctls stricter than we do now.
->
-> > > > >     Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > > >     Reviewed-by: Jan Kara <jack@suse.cz>
-> > > > >     Signed-off-by: Christian Brauner <brauner@kernel.org>
->
-> > > > > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > > > > index edc35522d75c..0a5083b9cce5 100644
-> > > > > --- a/fs/pidfs.c
-> > > > > +++ b/fs/pidfs.c
-> > > > > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
-> > > > >                  * erronously mistook the file descriptor for a pidfd.
-> > > > >                  * This is not perfect but will catch most cases.
-> > > > >                  */
-> > > > > -               return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-> > > > > +               return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
-> > > > >         }
->
-> > > > >         return false;
->
->
-> > > > > So kernel has changed error it returns, if this is a regression or not
-> > > > > is for kernel developers to decide.
->
-> > > > Yes, it's mostly a question to Christian whether if passed size for
-> > > > extensible ioctl is smaller than minimal, we should be returning
-> > > > ENOIOCTLCMD or EINVAL. I think EINVAL would make more sense but Christian
-> > > > is our "extensible ioctl expert" :).
->
-> > > You're asking difficult questions actually. :D
-> > > I think it would be completely fine to return EINVAL in this case.
-> > > But traditionally ENOTTY has been taken to mean that this is not a
-> > > supported ioctl. This translation is done by the VFS layer itself iirc.
->
-> > Now the translation is done by VFS, I agree. But in the past (when the LTP
-> > test was written) extensible ioctl with too small structure passed the
-> > initial checks, only later we found out the data is too short and returned
-> > EINVAL for that case. I *think* we are fine with just adjusting the test to
-> > accept the new world order but wanted your opinion what are the chances of
-> > some real userspace finding the old behavior useful or otherwise depending
-> > on it.
->
-> +1, thanks! Is it ok just expect any of these two regardless kernel version?
->
-> @Naresh Kamboju will you send a patch to LTP ML?
+Hi Gustavo,
 
-Sure.
-I love to send patches to LTP mailing list.
+Thanks for the patch.
 
+On 10/21/25 19:54, Gustavo A. R. Silva wrote:
+
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 >
-> Kind regards,
-> Petr
+> Use regular arrays instead of flexible-array members (they're not
+> really needed in this case) in a couple of unions, and fix the
+> following warnings:
 >
-> >                                                               Honza
+>       1 drivers/net/ethernet/spacemit/k1_emac.c:122:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>       1 drivers/net/ethernet/spacemit/k1_emac.c:122:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>       1 drivers/net/ethernet/spacemit/k1_emac.c:121:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>       1 drivers/net/ethernet/spacemit/k1_emac.c:121:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  drivers/net/ethernet/spacemit/k1_emac.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/spacemit/k1_emac.h b/drivers/net/ethernet/spacemit/k1_emac.h
+> index 5a09e946a276..577efe66573e 100644
+> --- a/drivers/net/ethernet/spacemit/k1_emac.h
+> +++ b/drivers/net/ethernet/spacemit/k1_emac.h
+> @@ -363,7 +363,7 @@ struct emac_desc {
+>  /* Keep stats in this order, index used for accessing hardware */
+>  
+>  union emac_hw_tx_stats {
+> -	struct {
+> +	struct individual_tx_stats {
+>  		u64 tx_ok_pkts;
+>  		u64 tx_total_pkts;
+>  		u64 tx_ok_bytes;
+> @@ -378,11 +378,11 @@ union emac_hw_tx_stats {
+>  		u64 tx_pause_pkts;
+>  	} stats;
+>  
+> -	DECLARE_FLEX_ARRAY(u64, array);
+> +	u64 array[sizeof(struct individual_tx_stats) / sizeof(u64)];
+
+I originally wrote it as DECLARE_FLEX_ARRAY to avoid having to do the
+sizeof dance, but I guess that's no good now? Oh well, I guess...
+
+Acked-by: Vivian Wang <wangruikang@iscas.ac.cn>
+
 
