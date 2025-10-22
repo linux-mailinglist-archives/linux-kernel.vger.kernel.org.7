@@ -1,140 +1,125 @@
-Return-Path: <linux-kernel+bounces-864739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405BBBFB6E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1654ABFB6EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F088318C602B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6A64613E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627AB3128D4;
-	Wed, 22 Oct 2025 10:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB536325482;
+	Wed, 22 Oct 2025 10:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="B3ufqTr8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jmVxpWK9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oLt37Wwy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ySFGeMdm"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="yy93WlZr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1646B1339A4
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F0B2F7ACA;
+	Wed, 22 Oct 2025 10:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761129542; cv=none; b=tzyGuH8cjYu/zqNpXCz6Wf1QCpH5ixu9df3xOPF64YQUpUUusctGnrCq+5MqSpP4h1tqmEufeuDKFhLwD+KGHV8hKSTVaHVeiy4ADI/CH2qtwLHfmAz2ngvLTk0dvAkdtykWk41JtwdQn+VT35BmJx8AT00cjHF82DB1DHUKoh0=
+	t=1761129673; cv=none; b=Sgweo+Ol4JMQq1WjdTOx2UZD4mHESiYSA70X0iG8zVTKIPkaR7y7UQNvO5SaN8BsJo7neIUFRByY+fTtLqh6/aBQCn5TDAUMSA610Bewhjfgj7sRfvlu17706l4Qc1VmKYwsazg4xz/pWvec/vWDDN1B+eCSgnGfXgGbWUXUv1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761129542; c=relaxed/simple;
-	bh=fH2qE4z2R9nG6ICsDw88KbQ2BeHjA6h90I3Uf4mFaho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wx2MJDGPH3rIWSHcwd2o5H7vDXdCjb5yvaf/aunA6HgjYcrHJx+ytLc3UgAXKtMETy7xBcZB7sojmfuNraPytYYHcrYDDT0zfl8CtryFhvaN/+bkGUv4wefWImfshrOreZ35X+7HScYVWpv/jwG115Zh7E49h5kOmQn3IYLuR8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=B3ufqTr8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jmVxpWK9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oLt37Wwy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ySFGeMdm; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	by smtp-out1.suse.de (Postfix) with ESMTP id 1C7372116F;
-	Wed, 22 Oct 2025 10:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761129535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=EkHE8TZpCym2hPkSeXljdO60kEKl/a+V0MkzQJl2IWA=;
-	b=B3ufqTr885uBzTtazvNrefAS6mguBlLMXpSaLq7Q/jqQCQ2j9g8aw4oMG+oj7EzOBeBOxx
-	LS1yvIyi7rHXRpFmC/TEcPW52dmHdGNNvZzfaY+QlLcJ2QahiUoJ31w18C49XO4YH+w5J0
-	4Z5OaKtkPMgjdhENf9kszABZCQHf80s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761129535;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=EkHE8TZpCym2hPkSeXljdO60kEKl/a+V0MkzQJl2IWA=;
-	b=jmVxpWK9eW7SJSNVzFbVxLAKnS5rQoMFuM0PW8rwFj5Bfpwmei/ppwA/4dQCLufI+3gvKx
-	wpp9ORgyBKu+QHAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761129531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=EkHE8TZpCym2hPkSeXljdO60kEKl/a+V0MkzQJl2IWA=;
-	b=oLt37Wwy+7TvWa9w/NJEtvI0NwYtANlzJockTzEG5WSwrMCYWM9yazxvOXhpoK56bVeU+A
-	RtZz2DYuT2V5J9iI5Utz0JIhI5fNeeYbjH2ka+BmCsLb5AtD7d2G1hACue3f4ufyL/VtTq
-	+l70afvghy50TLqEtZ7B5+VXKsD9cR0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761129531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=EkHE8TZpCym2hPkSeXljdO60kEKl/a+V0MkzQJl2IWA=;
-	b=ySFGeMdmJcW2m4iU6oMRbfI23ITFdvrBytvO+lVHe7RF+GETuUUeejWrYvb7GO4eNnAFKg
-	vj8cJeaFapvTdMCQ==
-From: Michal Suchanek <msuchanek@suse.de>
-To: linux-perf-users@vger.kernel.org
-Cc: Michal Suchanek <msuchanek@suse.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	Tony Jones <tonyj@suse.de>
-Subject: [PATCH] perf hwmon_pmu: Fix uninitialized variable warning
-Date: Wed, 22 Oct 2025 12:38:35 +0200
-Message-ID: <20251022103839.19550-1-msuchanek@suse.de>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761129673; c=relaxed/simple;
+	bh=Y4XRWqk30UFx8XFg5iSytvbhCXlPHqHCtntZ18Rvdek=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TGr3OQuw86nqUB++HoTYgn0NDeZ3T9slpgCOFfNPPQs9EEQB4BCJXjU7t2vkQFC1fL+wNAeYbKVvjzodlO77BUa9Z1APJ7PbQ5I8odxMp5LZpey7DuFLoSnb8w/R2byDlSKB2LaYoL7vRoCc1yZoLfn55VijPO4Wg8DplHaw4io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=yy93WlZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03F0BC4CEE7;
+	Wed, 22 Oct 2025 10:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
+	t=1761129672; bh=Y4XRWqk30UFx8XFg5iSytvbhCXlPHqHCtntZ18Rvdek=;
+	h=From:Date:Subject:To:Cc:From;
+	b=yy93WlZr1p5xL5ci3wYC3sR54UXjcZacSCPyrVrMLHLCFeBatu1pU3PayApjmhIWv
+	 y0+zlA2QEYsjaVp/Xwam7iFsSs7ZRFC/YrvLtOduMHi7hOpYhGHYlUMxyYPLob+pL0
+	 TQYeB4L0lbjhIN1CnMTMZknrFyMKICidzsoQJml4=
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED31CCCD1BB;
+	Wed, 22 Oct 2025 10:41:11 +0000 (UTC)
+From: Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
+Date: Wed, 22 Oct 2025 18:40:42 +0800
+Subject: [PATCH] Input: atkbd - skip deactivate for HONOR FMB-P's internal
+ keyboard
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251022-honor-v1-1-ff894ed271a9@linux.dev>
+X-B4-Tracking: v=1; b=H4sIAKq0+GgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyMj3Yz8vPwiXYukZMuk1DSL1KREcyWg2oKi1LTMCrA50bG1tQCjEZU
+ DVwAAAA==
+X-Change-ID: 20251022-honor-8bc9bef8eba7
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Hans de Goede <hansg@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@kernel.org, zhanjun@uniontech.com, niecheng1@uniontech.com, 
+ cryolitia@uniontech.com, Mingcong Bai <jeffbai@aosc.io>, 
+ Kexy Biscuit <kexybiscuit@aosc.io>, Hans de Goede <hansg@kernel.org>, 
+ Mikura Kyouka <mikurakyouka@aosc.io>, 
+ "foad.elkhattabi" <foad.elkhattabi@gmail.com>, 
+ Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761129670; l=1646;
+ i=cryolitia.pukngae@linux.dev; s=20250730; h=from:subject:message-id;
+ bh=Y4XRWqk30UFx8XFg5iSytvbhCXlPHqHCtntZ18Rvdek=;
+ b=fb54gBCoYQovO+qnMoj2w8LSCLTtg/nOUcNHVdOCnOqERcMLdLRUH+co3MkgsyKtoUWgWVa5r
+ Nergjot7GtUCDD2oH+CFBMJ7oHtvHi3UgY6/xrvaqA0sn2oxIUzJ0Zv
+X-Developer-Key: i=cryolitia.pukngae@linux.dev; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia.pukngae@linux.dev/20250730
+ with auth_id=540
 
-The line_len is only set on success. Check the return value instead.
+After commit 9cf6e24c9fbf17e52de9fff07f12be7565ea6d61 ("Input: atkbd -
+do not skip atkbd_deactivate() when skipping ATKBD_CMD_GETID"), HONOR
+FMB-P, aka HONOR MagicBook Pro 14 2025's internal keyboard stops
+working. Adding the atkbd_deactivate_fixup quirk fixes it.
 
-Fixes: 53cc0b351ec9 ("perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs")
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+DMI: HONOR FMB-P/FMB-P-PCB, BIOS 1.13 05/08/2025
+
+Fixes: 9cf6e24c9fbf17e52de9fff07f12be7565ea6d61 ("Input: atkbd - do not skip atkbd_deactivate() when skipping ATKBD_CMD_GETID")
+Reported-by: Mikura Kyouka <mikurakyouka@aosc.io>
+Link: https://www.xiaohongshu.com/explore/68738d0a0000000012015a79
+Link: https://club.honor.com/cn/thread-29463529-1-1.html
+Link: https://club.honor.com/cn/thread-29490444-1-1.html
+Reported-by: foad.elkhattabi <foad.elkhattabi@gmail.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=220384
+Signed-off-by: Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
 ---
- tools/perf/util/hwmon_pmu.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/input/keyboard/atkbd.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/tools/perf/util/hwmon_pmu.c b/tools/perf/util/hwmon_pmu.c
-index 416dfea9ffff..5c27256a220a 100644
---- a/tools/perf/util/hwmon_pmu.c
-+++ b/tools/perf/util/hwmon_pmu.c
-@@ -742,8 +742,7 @@ int perf_pmus__read_hwmon_pmus(struct list_head *pmus)
- 			continue;
- 		}
- 		io__init(&io, name_fd, buf2, sizeof(buf2));
--		io__getline(&io, &line, &line_len);
--		if (line_len > 0 && line[line_len - 1] == '\n')
-+		if (io__getline(&io, &line, &line_len) > 0 && line[line_len - 1] == '\n')
- 			line[line_len - 1] = '\0';
- 		hwmon_pmu__new(pmus, buf, class_hwmon_ent->d_name, line);
- 		close(name_fd);
+diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+index 6c999d89ee4b..422e28ad1e8e 100644
+--- a/drivers/input/keyboard/atkbd.c
++++ b/drivers/input/keyboard/atkbd.c
+@@ -1937,6 +1937,13 @@ static const struct dmi_system_id atkbd_dmi_quirk_table[] __initconst = {
+ 		},
+ 		.callback = atkbd_deactivate_fixup,
+ 	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "HONOR"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "FMB-P"),
++		},
++		.callback = atkbd_deactivate_fixup,
++	},
+ 	{ }
+ };
+ 
+
+---
+base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
+change-id: 20251022-honor-8bc9bef8eba7
+
+Best regards,
 -- 
-2.51.0
+Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
+
 
 
