@@ -1,278 +1,206 @@
-Return-Path: <linux-kernel+bounces-865829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE63BFE1FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D20BFE204
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E8D44E96B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:09:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E54DA4E8CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2102F83B2;
-	Wed, 22 Oct 2025 20:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893182F83C2;
+	Wed, 22 Oct 2025 20:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EFntzAbe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x0/W+Sw7"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB6D2F83C2
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41D22F7AD0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761163777; cv=none; b=SWrPdqZFMnNg+qdRygqyC3MN/lW+Bf5wIicfuJs9PS+qInEa8TWzcCvbyIezbt0qm39gE/Bep9yvxgSrTEwJRwtECix6teMiZadVx+Z1+iqB2gJLXo2j13MZc1xezx1YwU3EOSq69wDuUwcwzWunhoyKfer2U61Hadvi7omLM7o=
+	t=1761163817; cv=none; b=ZiQ8Eql1gchDnq3KeTBi9m0SosM4N9V6bOlBeXx8/XhXuYd0/Md1sT4kqXgWTDUTpXBdPp8ZT4JCrxFn73V0FVt9uR3uzjBY5vwL6s3Rw11+3exEb0g6AkqHwyDuQL26zeeM4J01+5tMpoex9+2pXNsmQGPEajNGSymlY9KeBWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761163777; c=relaxed/simple;
-	bh=+gKvWEAhNp2p6hG9E4kpfgsuz952AQjuSk7lPZqtluA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g0jcN/8qDrMFeWq+4OWBSxLOYEvQgjiIft60z6RZcDAmK2zuRKHk/c4ozjCxXdnFB5lv2QJrFB0hWhPLS9lrNnu5RuX7wI7wF0h5R4oh4tpNx0BGMg8JzO3UMiTw3aZdTJY8zFcWmmDYK+H2LcdoPsdWVLJsqjzoi/cGdSuBJMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EFntzAbe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761163774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dUeO/YtpBDjpNP+/Rv4SHJERka//cgw1906gVbxjijk=;
-	b=EFntzAbeBVxsj+CELu92lIsJatLSSzc2L8vbyGA4VNb7jtQKqnRycB6NfafRlazGZKQNPR
-	Vj7Hv5P5FVfUH+th1Ac9Hg5zZTaXWFPH/0FyMlUeOSQDxpVnXzvft57PyrriprHqm5FZo1
-	YT97UfeC2OJ0ATjkbkYSdCzVNg9sNnE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-466-Nkr6Id13OHKY5hZDJRxVqw-1; Wed, 22 Oct 2025 16:09:33 -0400
-X-MC-Unique: Nkr6Id13OHKY5hZDJRxVqw-1
-X-Mimecast-MFC-AGG-ID: Nkr6Id13OHKY5hZDJRxVqw_1761163768
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e39567579so81295e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:09:29 -0700 (PDT)
+	s=arc-20240116; t=1761163817; c=relaxed/simple;
+	bh=jL1xyKeY+DSl7FnGn5fIu9UTUzTUBfMaCWMbOzVyaiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RgZkgVmH7TlBL0wGEWT+OSNYBmqWIOehTvz9oXaVKriPDsA30z50wGnyIeGtnpgoQ7Y1GYnZdtSGwnvZgqyf1Sx8yjRaCiSllsQYiSrwpAuzRfGoPjQ3539yFJP39LwFvJJEpaxpm3t+vpb1se9QUCIYZzA2DfJ0fC9hxJFB9kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x0/W+Sw7; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-475c9881821so1446235e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:10:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761163814; x=1761768614; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CMO+68yA0NJP1unpK3WFsi9ClsA9S0hkHZBERZCyzFs=;
+        b=x0/W+Sw7IeyhYqPazvetiAgzrtGlYSD1Q/885UKNowuBEW3JnNqnQA1pMbCqSYX0OQ
+         r0EfPfq8wLF4I0fPWcZkaScuuLow6/X1zaBqbGaDR+GS36F2PjvxTNqDXIMdCw+Nl+ip
+         tXaYKBepDZNrlJs8I0W6RpZBIryVpuvLR7mYGJZM3WZufoGmWQ1AKOFgM4avQP51joZf
+         iqsZpceizRnsnKiCNwLeDsU13SRlc7DOZV1vFEzRVS0wzVQtRer0+TS6TfMh0MFPs0re
+         y8u7FIBBO06FUJbkF4HdRWa9Xc9y7X0ric0/Hx5vdg8THOddammCyALxQ3q5WtRMb0OQ
+         stpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761163768; x=1761768568;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761163814; x=1761768614;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dUeO/YtpBDjpNP+/Rv4SHJERka//cgw1906gVbxjijk=;
-        b=AGbcBsHZnYe2YZZIMytdsFuuOfjmkGYsoRdJXzJnN+fdpHoAwRjq3J/3Oe1WHEEPtz
-         bFkmWUO+cOWnzUz+pUgboQxyPpYGo5msbSQoCDjlaQojYlgjb2e7SHzrpneGyI7SRxns
-         MvkkwftEzZ+EsQ+SD+Hxf4XpeeUTHzMXwqI/z1D+Lu2/a94Qsnsjkra7mlrcMIuVcyqw
-         xxucDxdl27LQVt0MeH3a3GqVE5gtIbb6QopOMEpGPalRaUNvn6Hb2001uogSh6owv4FA
-         cdVCwumnq1p91vdBDiWulnTW4Pl8eaETWrMBh5K54h2YPWP+lLD191WkqxOLDgv32BUA
-         B+Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTw03NqOIVMJYYqib6ci/L62kNAFD3W+puFVvKA6Tzfg/ap4cfaSehExtIDeFwZQfBmGvpndqCdG4495Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcBLWS70HFu9gz76PfEqw39HxZZMom2r7Ee7IF99p/v1G+UQuo
-	WUmOLRjdkNDkJPunvSmyHEsOM5H9ngw2AS940CvjUguHM2dwev7VEO/UT/oIyvVzDFnCv/gSwX6
-	kyxin41w9WlyjXRt66uv6LeJWGGHCaZl9Gk6TC8RknCmsZ6bt4WJdkJqR4QU2+6axig==
-X-Gm-Gg: ASbGnctO6WnoKpK2Ng23y7KnxUy2uH/Z0d5/D7cc1bZFCVo+S2qyQFKDNVMlEbXb8xZ
-	y3or3P8Wo2e6By7WZdKMUkMURELP2YGHZcAbfDgi33SHe28FA2ur10KTeI37tFTSjzhL2jviMJb
-	3jD/HjvlQCNsFqaH85dfdqLizSpuOZHzx+M7kk4p+sWugjGJeUIx76zOWv0XsMR85rRi0ldU5Ar
-	YgtfrDb/5I492bwx2vNdCPhqkOCM5nYYekGIXxlWH8NSy8HumboJTXYr/7NxQQWzs9SLkxa8HcH
-	7Mi4XEaRTjS5b8ug6NAetTt+xIoUpueoUXwBvPqjPXt4+QTQqohpbKpAx1sfshcJzcHpzDcaCxT
-	2+mezf0sdXfItwtu19PADE0iJxdHub4eOasDL6Opckf7dG82sd1/c8nuTBWXpmbliRa+Frj4IeG
-	p8t1etu6SER2/POwXdGU5dZ7OLY1Q=
-X-Received: by 2002:a05:600c:3b04:b0:471:350:f7b8 with SMTP id 5b1f17b1804b1-471179017damr146055575e9.20.1761163767944;
-        Wed, 22 Oct 2025 13:09:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFeJmZJAMcww8F4mWD3Mdmim44dMWfgL8QKaixUaVMVlxDl0JJqaHLVxenWhQsfEAEk9uyhKQ==
-X-Received: by 2002:a05:600c:3b04:b0:471:350:f7b8 with SMTP id 5b1f17b1804b1-471179017damr146055395e9.20.1761163767473;
-        Wed, 22 Oct 2025 13:09:27 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898eb549sm144198f8f.41.2025.10.22.13.09.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 13:09:26 -0700 (PDT)
-Message-ID: <d3d05898-5530-4990-9d61-8268bd483765@redhat.com>
-Date: Wed, 22 Oct 2025 22:09:24 +0200
+        bh=CMO+68yA0NJP1unpK3WFsi9ClsA9S0hkHZBERZCyzFs=;
+        b=iqm3ou86wBjaR1SMMYLwjmrA1HbacezQwRG77Hxq3vVa+rq8jI4B7CBWBHAMsIXYQ3
+         pjesg4BAWhOve8uGfGBUJExNO4anq0JbxQ6LSE8RgENvO35YC+1LIMW8JQ7AGSRYWDeV
+         uZjV81StA9YCBv0KKPcCtpzm0O49OKD/Ufcfw0ZTM04Oj+8KT2HXTRXlREAIR/lrbBNu
+         sTTwbZISGeMhGvtnYhEpFkil44cO42HLFtATVA4T+VjRYELQeQzex0M0D3sqNhAQ4QER
+         sPRmA1fTE437c8z4LLadBDbAXIZ6D3iLtN8Cde1mkRp7I19bRmeHrxUkTP4OyLJX53Jj
+         Danw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCkN181jb4GOXUKIIbBexdNbqZyzQfcYuBt219gLyHLfCsEWv+IMNPl3YlpD8EiwtcFR7HSMGH3GeYFSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuzrmasE65Ms0sNkkVFVpD9c/6iK55+/Nf54hKhne8DugzCriM
+	GtybF8+y5etnEnEjRB8KlVYOETnDUkCjxm4waBk78adjnlZvWut7azDa6cMQEh8bXxE=
+X-Gm-Gg: ASbGncvILveznwyA+Wco05H/2ZYZkImU6H5U+UxQxxYP/ekllTyzBwAFwj8GHW//Qq5
+	DDgx1xv/tHkPWnD57utweHk5C2MqbixsgQOGrQhcMlLzC5ryvAu3ISAd1MxDtYWDphPDs0w8jTl
+	rnDH8LZS6dWAfI1pU7RQH/RMLRcVipkyYOlJ6U5MSUk/stjtrYAMZi+yFoP+h6zMWnYx2SGmaTs
+	w1m38qvoqHSKWk6uoX4UwpeJGAKX6KEp43Uq5Nx1UkrhGLXGwMKCsAiW02xthHW6EmgVfUKi/un
+	/UJL60fKS7gl5DttaGolpkBKTKpMBBBdxJ/5xs4uDcWo85GKSSAFCl6nH8nS7qluZusvRG3BFg5
+	nV1XvETqPaIK29h9T6pSBGm5Fj2pVLFQx/ZIlNB2i7H/NaB48V2UaZ5pjuZR+5Ay8oy2GEoZJOu
+	xMPvoaZRuDpjb/iLKM
+X-Google-Smtp-Source: AGHT+IEE7nbdHtxCgzExX95o6DoJe0s0AWHwSyXzENCSmPhw5KThK31EPdJRY52brcU+d9kt2XaOCg==
+X-Received: by 2002:a05:600c:c3:b0:46f:cdfe:cd39 with SMTP id 5b1f17b1804b1-475c6f69890mr15544315e9.16.1761163814335;
+        Wed, 22 Oct 2025 13:10:14 -0700 (PDT)
+Received: from orion.home ([2a02:c7c:7259:a00:11f4:2b3f:7c5a:5c10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caa8c785sm415275e9.14.2025.10.22.13.10.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 13:10:13 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: broonie@kernel.org,
+	gregkh@linuxfoundation.org,
+	srini@kernel.org
+Cc: rafael@kernel.org,
+	dakr@kernel.org,
+	make24@iscas.ac.cn,
+	steev@kali.org,
+	dmitry.baryshkov@oss.qualcomm.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	abel.vesa@linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] regmap: slimbus: fix bus_context pointer in regmap init calls
+Date: Wed, 22 Oct 2025 21:10:12 +0100
+Message-ID: <20251022201013.1740211-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] mm/huge_memory: preserve PG_has_hwpoisoned if a
- folio is split to >0 order
-To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, jane.chu@oracle.com
-Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
- nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251022033531.389351-1-ziy@nvidia.com>
- <20251022033531.389351-2-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251022033531.389351-2-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22.10.25 05:35, Zi Yan wrote:
-> folio split clears PG_has_hwpoisoned, but the flag should be preserved in
-> after-split folios containing pages with PG_hwpoisoned flag if the folio is
-> split to >0 order folios. Scan all pages in a to-be-split folio to
-> determine which after-split folios need the flag.
-> 
-> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
-> avoid the scan and set it on all after-split folios, but resulting false
-> positive has undesirable negative impact. To remove false positive, caller
-> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs to
-> do the scan. That might be causing a hassle for current and future callers
-> and more costly than doing the scan in the split code. More details are
-> discussed in [1].
-> 
-> It is OK that current implementation does not do this, because memory
-> failure code always tries to split to order-0 folios and if a folio cannot
-> be split to order-0, memory failure code either gives warnings or the split
-> is not performed.
-> 
+Commit 4e65bda8273c ("ASoC: wcd934x: fix error handling in
+wcd934x_codec_parse_data()") revealed the problem in the slimbus regmap.
+That commit breaks audio playback, for instance, on sdm845 Thundercomm
+Dragonboard 845c board:
 
-We're losing PG_has_hwpoisoned for large folios, so likely this should be
-a stable fix for splitting anything to an order > 0 ?
+ Unable to handle kernel paging request at virtual address ffff8000847cbad4
+ ...
+ CPU: 5 UID: 0 PID: 776 Comm: aplay Not tainted 6.18.0-rc1-00028-g7ea30958b305 #11 PREEMPT
+ Hardware name: Thundercomm Dragonboard 845c (DT)
+ ...
+ Call trace:
+  slim_xfer_msg+0x24/0x1ac [slimbus] (P)
+  slim_read+0x48/0x74 [slimbus]
+  regmap_slimbus_read+0x18/0x24 [regmap_slimbus]
+  _regmap_raw_read+0xe8/0x174
+  _regmap_bus_read+0x44/0x80
+  _regmap_read+0x60/0xd8
+  _regmap_update_bits+0xf4/0x140
+  _regmap_select_page+0xa8/0x124
+  _regmap_raw_write_impl+0x3b8/0x65c
+  _regmap_bus_raw_write+0x60/0x80
+  _regmap_write+0x58/0xc0
+  regmap_write+0x4c/0x80
+  wcd934x_hw_params+0x494/0x8b8 [snd_soc_wcd934x]
+  snd_soc_dai_hw_params+0x3c/0x7c [snd_soc_core]
+  __soc_pcm_hw_params+0x22c/0x634 [snd_soc_core]
+  dpcm_be_dai_hw_params+0x1d4/0x38c [snd_soc_core]
+  dpcm_fe_dai_hw_params+0x9c/0x17c [snd_soc_core]
+  snd_pcm_hw_params+0x124/0x464 [snd_pcm]
+  snd_pcm_common_ioctl+0x110c/0x1820 [snd_pcm]
+  snd_pcm_ioctl+0x34/0x4c [snd_pcm]
+  __arm64_sys_ioctl+0xac/0x104
+  invoke_syscall+0x48/0x104
+  el0_svc_common.constprop.0+0x40/0xe0
+  do_el0_svc+0x1c/0x28
+  el0_svc+0x34/0xec
+  el0t_64_sync_handler+0xa0/0xf0
+  el0t_64_sync+0x198/0x19c
 
-> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->   mm/huge_memory.c | 28 +++++++++++++++++++++++++---
->   1 file changed, 25 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index fc65ec3393d2..f3896c1f130f 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3455,6 +3455,17 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
->   					caller_pins;
->   }
->   
-> +static bool page_range_has_hwpoisoned(struct page *first_page, long nr_pages)
-> +{
-> +	long i;
-> +
-> +	for (i = 0; i < nr_pages; i++)
-> +		if (PageHWPoison(first_page + i))
-> +			return true;
-> +
-> +	return false;
+The __devm_regmap_init_slimbus() started to be used instead of
+__regmap_init_slimbus() after the commit mentioned above and turns out
+the incorrect bus_context pointer (3rd argument) was used in
+__devm_regmap_init_slimbus(). It should be just "slimbus" (which is equal
+to &slimbus->dev). Correct it. The wcd934x codec seems to be the only or
+the first user of devm_regmap_init_slimbus() but we should fix it till
+the point where __devm_regmap_init_slimbus() was introduced therefore
+two "Fixes" tags.
 
-Nit: I'd just do
+While at this, also correct the same argument in __regmap_init_slimbus().
 
-static bool page_range_has_hwpoisoned(struct page *page, unsigned long nr_pages)
-{
-	for (; nr_pages; page++, nr_pages--)
-		if (PageHWPoison(page))
-			return true;
-	}
-	return false;
-}
+Fixes: 4e65bda8273c ("ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()")
+Fixes: 7d6f7fb053ad ("regmap: add SLIMbus support")
+Cc: stable@vger.kernel.org
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Ma Ke <make24@iscas.ac.cn>
+Cc: Steev Klimaszewski <steev@kali.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
 
-> +}
-> +
->   /*
->    * It splits @folio into @new_order folios and copies the @folio metadata to
->    * all the resulting folios.
-> @@ -3462,22 +3473,32 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
->   static void __split_folio_to_order(struct folio *folio, int old_order,
->   		int new_order)
->   {
-> +	/* Scan poisoned pages when split a poisoned folio to large folios */
-> +	bool check_poisoned_pages = folio_test_has_hwpoisoned(folio) &&
-> +				    new_order != 0;
+The patch/fix is for the current 6.18 development cycle
+since it fixes the regression introduced in 6.18.0-rc1.
 
-I'd shorten this to "handle_hwpoison" or sth like that.
+Changes in v2:
+ - &slimbus->dev replaced with just "slimbus", no functional change
+ (as suggested by Dmitry);
+ - the same argument in __regmap_init_slimbus() was replaced with
+ "slimbus" (as suggested by Dmitry);
+ - reduced the backtrace log in the commit message (as suggested by Mark);
+ - corrected subject/title, few typos, added mention of non-managed init
+ func change, rephrased smth;
+ - added Reviewed-by tag from Abel.
 
-Maybe we can make it const and fit it into a single line.
+Prev version: https://lore.kernel.org/linux-sound/20251020015557.1127542-1-alexey.klimov@linaro.org/
 
-Comparison with 0 is not required.
+ drivers/base/regmap/regmap-slimbus.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-	const bool handle_hwpoison = folio_test_has_hwpoisoned(folio) && new_order;
-
->   	long new_nr_pages = 1 << new_order;
->   	long nr_pages = 1 << old_order;
->   	long i;
->   
-> +	folio_clear_has_hwpoisoned(folio);
-> +
-> +	/* Check first new_nr_pages since the loop below skips them */
-> +	if (check_poisoned_pages &&
-> +	    page_range_has_hwpoisoned(folio_page(folio, 0), new_nr_pages))
-> +		folio_set_has_hwpoisoned(folio);
->   	/*
->   	 * Skip the first new_nr_pages, since the new folio from them have all
->   	 * the flags from the original folio.
->   	 */
->   	for (i = new_nr_pages; i < nr_pages; i += new_nr_pages) {
->   		struct page *new_head = &folio->page + i;
-> -
->   		/*
->   		 * Careful: new_folio is not a "real" folio before we cleared PageTail.
->   		 * Don't pass it around before clear_compound_head().
->   		 */
->   		struct folio *new_folio = (struct folio *)new_head;
-> +		bool poisoned_new_folio = check_poisoned_pages &&
-> +			page_range_has_hwpoisoned(new_head, new_nr_pages);
-
-Is the temp variable really required? I'm afraid it is a bit ugly either way :)
-
-I'd just move it into the if() below.
-
-	if (handle_hwpoison &&
-	    page_range_has_hwpoisoned(new_head, new_nr_pages)
-		folio_set_has_hwpoisoned(new_folio);
-
-
-
-
+diff --git a/drivers/base/regmap/regmap-slimbus.c b/drivers/base/regmap/regmap-slimbus.c
+index 54eb7d227cf4..e523fae73004 100644
+--- a/drivers/base/regmap/regmap-slimbus.c
++++ b/drivers/base/regmap/regmap-slimbus.c
+@@ -48,8 +48,7 @@ struct regmap *__regmap_init_slimbus(struct slim_device *slimbus,
+ 	if (IS_ERR(bus))
+ 		return ERR_CAST(bus);
+ 
+-	return __regmap_init(&slimbus->dev, bus, &slimbus->dev, config,
+-			     lock_key, lock_name);
++	return __regmap_init(&slimbus->dev, bus, slimbus, config, lock_key, lock_name);
+ }
+ EXPORT_SYMBOL_GPL(__regmap_init_slimbus);
+ 
+@@ -63,8 +62,7 @@ struct regmap *__devm_regmap_init_slimbus(struct slim_device *slimbus,
+ 	if (IS_ERR(bus))
+ 		return ERR_CAST(bus);
+ 
+-	return __devm_regmap_init(&slimbus->dev, bus, &slimbus, config,
+-				  lock_key, lock_name);
++	return __devm_regmap_init(&slimbus->dev, bus, slimbus, config, lock_key, lock_name);
+ }
+ EXPORT_SYMBOL_GPL(__devm_regmap_init_slimbus);
+ 
 -- 
-Cheers
-
-David / dhildenb
+2.47.3
 
 
