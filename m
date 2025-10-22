@@ -1,159 +1,358 @@
-Return-Path: <linux-kernel+bounces-864908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E80DBFBCDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:15:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1848EBFBCE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A6CB1356EC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A769D5E2CE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E633891A;
-	Wed, 22 Oct 2025 12:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Emir2s6k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E639133DED6;
+	Wed, 22 Oct 2025 12:13:59 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2916B34167A
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4014B2BE643
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761135290; cv=none; b=gH23nGH1DbENqTcUvoh6YProidLp/n2032SWMDK59O58AwG3/3hENuYbk7yRV/4rDdZBFQc9s1Edsjq6et2wPQzVRjIQq2HwoLuS7aafaOuz4GfMzjU3+GSQY6tYPk7GxnxqKl8O24lceBHxDsrCECBr8WmBiIgBwJj/ucYwrIY=
+	t=1761135239; cv=none; b=Ssy9xewV5sd5exUSqVAHMg4XSBmTivi/5uNpMCjcBYq5W3gNIp0ivu0yGVs0Bw/GtmR/lTH03Mdx49/tq9JpE/Os3sq5vXEVMX7CXLLSxGGZ0Ae5Z4RjFCr98j8YfQKJR/2pPXsYMSODLfLGmIXZADlOkyJHtzc8zCZnxKRti50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761135290; c=relaxed/simple;
-	bh=pfS8U/j5Ny1hiXcolE4aHLqnuv2ch3BXbnGcgM7t6B4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CR1s9WhjEVwYyhMPHxRE4FbKFNs42WCc6Px0nL+XVP08X5AIREHASBb6hHpK52EiU0Po2YJo9HJOVULoQvfMSXF//fyS7qnvq8UppYLQEgIDEsVXWxIT1jvp0mGSZ0sn3xThjSAKleNk6eAl9wId+eOLxQz9Gn8cRXDKAwiw4JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Emir2s6k; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761135287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ekimc72PCbpOA1x/tlS6SXdLF6ETf9qbbL3151vpaxg=;
-	b=Emir2s6kDBNWk0o1OQ4izoaKLvicEhr8kWN7vsLTQIbJ30mHznN/67fruNTjdk8NrRxUUQ
-	FtSqz+3LniPkklxS9sswEWzdbZXfpG5/GscK+nVxVNcJVGLOME5Uf7ug3ccxkdB3XtXuKp
-	adVT78Na9CiY+rQ+MsDjDPVE285R840=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-d2iakW3GOnuSp_JrGPkW3A-1; Wed,
- 22 Oct 2025 08:14:44 -0400
-X-MC-Unique: d2iakW3GOnuSp_JrGPkW3A-1
-X-Mimecast-MFC-AGG-ID: d2iakW3GOnuSp_JrGPkW3A_1761135282
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7125D1956089;
-	Wed, 22 Oct 2025 12:14:42 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.72.112.98])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5BF521800590;
-	Wed, 22 Oct 2025 12:14:31 +0000 (UTC)
-From: Pingfan Liu <piliu@redhat.com>
-To: kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Pingfan Liu <piliu@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Joel Granados <joel.granados@kernel.org>
-Subject: [RFC 3/3] kexec_core: Promote the kexec to DL task
-Date: Wed, 22 Oct 2025 20:13:45 +0800
-Message-ID: <20251022121345.23496-4-piliu@redhat.com>
-In-Reply-To: <20251022121345.23496-1-piliu@redhat.com>
-References: <20251022121345.23496-1-piliu@redhat.com>
+	s=arc-20240116; t=1761135239; c=relaxed/simple;
+	bh=Sm4GWPNeJcL5gEwJZRJ5PrguqKuzIn1kzPolyeVZzsY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AW8JYkcX4qCDVIOs4ZzOg44n6HHDsVCeJ99dNqkGShPJRR82Fy8Kg/+EeoULeGBwnUstL2vAxF7LsapK9I9xzFCE3bN/RQRjvPYAcOBn4oaRUHM38yhzoj0VGtXSOQWenP5kEKASKeQwKUrb1fhXr7A+IRMjnuFBXGp8r/Tfbbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d4a4dea3so9753925ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:13:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761135236; x=1761740036;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOrJBT4oSmGN7Bwjcc4GP8AOfbxTb3nBv75gJrMjeOQ=;
+        b=KXR6AhF4nHlCx5mLBKD6cYGQ80hW7JWsnAdcnh2pf6dWu/MdskWbsOnTruLYMRSnhu
+         70dAd8t3ytUWxXQfzkCFycSjYQzYNLfH2itCDMij0e86V74+/R3Ugf+nS83MGAO7mrWT
+         LH1wSyvSE4Cll7XRH70SUb2Eczacy1fVF1ft4HJsbQH0iV/dcAReT2Ri4gLPAlxcNzzO
+         cPfvBsozg689OYQcFlb/qfoF+ZHsuiJUe6MFesU9moMM3gUVmxPz+xTfRKEiRDWqCzVb
+         /qb7+cI1uqIM8HvelaETsxgIUAsl46h1gGQmK7DcYvLFll3JLG9ExD00u6lIVQe4RAE6
+         fNrA==
+X-Gm-Message-State: AOJu0YyNs6/Pm8arEk8eLcBLIXLaGj7muGavKj74fJ7GJDZD1RzeSgWj
+	411tzd319FDVpBx0ENB5jNvj+uvEiTacvFPCxodoNqy63jfhj7eh8uAc9+wqJuf2hkOR3YjVOg4
+	uaRlLmWY31IRHYGGy+POIKxuAzOIff0Qy5DIkrcOyUP6lkpqGweHv6m8lBYg=
+X-Google-Smtp-Source: AGHT+IHE0R7OcJojFRrqtPTXyZ6ioqKOrpuQ/ZoSSC2fd6t1XTt8CmEMZo1PEbe8BB1gecLXyZkGOQ/6KC/4sgGccHi1BqMzmJZw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Received: by 2002:a05:6e02:1b0f:b0:430:b2a8:a9eb with SMTP id
+ e9e14a558f8ab-431d3190d6dmr37866805ab.1.1761135236441; Wed, 22 Oct 2025
+ 05:13:56 -0700 (PDT)
+Date: Wed, 22 Oct 2025 05:13:56 -0700
+In-Reply-To: <66f86aaa.050a0220.4a974.000e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8ca84.050a0220.346f24.0048.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ 552c50713f273b494ac6c77052032a49bc9255e2
+From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The previous patch lifted the deadline bandwidth check during the kexec
-process. As a result, DL tasks may be crowded onto the kexec CPU, which
-may starve the kexec task. At this point, the kexec task is the only
-task needed to make the reboot proceed, hence promoting it to a deadline
-task prevents this starvation.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Signed-off-by: Pingfan Liu <piliu@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Pierre Gondois <pierre.gondois@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baoquan He <bhe@redhat.com>
-To: kexec@lists.infradead.org
-To: linux-kernel@vger.kernel.org
----
- kernel/kexec_core.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+***
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 265de9d1ff5f5..0960bea1a8bab 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -41,6 +41,7 @@
- #include <linux/objtool.h>
- #include <linux/kmsg_dump.h>
- #include <linux/dma-map-ops.h>
-+#include <uapi/linux/sched/types.h>
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
+Author: dmantipov@yandex.ru
+
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
+
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 162711cc5b20..ce38505a823c 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6164,7 +6164,7 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 	struct buffer_head *bh = NULL;
+ 	struct ocfs2_dinode *di;
+ 	struct ocfs2_truncate_log *tl;
+-	unsigned int tl_count;
++	unsigned int tl_count, tl_used;
  
- #include <asm/page.h>
- #include <asm/sections.h>
-@@ -1183,6 +1184,20 @@ int kernel_kexec(void)
- 	} else
- #endif
- 	{
-+		struct sched_attr attr = {
-+			.size		= sizeof(struct sched_attr),
-+			.sched_policy	= SCHED_DEADLINE,
-+			.sched_nice	= 0,
-+			.sched_priority	= 0,
-+			/*
-+			 * Fake (unused) bandwidth; workaround to "fix"
-+			 * priority inheritance.
-+			 */
-+			.sched_runtime	= NSEC_PER_MSEC,
-+			.sched_deadline = 10 * NSEC_PER_MSEC,
-+			.sched_period	= 10 * NSEC_PER_MSEC,
-+		};
+ 	inode = ocfs2_get_system_file_inode(osb,
+ 					   TRUNCATE_LOG_SYSTEM_INODE,
+@@ -6184,9 +6184,10 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 
+ 	di = (struct ocfs2_dinode *)bh->b_data;
+ 	tl = &di->id2.i_dealloc;
++	tl_used = le16_to_cpu(tl->tl_used);
+ 	tl_count = le16_to_cpu(tl->tl_count);
+ 	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
+-		     tl_count == 0)) {
++		     tl_count == 0 || tl_used > tl_count)) {
+ 		status = -EFSCORRUPTED;
+ 		iput(inode);
+ 		brelse(bh);
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index 8c9c4825f984..2785ff245e79 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
+ 				 unsigned long offset)
+ {
+ 	const char *error_msg = NULL;
+-	const int rlen = le16_to_cpu(de->rec_len);
+-	const unsigned long next_offset = ((char *) de - buf) + rlen;
++	unsigned long next_offset;
++	int rlen;
 +
- 		/*
- 		 * CPU hot-removal path refers to kexec_in_progress, it
- 		 * requires a sync to ensure no in-flight hot-removing.
-@@ -1202,6 +1217,13 @@ int kernel_kexec(void)
- 		 */
- 		cpu_hotplug_enable();
- 		pr_notice("Starting new kernel\n");
-+		/*
-+		 * During hot-removing cpu, all DL tasks will be migrated to
-+		 * this cpu.  To prevent this task from starving, promoting it
-+		 * to DL task. And soon, local interrupt will be disabled in
-+		 * machine_kexec().
++	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
++		/* Dirent is (maybe partially) beyond the buffer
++		 * boundaries so touching 'de' members is unsafe.
 +		 */
-+		sched_setattr_nocheck(current, &attr);
- 		machine_shutdown();
++		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
++		     "too close to end or out-of-bounds",
++		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
++		return 0;
++	}
++
++	rlen = le16_to_cpu(de->rec_len);
++	next_offset = ((char *) de - buf) + rlen;
+ 
+ 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
+ 		error_msg = "rec_len is smaller than minimal";
+@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+ 	struct ocfs2_extent_block *eb;
+ 	struct ocfs2_extent_rec *rec = NULL;
+ 
++	if (le16_to_cpu(el->l_count) !=
++	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %lu has invalid extent list length %u\n",
++				  inode->i_ino, le16_to_cpu(el->l_count));
++		goto out;
++	}
++
+ 	if (el->l_tree_depth) {
+ 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+ 				      &eb_bh);
+@@ -3423,6 +3444,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 		offset += le16_to_cpu(de->rec_len);
  	}
  
--- 
-2.49.0
-
++	if (!last_de) {
++		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
++				  "is unexpectedly short",
++				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
++				  i_size_read(dir));
++		goto out;
++	}
++
+ 	/*
+ 	 * We're going to require expansion of the directory - figure
+ 	 * out how many blocks we'll need so that a place for the
+@@ -4104,10 +4133,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
+ 	}
+ 
+ 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
+-	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
+-	       offsetof(struct ocfs2_dx_root_block, dr_list));
++
++	dx_root->dr_list.l_tree_depth = 0;
+ 	dx_root->dr_list.l_count =
+ 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
++	dx_root->dr_list.l_next_free_rec = 0;
++	memset(&dx_root->dr_list.l_recs, 0,
++	       osb->sb->s_blocksize -
++	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
++		offsetof(struct ocfs2_extent_list, l_recs)));
+ 
+ 	/* This should never fail considering we start with an empty
+ 	 * dx_root. */
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index d1aa04a5af1b..56be21c695d6 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -905,13 +905,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
+ static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
+ {
+ 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
+-	int i;
+ 
+ 	alloc->id1.bitmap1.i_total = 0;
+ 	alloc->id1.bitmap1.i_used = 0;
+ 	la->la_bm_off = 0;
+-	for(i = 0; i < le16_to_cpu(la->la_size); i++)
+-		la->la_bitmap[i] = 0;
++	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
+ }
+ 
+ #if 0
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 86f2631e6360..ba4952b41602 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
+ 
+ 	rec = &el->l_recs[index];
+ 
+-	BUG_ON(ext_flags != rec->e_flags);
++	if (ext_flags != rec->e_flags) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
++				  (unsigned long long)ino, index, rec->e_flags, cpos);
++		goto out;
++	}
++
+ 	/*
+ 	 * after moving/defraging to new location, the extent is not going
+ 	 * to be refcounted anymore.
+@@ -1031,6 +1037,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 	if (range.me_threshold > i_size_read(inode))
+ 		range.me_threshold = i_size_read(inode);
+ 
++	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
++			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
++		status = -EINVAL;
++		goto out_free;
++	}
++
+ 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
+ 		context->auto_defrag = 1;
+ 
+diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+index ae0e44e5f2ad..c501eb3cdcda 100644
+--- a/fs/ocfs2/ocfs2_fs.h
++++ b/fs/ocfs2/ocfs2_fs.h
+@@ -468,7 +468,8 @@ struct ocfs2_extent_list {
+ 	__le16 l_reserved1;
+ 	__le64 l_reserved2;		/* Pad to
+ 					   sizeof(ocfs2_extent_rec) */
+-/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
++					/* Extent records */
++/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
+ };
+ 
+ /*
+@@ -482,7 +483,8 @@ struct ocfs2_chain_list {
+ 	__le16 cl_count;		/* Total chains in this list */
+ 	__le16 cl_next_free_rec;	/* Next unused chain slot */
+ 	__le64 cl_reserved1;
+-/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
++					/* Chain records */
++/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
+ };
+ 
+ /*
+@@ -494,7 +496,8 @@ struct ocfs2_truncate_log {
+ /*00*/	__le16 tl_count;		/* Total records in this log */
+ 	__le16 tl_used;			/* Number of records in use */
+ 	__le32 tl_reserved1;
+-/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
++					/* Truncate records */
++/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
+ };
+ 
+ /*
+@@ -638,7 +641,7 @@ struct ocfs2_local_alloc
+ 	__le16 la_size;		/* Size of included bitmap, in bytes */
+ 	__le16 la_reserved1;
+ 	__le64 la_reserved2;
+-/*10*/	__u8   la_bitmap[];
++/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
+ };
+ 
+ /*
+@@ -651,7 +654,7 @@ struct ocfs2_inline_data
+ 				 * for data, starting at id_data */
+ 	__le16	id_reserved0;
+ 	__le32	id_reserved1;
+-	__u8	id_data[];	/* Start of user data */
++	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
+ };
+ 
+ /*
+@@ -796,9 +799,10 @@ struct ocfs2_dx_entry_list {
+ 					 * possible in de_entries */
+ 	__le16		de_num_used;	/* Current number of
+ 					 * de_entries entries */
+-	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
+-							 * in a packed array of
+-							 * length de_num_used */
++					/* Indexed dir entries in a packed
++					 * array of length de_num_used.
++					 */
++	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
+ };
+ 
+ #define OCFS2_DX_FLAG_INLINE	0x01
+@@ -934,7 +938,8 @@ struct ocfs2_refcount_list {
+ 	__le16 rl_used;		/* Current number of used records */
+ 	__le32 rl_reserved2;
+ 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
+-/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
++				/* Refcount records */
++/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
+ };
+ 
+ 
+@@ -1020,7 +1025,8 @@ struct ocfs2_xattr_header {
+ 						    buckets.  A block uses
+ 						    xb_check and sets
+ 						    this field to zero.) */
+-	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
++						/* xattr entry list. */
++	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
+ };
+ 
+ /*
+diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+index 6ac4dcd54588..9969a041ab18 100644
+--- a/fs/ocfs2/suballoc.c
++++ b/fs/ocfs2/suballoc.c
+@@ -649,6 +649,16 @@ ocfs2_block_group_alloc_discontig(handle_t *handle,
+ 	return status ? ERR_PTR(status) : bg_bh;
+ }
+ 
++static int ocfs2_check_chain_list(struct ocfs2_chain_list *cl,
++				  struct super_block *sb)
++{
++	if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb))
++		return -EINVAL;
++	if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count))
++		return -EINVAL;
++	return 0;
++}
++
+ /*
+  * We expect the block group allocator to already be locked.
+  */
+@@ -671,6 +681,10 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
+ 	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
+ 
+ 	cl = &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, alloc_inode->i_sb);
++	if (status)
++		goto bail;
++
+ 	status = ocfs2_reserve_clusters_with_limit(osb,
+ 						   le16_to_cpu(cl->cl_cpg),
+ 						   max_block, flags, &ac);
+@@ -1992,6 +2006,9 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
+ 	}
+ 
+ 	cl = (struct ocfs2_chain_list *) &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, ac->ac_inode->i_sb);
++	if (status)
++		goto bail;
+ 
+ 	victim = ocfs2_find_victim_chain(cl);
+ 	ac->ac_chain = victim;
 
