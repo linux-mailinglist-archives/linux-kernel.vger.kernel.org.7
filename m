@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-865091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3189BFC348
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 783C6BFC37E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E119544AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:35:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 177D6564142
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC822348885;
-	Wed, 22 Oct 2025 13:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78543348864;
+	Wed, 22 Oct 2025 13:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UrqLx2jX"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vTfD15OZ"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D083347FF3
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2E4347FF4
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140073; cv=none; b=YlNWUd+VoMbGckd12gkVyEIG9E7IBmGPfw7dFuDj3On34lyiXX+pYhI6MYtEgOunG5ex7wDzUDqXtW4rQmu173lVNSLdXyMVX8iaSBipFEHtVIGoZlLvfDQU0Cl8Agvj371Os5tO0K+tbcNItUUNtmF2tHXv095b5YAx9H03GSI=
+	t=1761140129; cv=none; b=ETbWJBbCLrJLc/JQ8Vjb6WzRMXrb5qoplF9buHYL3emRnBEbdNDZqfP4oDx2IATc0ofJLmoSnyF/bQ4xior83nb4Oc7JIOp68P9ewaRlPCxPYEp1f/oQpkoa+V+xKRNDGEYUGVdIhW6G+NfeMvG/oe8azEORf3+2an6tjHNHT8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140073; c=relaxed/simple;
-	bh=T0KheH9SmHYRG9S90aXs4rewCJfStqdviPw1bBq61oA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ik4ww7rjQd73uIVdUdFDUQ+46Q0F1rw6emWPXGKwzB4EcqVGTyHS53sQoRLGfqnn3t3V7vNFppDBgU5wvSjB8WE16KIvMMbIqMw/RrqgdWUYcKziT4CInIse4YfjUc7tqZu+rrsxN/JUCt3Gn/Uv+RnqRv3gf1NaE8r7n1Qw/bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UrqLx2jX; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4270a072a0bso780005f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:34:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761140069; x=1761744869; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X6bRIK7N0Lc6wOEz1pBT1Kkom/tSArzPgk5+y4nbPsU=;
-        b=UrqLx2jXTyMJkQCoL6eYFx82cCydhZ2Q1yowuxxOpVg41IMr+b3AWk5Qzc0UOSptmH
-         YLxG/0dZ46P76ApNmc9iuQraPntbthmKCmpcVSilrmE+bkVmkPhZr7p2Pd5jAsXrJVjW
-         o01Thw29jYBLuYdhAiZ80H4qh8Htqr/Oa6UtjcPBsej7EHKJCZAVZHXK6ank9Y7gKzwx
-         NfxMHZZg9OSdfBmvAZDTqTgCQkV9ty8fSE+UOqMbwBDnj8Z2yADlAYJdf5wEVkRJFxn5
-         39GNn2Nk2Np80n3/4xnsbSV42CQQaibbirfFF2ajUD+VeElYu3ck4RlO6NywhD0zCSHN
-         OoAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761140069; x=1761744869;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X6bRIK7N0Lc6wOEz1pBT1Kkom/tSArzPgk5+y4nbPsU=;
-        b=jtRJpYqa9byCRsiFjBJcoPoAF1Oefr6BJdeJcyh2Nr0oOWYiquyQc475CJ6HX1lwTW
-         3I+mweDtVb+Dnri9sO3BogoJTDonE+Ipq/YuReNiCwu0FWdluUiCqvUMOLlLnofcoqQO
-         NTQ9BUmu8DUHO7HKnOBjlcmf54jiRiJfSd02NTkYLU15qSgCvJdYNJ4NUiBh6pVxhNnG
-         4YqQg1iBwevzgJHlV2dyerg0o1tyU5RcDgBoIIfQD9w+zDcwMRuJ3vTA05zsH3j5qVrG
-         /f6e85giTkw+ozLhqfDdLGJDeE5NtW7Mic8JBu+4YB6we/Euc1dY9Q2ykkqq0fvvF4EL
-         Vf9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWpvJQAM+Woc9xnTlqDThvf4FDdB01kANhODvCV/XOaacUlYKsdo0sy/vkqqguhuf+C3EIDClA38bEjWlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY9pUWtxk1w8Mpk5Rb6b2DfA7UQjt9DHwQyCR3auuj4430fJHK
-	A1kw8ntpFejGhglBskczDEefJJNDEMvDblbvCyXVUCWg2xs4icDpriDbM/ymdVt12sw=
-X-Gm-Gg: ASbGncvjRnoYezaDgfIyfzx28bM5uRAKw9lzwdzQI3I1OQl8pfdoG6mXr//kRl9UgUM
-	eDUiPoTzpxLUZm1lCokPK4yPloYZ0goOQM9qShPV/8eJn6Z4W6BayyAt5myu2T6pUoigmVRbJAW
-	HNnZ/Oi6rF3H88tflN2bEdTu3izj9axm8XOhkyZQWg70VxTCbkAVPavP2UT0emlJ36/aTCfKXTq
-	XVo9kF17J/LO7pdkuGFxnPUDobiy8XteKipXoAEFWXfRKhHLMqcFUaLLzcHgl8grrxDVRhujIWs
-	B2zaNqSXJiFgKJmEAaEKL6GSLZ8I1qPZ8KgVQl+/m9FzXriZQ40jzvogY6UCEUctyiCbDqPv1r9
-	oIMeZJ9NsRxxzMKTaYwMNHKxtucdQdM6lZkmkNvMb4cCOa9hBHqRVBTywMRaWwZhvNLsbWwk6fX
-	lsXs9fTZRLkxCLhUAeBwBzTg==
-X-Google-Smtp-Source: AGHT+IH/eS0bO2rVpOyBa4Ba5RIcrattnMm2FYtHvflh6MkB0GWk0k3OOmlqwAxRAezHhj8eTykIgA==
-X-Received: by 2002:a05:6000:184f:b0:425:86cf:43bb with SMTP id ffacd0b85a97d-4284e55735cmr2864362f8f.5.1761140069463;
-        Wed, 22 Oct 2025 06:34:29 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42855c2fb92sm2981201f8f.46.2025.10.22.06.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 06:34:29 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: pinctrl: toshiba,visconti: Drop redundant functions type
-Date: Wed, 22 Oct 2025 15:34:27 +0200
-Message-ID: <20251022133425.61988-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251022133425.61988-3-krzysztof.kozlowski@linaro.org>
-References: <20251022133425.61988-3-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1761140129; c=relaxed/simple;
+	bh=sdqYQHfzS9nTZ+Wid1WYCsfbD04MJZqLiL4+oME/ubw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mp1kv0ppltqJwE1USf5n1Xi2sJdxNh3WkBr7FUWm3cekNA5gpY2Fb/t/kMkXATEbwFK9czoCPYWA72tLkLJdUPx2b7UEEYrVd3Xe2S1a16R7H6PRXs0yJevPWwyQHNOLIOFnpictzjb1fnDr98ea3aRWUEpGfl6dcmnbnPpdakg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vTfD15OZ; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <70f8c6a1-cbb5-4a62-99aa-69b2f06bece2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761140115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vprp6Sprv0j2U+VrHGt+HSmR/LJpQhtuztUHl5jW5rg=;
+	b=vTfD15OZRMChVTcmQwOa7WBPKEdewiypH04vaDg6n1f79HcjPA/w9i6+/tDMH9/S32NHSS
+	Yh169jpPTrGI5oBZvykiFZ0EL4Dqa1+Gg58Z6AH2dxBYjfx3syekoh2IEWNaXEvPUVkw9A
+	z10CB584zYXDjOdt9GfYv+kUpZwXinQ=
+Date: Wed, 22 Oct 2025 21:34:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH 6.1.y] selftests/mm: Move default_huge_page_size to
+ vm_util.c
+To: Greg KH <greg@kroah.com>
+Cc: stable@vger.kernel.org, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, shuah@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Lance Yang <lance.yang@linux.dev>
+References: <20251022055138.375042-1-leon.hwang@linux.dev>
+ <2025102230-scoured-levitator-a530@gregkh>
+ <ff0b2bd4-2bb0-4d0b-8a9e-4a712c419331@linux.dev>
+ <2025102210-detection-blurred-8332@gregkh>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leon Hwang <leon.hwang@linux.dev>
+In-Reply-To: <2025102210-detection-blurred-8332@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Referenced pinmux-node.yaml schema already defines type for "functions"
-so $ref is redundant.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml    | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-index ce04d2eadec9..0eff0a0ee9e9 100644
---- a/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-@@ -42,7 +42,6 @@ patternProperties:
-       function:
-         description:
-           Function to mux.
--        $ref: /schemas/types.yaml#/definitions/string
-         enum: [i2c0, i2c1, i2c2, i2c3, i2c4, i2c5, i2c6, i2c7, i2c8,
-                spi0, spi1, spi2, spi3, spi4, spi5, spi6,
-                uart0, uart1, uart2, uart3, pwm, pcmif_out, pcmif_in]
--- 
-2.48.1
+On 2025/10/22 16:20, Greg KH wrote:
+> On Wed, Oct 22, 2025 at 04:08:45PM +0800, Leon Hwang wrote:
+>>
+>>
+>> On 22/10/25 15:40, Greg KH wrote:
+>>> On Wed, Oct 22, 2025 at 01:51:38PM +0800, Leon Hwang wrote:
+>>>> Fix the build error:
+>>>>
+>>>> map_hugetlb.c: In function 'main':
+>>>> map_hugetlb.c:79:25: warning: implicit declaration of function 'default_huge_page_size' [-Wimplicit-function-declaration]
+>>>>    79 |         hugepage_size = default_huge_page_size();
+>>>>       |                         ^~~~~~~~~~~~~~~~~~~~~~
+>>>> /usr/bin/ld: /tmp/ccYOogvJ.o: in function 'main':
+>>>> map_hugetlb.c:(.text+0x114): undefined reference to 'default_huge_page_size'
+>>>>
+>>>> According to the latest selftests, 'default_huge_page_size' has been
+>>>> moved to 'vm_util.c'. So fix the error by the same way.
+>>>>
+>>>> Reviewed-by: Lance Yang <lance.yang@linux.dev>
+>>>> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+>>>> ---
+>>>>  tools/testing/selftests/vm/Makefile      |  1 +
+>>>>  tools/testing/selftests/vm/userfaultfd.c | 24 ------------------------
+>>>>  tools/testing/selftests/vm/vm_util.c     | 21 +++++++++++++++++++++
+>>>>  tools/testing/selftests/vm/vm_util.h     |  1 +
+>>>>  4 files changed, 23 insertions(+), 24 deletions(-)
+>>>
+>>>
+>>> What commit id does this fix?  And again, why not just take the original
+>>
+>> Let me check which commit introduced the fix.
+>>
+>>> commits instead?
+>>
+>> I agree that taking the original commits would be preferable.
+>>
+>> However, it might involve quite a few patches to backport, which could
+>> be a bit of work.
+>
+> We can easily take lots of patches, don't worry about the quantity.  But
+> it would be good to figure out what caused this to break here, and not
+> in other branches.
+>
 
+Hi Greg,
+
+After checking with 'git blame map_hugetlb.c', the issue was introduced
+by commit a584c7734a4d (“selftests: mm: fix map_hugetlb failure on 64K
+page size systems”), which corresponds to upstream commit 91b80cc5b39f.
+This change appears to have caused the build error in the 6.1.y tree.
+
+Comparing several stable trees shows the following:
+
+- 6.0.y: not backported*
+- 6.1.y: backported
+- 6.2.y: not backported*
+- 6.3.y: not backported*
+- 6.4.y: not backported*
+- 6.5.y: not backported*
+- 6.6.y: backported
+- 6.7.y: backported
+
+Given this, it might be preferable to revert a584c7734a4d in 6.1.y for
+consistency with the other stable trees (6.0.y, 6.2–6.5.y).
+
+WDYT?
+
+Thanks,
+Leon
 
