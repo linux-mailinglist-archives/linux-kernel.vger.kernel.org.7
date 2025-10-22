@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-865615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC38BFD975
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8B5BFD981
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D151A0672D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAE719A7F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD122C15A9;
-	Wed, 22 Oct 2025 17:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D732C158E;
+	Wed, 22 Oct 2025 17:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="glxIbN8Q"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4W58T1S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4A037160;
-	Wed, 22 Oct 2025 17:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A26015687D;
+	Wed, 22 Oct 2025 17:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761154248; cv=none; b=U+Xl73M1EbiDwdiW33CBL3cQjIiGyPusBUJjRGs6K4KuD0ickVG7urLbw+ebms0c5ZCVF0F136T/Inz2s2fuHOF96jFAjD/HWr1mXKv9qwe4MvyJmMCvxuAWdshZSJ06vdqLLeZHjaBTskGOUUJweWK4asLDzy4mAvCH3Zx6hro=
+	t=1761154316; cv=none; b=MI2jsO+S2Izm3/Ro9xBWYl+REa2ManlOrUNd/kDqgB0XBtkyQSQG4GyZDRw0X456GqAWp6emoMVfX7MRlrBCmzplOPn2Vq+BbXrzXP95ZjnrcOchoJygMnWUnaxtXm0KNHiYNlTw35rhxQhu86/stvkpUzY2HQV+PCRxjVSowGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761154248; c=relaxed/simple;
-	bh=1qmY/CwBJD83zWmp5rWvoLYG9ya3rrBEJYcOdtURn9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CRukTAoiVztyUGq/rd102UDRs7UAsu0HApiTz7JaJGUVGq3WLpcjmwPOH67iZOep5H9uqqfVjejfCo7MndkMFzB7CYbKrfTg/oMX5wE13Xw4B/S/X1XXWA+HldZNNA5ZZ9QlknOG6nasXjlYSgfmm0y2PCru//lfGBD85KMkV5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=glxIbN8Q; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=CeC5OMKBMYRDelbMUjaS7F56dsB+qLx2c1x5CAej9Xk=; b=glxIbN8QhiARCJCgYFMGzZKmGB
-	LHkhlk24oX1rrwwapt8AOyvPPKlqODK0OMgTF+pVDD9HLLmFIDRlf8acW9OFzidRESCmNRKLZK9iJ
-	nWqdjjv+Bs/v7am+Zu/LUV4dYXRlk45eqo+FIcmrOuUgPOO0eefHt8ay6nVzyNFG/Ot8L0cQU8Ywb
-	NdSxIXMTtA2k4rr+GyWuSWlqTOopUcGfJysRaP2xwACp5+V39TVWzAN3qS2g7Pe29xBDgiXaK4D78
-	j9pdEJ7/eaHV89ylxU8a383FFaM35SlCFpZywak45mLd/l1zpQPGqYmsRdVvmBT8ZUlaa5EMId1zS
-	32z9IpEw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBcfd-00000003nIr-1V7h;
-	Wed, 22 Oct 2025 17:30:45 +0000
-Message-ID: <2997d8b9-a37a-4411-a5d8-b2cfcc3944b8@infradead.org>
-Date: Wed, 22 Oct 2025 10:30:44 -0700
+	s=arc-20240116; t=1761154316; c=relaxed/simple;
+	bh=fswy1rZQ0TLFPMGWN5XwIyYhQmDROE4MdTqHp9R8548=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZSXa9rqLLmpmtXs7tXn5iviVRBGtqzlVU3ntuBa9qrZMOaRZ3LzLE/ScuPCazHFO4YszLuFnRy5D206RGNe0HGpuQYg8/Mw1sMlALgDKaQown1OOqJIxKWxMV0l7nEtYDF5tpQKKdYI/yA+PEA/yyYFQrKYS8OTo3ksWiC+EHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4W58T1S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C831AC4CEE7;
+	Wed, 22 Oct 2025 17:31:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761154315;
+	bh=fswy1rZQ0TLFPMGWN5XwIyYhQmDROE4MdTqHp9R8548=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q4W58T1ScAlNqCXHBlJyvdgAHsiT/d+HYtZF/vFSI4Xdxe2f722w6JBJitnVBTveT
+	 nSxttsD9pW/7B4iMSolH7q9lZr2LyYMBb5aSLDQO3IbMTtj40qhCj+zUpyq57x6yC1
+	 YB3xIXqErAEx7gzsPQomhEsugG1c2vjegHBbqZ+K00JCg4d85hNaHVurIh2IHX1cO4
+	 ykLL4dNCsee+LXMTqXsR3YY7bNLPnRsQnG9gSNukSJAErAdCk9kLGvqzA7G3+JdUdT
+	 x5bxeo8l1ow/GGui21KgNSBJDaH2Bwn5DyIszC61UZ1dXVPkQd85eXMDH+gBtAkToZ
+	 xSnCiJh3dkjVA==
+Date: Wed, 22 Oct 2025 18:31:50 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Cc: neil.armstrong@linaro.org, jessica.zhang@oss.qualcomm.com,
+	airlied@gmail.com, simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dianders@chromium.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: display: panel: Add Tianma
+ TL121BVMS07-00 panel
+Message-ID: <20251022-lukewarm-commode-8be0ccc896c8@spud>
+References: <20251022124628.311544-1-yelangyan@huaqin.corp-partner.google.com>
+ <20251022124628.311544-2-yelangyan@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: process: Also mention Sasha Levin as
- stable tree maintainer
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Kernel Workflows <workflows@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org
-References: <20251022034336.22839-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251022034336.22839-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ilTfaP2sXYTf7i3+"
+Content-Disposition: inline
+In-Reply-To: <20251022124628.311544-2-yelangyan@huaqin.corp-partner.google.com>
 
 
+--ilTfaP2sXYTf7i3+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10/21/25 8:43 PM, Bagas Sanjaya wrote:
-> Sasha has also maintaining stable branch in conjunction with Greg
-> since cb5d21946d2a2f ("MAINTAINERS: Add Sasha as a stable branch
-> maintainer"). Mention him in 2.Process.rst.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+On Wed, Oct 22, 2025 at 08:46:27PM +0800, Langyan Ye wrote:
+> Add device tree bindings for the Tianma TL121BVMS07-00 12.1-inch
+> MIPI-DSI TFT LCD panel. The panel is based on the Ilitek IL79900A
+> controller.
+>=20
+> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
 
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+--ilTfaP2sXYTf7i3+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Now matches the MAINTAINERS file.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkVBgAKCRB4tDGHoIJi
+0lC7AQDmkB81fazzC9jXb8LdRa2lTC16MefC7XvYeA1h68HhQgD+O8lHMyMHtoK9
+o/xLobdgK9idVdHl1BIT5BRFt0DcXgg=
+=ACIW
+-----END PGP SIGNATURE-----
 
-> ---
->  Documentation/process/2.Process.rst | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/process/2.Process.rst b/Documentation/process/2.Process.rst
-> index 8e63d171767db8..7bd41838a5464f 100644
-> --- a/Documentation/process/2.Process.rst
-> +++ b/Documentation/process/2.Process.rst
-> @@ -99,8 +99,10 @@ go out with a handful of known regressions, though, hopefully, none of them
->  are serious.
->  
->  Once a stable release is made, its ongoing maintenance is passed off to the
-> -"stable team," currently Greg Kroah-Hartman. The stable team will release
-> -occasional updates to the stable release using the 9.x.y numbering scheme.
-> +"stable team," currently consists of Greg Kroah-Hartman and Sasha Levin. The
-> +stable team will release occasional updates to the stable release using the
-> +9.x.y numbering scheme.
-> +
->  To be considered for an update release, a patch must (1) fix a significant
->  bug, and (2) already be merged into the mainline for the next development
->  kernel. Kernels will typically receive stable updates for a little more
-> 
-> base-commit: 0aa760051f4eb3d3bcd812125557bd09629a71e8
-
--- 
-~Randy
+--ilTfaP2sXYTf7i3+--
 
