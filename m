@@ -1,221 +1,135 @@
-Return-Path: <linux-kernel+bounces-865703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BA7BFDC97
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC91BFDCB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780301886E06
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 224AB3A431D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C122FE067;
-	Wed, 22 Oct 2025 18:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAA532F770;
+	Wed, 22 Oct 2025 18:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="etW6EfiD"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EP15c+8Z"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ACF2D8DCA
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1340303C80
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761156773; cv=none; b=UVn2jqfVlhUxtFSAelIad0S4SLlfyYLuzR4ltORhS8YsbMq2vzr49YDyDtiPrWYfGF0Rqf/vYpeO8JsKAIsr+esvuosLei3xhSRnPbUn9v2ADcAS6bq78J/o6hdMWkzQwAMN4jtrYg+gpYt/oJB0l4Cgfa0RC4WNUR2rlTex27E=
+	t=1761156918; cv=none; b=Ie6bWN0EFhesn78agE4kzMsg3yevDp2Fsvo2zBlA2U62+NQyhv/yO3DOigmuws2JTLWcG3CddFGineG0zt02Hnfe0Uetp/eytYWnFC+PFuDR8+LB1cDWJd5nRljlb1o+dMSHiWppOzPW9wpGqGRnWFQYR3YYyI1hdE6Ewx/aWpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761156773; c=relaxed/simple;
-	bh=UmH1svExxe3696H3/lrjYo2eB/zUc0gH+XKx1eKRj0s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FGXOyzSMk5n61AN3KbgdP+bHFRSrl5rW5BtAuW154cWsnlBHwIbvwbqUv+i/88w+WOk14Re/a8zk5HQ9tOBqOpnhMTj4Svw5l6lWel4cT5EQymMuRCiSDXgSH+llsdrhLyxkRljyJMy3YEyGm9X3YyvpO6ol+2jaJkwnv6nLU74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=etW6EfiD; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb864fe90so2978497a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761156771; x=1761761571; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V5F7t24lC7jgleOK3FW+MwSMdfYKm48DJa8i0z/06to=;
-        b=etW6EfiDejJvXtpxWOQJZYlWvxxj1JxUybFbq1lWOBPbnJmETVlWVGxs15x0QxnoPv
-         lBGOB5YJ5jTEKflzBYX0BtZcr5xLOxQD8osloTdp8J2TOS+e/ON3ID57MEmjW6uAYDTf
-         CP56fGwsoCeg4306KgqPlIzodQ+/kZmxvuh+62eIB+cJRaumZNYNuwaLvqgKuDEpT0T/
-         B+YmNwDGcggZ/epE2PnmfZd3y5apLX/DDD17Q4TI6Vi7E3FN9u3szYmvE/9J1f8yChL9
-         utb+QyuS2Y4HZVrYtEA0YKamfCmdM7sC+jD9wgfjOd0ur0Lp0/TwbY+9IcOyMaFtpnNv
-         yAiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761156771; x=1761761571;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V5F7t24lC7jgleOK3FW+MwSMdfYKm48DJa8i0z/06to=;
-        b=eD11AufV2FmoqBnIEhDyZymG76XXgfPPU/Vs1Y+fmBoZUb08esQLG6NhS74sR0b2G1
-         BTCuRLaEeZfc0L1DhnC7ug6c1TCJr/z6JJKqHNHGFLlX3BDvlSCC8JVsXnaamYSFYhyP
-         uFdSPzy+uONvXgjKWR+mf0NwwnL0jdeyBkvTFNky5UKnZVzut/xo3R3fWFRj/4ivMb9V
-         bZapByI+1dAiKzzFNCUvXV+bN/qF9BMNOHkiQu80YYVqC8u7KhJHCQrYBFBUbl4hRIC3
-         hHba8a82hFMIXjo5c/lpwdVk6GiFt8UdvlYlrME0dbZ/U1u6nhQPh5C6EDZCs7JCxcRb
-         AeYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5QdJg1xfr1O6VcBOeBmDmPLC4yjhnd3xKT6L0a8rF/Sb72nxoddsGBFzZi/WBqHq9yOEdUfH8qV/6b0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmwerpDJRW2R8tVWnxXOyzSEZJaNOxLqnqSc6NOmNoNGt7e7bd
-	z/Id2rz53S0MQUMDzWMtecyXFrqMiUmm/R8svw3Fwb8Mq4/8BBHvuZO0zUUjxYOsPUwREB2yyPZ
-	joAbRaw==
-X-Google-Smtp-Source: AGHT+IFAZr0wpbGx7b8wp6kFow05WwkzX+gl9q/tJGKoWGxIdF2WxHsL5OqcbuH+85tLuHrz8145UQS6wJM=
-X-Received: from pjbnm19.prod.google.com ([2002:a17:90b:19d3:b0:33d:cdb9:9adf])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f8d:b0:33b:be31:8193
- with SMTP id 98e67ed59e1d1-33bcf85d59dmr30647063a91.6.1761156768896; Wed, 22
- Oct 2025 11:12:48 -0700 (PDT)
-Date: Wed, 22 Oct 2025 11:12:47 -0700
-In-Reply-To: <aPiQYBoDlUmrQxEw@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1761156918; c=relaxed/simple;
+	bh=MXeNLNddQ4jvxUTQVwovWtDMVHVwhiulywOctMNy2mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SwMs/yw9Lo1Wnz8HBqRBX42T8IkETV9cxegL+NoDXaX73ZasgevtpHoYTA/d1TPcU05tGKH7UaSp1L57v0jpA2fH2cxHzdfSXHRS/lcWcUAuqC3MCOVT9KRH7BrLqaENRzUxd0AMW7u7CGjMtGON04keuEEyYUYhF/vAWj2OHxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EP15c+8Z; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761156904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bjqzvxTmikL5FOmQCQrIY1gpsRGBxx0jwN7oqp/m/lM=;
+	b=EP15c+8ZpJlE8r0PhiZNqT3KJdeNs+10Yt6iGptu13afiLnb8HFR7i6FnQZKdTn4yZU/ZI
+	GUEGrDxO+YOSrVKQLKbYI6Epo2v5K2jLVJKhXhWWLAtyYNByFC6uZVrBEzzT1CJh3P2ozD
+	gU48vjKCer659VKfH4kJpnTTrf/oibU=
+Date: Wed, 22 Oct 2025 11:14:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-5-seanjc@google.com>
- <aPcG3LMA0qX5H5YI@yzhao56-desk.sh.intel.com> <aPe2pDYSpVFxDRWv@google.com> <aPiQYBoDlUmrQxEw@yzhao56-desk.sh.intel.com>
-Message-ID: <aPken0s-0MfdSd5o@google.com>
-Subject: Re: [PATCH v3 04/25] KVM: x86/mmu: Add dedicated API to map
- guest_memfd pfn into TDP MMU
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Vishal Annapurve <vannapurve@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Ackerley Tng <ackerleytng@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for conditional
+ jumps on same register
+Content-Language: en-GB
+To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+ john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ paul.chaignon@gmail.com, m.shachnai@gmail.com, luis.gerhorst@fau.de,
+ colin.i.king@gmail.com, harishankar.vishwanathan@gmail.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: Kaiyan Mei <M202472210@hust.edu.cn>, Yinhao Hu <dddddd@hust.edu.cn>
+References: <20251022164457.1203756-1-kafai.wan@linux.dev>
+ <20251022164457.1203756-2-kafai.wan@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20251022164457.1203756-2-kafai.wan@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 22, 2025, Yan Zhao wrote:
-> On Tue, Oct 21, 2025 at 09:36:52AM -0700, Sean Christopherson wrote:
-> > On Tue, Oct 21, 2025, Yan Zhao wrote:
-> > > On Thu, Oct 16, 2025 at 05:32:22PM -0700, Sean Christopherson wrote:
-> > > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > > > index 18d69d48bc55..ba5cca825a7f 100644
-> > > > --- a/arch/x86/kvm/mmu/mmu.c
-> > > > +++ b/arch/x86/kvm/mmu/mmu.c
-> > > > @@ -5014,6 +5014,65 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
-> > > >  	return min(range->size, end - range->gpa);
-> > > >  }
-> > > >  
-> > > > +int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
-> > > > +{
-> > > > +	struct kvm_page_fault fault = {
-> > > > +		.addr = gfn_to_gpa(gfn),
-> > > > +		.error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS,
-> > > > +		.prefetch = true,
-> > > > +		.is_tdp = true,
-> > > > +		.nx_huge_page_workaround_enabled = is_nx_huge_page_enabled(vcpu->kvm),
-> > > > +
-> > > > +		.max_level = PG_LEVEL_4K,
-> > > > +		.req_level = PG_LEVEL_4K,
-> > > > +		.goal_level = PG_LEVEL_4K,
-> > > > +		.is_private = true,
-> > > > +
-> > > > +		.gfn = gfn,
-> > > > +		.slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn),
-> > > > +		.pfn = pfn,
-> > > > +		.map_writable = true,
-> > > > +	};
-> > > > +	struct kvm *kvm = vcpu->kvm;
-> > > > +	int r;
-> > > > +
-> > > > +	lockdep_assert_held(&kvm->slots_lock);
-> > > Do we need to assert that filemap_invalidate_lock() is held as well?
-> > 
-> > Hrm, a lockdep assertion would be nice to have, but it's obviously not strictly
-> > necessary, and I'm not sure it's worth the cost.  To safely assert, KVM would need
-> Not sure. Maybe just add a comment?
-> But even with kvm_assert_gmem_invalidate_lock_held() and
-> lockdep_assert_held(&kvm->slots_lock), it seems that
-> kvm_tdp_mmu_map_private_pfn() still can't guarantee that the pfn is not stale.
 
-At some point we have to assume correctness.  E.g. one could also argue that
-holding every locking in the universe still doesn't ensure the pfn is fresh,
-because theoretically guest_memfd could violate the locking scheme.
 
-Aha!  And to further harden and document this code, this API can be gated on
-CONFIG_KVM_GUEST_MEMFD=y, as pointed out by the amazing-as-always test bot:
+On 10/22/25 9:44 AM, KaFai Wan wrote:
+> When conditional jumps are performed on the same register (e.g., r0 <= r0,
+> r0 > r0, r0 < r0) where the register holds a scalar with range, the verifier
+> incorrectly attempts to adjust the register's min/max bounds. This leads to
+> invalid range bounds and triggers a BUG warning:
+>
+> verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds violation u64=[0x1, 0x0] s64=[0x1, 0x0] u32=[0x1, 0x0] s32=[0x1, 0x0] var_off=(0x0, 0x0)
+> WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731 reg_bounds_sanity_check+0x163/0x220
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G        W           6.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
+> Tainted: [W]=WARN
+> Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> RIP: 0010:reg_bounds_sanity_check+0x163/0x220
+> Call Trace:
+>   <TASK>
+>   reg_set_min_max.part.0+0x1b1/0x360
+>   check_cond_jmp_op+0x1195/0x1a60
+>   do_check_common+0x33ac/0x33c0
+>   ...
+>
+> The issue occurs in reg_set_min_max() function where bounds adjustment logic
+> is applied even when both registers being compared are the same. Comparing a
+> register with itself should not change its bounds since the comparison result
+> is always known (e.g., r0 == r0 is always true, r0 < r0 is always false).
+>
+> Fix this by adding an early return in reg_set_min_max() when false_reg1 and
+> false_reg2 point to the same register, skipping the unnecessary bounds
+> adjustment that leads to the verifier bug.
+>
+> Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
+> Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
+> Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.kaiyanm@hust.edu.cn/
+> Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
+> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> ---
+>   kernel/bpf/verifier.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 6d175849e57a..420ad512d1af 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct bpf_verifier_env *env,
+>   	if (false_reg1->type != SCALAR_VALUE || false_reg2->type != SCALAR_VALUE)
+>   		return 0;
+>   
+> +	/* If conditional jumps on the same register, skip the adjustment */
+> +	if (false_reg1 == false_reg2)
+> +		return 0;
 
-https://lore.kernel.org/all/202510221928.ikBXHGCf-lkp@intel.com
+Your change looks good. But this is a special case and it should not
+happen for any compiler generated code. So could you investigate
+why regs_refine_cond_op() does not work? Since false_reg1 and false_reg2
+is the same, so register refinement should keep the same. Probably
+some minor change in regs_refine_cond_op(...) should work?
 
-We could go a step further and gate it on CONFIG_KVM_INTEL_TDX=y, but I don't
-like that idea as I think it'd would be a net negative in terms of documenation,
-compared to checking CONFIG_KVM_GUEST_MEMFD.  And in general I don't want to set
-a precedent of ifdef-ing common x86 based on what vendor code _currently_ needs
-an API.
+> +
+>   	/* fallthrough (FALSE) branch */
+>   	regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode), is_jmp32);
+>   	reg_bounds_sync(false_reg1);
 
-> e.g., if hypothetically those locks were released and re-acquired after getting
-> the pfn.
-> 
-> > to first assert that the file refcount is elevated, e.g. to guard against
-> > guest_memfd _really_ screwing up and not grabbing a reference to the underlying
-> > file.
-> > 
-> > E.g. it'd have to be something like this:
-> > 
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 94d7f32a03b6..5d46b2ac0292 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -5014,6 +5014,18 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
-> >         return min(range->size, end - range->gpa);
-> >  }
-> >  
-> > +static void kvm_assert_gmem_invalidate_lock_held(struct kvm_memory_slot *slot)
-> > +{
-> > +#ifdef CONFIG_PROVE_LOCKING
-> > +       if (WARN_ON_ONCE(!kvm_slot_has_gmem(slot)) ||
-> > +           WARN_ON_ONCE(!slot->gmem.file) ||
-> > +           WARN_ON_ONCE(!file_count(slot->gmem.file)))
-> > +               return;
-> > +
-> > +       lockdep_assert_held(file_inode(&slot->gmem.file)->i_mapping->invalidate_lock));
-> 	  lockdep_assert_held(&file_inode(slot->gmem.file)->i_mapping->invalidate_lock);
-> > +#endif
-> > +}
-> > +
-> >  int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
-> >  {
-> >         struct kvm_page_fault fault = {
-> > @@ -5038,6 +5050,8 @@ int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
-> >  
-> >         lockdep_assert_held(&kvm->slots_lock);
-> >  
-> > +       kvm_assert_gmem_invalidate_lock_held(fault.slot);
-> > +
-> >         if (KVM_BUG_ON(!tdp_mmu_enabled, kvm))
-> >                 return -EIO;
-> > --
-> > 
-> > Which I suppose isn't that terrible?
-> Is it good if we test is_page_fault_stale()? e.g.,
-
-No, because it can only get false positives, e.g. if an mmu_notifier invalidation
-on shared, non-guest_memfd memory.  Though a sanity check would be nice to have;
-I believe we can simply do:
-
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index c5734ca5c17d..440fd8f80397 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1273,6 +1273,8 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
-        struct kvm_mmu_page *sp;
-        int ret = RET_PF_RETRY;
- 
-+       KVM_MMU_WARN_ON(!root || root->role.invalid);
-+
-        kvm_mmu_hugepage_adjust(vcpu, fault);
- 
-        trace_kvm_mmu_spte_requested(fault);
 
