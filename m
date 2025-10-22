@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-865617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EA1BFD9BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:36:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77069BFD9C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364733A957D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:33:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40153AC6BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83582C2366;
-	Wed, 22 Oct 2025 17:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDB2280018;
+	Wed, 22 Oct 2025 17:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foNz52Xi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMp9SCMN"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD79280018;
-	Wed, 22 Oct 2025 17:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365BD2C21E5
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761154387; cv=none; b=ZOzvkznv4X8H7H39nTh8csOCfyCZGAbXR8i2n8gRYdYHPNUox5iufKeidiAzSspZRxj23CRaL1pod9hY9trPqXTFhoEDdlK9RuHVKfRXs18F1F2D+rphpbBo3jKyhf5yJybprdFU1lkHS5CobsN4t7iAObTYZwSdldYPoautbDw=
+	t=1761154395; cv=none; b=U52WmSzFGkVAFWdAhKrMzRk7z3K5BR4t6AHaVvZ5aLydrxFRchdLSwyqJNalSimbR/Kx9v7gSOQqTAef0mKyxe//8P8yB8DfW7xYSb1kZL6JycNJ9unFhng4rpSpOlqesXaILt/ifp7AFdx+gW8h2pYmEw6SFfNMPV2xL2KZe5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761154387; c=relaxed/simple;
-	bh=oQRSxir/QdvjZqD2ly4pH/q7y99FN0+/QgBeYN0bwZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBW4LdbuTRQqJKzmd/WINxWSWiebmiWuIbtoRlYwwk0RnXi6cT3yaevImiSZQH3BgzVK4dOMZBvm4XAAi5JktFW1V9MY9/5eKe1PxV8flDW+DqZsvR+0W9tF108FddINFOi5++GAkAcV6r9QTdjDmFYawhdTxKlXfj91qMTdJD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foNz52Xi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A93C4CEE7;
-	Wed, 22 Oct 2025 17:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761154386;
-	bh=oQRSxir/QdvjZqD2ly4pH/q7y99FN0+/QgBeYN0bwZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=foNz52Xiw3gDLusd1OIoklkvuJY5v8Fuj3Ph0PW57xr0dJ2SYep47tUF5Guf2EwnO
-	 maIJAtQ34TehZrhN/hci0RLzLPHZwFvtUPJT1Rh9IpWlBsSv4Mh1w9yBW70pVzMalo
-	 3dUfJ34YTOvyvmJkVabzTwrYkFBW+2VK9k+7EfPgGWwrKmOfGBFmyKk1GHpXmi9anP
-	 j9EjTyNhlBlf0+Ou3X+Kui5UW+WKIDOn03eAhUF9teBHCAwTCCnVfmsg9bcn8QAcrV
-	 cA3pIFNO1t8X6PWCm1d8fAUpYixvC/Tr1rRTvuj7j012n3JmM29gMCFOHKRhdfTuFz
-	 lOeU91gkmHzEw==
-Date: Wed, 22 Oct 2025 18:33:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Subject: Re: [PATCH net-next v2 1/5] dt-bindings: net: cdns,macb: add
- Mobileye EyeQ5 ethernet interface
-Message-ID: <20251022-gladly-sulfate-de2eb50351aa@spud>
-References: <20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com>
- <20251022-macb-eyeq5-v2-1-7c140abb0581@bootlin.com>
+	s=arc-20240116; t=1761154395; c=relaxed/simple;
+	bh=X6lF8zIJjF7s5ROui5zboNzCSWi7qJozziFtgW7mR/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pWaJeuO/OZ9qQlRQTgY59uSve7U9tBEI36jNcIQuuiGP/kb3vFqPg4vZzFE6MzWUAVU8ksraSRfUSGs5ZfRgXgtwvUl74QBoSWY6KO3X3yh9Tj9ybIoWmgE2niuuhm+FobHCOMaghWczbDUV3ytm+LZPNSUbGjB4RV8qjtjF4yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMp9SCMN; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-781997d195aso5451771b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761154393; x=1761759193; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OroZpdIC1yf+MDvOR3gnvSgvT2N1FiEkEXy4YQzpI70=;
+        b=hMp9SCMNjvPhuLTXuw6lmv3mrsZRWO+t91neV44I7KqAWMkCE78QUmXOY0oGm+Pfyt
+         rTme2YCzB/NmRU9R8kLLiCLPvMrq9St5MpLMTyJUP3QrRrqhDR1K9bhxMacnVUlwGHKZ
+         cEPhnBz5w8PmDeOGFznaQGCwgkmbp7WDhmlJV4y0vsSr+WvN1cpe18LBQ0otkcvpFDqT
+         p/4xoN2hFMiNaQBt5uzAMN3qCIF0vW0gt2C/UzhV5pXlc22k6cIej1p2m+ReBFWqizvG
+         Dn70GyDs29YoOyASX+b/8DPXxhtkqf7gW9QJKH8FwnqRLmHNbzmbE5KjOj52HcDnnIwH
+         ZkeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761154393; x=1761759193;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OroZpdIC1yf+MDvOR3gnvSgvT2N1FiEkEXy4YQzpI70=;
+        b=pXiKpXjb7GImFfXjA8j9DkUchColaPrWaG+kb3Npy02KKN8K4EAHZkRftQLf1XykFl
+         u21N+h8aqid1w7FeERrVGa35PfUjN6RofHUoDvQI3q4nmtkCly3TgMldY/xUkbSAY4xj
+         yDSS1UV+uWuLJ2EGo95XT9YNO+g6MgotoGTf/yowHHMjkJl1f5mwlnvXPTlFbwAOS0ik
+         LgQ/PtzHlK0iBSgWayyeWQbl2kakVnv0uwq1Fj/ikcaP+1bPb99U2gznuP5/G8n09YE7
+         1iyvZ+D//QFNqtRRdmnAj+9Va9SdupIQ0ZRh9uWRUpRy/X50JeCsyhMlv8qyBSEzVGF7
+         RzgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUREoeB5j/FPsO4eAkZa/y8awlDMWq1KnO2iWMbW27Mt3I7EHRTuSujJ1zPHFGNFYgKYvRHrMtx6VnhDPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqI+fjdlu4hN2tMbTNXdKbEb1rqYB01VGDZRwK7++zHHNhtJzi
+	yZb+p2Y0GszdHKt1L6NqWgFjMSKdlrftXZpGUi5+wgSuu8pPA+pbTQVA
+X-Gm-Gg: ASbGnctoxjmWN/tCdffjiRw2cFmYzcNDmbgXlKvCASwo9J+LirLGcmWaDSW9vnxrBzs
+	ANfaYQ7Xuka9axhHgs0GYDSydUu6gM57adQh/Em2Nyz517Iq569iwhpLMCTMO72ncsZsFcbDUiB
+	OKgYL8fBdOb7bt5BqA/Kc0Ak2mvybekA8VSL1UlruVEW/Ru8CHCRH0slS4kGjNFFFlL3vOjS/vp
+	uGljacNfpbZpM8mOI7pfYUiE9LvxpJGkmuVMRILOPQdxh1l+TIrIW+6dKGA2oyww+jDDHC66TWF
+	YTYpfRQmgBkPFAagFyyfbOYnipGuhsLVnECPf6xYatzmydOBCJSJEJgd1dbedZq29aegUyiTq3v
+	18zDJg+PoZc7j6roe+JLnSEa/KmEhTH82Uhd5M4Fujy6lJ40VbQ1Gx6/xsR/O3sgBYHc0DJ/GHR
+	6TkvlhRLeacLC4nCRnxsSY6kA3R5Y+ehn2lcGSSA==
+X-Google-Smtp-Source: AGHT+IH2Iq8OrJ8QYXSfjxY6+hOLsa6tF8yaRUdubPLGMOGZUqcxqkOZLieRbhpzfe7R9WCuEBEiww==
+X-Received: by 2002:a05:6a20:a11a:b0:262:1611:6528 with SMTP id adf61e73a8af0-334a85fdab2mr28401979637.29.1761154393201;
+        Wed, 22 Oct 2025 10:33:13 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff349bcsm15116989b3a.17.2025.10.22.10.33.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 10:33:12 -0700 (PDT)
+Message-ID: <bd847f60-5d93-4924-8e92-ec0e3b809817@gmail.com>
+Date: Wed, 22 Oct 2025 10:33:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Jlj1uK8prG7GukV4"
-Content-Disposition: inline
-In-Reply-To: <20251022-macb-eyeq5-v2-1-7c140abb0581@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/135] 6.12.55-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251022060141.370358070@linuxfoundation.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20251022060141.370358070@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/22/25 01:19, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.55 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 24 Oct 2025 06:01:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.55-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---Jlj1uK8prG7GukV4
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-On Wed, Oct 22, 2025 at 09:38:10AM +0200, Th=E9o Lebrun wrote:
-> Add "cdns,eyeq5-gem" as compatible for the integrated GEM block inside
-> Mobileye EyeQ5 SoCs. It is different from other compatibles in two main
-> ways: (1) it requires a generic PHY and (2) it is better to keep TCP
-> Segmentation Offload (TSO) disabled.
->=20
-> Signed-off-by: Th=E9o Lebrun <theo.lebrun@bootlin.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---Jlj1uK8prG7GukV4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkVTAAKCRB4tDGHoIJi
-0qn9AP9qOGErm2izzkTfDEmEPukpHIXAitFt5HCPpzDaAZJv0QD/WoGtPyOi/e/7
-+y3mvlMhXtWtSaRWQE+lQ+2F+CKVtAs=
-=rLJz
------END PGP SIGNATURE-----
-
---Jlj1uK8prG7GukV4--
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
