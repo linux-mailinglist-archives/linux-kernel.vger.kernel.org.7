@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-865083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2436ABFC2DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:35:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DDDBFC246
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 77A05543A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0309188800D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2949F34679D;
-	Wed, 22 Oct 2025 13:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DD2346E4B;
+	Wed, 22 Oct 2025 13:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZYwOhBus"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bO7usbTc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zD3u2out"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804512FD664;
-	Wed, 22 Oct 2025 13:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFD4346E40;
+	Wed, 22 Oct 2025 13:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761139760; cv=none; b=sD41541n8wH9QOmimw6taoPbC6cDRBvEQ5boLyuSME0eYnssMY9eCDo4lU50H/3dnwpRHWR49LN7rJX8mbm8+Ps2MRLIpKMz9EDi4fjY7p/y01ZtWjStTe2Po2KZ38qsXpQ0k3I78BeAamlyknbcWb07qq+AXSCOtW/lc647npo=
+	t=1761139741; cv=none; b=GHnFEqNxtzeHnlqzT+2LnF0vTBjJ4h5Dpbe54FviTEjhdDPcP3bSMy1o/6fb4Eackd/lC6OUE43UZWO4PYUrs3uqw7kvIfC+VbxMJMPKRCJ4K61mJhb3/NlfLTODToPwr8YTv8ZwqT9DR7tbAhrvHy4zAexL5eOdAcMzmY+Ohok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761139760; c=relaxed/simple;
-	bh=9MWwfLqVy2MR8ym9agdxv8YD0Vk1zDzt40KD44jYGh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUz01YVfdjXX53pNkV+uxIEGmpleb5gQXjqUmT8FJNrJ46i3wld8dA5Pjn/U6/eRHt/xadhNTQjzmI6lyUd0FTlnFioP9FxU0i6yudqt2qf9gjVsG9Q7aNVNc+5ImE1qZnG/V+YEfb90UHxQbPIUNJZ9htHLUPWJ5Js/CSLKaUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZYwOhBus; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vI5ygdM2fUq0WhLkjqvyWdwalTGXtImKgD/K2E+hX2M=; b=ZYwOhBusiUOSHhKLetWTNJNMjy
-	bOFMKbx4lkmtmrO7n86UGdT9Kf1mBZ2CQzanXcplCmrt35Ffy7u8kJ4PXpYYAoyQ7w9LT6BL8cQsu
-	PW0GEbL2LjAVq6xWvTlmWE/UmTIr5UKBTZDdwQTFoL+yMxe+9raqn9/DMtx0KaH9xWUFiN5fT1cMA
-	9Uyt/h1JzFxUl6Gz+WZVYYAqcbxOJexz/7zuC7PQu03jBwQtGNfpf7iTJUvMlJo4svTajaxMxLcPG
-	hZ9H7QIEIEqI2UQ3wSDJ6YzYR2PArEaH+qCVC3MCNssf15mS9nUiFou3pKuZjw17TFGNTrV218T/Z
-	aj9uPCFQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBYtb-00000006NrR-0yQr;
-	Wed, 22 Oct 2025 13:28:56 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BF53130039F; Wed, 22 Oct 2025 15:28:55 +0200 (CEST)
-Date: Wed, 22 Oct 2025 15:28:55 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V4 00/12] uaccess: Provide and use scopes for user access
-Message-ID: <20251022132855.GP4067720@noisy.programming.kicks-ass.net>
-References: <20251022102427.400699796@linutronix.de>
+	s=arc-20240116; t=1761139741; c=relaxed/simple;
+	bh=9s6GppBZJ9Lqv+qFpBX/EN15DVQCtnFtjFGeL4KRi6o=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PKx6/SxI+L1XE0dev+8w8/JfZCh2o81vvtnt0OJEGescx14BQdmWNe9AHKNMETgjZKQqkgneQ4yOwgkt5r5l0NmGkKCfd3ToToAXVcztXqp2zbtEHELTEZFVanegmg8uXTFubce21b/n6F3EhFCp3C6ayq5uagPU++IhETNFHGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bO7usbTc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zD3u2out; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 22 Oct 2025 13:28:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761139738;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bcobHMeCH83PQx+kmH3PajT/fhLxG+2BrCH7Odp6uXE=;
+	b=bO7usbTcgvhnX9hsQsOlXtuGrim9j6W15laiG4LoaH/1EWNOGNLeOzRK46Hx/HOf21GUpC
+	ef1yKqTUO3sWwDZy9piUqnRZzEYv+ycO6gZI6TY+i8AF0g9spZCYoYgTzvYDtEG3/nIN5n
+	4WCIJCkptJDouGouP3oyw3GSsa8D3XUYw58A6064UMUhG+3xN82FgzTJpTh7P/OGAK79e5
+	8ltWNYzaDFf5VTMviiBufEOTsL1JuvUY/uCAewszPXd8y2QzexZhTAVBMiB9Gh3XaBumAV
+	27GKWJwk+XQu59yXeDXrrnNOVNA40OTAwJqAw+2N9JtwZrljg9m6dxJ63d0dfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761139738;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bcobHMeCH83PQx+kmH3PajT/fhLxG+2BrCH7Odp6uXE=;
+	b=zD3u2out5IhGNd5aD+urJDqI1ItspwaaDWJEd7r5jmTWo/EO7Qoo1NN8CgY3ECnUmwd6yD
+	OyywKpl5O4xs3SBg==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/core] module: Fix device table module aliases
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>,
+ Cosmin Tanislav <demonsingur@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ "Chen-Yu Tsai" <wenst@chromium.org>, Anders Roxell <anders.roxell@linaro.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <e52ee3edf32874da645a9e037a7d77c69893a22a.1760982784.git.jpoimboe@kernel.org>
+References:
+ <e52ee3edf32874da645a9e037a7d77c69893a22a.1760982784.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022102427.400699796@linutronix.de>
+Message-ID: <176113973663.2601451.416165192460763876.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 02:49:02PM +0200, Thomas Gleixner wrote:
+The following commit has been merged into the objtool/core branch of tip:
 
-> Thomas Gleixner (12):
->       ARM: uaccess: Implement missing __get_user_asm_dword()
->       uaccess: Provide ASM GOTO safe wrappers for unsafe_*_user()
->       x86/uaccess: Use unsafe wrappers for ASM GOTO
->       powerpc/uaccess: Use unsafe wrappers for ASM GOTO
->       riscv/uaccess: Use unsafe wrappers for ASM GOTO
->       s390/uaccess: Use unsafe wrappers for ASM GOTO
->       uaccess: Provide scoped user access regions
->       uaccess: Provide put/get_user_scoped()
->       futex: Convert to scoped user access
->       x86/futex: Convert to scoped user access
->       select: Convert to scoped user access
+Commit-ID:     9025688bf6d427e553aca911308cd92e92634f51
+Gitweb:        https://git.kernel.org/tip/9025688bf6d427e553aca911308cd92e926=
+34f51
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Mon, 20 Oct 2025 10:53:40 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 22 Oct 2025 15:21:55 +02:00
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+module: Fix device table module aliases
+
+Commit 6717e8f91db7 ("kbuild: Remove 'kmod_' prefix from
+__KBUILD_MODNAME") inadvertently broke module alias generation for
+modules which rely on MODULE_DEVICE_TABLE().
+
+It removed the "kmod_" prefix from __KBUILD_MODNAME, which caused
+MODULE_DEVICE_TABLE() to generate a symbol name which no longer matched
+the format expected by handle_moddevtable() in scripts/mod/file2alias.c.
+
+As a result, modpost failed to find the device tables, leading to
+missing module aliases.
+
+Fix this by explicitly adding the "kmod_" string within the
+MODULE_DEVICE_TABLE() macro itself, restoring the symbol name to the
+format expected by file2alias.c.
+
+Fixes: 6717e8f91db7 ("kbuild: Remove 'kmod_' prefix from __KBUILD_MODNAME")
+Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reported-by: Mark Brown <broonie@kernel.org>
+Reported-by: Cosmin Tanislav <demonsingur@gmail.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Cosmin Tanislav <demonsingur@gmail.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Mark Brown <broonie@kernel.org>
+Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Link: https://patch.msgid.link/e52ee3edf32874da645a9e037a7d77c69893a22a.17609=
+82784.git.jpoimboe@kernel.org
+---
+ include/linux/module.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/module.h b/include/linux/module.h
+index e135cc7..d80c3ea 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -251,10 +251,11 @@ struct module_kobject *lookup_or_create_module_kobject(=
+const char *name);
+  */
+ #define __mod_device_table(type, name)	\
+ 	__PASTE(__mod_device_table__,	\
++	__PASTE(kmod_,			\
+ 	__PASTE(__KBUILD_MODNAME,	\
+ 	__PASTE(__,			\
+ 	__PASTE(type,			\
+-	__PASTE(__, name)))))
++	__PASTE(__, name))))))
+=20
+ /* Creates an alias so file2alias.c can find device table. */
+ #define MODULE_DEVICE_TABLE(type, name)					\
 
