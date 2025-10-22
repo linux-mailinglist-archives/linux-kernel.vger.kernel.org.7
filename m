@@ -1,157 +1,160 @@
-Return-Path: <linux-kernel+bounces-864616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0AABFB2FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:38:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDA4BFB30D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F74E4E37E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:38:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533A1482BAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2563E295DB8;
-	Wed, 22 Oct 2025 09:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPK+dzsm"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F94A2F39B1;
+	Wed, 22 Oct 2025 09:38:48 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DA928488D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECD328DB49
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761125889; cv=none; b=CBYMAiEJOB0pQmmX74PRsj76CsKnQ6w8/3XwuqD44iJpIz/FCYCuiSSztBj4erjtTmdzxz9J9iUWIUOR6Nb/c8E/9LnXFLxWpLysb42sXOtU2GBeaRxU2vNLENIfOE6qxGJa2eo6x1JxmjK5i4hgOMldkocf9AxDETybDTmDGG0=
+	t=1761125928; cv=none; b=djwfVqAbkSKl/PF194eQr8wY8GGJB2nRvTf7MeL23kNi4xb4fkE8It0+Pn7PAVNUBp84jxyO+2brqTMHxDdkKKeWXM5M0y8LOFeKLP8t0hLWO3kNqK/+hQNSaTV22gHX53woY8sJywT+gp5CEhrn2nImbnDRtgTexDy6iLhrgCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761125889; c=relaxed/simple;
-	bh=y+I/LwqqDB9pXpDXKCV/nv/6aZw2Lg2pKBs/RJwW6Gg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nrn4VenGyoBgzfzTzS+tKt2iOIpAtTJX9eoYO6mJuxYlast+UsyMUzUT3hvRLGrVbBCOuoEGxF2OilFSZBt5JAylKWUGVpxGYoYv5MVmpLQeMMB0f3mily8h1X0qbetUFZCiGYObhZvIP0b38Y31OwKCAuU0vBWBdujuYoGo8W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPK+dzsm; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e89de04d62so8353441cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761125886; x=1761730686; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJdPu+39G4lB6AuXLRBW7mSkqYwO4pjl1bYy6jRlyTM=;
-        b=iPK+dzsmqqwd8Dm05OY+3GPj7Fjm4DLGbG0b18ba96l42j3aNvj9I+Y8yVXFL4230Z
-         QIeyKJLcHyUJTaVwrVBxMr3Otufe20Ihp7WmD9g4VIN1SD8dNu5QR40ecMP2HYA+Dadk
-         nJCCUqlZg68KwCf+XkfBGfu15ohmm4iPLRd9mKbybSqeoS9/y/3pvFaWIZgjDdvetvrk
-         jhociuFMRNPrqq5ysJjyZENMpfy3pGrxMfhr1tmzxGoV/+1b7D0+H+ILtOCaw4GJPmAD
-         XQ74iLzaIMOA+K/7YnjZ6x7VVYECW+a9U+stkPK6W80xHOzsUJVSiKgwggxvSHzbcjGo
-         meUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761125886; x=1761730686;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HJdPu+39G4lB6AuXLRBW7mSkqYwO4pjl1bYy6jRlyTM=;
-        b=vDldlZ5eMgDcoc3AT41SHL+xO+xWWhJWqQQajQYzjCj0xyuQobINOZmYULVWyNjndU
-         dZmvsr41jRPGOE22R8iUrocZLcRlbrYnNgbxt+Y5Jf2BKZ4X+NZrbmqe1Ggm6EgLlZWT
-         BZm+zQWgNyMAAh24Yc4WcZ+YQvERQuf/CRUL+b17G03ByDOjgaPgy9stwi4jOZ81kw4J
-         utyBcSI9agC8OHfNo5DMhF3YEfKsNPHjQPc9gKsWXXt/ysZ+m45kXh09AF+YWqgiaqde
-         LI7BTf42Dm+hfEXY6XXW0wRAy2YCO59+0rsXYNq7FOBaVuOvE4leZxlJAzosySPlu+Uk
-         tBAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqDluRPL/KlXPWoVqI9+Lf32AcUAKs/Wr869lUkAEhaZ0BnIFqkg+s4pCwGPO6P/mKJuC3vVQLd21cAKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOWFev8XtDpG4wXYqAVEWZEQeZiZ5BiDW308gRkvumwOLVadUP
-	WoMj/j4cydmXxRbuVrG2KmjISCIaYZ3ad9Q79mc40FJSeQnq64EVPDkjwrT6Q3oLFoGq93Wb5VW
-	kfZphQapDcJ/KriIOCnF+MZDfIUFqqjf+Vts6
-X-Gm-Gg: ASbGncs+NUUXF/55tm6MsozXF/NWKW05MM5EeDA41Cbhao9xChHwiZ/TXwJxR0qhLeq
-	gSDGSJDsKmGkvpNrMAAz/gK3wKkMPHMQM8vv0LrsTARuaAI7bWguJPEn+32/KIKPYhmVGrEJf14
-	RSEreLvbLtuWz3LMhKFEkQFoOhdq2ECHt+YlGZ+jMobcBnuFyM1AbKmXo9uZz6U9HhEBoHTp+hi
-	7EnmL92XSSBVPkJnnLQUYDvTjcvP5LSizyOvbP0AxCUytkzIHsLWAw6zBpoTNIsH3hDB81ZQ7xA
-	d5OG5HxNKV1avQT6FvLLy+AnEDY=
-X-Google-Smtp-Source: AGHT+IG7gcxDomeEPXSQvywf68coWtEHDrJFLjeKkKBNT49t32BEMq0zgoHm8kjhpWZ3V5AxfkOg+1IItd2+7snHvHM=
-X-Received: by 2002:ac8:588d:0:b0:4e8:a2e8:3473 with SMTP id
- d75a77b69052e-4e8a2e8360amr228927981cf.13.1761125885712; Wed, 22 Oct 2025
- 02:38:05 -0700 (PDT)
+	s=arc-20240116; t=1761125928; c=relaxed/simple;
+	bh=RXI86dWsUOVLWMDkiSyvCC8/ZeCCo4YfEijOuemfgj0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JNdY8EPZVvLnY3AE3evT4/5kVCK0+3gLuU43nEEvLGFNHf0lAvLcoWGQIiJr1bpWAcjaZO4NPE4ymkTPM10rsdBiW4aSREorSXN/ootcOFvEn3P9XI2zr/GWnrEVdarRuv9LkXlcjEHCXYaJyFQNA1dvysWuPTPkW/wtM1MEA0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vBVIQ-00004t-1Z; Wed, 22 Oct 2025 11:38:18 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vBVIO-004rvs-3B;
+	Wed, 22 Oct 2025 11:38:17 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vBVIO-000000004t5-3n5a;
+	Wed, 22 Oct 2025 11:38:16 +0200
+Message-ID: <08fbb2fc1a2e581010b6b28cd1a544053a4f1fb0.camel@pengutronix.de>
+Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, vkoul@kernel.org, 
+	kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	geert+renesas@glider.be, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, 	biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Claudiu
+ Beznea	 <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang	
+ <wsa+renesas@sang-engineering.com>
+Date: Wed, 22 Oct 2025 11:38:16 +0200
+In-Reply-To: <dc27ae49-d60b-447e-971c-6b5b51ab9f29@tuxon.dev>
+References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+	 <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
+	 <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+	 <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+	 <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
+	 <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
+	 <6d4bc69c-1571-4d98-b0d4-214c68be118e@tuxon.dev>
+	 <c1099a8e422abbc5d12bf3f325cb9f2140c8c006.camel@pengutronix.de>
+	 <77678dd6-071b-4911-a5c5-f1519c92e91a@tuxon.dev>
+	 <6ba1fd1f07753c9b98a57c87bffbbee16971da7a.camel@pengutronix.de>
+	 <19746f65-bf10-4687-9e2b-b259220a9ea8@tuxon.dev>
+	 <dc27ae49-d60b-447e-971c-6b5b51ab9f29@tuxon.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
- <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
- <87a51jfl44.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
- <871pmv9unr.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
- <875xc78es0.fsf@DESKTOP-5N7EMDA>
-In-Reply-To: <875xc78es0.fsf@DESKTOP-5N7EMDA>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 22 Oct 2025 22:37:54 +1300
-X-Gm-Features: AS18NWA2mUCn-m7yzg54mG9Xj4DEjFUtxQVduHJ8uk8kWT6HeuKAOvMULXrelik
-Message-ID: <CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
-Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
->
-> With PTL, this becomes
->
-> CPU0:                           CPU1:
->
-> page fault                      page fault
-> lock PTL
-> write PTE
-> do local tlbi
-> unlock PTL
->                                 lock PTL        <- pte visible to CPU 1
->                                 read PTE        <- new PTE
->                                 do local tlbi   <- new PTE
->                                 unlock PTL
+Hi Claudiu,
 
-I agree. Yet the ish barrier can still avoid the page faults during CPU0's PTL.
+On Di, 2025-10-21 at 11:48 +0300, Claudiu Beznea wrote:
+> Hi, Philipp,
+>=20
+> On 10/15/25 11:19, Claudiu Beznea wrote:
+> > > > > > > > I see v2 and v3 tried to control the bit from the PHY drive=
+rs, and in
+> > > > > > > > v4 we were are already back to the reset driver.
+> > > > > > > v2 passed the system controller (SYSC) phandle to the USB PHY=
+s only (though
+> > > > > > > renesas,sysc-signals DT property) where the PWRRDY bit was se=
+t. The PWRRDY
+> > > > > > > bit was referenced counted in the SYSC driver though regmap A=
+PIs.
+> > > > > > >=20
+> > > > > > > v3 used the approach from v2 but passed the renesas,sysc-sign=
+als to all the
+> > > > > > > USB related drivers.
+> > > > > > >=20
+> > > > > > > Then, in v4, the PWRRDY refcounting was dropped and passed
+> > > > > > > renesas,sysc-signals only to the USB PHY CTRL DT node in the =
+idea that this
+> > > > > > > is the node that will always be probed first as all the other=
+ USB blocks
+> > > > > > > need it and request resets from it.
+> > > > > > >=20
+> > > > > > > v5 and v6 kept the approach from v4 and only addressed misc c=
+omments or
+> > > > > > > things that I noticed.
+> > > > > > Could you please let me know if you are OK with the approach pr=
+oposed in
+> > > > > > v7, so that I can start preparing a new version addressing your=
+ comments?
+> > > > > If the PWRRDY signal is an input to the USB2PHY control block, an=
+d not
+> > > > > only to the PHY blocks, I have no issue with this being handled i=
+n the
+> > > > > usb2phy reset driver -
+> > > > Yes, this is how the Renesas HW team confirmed they are related.
+> > > Ok, understood. I concur that usb2phy-ctrl is the right place for the
+> > > sysc property then.
+> > >=20
+> > > > > iff it is not sensible to just control the
+> > > > > signal from the power domain driver.
+> > > > As mentioned above, that can be done as well but, passing a SYSC ph=
+andle to
+> > > > the CPG DT node will not be valid from the HW description point of =
+view.
+> > > >=20
+> > > > > If we have to handle it in the reset driver, I'd prefer to see th=
+is
+> > > > > controlled with a dev_pm_genpd_add_notifier(). If that is not pos=
+sible,
+> > > > > I'd like to understand why.
+> > > > From the code inspection I did, that can be done. From what I can t=
+ell at
+> > > > the moment, I'll have to register a gepnd notifier from
+> > > > reset-rzg2l-usbphy-ctrl, before runtime resuming the device and con=
+trol the
+> > > > SYSC PWRRDY from it.
+> > > I'd like that.
+> > Now, that we found the genpd notifier is not a solution, could you plea=
+se
+> > let me know how would you like me to proceed?
+>=20
+> After discussing all the possible (known) solutions, could you please let
+> me know if you are OK with the approach in this series?
 
-CPU0:                                                                  CPU1:
+Yes, I don't have a better idea. Let's revisit the issue of ordering
+guarantees when suspend/resume is implemented.
 
-lock PTL
-
-write pte;
-Issue ish barrier
-do local tlbi;
-
-
-    No page fault occurs if tlb misses
-
-
-unlock PTL
-
-
-Otherwise, it could be:
-
-
-CPU0:                                                                  CPU1:
-
-lock PTL
-
-write pte;
-Issue nsh barrier
-do local tlbi;
-
-
-    page fault occurs if tlb misses
-
-
-unlock PTL
-
-
-Not quite sure if adding an ish right after the PTE modification has any
-noticeable performance impact on the test? I assume the most expensive part
-is still the tlbi broadcast dsb, not the PTE memory sync barrier?
-
-Thanks
-Barry
+regards
+Philipp
 
