@@ -1,248 +1,130 @@
-Return-Path: <linux-kernel+bounces-864655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5C7BFB459
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F56BFB428
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D5056448E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64DBC4239FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610E1322C97;
-	Wed, 22 Oct 2025 09:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6458931B81B;
+	Wed, 22 Oct 2025 09:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UoPOWqdB"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pNqJ5pC8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70375321F20;
-	Wed, 22 Oct 2025 09:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CDA315D42;
+	Wed, 22 Oct 2025 09:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127097; cv=none; b=MohGABuFmEV2Rvpu+NRjB7o3EzpHfCWFbGc1GGfoKQMu1YLU9hcgWsfdlGz1resPqSlOK0USMgC0khxq0f7Vc4Z/kQV9IIQpZQyplFUpsmJU+kCIS8aaMeLugofS3DE3aqwu0mGUEaJOwq/f8jzIzVF8oF2//MmmM/atkFpwlv4=
+	t=1761127067; cv=none; b=BYwi8iK4LqoeUgWcmxwwcSEdXmclcuAj0+YHd2LY5srezEq73pxm8YfO5QthaBMxDlUuLU9tHQ0BUb9AOm3VmtZTvzUcRIp2Dj7qVL4kiDDfpzfnME4lSwpdRLvfUyEyW62benlbW7xFaaRBU38IT8S08ALFHq8kdGTQup+pyJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127097; c=relaxed/simple;
-	bh=gtYjiNFtVt8U5a7O4szHCSUSWECRKX71byGeiRWlB80=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aqvk5jT7op0K8pl+jT7bIyefMlX9EVKQ5kcydMzIkAs/JWrQHOHfx6OuJTYrUdmyOF/1oVGcBe+Cl+Lxw7p1rKP66IsiG6ndKjw+qY3zI5WL/jXXmEy+zBY3i3LCxv63iVPeCU66ovrVJt/coD9PwlHQNN3sKr7e9vPorSF4NU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UoPOWqdB; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59M9vks71376573;
-	Wed, 22 Oct 2025 04:57:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761127066;
-	bh=2nZIhLUJnaxN4ORe7PVQWsIjKw9srIsJK8ggW0ZR304=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=UoPOWqdB7sqfS6fnuIyWWlS5G7zRXF93fUQd5LWwGdTmTSOQZCg4aPyoQ3Le9DBy9
-	 5jccxVyrm/pHxK6On6mWdSDYWVpBOjdDLSbl94Gf1pPoxC98QowAbJKPa0Trn8DzA6
-	 sX87h/sPHTWtpMfeUbJzlsEB9IbIU0fx/ZtUpE1U=
-Received: from DLEE202.ent.ti.com (dlee202.ent.ti.com [157.170.170.77])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59M9vkmK1511763
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 Oct 2025 04:57:46 -0500
-Received: from DLEE210.ent.ti.com (157.170.170.112) by DLEE202.ent.ti.com
- (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
- 2025 04:57:45 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE210.ent.ti.com
- (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 22 Oct 2025 04:57:45 -0500
-Received: from toolbox.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.73.74])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59M9vFcZ1029418;
-	Wed, 22 Oct 2025 04:57:40 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-        <quic_wenbyao@quicinc.com>, <inochiama@gmail.com>,
-        <mayank.rana@oss.qualcomm.com>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <cassel@kernel.org>, <kishon@kernel.org>,
-        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
-        <rongqianfeng@vivo.com>, <jirislaby@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v4 4/4] PCI: keystone: Add support to build as a loadable module
-Date: Wed, 22 Oct 2025 15:27:12 +0530
-Message-ID: <20251022095724.997218-5-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251022095724.997218-1-s-vadapalli@ti.com>
-References: <20251022095724.997218-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1761127067; c=relaxed/simple;
+	bh=7A1KpfR0RlRnCRdnu9t09fhdInNhsVZdUl5tQbeore4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DURIyVocZ0kOhPAgIDqGUNXuh3jpGR3PMSQk0AYZr+BAONpyUUt3ttoMiFPNbfnhCnKcCMr5MoCRGDLMy+zjlI+40wBhffLdm6zed7q2CAVdCK29P6uUM3Elymm0WkQStx57fy3YcdKtOUaNIXJhiL4t34vXi79EASX2/W5M5l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pNqJ5pC8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A439CC4CEE7;
+	Wed, 22 Oct 2025 09:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761127067;
+	bh=7A1KpfR0RlRnCRdnu9t09fhdInNhsVZdUl5tQbeore4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pNqJ5pC8uPR3bKmyL5D+Cnsj3weyAt9W5wzH2U2cZSVdz4LX6KZlTeTGZy6+D8gnI
+	 J4+ebKDXyoNd/ohCcjVlTldhy4ZKSCGFZ1+GjZOLM1H7yXCOva1HGOrgRvBdcAKyiJ
+	 2uT9CRW8lCLJON92XOhx84HYrhbio+SqouzQB5aw=
+Date: Wed, 22 Oct 2025 11:57:44 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Peng Zhang <zhangpeng.00@bytedance.com>
+Cc: jirislaby@kernel.org, ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	songmuchun@bytedance.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2] serial: 8250: always disable IRQ during THRE test
+Message-ID: <2025102231-fender-bovine-ecd9@gregkh>
+References: <20251016070516.37549-1-zhangpeng.00@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016070516.37549-1-zhangpeng.00@bytedance.com>
 
-The 'pci-keystone.c' driver is the application/glue/wrapper driver for the
-Designware PCIe Controllers on TI SoCs. Now that all of the helper APIs
-that the 'pci-keystone.c' driver depends upon have been exported for use,
-enable support to build the driver as a loadable module.
+On Thu, Oct 16, 2025 at 03:05:16PM +0800, Peng Zhang wrote:
+> commit 039d4926379b ("serial: 8250: Toggle IER bits on only after irq
+> has been set up") moved IRQ setup before the THRE test, so the interrupt
+> handler can run during the test and race with its IIR reads. This can
+> produce wrong THRE test results and cause spurious registration of the
+> serial8250_backup_timeout timer. Unconditionally disable the IRQ for the
+> short duration of the test and re-enable it afterwards to avoid the race.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 039d4926379b ("serial: 8250: Toggle IER bits on only after irq has been set up")
+> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
+> ---
+>  drivers/tty/serial/8250/8250_port.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> index 719faf92aa8a..f1740cc91143 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -2147,8 +2147,7 @@ static void serial8250_THRE_test(struct uart_port *port)
+>  	if (up->port.flags & UPF_NO_THRE_TEST)
+>  		return;
+>  
+> -	if (port->irqflags & IRQF_SHARED)
+> -		disable_irq_nosync(port->irq);
+> +	disable_irq(port->irq);
+>  
+>  	/*
+>  	 * Test for UARTs that do not reassert THRE when the transmitter is idle and the interrupt
+> @@ -2170,8 +2169,7 @@ static void serial8250_THRE_test(struct uart_port *port)
+>  		serial_port_out(port, UART_IER, 0);
+>  	}
+>  
+> -	if (port->irqflags & IRQF_SHARED)
+> -		enable_irq(port->irq);
+> +	enable_irq(port->irq);
+>  
+>  	/*
+>  	 * If the interrupt is not reasserted, or we otherwise don't trust the iir, setup a timer to
+> -- 
+> 2.20.1
+> 
+> 
 
-Additionally, the functions marked by the '__init' keyword may be invoked:
-a) After a probe deferral
-OR
-b) During a delayed probe - Delay attributed to driver being built as a
-   loadable module
+Hi,
 
-In both of the cases mentioned above, the '__init' memory will be freed
-before the functions are invoked. This results in an exception of the form:
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-	Unable to handle kernel paging request at virtual address ...
-	Mem abort info:
-	...
-	pc : ks_pcie_host_init+0x0/0x540
-	lr : dw_pcie_host_init+0x170/0x498
-	...
-	ks_pcie_host_init+0x0/0x540 (P)
-	ks_pcie_probe+0x728/0x84c
-	platform_probe+0x5c/0x98
-	really_probe+0xbc/0x29c
-	__driver_probe_device+0x78/0x12c
-	driver_probe_device+0xd8/0x15c
-	...
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-To address this, introduce a new function namely 'ks_pcie_init()' to
-register the 'fault handler' while removing the '__init' keyword from
-existing functions.
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-v3:
-https://lore.kernel.org/r/20250922071222.2814937-5-s-vadapalli@ti.com/
-Changes since v3:
-- Rebased patch on 6.18-rc1 tag of Mainline Linux.
-- The '__init' keyword has been removed from functions to avoid triggering
-  an exception due to '__init' memory being freed before functions are invoked.
-  This is the equivalent of:
-  https://lore.kernel.org/r/20250912100802.3136121-3-s-vadapalli@ti.com/
-  while addressing Bjorn's feedback at:
-  https://lore.kernel.org/r/20251002143627.GA267439@bhelgaas/
-  by introducing 'ks_pcie_init()' function specifically for registering the
-  fault handler while the rest of the driver remains the same.
+thanks,
 
-Regards,
-Siddharth.
-
- drivers/pci/controller/dwc/Kconfig        |  6 ++--
- drivers/pci/controller/dwc/pci-keystone.c | 36 +++++++++++++++--------
- 2 files changed, 27 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 349d4657393c..561a7266e21b 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -483,10 +483,10 @@ config PCI_DRA7XX_EP
- 	  This uses the DesignWare core.
- 
- config PCI_KEYSTONE
--	bool
-+	tristate
- 
- config PCI_KEYSTONE_HOST
--	bool "TI Keystone PCIe controller (host mode)"
-+	tristate "TI Keystone PCIe controller (host mode)"
- 	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
- 	depends on PCI_MSI
- 	select PCIE_DW_HOST
-@@ -498,7 +498,7 @@ config PCI_KEYSTONE_HOST
- 	  DesignWare core functions to implement the driver.
- 
- config PCI_KEYSTONE_EP
--	bool "TI Keystone PCIe controller (endpoint mode)"
-+	tristate "TI Keystone PCIe controller (endpoint mode)"
- 	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
- 	depends on PCI_ENDPOINT
- 	select PCIE_DW_EP
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 25b8193ffbcf..8e53822a903f 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -17,6 +17,7 @@
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
-@@ -799,7 +800,7 @@ static int ks_pcie_fault(unsigned long addr, unsigned int fsr,
- }
- #endif
- 
--static int __init ks_pcie_init_id(struct keystone_pcie *ks_pcie)
-+static int ks_pcie_init_id(struct keystone_pcie *ks_pcie)
- {
- 	int ret;
- 	unsigned int id;
-@@ -831,7 +832,7 @@ static int __init ks_pcie_init_id(struct keystone_pcie *ks_pcie)
- 	return 0;
- }
- 
--static int __init ks_pcie_host_init(struct dw_pcie_rp *pp)
-+static int ks_pcie_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
-@@ -861,15 +862,6 @@ static int __init ks_pcie_host_init(struct dw_pcie_rp *pp)
- 	if (ret < 0)
- 		return ret;
- 
--#ifdef CONFIG_ARM
--	/*
--	 * PCIe access errors that result into OCP errors are caught by ARM as
--	 * "External aborts"
--	 */
--	hook_fault_code(17, ks_pcie_fault, SIGBUS, 0,
--			"Asynchronous external abort");
--#endif
--
- 	return 0;
- }
- 
-@@ -1134,6 +1126,7 @@ static const struct of_device_id ks_pcie_of_match[] = {
- 	},
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, ks_pcie_of_match);
- 
- static int ks_pcie_probe(struct platform_device *pdev)
- {
-@@ -1381,4 +1374,23 @@ static struct platform_driver ks_pcie_driver = {
- 		.of_match_table = ks_pcie_of_match,
- 	},
- };
--builtin_platform_driver(ks_pcie_driver);
-+
-+static int __init ks_pcie_init(void)
-+{
-+#ifdef CONFIG_ARM
-+	/*
-+	 * PCIe access errors that result into OCP errors are caught by ARM as
-+	 * "External aborts"
-+	 */
-+	if (of_find_matching_node(NULL, ks_pcie_of_match))
-+		hook_fault_code(17, ks_pcie_fault, SIGBUS, 0,
-+				"Asynchronous external abort");
-+#endif
-+
-+	return platform_driver_register(&ks_pcie_driver);
-+}
-+device_initcall(ks_pcie_init);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("PCIe host controller driver for Texas Instruments Keystone SoCs");
-+MODULE_AUTHOR("Murali Karicheri <m-karicheri2@ti.com>");
--- 
-2.51.0
-
+greg k-h's patch email bot
 
