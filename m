@@ -1,192 +1,223 @@
-Return-Path: <linux-kernel+bounces-864486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3468DBFAE32
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:28:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE16BFAE77
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9065B353C62
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:28:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BF06506FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC0309F02;
-	Wed, 22 Oct 2025 08:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6857E30DEB1;
+	Wed, 22 Oct 2025 08:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GLezp4tR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BUiKQY7G"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810FF3081DC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BD530147A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121691; cv=none; b=seargUpIOb57WRk15rI16R8V5Smm32rjs7bEGppj8d++f2H4M0u4Ij/1EErFOzvBPG0ysZauH+QTZDBpCGhZ2lpmVzmm12FirDi7BKoNbhFQKjk0DS5HSIfmN2EPoNEhXdNUQfWcmgc34yjNmhYKQ3DD0BR/O4c86U7P4BKH3rw=
+	t=1761121835; cv=none; b=ljhPwfvqdTA8aHZeZLWMJB5O8Nw5btg7PWFosOMZeyem7AdZkcvPw1pdCzKwDzlDoRjwpXMJNSfLzl5rNNpdvWMdvkqPDEiQSfEUOSgyEjxJP9uII7Bc7r8zgYopq5y42d+YwyuFpUqjyis3/Mt90a6UC7nzteAKSOPmkUj5948=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121691; c=relaxed/simple;
-	bh=+qDTriJL1I8TlNCkThOTTjYJGjDQws6OfKtI9VmLqYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zn4DK/SRY4a1p3fSzKY4og79TluCMA6vrRgc/HLRbG2NXlLwjhrhI68YS94w8dXML0I9l8hoJRyEwsyCU3AQbaeuOrFX4+biA2gyvGos0JsM5mGb50vKX9nCPzMeMQDYJW/2cJ+NBE+HHgsq/L4n0ocI+rYbmRQUs8LxJW4EX5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GLezp4tR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761121686;
-	bh=+qDTriJL1I8TlNCkThOTTjYJGjDQws6OfKtI9VmLqYU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GLezp4tR0VrbO4ufLefY9gSD9aFklgbAX1ncNafEdBljwnmLzVoZ/n2P6arETT3yx
-	 BhDYxIDpnFVx0OuZ4Mxenaamq9C93PodBccJx9kPbcbs1V8jdmH0gqROMaU4VCMCjR
-	 y2TXGUxy8dzqtvY+WuuJrFW0L+TS1ayxAghS1NF8GVPnZn2xA9Nc+haDd+RSGiwDuM
-	 LZnycgx5dmSetFT4S7nnM1Ej8gVvXyoIvRWgFP66pzUQpRKN/JumjSzNayA8tQBl4r
-	 MQ/R99lq4mQaQ2a2JC+feu3/QSC+AVCkC6LCBRyTA//kwxaRPMb1uVCtAod8qf2zA0
-	 zYZIzAL/bm0Ag==
-Received: from [IPV6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa] (unknown [IPv6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A862E17E00B0;
-	Wed, 22 Oct 2025 10:28:05 +0200 (CEST)
-Message-ID: <64040015-2840-4210-8019-a39e605d87a0@collabora.com>
+	s=arc-20240116; t=1761121835; c=relaxed/simple;
+	bh=W4dnQ6OiL+B7d18Li0iqL0CW7ojtCaZYRhjm3iMI5R0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SsN6+HUCnXzn+8m9tyaIZhtix9C8A9fQ6RGuVOIEE4qTYCIW2nrYsDej9AIBSLZTM4emGibexCm9Qwl3yZFUhYJrnQLw59UZUOSSzb3kV8tV6/75cAgxLsuOFhgiEs+tm+/jL3ClQ5MGZJ0ibD5S8HUzggs/q5zVhL/mp3Nhz6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BUiKQY7G; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710665e7deso25183195e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:30:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761121830; x=1761726630; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j2I0pFy6f8OhKSW5/tXVB2hF1U9O55Rf8oI8wZFnUIk=;
+        b=BUiKQY7GzUcZralMKKwXrVPZZngWNzCX+8fS4Wh04r0LYuqzs8ga+rveYnHZXfem5X
+         35zRACBzxrJjUeo9VG35MpsOQ35D7p5PwJR1zzVKddPdio90aTltY7XOtVUoF0zGT/cO
+         44R4KMWt6h7ivfw1t5OYF1SdXAjkbIqlgLBnbxbLZrARWa/rdvK9XOqZzp5P8AGl1tRP
+         0KmRQtrnWVEkeELZgA9oY7VjootnMaxPm8UKBhiYdCewmLBsa/P0tTyMYsd1qYhGJczp
+         94y8i3+jtsReW9b2uLVOnGGS55Sz6r5o3bCcoJPUWWd3dQN2Gbv4kIR9Hp5WQCFPy8wm
+         1Y1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761121830; x=1761726630;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j2I0pFy6f8OhKSW5/tXVB2hF1U9O55Rf8oI8wZFnUIk=;
+        b=EXyzUTwmEiA+LunLuXDp5bktaoweCCsw6gK6wUj9RIIi5cudPOk8SZ1mCJl3Yg2Ppu
+         Jw0+56PYh3AC7CvspmWNU48qGHjB9VY/I4VIugGy9ifKJ4PlNiyk26ujRKXD4MH+3+js
+         913Y1moCFbVUAbfpS83bStOPqx0cb8zIg9gE+iExStM8xB7ixF2pdkS1k7fyz+Cu5lwU
+         KkpFjBFtJcv2Y6auI28wYUhJ9arJNoFVc+H9KvMW/WBynMfTNBVafw9v8oMSeuLrSOpy
+         KWefaMVRJKd6+GhEox41RwGyWnudjjFEl/dNhk56PzUNnF4CCmH2T6FA22d90hg3mcdt
+         vvbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCMBWOmAfSRUggeAd+mJdfPX70+wRYL6uFaLAlhvpXYUcEVyb/jE63QXBLzOFLo+MZd23L/ax6C7DW+80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyO/rFsAgeKihs0tIjKvn3kbrq/YbASLEjKwheiaL3JEGtOMrU
+	fwqwlGrAmcR84XAQF3oOcgQGoVEnahDR91TbzjorU1SripaYDDt2lnheQoZO+fbTuik=
+X-Gm-Gg: ASbGncuQzM6/xozPKACuG/+iAMUbXJd1O8nN61HUtTYLL0EpjP7GV3foiS+nR5zrRpm
+	u3fkY5LRv+4um88B27T3DUKWy24WV9DNdFq8bGLQ8mtFTjgQkI0fxeOzrnQ/TOnXlIgbYQUTQ6s
+	1XDFI0fd/3xcBQIkbeY5eTHo33f6P5YiqJ748md1pdPjHd82vNsZ2XGtl8qkjF9ZXV5pHAQoPJq
+	hL19QkXohbOqjHlO8BdcKoauKj6QCa/j7OT6psuy/s1MYqMSd5J0rF3K24YmBb7sBHdrlALHp4G
+	AztFZF7XHCSqebTm5kTc/BNF+YqQc2XYdl8Gbx4A393XaVGFljcSztgZqqmYXHM2k0XQcPCPLr2
+	eb9rmjr79XRFylAy9ZzZEyx8NqQmejFZ8F6uYrU/Xmpx0HzkGjRAvd4Oh3iISvgosG8cm21MInG
+	LPEPGqVwMvLM+T7BoMOQ==
+X-Google-Smtp-Source: AGHT+IEAsQvi1+jZRATkQNhN/Dc0L4u5Au+wsSC1TmJ90uNJgCNCcyTviA0okluf38Tbj562kD00bQ==
+X-Received: by 2002:a05:600c:3b03:b0:46d:d949:daba with SMTP id 5b1f17b1804b1-47117874326mr141739475e9.4.1761121829730;
+        Wed, 22 Oct 2025 01:30:29 -0700 (PDT)
+Received: from zovi.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c428f709sm33712955e9.8.2025.10.22.01.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 01:30:29 -0700 (PDT)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Aaron Tomlin <atomlin@atomlin.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Petr Mladek <pmladek@suse.com>,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] taint/module: Remove unnecessary taint_flag.module field
 Date: Wed, 22 Oct 2025 10:28:04 +0200
+Message-ID: <20251022082938.26670-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/12] drm/i915: Use huge tmpfs mountpoint helpers
-To: Boris Brezillon <boris.brezillon@collabora.com>,
- kernel test robot <lkp@intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Boris Brezillon <bbrezillon@kernel.org>,
- Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
- <andi.shyti@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Christopher Healy <healych@amazon.com>, Matthew Wilcox
- <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
- oe-kbuild-all@lists.linux.dev,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-kernel@vger.kernel.org
-References: <20251021113049.17242-7-loic.molinari@collabora.com>
- <202510221301.wU3TSqMg-lkp@intel.com> <20251022100548.4dee241e@fedora>
-Content-Language: fr
-From: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
-Organization: Collabora Ltd
-In-Reply-To: <20251022100548.4dee241e@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Boris,
+The TAINT_RANDSTRUCT and TAINT_FWCTL flags are mistakenly set in the
+taint_flags table as per-module flags. While this can be trivially
+corrected, the issue can be avoided altogether by removing the
+taint_flag.module field.
 
-On 22/10/2025 10:05, Boris Brezillon wrote:
-> On Wed, 22 Oct 2025 11:25:10 +0800
-> kernel test robot <lkp@intel.com> wrote:
-> 
->> Hi Loïc,
->>
->> kernel test robot noticed the following build errors:
->>
->> [auto build test ERROR on next-20251021]
->> [also build test ERROR on v6.18-rc2]
->> [cannot apply to akpm-mm/mm-everything drm-misc/drm-misc-next linus/master v6.18-rc2 v6.18-rc1 v6.17]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Lo-c-Molinari/drm-shmem-helper-Simplify-page-offset-calculation-in-fault-handler/20251021-193355
->> base:   next-20251021
->> patch link:    https://lore.kernel.org/r/20251021113049.17242-7-loic.molinari%40collabora.com
->> patch subject: [PATCH v5 06/12] drm/i915: Use huge tmpfs mountpoint helpers
->> config: x86_64-randconfig-003-20251022 (https://download.01.org/0day-ci/archive/20251022/202510221301.wU3TSqMg-lkp@intel.com/config)
->> compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
->> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510221301.wU3TSqMg-lkp@intel.com/reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202510221301.wU3TSqMg-lkp@intel.com/
->>
->> All errors (new ones prefixed by >>):
->>
->>     drivers/gpu/drm/i915/gem/i915_gem_shmem.c: In function '__create_shmem':
->>>> drivers/gpu/drm/i915/gem/i915_gem_shmem.c:511:59: error: 'struct drm_device' has no member named 'huge_mnt'
->>       511 |                 filp = shmem_file_setup_with_mnt(i915->drm.huge_mnt, "i915",
->>           |                                                           ^
->>
->>
->> vim +511 drivers/gpu/drm/i915/gem/i915_gem_shmem.c
->>
->>     486	
->>     487	static int __create_shmem(struct drm_i915_private *i915,
->>     488				  struct drm_gem_object *obj,
->>     489				  resource_size_t size)
->>     490	{
->>     491		unsigned long flags = VM_NORESERVE;
->>     492		struct file *filp;
->>     493	
->>     494		drm_gem_private_object_init(&i915->drm, obj, size);
->>     495	
->>     496		/* XXX: The __shmem_file_setup() function returns -EINVAL if size is
->>     497		 * greater than MAX_LFS_FILESIZE.
->>     498		 * To handle the same error as other code that returns -E2BIG when
->>     499		 * the size is too large, we add a code that returns -E2BIG when the
->>     500		 * size is larger than the size that can be handled.
->>     501		 * If BITS_PER_LONG is 32, size > MAX_LFS_FILESIZE is always false,
->>     502		 * so we only needs to check when BITS_PER_LONG is 64.
->>     503		 * If BITS_PER_LONG is 32, E2BIG checks are processed when
->>     504		 * i915_gem_object_size_2big() is called before init_object() callback
->>     505		 * is called.
->>     506		 */
->>     507		if (BITS_PER_LONG == 64 && size > MAX_LFS_FILESIZE)
->>     508			return -E2BIG;
->>     509	
->>     510		if (drm_gem_has_huge_mnt(&i915->drm))
->>   > 511			filp = shmem_file_setup_with_mnt(i915->drm.huge_mnt, "i915",
->>     512							 size, flags);
-> 
-> Maybe instead of this drm_gem_has_huge_mnt() (or in addition to), we
-> should have a drm_gem_get_huge_mnt() helper, so we don't have drivers
-> dereferencing drm_device::huge_mnt directly and we can get rid of it on
-> non THP configs.
+This is possible because, since commit 7fd8329ba502 ("taint/module: Clean
+up global and module taint flags handling") in 2016, the handling of module
+taint flags has been fully generic. Specifically, module_flags_taint() can
+print all flags, and the required output buffer size is properly defined in
+terms of TAINT_FLAGS_COUNT. The actual per-module flags are always those
+added to module.taints by calls to add_taint_module().
 
-Yes, drm_gem_get_huge_mnt() should be enough. This would prevent build 
-errors like that for builds with CONFIG_TRANSPARENT_PAGE=n without 
-having to insert ifdefs and would also just compile to a single 
-shmem_file_setup() here. The few places which actually need a boolean 
-value can simply do !!drm_gem_get_huge_mnt(dev).
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+---
+The patch is based on linux-next (20251021) because I wanted to avoid
+a conflict with "taint: add reminder about updating docs and scripts" [1],
+which is currently queued in mm-nonmm-unstable.
 
-> 
->>     513		else
->>     514			filp = shmem_file_setup("i915", size, flags);
->>     515		if (IS_ERR(filp))
->>     516			return PTR_ERR(filp);
->>     517	
->>     518		/*
->>     519		 * Prevent -EFBIG by allowing large writes beyond MAX_NON_LFS on shmem
->>     520		 * objects by setting O_LARGEFILE.
->>     521		 */
->>     522		if (force_o_largefile())
->>     523			filp->f_flags |= O_LARGEFILE;
->>     524	
->>     525		obj->filp = filp;
->>     526		return 0;
->>     527	}
->>     528	
->>
-> 
+[1] https://lore.kernel.org/all/20251015221626.1126156-1-rdunlap@infradead.org/
 
-Regards,
-Loïc
+---
+ include/linux/panic.h |  1 -
+ kernel/module/main.c  |  2 +-
+ kernel/panic.c        | 46 ++++++++++++++++++++-----------------------
+ 3 files changed, 22 insertions(+), 27 deletions(-)
+
+diff --git a/include/linux/panic.h b/include/linux/panic.h
+index 6f972a66c13e..a00bc0937698 100644
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -86,7 +86,6 @@ static inline void set_arch_panic_timeout(int timeout, int arch_default_timeout)
+ struct taint_flag {
+ 	char c_true;		/* character printed when tainted */
+ 	char c_false;		/* character printed when not tainted */
+-	bool module;		/* also show as a per-module taint flag */
+ 	const char *desc;	/* verbose description of the set taint flag */
+ };
+ 
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index c66b26184936..6f219751df7e 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -954,7 +954,7 @@ size_t module_flags_taint(unsigned long taints, char *buf)
+ 	int i;
+ 
+ 	for (i = 0; i < TAINT_FLAGS_COUNT; i++) {
+-		if (taint_flags[i].module && test_bit(i, &taints))
++		if (test_bit(i, &taints))
+ 			buf[l++] = taint_flags[i].c_true;
+ 	}
+ 
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 81b7911fb5ca..341c66948dcb 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -628,17 +628,13 @@ void panic(const char *fmt, ...)
+ }
+ EXPORT_SYMBOL(panic);
+ 
+-#define TAINT_FLAG(taint, _c_true, _c_false, _module)			\
++#define TAINT_FLAG(taint, _c_true, _c_false)				\
+ 	[ TAINT_##taint ] = {						\
+ 		.c_true = _c_true, .c_false = _c_false,			\
+-		.module = _module,					\
+ 		.desc = #taint,						\
+ 	}
+ 
+ /*
+- * TAINT_FORCED_RMMOD could be a per-module flag but the module
+- * is being removed anyway.
+- *
+  * NOTE: if you modify the taint_flags or TAINT_FLAGS_COUNT,
+  * please also modify tools/debugging/kernel-chktaint and
+  * Documentation/admin-guide/tainted-kernels.rst, including its
+@@ -646,26 +642,26 @@ EXPORT_SYMBOL(panic);
+  * /proc/sys/kernel/tainted.
+  */
+ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+-	TAINT_FLAG(PROPRIETARY_MODULE,		'P', 'G', true),
+-	TAINT_FLAG(FORCED_MODULE,		'F', ' ', true),
+-	TAINT_FLAG(CPU_OUT_OF_SPEC,		'S', ' ', false),
+-	TAINT_FLAG(FORCED_RMMOD,		'R', ' ', false),
+-	TAINT_FLAG(MACHINE_CHECK,		'M', ' ', false),
+-	TAINT_FLAG(BAD_PAGE,			'B', ' ', false),
+-	TAINT_FLAG(USER,			'U', ' ', false),
+-	TAINT_FLAG(DIE,				'D', ' ', false),
+-	TAINT_FLAG(OVERRIDDEN_ACPI_TABLE,	'A', ' ', false),
+-	TAINT_FLAG(WARN,			'W', ' ', false),
+-	TAINT_FLAG(CRAP,			'C', ' ', true),
+-	TAINT_FLAG(FIRMWARE_WORKAROUND,		'I', ' ', false),
+-	TAINT_FLAG(OOT_MODULE,			'O', ' ', true),
+-	TAINT_FLAG(UNSIGNED_MODULE,		'E', ' ', true),
+-	TAINT_FLAG(SOFTLOCKUP,			'L', ' ', false),
+-	TAINT_FLAG(LIVEPATCH,			'K', ' ', true),
+-	TAINT_FLAG(AUX,				'X', ' ', true),
+-	TAINT_FLAG(RANDSTRUCT,			'T', ' ', true),
+-	TAINT_FLAG(TEST,			'N', ' ', true),
+-	TAINT_FLAG(FWCTL,			'J', ' ', true),
++	TAINT_FLAG(PROPRIETARY_MODULE,		'P', 'G'),
++	TAINT_FLAG(FORCED_MODULE,		'F', ' '),
++	TAINT_FLAG(CPU_OUT_OF_SPEC,		'S', ' '),
++	TAINT_FLAG(FORCED_RMMOD,		'R', ' '),
++	TAINT_FLAG(MACHINE_CHECK,		'M', ' '),
++	TAINT_FLAG(BAD_PAGE,			'B', ' '),
++	TAINT_FLAG(USER,			'U', ' '),
++	TAINT_FLAG(DIE,				'D', ' '),
++	TAINT_FLAG(OVERRIDDEN_ACPI_TABLE,	'A', ' '),
++	TAINT_FLAG(WARN,			'W', ' '),
++	TAINT_FLAG(CRAP,			'C', ' '),
++	TAINT_FLAG(FIRMWARE_WORKAROUND,		'I', ' '),
++	TAINT_FLAG(OOT_MODULE,			'O', ' '),
++	TAINT_FLAG(UNSIGNED_MODULE,		'E', ' '),
++	TAINT_FLAG(SOFTLOCKUP,			'L', ' '),
++	TAINT_FLAG(LIVEPATCH,			'K', ' '),
++	TAINT_FLAG(AUX,				'X', ' '),
++	TAINT_FLAG(RANDSTRUCT,			'T', ' '),
++	TAINT_FLAG(TEST,			'N', ' '),
++	TAINT_FLAG(FWCTL,			'J', ' '),
+ };
+ 
+ #undef TAINT_FLAG
+
+base-commit: aaa9c3550b60d6259d6ea8b1175ade8d1242444e
+-- 
+2.51.1
+
 
