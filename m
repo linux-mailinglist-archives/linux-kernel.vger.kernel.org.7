@@ -1,565 +1,484 @@
-Return-Path: <linux-kernel+bounces-864124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B99BF9F85
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:41:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF643BF9F8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18FC519C7C6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:42:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7ACDC4E9101
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5142E2D781B;
-	Wed, 22 Oct 2025 04:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4813D1E5B68;
+	Wed, 22 Oct 2025 04:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXVkOYrl"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="jyTFotMw";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="jyTFotMw"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013003.outbound.protection.outlook.com [40.107.162.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2C2D7395
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761108088; cv=none; b=SqmVj55CnNtjpVULBWjgLVoUlw3fsAoybLo1+VtN0lC8JuU5Y6uOQwyM5sXwybPmgVkRyDnKqfOdMFaur1Jg4zyR7Jc/ODpc3EDQXxuvUwLsWb1x/iStHStJBfZ2iyRQTyjle1hNvMCZalmNozjr81H5Lyl+8TMGq9cVd0p9mZs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761108088; c=relaxed/simple;
-	bh=YI9XdeSqNw1PtqUxfjdv8/RUjGXVOhxD/W87lZ+RgMQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FHxAqUdFB6u+zae/uAOVKk2dk+EUwM7UxDNKVryLmSWXktljHhxUe0VZSLSEqVE/WdDi4ULkKywP3vROaFCbHgbMy0PHEh8LFTVvnZbFPFRD5FDY1UKjc+4/hmdeIH0itJXxx/dO1/bNSbM+2jNuwauslxw2GwYl1YuyX8D/ATQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXVkOYrl; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63c11011e01so10480844a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761108082; x=1761712882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KzIhtTke8e+w0UvoNy02RNiPIBjkvjFYUBf5hqrPq1k=;
-        b=UXVkOYrlCq1rHdL4z0Th2jMr5ktpJOub+YOAtq5AE57l87uTuKmY3rtLqxGsSwGOt1
-         fEoRxeQbyFZwJlmq62btkWfmffx1z+QT1uUywtH7buBcmYFHzOwSViNIeGlLfyPQSQ93
-         TVwoQmdhpjEDJA9jfCaryrgxjFsp3yHq/6sLzlA3L70O8+ERrAl7ScQMojFQBFcN4Z0O
-         dcJPc92DvCyhCEczGf/PqPeGfqsFqw0kKq9bIPZS+sMGLgtP5fKYvq5hCwdTneeWiLdm
-         U09FVH8/RyaMnzCD6bRMYylfF5sR9v4vLaeXCR/ab3WVK3ppTv/6vCClvcFWvkNkN2Wy
-         ri1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761108082; x=1761712882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KzIhtTke8e+w0UvoNy02RNiPIBjkvjFYUBf5hqrPq1k=;
-        b=pxdBDd7ShSmdc8FKMW71DfZL0QAPotNMAdqf6dLobr6q1DnytbI8qqJvSEi5vpOSMU
-         CnKxbomoDgEnFbCS7/0U9ULbROIvZQUalMZo21dL2CO/rtL1ebE7manfLVkLTz3gvdHv
-         zRwxRTkx0E83Pf5ynpkNj1KWQ5x5b6Cwtiu+rVtWFxzDJ6f1oPQeZ0cP21txQRDcPHh4
-         jy0pEo8eyZNRLrVXQAUL+5mAhZ1uJvr1sU6NTyMYXLQXOLM7OKM/INfO1tJWN/1yiveF
-         7m8ZDz9yG0pYR3rtQQm9mZNuuV/dQwZCks0wDAd2OnHOP48U7fW349AtLmNygJicpTXY
-         o95w==
-X-Forwarded-Encrypted: i=1; AJvYcCX83iCxy3dBxhTCHYCL0RSmxArM3ZaUbLg2OJvXna+W2KsnXsKGmPfowSdHiCZGgqDbIjAVZ1rBU8I4l4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa/aX/9n3oiUq+EpighTLkohsofpGzthUfuCjweyhdKp1k4nIE
-	sl9YfMggq22MshGVNR5LsCw1WUbYRW9gtupRjjJRkvVido1Y9N5Kyf/vnkrc2zeEo/FMjNEsSeb
-	ljO7HWWd8HvSeyFBA4ZVKZRxxDpClodM=
-X-Gm-Gg: ASbGncv78tjjiXubMQTcAJu2Ba3Gp5PY9EjB8WY1hCEADMEy7T/094azhCcaX2hcoXk
-	k2oVqMcgUexUD8vnt6gcLnHmcLkwM5D4NUUJfubIb14pyweAYlRxlcP+wXeDFcN61kR5Fex6Dv2
-	ujVIMWwWROZO4+iV+rkN62oL6wf8TzkRxL0aDfOAHnHk1ac3uODauF5nllEJE/lyNpTFBSuxnFd
-	i26BAmZMkwcJ6vIUIICnS2avFRAq1GQaDg5GLyhPyoMwIbalxfLz/+iuq2pJXIk6bcPzyuz4OLD
-	nmSPlgCcbKTcNUQ=
-X-Google-Smtp-Source: AGHT+IFM79I+L2aLcKhyvnpbYsGDy6QnZNFX/8jnRvok9XdbcEQbMrJ8J6bVZm0CtpL1WBrjXN82qfUU0k6ZqC9LrEg=
-X-Received: by 2002:a05:6402:5191:b0:63c:4f1e:6d82 with SMTP id
- 4fb4d7f45d1cf-63c4f1e73acmr14921626a12.24.1761108082359; Tue, 21 Oct 2025
- 21:41:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABDF1AC88A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.3
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761108351; cv=fail; b=P7erFzip2h16C1lxOu6XKaV0yysPGzSujwTYYpXLB9n/pw/8cKxlVjGWbHE3v3fYSaBjmsxHJW9bvwUiKfSeKW+vlcfCxsvZpOGv26Sf44/Oxzmrl6uJwS7YaoVGa1GY4xJXOxeYMrXZidUutpZ8hpcC44YG0il5kGkTJKgVDJ0=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761108351; c=relaxed/simple;
+	bh=HDMvYu8GIL2fXZ1noD5dSH3wGAi37WhVQAfUctL046g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UCCxb/Gnf+y2eNvYHAd4SVt63uivPfL7z1eiX750Pp0qXokK2dMNXJHaOME+actgf+vwaACtHTKf8VCGA8w+SM+uQIMlmbE5bPXL6j8wpsYT0LByi0M4lGRYdQ1UOrPsFoIckHl9bkBSxdrFj93Z3nPDIzeYhiIziLT3hNAD8PQ=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=jyTFotMw; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=jyTFotMw; arc=fail smtp.client-ip=40.107.162.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=VvqpDfojTIA9MfX53iK/lPchKAbyH1CFuNlxBclUf6N917G5mpXY1TJn3CsH8hrnuTGpXYAC30UejHBPAe/N47pnt7yvW8XXMW6jXGofZIU4gkoSJu3rie8LwoKXCcJJwMqKSTT4X0GoTh2H6bTekP0pYPchlVgGXKtsWOg0Irn5HDRY6FqGdpBBBcThMZVEbalSI36zzTbrGy4g4p9h/g6w8Z3fvIsiAirqUFyFUCwzWrYBgjKai2uq2B4JqtGsSlmoJVNzbO3zfS/9dvrz3lRmUmFN7rZyCcBUE7211c0mLp4JBj7aZcfJQq8H3Mxk6RjCQOEnKi5JzoZtjGzH6Q==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
+ b=acxQzf3FxJhGIZgVXMXr2XV0x1YJFkTU9+XFwZdbxEJH+FxCEV3MuLrt/GPjt4ktzM9upBxTiHCsbtGqsSAZrlKZ/RPmfbTaKD0VdMTJSw6mD4s5zJSv/s04fAHX2XfmuJ8hIceAu5d/y1eFKEqtY1cfWbZdv2JmfdFUy+rclQxHiZHK1q//5NHtR483HaVUMA5bhylI2PaqiSLdJ93G2WMoxUAAK4P1jxI1L+MoDo9+I1HpXHfX3nl/0WBYXHIN//JSe7OuY3QLw76/9vDFbrJyQbpGgyl9sOpFzPaXebeUyJzWdIteJDxc9IXHC1egwfTN6Q/Am3gpKACkMmsRiQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=collabora.com smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
+ b=jyTFotMwD3j8hzRdk5uLX5b6kqYyWJRX7BqQjKnw+YmdMZSvaq44FBdjAGfXi7tqO7TwnjdTvsKlxCma0dsmyNtebljYM/Pajof3r5NMvHz3uZG5eFiA1YspjHZj4frHWr0GJh3mhpNlyj9LjjHhH84wWEh0KXzAbk1IfhmbpvI=
+Received: from DU2P250CA0008.EURP250.PROD.OUTLOOK.COM (2603:10a6:10:231::13)
+ by PA6PR08MB10596.eurprd08.prod.outlook.com (2603:10a6:102:3d2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 04:45:43 +0000
+Received: from DB5PEPF00014B88.eurprd02.prod.outlook.com
+ (2603:10a6:10:231:cafe::9b) by DU2P250CA0008.outlook.office365.com
+ (2603:10a6:10:231::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.12 via Frontend Transport; Wed,
+ 22 Oct 2025 04:45:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB5PEPF00014B88.mail.protection.outlook.com (10.167.8.196) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
+ via Frontend Transport; Wed, 22 Oct 2025 04:45:41 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nBz4YRRgEyRW5Iqok0Nhi9266TxxWyWD/JSZfeXi4BZbTPq/ZFAtlbzc/XMi56G30yKXVVC0slu161+rFnrLg/H4u7F4YEG0YT+UUsY9pKcIB8LHMbduii3z+mITr7RiPPDLOKytHimiIOTAIWFjy/2IhjtOowA1Y6ytn87jcqcaPf3W2t04ZesE3fbj53AfPv8c5f63ZxRh5JYmcdY2wYNZfiu57Iz/iam1FBZeVqSJtazGV28I+ZJV6L+49hABNr90OlREx1RNxOhIpgk4uE0lIIuoIP9w89hOxchFq1DrNag4XUVXOYTbeCUbLKMSMKMDqvGxiu4TrOLd+aK9wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
+ b=mUpxUzhV6n9q9EQx98CphIF0fESOvvIMXReICVUFJcJ7unKgGWlhjgMh5QAnG3GZVLTkZ/mEt1X6DV+50DtVGpkyvOHv0ShGmoa8ewH2GwFh0tHsfeWpgiTDOcdOfV6xcBZo0eY7IRSZUxnhoQcv0iePXkGA6hj9yZInf1WJJgNkKqLNDLLSbey4Cdt3/xqKOO4xNCFiETw8Ej7WYdLO4RjeOxR1nvKAg/YSPJZnnypgm7xwbz7zgXrryhmEWq8wSYDj91xKpnSPkNpcrKyxQvqfj/FOOIpPvXuSzCd/0M9tq8gn6k3FYB6sTaCeeo0oMKcpRrMpSqjnM06/8ysN1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
+ b=jyTFotMwD3j8hzRdk5uLX5b6kqYyWJRX7BqQjKnw+YmdMZSvaq44FBdjAGfXi7tqO7TwnjdTvsKlxCma0dsmyNtebljYM/Pajof3r5NMvHz3uZG5eFiA1YspjHZj4frHWr0GJh3mhpNlyj9LjjHhH84wWEh0KXzAbk1IfhmbpvI=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB6982.eurprd08.prod.outlook.com (2603:10a6:20b:415::16)
+ by DB8PR08MB5339.eurprd08.prod.outlook.com (2603:10a6:10:114::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 04:45:08 +0000
+Received: from AM9PR08MB6982.eurprd08.prod.outlook.com
+ ([fe80::5d5d:a4a7:198c:fbdd]) by AM9PR08MB6982.eurprd08.prod.outlook.com
+ ([fe80::5d5d:a4a7:198c:fbdd%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 04:45:08 +0000
+Message-ID: <ba782636-2517-4087-9b23-005ec6ca9a47@arm.com>
+Date: Wed, 22 Oct 2025 05:45:07 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Steven Price <steven.price@arm.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
+ <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
+ <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
+Content-Language: en-US
+From: Akash Goel <akash.goel@arm.com>
+In-Reply-To: <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LNXP265CA0055.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5d::19) To AM9PR08MB6982.eurprd08.prod.outlook.com
+ (2603:10a6:20b:415::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017042312.1271322-1-alistair.francis@wdc.com>
- <20251017042312.1271322-5-alistair.francis@wdc.com> <e7d46c17-5ffd-4816-acd2-2125ca259d20@suse.de>
- <CAKmqyKMsYUPLz9hVmM_rjXKSo52cMEtn8qVwbSs=UknxRWaQUw@mail.gmail.com>
-In-Reply-To: <CAKmqyKMsYUPLz9hVmM_rjXKSo52cMEtn8qVwbSs=UknxRWaQUw@mail.gmail.com>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Wed, 22 Oct 2025 14:40:55 +1000
-X-Gm-Features: AS18NWDxX_HGaPlhwMFef4VjzTwZPMCk6IUmYygfFRuAXSRtLQyX_g3NHGGD5kk
-Message-ID: <CAKmqyKNSV1GdipOrOs3csyoTMKX1+mxTgxnOq9xnb3vmRN0RgA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] net/handshake: Support KeyUpdate message types
-To: Hannes Reinecke <hare@suse.de>
-Cc: chuck.lever@oracle.com, hare@kernel.org, 
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB6982:EE_|DB8PR08MB5339:EE_|DB5PEPF00014B88:EE_|PA6PR08MB10596:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91ec266f-e33b-4355-0572-08de1125daf2
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?NCtxY1ZQd0x0bkZYTHNiaExtR2IxNzhFd3VmZkpHK2pEVEZJUFRnb1RnSW8z?=
+ =?utf-8?B?ZzdTa2huYVVUN2NXMjhVVUw4MGFrWTZIaTBQUkJFeXdPWHh0ZXd6ZFU3Y1Qr?=
+ =?utf-8?B?Sk9JRG55cCtPeTFMUDI4OG5EOXVQblh3VXdlbUluQkZuT3lWZk5wT3dXdkJO?=
+ =?utf-8?B?cFdvUFEwSWxlekNKcTFSYiszMDFQTTUzcFJEbHdFaHpHSExDb0xXNCtzMFk5?=
+ =?utf-8?B?cUJ3a0MwSkxQcFlFT3BoVnRzYlpqd3hnR2VjdGNLM0V3NVR4THZIWjVDZVBs?=
+ =?utf-8?B?dU84SitlaDZJR2ZsNVJRWG5MMVcyUDlIdlREc3Urd3JONDNabVVWQnpxc0I5?=
+ =?utf-8?B?Sll6K1pBaFArOWhYckZHVEVMcHQxa0VFSTEzdG9CMExvdklubExZa3BBUVUy?=
+ =?utf-8?B?Y1Irbkx0UDN3d3dKWUJ2Lzh6bWV3cE5SSjRmMzdvQk5xc0JVRWZ3Q1ZNeERr?=
+ =?utf-8?B?VnRCUC83Z2cyUTFKRFBMYlREZ203WjRWdXlibDVyVlpncG1ObDMvWHd0SWpq?=
+ =?utf-8?B?a1BOeGpyQWZFRWlJTW9ybmg0SnowLzkwVG44amdNR3F3UFUwaFNKMlpkT0tr?=
+ =?utf-8?B?cW5QZUlZNXBaWEZJOXZsdHpzRHRZajcrWWowa2J5Nmg1UDl3cytKcEhsdHJD?=
+ =?utf-8?B?cG92ZlpmTU5WcUVkSHFhck4zK3h5TElCN1h0akp4LzZwcnVJWFBuMkxKNlMz?=
+ =?utf-8?B?djFuMDE5QVhrdEVTb1ZrRGJrcGloS0NiT1V1WWliRjdQa3ZPRXF0Z1hYQ3Ny?=
+ =?utf-8?B?TWk1ajRzMWg5S0FwazFTaCtNV2FLYjU3bkhaOEdKTlJVWlFVV0NIelpRWCs0?=
+ =?utf-8?B?aW5VSUxWSWE4T1ZMbmNrNjBxd3J1andvRlV0VkVZM2cxOFVtQ2RNa1UxeG1j?=
+ =?utf-8?B?V1g0M0d3Z3FnT0k1T1hQUW5BVU1EMWJCL1VNVm5ZLzJuSFVacHArbEVpYnJL?=
+ =?utf-8?B?eTNsWEt4NVd0bmtZT3Rhb2Z4TXY1QlV1dmVvd2VjY1ZFYVVCd2YxdHpvWlhG?=
+ =?utf-8?B?K2RVL3NyU1BIMTN4bXhEYnNycHNtdVFnKzBSbXJJQ281dzBoaTJuWFlXU3ky?=
+ =?utf-8?B?bnNkRXRXWnVlV2lQTEFETVJsSmdhOTZrZng0YVBpRXdkdkRzcGdRSGo1Q0R1?=
+ =?utf-8?B?ZmNScUtRbEdsZ1VHVHJRYVY2RFFuUGlWbi9qNFRPcURSQzJUVUF1cm03RFZz?=
+ =?utf-8?B?dEpXenJ6b3lqWjNPalViS3d6eStRTVY0cGNackdwUnRvd2QvemhTVUpEcnZX?=
+ =?utf-8?B?Wm9zWVpEdktCa1dLaDY5TjBKam1WTG5iR0JHa244VDJDMkplVjViZ2NZMGox?=
+ =?utf-8?B?KzB2SWZsVk1lcnVId3N5ZldpeURLTk5talBDRnVPRTVNbjBBUXA2ditKeEdj?=
+ =?utf-8?B?dU5BckI1aEo0R04xUFJXVDhkVWdjUUczNzJCLzE0VDJ5cklkNldobVlSMG5a?=
+ =?utf-8?B?VXBGQXlVbGd2dXhHWTRleFl4NUhsdjZqaGJ2eWJrS2lpRkxURjZJM2s2cE1M?=
+ =?utf-8?B?M0dxUy85alc5Q3lxMmFLUWhVL1hFQVIvcUdUTEpwVEtNRFI1MjVpTnpxcC9n?=
+ =?utf-8?B?S0lDNURsREFDaW5Ka3d0aVo4UWdnblQxdzQrS1RaL3A2UG1aajVBQk52dHVI?=
+ =?utf-8?B?bFNFUGNXNHhOSDAzcGprZGQ3cGFFZHlRNitBc1NwNjN3d3BycGtMOHlKRXZB?=
+ =?utf-8?B?VXFOZ1lsTkVKWnoxN2YycTZ1ZHpFRWdaL3dYUURjMVllM04rY2wydWRuUW9m?=
+ =?utf-8?B?eVFjOWUwQjlKSXBoa0hqVWFzWTVVRVE1WDRZYW5ONHJ3OWJ5MzNHTmRmS3VE?=
+ =?utf-8?B?REhlSHU4Mm90WE5KenloMEFBNnE1S3EzRi84RzBlcEZqQ0dEZVFJUGMyRUZH?=
+ =?utf-8?B?Q1RIeE1mSm5EaCtsZklwMFFqZGZvOFJENjhGeWlSaitHbXBIV2N1NUF2ZCtF?=
+ =?utf-8?Q?JUc5ewAvz+XpFHP8tro7LGbQ/aV6cWsN?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB6982.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5339
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB5PEPF00014B88.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	66d3d6ab-bc54-4beb-2030-08de1125c6ea
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|14060799003|36860700013|35042699022|82310400026|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y1RtRUtMUDBvSk81N0RHSW51U0VtREJGdkZyaWVhZHB5aklrU25LZVZYTzZz?=
+ =?utf-8?B?VGpNTFFES3ZrV09pR0c5RUdNWk5rdkNTYXhweFRKdGYwblpXOXNBUWVwU3Ew?=
+ =?utf-8?B?eThqQ09TM29Ua2x1TnFTbmJQb2VvWEJEb1hBbVZLNFZPMVRZVGNBRVZjTlYy?=
+ =?utf-8?B?Ri9FMlJKZkZOZThVaVZ6cUJZajVGZWRIVitsQ282WXZPdW9vamNtKzRZN0dV?=
+ =?utf-8?B?dkIrU2NxSS9WUUZuTVl0K215WU5oY0NHM0xUTmhOWGQzNXozVkpQVkQwVFkw?=
+ =?utf-8?B?b0xVcmpDRHJONXVnMmVURXEzMkhVNHFIWnlSczVVYVNsbWhmRm5YbkRYL1hW?=
+ =?utf-8?B?bkpYcUlrM1BpcTlRZTdPaWJMdVFaNmZBMHRidmdVNWdXMDNzY1FEcVNWYUx6?=
+ =?utf-8?B?ejRxck1RV3o1V0Y3YkJ0b2hEakhhSlFxTXQ0Y24xam1hV0ZZcjE5ZmxGWE5m?=
+ =?utf-8?B?WU0rM2lFUGZ3QktaWTY3SHo0ZkJSTm1QeE5IdExXRG1uMzhzTDhjZmozc0E5?=
+ =?utf-8?B?c3IycXZIMW5FL3VHMUlGTWp2eVRFVzJKNWhzVWJsQXlEbEVSNEZjOWtwNmt2?=
+ =?utf-8?B?cmJuMWl5eEJQSi9Nd1dKTGJubW5QaFU3bzR3N2lOcW93TTVCVkJYdzI4TU1k?=
+ =?utf-8?B?V1duOTdBRlR3alRJN0RFdEdIMytYQVU5eXIxY1FUclFzUmpRTnU4aTgzcElk?=
+ =?utf-8?B?N1pzN3FQd0ViRGVEdjZmZnBZMWh1Q1Uxc01ocDVSRGJ4VjJScW5GSEY5bGVz?=
+ =?utf-8?B?Y1JNcGgxdk82VzFjUGdDRzFvREFxajNBbGl2L01ERkJuK2plc05XQU5wdmZa?=
+ =?utf-8?B?NGpjZHZpaEpzeml6MXJXT1F3MGIwblovT1J3S1BCaEhxMzAvRUdwUHNmWGRh?=
+ =?utf-8?B?a1BhcmZ2b2wvbkpxQ29hTlFtK2N5RTIyMkd1eDdLeWpBMFZ4Vmdmdmk0SlE4?=
+ =?utf-8?B?NHE4RTM3ZGxaa25uMy9NM0NUM3hCZUNOQ3VQekdrQjV4TDVrS2hWbGtBUXEr?=
+ =?utf-8?B?K1AyVEZJcmtBOUFyRzZtTU9ZZUs4MGJTNnd5WU44c0k2R285YUxoY0t2U1Jm?=
+ =?utf-8?B?WnB3amV2akhlQ0EyQ2E1bThTVVhOVGlvVXVabDFzVkdaNVZlZ1FpeEdSWVJE?=
+ =?utf-8?B?a0hXQTZtSEJmbXcyQWRXMlhldGRyYzFkZ3dpbFVpK0NnVnFRUTcxcEloTW82?=
+ =?utf-8?B?VHlzbkNHc1NwQ2xhL2tmaXJDYzltbnp5eUR1NkJhNVk4WUdpTS9YcmJzdVBG?=
+ =?utf-8?B?L0FhMFY1NGlSYXZ1b3lzMGdSVTRza1FsVVA3TDR6VUdUSzBQSGJ6cGFYSzRV?=
+ =?utf-8?B?S3B4R2F2RnVOUCtqdm9xeWRvbDdZcm12SVV5dWcxbFI0NmJrSHF5MGlTK3Zl?=
+ =?utf-8?B?Y2JoRW1sek9Rd1h4V3JJRWlLRmJxeWpsOVNXMGkwZXAwVTZtQ01CRUdNVVpK?=
+ =?utf-8?B?SEFJTzFqcXBlc0s5aTdHdWFuaGpvbEhkb2NNdzZoeHlKT2Q3c1UrL01ualBJ?=
+ =?utf-8?B?Mkthb2ZkSGxqNlJBekJQQkk1dklYYTVXUkxtUVlSWnR6S21ubGRPTDBueU12?=
+ =?utf-8?B?WXUvMjJ2Q09iakIveWYybCt4UXU4NXJFT2loY3kyY1JEQmNXNmtmVzVzYjY2?=
+ =?utf-8?B?YXorbkN1TmNqd05vYXlYM3NCenJQNjFZMisrd2VWVE94aGJ5ZDdndWYwM0o5?=
+ =?utf-8?B?QmpMdTNlNm5reGxxQ280Vit4bUtzQ1BUVDZLSWpaYUFncU9kWWFYT21PRXVu?=
+ =?utf-8?B?NWN1NGc5SFRZcjJsTXlraW1mSkJYNllYMHJCSkVtclpVT2xOOTBwWFpuVHBQ?=
+ =?utf-8?B?c1pxSnVYbmdqTkd5WFlRYVpIWUwvZzV0Z1pyVE8rS0ExdE4rb2laTjNnWUhq?=
+ =?utf-8?B?WTVyVXVKSGJjNitaYVFqNTB4ZUk1dUFkWHUzUXJkQVB4YUNPN2JRL0Y5RVZC?=
+ =?utf-8?B?bVM1bGp0U3JQMUUzUXpBNUk3RWtxMTFDSUhWU2RGLzVzOVVCUmZjNTlzSGw2?=
+ =?utf-8?B?ZjY3SEZEMnFIMG5TY2JtZ0tWanFGOEh6SWxheWFJQkFWT2ErV0NFalBpcEti?=
+ =?utf-8?B?YTRHMTJoN05saWttV09XdUJMeWdCU0VKa1NkSGc1dnZEQ0dCUzFaOXV4SEg1?=
+ =?utf-8?Q?Qwp8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(14060799003)(36860700013)(35042699022)(82310400026)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 04:45:41.6745
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91ec266f-e33b-4355-0572-08de1125daf2
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B88.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR08MB10596
 
-On Tue, Oct 21, 2025 at 1:19=E2=80=AFPM Alistair Francis <alistair23@gmail.=
-com> wrote:
->
-> On Mon, Oct 20, 2025 at 4:09=E2=80=AFPM Hannes Reinecke <hare@suse.de> wr=
-ote:
-> >
-> > On 10/17/25 06:23, alistair23@gmail.com wrote:
-> > > From: Alistair Francis <alistair.francis@wdc.com>
-> > >
-> > > When reporting the msg-type to userspace let's also support reporting
-> > > KeyUpdate events. This supports reporting a client/server event and i=
-f
-> > > the other side requested a KeyUpdateRequest.
-> > >
-> > > Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> > > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> > > ---
-> > > v4:
-> > >   - Don't overload existing functions, instead create new ones
-> > > v3:
-> > >   - Fixup yamllint and kernel-doc failures
-> > >
-> > >   Documentation/netlink/specs/handshake.yaml | 16 ++++-
-> > >   drivers/nvme/host/tcp.c                    | 15 +++-
-> > >   drivers/nvme/target/tcp.c                  | 10 ++-
-> > >   include/net/handshake.h                    |  8 +++
-> > >   include/uapi/linux/handshake.h             | 13 ++++
-> > >   net/handshake/tlshd.c                      | 83 +++++++++++++++++++=
-++-
-> > >   6 files changed, 137 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/Documentation/netlink/specs/handshake.yaml b/Documentati=
-on/netlink/specs/handshake.yaml
-> > > index a273bc74d26f..c72ec8fa7d7a 100644
-> > > --- a/Documentation/netlink/specs/handshake.yaml
-> > > +++ b/Documentation/netlink/specs/handshake.yaml
-> > > @@ -21,12 +21,18 @@ definitions:
-> > >       type: enum
-> > >       name: msg-type
-> > >       value-start: 0
-> > > -    entries: [unspec, clienthello, serverhello]
-> > > +    entries: [unspec, clienthello, serverhello, clientkeyupdate,
-> > > +              clientkeyupdaterequest, serverkeyupdate, serverkeyupda=
-terequest]
-> > >     -
-> >
-> > Why do we need the 'keyupdate' and 'keyupdaterequest' types?
->
-> msg-type indicates if it's a client or server and hello or keyupdate,
-> the idea being
->
-> client:
->  - Hello
->  - KeyUpdate
->
-> server:
->  - Hello
->  - KeyUpdate
->
-> I'll drop clientkeyupdaterequest and serverkeyupdaterequest
->
-> > Isn't the 'keyupdate' type enough, and can we specify anything
-> > else via the update type?
->
-> Once we know if it's a client or server KeyUpdate we need to know if
-> we are receiving one, sending one or receiving one with the
-> request_update flag set, hence key-update-type
->
-> >
-> > >       type: enum
-> > >       name: auth
-> > >       value-start: 0
-> > >       entries: [unspec, unauth, psk, x509]
-> > > +  -
-> > > +    type: enum
-> > > +    name: key-update-type
-> > > +    value-start: 0
-> > > +    entries: [unspec, send, received, received_request_update]
-> >
-> > See above.
-> >
-> > >
-> > >   attribute-sets:
-> > >     -
-> > > @@ -74,6 +80,13 @@ attribute-sets:
-> > >         -
-> > >           name: keyring
-> > >           type: u32
-> > > +      -
-> > > +        name: key-update-request
-> > > +        type: u32
-> > > +        enum: key-update-type
-> > > +      -
-> > > +        name: key-serial
-> > > +        type: u32
-> >
-> > Not sure if I like key-serial. Yes, it is a key serial number,
-> > but it's not the serial number of the updated key (rather the serial
-> > number of the key holding the session information).
-> > Maybe 'key-update-serial' ?
-> >
-> > >     -
-> > >       name: done
-> > >       attributes:
-> > > @@ -116,6 +129,7 @@ operations:
-> > >               - certificate
-> > >               - peername
-> > >               - keyring
-> > > +            - key-serial
-> > >       -
-> > >         name: done
-> > >         doc: Handler reports handshake completion
-> > > diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> > > index 611be56f8013..2696bf97dfac 100644
-> > > --- a/drivers/nvme/host/tcp.c
-> > > +++ b/drivers/nvme/host/tcp.c
-> > > @@ -20,6 +20,7 @@
-> > >   #include <linux/iov_iter.h>
-> > >   #include <net/busy_poll.h>
-> > >   #include <trace/events/sock.h>
-> > > +#include <uapi/linux/handshake.h>
-> > >
-> > >   #include "nvme.h"
-> > >   #include "fabrics.h"
-> > > @@ -206,6 +207,10 @@ static struct workqueue_struct *nvme_tcp_wq;
-> > >   static const struct blk_mq_ops nvme_tcp_mq_ops;
-> > >   static const struct blk_mq_ops nvme_tcp_admin_mq_ops;
-> > >   static int nvme_tcp_try_send(struct nvme_tcp_queue *queue);
-> > > +static int nvme_tcp_start_tls(struct nvme_ctrl *nctrl,
-> > > +                           struct nvme_tcp_queue *queue,
-> > > +                           key_serial_t pskid,
-> > > +                           handshake_key_update_type keyupdate);
-> > >
-> > >   static inline struct nvme_tcp_ctrl *to_tcp_ctrl(struct nvme_ctrl *c=
-trl)
-> > >   {
-> > > @@ -1726,7 +1731,8 @@ static void nvme_tcp_tls_done(void *data, int s=
-tatus, key_serial_t pskid,
-> > >
-> > >   static int nvme_tcp_start_tls(struct nvme_ctrl *nctrl,
-> > >                             struct nvme_tcp_queue *queue,
-> > > -                           key_serial_t pskid)
-> > > +                           key_serial_t pskid,
-> > > +                           handshake_key_update_type keyupdate)
-> > >   {
-> > >       int qid =3D nvme_tcp_queue_id(queue);
-> > >       int ret;
-> > > @@ -1748,7 +1754,10 @@ static int nvme_tcp_start_tls(struct nvme_ctrl=
- *nctrl,
-> > >       args.ta_timeout_ms =3D tls_handshake_timeout * 1000;
-> > >       queue->tls_err =3D -EOPNOTSUPP;
-> > >       init_completion(&queue->tls_complete);
-> > > -     ret =3D tls_client_hello_psk(&args, GFP_KERNEL);
-> > > +     if (keyupdate =3D=3D HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC)
-> > > +             ret =3D tls_client_hello_psk(&args, GFP_KERNEL);
-> > > +     else
-> > > +             ret =3D tls_client_keyupdate_psk(&args, GFP_KERNEL, key=
-update);
-> > >       if (ret) {
-> > >               dev_err(nctrl->device, "queue %d: failed to start TLS: =
-%d\n",
-> > >                       qid, ret);
-> > > @@ -1898,7 +1907,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctr=
-l *nctrl, int qid,
-> > >
-> > >       /* If PSKs are configured try to start TLS */
-> > >       if (nvme_tcp_tls_configured(nctrl) && pskid) {
-> > > -             ret =3D nvme_tcp_start_tls(nctrl, queue, pskid);
-> > > +             ret =3D nvme_tcp_start_tls(nctrl, queue, pskid, HANDSHA=
-KE_KEY_UPDATE_TYPE_UNSPEC);
-> > >               if (ret)
-> > >                       goto err_init_connect;
-> > >       }
-> > > diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-> > > index 4ef4dd140ada..8aeec4a7f136 100644
-> > > --- a/drivers/nvme/target/tcp.c
-> > > +++ b/drivers/nvme/target/tcp.c
-> > > @@ -1833,7 +1833,8 @@ static void nvmet_tcp_tls_handshake_timeout(str=
-uct work_struct *w)
-> > >       kref_put(&queue->kref, nvmet_tcp_release_queue);
-> > >   }
-> > >
-> > > -static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue)
-> > > +static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
-> > > +     handshake_key_update_type keyupdate)
-> > >   {
-> > >       int ret =3D -EOPNOTSUPP;
-> > >       struct tls_handshake_args args;
-> > > @@ -1852,7 +1853,10 @@ static int nvmet_tcp_tls_handshake(struct nvme=
-t_tcp_queue *queue)
-> > >       args.ta_keyring =3D key_serial(queue->port->nport->keyring);
-> > >       args.ta_timeout_ms =3D tls_handshake_timeout * 1000;
-> > >
-> > > -     ret =3D tls_server_hello_psk(&args, GFP_KERNEL);
-> > > +     if (keyupdate =3D=3D HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC)
-> > > +             ret =3D tls_server_hello_psk(&args, GFP_KERNEL);
-> > > +     else
-> > > +             ret =3D tls_server_keyupdate_psk(&args, GFP_KERNEL, key=
-update);
-> > >       if (ret) {
-> > >               kref_put(&queue->kref, nvmet_tcp_release_queue);
-> > >               pr_err("failed to start TLS, err=3D%d\n", ret);
-> > > @@ -1934,7 +1938,7 @@ static void nvmet_tcp_alloc_queue(struct nvmet_=
-tcp_port *port,
-> > >               sk->sk_data_ready =3D port->data_ready;
-> > >               write_unlock_bh(&sk->sk_callback_lock);
-> > >               if (!nvmet_tcp_try_peek_pdu(queue)) {
-> > > -                     if (!nvmet_tcp_tls_handshake(queue))
-> > > +                     if (!nvmet_tcp_tls_handshake(queue, HANDSHAKE_K=
-EY_UPDATE_TYPE_UNSPEC))
-> > >                               return;
-> > >                       /* TLS handshake failed, terminate the connecti=
-on */
-> > >                       goto out_destroy_sq;
-> > > diff --git a/include/net/handshake.h b/include/net/handshake.h
-> > > index dc2222fd6d99..084c92a20b68 100644
-> > > --- a/include/net/handshake.h
-> > > +++ b/include/net/handshake.h
-> > > @@ -10,6 +10,10 @@
-> > >   #ifndef _NET_HANDSHAKE_H
-> > >   #define _NET_HANDSHAKE_H
-> > >
-> > > +#include <uapi/linux/handshake.h>
-> > > +
-> > > +#define handshake_key_update_type u32
-> > > +
-> > Huh?
-> > You define it as 'u32' here
-> >
-> > >   enum {
-> > >       TLS_NO_KEYRING =3D 0,
-> > >       TLS_NO_PEERID =3D 0,
-> > > @@ -38,8 +42,12 @@ struct tls_handshake_args {
-> > >   int tls_client_hello_anon(const struct tls_handshake_args *args, gf=
-p_t flags);
-> > >   int tls_client_hello_x509(const struct tls_handshake_args *args, gf=
-p_t flags);
-> > >   int tls_client_hello_psk(const struct tls_handshake_args *args, gfp=
-_t flags);
-> > > +int tls_client_keyupdate_psk(const struct tls_handshake_args *args, =
-gfp_t flags,
-> > > +                          handshake_key_update_type keyupdate);
-> > >   int tls_server_hello_x509(const struct tls_handshake_args *args, gf=
-p_t flags);
-> > >   int tls_server_hello_psk(const struct tls_handshake_args *args, gfp=
-_t flags);
-> > > +int tls_server_keyupdate_psk(const struct tls_handshake_args *args, =
-gfp_t flags,
-> > > +                          handshake_key_update_type keyupdate);
-> > >
-> > >   bool tls_handshake_cancel(struct sock *sk);
-> > >   void tls_handshake_close(struct socket *sock);
-> > > diff --git a/include/uapi/linux/handshake.h b/include/uapi/linux/hand=
-shake.h
-> > > index b68ffbaa5f31..b691530073c6 100644
-> > > --- a/include/uapi/linux/handshake.h
-> > > +++ b/include/uapi/linux/handshake.h
-> > > @@ -19,6 +19,10 @@ enum handshake_msg_type {
-> > >       HANDSHAKE_MSG_TYPE_UNSPEC,
-> > >       HANDSHAKE_MSG_TYPE_CLIENTHELLO,
-> > >       HANDSHAKE_MSG_TYPE_SERVERHELLO,
-> > > +     HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE,
-> > > +     HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATEREQUEST,
-> > > +     HANDSHAKE_MSG_TYPE_SERVERKEYUPDATE,
-> > > +     HANDSHAKE_MSG_TYPE_SERVERKEYUPDATEREQUEST,
-> > >   };
-> > >
-> > >   enum handshake_auth {
-> > > @@ -28,6 +32,13 @@ enum handshake_auth {
-> > >       HANDSHAKE_AUTH_X509,
-> > >   };
-> > >
-> > > +enum handshake_key_update_type {
-> > > +     HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC,
-> > > +     HANDSHAKE_KEY_UPDATE_TYPE_SEND,
-> > > +     HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED,
-> > > +     HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED_REQUEST_UPDATE,
-> > > +};
-> > > +
-> >
-> > and here it's an enum. Please kill the first declaration.
-> >
-> > >   enum {
-> > >       HANDSHAKE_A_X509_CERT =3D 1,
-> > >       HANDSHAKE_A_X509_PRIVKEY,
-> > > @@ -46,6 +57,8 @@ enum {
-> > >       HANDSHAKE_A_ACCEPT_CERTIFICATE,
-> > >       HANDSHAKE_A_ACCEPT_PEERNAME,
-> > >       HANDSHAKE_A_ACCEPT_KEYRING,
-> > > +     HANDSHAKE_A_ACCEPT_KEY_UPDATE_REQUEST,
-> > > +     HANDSHAKE_A_ACCEPT_KEY_SERIAL,
-> > >
-> > >       __HANDSHAKE_A_ACCEPT_MAX,
-> > >       HANDSHAKE_A_ACCEPT_MAX =3D (__HANDSHAKE_A_ACCEPT_MAX - 1)
-> > > diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
-> > > index 2549c5dbccd8..c40839977ab9 100644
-> > > --- a/net/handshake/tlshd.c
-> > > +++ b/net/handshake/tlshd.c
-> > > @@ -41,6 +41,7 @@ struct tls_handshake_req {
-> > >       unsigned int            th_num_peerids;
-> > >       key_serial_t            th_peerid[5];
-> > >
-> > > +     int                     th_key_update_request;
-> > >       key_serial_t            user_session_id;
-> > >   };
-> > >
-> > Why 'int' ? Can it be negative?
-> > If not please make it an 'unsigned int'
-> >
-> > > @@ -58,7 +59,8 @@ tls_handshake_req_init(struct handshake_req *req,
-> > >       treq->th_num_peerids =3D 0;
-> > >       treq->th_certificate =3D TLS_NO_CERT;
-> > >       treq->th_privkey =3D TLS_NO_PRIVKEY;
-> > > -     treq->user_session_id =3D TLS_NO_PRIVKEY;
-> > > +     treq->user_session_id =3D args->user_session_id;
-> > > +
-> > >       return treq;
-> > >   }
-> > >
-> > > @@ -265,6 +267,16 @@ static int tls_handshake_accept(struct handshake=
-_req *req,
-> > >               break;
-> > >       }
-> > >
-> > > +     ret =3D nla_put_u32(msg, HANDSHAKE_A_ACCEPT_KEY_SERIAL,
-> > > +                       treq->user_session_id);
-> > > +     if (ret < 0)
-> > > +             goto out_cancel;
-> > > +
-> > > +     ret =3D nla_put_u32(msg, HANDSHAKE_A_ACCEPT_KEY_UPDATE_REQUEST,
-> > > +                       treq->th_key_update_request);
-> > > +     if (ret < 0)
-> > > +             goto out_cancel;
-> > > +
-> > >       genlmsg_end(msg, hdr);
-> > >       return genlmsg_reply(msg, info);
-> > >
-> > > @@ -372,6 +384,44 @@ int tls_client_hello_psk(const struct tls_handsh=
-ake_args *args, gfp_t flags)
-> > >   }
-> > >   EXPORT_SYMBOL(tls_client_hello_psk);
-> > >
-> > > +/**
-> > > + * tls_client_keyupdate_psk - request a PSK-based TLS handshake on a=
- socket
-> > > + * @args: socket and handshake parameters for this request
-> > > + * @flags: memory allocation control flags
-> > > + * @keyupdate: specifies the type of KeyUpdate operation
-> > > + *
-> > > + * Return values:
-> > > + *   %0: Handshake request enqueue; ->done will be called when compl=
-ete
-> > > + *   %-EINVAL: Wrong number of local peer IDs
-> > > + *   %-ESRCH: No user agent is available
-> > > + *   %-ENOMEM: Memory allocation failed
-> > > + */
-> > > +int tls_client_keyupdate_psk(const struct tls_handshake_args *args, =
-gfp_t flags,
-> > > +                          handshake_key_update_type keyupdate)
-> > > +{
-> > > +     struct tls_handshake_req *treq;
-> > > +     struct handshake_req *req;
-> > > +     unsigned int i;
-> > > +
-> > > +     if (!args->ta_num_peerids ||
-> > > +         args->ta_num_peerids > ARRAY_SIZE(treq->th_peerid))
-> > > +             return -EINVAL;
-> > > +
-> > > +     req =3D handshake_req_alloc(&tls_handshake_proto, flags);
-> > > +     if (!req)
-> > > +             return -ENOMEM;
-> > > +     treq =3D tls_handshake_req_init(req, args);
-> > > +     treq->th_type =3D HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE;
-> > > +     treq->th_key_update_request =3D keyupdate;
-> > > +     treq->th_auth_mode =3D HANDSHAKE_AUTH_PSK;
-> > > +     treq->th_num_peerids =3D args->ta_num_peerids;
-> > > +     for (i =3D 0; i < args->ta_num_peerids; i++)
-> > > +             treq->th_peerid[i] =3D args->ta_my_peerids[i];
-> > Hmm?
-> > Do we use the 'peerids'?
->
-> We don't, this is just copied from the
-> tls_client_hello_psk()/tls_server_hello_psk() to provide the same
-> information to keep things more consistent.
->
-> I can remove setting these
 
-Actually, ktls-utils (tlshd) expects these to be set, so I think we
-should leave them as is
 
-Alistair
+On 10/21/25 18:39, Adrián Larumbe wrote:
+> Hi Akash,
+> 
+> On 21.10.2025 15:32, Akash Goel wrote:
+>>
+>>
+>> On 10/19/25 04:19, Adrián Larumbe wrote:
+>>> Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
+>>> behavior") did away with the treatment of partial unmaps of huge IOPTEs.
+>>>
+>>
+>> Sorry have a doubt.
+>>
+>> Corresponding to the commit 33729a5fc0ca, can we now remove the code to
+>> pre-allocate L3 page table pages i.e. 'op_ctx->rsvd_page_tables.pages' inside
+>> panthor_vm_prepare_unmap_op_ctx() ?.
+>>
+>>> In the case of Panthor, that means an attempt to run a VM_BIND unmap
+>>> operation on a memory region whose start address and size aren't 2MiB
+>>> aligned, in the event it intersects with a huge page, would lead to ARM
+>>> IOMMU management code to fail and a warning being raised.
+>>>
+>>> Presently, and for lack of a better alternative, it's best to have
+>>> Panthor handle partial unmaps at the driver level, by unmapping entire
+>>> huge pages and remapping the difference between them and the requested
+>>> unmap region.
+>>>
+>>> This could change in the future when the VM_BIND uAPI is expanded to
+>>> enforce huge page alignment and map/unmap operational constraints that
+>>> render this code unnecessary.
+>>>
+>>> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+>>> ---
+>>>    drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
+>>>    1 file changed, 126 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+>>> index 2d041a2e75e9..f9d200e57c04 100644
+>>> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+>>> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+>>> @@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+>>>    	return 0;
+>>>    }
+>>> +static bool
+>>> +is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
+>>> +			   const struct drm_gpuva_op_map *op,
+>>> +			   u64 unmap_start, u64 unmap_range,
+>>> +			   u64 sz2m_prev, u64 sz2m_next)
+>>> +{
+>>> +	size_t pgcount, pgsize;
+>>> +	const struct page *pg;
+>>> +	pgoff_t bo_offset;
+>>> +
+>>> +	if (op->va.addr < unmap_vma->base.va.addr) {
+>>
+>>
+>> Sorry, another doubt.
+>>
+>> Will this condition ever be true ?
+>>
+>> For 'op->remap.prev', 'op->va.addr' will always be equal to
+>> 'unmap_vma->base.va.addr'.
+> 
+> I believe it will always be less than that. 
 
->
-> > I thought that the information was encoded in the session, ie
-> > the 'user_session_id' ?
-> >
-> > > +
-> > > +     return handshake_req_submit(args->ta_sock, req, flags);
-> > > +}
-> > > +EXPORT_SYMBOL(tls_client_keyupdate_psk);
-> > > +
-> > >   /**
-> > >    * tls_server_hello_x509 - request a server TLS handshake on a sock=
-et
-> > >    * @args: socket and handshake parameters for this request
-> > > @@ -428,6 +478,37 @@ int tls_server_hello_psk(const struct tls_handsh=
-ake_args *args, gfp_t flags)
-> > >   }
-> > >   EXPORT_SYMBOL(tls_server_hello_psk);
-> > >
-> > > +/**
-> > > + * tls_server_keyupdate_psk - request a server TLS KeyUpdate on a so=
-cket
-> > > + * @args: socket and handshake parameters for this request
-> > > + * @flags: memory allocation control flags
-> > > + * @keyupdate: specifies the type of KeyUpdate operation
-> > > + *
-> > > + * Return values:
-> > > + *   %0: Handshake request enqueue; ->done will be called when compl=
-ete
-> > > + *   %-ESRCH: No user agent is available
-> > > + *   %-ENOMEM: Memory allocation failed
-> > > + */
-> > > +int tls_server_keyupdate_psk(const struct tls_handshake_args *args, =
-gfp_t flags,
-> > > +                          handshake_key_update_type keyupdate)
-> > > +{
-> > > +     struct tls_handshake_req *treq;
-> > > +     struct handshake_req *req;
-> > > +
-> > > +     req =3D handshake_req_alloc(&tls_handshake_proto, flags);
-> > > +     if (!req)
-> > > +             return -ENOMEM;
-> > > +     treq =3D tls_handshake_req_init(req, args);
-> > > +     treq->th_type =3D HANDSHAKE_MSG_TYPE_SERVERKEYUPDATE;
-> > > +     treq->th_key_update_request =3D keyupdate;
-> > > +     treq->th_auth_mode =3D HANDSHAKE_AUTH_PSK;
-> > > +     treq->th_num_peerids =3D 1;
-> > > +     treq->th_peerid[0] =3D args->ta_my_peerids[0];
-> >
-> > Same here. Why do we need to set 'peerid'?
-> >
-> > > +
-> > > +     return handshake_req_submit(args->ta_sock, req, flags);
-> > > +}
-> > > +EXPORT_SYMBOL(tls_server_keyupdate_psk);
-> > > +
-> > >   /**
-> > >    * tls_handshake_cancel - cancel a pending handshake
-> > >    * @sk: socket on which there is an ongoing handshake
-> > Nit: we _could_ overload 'peerid' with the user_session_id,then we
-> > wouldn't need to specify a new field in the handshake
-> > request.
-> > But that's arguably quite hackish.
->
-> Oh no! Let's not do that. That just seems prone to confusion
->
-> Alistair
->
-> >
-> > Cheers,
-> >
-> > Hannes
-> > --
-> > Dr. Hannes Reinecke                  Kernel Storage Architect
-> > hare@suse.de                                +49 911 74053 688
-> > SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
-> > HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
+
+Thanks Adrian for having a look.
+
+static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+{
+	struct panthor_vma *unmap_vma = container_of(op->remap.unmap->va, 
+struct panthor_vma, base);
+
+
+IIUC, the 'unmap_vma' passed to panthor_gpuva_sm_step_remap() will 
+always cover the entire VA range of 'drm_gpuva'.
+That's why drm_gpuva_op_remap_to_unmap_range() is called to know the 
+exact range to be unmapped.
+
+In __drm_gpuvm_sm_unmap() and __drm_gpuvm_sm_map(), you can see this,
+
+struct drm_gpuva_op_unmap u = { .va = va };
+
+
+ > What will be equal to unmap_vma->base.va.addr is 
+op->remap.prev->va.addr + op->remap.prev->va.range
+
+
+I think op->remap.prev->va.addr + op->remap.prev->va.range will be equal 
+to 'unmap_start' after the call to drm_gpuva_op_remap_to_unmap_range().
+
+Sorry I may have again misunderstood the code.
+
+Please can you check.
+
+Best regards
+Akash
+
+
+>> And for 'op->remap.next', 'op->va.addr' will always be greater than
+>> 'unmap_vma->base.va.addr'.
+> 
+> Yes, I believe so.
+> 
+>> Please can you clarify.
+>>
+>> Best regards
+>> Akash
+>>
+>>
+>>> +		bo_offset = unmap_start - unmap_vma->base.va.addr + unmap_vma->base.gem.offset;
+>>> +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+>>> +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+>>> +		pgsize = get_pgsize(unmap_start, unmap_range, &pgcount);
+>>> +
+>>> +	} else {
+>>> +		bo_offset = ((unmap_start + unmap_range - 1) - unmap_vma->base.va.addr)
+>>> +			+ unmap_vma->base.gem.offset;
+>>> +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+>>> +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+>>> +		pgsize = get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev, &pgcount);
+>>> +	}
+>>> +
+>>> +	pg = to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> PAGE_SHIFT];
+>>> +
+>>> +	if (pgsize == SZ_4K && folio_order(page_folio(pg)) == PMD_ORDER &&
+>>> +	    unmap_vma->base.va.addr <= sz2m_prev && unmap_vma->base.va.addr +
+>>> +	    unmap_vma->base.va.range >= sz2m_next)
+>>> +		return true;
+>>> +
+>>> +	return false;
+>>> +}
+>>> +
+>>> +struct remap_params {
+>>> +	u64 prev_unmap_start, prev_unmap_range;
+>>> +	u64 prev_remap_start, prev_remap_range;
+>>> +	u64 next_unmap_start, next_unmap_range;
+>>> +	u64 next_remap_start, next_remap_range;
+>>> +	u64 unmap_start, unmap_range;
+>>> +};
+>>> +
+>>> +static struct remap_params
+>>> +get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
+>>> +			const struct panthor_vma *unmap_vma)
+>>> +{
+>>> +	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
+>>> +	struct remap_params params = {0};
+>>> +
+>>> +	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
+>>> +
+>>> +	if (op->prev) {
+>>> +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+>>> +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+>>> +
+>>> +		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
+>>> +					       unmap_range, sz2m_prev, sz2m_next)) {
+>>> +			params.prev_unmap_start = sz2m_prev;
+>>> +			params.prev_unmap_range = SZ_2M;
+>>> +			params.prev_remap_start = sz2m_prev;
+>>> +			params.prev_remap_range = unmap_start & (SZ_2M - 1);
+>>> +
+>>> +			u64 diff = min(sz2m_next - unmap_start, unmap_range);
+>>> +
+>>> +			unmap_range -= diff;
+>>> +			unmap_start += diff;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	if (op->next) {
+>>> +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+>>> +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+>>> +
+>>> +		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
+>>> +					       unmap_range, sz2m_prev, sz2m_next)) {
+>>> +			if (unmap_range) {
+>>> +				params.next_unmap_start = sz2m_prev;
+>>> +				params.next_unmap_range = SZ_2M;
+>>> +				unmap_range -= op->next->va.addr & (SZ_2M - 1);
+>>> +			}
+>>> +
+>>> +			params.next_remap_start = op->next->va.addr;
+>>> +			params.next_remap_range = SZ_2M - (op->next->va.addr & (SZ_2M - 1));
+>>> +		}
+>>> +	}
+>>> +
+>>> +	params.unmap_start = unmap_start;
+>>> +	params.unmap_range = unmap_range;
+>>> +
+>>> +	return params;
+>>> +}
+>>> +
+>>>    static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+>>>    				       void *priv)
+>>>    {
+>>> @@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+>>>    	struct panthor_vm *vm = priv;
+>>>    	struct panthor_vm_op_ctx *op_ctx = vm->op_ctx;
+>>>    	struct panthor_vma *prev_vma = NULL, *next_vma = NULL;
+>>> -	u64 unmap_start, unmap_range;
+>>> +	struct remap_params params;
+>>>    	int ret;
+>>> -	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_range);
+>>> -	ret = panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
+>>> +	/*
+>>> +	 * ARM IOMMU page table management code disallows partial unmaps of huge pages,
+>>> +	 * so when a partial unmap is requested, we must first unmap the entire huge
+>>> +	 * page and then remap the difference between the huge page minus the requested
+>>> +	 * unmap region. Calculating the right offsets and ranges for the different unmap
+>>> +	 * and map operations is the responsibility of the following function.
+>>> +	 */
+>>> +	params = get_map_unmap_intervals(&op->remap, unmap_vma);
+>>> +
+>>> +	ret = panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_range);
+>>>    	if (ret)
+>>>    		return ret;
+>>>    	if (op->remap.prev) {
+>>> +		ret = panthor_vm_unmap_pages(vm, params.prev_unmap_start,
+>>> +					     params.prev_unmap_range);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +		ret = panthor_vm_map_pages(vm, params.prev_remap_start,
+>>> +					   flags_to_prot(unmap_vma->flags),
+>>> +					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
+>>> +					   op->remap.prev->gem.offset, params.prev_remap_range);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +
+>>>    		prev_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+>>>    		panthor_vma_init(prev_vma, unmap_vma->flags);
+>>>    	}
+>>>    	if (op->remap.next) {
+>>> +		ret = panthor_vm_unmap_pages(vm, params.next_unmap_start,
+>>> +					     params.next_unmap_range);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +
+>>> +		ret = panthor_vm_map_pages(vm, params.next_remap_start,
+>>> +					   flags_to_prot(unmap_vma->flags),
+>>> +					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
+>>> +					   op->remap.next->gem.offset, params.next_remap_range);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +
+>>>    		next_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+>>>    		panthor_vma_init(next_vma, unmap_vma->flags);
+>>>    	}
+>>>
+>>> base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
+>>> prerequisite-patch-id: 3b0f61bfc22a616a205ff7c15d546d2049fd53de
+> 
+> Adrian Larumbe
 
