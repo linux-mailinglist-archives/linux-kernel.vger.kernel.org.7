@@ -1,288 +1,193 @@
-Return-Path: <linux-kernel+bounces-864430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F0FBFAC7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:07:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F21BFAC6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A2F1A05AAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:06:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16819500930
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9592FE066;
-	Wed, 22 Oct 2025 08:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DEF301715;
+	Wed, 22 Oct 2025 08:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E8h+jbOf"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OqTfjc8C"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FF22FBDE2;
-	Wed, 22 Oct 2025 08:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D31E2FFF80
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120362; cv=none; b=HzZderu40wEq3kUwEO25KH5j0xlKfaAhGIc1hYJk0ZbN+PfJQKQf/CclREIlWVwuMffCaLyMIMsE0+DndkARL3T297JEQjOMZ2PIN61ng4jA1xcNooYAvujBhe+3Nv5CqHNkXKTbFFrozv+xsib7//niEJ88urfseGuZfSdmxdM=
+	t=1761120369; cv=none; b=tn24KSGsFViQpJAuZiz9Me9RQ11T+J+r/rP5SOx2JorUAfuU+CJvDnCMmrDQVB7BBJ8WgZHwSBrVESs9+eCqR2AZ3QJbDtwkAB2oDY4tjix0whI7WqfxcFXh+VhmPq6I8tmmRCOLqA3wkQO0RJwStSUW1C+Qilhn0Hox1ixmoh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120362; c=relaxed/simple;
-	bh=/u7cWJFmGb/0w3Q0RV4B5oTchZg1wFWsEu3Y+CNnIGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sHkYQCUt0NZrc4jBeiRxLhivj1R66zDD2gJwKAELlATqnCSYH3GwesDxrxZj6FsnzW5LG83DnFMiYqtndqVFqbM51jZw5FMJhcN5KZX+N27VAcVOTye3FD32CThnSTHjqLJpiH3Bay1ya7H4NmTJSDqB2q5fDe2KnaDoeVSIjPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E8h+jbOf; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 79B114E41271;
-	Wed, 22 Oct 2025 08:05:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4BB03606DC;
-	Wed, 22 Oct 2025 08:05:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C3AB4102F242C;
-	Wed, 22 Oct 2025 10:05:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761120355; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=bT/1MPxwrmKaeOltuH31t1GkUZWM2AMvg1m2hzc9/1o=;
-	b=E8h+jbOf8YX1pJ0j+IrYZWNJogH+0/urPN8krmqLEcautSwXzEF6rctq7whJ/1XmYujiDa
-	T3uXjMZjsA1bbf7lSQylFTKGeKBmVLjxI1/UJyb2aA1znzYHewpYAYSSr84ukB4QPxLbXN
-	ZWOqtlt+4TKdeLg6B1UgxIilXCpyJxdXIV9Z/Rm1j8qBOoN7L7vsOb/n1OOKkxzrjK14QF
-	r9f7GkqOPFVlxr99h32ACznyorrpNf84W1Si2ewWh7iI34xiGyvZ1BhErMipVgk8VMmBnL
-	F3xvdMj9x1kv0mYcjtSjCJNzGboiR5rKA0/qkD7ao2ZoWRhRhDOlJQigm4aMHg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
-Cc: Hans de Goede <hansg@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>
-Subject:
- Re: [PATCH v2 5/5] regulator: ltm8054: Support output current limit control
-Date: Wed, 22 Oct 2025 10:05:40 +0200
-Message-ID: <3500149.e9J7NaK4W3@fw-rgant>
-In-Reply-To: <20250925-ltm8054-driver-v2-5-bb61a401a0dc@bootlin.com>
-References:
- <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
- <20250925-ltm8054-driver-v2-5-bb61a401a0dc@bootlin.com>
+	s=arc-20240116; t=1761120369; c=relaxed/simple;
+	bh=Vv5HW4hMaQ9k6PZF5xQoMjollRe8szXt8vgnUejMW7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lfyd7hG/ME6ZkkS6EcI9aY/G7y9mCo9S9bhq9J5aPJnDopgghu8oT1AzEqkVcSJRxAosa4LrXvz8ihEdm7Isqf8KUEOnHaUfByY1lcFz+Hl/9O7PUJ+ErPQIrCcZDpeWogzHWyuIVn+GeYUUnO5QQH5TLjVJW9yKfKkbYHfibgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OqTfjc8C; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761120364;
+	bh=Vv5HW4hMaQ9k6PZF5xQoMjollRe8szXt8vgnUejMW7Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OqTfjc8CeEZodXvloy6yGK0vCCVA3ZUOYsnD0vEOc6mxtUqJblDcDaqLtizrvul49
+	 PqaCN2GxY14WvR3VNgeQ6zH+ZkRWkBdHFATc+T0ISJSIMQstxywXwEhe0f3sau3hIG
+	 2s1hgKhwTABfdbTdBWu4g5VySi3p1xg2O3YFMA2bTO4hbIaZP4x1JTuHz0o5J7avAv
+	 19F3fOgQTfNDUMFdBhHG99F8iDFH0tjUYUu71nrlziw30LL85XwkNuoNo/cpdUHuFp
+	 4h97W1yuKztO1Kr1rsUpThg7hLXqk0irWVaBaETOxDtvitMsoLJE9UkotUICc839pE
+	 OXfWXcVlNP8NA==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1CE6317E12C4;
+	Wed, 22 Oct 2025 10:06:03 +0200 (CEST)
+Date: Wed, 22 Oct 2025 10:05:48 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: kernel test robot <lkp@intel.com>
+Cc: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Boris Brezillon
+ <bbrezillon@kernel.org>, Rob Herring <robh@kernel.org>, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen
+ <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Hugh
+ Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
+ Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ oe-kbuild-all@lists.linux.dev, Linux Memory Management List
+ <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 06/12] drm/i915: Use huge tmpfs mountpoint helpers
+Message-ID: <20251022100548.4dee241e@fedora>
+In-Reply-To: <202510221301.wU3TSqMg-lkp@intel.com>
+References: <20251021113049.17242-7-loic.molinari@collabora.com>
+	<202510221301.wU3TSqMg-lkp@intel.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3863480.aeNJFYEL58";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
---nextPart3863480.aeNJFYEL58
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Wed, 22 Oct 2025 10:05:40 +0200
-Message-ID: <3500149.e9J7NaK4W3@fw-rgant>
-In-Reply-To: <20250925-ltm8054-driver-v2-5-bb61a401a0dc@bootlin.com>
-MIME-Version: 1.0
+On Wed, 22 Oct 2025 11:25:10 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-Hello everyone,
+> Hi Lo=C3=AFc,
+>=20
+> kernel test robot noticed the following build errors:
+>=20
+> [auto build test ERROR on next-20251021]
+> [also build test ERROR on v6.18-rc2]
+> [cannot apply to akpm-mm/mm-everything drm-misc/drm-misc-next linus/maste=
+r v6.18-rc2 v6.18-rc1 v6.17]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/Lo-c-Molinari/drm-=
+shmem-helper-Simplify-page-offset-calculation-in-fault-handler/20251021-193=
+355
+> base:   next-20251021
+> patch link:    https://lore.kernel.org/r/20251021113049.17242-7-loic.moli=
+nari%40collabora.com
+> patch subject: [PATCH v5 06/12] drm/i915: Use huge tmpfs mountpoint helpe=
+rs
+> config: x86_64-randconfig-003-20251022 (https://download.01.org/0day-ci/a=
+rchive/20251022/202510221301.wU3TSqMg-lkp@intel.com/config)
+> compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251022/202510221301.wU3TSqMg-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510221301.wU3TSqMg-lkp=
+@intel.com/
+>=20
+> All errors (new ones prefixed by >>):
+>=20
+>    drivers/gpu/drm/i915/gem/i915_gem_shmem.c: In function '__create_shmem=
+':
+> >> drivers/gpu/drm/i915/gem/i915_gem_shmem.c:511:59: error: 'struct drm_d=
+evice' has no member named 'huge_mnt' =20
+>      511 |                 filp =3D shmem_file_setup_with_mnt(i915->drm.h=
+uge_mnt, "i915",
+>          |                                                           ^
+>=20
+>=20
+> vim +511 drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+>=20
+>    486=09
+>    487	static int __create_shmem(struct drm_i915_private *i915,
+>    488				  struct drm_gem_object *obj,
+>    489				  resource_size_t size)
+>    490	{
+>    491		unsigned long flags =3D VM_NORESERVE;
+>    492		struct file *filp;
+>    493=09
+>    494		drm_gem_private_object_init(&i915->drm, obj, size);
+>    495=09
+>    496		/* XXX: The __shmem_file_setup() function returns -EINVAL if size=
+ is
+>    497		 * greater than MAX_LFS_FILESIZE.
+>    498		 * To handle the same error as other code that returns -E2BIG when
+>    499		 * the size is too large, we add a code that returns -E2BIG when =
+the
+>    500		 * size is larger than the size that can be handled.
+>    501		 * If BITS_PER_LONG is 32, size > MAX_LFS_FILESIZE is always fals=
+e,
+>    502		 * so we only needs to check when BITS_PER_LONG is 64.
+>    503		 * If BITS_PER_LONG is 32, E2BIG checks are processed when
+>    504		 * i915_gem_object_size_2big() is called before init_object() cal=
+lback
+>    505		 * is called.
+>    506		 */
+>    507		if (BITS_PER_LONG =3D=3D 64 && size > MAX_LFS_FILESIZE)
+>    508			return -E2BIG;
+>    509=09
+>    510		if (drm_gem_has_huge_mnt(&i915->drm))
+>  > 511			filp =3D shmem_file_setup_with_mnt(i915->drm.huge_mnt, "i915", =
+=20
+>    512							 size, flags);
 
-I've encountered a rather troublesome issue with this particular patch,
-which has delayed version 3 of this series. I'd like to describe it here,
-so that you can tell me if you have any suggestions for an upstreamable
-solution.
- 
-The problem concerns the set_current_limit() and get_current_limit()
-callbacks:
+Maybe instead of this drm_gem_has_huge_mnt() (or in addition to), we
+should have a drm_gem_get_huge_mnt() helper, so we don't have drivers
+dereferencing drm_device::huge_mnt directly and we can get rid of it on
+non THP configs.
 
-On Thursday, 25 September 2025 14:37:37 CEST Romain Gantois wrote:
-...
-> -static const struct regulator_ops ltm8054_regulator_ops = { };
-> +static int ltm8054_set_current_limit(struct regulator_dev *rdev, int
-> min_uA, int max_uA) +{
-> +	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
-> +	u64 vdac_uV;
-> +
-> +	min_uA = clamp_t(int, min_uA, priv->min_uA, priv->max_uA);
-> +
-> +	/* adjusted current limit = Rsense current limit * CTL pin voltage / 
-max
-> CTL pin voltage */ +	vdac_uV = (u64)min_uA * LTM8054_MAX_CTL_uV;
-> +	do_div(vdac_uV, priv->max_uA);
-> +
-> +	dev_dbg(&rdev->dev,
-> +		"Setting current limit to %duA, CTL pin to %duV\n", min_uA,
-> (int)vdac_uV); +
-> +	/* Standard IIO voltage unit is mV, scale accordingly. */
-> +	return iio_write_channel_processed_scale(priv->ctl_dac, vdac_uV, 
-1000);
-> +}
-> +
-> +static int ltm8054_get_current_limit(struct regulator_dev *rdev)
-> +{
-> +	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
-> +	int ret, vdac_uv;
-> +	u64 uA;
-> +
-> +	ret = iio_read_channel_processed_scale(priv->ctl_dac, &vdac_uv, 1000);
-> +	if (ret < 0) {
-> +		dev_err(&rdev->dev, "failed to read CTL DAC voltage, err %d\n", 
-ret);
-> +		return ret;
-> +	}
-> +
-> +	uA = (u64)vdac_uv * priv->max_uA;
-> +	do_div(uA, LTM8054_MAX_CTL_uV);
-> +
-> +	return uA;
-> +}
-> +
-> +static const struct regulator_ops ltm8054_regulator_ops = {
-> +	.set_current_limit = ltm8054_set_current_limit,
-> +	.get_current_limit = ltm8054_get_current_limit,
-> +};
-> +
-...
-
-I've encountered a lockdep splat while testing these callbacks. I've
-included a summary of the splat at the end of this email [1].
- 
-After investigating, it seems like the issue lies with IIO callbacks in the
-ad5592r driver being called with the LTM8054 regulator device lock held.
- 
-The ad5592r callbacks themselves call into the regulator core to enable the
-DAC's regulators, which might try the LTM8054 lock again in the same
-thread, causing a deadlock. This would only happen if the LTM8054 was
-supplying voltage to the ad5592r.
- 
-There are two parts to this issue:
-
-1. Making sure that the CTL IIO channel used by an LTM8054 device isn't
-supplied by the LTM8054 itself (or a consumer of the LTM8054). Solving this 
-removes the risk of an actual deadlock.
- 
-2. Silencing the lockdep splat. The splat seems to be triggered by the IIO
-driver taking the general regulator ww_mutex context, which means it will
-still occur even if we've made sure that the IIO channel isn't a consumer
-of the LTM8054 regulator.
-
-For part 1., a potential solution would be to create a device link with the
-LTM8054 device as a consumer and the CTL IIO channel as a supplier. IIUC
-device links do not tolerate cycles, so this should ensure that the IIO
-channel isn't a direct or indirect consumer of the LTM8054.
-
-However, the LTM8054 driver cannot access the IIO device struct to create the 
-link, so adding a new IIO consumer API function could be necessary.
- 
-For part 2., I'm having more trouble finding a proper solution. One
-potential fix would be to put the IIO channel reads/writes in a LTM8054
-driver work item and have them run without the regulator lock held. This
-would incidentally also solve part 1., however it would make the current
-limit operations asynchronous, and it seems like a lot of unnecessary
-complexity.
- 
-Please tell me if you have any suggestions for solving this, I'll keep
-searching on my side in the meantime.
-
-Thanks,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-[1] lockdep splat summary
-```
-WARNING: possible circular locking dependency detected
-6.17.0-rc6+ #9 Not tainted
-------------------------------------------------------
-kworker/u17:0/34 is trying to acquire lock:
-(&iio_dev_opaque->info_exist_lock){+.+.}-{4:4}, at: 
-iio_read_channel_processed_scale+0x40/0x120
-   
-but task is already holding lock:
-(regulator_ww_class_mutex){+.+.}-{4:4}, at: ww_mutex_trylock+0x184/0x3a0
-   
-which lock already depends on the new lock.
-   
-   
-the existing dependency chain (in reverse order) is:
-   
--> #2 (regulator_ww_class_mutex){+.+.}-{4:4}:
-       lock_acquire+0xf0/0x2c0
-       regulator_lock_dependent+0x120/0x270
-       regulator_enable+0x38/0xd0
-       ad5592r_probe+0xcc/0x630
-       ad5593r_i2c_probe+0x58/0x80
-   ...
-       ret_from_fork+0x10/0x20
-   
--> #1 (regulator_ww_class_acquire){+.+.}-{0:0}:
-       reacquire_held_locks+0xd4/0x1c0
-       lock_release+0x148/0x2c0
-       __mutex_unlock_slowpath+0x3c/0x2f0
-       mutex_unlock+0x1c/0x30
-       regulator_lock_dependent+0x1d4/0x270
-       regulator_get_voltage+0x34/0xd0
-       ad5592r_read_raw+0x154/0x2f0
-       iio_channel_read.isra.0+0xac/0xd0
-       iio_write_channel_processed_scale+0x64/0x1e0
-       ltm8054_set_current_limit+0x70/0xd0
-   ...
-       ret_from_fork+0x10/0x20
-   
--> #0 (&iio_dev_opaque->info_exist_lock){+.+.}-{4:4}:
-       check_prev_add+0x104/0xc60
-       __lock_acquire+0x12a4/0x15c0
-       lock_acquire+0xf0/0x2c0
-       __mutex_lock+0x90/0xc80
-       mutex_lock_nested+0x28/0x40
-       iio_read_channel_processed_scale+0x40/0x120
-       ltm8054_get_current_limit+0x34/0xa0
-       kthread+0x11c/0x1f0
-   ...
-       ret_from_fork+0x10/0x20
-   
-other info that might help us debug this:
-   
-Chain exists of:
-  &iio_dev_opaque->info_exist_lock --> regulator_ww_class_acquire --> 
-regulator_ww_class_mutex
-   
- Possible unsafe locking scenario:
-   
-       CPU0                    CPU1
-       ----                    ----
-  lock(regulator_ww_class_mutex);
-                               lock(regulator_ww_class_acquire);
-                               lock(regulator_ww_class_mutex);
-  lock(&iio_dev_opaque->info_exist_lock);
-   
- *** DEADLOCK ***
-```
-
---nextPart3863480.aeNJFYEL58
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmj4kFQACgkQKCYAIARz
-eA6puRAAnJGqhKF/LyR1iSyJYMIpEbmkGrn44GV4qMZpIK/EAwx5vhTXSevTcG+v
-wt/5ovGF/Fs0IuZ9LLheFczozHvDk33TfK/Pa62zePu1PnMYwJ9Q1dwoqHDQCrHI
-RzB1EMsKj1S22YwPuHrNc8NH+VkSaVvE+kChOze42mvwS86qY+O9QA4q+tUkMEAu
-W6kgmy9SQZDqqosIdNiotok5UyQoQKuA+4cWzFPwpCUMqo13GIhQ2wXYqWHxSBTR
-ZuWMWqq2c2lzLrxiqLUEUVsdyL1AG7FyUOBqQ0SWoyId0Zq18a8vr7vPyftsb+rt
-f0pqu14srqOA/xyUYfRv11FYRzr3oi11GZw5tRI7Nn74MhxZUWh4KmoYCKAjnNRN
-UQyjrKsl74BTC8F38/JBp+rqL4SYzhJh8/53Up7Dh5aCJXJvEEpI1k8pBTSOqdpU
-aC8fVDbVjiBn2EVobiBP75wnvEvLz/jRZAphZWpFJDa1+LZ178GqWZCKF/Y0O+jI
-JW2g25G/FHZiYhcKHwyH19xY8+vCnaF/dQyL49TprCSSUJdQBaijZal5jwLtidjm
-MYE+Hopih7ccfVwKhmyghQhfblZLvc+/6zpr6mSE4BmKT0crqgSQXAxuE/vIZOYI
-Zg+H7rvLGF06Coe8e0flLq7e3zh1hAsE9yWM1UNOsywvU8YEAbo=
-=wEUM
------END PGP SIGNATURE-----
-
---nextPart3863480.aeNJFYEL58--
-
-
+>    513		else
+>    514			filp =3D shmem_file_setup("i915", size, flags);
+>    515		if (IS_ERR(filp))
+>    516			return PTR_ERR(filp);
+>    517=09
+>    518		/*
+>    519		 * Prevent -EFBIG by allowing large writes beyond MAX_NON_LFS on =
+shmem
+>    520		 * objects by setting O_LARGEFILE.
+>    521		 */
+>    522		if (force_o_largefile())
+>    523			filp->f_flags |=3D O_LARGEFILE;
+>    524=09
+>    525		obj->filp =3D filp;
+>    526		return 0;
+>    527	}
+>    528=09
+>=20
 
 
