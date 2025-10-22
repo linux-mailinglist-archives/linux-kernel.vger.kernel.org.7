@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-864873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99079BFBBF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:57:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2420BFBC07
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E8471353F64
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:57:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 952F24F8D1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C6733FE07;
-	Wed, 22 Oct 2025 11:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C82F32AAAC;
+	Wed, 22 Oct 2025 12:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KGcrgbF/"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZU0fnZtG"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D4033FE03
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4C229A312
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134265; cv=none; b=USsaME4UzhRqnzn/Bte2ugaQwpYa/lOWLomedlRi2Nfltx1sSloyGJlOgn22hVbgxIjpKVoPXyed4Q4i+ypaQSpnYS+SpvLICOaIrSs2uMSMGelBm5aBBccrcjZHZbdKQsuoY4cE9iCY6QaHbgICzIg96gFK3Ux4ganuWVJFgDk=
+	t=1761134444; cv=none; b=g1SIrtZshOn0jlrpkO3nx2vqBpm1CAs/qsiuYnETZXYm7gIiparIr1gch4+Bx8AGFxgbsRAiwy4Y7Kb59sQIfelVd1KkRGyFoEb65S/JXjekL6ARiqyPz+l9k/HzOPaI1GjnTbfObnG0z9kploUYJrppcx995bZfQxrw3SdjZG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134265; c=relaxed/simple;
-	bh=8BaPCfQX7vMiRGCgF2IvivSuUs/Be4XjQvQi+SyJU6U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tTXMKUmb/vrvZHL+Lw5MZGkx0X4D/J96Sc/Ob4Pfxyh0Mdj17xnX9Ol29t0stjOgtMM6ZBTVroVAU3GMiKAI+5IcXe3aTcJpx9qPrAQJaZuHnzftkc1q2ir7wL3p9lmQ5jXWm4nKiUbA47Oc7A5+H1VO0XyGZEXjTUK0xwH9GRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KGcrgbF/; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47118259fd8so42510625e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:57:42 -0700 (PDT)
+	s=arc-20240116; t=1761134444; c=relaxed/simple;
+	bh=97a8tZjKqwRtHNr6BZl+meSJb3s8o64hqDASwzxbu5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QbSAx3Xo3HuCMAcTg0YE/csSotp9xGiMAvCJtt/pBmtGpSSvdIr4yqYZjNjMhJYjGmtTWSEuN0wEFUfDhpxFjPhUby5nuTz4T0T7qT3jIE/IWS9ngZx833/ut8t1wcSCmcA2B9H2Y3FcizYiv416FFdnFhuZvHl/qZeA6e/ovEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZU0fnZtG; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-785bf425f96so8564677b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:00:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761134261; x=1761739061; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nvWvVWsMp2HvZc/pRVfJNYeSWgEzu4aPg/sGoBmwFsM=;
-        b=KGcrgbF/nxXSNFBtJQd+KbXkPWyf7y2INCIFWkWDIHRbCbj1sFryx8SIUwbbvbrjMF
-         GabrLHd2SDU58Gt4I/bFPRUDdztxSKO+BB+x+3mTcHrvbz0BtU3epjqGox74XCnqH2/S
-         DFU4TMQbW1QGsOmJ+HpFt0ssk/9BljaFsdbiRhIQD7fj0ignx9zEk8/Ym2fzGDg5vbgg
-         TKc1x7mCITfTU2u8UtfKDak/MLJYL4Ijhwh/tK+xuHtGGR5Zp2bYIuPP7Vnro5nbOWTP
-         FJhPHvK/cjuhdGI5rftV5euGZkKLrfFiKzmALQABVUYZTI3nOM5zLflM/fCWniqBXZlq
-         zDXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761134261; x=1761739061;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761134440; x=1761739240; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nvWvVWsMp2HvZc/pRVfJNYeSWgEzu4aPg/sGoBmwFsM=;
-        b=TGTFachFKNtqAobREPxz+4EqSIEoEjSULjKYba+Vzpi8FjfxMUrXM72NsMs01hgY5C
-         sn/+Nd3G9dLr74pF5zYggEnFrIzph/bNOoSpOoMmJSolz1l12izzf0sZ0zq/w+v6IcUg
-         B8u2txcckhYrvXW+JoThj0/+keiqu3WFhdmXzNE87nTpbuaLpUIU+cdg2PJdn6EKkj5h
-         RI6HorKIq0KKB5/PgjO9WcjQJiB5hOEmioeNF8MRKYIYYykpt1FcJnz/t0d+X6EUwqxr
-         Bbo5G/Yzdv2BiwhZnKdJsfsojPYc/77GpsXtRyFBWVgYJ+HEab0oIeiXF4f6a44hZlWQ
-         k55w==
-X-Forwarded-Encrypted: i=1; AJvYcCVbus9Mhv+u36FPn/z8O2VNBCg7MvWDdsQclktOnS+bEJLg5msnoYlQSHOn04/MitrIrlLOnT/xuId1A1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaBUAFy2HkJ/79DqI/+Q+4jSGZGRsORJ9r8dr8X1w7jaAjKuZX
-	BLnYRhhqDTfSr3iSUbbtBZQ87cEWjnIryB9Q26+OQT/jNTNb9Espw6ux9r4Hgva9j3E=
-X-Gm-Gg: ASbGncujPMVtzdGzMPxuWzQeJ+CXKT/Pz7oC2H9O8FlDSzGPaCfeqSAqoQojanXAmPx
-	j3auykWmOLLKEfVy41OIylDtbaZUsRIUygSb+KUwenT65VPwuzHRpqnLMYXSVEX5hmbetC4Y47g
-	xut83kmLDFbRBELwXwmkX6tjb9f/88iyvBOzaDHaLDzbkUAv+ddLug+cBMfYP3w2K8qqiGkEztP
-	b/LMJMcoAKwKzHgNW7JPzQU2OBObHnFroGSHiFz78fuBNIp88d208FM5SCIvbtgEfjq3w+8j6+t
-	mKEiuWIO3Cg5xcLmBBCBRuLy+pLymdOdWV07a6LVfjJAMRlPAwIWKWixRCupp4QnRhGxxpsOu/4
-	n+yRVDgofxK+t7HbwfLEN47xik+Y2QSdZQfIFuQsC6PzDdCQ31DdvMqW8dK42SutV4Sk6RYsNkv
-	1YH3AgDZSP7w==
-X-Google-Smtp-Source: AGHT+IHU1kUQ/j+2c0DWldc7DeJQPageEV0i7vez8IloaeUnW6bD/qTCz4m2QvWTUpZaGhquDY3CAg==
-X-Received: by 2002:a05:600c:6385:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-47117912365mr156602265e9.29.1761134260710;
-        Wed, 22 Oct 2025 04:57:40 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:bdae:f4f4:58be:ea26])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475c42d9524sm39570535e9.18.2025.10.22.04.57.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:57:40 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: amlogic: Fix out-of-range PLL frequency setting
-In-Reply-To: <20251022-optimize_pll_driver-v1-1-a275722fb6f4@amlogic.com>
-	(Chuan Liu via's message of "Wed, 22 Oct 2025 14:58:51 +0800")
-References: <20251022-optimize_pll_driver-v1-0-a275722fb6f4@amlogic.com>
-	<20251022-optimize_pll_driver-v1-1-a275722fb6f4@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 22 Oct 2025 13:57:39 +0200
-Message-ID: <1j8qh34098.fsf@starbuckisacylon.baylibre.com>
+        bh=/6uhgqipKW89TbAKSJ0VsiSw+i7Bc0BvME8dlqiNOkU=;
+        b=ZU0fnZtGUkFNuLa8Ca6e43Ct9sxzfOOMFNaD/PsOrrOIveuOY7JsxWvOuqyz8EarfA
+         TooN8WmQWzEWlnMScJOSM9H4gtWDzlxtj2bqLSlXnMxv0gtZQWk19KaRQ6tm6BgZcxaw
+         Qb3DRFQZDjD4/xKWBl9AaBFWNUCPir1scC3exaxZbF8lDVV5NpArwYWzo11fwi5ii4F1
+         Pfr1ZMmDhOrTvcm2Z57Zj4GIAHL1RIexvGC6RgHQaUCD25y23vjfBen9k2VukcKern18
+         AvQL9FnGDL790sKs1WsCuE7JW3o3X4bA5UfnYJLtpa36JrSFOmKfMUKlPZxJAj+Hn42y
+         AQiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761134440; x=1761739240;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/6uhgqipKW89TbAKSJ0VsiSw+i7Bc0BvME8dlqiNOkU=;
+        b=Rs63N7dgNxVyUweoCfaGZ6nI4TYCd5aicVBMQcj9LLfi2ny8HRjoIRvlORohabwhCQ
+         pNDNtGQS6kwyooFQqoIFTLNeraH4qfk2J2yC8FyOVA0ziHqWbVmHTKnYyatrTHqUSECl
+         xm5kR7uwK7e4RBHmv7fFEFrNM40DxGYTuJDJE4Cy5lRkTT1SbM7fSkevDkJzYrZqJe9H
+         +VJQ6Xw5CUYPswSUg1YF28i6Bg5W2PEfNlMvVgl4s1o8f1St9bClJUA+Yd1f+9mDACj3
+         IAqD2HpZvcIK/n9mTcBBJaQir8bbcP8d7J58hOFqQ5lmMal8MWxagnL57q5a00stU+U3
+         9OfA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ySqyumQSWBEetHljgkBT+AW/6N/VtPjoAJruY5kBSFRHIfwao6bzKBcJ7zYvJF9RlucN064XP92fZ2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFOUFnHhSbUN7ZIsgcJXvA/0C+cfszHUe91EDLqhRTuv9pPsYE
+	bjNAxWrk5vd1JgN9gzcfYntoI0Y12cB3cJ8Gdgi8gfwCB/1l01/nc/2Flftl12LiG9k34VpbmhZ
+	UvLAoYTmX8+O9nz0CwDBZsiVyK47M40Y=
+X-Gm-Gg: ASbGncu4vXf8nl9ceTxMfAqxOw315HcB1cZ1PtZkkX4UfCGLAD8+2ZyvRlRRYUSYXqa
+	RFQ1QTNumCWGEl6bojw4VgzzFw44fdAhUSy2NhNs1Gh5FDAylJDp8Bck5XrK392yUWhLkcpj0v5
+	doaHj2fUdVdj5Sh+/vmyq/o997XK/UBMQnwVDqV/N8HaZ9zwPBleo+raM9KbwAu/dcz2fU+e4z4
+	nXL5bwJbv3aOu8jzox2rtOyZXTyx7nESA2cE4l4RR0DI2GB8j9RIH5UgPZSTQ==
+X-Google-Smtp-Source: AGHT+IHe7HPf6WFvrCRkjbNGAn3hqNruzzhDGzkeQpPjDeNqpVAuLbWf1eiEYp5Q7LepTL72CtjhjX2Ia5Crn9kuh08=
+X-Received: by 2002:a05:690e:1a8d:b0:63b:a941:90c1 with SMTP id
+ 956f58d0204a3-63f2f5b4e47mr755807d50.12.1761134440040; Wed, 22 Oct 2025
+ 05:00:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20251021104002.249745-2-srinivas.kandagatla@oss.qualcomm.com>
+ <20251022003429.4445-1-threeway@gmail.com> <76567559-4cac-467f-9740-e8a539a445f7@oss.qualcomm.com>
+In-Reply-To: <76567559-4cac-467f-9740-e8a539a445f7@oss.qualcomm.com>
+From: Steev Klimaszewski <threeway@gmail.com>
+Date: Wed, 22 Oct 2025 07:00:29 -0500
+X-Gm-Features: AS18NWAgMZIyWSBaRtc28HmRupfvFkfndCADg6zxwcxhZ5F7Sr-vfM6vIit3CAM
+Message-ID: <CAOvMTZjjCn5gDgOrf_2++QjfdCxz2PXTey5Nh_-=caB4wX1g5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] ASoC: qcom: sdw: fix memory leak
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: Stable@vger.kernel.org, alexey.klimov@linaro.org, broonie@kernel.org, 
+	krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
+	srini@kernel.org, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 22 Oct 2025 at 14:58, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+Hi Srini,
 
-> From: Chuan Liu <chuan.liu@amlogic.com>
+On Wed, Oct 22, 2025 at 4:52=E2=80=AFAM Srinivas Kandagatla
+<srinivas.kandagatla@oss.qualcomm.com> wrote:
 >
-> meson_clk_get_pll_range_index incorrectly determines the maximum value
-> of 'm'.
-
-This explanation is little light !
-
-How did the problem show up ? Under which condition ? How did you come
-this conclusion ?
-
-Other people having problems might benefit from the explanation 
-
+> On 10/22/25 1:34 AM, Steev Klimaszewski wrote:
+> > Hi Srini,
+> >
+> > On the Thinkpad X13s, with this patchset applied, we end up seeing a NU=
+LL
+> > pointer dereference:
+> >
 >
-> Fixes: 8eed1db1adec6 ("clk: meson: pll: update driver for the g12a")
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
->  drivers/clk/meson/clk-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Thanks Steev,
+> I think I know the issue, There was a silly typo in 3/4 patch.
+> Could you please try this change, I will send this in v3 anyway;
 >
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index 1ea6579a760f..b07e1eb19d12 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -191,7 +191,7 @@ static int meson_clk_get_pll_range_index(unsigned long rate,
->  	*m = meson_clk_get_pll_range_m(rate, parent_rate, *n, pll);
->  
->  	/* the pre-divider gives a multiplier too big - stop */
-> -	if (*m >= (1 << pll->m.width))
-> +	if (*m > pll->range->max)
+>
+> -------------------------->cut<------------------------
+> diff --git a/sound/soc/qcom/sdw.c b/sound/soc/qcom/sdw.c
+> index 16bf09db29f5..6576b47a4c8c 100644
+> --- a/sound/soc/qcom/sdw.c
+> +++ b/sound/soc/qcom/sdw.c
+> @@ -31,6 +31,7 @@ static bool qcom_snd_is_sdw_dai(int id)
+>         case RX_CODEC_DMA_RX_6:
+>         case RX_CODEC_DMA_RX_7:
+>         case SLIMBUS_0_RX...SLIMBUS_6_TX:
+> +               return true;
+>         default:
+>                 break;
+>         }
+>
+> -------------------------->cut<------------------------
+>
+> thanks,
+> Srini>
 
-Making sure m does not exceed the maximum value is valid too.
-You should check both conditions then
+Yep, that does it :)  Thanks for the quick fix.
 
->  		return -EINVAL;
->  
->  	return 0;
+Tested-by: Steev Klimaszewski <threeway@gmail.com> # Thinkpad X13s
 
--- 
-Jerome
+-- steev
 
