@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-864791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D00BBFB8CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:09:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEF5BFB8E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F17F4F71F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0895B19A41DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58197328B5C;
-	Wed, 22 Oct 2025 11:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD5532C948;
+	Wed, 22 Oct 2025 11:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="bXI0pm5f"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2x9nB+t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AFB325480;
-	Wed, 22 Oct 2025 11:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625BB32C931;
+	Wed, 22 Oct 2025 11:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761131360; cv=none; b=KRRBXqNp+hJyu8quXs+5IPPjHN8ToYPtBLuiuvi39xAL2cDQGJKZnVbylKmXrEtmQHHfy9bIOCrsgMPsd+jl49JuEb3vrYmIBOAC5CjtjTIL5g2O/SzL11hq1fbmUmM6P6eJIpwXHx5cUmb3FghxniAzmHeipBMT9Muw84/jZmI=
+	t=1761131431; cv=none; b=ONvcgxrQd+xI2rj9G66LLmuhDY0627ZZ+U5smMWOlxFtZrw5qKr6tcyDn9ilTfdkO8/j+vyxZ3IyzCOkhEj2tfFs4F43TaGAaxZXey/Raz8kps0S4P3ajWLOA8wFg0sxZYc/ZJMAOKsNAw41jbvbBVFb6rUr++kF4ssQ7zXsXns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761131360; c=relaxed/simple;
-	bh=T6ODlUJlWqezbW19E58MqGoWcwokpjzZaYfBY09YRm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b11YC4k+gwynI49qz/cKgBZ+69sZv/fn7yL/9saGUo+uAJdnbmEc+Km3SElktAljO762jibilL16vvqdLDETXnMcZ8vkSiH8r9Ehx0/JefEqhXLtp3+NnXonwvmHaWLJeLpUxSUcbOuoyaQ9sRwUQG0PhzcBXNjNL+mF4WTJLuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=bXI0pm5f; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id BCE621C007C; Wed, 22 Oct 2025 13:09:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1761131348;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VXWeJp8S/bE9DbKcDmsGycphOVF0L6UeyUVsirjFKfU=;
-	b=bXI0pm5ffnL3+AJ1YDq6ByzhIzqDhW05PuGzaAdxOQGYl+Lm+AlDz3MdQi/I/eW7Tv6XzO
-	RmC0EpXSaaCAwgwuNslZNdcqcGmnFxrXxXBX2D1AuAZ3qr75U/Xh8jhnIalx/tD8KlfQqj
-	qS6ZLSXwMO9JYhBYy6XoND/5z/tWybw=
-Date: Wed, 22 Oct 2025 13:09:08 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: guptarud@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Ondrej Jirman <megi@xff.cz>, Martijn Braam <martijn@brixit.nl>,
-	Kamil =?utf-8?Q?Trzci=C5=84ski?= <ayufan@ayufan.eu>,
-	"Leonardo G. Trombetta" <lgtrombetta@gmx.com>
-Subject: Re: [PATCH v4 0/4] Upstreaming Pinephone Pro Patches
-Message-ID: <aPi7VAZEDnbqdvG4@duo.ucw.cz>
-References: <20250929-ppp_light_accel_mag_vol-down-v4-0-6598f22d3451@gmail.com>
+	s=arc-20240116; t=1761131431; c=relaxed/simple;
+	bh=giaDzXJ7amEHAt5NKhtODhVh96Dnm7DoUD4EN0sU/+k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KRJ4WSuK3Z35Zjq95oEuYzPF2koQd64jAF34rF/ElVIA2tPRXO9ci6TFCH2HFbMl+yxLbsaTxHt3gKwqFnqOMMz8W52VINrAxyjyJZu7ffV/XU0sMJJQtlBE0saV7vx7HTuVSZqhJChL1dacL4QFdxdUU7NwTajcZzRs8dcrfPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2x9nB+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5DAC4CEE7;
+	Wed, 22 Oct 2025 11:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761131431;
+	bh=giaDzXJ7amEHAt5NKhtODhVh96Dnm7DoUD4EN0sU/+k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=s2x9nB+tMQXedvK2A3nU6LG3ZS3Zwaf9Lhc69LHbXA+sz0XqRD7W4846RILATPcdL
+	 c3hd2gGd8XGhz9pEkHOdzPHaE9y1VKHC3hsyj/NKDzCKfYGeHmyHgsViixRFSkWUm0
+	 4/1IXFJoFaYn2P4KYwsVZD3tRdhBwmB7xY3ygFeCAtjtSa0zwMojKW9Q+Iz+ti5i7e
+	 PHSpqW5McRd/l/pjinSq86xSNDSh2jBCs8INTzgAb+pLYdKfMnwrvQGgmKlGrWQxFe
+	 WziF4GRnncev9IXdlEYaov3ZEyGsXh4rEJdtv9JtlYHWierxqAyqU8hVUN3evQPcWr
+	 hDn8Ya6YwT4Mg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
+  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
+  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org
+Subject: Re: [PATCHv7 4/7] kho: add interfaces to unpreserve folios and page
+ ranges
+In-Reply-To: <20251022005719.3670224-5-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Tue, 21 Oct 2025 20:57:16 -0400")
+References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
+	<20251022005719.3670224-5-pasha.tatashin@soleen.com>
+Date: Wed, 22 Oct 2025 13:10:27 +0200
+Message-ID: <mafs0ecqvfazg.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="akbWoOZumakbWuit"
-Content-Disposition: inline
-In-Reply-To: <20250929-ppp_light_accel_mag_vol-down-v4-0-6598f22d3451@gmail.com>
+Content-Type: text/plain
 
+On Tue, Oct 21 2025, Pasha Tatashin wrote:
 
---akbWoOZumakbWuit
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Allow users of KHO to cancel the previous preservation by adding the
+> necessary interfaces to unpreserve folio and pages.
+>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  include/linux/kexec_handover.h | 12 +++++
+>  kernel/kexec_handover.c        | 85 ++++++++++++++++++++++++++++------
+>  2 files changed, 84 insertions(+), 13 deletions(-)
+>
+[...]
+>  
+> +/**
+> + * kho_unpreserve_pages - unpreserve contiguous pages.
+> + * @page: first page in the list.
+> + * @nr_pages: number of pages.
+> + *
+> + * Instructs KHO to unpreserve @nr_pages contigious  pages starting from @page.
 
-Hi!
+s/contigious/contiguous. Also drop the extra space after it.
 
-> Throughout the years, many have contributed to the Pinephone Pro (ppp)
-> development. Unfortunately, these patches are scattered around various
-> repositories in different states.
+> + * This call must exactly match a granularity at which memory was originally
+> + * preserved by kho_preserve_pages, call with the same @page and
+> + * @nr_pages). Unpreserving arbitrary sub-ranges of larger preserved blocks is
 
-Thanks for doing this.
+Stray closing parenthesis here. Perhaps a rewording to: "This must be
+called with the same @page and @nr_pages as the corresponding
+kho_preserve_pages() call. Unpreserving arbitrary..."
 
-You may want to cc phone-devel mailing list.
+Other than this,
 
-BR,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
---akbWoOZumakbWuit
-Content-Type: application/pgp-signature; name="signature.asc"
+> + * not supported.
+> + *
+> + * Return: 0 on success, error code on failure
+> + */
+> +int kho_unpreserve_pages(struct page *page, unsigned int nr_pages)
+> +{
+> +	struct kho_mem_track *track = &kho_out.track;
+> +	const unsigned long start_pfn = page_to_pfn(page);
+> +	const unsigned long end_pfn = start_pfn + nr_pages;
+> +
+> +	if (kho_out.finalized)
+> +		return -EBUSY;
+> +
+> +	__kho_unpreserve(track, start_pfn, end_pfn);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(kho_unpreserve_pages);
+> +
+>  struct kho_vmalloc_hdr {
+>  	DECLARE_KHOSER_PTR(next, struct kho_vmalloc_chunk *);
+>  };
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaPi7VAAKCRAw5/Bqldv6
-8tMBAKCVnJToNB6sKoye/rzIFyxpfw4XXwCgkvYgDCeaz2VqXgPd7DgxxwCy93A=
-=MQHp
------END PGP SIGNATURE-----
-
---akbWoOZumakbWuit--
+-- 
+Regards,
+Pratyush Yadav
 
