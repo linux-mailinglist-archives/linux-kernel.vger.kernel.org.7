@@ -1,167 +1,231 @@
-Return-Path: <linux-kernel+bounces-865605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35088BFD88E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:21:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB4DBFD933
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67831A00E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB58D3ACC52
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7D328EA72;
-	Wed, 22 Oct 2025 17:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE541D63C7;
+	Wed, 22 Oct 2025 17:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="kixgYPs8"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ad8XxZ/w"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408C22749D9
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69948286A4
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761153661; cv=none; b=OaZXmmD8eNZqkmOg432wnwSyfb0exjiaKZv+fZCM33hyC6JudllAHigLymPJQ/oPb4PCXh7a5Hq83wk2ivD5cqC3VK10uAEeJn+iHqJhHHQtwK+UVEl5rv2mbwr72jT1Yy+0kYyLPjRqrMfS9RHwpTUgjqc8OJcOKiHwrCbzpMY=
+	t=1761153738; cv=none; b=nEYnnbD063qnNUBXVOmadJLfZyywsgDpXXzfEmuPTWh3CdCLgt6oHRrFgL3UREGZskb1twjYPQLBAnV/xuamVLFYgBWvDxbQSJbrKIjknYLMfQsnG3Dv7U4xImDYfn5D/2iz2e+jjRa9fgO+eteOtPS4M7kx0nbDK/WlYHZukHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761153661; c=relaxed/simple;
-	bh=RDxBhDccQNTTmUuAIxDyt/eux6gk25H3gXgQVVgZ6NI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rNOv6FATujaSgK74h30bvKbkZeEVAEKTz6GKjpbQCPrAUEApLdkwDflUpOJ/V/n3zMn2TR4wl9H0yPfwlnZ8vbvae45eMobnGFyTqcO5f2inxHnGHL4LZUBRlfi1wiNlUBHATVx+NhpbUIJJEiA+R+G8NpYkfkG5IwU+ve9R4S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=kixgYPs8; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-33bda2306c5so5810743a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ssn.edu.in; s=ssn; t=1761153654; x=1761758454; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xJlYAnYJCsQ5KZ0qHSI39aoyPXSaqMpg4SB26b2+5nQ=;
-        b=kixgYPs8mdn6hl57T0NZDFEacJGf4SCs+7G2oojNpGhle1SiUeIfER8P28dYCx8Vg8
-         xnkuJTDubH11d0FYKR79c7VmGDKh4QfWj3OuoQe0CgrprRniPNEFsBl/5F9vknbUevrm
-         VwjwrkW/j+G3FGABVSZqUCb1nh9xIkEVjoPAs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761153654; x=1761758454;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xJlYAnYJCsQ5KZ0qHSI39aoyPXSaqMpg4SB26b2+5nQ=;
-        b=GrCunKeRn2hEo0GwHTbuOwrK/NnmYS509aoKtR02Ay+TgB6ln6Ycc/AHwxonz+Uerj
-         p98Rifccg+fLNwNXFgsMTXkObEUvnZHXbYfQw8qQNs940A1FysBy/XeQq1QTnYtvR9o7
-         S98IHJj5cmww5qtYUjaXv1BnFDPWgVqWqY/21wGp6juHyowdJxJCOonemIbo6swpgml4
-         FQric7zxJxNnPuiOEM4B/pQR9d0hBW9zGfhRiE/M4F73BnuaMTH+6zgxBBkIa4dy4DvW
-         4GD4YGi41eX35ov5EqWCwMUdozVKLgnvHIRyAzvDELQ05ekhGEakoRg39I9tsUpFyoPG
-         z2qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHJYZ+piacLVmU9/ZQMMPTP0Jsx49FSgrOBN4sUCh9nM9D4Ube2It/IOCJgmxV9kCwfG5vPT9cTvvWZ2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7k6cgz6aJwAYvJ78l3wOFB19Ig/SYF2+UoBBmCGeQIG1yKEuH
-	2VFt8L6n244m+JgSTvLNtpJdUo1sieQsdqhiD/CuF2AuuHlMRn6BwAaH3kMaDiPIrHkruAql50q
-	LvH3FcEDnXOYbP2tKxSRuFZxmLvBReOl7HPQVGRUyC1b468ZsWqI/IJ/n
-X-Gm-Gg: ASbGncspeXp085eLkv0h6aw/rXft5tFhHK3YanwYqD2VtG4e9gNEvdEoU4vAwsVb4bN
-	kiVBjfjQgXw1LUFQ7fz3sI6izm4fQ8awnKAZlMUgZAZUSHAeW/iLrdUZtu0giWPsjHcHjeOAZtq
-	DnecT6KD3QKl2uWOE3+JP1wbXdbxHq/RIePrgjSBirPXNIBAA9zuqTkl80T1h71yyV3VFhzGjkq
-	2gcnPrjjB0v3J13WGnedPmEzvJcmufj0LQ6LIBeNf/C1sZG9UB5cMhyeLPBtlMsAnqASqyKvW3C
-	zALlPXGbnB2U18FPOOs9wFkeyBn1AvNV4cJXCEZottn03Cl6xW1G/jAPjvEVj8g7mhtnhfgNUh6
-	RKl0rGIIc/x3jOhjuBnrsemiu7KrDNLSSdHLwQqVhmDl5HPE/vWVCPY/UzxRRyrNioKv+THaxzr
-	SysMy2lxJMYiyoNYINnVvr6WYY6wlBobXoVec8NTkr0fWyGMSPoedjq++RVjO6uawa9F6sixKPS
-	IA=
-X-Google-Smtp-Source: AGHT+IGwPZD6AsalYCzJnHEYLUjuY21HqxLrzheuD67TroTDroqc/7a3AGzGedrnuVb1Tzxscx3Hvw==
-X-Received: by 2002:a17:90b:4b51:b0:32e:7c34:70cf with SMTP id 98e67ed59e1d1-33bcf9237b8mr23362914a91.36.1761153653245;
-        Wed, 22 Oct 2025 10:20:53 -0700 (PDT)
-Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:33f3:e15:111c:b0e5:c724])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e224a2c3bsm3133625a91.20.2025.10.22.10.20.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 10:20:52 -0700 (PDT)
-From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-To: davem@davemloft.net
-Cc: edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Subject: [PATCH] Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Date: Wed, 22 Oct 2025 22:50:45 +0530
-Message-ID: <20251022172045.57132-1-biancaa2210329@ssn.edu.in>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761153738; c=relaxed/simple;
+	bh=rGFNJn6c8/oP+tvYXX7DpdFBuuX0tJHuE52i0IcEjdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JtMMv32suXo3okHD3Yr7nAS3ebTOYMxouGabZvpjxcZReOHYVl+2Q3SDDcMIjSMsQ1FoGp/JSYu73uNurnFBTubQciW61K8TwinpvQFzY1mcCI3s2+KLvVQILmMG27Exv+wPjrwts3lz/SDQ11pj8qQFCuSPJSpCRpjW5ZPhF0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ad8XxZ/w; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M8LmCG017699;
+	Wed, 22 Oct 2025 17:21:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OWwV7T
+	n3ArbSOBK/ru+JS+aA89QzPdU/w+o0r+7boyw=; b=Ad8XxZ/wihLAfGoKF4++Io
+	i8ydeCK1Qr7KG8kUEKaUaTOdY5ePREm3cxjvJnmfTdeaW8Ya9jfXlMtNkHgLNAhH
+	LJwTCQDp6Sl8PPNpG8jKnDp3oDE8mcNn8B6t+bEDNwOqauSIzRwsMseIf9uO5gEL
+	5M3Oc1f8BOjYtCRpEZ2+DnXbTNMzfxyFsNA9HV3vNJsolRPrd7Ip9P2/larsjKIq
+	G+LHS0XRGWqqtAdd4bePHA6zHjSp8aDx+O2ovWDZd+T6NgTLgWfRgrUXRu3P3XM0
+	k0BYBoxW0os1dYP85I6NNdF//RIhU+j/RnrVLCiFzardv0Y9AKg+mvZjZ1wAUj1Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vvn01-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 17:21:28 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59MH2dWp015102;
+	Wed, 22 Oct 2025 17:21:28 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vvmyy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 17:21:28 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59MEOvtX002926;
+	Wed, 22 Oct 2025 17:21:27 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqejhchh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 17:21:27 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59MHLPN132244300
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 Oct 2025 17:21:26 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A57485805C;
+	Wed, 22 Oct 2025 17:21:25 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 347505805D;
+	Wed, 22 Oct 2025 17:21:14 +0000 (GMT)
+Received: from [9.43.23.38] (unknown [9.43.23.38])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 22 Oct 2025 17:21:13 +0000 (GMT)
+Message-ID: <1a63ee2a-9c1e-4aa3-adb0-012e0eae5dcf@linux.ibm.com>
+Date: Wed, 22 Oct 2025 22:51:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/19] sched/fair: Disable cache aware scheduling for
+ processes with high thread counts
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        K Prateek Nayak <kprateek.nayak@amd.com>,
+        "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+        Chen Yu
+ <yu.c.chen@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Shrikanth Hegde <sshegde@linux.ibm.com>,
+        Jianyong Wu <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>,
+        Tingyin Duan <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>,
+        Len Brown <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>,
+        Zhao Liu <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>,
+        Libo Chen <libo.chen@oracle.com>,
+        Adam Li <adamli@os.amperecomputing.com>,
+        Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+ <a098a60d9b4fc8ccea3392096f8bb0cf03af070b.1760206683.git.tim.c.chen@linux.intel.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <a098a60d9b4fc8ccea3392096f8bb0cf03af070b.1760206683.git.tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Kze02mROfrpaQniMaypF_E1r2umAZ759
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX4FPLRow0MAPI
+ yTZDQ2xeAP5r2WUmPzBEnwiEaukoYZ1xR6Q3z2X7rLo+NGe2e4PMid3uFoSt9ZJ0lFEsrPyhNRF
+ KbBlYPn9ufoHoDOycQt/dZIzU0h3txvev7xdbw6dawvinNV66f90N9x6gItojMHNNhX7n8EqqFX
+ lpxI09Pur12xV3S40z6WJl7N1aab5koPNoBYsZmwxX1Y2YmGT9lYXSUArTj5eyVhfoQP3JT8Q4W
+ aoIuHXfEYgqHxmg7twxyZhcxiRsDPYwRSnIIQ84cX4/tBAro/YjE/p708/NVoJF6U7oQrzroFEO
+ 0fOXvBvujU5UbbGzR7jGK+HoAmxRensCVtRdT3Q+Bhdr98CkvfiQCBDQQs+uf+iqq5FoGNwZR6l
+ n1IrAnrirKoaop8DHzPkORZjrkxCRg==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f91298 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=QyXUC8HyAAAA:8 a=zd2uoN0lAAAA:8 a=R188rTlZ2uNt2ZuBVgAA:9 a=QEXdDO2ut3YA:10
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: -p6P4eB-YeH6xH9nASp-tsiUglMoe745
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_07,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-net/llc: add socket locking in llc_conn_state_process to fix race condition=
-s
+On 11/10/25 23:54, Tim Chen wrote:
+> From: Chen Yu <yu.c.chen@intel.com>
+> 
+> If the number of active threads within the process
+> exceeds the number of Cores(divided by SMTs number)
+> in the LLC, do not enable cache-aware scheduling.
+> This is because there is a risk of cache contention
+> within the preferred LLC when too many threads are
+> present.
+> 
+> Reported-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  kernel/sched/fair.c | 27 +++++++++++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 79d109f8a09f..6b8eace79eee 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -1240,6 +1240,18 @@ static inline int pref_llc_idx(struct task_struct *p)
+>  	return llc_idx(p->preferred_llc);
+>  }
+>  
+> +static bool exceed_llc_nr(struct mm_struct *mm, int cpu)
+> +{
+> +	int smt_nr = 1;
+> +
+> +#ifdef CONFIG_SCHED_SMT
+> +	if (sched_smt_active())
+> +		smt_nr = cpumask_weight(cpu_smt_mask(cpu));
+> +#endif
+> +
+> +	return ((mm->nr_running_avg * smt_nr) > per_cpu(sd_llc_size, cpu));
 
-The llc_conn_state_process function handles LLC socket state transitions an=
-d is called from timer callbacks and network packet processing.
+In Power10 and Power11 that has SMT8 and LLC size of 4, this would disable
+cache aware scheduling even for one thread.
 
-Currently, there is a race condition due to concurrent access to the LLC so=
-cket's state machine and connection state without proper locking. This caus=
-es use-after-free, array out-of-bounds, and general protection faults due t=
-o invalid concurrent state access.
+Also, llc_overload_pct already ensures the load on the  preferred LLC doesn't
+exceed certain capacity. Why is this exceed_llc_nr() check needed? Won't the
+existing overload_pct naturally prevent excessive task aggregation by blocking
+migrations when the destination LLC reaches ~50% utilization?
 
-This patch adds socket bottom-half locking (bh_lock_sock and bh_unlock_sock=
-) around the call to llc_conn_service() in llc_conn_state_process. This ser=
-ializes access to the LLC state machine and protects against races with LLC=
- socket freeing and timer callbacks.
+Thanks,
+Madadi Vineeth Reddy
 
-It complements existing fixes that lock the socket during socket freeing (l=
-lc_sk_free) and timer cancellation.
+> +}
+> +
+>  static void account_llc_enqueue(struct rq *rq, struct task_struct *p)
+>  {
+>  	int pref_llc;
+> @@ -1385,10 +1397,12 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
+>  
+>  	/*
+>  	 * If this task hasn't hit task_cache_work() for a while, or it
+> -	 * has only 1 thread, invalidate its preferred state.
+> +	 * has only 1 thread, or has too many active threads, invalidate
+> +	 * its preferred state.
+>  	 */
+>  	if (epoch - READ_ONCE(mm->mm_sched_epoch) > EPOCH_LLC_AFFINITY_TIMEOUT ||
+> -	    get_nr_threads(p) <= 1) {
+> +	    get_nr_threads(p) <= 1 ||
+> +	    exceed_llc_nr(mm, cpu_of(rq))) {
+>  		if (mm->mm_sched_cpu != -1)
+>  			mm->mm_sched_cpu = -1;
+>  	}
+> @@ -1467,6 +1481,11 @@ static void __no_profile task_cache_work(struct callback_head *work)
+>  	if (p->flags & PF_EXITING)
+>  		return;
+>  
+> +	if (get_nr_threads(p) <= 1) {
+> +		mm->mm_sched_cpu = -1;
+> +		return;
+> +	}
+> +
+>  	if (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
+>  		return;
+>  
+> @@ -9826,6 +9845,10 @@ static enum llc_mig can_migrate_llc_task(int src_cpu, int dst_cpu,
+>  	if (cpu < 0 || cpus_share_cache(src_cpu, dst_cpu))
+>  		return mig_unrestricted;
+>  
+> +	 /* skip cache aware load balance for single/too many threads */
+> +	if (get_nr_threads(p) <= 1 || exceed_llc_nr(mm, dst_cpu))
+> +		return mig_unrestricted;
+> +
+>  	if (cpus_share_cache(dst_cpu, cpu))
+>  		to_pref = true;
+>  	else if (cpus_share_cache(src_cpu, cpu))
 
-This fix prevents Kernel Address Sanitizer (KASAN) null pointer dereference=
-s, Undefined Behavior Sanitizer (UBSAN) array index out-of-bounds, and rare=
- kernel panics due to LLC state races.
-
-Reported-by: syzbot
----
- net/llc/llc_conn.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/llc/llc_conn.c b/net/llc/llc_conn.c
-index 5c0ac243b248..c4f852b2dff5 100644
---- a/net/llc/llc_conn.c
-+++ b/net/llc/llc_conn.c
-@@ -69,7 +69,9 @@ int llc_conn_state_process(struct sock *sk, struct sk_buf=
-f *skb)
- 	/*
- 	 * Send event to state machine
- 	 */
-+	bh_lock_sock(sk);  // Lock socket bottom-half before state machine proces=
-sing
- 	rc =3D llc_conn_service(skb->sk, skb);
-+	bh_unlock_sock(sk);  // Unlock after processing
- 	if (unlikely(rc !=3D 0)) {
- 		printk(KERN_ERR "%s: llc_conn_service failed\n", __func__);
- 		goto out_skb_put;
---=20
-2.43.0
-
-
---=20
-::DISCLAIMER::
-
----------------------------------------------------------------------
-The=20
-contents of this e-mail and any attachment(s) are confidential and
-intended=20
-for the named recipient(s) only. Views or opinions, if any,
-presented in=20
-this email are solely those of the author and may not
-necessarily reflect=20
-the views or opinions of SSN Institutions (SSN) or its
-affiliates. Any form=20
-of reproduction, dissemination, copying, disclosure,
-modification,=20
-distribution and / or publication of this message without the
-prior written=20
-consent of authorized representative of SSN is strictly
-prohibited. If you=20
-have received this email in error please delete it and
-notify the sender=20
-immediately.
----------------------------------------------------------------------
-Header of this mail should have a valid DKIM signature for the domain=20
-ssn.edu.in <http://www.ssn.edu.in/>
 
