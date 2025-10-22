@@ -1,95 +1,80 @@
-Return-Path: <linux-kernel+bounces-864147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965A0BFA099
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63485BFA09F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1905B4E64DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:18:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7AB6D4FAAF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D842E7F03;
-	Wed, 22 Oct 2025 05:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500E12E7F20;
+	Wed, 22 Oct 2025 05:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="RV870c22"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FF821B191;
-	Wed, 22 Oct 2025 05:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="pRrGvP3B"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EE521B191;
+	Wed, 22 Oct 2025 05:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761110313; cv=none; b=JWcMEw1Z6nWYigPEs1B4L0dc1pawzIRT1+/PwAO2ct1Z5N/7s++R7CqKTixvA6ca5L/XDCAITbx/ti36b8ZInhEjCkmGLwRHVcebkj0j1hgTWbOqy6njZNEMGtINVueH5t1/TW6FS9wj/hyNv13txD6G4qtDvrBBriNqLGk3RXc=
+	t=1761110324; cv=none; b=TmtpOmqLFMgummM7W49uST9YLEvQKONpEz+KMW1M+M7GY0KIJAuPRc4ypq3m0M+NA0q2p3z4Bls+OM3Q2q2GWEnE/8w2M971lRsu2mmT/K5CdLvgqqghr11KATAX5T9cfXgwLOBvjcUkoXGhgVuQONAwiVFsKg5kdKPcdGGtDOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761110313; c=relaxed/simple;
-	bh=z0lb6s966H2PCJSHptpf9JDasu3e30IiiI/eKi8yY9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWjP/Vkc75NqtIbq1WV58FQEpWZ2Riw37wnTegRPMUyy6dJ6CaS4SQnbJdmCop/roVNn7uZtGy8j64XqQm26m2i6Iloncz1+eRk3p99aBlO/kh88Pmb8J6ibjKPe8AuQPUpPmNmYYBRPducJNrAl8/5irzX+BN/NI7YZ/390lUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=RV870c22; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=teAud6Qwz333bGc0PlLBgP477zERkOpdS5svpKstPXc=; 
-	b=RV870c22xWI6DFospbqA4RVRtdgkSEHUB66rwzVxh1Cfc1sI+tPinmLxrriKO5sm7DkWPvpxCo8
-	9ni6ZE4zfFEWDsDWmw5mqQuS4kGbfQ5GR35b2EMi0WTyl2ec8uHgC8HV/ljsotwCQIzhG5dP9ORU1
-	rivMuii4PfZum4OnODRcq1xxaEl9ykaEgiqPq/G8oQ8ZlaUhVw0yK+m4J7aBP322jc4OmwsB5um7h
-	FBogF8hysqml/AbbqM/5J7CZroniiZEuZkEan/HDAa01PLJ37e2SYuZlb81seDVpMbpZMAmKoxGTn
-	DJPFhNVriLG7pSd1JzmqAC9p067Jk6PK7/FQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vBREW-00EaFJ-2z;
-	Wed, 22 Oct 2025 13:18:02 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 22 Oct 2025 13:18:00 +0800
-Date: Wed, 22 Oct 2025 13:18:00 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
-	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev,
-	usamaarif642@gmail.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
-	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
-	senozhatsky@chromium.org, sj@kernel.org, kasong@tencent.com,
-	linux-crypto@vger.kernel.org, davem@davemloft.net,
-	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
-	surenb@google.com, kristen.c.accardi@intel.com,
-	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com
-Subject: Re: [PATCH v12 23/23] mm: zswap: Batched zswap_compress() with
- compress batching of large folios.
-Message-ID: <aPhpCGz1dWoZsMeH@gondor.apana.org.au>
-References: <20250926033502.7486-1-kanchana.p.sridhar@intel.com>
- <20250926033502.7486-24-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1761110324; c=relaxed/simple;
+	bh=GFrpW2dy+w/py2zGxbu0iJ4pUjfgjuKFg0bx6eOUyq8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=n4FM1iHzKZaVNkNtO9NwHwLFXWstWiRyLbDQxQxdMS8fLLYD3X7Ty87JoKKUkrASp/s+GzjGLxgRxB9Ylax0rZrznBD+LA2MUVPi7MM8b1u2wDBQraMp/83Bsyqv49Q39virUmq1UlFsbVdX7LkzWt2PUpAFiZ+zB6l98Yhgxik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=pRrGvP3B; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id D299D201DAEA; Tue, 21 Oct 2025 22:18:42 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D299D201DAEA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761110322;
+	bh=GFrpW2dy+w/py2zGxbu0iJ4pUjfgjuKFg0bx6eOUyq8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pRrGvP3Bqjb7Gj61ehSUiwBfxpsf83tcqYBLkTdqEEjmJ08ocJB4wmCUdDXOTTmoX
+	 cBSGBEw3AgpPIMHlnbEbp7UEFuNl7gxtlJ5mpDiY2ugbde3t9MiEHKWSfnEYH3Huv/
+	 xLyrnZLy2iR7p4kfM/B6NfC0o1huJuqVtesfH/o8=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.6 000/105] 6.6.114-rc1 review
+Date: Tue, 21 Oct 2025 22:18:42 -0700
+Message-Id: <1761110322-25322-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20251021195021.492915002@linuxfoundation.org>
+References: <20251021195021.492915002@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926033502.7486-24-kanchana.p.sridhar@intel.com>
 
-On Thu, Sep 25, 2025 at 08:35:02PM -0700, Kanchana P Sridhar wrote:
->
-> Another initialization level optimization that happens in
-> zswap_cpu_comp_prepare() is, only for batching compressors, we allocate
-> extra memory for "batch-size" int pointers in the
-> @acomp_ctx->req->__ctx[] that are statically set to track the output SG
-> lists' lengths. This optimization was necessary to avoid the latency
+The kernel, bpf tool, perf tool, and kselftest builds fine for v6.6.114-rc1 on x86 and arm64 Azure VM.
 
-There is no need for this allocation.  Just store the output lengths
-in each destination scatterlist entry.
 
-Before the call to acomp, the destination SG list should contain as
-many elements as the number of units.  On return, the dst lengths
-should be stored in each destination SG entry.
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+Thanks,
+Hardik
 
