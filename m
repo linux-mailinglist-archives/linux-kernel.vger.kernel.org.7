@@ -1,275 +1,96 @@
-Return-Path: <linux-kernel+bounces-865852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26235BFE2C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4005BFE2D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0AE91A60110
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 004AB1883DA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4DF29405;
-	Wed, 22 Oct 2025 20:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB347214807;
+	Wed, 22 Oct 2025 20:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h324Cz4i"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="w9q1klmY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEBF1DF24F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA761FBEAC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761165042; cv=none; b=o0guSZ/jQBfRDNHEarMF5shIqytEGBhxs1goB7WDLBYWUS4BCmRfPMNm74I7CHog2MIVR9drg0ymTjE5rnTlmjNerP35sSyTJo4AqJCZWtHyIuBpAb9GROC470my+rsgaxXDDXGnl7p+LC4/N4uTIidlnnbv0jIftlidnsUj1CI=
+	t=1761165079; cv=none; b=RsycgNF4f9ABCPP6e3gnBqU6DjfCb+tHNMa0Ve/eI7VGLq3mmFAfSxjZHiS2VQ+lOQi01EQqASKSrlEBFGKkfbuG450iqDdxIb8KcBhI+H+7EBUWzQBjmWfqoUQTE+Snasd0YEEq98GQtQzNe/1exLE0V83+BdtsUz4tKdksSQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761165042; c=relaxed/simple;
-	bh=6dwTuaArewrFPW9XTrKVYuFVTpOc0vAjBp6lSYfiNco=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BCDG/ekuex8duh97wEhiqXk97plC59wi14B5MP2cxURwZbWNNbqEI+ZDwKTpbp1eplq9f6Mm6/FZ/WEp5DIxC4bXtdVUjESsy9hX8u8VAGaphy9+auZalERbmhWscuC2UBU3nAL8tibROynONfD1uw4bHwZjOei44BYUGzVY7lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h324Cz4i; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7a265a02477so42990b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761165040; x=1761769840; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UUz63Xv1tyVTkc9l3Ev4IKLrhQ8gVLar/qaBr5uJLls=;
-        b=h324Cz4i73sm8/sZ+DjVtHzATm/YOWmij7HbD//0M59hZLWvl2JoO83kDte/CCMwW6
-         Gr3tKK1QaKfK1o9jmLwZCEh+9GKbNri2I18pfhb+XYKuFYb1cEYqiNVjX8E97JKnNA43
-         5RA8Xp3rD7fWAZ6RQWbFUD3L9zEimNmU3KB0D2rBIJ4a1z1gD9nZjSeHZFrV4szqvero
-         e4YMQUBIb82gIEg6eLEcTZdXl8qGYb4nqNNfBP6fYrXf8spLJH1E98zvL9jpocY1QnbL
-         dduuVu6xvu3dcFuw4oho4qCW+R5NvEMqmiOgRvtCHZh9S+ojFPL7kXCDLWEzXSMt1dP6
-         MRHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761165040; x=1761769840;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UUz63Xv1tyVTkc9l3Ev4IKLrhQ8gVLar/qaBr5uJLls=;
-        b=dxOYOz64mAXoRnK178MFJm0urNFfHQ65E/EvAkAjjud4fJ6bX3sqLH4jRxIooJg1aE
-         vqfwsi/Qnleyt2SL1cFQ8DuD/wudmYq7DnoDJUZZGn4/RJZfc9hE7GP9IFqecx2JYyRl
-         qi1q8YabekNz1LBiF7RYo8G/hb64n+7AWZx3Cj/LdEZIMU7KnALyBC9pkaTDxnGs8qPk
-         uXJE/Cjh3RwtudqaksixWgouyqDT41cSJ6lhSl+vLXNPxn1K14uvN71fkPRmpGyGXtox
-         mvRNovNvnYKKQZdar9Fxw2HlGim8PIrRtWXCavOdUpeuZ8Ic72PHOwiycwNDIa1A0v/v
-         0kqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUApgUcBfIJHxKqTvs+jTnhDxm7WPOm6QmDRPVwgDT+1O0y3fN6p8g+4sarAo8KDMWeEM3hjgljSgTTTvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKsGBrZEjm7q191X9DCdahNrTuNhBgxEAoIMl+jlrlaX7rseCR
-	jE/faT2xVWfNER/9YHij/uQx8hbfZhTEhWrvIAPBCRGcmCYYjUhfp9aG
-X-Gm-Gg: ASbGncvQv/QC4+NHSQtzQN2tfHb4MUn8M1JOiSzzDP7UDo0cH7j4YDQKgpCWA2DE4kW
-	wBvnAReIiuBxfuJfUCY7pkwESQBeBIjegiIifIYoKroC23V1wW+8/f5tQTbiRNP02FXuJHISEFD
-	VvtmQuRAOjC8T/tRES5i0bdaIxvYDNTGeWgENSXSktRWoa0UGbhVfqBpzAQW7kDjx+946N4DuE6
-	ppPdI8xQ9geGBNuUf6mZMvow7HkcqYWsSociyJ7eAAes5tR2FaytVKiYsTPXmAiLLY1dIehkcHd
-	khnJfnRp5bMOrNDx0mf4g0AeSZK1bhi9HJwMhatccikUsCrtWSJodTYCgoYzO9sxsBetCGICSkr
-	stdOo4fpPFzlEO9UVuEjnJZdJUcwLMRENfKh5f8J4nR03Ws3i4puoW1kvR77cQHXCZMddR1w7tF
-	ycs2ITT3+YinClNKF3asue96Nb
-X-Google-Smtp-Source: AGHT+IGAh3QK/2rcSGZ/RMHSZ8PEYPNj/0DMQgo8cy16gJAExrWLHPor8aPoXEIl6B4Ura2xjBBcPA==
-X-Received: by 2002:a05:6a21:6d8a:b0:2ff:3752:836f with SMTP id adf61e73a8af0-334a86184ecmr28996788637.49.1761165040385;
-        Wed, 22 Oct 2025 13:30:40 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:fa8d:1a05:3c71:d71? ([2620:10d:c090:500::7:b877])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dc12bdsm104612b3a.72.2025.10.22.13.30.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 13:30:40 -0700 (PDT)
-Message-ID: <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for
- conditional jumps on same register
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, KaFai Wan
- <kafai.wan@linux.dev>,  Alexei Starovoitov	 <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, John Fastabend	
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh
- <kpsingh@kernel.org>,  Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
- <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, Matan Shachnai
-	 <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>, 
-	colin.i.king@gmail.com, Harishankar Vishwanathan	
- <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, LKML	
- <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"	
- <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
- Yinhao Hu <dddddd@hust.edu.cn>
-Date: Wed, 22 Oct 2025 13:30:37 -0700
-In-Reply-To: <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
-References: <20251022164457.1203756-1-kafai.wan@linux.dev>
-	 <20251022164457.1203756-2-kafai.wan@linux.dev>
-	 <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev>
-	 <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
-	 <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1761165079; c=relaxed/simple;
+	bh=PYBRJIE2AzLCJIOA5mxGioZu5kRAh7s6KYh05y8hKyw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VP1sUI1kyxxhpwM+jPvbNQgS+AN3brWb8pd0Ea4PiGG0TCskrFckl9OYY+R/pswRsrBtJ9N5rcYnduBHXiO29O12AVPShGbKNiXUprGCO1Ygy4hhK5e4JIsAA0O9GjjZeNiAoFXVlivUV0F5c7b+QI5FEXXo3lgIfrGWY4IUrl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=w9q1klmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E17C4CEE7;
+	Wed, 22 Oct 2025 20:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761165078;
+	bh=PYBRJIE2AzLCJIOA5mxGioZu5kRAh7s6KYh05y8hKyw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=w9q1klmYoOXMFEprrdmvg9iJv/FQC1vDPcRutX+/g08xjqg//sOjy6qaMN0GdYz26
+	 QQpoF7f9peB70xZ+Mro6WovAMtx9CKgGFjpAl3eZE9iBxM7sgYBXlBDFV3xFAILRP+
+	 Eyki8vANrnKq539rP6uzfXklY4/n5U64tvBHC5yQ=
+Date: Wed, 22 Oct 2025 13:31:18 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, craftfever
+ <craftfever@airmail.cc>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ksm: use range-walk function to jump over holes in
+ scan_get_next_rmap_item
+Message-Id: <20251022133118.f13f924348e8cdc6d49ef268@linux-foundation.org>
+In-Reply-To: <20251022153059.22763-1-pedrodemargomes@gmail.com>
+References: <20251022153059.22763-1-pedrodemargomes@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-10-22 at 13:12 -0700, Alexei Starovoitov wrote:
-> On Wed, Oct 22, 2025 at 12:46=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.=
-com> wrote:
-> >=20
-> > On Wed, 2025-10-22 at 11:14 -0700, Yonghong Song wrote:
-> > >=20
-> > > On 10/22/25 9:44 AM, KaFai Wan wrote:
-> > > > When conditional jumps are performed on the same register (e.g., r0=
- <=3D r0,
-> > > > r0 > r0, r0 < r0) where the register holds a scalar with range, the=
- verifier
-> > > > incorrectly attempts to adjust the register's min/max bounds. This =
-leads to
-> > > > invalid range bounds and triggers a BUG warning:
-> > > >=20
-> > > > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds vi=
-olation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=3D[0x1, 0x0]=
- var_off=3D(0x0, 0x0)
-> > > > WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731 reg_bounds_sa=
-nity_check+0x163/0x220
-> > > > Modules linked in:
-> > > > CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G        W          =
- 6.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
-> > > > Tainted: [W]=3DWARN
-> > > > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.1=
-6.3-debian-1.16.3-2 04/01/2014
-> > > > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
-> > > > Call Trace:
-> > > >   <TASK>
-> > > >   reg_set_min_max.part.0+0x1b1/0x360
-> > > >   check_cond_jmp_op+0x1195/0x1a60
-> > > >   do_check_common+0x33ac/0x33c0
-> > > >   ...
-> > > >=20
-> > > > The issue occurs in reg_set_min_max() function where bounds adjustm=
-ent logic
-> > > > is applied even when both registers being compared are the same. Co=
-mparing a
-> > > > register with itself should not change its bounds since the compari=
-son result
-> > > > is always known (e.g., r0 =3D=3D r0 is always true, r0 < r0 is alwa=
-ys false).
-> > > >=20
-> > > > Fix this by adding an early return in reg_set_min_max() when false_=
-reg1 and
-> > > > false_reg2 point to the same register, skipping the unnecessary bou=
-nds
-> > > > adjustment that leads to the verifier bug.
-> > > >=20
-> > > > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> > > > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> > > > Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Core=
-mail.kaiyanm@hust.edu.cn/
-> > > > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
-> > > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> > > > ---
-> > > >   kernel/bpf/verifier.c | 4 ++++
-> > > >   1 file changed, 4 insertions(+)
-> > > >=20
-> > > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > > > index 6d175849e57a..420ad512d1af 100644
-> > > > --- a/kernel/bpf/verifier.c
-> > > > +++ b/kernel/bpf/verifier.c
-> > > > @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct bpf_veri=
-fier_env *env,
-> > > >     if (false_reg1->type !=3D SCALAR_VALUE || false_reg2->type !=3D=
- SCALAR_VALUE)
-> > > >             return 0;
-> > > >=20
-> > > > +   /* If conditional jumps on the same register, skip the adjustme=
-nt */
-> > > > +   if (false_reg1 =3D=3D false_reg2)
-> > > > +           return 0;
-> > >=20
-> > > Your change looks good. But this is a special case and it should not
-> > > happen for any compiler generated code. So could you investigate
-> > > why regs_refine_cond_op() does not work? Since false_reg1 and false_r=
-eg2
-> > > is the same, so register refinement should keep the same. Probably
-> > > some minor change in regs_refine_cond_op(...) should work?
-> > >=20
-> > > > +
-> > > >     /* fallthrough (FALSE) branch */
-> > > >     regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode),=
- is_jmp32);
-> > > >     reg_bounds_sync(false_reg1);
-> >=20
-> > I think regs_refine_cond_op() is not written in a way to handle same
-> > registers passed as reg1 and reg2. E.g. in this particular case the
-> > condition is reformulated as "r0 < r0", and then the following branch
-> > is taken:
-> >=20
-> >    static void regs_refine_cond_op(struct bpf_reg_state *reg1, struct b=
-pf_reg_state *reg2,
-> >                                  u8 opcode, bool is_jmp32)
-> >    {
-> >         ...
-> >          case BPF_JLT: // condition is rephrased as r0 < r0
-> >                  if (is_jmp32) {
-> >                          ...
-> >                  } else {
-> >                          reg1->umax_value =3D min(reg1->umax_value, reg=
-2->umax_value - 1);
-> >                          reg2->umin_value =3D max(reg1->umin_value + 1,=
- reg2->umin_value);
-> >                  }
-> >                  break;
-> >         ...
-> >    }
-> >=20
-> > Note that intent is to adjust umax of the LHS (reg1) register and umin
-> > of the RHS (reg2) register. But here it ends up adjusting the same regi=
-ster.
-> >=20
-> > (a) before refinement: u64=3D[0x0, 0x80000000] s64=3D[0x0, 0x80000000] =
-u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> > (b) after  refinement: u64=3D[0x1, 0x7fffffff] s64=3D[0x0, 0x80000000] =
-u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> > (c) after  sync      : u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x=
-0] s32=3D[0x1, 0x0]
-> >=20
-> > At (b) the u64 range translated to s32 is > 0, while s32 range is <=3D =
-0,
-> > hence the invariant violation.
-> >=20
-> > I think it's better to move the reg1 =3D=3D reg2 check inside
-> > regs_refine_cond_op(), or to handle this case in is_branch_taken().
->=20
-> hmm. bu then regs_refine_cond_op() will skip it, yet reg_set_min_max()
-> will still be doing pointless work with reg_bounds_sync() and sanity chec=
-k.
-> The current patch makes more sense to me.
+On Wed, 22 Oct 2025 12:30:59 -0300 Pedro Demarchi Gomes <pedrodemargomes@gmail.com> wrote:
 
-Well, if we want to avoid useless work, we need something like:
+> Currently, scan_get_next_rmap_item() walks every page address in a VMA
+> to locate mergeable pages. This becomes highly inefficient when scanning
+> large virtual memory areas that contain mostly unmapped regions.
+> 
+> This patch replaces the per-address lookup with a range walk using
+> walk_page_range(). The range walker allows KSM to skip over entire
+> unmapped holes in a VMA, avoiding unnecessary lookups.
+> This problem was previously discussed in [1].
+> 
+> [1] https://lore.kernel.org/linux-mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
+> 
 
-@@ -16173,6 +16173,25 @@ static int is_pkt_ptr_branch_taken(struct bpf_reg_=
-state *dst_reg,
- static int is_branch_taken(struct bpf_reg_state *reg1, struct bpf_reg_stat=
-e *reg2,
-                           u8 opcode, bool is_jmp32)
- {
-+       if (reg1 =3D=3D reg2) {
-+               switch (opcode) {
-+               case BPF_JGE:
-+               case BPF_JLE:
-+               case BPF_JSGE:
-+               case BPF_JSLE:
-+               case BPF_JEQ:
-+               case BPF_JSET:
-+                       return 1;
-+               case BPF_JGT:
-+               case BPF_JLT:
-+               case BPF_JSGT:
-+               case BPF_JSLT:
-+               case BPF_JNE:
-+                       return 0;
-+               default:
-+                       return -1;
-+               }
-+       }
+Thanks.  It would be helpful of the changelog were to tell people how
+significant this change is for our users.
 
-But that's too much code for an artificial case.
-Idk, either way is fine with me.
+> Reported-by: craftfever <craftfever@airmail.cc>
+> Closes: https://lkml.kernel.org/r/020cf8de6e773bb78ba7614ef250129f11a63781@murena.io
+
+Buried in here is a claim that large amount of CPU are being used, but
+nothing quantitative.
+
+So is there something we can tell people who are looking at this patch
+in Feb 2026 and wondering "hm, should I add that to our kernel"?
+
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Co-developed-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Fixes: 31dbd01f3143 ("ksm: Kernel SamePage Merging")
+
+If the observed runtime problem is bad enough then a cc:stable might be
+justified.  But a description of that observed runtime behavior would
+be needed for that, please.
+
 
