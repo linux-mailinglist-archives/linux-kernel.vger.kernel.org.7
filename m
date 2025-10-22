@@ -1,106 +1,122 @@
-Return-Path: <linux-kernel+bounces-865320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64DFBFCCD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:14:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353E3BFCC84
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4416281B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:07:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DFE64FB47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5200134CFC6;
-	Wed, 22 Oct 2025 15:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334AE347BD4;
+	Wed, 22 Oct 2025 15:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dH8wWI07"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZH6rD+LG"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4898433C53F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06464322A2E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761145586; cv=none; b=kQX1HTf0PpjVn95bgx3J4kcbXxBO0HTKro5yW1a50Jd6fjlcXwk0gKKoeVnKV+sZSEpbczuJBGNpz0lqzdBO80EtJcbMde0QgeFXjDesSaoSrpgXUZ5d0Umm0GVacAplfZyk6sZ33Ovr5p3d1gWSN6s0lxvz/9qrF13kaKLJlQI=
+	t=1761145656; cv=none; b=bpclGAd9ssDjUtDnEdHKfDij6W5YG6Xo3By3rxixcrsp4ujg2+p/GMqJC9vyGiwWnNpi5dgALwIb8Mymk8agUnwCYmc1YWxMQd19nIBOXUcH4GS9ToqePT2a3+cek1fSTttN5c99iWsb99N5zZYecXVFTkjN2znGMDgC1MqdAQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761145586; c=relaxed/simple;
-	bh=WpipEQJXVYcFkpkRLqzSzEcCHbasdGEjiXt0RvDq5AE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YMoUfdDw/gsXbj5jOugFWqQDFiLzuGZh+TBvqlS5PJ6Lh3yx2EXf2Ap8JJ/Ih2K9Q104xUF++8znAbCAR8pRWudV9aUCZdtYBICBWrj9TQkO/r4O+wxZf5WWyfT9hWvsdLvSciBGFw7nDkZOyBSpNTtS0ub5Qc31FFKHqBpJT14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dH8wWI07; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33428befbbaso7971806a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:06:25 -0700 (PDT)
+	s=arc-20240116; t=1761145656; c=relaxed/simple;
+	bh=laoIWGu4p0dTammd2Nay5qWKbVIQdGqiuFOD52Zityg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PbflYsmSp3FtnRC38DhZQGoXruMgAtj1xDUAMpJDC/pN4FQBPl8G4dNW0feTXLzA6/YRtFkopdwU4HbPi6u8sGqCyym7soqV88GzpEhlEijhabquCqJM0Z1ziIzsnevJi+Ee+5w+1UUj5RSQOtib/vwjXT9q9mrFtJ/NePyHSa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZH6rD+LG; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4e896e91368so15556811cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:07:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761145585; x=1761750385; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mbNHPrOmzWNWm5K2/uwLb5lW4ecWkzdO5AE+PIr0iHg=;
-        b=dH8wWI07a3QClUYQRV/CZqdw7NpMtH+hAJHjx2P9A6aHE66ZKfmB6SI+22/VuELdPP
-         ZqeTRTyL7HV4YZQeOEOKHh+LcVKuyEImzydslsU3rMWMYbMobwf/JejqW4ogubHUWX+b
-         3eMXTIAP/q7wBmlElGCKp7CAboigQA5Q4x//uuW/GHPEZH435seEChVnWD+4ELq7YpTt
-         HeZ6740eQO0GIJxm21zJ9sR86aWPI6FCIYCz4QZPsWRwmJbp5Tp75chCP2SXElIybSX3
-         +Ut6d5QhWtigr7vY0ZT/M8/yCq1g87x82We17jdbBPRNWMdV7tHzqqJZnfiozY8U9b5u
-         NS1Q==
+        d=gmail.com; s=20230601; t=1761145654; x=1761750454; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LwzTm8USs1oolFR4WnnlWLIHx/1z1zWMBPnOEps6YoA=;
+        b=ZH6rD+LGQdTAZgGs0I50PCHpiQ4FR+8W/ThEunCTK52ksJFo/4y6TLwy2WZdq7feq4
+         YlGsTLEZzQ5K9U3cY6nShgaDK3F1be7wfKmhKIPOXFu45OjlhodwwZ34m1EEAmurzQDU
+         tlm+9EPLvzvBHef1oxhDeRfFaEU4pb6JjFBqZVDwYzTLs4CFTlELCuF++wrVAUVZym55
+         ywqv4cnncylC2vOSLEI9GRvTDqES1wtnW5GfQY1TXcoIDT5+Ul65ttS9X7rZ5xGc5kq+
+         fHB/w+XrhbSPutrTAGWItrp1447gQPz1tM9vGxu+U57TeQ0Ouuez+PU96AWeaET2ZdqI
+         yO8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761145585; x=1761750385;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mbNHPrOmzWNWm5K2/uwLb5lW4ecWkzdO5AE+PIr0iHg=;
-        b=tb1lYf0aVg14qDaV4nX11Cz8QpUDTn97yvViFWVqFBoKYPxaAtk0x/cXCa2rkN8o/g
-         GuFmDH9YqvKnETWtir/n3tqtUqloCR4+djsev2xxXmZmyaKLpc+ZCPC7rTNxNArRQm/n
-         csO5pMqkooNs/OtuckL/ZQoiGPJbI30KObsg0arAZYDNU+YtUS8fd1m4aSPLsuxzdgpF
-         dy4zmBp1BBQn0eBs6vT1tobAd5i6jTTcTB3LRUiXL6t8MIPXDhTeMJnNkDlw4ZyH6FXt
-         mBBB8CEq8Mk1JNAlTu7RihMrydQC5ZNLGtw6FvDAVcnkzb2/aIyFN0jHZ9qyOuzabDIK
-         vM1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUoT3Ulh2cvg/gSe2AuynlmqJH2iMAimxVnlg9Y5zG3v5q4BOiQZFD4LpDaqVZa82UD7+8Wxd4G3tGu2f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjlwTAdBoDOJMK70tTid2s7PRRB4y6L/blWFm9pad2cxf378UN
-	Ho3cpGTMyHtA3+g0YDlYjGxcL9mls/DuTWcjt5pZGa9jufWLg3+TA/cNydg3jARHOpjARaQK/EX
-	OeziHaQ==
-X-Google-Smtp-Source: AGHT+IGz5vCeuL6eg8BiHl+RDaAcDo1Jpgx/peM1TaCMEc8yk3bL7cPCwEmOI+HAuhAgN2IA8jgg5UzY0pE=
-X-Received: from pjbbk16.prod.google.com ([2002:a17:90b:810:b0:32d:a4d4:bb17])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2403:b0:33e:2d0f:4793
- with SMTP id 98e67ed59e1d1-33e2d0f5972mr2232790a91.11.1761145584675; Wed, 22
- Oct 2025 08:06:24 -0700 (PDT)
-Date: Wed, 22 Oct 2025 08:06:23 -0700
-In-Reply-To: <20251022013657.n2he5yabfgunm5vb@desk>
+        d=1e100.net; s=20230601; t=1761145654; x=1761750454;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LwzTm8USs1oolFR4WnnlWLIHx/1z1zWMBPnOEps6YoA=;
+        b=kEt+iB/XACfdB2TW8hv23LItQCxNVb11kil0+fmFOLyK9yHKXKCz8pcpiL8gWt0LOa
+         ReizW4TmFNG1Z1uHHEoN1+IPKpCs90Vv9g+z20mjnCIXRZP2+lUxxYB8n13khkOnsCez
+         azhyxCGddlkgYBfzITWdpbpcDiVAODC90OWiw/drAZNrjT2mTOi/gsdPs5Gmg5JGRA+0
+         kxuhRt7vXpP7dizM+KRsNzX/LYklQoq0wSPzgrr1hpr8l7N2SQ9g/gCSpyyJ5AXhE5Su
+         7H1efuG8qJfBDPW6jUE3jHfPZiLeHzo88UkAkj405p8CoSBVT4rE7TKCy1NWHCZ772L2
+         CZTg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0skTCrYCO8AhLSnCiUDYCDnH+FwpyADU2Ir+2tg81CSlZEwnCS3aKl+YQjqhQ8m9BO9wGbUA0S7CBd94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykGCBBRLYWLG+5vJgmvlASjW8PiopfOx0zzfzWN4qYyNDrX1ln
+	bLHGSdDIEncHLI0Yo84sWlQcZ0UIxSkVLzyxKWyzavRd8tos337VFm8E
+X-Gm-Gg: ASbGncuuwFsQbt0aNOTRJbIcoZ4NXPt9vk6F7bo9i2p3Qoy6D/3bVIhkhfj8aX2rqkN
+	FBOn7llv6lkM7jlrZwMacr+Lsad7613ioLTF7FKhHGWkAf2ZA4WH5vehijyjQ9f6AMehrrBnS1s
+	sTXRg9S+8gZlyEvfUs6BHWdNSizr0B3gnvXqN3ByndKdORcQiAh/NjrqlhZPjLYShtkBOL9dhXx
+	I5dE0b5FXxgEALPJSRY8XpvyxCU/jUM38slmGSswauOGf0UNIvsATUf0IvYgaqDchleOM6SeObe
+	lzYbcZyGKKM+PcEZEXCz6mZSSk8oIMWb08b6aF+ICFMQFnDoV6rHZCsxC39vEaXJ0eeqCghW7TK
+	Vt3y3wqVSJwHMvL/Tei5v8jUB8pX3Yi2eLzjHFI8+IlRkXDWtv6gjKSE7/bwqU5hAI1rzvSK8Jy
+	mZ8hK+Vc6YmaMRnvXfwWdCdBECHecUX68xM9FV6iFYmW90x+E8Fe69rt7yjgUBbTaHxdefkjYq6
+	C+wgx1e2saBtjDZzGQkSReFe+X/qaLHd5ycJvAroSI3sXe4jQcKbwjn3/q9rWz5zcXsZTyH
+X-Google-Smtp-Source: AGHT+IHsEoy9TxGzvUXGFHK7BCWyNK142Lft2EHU0bFZvJFw5sqf9x3YTrPE8ZGiTyyaXtUe0r/i+Q==
+X-Received: by 2002:a05:6214:21e7:b0:7fa:3202:5261 with SMTP id 6a1803df08f44-87c20543291mr269537286d6.12.1761145653653;
+        Wed, 22 Oct 2025 08:07:33 -0700 (PDT)
+Received: from NEU1-L01066-Ubuntu-22.04-valeo-wsl2.vnet.valeo.com (ip1f10fd85.dynamic.kabel-deutschland.de. [31.16.253.133])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf521c2c7sm89448266d6.19.2025.10.22.08.07.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 08:07:33 -0700 (PDT)
+From: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Mallikarjun Thammanavar <mallikarjunst09@gmail.com>,
+	"kernelci . org bot" <bot@kernelci.org>
+Subject: [PATCH] io_uring: initialize vairable "sqe" to silence build warning
+Date: Wed, 22 Oct 2025 17:07:16 +0200
+Message-Id: <20251022150716.2157854-1-mallikarjunst09@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016200417.97003-1-seanjc@google.com> <20251016200417.97003-4-seanjc@google.com>
- <20251022013657.n2he5yabfgunm5vb@desk>
-Message-ID: <aPjy72H6q3CH-BB1@google.com>
-Subject: Re: [PATCH v3 3/4] KVM: VMX: Disable L1TF L1 data cache flush if CONFIG_CPU_MITIGATIONS=n
-From: Sean Christopherson <seanjc@google.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 21, 2025, Pawan Gupta wrote:
-> On Thu, Oct 16, 2025 at 01:04:16PM -0700, Sean Christopherson wrote:
-> > @@ -302,6 +303,16 @@ static int vmx_setup_l1d_flush(enum vmx_l1d_flush_state l1tf)
-> >  	return 0;
-> >  }
-> >  
-> > +static int vmx_setup_l1d_flush(void)
-> > +{
-> > +	/*
-> > +	 * Hand the parameter mitigation value in which was stored in the pre
-> > +	 * module init parser. If no parameter was given, it will contain
-> > +	 * 'auto' which will be turned into the default 'cond' mitigation mode.
-> > +	 */
-> > +	return vmx_setup_l1d_flush(vmentry_l1d_flush_param);
-> 
-> A likely typo here, it should be:
-> 
-> 	return __vmx_setup_l1d_flush(vmentry_l1d_flush_param);
+clang-17 compiler throws build error when [-Werror,-Wuninitialized] are enabled
+error: variable 'sqe' is uninitialized when used here [-Werror,-Wuninitialized]
 
-Argh, I have a feeling I clobbered my branch with a --force push, as I remember
-fixing this exact problem.  Or maybe I saw Brendan's struggles and thought, "hold
-my beer!" :-D
+Initialize struct io_uring_sqe *sqe = NULL; to have clean build
+Reported-by: kernelci.org bot <bot@kernelci.org>
+Link: https://lore.kernel.org/regressions/176110914348.5309.724397608932251368@15dd6324cc71/
+
+Signed-off-by: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+---
+ io_uring/fdinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index d5aa64203de5..e5792b794f8b 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -89,7 +89,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 	seq_printf(m, "CachedCqTail:\t%u\n", data_race(ctx->cached_cq_tail));
+ 	seq_printf(m, "SQEs:\t%u\n", sq_tail - sq_head);
+ 	while (sq_head < sq_tail) {
+-		struct io_uring_sqe *sqe;
++		struct io_uring_sqe *sqe = NULL;
+ 		unsigned int sq_idx;
+ 		bool sqe128 = false;
+ 		u8 opcode;
+-- 
+2.34.1
+
 
