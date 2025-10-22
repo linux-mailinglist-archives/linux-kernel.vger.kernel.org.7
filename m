@@ -1,166 +1,223 @@
-Return-Path: <linux-kernel+bounces-864142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB515BFA066
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:05:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F693BFA05A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB041A02EF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:05:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A594630E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7D12D47FF;
-	Wed, 22 Oct 2025 05:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401AF2E0417;
+	Wed, 22 Oct 2025 05:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PzDIUEzF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9Rvocw/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38DA2E0930;
-	Wed, 22 Oct 2025 05:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7032D47FF;
+	Wed, 22 Oct 2025 05:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761109494; cv=none; b=cgsam/n9tdqETLd4jP/nZpDBVs4tWvvEVvgnQ/TUa8J7snUx9iPDdh3BMilK3SqeZRJiYu9ZNy8jSWOLNNghM0wv7bAfftJRgT4SeI1ERr1GBwetlYElypnSYLpjftDDWmcoikhKOG7U7b130412lMYHUDntqSBLzmuO3Xlnbp0=
+	t=1761109491; cv=none; b=rNZXq8T7eHgI5LGgGOpxXioHxUYWUivEtZunqKHlrxBDx7vZabHh9h6TNtHLssU6LFzNGwo1Sx2GykEeXcgL7glgiiVinYI36wyWxrn9Z/5sumXazuXaihWJoeu/wIgQfjfQvOPIc/G8hYaIUSQgcKsoUjIlz/X1eE6sWvxFncI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761109494; c=relaxed/simple;
-	bh=t4fVfuI1HdHc+jpCjhLSlAa3pfyB6tpSdTYZs5svI1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpVn6YeJ45cLIa0kKVnMvbGdPslRlsJfs1bxjuESpRiCKm3GumUFoFgyNsBwd6lRGOgXIYNPsVj+vXjvAxR84Rw08zyps0R/LRGNKkT5+mNZ9BffMtZ+d2gDO7yJEdtNvbuiO3n5OTFrp+z0QZIlvxSs0/cevMVw+ec/x9lFKVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PzDIUEzF; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761109493; x=1792645493;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t4fVfuI1HdHc+jpCjhLSlAa3pfyB6tpSdTYZs5svI1M=;
-  b=PzDIUEzFc0POfPBSlzvOA4NHX7HUQZim14uTZ4OAqzEDp+HTf/kap/2q
-   hvlmgDETJZkZqWW5kj9ZPZXFcHQhOxCi7tZuxl4Q5vZSjpnJ7XbXImEVy
-   y9+ylw0HWS4mwGD2lTy3t24yD5RE3nwKBZVC9u++L/h2gA4ceH3LkAWWb
-   R//zGEVz1Syn4aKIhibIQJWW32IxbYVJtIjhfuxCL6+Icml5nJK5kmlRY
-   tSL7LYmlQOsoy9strntVgQU7970PYKlbPKLbJq5M37is9lPo74tej4ATa
-   Ve/yTA1JmDP/ccW2PPfbBVneB7tjJuXexgXmc9D1JDF13vkrCUzToTLHf
-   w==;
-X-CSE-ConnectionGUID: NXkZFk5zROaPpbTL7EWE6w==
-X-CSE-MsgGUID: CSxFDOoIS4iHK2TF7JWHNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63143445"
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="63143445"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 22:04:52 -0700
-X-CSE-ConnectionGUID: uqZlMfscTbGXlOyP80R4jg==
-X-CSE-MsgGUID: yTCBgEp6Ts6RrnrU7T3ySw==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 21 Oct 2025 22:04:44 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBR0f-000C0l-2a;
-	Wed, 22 Oct 2025 05:03:55 +0000
-Date: Wed, 22 Oct 2025 13:01:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sander Vanheule <sander@svanheule.net>,
-	Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Sander Vanheule <sander@svanheule.net>
-Subject: Re: [PATCH v6 6/8] pinctrl: Add RTL8231 pin control and GPIO support
-Message-ID: <202510221215.irTQwvxA-lkp@intel.com>
-References: <20251021142407.307753-7-sander@svanheule.net>
+	s=arc-20240116; t=1761109491; c=relaxed/simple;
+	bh=2EdtDU6mRhcVA+GAzWRU4FRqrvpQfbrVBlhQfwxWS5o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=S8CSY97PcnFa+HDWQrD2y9NQ/f4jWZnP2GVXqktv/lQbgi902lT0keWk23PYVrkVA6xKXxKatJNg3e1eqqpPtvxWnB0A1rzOKi6Dp1XlZIjTO9D9AhyBwM+c5ThpF1XphYfJPl43D3p+dF99UgvtGb4nabsXtJZmu+Pr3qLVwGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9Rvocw/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EF8FAC4CEE7;
+	Wed, 22 Oct 2025 05:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761109491;
+	bh=2EdtDU6mRhcVA+GAzWRU4FRqrvpQfbrVBlhQfwxWS5o=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=t9Rvocw/JYXXU5Ucjbsn7aVQBLLOeKo+xM9g2JPz3Np2e/4NXlVSeUuG/QcaK44sO
+	 k18GCjxX2/6zaSvJBMsjXksMU5AIY8PXoc3GAjtSgs2q26i/Ad7+jecqelsCA2/bZJ
+	 DPQDmHB70IWhC7RbpkPeLdynag38TsVJgrMAx2QWfqG/9QJLrJbm78jRDR5fWFYTAG
+	 18ZMruTpypnS4dnpV8kF5vj7NSjA2p4QocMZQJBxMPMrT7rCIqxBHgUuyFZM89+kr8
+	 v8Gc2C4GmbwhxlS50KEyuTaduz68OZaVQc6q2sKQ8jdZnuKTqMIHzwNERlRjUXwLgl
+	 nGzTnQgkkpSBw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD365CCD1BE;
+	Wed, 22 Oct 2025 05:04:50 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Wed, 22 Oct 2025 13:04:48 +0800
+Subject: [PATCH v4] dts: arm64: amlogic: add a5 pinctrl node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021142407.307753-7-sander@svanheule.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251022-a5-pinctrl-node-v4-1-a71911852c4b@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAO9l+GgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHQUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyMj3URT3YLMvOSSohzdvPyUVF0LyxQzE/OkRCNLQzMloK6CotS0zAq
+ widGxtbUABr6r+mEAAAA=
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761109488; l=3976;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=L4+dkNUItx+b/fyi3A8tosJY0LGL4pTf8lDMXXe1YgY=;
+ b=KqEsemoMw7YudnhxpG8a8K0hlC5MigxSXpOLtE65kkqQNfDSatkjRHamxp/LTt8zeEV0aYLbL
+ HJU3Pq1WekxAeaFZdDV4th4W9Q9/HSbWlW1Ql2LwPziS67L5L43YKK7
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Hi Sander,
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-kernel test robot noticed the following build warnings:
+Add pinctrl device to support Amlogic A5.
 
-[auto build test WARNING on lee-mfd/for-mfd-next]
-[also build test WARNING on lee-mfd/for-mfd-fixes linusw-pinctrl/devel linusw-pinctrl/for-next lee-leds/for-leds-next linus/master v6.18-rc2 next-20251021]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Add A5 pinctrl compatible string and device node.
+---
+Changes in v4:
+- Rebase dts.
+- Binding has already be accepted. This submission does not include this part.
+- Link to v3: https://lore.kernel.org/all/20250403-a5-pinctrl-v3-0-a8c067e22295@amlogic.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sander-Vanheule/gpio-regmap-Force-writes-for-aliased-data-regs/20251021-222846
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-patch link:    https://lore.kernel.org/r/20251021142407.307753-7-sander%40svanheule.net
-patch subject: [PATCH v6 6/8] pinctrl: Add RTL8231 pin control and GPIO support
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251022/202510221215.irTQwvxA-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510221215.irTQwvxA-lkp@intel.com/reproduce)
+Changes in v3:
+- Remain blank line.
+- Link to v2: https://lore.kernel.org/r/20250401-a5-pinctrl-v2-0-a136c1058379@amlogic.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510221215.irTQwvxA-lkp@intel.com/
+Changes in v2:
+- Modify bindings according to Conor's suggestion.
+- Link to v1: https://lore.kernel.org/r/20250327-a5-pinctrl-v1-0-49320349c463@amlogic.com
+---
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi | 90 +++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-All warnings (new ones prefixed by >>):
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
+index b1da8cbaa25a..2b12d8284594 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
+@@ -5,6 +5,7 @@
+ 
+ #include "amlogic-a4-common.dtsi"
+ #include "amlogic-a5-reset.h"
++#include <dt-bindings/pinctrl/amlogic,pinctrl.h>
+ #include <dt-bindings/power/amlogic,a5-pwrc.h>
+ / {
+ 	cpus {
+@@ -58,6 +59,95 @@ reset: reset-controller@2000 {
+ 		#reset-cells = <1>;
+ 	};
+ 
++	periphs_pinctrl: pinctrl@4000 {
++		compatible = "amlogic,pinctrl-a5",
++			     "amlogic,pinctrl-a4";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges = <0x0 0x0 0x0 0x4000 0x0 0x300>;
++
++		gpioz: gpio@c0 {
++			reg = <0x0 0xc0 0x0 0x40>,
++			      <0x0 0x18 0x0 0x8>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_Z<<8) 16>;
++		};
++
++		gpiox: gpio@100 {
++			reg = <0x0 0x100 0x0 0x40>,
++			      <0x0 0xc   0x0 0xc>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_X<<8) 20>;
++		};
++
++		gpiot: gpio@140 {
++			reg = <0x0 0x140 0x0 0x40>,
++			      <0x0 0x2c  0x0 0x8>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_T<<8) 14>;
++		};
++
++		gpiod: gpio@180 {
++			reg = <0x0 0x180 0x0 0x40>,
++			      <0x0 0x40  0x0 0x8>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_D<<8) 16>;
++		};
++
++		gpioe: gpio@1c0 {
++			reg = <0x0 0x1c0 0x0 0x40>,
++			      <0x0 0x48  0x0 0x4>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_E<<8) 2>;
++		};
++
++		gpioc: gpio@200 {
++			reg = <0x0 0x200 0x0 0x40>,
++			      <0x0 0x24  0x0 0x8>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_C<<8) 11>;
++		};
++
++		gpiob: gpio@240 {
++			reg = <0x0 0x240 0x0 0x40>,
++			      <0x0 0x0   0x0 0x8>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_B<<8) 14>;
++		};
++
++		gpioh: gpio@280 {
++			reg = <0x0 0x280 0x0 0x40>,
++			      <0x0 0x4c  0x0 0x4>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_H<<8) 5>;
++		};
++
++		gpio_test_n: gpio@2c0 {
++			reg = <0x0 0x2c0 0x0 0x40>,
++			      <0x0 0x3c  0x0 0x4>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_TEST_N<<8) 1>;
++		};
++	};
++
+ 	gpio_intc: interrupt-controller@4080 {
+ 		compatible = "amlogic,a5-gpio-intc",
+ 			     "amlogic,meson-gpio-intc";
 
-   drivers/pinctrl/pinctrl-rtl8231.c: In function 'rtl8231_pinctrl_init_functions':
->> drivers/pinctrl/pinctrl-rtl8231.c:354:67: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-     354 |                 err = pinmux_generic_add_pinfunction(pctl, &func, (void *) flag);
-         |                                                                   ^
+---
+base-commit: ea528a07aae07a764babc0d92db55e2c0d68d414
+change-id: 20251022-a5-pinctrl-node-89d647ba2916
 
-
-vim +354 drivers/pinctrl/pinctrl-rtl8231.c
-
-   321	
-   322	static int rtl8231_pinctrl_init_functions(struct pinctrl_dev *pctl,
-   323		const struct pinctrl_desc *pctl_desc)
-   324	{
-   325		struct pinfunction func;
-   326		const char **groups;
-   327		unsigned int f_idx;
-   328		unsigned int flag;
-   329		const char *name;
-   330		unsigned int pin;
-   331		int num_groups;
-   332		int err;
-   333	
-   334		for (f_idx = 0; f_idx < ARRAY_SIZE(rtl8231_pin_functions); f_idx++) {
-   335			name = rtl8231_pin_functions[f_idx].name;
-   336			flag = rtl8231_pin_functions[f_idx].flag;
-   337	
-   338			for (pin = 0, num_groups = 0; pin < pctl_desc->npins; pin++)
-   339				if (rtl8231_pin_data[pin].functions & flag)
-   340					num_groups++;
-   341	
-   342			groups = devm_kcalloc(pctl->dev, num_groups, sizeof(*groups), GFP_KERNEL);
-   343			if (!groups)
-   344				return -ENOMEM;
-   345	
-   346			for (pin = 0, num_groups = 0; pin < pctl_desc->npins; pin++)
-   347				if (rtl8231_pin_data[pin].functions & flag)
-   348					groups[num_groups++] = rtl8231_pins[pin].name;
-   349	
-   350			func = PINCTRL_PINFUNCTION(name, groups, num_groups);
-   351			if (flag == RTL8231_PIN_FUNCTION_GPIO)
-   352				func.flags |= PINFUNCTION_FLAG_GPIO;
-   353	
- > 354			err = pinmux_generic_add_pinfunction(pctl, &func, (void *) flag);
-   355			if (err < 0)
-   356				return err;
-   357		}
-   358	
-   359		return 0;
-   360	}
-   361	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+
 
