@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-864488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D1EBFAE3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76727BFAE41
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1806340655F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:29:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CF681885F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4450C309F06;
-	Wed, 22 Oct 2025 08:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069B1309F14;
+	Wed, 22 Oct 2025 08:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BuXHoBBI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HO48mn1E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E8B309EF4
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CE130AAA9;
+	Wed, 22 Oct 2025 08:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121753; cv=none; b=uL8TO3XnmaG3PyBy2Q8PsXpe4URdkFKtYrdS3vNhO5Em8buicTBspXElg+IoUF8swcWRbBjCM+rdP4bN8k5akxADEo7e+kRir/D6n/p0UpvfENf1weF7tFAPDSZ5Pj1ichIViYSnnOA1f1czLCSgMisu062Ijn1+yf+kG8HCFfw=
+	t=1761121760; cv=none; b=WNU5AG+BAUydlRqjLssNj6/GAZRr1Po1jOAtOnjfAvrq3pKsxCaahNFNPeknfv0KL+c1t23lKrDQP3EdrGkNBvaLuNF/r6/cCil7B3l3E84VvtkT55ckKxO1DmSjEhf1qak0RGXubn6nggN9Y2fnW5wYfUfYNn6I2uVxutrmCf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121753; c=relaxed/simple;
-	bh=DQWIuIaP4G7L2QkOxVyAjoDdXex0u4FBjhfXyNZJ/DA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=igljzazUO7To+Lxo4Gxbj/hO61vw2uCtwF/ww5BLpxkGpYbLMewhPje0YFZwmrqdr0APdhIMnCcxCicsXT0Vu4aeQs0ogjlv88btKBcXS8VZ2Me5rA9QMB47YFquNOMROUrZBYOuNNuxWiIhKsUL+3ibOR+Ff6mM9LNP5yQzGkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BuXHoBBI; arc=none smtp.client-ip=198.175.65.20
+	s=arc-20240116; t=1761121760; c=relaxed/simple;
+	bh=X8hpluMqUjHyF3NnFKeki1ZNOZ9A7wW3hfxRIst9gNk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kJqWRNUW2hXuzx9sihvEzkI7nkSJAd8LGKxme736+6hiw831f+UuAyXthfzuT/JF9AyZDic9lc9I6IyA7vKHHOcyBM9Y2Rd0erhadfeDU26mTfohY4Z0t0mkQ/AaFq8oB4pyeqOzjMBjZBI73wa0UTrvBI6vS9TiThvbZR3riL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HO48mn1E; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761121751; x=1792657751;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DQWIuIaP4G7L2QkOxVyAjoDdXex0u4FBjhfXyNZJ/DA=;
-  b=BuXHoBBI667kQS9+XFB05k1LKWTYaLIY0aS4xFQJ6psmcZo2c46eVONc
-   Joyc8c69HCovgiOdSbtudOuxRXthI+Iec6b7L55UI//57X//JYNd3xHD8
-   yI2tcnBIjoyISrvZx4N1WfI3E3P7NUU/a+54U31tv+4Q9UNie53DEX07e
-   EMA7sLLOOVXSsTqDy8L/uG7k1Tvn/TykMa2aUpRj9xXxMctCMJMUGBNN+
-   OHMKaxwrQZglv/rEEw5EpXaCB7h6kWuz41F5ZgakLv+m83oOn1oznVsJ0
-   NdsMmz7lt+Oo9hC/dEvCyPo6QBwywKZmYgSN7ZoHJrPARShTWRhTD7joY
+  t=1761121758; x=1792657758;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=X8hpluMqUjHyF3NnFKeki1ZNOZ9A7wW3hfxRIst9gNk=;
+  b=HO48mn1EaWM6bikVLYXswOm+wWf7J103gcxVuf89BePxwmBPzfryGGhY
+   2rbWBd4ETjBOHyBQyJfUu+INYn8s4yuIn5EHnrdIPcooZQDmLm9SyjLge
+   HdRc1l/jDECz46SOKUkKLNokuBcyZ4r6QKYkd75jOUiYAgnTOs6QAH80z
+   cZww6i/czqqYexvB4gBBWukEsw8KQ54YgA7yJZZYfXWHpQp8VkurB2966
+   XXr7LF27vBNOQMdC8sylTIdnTkHnUgtA/VxA6SB5aPR3xKN+An0GDR0Xs
+   GeSdnv/EbyFYgR8ZZuojsjPoIy4R5U+LJ0JfStu/3yCX+90Hz+RqpUjis
    g==;
-X-CSE-ConnectionGUID: 1FE/mfijTTuNbeeDOuKdyA==
-X-CSE-MsgGUID: jlI42fkATi2m6W/eHj6lVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62965576"
+X-CSE-ConnectionGUID: Sa3ljfcdTBaBkvNaOgXIxw==
+X-CSE-MsgGUID: eJKOQM1BRzGD8RkWXZTqmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74382487"
 X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="62965576"
+   d="scan'208";a="74382487"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 01:29:11 -0700
-X-CSE-ConnectionGUID: 40GuBpibRF6wTTdn6B50PQ==
-X-CSE-MsgGUID: zG1sKX4NTcOFJ+1kV6INVg==
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 01:29:17 -0700
+X-CSE-ConnectionGUID: V+b1HRBlR6SJ4CzEl3BbxA==
+X-CSE-MsgGUID: akeshMYnSd64ObPki9LPvA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="183516208"
+   d="scan'208";a="183516218"
 Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa007.fm.intel.com with ESMTP; 22 Oct 2025 01:29:04 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 22 Oct 2025 01:29:11 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -88,11 +89,14 @@ Cc: iommu@lists.linux.dev,
 	x86@kernel.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v7 0/8] Fix stale IOTLB entries for kernel address space
-Date: Wed, 22 Oct 2025 16:26:26 +0800
-Message-ID: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v7 1/8] iommu: Disable SVA when CONFIG_X86 is set
+Date: Wed, 22 Oct 2025 16:26:27 +0800
+Message-ID: <20251022082635.2462433-2-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
+References: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,102 +105,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This proposes a fix for a security vulnerability related to IOMMU Shared
-Virtual Addressing (SVA). In an SVA context, an IOMMU can cache kernel
-page table entries. When a kernel page table page is freed and
-reallocated for another purpose, the IOMMU might still hold stale,
-incorrect entries. This can be exploited to cause a use-after-free or
-write-after-free condition, potentially leading to privilege escalation
-or data corruption.
+In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
+shares and walks the CPU's page tables. The x86 architecture maps the
+kernel's virtual address space into the upper portion of every process's
+page table. Consequently, in an SVA context, the IOMMU hardware can walk
+and cache kernel page table entries.
 
-This solution introduces a deferred freeing mechanism for kernel page
-table pages, which provides a safe window to notify the IOMMU to
-invalidate its caches before the page is reused.
+The Linux kernel currently lacks a notification mechanism for kernel page
+table changes, specifically when page table pages are freed and reused.
+The IOMMU driver is only notified of changes to user virtual address
+mappings. This can cause the IOMMU's internal caches to retain stale
+entries for kernel VA.
 
-Change log:
-v7:
- - The use of pmd_ptdesc() introduced a bug reported at
-   https://lore.kernel.org/linux-iommu/68eeb99e.050a0220.91a22.0220.GAE@google.com/.
-   Fix this by replacing it with page_ptdesc().
- - Discussed the approach of backporting and reached a consensus that we
-   need an extra patch to disable SVA for x86 arch and re-enable it after
-   the kernel page table free callback is done.
- - Use "const struct ptdesc *ptdesc" as the parameter for
-   ptdesc_test_kernel().
- - Move "select ASYNC_KERNEL_PGTABLE_FREE" to the last patch.
+Use-After-Free (UAF) and Write-After-Free (WAF) conditions arise when
+kernel page table pages are freed and later reallocated. The IOMMU could
+misinterpret the new data as valid page table entries. The IOMMU might
+then walk into attacker-controlled memory, leading to arbitrary physical
+memory DMA access or privilege escalation. This is also a Write-After-Free
+issue, as the IOMMU will potentially continue to write Accessed and Dirty
+bits to the freed memory while attempting to walk the stale page tables.
 
-v6:
- - https://lore.kernel.org/linux-iommu/20251014130437.1090448-1-baolu.lu@linux.intel.com/
- - Follow commit 522abd92279a to set/clear/test a flag of struct
-   ptdesc.
- - User pmd_ptdesc() helper.
- - Squash previous PATCH 6 and 7.
- - Rename CONFIG_ASYNC_PGTABLE_FREE to CONFIG_ASYNC_KERNEL_PGTABLE_FREE.
- - Refine commit message.
- - Rebase on top of v6.18-rc1.
+Currently, SVA contexts are unprivileged and cannot access kernel
+mappings. However, the IOMMU will still walk kernel-only page tables
+all the way down to the leaf entries, where it realizes the mapping
+is for the kernel and errors out. This means the IOMMU still caches
+these intermediate page table entries, making the described vulnerability
+a real concern.
 
-v5:
- - https://lore.kernel.org/linux-iommu/20250919054007.472493-1-baolu.lu@linux.intel.com/
- - Renamed pagetable_free_async() to pagetable_free_kernel() to avoid
-   confusion.
- - Removed list_del() when the list is on the stack, as it will be freed
-   when the function returns.
- - Discussed a corner case related to memory unplug of memory that was
-   present as reserved memory at boot. Given that it's extremely rare
-   and cannot be triggered by unprivileged users. We decided to focus
-   our efforts on the common vfree() case and noted that corner case in
-   the commit message.
- - Some cleanups.
+Disable SVA on x86 architecture until the IOMMU can receive notification
+to flush the paging cache before freeing the CPU kernel page table pages.
 
-v4:
- - https://lore.kernel.org/linux-iommu/20250905055103.3821518-1-baolu.lu@linux.intel.com/
- - Introduce a mechanism to defer the freeing of page-table pages for
-   KVA mappings. Call iommu_sva_invalidate_kva_range() in the deferred
-   work thread before freeing the pages.
+Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
+Cc: stable@vger.kernel.org
+Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/iommu-sva.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-v3:
- - https://lore.kernel.org/linux-iommu/20250806052505.3113108-1-baolu.lu@linux.intel.com/
- - iommu_sva_mms is an unbound list; iterating it in an atomic context
-   could introduce significant latency issues. Schedule it in a kernel
-   thread and replace the spinlock with a mutex.
- - Replace the static key with a normal bool; it can be brought back if
-   data shows the benefit.
- - Invalidate KVA range in the flush_tlb_all() paths.
- - All previous reviewed-bys are preserved. Please let me know if there
-   are any objections.
-
-v2:
- - https://lore.kernel.org/linux-iommu/20250709062800.651521-1-baolu.lu@linux.intel.com/
- - Remove EXPORT_SYMBOL_GPL(iommu_sva_invalidate_kva_range);
- - Replace the mutex with a spinlock to make the interface usable in the
-   critical regions.
-
-v1: https://lore.kernel.org/linux-iommu/20250704133056.4023816-1-baolu.lu@linux.intel.com/
-
-Dave Hansen (5):
-  mm: Add a ptdesc flag to mark kernel page tables
-  mm: Actually mark kernel page table pages
-  x86/mm: Use 'ptdesc' when freeing PMD pages
-  mm: Introduce pure page table freeing function
-  mm: Introduce deferred freeing for kernel page tables
-
-Lu Baolu (3):
-  iommu: Disable SVA when CONFIG_X86 is set
-  x86/mm: Use pagetable_free()
-  iommu/sva: Invalidate stale IOTLB entries for kernel address space
-
- arch/x86/Kconfig              |  1 +
- mm/Kconfig                    |  3 ++
- include/asm-generic/pgalloc.h | 18 ++++++++++
- include/linux/iommu.h         |  4 +++
- include/linux/mm.h            | 65 +++++++++++++++++++++++++++++++++--
- arch/x86/mm/init_64.c         |  2 +-
- arch/x86/mm/pat/set_memory.c  |  2 +-
- arch/x86/mm/pgtable.c         | 12 +++----
- drivers/iommu/iommu-sva.c     | 29 +++++++++++++++-
- mm/pgtable-generic.c          | 39 +++++++++++++++++++++
- 10 files changed, 163 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
+index 1a51cfd82808..a0442faad952 100644
+--- a/drivers/iommu/iommu-sva.c
++++ b/drivers/iommu/iommu-sva.c
+@@ -77,6 +77,9 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
+ 	if (!group)
+ 		return ERR_PTR(-ENODEV);
+ 
++	if (IS_ENABLED(CONFIG_X86))
++		return ERR_PTR(-EOPNOTSUPP);
++
+ 	mutex_lock(&iommu_sva_lock);
+ 
+ 	/* Allocate mm->pasid if necessary. */
 -- 
 2.43.0
 
