@@ -1,484 +1,779 @@
-Return-Path: <linux-kernel+bounces-864126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF643BF9F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:46:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 117D4BF9FE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7ACDC4E9101
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B380456475F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4813D1E5B68;
-	Wed, 22 Oct 2025 04:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9832DECAA;
+	Wed, 22 Oct 2025 04:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="jyTFotMw";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="jyTFotMw"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013003.outbound.protection.outlook.com [40.107.162.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDfxuhR3"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABDF1AC88A
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.3
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761108351; cv=fail; b=P7erFzip2h16C1lxOu6XKaV0yysPGzSujwTYYpXLB9n/pw/8cKxlVjGWbHE3v3fYSaBjmsxHJW9bvwUiKfSeKW+vlcfCxsvZpOGv26Sf44/Oxzmrl6uJwS7YaoVGa1GY4xJXOxeYMrXZidUutpZ8hpcC44YG0il5kGkTJKgVDJ0=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761108351; c=relaxed/simple;
-	bh=HDMvYu8GIL2fXZ1noD5dSH3wGAi37WhVQAfUctL046g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UCCxb/Gnf+y2eNvYHAd4SVt63uivPfL7z1eiX750Pp0qXokK2dMNXJHaOME+actgf+vwaACtHTKf8VCGA8w+SM+uQIMlmbE5bPXL6j8wpsYT0LByi0M4lGRYdQ1UOrPsFoIckHl9bkBSxdrFj93Z3nPDIzeYhiIziLT3hNAD8PQ=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=jyTFotMw; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=jyTFotMw; arc=fail smtp.client-ip=40.107.162.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=VvqpDfojTIA9MfX53iK/lPchKAbyH1CFuNlxBclUf6N917G5mpXY1TJn3CsH8hrnuTGpXYAC30UejHBPAe/N47pnt7yvW8XXMW6jXGofZIU4gkoSJu3rie8LwoKXCcJJwMqKSTT4X0GoTh2H6bTekP0pYPchlVgGXKtsWOg0Irn5HDRY6FqGdpBBBcThMZVEbalSI36zzTbrGy4g4p9h/g6w8Z3fvIsiAirqUFyFUCwzWrYBgjKai2uq2B4JqtGsSlmoJVNzbO3zfS/9dvrz3lRmUmFN7rZyCcBUE7211c0mLp4JBj7aZcfJQq8H3Mxk6RjCQOEnKi5JzoZtjGzH6Q==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
- b=acxQzf3FxJhGIZgVXMXr2XV0x1YJFkTU9+XFwZdbxEJH+FxCEV3MuLrt/GPjt4ktzM9upBxTiHCsbtGqsSAZrlKZ/RPmfbTaKD0VdMTJSw6mD4s5zJSv/s04fAHX2XfmuJ8hIceAu5d/y1eFKEqtY1cfWbZdv2JmfdFUy+rclQxHiZHK1q//5NHtR483HaVUMA5bhylI2PaqiSLdJ93G2WMoxUAAK4P1jxI1L+MoDo9+I1HpXHfX3nl/0WBYXHIN//JSe7OuY3QLw76/9vDFbrJyQbpGgyl9sOpFzPaXebeUyJzWdIteJDxc9IXHC1egwfTN6Q/Am3gpKACkMmsRiQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=collabora.com smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
- b=jyTFotMwD3j8hzRdk5uLX5b6kqYyWJRX7BqQjKnw+YmdMZSvaq44FBdjAGfXi7tqO7TwnjdTvsKlxCma0dsmyNtebljYM/Pajof3r5NMvHz3uZG5eFiA1YspjHZj4frHWr0GJh3mhpNlyj9LjjHhH84wWEh0KXzAbk1IfhmbpvI=
-Received: from DU2P250CA0008.EURP250.PROD.OUTLOOK.COM (2603:10a6:10:231::13)
- by PA6PR08MB10596.eurprd08.prod.outlook.com (2603:10a6:102:3d2::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 04:45:43 +0000
-Received: from DB5PEPF00014B88.eurprd02.prod.outlook.com
- (2603:10a6:10:231:cafe::9b) by DU2P250CA0008.outlook.office365.com
- (2603:10a6:10:231::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.12 via Frontend Transport; Wed,
- 22 Oct 2025 04:45:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB5PEPF00014B88.mail.protection.outlook.com (10.167.8.196) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
- via Frontend Transport; Wed, 22 Oct 2025 04:45:41 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nBz4YRRgEyRW5Iqok0Nhi9266TxxWyWD/JSZfeXi4BZbTPq/ZFAtlbzc/XMi56G30yKXVVC0slu161+rFnrLg/H4u7F4YEG0YT+UUsY9pKcIB8LHMbduii3z+mITr7RiPPDLOKytHimiIOTAIWFjy/2IhjtOowA1Y6ytn87jcqcaPf3W2t04ZesE3fbj53AfPv8c5f63ZxRh5JYmcdY2wYNZfiu57Iz/iam1FBZeVqSJtazGV28I+ZJV6L+49hABNr90OlREx1RNxOhIpgk4uE0lIIuoIP9w89hOxchFq1DrNag4XUVXOYTbeCUbLKMSMKMDqvGxiu4TrOLd+aK9wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
- b=mUpxUzhV6n9q9EQx98CphIF0fESOvvIMXReICVUFJcJ7unKgGWlhjgMh5QAnG3GZVLTkZ/mEt1X6DV+50DtVGpkyvOHv0ShGmoa8ewH2GwFh0tHsfeWpgiTDOcdOfV6xcBZo0eY7IRSZUxnhoQcv0iePXkGA6hj9yZInf1WJJgNkKqLNDLLSbey4Cdt3/xqKOO4xNCFiETw8Ej7WYdLO4RjeOxR1nvKAg/YSPJZnnypgm7xwbz7zgXrryhmEWq8wSYDj91xKpnSPkNpcrKyxQvqfj/FOOIpPvXuSzCd/0M9tq8gn6k3FYB6sTaCeeo0oMKcpRrMpSqjnM06/8ysN1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oeTprODjudIqcqrwBp1f9D2OlVKNpMaAOJJ4IqggE7k=;
- b=jyTFotMwD3j8hzRdk5uLX5b6kqYyWJRX7BqQjKnw+YmdMZSvaq44FBdjAGfXi7tqO7TwnjdTvsKlxCma0dsmyNtebljYM/Pajof3r5NMvHz3uZG5eFiA1YspjHZj4frHWr0GJh3mhpNlyj9LjjHhH84wWEh0KXzAbk1IfhmbpvI=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB6982.eurprd08.prod.outlook.com (2603:10a6:20b:415::16)
- by DB8PR08MB5339.eurprd08.prod.outlook.com (2603:10a6:10:114::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 04:45:08 +0000
-Received: from AM9PR08MB6982.eurprd08.prod.outlook.com
- ([fe80::5d5d:a4a7:198c:fbdd]) by AM9PR08MB6982.eurprd08.prod.outlook.com
- ([fe80::5d5d:a4a7:198c:fbdd%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 04:45:08 +0000
-Message-ID: <ba782636-2517-4087-9b23-005ec6ca9a47@arm.com>
-Date: Wed, 22 Oct 2025 05:45:07 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Steven Price <steven.price@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
- <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
- <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
-Content-Language: en-US
-From: Akash Goel <akash.goel@arm.com>
-In-Reply-To: <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LNXP265CA0055.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5d::19) To AM9PR08MB6982.eurprd08.prod.outlook.com
- (2603:10a6:20b:415::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968252D0C7D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761108439; cv=none; b=P5fU4QYAHJviWtjzqgiv34sdJVv/7G4Mt4bcdUHKZIExTmljp1kottQuwGP+vEogoxifjToKxqZJKp2Lm6VcbMjAABTExdZCtBcSO3VS4bNn1ZYashKyN1VK7MADBGyMH4oWir7jXsl4HpqcDx5Le0e+evXsPakhILc/Y0ZjK7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761108439; c=relaxed/simple;
+	bh=+9yndkcis78f9w1XyQuFstKZvV0zZnIcdQNej7dvRww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qAnqOI8IuWrn3oTLxuqGaXN2jyOzdLpc3EooV0F2rPlokMUxKECvDSlL29NC3WuUSDBsqkp6c7Yqmiv9WZBGzWM7856LIlBdIdZmd9212TrK1iqe4FZgasMP5gVgJeWW9SlyxX1fX9ENeZ6o0O2I/NksrUQVDXGV/ok5kKUJRGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDfxuhR3; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63e12a55270so1543033a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761108434; x=1761713234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/KlBXvr97rmb9rqrS6zWQpB5Pxp/vP2yK2iTZxO07ZM=;
+        b=GDfxuhR300B1cP6g/9RSC8K5HQUceuJZW1PVJzdz9TPYKVaa6kD32cvGSDelyThaZU
+         okT34I6sCc6F/cDPWxhk3dYPvFrGeTFNFuPoUdLHmeyNIiBQZe2263TaGSRuoVxWuulk
+         v5nLoC8tNvKkm+mCDu4Bcsi4o53dvv+5nQevc1Pv7U2lO+JvXoDaXacOfPtWSvC2hSaV
+         54oNgFJ2xiFInUVs/INX7QJfNLA22AUbRNBRwGY2wB3nGM5xTJY6EeqRXr9jiitASuK+
+         iYhhJtoOzWKvVGT39EghRAR+IPNUj0mMZTQPAy8NBNEzmO98CoqcEAFEEoWMZHhW0Run
+         cm/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761108434; x=1761713234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/KlBXvr97rmb9rqrS6zWQpB5Pxp/vP2yK2iTZxO07ZM=;
+        b=Cd5jXeO2HYq6AAaFGBP8qwddhuTmKQlH5EQI66T+9c9Lwo+Gy5KI3Z+Fqt82Z/Niaf
+         Ji2zZ/DQZf7DTUndKXc8JQfgukKoRqfrNAWjvIo63XRztc8W5hpj2QVYidJ2NjQR3scy
+         tQ2uuIa8u5hOL6yCIX5YjR/mqRKki61QFtDOLnESLLpEzV1zAaoP5mVksffTbHhHHpia
+         3lOGQ4Sm9xK2TiBtea9XJeeSeKvzk3TRhpxRzAq2QpavfwSvpmrgKnbne92mWdQd7/6y
+         AWjlOAFPjLAgq6UNXBVbwQG68xGfXLFYgPK/PaJ7C/dZ++dtYxAdYNSinhKqPH/vYQ5R
+         v9nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAsqayNjVfXt4c4onxJXkZ+jfXxZLYW9ShiWL6cbW0yGUOi4e+2CJWlJ9zyYN+RzW4nj0FFGP1WZVuy4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEJnluTlDfruF9OoJ1qOQcPHi2veF8KwpYABzsb5sYxQg12uMc
+	5R+1qWQpe2irURpDn9smlSAwC/eCKx0dnu6W7mtEGNkRXKEvXtSm9w10b386DqIvR4gefghHiF1
+	r7t9WyTs+BWrqOuXJveARWbjPjsRmZHY=
+X-Gm-Gg: ASbGnctmHZemZBh5iJYcVYeWPR5UbZVKHYcNSnU16Z224APDvqtU5owiHaxHogxLBDy
+	Zgj/9+OoJ9ofOBW6WshgQHPlZ7h7KXQCw3cnR61gILqWR8ZZqx7bj98ds05icSyQpyNlP4N2j0B
+	Xt050zVrUAv1wj4pxxU8iSi23sHhbaQnM2vL963WPOz5hmS14fu//VRI9A+DdqwdCKGfd1an4j0
+	uU8MOovAJHDujOoKJwzappQtKt6ns3OkkVJ9Pgjpk48cwQgPHD7dCpw3lfv7g==
+X-Google-Smtp-Source: AGHT+IHBnhMSU5mRb3TPO05V7/xYT70/RxXzLxW2OGoE5plHhztumdCUQKKvOEp1VDaXKIZZ9tXmmBNX12u95wC2ifc=
+X-Received: by 2002:a05:6402:2686:b0:63c:1a7b:b3bb with SMTP id
+ 4fb4d7f45d1cf-63c1f631befmr19183886a12.1.1761108433545; Tue, 21 Oct 2025
+ 21:47:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB6982:EE_|DB8PR08MB5339:EE_|DB5PEPF00014B88:EE_|PA6PR08MB10596:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91ec266f-e33b-4355-0572-08de1125daf2
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?NCtxY1ZQd0x0bkZYTHNiaExtR2IxNzhFd3VmZkpHK2pEVEZJUFRnb1RnSW8z?=
- =?utf-8?B?ZzdTa2huYVVUN2NXMjhVVUw4MGFrWTZIaTBQUkJFeXdPWHh0ZXd6ZFU3Y1Qr?=
- =?utf-8?B?Sk9JRG55cCtPeTFMUDI4OG5EOXVQblh3VXdlbUluQkZuT3lWZk5wT3dXdkJO?=
- =?utf-8?B?cFdvUFEwSWxlekNKcTFSYiszMDFQTTUzcFJEbHdFaHpHSExDb0xXNCtzMFk5?=
- =?utf-8?B?cUJ3a0MwSkxQcFlFT3BoVnRzYlpqd3hnR2VjdGNLM0V3NVR4THZIWjVDZVBs?=
- =?utf-8?B?dU84SitlaDZJR2ZsNVJRWG5MMVcyUDlIdlREc3Urd3JONDNabVVWQnpxc0I5?=
- =?utf-8?B?Sll6K1pBaFArOWhYckZHVEVMcHQxa0VFSTEzdG9CMExvdklubExZa3BBUVUy?=
- =?utf-8?B?Y1Irbkx0UDN3d3dKWUJ2Lzh6bWV3cE5SSjRmMzdvQk5xc0JVRWZ3Q1ZNeERr?=
- =?utf-8?B?VnRCUC83Z2cyUTFKRFBMYlREZ203WjRWdXlibDVyVlpncG1ObDMvWHd0SWpq?=
- =?utf-8?B?a1BOeGpyQWZFRWlJTW9ybmg0SnowLzkwVG44amdNR3F3UFUwaFNKMlpkT0tr?=
- =?utf-8?B?cW5QZUlZNXBaWEZJOXZsdHpzRHRZajcrWWowa2J5Nmg1UDl3cytKcEhsdHJD?=
- =?utf-8?B?cG92ZlpmTU5WcUVkSHFhck4zK3h5TElCN1h0akp4LzZwcnVJWFBuMkxKNlMz?=
- =?utf-8?B?djFuMDE5QVhrdEVTb1ZrRGJrcGloS0NiT1V1WWliRjdQa3ZPRXF0Z1hYQ3Ny?=
- =?utf-8?B?TWk1ajRzMWg5S0FwazFTaCtNV2FLYjU3bkhaOEdKTlJVWlFVV0NIelpRWCs0?=
- =?utf-8?B?aW5VSUxWSWE4T1ZMbmNrNjBxd3J1andvRlV0VkVZM2cxOFVtQ2RNa1UxeG1j?=
- =?utf-8?B?V1g0M0d3Z3FnT0k1T1hQUW5BVU1EMWJCL1VNVm5ZLzJuSFVacHArbEVpYnJL?=
- =?utf-8?B?eTNsWEt4NVd0bmtZT3Rhb2Z4TXY1QlV1dmVvd2VjY1ZFYVVCd2YxdHpvWlhG?=
- =?utf-8?B?K2RVL3NyU1BIMTN4bXhEYnNycHNtdVFnKzBSbXJJQ281dzBoaTJuWFlXU3ky?=
- =?utf-8?B?bnNkRXRXWnVlV2lQTEFETVJsSmdhOTZrZng0YVBpRXdkdkRzcGdRSGo1Q0R1?=
- =?utf-8?B?ZmNScUtRbEdsZ1VHVHJRYVY2RFFuUGlWbi9qNFRPcURSQzJUVUF1cm03RFZz?=
- =?utf-8?B?dEpXenJ6b3lqWjNPalViS3d6eStRTVY0cGNackdwUnRvd2QvemhTVUpEcnZX?=
- =?utf-8?B?Wm9zWVpEdktCa1dLaDY5TjBKam1WTG5iR0JHa244VDJDMkplVjViZ2NZMGox?=
- =?utf-8?B?KzB2SWZsVk1lcnVId3N5ZldpeURLTk5talBDRnVPRTVNbjBBUXA2ditKeEdj?=
- =?utf-8?B?dU5BckI1aEo0R04xUFJXVDhkVWdjUUczNzJCLzE0VDJ5cklkNldobVlSMG5a?=
- =?utf-8?B?VXBGQXlVbGd2dXhHWTRleFl4NUhsdjZqaGJ2eWJrS2lpRkxURjZJM2s2cE1M?=
- =?utf-8?B?M0dxUy85alc5Q3lxMmFLUWhVL1hFQVIvcUdUTEpwVEtNRFI1MjVpTnpxcC9n?=
- =?utf-8?B?S0lDNURsREFDaW5Ka3d0aVo4UWdnblQxdzQrS1RaL3A2UG1aajVBQk52dHVI?=
- =?utf-8?B?bFNFUGNXNHhOSDAzcGprZGQ3cGFFZHlRNitBc1NwNjN3d3BycGtMOHlKRXZB?=
- =?utf-8?B?VXFOZ1lsTkVKWnoxN2YycTZ1ZHpFRWdaL3dYUURjMVllM04rY2wydWRuUW9m?=
- =?utf-8?B?eVFjOWUwQjlKSXBoa0hqVWFzWTVVRVE1WDRZYW5ONHJ3OWJ5MzNHTmRmS3VE?=
- =?utf-8?B?REhlSHU4Mm90WE5KenloMEFBNnE1S3EzRi84RzBlcEZqQ0dEZVFJUGMyRUZH?=
- =?utf-8?B?Q1RIeE1mSm5EaCtsZklwMFFqZGZvOFJENjhGeWlSaitHbXBIV2N1NUF2ZCtF?=
- =?utf-8?Q?JUc5ewAvz+XpFHP8tro7LGbQ/aV6cWsN?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB6982.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5339
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB5PEPF00014B88.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	66d3d6ab-bc54-4beb-2030-08de1125c6ea
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|14060799003|36860700013|35042699022|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y1RtRUtMUDBvSk81N0RHSW51U0VtREJGdkZyaWVhZHB5aklrU25LZVZYTzZz?=
- =?utf-8?B?VGpNTFFES3ZrV09pR0c5RUdNWk5rdkNTYXhweFRKdGYwblpXOXNBUWVwU3Ew?=
- =?utf-8?B?eThqQ09TM29Ua2x1TnFTbmJQb2VvWEJEb1hBbVZLNFZPMVRZVGNBRVZjTlYy?=
- =?utf-8?B?Ri9FMlJKZkZOZThVaVZ6cUJZajVGZWRIVitsQ282WXZPdW9vamNtKzRZN0dV?=
- =?utf-8?B?dkIrU2NxSS9WUUZuTVl0K215WU5oY0NHM0xUTmhOWGQzNXozVkpQVkQwVFkw?=
- =?utf-8?B?b0xVcmpDRHJONXVnMmVURXEzMkhVNHFIWnlSczVVYVNsbWhmRm5YbkRYL1hW?=
- =?utf-8?B?bkpYcUlrM1BpcTlRZTdPaWJMdVFaNmZBMHRidmdVNWdXMDNzY1FEcVNWYUx6?=
- =?utf-8?B?ejRxck1RV3o1V0Y3YkJ0b2hEakhhSlFxTXQ0Y24xam1hV0ZZcjE5ZmxGWE5m?=
- =?utf-8?B?WU0rM2lFUGZ3QktaWTY3SHo0ZkJSTm1QeE5IdExXRG1uMzhzTDhjZmozc0E5?=
- =?utf-8?B?c3IycXZIMW5FL3VHMUlGTWp2eVRFVzJKNWhzVWJsQXlEbEVSNEZjOWtwNmt2?=
- =?utf-8?B?cmJuMWl5eEJQSi9Nd1dKTGJubW5QaFU3bzR3N2lOcW93TTVCVkJYdzI4TU1k?=
- =?utf-8?B?V1duOTdBRlR3alRJN0RFdEdIMytYQVU5eXIxY1FUclFzUmpRTnU4aTgzcElk?=
- =?utf-8?B?N1pzN3FQd0ViRGVEdjZmZnBZMWh1Q1Uxc01ocDVSRGJ4VjJScW5GSEY5bGVz?=
- =?utf-8?B?Y1JNcGgxdk82VzFjUGdDRzFvREFxajNBbGl2L01ERkJuK2plc05XQU5wdmZa?=
- =?utf-8?B?NGpjZHZpaEpzeml6MXJXT1F3MGIwblovT1J3S1BCaEhxMzAvRUdwUHNmWGRh?=
- =?utf-8?B?a1BhcmZ2b2wvbkpxQ29hTlFtK2N5RTIyMkd1eDdLeWpBMFZ4Vmdmdmk0SlE4?=
- =?utf-8?B?NHE4RTM3ZGxaa25uMy9NM0NUM3hCZUNOQ3VQekdrQjV4TDVrS2hWbGtBUXEr?=
- =?utf-8?B?K1AyVEZJcmtBOUFyRzZtTU9ZZUs4MGJTNnd5WU44c0k2R285YUxoY0t2U1Jm?=
- =?utf-8?B?WnB3amV2akhlQ0EyQ2E1bThTVVhOVGlvVXVabDFzVkdaNVZlZ1FpeEdSWVJE?=
- =?utf-8?B?a0hXQTZtSEJmbXcyQWRXMlhldGRyYzFkZ3dpbFVpK0NnVnFRUTcxcEloTW82?=
- =?utf-8?B?VHlzbkNHc1NwQ2xhL2tmaXJDYzltbnp5eUR1NkJhNVk4WUdpTS9YcmJzdVBG?=
- =?utf-8?B?L0FhMFY1NGlSYXZ1b3lzMGdSVTRza1FsVVA3TDR6VUdUSzBQSGJ6cGFYSzRV?=
- =?utf-8?B?S3B4R2F2RnVOUCtqdm9xeWRvbDdZcm12SVV5dWcxbFI0NmJrSHF5MGlTK3Zl?=
- =?utf-8?B?Y2JoRW1sek9Rd1h4V3JJRWlLRmJxeWpsOVNXMGkwZXAwVTZtQ01CRUdNVVpK?=
- =?utf-8?B?SEFJTzFqcXBlc0s5aTdHdWFuaGpvbEhkb2NNdzZoeHlKT2Q3c1UrL01ualBJ?=
- =?utf-8?B?Mkthb2ZkSGxqNlJBekJQQkk1dklYYTVXUkxtUVlSWnR6S21ubGRPTDBueU12?=
- =?utf-8?B?WXUvMjJ2Q09iakIveWYybCt4UXU4NXJFT2loY3kyY1JEQmNXNmtmVzVzYjY2?=
- =?utf-8?B?YXorbkN1TmNqd05vYXlYM3NCenJQNjFZMisrd2VWVE94aGJ5ZDdndWYwM0o5?=
- =?utf-8?B?QmpMdTNlNm5reGxxQ280Vit4bUtzQ1BUVDZLSWpaYUFncU9kWWFYT21PRXVu?=
- =?utf-8?B?NWN1NGc5SFRZcjJsTXlraW1mSkJYNllYMHJCSkVtclpVT2xOOTBwWFpuVHBQ?=
- =?utf-8?B?c1pxSnVYbmdqTkd5WFlRYVpIWUwvZzV0Z1pyVE8rS0ExdE4rb2laTjNnWUhq?=
- =?utf-8?B?WTVyVXVKSGJjNitaYVFqNTB4ZUk1dUFkWHUzUXJkQVB4YUNPN2JRL0Y5RVZC?=
- =?utf-8?B?bVM1bGp0U3JQMUUzUXpBNUk3RWtxMTFDSUhWU2RGLzVzOVVCUmZjNTlzSGw2?=
- =?utf-8?B?ZjY3SEZEMnFIMG5TY2JtZ0tWanFGOEh6SWxheWFJQkFWT2ErV0NFalBpcEti?=
- =?utf-8?B?YTRHMTJoN05saWttV09XdUJMeWdCU0VKa1NkSGc1dnZEQ0dCUzFaOXV4SEg1?=
- =?utf-8?Q?Qwp8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(14060799003)(36860700013)(35042699022)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 04:45:41.6745
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91ec266f-e33b-4355-0572-08de1125daf2
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B88.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR08MB10596
+References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+ <20251020093941.548058-3-dolinux.peng@gmail.com> <34a168e2-204d-47e2-9923-82d8ad645273@oracle.com>
+In-Reply-To: <34a168e2-204d-47e2-9923-82d8ad645273@oracle.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 22 Oct 2025 12:47:00 +0800
+X-Gm-Features: AS18NWBCI1jbEqx_cnB9CFvrdliurRtXQO8Nf34OFm4CFvwwjgCIu0-0Tu8BgzU
+Message-ID: <CAErzpmuVM4p3AxB5OTEOTNrtuv+BM+kFVXQ2w6qmBCwFky466Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
+ binary search
+To: Alan Maguire <alan.maguire@oracle.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Eduard Zingerman <eddyz87@gmail.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 22, 2025 at 1:25=E2=80=AFAM Alan Maguire <alan.maguire@oracle.c=
+om> wrote:
+>
+> On 20/10/2025 10:39, Donglin Peng wrote:
+> > This patch implements sorting of BTF types by their kind and name,
+> > enabling the use of binary search for type lookups.
+> >
+> > To share logic between kernel and libbpf, a new btf_sort.c file is
+> > introduced containing common sorting functionality.
+> >
+> > The sorting is performed during btf__dedup() when the new
+> > sort_by_kind_name option in btf_dedup_opts is enabled.
+> >
+> > For vmlinux and kernel module BTF, btf_check_sorted() verifies
+> > whether the types are sorted and binary search can be used.
+> >
+>
+> this looks great! one thing that might make libbpf integration easier
+> though (and Andrii can probably best answer if it's actually a problem)
+> - would it be possible to separate the libbpf and non-libbpf parts here;
+> i.e have a patch that adds the libbpf stuff first, then re-use it in a
+> separate patch for kernel sorting?
 
+Thanks for the suggestion, I will split it in the next version.
 
-On 10/21/25 18:39, Adrián Larumbe wrote:
-> Hi Akash,
-> 
-> On 21.10.2025 15:32, Akash Goel wrote:
->>
->>
->> On 10/19/25 04:19, Adrián Larumbe wrote:
->>> Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
->>> behavior") did away with the treatment of partial unmaps of huge IOPTEs.
->>>
->>
->> Sorry have a doubt.
->>
->> Corresponding to the commit 33729a5fc0ca, can we now remove the code to
->> pre-allocate L3 page table pages i.e. 'op_ctx->rsvd_page_tables.pages' inside
->> panthor_vm_prepare_unmap_op_ctx() ?.
->>
->>> In the case of Panthor, that means an attempt to run a VM_BIND unmap
->>> operation on a memory region whose start address and size aren't 2MiB
->>> aligned, in the event it intersects with a huge page, would lead to ARM
->>> IOMMU management code to fail and a warning being raised.
->>>
->>> Presently, and for lack of a better alternative, it's best to have
->>> Panthor handle partial unmaps at the driver level, by unmapping entire
->>> huge pages and remapping the difference between them and the requested
->>> unmap region.
->>>
->>> This could change in the future when the VM_BIND uAPI is expanded to
->>> enforce huge page alignment and map/unmap operational constraints that
->>> render this code unnecessary.
->>>
->>> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
->>> ---
->>>    drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
->>>    1 file changed, 126 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
->>> index 2d041a2e75e9..f9d200e57c04 100644
->>> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
->>> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
->>> @@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
->>>    	return 0;
->>>    }
->>> +static bool
->>> +is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
->>> +			   const struct drm_gpuva_op_map *op,
->>> +			   u64 unmap_start, u64 unmap_range,
->>> +			   u64 sz2m_prev, u64 sz2m_next)
->>> +{
->>> +	size_t pgcount, pgsize;
->>> +	const struct page *pg;
->>> +	pgoff_t bo_offset;
->>> +
->>> +	if (op->va.addr < unmap_vma->base.va.addr) {
->>
->>
->> Sorry, another doubt.
->>
->> Will this condition ever be true ?
->>
->> For 'op->remap.prev', 'op->va.addr' will always be equal to
->> 'unmap_vma->base.va.addr'.
-> 
-> I believe it will always be less than that. 
-
-
-Thanks Adrian for having a look.
-
-static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
-{
-	struct panthor_vma *unmap_vma = container_of(op->remap.unmap->va, 
-struct panthor_vma, base);
-
-
-IIUC, the 'unmap_vma' passed to panthor_gpuva_sm_step_remap() will 
-always cover the entire VA range of 'drm_gpuva'.
-That's why drm_gpuva_op_remap_to_unmap_range() is called to know the 
-exact range to be unmapped.
-
-In __drm_gpuvm_sm_unmap() and __drm_gpuvm_sm_map(), you can see this,
-
-struct drm_gpuva_op_unmap u = { .va = va };
-
-
- > What will be equal to unmap_vma->base.va.addr is 
-op->remap.prev->va.addr + op->remap.prev->va.range
-
-
-I think op->remap.prev->va.addr + op->remap.prev->va.range will be equal 
-to 'unmap_start' after the call to drm_gpuva_op_remap_to_unmap_range().
-
-Sorry I may have again misunderstood the code.
-
-Please can you check.
-
-Best regards
-Akash
-
-
->> And for 'op->remap.next', 'op->va.addr' will always be greater than
->> 'unmap_vma->base.va.addr'.
-> 
-> Yes, I believe so.
-> 
->> Please can you clarify.
->>
->> Best regards
->> Akash
->>
->>
->>> +		bo_offset = unmap_start - unmap_vma->base.va.addr + unmap_vma->base.gem.offset;
->>> +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
->>> +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
->>> +		pgsize = get_pgsize(unmap_start, unmap_range, &pgcount);
->>> +
->>> +	} else {
->>> +		bo_offset = ((unmap_start + unmap_range - 1) - unmap_vma->base.va.addr)
->>> +			+ unmap_vma->base.gem.offset;
->>> +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
->>> +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
->>> +		pgsize = get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev, &pgcount);
->>> +	}
->>> +
->>> +	pg = to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> PAGE_SHIFT];
->>> +
->>> +	if (pgsize == SZ_4K && folio_order(page_folio(pg)) == PMD_ORDER &&
->>> +	    unmap_vma->base.va.addr <= sz2m_prev && unmap_vma->base.va.addr +
->>> +	    unmap_vma->base.va.range >= sz2m_next)
->>> +		return true;
->>> +
->>> +	return false;
->>> +}
->>> +
->>> +struct remap_params {
->>> +	u64 prev_unmap_start, prev_unmap_range;
->>> +	u64 prev_remap_start, prev_remap_range;
->>> +	u64 next_unmap_start, next_unmap_range;
->>> +	u64 next_remap_start, next_remap_range;
->>> +	u64 unmap_start, unmap_range;
->>> +};
->>> +
->>> +static struct remap_params
->>> +get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
->>> +			const struct panthor_vma *unmap_vma)
->>> +{
->>> +	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
->>> +	struct remap_params params = {0};
->>> +
->>> +	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
->>> +
->>> +	if (op->prev) {
->>> +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
->>> +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
->>> +
->>> +		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
->>> +					       unmap_range, sz2m_prev, sz2m_next)) {
->>> +			params.prev_unmap_start = sz2m_prev;
->>> +			params.prev_unmap_range = SZ_2M;
->>> +			params.prev_remap_start = sz2m_prev;
->>> +			params.prev_remap_range = unmap_start & (SZ_2M - 1);
->>> +
->>> +			u64 diff = min(sz2m_next - unmap_start, unmap_range);
->>> +
->>> +			unmap_range -= diff;
->>> +			unmap_start += diff;
->>> +		}
->>> +	}
->>> +
->>> +	if (op->next) {
->>> +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
->>> +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
->>> +
->>> +		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
->>> +					       unmap_range, sz2m_prev, sz2m_next)) {
->>> +			if (unmap_range) {
->>> +				params.next_unmap_start = sz2m_prev;
->>> +				params.next_unmap_range = SZ_2M;
->>> +				unmap_range -= op->next->va.addr & (SZ_2M - 1);
->>> +			}
->>> +
->>> +			params.next_remap_start = op->next->va.addr;
->>> +			params.next_remap_range = SZ_2M - (op->next->va.addr & (SZ_2M - 1));
->>> +		}
->>> +	}
->>> +
->>> +	params.unmap_start = unmap_start;
->>> +	params.unmap_range = unmap_range;
->>> +
->>> +	return params;
->>> +}
->>> +
->>>    static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
->>>    				       void *priv)
->>>    {
->>> @@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
->>>    	struct panthor_vm *vm = priv;
->>>    	struct panthor_vm_op_ctx *op_ctx = vm->op_ctx;
->>>    	struct panthor_vma *prev_vma = NULL, *next_vma = NULL;
->>> -	u64 unmap_start, unmap_range;
->>> +	struct remap_params params;
->>>    	int ret;
->>> -	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_range);
->>> -	ret = panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
->>> +	/*
->>> +	 * ARM IOMMU page table management code disallows partial unmaps of huge pages,
->>> +	 * so when a partial unmap is requested, we must first unmap the entire huge
->>> +	 * page and then remap the difference between the huge page minus the requested
->>> +	 * unmap region. Calculating the right offsets and ranges for the different unmap
->>> +	 * and map operations is the responsibility of the following function.
->>> +	 */
->>> +	params = get_map_unmap_intervals(&op->remap, unmap_vma);
->>> +
->>> +	ret = panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_range);
->>>    	if (ret)
->>>    		return ret;
->>>    	if (op->remap.prev) {
->>> +		ret = panthor_vm_unmap_pages(vm, params.prev_unmap_start,
->>> +					     params.prev_unmap_range);
->>> +		if (ret)
->>> +			return ret;
->>> +		ret = panthor_vm_map_pages(vm, params.prev_remap_start,
->>> +					   flags_to_prot(unmap_vma->flags),
->>> +					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
->>> +					   op->remap.prev->gem.offset, params.prev_remap_range);
->>> +		if (ret)
->>> +			return ret;
->>> +
->>>    		prev_vma = panthor_vm_op_ctx_get_vma(op_ctx);
->>>    		panthor_vma_init(prev_vma, unmap_vma->flags);
->>>    	}
->>>    	if (op->remap.next) {
->>> +		ret = panthor_vm_unmap_pages(vm, params.next_unmap_start,
->>> +					     params.next_unmap_range);
->>> +		if (ret)
->>> +			return ret;
->>> +
->>> +		ret = panthor_vm_map_pages(vm, params.next_remap_start,
->>> +					   flags_to_prot(unmap_vma->flags),
->>> +					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
->>> +					   op->remap.next->gem.offset, params.next_remap_range);
->>> +		if (ret)
->>> +			return ret;
->>> +
->>>    		next_vma = panthor_vm_op_ctx_get_vma(op_ctx);
->>>    		panthor_vma_init(next_vma, unmap_vma->flags);
->>>    	}
->>>
->>> base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
->>> prerequisite-patch-id: 3b0f61bfc22a616a205ff7c15d546d2049fd53de
-> 
-> Adrian Larumbe
+>
+> > Cc: Eduard Zingerman <eddyz87@gmail.com>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Alan Maguire <alan.maguire@oracle.com>
+> > Cc: Song Liu <song@kernel.org>
+> > Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
+> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> > ---
+> >  include/linux/btf.h             |  20 +++-
+> >  kernel/bpf/Makefile             |   1 +
+> >  kernel/bpf/btf.c                |  39 ++++----
+> >  kernel/bpf/btf_sort.c           |   2 +
+> >  tools/lib/bpf/Build             |   2 +-
+> >  tools/lib/bpf/btf.c             | 163 +++++++++++++++++++++++++++-----
+> >  tools/lib/bpf/btf.h             |   2 +
+> >  tools/lib/bpf/btf_sort.c        | 159 +++++++++++++++++++++++++++++++
+> >  tools/lib/bpf/libbpf_internal.h |   6 ++
+> >  9 files changed, 347 insertions(+), 47 deletions(-)
+> >  create mode 100644 kernel/bpf/btf_sort.c
+> >  create mode 100644 tools/lib/bpf/btf_sort.c
+> >
+> > diff --git a/include/linux/btf.h b/include/linux/btf.h
+> > index ddc53a7ac7cd..c6fe5e689ab9 100644
+> > --- a/include/linux/btf.h
+> > +++ b/include/linux/btf.h
+> > @@ -221,7 +221,10 @@ bool btf_is_vmlinux(const struct btf *btf);
+> >  struct module *btf_try_get_module(const struct btf *btf);
+> >  u32 btf_nr_types(const struct btf *btf);
+> >  u32 btf_type_cnt(const struct btf *btf);
+> > -struct btf *btf_base_btf(const struct btf *btf);
+> > +u32 btf_start_id(const struct btf *btf);
+> > +u32 btf_nr_sorted_types(const struct btf *btf);
+> > +void btf_set_nr_sorted_types(struct btf *btf, u32 nr);
+> > +struct btf* btf_base_btf(const struct btf *btf);
+> >  bool btf_type_is_i32(const struct btf_type *t);
+> >  bool btf_type_is_i64(const struct btf_type *t);
+> >  bool btf_type_is_primitive(const struct btf_type *t);
+> > @@ -595,6 +598,10 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *l=
+og, enum bpf_prog_type prog_ty
+> >  bool btf_types_are_same(const struct btf *btf1, u32 id1,
+> >                       const struct btf *btf2, u32 id2);
+> >  int btf_check_iter_arg(struct btf *btf, const struct btf_type *func, i=
+nt arg_idx);
+> > +int btf_compare_type_kinds_names(const void *a, const void *b, void *p=
+riv);
+> > +s32 find_btf_by_name_kind(const struct btf *btf, int start_id, const c=
+har *type_name,
+> > +                       u32 kind);
+> > +void btf_check_sorted(struct btf *btf, int start_id);
+> >
+> >  static inline bool btf_type_is_struct_ptr(struct btf *btf, const struc=
+t btf_type *t)
+> >  {
+> > @@ -683,5 +690,16 @@ static inline int btf_check_iter_arg(struct btf *b=
+tf, const struct btf_type *fun
+> >  {
+> >       return -EOPNOTSUPP;
+> >  }
+> > +static inline int btf_compare_type_kinds_names(const void *a, const vo=
+id *b, void *priv)
+> > +{
+> > +     return -EOPNOTSUPP;
+> > +}
+> > +static inline s32 find_btf_by_name_kind(const struct btf *btf, int sta=
+rt_id, const char *type_name,
+> > +                       u32 kind)
+> > +{
+> > +     return -EOPNOTSUPP;
+> > +}
+> > +static inline void btf_check_sorted(struct btf *btf, int start_id);
+> > +{}
+> >  #endif
+> >  #endif
+> > diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+> > index 7fd0badfacb1..c9d8f986c7e1 100644
+> > --- a/kernel/bpf/Makefile
+> > +++ b/kernel/bpf/Makefile
+> > @@ -56,6 +56,7 @@ obj-$(CONFIG_BPF_SYSCALL) +=3D kmem_cache_iter.o
+> >  ifeq ($(CONFIG_DMA_SHARED_BUFFER),y)
+> >  obj-$(CONFIG_BPF_SYSCALL) +=3D dmabuf_iter.o
+> >  endif
+> > +obj-$(CONFIG_BPF_SYSCALL) +=3D btf_sort.o
+> >
+> >  CFLAGS_REMOVE_percpu_freelist.o =3D $(CC_FLAGS_FTRACE)
+> >  CFLAGS_REMOVE_bpf_lru_list.o =3D $(CC_FLAGS_FTRACE)
+> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > index c414cf37e1bd..11b05f4eb07d 100644
+> > --- a/kernel/bpf/btf.c
+> > +++ b/kernel/bpf/btf.c
+> > @@ -259,6 +259,7 @@ struct btf {
+> >       void *nohdr_data;
+> >       struct btf_header hdr;
+> >       u32 nr_types; /* includes VOID for base BTF */
+> > +     u32 nr_sorted_types;
+> >       u32 types_size;
+> >       u32 data_size;
+> >       refcount_t refcnt;
+> > @@ -544,33 +545,29 @@ u32 btf_nr_types(const struct btf *btf)
+> >       return total;
+> >  }
+> >
+> > -u32 btf_type_cnt(const struct btf *btf)
+> > +u32 btf_start_id(const struct btf *btf)
+> >  {
+> > -     return btf->start_id + btf->nr_types;
+> > +     return btf->start_id;
+> >  }
+> >
+> > -s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 =
+kind)
+> > +u32 btf_nr_sorted_types(const struct btf *btf)
+> >  {
+> > -     const struct btf_type *t;
+> > -     const char *tname;
+> > -     u32 i, total;
+> > -
+> > -     do {
+> > -             total =3D btf_type_cnt(btf);
+> > -             for (i =3D btf->start_id; i < total; i++) {
+> > -                     t =3D btf_type_by_id(btf, i);
+> > -                     if (BTF_INFO_KIND(t->info) !=3D kind)
+> > -                             continue;
+> > +     return btf->nr_sorted_types;
+> > +}
+> >
+> > -                     tname =3D btf_name_by_offset(btf, t->name_off);
+> > -                     if (!strcmp(tname, name))
+> > -                             return i;
+> > -             }
+> > +void btf_set_nr_sorted_types(struct btf *btf, u32 nr)
+> > +{
+> > +     btf->nr_sorted_types =3D nr;
+> > +}
+> >
+> > -             btf =3D btf->base_btf;
+> > -     } while (btf);
+> > +u32 btf_type_cnt(const struct btf *btf)
+> > +{
+> > +     return btf->start_id + btf->nr_types;
+> > +}
+> >
+> > -     return -ENOENT;
+> > +s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 =
+kind)
+> > +{
+> > +     return find_btf_by_name_kind(btf, 1, name, kind);
+> >  }
+> >
+> >  s32 bpf_find_btf_id(const char *name, u32 kind, struct btf **btf_p)
+> > @@ -6239,6 +6236,7 @@ static struct btf *btf_parse_base(struct btf_veri=
+fier_env *env, const char *name
+> >       if (err)
+> >               goto errout;
+> >
+> > +     btf_check_sorted(btf, 1);
+> >       refcount_set(&btf->refcnt, 1);
+> >
+> >       return btf;
+> > @@ -6371,6 +6369,7 @@ static struct btf *btf_parse_module(const char *m=
+odule_name, const void *data,
+> >               base_btf =3D vmlinux_btf;
+> >       }
+> >
+> > +     btf_check_sorted(btf, btf_nr_types(base_btf));
+> >       btf_verifier_env_free(env);
+> >       refcount_set(&btf->refcnt, 1);
+> >       return btf;
+> > diff --git a/kernel/bpf/btf_sort.c b/kernel/bpf/btf_sort.c
+> > new file mode 100644
+> > index 000000000000..898f9189952c
+> > --- /dev/null
+> > +++ b/kernel/bpf/btf_sort.c
+> > @@ -0,0 +1,2 @@
+> > +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> > +#include "../../tools/lib/bpf/btf_sort.c"
+> > diff --git a/tools/lib/bpf/Build b/tools/lib/bpf/Build
+> > index c80204bb72a2..ed7c2506e22d 100644
+> > --- a/tools/lib/bpf/Build
+> > +++ b/tools/lib/bpf/Build
+> > @@ -1,4 +1,4 @@
+> >  libbpf-y :=3D libbpf.o bpf.o nlattr.o btf.o libbpf_utils.o \
+> >           netlink.o bpf_prog_linfo.o libbpf_probes.o hashmap.o \
+> >           btf_dump.o ringbuf.o strset.o linker.o gen_loader.o relo_core=
+.o \
+> > -         usdt.o zip.o elf.o features.o btf_iter.o btf_relocate.o
+> > +         usdt.o zip.o elf.o features.o btf_iter.o btf_relocate.o btf_s=
+ort.o
+> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> > index 18907f0fcf9f..87e47f0b78ba 100644
+> > --- a/tools/lib/bpf/btf.c
+> > +++ b/tools/lib/bpf/btf.c
+> > @@ -1,6 +1,9 @@
+> >  // SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> >  /* Copyright (c) 2018 Facebook */
+> >
+> > +#ifndef _GNU_SOURCE
+> > +#define _GNU_SOURCE
+> > +#endif
+> >  #include <byteswap.h>
+> >  #include <endian.h>
+> >  #include <stdio.h>
+> > @@ -92,6 +95,9 @@ struct btf {
+> >        *   - for split BTF counts number of types added on top of base =
+BTF.
+> >        */
+> >       __u32 nr_types;
+> > +     /* number of named types in this BTF instance for binary search
+> > +      */
+> > +     __u32 nr_sorted_types;
+> >       /* if not NULL, points to the base BTF on top of which the curren=
+t
+> >        * split BTF is based
+> >        */
+> > @@ -619,6 +625,21 @@ __u32 btf__type_cnt(const struct btf *btf)
+> >       return btf->start_id + btf->nr_types;
+> >  }
+> >
+> > +__u32 btf__start_id(const struct btf *btf)
+> > +{
+> > +     return btf->start_id;
+> > +}
+> > +
+> > +__u32 btf__nr_sorted_types(const struct btf *btf)
+> > +{
+> > +     return btf->nr_sorted_types;
+> > +}
+> > +
+> > +void btf__set_nr_sorted_types(struct btf *btf, __u32 nr)
+> > +{
+> > +     btf->nr_sorted_types =3D nr;
+> > +}
+> > +
+> >  const struct btf *btf__base_btf(const struct btf *btf)
+> >  {
+> >       return btf->base_btf;
+> > @@ -915,38 +936,16 @@ __s32 btf__find_by_name(const struct btf *btf, co=
+nst char *type_name)
+> >       return libbpf_err(-ENOENT);
+> >  }
+> >
+> > -static __s32 btf_find_by_name_kind(const struct btf *btf, int start_id=
+,
+> > -                                const char *type_name, __u32 kind)
+> > -{
+> > -     __u32 i, nr_types =3D btf__type_cnt(btf);
+> > -
+> > -     if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
+> > -             return 0;
+> > -
+> > -     for (i =3D start_id; i < nr_types; i++) {
+> > -             const struct btf_type *t =3D btf__type_by_id(btf, i);
+> > -             const char *name;
+> > -
+> > -             if (btf_kind(t) !=3D kind)
+> > -                     continue;
+> > -             name =3D btf__name_by_offset(btf, t->name_off);
+> > -             if (name && !strcmp(type_name, name))
+> > -                     return i;
+> > -     }
+> > -
+> > -     return libbpf_err(-ENOENT);
+> > -}
+> > -
+> >  __s32 btf__find_by_name_kind_own(const struct btf *btf, const char *ty=
+pe_name,
+> >                                __u32 kind)
+> >  {
+> > -     return btf_find_by_name_kind(btf, btf->start_id, type_name, kind)=
+;
+> > +     return find_btf_by_name_kind(btf, btf->start_id, type_name, kind)=
+;
+> >  }
+> >
+> >  __s32 btf__find_by_name_kind(const struct btf *btf, const char *type_n=
+ame,
+> >                            __u32 kind)
+> >  {
+> > -     return btf_find_by_name_kind(btf, 1, type_name, kind);
+> > +     return find_btf_by_name_kind(btf, 1, type_name, kind);
+> >  }
+> >
+> >  static bool btf_is_modifiable(const struct btf *btf)
+> > @@ -3411,6 +3410,7 @@ static int btf_dedup_struct_types(struct btf_dedu=
+p *d);
+> >  static int btf_dedup_ref_types(struct btf_dedup *d);
+> >  static int btf_dedup_resolve_fwds(struct btf_dedup *d);
+> >  static int btf_dedup_compact_types(struct btf_dedup *d);
+> > +static int btf_dedup_compact_and_sort_types(struct btf_dedup *d);
+> >  static int btf_dedup_remap_types(struct btf_dedup *d);
+> >
+> >  /*
+> > @@ -3600,7 +3600,7 @@ int btf__dedup(struct btf *btf, const struct btf_=
+dedup_opts *opts)
+> >               pr_debug("btf_dedup_ref_types failed: %s\n", errstr(err))=
+;
+> >               goto done;
+> >       }
+> > -     err =3D btf_dedup_compact_types(d);
+> > +     err =3D btf_dedup_compact_and_sort_types(d);
+> >       if (err < 0) {
+> >               pr_debug("btf_dedup_compact_types failed: %s\n", errstr(e=
+rr));
+> >               goto done;
+> > @@ -3649,6 +3649,8 @@ struct btf_dedup {
+> >        * BTF is considered to be immutable.
+> >        */
+> >       bool hypot_adjust_canon;
+> > +     /* Sort btf_types by kind and time */
+> > +     bool sort_by_kind_name;
+> >       /* Various option modifying behavior of algorithm */
+> >       struct btf_dedup_opts opts;
+> >       /* temporary strings deduplication state */
+> > @@ -3741,6 +3743,7 @@ static struct btf_dedup *btf_dedup_new(struct btf=
+ *btf, const struct btf_dedup_o
+> >
+> >       d->btf =3D btf;
+> >       d->btf_ext =3D OPTS_GET(opts, btf_ext, NULL);
+> > +     d->sort_by_kind_name =3D OPTS_GET(opts, sort_by_kind_name, false)=
+;
+> >
+> >       d->dedup_table =3D hashmap__new(hash_fn, btf_dedup_equal_fn, NULL=
+);
+> >       if (IS_ERR(d->dedup_table)) {
+> > @@ -5288,6 +5291,116 @@ static int btf_dedup_compact_types(struct btf_d=
+edup *d)
+> >       return 0;
+> >  }
+> >
+> > +static __u32 *get_sorted_canon_types(struct btf_dedup *d, __u32 *cnt)
+> > +{
+> > +     int i, j, id, types_cnt =3D 0;
+> > +     __u32 *sorted_ids;
+> > +
+> > +     for (i =3D 0, id =3D d->btf->start_id; i < d->btf->nr_types; i++,=
+ id++)
+> > +             if (d->map[id] =3D=3D id)
+> > +                     ++types_cnt;
+> > +
+> > +     sorted_ids =3D calloc(types_cnt, sizeof(*sorted_ids));
+> > +     if (!sorted_ids)
+> > +             return NULL;
+> > +
+> > +     for (j =3D 0, i =3D 0, id =3D d->btf->start_id; i < d->btf->nr_ty=
+pes; i++, id++)
+> > +             if (d->map[id] =3D=3D id)
+> > +                     sorted_ids[j++] =3D id;
+> > +
+> > +     qsort_r(sorted_ids, types_cnt, sizeof(*sorted_ids),
+> > +             btf_compare_type_kinds_names, d->btf);
+> > +
+> > +     *cnt =3D types_cnt;
+> > +
+> > +     return sorted_ids;
+> > +}
+> > +
+> > +/*
+> > + * Compact and sort BTF types.
+> > + *
+> > + * Similar to btf_dedup_compact_types, but additionally sorts the btf_=
+types.
+> > + */
+> > +static int btf__dedup_compact_and_sort_types(struct btf_dedup *d)
+> > +{
+> > +     __u32 canon_types_cnt =3D 0, canon_types_len =3D 0;
+> > +     __u32 *new_offs =3D NULL, *canon_types =3D NULL;
+> > +     const struct btf_type *t;
+> > +     void *p, *new_types =3D NULL;
+> > +     int i, id, len, err;
+> > +
+> > +     /* we are going to reuse hypot_map to store compaction remapping =
+*/
+> > +     d->hypot_map[0] =3D 0;
+> > +     /* base BTF types are not renumbered */
+> > +     for (id =3D 1; id < d->btf->start_id; id++)
+> > +             d->hypot_map[id] =3D id;
+> > +     for (i =3D 0, id =3D d->btf->start_id; i < d->btf->nr_types; i++,=
+ id++)
+> > +             d->hypot_map[id] =3D BTF_UNPROCESSED_ID;
+> > +
+> > +     canon_types =3D get_sorted_canon_types(d, &canon_types_cnt);
+> > +     if (!canon_types) {
+> > +             err =3D -ENOMEM;
+> > +             goto out_err;
+> > +     }
+> > +
+> > +     for (i =3D 0; i < canon_types_cnt; i++) {
+> > +             id =3D canon_types[i];
+> > +             t =3D btf__type_by_id(d->btf, id);
+> > +             len =3D btf_type_size(t);
+> > +             if (len < 0) {
+> > +                     err =3D len;
+> > +                     goto out_err;
+> > +             }
+> > +             canon_types_len +=3D len;
+> > +     }
+> > +
+> > +     new_offs =3D calloc(canon_types_cnt, sizeof(*new_offs));
+> > +     new_types =3D calloc(canon_types_len, 1);
+> > +     if (!new_types || !new_offs) {
+> > +             err =3D -ENOMEM;
+> > +             goto out_err;
+> > +     }
+> > +
+> > +     p =3D new_types;
+> > +
+> > +     for (i =3D 0; i < canon_types_cnt; i++) {
+> > +             id =3D canon_types[i];
+> > +             t =3D btf__type_by_id(d->btf, id);
+> > +             len =3D btf_type_size(t);
+> > +             memcpy(p, t, len);
+> > +             d->hypot_map[id] =3D d->btf->start_id + i;
+> > +             new_offs[i] =3D p - new_types;
+> > +             p +=3D len;
+> > +     }
+> > +
+> > +     /* shrink struct btf's internal types index and update btf_header=
+ */
+> > +     free(d->btf->types_data);
+> > +     free(d->btf->type_offs);
+> > +     d->btf->types_data =3D new_types;
+> > +     d->btf->type_offs =3D new_offs;
+> > +     d->btf->types_data_cap =3D canon_types_len;
+> > +     d->btf->type_offs_cap =3D canon_types_cnt;
+> > +     d->btf->nr_types =3D canon_types_cnt;
+> > +     d->btf->hdr->type_len =3D canon_types_len;
+> > +     d->btf->hdr->str_off =3D d->btf->hdr->type_len;
+> > +     d->btf->raw_size =3D d->btf->hdr->hdr_len + d->btf->hdr->type_len=
+ + d->btf->hdr->str_len;
+> > +     free(canon_types);
+> > +     return 0;
+> > +
+> > +out_err:
+> > +     free(canon_types);
+> > +     free(new_types);
+> > +     free(new_offs);
+> > +     return err;
+> > +}
+> > +
+> > +static int btf_dedup_compact_and_sort_types(struct btf_dedup *d)
+> > +{
+> > +     if (d->sort_by_kind_name)
+> > +             return btf__dedup_compact_and_sort_types(d);
+> > +     return btf_dedup_compact_types(d);
+> > +}
+> > +
+> >  /*
+> >   * Figure out final (deduplicated and compacted) type ID for provided =
+original
+> >   * `type_id` by first resolving it into corresponding canonical type I=
+D and
+> > diff --git a/tools/lib/bpf/btf.h b/tools/lib/bpf/btf.h
+> > index ccfd905f03df..9a7cfe6b4bb3 100644
+> > --- a/tools/lib/bpf/btf.h
+> > +++ b/tools/lib/bpf/btf.h
+> > @@ -251,6 +251,8 @@ struct btf_dedup_opts {
+> >       size_t sz;
+> >       /* optional .BTF.ext info to dedup along the main BTF info */
+> >       struct btf_ext *btf_ext;
+> > +     /* Sort btf_types by kind and name */
+> > +     bool sort_by_kind_name;
+> >       /* force hash collisions (used for testing) */
+> >       bool force_collisions;
+> >       size_t :0;
+> > diff --git a/tools/lib/bpf/btf_sort.c b/tools/lib/bpf/btf_sort.c
+> > new file mode 100644
+> > index 000000000000..2ad4a56f1c08
+> > --- /dev/null
+> > +++ b/tools/lib/bpf/btf_sort.c
+> > @@ -0,0 +1,159 @@
+> > +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> > +
+> > +#ifndef _GNU_SOURCE
+> > +#define _GNU_SOURCE
+> > +#endif
+> > +
+> > +#ifdef __KERNEL__
+> > +#include <linux/bpf.h>
+> > +#include <linux/btf.h>
+> > +#include <linux/string.h>
+> > +
+> > +#define btf_type_by_id                               (struct btf_type =
+*)btf_type_by_id
+> > +#define btf__str_by_offset                   btf_str_by_offset
+> > +#define btf__name_by_offset                  btf_name_by_offset
+> > +#define btf__type_cnt                                btf_nr_types
+> > +#define btf__start_id                                btf_start_id
+> > +#define btf__nr_sorted_types                 btf_nr_sorted_types
+> > +#define btf__set_nr_sorted_types             btf_set_nr_sorted_types
+> > +#define btf__base_btf                                btf_base_btf
+> > +#define libbpf_err(x)                                x
+> > +
+> > +#else
+> > +
+> > +#include "btf.h"
+> > +#include "bpf.h"
+> > +#include "libbpf.h"
+> > +#include "libbpf_internal.h"
+> > +
+> > +#endif /* __KERNEL__ */
+> > +
+> > +/* Skip the sorted check if number of btf_types is below threshold
+> > + */
+> > +#define BTF_CHECK_SORT_THRESHOLD  8
+> > +
+> > +struct btf;
+> > +
+> > +static int cmp_btf_kind_name(int ka, const char *na, int kb, const cha=
+r *nb)
+> > +{
+> > +     return (ka - kb) ?: strcmp(na, nb);
+> > +}
+> > +
+> > +/*
+> > + * Sort BTF types by kind and name in ascending order, placing named t=
+ypes
+> > + * before anonymous ones.
+> > + */
+> > +int btf_compare_type_kinds_names(const void *a, const void *b, void *p=
+riv)
+> > +{
+> > +     struct btf *btf =3D (struct btf *)priv;
+> > +     struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
+> > +     struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
+> > +     const char *na, *nb;
+> > +     int ka, kb;
+> > +
+> > +     /* ta w/o name is greater than tb */
+> > +     if (!ta->name_off && tb->name_off)
+> > +             return 1;
+> > +     /* tb w/o name is smaller than ta */
+> > +     if (ta->name_off && !tb->name_off)
+> > +             return -1;
+> > +
+> > +     ka =3D btf_kind(ta);
+> > +     kb =3D btf_kind(tb);
+> > +     na =3D btf__str_by_offset(btf, ta->name_off);
+> > +     nb =3D btf__str_by_offset(btf, tb->name_off);
+> > +
+> > +     return cmp_btf_kind_name(ka, na, kb, nb);
+> > +}
+> > +
+> > +__s32 find_btf_by_name_kind(const struct btf *btf, int start_id,
+> > +                                const char *type_name, __u32 kind)
+> > +{
+> > +     const struct btf_type *t;
+> > +     const char *tname;
+> > +     __u32 i, total;
+> > +
+> > +     if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
+> > +             return 0;
+> > +
+> > +     do {
+> > +             if (btf__nr_sorted_types(btf)) {
+> > +                     /* binary search */
+> > +                     __s32 start, end, mid, found =3D -1;
+> > +                     int ret;
+> > +
+> > +                     start =3D btf__start_id(btf);
+> > +                     end =3D start + btf__nr_sorted_types(btf) - 1;
+> > +                     /* found the leftmost btf_type that matches */
+> > +                     while(start <=3D end) {
+> > +                             mid =3D start + (end - start) / 2;
+> > +                             t =3D btf_type_by_id(btf, mid);
+> > +                             tname =3D btf__name_by_offset(btf, t->nam=
+e_off);
+> > +                             ret =3D cmp_btf_kind_name(BTF_INFO_KIND(t=
+->info), tname,
+> > +                                                     kind, type_name);
+> > +                             if (ret =3D=3D 0)
+> > +                                     found =3D mid;
+> > +                             if (ret < 0)
+> > +                                     start =3D mid + 1;
+> > +                             else if (ret >=3D 0)
+> > +                                     end =3D mid - 1;
+> > +                     }
+> > +
+> > +                     if (found !=3D -1)
+> > +                             return found;
+> > +             } else {
+> > +                     /* linear search */
+> > +                     total =3D btf__type_cnt(btf);
+> > +                     for (i =3D btf__start_id(btf); i < total; i++) {
+> > +                             t =3D btf_type_by_id(btf, i);
+> > +                             if (btf_kind(t) !=3D kind)
+> > +                                     continue;
+> > +
+> > +                             tname =3D btf__name_by_offset(btf, t->nam=
+e_off);
+> > +                             if (tname && !strcmp(tname, type_name))
+> > +                                     return i;
+> > +                     }
+> > +             }
+> > +
+> > +             btf =3D btf__base_btf(btf);
+> > +     } while (btf && btf__start_id(btf) >=3D start_id);
+> > +
+> > +     return libbpf_err(-ENOENT);
+> > +}
+> > +
+> > +void btf_check_sorted(struct btf *btf, int start_id)
+> > +{
+> > +     const struct btf_type *t;
+> > +     int i, n, nr_sorted_types;
+> > +
+> > +     n =3D btf__type_cnt(btf);
+> > +     if ((n - start_id) < BTF_CHECK_SORT_THRESHOLD)
+> > +             return;
+> > +
+> > +     n--;
+> > +     nr_sorted_types =3D 0;
+> > +     for (i =3D start_id; i < n; i++) {
+> > +             int k =3D i + 1;
+> > +
+> > +             t =3D btf_type_by_id(btf, i);
+> > +             if (!btf__str_by_offset(btf, t->name_off))
+> > +                     return;
+> > +
+> > +             t =3D btf_type_by_id(btf, k);
+> > +             if (!btf__str_by_offset(btf, t->name_off))
+> > +                     return;
+> > +
+> > +             if (btf_compare_type_kinds_names(&i, &k, btf) > 0)
+> > +                     return;
+> > +
+> > +             if (t->name_off)
+> > +                     nr_sorted_types++;
+> > +     }
+> > +
+> > +     t =3D btf_type_by_id(btf, start_id);
+> > +     if (t->name_off)
+> > +             nr_sorted_types++;
+> > +     if (nr_sorted_types >=3D BTF_CHECK_SORT_THRESHOLD)
+> > +             btf__set_nr_sorted_types(btf, nr_sorted_types);
+> > +}
+> > +
+> > diff --git a/tools/lib/bpf/libbpf_internal.h b/tools/lib/bpf/libbpf_int=
+ernal.h
+> > index 35b2527bedec..f71f3e70c51c 100644
+> > --- a/tools/lib/bpf/libbpf_internal.h
+> > +++ b/tools/lib/bpf/libbpf_internal.h
+> > @@ -248,6 +248,12 @@ const struct btf_type *skip_mods_and_typedefs(cons=
+t struct btf *btf, __u32 id, _
+> >  const struct btf_header *btf_header(const struct btf *btf);
+> >  void btf_set_base_btf(struct btf *btf, const struct btf *base_btf);
+> >  int btf_relocate(struct btf *btf, const struct btf *base_btf, __u32 **=
+id_map);
+> > +int btf_compare_type_kinds_names(const void *a, const void *b, void *p=
+riv);
+> > +__s32 find_btf_by_name_kind(const struct btf *btf, int start_id, const=
+ char *type_name, __u32 kind);
+> > +void btf_check_sorted(struct btf *btf, int start_id);
+> > +__u32 btf__start_id(const struct btf *btf);
+> > +__u32 btf__nr_sorted_types(const struct btf *btf);
+> > +void btf__set_nr_sorted_types(struct btf *btf, __u32 nr);
+> >
+> >  static inline enum btf_func_linkage btf_func_linkage(const struct btf_=
+type *t)
+> >  {
+>
 
