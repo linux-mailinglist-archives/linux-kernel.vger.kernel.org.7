@@ -1,236 +1,137 @@
-Return-Path: <linux-kernel+bounces-864048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE2FBF9CBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:11:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954A7BF9CB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C885B189D4E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:12:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 237754E6BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB17F22333D;
-	Wed, 22 Oct 2025 03:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36DC2264CB;
+	Wed, 22 Oct 2025 03:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecU5J8UT"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2gWudvl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FD722A4F6
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1841121B195;
+	Wed, 22 Oct 2025 03:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102700; cv=none; b=aYSVHP53RrdaNPWIMF9Qbz/rpnY+N7PIu14Z3mukMON9FjrZ3rGTk07iBPUhU0fJxhVqgMQQrJJZARhBuq2RnzMMVEnIidtWpM5IW5PwI4gBlNx4hO1RP8goneGRznfnB6ub7t6HXcXDEQ1yB+fAjhSujEolKP+arSpDECYuJ2w=
+	t=1761102684; cv=none; b=qY9iOhj1gTKgbkTibl3/usklczO1FnzZXx4wNDiqMHBobmE1LhmcVCYj3NnL/aXoSk9WeaGAERw85ZmdE0YgMDIB2+GfOmPlWfd3YhtZG4n7wlQuHacLAU1ErmX7dqbVILnAmntzl93oJjOgETyAHNyei10Pj1P8K5S8TqctPj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102700; c=relaxed/simple;
-	bh=vo4X/k8QJ+NxqbcWxXdeO1gco1FXAXIvNeqYsVUxN+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AtB6Txm2o/u+j6xyNqyHgHszLF8lS6cbvX1byuEWpFw9tfmJu9uX6Y0fG7qtvK/hQzn0znthziqzHzqn67C6KoyOwFpsP41ejTN+oWZAhLgO8+70Gkntvj896Iqv+BBh1BjwuoA0rWbmx1z0OlwXzskPHTOzxi+R9OZqL/mZ1oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecU5J8UT; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-42e2c336adcso27946155ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:11:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761102698; x=1761707498; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1w81N5UwqCcLk9lzNRuUpjETqoES8d1bFB+ZdpugPTA=;
-        b=ecU5J8UT2Bwg8ULPydtna8dAQMF62PFne2fmf1Y9Ag8gK6uy29cNT/9sEC0fepMoUR
-         zxGvA9KDaX+D52B/boKTWnBLfg5u2nbMp3jj2VSm5DmxVfgxsjNTvul8Bq6n+oi4IHUG
-         o51N065I48yH3pYK1LeJafJCxj2cRlUhJwnxSwdnXFp0iwqvzKrzwJXqFtZiR8q6v90w
-         1/PcZ5EBGpqvawUyH3eTTS+i+QH5kDq0f3SJJtZCWP1dIKRRjNbDbnD+ArQZFEDjyl4h
-         QaEbDbvMFBBcNxAEuqjKjeDq20z1s5v9bpJvAiT/e1nDxqDYrrdUW7DPUZVuu5bPnAqd
-         TPLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761102698; x=1761707498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1w81N5UwqCcLk9lzNRuUpjETqoES8d1bFB+ZdpugPTA=;
-        b=xEvXGmS9HOk4VmkGONBUT+ffmKQI9S72kRJsCpuMPgiTaS1hqdTCmJbuQ2qxOXkrqP
-         3S35mm74UBshheMGzJnsfp6zZIFmgaFNdB+dEoPaSIdKfloCjusHOwVXb/EH/H37aP25
-         hfUwDoBr9HFcmlyeKqIV4nslJV7e+ugrY3tzDTowZshehWKWjXJgcFBRFupYsp+QB83U
-         cF9bN5LakYeuEwWSIzwaamlWnaRWBAV66UL9QPMOU5sCBs+vt6xqomHCxE+Nl5uBYwg/
-         Rv22lQPsvuF/Pj/RzoFzm63MVAUU7itBm1Mj8qLwrw25yfCB9ahpJe+KRL0CkfvGdPHd
-         Ln+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJPMTrHhP0i8+Bec7SG+o70Uq/UBssspstp3Xa2tS1/TS0w4RyUKioBrjSOkm2m1DWjBDBYnC/niY4quk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznmGnZSpbVdlPWKWJp3xS39d4qBcniPoIvheV1NETJ0RrLCm7l
-	yYcsHO8cviwwFGYXcM4IsxnqEOM/ix9nNwOORUrhq7TyPwBoTaEJnB0zZ6qRD5TsrWj6XMENTJK
-	qSCDNUKTviLXzS7a5vJBmmgKMUXyciP4=
-X-Gm-Gg: ASbGncvb0Mzht93sAZO3JDy61+FXm9/0MVilJ6seGGJU8RAcvagVl2JwcGU9cWkPG2/
-	Y+xIY23X+40BtLGXGG02WdwSxVVoHSPfLgW3t4cBiJ/7waS4J+mK0yO7M6SM/xTPW+sP97//FT9
-	kDjHYuwnHXXIM8fdAhh24IYU7koKGCfE20FNiasUqcAE7+gjSzVWMfeMCHA+jMKmUUQHKMo8TaQ
-	68q+WBKsdSw4TlLB2nWBaRO16a3RolFn464GytaQhLDYaURRS4BVKjdHw3O+Jhq14nGQ8Q=
-X-Google-Smtp-Source: AGHT+IHsc5L8H41oQ6pWuGlwc/6nz3oXWi8+Bcroke4DapuC5C0EkQMaKnI90LLtcbQ2XDw0xbZs5GobUsx8JgiIzoU=
-X-Received: by 2002:a05:6e02:1689:b0:42d:876e:61bd with SMTP id
- e9e14a558f8ab-430c527fb41mr284123945ab.28.1761102697970; Tue, 21 Oct 2025
- 20:11:37 -0700 (PDT)
+	s=arc-20240116; t=1761102684; c=relaxed/simple;
+	bh=J3joio7QLYgqlTYEASCEXu7uQck3iJxX3gB8UvFLwo4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rUhwyDPmylptx+UmFT60dTGBtMOUGRR1oWTehiObEDc6MLSyYx6kNpjAUhRKI3tRoLawTEQIpbP8cHFoLtTtHbaj1CaoiGpRnYmXjUdmVNxYSMa6RXHFiWNR5hNJTnONzbO0MZvo9gqNv6EIg8oNk+J0yyVQBaQ5nEy1A4CHuuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2gWudvl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A8798C4CEE7;
+	Wed, 22 Oct 2025 03:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761102682;
+	bh=J3joio7QLYgqlTYEASCEXu7uQck3iJxX3gB8UvFLwo4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=F2gWudvlYx5xBhl1AFiBuuq2up7dDBCjrE/U2qNgt07yPH58kgqkod4dHKyaRlgyx
+	 sY/QDvEJkTnPd6q0+KNKdSuqtDg7nKL9/bOEPI/FFH4Kiv7OS8CXnoxQ5fLgXB8+xW
+	 dc++dgqBWw1owkVwcpufja3KmKtCUklzAM0tqU2K96HJrgIs43keIVZ3eFW/sqEdne
+	 BM7RDfPnEpWmb+wbn8hWasRds6UCdVdVk3FgOxi7dGOFYKuS6e1vzgh4KED7G2GTc3
+	 mgHYKnkaaYfwmo+VFNUiKGIy8E9lDVd7QtAjUMWhs0gnKj2ePcjjWYG9fRSqDb/0az
+	 WMRyZC8feyz8w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D540CCD1B9;
+	Wed, 22 Oct 2025 03:11:22 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Tue, 21 Oct 2025 22:11:15 -0500
+Subject: [PATCH v5] soc: tegra: fuse: speedo-tegra210: Add soc speedo 2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021173200.7908-1-alessandro.d@gmail.com> <20251021173200.7908-2-alessandro.d@gmail.com>
-In-Reply-To: <20251021173200.7908-2-alessandro.d@gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Wed, 22 Oct 2025 11:11:01 +0800
-X-Gm-Features: AS18NWBBSoMIxcuhS-7Wwy3NqCqJITQFYqxcB1a6KZpfmjK1-38rwvJFwSyOIzY
-Message-ID: <CAL+tcoCwGQyNSv9BZ_jfsia6YFoyT790iknqxG7bB7wVi3C_vQ@mail.gmail.com>
-Subject: Re: [PATCH net v2 1/1] i40e: xsk: advance next_to_clean on status descriptors
-To: Alessandro Decina <alessandro.d@gmail.com>
-Cc: netdev@vger.kernel.org, Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Tirthendu Sarkar <tirthendu.sarkar@intel.com>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, bpf@vger.kernel.org, 
-	intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-t210-actmon-p3-v5-1-e1ef5e93909d@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFJL+GgC/0XMyw7CIBCF4VdpWEsyM4ClfRXTBcJUWfQiYGPS+
+ O5SXbj8T3K+XWROkbPom10k3mKOy1zDnBrh726+sYyhtiAgg0AoCyFI58u0zHJVUlkEUF2wyK2
+ opzXxGF9f8DL8OvHjWd3yG/9s3xwoWCRZ+JbcAeeVOSxSt3DukO3Vet9v+oCvLrP0yzTFUo+II
+ QQGS2pErYm1C2DI0ahgBAOojfcuODG83x8N0R9P4wAAAA==
+X-Change-ID: 20251021-t210-actmon-p3-3810039d81e7
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761102682; l=2079;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=MW8HFEQS9R+lPS9/S1KOlskDpwqUZBJBLhRfvIhSwIQ=;
+ b=yWz3YwMw+bcDfQX1L+ueM+/Hyb7SfKE3PywfHQxpycJ9twMvzt9NPJP4u+8wr/tEV0lzwPynB
+ dItkF6oCM1ZBMcNqIwok9eKEX+9YUjDQP/l0kxPRqt2Df5iEDoX0eCD
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Wed, Oct 22, 2025 at 1:33=E2=80=AFAM Alessandro Decina
-<alessandro.d@gmail.com> wrote:
->
-> Whenever a status descriptor is received, i40e processes and skips over
-> it, correctly updating next_to_process but forgetting to update
-> next_to_clean. In the next iteration this accidentally causes the
-> creation of an invalid multi-buffer xdp_buff where the first fragment
-> is the status descriptor.
->
-> If then a skb is constructed from such an invalid buffer - because the
-> eBPF program returns XDP_PASS - a panic occurs:
->
-> [ 5866.367317] BUG: unable to handle page fault for address: ffd31c37eab1=
-c980
-> [ 5866.375050] #PF: supervisor read access in kernel mode
-> [ 5866.380825] #PF: error_code(0x0000) - not-present page
-> [ 5866.386602] PGD 0
-> [ 5866.388867] Oops: Oops: 0000 [#1] SMP NOPTI
-> [ 5866.393575] CPU: 34 UID: 0 PID: 0 Comm: swapper/34 Not tainted 6.17.0-=
-custom #1 PREEMPT(voluntary)
-> [ 5866.403740] Hardware name: Supermicro AS -2115GT-HNTR/H13SST-G, BIOS 3=
-.2 03/20/2025
-> [ 5866.412339] RIP: 0010:memcpy+0x8/0x10
-> [ 5866.416454] Code: cc cc 90 cc cc cc cc cc cc cc cc cc cc cc cc cc cc c=
-c 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 90 48 89 f8 48 89 d1 <=
-f3> a4 e9 fc 26 c0 fe 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-> [ 5866.437538] RSP: 0018:ff428d9ec0bb0ca8 EFLAGS: 00010286
-> [ 5866.443415] RAX: ff2dd26dbd8f0000 RBX: ff2dd265ad161400 RCX: 000000000=
-00004e1
-> [ 5866.451435] RDX: 00000000000004e1 RSI: ffd31c37eab1c980 RDI: ff2dd26db=
-d8f0000
-> [ 5866.459454] RBP: ff428d9ec0bb0d40 R08: 0000000000000000 R09: 000000000=
-0000000
-> [ 5866.467470] R10: 0000000000000000 R11: 0000000000000000 R12: ff428d9ee=
-c726ef8
-> [ 5866.475490] R13: ff2dd26dbd8f0000 R14: ff2dd265ca2f9fc0 R15: ff2dd2654=
-8548b80
-> [ 5866.483509] FS:  0000000000000000(0000) GS:ff2dd2c363592000(0000) knlG=
-S:0000000000000000
-> [ 5866.492600] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 5866.499060] CR2: ffd31c37eab1c980 CR3: 0000000178d7b040 CR4: 000000000=
-0f71ef0
-> [ 5866.507079] PKRU: 55555554
-> [ 5866.510125] Call Trace:
-> [ 5866.512867]  <IRQ>
-> [ 5866.515132]  ? i40e_clean_rx_irq_zc+0xc50/0xe60 [i40e]
-> [ 5866.520921]  i40e_napi_poll+0x2d8/0x1890 [i40e]
-> [ 5866.526022]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [ 5866.531408]  ? raise_softirq+0x24/0x70
-> [ 5866.535623]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [ 5866.541011]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [ 5866.546397]  ? rcu_sched_clock_irq+0x225/0x1800
-> [ 5866.551493]  __napi_poll+0x30/0x230
-> [ 5866.555423]  net_rx_action+0x20b/0x3f0
-> [ 5866.559643]  handle_softirqs+0xe4/0x340
-> [ 5866.563962]  __irq_exit_rcu+0x10e/0x130
-> [ 5866.568283]  irq_exit_rcu+0xe/0x20
-> [ 5866.572110]  common_interrupt+0xb6/0xe0
-> [ 5866.576425]  </IRQ>
-> [ 5866.578791]  <TASK>
->
-> Advance next_to_clean to ensure invalid xdp_buff(s) aren't created.
->
-> Fixes: 1c9ba9c14658 ("i40e: xsk: add RX multi-buffer support")
-> Signed-off-by: Alessandro Decina <alessandro.d@gmail.com>
-> ---
->  drivers/net/ethernet/intel/i40e/i40e_xsk.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/eth=
-ernet/intel/i40e/i40e_xsk.c
-> index 9f47388eaba5..dbc19083bbb7 100644
-> --- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> +++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> @@ -441,13 +441,18 @@ int i40e_clean_rx_irq_zc(struct i40e_ring *rx_ring,=
- int budget)
->                 dma_rmb();
->
->                 if (i40e_rx_is_programming_status(qword)) {
-> +                       u16 ntp;
-> +
->                         i40e_clean_programming_status(rx_ring,
->                                                       rx_desc->raw.qword[=
-0],
->                                                       qword);
->                         bi =3D *i40e_rx_bi(rx_ring, next_to_process);
->                         xsk_buff_free(bi);
-> -                       if (++next_to_process =3D=3D count)
-> +                       ntp =3D next_to_process++;
-> +                       if (next_to_process =3D=3D count)
->                                 next_to_process =3D 0;
-> +                       if (next_to_clean =3D=3D ntp)
-> +                               next_to_clean =3D next_to_process;
->                         continue;
->                 }
->
-> --
-> 2.43.0
->
->
+From: Aaron Kling <webgeek1234@gmail.com>
 
-I'm copying your reply from v1 as shown below so that we can continue
-with the discussion :)
+The Jetson Nano series of modules only have 2 emc table entries,
+different from other soc sku's. As the emc driver uses the soc speedo to
+populate the emc opp tables, add a new speedo id to uniquely identify
+this.
 
-> It really depends on whether a status descriptor can be received in the
-> middle of multi-buffer packet. Based on the existing code, I assumed it
-> can. Therefore, consider this case:
->
-> [valid_1st_packet][status_descriptor][valid_2nd_packet]
->
-> In this case you want to skip status_descriptor but keep the existing
-> logic that leads to:
->
->     first =3D next_to_clean =3D valid_1st_packet
->
-> so then you can go and add valid_2nd_packet as a fragment to the first.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v5:
+- Split series
+- Link to v4: https://lore.kernel.org/r/20250923-t210-actmon-v4-0-442d1eb6377c@gmail.com
 
-Sorry, honestly, I still don't follow you.
+Changes in v4:
+- Various cleanups in patch 5 as requested by review
+- Fix a couple typos in patch 4
+- Link to v3: https://lore.kernel.org/r/20250906-t210-actmon-v3-0-1403365d571e@gmail.com
 
-Looking at the case you provided, I think @first always pointing to
-valid_1st_packet is valid which does not bring any trouble. You mean
-the case is what you're trying to handle?
+Changes in v3:
+- In patch 5, don't fail mc probe if opp tables are missing
+- Add more mc bindings to patch 1
+- Add patch to use tegra210-mc bindings in the mc driver
+- Re-order series to align patches within a subsystem to each other
+- Link to v2: https://lore.kernel.org/r/20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com
 
-You patch updates next_to_clean that is only used at the very
-beginning, so it will not affect @first. Imaging the following case:
+Changes in v2:
+- Assume 64-bit dram bus width in patch 4
+- Add dt-bindings patch to document the new properties on the
+  tegra210-emc node.
+- Link to v1: https://lore.kernel.org/r/20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com
+---
+ drivers/soc/tegra/fuse/speedo-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-     [status_descriptor][valid_1st_packet][valid_2nd_packet]
+diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
+index a8cc3632977230fbfda0f8c3bfa7b7b25c2378fe..06c2bcbee5734207e3ebacb4057da2195f85321c 100644
+--- a/drivers/soc/tegra/fuse/speedo-tegra210.c
++++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
+@@ -97,6 +97,7 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
+ 			break;
+ 
+ 		case 0x8F:
++			sku_info->soc_speedo_id = 2;
+ 			sku_info->cpu_speedo_id = 9;
+ 			sku_info->gpu_speedo_id = 2;
+ 			break;
 
-Even if the next_to_clean is updated, the @first still points to
-[status_descriptor] that is invalid and that will later cause the
-panic when constructing the skb.
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251021-t210-actmon-p3-3810039d81e7
+prerequisite-change-id: 20250812-tegra210-speedo-470691e8b8cc:v4
+prerequisite-patch-id: d32dd215b54ac46086377c1ce2c8d53d746690c9
 
-I'm afraid that we're not on the same page. Let me confirm that it is
-@first that points to the status descriptor that causes the panic,
-right? Could you share with us the exact case just like you did as
-above. Thank you.
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-Thanks,
-Jason
+
 
