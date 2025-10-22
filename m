@@ -1,153 +1,135 @@
-Return-Path: <linux-kernel+bounces-865802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76998BFE140
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:45:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BD3BFE143
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E11A34F088F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:45:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757333A79C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2FF224AF0;
-	Wed, 22 Oct 2025 19:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E0B19F40B;
+	Wed, 22 Oct 2025 19:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b="G0uVo7Bl"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tmDh3B5Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FAD229B38
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 19:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB13D27462;
+	Wed, 22 Oct 2025 19:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761162340; cv=none; b=XTXDJDqfBzPaOaH9ni/927E/a8/qQTwJj6YTCwYr/4nE/YM8qHp9kkumDfJHsfa30QLw+3mqKSEwkAVkkh/AVbcRCGTr0DYPQGSmri+p+WwXiBKh3Wj5tDAqHP7lnFWmd0pl+PFEd+Ef4pAzN7xWMYq3XDc20oNbzCdSQ336ob0=
+	t=1761162350; cv=none; b=jkNqvzt+28JCaTz2jC5QizIHkrwpdWjF5NVLMsYNJzkqmH4GsoL/H4hfPyN8OabMcgi4QWlsuC+VJC728P3DfaaVQLA+eHagStypw6ei8GNXLtg2X25WySMk3fvvb1/DQVcGRA/V6wwDoYB1wQimY5ud3/2iW8AR5ji3yE1ceF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761162340; c=relaxed/simple;
-	bh=JvEx88/9/4yrZrD8oUUka3XIDqnMKIT4jMYXzVc/PtU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HicAhkOmr3z4vg+h1TEIgU7Zyy3UqglclE77lbi4zc4jdgI9gmGjvgE1Yj2uOGwinrry4IhLUqxvj8rfNgfVC8FPvQwfHiZjdXmOKDeSQnbyWDtkcs/IafNhfziJmiejz9hIw6OrdSl8Hl0YsXqAYlNqniqrBxdPCb7luSLBUVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in; spf=pass smtp.mailfrom=ssn.edu.in; dkim=pass (1024-bit key) header.d=ssn.edu.in header.i=@ssn.edu.in header.b=G0uVo7Bl; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ssn.edu.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssn.edu.in
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33b9dc8d517so31947a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ssn.edu.in; s=ssn; t=1761162335; x=1761767135; darn=vger.kernel.org;
-        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SdyO+Sr/onadDh4rCJAHTE0lY/KlceYK45hEyRydGRw=;
-        b=G0uVo7BlsqU/Alhd2+QM2/QGU2u0NyDgGS4iBbndL3WHCzHmNyYWe2daSKXou7Rk7M
-         ZYX/OKF1NgSSE8SRldjZTXn26bURflrcy26Eh6ckSY9Rddt9U8dNwPwQ1p79nNsqKBGl
-         JZd+mIC3bJ3Yf87MNChZUUQjXfiMYLtr26ktk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761162335; x=1761767135;
-        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SdyO+Sr/onadDh4rCJAHTE0lY/KlceYK45hEyRydGRw=;
-        b=V6myvIoTsmaISKsmv3gfkbbJFmEP4aBO8+Ku1KIhL4c4kVzuSqpIgNXfehjUZgD7GS
-         50cPlFKwIkviP8iFeM49fLH1MWXP5iKLfzZYjZd3ztmZq5wbGQD9bqmbTIxevfYH3nA6
-         QIRr87FOseD1iZjvazfg8eCe846gS6KxFyyaGz87fv+Y5wEQvofCw5PYtOQxqpuj0oxS
-         VUN7ly+bjtUkzYVrP6pqQvbyQx66XujqqrwssqEO3PwhIo9QivS+Jownmfna93ozlyb5
-         7DW0F3eGKdXjyH3Vmf38N0f0YT4la29crRf56rrTngYGTMCRx1OnspxjI4bQ1jc2w10a
-         W68A==
-X-Gm-Message-State: AOJu0YxB6NUUqZb4c7wZVK/dIoMo5xa7pI6M+vQo+iFDGEP1K0FA9mJd
-	g3oFFtXnW+mt4sVJ6tKlnQakahdj06VLGvfjYfHdaju/tgVcRPA+pv4DxGBY4zo7aYEnayIySI9
-	QnGW43o0VXVpduxQnC0M88B8rsgOXA6z06PgH3F4PX5M7/5CVEyNZHW6gp2iPERAfajVTCpGxvF
-	o=
-X-Gm-Gg: ASbGncvbw1ExBv62NfCR96cirbYih9ZdZtl6wdgx+pGu4J9P5gtnu9Agkg/74zJzB6A
-	hxzs54v4hTiGQEl32NcuKFH2Pesu0f5Q8ZbOJGZg1sTrNZF6WfBepnWRsh1JqmihDaDQbx9IQr1
-	Z38LG9PaFyYfppmIGNcwqPuwMNM4xIbqJrwNrj74q6IFYz2w9YXKPWkxftrWsv/XfU0cQV+x8Ak
-	ndcSoGkx0YrYYldPzVN/cZpOjQInFzFpsJBOsDAla3YZzp7FLjj3+nD4KccFUwV11Lz/oFVVEsY
-	NsmLOeUUz4k1JIe+eCz56QbM85T9fAp58N9niDqGP7jNRsfGi3xi/Cn4iqB6jOoxRv0fK3WklpF
-	51pE3CRCULmsb79qpaQIaHA9fYaSIHl0lGjmGY56NV2PjwVD6rQ2jV+sF3cYMKgfyD7mNU+xp2l
-	qP+eafE0vB1Qxl89NaCoAFVw5454jZAxDT+870zMk/aa0rlNZ2Xog8gzCCbtLypdOTRvS5Db/3V
-	EE=
-X-Google-Smtp-Source: AGHT+IED97I1L6h438ObXwMrhI04f4auCt4isQ+Sfz/RWTVt54hKf/b03QWokE61BBKNqfmSQLySpQ==
-X-Received: by 2002:a17:90a:d44c:b0:32e:ae12:9d32 with SMTP id 98e67ed59e1d1-33bcf87f460mr27083250a91.11.1761162335472;
-        Wed, 22 Oct 2025 12:45:35 -0700 (PDT)
-Received: from biancaa-HP-Pavilion-Laptop-15-eg2xxx.. ([2406:7400:1c3:818d:712:fe94:5de7:1d8e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e224ca168sm3318470a91.22.2025.10.22.12.45.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 12:45:35 -0700 (PDT)
-From: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-To: linux-kernel@vger.kernel.org
-Cc: peng.fan@nxp.com,
-	sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Subject: [PATCH] Subject: Modifying mannual to manual
-Date: Thu, 23 Oct 2025 01:15:27 +0530
-Message-ID: <20251022194527.71189-1-biancaa2210329@ssn.edu.in>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761162350; c=relaxed/simple;
+	bh=BhrdWlrWjrxxxCFVIJZR3Y5rtQjATk4Iozogb7pSrYU=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=VAAx9G/njuba0vgsnHiLnRYXvQhOPsMAcuNVU4VXp9+8nwGLXjBopWlZvubGSaqRWdP2s4+9lvDPidFiXgnNYN9q0rkVdlI27c4afdnmvhQw9vELzX9Eu1jCBs8oUd+auhcV86gTPniPeB+erItuxtYBuKcQBpIcjgwQyPlvP1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tmDh3B5Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F574C4CEE7;
+	Wed, 22 Oct 2025 19:45:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761162349;
+	bh=BhrdWlrWjrxxxCFVIJZR3Y5rtQjATk4Iozogb7pSrYU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tmDh3B5QWQdj9aWhhJA+vZ20tQwAVdcPPo6xtHJ6xsW7/J04SUP3vLa3DKNptpTki
+	 Gvf9v0TkTvCQ9G8TkWH2ooOqhtCLRMOzqPZvGidP+Tdc6Wj7tw9EN9zN4bf7X9dno1
+	 +sRvxc9OFqpko3NnQa4mATd6SMmXdwimegArOGok=
+Date: Wed, 22 Oct 2025 12:45:48 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL]  hotfixes for 6.18-rc3
+Message-Id: <20251022124548.a2bd1335de33d5d2b7b2fcb2@linux-foundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-
-Spelling fix in the document from mannual to manual in 2 places.
-Regards,
-Biancaa.R
-
-Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
----
- drivers/firmware/arm_scmi/vendors/imx/imx95.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx95.rst b/drivers/firmware/arm_scmi/vendors/imx/imx95.rst
-index 741f4eace350..933c21512411 100644
---- a/drivers/firmware/arm_scmi/vendors/imx/imx95.rst
-+++ b/drivers/firmware/arm_scmi/vendors/imx/imx95.rst
-@@ -400,7 +400,7 @@ POR, WDOG, JTAG and etc.
- |                     |Bits[22:8] Error ID(Agent ID of the system).            |
- |                     |Bit[7:0] Reason(WDOG, POR, FCCU and etc):               |
- |                     |See the SRESR register description in the System        |
--|                     |Reset Controller (SRC) section in SoC reference mannual |
-+|                     |Reset Controller (SRC) section in SoC reference manual |
- |                     |One reason maps to BIT(reason) in SRESR                 |
- +---------------------+--------------------------------------------------------+
- |uint32 shutdownflags |Shutdown reason flags. This parameter has the format:   |
-@@ -419,7 +419,7 @@ POR, WDOG, JTAG and etc.
- |                     |Bits[22:8] Error ID(Agent ID of the System).            |
- |                     |Bit[7:0] Reason                                         |
- |                     |See the SRESR register description in the System        |
--|                     |Reset Controller (SRC) section in SoC reference mannual |
-+|                     |Reset Controller (SRC) section in SoC reference manual |
- |                     |One reason maps to BIT(reason) in SRESR                 |
- +---------------------+--------------------------------------------------------+
- |uint32 extinfo[3]    |Array of extended info words(e.g. fault pc)             |
--- 
-2.43.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
 
--- 
-::DISCLAIMER::
+Linus, please merge this batch of hotfixes for the current -rc cycle,
+thanks.
 
----------------------------------------------------------------------
-The 
-contents of this e-mail and any attachment(s) are confidential and
-intended 
-for the named recipient(s) only. Views or opinions, if any,
-presented in 
-this email are solely those of the author and may not
-necessarily reflect 
-the views or opinions of SSN Institutions (SSN) or its
-affiliates. Any form 
-of reproduction, dissemination, copying, disclosure,
-modification, 
-distribution and / or publication of this message without the
-prior written 
-consent of authorized representative of SSN is strictly
-prohibited. If you 
-have received this email in error please delete it and
-notify the sender 
-immediately.
----------------------------------------------------------------------
-Header of this mail should have a valid DKIM signature for the domain 
-ssn.edu.in <http://www.ssn.edu.in/>
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-st=
+able-2025-10-22-12-43
+
+for you to fetch changes up to 9aa12167ef1149d9980713b120ddcb31cf17222d:
+
+  csky: abiv2: adapt to new folio flags field (2025-10-21 15:46:18 -0700)
+
+----------------------------------------------------------------
+17 hotfixes.  12 are cc:stable and 14 are for MM.
+
+There's a two-patch DAMON series from SeongJae Park which addresses a
+missed check and possible memory leak.  Apart from that it's all
+singletons - please see the changelogs for details.
+
+----------------------------------------------------------------
+Alexei Starovoitov (1):
+      mm: don't spin in add_stack_record when gfp flags don't allow
+
+David Hildenbrand (1):
+      vmw_balloon: indicate success when effectively deflating during migra=
+tion
+
+Deepanshu Kartikey (2):
+      ocfs2: clear extent cache after moving/defragmenting extents
+      hugetlbfs: move lock assertions after early returns in huge_pmd_unsha=
+re()
+
+Enze Li (1):
+      mm/damon/core: fix potential memory leak by cleaning ops_filter in da=
+mon_destroy_scheme
+
+Lance Yang (1):
+      hung_task: fix warnings caused by unaligned lock pointers
+
+Lorenzo Stoakes (1):
+      mm/mremap: correctly account old mapping after MREMAP_DONTUNMAP remap
+
+Marek Szyprowski (1):
+      dma-debug: don't report false positives with DMA_BOUNCE_UNALIGNED_KMA=
+LLOC
+
+Qiuxu Zhuo (1):
+      mm: prevent poison consumption when splitting THP
+
+SeongJae Park (4):
+      mm/damon/sysfs: catch commit test ctx alloc failure
+      mm/damon/sysfs: dealloc commit test ctx always
+      mm/damon/core: fix list_add_tail() call on damon_call()
+      mm/damon/core: use damos_commit_quota_goal() for new goal commit
+
+Thomas Wei=DFschuh (1):
+      csky: abiv2: adapt to new folio flags field
+
+ arch/csky/abiv2/cacheflush.c         |  2 +-
+ arch/csky/abiv2/inc/abi/cacheflush.h |  4 ++--
+ drivers/misc/vmw_balloon.c           |  8 +++-----
+ fs/hugetlbfs/inode.c                 |  9 ---------
+ fs/ocfs2/move_extents.c              |  5 +++++
+ include/linux/hung_task.h            |  8 +++++---
+ kernel/dma/debug.c                   |  5 ++++-
+ mm/damon/core.c                      |  7 +++++--
+ mm/damon/sysfs.c                     |  7 ++++---
+ mm/huge_memory.c                     |  3 +++
+ mm/hugetlb.c                         |  5 ++---
+ mm/migrate.c                         |  3 ++-
+ mm/mremap.c                          | 15 ++++++---------
+ mm/page_owner.c                      |  3 +++
+ 14 files changed, 45 insertions(+), 39 deletions(-)
+
 
