@@ -1,404 +1,183 @@
-Return-Path: <linux-kernel+bounces-864618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C38BFB30A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:38:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA61BFB31C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D0019C7C4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:39:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC458567420
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53B029B217;
-	Wed, 22 Oct 2025 09:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED043054C8;
+	Wed, 22 Oct 2025 09:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J8UUUixv"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010050.outbound.protection.outlook.com [52.101.46.50])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dRePhIDS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68637299924
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761125925; cv=fail; b=VRVAO9l+tSOZbGet0GKjenVwkmlvvAD9kLYLGh3GFvxyJZQIepDW+tl03Zh30L6ujVFntkqn5WPeh+v6UA8Pc9i+VYRkB+LMsH+3mRkSvJGypLxol0OD+mVzbGlNV0jEwIBS1Zw13/qsvkasF/qy9auxXd89RRoz30FY4nTxSBY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761125925; c=relaxed/simple;
-	bh=cWiTUSlV7gBwiyA/fHlw1fwDRse9OLEgF+nS7djGsP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DmK8ZyPNgrVfNI1rA2eKyByrqbwhMKjq2BxKFaSY1tNEIO1jimKv8b2oE37msFSSAG5Kt+/KxMiZIOeOCEuTxclI32w+9exP4S31yu09z8Ql0Sn8KJL+Ti4dof8aTe+Ttfkuu6unfrGV3Uajl1Dl6UA8QvIer9qCcc42TDqUY2Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J8UUUixv; arc=fail smtp.client-ip=52.101.46.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VGkm6sLb7yG1xWWPRpPl5UwdIFWGX4LCpBdDDalDCNOPubJ76KZNLuNtunkaNyT/wbf7Cdav3S+zbydRIVFfp+pKd3epW91R9QEP3CFlIN6aaw5QB924JZ6i3/TzatF1F7+//G8qZoVE32LbwVIJEdaerkThioCK5er0gEMX/lfVkd7JKrFz68T2bNLUorcsJQSwCakjWO7+gMyIQmdAb5TxgqseC/e5PkA63+Vczn2UurQP4TFbgk2NOb6CxqAsNn1ENHFdaUR37xiwSreX+1lTPxSHMAHEwXbeOMGy3UJDeaN4mTktD1lwcFyg3dq/L8HblnmpyeOp586+yJI7RA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=79l0pDXnC5JmTYWSEOdo+u3S+4U433Mbq+RP6zH1HrE=;
- b=Y37xHIxYhcV6IejRE7vJB6FMsqVkeMtuzXQjQsgVb8+Ic8Rjv79sYdK+rMLjbzDPC+8+ISXftd1CDQLoAhF/Bvc03lnnCDxxquqvDwVxm+iRsn1imGYMLlb2hbJHhH4IU138UUa1bm2opgg6x07vDtLub/SIO05DtpkfvrBql/ShOo1dNtxlunyGZXtXNYdE2ApY239x2SybxYAXdxsIBVTu1aE0rgUXzEznHkZJLFv+Q/hMq3/WJ6FHWu+pEPKz1x+RqTvXEBqFCaouz2bwODC1WVsuZVts4H17L9mVYZpHoj4dmDVBo0uEZ03q8aoZwrHutbqSw+rhNNlI1KxRFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=79l0pDXnC5JmTYWSEOdo+u3S+4U433Mbq+RP6zH1HrE=;
- b=J8UUUixvYchBlthd04riIMumSksHKoZtf+CucqbC2zRWyopzdZZu0K0Re6vCdDSvj9G36xiVbc0uNXaCphAYlzrQekQ6zo30khN2x4Q10096treOSv+sZoSmAhNkbe6kFYWzM0/r4xUgdBzR5me0XTaTFX8TpP/XK8LyyVCQNQlbBifKbmlENOgytlLZVlJ/QJbQST3P8X50GDDzYa4P8CtjRASgs3xnybivhDi85KOhYJA7Z/Nw/zO6By9B40wXaX76M8WKrlOmselr0RJuWJunzl/O0EKQY9xp08zvMm5rRxyqcss0Aq9LAElutiJfxQsJZpf9sATjMzPO7nvv/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SN7PR12MB6765.namprd12.prod.outlook.com (2603:10b6:806:26b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 09:38:36 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 09:38:36 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Emil Tsalapatis <emil@etsalapatis.com>,
-	sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.19] sched_ext: Use ___v2 suffix for new kfuncs and fix scx build errors
-Date: Wed, 22 Oct 2025 11:38:26 +0200
-Message-ID: <20251022093826.113508-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.51.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MI2P293CA0005.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::12) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAB8298CA2
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761125954; cv=none; b=VEVrpnXnZeTmZoigz4xBgoDYfNElmdW9u4I9jVkfeU9gx7pkDsStuZXP3M1Zppc5mNGi5E+Wfs1EmsifoxyKGvPetT1DF6O6tVbBknOtju9c2RqlyaVJ1q5FgiT9smmTB4RIsPpG023dhsiNJjzengYMBNBmMdZY9Twes5sS+QA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761125954; c=relaxed/simple;
+	bh=UZ0OPkGP8yNVJlDHumkQcuasIKQr+bwGLQCUf7u5PAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W6lpfvN4p+aIvrPLzU+Y0OJCbsuIatqEDvVVEnmfO16w0+xixWjm0lTgPKCBDu6EKJKsPLNzK+LU0+rYba8izEAX6hE7aS0HdRKTMyGf0hotZcMtlAyqNcHXbHGVX+kJGHmMwvCxN7ur/zrJz9kumuZ7RkO/g2PhUt6abXs9ouk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dRePhIDS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761125952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MuYmiOLCaPZRj40EIc99HdJ/xOeorodHm2jhiotawYQ=;
+	b=dRePhIDSGb6E4K2W29vvLfCsyocAp1bR7KN6/ImCMY6UL7BN85ooRJj8hk8mQshxJkgiIX
+	P2MrB2ygvLJUlAaotbfB/S4CjR10EWiAAOOE46CFkXkf1bpJw38OKQRn4d4PX8CFXRckUQ
+	uKkMjSapvX93m6X1aHXXp+95QpzL1fs=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-4xzLA-JKNsWVaPfQQtQ2EQ-1; Wed, 22 Oct 2025 05:39:10 -0400
+X-MC-Unique: 4xzLA-JKNsWVaPfQQtQ2EQ-1
+X-Mimecast-MFC-AGG-ID: 4xzLA-JKNsWVaPfQQtQ2EQ_1761125949
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-426ff59a320so7944804f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:39:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761125949; x=1761730749;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MuYmiOLCaPZRj40EIc99HdJ/xOeorodHm2jhiotawYQ=;
+        b=OoZUCwJXk8z03H/hYVG5t9zGwMjJoT3R7UCjL98iTYlUsuAixcrPQLhHntOg5+gHhR
+         gw+iYQUcmE3kNTlTIiJA3R0zzJqnpi0vbsnIqUrQoY12loymCuUGKTqdGFByEPqxKT9a
+         ERW1w6Ptes5rXVZ+zojQYZWmpFR/vghyF3tM5MyUVyF7E/TZCi5i5CWQ6TTsuHhXBPjB
+         ZloyKn3PiG+rWsxcCh6wZbT/bvi+mSh6gHCknO+zeR+9XSz6KEbvas0GExGiqJbfw7VU
+         SFAdmKBfAuU6OiN6NfX/DtRqPyNnwVawj0QzF5DioOdqUYvWpCmJU2spx429hHLgXWkB
+         TaUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Z23V2Ds0bJdQ9OEN8bEo9qlwyn5euf2ysnA2kogJtuZmvXn+moFy90dImJrN9IAu2mRH2NSNtd0Bodk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycjaYoJcpsb7324lZZlxV9NqZNe8roOJ+U90/6DxBNmaIXOGck
+	k+ptBnOwDW9VW5jMYzGLE1Om+s628mk7xmamt9wH05Ph23fo5Fie+46ajN7jRvQrXJyFCL2eptB
+	ZoMY4LEFT67rTBpUGaNp31PC96CDtVEPxc3smBNqToyZkTMe4SQRaKTm2PJjygZKDTA==
+X-Gm-Gg: ASbGncuNzDQYlhn9CGP7MDz9/J5fRslbtiw6jbfXbBZwrZqcrR9E6yjgW1ORAKVb2Ro
+	ysnyw1JMr1DgFyatDlnuj/B9sVOdcl6HADD7C5O1D8Xj6k9WF7dzPs1xlXWdKbw6VvS8Tl262Q2
+	tNMZPSXO1iC0ErdjVdUXIFf2LR0cctKrfJON0KNzn7J5LF6xARxqn+I2Hp6E1oRkSnwPXS9BvOP
+	oKF5RQtF1kvey4eUD6m9LqxCIWY/1ZuTbIJ1tf6AMOKZ+vQkNdubba6wQaokDATYvIKGqXb7wUP
+	MpO7542msdLXAOSlV7k4JH18MRzMToPKauodRjLBBujsZeB5HyCFI53N4Ie7G6qa7n8HTWAfzQA
+	clN9GOvl2oPhgPQJ7cMidReOCaUAF8Onh79Qc
+X-Received: by 2002:a05:6000:2911:b0:3e7:46bf:f89d with SMTP id ffacd0b85a97d-42704db22camr15953038f8f.44.1761125949400;
+        Wed, 22 Oct 2025 02:39:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/aOryQn5sy8rYEtqe6i7g3LA3GyVmEJjSxmfNQPD4o765qZMFTbY8a7U8TNz9fPJlo12+lA==
+X-Received: by 2002:a05:6000:2911:b0:3e7:46bf:f89d with SMTP id ffacd0b85a97d-42704db22camr15953008f8f.44.1761125948937;
+        Wed, 22 Oct 2025 02:39:08 -0700 (PDT)
+Received: from [192.168.68.125] (bzq-79-177-149-47.red.bezeqint.net. [79.177.149.47])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a1505sm24495428f8f.8.2025.10.22.02.39.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 02:39:08 -0700 (PDT)
+Message-ID: <075914db-d497-4428-97e2-256b35f40729@redhat.com>
+Date: Wed, 22 Oct 2025 12:39:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SN7PR12MB6765:EE_
-X-MS-Office365-Filtering-Correlation-Id: 29e3e060-21e1-4207-7546-08de114ec625
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TjAZm68Uqv9GAOxbuGYZAltSyZ961aOR83r8XDCgHcnd/hSzcU3bNqnM2DTA?=
- =?us-ascii?Q?S8TjV/ctA+WlBjGsdPtTvJUF01pdvUfNFKXnroBBMo6/ow1vJWqWbbgAHyCS?=
- =?us-ascii?Q?W3YUofBqKwfjUNnI+N1J19WueSCDIRP24hIhDX/toq0CXPkVHtM5OBDwLe22?=
- =?us-ascii?Q?oqNP+phszU0atV85uPoHMrDN5B6DzJtL4onz5QUpKLtrb8FyCDPRPLRSfrvz?=
- =?us-ascii?Q?7IFvfw7GNEI3d+0mTDxJNeXogJGFhvotxvenMd7ILwZG6Mp4JZFmi7xq5Sbh?=
- =?us-ascii?Q?qj8jpaqy3ylWiDF0FHsU1Pxph+n4iJlmFlswx7rALw1TBcmdszwvrU0RRF9+?=
- =?us-ascii?Q?bAXDaZvbqe1vixAMk8odIF1RM1Iv9J0MBUGKdmqD1OzScelSbiKuy+kojWlM?=
- =?us-ascii?Q?WMhxhQCUKlDOF5yxVAfNtzT0eJ0IDCyFeyppZ53n3JXhi3qXd+4Hbj6UpgyY?=
- =?us-ascii?Q?3f1hVPpFWojSd2BFZaaAeQrltHVzII0xpAqBho6Zp3/RYMCs0QgiWbm4BLIM?=
- =?us-ascii?Q?fMpE6+0/GwNj1K3QI724M9R3Bg5Fk6M1TQ5VZqeHSnZrCoVmTNDWnXR77hPn?=
- =?us-ascii?Q?AZj4idT0xOzXHjjFvVK1UfDtwD1qcYo0ReI/p0x6p0KQUsvn9Y35UjW5zX34?=
- =?us-ascii?Q?re4MHboDGv0SJ5SNgUUYBHMrWXc8eq+xuDHMks7KGPUQ5GjO+EJUY6EYEWp3?=
- =?us-ascii?Q?O4X5tTxAenZQoJGyaOdyet3YVSRgI3H57g/hTfdJxevU7CVHxA5zQwLStxF4?=
- =?us-ascii?Q?1J0g9LxCQuIWdLiTklsxe+0m3vBnQ5/uL3v37jhr/izhOuHIUCiBGt8Uu9V5?=
- =?us-ascii?Q?3TGRU9lzpzGzXm6gm85aJBtlDREniysXDBjl9Coo4MPZdSq/X4EWmf/za2m8?=
- =?us-ascii?Q?9UwIt3QT+8I4LwbjXNuDjSNB330XOabvxleaQERSec/xsKJmxIytoWgLe/5H?=
- =?us-ascii?Q?zM+8s8CrPd/oHosn0jKK7jovOB33cCR0NBMXGfiPX73FYsWlyHX5ciavpQpf?=
- =?us-ascii?Q?mPZHoaHMz3NoZzP5VWe5sXeXhge4RIO9MForoEjYyO/SNIBcwlcUKEqjC47C?=
- =?us-ascii?Q?n/IU+aLWhpefycGhT4M5yKPiaKkxUjhA7u/BVzcu1jUvTWGpMduXIyGjhFwc?=
- =?us-ascii?Q?QjilcryQ1rvFHpmnFCiT4shFZePN0Tih9gYd50v6M3z7H5tuSs1A6bv4hUMA?=
- =?us-ascii?Q?teaEYxutGQm1TTAgODNfxd3l3B2vn5Hka7ooGMU1XRkA5tI9ICg/9RSE7hHF?=
- =?us-ascii?Q?YakPubKenwoK5e+t/35P1/rt+os+k+BY32HP1a9sGJrcOdAheyKIOiIFydZP?=
- =?us-ascii?Q?5FmkC6rhE9qUDk7lWegAeZ5GRPlDyoICYjMc/WtsEVMn5tB/6+owwYCfLOlt?=
- =?us-ascii?Q?Y/pwPJC8LlNMIi5uzsdb3kv99VCBxCQS4q3ZMSkhPRfyvUpLfdD8B5jS2mdI?=
- =?us-ascii?Q?tgrPeOi2w/f4Tna8cEEPfL7dTUMOsY4r?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RkOK75nQxNG7GQ6XOBtJwscBkXI8TymhiMMkTHOuPAcO9RX6Ef42XnBjM0i3?=
- =?us-ascii?Q?FMU5riHJaJl4kOzdGKM6yrhUpEnBf+5dqwOfzJgSazTNb8T1C6Y310SkVt3K?=
- =?us-ascii?Q?5aXQRh8P1+IyuAZdJNLHtVaszIG4QnG4Hvk8e4quGDyg7Kh0HQtBW0YZNwft?=
- =?us-ascii?Q?0wLhmhU1Sn9MsFlO0eOkogd7omZA89bUkNd2w6yXswG7wT9duOVBFXXbHjnJ?=
- =?us-ascii?Q?EOlOBEhwV1eXnrMYpOk52bzSqgkDJzkto0W32QKSVYEvo2Y5Ni84cVDIsmEb?=
- =?us-ascii?Q?MkzpvIr7u7skwv65NPDqhMKENgVQyfpc3ALroHTkGK+HbBtQY4SJMk2n7gSj?=
- =?us-ascii?Q?D+48B5XC/84PpMxC9OrsmzE2Fb5JNPkJPJ7cDxPP+pWwOCHNJxGoNouLyelm?=
- =?us-ascii?Q?8uK5qLn9IyM/Ta70IvGhZyfIHGtoT9rg8MoTmFpoRVJJjWiqBBLAMd1ZvcQV?=
- =?us-ascii?Q?epgRU5t4PVD4AkrjNOIpH/RFbKWlUhZfrfRSaGOEO+GR2cldvQgIb1ej4ZuQ?=
- =?us-ascii?Q?8wswuhD0vkdVxgtTV509T/HooeCdRfe6vY3xYRbr/auMPCR1IYlsn4r9PkH3?=
- =?us-ascii?Q?x5wm7/l8cFZnydPNk3O9UoL0QK8E8pmiT17fv8Z6q8KuqGk+vYDVLya7V2J6?=
- =?us-ascii?Q?baBoDwH16OTlHX0FDbCTtJXdMq7Jv0/aqsgne8BmR5ts+5SvZO6WifwrTbSy?=
- =?us-ascii?Q?/e3dONlP8JHDKb33b5P4fQQ/grJNUHwWVPlAVkj5ixdgfF7u62cMTPaHAFzO?=
- =?us-ascii?Q?sv6JsjEk1Yny6o2g62Y0AMfvoOOi7WWzmZ6cYDUruvFQzaYKwPGC1ZxoBhA6?=
- =?us-ascii?Q?nwTtfaUf7/4FO1wNJuD+31ggyrE8U52a+/OUhzmPf3ahJSsBTNZleQS0Y1AU?=
- =?us-ascii?Q?KjNX18xTlunHMh29SA/qfWeEB6ZQ3Yw2J1aro0j2xUirnxTcdvgd2QR4gy/e?=
- =?us-ascii?Q?oXMt8MrXVIj7X1vEKKPQ/tgJnwD1+H4JjISN/MjUqN5mmEz1BocCozkYBoyn?=
- =?us-ascii?Q?Fii+mvDC1Znq0XL2/eEhpVgaesAtTpHQPY6pYzNRfPDOyg1EroQj+BXK4/5r?=
- =?us-ascii?Q?xXWA+g1gwCUh6jiHDtMyyo9GGbxaoGfEU+MWB5hZljtOWoI9uzdK+t9nZy05?=
- =?us-ascii?Q?kk9k1mc5uHPkSSC9VG7MzEH3dzYRAIvkikuemIbE5zo1WUhPSVYtQ6rRtusK?=
- =?us-ascii?Q?MdAGvtnkghELX9AJnjYfIokT0W+H+lenT683du2ScMgmAVmBkVOPHV74BWus?=
- =?us-ascii?Q?Vu4WNTmP/GPMym10ZrOQJ0GA+aNlBGGjw+21Xc61XRwGZbXRPl+EbEi5h8Vb?=
- =?us-ascii?Q?092H/Z+pcXmFd0SQdXDP75ecIvE4izyF27aEKXJCu9VDrS5B1kawEmts/J3A?=
- =?us-ascii?Q?wSWPVxdg+m2rjWH3B5uGqX6PlSAG9o2y8KLeVZJ4CFmXmMW8sPufrtIa+4ur?=
- =?us-ascii?Q?wR1OM4IKTNh+HuSJOMp+ZDkYtZ9kX/IJdpg1AiiiH07aylifJxihuodJuZWT?=
- =?us-ascii?Q?36sciVluiR8fsqaQXXuPBaiYfFExCZrvy5QqxL6kT40/iyeVAsQcU6kAkgmY?=
- =?us-ascii?Q?f20S0pir76c+/irBKcvLknDpAOVMJoLbtfCs6BPH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29e3e060-21e1-4207-7546-08de114ec625
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 09:38:36.5639
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ul9CbvCFbUnBYl3rnd0GO6Ok8df8EzItPIkAZF2yKabkKdHP/IX9odywTs4DEvEoY05RPrsI11ZakA5fd39y6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6765
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 02/14] i40e: support generic devlink param
+ "max_mac_per_vf"
+To: Jakub Kicinski <kuba@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>
+Cc: Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+ Rafal Romanowski <rafal.romanowski@intel.com>
+References: <20251016-jk-iwl-next-2025-10-15-v2-0-ff3a390d9fc6@intel.com>
+ <20251016-jk-iwl-next-2025-10-15-v2-2-ff3a390d9fc6@intel.com>
+ <20251020182515.457ad11c@kernel.org>
+ <d39fc2bd-56bf-4c5b-99a2-398433238220@intel.com>
+ <20251021160745.7ff31970@kernel.org>
+Content-Language: en-US
+From: mohammad heib <mheib@redhat.com>
+In-Reply-To: <20251021160745.7ff31970@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Following commit 2dbbdeda77a61 ("sched_ext: Fix scx_bpf_dsq_insert()
-backward binary compatibility"), consistently use the ___v2 suffix also
-to the new scx_bpf_dsq_insert_vtime() and scx_bpf_select_cpu_and()
-kfuncs.
 
-Introduce __COMPAT_scx_bpf_select_cpu_and() and
-__COMPAT_scx_bpf_dsq_insert_vtime(), to ensure schedulers can transition
-smoothly to the updated interfaces, and temporarily mirror the
-definitions of struct scx_bpf_select_cpu_and_args and struct
-scx_bpf_dsq_insert_vtime_args to prevent build failures on kernels where
-these structs are not yet defined.
+Thank you for the review.
 
-Both the compatibility helpers and mirrored structs will be removed in
-v6.23.
+As Jacob Keller mentioned, this change enforces that a VF can never go 
+above the maximum allowed value. However, there could still be other 
+hardware-related restrictions.
 
-With these changes in place, all schedulers in the scx repository build
-and run correctly with the updated headers.
+Regarding the scenario you described, if the maximum is decreased to 2 
+after VF1 has already added 4 filters, then the next time the user tries 
+to add a new MAC address to VF1 (or to any VF that already has 2 or more 
+MAC filters), they will see an error message in the kernel log:
+  "Cannot add more MAC addresses: VF reached its maximum allowed limit 2"
 
-Fixes: c0d630ba347c7 ("sched_ext: Wrap kfunc args in struct to prepare for aux__prog")
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext.c                       | 10 ++--
- kernel/sched/ext_idle.c                  | 10 ++--
- tools/sched_ext/include/scx/common.bpf.h |  3 --
- tools/sched_ext/include/scx/compat.bpf.h | 63 +++++++++++++++++-------
- 4 files changed, 56 insertions(+), 30 deletions(-)
+I didn’t really consider the decreasing scenario, since this change is 
+intended to be configured by the system administrator once, before 
+setting up the VFs. If for some reason they decide to reduce the limit 
+during the VF’s lifetime, I believe it’s the user’s responsibility to 
+first remove the old MAC addresses and filters from the VF.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index cb41365032ebc..8816d89426a6f 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5490,7 +5490,7 @@ struct scx_bpf_dsq_insert_vtime_args {
- };
- 
- /**
-- * __scx_bpf_dsq_insert_vtime - Arg-wrapped vtime DSQ insertion
-+ * scx_bpf_dsq_insert_vtime___v2 - Arg-wrapped vtime DSQ insertion
-  * @p: task_struct to insert
-  * @args: struct containing the rest of the arguments
-  *       @args->dsq_id: DSQ to insert into
-@@ -5520,8 +5520,8 @@ struct scx_bpf_dsq_insert_vtime_args {
-  * to check the return value.
-  */
- __bpf_kfunc bool
--__scx_bpf_dsq_insert_vtime(struct task_struct *p,
--			   struct scx_bpf_dsq_insert_vtime_args *args)
-+scx_bpf_dsq_insert_vtime___v2(struct task_struct *p,
-+			      struct scx_bpf_dsq_insert_vtime_args *args)
- {
- 	struct scx_sched *sch;
- 
-@@ -5536,7 +5536,7 @@ __scx_bpf_dsq_insert_vtime(struct task_struct *p,
- }
- 
- /*
-- * COMPAT: Will be removed in v6.23.
-+ * COMPAT: Will be removed in v6.23 along with the ___v2 suffix.
-  */
- __bpf_kfunc void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id,
- 					  u64 slice, u64 vtime, u64 enq_flags)
-@@ -5557,7 +5557,7 @@ __bpf_kfunc_end_defs();
- BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
- BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dsq_insert___v2, KF_RCU)
--BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime___v2, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
- 
-diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
-index 3d9d404d5cd20..d4b6b5a300345 100644
---- a/kernel/sched/ext_idle.c
-+++ b/kernel/sched/ext_idle.c
-@@ -1003,7 +1003,7 @@ struct scx_bpf_select_cpu_and_args {
- };
- 
- /**
-- * __scx_bpf_select_cpu_and - Arg-wrapped CPU selection with cpumask
-+ * scx_bpf_select_cpu_and___v2 - Arg-wrapped CPU selection with cpumask
-  * @p: task_struct to select a CPU for
-  * @cpus_allowed: cpumask of allowed CPUs
-  * @args: struct containing the rest of the arguments
-@@ -1027,8 +1027,8 @@ struct scx_bpf_select_cpu_and_args {
-  * a negative value if no idle CPU is available.
-  */
- __bpf_kfunc s32
--__scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask *cpus_allowed,
--			 struct scx_bpf_select_cpu_and_args *args)
-+scx_bpf_select_cpu_and___v2(struct task_struct *p, const struct cpumask *cpus_allowed,
-+			    struct scx_bpf_select_cpu_and_args *args)
- {
- 	struct scx_sched *sch;
- 
-@@ -1043,7 +1043,7 @@ __scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask *cpus_allow
- }
- 
- /*
-- * COMPAT: Will be removed in v6.22.
-+ * COMPAT: Will be removed in v6.22 along with the ___v2 suffix.
-  */
- __bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
- 				       const struct cpumask *cpus_allowed, u64 flags)
-@@ -1413,7 +1413,7 @@ BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_node, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_node, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_RCU)
--BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_select_cpu_and___v2, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_idle)
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index e65b1eb668ea5..64e5411d04c04 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -60,9 +60,6 @@ static inline void ___vmlinux_h_sanity_check___(void)
- 
- s32 scx_bpf_create_dsq(u64 dsq_id, s32 node) __ksym;
- s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, bool *is_idle) __ksym;
--s32 __scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask *cpus_allowed,
--			     struct scx_bpf_select_cpu_and_args *args) __ksym __weak;
--bool __scx_bpf_dsq_insert_vtime(struct task_struct *p, struct scx_bpf_dsq_insert_vtime_args *args) __ksym __weak;
- u32 scx_bpf_dispatch_nr_slots(void) __ksym;
- void scx_bpf_dispatch_cancel(void) __ksym;
- bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym __weak;
-diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
-index a023b71991a6a..963ff3263c20b 100644
---- a/tools/sched_ext/include/scx/compat.bpf.h
-+++ b/tools/sched_ext/include/scx/compat.bpf.h
-@@ -161,6 +161,25 @@ static inline struct task_struct *__COMPAT_scx_bpf_cpu_curr(int cpu)
- 	return rq ? rq->curr : NULL;
- }
- 
-+/*
-+ * v6.19: Mirror the following _args structs, to prevent build errors in
-+ * kernels that don't have these structs defined yet.
-+ *
-+ * The kernel will carry these mirrored structs until v6.23 (see below).
-+ */
-+struct scx_bpf_select_cpu_and_args {
-+	s32			prev_cpu;
-+	u64			wake_flags;
-+	u64			flags;
-+};
-+
-+struct scx_bpf_dsq_insert_vtime_args {
-+	u64			dsq_id;
-+	u64			slice;
-+	u64			vtime;
-+	u64			enq_flags;
-+};
-+
- /*
-  * v6.19: To work around BPF maximum parameter limit, the following kfuncs are
-  * replaced with variants that pack scalar arguments in a struct. Wrappers are
-@@ -170,12 +189,20 @@ static inline struct task_struct *__COMPAT_scx_bpf_cpu_curr(int cpu)
-  * compatibility. After v6.23 release, remove the compat handling and move the
-  * wrappers to common.bpf.h.
-  */
--s32 scx_bpf_select_cpu_and___compat(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
--				    const struct cpumask *cpus_allowed, u64 flags) __ksym __weak;
--void scx_bpf_dsq_insert_vtime___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
-+s32 scx_bpf_select_cpu_and___v2(struct task_struct *p, const struct cpumask *cpus_allowed,
-+			     struct scx_bpf_select_cpu_and_args *args) __ksym __weak;
-+
-+s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-+			   const struct cpumask *cpus_allowed, u64 flags) __ksym __weak;
-+
-+bool scx_bpf_dsq_insert_vtime___v2(struct task_struct *p,
-+				   struct scx_bpf_dsq_insert_vtime_args *args) __ksym __weak;
-+
-+void scx_bpf_dsq_insert_vtime(struct task_struct *p,
-+			      u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
- 
- /**
-- * scx_bpf_select_cpu_and - Pick an idle CPU usable by task @p
-+ * __COMPAT_scx_bpf_select_cpu_and - Pick an idle CPU usable by task @p
-  * @p: task_struct to select a CPU for
-  * @prev_cpu: CPU @p was on previously
-  * @wake_flags: %SCX_WAKE_* flags
-@@ -183,11 +210,12 @@ void scx_bpf_dsq_insert_vtime___compat(struct task_struct *p, u64 dsq_id, u64 sl
-  * @flags: %SCX_PICK_IDLE* flags
-  *
-  * Inline wrapper that packs scalar arguments into a struct and calls
-- * __scx_bpf_select_cpu_and(). See __scx_bpf_select_cpu_and() for details.
-+ * scx_bpf_select_cpu_and___v2(). See scx_bpf_select_cpu_and___v2() for
-+ * details.
-  */
- static inline s32
--scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
--		       const struct cpumask *cpus_allowed, u64 flags)
-+__COMPAT_scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-+				const struct cpumask *cpus_allowed, u64 flags)
- {
- 	if (bpf_core_type_exists(struct scx_bpf_select_cpu_and_args)) {
- 		struct scx_bpf_select_cpu_and_args args = {
-@@ -196,15 +224,16 @@ scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
- 			.flags = flags,
- 		};
- 
--		return __scx_bpf_select_cpu_and(p, cpus_allowed, &args);
-+		return scx_bpf_select_cpu_and___v2(p, cpus_allowed, &args);
- 	} else {
--		return scx_bpf_select_cpu_and___compat(p, prev_cpu, wake_flags,
--						       cpus_allowed, flags);
-+		return scx_bpf_select_cpu_and(p, prev_cpu, wake_flags,
-+					      cpus_allowed, flags);
- 	}
- }
- 
- /**
-- * scx_bpf_dsq_insert_vtime - Insert a task into the vtime priority queue of a DSQ
-+ * __COMPAT_scx_bpf_dsq_insert_vtime - Insert a task into the vtime
-+ *				       priority queue of a DSQ
-  * @p: task_struct to insert
-  * @dsq_id: DSQ to insert into
-  * @slice: duration @p can run for in nsecs, 0 to keep the current value
-@@ -212,11 +241,12 @@ scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-  * @enq_flags: SCX_ENQ_*
-  *
-  * Inline wrapper that packs scalar arguments into a struct and calls
-- * __scx_bpf_dsq_insert_vtime(). See __scx_bpf_dsq_insert_vtime() for details.
-+ * scx_bpf_dsq_insert_vtime___v2(). See scx_bpf_dsq_insert_vtime___v2() for
-+ * details.
-  */
- static inline bool
--scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime,
--			 u64 enq_flags)
-+__COMPAT_scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime,
-+				  u64 enq_flags)
- {
- 	if (bpf_core_type_exists(struct scx_bpf_dsq_insert_vtime_args)) {
- 		struct scx_bpf_dsq_insert_vtime_args args = {
-@@ -226,10 +256,9 @@ scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime
- 			.enq_flags = enq_flags,
- 		};
- 
--		return __scx_bpf_dsq_insert_vtime(p, &args);
-+		return scx_bpf_dsq_insert_vtime___v2(p, &args);
- 	} else {
--		scx_bpf_dsq_insert_vtime___compat(p, dsq_id, slice, vtime,
--						  enq_flags);
-+		scx_bpf_dsq_insert_vtime(p, dsq_id, slice, vtime, enq_flags);
- 		return true;
- 	}
- }
--- 
-2.51.1
+
+On 10/22/25 2:07 AM, Jakub Kicinski wrote:
+> On Tue, 21 Oct 2025 13:39:27 -0700 Jacob Keller wrote:
+>> On 10/20/2025 6:25 PM, Jakub Kicinski wrote:
+>>> On Thu, 16 Oct 2025 23:08:31 -0700 Jacob Keller wrote:
+>>>> - The configured value is a theoretical maximum. Hardware limits may
+>>>>    still prevent additional MAC addresses from being added, even if the
+>>>>    parameter allows it.
+>>>
+>>> Is "administrative policy" better than "theoretical max" ?
+>>
+>> That could be a bit more accurate.
+>>
+>>> Also -- should we be scanning the existing state to check if some VM
+>>> hasn't violated the new setting and error or at least return a extack
+>>> to the user to warn that the policy is not currently adhered to?
+>>
+>> My understanding here is that this enforces the VF to never go *above*
+>> this value, but its possible some other hardware restriction (i.e. out
+>> of filters) could prevent a VF from adding more filters even if the
+>> value is set higher.
+>>
+>> Basically, this sets the maximum allowed number of filters, but doesn't
+>> guarantee that many filters are actually available, at least on X710
+>> where filters are a shared resource and we do not have a good mechanism
+>> to coordinate across PFs to confirm how many have been made available or
+>> reserved already. (Until firmware rejects adding a filter because
+>> resources are capped)
+>>
+>> Thus, I don't think we need to scan to check anything here. VFs should
+>> be unable to exceed this limit, and thats checked on filter add.
+> 
+> Sorry, just to be clear -- this comment is independent on the comment
+> about "policy" vs "theoretical".
+> 
+> What if:
+>   - max is set to 4
+>   - VF 1 adds 4 filters
+>   - (some time later) user asks to decrease max to 2
+> 
+> The devlink param is CMODE_RUNTIME so I'm assuming it can be tweaked
+> at any point in time.
+> 
+> We probably don't want to prevent lowering the max as admin has no way
+> to flush the filters. Either we don't let the knob be turned when SRIOV
+> is enabled or we should warn if some VF has more filters than the new
+> max?
+> 
 
 
