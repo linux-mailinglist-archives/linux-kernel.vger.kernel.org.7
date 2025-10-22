@@ -1,115 +1,104 @@
-Return-Path: <linux-kernel+bounces-864690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AC0BFB591
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:14:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89B7BFB598
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2D2188AFBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF62A581568
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952203161A0;
-	Wed, 22 Oct 2025 10:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEF931B810;
+	Wed, 22 Oct 2025 10:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="joxKS2I/"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFXjCo9z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6752C31A071
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B70313E37
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128057; cv=none; b=OT4gf55G/5Q5n3ZXjk6XlHew2ifj2wNtwFSAZ1zlXOM2MoRtSrEQ2gx5ozWzrfz2cXydO93T9GRN0+O4QkfuhI+r14HG9QiYC3i0kwQMmhmYb/J34p31mm4xSgmgLJw2PXzNU6e7woGtH2YO20MfZCaaouqMR3fPM0doSi476YQ=
+	t=1761128065; cv=none; b=AMm/AvgrmYOJIq/MfP6kkmJbQui7R5Tzb4djG1Xp6Tb0ayn02IzOjAYUjGCLgTEBghckO2HXdVrYCUxIHcLYkdJKhZJ7izTFh0piKQpJf7aBEjTAae5tPe6+O+ZPHD3ZnGynU98MgM1gtW56p1igRp9Va9L4u6r9hDGKTR97aWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128057; c=relaxed/simple;
-	bh=H0yQL7Yj3xAfGiqMxWIRkW/8b2njG9FZnAqlG1ULYSs=;
+	s=arc-20240116; t=1761128065; c=relaxed/simple;
+	bh=BksiNg7tpyriGQ1hysmu056HRi6UuHZRkqrmwRvyfJk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CnZDwYkpBcnkFwkpGYZS5/alrroo4prvagQ1XwDlnmd8IeB8btCN0ZK1yMe81TrE3i0yznU44zCGxNHG5O+ITHRxgJejeYdfOxjI82S1iiClWZMNLFWHOFbFGuNV4O7YxUnDTka4deKpNuGV732IHYC6MA0+ZMF/oqG5mtM0hdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=joxKS2I/; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-64fdca63b41so3085057eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:14:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761128054; x=1761732854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H0yQL7Yj3xAfGiqMxWIRkW/8b2njG9FZnAqlG1ULYSs=;
-        b=joxKS2I/+CgMBOQI0vZLyl89GWZa9/BI6zE5Ji2Ul7QjSXh61ZNSiYuYPqqmi6EjKJ
-         trCJq1bMhYCQLjzXN/39FS9RBieArrgiEmrB6T/MK4kUn/olO13CYAJKSow/ao9kL05a
-         7zbWMY93z4hmMhByPfewchwNnCVdeqh0FYYOw7ckeCJSNJCQwLAq68pIqWR04JBI/1p/
-         i69vjZ39YH/5M76f/aChBuhqm0YZLTSOuvy8crfw0KIbO9+sEFcpGtbtXQceWUHvsI9h
-         eGUGYTxfr8ntfJPhPLm5nv8r3tX7XYfHz5RNsKYXstWNKdetnyW5njFOYfIolWNAiR7S
-         xJjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761128054; x=1761732854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H0yQL7Yj3xAfGiqMxWIRkW/8b2njG9FZnAqlG1ULYSs=;
-        b=pHRn54cH5uFtXwNDjJUqra5OyXzn2AjStYTFRvJ6SAzI9DES+R5+FRZ/YdDXLgX+Pg
-         JZfkejbBEwQNtO0jzZqpShU7s4lzpyHvXKrDmjlVMKMGHm276VBGtLaP9Aj4KnD1T/x2
-         aAlAWU8byH9/21PnW6JxAugBChZq3zrbkW6yylbQxZYNGo1AS2HNHc17BZKNoQK+kGG/
-         IXYj1J6enEsgg4WnUBPXuyFNLYrECcS64vaEEaghvNUzC+HZRP/Y6/tnx2bBD12Utmxt
-         F2NNZyOyMD364/2FsnT+UgcqszF/5hKVu0Q2a2bGkxv1u542BY/fs9kt1Afg4KqKLqpZ
-         M/pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8158gLOFcFe9Ibb1A5LK2oWpUUuEnUtKFeDgAwDjwUZS83dkEvM6EyOIf/Zwq51LYn68WBUkVrkWVR6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3zhJSzrb0Mtq02YKk1HQa9tLpHXHkVWAR8Ta78mlyMR+w1ZiL
-	9xApe4wGkgZEj96MEL1PXJxMhXrqoLgCJ8T8Tek/BcNO+8udv5vSnyMAzKeIpztlSsvEf6dZnYH
-	Gr1Raj74H0jxLypiAv35bW9mPdyQ3i5ieFjbhxNgM
-X-Gm-Gg: ASbGncshYU81BraqhOHszGSxd1SehNZ9pjZ9+V+iFnq5X9FCLLO2A/RXUJD7z+yQ9ut
-	ZUTVoNb9gCZGWTr9hwAyh/q5fL377OnbQjjtDxYVpEPuNMP5qzaOgJAvjRRxsu75HWoV92iWriO
-	56nRORF7CGCNCM/Mujz03F+j0OOnWpkN2hAw4eJqmcbW2ZRKj+iPwZ/PwtGUBXeqKRPLSBmTa9F
-	UhSnuaHsfzjQ/UmTEWJvT7xDo6FzksKH0bQ2DbhqYW4gJvDUT17iwfSFyqduMj/NkByZvh2BOtK
-	lSMCoSMyNmjyVGs=
-X-Google-Smtp-Source: AGHT+IG601XlVSePErRgku2vXHiQm4srVDoYwTdc69NkfT5xbwE/K6snIHcykqpn0TdBm6kNBfvWxtGffkFM8Xw38bo=
-X-Received: by 2002:a05:6870:f70d:b0:335:b4a:8631 with SMTP id
- 586e51a60fabf-3c98d0e3b92mr9539118fac.24.1761128054251; Wed, 22 Oct 2025
- 03:14:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=RxFWAA61UCvFNibO7G7E0PPzijjhGQhXMSHPWeQRHc7BRSoLk1iNLyDCprIoRzFsxKVd3D5gRnDEdjA8C97+u4oKy9e0ijnVToqlQ8CIIdPG27AMB1wzMtJV6jzZaOJmG+VmQy7iGOLt1uAtM5arTErHcqWApMtsiLTnGmXvFp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFXjCo9z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D89ECC4CEE7
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:14:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761128064;
+	bh=BksiNg7tpyriGQ1hysmu056HRi6UuHZRkqrmwRvyfJk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MFXjCo9zcnJWPm3i/uME/Gos6Kai5pOUtMmkZaCxIxH4f1G2iBNWO6BsteyH6XnGr
+	 4Zd90D2WOq3UrIzDnGJbyKY0uVCIqubFuVODaRpPtAkeHAAJ6guyVzzV+PSkBIh6nV
+	 CGRlEUSdJHnegkag5S2Q8n1D884BHBrlZpy2HLc4DpDdwmg/gr5CIevhsYFWNUIjVW
+	 zgNO7y35aGfa12tpEh2Rs78q1h4n0/bbmWAnmahO/cxQJh+1iUay2OwuY0G82vngzM
+	 96vZQ1/6qgpLFmEm6HnzdnnfwmliORhfR6i5038HTOM5kmzD1TuTpgn9l5GUmz1dWp
+	 o0yUB5Qj65/GQ==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-592ee9a16adso1106813e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:14:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXFnvT/vHHIIWSdkSzTmazPHrbSErsOM3K1PdIdKmUnDTvW+I434ubcdRzZjwgPliQs2w7sp6dQQYxcvlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmxxWlkYQod6tzjw/vUyAGffLNA8pBpR3JaHqzwyfTmSH0Bsk+
+	+hHI/JJp/9gJGKmwGs4Frc9BhyFc3eY66+js/d9zXHvTaOw7VZRPMdXxnxVIptxwMEena7njky+
+	H0t6+ubj/Vr6sG4XVFa1szLJYPFgzTeE=
+X-Google-Smtp-Source: AGHT+IG8iUUMQF0D5yVhMfUk3f49gl16EpRj2WucDueAbKHKmqKh7iUJiKFsggwb9AdxMipBw35mRZegqZ8u7W964wc=
+X-Received: by 2002:a05:6512:3d92:b0:57b:5794:ccda with SMTP id
+ 2adb3069b0e04-591d84faa97mr5623451e87.20.1761128063284; Wed, 22 Oct 2025
+ 03:14:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-binder-bitmap-v2-0-e652d172c62b@google.com> <20251021-binder-bitmap-v2-5-e652d172c62b@google.com>
-In-Reply-To: <20251021-binder-bitmap-v2-5-e652d172c62b@google.com>
-From: Burak Emir <bqe@google.com>
-Date: Wed, 22 Oct 2025 12:14:02 +0200
-X-Gm-Features: AS18NWDBQzTe7S67kufVQReN9fAPakA17zOF1cXXOxHSQAtU4piUaSjZjQNyA2U
-Message-ID: <CACQBu=XFP03+9EKhvX_6rEA_aYRxyMmfGOV8hE4_NRwDue96Xw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] rust_binder: use bitmap for allocation of handles
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251022033405.64761-1-ebiggers@kernel.org>
+In-Reply-To: <20251022033405.64761-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 22 Oct 2025 12:14:11 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEjihuC1Wa8fWUqsvsJM6YJZ0wmuhkqicNAfQiHvnWkYw@mail.gmail.com>
+X-Gm-Features: AS18NWBSXzD203ZzkosAKi9Rr6vw53-JkbJxJJd1qk8yGMrx1SL9k2NwvTwhKzM
+Message-ID: <CAMj1kXEjihuC1Wa8fWUqsvsJM6YJZ0wmuhkqicNAfQiHvnWkYw@mail.gmail.com>
+Subject: Re: [PATCH] lib/crypto: poly1305: Restore dependency of arch code on !KMSAN
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Pei Xiao <xiaopei01@kylinos.cn>, Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
+	syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 3:33=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
+On Wed, 22 Oct 2025 at 05:37, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> To find an unused Binder handle, Rust Binder currently iterates the
-> red/black tree from the beginning until it finds a gap in the keys. This
-> is extremely slow.
+> Restore the dependency of the architecture-optimized Poly1305 code on
+> !KMSAN.  It was dropped by commit b646b782e522 ("lib/crypto: poly1305:
+> Consolidate into single module").
 >
-> To improve the performance, add a bitmap that keeps track of which
-> indices are actually in use. This allows us to quickly find an unused
-> key in the red/black tree.
+> Unlike the other hash algorithms in lib/crypto/ (e.g., SHA-512), the way
+> the architecture-optimized Poly1305 code is integrated results in
+> assembly code initializing memory, for several different architectures.
+> Thus, it generates false positive KMSAN warnings.  These could be
+> suppressed with kmsan_unpoison_memory(), but it would be needed in quite
+> a few places.  For now let's just restore the dependency on !KMSAN.
 >
-> This logic matches the approach used by C Binder. It was chosen
-> partially because it's the most memory efficient solution.
+> Note: this should have been caught by running poly1305_kunit with
+> CONFIG_KMSAN=y, which I did.  However, due to an unrelated KMSAN bug
+> (https://lore.kernel.org/r/20251022030213.GA35717@sol/), KMSAN currently
+> isn't working reliably.  Thus, the warning wasn't noticed until later.
 >
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Burak Emir <bqe@google.com>
+> Fixes: b646b782e522 ("lib/crypto: poly1305: Consolidate into single module")
+> Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/r/68f6a48f.050a0220.91a22.0452.GAE@google.com/
+> Reported-by: Pei Xiao <xiaopei01@kylinos.cn>
+> Closes: https://lore.kernel.org/r/751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn/
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+>  lib/crypto/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
