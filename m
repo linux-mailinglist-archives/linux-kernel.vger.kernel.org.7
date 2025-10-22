@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-865206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99CE7BFC936
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B66BFC95D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4090D6E3CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:24:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07B76E3EEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072F334FF6D;
-	Wed, 22 Oct 2025 14:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D16935028D;
+	Wed, 22 Oct 2025 14:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dN2k4WE0"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBoDw4dO"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C91D34DB7E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFC534D4EA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142908; cv=none; b=kgwuQWqQdeOKed7KeX7AFd/AyTktNuzgjuFfE3PBneu0XXTUAfGHvOZDQh0WDi9LZyLYrMMGuaZTw8OcmPA+9tTzkPKmdSDRImGjb+cuVRX3CsL5pS+N0CuYMi99DEMvphPJmpN8jl2TwsADqDR7zj0kN0+EXhtnOx77GA6rX5s=
+	t=1761142909; cv=none; b=deDYL1mnq5keYELwgLdV+To3GZ9UY02YgyqoS9VTz094uwASLL4hWXraeZB1MPu64+9lAE/OoazyBtuROMrhylf1tyxM+sM38RDqU7kSxfCRCV+zpJ3d+BdZ9m+Q+zQdJkzQEI91WhQC3/dcauuRK/cQtrGNzTDIY0ReAEH5/pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142908; c=relaxed/simple;
-	bh=NPYq2prUDw6E4LwASXaQMdEqr6v2oIwItNqZJN/XQxU=;
+	s=arc-20240116; t=1761142909; c=relaxed/simple;
+	bh=PeHm1wrR0AAPSTDMxiNgwUZQ4BKQBSCJMUznSgFPtDg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bfQaY1Ho6c6A5fJdRRIaHfgSWwMfusM1Me2iYUI2ntFa7owrWpdfzzJyDco8pTWIDNIrwx+WzXjRqWAc4kI1XNzQoWqgzUgshPLyIh0RqZt3J9YWf4nD7wWpGmg8IhewKWFW5q1OZdCsjAp8JRewWomNq2sDLd0hXHcGK6EtoDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dN2k4WE0; arc=none smtp.client-ip=209.85.221.44
+	 MIME-Version; b=N65vFQnpa8bav42jNtPvlXPpGrliqpKCBvOlVYwRh7QBpgFqgUFZjH4cabGxahGLEPUC1vL6/gz2HWEfv16Th0HvwY7nCmEM3VSaL91j6aB6OQTpAZ26dtHwBH3SaMEpwkjQ9AQbYdyEjmiuyuxXN32jSKviobRJJzzTb+l0lpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PBoDw4dO; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so8897219f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:21:43 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4710683a644so9497005e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761142901; x=1761747701; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761142903; x=1761747703; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bgdj41tpB2VgIRDJrZCciZQ/xBBL1EcMgPyAyntTnpo=;
-        b=dN2k4WE0ZY529zJSRBJ5ZwORqoW8KLeZSCDG6UUz7GYvoOwhMzgy1KeJ9j7hImNFYF
-         6jgoUufnykUb7VrhHxH/ZbMkng2hRNLbLq1WXb94zmPgT7TBt1gYeZypt52aMSWdZn2A
-         /nijUnNp08qxO3kNmhbsPtM1rZZ6YtRpStfEJITrlnFL7NeNBPcQxQrX09tmPKQOT2u/
-         s+OHrFBQERBAlc/eA1zcXlLEhbwAo13Ju8WQ4DBjWVP6U7cE2wtMvU+GOUVJDwBNR3E7
-         KyiRW5CeKo7CM6Ec+rKxfvq20nd6aTr6KFQO/Yy+9nbETsYnbb3kD+PZ/nQYEecAIMQC
-         KA0w==
+        bh=GxcQ3SZL/bX2w7ws13Plp9aplxV6uyygzePW373+H0o=;
+        b=PBoDw4dOVdungSvoQ7R8Nd8jMHcVY6n2Ef4TXgdWaOZGgbTQBR09IlTLcf1PDpUnM4
+         +oJS2OASDBNhsg8KY0r/47x4LEpuyCt/9xxi9ZfhaP/gKkmDhHdTcVWqRg0t2eHSXLVN
+         UbEgSleb9pdbF9MZonU9wzUUUC0HVmi+pAjGX2ZQlGRPA/o9aGm0Bfa1dPQ9Ugwk7cAZ
+         bx60rBwAQocbIUAJ5okAFyV8IeT+JplZmYt8Rskrf68oCjbic8nWQ8w7vFzOHbGINoC2
+         yyPaj119da/Cai7tN2FU2jhuUT+MvhgHkxZKpq1hfqim3RHnuHKnDpRQh62KYb9BlE7o
+         +3kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142901; x=1761747701;
+        d=1e100.net; s=20230601; t=1761142903; x=1761747703;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bgdj41tpB2VgIRDJrZCciZQ/xBBL1EcMgPyAyntTnpo=;
-        b=gSV1PAhZzCHqar/kR0EvxJTN72TT8r62kVtrj+uSXSf/iJH8nLCXaWIkQzBBqbYhBs
-         3fkHUkYZIRqdLZ51FgcmNEbkcdhz806VsqJBgtaGN+Z7JOKOmIxn6mWNWhg8oNO76seD
-         f4RMNugwONtxpTjztFISjIVdkXOSBfGWozQ11LcJUkAvqGStTtlBJUWXqFucawyzo/5C
-         EAxQBAG9r3P14yZrbRM6EKcdr7bomcYIWAWKJ53jzMQvrhMwFxv7e3LP1zFz5nM1Z2fH
-         6rylMa/mdGkqOPLcuT/wy2zSxuwZS4dhnTRApNu5gobLuNJ7jjakKH2Vu/fOAaJbfusn
-         5oHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVThHWToxpGK4aBESKhSyQwZ0SrjtSwoUGive7Hkj6WYRNh4joMhcL+qhcU7dZo10Bc5UDAru4g2eD386k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQTJwQUc9Eei5GRit7cv75feFqMKWqkVMGyZ3ownv/qTLiY+Kv
-	VHpSFkJEuCE3HfLVn6v5XyK8hAGrqlY8kZrclmksTmOsJ2b7FnltFEBl
-X-Gm-Gg: ASbGncugSwBNtVgli1ymzsXddXGLDkYdjh0K09bfCXJu+ZqcARsU5QhgxQwUDw9CjvT
-	MKmxQ+CXO4eiZ/ADNX73GPOgI7dXqe6zYrOSFK5fsEd8wX/ztc9/6pDhCPKdyDtskZTilF1sSx8
-	lbfm/18bH85V2FRe1I9hiIjYVcPlh+uAT1uDe5HqZ7bAbhVfoTcLFgAB/BmRiyrCrJvh9yUR91I
-	nYPI3I391OJ0fIRWvp5RYMRmKxQZdGm6CTG9RSPw1wvft6DOB/QWqM/7yAjp80h5B7xENaz8jb1
-	ggmpXddb/NnoI2g1YX8f5alsGOIZRABTBhG2gx6q597gni+1CV0+jGGckpbH7OJPQVgfqeuqUx+
-	HXmwyp9D7IqUuWEjuR0HNEdNg4zMSqD32Fp7fFMI8Dc3IIMBt0rvd3Uu1mSPKoNuw+LcpABMABm
-	PqdQ==
-X-Google-Smtp-Source: AGHT+IHM03V7eJFt3Eu6ja1MYetjG461AcLXE4YT5HRjXzs799spnfwnfQrFSdx7t2nEB8DurbecfQ==
-X-Received: by 2002:a05:6000:24c6:b0:427:928:787f with SMTP id ffacd0b85a97d-427092879c8mr10794030f8f.21.1761142901362;
-        Wed, 22 Oct 2025 07:21:41 -0700 (PDT)
+        bh=GxcQ3SZL/bX2w7ws13Plp9aplxV6uyygzePW373+H0o=;
+        b=oZKWqPs6Cjmza5IJNpk3cZila/j/tPW+EqPoptXQ9dqyPQ6X1Sb0CjZzxFcG8UPFK2
+         m8MuFl0yRWig6Xe+6b5+sShWISH5dX/7rD70FX3Dxj+ae7o1Ipd6NKWkYskq6qV540fG
+         +vPzyv+luoXlGLj82s+m9+4PEDszFmdc+xmA4i5UINQF226k/ppU8bqC+MXHYsI77JGU
+         hPzc6Ht+5l3o+/18GfUCjolH2CESdzbo/I67o7WjuFLJDQup6sHHjRvdC6v0E4OSw2YT
+         TjvM8vzdheYusNN84aKiai+4ogD05JzPuTdw4n4W4O3A1FIf7FwGMxddxAHL3n264c7z
+         6xhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDiOvuugYDFxR8bRPfdDd0dHEcLGdtuiTAxGMtnjBKWVRG8ASQaEH9stCV5SrRR/mV+R3fT1I1dXSdpLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/GmNGkkAXbQhkVFYr7y8Or+hNgCUZtWFy69+SEmuPZTIdOKaR
+	MFMETlx1yyOvIZHhhhIFIkWNnDtajejfl20m67VPSCjcXuk12uV0NXVs
+X-Gm-Gg: ASbGnctgSgtJknKnCaRq3t/8SibdYm3e5AsHwb+cfbwNPhdvg5tGZPTTSE3cPLuF7nK
+	5E7WWLwOTeSjHi68XdF8aGppjVqiWTZeOC7bOkDXdTjY/jiKL+I/+LAG2/RH/iJEg0+M9nWef8b
+	Rl9VN6xWux6JSfcop65tJSeaRtXBMxjBUsEoXoEVEuxY7hfSwjqBLNNdEQEkqpPvkp04SAhNhon
+	zYrg12ZktG0ykrrlTl84P2ZRZFe0Lk6l8F9XfFq+iMytbR5Vv6BLvXdCzuTYMiijDLMKA+0ECv3
+	tpjEB2qdMEELLdHiuxKgn/ViHVJuz93O81FlDLlXBt336EcmO/S6iofknUMrOTE6m6HZnqwd8iA
+	nmxFGw+LhoToEBQBGtUcZ3m9/6ltJl5SyB8ipYD2ctR+O7SItvQF92GJqwgSPRldDySKfOgdiSY
+	XZwA==
+X-Google-Smtp-Source: AGHT+IFzZOOF0atmxMPwb2Ue8vrmfwejiEjF1/G9gDbf31n6b2z7qklg1cXO9eefJTfh6D3ezEa6PA==
+X-Received: by 2002:a05:600c:8b84:b0:471:793:e795 with SMTP id 5b1f17b1804b1-475c6ed4639mr13800775e9.0.1761142903064;
+        Wed, 22 Oct 2025 07:21:43 -0700 (PDT)
 Received: from xeon.. ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm24803518f8f.19.2025.10.22.07.21.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm24803518f8f.19.2025.10.22.07.21.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 07:21:40 -0700 (PDT)
+        Wed, 22 Oct 2025 07:21:42 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -106,9 +106,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-media@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v5 10/23] dt-bindings: display: tegra: document Tegra132 MIPI calibration device
-Date: Wed, 22 Oct 2025 17:20:38 +0300
-Message-ID: <20251022142051.70400-11-clamor95@gmail.com>
+Subject: [PATCH v5 11/23] staging: media: tegra-video: vi: improve logic of source requesting
+Date: Wed, 22 Oct 2025 17:20:39 +0300
+Message-ID: <20251022142051.70400-12-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
 References: <20251022142051.70400-1-clamor95@gmail.com>
@@ -120,30 +120,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document MIPI calibration device found in Tegra132. This compatible
-already exists in the Linux kernel, I have just documented it to satisfy
-warnings.
+By default tegra_channel_get_remote_csi_subdev returns next device in pipe
+assuming it is CSI but in case of Tegra20 and Tegra30 it can also be VIP
+or even HOST.
 
-Each Tegra SoC generation has unique set of registers which should be
-configured. They all differ, hence fallback is not suitable here.
+Define tegra_channel_get_remote_csi_subdev within CSI and add check if
+returned device is actually CSI by comparing subdevice operations.
+
+Previous tegra_channel_get_remote_csi_subdev definition in VI rename to
+tegra_channel_get_remote_bridge_subdev and use it only in VI driver since
+core VI driver does not care about source and does not call any specific
+functions.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml  | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/media/tegra-video/csi.c | 16 ++++++++++++++++
+ drivers/staging/media/tegra-video/vi.c  | 14 +++++++-------
+ 2 files changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
-index 193ddb105283..9a500f52f01d 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
-@@ -18,6 +18,7 @@ properties:
-     enum:
-       - nvidia,tegra114-mipi
-       - nvidia,tegra124-mipi
-+      - nvidia,tegra132-mipi
-       - nvidia,tegra210-mipi
-       - nvidia,tegra186-mipi
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index 9e3bd6109781..ef5f054b6d49 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -445,6 +445,22 @@ static const struct v4l2_subdev_ops tegra_csi_ops = {
+ 	.pad    = &tegra_csi_pad_ops,
+ };
+ 
++struct v4l2_subdev *tegra_channel_get_remote_csi_subdev(struct tegra_vi_channel *chan)
++{
++	struct media_pad *pad;
++	struct v4l2_subdev *subdev;
++
++	pad = media_pad_remote_pad_first(&chan->pad);
++	if (!pad)
++		return NULL;
++
++	subdev = media_entity_to_v4l2_subdev(pad->entity);
++	if (!subdev)
++		return NULL;
++
++	return subdev->ops == &tegra_csi_ops ? subdev : NULL;
++}
++
+ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
+ 				   struct device_node *node,
+ 				   unsigned int port_num, unsigned int lanes,
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 90473729b546..04b538e8b514 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -160,8 +160,8 @@ static void tegra_channel_buffer_queue(struct vb2_buffer *vb)
+ 	wake_up_interruptible(&chan->start_wait);
+ }
+ 
+-struct v4l2_subdev *
+-tegra_channel_get_remote_csi_subdev(struct tegra_vi_channel *chan)
++static struct v4l2_subdev *
++tegra_channel_get_remote_bridge_subdev(struct tegra_vi_channel *chan)
+ {
+ 	struct media_pad *pad;
+ 
+@@ -182,7 +182,7 @@ tegra_channel_get_remote_source_subdev(struct tegra_vi_channel *chan)
+ 	struct v4l2_subdev *subdev;
+ 	struct media_entity *entity;
+ 
+-	subdev = tegra_channel_get_remote_csi_subdev(chan);
++	subdev = tegra_channel_get_remote_bridge_subdev(chan);
+ 	if (!subdev)
+ 		return NULL;
+ 
+@@ -204,7 +204,7 @@ static int tegra_channel_enable_stream(struct tegra_vi_channel *chan)
+ 	struct v4l2_subdev *subdev;
+ 	int ret;
+ 
+-	subdev = tegra_channel_get_remote_csi_subdev(chan);
++	subdev = tegra_channel_get_remote_bridge_subdev(chan);
+ 	ret = v4l2_subdev_call(subdev, video, s_stream, true);
+ 	if (ret < 0 && ret != -ENOIOCTLCMD)
+ 		return ret;
+@@ -217,7 +217,7 @@ static int tegra_channel_disable_stream(struct tegra_vi_channel *chan)
+ 	struct v4l2_subdev *subdev;
+ 	int ret;
+ 
+-	subdev = tegra_channel_get_remote_csi_subdev(chan);
++	subdev = tegra_channel_get_remote_bridge_subdev(chan);
+ 	ret = v4l2_subdev_call(subdev, video, s_stream, false);
+ 	if (ret < 0 && ret != -ENOIOCTLCMD)
+ 		return ret;
+@@ -1630,11 +1630,11 @@ static int tegra_vi_graph_notify_complete(struct v4l2_async_notifier *notifier)
+ 		goto unregister_video;
+ 	}
+ 
+-	subdev = tegra_channel_get_remote_csi_subdev(chan);
++	subdev = tegra_channel_get_remote_bridge_subdev(chan);
+ 	if (!subdev) {
+ 		ret = -ENODEV;
+ 		dev_err(vi->dev,
+-			"failed to get remote csi subdev: %d\n", ret);
++			"failed to get remote bridge subdev: %d\n", ret);
+ 		goto unregister_video;
+ 	}
  
 -- 
 2.48.1
