@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-864717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D008BFB667
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:26:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0CA8BFB66A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2153E58331E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:26:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBE905032B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1B031A7FE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262CC321F20;
 	Wed, 22 Oct 2025 10:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RrjXdSUG"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Fg8JtWvL"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70492D5A0C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D222322A24
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128785; cv=none; b=IjC/m9vJdnDX/Nj0YrlCvJzgyyvVd78G09DTMhDx7Zn7x7gSzYVfbtwoWf+MwCq+Y67zZ8g0iusHssg7RGGeOmGXIO2WiY+ZgW5hheTEuXfcm+7DVGyD+ivblHud83CFHq0aWx6Y4QzIMoP1lt1EqglezlAtNpqvTokIruhN1tI=
+	t=1761128785; cv=none; b=C4xR0AA98r78TH8yWwWJdMXmc+oqL5lR+SFPqoEKd7kKNVlvpQgDP2t4rvti7OccnIq9ZB7hVTsLgPRQKX1q2UJE4QC+esGjrZDkY0S9VBXLovYp7nVBKOProGC1u/Gpa0gjUClfnvoFRQnBm/h6AMUYYmL7BbQtv7mBCjnME14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761128785; c=relaxed/simple;
-	bh=CTU6J0E4iPLfycSwmSoKkd16tZrL3tGx/EZZtBzj4n8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c14CuRPZIljfFewX4k0Pe1yqcsITq67k8Dh8Qroc1zv51VoD3jOQjfIXHiB69RYPgI4Dj5bEMWkpURIrjIOmc2NEexco4i1uWBjnIF023QcwJuoCl5O0ng7QYPYg3DnwVMrov1XHcxOaDpmmFeSFZQ01xgIn4n0g+EnvDUdYXyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RrjXdSUG; arc=none smtp.client-ip=209.85.221.47
+	bh=xks3pzq509NsNrjTHZqfSN/c9dZ7LmayYUa23B1o8k8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qd/Bw227YcjTq7bITioVCDkZ6G1cKZSxct05k3AHFzDrlk7r/zv44YOaW5qrS1yL5ORX3RJHVoC/aCAHlutqSGevlm8HBJ4WhkshCng8TbBsReEdKxvpGUmVsDji7zFRda47RzD5qzAvxUfaaNdliLEvtxkUTYTUbigIqz4hqH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Fg8JtWvL; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-427054641f0so1014302f8f.1
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-426ff579fbeso798386f8f.0
         for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:26:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761128779; x=1761733579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLHXU8eawHTVYbg2TRv1FG2In4KNx8EMpgeXSr7poJY=;
-        b=RrjXdSUGRX/PzVE4nAgWrFHhEvv8AN+qrj8Chl/j338SjEge1IUGsFYOOY/kAZmbet
-         MWPuedwO15dHvelsYRKysRtPEE4hf+mXoffGf8IVFRfvKRk7Kv9h0PNQip4kjx4yQMs9
-         ffMjRiJcWIZgOxluXjgp7QTtCwcIhNF9Cp96tXgSzL3JOxp/ZQdzI6E6ttNBIWlC/Pwi
-         ul/3INp/0OK2sPcPG2G97ItZzaihi4MndoL6BVM2GKgMHhw9vDqBWU540MBBktY6vvVs
-         F3YJre5Vt/v4PIle1RsIEK8EmsxOwC+dQf7EFtp/rIB0R7yJW8vmxpAw/KQhZ7F/4PYG
-         JUUg==
+        d=suse.com; s=google; t=1761128780; x=1761733580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=alcVKMUt+tlMZmPP/SPA6cWASZ+xss81mljJu0f+zw4=;
+        b=Fg8JtWvLUXaBiGysrcBk2ONWj+1W3ieq9YG8JCmOC1FTZYjjL75ek4pY4ywjT8NBv8
+         /Hs2y9GRwNi/ku6ve0jNllz57XzSe04qFXY486YncRLFWhFw+0ggqBCbkpcXWuzQCAx8
+         zWuFGbWdO7UkMaRME+a7a3Xxm/UYdLl/ec3vgAKn3zxXUALHMT8pFXfXiRhadPfit+dI
+         uu5gSlegCTjpkZLBwRxz1EPGJR9WCXRxmv93zllrHnD33JboZFgLCDtDRqoEPkR0ObXd
+         57hqSqhDwLFDBD60oWWV0mzQ11TKhBMD7aKX+rCro2/K8q1/NwJ+fNSbl1Og8aVrrv7q
+         zyuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761128779; x=1761733579;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cLHXU8eawHTVYbg2TRv1FG2In4KNx8EMpgeXSr7poJY=;
-        b=N4Rj70QNHgijuB0kR60l0vpnUNvy3vUCtXefSQQr7ylvUxLS9MjflQHhIFkAvySdR6
-         F2SggBo0ZAr6wBmQunIp0Vl7LuXxx00EBUqv7njA2q7+ceAGbtwY9BA1a9BxakGgghCg
-         ir+myHm62Wsyt6h/QF4fStgeMVhkIm5D445iSzwJGGjbi//1nDSei4k5Khu/WJ2m12Jq
-         jb4fw1jA4yCkr+yDfw3Eh2w9FTkCnyOwrQ65vChw95M/HdnFluWzj30lkyWau0uyX/Y2
-         xI7Nem6mC2JU43QcU598IyNAJxlPcJjLhw//8dnTIyVaBfOmUNLAUv4d85Ziv5jnQxNh
-         WMEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKcPxD3kM2gQkhdf7NdK5bhi1Vr9Z3OsiiA66k6NtoUv1o6OSKPB298k9Fh0NXUc0u7/yvX1sxOnNNaQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFn6Sm9P7+mOBx+EJFrxx+q+IheKhp5/UHiHSqTZnr3enE8qh1
-	4PmqmNtET7pgtQMAiXGCKgCNgtmcPLT5OAuvAWY3dfuH8L2CAMmz86/+hNbfydGEc+Y=
-X-Gm-Gg: ASbGncv3YpebPkc94LS+bVchYjj+XFxNtp8jbWwjjzfc+DQKl61FNftbCc/yzMVROad
-	1C47PSK0llkqtbhO0rNLbYS2HeDB0gypiOPq5adKj5GX0LRc9yd3UUK7IKnKWpNS6DwzpRAeq0U
-	Uxru9b1g322etLk0q/8iu5tWuTHmbADlNbGJGIe2be7oyZsogcl9rJ7GCKnD2hkPzruhS4bKOA0
-	g7A6GDx5wklxvvGMoXcZuMAk+60adPvv3wCLyuVLeseGdrSAIoFTRSQCp7/RgXwpPTWfvZNRQPU
-	/5LJwa+6/+p3E3oLJCp1C7Y91N23OMRHx4icLORsumDM63lUVlnIjz0/d/9+x+9HWhYZXccU4Nk
-	LwX4vnYsuQfYZ/Wc0FFWs06QM2n8dJoGStf9j7aHc7pvOoysygugvz67vlXrOjR8kc7hh32mEL9
-	kcjWIurFphiEZgnqHSosYVg4mrsfY5ZJbMD/Gr1zxaR1jIQ++B1iGIKNUu675q/1vF/HnC3KxSb
-	LqpgA==
-X-Google-Smtp-Source: AGHT+IHihH5io6lS5ZZp9KLrAwcTOUq892OvQBG9BS+AmwUsIzbx8SjZ+4yw1mBJvVKnsFy5ydtF1A==
-X-Received: by 2002:a05:600c:1ca9:b0:46e:2562:ed71 with SMTP id 5b1f17b1804b1-47494260568mr33388495e9.1.1761128778718;
-        Wed, 22 Oct 2025 03:26:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761128780; x=1761733580;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=alcVKMUt+tlMZmPP/SPA6cWASZ+xss81mljJu0f+zw4=;
+        b=xGeM6JL+XCAX0uEiSK/kpNUjTRoyOoNYX9hXs4Qe4o4qKntd1tJCZCIcYBOukCvWhV
+         zCzLBIDS0oaeiAgE/FRKM2PvfeaE/fHEvuuCwfFj+/ycjEFBE4LV35X/jc63OFhD5PNM
+         zsEbalW2XUGuc6pgCtNqk8hFjdSx7DDPytmBaGsC2FPGekwhBNcUinu3LUFYKsgQTp/0
+         tkp0tByc1B+RdXOjHKKq6povQ6CN/MmCIWjy2cFo95HdXpSssHWy2v3UOVahUbxFbfvY
+         dx6ZIQuIHAuWJsdZe9xk2rj1VnOY5jChvtMvNxgIfZ81H0sb5LdM1Mj5l9zmz5E3Croq
+         e2rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUGl+9L3tM+skcyOzTkngp64rFq9CnFkETKKmWI5g1+r3q/NaprWuHFzZjVVN5zftyKG5f3+qu8ltnWZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjJ6xZRAiz5huHMcjbc+k+Eve4sOZfXhlQ+JElNPDhdqEBTLAC
+	86Vddc45GxWOarzJmk+/Ye3YTzRwUR0BiyCUel0LbXU7h17vqUleVmqlCEM/YPFD0AE=
+X-Gm-Gg: ASbGnctNvOZkgbyNnNSTRdjGDtuWIAPnVDpAFytIP02F+qN+doLrwV56JM+lHnjyABa
+	FpAxc4aepcO9LN5vqupY2jOwcKcQd+Ro37mGdHbTKm23/6kvtDgZn1m076ueba/r2KMzPfyemgs
+	yr0vrLlM8gbHbyckaE90OIDSNCfeaq2LQdUahg6tGd5onMpLHHvtEy2F+ExcVns4nBYvgKzhNUD
+	cFS3pjgCxmfi3qRyOMv5UM9xrRHqMYcAcfc5Ibc3BXQJRn0JosqimLYleeYjWFlrVTyS4XL1DT2
+	nVuINJO+CYEipkokKr/OgmWLUHlRRaTZCRHPdv5dC9cYXRGFxB7goAAwwmmJOlxYEDYr+Lcnj7i
+	JBoGC+V6CAay5oWwjt8YySRpsP7/nh7NXNOMqZsmuSOlXLB5VeFPPfYv463PAaPAU3W51CXCnnU
+	uvSz21zBgmXhAg4NHV2PeXRnl4la26oOx0FBpI/Mt8VljcSoQUTrWVHKaX1CKfBmJ0zQJdGZPB3
+	eRYWA==
+X-Google-Smtp-Source: AGHT+IGA/5ixI3whDOaoz9CffkO9FRerNi7Whju8HcdIJ+i6Az3912BHtx16GsmJqLHiU0A2MRkwyg==
+X-Received: by 2002:a05:6000:2404:b0:425:6fb5:2ac8 with SMTP id ffacd0b85a97d-4284e57a373mr2391699f8f.9.1761128779719;
+        Wed, 22 Oct 2025 03:26:19 -0700 (PDT)
 Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475c41cc92csm37137625e9.0.2025.10.22.03.26.18
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f00ce56csm24070170f8f.50.2025.10.22.03.26.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 03:26:18 -0700 (PDT)
+        Wed, 22 Oct 2025 03:26:19 -0700 (PDT)
 From: Petr Tesarik <ptesarik@suse.com>
 To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -83,10 +85,12 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
 	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
 	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
 	Petr Tesarik <ptesarik@suse.com>
-Subject: [PATCH v3 0/2] x86/tsx: Improve handling of the tsx= kernel parameter
-Date: Wed, 22 Oct 2025 12:26:11 +0200
-Message-ID: <cover.1761127696.git.ptesarik@suse.com>
+Subject: [PATCH v3 1/2] x86/tsx: Make tsx_ctrl_state static
+Date: Wed, 22 Oct 2025 12:26:12 +0200
+Message-ID: <775b10382ef40a7756b64f4a72779550e2720cb5.1761127696.git.ptesarik@suse.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1761127696.git.ptesarik@suse.com>
+References: <cover.1761127696.git.ptesarik@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,33 +99,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Parse the tsx= kernel parameter with early_param(), so it is not
-reported as unknown.
+Move all definitions related to tsx_ctrl_state to tsx.c. They are
+never referenced outside this file.
 
-As a side note, it was not necessary to defer the handling of
-tsx=auto. Contrary to Pawan's claim, cpu_set_bug_bits() is called
-from setup_arch() via early_cpu_init() and early_identify_cpu() before
-parse_early_param(). But it is a nice cleanup, nevertheless, and I
-learned something about parsing the command line. Cf. the NAK here:
-https://lore.kernel.org/all/20251009185134.fb4evjrk76rwxv37@desk/
+No functional change.
 
-Changes from v2:
-* compile-time initialization with the configured default
-* defer tsx=auto handling to tsx_init()
-* add more detail to the commit message
+Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+---
+ arch/x86/kernel/cpu/cpu.h | 9 ---------
+ arch/x86/kernel/cpu/tsx.c | 9 ++++++++-
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-Changes from v1:
-* make tsx_ctrl_state local to tsx.c
-* use early_param() instead of core_param()
-
-Petr Tesarik (2):
-  x86/tsx: Make tsx_ctrl_state static
-  x86/tsx: Get the tsx= command line parameter with early_param()
-
- arch/x86/kernel/cpu/cpu.h |  9 ------
- arch/x86/kernel/cpu/tsx.c | 59 ++++++++++++++++++++++-----------------
- 2 files changed, 34 insertions(+), 34 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
+index bc38b2d56f26..5c7a3a71191a 100644
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -42,15 +42,6 @@ extern const struct cpu_dev *const __x86_cpu_dev_start[],
+ 			    *const __x86_cpu_dev_end[];
+ 
+ #ifdef CONFIG_CPU_SUP_INTEL
+-enum tsx_ctrl_states {
+-	TSX_CTRL_ENABLE,
+-	TSX_CTRL_DISABLE,
+-	TSX_CTRL_RTM_ALWAYS_ABORT,
+-	TSX_CTRL_NOT_SUPPORTED,
+-};
+-
+-extern __ro_after_init enum tsx_ctrl_states tsx_ctrl_state;
+-
+ extern void __init tsx_init(void);
+ void tsx_ap_init(void);
+ void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c);
+diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
+index 49782724a943..8be08ece2214 100644
+--- a/arch/x86/kernel/cpu/tsx.c
++++ b/arch/x86/kernel/cpu/tsx.c
+@@ -19,7 +19,14 @@
+ #undef pr_fmt
+ #define pr_fmt(fmt) "tsx: " fmt
+ 
+-enum tsx_ctrl_states tsx_ctrl_state __ro_after_init = TSX_CTRL_NOT_SUPPORTED;
++enum tsx_ctrl_states {
++	TSX_CTRL_ENABLE,
++	TSX_CTRL_DISABLE,
++	TSX_CTRL_RTM_ALWAYS_ABORT,
++	TSX_CTRL_NOT_SUPPORTED,
++};
++
++static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init = TSX_CTRL_NOT_SUPPORTED;
+ 
+ static void tsx_disable(void)
+ {
 -- 
 2.51.0
 
