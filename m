@@ -1,95 +1,73 @@
-Return-Path: <linux-kernel+bounces-864712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BD4BFB655
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5858ABFB658
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0190F4F3031
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:25:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A50D8506B10
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5CB3126DF;
-	Wed, 22 Oct 2025 10:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E4A322745;
+	Wed, 22 Oct 2025 10:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEvjjIsd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JWAnUtiD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63732350A35;
-	Wed, 22 Oct 2025 10:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A28280318;
+	Wed, 22 Oct 2025 10:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128712; cv=none; b=X5nKGfQtFFSbB+o9dbU3SHjwW+ZQlfr7MSLvl0CR+cT4m7e2r9Hskhyfm9UVY6gF28AbwoFAs6QPrHbraxvyBY0eIVVZI+Nsj25WtEBOteHO5hKVpqxO7zNfDmFD3wabSKFyNl8K7OKm2S+HDr8rVMbl+sQR0KTduZENvM8ixwA=
+	t=1761128717; cv=none; b=S/SAo19Jp6sK2y3iSPILRBkLiwPjhoB8MvYDC3AD/jXhHkCu/RK4Ys1tPyvH0c+XTvcX9znYZfWQiVjx1/Gpd6qBJvU0k6jDCg9dpB0kL0G4fTs1ti/tjeHFRYFXNwjR5T/Pe72TSCGnmO2Jm3/+mHsJLLemGNEzXvo0p0aJHEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128712; c=relaxed/simple;
-	bh=stbg9Z4GKktvhVbBWBaKTlXQZOrVQklo2RFMw2PVpgc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cmXX++ZftMi0C4jg6NqOzQ3RYrKYBlWt2MV4BC+fJdh6forUNdEUIlEixxdoHvBR1nV8NvqDcv4gZYkAj5Hqb9hRb1mBxjKHQ3t1uh30fCYUGpPjhyP0G867hS2b58gJjh3DcEAGz0hoGrt7YjAbU8QlisNsqvalBp/5k703/+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEvjjIsd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29ECEC4CEE7;
-	Wed, 22 Oct 2025 10:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761128711;
-	bh=stbg9Z4GKktvhVbBWBaKTlXQZOrVQklo2RFMw2PVpgc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YEvjjIsdeQS+VXWfT62+1y6ZmLHQhBQdO5DzyWVgc/cNGTUnFYLgt7W0n49KP3x0I
-	 2qnGRwrRfk8gzhpj6CpJaByqIkuiO4f5E5bie1iequdnJvG6CtJlhk0h+NrqEyKJ+M
-	 aR84lskvYfWgFFArVhkhTFgmbo23eeMRV+feqgwkTaOyJuQmqK6HtBVupdmNG3ZAET
-	 gi3+NqBHS6maLsdRH8d5jI8rglQ6sRQ+htHYMUSRoYP64KJ05EZSniF1vSbHIqmde8
-	 M3EfvChB9r7SD6Ef3E+wnOYZOHDvvVu4xLs5mF2ZLndwj3DISKfdwXsH/CzJXrpwxe
-	 dIxmE0xi3Oa4A==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
-  jasonmiu@google.com,  dmatlack@google.com,  skhawaja@google.com
-Subject: Re: [PATCH v3 2/3] liveupdate: kho: Increase metadata bitmap size
- to PAGE_SIZE
-In-Reply-To: <20251021000852.2924827-3-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Mon, 20 Oct 2025 20:08:51 -0400")
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
-	<20251021000852.2924827-3-pasha.tatashin@soleen.com>
-Date: Wed, 22 Oct 2025 12:25:08 +0200
-Message-ID: <mafs0qzuvfd2z.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761128717; c=relaxed/simple;
+	bh=T2xSsqijF0LklJ89gp/Yz9fOPOiOgCsbt2SswEo5JB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMHRMlel2LlnAZww/CihEV4EJbuNxESuK6a0xGMvHslqlW7j+2HdoZ/oslE9+2FOE98NRgqOJ7VEAL8riFHdgRhxCeX1eGLQdZ2qghqIylrMPHrMydNgCuDjTYBa2M0lPSpwTzxxDXjnWMm61vLPNGWQH6gqeMoM7410budpqnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JWAnUtiD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E53DBC4CEF5;
+	Wed, 22 Oct 2025 10:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761128717;
+	bh=T2xSsqijF0LklJ89gp/Yz9fOPOiOgCsbt2SswEo5JB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JWAnUtiDLFhGJ+CbNU7QIX8cLmW6raAmB/00Bm7txQMMA7wbt+sLzYeOThffPuzqp
+	 pgrksOHWYbSiv7Ufc1WNMOe9K3g7MruEjxoGHdo16ScQ6udkYwDK9ZFrHLIvD1z51H
+	 WpRUzQAstQzuOuMopMRdSonxrpxA+xSK2Vae5wLs=
+Date: Wed, 22 Oct 2025 12:25:14 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Michail Tatas <michail.tatas@gmail.com>
+Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
+Subject: Re: staging: gpib: convert comments from // to /* */
+Message-ID: <2025102230-unshipped-comply-9957@gregkh>
+References: <aO2BHZzs3EsMTo3n@michalis-linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aO2BHZzs3EsMTo3n@michalis-linux>
 
-On Mon, Oct 20 2025, Pasha Tatashin wrote:
+On Tue, Oct 14, 2025 at 01:45:49AM +0300, Michail Tatas wrote:
+> This patch converts some comments from // -> /* */ to make everything consistent as suggested
+> in the TODO file in drivers/staging/gpib/TODO
 
-> KHO memory preservation metadata is preserved in 512 byte chunks which
-> requires their allocation from slab allocator. Slabs are not safe to be
-> used with KHO because of kfence, and because partial slabs may lead
-> leaks to the next kernel. Change the size to be PAGE_SIZE.
->
-> The kfence specifically may cause memory corruption, where it randomly
-> provides slab objects that can be within the scratch area. The reason
-> for that is that kfence allocates its objects prior to KHO scratch is
-> marked as CMA region.
->
-> While this change could potentially increase metadata overhead on
-> systems with sparsely preserved memory, this is being mitigated by
-> ongoing work to reduce sparseness during preservation via 1G guest
-> pages. Furthermore, this change aligns with future work on a stateless
-> KHO, which will also use page-sized bitmaps for its radix tree metadata.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Please wrap your changelog at 72 columns.
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+> This patch only updates part of the driver to keep a reasonable patch size. Further conversions
+> will be submitted in follow-up patches if this is accepted.
 
-[...]
+Please take a look at the kernel documentation that describes how to
+write a good changelog text.  Neither of these sentences fit that guide.
 
--- 
-Regards,
-Pratyush Yadav
+thanks,
+
+greg k-h
 
