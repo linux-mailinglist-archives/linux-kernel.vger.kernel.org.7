@@ -1,138 +1,146 @@
-Return-Path: <linux-kernel+bounces-865665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83617BFDB37
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:50:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414DBBFDB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30D1C1A619D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:50:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FFD35036D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F74E2E8B64;
-	Wed, 22 Oct 2025 17:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B339C2E8DFC;
+	Wed, 22 Oct 2025 17:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ghidSBky"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZkRdKPT"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7CD2E7F29
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D1D2E719E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761155172; cv=none; b=ayJXKiHWIlARxPNuAxBW0oPayoswRWvF/IIvFscktnkaC3Po+m5SUi01uF6tn/mvg7fR9CqWNpQKT7DDJPWir2kxsTWbJvMndMp9rbX0I76TA/oGJNXQorSarR+1FAuPSgw6uPgLNpYtYc+5TQ9YV1iRXYLvghtZcujO8scPAqs=
+	t=1761155192; cv=none; b=uNOQktIvVcNguLeQEaUnewH6GvHZwF3VBWPi/4cCsVIxQtrin3nS7xAmsWJXkjCA6oVd57PjpAJ93ePH7CRYFMTPeUXnab2Jxl24Cb9lRE0OuirgAXSpVxerDASXGabqZPqELUmzTHpc5YuNStpTBzMr/kYJ6GBfSTOKGHa3wSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761155172; c=relaxed/simple;
-	bh=qrix3pfqeHlYkHu5gf3ihlFO9JyiWdEausne67ag9Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuRkdnwBrdVCr098Qqu6ifmFxbgm9CvPdt4kC3foKmulSkneLl+0kayTK2kY7JvE4+gpJ8zOOwNOE1qFACJCNngP62owOPqWiT9jW5EyFDmMqsWtp8NuhU0yqGfoEQcdaRupAmSb6reW8lFUY8maDpUt7bcAnReEPHMVt9aNus0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ghidSBky; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761155171; x=1792691171;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qrix3pfqeHlYkHu5gf3ihlFO9JyiWdEausne67ag9Ew=;
-  b=ghidSBky2/5tjcFM4xcWL3fLN3/RAVU2WRnS0B0/twQcwqvt4Yx3lFW3
-   YE7RuaVx2DOsLUbcN0ivlRuNEyOMt3zhdGi29azK6SxSc6bk2ds6B0//7
-   EdEmy88BQkUlcmrl7V3QMvIqqMowD7m1cnDH8kxx3DvG5Bo24sNtPwRQj
-   +wADXfEBIMxONLvrpd0WbczZLFTG9A6NCdgBmBXoaiCDw7Aec6kSVFbIp
-   n+QwQo0uW4y/epDA0RsOmPidkF48/sXlQWOfe3lu6swX873uKFgo7GJS6
-   kGzcPENtpSRcTUHetT/T3Od80OXWcMbvsk6Cfz/VbtjMuLy5lUO1Ymdc9
-   g==;
-X-CSE-ConnectionGUID: WkWhFjeqTa6FZCy9OPv1mw==
-X-CSE-MsgGUID: w6gol5B5Rj6mTmfuNj9VjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88779599"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="88779599"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 10:46:10 -0700
-X-CSE-ConnectionGUID: V5jGYZIaSRedtosDZisc0A==
-X-CSE-MsgGUID: 4RfXQNktRd61S3fAMcvNhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="183154329"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO desk) ([10.124.221.85])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 10:46:10 -0700
-Date: Wed, 22 Oct 2025 10:46:03 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] x86/tsx: Get the tsx= command line parameter with
- early_param()
-Message-ID: <20251022174603.mx7sze3w5e24obps@desk>
-References: <cover.1761127696.git.ptesarik@suse.com>
- <befa0b859777267a11c90aebde6a3bedce276b90.1761127696.git.ptesarik@suse.com>
+	s=arc-20240116; t=1761155192; c=relaxed/simple;
+	bh=ZO9k478u1ngiqeGGIY3WNX6oKY50clVVErq42QbTs/Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fG5uazpyYxvUt7g66OB4UPwxFLFFuvGds7qKF4gCRXsr2qiDC7WCvOHOonPcG+Pd5VO19W4xZacavHDmkTUWjAgD/JkPBZTQnczpX60iPVUNy2/nosxEE03bD44nU1S/MkWRgOpdEztAiQEQwJvLq1D7e8nAKjzPAOL/YdxndWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZkRdKPT; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso1282113966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:46:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761155188; x=1761759988; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZO9k478u1ngiqeGGIY3WNX6oKY50clVVErq42QbTs/Y=;
+        b=YZkRdKPT8pBjRz95XUgoi033TzSjMyLT+va7nkpxPFJcIM6sAHgxpPXeBqDzxRhrDL
+         1ibGckJb7OBlfnv6DwAvxnXnOLhC2dSjsi8GVstRUUwJMYX3LEbSm84KegKmsCn0GDbq
+         dXQm+uQ/sfDwT5umd2I6/8U2uBToOmFg3oaUBpGA9cGjmfYPWfHnZom6J5c1B9DqnWx6
+         OJ5bT89BtiIro7S4Ukk09fa0Jr8Y/vkcsxbjG4QblzyfxQ/ikkDwWwakcWGLQkHNI1Ht
+         /mbcpcEqQPzmGTsfnKnI26vO/6VMxcCi6MNOLMMl77yY1NENlS/OfMGYqUevJpF32T0W
+         yAPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761155188; x=1761759988;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZO9k478u1ngiqeGGIY3WNX6oKY50clVVErq42QbTs/Y=;
+        b=LVE66lMV7UHkEDOYuSoKIHyD7tpHAi+WbxLO24QiBv6C1R0O2+d6ujZjO7uMZ3+57b
+         PVEUBxsj97vCxyjBFAtEms99cM5OapVTjKcqEbFpJhKSpBxrDHhhDF9hr3Ndu0s415tE
+         inCldlUcerCeTuHbNQeKA0HWOnaEHaGwHdDAJeaJFr52jV+S6GS6CgaUHcuJKKcTAPTs
+         JdV61XJuUOCevat++e+67EdOxOXZLIQTAKfmVu+Dvy+XtY+iWuEVECHAoaD/URSiL17X
+         WZaBs0hTDobO35Wi01yTj4jOs6AjCfusi4rvo9WvuwTDUR/4ji0mAd4R4mDnLEVMypJT
+         sziQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJHM9tN42fRCltyeRV4ah3x1xRfgZcYATUpIPqovIL0zWzc2S8Y4LbXwTyLmgj7uZVJ0QVILDUbeosLGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAhkmoKqwok4s1zf+h8E2dlr1nB/hOgQvDCuABSNwNHnwK+6wx
+	eWtf0N3h57uKvccyKpO2hZmq3Y6UTtomr8KrcMunaHN+7OMIT/s75/8qf2IbvW0h
+X-Gm-Gg: ASbGncv+OXqB6tViKQZihxHEfToV6mKYlMbIVEILHwm+eQeaZLKXFBmwKO0lA0MM1T6
+	bPIdHiSKUObYRjtY87CKMYV1vq3uNcMKklx4ZFyiwx08whEvlZzz9T8HwQgUhXseaDV0Z28Fqfr
+	nEOSKqwJif9PaKWVQTAj5suuAsL7BlZkJMNBHamd4yPASS7RjO8zDy0mOpiLADmr+KcT6Rm4oPF
+	lv2iS5oZw66tK6FPFy7ZIa2Nuz0qOU9NEBAUCjuWjLYMbvvWvDD/ogHQmnHR0CJ7qmNulNXjaM4
+	FABf6syc5U6oTSEOoiPOc4SxWQteWVQxs+kwOItAHxFba1xuBbB4+HOe7BShxxWBBdr/1qGdjL2
+	EH9aD4lRw1s7dhqefM8JK/o4P89hR0flyXqrZiieQnl4cqVG6ZaCgBDO5tomAxbtT+5WUWdYxAB
+	rOvTSgvA08QCjI2FFp++PTnjWEz14d/AH4WSCJIQhVqimCQlQ34bc9GlhI/cwb+Awg7Q0=
+X-Google-Smtp-Source: AGHT+IHCalBjEk5A4VepIJrx2VZmsQyalUaHdRlIahxdnPTXIoiiuFZ8zgGAwcDIXssdST0QDBYUzA==
+X-Received: by 2002:a17:907:3f88:b0:b3d:5088:214e with SMTP id a640c23a62f3a-b647501277bmr2370373466b.64.1761155188114;
+        Wed, 22 Oct 2025 10:46:28 -0700 (PDT)
+Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83960e6sm1393779166b.33.2025.10.22.10.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 10:46:27 -0700 (PDT)
+Message-ID: <d42ab1a0665f55731aabd1e9fcb31b8401b7913f.camel@gmail.com>
+Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Javier Martinez Canillas <javierm@redhat.com>, Wolfram Sang	
+ <wsa@the-dreams.de>, Herve Codina <herve.codina@bootlin.com>, David Rhodes	
+ <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+ <tiwai@suse.com>,  Nikita Shubin <nikita.shubin@maquefel.me>, Axel Lin
+ <axel.lin@ingics.com>, Brian Austin	 <brian.austin@cirrus.com>,
+ linux-sound@vger.kernel.org, 	patches@opensource.cirrus.com,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Date: Wed, 22 Oct 2025 19:46:26 +0200
+In-Reply-To: <d38779a7-a1af-49e4-b429-5ebd791e2168@sirena.org.uk>
+References: <e7873e6ce07cd92f4b5ce8880aa81b12c2a08ed3.camel@gmail.com>
+	 <d38779a7-a1af-49e4-b429-5ebd791e2168@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <befa0b859777267a11c90aebde6a3bedce276b90.1761127696.git.ptesarik@suse.com>
 
-On Wed, Oct 22, 2025 at 12:26:13PM +0200, Petr Tesarik wrote:
-> Use early_param() to get the value of the tsx= command line parameter. It
-> is an early parameter, because it must be parsed before tsx_init(), which
-> is called long before kernel_init(), where normal parameters are parsed.
-> 
-> Although cmdline_find_option() from tsx_init() works fine, the option is
-> later reported as unknown and passed to user space. The latter is not a
-> real issue, but the former is confusing and makes people wonder if the tsx=
-> parameter had any effect and double-check for typos unnecessarily.
-> 
-> The behavior changes slightly if "tsx" is given without any argument (which
-> is invalid syntax). Prior to this patch, the kernel logged an error message
-> and disabled TSX. With this patch, the kernel still issues a warning
-> (Malformed early option 'tsx'), but TSX state is unchanged. The new
-> behavior is consistent with other parameters, e.g. "tsx_async_abort".
-> 
-> Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> ---
->  arch/x86/kernel/cpu/tsx.c | 52 ++++++++++++++++++++-------------------
->  1 file changed, 27 insertions(+), 25 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
-> index 8be08ece2214..74ba4abac7e9 100644
-> --- a/arch/x86/kernel/cpu/tsx.c
-> +++ b/arch/x86/kernel/cpu/tsx.c
-> @@ -20,13 +20,17 @@
->  #define pr_fmt(fmt) "tsx: " fmt
->  
->  enum tsx_ctrl_states {
-> +	TSX_CTRL_AUTO,
->  	TSX_CTRL_ENABLE,
->  	TSX_CTRL_DISABLE,
->  	TSX_CTRL_RTM_ALWAYS_ABORT,
->  	TSX_CTRL_NOT_SUPPORTED,
->  };
->  
-> -static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init = TSX_CTRL_NOT_SUPPORTED;
-> +static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init =
-> +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO :
-> +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF) ? TSX_CTRL_DISABLE :
-                                                 ^
-						 The extra space I had in
-						 the version I sent was
-						 intentional.
+Hi Mark,
 
-> +	TSX_CTRL_ENABLE;
+On Wed, 2025-10-22 at 15:56 +0100, Mark Brown wrote:
+> > > I'm very reluctant to touch this stuff for SPI without some very care=
+ful
+> > > analysis that it's not going to cause things to explode on people, ri=
+ght
+> > > now things seem to be working well enough so I'm not clear we'd be
+> > > solving an actual problem.
+>=20
+> > The actual problem is that i2c-core is producing "of:" prefixed uevents
+> > instead of "i2c:" prefixed uevents starting from v4.18.
+>=20
+> > Most of the dual-bus ASoC CODECs are affected.
+>=20
+> That's a description of what change but not of a concrete problem that
+> users are experiencing.
 
-Also this can stay on the same line.
+the concrete problem Herve has experienced is that cs4271-i2c will not be
+loaded automatically starting with Linux v4.18 (commit af503716ac14
+"i2c: core: report OF style module alias for devices registered via OF").
 
-	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO    :
-	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF)  ? TSX_CTRL_DISABLE : TSX_CTRL_ENABLE;
+> > Now declaring "of:" to be the new I2C bus prefix for uevents starting f=
+rom
+> > Linux v4.18 sounds strange.
+>=20
+> I think a robust solution would involve having the OF aliases namespaced
+> by bus, or just not using the OF aliases but potentially having
+> collisions if two vendors pick the same device name.
 
-IMO, this is so much more easier to read.
+But this sounds like the situation before the above mentioned commit
+af503716ac14, when both i2c and spi were symmetrically namespaced with
+i2c: and spi: respectively and contained the "compatible" stripped of the
+vendor prefix.
+
+And I must admit that I had more understanding for the prior state of thing=
+s.
+
+--=20
+Alexander Sverdlin.
 
