@@ -1,100 +1,223 @@
-Return-Path: <linux-kernel+bounces-865183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7E2BFC701
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB8BBFC6D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A3C6628EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0282A1895D7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E57F34B419;
-	Wed, 22 Oct 2025 14:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F4934B66D;
+	Wed, 22 Oct 2025 14:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qF7XKvKB"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="giCjTQ5s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4ED348456
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0524234A78C;
+	Wed, 22 Oct 2025 14:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142121; cv=none; b=THvTIOxq1OXw7o7UBncnNhwPz1BbxVivGRidKX+mM+tFBxtYs/B3LZnJm3Urk/K41UDpxDOS+svGJ5nuho3iKdIDSYcgIAbMbhF3ZN/jcSr/1vYfvTAN4PvcqI0gcdQAzfNm8Tz/58Qn5B4+d6shJVAOA6RtqHFy2gN5dkDj3Yw=
+	t=1761142584; cv=none; b=NhHGsv2/pSj2fm1wXu+SGoWGB06Vc3qaDn1L8YBdWm/x9d0jVjn1aVuX3JQZ/5n2goKDlURSfHjDESYB9Uae/xNxTc6jlVi/o56WIduLyNmLUip7fcuetlKKg7y29Y6zwf32A3RpTi9e1TJbdDSo3kBjWUcOnV3zKJpknuhtDAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142121; c=relaxed/simple;
-	bh=nf6lYvULmbWaC/xW9v0Y1FlJ/x3FuK/AGx8my0sNvcg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HiGg+W4cy7fy/uyrADSYhaek7dy+YzhrD/UKY2IYTKAaYxSmv0wmtXZH4lyZorOpZ9v9oAbqw2AEgb6inyN+dgFWo1d4gzG5lQ4tpyq3bqSJ72iS/9eht+R4EeZY0Q+4quxMg2fy7xTGpj1PFxl20N5pF9edBSGn2vu5Znuk9qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qF7XKvKB; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47106a388cfso31909905e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:08:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761142118; x=1761746918; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATlrZjqtWRkDgSGBMom3PghpDA1GYToK819nxmIH54Y=;
-        b=qF7XKvKBWv8/UBbXzTPd6EBis/6kZfznFn9ZfAGFjfclhnSHQTpHdHLryicTUurJOP
-         iUO0AdHakdp/wlIs6kgTnw1vLotjNL2W8Cd0SfjnUDAwSSTxY1uYdPhfFaQ9q6xqohjX
-         PXzN64LL6cpA2JMzSzI+JXLbbyY3T2COvqq0T9mAXDRrIz0xCePFgm1XHupaJpGECtrg
-         4D2vQ/zmUM3w1398ErmUc8UlE+6f3g4zXD6OzBIL6lvevvSE2whnugkkYcPidAcWyZfa
-         ay+5RAr6X0d9sOZ6cyoUk9zYKEjBJHTg5vp/tu25E2fSDy6E/azskM0ttPLsSFFg9hB0
-         dTAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142118; x=1761746918;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATlrZjqtWRkDgSGBMom3PghpDA1GYToK819nxmIH54Y=;
-        b=ZEz/DZvfwQsoH1A5xBtPascziwfEjkpJuPi//gnaD8KKLgZXY4O2BIFdfJd+EnQexq
-         hy5lp8I9ADZ9a0HJfHrInNROBT/TH2F39XmUibGTgi0IKLLydo0ZgQ8EgJvMRsxD4yr3
-         zDAwxIjdOzxu0TdJ/nNJFLG8/peL316y+Dn1KmC7QEskinO7z7i8R9FdXRph4U/0RgwQ
-         oFoot+Wv15S4OWC5eFEzrzweKggFjq6D1TI4uoQtN4AjMVMeEWwzXAFSIBcR4wPmVr81
-         jAp4OPcQrFz55QyD1UoW6ndCrA/0gTNrJnnzBd8rqzBgmL2F+MicYReUV1XZW9FpWYvr
-         wYhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyZUPbRrq2ovul5jsHawyx71ksWvQa0JY0aU343fIu/b5Gh1d5kgUY6tF4GjFabGXED9sCvdDvfpCb2vA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0QUqNj3BI3eRvbBpLSneAA6govPaNdrbTRPWrewSD8aNGVGHe
-	yhLLWpLEvaC6Nsy1mLR2+v8TECDcK7si32Dwnf0W1MXalvyJEq3duElQK6+pk0xuNwXaI7zlKe8
-	u+nZuu8Zf2OrVkwyqjw==
-X-Google-Smtp-Source: AGHT+IGGiD7bely6ltA8zojQnpBYzqlN9EfV8SH7PMi9UDRTq16fyrTVPdiLdtgeh1l7/mph0NHAx7PqvBdfS3Y=
-X-Received: from wmom23.prod.google.com ([2002:a05:600c:4617:b0:46e:15a3:1c9b])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3f08:b0:470:ffd1:782d with SMTP id 5b1f17b1804b1-47117876a19mr174974085e9.6.1761142117704;
- Wed, 22 Oct 2025 07:08:37 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:08:36 +0000
-In-Reply-To: <jnpqitx2yup2cvt7ey4b3fgzsi62i2pkasjxgx6xfi2r45hhhn@qqle4nvlcbu2>
+	s=arc-20240116; t=1761142584; c=relaxed/simple;
+	bh=WLIq3te9nq7A6J2hfe3bvnRM8WiFX1/q3SS62dWu5ZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BmK557s1P7W+/toG3A3Ipu1G54+dOImQ/YWG5ITZL9SEsEus/tXfvgNpT+lqQoR4Dx6W2yHMxrnpJFlxmM3dN4KY/RjQVzFPLwwXELiUfIIv0xsmgB6GN6FVqhO2MahjSBRr6j0Z4YDyTGF5/vAkecnYasEf3C3ujQSvjryyVXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=giCjTQ5s; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761142584; x=1792678584;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WLIq3te9nq7A6J2hfe3bvnRM8WiFX1/q3SS62dWu5ZE=;
+  b=giCjTQ5sWvtZk8mzkX+i87XzHFiY1fDjsmpcdRBIb3UavEg1afghvF8o
+   MyoO/OLNtid+4ZZI/PHGb/C70fBfBoTlWAZ7lBl4HPgUFiB/qeQKZ3hRE
+   Xu79OwnLYe14P/uTcwXDd+c6HXrrtVoydOlfAYzK+ycg+UGZen1rbvmFI
+   sfMmeeAa4pRVM7EeUipCD4U3IXIE/wNTYu4TDofr8XZl/jjNDs4BrpHd4
+   OMMgAimfT3wbKgrK/W1IQV4YM8CxlTYSoqjXMfb4V3joCGbbm2P4E4xWi
+   tdYQK5AD6jqe27dPWOqW+QYgsZjpsWY5gllTYhJn06PbBsGXwycpI21Uw
+   w==;
+X-CSE-ConnectionGUID: o69RZQJUQreA2nxtH+u0FQ==
+X-CSE-MsgGUID: oLTWat13TmynZFf4k3ve9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63332323"
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="63332323"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 07:16:23 -0700
+X-CSE-ConnectionGUID: qaZ/8OfDSS6N/9RBj6haAg==
+X-CSE-MsgGUID: axV8P9zZRx+GIM1oecSuHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="184368005"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 22 Oct 2025 07:16:20 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBZbI-000CQ5-14;
+	Wed, 22 Oct 2025 14:15:13 +0000
+Date: Wed, 22 Oct 2025 22:09:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>, linux-media@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, awalls@md.metrocast.net,
+	mchehab@kernel.org, linux-kernel@vger.kernel.org,
+	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Subject: Re: [PATCH] pcmcia/parport_cs: Refactor probe function and improve
+ error logging
+Message-ID: <202510222115.WBPLEBsN-lkp@intel.com>
+References: <20251021190021.173748-1-biancaa2210329@ssn.edu.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
- <20251020-clk-send-sync-v2-1-44ab533ae084@google.com> <ghaqgzgnk6mkv6tm4inm2e24jyidsk7qhbff6zwc46kefojw5p@3jvwnn3q4bxw>
- <aPiTm7Pb9WguOd9j@google.com> <jnpqitx2yup2cvt7ey4b3fgzsi62i2pkasjxgx6xfi2r45hhhn@qqle4nvlcbu2>
-Message-ID: <aPjlZMg7UXc099cU@google.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Alice Ryhl <aliceryhl@google.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021190021.173748-1-biancaa2210329@ssn.edu.in>
 
-On Wed, Oct 22, 2025 at 03:03:26PM +0530, Viresh Kumar wrote:
-> On 22-10-25, 08:19, Alice Ryhl wrote:
-> > I'm guessing this means you want me to take it through drm-rust? See
-> > what I put in the cover letter about choice of tree.
-> 
-> I was expecting Stephen to pick it up directly.
+Hi Biancaa,
 
-Ah, that's fine, thanks.
+kernel test robot noticed the following build errors:
 
-Alice
+[auto build test ERROR on sailus-media-tree/master]
+[also build test ERROR on linus/master v6.18-rc2 next-20251022]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Biancaa-Ramesh/pcmcia-parport_cs-Refactor-probe-function-and-improve-error-logging/20251022-030324
+base:   git://linuxtv.org/sailus/media_tree.git master
+patch link:    https://lore.kernel.org/r/20251021190021.173748-1-biancaa2210329%40ssn.edu.in
+patch subject: [PATCH] pcmcia/parport_cs: Refactor probe function and improve error logging
+config: x86_64-buildonly-randconfig-006-20251022 (https://download.01.org/0day-ci/archive/20251022/202510222115.WBPLEBsN-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510222115.WBPLEBsN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510222115.WBPLEBsN-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/parport/parport_cs.c: In function 'parport_config':
+>> drivers/parport/parport_cs.c:164:9: error: label 'failed' used but not defined
+     164 |         goto failed;
+         |         ^~~~
+>> drivers/parport/parport_cs.c:137:21: warning: unused variable 'info' [-Wunused-variable]
+     137 |     parport_info_t *info = link->priv;
+         |                     ^~~~
+>> drivers/parport/parport_cs.c:167:5: warning: no return statement in function returning non-void [-Wreturn-type]
+     167 |     }
+         |     ^
+   drivers/parport/parport_cs.c: At top level:
+>> drivers/parport/parport_cs.c:169:6: error: expected '=', ',', ';', 'asm' or '__attribute__' before '->' token
+     169 |     p->modes |= PARPORT_MODE_PCSPP;
+         |      ^~
+>> drivers/parport/parport_cs.c:170:5: error: expected identifier or '(' before 'if'
+     170 |     if (epp_mode)
+         |     ^~
+   drivers/parport/parport_cs.c:172:9: error: expected '=', ',', ';', 'asm' or '__attribute__' before '->' token
+     172 |     info->ndev = 1;
+         |         ^~
+   drivers/parport/parport_cs.c:173:9: error: expected '=', ',', ';', 'asm' or '__attribute__' before '->' token
+     173 |     info->port = p;
+         |         ^~
+>> drivers/parport/parport_cs.c:175:5: error: expected identifier or '(' before 'return'
+     175 |     return 0;
+         |     ^~~~~~
+>> drivers/parport/parport_cs.c:177:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before ':' token
+     177 | failed:
+         |       ^
+>> drivers/parport/parport_cs.c:179:19: error: expected ')' before '->' token
+     179 |         kfree(link->priv);
+         |                   ^~
+         |                   )
+   drivers/parport/parport_cs.c:180:9: error: expected '=', ',', ';', 'asm' or '__attribute__' before '->' token
+     180 |     link->priv = NULL;
+         |         ^~
+   drivers/parport/parport_cs.c:181:9: error: expected identifier or '(' before 'return'
+     181 |         return -ENODEV;
+         |         ^~~~~~
+>> drivers/parport/parport_cs.c:182:1: error: expected identifier or '(' before '}' token
+     182 | } /* parport_config */
+         | ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for OF_GPIO
+   Depends on [n]: GPIOLIB [=y] && OF [=n] && HAS_IOMEM [=y]
+   Selected by [y]:
+   - GPIO_TB10X [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && (ARC_PLAT_TB10X || COMPILE_TEST [=y])
+   WARNING: unmet direct dependencies detected for GPIO_SYSCON
+   Depends on [n]: GPIOLIB [=y] && HAS_IOMEM [=y] && MFD_SYSCON [=y] && OF [=n]
+   Selected by [y]:
+   - GPIO_SAMA5D2_PIOBU [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && MFD_SYSCON [=y] && OF_GPIO [=y] && (ARCH_AT91 || COMPILE_TEST [=y])
+   WARNING: unmet direct dependencies detected for I2C_K1
+   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
+   Selected by [y]:
+   - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
+
+
+vim +/failed +164 drivers/parport/parport_cs.c
+
+84e2d34004dcd0c Dominik Brodowski 2008-07-29  134  
+15b99ac1729503d Dominik Brodowski 2006-03-31  135  static int parport_config(struct pcmcia_device *link)
+^1da177e4c3f415 Linus Torvalds    2005-04-16  136  {
+^1da177e4c3f415 Linus Torvalds    2005-04-16 @137      parport_info_t *info = link->priv;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  138      struct parport *p;
+9b44de2015ff4a2 Dominik Brodowski 2009-10-24  139      int ret;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  140  
+9b44de2015ff4a2 Dominik Brodowski 2009-10-24  141      dev_dbg(&link->dev, "parport_config\n");
+^1da177e4c3f415 Linus Torvalds    2005-04-16  142  
+00990e7ce0b0e59 Dominik Brodowski 2010-07-30  143      if (epp_mode)
+00990e7ce0b0e59 Dominik Brodowski 2010-07-30  144  	    link->config_index |= FORCE_EPP_MODE;
+00990e7ce0b0e59 Dominik Brodowski 2010-07-30  145  
+9b44de2015ff4a2 Dominik Brodowski 2009-10-24  146      ret = pcmcia_loop_config(link, parport_config_check, NULL);
+9b44de2015ff4a2 Dominik Brodowski 2009-10-24  147      if (ret)
+84e2d34004dcd0c Dominik Brodowski 2008-07-29  148  	    goto failed;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  149  
+eb14120f743d297 Dominik Brodowski 2010-03-07  150      if (!link->irq)
+9b44de2015ff4a2 Dominik Brodowski 2009-10-24  151  	    goto failed;
+1ac71e5a35eebee Dominik Brodowski 2010-07-29  152      ret = pcmcia_enable_device(link);
+9b44de2015ff4a2 Dominik Brodowski 2009-10-24  153      if (ret)
+9b44de2015ff4a2 Dominik Brodowski 2009-10-24  154  	    goto failed;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  155  
+9a017a910346afd Dominik Brodowski 2010-07-24  156      p = parport_pc_probe_port(link->resource[0]->start,
+9a017a910346afd Dominik Brodowski 2010-07-24  157  			      link->resource[1]->start,
+eb14120f743d297 Dominik Brodowski 2010-03-07  158  			      link->irq, PARPORT_DMA_NONE,
+51dcdfec6a274af Alan Cox          2009-04-07  159  			      &link->dev, IRQF_SHARED);
+fac3d7d7b11c825 Biancaa Ramesh    2025-10-22  160      if (!p) {
+fac3d7d7b11c825 Biancaa Ramesh    2025-10-22  161          dev_err(&link->dev,
+fac3d7d7b11c825 Biancaa Ramesh    2025-10-22  162              "parport_pc_probe_port() failed at 0x%03x, irq %u\n",
+decf26f6ec25dac Joe Perches       2020-04-03  163              (unsigned int)link->resource[0]->start, link->irq);
+^1da177e4c3f415 Linus Torvalds    2005-04-16 @164          goto failed;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  165      }   
+^1da177e4c3f415 Linus Torvalds    2005-04-16  166  
+fac3d7d7b11c825 Biancaa Ramesh    2025-10-22 @167      }
+fac3d7d7b11c825 Biancaa Ramesh    2025-10-22  168  
+^1da177e4c3f415 Linus Torvalds    2005-04-16 @169      p->modes |= PARPORT_MODE_PCSPP;
+^1da177e4c3f415 Linus Torvalds    2005-04-16 @170      if (epp_mode)
+^1da177e4c3f415 Linus Torvalds    2005-04-16  171  	p->modes |= PARPORT_MODE_TRISTATE | PARPORT_MODE_EPP;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  172      info->ndev = 1;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  173      info->port = p;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  174  
+15b99ac1729503d Dominik Brodowski 2006-03-31 @175      return 0;
+^1da177e4c3f415 Linus Torvalds    2005-04-16  176  
+^1da177e4c3f415 Linus Torvalds    2005-04-16 @177  failed:
+^1da177e4c3f415 Linus Torvalds    2005-04-16  178  	parport_cs_release(link);
+21c75ad65f8e521 YueHaibing        2019-03-21 @179  	kfree(link->priv);
+fac3d7d7b11c825 Biancaa Ramesh    2025-10-22  180      link->priv = NULL;
+15b99ac1729503d Dominik Brodowski 2006-03-31  181  	return -ENODEV;
+^1da177e4c3f415 Linus Torvalds    2005-04-16 @182  } /* parport_config */
+^1da177e4c3f415 Linus Torvalds    2005-04-16  183  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
