@@ -1,91 +1,115 @@
-Return-Path: <linux-kernel+bounces-863998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D249FBF9AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3441EBF9B05
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E6113554CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA68E19A83E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E23120A5DD;
-	Wed, 22 Oct 2025 02:11:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966B321578D;
+	Wed, 22 Oct 2025 02:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="xC79Cvy0"
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA54D1E9B37
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F57A2144C9;
+	Wed, 22 Oct 2025 02:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761099065; cv=none; b=rDBLntc8ZpI/pD0KcImmRijuQrRutc66EvvPxFjFjUqE1UmjcM+0eJURcFSZ9qsIJ0sXMHGFLx1sus2GmC6nUsWeRPUSuRSx3FvbCNCGKG7w2fr62iIOKYTxXbwA5QomzYuZS6haHsFcsFXyhCuvXqd9QiykR7woJAvWfFMJZh0=
+	t=1761099147; cv=none; b=rKoQ7QN1vWAwL4jC6Zlp69wRHzPMGVkiNBgyVJF7YKxQZliTw3dsCdnU6MfiJPpp6I8xh6cr0VZ2IAgaalQLELFxq6OaOTxHXeQdpC8+/NPKPAId5pHKpAa09N1+Z3aAlYGZlRDij6Dh0+6PN5qqUEcVtF7ICedhvRxSYXQSgvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761099065; c=relaxed/simple;
-	bh=IXY4fvSJRHLFO75TpbPu83+IVPZfStVGP/St8G/Dzcg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=U5nctevNbEKwrVyKkA6AA6eiWCRYaomYL8IHq/kSXNF2fdHjk999F0cF8v2jghhpmi0nNL2qk1flg9vtkbYCtwSMynlnkX+u1i8EaKdztoCt3iEqJEEFwvZce9JGpNnmIsjEmTUxcS7d1pw+KnFYOq2YgxnY4o6sJOAc9xE8Xc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93e8839f138so437877139f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761099063; x=1761703863;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hLSOgAbH4fajGF6l2x4+9VAs94l4PA4ks6BTQ5XcfjA=;
-        b=lYQ3OvuGdsRVxsLWFHZNVW+LlBROU3Yxvqday1KoZzW3vo1nKDJ8OcjLInz4RR7EZW
-         bO3gD1N12dROUA9bi9h/GppPn+hEnDBkW6PcpjYqx8B9LFtKequSupjYk0WlNMgvBsFA
-         m0WG7V9ZmHzq2IAX4l+OUo5XHQdgWtMIt3FzjWl39yHlNobKx4ZZksdFbgDoKhs6Yl2F
-         hL2kZopBJkMtHqD5lC0KWpI3aZHSbZ2EtFU9mUYswbK+Iy95CjbPMEtgrMbsL0swRHoJ
-         nnD2OTSPIVCZD0Hyohf8eec4eppzFvicirugS9D1nAJgECwOLDFsDhHeK49L/UXDfhWB
-         csWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKfTKQzCpSGyYvsMIrJtNUEXkOjDHI+VWhHTRmPtiPA6jCC+MT24zv4Y8SFzdUx9yuAn+YXpoX3cffLnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz34SNga2PDw3Id549Uz5osN2UXHcOTTbdeuzp9EWBX9Hn4ZnT/
-	WCeKDuE2MP3Q8f1s+6zdA1CFkBm0sbDT6Jn2ILEwjMgkttaRJKiXqxlOYqGADK8EZGzBsvBMOCB
-	gnEGXJ2KAkzDG6t2x0IjlimAriLbfuPRzxwwnoxkNqH6p/0+Iu5FqkIPJFRw=
-X-Google-Smtp-Source: AGHT+IEVW9cLdrHk5gyQA1WxfkhrgghwzYO929NE0/bgIGqUiwbHvlKzK4+WrKpOwbSYRX9B2Xshlsy9wmnlEgO83Es6W9TxsQg/
+	s=arc-20240116; t=1761099147; c=relaxed/simple;
+	bh=TWR8GXQJPy6unRKPZeUwgJvmGAL1681lypMPVlljwUA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MJxWh6o+z/xTSdj2nHxtwXxtkqn3wM0TjXkARyphXLrsC/agxG6cNbeTt2s72iGYx0t7GbAqTZl2SlmoGGqvj+v6O1xkFMmYWWi9LVX6YuYsJ39018BSOG2BO7ltHH4HEJZfz9ODz+hXZzqJQZiTCMoqW4oPxatBkMA/ENXmgLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=xC79Cvy0; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=8Ox2547AENmU7zFSWTojZNnWpSl1s+guzkBUOYPiR6I=;
+	b=xC79Cvy0LHHLwbVJq74DnWJVsGSzGJqnyh3bDlFKk4eVreeGJLIn8qK79AgsirDZHoD6pD/ac
+	OCXQKRhyTC1MjPFpOsId2M9lNRykDOH6eziRnoR7G0MyKH6yyR1EIyvawD/tR0kytOLajJ1cLiT
+	braeb9Arx82/ZwF0j+dWMvo=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4crt2j4lxKzKmgn;
+	Wed, 22 Oct 2025 10:11:57 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id F03801A0188;
+	Wed, 22 Oct 2025 10:12:21 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 22 Oct 2025 10:11:51 +0800
+Received: from localhost.huawei.com (10.90.31.46) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 22 Oct 2025 10:11:50 +0800
+From: Chenghai Huang <huangchenghai2@huawei.com>
+To: <gregkh@linuxfoundation.org>, <zhangfei.gao@linaro.org>,
+	<wangzhou1@hisilicon.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
+	<qianweili@huawei.com>, <linwenkai6@hisilicon.com>
+Subject: [PATCH v4 0/4] uacce: driver fixes for memory leaks and state management
+Date: Wed, 22 Oct 2025 10:11:45 +0800
+Message-ID: <20251022021149.1771168-1-huangchenghai2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3418:b0:93e:8c1d:3cdd with SMTP id
- ca18e2360f4ac-93e8c1d3e70mr2259497639f.16.1761099062740; Tue, 21 Oct 2025
- 19:11:02 -0700 (PDT)
-Date: Tue, 21 Oct 2025 19:11:02 -0700
-In-Reply-To: <68ef003e.050a0220.91a22.0229.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f83d36.a00a0220.9662e.0000.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] kernel BUG in do_xmote
-From: syzbot <syzbot+353de08f32ce69361b89@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-syzbot has bisected this issue to:
+This patch series addresses several issues in the uacce:
+1.Memory leak fix when device registration fails.
+2.Fix sysfs file creation conditions.
+3.Add error reporting for unsupported mremap operations.
+4.Ensuring safe queue release with proper state management.
 
-commit 669d4eb0b91817f2451a0210c79ef4c21af66f49
-Author: Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon Aug 4 22:07:02 2025 +0000
+---
+Changes in v4:
+- Revert the interception of sysfs creation for isolate_strategy.
+- Link to v3: https://lore.kernel.org/all/20251021135003.786588-1-huangchenghai2@huawei.com/
 
-    gfs2: Clean up properly during a withdraw
+Changes in v3:
+- Move the checks for the 'isolate_strategy_show' and
+  'isolate_strategy_store' functions to their respective call sites.
+- Use kobject_put to release the cdev memory instead of modifying
+  cdev to be a static structure member.
+- Link to v2: https://lore.kernel.org/all/20250916144811.1799687-1-huangchenghai2@huawei.com/
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15f57c58580000
-start commit:   52ba76324a9d Add linux-next specific files for 20251013
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17f57c58580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f57c58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=353de08f32ce69361b89
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1589f304580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1492bb34580000
+Changes in v2:
+- Use cdev_init to allocate cdev memory to ensure that memory leaks
+  are avoided.
+- Supplement the reason for intercepting the remapping operation.
+- Add "cc: stable@vger.kernel.org" to paths with fixed.
+- Link to v1: https://lore.kernel.org/all/20250822103904.3776304-1-huangchenghai2@huawei.com/
 
-Reported-by: syzbot+353de08f32ce69361b89@syzkaller.appspotmail.com
-Fixes: 669d4eb0b918 ("gfs2: Clean up properly during a withdraw")
+Chenghai Huang (2):
+  uacce: fix isolate sysfs check condition
+  uacce: ensure safe queue release with state management
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Wenkai Lin (1):
+  uacce: fix for cdev memory leak
+
+Yang Shen (1):
+  uacce: implement mremap in uacce_vm_ops to return -EPERM
+
+ drivers/misc/uacce/uacce.c | 51 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 8 deletions(-)
+
+-- 
+2.33.0
+
 
