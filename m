@@ -1,125 +1,198 @@
-Return-Path: <linux-kernel+bounces-865274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBC0BFCAB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:51:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFC5BFCA8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 494544FC8E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:50:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E156119A7B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3090534C15E;
-	Wed, 22 Oct 2025 14:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A6D34CFC8;
+	Wed, 22 Oct 2025 14:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BuqiwOmC"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1QpJ40o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39261F582E;
-	Wed, 22 Oct 2025 14:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE8C34C9BE;
+	Wed, 22 Oct 2025 14:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144468; cv=none; b=fllk7uJdYEJWrlXmvEFY5Uoty5UdRKDValtaHXjzlA0JxwCQTqB8aU8gYCwLkiAg9pz3ZdaSXRcDnsl5iPjEo8+JtVveE5g/RFfuf8Pj/PhABuhucQHz0ESSqleXXoCHlizvfoOjXJuvSvZzj32gqzbSaP1h2lZGd53f9xr0Zzg=
+	t=1761144470; cv=none; b=hgiG+xBTUPSbJ1qZ/TdbsEXcUAwRZ1WsDEaLZzW2n/F7enJwsrmtVTlWt1IepQhjcUxWvDrE/U4dlq1VZaBaYBJ15Q+6f1u6njEwNLWlmQogD4zvFAznXXYpl8iaHuZPYnEjOiV3/6CZiVzOB1u8m9rQg21tTICvZQS4umBRnPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144468; c=relaxed/simple;
-	bh=xd4kL/jXzdOqVEVTeb6/caeOsR6uMZrZNGg1CWFuQUg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NaM7VQqt+fEaDoynu+waAovYUo8Cms7WzcEwC9ducefcsiRP4AsOvTWVyXnajMKX136C4292Ob2/nLUWaRjFYAI7bnbAeWQXwnEuezqR2piNI01e5P6BYml60r9TdImDPoDzx9Bc0zhZif4TPznMs+0s6x3E1jngZMZJL/uad9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BuqiwOmC; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=f6
-	xyuwMavmWKRPX4QfibwgyIlfcPx5ibwjw/2n1TmN4=; b=BuqiwOmCsbrK9nyHVK
-	IQavwsnAMoLEnxrpLOGLT9uLGWLkSfoAgZFZ5ZfpL+hLmiRbjhy8SFxlwn10dDWw
-	msfvST70CMqQdJou1aE8XUxvvc2bNZdDhoNShKNS8QP5SkBHkKQvImoaEEEvOUxk
-	8bccvtN0j/InlKv4U0oGt5rT4=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDnjwVr7vho86LUBg--.2882S2;
-	Wed, 22 Oct 2025 22:47:08 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: gregkh@linuxfoundation.org
-Cc: hch@infradead.org,
-	jackzxcui1989@163.com,
-	jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	tj@kernel.org
-Subject: Re: [PATCH v1 2/2] serial: 8250_dma: add parameter to queue work on specific cpu
-Date: Wed, 22 Oct 2025 22:47:07 +0800
-Message-Id: <20251022144707.160181-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025102107-player-baggie-37fc@gregkh>
-References: <2025102107-player-baggie-37fc@gregkh>
+	s=arc-20240116; t=1761144470; c=relaxed/simple;
+	bh=Z1awYP775zcmRIPxtIP7LDM5gU9pja6nxuYhnSfCHwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDewiGv6/OeH8wzBbVxR1y621yfYH3eI1IlJpURMJli8/w/3hXcLq1ipTgeCRFAY3ywY6wYkt9IF4NdH+sJm3YnyImoSm1NFmziBtUd1DlTBSJ/SEeOkIJsUgnsoscjFjjbKEgO5GFhKyJADzoT+LVae7LDB/gsrPzcF4rvcd3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1QpJ40o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F13DBC4CEE7;
+	Wed, 22 Oct 2025 14:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761144469;
+	bh=Z1awYP775zcmRIPxtIP7LDM5gU9pja6nxuYhnSfCHwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U1QpJ40o66G6/TVUkWpx0/dz1vlGkwNZ1VOIZyJUGJszkMRpjvNLXc4+vcHL+cvuQ
+	 nuTA8alGqU9uNl/jhWZ3gdqiEK5Z7UHaISu50Nc2LJR5xXdrj+Pj9LxPo5NwVW6TX2
+	 zSxS14I0cjYf94gFsOxjidhXAWTe7sztaWJn/xrkNSMbvpRveODQTtos9GFonls1+8
+	 Ce+PVi6NsMeDMZUyDq5pF2ZGhQ8193V7agtk1l2CQOW/sDEhIWTuXfh88E6smHURsz
+	 qHEVeawHqp9S5XSnwz537mLA+9ZdtA8udXLXr/B7Tk7uxEW+Mc7DsWNoumPnZrqW3I
+	 p3nvHrkxxctJQ==
+Date: Wed, 22 Oct 2025 17:47:41 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: dan.j.williams@intel.com
+Cc: Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com,
+	=?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM
+ DIMM devices
+Message-ID: <aPjujSjgLSWsAtsb@kernel.org>
+References: <20251015080020.3018581-1-rppt@kernel.org>
+ <20251015080020.3018581-2-rppt@kernel.org>
+ <68f2da6bd013e_2a201008c@dwillia2-mobl4.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnjwVr7vho86LUBg--.2882S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXr4xAw15Ar1UCr13try3XFb_yoW5ZFW8pF
-	WSga4ft3WkXF4Iy3ZrWr40vFW3Can8KF13Gw1kGrWfAwn8JryFkr1xKFWj9FWUGr1kuFy5
-	ZFn09rW0yaykA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRnSdDUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/xtbCvwwvOWj47mxGzwAA3+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68f2da6bd013e_2a201008c@dwillia2-mobl4.notmuch>
 
-On Tue, 21 Oct 2025 18:26:53 +0200 Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> I do not know, but it was not threaded :(
+On Fri, Oct 17, 2025 at 05:08:11PM -0700, dan.j.williams@intel.com wrote:
+> Mike Rapoport wrote:
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > 
+> > There are use cases, for example virtual machine hosts, that create
+> > "persistent" memory regions using memmap= option on x86 or dummy
+> > pmem-region device tree nodes on DT based systems.
+> > 
+> > Both these options are inflexible because they create static regions and
+> > the layout of the "persistent" memory cannot be adjusted without reboot
+> > and sometimes they even require firmware update.
+> > 
+> > Add a ramdax driver that allows creation of DIMM devices on top of
+> > E820_TYPE_PRAM regions and devicetree pmem-region nodes.
+> > 
+> > The DIMMs support label space management on the "device" and provide a
+> > flexible way to access RAM using fsdax and devdax.
+> > 
+> > Signed-off-by: Mike Rapoport (Mircosoft) <rppt@kernel.org>
+> > ---
+> >  drivers/nvdimm/Kconfig  |  17 +++
+> >  drivers/nvdimm/Makefile |   1 +
+> >  drivers/nvdimm/ramdax.c | 272 ++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 290 insertions(+)
+> >  create mode 100644 drivers/nvdimm/ramdax.c
+> > 
+> > diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
+> > index fde3e17c836c..9ac96a7cd773 100644
+> > --- a/drivers/nvdimm/Kconfig
+> > +++ b/drivers/nvdimm/Kconfig
+> > @@ -97,6 +97,23 @@ config OF_PMEM
+> >  
+> >  	  Select Y if unsure.
+> >  
+> > +config RAMDAX
+> > +	tristate "Support persistent memory interfaces on RAM carveouts"
+> > +	depends on OF || X86
 > 
-> Try sending it to yourself and see if the delay maybe caused a problem?
-> there should not be an issue sending just 3 messages at once.
-
-Now that I think about it, both patches are small and address the same issue, so I
-will combine them into a single patch for the next submission.
-
-> 6.1 is very old, please try the latest 6.17.y release, or 6.18-rc1.
-> Lots and lots of RT stuff has been fixed since 6.1.
+> I see no compile time dependency for CONFIG_OF. The one call to
+> dev_of_node() looks like it still builds in the CONFIG_OF=n case. For
+> CONFIG_X86 the situation is different because the kernel needs
+> infrastructure to build the device.
 > 
-> I'm saying that the RT selection should cause you not to have those
-> larger variants in delays.  Try a newer kernel and see.
+> So maybe change the dependency to drop OF and make it:
+> 
+> 	depends on X86_PMEM_LEGACY if X86
 
-I have now clarified, as you mentioned, why there is no issue in the standard kernel
-but there is a problem in RT-Linux. In the dma_rx_complete function in 8250_dma.c,
-locking is done using uart_port_lock_irqsave and uart_port_unlock_irqrestore, where
-uart_port_lock_irqsave calls the spin_lock_irqsave API. In the standard kernel,
-spin_lock_irqsave disables both preemption and hardware interrupts, while in RT-Linux,
-spin_lock_irqsave does not disable preemption and does not disable hardware interrupts.
-This leads to a situation where, after acquiring the spin_lock_irqsave lock, if a
-real-time task preempts the current task, the spinlock holding period will lead to
-migrate_disable, so if other CPUs back to idle, they cannot pull the preempted kworker
-task. The work task can only continue execution after the real-time task releases the
-CPU, resulting in high latency. This issue cannot be resolved in any version of the
-kernel because the implementation of spin_lock_irqsave in RT-Linux is still defined
-as spin_lock in higher version kernels, which means it does not disable preemption or
-hardware interrupts. Similarly, in higher version kernels, spin_lock still calls
-migrate_disable. Therefore, this issue cannot be resolved by simply using a higher
-version of the kernel.
+We can't put if in a depends statement :(
+My intention with "depends on OF || X86" was that if it's not really
+possible to use this driver if it's not X86 or OF because there's nothing
+to define a platform device for ramdax to bind.
 
-> This should come from a hardware definition somewhere in your DT, not as
-> a user-selectable option.  And again, why not just tie it to the cpu
-> where the irq came from automatically?
+Maybe what we actually need is
 
-I don't think binding the work task to the CPU that handles the interrupt is feasible,
-because, in practice, this hardware interrupt is evenly distributed across all cores
-in our system. Moreover, from the ftrace data we captured, the IRQ handler thread that
-wakes up the kworker threads in RT-Linux is also distributed across various CPUs by
-default.
-Considering the current situation is still limited to the RT-Linux scenario, if
-possible, I will add the logic to create this workqueue only when CONFIG_PREEMPT_RT
-is enabled in the next patch. By setting WQ_SYS, it will allow user space to dynamically
-modify it. Additionally, in tty_flip_buffer_push, I will check if a private workqueue
-has been created; if so, I will use the private workqueue to queue the work task.
-If modified this way, there will be no changes for the standard kernel. For the RT-Linux
-system, if user space does not dynamically modify the workqueue's CPU affinity and
-priority, the effect will be the same as if this patch were not applied. What do you think
-about this approach?
+	select X86_PMEM_LEGACY_DEVICE if X86
+	default n
 
---
-Xin Zhao
+so that it could be only explicitly enabled in the configuration and if it
+is, it will also enable X86_PMEM_LEGACY_DEVICE on x86.
+With default set to no it won't be build "accidentailly", but OTOH cloud
+providers can disable X86_PMEM_LEGACY and enable RAMDAX and distros can
+build them as modules on x86 and architectures that support OF. 
 
+What do you think?
+
+> > +	select X86_PMEM_LEGACY_DEVICE
+> 
+> ...and drop this select.
+> 
+> > +	default LIBNVDIMM
+> > +	help
+> > +	  Allows creation of DAX devices on RAM carveouts.
+> > +
+> > +	  Memory ranges that are manually specified by the
+> > +	  'memmap=nn[KMG]!ss[KMG]' kernel command line or defined by dummy
+> > +	  pmem-region device tree nodes would be managed by this driver as DIMM
+> > +	  devices with support for dynamic layout of namespaces.
+> > +	  The driver can be bound to e820_pmem or pmem-region platform
+> > +	  devices using 'driver_override' device attribute.
+> 
+> Maybe some notes for details like:
+> 
+> * 128K stolen at the end of the memmap range
+> * supports 509 namespaces (see 'ndctl create-namespace --help')
+> * must be force bound via driver_override
+
+Sure.
+ 
+> [..]
+> > +static int ramdax_probe(struct platform_device *pdev)
+> > +{
+> > +	static struct nvdimm_bus_descriptor nd_desc;
+> > +	struct device *dev = &pdev->dev;
+> > +	struct nvdimm_bus *nvdimm_bus;
+> > +	struct device_node *np;
+> > +	int rc = -ENXIO;
+> > +
+> > +	nd_desc.provider_name = "ramdax";
+> > +	nd_desc.module = THIS_MODULE;
+> > +	nd_desc.ndctl = ramdax_ctl;
+> > +	nvdimm_bus = nvdimm_bus_register(dev, &nd_desc);
+> > +	if (!nvdimm_bus)
+> > +		goto err;
+> > +
+> > +	np = dev_of_node(&pdev->dev);
+> > +	if (np)
+> > +		rc = ramdax_probe_of(pdev, nvdimm_bus, np);
+> 
+> Hmm, I do not see any confirmation that this node is actually a
+> "pmem-region". If you attach the kernel to the wrong device I think you
+> get fireworks that could be avoided with a manual of_match_node() check
+> of the same device_id list as the of_pmem driver.
+> 
+> That still would not require a "depends on OF" given of_match_node()
+> compiles away in the CONFIG_OF=n case.
+
+With how driver_override is implemented it's possible to get fireworks with
+any platform device :)
+
+I'll add a manual check for of_match_node() to be on the safer side.
+
+> [..]
+> 
+> This looks good to me. With the above comments addressed you can add:
+> 
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+
+-- 
+Sincerely yours,
+Mike.
 
