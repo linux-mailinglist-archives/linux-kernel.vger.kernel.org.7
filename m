@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-864258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65727BFA4FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:48:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D311DBFA50B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A5842817E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:48:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9048B4F67FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552A01B4F09;
-	Wed, 22 Oct 2025 06:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2271F5437;
+	Wed, 22 Oct 2025 06:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f52VkERP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVpLb1W5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A342E11AA;
-	Wed, 22 Oct 2025 06:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E637248F77;
+	Wed, 22 Oct 2025 06:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761115728; cv=none; b=dQBybSfRokhmutCrNaxA7IR+KxoliRNaLJaSP7OhELqt2jW1hIi1jxtbi4KO8+f74XDfYcRgQG25+3WxCOMGXeDDsiVLrDzzVu9Dl2/KnNBYrhwNKu2NZBSSkcQBHmxHwUHkzca0xI1m9SmRUHZB24n1w9K48rA/tpI9V250ICY=
+	t=1761115757; cv=none; b=VAWmOV0l7NN49AmL9zPzAkRyhRPZCfMMz46taAZrg1NVSGJ+B0AiyvpBxmyPE+m1NqpfEHiFKMNMsruuZw681SwMYXEmQ2YeOtyNgKzyCBmfb02z2+x4oOCX4RwnrcN/UoxQhHwG2Yrs7fOYyjWh+UDaoAZEGocIKnsgkj8oLLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761115728; c=relaxed/simple;
-	bh=bux0MpiefE0E0udPEyLkyVKKTF7xnuFg2f9MRlWs8GY=;
+	s=arc-20240116; t=1761115757; c=relaxed/simple;
+	bh=XnE2DLS7tu2song5sWYAoCNuWntTxjoxe9/o7d7umkk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cgBDZ7POUQMzKihnc7S4JOLP7uO1WXIo6IzC65NqHAvjCjrnTHFEPRxtQvawXBswqX/UK96mPFLjGb6Gr5j0KcHoGawYgt75FlyOhwHksQ6ODZsjFDazSkM5wws0L0EpQ37Psj4MB3PHZ1rWnL+bMMmP2OdbqdiLGyseCetEpbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f52VkERP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B95C4CEE7;
-	Wed, 22 Oct 2025 06:48:45 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MEaP7bnrpBIJX7meiD5oWV3dBTAzdwRj4UTf6jqIgTLEGev0h5o5+oRILpazbf6vDxx+7BRodT1BMcWk2ZTiVtknunzmvAlXfycakzt12Nsr/jyCwzK18mEbrS2tdY7uRnK8AN91oFRjakVOBKbn59ck7G3baEbULnuCgzC0FFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVpLb1W5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EA5C4CEE7;
+	Wed, 22 Oct 2025 06:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761115728;
-	bh=bux0MpiefE0E0udPEyLkyVKKTF7xnuFg2f9MRlWs8GY=;
+	s=k20201202; t=1761115757;
+	bh=XnE2DLS7tu2song5sWYAoCNuWntTxjoxe9/o7d7umkk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f52VkERPw/+okQoOmeKa9eUCOQn1TM5lnDAiv3ekN3P/yEYgLJ+dz5+JO/7vnrI4L
-	 W9cjAgJUKBW6yAVO94hSZ7UUEnyyQd8GlCzh/QBn2v8+t4SEpO3KeFFHNc92KgX4b1
-	 lNxHihy+XKRm3oWUEARB8Cep5kv/ZBTFTflDvSrNXHyveYed0xCUoGThOR+WLZtd/V
-	 L37/BHXGm/FzdeqEq+784VIwyfZLskBBhPTuOccVmr3iM9OEDauVMLaS6iPvVGzmWC
-	 lyudEmwvrhS6ENFYjg7tLrtbZ8gCNOzgfypsAz8Yht0bStd5jInrsyckYzXnD4IubI
-	 rPlNC5kvIsqVw==
-Message-ID: <e396d81b-0f61-4a05-873e-354339b5e50e@kernel.org>
-Date: Wed, 22 Oct 2025 08:48:43 +0200
+	b=HVpLb1W51bg1KyFtphVFCVcSV68lMqzkPu+AhG/urikF3LJeGCYcMuVs+RH/hrqa+
+	 TukG5dUS8zr4R4Esv/WZJzSe9BVjpkyN7FhBnyB3jpWaRy86CLkEFmZzPo6kXXs0f9
+	 NT1ojr3r0LR913vgS8l0qxzdR+HZ+kj17gYklULTBjsXwdXu8saH1lTz1ZKULg8n6y
+	 8VMZEgEA+KGpKz5MNFLDMeylTAxkUdQTsY9HLwk+d+kNntkBUBwyPM8a1vXUU9ifEU
+	 EGWZSq7ll62oypmVsxgvXuZSPPt9AEcIROm9GOKg3XX3rJK7DcUMMrRzWnFaIj5o2e
+	 VSaiSwRhjAWSw==
+Message-ID: <0757094e-4168-4612-8ea9-22d767a84fc0@kernel.org>
+Date: Wed, 22 Oct 2025 08:49:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] Documentation/devicetree/bindings/hwmon: Add TSC1641
- binding
+Subject: Re: [PATCH 2/5] drivers/hwmon: Add Kconfig entry for TSC1641
 To: Igor Reznichenko <igor@reznichenko.net>, linux@roeck-us.net,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
  skhan@linuxfoundation.org, david.hunter.linux@gmail.com
 Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 References: <20251022044708.314287-1-igor@reznichenko.net>
- <20251022044708.314287-6-igor@reznichenko.net>
+ <20251022044708.314287-3-igor@reznichenko.net>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,76 +102,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251022044708.314287-6-igor@reznichenko.net>
+In-Reply-To: <20251022044708.314287-3-igor@reznichenko.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 22/10/2025 06:47, Igor Reznichenko wrote:
-> Add a devicetree binding for the TSC1641 I2C power monitor.
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
-prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-Please organize the patch documenting compatible (DT bindings) before
-their user.
-See also:
-https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
-
-
+> Add a Kconfig entry for the TSC1641 driver under the HWMON_I2C menu.
+> The driver can be built as a module or built-in. Default is module.
 > 
 > Signed-off-by: Igor Reznichenko <igor@reznichenko.net>
 > ---
->  .../devicetree/bindings/hwmon/st,tsc1641.yaml | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/st,tsc1641.yaml
+>  drivers/hwmon/Kconfig | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/hwmon/st,tsc1641.yaml b/Documentation/devicetree/bindings/hwmon/st,tsc1641.yaml
-> new file mode 100644
-> index 000000000000..e79f6dab4a87
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/st,tsc1641.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/st,tsc1641.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ST Microelectronics TSC1641 I2C power monitor
-> +
-> +maintainers:
-> +  - Igor Reznichenko <igor@reznichenko.net>
-> +
-> +description: |
-> +  TSC1641 is a 60 V, 16-bit high-precision power monitor with I2C and MIPI I3C interface
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 2760feb9f83b..b9d7b02932a6 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -2434,6 +2434,18 @@ config SENSORS_TMP513
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called tmp513.
+>  
+> +config SENSORS_TSC1641
 
-Please wrap code according to the preferred limit expressed in Kernel
-coding style, so at 80.
+This patch makes no sense on its own. Squash it.
 
-> +
-> +  Datasheets:
-> +    https://www.st.com/resource/en/datasheet/tsc1641.pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: st,tsc1641
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  shunt-resistor:
+> +	tristate "ST Microelectronics TSC1641 Power Moni
 
-Use existing property, git grep shunt.
-
-And then test it...
 
 Best regards,
 Krzysztof
