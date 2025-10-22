@@ -1,178 +1,213 @@
-Return-Path: <linux-kernel+bounces-865960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CA7BFE6B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:33:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A417BFE6B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB0F1A0681B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:33:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DDC63A5745
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA732F12DA;
-	Wed, 22 Oct 2025 22:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48590303C9C;
+	Wed, 22 Oct 2025 22:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="aX3N7Eib"
-Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ar1qImag"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F7A288C20
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDF526ED44
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761172396; cv=none; b=aZ2gwLyN4nmwnc8WxTpwEg3gRflYAnh3xluG6H0HETLKeQq/N4HQCjXXDufmDbEN9XLhHlEMkNlGTGPZgICQKLPb325+hD3/OJ3gYobsI/nT6jCOI0P9OmtNG6Fu9A1sAxDz6+yL/OZUIh3dNz8rvMpNY7XoM4YGtlWPgZ9BDVw=
+	t=1761172379; cv=none; b=WV/ZYOI2YJVRf7RKovDcT/YmvPFK0NMlEXrcN4bqSc3JJ8h3ochK5xxLi7dsQd0jujKTj0B3tMj0TJxjgIaT5QnlOpVP9f4N1IRpbJmkjPnoq/WV1kqNWo/VQOy9hn885NFfxlKnlrACru7fb7SAnHk60I4yY5VQb+Uf4gOlUVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761172396; c=relaxed/simple;
-	bh=dVfgEu9qcwOKno5SLXpEJ3JiPhsTPxK/YObQhXDy+/Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ci4mb/OnoWEPXsz+YgJQ+cVCyN8Q+49+rYL3d43YV0OXti8lkE43m4QFSkV2jzGSb9s3/JQvCyMTjPIvcHUl9po8p4dR8AGdd7mtyupl8fNA0vgt1ElPnXHjeay+GSH9elj4a+vZ5NcCOQvScuVuarBxcsVIZmmQ3ojg4DmPyhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=aX3N7Eib; arc=none smtp.client-ip=61.135.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1761172390;
-	bh=b+8CUta4WIQPuZ+O6n5HcqH79h8cLw/nbd8oqpi9Oss=;
-	h=From:Subject:Date:Message-ID;
-	b=aX3N7EibxIJ4mqaHdXlEVW9siFtOUAQ8plKZfX5A/y6ELXgP6Tq4qT1jGpHV+Po8D
-	 VReo7QwsGZfEn5v7F5k9e9dIIjxN1OH05M8xN0hI2qzK6qM3OIkKQ6yfvlsoImb4r0
-	 1OFlOPQMaRXaR+WnkpUyB69wm4fBBhrva/BRpuiE=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 68F95B7C00006FD8; Wed, 23 Oct 2025 06:32:29 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9169206816204
-X-SMAIL-UIID: E56726089A0E4746A66BEF4CFBB6559C-20251023-063229-1
-From: Hillf Danton <hdanton@sina.com>
-To: Samuel Wu <wusamuel@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	kernel-team@android.com,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
-Date: Thu, 23 Oct 2025 06:32:16 +0800
-Message-ID: <20251022223218.8664-1-hdanton@sina.com>
-In-Reply-To: <CAG2KctoJ+1x61KNmDj_52J1_Y3vyox7UNceFw6_WtbRMA_1vYA@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1761172379; c=relaxed/simple;
+	bh=onF2dEW2GT8z4+jPs6o/8tZ+jSkB9+bquGGz46WUlLY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=offbTmZcZnXM5MYoaOFjMbqHZISDv9k4Zs01hgwlHvHY4vEXZ5eoG5QLrfpSYkTQjPH8QH8BxEBZWOi2BREjNpbrYAJ0Di98zDIDqb8M6xq0+5KJvCfC32+cVbG++hb5Dp3prcOdS7eb5xLvAoYE7IrqCajMdSG3Tvv45cJy1sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ar1qImag; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1829CC2BC9E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761172379;
+	bh=onF2dEW2GT8z4+jPs6o/8tZ+jSkB9+bquGGz46WUlLY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ar1qImagDtvpiCGyN6GCkHI2EdgL3OVrIRYz7oDYU2WPoC9jaX3WZdi4JEXeovcyj
+	 qE3J1kx5EzGZyWQOFZoG0gCYckXKbDJmC+AeI1eVD/lD3HDf3T2T4vkFDirT08KPb8
+	 byzVxhlsag6qr1FQwmjpO3bEvKRM/T/IedDQEDF4EyrLAQC1FGkk/763o4/qRiaREO
+	 3Rt/NkbTnmFPEYKJIgbMftkS5rr6Rp37AvGjL9+q8e48qyOZAfa0AzBGLs8Zw4G1yN
+	 5VDtVzo3vdSoO2iCqRY+P+xfsxsq9sXSHAqO+GxI+rm0arIrEmvMNcJhp684/jDdJI
+	 jSZi6uGsFjmlA==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63c31c20b64so184326a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:32:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXSqt7QJWWcK/NebBeEKEeYAmvBSjtLW0FsZ1dCVwGL5zKDrAsraaNcxi+c6RvmAnCeGHLyNytHTmh8tJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylL9xgQWwHIOJaP6EvG0I5D6hr8vOoQ/f5yJ2VnBQ04xKNgMFp
+	58dMo7k5rq0fQbVnYa5JTz0eLSO5Kf9S/2EuIh90WqBDZNKvfUC+SJuTJAfebphpa9AsQdlxuzU
+	RDIBIoMvl2ODXzM2YoOP2ArbR7MiepWk=
+X-Google-Smtp-Source: AGHT+IGjY3xy/N8H2wqZeaBT7Q7WCMfTzN80Zu4l3CFpCRIMxNiTLzqsv3MPxBrCf5VbHA/IgoUtg4NtTW1Rb+2HHjE=
+X-Received: by 2002:a05:6402:440d:b0:639:ffb5:3604 with SMTP id
+ 4fb4d7f45d1cf-63c1f6edf8amr20301227a12.37.1761172377326; Wed, 22 Oct 2025
+ 15:32:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251020183304.umtx46whqu4awijj@pali>
+ <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com>
+ <20251021221919.leqrmil77r2iavyo@pali> <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+ <20251022185214.abdbkp7eqmcrnbhx@pali>
+In-Reply-To: <20251022185214.abdbkp7eqmcrnbhx@pali>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 23 Oct 2025 07:32:45 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9mun=jTbL2J8-d5Zfe8QuwCT-eM6c3p1Td05uxSE2yFQ@mail.gmail.com>
+X-Gm-Features: AS18NWCxeXFizVpnSB5ZyfUOajGEqtne71go8Pa-jl-OM3pbTbZb0T4375NdvQI
+Message-ID: <CAKYAXd9mun=jTbL2J8-d5Zfe8QuwCT-eM6c3p1Td05uxSE2yFQ@mail.gmail.com>
+Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, ebiggers@kernel.org, neil@brown.name, 
+	amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
+	jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 22 Oct 2025 11:41:37 -0700 Samuel Wu wrote:
-> On Tue, Oct 21, 2025 at 6:16 PM Hillf Danton <hdanton@sina.com> wrote:
-> > On Tue, 21 Oct 2025 13:13:39 -0700 Samuel Wu wrote:
-> > > On Fri, Oct 17, 2025 at 5:17 PM Hillf Danton <hdanton@sina.com> wrote:
-> > > > On Fri, 17 Oct 2025 23:39:06 +0000 Samuel Wu wrote:
-> > > > > +/**
-> > > > > + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
-> > > > > + *
-> > > > > + * Return 0 on successful file system sync, otherwise returns -EBUSY if file
-> > > > > + * system sync was aborted.
-> > > > > + */
-> > > > > +int pm_sleep_fs_sync(void)
-> > > > > +{
-> > > > > +     bool need_pm_sleep_fs_sync_requeue;
-> > > > > +     unsigned long flags;
-> > > > > +
-> > > > > +     do {
-> > > > > +             spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
-> > > > > +             reinit_completion(&pm_sleep_fs_sync_complete);
-> > > >
-> > > > Given difficulty following up here, can you specify why reinit is needed?
+On Thu, Oct 23, 2025 at 3:52=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> On Wednesday 22 October 2025 11:13:50 Namjae Jeon wrote:
+> > On Wed, Oct 22, 2025 at 7:19=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.or=
+g> wrote:
 > > >
-> > > There are two possibilities that make reinit_completion() necessary:
-> > > 1. Suspend abort triggers completion, but is canceled before
-> > > pm_wakeup_pending(), so need reinit to restart the
-> > > wait_for_completion() process.
-> > > 2. Handling back-to-back suspend attempts: after a subsequent suspend
-> > > attempt finishes waiting for a previous suspend's fs_sync to finish,
-> > > we need the reinit to start the wait_for_completion() process of the
-> > > subsequent suspend's fs_sync.
+> > > On Tuesday 21 October 2025 10:49:48 Namjae Jeon wrote:
+> > > > On Tue, Oct 21, 2025 at 3:33=E2=80=AFAM Pali Roh=C3=A1r <pali@kerne=
+l.org> wrote:
+> > > > >
+> > > > > Hello,
+> > > > Hi Pali,
+> > > > >
+> > > > > Do you have a plan, what should be the future of the NTFS support=
+ in
+> > > > > Linux? Because basically this is a third NTFS driver in recent ye=
+ars
+> > > > > and I think it is not a good idea to replace NTFS driver every de=
+cade by
+> > > > > a new different implementation.
+> > > > Our product is currently using ntfsplus without any issues, but we =
+plan to
+> > > > provide support for the various issues that are reported from users=
+ or
+> > > > developers once it is merged into the mainline kernel.
+> > > > This is very basic, but the current ntfs3 has not provided this sup=
+port
+> > > > for the last four years.
+> > > > After ntfsplus was merged, our next step will be to implement full =
+journal
+> > > > support. Our ultimate goal is to provide stable NTFS support in Lin=
+ux,
+> > > > utilities support included fsck(ntfsprogs-plus) and journaling.
 > > >
-> > If 1. and 2. matches the comment for wait_for_completion() below,
-> >
-> >         static DECLARE_COMPLETION(foo);
-> >
-> >         waiter          waker1          waker2
-> >         ---             ---             ---
-> >         for (;;) {
-> >           reinit_completion(&foo)
-> >           do anything
-> >           wait_for_completion(&foo)
-> >                         do bar1         do bar2
-> >                         complete(&foo)  complete(&foo)
-> >           if (end)
-> >                 break;
-> >         }
-> >
-> > the chance for reinit to drop one wakeup is not zero.
-> > If drop makes sense, for what do you wait after receiving two wakeups?
-> >
-> 
-> If I understand correctly, you are referring to the case where
-> multiple wakers trigger wait_for_complete() simultaneously, hence
-> having at least one waker's complete() being ignored?
-> 
-> If so, I see two possibilities with multiple wakers:
-> 1. fs_sync finishing + suspend abort1 + ... + suspend abortN
-> 2. suspend abort1 + ... + suspend abortN
-> 
-> Simplifying, if two wakers come in simultaneously, while one of the
-> wakers may have its complete() ignored, the state of that waker is
-> still checked after wait_for_completion(), with
-> if(pm_wakeup_pending()) and while(need_pm_sleep_fs_sync_requeue) for
-> suspend aborts and fs_sync finishing respectively.
-> 
-Note one of the two wakeups may come after the two checks.
+> > > One important thing here is that all those drivers are implementing
+> > > support for same filesystem. So theoretically they should be equivale=
+nt
+> > > (modulo bugs and missing features).
+> > >
+> > > So basically the userspace ntfs fs utils should work with any of thos=
+e
+> > > drivers and also should be compatible with Windows ntfs.sys driver.
+> > > And therefore independent of the used kernel driver.
+> > >
+> > > It would be really nice to have working fsck utility for ntfs. I hope
+> > > that we would not have 3 ntfs mkfs/fsck tools from 3 different projec=
+t
+> > > and every one would have different set of bugs or limitations.
+> > >
+> > > > >
+> > > > > Is this new driver going to replace existing ntfs3 driver? Or sho=
+uld it
+> > > > > live side-by-side together with ntfs3?
+> > > > Currently, it is the latter. I think the two drivers should compete=
+.
+> > > > A ntfs driver that users can reliably use for ntfs in their
+> > > > products is what should be the one that remains.
+> > > > Four years ago, ntfs3 promised to soon release the full journal and
+> > > > public utilities support that were in their commercial version.
+> > > > That promise hasn't been kept yet, Probably, It would not be easy f=
+or
+> > > > a company that sells a ntfs driver commercially to open some or all=
+ sources.
+> > > > That's why I think we need at least competition.
+> > >
+> > > I understand it. It is not really easy.
+> > >
+> > > Also same thing can happen with your new ntfsplus. Nobody knows what
+> > > would happen in next one or two years.
+> > Since I publicly mentioned adding write support to ntfs driver, I have =
+devoted
+> > a great deal of time and effort to fulfilling that while working on oth=
+er tasks
+> > in parallel. Your comment seems to undermine all the effort I have done
+> > over the years.
+>
+> I'm really sorry, I did not mean it in that way. I just wanted to point
+> that year is a very long period and unexpected things could happen.
+> Nothing against your or any others effort.
+I apologize for the misunderstanding. Thank you for clarifying that for me.
 
-       reinit_completion(&foo)
-       do anything
-       wait_for_completion(&foo)
-       		complete(&foo) from waker1
-       check1
-       check2
-       		complete(&foo) from waker2 // dropped by reinit
-
-> > > > > +             /*
-> > > > > +              * Handle the case where a sleep immediately follows a previous
-> > > > > +              * sleep that was aborted during fs_sync. In this case, wait for
-> > > > > +              * the previous filesystem sync to finish. Then do another
-> > > > > +              * filesystem sync so any subsequent filesystem changes are
-> > > > > +              * synced before sleeping.
-> > > > > +              */
-> > > > > +             if (pm_sleep_fs_sync_queued) {
-> > > > > +                     need_pm_sleep_fs_sync_requeue = true;
-> > > > > +             } else {
-> > > > > +                     need_pm_sleep_fs_sync_requeue = false;
-> > > > > +                     pm_sleep_fs_sync_queued = true;
-> > > > > +                     schedule_work(&sync_filesystems);
-> > > > > +             }
-> > > > > +             spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
-> > > > > +
-> > > > > +             /*
-> > > > > +              * Completion is triggered by fs_sync finishing or an abort sleep
-> > > > > +              * signal, whichever comes first
-> > > > > +              */
-> > > > > +             wait_for_completion(&pm_sleep_fs_sync_complete);
-> > > > > +             if (pm_wakeup_pending())
-> > > > > +                     return -EBUSY;
-> > > > > +     } while (need_pm_sleep_fs_sync_requeue);
-> > > > > +
-> > > > > +     return 0;
-> > > > > +}
+>
+> > >
+> > > > >
+> > > > > If this new driver is going to replace ntfs3 then it should provi=
+de same
+> > > > > API/ABI to userspace. For this case at least same/compatible moun=
+t
+> > > > > options, ioctl interface and/or attribute features (not sure what=
+ is
+> > > > > already supported).
+> > > > Sure, If ntfsplus replace ntfs3, it will support them.
+> > > > >
+> > > > > You wrote that ntfsplus is based on the old ntfs driver. How big =
+is the
+> > > > > diff between old ntfs and new ntfsplus driver? If the code is sti=
+ll
+> > > > > same, maybe it would be better to call it ntfs as before and cons=
+truct
+> > > > > commits in a way which will first "revert the old ntfs driver" an=
+d then
+> > > > > apply your changes on top of it (like write feature, etc..)?
+> > > > I thought this patch-set was better because a lot of code clean-up
+> > > > was done, resulting in a large diff, and the old ntfs was removed.
+> > > > I would like to proceed with the current set of patches rather than
+> > > > restructuring the patchset again.
+> > >
+> > > Sure. In the current form it looks to be more readable and easier for
+> > > review.
+> > >
+> > > But I think that more developers could be curious how similar is the =
+new
+> > > ntfsplus to the old removed ntfs. And in the form of revert + changes=
+ it
+> > > is easier to see what was changed, what was fixed and what new develo=
+ped.
+> > >
+> > > I'm just thinking, if the code has really lot of common parts, maybe =
+it
+> > > would make sense to have it in git in that "big revert + new changes"
+> > > form?
+> > >
+> > > > >
+> > > > > For mount options, for example I see that new driver does not use
+> > > > > de-facto standard iocharset=3D mount option like all other fs dri=
+ver but
+> > > > > instead has nls=3D mount option. This should be fixed.
+> > > > Okay, I will fix it on the next version.
+> > > > >
+> > > > > Pali
+> > > > Thank you for your review:)
 
