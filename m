@@ -1,125 +1,239 @@
-Return-Path: <linux-kernel+bounces-865039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1687BFC116
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:16:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1FABFC128
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B9965622E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:09:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 118B4562B33
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A937B34AAFF;
-	Wed, 22 Oct 2025 12:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjB2IZbm"
-Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9B934CFA1
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32E434D4DC;
+	Wed, 22 Oct 2025 12:58:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8362F34CFC4;
+	Wed, 22 Oct 2025 12:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137927; cv=none; b=dmaPWThulE9akUvUzMNtZVh7rfE23qH6eqpix7ifsFvqnEKw1wI5YcgWyjfOzqePk/nA656xhhaQKBK//uVjMvCp+2+NsWxTFqqh0adTrYEjSq/dE9mgODuCKFKvtvAevZckQGZlobcvfAVvUHS6cpNl+PCETHsO3/PYjdOhfbc=
+	t=1761137928; cv=none; b=ahRu4IOzwYC4hTesemkhiQhwlpaGPW6sfkdGEBIY5AzSBzdModXjigbsXKd9lHvTN5lrWLLJg4NszXoZcnoBgHPtsf1LyPSeAl+QdZr0qWlsrCEbpLBB1xCSIKLullQD5Nyvj9hTLg2uWxpP1TwezNdQfdhrrkhzg2w6xqzFD/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137927; c=relaxed/simple;
-	bh=armGkSkAaiUUsrrhXH17hULdm42LMKSSLzB/YcDoAGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CDBrgMNv6qVJs4qoWcsx316fI5JlLZ5f6TklEsSzKPpoGo5MPmMgE4HBYg+HwFwEdgGwrwOuQXHamJOZ/cRovnngV+2zJyquN/QbBB9BPCFEn1Brfd8iseo3tEc5llcRl7YH8nUsZ3R42NDQHVbZ8j/TqZYmFUrj4Y2W7xOvR5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EjB2IZbm; arc=none smtp.client-ip=74.125.224.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-633c1b740c5so6805202d50.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761137924; x=1761742724; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eLEmUot0dG9xtL8DSLz9R1/+HNCZwZn0MDiZJ/G/QNg=;
-        b=EjB2IZbmIBLErE/Qbzdc/+gUwwQsUM20REtA7MNkaK1mAha1jvS50mmWQdXXSRJlnn
-         ECUvv8A9uGlJfZ6hhJGS7/oba9DQkZ9psBvZ41Wb6/HbNs8eXED3TMAaec3NX97eIFne
-         6zTo5Ah/X22qylATf3Wboc4pBlRQXXUju8A6JyjdXIJWsj3UVfcsYjWSifUTR2z35aih
-         WcKoVFANHcuJMxj9/6w0gccf+8WEE3Xr01PIsXDFqes+SoMtksF2/+GCJJyQUBEiUrCO
-         TX5vHSX+OmsuOeZ8E6Qx5IHPSSKaH4AkdR6jsFIfFS+CtVZbXfa5KsKCCcNws6HYiND6
-         DJgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761137924; x=1761742724;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eLEmUot0dG9xtL8DSLz9R1/+HNCZwZn0MDiZJ/G/QNg=;
-        b=agp1MObWwFq8I0BXrOBmV3V+4duxcmOT8tWnQ8w+GEUV5xm0Tnh0An4YLzXDXl6k+R
-         K/AkVyhX4ZHZgW85zrrGqq/DrEAk/T3EZauFVp//m/MtF0txXhuJWVe0XdgqZUOUj1hw
-         TcrrakF2LJsuEgxBZcBiNl0vZm4iUjppmav29u9qKOHRcrbFshkUmaqfgZsp0P8Dih4N
-         qpxiOo0DvRHbjp7rmyBGYIGLlWekLHHY7ImNS/JR6d72uTj88YcZvG8N6bE4hqI3PiRH
-         O5hH4rU5Go4Tf3InahTfJSwdJTlK3jBXYeOlDdbbkYqwgimaK/koWQj/6r1JzBURAyuI
-         UVnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5ygW6gMYaCp/srqBMC/cJzj/t9gxQBjjJw2SK/7Ds9n0zsSLE/419edc2uKUTBCA9vEqyY4WydwCpowA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM470L0cuFMT0LMoX5oL8QgNy5FJ4RKNVgVZWJ2vXdRHnyUOOt
-	sznXVlVxkdjClx51cA68iqiEdKkj1gdzIDMB2JiHEBUHGEyP/XdT+5tXw1f+vpFCh837RZrIOl+
-	EPHUa/9NWCIQUwq8r0KBHMxh9BSACZXs8Q0fIDuzGfQ==
-X-Gm-Gg: ASbGncvIQmcP6wGTEJMbmnRndND1F3SHyPweJmhnJBHmbu4M/QKKSBDJ+02oyBBQzNw
-	lTcHmN27FW9iiKVwbPcIScC9kPXBnBkWYbje6takzEFyV05+92mZibm2PopFdoKflglmYbyS/wA
-	9TtcqdXC7LxXkPLzAvEy+gU778J/pREOnMw7V1sqgH8BA2MitaHMVSG0zWoUI4RAqfhkRGRF5hT
-	MwNg928jLGDMQu0Mx0Gc853SVW0MlWERo5otBn8jxUTE61xycu/mZD79EFLMn4JdRbTzFG6B+Mr
-	J32SnK8=
-X-Google-Smtp-Source: AGHT+IHAv7HiO6eP4aWMFZPRTzo0gGsJMyquNUGCzuthL+6MyEwwQSP44SzayI7psI05mL8WUrrN1mroERg61KE28fg=
-X-Received: by 2002:a05:690e:144b:b0:63e:19a8:e40d with SMTP id
- 956f58d0204a3-63e19a8e6f1mr16159025d50.38.1761137924084; Wed, 22 Oct 2025
- 05:58:44 -0700 (PDT)
+	s=arc-20240116; t=1761137928; c=relaxed/simple;
+	bh=l/bVXGTOuH/P3gATCnbv+Ywy5GgZCkt/pyPSy5TEh6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VdSWeklJvfeUqWBDcI2yxvoaw52MoyXjzKalyCHg8hDxuAi6GxyujzUSEy4sK8xoytp0BHf5nLJdB2Nz4FjeeInyCLh0PMbl0kzCiUeZTAuvPa12Bu1VbITPW0ufnm86VQSa40Fym4KHLdZ1eJQP+KdPpxHIhX+mlArvkLIAUGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1C7E1063;
+	Wed, 22 Oct 2025 05:58:37 -0700 (PDT)
+Received: from [172.27.251.126] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A177C3F59E;
+	Wed, 22 Oct 2025 05:58:38 -0700 (PDT)
+Message-ID: <50a8cc38-810b-4bea-9a73-2463a6160b9f@arm.com>
+Date: Wed, 22 Oct 2025 07:58:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021135155.1409-1-thorsten.blum@linux.dev>
-In-Reply-To: <20251021135155.1409-1-thorsten.blum@linux.dev>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 22 Oct 2025 14:58:07 +0200
-X-Gm-Features: AS18NWBn7Jc97c4IenLEHpSvuwzifEIi9PksbXk3zzduCyplxNyhkwWrmNivFQk
-Message-ID: <CAPDyKFo64vzC+66=v_4v5Z2CbFvFEQ+tYpSKcRvnvRcMvHD=TQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cpuidle: psci: Replace deprecated strcpy in psci_idle_init_cpu
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/29] ACPI / PPTT: Add a helper to fill a cpumask from
+ a cache_id
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-5-james.morse@arm.com>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20251017185645.26604-5-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 21 Oct 2025 at 15:52, Thorsten Blum <thorsten.blum@linux.dev> wrote:
->
-> strcpy() is deprecated; use strscpy() instead.
->
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Hi,
 
-Applied for next, thanks!
-
-Kind regards
-Uffe
+This is largely looking pretty solid, but..
 
 
+On 10/17/25 1:56 PM, James Morse wrote:
+> MPAM identifies CPUs by the cache_id in the PPTT cache structure.
+> 
+> The driver needs to know which CPUs are associated with the cache.
+> The CPUs may not all be online, so cacheinfo does not have the
+> information.
+> 
+> Add a helper to pull this information out of the PPTT.
+> 
+> CC: Rohit Mathew <Rohit.Mathew@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
 > ---
->  drivers/cpuidle/cpuidle-psci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
-> index b19bc60cc627..e75d85a8f90d 100644
-> --- a/drivers/cpuidle/cpuidle-psci.c
-> +++ b/drivers/cpuidle/cpuidle-psci.c
-> @@ -382,8 +382,8 @@ static int psci_idle_init_cpu(struct device *dev, int cpu)
->         drv->states[0].exit_latency = 1;
->         drv->states[0].target_residency = 1;
->         drv->states[0].power_usage = UINT_MAX;
-> -       strcpy(drv->states[0].name, "WFI");
-> -       strcpy(drv->states[0].desc, "ARM WFI");
-> +       strscpy(drv->states[0].name, "WFI");
-> +       strscpy(drv->states[0].desc, "ARM WFI");
->
->         /*
->          * If no DT idle states are detected (ret == 0) let the driver
-> --
-> 2.51.0
->
+> Changes since v2:
+>   * Removed stray cleanup useage in preference for acpi_get_pptt().
+>   * Removed WARN_ON_ONCE() for symmetry with other helpers.
+>   * Dropped restriction on unified caches.
+> 
+> Changes since v1:
+>   * Added punctuation to the commit message.
+>   * Removed a comment about an alternative implementaion.
+>   * Made the loop continue with a warning if a CPU is missing from the PPTT.
+> 
+> Changes since RFC:
+>   * acpi_count_levels() now returns a value.
+>   * Converted the table-get stuff to use Jonathan's cleanup helper.
+>   * Dropped Sudeep's Review tag due to the cleanup change.
+> ---
+>   drivers/acpi/pptt.c  | 64 ++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/acpi.h |  6 +++++
+>   2 files changed, 70 insertions(+)
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index 50c8f2a3c927..2f86f58699a6 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -985,3 +985,67 @@ int find_acpi_cache_level_from_id(u32 cache_id)
+>   
+>   	return -ENOENT;
+>   }
+> +
+> +/**
+> + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
+> + *					   specified cache
+> + * @cache_id: The id field of the cache
+> + * @cpus: Where to build the cpumask
+> + *
+> + * Determine which CPUs are below this cache in the PPTT. This allows the property
+> + * to be found even if the CPUs are offline.
+> + *
+> + * The PPTT table must be rev 3 or later,
+> + *
+> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
+> + * Otherwise returns 0 and sets the cpus in the provided cpumask.
+> + */
+> +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
+> +{
+> +	int level, cpu;
+> +	u32 acpi_cpu_id;
+> +	struct acpi_pptt_cache *cache;
+> +	struct acpi_table_header *table;
+> +	struct acpi_pptt_cache_v1 *cache_v1;
+> +	struct acpi_pptt_processor *cpu_node;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	table = acpi_get_pptt();
+> +	if (!table)
+> +		return -ENOENT;
+> +
+> +	if (table->revision < 3)
+> +		return -ENOENT;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
+> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
+> +		if (!cpu_node)
+> +			continue;
+> +
+> +		/* Start at 1 for L1 */
+> +		level = 1;
+> +		cache = acpi_find_any_type_cache_node(table, acpi_cpu_id, level,
+> +						      &cpu_node);
+> +		while (cache) {
+> +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
+> +						cache, sizeof(*cache));
+
+Is the core acpi definition in actbl2.h correct? Shouldn't it be 
+something along the lines of:
+
+struct acpi_pptt_cache_v1 {
+  struct acpi_subtable_header header;
+  u16 reservedd;
+  u32 flags;
+  u32 next_level_of_cache;
+  u32 size;
+  u32 number_of_sets;
+  u8 associativity;
+  u8 attributes;
+  u16 lines_size;
+  u32 cache_id;
+}
+
+
+Then that solves the detection of the additional field problem correctly 
+because the length (24 vs 28) of the subtable then tells you which 
+version your dealing with. (and goes back to why much of this is coded 
+to use ACPI_ADD_PTR rather than structure+ logic.)
+
+
+Thanks,
+
+
+
+
+
+
+> +			if (!cache)
+> +				continue;
+> +
+> +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
+> +						cache, sizeof(*cache));
+> +
+> +			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
+> +			    cache_v1->cache_id == cache_id)
+> +				cpumask_set_cpu(cpu, cpus);
+> +
+> +			level++;
+> +			cache = acpi_find_any_type_cache_node(table, acpi_cpu_id,
+> +							      level, &cpu_node);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index be074bdfd4d1..a9dbacabdf89 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1543,6 +1543,7 @@ int find_acpi_cpu_topology_package(unsigned int cpu);
+>   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
+>   void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
+>   int find_acpi_cache_level_from_id(u32 cache_id);
+> +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus);
+>   #else
+>   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
+>   {
+> @@ -1570,6 +1571,11 @@ static inline int find_acpi_cache_level_from_id(u32 cache_id)
+>   {
+>   	return -ENOENT;
+>   }
+> +static inline int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id,
+> +						      cpumask_t *cpus)
+> +{
+> +	return -ENOENT;
+> +}
+>   #endif
+>   
+>   void acpi_arch_init(void);
+
 
