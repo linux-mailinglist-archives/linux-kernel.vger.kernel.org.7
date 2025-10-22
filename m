@@ -1,194 +1,215 @@
-Return-Path: <linux-kernel+bounces-865224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E4BBFC89A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D7ABFCA7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 371933546BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 653456246DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7269D34EEF6;
-	Wed, 22 Oct 2025 14:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="XBtN2lNj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wi8ZyAIs"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7782434E76E;
-	Wed, 22 Oct 2025 14:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0EF28031C;
+	Wed, 22 Oct 2025 14:28:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC4535BDA6
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761143216; cv=none; b=oOHXhuLv8LIH6krSR9CBYiG71sIMvdowL6rgehnwbL1iydijh7LsB8pwTp/P+840WIy6iMVwdHJARbYCDrVu/zX0507dWDRyUYTgxfSGwUk1AQ8GLrvKPdtfY7w5VYCMvE/UilcBvx6OnhcIpejU2uT9RgzvuOv+CF9S+sPU+7U=
+	t=1761143338; cv=none; b=IaghMBB7OGQVKbZR8LV4siQtRfE4tawaQekyLWRpnfSdESML1zlX09iL8poISOTUgPkwLJSosJAqWikG2RfDh497ZE1BTC71mq7Y0Ik1Swmkp5XP2l1YydOR/qgriXgMgJwosbFEweY0iGCngQkEn/335H5AyDA0inb1Eb7TQfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761143216; c=relaxed/simple;
-	bh=njnMKnmAzBOYSt4qbFbbHsfQ3+1SX5N8fWPqY9xDRPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MMd9f/B8O25jukzwnc7VPDzlHDDAxGCfZGE/k39ssfi+4XsHZHhCX8rB2L5NyUlEZt1v8jZIXQVTj3ga0h/pqFbOq1Wjz43XFIQL3clWO+6rf5iFuuL+yqrrtVxBVBgI/7c229Rmc3F9xu8kkATGH29D9GI6puUOothYhB1c1Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=XBtN2lNj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wi8ZyAIs; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 400357A00B5;
-	Wed, 22 Oct 2025 10:26:53 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 22 Oct 2025 10:26:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761143213;
-	 x=1761229613; bh=jOvRrxLI/PxVSWmhxM2KgyJk/X+u6+/Vmaw9PuxY40k=; b=
-	XBtN2lNjCSSfXGaqXi0gx/hlO8WnexR6tUKWFw0W+Esl1w0VoLdaeTBIpl3+3SRt
-	8k0rusGVLaZzq6WMIbQuyM0WTeGOvKbmHJjwdrvEfb9GrR896b9a+9tEVP/3sdpf
-	paxsxPUnRdTFFnAtOtM07XbRfRVrG5HBEzRZC5uKdExsyRB/Bzp5lpOMbS7BkPih
-	KmI1toWj9g8kClgqlGVd7rtTlylfX4nulaysdLtdZfm6WvkOnT4eDZOEZObwlbIe
-	XvmLXVmfvHix8i5HNxPGoT1+fXs0nagnK9AITqKPBowKP+EmQHFKGhEf++nGCMZe
-	YxA9ggHBJsJm8bv/iF/7zA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761143213; x=
-	1761229613; bh=jOvRrxLI/PxVSWmhxM2KgyJk/X+u6+/Vmaw9PuxY40k=; b=w
-	i8ZyAIsZtLOryR2GGVNqeGZtf8OTyPOHf6pua9/Bnpk4edYPEghboe7XrCsnRwis
-	WBKNNK16wl9riG2ABWUcXXmkWKAM1IVvWIdcAv7TTPWO+dumAHiiNHlmQnNI1YKU
-	DrtJyS7tlvRrHh0MzxA3OGVC1hODIFU6Vuvuj1ilxlG9EMHHWOVZKI2iojCk4VWJ
-	TG3TEuoKd1Iytp3ITeBTdouGLMRhifNM27Ck0KHTFXWf2Xmm+dlkq+dxEeUJ+jRh
-	8OWM26Faoey1nPrM5mbxb0xSgnGKfPzk1lS/4MV0eBfqNl4q02z1X8mlKKLvd3yf
-	2xr2nypxaOlNK4P7Xi2AA==
-X-ME-Sender: <xms:rOn4aFjhzhWf5UKFXIQngaoA8wC5xpsjfdgvdKyzQz3Uj3wIGjqYUA>
-    <xme:rOn4aCye09H1Qqwat59MyRiZ4WtcMmBzXAYGpX5Dv_8ePeV4HZsSBFpgnQhSeQNHN
-    3hVy940u5n_SnfyubajrMH9x33xXWTfWkjLF6aOEp0l3DasAQ>
-X-ME-Received: <xmr:rOn4aDwAZbrOopB1xYax-VhcTT1OpzDw9qNkcnPY-NQn_rQEMd01G0at>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeefkedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpefgkeffie
-    efieevkeelteejvdetvddtledugfdvhfetjeejieduledtfefffedvieenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomhdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehlvghonhdrhhifrghngheslhhinhhugidruggvvhdprhgtphhtthhopehsthgrsg
-    hlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhu
-    gidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrg
-    htrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgv
-    rdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgv
-    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgrnhgtvgdrhi
-    grnhhgsehlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:rOn4aMqYobzJeKegfjkTb2Jig2imGUptMSQ-WOJVeXy52dqRTzyJLQ>
-    <xmx:rOn4aGlJAiIhljC8Jzc8Rlme4sPAFf5x2PVyh9nJ_wFCv19LEn15gw>
-    <xmx:rOn4aFxOsEdEjF2cBNW6DFm5xJ1ZddlhJYnaYAxsI3aZNGWcNn7iMw>
-    <xmx:rOn4aL0O7gaLZH54F7WEnqsoInBzvSTsUEWRZEg_V-XeXCFJ2g7Eog>
-    <xmx:ren4aATnIlNrUwkxxcWac1tUEZMNUOouhUXC6W31CVSQFSaRLN_PrAxB>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 22 Oct 2025 10:26:52 -0400 (EDT)
-Date: Wed, 22 Oct 2025 16:26:50 +0200
-From: Greg KH <greg@kroah.com>
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: stable@vger.kernel.org, akpm@linux-foundation.org, david@redhat.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH 6.1.y] selftests/mm: Move default_huge_page_size to
- vm_util.c
-Message-ID: <2025102241-clubbed-smirk-8819@gregkh>
-References: <20251022055138.375042-1-leon.hwang@linux.dev>
- <2025102230-scoured-levitator-a530@gregkh>
- <ff0b2bd4-2bb0-4d0b-8a9e-4a712c419331@linux.dev>
- <2025102210-detection-blurred-8332@gregkh>
- <70f8c6a1-cbb5-4a62-99aa-69b2f06bece2@linux.dev>
+	s=arc-20240116; t=1761143338; c=relaxed/simple;
+	bh=mJhr3NncY9clkh0gjeE3PCslsrYZ4XHyY8UYjCnbUkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PGqMlQYZKd95qWBTKnuGb7HvgtDY0r6LEUaHNyEwBdz/zf6kxaOenTjwYae8RYYl0bsXarqsb10pTsCnUhB6Y33oJoVWjoM5TtYtQjviCyCM5M43Wk/qNbAt0ecDGkt9g4kLHC/QOCw7trU28idjShFZMS68h3hnJRESN7FKqvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC4661063;
+	Wed, 22 Oct 2025 07:28:47 -0700 (PDT)
+Received: from [10.57.33.187] (unknown [10.57.33.187])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 555443F59E;
+	Wed, 22 Oct 2025 07:28:53 -0700 (PDT)
+Message-ID: <1cffaf6a-7e99-416f-af50-5659b1738af2@arm.com>
+Date: Wed, 22 Oct 2025 15:28:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <70f8c6a1-cbb5-4a62-99aa-69b2f06bece2@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and FW
+ event processing
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Ketil Johnsen <ketil.johnsen@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
+ <20251022143751.769c1f23@fedora>
+ <e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
+ <20251022160033.2f645528@fedora>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251022160033.2f645528@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 09:34:52PM +0800, Leon Hwang wrote:
+On 22/10/2025 15:00, Boris Brezillon wrote:
+> On Wed, 22 Oct 2025 14:36:23 +0100
+> Steven Price <steven.price@arm.com> wrote:
 > 
+>> On 22/10/2025 13:37, Boris Brezillon wrote:
+>>> On Wed, 22 Oct 2025 12:30:13 +0200
+>>> Ketil Johnsen <ketil.johnsen@arm.com> wrote:
+>>>   
+>>>> The function panthor_fw_unplug() will free the FW memory sections.
+>>>> The problem is that there could still be pending FW events which are yet
+>>>> not handled at this point. process_fw_events_work() can in this case try
+>>>> to access said freed memory.
+>>>>
+>>>> This fix introduces a destroyed state for the panthor_scheduler object,
+>>>> and we check for this before processing FW events.
+>>>>
+>>>> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+>>>> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
+>>>> ---
+>>>> v2:
+>>>> - Followed Boris's advice and handle the race purely within the
+>>>>   scheduler block (by adding a destroyed state)
+>>>> ---
+>>>>  drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
+>>>>  1 file changed, 12 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+>>>> index 0cc9055f4ee52..4996f987b8183 100644
+>>>> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+>>>> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+>>>> @@ -315,6 +315,13 @@ struct panthor_scheduler {
+>>>>  		 */
+>>>>  		struct list_head stopped_groups;
+>>>>  	} reset;
+>>>> +
+>>>> +	/**
+>>>> +	 * @destroyed: Scheduler object is (being) destroyed
+>>>> +	 *
+>>>> +	 * Normal scheduler operations should no longer take place.
+>>>> +	 */
+>>>> +	bool destroyed;  
+>>>
+>>> Do we really need a new field for that? Can't we just reset
+>>> panthor_device::scheduler to NULL early enough in the unplug path?
+>>> I guess it's not that simple if we have works going back to ptdev
+>>> and then dereferencing ptdev->scheduler, but I think it's also
+>>> fundamentally broken to have scheduler works active after the
+>>> scheduler teardown has started, so we might want to add some more
+>>> checks in the work callbacks too.
+>>>   
+>>>>  };
+>>>>  
+>>>>  /**
+>>>> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
+>>>>  	u32 events = atomic_xchg(&sched->fw_events, 0);
+>>>>  	struct panthor_device *ptdev = sched->ptdev;
+>>>>  
+>>>> -	mutex_lock(&sched->lock);
+>>>> +	guard(mutex)(&sched->lock);
+>>>> +
+>>>> +	if (sched->destroyed)
+>>>> +		return;
+>>>>  
+>>>>  	if (events & JOB_INT_GLOBAL_IF) {
+>>>>  		sched_process_global_irq_locked(ptdev);
+>>>> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
+>>>>  		sched_process_csg_irq_locked(ptdev, csg_id);
+>>>>  		events &= ~BIT(csg_id);
+>>>>  	}
+>>>> -
+>>>> -	mutex_unlock(&sched->lock);
+>>>>  }
+>>>>  
+>>>>  /**
+>>>> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
+>>>>  	cancel_delayed_work_sync(&sched->tick_work);
+>>>>  
+>>>>  	mutex_lock(&sched->lock);
+>>>> +	sched->destroyed = true;
+>>>>  	if (sched->pm.has_ref) {
+>>>>  		pm_runtime_put(ptdev->base.dev);
+>>>>  		sched->pm.has_ref = false;  
+>>>
+>>> Hm, I'd really like to see a cancel_work_sync(&sched->fw_events_work)
+>>> rather than letting the work execute after we've started tearing down
+>>> the scheduler object.
+>>>
+>>> If you follow my suggestion to reset the ptdev->scheduler field, I
+>>> guess something like that would do:
+>>>
+>>> void panthor_sched_unplug(struct panthor_device *ptdev)
+>>> {
+>>>         struct panthor_scheduler *sched = ptdev->scheduler;
+>>>
+>>> 	/* We want the schedu */
+>>> 	WRITE_ONCE(*ptdev->scheduler, NULL);
+>>>
+>>> 	cancel_work_sync(&sched->fw_events_work);
+>>>         cancel_delayed_work_sync(&sched->tick_work);
+>>>
+>>>         mutex_lock(&sched->lock);
+>>>         if (sched->pm.has_ref) {
+>>>                 pm_runtime_put(ptdev->base.dev);
+>>>                 sched->pm.has_ref = false;
+>>>         }
+>>>         mutex_unlock(&sched->lock);
+>>> }
+>>>
+>>> and
+>>>
+>>> void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events) {
+>>> 	struct panthor_scheduler *sched = READ_ONCE(*ptdev->scheduler);
+>>>
+>>> 	/* Scheduler is not initialized, or it's gone. */
+>>>         if (!sched)
+>>>                 return;
+>>>
+>>>         atomic_or(events, &sched->fw_events);
+>>>         sched_queue_work(sched, fw_events);
+>>> }  
+>>
+>> Note there's also the path of panthor_mmu_irq_handler() calling
+>> panthor_sched_report_mmu_fault() which will need to READ_ONCE() as well
+>> to be safe.
 > 
-> On 2025/10/22 16:20, Greg KH wrote:
-> > On Wed, Oct 22, 2025 at 04:08:45PM +0800, Leon Hwang wrote:
-> >>
-> >>
-> >> On 22/10/25 15:40, Greg KH wrote:
-> >>> On Wed, Oct 22, 2025 at 01:51:38PM +0800, Leon Hwang wrote:
-> >>>> Fix the build error:
-> >>>>
-> >>>> map_hugetlb.c: In function 'main':
-> >>>> map_hugetlb.c:79:25: warning: implicit declaration of function 'default_huge_page_size' [-Wimplicit-function-declaration]
-> >>>>    79 |         hugepage_size = default_huge_page_size();
-> >>>>       |                         ^~~~~~~~~~~~~~~~~~~~~~
-> >>>> /usr/bin/ld: /tmp/ccYOogvJ.o: in function 'main':
-> >>>> map_hugetlb.c:(.text+0x114): undefined reference to 'default_huge_page_size'
-> >>>>
-> >>>> According to the latest selftests, 'default_huge_page_size' has been
-> >>>> moved to 'vm_util.c'. So fix the error by the same way.
-> >>>>
-> >>>> Reviewed-by: Lance Yang <lance.yang@linux.dev>
-> >>>> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> >>>> ---
-> >>>>  tools/testing/selftests/vm/Makefile      |  1 +
-> >>>>  tools/testing/selftests/vm/userfaultfd.c | 24 ------------------------
-> >>>>  tools/testing/selftests/vm/vm_util.c     | 21 +++++++++++++++++++++
-> >>>>  tools/testing/selftests/vm/vm_util.h     |  1 +
-> >>>>  4 files changed, 23 insertions(+), 24 deletions(-)
-> >>>
-> >>>
-> >>> What commit id does this fix?  And again, why not just take the original
-> >>
-> >> Let me check which commit introduced the fix.
-> >>
-> >>> commits instead?
-> >>
-> >> I agree that taking the original commits would be preferable.
-> >>
-> >> However, it might involve quite a few patches to backport, which could
-> >> be a bit of work.
-> >
-> > We can easily take lots of patches, don't worry about the quantity.  But
-> > it would be good to figure out what caused this to break here, and not
-> > in other branches.
-> >
+> This could be hidden behind a panthor_device_get_sched() helper, I
+> guess. Anyway, it's not so much that I'm against the addition of an
+> extra bool, but AFAICT, the problem is not entirely solved, as there
+> could be a pending work that gets executed after sched_unplug()
+> returns, and I adding this bool check just papers over the real bug
+> (which is that we never cancel the fw_event work).
 > 
-> Hi Greg,
+>>
+>> I agree having an extra bool is ugly, but it easier to reason about than
+>> the lock-free WRITE_ONCE/READ_ONCE dance. It worries me that this will
+>> be regressed in the future. I can't immediately see how to wrap this in
+>> a helper to ensure this is kept correct.
 > 
-> After checking with 'git blame map_hugetlb.c', the issue was introduced
-> by commit a584c7734a4d (“selftests: mm: fix map_hugetlb failure on 64K
-> page size systems”), which corresponds to upstream commit 91b80cc5b39f.
-> This change appears to have caused the build error in the 6.1.y tree.
-> 
-> Comparing several stable trees shows the following:
-> 
-> - 6.0.y: not backported*
-> - 6.1.y: backported
-> - 6.2.y: not backported*
-> - 6.3.y: not backported*
-> - 6.4.y: not backported*
-> - 6.5.y: not backported*
-> - 6.6.y: backported
-> - 6.7.y: backported
-> 
-> Given this, it might be preferable to revert a584c7734a4d in 6.1.y for
-> consistency with the other stable trees (6.0.y, 6.2–6.5.y).
+> Sure, but you're not really catching cases where the work runs after
+> the scheduler component has been unplugged in case someone forgot to
+> cancel some works. I think I'd rather identify those cases with a
+> kernel panic, than a random UAF when the work is being executed.
+> Ultimately, we should probably audit all works used in the driver, to
+> make sure they are properly cancelled at unplug() time by the relevant
+> <component>_unplug() functions.
 
-Ah, yeah, it looks like this commit was reverted from other stable
-releases, as it shows up in the following releases:
+Yes I agree, we should have a cancel_work_sync(&sched->fw_events_work)
+call somewhere on the unplug path. That needs to be after the job irq
+has been disabled which is currently done in panthor_fw_unplug().
 
-	4.19.310 4.19.315 5.4.272 5.4.277 5.10.213 5.10.218 5.15.152 5.15.160 6.1.82 6.6.18 6.7.6
-
-So a revert would be fine, want to submit it?
-
-thanks,
-
-greg k-h
+Thanks,
+Steve
 
