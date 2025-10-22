@@ -1,126 +1,74 @@
-Return-Path: <linux-kernel+bounces-864449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9595BFACF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:10:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBCCBFAD2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3ECE352B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:10:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9AC71884396
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601803009C3;
-	Wed, 22 Oct 2025 08:10:49 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93E12FF668;
+	Wed, 22 Oct 2025 08:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=taskera.pl header.i=@taskera.pl header.b="utehSrrZ"
+Received: from mail.taskera.pl (mail.taskera.pl [51.75.73.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7E81684B0;
-	Wed, 22 Oct 2025 08:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E8A22E3E7
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.75.73.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120649; cv=none; b=gS9Oex501uwWINbKbBdPkG39nb0ABCGgMZPUkX7+R1VP2ehxWZoy/Z8z+lTcOgWTAIvnvwVVrs1fL7tEOyjjFw3zIVSp0pJXOh+awHgLuKwb2KrYRV5Rr3JcZTzLyHO7re3VnToaitIYNfbPeOt1IcK70TsPRnqAF7i+ON3K5b8=
+	t=1761120692; cv=none; b=jW17VB1WuoDt4AO5xzObWKAFrD0d22KZX+Kp+4JhhW7WmojZYtxUbC9KkJKmVrs2EKUZSxDQqTujHbVrCoKFc1P5nIuPtN79m30no7Ua25Qj/6S9YKEZzDmitePT9yQUko1fGpIl0fEeviDhoo5F/j3LLebhaKUX7NpLI8aNSvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120649; c=relaxed/simple;
-	bh=stqOx4m9vFLsGbyVhAdnxZb+Jc7vK7BpKLYzESDs1xI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iTKoQUwZ6Ud2CnzJgkoNEooxZftShaimwWTIwET22v8pFPZl6Aqg5uBlI5PyDeJOP92Q+hWTA57x15zFokSzPC8YGS6VuviKgaw6WsF9KMRnp9YH25W5aRpo1ZGzqcS7Iv8/sA2lKYt7KAOpd9zzhXirgHtG5rukYqzL5tUNwQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.105] (unknown [114.241.85.109])
-	by APP-01 (Coremail) with SMTP id qwCowABHoaNlkfhoW8rMEw--.47485S2;
-	Wed, 22 Oct 2025 16:10:14 +0800 (CST)
-Message-ID: <d66db3f6-4c6f-4dc3-ae4f-3502d9b81c79@iscas.ac.cn>
-Date: Wed, 22 Oct 2025 16:10:13 +0800
+	s=arc-20240116; t=1761120692; c=relaxed/simple;
+	bh=LHmroAf0IX0JOjVUiIwqM4s8ghVxxktECxT6AQD+q2c=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=kNEfrgWj9gZIvFUQKwQ0390ferAKgpgJ6/B7fdIqjESdft0lKly8s+4tiyLg9YWoeelshlUOU3bvr4FhXkYTYRQXJaqloNMfp7qhbQ2SJMAvGKYQMC0APcvJykuw6xpiGwqZMiD7gTpjwUojSD8bN55u/LoC7pRKq5gtXSJU6b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=taskera.pl; spf=pass smtp.mailfrom=taskera.pl; dkim=pass (2048-bit key) header.d=taskera.pl header.i=@taskera.pl header.b=utehSrrZ; arc=none smtp.client-ip=51.75.73.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=taskera.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=taskera.pl
+Received: by mail.taskera.pl (Postfix, from userid 1002)
+	id 1AFF925CE0; Wed, 22 Oct 2025 10:11:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=taskera.pl; s=mail;
+	t=1761120689; bh=LHmroAf0IX0JOjVUiIwqM4s8ghVxxktECxT6AQD+q2c=;
+	h=Date:From:To:Subject:From;
+	b=utehSrrZPilWRwWbhlTwV5suhN4c4hpCA1aDtLtY2oZuUmyTTVsIxZIPqQipPLth8
+	 47g44Sagfayn9AL24OxwTKFqp/2rfQ7P7w1fdJTMwD9ReYN6Nlxw/ia48opIcwgMla
+	 dT0ODbx/tr8ZIBvTl+Ss66AICjgANezm9Xdbm5Bh9MiJLu5Eu5FFQYyyQloENaALZ+
+	 b5CvHJpTixKSmNe1aTWB994w1nO6JTPfaJ3+gynfP11oJO2Q1KO2j45oDc0E9F9zxy
+	 D5f5pBqoUgeY5fLS3cR1UyHhAs4a5XF6iFSF3axKws/uUR21WALv0OHRu+ZaFfvD31
+	 I4xHcpdA1Nvgw==
+Received: by mail.taskera.pl for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:11:10 GMT
+Message-ID: <20251022084500-0.1.e0.vv9l.0.mlsaofg8xb@taskera.pl>
+Date: Wed, 22 Oct 2025 08:11:10 GMT
+From: "Eryk Wawrzyn" <eryk.wawrzyn@taskera.pl>
+To: <linux-kernel@vger.kernel.org>
+Subject: Zwrot
+X-Mailer: mail.taskera.pl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net: spacemit: Avoid -Wflex-array-member-not-at-end
- warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Yixun Lan <dlan@gentoo.org>
-Cc: netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aPd0YjO-oP60Lgvj@kspp>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <aPd0YjO-oP60Lgvj@kspp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowABHoaNlkfhoW8rMEw--.47485S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw17trW3ArWkur1xJr4Dtwb_yoW8tr1kpa
-	y8J3s7Ar4kJrWxW3ZrAayxZay5K3y8tFZ8GryFyan5ZFnFyF45CF1FkF4rCryqk3yxGryS
-	vrs0yw1UA3Wvq37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUqiFxDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Gustavo,
+Dzie=C5=84 dobry,
 
-Thanks for the patch.
+kontaktuj=C4=99 si=C4=99 w imieniu kancelarii specjalizuj=C4=85cej si=C4=99=
+ w zarz=C4=85dzaniu wierzytelno=C5=9Bciami.
 
-On 10/21/25 19:54, Gustavo A. R. Silva wrote:
+Od lat wspieramy firmy w odzyskiwaniu nale=C5=BCno=C5=9Bci. Prowadzimy ko=
+mpleksow=C4=85 obs=C5=82ug=C4=99 na etapach: przeds=C4=85dowym, s=C4=85do=
+wym i egzekucyjnym, dostosowuj=C4=85c dzia=C5=82ania do bran=C5=BCy Klien=
+ta.
 
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
->
-> Use regular arrays instead of flexible-array members (they're not
-> really needed in this case) in a couple of unions, and fix the
-> following warnings:
->
->       1 drivers/net/ethernet/spacemit/k1_emac.c:122:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->       1 drivers/net/ethernet/spacemit/k1_emac.c:122:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->       1 drivers/net/ethernet/spacemit/k1_emac.c:121:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->       1 drivers/net/ethernet/spacemit/k1_emac.c:121:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/net/ethernet/spacemit/k1_emac.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/ethernet/spacemit/k1_emac.h b/drivers/net/ethernet/spacemit/k1_emac.h
-> index 5a09e946a276..577efe66573e 100644
-> --- a/drivers/net/ethernet/spacemit/k1_emac.h
-> +++ b/drivers/net/ethernet/spacemit/k1_emac.h
-> @@ -363,7 +363,7 @@ struct emac_desc {
->  /* Keep stats in this order, index used for accessing hardware */
->  
->  union emac_hw_tx_stats {
-> -	struct {
-> +	struct individual_tx_stats {
->  		u64 tx_ok_pkts;
->  		u64 tx_total_pkts;
->  		u64 tx_ok_bytes;
-> @@ -378,11 +378,11 @@ union emac_hw_tx_stats {
->  		u64 tx_pause_pkts;
->  	} stats;
->  
-> -	DECLARE_FLEX_ARRAY(u64, array);
-> +	u64 array[sizeof(struct individual_tx_stats) / sizeof(u64)];
+Kiedy mo=C5=BCemy porozmawia=C4=87?
 
-I originally wrote it as DECLARE_FLEX_ARRAY to avoid having to do the
-sizeof dance, but I guess that's no good now? Oh well, I guess...
 
-Acked-by: Vivian Wang <wangruikang@iscas.ac.cn>
-
+Pozdrawiam
+Eryk Wawrzyn
 
