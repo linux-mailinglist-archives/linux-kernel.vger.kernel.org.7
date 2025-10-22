@@ -1,95 +1,181 @@
-Return-Path: <linux-kernel+bounces-865646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D58BFDAB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8C8BFDAD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 047BF4EF4EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA903AC0E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C81257827;
-	Wed, 22 Oct 2025 17:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFE82DA75A;
+	Wed, 22 Oct 2025 17:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+rdPsNd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m89XYRSL"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5AD2D7818;
-	Wed, 22 Oct 2025 17:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F8F2DC334;
+	Wed, 22 Oct 2025 17:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761155094; cv=none; b=QKVjMHb+lEAg0kKa0zGc28yoy6bcrVAAncKzGuf0eVA2CgcKRImQ5X1qdsKiTNgVsU9uz2AFqYoCw2VC6dwD+Jmo8oePieTpTMJFrSuTSvzwLss1XJYCQudeWWWeE/S95hk7bvHrRzEPKjkMyo836c1JKDDfIlPXov/2wCWqwLo=
+	t=1761155120; cv=none; b=WfttWjA5rnJmPf7twy7PoPyFXai/sBj+gNqZHN6C5yMQF+K6sdnFq7oM/9216wSLDOhB41GiHj6+Kw1WbiKcyLAul+LCC2pbGMWtHd0qMqsK0zVY3/mdwey6i9Q7ZR5thhyUyTVUX5Ce8mpm6wi9HoNgqss+nXF1+Ph4mPLO4p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761155094; c=relaxed/simple;
-	bh=W+Zl8ejinEPVx7KvbwfEUBHq8Gh29eQma2UCTEn6VCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q6b3MrvoHIChUwQ2+86la3Btlzbt91MX3mn5bVlSrbagJxxZhlzJo2NfeJlf9cF8lYUdWxnUliBMJzYeAS9xRu7z1nCDUCjcrDP4aaWt9YHR1hhF9lq47+ehO4GWsBMCCMWHquBxn+fxc0+Vb3SdCYT1ae4HyLsyJQQ3a/WeK8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+rdPsNd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 688F3C4CEE7;
-	Wed, 22 Oct 2025 17:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761155094;
-	bh=W+Zl8ejinEPVx7KvbwfEUBHq8Gh29eQma2UCTEn6VCM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B+rdPsNdkSUD+O/huDpptmt6jYlXJsEflfnExbc/V0T20aZU2IoENwrTMPza8ENcL
-	 Zmc3teUEgqthrozg/tgJAt8o56rw94SRRNmiGI9AeIRT7bSssRDakSiJLAzU511jlU
-	 uOtAImLPh+9h3B5kL6h5yg38cYqxiNgNeQSztfR5UrX7sEIQRSccfcRyYml0F7Tj4k
-	 zbJK6WbbZ8TBApgp2jQC3oVXqsp21vbA0dTvSbBhdgb5IDqdeeZKvitqXkYY0MIbgi
-	 zj3AtFe2UpYZs69tmiuFHU+Z4zQnUEhqVATtjRysI8U3dNUmzUUiuka9UTBHOqH2Sq
-	 L0dEluffPuA/w==
-Date: Wed, 22 Oct 2025 18:44:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1761155120; c=relaxed/simple;
+	bh=xZGl53eKq+1OICCuQNqLILqPzTdPFMCEeZbCmo5UKIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FHpZHEe6w/8A0K3G7MxF9+tDUkImFBIEcuDKBfDjxIclm3i33iwb448Jf5k+aVRpvFDWmIcWwy91QsaFzUUxJ3vNApWDJpEN4eUV00Zj64ArGkmlE/d5SYEC5BhkR+gQ0g3DPs3mIbYALqfOPxYs2dqSOMLrpd35FJOgdz8s8gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m89XYRSL; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761155114;
+	bh=xZGl53eKq+1OICCuQNqLILqPzTdPFMCEeZbCmo5UKIU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=m89XYRSLjbnxaXlCdLTmMA/515xdfkkdBPuJ3CrP1nl9rL5Nnhy2Fx3hWS1AJ9WA5
+	 T/T5FlKyCx5O7ww9LGkyPF1V4S+C235ghkHe8zeAh2QlCokUtaVDfsWPtKiWSqh+Oo
+	 VBsXcLL9QP683X2cEV1Pp5bne6JD89hVjSgXhytQqnfYDBVuzkHiNi5TO2Ifx4JtSm
+	 +ozD9O/grLYgFrDtsrB7Y88LPW+Yc7Rs/bCn3n7LOB+BfL9zPSD0EKXBLJ0Lelx+o1
+	 P1mC4/H0cuzHeEIwR4ebf4QRaupIBJQ/yLqXZjJOB/12uwRnWsmBlftMvRerruN+I3
+	 E9qhLXYaqrIOw==
+Received: from trenzalore (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1987A17E130E;
+	Wed, 22 Oct 2025 19:45:11 +0200 (CEST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Yunke Cao <yunkec@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	James Cowgill <james.cowgill@blaize.com>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
-	cix-kernel-upstream@cixtech.com
-Subject: Re: [PATCH v5 1/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
-Message-ID: <20251022-flammable-mockup-4965b730e86b@spud>
-References: <20251021070410.3585997-1-gary.yang@cixtech.com>
- <20251021070410.3585997-2-gary.yang@cixtech.com>
+	kernel@collabora.com,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: [PATCH v4 00/15] media: rkvdec: Add support for VDPU381 and VDPU383
+Date: Wed, 22 Oct 2025 13:44:52 -0400
+Message-ID: <20251022174508.284929-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Aslcfr6pZqhuksvL"
-Content-Disposition: inline
-In-Reply-To: <20251021070410.3585997-2-gary.yang@cixtech.com>
+Content-Transfer-Encoding: 8bit
 
+These variants are found respectively in the RK3588 and RK3576 SoCs.
+This patch only adds support for H264 and H265 in both variants.
 
---Aslcfr6pZqhuksvL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As there is a considerable part of the code that can be shared with the
+already supported rkvdec decoder driver, the support for these variants
+is added here rather than writing a new driver.
 
-On Tue, Oct 21, 2025 at 03:04:08PM +0800, Gary Yang wrote:
-> The pin-controller is used to control the Soc pins.
-> There are two pin-controllers on Cix Sky1 platform.
-> One is used under S0 state, the other is used under
-> S0 and S5 state.
->=20
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+This patch set uses the newly introduced hevc_ext_sps_[ls]t_rps v4l2
+controls for HEVC.
+Therefore, a patched version of userpace tools is needed for HEVC
+support (added for GStreamer[1] and in an early stage for FFmpeg[2]).
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+The patchset is based on Kwiboo's HEVC support for rk3399[3].
 
---Aslcfr6pZqhuksvL
-Content-Type: application/pgp-signature; name="signature.asc"
+[1]: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9355
+[2]: https://gitlab.collabora.com/detlev/ffmpeg
+[3]: https://lore.kernel.org/all/20250905161942.3759717-1-jonas@kwiboo.se/
 
------BEGIN PGP SIGNATURE-----
+Changes since v3:
+ - Rebased on latest next (ea299a216426) + HEVC support for rk3399
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkYEgAKCRB4tDGHoIJi
-0sYAAP9O+QBhPMKlVXgWxSSjkvMDNX/EKzPmh2SGi+q0jIXBNwD/dYGDW5Iyv4n8
-LUGkY0fQrp1kfczldh5l67AUCywPSQk=
-=69W1
------END PGP SIGNATURE-----
+Changes since v2:
+ - Rebased on Kwiboo's HEVC support for rk3399
+ - Include hevc_ext_sps_[ls]t_rps v4l2 controls commits
+ - Remove empty lines at end of files
+ - Rename RKVDEC2_ALLOC_* to RKVDEC_ALLOC_*
+ - Set min_with and min_height to 64
+ - Remove vdpu38x_fill_pixfmt_mp() function
+ - Handle userspace not supporting hevc_ext_sps_[ls]t_rps
+ - Make all config structs static const
 
---Aslcfr6pZqhuksvL--
+Changes since v1:
+ - Add parsing of the short and long term ref frame sets from the new v4l2
+   controls
+ - Add RPS cache to avoid parsing the same data again
+ - Fix HEVC pixel formats selection
+ - Fix multiple indentation errors
+
+Detlev Casanova (15):
+  media: uapi: HEVC: Add v4l2_ctrl_hevc_ext_sps_[ls]t_rps controls
+  media: v4l2-ctrls: Add hevc_ext_sps_[ls]t_rps controls
+  media: rkvdec: Switch to using structs instead of writel
+  media: rkvdec: Move cabac tables to their own source file
+  media: rkvdec: Use structs to represent the HW RPS
+  media: rkvdec: Move h264 functions to common file
+  media: rkvdec: Move hevc functions to common file
+  media: rkvdec: Add generic configuration for variants
+  media: rkvdec: Add RCB and SRAM support
+  media: rkvdec: Support per-variant interrupt handler
+  media: rkvdec: Enable all clocks without naming them
+  media: rkvdec: Add H264 support for the VDPU381 variant
+  media: rkvdec: Add H264 support for the VDPU383 variant
+  media: rkvdec: Add HEVC support for the VDPU381 variant
+  media: rkvdec: Add HEVC support for the VDPU383 variant
+
+ .../media/v4l/ext-ctrls-codec-stateless.rst   | 114 +++
+ .../media/v4l/videodev2.h.rst.exceptions      |   2 +
+ .../media/v4l/vidioc-queryctrl.rst            |  12 +
+ .../media/platform/rockchip/rkvdec/Kconfig    |   1 +
+ .../media/platform/rockchip/rkvdec/Makefile   |  14 +-
+ .../{rkvdec-hevc-data.c => rkvdec-cabac.c}    | 506 +++++++++-
+ .../rockchip/rkvdec/rkvdec-h264-common.c      | 252 +++++
+ .../rockchip/rkvdec/rkvdec-h264-common.h      |  83 ++
+ .../platform/rockchip/rkvdec/rkvdec-h264.c    | 891 ++----------------
+ .../rockchip/rkvdec/rkvdec-hevc-common.c      | 531 +++++++++++
+ .../rockchip/rkvdec/rkvdec-hevc-common.h      | 112 +++
+ .../platform/rockchip/rkvdec/rkvdec-hevc.c    | 306 +-----
+ .../platform/rockchip/rkvdec/rkvdec-rcb.c     | 173 ++++
+ .../platform/rockchip/rkvdec/rkvdec-rcb.h     |  29 +
+ .../platform/rockchip/rkvdec/rkvdec-regs.h    | 571 +++++++----
+ .../rockchip/rkvdec/rkvdec-vdpu381-h264.c     | 469 +++++++++
+ .../rockchip/rkvdec/rkvdec-vdpu381-hevc.c     | 595 ++++++++++++
+ .../rockchip/rkvdec/rkvdec-vdpu381-regs.h     | 427 +++++++++
+ .../rockchip/rkvdec/rkvdec-vdpu383-h264.c     | 582 ++++++++++++
+ .../rockchip/rkvdec/rkvdec-vdpu383-hevc.c     | 690 ++++++++++++++
+ .../rockchip/rkvdec/rkvdec-vdpu383-regs.h     | 284 ++++++
+ .../platform/rockchip/rkvdec/rkvdec-vp9.c     | 231 ++---
+ .../media/platform/rockchip/rkvdec/rkvdec.c   | 536 ++++++++++-
+ .../media/platform/rockchip/rkvdec/rkvdec.h   |  39 +
+ drivers/media/v4l2-core/v4l2-ctrls-core.c     |  18 +
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c     |  10 +
+ include/uapi/linux/v4l2-controls.h            |  61 ++
+ include/uapi/linux/videodev2.h                |   2 +
+ 28 files changed, 6080 insertions(+), 1461 deletions(-)
+ rename drivers/media/platform/rockchip/rkvdec/{rkvdec-hevc-data.c => rkvdec-cabac.c} (86%)
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-h264-common.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-h264-common.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-h264.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-hevc.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu383-h264.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu383-hevc.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu383-regs.h
+
+-- 
+2.51.1.dirty
+
 
