@@ -1,165 +1,119 @@
-Return-Path: <linux-kernel+bounces-864027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EA4BF9C24
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:44:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4358BF9C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4508D4E3504
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:44:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 990654E3661
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFD62222C0;
-	Wed, 22 Oct 2025 02:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08E8221577;
+	Wed, 22 Oct 2025 02:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="E3pzHGCc"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPaFsug9"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011AA21B195;
-	Wed, 22 Oct 2025 02:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9688F15CD7E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761101078; cv=none; b=QJT5HPnPh/QTQw8lGbctFP4Bf3QRpztg4kpvmXyMtvOxlWw0Mj7CkLC6xSRIqgurnTkddzkUiGW8L5HkH3KzAiAO0eT0lPt2W9ohywoZcl5kOZaeUOBgVkh1NS2cmu+ryqbgWPXB/x/+v4YzcF3QJs3S1+lVc08dcNDpQ88bzhE=
+	t=1761101127; cv=none; b=nI1NOPLqIIud/FqGZLq82OQJistVmeb4AhGl4cH9jUd1F38cEptowsSoUivdnpF3OoRZ8ehJsTYN6MNX6gcANZNsKDUYssCZ+QkVlw2z7epza4s0qHjoaSTPllwTd5rg+uSOMSy+IgrySgyxNBrUzaEK+WdrgAgJYw7xx6H3roQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761101078; c=relaxed/simple;
-	bh=S642hsLT3DbGO0se1uhbt4v7SgXn7F+bkZM8tu1lmZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nohDG+Tce9dyB0IohxpSd+fg5IvOV2FdPqzpDRWuGPJFsddbRtqrECbYCKIpkkqZ5nlbNHR7pPJX//EBbJAh7Wb7vPp7YvhQp1yAmZSvC3pn/Z7UepktRaFaL5CpSKVuiQRGVtOede2i8oe3xQnFfpcNDSlSD9afL4/5CwOjYaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=E3pzHGCc; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=R13CEIBB/JFrdtyQB2TvK4h6vcDqAX9MqppCDQkD4lQ=;
-	b=E3pzHGCcvts76onkle35CcVfcVtLxDAnjN0c+wdOXlvxPC3z98zBOw3ad3A8Xb
-	AJw0deF6rGN3JBOjYI7IiVlskhy67C8Bu2mDgFkX7VcgnjlY5Y6bUG3+TgaUYojm
-	YZPhqbDwZy0C7YLNq+d9rG0oXKUlxx6/oLuXn/8IW7MbQ=
-Received: from [192.168.23.121] (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgBnY84BRfho3XrtAw--.13497S2;
-	Wed, 22 Oct 2025 10:44:18 +0800 (CST)
-Message-ID: <b928fe1b-77ba-4189-8f75-56106e9fac19@163.com>
-Date: Wed, 22 Oct 2025 10:44:17 +0800
+	s=arc-20240116; t=1761101127; c=relaxed/simple;
+	bh=eAcIJAMH8RyaOLUFKIfGMYGdTUyHv9MGn07YWGY72Yc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=W1dYeExuzUOmsNqJNotjmLifz/JLrc9ZSeuuxWxHYoBfu+PdKK4JyzWmUkNeV5qlLSK61j6W1ouBidx3fEANf9KIWN0eKPZkiaVIf9FTKqBub9d7FKVmxrjSNXnqBDOci39YDfpBFzigZLezbIuciekJI2jnBlmnMJ06H88HcA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPaFsug9; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3b27b50090so1163462566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:45:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761101124; x=1761705924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lq2jjLsl5/bNBz+EC4uaN0bKVsmnxh0AOoBuKPfAEzY=;
+        b=HPaFsug9UpJ4B3490WAtRKV6sy+mIZscgDf9EzvH8ZDuStHM4gdXZuPHbbGvjSho4z
+         E+lKZdLPqIuqhWIYnp4W0q00OXl8B1x8KZyXkQatNHI6x2lNKQDMAaVND8gUPa7RinYF
+         Zj9Abr8DKir+wPiCaqTTaPgN2Nm5MTnuGTH1wr5fcGsaI9somN4rWQqvt9O2U7Ikpd8N
+         Amqdnqnr7s1X+SsmkgabOLSz4IHLVhFvcOUv06mYVBjuneQh5mYWG3/r/iAOojFURdEY
+         uMdZsQA++e34N548hbb+EPlktUzXvAVgtzjpWeJDT6lMygMDDBwcDXCxe5XGOLxYtYdt
+         noqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761101124; x=1761705924;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lq2jjLsl5/bNBz+EC4uaN0bKVsmnxh0AOoBuKPfAEzY=;
+        b=FIpmMk1oj5VAcYIPDaQriefxUeUS+w9e4bla8gmpPHymhf12YOc0BxtCFBKwMJbGMF
+         h5chqKX157zAjjBaeN0TvN6ISSbVANRXNhaIDZ7yJrYRo1Ydh9VeIRRzKsRt217G3JfX
+         Y7JXlgpX3tfOcuvlnXysZJlCx1j/0U5eFKrp55lcIn9/ykNS+tZY4lgkPtjTgDuK2K5H
+         r3jEs1kapIujJv0yebqRtjH1gmCKSCb7oUWGBa0RfMPI/AAElig2y7fBPCFVynXPcot8
+         oUONKzjlEgCrEJ0HwXHDGp7UsWPsdvocwvkRyykCNkcajRy8ZrBq7NwefDKu2wsgAeba
+         v5Gg==
+X-Gm-Message-State: AOJu0YzLmQQqZDoYhIUOBr42f09MieG1/5pmZte0IlpTqHwBjbGdYWKF
+	3qLQZnSS6Jkycbtf8s3cI2Vu9q93/RsXONoAo/JWgJYe7HBDJgiPehK2ljh8Ek8lor0yV9fPMZf
+	psBsa8bC/oX/pO5tKsoCpjqQg5FUeVr3/mPABu/0=
+X-Gm-Gg: ASbGncu1GsViAFWko261RyQolUAyxbsoVN2pq77Zw28p0GH/Z6ptRyqTaJttsvhv2AL
+	2heWjFJB6xwEpU5Fe1XRXpgS4/5dFdxKkKD/8ife9O8nVVgJzfDU1eXx1bW3ycNYSATs3AjU7wc
+	SAJQswd6TSXCsuKXaBPc5NtlbRIXCfIltcbZdLIY6BUpOp6mVEDY6/n9fv1qp7wYMhLz9Vt9oO6
+	bC34wz3f+li0UjtmgZRrtnmFVzUHnHovsKdyAppKcJxGyC4aK8BCx4GYbPDuPE=
+X-Google-Smtp-Source: AGHT+IFzqNo4QzZ1WnPmf2YSkO/3brp2YxIg4GKpGj44en2ic6JhjtUg3luPUNaA3+TTCkgHSJO+n/jbZzZ4eOcucxc=
+X-Received: by 2002:a17:907:3f17:b0:b3e:f89e:9840 with SMTP id
+ a640c23a62f3a-b6473242102mr2269139866b.20.1761101122985; Tue, 21 Oct 2025
+ 19:45:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] NFS: Fix possible NULL pointer dereference in
- nfs_inode_remove_request()
-To: Trond Myklebust <trondmy@kernel.org>, anna@kernel.org
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Baolin Liu <liubaolin@kylinos.cn>
-References: <20251012083957.532330-1-liubaolin12138@163.com>
- <5f1eb044728420769c5482ea95240717c0748f46.camel@kernel.org>
- <9243fe19-8e38-43e4-8ea4-077fa4512395@163.com>
- <a0accbb0e4ea7ad101dcaecf6ded576fc0c43a56.camel@kernel.org>
-From: liubaolin <liubaolin12138@163.com>
-In-Reply-To: <a0accbb0e4ea7ad101dcaecf6ded576fc0c43a56.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgBnY84BRfho3XrtAw--.13497S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAF1Uur47CFW7JFykZFW5KFg_yoW5tr45pr
-	W7Kan0kF4kXr15Grn2q3W2vr1Yq34jkw4rZFn7Gw1avFnI9FnagF4UKF18uFn8Cr4xJF48
-	Xr1UAay3uayYya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRhSd9UUUUU=
-X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/xtbCwQKpdGj4RQL8agAA3f
+From: Jiaming Zhang <r772577952@gmail.com>
+Date: Wed, 22 Oct 2025 10:44:45 +0800
+X-Gm-Features: AS18NWCeORSgmXNohzwlr2_oj1p-NbS5QMAaG1LhUMS3O__rfHvgA71-0O9bb5c
+Message-ID: <CANypQFbLkw50aXkdjTbYT2S6me5yowReL2asG__MWveMU=vW0g@mail.gmail.com>
+Subject: [DISCUSS] Security implications of slab-out-of-bounds Read issue in hfsplus_strcasecmp
+To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, slava@dubeyko.com
+Cc: linux-kernel@vger.kernel.org, Jiaming Zhang <r772577952@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> Sorry, I didn’t actually see any case where req->wb_head == NULL. 
-> I found this through a smatch warning that pointed out a potential null pointer dereference. 
-> Instead of removing the NULL folio check, I prefer to keep it to prevent this potential issue. Checking pointer validity before use is a good practice. 
-> From a maintenance perspective, we can’t rule out the possibility that future changes might introduce a req->wb_head == NULL case, so I suggest keeping the NULL folio check.
+Hi HFS+ maintainers,
 
+I am starting this thread to discuss the security implications of an
+issue in the HFS+ filesystem and to seek your suggestions on whether
+it should be assigned a CVE.  I discussed this with the CVE team
+earlier, and they suggested I seek opinions from the filesystem
+maintainers.
 
+The issue is a slab-out-of-bounds read in hfsplus_strcasecmp(), fixed
+by commit 42520df65bf6 ("hfsplus: fix slab-out-of-bounds read in
+hfsplus_strcasecmp()"). The issue can be triggered by a corrupted
+filesystem image. I also tried to use `fsck.hfsplus` to fix the image,
+but the fix failed (exiting with code 8), meaning it would not be
+auto-mounted.
 
-在 2025/10/17 23:02, Trond Myklebust 写道:
-> On Fri, 2025-10-17 at 14:57 +0800, liubaolin wrote:
->> [You don't often get email from liubaolin12138@163.com. Learn why
->> this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>
->>> This modification addresses a potential issue detected by Smatch
->>> during a scan of the NFS code. After reviewing the relevant code, I
->>> confirmed that the change is required to remove the potential risk.
->>
->>
-> 
-> I'm sorry, but I'm still not seeing why we can't just remove the check
-> for a NULL folio.
-> 
-> Under what circumstances do you see us calling
-> nfs_inode_remove_request() with a request that has req->wb_head ==
-> NULL? I'm asking for a concrete example.
-> 
->>
->> 在 2025/10/13 12:47, Trond Myklebust 写道:
->>> On Sun, 2025-10-12 at 16:39 +0800, Baolin Liu wrote:
->>>> [You don't often get email from liubaolin12138@163.com. Learn why
->>>> this is important at
->>>> https://aka.ms/LearnAboutSenderIdentification ]
->>>>
->>>> From: Baolin Liu <liubaolin@kylinos.cn>
->>>>
->>>> nfs_page_to_folio(req->wb_head) may return NULL in certain
->>>> conditions,
->>>> but the function dereferences folio->mapping and calls
->>>> folio_end_dropbehind(folio) unconditionally. This may cause a
->>>> NULL
->>>> pointer dereference crash.
->>>>
->>>> Fix this by checking folio before using it or calling
->>>> folio_end_dropbehind().
->>>>
->>>> Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
->>>> ---
->>>>    fs/nfs/write.c | 11 ++++++-----
->>>>    1 file changed, 6 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/nfs/write.c b/fs/nfs/write.c
->>>> index 0fb6905736d5..e148308c1923 100644
->>>> --- a/fs/nfs/write.c
->>>> +++ b/fs/nfs/write.c
->>>> @@ -739,17 +739,18 @@ static void nfs_inode_remove_request(struct
->>>> nfs_page *req)
->>>>           nfs_page_group_lock(req);
->>>>           if (nfs_page_group_sync_on_bit_locked(req, PG_REMOVE)) {
->>>>                   struct folio *folio = nfs_page_to_folio(req-
->>>>> wb_head);
->>>> -               struct address_space *mapping = folio->mapping;
->>>>
->>>> -               spin_lock(&mapping->i_private_lock);
->>>>                   if (likely(folio)) {
->>>> +                       struct address_space *mapping = folio-
->>>>> mapping;
->>>> +
->>>> +                       spin_lock(&mapping->i_private_lock);
->>>>                           folio->private = NULL;
->>>>                           folio_clear_private(folio);
->>>>                           clear_bit(PG_MAPPED, &req->wb_head-
->>>>> wb_flags);
->>>> -               }
->>>> -               spin_unlock(&mapping->i_private_lock);
->>>> +                       spin_unlock(&mapping->i_private_lock);
->>>>
->>>> -               folio_end_dropbehind(folio);
->>>> +                       folio_end_dropbehind(folio);
->>>> +               }
->>>>           }
->>>>           nfs_page_group_unlock(req);
->>>>
->>>> --
->>>> 2.39.2
->>>>
->>>
->>> What reason is there to believe that we can ever call
->>> nfs_inode_remove_request() with a NULL value for req->wb_head-
->>>> wb_folio, or even with a NULL value for req->wb_head->wb_folio-
->>>> mapping?
->>>
->>>
->>
-> 
+This phenomenon means that the barrier to issue exploitation is
+relatively high, but I believe the issue's impact still warrants a CVE
+for the following reason: it involves kernel-level memory corruption.
+If a privileged user attempts to mount a specially crafted HFS+ image
+manually, this issue can be triggered, leading to a kernel panic and a
+system crash.
 
+A reliable, user-triggered kernel Denial of Service (DoS) is generally
+considered a security issue worth tracking.
+
+Given this, I would greatly appreciate your suggestions on whether a
+CVE should be assigned to this issue. If you agree, I will follow up
+with the CVE team to proceed with the assignment process.
+
+Original issue report:
+https://lore.kernel.org/all/CANypQFak7_YYBa_zpa8YmoYzekV_f39jvWJ-STudDUTR2-B_3Q@mail.gmail.com/
+
+Thank you for your time and expertise.
+
+Best regards,
+Jiaming Zhang
 
