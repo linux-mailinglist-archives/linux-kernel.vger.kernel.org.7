@@ -1,161 +1,274 @@
-Return-Path: <linux-kernel+bounces-865366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C071BFCE69
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4399BFCE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88D33AA572
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364F03AA1E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA4534D4F3;
-	Wed, 22 Oct 2025 15:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2303469FB;
+	Wed, 22 Oct 2025 15:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ILZvfWV6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhweH1Zo"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2560934CFC6
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE606274B2A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146911; cv=none; b=etgwE8HfMqgSmGYQ+3e3gNixRPys1NFCNcjNJz9aayxEjH84EyDBh7tGvmAmffDR0+fRpY6oMe1kunf68VkzpYMJ/ys9qkkTgZckWQNV7EhvmE2VX2FGXxvr5TMPO4qrjzy3md3AmGjjrQ7dw33oYU9LMNyoyNu+N/Yg06S1l6M=
+	t=1761147190; cv=none; b=ZeALcPcIjwafFkZGZt11gRIks8IQnmwXS/vUq0NLo94JGH5fRkemQqtfO5pZqT6jjrQhk9hKsjLcQgIeLhhpr4TCEqqN+HVl2cq4/7uECauBSFDhvPwcNc6z/HW0rMrYZ+3xDmlK0LLE/ZHfokGiQ7Gj0qtuThvtlXd2bOv+w1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146911; c=relaxed/simple;
-	bh=LKg80GSsXajEimsbU2IImSWBv/62yWeZsCxzc4ocqVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h53MHO9aDua0nQWqzm9a22Kjo4UbEszT3XdZm9JS8g9w8N+6q6ziNGRcJsVswq88BYGUHDjxpSsnpPjH77Hg4kokQfi+Kqt+fQk+9s6ppVO4OqA3jR+99va7yE0BZibJZIho+LgV+qHLlEnCuxNGEbQjZApCkxPnxwE9T89PJqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ILZvfWV6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MAOvMH032759
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:28:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kEkN3I7ez210KvWSzWyrOcOsuH0KwadB9yDxw0Xm8nE=; b=ILZvfWV6hSPfBB5J
-	g2+JWRa5A3ucDW0n2H2/I/8ejYIUzQKN9LYqo6m/rEmw+chUvqXhMcY4/CdbfTGr
-	sRT++teJ3xdavvz6u7hIdzFqOmiXRAFzbhewbT5CLz7yNZUGuZToZVTx2aD700bn
-	pKHNPVLVCcCnwBw2lHbBDy679TTkT6bWKyZxZTTNZu9nGEhiZ//2Fc8WiOZWkL0I
-	05/3zBBEnxjxatTOyk+UMsjM4sLQnZhKc0c/9E8mjvcYEef20Swqa6V0y4piTCLS
-	EA71sOigZgcIpSvN6cppV7fEb95urk8T0saPXw2q4kJ7SvWztAQddwx6DEKK5WmK
-	+kRTmg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08wasnh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:28:29 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e8a35e1923so3276061cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:28:29 -0700 (PDT)
+	s=arc-20240116; t=1761147190; c=relaxed/simple;
+	bh=sp2jxQNYf3dyEV6Ht1dZIFg/5isuDrEtnNm4o3HOdu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jcSoDReP202BMxXINQmQy4EuQODWrgENoHt/hMWP+xlHUJ12nFVOieOlZBfG0Z4Cq3EIPBgGfCwtffoI0QR7kMiYrCA1JApgdzPMT4OO+Mb4BvQ62SQ7s3PmfFYyVAhbfsPU8b81LWiRY+6mUpHJNa2LtcKenIT+fQ8tL8xiQNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GhweH1Zo; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b6cea7c527bso529610a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:33:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761147185; x=1761751985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZVnN7fp0G3FFsg6wsk/hleC1984NY97+iWMyaKEDz8=;
+        b=GhweH1ZonZ96nrRuCRk0iq/DrjFjMxSUVbQBDE5gfJLDVV2s9LJwAh1m4MKL4TXKEy
+         olWmx27y0x0SFmAJ45RwLB7r0kgZAQgkKVs3qsCNHDWTSEuarG7Uv86M/Ay/4BNS9blI
+         pRRfEiqkH+RDgfPKvTnRFAjD9BZ/iJTlX2V46rsPyQSxCPD3sbiB3Ykde02t1s60+JBy
+         zpQ8ruzYrYCHny8JgVo7lNJ0bMTAyAAchO+7CXFdrZJQkye1Bza2vQ4Sp24/QogfpCkX
+         2Gw/oKrxmSYTlRxNBFhZDhjf6qlxfv58/HLruUzw40QywsXTEOXAuEP/QEBkrlANNflG
+         x8kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761146908; x=1761751708;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kEkN3I7ez210KvWSzWyrOcOsuH0KwadB9yDxw0Xm8nE=;
-        b=jSkN8c8x98CANERnosL1g2M6a254HBzLhisUuwpqUmc/j2S3tMHxMUZY5m11913ail
-         3/MZN0irBaWHb3uVQpkfjXR81gJsorWN59nQ9PzzQUH26Ve9aY02OZvQ3dNmpwbM072p
-         V4KvxgM5yV3qNDrfh0b0vAAAB7oC4qz32upHfgv6+5TIQbqobLbbKxvS45vxX7AH2fBN
-         6WOZ8fBWup4gg+MjNfBZ3Z+Y1NiC7wyYLva3Pesr9nlgH/yuyXkljhewz5/5B+TE5hiU
-         YAmSB5Cdx+bJPOd/3s7q+Z7+pJvjzkWwz028ToX5+c+CDsv5TV3kURWd9MbgPgLG7SDP
-         uQ4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIwyvC5/aF+/UGEoksPSSJ2X6BQICRGDGiiXTanq/STDDsZ6tJ2yedWcvs9/1D8r0fnaur78aBq02HVgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS/WSkwiYRaC/Zl/t90qpRDGEWSCerlatT5KyQ1HlrhgLGKsWO
-	Pg3cwNeASoJbBJn1ywqiamKF+Giyjl+d7vQZLzYQC1MYKNSDeo1W8MGgGlVWori3KAdgcnuZDCl
-	weqVLUmq6gqbEbzL54WDZnAqOl5TvzaTzBgdjbrIrHWYlqXX2+YrQga/tMZ+mcYRhyP0=
-X-Gm-Gg: ASbGnctfWrd2+ZUErCs44G6aHOQdPGhnusYmx6rZtg38RF/fZy6gAlcPofZ1grHg7iz
-	di5nISRZxacq0+OkWTdqI7wXE/GFq4na2miIf8l83JMdjZRhWQtJe3CcxW3V9fncIn2GxAOpOOJ
-	y2XJvUlt/yUIARgzdsF2oHl/wguNJ6VP5JxXlH/bI7Mv8lAUN8WRAM9wVl4omzI5Xa1KSHQJxMA
-	moMwcL1jkeVqheJ6lep7VhAh71EoFFYd9pUK5SE01mIfDej2srWngOf3ywbbSFO5M64iD3W+jD3
-	QLUkUBxUcsHJ099Yeygwz5w9EBib1XTpjKFpeURqB7N8a2jIVCGs9TmT7NaKCcgsxMdoaZJ5qI9
-	gyX35VWqXxhLu3wzA5xn7vwaAVFW4vju3/QrvmNPmlVhTtwMHmpzF04u1
-X-Received: by 2002:ac8:5916:0:b0:4d7:e0ed:421f with SMTP id d75a77b69052e-4ea1167dbc0mr64496491cf.3.1761146907948;
-        Wed, 22 Oct 2025 08:28:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIbfA/J7/7e/fTVE+4K3MaejRMmguF//6ihYzs52oLlv/Bgz24gIfsByl/uIBh4sKc+gqcHQ==
-X-Received: by 2002:ac8:5916:0:b0:4d7:e0ed:421f with SMTP id d75a77b69052e-4ea1167dbc0mr64496241cf.3.1761146907534;
-        Wed, 22 Oct 2025 08:28:27 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb0365e1sm1371481666b.48.2025.10.22.08.28.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 08:28:27 -0700 (PDT)
-Message-ID: <41481de2-12fd-49b5-b3bd-f3e44e78dcb3@oss.qualcomm.com>
-Date: Wed, 22 Oct 2025 17:28:24 +0200
+        d=1e100.net; s=20230601; t=1761147185; x=1761751985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bZVnN7fp0G3FFsg6wsk/hleC1984NY97+iWMyaKEDz8=;
+        b=ppOm+OV3nNbaJ+B6cjcdanJiIniGDhsPwpLzLX4h7H2a+iUH+zSQWuAMuhmEHZ9j6c
+         8s4jirh7j1RKsImwWXYinYJ1cT5N1GGE2cUGPq9hg2ttTwumPbdqQYf9+zkaGXIpQpFP
+         p7O56U7YYleijgHIrqFg+Skoqk64t99/EnMO3+75wK2KfSb4t50zItRdM39ZUQxncg4H
+         Z/4a+EaBRlPwXG2j9zz1AfT6hzh9t9lrEdBGzWxRpq//h1vtpiXjh0jnQog0oEzy1qCx
+         2YOwl7mPrP7GZqrkC70E1lHtLHcb0+6Rkjt7ghxGrNcKX29TTEcCr1gre5FtBfsjLmM9
+         OYYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtbARE6wBZqoqytszSMk2eGWOzGhgDMDXXI67r5vl5/zsyZll83uRiP/Hs8TfmKRc6PypJ5VncIK+IBiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLTxYR8BPZ9e5o3LGWvF76mkyW6nnjF7vT42aknyMgenYFVxeG
+	jUayVDWrr1QjTls2wg7ihTFBqNm36ksbU9L7ek192MPU+FpTFEfcUR8k
+X-Gm-Gg: ASbGnctE3k3izbwCPnP7DdG9yrfYz6juEm9uvC7wqoKSHR77nGDiZ0tsUPlQrIwkTIT
+	08StY9eIWypyQ0EOhHEOLhtq27TfQ4yfzVmHZCd2YBMR7pcVCHzb1AE++qLT5yCyLOfnmDxNNXd
+	K1YuVNmasefeC9SN7+98OsmSPi0vJBZ/JNm/dJjyQVQobdZ8JJcvtyV/83vHXyCvYU5PI6K5xw2
+	1qqO7xQEOkZO5fNQEuFkWyvaL4KtZDt8XyZLgeCWBFA4EACFSyANcYJaDPeZhoy26cRE2mX5N6e
+	wnh0ZWAB2gFIWEayLDTpV2WIV/RVbJC3XciymBse6jS5BKx8Mg1B4HpfWjfy7BZwOzaSpftFWYx
+	JU+QyMsoGH2e8epq3xov3pD5YQKXctVAxVDifZ+VqMbbBy54Nq40CKyuliIJxsBJ4CXAKSW2sTB
+	gXUou5T3dPG+M/Tq1+oH1E7zpcOtmicOAj63jrnw==
+X-Google-Smtp-Source: AGHT+IGQkq0z/ZJ+qpM4UMe4gES4ssp4l9ztDVvOS3jum1ycvFbCo7Cw2cmJSkRbFVsQ3smyxo4c4w==
+X-Received: by 2002:a17:903:46c7:b0:274:aab9:4ed4 with SMTP id d9443c01a7336-290cb65f861mr280258655ad.57.1761147184829;
+        Wed, 22 Oct 2025 08:33:04 -0700 (PDT)
+Received: from weg-ThinkPad-P16v-Gen-2.. ([2804:30c:166c:ce00:98e6:668e:c32f:8f4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fde15sm142097195ad.84.2025.10.22.08.33.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 08:33:04 -0700 (PDT)
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	craftfever <craftfever@airmail.cc>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Subject: [PATCH v4] ksm: use range-walk function to jump over holes in scan_get_next_rmap_item
+Date: Wed, 22 Oct 2025 12:30:59 -0300
+Message-ID: <20251022153059.22763-1-pedrodemargomes@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5424
- compatible
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, Mark Brown <broonie@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org, vkoul@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, quic_varada@quicinc.com
-References: <20251014110534.480518-1-quic_mdalam@quicinc.com>
- <20251014110534.480518-2-quic_mdalam@quicinc.com>
- <dd1e4289-5e36-4b24-9afd-f09569459a96@sirena.org.uk>
- <96ae7d38-4ce0-fa34-e6f0-6bb6e4ceaa28@quicinc.com>
- <0a743099-face-4cc1-91ef-098a748604b7@sirena.org.uk>
- <49eb9f15-fad9-4f8d-1463-04cd692bbe51@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <49eb9f15-fad9-4f8d-1463-04cd692bbe51@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: JPsurJRJYCRPl0xTdJ3j1fxoh6yOq8fv
-X-Proofpoint-GUID: JPsurJRJYCRPl0xTdJ3j1fxoh6yOq8fv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX+STYOu8/kVK+
- RlJgJJyeO4p5xjNddNT/7Da/5KlUPZqQJPVKBHkQ70QHe857umYbHGIuHZUsFc9zPg/0MeGM1ut
- x73BSzcFbERPR0vW6GPl8/NlLz7IkTgeV1LAGCO7RC1kbgzQs9Ygbr8fenYfT/qLh33UyyaZ7TY
- Qy+m3nDqvJ5JRkakyC9m6iik15Z+t00GnSshWbTVQKQ2VL77GehevosP4fdO+3iV0ltMEcQQlTY
- ZQGvBSIla9T9jNu51E2Od2v8JMg+xP0C+26rFU4d8gWmMhjVyHSZU2Dev3HyJU897D6KC6kp/Og
- h8FrSGGsCkHMPCUjFrceNyx5IVe+OCBeMTic3v8cT29Z+n+O5kbD0IiyrL6uviCJsoxPrryE6ji
- 6HEQCn9Idf3TERNBgSCbxYTVAs3ZjQ==
-X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68f8f81d cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=WIUPFbzvC2a9H5sHzXkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22 a=HhbK4dLum7pmb74im6QT:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_06,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
 
-On 10/22/25 5:20 PM, Md Sadre Alam wrote:
-> Hi,
-> 
-> On 10/22/2025 4:12 PM, Mark Brown wrote:
->> On Wed, Oct 22, 2025 at 12:29:01PM +0530, Md Sadre Alam wrote:
->>> On 10/22/2025 12:39 AM, Mark Brown wrote:
->>>> On Tue, Oct 14, 2025 at 04:35:26PM +0530, Md Sadre Alam wrote:
->>>>> IPQ5424 contains the QPIC-SPI-NAND flash controller which is the same as
->>>>> the one found in IPQ9574. So let's document the IPQ5424 compatible and
->>>>> use IPQ9574 as the fallback.
->>
->>>> This doesn't apply against current code, please check and resend.
->>
->>> Thank you for the feedback. I’d appreciate a bit more clarity on what
->>> “doesn't apply against current code” refers to in this context. I’ve
->>> manually applied the patch against the latest mainline (torvalds/linux) and
->>> it applied cleanly without any conflicts. Please let me know if there’s a
->>> specific tree or integration point I should be checking against.
->>
->> I tried to apply it to the spi tree
->>
->>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-6.19
-> Thanks for letting me know — I’ll rebase the patch on the SPI tree (for-6.19) and resend it.
+Currently, scan_get_next_rmap_item() walks every page address in a VMA
+to locate mergeable pages. This becomes highly inefficient when scanning
+large virtual memory areas that contain mostly unmapped regions.
 
-JFYI you can generally count on linux-next/master as a good base
+This patch replaces the per-address lookup with a range walk using
+walk_page_range(). The range walker allows KSM to skip over entire
+unmapped holes in a VMA, avoiding unnecessary lookups.
+This problem was previously discussed in [1].
 
-Konrad
+[1] https://lore.kernel.org/linux-mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
+
+---
+
+v4:
+  - Make minimal changes to replace folio_walk by walk_page_range_vma
+
+v3: https://lore.kernel.org/all/20251016012236.4189-1-pedrodemargomes@gmail.com/
+  - Treat THPs in ksm_pmd_entry
+  - Update ksm_scan.address outside walk_page_range
+  - Change goto to while loop
+
+v2: https://lore.kernel.org/all/20251014151126.87589-1-pedrodemargomes@gmail.com/
+  - Use pmd_entry to walk page range
+  - Use cond_resched inside pmd_entry()
+  - walk_page_range returns page+folio
+
+v1: https://lore.kernel.org/all/20251014055828.124522-1-pedrodemargomes@gmail.com/
+
+Reported-by: craftfever <craftfever@airmail.cc>
+Closes: https://lkml.kernel.org/r/020cf8de6e773bb78ba7614ef250129f11a63781@murena.io
+Suggested-by: David Hildenbrand <david@redhat.com>
+Co-developed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Fixes: 31dbd01f3143 ("ksm: Kernel SamePage Merging")
+Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+---
+ mm/ksm.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 104 insertions(+), 9 deletions(-)
+
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 3aed0478fdce..4f672f4f2140 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -2455,6 +2455,95 @@ static bool should_skip_rmap_item(struct folio *folio,
+ 	return true;
+ }
+ 
++struct ksm_next_page_arg {
++	struct folio *folio;
++	struct page *page;
++	unsigned long addr;
++};
++
++static int ksm_next_page_pmd_entry(pmd_t *pmdp, unsigned long addr, unsigned long end,
++		struct mm_walk *walk)
++{
++	struct ksm_next_page_arg *private = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	pte_t *start_ptep = NULL, *ptep, pte;
++	struct mm_struct *mm = walk->mm;
++	struct folio *folio;
++	struct page *page;
++	spinlock_t *ptl;
++	pmd_t pmd;
++
++	if (ksm_test_exit(mm))
++		return 0;
++
++	cond_resched();
++
++	pmd = pmdp_get_lockless(pmdp);
++	if (!pmd_present(pmd))
++		return 0;
++
++	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && pmd_leaf(pmd)) {
++		ptl = pmd_lock(mm, pmdp);
++		pmd = pmdp_get(pmdp);
++
++		if (!pmd_present(pmd)) {
++			goto not_found_unlock;
++		} else if (pmd_leaf(pmd)) {
++			page = vm_normal_page_pmd(vma, addr, pmd);
++			if (!page)
++				goto not_found_unlock;
++			folio = page_folio(page);
++
++			if (folio_is_zone_device(folio) || !folio_test_anon(folio))
++				goto not_found_unlock;
++
++			page += ((addr & (PMD_SIZE - 1)) >> PAGE_SHIFT);
++			goto found_unlock;
++		}
++		spin_unlock(ptl);
++	}
++
++	start_ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
++	if (!start_ptep)
++		return 0;
++
++	for (ptep = start_ptep; addr < end; ptep++, addr += PAGE_SIZE) {
++		pte = ptep_get(ptep);
++
++		if (!pte_present(pte))
++			continue;
++
++		page = vm_normal_page(vma, addr, pte);
++		if (!page)
++			continue;
++		folio = page_folio(page);
++
++		if (folio_is_zone_device(folio) || !folio_test_anon(folio))
++			continue;
++		goto found_unlock;
++	}
++
++not_found_unlock:
++	spin_unlock(ptl);
++	if (start_ptep)
++		pte_unmap(start_ptep);
++	return 0;
++found_unlock:
++	folio_get(folio);
++	spin_unlock(ptl);
++	if (start_ptep)
++		pte_unmap(start_ptep);
++	private->page = page;
++	private->folio = folio;
++	private->addr = addr;
++	return 1;
++}
++
++static struct mm_walk_ops ksm_next_page_ops = {
++	.pmd_entry = ksm_next_page_pmd_entry,
++	.walk_lock = PGWALK_RDLOCK,
++};
++
+ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+ {
+ 	struct mm_struct *mm;
+@@ -2542,21 +2631,27 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+ 			ksm_scan.address = vma->vm_end;
+ 
+ 		while (ksm_scan.address < vma->vm_end) {
++			struct ksm_next_page_arg ksm_next_page_arg;
+ 			struct page *tmp_page = NULL;
+-			struct folio_walk fw;
+ 			struct folio *folio;
+ 
+ 			if (ksm_test_exit(mm))
+ 				break;
+ 
+-			folio = folio_walk_start(&fw, vma, ksm_scan.address, 0);
+-			if (folio) {
+-				if (!folio_is_zone_device(folio) &&
+-				     folio_test_anon(folio)) {
+-					folio_get(folio);
+-					tmp_page = fw.page;
+-				}
+-				folio_walk_end(&fw, vma);
++			int found;
++
++			found = walk_page_range_vma(vma, ksm_scan.address,
++						    vma->vm_end,
++						    &ksm_next_page_ops,
++						    &ksm_next_page_arg);
++
++			if (found > 0) {
++				folio = ksm_next_page_arg.folio;
++				tmp_page = ksm_next_page_arg.page;
++				ksm_scan.address = ksm_next_page_arg.addr;
++			} else {
++				VM_WARN_ON_ONCE(found < 0);
++				ksm_scan.address = vma->vm_end - PAGE_SIZE;
+ 			}
+ 
+ 			if (tmp_page) {
+-- 
+2.43.0
+
 
