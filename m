@@ -1,412 +1,122 @@
-Return-Path: <linux-kernel+bounces-864039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B421DBF9C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:02:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21362BF9C75
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42867467E0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1CAE3A8982
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD6D224893;
-	Wed, 22 Oct 2025 03:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB6D222581;
+	Wed, 22 Oct 2025 03:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPRo6UIT"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2Q0iTku"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5500A20CCCC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0EA220F5C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102143; cv=none; b=LEUOsLRWeMm8ha0bF1wMrPxwP3jBX3qqjiMo8V8LkQzKDhN/lE4SnGQT58KpfGZebwkrNWkxUG0CS9hiXx+ujLYhod9LMsEwSIQQyF11fZ+miM/cxMPhfXKAuehKSxPMtfeUNxNQLRjlaRyqeOulyCic15bWQx+15MhcetwOnmo=
+	t=1761102227; cv=none; b=ReXWC0iBw0WKmV6WEepjIHsCxRuQrh3sb1mwcOVveRfLkRTgqew75ZxPPyljCua0lQfe3N98ul9bzSbgNnMCygb3Wofr9pDwMj70M2Z3ipwVgHp5U4EHR4h/nQ2PVhrygVHlS6bW3TEB/aed9Lr5fr5SBVH4P6sYqzYzzWsu9ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102143; c=relaxed/simple;
-	bh=zLVBu/+AMKlMtlB/bEZt72G9qc/KIcx/E7Osk59nw64=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gt2gMCW/DiHsRJH76B0ranVRwtKN6oQ60fOFi9r2oownqOSFvDfxBZgvrRrI+S/nj5f0tILPnTNi9NkKM3CzIcKjNeM7QuZfi3+JER2bA11cjN0BI7zRagiFUz8hUdBlkDcfDGQBQ/z2pWMkweABMAiPRzE8FvCMqMbvqxpdwhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPRo6UIT; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e9d633b78so123608066b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761102140; x=1761706940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WzMUf6QRLk6HWgUGF9SsuDOm+/wNiddte8xrTsUO7/g=;
-        b=nPRo6UITW6Ll3dM6BF1Do0eCr8w8JRLvXdSl+GZADupRXAPCS1y+XoCo7QQ4GvvvGN
-         pa5GmWMB7TV4tCEAmZJ9N/yUIn4rFLVYhe/ZpggQyd8KrQBNzvv7VVp7tft3nqKq3zG3
-         DTz6nxG+ETrazMnQ8vzrbdS6/bMtS3Gov3JsExBRVnmL8RzO1ae466PcuzhcMp6kJSZw
-         MwSfwjhUpn0IAv6VdSy9qZHWTMYryqPZ5/ArFSx4S96tF/z9w0ogVtLsZ3owVnCvF1Ic
-         WzGopy+zHeSg+uJwD4LEtaZIra+tLP9SZuIkJbMr6fB6mjxdApYAU5eeOAtbcwzA+PzM
-         84PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761102140; x=1761706940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WzMUf6QRLk6HWgUGF9SsuDOm+/wNiddte8xrTsUO7/g=;
-        b=jh3HsO4McROSesE0BxDVi1npGTWl/al0DBBMXXODBbxpDc2grckQvDlmJiNqooxB3w
-         q5JfdGEv2itdCuDZXQTxqrbNyOkeWdXVI6gzWcCsi6Ww6N6CRUJQd3qxK7EG7r1slw+i
-         gMyBvpBjAiTx5yHntqF8+0XFr6ev0NfgLT5+oeXAyh+YsD/8O0CB5MjR7TjwBAvQgQio
-         ujP+bJjRKYO+nNxjrFflj/ZbY6ZGmboPInd5O6iTcDj0MZSTVu7pHI3keHgQrVYsJED1
-         63XKMKEeEV+S2B8S/Ccj8V0Neyi7h78BQ7A8er2QptVYxDGj+e1tON6wWjezvN/zXjcx
-         8/sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8x+nlQowaTz0S/WB2pMEnB0mmWaNYYJndklgfUsTDkaGd6c/qkEpBfrhzay5DZ6zUteguOA5nKCHNzmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLP3yZ7xXpAkX9VyRz/8kcf6BhD+xeyJ6yZ+Yx1PVuRvG95uXq
-	bWlObIQJc6C81cNBAX4ghyFS/eh+96JT44zBhSpBKm6IJEbHWdpgH/8MIFy0BHy5duuY4rGMo2x
-	5bziN72FHVNV6sj5vL3hkTcLboh5VsRY=
-X-Gm-Gg: ASbGnctYvtL+jwkkYyyMqR62hgX3YibgJQg3TVVGpekwol81f0CpStO3hlFY/cP5OHy
-	SOnoMBTx0TNEFhnTMg5YkBostYAWCx+K4y66AxEVHNdRidDMgEumnynlE9hE4JfRxE7/u0MXIjW
-	lG/AeSIuEEq3w8BAyQ5dKvlgmOdhit4k0Y35XpscVoAU59OUg3F7FPotRaU27VOmetsjVsoohQ+
-	Y4UCYtiAq2ftuejuReY7a33uN7bgzw13Y08jzTGHNFFuMcG3uS8ApwR4YK2bm3Qm5X+OH3uxqLl
-	7vJuvmw=
-X-Google-Smtp-Source: AGHT+IGXiOBvEdzf4B7QXYil7PlHFvUamyVfsJceB+za+fvQwqtEn7f3PQXBCs8Ga2lZSx7wbG1NoXSh34ERnd9giWU=
-X-Received: by 2002:a17:907:84d:b0:b33:821f:156e with SMTP id
- a640c23a62f3a-b6d2c005772mr5752166b.12.1761102139380; Tue, 21 Oct 2025
- 20:02:19 -0700 (PDT)
+	s=arc-20240116; t=1761102227; c=relaxed/simple;
+	bh=GNknf7cAYZM4vHLwFSMCKH/cU4Cxaok774v4n0rDamM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wvz1atS5SHM/ODht1KiBaY9RKTOXSzUli1eNMrAUkIdaMldkFgeTN5iOFk+bTvgKY+HgrTzVDBDgL2lRPwFYN3tv9/An3ZUnAzIxviNoeEFD9+VnsbXnSevWBQYg0h/OMmXpGQalte265agZdEJRMLN8YmNhWLf3ZHiCEtHlm5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2Q0iTku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6658C4CEF1;
+	Wed, 22 Oct 2025 03:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761102227;
+	bh=GNknf7cAYZM4vHLwFSMCKH/cU4Cxaok774v4n0rDamM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j2Q0iTkuDZE51Vg1wpvY8r3vZgKmfxvkzLKY+rweO+ZNQGSI97g8xU7/hnAlch1cR
+	 CvyUqLGtdSAC9Kdw85mOGJte+awVvvTfPwRJguLmt7o1onqTRSnc2Mo3STs3AnB8Bo
+	 AVZyZBgjFz3nnjkm/2Hw/ew/YjaLoLN0sFR/EJsnY09FfPeMKUn+w4qypO7Go7E/cc
+	 878c1xWcphXL0P4UYgwUs9TMTXY6c1rKo6qeBH4NNKUZ4uWcBKJcHfXQIPbdLF6q4B
+	 yrECQz9L1Ua/mQ8F67x23e2fwVsQYBjQDqG3SZms00B9AcFSuFwrHBWpZLnQ5fGfSO
+	 aVD1YnzjN1nMg==
+Date: Tue, 21 Oct 2025 20:02:13 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH] mm/kmsan: Fix kmsan kmalloc hook when no stack depots
+ are allocated yet
+Message-ID: <20251022030213.GA35717@sol>
+References: <20250930115600.709776-2-aleksei.nikiforov@linux.ibm.com>
+ <20251008203111.e6ce309e9f937652856d9aa5@linux-foundation.org>
+ <335827e0-0a4c-43c3-a79b-6448307573fd@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
- <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
-In-Reply-To: <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 22 Oct 2025 11:02:07 +0800
-X-Gm-Features: AS18NWC4nWxQjoF-Vfg8-cJwp-0zaphXSSSqY80gm2YPuIdEVXmO8bEHMMuBObw
-Message-ID: <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
- binary search
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <335827e0-0a4c-43c3-a79b-6448307573fd@linux.ibm.com>
 
-On Wed, Oct 22, 2025 at 2:59=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Mon, 2025-10-20 at 17:39 +0800, Donglin Peng wrote:
-> > This patch implements sorting of BTF types by their kind and name,
-> > enabling the use of binary search for type lookups.
-> >
-> > To share logic between kernel and libbpf, a new btf_sort.c file is
-> > introduced containing common sorting functionality.
-> >
-> > The sorting is performed during btf__dedup() when the new
-> > sort_by_kind_name option in btf_dedup_opts is enabled.
->
-> Do we really need this option?  Dedup is free to rearrange btf types
-> anyway, so why not sort always?  Is execution time a concern?
+On Fri, Oct 10, 2025 at 10:07:04AM +0200, Aleksei Nikiforov wrote:
+> On 10/9/25 05:31, Andrew Morton wrote:
+> > On Tue, 30 Sep 2025 13:56:01 +0200 Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com> wrote:
+> > 
+> > > If no stack depot is allocated yet,
+> > > due to masking out __GFP_RECLAIM flags
+> > > kmsan called from kmalloc cannot allocate stack depot.
+> > > kmsan fails to record origin and report issues.
+> > > 
+> > > Reusing flags from kmalloc without modifying them should be safe for kmsan.
+> > > For example, such chain of calls is possible:
+> > > test_uninit_kmalloc -> kmalloc -> __kmalloc_cache_noprof ->
+> > > slab_alloc_node -> slab_post_alloc_hook ->
+> > > kmsan_slab_alloc -> kmsan_internal_poison_memory.
+> > > 
+> > > Only when it is called in a context without flags present
+> > > should __GFP_RECLAIM flags be masked.
+> > > 
+> > > With this change all kmsan tests start working reliably.
+> > 
+> > I'm not seeing reports of "hey, kmsan is broken", so I assume this
+> > failure only occurs under special circumstances?
+> 
+> Hi,
+> 
+> kmsan might report less issues than it detects due to not allocating stack
+> depots and not reporting issues without stack depots. Lack of reports may go
+> unnoticed, that's why you don't get reports of kmsan being broken.
 
-The issue is that sorting changes the layout of BTF. Many existing selftest=
-s
-rely on the current, non-sorted order for their validation checks. Introduc=
-ing
-this as an optional feature first allows us to run it without immediately
-breaking the tests, giving us time to fix them incrementally.
+Yes, KMSAN seems to be at least partially broken currently.  Besides the
+fact that the kmsan KUnit test is currently failing (which I reported at
+https://lore.kernel.org/r/20250911175145.GA1376@sol), I've confirmed
+that the poly1305 KUnit test causes a KMSAN warning with Aleksei's patch
+applied but does not cause a warning without it.  The warning did get
+reached via syzbot somehow
+(https://lore.kernel.org/r/751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn/),
+so KMSAN must still work in some cases.  But it didn't work for me.
 
->
-> > For vmlinux and kernel module BTF, btf_check_sorted() verifies
-> > whether the types are sorted and binary search can be used.
->
-> [...]
->
-> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> > index c414cf37e1bd..11b05f4eb07d 100644
-> > --- a/kernel/bpf/btf.c
-> > +++ b/kernel/bpf/btf.c
-> > @@ -259,6 +259,7 @@ struct btf {
-> >       void *nohdr_data;
-> >       struct btf_header hdr;
-> >       u32 nr_types; /* includes VOID for base BTF */
-> > +     u32 nr_sorted_types;
-> >       u32 types_size;
-> >       u32 data_size;
-> >       refcount_t refcnt;
-> > @@ -544,33 +545,29 @@ u32 btf_nr_types(const struct btf *btf)
-> >       return total;
-> >  }
-> >
-> > -u32 btf_type_cnt(const struct btf *btf)
-> > +u32 btf_start_id(const struct btf *btf)
-> >  {
-> > -     return btf->start_id + btf->nr_types;
-> > +     return btf->start_id;
-> >  }
-> >
-> > -s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 =
-kind)
-> > +u32 btf_nr_sorted_types(const struct btf *btf)
-> >  {
-> > -     const struct btf_type *t;
-> > -     const char *tname;
-> > -     u32 i, total;
-> > -
-> > -     do {
-> > -             total =3D btf_type_cnt(btf);
-> > -             for (i =3D btf->start_id; i < total; i++) {
-> > -                     t =3D btf_type_by_id(btf, i);
-> > -                     if (BTF_INFO_KIND(t->info) !=3D kind)
-> > -                             continue;
-> > +     return btf->nr_sorted_types;
-> > +}
-> >
-> > -                     tname =3D btf_name_by_offset(btf, t->name_off);
-> > -                     if (!strcmp(tname, name))
-> > -                             return i;
-> > -             }
-> > +void btf_set_nr_sorted_types(struct btf *btf, u32 nr)
-> > +{
-> > +     btf->nr_sorted_types =3D nr;
-> > +}
-> >
-> > -             btf =3D btf->base_btf;
-> > -     } while (btf);
-> > +u32 btf_type_cnt(const struct btf *btf)
-> > +{
-> > +     return btf->start_id + btf->nr_types;
-> > +}
-> >
-> > -     return -ENOENT;
-> > +s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 =
-kind)
-> > +{
-> > +     return find_btf_by_name_kind(btf, 1, name, kind);
->                                          ^^^
->                 nit: this will make it impossible to find "void" w/o a sp=
-ecial case
->                      in the find_btf_by_name_kind(), why not start from 0=
-?
+(That particular warning in the architecture-optimized Poly1305 code is
+actually a false positive due to memory being initialized by assembly
+code.  But that's besides the point.  The point is that I should have
+seen the warning earlier, but I didn't.  And Aleksei's patch seems to
+fix KMSAN to work reliably.  It also fixes the kmsan KUnit test.)
 
-Thanks. I referred to btf__find_by_name_kind in libbpf. In
-btf_find_by_name_kind,
-there is a special check for "void". Consequently, I've added a
-similar special check
-for "void" in find_btf_by_name_kind as well.
+I don't really know this code, but I can at least give:
 
-> >  }
-> >
-> >  s32 bpf_find_btf_id(const char *name, u32 kind, struct btf **btf_p)
->
-> [...]
->
-> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > index 18907f0fcf9f..87e47f0b78ba 100644
-> > --- a/tools/lib/bpf/btf.c
-> > +++ b/tools/lib/bpf/btf.c
->
-> [...]
->
-> > +/*
-> > + * Compact and sort BTF types.
-> > + *
-> > + * Similar to btf_dedup_compact_types, but additionally sorts the btf_=
-types.
-> > + */
-> > +static int btf__dedup_compact_and_sort_types(struct btf_dedup *d)
-> > +{
->
-> And this function will become btf__dedup_compact_types(),
-> if BTF will be always sorted. Thus removing some code duplication.
+Tested-by: Eric Biggers <ebiggers@kernel.org>
 
-Thanks for the suggestion. I think we can keep just
-btf__dedup_compact_and_sort_types and add a feature check before
-sorting, like this:
+If you want to add a Fixes commit I think it is either 97769a53f117e2 or
+8c57b687e8331.  Earlier I had confirmed that reverting those commits
+fixed the kmsan test too
+(https://lore.kernel.org/r/20250911192953.GG1376@sol).
 
-if (d->sort_by_kind_name)
-    qsort_r(sorted_ids, types_cnt, sizeof(*sorted_ids),
-            btf_compare_type_kinds_names, d->btf);
-
->
-> [...]
->
-> > diff --git a/tools/lib/bpf/btf_sort.c b/tools/lib/bpf/btf_sort.c
-> > new file mode 100644
-> > index 000000000000..2ad4a56f1c08
-> > --- /dev/null
-> > +++ b/tools/lib/bpf/btf_sort.c
->
-> [...]
->
-> > +/*
-> > + * Sort BTF types by kind and name in ascending order, placing named t=
-ypes
-> > + * before anonymous ones.
-> > + */
-> > +int btf_compare_type_kinds_names(const void *a, const void *b, void *p=
-riv)
-> > +{
-> > +     struct btf *btf =3D (struct btf *)priv;
-> > +     struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
-> > +     struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
-> > +     const char *na, *nb;
-> > +     int ka, kb;
-> > +
-> > +     /* ta w/o name is greater than tb */
-> > +     if (!ta->name_off && tb->name_off)
-> > +             return 1;
-> > +     /* tb w/o name is smaller than ta */
-> > +     if (ta->name_off && !tb->name_off)
-> > +             return -1;
-> > +
-> > +     ka =3D btf_kind(ta);
-> > +     kb =3D btf_kind(tb);
-> > +     na =3D btf__str_by_offset(btf, ta->name_off);
-> > +     nb =3D btf__str_by_offset(btf, tb->name_off);
-> > +
-> > +     return cmp_btf_kind_name(ka, na, kb, nb);
->
-> If both types are anonymous and have the same kind, this will lead to
-> strcmp(NULL, NULL). On kernel side that would lead to null pointer
-> dereference.
-
-Thanks, I've confirmed that for anonymous types, name_off is 0,
-so btf__str_by_offset returns a pointer to btf->strs_data (which
-contains a '\0' at index 0) rather than NULL. However, when name_off
-is invalid, btf__str_by_offset does return NULL. Using str_is_empty
-will correctly handle both scenarios. Unnamed types of the same kind
-shall be considered equal. I will fix it in the next version.
-
->
-> > +}
-> > +
-> > +__s32 find_btf_by_name_kind(const struct btf *btf, int start_id,
-> > +                                const char *type_name, __u32 kind)
->
-> Nit: having functions with names btf_find_by_name_kind and
->                                  find_btf_by_name_kind
->      is very confusing.
->      Usually we use names like __<func> for auxiliary functions
->      like this.
-
-Agreed. The function will be updated to __btf_find_by_name_kind
-in the next version.
-
->
-> > +{
-> > +     const struct btf_type *t;
-> > +     const char *tname;
-> > +     __u32 i, total;
-> > +
-> > +     if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
-> > +             return 0;
-> > +
-> > +     do {
-> > +             if (btf__nr_sorted_types(btf)) {
-> > +                     /* binary search */
-> > +                     __s32 start, end, mid, found =3D -1;
-> > +                     int ret;
-> > +
-> > +                     start =3D btf__start_id(btf);
-> > +                     end =3D start + btf__nr_sorted_types(btf) - 1;
-> > +                     /* found the leftmost btf_type that matches */
-> > +                     while(start <=3D end) {
-> > +                             mid =3D start + (end - start) / 2;
-> > +                             t =3D btf_type_by_id(btf, mid);
-> > +                             tname =3D btf__name_by_offset(btf, t->nam=
-e_off);
-> > +                             ret =3D cmp_btf_kind_name(BTF_INFO_KIND(t=
-->info), tname,
-> > +                                                     kind, type_name);
-> > +                             if (ret =3D=3D 0)
-> > +                                     found =3D mid;
-> > +                             if (ret < 0)
-> > +                                     start =3D mid + 1;
-> > +                             else if (ret >=3D 0)
-> > +                                     end =3D mid - 1;
-> > +                     }
-> > +
-> > +                     if (found !=3D -1)
-> > +                             return found;
-> > +             } else {
-> > +                     /* linear search */
-> > +                     total =3D btf__type_cnt(btf);
-> > +                     for (i =3D btf__start_id(btf); i < total; i++) {
-> > +                             t =3D btf_type_by_id(btf, i);
-> > +                             if (btf_kind(t) !=3D kind)
-> > +                                     continue;
-> > +
-> > +                             tname =3D btf__name_by_offset(btf, t->nam=
-e_off);
-> > +                             if (tname && !strcmp(tname, type_name))
-> > +                                     return i;
-> > +                     }
-> > +             }
-> > +
-> > +             btf =3D btf__base_btf(btf);
-> > +     } while (btf && btf__start_id(btf) >=3D start_id);
-> > +
-> > +     return libbpf_err(-ENOENT);
-> > +}
-> > +
-> > +void btf_check_sorted(struct btf *btf, int start_id)
-> > +{
-> > +     const struct btf_type *t;
-> > +     int i, n, nr_sorted_types;
-> > +
-> > +     n =3D btf__type_cnt(btf);
-> > +     if ((n - start_id) < BTF_CHECK_SORT_THRESHOLD)
-> > +             return;
->
-> Are there any measurable performance benefits from having this special ca=
-se?
-
-Sorry, I haven't run performance tests. The number 8 comes from the theoret=
-ical
-equivalence point where n/2 =E2=89=88 log2(n).
-
->
-> > +
-> > +     n--;
-> > +     nr_sorted_types =3D 0;
-> > +     for (i =3D start_id; i < n; i++) {
-> > +             int k =3D i + 1;
-> > +
-> > +             t =3D btf_type_by_id(btf, i);
-> > +             if (!btf__str_by_offset(btf, t->name_off))
-> > +                     return;
->
-> I am confused.
-> This effectively bans BTFs with anonymous types,
-> as btf__set_nr_sorted_types() wont be called if such types are found.
-> Anonymous types are very common, e.g. all FUNC_PROTO are anonymous.
-
-Thanks, I thought that for anonymous types, name_off would be 0,
-and btf__str_by_offset would not return NULL. However if the name_off is
-invalid, it will return NULL. So I plan to modify btf_compare_type_kinds_na=
-mes
-to cover both scenarios.
-
-
->
-> > +
-> > +             t =3D btf_type_by_id(btf, k);
-> > +             if (!btf__str_by_offset(btf, t->name_off))
-> > +                     return;
-> > +
-> > +             if (btf_compare_type_kinds_names(&i, &k, btf) > 0)
-> > +                     return;
-> > +
-> > +             if (t->name_off)
-> > +                     nr_sorted_types++;
-> > +     }
-> > +
-> > +     t =3D btf_type_by_id(btf, start_id);
-> > +     if (t->name_off)
-> > +             nr_sorted_types++;
-> > +     if (nr_sorted_types >=3D BTF_CHECK_SORT_THRESHOLD)
-> > +             btf__set_nr_sorted_types(btf, nr_sorted_types);
-> > +}
-> > +
->
-> [...]
+- Eric
 
