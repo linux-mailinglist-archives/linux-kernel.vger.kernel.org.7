@@ -1,184 +1,202 @@
-Return-Path: <linux-kernel+bounces-864909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0A7BFBD01
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:18:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327C5BFBCFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1348588517
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA136188FB40
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C3433F8D9;
-	Wed, 22 Oct 2025 12:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCEC341AD7;
+	Wed, 22 Oct 2025 12:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="iSyD2eAC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gkayi/hY"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xAv5oXoK"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21634285074;
-	Wed, 22 Oct 2025 12:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA9334165E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761135379; cv=none; b=hYUj3UbPZvpVBzAx4ruUb26YbVIYmNeCzVgUg3BEpjQEYcBrykKsxw+BitKnfnAWaB7QsivCtcqn6QYfnFX5thB+JCtzaCcpUgZARQnyiG1eHJKtr7iel/LzbfVkAYtGuwWGXelV5s96Rl2Mh2IHjvpmeS+bGvWF3Dc+txKMdiY=
+	t=1761135489; cv=none; b=BQIhuasPjtYKmu2N3Xyg7DSj7tYGdXILVlJL71XG0IGFxmxHZtvgeErCA3Q9nWQQY5B0qY50R8Lzvcz0iluN2y52XOxpJtSJQITjw7XaWRvWR8owUCuBhtU12kkYicJFZRV8f6fh0ECoEFPIY37pda8lgJQhnCtwqp0+dNgMaGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761135379; c=relaxed/simple;
-	bh=cgt7CLQjSoyB4oOe7l2CcWFiQDCWV6sN2Ax5llb7nBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJ4zY2Pk/2jpSHEqvIujYTzWuz1r7a2i5w3kJMduQdl2d4T4GwEx2BGSALdZBEg9a3Pqlw13oGTBNn5zfXihW4yf5/IZEnN86B6yFuwnLPG9A/AQJ9nXcVooRMOoIhUs5t19kpvdKYLUu4/C+mWHKqmixRMpINwFH31gkIMuu0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=iSyD2eAC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gkayi/hY; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2694EEC0064;
-	Wed, 22 Oct 2025 08:16:16 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 22 Oct 2025 08:16:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1761135376;
-	 x=1761221776; bh=FajAkPMbd4+2ubuOtdzYe8+OKPtN1c8032SY+wXAvDY=; b=
-	iSyD2eACEzRF6VDWame1A5MHviX4LWMvaxRqBmr1pgb33aceXZfLqHU/ISr5i+tT
-	qtN+n5sP9ZZLSCDiVRU/Rc/k2+esSNRKCCGraLclmrAIc0BzjfbCT8/H0wWyN+NU
-	pCR7Qm9yQfThGY2m2HmIbKfbaCKGNCOv8uDoM/3B8Bg1hyMYoWzxVzsgNHQeJeFX
-	7rl3VNuUXA+BzDkiI35MxMqKTLZRwN6jD08HR3ZSwiB2nipZ5wPaum+6GZpL/2LO
-	ppg5li9qCS/IKHmEogzNRTf/tLuErnsrepjDxyRqSWJSla+jG0W2JyIG02cU3xqa
-	kXYfAcKae9/KGNh3oPXcjQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761135376; x=
-	1761221776; bh=FajAkPMbd4+2ubuOtdzYe8+OKPtN1c8032SY+wXAvDY=; b=g
-	kayi/hYyHMifyC8iIhm4lQ/zTyJ4NhXv/m8BY0gEuzF7k3rfbZAcGrOFHuX03Gwd
-	OIYyKa+y0Q3i6PUO3Zvc/YH+/4FMYjB/cjlxwY1gK1TgyiYx+MpDdAMgw+GqUYtp
-	nd5XF9aMlgG+L4L8jgzUc8nd3r9plXaZWukysSoB7pS/5tj+PRvhv+tTDbF7YLnt
-	y/MkurKZM25GaKVrS566CI/vApKIa6PW+1zI8d4KuNVK9KkYWcX01XMw9bN9SjUO
-	BIEq/K0nFf8oWhkR/5TW1OcP+bdFQV8VVX6mvk2UHP7jsvQQNvf9SbNMdt7ZkV+Z
-	QqRjrhKHaa6mDO5Gp74ew==
-X-ME-Sender: <xms:D8v4aNEdLghyyTWWIoz-fduLwSRHBg1W-HyvnhTS0oyTE3-6Yd7l2Q>
-    <xme:D8v4aDT2UOHVhQdxPd29RQimS1qQ552-p95GhdSlCVF-vCgSGh_xpP6yxtq1zwbDy
-    YcDKyeYtTQPSVBsghwA6P-cQjQDR2O5W4crG8a0qAo8h3tQdZEWlQ4>
-X-ME-Received: <xmr:D8v4aPeRSJv-GU6Sus5cMAVIbRKRq0j5Zl0lffpZ6IEwsQijlgfoLP9jTNZ4l4WsrmoRd9NP2k3dqJQJAICPRQ61LbaCzrc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeefheeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
-    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeefheet
-    heekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhn
-    rghtvggthhdrshgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepphhrrggshhgrkhgrrhdrtghsvghnghhgsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepphgruhhlsehpsggrrhhkvghrrdguvghvpdhrtghpthhtoheprghnughrvg
-    ifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghm
-    lhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
-    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
-    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghsse
-    hglhhiuggvrhdrsggvpdhrtghpthhtohepmhhithhsuhhhihhrohdrkhhimhhurhgrrdhk
-    tgesrhgvnhgvshgrshdrtghomh
-X-ME-Proxy: <xmx:D8v4aBjaP8DysEkFTY6jndxGe_WRCn6GI6dMIPMGeL34M4BWQ26okA>
-    <xmx:D8v4aKION9Fh9EbRfbc9m-QiGIHmbd-iRS0GQDbpoaG-hOiVj1WMTQ>
-    <xmx:D8v4aOGFM86KB_ajjLJsW8NLemQsDZ-3zi36hUbXEViRApSedQ-__g>
-    <xmx:D8v4aA3DhWIAmcR5qaV8zGi49T_gFZlBVTDlcCQ5ew_yxAEI4eqokg>
-    <xmx:EMv4aNy87RC6RJe0MigPyc-lHMrxy5gYkhDiktWYQfk8Ads_XrkqA7y5>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 22 Oct 2025 08:16:15 -0400 (EDT)
-Date: Wed, 22 Oct 2025 14:16:14 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] net: ravb: Ensure memory write completes before
- ringing TX doorbell
-Message-ID: <20251022121614.GE1694476@ragnatech.se>
-References: <20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251017151830.171062-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1761135489; c=relaxed/simple;
+	bh=WBrGicdJ7vJmFD7ULLVAtRjwv/BXxswDEpGZGdImK50=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aKoL4RyXTvohwcamFkuJ/RuuoXEpV2r30K1rwCFhfFOUNiGz7WK5Ws97HaPqseGqipk3x4UQFmS6sMpYWxpsM2whNGph896yzeqW8DrcPlzKlwlkWQ83axqFNLd8rgeympEcyeh+QJK18/HAiuM3p9m5YUTf8q/B4vSoHDMzYEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xAv5oXoK; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57992ba129eso8029276e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761135486; x=1761740286; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WBrGicdJ7vJmFD7ULLVAtRjwv/BXxswDEpGZGdImK50=;
+        b=xAv5oXoKfbVVGAdLjEvtVPWEgV3x5Pvth28fyWj8XT99aP3h1JGqI53/ETWjYdhM22
+         AEUlAVuEK6kO90RcDw8uvYpsiTJ+1haXJu059RYWMFhCpGOO63zgJg0A59NfgjicHi79
+         8aQfMB6RqnoVOMB5gkSc/rg/amESUiBVaFuM1pp29pi0VHBbFGCnftpmUtsJlEKeKBju
+         iP33FyuJbRP1SJZ68JzrDBgW9YomyAkR2RkmvMv1dzSuYfTUTjZoUfB2uvambnnaJrsr
+         1jPDBQJ/mSWTMUhITVVBuV457GRLUQQ3OqJa+KMZBiwjaziPAHyNXutnsc1O6IgXGSoE
+         4yDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761135486; x=1761740286;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WBrGicdJ7vJmFD7ULLVAtRjwv/BXxswDEpGZGdImK50=;
+        b=Y/PGgz1On+kcG+eJrFnWYQg6Q78i1BOCBXYDzP/myCnZBnz3zbFILXKuhQVy+l4Kbj
+         4RvRPorufldbuyUn6jz479jRXXNAKTTMeuODuhrh1wkC5St1M7EjlEHezxCpHNzmKHgv
+         zn2GAn96IjIDGBsFqvqFwEp5A/CuT1FNU7Iyj2h9Q9sKhN8TzmryXdwfXNdSOrLWpy/M
+         qf2UC33ww+kJsnDcpLRf4/XIPO2y5otOgzKBXIb5ScddxlN32294TMHljEOC3leQI4xa
+         V0aC8CnWO9lN8EfBI8sCs/ksadmdynixceJa3WVe+A2DeMPQXhiujgMjQlD8eC7afxfa
+         UIHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWI5C8b0mwxpySk0pbhtD+EQHZt+m4/DfqM6fiMwwbpJ+Ivj69i4SuSGhZdhjdXdc2b9qMKcVBREi+3Lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIl3+GTmVUaiOLb02dwy8ISG9kKMJojixe6lbKMN9jXfhnos6U
+	usMBhxRa504hDKk6Baw2V0l9gyrTvn86kAu92UTYbt08V/9q9R4c/+osyQDsEnEnJpSTI6yEgQu
+	XfXFl3MkgrVGrtp2CY2L8JJB5ULK58buToZo/eyTFurV7Pla8BpKLpBHm7A==
+X-Gm-Gg: ASbGncuN1zAcpg0PGH000mHxA3ZMZ65QWz3btH3Ly4/kqCy6SV3sfgV0Jb5F4j1lSYl
+	D1B5lJRbU5rxLSWpWERAOm4rCUJsd7NP+rYhGEpcyTp3n+wdB0TnA4+fH/2id35XsviDDF00aba
+	EmhHILfkvJfGS0avYGh8rETcqwfmmuSAf9sUw/DohVWxavb+YUZI32cgjOH8yrNFL7lJgK/GfQN
+	TapOGbPW0/xnjwfObclWkYAB2BkNlCU2FvWd2zx/2sac26o8QkB671UTDfSXujpfLGbWDGY9VrO
+	z2uUrXQdCJiZUw/V
+X-Google-Smtp-Source: AGHT+IHdFjD1upF60QNrKQiPHb0EuLyjig0EXitYcomcOh2LTKy2vCTOo5wwpoP3zGRv3ACq4Fw6m6AiGSWjUoYZbaI=
+X-Received: by 2002:a05:6512:1115:b0:591:c2f8:9a5a with SMTP id
+ 2adb3069b0e04-591d8595e35mr6051681e87.35.1761135485542; Wed, 22 Oct 2025
+ 05:18:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251017151830.171062-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251006-reset-gpios-swnodes-v1-7-6d3325b9af42@linaro.org>
+ <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
+ <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com>
+ <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
+ <CAMRc=Md4DUSuwv07EuBVDJbY1Uzezq+TONxyCvLtOHD=iFXrcQ@mail.gmail.com>
+ <050d74d7619bdfdf5ca81d8914a2a8836a0d4e2e.camel@pengutronix.de>
+ <CAMRc=MfPqRLFHPW988oMry7vVoTgtQHrxxND4=nr_40dOa5owg@mail.gmail.com>
+ <aPeexuA1nu-7Asws@smile.fi.intel.com> <aPegyVyONkPWRgi9@smile.fi.intel.com>
+ <CAMRc=McPpFEmg7dpfiYWJaPR4yMynOaU5Hp37E7rTzWSCNxBuA@mail.gmail.com>
+ <aPerDcMFdbWecGEv@smile.fi.intel.com> <804b4b8cf23444fe5dc9400ac1de3a738a77e09e.camel@pengutronix.de>
+In-Reply-To: <804b4b8cf23444fe5dc9400ac1de3a738a77e09e.camel@pengutronix.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 22 Oct 2025 14:17:53 +0200
+X-Gm-Features: AS18NWCQ7ANfnKQl00uAA5vEojJxMGPQi1isAnxjQuec18eN_PhBUMwxJKrcpO8
+Message-ID: <CAMRc=Md-KuNp1o6GLA0WTbknbN-qtt8YJqy5fJs0P0EyE7KY3Q@mail.gmail.com>
+Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent of
+ the reset device
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Lad,
+On Wed, Oct 22, 2025 at 10:39=E2=80=AFAM Philipp Zabel <p.zabel@pengutronix=
+.de> wrote:
+>
+> On Di, 2025-10-21 at 18:47 +0300, Andy Shevchenko wrote:
+> > On Tue, Oct 21, 2025 at 05:23:33PM +0200, Bartosz Golaszewski wrote:
+> > > On Tue, Oct 21, 2025 at 5:03=E2=80=AFPM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Tue, Oct 21, 2025 at 05:55:02PM +0300, Andy Shevchenko wrote:
+> > > > > On Tue, Oct 21, 2025 at 11:39:41AM +0200, Bartosz Golaszewski wro=
+te:
+> > > > > > On Tue, Oct 21, 2025 at 11:31=E2=80=AFAM Philipp Zabel <p.zabel=
+@pengutronix.de> wrote:
+> > > > > > > On Di, 2025-10-21 at 11:27 +0200, Bartosz Golaszewski wrote:
+> >
+> > [...]
+> >
+> > > > > > > No need to convert all existing drivers right away, but I'd l=
+ike to see
+> > > > > > > a user that benefits from the conversion.
+> > > > > > >
+> > > > > >
+> > > > > > The first obvious user will be the reset-gpio driver which will=
+ see
+> > > > > > its core code simplified as we won't need to cast between OF an=
+d
+> > > > > > fwnodes.
+> > > > >
+> > > > > +1 to Bart's work. reset-gpio in current form is useless in all m=
+y cases
+> > > > > (it's OF-centric in 2025! We should not do that in a new code).
+> > > > >
+> > > > > More over, conversion to reset-gpio from open coded GPIO APIs is =
+a clear
+> > > > > regression and I want to NAK all those changes (if any already do=
+ne) for
+> > > > > the discrete components that may be used outside of certainly OF-=
+only niche of
+> > > > > the platforms.
+> > > >
+> > > > To be clear, the conversion that's done while reset-gpio is kept OF=
+-centric.
+> > > > I'm in favour of using it, but we need to make it agnostic.
+> > >
+> > > As of now, the whole reset framework is completely OF-centric, I don'=
+t
+> > > know what good blocking any such conversions would bring? I intend to
+> > > convert the reset core but not individual drivers.
+> >
+> > Blocking making new regressions?
+> >
+> > Otherwise as long as reset framework and reset-gpio are agnostic, I'm p=
+retty
+> > much fine with the idea and conversion.
+>
+> I think we might be talking about different "conversions" and different
+> "blocking" here?
+>
+> 1) Conversion of the reset core from of_node to fwnode.
+> 2) Conversion of reset controller drivers from of_node to fwnode.
+> 3) Conversion of consumer drivers from gpiod to reset_control API.
+>
+> My understanding is:
+>
+> Bartosz would like to convert the reset core to fwnode (1) but not
+> convert all the individual reset controller drivers (2). He doesn't
+> like blocking (1) - this statement was partially in reaction to me
+> bringing up a previous attempt that didn't go through.
+>
+> Andy would like to block consumer driver conversions from gpiod to
+> reset_control API (3) while the reset-gpio driver only works on OF
+> platforms.
+>
+> Please correct me if and where I misunderstood.
+>
 
-Thanks for your work.
+I think Andy is afraid that people will convert drivers that are used
+in the fwnode world to reset-gpio which only works with OF. I don't
+think that anyone's trying to do it though.
 
-On 2025-10-17 16:18:30 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add a final dma_wmb() barrier before triggering the transmit request
-> (TCCR_TSRQ) to ensure all descriptor and buffer writes are visible to
-> the DMA engine.
-> 
-> According to the hardware manual, a read-back operation is required
-> before writing to the doorbell register to guarantee completion of
-> previous writes. Instead of performing a dummy read, a dma_wmb() is
-> used to both enforce the same ordering semantics on the CPU side and
-> also to ensure completion of writes.
-> 
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> Cc: stable@vger.kernel.org
-> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> I think fwnode conversion of the reset controller framework core is a
+> good idea, I'd just like to see a use case accompanying the conversion.
+> It seems like enabling the reset-gpio driver to be used on non-OF
+> platforms could be that. Andy, do you have an actual case in mind?
+>
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+I'd say converting the reset core to fwnode has merits on its own. We
+should typically use the highest available abstraction layer (which is
+fwnode in this case) unless we absolutely have no choice (for
+instance: using some very OF-specific APIs).
 
-> ---
-> v1->v2:
-> - New patch added to separate out the memory barrier change
->   before ringing the doorbell.
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 0e40001f64b4..c3fc15f9ec85 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -2232,6 +2232,14 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->  		dma_wmb();
->  		desc->die_dt = DT_FSINGLE;
->  	}
-> +
-> +	/* Before ringing the doorbell we need to make sure that the latest
-> +	 * writes have been committed to memory, otherwise it could delay
-> +	 * things until the doorbell is rang again.
-> +	 * This is in replacement of the read operation mentioned in the HW
+That being said: the reset-gpio driver will be able to work with any
+firmware node once we do the conversion which is a good first
+use-case.
 
-nit: I would spell out hardware here, if you do a v3.
-
-> +	 * manuals.
-> +	 */
-> +	dma_wmb();
->  	ravb_modify(ndev, TCCR, TCCR_TSRQ0 << q, TCCR_TSRQ0 << q);
->  
->  	priv->cur_tx[q] += num_tx_desc;
-> -- 
-> 2.43.0
-> 
-
--- 
-Kind Regards,
-Niklas Söderlund
+Bartosz
 
