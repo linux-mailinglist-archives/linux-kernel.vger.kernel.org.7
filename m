@@ -1,223 +1,211 @@
-Return-Path: <linux-kernel+bounces-864498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE16BFAE77
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2A2BFAE36
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BF06506FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:31:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB9918871C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6857E30DEB1;
-	Wed, 22 Oct 2025 08:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F2B309F01;
+	Wed, 22 Oct 2025 08:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BUiKQY7G"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="W24V9bZ9"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022107.outbound.protection.outlook.com [52.101.126.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BD530147A
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121835; cv=none; b=ljhPwfvqdTA8aHZeZLWMJB5O8Nw5btg7PWFosOMZeyem7AdZkcvPw1pdCzKwDzlDoRjwpXMJNSfLzl5rNNpdvWMdvkqPDEiQSfEUOSgyEjxJP9uII7Bc7r8zgYopq5y42d+YwyuFpUqjyis3/Mt90a6UC7nzteAKSOPmkUj5948=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121835; c=relaxed/simple;
-	bh=W4dnQ6OiL+B7d18Li0iqL0CW7ojtCaZYRhjm3iMI5R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SsN6+HUCnXzn+8m9tyaIZhtix9C8A9fQ6RGuVOIEE4qTYCIW2nrYsDej9AIBSLZTM4emGibexCm9Qwl3yZFUhYJrnQLw59UZUOSSzb3kV8tV6/75cAgxLsuOFhgiEs+tm+/jL3ClQ5MGZJ0ibD5S8HUzggs/q5zVhL/mp3Nhz6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BUiKQY7G; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710665e7deso25183195e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761121830; x=1761726630; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2I0pFy6f8OhKSW5/tXVB2hF1U9O55Rf8oI8wZFnUIk=;
-        b=BUiKQY7GzUcZralMKKwXrVPZZngWNzCX+8fS4Wh04r0LYuqzs8ga+rveYnHZXfem5X
-         35zRACBzxrJjUeo9VG35MpsOQ35D7p5PwJR1zzVKddPdio90aTltY7XOtVUoF0zGT/cO
-         44R4KMWt6h7ivfw1t5OYF1SdXAjkbIqlgLBnbxbLZrARWa/rdvK9XOqZzp5P8AGl1tRP
-         0KmRQtrnWVEkeELZgA9oY7VjootnMaxPm8UKBhiYdCewmLBsa/P0tTyMYsd1qYhGJczp
-         94y8i3+jtsReW9b2uLVOnGGS55Sz6r5o3bCcoJPUWWd3dQN2Gbv4kIR9Hp5WQCFPy8wm
-         1Y1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761121830; x=1761726630;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j2I0pFy6f8OhKSW5/tXVB2hF1U9O55Rf8oI8wZFnUIk=;
-        b=EXyzUTwmEiA+LunLuXDp5bktaoweCCsw6gK6wUj9RIIi5cudPOk8SZ1mCJl3Yg2Ppu
-         Jw0+56PYh3AC7CvspmWNU48qGHjB9VY/I4VIugGy9ifKJ4PlNiyk26ujRKXD4MH+3+js
-         913Y1moCFbVUAbfpS83bStOPqx0cb8zIg9gE+iExStM8xB7ixF2pdkS1k7fyz+Cu5lwU
-         KkpFjBFtJcv2Y6auI28wYUhJ9arJNoFVc+H9KvMW/WBynMfTNBVafw9v8oMSeuLrSOpy
-         KWefaMVRJKd6+GhEox41RwGyWnudjjFEl/dNhk56PzUNnF4CCmH2T6FA22d90hg3mcdt
-         vvbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCMBWOmAfSRUggeAd+mJdfPX70+wRYL6uFaLAlhvpXYUcEVyb/jE63QXBLzOFLo+MZd23L/ax6C7DW+80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyO/rFsAgeKihs0tIjKvn3kbrq/YbASLEjKwheiaL3JEGtOMrU
-	fwqwlGrAmcR84XAQF3oOcgQGoVEnahDR91TbzjorU1SripaYDDt2lnheQoZO+fbTuik=
-X-Gm-Gg: ASbGncuQzM6/xozPKACuG/+iAMUbXJd1O8nN61HUtTYLL0EpjP7GV3foiS+nR5zrRpm
-	u3fkY5LRv+4um88B27T3DUKWy24WV9DNdFq8bGLQ8mtFTjgQkI0fxeOzrnQ/TOnXlIgbYQUTQ6s
-	1XDFI0fd/3xcBQIkbeY5eTHo33f6P5YiqJ748md1pdPjHd82vNsZ2XGtl8qkjF9ZXV5pHAQoPJq
-	hL19QkXohbOqjHlO8BdcKoauKj6QCa/j7OT6psuy/s1MYqMSd5J0rF3K24YmBb7sBHdrlALHp4G
-	AztFZF7XHCSqebTm5kTc/BNF+YqQc2XYdl8Gbx4A393XaVGFljcSztgZqqmYXHM2k0XQcPCPLr2
-	eb9rmjr79XRFylAy9ZzZEyx8NqQmejFZ8F6uYrU/Xmpx0HzkGjRAvd4Oh3iISvgosG8cm21MInG
-	LPEPGqVwMvLM+T7BoMOQ==
-X-Google-Smtp-Source: AGHT+IEAsQvi1+jZRATkQNhN/Dc0L4u5Au+wsSC1TmJ90uNJgCNCcyTviA0okluf38Tbj562kD00bQ==
-X-Received: by 2002:a05:600c:3b03:b0:46d:d949:daba with SMTP id 5b1f17b1804b1-47117874326mr141739475e9.4.1761121829730;
-        Wed, 22 Oct 2025 01:30:29 -0700 (PDT)
-Received: from zovi.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c428f709sm33712955e9.8.2025.10.22.01.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 01:30:29 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Petr Mladek <pmladek@suse.com>,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] taint/module: Remove unnecessary taint_flag.module field
-Date: Wed, 22 Oct 2025 10:28:04 +0200
-Message-ID: <20251022082938.26670-1-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.51.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EBA309EEA;
+	Wed, 22 Oct 2025 08:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761121727; cv=fail; b=Y0Y8QK5VXGs+7XZyDh3akCGTC2ObXJwRLh1C8Vki0qh+CLI8iMiGOMv0LlFEbrDfKpk0Icfs7zqgeHnKTt2s1PpC05sF4SwQXQKT2LxdCPA8SR8StFOePcqdhnIsQ9egUCMp2+GUCME6nDLudo8xvoDRvgx+jUJGf1r833AoSZQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761121727; c=relaxed/simple;
+	bh=I+usERoobPg+iRROrP8/38iVEmrlni4yKKzK/5hcF54=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lJs7LtxXm/gfHi98OA2LFemDEDr8v0xn7EprMKjWxbQKACn+4105djRKYF8fcYotsV970DCJ/WQhKFcYzbbpF7T3VaMvpHv7TWQCE8gXf8BqbXfdPMmlaSUaGyBl2qdRP/+tVQmCj31n6rHIBFH1BaUb8ABnHe+nHYInOQJWVcM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=W24V9bZ9; arc=fail smtp.client-ip=52.101.126.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S9W6xmKcnyqSPNpUoWmswY+zGa8aQkkzbuU9RtRULiqSqMohZ9IQXc5T+kn+5WDw8mNVmLbKTUVeuS0941hp3uV7I/0EiflVPaaUXml9GFATFtsZ84vBbQchwSEImStygGRmkLQTS/n7C3XxL+TU4Ib0b+Gb4XV4pxDghnoEOffpuFbLexpdTFOSEf7/MMQNdkgb8qUhAZrLFwiSIwqWSQ52bIo0b9wOYRxmabTFSUOA4e1Dw7dbIZyJys8KlmQip5jXe0m/y/0UnagZ+1phrNyB+sk5nrX2XG9wueqIPt4HZ7/Aj1bc3MBaITiLvlr5of7Pl28RlDSfFYQsFZFy+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I+usERoobPg+iRROrP8/38iVEmrlni4yKKzK/5hcF54=;
+ b=vXKQFfhbG5tKens8TDQohDwKvUjdfRbivgBuvZBj4K+LnkcCD8DYavy64W0GgT7cyLJ1Arxk+WXl19x1es/VRDotPqgotbOZuLpeDirahuXzwcZvZ4+ALV3mmWYEPDg0hu2OQcexiUSzAhXBZCtkS5/1LSkUP2yhNJM5xU6LAVtwig2RK4XXiB7HcOub9PdSr+B5REXGfOt7dl1A1Nuky6zhGZk+0U/B/AHyWzfKFDlgs3kS+UDvyKcEJab9WDeOMKKWH29SDcAlYPvNdBByr9bw/W17OwosUqzk/okspe9sXvLtGgXstkZzMUljS9RIqCvBKgpdf61Qz1NY3ZjOhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I+usERoobPg+iRROrP8/38iVEmrlni4yKKzK/5hcF54=;
+ b=W24V9bZ9Ey6DfzZI8YND1ZjTV86gWm8jkc+L+nqRf9m+fu3ZeL+5CDybG+ubuHtWYLM1BjAOaD87K5PP63ZybiSRUk8D8cK1SWr5QqIw3WxjaRMI7ZzNv0t4Q/itGCLzh8EcE01jLIUfcV1i3kHAEO4F5cJDYJa/HmUo3KyPO7328QIs1dhPLEQ99zfqqd7YwMyul9StOv7RkdXuCghosgTcJO5N6VmLlDImC6GwNvB4DjVQi1parRCDzrFv0TSYYeT/QsH4icFfQaT6L7I33DMNPtVRezXBA0jUS3lxvm0rVDMGHUWHBfE7T0Oew9tKj1vzw46WtTAX3g/YBc3H7g==
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com (2603:1096:408::791)
+ by SEZPR06MB6285.apcprd06.prod.outlook.com (2603:1096:101:130::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Wed, 22 Oct
+ 2025 08:28:40 +0000
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80]) by TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80%7]) with mapi id 15.20.9228.014; Wed, 22 Oct 2025
+ 08:28:40 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, "jk@codeconstruct.com.au"
+	<jk@codeconstruct.com.au>, Lee Jones <lee@kernel.org>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann
+	<arnd@arndb.de>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
+	"nfraprado@collabora.com" <nfraprado@collabora.com>, Taniya Das
+	<quic_tdas@quicinc.com>, Lad Prabhakar
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 3/6] dt-bindings: mfd: aspeed,ast2x00-scu: allow
+ #size-cells range
+Thread-Topic: [PATCH v6 3/6] dt-bindings: mfd: aspeed,ast2x00-scu: allow
+ #size-cells range
+Thread-Index: AQHcQyJOVReIAh3KfkOzMPA0rgTmD7TNz7sAgAAFj0A=
+Date: Wed, 22 Oct 2025 08:28:40 +0000
+Message-ID:
+ <TY2PPF5CB9A1BE61219A29CA15C87D7AEB5F2F3A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-4-ryan_chen@aspeedtech.com>
+ <624530ac-078a-4312-b8da-c2a090aec7c4@kernel.org>
+In-Reply-To: <624530ac-078a-4312-b8da-c2a090aec7c4@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY2PPF5CB9A1BE6:EE_|SEZPR06MB6285:EE_
+x-ms-office365-filtering-correlation-id: 05a78e59-5265-4bec-b295-08de11450140
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?d3poajEwdHNwZlVZVGcvMXZ3UlBDemsyZHd4dU9TbTlSUk9WR1hLbUVFcUc5?=
+ =?utf-8?B?SkwvRUpNWHEwZitKVlErMGNTSDEyb1VlL1pXczI0V3E0aFl6eTJuTEZHbElD?=
+ =?utf-8?B?MnFYdVpvaHcrSWZsbHpFRVpwR0k4bjZDMUFQTUtHclN1aGpZTUR6UzhyMVJw?=
+ =?utf-8?B?L2ZaMzFjQTJqS3V2OXA0b2QxK3RXV1hVL09ocjRqczZGWG9iSjFCbzNGT1pr?=
+ =?utf-8?B?NloxWFRVNzcrZ3Z2NkVkU1N4N29EWUZsY2lpNWcvUUo1d0VscGJPcWM4cFJt?=
+ =?utf-8?B?V201anZUcGhzc1IvTVVpNkFZOXd1aC9CQ200L0ZNZmlRcnlaZTJSdDUvOEhY?=
+ =?utf-8?B?bFB3QzI0eG9PaWU0RGVUQ1JCRDRSNVhZQjVPT1dRWVdrcmJKUkNIYnh3WFli?=
+ =?utf-8?B?VHZlRy9VZ3NlQVY2RTQzelB0alYyZEZqWURYUHRSMGgyMGxJWVVBVlprMy9m?=
+ =?utf-8?B?T0NlL0dMTW8yNTFBREZIQWJWbXdlZjlwQmlIOXc4amN1TEUxSWk5OXJQNENl?=
+ =?utf-8?B?NVVRZW15V2lxTExqTWZtK09VcDl4NzE1NGZ4c2dJdGl5UGVDOFNUQ2hSd1VY?=
+ =?utf-8?B?ZFRWK2p0N2tLYnV0dVIzVklJcU5HRmh2eXRLMUZRcXkvc0d5WGZXb0Uwdno5?=
+ =?utf-8?B?cFN1eEQ5MmRkdTBQenpyemtTTmFXUnpPVy9YMjBpMnFrYVhmeTIxdGI5NUxO?=
+ =?utf-8?B?NXo3NmRFNldweFZ6Tlc2bW1sNVpRUE9wU0ZzK0Z0dnhBUG1VbEg3Ry9pdDF4?=
+ =?utf-8?B?bklkVXJmckg0dVNzRmpIdFh4aGcwN2dQUUptd0VVOFFRcWpuOURDQnppTU1N?=
+ =?utf-8?B?a29hczdlTzdrQ29PZUg4ZENCQjRWcmt4MnI1bittdUMwb2ZlWTJ5MGlua0RG?=
+ =?utf-8?B?WTdCaEk4YWRpVlh5bmk1Q1FSN2gxNTgwY1hDeHNpTTNxODVqNlQ2UXp6cDlG?=
+ =?utf-8?B?c0dpUy82VFkyYzZWTU5vYUlBTXlHdGhndDFjaUNmMkRiN2RKd3VTK1FTS0hF?=
+ =?utf-8?B?MTU5RnZWL2pYbmxJbFZnYkNnbU9aa0psL2hlSVFFMGxlV29BbitaQjl6cHlv?=
+ =?utf-8?B?aW5laC9DZDNsNEFFY29TTUc1YmpNU1RWOFB0NjI4TDhhQUkrNy9yV0JZVUdO?=
+ =?utf-8?B?UkZOb3JDVFlseGVsZk0xaVo2aW9NSndGdDIwV0d0QzRDc3N3MWJLN00vNmpN?=
+ =?utf-8?B?SGN3UEJkME1TTEVoRFRtSzRTYTZLVE5pUWN2SnAvYjV3anZZdm9Qb2tEWVpI?=
+ =?utf-8?B?anI3UzVYREQ0NDN3ekVKa3kxUnBmWno5YXZHTzdtOTErY0xWT1ZSU21wbklP?=
+ =?utf-8?B?SlRlckdQSmtqMTZDc2dscWNZN3VnMGNwbmxkNkI1ODZlcmhBMFpuS3d5c2tr?=
+ =?utf-8?B?bWVMUnFOcklpcnE5MDE5MmYveXVmRHVnUWQrek5rTlFSZlh3RHlaQ0MvTXhm?=
+ =?utf-8?B?RFJqdkp4Qkl4YVZFMjRGdW8rT29DZ3liNTJ1MXJ1VG53UnUweVNoVGpqdXBz?=
+ =?utf-8?B?S0w2ZFBTb1ZRc1Zlb2lHc0dUVVI3N0RFNmRYbnMrcmwra3RLelk0RVkrWFd3?=
+ =?utf-8?B?ZlJ6MFk0QlIyQVE4WDhxUVFhdUF4a3JyTzBiN1RKM3k0d2pzU2hVMTUrVFNP?=
+ =?utf-8?B?a2R0aWFULzcyNHFzZHpPTlZsbC9iNllDWWRvdW9JaXE5OEV6d0Nya2ROREJ2?=
+ =?utf-8?B?dmUrSGxlQjRaQTdUK0s1RFkza05YNFR4U2gwU3MzS1pBNUJFa1daS3ZTaVBE?=
+ =?utf-8?B?VWNVOWc3U0IzQ2ZUVDNWSk9UQlJVVFM5UktxQTRUclNtYmtCcGcwZkxPUVFD?=
+ =?utf-8?B?MUlTVWVTU1lkcTFDUWYwdGU0S2pwY04yNENETXV1TFJ1K2xab08yL1BZSitl?=
+ =?utf-8?B?WkZQd3RRdTZFdEVBZXVqd3ZpSmV4Y08vWFJhanoxMUo0MExFeWZLb01zQjdS?=
+ =?utf-8?B?cnVtTTJZV0FrK2h2cTl3MmRnV1dWUmVCSW5WMmMzdUpJUTdTWWk2cmhIV25J?=
+ =?utf-8?B?NXJYN0Z4M09LcGhvNFRGbnMyVDJZbWpPbWJxOXhSTnpzcTROVjVJZE54bUs1?=
+ =?utf-8?B?cjNONTJ0T1loTWFTM2pqR0ZOemoyNy9pRW5Tdz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?bFByR0VqY3ZpWmRCT21xMVdjM291UFlISGtaK3N2aG04bzh6Z0MvMFBqWXdI?=
+ =?utf-8?B?N2R1cTNiRmZqa20yckxRdFJKZFI0ZGQ3cHNJclNOTXdYVnJGcUtnVEZhWHY5?=
+ =?utf-8?B?Qml3RmFBOUJuRks3d2l3MW5YWkUyb2dEeXIwNWhpNDZIY05oM01sSlc3YWdp?=
+ =?utf-8?B?T1YveDVidUp5dzZNbU5RYVV3Zi9qYlNMaUJEMDIwL0IzNFN5VGhGUXN1Wndu?=
+ =?utf-8?B?Z2pwcUFiNXJFQ24vcWdQdjVUbVNYY2p3Y0pESktDUi9VY0VySTJPWnpBYmpD?=
+ =?utf-8?B?ZjI0b3QxSnd4SU5Nb0Y4SWx1b1N0ZTBBNU42bUhtUVJBYTRYL2ZMeUhnUEI0?=
+ =?utf-8?B?YmFoY2lJTGNwQW5rNGI1d1FYNXdxNzVsZXpueFVrUE1IWnRuOGtZRzNlVENW?=
+ =?utf-8?B?MEJDOXBPZW43VGZ2WGNicjBmNFlxQ3dIZm9IRlRaNkErU21FSlJORFlVeURz?=
+ =?utf-8?B?djdJc3A4eTBFd1NNcmFEaWpldTZrOWF2RHRhR2hVdWFnNWlIMWs2NmZxaUJU?=
+ =?utf-8?B?OXVFUFZpSDZJOXZLd1pXdkxhTjQ1NWxJRW5WazZHcHd2RnJkd0tWMFJtcDRm?=
+ =?utf-8?B?c0dscmNKZnRoa1dsdGpiTHdWZ0VRWmZTbVZNRWMwdE9hYmg1RzdjT3hiaFIy?=
+ =?utf-8?B?MUFGYU0rUEkvRzAxOEEzNTdoazU0ZWFQcVJaR0M3eGN4YjdFS0ZGQk9UYWJT?=
+ =?utf-8?B?M0FuMmdKL1FCMFlJMDNQN2hvSjEzSzdiLzBzMnpJMUlXMEhNMDE1Z1ZCR2Zr?=
+ =?utf-8?B?aTd3cnBObVlaa01TTHJ0SmI3ZkFobDRSd3h3N1JhMUk2b2hnYWMyMU0vc0tH?=
+ =?utf-8?B?VjdWS1pwM293WTkwQmVKL1R4TWZ4Y2NaTDdvaVRSc1lhM2cxRmR1RG9TMS90?=
+ =?utf-8?B?QjduMktZYXBtYW53K3ZxOG1VaEVScnRGd2pZaTJ5WDM3bmZHK25LdEVnQWFN?=
+ =?utf-8?B?TjBGTXpBdERsZE9XK0JEczlGV2tiN1ZOSzhDYWUrWXRBZjh2ZlRqbWkwTmhn?=
+ =?utf-8?B?MjQrRlJZb3JBZ3Z0M2c0TngxZW1tQllrbVBqVmpVd0c4UkJIeXJSVTVaR1lC?=
+ =?utf-8?B?VVAwTnM3S1lmaXQrV0hwSW81YjZsZEVRYWpOY3k2cyt0ck8vM3QwUHIrMjA0?=
+ =?utf-8?B?NU5idDVoYXdhUVpQRHAwR0VDanV0MmtCSFg1V21jR3ZabGR2RkNwclRrcXZJ?=
+ =?utf-8?B?YmE0U2Q3MnBrc1pxWlF4bG91T1ZwTkdaamVia042OVB3ajBSQnNkSGtySnFz?=
+ =?utf-8?B?STNVY0VWTXdhWDlPbGRKMUtwb25xVmJSUlBNcTBqazVWcTNMMU9VZ2VPdkVV?=
+ =?utf-8?B?WCtCRlV4N2I5dWRuMXNsd01NQ2dNNysvNWxYTk96eEcwSEFaaTRsUlhuM2ZN?=
+ =?utf-8?B?c2tuMTZSZFFuOHFHWGlRdThFVHdJM3h2Njh2RElXR2ZXVHBrTzZYUHZ3c3d6?=
+ =?utf-8?B?cmhMOFdiRkZNL2h5Zm01ZHNQMkk4Q1Qyd3g4dWloYzVBMnJzK09KcmxBbldM?=
+ =?utf-8?B?UDdhZEhHaCtXWGZhNlVYNUxVVmczMGZlS3BSRmtRNXVCZDV5Wk1jaitDZ0NF?=
+ =?utf-8?B?WDNHdk1hZUJVbnN4YVdlR2RiTFZGRGxFVkhpOG5lOGlBUnFJcGVrUUpqRmZp?=
+ =?utf-8?B?aVZ2enZ5aWhOcHV3YkdrVHVhdnZBa004cUtLY3UxNGU2M2NzRDlTRWJoVURk?=
+ =?utf-8?B?bENEMW1ZUFJBbmZNZlphSVpZSnlMWlh5MkhaLzhHZ0FEOUlYbmQ2VW5iWW1J?=
+ =?utf-8?B?dlFSbE1mVVFpWHpFU2dwQk9CYmg1c2N3RHNaMEhzNEdPTkhvenJjUWlzaDJo?=
+ =?utf-8?B?bmluK0dXaGJPWHo5T3p6c1dDRzZCUlVyMEpROTZ4WXNvUkpvRDkxM3pxemtK?=
+ =?utf-8?B?c0FtKzludG9icGhoQWpLWGp4aFAySDZRTzdaVEUzTmU4dFd1YlRpQnJYVnF1?=
+ =?utf-8?B?YnREeVpNR2RwTEpVdy9kVTBZTjM2aE8yZ0xjWERFOFVTY1lLVkpTTVU0V1NE?=
+ =?utf-8?B?TUwvb1RJWU9Wb2VUK2did1NocWJuTXJjRnl6NUJ6V3BkTnRENGF5Z05JNm9U?=
+ =?utf-8?B?WGpxdHFKSU92M2Y5QTZIUGxrTGpRbUd2Z3BXaU01VzNvMkcwelBJSkVMQWlG?=
+ =?utf-8?Q?kkAcAYQoruv2mzwI5XERQ+sph?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05a78e59-5265-4bec-b295-08de11450140
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2025 08:28:40.4163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UFevAFuW/K2xmIbH3JNbjbTmgLDP/8S/+P+DVHn4CAAlxULHdVTMJZ8SEkXu9/wFF4+247cMhCZDmV6bBCXxVL2pxvX+6NXcw0cVgayP6mM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6285
 
-The TAINT_RANDSTRUCT and TAINT_FWCTL flags are mistakenly set in the
-taint_flags table as per-module flags. While this can be trivially
-corrected, the issue can be avoided altogether by removing the
-taint_flag.module field.
-
-This is possible because, since commit 7fd8329ba502 ("taint/module: Clean
-up global and module taint flags handling") in 2016, the handling of module
-taint flags has been fully generic. Specifically, module_flags_taint() can
-print all flags, and the required output buffer size is properly defined in
-terms of TAINT_FLAGS_COUNT. The actual per-module flags are always those
-added to module.taints by calls to add_taint_module().
-
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
----
-The patch is based on linux-next (20251021) because I wanted to avoid
-a conflict with "taint: add reminder about updating docs and scripts" [1],
-which is currently queued in mm-nonmm-unstable.
-
-[1] https://lore.kernel.org/all/20251015221626.1126156-1-rdunlap@infradead.org/
-
----
- include/linux/panic.h |  1 -
- kernel/module/main.c  |  2 +-
- kernel/panic.c        | 46 ++++++++++++++++++++-----------------------
- 3 files changed, 22 insertions(+), 27 deletions(-)
-
-diff --git a/include/linux/panic.h b/include/linux/panic.h
-index 6f972a66c13e..a00bc0937698 100644
---- a/include/linux/panic.h
-+++ b/include/linux/panic.h
-@@ -86,7 +86,6 @@ static inline void set_arch_panic_timeout(int timeout, int arch_default_timeout)
- struct taint_flag {
- 	char c_true;		/* character printed when tainted */
- 	char c_false;		/* character printed when not tainted */
--	bool module;		/* also show as a per-module taint flag */
- 	const char *desc;	/* verbose description of the set taint flag */
- };
- 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index c66b26184936..6f219751df7e 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -954,7 +954,7 @@ size_t module_flags_taint(unsigned long taints, char *buf)
- 	int i;
- 
- 	for (i = 0; i < TAINT_FLAGS_COUNT; i++) {
--		if (taint_flags[i].module && test_bit(i, &taints))
-+		if (test_bit(i, &taints))
- 			buf[l++] = taint_flags[i].c_true;
- 	}
- 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 81b7911fb5ca..341c66948dcb 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -628,17 +628,13 @@ void panic(const char *fmt, ...)
- }
- EXPORT_SYMBOL(panic);
- 
--#define TAINT_FLAG(taint, _c_true, _c_false, _module)			\
-+#define TAINT_FLAG(taint, _c_true, _c_false)				\
- 	[ TAINT_##taint ] = {						\
- 		.c_true = _c_true, .c_false = _c_false,			\
--		.module = _module,					\
- 		.desc = #taint,						\
- 	}
- 
- /*
-- * TAINT_FORCED_RMMOD could be a per-module flag but the module
-- * is being removed anyway.
-- *
-  * NOTE: if you modify the taint_flags or TAINT_FLAGS_COUNT,
-  * please also modify tools/debugging/kernel-chktaint and
-  * Documentation/admin-guide/tainted-kernels.rst, including its
-@@ -646,26 +642,26 @@ EXPORT_SYMBOL(panic);
-  * /proc/sys/kernel/tainted.
-  */
- const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
--	TAINT_FLAG(PROPRIETARY_MODULE,		'P', 'G', true),
--	TAINT_FLAG(FORCED_MODULE,		'F', ' ', true),
--	TAINT_FLAG(CPU_OUT_OF_SPEC,		'S', ' ', false),
--	TAINT_FLAG(FORCED_RMMOD,		'R', ' ', false),
--	TAINT_FLAG(MACHINE_CHECK,		'M', ' ', false),
--	TAINT_FLAG(BAD_PAGE,			'B', ' ', false),
--	TAINT_FLAG(USER,			'U', ' ', false),
--	TAINT_FLAG(DIE,				'D', ' ', false),
--	TAINT_FLAG(OVERRIDDEN_ACPI_TABLE,	'A', ' ', false),
--	TAINT_FLAG(WARN,			'W', ' ', false),
--	TAINT_FLAG(CRAP,			'C', ' ', true),
--	TAINT_FLAG(FIRMWARE_WORKAROUND,		'I', ' ', false),
--	TAINT_FLAG(OOT_MODULE,			'O', ' ', true),
--	TAINT_FLAG(UNSIGNED_MODULE,		'E', ' ', true),
--	TAINT_FLAG(SOFTLOCKUP,			'L', ' ', false),
--	TAINT_FLAG(LIVEPATCH,			'K', ' ', true),
--	TAINT_FLAG(AUX,				'X', ' ', true),
--	TAINT_FLAG(RANDSTRUCT,			'T', ' ', true),
--	TAINT_FLAG(TEST,			'N', ' ', true),
--	TAINT_FLAG(FWCTL,			'J', ' ', true),
-+	TAINT_FLAG(PROPRIETARY_MODULE,		'P', 'G'),
-+	TAINT_FLAG(FORCED_MODULE,		'F', ' '),
-+	TAINT_FLAG(CPU_OUT_OF_SPEC,		'S', ' '),
-+	TAINT_FLAG(FORCED_RMMOD,		'R', ' '),
-+	TAINT_FLAG(MACHINE_CHECK,		'M', ' '),
-+	TAINT_FLAG(BAD_PAGE,			'B', ' '),
-+	TAINT_FLAG(USER,			'U', ' '),
-+	TAINT_FLAG(DIE,				'D', ' '),
-+	TAINT_FLAG(OVERRIDDEN_ACPI_TABLE,	'A', ' '),
-+	TAINT_FLAG(WARN,			'W', ' '),
-+	TAINT_FLAG(CRAP,			'C', ' '),
-+	TAINT_FLAG(FIRMWARE_WORKAROUND,		'I', ' '),
-+	TAINT_FLAG(OOT_MODULE,			'O', ' '),
-+	TAINT_FLAG(UNSIGNED_MODULE,		'E', ' '),
-+	TAINT_FLAG(SOFTLOCKUP,			'L', ' '),
-+	TAINT_FLAG(LIVEPATCH,			'K', ' '),
-+	TAINT_FLAG(AUX,				'X', ' '),
-+	TAINT_FLAG(RANDSTRUCT,			'T', ' '),
-+	TAINT_FLAG(TEST,			'N', ' '),
-+	TAINT_FLAG(FWCTL,			'J', ' '),
- };
- 
- #undef TAINT_FLAG
-
-base-commit: aaa9c3550b60d6259d6ea8b1175ade8d1242444e
--- 
-2.51.1
-
+PiBTdWJqZWN0OiBSZTogW1BBVENIIHY2IDMvNl0gZHQtYmluZGluZ3M6IG1mZDogYXNwZWVkLGFz
+dDJ4MDAtc2N1OiBhbGxvdw0KPiAjc2l6ZS1jZWxscyByYW5nZQ0KPiANCj4gT24gMjIvMTAvMjAy
+NSAwOTowNSwgUnlhbiBDaGVuIHdyb3RlOg0KPiA+IFRoZSAjc2l6ZS1jZWxscyBwcm9wZXJ0eSBp
+biB0aGUgQXNwZWVkIFNDVSBiaW5kaW5nIGlzIGN1cnJlbnRseSBmaXhlZA0KPiA+IHRvIGEgY29u
+c3RhbnQgdmFsdWUgb2YgMS4gSG93ZXZlciwgbmV3ZXIgU29DcyAoZXguIEFTVDI3MDApIG1heQ0K
+PiA+IHJlcXVpcmUgdHdvIHNpemUgY2VsbHMgdG8gZGVzY3JpYmUgY2VydGFpbiBzdWJyZWdpb25z
+IG9yIHN1YmRldmljZXMuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIHVwZGF0ZXMgdGhlIHNjaGVtYSB0
+byBhbGxvdyAjc2l6ZS1jZWxscyB2YWx1ZXMgaW4gdGhlIHJhbmdlDQo+ID4gb2YgMSB0byAyLiBU
+aGlzIG1ha2VzIHRoZSBiaW5kaW5nIG1vcmUgZmxleGlibGUgd2hpbGUgbWFpbnRhaW5pbmcNCj4g
+PiBjb21wYXRpYmlsaXR5IHdpdGggZXhpc3RpbmcgcGxhdGZvcm1zLg0KPiA+IEl0IGFsc28gcmVz
+b2x2ZXMgZHQtYmluZGluZyB2YWxpZGF0aW9uIHdhcm5pbmdzIHJlcG9ydGVkIGJ5IGBtYWtlDQo+
+ID4gZHRfYmluZGluZ19jaGVja2AuDQo+IA0KPiBUaGVyZSBpcyBubyBzdWNoIHdhcm5pbmchIEkg
+dGhpbmsgSSB0b2xkIHlvdSB0aGF0IGFscmVhZHkuIERvbid0IGludmVudCBmYWtlLA0KPiBmdXR1
+cmUgd2FybmluZ3MuDQoNClNvcnJ5LCBJIHVuZGVyc3RhbmQgeW91ciBwb2ludCwgd2lsbCByZW1v
+dmUgdGhpcyBwYXRjaC4NCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo=
 
