@@ -1,278 +1,298 @@
-Return-Path: <linux-kernel+bounces-863900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9ABABF972E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:20:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCABBF9742
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E277C35380F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:20:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94437464D68
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3CB1CEAA3;
-	Wed, 22 Oct 2025 00:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8018B19D092;
+	Wed, 22 Oct 2025 00:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXE2nZnh"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dupHr21s"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012049.outbound.protection.outlook.com [52.101.43.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1F219C556
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761092425; cv=none; b=AGaYOd3r+otzqGNJbRNrRlyyuR/+FWAsfwZR+/yBrXtr40ZmTzsxVJ52x07JOirlv8ArADDDq+U3g5CccphonuAejuvhrgb3yqIzxEaVnjcl6J8q4k8eeuAikPzr7lE8Nsq17yV0ilLdThF+Fs3DYDsznxRf9XZ9PxntaqOeLvE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761092425; c=relaxed/simple;
-	bh=BRXShLW7W5/j3n6WXYzW3QS+Q7LioQIoXr7V3X8QlnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q31WZt6Tep+m369rEv3omGZujHGheIjSuwPO1XxvP9jgrhMGQRhoxPTlmF0JK9G8RPYYwotOt3LefkidJf82Hirei3ZYC/OLjord2rHq5wo4EkdycwMCcldxd0xk4Bq5eQ3YWQFThIa9+BRPSVulBdjYlm2H/p+0nyHgYqc9NnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXE2nZnh; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b57bffc0248so359354a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761092423; x=1761697223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zh6p3zPmQiUeUqLIm43PW7u/eg9Ryz3Ek/pj2nzImMM=;
-        b=KXE2nZnhkem3LmJNhkglie6PeX/ZuWvOGV3X0MET20RmDD+gFiVV4vcRp6q/e16luD
-         NLlg496/XIoFYgrhISvc+XqVGYNoxetJn+UD5DgYwxC0CzIoEc4tJMwsPCk/QHriqQF9
-         HEcTXSs6/EgGR9/ktX0eHld4fig6k2R+xTPX+P+BrUihxh9wZftYlwfUmRfWE42E7n0f
-         /g1fIdSg9MJBOPUQ0OZwz3rlQkrU4T8kCl/HLpXQ1EhAMEgB5enyMZn+0fi1WCnwyYx+
-         JiVx8QzniwJcUqVnsDIAwd102+aC3/WZM6fRUKQHdEcAkU2AQCBVEEdUEj3rnhMO3HXD
-         s8oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761092423; x=1761697223;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zh6p3zPmQiUeUqLIm43PW7u/eg9Ryz3Ek/pj2nzImMM=;
-        b=KAXuxl4c31Z2Fl4YktIu2+RtyioOy7YNGueGY7CpH9Svn0LZfzmedFoGFGEL/fd1QJ
-         VNQmGetzH1FzwKkPc3cfhdfK8gtHoh1bpqsje6ef9OLLKMHcrHseZuCiTEq7ViHHhHpi
-         y5Mydjg9z+N6TSaZs/XKynJfVNwYC4xXpV2arKqDjkqhYapQ9pABQfWo9Fu5g5EVuvGY
-         mLqyOLvUJGDfNJiN3ijkebo0yCBvgy9VFnFBHYK21GilFSADqGniqYeI/66AN1tELKOO
-         QjjKqOLIMmd6do81cQXw4Je6b9b0FI0DFANthtCHmC6q2gZaJcGkRgpzvgfsq9RkNrM8
-         c74A==
-X-Forwarded-Encrypted: i=1; AJvYcCVpPZBUc/iQwE2483Yn3wPldsi6GZpZ0ZFZ8xcXtgd+3fuRhyYJH3TgJ+1n7jHAlL587xTtFtOA/7l+P9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF3fDnCdn2QVKOqaeF98RLaoTNEYLVOYJS+eraKvTbcak7pOnO
-	lnrz5gdKGDMqkuCP3nQgJou7H7shabbJAGjX1Og9qzIHd2/7LHPunKRT
-X-Gm-Gg: ASbGncsXl7hZx34APvQ6XKnu92QjlctgbQHcYrPCclytJ+SiXMa26oaxIylRjtfKbM6
-	UFssUFfDyYQvIPPBjk62XvQCSNiaKnRrjQbh1FKEjhmecrZW1HDbFdKlhZPTohQ6bQ/ozbCeiEK
-	q+GJ1Dxfl5ynVCjQo6iKgZWiId0ZW0eFyJbXTQVo1KtMGKbx3ZuALG7R5i0odeSwf+4bLUF9taN
-	nslLuJuwQcGbt3jKySjxsLQH/CrxCDTLDovccdJ8UhYLbB5Hx8gy6sLScdl0uBL/xCGO8Eevzyv
-	BxwT7IRyFGmKWv4Ngv5OskAUn1hdfQ/iN++SmF/9GYcvkx8QtddDad7CDkxcrXaxsljVHlu4jsI
-	8J00q0gdB6/UtnO5DXD1L1OXJ5TQz50HXEDOlmFHfkYhgMZIukeIBMp9qgXlUdXJOUuUUb+bFYc
-	+yZ4wjkXG+
-X-Google-Smtp-Source: AGHT+IHNz+zoQ+2Bi98EPbJTECbCqeGyTGzZFef/KyQe6e5Dp6oW7yPraB1RU49wPYv0mxci6bnbpw==
-X-Received: by 2002:a17:903:249:b0:267:44e6:11d6 with SMTP id d9443c01a7336-292ffba4632mr18972615ad.6.1761092423350;
-        Tue, 21 Oct 2025 17:20:23 -0700 (PDT)
-Received: from fedora ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fdcf9sm120759805ad.91.2025.10.21.17.20.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 17:20:23 -0700 (PDT)
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Simon Horman <horms@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Shuah Khan <shuah@kernel.org>,
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>
-Subject: [PATCH net-next v8 2/2] selftests: tls: add tls record_size_limit test
-Date: Wed, 22 Oct 2025 10:19:37 +1000
-Message-ID: <20251022001937.20155-2-wilfred.opensource@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251022001937.20155-1-wilfred.opensource@gmail.com>
-References: <20251022001937.20155-1-wilfred.opensource@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FDF7262A;
+	Wed, 22 Oct 2025 00:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761092948; cv=fail; b=Tx7kD6fkqxLmuGt7EouWh7U3pJAit6qj7O23N7VbQEFjZLtQqw+CS4SK+19G5vOphBQJnBCPIA18k3zv9VWGmcyUxspFockss6uGikbyHmv0HaQcNqVimabhYP6SROIGbnmNDhuHzukAVkG0q4wxBjXQq63b98966/MMT9uQ7Ac=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761092948; c=relaxed/simple;
+	bh=6cG6AbHNJqtV4xb3Ih4lKHJlRbCVehd3H/AhAIhfrZM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oLjBVYR8mlU0rxCK8Cmqk6yvTISgUYwpqOrowDEiUDbDogMT7Jfnr5hT1U4KVQ8RJjPM0UKTmCfJKgMxuDaSYlclxMcprZGUToOmhz5Surtp0M0FuJiBtgGWr9J6GibEnz5mFW/yI9YW3u9EWF+6sJzlryY1bSh0OmERGR0wf6k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dupHr21s; arc=fail smtp.client-ip=52.101.43.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KhGJOFyVy0ERVRl4OqgOptH5UfB3e4xZZllE9jqtdY0vTiUeGDi+K9+vfqzDArnYmISXhVfn5C5Ngof42JipXFbet3Sc3epR1a799GznyEsagXDbbAvH3BxNEwgF5tweUcWxLVokMvgbFyT57XbTG7Q73VKYnymQ2srgO31IZsigieu1hHYtvlvGgcH0aXeS+jhwlwZ7cVP6pKQawKQsdGxAwRBau2xun0tc3N99r1XQ246mwqWJg2PM4GEgaHQNLu6/nM9v9HCC38RLQdtmB656mbvlsnDvp3D9FDkxEj5bBppV15L2OCBSnTXXTDLEcE0u3/kS828a2GC1rnLTlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m7CFn3JgqNpTb9fH7UBGqn2RGEy2Qw1SF2jltO5f1x4=;
+ b=OrJWvQLuajMSfYmg6a0ciDG7OUqK6vXG3VLi7bjN+hFTAs2n0R4XSoP0Ufa5DkJKbB85ttxF16smZ5mTRB817jk4P8gwcvT72H5Ya/cSWSM8vlTweZ0THn25UY/NmrchsITU8RixYF9q7kXgdiQSaleT0Y54aUN5i0MueAyicOYZQY8wLNc+NjH2qHMwGjjNRJMBWHkZfjXOpmPsyYaQLXRVteL/ynWQTPT8If6MUGDP2xqjRTbVfebY7dD5R6QPzI+2Tl/hu3A2RvzGNx2e/6L2bWDVjipkuHjHoXMPWqO+XgbGpTMpV3KkKi04+kKJwlzbFv4ESwCdtDBCuOPcfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m7CFn3JgqNpTb9fH7UBGqn2RGEy2Qw1SF2jltO5f1x4=;
+ b=dupHr21swUnvvNZPWThbaQL0x8ojvsY/132+IEhGpGxUFZ7Q6aPcuG6k00OoxlYeaHlWXFqfpKUmxTziuOqAp9KlK0DYmhXFcEGs+Tyid+kaqJQ9nVMaEwEuQhmS6psA41EDBmQOn9+dBuTM9D16rK09az6zBcwllRfEuP7/dE7IUdH56kttp4IinAFRFmKjwkARMr0YERrvNohqV2kNYiX9EZ+5ON5YdaCz5Ww+9kTDWCpbSAPPIYiOy86+3VnDKJF85ttgJUsbLa2O131sSxFe2gfeicEhi15A21uqV+tmv3pgaLCWXI7dgoJgemvJKlll5JH8n6iF68OOLYWLgw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
+ SJ0PR12MB5609.namprd12.prod.outlook.com (2603:10b6:a03:42c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Wed, 22 Oct
+ 2025 00:29:04 +0000
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2%6]) with mapi id 15.20.9228.016; Wed, 22 Oct 2025
+ 00:29:03 +0000
+Message-ID: <fa5187f0-293e-48f0-ab75-6641e284e8b4@nvidia.com>
+Date: Tue, 21 Oct 2025 17:29:00 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/29] arm_mpam: Add probe/remove for mpam msc driver
+ and kbuild boiler plate
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-8-james.morse@arm.com>
+Content-Language: en-US
+From: Fenghua Yu <fenghuay@nvidia.com>
+In-Reply-To: <20251017185645.26604-8-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR08CA0027.namprd08.prod.outlook.com
+ (2603:10b6:a03:100::40) To DM6PR12MB2667.namprd12.prod.outlook.com
+ (2603:10b6:5:42::28)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|SJ0PR12MB5609:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59e62d2a-b6ca-462a-afa2-08de11020083
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?empId20xSXBCZGFCci9MUkR2U3pReWI4YUFJNTEyR1BFcjVzWmhtQno3TmhY?=
+ =?utf-8?B?VUg2TjlBdVhYMklSYVB3elRoaEtTM1h5eTF6aU5PZHB1aC91VTFnSERQV2RI?=
+ =?utf-8?B?UkdVL0kwR2pXd3E0SHVzM09wc2w0MHQzVEhXUEdOWmZ3OXJXcHB2SUJUeXpM?=
+ =?utf-8?B?OEZKMjl3T2FsY0JpOGRUa2lTVVNldG8xSHVvcXlJajZXanJmb2QrazBpUG5i?=
+ =?utf-8?B?L1pwNDh3RXREblpkcFJpejJUZnUxc3c2U2padjdJTWg5YmY4ZG92OTZSMGM2?=
+ =?utf-8?B?UDNicU1ackxXRWs3Zzg1NEc5VHowMmFjRUdkRXBicGlOVTVUWTlxS3ArS2Nw?=
+ =?utf-8?B?ajlVUmx2dW41RzRGUkNHaStBSG5wNVd5NERmR3RoWmFVWDV1d3dSM1QrKzVs?=
+ =?utf-8?B?ZGZmWGVpMVdoZmJGUFVwNWplYjI0S3Rmb1M4YmNRNzFpMVBWa0JnMy9PdlJr?=
+ =?utf-8?B?WW02YlIyYTN5ck1PZEFjT0JRdW82THB3NzZrclpRSzNZbEdtMlI0VUhlSm1S?=
+ =?utf-8?B?Nkx2YVo2MmJaaVZLRDVLMnFyR2YxMk8wMy9Xb0E0VHNKSWEvYWU3cGJmRjdv?=
+ =?utf-8?B?YTNTcllaV2NOSFVvb2tBa1FySkkrS0t4RXZaQ0lCQWgzd3JNVEhxc0R0OFE0?=
+ =?utf-8?B?S3dPbU8yd091a3ZrQlpkQzFxZTdwODNKbnJKYStERUhsdXhmV3MrbkJTQW1p?=
+ =?utf-8?B?Tkg1Vm5ubGpnK2NBbkVkZ0txNkMvSlAveUF4MTBqRXVNdm42T0w0QWFDMEtj?=
+ =?utf-8?B?UTA2ODI5ZVVFTmMrLytrbzVITWU3d2xsU3pHTTRFSVlKTkJyb2VtOHNKOXZr?=
+ =?utf-8?B?TFppckl0cHA5RjV5MHBQNDIyQTFqU2twZytaQkVNMi9xZWRDbkJEZndENm0z?=
+ =?utf-8?B?cVFPaC9ORm8vNEtuV3Y4TG1CM1hOd3RQUTRCVWgzbWJ4QzlzdmVaaGdFWTJ2?=
+ =?utf-8?B?WHoyeUFma2N1Z3B2ZDlNRzZvZFBiamFCZWYrcHMzbGR6VUtoY1NESEJybFlQ?=
+ =?utf-8?B?YU8wY2QvSjZON1dsNlkycDMrSlh6RStUdk52UHdtSUVTSWVORDFZU1N6MHp6?=
+ =?utf-8?B?YkJDTU8vdnRvd2x4MkY2R3d2ZkxHeS9pQmxDdUFHZGgrdW5KR0VDV01nc0JK?=
+ =?utf-8?B?QlA2RUlTTDcxeWR4ZFdoaUFEZ1hva0NOcmJwZHZDL2JwSnBESDBhdXkwTGxj?=
+ =?utf-8?B?SjI2UVNBMmRzbnZZN0h5c0ZiZS9tMDFpcmJDamN6UzM5cE1zQTlYR2V5Mm1E?=
+ =?utf-8?B?NC9BUEZQSTM2VW8xc25rNHNydE0xM0NFMzhncTFxbTUwbWNzSE1IOURLUkND?=
+ =?utf-8?B?SG94Z3hISFJXWUNjTndnOVczY1VDb3JmT3VYV2IvOTJzVXdFZUhBeXkvUXpP?=
+ =?utf-8?B?cE9ROVp3YVRpcWx5akdYR2ZzMmNOcVdQM1ZPcHFBcWhQTUFycUtyTzNpN05u?=
+ =?utf-8?B?WUMwTFU0MG1oVmttaldvNjBHNUhUQTJKaFZ3bXArSzdMRkpZS25ONnN3Ny9i?=
+ =?utf-8?B?YzB2bHFRUTA0NXN5WXhkdXpya3RLWEErTUFrTVJXdUpGR3FwRjlvZSs1RDhC?=
+ =?utf-8?B?SmJwZVEzRGZQUFZ2M2ZxZk9rNmp6ZDlvNHVIY0EvbGk4bisyeS80OEJBZS9N?=
+ =?utf-8?B?MzlxM21kaFRRalhZRnRmZVdWZktkTnNIS3JwRStQL1BPSFA2Ujd5enVTYjNr?=
+ =?utf-8?B?OFlmMHRaY0E5RDdZUy9BUVdUZWdkZlFxMXVkbmJSWEtodFMvbC84T09sTmxh?=
+ =?utf-8?B?Sk1pcUVta1g1a0dFSkR1SU5FQnZvRDlLdjM3Ykp5ODdvQXN1N29tTEQvRHVB?=
+ =?utf-8?B?Z3dYMDBLUnZDQUtCang2WGFWbzU3Q0JNTmJlcUlFNkV1Z3hzR0h4a25vYkF0?=
+ =?utf-8?B?QnZ5YW1hTG9YYkFlS3RoSlVhZnRaT0xYRnlmTlpiYzJDTjJKSlRoTktYZVNS?=
+ =?utf-8?Q?9JGZixJ6cYHcjWzxuC0+4IvXSz6Ffp1g?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TEFFQ3Fmc3VpTEZmUlE2eURaMHM2M05qQWx0Y0FwNXZ6eEU4VHREcFJpS3BS?=
+ =?utf-8?B?TnN0NFZLM2pXRTVwMk9KY3QxVDRIVjNDbUN5ak9tanlHZU02YnVkckJmRUZD?=
+ =?utf-8?B?SU5rak0xZnZZODl1QUtEQjhHTlhGWDdBYUNhYnJkZjhmMklscWFkNTNXUVl6?=
+ =?utf-8?B?OWNNblRjMW9SbFRoSkJiZmx6M3dXQ1I0YTlOVWNyQ1hCT0RkdXROMzdGNnBv?=
+ =?utf-8?B?MkNabXVlcVNucStMbzQ2U1JEeEdZYmNhQzBzbWRmRTJqWDd0ZjBobUVhdVg0?=
+ =?utf-8?B?Wko0dnk3TGV6ZC9GRkhSdDV0bEp4UFVmV2s0N3NxWTlUMzJVOEp4N2RYNGQw?=
+ =?utf-8?B?ZE91djJHM3pTZk85Yy84WUZ6WlA3QVIreU5nRzZIMnJaL05tV0Z6S0x5M0Rv?=
+ =?utf-8?B?eW5BR2JXVndaNkJKT0tKYzFaOVVSMG1wZXFKZFhmMnczc2FkLzR4Ui9RZ21G?=
+ =?utf-8?B?YmhIdXlCcng4T292UHVmdW1JZHpmYmJNNDNscmlFbVNWdGY4WXVvKzVJcU1u?=
+ =?utf-8?B?T3cyUUNmRUo5dTRlcmVhMUdsUDJIK2kxbVJzcGU2eVgrcWozcmdOcVBncmRu?=
+ =?utf-8?B?RWZUKzgwbFFSTS8yUTQ3djRxallXOWg5RU0rTmJmVWJKUlVocTlrZTg1bGlI?=
+ =?utf-8?B?NWRBMDVVVUFEWU5KbWcxT2R5dWwrNy9VRTJFVGlnQlp4THFFVnZQZEdLaFBj?=
+ =?utf-8?B?YWJvdE8xLzAwenpwTGdML0lmMWhSQTRqaWJ1NXorK2ZYcC9DV0NCUS9IVTYy?=
+ =?utf-8?B?aW1QdjdrbGNvajRyby9Tcnc2ZUVXRVdvUlkyMUFEQnBIM2FqcUdrRlFlbzBH?=
+ =?utf-8?B?TVRvbjVidnlUUUJQRUtIRTNIY3NjQ3h4VTdVa2hPbURCZ1ZIUzNLaUkzMWZT?=
+ =?utf-8?B?VW5kaVQ3ZERVODhNVnJJd1lHUmpHelREMEt3V3liVlRJUVVRNXRMNnlNbFIr?=
+ =?utf-8?B?RW1pVWpxem9NYXZnRmdBWHV2SWYwZStWL3Y1a0VkYWNjQy9YaVZxTFdKYVdq?=
+ =?utf-8?B?ZHAwKytqWjVtM3FnYjVFS2pqdzR2alBjV01SR1l0ZmRtQjZ2RDUyajMyQkpt?=
+ =?utf-8?B?c1dueFVqNks4ZjNIaFJuQ0Jpa1MrYjNJdTVYblpBUnRJQWY2OTFMVzVvUWRr?=
+ =?utf-8?B?THlUeTlrcGtFb1FlVkdRcCtKOVBqM1ZQTEtnSjAyQTdESFJGd1o4SUxlVElI?=
+ =?utf-8?B?M2hrd2dXNEo0NkxYMVJuK0VGblVwcHd3VVJlNjJsaEw5ZjRnNlVCM21tcUZo?=
+ =?utf-8?B?b2dBNUp3QTYwQ1lPUHR0a1VkSStLSVhLVzhGRHA0Y3JBWG52YmtIZmxacUho?=
+ =?utf-8?B?TG9aeE1RdkwvTC90SktGcWtFWmM4T1VNUStkeHU2d0U3UCt5STRobkZZYSs4?=
+ =?utf-8?B?SUZsNmI5RXFQRGhiMHNSMTUzb1V2cnJxSGFhajhiWk9jTHFCZ1luQUdBSmFF?=
+ =?utf-8?B?U2QrVmhpa2c1cDVNY0JMRlZiUUQwZXdjaDRPY0cvcTh1MTBmTUdqSU0zWmd4?=
+ =?utf-8?B?d3Uvc2M3Nnd6UjFpVFo2am1mZmNCTmRIMGxOdVJZRWlUcXJCR3kzcjlGQjFN?=
+ =?utf-8?B?NFB6UWxjZHMrbXYxU3F3YnBxZWkra3c5RDYzTE5NZCt6NTlnWisycDJ2Sjh5?=
+ =?utf-8?B?b0p2ZHNWMDhZTlpNV2hZNzJpeG4rQ2c3a0hsZFJhU1VvdDJQa25zNHhKQnlp?=
+ =?utf-8?B?T3NCUXNMUTBQOFluNjY2OHF4MzFJM3ZKU2F2ai8xVkNvVTh5Z0F5NlVIWEl2?=
+ =?utf-8?B?ZmZqaEh5STVQRUtGS3FzV2dzY3M2d2NETGU3VDdNemlSTDFBbHdCaEJsS3RK?=
+ =?utf-8?B?Qk83c3BNbjM4KzJvL1B4RjFaMGhHY2ZhdWRXS0VoL3JMVzBHYnBPUUhJNnVv?=
+ =?utf-8?B?NjNDVFJXQ2xmMjBtTDlCOVZrTUE1MnJMdWp1cFlDbFgveTJQMXZMWCtINElQ?=
+ =?utf-8?B?V3ZLdEMxd0xhaFRUVmpMcklvYkliQkt5YjZJNVBQWEkxaWpPUC8wUE56RG5s?=
+ =?utf-8?B?MDN0UVZwaGx5dHlqcWVqT1lPZ1ZaaW45c0RxTlNFWHYyejliWmVuZzMxelpr?=
+ =?utf-8?B?N2FCS3ZNN0ZqYjJGZ1RDaFJiQ1lwMnAzV0NwK3h0UEQzY081MWlkMytTNysr?=
+ =?utf-8?Q?Sk939QvEiS24p8gR2YIVuGJyc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59e62d2a-b6ca-462a-afa2-08de11020083
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 00:29:03.4597
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: udAVV6Y7bAZZFAq97UBnP26vSkK4nfijVDdEvLbw/kEQ58XTBIlTi9QXfFy7wok1bj/hJkefOKJPjnJqCoYGqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5609
 
-From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Hi, James,
 
-Test that outgoing plaintext records respect the tls TLS_TX_MAX_PAYLOAD_LEN
-set using setsockopt(). The limit is set to be 128, thus, in all received
-records, the plaintext must not exceed this amount.
+On 10/17/25 11:56, James Morse wrote:
+> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
+> only be accessible from those CPUs, and they may not be online.
+> Touching the hardware early is pointless as MPAM can't be used until
+> the system-wide common values for num_partid and num_pmg have been
+> discovered.
+> 
+> Start with driver probe/remove and mapping the MSC.
+> 
+> CC: Carl Worth <carl@os.amperecomputing.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+[SNIP]> +/*
+> + * An MSC can control traffic from a set of CPUs, but may only be accessible
+> + * from a (hopefully wider) set of CPUs. The common reason for this is power
+> + * management. If all the CPUs in a cluster are in PSCI:CPU_SUSPEND, the
+> + * corresponding cache may also be powered off. By making accesses from
+> + * one of those CPUs, we ensure this isn't the case.
+> + */
+> +static int update_msc_accessibility(struct mpam_msc *msc)
+> +{
+> +	u32 affinity_id;
+> +	int err;
+> +
+> +	err = device_property_read_u32(&msc->pdev->dev, "cpu_affinity",
+> +				       &affinity_id);
+> +	if (err)
+> +		cpumask_copy(&msc->accessibility, cpu_possible_mask);
+> +	else
+> +		acpi_pptt_get_cpus_from_container(affinity_id,
+> +						  &msc->accessibility);
+> +	return err;
 
-Also test that setting a new record size limit whilst a pending open
-record exists is handled correctly by discarding the request.
+The error is handled and there is no need to return the error to caller.
+Returning the error causes probe failure and the mpam_msc driver cannot 
+be installed.
 
-Suggested-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
----
-V7 -> V8:
- - Drop TLS 1.3 tests for the removed getsockopt() changes from V7 
----
- tools/testing/selftests/net/tls.c | 141 ++++++++++++++++++++++++++++++
- 1 file changed, 141 insertions(+)
+s/return err;/return 0;/
 
-diff --git a/tools/testing/selftests/net/tls.c b/tools/testing/selftests/net/tls.c
-index 5c6d8215021c..da1b50b30719 100644
---- a/tools/testing/selftests/net/tls.c
-+++ b/tools/testing/selftests/net/tls.c
-@@ -2856,6 +2856,147 @@ TEST_F(tls_err, oob_pressure)
- 		EXPECT_EQ(send(self->fd2, buf, 5, MSG_OOB), 5);
- }
- 
-+/*
-+ * Parse a stream of TLS records and ensure that each record respects
-+ * the specified @max_payload_len.
-+ */
-+static size_t parse_tls_records(struct __test_metadata *_metadata,
-+				const __u8 *rx_buf, int rx_len, int overhead,
-+				__u16 max_payload_len)
-+{
-+	const __u8 *rec = rx_buf;
-+	size_t total_plaintext_rx = 0;
-+	const __u8 rec_header_len = 5;
-+
-+	while (rec < rx_buf + rx_len) {
-+		__u16 record_payload_len;
-+		__u16 plaintext_len;
-+
-+		/* Sanity check that it's a TLS header for application data */
-+		ASSERT_EQ(rec[0], 23);
-+		ASSERT_EQ(rec[1], 0x3);
-+		ASSERT_EQ(rec[2], 0x3);
-+
-+		memcpy(&record_payload_len, rec + 3, 2);
-+		record_payload_len = ntohs(record_payload_len);
-+		ASSERT_GE(record_payload_len, overhead);
-+
-+		plaintext_len = record_payload_len - overhead;
-+		total_plaintext_rx += plaintext_len;
-+
-+		/* Plaintext must not exceed the specified limit */
-+		ASSERT_LE(plaintext_len, max_payload_len);
-+		rec += rec_header_len + record_payload_len;
-+	}
-+
-+	return total_plaintext_rx;
-+}
-+
-+TEST(tls_12_tx_max_payload_len)
-+{
-+	struct tls_crypto_info_keys tls12;
-+	int cfd, ret, fd, overhead;
-+	size_t total_plaintext_rx = 0;
-+	__u8 tx[1024], rx[2000];
-+	__u16 limit = 128;
-+	__u16 opt = 0;
-+	unsigned int optlen = sizeof(opt);
-+	bool notls;
-+
-+	tls_crypto_info_init(TLS_1_2_VERSION, TLS_CIPHER_AES_CCM_128,
-+			     &tls12, 0);
-+
-+	ulp_sock_pair(_metadata, &fd, &cfd, &notls);
-+
-+	if (notls)
-+		exit(KSFT_SKIP);
-+
-+	/* Don't install keys on fd, we'll parse raw records */
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX, &tls12, tls12.len);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &limit,
-+			 sizeof(limit));
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = getsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &opt, &optlen);
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(limit, opt);
-+	EXPECT_EQ(optlen, sizeof(limit));
-+
-+	memset(tx, 0, sizeof(tx));
-+	ASSERT_EQ(send(cfd, tx, sizeof(tx), 0), sizeof(tx));
-+	close(cfd);
-+
-+	ret = recv(fd, rx, sizeof(rx), 0);
-+
-+	/*
-+	 * 16B tag + 8B IV -- record header (5B) is not counted but we'll
-+	 * need it to walk the record stream
-+	 */
-+	overhead = 16 + 8;
-+	total_plaintext_rx = parse_tls_records(_metadata, rx, ret, overhead,
-+					       limit);
-+
-+	ASSERT_EQ(total_plaintext_rx, sizeof(tx));
-+	close(fd);
-+}
-+
-+TEST(tls_12_tx_max_payload_len_open_rec)
-+{
-+	struct tls_crypto_info_keys tls12;
-+	int cfd, ret, fd, overhead;
-+	size_t total_plaintext_rx = 0;
-+	__u8 tx[1024], rx[2000];
-+	__u16 tx_partial = 256;
-+	__u16 og_limit = 512, limit = 128;
-+	bool notls;
-+
-+	tls_crypto_info_init(TLS_1_2_VERSION, TLS_CIPHER_AES_CCM_128,
-+			     &tls12, 0);
-+
-+	ulp_sock_pair(_metadata, &fd, &cfd, &notls);
-+
-+	if (notls)
-+		exit(KSFT_SKIP);
-+
-+	/* Don't install keys on fd, we'll parse raw records */
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX, &tls12, tls12.len);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &og_limit,
-+			 sizeof(og_limit));
-+	ASSERT_EQ(ret, 0);
-+
-+	memset(tx, 0, sizeof(tx));
-+	ASSERT_EQ(send(cfd, tx, tx_partial, MSG_MORE), tx_partial);
-+
-+	/*
-+	 * Changing the payload limit with a pending open record should
-+	 * not be allowed.
-+	 */
-+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_MAX_PAYLOAD_LEN, &limit,
-+			 sizeof(limit));
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EBUSY);
-+
-+	ASSERT_EQ(send(cfd, tx + tx_partial, sizeof(tx) - tx_partial, MSG_EOR),
-+		  sizeof(tx) - tx_partial);
-+	close(cfd);
-+
-+	ret = recv(fd, rx, sizeof(rx), 0);
-+
-+	/*
-+	 * 16B tag + 8B IV -- record header (5B) is not counted but we'll
-+	 * need it to walk the record stream
-+	 */
-+	overhead = 16 + 8;
-+	total_plaintext_rx = parse_tls_records(_metadata, rx, ret, overhead,
-+					       og_limit);
-+	ASSERT_EQ(total_plaintext_rx, sizeof(tx));
-+	close(fd);
-+}
-+
- TEST(non_established) {
- 	struct tls12_crypto_info_aes_gcm_256 tls12;
- 	struct sockaddr_in addr;
--- 
-2.51.0
+> +}
+> +
+> +static int fw_num_msc;
+> +
+> +static void mpam_msc_destroy(struct mpam_msc *msc)
+> +{
+> +	struct platform_device *pdev = msc->pdev;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	list_del_rcu(&msc->all_msc_list);
+> +	platform_set_drvdata(pdev, NULL);
+> +}
+> +
+> +static void mpam_msc_drv_remove(struct platform_device *pdev)
+> +{
+> +	struct mpam_msc *msc = platform_get_drvdata(pdev);
+> +
+> +	if (!msc)
+> +		return;
+> +
+> +	mutex_lock(&mpam_list_lock);
+> +	mpam_msc_destroy(msc);
+> +	mutex_unlock(&mpam_list_lock);
+> +
+> +	synchronize_srcu(&mpam_srcu);
+> +}
+> +
+> +static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device *pdev)
+> +{
+> +	int err;
+> +	u32 tmp;
+> +	struct mpam_msc *msc;
+> +	struct resource *msc_res;
+> +	struct device *dev = &pdev->dev;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+> +	if (!msc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	mutex_init(&msc->probe_lock);
+> +	mutex_init(&msc->part_sel_lock);
+> +	msc->id = pdev->id;
+> +	msc->pdev = pdev;
+> +	INIT_LIST_HEAD_RCU(&msc->all_msc_list);
+> +	INIT_LIST_HEAD_RCU(&msc->ris);
+> +
+> +	err = update_msc_accessibility(msc);
+> +	if (err)
+> +		return ERR_PTR(err);
+
+The returned error causes probe failure and the driver cannot be 
+installed. Return 0 will make the probe succeed.
+
+There is no probe failure in mpam/snapshot/v6.18-rc1 because its 
+returned err=0.
+
+[SNIP]
+
+Thanks.
+
+-Fenghua
 
 
