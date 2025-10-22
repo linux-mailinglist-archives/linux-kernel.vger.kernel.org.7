@@ -1,130 +1,166 @@
-Return-Path: <linux-kernel+bounces-864755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6B9BFB79A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:53:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D99BFB788
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 652D9508EBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17764189B645
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AD8326D48;
-	Wed, 22 Oct 2025 10:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5D03233EE;
+	Wed, 22 Oct 2025 10:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z3A5pfvH"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaB7rgIA"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C128325482
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC98246762
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130317; cv=none; b=BDc23rHWYj0seYjPcRTIbHYIRfakw8/bdYcL4ALeB4Yg4THaiiN4zfX4Dm5MOS4lXZDPZdOQHkkRVX6fwUkwDnTOTP7ewBc4Y7v4NF1lF+ghF7gycpWQzYtMTuyirFEnS8uno6689ienRcg44oUhGeOO138bvkyGTfrYYKl8Png=
+	t=1761130357; cv=none; b=XPHlJmJNVIqC+8S9f6iwYhztplYJ5D8mM5vQrJAnQfU1McO/ub6PDtSbAU9B5GG1TqNc7kVSS/BzXP08kztoptyo9+CKrvzcgCMMVDbpWsEOIvWy5WVLPT5rv2A+3iw4zjvdl0vke5DLXfzKkY2XxYWs3bVNO+NJxA9FwyL4vWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130317; c=relaxed/simple;
-	bh=0emIbIHta2KZrdaQPWJL6o23SZSpJgnhglkKqaRrkZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzjzVxmyA0ON0shKtYux+keEv3W2wFqzsYkF2MAaGBW19NGbe14tvckeHwP8to2m3ZMOnTrxW3VKVyvPqlyfqizfQlkm0QQk+fvmJrcAp989fzxDIcGnN1jzaVP2NxvA6EczibuTHgAvHtqHLjHvMMGZsKiwuXqE49Nbjg+3DGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z3A5pfvH; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47117f92e32so44801345e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:51:55 -0700 (PDT)
+	s=arc-20240116; t=1761130357; c=relaxed/simple;
+	bh=+MHqJhddBVXKtcU8ztFKmj1eMQPN/RlOUsiDFZNENSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HhEcDvrTilFPOvfjSh3TGv3rKMbDMUA6yJzTeXiwYpGOuvFvkE+x/eYK7HAHS9k+vSNgjGaJ+7OZpu+Mjvp7Gx4vUI2PblgXdiHapbfcLk2Dkv8pO32Ioaq08pr/W0xxAt7+V16PadNUy8pi5v/jKsjcbzAAjN4ubfwV+Vja5oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaB7rgIA; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-88f8e855b4eso577432185a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:52:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761130314; x=1761735114; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wj0NZFWJVRGALI2+fvxHBDNu33Sev5bvshrkRXRWHmY=;
-        b=z3A5pfvHkk8n7wHYf6hZGe3uhD2CtjlY/40Zt9gH8422sKNt3c00rULicZ7Ay7QEXW
-         q+iQKrDqYlPbLnVEpk6cuW9idbQ4AoWC/f/r6BvtRgFpwpuIodK8+LXuDJ8Az6ukeCJO
-         U9z5AL8qT0ukpV+0GVkHtgkJkzvFfq3pX4kF1yd+8mo8KhAl3ruXfm241uKyEqMR1H6F
-         sNuv4JUhwOvyBGcmJhBi8Re77yMLsiCxOUoGJUPrveKm/aBNwJaeUIsJDyZvdtzfaEKK
-         dSm4sBG9HNn4ofHVlk6cmnX+woZTHuqgS6Z/w3mPsw0tQGX2eakfdIfe5o7sJ6xkpRiw
-         tMLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761130314; x=1761735114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761130355; x=1761735155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wj0NZFWJVRGALI2+fvxHBDNu33Sev5bvshrkRXRWHmY=;
-        b=qSYjqMgPxNF/34RVFmTT0ylX/R5yym6aTvz9txwklRMgoOzEyxj9oXCLNv7OtY/TtJ
-         FcbTxkKO80aOVawUpJeCZq9bT4aHzadHEqP5hIPXEm7Odbjk7i+OOuOBbaprHbqRxMk4
-         tYrbXok2Au1/yBGJtnwDmhzmTarKbCeQsF0uuXRWV2q6oUD0D4XPVcVrgRA4R9Uww2K6
-         Bg/1muEa+UtdhD04xwUDcccCQU1005RzZSJKImIcByoWC43ZSTXzFtqRcA/9668sPDvj
-         ZycURWKxzW3gAYNp6T3zmDCaWV5gfUANgGJQI7bj6jcLBaEql309AtoDCCM7xaISbuQm
-         eTfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSunSFawjxSYqRV4/hjoC5i1ZGWcgk7dmkWHKvrXwruCxss3CZP4qhIQQhn+FM2o1GIfUIMdKJSkE7Snc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuOHydG9ja9qzw5nNiOZMprjCBVF/DrnpU0r7RGkDATkxT0an9
-	JgUQ2BwwTdOb+K1Ggje+fFtfwwJ4YfGtS02Gc19QXPDD1Z9IjYUqxSN2Z3p/sOvPdwI=
-X-Gm-Gg: ASbGnctPXYzlw1IghgwzfThknDcJZ9XRc8CS2f2yKL70hlvOCNMR85kuz/1jT0zET+z
-	opyTpMHSPe+qbmN69PoZkfE5I9siegu9eyYrXO8eAUR8tEmh4Zg4mXMsgGKzBgUif3pUyMPooY/
-	8foCbyHA6vDRsqJJEp7IJClXdVri+fbOWvY+i4xJSmfsRVMLZpz/9UAoII8dgH0m7QK346vxSPK
-	vQEg+jUUhbtMqF3q/9JDj3PVqE4jh0tVDKfdkMIX15DA4nYVybGQnmyXxSXT0X2Pw453EdmpbQj
-	w/Mc8k0Ijgu7XwIwb/R4RQP0nFh3ADxb4/JF5Lc0Ghrbb3TjKPuf7wDPzgZzr6FB/AORfhs9zF1
-	Doxi+4Jn5bjImZ2n6i6d6WX+M777GuSHeTpy9OCFh7iXWQepDniugI/lD7AAOy2lE62WGLJwz
-X-Google-Smtp-Source: AGHT+IFqoTQ2HPqFhE+xoTH5Tzl+i0vK7I5FUuawS0A8siSroPNadoWtujMORQ1HXcf2sw7QAqJLcA==
-X-Received: by 2002:a05:600c:548a:b0:46f:b42e:edce with SMTP id 5b1f17b1804b1-47117925db7mr136759365e9.39.1761130313599;
-        Wed, 22 Oct 2025 03:51:53 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342373sm43403635e9.12.2025.10.22.03.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 03:51:52 -0700 (PDT)
-Date: Wed, 22 Oct 2025 13:51:50 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/7] drm/msm: Add display support for Glymur platform
-Message-ID: <d6ivp57mh77gxybjvvwpmqoc5fsy52yydtvs23bepwdxgkxhzj@ahryeick6yaw>
-References: <20251014-glymur-display-v2-0-ff935e2f88c5@linaro.org>
- <20251020-astonishing-zebra-of-respect-1c2eca@kuoka>
+        bh=yEuWOBEN/U35xXneOxk8fuulvP+81wWTxzQsKgpzxyU=;
+        b=WaB7rgIAnruCaEO18CYf8JzrQxGp6Utk7SjjB7RDD4VguyvdlTuUCVBqyQ1VWFQISe
+         LiQ2VE+S8unO7YInLk5jK0NgTKXp5jC4kE0tH2OIBFLLj0AOClCHFmevIkwHgRBEgYzo
+         6G1Yu2CsHt2aRf9fkJyvJc0rsSpGXp8aWmstzx8JlVYusz3nQse4TvBNvnQpHyAEMXPq
+         5zQQiLvCMovdDs1XfmZ4zMFWnYI8EbGsZwUwscDxhoRrgm6hLtMROTjqGuE29IuWMzNF
+         vzUhp61BibiX70keIOdJNExED+FisGKztCXlEflM3nocVzdXDSWGqFXE3+V0eZSc4JT8
+         YheA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761130355; x=1761735155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yEuWOBEN/U35xXneOxk8fuulvP+81wWTxzQsKgpzxyU=;
+        b=WtW7leJGstw1z5csgtfvEeEoiTuuUXxvj9ouwATExGA/s7xmbg8gweqw3Y1KvQglrH
+         ATDKJSnk706ZjCJxWOcPKL9LfxVBO/U8SpXvVzJRcCrtV5BVH70up58sy76vjm+2mfA5
+         JeqKzjheHYQncoLLI2PFTHPK98cClJRIkBxcXBQj9CqOrV8GkTpLec8WJ9whW8lID/Ex
+         uf5XniAVMJCoManYyWSoIahJvAkf4bGKNGoZaWk8Q5Hwchmvv8zdL68c+8yxikMLiAut
+         If192/Fn3V/TXbTQzgyGNCitawqM+MN5O0gTEx16gGdMkFibuJ1uVxG6WP4cQv29Ob0z
+         qRhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMLMA1CfChG29HiWyubrHPLvxa81kBUi6/Cu7e1gihXCn1PCVKxqPOos/PYGfDR+NsqvJOrVIqnIRqwE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydiknGm8113bNsaOAkMEabBfJ+jSnfUVqeLEyBNIoFXBKkKcFq
+	008V8KXuCjUGvC6BGZxPfbABbCVpx6hY6s7/8/TmvPXLU0a1lGS4NO6LSLKrytImJDjtyHulQAM
+	r5y/vxK1PmmdR00ohmna2o/VhrC4ocWE=
+X-Gm-Gg: ASbGncvmlk/6lozpKLr0+C8ezY5J3oEBC9KhHehCpO+Dh3OOKc63m3BoVi1iCf4CgN4
+	sq+oQ475uvMGVXoCWeJtE9qnH99gvKoEb7Rmw9YGrGr1hI3W1lRArIjm4B+KteKF60jJyX3i2xE
+	k4lJwcIsm3uDbBZ4sfwNOf9OAm/sylnabkEFwzw4OISnIIHwLtu0un1We69RdLFOBj/QbuHeV1O
+	swf12zgq6WSKTz6CQ6rbxtY+jai/bfpWxFF+lrEuIqx6+JdUxwEINKGQLeFXDUCv1hFTt32pnhL
+	jJzvgrAGgHk/tNIXO5AdUIOS6l4=
+X-Google-Smtp-Source: AGHT+IF+UfILE16/+y31/plfKL4BsKCPsgS9omTYmo7r7nqziwmbbysRvcZ1nTCNlDK4BHMGeEjCaYDlClvwVJdT4QE=
+X-Received: by 2002:a05:620a:25cf:b0:850:b7ad:c978 with SMTP id
+ af79cd13be357-890708f2553mr2525779185a.49.1761130354392; Wed, 22 Oct 2025
+ 03:52:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020-astonishing-zebra-of-respect-1c2eca@kuoka>
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+ <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+ <87a51jfl44.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
+ <871pmv9unr.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
+ <875xc78es0.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
+ <87a51j6zg7.fsf@DESKTOP-5N7EMDA> <CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
+ <87ms5j4444.fsf@DESKTOP-5N7EMDA>
+In-Reply-To: <87ms5j4444.fsf@DESKTOP-5N7EMDA>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 22 Oct 2025 23:52:23 +1300
+X-Gm-Features: AS18NWAP0fbsGHxZLrVjv_J-9bnvKPZdV1GwoS51_2cxWur2X2S3xT3hLu6HdG0
+Message-ID: <CAGsJ_4xhJSLnXOZy4kPmnif5Paq+OPN_Ww+rPk2WO4-ADSC0Yw@mail.gmail.com>
+Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25-10-20 12:40:24, Krzysztof Kozlowski wrote:
-> On Tue, Oct 14, 2025 at 03:38:25PM +0300, Abel Vesa wrote:
-> > The Glymur MDSS is based on the one found in SM8750, with 2 minor number
-> > version bump. Differences are mostly in the DPU IP blocks numbers.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> > Changes in v2:
-> >  - Picked-up Krzysztof's and Dmitry's R-b tags.
-> >  - Fixed the bindings check reported by Rob.
-> >  - Fixed indentation reported by Krzysztof.
-> >  - Re-worded the commits to better explain the incompatibility
-> >    with previous platforms.
-> >  - Add the UBWC config patch, as suggested by Dmitry.
-> 
-> Where are lore links? b4 provides them automatically.
-> 
+On Wed, Oct 22, 2025 at 11:34=E2=80=AFPM Huang, Ying
+<ying.huang@linux.alibaba.com> wrote:
+>
+> Barry Song <21cnbao@gmail.com> writes:
+>
+> > On Wed, Oct 22, 2025 at 10:46=E2=80=AFPM Huang, Ying
+> > <ying.huang@linux.alibaba.com> wrote:
+> >
+> >> >
+> >> > I agree. Yet the ish barrier can still avoid the page faults during =
+CPU0's PTL.
+> >>
+> >> IIUC, you think that dsb(ish) compared with dsb(nsh) can accelerate
+> >> memory writing (visible to other CPUs).  TBH, I suspect that this is t=
+he
+> >> case.
+> >
+> > Why? In any case, nsh is not a smp domain.
+>
+> I think dsb(ish) will be slower than dsb(nsh) in theory.  I guess that
+> dsb just wait for the memory write to be visible in the specified
+> shareability domain instead of making write faster.
+>
+> > I believe a dmb(ishst) is sufficient to ensure that the new PTE writes
+> > are visible
+>
+> dmb(ishst) (smp_wmb()) should pair with dmb(ishld) (smp_rmb()).
+>
+> > to other CPUs. I=E2=80=99m not quite sure why the current flush code us=
+es dsb(ish);
+> > it seems like overkill.
+>
+> dsb(ish) here is used for tlbi(XXis) broadcast.  It waits until the page
+> table change is visible to the page table walker of the remote CPU.
 
-This patchset was enrolled with b4 due to logistical reasons
-which lead to losing initial kernel tree.
+It seems we=E2=80=99re aligned on all points[1], although I=E2=80=99m not s=
+ure whether
+you have data comparing A and B.
 
-I thought the b4 prep -e should be the one to use in this case,
-but now I realized that has a different purpose. My bad.
+A:
+write pte
+don't broadcast pte
+tlbi
+don't broadcast tlbi
 
-Will make sure links are there in the next version.
+with
 
-Thanks for reviewing.
+B:
+write pte
+broadcast pte
+tlbi
+don't broadcast tlbi
+
+I guess the gain comes from "don't broadcat tlbi" ?
+With B, we should be able to share many existing code.
+
+[1] https://lore.kernel.org/linux-mm/20251013092038.6963-1-ying.huang@linux=
+.alibaba.com/T/#m54312d4914c69aa550bee7df36711c03a4280c52
+
+Thanks
+Barry
 
