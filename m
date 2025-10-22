@@ -1,194 +1,155 @@
-Return-Path: <linux-kernel+bounces-865934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6038BFE5C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:59:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9D1BFE5D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5326C3A9A37
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:59:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA35419C6A4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CCF305042;
-	Wed, 22 Oct 2025 21:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5701B1DF75C;
+	Wed, 22 Oct 2025 22:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UsTWniNa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMel8KMd"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84652303A2D;
-	Wed, 22 Oct 2025 21:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB4B3043DE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761170366; cv=none; b=HrfCbK/k0dZbX+lDQMgLwp/E2sSs84xHNiu7q5z/32pxlRmWm6Sos3zr67ODAEzKBt96KDFnykvHz39P5woanRMIQGAqtiP13FGRAiVT0hKcKrAXMLAnvynrqs2ZvuYRDVcOpuP+MUHChInNz96JgKzIrr3GQlka0rGW70PNBhA=
+	t=1761170614; cv=none; b=UJrwbY2pS8+5yKYF81DPdJkHuuIDENzdpKpb9JQ+sPqE3hpMbGxR//ShslzXPV6nNV02W58TsjIHvjl+xXtePKIrfmUV3C5FVMeDwV9nlbUGO6a1aUXvaY44DB/rX3rndjHf8t69mmF6w3kcHFFWN7J+QkXO//CMUHn2fFTCWCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761170366; c=relaxed/simple;
-	bh=YFd27wXix1IAPhDgICO/LKl4LrK5zPB9xb0D7M0YWlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFT2eJaxhFcWFMjFM6MDeOlVmTJY1tqY8aAlyz6U+JA/EPiKeupfX5GohhLPKihSBafdRxjqR4dsbu+Yu7nohNE/1L4tKtWG+ZwoS2Z3IpM3fdRcy6wWoRRUYStaPCXSG3G7IGIYAisn0ZbfCT9m5HxMX/7NcHVH9c3Rxq5D008=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UsTWniNa; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761170365; x=1792706365;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YFd27wXix1IAPhDgICO/LKl4LrK5zPB9xb0D7M0YWlA=;
-  b=UsTWniNaxZ26CAs694Mqy7v0lpvGqLtfU9JTUgsn5lKDhPsvaVWh898+
-   Jbd96g6erKKqGZPujQ8LSz7eEsTeZSNPruO2nAx8I/CuoMVp9VMVDxVkf
-   650i6fUnJ/hH/O4+Mmhv9FLwu8HzxfYIXT0MbmkE0kEk5uoIPgpTw6ANo
-   QGuRoT+bIYLxcHuMWEEzscasrT2uha5VmYtdKhm1BrBBPMz9zKwJQJLEh
-   Ixvhjpyp1HzpUuGqL5w25H9jQrOY43eCoE3eJf999sON5YLPr7gbX16Ud
-   i7jSxVmTTLpivv+PRJpylMZoxGbnR5Wn6uJGvzDgViw0xPJuJ/wbutqG/
-   g==;
-X-CSE-ConnectionGUID: ppwHXru+SvK35Yao5YeIrg==
-X-CSE-MsgGUID: YBXsQYO8TNKeLnKCrdL6ZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74678304"
-X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="74678304"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 14:59:24 -0700
-X-CSE-ConnectionGUID: AllZI4W6S6Cnl2uyz4ZxwQ==
-X-CSE-MsgGUID: QEx1E6IIRSOFqgSfZybAJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="189258251"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 22 Oct 2025 14:59:20 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBgrV-000Ckj-2p;
-	Wed, 22 Oct 2025 21:59:17 +0000
-Date: Thu, 23 Oct 2025 05:59:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, quic_yingdeng@quicinc.com,
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-	Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
-	Jinlong Mao <jinlong.mao@oss.qualcomm.com>
-Subject: Re: [PATCH v3] stm: class: Add MIPI OST protocol support
-Message-ID: <202510230738.OD0OO0n6-lkp@intel.com>
-References: <20251022071834.1658684-1-yingchao.deng@oss.qualcomm.com>
+	s=arc-20240116; t=1761170614; c=relaxed/simple;
+	bh=Ad2cCbxg4Z1sO77CXRzr3tWjUJufZzDngeFPn5U+ARc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UT+vDNkteQSP3ELmEW90TlW9W7/uOKiYbFubbTrHA6mnxdOo2WyljVGM30W6mfkg3BEDCabuyI2LItscK4lB14S0flSWNfA82G6N/4dgZ/dkhtLbNT1Iz3n3a4j6+7uSSw0xpdElqv5rBIWnQQfFdtFf1IGZeCci/o1SyAqfy3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMel8KMd; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-793021f348fso118179b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:03:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761170612; x=1761775412; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ux/kk3E8TaoNJw/zffvlizfWUNSIBjq0m1/nXej3Ft0=;
+        b=nMel8KMdYGwIbBAJofXabzax/ux/lB8+1znKGoJ9BdborAbDd/hmzpJE4tWeNceTv5
+         RXng3U2kml5gYYrSeIJLkCfCr+ns0VS/zKh08wLMuD9P6m682pXwUSLk87DaGrlR1OhK
+         +f4Ykv3gIeCFuM0rUfulYJqN/Hllry96bwLzwGo66zN4J56vrEnh4q3Xi79KvbtO2g6a
+         F1IJ5L1mfc6T60d6ICvXI/0kzZCwoEbD3iEkvL90OessR61A/E2J9Q6rKqvWEFxlSs8j
+         fC3oCLWSfaqYwEvQ0tVj76S79qO8WSwqm3JKo7o20MkYQSN3eO+sOoLRYbygAmEbwJsS
+         ZeCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761170612; x=1761775412;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ux/kk3E8TaoNJw/zffvlizfWUNSIBjq0m1/nXej3Ft0=;
+        b=pJDAuRZTgs6CkpIClS7Fm1bGSnR8qZFPPs8N6XcLN7Nvu5c7ytSSrKx3lviOG7Gd3n
+         fd1cQdmRswNZuIcioTSXajbGyHQ6ssL3kKBwFH5br0WcILVYTBPQ0FjqvZQ38QMOd8kL
+         Dy7ycCHwQfKHoT9RlTOzdtXZByaMJ6nyedpvyVqkjuL/prj/xu292118HwTSlibE3VVm
+         VNIEPPGzq8VVaGCx72gs5We1cZMSsnbzu1bQcczcE03+Ms8FQy5j+aCfDtGXIXBtry3T
+         BrvEhXxWhraMGZ12oNXQ3cDiOOpk9MsmLt8uCaryCVnhC0nki57PnxkeQSfR7YUCzSNK
+         aLeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXavtXhQ5+MOsKK/+Nvba+j+7kraNrVdTuUYtdQZ2XZeDaY1543xrqL2uajG8fmkcsi5fV9BJquivL73q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvGZEWJC3ltBcfj07Xg4amt2vYCvsS9Dzl/7ZUP3IxBvxrUPft
+	HneOkxh1QLCVLVcP5C8LYWomyBd2ahOIKcwfrUHU+AUOlEuK2u7UKs4H
+X-Gm-Gg: ASbGncsGWw2Vlkjasj/Nw0EXTtSmAlwATQgkznS9ot4wf+NWyOyNd5/niVIkPNB39+r
+	OnF4srS9Y6fEuw3ioC3FMVOEnax9X0E3cELuF/DdEr5ulDT1WDgEcvcUqFC6KUjVix06koYKkX3
+	lKXkVpuAR1/SjIrE5MNQCNm3Pp7JFTzbNrKw8+rmFOY3MiKXLmRLP/JTcTj4MbVaTYo6ZbAHtjY
+	N2wLeiFgbVH+GPZZpBC0+4G/q/dP+4SnZYT+6ExoTJyNV720bMYNZAVD0YDB0acxh9QYPZqm5JU
+	jiMdTahQUQ8AgD3ibn/sDEtZZRxNM2t3eTLM0YUJXSH6toMVq4lSrAn30nuCzzVRgdby5hzMGwS
+	Nzr183kPSLHAuFB6O+xiEQLXCYdf1IV51Dvk/kMweSxLjMZphARqNGrGXP4WIVbLzW4zu2qIY8B
+	YGl5UocNr+b17Kg0k+Q99VM0o=
+X-Google-Smtp-Source: AGHT+IHOKCy2DH7KAv9trRUhXlwgWDwBolG+BUKI0eV1iSdxSWzMfxG2dEL1k7vkjKTfjuYp1ROHGw==
+X-Received: by 2002:a05:6a00:22cf:b0:781:1481:897d with SMTP id d2e1a72fcca58-7a220b16cd0mr31471379b3a.17.1761170612295;
+        Wed, 22 Oct 2025 15:03:32 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:860f:a014:6e9f:df59:b010])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274b8b350sm261181b3a.37.2025.10.22.15.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 15:03:31 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: rtl8723bs: remove todo/note and duplicated EFUSE_CTRL macro
+Date: Wed, 22 Oct 2025 19:00:51 -0300
+Message-ID: <20251022220324.14260-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022071834.1658684-1-yingchao.deng@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Yingchao,
+The usage of EFUSE_xxx and MSR macros are already in place, so the note
+and todo about that can be removed. Also, there was a duplication of the
+definition of EFUSE_CTRL macro in two places, keep the one at the .h file.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+---
+At drivers/staging/rtl8723bs/include/hal_com_reg.h file, there is the following note/TODO:
 
-[auto build test WARNING on atorgue-stm32/stm32-next]
-[also build test WARNING on linus/master v6.18-rc2 next-20251022]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+/*  TODO: use these definition when using REG_xxx naming rule. */
+/*  NOTE: DO NOT Remove these definition. Use later. */
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yingchao-Deng/stm-class-Add-MIPI-OST-protocol-support/20251022-152642
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
-patch link:    https://lore.kernel.org/r/20251022071834.1658684-1-yingchao.deng%40oss.qualcomm.com
-patch subject: [PATCH v3] stm: class: Add MIPI OST protocol support
-config: x86_64-randconfig-071-20251023 (https://download.01.org/0day-ci/archive/20251023/202510230738.OD0OO0n6-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510230738.OD0OO0n6-lkp@intel.com/reproduce)
+#define EFUSE_CTRL				REG_EFUSE_CTRL		/*  E-Fuse Control. */
+#define EFUSE_TEST				REG_EFUSE_TEST		/*  E-Fuse Test. */
+#define MSR						(REG_CR + 2)		/*  Media Status register */
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510230738.OD0OO0n6-lkp@intel.com/
+I guess the idea was to standardize those macros rather using the REG_xxx_yyy ones.
+In fact, when searching for a missusage of that, there is none, only a duplicated redefinition
+of EFUSE_CTRL at drivers/staging/rtl8723bs/core/rtw_efuse.c.
 
-All warnings (new ones prefixed by >>):
+I`m suggesting to remove the note/TODO as well as remove the duplicated define, since the
+hal_com_reg.h is already included at rtw_efuse (included indirectly).
 
->> drivers/hwtracing/stm/p_ost.c:172:6: warning: unused variable 'i' [-Wunused-variable]
-     172 |         int i;
-         |             ^
-   1 warning generated.
+Tks and regards.
 
+Changelog:
+v2: rebase
+v1: https://lore.kernel.org/all/20251010185456.26754-1-rodrigo.gobbi.7@gmail.com/#t
+---
+ drivers/staging/rtl8723bs/core/rtw_efuse.c      | 3 ---
+ drivers/staging/rtl8723bs/include/hal_com_reg.h | 4 ----
+ 2 files changed, 7 deletions(-)
 
-vim +/i +172 drivers/hwtracing/stm/p_ost.c
-
-   154	
-   155	static ssize_t
-   156	notrace ost_write(struct stm_data *data, struct stm_output *output,
-   157			  unsigned int chan, const char *buf, size_t count,
-   158			  struct stm_source_data *source)
-   159	{
-   160		unsigned int c = output->channel + chan;
-   161		unsigned int m = output->master;
-   162		const unsigned char nil = 0;
-   163		u32 header = DATA_HEADER;
-   164		struct trc_hdr {
-   165			u16 version;
-   166			u16 magic;
-   167			u32 cpu;
-   168			u64 timestamp;
-   169			u64 tgid;
-   170		} hdr;
-   171		ssize_t sz;
- > 172		int i;
-   173		struct ost_output *op = output->pdrv_private;
-   174	
-   175		/*
-   176		 * Identify the source by entity type.
-   177		 * If entity type is not set, return error value.
-   178		 */
-   179		if (op->node.entity_type)
-   180			header |= ost_entity_value[op->node.entity_type];
-   181		else
-   182			return -EINVAL;
-   183	
-   184		/*
-   185		 * STP framing rules for OST frames:
-   186		 *   * the first packet of the OST frame is marked;
-   187		 *   * the last packet is a FLAG with timestamped tag.
-   188		 */
-   189		/* Message layout: HEADER / DATA / TAIL */
-   190		/* HEADER */
-   191		sz = data->packet(data, m, c, STP_PACKET_DATA, STP_PACKET_MARKED,
-   192				  4, (u8 *)&header);
-   193		if (sz <= 0)
-   194			return sz;
-   195	
-   196		/* DATA */
-   197		hdr.version	= STM_MAKE_VERSION(0, 3);
-   198		hdr.magic	= STM_HEADER_MAGIC;
-   199		hdr.cpu		= raw_smp_processor_id();
-   200		hdr.timestamp = sched_clock();
-   201		hdr.tgid	= task_tgid_nr(current);
-   202		sz = stm_data_write(data, m, c, false, &hdr, sizeof(hdr));
-   203		if (sz <= 0)
-   204			return sz;
-   205	
-   206		sz = stm_data_write(data, m, c, false, buf, count);
-   207	
-   208		/* TAIL */
-   209		if (sz > 0)
-   210			data->packet(data, m, c, STP_PACKET_FLAG,
-   211				STP_PACKET_TIMESTAMPED, 0, &nil);
-   212	
-   213		return sz;
-   214	}
-   215	
-
+diff --git a/drivers/staging/rtl8723bs/core/rtw_efuse.c b/drivers/staging/rtl8723bs/core/rtw_efuse.c
+index d5c53b614f61..98b15ca10074 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_efuse.c
++++ b/drivers/staging/rtl8723bs/core/rtw_efuse.c
+@@ -26,9 +26,6 @@ u8 fakeBTEfuseContent[EFUSE_MAX_BT_BANK][EFUSE_MAX_HW_SIZE];
+ u8 fakeBTEfuseInitMap[EFUSE_BT_MAX_MAP_LEN] = {0};
+ u8 fakeBTEfuseModifiedMap[EFUSE_BT_MAX_MAP_LEN] = {0};
+ 
+-#define REG_EFUSE_CTRL		0x0030
+-#define EFUSE_CTRL			REG_EFUSE_CTRL		/*  E-Fuse Control. */
+-
+ /*  11/16/2008 MH Add description. Get current efuse area enabled word!!. */
+ u8
+ Efuse_CalculateWordCnts(u8 word_en)
+diff --git a/drivers/staging/rtl8723bs/include/hal_com_reg.h b/drivers/staging/rtl8723bs/include/hal_com_reg.h
+index 9a02ae69d7a4..cf5c15dc2bfd 100644
+--- a/drivers/staging/rtl8723bs/include/hal_com_reg.h
++++ b/drivers/staging/rtl8723bs/include/hal_com_reg.h
+@@ -189,10 +189,6 @@
+ /* 	Redifine 8192C register definition for compatibility */
+ /*  */
+ /*  */
+-
+-/*  TODO: use these definition when using REG_xxx naming rule. */
+-/*  NOTE: DO NOT Remove these definition. Use later. */
+-
+ #define EFUSE_CTRL				REG_EFUSE_CTRL		/*  E-Fuse Control. */
+ #define EFUSE_TEST				REG_EFUSE_TEST		/*  E-Fuse Test. */
+ #define MSR						(REG_CR + 2)		/*  Media Status register */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
