@@ -1,138 +1,81 @@
-Return-Path: <linux-kernel+bounces-865334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F37BFCD1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:18:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7067DBFCD57
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322B219C833E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101A03A826A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF2534C12E;
-	Wed, 22 Oct 2025 15:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891C234D4DB;
+	Wed, 22 Oct 2025 15:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UNKHtIv5"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqDzhGux"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C02634B41D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10F4340D9E;
+	Wed, 22 Oct 2025 15:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146281; cv=none; b=QRdN27/HIx0IUx5ZO+h9jyU/wl9yHh7mJMX7Q9ccz3qwx7FG4NVTY3NyBYzeKPFoHa/nBx1FF6xFN7Aei6cu/k5+5QrISd2FiBl9FgH9QU6dywX3zEwbqzV6QmS660VdvssPnLQe2pLeUF/YZfS+wTjJkaJmrWzqcuLVTAPi7nM=
+	t=1761146282; cv=none; b=dMsmcp1N/0+do/7NGqiyix3BdbWMPBOU4e6D/lU+dk6mTcRHT7GvUQvnBwbUzJaG+zryiQIMFy9ah47OkY2pipQt6H9xvs+axVNAaV3aarS1Ru+0txfO/tmZl9QMEVawWPfNjLVejqUmEl2WL93uLj3YiYLji4IokXEcc1Ax0TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146281; c=relaxed/simple;
-	bh=eEi5uGSy32lg1YEn4uhchHVaozmcMy+gUlUoOl32tFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XRETHEbvOPgWdNGqGyhTtCIrzRoOpoY4wvfzPyKzJ/sl/KUylwVOfzOwdKpOzu9NrY+QiD+4kN2jRh4+emTRnkMLpBgaTsvu7ZqWATI0RMK7lSGgS0yh2KyFfNoBh3Bx+J4z/xOBcqG0AUx+Y7lrK7PzUidOavAbciewtr7Q8hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UNKHtIv5; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id F204B4E4127B;
-	Wed, 22 Oct 2025 15:17:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B9620606DC;
-	Wed, 22 Oct 2025 15:17:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B185D102F23AD;
-	Wed, 22 Oct 2025 17:17:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761146271; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=CChA9h90pM92X6zpGVU45uXBGsE28460coNy6HElnTo=;
-	b=UNKHtIv5f1DzlxegUyhHSDfJ7g25b/CPCEU3SM9RVlJIpi6E0EBTl6jl7VFNlEpJ4NTWV2
-	HcfDK+MtQX0e4N747aUnearfX70ksr/PyZkeevsJTT7nNSW9ZpGExcEc+zA4HYpJJfg1sK
-	AJUAfvAsW3OdDMfP2WzJ6jw4XQYfRULAmPSaaoqKvjtCmLz61sbyC5hXDgRNvOoFVDbDvR
-	S2OhtLkr0zhAYk30l8KVPulymsRD/PtA229eg2kOF+SHPnAFtoqGBFdqYgNj+H+IetJKwJ
-	jGDrqHNXZZCTIjw+P4todOqIqXWFf4bhXCRRtrC3MilgZ4DKL2xHf5BH2dpRUw==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Douglas Anderson <dianders@chromium.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Bajjuri Praneeth <praneeth@ti.com>,
-	Louis Chauvet <louis.chauvet@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	"Kory Maincent (TI.com)" <kory.maincent@bootlin.com>,
-	stable@vger.kernel.org,
-	Swamil Jain <s-jain1@ti.com>,
-	thomas.petazzoni@bootlin.com,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH v2] drm/tilcdc: Fix removal actions in case of failed probe
-Date: Wed, 22 Oct 2025 17:17:38 +0200
-Message-ID: <20251022151739.864344-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761146282; c=relaxed/simple;
+	bh=3yeJVTWsQ3PYP7UnkIWLKc7xoHqvrW6f9Xjdn+b5Fo0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XK0+FDvcIYHBowXLy53KFDgG5DNA5AZYzkvhD0xq5wZcKMNI9iFD0EgTVUBCZtvvet9h/Qst2Hg2loGXdmKbm6PBzZ4M3CFoDZNVCDnmaiA30j9sXqnoblXGY7pASKh9fOgxvGkRkvxTW6GB3+r3vl6EQY2ENnFS/dpn+levWdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqDzhGux; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00AC7C4CEE7;
+	Wed, 22 Oct 2025 15:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761146282;
+	bh=3yeJVTWsQ3PYP7UnkIWLKc7xoHqvrW6f9Xjdn+b5Fo0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=XqDzhGuxKey4Ptn2VUX7BaTGsyOl0B4f+SD2hyzATnyW0q+zaMAsCSfnUXYwk5oxu
+	 Jn2iIebbfa2s2qMpWlKLGCEPByAZIN/sCFYeCj1lByj+wQR2TJC8+ipuRQ2ZHUfWAW
+	 BCGY0rQEQgIdDm5gHOsaU0RSZLjv+eBOpmThiKysl1VEbFtBILWCLh3uSZYNu40uyk
+	 9aaUtZrj7Rnl4L3wcGJz3SF9zD9Oiv8WyV+DKmAiARqxxosR4u7q4orvrVQTbRyxrB
+	 x3nu8WRbqh7JMIkr8X4to+VRZXo4QqDpctRVaQFecV2zAvokfi2APrc82yq8+TnKHm
+	 PIJmRCIjAqB0A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 353903A78A6C;
+	Wed, 22 Oct 2025 15:17:44 +0000 (UTC)
+Subject: Re: Re: [GIT PULL] 9p cache=mmap regression fix (for 6.18-rc3)
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aPhtxt7qEWY5FjPQ@codewreck.org>
+References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
+ <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
+ <aPgUaFE1oUq8e1F-@codewreck.org>
+ <39116c81-1798-4cc1-945c-a05d0ac7d8d9@maowtm.org> <aPhtxt7qEWY5FjPQ@codewreck.org>
+X-PR-Tracked-List-Id: <v9fs.lists.linux.dev>
+X-PR-Tracked-Message-Id: <aPhtxt7qEWY5FjPQ@codewreck.org>
+X-PR-Tracked-Remote: https://github.com/martinetd/linux tags/9p-for-6.18-rc3-v2
+X-PR-Tracked-Commit-Id: 43c36a56ccf6d9b07b4b3f4f614756e687dcdc01
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9ea7460217423f07febe273307a5f3b6b1303b29
+Message-Id: <176114626271.1971781.12512695262576428090.pr-tracker-bot@kernel.org>
+Date: Wed, 22 Oct 2025 15:17:42 +0000
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Tingmao Wang <m@maowtm.org>, Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, Christian Schoenebeck <linux_oss@crudebyte.com>, Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org, v9fs@lists.linux.dev, bpf@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
+The pull request you sent on Wed, 22 Oct 2025 14:38:14 +0900:
 
-The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() helpers
-should only be called when the device has been successfully registered.
-Currently, these functions are called unconditionally in tilcdc_fini(),
-which causes warnings during probe deferral scenarios.
+> https://github.com/martinetd/linux tags/9p-for-6.18-rc3-v2
 
-[    7.972317] WARNING: CPU: 0 PID: 23 at drivers/gpu/drm/drm_atomic_state_helper.c:175 drm_atomic_helper_crtc_duplicate_state+0x60/0x68
-...
-[    8.005820]  drm_atomic_helper_crtc_duplicate_state from drm_atomic_get_crtc_state+0x68/0x108
-[    8.005858]  drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0x1c8
-[    8.005885]  drm_atomic_helper_disable_all from drm_atomic_helper_shutdown+0x90/0x144
-[    8.005911]  drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc]
-[    8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [tilcdc]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9ea7460217423f07febe273307a5f3b6b1303b29
 
-Fix this by moving both drm_kms_helper_poll_fini() and
-drm_atomic_helper_shutdown() inside the priv->is_registered conditional
-block, ensuring they only execute after successful device registration.
+Thank you!
 
-Cc: stable@vger.kernel.org
-Reviewed-by: Swamil Jain <s-jain1@ti.com>
-Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at shutdown/remove time for misc drivers")
-Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
----
-
-I'm working on removing the usage of deprecated functions as well as
-general improvements to this driver, but it will take some time so for
-now this is a simple fix to a functional bug.
-
-Change in v2:
-- Add missing cc: stable tag
-- Add Swamil reviewed-by
----
- drivers/gpu/drm/tilcdc/tilcdc_drv.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-index 7caec4d38ddf..2031267a3490 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-@@ -172,11 +172,11 @@ static void tilcdc_fini(struct drm_device *dev)
- 	if (priv->crtc)
- 		tilcdc_crtc_shutdown(priv->crtc);
- 
--	if (priv->is_registered)
-+	if (priv->is_registered) {
- 		drm_dev_unregister(dev);
--
--	drm_kms_helper_poll_fini(dev);
--	drm_atomic_helper_shutdown(dev);
-+		drm_kms_helper_poll_fini(dev);
-+		drm_atomic_helper_shutdown(dev);
-+	}
- 	tilcdc_irq_uninstall(dev);
- 	drm_mode_config_cleanup(dev);
- 
 -- 
-2.43.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
