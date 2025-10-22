@@ -1,106 +1,112 @@
-Return-Path: <linux-kernel+bounces-864188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A4FBFA20B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D15EBFA217
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A68B3B0072
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57561890299
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38077EAC7;
-	Wed, 22 Oct 2025 05:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985012472A8;
+	Wed, 22 Oct 2025 05:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ejh+DcD0"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fq9beKtZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56FE190477
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB22623AB9C;
+	Wed, 22 Oct 2025 05:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761112567; cv=none; b=rqHSWIxPScXjogwGxSNnW3Kdy5lDp834Pg8XyLaFYFIrVGJdGVZFGktGQ4pI2Og0KipG7mU4k0fqsfgYAvCseoLuZlAev8ipndtYFh7Ar/nyiHQmPTIWgrZGASjQ9HOuf5xiuHCM1Ky9X1m5mU3jPizYcTfIEEPl37P+h5y49/s=
+	t=1761112598; cv=none; b=dFIHbfFWsbge61KGemVhlTGIkj7jQoQiow2YHRNwxCHtUpuavkRcJhLtoOpo/DnkeStf6bQyaolQpjGj5NZeDkkD0MJIc3rsMerm5LX0dEFx+bEE0hJUUAqWbll6hQ048wDHXv6mdDy0iOjArt4w+UQIQf+5wd/bXoyZ5onuZaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761112567; c=relaxed/simple;
-	bh=CAE35DJcjLYj2/oXjadiEL4ZX4qY39eziNS80KbwbhQ=;
+	s=arc-20240116; t=1761112598; c=relaxed/simple;
+	bh=e0BNSEe8+JWm79ZsctEdZVSTDEu6ZAcAN5FVm7Wus1E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i7MQIXyHmcUce/c9CiPKFNGNzBvtdYKwJYn9ClNcQ8/s6rcX5Ha9jRNEsSR4X+BWJKBe2m/fYoaHSUdmlmZIqC4/rv+PGcZFDBDWO+ZCl9jKpR2Jp2p1hxdHxgAl3Jm71kst+5LBGklhtQcoWg5U9ZMUP2r7aegC6ONvEQSLp38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ejh+DcD0; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <bc56789f-7caa-45d8-814b-f9f169519959@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761112548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O9v8uzOZ2BjUR4zUy5fKDZn7QBtnMzhYGRU6pZ93UAA=;
-	b=Ejh+DcD0uofz+F23p0ULeC77nHIN/vp21YzT60jryIE4l8GESqxhtAu34b8BgLXWpY4sm8
-	o4oKr4BAgfztUEre4kEVoSMtxjKqy+CjKP+AwYMU4R3i7CyqJmLGkTGYQRKHpkhrqzSn6K
-	yAxjIAR7QiSuXEn6F1hY1FrhWJRYLX0=
-Date: Wed, 22 Oct 2025 13:55:25 +0800
+	 In-Reply-To:Content-Type; b=XTRU1FrSkNg+jKeEkDLhTtH6tQF1RUdM03m1aol2GGsuV3TE8mxNm6WgLX/fpnVbJi/D62SMZrGoTooXsN1Wxizegcl7ComKo4HQsRp7Pp8c7oh7mihBokPEZ+Vb1hk9ZcHk63nVGBvCtH3QbcgpPtjo4JHIDzp4okQ0Zuz2Sks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fq9beKtZ; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761112596; x=1792648596;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=e0BNSEe8+JWm79ZsctEdZVSTDEu6ZAcAN5FVm7Wus1E=;
+  b=fq9beKtZpSZ9xtF+1HtgOxXkuuxjT4aQcwDE1euEyeV7Srf9KEC3+Wkp
+   N2HU5onhiIKNBycmOWo333J71u/xv0N8gUnRtNJokKeVJyn2u9b5JWOrf
+   ULvKNp+Snf9bPgTr3OWDqvyYHcqC5iju7Jx/zzBdGeelzj2gMGSPOuyiT
+   ySstzO4fXUxfPN7+M50NCYJ38POiG4+gc5+rLVt+Uf0P7itDQDwvV0izU
+   YXrXf86y0I/2f9OJccsLMHRs3VavY0uDXlJAxJ93CTcZBVQGz8006BBC8
+   PJ79/mKqSTUkt+PxuqCH5vQLdHmaFJEGOut9fksw+TVkHc0ihel32Ny9s
+   w==;
+X-CSE-ConnectionGUID: +icgYwRvTquDif4tD09DqA==
+X-CSE-MsgGUID: uQcm2lSUSUSQtXWIpNgFnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73920266"
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="73920266"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 22:56:35 -0700
+X-CSE-ConnectionGUID: oEyBARVoRTqxmx9FX15Ezg==
+X-CSE-MsgGUID: iu37FNdWT/WUX/u/fUlTIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="184184586"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 22:56:28 -0700
+Message-ID: <7aa86887-b499-4618-b174-96cb0cd17d24@linux.intel.com>
+Date: Wed, 22 Oct 2025 13:56:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 13/22] smb: move file access permission bits
- definitions to common/cifspdu.h
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org,
- smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org,
- tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com,
- sprasad@microsoft.com, bharathsm@microsoft.com,
- christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251014072856.3004683-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251014072856.3004683-3-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd-4oA1JV7zjrdKqw835ErnOU9ge7RYfbL7ij9X-OAY9hQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/25] Revert "KVM: x86/tdp_mmu: Add a helper function
+ to walk down the TDP MMU"
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20251017003244.186495-1-seanjc@google.com>
+ <20251017003244.186495-6-seanjc@google.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <CAKYAXd-4oA1JV7zjrdKqw835ErnOU9ge7RYfbL7ij9X-OAY9hQ@mail.gmail.com>
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251017003244.186495-6-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Should we move all file access permission bit definitions to 
-common/cifspdu.h?
 
-Perhaps in the future we can change them to be the same.
 
-On 10/20/25 1:27 PM, Namjae Jeon wrote:
->> +
->> +#define CLIENT_SET_FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA | FILE_WRITE_EA \
->> +                               | FILE_READ_ATTRIBUTES \
->> +                               | FILE_WRITE_ATTRIBUTES \
->> +                               | DELETE | READ_CONTROL | WRITE_DAC \
->> +                               | WRITE_OWNER | SYNCHRONIZE)
->> +#define SERVER_SET_FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA \
->> +                               | FILE_READ_ATTRIBUTES \
->> +                               | DELETE | READ_CONTROL | WRITE_DAC \
->> +                               | WRITE_OWNER | SYNCHRONIZE)
->> +#define CLIENT_SET_FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA \
->> +                               | FILE_READ_EA | FILE_WRITE_EA \
->> +                               | FILE_READ_ATTRIBUTES \
->> +                               | FILE_WRITE_ATTRIBUTES \
->> +                               | DELETE | READ_CONTROL | WRITE_DAC \
->> +                               | WRITE_OWNER | SYNCHRONIZE)
->> +#define SERVER_SET_FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA \
->> +                               | FILE_WRITE_EA \
->> +                               | FILE_DELETE_CHILD \
->> +                               | FILE_WRITE_ATTRIBUTES \
->> +                               | DELETE | READ_CONTROL | WRITE_DAC \
->> +                               | WRITE_OWNER | SYNCHRONIZE)
-> What's the reason for moving it if the smb client and server don't share it?
+On 10/17/2025 8:32 AM, Sean Christopherson wrote:
+> Remove the helper and exports that were added to allow TDX code to reuse
+> kvm_tdp_map_page() for its gmem post-populate flow now that a dedicated
+> TDP MMU API is provided to install a mapping given a gfn+pfn pair.
+>
+> This reverts commit 2608f105760115e94a03efd9f12f8fbfd1f9af4b.
+>
+> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
--- 
-Thanks,
-ChenXiaoSong.
-
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
