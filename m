@@ -1,177 +1,299 @@
-Return-Path: <linux-kernel+bounces-864348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CDDBFA93F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB67BFA92D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A67964F6AF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4500518C5EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABC92F90DE;
-	Wed, 22 Oct 2025 07:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710FD2F7AC5;
+	Wed, 22 Oct 2025 07:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IV5jXqOe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jVVU/a/u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FwHGxIBf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jobb8kvn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q2s0vJ4+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B182ECEA9
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B022F1FFC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761118388; cv=none; b=bh7eS8iE8l+0MPp54nU91uZnu6YR0A13yatbv7m7AIfweQW6/BM695gIzmhWm33dctTpCJuFWD/4hClnDxtNE4W0/OFq8nZ6EZMXyYoZDrv8C5IDV0DUNAS6u8EDJeBcvdnuASGQwuwgNOS2yafFyt9ACUblfJ5KWG1y21rHUDI=
+	t=1761118319; cv=none; b=PaSvlzGcArAErpm3LpiF1pSBYyOZtFlRyVMm3Bffxru+/u8CZblXSZDc55jZdkXAEc8QoALfb0MIp9rjq0x7ymXZwu/JsrsJOxjKIXTMFZvHtH8mAQ6CetPFjCJZJHEw1jOoKBrrYoIBsrqcgExantgLD1b+Z5rZu6rYrOHam5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761118388; c=relaxed/simple;
-	bh=5jGyijFXBd+kWlPS7szMVtwgQqfkd/aGB/wsypPrASk=;
+	s=arc-20240116; t=1761118319; c=relaxed/simple;
+	bh=nni058SerUWrPEH+xI5uMnP8DnngzYS4zOj5GDkfbFs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrl0RKOcQIY6LiTNVEXNQ/RMF4NeT9csvWZ0qUwnG3smaFG+GjdspOdYueIzUJAYzW4pcv4EqasR/d3fJfRwYwz6ZYOdIqOBR6ZBz0TNMNff4jJXc9Gnig4uCB7jU5nmHwpQfCDbqCj3qypzcI9tpr8INanVR8TlcS1W83Jb2Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IV5jXqOe; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761118387; x=1792654387;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5jGyijFXBd+kWlPS7szMVtwgQqfkd/aGB/wsypPrASk=;
-  b=IV5jXqOevnFzoKXN4dwS1PxMyIlb6sM8JJsUquj8XAovL+N2oVkd8NU1
-   y28BWFv2TbwBNw1FuBvf+cA0mpKJF98l3ysTwbJ/6ZfCuscsN44yqTfoX
-   Ds3i2X+UTLmZlFoYolMpol8FfdagCK5dcy5xYV9S0lPjKK3XT4H9R1K86
-   IEIlHl1so3TFkuUcRHVCktr55GUy0PLgV2z1MDDvjYErVXcxvTDHF/zQb
-   Ms7DyT7enBCvXVjC2XUEqt38KejblOTk/UWd/5I/Pjzbwrh4oBD8V7lCU
-   ti+vSfElO2ojoC10+4+/S8WZ0fmcr7x/RaBxVZWFeHQJmIjT5LgQ6PO1t
-   A==;
-X-CSE-ConnectionGUID: bkzAk4C2RViOn0EKm7AJCw==
-X-CSE-MsgGUID: ojwIKFJVRU6DBvA8VMmFgQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80881146"
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="80881146"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 00:33:06 -0700
-X-CSE-ConnectionGUID: fov/Oc3RRLiiWkuh5b5zYg==
-X-CSE-MsgGUID: RHrFOH6rSy2zXBLfuY46JA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="187840887"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 22 Oct 2025 00:33:04 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBTJr-000C6D-0U;
-	Wed, 22 Oct 2025 07:32:03 +0000
-Date: Wed, 22 Oct 2025 15:31:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Subject: Re: [PATCH] Kconfig:Uses glibc so strscpy has to be manually- added
-Message-ID: <202510221519.nzy5mUJ3-lkp@intel.com>
-References: <20251021171446.46942-1-biancaa2210329@ssn.edu.in>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsSMs5ZKV0dL1TfpMOx/86RdOElfVH+CdsaK6GYiw0D/O87br3POgyCif6NTcpFvUx6pgdti/Qo/C7RpiubQWFFRqQdc8UYStm4UXCpRkC78to66L+vUt4pKpnOUaNmVr3shliYrSahdvMP/R8ZdyjY7vVAvuCrgFZW+e/Vp7RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jVVU/a/u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FwHGxIBf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jobb8kvn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q2s0vJ4+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9ECAA1F391;
+	Wed, 22 Oct 2025 07:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761118311;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QPxrhNSaar3ryimAQbdkokRF96kEc3aQalF5Fe5MeDE=;
+	b=jVVU/a/u/q2/FwWuFGplhaZZBzKfcJTeg3DFiuJLVuVDi+zRE84xfmP1oVtZlRr+n/7vvj
+	XY8+7dL7s5xn1ij+0HPLT8BSXliLg+lipY55fvGG6385szMb4trNgodU02xj5ECR62XH12
+	yQeASH/SXxVpHYWr/qy9VEtzrVWzWoc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761118311;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QPxrhNSaar3ryimAQbdkokRF96kEc3aQalF5Fe5MeDE=;
+	b=FwHGxIBfzTEPZ7/X1vEJtTa1UGaneh9dnyLwVeO+EMpmKdlpxGeT2DI6dHRp4wQnHbzi3z
+	BsnL/4roa5+qz+CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761118307;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QPxrhNSaar3ryimAQbdkokRF96kEc3aQalF5Fe5MeDE=;
+	b=jobb8kvnGuvzURwf63NHPQNWgsi3o6NQ4FjFHyDr5gZ27uDuGfzJ+x+vgtup4d4hpGqhRK
+	DZUEF7psj9Z0k2yvOrNTkEZiqvCmuMe+dcTbIi2xVAcpCNmbiB4euZLu/FzC2z+0bTv7s/
+	fmrDUkUQ2liW2LxAva33CiApq07S7cs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761118307;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QPxrhNSaar3ryimAQbdkokRF96kEc3aQalF5Fe5MeDE=;
+	b=q2s0vJ4+QZKotK4d80wK6BDpqazzeAxeXeTgGx0gOk4jcQwITMkIKlkdKGAQK6K/9AoDIa
+	Robw6QWVMbkVycBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 758011339F;
+	Wed, 22 Oct 2025 07:31:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id e3+PHGOI+GjgFgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 22 Oct 2025 07:31:47 +0000
+Date: Wed, 22 Oct 2025 09:31:38 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
+Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
+	johannes.thumshirn@wdc.com, fdmanana@suse.com, boris@bur.io,
+	wqu@suse.com, neal@gompa.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] btrfs: declare free_ipath() via DEFINE_FREE() instead
+Message-ID: <20251022073138.GX13776@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20251021142749.642956-1-mssola@mssola.com>
+ <20251021142749.642956-2-mssola@mssola.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251021171446.46942-1-biancaa2210329@ssn.edu.in>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251021142749.642956-2-mssola@mssola.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
 
-Hi Biancaa,
+On Tue, Oct 21, 2025 at 04:27:46PM +0200, Miquel Sabaté Solà wrote:
+> This transforms the signature to __free_ipath() instead of the original
+> free_ipath(), but this function was only being used as a cleanup
+> function anyways. Hence, define it as a helper and use it via the
+> __free() attribute on all uses. This change also means that
+> __free_ipath() will be inlined whereas that wasn't the case for the
+> original one, but this shouldn't be a problem.
+> 
+> A follow up macro like we do with BTRFS_PATH_AUTO_FREE() has been
+> discarded as the usage of this struct is not as widespread as that.
 
-kernel test robot noticed the following build errors:
+The point of adding the macros or at least the freeing wrappers is to
+force the NULL initialization and to make it visible in the declarations
+(typed all in capitals). The number of use should not be the main factor
+and in this case it's 4 files.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.18-rc2 next-20251022]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Signed-off-by: Miquel Sabaté Solà <mssola@mssola.com>
+> ---
+>  fs/btrfs/backref.c | 10 +---------
+>  fs/btrfs/backref.h |  7 ++++++-
+>  fs/btrfs/inode.c   |  4 +---
+>  fs/btrfs/ioctl.c   |  3 +--
+>  fs/btrfs/scrub.c   |  4 +---
+>  5 files changed, 10 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/btrfs/backref.c b/fs/btrfs/backref.c
+> index e050d0938dc4..a1456402752a 100644
+> --- a/fs/btrfs/backref.c
+> +++ b/fs/btrfs/backref.c
+> @@ -2785,7 +2785,7 @@ struct btrfs_data_container *init_data_container(u32 total_bytes)
+>   * allocates space to return multiple file system paths for an inode.
+>   * total_bytes to allocate are passed, note that space usable for actual path
+>   * information will be total_bytes - sizeof(struct inode_fs_paths).
+> - * the returned pointer must be freed with free_ipath() in the end.
+> + * the returned pointer must be freed with __free_ipath() in the end.
+>   */
+>  struct inode_fs_paths *init_ipath(s32 total_bytes, struct btrfs_root *fs_root,
+>  					struct btrfs_path *path)
+> @@ -2810,14 +2810,6 @@ struct inode_fs_paths *init_ipath(s32 total_bytes, struct btrfs_root *fs_root,
+>  	return ifp;
+>  }
+>  
+> -void free_ipath(struct inode_fs_paths *ipath)
+> -{
+> -	if (!ipath)
+> -		return;
+> -	kvfree(ipath->fspath);
+> -	kfree(ipath);
+> -}
+> -
+>  struct btrfs_backref_iter *btrfs_backref_iter_alloc(struct btrfs_fs_info *fs_info)
+>  {
+>  	struct btrfs_backref_iter *ret;
+> diff --git a/fs/btrfs/backref.h b/fs/btrfs/backref.h
+> index 25d51c246070..d3b1ad281793 100644
+> --- a/fs/btrfs/backref.h
+> +++ b/fs/btrfs/backref.h
+> @@ -241,7 +241,12 @@ char *btrfs_ref_to_path(struct btrfs_root *fs_root, struct btrfs_path *path,
+>  struct btrfs_data_container *init_data_container(u32 total_bytes);
+>  struct inode_fs_paths *init_ipath(s32 total_bytes, struct btrfs_root *fs_root,
+>  					struct btrfs_path *path);
+> -void free_ipath(struct inode_fs_paths *ipath);
+> +
+> +DEFINE_FREE(ipath, struct inode_fs_paths *,
+> +	if (_T) {
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Biancaa-Ramesh/Kconfig-Uses-glibc-so-strscpy-has-to-be-manually-added/20251022-011608
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20251021171446.46942-1-biancaa2210329%40ssn.edu.in
-patch subject: [PATCH] Kconfig:Uses glibc so strscpy has to be manually- added
-config: arm-randconfig-r071-20251022 (attached as .config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510221519.nzy5mUJ3-lkp@intel.com/reproduce)
+You can drop the if() as kvfree/kfree handles NULL pointers and we don't
+do that in the struct btrfs_path either.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510221519.nzy5mUJ3-lkp@intel.com/
+> +		kvfree(_T->fspath);
+> +		kfree(_T);
+> +	})
+>  
+>  int btrfs_find_one_extref(struct btrfs_root *root, u64 inode_objectid,
+>  			  u64 start_off, struct btrfs_path *path,
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 79732756b87f..4d154209d70b 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -130,7 +130,7 @@ static int data_reloc_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
+>  	struct btrfs_fs_info *fs_info = warn->fs_info;
+>  	struct extent_buffer *eb;
+>  	struct btrfs_inode_item *inode_item;
+> -	struct inode_fs_paths *ipath = NULL;
+> +	struct inode_fs_paths *ipath __free(ipath) = NULL;
 
-All errors (new ones prefixed by >>):
+I'd spell the name in full, like __free(free_ipath) or
+__free(inode_fs_paths) so it matches the type not the variable name.
 
-   scripts/kconfig/util.c: In function 'str_new':
->> scripts/kconfig/util.c:70:9: error: implicit declaration of function 'strscpy'; did you mean 'strlcpy'? [-Wimplicit-function-declaration]
-      70 |         strscpy(gs.s, "\0");
-         |         ^~~~~~~
-         |         strlcpy
-   scripts/kconfig/symbol.c: In function 'sym_set_string_value':
->> scripts/kconfig/symbol.c:812:9: error: implicit declaration of function 'strscpy'; did you mean 'strlcpy'? [-Wimplicit-function-declaration]
-     812 |         strscpy(val, newval);
-         |         ^~~~~~~
-         |         strlcpy
-   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/util.o] Error 1
-   scripts/kconfig/confdata.c: In function 'conf_touch_dep':
->> scripts/kconfig/confdata.c:157:9: error: implicit declaration of function 'strscpy'; did you mean 'strlcpy'? [-Wimplicit-function-declaration]
-     157 |         strscpy(depfile_path + depfile_prefix_len, name);
-         |         ^~~~~~~
-         |         strlcpy
-   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/confdata.o] Error 1
-   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/symbol.o] Error 1
-   make[3]: Target 'oldconfig' not remade because of errors.
-   make[2]: *** [Makefile:742: oldconfig] Error 2
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'oldconfig' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'oldconfig' not remade because of errors.
---
-   scripts/kconfig/util.c: In function 'str_new':
->> scripts/kconfig/util.c:70:9: error: implicit declaration of function 'strscpy'; did you mean 'strlcpy'? [-Wimplicit-function-declaration]
-      70 |         strscpy(gs.s, "\0");
-         |         ^~~~~~~
-         |         strlcpy
-   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/util.o] Error 1
-   scripts/kconfig/confdata.c: In function 'conf_touch_dep':
->> scripts/kconfig/confdata.c:157:9: error: implicit declaration of function 'strscpy'; did you mean 'strlcpy'? [-Wimplicit-function-declaration]
-     157 |         strscpy(depfile_path + depfile_prefix_len, name);
-         |         ^~~~~~~
-         |         strlcpy
-   scripts/kconfig/symbol.c: In function 'sym_set_string_value':
->> scripts/kconfig/symbol.c:812:9: error: implicit declaration of function 'strscpy'; did you mean 'strlcpy'? [-Wimplicit-function-declaration]
-     812 |         strscpy(val, newval);
-         |         ^~~~~~~
-         |         strlcpy
-   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/confdata.o] Error 1
-   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/symbol.o] Error 1
-   make[3]: Target 'olddefconfig' not remade because of errors.
-   make[2]: *** [Makefile:742: olddefconfig] Error 2
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'olddefconfig' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'olddefconfig' not remade because of errors.
-
-
-vim +70 scripts/kconfig/util.c
-
-    62	
-    63	/* Allocate initial growable string */
-    64	struct gstr str_new(void)
-    65	{
-    66		struct gstr gs;
-    67		gs.s = xmalloc(sizeof(char) * 64);
-    68		gs.len = 64;
-    69		gs.max_width = 0;
-  > 70		strscpy(gs.s, "\0");
-    71		return gs;
-    72	}
-    73	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  	struct btrfs_root *local_root;
+>  	struct btrfs_key key;
+>  	unsigned int nofs_flag;
+> @@ -193,7 +193,6 @@ static int data_reloc_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
+>  	}
+>  
+>  	btrfs_put_root(local_root);
+> -	free_ipath(ipath);
+>  	return 0;
+>  
+>  err:
+> @@ -201,7 +200,6 @@ static int data_reloc_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
+>  "checksum error at logical %llu mirror %u root %llu inode %llu offset %llu, path resolving failed with ret=%d",
+>  		   warn->logical, warn->mirror_num, root, inum, offset, ret);
+>  
+> -	free_ipath(ipath);
+>  	return ret;
+>  }
+>  
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 692016b2b600..453832ded917 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -3298,7 +3298,7 @@ static long btrfs_ioctl_ino_to_path(struct btrfs_root *root, void __user *arg)
+>  	u64 rel_ptr;
+>  	int size;
+>  	struct btrfs_ioctl_ino_path_args *ipa = NULL;
+> -	struct inode_fs_paths *ipath = NULL;
+> +	struct inode_fs_paths *ipath __free(ipath) = NULL;
+>  	struct btrfs_path *path;
+>  
+>  	if (!capable(CAP_DAC_READ_SEARCH))
+> @@ -3346,7 +3346,6 @@ static long btrfs_ioctl_ino_to_path(struct btrfs_root *root, void __user *arg)
+>  
+>  out:
+>  	btrfs_free_path(path);
+> -	free_ipath(ipath);
+>  	kfree(ipa);
+>  
+>  	return ret;
+> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+> index fe266785804e..74d8af1ff02d 100644
+> --- a/fs/btrfs/scrub.c
+> +++ b/fs/btrfs/scrub.c
+> @@ -505,7 +505,7 @@ static int scrub_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
+>  	struct btrfs_inode_item *inode_item;
+>  	struct scrub_warning *swarn = warn_ctx;
+>  	struct btrfs_fs_info *fs_info = swarn->dev->fs_info;
+> -	struct inode_fs_paths *ipath = NULL;
+> +	struct inode_fs_paths *ipath __free(ipath) = NULL;
+>  	struct btrfs_root *local_root;
+>  	struct btrfs_key key;
+>  
+> @@ -569,7 +569,6 @@ static int scrub_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
+>  				  (char *)(unsigned long)ipath->fspath->val[i]);
+>  
+>  	btrfs_put_root(local_root);
+> -	free_ipath(ipath);
+>  	return 0;
+>  
+>  err:
+> @@ -580,7 +579,6 @@ static int scrub_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
+>  			  swarn->physical,
+>  			  root, inum, offset, ret);
+>  
+> -	free_ipath(ipath);
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.51.1
+> 
 
