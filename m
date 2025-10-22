@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-865287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F32BFCB30
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:54:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0764BFCB66
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2AE2E3583D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:54:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A5BD4FB770
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6C13491F8;
-	Wed, 22 Oct 2025 14:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6800534C995;
+	Wed, 22 Oct 2025 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="l2jvMTVr"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AL/8yhpO"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA6E280318
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C824030DD32
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144830; cv=none; b=cPbOp/MhyJJN90fTN8AcBnWnKfSIZafwzXkOdWD65rHhLN+sxdKNwKI5fdVJ4MQKpvTDhWqXCSlcS3331uATb+HyruOTJf0SMjbSwB8IfIxliKa8JPT3C5qnkPK8wIPMGNDzuxMuoLfuSbMBKoFHBu0k9f3Zgz4kDARH0a7bSyc=
+	t=1761144843; cv=none; b=AT6JHcqXZA70L/do8HrAzG52reVk20b3qd6DIXMYZcDjOmhroJXfzlFXggSpnBWhc4Cvh2g2XtUvcXQgysC5Bqnepz3LIRQLEEyMXoOX4mg+R32NfIELd0cXm9WNxydtfXunRdS2gUDSZCBwY9DB8BfHXtekbaBFODenQplZbXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144830; c=relaxed/simple;
-	bh=ExaNIFvj/8bzzKJ6c9wlj2eTQ4v5G+JNU21O0NVuOMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=soqQnIV4OfFuViJ10YXwhhuoMAIbhH3C584sa8sCWrgkMOeBrpTbnX+y5wJUK81t9JN4nOTdBocIwh7g1ROmy8+3xXhjOmuJQsOwmXtUvFUAUdH2nWDZOTkJsX1FBipetGvsEdpfXN6fikMge2K32H2LFyVK6wav8w3hE9mRTVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=l2jvMTVr; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-87c1f3f4373so127794586d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:53:48 -0700 (PDT)
+	s=arc-20240116; t=1761144843; c=relaxed/simple;
+	bh=bks8qIi7M2BOZI3y7iG2qNo8QYzUXZ0cz4QMvS9FeDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c+izEFNRvMEHh77C7Am+WnYcio+LPnuECbsdV+INL9IFCB7xAXXzPFMZ7W39Mo46diYHqEyiZS8Z5QWwhHkazOZQWpWoBK/hN5V+AcLPN23tJYkAULR9znJ48kO7HM2vwWBOoapIUoaltxW5CTsW9RnBtGzlstLG3d3dm8HKI+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AL/8yhpO; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b43a3b1ae1fso164667866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:54:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1761144827; x=1761749627; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cfXdO6iFVoG7HfA3ugtXk5YCzyB+I2gK/iAlyV/U2k=;
-        b=l2jvMTVrZZlVLfWWyG6iwckiZaJI+mKc16Myp6ykXb24JYmgoeiOMtLkDQyyb8SCWN
-         I5tbKnD6rHELA/iTr9Xh8vFyPkNBgcRqekdyZ8XWt40i/tMLMh3Y47uitoNyXdaGax4i
-         hQif+ZNSclKhJqw5SRpGSpT2JRoHwDT6Nz71B7v7oA57SDaS92gLqCAC1Tw2CJIhC/HJ
-         0mjKQHTLVwho+0P4slFI1tVnRbxG35ctmmK9LIYQTR75YY5YlP29fkyp2BF+L92jzwGR
-         XfAuvcd2uSEUufpjrtphb3HiYo5lBaofwro3mabR6pS5wsv6hfsUC89S7JkD2vjgUsyc
-         R5Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761144827; x=1761749627;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761144840; x=1761749640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1cfXdO6iFVoG7HfA3ugtXk5YCzyB+I2gK/iAlyV/U2k=;
-        b=nRNp3OKNB6llhtOORTihNPgQlp06EdGjdexm8HRhxKhqYJDbt1uZXeL+mcUijU398D
-         ghpyEVp/FR/hKCW8yQb04V5qHVQz96wZXhlAqpCJzLzOblRhRxQkQ8hT1KUyl3BZf5Mv
-         Tid0muaJa0e83Qxozvx8tcTpQkMpOJqBijDaH+wMeNTgSEUi1pZ8amMNqppT/QM4aYKZ
-         agesiG3VQsF/jZqndjMLMmmv8/cWwPVfTbvwS3689F0qUvDFChgmgiXM+kNv4uIKW+0F
-         pqzU5Vnc7vprDNxUC5hm3gJ4vWlei6aJRvDqggHAG4kkmUC1wVo2Kfkjw0kAphATMbkf
-         v4VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW53gnJuy0BTS/hLihHzwyAVj726HXCfqrpwYjronOAUP2yxwqJpx5rc5Cq1+Vp7XPevzGudPJVAxNtLUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzG211yDxQW4tKsRa+q3yw+k+7K4+gGG2hK29/sN0peocFNg1M
-	GabxxQl9G1z2bXuKFOK62Eb1wuhjLv8vOw6xZNM7FEz1M1G+iUxKxj8eeq5VNSmodrM=
-X-Gm-Gg: ASbGncsEEVSvsbHokZcj6Echu1nDJf6EEoJfITIkH9s1HWip7tghqiw+A6q0PAGYLEs
-	1o5keNiyp7cWLRpHfWv3qheNMJdJ5zo+4IO0Yiel8i3wtUJnwS0vWEuImjUt7ZU1tEbJhjEOYZO
-	LqcniahcNt2ZBycvC6/eQVXbqtnOVfxyfFZ4nh7phkKOdeBlK27i303+IH37wpt06JVkVn1b6wh
-	Fb/PNCyyKpW2PVkmNn2npRtIdhA6fhRAimJROaLJ24H8pYBu1WfcbY1kl6bIGowakDdkEeWz+9m
-	TcO7y3RY0mNyFYMyrs6iNGBrXctHwPOJAMRR8S21Z9IHBy91zjdcPNDe7c8rtBt0Bb3gSeU8vhO
-	ctZP0OpbmnhUres7Q9z0baU5Szmz78DfAfwExqZS2Cef6mdW74oRZmFAXVIG53u/pjfTMmmQCCQ
-	3h4VidinKuw831LjwlEXPE4eD/72hywh6YqZUmH5tYjtWqlrEmjgX+dFA242k=
-X-Google-Smtp-Source: AGHT+IFHuMaMm9YG8UjNunKuIxLRJWBbIuuF0QSGwuVL9vRBN2OWA2gEWGQ8hVXwPZQWU1e1osSl+Q==
-X-Received: by 2002:ad4:5d6f:0:b0:87c:2c0d:309e with SMTP id 6a1803df08f44-87c2c0d3796mr169678726d6.37.1761144827141;
-        Wed, 22 Oct 2025 07:53:47 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf51ff3c9sm90532536d6.8.2025.10.22.07.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 07:53:46 -0700 (PDT)
-Date: Wed, 22 Oct 2025 10:53:44 -0400
-From: Gregory Price <gourry@gourry.net>
-To: SeongJae Park <sj@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
-	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org,
-	ziy@nvidia.com, David Hildenbrand <david@redhat.com>
-Subject: Re: [RFC PATCH v2] page_alloc: allow migration of smaller hugepages
- during contig_alloc.
-Message-ID: <aPjv-Kd2ZihLUqMS@gourry-fedora-PF4VCD3F>
-References: <20251020210816.1089910-1-gourry@gourry.net>
- <20251022014057.128900-1-sj@kernel.org>
+        bh=bks8qIi7M2BOZI3y7iG2qNo8QYzUXZ0cz4QMvS9FeDg=;
+        b=AL/8yhpOqQkpiE/+WJdMEYRlOKeqUqHddQ5y9TgWJ4mfVmJzEBxtfWI5erMBihdD2J
+         XKH83fUX0x9DgFIwQ/jErQ8lKqPk/Izt8tkNpZmmKTMSqgpDCFQYDmnECOOnebnW6ZEw
+         lL+0H28uPPY64BJaSpC3f7OycjeVYQ2cdbaUnJCnwy+28EXMg+Szcj3Q0LaATsekWysg
+         JszZBSnJ3xWexLcrVIKDc1vQDMbmgVRqQZyi9zswePHLkRUeEkZoDPxuT1BOkrI+0vPI
+         dAagkhoAf26tOkX23HDkW4jPq5TCuep+sC7zM5qWmao2+p7vzVHsgHUe8UpE2mAqn4NG
+         Ddpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761144840; x=1761749640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bks8qIi7M2BOZI3y7iG2qNo8QYzUXZ0cz4QMvS9FeDg=;
+        b=cvbwqWOFg8lV4k2LK5REyUfXqKCJUdErzPpm6tPut/uGkxfQ6AdTPhyP7v/u2LuY98
+         1MmlcUJHwHijO/6X86cdjlXBOLIFKFhfPbDCuazNOP4YzATawM6RqK9VRPjKFdfWmmHx
+         DuSAtAvMms8gkGTdFXVCTxZFEUIUIldMFfOMiWE7uiDzvyAKDAnZlCfvSFgPxIFHBbCb
+         MNE73w2YcTzfF7tDVnd5UqpMfvdLXf69MJOORMDiKV28yV4vR8BtZJwZ9BcMHwZWjCtb
+         rqBjz50x+9WdA77rah4QVP73+WIx3j91ij0g8bc97ixYRjxxdG8SBWHN8hVFYfxq9ZMk
+         p+9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSxv9dSmD2bfVs+7+psgd8L4PUtHyOkrmF4m3K4ijJE0G5MoRsdKsCgzoU9QND3rgAkB/2sCKLLEzR4B4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydd13b5jg1AJhN+Kgfp5DCJ3pYcWKMDWq8g6wRl29jM+jqCynz
+	4Bg3XiXEjG3m4+GoX0FA6kESfBOgfnGARMC7jxPv2WRhWZ5kVMxnB0h2h78rjyWBZvRHrT+KPHa
+	c7XQJxFr4Eed221f+AumlZNgyI8568QQ=
+X-Gm-Gg: ASbGnctqHjbC9PzVQwvN2YS2G3mq1Z5sho7nNeB4ZD447E1pGCpBSp8vpzVc0SYb44L
+	66RwA57B4oafSXXfeoD79tfy4m+TasSXnO3dWmTunuTmTGaXBVYwqNyDeS5Leuq3F8k9UPtyfdE
+	ErhroGILt2NUqNvuXQsAIMG8n06qM4CqvASqV1MnM8oLMp16+F/S1CSSPY/DuxWNzBAuRFOe28b
+	jk7Wm8rrBFigz5LnRToPpDCzAIrLt/Z1L5kmPZJW5U9HYaLJmpkBNvjBIUSqA==
+X-Google-Smtp-Source: AGHT+IG7h7TaFxHTuDY8AWEs3DohBAFF5ntTu6CWIe9+nZpuje6ygTxavGcJ/i05b9VtLfcssN/cg/UG6AHp/Ayc0iQ=
+X-Received: by 2002:a17:907:d90:b0:b6c:55b5:27a2 with SMTP id
+ a640c23a62f3a-b6c76fa331cmr460806666b.6.1761144839990; Wed, 22 Oct 2025
+ 07:53:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022014057.128900-1-sj@kernel.org>
+References: <2025102125-petted-gristle-43a0@gregkh> <20251021145449.473932-1-pioooooooooip@gmail.com>
+ <CAKYAXd-JFuBptqzEbgggUhaF2bEfWMRXCSK9N_spiBxvi1v0Wg@mail.gmail.com>
+In-Reply-To: <CAKYAXd-JFuBptqzEbgggUhaF2bEfWMRXCSK9N_spiBxvi1v0Wg@mail.gmail.com>
+From: =?UTF-8?B?44GP44GV44GC44GV?= <pioooooooooip@gmail.com>
+Date: Wed, 22 Oct 2025 23:53:49 +0900
+X-Gm-Features: AS18NWC4GzKd1xEuugd--eot2ZHrwZpDIUjy0AlgxBnilTm3xbX4azrPGMl_XLI
+Message-ID: <CAFgAp7ixLZLXGSN6tOmtNj0f4b-z3pnMrQg4Avnb6tOvj3h3KQ@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: transport_ipc: validate payload size before
+ reading handle
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	gregkh@linuxfoundation.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 06:40:57PM -0700, SeongJae Park wrote:
-> On Mon, 20 Oct 2025 17:08:16 -0400 Gregory Price <gourry@gourry.net> wrote:
-> > +
-> > +			/* Don't consider moving same size/larger pages */
-> > +			page = compound_head(page);
-> > +			order = compound_order(page);
-> > +			if ((order >= MAX_PAGE_ORDER) ||
-> > +			    (nr_pages < (1 << order)))
-> > +				return false;
-> 
-> Shouldn't the comparison of 'nr_pages' against '1 << order' use '<=' instead of
-> '<', to match the commit description?
-> 
+Hi Namjae, Steve,
 
-Good catch, got lost in the shuffle.  Thank you!
+Thanks for updating the patch. I=E2=80=99ve reviewed the changes and they l=
+ook
+good to me.
 
-~Gregory
+Minor impact note: this patch prevents a 4-byte out-of-bounds read in
+ksmbd's handle_response() when the declared Generic Netlink payload
+size is < 4.
+If a remote client can influence ksmbd.mountd to emit a truncated
+payload, this could be remotely triggerable (info-leak/DoS potential).
+If you consider this security-impacting, I=E2=80=99m happy to request a CVE
+via the kernel.org CNA.
+
+Thanks!!
+Qianchang Zhao
+
+
+On Wed, Oct 22, 2025 at 3:39=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
+ wrote:
+>
+> On Tue, Oct 21, 2025 at 11:55=E2=80=AFPM Qianchang Zhao <pioooooooooip@gm=
+ail.com> wrote:
+> >
+> > handle_response() dereferences the payload as a 4-byte handle without
+> > verifying that the declared payload size is at least 4 bytes. A malform=
+ed
+> > or truncated message from ksmbd.mountd can lead to a 4-byte read past t=
+he
+> > declared payload size. Validate the size before dereferencing.
+> >
+> > This is a minimal fix to guard the initial handle read.
+> >
+> > Fixes: 0626e6641f6b ("cifsd: add server handler for central processing =
+and tranport layers")
+> > Cc: stable@vger.kernel.org
+> > Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> > Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> I have directly updated your patch. Can you check the attached patch ?
+> Thanks!
 
