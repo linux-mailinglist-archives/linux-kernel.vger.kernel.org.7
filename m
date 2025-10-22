@@ -1,148 +1,110 @@
-Return-Path: <linux-kernel+bounces-865590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A032BFD82D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:16:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503F2BFD7FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28D86501CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:13:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED686345520
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC5E27F4CA;
-	Wed, 22 Oct 2025 17:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FD727FB35;
+	Wed, 22 Oct 2025 17:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B41w7bEg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fM26tfZs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EDC1B7F4;
-	Wed, 22 Oct 2025 17:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6961B7F4;
+	Wed, 22 Oct 2025 17:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761153176; cv=none; b=s4UbSTRXdPqj2RJ6k7wOCD+wTorqNCo3486uHpfwTLS1WbWLmbps6EtgZeQdYKZ9OKGaSRTUXWM6k/wCjMm0px+zuISDkSDCHmvK2ZQbRfSYs6vCqBlOmLxaFJ7qsudYU5S8Swc3aP/LhgXMJZ7ZTxgzmT6F1iwCtNk4ce057h4=
+	t=1761153205; cv=none; b=Axyst1VYT6UrfEN3qsmpuW3l4DhF3ZFPavgLBKVqszJ9qzW228jYrWOTmRkG+LU/Xh8YJnk4Fm3TNhLvsGhRurAPSo0q6xV/5X8VdmXPJn5eBZqVXy43oqhG5SQ9tOxCgmvyJG9w5vvRKeRud1jbgvBzgFaB1gG33icOrEOh4+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761153176; c=relaxed/simple;
-	bh=CA2iL+o+DO6b320JfGgya3sZsmpPjkeP4srUuVWXJQY=;
+	s=arc-20240116; t=1761153205; c=relaxed/simple;
+	bh=Oc5cL4PM3GS59XiGaVYHm7x2QglMaN7Tq26+NOil5DE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NGzv6ScLdzlQ82Y5jCh1MWrP2Ixe4fAXSKgj5Or2+l9bfiMCd69AFhvOKwFjhfX0NHbe8z8wNqZokvMIWq8GqxQt073WckWreVgl0p2YydmVsfdRogWH6nlb3nb7lURxVuDrvgeeY2ulSp+l2P/p2ZI07luUYuoMXEha5egP9wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B41w7bEg; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761153174; x=1792689174;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=CA2iL+o+DO6b320JfGgya3sZsmpPjkeP4srUuVWXJQY=;
-  b=B41w7bEgqD5s3e35MhqURGJTvf3ssBWOwn9wRqeXuo+44HKrBz0cEdOa
-   XvqX3TqzNvxlfykRg6CH5rdfwcX/byiCILiMzdOFzwg18b7hwSg7edGSX
-   IWHXO8SSUXb80aAXF3QXZXNx4aBzfrzP+AF2bGKfclnvDxvGP38fovoTC
-   7S0/d0ku5E0JS+FWRqqpXMISyP5CdjJ/HeRA4DCKxCLS5BGX0JiAL0Abj
-   27Wj6Mg4UGxgglMFS6poDNWCpCqS137o1HLvuvqZVzbdZ9PwrcufJx7fV
-   NQSwjmcmmBjW0PsuLO2a1+Tfk6ZARf+dqkZwnhkiSBjqQSVm9x6KfCyaS
-   w==;
-X-CSE-ConnectionGUID: qaIzlhR6QJieEW9efHjqIA==
-X-CSE-MsgGUID: 2gcVVxGUTUCol42SV1wEUQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63014009"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="63014009"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 10:12:53 -0700
-X-CSE-ConnectionGUID: u2ERStFSS/aim79IAjV65A==
-X-CSE-MsgGUID: 3dwWDioCRDGoZpxlH9UaHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="183146706"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.83])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 10:12:46 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vBcOB-00000001km0-2Hse;
-	Wed, 22 Oct 2025 20:12:43 +0300
-Date: Wed, 22 Oct 2025 20:12:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 01/10] string: provide strends()
-Message-ID: <aPkQi_Zn-17JKG0s@smile.fi.intel.com>
-References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
- <20251022-gpio-shared-v2-1-d34aa1fbdf06@linaro.org>
- <aPj3fCYj-NQdDSQT@smile.fi.intel.com>
- <CAMRc=MeSFKRo1rHq5ENzKqws+gOAX=-nCsGtw5MXvsOwJr=XpQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTFRvby2F3zThc/bSbR2DA+v/KU96ZCSUemnOcTBxRuj9XUumIRg/youb2fkskFbi0H4TB2YieHvWU5Y2UflSGi5KklPAMLDsc/+TlraJQAVMSiXEh4lqY572zJlKu9N5SHOzShENXScTsrxZegLXk2pY6sb06rroZozViiYlNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fM26tfZs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32FAAC4CEE7;
+	Wed, 22 Oct 2025 17:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761153204;
+	bh=Oc5cL4PM3GS59XiGaVYHm7x2QglMaN7Tq26+NOil5DE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fM26tfZs84ldeAddOmNXArn5RbP7iEp+oNUSPg92OafLdEp2A2CltfwxTYDTDbSBt
+	 yhtDIrkROBstCq84hJRIv0uvNE852TNVAVBfnIvhjfb5K+f+sBF1WJ88PbKKep8MPs
+	 rsTBFdIzM2FKvPUMhlYOGddUPz2hWCETV98K98SI=
+Date: Wed, 22 Oct 2025 19:13:19 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Gabriele Paoloni <gpaoloni@redhat.com>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	safety-architecture@lists.elisa.tech, acarmina@redhat.com,
+	kstewart@linuxfoundation.org, chuckwolber@gmail.com
+Subject: Re: [RFC PATCH v2 0/3] Add testable code specifications
+Message-ID: <2025102211-wolverine-cradling-b4ec@gregkh>
+References: <20250910170000.6475-1-gpaoloni@redhat.com>
+ <2025102111-facility-dismay-322e@gregkh>
+ <CA+wEVJZEho_9kvaGYstc=5f6iHGi69x=_0zT+jrC2EqSFUQMWQ@mail.gmail.com>
+ <2025102124-punctuate-kilogram-da50@gregkh>
+ <CA+wEVJajSGzb85YTiv98yAY3bcJFS0Qp_xjLc++wnU8t=wDAOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeSFKRo1rHq5ENzKqws+gOAX=-nCsGtw5MXvsOwJr=XpQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <CA+wEVJajSGzb85YTiv98yAY3bcJFS0Qp_xjLc++wnU8t=wDAOg@mail.gmail.com>
 
-On Wed, Oct 22, 2025 at 05:36:33PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Oct 22, 2025 at 5:25 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Wed, Oct 22, 2025 at 03:10:40PM +0200, Bartosz Golaszewski wrote:
-
-...
-
-> > > +static void string_test_strends(struct kunit *test)
-> > > +{
-> > > +     KUNIT_EXPECT_TRUE(test, strends("foo-bar", "bar"));
-> > > +     KUNIT_EXPECT_TRUE(test, strends("foo-bar", "-bar"));
-> > > +     KUNIT_EXPECT_TRUE(test, strends("foobar", "foobar"));
-> > > +     KUNIT_EXPECT_TRUE(test, strends("foobar", ""));
-> > > +     KUNIT_EXPECT_FALSE(test, strends("bar", "foobar"));
-> > > +     KUNIT_EXPECT_FALSE(test, strends("", "foo"));
-> > > +     KUNIT_EXPECT_FALSE(test, strends("foobar", "ba"));
-> > > +     KUNIT_EXPECT_TRUE(test, strends("", ""));
-> > > +}
+On Wed, Oct 22, 2025 at 04:06:10PM +0200, Gabriele Paoloni wrote:
+> > Every in-kernel api documented in a "formal" way like this?  Or a
+> > subset?  If a subset, which ones specifically?  How many?  And who is
+> > going to do that?  And who is going to maintain it?  And most
+> > importantly, why is it needed at all?
 > >
-> > Have you checked the binary file? If you want this to be properly implemented,
-> > generate the suffix. (Actually making the function static inline makes my point
-> > really visible)
+> > For some reason Linux has succeeded in pretty much every place an
+> > operating system is needed for cpus that it can run on (zephyr for those
+> > others that it can not.)  So why are we suddenly now, after many
+> > decades, requiring basic user/kernel stuff to be formally documented
+> > like this?
 > 
-> Andy, this is bikeshedding. This is literally the least important
-> piece of this series. It doesn't matter for the big picture whether
-> this is inlined or not.
+> Let me try to answer starting from the "why".
 
-It's definitely not a bikeshedding. I try to keep a bit consistency here and
-I don't see the point of bloating a kernel (binary as well) for the function
-that just a couple of lines with simple basic calls.
+Let's ignore the "why" for now, and get to the "how" and "what" which
+you skipped from my questions above.
 
-Also note that with inlined version strlen() for string literals will be
-calculated at _compile-time_! This is clear benefit.
+_Exactly_ how many in-kernel functions are you claiming is needed to be
+documented in this type of way before Linux would become "acceptable" to
+these regulatory agencies, and which ones _specifically_ are they?
 
-Really, library code is not as simple as dropping something to somewhere...
+Without knowing that, we could argue about the format all day long, and
+yet have nothing to show for it.
 
--- 
-With Best Regards,
-Andy Shevchenko
+And then, I have to ask, exactly "who" is going to do that work.
 
+I'll point at another "you must do this for reasons" type of request we
+have had in the past, SPDX.  Sadly that task was never actually finished
+as it looks like no one really cared to do the real work involved.  We
+got other benefits out of that effort, but the "goal" that people
+started that effort with was never met.  Part of that is me not pushing
+back hard enough on the "who is going to do the work" part of that
+question, which is important in stuff like this.
 
+If you never complete the effort, your end goal of passing Linux off to
+those customers will never happen.
+
+So, try to answer that, with lots and lots of specifics, and then, if we
+agree that it is a sane thing to attempt (i.e. you are going to do all
+the work and it actually would be possible to complete), then we can
+argue about the format of the text :)
+
+thanks,
+
+greg k-h
 
