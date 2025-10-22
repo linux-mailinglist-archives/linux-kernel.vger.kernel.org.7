@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-864426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAE4BFAC45
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:04:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBBDBFAC51
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26D574ED494
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7FC2581BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D373002B4;
-	Wed, 22 Oct 2025 08:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102022FFF9F;
+	Wed, 22 Oct 2025 08:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xsVQDh2u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NK/cz02i"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41921306481;
-	Wed, 22 Oct 2025 08:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658742FD7CE;
+	Wed, 22 Oct 2025 08:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120171; cv=none; b=HGf5QIz6y/mwTTGXq7ZzXSNkPSQb7UcCZS0k/hEKcXmY3nlbsc6OUzSNKuOD6Vqjw4J5u99sdMhBKklWshCx2ztIIDZq80FGztKOHqQbyqt2fUMbvZ3s3ZXwWFs8Ny1FIisUnZhs6h5u/G8tp+Dlc1ItvPNMrB7I6L4rJEQe7MY=
+	t=1761120241; cv=none; b=TrMWepljGo/h/wvVtk4m3P9+CVYWPpKafsw4kk9oN70WqB8EhXAsztfZoiyZhAjqDL0LQmbh1XuPzO2UrqnCNVXnWF8MBuNA9SsuWpVKtx0DtyTwxmJozef2PKWtssB98vkSjC6fR+MMF6mSaYab11sf3oylgjerrR48Kq4CH2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120171; c=relaxed/simple;
-	bh=6KyeXhuRv/gbNRLF/Qqgz7ISIJRT8ewlX6UjL2d8zZw=;
+	s=arc-20240116; t=1761120241; c=relaxed/simple;
+	bh=bfUMbPerq+fEDvB+LROzdmC3jXGd1Q9n6GZWvJZ87sc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pkf4mJbmF/nNRg1R20WphkSs2DFsCUa9R95fc8AaEPAuM+pBjczuLmbsPQW+flslWvBo2OslFY+0LEc717vH2Wc30hZuCTBk2gRpLqOaodirMw9l/NTmiF0uXGn8ytn6l7ro2P5LaN8tPJ2wSBPtyVzNrJQojE3UFqE29C6Ejx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xsVQDh2u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 743B4C116C6;
-	Wed, 22 Oct 2025 08:02:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761120169;
-	bh=6KyeXhuRv/gbNRLF/Qqgz7ISIJRT8ewlX6UjL2d8zZw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xsVQDh2uXvtgGe5R6o4BH5/YGX7BTrd/69ZfNqM3BLhaJA25y/Gbu5JvvffJeGrvJ
-	 4zIEaiqZ0SNLj0owXd7e6IoeFj+Rzn281KRXCfBVLZpmqPtE0sT1DcomfCxosOt98r
-	 6BE8W/kEqVQLozO23ACCoS7FSTxqyjjSZGisraxs=
-Date: Wed, 22 Oct 2025 10:02:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jimmy Hu <hhhuuu@google.com>
-Cc: linux-usb@vger.kernel.org, badhri@google.com, stern@rowland.harvard.edu,
-	royluo@google.com, Thinh.Nguyen@synopsys.com, balbi@ti.com,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] usb: gadget: udc: fix race condition in usb_del_gadget
-Message-ID: <2025102212-selected-ovary-6259@gregkh>
-References: <20251014085156.2651449-1-hhhuuu@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W35w4+lR11avXb2ZqDwSO4miKHPpj+g+D2E6iESAYtFQSoivQxMiIG6AXXLNpMxgn47ANQ3rj81pd1OxI1uQBsFrzOYZPvh6D1NyMbYbY9bjkUK2p/XE2L/jiew5QvXbJS09RkhTycpjAP0QsS7MJiZvuy2D2YDRVkPhLrMxSBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NK/cz02i; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=roqNU6kD3/csn+XxCTM9mwsRN24d/+pKYNj4gPjrxlI=; b=NK/cz02ixmd4tD6eYchUeu7VIl
+	BfH9xW8inuL+5ePuN5iKfiquWdW4TYFRBVZJ8q6fcb7xDP6DYog9S3+vXqGLoWHfkVLjpVWEwC3cB
+	qd8eo1/CsEahjs97xlllH0RKVsk6iMSKMJrHtDLM1POxxIxjx+EIkUrTAPrRYE+xqd35Il+lMMJKR
+	LrEWJZyZdTppg5CYb6uHEta+OgqTQ8LbHKsfxWqldtd9iGKxma9iO7OMUrctngywfG7zzs0BsVXQ/
+	RaGkExrZDvy29sVk4D2giYNrjk0yTKGGarxFvA76qOy3/OwrWBZVP9tjhnLxamafZmllX7CeYhir6
+	pbbfINjQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBTow-00000000DYC-1Ee7;
+	Wed, 22 Oct 2025 08:03:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6FF9C3003C4; Wed, 22 Oct 2025 10:03:46 +0200 (CEST)
+Date: Wed, 22 Oct 2025 10:03:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	Wen-Fang Liu <liuwenfang@honor.com>
+Subject: Re: sched_ext: Fix SCX_KICK_WAIT to work reliably
+Message-ID: <20251022080346.GH4067720@noisy.programming.kicks-ass.net>
+References: <20251021210354.89570-1-tj@kernel.org>
+ <20251021210354.89570-3-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,39 +65,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251014085156.2651449-1-hhhuuu@google.com>
+In-Reply-To: <20251021210354.89570-3-tj@kernel.org>
 
-On Tue, Oct 14, 2025 at 08:51:56AM +0000, Jimmy Hu wrote:
-> A race condition during gadget teardown can lead to a use-after-free
-> in usb_gadget_state_work(), as reported by KASAN:
-> 
->   BUG: KASAN: invalid-access in sysfs_notify+0_x_2c/0_x_d0
->   Workqueue: events usb_gadget_state_work
-> 
-> The fundamental race occurs because a concurrent event (e.g., an
-> interrupt) can call usb_gadget_set_state() and schedule gadget->work
-> at any time during the cleanup process in usb_del_gadget().
-> 
-> Commit 399a45e5237c ("usb: gadget: core: flush gadget workqueue after
-> device removal") attempted to fix this by moving flush_work() to after
-> device_del(). However, this does not fully solve the race, as a new
-> work item can still be scheduled *after* flush_work() completes but
-> before the gadget's memory is freed, leading to the same use-after-free.
-> 
-> This patch fixes the race condition robustly by introducing a 'teardown'
-> flag and a 'state_lock' spinlock to the usb_gadget struct. The flag is
-> set during cleanup in usb_del_gadget() *before* calling flush_work() to
-> prevent any new work from being scheduled once cleanup has commenced.
-> The scheduling site, usb_gadget_set_state(), now checks this flag under
-> the lock before queueing the work, thus safely closing the race window.
-> 
-> Changes in v2:
->   - Removed redundant inline comments as suggested by Alan Stern.
+On Tue, Oct 21, 2025 at 11:03:54AM -1000, Tejun Heo wrote:
 
-This goes below the --- line.
+> @@ -5208,12 +5214,11 @@ static void kick_cpus_irq_workfn(struct
+>  
+>  		if (cpu != cpu_of(this_rq)) {
+>  			/*
+> -			 * Pairs with smp_store_release() issued by this CPU in
+> -			 * switch_class() on the resched path.
+> +			 * Pairs with store_release in put_prev_task_scx().
+>  			 *
+> -			 * We busy-wait here to guarantee that no other task can
+> -			 * be scheduled on our core before the target CPU has
+> -			 * entered the resched path.
+> +			 * We busy-wait here to guarantee that the task running
+> +			 * at the time of kicking is no longer running. This can
+> +			 * be used to implement e.g. core scheduling.
+>  			 */
+>  			while (smp_load_acquire(wait_pnt_seq) == pseqs[cpu])
+>  				cpu_relax();
 
-> 2.51.0.760.g7b8bcc2412-goog
+You could consider using:
 
-This does not apply to my usb-linus branch, what kernel was it made
-against?  Can you rebase and resubmit it based on that one?
+			smp_cond_load_acquire(wait_pnt_seq, VAL !+ pseqs[cpu]);
+
+that's the fancy way of doing a spin wait and allows architectures to
+optimize (mostly arm64 at this point).
 
