@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-864877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2E1BFBC1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:02:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32AFBFBC16
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A21B84F4D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD942189AD1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A145C34165E;
-	Wed, 22 Oct 2025 12:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7981340A46;
+	Wed, 22 Oct 2025 12:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mOoUhNYh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6RKYgZUj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHrfUKjI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C6532AAAC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0698B33F8C1;
 	Wed, 22 Oct 2025 12:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134509; cv=none; b=t5mY1bnh4dthBvfoCtxP6zVNm49MHYnoq2NQszWyE6mJU1j4r3lYpJRIBhefW/ZLvNrvIbjqsHKx6yVlmRnA+r49UVBaZL27Le0ymbn+mOb+xo3aSRiChoG4sY7FVptTsAVd8Xt3oxjV4z5BAEuIkwDuPnCoo4ajaOCyJd5Wol8=
+	t=1761134508; cv=none; b=TbzqGSR4rCzs03w+sHe4odTSKZ/eCF9sdF37gotf9IJ8poa7rvdXHCUkYjpUAZXHwMFZwGMV6BE0FZMX3fbSSHa1aDS+8g8H8WaK7dIYcU+OZeZrQJdAG/AB4jweUNQRWRfRVvCtcrjLrDyoq3pu/jL7zTKguLL+/PC20cu/tvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134509; c=relaxed/simple;
-	bh=ioBibAcvdFoxYXHmUAvx07BG3CWdNQQf12x9MxqDkkY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=qa+Oe6ImkI+kuHWFvpfWO0MswN6m5wtHFEu1lFxrQDthKIsKW33uSj4bNoYn8UCA/R6JryblKWd6KXIkfpzNBlt/qHYXG8RGsV4+M04oGCpIDOnQ/zrk9zu+6q3BBm2GzJhW1piYS2XmtEPjpz2TTEcmSIYB+FSwJpjurlTWrpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mOoUhNYh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6RKYgZUj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 22 Oct 2025 12:01:35 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761134498;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AbTZK8K7zjHJ5PVUnvje4mxWgwKeS4mV4YNw34fSt+M=;
-	b=mOoUhNYhib/PRqvLMT7QsAd+CRWwhCpQIA38mp673F59TSU6yIsCf2oRZ/U4ttTpo/ahXE
-	HsC3M/bZ/ZozrrzeuF1ipocS8kG6iAcugReqcTGfZ3nwTWCENU521rEIMTlZEp1qBOcK/3
-	xphju9vMilvFNAbx3MjLLfj0qHHiukM5ASMU/7CyjgzAuygbv2r6wRP3OJ7bSAJ9lZ1Sh2
-	bEjxoR4Nn6lIO9MUas/qwj1bLN6cYZ6/EkAafOKGExf2CSGweXPIXVICfqtycjQrf2hyVW
-	j3qdL4Rax/Wg7db1mnWajos7PuZ9+3IUeEQswg3KvaDjBv/kqeCfHDc4551h9w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761134498;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AbTZK8K7zjHJ5PVUnvje4mxWgwKeS4mV4YNw34fSt+M=;
-	b=6RKYgZUjFd6lldsMvh8XqZfbjAwJ17T4ZNZhDd984NjycY5pHwak2K+/UXWZmjl1StCY4E
-	NSiwXIIb9s0PNBBg==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool/klp: Add the debian-based package name of
- xxhash to the hint
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251017194732.7713-1-bp@kernel.org>
-References: <20251017194732.7713-1-bp@kernel.org>
+	s=arc-20240116; t=1761134508; c=relaxed/simple;
+	bh=T556VrX6OouRZb5uhFtV/UG3SP+6hGynUByoORxI3mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VeTNdO5jWtT0s6kOzOPqe8n0lx7sAdtcBrbiCZ7uqQHyLRAC+Aa08bAELfdZeam1lweqRx6Ru9zIeYC/SYMzIEcDTBsgAIvG+N4/1/vLIrylTyGqGLwY5T1KJPf/EzqV2WLHtIUBOpPYvTcilJgRLM0AXTSBPLESNm5S30fIV3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHrfUKjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06AC2C4CEE7;
+	Wed, 22 Oct 2025 12:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761134506;
+	bh=T556VrX6OouRZb5uhFtV/UG3SP+6hGynUByoORxI3mo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FHrfUKjIvRuG7YNyifyHa7++HR1RY2e3Y2WXUjCvpotbZspUTcRm4/r6XLa4PUYUA
+	 hud9W25pFBZ7muSSCsD8uzkxhEYuavxPJlJOYjnAhMgH+lYIuUQoQpPTTJ4DQ93WUu
+	 Sn/FFV+uaOS4tuusG3sFflTcGaaTw/CnEqaHiYkgqsP/EVFNM5AhndhSu3oEiUAbeL
+	 SuLg6bf/h1sUKq+LikS1a+BuydDwX+cahqHx7/9n7MgpAI700cU99867sln3z6DE/X
+	 3mab2Fnc1+7XZHEdtr39jptKcfpUzWCUuaDkASZhd5jXgj0b2wHH/pH17I/xNhXFD8
+	 D6Ahx7/gD/1OA==
+Date: Wed, 22 Oct 2025 13:01:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
+	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Weinan Liu <wnliu@google.com>,
+	Fazla Mehrab <a.mehrab@bytedance.com>,
+	Chen Zhongjin <chenzhongjin@huawei.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Dylan Hatch <dylanbhatch@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>
+Subject: Re: [PATCH] module: Fix device table module aliases
+Message-ID: <13384578-a7e7-439a-8f30-387a2cb92680@sirena.org.uk>
+References: <e52ee3edf32874da645a9e037a7d77c69893a22a.1760982784.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176113449564.2601451.10781814122557793113.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JFx3/RNbBAIdVwTo"
+Content-Disposition: inline
+In-Reply-To: <e52ee3edf32874da645a9e037a7d77c69893a22a.1760982784.git.jpoimboe@kernel.org>
+X-Cookie: The early worm gets the late bird.
 
-The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     da247eff96dd32380dfb0cb089be8671ac4bdcd0
-Gitweb:        https://git.kernel.org/tip/da247eff96dd32380dfb0cb089be8671ac4=
-bdcd0
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Fri, 17 Oct 2025 21:47:32 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 22 Oct 2025 13:51:11 +02:00
+--JFx3/RNbBAIdVwTo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-objtool/klp: Add the debian-based package name of xxhash to the hint
+On Mon, Oct 20, 2025 at 10:53:40AM -0700, Josh Poimboeuf wrote:
 
-Add the debian package name for the devel version of the xxHash package
-"libxxhash-dev".
+> Commit 6717e8f91db7 ("kbuild: Remove 'kmod_' prefix from
+> __KBUILD_MODNAME") inadvertently broke module alias generation for
+> modules which rely on MODULE_DEVICE_TABLE().
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://patch.msgid.link/20251017194732.7713-1-bp@kernel.org
----
- tools/objtool/builtin-check.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It'd be really good to get this fix applied, modules not loading is
+hugely impacting CI coverage for -next - a lot of systems aren't even
+able to get their rootfs due to the drivers for it being built as
+modules.
 
-diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-index 7b6fd60..1e1ea83 100644
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -164,7 +164,7 @@ static bool opts_valid(void)
-=20
- #ifndef BUILD_KLP
- 	if (opts.checksum) {
--		ERROR("--checksum not supported; install xxhash-devel and recompile");
-+		ERROR("--checksum not supported; install xxhash-devel/libxxhash-dev and re=
-compile");
- 		return false;
- 	}
- #endif
+--JFx3/RNbBAIdVwTo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj4x6MACgkQJNaLcl1U
+h9A3+Af9EFeKJB8wqz9ZYQdGMRKwXP3WlXm9j/Kn8w47cMkgp4f4JJl2jwNbcBGs
+eOQbK2gZna3J4bESlDor/iADo29LigZnyU3orjfqIcSoZZOjgMnGvbmUTkkuAR51
+LB7c30kTeRCjqH+8IPivWxf2PEEGOh8rpdMgxukOcEpRBZN6Q0fnkn3kmIVdJ34a
+IfYQo2Hr36BETa4d+BAWSqF3TNunPZLQM0SZVpTGkMkKKLBesGg/9SppYmASOCcP
+5hP7x9Dq8Lm2vXCQ/cqEc5jG4I0cvZmG41iKA2jaMH0MHjGtve/6GAesYfdaCRs7
+7WsRcQnVxMHQ1T3+4eklvGL/c3SJDA==
+=40Xa
+-----END PGP SIGNATURE-----
+
+--JFx3/RNbBAIdVwTo--
 
