@@ -1,112 +1,179 @@
-Return-Path: <linux-kernel+bounces-864372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06E4BFAA44
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AB5BFAA57
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 386F05066CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:42:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB8394EB7FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71782FC882;
-	Wed, 22 Oct 2025 07:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B125C2FD667;
+	Wed, 22 Oct 2025 07:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PkTnWtr1"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLke6GCr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C04D2F7AA8;
-	Wed, 22 Oct 2025 07:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78612FB988
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761118897; cv=none; b=qMwBKBc1mY/H1Vij9VEv5p/3V89uaoAw3JAtWn4ce6Krh9vMVRA/Zqi8EnGyGT5KTSMkTKZoPsM+TNq9iaYB6OIPbkCgpeuIUe5LFnhhn2sJy3yMADPW8k970u+auqO1gHPvzcMi/2ikfXfFZJODKwdz6aEB6/bUlCKqOv630Zo=
+	t=1761118929; cv=none; b=FWEaQ8+04E26CWFLYke4/kPknBPKsl64o6ijTggiCJm1dpvdugVnxi6bOuL6b6/KSeH2aLZdmD465CDDSJn3W2tEURvsmWB2uh1gqE7d0GnxMx/6rnW3FQrun2NGR0KuSTPG99AaSvj7p9JBy4KvSRm6ju9YwO2emV83G2HZBFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761118897; c=relaxed/simple;
-	bh=w6Pk318+uWlJig7kSmhciOgwzKqt9hCCrIYqqL4yqNY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=ogsdqPFBv8wiVq5N9cCniPcwftrOyfiBsR8M9mzeHT4x+OkplVhbX6jxsyrCyRvDFoDtrtS1PStyc2j+A2VLoGT0acKbGatD8X4hfFdIjopgQED9fCBYSA6/Bmo39KbnTb4OEK2B3oG2CJ0p8TWPQb/F1YtGF7u6VAlR4mbdvlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PkTnWtr1; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 4F841C0B8BF;
-	Wed, 22 Oct 2025 07:41:14 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0A58E606DC;
-	Wed, 22 Oct 2025 07:41:34 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 68B39102F241B;
-	Wed, 22 Oct 2025 09:41:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761118892; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=w6Pk318+uWlJig7kSmhciOgwzKqt9hCCrIYqqL4yqNY=;
-	b=PkTnWtr1jkPN412arglI0mz2NhL3TRAuP2uayrqji+VoDe4d/FIjOWZ1cc63SLUc2Lo+Jd
-	FIt6sYzMUROvjKK/8SgV+CUFUlBPL8rb9ABg11NRZs/srHm3UId29ZEnEIgtzwZi7hu8Bk
-	kMs8qKh0az23BYaou/Ar5XWg2AlYUT9Siy4Oo04ojU8ZXk4QSchJV9XKZvEZQhXNDpszvs
-	oAABVn1+T2IIXdMSECtUVh5yyhkYANZOUz39ovz7lY/SSCagG40w0uUti1Mtx1aEyaKc5L
-	g+6yf9EKsEizPO15T9Qt6fJBKtKZp2axtAOPGBbrxKquY0a8h1C/XZ9rgavKgA==
+	s=arc-20240116; t=1761118929; c=relaxed/simple;
+	bh=4yTC+36exgdGZ8D10H669LXRniU7gmAH/RHHNfluhAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H07w7iaXwnKmVqw/2sjgFDMfF+R35ZsaRX4RBS1NxyJr2AQIOFBeAZMcylyR57TicJMRrQAm5IDBMjBtFllObN5isiNwOXFQFlwnSZkXjfhl9vevp8Ia5jhrNrZQ4P7WqTrK+Pd/MkZrKwWPdaxMhA0ZQNqEj6/yGLRy88aho6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLke6GCr; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761118927; x=1792654927;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4yTC+36exgdGZ8D10H669LXRniU7gmAH/RHHNfluhAE=;
+  b=gLke6GCrcGGIdgWg1UPvpoMLJADX3hNhjXOGoQGqJCJzFNLo5xRGP/zD
+   na+XW3qc6fnHcWQvukU+MCrLYc4kOlDK1F/DeEuX5BWZxeM9rPuhFy6cb
+   jRqdckh9oEHcY3VHdTJniwMfh7ftRcwZKDsXaYu+NNzZbjOoIO+VBRS7x
+   hJq+49zI4lcXqYvqAuLUHCYNtjDGbDP+aCfwW3k6OtCPAJtz4lDdLYbPw
+   meOuXgYRaIshs3Yhc9D5QkMePqUIFcDoHsv+hNOiq6M2VsNuDzJa5Jged
+   ToNBwSdYVh4NxbnEK3xlpPFUaW367vCYthC4vR/dQjqFNz+yhBOfof/06
+   A==;
+X-CSE-ConnectionGUID: 8+tbEi8RQQyxwDZD/SQj5w==
+X-CSE-MsgGUID: MbZ4QkAQRl6U9cv/JpHe6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63180773"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63180773"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 00:42:07 -0700
+X-CSE-ConnectionGUID: t5l9xfT1RYuO2cn/qNwqFg==
+X-CSE-MsgGUID: UwCivyQtSte3Yzbfbg/fxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="183690997"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 22 Oct 2025 00:42:05 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBTTu-000C6v-2m;
+	Wed, 22 Oct 2025 07:42:02 +0000
+Date: Wed, 22 Oct 2025 15:41:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Subject: Re: [PATCH] Kconfig:Uses glibc so strscpy has to be manually- added
+Message-ID: <202510221515.tlpfL3lX-lkp@intel.com>
+References: <20251021171446.46942-1-biancaa2210329@ssn.edu.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 Oct 2025 09:41:24 +0200
-Message-Id: <DDOOJIQS8DK2.1QUEWN5FYYQ32@bootlin.com>
-Subject: Re: [PATCH net-next 00/12] net: macb: EyeQ5 support (alongside
- generic PHY driver in syscon)
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Paolo Abeni"
- <pabeni@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
- <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Russell
- King" <linux@armlinux.org.uk>, "Vinod Koul" <vkoul@kernel.org>, "Kishon
- Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Thomas
- Bogendoerfer" <tsbogend@alpha.franken.de>, "Philipp Zabel"
- <p.zabel@pengutronix.de>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-mips@vger.kernel.org>, <linux-phy@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, "Maxime
- Chevallier" <maxime.chevallier@bootlin.com>, "Andrew Lunn"
- <andrew@lunn.ch>, "Jerome Brunet" <jbrunet@baylibre.com>
-To: "Jakub Kicinski" <kuba@kernel.org>, =?utf-8?q?Th=C3=A9o_Lebrun?=
- <theo.lebrun@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com>
- <20251021171430.579211b2@kernel.org>
-In-Reply-To: <20251021171430.579211b2@kernel.org>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021171446.46942-1-biancaa2210329@ssn.edu.in>
 
-On Wed Oct 22, 2025 at 2:14 AM CEST, Jakub Kicinski wrote:
-> On Tue, 21 Oct 2025 18:32:41 +0200 Th=C3=A9o Lebrun wrote:
->> Merging all this won't be easy, sorry. Is this split across trees OK?
->> The net-next part is pretty evident, it is the rest that appears
->> complex to merge to me. I can resend the series exploded if useful
->> (or at least split net-next versus the rest).
->
-> Yes, please respin just the patches that need to go via net-next
-> for us (1,3-6?). The rest I don't car^W know :)
+Hi Biancaa,
 
-Sure thing! Only net beauty is present in V2.
+kernel test robot noticed the following build errors:
 
-https://lore.kernel.org/lkml/20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.=
-com/
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.18-rc2 next-20251022]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
+url:    https://github.com/intel-lab-lkp/linux/commits/Biancaa-Ramesh/Kconfig-Uses-glibc-so-strscpy-has-to-be-manually-added/20251022-011608
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20251021171446.46942-1-biancaa2210329%40ssn.edu.in
+patch subject: [PATCH] Kconfig:Uses glibc so strscpy has to be manually- added
+config: x86_64-randconfig-002-20251022 (attached as .config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510221515.tlpfL3lX-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510221515.tlpfL3lX-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> scripts/kconfig/confdata.c:157:2: error: call to undeclared function 'strscpy'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     157 |         strscpy(depfile_path + depfile_prefix_len, name);
+         |         ^
+>> scripts/kconfig/util.c:70:2: error: call to undeclared function 'strscpy'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      70 |         strscpy(gs.s, "\0");
+         |         ^
+   scripts/kconfig/symbol.c1 error generated.
+   :812:2: error: call to undeclared function 'strscpy'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     812 |         strscpy(val, newval);
+         |         ^
+   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/util.o] Error 1 shuffle=3058352405
+   1 error generated.
+   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/confdata.o] Error 1 shuffle=3058352405
+   1 error generated.
+   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/symbol.o] Error 1 shuffle=3058352405
+   make[3]: Target 'oldconfig' not remade because of errors.
+   make[2]: *** [Makefile:742: oldconfig] Error 2 shuffle=3058352405
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=3058352405
+   make[1]: Target 'oldconfig' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=3058352405
+   make: Target 'oldconfig' not remade because of errors.
 --
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>> scripts/kconfig/symbol.c:812:2: error: call to undeclared function 'strscpy'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     812 |         strscpy(val, newval);
+         |         ^
+>> scripts/kconfig/confdata.c:157:2: error: call to undeclared function 'strscpy'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     157 |         strscpy(depfile_path + depfile_prefix_len, name);
+         |         ^
+>> scripts/kconfig/util.c:70:2: error: call to undeclared function 'strscpy'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      70 |         strscpy(gs.s, "\0");
+         |         ^
+   1 error generated.
+   1 error generated.
+   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/confdata.o] Error 1 shuffle=3058352405
+   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/util.o] Error 1 shuffle=3058352405
+   1 error generated.
+   make[3]: *** [scripts/Makefile.host:131: scripts/kconfig/symbol.o] Error 1 shuffle=3058352405
+   make[3]: Target 'olddefconfig' not remade because of errors.
+   make[2]: *** [Makefile:742: olddefconfig] Error 2 shuffle=3058352405
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=3058352405
+   make[1]: Target 'olddefconfig' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=3058352405
+   make: Target 'olddefconfig' not remade because of errors.
 
+
+vim +/strscpy +157 scripts/kconfig/confdata.c
+
+   147	
+   148	/* touch depfile for symbol 'name' */
+   149	static int conf_touch_dep(const char *name)
+   150	{
+   151		int fd;
+   152	
+   153		/* check overflow: prefix + name + '\0' must fit in buffer. */
+   154		if (depfile_prefix_len + strlen(name) + 1 > sizeof(depfile_path))
+   155			return -1;
+   156	
+ > 157		strscpy(depfile_path + depfile_prefix_len, name);
+   158	
+   159		fd = open(depfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+   160		if (fd == -1)
+   161			return -1;
+   162		close(fd);
+   163	
+   164		return 0;
+   165	}
+   166	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
