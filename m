@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-864166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2CFBFA139
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:38:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247BEBFA133
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24DA18C7251
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B580480609
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3812EC0B0;
-	Wed, 22 Oct 2025 05:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="UNktbWJm"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67772EC081;
-	Wed, 22 Oct 2025 05:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761111520; cv=none; b=m4epSCHvgM7Dm71hBIY77k9ZhZ8jfq382zkR4CzBueWNMnatI+m31042PiGo/1CbP/KD3PpFrtTwRh/RkdXHcYaU5zt1gPjg4gtEYLarbH920/ZT4gvCJnmbswoKQqeGUcdRKz9hzgtWUVw5eb7/WUr9AEIyPJLn2Q2qShbrfVQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761111520; c=relaxed/simple;
-	bh=UCQR+aT3yopHWQ+fBkDsxTQA8UU1mrskcwvqVTuyKt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNN5tHNhRHvVj640LUagYORrsjgISyi909bngDf8yKOyu1uFcW5BMAkxYWAxjbx/nE2mntTh4dkH3VO3oUX+zyF6crortxP0eZ//rTne72ARHQxmGlWIPPubVOLOu3gnD5S8koB5wqD/sG8NoXNP0WzLYYh3xFPQoYBpOjyHczg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=UNktbWJm; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 4081C14C2D3;
-	Wed, 22 Oct 2025 07:38:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1761111514;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OPgNsOT2ZO9umiexmnUVC6FxF44CE2Et1XNZVAkmI3Y=;
-	b=UNktbWJmMVmAiO6elXuW5rxb14r0OOg3jKIKPHPdDxEWWFmJjwL/eFilcCtA+xSPBuTcCa
-	DtIrAC4MA4vLPrETboYsfb/3FCuML+eAORUmnO9uQc275gbR5oAEvVxI2Fxa9ZSSdGA0pB
-	U+HYZiiYdYF4she1+Ls5WUcuh43HcXjYtV/r593e0yLzcsua3dOqX3+LkuuoSHB56uCzbO
-	C3wGgXxdbge8bp8RRH2r1C2fG+m4THEjlNhKznhAj5Fs6u79b3/s2WQVCImyn1jzS7tEWn
-	eQC/MSpOirheEGIwvCDNFNo1NulIPeUuOcDrDKlK87yyIPqT8syQCCU1/AWhOA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1b0779e1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268BC2EC095;
 	Wed, 22 Oct 2025 05:38:29 +0000 (UTC)
-Date: Wed, 22 Oct 2025 14:38:14 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Tingmao Wang <m@maowtm.org>
-Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org,
-	v9fs@lists.linux.dev, bpf@vger.kernel.org
-Subject: Re: [GIT PULL] 9p cache=mmap regression fix (for 6.18-rc3)
-Message-ID: <aPhtxt7qEWY5FjPQ@codewreck.org>
-References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
- <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
- <aPgUaFE1oUq8e1F-@codewreck.org>
- <39116c81-1798-4cc1-945c-a05d0ac7d8d9@maowtm.org>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FCWNRQbo"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC4B2E9EAA;
+	Wed, 22 Oct 2025 05:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761111508; cv=none; b=UWrbtLtfJtLYfrfzyaqeaDdEC/ShOiHSQzXOQ5SiNC+NdKRw7tieY+Py+y/DJBsv/X4frdNZAzZrjKROiEIoPc3Qu8ETM0c6zX1wqTHHHmNlw1t8ytUX9mO4ogL6piSTYTqhRMZyMVUu1CEOMVbubF0glpHTHFbOEqrHOuN55Jw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761111508; c=relaxed/simple;
+	bh=Qv9E7OjNIRMdjchrba2/MnYb1mZNFR20igD+aVJBsq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KNfnGBbK3j2JEPRPfNzhu0tuKlWDWgrjV9cJLR1l0mLXqbFDmwZbIj0U2UoeO0/fgkVcEIQPN+jkTOwB3m8pTU3b9prIMR+M7GpZvLyx7V8iBM8QcqGnN56BOCVcq8EJbNg42etfsADEzQhsk/zOCeEINUnZ9Bm3VdicajUQPAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FCWNRQbo; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761111504;
+	bh=gFHOlEr4tyQRFeQJJbIcrW+KmWARMU4YGEpDlGjHDPY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FCWNRQbo4nMSNoN+weSPYa9VF6PgWktjWmKxaR0IR/Qn8zpAdqf8PzBPgJewxL7Qo
+	 FeOR/9ahYEN0MTtu55ZEFbF3Bp0g17Ct8e3pzDx568pScssS9dR4nEIsrE710yeaDR
+	 D0I1rLsVjogZq3hrrfp3mHElvAEplqKT55JhbnOlxef1b3gtNmVSBHmHAMcAPSMh6h
+	 mKs4503iK5UvTTQe0ji39EF0tRPA9gQmI3ORlut7B8gYQ5hnkQ3QzSDKNYkV7C1Oo+
+	 Ux34zhGuUlWSPJQxjM6n8xuU79jyBtnkINZSX6RcaAi6rvPcCS5IWYSn5hbL3Y5Pla
+	 N3m1qT41Hybvw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4crycw5v6zz4wCV;
+	Wed, 22 Oct 2025 16:38:24 +1100 (AEDT)
+Date: Wed, 22 Oct 2025 16:38:24 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: add Mark Brown as a maintainer
+Message-ID: <20251022163824.38b1248c@canb.auug.org.au>
+In-Reply-To: <20251022163625.5df7542a@canb.auug.org.au>
+References: <20251022163625.5df7542a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <39116c81-1798-4cc1-945c-a05d0ac7d8d9@maowtm.org>
+Content-Type: multipart/signed; boundary="Sig_/2ZM2ObFJP==qNqVR3HlYxgi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Tingmao Wang wrote on Wed, Oct 22, 2025 at 12:34:13AM +0100:
-> On 10/22/25 00:16, Dominique Martinet wrote:
-> > We had a regression with cache=mmap that impacted quite a few people so
-> > I'm sending a fix less than a couple of hours after making the commit.
-> > 
-> > If it turns out there are other side effects I'd suggest just reverting
-> > commit 290434474c33 ("fs/9p: Refresh metadata in d_revalidate for
-> > uncached mode too") first, but the fix is rather minimal so I think it's
-> > ok to try falling forward -- let me know if you prefer a revert and I'll
-> > send one instead (there's a minor conflict)
-> 
-> See the reply to the original patch [1] (posted right after, and before
-> seeing, this message) - there is indeed more side effects, and I wouldn't
-> mind a revert for now.  0172a934747f ("fs/9p: Invalidate dentry if inode
-> type change detected in cached mode") will need to be reverted too.
+--Sig_/2ZM2ObFJP==qNqVR3HlYxgi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-(yeah, and even that conflicts due to the added debug message in the
-next commit, but I went the heavy-handed way and removed the conflicting
-hunk so that commit's also implicitly been removed. In hindsight it
-would have been cleaner to revert the three commits
-290434474c33^..c667c54c5875 -- ohwell)
+Hi all,
 
-> [1]: https://lore.kernel.org/v9fs/6c74ad63-3afc-4549-9ac6-494b9a63e839@maowtm.org/
+On Wed, 22 Oct 2025 16:36:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Mark has been kindly helping fill in when I have been unavailable over
+> the past several years.  Has has also put his hand up to take over
+                           ^^^
+Should be "He"
 
-OK, so let's go with the revert for now as I don't have time to look for
-more corner cases immediately.
+> linux-next maintenance when I finally decide to stop (which may be some
+> time yet ;-) ).
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f2bc6c6a214e..52f9d98091ca 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14420,6 +14420,7 @@ F:	tools/memory-model/
+> =20
+>  LINUX-NEXT TREE
+>  M:	Stephen Rothwell <sfr@canb.auug.org.au>
+> +M:	Mark Brown <broonie@kernel.org>
+>  L:	linux-next@vger.kernel.org
+>  S:	Supported
+>  B:	mailto:linux-next@vger.kernel.org and the appropriate development tree
+> --=20
+> 2.51.0
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
 
-Linus, here's the new PR:
----------
-The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
 
-  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
 
-are available in the Git repository at:
+--=20
+Cheers,
+Stephen Rothwell
 
-  https://github.com/martinetd/linux tags/9p-for-6.18-rc3-v2
+--Sig_/2ZM2ObFJP==qNqVR3HlYxgi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-for you to fetch changes up to 43c36a56ccf6d9b07b4b3f4f614756e687dcdc01:
+-----BEGIN PGP SIGNATURE-----
 
-  Revert "fs/9p: Refresh metadata in d_revalidate for uncached mode too" (2025-10-22 14:25:27 +0900)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj4bdAACgkQAVBC80lX
+0GwDCAf+K39TY01DE3Nh9Hk9XEHU5sCnOIqfm/QDzOOu0OjxspcAsyS8S79dPdHq
+dfs6n+W8AHviO+4gkmU2naNXH1AsmV1cRE2VpS3lnAGRtuEPV9xcPSS3VwNd97v+
+RFOsKVSIR2H/GDx/mxcACq+mbIlI+uBcpSJ7UajNuo2QpZ8Oqb8yjFH+KAbBMJPL
+PMMkbRk3DUfGQ1Do0f5uTjj6nf+qhBlpfhkJ02deTcbrETUaQk5nMMTEYHK4qE5l
+V0wzOiaKKRT49qydf6kfoDdhRyccwEan2CqYOzQ3mPYQ7m1ezvIvdirRbUP4J5R5
+mdgepjbFxty5NCiEaSJyRA6KSm8WdA==
+=EvuK
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Fix 9p cache=mmap regression by revert
-
-This reverts the problematic commit instead of trying to fix it in a
-rush
-
-----------------------------------------------------------------
-Dominique Martinet (1):
-      Revert "fs/9p: Refresh metadata in d_revalidate for uncached mode too"
-
- fs/9p/vfs_dentry.c     | 10 ++--------
- fs/9p/vfs_inode.c      |  8 +-------
- fs/9p/vfs_inode_dotl.c |  8 +-------
- 3 files changed, 4 insertions(+), 22 deletions(-)
-
--- 
-Dominique Martinet | Asmadeus
+--Sig_/2ZM2ObFJP==qNqVR3HlYxgi--
 
