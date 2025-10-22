@@ -1,358 +1,270 @@
-Return-Path: <linux-kernel+bounces-865171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4FCBFC58F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:01:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C433BFBF7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D700350164
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:01:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63EED4E93A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8014834AAED;
-	Wed, 22 Oct 2025 14:01:03 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0134676C;
+	Wed, 22 Oct 2025 12:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="FLlJWJlU"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013010.outbound.protection.outlook.com [40.107.159.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDB634575F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141662; cv=none; b=oQ1L+dQDNsm5uPeQGgi8NlMzvqiscld5xAl7imsqMykccUEMDHqHuZBdixolqDSZ/RFYlILAQ3iB2vQ8K+rtAHAjsBTflADvdlQYf8pxRQe0TEChSltX9UkxB6rn/TygM12aqYRjzOr5qALrHNQeOTuxzvrSDnTO6TnqN71/41Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141662; c=relaxed/simple;
-	bh=Sm4GWPNeJcL5gEwJZRJ5PrguqKuzIn1kzPolyeVZzsY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QkqxOR5rLZ5wOk+arevpjmXeKeZJH6Ft0wpaOrn0oSvRm1VoNLdhA73F7q/NC7oRZIFYUmllW30RnOFCCv2Jpg35C4wNwUhj7aQ8QVOc+l+pk2OTWikR3F2NJhenKWnN4fDlkdTpKzD/CABKQrgKNBYvBtgvvX9/sLW+geLscQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430db6d36c6so128691815ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:00:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761141659; x=1761746459;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wOrJBT4oSmGN7Bwjcc4GP8AOfbxTb3nBv75gJrMjeOQ=;
-        b=IZnRJVuaPWpjuMEMDnPPEP53GlBEQielwKYBCKkYiT6gVtWiaKIocMoftE0BouyLM0
-         OVWLP+W4vbLMAwPCLGiy63hKp9zwLbT9NyQ5GyrBvoo7F3cQgYnh3YlqL8bosIcCBB6q
-         85J49KSAxQ1Jq3R9kvnl7K3DKk5yTWjHQNhPn32kE8QOwFuKWwOK4PinC3+qZiZPZVpj
-         vrQzHxjQLYxq42QJ7Mvc5wmzKw8XZ8hGWCMX6bn3wl2JfVOHkUdlfYRy6UhpJ5MBOO8m
-         WPteQypgSyz56lWu/h4GgW44zeIgTL276dmcnU8u6WBN8k9sO2QW/c648LlsjibLS5M3
-         QwQw==
-X-Gm-Message-State: AOJu0YyRUh8+do7vTTp2kowgCbOCitQ7qIBSO8LYm5NZBGYX7p/Kgxp0
-	yRauMDyX+ugBzkCJPmSCo60748FLD1OFTY0TiWHa0XkZtFTKdjwhdjcyaxZoXrZLv0QneX9v6zG
-	QfXzzHm+zeNjsP0due11QaSdKl1xpRoPWPcZ1Riolg4CdIskmAJN5hostXK4=
-X-Google-Smtp-Source: AGHT+IFzj2iY+bqoOEapafstXhvXKFTf80xCN3KBqN8fdOhdMD+xYLfj0VR9/it7DAow/M4eu8WPVYTzDPk8+ObvNkj39cIggDVh
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E797348441;
+	Wed, 22 Oct 2025 12:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761137485; cv=fail; b=lPgU0FnXVY/Me2jyOh43veZmE/UKR7400RwSJ16Widas091RCZZGoGjL8BKANTty0guXIvJ8HebPn3PA3Iz8rjwzpY6cvv1gxY9X90HomgceEkJo132jIQ8nCzQ3bEUs+vD96axf45jnbQKGERmEin2+EL2Kgi5jgCl15oAkjio=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761137485; c=relaxed/simple;
+	bh=OrKv3i1Ag20eu+0RVgdJP0iZJQfwR8TDF3IG6jTcCzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PiY/bgxGRT4xM9zqq75KfCPO5x/f9Qh3IMaknWmPIidwoQVbdE0CdMYodOUooVF5WLKFzxwze4Y54c2GIkj+C/gfJl83nVqcJirwmoyWKPewGyuEVrruvGWnSy3IfenRWK+sSTr3GYMWi9LGdb/NYbEh4YQG1n5TdKDJD8G4foA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=FLlJWJlU; arc=fail smtp.client-ip=40.107.159.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XRCmseK+ORqp4drODF5Ijjzo6Sk84BtFT0R3sKJnGjBNZjUZ6zEOu2I7bREcov5fzlfcOLJOuN9hp3bL4MwpgocIP8MYVnSd+L86TYVK9p4lcJjsXUc6flG9vBApcHK3Ri3p6XKIv7hi9Vx4R3gBNrGyPi4kVNeMI7K+DHd6droDkCY88EmOzqJSM/a6fgKf7yy1YUb6F6+GdkcFlaxUOKQXBGHdbtg5Qstd23xe+z8Pf1h+kRl0/kfDYsT8rnb9l9l7jwE4uimgFD73vMFHtjvR/RH8DyFL2Yg9+3Y5ASqwVGS3agxv/hKNbCUFJWHHa1CJ7XJb+m2zUt5zNKwodA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jT3lDddqMFsc+6SHYoQRSzE3tFPv0MjuNQ72aOttWFw=;
+ b=lPngKPHFo0Suzfxn4T4XL7uZiFsw4AvqEwrBWgSuHDBlr6q4hwwT0iLiJauO3q4TT9fkoqpk5HQtFRZOicCfgOK2f/R1WmweAPAlWwbyxXsda8aJ+BowkarYSGUUGBpYiYS2sy5izZkRahPeyZAdzID5Duoms7K8UoLb74aY2AV8koYGt4yWiKIeo2P4VYiTX8MbPYk2LV7v25MtMx1FfmVFTScMDx4lYjxmYXMWh8icLXTNTKUrbkBJWCmrauitsF0PWQURszWTGEojIJJoRzlPv2AHTPhCWzZ/SffgHDPf/ej6rhYkyYWfIxRIsNJqkwbRy1bAsBomC51rq8GPTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jT3lDddqMFsc+6SHYoQRSzE3tFPv0MjuNQ72aOttWFw=;
+ b=FLlJWJlUkQWo4UgGFgxX8Zi2UugNUxUk5qOEBVTCdihUHJfdfMl0P8g3f6V/W1Luet+NIr9NbxiUWCJmjX67OLOCm1KUyPZOX0WY0WN6rKpWUD1Tisd7AQAQZ8da6oOfTmOYBRqRNov9p8Hmek+EVZwGMTDZOLw2rz/stVUqoWJX3qcmN5T9rTOP8ZCSABgLqotYQZvMquOwHq0Gq4HUIhoDiD/eZuXrycGtqMmDtPshE1SAGODoBztrhwKWtnlHnkbd4Il68bXqM+mzoCH/9P0ZfCD1/ehVJEYr5LgQjGX1JauQ4XCSNnufyTk/8nlsIdFSruy97aT7Oa8rKVrggQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI2PR04MB10222.eurprd04.prod.outlook.com (2603:10a6:800:221::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Wed, 22 Oct
+ 2025 12:51:08 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 12:51:08 +0000
+Date: Wed, 22 Oct 2025 22:03:15 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+Message-ID: <20251022140315.GA11174@nxa18884-linux.ap.freescale.net>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2P153CA0003.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::20) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1947:b0:430:9f96:23bb with SMTP id
- e9e14a558f8ab-430c522319amr270063175ab.8.1761141658581; Wed, 22 Oct 2025
- 07:00:58 -0700 (PDT)
-Date: Wed, 22 Oct 2025 07:00:58 -0700
-In-Reply-To: <67ff1158.050a0220.d2ea7.0004.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8e39a.050a0220.346f24.0052.GAE@google.com>
-Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- 552c50713f273b494ac6c77052032a49bc9255e2
-From: syzbot <syzbot+f2107d999290b8166267@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI2PR04MB10222:EE_
+X-MS-Office365-Filtering-Correlation-Id: df496d2f-55d7-4f23-a608-08de1169ab3a
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|1800799024|376014|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0fjLI+oBTS6zM/5nnqYzFldH1S86+G2qLDYpx/8iT7dqncgHFP/QjJtpH+UU?=
+ =?us-ascii?Q?Uh7SsLkb3sE70iEXgM1YSc0ZRDe24nx2j2cBX5JUbRZidz8qc7hpwAQUTGSC?=
+ =?us-ascii?Q?WS8DnCdhN4jQuX5EKxE+NMq715DNjaUimfH4+vtHyoWe4hy+edf6Ht89mRY1?=
+ =?us-ascii?Q?154Mkbc4bS8sPEUsa90cmEarEjRdIepriMKkc6qy8UdU9QNJ0yvKxRBpjUpr?=
+ =?us-ascii?Q?fKmFhI0o9Uwa10QUdW54ci7xS4PcqGvEqZ1dy4FfOIGVpaTidL2qlZR6RJP0?=
+ =?us-ascii?Q?hKS+w+B+ehfGIG1wwzPcUSpKFoMKw9B2mZgtt1BihQZhjaG7nroiDCX0DaPd?=
+ =?us-ascii?Q?VBDWqqQVdQA0LUZWU3cFge93+tgF8595fLAQzAsxdPwqt6rs/3gTA+UMnQtQ?=
+ =?us-ascii?Q?OojdPo0tSJxcaM0HYc3QwtnqWFdz1vXAOUR8py/x1WU2noiNuWxZ99AbJzgv?=
+ =?us-ascii?Q?3Xq1LXd8xHbjg6sgb2U+bC/S2UfzBDGvdiFG3B6w9Q7J9BswGu31bcesRb2k?=
+ =?us-ascii?Q?KO4M9WhRjwWekQi6W8boKnF9GEEgjvYPlLNOY1vXZzeEJeaGuzcSnzH3FUR8?=
+ =?us-ascii?Q?kaPOznyFeZWv4TCyYPvx+MOw8RBhoSoZ2pwD7Za3wAISqdlEOiNVY8RRavzR?=
+ =?us-ascii?Q?S/jZ3G+s8rkgHzIwEnMmKx9CUDefzcCgXGx350ai+NVKxcsOVL6NPxW3S8eD?=
+ =?us-ascii?Q?1LYqzQKUFUCr7xwy1OOtobdAQ+lXWEzlYeOW6L+n3QdLE8JtgGuapMvQhTPc?=
+ =?us-ascii?Q?wvoG4HsFl0pZWC2EFbS0KRmqNZgSz9sSK9i9XcubBprq0U9HTiGpMEcLGCBf?=
+ =?us-ascii?Q?jF9Oz+MYRPAjb3IMX4Xaaddk7ap3iF1qp8ssNnTQqo+zfyNoQ7EKI+7vfeUx?=
+ =?us-ascii?Q?fcPsWngaR6rXyWvQWaGFG9/nbZbvQyUjPwZmgiBveCK8gj6meZiaRiJ65vkh?=
+ =?us-ascii?Q?YWF2BxtzWsSMMEC4bHDqHVtynJAh4IpZ2lK6uuMpE+Bt8o69h7mBehr2i5Nw?=
+ =?us-ascii?Q?6S7Lv58N3mmAiXZGezpGw8Bc2RiHJPxNAn0mKLTQs12LDYPIcJy8se4310zT?=
+ =?us-ascii?Q?ytDAefMci+MYznuoSUWgKyF9FTwXmfJ48bfZhOn3FvwURd96SIQYCVVe0NwT?=
+ =?us-ascii?Q?1g9AP3Pf45Jb5g3TucuUCaicJw33YGe8DBQzVo2Qgm7EJZVduzZ9SBPsQ8pX?=
+ =?us-ascii?Q?Yk7kOdDXbRNpjsVajvOVtjXUyWlPKcC0KTbgdzpM6EjJTObYnfMdY+4p7HFt?=
+ =?us-ascii?Q?W3rjgCcjJ7ow6OD5RfiLH8TOkOIoPlp0iaoiOIY5Riqcy2zBztUqNES6uxbp?=
+ =?us-ascii?Q?sZUsn/QwTczlcpytktlfwmTRKtt6EbakNxL74XCevC0bcc15UwcYjuk2kpHJ?=
+ =?us-ascii?Q?bDSthDtKr3rGDadObNtChpr7ignfe13/3j563p1LoKJQEv0WJSmMYlHLYkjq?=
+ =?us-ascii?Q?TsVn0YE7Uq8ix745/FGKlxNwW9YthP6+9CNwn1PQrGTVM/U5Q1+mfkrtxNVK?=
+ =?us-ascii?Q?LFhO4bTIU4DdERblnqkyuuNmJjiyGejWAE0F?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(1800799024)(376014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kBzZ8fJdHlXZElCSGC4+PNDOLI+aHHwutTKKxIIbxStiJMyuX8zWJ0uSKWJt?=
+ =?us-ascii?Q?CcPahMxENrSAcS1XCRDitlA4R/f4O+k309CakABn0OcPwP2CN2nfvthzqKh8?=
+ =?us-ascii?Q?tWsocMrtqaQRxWDdF7+MQ5kBJbW6XEytpJVTEJQvofsD40bzybpy5L0oETfO?=
+ =?us-ascii?Q?Az5sR/yGwuK8Vs9BfqOgBHjhvjkiEtxWWt2P69SCUNKj2CBEMytX97v/oSPx?=
+ =?us-ascii?Q?zfReH0E2lj02XRGltvNHgnbvxnjjK8mJWc1g0klAn0DoAnPbrhi3a4bfqwbI?=
+ =?us-ascii?Q?aYGfuWH0FhTneBvg7wDGv/37rqA9JeIV6OFjhVyATdaXNzRn80ejN+wB3IaW?=
+ =?us-ascii?Q?4XWU5i7KsH7qghqBfkgHBgp3zEUw+6qIJYKMLTsLZkK4N+Z8/0Jd9SYPzGFq?=
+ =?us-ascii?Q?FEdk9hgr+W9AGc57xb+3FMgW83pXflRMwMTSqzcO9TuV011n2PjnLMDSUfp7?=
+ =?us-ascii?Q?ZCSzpu+8SgpEYX5Eteca+94Sl0MT/cKwKQzgjc/P0zCMGL0TdXPlhma3e1cz?=
+ =?us-ascii?Q?qI1kJ/VFdqealdNSAhhzmazbuZ7G2j9Ed56eUXgLJ/h//nv1AJCj30w3qCHC?=
+ =?us-ascii?Q?wm2zc/qqHTDsLiRsoN0kGc6L8/CPhEczDou/OooZWf5tiU4To1c2kMPuCzGj?=
+ =?us-ascii?Q?g0HnqrW8/IGRaodjdhdRU5KF4JbsGrso7XQIc+oIdE82yqwRVDZXK2AW2GIP?=
+ =?us-ascii?Q?G77M3I++Vbrq4nT3pqldbb89Z065Z0jHaePhaoEJ7RyN8/ZaAGFJJo/yT9q0?=
+ =?us-ascii?Q?1FBvTXr/WlYKkXRWATXMlj8zZXFOcCaEO5ovbIRQTICiEdhFzOSC2cAobIWP?=
+ =?us-ascii?Q?VQbtQLH5TwiHa0K7ONxYy9uAohK7b/+p6ZgD+/19tcTBkMT8c4O/zDxDVkjz?=
+ =?us-ascii?Q?9eYf6z+Vs12e6+UprQD5Bem8hRGU/OXraj37Jy3eItEzu+m/CVSlT5lwlLt8?=
+ =?us-ascii?Q?bbKv3PnBZ3Fd9KJJNIGxdt/h3FuavJwJHpM9irSkdzZ/bvaFbdwoXPknE/iU?=
+ =?us-ascii?Q?CjQ2OYKGu4GeaHELX1mxVbehB4q3IEaloc1zdkNvXsFgio0HbAiMqALOvxTj?=
+ =?us-ascii?Q?/x+5pNWLPBX3YRfjDDLVRo1SrIHiov7tylsyATO5EDSjZsm19bNSpKsgPFYr?=
+ =?us-ascii?Q?Vu1a4owUxjt6YUr+sUeJIEFS1zCeqnjImmNUa4GXpmgvOpG2FnYdPLse0f/A?=
+ =?us-ascii?Q?mi0IhOVxvtyG/zbOl0Px7tPnmpLiaELS8MYqBHIFTR05T65bJRXplkYvbtx0?=
+ =?us-ascii?Q?3//P7t+346aOl4pG64Yt0M9pFY560TAFnhywF2wqr7+zrB+pfzT6lqScF9Oa?=
+ =?us-ascii?Q?rREHXjw2sq/7zmxrXWRkHl1wqlgcceungV/IXySslpo1QamOgntn8WIcKXNY?=
+ =?us-ascii?Q?ktPM09mnBvJKk3fq1AUicLQ45saw3AFQXbGPqqoNon9OAboFzNZLyfeHsNmY?=
+ =?us-ascii?Q?3NsSFMsc9k+/WFHahPQMaxsdIoFVHjEmphair/tbfRO+yHqqOGSWVXL466rk?=
+ =?us-ascii?Q?xajRczSrnVf6SyoMobUf1uzziUZNiYDVXmOgcer86AxwsAMRmBJTIypBxE+5?=
+ =?us-ascii?Q?V4pJoNGsgaillcqJH0xMX6Ed6bzyAWaWNwhVWpdc?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df496d2f-55d7-4f23-a608-08de1169ab3a
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 12:51:08.0194
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JEGUK5glhjhcB62HC+bY5KmsmrFTVJyN217QOWI86E12EQdAO6MdWWH2eG5I++HLIMLYyCwjDunjrfffKdqC9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10222
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Laurentiu,
 
-***
+On Fri, Oct 17, 2025 at 04:20:20AM -0700, Laurentiu Mihalcea wrote:
+>From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>
+>The i.MX8ULP System Integration Module (SIM) LPAV module is a block
+>control module found inside the LPAV subsystem, which offers some clock
+>gating options and reset line assertion/de-assertion capabilities.
+>
+>Therefore, the clock gate management is supported by registering the
+>module's driver as a clock provider, while the reset capabilities are
+>managed via the auxiliary device API to allow the DT node to act as a
+>reset and clock provider.
+>
+>Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>---
+....
+>+struct clk_imx8ulp_sim_lpav_data {
+>+	void __iomem *base;
+>+	struct regmap *regmap;
+>+	spinlock_t lock; /* shared by MUX, clock gate and reset */
+>+	unsigned long flags; /* for spinlock usage */
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
-Author: dmantipov@yandex.ru
+This does not need to be here, put it as function local variable should
+be fine.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
+>+	struct clk_hw_onecell_data clk_data; /*  keep last */
+>+};
+>+
+>+struct clk_imx8ulp_sim_lpav_gate {
+>+	const char *name;
+>+	int id;
+>+	const struct clk_parent_data parent;
+>+	u8 bit;
+>+};
+>+
+>+static struct clk_imx8ulp_sim_lpav_gate gates[] = {
+>+	IMX8ULP_HIFI_CLK_GATE("hifi_core", CORE, "hifi_core", 17),
+>+	IMX8ULP_HIFI_CLK_GATE("hifi_pbclk", PBCLK, "lpav_bus", 18),
+>+	IMX8ULP_HIFI_CLK_GATE("hifi_plat", PLAT, "hifi_plat", 19)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 162711cc5b20..ce38505a823c 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -6164,7 +6164,7 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
- 	struct buffer_head *bh = NULL;
- 	struct ocfs2_dinode *di;
- 	struct ocfs2_truncate_log *tl;
--	unsigned int tl_count;
-+	unsigned int tl_count, tl_used;
- 
- 	inode = ocfs2_get_system_file_inode(osb,
- 					   TRUNCATE_LOG_SYSTEM_INODE,
-@@ -6184,9 +6184,10 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
- 
- 	di = (struct ocfs2_dinode *)bh->b_data;
- 	tl = &di->id2.i_dealloc;
-+	tl_used = le16_to_cpu(tl->tl_used);
- 	tl_count = le16_to_cpu(tl->tl_count);
- 	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
--		     tl_count == 0)) {
-+		     tl_count == 0 || tl_used > tl_count)) {
- 		status = -EFSCORRUPTED;
- 		iput(inode);
- 		brelse(bh);
-diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index 8c9c4825f984..2785ff245e79 100644
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
- 				 unsigned long offset)
- {
- 	const char *error_msg = NULL;
--	const int rlen = le16_to_cpu(de->rec_len);
--	const unsigned long next_offset = ((char *) de - buf) + rlen;
-+	unsigned long next_offset;
-+	int rlen;
-+
-+	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
-+		/* Dirent is (maybe partially) beyond the buffer
-+		 * boundaries so touching 'de' members is unsafe.
-+		 */
-+		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
-+		     "too close to end or out-of-bounds",
-+		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
-+		return 0;
-+	}
-+
-+	rlen = le16_to_cpu(de->rec_len);
-+	next_offset = ((char *) de - buf) + rlen;
- 
- 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
- 		error_msg = "rec_len is smaller than minimal";
-@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
- 	struct ocfs2_extent_block *eb;
- 	struct ocfs2_extent_rec *rec = NULL;
- 
-+	if (le16_to_cpu(el->l_count) !=
-+	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
-+		ret = ocfs2_error(inode->i_sb,
-+				  "Inode %lu has invalid extent list length %u\n",
-+				  inode->i_ino, le16_to_cpu(el->l_count));
-+		goto out;
-+	}
-+
- 	if (el->l_tree_depth) {
- 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
- 				      &eb_bh);
-@@ -3423,6 +3444,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
- 		offset += le16_to_cpu(de->rec_len);
- 	}
- 
-+	if (!last_de) {
-+		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
-+				  "is unexpectedly short",
-+				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
-+				  i_size_read(dir));
-+		goto out;
-+	}
-+
- 	/*
- 	 * We're going to require expansion of the directory - figure
- 	 * out how many blocks we'll need so that a place for the
-@@ -4104,10 +4133,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
- 	}
- 
- 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
--	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
--	       offsetof(struct ocfs2_dx_root_block, dr_list));
-+
-+	dx_root->dr_list.l_tree_depth = 0;
- 	dx_root->dr_list.l_count =
- 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
-+	dx_root->dr_list.l_next_free_rec = 0;
-+	memset(&dx_root->dr_list.l_recs, 0,
-+	       osb->sb->s_blocksize -
-+	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
-+		offsetof(struct ocfs2_extent_list, l_recs)));
- 
- 	/* This should never fail considering we start with an empty
- 	 * dx_root. */
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index d1aa04a5af1b..56be21c695d6 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -905,13 +905,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
- static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
- {
- 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
--	int i;
- 
- 	alloc->id1.bitmap1.i_total = 0;
- 	alloc->id1.bitmap1.i_used = 0;
- 	la->la_bm_off = 0;
--	for(i = 0; i < le16_to_cpu(la->la_size); i++)
--		la->la_bitmap[i] = 0;
-+	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
- }
- 
- #if 0
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 86f2631e6360..ba4952b41602 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
- 
- 	rec = &el->l_recs[index];
- 
--	BUG_ON(ext_flags != rec->e_flags);
-+	if (ext_flags != rec->e_flags) {
-+		ret = ocfs2_error(inode->i_sb,
-+				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
-+				  (unsigned long long)ino, index, rec->e_flags, cpos);
-+		goto out;
-+	}
-+
- 	/*
- 	 * after moving/defraging to new location, the extent is not going
- 	 * to be refcounted anymore.
-@@ -1031,6 +1037,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
- 	if (range.me_threshold > i_size_read(inode))
- 		range.me_threshold = i_size_read(inode);
- 
-+	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
-+			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
-+		status = -EINVAL;
-+		goto out_free;
-+	}
-+
- 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
- 		context->auto_defrag = 1;
- 
-diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
-index ae0e44e5f2ad..c501eb3cdcda 100644
---- a/fs/ocfs2/ocfs2_fs.h
-+++ b/fs/ocfs2/ocfs2_fs.h
-@@ -468,7 +468,8 @@ struct ocfs2_extent_list {
- 	__le16 l_reserved1;
- 	__le64 l_reserved2;		/* Pad to
- 					   sizeof(ocfs2_extent_rec) */
--/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
-+					/* Extent records */
-+/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
- };
- 
- /*
-@@ -482,7 +483,8 @@ struct ocfs2_chain_list {
- 	__le16 cl_count;		/* Total chains in this list */
- 	__le16 cl_next_free_rec;	/* Next unused chain slot */
- 	__le64 cl_reserved1;
--/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
-+					/* Chain records */
-+/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
- };
- 
- /*
-@@ -494,7 +496,8 @@ struct ocfs2_truncate_log {
- /*00*/	__le16 tl_count;		/* Total records in this log */
- 	__le16 tl_used;			/* Number of records in use */
- 	__le32 tl_reserved1;
--/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
-+					/* Truncate records */
-+/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
- };
- 
- /*
-@@ -638,7 +641,7 @@ struct ocfs2_local_alloc
- 	__le16 la_size;		/* Size of included bitmap, in bytes */
- 	__le16 la_reserved1;
- 	__le64 la_reserved2;
--/*10*/	__u8   la_bitmap[];
-+/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
- };
- 
- /*
-@@ -651,7 +654,7 @@ struct ocfs2_inline_data
- 				 * for data, starting at id_data */
- 	__le16	id_reserved0;
- 	__le32	id_reserved1;
--	__u8	id_data[];	/* Start of user data */
-+	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
- };
- 
- /*
-@@ -796,9 +799,10 @@ struct ocfs2_dx_entry_list {
- 					 * possible in de_entries */
- 	__le16		de_num_used;	/* Current number of
- 					 * de_entries entries */
--	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
--							 * in a packed array of
--							 * length de_num_used */
-+					/* Indexed dir entries in a packed
-+					 * array of length de_num_used.
-+					 */
-+	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
- };
- 
- #define OCFS2_DX_FLAG_INLINE	0x01
-@@ -934,7 +938,8 @@ struct ocfs2_refcount_list {
- 	__le16 rl_used;		/* Current number of used records */
- 	__le32 rl_reserved2;
- 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
--/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
-+				/* Refcount records */
-+/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
- };
- 
- 
-@@ -1020,7 +1025,8 @@ struct ocfs2_xattr_header {
- 						    buckets.  A block uses
- 						    xb_check and sets
- 						    this field to zero.) */
--	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
-+						/* xattr entry list. */
-+	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
- };
- 
- /*
-diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
-index 6ac4dcd54588..9969a041ab18 100644
---- a/fs/ocfs2/suballoc.c
-+++ b/fs/ocfs2/suballoc.c
-@@ -649,6 +649,16 @@ ocfs2_block_group_alloc_discontig(handle_t *handle,
- 	return status ? ERR_PTR(status) : bg_bh;
- }
- 
-+static int ocfs2_check_chain_list(struct ocfs2_chain_list *cl,
-+				  struct super_block *sb)
-+{
-+	if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb))
-+		return -EINVAL;
-+	if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count))
-+		return -EINVAL;
-+	return 0;
-+}
-+
- /*
-  * We expect the block group allocator to already be locked.
-  */
-@@ -671,6 +681,10 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
- 	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
- 
- 	cl = &fe->id2.i_chain;
-+	status = ocfs2_check_chain_list(cl, alloc_inode->i_sb);
-+	if (status)
-+		goto bail;
-+
- 	status = ocfs2_reserve_clusters_with_limit(osb,
- 						   le16_to_cpu(cl->cl_cpg),
- 						   max_block, flags, &ac);
-@@ -1992,6 +2006,9 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
- 	}
- 
- 	cl = (struct ocfs2_chain_list *) &fe->id2.i_chain;
-+	status = ocfs2_check_chain_list(cl, ac->ac_inode->i_sb);
-+	if (status)
-+		goto bail;
- 
- 	victim = ocfs2_find_victim_chain(cl);
- 	ac->ac_chain = victim;
+For the parent name, my understanding is they should be the one
+from clk-imx8ulp.c, but I not find them, or may I miss something?
+
+>+};
+>+
+>+#ifdef CONFIG_RESET_CONTROLLER
+>+static void clk_imx8ulp_sim_lpav_aux_reset_release(struct device *dev)
+>+{
+>+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+>+
+>+	kfree(adev);
+>+}
+>+
+>+static void clk_imx8ulp_sim_lpav_unregister_aux_reset(void *data)
+>+{
+>+	struct auxiliary_device *adev = data;
+>+
+>+	auxiliary_device_delete(adev);
+>+	auxiliary_device_uninit(adev);
+>+}
+>+
+>+static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
+>+{
+>+	struct auxiliary_device *adev __free(kfree) = NULL;
+>+	int ret;
+>+
+>+	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+>+	if (!adev)
+>+		return -ENOMEM;
+>+
+>+	adev->name = "reset";
+>+	adev->dev.parent = &pdev->dev;
+>+	adev->dev.release = clk_imx8ulp_sim_lpav_aux_reset_release;
+>+
+>+	ret = auxiliary_device_init(adev);
+>+	if (ret) {
+>+		dev_err(&pdev->dev, "failed to initialize aux dev\n");
+>+		return ret;
+>+	}
+>+
+>+	ret = auxiliary_device_add(adev);
+>+	if (ret) {
+>+		auxiliary_device_uninit(adev);
+>+		dev_err(&pdev->dev, "failed to add aux dev\n");
+>+		return ret;
+>+	}
+>+
+>+	return devm_add_action_or_reset(&pdev->dev,
+>+					clk_imx8ulp_sim_lpav_unregister_aux_reset,
+>+					no_free_ptr(adev));
+
+clk_imx8ulp_sim_lpav_unregister_aux_reset() clean up the resources, if
+moving this before auxiliary_device_add(), then no need
+auxiliary_device_uninit() when add fails?
+
+>+}
+
+Regards
+Peng
 
