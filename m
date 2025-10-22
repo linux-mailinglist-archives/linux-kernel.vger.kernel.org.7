@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-864796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C440BFB90B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:13:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F477BFB908
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F90F3AD4A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:13:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2DAE4EED6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E489832D42E;
-	Wed, 22 Oct 2025 11:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024E232B99C;
+	Wed, 22 Oct 2025 11:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="HQgMT9LE"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZ6VVoxx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C762F28F1;
-	Wed, 22 Oct 2025 11:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C32011CA9;
+	Wed, 22 Oct 2025 11:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761131581; cv=none; b=qd22Jj4z15DCGqDZUSMSLg8KJalMdxuWEy7RE1r1LjfHoAz86/VGy0QCiq0Zw3qWoRW+yjTGgRaP4xmETG8ejxgQaQ4q7aJDei7asM/18yldaW/uzSnaR/xAW7cAPR6C1vM5lC8yxb+ZKplIL9gKXRKt7XPRxqNaC48XKA0Rw24=
+	t=1761131597; cv=none; b=HySg25/aHuSvQIubO9icymwRS5GNrEAYwfWY3w6CNmhzUr0zDBHlUARm14iLd6pU86SJcIxR/gYZVZiOGkE+g6glHiDtvs9ofDKOXhysHiILeJ1Vtqjus+7zg98snLhVYvt9jZDu/0zHJNXvr59NDY2dpL6FUGdi0ay/HrNu70g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761131581; c=relaxed/simple;
-	bh=yBEPK/ItgXtL8RrOwEQxUimjZhkACX5vrovEaxJ0TvU=;
+	s=arc-20240116; t=1761131597; c=relaxed/simple;
+	bh=PDpSlXCddhObHo2V8wLdD/S5r1tvdmsOH6tTH+Y2AJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EobWUXHIkyKlMb1qWpR6jpfr3H0QLOHV3swhC0oRJAVDvG1TkOTsXtV7qe57KnSo86rBSTSbKCbD01CIPoVx6iUVhcPCzROEMd/BaADSTl7j1s+1EC8vy3QD9JnbHbpDDsowN7JqSRKF50JuueqHoThoL3Fc18bngi7oFD4y1A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=HQgMT9LE; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 3556F1C01AC; Wed, 22 Oct 2025 13:12:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1761131577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yBEPK/ItgXtL8RrOwEQxUimjZhkACX5vrovEaxJ0TvU=;
-	b=HQgMT9LE6g77sHbrC/HhWVmziHofgn2BPC541hn8rKfSWz3cR2/O6Cnt4zeoIKCLNFjW4v
-	96AyoSweu1fqhZPTiEA1k9tuDH5x/9xcDCJCPa50wsGJQdTrGbU+8aVI1hXSL+ufb9jrIF
-	vbn3mL4s0q0r+g+3Qfvp3hX9RdOsUMc=
-Date: Wed, 22 Oct 2025 13:12:56 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: guptarud@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Ondrej Jirman <megi@xff.cz>,
-	"Leonardo G. Trombetta" <lgtrombetta@gmx.com>
-Subject: Re: [PATCH v4 3/4] arm64: dts: rk3399-pinephone-pro: Add
- magnetometer sensor support
-Message-ID: <aPi8OCA2OkvrGA+S@duo.ucw.cz>
-References: <20250929-ppp_light_accel_mag_vol-down-v4-0-6598f22d3451@gmail.com>
- <20250929-ppp_light_accel_mag_vol-down-v4-3-6598f22d3451@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RGIUMtnO6NpPqnY2+5dIwxyHGwE78cLkuQvA2qwo8WpdkFhtWOcsvOwOe6HShii2LO62jboIvALHfUvISOjzXZeTTw1VL51ekpcGUzHfE9r8Y/3pKxZBvDFEUzyzXin/agfbE8xJ7LtrnYvYtHdqdeZLfje2Voz7LW7p7iElnzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZ6VVoxx; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761131595; x=1792667595;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PDpSlXCddhObHo2V8wLdD/S5r1tvdmsOH6tTH+Y2AJw=;
+  b=OZ6VVoxxmrYAHHFOCBCeSNW7YHb4z2DKq/09bSS+exarPpomUTPLLoKG
+   pw2ORgb/ctPdt84CXS16frXcOHStYdC50mR7lW/t4Q/cFEfApeD4rblSJ
+   8+JmhpqkZ+T2ttDs5ZqU58RuZYJzwcgjz8j+jBsBx7WGnLaCh+RFDMoQ7
+   jNLR1LpOerubYAjwTxsk09deuoklfcVzfG6HgEV1a/4Qv5j48yDjEEleN
+   OlHqxq3LpOWPgZI5mdNlRs8ztJo0K9/FHeR9NZ4VE4SRaf/9u7zr8YTwc
+   Y/lVGSmwxErXCFIerjNxSTrJH9Wy/KZh097NFSm+Z9D6iCp6JC6BsMLmS
+   g==;
+X-CSE-ConnectionGUID: 5Y6mbUKTSzycnHLI+Whlmg==
+X-CSE-MsgGUID: 2lSut8BZSL+Go8N3kNnSpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62304306"
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="62304306"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 04:13:15 -0700
+X-CSE-ConnectionGUID: KwM47LD9R9+u1aTyN/e6Dw==
+X-CSE-MsgGUID: zyxQNUL9StuxwNlIU6wZnQ==
+X-ExtLoop1: 1
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.28])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 04:13:12 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 8A99C121E5B;
+	Wed, 22 Oct 2025 14:13:09 +0300 (EEST)
+Date: Wed, 22 Oct 2025 14:13:09 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: mchehab@kernel.org, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+	martink@posteo.de, kernel@puri.sm, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Frank.Li@nxp.com
+Subject: Re: [PATCH v5 4/4] media: imx-mipi-csis: Support active data lanes
+ differing from maximum
+Message-ID: <aPi8RXHVBMB7vHQ2@kekkonen.localdomain>
+References: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
+ <20251022102228.275627-5-isaac.scott@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/IL2wEoASFvIAdD5"
-Content-Disposition: inline
-In-Reply-To: <20250929-ppp_light_accel_mag_vol-down-v4-3-6598f22d3451@gmail.com>
-
-
---/IL2wEoASFvIAdD5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251022102228.275627-5-isaac.scott@ideasonboard.com>
 
-Hi!
+Hi Isaac,
 
-> DEVICE=3D"/sys/bus/iio/devices/iio:device2"
->=20
-> X=3D$(cat $DEVICE/in_magn_x_raw)
-> Y=3D$(cat $DEVICE/in_magn_y_raw)
-> Z=3D$(cat $DEVICE/in_magn_z_raw)
->=20
-> X_MIN=3D$X; X_MAX=3D$X
-> Y_MIN=3D$Y; Y_MAX=3D$Y
-> Z_MIN=3D$Z; Z_MAX=3D$Z
->=20
-> START_TIME=3D$(date +%s)
+On Wed, Oct 22, 2025 at 11:22:28AM +0100, Isaac Scott wrote:
+> Call on v4l2_get_active_data_lanes() to check if the driver reports that
+> the number of lanes actively used by the MIPI CSI transmitter differs to
+> the maximum defined in device tree.
+> 
+> If the number of active data lanes reported by the driver is invalid, or
+> the operation is not supported, fall back to the number of allowed data
+> lanes.
+> 
+> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> ---
+>  drivers/media/platform/nxp/imx-mipi-csis.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+> index 838a1ad123b5..637ef6e614fa 100644
+> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> @@ -1034,6 +1034,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+>  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
+>  	csis_fmt = find_csis_format(format->code);
+>  
+> +	ret = v4l2_get_active_data_lanes(csis->source.pad,
+> +					 csis->bus.num_data_lanes);
+> +	csis->num_data_lanes = ret < 0 ? csis->bus.num_data_lanes : ret;
 
-I wonder if we should create some simple gui tool for testing this and
-accelerometer?
+I guess this works but should we return an error here instead?
 
-Anyway,
+Alternatively, the function could always return some number of lanes as
+well (with a printed warning on error). I think I'd do the former though.
 
-> Co-developed-by: Leonardo G. Trombetta <lgtrombetta@gmx.com>
-> Signed-off-by: Leonardo G. Trombetta <lgtrombetta@gmx.com>
-> Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+> +
+>  	ret = mipi_csis_calculate_params(csis, csis_fmt);
+>  	if (ret < 0)
+>  		goto err_unlock;
 
-Reviewed-by: Pavel Machek <pavel@ucw.cz>
+-- 
+Regards,
 
-
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
-
---/IL2wEoASFvIAdD5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaPi8OAAKCRAw5/Bqldv6
-8kxOAJwJ2rD4puXSmIpTlLg26wYcEZf5fQCgkJcbklr4Db1oSCPze/V0XUGuu/8=
-=Z0vO
------END PGP SIGNATURE-----
-
---/IL2wEoASFvIAdD5--
+Sakari Ailus
 
