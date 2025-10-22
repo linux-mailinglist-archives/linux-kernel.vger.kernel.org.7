@@ -1,108 +1,129 @@
-Return-Path: <linux-kernel+bounces-865106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1B3BFC415
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96443BFC504
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6BEB508AF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621215E7706
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C43343D8D;
-	Wed, 22 Oct 2025 13:37:36 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37343491EA;
+	Wed, 22 Oct 2025 13:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="K6158Wcy"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA3326ED5D;
-	Wed, 22 Oct 2025 13:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B600319870;
+	Wed, 22 Oct 2025 13:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140255; cv=none; b=JDZGAc2kaozmEn+49xvjyfGtPi2YG0XCTWHt0br4MMIhqg28GMl0tpqyuMZnXHU47zCuYB+WqSqApvzzkDPAxXCbWQrig9K00YIMeWQfFqvUXP0iRlr5K87THn1Ho1glqkXf9ZvNb09qYgDijrdVqB5MG1/oc+qGvGRbJqmTrh0=
+	t=1761140260; cv=none; b=N5houvVNnwTK/QoPt3ubRA1RGLb0mTHsuqNx0uddfBvYpVuljmxfsnWI5P90wj9uhYORLKin2k8CdmN6Oy2lZGejl6n0zd2n6ZSosKDH5xhjoMRdbe9GD/KatlQ9IX09y+MMvZnqBiUfY2oeXMVIoiV9WXHK16S4bGd0EmmLaQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140255; c=relaxed/simple;
-	bh=2/Zr8EbiNzvQGrIqKwIzmh9iQkSL/0y2Bs+hfNheya8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NSxoWmQ1Y+zHo3OFoaFQmLjI0AfHcKzsgE3CuxQHvu7kyGgGO6Ne2i86Shcud4qWHLWGyrUMPCboJeiCtNAkXR4/uIG8lOKeNYFkGuhM2r7P7gYY0fgwiDHVyfKc+oG7eJE6/LOVPfVeGJYP7LJWnskgh59yAcAKUnDRHQrn5XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 08959BB9EA;
-	Wed, 22 Oct 2025 13:37:25 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf04.hostedemail.com (Postfix) with ESMTPA id 29F4920024;
-	Wed, 22 Oct 2025 13:37:22 +0000 (UTC)
-Message-ID: <703531ba0d3183ffc77e5a76922099564848091e.camel@perches.com>
-Subject: Re: [PATCH] OPP: Initialize scope-based pointers inline
-From: Joe Perches <joe@perches.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki"	
- <rafael@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon
- <nm@ti.com>,  Stephen Boyd <sboyd@kernel.org>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
- Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org
-Date: Wed, 22 Oct 2025 06:37:15 -0700
-In-Reply-To: <45a64ff434a027c296d1d5c35f442e51378c9425.1761128347.git.viresh.kumar@linaro.org>
-References: 
-	<45a64ff434a027c296d1d5c35f442e51378c9425.1761128347.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761140260; c=relaxed/simple;
+	bh=bM78zcZcxf2ooIixxkmQEBOcOTvghqfII/4EoujWcjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E/J3DQLrendkwstRNreqSdTHk647w6ROgQKJ4L/b+WPw4nApK66O/qOiu6/Eg78Ue5I25b9K1GaK0bchX+YnVbICN5/pT42bbJQk91kxVRxeB2DicEScmKG+Ewz1+1QR89SRrYri/OLdKFxec2u9v2+tr3uGwkjckpwgLbqdVEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=K6158Wcy; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cs9Fp5VDJz9tRP;
+	Wed, 22 Oct 2025 15:37:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761140254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2gGJ2j4XuU1eR+kSbHyPUvCzb9zojsG4YTdQlWdLMjQ=;
+	b=K6158WcyF+BOJQFTdw7hpnl4LPtjCCwgBiCCZO314UzujaTkx27mAfeDY5kNdNKdVk0isG
+	8VPHMrNfvq0ZC1yqFQMz5ULuKEl3qIJpwgDU18sOlqnIo41/WcD7wlhEaCZMekDFokhQDI
+	2GEVpL7TtH0CxWs6P7aORkWFNddL+3VOAY8DtBbB+E5av5VXHzz7+L68UlqTmIjOdyeZxu
+	HOYZnBAKk8EfJplVInSYNX7G1tUYZHvISQx0Tc8+xC59LATJzNcO+DdghHs6ea1IQgU+mK
+	M0nVhp8ia3Bajfz0E/a56fJum/z5GuDpqcUS0w9CVvUe6GM4uJKlzWnIsoWlOQ==
+Message-ID: <29bc5e92-04c9-475a-ba3d-a5ea26f1c95a@mailbox.org>
+Date: Wed, 22 Oct 2025 15:37:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 29F4920024
-X-Stat-Signature: nujp71fqdoj4py6c5dr64q4sf7x9awtb
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18nA0GPMNuaN2fS6qCjOtF2RsNNe/yEmPo=
-X-HE-Tag: 1761140242-393872
-X-HE-Meta: U2FsdGVkX19AYZm+QcHlGSPJSlcc4ebFpZdzUIOeHj3GNN3ARM9viy93reD0WqIPrWlajPMh/8pA28to2CMA3RiuUfRIgammdcs0VUA5KVnm+KEq42dA7vLqZJIuQijYgmqxdk1aWOCjNXatLYhibBD8GhP9c/fAOkw7VBS9K/PbuYjNblGBjk9jMOkMJAKh9eVJ9F88lHSC7vpNX1F20dxhPmGKHNLaRPUFrF2cT+lFgGLVuobydAOzmF0XJOMjr61YlEED5vWOL5yaDoRnOCeYt0TAfsWCFMk7d3aG0Ye0Q9bAIajhY3TImcFWP4ha
+Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+To: "Musham, Sai Krishna" <sai.krishna.musham@amd.com>,
+ "mani@kernel.org" <mani@kernel.org>,
+ "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, "Bandi, Ravi Kumar"
+ <ravib@amazon.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Sean Anderson <sean.anderson@linux.dev>,
+ "Yeleswarapu, Nagaradhesh" <nagaradhesh.yeleswarapu@amd.com>
+References: <20251021212801.GA1224310@bhelgaas>
+ <ab1f7c51-bc41-4774-a0dc-850e53c412eb@mailbox.org>
+ <3it5l556vmfpuu6kz5yvulwosi4ecmcgfbzcizrc5wi7ifddkh@mpzfxf2v6v3f>
+ <72267a6c-13c7-40bd-babb-f73a28625ca4@mailbox.org>
+ <SN7PR12MB7201CF621AF0A38AA905799D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
+ <brekq5jmgnotwpshcksxefpg2adm4vlsbuncazdg32sdpxqjwj@annnvyzshrys>
+ <SN7PR12MB7201C6B5B64F8847DD6D816D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
+ <zuj6puxpqgjmaa3y3wwyixlru7e7locplnjev37i5fnh6zummw@72t5prkfsrpk>
+ <DM4PR12MB6158ACBA7BCEDB99A55ACA03CDF3A@DM4PR12MB6158.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Stefan Roese <stefan.roese@mailbox.org>
+In-Reply-To: <DM4PR12MB6158ACBA7BCEDB99A55ACA03CDF3A@DM4PR12MB6158.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 4eec622a3ee0e92cfaf
+X-MBO-RS-META: bxfn33oh4qooy9od7kb88eg7bpucyym8
 
-On Wed, 2025-10-22 at 15:49 +0530, Viresh Kumar wrote:
-> Uninitialized pointers with `__free` attribute can cause undefined
-> behaviour as the memory allocated to the pointer is freed automatically
-> when the pointer goes out of scope.
-[]
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-[]
-> @@ -309,9 +309,8 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_is_turbo);
->   */
->  unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
->  {
-> -	struct opp_table *opp_table __free(put_opp_table);
-> -
-> -	opp_table =3D _find_opp_table(dev);
-> +	struct opp_table *opp_table __free(put_opp_table) =3D
-> +		_find_opp_table(dev);
+On 10/22/25 14:48, Musham, Sai Krishna wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 
-Style trivia:
+<snip>
 
-It's common to include a blank line after the definitions.
+>>> We even don’t need ravi patch, as we have tested this at our end it
+>>> works fine by just updating interrupt-map Property. We need to now understand the
+>> difference in design.
+>>
+>> Ok, please let us know with your findings. In the meantime, I'll keep Ravi's patch in
+>> tree, as it seems to be required on his setup.
+>>
+> 
+> We tested on Linux version 6.12.40 without applying either Stefan's or Ravi's patches.
+> Instead, we applied only the following interrupt-map property change (entries 0,1,2,3) and verified that
+> legacy interrupts are working correctly.
+> 
+> interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
+> <0 0 0 2 &pcie_intc_0 1>,
+> <0 0 0 3 &pcie_intc_0 2>,
+> <0 0 0 4 &pcie_intc_0 3>;
+> 
+> 38:       1143          0  pl_dma:RC-Event  16 Level     80000000.axi-pcie
+> 39:       1143          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
 
-> @@ -327,7 +326,6 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_clock_latency);
->   */
->  unsigned long dev_pm_opp_get_max_volt_latency(struct device *dev)
->  {
-> -	struct opp_table *opp_table __free(put_opp_table);
->  	struct dev_pm_opp *opp;
->  	struct regulator *reg;
->  	unsigned long latency_ns =3D 0;
-> @@ -337,7 +335,8 @@ unsigned long dev_pm_opp_get_max_volt_latency(struct =
-device *dev)
->  		unsigned long max;
->  	} *uV;
-> =20
-> -	opp_table =3D _find_opp_table(dev);
-> +	struct opp_table *opp_table __free(put_opp_table) =3D
-> +		_find_opp_table(dev);
+Okay. Same here. I don't need Ravi's patch for the INTx bit enabling.
 
-here too etc...
+I understand that you want us to change the interrupt map in the auto-
+generated device-tree from Vivado. Which is IMHO a bit "suboptimal".
 
->  	if (IS_ERR(opp_table))
->  		return 0;
-> =20
+I would prefer to have a solution which works out-of-the-box, w/o the
+need to manually change DT properties. Is it planned to change / fix
+this interrupt map in pl.dtsi generated with a newer version of Vivado?
+
+Thanks,
+Stefan
+
 
