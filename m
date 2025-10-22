@@ -1,457 +1,122 @@
-Return-Path: <linux-kernel+bounces-864456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A96ABFAD6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036B9BFAD47
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8938F4866CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34CE18C478A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DA9307ADA;
-	Wed, 22 Oct 2025 08:14:44 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BFC30506D;
+	Wed, 22 Oct 2025 08:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6vAg3qhU"
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16463054C8;
-	Wed, 22 Oct 2025 08:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A9B303C9C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120883; cv=none; b=EtNCk8Env6S6ihpwQA0QuJLQGO0+ozekslpYQMt59gBgJmYoV+Bxrowdjv+NwVeo0j2azY7Ljz6sAZc4267Vxct53g/O3J43JN3cW+GMRFtHeKUAQ7z0JTSuTtPSjJoWWs22wmHTwgyRyCelZVWJEhSyFzwGuAoWdTa6KSkOj6A=
+	t=1761120860; cv=none; b=uV2ZzmkAMj7pEIcDiuy8MpotKaLrjykmxHTELDteHyrtET+SekV3aohd8sqghb9RF1NWOgmdD2UF+SFERZIHnb8Es96e3y+gArVj+ffhrOmWWlD7FNrlT+yZvzPhgY3vf1wuABbd/IsLYQEDGlu3aO+3mu7Pj/uXd2kllgMyRX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120883; c=relaxed/simple;
-	bh=FP3scRSWmy6T/27Xx7Ci/dJ+/UlDf+/Oyo+7Yt0U7Ao=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kLhnsyqV9oZwKAmNQ6ChBnKBVroOPS0Dq2vc/gpJnyxtLKANKv2ABjbthAbDzTygoslOhMjwHIZFiOuUUPapLRD6hawiUIJ/pVP/1EYu3nY1XIGnKlHcvRm5+t6/k4kTdnm/O0SWNk9w1Kf7SZ7vjJOr8tX2zlLDVkCcQG82R/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz17t1761120860t67bdee74
-X-QQ-Originating-IP: UnkENIYoRfm1Z5G501tQ87KwaI68IzYtmP30HuSlm8s=
-Received: from localhost.localdomain ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 22 Oct 2025 16:14:18 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9551714936637933223
-EX-QQ-RecipientCnt: 17
-From: Dong Yibo <dong100@mucse.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	corbet@lwn.net,
-	andrew+netdev@lunn.ch,
-	danishanwar@ti.com,
-	vadim.fedorenko@linux.dev,
-	geert+renesas@glider.be,
-	mpe@ellerman.id.au,
-	lorenzo@kernel.org,
-	lukas.bulwahn@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dong100@mucse.com
-Subject: [PATCH net-next v15 5/5] net: rnpgbe: Add register_netdev
-Date: Wed, 22 Oct 2025 16:13:51 +0800
-Message-Id: <20251022081351.99446-6-dong100@mucse.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251022081351.99446-1-dong100@mucse.com>
-References: <20251022081351.99446-1-dong100@mucse.com>
+	s=arc-20240116; t=1761120860; c=relaxed/simple;
+	bh=H9i6UoljCf2JzBJEdyRvJAkrbPTI8slSCJvsw63srs4=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=brGGh+MzR1jPFmY0aPGNtcTvFBgFZDQmq6tdmpkymxcf88C4jxSjs2C+jGT48HZiS/gmjXg+U54/NZhmywe+dp73mru3ZO8sjaA5zdWwxgDMwDymgVecOqRISzzdCjcrTQFD7AFVWpsxDwUa5eadu3bUqbwrhtVIprLXIA5sxao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6vAg3qhU; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=sNQMxguYxRy5VmNUSveNNzxqqUyeH9podY9lGnXUEKo=;
+	b=6vAg3qhUDJ5RoF9ZrHjqd6OTnzE5kTGTK1P8PScxd7qM1jpEVufX1BeZjGuK6rFT2ptBe5o1N
+	b1ukOcwKnq+sinNo39BtsoOHDTNy8ZFWy5DEG5d+d9LO88pFxPfTGjPv086xVgazz6EEMdcX+1O
+	fsgwCaQi0Kt7Tz+YYrT6EoE=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cs24F6SgGz1prPw;
+	Wed, 22 Oct 2025 16:13:49 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id CF19D1401F4;
+	Wed, 22 Oct 2025 16:14:14 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 22 Oct 2025 16:14:14 +0800
+Subject: Re: [PATCH] ubifs: using vmalloc_array() to handle the code
+To: tanze <tanze@kylinos.cn>, <richard@nod.at>, <hengzhihao1@huawei.com>,
+	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20251022080200.526003-1-tanze@kylinos.cn>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <e345c2fa-3151-d8b6-6cd2-b0afd5e13d86@huawei.com>
+Date: Wed, 22 Oct 2025 16:14:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20251022080200.526003-1-tanze@kylinos.cn>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: NXhskp4g2j/OYZUND/q/t3JYBPUruO8VgdlKHFQ4yGIsDpJbZY95Ey75
-	qlqMj8BGR3XfyMNSJgToGQgNdDgPerAbMf1ivsooeHkd0veLZiq6/3AHV9TQmuxGzKQB+9G
-	e48+/2ITFtyajX58n6GcWQ6FNH6g9/4yZkmXUVOfCLMNUqogtYmNR6UAdn7A4Jl8AvZ+q8M
-	fyopzjCCAsKw2ndzHTavJqpzabc+pNgx0zu1T/4dS0U4n2lcCt25boY7WmPL9pql7p3GtaB
-	Thea5BiZth6JsUi8YuFybDTzgH+g4kiISdimqIkq+0YDME/HNn/9WE3MHCmMUwIgSlpPi/I
-	XSyYuCeprY7JwUTaixgNWVSFOFoN0B1rVf2gavzaMq4DX1F87hWnXDGtgVMuX+EE5rnJ7wC
-	sQX9i2DPVYH6kKcxB13j7CRH5l9gQkdOfeZNCbkZgVLmr8KWbS/8uNLaEaioTUANSPRGDr+
-	ECxsJU4g2wBS85wfwUnC+earyxfGTOLDhgkouEaQBDIXe44+e3j5D2nvhnkH46aqe1/OUbI
-	mTG2cENWRdk4G8IWTVGqXTUEtUbzahqNjLSlHddqq5RA9zFie9r9NOWa3uhZxfjLm7mvpYJ
-	G0O+TocKnZ5+7YfW0nIVQSu7bdtfw7RvQ1nvJtzlxErn1aKeSU1CegiJ1bEdYYiHYAGHh06
-	wW0Dw0xAiCpCQKb17F91cgX3StlnRq4eazcVtHmlDZLjVh1VNYEy1zlJ2fV8NRlTK2ncIsF
-	OXGiByjGTHyDEfQEgFNTdVOHFEDzZU1KfHZX0fIOCq7Ifg+VhbBTLb90C8plhuQtGLFE2wH
-	u/r3Dy/pGb75pXJNhxIOC+Z6gXE+U9DRK9dOl1hmcge8xwM6Yay0WLyipNWyQUqwzSYJlju
-	src7dD40MbRb9tynT30hTG+A8vLP7AD9SH/tGJaMmFGWzUiWnG1iTEVjV5du1dAkLG3MOgp
-	iqv7C7tkbykIgnquQrxDMZckoWRO0GukjILS5ZBKEnBw1u1gAou8faf72MBU6d4sa7aMRLM
-	BEzkUrEumQmkOGWeFNwj2CAdgA/QreZO41I/o0RlnPNjY0CNTa
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-Complete the network device (netdev) registration flow for Mucse Gbe
-Ethernet chips, including:
-1. Hardware state initialization:
-   - Send powerup notification to firmware (via echo_fw_status)
-   - Sync with firmware
-   - Reset hardware
-2. MAC address handling:
-   - Retrieve permanent MAC from firmware (via mucse_mbx_get_macaddr)
-   - Fallback to random valid MAC (eth_random_addr) if not valid mac
-     from Fw
+ÔÚ 2025/10/22 16:02, tanze Ð´µÀ:
+> Change array_size() to vmalloc_array(), Due to vmalloc_array()
+> is optimized better,uses fewer instructions, and handles
+> overflow more concisely
+> 
+> Signed-off-by: tanze <tanze@kylinos.cn>
+> ---
+>   fs/ubifs/lpt.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
 
-Signed-off-by: Dong Yibo <dong100@mucse.com>
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
----
- drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  24 ++++
- .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  73 +++++++++++
- drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   2 +
- .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 117 +++++++++++++++++-
- 4 files changed, 214 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-index 37bd9278beaa..27fb080c0e37 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-@@ -6,6 +6,7 @@
- 
- #include <linux/types.h>
- #include <linux/mutex.h>
-+#include <linux/netdevice.h>
- 
- enum rnpgbe_boards {
- 	board_n500,
-@@ -26,18 +27,38 @@ struct mucse_mbx_info {
- 	u32 fwpf_ctrl_base;
- };
- 
-+/* Enum for firmware notification modes,
-+ * more modes (e.g., portup, link_report) will be added in future
-+ **/
-+enum {
-+	mucse_fw_powerup,
-+};
-+
- struct mucse_hw {
- 	void __iomem *hw_addr;
-+	struct pci_dev *pdev;
- 	struct mucse_mbx_info mbx;
-+	int port;
-+	u8 perm_addr[ETH_ALEN];
- 	u8 pfvfnum;
- };
- 
-+struct mucse_stats {
-+	u64 tx_dropped;
-+};
-+
- struct mucse {
- 	struct net_device *netdev;
- 	struct pci_dev *pdev;
- 	struct mucse_hw hw;
-+	struct mucse_stats stats;
- };
- 
-+int rnpgbe_get_permanent_mac(struct mucse_hw *hw);
-+int rnpgbe_reset_hw(struct mucse_hw *hw);
-+int rnpgbe_send_notify(struct mucse_hw *hw,
-+		       bool enable,
-+		       int mode);
- int rnpgbe_init_hw(struct mucse_hw *hw, int board_type);
- 
- /* Device IDs */
-@@ -46,4 +67,7 @@ int rnpgbe_init_hw(struct mucse_hw *hw, int board_type);
- #define RNPGBE_DEVICE_ID_N500_DUAL_PORT   0x8318
- #define RNPGBE_DEVICE_ID_N210             0x8208
- #define RNPGBE_DEVICE_ID_N210L            0x820a
-+
-+#define mucse_hw_wr32(hw, reg, val) \
-+	writel((val), (hw)->hw_addr + (reg))
- #endif /* _RNPGBE_H */
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-index 5739db98f12a..2ec6e28d2c35 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-@@ -1,11 +1,82 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright(c) 2020 - 2025 Mucse Corporation. */
- 
-+#include <linux/pci.h>
- #include <linux/errno.h>
-+#include <linux/etherdevice.h>
- 
- #include "rnpgbe.h"
- #include "rnpgbe_hw.h"
- #include "rnpgbe_mbx.h"
-+#include "rnpgbe_mbx_fw.h"
-+
-+/**
-+ * rnpgbe_get_permanent_mac - Get permanent mac
-+ * @hw: hw information structure
-+ *
-+ * rnpgbe_get_permanent_mac tries to get mac from hw
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ **/
-+int rnpgbe_get_permanent_mac(struct mucse_hw *hw)
-+{
-+	struct device *dev = &hw->pdev->dev;
-+	u8 *mac_addr = hw->perm_addr;
-+	int err;
-+
-+	err = mucse_mbx_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->port);
-+	if (err) {
-+		dev_err(dev, "Failed to get MAC from FW %d\n", err);
-+		return err;
-+	}
-+
-+	if (!is_valid_ether_addr(mac_addr)) {
-+		dev_err(dev, "Failed to get valid MAC from FW\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * rnpgbe_reset_hw - Do a hardware reset
-+ * @hw: hw information structure
-+ *
-+ * rnpgbe_reset_hw calls fw to do a hardware
-+ * reset, and cleans some regs to default.
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ **/
-+int rnpgbe_reset_hw(struct mucse_hw *hw)
-+{
-+	mucse_hw_wr32(hw, RNPGBE_DMA_AXI_EN, 0);
-+	return mucse_mbx_reset_hw(hw);
-+}
-+
-+/**
-+ * rnpgbe_send_notify - Echo fw status
-+ * @hw: hw information structure
-+ * @enable: true or false status
-+ * @mode: status mode
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ **/
-+int rnpgbe_send_notify(struct mucse_hw *hw,
-+		       bool enable,
-+		       int mode)
-+{
-+	int err;
-+	/* Keep switch struct to support more modes in the future */
-+	switch (mode) {
-+	case mucse_fw_powerup:
-+		err = mucse_mbx_powerup(hw, enable);
-+		break;
-+	default:
-+		err = -EINVAL;
-+	}
-+
-+	return err;
-+}
- 
- /**
-  * rnpgbe_init_n500 - Setup n500 hw info
-@@ -50,6 +121,8 @@ int rnpgbe_init_hw(struct mucse_hw *hw, int board_type)
- {
- 	struct mucse_mbx_info *mbx = &hw->mbx;
- 
-+	hw->port = 0;
-+
- 	mbx->pf2fw_mbx_ctrl = MUCSE_GBE_PFFW_MBX_CTRL_OFFSET;
- 	mbx->fwpf_mbx_mask = MUCSE_GBE_FWPF_MBX_MASK_OFFSET;
- 
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-index 268f572936aa..e77e6bc3d3e3 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-@@ -11,5 +11,7 @@
- #define MUCSE_N210_FWPF_CTRL_BASE      0x29400
- #define MUCSE_N210_FWPF_SHM_BASE       0x2d900
- 
-+#define RNPGBE_DMA_AXI_EN              0x0010
-+
- #define RNPGBE_MAX_QUEUES 8
- #endif /* _RNPGBE_HW_H */
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-index d8aaac79ff4b..e4392ddfbce2 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-@@ -7,6 +7,7 @@
- 
- #include "rnpgbe.h"
- #include "rnpgbe_hw.h"
-+#include "rnpgbe_mbx_fw.h"
- 
- static const char rnpgbe_driver_name[] = "rnpgbe";
- 
-@@ -24,6 +25,58 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
- 	{0, },
- };
- 
-+/**
-+ * rnpgbe_open - Called when a network interface is made active
-+ * @netdev: network interface device structure
-+ *
-+ * The open entry point is called when a network interface is made
-+ * active by the system (IFF_UP).
-+ *
-+ * Return: 0
-+ **/
-+static int rnpgbe_open(struct net_device *netdev)
-+{
-+	return 0;
-+}
-+
-+/**
-+ * rnpgbe_close - Disables a network interface
-+ * @netdev: network interface device structure
-+ *
-+ * The close entry point is called when an interface is de-activated
-+ * by the OS.
-+ *
-+ * Return: 0, this is not allowed to fail
-+ **/
-+static int rnpgbe_close(struct net_device *netdev)
-+{
-+	return 0;
-+}
-+
-+/**
-+ * rnpgbe_xmit_frame - Send a skb to driver
-+ * @skb: skb structure to be sent
-+ * @netdev: network interface device structure
-+ *
-+ * Return: NETDEV_TX_OK
-+ **/
-+static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
-+				     struct net_device *netdev)
-+{
-+	struct mucse *mucse = netdev_priv(netdev);
-+
-+	dev_kfree_skb_any(skb);
-+	mucse->stats.tx_dropped++;
-+
-+	return NETDEV_TX_OK;
-+}
-+
-+static const struct net_device_ops rnpgbe_netdev_ops = {
-+	.ndo_open       = rnpgbe_open,
-+	.ndo_stop       = rnpgbe_close,
-+	.ndo_start_xmit = rnpgbe_xmit_frame,
-+};
-+
- /**
-  * rnpgbe_add_adapter - Add netdev for this pci_dev
-  * @pdev: PCI device information structure
-@@ -42,7 +95,7 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev,
- 	void __iomem *hw_addr;
- 	struct mucse *mucse;
- 	struct mucse_hw *hw;
--	int err;
-+	int err, err_notify;
- 
- 	netdev = alloc_etherdev_mq(sizeof(struct mucse), RNPGBE_MAX_QUEUES);
- 	if (!netdev)
-@@ -64,14 +117,66 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev,
- 	}
- 
- 	hw->hw_addr = hw_addr;
-+	hw->pdev = pdev;
-+
- 	err = rnpgbe_init_hw(hw, board_type);
- 	if (err) {
- 		dev_err(&pdev->dev, "Init hw err %d\n", err);
- 		goto err_free_net;
- 	}
-+	/* Step 1: Send power-up notification to firmware (no response expected)
-+	 * This informs firmware to initialize hardware power state, but
-+	 * firmware only acknowledges receipt without returning data. Must be
-+	 * done before synchronization as firmware may be in low-power idle
-+	 * state initially.
-+	 */
-+	err_notify = rnpgbe_send_notify(hw, true, mucse_fw_powerup);
-+	if (err_notify) {
-+		dev_warn(&pdev->dev, "Send powerup to hw failed %d\n",
-+			 err_notify);
-+		dev_warn(&pdev->dev, "Maybe low performance\n");
-+	}
-+	/* Step 2: Synchronize mailbox communication with firmware (requires
-+	 * response) After power-up, confirm firmware is ready to process
-+	 * requests with responses. This ensures subsequent request/response
-+	 * interactions work reliably.
-+	 */
-+	err = mucse_mbx_sync_fw(hw);
-+	if (err) {
-+		dev_err(&pdev->dev, "Sync fw failed! %d\n", err);
-+		goto err_powerdown;
-+	}
- 
--	return 0;
-+	netdev->netdev_ops = &rnpgbe_netdev_ops;
-+	err = rnpgbe_reset_hw(hw);
-+	if (err) {
-+		dev_err(&pdev->dev, "Hw reset failed %d\n", err);
-+		goto err_powerdown;
-+	}
-+
-+	err = rnpgbe_get_permanent_mac(hw);
-+	if (err == -EINVAL) {
-+		dev_warn(&pdev->dev, "Using random MAC\n");
-+		eth_random_addr(hw->perm_addr);
-+	} else if (err) {
-+		dev_err(&pdev->dev, "get perm_addr failed %d\n", err);
-+		goto err_powerdown;
-+	}
-+
-+	eth_hw_addr_set(netdev, hw->perm_addr);
-+	err = register_netdev(netdev);
-+	if (err)
-+		goto err_powerdown;
- 
-+	return 0;
-+err_powerdown:
-+	/* notify powerdown only powerup ok */
-+	if (!err_notify) {
-+		err_notify = rnpgbe_send_notify(hw, false, mucse_fw_powerup);
-+		if (err_notify)
-+			dev_warn(&pdev->dev, "Send powerdown to hw failed %d\n",
-+				 err_notify);
-+	}
- err_free_net:
- 	free_netdev(netdev);
- 	return err;
-@@ -138,11 +243,17 @@ static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- static void rnpgbe_rm_adapter(struct pci_dev *pdev)
- {
- 	struct mucse *mucse = pci_get_drvdata(pdev);
-+	struct mucse_hw *hw = &mucse->hw;
- 	struct net_device *netdev;
-+	int err;
- 
- 	if (!mucse)
- 		return;
- 	netdev = mucse->netdev;
-+	unregister_netdev(netdev);
-+	err = rnpgbe_send_notify(hw, false, mucse_fw_powerup);
-+	if (err)
-+		dev_warn(&pdev->dev, "Send powerdown to hw failed %d\n", err);
- 	free_netdev(netdev);
- }
- 
-@@ -173,6 +284,8 @@ static void rnpgbe_dev_shutdown(struct pci_dev *pdev)
- 
- 	rtnl_lock();
- 	netif_device_detach(netdev);
-+	if (netif_running(netdev))
-+		rnpgbe_close(netdev);
- 	rtnl_unlock();
- 	pci_disable_device(pdev);
- }
--- 
-2.25.1
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> diff --git a/fs/ubifs/lpt.c b/fs/ubifs/lpt.c
+> index 441d0beca4cf..dde0aa3287f4 100644
+> --- a/fs/ubifs/lpt.c
+> +++ b/fs/ubifs/lpt.c
+> @@ -628,8 +628,8 @@ int ubifs_create_dflt_lpt(struct ubifs_info *c, int *main_lebs, int lpt_first,
+>   	pnode = kzalloc(sizeof(struct ubifs_pnode), GFP_KERNEL);
+>   	nnode = kzalloc(sizeof(struct ubifs_nnode), GFP_KERNEL);
+>   	buf = vmalloc(c->leb_size);
+> -	ltab = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
+> -				  c->lpt_lebs));
+> +	ltab = vmalloc_array(c->lpt_lebs,
+> +			     sizeof(struct ubifs_lpt_lprops));
+>   	if (!pnode || !nnode || !buf || !ltab || !lsave) {
+>   		err = -ENOMEM;
+>   		goto out;
+> @@ -1777,8 +1777,8 @@ static int lpt_init_rd(struct ubifs_info *c)
+>   {
+>   	int err, i;
+>   
+> -	c->ltab = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
+> -				     c->lpt_lebs));
+> +	c->ltab = vmalloc_array(c->lpt_lebs,
+> +				sizeof(struct ubifs_lpt_lprops));
+>   	if (!c->ltab)
+>   		return -ENOMEM;
+>   
+> @@ -1846,8 +1846,8 @@ static int lpt_init_wr(struct ubifs_info *c)
+>   {
+>   	int err, i;
+>   
+> -	c->ltab_cmt = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
+> -					 c->lpt_lebs));
+> +	c->ltab_cmt = vmalloc_array(c->lpt_lebs,
+> +				    sizeof(struct ubifs_lpt_lprops));
+>   	if (!c->ltab_cmt)
+>   		return -ENOMEM;
+>   
+> 
 
 
