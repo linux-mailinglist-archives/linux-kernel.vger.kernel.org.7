@@ -1,146 +1,130 @@
-Return-Path: <linux-kernel+bounces-865666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414DBBFDB43
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DDABFDB46
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FFD35036D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:49:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80C3C500B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B339C2E8DFC;
-	Wed, 22 Oct 2025 17:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZkRdKPT"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631722E8B76;
+	Wed, 22 Oct 2025 17:47:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D1D2E719E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142002DEA6A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761155192; cv=none; b=uNOQktIvVcNguLeQEaUnewH6GvHZwF3VBWPi/4cCsVIxQtrin3nS7xAmsWJXkjCA6oVd57PjpAJ93ePH7CRYFMTPeUXnab2Jxl24Cb9lRE0OuirgAXSpVxerDASXGabqZPqELUmzTHpc5YuNStpTBzMr/kYJ6GBfSTOKGHa3wSc=
+	t=1761155221; cv=none; b=kYJ2Dlu7UG6Mj9OiePJw/jfRqtP3knFNDDtAf9JF4UXJ9ZXWoGvErkE98ao/BER6ovsjHsfK4ehaTIfi0RBX30+ZA2HCC3luEnxrEVL2kx/eBjV4sVwDq/8fSpV2BorB3MJtnHzW+uey2TUqstwcOZb5Sbb3QoLT/akn5HzKQs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761155192; c=relaxed/simple;
-	bh=ZO9k478u1ngiqeGGIY3WNX6oKY50clVVErq42QbTs/Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fG5uazpyYxvUt7g66OB4UPwxFLFFuvGds7qKF4gCRXsr2qiDC7WCvOHOonPcG+Pd5VO19W4xZacavHDmkTUWjAgD/JkPBZTQnczpX60iPVUNy2/nosxEE03bD44nU1S/MkWRgOpdEztAiQEQwJvLq1D7e8nAKjzPAOL/YdxndWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZkRdKPT; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso1282113966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:46:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761155188; x=1761759988; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZO9k478u1ngiqeGGIY3WNX6oKY50clVVErq42QbTs/Y=;
-        b=YZkRdKPT8pBjRz95XUgoi033TzSjMyLT+va7nkpxPFJcIM6sAHgxpPXeBqDzxRhrDL
-         1ibGckJb7OBlfnv6DwAvxnXnOLhC2dSjsi8GVstRUUwJMYX3LEbSm84KegKmsCn0GDbq
-         dXQm+uQ/sfDwT5umd2I6/8U2uBToOmFg3oaUBpGA9cGjmfYPWfHnZom6J5c1B9DqnWx6
-         OJ5bT89BtiIro7S4Ukk09fa0Jr8Y/vkcsxbjG4QblzyfxQ/ikkDwWwakcWGLQkHNI1Ht
-         /mbcpcEqQPzmGTsfnKnI26vO/6VMxcCi6MNOLMMl77yY1NENlS/OfMGYqUevJpF32T0W
-         yAPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761155188; x=1761759988;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZO9k478u1ngiqeGGIY3WNX6oKY50clVVErq42QbTs/Y=;
-        b=LVE66lMV7UHkEDOYuSoKIHyD7tpHAi+WbxLO24QiBv6C1R0O2+d6ujZjO7uMZ3+57b
-         PVEUBxsj97vCxyjBFAtEms99cM5OapVTjKcqEbFpJhKSpBxrDHhhDF9hr3Ndu0s415tE
-         inCldlUcerCeTuHbNQeKA0HWOnaEHaGwHdDAJeaJFr52jV+S6GS6CgaUHcuJKKcTAPTs
-         JdV61XJuUOCevat++e+67EdOxOXZLIQTAKfmVu+Dvy+XtY+iWuEVECHAoaD/URSiL17X
-         WZaBs0hTDobO35Wi01yTj4jOs6AjCfusi4rvo9WvuwTDUR/4ji0mAd4R4mDnLEVMypJT
-         sziQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJHM9tN42fRCltyeRV4ah3x1xRfgZcYATUpIPqovIL0zWzc2S8Y4LbXwTyLmgj7uZVJ0QVILDUbeosLGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAhkmoKqwok4s1zf+h8E2dlr1nB/hOgQvDCuABSNwNHnwK+6wx
-	eWtf0N3h57uKvccyKpO2hZmq3Y6UTtomr8KrcMunaHN+7OMIT/s75/8qf2IbvW0h
-X-Gm-Gg: ASbGncv+OXqB6tViKQZihxHEfToV6mKYlMbIVEILHwm+eQeaZLKXFBmwKO0lA0MM1T6
-	bPIdHiSKUObYRjtY87CKMYV1vq3uNcMKklx4ZFyiwx08whEvlZzz9T8HwQgUhXseaDV0Z28Fqfr
-	nEOSKqwJif9PaKWVQTAj5suuAsL7BlZkJMNBHamd4yPASS7RjO8zDy0mOpiLADmr+KcT6Rm4oPF
-	lv2iS5oZw66tK6FPFy7ZIa2Nuz0qOU9NEBAUCjuWjLYMbvvWvDD/ogHQmnHR0CJ7qmNulNXjaM4
-	FABf6syc5U6oTSEOoiPOc4SxWQteWVQxs+kwOItAHxFba1xuBbB4+HOe7BShxxWBBdr/1qGdjL2
-	EH9aD4lRw1s7dhqefM8JK/o4P89hR0flyXqrZiieQnl4cqVG6ZaCgBDO5tomAxbtT+5WUWdYxAB
-	rOvTSgvA08QCjI2FFp++PTnjWEz14d/AH4WSCJIQhVqimCQlQ34bc9GlhI/cwb+Awg7Q0=
-X-Google-Smtp-Source: AGHT+IHCalBjEk5A4VepIJrx2VZmsQyalUaHdRlIahxdnPTXIoiiuFZ8zgGAwcDIXssdST0QDBYUzA==
-X-Received: by 2002:a17:907:3f88:b0:b3d:5088:214e with SMTP id a640c23a62f3a-b647501277bmr2370373466b.64.1761155188114;
-        Wed, 22 Oct 2025 10:46:28 -0700 (PDT)
-Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83960e6sm1393779166b.33.2025.10.22.10.46.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 10:46:27 -0700 (PDT)
-Message-ID: <d42ab1a0665f55731aabd1e9fcb31b8401b7913f.camel@gmail.com>
-Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
- automatic module loading
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Javier Martinez Canillas <javierm@redhat.com>, Wolfram Sang	
- <wsa@the-dreams.de>, Herve Codina <herve.codina@bootlin.com>, David Rhodes	
- <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>,  Nikita Shubin <nikita.shubin@maquefel.me>, Axel Lin
- <axel.lin@ingics.com>, Brian Austin	 <brian.austin@cirrus.com>,
- linux-sound@vger.kernel.org, 	patches@opensource.cirrus.com,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Date: Wed, 22 Oct 2025 19:46:26 +0200
-In-Reply-To: <d38779a7-a1af-49e4-b429-5ebd791e2168@sirena.org.uk>
-References: <e7873e6ce07cd92f4b5ce8880aa81b12c2a08ed3.camel@gmail.com>
-	 <d38779a7-a1af-49e4-b429-5ebd791e2168@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1761155221; c=relaxed/simple;
+	bh=YFJDQxVXGIt2EVvzI4UDLWngSrJVYknKXX4lJa0qIvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2f56sCfAig3G+KOlvOsxhi/VsO+T2YM5VuXIUryAYx4fmw8E8JcGanW6+zr8pP3MrLdHMFENY2kgwyQDpu1bGeZCvpwJ0Cidfv6Ld1FQRSytNERT/yvcp6hP7fbG+vk6vaZeXJYNrycjz+IjRlKtAjItTa1Rr9lqI/qjAY4y2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vBcvD-0005QR-OG; Wed, 22 Oct 2025 19:46:51 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vBcvA-004vcd-2A;
+	Wed, 22 Oct 2025 19:46:48 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 5D05048D5D9;
+	Wed, 22 Oct 2025 17:46:48 +0000 (UTC)
+Date: Wed, 22 Oct 2025 19:46:47 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol@kernel.org>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add myself as m_can reviewer
+Message-ID: <20251022-lorikeet-of-fortunate-plenty-43e085-mkl@pengutronix.de>
+References: <20251022-topic-mcan-reviewer-v6-18-v1-1-885ec5e43493@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zocc6mbgpq6p4hwg"
+Content-Disposition: inline
+In-Reply-To: <20251022-topic-mcan-reviewer-v6-18-v1-1-885ec5e43493@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Mark,
 
-On Wed, 2025-10-22 at 15:56 +0100, Mark Brown wrote:
-> > > I'm very reluctant to touch this stuff for SPI without some very care=
-ful
-> > > analysis that it's not going to cause things to explode on people, ri=
-ght
-> > > now things seem to be working well enough so I'm not clear we'd be
-> > > solving an actual problem.
+--zocc6mbgpq6p4hwg
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] MAINTAINERS: Add myself as m_can reviewer
+MIME-Version: 1.0
+
+Hello Chandrasekar,
+
+I've seen not much review feedback from you....
+
+On 22.10.2025 11:10:09, Markus Schneider-Pargmann wrote:
+> As I have contributed to the m_can driver over the past years, I would
+> like to continue reviewing new patches.
 >=20
-> > The actual problem is that i2c-core is producing "of:" prefixed uevents
-> > instead of "i2c:" prefixed uevents starting from v4.18.
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 >=20
-> > Most of the dual-bus ASoC CODECs are affected.
->=20
-> That's a description of what change but not of a concrete problem that
-> users are experiencing.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 46126ce2f968e4f9260263f1574ee29f5ff0de1c..835dfe1a16c975fb3ab46bc7e=
+d736cde61ec0bf5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15394,6 +15394,7 @@ F:	drivers/net/phy/mxl-gpy.c
+> =20
+>  MCAN MMIO DEVICE DRIVER
+>  M:	Chandrasekar Ramakrishnan <rcsekar@samsung.com>
+> +R:	Markus Schneider-Pargmann <msp@baylibre.com>
 
-the concrete problem Herve has experienced is that cs4271-i2c will not be
-loaded automatically starting with Linux v4.18 (commit af503716ac14
-"i2c: core: report OF style module alias for devices registered via OF").
+=2E..Maybe you want to give the maintainer hat to Markus?
 
-> > Now declaring "of:" to be the new I2C bus prefix for uevents starting f=
-rom
-> > Linux v4.18 sounds strange.
->=20
-> I think a robust solution would involve having the OF aliases namespaced
-> by bus, or just not using the OF aliases but potentially having
-> collisions if two vendors pick the same device name.
-
-But this sounds like the situation before the above mentioned commit
-af503716ac14, when both i2c and spi were symmetrically namespaced with
-i2c: and spi: respectively and contained the "compatible" stripped of the
-vendor prefix.
-
-And I must admit that I had more understanding for the prior state of thing=
-s.
+Marc
 
 --=20
-Alexander Sverdlin.
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--zocc6mbgpq6p4hwg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmj5GIQACgkQDHRl3/mQ
+kZw6ZQf8DfrpXASMNYTe0xbgYAb39s9gFmgnVNWr2BZn9Awhy5+jhDvkhtk/5zdi
+Lx9wJRkKCTimAnTmk6YRSHtUlnxfBeax3swLWUQ4vGI5twAudHyeJgoOfIcoGLQd
+9gQ9/LxDWvGq/T96LRTJq3O2+VHDfPxz9U70o+CGIzZcHRFLqadIt/gJPV6zmbex
+hsY9YQfhR1nVRQJhBSb9SSR725SUPs3qEIqDZ5Z7QycPMvk8OxSdVJ87UeMvvnng
+gNZWP0U7dkUSQSxNyP86CmCUJV/dwXqkhR84rAy+s22xCueCgVrYV884GlpZ4UPm
+ZZKl0FbFpNxihlhKbmv5d+7HAYU20w==
+=MIld
+-----END PGP SIGNATURE-----
+
+--zocc6mbgpq6p4hwg--
 
