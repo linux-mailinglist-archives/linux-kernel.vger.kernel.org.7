@@ -1,200 +1,156 @@
-Return-Path: <linux-kernel+bounces-865750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D44ABFDE9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:44:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9B9BFDEAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 521A05461F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D203A5CCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B2734E74E;
-	Wed, 22 Oct 2025 18:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3433F34DCCE;
+	Wed, 22 Oct 2025 18:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C4ABvbj4"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3UA6Hud"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BD134DCCF
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3019734887B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761158513; cv=none; b=WR1pFb2BHZ9qPm7pQWflsmqmASC55nav+josV3cJKuho69oEjwHp8TYXOiLX+cLjtqXvK5TVEOU5uagIXKimlm98ocI+yabVPnTWLO1msfNvArupNSZmsL+FRnKq/pcAmViAQrvWBU8svjKTqtOImB8F+zxKqBMDXl62vxWXlXo=
+	t=1761158568; cv=none; b=WZ/3WNi9gDRAcT7A4VMeIWWnzuNiASLm1DnJz5QFTSHNG/tJoqWveWk6NG++R7N6415deRGtcXC6Fxska6YCTRdrQ3GJu+yMETQu0e3zPdM2KLvwDEBBC7zaS7DbjpKaLvfoLk1fL+UQ/UlgcNJjRLVa4JvGgmSNp8C4P+yBZ8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761158513; c=relaxed/simple;
-	bh=4SsgFy3W8i6VYi5migZylUtx9+LlsgxxkwCdOCuq1ec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PKd7EQBhHh98hqdrb1z8nGBPcdqDIo4Enc39EW2kywRSc7SAA1AheriZ+dy1plb1uH+kj8bYe/5ljp268KXihENOSt2nclJTwSTUA7lrR4kYTrNJ0NZs/lHhtp9DIQgB6DaK1uixtZKZaVOaEi8PwZDwiLBmsuCCSjEE10EeWU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C4ABvbj4; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c1a0d6315so13086324a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:41:50 -0700 (PDT)
+	s=arc-20240116; t=1761158568; c=relaxed/simple;
+	bh=62Rd9Cj+tuLxEAc6371oplypJXVUPm0OX7f4j/blxSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t0s477TIeCOuoDVlw9+/pEctIY1sKQ+6Mbp7v9IUPi6+fPxAJJ8skKMcKpECXTL4W4Y98q/be9n65SZ76uKs432wbRBsjLN6dtlmHV/Vku/VoCGCcAKnLcfI/f9fCjtHCsmJun3M3z62ZV16AhnxvzwYDYBLZT+d/24RL/0lqsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3UA6Hud; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-781251eec51so5699649b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:42:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761158509; x=1761763309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iBSNtwt1hqivpMpQtmcSf95eEecb17MZgEpr3DvvZp8=;
-        b=C4ABvbj4hEYyxN0hqadq04T0CTTUoZmxChgIpTw13E21PH2Mqw7qmXdxamV1Pm8HaE
-         T/JkCy+a1EACehR0AwlaDvnOA1bs/DGiZRt68+TMKfe9nc3Q5oBCgqUh+ejDPQ8eWrgm
-         XzV+lEwxAgLjWOKoBLXyaOpVN8wxLeiAvD8yOKaEpI3+VRUgEmBmK1kZq9/7n3FtSuSy
-         dYcu+nhRt2OK3+gNbjJkTrcrUhFUwUqQIOdDTIf5vqPrVhW+Ib/nNGPqHtP9xdkmI9VB
-         EQbRQ8LzUL/wI2TIa47+/WdMW1dTt0bm3KXcXyBMz6QSgbKIKkOA4sTyaidCpRG65C26
-         LWNA==
+        d=gmail.com; s=20230601; t=1761158566; x=1761763366; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaDPVD10QzAGywMTcZ8MVoJwwj1EgOUaXLk9q2JTmq8=;
+        b=N3UA6HudxvgWUIjXDO4j629xlo21BLNMA9iQWqfn9FTqvB9BOksUxpongzUDqLZnD0
+         jrusS04akv5oqzG7Mtl+xg2W110DRcUv8zXlFlEpwxI4DY1kNEUw2mMYx75qTEe7IeA0
+         0ffNl38nW8yWQ3pVTvTZWczwVWFGrOBsrI1WQ5RJGhehUqS4WhxDZepbfTnTS+FKnVz1
+         gd+BxuWQqX2aHeVZDhg6uaZsaZ1oKYRKfzsjJnDQNBsdgjmphmQDBnqhBWIQLyKeq6R+
+         ijSRz8d+iBHJh6ZYaWP5ZxXEZ4t+YWWLNQml6fP7ZjRw5ya41xuiTLlTHJVx+74UIetA
+         7LYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761158509; x=1761763309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iBSNtwt1hqivpMpQtmcSf95eEecb17MZgEpr3DvvZp8=;
-        b=wLRrFw2z3czLLRgOP324q6xUdSvHfxrU0zaUkXqrumHOSyIn9u+VvqoJKyC4Ep9JrN
-         t5T6iH4dvTq41U32WUQh91NK6jjurjIXc7coHRlOZw6WM5X3AbmB7SWx9dpJ0IwWAACS
-         RUnmGg6fRd42aTr/F+mJIbZy0bHOKtJiyqa8Exn71nl6IeJyxmw+Be3slApThzm4U1fT
-         YKCuogqfj5muxTy8pL9USAlvogpZM+ZPx3EB9G9Zck2fapMGT7yZApj70UxfBIe0WcD3
-         vCO3hcveWVH+xOB1ZaXA9YbbzZv2+t10CpRxsJsrFx6Js58zkhLofoHoaTRipiiLta4A
-         mO8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWk+Qnt/nSgm097G9Xwcxv99mBR8r9dp1/gkO0OU8C+3eaOv+o7uDvAvfEZ1Sz31oW1ngPqN6wsa8OEn/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmFaXLZflID+vTtClcpjiuS1v/JAtYjAzKIttDUQ+WBd2hkHAo
-	gvMU1pwnmEhEjv0v0BK4YbfeANsSomLSaOplz5eQR/cllQwB0sD53pVR9gp/i1fukY4V9QoK1q7
-	7WWPqH29H2IHCUdyua3g+Ot5X/MPxRJ+UjGB8lPZZ
-X-Gm-Gg: ASbGncvbyWmSod5MthLrf1f17fwsuECxaPj8cnRrlz03OyLhhGp4iBKbQre8rKI51Xs
-	IkN9TfhXw8DKzbjCx3pEBQxJRbmR+IvjGJpVgKf7JrLFoTw8rC2xtaXydZEUzS2K7RQCTk8HgbV
-	SvhbhcOJRXvkgGYmAIfWYmPYC9NPoGdhLf7gV5h/xXegIJncxw2C+ds9DL7M8ck4NMvPA5rXBrs
-	AfSWStqp+1Qmz2GE4q2IRuwKuREEP8IhKgpu6cEtdlKVeuMHuA5DxXjC3sl6rjrOtfMJqEo2Tc5
-	ZXbGKg+lrpKlefp2YQhbid3y
-X-Google-Smtp-Source: AGHT+IG9QOCvLGRlm2L1hQvr/syZxkOWJ3YGHVm/KAKKxfnnsFMCKtjyaFKcnKslc2naOE06t43sSnnXWGnsfmQWWbQ=
-X-Received: by 2002:a17:907:bb49:b0:b4b:4f7:7a51 with SMTP id
- a640c23a62f3a-b6475706fc2mr2674087066b.62.1761158508815; Wed, 22 Oct 2025
- 11:41:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761158566; x=1761763366;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OaDPVD10QzAGywMTcZ8MVoJwwj1EgOUaXLk9q2JTmq8=;
+        b=u6j/YCu2onDBadqQqnF4x0DfIr5xNR2DBA6HWzLXUorwniZGWuOmw8XynydltRRWNB
+         hVLBvuG7Mm+O2g/1SFzfoCkB06NwwWQhOjpzV6Y4rCDzJslf0n1FelQVapNjrWkQEhJT
+         h9AwJkRYcCKefUUDOeA0QAwy7grd3QqLBQSrqBJvMYi1h2v8n81WSwha6ah5IziUZWBS
+         Rl2/9TGVVXro7KmKosBXWQ/ABglky/hCMENhFCSRRHoELNvZo/ccrC28l1NAMNGW/AUf
+         1M7TfytT230BpeiMzJna945itPyuMZ0nWMeVPnsN0p6OjwYmrnpsnVr/jMied41kEeky
+         XQxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZtN8I3g/WgrRffMe3wkdjNNZWdzo15Z4bNX/jHaD99rUUkmIXaV+5a4b+L1B3Gg0YA0bXzzHLcXg98Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOczZj0j5cEDtYszQoPsFuJ0nsnA+yCb3lxbpwIK1ubUm9nmKc
+	6CN32bU+utFub52y2y07pNUQMfi14Nl202fW2c3TT6ezAMcknE+78CnY
+X-Gm-Gg: ASbGnctWhNRsdGhuK0uTVqfkJaaJa3DYDWqB7YdNuzyUSOvFXuAKpIp00OTZVcGzMwA
+	WMCuTP2Ux8GvkS3EsnoE994fyvRjLKukssiTn9f2lNQLa3M8H7rJbuEunEI+CiQTFuVttIZIeBE
+	XCppuU0dWQXXrl/jV/10csrFHQ31ctLuczpRpEoRcp392fb77N7O5C+N1jzaQkyR9yJows7ozxr
+	iCpx3gzmlrg7CksDByiLQtwYrPNpWIhhVLI3q2dpbp217VpwInXoEaRoe7sLqYyP1vEU/OJookX
+	cpnHuwW3gfLGEqKXlU4Et4LYYcePuuxpJrL1t5Ric99XQVnG1uZOexBJHXT/s4LpG4IhEP4vjFH
+	7Q2Ae0TmOOdAsgfkGwp9hvvTuiZ953wQ/IpwK+lsvLlxZdflg9Za3cZoL7IayzAJ2nlJJ/1P0Yg
+	5ksg==
+X-Google-Smtp-Source: AGHT+IGEuNl7KxT0ZBg1REm9jtYV03SiCDzrf1MkAQZm9SCvvp7AAFvvgs3enN+dhrzrLl2aRLXWTg==
+X-Received: by 2002:a05:6300:8052:b0:334:a916:8b4 with SMTP id adf61e73a8af0-334a9160985mr26107060637.8.1761158566294;
+        Wed, 22 Oct 2025 11:42:46 -0700 (PDT)
+Received: from fedora ([2401:4900:1c6a:bfa2:49f8:6793:8484:a709])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b6f7absm13489547a12.39.2025.10.22.11.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 11:42:46 -0700 (PDT)
+From: Shi Hao <i.shihao.999@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	x86@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hpa@zytor.com,
+	Shi Hao <i.shihao.999@gmail.com>,
+	Smatch static checker <smatch@kernel.org>
+Subject: [PATCH] _x86: intel: pt: fix potential null dereferences
+Date: Thu, 23 Oct 2025 00:12:30 +0530
+Message-ID: <20251022184230.124113-1-i.shihao.999@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAG2KctpHA+L=xh-VQ8SVDSRcqyL+ch=WMVrKS+pckLmC6uJwvw@mail.gmail.com>
- <20251022011547.8648-1-hdanton@sina.com>
-In-Reply-To: <20251022011547.8648-1-hdanton@sina.com>
-From: Samuel Wu <wusamuel@google.com>
-Date: Wed, 22 Oct 2025 11:41:37 -0700
-X-Gm-Features: AS18NWBw4EAoALtfgytkbkwkbw8Bd9QzC3V--BUqEq20Lf9R4DR6aXlMdo7JRKk
-Message-ID: <CAG2KctoJ+1x61KNmDj_52J1_Y3vyox7UNceFw6_WtbRMA_1vYA@mail.gmail.com>
-Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
-To: Hillf Danton <hdanton@sina.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 21, 2025 at 6:16=E2=80=AFPM Hillf Danton <hdanton@sina.com> wro=
-te:
->
-> On Tue, 21 Oct 2025 13:13:39 -0700 Samuel Wu wrote:
-> > On Fri, Oct 17, 2025 at 5:17=E2=80=AFPM Hillf Danton <hdanton@sina.com>=
- wrote:
-> > > On Fri, 17 Oct 2025 23:39:06 +0000 Samuel Wu wrote:
-> > > > +/**
-> > > > + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
-> > > > + *
-> > > > + * Return 0 on successful file system sync, otherwise returns -EBU=
-SY if file
-> > > > + * system sync was aborted.
-> > > > + */
-> > > > +int pm_sleep_fs_sync(void)
-> > > > +{
-> > > > +     bool need_pm_sleep_fs_sync_requeue;
-> > > > +     unsigned long flags;
-> > > > +
-> > > > +     do {
-> > > > +             spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
-> > > > +             reinit_completion(&pm_sleep_fs_sync_complete);
-> > >
-> > > Given difficulty following up here, can you specify why reinit is nee=
-ded?
-> >
-> > There are two possibilities that make reinit_completion() necessary:
-> > 1. Suspend abort triggers completion, but is canceled before
-> > pm_wakeup_pending(), so need reinit to restart the
-> > wait_for_completion() process.
-> > 2. Handling back-to-back suspend attempts: after a subsequent suspend
-> > attempt finishes waiting for a previous suspend's fs_sync to finish,
-> > we need the reinit to start the wait_for_completion() process of the
-> > subsequent suspend's fs_sync.
-> >
-> If 1. and 2. matches the comment for wait_for_completion() below,
->
->         static DECLARE_COMPLETION(foo);
->
->         waiter          waker1          waker2
->         ---             ---             ---
->         for (;;) {
->           reinit_completion(&foo)
->           do anything
->           wait_for_completion(&foo)
->                         do bar1         do bar2
->                         complete(&foo)  complete(&foo)
->           if (end)
->                 break;
->         }
->
-> the chance for reinit to drop one wakeup is not zero.
-> If drop makes sense, for what do you wait after receiving two wakeups?
->
+Add checks to prevent potential null dereferences of buf->stop_te
+and buf->intr_te in pt_buffer_reset_markers function.
 
-If I understand correctly, you are referring to the case where
-multiple wakers trigger wait_for_complete() simultaneously, hence
-having at least one waker's complete() being ignored?
+Smatch reported possible null dereferences of buf->stop_te and
+buf->intr_te in the pt_buffer_reset_markers() and when i checked
+both pointers were checked for null dereferences in earlier lines
+however,after calling pt_topa_entry_for_page() where its return
+value is NULL in certain conditions there were no checks for further
+buf->stop_te and buf->intr_te uses which could potentially be null
+dereferenced.
 
-If so, I see two possibilities with multiple wakers:
-1. fs_sync finishing + suspend abort1 + ... + suspend abortN
-2. suspend abort1 + ... + suspend abortN
+To avoid null dereference add checks after each pt_topa_entry_for_page()
+call to safely handle null returns and also add checks where there was
+direct dereference of the pointers.
 
-Simplifying, if two wakers come in simultaneously, while one of the
-wakers may have its complete() ignored, the state of that waker is
-still checked after wait_for_completion(), with
-if(pm_wakeup_pending()) and while(need_pm_sleep_fs_sync_requeue) for
-suspend aborts and fs_sync finishing respectively.
+Reported-by: Smatch static checker <smatch@kernel.org>
+Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
+---
+ arch/x86/events/intel/pt.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-> > > > +             /*
-> > > > +              * Handle the case where a sleep immediately follows =
-a previous
-> > > > +              * sleep that was aborted during fs_sync. In this cas=
-e, wait for
-> > > > +              * the previous filesystem sync to finish. Then do an=
-other
-> > > > +              * filesystem sync so any subsequent filesystem chang=
-es are
-> > > > +              * synced before sleeping.
-> > > > +              */
-> > > > +             if (pm_sleep_fs_sync_queued) {
-> > > > +                     need_pm_sleep_fs_sync_requeue =3D true;
-> > > > +             } else {
-> > > > +                     need_pm_sleep_fs_sync_requeue =3D false;
-> > > > +                     pm_sleep_fs_sync_queued =3D true;
-> > > > +                     schedule_work(&sync_filesystems);
-> > > > +             }
-> > > > +             spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags)=
-;
-> > > > +
-> > > > +             /*
-> > > > +              * Completion is triggered by fs_sync finishing or an=
- abort sleep
-> > > > +              * signal, whichever comes first
-> > > > +              */
-> > > > +             wait_for_completion(&pm_sleep_fs_sync_complete);
-> > > > +             if (pm_wakeup_pending())
-> > > > +                     return -EBUSY;
-> > > > +     } while (need_pm_sleep_fs_sync_requeue);
-> > > > +
-> > > > +     return 0;
-> > > > +}
->
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index e8cf29d2b10c..2b7d5d118b48 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -1148,7 +1148,8 @@ static int pt_buffer_reset_markers(struct pt_buffer *buf,
+ 	if (idx != buf->stop_pos) {
+ 		buf->stop_pos = idx;
+ 		buf->stop_te = pt_topa_entry_for_page(buf, idx);
+-		buf->stop_te = pt_topa_prev_entry(buf, buf->stop_te);
++		if (buf->stop_te)
++			buf->stop_te = pt_topa_prev_entry(buf, buf->stop_te);
+ 	}
+
+ 	wakeup = handle->wakeup >> PAGE_SHIFT;
+@@ -1162,12 +1163,16 @@ static int pt_buffer_reset_markers(struct pt_buffer *buf,
+ 	if (idx != buf->intr_pos) {
+ 		buf->intr_pos = idx;
+ 		buf->intr_te = pt_topa_entry_for_page(buf, idx);
+-		buf->intr_te = pt_topa_prev_entry(buf, buf->intr_te);
++		if (buf->intr_te)
++			buf->intr_te = pt_topa_prev_entry(buf, buf->intr_te);
+ 	}
+
+-	buf->stop_te->stop = 1;
+-	buf->stop_te->intr = 1;
+-	buf->intr_te->intr = 1;
++	if (buf->stop_te) {
++		buf->stop_te->stop = 1;
++		buf->stop_te->intr = 1;
++	}
++	if (buf->intr_te)
++		buf->intr_te->intr = 1;
+
+ 	return 0;
+ }
+--
+2.51.0
+
 
