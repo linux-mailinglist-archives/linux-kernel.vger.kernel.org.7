@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-864370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C37BBFAA21
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:42:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FE3BFAA2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 087B2345B91
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:42:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035711A042EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0692FB0B9;
-	Wed, 22 Oct 2025 07:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="S2CX+9xO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DU/wXHAj"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581572FB61C;
-	Wed, 22 Oct 2025 07:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D472FBE1F;
+	Wed, 22 Oct 2025 07:41:36 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0982FB097;
+	Wed, 22 Oct 2025 07:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761118857; cv=none; b=VPFnHntlaG5tQU4fn85M0KMYIwuSi8nlNCHQ1twkcSaKFfYnRkSDszMJONA8rzHqJ+oaN4ktPcl2hFglcGnOJKXsHkq6cODLr1i8lzPFfba+jeNbe4mSNblwYrqFHt1XjA3SEmSpXxa+PyGt1xfOm7+Jj9x4TZHnXh8TUKulH/8=
+	t=1761118896; cv=none; b=TugCHdXbvFllf/1PolqCUBeaSjI1IsBg6ZvU++ZFVip/h+361E8CQapFn0S2VCBIWFWs3SPmUEu2rA+LnjyfNCRvI92QoL0cncfbszqLrZh3jx3Pc9mOee+vHRn2bW3odQTwc5bOBizzEuOqGMhLcj0Cf/hgiV9gM79v6XCiO1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761118857; c=relaxed/simple;
-	bh=ptsr+CkrEYXAO4QKKRWMvqPRb8OQOyW1l37qGvBpwuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kgy3igNi7wePPMhTDqEEvnHudDhWXHtgMLf2bGLTbrj0HeEsZB5z+Py7j6ePlpCzxbJtkxlbbNhTaxT5Brn7FjCScwDVCsNbANHMDwjdc1byr3PGkUK0QdyeJKQhCwqSDq8n1LaazT4DTa8VYNLEgfyDe0aJgc2NfX0xJ5j+m1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=S2CX+9xO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DU/wXHAj; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 42678EC0183;
-	Wed, 22 Oct 2025 03:40:53 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Wed, 22 Oct 2025 03:40:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1761118853; x=1761205253; bh=9u/6AOHdyJ
-	KLm2MAVj/gg3WnnXnpnA5iTO0PKfyo/5U=; b=S2CX+9xO+lB5b8QIcajBhxlNP9
-	B6S0lIMXmIEIHLe0mBNFn53EkW9n3eRhfYHhGyW6Q8HTO2V4HJKSYkXqUSGPpSOS
-	mX7L0xZ+YAsYs6GU9T5KSu8wSHcB4zXguoOe+DpboeDuYh9qYO3Daznip60lTbyB
-	pXe2flQNFYvMEEj2+YEd/OpC68yX2Ei8bG0LQueWg+93vvwZPmVv6rWKiZXjZJx1
-	jb5aDkcBjo/8TSYZUAQv1BSxoYQ7P1l117xNRhFcTJzewh17ZIsCJC8zXBbD/c7J
-	mkritEo8EsTxvYU7j+MXUwJt0AnWQPD7Rdz8tQPXX1lE2Db+QuvCZ8LGYjOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761118853; x=1761205253; bh=9u/6AOHdyJKLm2MAVj/gg3WnnXnpnA5iTO0
-	PKfyo/5U=; b=DU/wXHAj0AuA/qtjvo2fDScseQKQ4OMji/CnkC7szRlxmbbDWCv
-	rGNG16shMn0eboV1GejawCJ3DBb98pWeLiFmkfUyxOuG3L8XMcGd6WKwC5xoQxM/
-	N89Dxj1/wOVspufdjh/9QFCP8Hs17ncM+JS8omOD8YATEfOXdBD9pHkJs4HhITAp
-	nzdBxUPedvEersg9PedjWUqtfbqApJP8tyXeX0kE+0/nQTBTvN1M2zT8j9g1/8rW
-	/2aZ/Dn1xSC9yFM4c8Xsa/QjGC9celo4R4dwI3rZ6d/5G9j0dDu1I04AGBfppGy4
-	Fvp8WZ3ryPfGRX+A4sBCn3fmnGMi6vESRtg==
-X-ME-Sender: <xms:hIr4aLlAkY4zwtHdoPYzDEThSSYDKiJbNeqGUBF3uWGWfisNuhE-tQ>
-    <xme:hIr4aHlgs-mwtp1Qbf5F5Vbx43rgjXqeLQponxF18l-tPIyAk6l2KAXQQslts92Io
-    Y8i2RWO00reWipJGVCjvMca-mJWS611MmQjkILGISo0w0VZmg>
-X-ME-Received: <xmr:hIr4aAXpN9J0gX4tRVJFrMqBBVZeMpM2bqQwB9Uajdzv4o5A9N1MIWtK>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeftddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvdevvd
-    eljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
-    gtohhmpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    oheplhgvohhnrdhhfigrnhhgsehlihhnuhigrdguvghvpdhrtghpthhtohepshhtrggslh
-    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhig
-    qdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrth
-    drtghomhdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlrghntggvrdihrg
-    hngheslhhinhhugidruggvvh
-X-ME-Proxy: <xmx:hIr4aF9M30XQygfl7U-P6vIcPnB5h_FMk1MekPlYvg2aVh15tPH9og>
-    <xmx:hIr4aNqd-8PMwOlgRSJEGQjZ-7PiXKIFBW3N7mIj5-3_hXb4R48Jjg>
-    <xmx:hIr4aHnI4hZqJrIurvlLueaonGwfj55DByZl4_l256-hg_KTCc_0Fg>
-    <xmx:hIr4aBYb3lFJsPbTSmNmiGw_1_Q0jffZuO2XT91gIVjladboH6cvqw>
-    <xmx:hYr4aC1uwQoSH2P8BZR-2V4Ltoxt1wCMWv6d1hEpg4nNI-tMkewhJZof>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 22 Oct 2025 03:40:52 -0400 (EDT)
-Date: Wed, 22 Oct 2025 09:40:49 +0200
-From: Greg KH <greg@kroah.com>
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: stable@vger.kernel.org, akpm@linux-foundation.org, david@redhat.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH 6.1.y] selftests/mm: Move default_huge_page_size to
- vm_util.c
-Message-ID: <2025102230-scoured-levitator-a530@gregkh>
-References: <20251022055138.375042-1-leon.hwang@linux.dev>
+	s=arc-20240116; t=1761118896; c=relaxed/simple;
+	bh=QGvghVdZeHNgJp8I5CtrM9Hp+1y1sMOYQhyX0Teuka8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pXTPGaL6Jxw/FE3HdlFC3kaV0gyiDFG7p2JxISHr+NDEcy0itevTaiJmf2GFEPNUkhSLPSr3MI6ToWM2xfyD9ZFfmb444rhPwTx0L7f/AcjVvLGie1s1JQd1F4ssm08n1TWfofAugQUZ8Knt/+2/PMVtE/vpyUH20tqtH1ZlJ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: aIAKL2f4Q7SXye2L9587IA==
+X-CSE-MsgGUID: xD7YSYiJTEKIp2qUojD5Mw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 22 Oct 2025 16:41:33 +0900
+Received: from demon-pc.localdomain (unknown [10.226.93.88])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3861C4006DED;
+	Wed, 22 Oct 2025 16:41:29 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH] pinctrl: renesas: rzg2l: remove useless wrappers
+Date: Wed, 22 Oct 2025 10:40:58 +0300
+Message-ID: <20251022074100.1994447-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022055138.375042-1-leon.hwang@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 01:51:38PM +0800, Leon Hwang wrote:
-> Fix the build error:
-> 
-> map_hugetlb.c: In function 'main':
-> map_hugetlb.c:79:25: warning: implicit declaration of function 'default_huge_page_size' [-Wimplicit-function-declaration]
->    79 |         hugepage_size = default_huge_page_size();
->       |                         ^~~~~~~~~~~~~~~~~~~~~~
-> /usr/bin/ld: /tmp/ccYOogvJ.o: in function 'main':
-> map_hugetlb.c:(.text+0x114): undefined reference to 'default_huge_page_size'
-> 
-> According to the latest selftests, 'default_huge_page_size' has been
-> moved to 'vm_util.c'. So fix the error by the same way.
-> 
-> Reviewed-by: Lance Yang <lance.yang@linux.dev>
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> ---
->  tools/testing/selftests/vm/Makefile      |  1 +
->  tools/testing/selftests/vm/userfaultfd.c | 24 ------------------------
->  tools/testing/selftests/vm/vm_util.c     | 21 +++++++++++++++++++++
->  tools/testing/selftests/vm/vm_util.h     |  1 +
->  4 files changed, 23 insertions(+), 24 deletions(-)
+rzg2l_gpio_irq_set_type() and rzg2l_gpio_irqc_eoi() only call the
+equivalent parent functions, replace their usage with the parent
+functions and remove them.
 
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-What commit id does this fix?  And again, why not just take the original
-commits instead?
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 947bce7bfc0e..f25ecada5c69 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -2494,16 +2494,6 @@ static void rzg2l_gpio_irq_enable(struct irq_data *d)
+ 	__rzg2l_gpio_irq_enable(d, true);
+ }
+ 
+-static int rzg2l_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+-{
+-	return irq_chip_set_type_parent(d, type);
+-}
+-
+-static void rzg2l_gpio_irqc_eoi(struct irq_data *d)
+-{
+-	irq_chip_eoi_parent(d);
+-}
+-
+ static void rzg2l_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+@@ -2539,8 +2529,8 @@ static const struct irq_chip rzg2l_gpio_irqchip = {
+ 	.irq_enable = rzg2l_gpio_irq_enable,
+ 	.irq_mask = irq_chip_mask_parent,
+ 	.irq_unmask = irq_chip_unmask_parent,
+-	.irq_set_type = rzg2l_gpio_irq_set_type,
+-	.irq_eoi = rzg2l_gpio_irqc_eoi,
++	.irq_set_type = irq_chip_set_type_parent,
++	.irq_eoi = irq_chip_eoi_parent,
+ 	.irq_print_chip = rzg2l_gpio_irq_print_chip,
+ 	.irq_set_affinity = irq_chip_set_affinity_parent,
+ 	.irq_set_wake = rzg2l_gpio_irq_set_wake,
+@@ -2640,7 +2630,7 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
+ 		 * interrupt.
+ 		 */
+ 		raw_spin_lock_irqsave(&pctrl->lock, flags);
+-		ret = rzg2l_gpio_irq_set_type(data, irqd_get_trigger_type(data));
++		ret = irq_chip_set_type_parent(data, irqd_get_trigger_type(data));
+ 		if (!ret && !irqd_irq_disabled(data))
+ 			__rzg2l_gpio_irq_enable(data, false);
+ 		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+-- 
+2.51.1.dirty
 
-thanks,
-
-greg k-h
 
