@@ -1,141 +1,142 @@
-Return-Path: <linux-kernel+bounces-864044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D247BF9C90
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:08:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EDEBF9DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0843B9991
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AEE188EAC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E187822A4F6;
-	Wed, 22 Oct 2025 03:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BBF2D23BD;
+	Wed, 22 Oct 2025 03:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naOXyBe3"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b="xbdICgzP"
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F80D22333D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31A72D0C97
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102498; cv=none; b=FcCUlgC3UI0sD0FD6nG0nMKYJJ+GlbvBKro6oP4f9PzamTAE1Ypq6b7o0V6XqUZpMkQvTKjKKlaerGryAhICsib8XcltyPw/v+tc7gCiKcD50JyozEppQ6kM0gOmtn8BmxFDa5sSEwyOyLbwoCkYZMAHR1Hes/mt91SM5G80S2Q=
+	t=1761104562; cv=none; b=S5COFXy8cJ4bi9p6oX9D/eiBNdm24ECg/DDkavQ8LxYuOh19Xtrk/tzZ0hw6KG6DgZJ1tqVSNU8rtX2Y9LXpD8onKwNqo16qkHHkLG8PLY9Nsbb+U7D/uqv2xPhyshdwHjZA7uHnHhyyqioJOvJhpZzAUgs4gt1EsnEvMShjTBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102498; c=relaxed/simple;
-	bh=zPBJPWJG1RmSuUSiXXFf7Fti2uJ0uJ2ARX+chCP+tt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DqNkM1L7PVB0EVEWO7XR2kI0PN2ZQdmcjajOEKIPobLAWLbFK6+hlWLQtOJ6fHqMSrFFbBgCeG6mqWNxcvvwDIytz+w9e3jOi/cG8cBUIpjLAQlLk3gHdKHqS7HTu6BRVJsB3CaiHkvZYi3w2UCDd3Wy8jjdQNj/sBURU2Z2Jfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=naOXyBe3; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-634cef434beso953271a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761102495; x=1761707295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=InWFJpQO8fTxO1bkzACACUHVLGVVqDW5A3rrLvGIiHo=;
-        b=naOXyBe3+hvTKIo+vbFvLXlll+y+KoSnNIP9bGK+69ckGp168T341BGAXX+iL8Nwx4
-         UB+/16hqXMr9Tk6KZcoZDP/3xLL/+hlGzV86xxL0tw/sgUg92vyg9w1kBduHJ9oS41VY
-         WiE3aPl3KWkd3uWf7z1jPkQsX9n6oJ6dh90oOBmas0EEQLWnbjsGAzo79m8/411kq+Iz
-         Zu2Oe4Q37i4Vl75V3vVCwWRcUZ4/1g56Lf+nmnJKOvK2X34bLwK1E1sY3pE1qyOTGJ4+
-         c9RV87r2qa7vpfRKku8GYT9UhyoV7Ta031pz5+1q/8eRGLp1AhoQQbO6dEGizE1j0v6A
-         hXVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761102495; x=1761707295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=InWFJpQO8fTxO1bkzACACUHVLGVVqDW5A3rrLvGIiHo=;
-        b=lhXVDxiww84YU/knR/c/Xg6Hu29aWyYKVqj6G8NHpRjIjPPD5NHO7O1X0oId9JvTBq
-         X6SZdTOtG0N/72NJt7XELp+1fpwM4Uc75yYyfExwR8v3GDFQ+ltWhBHthzSHsxiTHBIi
-         C7txUAKYWXoQUZehh+pRmkKCcwkGTKbmTItEuReUl0bk7+OUpkCPAU7o/1WzxBrKBiiI
-         NVfDRwv8caocBSgOdwEC+J6D+YAdmq6d3NlOR1driiesObvmipfj+zfPJg1M/awSteyu
-         so2/gWfB0EySKDk8smoTY1baJi21lKkrWe4T4Gxmtnkj3oLvrDFD0osoVhK4Ak4RpLTD
-         crMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGdMlgcYO9o0baydplqa2nJPlyWgw8lh5QFn+Rl+Rh+SrvLDv0iK1j4FdO4CNsm49ycNlXWSwbUzeR1hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq/j4xwA6PBBAlZXk+WWbvR3z2MNCHU1hclNezO1kvaslD/K2i
-	8yJr3HO4saRt0rbSEQl2/QuMK/JKNp5Y7iW9GtvfAC1NQ9jutDnN6OKSohfGNwK56W3c3SIwPtv
-	s63D+0wb5OJlXPHn8PzYF7UwXf+pFBtc=
-X-Gm-Gg: ASbGncsOSLpV5NdkwRysSdV7/huXxH3VwB0g3uossRBUgoJMZfNSRKkyqgUCWl8Epje
-	WDY94R0bRt+DwSJCON5UkDk2dbDe3oSbEL9Lc6u7JmFhTUw0IxwdjzTHm0YuD7jcbVz01zspOrO
-	98ckpYAyZd2HuG+iuIN6BCWTtNDJxK++NGVz5w3bEe9P7dvh1y0zxldGvvFGPQhuGBRvN7S3wWB
-	r/DbbkB/hdjIiu98KD90fc5ofH958fc5P+INTJuDKidrlco3GUhro3ySZsIhfshnABq75W0
-X-Google-Smtp-Source: AGHT+IEX1rltKwLPyvW0/Qg9CwBU/OfKcOnqDgE5TVcbY0wTzB19biWLcNylgJME1yuSwaOCqqEw3jC5+BWl5NnsTiE=
-X-Received: by 2002:a05:6402:210b:b0:63c:5892:3c3a with SMTP id
- 4fb4d7f45d1cf-63e173c0c0bmr1896817a12.13.1761102494810; Tue, 21 Oct 2025
- 20:08:14 -0700 (PDT)
+	s=arc-20240116; t=1761104562; c=relaxed/simple;
+	bh=nJlWE7TMkJF+qGX9RK5h0Ifycl6qj/LOobvEdjZQzrs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DznBi629Scqwx8Srebi5fF3DaX9eZQjH1dd2j8eCBlDRKZ//8rK0yq5gYvRnNhkQolvw6OSz6cF4HWXwoh/Af/HBzwPWTq4TAvfHoHjvbhPVUiVX/YclzS0oOu9d3DrhHV2/ICcKg0oueGVl+cQx0QdCX/3Y4bi4MQYUlInZMc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b=xbdICgzP; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id 59M392kR079255
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:09:02 +0800 (+08)
+	(envelope-from Wenhua.Lin@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 59M38ktb078051;
+	Wed, 22 Oct 2025 11:08:46 +0800 (+08)
+	(envelope-from Wenhua.Lin@unisoc.com)
+Received: from SHDLP.spreadtrum.com (zeshmbx09.spreadtrum.com [10.29.3.107])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4crvFD4wVqz2NG5xV;
+	Wed, 22 Oct 2025 11:06:08 +0800 (CST)
+Received: from zeshkernups01.spreadtrum.com (10.29.55.99) by
+ zeshmbx09.spreadtrum.com (10.29.3.107) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.48; Wed, 22 Oct 2025 11:08:44 +0800
+From: Wenhua Lin <Wenhua.Lin@unisoc.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>, Cixi
+ Geng <cixi.geng@linux.dev>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        wenhua lin <wenhua.lin1994@gmail.com>,
+        Wenhua
+ Lin <Wenhua.Lin@unisoc.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>,
+        Zhaochen
+ Su <Zhaochen.Su@unisoc.com>,
+        Zhirong Qiu <Zhirong.Qiu@unisoc.com>
+Subject: [PATCH] serial: sprd: Return -EPROBE_DEFER when uart clock is not ready
+Date: Wed, 22 Oct 2025 11:08:40 +0800
+Message-ID: <20251022030840.956589-1-Wenhua.Lin@unisoc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
- <20251020093941.548058-2-dolinux.peng@gmail.com> <76e2860403e1bed66f76688132ffe71316f28445.camel@gmail.com>
- <CAErzpmvLR8tc0bfYg6mG82gqMSXHq_qXeMsssSDuzirxkSt-Rg@mail.gmail.com> <dacb24230861da2eb8fb5bd7168bdca571727b62.camel@gmail.com>
-In-Reply-To: <dacb24230861da2eb8fb5bd7168bdca571727b62.camel@gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 22 Oct 2025 11:08:03 +0800
-X-Gm-Features: AS18NWB2xp5k8jJQYnmoli_av-vve609ERXlhcmwqYUxVIE0Xnuffu4DyjzlWZQ
-Message-ID: <CAErzpmtV4AS4=TvgXM5R0bW-7kv8W014D=mcCFANQ-o3PFnZtg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/5] btf: search local BTF before base BTF
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ zeshmbx09.spreadtrum.com (10.29.3.107)
+X-MAIL:SHSQR01.spreadtrum.com 59M38ktb078051
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=unisoc.com;
+	s=default; t=1761102535;
+	bh=3QHy8p1fdhdVE9oNK7Yv7NVBgLHQMmSDxFOKxwgs8AQ=;
+	h=From:To:CC:Subject:Date;
+	b=xbdICgzPDv9fXYSmY52e8JwI6Zx490rRJS/mcItAknQrzBIljr6JI1HQAlhi0wK3j
+	 bRbcvp+4wHc0m8+vLZ4rJKpVeh7gMlmJ5YiKcV3SQzha3im3cK2ZPpQbjwop84spoe
+	 Ari7gJgrXvkozeTWOH6jgT28+M2j0yEmjTEXcdbT5pU6c1hr8f8vuvy6gOMVh2lvWa
+	 DBteDF6cfkE09COAaXL2psCD0azZEiEgWNRvSn1tMd2Bgi1LkxTh/sr0YIPTnOFmYo
+	 TEqCDsrD47aZ6kuBMepceoPnquFW0PCviNfVNb9N8KqUpEUCsHWWi9ZpRuzRl0f+nI
+	 iGRhDXxgcev7A==
 
-On Tue, Oct 21, 2025 at 11:56=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.co=
-m> wrote:
->
-> On Tue, 2025-10-21 at 16:31 +0800, Donglin Peng wrote:
-> > On Tue, Oct 21, 2025 at 9:06=E2=80=AFAM Eduard Zingerman <eddyz87@gmail=
-.com> wrote:
-> > >
-> > > On Mon, 2025-10-20 at 17:39 +0800, Donglin Peng wrote:
-> > > > Change btf_find_by_name_kind() to search the local BTF first,
-> > > > then fall back to the base BTF. This can skip traversing the large
-> > > > vmlinux BTF when the target type resides in a kernel module's BTF,
-> > > > thereby significantly improving lookup performance.
-> > > >
-> > > > In a test searching for the btf_type of function ext2_new_inode
-> > > > located in the ext2 kernel module:
-> > > >
-> > > > Before: 408631 ns
-> > > > After:     499 ns
-> > > >
-> > > > Performance improvement: ~819x faster
-> > >
-> > > [...]
-> > >
-> > > > ---
-> > >
-> > > The flip makes sense, but are we sure that there are no implicit
-> > > expectations to return base type in case of a name conflict?
-> > >
-> > > E.g. kernel/bpf/btf.c:btf_parse_struct_metas() takes a pointer to
-> > > `btf` instance and looks for types in alloc_obj_fields array by name
-> > > (e.g. "bpf_spin_lock"). This will get confused if module declares a
-> > > type with the same name. Probably not a problem in this particular
-> > > case, but did you inspect other uses?
-> >
-> > Thank you for pointing this out. I haven't checked other use cases yet,
-> > and you're right that this could indeed become a real issue if there ar=
-e
-> > name conflicts between local and base types. It seems difficult to
-> > prevent this behavior entirely. Do you have any suggestions on how we
-> > should handle such potential conflicts?
->
-> What are the results of the above benchmark after sorting?
-> If things are fast enough we might not need to do this change.
-> Otherwise, each call to btf_find_by_name_kind() should be
-> inspected. If necessary new APIs can be added to search only in
-> vmlinux, or only in program, or only in module BTF.
+In sprd_clk_init(), when devm_clk_get() returns -EPROBE_DEFER
+for either uart or source clock, we should propagate the
+error instead of just warning and continuing with NULL clocks.
 
-Thanks for the suggestion. I'll run some benchmarks and share my findings.
+Currently the driver only emits a warning when clock acquisition
+fails and proceeds with NULL clock pointers. This can lead to
+issues later when the clocks are actually needed. More importantly,
+when the clock provider is not ready yet and returns -EPROBE_DEFER,
+we should return this error to allow deferred probing.
+
+This change adds explicit checks for -EPROBE_DEFER after both:
+1. devm_clk_get(uport->dev, uart)
+2. devm_clk_get(uport->dev, source)
+
+When -EPROBE_DEFER is encountered, the function now returns
+-EPROBE_DEFER to let the driver framework retry probing
+later when the clock dependencies are resolved.
+
+Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+---
+ drivers/tty/serial/sprd_serial.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
+index 8c9366321f8e..092755f35683 100644
+--- a/drivers/tty/serial/sprd_serial.c
++++ b/drivers/tty/serial/sprd_serial.c
+@@ -1133,6 +1133,9 @@ static int sprd_clk_init(struct uart_port *uport)
+ 
+ 	clk_uart = devm_clk_get(uport->dev, "uart");
+ 	if (IS_ERR(clk_uart)) {
++		if (PTR_ERR(clk_uart) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++
+ 		dev_warn(uport->dev, "uart%d can't get uart clock\n",
+ 			 uport->line);
+ 		clk_uart = NULL;
+@@ -1140,6 +1143,9 @@ static int sprd_clk_init(struct uart_port *uport)
+ 
+ 	clk_parent = devm_clk_get(uport->dev, "source");
+ 	if (IS_ERR(clk_parent)) {
++		if (PTR_ERR(clk_parent) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++
+ 		dev_warn(uport->dev, "uart%d can't get source clock\n",
+ 			 uport->line);
+ 		clk_parent = NULL;
+-- 
+2.34.1
+
 
