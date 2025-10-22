@@ -1,137 +1,187 @@
-Return-Path: <linux-kernel+bounces-865022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EE3BFC065
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:09:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12075BFC06E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9873B188B01D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:06:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF5F1189E7A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEB5355813;
-	Wed, 22 Oct 2025 12:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8CE34B676;
+	Wed, 22 Oct 2025 12:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGF9O2Ow"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="leYxFwf4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aNinvXYR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B89D34A784
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF7432E6B6;
+	Wed, 22 Oct 2025 12:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137767; cv=none; b=aEk8c+F8McGSDreRubvWbMaRBDpu4tmLaB6O7mAjlHMNGdcCc+jaPW3T3Y/wBr58pYrZfSOXy5ZVhk8BmCojzS5v9aXszxcQ8FcJRQySg7ZpUX0v04MHzSx3FztGD/LnnXnXDI8gPna6Pb5zArIq0ZW1X6pdlSRApkf4ThlWph8=
+	t=1761137852; cv=none; b=pAz9JYTH1wS79RfDBcTqTMFZifXJVFMeUvjqNyCLD5+TId0uEQpY5gvlRaT2MOtxOyoaVgJyAaAceiU2CHB62fjdQdbCunZT0TA1Xt5x2Y1wUoALooY/tEXX7hmRb+4yTg5pep45ajoNkL5qtvfNkFq5L1kzUDUOCqw6wYznaAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137767; c=relaxed/simple;
-	bh=55Djqf35I/K3RxxLzdcQP6qMdW/uYAdfSQFf+LthStU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oThAGo0GZxr8OlgOeawSXQhILjnQwDxBJYUaliyAvE/3KXvcJsaenXvFRHOr1PW+jeFBECDnuNmRI7/ZMVMocCMnd5pfHsgLswZDtO8DRDeYpajuwpZaWbGe4c8bWK4XuPCwyKndl6O+9qfIf9gTkgpvlcMmhOfgcLPAlRbz4zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGF9O2Ow; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b67684e2904so4832642a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761137765; x=1761742565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=55Djqf35I/K3RxxLzdcQP6qMdW/uYAdfSQFf+LthStU=;
-        b=BGF9O2OwETToO33KLhtkS4GfP1axe7S3jilxDDoEbVe5mh1qiMKOedeftrQgdl/qKK
-         4KULqF7CSImOTz8PjMH7joKKyO1lkQnZM6dzAnIBX/H54V0c5FfYCq7F8pO53cvVSzWZ
-         k+ZH+MUzc/w5zftoKuM4FCm1w3Wgu3/eslyrv8ihLV/Gvm6iQ0NMI9dDf+iNcQnUlYhf
-         WiREEhy2cB+Hnt/dqS9qmrna+q9to2jjn8X7kNjUeBcsAu2vBaIAXozsoIHVnCClhL2R
-         oAV+NuNIsQ1pP6kgei0r30PnzVyYElvCD51w6vOLHCKRH90eWUKV9lE8FzXe8p6GaH81
-         nHkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761137765; x=1761742565;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=55Djqf35I/K3RxxLzdcQP6qMdW/uYAdfSQFf+LthStU=;
-        b=TNytVd7gRKAwoy/18wkDdnXH/qqHLdyIOvxt2pY2SnoHN5VcE6obdO9v7IOK1BT0wR
-         40Iq0VIE3fdbIPRucd2oX3f8i2jfWJaIYvDEGz9D28ZEqLV73ACQuz9Xxu1Zxq/QpUpV
-         513nyx1x7skLW06/JS+GBzD4F/YogQ+B+pG96s6uyR2/dtlaBPcfzSCdcifqnD2ngsTd
-         g45dxkpwaOzuIh7KLkRRLhFSLjlTA1mX3RLMrf3XqkjpErQ9/DP1Yh3wSYciPPECBDAg
-         2ECEVUHHNnCk7zDimIWmAbym+ZSs3gX/wHS/Q0FZDOVNzihnJcN0x0JXyB7cfmuoGBmm
-         llZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwV5R1WhhXssQiJTJnGI6wW9UkaLFNyYdkluEyiJrQTu3y9+FUKUQM5pd62u/+tr3Km9XkUE5HP6Zl8jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyky/mH64y12yXIxQ8h9qUcvA6kWZlA2us+cqUaDmeikbXGZAlo
-	+7wJMNNe8nyWT7cQ1cB9nadD4PlGM4nh38Eahc4xenO4V4HzbwKXw3La
-X-Gm-Gg: ASbGncuFmMhLcSUjCNVmTKXrYrrX+fD1+M31npgw68sHm2euscSaDeQmWglcHIr3fvC
-	Nw6YaXO6mYnbcPQOeeIWv3dpAXyz5rOyknol3lOMUeFAmKMht2DRpKI1UIwEV3xDyZCf+/QU5XM
-	U69fVhmoZgOo/S5TKJv3Ael+WZtyrZPRG/HcsL241/5+A2PVURmhvbKeLZOuvrO+5BOlczUr3CM
-	k/m1+XSKEhpkU73VRJOht/uGQDkvKQmT+H0WPXNZoRlhxAEYouVL7YwxBuid75B3S/wabJPfXRl
-	mHRXhkGwlrKQhqpO1RJ80RP1g8zxyKj8OHz2VKkgMUuLNoopXLRzw2z73yMAHbnhG2pwc1T+2Fd
-	SbTVxCzvFBNyvL7M+9WvHU6kEBWPLaChxOxfpUQtq1AWO/ShmsUSr7y3ylMq5POlTgfXvavN3NE
-	cWJiLdw8kz389hAw==
-X-Google-Smtp-Source: AGHT+IFAbriApVOx8o8gcjpfk2lo+t2/yibaJf5nwAMFzyuHbx4XWsOEML5CUbO64FfcWtaVnEq9gQ==
-X-Received: by 2002:a17:902:f78f:b0:290:af0e:1183 with SMTP id d9443c01a7336-290cb65c5e7mr213748355ad.51.1761137764590;
-        Wed, 22 Oct 2025 05:56:04 -0700 (PDT)
-Received: from [172.20.10.5] ([117.20.154.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29247218eafsm137558455ad.101.2025.10.22.05.55.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 05:56:03 -0700 (PDT)
-Message-ID: <8764fe64-d896-460e-8e0c-cd81667c57b9@gmail.com>
-Date: Wed, 22 Oct 2025 20:55:55 +0800
+	s=arc-20240116; t=1761137852; c=relaxed/simple;
+	bh=uU+yJJdN7UX2rf6FgcUo6WL4cDe0hH4Kc512BII8mY4=;
+	h=Message-ID:From:To:Subject:cc:Date; b=e29EAjRBquJf4faWKMGQOEbN6ZLV/SfsLsuG348vjuUkGtvPlkKridCAHWv30s54cX40kwWJ2YRgHJqO7FAUJbpKviav+/2x4sFQ96PwYNmsBezsD++1WYa/HlH47T/PbuNbZuqE4rDzqYzvU8Py+hI/aY30vUBtFNmsZ7gDrGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=leYxFwf4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aNinvXYR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20251022110646.839870156@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761137848;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=wwHQlPNeKtHr3D+/0q7R8scym6snVoGqSI2dxv8wiUc=;
+	b=leYxFwf4kfbiztmW0DrAGVTWU7cLBTCU7XkKkbl4CXoxyJEExJtVvgbzkiZjzJvVHrao6a
+	5zu9fb0Ai0FfQo1iDxerT/5KBFJm71JGqG+cHWt9e50j2UCNEBixAgk4ShEaXdQf74+D2I
+	HEPLEJ0boWxmMe/RcvXIBW4p+vWF6nG+U1n71n8ornruYtE0CnPW92PS2PXoPTqy7n2R9S
+	8ys4vWkexPyQ/Qn5jlH3DZ6XV99uZ04bGG8WJ4CQIQAvX/8dUu310o05iTH4nmtmMpFTk5
+	Bwg/629HGYSlEg3N3S6z7oYMElUBdmlPMzD9sBmFUUIpNMgezmHPc3IDt4dzWQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761137848;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=wwHQlPNeKtHr3D+/0q7R8scym6snVoGqSI2dxv8wiUc=;
+	b=aNinvXYR1fWujSkIVzI/5iEuBvBx9pCOsf11X+r+ybJ1U3p4+w/quz0IZNjqF/mWpME6P4
+	fEK28xSwsODpgEAw==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Subject: [patch V2 00/12] rseq: Implement time slice extension mechanism
+cc: Peter Zilstra <peterz@infradead.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+Date: Wed, 22 Oct 2025 14:57:28 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v1 1/2] bpf: Add kfuncs for detecting execution
- context
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251022113412.352307-1-jiayuan.chen@linux.dev>
- <20251022113412.352307-2-jiayuan.chen@linux.dev>
-Content-Language: en-US
-From: Leon Hwang <hffilwlqm@gmail.com>
-In-Reply-To: <20251022113412.352307-2-jiayuan.chen@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+
+This is a follow up on the V1 version:
+
+     https://lore.kernel.org/20250908225709.144709889@linutronix.de
+
+Time slice extensions are an attempt to provide opportunistic priority
+ceiling without the overhead of an actual priority ceiling protocol, but
+also without the guarantees such a protocol provides.
+
+The intent is to avoid situations where a user space thread is interrupted
+in a critical section and scheduled out, while holding a resource on which
+the preempting thread or other threads in the system might block on. That
+obviously prevents those threads from making progress in the worst case for
+at least a full time slice. Especially in the context of user space
+spinlocks, which are a patently bad idea to begin with, but that's also
+true for other mechanisms.
+
+This series uses the existing RSEQ user memory to implement it.
+
+Changes vs. V1:
+
+   - Rebase on the newest RSEQ and uaccess changes
+
+   - Use seperate bytes for request and grant and lift the atomic operation
+     requirement for user space - Mathieu
+
+   - Kconfig indentation, fix typos and expressions - Randy
+
+   - Provide an extra stub for the !RSEQ case - Prateek
+
+   - Use the proper name in sys_ni.c and add comment - Prateek
+
+   - Return 1 from __setup() - Prateek
 
 
+The uaccess and RSEQ modifications on which this series is based can be
+found here:
 
-On 2025/10/22 19:33, Jiayuan Chen wrote:
-> This path introduces several kfuncs to help BPF programs determine their
-> current execution context. When hooking functions for statistics, we often
-> need to use current->comm to get the process name.
->
-> However, these hooked functions can be called from either process context
-> or interrupt context. When called from interrupt context, the current we
-> obtain may refer to the process that was interrupted, which may not be
-> what we need.
->
-> These new kfuncs expose APIs that allow users to determine the actual
-> execution context.
+    https://lore.kernel.org/20251022104005.907410538@linutronix.de/
 
-Hi Jiayuan,
+and in git:
 
-Rather than introducing multiple kfuncs to determine the current
-execution context, this can already be achieved by using the
-'bpf_this_cpu_ptr()' helper to read the underlying preemption count.
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/cid
 
-Please refer to my earlier patch,
-"selftests/bpf: Introduce experimental bpf_in_interrupt()"[1], which
-demonstrates this approach.
+For your convenience all of it is also available as a conglomerate from
+git:
 
-Links:
-[1] https://lore.kernel.org/bpf/20250903140438.59517-1-leon.hwang@linux.dev/
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/slice
 
 Thanks,
-Leon
 
-[...]
+	tglx
+---
+Peter Zilstra (1):
+      sched: Provide and use set_need_resched_current()
+
+Thomas Gleixner (11):
+      rseq: Add fields and constants for time slice extension
+      rseq: Provide static branch for time slice extensions
+      rseq: Add statistics for time slice extensions
+      rseq: Add prctl() to enable time slice extensions
+      rseq: Implement sys_rseq_slice_yield()
+      rseq: Implement syscall entry work for time slice extensions
+      rseq: Implement time slice extension enforcement timer
+      rseq: Reset slice extension when scheduled
+      rseq: Implement rseq_grant_slice_extension()
+      entry: Hook up rseq time slice extension
+      selftests/rseq: Implement time slice extension test
+
+ Documentation/userspace-api/index.rst       |    1 
+ Documentation/userspace-api/rseq.rst        |  118 ++++++++++
+ arch/alpha/kernel/syscalls/syscall.tbl      |    1 
+ arch/arm/tools/syscall.tbl                  |    1 
+ arch/arm64/tools/syscall_32.tbl             |    1 
+ arch/m68k/kernel/syscalls/syscall.tbl       |    1 
+ arch/microblaze/kernel/syscalls/syscall.tbl |    1 
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 
+ arch/parisc/kernel/syscalls/syscall.tbl     |    1 
+ arch/powerpc/kernel/syscalls/syscall.tbl    |    1 
+ arch/s390/kernel/syscalls/syscall.tbl       |    1 
+ arch/s390/mm/pfault.c                       |    3 
+ arch/sh/kernel/syscalls/syscall.tbl         |    1 
+ arch/sparc/kernel/syscalls/syscall.tbl      |    1 
+ arch/x86/entry/syscalls/syscall_32.tbl      |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl      |    1 
+ arch/xtensa/kernel/syscalls/syscall.tbl     |    1 
+ include/linux/entry-common.h                |    2 
+ include/linux/rseq.h                        |   11 +
+ include/linux/rseq_entry.h                  |  190 ++++++++++++++++-
+ include/linux/rseq_types.h                  |   28 ++
+ include/linux/sched.h                       |    7 
+ include/linux/syscalls.h                    |    1 
+ include/linux/thread_info.h                 |   16 -
+ include/uapi/asm-generic/unistd.h           |    5 
+ include/uapi/linux/prctl.h                  |   10 
+ include/uapi/linux/rseq.h                   |   38 +++
+ init/Kconfig                                |   12 +
+ kernel/entry/common.c                       |   14 +
+ kernel/entry/syscall-common.c               |   11 -
+ kernel/rcu/tiny.c                           |    8 
+ kernel/rcu/tree.c                           |   14 -
+ kernel/rcu/tree_exp.h                       |    3 
+ kernel/rcu/tree_plugin.h                    |    9 
+ kernel/rcu/tree_stall.h                     |    3 
+ kernel/rseq.c                               |  304 ++++++++++++++++++++++++++++
+ kernel/sys.c                                |    6 
+ kernel/sys_ni.c                             |    1 
+ scripts/syscall.tbl                         |    1 
+ tools/testing/selftests/rseq/.gitignore     |    1 
+ tools/testing/selftests/rseq/Makefile       |    5 
+ tools/testing/selftests/rseq/rseq-abi.h     |   27 ++
+ tools/testing/selftests/rseq/slice_test.c   |  198 ++++++++++++++++++
+ 45 files changed, 1011 insertions(+), 52 deletions(-)
+
 
