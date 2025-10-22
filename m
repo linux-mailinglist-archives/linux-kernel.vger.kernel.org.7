@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-865219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5BDBFCA11
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:46:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7073BFC875
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86098624B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:29:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C8A04E150D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FE934CFB3;
-	Wed, 22 Oct 2025 14:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C269A34D901;
+	Wed, 22 Oct 2025 14:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W+uMC0i8"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="QJVVHnS5"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463D434CFB0;
-	Wed, 22 Oct 2025 14:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BC134D4E8
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761143062; cv=none; b=nsUNSdGhgUWoJBSU/ZGiW3xt96brO95/H/BOyzaTto79kSmr8JyzjATjyGyDzFWCcXpNrInnmnB2+Mbu/n7u2VULrlbauog4+mSzm6kQYO2PLAWbkMSSo/cpje8WCaEaC88jgKN7knTzw37zwYB8IDDaGM8vA0XtHfmk3pD5738=
+	t=1761143109; cv=none; b=RFy5zFfexCPIoGjE8Fd64v/8dZPYbWLDHaqBmtEwimk+l7u+9udXqQd3r0QI4/MM5M7Bz/mZiEKrMvrWh6A2lw9162Kzd/G3s76AJ10Rmm0aCRxW09Xd/lP0XlfGKQnBxtEUl7nIs/EyatoTFTajrxyL5+8Fz/C3n8ExFVS1Va0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761143062; c=relaxed/simple;
-	bh=H228bBJrkQxEoiNZc6XQYVYrYA5oeSdH6yGkyWFKcP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S20dy/6v2VSzUBbGA3VYahIsUmucSyHhgCKVvQxa0Cx7FamiazQNJH9Rw7KdbT+tgHeEcC8Q+SwtRLy3n3B3Q7CKp8KBSlOKhEZQqjduC/MfgGuEihv7NkiXniSCXmvB62BpfziOsf4WMPpRoEPEckT18R/ZgFR57yyLIoaYO+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W+uMC0i8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dctXkstECTenaZhiUiTAEPs/+u3lBJ+4oLit/DWtNCs=; b=W+uMC0i8lkaiKuhkl8eUM+csMP
-	zH9Alfil/ggkWS+mff98nPo9bDIMkuW8K5C5+KY2e8934/ExnLSA4XSDvs16qF9TmynNu52oe7tVO
-	alhtY8gr8526Ul/GMwiNjT57GxRn6C1/yPzHIibpvNmoPRJeplLP1368i919MkX3vMD0TfWO58XqB
-	EaUXdGG6nfjfQNZR1hVFszBgQD2CFgdZfn+DgZnjBkiVlcKh5kkIe9C65p09XP2z5JubaB3DW+xwx
-	QnSnO4coWaBJMspnjlZNpjlij/u6mnQPePfu4Nb2uYSAp9cc5ZSqjPHhLdI24izWy1wkOQRbI8Bdl
-	/7A8lvtg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBZkt-00000007mfm-1HRN;
-	Wed, 22 Oct 2025 14:24:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 542B830039F; Wed, 22 Oct 2025 16:23:59 +0200 (CEST)
-Date: Wed, 22 Oct 2025 16:23:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V4 07/12] uaccess: Provide scoped user access regions
-Message-ID: <20251022142359.GQ4067720@noisy.programming.kicks-ass.net>
-References: <20251022102427.400699796@linutronix.de>
- <20251022103112.294959046@linutronix.de>
- <20251022152006.4d461c8b@pumpkin>
+	s=arc-20240116; t=1761143109; c=relaxed/simple;
+	bh=MjgHzsGA+WKFYBJMcOubn2pYaMOqdZc+DCEBUL2CsWA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W7go+fhVkalVhRazhXBmJoJosdoJEU+qEVmai8p44h2mq9i7mUh19pbMvExHUX9mg4chBWDGreovHSHBhMRi5duoUMdC0PGMUTnZ5sDT6XtukSQ4aFPifUJxZQ5jFDek9BaXY0/JW7kY0qLzqajE0D7HXTt7sxqNnWVYY9nSxvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=QJVVHnS5; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59M56XcC1667206
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:25:04 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=yuwdSWCyrURvkAB0e1mP
+	UZf2LmUqrOdvgVebOzznUKQ=; b=QJVVHnS5JkvHuYL8s83xtYm3IJWhE/Ftm12S
+	tDDyev1O9nuNK8DP0ZH1n6HSSXuxwMqmbA5zr8IXSSfte6HOVB0QUhTO1fPuW4q6
+	SPM8HgqyWH+zoQxabQZNCDv0J0WGC1O1FtXE/qL1qlvepxDHysNlKV+URnzeQ8V8
+	0ZM0ge8R35vCnW8m79/811RDZQxVjqwUJ63TFvw0H+c+UFwNo/nx1c6uzeOFb6Mu
+	FCupVh+26XDE3slQMlNZPcQBIvFi8N6dXR0cI5S9Nomifnv0M4yZCbW+SkSK93lE
+	PIPu+1oXSdmMQU3XQ0iMazIYnakRcMEHy0ToVUaMkEisFmXihg==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49xrtrbbcm-13
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:25:03 -0700 (PDT)
+Received: from twshared71707.17.frc2.facebook.com (2620:10d:c0a8:1b::8e35) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Wed, 22 Oct 2025 14:24:57 +0000
+Received: by devgpu012.nha5.facebook.com (Postfix, from userid 23751)
+	id 49A9458E123; Wed, 22 Oct 2025 07:24:54 -0700 (PDT)
+Date: Wed, 22 Oct 2025 07:24:54 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+CC: Alex Williamson <alex.williamson@redhat.com>,
+        Jason Gunthorpe
+	<jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] vfio/type1: handle DMA map/unmap up to the
+ addressable limit
+Message-ID: <aPjpNh/f8n9yYk/U@devgpu012.nha5.facebook.com>
+References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
+ <20251012-fix-unmap-v4-3-9eefc90ed14c@fb.com>
+ <87d60dcd-972c-4ab6-aa6c-0d912a792345@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251022152006.4d461c8b@pumpkin>
+In-Reply-To: <87d60dcd-972c-4ab6-aa6c-0d912a792345@oracle.com>
+X-FB-Internal: Safe
+X-Proofpoint-GUID: 8847TEJuw6z3nlGu7K_OO2vY0MuxS_q4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDExOCBTYWx0ZWRfX8Yfgb0+okT7G
+ dBN2qt/vDQjnKmzZDyozuxdYvvHrTerYCZOL+hJVfAPueDNlnFr4erLYZaZ/HoJFzGKS0POfNsg
+ vzw5EkQAp/Uy+fu5WOhgEg39WhI96wxFuS+gMJsS0/lijxgqSbO0X0ICCSn71F9O+MNhIqjHQmk
+ Jj+s3D4Fje/oiK48ntrmBhTcWXAgU0RJA9ebHTOmk5x2QQshW2gWaC4I5Y7DJ1l0eaCk1jVbn85
+ 1qKu89Y4ogGDi6YB2kR8gmA4nT7apHQr/AT2PL+Np2t538dyK0rJs95Zw3c8oTu0cU1pHdCPA4T
+ X0JececKdDgRlrlf59p9b0H3d/T2vYpCiRWxpxEiPxfgeOF5UalWT+vdE+NkvwCRjUp77FqY5Mf
+ IxQAUbELj1MTVFd4RyprCMH9r6qbQg==
+X-Authority-Analysis: v=2.4 cv=CZMFJbrl c=1 sm=1 tr=0 ts=68f8e940 cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=7wtgGtFo6pcdWUsKYVMA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: 8847TEJuw6z3nlGu7K_OO2vY0MuxS_q4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_06,2025-10-13_01,2025-03-28_01
 
-On Wed, Oct 22, 2025 at 03:20:06PM +0100, David Laight wrote:
+On Tue, Oct 21, 2025 at 06:18:00PM -0400, Alejandro Jimenez wrote:
+> @@ -210,11 +215,13 @@ static void vfio_link_dma(struct vfio_iommu *iommu, struct vfio_dma *new)
+> >   	struct rb_node **link = &iommu->dma_list.rb_node, *parent = NULL;
+> >   	struct vfio_dma *dma;
+> > +	WARN_ON(new->size != 0);
+> > +
+> >   	while (*link) {
+> >   		parent = *link;
+> >   		dma = rb_entry(parent, struct vfio_dma, node);
+> > -		if (new->iova + new->size <= dma->iova)
+> > +		if (new->iova <= dma->iova)
+> It is possible I missed a previous thread where this was already discussed,
+> but why are we adding this new restriction that vfio_link_dma() will
+> _always_ be called with dma->size = 0? I know it is the case now, but is
+> there a reason why future code could not try to insert a non-zero sized
+> node?
 
-> I think that 'feature' should be marked as a 'bug', consider code like:
-> 	for (; len >= sizeof (*uaddr); uaddr++; len -= sizeof (*uaddr)) {
-> 		scoped_user_read_access(uaddr, Efault) {
-> 			int frag_len;
-> 			unsafe_get_user(frag_len, &uaddr->len, Efault);
-> 			if (!frag_len)
-> 				break;
-> 			...
-> 		}
-> 		...
-> 	}
-> 
+Perhaps the WARN_ON is too coddlesome, but given that this helper is used for
+exactly one purpose today, the intent is to strongly hint to a future user to
+consider what they're doing by deviating from the current usage.
 
-All the scoped_* () things are for loops. break is a valid way to
-terminate them. 
+iommu->dma_list's invariant is that all elems should have non-overlapping iova
+ranges, which is currently enforced pre-insertion in vfio_dma_do_map by the
+vfio_find_dma check. After vfio_pin_map_dma returns, either the vfio_dma has
+been grown to its full size, or has been removed from iommu->dma_list on error
+via vfio_remove_dma.
+
+> I thought it would be more fitting to add overflow protection here too, as
+> it is done for other code paths in the file? I know the WARN_ON() above will
+> make us aware if there is ever another caller that attempts to use size !=0,
+> so this is more of a nit about consistency than a concern about correctness.
+
+The other code paths which check for overflow focus on sanitizing args at
+the vfio_iommu_driver_ops boundary. Since this helper is downstream from those
+existing checks, and given its specificity, I'm not sure additional checks here
+would be helpful.
 
