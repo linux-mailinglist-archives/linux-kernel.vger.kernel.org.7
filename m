@@ -1,104 +1,79 @@
-Return-Path: <linux-kernel+bounces-864691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89B7BFB598
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:14:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08140BFB5A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF62A581568
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:14:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96DD6504063
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEF931B810;
-	Wed, 22 Oct 2025 10:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFXjCo9z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECA2280332;
+	Wed, 22 Oct 2025 10:14:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B70313E37
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9EE31B133;
+	Wed, 22 Oct 2025 10:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128065; cv=none; b=AMm/AvgrmYOJIq/MfP6kkmJbQui7R5Tzb4djG1Xp6Tb0ayn02IzOjAYUjGCLgTEBghckO2HXdVrYCUxIHcLYkdJKhZJ7izTFh0piKQpJf7aBEjTAae5tPe6+O+ZPHD3ZnGynU98MgM1gtW56p1igRp9Va9L4u6r9hDGKTR97aWs=
+	t=1761128074; cv=none; b=DUsutw7SnOOmDUswKHiCuDLuQ0y+PfQzKeMeY4OZvxH453WAjJiKkiVT3UWTo6tJd6Wy9TtUIlgyiX6mSde3n5icrO39ZlswGyna68CQcaYOVZLQmbIwoc8hqmkrJnE9GsHEOhnEZAYiTGNW22wHpqIctWGv+bJ6ksv3dvfzeg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128065; c=relaxed/simple;
-	bh=BksiNg7tpyriGQ1hysmu056HRi6UuHZRkqrmwRvyfJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RxFWAA61UCvFNibO7G7E0PPzijjhGQhXMSHPWeQRHc7BRSoLk1iNLyDCprIoRzFsxKVd3D5gRnDEdjA8C97+u4oKy9e0ijnVToqlQ8CIIdPG27AMB1wzMtJV6jzZaOJmG+VmQy7iGOLt1uAtM5arTErHcqWApMtsiLTnGmXvFp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFXjCo9z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D89ECC4CEE7
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761128064;
-	bh=BksiNg7tpyriGQ1hysmu056HRi6UuHZRkqrmwRvyfJk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MFXjCo9zcnJWPm3i/uME/Gos6Kai5pOUtMmkZaCxIxH4f1G2iBNWO6BsteyH6XnGr
-	 4Zd90D2WOq3UrIzDnGJbyKY0uVCIqubFuVODaRpPtAkeHAAJ6guyVzzV+PSkBIh6nV
-	 CGRlEUSdJHnegkag5S2Q8n1D884BHBrlZpy2HLc4DpDdwmg/gr5CIevhsYFWNUIjVW
-	 zgNO7y35aGfa12tpEh2Rs78q1h4n0/bbmWAnmahO/cxQJh+1iUay2OwuY0G82vngzM
-	 96vZQ1/6qgpLFmEm6HnzdnnfwmliORhfR6i5038HTOM5kmzD1TuTpgn9l5GUmz1dWp
-	 o0yUB5Qj65/GQ==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-592ee9a16adso1106813e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:14:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXFnvT/vHHIIWSdkSzTmazPHrbSErsOM3K1PdIdKmUnDTvW+I434ubcdRzZjwgPliQs2w7sp6dQQYxcvlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmxxWlkYQod6tzjw/vUyAGffLNA8pBpR3JaHqzwyfTmSH0Bsk+
-	+hHI/JJp/9gJGKmwGs4Frc9BhyFc3eY66+js/d9zXHvTaOw7VZRPMdXxnxVIptxwMEena7njky+
-	H0t6+ubj/Vr6sG4XVFa1szLJYPFgzTeE=
-X-Google-Smtp-Source: AGHT+IG8iUUMQF0D5yVhMfUk3f49gl16EpRj2WucDueAbKHKmqKh7iUJiKFsggwb9AdxMipBw35mRZegqZ8u7W964wc=
-X-Received: by 2002:a05:6512:3d92:b0:57b:5794:ccda with SMTP id
- 2adb3069b0e04-591d84faa97mr5623451e87.20.1761128063284; Wed, 22 Oct 2025
- 03:14:23 -0700 (PDT)
+	s=arc-20240116; t=1761128074; c=relaxed/simple;
+	bh=jK9NHvFqOq8hS/pN8CgxIiiK2bTriD2UWN8zrHq+pEw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TfzmLxIT/rSb/shQv7fhQKwfjk604ebG7sPUfTSTON6NmTwsc5whmNYSL3hMYJXCagvje+59ZY38xUDa4fZXxnhgY2BvnOJAS7EhnDcG06T1faplHAsZTdum1tKyfBnV/GkL2kdjER4If/VKtMo5D33c2jIB4hzlXwxc04RPf/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cs4gF2PhWz6J7Z8;
+	Wed, 22 Oct 2025 18:10:49 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 321901402FE;
+	Wed, 22 Oct 2025 18:14:29 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 22 Oct
+ 2025 11:14:24 +0100
+Date: Wed, 22 Oct 2025 11:14:23 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Linux ACPI <linux-acpi@vger.kernel.org>, Linux PM
+	<linux-pm@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, LKML
+	<linux-kernel@vger.kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>, Frank
+ Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v3 2/2] ACPI: TAD: Improve runtime PM using guard macros
+Message-ID: <20251022111423.0000047d@huawei.com>
+In-Reply-To: <13881356.uLZWGnKmhe@rafael.j.wysocki>
+References: <4698369.LvFx2qVVIh@rafael.j.wysocki>
+	<13881356.uLZWGnKmhe@rafael.j.wysocki>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022033405.64761-1-ebiggers@kernel.org>
-In-Reply-To: <20251022033405.64761-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 22 Oct 2025 12:14:11 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEjihuC1Wa8fWUqsvsJM6YJZ0wmuhkqicNAfQiHvnWkYw@mail.gmail.com>
-X-Gm-Features: AS18NWBSXzD203ZzkosAKi9Rr6vw53-JkbJxJJd1qk8yGMrx1SL9k2NwvTwhKzM
-Message-ID: <CAMj1kXEjihuC1Wa8fWUqsvsJM6YJZ0wmuhkqicNAfQiHvnWkYw@mail.gmail.com>
-Subject: Re: [PATCH] lib/crypto: poly1305: Restore dependency of arch code on !KMSAN
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Pei Xiao <xiaopei01@kylinos.cn>, Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
-	syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, 22 Oct 2025 at 05:37, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Restore the dependency of the architecture-optimized Poly1305 code on
-> !KMSAN.  It was dropped by commit b646b782e522 ("lib/crypto: poly1305:
-> Consolidate into single module").
->
-> Unlike the other hash algorithms in lib/crypto/ (e.g., SHA-512), the way
-> the architecture-optimized Poly1305 code is integrated results in
-> assembly code initializing memory, for several different architectures.
-> Thus, it generates false positive KMSAN warnings.  These could be
-> suppressed with kmsan_unpoison_memory(), but it would be needed in quite
-> a few places.  For now let's just restore the dependency on !KMSAN.
->
-> Note: this should have been caught by running poly1305_kunit with
-> CONFIG_KMSAN=y, which I did.  However, due to an unrelated KMSAN bug
-> (https://lore.kernel.org/r/20251022030213.GA35717@sol/), KMSAN currently
-> isn't working reliably.  Thus, the warning wasn't noticed until later.
->
-> Fixes: b646b782e522 ("lib/crypto: poly1305: Consolidate into single module")
-> Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/r/68f6a48f.050a0220.91a22.0452.GAE@google.com/
-> Reported-by: Pei Xiao <xiaopei01@kylinos.cn>
-> Closes: https://lore.kernel.org/r/751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn/
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->  lib/crypto/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+On Tue, 21 Oct 2025 19:35:54 +0200
+"Rafael J. Wysocki" <rafael@kernel.org> wrote:
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Use guard pm_runtime_active_try to simplify runtime PM cleanup and
+> implement runtime resume error handling in multiple places.
+> 
+> Also use guard pm_runtime_noresume to simplify acpi_tad_remove().
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
 
