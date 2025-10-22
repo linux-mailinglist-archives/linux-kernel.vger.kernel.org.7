@@ -1,145 +1,179 @@
-Return-Path: <linux-kernel+bounces-864122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51264BF9F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:39:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB8EBF9F73
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107B33B040A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:39:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0180A3B2CF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E472C21D8;
-	Wed, 22 Oct 2025 04:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE122D7804;
+	Wed, 22 Oct 2025 04:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="SPurPWPG"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHY9UCsM"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B31B19DFA2
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5533B2D6E64
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761107988; cv=none; b=tRyOPqBVXPepMZ/qLysFUkh6koCZHUOl5hooN/L6nejMsE72NrXKCW4Hs1O4OQS3uKMMFzr6QID1qNdWzQGRQyYovwJtX8Nvj8Gu5JI95ZTCxKw9lW5FaHUSaDJ5y5+R7Zu9eT2fyTYx1jkNSuGJsTA/zg/mXRxfS7Seg31aEYg=
+	t=1761108002; cv=none; b=TXWhKfCQTK8MVBpRpPI46uIrhXKQs14xQWN/sfK7krrYPvcvuURHZUzwQPQzv5W3fWKgHREbqGK73KAPwm15R/FBIAMTOVClAAarPcRpVcb48uEO2cVNh2G9islMwkX36Fq2kQFhhHQQ04KC2KZMY5peeFGZ1AL7FJX5jTDuRYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761107988; c=relaxed/simple;
-	bh=Vaa8WDqiUIJ0pCd0KwULYla2oJbe1U4MWEx0if5guLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QK6/BQYrcfuAZN7r69oAoKd+YxSY2S97BWBwGR/s1+uVuF2a6Mov8JlzoH1bSiwEGot0megW8Fey9awuhwqw3N/bM9YR+5WfIR46I8RDPnT9iyJblbVtkcK9QYuDBJ0hbgpwnn/gDrkFlz5K0gYQQKVbJQoArqn79s6Bu6K4GGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=SPurPWPG; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1761107882;
-	bh=z3D6oLpRpC3uTJLuNajnamGCVKNxJO388PHfD5+0ZWM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=SPurPWPGk0RtUOk2yMXEJwXdtgahg869pn5+zOQQk81B9TJCwUqZ7PsvPJD2tDyE0
-	 zHANUqYljEgiojmDjDgD5GsntIb83bV9mvRhZrKnptn82xeIhrw8sFXQ6Mdbylyga8
-	 Zq/zQc5S5YZOV5YcDof/CKinaCYJ618huTgJS+dk=
-X-QQ-mid: zesmtpgz5t1761107875tc65f3677
-X-QQ-Originating-IP: zdumyoB0a58EQZUjbozu0JEFOJ2+w+6ADKhX/NG8DRQ=
-Received: from = ( [14.123.255.147])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 22 Oct 2025 12:37:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8598891312569528437
-EX-QQ-RecipientCnt: 8
-Date: Wed, 22 Oct 2025 12:37:53 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] mfd: simple-mfd-i2c: remove select I2C_K1
-Message-ID: <6DB8C5F20B3FAC2E+aPhfoRXlJtJymlB5@kernel.org>
-References: <20251022-p1-kconfig-fix-v1-1-c142d51e1b08@linux.spacemit.com>
- <965a6f1f-37de-4029-ba16-cfd2de7895ed@riscstar.com>
+	s=arc-20240116; t=1761108002; c=relaxed/simple;
+	bh=ld3/eNFPLY60lt+IfJihL1BDtR0im6CUyfF2eWumV4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C8WqnYJzRf5QcNFjW/LhO7G060iypfkP4HFhqBoVkphqqqPG6jWQGDzNo5y16V0XpXM8+Zjs/hk4DKYdr3K4E4t5108LzWYO5EoZe2fTTjK60GoMPXY060PpBy5Cy8Wc8dNi3oKCWujKabZBabT00FI2k308F8jlazQxeL7AcBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHY9UCsM; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63c4b5a1b70so8737233a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761107999; x=1761712799; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6gcIWpCfhJL6hBxoRz2avBVbdzuoekMr6bFmgI7HFrU=;
+        b=RHY9UCsMxS1Ca9btNKQSfC7ykasuymUnNiCO38Ppoo0U0n1cqtfLBkAcPSIVUcnwTy
+         3GwOhyh4XH3TiAfLPObiPMGSziQoIHybXSowXOIMGA5KnyBLtJ4Ummc7vMoosC2rceZo
+         EdlQ5xX3A098Esibbo5hVoUKG8AqPWRoxPJppopTvAK5/Vnu5O3dItpmnCKrhf2B/UXN
+         klzJfMsq/yc4s9jiaY+G2R4GTOIIGZtfodKmTvAPHWoWVb+KVqdu6FLqdJE1vJqqwcqE
+         iuiu+rX35b8ABzTP7stnsdr4IqJYTrbU5pNBDdoTKVtFVwjV2R/LzD0hNuv+y0+lnyJf
+         Z69g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761107999; x=1761712799;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6gcIWpCfhJL6hBxoRz2avBVbdzuoekMr6bFmgI7HFrU=;
+        b=NFw1/TDAPF00OZEgpWG5zHVzmLxqruC66DQeAw/bqX+ird/Al0uu9WbEgMr6+t7i5h
+         I12EkeGX4hOUKtQLHuijrdvP4sK6CIqP1T2iqsvnMXVMIGWIOnLQ1f25GP6XiiVIy0nK
+         GwoaAEgoj8/sB4MYO95U3c8UG3BzOA4R9syCS5ned/cHVji5e7Y8jCkBXoAIfsIBS1vp
+         PF7/TgRJSyXNVD5Mwed+tlRZpua7inzeIkK1kUWPiG7jFh8K8iiIyDO/q1w7/BZ+AoBG
+         Hy4e1dKZPu7oMY2DJl4QgJQ2FCGyyG9BlBGzUZdhJ2XUZMw/fJ/I6r58Am4U/Z3df9GJ
+         dzrw==
+X-Forwarded-Encrypted: i=1; AJvYcCV26Bfz6khvhlwvmYIw91RZfSNOU/D2KKLifYRjsfnHkhBhb04OvTP0jZvvk2TUd+7DV6/6HmIzigWSSYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIdMen0SgM7Od/I8p9LZwlwfA4xEiXVdluUDdapSJAFVyESjuP
+	plfhNOFzk3lQG2JE8zKh9J9hjJEVhacIwVKlrqK9bKv5svs7473pbxlOIgV1pPiYWYF6/fxSBY1
+	s2fQfdq9yY11+C9vQLPvP0+iMChDwwoA=
+X-Gm-Gg: ASbGncuXhMB5Pd0cLY6Ob+zkghSfLV40jIx3q5JUWiZiURX0Ljzq520Mjyt6YoNu25u
+	iioZcbEpurxVdIGGCd6sphH2Fy23/Rgr5XflkR+GCbLQQH2vYLL+AT0D28+lIgQB1RiSMPn68o3
+	2SMwYbKHbatjCPo5TOLm4TY4322rRFXWAZ+dTAfRf2TkuRLIFfTtG5vzegYc0X3LjBzIQrTeMCL
+	licA8WGUhGjluA7JwxHLHdnlG8ascW3WwuFsUhKSJfqZRBFSNzs5QmQEcvRsnww24U17WO+4lls
+	BMlBcHZeCqTxHyQ=
+X-Google-Smtp-Source: AGHT+IHSd/93IEd4Mf8dHK30aphVlqAdJCT0S+NEWOivhVENBOPgJ3/RAW4iofRgxNakg4DSTQa1CtVepWHOJJL4c04=
+X-Received: by 2002:a05:6402:1ed6:b0:637:dfb1:3395 with SMTP id
+ 4fb4d7f45d1cf-63c1f62ac10mr20025277a12.8.1761107998484; Tue, 21 Oct 2025
+ 21:39:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <965a6f1f-37de-4029-ba16-cfd2de7895ed@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MxRSPV+z0HAoL+RR1zvyJJ8B6cAaVV32hiYxdg+wKFb5tUhs1E/P49S0
-	bYt3vMXTh06xtXYdbLBBQ4Oq0hJulFhTMBW+OwvDFJycTredzhlKuC4uYEZK5HCWva0e8Q2
-	KmL4kNN0SDolZMlfJelJLjr0QqUbGdi0OYUuJhuaIyoaJR143YJG2FuQrWgoYd2CCH51XfA
-	LxeXky2IUoREeGoWgh66n9PvOeTkXfRWcy5373HpRtbwpnFngabDJfYi4ad4Qs0pFoopKtD
-	pT8G3c9mW3Ms0a5Z4bCmiXNiwR6Psr1MbsNf/aYac2peW1hxmEOuBvysCncJAhzVtyj3I5l
-	CbnIvvIXNootxREB/9Pyka5N8b1a9NRPrzokzvnx6SdOsu42hJeIjCl0ZwvJqbeOcZz/faG
-	pjDkw9vXMm48wvTm/wqKFpwT35N0P7G2X6rfcCa0UaA8FdtTDZQ4WhAKbotvyywaACLu6nJ
-	0xmvk8mmX6/2C7p9aJlD7+z4j1WYufqy/rtbBgVbS45CFe+cgImvmMywqENjEflsiJbQVOh
-	REYJEEadMoPJrF09KZYu8eSUCL+kL0RWsDi7AJk12gcabwHQsTtW805pNqxIYyj1SYjFa2x
-	F63/vTCWfNsJrtR6va8SMgmR07bf+AZXStmhKRRGX7IpUxib+iogLbqGLFFzDrFQj2ISQ0g
-	QDyXmqOIH4i79sd+yjoFjGBN4fuAqdZlxVh/Vut1Gt+ExXysUMru6J6tLXwkrk+yF50ZP5W
-	sOQphClz42QCG3LI2faoCVufGhYamVWd/bAV3FVKShQdsepm71YcaR2inzr8+0JSarStVri
-	blu4Mpfna+SiPNCPaThSeOBWBeBvqDy65CcTK9pE5JmSpoycQRi+JlFL+gBFDm4uA3w+xO3
-	tx8hV580ZLCdix0Rk00zOOPDvdPiiuTaIc3VSOz89k8Hkam9YjbFJXhoRDUXj1bcGedt+6j
-	0+Y4e8ptJRDZUAoGEllltqDoIbxyDZrh1UX85TLtNWRWGSjX3HclQq85kJr4ZdtqiypWyqo
-	Z7gciWsvYzB/OQPN+AW0pstK/ssNs+FTESK4kFGaBc/qQvNUTx1+msaOazkxavmhCp28wpi
-	Jkvp3IPG7k67sQ7oS+OuNR2KVWx7UXgxhnOA3yONPRgXTvjNk/ZRIeFwkC7Hh5UCCqi6gq5
-	VCkcCzKl6DmFamA=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+References: <20251017042312.1271322-1-alistair.francis@wdc.com>
+ <fe16288e-e3f2-4de3-838e-181bbb0ce3ee@suse.de> <CAKmqyKP0eB_WTZtMqtaNELPE4Bs9Ln-0U+_Oqk8fuJXTay_DPg@mail.gmail.com>
+ <ddadb1f6-d7e9-427d-baf7-814d2288a407@suse.de>
+In-Reply-To: <ddadb1f6-d7e9-427d-baf7-814d2288a407@suse.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Wed, 22 Oct 2025 14:39:32 +1000
+X-Gm-Features: AS18NWAoKKDrp8EpUQELmqxYplrpYxne55FmSrIQzh7JZ6Y-E7isTMxYgqwoeZA
+Message-ID: <CAKmqyKOcuUtiv_9g07+8fU7VdAdsKZ2ufAtgarSz=j9H1YP4dA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] nvme-tcp: Support receiving KeyUpdate requests
+To: Hannes Reinecke <hare@suse.de>
+Cc: chuck.lever@oracle.com, hare@kernel.org, 
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 11:30:37PM -0500, Alex Elder wrote:
-> On 10/21/25 8:58 PM, Troy Mitchell wrote:
-> > select will force a symbol to a specific value without considering
-> > its dependencies. As a result, the i2c-k1 driver will fail to build
-> > when OF or COMMON_CLK are disabled.
-> 
-> Should config I2C_K1 depend on COMMON_CLK then?
-Yes, this patch [1] registers the ILCR as a clock.
+On Tue, Oct 21, 2025 at 4:40=E2=80=AFPM Hannes Reinecke <hare@suse.de> wrot=
+e:
+>
+> On 10/21/25 03:01, Alistair Francis wrote:
+> > On Tue, Oct 21, 2025 at 3:46=E2=80=AFAM Hannes Reinecke <hare@suse.de> =
+wrote:
+> >>
+> >> On 10/17/25 06:23, alistair23@gmail.com wrote:
+> >>> From: Alistair Francis <alistair.francis@wdc.com>
+> >>>
+> >>> The TLS 1.3 specification allows the TLS client or server to send a
+> >>> KeyUpdate. This is generally used when the sequence is about to
+> >>> overflow or after a certain amount of bytes have been encrypted.
+> >>>
+> >>> The TLS spec doesn't mandate the conditions though, so a KeyUpdate
+> >>> can be sent by the TLS client or server at any time. This includes
+> >>> when running NVMe-OF over a TLS 1.3 connection.
+> >>>
+> >>> As such Linux should be able to handle a KeyUpdate event, as the
+> >>> other NVMe side could initiate a KeyUpdate.
+> >>>
+> >>> Upcoming WD NVMe-TCP hardware controllers implement TLS support
+> >>> and send KeyUpdate requests.
+> >>>
+> >>> This series builds on top of the existing TLS EKEYEXPIRED work,
+> >>> which already detects a KeyUpdate request. We can now pass that
+> >>> information up to the NVMe layer (target and host) and then pass
+> >>> it up to userspace.
+> >>>
+> >>> Userspace (ktls-utils) will need to save the connection state
+> >>> in the keyring during the initial handshake. The kernel then
+> >>> provides the key serial back to userspace when handling a
+> >>> KeyUpdate. Userspace can use this to restore the connection
+> >>> information and then update the keys, this final process
+> >>> is similar to the initial handshake.
+> >>>
+> >>
+> >> I am rather sceptical at the current tlshd implementation.
+> >> At which place do you update the sending keys?
+> >
+> > The sending keys are updated as part of gnutls_session_key_update().
+> >
+> > gnutls_session_key_update() calls update_sending_key() which updates
+> > the sending keys.
+> >
+> > The idea is that when the sequence number is about to overflow the
+> > kernel will request userspace to update the sending keys via the
+> > HANDSHAKE_KEY_UPDATE_TYPE_SEND key_update_type. Userspace updates the
+> > keys and initiates a KeyUpdate.
+> >
+> That's also what the spec says.
+> But in order to do that we would need to get hold of the sequence
+> number, which currently is internal to gnutls.
 
-> 
-> But you're right, the selecting config should ensure the
-> dependencies of the selected one are satisfied.
-And the config REGULATOR_SPACEMIT_P1 select MFD_SPACEMIT_P1(RTC same).
-Should we change it to depends on?
-> 
-> > The reason for removing I2C_K1 instead of adding a depends on condition
-> > is to keep the possibility for other SoCs to use this PMIC.
-> 
-> Acked-by: Alex Elder <elder@riscstar.com>
-Thanks.
+The sequence number is in the kernel. After the handshake the kernel
+takes over the TLS connection, so it's up to the kernel to detect a
+sequence number overflow. My sending KeyUpdate patches do this, but
+they aren't included in this series.
 
-                - Troy
-Link:
-https://lore.kernel.org/all/20251017-k1-i2c-ilcr-v4-1-eed4903ecdb9@linux.spacemit.com/ [1]
-> 
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202510211523.sSEVqPUQ-lkp@intel.com/
-> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > ---
-> >   drivers/mfd/Kconfig | 1 -
-> >   1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > index 6cec1858947bf7ab5ee78beb730c95dabcb43a98..ea367c7e97f116d7585411fff5ba6bcd36882524 100644
-> > --- a/drivers/mfd/Kconfig
-> > +++ b/drivers/mfd/Kconfig
-> > @@ -1258,7 +1258,6 @@ config MFD_SPACEMIT_P1
-> >   	tristate "SpacemiT P1 PMIC"
-> >   	depends on ARCH_SPACEMIT || COMPILE_TEST
-> >   	depends on I2C
-> > -	select I2C_K1
-> >   	select MFD_SIMPLE_MFD_I2C
-> >   	help
-> >   	  This option supports the I2C-based SpacemiT P1 PMIC, which
-> > 
-> > ---
-> > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> > change-id: 20251021-p1-kconfig-fix-6d2b59d03b8f
-> > 
-> > Best regards,
-> 
-> 
+> Can we extract it from the session information?
+
+gnutls can export the sequence number, but as above it doesn't
+actually know the correct value (after the handshake).
+
+> And can we display it in sysfs, to give users information
+> whether a KeyUpdate had happened?
+
+I don't think that's a good idea. Writing the sequence number to sysfs
+seems like extra overhead in the TLS fast path. On top of that I don't
+see why userspace cares or what it can do with the number
+
+Alistair
+
+>
+> Cheers,
+>
+> Hannes
+> --
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
+> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
