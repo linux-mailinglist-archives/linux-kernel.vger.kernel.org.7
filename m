@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-864827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56865BFBA20
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:25:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3A0BFBA3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89085649B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:24:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A5214EA399
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109993370F0;
-	Wed, 22 Oct 2025 11:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F80338938;
+	Wed, 22 Oct 2025 11:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fvhbRdIY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aq4Vbwk9"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCD933711B;
-	Wed, 22 Oct 2025 11:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455F1338924
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761132282; cv=none; b=ZDa9qhhO5sXGRJcQ9pQsCP6WqnWfU86J/kKVhGfP3gJTtCIXJruI53DFRgpwVgaY66zEUje1Opqn7PNTlW44ErlrsUKVyIkN4IsF96qpwt/L9aa9LP/G+3lP6ipazOfJtryX8GnnVYz3k3n0e3d/T+RlRwJWWQxTX76/wKmmahA=
+	t=1761132492; cv=none; b=T7t9ii6js3w2w7UVH1uky0C4cCJjwnc51Uzyd2/jbRz8nOAyVKyJyPdgx22XAQml5rP0kGW/+CvQqHdfkb/ucbkFpMjOyEAiSYiQn5xRTDUL2AjVzConjKV5Pxlo3nY31K12At8b+uItqm3pvKM3jfv2LP8fuSWZHscg3y14Mik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761132282; c=relaxed/simple;
-	bh=saJh2pYKcHbfNeU6j5aIeEhHMmEGD6ngNfMdHtFav24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gc2qrAAbdK+W3oNnl1VpJRh309/z2woDeJfe3Y2EpFGMizHkd81bRw29TnkTbd/OncOPpMeG1CzvsRwn+xCqmrbNdDvFtLUeX+cnxRsv+W/KVay4B2E83pr6OrMWxcYRh8NtjCT6bLB1vHtBPmcwoIsC68bfbskTCW5uPrfVAPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fvhbRdIY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Hx7IMRRxA9uFUyCzmuFFLeFf+897nJgZOnLj3popP8E=; b=fvhbRdIY1zIWUU8ihlkZOHEgnE
-	MzODHMfk/jyzVyCCcMqOwN9DM4KwxFu4JWrlgqIhMLgv+3iol/YUkza4iHE/THkZU1euUlpqKtVAn
-	dYBNjMS8/MY6P6DdoQWa5No2zJVd9VrmN5qher8vFYD+eL7tJ3hfxYluYLS8iB3UxTziwDCrNPRQL
-	PqLzEc8wIGsis2nfNHIHj8iupqVRbmIO6GY5+Azdgv8ymSlChPGG1DkFfdjqY2WmhQH0hVqLmZvol
-	bsD3P0ZFZcQ3l84sE91CXlk42UtZ+oaTjcN8HOEBk6LSKwGRwY5lWTeVze2gVoHisaqmyoh9i1dDH
-	MMN3IIBQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBWxE-000000043BQ-07IZ;
-	Wed, 22 Oct 2025 11:24:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BBDE63003C4; Wed, 22 Oct 2025 13:24:32 +0200 (CEST)
-Date: Wed, 22 Oct 2025 13:24:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
-	kernel test robot <oliver.sang@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: Re: [Patch v8 02/12] perf/x86/intel: Fix NULL event access and
- potential PEBS record loss
-Message-ID: <20251022112432.GN4067720@noisy.programming.kicks-ass.net>
-References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
- <20251015064422.47437-3-dapeng1.mi@linux.intel.com>
- <fcb09e14-970c-4ebd-82f2-a12150fe3708@linux.intel.com>
+	s=arc-20240116; t=1761132492; c=relaxed/simple;
+	bh=GeYp5ENRNtZGT10yPqhZlLkA5ANkd2KNx9IryLw5koY=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=k4y74pYGLiSJIvvXy0F3cClxpxleZjMTj0kxdfeQM0WpZup2DlBjBJsNvYC3DCkp7LNQOqkjQ9TZq8xX8a9TAXgYlbYQif01nJimJC9bv/LTy207gckKQQiUhQ/nkvzlU0FCZ/wqmukdrqwaE7bMlECYDNUlXPi58qJkwIZABaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aq4Vbwk9; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so84902335ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761132490; x=1761737290; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BqxPU3ybT0jcPtSpvtuctUbg2p7l0ybpoGGX4OXazrw=;
+        b=Aq4Vbwk9QcMPBwjRSfJ8fYXQwlFKWqKPBgHX+1pgX316vONZTB2U1oVm1owf7xvMwJ
+         rZ6ivxyMCC2ZFVG0QwHh+KkrYva1+zrR+gJdDY4n42TNqIcUlhV8dXxifBk2B+PEznpM
+         TcB7LXZNONQQCT1URzBH7Kgs9Kf38Ui7KKdk4MWaBf5IOz/E0R4qopDZEMpP+P4ekaTD
+         IY50LpsySBPp1JhAiWyvcP598uKZMQ7RYWGXQuIKZT9DWfLLhjt7gZjRLshYMu1YaZCe
+         8HAsy+B3fA8QXint2qjcSG0h2TmpD9SqFcXqoLw/bxKv72E77MgWBSDHrGOpRXqbrbpR
+         hs8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761132490; x=1761737290;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BqxPU3ybT0jcPtSpvtuctUbg2p7l0ybpoGGX4OXazrw=;
+        b=a80Bu1LcZPdZ1e31WJJg0ufqT5u13/FWh/oncNnEHh56WTWbkFajZANs4pCJXAG9Mw
+         dqVoMzYFWQSMEkZjDlFM2JjQY3wpLBgr4aPvtCY4yCoYAvSW0ukOwc6rMsVo14LJcfO/
+         q8Dm02xXlf1J0hGWAVnjs9kcEhRwNfykgaFBTQNN2rvA/xLBe3s4ws+1NmfFyKThYjAj
+         jJqKLX7b7V5y8QK6Ut8Z8wc2dq2AiCo55moJG0qmnuQkbtW2WAf3DGimjJy5/slfqB8t
+         57N6F2pBaN2Jcf1oGEi5p4thkZ9bJiHfwGz2vwkwFrYffObFfSsyharWevmXYGvfB7r3
+         4oEA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4qElS5nDbETiG4TdJZTYyjtvVP1mbTwoS//aOp7+Tmzs9qRlPa0uWmvgKizRj0iKKyPuPSLGr7CSTsHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfgX2BF3I4PHJFvLd81udNq8CXIgffWq9I+S1mx0UEyMot9fto
+	sAqIpsgtRuqwCRuWWIYy7aRpBUVLRCm0nYFc4KH3T6vPAbNEFt8sFEs4
+X-Gm-Gg: ASbGncvMz+1Z7yxBcBkm997ploOXxLb+AnyyniCM3oB5W+6usOUqavbeHuRX4YOEeaC
+	LncR4+T471ejIKl5/4+7BSLwxzgpuY28Z3PGnSu5rD4yxdL8uJMYCwKv3+y33lXyHCwRtG809nC
+	aeEYRZClHV7WF6kquSWR3YE2izMrcvCJ+e7lwfNOhNrABbRF6ou2fG568EtlOeRx7NS42CRUjDO
+	2RecAbjEVCRDVhw3HOcwJmNhKyS/7SGW+tjdiq7MBUH2I2nlnQWW8LjAZkP/K1GCccplLyLSYCt
+	dK23gTqF2NF8r0h6S9peAqh2CpWLTYGbVtA/ux3958hPirMU8daPmJlbMumJQPPYO8FWWxVla9E
+	biMnnjhf1miBf8dOxTOSXmke3zvAmwABm8O5VFk3hoYNCynNQaGjOtFBuRPm33Qjn+qxvEGZkua
+	7CmXV17VkXAsziPdUoq4PAdUXdLI1ZIUSctfpqEytPBmEZCf6oDizwHv02W/xG7cbM
+X-Google-Smtp-Source: AGHT+IHGaMtzm0oPfRLcVei5D22QVh6bUWN9a4cAiOtccRcsTBGutGIH9BwZOenuaOtlvKNrgysN9A==
+X-Received: by 2002:a17:903:138a:b0:290:26fb:2b91 with SMTP id d9443c01a7336-290c9bef53cmr248187565ad.0.1761132490409;
+        Wed, 22 Oct 2025 04:28:10 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29247219357sm135633135ad.111.2025.10.22.04.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 04:28:10 -0700 (PDT)
+Date: Wed, 22 Oct 2025 20:27:54 +0900 (JST)
+Message-Id: <20251022.202754.1583747778621840789.fujita.tomonori@gmail.com>
+To: dakr@kernel.org
+Cc: aliceryhl@google.com, fujita.tomonori@gmail.com,
+ daniel.almeida@collabora.com, a.hindborg@kernel.org,
+ alex.gaynor@gmail.com, ojeda@kernel.org, anna-maria@linutronix.de,
+ bjorn3_gh@protonmail.com, boqun.feng@gmail.com, frederic@kernel.org,
+ gary@garyguo.net, jstultz@google.com, linux-kernel@vger.kernel.org,
+ lossin@kernel.org, lyude@redhat.com, rust-for-linux@vger.kernel.org,
+ sboyd@kernel.org, tglx@linutronix.de, tmgross@umich.edu
+Subject: Re: [PATCH v2 2/2] rust: Add read_poll_count_atomic function
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <a5cca6ca-9147-4531-81d8-05af1333848b@kernel.org>
+References: <DDO06754OMN5.G0AN9OCWTFLW@kernel.org>
+	<aPeTFMeVoIuo8Lur@google.com>
+	<a5cca6ca-9147-4531-81d8-05af1333848b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fcb09e14-970c-4ebd-82f2-a12150fe3708@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 04:12:14PM +0800, Mi, Dapeng wrote:
+On Tue, 21 Oct 2025 18:02:39 +0200
+Danilo Krummrich <dakr@kernel.org> wrote:
 
-> Just think twice about this fix, it seems current fix is incomplete.
-> Besides the PEBS handler, the basic PMI handler could encounter same issue,
-> like the below code in handle_pmi_common(),
+> On 10/21/25 4:05 PM, Alice Ryhl wrote:
+>> On Tue, Oct 21, 2025 at 02:35:34PM +0200, Danilo Krummrich wrote:
+>>> Please replace the match statement with map().
+>>>
+>>> 	read_poll_count_atomic(
+>>> 	    ...
+>>> 	)
+>>> 	.map(|_| ())
+>>>
+>> 
+>> IMO, this should instead be:
+>> 
+>> 	read_poll_count_atomic(
+>> 	    ...
+>> 	)?
+>> 	Ok(())
 > 
->     for_each_set_bit(bit, (unsigned long *)&status, X86_PMC_IDX_MAX) {
->         struct perf_event *event = cpuc->events[bit];
->         u64 last_period;
+> I think map() has the advantage that it is a bit more explicit about the fact
+> that the return value is discarded intentionally.
 > 
->         handled++;
-> 
->         if (!test_bit(bit, cpuc->active_mask))
->             continue;
-> 
-> Although the NULL event would not be accessed by checking
-> the cpuc->active_mask, the potential overflow process of these NULL events
-> is skipped as well, it may cause data loss.
-> 
-> Moreover, current approach defines temporary variables to snapshot the
-> active events, the temporary variables may consume too much stack memory
-> (384 bytes).
-> 
-> So I enhance the fix as below. Do you have any comment on this? Thanks.
+> But I'm fine with either version.
 
-So I didn't like the previous and I like this even less. What about
-something like this instead?
+Then I'll go with 'Ok'.
 
-I quickly went through the cpuc->event[ users and they all either check
-active_mask or, in case of the PEBS stuff, check pebs_enabled mask
-(which should be a subset of active_mask).
-
-(the PEBS last case depends on count being 0 for all counters that are
-not set in pebs_enabled)
-
-WDYT?
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 745caa6c15a3..74479f9d6eed 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1344,6 +1344,7 @@ static void x86_pmu_enable(struct pmu *pmu)
- 				hwc->state |= PERF_HES_ARCH;
- 
- 			x86_pmu_stop(event, PERF_EF_UPDATE);
-+			cpuc->events[hwc->idx] = NULL;
- 		}
- 
- 		/*
-@@ -1365,6 +1366,7 @@ static void x86_pmu_enable(struct pmu *pmu)
- 			 * if cpuc->enabled = 0, then no wrmsr as
- 			 * per x86_pmu_enable_event()
- 			 */
-+			cpuc->events[hwc->idx] = event;
- 			x86_pmu_start(event, PERF_EF_RELOAD);
- 		}
- 		cpuc->n_added = 0;
-@@ -1531,7 +1533,6 @@ static void x86_pmu_start(struct perf_event *event, int flags)
- 
- 	event->hw.state = 0;
- 
--	cpuc->events[idx] = event;
- 	__set_bit(idx, cpuc->active_mask);
- 	static_call(x86_pmu_enable)(event);
- 	perf_event_update_userpage(event);
-@@ -1610,7 +1611,6 @@ void x86_pmu_stop(struct perf_event *event, int flags)
- 	if (test_bit(hwc->idx, cpuc->active_mask)) {
- 		static_call(x86_pmu_disable)(event);
- 		__clear_bit(hwc->idx, cpuc->active_mask);
--		cpuc->events[hwc->idx] = NULL;
- 		WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
- 		hwc->state |= PERF_HES_STOPPED;
- 	}
-@@ -1648,6 +1648,7 @@ static void x86_pmu_del(struct perf_event *event, int flags)
- 	 * Not a TXN, therefore cleanup properly.
- 	 */
- 	x86_pmu_stop(event, PERF_EF_UPDATE);
-+	cpuc->events[event->hw.idx] = NULL;
- 
- 	for (i = 0; i < cpuc->n_events; i++) {
- 		if (event == cpuc->event_list[i])
+I'll send to a different patch to update read_poll_wait's example for
+the same change.
 
