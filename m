@@ -1,279 +1,139 @@
-Return-Path: <linux-kernel+bounces-864435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF467BFAC7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:07:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A33BFAC93
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2D855342998
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:07:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D8504E5815
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674D0302CD0;
-	Wed, 22 Oct 2025 08:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEE630596F;
+	Wed, 22 Oct 2025 08:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QcUkncMm"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUx/AVC/"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11D03019AD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145BA303C8D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120392; cv=none; b=TBUhWX2VnvWqaw/IooUTb7KTNtdm6s1AXH4VzNsUKFFsPPiGgAyazaM4v638kwRF4TUq1IdVCq8UyF7kR3jLb4h3DB2BQB1RLOTw/1Je/MPcexf/9yElfr4qiR53z0cL/Mm2exkoQGtfxX4n/7GNVKEAuGfhps7fJW3rA1hx1iw=
+	t=1761120398; cv=none; b=HvlDqoC6rmsP062OygF8PmJZFkdstSrBGd/aB5EiZn3NGrfRRjhOSBFq56X2q/Ecgpb2T8IMg+R/ZFW/WXPKwAjRTNbE7dZfzSQOecs8aXWcZ0QZdXq2T9dVCf0EhobUFJJF1swW/t0skPNkBeq9sqloGpCocqnbn4KT1PYRweI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120392; c=relaxed/simple;
-	bh=i7rr4hr7GlAFwX8ai8F7Xn426QIX0/HemOMZ06kDLAM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UYDFssGWKVaf009f9OBB/ugVrP3m7jmhVnpwZZVI3ij7mXx+KXosHWFJ92He+IVvJMAeAPEtgKAH1V9XWrPke4iE7uJmG/19zSDHI7Xj0FS/WU/QMpAMtlrhXXxOnPgFZIbbUQsP3O0381kJn4BbR44ijuIfOkhzICm03tl2CSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QcUkncMm; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-426ed6f4db5so362255f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:06:29 -0700 (PDT)
+	s=arc-20240116; t=1761120398; c=relaxed/simple;
+	bh=eyBdO2wWOgqsPzs2lpBJ9/L31r8e4dCSgvgCYmxIx6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QF+eOX2Te49NTbhe+bUrxh15xCcrcw9zz0TBaOpYtLc0We1fbTwgyZMMzbtK6XysROmX3TQb2h77OuMx1irwc0Q+V1gINak2RkyVgELGfpMr/8min4OlvPdc6siiFMTdfFEgWY6fSSIFThBTeoH8p33iZFcNEBThl+KNRZ2jTTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUx/AVC/; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63e12a55270so1750377a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:06:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761120388; x=1761725188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761120394; x=1761725194; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uPT3djXxuwyZG03uZ4DKKGDEQkFViw3ZAiy4XlRf2D8=;
-        b=QcUkncMm0e65HlNpbYoPaqeXepP2zhOmiydfNTiXafCZIyIryzkPkyWXN1N81x80Lz
-         O51z/Nm3bTZfJ0OrcI/mhw+5N/XXCutz14iiVi6qpRJTE2fmbnqKyEzAh5lsDbbcy6RN
-         lzhMYio0MTBDWR48nlV1f84PUjKejwhR9ds9NZmNG1NV3n4ymuVqH91lH4GqlPcc8ak5
-         nv1Q+AP4yYi0XpRfT6eENd2wAQZXkIs0KLspM29IkkSJyZmzYnFkWiks2kJF7mVLvlBb
-         ak02Ta6WIqRtt4xp8LJcoEwfRUAEcrk1jIa9bN8TNlzyXELpNNctUMcBhqHFhOhVA36Z
-         4NMA==
+        bh=toHlnWQqNYbfD0u6quHogsDi3+miz5wiSuRT4/A88gI=;
+        b=aUx/AVC/VZbpE2oN97dtsPHXthi3yMi5uzy00pyB+I/2aKpB1pOF2pRPdY6cZntp6p
+         +DxMKa9u/iHSxDOYlybze4ivOTbEBXwIlPobhtH9vR+ofclCSVUnFdLZ2x75oKao2T6F
+         BzGLltxDdG1BTWxSKuNX4gqbmqd/hSjjIIFVs0n0Ch4mlkoUiC6dBoLKKuDIBPDKTFUi
+         kFk5uj7UUBrRa5xQZqggiEu3sdLoHgwuGvH/67ISB2+jrRmwVgOB6jqYyuXpupwhrpaf
+         63/jcsA3jGWujqwOZrdyACWvjfRvauXk4GbFXeQNuFeYqpEhKr8/+iUckaeissAGe+rY
+         jSBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761120388; x=1761725188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761120394; x=1761725194;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uPT3djXxuwyZG03uZ4DKKGDEQkFViw3ZAiy4XlRf2D8=;
-        b=FFqe5q9Vi1Jdi+fJmwH5N8JbUusBJMBsGtA0dRGxhLEHOBfSefLh2tlRnrhrSRFlt0
-         N6VSpKZsw+V6nAuKjrPGJdsKOfYJ/he4HB8Jcsl89EW+d8jCSELGGrRF6Sr/9CY52YW6
-         e55O13qDRL/+R02DL+FJIqyohTd4MyKW/bxMzm0MW/dmH+x1ksDY6TRPECyp7VECwLHe
-         QhtJi+6vZnr7OPuKCRMX1G6U2Hsts2B2AqpV/LTCqtoPvmgP7Z7Oqd7vaKxWb0H5nuPP
-         npTc7m+6pNF7ViYd4TdIoYwKDDSqZ30EL7dRygi9eFVEZJQ03+8uiwLlA9QgLZiUlxuy
-         21WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzccsna+PaEl5coiq0b28XlEK0txR6q3gGO+z5Mq4uaMnvPRRpG9yKh93BKdwyoMUKFTwtqYUQEdEgK1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywje367LCf8lPK3gfyAZHC5FNvu8q8cQhGh1DxLE9HY+InkBEaw
-	HpDmly+rK66e99HDtojsKOINoKIZto6IST6hClJBFs+nZ4DND2KPTFOGPhXL4Kh1qrKmYyJZ2zU
-	YP6FxBpq+td1bSWENbuOJMKvynHA/optlEeCBvrqE3Q==
-X-Gm-Gg: ASbGncuPnOfu7wDAB+d22mkp2m90SIILHlehWOQHZ12ccDhigbT/1s5N5w1f19//Vop
-	hpjnGGZESR2JH1I/CwZEJoSnId8YaSe4dhiWfOk6gPh1CF2ys3to3J86ki0+svm4rJYihmGKIkI
-	VWE2mWxxShNjTtrjRjzLtAaLcjuB2mBdB38qDIoV/f4F2rV9KHp12qE5XQLH7SvSjHjEarUvk6x
-	IqQTQxlnjw6hFDGB/OGDvUKbhGvXiMVlF3+ScKc9qUK7ZGoUgAhvYkyBP4=
-X-Google-Smtp-Source: AGHT+IErIGWqnC+YrEzurKE07CGgJ2SXF5rw5ePxfegDakBTc4QMm8JUStUPPbJ2lzOoyOwJPTHQ6yaW4KGCVun/x0E=
-X-Received: by 2002:a5d:584e:0:b0:407:d776:4434 with SMTP id
- ffacd0b85a97d-42856a89d28mr492690f8f.30.1761120387951; Wed, 22 Oct 2025
- 01:06:27 -0700 (PDT)
+        bh=toHlnWQqNYbfD0u6quHogsDi3+miz5wiSuRT4/A88gI=;
+        b=m2b0gvpdhmmJjNFDSXl5ZJUM3H9cLF5PIJbo2vXve4g+EPPqO6frA0VIsYKJ8MYPKT
+         Qn/CnjIcAr33GMzmg4+MYMBxkbXsbNeAnjHx7IEIMbt7vneW0UWPFJtOF+91xgtE61Mn
+         UMnbz/I62AIE8qubGyvaL4apMWKgnJEucY/aTzRB7bkYNG4N7tyS4d5nsTK5eOPlX/BX
+         cV67wPeBEpYX6/0dqp/Zd996lO5pu0McX+K7C/OYDM1joaiZogEYiYPKTWzLdZgPJFcg
+         Zh7sbdhfn5337cXl8jPzMDbbh4diqt+3SUxqn6x7Pln5rxXJ67EedYhWmaKYz/6O4xWf
+         b5gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAdXNwlTwmniBRP7MswNSls3xX7krewk1fHg0eDUxcm+skKrXgZdti3y/fgBlrLdhQyrXuJxwxl9o0jMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8rZnpktII7ycY4xQiAzbp40QHJxj4dC7RPWm4iF+7wkjDLYFH
+	Ryp0vPXLYqtKPsfs+5mZG7JuCxNM5l9pVbCOz3pMhi5/nvJBmOxZEcal
+X-Gm-Gg: ASbGncuM3hUMfPZDe8RqYP82hXYQwcTBrSnNkx7eA5+vN60kuKF3OWP3Ohgw2hNQ/gS
+	GrctxfXczdeW3PNqOBf2tjYqP+1fevOSrMKO8N3LC2+C8xXhr7iXl5RoFHv2daDp5SFzptHCf5y
+	bs5JOEZuuV8T/jWkayk5TszSHfsjf/rtabCIQrTL6sOi82BKLf0a8G3GnKqccuqMox+cySU75Lx
+	H4kS999sZrfoPtRJRXQiOloccTmu/TwjbnDWaU0yOUWyFOzr8i6T9yKG4NQMoEBYl3J2Fw7W3Cw
+	5Z7wDzBRRWa+niWf1AGOVjeNSWHj2tVSj1nbtQF4s50VvF+Cl3FjUqq4U6Iv6lOV1HoWo1vfKBu
+	/giedbBtmI2gFtOpPr1bLWgt5NIBgMTFXralN8gKsrruQUluL9VanRiUnfL7ENLIthCLWqyznaE
+	+o
+X-Google-Smtp-Source: AGHT+IFKMamBOdEkXZztW4+a96FX3cVQPwKK7mU8xvsOl5ZRh1X2aHXQdNoBVmqwPChAhbEjv7M9Xg==
+X-Received: by 2002:a05:6402:2791:b0:63e:23c0:c33e with SMTP id 4fb4d7f45d1cf-63e23c0c43amr1116868a12.27.1761120394218;
+        Wed, 22 Oct 2025 01:06:34 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-63c4945ef49sm11192106a12.29.2025.10.22.01.06.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 01:06:33 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: bagasdotme@gmail.com
+Cc: akpm@linux-foundation.org,
+	andy.shevchenko@gmail.com,
+	arnd@arndb.de,
+	axboe@kernel.dk,
+	bp@alien8.de,
+	brauner@kernel.org,
+	christophe.leroy@csgroup.eu,
+	cyphar@cyphar.com,
+	ddiss@suse.de,
+	dyoung@redhat.com,
+	email2tema@gmail.com,
+	graf@amazon.com,
+	gregkh@linuxfoundation.org,
+	hca@linux.ibm.com,
+	hch@lst.de,
+	hsiangkao@linux.alibaba.com,
+	initramfs@vger.kernel.org,
+	jack@suse.cz,
+	jrtc27@jrtc27.com,
+	julian.stecklina@cyberus-technology.de,
+	kees@kernel.org,
+	krzk@kernel.org,
+	linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mcgrof@kernel.org,
+	monstr@monstr.eu,
+	mzxreary@0pointer.de,
+	nschichan@freebox.fr,
+	patches@lists.linux.dev,
+	rob@landley.net,
+	safinaskar@gmail.com,
+	thomas.weissschuh@linutronix.de,
+	thorsten.blum@linux.dev,
+	torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v3 2/3] initrd: remove deprecated code path (linuxrc)
+Date: Wed, 22 Oct 2025 11:06:25 +0300
+Message-ID: <20251022080626.24446-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <aPg-YF2pcyI-HusN@archie.me>
+References: <aPg-YF2pcyI-HusN@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021142749.642956-1-mssola@mssola.com> <20251021142749.642956-2-mssola@mssola.com>
- <20251022073138.GX13776@twin.jikos.cz>
-In-Reply-To: <20251022073138.GX13776@twin.jikos.cz>
-From: Daniel Vacek <neelx@suse.com>
-Date: Wed, 22 Oct 2025 10:06:17 +0200
-X-Gm-Features: AS18NWAW65wMT_NPMRH8zH-Chtb0tobvWzCUv7MCRWOtED9hj5Ie9fAvPfEpkiU
-Message-ID: <CAPjX3Fcd2MgzhRtDEGRsNNZ1qARiaT0edfnqPA-5HAchwf1gAg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] btrfs: declare free_ipath() via DEFINE_FREE() instead
-To: dsterba@suse.cz
-Cc: =?UTF-8?B?TWlxdWVsIFNhYmF0w6kgU29sw6A=?= <mssola@mssola.com>, 
-	linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com, 
-	johannes.thumshirn@wdc.com, fdmanana@suse.com, boris@bur.io, wqu@suse.com, 
-	neal@gompa.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 22 Oct 2025 at 09:32, David Sterba <dsterba@suse.cz> wrote:
->
-> On Tue, Oct 21, 2025 at 04:27:46PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
-ote:
-> > This transforms the signature to __free_ipath() instead of the original
-> > free_ipath(), but this function was only being used as a cleanup
-> > function anyways. Hence, define it as a helper and use it via the
-> > __free() attribute on all uses. This change also means that
-> > __free_ipath() will be inlined whereas that wasn't the case for the
-> > original one, but this shouldn't be a problem.
-> >
-> > A follow up macro like we do with BTRFS_PATH_AUTO_FREE() has been
-> > discarded as the usage of this struct is not as widespread as that.
->
-> The point of adding the macros or at least the freeing wrappers is to
-> force the NULL initialization and to make it visible in the declarations
-> (typed all in capitals). The number of use should not be the main factor
-> and in this case it's 4 files.
->
-> > Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.com>
-> > ---
-> >  fs/btrfs/backref.c | 10 +---------
-> >  fs/btrfs/backref.h |  7 ++++++-
-> >  fs/btrfs/inode.c   |  4 +---
-> >  fs/btrfs/ioctl.c   |  3 +--
-> >  fs/btrfs/scrub.c   |  4 +---
-> >  5 files changed, 10 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/fs/btrfs/backref.c b/fs/btrfs/backref.c
-> > index e050d0938dc4..a1456402752a 100644
-> > --- a/fs/btrfs/backref.c
-> > +++ b/fs/btrfs/backref.c
-> > @@ -2785,7 +2785,7 @@ struct btrfs_data_container *init_data_container(=
-u32 total_bytes)
-> >   * allocates space to return multiple file system paths for an inode.
-> >   * total_bytes to allocate are passed, note that space usable for actu=
-al path
-> >   * information will be total_bytes - sizeof(struct inode_fs_paths).
-> > - * the returned pointer must be freed with free_ipath() in the end.
-> > + * the returned pointer must be freed with __free_ipath() in the end.
-> >   */
-> >  struct inode_fs_paths *init_ipath(s32 total_bytes, struct btrfs_root *=
-fs_root,
-> >                                       struct btrfs_path *path)
-> > @@ -2810,14 +2810,6 @@ struct inode_fs_paths *init_ipath(s32 total_byte=
-s, struct btrfs_root *fs_root,
-> >       return ifp;
-> >  }
-> >
-> > -void free_ipath(struct inode_fs_paths *ipath)
-> > -{
-> > -     if (!ipath)
-> > -             return;
-> > -     kvfree(ipath->fspath);
-> > -     kfree(ipath);
-> > -}
-> > -
-> >  struct btrfs_backref_iter *btrfs_backref_iter_alloc(struct btrfs_fs_in=
-fo *fs_info)
-> >  {
-> >       struct btrfs_backref_iter *ret;
-> > diff --git a/fs/btrfs/backref.h b/fs/btrfs/backref.h
-> > index 25d51c246070..d3b1ad281793 100644
-> > --- a/fs/btrfs/backref.h
-> > +++ b/fs/btrfs/backref.h
-> > @@ -241,7 +241,12 @@ char *btrfs_ref_to_path(struct btrfs_root *fs_root=
-, struct btrfs_path *path,
-> >  struct btrfs_data_container *init_data_container(u32 total_bytes);
-> >  struct inode_fs_paths *init_ipath(s32 total_bytes, struct btrfs_root *=
-fs_root,
-> >                                       struct btrfs_path *path);
-> > -void free_ipath(struct inode_fs_paths *ipath);
-> > +
-> > +DEFINE_FREE(ipath, struct inode_fs_paths *,
-> > +     if (_T) {
->
-> You can drop the if() as kvfree/kfree handles NULL pointers and we don't
-> do that in the struct btrfs_path either.
+Bagas Sanjaya <bagasdotme@gmail.com>:
+> Do you mean that initrd support will be removed in LTS kernel release of 2026?
 
-But it's being dereferenced right on the next line. I think the check
-is still needed due to that.
+I meant September 2026. But okay, if there is v4, then I will change this to
+"after LTS release in the end of 2026".
 
-> > +             kvfree(_T->fspath);
-> > +             kfree(_T);
-> > +     })
-> >
-> >  int btrfs_find_one_extref(struct btrfs_root *root, u64 inode_objectid,
-> >                         u64 start_off, struct btrfs_path *path,
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index 79732756b87f..4d154209d70b 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -130,7 +130,7 @@ static int data_reloc_print_warning_inode(u64 inum,=
- u64 offset, u64 num_bytes,
-> >       struct btrfs_fs_info *fs_info =3D warn->fs_info;
-> >       struct extent_buffer *eb;
-> >       struct btrfs_inode_item *inode_item;
-> > -     struct inode_fs_paths *ipath =3D NULL;
-> > +     struct inode_fs_paths *ipath __free(ipath) =3D NULL;
->
-> I'd spell the name in full, like __free(free_ipath) or
-> __free(inode_fs_paths) so it matches the type not the variable name.
->
-> >       struct btrfs_root *local_root;
-> >       struct btrfs_key key;
-> >       unsigned int nofs_flag;
-> > @@ -193,7 +193,6 @@ static int data_reloc_print_warning_inode(u64 inum,=
- u64 offset, u64 num_bytes,
-> >       }
-> >
-> >       btrfs_put_root(local_root);
-> > -     free_ipath(ipath);
-> >       return 0;
-> >
-> >  err:
-> > @@ -201,7 +200,6 @@ static int data_reloc_print_warning_inode(u64 inum,=
- u64 offset, u64 num_bytes,
-> >  "checksum error at logical %llu mirror %u root %llu inode %llu offset =
-%llu, path resolving failed with ret=3D%d",
-> >                  warn->logical, warn->mirror_num, root, inum, offset, r=
-et);
-> >
-> > -     free_ipath(ipath);
-> >       return ret;
-> >  }
-> >
-> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > index 692016b2b600..453832ded917 100644
-> > --- a/fs/btrfs/ioctl.c
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -3298,7 +3298,7 @@ static long btrfs_ioctl_ino_to_path(struct btrfs_=
-root *root, void __user *arg)
-> >       u64 rel_ptr;
-> >       int size;
-> >       struct btrfs_ioctl_ino_path_args *ipa =3D NULL;
-> > -     struct inode_fs_paths *ipath =3D NULL;
-> > +     struct inode_fs_paths *ipath __free(ipath) =3D NULL;
-> >       struct btrfs_path *path;
-> >
-> >       if (!capable(CAP_DAC_READ_SEARCH))
-> > @@ -3346,7 +3346,6 @@ static long btrfs_ioctl_ino_to_path(struct btrfs_=
-root *root, void __user *arg)
-> >
-> >  out:
-> >       btrfs_free_path(path);
-> > -     free_ipath(ipath);
-> >       kfree(ipa);
-> >
-> >       return ret;
-> > diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-> > index fe266785804e..74d8af1ff02d 100644
-> > --- a/fs/btrfs/scrub.c
-> > +++ b/fs/btrfs/scrub.c
-> > @@ -505,7 +505,7 @@ static int scrub_print_warning_inode(u64 inum, u64 =
-offset, u64 num_bytes,
-> >       struct btrfs_inode_item *inode_item;
-> >       struct scrub_warning *swarn =3D warn_ctx;
-> >       struct btrfs_fs_info *fs_info =3D swarn->dev->fs_info;
-> > -     struct inode_fs_paths *ipath =3D NULL;
-> > +     struct inode_fs_paths *ipath __free(ipath) =3D NULL;
-> >       struct btrfs_root *local_root;
-> >       struct btrfs_key key;
-> >
-> > @@ -569,7 +569,6 @@ static int scrub_print_warning_inode(u64 inum, u64 =
-offset, u64 num_bytes,
-> >                                 (char *)(unsigned long)ipath->fspath->v=
-al[i]);
-> >
-> >       btrfs_put_root(local_root);
-> > -     free_ipath(ipath);
-> >       return 0;
-> >
-> >  err:
-> > @@ -580,7 +579,6 @@ static int scrub_print_warning_inode(u64 inum, u64 =
-offset, u64 num_bytes,
-> >                         swarn->physical,
-> >                         root, inum, offset, ret);
-> >
-> > -     free_ipath(ipath);
-> >       return 0;
-> >  }
-> >
-> > --
-> > 2.51.1
-> >
->
+-- 
+Askar Safin
 
