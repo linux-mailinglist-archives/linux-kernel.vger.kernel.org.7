@@ -1,110 +1,202 @@
-Return-Path: <linux-kernel+bounces-864183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1BEBFA1ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:49:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43592BFA1F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3641897E6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B395662E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68622229B38;
-	Wed, 22 Oct 2025 05:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A68229B38;
+	Wed, 22 Oct 2025 05:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvsJ03pG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8s77ln9"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFED350A1F;
-	Wed, 22 Oct 2025 05:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5EC63CF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761112124; cv=none; b=c1H7JDzkZUHZd40kFdNqhtFQyGq/Buf4QN4WG7YeBFlSivGS4kBjZhIxcLbSORO8hADIBMY+3x7FzIoW+WJVRYRrfAmg0KaZsVUuAZ9jK/KwYZTs/8AN0RvnxNh/13sbtd8MGFuCu0m7E2Z0+ANOIHV+tTah/33TCNjZgh3KrIQ=
+	t=1761112178; cv=none; b=jeo8wPC8ZqMwH0/qmMXQIi+UArZ8zyeNZBo/vQiKpjgHQVfFXxdgtmzqaxtNzxKEgXzXcbhD0Ytz8T3+/WK1HixHtVyMiAh90cvoke5mNQk4oDMZwMVdkBKmYDTSdHeLzOoO83RaFuRnIkg3nXZTK7hNJgf20olqre0qAsGTWHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761112124; c=relaxed/simple;
-	bh=fcipi0rhSVh/MNjzf96g6xOkImIIzAGSVFrNKZ8ddPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3fDbSVcLAQYSe1idEs02P2MReqbYk36Ucq1RB57pzMVVLX4ycqF4gKJNwmsWuMiHAnEt5q+UMFVZ06x6ocf4f5XVGrViMmH+lMMhW9+p8w0C+Oa19u3T8YMPUxkRE2XmFBSnlNxJjlZEaRC2t017DRLGe0cPFz2Pry+EymvW5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvsJ03pG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B65C1C4CEE7;
-	Wed, 22 Oct 2025 05:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761112124;
-	bh=fcipi0rhSVh/MNjzf96g6xOkImIIzAGSVFrNKZ8ddPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BvsJ03pGBLi1YmtCZ8C0D8WvcHS+RmRHNPZql7RGpbklXYte0LYpupraBCS4xOuMO
-	 7tx5BZOJK7thCe6TZFgyOrnoF9I6bfopWVDyL/y65ALY4qy003kQfaka63vmfVR2Z/
-	 QSY8SeskvpY9pZE3E/eEtDypZcHUmieSsMAhRtnVIItxCjfIL9qb6gKYQIYYQLGJ6N
-	 zVjxCXptAk7rZJ4GIBdloP69N1KCaa0pooMlqHjyNLSBRZPZFANqW8glt6eGdpk20c
-	 SH1aazS15ehjZq6kUZtzL0EPiK1//rZkPY9t7G2A6GPPq+s3MgrOUtVcQ9c11GmMYC
-	 PQq/bC91NY4Sw==
-Date: Wed, 22 Oct 2025 08:48:34 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, brauner@kernel.org,
-	corbet@lwn.net, graf@amazon.com, jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, masahiroy@kernel.org, ojeda@kernel.org,
-	pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org,
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Subject: Re: [PATCH v3 0/3] KHO: kfence + KHO memory corruption fix
-Message-ID: <aPhwMitTY9De7md8@kernel.org>
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
- <aPchmxfh4ACM0vY2@kernel.org>
- <CA+CK2bAHH1tzMEGxAwbmrLnLTzJANMntRu=cp0J8-n101ER7Pw@mail.gmail.com>
- <20251021135331.8e0185a173a5fa40add60802@linux-foundation.org>
- <CA+CK2bDPLAS7EM--stHkZkx8FSgYBjDOz6FdvWBYrdHwZpZZjw@mail.gmail.com>
+	s=arc-20240116; t=1761112178; c=relaxed/simple;
+	bh=RPNiAenH8YGbjYOgBgh8lZgLycKBqNtudWB2/wBr7PU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O81MZPo2H1+8lAuWQFj1XrHyg4SoKKOXy6BOPhtx1DjpuiwvNsCAHiCy7j+PJdWj2foM+r39keE1ruQnKnekoJquKtAihWQTX3CN025uaQjv/6OoaGz0Fc2qvzNLHp8IO4+ZUjtvF0jyTwmrgE+rngA4CR+CZFsC9CnbERE4x+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8s77ln9; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-63c09ff13aeso11423812a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:49:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761112174; x=1761716974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QF6I12cmNwQJIE2Ooh/PoCg5Zdy7/MLhY3n+XRHHRpU=;
+        b=C8s77ln958D7otPiiEz+wG/FSu6f6N9Hvt4cds+5h7ENAvUcnaAIc5GbLxgzW7G8tE
+         EOCFJaXwRcn93rr001Qi+Bl23eckO0EmNelUtp7VVHRCPGtZDACVtog/S+9z3rOsngvb
+         lsYWWJOgxZUAWPHYO7lGeVI0QFtKQC3tWve4sljeylpdWWXCR0SqttWmD+yP/PDLwqPF
+         eX7sfB8KxkeM0F0wGm8RyN+MOXGNKpWDV4lcSECVX7AYKGPKYtik6+GUrEJIAc0nVAMk
+         ZBh0OmN0kpbzTAclPLEVO7F80oGdq9zc90/i6SPVDYWtusfeG8rJhkfkpCm5ltXb6Txp
+         KVSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761112174; x=1761716974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QF6I12cmNwQJIE2Ooh/PoCg5Zdy7/MLhY3n+XRHHRpU=;
+        b=OTOUlg79uj0lIGm4pbRuIepq14tROlIU7GlZh8eeJ/BpiVYR1PKHHjZ+AsJ2eDYuQS
+         2n96fhvZsHFEnhb0Nb6fkOFPhJtGId5VcXMO6HbXAPWO+bakvymI+VgW/IA89Cm2R1ZS
+         WBwzgp0RdjCwijun4EbMRMlYEHuET2R8kbHveS6tUAzYNDks5F4bmhA7nKpzaIW1p6z/
+         Ohku3hEFK5Y992GP/9oV4dLQoy59iEThP62+5bMFZuFzotEbKiUf82o675cy/MlpNK9c
+         KG/2R3PuTlmZbP1d7tXZCepY7QRQdDZE4506YqQqmeNBXYq0xqZxIS47MeQ7IFmygwkK
+         4wRg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ZeKgiUbCfnRFL85moj7LkAqbWvzXRftEPB2ogg8M9uU4fD4giHfXcgleSiqQBH+zoJ7rhuGF/BUrX8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Q7uTQ1IsAX8jDQUXS1Gx8D49v2zxSCLUR208HAARDwYkHgC/
+	OVdBFHWvUoEboDxKRWIoM/dpJU6F9U4BiwwfQnXJPQoDzEZb+Xz2T58X0TybJYMfGU8OckJh+yE
+	187slaU2pMB6AYnOeX9imOv7t/9DgH6U=
+X-Gm-Gg: ASbGncvVltyaZAZOJ5j9HQePHdY3gy1941/acr9bw9AMMq6KTTyhsnKdjvC8InCd2V1
+	0jWv1bkF9NynRTQ8/XEI1Rpqe3MXQDDC43DRcynbqudMkdJ9IMK0MD9+pMTYxnYlrcaqLHoPzpE
+	GlU/igWC/aOqljnPMNeLvggOSK4awUs81CMg9qFCgTko9+vJpQbzEQSsmM9Rslei/RmgsFxpb50
+	mUhehIpM+8MZtXA2+hFWgDX7WQy4nCQKZ/VP8+yoyfJDnjdyaw46G+TrPIC0YUoHGVDtO0=
+X-Google-Smtp-Source: AGHT+IEL4L/n0/KZ2//izEt50x/P7vjrecEoRquGYRoVdQ4a49sx5DhBJ0rYUtgsnqQLisHd/Or3m5ShhudEHx4+ThI=
+X-Received: by 2002:a05:6402:5189:b0:63c:3efe:d970 with SMTP id
+ 4fb4d7f45d1cf-63c3efeee6emr14892034a12.31.1761112174303; Tue, 21 Oct 2025
+ 22:49:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bDPLAS7EM--stHkZkx8FSgYBjDOz6FdvWBYrdHwZpZZjw@mail.gmail.com>
+References: <20251021190436.81682-1-ryncsn@gmail.com> <65f4dd0b-2bc2-4345-86c2-630a91fcfa39@linux.alibaba.com>
+In-Reply-To: <65f4dd0b-2bc2-4345-86c2-630a91fcfa39@linux.alibaba.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 22 Oct 2025 13:48:57 +0800
+X-Gm-Features: AS18NWDTFF1efA6O66Kmu5sZvMNxApkc4VVj3WyF2eIjSrA0fBYB7cddYTfIxRE
+Message-ID: <CAMgjq7D_G=5bJe_Uj11sHV2qCyu-Z-3PZu7QuZyPEhuFiE63wQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/shmem: fix THP allocation size check and fallback
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Hugh Dickins <hughd@google.com>, Dev Jain <dev.jain@arm.com>, 
+	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Liam Howlett <liam.howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Mariano Pache <npache@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 08:15:04PM -0400, Pasha Tatashin wrote:
-> On Tue, Oct 21, 2025 at 4:53 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, Oct 22, 2025 at 9:25=E2=80=AFAM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2025/10/22 03:04, Kairui Song wrote:
+> > From: Kairui Song <kasong@tencent.com>
 > >
-> > On Tue, 21 Oct 2025 12:04:47 -0400 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
-> >
-> > > > With liveupdate: dropped from the subjects
-> > >
-> > > I noticed "liveupdate: " subject prefix left over only after sending
-> > > these patches. Andrew, would you like me to resend them, or could you
-> > > remove the prefix from these patches?
-> >
-> > No problem.
-> >
-> > What should we do about -stable kernels?
-> >
-> > It doesn't seem worthwhile to backport a 3-patch series for a pretty
-> > obscure bug.  Perhaps we could merge a patch which disables this
-> 
-> We are using KHO and have had obscure crashes due to this memory
-> corruption, with stacks all over the place. I would prefer this fix to
-> be properly backported to stable so we can also automatically consume
-> it once we switch to the upstream KHO. I do not think disabling kfence
-> in the Google fleet to resolve this problem would work for us, so if
-> it is not going to be part of stable, we would have to backport it
-> manually anyway.
+> > There are some problems with the code implementations of THP fallback.
+> > suitable_orders could be zero, and calling highest_order on a zero valu=
+e
+> > returns an overflowed size. And the order check loop is updating the
+> > index value on every loop which may cause the index to be aligned by a
+> > larger value while the loop shrinks the order.
+>
+> No, this is not true. Although =E2=80=98suitable_orders=E2=80=99 might be=
+ 0, it will not
+> enter the =E2=80=98while (suitable_orders)=E2=80=99 loop, and =E2=80=98or=
+der=E2=80=99 will not be used
+> (this is also how the highest_order() function is used in other places).
 
-The backport to stable is only relevant to 6.17 that's going to be EOL soon
-anyway. Do you really think it's worth the effort?
- 
-> Thanks,
-> Pasha
-> 
-> > combination in Kconfig, as a 6.18-rcX hotfix with a cc:stable.
-> >
-> > Then for 6.19-rc1 we add this series and a fourth patch which undoes
-> > that Kconfig change?
+Maybe I shouldn't mix the trivial issue with the real issue here,
+sorry, my bad, I was in a hurry :P.
+I mean if suitable_orders is zero we should just skip calling the
+highest_order since that returns a negative value. It's not causing an
+issue though, but redundant.
 
--- 
-Sincerely yours,
-Mike.
+>
+> > And it forgot to try order
+> > 0 after the final loop.
+>
+> This is also not true. We will fallback to order 0 allocation in
+> shmem_get_folio_gfp() if large order allocation fails.
+
+I thought after the fix, we can simplify the code, and maybe reduce
+the call to shmem_alloc_and_add_folio to only one so it will be
+inlined by the compiler.
+
+On second thought some more changes are needed to respect the
+huge_gfp. Maybe I should send a series to split the hot fix with clean
+ups.
+
+But here the index being modified during the loop do need a fix I
+think, so, for the fix part, we just need:
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 29e1eb690125..e89ae4dd6859 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1895,10 +1895,11 @@ static struct folio
+*shmem_alloc_and_add_folio(struct vm_fault *vmf,
+                order =3D highest_order(suitable_orders);
+                while (suitable_orders) {
+                        pages =3D 1UL << order;
+-                       index =3D round_down(index, pages);
+-                       folio =3D shmem_alloc_folio(gfp, order, info, index=
+);
+-                       if (folio)
++                       folio =3D shmem_alloc_folio(gfp, order, info,
+round_down(index, pages));
++                       if (folio) {
++                               index =3D round_down(index, pages);
+                                goto allocated;
++                       }
+
+                        if (pages =3D=3D HPAGE_PMD_NR)
+                                count_vm_event(THP_FILE_FALLBACK);
+
+>
+> > This is usually fine because shmem_add_to_page_cache ensures the shmem
+> > mapping is still sane, but it might cause many potential issues like
+> > allocating random folios into the random position in the map or return
+> > -ENOMEM by accident. This triggered some strange userspace errors [1],
+> > and shouldn't have happened in the first place.
+>
+> I tested tmpfs with swap on ZRAM in the mm-new branch, and no issues
+> were encountered. However, it is worth mentioning that, after the commit
+> 69e0a3b49003 ("mm: shmem: fix the strategy for the tmpfs 'huge=3D'
+> options"), tmpfs may consume more memory (because we no longer allocate
+> large folios based on the write size), which might cause your test case
+> to run out of memory (OOM) and trigger some errors. You may need to
+> adjust your swap size or memcg limit.
+>
+
+I'm not seeing any OOM issue, and I tested with different memory
+sizes, the error occurs with all different setup.
+
+If I compared the built object with the ones before 69e0a3b49003, I
+can see that the build object is corrupted:
+
+Compare using hexdump & diff on any .o generated by gcc:
+--- GOOD        2025-10-21 12:17:44.121000287 +0000
++++ BAD 2025-10-21 12:18:01.094000870 +0000
+@@ -3371,425 +3371,7 @@
+... <summary: whole chunk of data & symbols missing> ...
+
+GCC compile didn't fail because the problem occurs when writing the
+objects, so instead LD failed and not due to OOM.
+
+The reproduction rate is very high with different setup, not sure why
+it didn't occur on your setup, I suspect it's related to how different
+gcc handles write (not fault)?
+
+Revert 69e0a3b49003, the build is OK. 69e0a3b49003 isn't the root
+cause but triggered this.
+
+The minimized fix posted above also fixes the problem just fine.
 
