@@ -1,324 +1,171 @@
-Return-Path: <linux-kernel+bounces-863910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882A1BF97D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:41:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A89BF97DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A423C1888654
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:41:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0670A4E609A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCAF1C4A24;
-	Wed, 22 Oct 2025 00:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85151CBEAA;
+	Wed, 22 Oct 2025 00:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AE876gno"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgSi1rDL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792EE1A3154
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40447D2FB;
+	Wed, 22 Oct 2025 00:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761093680; cv=none; b=s6Cqaf/fGPxwuvTfUqqxp7McQn79piYmPdu+NTkMBqs7jkw8tyZR4jihMpwj4a/xgonu8zkXXwpQEmaDwTeQWIJ5Hnl+nzgD1UJ16eK0jE4m1nkYevOr7RnPwPWPalu052MmgF9Ik8uyv2nmYCaAA6igsQaIR0AFsnL7xqwXjjg=
+	t=1761093726; cv=none; b=MDkSFzv54n19rJyYsbl7AX5dYuENHjuBjHohMDStKRgINY1H4hbFi/ptqHatW9z7PYjC1++erFC2QqBtFm7kretP20qDNvaOsEit9nXNaHvnOpbLeH7Klpfrwl9urPFOPsPvacEUC9eQbaV5+Qr9PpW4m0RlCVc0lP5aIQ2JCKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761093680; c=relaxed/simple;
-	bh=TyGxxPZmvW7pzQW51SpvPF4+tI/TQ5YOSadbcuPIfDs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qhkMBfR9Ibp6D76W919gSjCSTvRSjnX0+mF99xdqgwJwp/4GUGxP5rw3Tvw6KUaMtp9Qh7sm8UAaFZP+oYncRlB2EabSWNei3RZzNKp8L35dwPWhIoDfKyWNK369blEtevQufBHe+H9In6huMHuxvwsE5r7vq5sbR6VzhpVO71s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AE876gno; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33067909400so4794296a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:41:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761093677; x=1761698477; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J6dfzjaiaVtqKR1q20BH9Mi7/4Fk6B7qT1IK5wGL940=;
-        b=AE876gno77uV/wKEIIu3gLHaGI60Un2iv6M2GjHeCvmzvxJHF6X3mj2AkZZhKJzYqb
-         e+jZKRAIXCoPZWFexno5z4iiOTOW4x6Faww9ngrFFWtAHdtw1L9xA6lwVFNEenZZASuu
-         YFdCJ6+A6TBf6x1rCTUIAgV8akCTB1AYqSk5s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761093677; x=1761698477;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J6dfzjaiaVtqKR1q20BH9Mi7/4Fk6B7qT1IK5wGL940=;
-        b=s0wda0mEhhLEvBrwt0gddxcpPpbpXA51WBk4y2VVzCEVZb/5dQDemjmoIT7FX/aVfK
-         zCdU+xYRR2LO48F5aUYKZ9tZt+QbbjhifjqA5/C/bC5tjg4pdP/ZTEzrK0c8KVqIrCiB
-         t+HjZDUVqb9tFbpu7qKe6JUsfJZo41ZeqC9bbvtiOmpNT7KhGyUQkMSkvshN5DTRZmXt
-         NplhHTL8BL1gm8i6jPvgzVQGHGlPtIzEt2AcBxbnJ/I98GEUMFEhWrzLojAblugnAp0L
-         5VebniKd3D7zgF2kEuLjBHgKrr5XqAZ7bXj23UWXav+jS4n8S3OGu52cfpty+Zr73BN5
-         Yi4Q==
-X-Gm-Message-State: AOJu0YyQDfQqR7oonpxSrHKoSpGk7z2+UYMhjS5O1lKl1PoaHZ/cZatB
-	Gb5ztPKLzNT+wE4KQi+gEVYLy0gLTyE+XvYWg/YG3FBu8qI3yE6bKx00nJTfRT1ScH9g6ew9Xjw
-	UMTI=
-X-Gm-Gg: ASbGnctAOhx2RYXuCpgCWt5ANNsIXJWlLKRkZn26Di6LM+P4de2Iq6+3sx4Z9l0xHkQ
-	jphI5HBUjoVkD5cCg1pIRrlr1sqwr3QLR4W6qWES/UXxSNSQpY1twA15HI58ysPmFdESyT2YoNT
-	xPF3VzjXsXIS4u05ot5joHZg42LeMO+EFWGXDX2XF6QJs13eLlXJoBsU/lgAsB7A+6++e11JW53
-	FI/2pqFKR9CDP7SW4E4eTLxLXoEVO0xQOL7l2xu5VOsawHIdEHZ/NS8zsSTdZtdKNZLPoN7jVsW
-	0MaZ+3I9D1pREFtMVnT++JMfXGgy2dGHn2B4uXbQcp4A2h80ajYmuVHuUj3R0lK072qEWIF7fbf
-	u6SZdzGhObpXI21V4bSBw8cd7m/qD9A4gaVDF1MUSqKfGZOFUECKGZF6u0X5TvNb/JK2/17bWav
-	fnH++NArmPJmOwj8dEinTRIXi4JZTlH1eJpz/eVMmyqwRRZlRQZdrInFbYg19QegLV/MEdVA==
-X-Google-Smtp-Source: AGHT+IG7+QbrZey9RClgWh7UPMb8t6jNRdh/AFiPRfWiyRY8UfhUqIXJFg0hA4yGu9np4R40oShdYA==
-X-Received: by 2002:a17:90b:2d8f:b0:32b:cafc:e339 with SMTP id 98e67ed59e1d1-33bcf9551e5mr20563152a91.36.1761093676997;
-        Tue, 21 Oct 2025 17:41:16 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:3ee0:9b5f:66d7:dd23])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b33c7asm11600168a12.21.2025.10.21.17.41.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 17:41:16 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-s390 <linux-s390@vger.kernel.org>,
-	Andrew Chant <achant@google.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Douglas Anderson <dianders@chromium.org>,
+	s=arc-20240116; t=1761093726; c=relaxed/simple;
+	bh=LnhsXoBcNxtEasvKkLZV5gjzwsUsenbpgPgL7jkUjl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1T6lffWN8c5GbkCHNOJ0weU7dPq4SKAOIfyJ7vQ72ZGZ2EGYnSxrT1V8jrdecpftGUrMEtvTkcZjAgWbVsvta+LtuvAem2wanpUF8wzyCaEwEQsnWDcl5BXIwPCljQTc1FoOwYN9J6ibLHYsT/naZi3vm5kCE99oGmSFcipld4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgSi1rDL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409A2C4CEF1;
+	Wed, 22 Oct 2025 00:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761093725;
+	bh=LnhsXoBcNxtEasvKkLZV5gjzwsUsenbpgPgL7jkUjl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BgSi1rDLmnzf3yQSa+2FTfYs1O2nzKyq7UwwLjQ1Dq6KeugwGOU4wwtu/0bmocy2Y
+	 a49gK8PHnP9XCrqNU4CaGNM/wy7Zir23gI9biWEjYdrWgQ88n8ys15DiBvlyJLpq7K
+	 woQXkmJV83+iRtKNpVxxWN5XMjGgW2slJewort5GEB9rkJNrnmISKBErTHEQ/d5Stj
+	 tIG2Dr+CA8Vm4dnZ+Yqh/V9Ap7H2jqPg5I3rQHsbNstBKH2g7uS8u/FhVbaWGGyAiI
+	 pABxFjut7OtZjshTSvFG2tNApPr7esiX50iF56GaDn1B4Al1oqtk8Qm7kHRxWM8ljw
+	 yXkvrujtjluXA==
+Date: Wed, 22 Oct 2025 09:41:57 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Zecheng Li <zecheng@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Francesco Valla <francesco@valla.it>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Jeff Xu <jeffxu@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Subject: [PATCH v2] init/main.c: Wrap long kernel cmdline when printing to logs
-Date: Tue, 21 Oct 2025 17:39:48 -0700
-Message-ID: <20251021173939.v2.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
-X-Mailer: git-send-email 2.51.0.915.g61a8936c21-goog
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/9] perf tools: Some improvements on data type
+ profiler
+Message-ID: <aPgoVTfCFxqTpCaK@google.com>
+References: <20251013181607.2745653-1-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251013181607.2745653-1-zecheng@google.com>
 
-The kernel cmdline length is allowed to be longer than what printk can
-handle. When this happens the cmdline that's printed to the kernel
-ring buffer at bootup is cutoff and some kernel cmdline options are
-"hidden" from the logs. This undercuts the usefulness of the log
-message.
+Hello,
 
-Specifically, grepping for COMMAND_LINE_SIZE shows that 2048 is common
-and some architectures even define it as 4096. s390 allows a
-CONFIG-based maximum up to 1MB (though it's not expected that anyone
-will go over the default max of 4096 [1]).
+On Mon, Oct 13, 2025 at 06:15:57PM +0000, Zecheng Li wrote:
+> Hi all,
+> 
+> I've identified several missing data type annotations within the perf
+> tools when annotating the Linux kernel. This patch series improves the
+> coverage and correctness of data type annotations.
+> 
+> Some patches from the previous version of this series were
+> cherry-picked. This revision adds new improvements based on feedback and
+> further development.
+> 
+> Here's a breakdown of the changes in this revision:
+> 
+> Patch 1 skips annotations for LEA instructions in x86, as these do not
+> involve memory access. It now returns NO_TYPE.
+> 
+> Patches 2 implements the TSR_KIND_POINTER to represent registers holding
+> memory addresses of the type. We are using the size of void* to get the
+> pointer size. This could be improved to use an architecture dependent
+> pointer size, but may require more work.
+> 
+> Patches 3-5 implement a basic approach for register offset tracking that
+> supports add, sub, and lea operations. The register state is invalidated
+> when an unsupported arithmetic instruction is encountered. This revision
+> uses TSR_KIND_POINTER to avoid finding the pointer type in DWARF and
+> preserves the pointer offset information in the stack state.
 
-The maximum message pr_notice() seems to be able to handle (based on
-experiment) is 1021 characters. This appears to be based on the
-current value of PRINTKRB_RECORD_MAX as 1024 and the fact that
-pr_notice() spends 2 characters on the loglevel prefix and we have a
-'\n' at the end.
+I've applied up to this to perf-tools-next, will review the rest later.
 
-While it would be possible to increase the limits of printk() (and
-therefore pr_notice()) somewhat, it doesn't appear possible to
-increase it enough to fully include a 2048-character cmdline without
-breaking userspace. Specifically on at least two tested userspaces
-(ChromeOS plus the Debian-based distro I'm typing this message on) the
-`dmesg` tool reads lines from `/dev/kmsg` in 2047-byte chunks. As per
-`Documentation/ABI/testing/dev-kmsg`:
+Thanks,
+Namhyung
 
-  Every read() from the opened device node receives one record
-  of the kernel's printk buffer.
-  ...
-  Messages in the record ring buffer get overwritten as whole,
-  there are never partial messages received by read().
-
-We simply can't fit a 2048-byte cmdline plus the "Kernel command
-line:" prefix plus info about time/log_level/etc in a 2047-byte read.
-
-The above means that if we want to avoid the truncation we need to do
-some type of wrapping of the cmdline when printing.
-
-Add wrapping to the printout of the kernel command line. By default,
-the wrapping is set to 1021 characters to avoid breaking anyone, but
-allow wrapping to be set lower by a Kconfig knob
-"CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN". Any tools that are correctly
-parsing the cmdline today (because it is less than 1021 characters)
-will see no difference in their behavior. The format of wrapped output
-is designed to be matched by anyone using "grep" to search for the
-cmdline and also to be easy for tools to handle. Anyone who is sure
-their tools (if any) handle the wrapped format can choose a lower
-wrapping value and have prettier output.
-
-Wrapping is based on spaces, ignoring quotes. All lines are prefixed
-with "Kernel command line: " and lines that are not the last line have
-a " \" suffix added to them. The prefix and suffix count towards the
-line length for wrapping purposes. The ideal length will be exceeded
-if no appropriate place to wrap is found.
-
-The wrapping function added here is fairly generic and could be made a
-library function (somewhat like print_hex_dump()) if it's needed
-elsewhere in the kernel. However, having printk() directly incorporate
-this wrapping would be unlikely to be a good idea since it would break
-printouts into more than one record without any obvious common line
-prefix to tie lines together. It would also be extra overhead when, in
-general, kernel log message should simply be kept smaller than 1021
-bytes. For some discussion on this topic, see responses to the v1
-posting of this patch [2].
-
-[1] https://lore.kernel.org/r/20251021131633.26700Dd6-hca@linux.ibm.com
-[2] https://lore.kernel.org/r/CAD=FV=VNyt1zG_8pS64wgV8VkZWiWJymnZ-XCfkrfaAhhFSKcA@mail.gmail.com
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-v1 link: https://lore.kernel.org/r/20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid
-
-NOTE: I _didn't_ add any "max characters printed" in v2 to try to
-handle someone on s390 having an absurdly long cmdline after the
-discussoin in v1. If someone truly puts a giant cmdline then it will
-all be printed out to dmesg. If this truly turns out to be a problem
-for someone then it's easy to add a maximum at a later time.
-
-Changes in v2:
-- Much longer commit message after discussion in v1.
-
- init/Kconfig | 10 +++++++
- init/main.c  | 83 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 92 insertions(+), 1 deletion(-)
-
-diff --git a/init/Kconfig b/init/Kconfig
-index cab3ad28ca49..905b2ece4127 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1512,6 +1512,16 @@ config BOOT_CONFIG_EMBED_FILE
- 	  This bootconfig will be used if there is no initrd or no other
- 	  bootconfig in the initrd.
- 
-+config CMDLINE_LOG_WRAP_IDEAL_LEN
-+	int "Length to try to wrap the cmdline when logged at boot"
-+	default 1021
-+	range 40 1021
-+	help
-+	  At boot time, the kernel command line is logged to the console.
-+	  It will attempt to be wrapped at this many characters. If there
-+	  are more than this many non-space characters in a row, log lines
-+	  may exceed this ideal maximum length.
-+
- config INITRAMFS_PRESERVE_MTIME
- 	bool "Preserve cpio archive mtimes in initramfs"
- 	depends on BLK_DEV_INITRD
-diff --git a/init/main.c b/init/main.c
-index 07a3116811c5..0adc1575a2cb 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -906,6 +906,87 @@ static void __init early_numa_node_init(void)
- #endif
- }
- 
-+#define KERNEL_CMDLINE_PREFIX		"Kernel command line: "
-+#define KERNEL_CMDLINE_PREFIX_LEN	(sizeof(KERNEL_CMDLINE_PREFIX) - 1)
-+#define KERNEL_CMDLINE_CONTINUATION	" \\"
-+#define KERNEL_CMDLINE_CONTINUATION_LEN	(sizeof(KERNEL_CMDLINE_CONTINUATION) - 1)
-+
-+#define IDEAL_CMDLINE_LEN		(CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN - \
-+					 KERNEL_CMDLINE_PREFIX_LEN)
-+#define IDEAL_CMDLINE_SPLIT_LEN		(IDEAL_CMDLINE_LEN - KERNEL_CMDLINE_CONTINUATION_LEN)
-+
-+/**
-+ * print_kernel_cmdline() - Print the kernel cmdline with wrapping.
-+ * @cmdline: The cmdline to print.
-+ *
-+ * Print the kernel command line, trying to wrap based on the Kconfig knob
-+ * CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN.
-+ *
-+ * Wrapping is based on spaces, ignoring quotes. All lines are prefixed
-+ * with "Kernel command line: " and lines that are not the last line have
-+ * a " \" suffix added to them. The prefix and suffix count towards the
-+ * line length for wrapping purposes. The ideal length will be exceeded
-+ * if no appropriate place to wrap is found.
-+ *
-+ * Example output if CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN is 40:
-+ *   Kernel command line: loglevel=7 \
-+ *   Kernel command line: init=/sbin/init \
-+ *   Kernel command line: root=PARTUUID=8c3efc1a-768b-6642-8d0c-89eb782f19f0/PARTNROFF=1 \
-+ *   Kernel command line: rootwait ro \
-+ *   Kernel command line: my_quoted_arg="The \
-+ *   Kernel command line: quick brown fox \
-+ *   Kernel command line: jumps over the \
-+ *   Kernel command line: lazy dog."
-+ */
-+static void print_kernel_cmdline(const char *cmdline)
-+{
-+	size_t len = strlen(cmdline);
-+
-+	while (len > IDEAL_CMDLINE_LEN) {
-+		const char *first_space;
-+		const char *prev_cutoff;
-+		const char *cutoff;
-+		int to_print;
-+		size_t used;
-+
-+		/* Find the last ' ' that wouldn't make the line too long */
-+		prev_cutoff = NULL;
-+		cutoff = cmdline;
-+		while (true) {
-+			cutoff = strchr(cutoff + 1, ' ');
-+			if (!cutoff || cutoff - cmdline > IDEAL_CMDLINE_SPLIT_LEN)
-+				break;
-+			prev_cutoff = cutoff;
-+		}
-+		if (prev_cutoff)
-+			cutoff = prev_cutoff;
-+		else if (!cutoff)
-+			break;
-+
-+		/* Find the beginning and end of the string of spaces */
-+		first_space = cutoff;
-+		while (first_space > cmdline && first_space[-1] == ' ')
-+			first_space--;
-+		to_print = first_space - cmdline;
-+		while (*cutoff == ' ')
-+			cutoff++;
-+		used = cutoff - cmdline;
-+
-+		/* If the whole string is used, break and do the final printout */
-+		if (len == used)
-+			break;
-+
-+		if (to_print)
-+			pr_notice("%s%.*s%s\n", KERNEL_CMDLINE_PREFIX,
-+				  to_print, cmdline, KERNEL_CMDLINE_CONTINUATION);
-+
-+		len -= used;
-+		cmdline += used;
-+	}
-+	if (len)
-+		pr_notice("%s%s\n", KERNEL_CMDLINE_PREFIX, cmdline);
-+}
-+
- asmlinkage __visible __init __no_sanitize_address __noreturn __no_stack_protector
- void start_kernel(void)
- {
-@@ -942,7 +1023,7 @@ void start_kernel(void)
- 	early_numa_node_init();
- 	boot_cpu_hotplug_init();
- 
--	pr_notice("Kernel command line: %s\n", saved_command_line);
-+	print_kernel_cmdline(saved_command_line);
- 	/* parameters may set static keys */
- 	parse_early_param();
- 	after_dashes = parse_args("Booting kernel",
--- 
-2.51.0.915.g61a8936c21-goog
-
+> 
+> Patches 6-8 split patch 8 from v2 with some minor improvements. It skips
+> check_variable when the type is found directly by register, since
+> sufficient checking is already performed in match_var_offset.
+> check_variable lacks some DWARF information to correctly determine if a
+> variable is valid. I also found it is able to find members for
+> typedef'd types so I preserve them in match_var_offset.
+> 
+> Patch 9 implements support for DW_OP_piece. Currently, this is allowed
+> in check_allowed_ops but is handled like other single location
+> expressions. This patch splits any expression containing DW_OP_piece
+> into multiple parts and handle them separately.
+> 
+> I have tested each patch on a vmlinux and manually checked the results.
+> After applying all patches, there are less missing or incorrect
+> annotations. No obvious regressions were observed.
+> 
+> v4:
+> Merged patch in v3:
+> perf annotate: Rename TSR_KIND_POINTER to TSR_KIND_PERCPU_POINTER
+> 
+> Updated patches 1-5 based on the feedback from Namhyung.
+> 
+> v3:
+> https://lore.kernel.org/all/20250917195808.2514277-1-zecheng@google.com/
+> Merged patches in v2:
+> 
+> perf dwarf-aux: Use signed variable types in match_var_offset
+> perf dwarf-aux: More accurate variable type match for breg
+> perf dwarf-aux: Better variable collection for insn tracking
+> perf dwarf-aux: Skip check_variable for die_find_variable_by_reg
+> 
+> v2:
+> https://lore.kernel.org/all/20250825195412.223077-1-zecheng@google.com/
+> 1. update the match_var_offset function signature to s64
+> 2. correct the comment for is_breg_access_indirect. Use simpler logic to
+> match the expressions we support.
+> 3. add is_reg_var_addr to indicate whether a register holds an address
+> of the variable. This defers the type dereference logic to
+> update_var_state.
+> 4. invalidate register state for unsupported instructions.
+> 5. include two new patches related to improving data type profiler.
+> 
+> v1:
+> https://lore.kernel.org/linux-perf-users/20250725202809.1230085-1-zecheng@google.com/
+> 
+> Zecheng Li (9):
+>   perf annotate: Skip annotating data types to lea instructions
+>   perf annotate: Track address registers via TSR_KIND_POINTER
+>   perf annotate: Track arithmetic instructions on pointers
+>   perf annotate: Save pointer offset in stack state
+>   perf annotate: Invalidate register states for untracked instructions
+>   perf dwarf-aux: Skip check_variable for die_find_variable_by_reg
+>   perf dwarf-aux: Preserve typedefs in match_var_offset
+>   perf annotate: Improve type comparison from different scopes
+>   perf dwarf-aux: Support DW_OP_piece expressions
+> 
+>  tools/perf/arch/x86/annotate/instructions.c | 183 +++++++++++++-
+>  tools/perf/util/annotate-data.c             | 102 ++++++--
+>  tools/perf/util/annotate-data.h             |  14 +-
+>  tools/perf/util/annotate.c                  |  20 ++
+>  tools/perf/util/dwarf-aux.c                 | 266 +++++++++++++++-----
+>  tools/perf/util/dwarf-aux.h                 |   2 +-
+>  6 files changed, 493 insertions(+), 94 deletions(-)
+> 
+> -- 
+> 2.51.0
+> 
 
