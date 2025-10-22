@@ -1,111 +1,318 @@
-Return-Path: <linux-kernel+bounces-865325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39268BFCCC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:14:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C01BFCD2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A884C4EB85C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6955C3A98EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A90F34844D;
-	Wed, 22 Oct 2025 15:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD2134CFC5;
+	Wed, 22 Oct 2025 15:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WILyl/bn"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gDv9PvMw"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD02135BDBD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B478434C99C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146044; cv=none; b=uqnEjXJ046LZwXkd0KcE5L6m/LhX0cH4Ub5vxFrBHSu0RyKwbi7774wEeh0BLEoeDb4GRSkHNhG4h9M5geVGdZlrlNTl1EMiRCkwII6gIs5wcRh5Ly0L4Glsi9nbV5Y/bhVs2G5ccp9EYnncJ5SGlfovMaJhd7sRXj9c+kxY0I8=
+	t=1761146115; cv=none; b=oxbZiAiVhEoUbdrXu8C8FBDqMywenUalRIO1oIbrHK/8uix8n0hkF6wjQBFI9vBvAoBBdoB+VoCyK5n+OHzoUv3T3LTcjiDUbpgrnrYWW3pEcPkP20nu7ELRP29kNyLxfMEL2CWzE1W0b63GtfwufwKw4Nt73TO7/PUQY3ODZqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146044; c=relaxed/simple;
-	bh=bJkRf2vDW66xzETEmduK5o/Wmh8MgCortzpmg5JEPoc=;
+	s=arc-20240116; t=1761146115; c=relaxed/simple;
+	bh=4mblRB768g0mR+5jJ6ggp8VkkejsrNbpM/I/hxaLvgQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DJDI5Q7gMuO/h3SVBqCbnPaV6dgGs0TZnOeheECKMGZmdctGZdt851HkEvgHn5z8BjT8/4trxZQ8YyaWtTtd3NmoAEXRlz+a1Y+lX7gr/lVKT0y9cLUhCbVbvSnMJeS3tEzFm/LcwQFAM6Gha1uR1ptmZ0CUgB/NR7A6sQEwev8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WILyl/bn; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-44181f9e5b4so4154113b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761146041; x=1761750841; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M06GA4DzU6q4HcL9w50fg3W9nzfX6SVpmQDyjsPEDxA=;
-        b=WILyl/bno9iHRovIoGuzt1qOrfFXuCFLtYkN9W1HXfo7iMfQKCh9aUdvScBILF1qN1
-         qHEYWcyq5pcPdEtGuOSOaYcnBgcwXY9Q1HGMND12oMlaqdiHO97g+j0Paq58AwT8kg8c
-         qXbMVqEt8VglL7upyQgN7NvkdAp6cgcHk4omYQqARv64nl3ppKZXCmJK2uCUUa3zAtGv
-         LyS6QxCZswpi4NRMdRk5Y2ATzVfWtnucCnkuvTQP8xLKaf5Cm9xyCGc2lba/XKF6E0qA
-         CcZJk6CxbPV4/2bB56L4AL1qmsoYLvUa6mZrropBBTMZUzL8dOi+mybq/UdOHiiW1ptL
-         l0cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761146041; x=1761750841;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M06GA4DzU6q4HcL9w50fg3W9nzfX6SVpmQDyjsPEDxA=;
-        b=p8eRsv9g0C7hlq7qD7FsjKa2qqyE95eUXFmjTJz6OGlIrju6UjRTTkcQljcH5Lsp8s
-         583qtNCC/zcFHTVOUORHIWg8zR7jPcr2c5r6q5Wj8YRHZ9uLKNxvucRGBeEIhOldSwZe
-         R7crYjOt9VBfOK1lDoamXTBmRu69PCQBBwzHzN6ks2YM8gteocsOcqaF7q+jgJDral9e
-         Lw5b4Nhurvj3QPEcTkw3hfKqVpGvKJVYuBVJ2/NrgoT8HOclCnuZjUxmYYCvuN16P1fR
-         Vl3K0ZmcAYsNbGVJkIpBBnhLDPUmUyEoAskzUrpEQBdMBtLG7sy4Ojny23iRoAXws9z1
-         oroQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhO+v9rh4tJu2SkHIlwnwBcmb5/zc4ksZO87GUcdh8fDzkOFErBeQGAayQfc0rPBu4sd02WPG2Bdwg8Ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyifAuupwj3apRCf8BWLMYgO2DCus63eKcDrQUPYa3rNUn+QWbs
-	zQhtSUbYK66H7z5fzzmttRnVvpZv8NeKVFRMPCeAHjOT5U9lHXpjJt8P7n3FiYP7aAw=
-X-Gm-Gg: ASbGncuJSh+uc4rnWosNNVH3aM47oo5h8DentvCtICDw6xmUFucjAfToEJe4imSgZAO
-	pvAMMBreeNUAVenxk/XDx5UkmJmCbi2Lv7/P58t1tPPDd9FK8LMOnrvid1cGlGu9yRGAbSDWVcW
-	GWRqD4Z6q79w2h1dvEAbPhcETbRpCepMT/f+YV9E2ZBWppy+Zi6F3Ogu0+Mm2YtjCLmuPaO4tOn
-	muFuOUuNWusUH+JgyVgyAVrxlKKTnrmPjulaRGecBZth8Ik54X68Kzajrc7wQnY0MYSmfZcmvqX
-	rhM94rMC5BDoYLsqHSSyKScXqlbkYa+/W+oBrlWSxJLKIGwBy6wSredhXav3U7X/Q0zlKkHqxk3
-	PrQPNcYXRBOO75wNrkJCh3KHaJAx3movO0HS7rasOFnVbFsBdmgEfItLumiBfDAq/hEgMpi5c93
-	GwDpQ1ZH8rxBX6oT9O8+icLgRXfNU3GvcYqzfnBfEa68Upkz0xyA==
-X-Google-Smtp-Source: AGHT+IH5X1dX+eTbtzPr1DK1hodPbkihzSGYwZP+aVpU3q50pmX97szy9HuXtGku72DLkLr+jPiOWQ==
-X-Received: by 2002:a05:6808:2112:b0:43f:1b7d:b631 with SMTP id 5614622812f47-443a30af9femr9009191b6e.35.1761146040880;
-        Wed, 22 Oct 2025 08:14:00 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:4176:6994:bd72:1296? ([2600:8803:e7e4:500:4176:6994:bd72:1296])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-443df628a35sm3311240b6e.22.2025.10.22.08.14.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 08:14:00 -0700 (PDT)
-Message-ID: <cf276696-2928-4ddd-9750-db84466e4599@baylibre.com>
-Date: Wed, 22 Oct 2025 10:13:59 -0500
+	 In-Reply-To:Content-Type; b=K4SGSC56wLzOMOo8bPkjJB0vZNzxP/HJVmUfxvs7USh0GG/fTxouh3gM17KvGzHJeyEOhjWw5AA5FxyIqzN6ffiEv5Z2s6+bE1KKB8KeIxXz0cmOA+JAriI8FEHIsCog+RGhgUQtkwBacLX8Bhcb3FXuQJuRNVds377k0Rj/nWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gDv9PvMw; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <947b1121-ddfc-4f49-825d-103699b62d0c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761146101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPD7KYgHjZ2Kx2EBhuhfRI/lFZmifGXs9ZgWPA9xXqg=;
+	b=gDv9PvMwi7yFV5RizFwxLazuRUHH3JAn2AKGNIfPpXeMPmJmGEaUAgN4Ns2irU/AQMwql+
+	AcxaIN3Jh4BpVJWspOqCcRpLJjth8UmNYw1q1uN+iFQoCvEshG5BYuyFS7xMdtaieY32/Y
+	Wr3OEOsJJ8w4GhFNCE7pHbAqFab3CwE=
+Date: Wed, 22 Oct 2025 23:14:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return
- statement in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Remi Buisson <remi.buisson@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <aPi5vEp75jH0imQc@stanley.mountain>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aPi5vEp75jH0imQc@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH bpf-next v3 1/2] perf: Use extern perf_callchain_entry for
+ get_perf_callchain
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ song@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20251019170118.2955346-1-chen.dylane@linux.dev>
+ <20251019170118.2955346-2-chen.dylane@linux.dev>
+ <20251020114040.GT3419281@noisy.programming.kicks-ass.net>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <20251020114040.GT3419281@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/22/25 6:02 AM, Dan Carpenter wrote:
-> The intention here was clearly to return -ENODEV but the return statement
-> was missing.  It would result in an off by one read in i3c_chip_info[] on
-> the next line.  Add the return statement.
+在 2025/10/20 19:40, Peter Zijlstra 写道:
+
+Hi, Peter
+
+> On Mon, Oct 20, 2025 at 01:01:17AM +0800, Tao Chen wrote:
+>>  From bpf stack map, we want to use our own buffers to avoid unnecessary
+>> copy, so let us pass it directly. BPF will use this in the next patch.
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
 > 
-> Fixes: 1bef24e9007e ("iio: imu: inv_icm45600: add I3C driver for inv_icm45600 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+>> index 808c0d7a31f..851e8f9d026 100644
+>> --- a/kernel/events/callchain.c
+>> +++ b/kernel/events/callchain.c
+>> @@ -217,8 +217,8 @@ static void fixup_uretprobe_trampoline_entries(struct perf_callchain_entry *entr
+>>   }
+>>   
+>>   struct perf_callchain_entry *
+>> -get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+>> -		   u32 max_stack, bool crosstask, bool add_mark)
+>> +get_perf_callchain(struct pt_regs *regs, struct perf_callchain_entry *external_entry,
+>> +		   bool kernel, bool user, u32 max_stack, bool crosstask, bool add_mark)
+>>   {
+>>   	struct perf_callchain_entry *entry;
+>>   	struct perf_callchain_entry_ctx ctx;
+>> @@ -228,7 +228,11 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+>>   	if (crosstask && user && !kernel)
+>>   		return NULL;
+>>   
+>> -	entry = get_callchain_entry(&rctx);
+>> +	if (external_entry)
+>> +		entry = external_entry;
+>> +	else
+>> +		entry = get_callchain_entry(&rctx);
+>> +
+>>   	if (!entry)
+>>   		return NULL;
+>>   
+>> @@ -260,7 +264,8 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+>>   	}
+>>   
+>>   exit_put:
+>> -	put_callchain_entry(rctx);
+>> +	if (!external_entry)
+>> +		put_callchain_entry(rctx);
+>>   
+>>   	return entry;
+>>   }
+> 
+> Urgh.. How about something like the below, and then you fix up
+> __bpf_get_stack() a little like this:
+> 
+
+Your solution seems to be more scalable, i will develop based on 
+yours，thanks a lot.
+
+> 
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 4d53cdd1374c..8b85b49cecf7 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -303,8 +303,8 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>   	u32 max_depth = map->value_size / stack_map_data_size(map);
+>   	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+>   	bool user = flags & BPF_F_USER_STACK;
+> +	struct perf_callchain_entry_ctx ctx;
+>   	struct perf_callchain_entry *trace;
+> -	bool kernel = !user;
+>   
+>   	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+>   			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+> @@ -314,8 +314,13 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>   	if (max_depth > sysctl_perf_event_max_stack)
+>   		max_depth = sysctl_perf_event_max_stack;
+>   
+> -	trace = get_perf_callchain(regs, kernel, user, max_depth,
+> -				   false, false);
+> +	trace = your-stuff;
+> +
+> +	__init_perf_callchain_ctx(&ctx, trace, max_depth, false);
+> +	if (!user)
+> +		__get_perf_callchain_kernel(&ctx, regs);
+> +	else
+> +		__get_perf_callchain_user(&ctx, regs);
+>   
+>   	if (unlikely(!trace))
+>   		/* couldn't fetch the stack trace */
+> 
+> 
+> 
 > ---
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index fd1d91017b99..14a382cad1dd 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -67,6 +67,7 @@ struct perf_callchain_entry_ctx {
+>   	u32				nr;
+>   	short				contexts;
+>   	bool				contexts_maxed;
+> +	bool				add_mark;
+>   };
+>   
+>   typedef unsigned long (*perf_copy_f)(void *dst, const void *src,
+> @@ -1718,9 +1719,17 @@ DECLARE_PER_CPU(struct perf_callchain_entry, perf_callchain_entry);
+>   
+>   extern void perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+>   extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+> +
+> +extern void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
+> +				      struct perf_callchain_entry *entry,
+> +				      u32 max_stack, bool add_mark);
+> +
+> +extern void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
+> +extern void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
+> +
+>   extern struct perf_callchain_entry *
+>   get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+> -		   u32 max_stack, bool crosstask, bool add_mark);
+> +		   u32 max_stack, bool crosstask);
+>   extern int get_callchain_buffers(int max_stack);
+>   extern void put_callchain_buffers(void);
+>   extern struct perf_callchain_entry *get_callchain_entry(int *rctx);
+> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+> index 808c0d7a31fa..edd76e3bb139 100644
+> --- a/kernel/events/callchain.c
+> +++ b/kernel/events/callchain.c
+> @@ -216,50 +216,70 @@ static void fixup_uretprobe_trampoline_entries(struct perf_callchain_entry *entr
+>   #endif
+>   }
+>   
+> +void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
+> +			       struct perf_callchain_entry *entry,
+> +			       u32 max_stack, bool add_mark)
+> +
+> +{
+> +	ctx->entry		= entry;
+> +	ctx->max_stack		= max_stack;
+> +	ctx->nr			= entry->nr = 0;
+> +	ctx->contexts		= 0;
+> +	ctx->contexts_maxed	= false;
+> +	ctx->add_mark		= add_mark;
+> +}
+> +
+> +void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
+> +{
+> +	if (user_mode(regs))
+> +		return;
+> +
+> +	if (ctx->add_mark)
+> +		perf_callchain_store_context(&ctx, PERF_CONTEXT_KERNEL);
+> +	perf_callchain_kernel(ctx, regs);
+> +}
+> +
+> +void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
+> +{
+> +	int start_entry_idx;
+> +
+> +	if (!user_mode(regs)) {
+> +		if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> +			return;
+> +		regs = task_pt_regs(current);
+> +	}
+> +
+> +	if (ctx->add_mark)
+> +		perf_callchain_store_context(ctx, PERF_CONTEXT_USER);
+> +
+> +	start_entry_idx = entry->nr;
+> +	perf_callchain_user(ctx, regs);
+> +	fixup_uretprobe_trampoline_entries(entry, start_entry_idx);
+> +}
+> +
+>   struct perf_callchain_entry *
+>   get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+> -		   u32 max_stack, bool crosstask, bool add_mark)
+> +		   u32 max_stack, bool crosstask)
+>   {
+> -	struct perf_callchain_entry *entry;
+>   	struct perf_callchain_entry_ctx ctx;
+> -	int rctx, start_entry_idx;
+> +	struct perf_callchain_entry *entry;
+> +	int rctx;
+>   
+>   	/* crosstask is not supported for user stacks */
+>   	if (crosstask && user && !kernel)
+>   		return NULL;
+>   
+> -	entry = get_callchain_entry(&rctx);
+> +	entry = get_callchain_entry(&rctx, regs);
+>   	if (!entry)
+>   		return NULL;
+>   
+> -	ctx.entry		= entry;
+> -	ctx.max_stack		= max_stack;
+> -	ctx.nr			= entry->nr = 0;
+> -	ctx.contexts		= 0;
+> -	ctx.contexts_maxed	= false;
+> +	__init_perf_callchain_ctx(&ctx, entry, max_stack, true);
+>   
+> -	if (kernel && !user_mode(regs)) {
+> -		if (add_mark)
+> -			perf_callchain_store_context(&ctx, PERF_CONTEXT_KERNEL);
+> -		perf_callchain_kernel(&ctx, regs);
+> -	}
+> +	if (kernel)
+> +		__get_perf_callchain_kernel(&ctx, regs);
+> +	if (user && !crosstask)
+> +		__get_perf_callchain_user(&ctx, regs);
+>   
+> -	if (user && !crosstask) {
+> -		if (!user_mode(regs)) {
+> -			if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> -				goto exit_put;
+> -			regs = task_pt_regs(current);
+> -		}
+> -
+> -		if (add_mark)
+> -			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
+> -
+> -		start_entry_idx = entry->nr;
+> -		perf_callchain_user(&ctx, regs);
+> -		fixup_uretprobe_trampoline_entries(entry, start_entry_idx);
+> -	}
+> -
+> -exit_put:
+>   	put_callchain_entry(rctx);
+>   
+>   	return entry;
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 177e57c1a362..cbe073d761a8 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8218,7 +8218,7 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+>   		return &__empty_callchain;
+>   
+>   	callchain = get_perf_callchain(regs, kernel, user,
+> -				       max_stack, crosstask, true);
+> +				       max_stack, crosstask);
+>   	return callchain ?: &__empty_callchain;
+>   }
+>   
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
 
+-- 
+Best Regards
+Tao Chen
 
