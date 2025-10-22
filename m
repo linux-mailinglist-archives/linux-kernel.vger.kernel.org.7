@@ -1,196 +1,303 @@
-Return-Path: <linux-kernel+bounces-865105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A00BFC447
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:49:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA569BFC4EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5879661707
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04CF2661FE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7428C348863;
-	Wed, 22 Oct 2025 13:36:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53A5348441
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140191; cv=none; b=UzPWmo5IbiSYmHQAe5q5gwF5koTtLDmh13Rs36MuqdIQVuj8OvH2hDcIcFnt2rc8c+eb6iYV3vjkjTq9UrCYgAb7cMfeqxYI/vOzj8LTDthzuAx6ZriiWsRQ92m/DMwV692F9AnvJV+PRwtcS30o+DelBjY0eAST/pU/meIF+f8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140191; c=relaxed/simple;
-	bh=y4n+tbwGH/22VkyUJBtBrvR+kyYYvmvo6qbbz2Ce290=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJooqGFwvQVFYqk3EjY1Q6ZM/WBzqBB0CCpEWyN6I2wJtdq8kgxB+YvUFsGA34b8GNfdpxmb8Ts7l4X6JfmqjpNA5ike3Bixc+sI79ixAtU8U+fNQ8wWOabElHrY7U6o7yNvSx93wfbABzLxWQKep5pxea11iujZQA7RIjy3Tr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B6661063;
-	Wed, 22 Oct 2025 06:36:20 -0700 (PDT)
-Received: from [10.57.33.187] (unknown [10.57.33.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B23CF3F59E;
-	Wed, 22 Oct 2025 06:36:25 -0700 (PDT)
-Message-ID: <e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
-Date: Wed, 22 Oct 2025 14:36:23 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73BD347BDA;
+	Wed, 22 Oct 2025 13:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="nWTzEt9V"
+Received: from mx-relay102-hz1.antispameurope.com (mx-relay102-hz1.antispameurope.com [94.100.133.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4150347FC0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.133.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761140287; cv=pass; b=O7ufqGnkim0CbrPVxGAFSrLoP/dcCBQD57ZAMBZJniEbBI5nkaajPXAYONMNhOS9xb8PtWP8FprXZX+/Jf3dbi6/NYYtuJzhaZ9iVvupsNyXQ2nDMNIUT0vIO+vIW0ZmGKrmOGHJCfe4iYuVZzlcMoilDROMTr7GZMeApAZudfA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761140287; c=relaxed/simple;
+	bh=jfmq/xxFUjoorgJj8DOsAfY/DMuLUG+cxIPyCkVDlLc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GSX3poFzG8FF0zmEgzjvW/MnVEnYM4J5QH0CecI5y264W8XlwmXXV47wM0JFPL0XEkQ925oIPG87FS0oTX+aKdj/N/a2/Pik2zs1nAuCRqICw8rhstgIEWQgvcYMjd8qkdlDfwlQG9pvKQUdlOdNUpJBYTgx4EoaYeilPfXMR7U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=nWTzEt9V; arc=pass smtp.client-ip=94.100.133.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate102-hz1.hornetsecurity.com 1;
+ spf=pass reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com
+ smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
+ header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=1DebWUerm1P3b92vVeQv2ZKMa4RczUkTUoAChT1TsvQ=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1761140226;
+ b=mBxHfRClRjqzDl5+C2N4tRKFONTUt+iyUodU8hPpPrcCjx5F934tvZKzWTcX0+O8yJ1S3Rlh
+ ADg4dHE00bpA7IX2iuUg3qL1/7qYxzFm/F/wMjEG4dAAZmliHvOvFGg5cwTNnlhqQ6Q25okUIgM
+ c1k8ZTt07gdzlOER0Gk22BphDi4uUMzrqBNwWnYAMpEV6RRuvug7sQGKx1nzDi4Y88jSnxms30I
+ hzdMf/iPuZQl9XSwDKlJSFfox4i5LgY8RkLkP9jAbkmEAuLS1vTg1og2fRkyCBAm8/zpirCK4ZT
+ /0EXZ+fvPHzFjVympQO/EqeJ7kjnKo8pAbNwWuRzt5/Yg==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1761140226;
+ b=CEgZJhUiO/nE7jN6VS+oRi/NhZ7xmCgbOR3+7QvjtT8eYma+Lj2uAznKjaxFAMWyg2JH8hXg
+ H9UqiJlqnCdS8fbOWOKs1txhlsNWp87tu59YLeT+3QqHD0Gr4q5mMtysSkONBcSXziKlHLz8yfD
+ zNF457vho1um9pVCB5tEDv7UTV5bmTsgGb4o/v/gJUocOPFx0zrNwSMXtLuPbAKRH5F4yQe6hIn
+ XnMz4s7Zdc1rrfiiF/NMAlxpx+m9VCZ3knXtlD+BK2B8v4xXH5Nth5Ltl3ZyyCI2Xt7MIGQFiqu
+ h0218mhMzR+HMYUX8MyLwA0rVFnCmIIP/JXwvjioeUmFQ==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay102-hz1.antispameurope.com;
+ Wed, 22 Oct 2025 15:37:06 +0200
+Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
+	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 14121220C57;
+	Wed, 22 Oct 2025 15:36:52 +0200 (CEST)
+Message-ID: <d46d07858a3b5cc9134e17509617901e2215122f.camel@ew.tq-group.com>
+Subject: Re: [PATCH] serial: imx: allow CRTSCTS with RTS/CTS GPIOs
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org,  imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Date: Wed, 22 Oct 2025 15:36:51 +0200
+In-Reply-To: <1963351b2e50c537418293e6ab9293576a239c98.camel@ew.tq-group.com>
+References: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
+	 <cdkpp74ra2ltr7h46psutkwnzyvl4iegcicnhqqj7svm5trltm@w2egfj5nryjm>
+	 <7d3df04c482e71760ccc941469c99412b608c92b.camel@ew.tq-group.com>
+	 <lgse44as4k6fpzarztfnfl7wbxq2bfg5k7m7l6xlsyx23pmem4@khal3tytgwjn>
+	 <1963351b2e50c537418293e6ab9293576a239c98.camel@ew.tq-group.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and FW
- event processing
-To: Boris Brezillon <boris.brezillon@collabora.com>,
- Ketil Johnsen <ketil.johnsen@arm.com>
-Cc: Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
- <20251022143751.769c1f23@fedora>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251022143751.769c1f23@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay102-hz1.antispameurope.com with 4cs9F04rnBz1H2R
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:2922bd59ae7bb4f5e6d1e8192f878683
+X-cloud-security:scantime:1.834
+DKIM-Signature: a=rsa-sha256;
+ bh=1DebWUerm1P3b92vVeQv2ZKMa4RczUkTUoAChT1TsvQ=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1761140226; v=1;
+ b=nWTzEt9VDKRU0FB1Obx5AaJGjWyR/TxHxzuVf4knIL8KBHQRgiKb2RhGI2lLfYAaZPmJJy/C
+ 79gdYAqqbSkq/Lvmx+fw+aHlHxoZeAyfHHLxV7zoQiI9VFpAtguZTQeR8cPHUw95nDS1nDA78p3
+ dDyqTgtkBNbTjfywIPLeNgnOG/60C3v2cnFMr/i/9mAGUbpOoFPqM4dl6DEh3aQ240cisAwNBxM
+ VKPI0CGtquQEcTHp7Lq8Xi/er+lPP5yvIVr6CpwZti9VRT0zof3SuSxMcqS6V88kyZl5mIZ9yrl
+ St1aPOLAq99BLw63TiIUdLXizdoD9duHJ/CtpcJWJLu4Q==
 
-On 22/10/2025 13:37, Boris Brezillon wrote:
-> On Wed, 22 Oct 2025 12:30:13 +0200
-> Ketil Johnsen <ketil.johnsen@arm.com> wrote:
-> 
->> The function panthor_fw_unplug() will free the FW memory sections.
->> The problem is that there could still be pending FW events which are yet
->> not handled at this point. process_fw_events_work() can in this case try
->> to access said freed memory.
->>
->> This fix introduces a destroyed state for the panthor_scheduler object,
->> and we check for this before processing FW events.
->>
->> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
->> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
->> ---
->> v2:
->> - Followed Boris's advice and handle the race purely within the
->>   scheduler block (by adding a destroyed state)
->> ---
->>  drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
->>  1 file changed, 12 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
->> index 0cc9055f4ee52..4996f987b8183 100644
->> --- a/drivers/gpu/drm/panthor/panthor_sched.c
->> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
->> @@ -315,6 +315,13 @@ struct panthor_scheduler {
->>  		 */
->>  		struct list_head stopped_groups;
->>  	} reset;
->> +
->> +	/**
->> +	 * @destroyed: Scheduler object is (being) destroyed
->> +	 *
->> +	 * Normal scheduler operations should no longer take place.
->> +	 */
->> +	bool destroyed;
-> 
-> Do we really need a new field for that? Can't we just reset
-> panthor_device::scheduler to NULL early enough in the unplug path?
-> I guess it's not that simple if we have works going back to ptdev
-> and then dereferencing ptdev->scheduler, but I think it's also
-> fundamentally broken to have scheduler works active after the
-> scheduler teardown has started, so we might want to add some more
-> checks in the work callbacks too.
-> 
->>  };
->>  
->>  /**
->> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
->>  	u32 events = atomic_xchg(&sched->fw_events, 0);
->>  	struct panthor_device *ptdev = sched->ptdev;
->>  
->> -	mutex_lock(&sched->lock);
->> +	guard(mutex)(&sched->lock);
->> +
->> +	if (sched->destroyed)
->> +		return;
->>  
->>  	if (events & JOB_INT_GLOBAL_IF) {
->>  		sched_process_global_irq_locked(ptdev);
->> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
->>  		sched_process_csg_irq_locked(ptdev, csg_id);
->>  		events &= ~BIT(csg_id);
->>  	}
->> -
->> -	mutex_unlock(&sched->lock);
->>  }
->>  
->>  /**
->> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
->>  	cancel_delayed_work_sync(&sched->tick_work);
->>  
->>  	mutex_lock(&sched->lock);
->> +	sched->destroyed = true;
->>  	if (sched->pm.has_ref) {
->>  		pm_runtime_put(ptdev->base.dev);
->>  		sched->pm.has_ref = false;
-> 
-> Hm, I'd really like to see a cancel_work_sync(&sched->fw_events_work)
-> rather than letting the work execute after we've started tearing down
-> the scheduler object.
-> 
-> If you follow my suggestion to reset the ptdev->scheduler field, I
-> guess something like that would do:
-> 
-> void panthor_sched_unplug(struct panthor_device *ptdev)
-> {
->         struct panthor_scheduler *sched = ptdev->scheduler;
-> 
-> 	/* We want the schedu */
-> 	WRITE_ONCE(*ptdev->scheduler, NULL);
-> 
-> 	cancel_work_sync(&sched->fw_events_work);
->         cancel_delayed_work_sync(&sched->tick_work);
-> 
->         mutex_lock(&sched->lock);
->         if (sched->pm.has_ref) {
->                 pm_runtime_put(ptdev->base.dev);
->                 sched->pm.has_ref = false;
->         }
->         mutex_unlock(&sched->lock);
-> }
-> 
-> and
-> 
-> void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events) {
-> 	struct panthor_scheduler *sched = READ_ONCE(*ptdev->scheduler);
-> 
-> 	/* Scheduler is not initialized, or it's gone. */
->         if (!sched)
->                 return;
-> 
->         atomic_or(events, &sched->fw_events);
->         sched_queue_work(sched, fw_events);
-> }
+On Tue, 2025-10-21 at 11:37 +0200, Matthias Schiffer wrote:
+> On Tue, 2025-10-21 at 10:59 +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > Hello Matthias,
+> >=20
+> > On Mon, Oct 20, 2025 at 10:09:29AM +0200, Matthias Schiffer wrote:
+> > > On Fri, 2025-10-17 at 17:01 +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > > > On Thu, Oct 16, 2025 at 01:37:30PM +0200, Matthias Schiffer wrote:
+> > > > > The CTS GPIO is only evaluated when the CRTSCTS termios flag is e=
+nabled;
+> > > > > it should be possible to enable the flag when only GPIO and no ha=
+rdware-
+> > > > > controlled RTS/CTS are available. UCR2_IRTS is kept enabled in th=
+is case,
+> > > > > so the hardware CTS is ignored.
+> > > > >=20
+> > > > > Fixes: 58362d5be352 ("serial: imx: implement handshaking using gp=
+ios with the mctrl_gpio helper")
+> > > > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.c=
+om>
+> > > > > ---
+> > > > >  drivers/tty/serial/imx.c | 10 +++++-----
+> > > > >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> > > > > index 500dfc009d03e..4a54a689a0603 100644
+> > > > > --- a/drivers/tty/serial/imx.c
+> > > > > +++ b/drivers/tty/serial/imx.c
+> > > > > @@ -1117,8 +1117,8 @@ static void imx_uart_set_mctrl(struct uart_=
+port *port, unsigned int mctrl)
+> > > > >  			ucr2 |=3D UCR2_CTS;
+> > > > >  			/*
+> > > > >  			 * UCR2_IRTS is unset if and only if the port is
+> > > > > -			 * configured for CRTSCTS, so we use inverted UCR2_IRTS
+> > > > > -			 * to get the state to restore to.
+> > > > > +			 * configured for hardware-controlled CRTSCTS, so we use
+> > > > > +			 * inverted UCR2_IRTS to get the state to restore to.
+> > > > >  			 */
+> > > > >  			if (!(ucr2 & UCR2_IRTS))
+> > > > >  				ucr2 |=3D UCR2_CTSC;
+> > > > > @@ -1780,7 +1780,7 @@ imx_uart_set_termios(struct uart_port *port=
+, struct ktermios *termios,
+> > > > >  	if ((termios->c_cflag & CSIZE) =3D=3D CS8)
+> > > > >  		ucr2 |=3D UCR2_WS;
+> > > > > =20
+> > > > > -	if (!sport->have_rtscts)
+> > > > > +	if (!sport->have_rtscts && !sport->have_rtsgpio)
+> > > > >  		termios->c_cflag &=3D ~CRTSCTS;
+> > > > > =20
+> > > > >  	if (port->rs485.flags & SER_RS485_ENABLED) {
+> > > >=20
+> > > > This hunk makes sense.
+> > > >=20
+> > > > > @@ -1794,7 +1794,7 @@ imx_uart_set_termios(struct uart_port *port=
+, struct ktermios *termios,
+> > > > >  		else
+> > > > >  			imx_uart_rts_inactive(sport, &ucr2);
+> > > > > =20
+> > > > > -	} else if (termios->c_cflag & CRTSCTS) {
+> > > > > +	} else if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts) =
+{
+> > > >=20
+> > > > I agree to add the parens here and consider this more readable than=
+ the
+> > > > alternative
+> > > >=20
+> > > > 	} else if (termios->c_cflag & CRTSCTS && sport->have_rtscts) {
+> > > >=20
+> > > > . Note there is no real win here. If the port doesn't have RTS/CTS =
+it
+> > > > doesn't matter if it tries to control the RTS line. While you could
+> > > > argue it shouldn't set the line, it only makes an externally observ=
+able
+> > > > difference if one of the SoC's pads is muxed to its RTS function.
+> > > > I claim it's more robust in this case (i.e. no uart-has-rtscts prop=
+erty
+> > > > but a pinmux for the RTS line) to control the line according to the=
+ RTS
+> > > > setting. This is (at least IMO) better and more expected than drivi=
+ng
+> > > > this line to a constant level. So I oppose to this hunk.
+> > > >=20
+> > > > >  		/*
+> > > > >  		 * Only let receiver control RTS output if we were not request=
+ed
+> > > > >  		 * to have RTS inactive (which then should take precedence).
+> > > > > @@ -1803,7 +1803,7 @@ imx_uart_set_termios(struct uart_port *port=
+, struct ktermios *termios,
+> > > > >  			ucr2 |=3D UCR2_CTSC;
+> > > > >  	}
+> > > > > =20
+> > > > > -	if (termios->c_cflag & CRTSCTS)
+> > > > > +	if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts)
+> > > > >  		ucr2 &=3D ~UCR2_IRTS;
+> > > > >  	if (termios->c_cflag & CSTOPB)
+> > > > >  		ucr2 |=3D UCR2_STPB;
+> > > >=20
+> > > > Hmm, not sure. On one hand the same argument applies as above, but =
+on
+> > > > the other if there are pins that are not explicitly configured but =
+still
+> > > > in their CTS function this might affect operation in a bad way.
+> > > > Also this affects the (very usual) configuration where only RX, TX =
+and
+> > > > RTS are used and CTS is not. In this case have_rtscts is true (righ=
+t?)
+> > > > and then if there is an accidental CTS pin this is bad and not fixe=
+d by
+> > > > your change. Hmmm...
+> > >=20
+> > > I think it makes sense to always keep UCR2_IRTS set when have_rtscts =
+is unset,
+> > > as otherwise there might be two separate CTS signals in the accidenta=
+l CTS pin
+> > > case - the hardware + the GPIO one, both affecting the UART operation=
+.
+> >=20
+> > With that change you break setups that have an RTS-GPIO but rely on the
+> > HW pin for the CTS function. Not sure how common that is, but in this
+> > case you only want the first code change. You could argue that in that
+> > case have_rtscts should be set, but that's somewhat fuzzy.
+>=20
+> Such a setup should set have_rtscts IMO. In any case, my patch would not =
+break
+> existing setups, as the CRTSCTS flag simply cannot be set for !have_rtsct=
+s
+> without these changes.
+>=20
+> >=20
+> > > If we keep this change (the 3rd), the 2nd should also be included for
+> > > consistency in the code path where I just changed a comment - there, =
+UCR2_CTSC
+> > > is set only when UCR2_IRTS is unset. The 2nd and 3rd change together =
+keep
+> > > imx_uart_set_mctrl and imx_uart_set_termios aligned.
+> > >=20
+> > > >=20
+> > > > So in sum the 2nd and 3rd code change is controversial. If the firs=
+t one
+> > > > already fixes the problem you're facing, I suggest to go for only t=
+hat.
+> > > > If you still think that the 3rd (and maybe even the 2nd) change is =
+a
+> > > > good idea, I'd request to do that in a separate commit as this is a
+> > > > separate problem. Also the commit log only describes the first chan=
+ge,
+> > > > doesn't it?
+> > >=20
+> > > The commit message describes the first and third change; the second i=
+s included
+> > > to keep the setup consistent. I don't think these changes can be sepa=
+rated well
+> > > - the second and third change only affect a case that couldn't occur =
+without the
+> > > first (as (termios->c_cflag & CRTSCTS) && !sport->have_rtscts would n=
+ever have
+> > > been true). My suggestion would be that I extend the commit message t=
+o explain
+> > > each change in detail.
+> >=20
+> > I'd still request to split the patch in at least two patches. The first
+> > code change is to allow rts-gpios to work at all. The two later patches
+> > change details about how HW pins are controlled in the presence of
+> > rts-gpios
+>=20
+> Okay, will do.
 
-Note there's also the path of panthor_mmu_irq_handler() calling
-panthor_sched_report_mmu_fault() which will need to READ_ONCE() as well
-to be safe.
+Hmm, thinking about this again, I'm not sure how to assign Fixes tags if we=
+ do
+it like this. Depending on our decision on the correct handling of hardware=
+-
+controlled RTS/CTS in the presence of the GPIOs, the first patch might intr=
+oduce
+"wrong" code which is then fixed by the second (but the second patch could =
+not
+have a Fixes tag for the first patch of the same series).
 
-I agree having an extra bool is ugly, but it easier to reason about than
-the lock-free WRITE_ONCE/READ_ONCE dance. It worries me that this will
-be regressed in the future. I can't immediately see how to wrap this in
-a helper to ensure this is kept correct.
+As it seems preferable not to introduce the wrong code in the first place, =
+I
+would propose to change the order of patches: The first one would update th=
+e
+handling of CTSC and IRTS with CRTSCTS in the absence of have_rtscts (witho=
+ut
+functional change, as CRTSCTS can't be set without have_rtscts), with the f=
+inal
+patch of the series allowing CRTSCTS with just have_rtsgpio.
 
-Thanks,
-Steve
+Best,
+Matthias
 
-> 
-> 
-> sched_queue_[delayed_]work() could also be automated to issue a drm_WARN_ON()
-> when it's called and ptdev->scheduler = NULL.
-
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
