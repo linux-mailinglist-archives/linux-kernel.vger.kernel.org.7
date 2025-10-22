@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-864164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C912BFA127
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2CFBFA139
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED1B834658D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24DA18C7251
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4512E8882;
-	Wed, 22 Oct 2025 05:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3812EC0B0;
+	Wed, 22 Oct 2025 05:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="0Up3RLUx"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709BC21348;
-	Wed, 22 Oct 2025 05:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="UNktbWJm"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67772EC081;
+	Wed, 22 Oct 2025 05:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761111437; cv=none; b=tDNiwXS/ksjkGJdixphHaWJtc22pr4fkesM/6FB4Dn0jnvfBHdOUVaf8fO8cwAGKJo8w8vmoxyYbdCZoX45tn/CSZscg0pxLRJXIqGS6dNoaHLzN0viKzKXt5UEQRf3aYyOlarxfTJSPkuDeja+uEHkkw27VyZkOWgaANOiAMm8=
+	t=1761111520; cv=none; b=m4epSCHvgM7Dm71hBIY77k9ZhZ8jfq382zkR4CzBueWNMnatI+m31042PiGo/1CbP/KD3PpFrtTwRh/RkdXHcYaU5zt1gPjg4gtEYLarbH920/ZT4gvCJnmbswoKQqeGUcdRKz9hzgtWUVw5eb7/WUr9AEIyPJLn2Q2qShbrfVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761111437; c=relaxed/simple;
-	bh=Tbwss0nXMa5BTDRSqT/ghsm1C3O/dSOWFT7FaxGnv98=;
+	s=arc-20240116; t=1761111520; c=relaxed/simple;
+	bh=UCQR+aT3yopHWQ+fBkDsxTQA8UU1mrskcwvqVTuyKt4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXaqH8y7IDdCJU7e22hdWrKVfblvtlbByJHRVvfnpG3jB6bc/ZQDsNTpImodoyeEXP6wjnFWVbrUeVEFwqVAcg9q3CrWBOZUXL9mMdyyMZm+/0lWxtzUQ3Qr7ZKxvR0qttOf8w7DFa8SFRbWHlLRNIf+g/IBPODH7UIAjCZXp6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=0Up3RLUx; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=55BpwGusbE0Q6zvfMgJToUDCvwjVEr4QNsPjBG6PryY=; b=0Up3RLUxevg5HmyNmj6t+iLeeh
-	h9sk+cN5AbTz9BrLD/uDPr/dJ6yMTn4STQXIxdDeme1rpDqCwsKSqwtjgDSfuN0WhEqSGTgs9sICn
-	KnndmNcMxh5kNqok6inV4Dp64af+lZ0O3tIsTW5rttpQEwqMuDua7tJl35tz6k6CZo77Zy6IXv1/c
-	VpNDDm7WFADtWKZrKUI87mBA0q1axdv/MErhBQ51WFshpSAiZj84uANBFqG64Yx8a3jFIKMkXkQKL
-	EpyNNauoeWcqTN6ex1m3UZviSnSQ9FW1FYLbRthOB0iYpcMFYvwxelah14H1fjC/wJ5CUg/ohlUXQ
-	PKS92Ryg==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1vBRWp-00H5T8-33;
-	Wed, 22 Oct 2025 07:36:55 +0200
-Date: Wed, 22 Oct 2025 07:36:55 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
-	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] driver: reset: spacemit-p1: add driver for
- poweroff/reboot
-Message-ID: <aPhtd0j6iBpqiGUQ@aurel32.net>
-Mail-Followup-To: Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
-	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
-References: <20251021201451.1013640-1-aurelien@aurel32.net>
- <20251021201451.1013640-2-aurelien@aurel32.net>
- <20251022004830-GYB1522542@gentoo.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNN5tHNhRHvVj640LUagYORrsjgISyi909bngDf8yKOyu1uFcW5BMAkxYWAxjbx/nE2mntTh4dkH3VO3oUX+zyF6crortxP0eZ//rTne72ARHQxmGlWIPPubVOLOu3gnD5S8koB5wqD/sG8NoXNP0WzLYYh3xFPQoYBpOjyHczg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=UNktbWJm; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 4081C14C2D3;
+	Wed, 22 Oct 2025 07:38:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1761111514;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OPgNsOT2ZO9umiexmnUVC6FxF44CE2Et1XNZVAkmI3Y=;
+	b=UNktbWJmMVmAiO6elXuW5rxb14r0OOg3jKIKPHPdDxEWWFmJjwL/eFilcCtA+xSPBuTcCa
+	DtIrAC4MA4vLPrETboYsfb/3FCuML+eAORUmnO9uQc275gbR5oAEvVxI2Fxa9ZSSdGA0pB
+	U+HYZiiYdYF4she1+Ls5WUcuh43HcXjYtV/r593e0yLzcsua3dOqX3+LkuuoSHB56uCzbO
+	C3wGgXxdbge8bp8RRH2r1C2fG+m4THEjlNhKznhAj5Fs6u79b3/s2WQVCImyn1jzS7tEWn
+	eQC/MSpOirheEGIwvCDNFNo1NulIPeUuOcDrDKlK87yyIPqT8syQCCU1/AWhOA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1b0779e1;
+	Wed, 22 Oct 2025 05:38:29 +0000 (UTC)
+Date: Wed, 22 Oct 2025 14:38:14 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Tingmao Wang <m@maowtm.org>
+Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org,
+	v9fs@lists.linux.dev, bpf@vger.kernel.org
+Subject: Re: [GIT PULL] 9p cache=mmap regression fix (for 6.18-rc3)
+Message-ID: <aPhtxt7qEWY5FjPQ@codewreck.org>
+References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
+ <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
+ <aPgUaFE1oUq8e1F-@codewreck.org>
+ <39116c81-1798-4cc1-945c-a05d0ac7d8d9@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251022004830-GYB1522542@gentoo.org>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <39116c81-1798-4cc1-945c-a05d0ac7d8d9@maowtm.org>
 
-On 2025-10-22 08:48, Yixun Lan wrote:
-> Hi Aurelien,
+Tingmao Wang wrote on Wed, Oct 22, 2025 at 12:34:13AM +0100:
+> On 10/22/25 00:16, Dominique Martinet wrote:
+> > We had a regression with cache=mmap that impacted quite a few people so
+> > I'm sending a fix less than a couple of hours after making the commit.
+> > 
+> > If it turns out there are other side effects I'd suggest just reverting
+> > commit 290434474c33 ("fs/9p: Refresh metadata in d_revalidate for
+> > uncached mode too") first, but the fix is rather minimal so I think it's
+> > ok to try falling forward -- let me know if you prefer a revert and I'll
+> > send one instead (there's a minor conflict)
 > 
-> On 22:11 Tue 21 Oct     , Aurelien Jarno wrote:
-> > This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
-> > chip, which is commonly paired with the SpacemiT K1 SoC.
-> > 
-> > The SpacemiT P1 support is implemented as a MFD driver, so the access is
-> > done directly through the regmap interface. Reboot or poweroff is
-> > triggered by setting a specific bit in a control register, which is
-> > automatically cleared by the hardware afterwards.
-> > 
-> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > Reviewed-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> > v3:
-> >  - Allow building as a module
-> >  - Remove outdated Acked-by and Tested-by
-> >  - Collect Reviewed-by
-> > 
-> >  drivers/power/reset/Kconfig              |  9 +++
-> >  drivers/power/reset/Makefile             |  1 +
-> >  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
-> >  3 files changed, 98 insertions(+)
-> >  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
-> > 
-> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> > index 8248895ca9038..6577d73edbda4 100644
-> > --- a/drivers/power/reset/Kconfig
-> > +++ b/drivers/power/reset/Kconfig
-> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
-> >  	help
-> >  	  Reboot support for the KEYSTONE SoCs.
-> >  
-> > +config POWER_RESET_SPACEMIT_P1
-> > +	tristate "SpacemiT P1 poweroff and reset driver"
-> > +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> ..
-> > +	select MFD_SPACEMIT_P1
-> I'd suggest to use "depends on" instead of "select", the reason is that
-> using "select" will sometimes ignore the dependency, considering
-> the reset driver here is tightly coupled with P1, so I think it's 
-> reasonable to switch to use "depends on", also refer below link
-> 
-> https://lxr.linux.no/#linux+v6.7.1/Documentation/kbuild/kconfig-language.rst#L144
-> 
->         select should be used with care. select will force
->         a symbol to a value without visiting the dependencies.
->         By abusing select you are able to select a symbol FOO even
->         if FOO depends on BAR that is not set.
->         In general use select only for non-visible symbols
->         (no prompts anywhere) and for symbols with no dependencies.
->         That will limit the usefulness but on the other hand avoid
->         the illegal configurations all over.
+> See the reply to the original patch [1] (posted right after, and before
+> seeing, this message) - there is indeed more side effects, and I wouldn't
+> mind a revert for now.  0172a934747f ("fs/9p: Invalidate dentry if inode
+> type change detected in cached mode") will need to be reverted too.
 
-Thanks for the pointer, I'll fix that in the next version. I used 
-REGULATOR_SPACEMIT_P1 and RTC_DRV_SPACEMIT_P1 as examples, they'll also 
-need to be fixed.
+(yeah, and even that conflicts due to the added debug message in the
+next commit, but I went the heavy-handed way and removed the conflicting
+hunk so that commit's also implicitly been removed. In hindsight it
+would have been cleaner to revert the three commits
+290434474c33^..c667c54c5875 -- ohwell)
 
-Note also that without the select, a default value has to be added to 
-MFD_SPACEMIT_P1, otherwise this makes the default values on the 
-regulator, rtc and reboot drivers useless.
+> [1]: https://lore.kernel.org/v9fs/6c74ad63-3afc-4549-9ac6-494b9a63e839@maowtm.org/
+
+OK, so let's go with the revert for now as I don't have time to look for
+more corner cases immediately.
+
+Linus, here's the new PR:
+---------
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
+
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+
+are available in the Git repository at:
+
+  https://github.com/martinetd/linux tags/9p-for-6.18-rc3-v2
+
+for you to fetch changes up to 43c36a56ccf6d9b07b4b3f4f614756e687dcdc01:
+
+  Revert "fs/9p: Refresh metadata in d_revalidate for uncached mode too" (2025-10-22 14:25:27 +0900)
+
+----------------------------------------------------------------
+Fix 9p cache=mmap regression by revert
+
+This reverts the problematic commit instead of trying to fix it in a
+rush
+
+----------------------------------------------------------------
+Dominique Martinet (1):
+      Revert "fs/9p: Refresh metadata in d_revalidate for uncached mode too"
+
+ fs/9p/vfs_dentry.c     | 10 ++--------
+ fs/9p/vfs_inode.c      |  8 +-------
+ fs/9p/vfs_inode_dotl.c |  8 +-------
+ 3 files changed, 4 insertions(+), 22 deletions(-)
 
 -- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+Dominique Martinet | Asmadeus
 
