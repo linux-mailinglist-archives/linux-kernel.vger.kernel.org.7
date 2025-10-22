@@ -1,167 +1,206 @@
-Return-Path: <linux-kernel+bounces-864298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF316BFA73D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:06:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DB7BFA788
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9095E3B2631
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D616B189B73F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B572F39DD;
-	Wed, 22 Oct 2025 07:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C3F2F60B5;
+	Wed, 22 Oct 2025 07:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hlK5YiXJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tQQAHmKk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="z+t7udLx";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cCOmOphU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="je/MybQn"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DB32F5A28
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691152F3C27
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761116754; cv=none; b=ZOoyCpQnPII3rI0OqJr4L3woJ4tCpB9sqYE1+1ZE/VKdCA/DUzPwpCp2ewKe9iSVwH4TwatUSoHsdayjKSltVLw1sOP8jncBnFQp9EsZi+Tq5RNzeCihBiEhOAQZ2Vi4NygkpfCPuVtb/TsbM8TnfQB2QN2O2E8xhjp1axEQULQ=
+	t=1761116939; cv=none; b=iRq9D3UVUmQQnPp/VQ1JcCMgstMz5NZf2QPCad+JPAx4OZNV7GXwzf8x6pTSUmFIz53G4nhxvHJnpF1pDtU6RbLfA9CPq5kjLLCI7bBxRIgR/GwjtP31trBpLNpYSy7CkktHp16b0x3ecGcwh2N7EaHG7atUIdyOBKjJRy0bJGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761116754; c=relaxed/simple;
-	bh=nuBwQd/3BkfNKIhJSB3lKEQ49L5UdcoVz8iP+DlOZ2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mXE7f114D07H/j2lAWeX6LBASQ5Ok9zTB70L1yIgDrhztCQIo1LT61EcCBIhm0vto0ZckrvGp18YrakLXldxQTISpzJRpRzw8YdlO4lP5NxEbGWNRbvti8V/DGSCfnqOnXZStTFQPjmKrpWsNMuqxjuuGMUCetpyi16Pcssf2yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hlK5YiXJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 97E2D83D;
-	Wed, 22 Oct 2025 09:04:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761116646;
-	bh=nuBwQd/3BkfNKIhJSB3lKEQ49L5UdcoVz8iP+DlOZ2U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hlK5YiXJVmpjkKhWd3lmwIpXozohwJ4WY932dq37yNhjLLGF9sF12Vd0OH9WUR1mh
-	 KK8UZEOcb4snGC9jnYKuuRuiqDRcpo8OWtf2glQ4oB0Vs51CGcEvpf8fws8wPsL8Wh
-	 Ph+cBtzGxYnNaJ1bEc6Po6CU2AY4VP3ZEhB75rLo=
-Message-ID: <5269c71a-b439-46d3-acb4-590eee2406f4@ideasonboard.com>
-Date: Wed, 22 Oct 2025 10:05:47 +0300
+	s=arc-20240116; t=1761116939; c=relaxed/simple;
+	bh=qe4z/LoLoycxB0TzIKylzsq3GuCWi1pax/9SGUwJcTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbxLVGmIljTUBDGqTJtRqO0oMR8rTQLczkFv0SEWNHJFQLi7hprPQXvsh+Jae6Z0tVcND7RQjUmbgYXsNcsWstE8w4BFfZirWPwWtkbVsJmPqDKxa+RCMwpQ7y0YoEJZrmyk7FOXghCXr3LpHYOOC4iNMavuLNjkTI20irCHaP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tQQAHmKk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=z+t7udLx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cCOmOphU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=je/MybQn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AD4A11F38D;
+	Wed, 22 Oct 2025 07:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761116929; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EiqzOTcD6BeiMm0m3Qik1jWulQ22mecGBwnXl3IAyTY=;
+	b=tQQAHmKkibpPDnyQgtlMZSpkOn0Wz/I7jjvBFmJ1qvbuwBsSG0bA9PF2p3G+1sn6u6ia24
+	hoUy1YP3YoujGOMGP4IutV4Uyg/NbJoQYxFlSlgsQYdZdxwwa74r5xd8a2/QrycOarWv/o
+	qYotXMZKxHCPNUUvlP1Hc1kOd1fMoL8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761116929;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EiqzOTcD6BeiMm0m3Qik1jWulQ22mecGBwnXl3IAyTY=;
+	b=z+t7udLxKXENOYjuxaH7Jcb+kZuZMce0iuT2MA9UdsN3bWkDOc+XG5ndDikyJk0o5Gfekv
+	3MQLjlYRZ2O6DyBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761116925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EiqzOTcD6BeiMm0m3Qik1jWulQ22mecGBwnXl3IAyTY=;
+	b=cCOmOphUpqowelBvduOESBfAfveCRIu/36sTR7fYXJ2SFhx7BL2S8zVSdtb/9WhYFDajly
+	mSl4RgSwmlo+INNAjRAabISO12kXXdDuraakTs+OaNwvP3n61f6SQf3dnx0FUi61/+uCGl
+	REolJSuqpwdcd3tBghZ8ao1sTFwNIWg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761116925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EiqzOTcD6BeiMm0m3Qik1jWulQ22mecGBwnXl3IAyTY=;
+	b=je/MybQn3PHBim9ffU5JgGUHSwMYAjfNS7uirlQ8S7PQ57MsfShgooOxVdE8ZNMYzOrzId
+	zN/00VF0MkMeMlCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3C401339F;
+	Wed, 22 Oct 2025 07:08:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M23uL/yC+GhCAQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 22 Oct 2025 07:08:44 +0000
+Date: Wed, 22 Oct 2025 08:08:42 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <zuzs6ucmgxujim4fb67tw5izp3w2t5k6dzk2ktntqyuwjva73d@tqgwkk6stpgz>
+References: <20251017141536.577466-1-kirill@shutemov.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tilcdc: Fix removal actions in case of failed probe
-To: Kory Maincent <kory.maincent@bootlin.com>,
- Douglas Anderson <dianders@chromium.org>, Maxime Ripard
- <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: Bajjuri Praneeth <praneeth@ti.com>,
- Louis Chauvet <louis.chauvet@bootlin.com>, thomas.petazzoni@bootlin.com,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-References: <20251014143229.559564-1-kory.maincent@bootlin.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20251014143229.559564-1-kory.maincent@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017141536.577466-1-kirill@shutemov.name>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-Hi,
-
-On 14/10/2025 17:32, Kory Maincent wrote:
-> From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
+On Fri, Oct 17, 2025 at 03:15:36PM +0100, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
 > 
-> The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() helpers
-> should only be called when the device has been successfully registered.
-> Currently, these functions are called unconditionally in tilcdc_fini(),
-> which causes warnings during probe deferral scenarios.
+> The protocol for page cache lookup is as follows:
 > 
-> [    7.972317] WARNING: CPU: 0 PID: 23 at drivers/gpu/drm/drm_atomic_state_helper.c:175 drm_atomic_helper_crtc_duplicate_state+0x60/0x68
-> ...
-> [    8.005820]  drm_atomic_helper_crtc_duplicate_state from drm_atomic_get_crtc_state+0x68/0x108
-> [    8.005858]  drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0x1c8
-> [    8.005885]  drm_atomic_helper_disable_all from drm_atomic_helper_shutdown+0x90/0x144
-> [    8.005911]  drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc]
-> [    8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [tilcdc]
+>   1. Locate a folio in XArray.
+>   2. Obtain a reference on the folio using folio_try_get().
+>   3. If successful, verify that the folio still belongs to
+>      the mapping and has not been truncated or reclaimed.
+>   4. Perform operations on the folio, such as copying data
+>      to userspace.
+>   5. Release the reference.
 > 
-> Fix this by moving both drm_kms_helper_poll_fini() and
-> drm_atomic_helper_shutdown() inside the priv->is_registered conditional
-> block, ensuring they only execute after successful device registration.
+> For short reads, the overhead of atomic operations on reference
+> manipulation can be significant, particularly when multiple tasks access
+> the same folio, leading to cache line bouncing.
 > 
-> Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at shutdown/remove time for misc drivers")
-> Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
+> <snip>
+>+static inline unsigned long filemap_read_fast_rcu(struct address_space *mapping,
+> +						  loff_t pos, char *buffer,
+> +						  size_t size)
+> +{
+> +	XA_STATE(xas, &mapping->i_pages, pos >> PAGE_SHIFT);
+> +	struct folio *folio;
+> +	loff_t file_size;
+> +	unsigned int seq;
+> +
+> +	lockdep_assert_in_rcu_read_lock();
+> +
+> +	/* Give up and go to slow path if raced with page_cache_delete() */
+> +	if (!raw_seqcount_try_begin(&mapping->i_pages_delete_seqcnt, seq))
+> +		return false;
+> +
+> +	folio = xas_load(&xas);
+> +	if (xas_retry(&xas, folio))
+> +		return 0;
+> +
+> +	if (!folio || xa_is_value(folio))
+> +		return 0;
+> +
+> +	if (!folio_test_uptodate(folio))
+> +		return 0;
+> +
+> +	/* No fast-case if readahead is supposed to started */
+> +	if (folio_test_readahead(folio))
+> +		return 0;
+> +	/* .. or mark it accessed */
+> +	if (!folio_test_referenced(folio))
+> +		return 0;
+> +
+> +	/* i_size check must be after folio_test_uptodate() */
+> +	file_size = i_size_read(mapping->host);
+> +	if (unlikely(pos >= file_size))
+> +		return 0;
+> +	if (size > file_size - pos)
+> +		size = file_size - pos;
+> +
+> +	/* Do the data copy */
+> +	size = memcpy_from_file_folio(buffer, folio, pos, size);
+> +	if (!size)
+> +		return 0;
+> +
 
-Should this be cc: stable?
+I think we may still have a problematic (rare, possibly theoretical) race here where:
 
- Tomi
+   T0				  		T1						T3
+filemap_read_fast_rcu()    |							|
+  folio = xas_load(&xas);  |							|
+  /* ... */                |  /* truncate or reclaim frees folio, bumps delete	|
+                           |     seq */						|  	folio_alloc() from e.g secretmem
+  			   |							|	set_direct_map_invalid_noflush(!!)
+memcpy_from_file_folio()   |							|
 
-> ---
->  drivers/gpu/drm/tilcdc/tilcdc_drv.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> index 7caec4d38ddf..2031267a3490 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> @@ -172,11 +172,11 @@ static void tilcdc_fini(struct drm_device *dev)
->  	if (priv->crtc)
->  		tilcdc_crtc_shutdown(priv->crtc);
->  
-> -	if (priv->is_registered)
-> +	if (priv->is_registered) {
->  		drm_dev_unregister(dev);
-> -
-> -	drm_kms_helper_poll_fini(dev);
-> -	drm_atomic_helper_shutdown(dev);
-> +		drm_kms_helper_poll_fini(dev);
-> +		drm_atomic_helper_shutdown(dev);
-> +	}
->  	tilcdc_irq_uninstall(dev);
->  	drm_mode_config_cleanup(dev);
->  
+We may have to use copy_from_kernel_nofault() here? Or is something else stopping this from happening?
 
+-- 
+Pedro
 
