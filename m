@@ -1,68 +1,77 @@
-Return-Path: <linux-kernel+bounces-864865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2383BFBB9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:49:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14DABFBBA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 227B0353723
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:49:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44C274EAE35
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7187033F8DA;
-	Wed, 22 Oct 2025 11:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3E032ED27;
+	Wed, 22 Oct 2025 11:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IOL5DxkN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SmIhARcm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BFB32E745;
-	Wed, 22 Oct 2025 11:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35F530F52B;
+	Wed, 22 Oct 2025 11:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761133771; cv=none; b=r8oedMvLldJsL5PxnHYRylTA9rXdCLPIeuat+MGLHcIH6NbQvlDTfRFjJXBRTLKb8Vws/uYBET3io4/5gQjoxTwpguCEkvCgblOM4anxvR4lIsnZjMOGyDboleyleZwyhUwFuzlVY3orxHe3HREpVHk4HgzPIJecmev5HPPT1Bc=
+	t=1761133825; cv=none; b=anxYcDCRBBZuTaNOPbJroHLTWbui1vELiJa06S3ux9n+VdU77aOSseeiomEiiH5hVAGsmx5hpvawfyKQfFKF0i4obvO8M8ydPlB7F9D7x1NVhDfIR2u1hZk+8UpUTY3eQOvGdQxzXhtUBQFje7anbbivzTMQUGoW7DpSZ+RorkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761133771; c=relaxed/simple;
-	bh=KnivbPc4Z2ekQldbY1k9O11RMbzSito1tPPROx4DQFo=;
+	s=arc-20240116; t=1761133825; c=relaxed/simple;
+	bh=u5TPYnOkoEfABi04+jGPySZnwP59I3PvfB31Ze/FrEo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=km5cVottomy3XkHM9nbNFpEMiSVHoNjvtWzAEJuOA4IVSJeIyaJh9miCgRsTQMrsVjRx//sgFP9aRvsO9b+G7ckbia+Bf0tn+Av07BASjtAz5WK6+54a3LtHbw2RKj5wcvC834+1RU9JNHcgRd+FPANhEr26oE/hLSZ+TPuzsZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IOL5DxkN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=l1x0AilQYrSx229yxEwfmMTRySwBVQwUcACuiygmXLk=; b=IOL5DxkNFVWR8ZUBvDwkOtu9T/
-	YeWiK3NcUudIZwvh8jMf/SVNcbEGF/hs8hOJC/M73TIFIkxX4kyNDFzSbL9QTw/J7WKq3HVxW5Dtf
-	C9r2XJaZFZv7tVHD8jubqmomLG4tkdW4JUiJkenpEc/XBrgeeiWpVBPhQT1dyx/mjLinrL/2J/+YL
-	qQROR9qheHijjJxqdS8Q+fLXiM3XqOR1bfSPxiTNN/GcgYDnXfmAEx0R+0+gagiqQQgeXA9XHxB58
-	Vlyd8jjeCRwX+Z0XwYYN0E4SuHEpID0vb75uY6fYAcHbjP3Tv449MFActqrT0ozWuQRlwuGerTE8V
-	FpxYIkjg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBWTX-00000000VRA-0xwD;
-	Wed, 22 Oct 2025 10:53:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 08C3B30039F; Wed, 22 Oct 2025 13:49:18 +0200 (CEST)
-Date: Wed, 22 Oct 2025 13:49:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: Re: [Patch v8 06/12] perf/x86/intel/ds: Factor out PEBS record
- processing code to functions
-Message-ID: <20251022114917.GT3245006@noisy.programming.kicks-ass.net>
-References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
- <20251015064422.47437-7-dapeng1.mi@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOnmsLKZn11d2DV/sdlBTo+V3084ivzLTVHLuip+GkuRRuL8lETOkG/fVM3tDkPZ9F4XKGMsQnC7D/ikEwS+NoUQGtceAZWXjNneTz4KOz6rlig786Pl/Lca2NvPC9diPxuOK5BHRifMRiR3GLv7WytIPqgp/oGUttdhnE0C1dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SmIhARcm; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761133824; x=1792669824;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u5TPYnOkoEfABi04+jGPySZnwP59I3PvfB31Ze/FrEo=;
+  b=SmIhARcm3RyVLDrkOc1d/sHMQgsLBYq5igNyJXnLRD1QRAaUx4bqrh/Q
+   +VfXZIbeSjBQFsJmylRGslhd06Uj195RmSH2ZgcLZXtDTwg/V4K7/bHMY
+   h9p7ckIe09L9Pw9MNptFp7zyKew4l4OxVF/Mtt60aP9/UQtYRtdCExp7o
+   +wlfNU/SyApiAQL3UgFQbx3sYwHahwErsW9qfAHI+XsGkBmBSYZhhZC4o
+   tSV+UH3RMdfUXFwafvKt8ko3/YwHqnmUXqIbNlwTA6L/Bo+vi7rPCKWR5
+   EkkZaeAAixHF0IZ7qtdKWN8o0p2XUTqb56wVIGuh0nFRwSBr+Gsoyl9L9
+   Q==;
+X-CSE-ConnectionGUID: nOXmuV/ASFeh7FJ5zYVYXg==
+X-CSE-MsgGUID: TMDEUm87TBuZBNEvJbYnTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="85900915"
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="85900915"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 04:50:23 -0700
+X-CSE-ConnectionGUID: 7tbYMpNsR72hBj0nd/kZmw==
+X-CSE-MsgGUID: 6Dr86KTbTkWFBvufRE1c7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="214796781"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.83])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 04:50:21 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vBXMA-00000001geN-2G2G;
+	Wed, 22 Oct 2025 14:50:18 +0300
+Date: Wed, 22 Oct 2025 14:50:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] iio: accel: bma220: move set_wdt() out of bma220_core
+Message-ID: <aPjE-n0wKNIJd2-M@smile.fi.intel.com>
+References: <20251021-bma220_set_wdt_move-v1-1-6c99f6fd951c@subdimension.ro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,89 +80,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015064422.47437-7-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251021-bma220_set_wdt_move-v1-1-6c99f6fd951c@subdimension.ro>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 15, 2025 at 02:44:16PM +0800, Dapeng Mi wrote:
-> Beside some PEBS record layout difference, arch-PEBS can share most of
-> PEBS record processing code with adaptive PEBS. Thus, factor out these
-> common processing code to independent inline functions, so they can be
-> reused by subsequent arch-PEBS handler.
-> 
-> Suggested-by: Kan Liang <kan.liang@linux.intel.com>
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  arch/x86/events/intel/ds.c | 101 ++++++++++++++++++++++++-------------
->  1 file changed, 66 insertions(+), 35 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> index a80881a20321..41acbf0a11c9 100644
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-> @@ -2629,6 +2629,64 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
->  	}
->  }
->  
-> +static inline void __intel_pmu_handle_pebs_record(struct pt_regs *iregs,
-> +						  struct pt_regs *regs,
-> +						  struct perf_sample_data *data,
-> +						  void *at, u64 pebs_status,
-> +						  struct perf_event *events[],
-> +						  short *counts, void **last,
-> +						  setup_fn setup_sample)
-> +{
-> +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-> +	struct perf_event *event;
-> +	int bit;
-> +
-> +	for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
-> +		event = cpuc->events[bit];
-> +
-> +		if (WARN_ON_ONCE(!event) ||
-> +		    WARN_ON_ONCE(!event->attr.precise_ip))
-> +			continue;
-> +
-> +		if (counts[bit]++)
-> +			__intel_pmu_pebs_event(event, iregs, regs, data,
-> +					       last[bit], setup_sample);
-> +
-> +		last[bit] = at;
-> +		/*
-> +		 * perf_event_overflow() called by below __intel_pmu_pebs_last_event()
-> +		 * could trigger interrupt throttle and clear all event pointers of
-> +		 * the group in cpuc->events[] to NULL. So snapshot the event[] before
-> +		 * it could be cleared. This avoids the possible NULL event pointer
-> +		 * access and PEBS record loss.
-> +		 */
-> +		if (counts[bit] && !events[bit])
-> +			events[bit] = cpuc->events[bit];
-> +	}
-> +}
-> +
-> +static inline void
-> +__intel_pmu_handle_last_pebs_record(struct pt_regs *iregs, struct pt_regs *regs,
-> +				    struct perf_sample_data *data, u64 mask,
-> +				    struct perf_event *events[],
-> +				    short *counts, void **last,
-> +				    setup_fn setup_sample)
-> +{
-> +	struct perf_event *event;
-> +	int bit;
-> +
-> +	for_each_set_bit(bit, (unsigned long *)&mask, X86_PMC_IDX_MAX) {
-> +		if (!counts[bit])
-> +			continue;
-> +
-> +		event = events[bit];
-> +
-> +		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
-> +					    counts[bit], setup_sample);
-> +	}
-> +
-> +}
+On Tue, Oct 21, 2025 at 01:31:49PM +0300, Petre Rodan wrote:
+> Move bma220_set_wdt() into bma220_i2c.c instead of using a conditional
+> based on i2c_verify_client() in bma220_core.c that would make core
+> always depend on the i2c module.
 
-These need to be __always_inline, like the other functions that take
-setup_fn. Otherwise the compiler might decide to not inline and then it
-can't constant propagate this function and we get indirect calls.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+But Kconfig for this driver is a bit strange. Usually we do other way around,
+i.e. make user visible selection of the glue drivers, while core is selected if
+at least one of the leaf driver selected by the user.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
