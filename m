@@ -1,193 +1,421 @@
-Return-Path: <linux-kernel+bounces-863905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C769BF97BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:36:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5478ABF97C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458663B3407
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D843A7B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1203819E82A;
-	Wed, 22 Oct 2025 00:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF1E1C84A6;
+	Wed, 22 Oct 2025 00:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F/1W2KCV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZKq9sJ0G"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3611A267
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5190613A86C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761093368; cv=none; b=sgnOWJJ3f08DxInl/l3RN1wezjihwIx8YNnH4fWCPwi1pX7QwAqJxC25NvkDPRs3oEdb8Pvtrh0+V65uX6/xiE2bNe3y8TtG9G3uEw9mOrAnSDK2SqlwUufuzB+iEDtr3E0S8rxWoDWdScFCwR25Yn+SMGNmSb1wtB4fGCf/NSY=
+	t=1761093544; cv=none; b=FTU7ptoGH76vTazRnfuNUpCHst6PfKX8KMA6BxQc+ugWeKFkmFJD1PG1dsQVvUPqIgTlKqMck2d9omTuSFNPlyCuVLk8d0I/Oi9YcVpC+N9oLPoqjDt1KcFlN3m6dKAyyx5AbGhsd4ZH52c8BSwz1EuGEE3vKdkqS6BfG/7jzIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761093368; c=relaxed/simple;
-	bh=qGdg2hTNbv4eDVYuRLmW61WEm0UkZVbz2VN1w7WAcds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thoZHL0dRuvU3l8pzlB2QwlWVQpB6D/KcNW7+diGvHDnnoMSN6Q1VQn5FUemHx8PN0jKXtyly0VqCS1g6yduZES8MIS9M3C8YbTQyTLAPa/pnkEauoRSe2hFaMnQx9Yjm5aRi+l3KfPDMTGLLgNuJRmZ9MiO86YpRP+ZASheoXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F/1W2KCV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761093362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8rddT85Vybs6AukEERIZlyr/IwXipynLaLs4KMySCzo=;
-	b=F/1W2KCVFIwbMPs/o0lGFyNQ5/9mtXiPTWO8HwaGc6iUyI/jvGQIDl/3Arz8m3dw9UtYJY
-	IeKHc78d0E5m3M+l22ppMb1QdAbH2vWBZrGqh6Q+Au5FvAPjMfjPR57rvX+uS0LGTofowT
-	WrAAMEYBPpfUAjR250QLffKMRLMZUN8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-2AB8zcQnNNe7vIm2ZWtnzA-1; Tue,
- 21 Oct 2025 20:35:59 -0400
-X-MC-Unique: 2AB8zcQnNNe7vIm2ZWtnzA-1
-X-Mimecast-MFC-AGG-ID: 2AB8zcQnNNe7vIm2ZWtnzA_1761093357
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 001781800345;
-	Wed, 22 Oct 2025 00:35:56 +0000 (UTC)
-Received: from localhost (unknown [10.22.88.12])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B4CC319541B2;
-	Wed, 22 Oct 2025 00:35:53 +0000 (UTC)
-Date: Tue, 21 Oct 2025 21:35:52 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>, Phil Auld <pauld@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Shizhao Chen <shichen@redhat.com>, linux-kernel@vger.kernel.org,
-	Omar Sandoval <osandov@fb.com>, Xuewen Yan <xuewen.yan@unisoc.com>
-Subject: Re: sched: update_entity_lag does not handle corner case with task
- in PI chain
-Message-ID: <aPgm6KvDx5Os2oJS@uudg.org>
-References: <aPN7XBJbGhdWJDb2@uudg.org>
- <20251018195730.GJ3419281@noisy.programming.kicks-ass.net>
- <c10f6fda-aa8c-4d8e-a315-3c084af08862@amd.com>
+	s=arc-20240116; t=1761093544; c=relaxed/simple;
+	bh=TIjFtBTjpwlKcGoETS7HOX7IgKiftQTJwlyTkdKev6A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nmhRkUyF+TVrEnedWxgb8xEn9Wh4FG86clLhCBhBaUHhCmkvTGtJJkwaNybDYKZW3lphjdTQmkk1X5rCi3zjAKQIONbdgtdr8GgsKCNu8NIJYWA9M6qpshY6bpQn/ksGsXnRRgk/7+QTbZzR2Hrb/D0DjR6Vlvnw8ieF3+Bdl5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZKq9sJ0G; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-591ebf841ddso1572091e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761093540; x=1761698340; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=07GWF8unSJYEHIbBCkg8bRPaixLcy4My/ivZS8+skUg=;
+        b=ZKq9sJ0GuPAQ/a97nXCf5mrEmh7C85ZObbyoSvAZG3D8U2kfsQ147aoXogdCvZ3yeR
+         FeRRG8xsGcUueTPg6peKA/g2o93EZV0glEMP0l6Gk6Wb4b2iOHjOuYsZ9l6d+OrF+fPo
+         u4bzPnAur6Mzi0SAF0thqawLv7EvKD9oOhs0tNEPabhp6YTVQlZoGo+R9NfcEqtSP/wt
+         Y3mNoNIgqs0ZgqZcx5uPDlAWP/0d4qbOU4hnsJXAlW4WguJnvcyhsd0gbEKPN2P8GrlX
+         fx/EMHwVlwLzR/jNvix1UYu/zky/h/qpfWf6UnS4/A4uJFsUgMW62DpnH8+R64gmJnsb
+         ovvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761093540; x=1761698340;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=07GWF8unSJYEHIbBCkg8bRPaixLcy4My/ivZS8+skUg=;
+        b=B1K+L7AsQHBLWT5dpFqes3/nyjPVGWbq/YIkB+/BwrILn1AWYPUIlKihnheKhnB3M8
+         XMPc8Eb4dQ6T0xaLcqHmCKjCgYYdeZoAUcltka5ZHo+jNtDlNVjwvoG+mfKmTJVTfoHe
+         usLqeYD5dg2HQ5iH3+oTonT99uqHMG31LwYijcBSGkZz08mnKqFd5oKXYzJOZUr+EnSR
+         e+LODzCmC6m9N9/ta+M318xNRx9Qcesx6OEBoSmI2uq2fLSJG7BeBNLK4WhU3pzJGDD6
+         XIAduPRiNHja6ul+H2OQqvgR/wI70mbF/JU3GtzFCGd/9F0ySQaJ68vVvDt9iqnEfYPH
+         Rueg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVnAAN6VCxZFtJdpKobaSc/cV3BlJtrK92s7YgKnbl4yix3WL1cWeg/Yb2+nf3lS57kyBL3PMo6JB0TYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAKToQdYmhkVYBkZzxulgZpPpVfa2Lnr5rp08TqDq2djF403gd
+	N/oH1rBPKvzXZslLXkmUJe7AOG0SEiHTxK8Avj4D8eAIKaxK+miIZyKmYC/GFnQDdYAsl8pVkCk
+	c9APxs9zOvRzCVqEwIFdAAzzhmb2W0KOcvPJYeiCI
+X-Gm-Gg: ASbGncsHr40jhjPpB44um7JyST3DK7EUmibFW1Sd9Mifw5id+8/JoCMkJ2jwazOcyAI
+	bvTPayp10A6LDb4AWzsrsVua+38PjmrpAQ00GsH8WVyhlk3rHuBakMGdoKeMjU8HWki6OqOtwz9
+	LSWU6HRSqFaeraTMg6hrDMqu1zhv954P7PR59H9wLXbGIoUwj6VXyOwgP/k+ZYohF/Nm/fgyhFd
+	MG2o8RtWRVOdEEJyMuA4toHcLa/NyuE34fSTXbiwwJTWzKLND7YkpIh36HNtXPUHSB3YR0CzTW/
+	qof2fRnWO8xeDTnIlXf9/oHiGw==
+X-Google-Smtp-Source: AGHT+IEv0LKkhKX4OP3PSlmIdQM3QHHaKGdBfaLjHdys1lfFe7uY5h85fQqVO38DlRtlCvYUTxOss9iLW6mylVMqGEM=
+X-Received: by 2002:a05:6512:1054:b0:57b:96c8:6620 with SMTP id
+ 2adb3069b0e04-591d852be07mr6422849e87.3.1761093540202; Tue, 21 Oct 2025
+ 17:39:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c10f6fda-aa8c-4d8e-a315-3c084af08862@amd.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com> <20251015132452.321477fa@shazbot.org>
+ <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com> <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
+ <20251016160138.374c8cfb@shazbot.org> <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
+ <20251020153633.33bf6de4@shazbot.org> <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
+ <CALzav=ebeVvg5jyFjkAN-Ud==6xS9y1afszSE10mpa9PUOu+Dw@mail.gmail.com> <aPfbU4rYkSUDG4D0@devgpu012.nha5.facebook.com>
+In-Reply-To: <aPfbU4rYkSUDG4D0@devgpu012.nha5.facebook.com>
+From: David Matlack <dmatlack@google.com>
+Date: Tue, 21 Oct 2025 17:38:31 -0700
+X-Gm-Features: AS18NWA-blcidvzyitSBhyRzyox4onuIaIqQYeyFJ1tOQ9lvIpUcktY63SpLme8
+Message-ID: <CALzav=cyDaiKbQfkjF_UUQ0PB6cAKZhnSqM3ZvodqqEe8kQEqw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable limit
+To: Alex Mastro <amastro@fb.com>
+Cc: Alex Williamson <alex@shazbot.org>, Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 12:38:17PM +0530, K Prateek Nayak wrote:
-> Hello Peter, Luis,
-> 
-> On 10/19/2025 1:27 AM, Peter Zijlstra wrote:
-> >> [ 1805.450470] ------------[ cut here ]------------
-> >> [ 1805.450474] WARNING: CPU: 2 PID: 19 at kernel/sched/fair.c:697 update_entity_lag+0x5b/0x70
-> >> [ 1805.463366] Modules linked in: intel_rapl_msr intel_rapl_common intel_uncore_frequency intel_uncore_frequency_common skx_edac skx_edac_common nfit libnvdimm x86_pkg_temp_th
-> >> ermal intel_powerclamp coretemp kvm_intel kvm platform_profile dell_wmi sparse_keymap rfkill irqbypass iTCO_wdt video mgag200 rapl iTCO_vendor_support dell_smbios ipmi_ssif in
-> >> tel_cstate vfat dcdbas wmi_bmof intel_uncore dell_wmi_descriptor pcspkr fat i2c_algo_bit lpc_ich mei_me i2c_i801 i2c_smbus mei intel_pch_thermal ipmi_si acpi_power_meter acpi_
-> >> ipmi ipmi_devintf ipmi_msghandler sg fuse loop xfs sd_mod i40e ghash_clmulni_intel libie libie_adminq ahci libahci tg3 libata wmi sunrpc dm_mirror dm_region_hash dm_log dm_mod
-> >>  nfnetlink
-> >> [ 1805.525160] CPU: 2 UID: 0 PID: 19 Comm: rcub/0 Kdump: loaded Not tainted 6.17.1-rt5 #1 PREEMPT_RT 
-> >> [ 1805.534113] Hardware name: Dell Inc. PowerEdge R440/0WKGTH, BIOS 2.21.1 03/07/2024
-> >> [ 1805.541678] RIP: 0010:update_entity_lag+0x5b/0x70
-> >> [ 1805.546385] Code: 42 f8 48 81 3b 00 00 10 00 75 23 48 89 fa 48 f7 da 48 39 ea 48 0f 4c d5 48 39 fd 48 0f 4d d7 48 89 53 78 5b 5d c3 cc cc cc cc <0f> 0b eb b1 48 89 de e8 b9
-> >>  8c ff ff 48 89 c7 eb d0 0f 1f 40 00 90
-> >> [ 1805.565130] RSP: 0000:ffffcc9e802f7b90 EFLAGS: 00010046
-> >> [ 1805.570358] RAX: 0000000000000000 RBX: ffff8959080c0080 RCX: 0000000000000000
-> >> [ 1805.577488] RDX: 0000000000000000 RSI: ffff8959080c0080 RDI: ffff895592cc1c00
-> >> [ 1805.584622] RBP: ffff895592cc1c00 R08: 0000000000008800 R09: 0000000000000000
-> >> [ 1805.591756] R10: 0000000000000001 R11: 0000000000200b20 R12: 000000000000000e
-> >> [ 1805.598886] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> >> [ 1805.606020] FS:  0000000000000000(0000) GS:ffff895947da2000(0000) knlGS:0000000000000000
-> >> [ 1805.614107] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> [ 1805.619853] CR2: 00007f655816ed40 CR3: 00000004ab854006 CR4: 00000000007726f0
-> >> [ 1805.626985] PKRU: 55555554
-> >> [ 1805.629696] Call Trace:
-> >> [ 1805.632150]  <TASK>
-> >> [ 1805.634258]  dequeue_entity+0x90/0x4f0
-> >> [ 1805.638012]  dequeue_entities+0xc9/0x6b0
-> >> [ 1805.641935]  dequeue_task_fair+0x8a/0x190
-> >> [ 1805.645949]  ? sched_clock+0x10/0x30
-> >> [ 1805.649527]  rt_mutex_setprio+0x318/0x4b0
-> > 
-> > So we have:
-> > 
-> > rt_mutex_setprio()
-> > 
-> >   rq = __task_rq_lock(p, ..); // this asserts p->pi_lock is held
-> > 
-> >   ...
-> > 
-> >   queued = task_on_rq_queued(rq); // basically reads p->on_rq
-> >   running = task_current_donor()
-> >   if (queued)
-> >     dequeue_task(rq, p, queue_flags);
-> >       dequeue_task_fair()
-> >         dequeue_entities()
-> > 	  dequeue_entity()
-> > 	    update_entity_lag()
-> > 	      WARN_ON_ONCE(se->on_rq);
-> > 
-> > So the only way to get here is if: rq->on_rq is in fact !0 *and*
-> > se->on_rq is zero.
-> > 
-> > And I'm not at all sure how one would get into such a state.
-> 
-> This looks like something that can happen when a delayed task is
-> dequeued from a throttled hierarchy. Matt had reported similar
-> problem with wait_task_inactive() in
-> https://lore.kernel.org/all/20250925133310.1843863-1-matt@readmodwrite.com/
-> 
-> rt_mutex_setprio()
->   ...
->   if (prev_class != next_class && p->se.sched_delayed)
->     dequeue_task(rq, p, DEQUEUE_DELAYED)
->       dequeue_entities(se = &p->se)
->         dequeue_entity(se)
->           se->on_rq = 0; /* se->on_rq turns 0 here */
->         ...
->         if (cfs_rq_throttled(cfs_rq))
->           return 0; /* Early return brfore __block_task() */
->   ...
-> 
->   /* __block_task() not called; task_on_rq_queued() returns true. */
->   queued = task_on_rq_queued(p);
->   ...
-> 
->   if (queued)
->     dequeue_task(rq, p, queue_flag)
->       dequeue_entities(se = &p->se)
->         dequeue_entity(se)
->           update_entity_lag(se)
->             WARN_ON_ONCE(!se->on_rq)
-> 
-> 
-> v6.18 kernels will get rid of this issue as a part of per-task throttle
-> feature and stable should pick up the fix for same on the thread soon. 
+On Tue, Oct 21, 2025 at 12:13=E2=80=AFPM Alex Mastro <amastro@fb.com> wrote=
+:
+>
+> On Tue, Oct 21, 2025 at 09:31:59AM -0700, David Matlack wrote:
+> > On Tue, Oct 21, 2025 at 9:26=E2=80=AFAM Alex Mastro <amastro@fb.com> wr=
+ote:
+> > > On Mon, Oct 20, 2025 at 03:36:33PM -0600, Alex Williamson wrote:
+> > > > Should we also therefore expand the DMA mapping tests in
+> > > > tools/testing/selftests/vfio to include an end of address space tes=
+t?
+> > >
+> > > Yes. I will append such a commit to the end of the series in v5. Our =
+VFIO tests
+> > > are built on top of a hermetic rust wrapper library over VFIO ioctls,=
+ but they
+> > > aren't quite ready to be open sourced yet.
+> >
+> > Feel free to reach out if you have any questions about writing or
+> > running the VFIO selftests.
+>
+> Thanks David. I built and ran using below. I am not too familiar with
+> kselftests, so open to tips.
+>
+> $ make LLVM=3D1 -j kselftest-install INSTALL_PATH=3D/tmp/kst TARGETS=3D"v=
+fio"
+> $ VFIO_SELFTESTS_BDF=3D0000:05:00.0 /tmp/kst/run_kselftest.sh
+>
+> I added the following. Is this the right direction? Is multiple fixtures =
+per
+> file OK? Seems related enough to vfio_dma_mapping_test.c to keep together=
+.
 
-Thank you! You were right, your patch in that thread seems to have fixed
-the issue I reported.
+Adding a fixture to vfio_dma_mapping_test.c is what I was imagining as well=
+.
 
-I read the thread you mentioned, built a test kernel with the patch and have
-been running tests for more than 6h now without a single backtrace. As reported
-earlier, I was able to hit the bug within 15 minutes without the patch.
+Overall looks good, we can hash out the specifics in the patches if
+you prefer. But I added some thoughts below.
 
-Best regards,
-Luis
+>
+> I updated the *_unmap function signatures to return the count of bytes un=
+mapped,
+> since that is part of the test pass criteria. Also added unmap_all flavor=
+s,
+> since those exercise different code paths than range-based unmap.
 
-> 
-> -- 
-> Thanks and Regards,
-> Prateek
-> 
----end quoted text---
+When you send, can you introduce these in a separate commit and update
+the existing test function in vfio_dma_mapping_test.c to assert on it?
 
+>
+> Relevant test output:
+>
+> # #  RUN           vfio_dma_map_limit_test.vfio_type1_iommu.end_of_addres=
+s_space ...
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # #            OK  vfio_dma_map_limit_test.vfio_type1_iommu.end_of_addres=
+s_space
+> # ok 16 vfio_dma_map_limit_test.vfio_type1_iommu.end_of_address_space
+> # #  RUN           vfio_dma_map_limit_test.vfio_type1v2_iommu.end_of_addr=
+ess_space ...
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # #            OK  vfio_dma_map_limit_test.vfio_type1v2_iommu.end_of_addr=
+ess_space
+> # ok 17 vfio_dma_map_limit_test.vfio_type1v2_iommu.end_of_address_space
+> # #  RUN           vfio_dma_map_limit_test.iommufd_compat_type1.end_of_ad=
+dress_space ...
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # #            OK  vfio_dma_map_limit_test.iommufd_compat_type1.end_of_ad=
+dress_space
+> # ok 18 vfio_dma_map_limit_test.iommufd_compat_type1.end_of_address_space
+> # #  RUN           vfio_dma_map_limit_test.iommufd_compat_type1v2.end_of_=
+address_space ...
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # #            OK  vfio_dma_map_limit_test.iommufd_compat_type1v2.end_of_=
+address_space
+> # ok 19 vfio_dma_map_limit_test.iommufd_compat_type1v2.end_of_address_spa=
+ce
+> # #  RUN           vfio_dma_map_limit_test.iommufd.end_of_address_space .=
+..
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+> # Mapped HVA 0x7f6638222000 (size 0x1000) at IOVA 0xfffffffffffff000
+>
+> diff --git a/tools/testing/selftests/vfio/lib/include/vfio_util.h b/tools=
+/testing/selftests/vfio/lib/include/vfio_util.h
+> index ed31606e01b7..8e9d40845ccc 100644
+> --- a/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> +++ b/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> @@ -208,8 +208,9 @@ void vfio_pci_device_reset(struct vfio_pci_device *de=
+vice);
+>
+>  void vfio_pci_dma_map(struct vfio_pci_device *device,
+>                       struct vfio_dma_region *region);
+> -void vfio_pci_dma_unmap(struct vfio_pci_device *device,
+> -                       struct vfio_dma_region *region);
+> +u64 vfio_pci_dma_unmap(struct vfio_pci_device *device,
+> +                       struct vfio_dma_region *region);
+> +u64 vfio_pci_dma_unmap_all(struct vfio_pci_device *device);
+>
+>  void vfio_pci_config_access(struct vfio_pci_device *device, bool write,
+>                             size_t config, size_t size, void *data);
+> diff --git a/tools/testing/selftests/vfio/lib/vfio_pci_device.c b/tools/t=
+esting/selftests/vfio/lib/vfio_pci_device.c
+> index 0921b2451ba5..f5ae68a7df9c 100644
+> --- a/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> +++ b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> @@ -183,7 +183,7 @@ void vfio_pci_dma_map(struct vfio_pci_device *device,
+>         list_add(&region->link, &device->dma_regions);
+>  }
+>
+> -static void vfio_iommu_dma_unmap(struct vfio_pci_device *device,
+> +static u64 vfio_iommu_dma_unmap(struct vfio_pci_device *device,
+>                                  struct vfio_dma_region *region)
+>  {
+>         struct vfio_iommu_type1_dma_unmap args =3D {
+> @@ -193,9 +193,25 @@ static void vfio_iommu_dma_unmap(struct vfio_pci_dev=
+ice *device,
+>         };
+>
+>         ioctl_assert(device->container_fd, VFIO_IOMMU_UNMAP_DMA, &args);
+> +
+> +       return args.size;
+> +}
+> +
+> +static u64 vfio_iommu_dma_unmap_all(struct vfio_pci_device *device)
+> +{
+> +       struct vfio_iommu_type1_dma_unmap args =3D {
+> +               .argsz =3D sizeof(args),
+> +               .iova =3D 0,
+> +               .size =3D 0,
+> +               .flags =3D VFIO_DMA_UNMAP_FLAG_ALL,
+> +       };
+> +
+> +       ioctl_assert(device->container_fd, VFIO_IOMMU_UNMAP_DMA, &args);
+> +
+> +       return args.size;
+>  }
+>
+> -static void iommufd_dma_unmap(struct vfio_pci_device *device,
+> +static u64 iommufd_dma_unmap(struct vfio_pci_device *device,
+>                               struct vfio_dma_region *region)
+>  {
+>         struct iommu_ioas_unmap args =3D {
+> @@ -206,17 +222,54 @@ static void iommufd_dma_unmap(struct vfio_pci_devic=
+e *device,
+>         };
+>
+>         ioctl_assert(device->iommufd, IOMMU_IOAS_UNMAP, &args);
+> +
+> +       return args.length;
+> +}
+> +
+> +static u64 iommufd_dma_unmap_all(struct vfio_pci_device *device)
+> +{
+> +       struct iommu_ioas_unmap args =3D {
+> +               .size =3D sizeof(args),
+> +               .iova =3D 0,
+> +               .length =3D UINT64_MAX,
+> +               .ioas_id =3D device->ioas_id,
+> +       };
+> +
+> +       ioctl_assert(device->iommufd, IOMMU_IOAS_UNMAP, &args);
+> +
+> +       return args.length;
+>  }
+>
+> -void vfio_pci_dma_unmap(struct vfio_pci_device *device,
+> +u64 vfio_pci_dma_unmap(struct vfio_pci_device *device,
+>                         struct vfio_dma_region *region)
+>  {
+> +       u64 unmapped;
+> +
+>         if (device->iommufd)
+> -               iommufd_dma_unmap(device, region);
+> +               unmapped =3D iommufd_dma_unmap(device, region);
+>         else
+> -               vfio_iommu_dma_unmap(device, region);
+> +               unmapped =3D vfio_iommu_dma_unmap(device, region);
+>
+>         list_del(&region->link);
+> +
+> +       return unmapped;
+> +}
+> +
+> +u64 vfio_pci_dma_unmap_all(struct vfio_pci_device *device)
+> +{
+> +       u64 unmapped;
+> +       struct vfio_dma_region *curr, *next;
+> +
+> +       if (device->iommufd)
+> +               unmapped =3D iommufd_dma_unmap_all(device);
+> +       else
+> +               unmapped =3D vfio_iommu_dma_unmap_all(device);
+> +
+> +       list_for_each_entry_safe(curr, next, &device->dma_regions, link) =
+{
+> +               list_del(&curr->link);
+> +       }
+> +
+> +       return unmapped;
+>  }
+>
+>  static void vfio_pci_region_get(struct vfio_pci_device *device, int inde=
+x,
+> diff --git a/tools/testing/selftests/vfio/vfio_dma_mapping_test.c b/tools=
+/testing/selftests/vfio/vfio_dma_mapping_test.c
+> index ab19c54a774d..e908c1fe7103 100644
+> --- a/tools/testing/selftests/vfio/vfio_dma_mapping_test.c
+> +++ b/tools/testing/selftests/vfio/vfio_dma_mapping_test.c
+> @@ -122,6 +122,8 @@ FIXTURE_TEARDOWN(vfio_dma_mapping_test)
+>         vfio_pci_device_cleanup(self->device);
+>  }
+>
+> +#undef FIXTURE_VARIANT_ADD_IOMMU_MODE
+
+I think this can/should go just after the
+FIXTURE_VARIANT_ADD_ALL_IOMMU_MODES(); statement. The same below.
+
+> +
+>  TEST_F(vfio_dma_mapping_test, dma_map_unmap)
+>  {
+>         const u64 size =3D variant->size ?: getpagesize();
+> @@ -192,6 +194,61 @@ TEST_F(vfio_dma_mapping_test, dma_map_unmap)
+>         ASSERT_TRUE(!munmap(region.vaddr, size));
+>  }
+>
+> +FIXTURE(vfio_dma_map_limit_test) {
+> +       struct vfio_pci_device *device;
+> +};
+> +
+> +FIXTURE_VARIANT(vfio_dma_map_limit_test) {
+> +       const char *iommu_mode;
+> +};
+> +
+> +#define FIXTURE_VARIANT_ADD_IOMMU_MODE(_iommu_mode)                     =
+       \
+> +FIXTURE_VARIANT_ADD(vfio_dma_map_limit_test, _iommu_mode) {             =
+       \
+> +       .iommu_mode =3D #_iommu_mode,                                    =
+        \
+> +}
+> +
+> +FIXTURE_VARIANT_ADD_ALL_IOMMU_MODES();
+> +
+> +FIXTURE_SETUP(vfio_dma_map_limit_test)
+> +{
+> +       self->device =3D vfio_pci_device_init(device_bdf, variant->iommu_=
+mode);
+> +}
+> +
+> +FIXTURE_TEARDOWN(vfio_dma_map_limit_test)
+> +{
+> +       vfio_pci_device_cleanup(self->device);
+> +}
+> +
+> +#undef FIXTURE_VARIANT_ADD_IOMMU_MODE
+> +
+> +TEST_F(vfio_dma_map_limit_test, end_of_address_space)
+> +{
+> +       struct vfio_dma_region region =3D {};
+> +       u64 size =3D getpagesize();
+> +       u64 unmapped;
+> +
+> +       region.vaddr =3D mmap(NULL, size, PROT_READ | PROT_WRITE,
+> +                           MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+> +       ASSERT_NE(region.vaddr, MAP_FAILED);
+> +
+> +       region.iova =3D ~(iova_t)0 & ~(size - 1);
+> +       region.size =3D size;
+> +
+> +       vfio_pci_dma_map(self->device, &region);
+> +       printf("Mapped HVA %p (size 0x%lx) at IOVA 0x%lx\n", region.vaddr=
+, size, region.iova);
+> +       ASSERT_EQ(region.iova, to_iova(self->device, region.vaddr));
+> +
+> +       unmapped =3D vfio_pci_dma_unmap(self->device, &region);
+> +       ASSERT_EQ(unmapped, size);
+> +
+> +       vfio_pci_dma_map(self->device, &region);
+> +       printf("Mapped HVA %p (size 0x%lx) at IOVA 0x%lx\n", region.vaddr=
+, size, region.iova);
+> +       ASSERT_EQ(region.iova, to_iova(self->device, region.vaddr));
+> +
+> +       unmapped =3D vfio_pci_dma_unmap_all(self->device);
+> +       ASSERT_EQ(unmapped, size);
+
+The unmap_all test should probably be in a separate TEST_F. You can
+put the struct vfio_dma_region in the FIXTURE and initialize it in the
+FIXTURE_SETUP() to reduce code duplication.
+> +}
+
+Would it be useful to add negative map/unmap tests as well? If so we'd
+need a way to plumb the return value of the ioctl up to the caller so
+you can assert that it failed, which will conflict with returning the
+amount of unmapped bytes.
+
+Maybe we should make unmapped an output parameter like so?
+
+int __vfio_pci_dma_map(struct vfio_pci_device *device,
+        struct vfio_dma_region *region);
+
+void vfio_pci_dma_map(struct vfio_pci_device *device,
+        struct vfio_dma_region *region);
+
+int __vfio_pci_dma_unmap(struct vfio_pci_device *device,
+        struct vfio_dma_region *region, u64 *unmapped);
+
+void vfio_pci_dma_unmap(struct vfio_pci_device *device,
+        struct vfio_dma_region *region, u64 *unmapped);
+
+int __vfio_pci_dma_unmap_all(struct vfio_pci_device *device, u64 *unmapped)=
+;
+void vfio_pci_dma_unmap_all(struct vfio_pci_device *device, u64 *unmapped);
+
+unmapped can be optional and callers that don't care can pass in NULL.
+It'll be a little gross though to see NULL on all the unmap calls
+though... Maybe unmapped can be restricted to __vfio_pci_dma_unmap().
+So something like this:
+
+int __vfio_pci_dma_unmap(struct vfio_pci_device *device,
+        struct vfio_dma_region *region, u64 *unmapped);
+
+void vfio_pci_dma_unmap(struct vfio_pci_device *device,
+        struct vfio_dma_region *region);
 
