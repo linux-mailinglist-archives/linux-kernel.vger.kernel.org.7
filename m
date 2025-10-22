@@ -1,124 +1,98 @@
-Return-Path: <linux-kernel+bounces-864482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99E4BFAE1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D1EBFAE3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D17A3B3B8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1806340655F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B05309EFB;
-	Wed, 22 Oct 2025 08:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4450C309F06;
+	Wed, 22 Oct 2025 08:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9lSf9jl"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BuXHoBBI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E14309EE7
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E8B309EF4
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121578; cv=none; b=G4xKWYLCvKYKO/vqgKZ7dhzBLJHysjoUPQVBe1Bm/f0xvrSrqwfD3EDcM9Wj8+30uD36ItW/tB1hJ+z6Gad7ZKSGVwDJUBZs8BDO89bhQs1nxXy+Lyxmn2dhlUr+Aof5l/cysZRhH14HdGvKUBF1p2/9OgqoN6NGvoHj3W8KXcE=
+	t=1761121753; cv=none; b=uL8TO3XnmaG3PyBy2Q8PsXpe4URdkFKtYrdS3vNhO5Em8buicTBspXElg+IoUF8swcWRbBjCM+rdP4bN8k5akxADEo7e+kRir/D6n/p0UpvfENf1weF7tFAPDSZ5Pj1ichIViYSnnOA1f1czLCSgMisu062Ijn1+yf+kG8HCFfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121578; c=relaxed/simple;
-	bh=Q6H986X15qYys1qfZkB9W2dW8AtLZxTL9G3Hoa0FETk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nVutKIZnzhOM7p04F2rYXfy9tmwRWKRmPN409nQtzuy1ZYS1R9mSh4zSWx9wy8VfwVyo8l/ALcUhb7yU2W+tMMC4bJilfBrOzflMSlaKlmEY5nKdEQ3MNQ/jC+iJfv64uGStFwBHgsG+rb63zbPecBScSeGWXTyTXpDUV/xUIVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9lSf9jl; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b4f323cf89bso1447607466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761121574; x=1761726374; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NDyEa99uEXhpux+y1jdsG/DCyMfzL2pd992wei+/e1g=;
-        b=g9lSf9jlzTL74ZxyfEMsa16zdauZydvqbq6C8BlT0oq+R+RCOZKV7QlN+n7Puwk6X9
-         TK11E1pXhHLdAuoU9qJ8OVl+4QcN5CIDLdvrtHDuaQdch6/it+z8DAx58sBJnRfAmgVz
-         vG4xalYkaDCAiv6gJpIiu08tQML8GZKeBJuCErAqp862qz7oIFTxEML3NDQfa42+q1m5
-         JyZrQGPFKnbdBW9dDJ4+v/Qb2AY9ddKozGeODolVFc91lLhGagiEvJAxutp+Fa0TKdf+
-         VbXPxrycqhr9LTv3VpU2DzC8PZWvGeSgNpfGHO24xPNLpypRN3tDJdofqxE6Q/w05re7
-         zT7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761121574; x=1761726374;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NDyEa99uEXhpux+y1jdsG/DCyMfzL2pd992wei+/e1g=;
-        b=MXUfw4m0YpbEjh9IOe5eeBUyYs851xpmss15xkQdgvzZ2245yArljeVgGu9/iRmxW7
-         5Ju/sxm3vKJWpAhuocbBheXTqYJaw7g89fSJVcIu/+fpf2FYb564TmviDJFm2uwtqlbB
-         lTZZeGq0A+tJah/iBrNWjwkTJnzJc5vErpCKw3t0WEjkqWBC0ov8mI8Ra91/67DZXAvL
-         YKZgguAvWGhd2/pBbuoPfx0YceDGGvlg4uBYaICHOeyI4tBHydGEGx15zqj005a40ENU
-         aM9/B6DKZ/DwzeuekMYk/YsssOAT9QIt2NeV1qEKwd28Eu38U1thWMi0DmyeWb43crmA
-         fB4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJCSwoqwrEr3HC51dptR2DeqFSwFHImR5BCR2wAXK9Pt8XmXAPNiKPyR2wvEpoz5iCnxTC6rfY9sxURSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+hfMbiK8zZDwpEDODNpHcUJ5pK8baNaRLpidOFuvMKJk/hoyF
-	+t9QzxARrjQ4tX/a6FV+/cL2w9dFF3Hkx0mwT/TRdTkVbzL3F5NuBPHu
-X-Gm-Gg: ASbGncvzonIcO3k5n7TgFWciaeaDg9hSqkODJflZsNI8dY+LNjnB6R7uBuEdgV1pFkG
-	6ZUAkilDuKpQ75LgpbKqf9HzPQ7whdVVouYCBJ5gPW7nJwVPa5FcLejQJ2RycE3PUO97qXRTGXo
-	GkDgJUW9gr4fcPP4jTbMWqjuTqMPrZp60HVLRTaFlYXqt/iWLnPCieIbW2dt8Tq0S8Pi01lROqv
-	x+W15fXiyXj1/Dw7+oYiMkfLDceJiqmEdPfPVX+n6G0R/8dEhhH4pXgaXLcRlOEBKDZWXzq290N
-	1N130xR71kgmDuaLz13tEzEL4somKVAWcKbrdTrGe76LOj7UTMFM940A/iGQNR00D8qjmAyooNc
-	yL+tJoo22iYGMr12u2LGr4khcHQSLoJgAJyAz3ChNpzQEnlVyozGg/3Sv9UKlSJHWwXX4gQguLL
-	u2
-X-Google-Smtp-Source: AGHT+IFMC1ZTRJ80d2+tQCzLJZEUcRjgNolpnafRAvb1tXsgv9lX8RVp0jdHUx6GvU3poKNRSafE7g==
-X-Received: by 2002:a17:907:7ea6:b0:b3e:3c1c:d2f2 with SMTP id a640c23a62f3a-b6474940fc1mr2581204566b.36.1761121573582;
-        Wed, 22 Oct 2025 01:26:13 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b6cfa6cb6e6sm365510866b.49.2025.10.22.01.26.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 01:26:13 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: hch@infradead.org
-Cc: akpm@linux-foundation.org,
-	andy.shevchenko@gmail.com,
-	arnd@arndb.de,
-	axboe@kernel.dk,
-	bp@alien8.de,
-	brauner@kernel.org,
-	christophe.leroy@csgroup.eu,
-	cyphar@cyphar.com,
-	ddiss@suse.de,
-	dyoung@redhat.com,
-	email2tema@gmail.com,
-	graf@amazon.com,
-	gregkh@linuxfoundation.org,
-	hca@linux.ibm.com,
-	hsiangkao@linux.alibaba.com,
-	initramfs@vger.kernel.org,
-	jack@suse.cz,
-	jrtc27@jrtc27.com,
-	julian.stecklina@cyberus-technology.de,
-	kees@kernel.org,
-	krzk@kernel.org,
-	linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1761121753; c=relaxed/simple;
+	bh=DQWIuIaP4G7L2QkOxVyAjoDdXex0u4FBjhfXyNZJ/DA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=igljzazUO7To+Lxo4Gxbj/hO61vw2uCtwF/ww5BLpxkGpYbLMewhPje0YFZwmrqdr0APdhIMnCcxCicsXT0Vu4aeQs0ogjlv88btKBcXS8VZ2Me5rA9QMB47YFquNOMROUrZBYOuNNuxWiIhKsUL+3ibOR+Ff6mM9LNP5yQzGkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BuXHoBBI; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761121751; x=1792657751;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DQWIuIaP4G7L2QkOxVyAjoDdXex0u4FBjhfXyNZJ/DA=;
+  b=BuXHoBBI667kQS9+XFB05k1LKWTYaLIY0aS4xFQJ6psmcZo2c46eVONc
+   Joyc8c69HCovgiOdSbtudOuxRXthI+Iec6b7L55UI//57X//JYNd3xHD8
+   yI2tcnBIjoyISrvZx4N1WfI3E3P7NUU/a+54U31tv+4Q9UNie53DEX07e
+   EMA7sLLOOVXSsTqDy8L/uG7k1Tvn/TykMa2aUpRj9xXxMctCMJMUGBNN+
+   OHMKaxwrQZglv/rEEw5EpXaCB7h6kWuz41F5ZgakLv+m83oOn1oznVsJ0
+   NdsMmz7lt+Oo9hC/dEvCyPo6QBwywKZmYgSN7ZoHJrPARShTWRhTD7joY
+   g==;
+X-CSE-ConnectionGUID: 1FE/mfijTTuNbeeDOuKdyA==
+X-CSE-MsgGUID: jlI42fkATi2m6W/eHj6lVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62965576"
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="62965576"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 01:29:11 -0700
+X-CSE-ConnectionGUID: 40GuBpibRF6wTTdn6B50PQ==
+X-CSE-MsgGUID: zG1sKX4NTcOFJ+1kV6INVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="183516208"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by fmviesa007.fm.intel.com with ESMTP; 22 Oct 2025 01:29:04 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Yi Lai <yi1.lai@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: iommu@lists.linux.dev,
+	security@kernel.org,
+	x86@kernel.org,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	mcgrof@kernel.org,
-	monstr@monstr.eu,
-	mzxreary@0pointer.de,
-	nschichan@freebox.fr,
-	patches@lists.linux.dev,
-	rob@landley.net,
-	safinaskar@gmail.com,
-	thomas.weissschuh@linutronix.de,
-	thorsten.blum@linux.dev,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v3 0/3] initrd: remove half of classic initrd support
-Date: Wed, 22 Oct 2025 11:26:04 +0300
-Message-ID: <20251022082604.25437-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <aPh9Tx95Yhm_EkLN@infradead.org>
-References: <aPh9Tx95Yhm_EkLN@infradead.org>
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v7 0/8] Fix stale IOTLB entries for kernel address space
+Date: Wed, 22 Oct 2025 16:26:26 +0800
+Message-ID: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -127,42 +101,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Christoph Hellwig <hch@infradead.org>:
-> On Tue, Oct 21, 2025 at 03:05:35PM +0200, Christian Brauner wrote:
-> > Without Acks or buy-in from other maintainers this is not a change we
-> > can just do given that a few people already piped up and expressed
-> > reservations that this would be doable for them.
-> > 
-> > @Christoph, you marked this as deprecated years ago.
-> > What's your take on this?
-> 
-> I'd love to see it go obviously.  But IIRC we had various users show
-> up, which speaks against removing it.  Maybe the first step would be
-> a separate config option just for block-based initrd?
+This proposes a fix for a security vulnerability related to IOMMU Shared
+Virtual Addressing (SVA). In an SVA context, an IOMMU can cache kernel
+page table entries. When a kernel page table page is freed and
+reallocated for another purpose, the IOMMU might still hold stale,
+incorrect entries. This can be exploited to cause a use-after-free or
+write-after-free condition, potentially leading to privilege escalation
+or data corruption.
 
-So far in recent months 3 people spoke against initrd removal. All they are in Cc. They are:
+This solution introduces a deferred freeing mechanism for kernel page
+table pages, which provides a safe window to notify the IOMMU to
+invalidate its caches before the page is reused.
 
-- Julian Stecklina. He planned to use initrd with erofs, which is currently
-not supported anyway. Also, he replied to v1:
-"You have all my support for nuking so much legacy code!"
-"Acked-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>"
-( https://lore.kernel.org/lkml/1f9aee6090716db537e9911685904786b030111f.camel@cyberus-technology.de/ )
+Change log:
+v7:
+ - The use of pmd_ptdesc() introduced a bug reported at
+   https://lore.kernel.org/linux-iommu/68eeb99e.050a0220.91a22.0220.GAE@google.com/.
+   Fix this by replacing it with page_ptdesc().
+ - Discussed the approach of backporting and reached a consensus that we
+   need an extra patch to disable SVA for x86 arch and re-enable it after
+   the kernel page table free callback is done.
+ - Use "const struct ptdesc *ptdesc" as the parameter for
+   ptdesc_test_kernel().
+ - Move "select ASYNC_KERNEL_PGTABLE_FREE" to the last patch.
 
-- Gao Xiang, maintainer of erofs. He also planned to use initrd with erofs,
-which is currently not supported anyway. Also, he said to me:
-> Again, I don't have any strong opinion to kill initrd entirely because
-> I think initdax may be more efficient and I don't have any time to work
-> on this part -- it's unrelated to my job.
-( https://lore.kernel.org/all/79315382-5ba8-42c1-ad03-5cb448b23b72@linux.alibaba.com/ )
+v6:
+ - https://lore.kernel.org/linux-iommu/20251014130437.1090448-1-baolu.lu@linux.intel.com/
+ - Follow commit 522abd92279a to set/clear/test a flag of struct
+   ptdesc.
+ - User pmd_ptdesc() helper.
+ - Squash previous PATCH 6 and 7.
+ - Rename CONFIG_ASYNC_PGTABLE_FREE to CONFIG_ASYNC_KERNEL_PGTABLE_FREE.
+ - Refine commit message.
+ - Rebase on top of v6.18-rc1.
 
-- Nicolas Schichan. He has million devices, which use initrd. But they use
-root=/dev/ram code path, not linuxrc code path, which I'm removing. He
-explained this here:
-https://lore.kernel.org/lkml/20250918152830.438554-1-nschichan@freebox.fr/
+v5:
+ - https://lore.kernel.org/linux-iommu/20250919054007.472493-1-baolu.lu@linux.intel.com/
+ - Renamed pagetable_free_async() to pagetable_free_kernel() to avoid
+   confusion.
+ - Removed list_del() when the list is on the stack, as it will be freed
+   when the function returns.
+ - Discussed a corner case related to memory unplug of memory that was
+   present as reserved memory at boot. Given that it's extremely rare
+   and cannot be triggered by unprivileged users. We decided to focus
+   our efforts on the common vfree() case and noted that corner case in
+   the commit message.
+ - Some cleanups.
 
-So, this patchset will not impact these people. So, I think it is okay
-to remove linuxrc now. We can revert this patchset if needed.
+v4:
+ - https://lore.kernel.org/linux-iommu/20250905055103.3821518-1-baolu.lu@linux.intel.com/
+ - Introduce a mechanism to defer the freeing of page-table pages for
+   KVA mappings. Call iommu_sva_invalidate_kva_range() in the deferred
+   work thread before freeing the pages.
+
+v3:
+ - https://lore.kernel.org/linux-iommu/20250806052505.3113108-1-baolu.lu@linux.intel.com/
+ - iommu_sva_mms is an unbound list; iterating it in an atomic context
+   could introduce significant latency issues. Schedule it in a kernel
+   thread and replace the spinlock with a mutex.
+ - Replace the static key with a normal bool; it can be brought back if
+   data shows the benefit.
+ - Invalidate KVA range in the flush_tlb_all() paths.
+ - All previous reviewed-bys are preserved. Please let me know if there
+   are any objections.
+
+v2:
+ - https://lore.kernel.org/linux-iommu/20250709062800.651521-1-baolu.lu@linux.intel.com/
+ - Remove EXPORT_SYMBOL_GPL(iommu_sva_invalidate_kva_range);
+ - Replace the mutex with a spinlock to make the interface usable in the
+   critical regions.
+
+v1: https://lore.kernel.org/linux-iommu/20250704133056.4023816-1-baolu.lu@linux.intel.com/
+
+Dave Hansen (5):
+  mm: Add a ptdesc flag to mark kernel page tables
+  mm: Actually mark kernel page table pages
+  x86/mm: Use 'ptdesc' when freeing PMD pages
+  mm: Introduce pure page table freeing function
+  mm: Introduce deferred freeing for kernel page tables
+
+Lu Baolu (3):
+  iommu: Disable SVA when CONFIG_X86 is set
+  x86/mm: Use pagetable_free()
+  iommu/sva: Invalidate stale IOTLB entries for kernel address space
+
+ arch/x86/Kconfig              |  1 +
+ mm/Kconfig                    |  3 ++
+ include/asm-generic/pgalloc.h | 18 ++++++++++
+ include/linux/iommu.h         |  4 +++
+ include/linux/mm.h            | 65 +++++++++++++++++++++++++++++++++--
+ arch/x86/mm/init_64.c         |  2 +-
+ arch/x86/mm/pat/set_memory.c  |  2 +-
+ arch/x86/mm/pgtable.c         | 12 +++----
+ drivers/iommu/iommu-sva.c     | 29 +++++++++++++++-
+ mm/pgtable-generic.c          | 39 +++++++++++++++++++++
+ 10 files changed, 163 insertions(+), 12 deletions(-)
 
 -- 
-Askar Safin
+2.43.0
+
 
