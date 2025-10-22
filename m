@@ -1,115 +1,98 @@
-Return-Path: <linux-kernel+bounces-865406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1EEBFD004
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:01:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD965BFCFDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F8B3AC0B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0183AAF3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA03F26F2B9;
-	Wed, 22 Oct 2025 16:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787A2260580;
+	Wed, 22 Oct 2025 16:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qC7J67qH"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RS9ulQ2l"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED5126E6F6;
-	Wed, 22 Oct 2025 16:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6597A25D209
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761148839; cv=none; b=jHnUD6qhjAACbCYsu/TdYq0F1Ka6dkhJGQEUmEeAjJC1nGZeNieC7MVqSO1g2Digs4p7b7K9n7uvXjMhPcxWBGHwsuqvCyEVq8b1L58oBipS4vzOYNZT59cvXXcTyAwi3DwxVrplIxNK5UAlqs2DHyDZ6XiFsJchz8ou94FTk4A=
+	t=1761148804; cv=none; b=UCfyKYpoxgjSFrrZah7m4+Su/UJG5GK/JOShM/ghW2rTnXeLe/4vN4isCSKpclPsBbb0J4nm7bNxrCP8KsDpbab0nENmTQjO7Xq7UhQdb94XTfEKVa4cRKPpjIXSl0eO928UbgbR4Iop2r2e2OiANuA2oXoELZSgx8WM/QcgywY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761148839; c=relaxed/simple;
-	bh=jbu7M00koy29d91adFhRysiT6pdG6JgiTtHNdmMfJek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a0gefolwTmYmQBa2C8IWalj0AY460QTEacf4pTkBly14ArS9v5iQIYnOV+wxZ40oPxqH3QTqWLgEFwy+lMQQXkkij5+hK5WvdlxwH00iRxDxtieq/rTs2eaO7e9IOvVSTXSwX7+6/pfJKHJhmDJOa8pgyzla2rP8Dti01HRI8JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qC7J67qH; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <cbee1f3b-49df-4228-898c-f6dc07e52add@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761148822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yp2cQvFiaIaAz+JhdGJjrvgCDsYO80NbgcjJ/2JWtSU=;
-	b=qC7J67qHBbXFf8znPbB+TkYYl2uLEniHZ8byowwo+150h34q6YJrsdpYOPXzJH1SK1gl5f
-	/uXLBaRH4Hh0gyxLtH1U2Qbw2ZD8PoTqVOSRQmyU54JlcB4aDjTZJ4ThdwKaNZKFs8tPqv
-	5O3cThVkFDvku8dHLxbEAWZu4x6tHfA=
-Date: Wed, 22 Oct 2025 23:59:32 +0800
+	s=arc-20240116; t=1761148804; c=relaxed/simple;
+	bh=KzWGAXTtJNaWOtBKzMnXWFA9Pc/O+vKz4Cro7WOAr4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/VvoBB9FGEQ9RxXHt1g6bVgFEYNdxEGVRNimI100H3fp1jHotAFg5YfuUZPbfjmF5SG5AbS2k8VHaqEyczJ9WJtsILoMNPd7TEpxM1CMxfdbMVufVliu1YVGEw+vbx2r6wxx9UTySwItMB8MZxoz7V1hPdzOx/eXrVe2kE4DPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RS9ulQ2l; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4e89ffd95b9so15380821cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:00:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761148802; x=1761753602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KzWGAXTtJNaWOtBKzMnXWFA9Pc/O+vKz4Cro7WOAr4U=;
+        b=RS9ulQ2lHiWmy/gV+7Kqw9PImxGQyCkaYijbZlLPIiPyGsXg2F/zorj+UmdBeVB6en
+         Q/xu8+Q0vOXlYETVNZV0ClMR9763WXUOG9A71PMyT+ZFA2PwLnYz502V1c9mAeNNX3XB
+         x7/1IACU7b+K62ZQ086pDExJbBH0lgAJrAcBuViflBDB9v2MW3oPDcI99ycWEtZQBTtj
+         2aMilXNef/AKOVsDvB9faKPOg8BGZbuvW9MklZbXCcncAKD7BN9XF67IheTJuYUi/mVT
+         gvzMCDdZx16eWs47ONvkakvAJWAH/dCdAlDgIBtZPPUibYOZAv6yZ5lsb5gq7AUZGS7C
+         OoBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761148802; x=1761753602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KzWGAXTtJNaWOtBKzMnXWFA9Pc/O+vKz4Cro7WOAr4U=;
+        b=e1/urNBdaRczseHh0vQOtdYb40AEKzI30rRQfecfPdnzxd3cP8UO623XK+S/ghVZzR
+         d0VJ3BKL0TI1BDkuidhGsDGsWSguRoTaanohnlyDx3TaWtVA3exZOSwJ5osPCTMN7FeH
+         gC+ydvbNbYh09sCGtNn3Vc5EN+ns46sLDG/tz0aRa3R3NvoG6lCoSxeDqlchwFMlk3HR
+         thzHUCaXtppGKc4Ka9Y/eBobRlb4e+1oSJ5GnbgpMDZ7ctntEYnt/iXuIWgld9oapDFY
+         MLnYfyQL1OGVQBVzUezDumxzSfodDIdSi/skvFyLGrA0KensUhZjbywM7uyiVw4lDYi5
+         fAxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVr/0DzEpX8YpRYG073ox9OtBaP6A8J74DCWmUUxnd7IwifYjqTgcWjbCDG4ewsGHYrgdZZ7JQXwyuUKb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqEWaUkxbCi7KRXI51OI0RPDyuNPIXfU5OMDhWKT7qVRwC9HyE
+	nIA5cMfYy32Iy9Ub4QqA+7Na47CBDQua2XnA5AnbjnD17Kdb6hK3exIn3y0lf/47GVlitmtY9L6
+	uy6ArOUnHqOUmZiTbhzNiTyvmUIX2tiM=
+X-Gm-Gg: ASbGncu9ibzdCNBDREczdzJK1Ndc+cn+uQQYjeRiZbcOn4K5QGkd5Pnkl4pkh680nRH
+	Qmwrb+OzSBeT5tdNMOu4bOIg+ojvsUgwbn1wi3WI0UGoMDSJr5m9vTlkPdgZRrWwsmVN8n4g/x8
+	ICqHfxSWMbZ68dRxDcNzSMHK+1XrkhmTzfneSLaCGA/unYAXlh7WBddDdMlm2n9d+aFqyw8r3Op
+	QrITie1alD5SP0XaKb35VHB5BIJwVnDN13RMyTUbvDRyKw+oRDWsqkPk4dyBVKBVKWTMxT8OZP5
+	+7pp+aq/0rNyoAOKwatjkzU3eHA=
+X-Google-Smtp-Source: AGHT+IHxWCD/w+o2vmfbuWDtKOmy2UCQxI4nvjqy0zKHd7wCbrRbTr3WpmmN6Tt3lY3nMvE06CH78X9xcKtEFyAyF3c=
+X-Received: by 2002:a05:6214:2469:b0:7c6:bbaf:11b4 with SMTP id
+ 6a1803df08f44-87c2081ccffmr315026216d6.54.1761148802138; Wed, 22 Oct 2025
+ 09:00:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3 2/2] bpf: Use per-cpu BPF callchain entry to
- save callchain
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
- song@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20251019170118.2955346-1-chen.dylane@linux.dev>
- <20251019170118.2955346-3-chen.dylane@linux.dev>
- <20251020110303.GS3419281@noisy.programming.kicks-ass.net>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <20251020110303.GS3419281@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251022150716.2157854-1-mallikarjunst09@gmail.com> <5b78c30d-26de-4e49-9bfa-121c9f40b4e0@kernel.dk>
+In-Reply-To: <5b78c30d-26de-4e49-9bfa-121c9f40b4e0@kernel.dk>
+From: Mallikarjun S T <mallikarjunst09@gmail.com>
+Date: Wed, 22 Oct 2025 17:59:51 +0200
+X-Gm-Features: AS18NWAJWcskmCUPndr9Lli3CHnsvOgWgxEkWkWuX7hMLeLHsGN9TYgqSU5HGMA
+Message-ID: <CADv35-T8XchxB43FZ2XdJ+8nWDCULqz1FLX5vC9WN3gtgeSpQQ@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: initialize vairable "sqe" to silence build warning
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev, "kernelci . org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/10/20 19:03, Peter Zijlstra 写道:
-> On Mon, Oct 20, 2025 at 01:01:18AM +0800, Tao Chen wrote:
->> As Alexei noted, get_perf_callchain() return values may be reused
->> if a task is preempted after the BPF program enters migrate disable
->> mode. Drawing on the per-cpu design of bpf_bprintf_buffers,
->> per-cpu BPF callchain entry is used here.
-> 
-> And now you can only unwind 3 tasks, and then start failing. This is
-> acceptable, why?
+Thanks, Greg and Jens, for pointing this out.
 
-Yes it is, if we use per-cpu-bpf-callchain-entry like 
-bpf_bprintf_buffers, this is a proposal from Andrii and Alexei,
-In my understanding, is it a low-probability event to be preempted three 
-times in a row in the same cpu?
+I understand that this issue has already been fixed, and I=E2=80=99ll make
+sure to pay closer attention in future submissions.
 
-> 
->> -	if (may_fault)
->> -		rcu_read_lock(); /* need RCU for perf's callchain below */
->> -
-> 
-> I know you propose to remove this code; but how was that correct? The
-> perf callchain code hard relies on non-preemptible context, RCU does not
-> imply such a thing.
->
-
-Alexei mentioned this rcu-lock issue before，
-It seems we need preemption protection.
-https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
-
->>   	if (trace_in)
->>   		trace = trace_in;
->> -	else if (kernel && task)
->>   		trace = get_callchain_entry_for_task(task, max_depth);
->> -	else
->> -		trace = get_perf_callchain(regs, NULL, kernel, user, max_depth,
->> -					   crosstask, false);
-> 
-> 
-
-
--- 
-Best Regards
-Tao Chen
+regards,
+Mallikarjun
 
