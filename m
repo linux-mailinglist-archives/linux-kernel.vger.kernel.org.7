@@ -1,100 +1,136 @@
-Return-Path: <linux-kernel+bounces-864586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98434BFB1E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:17:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A3CBFB1DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F2A8507A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:17:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79400507D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0B13126CB;
-	Wed, 22 Oct 2025 09:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B403128AD;
+	Wed, 22 Oct 2025 09:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="s9GU55Lc"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lzmcFTb1"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082BE30EF84;
-	Wed, 22 Oct 2025 09:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382F828A72B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761124632; cv=none; b=RVF3JGSzODSRJjCSUEN6NGkOpCMsVTozPbEoH/qndV7j2zd7rqu6zMhXHNAnmvU4UXAIggzwpTCD10qmGGo6GFdf/V3i7Q6rR8N9wmSHUtI8E1/ONiSlD2yzevMdcWKZsQdn/lDuySqAR0osfjgygSzj3sQeHz4r6su/MEdBtOQ=
+	t=1761124622; cv=none; b=QbVEj5a3clMlvgVPT9hEdvkHPnzDMDDvZ8kr7u1U8jYvk/7BB/6nEc/s+Dtx7V8AZPgfiqmtFByYM9QYfmXCefJmp+SJfauCkSatCuitMafJmXjf84foiJ4a8fuT4+BrXZVIevVJiq6zS5mTPgt3aB7Wsv1gYdbH9ne/u3TyyQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761124632; c=relaxed/simple;
-	bh=xGz92sZd9owiqeq2wwVPdHMaKmiDtAU0dL8ZyyOp4qE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:Content-Type:
-	 MIME-Version; b=Ll91Dn1IAHY5u0tiYLveecUvnyXoasgV96FEehIAaYWodf3wBmN/cnmh2tUh8yF9x92DELSnp2+EL6QtVpAZmrzaI2AempIbiMAT+GlL7Hkdb8P1Gpz+igGaIKZzJ+vD4N87lTM4nLibN3MIWK1AMMZBAFWam5rSz8tx3P4tfqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=s9GU55Lc; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59M9GrvR6384837, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1761124613; bh=xGz92sZd9owiqeq2wwVPdHMaKmiDtAU0dL8ZyyOp4qE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version;
-	b=s9GU55LcRexK4p5ktdzHFPilPz8fg/+2jwNR8RzxX0PvTKllnlky4nwiNAUNHDmOW
-	 lm0pQfrH6xRhvToaFhsT5Y6u6YtGHezVu0wWQEK4B06Gtu86zq4aqu/jIOSoR5wcbf
-	 OJLD2O25+U5p5OVk12BSMFIhU6s995PLZTrZuoMFt53BBp3U0/K8B3uMi3kH/UtF04
-	 Xruc7LI33zPThqk1MIwfPnv2/h0MIvY5Fve9wePhtm2Vk95BD6VCGMYF66cpsKbd0h
-	 IIexLCzm363UH9EKP2PRbmuAImjrDgsMK7qSyn/Zgob05f762PPL+FGsST1el0sUN0
-	 8Cb6ENqIuVbcg==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59M9GrvR6384837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Oct 2025 17:16:53 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 22 Oct 2025 17:16:53 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 22 Oct 2025 17:16:53 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
- 15.02.1544.027; Wed, 22 Oct 2025 17:16:53 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bernie Huang
-	<phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: RE: [PATCH rtw-next v3 7/9] wifi: rtw89: handle IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
-Thread-Topic: [PATCH rtw-next v3 7/9] wifi: rtw89: handle
- IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
-Thread-Index: AQHcP03+N98C+NXP40OStTAnFiNodrTNutGwgAAvBeA=
-Date: Wed, 22 Oct 2025 09:16:52 +0000
-Message-ID: <3aa77693afa44a9aabb4a385d65f55f4@realtek.com>
-References: <20251017100658.66581-1-pchelkin@ispras.ru>
- <20251017100658.66581-8-pchelkin@ispras.ru> 
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761124622; c=relaxed/simple;
+	bh=uT0LN1EUMQAZ1v7BvLjcq3iXoGtsuTlf5kkUSCJBu2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y5lkOhkd6WFfJJ/UfmxmV9uomo5I3dSX+Ib9HWMqZKPsPdcIsKL80jsQ916AqRhMqp4nph6Ltawys0hTX3FpyHuiFanqt4bXS3sXUApMY4qhgG3We6cOPnGDtAtAvplvD/inDD/4op3t/Wg8oOV/AfVOgl47JxErNQRNfHbtvsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lzmcFTb1; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso6445083f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1761124617; x=1761729417; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0d1OtznxSM+pdxcYthlznRVSRSBvTGMBZ9iBozHqpE0=;
+        b=lzmcFTb1SODOtoiyQ5JVKp2d3GabR4bWNAXhGO5+FoC7+FroHz8FrRI0k9/Y1N9B6u
+         Pl0MPnTexWeyjwE30rIRo2JBSQ/OcumJWSUNhERSloYQy00swhWtLoiXPGMXDVKQgl/8
+         zvqMZtnla+/is7pG4tPjV8qa1BamJTwaGePaqrC1aW+R97t7R2QYCtZCcq+V+mXfyz7c
+         YXvha9x5Y7+UKFcwM4tK/eoDvZcuEKeLyWhM3F9SHMGKCdp6wHEJKP22orF8j1yCKTzf
+         EEH/sxMWZyZjuUPlD4oYktpDQ4spw8SaJXLd9YBA6vUTm9mtMBOokgPWTUnKPqkXvTu0
+         nWcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761124617; x=1761729417;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0d1OtznxSM+pdxcYthlznRVSRSBvTGMBZ9iBozHqpE0=;
+        b=ujxJ9coPClxM6nPTclcyLCzr69nC2xFZS+EtmRPQDG+oT9As4/ypO3WHviwMJjV0IV
+         2X/sc/FS5Jrj5vls9pZzmEEG9PhSgJcghpmevuD2Mfyaz6qfdVsVZfnLB2rDljvf0NTJ
+         sX39BMiyVH/RggiL7uBrIeo+TwbqHFyVn7Y2AyVze4otPA8c4yvR3hAaSW8nc1+bBAKY
+         dhtAdLBX18dz+Yke7A/U6syZw/If3JRMHnDrOC4X0jplgOPv48+Idj4Ni+AEu4ptdVlz
+         WFebbZUqIc4Vwh2rIb5Xdu2NneytPdOWGH6/JSgQ9E+nl316bgkKnjv5jwRX8c3fQymM
+         uYQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVusNEsXGrmy6oEgPYSXqIsk2tiNmrt9wyvrVVfz1M+RNF6sq6QqOGwhYMeRNQiFWL/Qvdc5yu5Xl5UJEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfv1KuTlIzLvKcVP/BqVGX3pPlqtdW6SXRxDT+yf10doVMPJuU
+	FR52yBjzOA0dg5gIlfQDlPpAZ0qaZm1l+Qr0d4Oa+DnmrfuM40JkeO0=
+X-Gm-Gg: ASbGncsOcXnBcKFIeVbnD0+sUs+h0IeYJVf03yQg6+Ns9Zg5iuOSuasWbLYnUfGM6sj
+	ZSZTQkGsf9E9DJ6UWe29ALJkJ83+zQBmei6S0hJHqLNDS9kiGKEXImMGN3kw+X4LJgXgSeGyct2
+	AGNUFlP8lp4Af7pns9I7GNtkbG8K+ff40M1REq4wCfnfjjz+VkG5bexBptV8Q2JGpLe0VeYfUjK
+	1We/vgtnKHF86FKp8HsyINF4liplW5l2ko8al52sPRN8vYswVnoDLUpJz1CAacMHBhlLbaNFqKn
+	oAVgzi34l4tVjq+V3oIxbWrU0LwcaKrdlVvN0rSkAuEqoBLBm3HkMk0pPsm9CPnPKW1TVeBpqwi
+	0zItHKYTC3Xcq+8lnyH35iX4mFQQVsThtwf5uMezoSmh2aBc9Y1X6xHNDliJqo4M5AycEXvYy+E
+	Sx3qfd7/zR46ztpWVOPYvdai3KsZHonEET1+EbjhTXCyeRfFsu9eyuyR+wXpeOCw==
+X-Google-Smtp-Source: AGHT+IHa35nbyTK6Dmlfdg41+HIA1hn/cBaTOnRlZDC5R3mjJeMyTqjZs96LilY2c+rKxD8zCB0KXg==
+X-Received: by 2002:a05:6000:26ce:b0:3eb:5e99:cbb9 with SMTP id ffacd0b85a97d-42704d7eaa2mr12913918f8f.10.1761124616882;
+        Wed, 22 Oct 2025 02:16:56 -0700 (PDT)
+Received: from [192.168.1.3] (p5b057850.dip0.t-ipconnect.de. [91.5.120.80])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0f88sm23394732f8f.7.2025.10.22.02.16.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 02:16:56 -0700 (PDT)
+Message-ID: <5f8fba3b-2ee1-4a02-9b41-e6e1de1a507a@googlemail.com>
+Date: Wed, 22 Oct 2025 11:16:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [REGRESSION][BISECTED] Screen goes blank with ASpeed AST2300 in
+ 6.18-rc2
+Content-Language: de-DE
+To: Thomas Zimmermann <tzimmermann@suse.de>, regressions@lists.linux.dev,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: dri-devel@lists.freedesktop.org, stable@vger.kernel.org,
+ jfalempe@redhat.com, airlied@redhat.com, dianders@chromium.org,
+ nbowler@draconx.ca, Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thorsten Leemhuis <regressions@leemhuis.info>
+References: <20251014084743.18242-1-tzimmermann@suse.de>
+ <a40caf8e-58ad-4f9c-af7f-54f6f69c29bb@googlemail.com>
+ <43992c88-3a3a-4855-9f46-27a7e5fdec2e@suse.de>
+ <798ba37a-41d0-4953-b8f5-8fe6c00f8dd3@googlemail.com>
+ <bf827c5c-c4dd-46f1-962d-3a8e2a0a7fdf@suse.de>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <bf827c5c-c4dd-46f1-962d-3a8e2a0a7fdf@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Ping-Ke Shih <pkshih@realtek.com> wrote:
->=20
-> Also, all are dropped, can't we just call ieee80211_purge_tx_queue()?
->=20
+Am 22.10.2025 um 11:11 schrieb Thomas Zimmermann:
+> Hi
+> 
+> Am 22.10.25 um 10:08 schrieb Peter Schneider:
+>>
+>> Your patch applied cleanly against 6.18-rc2 and the kernel built fine, but unfortunately it did not solve the issue: 
+>> my console screen stays blank after booting. This is regardless whether I do a soft reboot, press the reset button or 
+>> power cycle and do a cold boot. They are all the same.
+> 
+> Just to be sure: you do see output at the early boot stages (BIOS, boot loader). It's at some later point during boot, 
+> the driver loads and the display blanks out?
 
-Please ignore this comment. Since you want to complete wait, then
-rtw89_tx_wait_list_clear() can delete wait marked as completed from list.
+Yes, that's correct.
+
+> There's another patch attached. does this make a difference?
+
+Do I have to apply that against base 6.18-rc2 or against 6.18-rc2 + your previous patch?
 
 
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
