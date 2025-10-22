@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-864480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C64BFAE08
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F26CABFAE11
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A11C188CDAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:25:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7663189143B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5752C3081B5;
-	Wed, 22 Oct 2025 08:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8D3309EE4;
+	Wed, 22 Oct 2025 08:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v2OJ3Gd+"
-Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rFRRymTv"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286B2FE060
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F5D2FE060;
+	Wed, 22 Oct 2025 08:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121493; cv=none; b=OMhrphyTTfnPJLe9tSPFbdX70H7EU1kIQ94iJQDLJPDZ4KzdX79GfbuzHZ7IXHMsBa5g7di2KfLWg9LP0mpPv2S4Ye8TkSb31ND8+TXJMMFD6pVqQ+BKqVhydiwmUgkZqGxZW2WFLBInavI9tGFQ1FUt9yrKA1R2c3rbtpntyog=
+	t=1761121567; cv=none; b=MTIixetXCxyiGY8c48o6Yi7tN6+EcFZwrraYmdVYc9CYwhB+i1d5DR2QSED22/QNdtlMwyXBcHqzx/1EZ9bQPAhBEymKTYMOstGi91DUQz3PpGPlJKAlA41xjlgr6Dl7L2zrpz9VDNJ2ECOVuFhamvQqoyJagdprW0kK8mrAA5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121493; c=relaxed/simple;
-	bh=RXxaSNMDRj91FhueTL9SXO/VAqCmGMKRScvrihJDC2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lM3wmLXPKRNncfcjrOXQPJo1zXuw8b430a6wtkRid+LnT6r+mCMWI82UlVPNiCKd9bWMHTBgJWVFPmwzoWC/XA+CgAbIhAA8eC1Fosow0MZkFyQRZkvm0fwX3j6ljbzP1cQTzlAYMh00e/a5/YVIJSXQwYpFFJz+SktVTg4CEmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v2OJ3Gd+; arc=none smtp.client-ip=74.125.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63e336b1ac4so1229886d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761121491; x=1761726291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RXxaSNMDRj91FhueTL9SXO/VAqCmGMKRScvrihJDC2U=;
-        b=v2OJ3Gd+tALwRf4OfHPbzgAmhR2q9x/EyLAQAwbT6+55z1sA6ldadAZiRvzfidl9II
-         vGoBi+EyFET4eGSsVUDqyT7hX4f/U4Ox21zvHhKBg4eAorJZRGQhyM6H3Ix/+t6KAU1Z
-         RF4Z4LKUPq2B7ejHo2s9gT6sEg25t7Kkk7+HWqIlLz5sWsYsLivmHifhtnsDSdyj8O1V
-         SezByrdRbuCT+J0adHFptnb43WJgKgHPyyJiDw5gXTCjdAXb0lQaGd0J/DwX5viBu0K/
-         e5hU0XOVeN2QjDscsOrS+26KnEaIjGjBLQA3VvR8rmqiVvp8HxttM0arvwOGJJMNgHFB
-         V8EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761121491; x=1761726291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RXxaSNMDRj91FhueTL9SXO/VAqCmGMKRScvrihJDC2U=;
-        b=DwzDeNF+2AtAnoN1uW8tozAIBIyEpYo++AZenr5ck6UWw1V71uV9ADF9175QHjYb75
-         T//juMspckFN7nphRyHDjkwcuY7VFp9VR3rAR2b0ORD9t4mlC8xOiLixQbYM6aqvhEcv
-         etlNaFPliprsCa/xOQZWYH69CDAbniVusgon29+ElY6EM0a41nSjWkiCnZc3yYs/njVI
-         xQmonmEKMFcfdLP9+QiEuC2swQtdfJe/NK9rubsNGCjYgh7xOF2i7eswwvFCCkNJ3CUZ
-         XoCL0gGQavyZO96TpugO4pFK9gXnutAETQp+khc44kEvRHptaOzb2bsmCQZ0SCeC39JG
-         BXWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWm0gO1cOw/que1GJF53jObohcLv9aHmF53mJpb5S96uT94a0gSFad+9cFhppUFeq5js0EekdU4QMW/xhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKrRI1gUl28sVhRrEGkwJoPYepxhmSe1lxutsxv02DWLFX4gRU
-	ypD+FsFTCo8iX9TnTJ1Ccay8g4E5GfAsXsBKx4tUMHtJjlfEdFzcWADBh4GQxeS8FiLyjAiI4Cq
-	pxPhximxWORdWzoc/lrZesm5J9kZy9bX46YeBXbR5hQ==
-X-Gm-Gg: ASbGnctapey3Iqs6ReRwfStyxtopqyD2IRMPk+5yza5CHWdciWtxFuDUdDPAGVSOcl9
-	bTdv1En4DGC20RdlksZgBrWyotcIaRTVcxK+JvPZx50RD49gI2xC7uwFnG7Oo1/HfE50SSbeCMq
-	PyLHs4jQEBk+9yXKrby/APPsgNmjMma6vgeARJII/mZ9j4Bk2/ZzQugSkj2Pc0d6FiES6ROAyKp
-	gUILZUYQbT9R6bRtn3BM3CbpzMvOlhUWyn75XUc3Ha5maNr4iH/SFPiZpONaxu+iHNW15Y=
-X-Google-Smtp-Source: AGHT+IERBbCdzrK/DnyqVvBrjv6GLzWwxwoEO7f9Mw9D/RkAigeGgzM8GB04mtMR32cqX6B3SnKkLTsVQyTiuof3lXc=
-X-Received: by 2002:a05:690e:11cd:b0:63e:2b9e:1462 with SMTP id
- 956f58d0204a3-63f2f624987mr358734d50.22.1761121490978; Wed, 22 Oct 2025
- 01:24:50 -0700 (PDT)
+	s=arc-20240116; t=1761121567; c=relaxed/simple;
+	bh=GcOayzrpL3XN45TYF8aRFDQHCEpABTubndQWUs/Olos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwyaE2l2pm2nhdfORft2qMFt5KuayWqpU8ua/6Uce/B64XsyR4CM0hnHhKwDqr8UATKmLQeuy70/o+Kb6EazE8xdZGmiZMBSiQ17RfPmQ2VPXIoV4zRf0ABvgQwdvCeRyUnusxE1iieEmV3UVU3VZzaKEIsujGK/8ihpDT0Ur4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rFRRymTv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HwH5x5HyQ0iNsnWYUIrOkwzBLLqSWs26PFnB9Hw9zrg=; b=rFRRymTvsxiHY5Z9kk6gQcPDdH
+	q+LBhU6IgfqCPMOqEen7bfrcl/FO4M7yDOeIzepUAVgK8BejefMm/2wrIo2IzPrm01EjWc/3p5dYY
+	IXKDjSEqQuLyzlVr/OG1j4WiAmIdzvXNy0RGvCHyoeBahthZWBtRPv8qFrUGmR5O3gbPSI6bm2zGF
+	lPxbFuMuevP7QUkKT34AwysjhhFHQHQzycqeAomW/7DbQqKw8qnf99qOb58IOBuIPAXW2VIdQGbt8
+	mhIjbqyQOhoW/ry50sMIlXZYxK9cVa56MToV19GO+h2b//S1mMkuK7dE7GeVPutVT1b74bkKONyxn
+	aph1QZTw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBUA9-00000000cYB-2CVJ;
+	Wed, 22 Oct 2025 08:25:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BB95330039F; Wed, 22 Oct 2025 10:25:41 +0200 (CEST)
+Date: Wed, 22 Oct 2025 10:25:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v10 03/15] x86/alternatives: Disable LASS when patching
+ kernel alternatives
+Message-ID: <20251022082541.GL4067720@noisy.programming.kicks-ass.net>
+References: <20251007065119.148605-1-sohil.mehta@intel.com>
+ <20251007065119.148605-4-sohil.mehta@intel.com>
+ <20251021200328.GMaPfnEDibnBrhNTmQ@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605171524.27222-1-aradhya.bhatia@linux.dev> <20250605171524.27222-4-aradhya.bhatia@linux.dev>
-In-Reply-To: <20250605171524.27222-4-aradhya.bhatia@linux.dev>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 22 Oct 2025 10:24:37 +0200
-X-Gm-Features: AS18NWBhnPNxVBgcXMb7pCZGsTv2XFqiKsKzW4r9u2dZYTJ-75bh2elmyFMfPJQ
-Message-ID: <CACRpkdaOyDJ-ur6iO8qnWesL1SZ9C-okWO353rUKpTO-q8urWA@mail.gmail.com>
-Subject: Re: [PATCH v13 3/4] drm/atomic-helper: Re-order bridge chain
- pre-enable and post-disable
-To: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	DRI Development List <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>, 
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021200328.GMaPfnEDibnBrhNTmQ@fat_crate.local>
 
-On Thu, Jun 5, 2025 at 7:15=E2=80=AFPM Aradhya Bhatia <aradhya.bhatia@linux=
-.dev> wrote:
+On Tue, Oct 21, 2025 at 10:03:28PM +0200, Borislav Petkov wrote:
+> On Mon, Oct 06, 2025 at 11:51:07PM -0700, Sohil Mehta wrote:
+> > +static __always_inline void lass_clac(void)
+> > +{
+> > +	alternative("", "clac", X86_FEATURE_LASS);
+> > +}
+> > +
+> > +static __always_inline void lass_stac(void)
+> > +{
+> > +	alternative("", "stac", X86_FEATURE_LASS);
+> > +}
+> 
+> So I probably missed the whole discussion on how we arrived at
+> lass_{stac,clac}() but just in case, those names sound silly.
+> 
 
-> From: Aradhya Bhatia <a-bhatia1@ti.com>
->
-> Move the bridge pre_enable call before crtc enable, and the bridge
-> post_disable call after the crtc disable.
+Initially the suggestion was to use stac/clac directly iirc; but that
+looses the information these are for LASS only. Hence the LASS specific
+ones.
 
-This commit regresses the MCDE driver to a hard boot failure.
-Reverting the patch fixes the issue.
+(its an unfortunate arch detail that LASS and SMAP both use the AC flag
+and all that)
 
-I think it has something to do with the internal DSI bridge in
-drivers/gpu/drm/mcde/mcde_dsi.c
+> diff --git a/arch/x86/include/asm/smap.h b/arch/x86/include/asm/smap.h
+> index 3ecb4b0de1f9..066d83a6b1ff 100644
+> --- a/arch/x86/include/asm/smap.h
+> +++ b/arch/x86/include/asm/smap.h
+> @@ -55,16 +55,8 @@ static __always_inline void stac(void)
+>   * Use lass_stac()/lass_clac() when accessing kernel mappings
+>   * (!_PAGE_USER) in the lower half of the address space.
+>   */
+> -
+> -static __always_inline void lass_clac(void)
+> -{
+> -	alternative("", "clac", X86_FEATURE_LASS);
+> -}
+> -
+> -static __always_inline void lass_stac(void)
+> -{
+> -	alternative("", "stac", X86_FEATURE_LASS);
+> -}
+> +#define lass_disable()		stac()
+> +#define lass_enable()		clac()
 
-Any hints to what needs to be fixed here?
+But that's not the same, stac() and clac() are FEATURE_SMAP, these are
+FEATURE_LASS.
 
-Yours,
-Linus Walleij
+If you really want the _disable _enable naming that's fine with me, but
+then perhaps we should also s/clac/smap_disable/ and s/stac/smap_enable/
+for consistency.
 
