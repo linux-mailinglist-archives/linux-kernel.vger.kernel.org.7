@@ -1,92 +1,701 @@
-Return-Path: <linux-kernel+bounces-864935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893FDBFBE5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:44:43 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA3DBFBE70
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC364083C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:44:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC02A356EF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E452765ED;
-	Wed, 22 Oct 2025 12:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54044344024;
+	Wed, 22 Oct 2025 12:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="YCw1eC0h"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W6tVF3fK"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAFB33C52C;
-	Wed, 22 Oct 2025 12:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A91344039
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137072; cv=none; b=JwjPpfKYwLxsxFXIIn8p6ON3dYHnOaccyYWjSBAqXYYV09cZoWDmWHt8/lNsJAgQ942iDhj+h3v5gdN8YY6OLhbR7aRK1u3G5ykpAqeA/mkU9oTH1M+/7p7PngOH0wAx+9mcTCDJ+8sX3cM4MBmBFNgvQhmDXV1z/mohgsOaxiY=
+	t=1761137087; cv=none; b=Puxaq1hbs6mFChj2SpVn9OGc9s8MNnLtUvnO7ZGs5OI1s3WdgZ4s1Szd8HqJYLczeG2hkhj4YOIAd7XJVcnCkgf0sQ7gk9fx8UqYqacy4SGsMWmnzil3XBmR5NUTKXEkGspgqFI+O9V+BshaXPo6+T96SA6Me6PIDwEx4+chXjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137072; c=relaxed/simple;
-	bh=VKKg6R2GGpyhzV6SYM4/YURkRudQx/VKFAbp39pJy2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SVc4b7NL1K57SbyaBvefEEP2rDMybxZlM/3Eq1tS3Y2OhS2mb2z+/vHhtS2WRCdz2vc8j4ca4tZyGw+zLjcLZckk/FF8rpCksVDOXDJJBxnaC6D7jmhvgRES9xcx0gdo0UDUZrtlW5a0XI+YGkn74RlNcDC2I3QaWsDjyIpNyD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=YCw1eC0h; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=RHH0V3A771nXPxinUtl+9kdKJ/Xiz0uAziok/Uy7w6U=; b=YCw1eC0h2+mdHNGza9ioOsBTX4
-	ByiTfzRHpGOORNNaarkXx4olcM4ccE7E5FSax6hbK3nnTVBOVhZI7YxrhFAwGKFrgtSc1XowSvUam
-	yQbrIDR1r/cosUgrUTT8nqm0rqkFRRIJCJe7A148h3nZ1OvHXiHN7ms4OXY5OwOgO/b/MCu4ES9oW
-	ZD314PNlzPMmlVgnyVizrG24RdoDz1Ifbc3CnIY6wIo/OOAWjugx4JbVpt8sIcEfiPklKY9K9ff6z
-	mwzwVSK3kcRpb3ugxhBIdX5piSV7ACpOPU1UhN09h8n92dEDob/vh6OhpqCawOwoTThc0GM9Pyhr+
-	MJFYdD0g==;
-Date: Wed, 22 Oct 2025 14:44:22 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: akemnade@kernel.org, Lee Jones <lee@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, Kevin Hilman
- <khilman@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- linux-omap@vger.kernel.org
-Subject: Re: [PATCH 2/3] Input: add TWL603x power button
-Message-ID: <20251022144422.7c17322a@kemnade.info>
-In-Reply-To: <aalnnbzeajxgnq33go5b2gi72yjzeeun5f2pkbdulu2hwuz663@b65xssnkse7l>
-References: <20251020-twl6030-button-v1-0-93e4644ac974@kernel.org>
-	<20251020-twl6030-button-v1-2-93e4644ac974@kernel.org>
-	<aalnnbzeajxgnq33go5b2gi72yjzeeun5f2pkbdulu2hwuz663@b65xssnkse7l>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1761137087; c=relaxed/simple;
+	bh=xiZscMSJ5Y6S51NdfEoM5uux4TkxuaNsK2jqNgL5eL8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UNDoAedCk1REFqZlP2MwQPgvqvSIdGlehgJ8NKDQI4tdjd1iLj/V7WD+Inw8WTJeV5PFaJt4DD09E9C7R3G/LrlfAchTRaMwVftvGfna7KUEnUbey+x3dLQJBv5b4EdyL9W5+qjmWQkqrgnZVzeTW1YdFpOkoDriJP4Bti149H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W6tVF3fK; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4270a0127e1so3398797f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761137083; x=1761741883; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/lszp+0t1XNimB1Wor5aJTBDq6Y010S2Qxr+PcGktvc=;
+        b=W6tVF3fKO4ImAaAxJEjtZ/oASSYM0ebDwpw7QMOtIxAbXiywIU1M86DpejQ3QktAPc
+         WR5HD/X+t9evaF8G2j0uAGHBugDuJifPuYFxiGkoQGe33dbT9S7BovHEdsPHYweozSup
+         LFKcl8SbrwDUTV6LPjLxmPvOMDGpVJddsrnrDbtn/AYjQP2F+oyp4JLQ5FdN7ZwKGxVo
+         ns1nCjrgltvaXky4ANG7wAdzSjVgOTGci3zJUvcxhl2AT5HJ8j978g2AeUCOgXdMSn9R
+         k8HBbpIb8ajR9jMyarOmbFfid041sWLC11f6JO3IVEMRDLVdIK/IwfOByQH7GOKbUt6X
+         fAWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761137083; x=1761741883;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/lszp+0t1XNimB1Wor5aJTBDq6Y010S2Qxr+PcGktvc=;
+        b=l1IHHvhdXK8mHJ6VWUZaz9Tc/N0vMCI3FPspt1guaNB+3Kv0yMA55id3BWqoz3VLhu
+         RFWT3DZ7jtippneu+eWLnAMZ6QEy7luXRtsRPhGbW0oFHZGN/Pnb6YkQpWs5m8zcF7Rz
+         jEl4Rjxad7F0FDntFhDJJT/AdI1MsGbT1Dz7tDFpQsldLf6pFlkXXCW0/PjuNqu4SRM1
+         0fi8016D2VHRucwDKMF+FCFYoG8e1URPMfxWrFxxeGOg6ShQSe1lXkBNVL+ATryicNfg
+         EJnuHw9jYNdnANDtiPnWO7OWyHgFXC6mG3CKTq+zL1sRrCqRKVvohwvd1a2K7UO1g8/k
+         1YAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVY5f74Mwuvh+XRoaxg6/m/QMw011N3MCyBI7/Cf+lk7WhYqtNPwXbMh/82iuNzIARaPvpmIN7S/sYov/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynVI9YdC/rANiTk9R6jR872fpZfjlidnzQTgh1nYYF2N5PWRf4
+	+1J0r4u5aD0ZoSZz1WE4srcatWtm+WJOFGlCBBS+p+eKI2f5wXmppEEaef6IVm7G628=
+X-Gm-Gg: ASbGncsqCv1DTF1UVzZ9J9tOk5FwTaemrFI5Vylp58Cr5dcEA9OE3HMPV8s22cqX7Lz
+	cGjECYFro35u6609sMf2kAhWvADELZrJryxx9MA1JADXL9Iu0FUWArXIhRanSfXX07ORX022fM/
+	cgJNHm+z3RVmsW7W/+7wk+awGNlQ1X3IVKm21b8QiSNv0H0iWv6rMd9Ok60dsO8UjxNoOrs90sL
+	jBR+/PY38RQFvzv+NXfs7U8eKWmvj5IQLjoln/miKvl0CRoGyQN+MWSKspSZYGrW5v8ZDN5/asH
+	5xaxXB2Cxna2WKopymZGwkhZNrANQnPW6orLDL8sA7oIrVA7zDjoCWIwkpmpFl7xqBPW4c4kA5g
+	NbN9AZdmc7hj5wkgkhEMX3xKRWv2IR9XWLqxIEtkyu9U1h6Bv3+2eKiQHXQ0rOBoMgXCgra4XVU
+	YM86ylNxQLNSRfDYRW5cwN
+X-Google-Smtp-Source: AGHT+IEeJnQTJSqadBx3d8e4XA6eI7t/KljcdJTu95OhpQjf/JKTRr/Lu38tHgjoWOKhwCvC0wMRQg==
+X-Received: by 2002:a05:6000:1869:b0:427:79f:dcd8 with SMTP id ffacd0b85a97d-427079fdd00mr13043419f8f.55.1761137082390;
+        Wed, 22 Oct 2025 05:44:42 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce586sm25647844f8f.49.2025.10.22.05.44.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 05:44:41 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Wed, 22 Oct 2025 14:44:40 +0200
+Subject: [PATCH RFC RFT] drm/msm: adreno: attach the GMU device to a driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251022-topic-adreno-attach-gmu-to-driver-v1-1-999037f7c83e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIALfR+GgC/x2NQQqDMBBFryKz7oCGitCt4AGku9JFTEadhYlMU
+ hHEuzt2+R6f9w9IJEwJXsUBQhsnjkGhehTgZhsmQvbKYEpTV6UxmOPKDq0XChFtztbNOC0/9ei
+ FNxKkZ6Pj0Tc0DKCdVWjk/f/xgb5rb9d3b/ie5wViHSYUfwAAAA==
+X-Change-ID: 20251022-topic-adreno-attach-gmu-to-driver-e47025fd7ebb
+To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=18606;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=xiZscMSJ5Y6S51NdfEoM5uux4TkxuaNsK2jqNgL5eL8=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBo+NG5aoKCA+c8tB7YzGfS59IwHnAbyd5SliF3bRTh
+ m+LdECaJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaPjRuQAKCRB33NvayMhJ0W9AD/
+ 94SMt/rsFa602UkRpKch70/ZJCRrdTvkCRwPGXyySIHJSlzZR726o5IGl9M4mHyEv9hVZf3Wy69VbB
+ /bBM2FkuAuTKtrfNay7RIv4Sz31BCryP+n+pU6bcFMSyxIF225N4zu5QNaky67xxn6GXkV69Qo0gWc
+ BjkRlaESBUZxBZrzK5vapPeVKVcpo/xT8vfr5iLcaf8bE9oR90vAQIdEbXJcoeKNuWEURrAC/ydAL8
+ 8e9YWhqgPnj3eC0L7WpJ+Aq+i9jcVwryrQxTdykpTVec9fsol5q8yxqBEYmgHlu/6bEuiEr5CU6rNg
+ NNNnAEe/CmCheuzdiRMtXXgpXYrzyWBpclPs74833efU/x/oIP/h5LlFC5ETrMdR9TiBi4xSOYtP4K
+ RfIXJFBlepiLtA2SoChgXGOMUA3ggov2WI0bhcyob9AmRE3kF2PYpaXwFuO3A3hO6KAat1ddx+F2vk
+ Aqk+ia7YFOlptZ7C0359UM3dDwMh71m7UKdoEjwRJN6p6KCGzEWCPsenPLzg4eMhjKYCbEOe1b4KrY
+ WFMiy3MOr6fuGUS3I5NNr3PIjqum90go0MUAm/W0Xc5qaooyJogXNv+uyFfg9KWa3mE3p3mSKs2y3Y
+ thT+BSuz7TNbVVAovKmQhPwbQmTR8AuvNV3UgviCnnabOul8ZOilysLzq5lQ==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Tue, 21 Oct 2025 10:58:35 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+Due to the sync_state is enabled by default in pmdomain & CCF since v6.17,
+the GCC and GPUCC sync_state would stay pending, leaving the resources in
+full performance:
+gcc-x1e80100 100000.clock-controller: sync_state() pending due to 3d6a000.gmu
+gpucc-x1e80100 3d90000.clock-controller: sync_state() pending due to 3d6a000.gmu
 
-> On Mon, Oct 20, 2025 at 02:31:59PM +0200, akemnade@kernel.org wrote:
-> > From: Andreas Kemnade <andreas@kemnade.info>
-> > 
-> > Like the TWL4030, these PMICs also have a power button feature, so add
-> > a driver for it.  
-> 
-> Could it be integrated into twl4030-pwrbutton.c? I think the differences
-> can be accounted for via a "chip" structure attached to a compatible...
-> 
-So what is different:
-- different register (but same bit)
-- some custom irq stuff for 603x (so if (is_603x) needed)
-- different name for the button (can be neglected I think) 
+In order to fix this state and allow the GMU to be properly
+probed, let's add a proper driver for the GMU and add it to
+the MSM driver components.
 
-Besides of adding a chip structure  we can do it the same way
-as rtc-twl.c is doing: using twl_class_is_xxxx() which derives
-its return from the parents compatible. It is simplier, but
-I think the chip structure does not hurt much either.
+Only the proper GMU has been tested since I don't have
+access to hardware with a GMU wrapper.
 
-Regards,
-Andreas
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 354 ++++++++++++++---------------
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |   6 -
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h      |   3 -
+ drivers/gpu/drm/msm/adreno/adreno_device.c |   4 +
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h    |   4 +
+ drivers/gpu/drm/msm/msm_drv.c              |  16 +-
+ 6 files changed, 192 insertions(+), 195 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index fc62fef2fed8..6e7c3e627509 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -1859,11 +1859,14 @@ void a6xx_gmu_sysprof_setup(struct msm_gpu *gpu)
+ 	pm_runtime_put(&gpu->pdev->dev);
+ }
+ 
+-void a6xx_gmu_remove(struct a6xx_gpu *a6xx_gpu)
++static void a6xx_gmu_unbind(struct device *dev, struct device *master, void *data)
+ {
+-	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
++	struct platform_device *pdev = to_platform_device(dev);
++	struct msm_drm_private *priv = dev_get_drvdata(master);
++	struct msm_gpu *gpu = priv->gpu;
++	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
++	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+ 	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+-	struct platform_device *pdev = to_platform_device(gmu->dev);
+ 
+ 	mutex_lock(&gmu->lock);
+ 	if (!gmu->initialized) {
+@@ -1903,9 +1906,6 @@ void a6xx_gmu_remove(struct a6xx_gpu *a6xx_gpu)
+ 		free_irq(gmu->gmu_irq, gmu);
+ 		free_irq(gmu->hfi_irq, gmu);
+ 	}
+-
+-	/* Drop reference taken in of_find_device_by_node */
+-	put_device(gmu->dev);
+ }
+ 
+ static int cxpd_notifier_cb(struct notifier_block *nb,
+@@ -1919,169 +1919,130 @@ static int cxpd_notifier_cb(struct notifier_block *nb,
+ 	return 0;
+ }
+ 
+-int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
++static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
+ {
+-	struct platform_device *pdev = of_find_device_by_node(node);
+-	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+-	int ret;
+-
+-	if (!pdev)
+-		return -ENODEV;
+-
+-	gmu->dev = &pdev->dev;
+-
+-	ret = of_dma_configure(gmu->dev, node, true);
+-	if (ret)
+-		return ret;
+-
+-	pm_runtime_enable(gmu->dev);
+-
+-	/* Mark legacy for manual SPTPRAC control */
+-	gmu->legacy = true;
+-
+-	/* Map the GMU registers */
+-	gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
+-	if (IS_ERR(gmu->mmio)) {
+-		ret = PTR_ERR(gmu->mmio);
+-		goto err_mmio;
+-	}
+-
+-	gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
+-	if (IS_ERR(gmu->cxpd)) {
+-		ret = PTR_ERR(gmu->cxpd);
+-		goto err_mmio;
+-	}
+-
+-	if (!device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME)) {
+-		ret = -ENODEV;
+-		goto detach_cxpd;
+-	}
+-
+-	init_completion(&gmu->pd_gate);
+-	complete_all(&gmu->pd_gate);
+-	gmu->pd_nb.notifier_call = cxpd_notifier_cb;
+-
+-	/* Get a link to the GX power domain to reset the GPU */
+-	gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
+-	if (IS_ERR(gmu->gxpd)) {
+-		ret = PTR_ERR(gmu->gxpd);
+-		goto err_mmio;
+-	}
+-
+-	gmu->initialized = true;
+-
+-	return 0;
+-
+-detach_cxpd:
+-	dev_pm_domain_detach(gmu->cxpd, false);
+-
+-err_mmio:
+-	iounmap(gmu->mmio);
+-
+-	/* Drop reference taken in of_find_device_by_node */
+-	put_device(gmu->dev);
+-
+-	return ret;
+-}
+-
+-int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+-{
+-	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
++	struct platform_device *pdev = to_platform_device(dev);
++	struct msm_drm_private *priv = dev_get_drvdata(master);
++	struct msm_gpu *gpu = dev_to_gpu(&priv->gpu_pdev->dev);
++	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
++	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+ 	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+-	struct platform_device *pdev = of_find_device_by_node(node);
+ 	struct device_link *link;
+ 	int ret;
+ 
+-	if (!pdev)
+-		return -ENODEV;
+-
+-	gmu->dev = &pdev->dev;
++	gmu->dev = dev;
+ 
+-	ret = of_dma_configure(gmu->dev, node, true);
++	ret = of_dma_configure(gmu->dev, dev->of_node, true);
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Set GMU idle level */
+-	gmu->idle_level = (adreno_gpu->info->quirks & ADRENO_QUIRK_IFPC) ?
+-		GMU_IDLE_STATE_IFPC : GMU_IDLE_STATE_ACTIVE;
++	if (adreno_has_gmu_wrapper(adreno_gpu))
++		/* Mark legacy for manual SPTPRAC control */
++		gmu->legacy = true;
++
++	if (!gmu->legacy)
++		/* Set GMU idle level */
++		gmu->idle_level = (adreno_gpu->info->quirks & ADRENO_QUIRK_IFPC) ?
++			GMU_IDLE_STATE_IFPC : GMU_IDLE_STATE_ACTIVE;
+ 
+ 	pm_runtime_enable(gmu->dev);
+ 
+-	/* Get the list of clocks */
+-	ret = a6xx_gmu_clocks_probe(gmu);
+-	if (ret)
+-		goto err_put_device;
++	if (!gmu->legacy) {
++		/* Get the list of clocks */
++		ret = a6xx_gmu_clocks_probe(gmu);
++		if (ret)
++			return ret;
+ 
+-	ret = a6xx_gmu_memory_probe(adreno_gpu->base.dev, gmu);
+-	if (ret)
+-		goto err_put_device;
++		ret = a6xx_gmu_memory_probe(adreno_gpu->base.dev, gmu);
++		if (ret)
++			return ret;
+ 
++		/* A660 now requires handling "prealloc requests" in GMU firmware
++		 * For now just hardcode allocations based on the known firmware.
++		 * note: there is no indication that these correspond to "dummy" or
++		 * "debug" regions, but this "guess" allows reusing these BOs which
++		 * are otherwise unused by a660.
++		 */
++		gmu->dummy.size = SZ_4K;
++		if (adreno_is_a660_family(adreno_gpu) ||
++		    adreno_is_a7xx(adreno_gpu)) {
++			ret = a6xx_gmu_memory_alloc(gmu, &gmu->debug, SZ_4K * 7,
++						    0x60400000, "debug");
++			if (ret)
++				goto err_memory;
++
++			gmu->dummy.size = SZ_8K;
++		}
+ 
+-	/* A660 now requires handling "prealloc requests" in GMU firmware
+-	 * For now just hardcode allocations based on the known firmware.
+-	 * note: there is no indication that these correspond to "dummy" or
+-	 * "debug" regions, but this "guess" allows reusing these BOs which
+-	 * are otherwise unused by a660.
+-	 */
+-	gmu->dummy.size = SZ_4K;
+-	if (adreno_is_a660_family(adreno_gpu) ||
+-	    adreno_is_a7xx(adreno_gpu)) {
+-		ret = a6xx_gmu_memory_alloc(gmu, &gmu->debug, SZ_4K * 7,
+-					    0x60400000, "debug");
++		/* Allocate memory for the GMU dummy page */
++		ret = a6xx_gmu_memory_alloc(gmu, &gmu->dummy, gmu->dummy.size,
++					    0x60000000, "dummy");
+ 		if (ret)
+ 			goto err_memory;
+ 
+-		gmu->dummy.size = SZ_8K;
+-	}
+-
+-	/* Allocate memory for the GMU dummy page */
+-	ret = a6xx_gmu_memory_alloc(gmu, &gmu->dummy, gmu->dummy.size,
+-				    0x60000000, "dummy");
+-	if (ret)
+-		goto err_memory;
++		/* Note that a650 family also includes a660 family: */
++		if (adreno_is_a650_family(adreno_gpu) ||
++		    adreno_is_a7xx(adreno_gpu)) {
++			ret = a6xx_gmu_memory_alloc(gmu, &gmu->icache,
++				SZ_16M - SZ_16K, 0x04000, "icache");
++			if (ret)
++				goto err_memory;
++		/*
++		 * NOTE: when porting legacy ("pre-650-family") GPUs you may be tempted to add a condition
++		 * to allocate icache/dcache here, as per downstream code flow, but it may not actually be
++		 * necessary. If you omit this step and you don't get random pagefaults, you are likely
++		 * good to go without this!
++		 */
++		} else if (adreno_is_a640_family(adreno_gpu)) {
++			ret = a6xx_gmu_memory_alloc(gmu, &gmu->icache,
++				SZ_256K - SZ_16K, 0x04000, "icache");
++			if (ret)
++				goto err_memory;
++
++			ret = a6xx_gmu_memory_alloc(gmu, &gmu->dcache,
++				SZ_256K - SZ_16K, 0x44000, "dcache");
++			if (ret)
++				goto err_memory;
++		} else if (adreno_is_a630_family(adreno_gpu)) {
++			/* HFI v1, has sptprac */
++			gmu->legacy = true;
++
++			/* Allocate memory for the GMU debug region */
++			ret = a6xx_gmu_memory_alloc(gmu, &gmu->debug, SZ_16K, 0, "debug");
++			if (ret)
++				goto err_memory;
++		}
+ 
+-	/* Note that a650 family also includes a660 family: */
+-	if (adreno_is_a650_family(adreno_gpu) ||
+-	    adreno_is_a7xx(adreno_gpu)) {
+-		ret = a6xx_gmu_memory_alloc(gmu, &gmu->icache,
+-			SZ_16M - SZ_16K, 0x04000, "icache");
+-		if (ret)
+-			goto err_memory;
+-	/*
+-	 * NOTE: when porting legacy ("pre-650-family") GPUs you may be tempted to add a condition
+-	 * to allocate icache/dcache here, as per downstream code flow, but it may not actually be
+-	 * necessary. If you omit this step and you don't get random pagefaults, you are likely
+-	 * good to go without this!
+-	 */
+-	} else if (adreno_is_a640_family(adreno_gpu)) {
+-		ret = a6xx_gmu_memory_alloc(gmu, &gmu->icache,
+-			SZ_256K - SZ_16K, 0x04000, "icache");
++		/* Allocate memory for the GMU log region */
++		ret = a6xx_gmu_memory_alloc(gmu, &gmu->log, SZ_16K, 0, "log");
+ 		if (ret)
+ 			goto err_memory;
+ 
+-		ret = a6xx_gmu_memory_alloc(gmu, &gmu->dcache,
+-			SZ_256K - SZ_16K, 0x44000, "dcache");
++		/* Allocate memory for for the HFI queues */
++		ret = a6xx_gmu_memory_alloc(gmu, &gmu->hfi, SZ_16K, 0, "hfi");
+ 		if (ret)
+ 			goto err_memory;
+-	} else if (adreno_is_a630_family(adreno_gpu)) {
+-		/* HFI v1, has sptprac */
+-		gmu->legacy = true;
+ 
+-		/* Allocate memory for the GMU debug region */
+-		ret = a6xx_gmu_memory_alloc(gmu, &gmu->debug, SZ_16K, 0, "debug");
+-		if (ret)
+-			goto err_memory;
+-	}
++		if (adreno_is_a650_family(adreno_gpu) ||
++		    adreno_is_a7xx(adreno_gpu)) {
++			gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
++			if (IS_ERR(gmu->rscc)) {
++				ret = -ENODEV;
++				goto err_mmio;
++			}
++		} else {
++			gmu->rscc = gmu->mmio + 0x23000;
++		}
+ 
+-	/* Allocate memory for the GMU log region */
+-	ret = a6xx_gmu_memory_alloc(gmu, &gmu->log, SZ_16K, 0, "log");
+-	if (ret)
+-		goto err_memory;
++		/* Get the HFI and GMU interrupts */
++		gmu->hfi_irq = a6xx_gmu_get_irq(gmu, pdev, "hfi", a6xx_hfi_irq);
++		gmu->gmu_irq = a6xx_gmu_get_irq(gmu, pdev, "gmu", a6xx_gmu_irq);
+ 
+-	/* Allocate memory for for the HFI queues */
+-	ret = a6xx_gmu_memory_alloc(gmu, &gmu->hfi, SZ_16K, 0, "hfi");
+-	if (ret)
+-		goto err_memory;
++		if (gmu->hfi_irq < 0 || gmu->gmu_irq < 0) {
++			ret = -ENODEV;
++			goto err_mmio;
++		}
++	}
+ 
+ 	/* Map the GMU registers */
+ 	gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
+@@ -2090,26 +2051,6 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 		goto err_memory;
+ 	}
+ 
+-	if (adreno_is_a650_family(adreno_gpu) ||
+-	    adreno_is_a7xx(adreno_gpu)) {
+-		gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
+-		if (IS_ERR(gmu->rscc)) {
+-			ret = -ENODEV;
+-			goto err_mmio;
+-		}
+-	} else {
+-		gmu->rscc = gmu->mmio + 0x23000;
+-	}
+-
+-	/* Get the HFI and GMU interrupts */
+-	gmu->hfi_irq = a6xx_gmu_get_irq(gmu, pdev, "hfi", a6xx_hfi_irq);
+-	gmu->gmu_irq = a6xx_gmu_get_irq(gmu, pdev, "gmu", a6xx_gmu_irq);
+-
+-	if (gmu->hfi_irq < 0 || gmu->gmu_irq < 0) {
+-		ret = -ENODEV;
+-		goto err_mmio;
+-	}
+-
+ 	gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
+ 	if (IS_ERR(gmu->cxpd)) {
+ 		ret = PTR_ERR(gmu->cxpd);
+@@ -2122,11 +2063,13 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 		goto detach_cxpd;
+ 	}
+ 
+-	/* Other errors are handled during GPU ACD probe */
+-	gmu->qmp = qmp_get(gmu->dev);
+-	if (PTR_ERR_OR_ZERO(gmu->qmp) == -EPROBE_DEFER) {
+-		ret = -EPROBE_DEFER;
+-		goto detach_gxpd;
++	if (!gmu->legacy) {
++		/* Other errors are handled during GPU ACD probe */
++		gmu->qmp = qmp_get(gmu->dev);
++		if (PTR_ERR_OR_ZERO(gmu->qmp) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto detach_gxpd;
++		}
+ 	}
+ 
+ 	init_completion(&gmu->pd_gate);
+@@ -2139,18 +2082,20 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 	 */
+ 	gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
+ 
+-	/* Get the power levels for the GMU and GPU */
+-	a6xx_gmu_pwrlevels_probe(gmu);
++	if (!gmu->legacy) {
++		/* Get the power levels for the GMU and GPU */
++		a6xx_gmu_pwrlevels_probe(gmu);
+ 
+-	ret = a6xx_gmu_acd_probe(gmu);
+-	if (ret)
+-		goto detach_gxpd;
++		ret = a6xx_gmu_acd_probe(gmu);
++		if (ret)
++			goto detach_gxpd;
+ 
+-	/* Set up the HFI queues */
+-	a6xx_hfi_init(gmu);
++		/* Set up the HFI queues */
++		a6xx_hfi_init(gmu);
+ 
+-	/* Initialize RPMh */
+-	a6xx_gmu_rpmh_init(gmu);
++		/* Initialize RPMh */
++		a6xx_gmu_rpmh_init(gmu);
++	}
+ 
+ 	gmu->initialized = true;
+ 
+@@ -2170,16 +2115,57 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 
+ err_mmio:
+ 	iounmap(gmu->mmio);
+-	if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
+-		iounmap(gmu->rscc);
+-	free_irq(gmu->gmu_irq, gmu);
+-	free_irq(gmu->hfi_irq, gmu);
++	if (!gmu->legacy) {
++		if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
++			iounmap(gmu->rscc);
++		free_irq(gmu->gmu_irq, gmu);
++		free_irq(gmu->hfi_irq, gmu);
++	}
+ 
+ err_memory:
+-	a6xx_gmu_memory_free(gmu);
+-err_put_device:
+-	/* Drop reference taken in of_find_device_by_node */
+-	put_device(gmu->dev);
++	if (!gmu->legacy)
++		a6xx_gmu_memory_free(gmu);
+ 
+ 	return ret;
+ }
++
++static const struct component_ops a6xx_gmu_ops = {
++	.bind   = a6xx_gmu_bind,
++	.unbind = a6xx_gmu_unbind,
++};
++
++static int a6xx_gmu_probe(struct platform_device *pdev)
++{
++	return component_add(&pdev->dev, &a6xx_gmu_ops);
++}
++
++static void a6xx_gmu_remove(struct platform_device *pdev)
++{
++
++	component_del(&pdev->dev, &a6xx_gmu_ops);
++}
++
++static const struct of_device_id dt_match[] = {
++	{ .compatible = "qcom,adreno-gmu" },
++	{ .compatible = "qcom,adreno-gmu-wrapper" },
++	{}
++};
++
++static struct platform_driver a6xx_gmu_drv = {
++	.probe = a6xx_gmu_probe,
++	.remove = a6xx_gmu_remove,
++	.driver = {
++		.name = "a6xx_gmu",
++		.of_match_table = dt_match,
++	},
++};
++
++void __init a6xx_gmu_register(void)
++{
++	platform_driver_register(&a6xx_gmu_drv);
++}
++
++void __exit a6xx_gmu_unregister(void)
++{
++	platform_driver_unregister(&a6xx_gmu_drv);
++}
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index b8f8ae940b55..d418f49f47a1 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -2352,8 +2352,6 @@ static void a6xx_destroy(struct msm_gpu *gpu)
+ 
+ 	a6xx_llc_slices_destroy(a6xx_gpu);
+ 
+-	a6xx_gmu_remove(a6xx_gpu);
+-
+ 	adreno_gpu_cleanup(adreno_gpu);
+ 
+ 	kfree(a6xx_gpu);
+@@ -2689,10 +2687,6 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
+ 	if (adreno_is_a618(adreno_gpu) || adreno_is_7c3(adreno_gpu))
+ 		priv->gpu_clamp_to_idle = true;
+ 
+-	if (adreno_has_gmu_wrapper(adreno_gpu))
+-		ret = a6xx_gmu_wrapper_init(a6xx_gpu, node);
+-	else
+-		ret = a6xx_gmu_init(a6xx_gpu, node);
+ 	of_node_put(node);
+ 	if (ret) {
+ 		a6xx_destroy(&(a6xx_gpu->base.base));
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+index 0b17d36c36a9..070af413e5ad 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+@@ -252,9 +252,6 @@ bool a6xx_gmu_isidle(struct a6xx_gmu *gmu);
+ int a6xx_gmu_set_oob(struct a6xx_gmu *gmu, enum a6xx_gmu_oob_state state);
+ void a6xx_gmu_clear_oob(struct a6xx_gmu *gmu, enum a6xx_gmu_oob_state state);
+ 
+-int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node);
+-int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node);
+-void a6xx_gmu_remove(struct a6xx_gpu *a6xx_gpu);
+ void a6xx_gmu_sysprof_setup(struct msm_gpu *gpu);
+ 
+ void a6xx_preempt_init(struct msm_gpu *gpu);
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+index 28f744f3caf7..9f9b5863a8de 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_device.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+@@ -415,6 +415,8 @@ void __init adreno_register(void)
+ 		return;
+ 
+ 	platform_driver_register(&adreno_driver);
++
++	a6xx_gmu_register();
+ }
+ 
+ void __exit adreno_unregister(void)
+@@ -422,5 +424,7 @@ void __exit adreno_unregister(void)
+ 	if (skip_gpu)
+ 		return;
+ 
++	a6xx_gmu_unregister();
++
+ 	platform_driver_unregister(&adreno_driver);
+ }
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+index 390fa6720d9b..d3a653adbc72 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+@@ -678,6 +678,10 @@ struct msm_gpu *a3xx_gpu_init(struct drm_device *dev);
+ struct msm_gpu *a4xx_gpu_init(struct drm_device *dev);
+ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev);
+ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev);
++struct msm_gpu *a6xx_gpu_init(struct drm_device *dev);
++
++void __init a6xx_gmu_register(void);
++void __exit a6xx_gmu_unregister(void);
+ 
+ static inline uint32_t get_wptr(struct msm_ringbuffer *ring)
+ {
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 7e977fec4100..0618da7e8b40 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -998,18 +998,30 @@ static const struct of_device_id msm_gpu_match[] = {
+ 	{ },
+ };
+ 
++static const struct of_device_id msm_gmu_match[] = {
++	{ .compatible = "qcom,adreno-gmu" },
++	{ .compatible = "qcom,adreno-gmu-wrapper" },
++	{ },
++};
++
+ static int add_gpu_components(struct device *dev,
+ 			      struct component_match **matchptr)
+ {
+-	struct device_node *np;
++	struct device_node *np, *gmu;
+ 
+ 	np = of_find_matching_node(NULL, msm_gpu_match);
+ 	if (!np)
+ 		return 0;
+ 
+-	if (of_device_is_available(np) && adreno_has_gpu(np))
++	if (of_device_is_available(np) && adreno_has_gpu(np)) {
+ 		drm_of_component_match_add(dev, matchptr, component_compare_of, np);
+ 
++		gmu = of_find_matching_node(NULL, msm_gmu_match);
++		if (of_device_is_available(gmu))
++			drm_of_component_match_add(dev, matchptr, component_compare_of, gmu);
++		of_node_put(gmu);
++	}
++
+ 	of_node_put(np);
+ 
+ 	return 0;
+
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251022-topic-adreno-attach-gmu-to-driver-e47025fd7ebb
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
