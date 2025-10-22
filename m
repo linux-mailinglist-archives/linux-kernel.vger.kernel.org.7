@@ -1,213 +1,268 @@
-Return-Path: <linux-kernel+bounces-863939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF35BF98D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:59:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E886BF98DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A473D18C7ADA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9858E482B1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADE97DA66;
-	Wed, 22 Oct 2025 00:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1187A1D5CDE;
+	Wed, 22 Oct 2025 00:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="epzop5P5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JPvMM31f"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HpWnupd6"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D7E1A317D;
-	Wed, 22 Oct 2025 00:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761094749; cv=fail; b=kmK9TBa0JsrB6Vwy6YJybTm02zVjw1QFTAJ+gz+GP1wr5WozsnjR55XxR0qgjKI8bhfhQ5O5kaLR2tPzuIxpG7vr05qyCVDmlhLFDokjS2OEeHU185Nb1kf0CLCPNxyzY1QVDoRfNuIEIW7MsEVqmJ8na64u9OoLsYYAJV2ALgQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761094749; c=relaxed/simple;
-	bh=M+c0g9Zt84Fvf+KIYaar7CbK/YnitpHiFFZYwBK1LOk=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=nl/NDzG4J458sEQ+R3OW1NGdN40Kpu4UoHykKyKIagMcCdmr6vXit1FFth3WFmtNJa1vtTDcHh1x086yWrSI9mOpVYjTpr9JdT9QK34aGYZNJgAoI+ar3A5SeSWEQyPJfuas7kJurCHOWTL1pYuzazGiDky+YCbkh/XB+zcpQlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=epzop5P5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JPvMM31f; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LMvIhD009197;
-	Wed, 22 Oct 2025 00:58:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=7vxnkkBU1B6W/4Mm1S
-	2RYiK/5xP3ZwMswWMGMu+OdDk=; b=epzop5P5Rof80TblUu3cSKoB/Y9c8ta0JN
-	uiSNGxbJi2FZ6dT4j21bowQgyyGj+X8v8zmOpQaPifQE7Xfx+0ugIjI07f3IjnZj
-	f8xNg7mhM08dn3wHFlh2cV5P9jJgeamCTSj48z+e5+INs912xD8VZei73e69BQJr
-	Td7eCGEyCNW/JaTTOftJEkYESdu2Ojv6k5XVIW3u4TucpL3sCppQUNd4NzIt+PPg
-	ZhRJcyVUl1WR/yQpsWwRGagl1OL3aomx5wb8r5v4FFdsz4xyRv4QnRwOug80DDSM
-	dCsxYS3gQVnRDe0Wl9ZN/bvneEpVP3IN5derv6I3W3C0LJ/TnA4w==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49v31d6udc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Oct 2025 00:58:54 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59LM64ht009337;
-	Wed, 22 Oct 2025 00:58:53 GMT
-Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010000.outbound.protection.outlook.com [52.101.46.0])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bdrxdq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Oct 2025 00:58:53 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KGoDP91WWyqnWmX1MZX9n/i6VnRbC53yj6ETiBUKSr7C1AAOVY5mAYagqLfM0dATSKtLUu5L5bb0EzA8NkY1z3k3WDTe6kdy7saIGH+UP9sec2fs7Efme3tYlzh5+T3ofKz/LnGTVJtfpbVa3h6mn2JzrInic2Gha/gs61vBT/sL++ncmN6QLiDjxS03wW3EF4+g6HVjWjuSHVF40m7Zfad1asylPFns6tUU21Ps8iXJ1laH31jSmTY3RbeLfqjZNvRtz8FMEF/BSUhV+1gWuCzDBv28eoLYnvExudFfqgJ6UnNrEj1XLwkDHJ7WrLz8Y5cmPYY6dJRdoB3VM4eYmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7vxnkkBU1B6W/4Mm1S2RYiK/5xP3ZwMswWMGMu+OdDk=;
- b=C8Cz3yM9tIwSp6QkynKPqvdo3mw+s1bnHpGhP3mr0hZ/OJN3wK26Fx31w8UTK62YaULFzN0l/S4BWXIXNKd+4m6IdHZoyIl1kp/7oS9/vktvbFtwh5pEAQ/9/6zo2BF7uuUMv/8S0ZxymJ1c4y6Kf3jFmzpZYmbRIrKjnquBLUAsg+H9hs1ak+La4GqcvTCK9NsB6pyjxhhPnNGPNs2PjD3Xj9CGLyd2hn7tJpNZWRt8v+FEpNanzn4YD0pJCQYq5RXpxubntQuPUzeptBS5KL3BIAsRv48LiH27qPWjmlPFdM+EtDZoR6H+Wqqly+wGlYIc2Y8f9FJcab5BHSMbvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7403E1CEAA3
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761094785; cv=none; b=HFUH1lctqwbuOmQZW8/iAaKkYLuab4XkUqFiU1yU1QsebBFT4iu45ppxvxx6LduPaAL3S4l7u4hI+WlTvTJoO+/D27MKkHClJwlHr9+DKO9zxQ9pcRzuFVqHhzk/UVMs2MQ5Ue2czifxnJUfavP7jK7XDAxk7TC1jO9crJzQ5y4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761094785; c=relaxed/simple;
+	bh=2GjrwFDYdVNv+tpRJWsOPtJi9DEu7XizkxweOnEOd2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TGJwY4hVwtw5EVfaNUoaPzlaXFOj/t8YRQ+yxGBL39hCwvRUxmIhIu1CJbF1G4UUdOhTIvEEdSf5SUmF5HfSuFeEHGrrrx63Z3HyKsk4MJqD3H5m6FIp9iS7/9jBpGD20XbBVvgk34OGG7VaPXXT6AigWS3sRZXLs71zNeISvNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HpWnupd6; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4711810948aso43334615e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:59:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7vxnkkBU1B6W/4Mm1S2RYiK/5xP3ZwMswWMGMu+OdDk=;
- b=JPvMM31fHwh554onZ7hFft1E9diybhM5Q/vGHYcLIuchWsae9lUyHgchlSiOmFHDqzpJepX4sHWMQX+uOdbt2Z6de95XM9CfQNGBEr1PVlkp3LwNszzMR6I5iGA1b4/rID75iOW8zH/mEFhfFEc8nArtxD+6t8nZiTcYqmDqAO4=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by BN0PR10MB4950.namprd10.prod.outlook.com (2603:10b6:408:12a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 00:58:50 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 00:58:44 +0000
-To: liuqiangneo@163.com
-Cc: satishkh@cisco.com, sebaddel@cisco.com, kartilak@cisco.com,
-        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Qiang Liu
- <liuqiang@kylinos.cn>
-Subject: Re: [PATCH] scsi:fnic: Self-assignment of intr_time_type has no effect
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20251017075504.143491-1-liuqiangneo@163.com>
-	(liuqiangneo@163.com's message of "Fri, 17 Oct 2025 15:55:03 +0800")
-Organization: Oracle Corporation
-Message-ID: <yq1ldl369c9.fsf@ca-mkp.ca.oracle.com>
-References: <20251017075504.143491-1-liuqiangneo@163.com>
-Date: Tue, 21 Oct 2025 20:58:42 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: YQZPR01CA0129.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:87::20) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+        d=google.com; s=20230601; t=1761094782; x=1761699582; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0xEV8oP7/LJpDk2U5jLeRfggXS9CoYgLq/Xr9trinnw=;
+        b=HpWnupd6ahlxI/sTzCNoVHJnh+iGAJNsNA/RstOqZMtWiSgg+y0KYA/j2B0ORHF0W1
+         owcvSNJpYfTrrFuiwi+ZNFGtta5/J5fwi57u8ikGE2ygPtaW6pz5wo3e7qyv0KXX9SCb
+         r9BUBAejkAn18jqtghlnaT83z5fZ4kFEZacvyaDkWqSiOJJQzTlbnH9TH88VChUThtVR
+         b4VU71GnC8loR2knCOekKeW6ychk25FtWXmkdlOMTQXVNb8CwUCMRTgcEPOj9JSEW8VL
+         BVIIuL6kCUQxvClAsmoEjcEHQkRrFa1CyJ2h/CMeUq3ODxT0sK7BDCpKtxY1TJ9Bvqo7
+         ml3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761094782; x=1761699582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0xEV8oP7/LJpDk2U5jLeRfggXS9CoYgLq/Xr9trinnw=;
+        b=b287XQORKqb82sTT10GZDBnCe51diz84Nq5w29Y+pJ/dvIKUVWqi+V2FUhPewdjjUx
+         eXWYaio7gXcjo2pPOozktrO7GrfF3MOq1yN4NLZxbFAJ5mNgt21NxwUvlUzdPfHtIEW5
+         S8Xte9r9JoTqImWzZvMqojhZi4wxO4z1t8UlizTHnZyDjsvkq4HPEt0Ej8GVmz917KTb
+         SO6JvpVS7SZRqqdF7RmphfEeGiCBpSLUuY4Nv/zYyP103KNmkw7qmaSKuq/PLf5+dxvE
+         NGsbKBZ7PLdb9AWShex96iImwLyy7JBhK99uStzaW/p/soeAVYbYEoDiGFRA1NscW4N/
+         Gokg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRVelpud8HCCZ/SmNJRLftvLf68kG65YL46w/Hw1W5GR6OX5cEv/UGFMtCTtoEg4ZwUOZfyEi+NRTVUnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw9VUplQMhYd74T7Fkd4zNTDTpxViUrigo/3w+cVsx4o+N4blV
+	yRhZ1P7UFaRJvt1Qf8dEunPWUNBUOdCwKm32TEIQMyUxs2+GowHk+uVChEsd4tPWJpn3Qp3VE9g
+	gHTrPSrQBCfZmFjHcb8fqku3K+aMDRpRK/ciUxFSw
+X-Gm-Gg: ASbGnctsH2ytB6guc77+4yr7cpCYq+SVlD/PU7+AMHw5kJFp8P7H5K8knH3Hvg3uO9m
+	5zqrPyF7TqCGQ8l4GSHoeA7fRuv3JLOGmeWgiquWtKK89xItDoFXco+ctmk+yNJCA7osqtqmfdA
+	iT3lv4qqCCBUZX9bkHYmhqDQQKKNKVuFwopO7NSTWqmHsflw1/KeHfNT3/Kbx28bGmmtqbtOMED
+	f8Ins2LV6Wlit0Qv1Q1WTjq9eXNunnhTQXlMtwS5GDJPjfRm3fkvqVVNYU=
+X-Google-Smtp-Source: AGHT+IGx3Qzgr+9yTFCdhHfzYJR0ao2Q/u8VvpEx6LPIGJlsEQvV8faBYF79WSejez6shY/tdzi/USdR7Q8GO8tc8zg=
+X-Received: by 2002:a05:600c:4507:b0:46e:376c:b1f0 with SMTP id
+ 5b1f17b1804b1-47117876744mr147970965e9.7.1761094781549; Tue, 21 Oct 2025
+ 17:59:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|BN0PR10MB4950:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9cdf6d49-956b-47d5-bcd7-08de11062610
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OHUIoBU2X76mZmX45b73YMHtAXcfcZLEMyZGADc8q207FpuXc4p6QMNVQ6qO?=
- =?us-ascii?Q?B5Yx/Bn7LINzxGOkSkTqNGQIQed/EsEhkfR/4qvWxplsoi8dcUMx+pqratYV?=
- =?us-ascii?Q?D/JwF3H4HLuh0UJ9clRqNo/Fe+rbdSKdhIFAnsCmnNMpgbwlDmDWJ6aK686e?=
- =?us-ascii?Q?R0eVZWnnPI4a+wO4yEXFaP2TzDH0fQLiKoNSqWuLmgc/oLI8epW5f/NISqaZ?=
- =?us-ascii?Q?+PMeGmJxITv5IPhdZiuAHEOb+7Ya6DQ3V/qEENF8izmVdZqLdRbA6Ux3d2R4?=
- =?us-ascii?Q?MJG5fJG519gLlEK1hJJt8x9kGQa+jVBwlrPSEgVWFMjg6u/8lKRDSncR0SZ9?=
- =?us-ascii?Q?E6XECMaqKHtX2Na13ib+PxfdYKcljSFTyJdZ46nLRN3WvjiybqMJGOggTK7H?=
- =?us-ascii?Q?ikBEOJBforSTHf2hpIbHVT6vZtNyltvFSHsKE2AiBVsWBd3mYOCouj56BO8k?=
- =?us-ascii?Q?nWEJjBUhKJkpK4n6/Lz7dFATRw9wYF/1uCdSBZmgtl9dTq8ggc9k8mhW9rLO?=
- =?us-ascii?Q?sWcu8c90sbwlJQ/jf4SOXqk8a29XuD74ay/ndLhy73JfkcXpQCLYFD9+Y/4D?=
- =?us-ascii?Q?w1nq5wWS+vNWiEVLN60Jl3pmUbmupQZXMLz8ZtX9cBumzP4Yr4XP41O99GfS?=
- =?us-ascii?Q?ScH+7wGymFf40R4qKuBegJ66v5KcjLylRdIHzv43sUfjvMl7ar4UyaMZQhMd?=
- =?us-ascii?Q?d1N1WHd/8WEJEtup8lRLlwuCW56z+g4BVNpMs5BqAxml7ai6HP7IYGoaHXx5?=
- =?us-ascii?Q?6IDQygfpk20xwUvA68wN+mCX3S2eLXEi0v9rBAQNVMO5K5yjAascdPccE9rN?=
- =?us-ascii?Q?1Epb3zlIEQb/Z2aMfbByYQKX1as31JONF1hBHcMUo33MtLGb8YJDdqMOaxke?=
- =?us-ascii?Q?a5oQ/n9rXbpgfx5dA7PaY+yHjNE8xHQdQVoEUk/uafOGGqJ5f0uwD2oukZ1i?=
- =?us-ascii?Q?EkcxrhuK11R2/y+WGkcf2F00s7IlkBL7m+5ozZ3XJjjO7U3cEQ9abqCUEgsw?=
- =?us-ascii?Q?fysCxFEbj4NC7KgWHi6POqAVhN4FrEsMy/XH9y2HoAJyEiialVHhk4JinNyt?=
- =?us-ascii?Q?4R7heLkcVqBGV3HlMPZf9T1Fi5hOBw9lVUk/t5C92LZ/TxQgr1HCJlgz0138?=
- =?us-ascii?Q?OyhOmV8l4Jl699Ygf3ePg0eYrOajSGGPpTvr6jyYTB8OGqdUnj8Kzg1PXDTa?=
- =?us-ascii?Q?82SjmRWlYvRlWF8eFkek8FOmP+yxtedt4UZNqxxGTWL5tCbATDHM3jRBSEdL?=
- =?us-ascii?Q?fbu4Tkct2i9uAqg/DmJBMLOVWPXl0yZuXLguAkixlXvXrHApqY2xTpTDb00v?=
- =?us-ascii?Q?DYtiNQwXOfQmhx7nkGpQyvj3N12FFbGUlLwxNlPKlGOUXNgCxnSApk0N8lfP?=
- =?us-ascii?Q?eDi/bTMmZq00dVRC9RKVtndawsDGgYazQI+tqMB9glQ0ZUEWc1mbaoVRfc+I?=
- =?us-ascii?Q?wGYmwmrrPzmtuCABbvn5MVw9Dedi+pWE?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lGGhZ7Zm7d5yL+C/gndDxXmqM1+dqC2N4co9BezLYfHiXR19+FOIDMhulDgB?=
- =?us-ascii?Q?TvU59ODEwZ5WgB4sYcHxYc24OtcTB9Cfj08tcRHeoKoPkFxd8O5QGxuEL47O?=
- =?us-ascii?Q?Au38fJxezHsJ6IRdyk1A057fbIBsJArqI1v+OLu+R0AJ+2L0MkFovOM8/zic?=
- =?us-ascii?Q?4qozjcdhMp5MpzLp7ChpyjwiiQ77ywbdhB3GdagfLS3+A3yi8lpAukJ09Khr?=
- =?us-ascii?Q?griAiprLsKNXUU8+Pz2LIgh9DVBCLUe2iUfTpGGCHlx0FJJ3rZ8ctNsDyBtH?=
- =?us-ascii?Q?FDUC+uHlq5mec4jaMfdVC/tclv+tgbeLLWKdfAk3BWg91TETRe7cj2G9G69p?=
- =?us-ascii?Q?Ut4esmv0WnN9pe1svk2g9YWrsTZs515wzhUi3rZBzaLUmkM2K0BXTT/q2QHk?=
- =?us-ascii?Q?/Ae+/49X0aU0fdPqrJZpu81PQSWPG7c5cJggFN0hrUstw+AGCrUIeI8dBjTk?=
- =?us-ascii?Q?5gLi9FWIkgbX/MAj6jdpL/+p3mIcCj1fFO657a/jnqfpNahvm6Ki/UT6FRap?=
- =?us-ascii?Q?Rblatls57N4fmsR4G03aZbvVwQjdSm4j6jPBHUfw9WHE+SbvsVMCDiH0AOfA?=
- =?us-ascii?Q?pLeCKxEAH7/pRGNyyv7at6pHxRg0XPeQJC8WXc5PXnCTH0EFNr6Y3oeUZlHq?=
- =?us-ascii?Q?ixTihQLgn5NkrbkaPGiYp0tJNqFZTrsu8QvXUcoV8/xQjWXXy3lFrRlk6W3a?=
- =?us-ascii?Q?E29g3ENLdzZu3FefUxiyr4Kea2qCETzG5FDQF68BZR+7INZK4FnavBXwK85A?=
- =?us-ascii?Q?8aRQCeAmKHXne7+3XrwCgb86qNvzmuXc10SKQdBgmDj5Ufcp1Utp1vzGVFRq?=
- =?us-ascii?Q?TIk1q3BhrpHaOVErtyhoLCo+TZF7H7NJbpOZszAtEfWFpc5iX2w8SnzHWcmA?=
- =?us-ascii?Q?3RGc6z3u/6KJqjf7ZAB/2cS4t+rJvNSWx7NQSdRKT6gGc329BmkebcaNWYrh?=
- =?us-ascii?Q?rAj9PlWx/XdPPgVmdfLe9olkQRXnjDqeOd0S5AnxlcylpkbfY/v0lLfgduhN?=
- =?us-ascii?Q?EVS2LiU9AgicEbhO9SPyiN9tFUmuY4TI0kB6Z6H8eoztuKyBj/ZgbtgEzrzy?=
- =?us-ascii?Q?n2Rkyr3CrsnVrRB3dYODsrrQwSO5O9Q4BAYuFU1PjQAfy+gbQUilelzxBsiq?=
- =?us-ascii?Q?pCgLdLWWRzQwYJYEcIf5GL8PK22Hnefm/4PK3HZSOdfArOPekIh8Xh2jaoXt?=
- =?us-ascii?Q?Fs589/wkJM/Odx7i5yEKFVFrU0pg0/ZmgjiKNErBqtbJ/z5W59CWFVXEtsNf?=
- =?us-ascii?Q?m03B7LfsLiqU/k/t5YldQ2fZ44mif2HXOeM/gVmUlzUD51AHLXj9eKWafgM/?=
- =?us-ascii?Q?mFrx0x1pbHM5YT4NdbqSHZ3GXGan9hjXr4vHefSibgv0Ny4ljEGYGfayJmQL?=
- =?us-ascii?Q?pjxtb4eK6dMSv7nwtk/+mgw4EZBEHMMTNZ83bPQvhWaRCZASHSJVw2oZjiv5?=
- =?us-ascii?Q?KJLxClQWXlVDcno1yHRqK9mnYtmgsANNYOJl2IUB1kJPB83o5Cj8XULZfSt0?=
- =?us-ascii?Q?ONNnfEpUy4jawTM1sHjI68MYrwEQjRZcPEpqa4bmzfb+tiTGi2q/PM5PNAAv?=
- =?us-ascii?Q?8NHYT5vwiMNXY3eeb3BkTRJCeEsxLMyD1BrOfTaJy4pb9VcLVCg9SU1zQUpP?=
- =?us-ascii?Q?Nw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	+UnjppH5KXJR2hoI1x39HPp5+qDcAA967gZoZiItOdZZWqzv3Z7k+4oRtCN//mIxWFql0+DPLFpZF+l4g1zxP8N6tiXO+6HTPZC2vhNN+m15pMqw7AX3hX4arQt2FMjGj/u5BPshb/cz3vaXCBflNzO2bMgT+L5bgWLCRxL0nIZtRNiudpTQVSaln7sKwuyb5xgkLE4pLfOezgl+RTZxXZeLZvCoV9kvyYCRdMWQ4Bu5dsq+c3PODEcFN2MqdqYIs799MfpToRoloQdnufmwrrgifBh0u0c551HLq++LAE2p2M3d3EUmt4pTlbpPdT4TyS1IkwSCgVs/oD9cuAGpdmAUekOBDumU7VHnVZVA3SVIUvJhz2SLk519ThZ6TkGn4P2nRDx3Mkm5KcOgfXe2dgsLXHmGsebhJ6bzThilgfkIci5FTSokaIm2kO4n+HyjUK/cBlHGjdC0MEOP4UDiqsLozroM0+dis3PRlGmBIwSlOLR9LUrbsjB/UcxRtG9HJXgcK5irw6+6obQi+G4YUxSrFWDPYo7SBAs3zNF7gROn5Ac9qUef2+TXhWd+fY3HSD7Ry88ORbADdj4jZNxzl0jPHR+DeMBaD01HgKJYqjk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cdf6d49-956b-47d5-bcd7-08de11062610
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 00:58:44.1121
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Qog5sRYV8kw3pQecrv+ey2KQdsjc/QpZnga//2gwZjYj72vxDxlfi2soT2UpK5W4WoBvuSL8ZRZs7Dwl65J21n2eFTXaUQtClhAxw6O2wA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4950
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- mlxlogscore=778 bulkscore=0 malwarescore=0 mlxscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510220006
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX+FSM9jpWvz6j
- gU9YtdDLQ+lAFVbxqR3mlD+cbfPPYuTJ8kR2Ir4758mHg9G+/Mj4xad+Kns2U9PHxjkV/5QSDvp
- 20V8bCs2+ujE6PhGtbtu5g6bvBOZa0D1KHe9C62MA8WKR5MIumlb53llm+6fDSMatQDAvvwcLhp
- FWt6mAq5AAvDVmDask/NdRgwn9mNL/RZWf9TAi6OBIsCyT+uWPmo9Jb6G+u3KqA5YY/vb7W+B2R
- 52eEJ8n+1Iq3O9X0gUBiGMPeyFL3Vek+gCsbd+D/7DmxmyBM34/trzBBksEscRrfrfmQjHiHIVD
- gfNI6XoLz1iSn56AjcQG4LRGI3nxJbEONFoSUz66nqUNmgb13nEJF+8cf3IxLlzlPwpciNFytkX
- lcfgrYIbIKavENY2jOltv/8FWN8oEzh0SNMtgPnxrBWWkxxl/Zw=
-X-Proofpoint-GUID: BNgZqSA_HQf0o4ak0FtEqWLHDYMwGBVN
-X-Authority-Analysis: v=2.4 cv=KoZAGGWN c=1 sm=1 tr=0 ts=68f82c4e b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
- a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=fdf5QHehS9EIZpnLbQ0A:9 cc=ntf
- awl=host:12092
-X-Proofpoint-ORIG-GUID: BNgZqSA_HQf0o4ak0FtEqWLHDYMwGBVN
+References: <20251001011941.1513050-1-jasonmiu@google.com> <20251001011941.1513050-2-jasonmiu@google.com>
+ <20251006141444.GN3360665@nvidia.com> <CAHN2nPKjg6=0QTcSoptxvQW9MpP0YwGUTx_gQDBxgCtSzxY5Pg@mail.gmail.com>
+ <20251009175205.GB3899236@nvidia.com>
+In-Reply-To: <20251009175205.GB3899236@nvidia.com>
+From: Jason Miu <jasonmiu@google.com>
+Date: Tue, 21 Oct 2025 17:59:29 -0700
+X-Gm-Features: AS18NWCV7ujd1_nk4jzUplOGzOVRDyy3XvJOMidHbQL4TGXpAjE_MJA9mRNpbHA
+Message-ID: <CAHN2nPJbXeSzLuznWcV+vo80rtk5odd+2GDW_NVDUGPG1KO-Gg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] kho: Adopt KHO radix tree data structures
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alexander Graf <graf@amazon.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Changyuan Lyu <changyuanl@google.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	Mike Rapoport <rppt@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Thanks Jason, I uploaded the patch v2 according to your feedback.
 
-> Remove the self-assignment statement of the intr_time_type variable
+On Thu, Oct 9, 2025 at 10:52=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> > > > -#define PROP_PRESERVED_MEMORY_MAP "preserved-memory-map"
+> > > > +#define PROP_PRESERVED_PAGE_RADIX_TREE "preserved-page-radix-tree"
+> > > >  #define PROP_SUB_FDT "fdt"
+> > >
+> > > I'de really like to see all of these sorts of definitions in some
+> > > structured ABI header not open coded all over the place..
+> >
+> > Do you think `include/linux/kexec_handover.h` is the appropriate
+> > place, or would you prefer a new, dedicated ABI header (e.g., in
+> > `include/uapi/linux/`) for all KHO-related FDT constants?
+>
+> I would avoid uapi, but maybe Pasha has some
+> idea.
+>
+>  include/linux/live_update/abi/ ?
 
-Applied to 6.19/scsi-staging, thanks!
+Yes, moved to include/linux/live_update/abi/.
 
--- 
-Martin K. Petersen
+>
+> > Agreed. Will change `u64` according to Pasha's comment. And we use
+> > explicit casts like `(u64)virt_to_phys(new_tree)` and `(struct
+> > kho_radix_tree *)phys_to_virt(table_entry)` in the current series. I
+> > believe this, along with the `u64` type, makes it clear that the table
+> > stores physical addresses.
+>
+> Well, the macros were intended to automate this and avoid mistakes
+> from opencoding.. Just keep using them?
+>
+
+Sure, added two inline functions `kho_radix_tree_desc()` and
+`kho_radix_tree()`  back for converting.
+
+> > > > + */
+> > > > +static unsigned long kho_radix_encode(unsigned long pa, unsigned i=
+nt order)
+> > >
+> > > pa is phys_addr_t in the kernel, never unsigned long.
+> > >
+> > > If you want to make it all dynamic then this should be phys_addr_t
+> >
+> > Should this also be `u64`, or we stay with `phys_addr_t` for all page
+> > addresses?
+>
+> you should use phys_addr_t for everything that originates from a
+> phys_addr_t, and u64 for all the ABI
+>
+done
+
+> > > > +{
+> > > > +     unsigned long h =3D 1UL << (BITS_PER_LONG - PAGE_SHIFT - orde=
+r);
+> > >
+> > > And this BITS_PER_LONG is confused, it is BITS_PER_PHYS_ADDR_T which
+> > > may not exist.
+> > >
+> > > Use an enum ORDER_0_LG2 maybe
+> >
+> > I prefer `KHO_RADIX_ORDER_0_BIT_POS` (defined as `BITS_PER_LONG -
+> > PAGE_SHIFT`) over `ORDER_0_LG2`, as I think the latter is a bit hard
+> > to understand, what do you think? This constant, along with others,
+> > will be placed in the enum.
+>
+> Sure, though I prefer LG2 to BIT_POS
+
+Lets pick LG2. =3D)
+
+>
+> BIT_POS to me implies it is being used as  bit wise operation, while
+> log2 is a mathematical concept
+>
+>   X_lg2 =3D ilog2(X)  &&  X =3D=3D 1 << X_lg2
+>
+> > > > +                             kho_radix_tree_walk_callback_t cb)
+> > > > +{
+> > > > +     int level_shift =3D ilog2(PAGE_SIZE / sizeof(unsigned long));
+> > > > +     struct kho_radix_tree *next_tree;
+> > > > +     unsigned long encoded, i;
+> > > > +     int err =3D 0;
+> > > >
+> > > > +     if (level =3D=3D 1) {
+> > > > +             encoded =3D offset;
+> > > > +             return kho_radix_walk_bitmaps((struct kho_bitmap_tabl=
+e *)root,
+> > > > +                                           encoded, cb);
+> > >
+> > > Better to do this in the caller  a few lines below
+> >
+> > But the caller is in a different tree level? Should we only walk the
+> > bitmaps at the lowest level?
+>
+> I mean just have the caller do
+>
+> if (level-1 =3D=3D0)
+>    kho_radix_walk_bitmaps()
+> else
+>    ..
+>
+> Avoids a function call
+
+I see. Done.
+
+>
+> > > > +     for (i =3D 0; i < PAGE_SIZE / sizeof(unsigned long); i++) {
+> > > > +             if (root->table[i]) {
+> > > > +                     encoded =3D offset << level_shift | i;
+> > >
+> > > This doesn't seem right..
+> > >
+> > > The argument to the walker should be the starting encoded of the tabl=
+e
+> > > it is about to walk.
+> > >
+> > > Since everything always starts at 0 it should always be
+> > >   start | (i << level_shift)
+> > >
+> > > ?
+> >
+> > You're right that this line might not be immediately intuitive. The
+> > var `level_shift` (which is constant value 9 here) is applied to the
+> > *accumulated* `offset` from the parent level. Let's consider an
+> > example of a preserved page at physical address `0x1000`, which
+> > encodes to `0x10000000000001` (bit 52 is set for order 0, bit 0 is set
+> > for page 1).
+>
+> Oh, weird, too weird maybe. I'd just keep all the values as fully
+> shifted, level_shift should be adjusted to have the full shift for
+> this level. Easier to understand.
+>
+> Also, I think the order bits might have become a bit confused, I think
+> I explained it wrong.
+>
+> My idea was to try to share the radix levels to save space eg if we
+> have like this patch does:
+>
+>   Order phys
+>   00001 abcd
+>   00010 0bcd
+>   00100 00cd
+>   01000 000d
+>
+> Then we don't get too much page level sharing, the middle ends up with
+> 0 indexes in tables that cannot be shared.
+>
+> What I was going for was to push all the shared pages to the left
+>
+>   00001 abcd
+>   00000 1bcd
+>   00000 01cd
+>   00000 001d
+>
+> Here the first radix level has index 0 or 1 and is fully shared. So eg
+> Order 4 and 5 will have all the same 0 index table levels. This also
+> reduces the max height of the tree because only +1 bit is needed to
+> store order.
+>
+> Jason
+
+Thanks for the clarification. I updated the logic by keeping the
+encoded value fully shifted and adjusting the `level_shift` according
+to the current level.
+
+And yes we are having the shared pages on the left side (zeros in the
+encoded prefix) while having the order bits shift to right when the
+page order increases. I hope the updated code makes this more clearer.
+
+--
+Jason Miu
 
