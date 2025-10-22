@@ -1,268 +1,230 @@
-Return-Path: <linux-kernel+bounces-864052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF06BF9CD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:13:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8124BF9CE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A2E189BEDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:14:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 205324E7A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CB323A58B;
-	Wed, 22 Oct 2025 03:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAACD221F39;
+	Wed, 22 Oct 2025 03:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0PfVexC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN5cAa8g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AEE224AEB;
-	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4908479;
+	Wed, 22 Oct 2025 03:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102806; cv=none; b=QBOdJkcuOUfx2jb9tnH1O04/rryv/tzJOVwXtLqh9V02IwfxUyWeL1Rqm0h/d2B8A6wbawDikVzSlMQgJkIqAWMUfLH3QtEFbny5cbdLMwnkxaC4WtjYWa0Dym1FjXVw0qs+lTexVygwVErj2Uw28B2wScRyV54Vo4+QjYXCgHY=
+	t=1761102924; cv=none; b=m/V3mWU0ZfdZqQOLsyjCKOUYnlNdy2BveXh07MjCzApXGPlBch2r6+XjaJr85DwibN1ublWr72eGdgTkDRdiduFH7tC+KeSY7GZB/i71F55VeczNxj+WHk+SuYWnFlJ4Ir5MKPc1Toqs3N6uTtxu03CwQS9F5I/hLLJxsKBW1l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102806; c=relaxed/simple;
-	bh=hV14NGi5CrH131Wx4M4fOh7wVGQBwgsL+TxbUFT+uBo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kEoHSDZnyDK7Q/YSMYB1jVG2Dji7y9zFROP2PQKlgFNzZwr9m22l46NVzXbxpwnfiycNTEHgYibltJMoyuYXOhdUNr5TEN2s6SawU/8TEgUXNLOMLGk8/8SRsWJ4u2xcDZi1HQWTZUnfcgNkmXVV5Zrd8VKhHtxpDGv/bRRD3G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0PfVexC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6D7E0C116B1;
-	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
+	s=arc-20240116; t=1761102924; c=relaxed/simple;
+	bh=TXfpuvjKdRMbKKS6U0EEJNLifN65D/mzRp/Bp10kmAA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GzCFGdYBmoPkzYBQIY1TFR44H/HN0H13eZjuSKXRWIvCiQC3DaxAxt0ASo4oA3WqoMeXT5uEuZAyNj6wMf/NaXUihikQu38TCabNFczddv7JNlnKMbdO7cns/+A9rnMsngtFWMdCo3X1h0nGZ2Z9yxtZKrRhqoM5FL22UNyNCng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN5cAa8g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2357C4CEE7;
+	Wed, 22 Oct 2025 03:15:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761102806;
-	bh=hV14NGi5CrH131Wx4M4fOh7wVGQBwgsL+TxbUFT+uBo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=I0PfVexC3Y3w2bnDPas0lRIvzdO9eCqArTkWldCHrdvUGQ2gBPvDS1j2smBUUoG9n
-	 0JljAjQNVeYTqgcaVkHhbGPcktNlqKvGbicEk5EBU5thqeNuLptp0qvEzdiG77yeLS
-	 d05BQjPqpHODGUPJOyb8BrXTahvA2xMYuCWcLo6hal1iKI/vx4PaYMKrd/RBlp9lAf
-	 qbBdmbvHc78/mZO8eLg48mcBqR4GbcdIfNa0JIn7dsVMbV+o6gShbPhylNb61k8bg8
-	 xrsMuGXEbayicYkyeWFWdla3D8qROeJNMolrUuz3HbqLt0mKVAUX7j86YyN+wnHGK2
-	 d6GhWtQY/zH3w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6113FCCF9E0;
-	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 21 Oct 2025 22:13:24 -0500
-Subject: [PATCH v5 3/3] arm64: tegra: Add OPP tables on Tegra210
+	s=k20201202; t=1761102923;
+	bh=TXfpuvjKdRMbKKS6U0EEJNLifN65D/mzRp/Bp10kmAA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=HN5cAa8g/9IBQoGySj7TZr+Qe5JA1+ckGl3IvmmSOovA9K+d2NMlnrbwlL0W9Yhe/
+	 dyZODPX4BDRjWiCxgMPCelC/zWvjBcNtDb1f7hg/H6C0atNwATIFvujRRwSETZricz
+	 UkncTcJ8JU4rjSuyGri9DfNPmWO/bRaROlBdvmjYOmqiYDDBDNuYgTBhkISI1tLbK9
+	 jLzxjpdrHq3lm1oEyF3Nl6xC8U7wX4iVbJmbWgwLBttWFx7omggB9fV+EG8nSUUdVi
+	 TsOTKrp2NekjH/oYOPBp5H58WMj3oml6awDhJxMugvrnufYtcx5cPQHvIg0VRgOhc+
+	 Dv6YlCa9UriLQ==
+Message-ID: <ee0bb5eec4b43328749735150c5505f02e7a1842.camel@kernel.org>
+Subject: Re: [PATCH v1] NFS: Fix possible NULL pointer dereference in
+ nfs_inode_remove_request()
+From: Trond Myklebust <trondmy@kernel.org>
+To: liubaolin <liubaolin12138@163.com>, anna@kernel.org, Dan Carpenter
+	 <dan.carpenter@linaro.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Liu
+	 <liubaolin@kylinos.cn>
+Date: Tue, 21 Oct 2025 23:15:21 -0400
+In-Reply-To: <b928fe1b-77ba-4189-8f75-56106e9fac19@163.com>
+References: <20251012083957.532330-1-liubaolin12138@163.com>
+	 <5f1eb044728420769c5482ea95240717c0748f46.camel@kernel.org>
+	 <9243fe19-8e38-43e4-8ea4-077fa4512395@163.com>
+	 <a0accbb0e4ea7ad101dcaecf6ded576fc0c43a56.camel@kernel.org>
+	 <b928fe1b-77ba-4189-8f75-56106e9fac19@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-t210-actmon-p4-v5-3-4a4dbc49fbc8@gmail.com>
-References: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
-In-Reply-To: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761102805; l=4992;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=c3UF+J0NFIjfjdyZNjJHy/D9Hy0JzM3QHoSqUqe7xkk=;
- b=uQO5bNcyCdCavLybiq9vOT5rJz9pIaej9q9CBYjzcrp/mBA6Wo30kMcc5VK6quaqoL9qIHqGw
- hmw5635KvnUBk2yMXbL8sBBjeGln6ERuQJpnCHuBnm/eYQvYzQP7hxV
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On Wed, 2025-10-22 at 10:44 +0800, liubaolin wrote:
+> > Sorry, I didn=E2=80=99t actually see any case where req->wb_head =3D=3D=
+ NULL.=20
+> > I found this through a smatch warning that pointed out a potential
+> > null pointer dereference.=20
+> > Instead of removing the NULL folio check, I prefer to keep it to
+> > prevent this potential issue. Checking pointer validity before use
+> > is a good practice.=20
+> > From a maintenance perspective, we can=E2=80=99t rule out the possibili=
+ty
+> > that future changes might introduce a req->wb_head =3D=3D NULL case, so
+> > I suggest keeping the NULL folio check.
+>=20
 
-This adds OPP tables for actmon and emc, enabling dynamic frequency
-scaling for ram.
+I think you need to look at how smatch works in these situations. It is
+not looking at the call chain, but is rather looking at how the
+function is structured.
+Specifically, as I understand it, smatch looks at whether a test for a
+NULL pointer exists, and whether it is placed before or after the
+pointer is dereferenced. So it has nothing to say about whether the
+check is needed; all it says is that *if* the check is needed, then it
+should be placed differently.
+Dan Carpenter, please correct me if my information above is outdated...
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- .../boot/dts/nvidia/tegra210-peripherals-opp.dtsi  | 135 +++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   7 ++
- 2 files changed, 142 insertions(+)
+So in this case, since we've never seen a case where the NULL check is
+violated, and an analysis of the call chain doesn't show up any
+(remaining) cases where that NULL pointer test is needed, my
+recommendation is that we just remove the test going forward.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-peripherals-opp.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-peripherals-opp.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..bf2527d737932a1f41aa83d61f44d87ba52b0519
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-peripherals-opp.dtsi
-@@ -0,0 +1,135 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/ {
-+	/* EMC DVFS OPP table */
-+	emc_icc_dvfs_opp_table: opp-table-dvfs0 {
-+		compatible = "operating-points-v2";
-+
-+		opp-40800000-800 {
-+			opp-microvolt = <800000 800000 1150000>;
-+			opp-hz = /bits/ 64 <40800000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-68000000-800 {
-+			opp-microvolt = <800000 800000 1150000>;
-+			opp-hz = /bits/ 64 <68000000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-102000000-800 {
-+			opp-microvolt = <800000 800000 1150000>;
-+			opp-hz = /bits/ 64 <102000000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-204000000-800 {
-+			opp-microvolt = <800000 800000 1150000>;
-+			opp-hz = /bits/ 64 <204000000>;
-+			opp-supported-hw = <0x0007>;
-+			opp-suspend;
-+		};
-+
-+		opp-408000000-812 {
-+			opp-microvolt = <812000 812000 1150000>;
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-665600000-825 {
-+			opp-microvolt = <825000 825000 1150000>;
-+			opp-hz = /bits/ 64 <665600000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-800000000-825 {
-+			opp-microvolt = <825000 825000 1150000>;
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-1065600000-837 {
-+			opp-microvolt = <837000 837000 1150000>;
-+			opp-hz = /bits/ 64 <1065600000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-1331200000-850 {
-+			opp-microvolt = <850000 850000 1150000>;
-+			opp-hz = /bits/ 64 <1331200000>;
-+			opp-supported-hw = <0x0003>;
-+		};
-+
-+		opp-1600000000-887 {
-+			opp-microvolt = <887000 887000 1150000>;
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-supported-hw = <0x0007>;
-+		};
-+	};
-+
-+	/* EMC bandwidth OPP table */
-+	emc_bw_dfs_opp_table: opp-table-dvfs1 {
-+		compatible = "operating-points-v2";
-+
-+		opp-40800000 {
-+			opp-hz = /bits/ 64 <40800000>;
-+			opp-supported-hw = <0x0003>;
-+			opp-peak-kBps = <652800>;
-+		};
-+
-+		opp-68000000 {
-+			opp-hz = /bits/ 64 <68000000>;
-+			opp-supported-hw = <0x0003>;
-+			opp-peak-kBps = <1088000>;
-+		};
-+
-+		opp-102000000 {
-+			opp-hz = /bits/ 64 <102000000>;
-+			opp-supported-hw = <0x0003>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		opp-204000000 {
-+			opp-hz = /bits/ 64 <204000000>;
-+			opp-supported-hw = <0x0007>;
-+			opp-peak-kBps = <3264000>;
-+			opp-suspend;
-+		};
-+
-+		opp-408000000 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-supported-hw = <0x0003>;
-+			opp-peak-kBps = <6528000>;
-+		};
-+
-+		opp-665600000 {
-+			opp-hz = /bits/ 64 <665600000>;
-+			opp-supported-hw = <0x0003>;
-+			opp-peak-kBps = <10649600>;
-+		};
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-supported-hw = <0x001F>;
-+			opp-peak-kBps = <12800000>;
-+		};
-+
-+		opp-1065600000 {
-+			opp-hz = /bits/ 64 <1065600000>;
-+			opp-supported-hw = <0x0003>;
-+			opp-peak-kBps = <17049600>;
-+		};
-+
-+		opp-1331200000 {
-+			opp-hz = /bits/ 64 <1331200000>;
-+			opp-supported-hw = <0x0003>;
-+			opp-peak-kBps = <21299200>;
-+		};
-+
-+		opp-1600000000 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-supported-hw = <0x0007>;
-+			opp-peak-kBps = <25600000>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2fcc7a28690f7100d49e8b93c4fb77de7947b002..f2961c9e12db1cf91254b75389779955f2a0956d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -9,6 +9,8 @@
- #include <dt-bindings/thermal/tegra124-soctherm.h>
- #include <dt-bindings/soc/tegra-pmc.h>
- 
-+#include "tegra210-peripherals-opp.dtsi"
-+
- / {
- 	compatible = "nvidia,tegra210";
- 	interrupt-parent = <&lic>;
-@@ -516,6 +518,9 @@ actmon@6000c800 {
- 		clock-names = "actmon", "emc";
- 		resets = <&tegra_car 119>;
- 		reset-names = "actmon";
-+		operating-points-v2 = <&emc_bw_dfs_opp_table>;
-+		interconnects = <&mc TEGRA210_MC_MPCORER &emc>;
-+		interconnect-names = "cpu-read";
- 		#cooling-cells = <2>;
- 	};
- 
-@@ -1024,6 +1029,8 @@ emc: external-memory-controller@7001b000 {
- 		clock-names = "emc";
- 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
- 		nvidia,memory-controller = <&mc>;
-+		operating-points-v2 = <&emc_icc_dvfs_opp_table>;
-+
- 		#interconnect-cells = <0>;
- 		#cooling-cells = <2>;
- 	};
+We should not need to add a "Tested" or "stable" tag, since this test
+is harmless, and so the change is just an optimisation.
 
--- 
-2.51.0
+>=20
+> =E5=9C=A8 2025/10/17 23:02, Trond Myklebust =E5=86=99=E9=81=93:
+> > On Fri, 2025-10-17 at 14:57 +0800, liubaolin wrote:
+> > > [You don't often get email from liubaolin12138@163.com. Learn why
+> > > this is important at
+> > > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
+> > >=20
+> > > > This modification addresses a potential issue detected by
+> > > > Smatch
+> > > > during a scan of the NFS code. After reviewing the relevant
+> > > > code, I
+> > > > confirmed that the change is required to remove the potential
+> > > > risk.
+> > >=20
+> > >=20
+> >=20
+> > I'm sorry, but I'm still not seeing why we can't just remove the
+> > check
+> > for a NULL folio.
+> >=20
+> > Under what circumstances do you see us calling
+> > nfs_inode_remove_request() with a request that has req->wb_head =3D=3D
+> > NULL? I'm asking for a concrete example.
+> >=20
+> > >=20
+> > > =E5=9C=A8 2025/10/13 12:47, Trond Myklebust =E5=86=99=E9=81=93:
+> > > > On Sun, 2025-10-12 at 16:39 +0800, Baolin Liu wrote:
+> > > > > [You don't often get email from liubaolin12138@163.com. Learn
+> > > > > why
+> > > > > this is important at
+> > > > > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
+> > > > >=20
+> > > > > From: Baolin Liu <liubaolin@kylinos.cn>
+> > > > >=20
+> > > > > nfs_page_to_folio(req->wb_head) may return NULL in certain
+> > > > > conditions,
+> > > > > but the function dereferences folio->mapping and calls
+> > > > > folio_end_dropbehind(folio) unconditionally. This may cause a
+> > > > > NULL
+> > > > > pointer dereference crash.
+> > > > >=20
+> > > > > Fix this by checking folio before using it or calling
+> > > > > folio_end_dropbehind().
+> > > > >=20
+> > > > > Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+> > > > > ---
+> > > > > =C2=A0=C2=A0 fs/nfs/write.c | 11 ++++++-----
+> > > > > =C2=A0=C2=A0 1 file changed, 6 insertions(+), 5 deletions(-)
+> > > > >=20
+> > > > > diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+> > > > > index 0fb6905736d5..e148308c1923 100644
+> > > > > --- a/fs/nfs/write.c
+> > > > > +++ b/fs/nfs/write.c
+> > > > > @@ -739,17 +739,18 @@ static void
+> > > > > nfs_inode_remove_request(struct
+> > > > > nfs_page *req)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nfs_page_g=
+roup_lock(req);
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (nfs_pa=
+ge_group_sync_on_bit_locked(req,
+> > > > > PG_REMOVE)) {
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct folio *folio =3D
+> > > > > nfs_page_to_folio(req-
+> > > > > > wb_head);
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct address_space *mapping =3D folio-
+> > > > > >mapping;
+> > > > >=20
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 spin_lock(&mapping->i_private_lock);
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (likely(folio)) {
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struc=
+t address_space *mapping =3D
+> > > > > folio-
+> > > > > > mapping;
+> > > > > +
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_=
+lock(&mapping->i_private_lock);
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 folio->private =3D NULL;
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 folio_clear_private(folio);
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 clear_bit(PG_MAPPED, &req->wb_head-
+> > > > > > wb_flags);
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 }
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&mapping->i_private_lock);
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_=
+unlock(&mapping-
+> > > > > >i_private_lock);
+> > > > >=20
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 folio_end_dropbehind(folio);
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 folio=
+_end_dropbehind(folio);
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 }
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nfs_page_g=
+roup_unlock(req);
+> > > > >=20
+> > > > > --
+> > > > > 2.39.2
+> > > > >=20
+> > > >=20
+> > > > What reason is there to believe that we can ever call
+> > > > nfs_inode_remove_request() with a NULL value for req->wb_head-
+> > > > > wb_folio, or even with a NULL value for req->wb_head-
+> > > > > >wb_folio-
+> > > > > mapping?
+> > > >=20
+> > > >=20
+> > >=20
+> >=20
 
-
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trondmy@kernel.org, trond.myklebust@hammerspace.com
 
