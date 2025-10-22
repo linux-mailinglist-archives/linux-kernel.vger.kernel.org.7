@@ -1,78 +1,132 @@
-Return-Path: <linux-kernel+bounces-865140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E14DBFC3F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:47:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82203BFC577
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF3D188242F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5320666A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779DF34B675;
-	Wed, 22 Oct 2025 13:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EF0346793;
+	Wed, 22 Oct 2025 13:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jGEhTocW"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAbY+kjK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA2634A3CD;
-	Wed, 22 Oct 2025 13:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD44347BC5;
+	Wed, 22 Oct 2025 13:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140532; cv=none; b=bd0uEVE6zCBZdyDvUuqrb1DNg+RjGuu9xIVaWAfylSNBp+FADjSq4NXNJs0Qk7uNQvoMCwGI5hPIOtUnV3DLO/aJRYpzIaDcO3QI2oEkkfEsXgtMuBvJM2jIQ+nyHXVCphEFbeorkBL5ID1VS0RAaJlxaXiPtlYkf28peeTQfVg=
+	t=1761140583; cv=none; b=AD6wb7n/g8YXxbMeqIWgQG9mVTFwTdY2d8BOXBVCheX01x0E7oInxsLPalTBlmqkYerUTSQGYbd22hNkGk7ktQFjTgNnWuCWCjMUFooZEXs4mK77sfWHfqZSzakJKPRXi0s6r2+5kOUGSXvcP6NyDAx1bOrAL+0Wto+We0vh7Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140532; c=relaxed/simple;
-	bh=IEl79dUHrwJY7QFFJ7tR0zbEoABfMRRIYbMeefn0LJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJJLNm6nZuHq5hiimbrSKx0oN8OU1flmBORktxGp56TebTfrZTnrstQgHW7WUOo00OmPthsRMbJkeghbixGDLQyosYMo6GOwsULL71CxhqaATqan0lOi9JhgU8jGGy0DLEjFLZ8d8a0tdzhzmsBVrk6TtjaGILG0WLiv5pcAyzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jGEhTocW; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1an8fnmht/cJNOgYrJWi07C4PsJe8h4fjBzZcExGXmY=; b=jGEhTocWzVhbz1bkUmSJiPWV9D
-	XgMkodaWUCB+DipQk/ljACkDYyav47bcG6o1HvHm7cbY2SplxbOnaEGkXshpaL4bAmjgBk+bNzBKx
-	xB0AdgPfSFlpYhcNmsC/793QWTwZYes77hbAUN+NqwZW3Ud7xQGDzC513Tc8jT8QVh0M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vBZ6J-00BlVf-8u; Wed, 22 Oct 2025 15:42:03 +0200
-Date: Wed, 22 Oct 2025 15:42:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: net: rockchip-dwmac: Add compatible
- string for RK3506
-Message-ID: <09bc04f7-21f1-402d-98db-3a845a7c0099@lunn.ch>
-References: <20251021224357.195015-1-heiko@sntech.de>
- <20251021224357.195015-4-heiko@sntech.de>
+	s=arc-20240116; t=1761140583; c=relaxed/simple;
+	bh=OHIuqSYAMSWwC2mR3fyIfTLQ2n23hPsjeCdK4RwoUn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mzLgO3NJMczP9c0fyBTMd3Smdx3JFyWVMNBcWbaBJ59AeVgvbzY5GkhZ0WmlcHulDD7MM8z63Vz7IfEjKm8pXD7sLrFyhEU1jHX7Hm5xJJYkL88n2oV9eRW2KcC1LOubSQzFH6WrYeOQVxkwIxCShCmcDFavMoZiS/82FDLnnRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAbY+kjK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB09FC4CEE7;
+	Wed, 22 Oct 2025 13:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761140583;
+	bh=OHIuqSYAMSWwC2mR3fyIfTLQ2n23hPsjeCdK4RwoUn0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fAbY+kjKCv3HaCjh5V3vAJRRvydwad+CX10uiQ8rwomSRwNYR6yaB91wsu166tcrG
+	 d1pROnlOV2Bm6G/3OoF5jmylmWYDZ8Gy40n7O8HmYvkTbK1+xaMbZEYeKO4Miw1N0F
+	 DiGDCx0HtSnopCOa5EZ+821eO2URZm+9OHfmWEmEv5u/yP9yJrTAXSdhHBo0otL1Z5
+	 n7f2F2uV5sl67moeBsRCbVWa4VQI3s8eOBCkFz+H6tXpRmVoa5SSpnFw23DTKM21Gz
+	 QlQVECmQ/HgikfqM09g8sv8WOQ1RZluXKGcfpLk4wU05EFyEB1hyTHb5Ap92EaC6ch
+	 9LM8y01p1U7sA==
+Message-ID: <882aa222-fe4f-4724-87eb-4480de91919d@kernel.org>
+Date: Wed, 22 Oct 2025 15:42:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021224357.195015-4-heiko@sntech.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 11/12] ASoC: dt-bindings: sound: cirrus: cs530x: add
+ spi bus properties
+To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>,
+ Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+ devicetree@vger.kernel.org
+References: <20251022133914.160905-1-vitalyr@opensource.cirrus.com>
+ <20251022133914.160905-12-vitalyr@opensource.cirrus.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251022133914.160905-12-vitalyr@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 12:43:56AM +0200, Heiko Stuebner wrote:
-> Rockchip RK3506 has two Ethernet controllers based on Synopsys DWC
-> Ethernet QoS IP.
-> 
-> Add compatible string for the RK3506 variant.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On 22/10/2025 15:38, Vitaly Rodionov wrote:
+> This patch adds property for cs530x SPI control bus
+> with max frequency 24MHz.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Why?
 
-    Andrew
+You described what you did, we see that from the diff. Explain why you
+are doing this, e.g. hardware is like that? Old hardware? New hardware?
+Both? If only new, then why this is a separate patch?
+
+Also, since I expect new version:
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
+
+
+Best regards,
+Krzysztof
 
