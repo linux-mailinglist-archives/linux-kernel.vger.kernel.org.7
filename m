@@ -1,120 +1,144 @@
-Return-Path: <linux-kernel+bounces-864539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2BCBFB05A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:59:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0670FBFB053
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE3D54F6555
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7D61A0548C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130E130F94D;
-	Wed, 22 Oct 2025 08:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5E530E838;
+	Wed, 22 Oct 2025 08:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="yI8qH9Bm"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZQyiqIJl"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A130130DEA9
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65D30CD9F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123544; cv=none; b=fX27+S1KNqjMRqAuyX2JMXhTkIlGS1dXjXYWZQ4uurSaeI8P51vz3YQ9ZxvsVdAJ5Lgf5fGe2d2cB69VgHTtzlwKcyiqrC/Cj5kWedkBJOG530H2SycdL+6fV6E6reDQ9skEg7s6FmDN0sMQnf6XUvRFo0CQgfVdTkDh6kx0RY4=
+	t=1761123542; cv=none; b=XY8xPQKuTt8ZL+R+pV/Vs6QqJkYpYRbsvQU/TU7m2VtZgmp7RF97QxhDyY08IvzO6NtQpOQKMTcEvrzDIlHsZi0qTNUE9fwjk4aggB+iu4vOvZo0QQ8pb3UrRuJspkbe1+1qvar0Gy+CDHCnT3DukgDEldF0rmPobhh9HHUYUmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123544; c=relaxed/simple;
-	bh=1sB+y+2F5AgDvcVjsXiO3WC8BvU0j94h0T5YuzxpTD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OKxJ9lXYfJDj4W7oRQTse2L0C/q4oEi6whYKZIIOnGF/ZjscDYdWkuTzMWC2t16pE0EzI6WurJM2394ws7BaPvVEHlNmWwWQm1Skjd1kwbkv0tEDHAuR/e5530UytBv5g3hbhLolf0UGAHDhqtJ6IChqwNNRD53uVUtCzXVPfuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=yI8qH9Bm; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 95CF31A15CD;
-	Wed, 22 Oct 2025 08:58:55 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6AC9A606DC;
-	Wed, 22 Oct 2025 08:58:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2060F102F242C;
-	Wed, 22 Oct 2025 10:58:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761123534; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=h3wyVAAjgpfAxuh8GhpQv3L/iuVzTsI8pLm/DOPP3nE=;
-	b=yI8qH9Bmmj+bpaMMWZZa1WzEVRgeh7bv/rOJ6iBmWn23Rbcl/n+Yf4jtRC2mR9lz0LF0Tn
-	BOealVg3vVP5jxBp4OvheZwT10E4JDQYJHq+eBBvgajOLjmvExN3xS8cL6/uQfGdR1EVLY
-	7jBylk06ZeSoUuLXGj+EqmpxsZXuiX7Nun95HQMhaPHqstX+a2LTHaCaJhZaAS9DZ1jyxJ
-	GiHUQWjTwdmVoAFkRU21Wgl1HHs8zQrvNDOKGvgHWzYIb7fBDJCRMPC4Xv6umb6cawr0yt
-	TWRhDs0dLc1MhanFgjk6VSym/Ux5jJz9RRO5f0eV1Wk4Nw75kwHy23TQVFMTXw==
-Date: Wed, 22 Oct 2025 10:58:40 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Douglas Anderson <dianders@chromium.org>, Maxime Ripard
- <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Bajjuri Praneeth <praneeth@ti.com>, Louis
- Chauvet <louis.chauvet@bootlin.com>, thomas.petazzoni@bootlin.com, Jyri
- Sarha <jyri.sarha@iki.fi>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>
-Subject: Re: [PATCH] drm/tilcdc: Fix removal actions in case of failed probe
-Message-ID: <20251022105840.5e1f06bf@kmaincent-XPS-13-7390>
-In-Reply-To: <5269c71a-b439-46d3-acb4-590eee2406f4@ideasonboard.com>
-References: <20251014143229.559564-1-kory.maincent@bootlin.com>
-	<5269c71a-b439-46d3-acb4-590eee2406f4@ideasonboard.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761123542; c=relaxed/simple;
+	bh=ieTS/2AUSqHmza1HrKfNJtn1CeAfB7G7H5as9i2ecb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNyw6MxF+BtPmYBPU28zHuNUiWR9OEpo47vazDr09zzuLxYL/lC2pUsbk5CtcVhPgtOAAZciCSyMhRHvYx2icw87x2IU1hFSodNiL6HBa90jlaHw958qkN53I4HoayA2BVnnVuL5ZuJbn5oaKLzza24xJboibiDrBHlemIkooag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZQyiqIJl; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=d7p6
+	HBZFL98YK3UIk5xyMNXr+3fHwObVudCqHrAoNEg=; b=ZQyiqIJlKs2JLxWHP4eZ
+	828KNP80At3xIh4/erA/AzWw3JI24eB3DFOQkw/VBx/l04ZU79g9KPEdLR312quT
+	FqqsjpVzDh0UInnXizNvubF8hiWWgcLXyhwap9QrCwPTgYaVcSGs7WQlDb7N+dSf
+	yfooIFIDygDr7Q25J8gVg8Xnajl7+/5nEnJFi4zmRxpumhnqxq9YcaKPgp9P3K5Y
+	v8ZannYYolOIvVxb9WE+pjhLAh8qKp8JUnM8YiiXmquMVr7hmOvI3/a8hOkkue38
+	PprcBOAxwD8hGLaxCLpzK9M7DTbplhIRwW6eCNLOMf5VF5GcsQ1CjL/QbXdJg7va
+	UA==
+Received: (qmail 1759180 invoked from network); 22 Oct 2025 10:58:56 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Oct 2025 10:58:56 +0200
+X-UD-Smtp-Session: l3s3148p1@NIzHhrtBaHttKPGR
+Date: Wed, 22 Oct 2025 10:58:56 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: =?utf-8?Q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Dmitry Guzman <dmitry.guzman@mobileye.com>,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH 2/3] i2c: designware: Enable transfer with different
+ target addresses
+Message-ID: <aPic0NtVkzpZJUuz@shikoro>
+References: <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
+ <22296119.4csPzL39Zc@benoit.monin>
+ <aPaS4c-AX0P66T30@shikoro>
+ <5779084.ZASKD2KPVS@benoit.monin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aj5Xj/8WAdTUbVl4"
+Content-Disposition: inline
+In-Reply-To: <5779084.ZASKD2KPVS@benoit.monin>
+
+
+--aj5Xj/8WAdTUbVl4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 22 Oct 2025 10:05:47 +0300
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+Hi Beno=C3=AEt,
 
-> Hi,
->=20
-> On 14/10/2025 17:32, Kory Maincent wrote:
-> > From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
-> >=20
-> > The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() helpers
-> > should only be called when the device has been successfully registered.
-> > Currently, these functions are called unconditionally in tilcdc_fini(),
-> > which causes warnings during probe deferral scenarios.
-> >=20
-> > [    7.972317] WARNING: CPU: 0 PID: 23 at
-> > drivers/gpu/drm/drm_atomic_state_helper.c:175
-> > drm_atomic_helper_crtc_duplicate_state+0x60/0x68 ... [    8.005820]
-> > drm_atomic_helper_crtc_duplicate_state from
-> > drm_atomic_get_crtc_state+0x68/0x108 [    8.005858]
-> > drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0x1c8=
- [
-> >  8.005885]  drm_atomic_helper_disable_all from
-> > drm_atomic_helper_shutdown+0x90/0x144 [    8.005911]
-> > drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc] [
-> > 8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [tilc=
-dc]
-> >=20
-> > Fix this by moving both drm_kms_helper_poll_fini() and
-> > drm_atomic_helper_shutdown() inside the priv->is_registered conditional
-> > block, ensuring they only execute after successful device registration.
-> >=20
-> > Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at
-> > shutdown/remove time for misc drivers") Signed-off-by: Kory Maincent
-> > (TI.com) <kory.maincent@bootlin.com> =20
->=20
-> Should this be cc: stable?
+> This patch replaces a -EINVAL in the middle of the transfer by a
+> STOP-then-START, but you are right, the expectation is to have a single
+> STOP at the end of a combined transfer. I somehow overlooked that part.
 
-Indeed I think so.
+Yes. Sadly, the designware controllers are broken in that regard, it
+seems :(
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> Maybe I could add support for the I2C_M_STOP flag instead? Or does an
+> adapter has to support all the protocol mangling if flagged with
+> I2C_FUNC_PROTOCOL_MANGLING?
+
+It doesn't. It is a known weakness of I2C_FUNC_PROTOCOL_MANGLING. Maybe
+we could extrapolate it like we did for I2C_FUNC_NOSTART? Just an idea,
+I haven't really looked into it.
+
+> That would still allow to group multiple accesses to device that support a
+> STOP in a transaction when done via i2c_dev I2C_RDWR ioctl, in a single-m=
+aster
+> configuration.
+
+I'd think such transfers are super rare but if you still want to
+implement it, please do. Note that some devices will still not work
+because they reset their state machine on STOP. See Hans' example.
+
+Happy hacking,
+
+   Wolfram
+
+
+--aj5Xj/8WAdTUbVl4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmj4nM8ACgkQFA3kzBSg
+KbYI/g//cLJ/JoqLW9jmoOBeTgsxe5XPQ0LDgze+g7As3CooBUleoVReBZ/4ontl
+cu5sj17UHSOv8l1X1TGGxa5zXXDOPTmg2vQvCiYauCJ/IMfwmAz8GfzgYfJliTB+
+qXO6ZlCeW5I8iHdPtVDbw3a/maZtpHJs9lUDINAX3jLVsLeRqqAIKp7AdEgY7AHb
+uoyLFADhrXmJVlHttL/EHvjKTvsFGHWUxVKf8Cqnir/1/oCQZiCp02ABqTb8LqNw
+OJvnQIDJTHFfPfFcHOG0B5gf8rJhN9p+tJgdsZpz6Eodh/TsoJIlzdkRvIglLVMa
+sAzQCUNapvjf0ZdBJpLqGh3m4+87Wi65qSt6w2KDrVswch8/NA4TI7CWBSXQPBrf
+0fqkuQTSE+O+mFQcqT0ji8H6NftJjtBgWbtK2C4B53mRoXMquB5y9W+QvYXB/z/X
+CXq+xyDOP5lvj9kiQV0zjWXi4U/dDY8iiBfmvfK3H/XIxOaGl3WDmitcioZesKvN
+TCltFrEH3wEnyVztv7mICcVsWQ8iDTZIJPmfv5joYPv7OUQpkPAE4dCqFXSx/R4F
+YVcESi0h+vZJsJlTV9GhN0EB4DKQ5fdVUa9d1V9Id65Y+qsuNpXPqyAZGiMwoe8g
+yusLjBzQYns5Y+ZuITRqGpt2Gnt+SwomG0B/AtU/YtHSvqmf/ZA=
+=PxPl
+-----END PGP SIGNATURE-----
+
+--aj5Xj/8WAdTUbVl4--
 
