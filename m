@@ -1,148 +1,183 @@
-Return-Path: <linux-kernel+bounces-865338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366FBBFCD4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:21:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D61BFCDA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12FA1A01F6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:21:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFC553B2ADD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0842534B43C;
-	Wed, 22 Oct 2025 15:21:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE57332B983
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4424B34D4C4;
+	Wed, 22 Oct 2025 15:22:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F8F309F1E;
+	Wed, 22 Oct 2025 15:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146465; cv=none; b=WqTu4cca5+bDQETmx0L3oi34pmX+SZxIABneSrxaMLlOsgrnhXn5FuLkbwfkJvrJHkTkyLd+d7ATWph4lMYPjNPefML1WZm8lqW9DcaBkXGpUOIWrX0sRRe0mMl3iq1MYQU3T1YHhzqWCPwJMzvwveQGiFqFhUsFX0LRhL4g/Fw=
+	t=1761146525; cv=none; b=sdtKywCdL0WGdIzjC7zGuZGHd1Udtg++sr2PFaIsvDaeEkhDG+PlvfKLgtnQ18B6xYWCuGKZnUcR3RWewMu0BAuqUgxZsa1QXkcOv9Tese7nJUBHaiaCjWObNKVZ8+eTUCjU9b929rC0V788TI0ArM/DO+xRATg6npcxz4k1k1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146465; c=relaxed/simple;
-	bh=1WdfQBW36mIHUKlYc/CuT5OLiKxusVk27raIU+VTvIc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=i+HWFlPCc1p0AHk2bTMoUAnQnwZEhFZ6n54jPoDD+zb5MTTiQkTiHF49uCPKA4P2GKYJUuAGch7bhM6DT+VpRg8CjM2ggybfyFy4FbAX0gTKAdbp5TOHdVU2BOFxhxEitfc9XJLXEEm34lWdIKmPz5dv2NrE4EkseCBPYdsb60o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430b0adb3e2so16065425ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761146463; x=1761751263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sYdOGsPVpBpj6GYv47r5k71TsK0WoT1u0jBFZsV8s0k=;
-        b=WlRznrNBgMxZ4c9Z0QhHyJnl2K0EBvMrrV4lpTgbISr8Ht+DN6T0ddiqH8/Y+tEiDZ
-         JUJ4+m2xoFLHrss0zYA5WkAgy65N1VAcFG2RdONVjDg42SiURf6352Z5loUpeDCmmvoR
-         h9gfPg4LIQMIFFRBe9eYzCPEl8wNltGNM4GosJsKVIf3lZ9mhaYtIPoprxcOS4TY7Asy
-         ak6z1U7qIDv9R7sygZ6SZwiaUV1Z1IHfY2HnCQj15/Acp1VLj6lfiIpzjFjVh70DDCPv
-         0F9i2HTJ7OB7iAGkdjwbmsPxbKAIuEsyof57LKiRDi1+A1RFI7FcJRJAgQJwHArsPwuQ
-         8tug==
-X-Forwarded-Encrypted: i=1; AJvYcCVPevToDdECwsDXatQgDEnS/7c5LT9NCol69Zw4hzz/1R+5Ni+AGTfhE8HCBxy3wJU1SF01ZDN4n6xQt/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS/q0JPSCA52gPEI9bIt7Ylhvn4dLIBrowK1bDzExG9/p1KrLv
-	KF3gLqV9rGUe/pJRfaLuy/1Rt0u4kq0Tc4my7P9tdoI2XiXYNydRf2Cpq6xqo6RO76m5tX1n74m
-	PXh0ZKY9xv0+lXKSTVS+5LMqu8IPZsMZMhK3Gzy2L2AF9A+/Z/JRjrI8j4nk=
-X-Google-Smtp-Source: AGHT+IFxIXCeVvjc4LEldfhDqJ/N2cmDCceVwutQojrChJ1DtSb7Vl5IIMmdeEk7Ou3eiyjrwqwbDAcA38cHxiqyTqHKMmvwsOgX
+	s=arc-20240116; t=1761146525; c=relaxed/simple;
+	bh=SHH0MKNc1HKkLyjtbC1hAyqEI4+sWFaedr6WKmlv1kQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aLxodu2AHlu6Hkn1n0RdJ416l4IAEF8iynMxtZYTWlKit0MkQbohbG9+lrsESWClav/4ZkSzruN7oxrbdUv01zOui0fUZGqh4M3Tw1jSrm/j3SkIFVTe5UXUFhC54MMr5QAy2Nj26EbTItk/uj/2tTW8tHEFbH3LduPKDtLOuhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE29E1063;
+	Wed, 22 Oct 2025 08:21:49 -0700 (PDT)
+Received: from [10.57.33.187] (unknown [10.57.33.187])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C94A13F63F;
+	Wed, 22 Oct 2025 08:21:37 -0700 (PDT)
+Message-ID: <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com>
+Date: Wed, 22 Oct 2025 16:21:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0f:b0:430:b2a8:a9eb with SMTP id
- e9e14a558f8ab-431d3190d6dmr46361505ab.1.1761146463143; Wed, 22 Oct 2025
- 08:21:03 -0700 (PDT)
-Date: Wed, 22 Oct 2025 08:21:03 -0700
-In-Reply-To: <20251022150444.jHFNw%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8f65f.a70a0220.3bf6c6.001f.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_remove_extent
-From: syzbot <syzbot+8882b2f5f48a7170a726@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
+To: Ackerley Tng <ackerleytng@google.com>, cgroups@vger.kernel.org,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, x86@kernel.org
+Cc: akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
+ brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
+ corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
+ david@redhat.com, dmatlack@google.com, erdemaktas@google.com,
+ fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org,
+ hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com,
+ isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com,
+ jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com,
+ jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com,
+ kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maobibo@loongson.cn,
+ mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
+ mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, mingo@redhat.com,
+ mlevitsk@redhat.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, peterx@redhat.com, pgonda@google.com, prsampat@amd.com,
+ pvorel@suse.cz, qperret@google.com, richard.weiyang@gmail.com,
+ rick.p.edgecombe@intel.com, rientjes@google.com, rostedt@goodmis.org,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
+ shakeel.butt@linux.dev, shuah@kernel.org, steven.sistare@oracle.com,
+ suzuki.poulose@arm.com, tabba@google.com, tglx@linutronix.de,
+ thomas.lendacky@amd.com, vannapurve@google.com, vbabka@suse.cz,
+ viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com,
+ will@kernel.org, willy@infradead.org, wyihan@google.com,
+ xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com,
+ yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1760731772.git.ackerleytng@google.com>
+ <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 17/10/2025 21:11, Ackerley Tng wrote:
+> Introduce a "version 2" of KVM_SET_MEMORY_ATTRIBUTES to support returning
+> information back to userspace.
+> 
+> This new ioctl and structure will, in a later patch, be shared as a
+> guest_memfd ioctl, where the padding in the new kvm_memory_attributes2
+> structure will be for writing the response from the guest_memfd ioctl to
+> userspace.
+> 
+> A new ioctl is necessary for these reasons:
+> 
+> 1. KVM_SET_MEMORY_ATTRIBUTES is currently a write-only ioctl and does not
+>    allow userspace to read fields. There's nothing in code (yet?) that
+>    validates this, but using _IOWR for consistency would be prudent.
+> 
+> 2. KVM_SET_MEMORY_ATTRIBUTES, when used as a guest_memfd ioctl, will need
+>    an additional field to provide userspace with more error details.
+> 
+> Alternatively, a completely new ioctl could be defined, unrelated to
+> KVM_SET_MEMORY_ATTRIBUTES, but using the same ioctl number and struct for
+> the vm and guest_memfd ioctls streamlines the interface for userspace. In
+> addition, any memory attributes, implemented on the vm or guest_memfd
+> ioctl, can be easily shared with the other.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> ---
+>  Documentation/virt/kvm/api.rst | 32 +++++++++++++++++++++++++++++++
+>  include/uapi/linux/kvm.h       | 12 ++++++++++++
+>  virt/kvm/kvm_main.c            | 35 +++++++++++++++++++++++++++++++---
+>  3 files changed, 76 insertions(+), 3 deletions(-)
+> 
+[...]
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 52f6000ab0208..c300e38c7c9cd 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+[...]
+> @@ -5366,15 +5375,35 @@ static long kvm_vm_ioctl(struct file *filp,
+>  	}
+>  #endif /* CONFIG_HAVE_KVM_IRQ_ROUTING */
+>  #ifdef CONFIG_KVM_VM_MEMORY_ATTRIBUTES
+> +	case KVM_SET_MEMORY_ATTRIBUTES2:
+>  	case KVM_SET_MEMORY_ATTRIBUTES: {
+> -		struct kvm_memory_attributes attrs;
+> +		struct kvm_memory_attributes2 attrs;
+> +		unsigned long size;
+> +
+> +		if (ioctl == KVM_SET_MEMORY_ATTRIBUTES) {
+> +			/*
+> +			 * Fields beyond struct kvm_userspace_memory_region shouldn't be
+> +			 * accessed, but avoid leaking kernel memory in case of a bug.
+> +			 */
+> +			memset(&mem, 0, sizeof(mem));
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in ocfs2_remove_extent
+s/mem/attrs/g
 
-------------[ cut here ]------------
-kernel BUG at fs/ocfs2/alloc.c:5581!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5971 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_remove_extent+0x2050/0x21a0 fs/ocfs2/alloc.c:5581
-Code: f9 ff ff 48 8b 4c 24 08 80 e1 07 fe c1 38 c1 0f 8c 27 fa ff ff 48 8b 7c 24 08 e8 db 38 8a fe e9 18 fa ff ff e8 61 fa 22 fe 90 <0f> 0b f3 0f 1e fa 65 44 8b 3d 06 58 cf 0e bf 07 00 00 00 44 89 fe
-RSP: 0018:ffffc90002a5e620 EFLAGS: 00010293
-RAX: ffffffff839cb81f RBX: 0000000000000007 RCX: ffff888035d2a480
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000007
-RBP: ffffc90002a5e970 R08: ffff888035d2a480 R09: 0000000000000006
-R10: 00000000fffffffc R11: 0000000000000000 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88808d75f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe0a8a6eb4c CR3: 0000000042743000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- ocfs2_remove_btree_range+0xdef/0x1540 fs/ocfs2/alloc.c:5778
- ocfs2_commit_truncate+0xba7/0x2250 fs/ocfs2/alloc.c:7373
- ocfs2_truncate_for_delete fs/ocfs2/inode.c:699 [inline]
- ocfs2_wipe_inode fs/ocfs2/inode.c:866 [inline]
- ocfs2_delete_inode fs/ocfs2/inode.c:1155 [inline]
- ocfs2_evict_inode+0x1138/0x4100 fs/ocfs2/inode.c:1295
- evict+0x504/0x9c0 fs/inode.c:810
- ocfs2_dentry_iput+0x247/0x370 fs/ocfs2/dcache.c:407
- __dentry_kill+0x209/0x660 fs/dcache.c:669
- dput+0x19f/0x2b0 fs/dcache.c:911
- __fput+0x68e/0xa70 fs/file_table.c:476
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x6b5/0x2300 kernel/exit.c:966
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
- get_signal+0x1285/0x1340 kernel/signal.c:3034
- arch_do_signal_or_restart+0xa0/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:40 [inline]
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- irqentry_exit_to_user_mode+0x7e/0x110 kernel/entry/common.c:73
- exc_page_fault+0xab/0x100 arch/x86/mm/fault.c:1535
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
-RIP: 0033:0x7f95a3d8ebf1
-Code: Unable to access opcode bytes at 0x7f95a3d8ebc7.
-RSP: 002b:00000000fffffeb0 EFLAGS: 00010217
-RAX: 0000000000000000 RBX: 00007f95a3fb5fa0 RCX: 00007f95a3d8ebe9
-RDX: 0000000000000000 RSI: 00000000fffffeb0 RDI: 0000000002000400
-RBP: 00007f95a3e11e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 00007f95a3fb6038 R14: 00007f95a3fb5fa0 R15: 00007ffc4e081d38
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_remove_extent+0x2050/0x21a0 fs/ocfs2/alloc.c:5581
-Code: f9 ff ff 48 8b 4c 24 08 80 e1 07 fe c1 38 c1 0f 8c 27 fa ff ff 48 8b 7c 24 08 e8 db 38 8a fe e9 18 fa ff ff e8 61 fa 22 fe 90 <0f> 0b f3 0f 1e fa 65 44 8b 3d 06 58 cf 0e bf 07 00 00 00 44 89 fe
-RSP: 0018:ffffc90002a5e620 EFLAGS: 00010293
-RAX: ffffffff839cb81f RBX: 0000000000000007 RCX: ffff888035d2a480
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000007
-RBP: ffffc90002a5e970 R08: ffff888035d2a480 R09: 0000000000000006
-R10: 00000000fffffffc R11: 0000000000000000 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88808d75f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f37f9a6d000 CR3: 000000003623c000 CR4: 0000000000352ef0
+> +			size = sizeof(struct kvm_set_memory_attributes);
+> +		} else {
+> +			size = sizeof(struct kvm_set_memory_attributes2);
 
+s/kvm_set_memory_attributes/kvm_memory_attributes/ (on both sizeof lines
+above and in the SANITY_CHECK_MEMORY_ATTRIBUTES_FIELD macro).
 
-Tested on:
+> +		}
+> +
+> +		/* Ensure the common parts of the two structs are identical. */
+> +		SANITY_CHECK_MEMORY_ATTRIBUTES_FIELD(slot);
+> +		SANITY_CHECK_MEMORY_ATTRIBUTES_FIELD(flags);
+> +		SANITY_CHECK_MEMORY_ATTRIBUTES_FIELD(guest_phys_addr);
+> +		SANITY_CHECK_MEMORY_ATTRIBUTES_FIELD(memory_size);
+> +		SANITY_CHECK_MEMORY_ATTRIBUTES_FIELD(userspace_addr);
 
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16099b04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb89820a01e5d251
-dashboard link: https://syzkaller.appspot.com/bug?extid=8882b2f5f48a7170a726
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1116ce7c580000
+The fields are:
+  * address
+  * size
+  * attributes
+  * flags
+
+The list you've got appears to match struct kvm_userspace_memory_region
+- copy/paste error?
+
+Thanks,
+Steve
+
+>  
+>  		r = -ENOTTY;
+>  		if (!vm_memory_attributes)
+>  			goto out;
+>  
+>  		r = -EFAULT;
+> -		if (copy_from_user(&attrs, argp, sizeof(attrs)))
+> +		if (copy_from_user(&attrs, argp, size))
+>  			goto out;
+>  
+>  		r = kvm_vm_ioctl_set_mem_attributes(kvm, &attrs);
 
 
