@@ -1,232 +1,278 @@
-Return-Path: <linux-kernel+bounces-865828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62AFBFE1F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:08:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE63BFE1FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 459054E8FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:08:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E8D44E96B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C884D2F83D8;
-	Wed, 22 Oct 2025 20:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2102F83B2;
+	Wed, 22 Oct 2025 20:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q93ODK5u"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012036.outbound.protection.outlook.com [40.93.195.36])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EFntzAbe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B8042048
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761163707; cv=fail; b=mGYUeRL5RPD3UwryGwj64KenngEiYs1+oWMZWS77kfwBchAT7D5BpXkooSlCilqMf27ViXOIecDp70amcRZ17lAvFzasKCFyb4xZvJ8zvRKheapz3tSEKHbOOEuznqBB9T2OvncbfhVxb5puIwLpz/sCCfE/gYzpkc7dQTt62PA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761163707; c=relaxed/simple;
-	bh=SkPbC0bQ63vDEJ5OGeuJFJab0kunAGOLjLq/ijl6Acs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kdP8o7uFg9JpGVh1C7FlAmOW17NXZHWJ7q79sznD8GhATTNNaCcUEhye3kAcJiSAY+0FFi6mqiHfZ4cl47VmVngdWXFbN4yBA9XIxj2GW4rLQHxtlrIpc3fycz7K2vq2q+od55/VIUHh2Un2G2OIF1NgIte881MgXFwlsGsh9G8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q93ODK5u; arc=fail smtp.client-ip=40.93.195.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tl5C0H2qQOomjnoZuzienuzcVx3sfOo+40Xk4Qu/n4Qz+ejRXqko53QYIMrbgxAfAc2OOUTA2m7fRUzEf8mXBRuJ8yuu272n9X4xLd80RkkAAKPUmRxsIi2t9D9dvjtM1pwsh92ug208v52gGWSMU8mL1GxKP/5cw1KBv3YLkkdi5igJRFHWq6ikn4UcaH/XjXUkEguTgcFTFmmnBai05EWmz4isV+KVPkh6QpauAzzvEYBTJIRbu3dkTlAnmpt2P3BDKS6HjDxB7JQG4kccKvGclcdH8lRYSK/Oa8ADfxFvh0CwNQFw25Debovu1jENShsczw9gPX+lAvz16BE/3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r/eC1fzJ0bhsXK3HSF+MVGphot1HOunMfPjIy81n8bQ=;
- b=nS85zBCBiEvmWl3bSEeWepyVGWKnxcVj7Y509s+W25nLz+dVnLbRdt6RHv7xwZHqHZoV/EIiJe/oKXuDb+ZiOkQ0SUu1cATIPCkvnCEm2qIE4eGWZUVVAMIjN/Bbu1L6u6lzDBUvPwBD+yBSVPaN0akSc7EGsjlM2LbPJEA8Dt24DxVCEkNTGCp+ueahxTg7I4BknnruVPwTIctjaYJnJiKbZH6NpEbMaLVyq1oBtkp9bVNSgMtSMLkaLfT4Wn5O4VZI5Aac7vTHI7EuLP8+4ruyfJ2dIpQT95jE1GAmrG0RO/aDlKwHMwIYnETVD1be0lIc2Rda9jqhr6hCxWYMAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r/eC1fzJ0bhsXK3HSF+MVGphot1HOunMfPjIy81n8bQ=;
- b=q93ODK5ueOukv8RjKIg6SEy+zy67JT/f7vLOKQlEAusFLU5ZqcUWrCAA3WUbvZTqEKVz7Y2wNkrVpLSZ0MwpFMIp8A2J7vln546Yub48En6gkPKi4AsYtKPqP8vtrpmAkTjqmQtLwdTKGf+2XPqsPVIpTOqvjK4EDKUl8D2u9TtSRJBDWvEBbn3FXnI7luO9rhErUDN4Ld3h63pqddv/TY3zWVE4dOKC17nG0NCqXHkJ6cmedi/ATdX28WQ0eErV6L9I7Meb2mKch8XBcts8A+mx939yg3Y/WrQXMxrXhOIBPe6VmX0k7wzln0FKr0LYSzk5MR0AqTS9s0mKy7Efhg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by CH2PR12MB4327.namprd12.prod.outlook.com (2603:10b6:610:7d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Wed, 22 Oct
- 2025 20:08:22 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 20:08:22 +0000
-Date: Wed, 22 Oct 2025 17:08:19 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
-	will@kernel.org, joro@8bytes.org, kevin.tian@intel.com,
-	jsnitsel@redhat.com, vasant.hegde@amd.com, iommu@lists.linux.dev,
-	santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
-	jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
-	wnliu@google.com, gptran@google.com, kpsingh@google.com,
-	joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
-Subject: Re: [PATCH v4 13/16] iommu/amd: Track host Domain ID mapping for
- each guest Domain ID
-Message-ID: <20251022200819.GE262900@nvidia.com>
-References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
- <20251021014324.5837-14-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021014324.5837-14-suravee.suthikulpanit@amd.com>
-X-ClientProxiedBy: YT4PR01CA0302.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10e::7) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB6D2F83C2
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761163777; cv=none; b=SWrPdqZFMnNg+qdRygqyC3MN/lW+Bf5wIicfuJs9PS+qInEa8TWzcCvbyIezbt0qm39gE/Bep9yvxgSrTEwJRwtECix6teMiZadVx+Z1+iqB2gJLXo2j13MZc1xezx1YwU3EOSq69wDuUwcwzWunhoyKfer2U61Hadvi7omLM7o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761163777; c=relaxed/simple;
+	bh=+gKvWEAhNp2p6hG9E4kpfgsuz952AQjuSk7lPZqtluA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g0jcN/8qDrMFeWq+4OWBSxLOYEvQgjiIft60z6RZcDAmK2zuRKHk/c4ozjCxXdnFB5lv2QJrFB0hWhPLS9lrNnu5RuX7wI7wF0h5R4oh4tpNx0BGMg8JzO3UMiTw3aZdTJY8zFcWmmDYK+H2LcdoPsdWVLJsqjzoi/cGdSuBJMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EFntzAbe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761163774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dUeO/YtpBDjpNP+/Rv4SHJERka//cgw1906gVbxjijk=;
+	b=EFntzAbeBVxsj+CELu92lIsJatLSSzc2L8vbyGA4VNb7jtQKqnRycB6NfafRlazGZKQNPR
+	Vj7Hv5P5FVfUH+th1Ac9Hg5zZTaXWFPH/0FyMlUeOSQDxpVnXzvft57PyrriprHqm5FZo1
+	YT97UfeC2OJ0ATjkbkYSdCzVNg9sNnE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-466-Nkr6Id13OHKY5hZDJRxVqw-1; Wed, 22 Oct 2025 16:09:33 -0400
+X-MC-Unique: Nkr6Id13OHKY5hZDJRxVqw-1
+X-Mimecast-MFC-AGG-ID: Nkr6Id13OHKY5hZDJRxVqw_1761163768
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e39567579so81295e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:09:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761163768; x=1761768568;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dUeO/YtpBDjpNP+/Rv4SHJERka//cgw1906gVbxjijk=;
+        b=AGbcBsHZnYe2YZZIMytdsFuuOfjmkGYsoRdJXzJnN+fdpHoAwRjq3J/3Oe1WHEEPtz
+         bFkmWUO+cOWnzUz+pUgboQxyPpYGo5msbSQoCDjlaQojYlgjb2e7SHzrpneGyI7SRxns
+         MvkkwftEzZ+EsQ+SD+Hxf4XpeeUTHzMXwqI/z1D+Lu2/a94Qsnsjkra7mlrcMIuVcyqw
+         xxucDxdl27LQVt0MeH3a3GqVE5gtIbb6QopOMEpGPalRaUNvn6Hb2001uogSh6owv4FA
+         cdVCwumnq1p91vdBDiWulnTW4Pl8eaETWrMBh5K54h2YPWP+lLD191WkqxOLDgv32BUA
+         B+Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTw03NqOIVMJYYqib6ci/L62kNAFD3W+puFVvKA6Tzfg/ap4cfaSehExtIDeFwZQfBmGvpndqCdG4495Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcBLWS70HFu9gz76PfEqw39HxZZMom2r7Ee7IF99p/v1G+UQuo
+	WUmOLRjdkNDkJPunvSmyHEsOM5H9ngw2AS940CvjUguHM2dwev7VEO/UT/oIyvVzDFnCv/gSwX6
+	kyxin41w9WlyjXRt66uv6LeJWGGHCaZl9Gk6TC8RknCmsZ6bt4WJdkJqR4QU2+6axig==
+X-Gm-Gg: ASbGnctO6WnoKpK2Ng23y7KnxUy2uH/Z0d5/D7cc1bZFCVo+S2qyQFKDNVMlEbXb8xZ
+	y3or3P8Wo2e6By7WZdKMUkMURELP2YGHZcAbfDgi33SHe28FA2ur10KTeI37tFTSjzhL2jviMJb
+	3jD/HjvlQCNsFqaH85dfdqLizSpuOZHzx+M7kk4p+sWugjGJeUIx76zOWv0XsMR85rRi0ldU5Ar
+	YgtfrDb/5I492bwx2vNdCPhqkOCM5nYYekGIXxlWH8NSy8HumboJTXYr/7NxQQWzs9SLkxa8HcH
+	7Mi4XEaRTjS5b8ug6NAetTt+xIoUpueoUXwBvPqjPXt4+QTQqohpbKpAx1sfshcJzcHpzDcaCxT
+	2+mezf0sdXfItwtu19PADE0iJxdHub4eOasDL6Opckf7dG82sd1/c8nuTBWXpmbliRa+Frj4IeG
+	p8t1etu6SER2/POwXdGU5dZ7OLY1Q=
+X-Received: by 2002:a05:600c:3b04:b0:471:350:f7b8 with SMTP id 5b1f17b1804b1-471179017damr146055575e9.20.1761163767944;
+        Wed, 22 Oct 2025 13:09:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeJmZJAMcww8F4mWD3Mdmim44dMWfgL8QKaixUaVMVlxDl0JJqaHLVxenWhQsfEAEk9uyhKQ==
+X-Received: by 2002:a05:600c:3b04:b0:471:350:f7b8 with SMTP id 5b1f17b1804b1-471179017damr146055395e9.20.1761163767473;
+        Wed, 22 Oct 2025 13:09:27 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898eb549sm144198f8f.41.2025.10.22.13.09.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 13:09:26 -0700 (PDT)
+Message-ID: <d3d05898-5530-4990-9d61-8268bd483765@redhat.com>
+Date: Wed, 22 Oct 2025 22:09:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|CH2PR12MB4327:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71e21579-88f4-4fbb-c010-08de11a6c015
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MOtwYWemN/7NbUyzheOwCYUkcO9Qv5KcNq9hONYt1FU0J35O1Eu8BRkasLGd?=
- =?us-ascii?Q?AQqC5HVgxH4s9N0cf9bgEJ5Oo9Dv58xE3BB4SeQAta+Ayu4JE+ls8XDQnVcr?=
- =?us-ascii?Q?CvsfbSSdrKz7M1pqh9g14QrwXO2p7A4dHpnamKVH0hTRj1KuWpCrrWesvh31?=
- =?us-ascii?Q?0mNtGEYZB+4Ul77RguyRritu7eSIFdUceGIu3SrjLJeOfcSxArKJXwWQ0kms?=
- =?us-ascii?Q?03xYGh/f+ZYeFPIJzlMDbBwvmkLPskYWYB4f8jiaTHZQkKnS2qaW2++r60jJ?=
- =?us-ascii?Q?QVmNFpdebjRB7oIsplYt/KVDhrFRh44Mhe0Q1zSnordx2gc50mvDlw4fb4Ta?=
- =?us-ascii?Q?SxTJP0WMGDHIhtNy6g44DBSK6K+3WrUsssC77oMy3MhaNypr25RMbZSMFOgb?=
- =?us-ascii?Q?/+oYVb97sT+nftdpqEE8KqjW+gJlFiUsqW5ez914BYB5yGqoCPjs7h7vsUcA?=
- =?us-ascii?Q?8kfxqaiK4xW1cyC3kc4YxxAhIx2xpA8eZy4/hIJB1sKTXYeMGhjPISvZx/8R?=
- =?us-ascii?Q?T9ru+cqZa4Sr4C28pj1JkSI4H5P2rUw5ThgWf7jtstq4B6TBdFY0z/qnyH27?=
- =?us-ascii?Q?XZKt1Xh5+oiHM431hAZ4vxTG+uDsCY3TRMmjsarDwf2tc4KVkbma/SFpw/wc?=
- =?us-ascii?Q?UVeF8QZGs+YgYW9mUvPj1KCYwWOQjRypibqKKVxVKhoPbmr4bF+a3T6bzZKu?=
- =?us-ascii?Q?VTp3H+hr191jE0rmXON+8WGb+YkHB4T5R3vGdYVvLAv6tsobfIO0dNAMxwUj?=
- =?us-ascii?Q?4Mb3SFIvOKEtfeLNd1H9nMjvcGKYe3/bm/bMBf0bv74ulLHXbZ1nSqwsh+Tx?=
- =?us-ascii?Q?LqXDLZ7vvtBuSE3uOml1Ital+BRWt+Z1uqX71sHScNAARrEa/tKn0375m72H?=
- =?us-ascii?Q?sTuJ4qww5aV2VuzL5X7XeFo9SMYjcAFrrRGfvNvUZjRv6ELpvPCJwPKnWv7r?=
- =?us-ascii?Q?EGsmuXduw0Plt+jPW6Kz6dxAR+EQk0DEWtGkflIBC6f05JpdVHjFIGamZ0rW?=
- =?us-ascii?Q?5RXCjJhJP2Yb4o69xrSl0mV6TDVwj5b0YdHDrVrqAJnceO9e4e5rmSovsIwO?=
- =?us-ascii?Q?C9HapXCO7tzUi1wzlApxHtL5x4Nfe7WhZz+j+mujsB5zLkZH2zdQIUX316n3?=
- =?us-ascii?Q?5JKpO9ROsM/lDp2FQd9GrBLRRzQj6R09KAPMU6TuTiZkkkjw7gZRwGDrmoeL?=
- =?us-ascii?Q?qF98K8+Ev9SF1rQGsY/i5OIDcYNyt/797SIuUR7C17Bnw/PHNplqujT33LcE?=
- =?us-ascii?Q?SyYwlcv37+6+H7L86LuCrWD4yvddWSUtldx6K/85MkTII0BcqU17V3CNeCv2?=
- =?us-ascii?Q?xEQ7XTpxslr6ifSQm3+oT7w9iXtgq3Vi7PdfBvajD4hca8kV98QO9SHWnoxs?=
- =?us-ascii?Q?3L6GV+JbeNEVS/8i944M+t2kJ3wW/J0uldP0hwxKjeesFOUbW2mMMDpV8JIo?=
- =?us-ascii?Q?KLUv2fCsU+YtdjYPyOTVVtCPo+GmgoN+?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ix9Xfao0tDF5hJlh7WAr+XHKkFpiYWlU7Q6Y0NGoMaBJ922r8w+2/FoRTtbS?=
- =?us-ascii?Q?ugxu+xQjHrJAdgJeMrjNYw0A1reCiWzbLdeTK1wFufnkU3PMPaq5HoC5dB/3?=
- =?us-ascii?Q?Et3JVj81Ee3BuzlYICS/HXVACkPOGmGt3wsKNpEc23fG9PNRBBzGzG9Yuonc?=
- =?us-ascii?Q?XT1p9aILmioihIld3Ouhi1UPxA/N0va8q/LcJV1LixejAxj3wkDi/+JTizdZ?=
- =?us-ascii?Q?ppuTQ6CY6xpBdxFHdff2kierTBBsZioSNopuj11/UGMUbBD6V9rE1b+HcjlT?=
- =?us-ascii?Q?fabMqfsWK4WwgL46pgHF53ZCF5Hu7D3Q9r9NMxaOiJlXqysBIa+8YLbnly6Q?=
- =?us-ascii?Q?HuBZy6ZXXrbLTMT5SrDdNTLvG46Lc5hWcxPwdlPfYjY2csowD4nsWGR+YFvm?=
- =?us-ascii?Q?Mq32YYOsXqMPG9xrhdDOcpuN+ThajjtR166XUZQdv2y3+qKgsfhOf1nTXIaO?=
- =?us-ascii?Q?ZB2Qq5Hu3Iu19GbPcn1OUcN/xUZfQap4EzWZN+29eXsC1b6q8MzHp4TIkR2K?=
- =?us-ascii?Q?TpJcgaAAjMc0Ih5D3426wVfHN+9ka4TH04zZVkpNXzYk5GBWNJMYsNH/Utvq?=
- =?us-ascii?Q?ZKP1URjGdgRhIIWFWmMnGuFxXOKBlGuPeh6RbPRqq9ePYgNrvNI/2XEPK0/B?=
- =?us-ascii?Q?JGPNBkp0MydhpeGuyF06Zrc1U2+dVj8rI7oUH0c/zTuWb3AFbqSQ2aka9nD2?=
- =?us-ascii?Q?It7a7u3GppN0Wr6Yrv6wa1A/qxzP9d0Ime4O8aZWx8mqXixHYtkvZ0vAOzVH?=
- =?us-ascii?Q?EeMuZ9qSNJ0PjP9onRCnpY0JCjbLEnG9cJWxto4J9rBDI2JwaA8cw4AwbYf7?=
- =?us-ascii?Q?qo8qFjrScursjxOoiYJd4RgCP3upJIpRw7GKAji7kCtN2yREMKsuHjAY55Hb?=
- =?us-ascii?Q?SZjGflbMAi0hHRuew0oRdMe1xc8Sc806bhmyek/BRdR/kUBsqeSr/rSk2MZi?=
- =?us-ascii?Q?2aPuV0i3Sg72mKDLWzcgNEF0IqF1XBdlDLCWzi9K7Dr1CGzNkn2HWpyMoruf?=
- =?us-ascii?Q?TWsDnZP2O+nqO/XQ14VDs5hxdYjcxdpDx0Weo/CXAHsdGOQsLNCMUYGuXKxr?=
- =?us-ascii?Q?IgO/p4pb9oO6mDmfkZsR5sg9u1G52ZXg1yEFUVyRXF4u/VAubWbOSNUdjAau?=
- =?us-ascii?Q?oz+XtrANwJqQchLgPN6XpabZ2Ln9yiVSscrQFkSxWyvLU7eC9Dcgxd2NH/KU?=
- =?us-ascii?Q?f+0Vblg0nCSiFbrYLv2+YHQB/wQUUUB449Iy7uF9b+quXwlPBSPBoiJgHoXK?=
- =?us-ascii?Q?fciMRVD3BOzLO3gatBTZ4Y1GouiLJSRiNTnsyLr4KsGJya+eqxcVVmkWvb01?=
- =?us-ascii?Q?JGFg7sO1x/b4kwizlY6WqN/0yQIV3YzD4iT5vN4+kE3o83zrI3rjez69WQCC?=
- =?us-ascii?Q?gAoISkJXsaeiA89LWqKrTS4U4ELdaQ7JsBUkqh87DpqPudlp/LstoLTdBjA7?=
- =?us-ascii?Q?wxbMoSVwPp9jwncLk8y6fsmeQ7LNaxEnqo8IDLzA/SfdQhbwwk4VaNFjrlUv?=
- =?us-ascii?Q?nWG7iJOnur80jFY0P6lTU9yev39YUetLjkkzmm9IaTpduS9e7fhJWZN6n6Mo?=
- =?us-ascii?Q?rMFs1QrDggxIsKmkWYw=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71e21579-88f4-4fbb-c010-08de11a6c015
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 20:08:22.0776
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wWcexkYWMIbS1yTOnZcYSddkV0sYHApH5aEq9Sx+ghEQCcNDQ353TVl0fXzK8m+G
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4327
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] mm/huge_memory: preserve PG_has_hwpoisoned if a
+ folio is split to >0 order
+To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, jane.chu@oracle.com
+Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
+ nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20251022033531.389351-1-ziy@nvidia.com>
+ <20251022033531.389351-2-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251022033531.389351-2-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 01:43:21AM +0000, Suravee Suthikulpanit wrote:
-> Each nested domain is assigned guest domain ID (gDomID), which guest OS
-> programs into guest Device Table Entry (gDTE). For each gDomID, the driver
-> assigns a corresponding host domain ID (hDomID), which will be programmed
-> into the host Device Table Entry (hDTE).
+On 22.10.25 05:35, Zi Yan wrote:
+> folio split clears PG_has_hwpoisoned, but the flag should be preserved in
+> after-split folios containing pages with PG_hwpoisoned flag if the folio is
+> split to >0 order folios. Scan all pages in a to-be-split folio to
+> determine which after-split folios need the flag.
 > 
-> The gDTE to hDTE 1:1 mapping is stored in the nest parent domain using
-> an xarray (struct protection_domain.gdomid_array). When invalidate the
-> nest parent domain, the INVALIDATE_IOMMU_PAGES must be issued for each
-> hDomID in the gdomid_array.
+> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
+> avoid the scan and set it on all after-split folios, but resulting false
+> positive has undesirable negative impact. To remove false positive, caller
+> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs to
+> do the scan. That might be causing a hassle for current and future callers
+> and more costly than doing the scan in the split code. More details are
+> discussed in [1].
+> 
+> It is OK that current implementation does not do this, because memory
+> failure code always tries to split to order-0 folios and if a folio cannot
+> be split to order-0, memory failure code either gives warnings or the split
+> is not performed.
+> 
 
-I think this should be stored in the viommu..
+We're losing PG_has_hwpoisoned for large folios, so likely this should be
+a stable fix for splitting anything to an order > 0 ?
 
-It is a small unrealistic detail but very pedantically the API allows
-creating two VIOMMU's from the same NEST PARENT domain and if someone
-did this then each of the VIOMMU should have its own private gDomID
-number space and own separated xarray.
-
-Allowing two VIOMMUs to share the same hDomID could be problematic
-because we don't know the PASID layout is consistent.
-
-> +static int iommu_flush_hdom_ids(struct amd_iommu *iommu,
-> +				u64 address, size_t size,
-> +				struct protection_domain *parent)
+> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   mm/huge_memory.c | 28 +++++++++++++++++++++++++---
+>   1 file changed, 25 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index fc65ec3393d2..f3896c1f130f 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3455,6 +3455,17 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
+>   					caller_pins;
+>   }
+>   
+> +static bool page_range_has_hwpoisoned(struct page *first_page, long nr_pages)
 > +{
-> +	int ret = 0;
-> +	unsigned long i;
-> +	struct iommu_cmd cmd;
-> +	struct nested_domain *ndom;
+> +	long i;
 > +
-> +	xa_for_each(&parent->gdomid_array, i, ndom) {
+> +	for (i = 0; i < nr_pages; i++)
+> +		if (PageHWPoison(first_page + i))
+> +			return true;
+> +
+> +	return false;
 
-This doesn't seem right.. There could be many nested_domains sharing
-the same gDomID..
+Nit: I'd just do
 
-I expect this xarray to have a struct like
+static bool page_range_has_hwpoisoned(struct page *page, unsigned long nr_pages)
+{
+	for (; nr_pages; page++, nr_pages--)
+		if (PageHWPoison(page))
+			return true;
+	}
+	return false;
+}
 
-struct gdomid {
-   refcount_t users;
-   u32 hdomid;
-};
+> +}
+> +
+>   /*
+>    * It splits @folio into @new_order folios and copies the @folio metadata to
+>    * all the resulting folios.
+> @@ -3462,22 +3473,32 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
+>   static void __split_folio_to_order(struct folio *folio, int old_order,
+>   		int new_order)
+>   {
+> +	/* Scan poisoned pages when split a poisoned folio to large folios */
+> +	bool check_poisoned_pages = folio_test_has_hwpoisoned(folio) &&
+> +				    new_order != 0;
 
-And each nested_domain will go into the viommu and either allocate a
-new gdomid or ++users for the existing one. Inverse when destroying a
-nested_domain.
+I'd shorten this to "handle_hwpoison" or sth like that.
 
-> @@ -92,6 +92,49 @@ amd_iommu_alloc_domain_nested(struct iommufd_viommu *viommu, u32 flags,
->  	ndom->domain.type = IOMMU_DOMAIN_NESTED;
->  	ndom->viommu = aviommu;
->  
-> +	/*
-> +	 * Normally, when a guest has multiple pass-through devices,
-> +	 * the IOMMU driver setup DTEs with the same stage-2 table and
-> +	 * use the same host domain ID (hDomId). In case of nested translation,
-> +	 * if the guest setup different stage-1 tables with same PASID,
-> +	 * IOMMU would use the same TLB tag. This will results in TLB
-> +	 * aliasing issue.
-> +	 *
-> +	 * The guest is assigning gDomIDs based on its own algorithm for managing
-> +	 * cache tags of (DomID, PASID). Within a single viommu, the nest parent domain
-> +	 * (w/ S2 table) is used by all DTEs. But we need to consistently map the gDomID
-> +	 * to a single hDomID. This is done using an xarray in the nest parent domain to
-> +	 * keep track of the gDomID mapping. When the S2 is changed, the INVALIDATE_IOMMU_PAGES
-> +	 * command must be issued for each hDomID in the xarray.
-> +	 *
-> +	 * Since there is no invalidation support and no viommu yet, just always use a
-> +	 * unique hDomID for now.
+Maybe we can make it const and fit it into a single line.
 
-It is not "for now" anymore, this is the correct algorithm..
+Comparison with 0 is not required.
 
-Jason
+	const bool handle_hwpoison = folio_test_has_hwpoisoned(folio) && new_order;
+
+>   	long new_nr_pages = 1 << new_order;
+>   	long nr_pages = 1 << old_order;
+>   	long i;
+>   
+> +	folio_clear_has_hwpoisoned(folio);
+> +
+> +	/* Check first new_nr_pages since the loop below skips them */
+> +	if (check_poisoned_pages &&
+> +	    page_range_has_hwpoisoned(folio_page(folio, 0), new_nr_pages))
+> +		folio_set_has_hwpoisoned(folio);
+>   	/*
+>   	 * Skip the first new_nr_pages, since the new folio from them have all
+>   	 * the flags from the original folio.
+>   	 */
+>   	for (i = new_nr_pages; i < nr_pages; i += new_nr_pages) {
+>   		struct page *new_head = &folio->page + i;
+> -
+>   		/*
+>   		 * Careful: new_folio is not a "real" folio before we cleared PageTail.
+>   		 * Don't pass it around before clear_compound_head().
+>   		 */
+>   		struct folio *new_folio = (struct folio *)new_head;
+> +		bool poisoned_new_folio = check_poisoned_pages &&
+> +			page_range_has_hwpoisoned(new_head, new_nr_pages);
+
+Is the temp variable really required? I'm afraid it is a bit ugly either way :)
+
+I'd just move it into the if() below.
+
+	if (handle_hwpoison &&
+	    page_range_has_hwpoisoned(new_head, new_nr_pages)
+		folio_set_has_hwpoisoned(new_folio);
+
+
+
+
+-- 
+Cheers
+
+David / dhildenb
+
 
