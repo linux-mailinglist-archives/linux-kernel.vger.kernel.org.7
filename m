@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-864711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41078BFB64F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:24:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BD4BFB655
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D080507662
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:23:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0190F4F3031
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE3728C840;
-	Wed, 22 Oct 2025 10:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5CB3126DF;
+	Wed, 22 Oct 2025 10:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CBNflJgz"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEvjjIsd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A95287243
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63732350A35;
+	Wed, 22 Oct 2025 10:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128625; cv=none; b=nJOgGz2womY2aL4S1QghqpuH1oJW8yyWWWbbOd/idOzu9XG/pqGyn6x/LWN7giy6HnwMoba2pgEESYWTAbq3HO3e1rguQDyozn1unKfD87rFCrZ9yQTwW00j5jv9vPG+aOdtqxDDgDA7oC/DH7Ljfvqr7a3UBkXq73IZ0q0eY9U=
+	t=1761128712; cv=none; b=X5nKGfQtFFSbB+o9dbU3SHjwW+ZQlfr7MSLvl0CR+cT4m7e2r9Hskhyfm9UVY6gF28AbwoFAs6QPrHbraxvyBY0eIVVZI+Nsj25WtEBOteHO5hKVpqxO7zNfDmFD3wabSKFyNl8K7OKm2S+HDr8rVMbl+sQR0KTduZENvM8ixwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128625; c=relaxed/simple;
-	bh=YMRyZre+kBbFoPiHrqjDWIN+c5UsSggZobEPZ5cklR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lG9EDnoaA27Pj+KYwyANp6na6PGpacYOSuncpQI2VKf0SPED4LONGWKPeocScI1TQgSNySc7pKMIHTwjuAYFsGGCdxI6Gq8x62OrI4EqVENoYX0Pq5MWbcWZKjMdtuUtPRl428z3Fjv0K5OaPhUcmMQYYsPtbsns+79z2aNsGo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=CBNflJgz; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-421851bcb25so3982908f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1761128622; x=1761733422; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=14Z/Egm0ib+pyI7E20I7AQcOKcoL8J1lei7NXkr+nVY=;
-        b=CBNflJgz6IF8ioY3RtZRqC/RQrVpIyON73Nk6TpSC3y0xnv10Gyf3/dq+Z5HPzdxDm
-         2esW8vZevm2hJ3K/0bcfWk8BuCvD6ZAKvtv0qIr2TtO9jxL/6j2fJhgyDdbEg/GtJw2D
-         +dupHc+FdB2nn9uVEfCROBvT1QDUhBsK+SUhj3qIxywVMU8VOwfFVp4rrLrLQND1sGIG
-         2asgeAnk03tpisYi6NS94j/rShIB1OiA7qIRKb/6I3hw2gh2EM5woJ5m1zqnLdiD8IDM
-         M4FoTZpSxA+Am5/AbjMUqU3bScOu9DvFm2j9xA2ze9qXhc4pO280YkdVy9Dbs7Ta2jRB
-         n+KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761128622; x=1761733422;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=14Z/Egm0ib+pyI7E20I7AQcOKcoL8J1lei7NXkr+nVY=;
-        b=JK1z23ZkxhZYScm+XAUDKKwG84vkVmhDfsd+br6J2Hwvi9nFY0XECHUtNI99gzlrcd
-         YnqxaowlnqwRgkGS0EJuKehp0sgR1UStyLi4iuNwRqIYx1XH2IYTHgrgLUhXqt6dvcap
-         3SUMo2XRhaYU7IsFrZWqLhDEK5XG5HDYgmhM8EGchz2BeE6/yyxJLcL1891BQ84rMl9N
-         EvZSbnFx3YykoJnLjXRtFjxeSoJBzrDNq08uryy7f1xIICFAVy4Vz1WmBEDIM2qulgG/
-         4VV13W8pVWNX3QJeo/69iFLZDXUMiE69VqSDhQpW1rqUtxyi2cBMiZ7O3jmjUrIpLhFP
-         AEqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHPEkBliwwV48wL8Q3m/4Ii7YaJbuK3m07dsSddycQARBbpL+1ApyJzkETxqm/vl841Q0kqMbtiND768s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxefRcixDPhLHF5TOh+9Rqr3QAAXzLKnu7SiX0pF/mPPeYpCcAG
-	kdXnrU2xW3drYg1oMe7Mwyqr6lv2bcxFLu/N5Fydi4OEjmjjOU9GfCw=
-X-Gm-Gg: ASbGncvziHIhuxuG0t0Yy13CIilXdq2jUSbdp5ZJoCLFONhlwy5XTizFof7O8aDdQBH
-	ERwnODyANduEjqMe4knh1lsconIT3uZk+352rkt43UK6YQ0OlUwpPUOP+A1JnITYHatIknhCEPQ
-	lBua4YaNsu+JIH5a+maLtIzvACs4tZfuxB3ShHUo0udVletOqFQ39nSTsLTaCjDDftIYYiGJQRZ
-	6RMiIQdhvjtcVqPAQZt/VW9D1Y/OwL6Y5tl6InxFQqfy11hZLIDDRHJc3M5yAslyTc/KNdsyEj0
-	FjgYkgEcLnP18vmbUgwTk1e6jfTrZppezsE4gUNEorFx1iqEzgmqeIcv+fF6E6N/+uDjOj6tUyh
-	ZKpteLxIZyzQgJU0dz2MkFdrcALCoVO97SyDQFAJ9fui1eWdXICGBn+HNgmnRvLn0B+fBb8W1VK
-	h501TYIG27T2fp+gFH5yM3iMII0SaoHz8QtbBDdwzl7tg8SQnjUp8=
-X-Google-Smtp-Source: AGHT+IHC3YeUejmKrYXNkUxhYAL7YEasRTosBZae2wnCLum1tuqcSZ/3cUYt2n/DhFVyS/dLVqcNaA==
-X-Received: by 2002:a5d:5c89:0:b0:427:241:cb86 with SMTP id ffacd0b85a97d-42704d1461bmr10607226f8f.7.1761128622241;
-        Wed, 22 Oct 2025 03:23:42 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057850.dip0.t-ipconnect.de. [91.5.120.80])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42855c2fb92sm2193439f8f.46.2025.10.22.03.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 03:23:41 -0700 (PDT)
-Message-ID: <36369902-7be0-4517-833b-71a69ed870c1@googlemail.com>
-Date: Wed, 22 Oct 2025 12:23:41 +0200
+	s=arc-20240116; t=1761128712; c=relaxed/simple;
+	bh=stbg9Z4GKktvhVbBWBaKTlXQZOrVQklo2RFMw2PVpgc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cmXX++ZftMi0C4jg6NqOzQ3RYrKYBlWt2MV4BC+fJdh6forUNdEUIlEixxdoHvBR1nV8NvqDcv4gZYkAj5Hqb9hRb1mBxjKHQ3t1uh30fCYUGpPjhyP0G867hS2b58gJjh3DcEAGz0hoGrt7YjAbU8QlisNsqvalBp/5k703/+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEvjjIsd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29ECEC4CEE7;
+	Wed, 22 Oct 2025 10:25:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761128711;
+	bh=stbg9Z4GKktvhVbBWBaKTlXQZOrVQklo2RFMw2PVpgc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YEvjjIsdeQS+VXWfT62+1y6ZmLHQhBQdO5DzyWVgc/cNGTUnFYLgt7W0n49KP3x0I
+	 2qnGRwrRfk8gzhpj6CpJaByqIkuiO4f5E5bie1iequdnJvG6CtJlhk0h+NrqEyKJ+M
+	 aR84lskvYfWgFFArVhkhTFgmbo23eeMRV+feqgwkTaOyJuQmqK6HtBVupdmNG3ZAET
+	 gi3+NqBHS6maLsdRH8d5jI8rglQ6sRQ+htHYMUSRoYP64KJ05EZSniF1vSbHIqmde8
+	 M3EfvChB9r7SD6Ef3E+wnOYZOHDvvVu4xLs5mF2ZLndwj3DISKfdwXsH/CzJXrpwxe
+	 dIxmE0xi3Oa4A==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
+  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
+  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
+  jasonmiu@google.com,  dmatlack@google.com,  skhawaja@google.com
+Subject: Re: [PATCH v3 2/3] liveupdate: kho: Increase metadata bitmap size
+ to PAGE_SIZE
+In-Reply-To: <20251021000852.2924827-3-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Mon, 20 Oct 2025 20:08:51 -0400")
+References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
+	<20251021000852.2924827-3-pasha.tatashin@soleen.com>
+Date: Wed, 22 Oct 2025 12:25:08 +0200
+Message-ID: <mafs0qzuvfd2z.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.12 000/135] 6.12.55-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251022060141.370358070@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20251022060141.370358070@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Am 22.10.2025 um 10:19 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.12.55 release.
-> There are 135 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Oct 20 2025, Pasha Tatashin wrote:
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No more screen problems, no dmesg oddities or 
-regressions found.
+> KHO memory preservation metadata is preserved in 512 byte chunks which
+> requires their allocation from slab allocator. Slabs are not safe to be
+> used with KHO because of kfence, and because partial slabs may lead
+> leaks to the next kernel. Change the size to be PAGE_SIZE.
+>
+> The kfence specifically may cause memory corruption, where it randomly
+> provides slab objects that can be within the scratch area. The reason
+> for that is that kfence allocates its objects prior to KHO scratch is
+> marked as CMA region.
+>
+> While this change could potentially increase metadata overhead on
+> systems with sparsely preserved memory, this is being mitigated by
+> ongoing work to reduce sparseness during preservation via 1G guest
+> pages. Furthermore, this change aligns with future work on a stateless
+> KHO, which will also use page-sized bitmaps for its radix tree metadata.
+>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
-
-Beste Grüße,
-Peter Schneider
+[...]
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Regards,
+Pratyush Yadav
 
