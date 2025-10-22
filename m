@@ -1,183 +1,208 @@
-Return-Path: <linux-kernel+bounces-864004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AEBEBF9B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:14:12 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8278BF9B1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BCB54E4DAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:14:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10F173563EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171E4212578;
-	Wed, 22 Oct 2025 02:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700401D5AD4;
+	Wed, 22 Oct 2025 02:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lx5ZNXbj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9sc0WbR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED351D63C7
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C8C21019C;
+	Wed, 22 Oct 2025 02:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761099244; cv=none; b=VdoCz32rNwUkx6XxeHemZ45ofYh3Q6Z46/fQ0zi4ZX1/eHQJ9Ris1qunsaIUNn+VTxTXRaSJoJ/1nJhX/G/PlKy8auV4r2XUYCQJo2qc4X1lSA1kpdjWOcxMar2wAreHIkc21oUFdQk/SpFcJbEudR2P0HBr3ZmznNhd+SV0GQo=
+	t=1761099353; cv=none; b=Gyj4+20q5/vwp0Oy8C8GodZ/XpbsHz2nZDXTvsRhFEDPFt+SMapWTxYqVq9Vh5rhoY5jgiwhtkJ0Zx+qUQJFpbkJNCxpN6+/m+ORHfDCapRJGY2hsa3Qg07LZ46a+bi+/p/zWnKqt4eZz37EkSH5YwCnOIxpF23aqhuQ6retfuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761099244; c=relaxed/simple;
-	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FIpT8aD36dID1I8/obJa4RiATLcFvv9zTvsuxFDLb6o2ak844IOLugfZGBG6rE/tdomzqyMrcKl+NAO9P9wAzCF8jOoFpu60iULkBLNDKfTEfkP2deynofXRQhQhyIARI/oVTILEs2bk5++aDQXcIkGdN/gkV94UxkPzLyzpAf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lx5ZNXbj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032CDC4CEFD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:04 +0000 (UTC)
+	s=arc-20240116; t=1761099353; c=relaxed/simple;
+	bh=K8KyPpuWFb8QcJ7XXOwUi5j8hUUNg/w4R0Rxk5mqPqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=d1dd5rUox79LdoK5FWvOfnBuIdMEsxrF7sijVmqkhKLpGKBBWYD/etwjNghHV3OUVgctfwT6Vd3xg09vlq69TmkEd1XCewCbLb4+m1oJPaG92zPXf2p7qdEsqs2TqIc2lrCQ2e+HNK39f8saJcDMfBxSRScI/nkf3w1RoW8l64A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9sc0WbR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA5EC4CEF1;
+	Wed, 22 Oct 2025 02:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761099244;
-	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Lx5ZNXbjFRLltyuRgvoNRyCzTXSu0FK4LgExZTa8UjQFP1m3TuIXXSrzbjiiQWpmk
-	 VzITnBZIScuWIvHZ4lq3jbw619G0nZipjrOv4LKXKXQd9uUKeStM18DY3CJRxL7itU
-	 gn6v9PN5iSV85/umWkJSYlTZShKtAvXfVe0nsyc17s+ZsmxzJS13mCMnQpsxaUpEsn
-	 rxdEPJlsah8tek/SiehXfgSzXvLPfUTtQHtHue6HNFZoaZXnYBFsvvdiOOUS4Ll4MZ
-	 0eLxcKuyjFQFJooCzHP088V4x7Zy7GHUZCq3odyvjOUn4UmO6H1/qgKd12zU1/6GJy
-	 H718tJYLg/Z8g==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3e234fcd4bso1132022266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:14:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgjJxlLL3YNJcmW+N72FKP4H/4Xu6wJfqE4cTC0r1Yahx3tWk/Hvpq01o/7iJeHYgpp7O7jU2GESyV6HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoV8zhrZumO0GySvXuOIXcnq4IMpJ7atcuCSEz5085FOBhVVGi
-	1MWiLaFKy00/c+F2H41BwOCj7ZoFe0vB4lT8yhNBdmqQCeF/EnbPZuh60cZC+ElzutMF2cjWYAc
-	k2FxkUTQMg0iRuuh0qFUZutNBgql9Jnw=
-X-Google-Smtp-Source: AGHT+IFt7FAknz2XTlPPH7Tjv30M3nEp+LdrCx3vX81xk7xwmr8jzVAH1KIIedv4le/Wpjp3OZCAVUvGcwL0/Jdx8j4=
-X-Received: by 2002:a17:906:6a1d:b0:b0d:d831:6fba with SMTP id
- a640c23a62f3a-b647453ff67mr2193646466b.59.1761099242372; Tue, 21 Oct 2025
- 19:14:02 -0700 (PDT)
+	s=k20201202; t=1761099352;
+	bh=K8KyPpuWFb8QcJ7XXOwUi5j8hUUNg/w4R0Rxk5mqPqg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Z9sc0WbR5vWlhZcCkAalZUcE8a6choXCT7cZiw3CKT+J/5fC9T7v5u8AnSqXnYbsV
+	 P7P2b6ik+JssEgaNDkNe2XnMW4PsoELzAWa2A70O8bYwKlVoCYveujBcfn2DN4GtuH
+	 MtHpRjUE6qp40ZhvgbtLft0TF6MRQ4LrPNFHLLcWBElzO1sWuP5sZDzcxyqfyB6kKd
+	 elTIYyj9yvVuubI/W/MSif1lULq9VXO5m4e9ogOmWMceGRX4NKD8H9fwlcT7ds2NBq
+	 W+tjZ3+hUcvB8bsnj7q6LbFpYZppFs72qrTfn98svYFY45qzgLUFnjHr+RByRQO4aA
+	 r1dgolbERzVsQ==
+From: SeongJae Park <sj@kernel.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: manually uninline __memcg_memory_event
+Date: Tue, 21 Oct 2025 19:15:49 -0700
+Message-ID: <20251022021549.129413-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <3h26sozqgksxn4fvh7i6qjhtbnrtzit6eluyieyhsvycs3fbs5@ddblsq2crkit>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251020183304.umtx46whqu4awijj@pali>
- <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com> <20251021221919.leqrmil77r2iavyo@pali>
-In-Reply-To: <20251021221919.leqrmil77r2iavyo@pali>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 22 Oct 2025 11:13:50 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
-X-Gm-Features: AS18NWC6mAMxQP9NZ3c7BvWoYtCMOJQRY4IgXvJlRe3WjgtE6NSrE_XJ0LMcBGg
-Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
-Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
-	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
-	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
-	xiang@kernel.org, dsterba@suse.com, ebiggers@kernel.org, neil@brown.name, 
-	amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
-	jay.sim@lge.com, gunho.lee@lge.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 7:19=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Tuesday 21 October 2025 10:49:48 Namjae Jeon wrote:
-> > On Tue, Oct 21, 2025 at 3:33=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.or=
-g> wrote:
-> > >
-> > > Hello,
-> > Hi Pali,
-> > >
-> > > Do you have a plan, what should be the future of the NTFS support in
-> > > Linux? Because basically this is a third NTFS driver in recent years
-> > > and I think it is not a good idea to replace NTFS driver every decade=
- by
-> > > a new different implementation.
-> > Our product is currently using ntfsplus without any issues, but we plan=
- to
-> > provide support for the various issues that are reported from users or
-> > developers once it is merged into the mainline kernel.
-> > This is very basic, but the current ntfs3 has not provided this support
-> > for the last four years.
-> > After ntfsplus was merged, our next step will be to implement full jour=
-nal
-> > support. Our ultimate goal is to provide stable NTFS support in Linux,
-> > utilities support included fsck(ntfsprogs-plus) and journaling.
->
-> One important thing here is that all those drivers are implementing
-> support for same filesystem. So theoretically they should be equivalent
-> (modulo bugs and missing features).
->
-> So basically the userspace ntfs fs utils should work with any of those
-> drivers and also should be compatible with Windows ntfs.sys driver.
-> And therefore independent of the used kernel driver.
->
-> It would be really nice to have working fsck utility for ntfs. I hope
-> that we would not have 3 ntfs mkfs/fsck tools from 3 different project
-> and every one would have different set of bugs or limitations.
->
-> > >
-> > > Is this new driver going to replace existing ntfs3 driver? Or should =
-it
-> > > live side-by-side together with ntfs3?
-> > Currently, it is the latter. I think the two drivers should compete.
-> > A ntfs driver that users can reliably use for ntfs in their
-> > products is what should be the one that remains.
-> > Four years ago, ntfs3 promised to soon release the full journal and
-> > public utilities support that were in their commercial version.
-> > That promise hasn't been kept yet, Probably, It would not be easy for
-> > a company that sells a ntfs driver commercially to open some or all sou=
-rces.
-> > That's why I think we need at least competition.
->
-> I understand it. It is not really easy.
->
-> Also same thing can happen with your new ntfsplus. Nobody knows what
-> would happen in next one or two years.
-Since I publicly mentioned adding write support to ntfs driver, I have devo=
-ted
-a great deal of time and effort to fulfilling that while working on other t=
-asks
-in parallel. Your comment seems to undermine all the effort I have done
-over the years.
->
-> > >
-> > > If this new driver is going to replace ntfs3 then it should provide s=
-ame
-> > > API/ABI to userspace. For this case at least same/compatible mount
-> > > options, ioctl interface and/or attribute features (not sure what is
-> > > already supported).
-> > Sure, If ntfsplus replace ntfs3, it will support them.
-> > >
-> > > You wrote that ntfsplus is based on the old ntfs driver. How big is t=
-he
-> > > diff between old ntfs and new ntfsplus driver? If the code is still
-> > > same, maybe it would be better to call it ntfs as before and construc=
-t
-> > > commits in a way which will first "revert the old ntfs driver" and th=
-en
-> > > apply your changes on top of it (like write feature, etc..)?
-> > I thought this patch-set was better because a lot of code clean-up
-> > was done, resulting in a large diff, and the old ntfs was removed.
-> > I would like to proceed with the current set of patches rather than
-> > restructuring the patchset again.
->
-> Sure. In the current form it looks to be more readable and easier for
-> review.
->
-> But I think that more developers could be curious how similar is the new
-> ntfsplus to the old removed ntfs. And in the form of revert + changes it
-> is easier to see what was changed, what was fixed and what new developed.
->
-> I'm just thinking, if the code has really lot of common parts, maybe it
-> would make sense to have it in git in that "big revert + new changes"
-> form?
->
-> > >
-> > > For mount options, for example I see that new driver does not use
-> > > de-facto standard iocharset=3D mount option like all other fs driver =
-but
-> > > instead has nls=3D mount option. This should be fixed.
-> > Okay, I will fix it on the next version.
-> > >
-> > > Pali
-> > Thank you for your review:)
+On Tue, 21 Oct 2025 18:28:02 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+
+> On Tue, Oct 21, 2025 at 05:58:00PM -0700, SeongJae Park wrote:
+> > On Tue, 21 Oct 2025 16:44:25 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > 
+> > > The function __memcg_memory_event has been unnecessarily marked inline
+> > > even when it is not really performance critical. It is usually called
+> > > to track extreme conditions. Over the time, it has evolved to include
+> > > more functionality and inlining it is causing more harm.
+> > > 
+> > > Before the patch:
+> > > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
+> > >    text    data     bss     dec     hex filename
+> > >   35645   10574    4192   50411    c4eb mm/memcontrol.o
+> > >   54738    1658       0   56396    dc4c net/ipv4/tcp_input.o
+> > >   34644    1065       0   35709    8b7d net/ipv4/tcp_output.o
+> > > 
+> > > After the patch:
+> > > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
+> > >    text    data     bss     dec     hex filename
+> > >   35137   10446    4192   49775    c26f mm/memcontrol.o
+> > >   54322    1562       0   55884    da4c net/ipv4/tcp_input.o
+> > >   34492    1017       0   35509    8ab5 net/ipv4/tcp_output.o
+> > > 
+> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > > ---
+> > >  include/linux/memcontrol.h | 32 ++------------------------------
+> > >  mm/memcontrol.c            | 31 +++++++++++++++++++++++++++++++
+> > >  2 files changed, 33 insertions(+), 30 deletions(-)
+> > > 
+> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > > index d37e7c93bb8c..8d2e250535a8 100644
+> > > --- a/include/linux/memcontrol.h
+> > > +++ b/include/linux/memcontrol.h
+> > > @@ -1002,36 +1002,8 @@ static inline void count_memcg_event_mm(struct mm_struct *mm,
+> > >  	count_memcg_events_mm(mm, idx, 1);
+> > >  }
+> > >  
+> > > -static inline void __memcg_memory_event(struct mem_cgroup *memcg,
+> > > -					enum memcg_memory_event event,
+> > > -					bool allow_spinning)
+> > > -{
+> > > -	bool swap_event = event == MEMCG_SWAP_HIGH || event == MEMCG_SWAP_MAX ||
+> > > -			  event == MEMCG_SWAP_FAIL;
+> > > -
+> > > -	/* For now only MEMCG_MAX can happen with !allow_spinning context. */
+> > > -	VM_WARN_ON_ONCE(!allow_spinning && event != MEMCG_MAX);
+> > > -
+> > > -	atomic_long_inc(&memcg->memory_events_local[event]);
+> > > -	if (!swap_event && allow_spinning)
+> > > -		cgroup_file_notify(&memcg->events_local_file);
+> > > -
+> > > -	do {
+> > > -		atomic_long_inc(&memcg->memory_events[event]);
+> > > -		if (allow_spinning) {
+> > > -			if (swap_event)
+> > > -				cgroup_file_notify(&memcg->swap_events_file);
+> > > -			else
+> > > -				cgroup_file_notify(&memcg->events_file);
+> > > -		}
+> > > -
+> > > -		if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
+> > > -			break;
+> > > -		if (cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_LOCAL_EVENTS)
+> > > -			break;
+> > > -	} while ((memcg = parent_mem_cgroup(memcg)) &&
+> > > -		 !mem_cgroup_is_root(memcg));
+> > > -}
+> > > +void __memcg_memory_event(struct mem_cgroup *memcg,
+> > > +			  enum memcg_memory_event event, bool allow_spinning);
+> > >  
+> > >  static inline void memcg_memory_event(struct mem_cgroup *memcg,
+> > >  				      enum memcg_memory_event event)
+> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > index 1a95049d8b88..93f7c76f0ce9 100644
+> > > --- a/mm/memcontrol.c
+> > > +++ b/mm/memcontrol.c
+> > > @@ -1626,6 +1626,37 @@ unsigned long mem_cgroup_size(struct mem_cgroup *memcg)
+> > >  	return page_counter_read(&memcg->memory);
+> > >  }
+> > >  
+> > > +void __memcg_memory_event(struct mem_cgroup *memcg,
+> > > +			  enum memcg_memory_event event, bool allow_spinning)
+> > 
+> > Seems this function is called only from memcontrol.c.  Why not making it a
+> > static function?
+> 
+> There is a recent code where this is called (indirectly) from networking
+> stack for MEMCG_SOCK_THROTTLED.
+
+Thank you for enlightening me.  Apparently the code is from
+https://lore.kernel.org/20251016161035.86161-1-shakeel.butt@linux.dev.
+
+> 
+> > 
+> > > +{
+> > > +	bool swap_event = event == MEMCG_SWAP_HIGH || event == MEMCG_SWAP_MAX ||
+> > > +			  event == MEMCG_SWAP_FAIL;
+> > > +
+> > > +	/* For now only MEMCG_MAX can happen with !allow_spinning context. */
+> > > +	VM_WARN_ON_ONCE(!allow_spinning && event != MEMCG_MAX);
+> > > +
+> > > +	atomic_long_inc(&memcg->memory_events_local[event]);
+> > > +	if (!swap_event && allow_spinning)
+> > > +		cgroup_file_notify(&memcg->events_local_file);
+> > > +
+> > > +	do {
+> > > +		atomic_long_inc(&memcg->memory_events[event]);
+> > > +		if (allow_spinning) {
+> > > +			if (swap_event)
+> > > +				cgroup_file_notify(&memcg->swap_events_file);
+> > > +			else
+> > > +				cgroup_file_notify(&memcg->events_file);
+> > > +		}
+> > > +
+> > > +		if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
+> > > +			break;
+> > > +		if (cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_LOCAL_EVENTS)
+> > > +			break;
+> > > +	} while ((memcg = parent_mem_cgroup(memcg)) &&
+> > > +		 !mem_cgroup_is_root(memcg));
+> > > +}
+> > > +EXPORT_SYMBOL(__memcg_memory_event);
+> > 
+> > Also, seems there is no reason to export this symbol?
+> 
+> The networking code needs this export.
+> 
+> Thanks for taking a look.
+
+Again, thank you for clarifying.
+
+Acked-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+[...]
 
