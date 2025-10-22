@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-864969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439AEBFBFCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:57:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534F0BFBF8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 488E21A073AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:55:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B87534FF723
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F081E34A3A7;
-	Wed, 22 Oct 2025 12:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481E234A76F;
+	Wed, 22 Oct 2025 12:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AWuko00G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NsB3bwm1"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pMJNTRgp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XxSWPIqs"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F369345CB2
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B533491C2
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137532; cv=none; b=NHZOGXtkdWtUuFNn/exWJxHyrWTut8D1bkaTOJthXHfjXFcEH7ts9E6bQHifHX5upweVmhAwdI9sci0KUFljdBubFj471qVjYyfZ0cnhAT7+SpzFYcjRSjjQehWuMwgoOS63mlczI0g6TItTC9AaOLcVWn5GMOfPaPewZougz/c=
+	t=1761137533; cv=none; b=pYlyWFyRhIglWZsjcRBJy5ML3ehXaB4fIG0TZL91rzzmz/UpViLvvJjxzsWqEc8ru4YaehDRxm1ITKeUqX9l0BQv3tqLS+EPM4OH587R3ksdGHHWvRA6kRmEEk+soIbBBaL+9w/3naB3zJ+3I04FdlgHcgB4OZyXVApNxrUP1lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137532; c=relaxed/simple;
-	bh=A1vRO+JC6wXvVRyZ6M6JYXziZGl5gDaaaQTk8Wtbe7w=;
+	s=arc-20240116; t=1761137533; c=relaxed/simple;
+	bh=qy58vM+nY+BjQK+xrtw1SLFKhQ6e/JS7dfTLEMN1j00=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=dfUzm+JZfFPay33o+YF+KPURmy0xxJKJ2cyEUW79yBiEizkawIdNJAnbCgyY26RgN5ouZScVUqqO62n9ArFqWVXdk1jDU1r7HxbpZS4JKqVOHTJUyoXPHXs1/BZT04NgG4kFctId22MQH16rT0u6eVFrSA1b/VxxsRdrHjI86Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AWuko00G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NsB3bwm1; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=uDFTA7d7PPf/cywbwug0hQnWAcMhfcKw7IrzQp2s+ynBocMMChxzw2eXNwZKzyu4aMCQor7yoS+DBKifPUFnpNTIglBXPoqGvzKwTwfZNxQJZs3R8Jam7By0wD85V1GQwl316zMcmsGmJ6SFMOBhA+fmN47XAyLDFF8pBgz+y04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pMJNTRgp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XxSWPIqs; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251022121941.624112132@linutronix.de>
+Message-ID: <20251022121941.688065928@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761137526;
+	s=2020; t=1761137527;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=1gK10EHJk76APGnXrchUXEgYg86oZi63TuoER7ZkuNM=;
-	b=AWuko00G3JtX0LlhdhAanUBC+LGls9v73M8QaDVY71xG9FPpjn4kdgGT+S6bqqBvtQa5v2
-	0IH88KdymiBNlQhoMhYsCsx8RCobi4X0DFfRyGH5RDvcz2WrOe3j6xoZxK7GP6QQ0VqF1A
-	PE+1lt81uNJ1zoHw2NFofgLDLggxdBiNrWFJO8T9mej3RKOzAXu0s5RAzmgQx3wYwydoV+
-	QCzaqoyaKH0tz8jXrQacdgvt2zoyiFN79FUzhNkFQaClK+1OnhPW5UEa1d7mKqYnuFw0hi
-	/H6eQkBSF3ayX7xHZTcxoU7y76Ah57frF4fdf6K7ERJS6M3eW3WgR08uqWWa9Q==
+	 references:references; bh=QCSp39rY3Kb/sLl0RkVNht1m8WyhVaHdRitDN9VJ3QE=;
+	b=pMJNTRgpUpMSvykWpaHJbJ+0D5nqZH7cjG9T0UCoL/dcNoCfp7IOy+LsoqDn4UyyYWGbqn
+	bTiLz0MFMjMzHae9DYBAeM5gY/FNHDiFGZhLtRRLN4VUoeD8phZldnhlhBcP1OU1oUOkna
+	j6dKkR4QDXsKKHNFHSY+9peEIa15PIkE1UaFK5RJfgwRiHs+3UfZtLW6WP7G6nu7TOxZBl
+	hJgKBI+KJusM4uagxQIJDIfFWffPSVL1em74Pfbpu/7IiOtc4Qr+eEiiuGHXXe/7K8J2jh
+	aTfS1m95/R0J72fMpke27GpSUaU2VjOCNiimFXyOtTuprKgqwZcsgjyB73CMgw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761137526;
+	s=2020e; t=1761137527;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=1gK10EHJk76APGnXrchUXEgYg86oZi63TuoER7ZkuNM=;
-	b=NsB3bwm1IKnBr1VVsw4kUAp0tEkJJLMzszVhBqGE2HeCJVahBHVqLa/n37rI1bYuV6mcvI
-	IXsp8r9WJTintvAw==
+	 references:references; bh=QCSp39rY3Kb/sLl0RkVNht1m8WyhVaHdRitDN9VJ3QE=;
+	b=XxSWPIqswrkN4/WCn7S1iKrIsvA8uCqJ7nKVymeB3ch+KZ3Q2/rPolLpE2Nk2GzsPrprj+
+	yn1Rp1YgOSHQL1Dg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
@@ -59,8 +59,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  x86@kernel.org,
  Sean Christopherson <seanjc@google.com>,
  Wei Liu <wei.liu@kernel.org>
-Subject: [patch V5 04/31] rseq: Remove the ksig argument from
- rseq_handle_notify_resume()
+Subject: [patch V5 05/31] rseq: Simplify registration
 References: <20251022121836.019469732@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,60 +68,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 Oct 2025 14:52:05 +0200 (CEST)
+Date: Wed, 22 Oct 2025 14:52:07 +0200 (CEST)
 
-There is no point for this being visible in the resume_to_user_mode()
-handling.
+There is no point to read the critical section element in the newly
+registered user space RSEQ struct first in order to clear it.
+
+Just clear it and be done with it.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 ---
- include/linux/resume_user_mode.h |    2 +-
- include/linux/rseq.h             |   13 +++++++------
- 2 files changed, 8 insertions(+), 7 deletions(-)
---- a/include/linux/resume_user_mode.h
-+++ b/include/linux/resume_user_mode.h
-@@ -59,7 +59,7 @@ static inline void resume_user_mode_work
- 	mem_cgroup_handle_over_high(GFP_KERNEL);
- 	blkcg_maybe_throttle_current();
- 
--	rseq_handle_notify_resume(NULL, regs);
-+	rseq_handle_notify_resume(regs);
- }
- 
- #endif /* LINUX_RESUME_USER_MODE_H */
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -37,19 +37,20 @@ static inline void rseq_set_notify_resum
- 
- void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
- 
--static inline void rseq_handle_notify_resume(struct ksignal *ksig,
--					     struct pt_regs *regs)
-+static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+ kernel/rseq.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -492,11 +492,9 @@ void rseq_syscall(struct pt_regs *regs)
+ /*
+  * sys_rseq - setup restartable sequences for caller thread.
+  */
+-SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+-		int, flags, u32, sig)
++SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len, int, flags, u32, sig)
  {
- 	if (current->rseq)
--		__rseq_handle_notify_resume(ksig, regs);
-+		__rseq_handle_notify_resume(NULL, regs);
- }
+ 	int ret;
+-	u64 rseq_cs;
  
- static inline void rseq_signal_deliver(struct ksignal *ksig,
- 				       struct pt_regs *regs)
- {
--	scoped_guard(RSEQ_EVENT_GUARD)
--		__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
--	rseq_handle_notify_resume(ksig, regs);
-+	if (current->rseq) {
-+		scoped_guard(RSEQ_EVENT_GUARD)
-+			__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
-+		__rseq_handle_notify_resume(ksig, regs);
-+	}
- }
+ 	if (flags & RSEQ_FLAG_UNREGISTER) {
+ 		if (flags & ~RSEQ_FLAG_UNREGISTER)
+@@ -557,11 +555,9 @@ SYSCALL_DEFINE4(rseq, struct rseq __user
+ 	 * avoid a potential segfault on return to user-space. The proper thing
+ 	 * to do would have been to fail the registration but this would break
+ 	 * older libcs that reuse the rseq area for new threads without
+-	 * clearing the fields.
++	 * clearing the fields. Don't bother reading it, just reset it.
+ 	 */
+-	if (rseq_get_rseq_cs_ptr_val(rseq, &rseq_cs))
+-	        return -EFAULT;
+-	if (rseq_cs && clear_rseq_cs(rseq))
++	if (!put_user_scoped(0UL, &rseq->rseq_cs))
+ 		return -EFAULT;
  
- /* rseq_preempt() requires preemption to be disabled. */
-
-
-
+ #ifdef CONFIG_DEBUG_RSEQ
 
 
