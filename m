@@ -1,222 +1,163 @@
-Return-Path: <linux-kernel+bounces-864464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E97BFAD96
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:19:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC04BFADA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 785A54E2190
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9661A04CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B41E306498;
-	Wed, 22 Oct 2025 08:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BA9309DDC;
+	Wed, 22 Oct 2025 08:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HPOwEoIb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n0ZOZyfJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EeTPI17Y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DfxFSWiK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bCkXj4FC"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECC4350A13
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA2D3054C8
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121165; cv=none; b=tyX4hxLfgvD/S68zzXd/DnqhFALA2XXa4XFXE4gmKX7BrkNwIOikPYI74ato70EyfujJumqBwnUc/H0viIbFDLi2r6csBgEgo+RDVnlAcwxVsI/ID7qqTdFmq2Q9stRx4i3qwvgDXUkVInnnISMBBbsore4bDracKMwA/KdZUCI=
+	t=1761121190; cv=none; b=Mr3a3XsvdDLvUv+cXL6lQXnLzTCmN1Y+R3qs5LXCr7/dbTSglFMjy3KmKVN/dsy8YRo2b3xeAqe2Rvr0/iPzOlDiG0y9f79T3z+GkqHXUnrLOYP+YO77nv8RhNJb2BdF2qhNno2CjuVvUK6aD/nVmxJRKLbGx2eweu3621opbZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121165; c=relaxed/simple;
-	bh=oIPnBcshX6WZbMbo0h4STxyka/raevanleGYGFETRi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j8Qvja+Z/cTYTT3kIuelcio7yqFZygvNbn/fQgk5Dgqws8RKo3JVsd5fMRilW2HjpQRc9KApE6Q+yJLie/tBmMQJIoZ4au7AvVWo9VjhnRjzZs+sgZZxz1AFGnOFq5mYGcwKWespSjyNf9uOOWMX7GdvVA4RMlCL5V0Lmxv4pyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HPOwEoIb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n0ZOZyfJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EeTPI17Y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DfxFSWiK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EEE921F38D;
-	Wed, 22 Oct 2025 08:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761121158; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1761121190; c=relaxed/simple;
+	bh=AeBSiBDgwpOGCGWPswfsYos7CpkvHnSPMpBTKMI3s6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gw4IXKKEnsAqD2s6svYiwmDUE+0zxgWq/EHpjSmNtFIHkFE78ht5NzaZhaAGdvEEZSboEw+nhY8YkPzpCAtdtc7TxXDBhEQ38UQ9Jn2d7fWsSoHfOiVYU3K0dRoeptJOFtCI0rWf7rRYN/aGKpwH3FAabET+RuN59UpXgHXY8Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bCkXj4FC; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761121185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FYJhKYLUEbnzb3ZCl9i52DAQBHIpntDJNlMNqTzymUc=;
-	b=HPOwEoIb78yflXQDQb/OWUDH2GjXDZTLU6gcs2MFc3JQyKU63i52Qp8u6SjKrYBSpigoUJ
-	gj0xLZw7ZI+EuMISrqis/xY1XcPZILTjfXhuwzHmdbBzcs+WyzjHD9u37Vrn35TCxu679c
-	7revljCoK43ouhuej9SvwRLI3BDf4nc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761121158;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FYJhKYLUEbnzb3ZCl9i52DAQBHIpntDJNlMNqTzymUc=;
-	b=n0ZOZyfJgf0oTrvF5vNl9SN1sIN2HSmCbtjLuYMt57xABI4taNmr5+MlHKOr0UNYFa1V6s
-	FfSKj6A+jghsECBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761121153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FYJhKYLUEbnzb3ZCl9i52DAQBHIpntDJNlMNqTzymUc=;
-	b=EeTPI17YBX55qYMKuaut1iAHO7e7vJkdZCT4gdUrZ8TJIQak/Tgl5+CvI6i+bqOOMZDlqD
-	1KMXM+GSRhgdSG8P0iXcixZbmY5EpzuNXHYCIgMIHMMYpDe5t4Pk9WSvQOoue6/GJghF8Z
-	dzTIJAKi2CsdQ6TqeB54b/27ANleu7g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761121153;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FYJhKYLUEbnzb3ZCl9i52DAQBHIpntDJNlMNqTzymUc=;
-	b=DfxFSWiKw6CAzJbyEmWUcXiRipIKSQ/DLKvLkla7O8GW9B1H2fXRBElxEVuhmrOsQfh8UO
-	5pCaP0f27DTq1ABQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7C4D13A29;
-	Wed, 22 Oct 2025 08:19:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DeHBJ4GT+Gi2QgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 22 Oct 2025 08:19:13 +0000
-Message-ID: <b2021d28-63d9-415c-89d8-2beac80aab94@suse.de>
-Date: Wed, 22 Oct 2025 10:19:13 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=bpy//4A7k0mbi8peB9EHLJq9FXO+mcernBj+cHoysX4=;
+	b=bCkXj4FCRTsFuSWTdzCO9l/y1V8g6EkIWkSW7RkPA5aA6w8xS6+THX9b97DHypTYKGsiHY
+	Z9+CHBFANqs5y/DhbCsbNFTbTU+z0Py4KfK4kXnMUhemF8gDdSt0uCbVpLcgie8kinKCQk
+	vtLfHpuOQuDgxCwfvELMNRwPsQ6jHGw=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: ast@kernel.org, jolsa@kernel.org, Menglong Dong <menglong8.dong@gmail.com>
+Cc: daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, leon.hwang@linux.dev,
+ jiang.biao@linux.dev, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 00/10] bpf: tracing session supporting
+Date: Wed, 22 Oct 2025 16:19:27 +0800
+Message-ID: <5931958.DvuYhMxLoT@7950hx>
+In-Reply-To: <20251022080159.553805-1-dongml2@chinatelecom.cn>
+References: <20251022080159.553805-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sitronix/st7571-i2c: remove unneeded semicolon
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20251022-st7571-semicolon-v1-1-83d322618ff4@gmail.com>
- <aPiOxYYY_dPkShsW@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <aPiOxYYY_dPkShsW@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,intel.com:email];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-Hi
+On 2025/10/22 16:01, Menglong Dong wrote:
+> Sometimes, we need to hook both the entry and exit of a function with
+> TRACING. Therefore, we need define a FENTRY and a FEXIT for the target
+> function, which is not convenient.
+> 
+> Therefore, we add a tracing session support for TRACING. Generally
+> speaking, it's similar to kprobe session, which can hook both the entry
+> and exit of a function with a single BPF program. Meanwhile, it can also
+> control the execution of the fexit with the return value of the fentry.
+> Session cookie is also supported with the kfunc bpf_fsession_cookie().
+> 
+> The kfunc bpf_tracing_is_exit() and bpf_fsession_cookie() are both inlined
+> in the verifier.
 
-Am 22.10.25 um 09:59 schrieb Marcus Folkesson:
-> On Wed, Oct 22, 2025 at 08:10:57AM +0200, Marcus Folkesson wrote:
->> Fix style issue reported by Kernel test robot.
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202510221125.Cg0sM4xJ-lkp@intel.com/
->> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
->> ---
->>   drivers/gpu/drm/sitronix/st7571-i2c.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
->> index 32b91d65b768b26caa7dcef42a00d36f236fbc32..4e73c8b415d677dab5b421666b56f4bb3697b982 100644
->> --- a/drivers/gpu/drm/sitronix/st7571-i2c.c
->> +++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
->> @@ -322,7 +322,7 @@ static void st7571_prepare_buffer_grayscale(struct st7571_device *st7571,
->>   		size = (rect->x2 - rect->x1) * (rect->y2 - rect->y1) / 4;
->>   		memcpy(st7571->hwbuf, vmap->vaddr, size);
->>   		break;
->> -	};
->> +	}
->>   }
->>   
->>   static int st7571_fb_update_rect_monochrome(struct drm_framebuffer *fb, struct drm_rect *rect)
->>
->> ---
->> base-commit: c1a7cc00cd412505e070eb4e62bc0b0ca85243e0
->> change-id: 20251022-st7571-semicolon-bc5287cde264
->>
->> Best regards,
->> -- 
->> Marcus Folkesson <marcus.folkesson@gmail.com>
->>
-> Pushed to drm-misc-fixes.
+Hmm......the gmail broken after it sent the 7th patch. So I sent
+the remained 3 patches again. However, they are not recognized
+together as a series. So awkward :/
 
-This does not belong into -fixes as it's not a bug fix, just a style 
-issue. Also misses the Fixes tag. No need to revert, but please keep in 
-mind for next time.
+Should I resend it?
 
-Best regards
-Thomas
+Thanks!
+Menglong Dong
 
->
-> Best regards,
-> Marcus Folkesson
+> 
+> We allow the usage of bpf_get_func_ret() to get the return value in the
+> fentry of the tracing session, as it will always get "0", which is safe
+> enough and is OK.
+> 
+> The while fsession stuff is arch related, so the -EOPNOTSUPP will be
+> returned if it is not supported yet by the arch. In this series, we only
+> support x86_64. And later, other arch will be implemented.
+> 
+> Changes since v1:
+> * session cookie support.
+>   In this version, session cookie is implemented, and the kfunc
+>   bpf_fsession_cookie() is added.
+> 
+> * restructure the layout of the stack.
+>   In this version, the session stuff that stored in the stack is changed,
+>   and we locate them after the return value to not break
+>   bpf_get_func_ip().
+> 
+> * testcase enhancement.
+>   Some nits in the testcase that suggested by Jiri is fixed. Meanwhile,
+>   the testcase for get_func_ip and session cookie is added too.
+> 
+> Menglong Dong (10):
+>   bpf: add tracing session support
+>   bpf: add kfunc bpf_tracing_is_exit for TRACE_SESSION
+>   bpf: add kfunc bpf_fsession_cookie for TRACING SESSION
+>   bpf,x86: add ret_off to invoke_bpf()
+>   bpf,x86: add tracing session supporting for x86_64
+>   libbpf: add support for tracing session
+>   selftests/bpf: test get_func_ip for fsession
+>   selftests/bpf: add testcases for tracing session
+>   selftests/bpf: add session cookie testcase for fsession
+>   selftests/bpf: add testcase for mixing fsession, fentry and fexit
+> 
+>  arch/arm64/net/bpf_jit_comp.c                 |   3 +
+>  arch/loongarch/net/bpf_jit.c                  |   3 +
+>  arch/powerpc/net/bpf_jit_comp.c               |   3 +
+>  arch/riscv/net/bpf_jit_comp64.c               |   3 +
+>  arch/s390/net/bpf_jit_comp.c                  |   3 +
+>  arch/x86/net/bpf_jit_comp.c                   | 214 ++++++++++++++++--
+>  include/linux/bpf.h                           |   2 +
+>  include/uapi/linux/bpf.h                      |   1 +
+>  kernel/bpf/btf.c                              |   2 +
+>  kernel/bpf/syscall.c                          |   2 +
+>  kernel/bpf/trampoline.c                       |   5 +-
+>  kernel/bpf/verifier.c                         |  45 +++-
+>  kernel/trace/bpf_trace.c                      |  59 ++++-
+>  net/bpf/test_run.c                            |   1 +
+>  net/core/bpf_sk_storage.c                     |   1 +
+>  tools/bpf/bpftool/common.c                    |   1 +
+>  tools/include/uapi/linux/bpf.h                |   1 +
+>  tools/lib/bpf/bpf.c                           |   2 +
+>  tools/lib/bpf/libbpf.c                        |   3 +
+>  .../selftests/bpf/prog_tests/fsession_test.c  | 161 +++++++++++++
+>  .../bpf/prog_tests/get_func_ip_test.c         |   2 +
+>  .../bpf/prog_tests/tracing_failure.c          |   2 +-
+>  .../selftests/bpf/progs/fsession_cookie.c     |  49 ++++
+>  .../selftests/bpf/progs/fsession_mixed.c      |  45 ++++
+>  .../selftests/bpf/progs/fsession_test.c       | 175 ++++++++++++++
+>  .../selftests/bpf/progs/get_func_ip_test.c    |  14 ++
+>  26 files changed, 776 insertions(+), 26 deletions(-)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/fsession_test.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/fsession_cookie.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/fsession_mixed.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/fsession_test.c
+> 
+> 
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+
 
 
 
