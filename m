@@ -1,273 +1,547 @@
-Return-Path: <linux-kernel+bounces-865857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49986BFE2EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40CBBFE301
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A441886FE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:35:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8BA1882148
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D1A2FB085;
-	Wed, 22 Oct 2025 20:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB57E2F8BFF;
+	Wed, 22 Oct 2025 20:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3u53QTw"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="x3lly1v+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="m8vvGjNZ"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9882F7AA7
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761165304; cv=none; b=BHddNEUdqGynSoE8NUjXs6apXi6AOJ6N8c/9ziYKCHSjy6gOwp+BZkeUqWo25+4pD0so8A90Sy+DDZBuVr35F504MMAOLHvh6va2g8RIsazRq60mPax1M4g4zfE54b4wQYLn6G/T4C5HNilBdM4v5R2QrVHg8ctyQvO064q6ZXM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761165304; c=relaxed/simple;
-	bh=aE4lNlQa4crgHUTDnM2pWT9TstB26PhmDMUEJMxtbwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FGTCpJo/RL+2OAbeeZXh8szxLugvShh6m0+aK3bWkcnBBV1iOjoh+U5FejQar5E4dAwbxl1VWfohJ41ke6nXHm5t9EdZSkdrh+0g62Sz3vJWAlK1Vvc69PqpA3oMkMu+JEMxj45bNn2UVRxT286/epaFgwvn6UgpiS5YllTPWWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g3u53QTw; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42701b29a7eso19149f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761165301; x=1761770101; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gOCMQL/wAiBi4J6RjJqrNFgNKIjmwY+37aLo+8bEb54=;
-        b=g3u53QTwbcsU78OrsxOdrfVsGrznvCx7HZXYb60JXpCO2XRS59hpwxxI2Vqic4fUmq
-         YejUJJejKh1fGZvJeH0lvYIOAs0pKp5WiTXJC+jcon6j8x6SMzVeXF3IAER5r+sk7FhO
-         yqVT4oYmcLyQeyvWs6zbpMosKvuiWF8tvc8B7bCEEQV74XicMjKCkTnk8wYEUqhCd2Wc
-         rV6AjG2jbtxlBiPkKK0tGxypQ9SLdOo3i/FLx5n2MgfhnHCmEVPfRM4K1GKBqorffIUY
-         IytST1S8c04xU0sGhQFH1UFbtw/P7OejwhA1YbaYd7rANh/UtLF6OQa5dFIb0IpiXJkG
-         eMgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761165301; x=1761770101;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gOCMQL/wAiBi4J6RjJqrNFgNKIjmwY+37aLo+8bEb54=;
-        b=jXVdng7FuMoIlVZTFxXedmf2T+LlQb79sk4c28rdwKvUKbZ8DwyZh0YyNJtoU0+Ygq
-         NTxUyqPMwLpmU4k7adSOpgj9EB4fsWVbzFggHcsflYzf05WyGUXpK7pTyNFPLLONqC8R
-         DJgiDIBoEINB/JLuz1hj6LZAx26PEFa2DTjSE6jd/rtkYsLdsCnkkf0X0UC/M01OR1Ix
-         ocQayoP3MkvH6w0FPLEmDUx5lF9DT6FEiTDA5d/X7hjcFSOmsnGy383mcZ00UdogxLCh
-         efgOhQyA0U5JoV7SiqUq8++MLwI+1F3yXnxAEmz7fdfmgP5ZxT+fI0HcVUB1DoEvmltp
-         akSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnW2GCVmT1jeT/QB3zap5rUwA3onJ94HEOUMfeMMt/GZEsfZcRFoWEofJfG4AKR1O+AgDY1kyx1NwhYyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEouLjmzdpl6PxDM9fTkYc7WCg/I26y4XUtEWp0WbnUXlrwaD2
-	TYHW2VJABL0EbDoMBF4bMUJhqZWjpw2kmhCGJ+FyKO/8G1p6Evd2b9OwmNSsaLTRTvie7Pl2NoN
-	J371x8qQfIfVGqmis8/8m6Di+K9GZw2w=
-X-Gm-Gg: ASbGncvHe94nciBP9fdpbJnDqFXlB/CP5LN0biwFgMA5XhH4BHhOfoZcICAziIeiHiE
-	GXEWt3iiFo8v1cVkmDL9UPPPYYjwUNfpH3xtwxNa4b3Syx60ch5OCa9AKbns/9DuKGKE1SQBqfE
-	OKu1iWgaxnuGdxExbdurR84FZYJAhbks174IVU5VShliudVLgbAdQkePGvQ1xurNukx9feET5yR
-	6U+9VQ71yasK1duSn1QaHwuC+XghSOPxtpbozvkoCTbAsyZSmUFpzyTk7ZPAsTlsu2udSdMs9Ai
-	Jjpe64Xp6jYAoxHOZ87PPmR2yf9G
-X-Google-Smtp-Source: AGHT+IHNTfNn1xIfZYbnIWtYBzNd2ecMfDDl7vgqcZKx0cQQ7OSVPss9Q/ulrQl/beyvLokaEORrcgTO26r+UteMcEU=
-X-Received: by 2002:a5d:5847:0:b0:3e7:428f:d33 with SMTP id
- ffacd0b85a97d-42853264c37mr3549219f8f.16.1761165300670; Wed, 22 Oct 2025
- 13:35:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1BD2F28F9;
+	Wed, 22 Oct 2025 20:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761165371; cv=pass; b=pwbbLNngSM3SiCm/VzuIwt5ZS2Jmas3uLuH4ArKKVRdH9z2i7NmipCokdhrq9xrwe1jlTU32SGGzn0CH6OHHCwPsEcSIYD0y18OOo0cSExtcUDE5cIGAJpOCVUxrL1xtsa+KHBbl/tpcngUB+WF9vy8JZpDlfeA3iyJB/ACoTwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761165371; c=relaxed/simple;
+	bh=fbsOZjeBYURUQ8AcI4lPHwYdOIM1BWMlppGkd/GOeW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fYnxSFJWat+Mx/43XinR3tYu0TV2fnIFmmT9yfpY2TPeBO7LKqOsvSr16c15U8y86DOmjiD93pN7vSRTpmqGMo77JyRJrooZe+k5VUUPbR7KVKtoq1sS832PFaytOyGY/x99q9CTG9pVEwO8CIjWdL4x45CBaQ33YdIc0qy2fBQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=x3lly1v+; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=m8vvGjNZ; arc=pass smtp.client-ip=185.56.87.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-l4b2.prod.antispam.mailspamprotection.com; s=arckey; t=1761165368;
+	 b=oeY5N5kEo494i0J7JyVfXen57GDUnHQRIRqyF83SJMp2iQXmEmao4+IF7Y1yGPC6jstRFnKTPi
+	  TIxxdv0JcYqYpEERDr0eJsCdR9sckwiLSAnKnXk2fPeMtdaigDWMVArIGEiJ64YqtiF2Tt4aYv
+	  SPP/e3kMELr+uLO/pFl2ELwuafVC/IKjRwQ1TW4jiy8pkdzmReDSZRx4ogl6l5fOHnX56//6Cr
+	  vEzd0uxWNcAkx3QP0PXn1mwZ0w42rTVhIKKgGmWKEyQ/vE/11qbnpVm7/iN8R1IbpwfXY8F0V+
+	  fzke7aYzorC7Wgfjh6D5czJ+DgWVLT7pJLUuco3vzmNYDA==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-l4b2.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-l4b2.prod.antispam.mailspamprotection.com; s=arckey; t=1761165368;
+	bh=fbsOZjeBYURUQ8AcI4lPHwYdOIM1BWMlppGkd/GOeW0=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	  Message-ID:Date:Subject:Cc:To:From:DKIM-Signature:DKIM-Signature;
+	b=mGr7pKF0T+6QjyjO5PgtRA0JBqf4zBukBT1oLf7EJInbFjklFe0lQkCidX/mE8PdfMKIepw+c9
+	  0LKZxxPariOClz7BDQY9I7okPEJuCUenmJLSthVJM+pAYCGed9fFYvHJ8B9ANNHUrvF6V/pej2
+	  z2hqemvzNfasf4ePsHWakfg5MqXhCK13LYxbMVwBWNM0GHYUTxW4I4eIirHSg/8QikCeTC9iYj
+	  /CYBT7CV+k+28EqlAkC8YiwscB1AJWp3/lmny8Z8WGii9dhMMB4hGXwFmVLKiRux34s0eZODKN
+	  uBIfuQBn//gvMSs9NBFEklWmKaA8WknrT4KJJaVneiXM7w==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Reply-To:List-Unsubscribe;
+	bh=lVS4OAOudeNzjAVGx56iDpMXSXUm+qb99UVz5KIYAmw=; b=x3lly1v+lTPlURfMZ4ZZ+kQXGB
+	AlRuE9kZ+MKMeRollQoOlYfI2esV+YU4fOJGLDSbAfnttolddNfUj1YWUHdR82VaOvF1Fb7VnwKz/
+	K9vRSKbGsncF2jxRFA/Bma0S6LG+0uS6EqdwXuHt1fuSJAMMUIk2ezWGDHbQnvwPiMg8=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-l4b2.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vBfYr-00000002w5u-1c8s;
+	Wed, 22 Oct 2025 20:35:59 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=lVS4OAOudeNzjAVGx56iDpMXSXUm+qb99UVz5KIYAmw=; b=m8vvGjNZ4MjKrg1+iQuB5W6+Jt
+	XndvmxR5ucuvJv/kO4gbQ+9vFHiCk/QLi2DHWGKaTgnpxc46d1JmPdjrXhw1NYfzXlauRzwpjhxs7
+	KXKhzNjyVBegDyBYH1ky0eaPqCn6hF1lgbv1r+38YTMGHdtiC+KcF4/gfLbm9vxppUr0=;
+Received: from [95.239.58.48] (port=61520 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vBfYa-00000000D8T-1f1i;
+	Wed, 22 Oct 2025 20:35:40 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Paul Menzel <pmenzel@molgen.mpg.de>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [BUG] Erratic behavior in btnxpuart on v6.18-rc2 - and a possible
+ solution
+Date: Wed, 22 Oct 2025 22:35:36 +0200
+Message-ID: <1982590.7Z3S40VBb9@fedora.fritz.box>
+In-Reply-To: <aPkCZ8l4-5ffyiAe@mozart.vkv.me>
+References:
+ <6837167.ZASKD2KPVS@fedora.fritz.box> <2569250.XAFRqVoOGU@fedora.fritz.box>
+ <aPkCZ8l4-5ffyiAe@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022164457.1203756-1-kafai.wan@linux.dev> <20251022164457.1203756-2-kafai.wan@linux.dev>
- <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev> <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
- <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com> <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
-In-Reply-To: <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 22 Oct 2025 13:34:49 -0700
-X-Gm-Features: AS18NWCOUOIN10upBo9tUClQOlsY7bKB4bVpcv4wyU222Jqj1i0GptAsFooHk0M
-Message-ID: <CAADnVQKzWzgUpdtv+Qe0pJ7kc4zBvG0GkKWz0btv3-WZ3cPfVw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for conditional
- jumps on same register
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, KaFai Wan <kafai.wan@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, 
-	Matan Shachnai <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>, colin.i.king@gmail.com, 
-	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
-	Yinhao Hu <dddddd@hust.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: a32a237380d66adf6c0adef78a170338
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1vBfYr-00000002w5u-1c8s-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-l4b2.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-On Wed, Oct 22, 2025 at 1:30=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Wed, 2025-10-22 at 13:12 -0700, Alexei Starovoitov wrote:
-> > On Wed, Oct 22, 2025 at 12:46=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
-l.com> wrote:
+On Wednesday, 22 October 2025 at 18:12:23 Calvin Owens <calvin@wbinvd.org> wrote:
+> On Wednesday 10/22 at 00:07 +0200, Francesco Valla wrote:
+> > On Tuesday, 21 October 2025 at 23:29:59 Calvin Owens <calvin@wbinvd.org> wrote:
+> > > On Tuesday 10/21 at 14:20 -0700, Calvin Owens wrote:
+> > > > On Tuesday 10/21 at 22:53 +0200, Francesco Valla wrote:
+> > > > > Hello,
+> > > > > 
+> > > > > while testing Bluetooth on my NXP i.MX93 FRDM, which is equipped with an IW612
+> > > > > Bluetooth chipset from NXP, I encountered an erratic bug during initialization.
+> > > > > 
+> > > > > While the firmware download always completed without errors, subsequent HCI
+> > > > > communication would fail most of the time with:
+> > > > > 
+> > > > >     Frame reassembly failed (-84)
+> > > > > 
+> > > > > After some debug, I found the culprit to be this patch that was integrated as
+> > > > > part of the current (v6.18) cycle:
+> > > > > 
+> > > > >     93f06f8f0daf Bluetooth: remove duplicate h4_recv_buf() in header [1]
+> > > > > 
+> > > > > The reason is simple: the h4_recv_buf() function from hci_h4.c, which is now
+> > > > > used instead the "duplicated" one in the (now removed) h4_recv_buf.h, assumes
+> > > > > that the private drvdata for the input struct hci_dev is a pointer to a
+> > > > > struct hci_uart, but that's not the case for the btnxpuart driver. In this
+> > > > > case, the information about padding and alignment are pretty random and
+> > > > > depend on the content of the data that was incorrectly casted as a
+> > > > > struct hci_uart.
+> > > > > 
+> > > > > The bug should impact also the other platforms that were touched by the
+> > > > > same patch. 
+> > > > 
+> > > > Hi Francesco,
+> > > > 
+> > > > Thanks for investigating, this makes sense to me.
+> > > > 
+> > > > Funny enough, I specifically tested this on btnxpuart and saw no
+> > > > problems. I suppose some kconfig difference or some other innocuous
+> > > > patch moved structure fields around such that it triggered for you?
+> > > > Not that it really matters...
+> > > > 
+> > > > > For the time being, I'd then propose to revert the commit.
+> > > > 
+> > > > Adding back all the duplicate code is not the right way forward, IMHO.
+> > > > There must be some way to "mask" the problematic behavior for the
+> > > > drivers which stash the different structure in drvdata, right?
+> > > 
+> > > Actually, the right approach is probably to tweak these drivers to do
+> > > what the Intel driver does:
+> > > 
+> > > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/bluetooth/hci_intel.c#n869
+> > > 
+> > >     static int intel_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+> > >     {
+> > >             struct hci_uart *hu = hci_get_drvdata(hdev);
+> > >             struct intel_data *intel = hu->priv;
+> > > 
+> > > I'll spin that up unless I hear better from anyone else :)
 > > >
-> > > On Wed, 2025-10-22 at 11:14 -0700, Yonghong Song wrote:
-> > > >
-> > > > On 10/22/25 9:44 AM, KaFai Wan wrote:
-> > > > > When conditional jumps are performed on the same register (e.g., =
-r0 <=3D r0,
-> > > > > r0 > r0, r0 < r0) where the register holds a scalar with range, t=
-he verifier
-> > > > > incorrectly attempts to adjust the register's min/max bounds. Thi=
-s leads to
-> > > > > invalid range bounds and triggers a BUG warning:
-> > > > >
-> > > > > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds =
-violation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=3D[0x1, 0x=
-0] var_off=3D(0x0, 0x0)
-> > > > > WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731 reg_bounds_=
-sanity_check+0x163/0x220
-> > > > > Modules linked in:
-> > > > > CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G        W        =
-   6.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
-> > > > > Tainted: [W]=3DWARN
-> > > > > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1=
-.16.3-debian-1.16.3-2 04/01/2014
-> > > > > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
-> > > > > Call Trace:
-> > > > >   <TASK>
-> > > > >   reg_set_min_max.part.0+0x1b1/0x360
-> > > > >   check_cond_jmp_op+0x1195/0x1a60
-> > > > >   do_check_common+0x33ac/0x33c0
-> > > > >   ...
-> > > > >
-> > > > > The issue occurs in reg_set_min_max() function where bounds adjus=
-tment logic
-> > > > > is applied even when both registers being compared are the same. =
-Comparing a
-> > > > > register with itself should not change its bounds since the compa=
-rison result
-> > > > > is always known (e.g., r0 =3D=3D r0 is always true, r0 < r0 is al=
-ways false).
-> > > > >
-> > > > > Fix this by adding an early return in reg_set_min_max() when fals=
-e_reg1 and
-> > > > > false_reg2 point to the same register, skipping the unnecessary b=
-ounds
-> > > > > adjustment that leads to the verifier bug.
-> > > > >
-> > > > > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> > > > > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> > > > > Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Co=
-remail.kaiyanm@hust.edu.cn/
-> > > > > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
-> > > > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> > > > > ---
-> > > > >   kernel/bpf/verifier.c | 4 ++++
-> > > > >   1 file changed, 4 insertions(+)
-> > > > >
-> > > > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > > > > index 6d175849e57a..420ad512d1af 100644
-> > > > > --- a/kernel/bpf/verifier.c
-> > > > > +++ b/kernel/bpf/verifier.c
-> > > > > @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct bpf_ve=
-rifier_env *env,
-> > > > >     if (false_reg1->type !=3D SCALAR_VALUE || false_reg2->type !=
-=3D SCALAR_VALUE)
-> > > > >             return 0;
-> > > > >
-> > > > > +   /* If conditional jumps on the same register, skip the adjust=
-ment */
-> > > > > +   if (false_reg1 =3D=3D false_reg2)
-> > > > > +           return 0;
-> > > >
-> > > > Your change looks good. But this is a special case and it should no=
-t
-> > > > happen for any compiler generated code. So could you investigate
-> > > > why regs_refine_cond_op() does not work? Since false_reg1 and false=
-_reg2
-> > > > is the same, so register refinement should keep the same. Probably
-> > > > some minor change in regs_refine_cond_op(...) should work?
-> > > >
-> > > > > +
-> > > > >     /* fallthrough (FALSE) branch */
-> > > > >     regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode=
-), is_jmp32);
-> > > > >     reg_bounds_sync(false_reg1);
-> > >
-> > > I think regs_refine_cond_op() is not written in a way to handle same
-> > > registers passed as reg1 and reg2. E.g. in this particular case the
-> > > condition is reformulated as "r0 < r0", and then the following branch
-> > > is taken:
-> > >
-> > >    static void regs_refine_cond_op(struct bpf_reg_state *reg1, struct=
- bpf_reg_state *reg2,
-> > >                                  u8 opcode, bool is_jmp32)
-> > >    {
-> > >         ...
-> > >          case BPF_JLT: // condition is rephrased as r0 < r0
-> > >                  if (is_jmp32) {
-> > >                          ...
-> > >                  } else {
-> > >                          reg1->umax_value =3D min(reg1->umax_value, r=
-eg2->umax_value - 1);
-> > >                          reg2->umin_value =3D max(reg1->umin_value + =
-1, reg2->umin_value);
-> > >                  }
-> > >                  break;
-> > >         ...
-> > >    }
-> > >
-> > > Note that intent is to adjust umax of the LHS (reg1) register and umi=
-n
-> > > of the RHS (reg2) register. But here it ends up adjusting the same re=
-gister.
-> > >
-> > > (a) before refinement: u64=3D[0x0, 0x80000000] s64=3D[0x0, 0x80000000=
-] u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> > > (b) after  refinement: u64=3D[0x1, 0x7fffffff] s64=3D[0x0, 0x80000000=
-] u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> > > (c) after  sync      : u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, =
-0x0] s32=3D[0x1, 0x0]
-> > >
-> > > At (b) the u64 range translated to s32 is > 0, while s32 range is <=
-=3D 0,
-> > > hence the invariant violation.
-> > >
-> > > I think it's better to move the reg1 =3D=3D reg2 check inside
-> > > regs_refine_cond_op(), or to handle this case in is_branch_taken().
-> >
-> > hmm. bu then regs_refine_cond_op() will skip it, yet reg_set_min_max()
-> > will still be doing pointless work with reg_bounds_sync() and sanity ch=
-eck.
-> > The current patch makes more sense to me.
->
-> Well, if we want to avoid useless work, we need something like:
->
-> @@ -16173,6 +16173,25 @@ static int is_pkt_ptr_branch_taken(struct bpf_re=
-g_state *dst_reg,
->  static int is_branch_taken(struct bpf_reg_state *reg1, struct bpf_reg_st=
-ate *reg2,
->                            u8 opcode, bool is_jmp32)
+> > 
+> > Hi, thanks for the quick response!
+> > 
+> > That was my first thought, but the Intel driver actually _uses_ the hci_uart
+> > structure, while btnxpuart and such would only piggy-back on it to be able to
+> > use h4_recv_buf() (and struct hci_uart is huge!).
+> 
+> Why is that a problem? Certainly, nobody is going to mind the extra
+> bytes with that monstrosity hanging around :)
+> 
+
+You have a point there.
+
+> > One possible solution would be to define an "inner" __h4_recv_buf() function
+> > that accepts alignment and padding as arguments, and use that directly on
+> > drivers that don't use struct hci_uart (PoC attached - I don't like the
+> > __h4_recv_buf name but I don't really know how it should be called).
+> 
+> I don't feel super strongly about it, but IMHO the whole thing is easier
+> to understand if we just put the data the core function expects where it
+> expects it. I haven't had enough coffee yet, but I think
+> zero-initializing hu is sufficient...
+> 
+> Something like this, only compile tested:
+> ---8<---
+> From: Calvin Owens <calvin@wbinvd.org>
+> Subject: [PATCH] Working bugfix for bt cleanup, only for btnxpuart for now
+> 
+> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> ---
+>  drivers/bluetooth/btnxpuart.c | 74 +++++++++++++++++++----------------
+>  1 file changed, 41 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+> index d5153fed0518..cf464515c855 100644
+> --- a/drivers/bluetooth/btnxpuart.c
+> +++ b/drivers/bluetooth/btnxpuart.c
+> @@ -212,6 +212,7 @@ struct btnxpuart_dev {
+>  	struct ps_data psdata;
+>  	struct btnxpuart_data *nxp_data;
+>  	struct reset_control *pdn;
+> +	struct hci_uart hu;
+>  };
+>  
+>  #define NXP_V1_FW_REQ_PKT	0xa5
+> @@ -363,6 +364,12 @@ union nxp_set_bd_addr_payload {
+>  
+>  static u8 crc8_table[CRC8_TABLE_SIZE];
+>  
+> +static struct btnxpuart_dev *hci_get_nxpdev(struct hci_dev *hdev)
+> +{
+> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+> +	return hu->priv;
+> +}
+> +
+>  /* Default configurations */
+>  #define DEFAULT_H2C_WAKEUP_MODE	WAKEUP_METHOD_BREAK
+>  #define DEFAULT_PS_MODE		PS_MODE_ENABLE
+> @@ -373,7 +380,7 @@ static struct sk_buff *nxp_drv_send_cmd(struct hci_dev *hdev, u16 opcode,
+>  					void *param,
+>  					bool resp)
 >  {
-> +       if (reg1 =3D=3D reg2) {
-> +               switch (opcode) {
-> +               case BPF_JGE:
-> +               case BPF_JLE:
-> +               case BPF_JSGE:
-> +               case BPF_JSLE:
-> +               case BPF_JEQ:
-> +               case BPF_JSET:
-> +                       return 1;
-> +               case BPF_JGT:
-> +               case BPF_JLT:
-> +               case BPF_JSGT:
-> +               case BPF_JSLT:
-> +               case BPF_JNE:
-> +                       return 0;
-> +               default:
-> +                       return -1;
-> +               }
-> +       }
->
-> But that's too much code for an artificial case.
-> Idk, either way is fine with me.
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	struct sk_buff *skb = NULL;
+>  
+> @@ -426,7 +433,7 @@ static void ps_cancel_timer(struct btnxpuart_dev *nxpdev)
+>  
+>  static void ps_control(struct hci_dev *hdev, u8 ps_state)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	int status = 0;
+>  
+> @@ -483,7 +490,7 @@ static void ps_timeout_func(struct timer_list *t)
+>  {
+>  	struct ps_data *data = timer_container_of(data, t, ps_timer);
+>  	struct hci_dev *hdev = data->hdev;
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  
+>  	if (test_bit(BTNXPUART_TX_STATE_ACTIVE, &nxpdev->tx_state)) {
+>  		ps_start_timer(nxpdev);
+> @@ -502,7 +509,7 @@ static irqreturn_t ps_host_wakeup_irq_handler(int irq, void *priv)
+>  }
+>  static int ps_setup(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct serdev_device *serdev = nxpdev->serdev;
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	int ret;
+> @@ -597,7 +604,7 @@ static void ps_cleanup(struct btnxpuart_dev *nxpdev)
+>  
+>  static int send_ps_cmd(struct hci_dev *hdev, void *data)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	struct psmode_cmd_payload pcmd;
+>  	struct sk_buff *skb;
+> @@ -636,7 +643,7 @@ static int send_ps_cmd(struct hci_dev *hdev, void *data)
+>  
+>  static int send_wakeup_method_cmd(struct hci_dev *hdev, void *data)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	struct wakeup_cmd_payload pcmd;
+>  	struct sk_buff *skb;
+> @@ -682,7 +689,7 @@ static int send_wakeup_method_cmd(struct hci_dev *hdev, void *data)
+>  
+>  static void ps_init(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	u8 default_h2c_wakeup_mode = DEFAULT_H2C_WAKEUP_MODE;
+>  
+> @@ -732,7 +739,7 @@ static void ps_init(struct hci_dev *hdev)
+>  /* NXP Firmware Download Feature */
+>  static int nxp_download_firmware(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	int err = 0;
+>  
+>  	nxpdev->fw_dnld_v1_offset = 0;
+> @@ -782,7 +789,7 @@ static int nxp_download_firmware(struct hci_dev *hdev)
+>  
+>  static void nxp_send_ack(u8 ack, struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	u8 ack_nak[2];
+>  	int len = 1;
+>  
+> @@ -796,7 +803,7 @@ static void nxp_send_ack(u8 ack, struct hci_dev *hdev)
+>  
+>  static bool nxp_fw_change_baudrate(struct hci_dev *hdev, u16 req_len)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct nxp_bootloader_cmd nxp_cmd5;
+>  	struct uart_config uart_config;
+>  	u32 clkdivaddr = CLKDIVADDR - nxpdev->boot_reg_offset;
+> @@ -846,7 +853,7 @@ static bool nxp_fw_change_baudrate(struct hci_dev *hdev, u16 req_len)
+>  
+>  static bool nxp_fw_change_timeout(struct hci_dev *hdev, u16 req_len)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct nxp_bootloader_cmd nxp_cmd7;
+>  
+>  	if (req_len != sizeof(nxp_cmd7))
+> @@ -899,7 +906,7 @@ static bool process_boot_signature(struct btnxpuart_dev *nxpdev)
+>  static int nxp_request_firmware(struct hci_dev *hdev, const char *fw_name,
+>  				const char *fw_name_old)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	const char *fw_name_dt;
+>  	int err = 0;
+>  
+> @@ -931,7 +938,7 @@ static int nxp_request_firmware(struct hci_dev *hdev, const char *fw_name,
+>  /* for legacy chipsets with V1 bootloader */
+>  static int nxp_recv_chip_ver_v1(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct v1_start_ind *req;
+>  	__u16 chip_id;
+>  
+> @@ -956,7 +963,7 @@ static int nxp_recv_chip_ver_v1(struct hci_dev *hdev, struct sk_buff *skb)
+>  
+>  static int nxp_recv_fw_req_v1(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct btnxpuart_data *nxp_data = nxpdev->nxp_data;
+>  	struct v1_data_req *req;
+>  	__u16 len;
+> @@ -1065,7 +1072,7 @@ static int nxp_recv_fw_req_v1(struct hci_dev *hdev, struct sk_buff *skb)
+>  static char *nxp_get_fw_name_from_chipid(struct hci_dev *hdev, u16 chipid,
+>  					 u8 loader_ver)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	char *fw_name = NULL;
+>  
+>  	switch (chipid) {
+> @@ -1139,7 +1146,7 @@ static char *nxp_get_old_fw_name_from_chipid(struct hci_dev *hdev, u16 chipid,
+>  static int nxp_recv_chip_ver_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+>  	struct v3_start_ind *req = skb_pull_data(skb, sizeof(*req));
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	const char *fw_name;
+>  	const char *fw_name_old;
+>  	u16 chip_id;
+> @@ -1163,7 +1170,7 @@ static int nxp_recv_chip_ver_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>  
+>  static void nxp_handle_fw_download_error(struct hci_dev *hdev, struct v3_data_req *req)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	__u32 offset = __le32_to_cpu(req->offset);
+>  	__u16 err = __le16_to_cpu(req->error);
+>  	union nxp_v3_rx_timeout_nak_u timeout_nak_buf;
+> @@ -1191,7 +1198,7 @@ static void nxp_handle_fw_download_error(struct hci_dev *hdev, struct v3_data_re
+>  
+>  static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct v3_data_req *req;
+>  	__u16 len = 0;
+>  	__u16 err = 0;
+> @@ -1277,7 +1284,7 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>  
+>  static int nxp_set_baudrate_cmd(struct hci_dev *hdev, void *data)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	__le32 new_baudrate = __cpu_to_le32(nxpdev->new_baudrate);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	struct sk_buff *skb;
+> @@ -1362,7 +1369,7 @@ static int nxp_process_fw_dump(struct hci_dev *hdev, struct sk_buff *skb)
+>  	struct hci_acl_hdr *acl_hdr = (struct hci_acl_hdr *)skb_pull_data(skb,
+>  									  sizeof(*acl_hdr));
+>  	struct nxp_fw_dump_hdr *fw_dump_hdr = (struct nxp_fw_dump_hdr *)skb->data;
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	__u16 seq_num = __le16_to_cpu(fw_dump_hdr->seq_num);
+>  	__u16 buf_len = __le16_to_cpu(fw_dump_hdr->buf_len);
+>  	int err;
+> @@ -1439,7 +1446,7 @@ static int nxp_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+>  /* NXP protocol */
+>  static int nxp_setup(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct serdev_device *serdev = nxpdev->serdev;
+>  	char device_string[30];
+>  	char event_string[50];
+> @@ -1475,7 +1482,7 @@ static int nxp_setup(struct hci_dev *hdev)
+>  
+>  static int nxp_post_init(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  
+>  	if (nxpdev->current_baudrate != nxpdev->secondary_baudrate) {
+> @@ -1491,7 +1498,7 @@ static int nxp_post_init(struct hci_dev *hdev)
+>  
+>  static void nxp_hw_err(struct hci_dev *hdev, u8 code)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  
+>  	switch (code) {
+>  	case BTNXPUART_IR_HW_ERR:
+> @@ -1505,7 +1512,7 @@ static void nxp_hw_err(struct hci_dev *hdev, u8 code)
+>  
+>  static int nxp_shutdown(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct sk_buff *skb;
+>  	u8 pcmd = 0;
+>  
+> @@ -1529,7 +1536,7 @@ static int nxp_shutdown(struct hci_dev *hdev)
+>  
+>  static bool nxp_wakeup(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  
+>  	if (psdata->c2h_wakeupmode != BT_HOST_WAKEUP_METHOD_NONE)
+> @@ -1540,7 +1547,7 @@ static bool nxp_wakeup(struct hci_dev *hdev)
+>  
+>  static void nxp_reset(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  
+>  	if (!ind_reset_in_progress(nxpdev) && !fw_dump_in_progress(nxpdev)) {
+>  		bt_dev_dbg(hdev, "CMD Timeout detected. Resetting.");
+> @@ -1550,7 +1557,7 @@ static void nxp_reset(struct hci_dev *hdev)
+>  
+>  static int btnxpuart_queue_skb(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  
+>  	/* Prepend skb with frame type */
+>  	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
+> @@ -1561,7 +1568,7 @@ static int btnxpuart_queue_skb(struct hci_dev *hdev, struct sk_buff *skb)
+>  
+>  static int nxp_enqueue(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct ps_data *psdata = &nxpdev->psdata;
+>  	struct hci_command_hdr *hdr;
+>  	struct psmode_cmd_payload ps_parm;
+> @@ -1693,7 +1700,7 @@ static void btnxpuart_tx_work(struct work_struct *work)
+>  
+>  static int btnxpuart_open(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	int err = 0;
+>  
+>  	err = serdev_device_open(nxpdev->serdev);
+> @@ -1708,7 +1715,7 @@ static int btnxpuart_open(struct hci_dev *hdev)
+>  
+>  static int btnxpuart_close(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  
+>  	serdev_device_close(nxpdev->serdev);
+>  	skb_queue_purge(&nxpdev->txq);
+> @@ -1722,7 +1729,7 @@ static int btnxpuart_close(struct hci_dev *hdev)
+>  
+>  static int btnxpuart_flush(struct hci_dev *hdev)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  
+>  	/* Flush any pending characters */
+>  	serdev_device_write_flush(nxpdev->serdev);
+> @@ -1784,7 +1791,7 @@ static const struct serdev_device_ops btnxpuart_client_ops = {
+>  
+>  static void nxp_coredump_notify(struct hci_dev *hdev, int state)
+>  {
+> -	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	struct btnxpuart_dev *nxpdev = hci_get_nxpdev(hdev);
+>  	struct serdev_device *serdev = nxpdev->serdev;
+>  	char device_string[30];
+>  	char event_string[50];
+> @@ -1877,7 +1884,8 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
+>  	nxpdev->hdev = hdev;
+>  
+>  	hdev->bus = HCI_UART;
+> -	hci_set_drvdata(hdev, nxpdev);
+> +	hci_set_drvdata(hdev, &nxpdev->hu);
+> +	nxpdev->hu.priv = nxpdev;
+>  
+>  	hdev->manufacturer = MANUFACTURER_NXP;
+>  	hdev->open  = btnxpuart_open;
+> 
 
-Makes sense to me.
+I tested this on my i.MX93 FRDM and I confirm it's working. Can't say that I
+like it, but...
+
+Regards,
+Francesco
+
+
+
 
