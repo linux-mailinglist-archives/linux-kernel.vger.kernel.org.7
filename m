@@ -1,318 +1,274 @@
-Return-Path: <linux-kernel+bounces-864379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD0EBFAA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:45:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B0FBFAA81
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F9CF504EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:44:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D56B94F5A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A442D2F3C0F;
-	Wed, 22 Oct 2025 07:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtxWl178"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5A2D6604;
+	Wed, 22 Oct 2025 07:45:42 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65C22F363E;
-	Wed, 22 Oct 2025 07:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4426E6EB
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761119083; cv=none; b=Q3u39RxM4euu5ss7U4ioNu9Lg5Nc+OLb+ur7Uudv1eaxJzfXkzabt+AujZvgRI+2wQJd+AuQ90567Fg9d5QsacKNfIpX4QDlig+bmP+y1aj/XVak31odd1blo4Jnh9SqFoNUaooYsr5LcAIJzjxtbfsy0r+3zn7xFWX+jFdkI8k=
+	t=1761119141; cv=none; b=lBzI9+pXPnrbGqeQq7UTHweNAwGx8/oj9nlz7lB1anvkdKF63kxqwVwN/4+3+5yn+xmF0PlLBnEAynVBMIYV+5cJrpukClpK9+B5wxwTSA4Z5pLTdsg5sUlSJp35FR//0spl9rQXvS3iD4lyusR81rACG9zOHAy/HGubZiqFugU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761119083; c=relaxed/simple;
-	bh=dOaaUGpCoWK/3UecfDVD5nwyOjAWut3PtEie6hbPpME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlpesaSYb8LD1YYSsoec7VWDJ+60E6ze03BeC+CX7THE280lciaGWARstSCQMo3aHzgPxDkuDDD+h+X0oLUnl0SNFRGNkcZne/IPzOfB9HGL5y8UPnEJzMaHQqVmxyb3fTG0bf6NxcwQosTTLrLga2+ydwfjquFUCn/vxEPFqZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtxWl178; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFA7C4CEE7;
-	Wed, 22 Oct 2025 07:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761119083;
-	bh=dOaaUGpCoWK/3UecfDVD5nwyOjAWut3PtEie6hbPpME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UtxWl178ZkpUUG2PeSVOEvkUfpCWl2Z9D/H7AHnF49qhriBnzBKTAomAu0XHM79kP
-	 Qh4OA2nyXfP5c3KXZ0bfpbmrVC+k5IjtHeOjePT3P7vUUM40/ju8ykgOCgjSB84+dP
-	 bvbrOYvPJ6wwSG0253pFzGmNSLmLGf5E4TnWr07wd/Gh8I4DbbSTNMYqwl/DknLWb6
-	 qzzegwwkCUrCNpyA3hXYOCjS8jSsHhuI/GptCDOl0udsIx8KnGUdMOyZpOfaYqlope
-	 2vTADlxjpsBfJtJQj5KU5Bo6lmoUNqFseRrxGFBV/eqaJ5uAyB+JlEndQ8AA/s3wKj
-	 7z2frVqTgDKUw==
-Date: Wed, 22 Oct 2025 09:44:40 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: add exynos8890 SoC
-Message-ID: <20251022-affable-arrogant-coucal-3f7fbc@kuoka>
-References: <20251017161334.1295955-1-ivo.ivanov.ivanov1@gmail.com>
- <20251017161334.1295955-2-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1761119141; c=relaxed/simple;
+	bh=a/T04ZkBonHaSj9LogmYs7O4+MD77IySVFh8zs9QLDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oPH6TCVOMYVeWy1oUcXdNnuMAbM11IbQ/tjBLCaYcK6XWuhcZJvxmZS4c1t9NytAlofW1Z9G6s3h/nDcVAAJau6sqRuws4lMuiKQvhyw4ZIjy+4BsEdPWYB5MZ2kjrTgf7qWV5Ek4HQm7L3ULxjJ9kIBD0QuuVNMhmlCwESi41o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-54aa5f70513so1723097e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:45:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761119138; x=1761723938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAdjmTMFvX9GF5gAa+D8JhWfn0fgYJ2cKUltMzt7uhw=;
+        b=fPPMe9BQUELeXSUDMdvvpHQytPY4R/cPSYkfUPeJp6XFb6GXLqQPofp2+96vwTZbRs
+         uM2uA0GPSaql1DUw3a+4FrEDOge7ygaCCr136Phex3boobF9jCiPG3qsowdXI8tqz7UA
+         UssvpvH2uTK6jBe8r7pj5aJ4NhJDpFLAxh/4uJXW4CFKN3o9Jf8cSSFtU36duFXoL81A
+         vV5hL7dQMh3MfCYD767s7AVdErfQerrlx86GE7cgyQAWQjtEzbI4Azi6Do/7kxFoEoEw
+         pRXbzkSf5yKXgzoupMCqPeLEyOpH2LRgNmqx3JdAHapLrvE+lqlr8tlaasfAfvf5a23G
+         s3BA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWzzotuD3pEth2NqVvY1xW5zuizhTqfvSrEtmhyx4DO4QWV1C380ptiIKN7PwZKHtDeXkt+w7XdiHdp/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyHhK+OkjY3WIiUfLt8ruJWaNcedKAfSFe3wp7U4MSFWWgm/P3
+	1ZO+lT9/RN9fFdFcBopEGnSPu07vkBWdXlCvZk20TOYG9SUjcxTiPg8JLrrU0y5g
+X-Gm-Gg: ASbGncsmSYQ/UNrO4pUDiaLTmp8Kt8FmCjQ6/pfKImNHYQ61DpzncZozmH2YH5Bwug9
+	Q+cVGhNmHXSE+MyBrZypFJu99pK6W+/DbEbcmuqwad4ZQBm89UmiVp4UWRlEvSrB/GsJcIm6sRf
+	Gcv9QWH7AYuxCtFICUCL15kMwT0Pd2vhMjZ26H6wCfUHeOOUy/jtveQw7aR/JDRoX/lH16pOIJB
+	YfelFJnhXEZ43Jvt34tqwS6x6rHCRI9cSRdK4Ox9V3FMaGEYzn63SZ7VGHAhB/UiyzsccFXVyCR
+	PxfHhfQVwdkPo6SJYaEt0WtrH6vzJRvfGz4NmH3IhOt4Wj1rgdMsQDsRqH0rR9318zTuRh6aWE6
+	qlt64OZ0zp2lgwuTEAeNtPKaqXj7r2gFf6Og68gQJTmjIQ9BLp7FCn2RRmMGOAPD0DOoZnSWzyz
+	9BZdsGY9K8/mR05LGwkYlbkCV4NRfoyxitwzyR8g==
+X-Google-Smtp-Source: AGHT+IFXoiNqwPbjafrLFwtDAIBkvHbvBvP6KJFm1QvuH/Nu4aYsNMbv5rTFKa8+IOAJ63Bym5ounw==
+X-Received: by 2002:a05:6122:3183:b0:54a:87d3:2f09 with SMTP id 71dfb90a1353d-5564ed88757mr6179931e0c.2.1761119138274;
+        Wed, 22 Oct 2025 00:45:38 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-556620d8d1dsm4491997e0c.18.2025.10.22.00.45.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 00:45:37 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-9310a7b2668so1737648241.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:45:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV8SBqHzROHMhSicCh5m4bGlSxWkpwxXXHZEY7AyLBUtC5vG2j1+9bh0Sgtn1J7SbzBlOKUEZ7q9NZHhNU=@vger.kernel.org
+X-Received: by 2002:a05:6102:f09:b0:5d5:f6ae:38d1 with SMTP id
+ ada2fe7eead31-5db093f61bfmr2258135137.38.1761119137320; Wed, 22 Oct 2025
+ 00:45:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com>
+ <CAMuHMdVwAkC0XOU_SZ0HeH0+oT-j5SvKyRcFcJbbes624Yu9uQ@mail.gmail.com>
+ <89a20c14-dd0f-22ae-d998-da511a94664a@linux.intel.com> <CAMuHMdUbseFEY8AGOxm2T8W-64qT9OSvfmvu+hyTJUT+WE2cVw@mail.gmail.com>
+ <20844374-d3df-cc39-a265-44a3008a3bcb@linux.intel.com>
+In-Reply-To: <20844374-d3df-cc39-a265-44a3008a3bcb@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Oct 2025 09:45:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWD_GJ0hpJODBNKeR77UhKMW2CuWWf-xJo2kuL514_Tpw@mail.gmail.com>
+X-Gm-Features: AS18NWAyk-xCGiK52nBlQ2ymPt7U7TZu5lcTJpfjk9UqwXEt8Q8nt7D9Ftjb-ak
+Message-ID: <CAMuHMdWD_GJ0hpJODBNKeR77UhKMW2CuWWf-xJo2kuL514_Tpw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] PCI & resource: Make coalescing host bridge windows safer
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251017161334.1295955-2-ivo.ivanov.ivanov1@gmail.com>
 
-On Fri, Oct 17, 2025 at 07:13:29PM +0300, Ivaylo Ivanov wrote:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-aud
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_AUD PLL clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: pll
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-bus0
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_BUS0 ACLK 528MHz clock (from CMU_TOP)
-> +            - description: CMU_BUS0 ACLK 200MHz clock (from CMU_TOP)
-> +            - description: CMU_BUS0 PCLK 132MHz clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: "528"
-> +            - const: "200"
-> +            - const: "132"
+Hi Ilpo,
 
-We do not want the frequency here, for sure not frequency alone. There
-is no such code/syntax. Really.  Please do not invent your own style.
-That's just pclk. You describe here the logical name of this clock
-input.
+On Tue, 21 Oct 2025 at 13:54, Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+> On Tue, 21 Oct 2025, Geert Uytterhoeven wrote:
+> > On Mon, 20 Oct 2025 at 18:20, Ilpo J=C3=A4rvinen
+> > <ilpo.jarvinen@linux.intel.com> wrote:
+> > > On Mon, 20 Oct 2025, Geert Uytterhoeven wrote:
+> > > > On Fri, 10 Oct 2025 at 16:42, Ilpo J=C3=A4rvinen
+> > > > <ilpo.jarvinen@linux.intel.com> wrote:
+> > > > > Here's a series for Geert to test if this fixes the improper coal=
+escing
+> > > > > of resources as was experienced with the pci_add_resource() chang=
+e (I
+> > > > > know the breaking change was pulled before 6.18 main PR but I'd w=
+ant to
+> > > > > retry it later once the known issues have been addressed). The ex=
+pected
+> > > > > result is there'll be two adjacent host bridge resources in the
+> > > > > resource tree as the different name should disallow coalescing th=
+em
+> > > > > together, and therefore BAR0 has a window into which it belongs t=
+o.
+> > > > >
+> > > > > Generic info for the series:
+> > > > >
+> > > > > PCI host bridge windows were coalesced in place into one of the s=
+tructs
+> > > > > on the resources list. The host bridge window coalescing code doe=
+s not
+> > > > > know who holds references and still needs the struct resource it'=
+s
+> > > > > coalescing from/to so it is safer to perform coalescing into enti=
+rely
+> > > > > a new struct resource instead and leave the old resource addresse=
+s as
+> > > > > they were.
+> > > > >
+> > > > > The checks when coalescing is allowed are also made stricter so t=
+hat
+> > > > > only resources that have identical the metadata can be coalesced.
+> > > > >
+> > > > > As a bonus, there's also a bit of framework to easily create kuni=
+t
+> > > > > tests for resource tree functions (beyond just resource_coalesce(=
+)).
+> > > > >
+> > > > > Ilpo J=C3=A4rvinen (3):
+> > > > >   PCI: Refactor host bridge window coalescing loop to use prev
+> > > > >   PCI: Do not coalesce host bridge resource structs in place
+> > > > >   resource, kunit: add test case for resource_coalesce()
+> > > >
+> > > > Thanks for your series!
+> > > >
+> > > > I have applied this on top of commit 06b77d5647a4d6a7 ("PCI:
+> > > > Mark resources IORESOURCE_UNSET when outside bridge windows"), and
+> > > > gave it a a try on Koelsch (R-Car M2-W).
+> > >
+> > > So the pci_bus_add_resource() patch to rcar_pci_probe() was not inclu=
+ded?
+> > > No coalescing would be attempted without that change.
+> >
+> > Sorry, I didn't realize you wanted that (and anything else) to be
+> > included, too.  Please tell me the exact base I should use for testing,
+> > and I will give it another run.
+>
+> I'm sorry, it's indeed a bit confusing as some of these patches never
+> have been in Linus' tree.
+>
+> So I'm interested on what's the result with these changes/series together=
+:
+>
+> [PATCH 1/2] PCI: Setup bridge resources earlier
+> [PATCH 2/2] PCI: Resources outside their window must set IORESOURCE_UNSET
+> [PATCH 1/1] PCI: rcar-gen2: Add BAR0 into host bridge resources
+> [PATCH 1/3] PCI: Refactor host bridge window coalescing loop to use prev
+> [PATCH 2/3] PCI: Do not coalesce host bridge resource structs in place
+> [PATCH 3/3] resource, kunit: add test case for resource_coalesce()
+>
+> You might also want to change that pci_dbg() in the IORESOURCE_UNSET patc=
+h
+> to pci_info() (as otherwise dyndbg is necessary to make it visible).
 
-ACLK is AXI bus clock, so if this block receives only one ACLK, then
-this is just "axi" or "bus". Recently we were calling this "bus".
+Thanks, all done:
 
-Same in other places. If two AXI bus clocks come in, they could be named
-bus0 and bus1, or in this case - because these are sources for
-generating further ACLKs - bus_528 and bus_200, to indicate that one
-will be for AXI bus clocked 528 MHz and other for 200 MHz.
+    $ git cherry -v --abbrev=3D1 v6.18-rc2^
+    + 211ddde0 Linux 6.18-rc2
+    + 3fdaf2 PCI: Setup bridge resources earlier
+    + 5be02e5 PCI: Resources outside their window must set IORESOURCE_UNSET
+    + adf6f11 PCI: rcar-gen2: Add BAR0 into host bridge resources
+    + eecb500 PCI: Refactor host bridge window coalescing loop to use prev
+    + 60470b3 PCI: Do not coalesce host bridge resource structs in place
+    + afe3ec resource, kunit: add test case for resource_coalesce()
+    + 487c98 Use dev_info() in drivers/pci/probe.c:__pci_read_base()
+IORESOURCE_UNSET path
 
-Please wait for some other opinions, because same rule I would like to
-apply to ExynosAuto, Artpec and Google GS.
+Compared to v6.18-rc2, dmesg changed (for the first PCI/USB instance)
+like:
 
-@Raghav Sharma, @Alim Akhtar, @Sam Protsenko, @Peter Griffin, @Andr=C3=A9
-Draszik  - share your thoughs please?
+     pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
+     pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff
+-> 0x00ee080000
+     pci-rcar-gen2 ee090000.pci: PCI: revision 11
+     pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
+     pci_bus 0000:00: root bus resource [bus 00]
+     pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
+    +pci_bus 0000:00: root bus resource [mem 0xee090000-0xee090bff]
+     pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
+PCI endpoint
+     pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
+    -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
+    +pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
+initial claim (no window)
+    +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
+     pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
+PCI endpoint
+    -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
+    +pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
+claim (no window)
+    +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
+     pci 0000:00:01.0: supports D1 D2
+     pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
+     pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
+PCI endpoint
+    -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
+    +pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
+claim (no window)
+    +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
+     pci 0000:00:02.0: supports D1 D2
+     pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
+     PCI: bus0: Fast back to back transfers disabled
+     pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
+     pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
+     pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
+    +pci_bus 0000:00: resource 5 [mem 0xee090000-0xee090bff]
+     pci 0000:00:01.0: enabling device (0140 -> 0142)
+     pci 0000:00:02.0: enabling device (0140 -> 0142)
 
-And to clarify in simple terms for others or for the future:
-1. HCLK would be the AHB bus, so also bus. Both ACLK and HCLK are for
-memory accesses.
-2. PCLK is APB bus, for registers.
-3. SCLK is for main operation of the block (called special clock, but no
-clue what is so special about it).
+> The expected result is that those usb resources are properly parented and
+> the ee080000-ee08ffff and ee090000-ee090bff are not coalesced together (a=
+s
+> that would destroy information). So something along the lines of:
+>
+>     ee080000-ee08ffff : pci@ee090000
+>       ee080000-ee080fff : 0000:00:01.0
+>         ee080000-ee080fff : ohci_hcd
+>       ee081000-ee0810ff : 0000:00:02.0
+>         ee081000-ee0810ff : ehci_hcd
+>     ee090000-ee090bff : ee090000.pci pci@ee090000
 
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-bus1
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_BUS1 ACLK 528MHz clock (from CMU_BUS0)
-> +            - description: CMU_BUS1 PCLK 132MHz clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: "528"
-> +            - const: "132"
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-ccore
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_CCORE ACLK 800MHz clock (from CMU_TOP)
-> +            - description: CMU_CCORE ACLK 264MHz clock (from CMU_TOP)
-> +            - description: CMU_CCORE ACLK G3D 800MHz clock (from CMU_TOP)
-> +            - description: CMU_CCORE ACLK 528MHz clock (from CMU_TOP)
-> +            - description: CMU_CCORE ACLK 132MHz clock (from CMU_TOP)
-> +            - description: CMU_CCORE PCLK 66MHz clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: "800"
-> +            - const: "264"
-> +            - const: g3d
-> +            - const: "528"
-> +            - const: "132"
-> +            - const: "66"
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-disp0
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_DISP0 ACLK 0 400MHz clock (from CMU_TOP)
-> +            - description: CMU_DISP0 ACLK 1 400MHz clock (from CMU_TOP)
-> +            - description: CMU_DISP0 DECON0 ECLK0 clock (from CMU_TOP)
-> +            - description: CMU_DISP0 DECON0 VCLK0 clock (from CMU_TOP)
-> +            - description: CMU_DISP0 DECON0 VCLK1 clock (from CMU_TOP)
-> +            - description: CMU_DISP0 HDMI audio clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: "0_400"
-> +            - const: "1_400"
-> +            - const: eclk0
-> +            - const: vclk0
-> +            - const: vclk1
-> +            - const: audio
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-disp1
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_DISP1 ACLK 0 400MHz clock (from CMU_TOP)
-> +            - description: CMU_DISP1 ACLK 1 400MHz clock (from CMU_TOP)
-> +            - description: CMU_DISP1 DECON1 ECLK0 clock (from CMU_TOP)
-> +            - description: CMU_DISP1 DECON1 ECLK1 clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: "0_400"
-> +            - const: "1_400"
-> +            - const: eclk0
-> +            - const: eclk01
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-fsys0
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_FSYS0 ACLK 200MHz clock (from CMU_TOP)
-> +            - description: CMU_FSYS0 USB30DRD clock (from CMU_TOP)
-> +            - description: CMU_FSYS0 MMC0 clock (from CMU_TOP)
-> +            - description: CMU_FSYS0 UFS UNIPRO20 clock (from CMU_TOP)
-> +            - description: CMU_FSYS0 PHY 24MHz clock (from CMU_TOP)
-> +            - description: CMU_FSYS0 UFS UNIPRO config clock (from CMU_T=
-OP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: "200"
-> +            - const: usb
-> +            - const: mmc
-> +            - const: unipro20
+Compared to v6.18-rc2, the output of "lspci -v" or "cat /proc/iomem"
+did not change.  Hence for the two PCI/USB instances:
 
-Just "ufs"
+    ee080000-ee08ffff : pci@ee090000
+      ee080000-ee080fff : 0000:00:01.0
+        ee080000-ee080fff : ohci_hcd
+      ee081000-ee0810ff : 0000:00:02.0
+        ee081000-ee0810ff : ehci_hcd
+    ee090000-ee090bff : ee090000.pci pci@ee090000
+    ee0c0000-ee0cffff : pci@ee0d0000
+      ee0c0000-ee0c0fff : 0001:01:01.0
+        ee0c0000-ee0c0fff : ohci_hcd
+      ee0c1000-ee0c10ff : 0001:01:02.0
+        ee0c1000-ee0c10ff : ehci_hcd
+    ee0d0000-ee0d0bff : ee0d0000.pci pci@ee0d0000
 
-> +            - const: 24m
+Gr{oetje,eeting}s,
 
-No... really no. Half of these names feel random. ACLK 200 MHz is "200"
-but PHY 24 MHz is 24m... That's SCLK but I don't know from where does it
-come from, so what is the true source. Since it is used as ref clock for
-PHY, I would rather assume this is not "SCLK" but some fixed oscillator
-input. If you don't find the source of this clock giving any reasonable
-name, let it be just "sclk".
+                        Geert
 
-I understand that without hardware manual it is difficult to figure all
-this out and my requirements here do not make it easier. I appreciate
-your work.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> +            - const: unipro_cfg
-
-"ufs_cfg"
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8890-cmu-fsys1
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_FSYS1 ACLK 200MHz clock (from CMU_TOP)
-> +            - description: CMU_FSYS1 MMC2 clock (from CMU_TOP)
-> +            - description: CMU_FSYS1 UFS UNIPRO20 clock (from CMU_TOP)
-> +            - description: CMU_FSYS1 UFS UNIPRO config clock (from CMU_T=
-OP)
-> +            - description: CMU_FSYS1 PCIe PHY clock (from CMU_TOP)
-> +            - description: CMU_FSYS1 PCIe PLL clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: "200"
-> +            - const: mmc2
-
-mmc
-
-> +            - const: unipro20
-> +            - const: unipro_cfg
-
-Please keep common part same with fsys0, so the lists share as much as
-possible.  Same for other blocks.
-
-Best regards,
-Krzysztof
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
