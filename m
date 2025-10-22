@@ -1,138 +1,190 @@
-Return-Path: <linux-kernel+bounces-864033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680E5BF9C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:51:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18749BF9C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C01534E92D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCB4420113
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE7A221DB0;
-	Wed, 22 Oct 2025 02:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF71217733;
+	Wed, 22 Oct 2025 02:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dyHywGH7"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUjimvD7"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051CD15687D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1956720298D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761101459; cv=none; b=QL+mgHl6N/PPm+TWdevyua5AYXmA3Ui8xRDUFTCGdZn2eJ0VOyq6iIvjhg35zGstixLnP36sGzfs62TvWANwJvJWa0p42QmsjE6XENNwFJc7c+Gj2PvGH51QVUijDHWND8861uSevS5KeDRsU/zSwWqTKVq6249Ag+upM8D1FSs=
+	t=1761101479; cv=none; b=lCP6S4af5uQK4n7JUqVoiY/KqViJ7gJNbm/79VeN01UdWt5WQc01RNOO188LJZ11uHX8m/a/FhQzxD83/6dRjKkcPCyoiAsLLc1p3kJ9FGUKawSZyVLO0AD7YSVW/6A0c3VsxfuUuOib7sDFWAban3S7NzsHB8NLiyQ1WX3hsCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761101459; c=relaxed/simple;
-	bh=74Q/QyxC69gHYqKvcyXF1RTLpkWKNAxTLiRfo0xsGck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c5pTG/top1j3D1CrthV4iptuiN6cau41yi3xWSItfJr3YFz+kam2aYOPgzKf1JlEj/MMcJaEsRgl1/5JHwUTatPQ4MDx76vQh7PphvlIvdy8icoTr35d8f7jgxwUwU3R3AJGXIcGtYiNW2h8bYDoEKBOQvw5E9Ik/aEkhLo06gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dyHywGH7; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-290d48e9f1fso76455ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:50:57 -0700 (PDT)
+	s=arc-20240116; t=1761101479; c=relaxed/simple;
+	bh=DN2zzjuR1XBFiecBiRFeq+IT9NsiVCtgBLl23iLlhjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFyYfhT/46qC8duAKwL7mPoIeSWmuYFb3bN0KUxNkig3zkrJHCSmawcjBqeiC5PCpecoiaNEx3kYbXUOvqrNHhQzCfGQa91UH3JSadlhEgDTq7VYZvKU471Pp3JaYV5ehIaDzk7GVkQlxRQl+SWF67yklTa0MXneEFWU64x5l5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUjimvD7; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-88f79ae58f0so899836585a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761101457; x=1761706257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761101477; x=1761706277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=74Q/QyxC69gHYqKvcyXF1RTLpkWKNAxTLiRfo0xsGck=;
-        b=dyHywGH78S5yBX7YyqKiXj5ikSYRGPZ+VUDVPU5Fa2P9iGR4sh/wx9xP2sJP8DV9j+
-         7/7LFvWcUItwKSLr7HNydWPZ09SVE6VXs2EIcap5pAhm7b/D+ql6x/PHkfklwyttMANL
-         Eoujm0q12KvsCdobGOnayhIc1irUUZ+c5QMNMgvPPIsUhjjXLAk1uWVVHr2gXwCO7Ga7
-         FzzhADifTQbUCjmgacV1Yv2WDqfdR2/lP3yX+z+bkxOrR+IpK9xETQWKxDowR8QPpUAJ
-         DUktG+MBZGvfA9mrcgyH5dHmrILCNZHIlcOnlMnrSm1ZGZAUY+9tapCIwXfOVQF33Q9T
-         /xaQ==
+        bh=NyhW697pM1Zdwkt3dzJURt6zsYm6OZUy7a/3856PR+s=;
+        b=iUjimvD7u6MSMKejIaVDE/L0eo+gPeNWv3PPnY1iqpi+p37zO2oaIdybs/pQkVm5Wr
+         A9GZc+BKC3XOcNTknH+6B35fEDjiCSdYzl20aORAYQH2LHbg3qPLfnzkXH1Sa/nkq0jf
+         QiNHLOdU/hx8+o872gwQq38WA0IA9HaZaupslEAnbPR6qxfoBfYa+VinwiJM1PUdWo1x
+         aUcfyssYMdns2xZbH53sgrI1ICZxtJ3J64JM3Yzn8DxYEOhjvsz8iT9MorGacJS0PdTU
+         NfimfTkJkUBo5ORm9vSg4j5TzLsOXWVGBKJhO8e2sYGDOJwM6KvyekkyijzfuBt3Lid7
+         FYag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761101457; x=1761706257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761101477; x=1761706277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=74Q/QyxC69gHYqKvcyXF1RTLpkWKNAxTLiRfo0xsGck=;
-        b=dAcmoPYv7jvJKAblO37o98YpGFG+XuTA6lsGHJUUTVrzaOUNKbJRR/3zgD4V+gofEU
-         3d8Tg7r9iDb29WwM1I/7tz3HbrEQo6d6botVT8DjlKbqEufIEOtvFrvi4YmZsOzKsO8v
-         42BKD+MZYrChtydoPgOvTfT4yuI1OhoCCe3RUgdVp5ZzaITJYS4ELNdU9Zvm1X2F9Rxw
-         3y7PBDbbh/Q2hSB1KqjMcbR7yRohPrXn7JX2eYNxm3f9izawAtvZHTwsyjsNF2i2dClg
-         8wV0CTYGkqVTJYrhYo2tOFV+UqoqfRLT1Qxc9K+tpxqr2L80llMM8ZQ7LC+p+yBB6+oK
-         cFFw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/YLJCtF3SwQIFBsbPbeuYOmX9xKGUobr4wP79LxbMeFK3i3iHodT9lvP6bySbKUWsDLSAy7BVDh9LoP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuR5thdjEBSlW1bMMU+7x68sgtkDs0TJ0CwJ3Gt5D+LUM1awek
-	BB+BFF6z0WtcWJu8lxE2l94nFbOFF/H8zpiwMviG9dTTRjgBXTRJzcFWX8yDrClMOoKR4NbEQQx
-	pAZ+8VAjsPU3Irh7duvLqRzMHTUOu2cCvfS3oqhzV
-X-Gm-Gg: ASbGnctoghIdbs3cx9zyH0Wea1R9amebBqO4FD7mO3lMX0aW3zjwLP60mfhYuy+qAbP
-	Feskxv6DrAs5U8DMdzdfckIZ2xUAwsH5QcDlxHNlIYQy4Msxarx66lbkej/N/ulXUdeVZLIg6OB
-	tKASbvP3Irdhr80biKOZsNY32tPKc7EIpnhKivQod+tIOW5cQ0fYG7VhJM7H5Ps+DY63eJIOiMA
-	M0nCvSkl+IJ0HYX5eOIo4YTuLWy6XOk58Z3QB+pMDxHDJNcywKMs+IcU+GnfW0eocOC8Am278/Y
-	gPxoW1FsZsq47fbEfA==
-X-Google-Smtp-Source: AGHT+IFkG3kqBGNd46dgK6k1mDuBdTTvwZJXkiU044mOI8ZxoI9hkB/OVHaxUzIqj6um5XEsujlEKYLzOZVTQWu3PkY=
-X-Received: by 2002:a17:902:c409:b0:25b:d970:fe45 with SMTP id
- d9443c01a7336-2930238eaf8mr2130905ad.1.1761101457070; Tue, 21 Oct 2025
- 19:50:57 -0700 (PDT)
+        bh=NyhW697pM1Zdwkt3dzJURt6zsYm6OZUy7a/3856PR+s=;
+        b=nGu1IEuuXK2sKCUiIIyIKaACWresKRh/7T+Lt/suRRC3zGLzeJ9+b+vNnWAH+ieRRv
+         cMJ69qMA0gvk6uJ4H7GDLCXzH+negQJ68wlc2iLKZcmLz8uldGXQGcXTvZFx3MPogKrQ
+         UBB36LUQfU6KdQRAW/+8YSMJvwIxvKC9NPtYQW7bwFxK9HAOoZeiAYrgtrFqbaWFAMER
+         kUBBqUrnY9Q7QkvLAGhLE9PuLEJJ3N79pEIHYp7+bM+O10LqxadfK8B/xR/WgSPK0+76
+         YeeroP8++9tkb9y//hmTXU3wMvDptTFZQNRoX2RrIRavQ59F+yr8399w6ozSv9hsGJ6r
+         GLWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBomDVHmRll9TADPPIG5T4zVmwAbycMTFFvsIv1rB6W1b7XZCLa/9vmAE9bqkg0iiRccZ//a3CWoU++ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRu0Bm3DBGLJGp/hkOPRLwaaciaKNAsRac6URmZQNmr1JRaEkU
+	muWE///gt6sbWt39gxkbN/uV+Ie2C92mLJvSzPkjLfD6TWX0iCllFXxU
+X-Gm-Gg: ASbGncsM6GOlXkbtQjtziG/372d0Hs6WgHDHwTULIfCEMBMueGgocN5Ny4Mfosb5XzU
+	/+Wbn0n1ZlOyZbwbpKetB4OIDBPPhKI0eE9obKyAOqEgG0wLaGm6ITLmTX3K6bkrLLeXSTHql3w
+	Bbugmo9WC54OBz/bbyxjGZrBxBXR+CPcJBViT4EHthPQ8sp+pS4DDb/9N3yKuc8x017UUs1cTDm
+	Cr+niyXxXRTa32BDYhdFTD/2CICYHjVCIvwUchzAx6PhZe1xU/o4JYWFOTxUuTib30Q8RMJXjXI
+	Fk2bt6lTil3ViyOxLGQjGGttDM89qWb5BRDP9bTXjB/G9Dgofgi7vkd2zvEqs7I3d8Oj0FFzHTd
+	jTq3qpleNhWkkBx9krSU9dhaXfMZdCRokeizfzsDftZrT6L4NIVA3iLt9A7jlKnxmaWb1G6iPZF
+	m6p7wICekObFdEj7+LAC3dufstRq3kvooSfNueGDY7vs6PVvrv+DCGSyBfilYYUyur/fMdysy9a
+	Son
+X-Google-Smtp-Source: AGHT+IH76FHEmO22At9FXgcUJuu8my/jDBE2unDwsrmXoj8Aexa9wRTIw+yZ5wFWZlv6yISqjZiYrQ==
+X-Received: by 2002:a05:622a:7505:b0:4e8:9d50:f751 with SMTP id d75a77b69052e-4e89d50f8b6mr172479011cf.60.1761101476654;
+        Tue, 21 Oct 2025 19:51:16 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cc8d611esm882004585a.11.2025.10.21.19.51.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 19:51:16 -0700 (PDT)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CE113F40066;
+	Tue, 21 Oct 2025 22:51:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 21 Oct 2025 22:51:15 -0400
+X-ME-Sender: <xms:o0b4aDOFoTMqlXFTW_4S8zGXQ6pFKR73m_wKUoD91VzSFM7ZklL7CQ>
+    <xme:o0b4aJzzptvvKw7KN1KJOuafCmtset7LZ8qFyXjNVSSuoEErFN4yDmh0j9ni90d7p
+    Tb68hj6071MdvWQ6ryX3mXUg87t8Z5Na9BYYF2zEceekAHnxODPPw>
+X-ME-Received: <xmr:o0b4aNoaFSm4dYbusiPo7dzShRFTIFwa4UIW0b9J3fK7MulSVkAByinDF39tpCILWzskiDAafoJ1QbZ3kkrnbmdI6Tp-2mgaFyk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvgedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffei
+    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphhtthhopehtgh
+    hlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehmihhnghhosehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehhphgrseiihihtohhrrdgtohhmpdhrtghpthhtohepph
+    gvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggrnhhivghlrdgr
+    lhhmvghiuggrsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqkh
+    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    nhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhmrghurhgvrh
+    esghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:o0b4aBOIwnPC6jKnxdfYeMUHZytZ1Qw8nEOKNb2bL9GyoNCsVoYGGw>
+    <xmx:o0b4aJeYI0KEZLf71lOqD8xYCDufDI8BMt_RzMUr1PzhC2uh_5Ro-Q>
+    <xmx:o0b4aPVzcuwstMw_Z-hwuP-4XIaD6MCrOqgNfhLNy4cGW6cwJ5iyIw>
+    <xmx:o0b4aCCLXqY5vaHc1fcKSck8AwA0p-EBhRmbKRO9dTbA9J8cu9-Ejw>
+    <xmx:o0b4aC57KhuNHMyKLI77sYp8NT8r_tmFFBdtVpBm-UwfFz_YX9b3QQAD>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 22:51:15 -0400 (EDT)
+Date: Tue, 21 Oct 2025 22:51:15 -0400
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <aPhGo5WjbPM1Yu95@tardis-2.local>
+References: <20251022114644.4437c2d9@canb.auug.org.au>
+ <aPg_EnqRSqmFVdOX@tardis-2.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901160930.1785244-1-pbonzini@redhat.com> <20250901160930.1785244-5-pbonzini@redhat.com>
- <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
- <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com> <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
- <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com> <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
- <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
- <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com> <5b007887-d475-4970-b01d-008631621192@intel.com>
- <CAGtprH-WE2_ADCCqm2uCvuDVbx61PRpcqy-+krq13rss2T_OSg@mail.gmail.com>
- <CAGtprH_sedWE_MYmfp3z3RKY_Viq1GGV4qiA0H5g2g=W9LwiXA@mail.gmail.com> <08d64b6e-64f2-46e3-b9ef-87b731556ee4@intel.com>
-In-Reply-To: <08d64b6e-64f2-46e3-b9ef-87b731556ee4@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Tue, 21 Oct 2025 19:50:44 -0700
-X-Gm-Features: AS18NWB82gI5mzQohtK6dqujASE7pQMR3DBpwJ7JLgGvKBNTIxbWBEnf-GbjPkc
-Message-ID: <CAGtprH860CZk3V_cpYmMz4mWps7mNbttD6=GV-ttkao1FLQ5tg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
- partial write erratum
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Juergen Gross <jgross@suse.com>, "Reshetova, Elena" <elena.reshetova@intel.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"kas@kernel.org" <kas@kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "Chatre, Reinette" <reinette.chatre@intel.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "Williams, Dan J" <dan.j.williams@intel.com>, 
-	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
-	"Gao, Chao" <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>, 
-	"Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPg_EnqRSqmFVdOX@tardis-2.local>
 
-On Tue, Oct 21, 2025 at 10:08=E2=80=AFAM Dave Hansen <dave.hansen@intel.com=
-> wrote:
->
-> On 10/18/25 08:54, Vishal Annapurve wrote:
-> > Circling bank on this topic, I would like to iterate a few points:
-> > 1) Google has been running workloads with the series [1] for ~2 years
-> > now, we haven't seen any issues with kdump functionality across kernel
-> > bugs, real hardware issues, private memory corruption etc.
->
-> Great points and great info!
->
-> As a next step, I'd expect someone (at Google) to take this into
-> consideration and put together a series to have the kernel comprehend
-> those points.
+On Tue, Oct 21, 2025 at 10:18:58PM -0400, Boqun Feng wrote:
+> On Wed, Oct 22, 2025 at 11:46:44AM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> 
+> Hi Stephen,
+> 
+> Thanks for reporting this.
+> 
+> Cc Mathhew and Danilo,
+> 
 
-Then is it safe to say that Intel doesn't consider:
-* Adding the support to just reset PAMT memory [1] to this series and
-* Modifying the logic in this patch [2] to enable kdump and keep kexec
-support disabled in this series
+(now really Cc them...)
 
-as a viable direction upstream for now until a better solution comes along?
+Regards,
+Boqun
 
-If not, can kdump be made optional as Juergen suggested?
-
-[1] https://lore.kernel.org/lkml/6960ef6d7ee9398d164bf3997e6009df3e88cb67.1=
-727179214.git.kai.huang@intel.com/
-[2] https://lore.kernel.org/all/20250901160930.1785244-5-pbonzini@redhat.co=
-m/
+> > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> > 
+> > error[E0594]: cannot assign to data in dereference of `lock::Guard<'_, T, MutexBackend>`
+> >   --> rust/kernel/debugfs/traits.rs:64:9
+> >    |
+> > 64 |         *self.lock() = val;
+> >    |         ^^^^^^^^^^^^ cannot assign
+> >    |
+> >    = help: trait `DerefMut` is required to modify through a dereference, but it is not implemented for `lock::Guard<'_, T, MutexBackend>`
+> > 
+> 
+> Could we make the `impl Reader` for `Mutex<T>` to bound where `T:
+> Unpin`? Since `Mutex<T>` is structurally pinning `T`, you cannot use
+> `*self.lock()` to overwrite `T` directly. And that'll fix this.
+> 
+> Thanks!
+> 
+> Regards,
+> Boqun
+> 
+> > error: aborting due to 1 previous error
+> > 
+> > For more information about this error, try `rustc --explain E0594`.
+> > 
+> > Caused by commit
+> > 
+> >   da123f0ee40f ("rust: lock: guard: Add T: Unpin bound to DerefMut")
+> > 
+> > I have used the tip tree from next-20251021 for today.
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell
+> 
+> 
 
