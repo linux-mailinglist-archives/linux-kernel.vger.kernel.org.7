@@ -1,227 +1,102 @@
-Return-Path: <linux-kernel+bounces-865377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7E5BFCEB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3E4BFCEC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 543E8352961
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:37:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 081F034D0D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBA934CFCF;
-	Wed, 22 Oct 2025 15:37:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A009734D919
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCA934B181;
+	Wed, 22 Oct 2025 15:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjfB7p84"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C6C34B1B9;
+	Wed, 22 Oct 2025 15:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761147432; cv=none; b=nUfKIIX2Lm0xupx9uOcCPdRIoD0qaEW1fXJVuH0paKnUu4AKpJ2MSsU5rk+pw13JTfj+j/XcjdLc+l1cGRBg34jbN4UdhIMpoeEHEw7EAvP1T/YNQp7B0Ip/id3j6YUk6LEJ/OBI14F1mN1T8gqidgi/gyQW1BxglR9iQ3bjTtQ=
+	t=1761147477; cv=none; b=iMvGF1e3GMzpf8yPLZQQz+ALEu9ZBmdZhpcS94CVOWcdedul5ywZzt2S59hoaEZF8Epy6orL52XILM0cu0aDWZ+Gaoy5LKEUBkA45R1ys1H8Hw7c8/Khn0DZH4IWzwJOm11K6CCs/ds5FQ3K7cY5Zi2b+Gyl41N45M9OVVlB058=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761147432; c=relaxed/simple;
-	bh=Wp6YnOcdmUg+a0bq20MFilbw7hyOai1L0qGHzGX9YAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwM5nwoHNseGrF/anedU2eBLkXo6/wJjcm/MseCX/bRE06PEXWZ+q3et89U8gTb3YlWFBeSOWynNbCip4F1WE5MTkk6zQ+9y5RggGj+P3ffL03EIO8tVDFsq/G+9Ewsl01O4P/5Xyn5EurpT7Mtz3PTPS7it9vhs3w3S9A5N1lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3CC31655;
-	Wed, 22 Oct 2025 08:36:53 -0700 (PDT)
-Received: from [10.57.33.187] (unknown [10.57.33.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 68CB83F63F;
-	Wed, 22 Oct 2025 08:36:59 -0700 (PDT)
-Message-ID: <7974fa97-da7e-4d8e-ad41-37f1771d1f7b@arm.com>
-Date: Wed, 22 Oct 2025 16:36:57 +0100
+	s=arc-20240116; t=1761147477; c=relaxed/simple;
+	bh=jI6dcZtxyFt42f+IXIVCYLjP86ufsKVa2QjGx7tVqno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E8SBiTyxXpyvaAPjeM3l3fuLMnGEpBR4baCdaZeIgilP8S2+BPweaX6vOI562uIl3Ls2+kqWBJIAzzjipMSKAT5uHleq5nP+/z/Hv65ZPPNzFXSyob9N7wlc6h36tTzKXlAhbfTCLboNxdcg1PuZ7AB0dllU/kNQ4Zh/U9J1Bkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjfB7p84; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1980C4CEE7;
+	Wed, 22 Oct 2025 15:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761147476;
+	bh=jI6dcZtxyFt42f+IXIVCYLjP86ufsKVa2QjGx7tVqno=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HjfB7p84nmCKYzvJBwLrUL+F/WVAP0mCvtFhCYZqtJ7nLjz4BQsjFUt+NTZ74GQ/a
+	 VHJH51mRHFMdPXUtblZyHkvIjmqYXImgtJHjZKMB0N+07d06oXvbpBaJjNSqomIBoX
+	 bKMrkWm6W2OSpGJyEFAsmrux25nE7waDE0kmg1rS7AsD++W2rbI82kcm3ScS9hl39q
+	 6s7QpOGXV0TJ5AtlPZTu2nC0orGMfgiJyRsdXon3TbQubPf0O6ymDf5ln1sGMBFAw+
+	 3THt1JxO0vlsNvNeA11dm5emg4J7NquYXjJtYjbLCEQ9lA/Y9NVwP5jwVEMbTuXw1b
+	 ckzAERbGARNSQ==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] tracing: Add an option to show symbols in _text+offset for function profiler
+Date: Thu, 23 Oct 2025 00:37:51 +0900
+Message-ID: <176114747153.315239.6863821259073466010.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and FW
- event processing
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Ketil Johnsen <ketil.johnsen@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
- <20251022143751.769c1f23@fedora>
- <e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
- <20251022160033.2f645528@fedora>
- <1cffaf6a-7e99-416f-af50-5659b1738af2@arm.com>
- <20251022173217.1105681b@fedora>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251022173217.1105681b@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 22/10/2025 16:32, Boris Brezillon wrote:
-> On Wed, 22 Oct 2025 15:28:51 +0100
-> Steven Price <steven.price@arm.com> wrote:
-> 
->> On 22/10/2025 15:00, Boris Brezillon wrote:
->>> On Wed, 22 Oct 2025 14:36:23 +0100
->>> Steven Price <steven.price@arm.com> wrote:
->>>   
->>>> On 22/10/2025 13:37, Boris Brezillon wrote:  
->>>>> On Wed, 22 Oct 2025 12:30:13 +0200
->>>>> Ketil Johnsen <ketil.johnsen@arm.com> wrote:
->>>>>     
->>>>>> The function panthor_fw_unplug() will free the FW memory sections.
->>>>>> The problem is that there could still be pending FW events which are yet
->>>>>> not handled at this point. process_fw_events_work() can in this case try
->>>>>> to access said freed memory.
->>>>>>
->>>>>> This fix introduces a destroyed state for the panthor_scheduler object,
->>>>>> and we check for this before processing FW events.
->>>>>>
->>>>>> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
->>>>>> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
->>>>>> ---
->>>>>> v2:
->>>>>> - Followed Boris's advice and handle the race purely within the
->>>>>>   scheduler block (by adding a destroyed state)
->>>>>> ---
->>>>>>  drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
->>>>>>  1 file changed, 12 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
->>>>>> index 0cc9055f4ee52..4996f987b8183 100644
->>>>>> --- a/drivers/gpu/drm/panthor/panthor_sched.c
->>>>>> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
->>>>>> @@ -315,6 +315,13 @@ struct panthor_scheduler {
->>>>>>  		 */
->>>>>>  		struct list_head stopped_groups;
->>>>>>  	} reset;
->>>>>> +
->>>>>> +	/**
->>>>>> +	 * @destroyed: Scheduler object is (being) destroyed
->>>>>> +	 *
->>>>>> +	 * Normal scheduler operations should no longer take place.
->>>>>> +	 */
->>>>>> +	bool destroyed;    
->>>>>
->>>>> Do we really need a new field for that? Can't we just reset
->>>>> panthor_device::scheduler to NULL early enough in the unplug path?
->>>>> I guess it's not that simple if we have works going back to ptdev
->>>>> and then dereferencing ptdev->scheduler, but I think it's also
->>>>> fundamentally broken to have scheduler works active after the
->>>>> scheduler teardown has started, so we might want to add some more
->>>>> checks in the work callbacks too.
->>>>>     
->>>>>>  };
->>>>>>  
->>>>>>  /**
->>>>>> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
->>>>>>  	u32 events = atomic_xchg(&sched->fw_events, 0);
->>>>>>  	struct panthor_device *ptdev = sched->ptdev;
->>>>>>  
->>>>>> -	mutex_lock(&sched->lock);
->>>>>> +	guard(mutex)(&sched->lock);
->>>>>> +
->>>>>> +	if (sched->destroyed)
->>>>>> +		return;
->>>>>>  
->>>>>>  	if (events & JOB_INT_GLOBAL_IF) {
->>>>>>  		sched_process_global_irq_locked(ptdev);
->>>>>> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
->>>>>>  		sched_process_csg_irq_locked(ptdev, csg_id);
->>>>>>  		events &= ~BIT(csg_id);
->>>>>>  	}
->>>>>> -
->>>>>> -	mutex_unlock(&sched->lock);
->>>>>>  }
->>>>>>  
->>>>>>  /**
->>>>>> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
->>>>>>  	cancel_delayed_work_sync(&sched->tick_work);
->>>>>>  
->>>>>>  	mutex_lock(&sched->lock);
->>>>>> +	sched->destroyed = true;
->>>>>>  	if (sched->pm.has_ref) {
->>>>>>  		pm_runtime_put(ptdev->base.dev);
->>>>>>  		sched->pm.has_ref = false;    
->>>>>
->>>>> Hm, I'd really like to see a cancel_work_sync(&sched->fw_events_work)
->>>>> rather than letting the work execute after we've started tearing down
->>>>> the scheduler object.
->>>>>
->>>>> If you follow my suggestion to reset the ptdev->scheduler field, I
->>>>> guess something like that would do:
->>>>>
->>>>> void panthor_sched_unplug(struct panthor_device *ptdev)
->>>>> {
->>>>>         struct panthor_scheduler *sched = ptdev->scheduler;
->>>>>
->>>>> 	/* We want the schedu */
->>>>> 	WRITE_ONCE(*ptdev->scheduler, NULL);
->>>>>
->>>>> 	cancel_work_sync(&sched->fw_events_work);
->>>>>         cancel_delayed_work_sync(&sched->tick_work);
->>>>>
->>>>>         mutex_lock(&sched->lock);
->>>>>         if (sched->pm.has_ref) {
->>>>>                 pm_runtime_put(ptdev->base.dev);
->>>>>                 sched->pm.has_ref = false;
->>>>>         }
->>>>>         mutex_unlock(&sched->lock);
->>>>> }
->>>>>
->>>>> and
->>>>>
->>>>> void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events) {
->>>>> 	struct panthor_scheduler *sched = READ_ONCE(*ptdev->scheduler);
->>>>>
->>>>> 	/* Scheduler is not initialized, or it's gone. */
->>>>>         if (!sched)
->>>>>                 return;
->>>>>
->>>>>         atomic_or(events, &sched->fw_events);
->>>>>         sched_queue_work(sched, fw_events);
->>>>> }    
->>>>
->>>> Note there's also the path of panthor_mmu_irq_handler() calling
->>>> panthor_sched_report_mmu_fault() which will need to READ_ONCE() as well
->>>> to be safe.  
->>>
->>> This could be hidden behind a panthor_device_get_sched() helper, I
->>> guess. Anyway, it's not so much that I'm against the addition of an
->>> extra bool, but AFAICT, the problem is not entirely solved, as there
->>> could be a pending work that gets executed after sched_unplug()
->>> returns, and I adding this bool check just papers over the real bug
->>> (which is that we never cancel the fw_event work).
->>>   
->>>>
->>>> I agree having an extra bool is ugly, but it easier to reason about than
->>>> the lock-free WRITE_ONCE/READ_ONCE dance. It worries me that this will
->>>> be regressed in the future. I can't immediately see how to wrap this in
->>>> a helper to ensure this is kept correct.  
->>>
->>> Sure, but you're not really catching cases where the work runs after
->>> the scheduler component has been unplugged in case someone forgot to
->>> cancel some works. I think I'd rather identify those cases with a
->>> kernel panic, than a random UAF when the work is being executed.
->>> Ultimately, we should probably audit all works used in the driver, to
->>> make sure they are properly cancelled at unplug() time by the relevant
->>> <component>_unplug() functions.  
->>
->> Yes I agree, we should have a cancel_work_sync(&sched->fw_events_work)
->> call somewhere on the unplug path. That needs to be after the job irq
->> has been disabled which is currently done in panthor_fw_unplug().
-> 
-> Not necessarily. If we prevent any further FW events to queue the
-> fw_events work, we can just cancel it in the sched_unplug() path, after
-> we've transition to this "sched-is-gone" state.
+Hi,
 
-True that would also work.
+This series implements an option to show symbols in _text+OFFSET
+format instead of symbol name in the function profiler.
+This is the 5th version, the previous one is here;
 
-Steve
+https://lore.kernel.org/all/176071773144.175601.17884676964675287059.stgit@devnote2/
 
+In this version, eventually I repaced TRACE_ITER_* enumalation
+symbols with TRACE_ITER(flag) macro. If the flag bit number is
+-1, the macro becomes 0, which is for a dummy flag.
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (2):
+      tracing: Allow tracer to add more than 32 options
+      tracing: Add an option to show symbols in _text+offset for function profiler
+
+
+ kernel/trace/blktrace.c              |    6 +
+ kernel/trace/ftrace.c                |   26 ++++++
+ kernel/trace/trace.c                 |  154 +++++++++++++++++-----------------
+ kernel/trace/trace.h                 |   40 +++++----
+ kernel/trace/trace_events.c          |    4 -
+ kernel/trace/trace_events_synth.c    |    2 
+ kernel/trace/trace_fprobe.c          |    6 +
+ kernel/trace/trace_functions_graph.c |   18 ++--
+ kernel/trace/trace_irqsoff.c         |   30 +++----
+ kernel/trace/trace_kdb.c             |    2 
+ kernel/trace/trace_kprobe.c          |    6 +
+ kernel/trace/trace_output.c          |   18 ++--
+ kernel/trace/trace_sched_wakeup.c    |   24 +++--
+ kernel/trace/trace_syscalls.c        |    2 
+ 14 files changed, 185 insertions(+), 153 deletions(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
