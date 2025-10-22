@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-864698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27087BFB5E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:19:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315C3BFB5F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A431B4E8D0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:19:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED54E4E924A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85141320A3E;
-	Wed, 22 Oct 2025 10:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E17315777;
+	Wed, 22 Oct 2025 10:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DzCFpZJc"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I/eqHFV/"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4713161AF
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02BC2472A8
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128382; cv=none; b=ugvS1WfsfxK0zy1HipoJXWKGiBS1NAhC3ei8eKVnXGxNImztLkVCmJe72AIgpkUE8If7mRELJ72t0F5WulsmLh2Q4F4KVjlG1QXZqiOUl/QTqUhyg46OfslH++sKS2GZTJ2NpVB1F9nPoIkK+AjpQTUNYMlrEZLDw22NFGuzews=
+	t=1761128422; cv=none; b=qwXKVkJXvd1kAw2X7eI/aPgR8shklqcEhNPgShnC43ENu7WOv5JdSVclvqGeGnDOcIegSNbKmEnaOTa6hl75NdtrmCQPTggl5XYCY0MRPBRWT1KZyHu98ASXVz1XkYYJke0up1oy9QiBScugl8hDmBi0I5KQjoeP9t02COo8/Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128382; c=relaxed/simple;
-	bh=joBEyn5l111nZ9jGESSCAOmkS1tgkzPeMQXORmoeZRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvxe/L9fQCs2Vwk0OyFGUiN98uuUMZDkq8a/zNzHAclyjzc7lg1D444ACcUMToeS74EOWbaOsDJSxVPfpWbVnp7lbmx2aEwmLcYnViOcX9eqRqCTN14mdEpZGwP9oEObknxpKDDV2Gmiqkp3hmpBM6eGUiHWPjboe15ubHweSlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DzCFpZJc; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47100eae3e5so21712905e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761128379; x=1761733179; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXyDXixja6RmZT39Er05ZzpCC3vXUho6dl9B7iE9rfM=;
-        b=DzCFpZJcaEvh+evRO3GsyZ9vyb4yBLLh3ggw32alsNuqluiISUpz3UoIumLk8EKYWB
-         j1tKj9zYVv+b254EpxtPmDtClRMxMaStwRi2SJCwGwIgJRd7+ynAbhYuisRLRCkp6nHp
-         1/3VJaWJApP740/PKVxjX/I80Kw657fBVlQNXlN3t2aWnqOQ0aN++5fHDgP1jt3yCcYA
-         L1Jr4hLl6sqwLAArSavbfSTnWoxi/+pE+O1vouEu2PiOeCCbGRnXls7UNJ9CnttxvnnF
-         07N5sztahQPybwTnLOY7zpSeXqIdeZBKIJ6ZhmcHsPaQ7slVUGiIuqvGO7ISAeDTkZCU
-         lm/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761128379; x=1761733179;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xXyDXixja6RmZT39Er05ZzpCC3vXUho6dl9B7iE9rfM=;
-        b=Fid5d5yqea7e5i6cW3/jo616lU/9MVhkALGuUpnq/9RCq4vjG41EoDNAWtK/kLYPy9
-         SlMH6H9rTyrtCr2x84YuWQkBX/YzRmnadXoomln39YwuATBLp5QPnEfIBdYGHAoTLM2E
-         /66a+q3LkLC0sVgLnIBLzVKHojL4SfK7km3d7VebgykkBz4zy7GavaWiqPP9vhHE9NoZ
-         FXqPcyYZh49XO9V5Igi/cV/Li0vPToEchbOVUO0GKSUARZHSD/ivRb7JWA9aysvb8hUq
-         5qL4ztyRN0hKUbED5gbfuvjU2TsmFE3UTyvxjIHve9pRcJr1OJR1H1CxQ/b+sH21RyFA
-         oP2w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/4a4K/f05CdPlg2XKJ7Or9wTD7rZTumAow7aUDALPkPLhFenZXJ5OwWHeZGd/qS7anf94kciWtClCrRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvoS9Uh05S42DkcBbRMNnbjozOFECsQWSOfZzXWTij+A2GALnS
-	kIkKC9MhxUDuhXSDuNSt/Ejp4v+xW9oVaIbhMU6c3WXQHAGlKNqlu9EWK4N9rhupYrE=
-X-Gm-Gg: ASbGncth1m529hnDT6QUWuxKOYZo0uSzUPe0w1eOA3HN5utnOFF71I7HO0arHoHokZU
-	UoWiwPz3ch1JgxEroq7Y7iE2c8EgHQ1UugT/egk02uERqcumZ0UXDahr/j+TWNJnRcgeG7W46GE
-	ZS9Oi+rBX6Pj7wBnva7xWF3l1mzzUHLopDgAXkd3H+VO/7Ujp1lNcAyVRq7WDDe0RHZFOxClXL9
-	dUBb8JLGCMxs4YtjeBOB9Rp4zOO+nit2J9P0uCjjlX/DYqwdBjmU+g5UrQkGrSg4Ou1dOFElS7b
-	d+97trp96/VFg9cm/7T/SxHehkNYFjZNXsJ5FUarqB+BnjFtIQBN/U1+h3bks6gESAmaFySKwFt
-	auLlis3lFwiaIm781S3ETG3Q6HZAXvkSXKUkoNniv7N8XZMApYLoNB/5vSXhTCMI3wD4obBqJlJ
-	TUTJxNuQ/87lfSHw==
-X-Google-Smtp-Source: AGHT+IEbwRIxqwOcW6k8/RNZuYBz6gOsWXSzyHrVYvpQPGm+n70PNasZXailVMdY6Pt7W5w8c1E2Ig==
-X-Received: by 2002:a05:600c:45ca:b0:46e:59dd:1b4d with SMTP id 5b1f17b1804b1-471178a4bb0mr148080655e9.16.1761128378963;
-        Wed, 22 Oct 2025 03:19:38 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4369b3esm36179955e9.13.2025.10.22.03.19.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 03:19:38 -0700 (PDT)
-Date: Wed, 22 Oct 2025 12:19:36 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	Randy Dunlap <rdunlap@infradead.org>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] taint/module: Remove unnecessary taint_flag.module field
-Message-ID: <aPivuD7CWwHBRcZI@pathway.suse.cz>
-References: <20251022082938.26670-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1761128422; c=relaxed/simple;
+	bh=Wit2FgAsksM00jyxZA/PpTKg3l/+DQthNW+OiFZbGZY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=urEevIHr0tJElDgi1ODUN8BVjuJhHkMadJMJd++LVGuACzvsZaTEVgFa2Bt2FGRt4ZDZ2BwgLFvLy0lnmrSHJLhAtsBLsOwwLtgJvW0PlpcCKUdG63q5hlBbnisoJ8wlg5ez+eWVmc6vuyBAzqAHd16AGRCrbl6KGrsrFt0hozY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=I/eqHFV/; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59MAKJCE1391487;
+	Wed, 22 Oct 2025 05:20:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761128419;
+	bh=g4E9DI4BsITNFZaG/SQz7E1z2z+oQ3Vx4NpSt7dVHlE=;
+	h=From:To:CC:Subject:Date;
+	b=I/eqHFV/GI5VwwDp8jrO4TwvV3JosSkCQ7OjPiUb1lN9Zsq9XOS4nppK40vMOUc1n
+	 4HzUqXHC3RoGdWpEc5/zuiBauUafXfG5W8rrOB+gtgjLVnig/foQZBR+WVVijbIeir
+	 o+CK9CdIJCawFXB713R3VfEhTQ/YAjnZk154cquU=
+Received: from DLEE207.ent.ti.com (dlee207.ent.ti.com [157.170.170.95])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59MAKJla1855158
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 22 Oct 2025 05:20:19 -0500
+Received: from DLEE203.ent.ti.com (157.170.170.78) by DLEE207.ent.ti.com
+ (157.170.170.95) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
+ 2025 05:20:19 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE203.ent.ti.com
+ (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 22 Oct 2025 05:20:19 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59MAKGft1057060;
+	Wed, 22 Oct 2025 05:20:17 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <jassisinghbrar@gmail.com>, <linux-kernel@vger.kernel.org>
+CC: <hiagofranco@gmail.com>, <afd@ti.com>, <hnagalla@ti.com>,
+        <u-kumar1@ti.com>, <b-padhi@ti.com>
+Subject: [RFC PATCH] mailbox: omap-mailbox: Flush out pending msgs before entering suspend
+Date: Wed, 22 Oct 2025 15:50:15 +0530
+Message-ID: <20251022102015.1345696-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022082938.26670-1-petr.pavlu@suse.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed 2025-10-22 10:28:04, Petr Pavlu wrote:
-> The TAINT_RANDSTRUCT and TAINT_FWCTL flags are mistakenly set in the
-> taint_flags table as per-module flags. While this can be trivially
-> corrected, the issue can be avoided altogether by removing the
-> taint_flag.module field.
-> 
-> This is possible because, since commit 7fd8329ba502 ("taint/module: Clean
-> up global and module taint flags handling") in 2016, the handling of module
-> taint flags has been fully generic. Specifically, module_flags_taint() can
-> print all flags, and the required output buffer size is properly defined in
-> terms of TAINT_FLAGS_COUNT. The actual per-module flags are always those
-> added to module.taints by calls to add_taint_module().
-> 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+There may be pending messages in the mailbox FIFO that are not consumed
+by the remote processor for various reasons; the remote processor may
+already be powered off or may be in a bad state. Instead of aborting
+suspend because of these pending messages, flush the FIFOs and proceed
+with suspend. Pending messages could also be restored in the resume
+context, but since remote processors are typically rebooted during
+suspend/resume today, there is no point in restoring stale messages.
 
-Makes sense. Nice trick!
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+ drivers/mailbox/omap-mailbox.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-Acked-by: Petr Mladek <pmladek@suse.com>
+diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+index 680243751d62..5e6373911630 100644
+--- a/drivers/mailbox/omap-mailbox.c
++++ b/drivers/mailbox/omap-mailbox.c
+@@ -341,13 +341,10 @@ static int omap_mbox_suspend(struct device *dev)
+ 	if (pm_runtime_status_suspended(dev))
+ 		return 0;
+ 
+-	for (fifo = 0; fifo < mdev->num_fifos; fifo++) {
+-		if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
+-			dev_err(mdev->dev, "fifo %d has unexpected unread messages\n",
+-				fifo);
+-			return -EBUSY;
+-		}
+-	}
++	/* Flush out pending mbox messages before entering suspend */
++	for (fifo = 0; fifo < mdev->num_fifos; fifo++)
++		while (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo)) != 0)
++			mbox_read_reg(mdev, MAILBOX_MESSAGE(fifo));
+ 
+ 	for (usr = 0; usr < mdev->num_users; usr++) {
+ 		reg = MAILBOX_IRQENABLE(mdev->intr_type, usr);
+-- 
+2.34.1
 
-Best Regards,
-Petr
 
