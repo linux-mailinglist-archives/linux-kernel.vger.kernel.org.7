@@ -1,188 +1,140 @@
-Return-Path: <linux-kernel+bounces-864023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AE5BF9BFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1008BF9C09
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 776C64E2245
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44AB93A56F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867F9219E8C;
-	Wed, 22 Oct 2025 02:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72C521B195;
+	Wed, 22 Oct 2025 02:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csH0zhXf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="o/gQEfPE"
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24D417BB35
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89845153BED;
+	Wed, 22 Oct 2025 02:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761100645; cv=none; b=ei3/odHS9/8uVyXj76NQfR0BjNYHH3rf3ORlmW1nMMuT2P8zLuU8Vy/93ShDh5mBtRLBGheQlEk0fC0BFc2ojAZgqWpefwQgCCh8D/5gJo9mrEBes/fLWGjNmJgF6XY0frjo1B905++mjrxvwkq4B5csPTy1DptexLKxq8Vh5z4=
+	t=1761100830; cv=none; b=nPdvx9HJX19uRe6IOIl4NyntGkngvmW7GI58xzpCevvfHgx6OmbDFV8zeW3A6C1O7QNbIlB0QVsVyq8KX8QTEio4lYZjPPV6pm6IKdUWIJ5BcPZPBxaw3kZyNFX8b+UUUb+aaDsR4DxL1yyNNrEq2VS94c8oYuuTiGPunBNqU0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761100645; c=relaxed/simple;
-	bh=ml/xeYDhTNx1bgatCCjgOtANITCdQ3MIYRxTyroOLqc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=auoLxigI0U5u+Vj/agOls9OKqfTaaz749/3fppX5ATck3QUPtMgVEqrHYa54sS1qtrKpT05e2DqNUFjpAIdhG7PsMGx1pafI2QjOSHbPKzzSsBigQs3cE0yMNnLN96/JZJlUAtLwsduUtvYoizLkjwYknGq5E07UWrfDHkeUkbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csH0zhXf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EEEC4CEF1;
-	Wed, 22 Oct 2025 02:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761100645;
-	bh=ml/xeYDhTNx1bgatCCjgOtANITCdQ3MIYRxTyroOLqc=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=csH0zhXfncwQIBpJyKsvZzt7kJzwiJoz7P+ryKKluQo147609cPJsoac1xWxHtr0t
-	 tsn3g6gLcMnzKcUveuQqrFAmVPRh93yaqAEOhxhwrEdsgR5UydqGABqEAab/JaFF1D
-	 z1idp4HfEPIUeahgeG5ZZ5rgjt3JiciTKWgiWX1tZzyLhIdubcr/2GJqpVvsDB20hh
-	 nCdLvqKEYdaCzJolHgIS+TTstpgCs9Km3a+ltrcRP9uOOjiFNS4ZrO9fBWJ02t7mw2
-	 C2ZcVVi1kEdRGUZjkIg5LTKTS68goNHy79AfrkukNxIQM9bwh9O3utlgRB31KtudIv
-	 KKu5Lk7oIg/Xg==
-Message-ID: <90d89437-8a8f-4b6f-9aa1-3cf47ed9f9c3@kernel.org>
-Date: Wed, 22 Oct 2025 10:37:21 +0800
+	s=arc-20240116; t=1761100830; c=relaxed/simple;
+	bh=YfLxz+1xwnVOpzZ2JUu5fbWVJwN2+rzZWBbl8phqto8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ukvj3YqgwsgM9gTQ3EsYuJ9LNOLzTI5+911faDcVFyVXjrMANGrXTYoyLddjQ5SfWGzuZNl7hX4PXh24sz71zPZ4aJELCCqzcIoNbJkI+4ROekJii/2yMLp2/U1Njhxkz+FbThDTClTk+lPuQGCAEDgzByIAcaUPauu4/xmGBI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=o/gQEfPE; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59M1x5NO2299378;
+	Wed, 22 Oct 2025 02:40:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=PPS06212021; bh=ZjKAK0Bf+
+	4pkvg3Bam7nabKNYs94G5UaVYnLMnn5k8U=; b=o/gQEfPEprw+UkLDMU1/5CqIu
+	TiN593tmtyoA8hQ8YS8umOdvzL921S+Zd93B2QN98dk144UJExjF/0ecwzUZydwY
+	jtdas6XuGJScCOIbnWk66QhTjVU9YCgsg+uwkzhILdi1EMAIvMQYVcKDBSj+4AI4
+	dGzcw143X+8LTLgftuMS66OEtFcRyPFIytaUzZbVxy+JFU+3EC4nlv4pHY2hR/zF
+	PiDSsMjhy9+ngEAGiKzXaH0gFTsim2/g176qrhN2nSb1Of/hTpIVqGEyH2qt+KDa
+	1MajoAMndVlunL90Z+/DkvPA0r/SAa5rN7G+2joO+GtukBif+f6a1ugq5EQtg==
+Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49wrpx9y6s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 22 Oct 2025 02:40:12 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Tue, 21 Oct 2025 19:40:11 -0700
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Tue, 21 Oct 2025 19:40:08 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <samsun1006219@gmail.com>
+CC: <kuba@kernel.org>, <ahmed.zaki@intel.com>, <aleksander.lobakin@intel.com>,
+        <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+        <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <pabeni@redhat.com>, <sdf@fomichev.me>,
+        <syzkaller-bugs@googlegroups.com>, <syzkaller@googlegroups.com>
+Subject: [PATCH V4] usbnet: Prevents free active kevent
+Date: Wed, 22 Oct 2025 10:40:07 +0800
+Message-ID: <20251022024007.1831898-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Subject: Re: [BUG] f2fs: divide error in f2fs_all_cluster_page_ready on v6.17
-To: "Bai, Shuangpeng" <SJB7183@PSU.EDU>
-References: <44D8F7B3-68AD-425F-9915-65D27591F93F@psu.edu>
- <54ad259c-b29f-4444-8d3c-1ec37abc628d@kernel.org>
- <A08A3C40-FC46-4A14-A946-6C5D354FE9AB@psu.edu>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <A08A3C40-FC46-4A14-A946-6C5D354FE9AB@psu.edu>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=b9O/I9Gx c=1 sm=1 tr=0 ts=68f8440c cx=c_pps
+ a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=pGLkceISAAAA:8
+ a=t7CeM3EgAAAA:8 a=KMxUBI-LuQ3xbY_cxn0A:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=FdTzh2GWekK77mhwV6Dw:22 a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
+X-Proofpoint-GUID: HfAhk5HfZUqTgAHLbbzazWwXt4njlAaX
+X-Proofpoint-ORIG-GUID: HfAhk5HfZUqTgAHLbbzazWwXt4njlAaX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDAyMSBTYWx0ZWRfXz66lZ1KamRCd
+ Whoy6tAKHt9qMn/ImYhHv98VXuvgyTKc/jAEIhx1Pem3QNdf1oo0dVg4YeaNA32rgO9ZTrVjtNm
+ XHvfINhdPalGFlamFQ34PQSPn+s1rEQJGgKAchiZZO4w/k3yEMJ7xH+fr/x4WIvxtlwXRSuJkup
+ gAmikifYYSoq/BF/A5iH9mFqZnjiNCKOdRqsJSn0dHXfpmhiBuCThPRDG1ZbAHkIo4W5yvTOtyi
+ bkVRkwZCq/oS9ElqBAIm95gUKflumLTqX+XMUyIjA04rZtZYlooAh7vSgZTLnQrridaToVygnJP
+ RNlPTcjJA/i+sgZhd2lduLUDt3s/AtfWlgl+MaEB/n6Js+dfZuqlrPHwnFZliAmvyM9fESy1xUc
+ pLqtmjnENY0soNbVqycslXpcZzhj3Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501 malwarescore=0
+ spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510220021
 
-On 10/22/25 08:57, Bai, Shuangpeng wrote:
-> 
-> 
->> On Oct 19, 2025, at 23:15, Chao Yu <chao@kernel.org> wrote:
->>
->> Hi Bai,
->>
->> On 10/12/25 23:49, Bai, Shuangpeng wrote:
->>> Hi Kernel Maintainers,
->>> Our tool found a new kernel bug "divide error in f2fs_all_cluster_page_ready". Please see the details below.
->>> Kernel commit: 6.17
->>> Kernel config: attachment
->>> Reproducer: attachment
->>> The reproducer triggers the crash reliably in ~500 seconds on a QEMU x86_64 VM.
->>> I’m happy to test debug patches or provide additional information.
->>
->> Finally, I can reproduce this bug, thanks for your help. :)
->>
->> I have figured out a fix below, could you please help to test it?
->>
->> https://lore.kernel.org/linux-f2fs-devel/20251020023453.329467-1-chao@kernel.org
->>
-> 
-> I applied the patch to v6.18-rc2 and reran the reproducer. The issue no longer reproduces.
+The root cause of this issue are:
+1. When probing the usbnet device, executing usbnet_link_change(dev, 0, 0);
+put the kevent work in global workqueue. However, the kevent has not yet
+been scheduled when the usbnet device is unregistered. Therefore, executing
+free_netdev() results in the "free active object (kevent)" error reported
+here.
 
-Thanks a lots for your help! :)
+2. Another factor is that when calling usbnet_disconnect()->unregister_netdev(),
+if the usbnet device is up, ndo_stop() is executed to cancel the kevent.
+However, because the device is not up, ndo_stop() is not executed.
 
-Thanks,
+The solution to this problem is to cancel the kevent before executing
+free_netdev().
 
-> 
-> Thank you!
-> 
-> 
-> 
->> Thanks,
->>
->>> Oops: divide error: 0000 [#1] SMP KASAN PTI
->>> CPU: 0 UID: 0 PID: 11441 Comm: syz.0.46 Not tainted 6.17.0 #1 PREEMPT(full)
->>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
->>> RIP: 0010:f2fs_all_cluster_page_ready+0x106/0x550 fs/f2fs/compress.c:857
->>> Code: 00 8b 4d 00 48 89 d8 48 c1 e8 20 74 19 48 89 d8 31 d2 48 f7 f1 48 89 d5 eb 14 48 89 5c 24 10 e8 40 a4 6d fd eb 2d 89 d8 31 d2 <f7> f1 89 d5 31 ff 48 89 ee e8 0c a9 6d fd 48 85 ed 74 0c e8 22 a4
->>> RSP: 0018:ffffc90006616e60 EFLAGS: 00010246
->>> RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
->>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
->>> RBP: ffffc90006617270 R08: ffffffff84552d26 R09: 0000000000000000
->>> R10: ffff888155ad2000 R11: ffffffff81d2aa26 R12: 0000000000000001
->>> R13: dffffc0000000000 R14: 0000000000000010 R15: ffffc90006617260
->>> FS:  00007f8bac5b5640(0000) GS:ffff888220f02000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 000056508a326000 CR3: 0000000117bec000 CR4: 00000000000006f0
->>> Call Trace:
->>>  <TASK>
->>>  f2fs_write_cache_pages fs/f2fs/data.c:3078 [inline]
->>>  __f2fs_write_data_pages fs/f2fs/data.c:3290 [inline]
->>>  f2fs_write_data_pages+0x1c19/0x3600 fs/f2fs/data.c:3317
->>>  do_writepages+0x38e/0x640 mm/page-writeback.c:2634
->>>  filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
->>>  __filemap_fdatawrite_range mm/filemap.c:419 [inline]
->>>  file_write_and_wait_range+0x2ba/0x3e0 mm/filemap.c:794
->>>  f2fs_do_sync_file+0x6e6/0x1b00 fs/f2fs/file.c:294
->>>  generic_write_sync include/linux/fs.h:3043 [inline]
->>>  f2fs_file_write_iter+0x76e/0x2700 fs/f2fs/file.c:5259
->>>  new_sync_write fs/read_write.c:593 [inline]
->>>  vfs_write+0x7e9/0xe00 fs/read_write.c:686
->>>  ksys_write+0x19d/0x2d0 fs/read_write.c:738
->>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>  do_syscall_64+0xf7/0x470 arch/x86/entry/syscall_64.c:94
->>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>> RIP: 0033:0x7f8bab7ae49d
->>> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
->>> RSP: 002b:00007f8bac5b4f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
->>> RAX: ffffffffffffffda RBX: 00007f8baba26180 RCX: 00007f8bab7ae49d
->>> RDX: 000000000000ffbd RSI: 0000200000000240 RDI: 0000000000000007
->>> RBP: 00007f8bab848268 R08: 0000000000000000 R09: 0000000000000000
->>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->>> R13: 00007f8baba26218 R14: 00007f8baba26180 R15: 00007f8bac595000
->>>  </TASK>
->>> Modules linked in:
->>> ---[ end trace 0000000000000000 ]---
->>> RIP: 0010:f2fs_all_cluster_page_ready+0x106/0x550 fs/f2fs/compress.c:857
->>> Code: 00 8b 4d 00 48 89 d8 48 c1 e8 20 74 19 48 89 d8 31 d2 48 f7 f1 48 89 d5 eb 14 48 89 5c 24 10 e8 40 a4 6d fd eb 2d 89 d8 31 d2 <f7> f1 89 d5 31 ff 48 89 ee e8 0c a9 6d fd 48 85 ed 74 0c e8 22 a4
->>> RSP: 0018:ffffc90006616e60 EFLAGS: 00010246
->>> RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
->>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
->>> RBP: ffffc90006617270 R08: ffffffff84552d26 R09: 0000000000000000
->>> R10: ffff888155ad2000 R11: ffffffff81d2aa26 R12: 0000000000000001
->>> R13: dffffc0000000000 R14: 0000000000000010 R15: ffffc90006617260
->>> FS:  00007f8bac5b5640(0000) GS:ffff888220f02000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 000056508a326000 CR3: 0000000117bec000 CR4: 00000000000006f0
->>> ----------------
->>> Code disassembly (best guess):
->>>    0: 00 8b 4d 00 48 89     add    %cl,-0x76b7ffb3(%rbx)
->>>    6: d8 48 c1              fmuls  -0x3f(%rax)
->>>    9: e8 20 74 19 48        call   0x4819742e
->>>    e: 89 d8                 mov    %ebx,%eax
->>>   10: 31 d2                 xor    %edx,%edx
->>>   12: 48 f7 f1              div    %rcx
->>>   15: 48 89 d5              mov    %rdx,%rbp
->>>   18: eb 14                 jmp    0x2e
->>>   1a: 48 89 5c 24 10        mov    %rbx,0x10(%rsp)
->>>   1f: e8 40 a4 6d fd        call   0xfd6da464
->>>   24: eb 2d                 jmp    0x53
->>>   26: 89 d8                 mov    %ebx,%eax
->>>   28: 31 d2                 xor    %edx,%edx
->>> * 2a: f7 f1                 div    %ecx <-- trapping instruction
->>>   2c: 89 d5                 mov    %edx,%ebp
->>>   2e: 31 ff                 xor    %edi,%edi
->>>   30: 48 89 ee              mov    %rbp,%rsi
->>>   33: e8 0c a9 6d fd        call   0xfd6da944
->>>   38: 48 85 ed              test   %rbp,%rbp
->>>   3b: 74 0c                 je     0x49
->>>   3d: e8                    .byte 0xe8
->>>   3e: 22                    .byte 0x22
->>>   3f: a4                    movsb  %ds:(%rsi),%es:(%rdi)
->>> Best,
->>> Shuangpeng
->>
-> 
+Fixes: a69e617e533e ("usbnet: Fix linkwatch use-after-free on disconnect")
+Reported-by: Sam Sun <samsun1006219@gmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=8bfd7bcc98f7300afb84
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+V1 -> V2: update comments for typos
+V2 -> V3: add fixes tag
+V3 -> V4: move cancel_work_sync to right after unregister_netdev
+
+ drivers/net/usb/usbnet.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index bf01f2728531..697cd9d866d3 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1659,6 +1659,8 @@ void usbnet_disconnect (struct usb_interface *intf)
+ 	net = dev->net;
+ 	unregister_netdev (net);
+ 
++	cancel_work_sync(&dev->kevent);
++
+ 	while ((urb = usb_get_from_anchor(&dev->deferred))) {
+ 		dev_kfree_skb(urb->context);
+ 		kfree(urb->sg);
+-- 
+2.43.0
 
 
