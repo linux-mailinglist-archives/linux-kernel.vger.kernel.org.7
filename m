@@ -1,133 +1,153 @@
-Return-Path: <linux-kernel+bounces-864468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16899BFADBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:21:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23943BFADBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2753ADEC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:20:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF7644E0223
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93B63081A4;
-	Wed, 22 Oct 2025 08:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9F03081A4;
+	Wed, 22 Oct 2025 08:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dJvJ5L6k"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qFVaMxuX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936AF3054C8;
-	Wed, 22 Oct 2025 08:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAE830649A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121245; cv=none; b=bSenC+eabTh2vmAxgaPCTazznFrNemZE2l5W2MtvOTYeKeEI/x/55uhZUGtgFk0eG2fdlKilNABoufisAIenwD+hGTSifzdMxHnrRGTCHunD9OHirk9nAaX2syQyIt/2brCs7NuoTUi1kyS2ARlfkSvAe3tWc9DsVr5j9PuaBPE=
+	t=1761121271; cv=none; b=aJSHEHJxBVeR6rUWMknuVzSmpV5bLE9nwDCJ7/RBQ+y45odd2RZ0JHqOoFiNed2tIDIlgmVIGCMtrFrX9sjLfdv5jEEBYuQJZD0KeDzrwHeWq81c0aq4b571aIStj9J474CsdziKpCcURnv/dLhuUvoIolVsRVXqoPVD1LSwEqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121245; c=relaxed/simple;
-	bh=NaBVnYfiCGBUleVgENfqy+6MTH7byS2p6Wtyv6/P8ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rn9b/U80OjPVXYvloS+DNUPsw7gJQaXnmSIZ1yzk0BchPfQQEp6v5MoYAWd6BB0H7WxnvN+Idy1odDCH2RGKc06l2HoJ7Zi+m2nTqgxflrrAgvhojLJiBu0rwZ+TnnIK/Uhls6QgWo+rHzeJ9WXqvPMfEKqGSTEg+OCNOfazk9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dJvJ5L6k; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GBiS77jacBsAV5FtDUoak5VLXkPdQf0nis8KTJqTfW4=; b=dJvJ5L6kzK0cWDQUXS+9Sv/+VK
-	d0CkMXZ8LBVpyOFapysJs3nZUl8zg9jTWIWcs7hMsJWUEWdw593rfTsyMVuBrGOxp7kergFX2kDAu
-	kRHlMRJjX66XPkxAzIXHxKzcAfWzVZxuKDsExmSD0CeQS3y2h8LVClTy6lALGeurbtbN08tcGCYsL
-	/vQ0qw1qBCzpwe3TRNnSukrnJKItuh8uQv7oB/ibvZYDRFJnxGZgGj3hljyUiY5aaxa8T1u6tEUgt
-	R30bNScOmi92rDSwQ+MJbXLrbKxu56TMtKAKqiNxmdw3XTNl50zs1smUC/tD8rqphtpHS7p2v2heZ
-	Evo5QUhw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBTDO-00000000P2b-0jqI;
-	Wed, 22 Oct 2025 07:24:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7E1C730039F; Wed, 22 Oct 2025 10:20:25 +0200 (CEST)
-Date: Wed, 22 Oct 2025 10:20:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
-	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Shuah Khan <shuah@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	kernel test robot <lkp@intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Marc Herbert <Marc.Herbert@linux.intel.com>,
-	Christopher Ferris <cferris@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Jeff Xu <jeffxu@chromium.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
-Message-ID: <20251022082025.GK4067720@noisy.programming.kicks-ass.net>
-References: <20251020220005.work.095-kees@kernel.org>
- <20251020220118.1226740-1-kees@kernel.org>
- <20251021095447.GL3245006@noisy.programming.kicks-ass.net>
- <202510211210.84D670D1C@keescook>
+	s=arc-20240116; t=1761121271; c=relaxed/simple;
+	bh=ndK7Nv0K8owTRWCw2j30l/vYTQLzsKCCykYIlPDV6eU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KtFqDmw/36/t09b5q6efvYpTURUg5/NAJJOASzQzOnPK2VWxm/qVFppnzSC5Y18s/7Da5n3M4lxCX1JIrTK5+pCufwu7JLt7psdhcfHQrC6qotf4Q0kbDRXLJ3JpX7YPz1Br72Gb6nxMhAqm7ozeeaA78BpryHUsKl633yBVV3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qFVaMxuX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M0Z1N2022111;
+	Wed, 22 Oct 2025 08:20:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=RoDsqR
+	QtDPGVBi9bAGRBayt7QtkpTEmGZZUOBqsfBxg=; b=qFVaMxuXwGdx+CQoSMutyp
+	FR/W9M0GEmxzm4AwkgVB9ILioqcguHXGhXutB/JRBTqCk/WzUMasoLC1u6ASm/9Z
+	C7i2wwlIj1Uy7JYau6EBe2SFxR/RMNP6GpyFwrmuf7QiPM335VXRGuqqT9HpoyQy
+	tpnoCom0KrM/+nZxmiwmmdXVhKvg27VehMrDM90LxxQqmud3/JfFR8gyCQzdymta
+	ZEbtlKkug2Q7bKTBZDYVqV3Jz+j7OPbh/ojK4KeT4TIASDp3ux3iwAN4T9a0aETm
+	FIActcaU3d9pA2lXl3VdMicOCiaUsp95gV1S4yTDCIM6gaVoz4iQQ39Fprv/8Iew
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vt5md-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 08:20:44 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59M6DIwB014848;
+	Wed, 22 Oct 2025 08:20:43 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vn7s7gb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 08:20:43 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59M8KgIi25166090
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 Oct 2025 08:20:42 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18EEB20040;
+	Wed, 22 Oct 2025 08:20:42 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 834EC20049;
+	Wed, 22 Oct 2025 08:20:41 +0000 (GMT)
+Received: from [9.87.134.81] (unknown [9.87.134.81])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 22 Oct 2025 08:20:41 +0000 (GMT)
+Message-ID: <42d3a98ec468c14f21a8e37a53df9ee93010f571.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/2] nvme-pci: Print error message on failure in
+ nvme_probe
+From: Gerd Bayer <gbayer@linux.ibm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig
+	 <hch@lst.de>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Sagi
+ Grimberg <sagi@grimberg.me>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Wed, 22 Oct 2025 10:20:41 +0200
+In-Reply-To: <2025102230-omega-octopus-3cf1@gregkh>
+References: <20251020-nvme_probefail-v1-0-a420046d98f0@linux.ibm.com>
+	 <20251020-nvme_probefail-v1-1-a420046d98f0@linux.ibm.com>
+	 <20251022062634.GA4790@lst.de> <2025102230-omega-octopus-3cf1@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202510211210.84D670D1C@keescook>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9FD8qQeOnQDRobCdl1e3zFhscAzSD0QZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX7cE3NVRtZuVx
+ GvlY13LoI73Z/gXSf9QAkvkyIo0S+MNjop9vLf4BKpralvAiLRKjv6SpjmpzExvEKlW/nimHqC2
+ 4fMMteNjFzEIhpFtFINWfegELd/YWfusfgSIdlyi5eFgYz7ByTHDfkvITRyczFOLGHwpqT6xG5I
+ XgjtIpIEgJzHKyFa7O16CseioCcK6imfLkPRI6rwwieJcJlMBIU3j6AzhCdk8ztha8/TNh/LjFa
+ dA0cGDn269vpR298gNNM/jPfKh3WUjvOZ3k7dybnEL9um58go+2UrhXbLscCPkJ4Gd+J9shzY53
+ mtzo9/jC/r6gcjPi2u1ofXv4ayr5vhpAb98MscvpqvPXulgSOAqwTRodYmSc/LYGtUfeKzsnbW1
+ Hy6gqYw6psHNaxOCNuGDP6bhHwuzIQ==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f893dc cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=nr0wtmjnT5oQp51ULx0A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 9FD8qQeOnQDRobCdl1e3zFhscAzSD0QZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1011 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Tue, Oct 21, 2025 at 12:24:05PM -0700, Kees Cook wrote:
-> On Tue, Oct 21, 2025 at 11:54:47AM +0200, Peter Zijlstra wrote:
+On Wed, 2025-10-22 at 09:48 +0200, Greg Kroah-Hartman wrote:
+> On Wed, Oct 22, 2025 at 08:26:34AM +0200, Christoph Hellwig wrote:
+> > On Mon, Oct 20, 2025 at 05:29:07PM +0200, Gerd Bayer wrote:
+> > > Add a new error message like
+> > > nvme nvme0: probe failed on 2004:00:00.0 (result: -19)
+> > > that makes failures to probe visible in the kernel log.
+> >=20
+> > Is that really a thing drivers are expected to do?  If it is generally
+> > usefull I'd expect it to be in the driver core.
+>=20
+> We have that already, dev_err_probe(), no need to create
+> yet-another-version of that.
 
-> > So why do we need both __counted_by_ptr() and this __sized_by(), won't
-> > one be good enough?
-> 
-> I remain extraordinarily frustrated that counted_by can't be used with
-> "void *". I hit a brick wall on this, though, and don't know how to
-> convince either GCC or Clang devs to fix it. It's so obviously correct
-> to me: "void *" uses a 1 byte iterator for arithmetic... so asking how
-> big a given allocation is should be byte sized!
+So I take this as an implict answer to the question, if drivers are
+expected to do this or the driver core: Drivers.
 
-Right, at least for gnu11 language variants this really should work. I
-mean, disallow the usage for c11 if you're pedantic but for crying out
-loud, have the GNU extensions be consistent and all that.
 
-Feel free to use my feedback if it would help.
+Before learning about dev_err_probe() I was sampling a few drivers'
+probe functions and got inconclusive results regarding their verbosity
+regarding logging errors in probe. Interestingly, none of my samples
+used dev_err_probe()...
 
-> Let me take another stab at it...
+While for most drivers it may be obvious that in most sytem
+configurations it will not go unnoticed that e.g. the graphics
+controller failed to probe - there may be other
+components/configurations and a centralized error reporting e.g. in
+local_pci_probe() would have its benefits. But then with so many
+drivers already using dev_err_probe(), we don't want to report this
+twice, now.
 
-Thanks!
+Thus, I'm going to convert my patch over for a v2.
 
-> As for avoiding __counted_by_ptr(), we could just raise the minimum
-> Clang and GCC versions to require this, but that means dropping existing
-> coverage (e.g GCC 15 supports only flexible array counted_by).
-> 
-> Maybe we could do a global __counted_by_ptr -> __counted_by replacement
-> once GCC 16 is released?
-
-That sounds like a plan! :-)
+Thanks,
+Gerd
 
