@@ -1,129 +1,164 @@
-Return-Path: <linux-kernel+bounces-865107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96443BFC504
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:55:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82460BFC357
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621215E7706
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB9E19C6B9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37343491EA;
-	Wed, 22 Oct 2025 13:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF40C348469;
+	Wed, 22 Oct 2025 13:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="K6158Wcy"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kLQaWKGa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B600319870;
-	Wed, 22 Oct 2025 13:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7276B347BA9;
+	Wed, 22 Oct 2025 13:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140260; cv=none; b=N5houvVNnwTK/QoPt3ubRA1RGLb0mTHsuqNx0uddfBvYpVuljmxfsnWI5P90wj9uhYORLKin2k8CdmN6Oy2lZGejl6n0zd2n6ZSosKDH5xhjoMRdbe9GD/KatlQ9IX09y+MMvZnqBiUfY2oeXMVIoiV9WXHK16S4bGd0EmmLaQA=
+	t=1761140318; cv=none; b=abxtlD46X/nsVBy83jjzZZFBO0olghhRQLxp4vjVrQc//2+m3n1PoBsxk7KwHNkzRb0awTIigNGh1pssirdO1zWb9D8sKrFRg3IYLucBQu5n0HkBYrwK1CuDnoKfBfQ8D8e9bTEp96cSW/UDerkZ3oT4gJuiAA5crTj1eIUUWmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140260; c=relaxed/simple;
-	bh=bM78zcZcxf2ooIixxkmQEBOcOTvghqfII/4EoujWcjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/J3DQLrendkwstRNreqSdTHk647w6ROgQKJ4L/b+WPw4nApK66O/qOiu6/Eg78Ue5I25b9K1GaK0bchX+YnVbICN5/pT42bbJQk91kxVRxeB2DicEScmKG+Ewz1+1QR89SRrYri/OLdKFxec2u9v2+tr3uGwkjckpwgLbqdVEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=K6158Wcy; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cs9Fp5VDJz9tRP;
-	Wed, 22 Oct 2025 15:37:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761140254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2gGJ2j4XuU1eR+kSbHyPUvCzb9zojsG4YTdQlWdLMjQ=;
-	b=K6158WcyF+BOJQFTdw7hpnl4LPtjCCwgBiCCZO314UzujaTkx27mAfeDY5kNdNKdVk0isG
-	8VPHMrNfvq0ZC1yqFQMz5ULuKEl3qIJpwgDU18sOlqnIo41/WcD7wlhEaCZMekDFokhQDI
-	2GEVpL7TtH0CxWs6P7aORkWFNddL+3VOAY8DtBbB+E5av5VXHzz7+L68UlqTmIjOdyeZxu
-	HOYZnBAKk8EfJplVInSYNX7G1tUYZHvISQx0Tc8+xC59LATJzNcO+DdghHs6ea1IQgU+mK
-	M0nVhp8ia3Bajfz0E/a56fJum/z5GuDpqcUS0w9CVvUe6GM4uJKlzWnIsoWlOQ==
-Message-ID: <29bc5e92-04c9-475a-ba3d-a5ea26f1c95a@mailbox.org>
-Date: Wed, 22 Oct 2025 15:37:30 +0200
+	s=arc-20240116; t=1761140318; c=relaxed/simple;
+	bh=Jk07LSuW7o+FzSpWG5F/znIOgaI7RMdvCBmOLObpTrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8Uy6olmUMGv6KmS7rlbTDnlkQSV36OIjeq6OX83LrteG4fna/s+Ec295UB/8Mob0CN6/cu2HuA6hV3mC2+bB9whXMgKhOBD1j+oVMtcJXqDGlYd/ucP2qbJQmd7TxHZXX6VElYM6GnZeID5kBzajgEp0Cg1BLmb6tNofq4iIc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kLQaWKGa; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761140316; x=1792676316;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Jk07LSuW7o+FzSpWG5F/znIOgaI7RMdvCBmOLObpTrE=;
+  b=kLQaWKGakS5bZ4CROE0NWa6b4DlfasmPgIn0r/Tu/uoUwTC86FaNcV9V
+   3WbXZy4cV1YwwCLVJAo2jHUcAehvAnoBPmZP+NOqFlNn4WHKCUYC9ErPe
+   yls1Fptkt22qRB136R3Uf9uuv9s7QmO/wLIl5rtfWpuLQdxVUU3NICk9f
+   qwkK3O/txsGtwE8OFI42k13LqKs/iEIq+efTtMbaFnFRxFg6aCWE5MKP9
+   S+iwX+mBx1AkGEECK3P0h2vzFEKdr5Zw/kFIf0SHlj07S43lUsB6J3NS/
+   n/acIKiypT3qTdlFu6y49X5Cajc6UwTv1ABUrKA5UdrljWjvC2o7exNAY
+   w==;
+X-CSE-ConnectionGUID: UCKfzWVMTkaad839hsanFA==
+X-CSE-MsgGUID: 2ZnMFXJfTdW6RLJkzAXauw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74406847"
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="74406847"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 06:38:36 -0700
+X-CSE-ConnectionGUID: ql/oeXATRQWxWC8SoZ9/Ng==
+X-CSE-MsgGUID: ip3xF8XMTfupYz0ejroGyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="183463464"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 22 Oct 2025 06:38:33 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBZ2s-000COn-2a;
+	Wed, 22 Oct 2025 13:38:30 +0000
+Date: Wed, 22 Oct 2025 21:38:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+	platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Denis Benato <benato.denis96@gmail.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: Re: [PATCH v7 5/9] platform/x86: asus-wmi: Add support for multiple
+ kbd led handlers
+Message-ID: <202510222013.EBLC609m-lkp@intel.com>
+References: <20251018101759.4089-6-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-To: "Musham, Sai Krishna" <sai.krishna.musham@amd.com>,
- "mani@kernel.org" <mani@kernel.org>,
- "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, "Bandi, Ravi Kumar"
- <ravib@amazon.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Sean Anderson <sean.anderson@linux.dev>,
- "Yeleswarapu, Nagaradhesh" <nagaradhesh.yeleswarapu@amd.com>
-References: <20251021212801.GA1224310@bhelgaas>
- <ab1f7c51-bc41-4774-a0dc-850e53c412eb@mailbox.org>
- <3it5l556vmfpuu6kz5yvulwosi4ecmcgfbzcizrc5wi7ifddkh@mpzfxf2v6v3f>
- <72267a6c-13c7-40bd-babb-f73a28625ca4@mailbox.org>
- <SN7PR12MB7201CF621AF0A38AA905799D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
- <brekq5jmgnotwpshcksxefpg2adm4vlsbuncazdg32sdpxqjwj@annnvyzshrys>
- <SN7PR12MB7201C6B5B64F8847DD6D816D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
- <zuj6puxpqgjmaa3y3wwyixlru7e7locplnjev37i5fnh6zummw@72t5prkfsrpk>
- <DM4PR12MB6158ACBA7BCEDB99A55ACA03CDF3A@DM4PR12MB6158.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Stefan Roese <stefan.roese@mailbox.org>
-In-Reply-To: <DM4PR12MB6158ACBA7BCEDB99A55ACA03CDF3A@DM4PR12MB6158.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 4eec622a3ee0e92cfaf
-X-MBO-RS-META: bxfn33oh4qooy9od7kb88eg7bpucyym8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018101759.4089-6-lkml@antheas.dev>
 
-On 10/22/25 14:48, Musham, Sai Krishna wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
+Hi Antheas,
 
-<snip>
+kernel test robot noticed the following build warnings:
 
->>> We even don’t need ravi patch, as we have tested this at our end it
->>> works fine by just updating interrupt-map Property. We need to now understand the
->> difference in design.
->>
->> Ok, please let us know with your findings. In the meantime, I'll keep Ravi's patch in
->> tree, as it seems to be required on his setup.
->>
-> 
-> We tested on Linux version 6.12.40 without applying either Stefan's or Ravi's patches.
-> Instead, we applied only the following interrupt-map property change (entries 0,1,2,3) and verified that
-> legacy interrupts are working correctly.
-> 
-> interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
-> <0 0 0 2 &pcie_intc_0 1>,
-> <0 0 0 3 &pcie_intc_0 2>,
-> <0 0 0 4 &pcie_intc_0 3>;
-> 
-> 38:       1143          0  pl_dma:RC-Event  16 Level     80000000.axi-pcie
-> 39:       1143          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
+[auto build test WARNING on 3a8660878839faadb4f1a6dd72c3179c1df56787]
 
-Okay. Same here. I don't need Ravi's patch for the INTx bit enabling.
+url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/HID-asus-simplify-RGB-init-sequence/20251018-182410
+base:   3a8660878839faadb4f1a6dd72c3179c1df56787
+patch link:    https://lore.kernel.org/r/20251018101759.4089-6-lkml%40antheas.dev
+patch subject: [PATCH v7 5/9] platform/x86: asus-wmi: Add support for multiple kbd led handlers
+config: i386-randconfig-141-20251020 (https://download.01.org/0day-ci/archive/20251022/202510222013.EBLC609m-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
 
-I understand that you want us to change the interrupt map in the auto-
-generated device-tree from Vivado. Which is IMHO a bit "suboptimal".
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510222013.EBLC609m-lkp@intel.com/
 
-I would prefer to have a solution which works out-of-the-box, w/o the
-need to manually change DT properties. Is it planned to change / fix
-this interrupt map in pl.dtsi generated with a newer version of Vivado?
+New smatch warnings:
+drivers/platform/x86/asus-wmi.c:1623 kbd_led_update_all() warn: always true condition '(value >= 0) => (0-u32max >= 0)'
 
-Thanks,
-Stefan
+Old smatch warnings:
+drivers/platform/x86/asus-wmi.c:2288 asus_new_rfkill() warn: '*rfkill' is an error pointer or valid
 
+vim +1623 drivers/platform/x86/asus-wmi.c
+
+  1589	
+  1590	static void kbd_led_update_all(struct work_struct *work)
+  1591	{
+  1592		enum led_brightness value;
+  1593		struct asus_wmi *asus;
+  1594		bool registered, notify;
+  1595		int ret;
+  1596	
+  1597		asus = container_of(work, struct asus_wmi, kbd_led_work);
+  1598	
+  1599		scoped_guard(spinlock_irqsave, &asus_ref.lock) {
+  1600			registered = asus->kbd_led_registered;
+  1601			value = asus->kbd_led_wk;
+  1602			notify = asus->kbd_led_notify;
+  1603		}
+  1604	
+  1605		if (!registered) {
+  1606			/*
+  1607			 * This workqueue runs under asus-wmi, which means probe has
+  1608			 * completed and asus-wmi will keep running until it finishes.
+  1609			 * Therefore, we can safely register the LED without holding
+  1610			 * a spinlock.
+  1611			 */
+  1612			ret = devm_led_classdev_register(&asus->platform_device->dev,
+  1613						    &asus->kbd_led);
+  1614			if (!ret) {
+  1615				scoped_guard(spinlock_irqsave, &asus_ref.lock)
+  1616					asus->kbd_led_registered = true;
+  1617			} else {
+  1618				pr_warn("Failed to register keyboard backlight LED: %d\n", ret);
+  1619				return;
+  1620			}
+  1621		}
+  1622	
+> 1623		if (value >= 0)
+  1624			do_kbd_led_set(&asus->kbd_led, value);
+  1625		if (notify) {
+  1626			scoped_guard(spinlock_irqsave, &asus_ref.lock)
+  1627				asus->kbd_led_notify = false;
+  1628			led_classdev_notify_brightness_hw_changed(&asus->kbd_led, value);
+  1629		}
+  1630	}
+  1631	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
