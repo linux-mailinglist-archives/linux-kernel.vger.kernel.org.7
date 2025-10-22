@@ -1,346 +1,144 @@
-Return-Path: <linux-kernel+bounces-865295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2ADBFCBAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C0CBFCBB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C6C189086D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548551A60D49
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A7F347FFF;
-	Wed, 22 Oct 2025 14:58:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D123451C9;
-	Wed, 22 Oct 2025 14:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C117034BA52;
+	Wed, 22 Oct 2025 14:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MBcf4hY6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8823451C9
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761145096; cv=none; b=nKrBZFUDffYrDr3W1etfj4E4gC7JMAOfv/4HByzsapCBbCz5b5FvKyzCWlYXQWCg0kFhciI0FmGPJr33fSVPA5PmxD9QSALZJiaYtUEdpGAruSdW6A06sVvcAg4fRYrXhbNIZuB12+Y4ZEEQN6BG1wLbRfo1msCd8lhKnaEesFk=
+	t=1761145101; cv=none; b=o0CiWbxmzhDRRpgZeJd25iIE5uWo3744VNT9owxJDzmnLyO2fTUofsogqKf0O81pTmSKqO0+vqiDmn9SxRrzI9tEfX9SVl9mwjM20PCGjIxKRWOoyJ2Hn0XQ/SDt16bB96t2mHTfOfb8D/37Kt8NFa5BGpaduCzpAu1izl6maQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761145096; c=relaxed/simple;
-	bh=v1fCkFl3oIrtd+iM/6lymWwvzU5bXHffbndCeeRvQjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hO+e+foSzx2ptVnKZYa2PYdWbrCo1nPlw65Wn3HGFjXWt1Qwbjqf1yX6xJWS0pMtxwGF39zRZjNudoexeKkEd3v0tFPDvSXI0AjvcBT+iRCIGu6ozPPkhIAGtAOMHdYpn0e8KHTLTAqTkW2AeH670RLUXS8CDOwXqb/NVzXs3/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8357E1063;
-	Wed, 22 Oct 2025 07:58:05 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45AB03F63F;
-	Wed, 22 Oct 2025 07:58:11 -0700 (PDT)
-Date: Wed, 22 Oct 2025 15:58:08 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-Message-ID: <aPjxAIudLd16aU4Z@e133380.arm.com>
-References: <aO0Oazuxt54hQFbx@e133380.arm.com>
- <bf18c704-66d0-40cb-8696-435ac1c928b5@intel.com>
- <aO/CEuyaIyZ5L28d@e133380.arm.com>
- <dd5ba9e5-9809-4792-966a-e35368ab89f0@intel.com>
- <aPJP52jXJvRYAjjV@e133380.arm.com>
- <e788ca62-ec63-4552-978b-9569f369afd5@intel.com>
- <aPZaTk97RC6sg+uQ@e133380.arm.com>
- <aPZj1nDVEYmYytY9@agluck-desk3>
- <aPearyfcnpJJ/e06@e133380.arm.com>
- <aPf0OKwDZ4XbmVRB@agluck-desk3>
+	s=arc-20240116; t=1761145101; c=relaxed/simple;
+	bh=UA7FZ7E09YCCwNWVXtHh35Tj2Kh2ruJ5zTVls+xKLW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XeMd+kQMQAPQysmMyC6QpRWWjGlZHlp0E7opfC7V063DOTDUTscEm5Dnsn2vltMdF3k1rROBCTcfVsDdIuU4vXSzkfeTYQc1yIVOIK8OWWO9rsnKpmtdJoqKtanRnRsnWJO/5h6uFWwGyXodY49QoRRD+3HXksfvXfn/IRuZSKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MBcf4hY6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M8ZmoI006415
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:58:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pgqjTbpnFaE0hcBetVMhGWTjxas9QOG0G/pOXwEzoy8=; b=MBcf4hY6zoRatuO7
+	WUdbyvvxobU+IwO4Zzc6NvhTr/q7Ny4dXZivEgI+2HrSyvEoWwzTYwxUO6Sw7nOh
+	WeIcwG4YvUQdTs/w3YWlHnXxjhjzWHpDyFHYt4P3DiZsyQBUAEUsje3YeOwekmto
+	HA/NKOYESvMyqsx4Y1dbX1Wxb/6NQ5rizxKRgWKP1Kk014sKbfcZRegRdS83BBxY
+	U1Kb3RMm1Ifb5vfsS8AxsUX/pVhSigNHV4A9oX/NB4nymN/eqAxePU6dE5kCVdRM
+	THdBOlV5r0XVoAMNCAN0WUIz4wMTTv3F9EmfkqbewdBCg6xogL8CC3ogJkwDp/et
+	A+IDUw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpsam4v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:58:19 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e8a35e1923so3182061cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:58:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761145098; x=1761749898;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pgqjTbpnFaE0hcBetVMhGWTjxas9QOG0G/pOXwEzoy8=;
+        b=bGYAaG2uaN2iiRu3QaDgi/2WsHm4nf3jirVDU56n7r7a1r0fQzECNmt/hrxD/p+Vgt
+         AUegzABjSJZIIz+bmn4nJtHT3x6SSsY+r2fY1242tLfK9xOuu9KVijEMkULpIPFzHumi
+         VDX65CcokbjumOG73LoKIyztbbs9HDiCCOrB2rMkhkosZcR7F5Vq1utWWRw/50JSiOCj
+         eVPPfIG8HHdm/MvOk533lEqRe/ibZKTAirEOnwJeeEtfPM4fSg29rHJhUioONisw4Eww
+         86tC+ssiIqSAHOTWFykmuADT3sTOxuJxUyTdZT5YupuNyf4VBh8MNjXScoRtaBUHXcTW
+         FbHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGU6yLn3ALFlSWHZu7QaHrZG2+JAqFlyom8SuG3LqNdIbryXp6HNRjxr9zv4DJDL+pzw9xHpqSzUvuMoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzegAuq9dzUZgl1bTfUmecjagq/SfgVh+mxRKfMkwnm4u+kKT/C
+	bpzJfUazy0A202WSvHu6z4c6LBmo3fiNUOCEJTkhWgpfzXgxe5AaFPN9np+ukU+wjEaaFsb+Q60
+	XBx4AOsCXilnF0F29SSKy8U0IQACgRdyM+hOjksSpraA2tn1XIpSkZESjy9JPUjz4OiI=
+X-Gm-Gg: ASbGncufo612PveVgPQcosImbj8bBvTg8JBAeXVd+41Up8CsRpT60mLgMyfAN/5zGu/
+	Aq/Ruwt9XqpB8UUTElB/ACOnmMq7D0A5AkOAZY4W7y650ucxefnn7UvN64p0SQyVyhr1Drwq6cb
+	58u0yk9UH8hbqPutUcVJahlFWNmyHZ5j5KdNdN7UuyPH5mA4YbKlsy34hfnvW1nyNn7EX+ag9+y
+	mKy3sSgdXpe60nEYAtPzVJ/S/QVb2MRxyeDyNUbXDXlxyORStO8zqkCYrmFyDSN/4TsdBT+R2IF
+	iTRC0VL8mflYeL3CV6Ojs4UgH4OrXzQxkCLRqjcAMmFSn3Oh+EYwlIx1joywiZOHmX5EjuiRDci
+	92khup9/551+NauwHkke2Tvp9+az9ZftVeBC8UA3mRNiaBw9R9AZ8j8JB
+X-Received: by 2002:a05:622a:60d:b0:4e8:9ed2:790f with SMTP id d75a77b69052e-4ea1177d7a5mr58969981cf.10.1761145097749;
+        Wed, 22 Oct 2025 07:58:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUR9bnbGHJDmSjsGFP17dQVzXSza6HHoSAKI6AUZ1xGMLyDyNfS6OtKnS3TvxPA0S0TIGYKw==
+X-Received: by 2002:a05:622a:60d:b0:4e8:9ed2:790f with SMTP id d75a77b69052e-4ea1177d7a5mr58969651cf.10.1761145097194;
+        Wed, 22 Oct 2025 07:58:17 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb035d48sm1350290866b.53.2025.10.22.07.58.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 07:58:16 -0700 (PDT)
+Message-ID: <61c299af-c4f8-47a0-8803-306c08792b17@oss.qualcomm.com>
+Date: Wed, 22 Oct 2025 16:58:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPf0OKwDZ4XbmVRB@agluck-desk3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] regulator: rpmh-regulator: Fix PMIC5 BOB bypass
+ mode handling
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251022-add-rpmh-read-support-v2-0-5c7a8e4df601@oss.qualcomm.com>
+ <20251022-add-rpmh-read-support-v2-1-5c7a8e4df601@oss.qualcomm.com>
+ <on4zcfs5qdaekc7teo2iq6vpw7o2mp6yiqjkbznxo7wcxgutj3@nb35f55fkugv>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <on4zcfs5qdaekc7teo2iq6vpw7o2mp6yiqjkbznxo7wcxgutj3@nb35f55fkugv>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX5CP5Zj55Xp7q
+ h6mUZrJrdM9tdCQH4Nhhcaoz65xInlWrNR9LBbYBFF5T931UF8g0fmMnfcaPau7n6uSn6UIh5cB
+ YEaJS9WebsdNDlXEo2T6Z1yjkNIwz8I2lLHPbtlH2eHtGuF9z/ybhp/MYF9KtTdjB1BKdQM03jT
+ 34DrgYYUPHn08iVmSv6105siqOS/7G1Vj4tNB/DlDZSHmnFo+D52z5Y9QU07oUoZt6uwE0Zvgzl
+ ToWgiB/wFFxYyXsOPWgO5xp3Mcy9QUhoBbf50BOf7AoRwDaQwpuEUtFPU4wH6WGt5u9F12zspkD
+ lG/oiM+vvCwH19WbzjQwpHXxuWuim2W/UDeYjnQh90/vXiQ6QQgNvaKCU1ufg49tuQ0JEGZJZXb
+ ApzymE0GtSl+Lnw92hoEm10flF/K4g==
+X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68f8f10b cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=kCPPLUCfYJNoUqFreaIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: xZOu7ObqoCgGWy6pVw0f2CusEsOYt7LT
+X-Proofpoint-ORIG-GUID: xZOu7ObqoCgGWy6pVw0f2CusEsOYt7LT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_06,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
 
-Hi Tony,
-
-On Tue, Oct 21, 2025 at 01:59:36PM -0700, Luck, Tony wrote:
-> Hi Dave,
+On 10/22/25 12:23 AM, Dmitry Baryshkov wrote:
+> On Wed, Oct 22, 2025 at 02:38:53AM +0530, Kamal Wadhwa wrote:
+>> Currently, when `rpmh_regulator_set_mode_bypass()` helper function
+>> is called to set bypass mode, it sends PMIC4's BOB bypass mode
+>> value for even if its a PMIC5 BOB.
 > 
-> On Tue, Oct 21, 2025 at 03:37:35PM +0100, Dave Martin wrote:
-> > Hi Tony,
-> > 
-> > On Mon, Oct 20, 2025 at 09:31:18AM -0700, Luck, Tony wrote:
+> The universe will end, the Sun will explode and Ragnarök will be upon
+> us. Please describe the issue, why sending bypass value is bad.
 
-[...]
+I think you misread, it sends the magic value which corresponds
+to BYPASS, but one that worked for the previous generation
 
-> > > Changes to the schemata file are currently "staged" and then applied.
-> > > There's some filesystem level error/sanity checking during the parsing
-> > > phase, but maybe for MB some parts can also be delayed, and re-ordered
-> > > when architecture code applies the changes.
-> > > 
-> > > E.g. while filesystem code could check min <= opt <= max. Architecture
-> > > code would be responsible to write the values to h/w in a sane manner
-> > > (assuming architecture cares about transient effects when things don't
-> > > conform to the ordering).
-> > > 
-> > > E.g. User requests moving from min,opt,max = 10,20,30 to 40,50,60
-> > > Regardless of the order those requests appeared in the write(2) syscall
-> > > architecture bumps max to 60, then opt to 50, and finally min to 40.
-> > 
-> > This could be sorted indeed be sorted out during staging, but I'm not
-> > sure that we can/should rely on it.
-> > 
-> > If we treat the data coming from a single write() as a transaction, and
-> > stage the whole thing before executing it, that's fine.  But I think
-> > this has to be viewed as an optimisation rather than guaranteed
-> > semantics.
-> > 
-> > 
-> > We told userspace that schemata is an S_IFREG regular file, so we have
-> > to accept a write() boundary anywhere in the stream.
-> > 
-> > (In fact, resctrl chokes if a write boundary occurs in the middle of a
-> > line.  In practice, stdio buffering and similar means that this issue
-> > turns out to be difficult to hit, except with shell scripts that try to
-> > emit a line piecemeal -- I have a partial fix for that knocking around,
-> > but this throws up other problems, so I gave up for the time being.)
-> 
-> Is this worth the pain and complexity? Maybe just document the reality
-> of the implementation since day 1 of resctrl that each write(2) must
-> contain one or more lines, each terminated with "\n".
-
-<soapbox>
-
-We could, in the same way that a vendor could wire a UART directly to
-the pins of a regular mains power plug.  They could stick a big label
-on it saying exactly how the pins should be hooked up to another low-
-voltage UART and not plugged into a mains power outlet... but you know
-what's going to happen.
-
-The whole point of a file-like interface is that the user doesn't (or
-shouldn't) have to craft I/O directly at the syscall level.  If they
-have to do that, then the reasons for not relying on ioctl() or a
-binary protocol melt away (like that UART).
-
-Because the easy, unsafe way of working with these files almost always
-works, people are almost certainly going to use it, even if we tell
-them not to (IMHO).
-
-</soapbox>
-
-
-That said, for practical purposes, the interface is reliable enough
-(for now).  We probably shouldn't mess with it unless we can come up
-with something that is clearly better.
-
-(I have some ideas, but I think it's off-topic, here.)
-
-> There are already so many ways that the schemata file does not behave
-> like a regular S_IFREG file. E.g. accepting a write to just update
-> one domain in a resource: # echo L3:2=0xff > schemata
-
-That still feels basically file-like.  I can write something into a
-file, then something else can read what I wrote, interpret it in any
-way it likes, and write back something different for me to read.
-
-In our case, it is as if after each write() the kernel magically reads
-and rewrites the file before userspace gets a chance to do anything
-else.  This doesn't work as a protocol between userspace processes, but
-the kernel can pull tricks that are not available to userspace -- so it
-can be made to work for user <-> kernel protocols (modulo the issues
-about write() boundaries etc.)
-
-> So describe schemata in terms of writing "update commands" rather
-> than "Lines"?
-
-That's reasonable.  In practice, each line written is a request to the
-kernel to do something, but it's already the case that the kernel
-doesn't necessarily do exactly what was asked for (due to rounding,
-etc.)
-
-
-Overall, I think the current state of play is that we need to consider
-the lines to be independent "commands", and execute them in the order
-given.
-
-That's the model I've been assuming here.
-
-
-> > We also cannot currently rely on userspace closing the fd between
-> > "transactions".  We never told userspace to do that, previously.  We
-> > could make a new requirement, but it feels unexpected/unreasonable (?)
-> > 
-> > > > 
-> > > > "So, from now on, only write the things that you actually want to set."
-> > > > 
-> > > > Does that sound about right?
-> > > 
-> > > Users might still use their favorite editor on the schemata file and
-> > > so write everything, while only changing a subset. So if we don't go
-> > > for the full two-phase update I describe above this would be:
-> > > 
-> > >   "only *change* the things that you actually want to set".
-> 
-> I misremembered where the check for "did the user change the value"
-> happened. I thought it was during parsing, but it is actually in
-> resctrl_arch_update_domains() after all input parsing is complete
-> and resctrl is applying changes. So unless we change things to work
-> the way I hallucinated, then ordering does matter the way you
-> described.
-
-Ah, right.
-
-There would be different ways to do this, but yes, that was my
-understanding of how things work today.
-
-> > 
-> > [...]
-> > 
-> > > -Tony
-> > 
-> > This works if the schemata file is output in the right order (and the
-> > user doesn't change the order):
-> > 
-> > # cat schemata
-> > MB:0=100;1=100
-> > # MB_HW:0=1024;1=1024
-> > 
-> > ->
-> > 
-> > # cat <<EOF >schemata
-> > MB:0=100;1=100
-> > MB_HW:0=512,1=512
-> > EOF
-> > 
-> > ... though it may still be inefficient, if the lines are not staged
-> > together.  The hardware memory bandwidth controls may get programmed
-> > twice, here -- though the final result is probably what was intended.
-> > 
-> > I'd still prefer that we tell people that they should be doing this:
-> > # cat <<EOF >schemata
-> > MB_HW:0=512,1=512
-> > EOF
-> > 
-> > ...if they are really tyring to set MB_HW and don't care about the
-> > effect on MB?
-> 
-> I'm starting to worry about this co-existence of old/new syntax for
-> Intel region aware. Life seems simple if there is only one MB_HW
-> connected to the legacy "MB". Updates to either will make both
-> appear with new values when the schemata is read. E.g.
-> 
-> # cat schemata
-> MB:0=100
-> #MB_HW=255
-> 
-> # echo MB:0=50 > schemata
-> 
-> # cat schemata
-> MB:0=50
-> #MB_HW=127
-> 
-> But Intel will have several MB_HW controls, one for each region.
-> [Schemata names TBD, but I'll just call them 0, 1, 2, 3 here]
-> 
-> # cat schemata
-> MB:0=100
-> #MB_HW0=255
-> #MB_HW1=255
-> #MB_HW2=255
-> #MB_HW3=255
-> 
-> If the user sets just one of the HW controls:
-> 
-> # echo MB_HW1=64
-> 
-> what should resctrl display for the legacy "MB:" line?
->
-> -Tony
-
-Erm, good question.  I hadn't though too carefully about the region-
-aware case.
-
-I think it's reasonable to expect software that writes MB_HW<n>
-independently to pay attention only to these specific schemata when
-reading back -- a bit like accessing a C union.
-
-# echo 'MB:0=100' >schemata
-# cat schemata
-->
-	MB:0=100
-	# MB_HW:0=255
-	# MB_HW0:0=255
-	# MB_HW1:0=255
-	# MB_HW2:0=255
-	# MB_HW3:0=255
-
-# echo 'MB:0=100' >schemata
-# cat schemata
-->
-	MB:0=50
-	# MB_HW:0=128
-	# MB_HW0:0=128
-	# MB_HW1:0=128
-	# MB_HW2:0=128
-	# MB_HW3:0=128
-
-# echo 'MB_HW:0=127' >schemata
-# cat schemata
-->
-	MB:0=50
-	# MB_HW:0=127
-	# MB_HW0:0=127
-	# MB_HW1:0=127
-	# MB_HW2:0=127
-	# MB_HW3:0=127
-
-# echo 'MB_HW1:0=64' >schemata
-# cat schemata
-->
-	MB:0=???
-	# MB_HW:0=???
-	# MB_HW0:0=127
-	# MB_HW1:0=64
-	# MB_HW2:0=127
-	# MB_HW3:0=127
-
-The rules for populating the ??? entries could be designed to be
-somewhat intuitive, or we could just do the easiest thing.
-
-So, could we just pick one, fixed, region to read the MB_HW value from?
-Say, MB_HW0:
-
-	MB:0=50
-	# MB_HW:0=127
-	# MB_HW0:0=127
-	# MB_HW1:0=64
-	# MB_HW2:0=127
-	# MB_HW3:0=127
-
-Or take the average across all regions:
-
-	MB:0=44
-	# MB_HW:0=111
-	# MB_HW0:0=127
-	# MB_HW1:0=64
-	# MB_HW2:0=127
-	# MB_HW3:0=127
-
-The latter may be more costly or complex to implement, and I don't
-know whether it is really useful.  Software that knows about the
-MB_HW<n> entries also knows that once you have looked at these, MB_HW
-and MB tell you nothing else.
-
-What do you think?
-
-I'm wondering whether setting the MB_HW<n> independently may be quite a
-specialised use case, which not everyone will want/need to do, but
-that's an assumption on my part.
-
-Cheers
----Dave
+Konrad
 
