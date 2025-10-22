@@ -1,116 +1,129 @@
-Return-Path: <linux-kernel+bounces-864743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96E4BFB706
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A78BFB70C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8911C4EE5B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:42:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23BE467415
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613541339A4;
-	Wed, 22 Oct 2025 10:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0051A319879;
+	Wed, 22 Oct 2025 10:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9fP+N6D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="o5j7WoI0"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EF92BE03C;
-	Wed, 22 Oct 2025 10:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDB921FF4D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761129729; cv=none; b=WkuBPtOfck9li2TRhma6Dcsy8WA86H6SINYQanIqrO9UuiDzUQec8ZuQllHHFIa7N+eU+LXjOiyfy3VdRCmf9bGGVfbBnlHtcwRQvesGRaO2CTQ2lPDjpx1adE4M/5qZrNygcbtNtNXRQLJeAXDcja0hff5kBw6dZPiOTw0Rdh4=
+	t=1761129803; cv=none; b=fANlcB/7Lwk+5H4nRAu1RRyvoFYn5LaPsP0jKZ3v6Vv5/WitC6/FO8Fhp2QMqvsJ7BlCwHhUhb4+VgYLHMrKfRIjWJhZzrZUKFZaG819poZydKb4UToSWF78P799h4OZfVOPu+ukn2ZCDjojkhU5t+gZPQXhMtQ/RmPh2nBLEOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761129729; c=relaxed/simple;
-	bh=fP5yx2bkDWUMYZyoqg2KA3bJxODxRSuv9A7iBDPTTNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMGsikRdozJ6ko5cWOXowSUGEoEhqRN5cBKRBe/+youV9fRavmI8z/cwkW8S34zoaudysxjiLbhzXZWmnnbu4n4/iuIzxnCvhBzE1i0MyM2FfFLs8dKnTrAgFQDgBIqQC8h4B5TYdT9nEffLlLUa7BHbaaAFblcBdFlA1uH96tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9fP+N6D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3779EC4CEE7;
-	Wed, 22 Oct 2025 10:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761129729;
-	bh=fP5yx2bkDWUMYZyoqg2KA3bJxODxRSuv9A7iBDPTTNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T9fP+N6DOJO7FFkNgQpdDLiuTOdU2VB0c2Sj91vdqmRqgKECbC9m9wwNvVYcYNXwl
-	 fRqh+/uP7ez0/YLzTXHPO9nnsHG3+D8ryseTSClTw6OnVEkgwytElQYohPUx5jIe+L
-	 vM6MjvjS2r8quPU45hgVl5GWpjDOcYf5CI+T4Mt/elWl72EzrT6SZ5WNln/+JGqPVS
-	 CUbviADbZGoneEh+6K/Ws0LL3m2+MEEtx/g/izDWKrhRflxH7+YqibRC9iyu2CABJx
-	 BQu8ow/WxcS2HVUwdnGtBYgcZf1g+r6nP2UdAg4QPj5EC8o30HuFChhX1e/EJcvUgy
-	 EST+n41PqYujQ==
-Date: Wed, 22 Oct 2025 11:42:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org, vkoul@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, quic_varada@quicinc.com
-Subject: Re: [PATCH v3 1/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5424
- compatible
-Message-ID: <0a743099-face-4cc1-91ef-098a748604b7@sirena.org.uk>
-References: <20251014110534.480518-1-quic_mdalam@quicinc.com>
- <20251014110534.480518-2-quic_mdalam@quicinc.com>
- <dd1e4289-5e36-4b24-9afd-f09569459a96@sirena.org.uk>
- <96ae7d38-4ce0-fa34-e6f0-6bb6e4ceaa28@quicinc.com>
+	s=arc-20240116; t=1761129803; c=relaxed/simple;
+	bh=JZ4P+wYE8YZdEKQsH+NfoSABTfJNMWLi6rL0+6dUT14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pXaVmfe45pPbjfFOD4cPPSMAbrRkc4iOibBy0mu9VOFDxK/9o+q3hWUH0hs7TZvWv+blVVKQUG2NP4zHgTmy6es0qefEARVyTjDaxY6ehkxkbqojkCGxNU47qv655iDProWOkdY13uh4qynRzcbI0dzT1UX6ZSb8MsfIlTmVQAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=o5j7WoI0; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
+	by cmsmtp with ESMTPS
+	id BHQqvPT9HeNqiBWJNvkgjt; Wed, 22 Oct 2025 10:43:21 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id BWJEvVXiNfjrXBWJEvwoSZ; Wed, 22 Oct 2025 10:43:12 +0000
+X-Authority-Analysis: v=2.4 cv=ItcecK/g c=1 sm=1 tr=0 ts=68f8b549
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=fB1EUuAJHaHnRYsFKpoA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dlFZvav2JxkX6DXRhpjf71y+Kb2+lLpOvXc+C6RSZuM=; b=o5j7WoI0NEjXbsiqdG1K/WaJDC
+	If7ZMcgxhUox+4mEypQsuOIewqHPfhyHqKOaZ8DvoeGk+LjNhS5kIxIVpsNzSIYXvAaYo64AUEzzl
+	gQYbE4AuEfYlNDcnoqT/3Y64UmkNuwgz7Iqnt5ieLq8MVtIFi7h7qvI7xJ4NTxBwo/1+YtuB4Hhu+
+	ukA1ZVQ2zJYmnWNUAZeTLXBh9MF3EiPqGr/S1rgBE0goMjLEGlr8CUCmFGSdK7ICDo3VHGtgJi7pI
+	r3U0uCHDJQUDtM1je3ZIQ/ygbeyzTaj0GhARsUXkSsW6x51g9ZcqfUmO0++xrIFf7rFDQoOZxLH5n
+	8SqSO2iA==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:49900 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <re@w6rz.net>)
+	id 1vBWJD-00000000q4O-2xIr;
+	Wed, 22 Oct 2025 04:43:11 -0600
+Message-ID: <8e8997f8-f266-4237-9325-3ae602f4304c@w6rz.net>
+Date: Wed, 22 Oct 2025 03:43:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yDD6QZe3iu15yXq9"
-Content-Disposition: inline
-In-Reply-To: <96ae7d38-4ce0-fa34-e6f0-6bb6e4ceaa28@quicinc.com>
-X-Cookie: Remember the... the... uhh.....
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/105] 6.6.114-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251021195021.492915002@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20251021195021.492915002@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1vBWJD-00000000q4O-2xIr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:49900
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 54
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDcN4UP7pxitbyIdTG7SrxR70AMH4LipjE/HnYB8nDVWLIqoCeX0XCuWJYpb5QBQ/ks0c5mbCs7S823BdRBituYO/whzkeOvw3+aA1z0raYnPsnd4cbn
+ Pb9FeaG1shqeea3Ffbpg8SkVyuA+QwxNTjCy0uypcbQkAphZfjdLJJdmvFtNbBC236Dnva7Te13peISs5D7kadLN0qSNBSybaIM=
 
+On 10/21/25 12:50, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.114 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 23 Oct 2025 19:49:51 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.114-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
---yDD6QZe3iu15yXq9
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-On Wed, Oct 22, 2025 at 12:29:01PM +0530, Md Sadre Alam wrote:
-> On 10/22/2025 12:39 AM, Mark Brown wrote:
-> > On Tue, Oct 14, 2025 at 04:35:26PM +0530, Md Sadre Alam wrote:
-> > > IPQ5424 contains the QPIC-SPI-NAND flash controller which is the same=
- as
-> > > the one found in IPQ9574. So let's document the IPQ5424 compatible and
-> > > use IPQ9574 as the fallback.
+Tested-by: Ron Economos <re@w6rz.net>
 
-> > This doesn't apply against current code, please check and resend.
-
-> Thank you for the feedback. I=E2=80=99d appreciate a bit more clarity on =
-what
-> =E2=80=9Cdoesn't apply against current code=E2=80=9D refers to in this co=
-ntext. I=E2=80=99ve
-> manually applied the patch against the latest mainline (torvalds/linux) a=
-nd
-> it applied cleanly without any conflicts. Please let me know if there=E2=
-=80=99s a
-> specific tree or integration point I should be checking against.
-
-I tried to apply it to the spi tree
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-6.19
-
---yDD6QZe3iu15yXq9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj4tPkACgkQJNaLcl1U
-h9BcKAf/Vuyo9/4fndX06ye8KTEa1FfUlq/YpJCWZJl8gAF5LG4YFmaz5flelTt2
-rWWwJCsXj8q6sobLSsdBMwEEiqtuWkHoBfI3MDRxlnsh9cwoHhPecrtUwzy+SjA3
-8uD77eS84VOHrFO5Oz7kdFkFkcRejx9oQvY7QzK+FaoaLG6DIEIVjcHBgLinfQ9n
-Ser8cSWagEC+ocb0PokbMv1ySDo5J03kSoWFTPmOPA2PLspmQKh3VnZ59q2jXyjY
-qJ8aLLBknoJ37V97AwgMrfFJH4pD7XD8tj34kk2ID2oBnKBzpBcxSxRCvpvet7cq
-RizTaWS+Ol0c9aRW1hsFawxiEoEt7w==
-=hYXk
------END PGP SIGNATURE-----
-
---yDD6QZe3iu15yXq9--
 
