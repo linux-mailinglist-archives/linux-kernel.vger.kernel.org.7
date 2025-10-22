@@ -1,241 +1,116 @@
-Return-Path: <linux-kernel+bounces-864588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AC2BFB1F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB143BFB1F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DCF54FA1C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:18:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EAA64250F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1172571A0;
-	Wed, 22 Oct 2025 09:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OF2J3E5A"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A6C311C1B;
+	Wed, 22 Oct 2025 09:18:39 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C2730EF84;
-	Wed, 22 Oct 2025 09:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E162571A0;
+	Wed, 22 Oct 2025 09:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761124704; cv=none; b=ffPJhrPNl2SAJTgPi1GhdexJImZ05xAHHzhn+ZPrUT4sUQCYgMNiiMsNarfkna4nDq1QASHYS0+qlpFEA9qRQ8TS1C4trxDB/rR6TDkAL+S7cv543lg5h3acZSGbtM5AMY5z4wRU3MB9deXloKJx2xeatyJNTUx+Lg+RZ0jUv44=
+	t=1761124718; cv=none; b=sSFytcDJkVIVvmJxkrOLt2AnqqjbqaL0PR8yJNhLRh9CcEcIVLuHjRDbdWchrIe9wa+YuciLN3BKMh666iDm9T+eInLTyGpse3IDnTPG++aX0FQ5IkXOxtBtS25c2TPVWarELMMgT0BBA3gO8bcDNmLGa0I4zOEgOjhf9z/xYVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761124704; c=relaxed/simple;
-	bh=FGCr1siS9EZNF4C9OKmn3apBGtbCDYLUAtCd/WlrkcM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=poR9XY993drtIKc9pRzS0e8mR2UrIybThRso3B2qWLxuhmEFhe3tjqVwLuIyrrGn9niTh372ZLdFJ+8HWJ1dsgTteLmobm3emEYWjSFMMtGkTCZoGYB8IfXEUXH/0/SJWOmIalKHjn6B+ktzmdHQ4bpZ8T1ypba5AhKwyaM+ekE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OF2J3E5A; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 4BF414E41261;
-	Wed, 22 Oct 2025 09:18:20 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1FD07606DC;
-	Wed, 22 Oct 2025 09:18:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BB8D8102F2424;
-	Wed, 22 Oct 2025 11:18:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761124698; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=LNEtH9lG/yvOebKMsji3DJq4oD0CU5SvCjoqyEyuZJY=;
-	b=OF2J3E5AqsRwJZUe/GRi6I4GRKXFbvqbO/tcH7qL3QxWQQyacXCI2N81rs8SHmBRk42pei
-	mDcgLvkOpYtZ128tfw0QgBcbY/E2k4MUV7t/gHmWJHKhdVhNl+2JV4byn2kuJ3Fb38Zsif
-	wpRUDMbFz+ApprQLi2TiA/7Lx9AvfUPkrFwOFsBlUEtUARyAwZIjKZ2yNUEO0IVZruZaFf
-	6hL7qd09YkaJz04E2Nuj0oSbPtlR8xHZsN9HavVDoyhWhsS2LPUifxn/pvZzIR5unzRj2j
-	YtuqYc8IuOEKk7cQUYupHAyPUGw8jaHFhFGi667+wSvG5a5gvBhR5n9ZA2yHfw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Genoud <richard.genoud@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Chen-Yu Tsai
- <wens@csie.org>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Samuel
- Holland <samuel@sholland.org>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,  Wentao Liang <vulab@iscas.ac.cn>,  Johan
- Hovold <johan@kernel.org>,  Maxime Ripard <mripard@kernel.org>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  linux-mtd@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-sunxi@lists.linux.dev,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 13/15] mtd: rawnand: sunxi: Add support for H616 nand
- controller
-In-Reply-To: <20251020101311.256819-14-richard.genoud@bootlin.com> (Richard
-	Genoud's message of "Mon, 20 Oct 2025 12:13:09 +0200")
-References: <20251020101311.256819-1-richard.genoud@bootlin.com>
-	<20251020101311.256819-14-richard.genoud@bootlin.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Wed, 22 Oct 2025 11:18:07 +0200
-Message-ID: <87ecqvthv4.fsf@bootlin.com>
+	s=arc-20240116; t=1761124718; c=relaxed/simple;
+	bh=iFDCalLskXW9rVP0zzspDtQbMZaXfTw4fPS+22BIkQ0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=uUTAVzPd6NUXbpch/p2JQF4gPAlm/zdbssnntjmpvT37fP/pyUtQKua78P4DBiuXPpwpPeOOjOlXi+sH5F0GiSzAq7o8HcQnU2EN3DMXexRzBhyiROZq7ST86GLGQ5brqsh1c0kd3iR+6ZP25fgisIuMeDZtpcmoxXuaBFufl/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-01 (Coremail) with SMTP id qwCowADXK55Qofhopw_aEw--.35253S2;
+	Wed, 22 Oct 2025 17:18:21 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: eajames@linux.ibm.com,
+	ninad@linux.ibm.com,
+	joel@jms.id.au,
+	jk@ozlabs.org
+Cc: linux-fsi@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] fsi/core: fix error handling in fsi_slave_init()
+Date: Wed, 22 Oct 2025 17:18:07 +0800
+Message-Id: <20251022091807.3300-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:qwCowADXK55Qofhopw_aEw--.35253S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WryrKw4rWw17XFW8GFyDJrb_yoW8Wr4kpa
+	1DGa4FyrWUGr1kKrsrZas7ZF98C3yIv34furWrGwn2krZxXr90vryjg340ya48JFWkCF48
+	X3srXrykW3WDXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjWxR3UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Richard,
+Once cdev_device_add() failed, we should use put_device() to decrement
+reference count for cleanup. Or it could cause memory leak. Although
+operations in err_free_ida are similar to the operations in callback
+function fsi_slave_release(), put_device() is a correct handling
+operation as comments require when cdev_device_add() fails.
 
-On 20/10/2025 at 12:13:09 +02, Richard Genoud <richard.genoud@bootlin.com> =
-wrote:
+As comment of device_add() says, 'if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count'.
 
-> The H616 nand controller has the same base as A10/A23, with some
-> differences:
-> - mdma is based on chained buffers
-> - its ECC supports up to 80bit per 1024bytes
-> - some registers layouts are a bit different, mainly due do the stronger
->   ECC.
-> - it uses USER_DATA_LEN registers along USER_DATA registers.
-> - it needs a specific clock for ECC and MBUS.
->
-> Introduce the basic support, with ECC and scrambling, but without
-> DMA/MDMA.
->
-> Tested on Whatsminer H616 board (with and without scrambling, ECC)
->
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+Found by code review.
 
-...
+Cc: stable@vger.kernel.org
+Fixes: 371975b0b075 ("fsi/core: Fix error paths on CFAM init")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/fsi/fsi-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
->=20=20
-> +#define NFC_TIMING_CFG2(tCDQSS, tSC, tCLHZ, tCSS, tWC)		\
-> +	((((tCDQSS) & 0x1) << 11) | (((tSC) & 0x3) << 12) |	\
-> +	 (((tCLHZ) & 0x3) << 14) | (((tCSS) & 0x3) << 16) |	\
-> +	 (((tWC) & 0x3) << 18))
-> +
->  /* define bit use in NFC_CMD */
->  #define NFC_CMD_LOW_BYTE_MSK	GENMASK(7, 0)
-> -#define NFC_CMD_HIGH_BYTE_MSK	GENMASK(15, 8)
-> +#define NFC_CMD_HIGH_BYTE_MSK	GENMASK(15, 8)  // 15-10 reserved on H6
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index c6c115993ebc..444878ab9fb1 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -1084,7 +1084,8 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
+ 	rc = cdev_device_add(&slave->cdev, &slave->dev);
+ 	if (rc) {
+ 		dev_err(&slave->dev, "Error %d creating slave device\n", rc);
+-		goto err_free_ida;
++		put_device(&slave->dev);
++		return rc;
+ 	}
+ 
+ 	/* Now that we have the cdev registered with the core, any fatal
+@@ -1110,8 +1111,6 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
+ 
+ 	return 0;
+ 
+-err_free_ida:
+-	fsi_free_minor(slave->dev.devt);
+ err_free:
+ 	of_node_put(slave->dev.of_node);
+ 	kfree(slave);
+-- 
+2.17.1
 
-Wrong comment type :-)
-
-> +#define NFC_CMD_ADR_NUM_MSK	GENMASK(9, 8)
->  #define NFC_CMD(x)		(x)
->  #define NFC_ADR_NUM_MSK		GENMASK(18, 16)
->  #define NFC_ADR_NUM(x)		(((x) - 1) << 16)
-> @@ -122,6 +156,7 @@
->  #define NFC_SEQ			BIT(25)
->  #define NFC_DATA_SWAP_METHOD	BIT(26)
->  #define NFC_ROW_AUTO_INC	BIT(27)
-> +#define NFC_H6_SEND_RND_CMD2	BIT(27)
->  #define NFC_SEND_CMD3		BIT(28)
->  #define NFC_SEND_CMD4		BIT(29)
->  #define NFC_CMD_TYPE_MSK	GENMASK(31, 30)
-> @@ -133,6 +168,7 @@
->  #define NFC_READ_CMD_MSK	GENMASK(7, 0)
->  #define NFC_RND_READ_CMD0_MSK	GENMASK(15, 8)
->  #define NFC_RND_READ_CMD1_MSK	GENMASK(23, 16)
-> +#define NFC_RND_READ_CMD2_MSK	GENMASK(31, 24)
-
-...
-
-> @@ -858,6 +967,8 @@ static int sunxi_nfc_hw_ecc_read_chunk(struct nand_ch=
-ip *nand,
->  	if (ret)
->  		return ret;
->=20=20
-> +	sunxi_nfc_reset_user_data_len(nfc);
-> +	sunxi_nfc_set_user_data_len(nfc, 4, 0);
-
-I'm not sure I understand this properly. Why isn't this a fixed setting?
-Also, what is 4? It is not obvious to me and my require either a comment
-or a define (or maybe a sizeof()).
-
->  	sunxi_nfc_randomizer_config(nand, page, false);
->  	sunxi_nfc_randomizer_enable(nand);
->  	writel(NFC_DATA_TRANS | NFC_DATA_SWAP_METHOD | NFC_ECC_OP,
-> @@ -968,6 +1079,8 @@ static int sunxi_nfc_hw_ecc_read_chunks_dma(struct n=
-and_chip *nand, uint8_t *buf
->  		return ret;
->=20=20
->  	sunxi_nfc_hw_ecc_enable(nand);
-> +	sunxi_nfc_reset_user_data_len(nfc);
-> +	sunxi_nfc_set_user_data_len(nfc, 4, 0);
->  	sunxi_nfc_randomizer_config(nand, page, false);
->  	sunxi_nfc_randomizer_enable(nand);
->=20=20
-> @@ -1100,6 +1213,8 @@ static int sunxi_nfc_hw_ecc_write_chunk(struct nand=
-_chip *nand,
->=20=20
->  	sunxi_nfc_randomizer_config(nand, page, false);
->  	sunxi_nfc_randomizer_enable(nand);
-> +	sunxi_nfc_reset_user_data_len(nfc);
-> +	sunxi_nfc_set_user_data_len(nfc, 4, 0);
->  	sunxi_nfc_hw_ecc_set_prot_oob_bytes(nand, oob, 0, bbm, page);
->=20=20
->  	writel(NFC_DATA_TRANS | NFC_DATA_SWAP_METHOD |
-> @@ -1344,10 +1459,12 @@ static int sunxi_nfc_hw_ecc_write_page_dma(struct=
- nand_chip *nand,
->  	if (ret)
->  		goto pio_fallback;
->=20=20
-> +	sunxi_nfc_reset_user_data_len(nfc);
->  	for (i =3D 0; i < ecc->steps; i++) {
->  		const u8 *oob =3D nand->oob_poi + (i * (ecc->bytes + 4));
->=20=20
->  		sunxi_nfc_hw_ecc_set_prot_oob_bytes(nand, oob, i, !i, page);
-> +		sunxi_nfc_set_user_data_len(nfc, 4, i);
-
-Here you use it differently, maybe a bit of explanation in a comment
-could help.
-
->  	}
->=20=20
->  	nand_prog_page_begin_op(nand, page, 0, NULL, 0);
-> @@ -2148,6 +2265,10 @@ static int sunxi_nfc_probe(struct platform_device =
-*pdev)
->  	if (irq < 0)
->  		return irq;
->=20=20
-> +	nfc->caps =3D of_device_get_match_data(dev);
-> +	if (!nfc->caps)
-> +		return -EINVAL;
-> +
->  	nfc->ahb_clk =3D devm_clk_get_enabled(dev, "ahb");
->  	if (IS_ERR(nfc->ahb_clk)) {
->  		dev_err(dev, "failed to retrieve ahb clk\n");
-> @@ -2160,6 +2281,22 @@ static int sunxi_nfc_probe(struct platform_device =
-*pdev)
->  		return PTR_ERR(nfc->mod_clk);
->  	}
->=20=20
-
-...
-
->  static const struct sunxi_nfc_caps sunxi_nfc_a10_caps =3D {
->  	.has_ecc_block_512 =3D true,
-> +	.has_ecc_clk =3D false,
-> +	.has_mbus_clk =3D false,
-
-As you want, but setting these fields (and below) to false is not
-strictly required as they will be set to 0 (which means false,
-automatically).
-
->  	.reg_io_data =3D NFC_REG_A10_IO_DATA,
->  	.reg_ecc_err_cnt =3D NFC_REG_A10_ECC_ERR_CNT,
->  	.reg_user_data =3D NFC_REG_A10_USER_DATA,
-> @@ -2242,11 +2383,14 @@ static const struct sunxi_nfc_caps sunxi_nfc_a10_=
-caps =3D {
->  	.dma_maxburst =3D 4,
->  	.ecc_strengths =3D sunxi_ecc_strengths_a10,
->  	.nstrengths =3D ARRAY_SIZE(sunxi_ecc_strengths_a10),
-> +	.max_ecc_steps =3D 16,
->  	.sram_size =3D 1024,
->  };
->=20=20
-
-> +static const struct sunxi_nfc_caps sunxi_nfc_h616_caps =3D {
-> +	.has_mdma =3D false, // H616 supports only chained descriptors
-
-Wrong comment type :-)
-
-LGTM otherwise.
-
-Thanks,
-Miqu=C3=A8l
 
