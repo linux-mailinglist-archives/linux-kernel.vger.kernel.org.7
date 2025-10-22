@@ -1,230 +1,106 @@
-Return-Path: <linux-kernel+bounces-865498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70482BFD6B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:59:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DFDBFD5C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 369D3401853
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:36:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DB8756391F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCA33557F1;
-	Wed, 22 Oct 2025 16:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D4C358D17;
+	Wed, 22 Oct 2025 16:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGumm2YL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LmHf6n1o"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E44C35505D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663E63587B0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761150161; cv=none; b=N6CQqVAkG5aNfWtfRAKB75uqliZNGAOq5aa3LnytH32IVMHvi/diq8XFC+DN/bf+hqH1GViej+bgFu126Z4Sfun0v5g0DVvKsx0c+L65H/3R26x2/uNFN9A3tHYgVGjhwBT1MawNdwhhKnbwMOuq69uDwfHJMCwcKt87sKHOzzE=
+	t=1761150367; cv=none; b=mIX2Rsy+oMDmRXxDVe1xqygBgjWJUYT0pIeYI0C8QUIKC2eNk2PP8UljknvMzq+vp9nGfb+hLQgtFBXhHf26oFyhgPD4aW18/4SnDJnYnFsoclFD4ww833yHIUi/DkANlNfEdDNyaaQ6R9xOMTpqlEQnWDSqOv5Aux4ZdNqG4xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761150161; c=relaxed/simple;
-	bh=YCov4x0BqOSH2/C6y9Fgj+4zowfsuwuCXjatGY7QUkY=;
+	s=arc-20240116; t=1761150367; c=relaxed/simple;
+	bh=gIw1kriFuplFJlOu4lyyAKijl5rEMdkuXjxlFUcX/H0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FAEL/QIqT4VPYYIhxK0quI7zzBPB5Kd3MkezI/DSel9Vw8ySPlxuNlha1EshwWcj7VCBtPFWFLuiXXQei2D23WpAFdHcKEpEvWecIQgejdGjJtmWnv006Jde2HS5l038PrrCKnQav6E8H7TAH05UDkGbTIwsEdLnWpCVpa5mBKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGumm2YL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8228C19421
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761150160;
-	bh=YCov4x0BqOSH2/C6y9Fgj+4zowfsuwuCXjatGY7QUkY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FGumm2YLbqk2q5dVH7k9NbkHOlkzGKQ9m+2ARM6o5gptaxrA5N/6nKstvNDdTijmx
-	 XiZNNNo4BgrifPtpiZ98sumxspcln0bWzs5M/7nrJNf3zYclXeYtHjR64wb16zB7nc
-	 sEGHmfnI/GE6OqhqwFFCT/2sTUnTSxCh1SuaVzLCrGSqRataQf7UjPYfhu2QCHyU9R
-	 TK8t1f8W1xyvVJfBb2qFk/EczlY1D6aGQjHx87+qy2bhEKBm2JY6/b/+X93ktW7088
-	 CqUL5Y0YSg+AJ83T7D/vK6t2WCYRuacGg+Ga1HlI1oSJkhbT6EjC5AKwz//p1y1N6I
-	 2hkXFnWTinzZA==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e9d633b78so294192766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:22:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIHUHFTfXfr8g2R5t5rMJ57oFF43Y2FcsiP0ZqDLeVIIAbLEGEyikLjUioPgrW92jkedffWChumRDijcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfW7ZFuwinBgA1eaIPCc+G3C1CVuplkdZ7RL/BlbkckZStU/rw
-	J/jn/HhsVk00yL9dg2I3GHb3B7SB8831MfbNi9puk5Y5NuNbtm8rd2vES3lzNqo6oCy/AYOOcot
-	mcoM35izTGyh4/uel30PGm+bJIi9KVQ==
-X-Google-Smtp-Source: AGHT+IGphdHfOqtuSMrfZHHKoMtu86beDx79AwnS5WmHT0uStu32DJJ/Ln6QYAVqoGfNCp7zAA/jO70wft27b2yZyjA=
-X-Received: by 2002:a17:907:845:b0:b2a:47c9:8ff5 with SMTP id
- a640c23a62f3a-b6d2c71f62amr555812966b.10.1761150158929; Wed, 22 Oct 2025
- 09:22:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZjhogFqKYg/ozqnAv6SuVX2Q0gsecWAC29tL/r2oMxDkWPEqgEQ3X2kFyGxKD678HrWTNpAFvwGzxx2+LVHij3WFKUiRnuQG3+qZzL+ORzEmbDlxi5jKkk96jrDYN5Px8iyFGzc8RtWJxfpSjKHRyGkAWk7s4MakbOUORmvGgz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LmHf6n1o; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so12296a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761150362; x=1761755162; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gIw1kriFuplFJlOu4lyyAKijl5rEMdkuXjxlFUcX/H0=;
+        b=LmHf6n1ofLAjq8HgFzzJBvd5LqVEikKJdlTMHoz69g2WAJZAZvMxUwh5URrt74XG96
+         rmc5c7RMF7O4qweeUq5/p7zVP7XdmFO74WjqiWX8MsY4Bpg7FTuq3VWpt0VAdtr9tQbr
+         sAsSxzo7hsXK2fOZ6cCp3R0P/kzrk5k4qr8MqJoFvs2vFWV/f4dXzEvHDJ7/XBbnplcC
+         J0055dbo+jBOGV/K8cRD70lzQ9GNU5j0KOO6TtSAboqk/s3bLPrztk9TuVODXGUGvIso
+         jey5EhsM+/XOx6xoV/axU4CKr1Qjt+S1GqLTncalj7aDMCLEjo4/5NMiks8T/8dycdT9
+         5BBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761150362; x=1761755162;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gIw1kriFuplFJlOu4lyyAKijl5rEMdkuXjxlFUcX/H0=;
+        b=cU5CCpj4FpQTQ54voc4dFYO22ZPc9NtdaRgVyP9ah8NXmlbwvrWqHawM5to7ilAx6H
+         wZz0RmfCGdVX6AA+e0SanDNg97eIWvVuAGZeM5lXu6dYm0urqodsjB3IaXZhjByQae7+
+         Z+4hTxgujsrW9g7IeE7TjzfxjlLM+fTvZ8XN9prs4We2F2B3Y71ctHVspuyqu1XAOHRi
+         RPCundQlVXY9WtHTP7kSNSySeP5wNptXwybpQbX4FGM/rXezXzLN6qwACC+6ghRy23fo
+         S1wZy+B8aYqzTKJW0zO/PT7Cl0u6RMVLif8GZcnMmv7eSf4OJAVGPCJCvIMwAYc37OJU
+         IreA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgJA6z7nKahYVLBYSRxVWGTlUXb6h/VJgeIPLGuPhOMc9I700eE983pC+DLCIoW73Khj+CJn7sn37spTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEvna5orgSL9eQDx/tGF26tjInA7TEQEPzUFcCQA+vqzZspCdD
+	YzAD/B5xPPt5QJmvq8NY30C94A2vxkoo3ualyDcjiW2Ym87f4RuOHV1VvmrZQTK98wek7K+VPEv
+	lYeW06kG0ypC790zD/tmm8XuJp/72ZF0PUJjJHTR9
+X-Gm-Gg: ASbGnctLUgcOSjn6Uq+Y8hNYVYtC2L97pU15vyx6CPD9lXMgXvVqkHhLa/7W1LGqGxQ
+	YR40LMfhtpSvRjoBRQ2n7tdyeUJd3HNwu1kRC6/lutwAWZaWhQSIEyy2IXFxkvktl+TFE9Xqa/I
+	S3Bo6otItDwINCZ6VZPDHMZI926aJaneSMHYZRqSzx5+bPAb+vL8DZxiStMxULpEjz57pWDnZQS
+	SOSYylfngD3juFYL3pTFEyYboAvZEle/93Rm0TjsswMJJgYovSmUnZ2kDfh9SbLbcbiHTEpN5jm
+	AgRwPp4nyfMJFCo=
+X-Google-Smtp-Source: AGHT+IEkvw6aGBiyj17QM5779QXlZYvCVowncplpH/uSCnE1bqWGQ2ML0a40foJQ2EvGykJFnPbW/Xu6ziwwDK3dt1A=
+X-Received: by 2002:a05:6402:14c4:b0:63c:4ca6:605d with SMTP id
+ 4fb4d7f45d1cf-63e1d983a91mr47142a12.1.1761150361564; Wed, 22 Oct 2025
+ 09:26:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016-ethos-v5-0-ba0aece0a006@kernel.org> <20251016-ethos-v5-2-ba0aece0a006@kernel.org>
- <aPHhXl6qdU1mMCNt@lstrano-desk.jf.intel.com> <20251017153746.GA1579747-robh@kernel.org>
- <aPM3J2jZcct7ODIp@lstrano-desk.jf.intel.com> <aPNE5po45Umson5V@lstrano-desk.jf.intel.com>
- <aPf+ZLJ2KIsz+lZx@lstrano-desk.jf.intel.com>
-In-Reply-To: <aPf+ZLJ2KIsz+lZx@lstrano-desk.jf.intel.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 22 Oct 2025 11:22:27 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK+WUk-cs0ZgiQ-nEQTmdn=faCCnoPED2HnhKx0vJ=uCQ@mail.gmail.com>
-X-Gm-Features: AS18NWCRsuFSavTaQ2ZXGKmNF4KE6LZuGI0Wke6UF8bHIQFS03d1VhZlH-NVkSw
-Message-ID: <CAL_JsqK+WUk-cs0ZgiQ-nEQTmdn=faCCnoPED2HnhKx0vJ=uCQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] accel: Add Arm Ethos-U NPU driver
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
-	Daniel Stone <daniel@fooishbar.org>, Frank Li <Frank.li@nxp.com>, 
-	Sui Jingfeng <sui.jingfeng@linux.dev>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+References: <20251022035324.70785-1-boqun.feng@gmail.com> <20251022035324.70785-4-boqun.feng@gmail.com>
+In-Reply-To: <20251022035324.70785-4-boqun.feng@gmail.com>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Wed, 22 Oct 2025 09:25:50 -0700
+X-Gm-Features: AS18NWBnbWpnEFlfGFR8ot6NPG7P_TnmbfK-bFy8u2QTY8SZZlNCsPcjGEOE11Y
+Message-ID: <CAGSQo039P_FK_D_dOr_5t8C6DOQPBKu_WamqLQijqfcT-gsFqg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: debugfs: Replace the usage of Rust native atomics
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 4:43=E2=80=AFPM Matthew Brost <matthew.brost@intel.=
-com> wrote:
+On Tue, Oct 21, 2025 at 8:53=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
 >
-> On Sat, Oct 18, 2025 at 12:42:30AM -0700, Matthew Brost wrote:
-> > On Fri, Oct 17, 2025 at 11:43:51PM -0700, Matthew Brost wrote:
-> > > On Fri, Oct 17, 2025 at 10:37:46AM -0500, Rob Herring wrote:
-> > > > On Thu, Oct 16, 2025 at 11:25:34PM -0700, Matthew Brost wrote:
-> > > > > On Thu, Oct 16, 2025 at 04:06:05PM -0500, Rob Herring (Arm) wrote=
-:
-> > > > > > Add a driver for Arm Ethos-U65/U85 NPUs. The Ethos-U NPU has a
-> > > > > > relatively simple interface with single command stream to descr=
-ibe
-> > > > > > buffers, operation settings, and network operations. It support=
-s up to 8
-> > > > > > memory regions (though no h/w bounds on a region). The Ethos NP=
-Us
-> > > > > > are designed to use an SRAM for scratch memory. Region 2 is res=
-erved
-> > > > > > for SRAM (like the downstream driver stack and compiler). Users=
-pace
-> > > > > > doesn't need access to the SRAM.
-> > > >
-> > > > Thanks for the review.
-> > > >
-> > > > [...]
-> > > >
-> > > > > > +static struct dma_fence *ethosu_job_run(struct drm_sched_job *=
-sched_job)
-> > > > > > +{
-> > > > > > +     struct ethosu_job *job =3D to_ethosu_job(sched_job);
-> > > > > > +     struct ethosu_device *dev =3D job->dev;
-> > > > > > +     struct dma_fence *fence =3D NULL;
-> > > > > > +     int ret;
-> > > > > > +
-> > > > > > +     if (unlikely(job->base.s_fence->finished.error))
-> > > > > > +             return NULL;
-> > > > > > +
-> > > > > > +     fence =3D ethosu_fence_create(dev);
-> > > > >
-> > > > > Another reclaim issue: ethosu_fence_create allocates memory using
-> > > > > GFP_KERNEL. Since we're already in the DMA fence signaling path
-> > > > > (reclaim), this can lead to a deadlock.
-> > > > >
-> > > > > Without too much thought, you likely want to move this allocation=
- to
-> > > > > ethosu_job_do_push, but before taking dev->sched_lock or calling
-> > > > > drm_sched_job_arm.
-> > > > >
-> > > > > We really should fix the DRM scheduler work queue to be tainted w=
-ith
-> > > > > reclaim. If I recall correctly, we'd need to update the work queu=
-e
-> > > > > layer. Let me look into that=E2=80=94I've seen this type of bug s=
-everal times,
-> > > > > and lockdep should be able to catch it.
-> > > >
-> > > > Likely the rocket driver suffers from the same issues...
-> > > >
-> > >
-> > > I am not surprised by this statement.
-> > >
-> > > > >
-> > > > > > +     if (IS_ERR(fence))
-> > > > > > +             return fence;
-> > > > > > +
-> > > > > > +     if (job->done_fence)
-> > > > > > +             dma_fence_put(job->done_fence);
-> > > > > > +     job->done_fence =3D dma_fence_get(fence);
-> > > > > > +
-> > > > > > +     ret =3D pm_runtime_get_sync(dev->base.dev);
-> > > > >
-> > > > > I haven't looked at your PM design, but this generally looks quit=
-e
-> > > > > dangerous with respect to reclaim. For example, if your PM resume=
- paths
-> > > > > allocate memory or take locks that allocate memory underneath, yo=
-u're
-> > > > > likely to run into issues.
-> > > > >
-> > > > > A better approach would be to attach a PM reference to your job u=
-pon
-> > > > > creation and release it upon job destruction. That would be safer=
- and
-> > > > > save you headaches in the long run.
-> > > >
-> > > > Our PM is nothing more than clock enable/disable and register init.
-> > > >
-> > > > If the runtime PM API doesn't work and needs special driver wrapper=
-s,
-> > > > then I'm inclined to just not use it and manage clocks directly (as
-> > > > that's all it is doing).
-> > > >
-> > >
-> > > Yes, then you=E2=80=99re probably fine. More complex drivers can do a=
-ll sorts of
-> > > things during a PM wake, which is why PM wakes should generally be th=
-e
-> > > outermost layer. I still suggest, to future-proof your code, that you
-> > > move the PM reference to an outer layer.
-> > >
-> >
-> > Also, taking a PM reference in a function call =E2=80=94 as opposed to =
-tying it
-> > to a object's lifetime =E2=80=94 is risky. It can quickly lead to imbal=
-ances in
-> > PM references if things go sideways or function calls become unbalanced=
-.
-> > Depending on how your driver uses the DRM scheduler, this seems like a
-> > real possibility.
-> >
-> > Matt
-> >
-> > > > >
-> > > > > This is what we do in Xe [1] [2].
-> > > > >
-> > > > > Also, in general, this driver has been reviewed (RB=E2=80=99d), b=
-ut it's not
-> > > > > great that I spotted numerous issues within just five minutes. I =
-suggest
-> > > > > taking a step back and thoroughly evaluating everything this driv=
-er is
-> > > > > doing.
-> > > >
-> > > > Well, if it is hard to get simple drivers right, then it's a proble=
-m
-> > > > with the subsystem APIs IMO.
-> > > >
-> > >
-> > > Yes, agreed. We should have assertions and lockdep annotations in pla=
-ce
-> > > to catch driver-side misuses. This is the second driver I=E2=80=99ve =
-randomly
-> > > looked at over the past year that has broken DMA fencing and reclaim
-> > > rules. I=E2=80=99ll take an action item to fix this in the DRM schedu=
-ler, but
-> > > I=E2=80=99m afraid I=E2=80=99ll likely break multiple drivers in the =
-process as misuess
-> > > / lockdep will complain.
+> Rust native atomics are not allowed to use in kernel due to the mismatch
+> of memory model with Linux kernel memory model, hence remove the usage
+> of Rust native atomics in debufs.
 >
-> I've posted a series [1] for the DRM scheduler which will complain about =
-the
-> things I've pointed out here.
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 
-Thanks. I ran v6 with them and no lockdep splats.
-
-Rob
+Reviewed-by: Matthew Maurer <mmaurer@google.com>
 
