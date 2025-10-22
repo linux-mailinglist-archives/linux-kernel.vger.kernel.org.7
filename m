@@ -1,144 +1,169 @@
-Return-Path: <linux-kernel+bounces-864520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D54BFAF5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:44:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A94ABFAF64
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5033BACC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C5A56420D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7C430DD2F;
-	Wed, 22 Oct 2025 08:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9852530DEA9;
+	Wed, 22 Oct 2025 08:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nF4ve3k3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CEYPPFcY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C072F5A1D;
-	Wed, 22 Oct 2025 08:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAC2305076
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761122679; cv=none; b=WUhXV//MLdEgZHn0XLXBRkZbqVZ1WoI2d3eYjWUwYTjEORi24jGerhZt81uqJs37saezrcVR44MZ0O4oz2BkskWN2cdKVK96lLl4fJCHrZ4CaCi+WzdeRzRuF6TX4tEclcAiP1Wea1N1Pk9KDtZEJXoNdj28jqgDjGTHX2KaHpE=
+	t=1761122699; cv=none; b=Ap5C8TslcqoTnMT/LbJaBrwa3fIYlDwOjXbEQSaJj8HqIywV1UPP8j63FPlaeHJtMDkSlQ7KejhIL7RgYvs+U09yiTofrwU2mQ6M+PhPIrK23bEVeb31/lO9QyGhQ7GuzXAWJIEcaIVjSksFwclhUosPXBwItWrVUSz6eyt2gEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761122679; c=relaxed/simple;
-	bh=jbN+CoRUpR8I4L1UUX+XaVKaNlIDiMfIKInpFU2+ytw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qByyCFAWdC7Y/WP11aiAfnL1iyvjjBGeBN7YvRP2+J1e/BIdeE9JXBQfpdzvmnjp0t5kWrjqQa6VAssrtL1Y7ZvpLH2+/O8JElWXKx/Au+f7n/gwTY6pyj6FxYn8AHwCHe/xYtPSPXQrE29++1u2es9mF0RIzQ5v1MytlztSXQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nF4ve3k3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1683C4CEE7;
-	Wed, 22 Oct 2025 08:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761122678;
-	bh=jbN+CoRUpR8I4L1UUX+XaVKaNlIDiMfIKInpFU2+ytw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nF4ve3k3M7eA7mCBacJC4eLH4VVlErlCmFl/H8dDw9mGDnKmyY/KcDahvFn1lRBUv
-	 fUxvm9rCOF0djLvPmdw0ox4keTjao+QL8n1OZeTN+5BPIe5VvM6F/+N84QATAQxEAD
-	 /vM0tZ6oGwOsrPT+fENEuUwywwncl3ujmK2Up+exwkOI8Qm1o/Ny617xyDzaRL099l
-	 DypuJ7u6vlmRCbMFcd1EZdK/7poBZmeDIspnlDej3QGeTUkjqLnkgj0t3JM6QXahIY
-	 GNszmZLl9Ag5xESeAl1CzD3mbCksBrPEWEL/Tg9a3bqeILRXIATYt3ur9ap/P1mDJB
-	 Am2N7+2cWpIzQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vBUSS-0000000G7OH-0TGl;
-	Wed, 22 Oct 2025 08:44:36 +0000
-Date: Wed, 22 Oct 2025 09:44:35 +0100
-Message-ID: <865xc7wcjw.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: <corbet@lwn.net>,
-	<catalin.marinas@arm.com>,
-	<will@kernel.org>,
-	<akpm@linux-foundation.org>,
-	<paulmck@kernel.org>,
-	<pawan.kumar.gupta@linux.intel.com>,
-	<mingo@kernel.org>,
-	<bp@alien8.de>,
-	<kees@kernel.org>,
-	<arnd@arndb.de>,
-	<fvdl@google.com>,
-	<broonie@kernel.org>,
-	<oliver.upton@linux.dev>,
-	<yeoreum.yun@arm.com>,
-	<yangyicong@hisilicon.com>,
-	<james.morse@arm.com>,
-	<ardb@kernel.org>,
-	<hardevsinh.palaniya@siliconsignals.io>,
-	<linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: Add kernel parameter to disable trap EL0 accesses to IMPDEF regs
-In-Reply-To: <0e885995-c85e-4f0f-b0e6-edac9928d854@huawei.com>
-References: <20251021115428.557084-1-liaochang1@huawei.com>
-	<86ecqwwig3.wl-maz@kernel.org>
-	<0e885995-c85e-4f0f-b0e6-edac9928d854@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1761122699; c=relaxed/simple;
+	bh=IJoyUmfW/Iq/I7TDBxnbdg5/OO2KKWRIyzb6EPKEmqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UQ11Y+tCsCSO+4/aKOl4/Ano/GV2HjchiYjrZIa7gLPcnq365Gy5KT8LhNMfOkYZ6Sd6MyytXcPPaYjwZ72ylppQyAENz1cXaQDl35r8fWlGCovIyHvC7oNjM6SeJzNlLlDwPcP3SQSB+zJAOcvo+Wu0/1x3Dy5ty8yhS6vJkOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CEYPPFcY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M7r91a012237
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:44:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=8Fqs3VCh8yc+MC9pZJHM6nKy
+	Xi4+WkuALoZolH7c+Qw=; b=CEYPPFcYf6vr9360F+UE9BbL3krnCBe+oQrsRahK
+	5EYyEFg4ArF3XHrGQrg4XSUUsoniAOp82kR7djTQzIo7wJP+SDDHqIpLpTp6KhaX
+	+2N2MkZPoSlawMWcvlnEhJehVbxr8cdZewmGa8hLcCKledU0tdHPW6hfG2OTxKps
+	FGlf9SfBfkK256az+XBPaD4Aa17AUT1s29ouNxqsuMR8yTCjXqLExf1exYID7eLc
+	x9rl26C395DPNAgGu9sRPZgvCBSjKKhVUnpR1JqncmpNy24exz5OcvWCtzf19VPG
+	9KHs1u2mLndn/H+q9eLZakswy1S8FyX1yr5DwUH8GRDXnw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xhe0hs5r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:44:57 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4eb7853480dso6224801cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:44:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761122696; x=1761727496;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Fqs3VCh8yc+MC9pZJHM6nKyXi4+WkuALoZolH7c+Qw=;
+        b=gPsA/Drg8ytH7pJIxv2ryEnqEOLNFKYNCUARP89pZLMfzOzOLYlGwHWHO1BlDZViji
+         cd4EgJo0g5YQMVB/5EuYPp0W2xvgvKs3sZe988fHNg0gk7Se8PXuU0jMJbWYF/NXQkBL
+         cKHwZQaYZbryZBYmo3bd8Q3FyNHlX6Qbph4NAGLvLP122510asbTOHwE96GBe1IQUSYf
+         T5JqmIv8TrdrQF08Zlh505UDYJU9FvwKWudrU1zbslSZGuCxTOfLCVe9ytoiiYXLL7TD
+         Y5fT38LCPb0TNIkl549ck6oY+km/n4EgfG8pWl+oBnCRe6SwsZiB9lc4BLk+g+Ww48W/
+         C81w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnKPmofJgB4q6Um2EleBTOLYmikrujuOv7ip4O9+P2QRKfEAQUtMTJ9zkFUA8RBZnzntEH69FqLuSazaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZG+KIr12yeD845WindrZi7AjEdTQ5QS1bv8WHSXOTqG+lZ+Ua
+	PC+8f+hKqTz1zjf/WDMBnLzwMdwqJjoEMeGLn4656OtzgY3tlA4NhduOTr6VJeca2yAV8ZsSZlv
+	ZAafMRvHHVdXQpMLjW8smxgX28aWoiIqmaQBdBv4q58sNonGto0vQ1Mjzcxed/DOkQl0=
+X-Gm-Gg: ASbGncug0gKAlRGcTVHsb7pf9MhE+ng1jh6vIjRf5lIidStkUSETY2cKItMsZb07jvg
+	syG47cnMLvEA8mLJKphBY+z/NEm2i5drZhQhtlmtvPnM7cph4S7xpoDENuZBFKZNDcOSisMuHYU
+	WcqMXpr4lWtk10+6Pn7Y18fRqUlkgHhYLLuBtPIj4QbNji6Yt7psW+91sOZLp6kB+D/6cSMldTi
+	cipTW0KBJ6at8UjERD5xsi3zf7hAn/PhybI55LMd8Pxtf9nEe0MLoKOmeIGmJooL57hyr7A9bBA
+	ZP99G+LYkgAJvqjIcatFi7cn1+nS/NYXkAVN4wcTxmX7dFdxK+cpf58j+JWkyvZxxUNLf562YIs
+	VSb09Ldp7TBbSqDx1oYsoOt+Z0rUwc8kbcj/1mGwbVSxqj32hL1wDwZuRdS4ngeqdOievcsZ5Yx
+	x2CtK/90UXlms=
+X-Received: by 2002:ac8:5fd6:0:b0:4e8:a376:4345 with SMTP id d75a77b69052e-4e8a3764648mr206381011cf.43.1761122696490;
+        Wed, 22 Oct 2025 01:44:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHtfeLvPBUYx/OMKTojfmm6wZmeHWO7eZ456Avbu6mhNcWgXFGtSexxWbZLyk+APWBqPsIjjQ==
+X-Received: by 2002:ac8:5fd6:0:b0:4e8:a376:4345 with SMTP id d75a77b69052e-4e8a3764648mr206380801cf.43.1761122696021;
+        Wed, 22 Oct 2025 01:44:56 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f1d2d0d6sm159633e87.49.2025.10.22.01.44.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 01:44:55 -0700 (PDT)
+Date: Wed, 22 Oct 2025 11:44:53 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] regulators: qcom-rpmh-regulator: Fix coding style
+ issues
+Message-ID: <pldvmkjm7muflwti25rc24so3jbkxgyg3uhk2btuzpimjv5emc@62wz5dyksjr4>
+References: <20251022-add-rpmh-read-support-v2-0-5c7a8e4df601@oss.qualcomm.com>
+ <20251022-add-rpmh-read-support-v2-4-5c7a8e4df601@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: liaochang1@huawei.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, paulmck@kernel.org, pawan.kumar.gupta@linux.intel.com, mingo@kernel.org, bp@alien8.de, kees@kernel.org, arnd@arndb.de, fvdl@google.com, broonie@kernel.org, oliver.upton@linux.dev, yeoreum.yun@arm.com, yangyicong@hisilicon.com, james.morse@arm.com, ardb@kernel.org, hardevsinh.palaniya@siliconsignals.io, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022-add-rpmh-read-support-v2-4-5c7a8e4df601@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE2NyBTYWx0ZWRfX635cedDur8/h
+ h+vl1aj1eaWvRRUsi3LFgR+M5F7eXJXb/7+OmoZNPAZqduVIuyciUcL2qHaqiXoZB0UAjCFLr0r
+ WS3oC8jNrWjxQZB4PovcMcS3ppkPXcDqbC70a1ttFAPJwzdfbqfF/MOT2C5hskLQRnA9YO5Xbqx
+ Z9RX+NdMYLj7pvq7UNro9umc3KJzdazLLEHzdOQoXpmDHCWHNHxzuVmhWtm6pwAUni8EmSbAXYS
+ Uh0cNVCP6j2nfTu3Zn8mBSml3ZWPran29egZF8kri+8lVY2YEawfH9g8i5pjEeLELTqza930bID
+ nbzLB3KHMkqcttW08LVirjKEXiZGqe+FraTI9R+lY6kU5mS/qKgo61bxuAfZeVxHHQ+XYN51Ocg
+ XRcQosDYpAh9ab/xX8NbxVICwLWW0w==
+X-Proofpoint-ORIG-GUID: 9ApGMkHQUi6qM5obAlUou2R98ULmU-VV
+X-Authority-Analysis: v=2.4 cv=WYUBqkhX c=1 sm=1 tr=0 ts=68f89989 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=gAYjBv6TkpC_2adqZ5sA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: 9ApGMkHQUi6qM5obAlUou2R98ULmU-VV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510210167
 
-On Wed, 22 Oct 2025 03:37:04 +0100,
-"Liao, Chang" <liaochang1@huawei.com> wrote:
->=20
-> Hi Marc,
->=20
-> =E5=9C=A8 2025/10/21 20:25, Marc Zyngier =E5=86=99=E9=81=93:
-> > On Tue, 21 Oct 2025 12:54:28 +0100,
-> > Liao Chang <liaochang1@huawei.com> wrote:
-> >>
-> >> Add kernel parameter to allow system-wide EL0 access to IMPDEF system
-> >> regregisters and instructions without trapping to EL1/EL2. Since trap
-> >> overhead will compromises benefits, and it's even worse in
-> >> virtualization on CPU where certain IMPDEF registers and instructions
-> >> are designed for EL0 performance use.
-> >=20
-> > Since you mention virtualisation, I want to be clear: there is no way
-> > I will consider anything like this for KVM. KVM will always trap and
-> > UNDEF such register accesses, no matter where they come from (EL0 or
-> > EL1).
-> >=20
-> > Allowing such registers to be accessed from within a guest would make
-> > it impossible to context-switch or save/restore the guest correctly.
-> >=20
-> > You can of course do what you want in your downstream kernel or your
-> > own hypervisor, but I wanted to set the expectations on the upstream
-> > side.
->=20
-> Does it make sense to allow EL0 access IMPDEF without trapping for some
-> special vendor CPUID, instead of forbidding it as the default setting on
-> the upstream code?
+On Wed, Oct 22, 2025 at 02:38:56AM +0530, Kamal Wadhwa wrote:
+> Fix the code style/format issues reported by checkpatch.pl
+> script.
+> 
+> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> ---
+>  drivers/regulator/qcom-rpmh-regulator.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Let me answer your question with my own questions:
+Why are you fixing a patch that was a part of this series?
 
-How can supervisory software (kernel or hypervisor) save and restore
-state that it doesn't know about? How can it ensure isolation of state
-if there are unspecified registers that can change unspecified things
-behind its back?
+> 
+> diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
+> index 9f693043cb87aa77a7a529b5b973323450db80be..6a36ef967d5d9e32c005e79a12099ebef824842f 100644
+> --- a/drivers/regulator/qcom-rpmh-regulator.c
+> +++ b/drivers/regulator/qcom-rpmh-regulator.c
+> @@ -109,7 +109,7 @@ static const struct resource_name_formats vreg_rsc_name_lookup[NUM_REGULATOR_TYP
+>   *				regulator
+>   * @ops:			Pointer to regulator ops callback structure
+>   * @voltage_ranges:		The possible ranges of voltages supported by this
+> - * 				PMIC regulator type
+> + *				PMIC regulator type
+>   * @n_linear_ranges:		Number of entries in voltage_ranges
+>   * @n_voltages:			The number of unique voltage set points defined
+>   *				by voltage_ranges
+> @@ -387,7 +387,7 @@ static int rpmh_regulator_vrm_set_mode_bypass(struct rpmh_vreg *vreg,
+>  		return pmic_mode;
+>  
+>  	if (bypassed) {
+> -		if(!vreg->hw_data->bypass_supported)
+> +		if (!vreg->hw_data->bypass_supported)
+>  			return -EINVAL;
+>  		cmd.data = vreg->hw_data->pmic_bypass_mode;
+>  	} else {
+> 
+> -- 
+> 2.25.1
+> 
 
-You'd need to add CPU-specific code to the kernel to make that work,
-and SW written to make use of these functionalities wouldn't work
-anywhere else. So if you end-up with a custom userspace, why should
-upstream care? There is zero benefit to the ecosystem.
-
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+-- 
+With best wishes
+Dmitry
 
