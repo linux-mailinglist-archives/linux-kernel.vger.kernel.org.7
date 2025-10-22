@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-864319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E480BBFA831
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:22:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97286BFA846
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072883BC303
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:22:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 163FC3421C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D95B2F4A04;
-	Wed, 22 Oct 2025 07:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222CB2F7AA2;
+	Wed, 22 Oct 2025 07:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sbKSnHJn"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCDAuass"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53452F3C27
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A302F616A;
+	Wed, 22 Oct 2025 07:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761117748; cv=none; b=LXof2aKfaHoVPJc3i0VgrlOqv7WiuYpwZRrRndyHXAKFKYzMBXABs061nUVc8rbcBBG2iLPJj0cKcGUfitkoqpCjlB3LBw6EGIxC+zX6WHbsfBlXVOTM5CtHOEEa9Isx+VV+DL4QWgCzUuFjAoG5o49ArUqgqDD0nQv7lnq0gG0=
+	t=1761117765; cv=none; b=XueliUmCtI5nkOdZq64kTjVC9nycOVVMpJ3tudbGwhQ8EwxomtxeL7TE3pt4+pQZ/A+N77QShU9e7kN5KmHMLPqoPKQADqsXJ+vEpjSVxdMp+5vR5a0Swf0fjZaPefC+Y8/YqdwRcIsUncX5C3lBYnhavy8am+UGDZnoBWGBDuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761117748; c=relaxed/simple;
-	bh=TwvetbWdKUMVFU6QjT4CxeRWEq57eDBbx7k02Vd8Xwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iq3E5MVCuDFwM+wun7i0Imfqn1XYhRQiy0uCLCLJYTHRwCigyIqyWYd2PPClZ8C/NclNQ9DrbIqRHKdfKl+RuzWXfpsOMJvz2uPhxG1dwcwl6ygGiJsWGiRQ7p/UmhKi3LcKOWWu8f5skURuG7wVfTwog+vqJEiT1BZxqy3VXas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sbKSnHJn; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-290c2b6a6c2so60422115ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761117746; x=1761722546; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TwvetbWdKUMVFU6QjT4CxeRWEq57eDBbx7k02Vd8Xwg=;
-        b=sbKSnHJnGdnh+SChtyk2b/0waFj4rbMcqOv4ob03KHBOzUErCS4Bn3r1oF0OZBIRWV
-         IKzKO7IrmChUpAXw+N8CYcCIKP4X5DzySIglYxMovlWcuTkByG5AZj4pXSxM/cTk32JT
-         v/UjqrlTFvvK3IyNGByKQR/UdTXv5UOO440oqI6fcXsU1dFpNzWMRSGcDklEsMwpNDRC
-         OdxGa0mksyoxyAupeIgNxQe5/nReB+PpBpnNsJw/OJDoctvGvimAWTPMuwgj52Lg/Buy
-         NMeh5cXxKMhFS1xcQa2g7mprNs+WpcRpA1xi9/J12lTiEsqExqboyTYGRsE3+UXmAD/+
-         g7oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761117746; x=1761722546;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TwvetbWdKUMVFU6QjT4CxeRWEq57eDBbx7k02Vd8Xwg=;
-        b=gNQPjZ/gTzNs3zeP6r8/SYCrZq9PNs1CNDKCLFjdwwzam9YLn+d1Hp9OngzBJMIg64
-         7Lj1dt2a9241MEKIUCxbIKG6y/VHJ3BQQaDPGDeWfhulrQQnERVhoDpW/Ck5xoUQOSzp
-         U/zhIdufbyFXAD8gOcF0Gpv2lDpbmOKqRG9latbSG+2C2wyan1AmBV+Rv258EKbfqtxa
-         VcvJb1raloJWCwVYIUtFEL0nm1oC0rJ/8MBRSJsdy+cdTwmQY9Jz0xxpyBjzii5uHceG
-         HwE62lgnfQrcuDppAz/wszZ9VTw6DZ4ue0YrJqeOeje8c6zEs9qODIm6+CJaZWakl91M
-         xUYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWh2WrBjpFq4oXneEa1OtVeipj3XYdpRj3ekAtPi0IydmrRJBvurgwIy/NuV8l6zmXjysfsFeDgzER1yL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyARRbdFTiNXdjGekT/or7jRpTGJutg8WhdQW/T6HxnGG1uZ4ZT
-	H2xt5FvxhwjDJ8Ib+jegLKXeHi3LlrgZTTFNLOviCfD+yMjS85JbzYBw7Xi5cZZ0FQuuLM3jZdo
-	WBTDPUpEAF5PI/TNCBEdVpCy7v0Nz1MgNlhPJ9iQl
-X-Gm-Gg: ASbGncsvRfHTUAe24T1yDHl3phXZ1wVR+gNyMklJWuB0T7hyToQm6pw8UEjA0hpf6Qh
-	EHwvKb7Fdl88SsD7NiuFj3R3Wxp+dCBxF/iGcA+7RMHe/+0zT64Q1ft3T1UgFiK1tTIxUHMXpiG
-	vOX3oOkr9L+cWYuSxmqqNtpj85g3/ngeiHWGW3idQqcAuq5Gbbh9ryeDvU6Qh119gT6uxpgPo19
-	hrYEAlXnpiO4X5EWeGYVc7OqzjrnjsWBvUDweVzQ2YkeswQEix+HfC+E1ojYSLzC0VZNRVuXget
-	f4Hv4X/X4pIQoZ+hlQ==
-X-Google-Smtp-Source: AGHT+IHFIZ0C34j+sahAzN6WmAzcBj8zZCC8xVi4muVmwKBX9i9JtWfdmefM51LsQSvwB9xwcIwZOiFOi/DKJceh1yw=
-X-Received: by 2002:a17:903:8c6:b0:26d:353c:75cd with SMTP id
- d9443c01a7336-290c9cc30b8mr247581035ad.21.1761117745989; Wed, 22 Oct 2025
- 00:22:25 -0700 (PDT)
+	s=arc-20240116; t=1761117765; c=relaxed/simple;
+	bh=6MxoejU7iKxp9mf2s8THn5c4jDLFtHOP5ivmjYnDox0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=C29Re8NP/fFdU9x8W83Mjnou5N4HTfeID4unScWmZLszvc3yS+10lljukyaFhG9jBSmDes1Ls1c/TTvc0iBTpO6dYbetwWZnvlKvUQzkQvRakynAPE6oy+fDSPMoD1Q5KwWlOrJyN9FVhKiYzIuy0r08nbVrHlC3Xv4I+sUEgcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCDAuass; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF02EC4CEF7;
+	Wed, 22 Oct 2025 07:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761117764;
+	bh=6MxoejU7iKxp9mf2s8THn5c4jDLFtHOP5ivmjYnDox0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=tCDAuass2USKptSp3Urz8RFIJHosHnDRCL4O9vUQ3W3xWunIvmY5E8wNzeUr9cdXp
+	 2Aq822wED1ySumLmTyB04CNMJLDr+pV/bD7yCddj6zLV6PZh29zYSOTJCsvpg9b0Lt
+	 92k4Y2sL7b0dgHcWJt01DN4MWEPOnaPvWQlqmGBJlwitgEk2ACamqmFURB5qU2DNnv
+	 lmBDWIsK35ebK1ILK2favwL67F6tdq1OaD0dURQvaZwNpbGeyc+3R+f9H+zwzTZq/F
+	 BVC0RNq/gtS9wWUfNBcZsofpLWW8AlVhcqMe/RazTNBroARP1E9iyA4VI1Y3kxVppy
+	 IbWISFKwt97eA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4D7CCD195;
+	Wed, 22 Oct 2025 07:22:44 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Subject: [PATCH v2 0/5] arm64: dts: freescale: add support for the
+ GOcontroll Moduline IV/Mini
+Date: Wed, 22 Oct 2025 09:22:36 +0200
+Message-Id: <20251022-mini_iv-v2-0-20af8f9aac14@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021195906.20389-1-adelodunolaoluwa.ref@yahoo.com> <20251021195906.20389-1-adelodunolaoluwa@yahoo.com>
-In-Reply-To: <20251021195906.20389-1-adelodunolaoluwa@yahoo.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Wed, 22 Oct 2025 00:22:14 -0700
-X-Gm-Features: AS18NWDYOZ-Ja2ju3PTAqCAsY0yiy5CA_MHH0MVY47CpxTMi1dFAZm_Pu3fijwA
-Message-ID: <CAAVpQUCqiTUQM6gfFE_qps19vcsE12QsMifzqPc19M_2arWtsQ@mail.gmail.com>
-Subject: Re: [PATCH v2] net: unix: remove outdated BSD behavior comment in unix_release_sock()
-To: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADyG+GgC/2XMQQqDMBCF4avIrJuSjIZqV71HkSLpqAOaKYmEF
+ sndm7rt8n88vh0iBaYI12qHQIkjiy+BpwrcPPiJFD9LA2q0RutOrez5wUkN2pJ16AxiDeX9CjT
+ y+5DufemZ4ybhc8DJ/NZ/Ixml1Vi3beeaDht7uU3ixG9BluXsZIU+5/wFvo3v0aMAAAA=
+X-Change-ID: 20251009-mini_iv-a05e5c2c1223
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Maud Spierings <maudspierings@gocontroll.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761117763; l=1486;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=6MxoejU7iKxp9mf2s8THn5c4jDLFtHOP5ivmjYnDox0=;
+ b=8EDC4BIHHluETyJsGoyj3Ub5ZCMaVm7eZYUrj9HEkXC3ILQwIrUDvDuWDi3lD+10vmAFhAPht
+ fbrq37zJBZJCz9pkBRodQSo996DWROXX/di837e4v0DP/zUj/N4dKZ4
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-On Tue, Oct 21, 2025 at 12:59=E2=80=AFPM Sunday Adelodun
-<adelodunolaoluwa@yahoo.com> wrote:
->
-> Remove the long-standing comment in unix_release_sock() that described a
-> behavioral difference between Linux and BSD regarding when ECONNRESET is
-> sent to connected UNIX sockets upon closure.
->
-> As confirmed by testing on macOS (similar to BSD behavior), ECONNRESET
+Add initial support for the Moduline IV and Moduline Mini embedded
+controllers.
 
-I tested on FreeBSD and the behaviour was the same with macOS.
+These systems are powered by the Ka-Ro Electronics tx8m-1610 COM, which
+features an imx8mm SoC.
 
----8<---
-$ qemu-system-x86_64 -drive file=3DFreeBSD-14.3-RELEASE-amd64.qcow2 \
--enable-kvm -cpu host -serial mon:stdio -nographic
-...
-root@freebsd:~ # uname -r
-14.3-RELEASE
-root@freebsd:~ # python a.py
-test 1
-b'hello'
-b''
-test 2
-b''
-b''
-test 3
-[Errno 54] Connection reset by peer
----8<---
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+Changes in v2:
+- Fix allignment issue in imx8mm-tx8m-1610.dtsi (fec1)
+- Move phy-reset into fec (works better in barebox)
+- Make the gpio-line-names groups of four on every line
+- Link to v1: https://lore.kernel.org/r/20251009-mini_iv-v1-0-f3889c492457@gocontroll.com
 
-> is only observed for SOCK_DGRAM sockets, not for SOCK_STREAM. Meanwhile,
-> Linux already returns ECONNRESET in cases where a socket is closed with
-> unread data or is not yet accept()ed. This means the previous comment no
-> longer accurately describes current behavior and is misleading.
->
-> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
-> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+---
+Maud Spierings (5):
+      dt-bindings: arm: fsl: Add GOcontroll Moduline IV/Mini
+      arm64: dts: imx8mm: Add pinctrl config definitions
+      arm64: dts: freescale: add Ka-Ro Electronics tx8m-1610 COM
+      arm64: dts: freescale: Add the GOcontroll Moduline IV
+      arm64: dts: freescale: Add the GOcontroll Moduline Mini
 
-The comment is outdated anyway, so
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   2 +
+ arch/arm64/boot/dts/freescale/Makefile             |   3 +
+ arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h     |  33 +
+ .../imx8mm-tx8m-1610-moduline-iv-306-d.dts         | 801 +++++++++++++++++++++
+ .../imx8mm-tx8m-1610-moduline-mini-111.dts         | 691 ++++++++++++++++++
+ .../arm64/boot/dts/freescale/imx8mm-tx8m-1610.dtsi | 439 +++++++++++
+ 6 files changed, 1969 insertions(+)
+---
+base-commit: 7c3ba4249a3604477ea9c077e10089ba7ddcaa03
+change-id: 20251009-mini_iv-a05e5c2c1223
 
-Link: https://lore.kernel.org/netdev/20251018235325.897059-1-kuniyu@google.=
-com/
-Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+Best regards,
+-- 
+Maud Spierings <maudspierings@gocontroll.com>
+
+
 
