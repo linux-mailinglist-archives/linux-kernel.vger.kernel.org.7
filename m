@@ -1,142 +1,236 @@
-Return-Path: <linux-kernel+bounces-864328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEAEBFA870
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:24:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6215DBFA873
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0121B4F509B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:24:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FC444F2DA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492332F83DC;
-	Wed, 22 Oct 2025 07:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C422F60A3;
+	Wed, 22 Oct 2025 07:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="atcQMrZ6"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WHnA9Oyz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B170B2F7453
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D4F2F6175
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761117832; cv=none; b=iFW9w7GWnoAc0oXlROZ/jQtIjjIvZUcWMSl3AG3bnI1KYwDd11erkB5O6yBvhLxVT2kdu4tT6aIiM8t5dOQblVyh/sbO58b5WI1qrJtTwa7+PvLa0WFYZgBZpvjI+AiHAA5pcERGrUSX02dfr4KAH6snxd2JEP+KzPjGo86D/g0=
+	t=1761117867; cv=none; b=lupGp8X+/0VnQVKvdCzZrAVyEywvgixPya52VsnOq516ORpUWO/Q7XP2SIZDMMHBWs/FRR4WADIdG6OG+mdgVw4vZjcoI+7Imd5Bku8FGoVmN3xbS+3knHfuqDgD2ALHhBUSRw5j2ccVePGFPl0xAs0bI5wWg0+QFLl8Gusc4Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761117832; c=relaxed/simple;
-	bh=KAzF1t+jG/TWqXNpynShq2i67Mb+W9sWwRnWCZGDy80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rQvFCFOPpuU7Ec+UWD2fPSnTjC7KkDgZI89CdSCg27aNuLOTuCEThuJ2ZZDIviSpcKvjvXh/GJOWg3C79hu4VjSlO8MMVF0jTGi7FguILEgSe9/czkxsfmlWuPMv4+6jNakXQTkK/L7xD34upPCxH+yww0wP04Gk/HJik0yGuZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=atcQMrZ6; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-591eb980286so2092967e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761117829; x=1761722629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5A1id1SGRYPwkfypYJ6qRn/5uL2uarF90qzz71rp2EQ=;
-        b=atcQMrZ6deXkIw+U1xSYPmcqhQJcgzReuep7WDdtIBDMczeRThGqf3MyYh3Xw+90Gz
-         +Xo4db7nB3OYKQtrMXqaJHFtzBS1kPTbjlt8sty3AZ0Ld0WNZU2OC3wue+ybpblXHpEu
-         d3PUnSkkwVY9/Jsc88Sf6buE3+Bz2s/hMpky5sdKvL/35UOAKeoY9keGpDc3GWkFDuxd
-         otQlTUW1h2iQLDLQMM9AtHydgzVdREv30R8TlK5Mc+OlwKqXj9Z0BGkqVn2/uZQF5KKH
-         haQrag1IQ5Qhx2W4S2FmvPUqAcrW3g1E4DtOJHvzqodB3l+nMImTvNp9OlUNXFdRJelE
-         FDBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761117829; x=1761722629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5A1id1SGRYPwkfypYJ6qRn/5uL2uarF90qzz71rp2EQ=;
-        b=nkUgvE1aKzyo4fE3BqMQSHHWDv4+q6lELj5NrdJrgFmO5mRZH+7nsuLJun0wg2QdZu
-         LfuBssS0+5RRyK8A7JOpFcMkAymIkTJaeh/WN3n/b8C7qu6zczuj1AepCHlWJyXberSo
-         xshcqarwNmjEamTE3qRz7vvhlilkanDydic/a5U4TOZiKvxzAFSjDHu0sINvCU7d5ZsC
-         66whVIBcg0MV6nklZR072ABrwlKlPRyqMVv/OIr1KP3Ggf6N/Dtjesly99Xl8v5HwMu3
-         zaxyhhCIeFcgZjTuEhQ6xg5qefI6rSA5gF5Gj0IAJ8au/WAHTpEQvUCtatLcMDOQtiss
-         qd7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWkI8k2hXOiO94CD61pKZaRcGjdYUoSlgENils8znNwpS+P8kq/Z5xWN29jLWDYUJ03XyCqa4gIFg46S00=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztp2LEdgv0FcJ9pPa8nZO9DF5QAVYQ8FyMuteZKAR6YmY+LyU7
-	ZcXLpBmOM9FbL6pep/5EAuTa+4sOcgYmLZEo+BBs0RJU0RxhQjWdqvbvutBdmW4/ocDv6i3u3KO
-	+bbzIWA4t2jx3c/FYqF8vCDcUIIZMGIcIiIcMnFhYRQ==
-X-Gm-Gg: ASbGncvmwdysF9rsdyNW1l4zlnJ69eDZKpWSCWd7GhX6pzMLPdlDaDGgSaKlD8ucZEw
-	fwQtQVBHbO3abGc9PjjAHwcuJZXpaBd3N/PamooJLTdDxqW3oY027lk8a2DJYJBqxg5a69j4o3O
-	z/UlyvqVobB00k65v3OyghHK8rsBLo2EFoYBMzEqtpCy3OcP4Z9Co6tt0OwGkkUOP7qVIytTsSp
-	3/w5CEFlg8IpWfWNeU2+d6kcGd3Wa2bQ54Z5iI/J/sR242GUv4Qk+XnX/8aQEHJgLWD0SJSopQz
-	P57Vtc/f6O1DAPCW
-X-Google-Smtp-Source: AGHT+IGeyQXjZLLCFK5JPYKsrKRqqZiejy+zuOYqH5QxSDczg7GGQ5xLajlHxEL5O+oHFuqe15LrIT93CQawnFHffbo=
-X-Received: by 2002:a05:6512:10d5:b0:591:c5bb:ce44 with SMTP id
- 2adb3069b0e04-591d8565542mr6721828e87.43.1761117828734; Wed, 22 Oct 2025
- 00:23:48 -0700 (PDT)
+	s=arc-20240116; t=1761117867; c=relaxed/simple;
+	bh=aq4f1hDhOP4DGcybKEAs0T5HwBDkF1Yqlah0Y4hMm70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NpJpNpJEINONagNz+qKUkCYtdFlFvgqX+m3HJ704mDlOE/mMUa6CkIr6a4J6KGCvRInm9ejcpKqGq/wDOXhzreig9Afkw5kjejtoSmorWf0qyngyKTw0Jx0yqixheG8puoYYxNTaTso1oTNu5QLSGzgPgIFjhH8d4HlJs2tELww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WHnA9Oyz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 32218557;
+	Wed, 22 Oct 2025 09:22:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761117759;
+	bh=aq4f1hDhOP4DGcybKEAs0T5HwBDkF1Yqlah0Y4hMm70=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WHnA9OyzNbWDb9XQRanQ8mVUEQzUBQtj2B0bH7PLV5zghpTg4hsgQodYURlopAejr
+	 4v+N2NU7SOSLGZ+1cQfZ6lQdD1bA5D64ttk0I2OJkKWn7a+TA7ayq4lvjb1kYrFj3W
+	 agQkV8xZDEuhSQylaVSeaZ1D5BMBmhraOHxUZUms=
+Message-ID: <6fac1b8a-1810-4fb8-8ea6-8628de57ce31@ideasonboard.com>
+Date: Wed, 22 Oct 2025 10:24:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021181631.25442-1-alitariq45892@gmail.com>
-In-Reply-To: <20251021181631.25442-1-alitariq45892@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 22 Oct 2025 09:23:37 +0200
-X-Gm-Features: AS18NWCsM_dUl8fxQ2wYJOUQ3nXW_TsGWO5r7_7o5MFypE6AK4VLb7fy2KZDeW4
-Message-ID: <CAMRc=Mc9e4P9vCt79yR1Jt5_2wxUngqAR_m1AxG=nbz=Cr3BjQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: starfive: use dynamic GPIO base allocation
-To: Ali Tariq <alitariq45892@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: samsung-dsim: Fix init order
+To: Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Aradhya Bhatia <a-bhatia1@ti.com>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Hiago De Franco <hiagofranco@gmail.com>,
+ Francesco Dolcini <francesco@dolcini.it>
+References: <20250619-samsung-dsim-fix-v1-1-6b5de68fb115@ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250619-samsung-dsim-fix-v1-1-6b5de68fb115@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 8:17=E2=80=AFPM Ali Tariq <alitariq45892@gmail.com>=
- wrote:
->
-> The JH7110 pinctrl driver currently sets a static GPIO base number from
-> platform data:
->
->   sfp->gc.base =3D info->gc_base;
->
-> Static base assignment is deprecated and results in the following warning=
-:
->
->   gpio gpiochip0: Static allocation of GPIO base is deprecated,
->   use dynamic allocation.
->
-> Set `sfp->gc.base =3D -1` to let the GPIO core dynamically allocate
-> the base number. This removes the warning and aligns the driver
-> with current GPIO guidelines.
->
-> Tested on VisionFive 2 (JH7110 SoC).
->
-> Signed-off-by: Ali Tariq <alitariq45892@gmail.com>
+Hi samsung-dsim maintainers,
+
+On 19/06/2025 15:27, Tomi Valkeinen wrote:
+> The commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain
+> pre-enable and post-disable") changed the order of enable/disable calls.
+> Previously the calls (on imx8mm) were:
+> 
+> mxsfb_crtc_atomic_enable()
+> samsung_dsim_atomic_pre_enable()
+> samsung_dsim_atomic_enable()
+> 
+> now the order is:
+> 
+> samsung_dsim_atomic_pre_enable()
+> mxsfb_crtc_atomic_enable()
+> samsung_dsim_atomic_enable()
+> 
+> On imx8mm (possibly on imx8mp, and other platforms too) this causes two
+> issues:
+> 
+> 1. The DSI PLL setup depends on a refclk, but the DSI driver does not
+> set the rate, just uses it with the rate it has. On imx8mm this refclk
+> seems to be related to the LCD controller's video clock. So, when the
+> mxsfb driver sets its video clock, DSI's refclk rate changes.
+> 
+> Earlier this mxsfb_crtc_atomic_enable() set the video clock, so the PLL
+> refclk rate was set (and didn't change) in the DSI enable calls. Now the
+> rate changes between DSI's pre_enable() and enable(), but the driver
+> configures the PLL in the pre_enable().
+> 
+> Thus you get a black screen on a modeset. Doing the modeset again works,
+> as the video clock rate stays the same.
+> 
+> 2. The image on the screen is shifted/wrapped horizontally. I have not
+> found the exact reason for this, but the documentation seems to hint
+> that the LCD controller's pixel stream should be enabled first, before
+> setting up the DSI. This would match the change, as now the pixel stream
+> starts only after DSI driver's pre_enable().
+> 
+> The main function related to this issue is samsung_dsim_init() which
+> will do the clock and link configuration. samsung_dsim_init() is
+> currently called from pre_enable(), but it is also called from
+> samsung_dsim_host_transfer() to set up the link if the peripheral driver
+> wants to send a DSI command.
+> 
+> This patch fixes both issues by moving the samsung_dsim_init() call from
+> pre_enable() to enable().
+> 
+> However, to deal with the case where the samsung_dsim_init() has already
+> been called from samsung_dsim_host_transfer() and the refclk rate has
+> changed, we need to make sure we re-initialize the DSI with the new rate
+> in enable(). This is achieved by clearing the DSIM_STATE_INITIALIZED
+> flag and uninitializing the clocks and irqs before calling
+> samsung_dsim_init().
+> 
+> Fixes: c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
+> Reported-by: Hiago De Franco <hiagofranco@gmail.com>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+Can this be merged?
+
+ Tomi
+
 > ---
->  drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers=
-/pinctrl/starfive/pinctrl-starfive-jh7110.c
-> index 05e3af75b09f..eb5cf8c067d1 100644
-> --- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-> +++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-> @@ -938,7 +938,7 @@ int jh7110_pinctrl_probe(struct platform_device *pdev=
-)
->         sfp->gc.set =3D jh7110_gpio_set;
->         sfp->gc.set_config =3D jh7110_gpio_set_config;
->         sfp->gc.add_pin_ranges =3D jh7110_gpio_add_pin_ranges;
-> -       sfp->gc.base =3D info->gc_base;
-> +       sfp->gc.base =3D -1;
->         sfp->gc.ngpio =3D info->ngpios;
->
->         jh7110_irq_chip.name =3D sfp->gc.label;
-> --
-> 2.43.0
->
->
+>  drivers/gpu/drm/bridge/samsung-dsim.c | 29 +++++++++++++++++++----------
+>  1 file changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index f2f666b27d2d..cec383d8946d 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -1473,22 +1473,31 @@ static void samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+>  	}
+>  
+>  	dsi->state |= DSIM_STATE_ENABLED;
+> -
+> -	/*
+> -	 * For Exynos-DSIM the downstream bridge, or panel are expecting
+> -	 * the host initialization during DSI transfer.
+> -	 */
+> -	if (!samsung_dsim_hw_is_exynos(dsi->plat_data->hw_type)) {
+> -		ret = samsung_dsim_init(dsi);
+> -		if (ret)
+> -			return;
+> -	}
+>  }
+>  
+>  static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+>  				       struct drm_atomic_state *state)
+>  {
+>  	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
+> +	int ret;
+> +
+> +	/*
+> +	 * The DSI bridge may have already been initialized in
+> +	 * samsung_dsim_host_transfer(). It is possible that the refclk rate has
+> +	 * changed after that due to the display controller configuration, and
+> +	 * thus we need to reinitialize the DSI bridge to ensure the correct
+> +	 * clock settings.
+> +	 */
+> +
+> +	if (dsi->state & DSIM_STATE_INITIALIZED) {
+> +		dsi->state &= ~DSIM_STATE_INITIALIZED;
+> +		samsung_dsim_disable_clock(dsi);
+> +		samsung_dsim_disable_irq(dsi);
+> +	}
+> +
+> +	ret = samsung_dsim_init(dsi);
+> +	if (ret)
+> +		return;
+>  
+>  	samsung_dsim_set_display_mode(dsi);
+>  	samsung_dsim_set_display_enable(dsi, true);
+> 
+> ---
+> base-commit: 7872997c048e989c7689c2995d230fdca7798000
+> change-id: 20250619-samsung-dsim-fix-58c8ec8193e9
+> 
+> Best regards,
 
-That's a NACK until you also remove JH7110_AON_GC_BASE and
-JH7110_SYS_GC_BASE assignments after explaining why they are no longer
-needed.
-
-Bartosz
 
