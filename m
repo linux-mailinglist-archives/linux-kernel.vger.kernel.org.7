@@ -1,211 +1,253 @@
-Return-Path: <linux-kernel+bounces-864961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14877BFBFA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:56:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B512BBFBFAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5BB4062EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:53:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386481A60FFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58170347FCC;
-	Wed, 22 Oct 2025 12:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1085D34AB18;
+	Wed, 22 Oct 2025 12:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OdBXKwhf"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WZefTqbs"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010064.outbound.protection.outlook.com [52.101.61.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD4934A79D;
-	Wed, 22 Oct 2025 12:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137408; cv=none; b=g2Aa6xEmLwnjJ223M11BQ2I6vbqAVrkK78+xV94dMYshUBdfZF2Jx2r9BxPPMhIasFNGlIyNhM4DiKq3peHCjJa02E2R/hrVyipM7tsvEk99hzhKZ9OCmbBTv1FHZWSYgfPimgTA3WPeHDxqHNK/tBjJPSDfeBiyff9z5d/Tc+8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137408; c=relaxed/simple;
-	bh=Ya/kbI6xfJJoIpifuVhYGYHRTJgy49Q6/sMfr4bqwms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXyPaT2xUZ5JwdXsriO/fy9QtKIgsZ9Nci9gS3gwnDBw3LJNpcJvyL3NYmjRvBwOaHsVsXmybU1FDvaBouHQ4PZLPiX1Du91WP+qgkeUi6oIY4uLvLvdCSUp/rsHHYQ/XDXG2NdaDyKiCr8Y31wtwdn1Ai1YJn9vXZ1SX7B1sEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OdBXKwhf; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 14D7E8FA;
-	Wed, 22 Oct 2025 14:48:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761137285;
-	bh=Ya/kbI6xfJJoIpifuVhYGYHRTJgy49Q6/sMfr4bqwms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OdBXKwhfB+L0SvmbsqZOvpbX2zMRR26Bsx857tBf0wRD7edSSOP/u0AwrDhtT8vEo
-	 DXxzYWZDvF2rPf8tFISa/WZao3NHcumHkSnWIQ258FUqpdZ8Co6VHuTmZXCiuNlwe0
-	 +7MoWjjRUjtuMBkStnllMxy7WUxus+Or2PREmvDk=
-Date: Wed, 22 Oct 2025 15:49:37 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Create a specific id namespace for
- output entities
-Message-ID: <20251022124937.GE727@pendragon.ideasonboard.com>
-References: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
- <20251022120849.GD727@pendragon.ideasonboard.com>
- <CANiDSCvtqe8MKpb=O-=Mv28dK+g=REi7kpdr-eyAD-mLLpzQJw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E213C345CAE;
+	Wed, 22 Oct 2025 12:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761137432; cv=fail; b=RsZGIHTxKqONPFQMQGUvf6OaIL/QwdYTZ8Zhzt9SJRP+HdowG/b/m3f3hSsxsDVmJ9GAa5Su4AD5xOCpYOVP5LBEkMOSNf7r6HJAk/WoVjANFO/p2Fw/qr+ta3cGXoF0AgotkzBLONkhBwdOTq/mhSjKyg2mLdrGD40/6qB+0e0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761137432; c=relaxed/simple;
+	bh=EbFaPZqVfWxI31bbf2tcTMZ0L/mhWYrTKCzZeIhkUzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=erO/Z8Qc+xbSKp3DpHhoJie+V9vK/hqYRf6FPCwsvzg/G1qsZwjqRR1cwhMvhVKPNLo+QsUl8McXmjq45ycQarynRy9tkJ4e/1tYTBaM/MlmjLPSDBZFvFLqnnDZ9aF880h0vj8CPcNtwrFciBaFj1iCwjjZFGG9j5qWEzdn9e8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WZefTqbs; arc=fail smtp.client-ip=52.101.61.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eRs/9gD8sGy1PscV8K6D/4XwiVVU24mj5H/G1hdnyIMkInu9Ntf7eWtlcWJd6yli1cRjsKTNI0xtBAmrICx3GXB2cSNWJH2qoiT8wsigWOUNn9+OennCe4Urni0ZYESD63kUvOCWPZLcUSKJRq/UQImHKn+qMGTTigqYUk0sU0wW1rgM4NPXUA7VAJ1WhaMZdaIOVvGFgBOVRa0hGXAx5KV55MJDmn3wtbNlUO43iBYvT/5k+Ae4f4TXFnKOaO8M99Z1bSegNE4DowYOXuw5ubh2VHTTmKJGOMzJdlUhyvkIQq2qWLvoYFi91XwPuvzQavXuof1+Mud/K/bZKJnvNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rJ6Dp09PtYyxGhFWuYW+ZMJMH/IsIpalnb0uRHyEvWs=;
+ b=QU3hCR0TAumTBf5wzyxpPZTaiZIQwu0Ep+QdL6M6Dev11/zuRnTujD/IGK9Bazj2fj3l4jMcZCazFn2TNroLQhSwovEmbOVZRukEuZKCOk3Vs6QUC9nE2zQrD122v/ykR5NXXjJ8U7tCTGOu5N8Aua7bWlbRm7tzD3G++b+HDpT+2X7iWp+F4TxQZvqkxzFluEA8SyiYXPKTJe2t/0mgUnuVLOY3TtmH3nIFc5UjKMMWGAnilUSiyAZoPwfLVsIoRPl21Fxdv4QPfoawDQsN4TNRY31itJKRqNMnPLmCAaaRgEXxJ6yLR8dm2RynXaasPoKW5aUrVE5ZLUicN/Ueqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rJ6Dp09PtYyxGhFWuYW+ZMJMH/IsIpalnb0uRHyEvWs=;
+ b=WZefTqbsXkcluMVy9qWvbNwaTPQZtgsSnqJyFtqnvrPwvWooUuQ6z91ryqF53g12ZuovYNiJm1W6VtVT9aKARIVZPSxbmjTClNC7y1qAqTdFa98vIT2SWhPJVKR21mZlt9pOvZQWUKuL0jaghTxetq+AzEt9ms7ktH5+k87z7eVNufRLqwsoOruxlbvm9DQx+j0zJppWZI5tKoZ6Wy6FTDfLZ2Y806w/rPOM9bpgbcLGd6k9ALBfPVHqO7DhnI5bakkwTM4u2fPZy0OD0ZRuc1bV8qZZlGRM14aPEDKIUv7j+tSLNYA5pJCizHV0wKCKw823TzgGVwhNo/4tsDdEqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by SJ0PR12MB6760.namprd12.prod.outlook.com (2603:10b6:a03:44c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 12:50:14 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 12:50:14 +0000
+Date: Wed, 22 Oct 2025 09:50:12 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 9/9] vfio/pci: Add dma-buf export support for MMIO
+ regions
+Message-ID: <20251022125012.GB244727@nvidia.com>
+References: <cover.1760368250.git.leon@kernel.org>
+ <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
+X-ClientProxiedBy: BL0PR02CA0046.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::23) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCvtqe8MKpb=O-=Mv28dK+g=REi7kpdr-eyAD-mLLpzQJw@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|SJ0PR12MB6760:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4ef060f-373a-4e1b-403d-08de11698b25
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4Dr1raJ0jMRFHbOTlSMzM808tvA/ZGbNcIskyJqhB85rctD6/A1r22oS2AKf?=
+ =?us-ascii?Q?ChsGvYJ2eC5DHCWbdNTOiWXPG3U5K+0nKc8XDScLTyxPPWHfOkGQf5NrBxzn?=
+ =?us-ascii?Q?SDxqiBDuVwdHrhA6faHYCeIVwwZU/R1VxW9B5sj1ttjPOp5oD7KVd5feZ7gq?=
+ =?us-ascii?Q?qOYHf93SW6QJGXC2VzLUPTi2cqmYWvWsfBtKzNlBfsQom0HFg51cVPmwmK6/?=
+ =?us-ascii?Q?tmmIKR3dgcwKqNm//4JwHsm3ptue2/KVX30xSWZ8taLohg4+r1zXWxuCxJPt?=
+ =?us-ascii?Q?ATkGucwP+DjVU5rBvQ4DNgFzAqnWK4g/x6w3U5cDAieblWYgKw8jVfKE7i1h?=
+ =?us-ascii?Q?umbGOmvahlSisZxrplj+NQ5HVAJBWOB/XEjwlH956dHLBI0sMQ/yJg0sca9e?=
+ =?us-ascii?Q?qI5HDhvKwhu3g4dWZ7kJ/8UTVC1STKA3MYtwJy6KXhoZuluxuQ3YJs4NZif2?=
+ =?us-ascii?Q?T6k1rDTRnjJzftavWrpc1yc2B1+g8S2WNDVRLSjDEFLtGiZHgsmK8ZeE+KOX?=
+ =?us-ascii?Q?iQsarndqR/8xWd0DGS6VPz0q+BWu/5t5ou5vGGBsK69Mt+z45Vrrps1TN7vD?=
+ =?us-ascii?Q?Ch6K5cAY3o+kD6aPXF8YD8Aoj2qRVg4uodd1bqbxa6VdUYFymRb6EPzYgxaa?=
+ =?us-ascii?Q?SLqYgCaEehDT+0KqnAB1eEc19vPA4Z8yZMvXJVz6ODPADfYFnmAbNjHacn9M?=
+ =?us-ascii?Q?BPl9tT+TWxCgMd85vgUuvDAol6RvkCckIp7VEfryjWtoqcFm5r4dMEc3t9td?=
+ =?us-ascii?Q?/UAdMZ5n09zrNbHUIJnU/2qqAiAZqRCAaqGkGj2QVSWfYsql0Qc8rrX6Mp08?=
+ =?us-ascii?Q?oZm29xOFQ1ipUStdVR5isiiyj4AruDRUGhJZ4j/eZp7EQWp2Lq4JmTMcYEt4?=
+ =?us-ascii?Q?bqovA1slMXmDAkz/bVEucLdiKybaw3Ath6PgIA2tSsdgpYn9SX1e7T5cCBOO?=
+ =?us-ascii?Q?P6dKTGUXzEdMQZ1ohT871Gu7bcG/r8vyssiJqr2gPvYqY6TJcI1ob+Pxg4GZ?=
+ =?us-ascii?Q?MlKtSRU0SCzB0m0+UNxp7wTVqhfwraikcunVFd2DZrOb3Xty+hUnRzmeL/lz?=
+ =?us-ascii?Q?G2OpMiWhmozCOlmhZwLjpbxgEuLZwuKs456yusNS6i8mSSSgzMhbV0QKbXwE?=
+ =?us-ascii?Q?nnWL9EkQWyMQCRZKHON7Gijs/qJ9FhXiV4jgioiqQGlQlG1Syx71NnZolHMA?=
+ =?us-ascii?Q?OVBBRYny7frBKmsGcK+FRKpgXIQ0PCm6Ta4/EbnyVKMADHobM9bY6MmHKvsH?=
+ =?us-ascii?Q?tAczfCzsKqU3sxgG2RPuFzqaggRuKJVVhZaa9gB0d7I/S7MsIYn9gZw/ROpg?=
+ =?us-ascii?Q?MOlUk0uHJPRDLz8zGBroTtdJft+XNA5Ivev3FtK+Wi+fCp9nnMWAlKWPYWK9?=
+ =?us-ascii?Q?dk4BznlpIzDMTeR7e4aNSwg6exmMSeBY4N73RmtQmv9byEme07cTmxo3gjDx?=
+ =?us-ascii?Q?NS9xYjJqMXe7A1sB2wIFht32A245TOUY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?EnM6hkcIrT7K6L2RWJQ2aopUSQfyoIeYeU6MxjjHupEN6yOYMCT+AVTueMFt?=
+ =?us-ascii?Q?mbfavNZpPcj+l61hIcsvOrQpbjXcf+WI8RgAADLKCYfl3Clq0ptQw5f2t73p?=
+ =?us-ascii?Q?1Jt0SpeYXR+HSgAa+hypMAzfOlk0/LLU4tclKLsRwC7v4Ja9bCDV8KueGS0k?=
+ =?us-ascii?Q?QLhvc07lCaFc3awtdN59Os6BUM6eJNMEjAZczYqOM8xE59VwTWQXD6rsgQ5H?=
+ =?us-ascii?Q?U4XEx+IyePnasIW67ZsXoRNxO8/u1J+Ybp/93itYmH2r3nJmNnq2OBChuOGi?=
+ =?us-ascii?Q?ncLTW3LD+wT4pv3UjCjMx4RKKBcshpTooFEsW3z77IjnUbkzCkXaOoHsn1Bu?=
+ =?us-ascii?Q?XrMwReg6BhaXzOGPW4MSEEEVFEAdAETcOGx14oD2/yYMwG8qa6B6U/SWRHge?=
+ =?us-ascii?Q?iY1Yfd1A885+iVMj9vrOGbaVTE6ltB3IaBI7e3e3oICvp+AVgsIIlpZuYKv/?=
+ =?us-ascii?Q?X/B/wWk+vfc+9zBGvhn8pvuWEdPY3Ym4QAUxP4bolxl79ioWcuTjirHDz89r?=
+ =?us-ascii?Q?st++LKF8qnpD5hzVnLzTN1r4NQ3j8Y7aQrxhEl7tQUhdWY5zvFT/pEpcD9rM?=
+ =?us-ascii?Q?Xwh0baGRuAl0rejkpqH1mUa9vpktGULWbm93NOoZl6RtzycfgaYVj7YDV+x9?=
+ =?us-ascii?Q?xEtrZTJ7D5HB4vR0c5N169fKfjGiJi2QBcOuzqNX9lIXrH8LNyaWRBXJ/lVx?=
+ =?us-ascii?Q?NzlNl98YOPslGl2kuUV1yAqEIbzTLlUxmaAO7YMazk1BshUxAesb2XQAW5BY?=
+ =?us-ascii?Q?8Ed9J2psE9X6zUdnGfBzG2UE99jYKJAnKqXfCUSvHleO6IGqvzN7/RNQpOvL?=
+ =?us-ascii?Q?hZofElNnQabHbkdfFGHKSOBQ/C2PIyb69AErAq6jDsDaN8p8My0oydvGY3ZC?=
+ =?us-ascii?Q?IgjN08IBgWVABd+w5bOb5g6OTZkPREGZLnPyNVz/ZnY/89GMozf6BePk9B0t?=
+ =?us-ascii?Q?ibb8+vBxfFE9al4XMxRwgp2eM/J+E0BCWFYsKG68tJgrqOEqLieuivynLkPs?=
+ =?us-ascii?Q?dRaPCKhgpvHTikIlz0M8NCkYhil77VpuN1NZr4rrVdR2JG08Tn1848i+TjBR?=
+ =?us-ascii?Q?BXGx0ZaQXCEnVIimR1s6TtZ4JhtrG7GRlrO6+G3jZz0xOklC1UCTjBLJ4N/p?=
+ =?us-ascii?Q?0JebwIAITWbPUGsaM/O4f/yNtbBFlb5izNfbjEkf1Scvi4BNux+ToO+++zcx?=
+ =?us-ascii?Q?unac9xwqRmvKsDUA0LHYjSYi1+FoMDqpPLTa1ASXNJvxpRL/eBMsuh01pj8Z?=
+ =?us-ascii?Q?e+FAZ7oX8K1qKJnR7XWt5vqu00YWyTJBQ5VkGvcEk0PLXaPMFvjU2i0/C4Du?=
+ =?us-ascii?Q?V5JYExN/W1XcZGfVJfe5TaLECxUP8xs14B0zh/FSb2L8ud54nrZCH5Aq8gQG?=
+ =?us-ascii?Q?1eiFjJzo8AVPBw9A8VEIxZADos5TBG2EDz7MFnr9c6U8EkZLbOXRRN7iPkq6?=
+ =?us-ascii?Q?drThfOjWTYUuYCdWe+tsxkx/PtK3DQkppCsR4uPvI502mkrN57gCDKSF87Ws?=
+ =?us-ascii?Q?Pn+m2u1/PIRN9NRtM0yc6bKkw2p8PrX+rJPaHEWWGkNIR6sI+uDj+e5s78Fl?=
+ =?us-ascii?Q?hEIr3MF3I9XpwkDOWVc=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4ef060f-373a-4e1b-403d-08de11698b25
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 12:50:13.9646
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jQBni5vEIKi49NXEFASv7X8GFia5leP6Ri4ele2pz6Jl3HTB2Jv1ubaPT+/EvqG4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6760
 
-On Wed, Oct 22, 2025 at 02:29:15PM +0200, Ricardo Ribalda wrote:
-> On Wed, 22 Oct 2025 at 14:09, Laurent Pinchart wrote:
-> > On Wed, Oct 22, 2025 at 11:55:16AM +0000, Ricardo Ribalda wrote:
-> > > Nothing can be connected from an output entity. Which means that no
-> >
-> > s/output entity/output terminal. Same below.
-> >
-> > Did you mean s/from an/to an/ ?
-> >
-> > > other entity can reference an output entity as baSourceId.
-> > >
-> >
-> > Some output terminals have controls, so we need to preserve their ID.
-> > That's why my proposal only set the UVC_TERM_OUTPUT bit for the
-> > *streaming* output terminals, not for all output terminals.
-> >
-> > > Use this fact to move all the output entities to a different namespace
-> > > id.
-> > >
-> > > The output entities are usually named after the dev_name() of the usb
-> > > device, so there should not be any uAPI change from this change.
-> > >
-> > > Although with this change we can handle some id collisions
-> > > automagically, change the logic of uvc_alloc_new_entity() to keep
-> > > showing a warning when a camera has invalid descriptors. Hopefully this
-> > > message will help vendors fix their invalid descriptors.
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > > Hi, this patch fixes support for some devices with invalid USB
-> > > descriptor.
-> > >
-> > > It is orthogonal to:
-> > > https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
-> > >
-> > > Some devices will be fixed by the other patch, other devices will be
-> > > fixed by this. In my opinion is worth to land both patches.
-> > >
-> > > Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_driver.c | 23 +++++++++++++++++++----
-> > >  1 file changed, 19 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..40f8ae0df89e104992f5d55af3d3539dea3d146e 100644
-> > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > @@ -165,10 +165,14 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
-> > >       return NULL;
-> > >  }
-> > >
-> > > +#define ENTITY_HARDWARE_ID(id) ((id) & ~UVC_TERM_OUTPUT)
-> >
-> > This needs a UVC_ prefix, and should probably go to uvcvideo.h. You can
-> > also & 0xff, as the UVC descriptors store IDs in 8-bit fields.
-> >
-> > > +
-> > >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
-> > >  {
-> > >       struct uvc_streaming *stream;
-> > >
-> > > +     id = ENTITY_HARDWARE_ID(id);
-> > > +
-
-Another comment, I would have done this in the (single) caller, to keep
-operating on real ids in this function. Or we could pass a struct
-uvc_entity instead of an int id and rename the function to
-uvc_stream_for_terminal(), which could better encapsulate the purpose.
-
-> > >       list_for_each_entry(stream, &dev->streams, list) {
-> > >               if (stream->header.bTerminalLink == id)
-> > >                       return stream;
-> > > @@ -810,10 +814,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
-> > >       }
-> > >
-> > >       /* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
-> > > -     if (uvc_entity_by_id(dev, id)) {
-> > > -             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
-> > > +     if (uvc_entity_by_id(dev, ENTITY_HARDWARE_ID(id)))
-> > > +             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
-> > > +                     ENTITY_HARDWARE_ID(id));
-> >
-> > It's not an error anymore if there's no collision of the full 16-bit ID,
-> > right ? Should it be demoted to a dev_warn() ?
+On Mon, Oct 13, 2025 at 06:26:11PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> if it is OK with you I'd rather keep the dev_err(). If an ISP
-> manufacturer tests their camera in Linux I want them to really notice
-> that there is an error.
-
-Yes I'm OK with that. It shouldn't happen. We want a dev_err_and_blame()
-that prints a message to the kernel log and posts messages on social
-networks to blame the hardware manufacturer.
-
-> Besides that, I have implemented all your proposed changes.
+> Add support for exporting PCI device MMIO regions through dma-buf,
+> enabling safe sharing of non-struct page memory with controlled
+> lifetime management. This allows RDMA and other subsystems to import
+> dma-buf FDs and build them into memory regions for PCI P2P operations.
 > 
-> I cannot test it until tomorrow in real hardware. But the changes are
-> trivial, let me know if I shall send the v2 right now or wait til it
-> is tested.
+> The implementation provides a revocable attachment mechanism using
+> dma-buf move operations. MMIO regions are normally pinned as BARs
+> don't change physical addresses, but access is revoked when the VFIO
+> device is closed or a PCI reset is issued. This ensures kernel
+> self-defense against potentially hostile userspace.
 
-Up to you, I don't mind either way.
+Let's enhance this:
 
-If we merge "[PATCH v2] media: uvcvideo: Use heuristic to find stream
-entity" first, do you plan to revert it to get this patch merged ?
+Currently VFIO can take MMIO regions from the device's BAR and map
+them into a PFNMAP VMA with special PTEs. This mapping type ensures
+the memory cannot be used with things like pin_user_pages(), hmm, and
+so on. In practice only the user process CPU and KVM can safely make
+use of these VMA. When VFIO shuts down these VMAs are cleaned by
+unmap_mapping_range() to prevent any UAF of the MMIO beyond driver
+unbind.
 
-> > > +
-> > > +     if (uvc_entity_by_id(dev, id))
-> > >               id = UVC_INVALID_ENTITY_ID;
-> > > -     }
-> > >
-> > >       extra_size = roundup(extra_size, sizeof(*entity->pads));
-> > >       if (num_pads)
-> > > @@ -969,6 +975,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
-> > >       struct usb_host_interface *alts = dev->intf->cur_altsetting;
-> > >       unsigned int i, n, p, len;
-> > >       const char *type_name;
-> > > +     unsigned int id;
-> > >       u16 type;
-> > >
-> > >       switch (buffer[2]) {
-> > > @@ -1107,8 +1114,16 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
-> > >                       return 0;
-> > >               }
-> > >
-> > > +             /*
-> > > +              * Nothing can be connected from an output terminal. To avoid
-> > > +              * entity-id's collisions in devices with invalid USB
-> > > +              * descriptors, move the output terminal id to its own
-> > > +              * namespace.
-> > > +              */
-> > > +             id = buffer[3] | UVC_TERM_OUTPUT;
-> > > +
-> > >               term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
-> > > -                                         buffer[3], 1, 0);
-> > > +                                         id, 1, 0);
-> > >               if (IS_ERR(term))
-> > >                       return PTR_ERR(term);
-> > >
-> > >
-> > > ---
-> > > base-commit: ea299a2164262ff787c9d33f46049acccd120672
-> > > change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
+However, VFIO type 1 has an insecure behavior where it uses
+follow_pfnmap_*() to fish a MMIO PFN out of a VMA and program it back
+into the IOMMU. This has a long history of enabling P2P DMA inside
+VMs, but has serious lifetime problems by allowing a UAF of the MMIO
+after the VFIO driver has been unbound.
 
--- 
-Regards,
+Introduce DMABUF as a new safe way to export a FD based handle for the
+MMIO regions. This can be consumed by existing DMABUF importers like
+RDMA or DRM without opening an UAF. A following series will add an
+importer to iommufd to obsolete the type 1 code and allow safe
+UAF-free MMIO P2P in VM cases.
 
-Laurent Pinchart
+DMABUF has a built in synchronous invalidation mechanism called
+move_notify. VFIO keeps track of all drivers importing its MMIO and
+can invoke a synchronous invalidation callback to tell the importing
+drivers to DMA unmap and forget about the MMIO pfns. This process is
+being called revoke. This synchronous invalidation fully prevents any
+lifecycle problems. VFIO will do this before unbinding its driver
+ensuring there is no UAF of the MMIO beyond the driver lifecycle.
+
+Further, VFIO has additional behavior to block access to the MMIO
+during things like Function Level Reset. This is because some poor
+platforms may experience a MCE type crash when touching MMIO of a PCI
+device that is undergoing a reset. Today this is done by using
+unmap_mapping_range() on the VMAs. Extend that into the DMABUF world
+and temporarily revoke the MMIO from the DMABUF importers during FLR
+as well. This will more robustly prevent an errant P2P from possibly
+upsetting the platform.
+
+A DMABUF FD is a prefered handle for MMIO compared to using something
+like a pgmap because:
+ - VFIO is supported, including its P2P feature, on archs that don't
+   support pgmap
+ - PCI devices have all sorts of BAR sizes, including ones smaller
+   than a section so a pgmap cannot always be created
+ - It is undesirable to waste alot of memory for struct pages,
+   especially for a case like a GPU with ~100GB of BAR size
+ - We want a synchronous revoke semantic to support FLR with light
+   hardware requirements
+
+Use the P2P subsystem to help generate the DMA mapping. This is a
+significant upgrade over the abuse of dma_map_resource() that has
+historically been used by DMABUF exporters. Experience with an OOT
+version of this patch shows that real systems do need this. This
+approach deals with all the P2P scenarios:
+ - Non-zero PCI bus_offset
+ - ACS flags routing traffic to the IOMMU
+ - ACS flags that bypass the IOMMU - though vfio noiommu is required
+   to hit this.
+
+There will be further work to formalize the revoke semantic in
+DMABUF. For now this acts like a move_notify dynamic exporter where
+importer fault handling will get a failure when they attempt to map.
+This means that only fully restartable fault capable importers can
+import the VFIO DMABUFs. A future revoke semantic should open this up
+to more HW as the HW only needs to invalidate, not handle restartable
+faults.
+
+Jason
 
