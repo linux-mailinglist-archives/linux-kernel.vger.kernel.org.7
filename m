@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-864994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F5ABFC01D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB443BFC086
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9030819C5834
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB1462437F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92CA34EEF1;
-	Wed, 22 Oct 2025 12:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE0D34F257;
+	Wed, 22 Oct 2025 12:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YCRC+Bi5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="90UjjEyF"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UOdzPfC5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CizQurBi"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DC434B699
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3891334C82D
 	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137567; cv=none; b=dfa0kzrZSS7vNNBHybQhRm6ia2eQ2GtqKxTG28kTGaufnvGm53iEC9e2WGxaQGeJwvNC27HXX0hH9Jdc4pSEqmR7Zggkz3dJpgOkyUdPlDlsz9YWca3wy9DgjV2cClT6gAR2aE/8byQBT8Q/FJ48YoJZaGzfGvt855iokpbTn9A=
+	t=1761137568; cv=none; b=aPLViDFuCnS9wcVNgUGnUIruPrWLyBvvcmQzk0aw3cjxLf2RmRrW8RlJbK1ijJVPq77G54tfT3dEPARLfDHKbc2/vPXCoCIo6y9LqdkdnJ/mFm2pxSOePIO49OWmG6kAGMYqPgWcrrwc+vYYfCCUWjo0xiNU/dUeuT0IIbXWbkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137567; c=relaxed/simple;
-	bh=fSAYLVd5AqHucCuNHOo0vXpOkZl/dhTZKCK1EjF/s0U=;
+	s=arc-20240116; t=1761137568; c=relaxed/simple;
+	bh=fRtKSAT+7JawqD54Nvj6KBAjse/kVX+VAldx1oveosY=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=OIjl5qfX1tw1poxpnA/FTcbe8S14wbCCfjxzJeYTWUWGdeljDdzJ2WkO8eVX71JfYic+7xeejFXfwBJrgoUvUhf9yzssr0KZ8bxVn9u/nHlppfXwee2mFilOkdur277WuJ4Dmt4bg3QCWyIJ45TlArOwbYGUi5kTr5M31ctAcgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YCRC+Bi5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=90UjjEyF; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=DR6nixMGeICCPgZ9oZsLX4Fe5L2mtSBgRzd3O/yzp8ttGHgtMBB+972DLRJpyruhY58uadyFSUkDHbHLFBuAOhUJYj8GSsXD3/9N83Tjjef9O+pR8oYKJJ+gyJMXSLcmgasL4VpXfl1QsFcBTmHbq8f5Vze1ccA4vwIcixxinPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UOdzPfC5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CizQurBi; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251022121943.217839762@linutronix.de>
+Message-ID: <20251022121943.289709585@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761137557;
+	s=2020; t=1761137558;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=MC87nopEMMD6W1ICzJrXeQbGP0Yoxe/0UCOwm3vz4Qw=;
-	b=YCRC+Bi5Tc09spdl3Oaa21T1QnQobgGdVlvP0fHRBCVvk9oQNAq0Ad85VgYBAi+tAzLol4
-	5Iiim6M4TC1vciPt37ZsE5350NC0dmc6/QzGqPktv0fk822sukFDXbA7ilQS08Axx5xOvL
-	ghDJSdFds+VBiSnjJkRWTueacd6An/Cc/cJjPbD/cqoA6oW5xvNw+b11cER8UAvWQsyCFb
-	WNgqhxzoZnAQdWzZ4Qpi+Q6bJlWoyfo3uNNKxygxkrlpE/Kd2owiITay8e2cyafYtztP2k
-	cX7U5LCeqSUTPN2bsOntYC0RhQ8aHgKdqGEmx/eTmRpVBQk/6++IxlM7k2gtYA==
+	 references:references; bh=u/TMrFpJWl68PmfpLX0HbgIWYFPqgU/kRgNhPDl2Dak=;
+	b=UOdzPfC5mYE8pqV8Yr4AKYsIup5EmDvkvbcSOzq6D3ksD4N4TCtqSiWim3mPlczwxPcDlo
+	ZjRopucq2+k2EWBauSvnSYCPpRF4palFAUWe9PChg0faxJz+skAjXVBEhECGQ6QznvG7h8
+	LklT3rIVoj0mZxn/WzhZATZoJT/E5vIW9LtlOYeAVZhq8qWWs/RgwBphtYJPu9R6nxLeqV
+	0X7i9fVyMGOJ7fAIQxXnG5/AuoBVM06mBg6HjSpyjNXvGzaLIQFfV+hh2Avl1ta0T9tAIk
+	y2uq7bBkzgz5FP/wJHPTLSjNiQ+rjvVgvY9TbjQ18fkaIqjkLHRBjTT64FLPwg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761137557;
+	s=2020e; t=1761137558;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=MC87nopEMMD6W1ICzJrXeQbGP0Yoxe/0UCOwm3vz4Qw=;
-	b=90UjjEyFkCJLg4HoW7qKvqWiQDhsjEG/AMDIU2F5gTPkm5DgvapWCsw5jNXyOxe+u/E0Is
-	Hv0ZMfaPYxq6FWAQ==
+	 references:references; bh=u/TMrFpJWl68PmfpLX0HbgIWYFPqgU/kRgNhPDl2Dak=;
+	b=CizQurBiru7p8U5MQfpREn2M1zpr7bbeGgf5nt2yd8+K6DKkGfgtrzX4tgKpffmPI1EQYP
+	zxbec4JeVxyu0ECw==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
@@ -59,7 +59,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  x86@kernel.org,
  Sean Christopherson <seanjc@google.com>,
  Wei Liu <wei.liu@kernel.org>
-Subject: [patch V5 29/31] entry: Split up exit_to_user_mode_prepare()
+Subject: [patch V5 30/31] rseq: Split up rseq_exit_to_user_mode()
 References: <20251022121836.019469732@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,113 +68,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 Oct 2025 14:52:36 +0200 (CEST)
+Date: Wed, 22 Oct 2025 14:52:38 +0200 (CEST)
 
-exit_to_user_mode_prepare() is used for both interrupts and syscalls, but
-there is extra rseq work, which is only required for in the interrupt exit
-case.
+Separate the interrupt and syscall exit handling. Syscall exit does not
+require to clear the user_irq bit as it can't be set. On interrupt exit it
+can be set when the interrupt did not result in a scheduling event and
+therefore the return path did not invoke the TIF work handling, which would
+have cleared it.
 
-Split up the function and provide wrappers for syscalls and interrupts,
-which allows to separate the rseq exit work in the next step.
+The debug check for the event state is also not really required even when
+debug mode is enabled via the static key. Debug mode is largely aiding user
+space by enabling a larger amount of validation checks, which cause a
+segfault when a malformed critical section is detected. In production mode
+the critical section handling takes the content mostly as is and lets user
+space keep the pieces when it screwed up.
+
+On kernel changes in that area the state check is useful, but that can be
+done when lockdep is enabled, which is anyway a required test scenario for
+fundamental changes.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 ---
- include/linux/entry-common.h     |    2 -
- include/linux/irq-entry-common.h |   42 ++++++++++++++++++++++++++++++++++-----
- 2 files changed, 38 insertions(+), 6 deletions(-)
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -156,7 +156,7 @@ static __always_inline void syscall_exit
- 	if (unlikely(work & SYSCALL_WORK_EXIT))
- 		syscall_exit_work(regs, work);
- 	local_irq_disable_exit_to_user();
--	exit_to_user_mode_prepare(regs);
-+	syscall_exit_to_user_mode_prepare(regs);
- }
- 
- /**
+ include/linux/irq-entry-common.h |    4 ++--
+ include/linux/rseq_entry.h       |   21 +++++++++++++++++----
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 --- a/include/linux/irq-entry-common.h
 +++ b/include/linux/irq-entry-common.h
-@@ -201,7 +201,7 @@ void arch_do_signal_or_restart(struct pt
- unsigned long exit_to_user_mode_loop(struct pt_regs *regs, unsigned long ti_work);
- 
- /**
-- * exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-+ * __exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-  * @regs:	Pointer to pt_regs on entry stack
-  *
-  * 1) check that interrupts are disabled
-@@ -209,8 +209,10 @@ unsigned long exit_to_user_mode_loop(str
-  * 3) call exit_to_user_mode_loop() if any flags from
-  *    EXIT_TO_USER_MODE_WORK are set
-  * 4) check that interrupts are still disabled
-+ *
-+ * Don't invoke directly, use the syscall/irqentry_ prefixed variants below
-  */
--static __always_inline void exit_to_user_mode_prepare(struct pt_regs *regs)
-+static __always_inline void __exit_to_user_mode_prepare(struct pt_regs *regs)
+@@ -247,7 +247,7 @@ static __always_inline void __exit_to_us
+ static __always_inline void syscall_exit_to_user_mode_prepare(struct pt_regs *regs)
  {
- 	unsigned long ti_work;
- 
-@@ -224,15 +226,45 @@ static __always_inline void exit_to_user
- 		ti_work = exit_to_user_mode_loop(regs, ti_work);
- 
- 	arch_exit_to_user_mode_prepare(regs, ti_work);
-+}
- 
+ 	__exit_to_user_mode_prepare(regs);
 -	rseq_exit_to_user_mode();
--
-+static __always_inline void __exit_to_user_mode_validate(void)
-+{
- 	/* Ensure that kernel state is sane for a return to userspace */
- 	kmap_assert_nomap();
- 	lockdep_assert_irqs_disabled();
- 	lockdep_sys_exit();
++	rseq_syscall_exit_to_user_mode();
+ 	__exit_to_user_mode_validate();
  }
  
-+
-+/**
-+ * syscall_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-+ * @regs:	Pointer to pt_regs on entry stack
-+ *
-+ * Wrapper around __exit_to_user_mode_prepare() to separate the exit work for
-+ * syscalls and interrupts.
-+ */
-+static __always_inline void syscall_exit_to_user_mode_prepare(struct pt_regs *regs)
-+{
-+	__exit_to_user_mode_prepare(regs);
-+	rseq_exit_to_user_mode();
-+	__exit_to_user_mode_validate();
-+}
-+
-+/**
-+ * irqentry_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-+ * @regs:	Pointer to pt_regs on entry stack
-+ *
-+ * Wrapper around __exit_to_user_mode_prepare() to separate the exit work for
-+ * syscalls and interrupts.
-+ */
-+static __always_inline void irqentry_exit_to_user_mode_prepare(struct pt_regs *regs)
-+{
-+	__exit_to_user_mode_prepare(regs);
-+	rseq_exit_to_user_mode();
-+	__exit_to_user_mode_validate();
-+}
-+
- /**
-  * exit_to_user_mode - Fixup state when exiting to user mode
-  *
-@@ -297,7 +329,7 @@ static __always_inline void irqentry_ent
- static __always_inline void irqentry_exit_to_user_mode(struct pt_regs *regs)
+@@ -261,7 +261,7 @@ static __always_inline void syscall_exit
+ static __always_inline void irqentry_exit_to_user_mode_prepare(struct pt_regs *regs)
  {
- 	instrumentation_begin();
--	exit_to_user_mode_prepare(regs);
-+	irqentry_exit_to_user_mode_prepare(regs);
- 	instrumentation_end();
- 	exit_to_user_mode();
+ 	__exit_to_user_mode_prepare(regs);
+-	rseq_exit_to_user_mode();
++	rseq_irqentry_exit_to_user_mode();
+ 	__exit_to_user_mode_validate();
  }
-
+ 
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -520,19 +520,31 @@ static __always_inline bool rseq_exit_to
+ 
+ #endif /* CONFIG_GENERIC_ENTRY */
+ 
+-static __always_inline void rseq_exit_to_user_mode(void)
++static __always_inline void rseq_syscall_exit_to_user_mode(void)
+ {
+ 	struct rseq_event *ev = &current->rseq.event;
+ 
+ 	rseq_stat_inc(rseq_stats.exit);
+ 
+-	if (static_branch_unlikely(&rseq_debug_enabled))
++	/* Needed to remove the store for the !lockdep case */
++	if (IS_ENABLED(CONFIG_LOCKDEP)) {
+ 		WARN_ON_ONCE(ev->sched_switch);
++		ev->events = 0;
++	}
++}
++
++static __always_inline void rseq_irqentry_exit_to_user_mode(void)
++{
++	struct rseq_event *ev = &current->rseq.event;
++
++	rseq_stat_inc(rseq_stats.exit);
++
++	lockdep_assert_once(!ev->sched_switch);
+ 
+ 	/*
+ 	 * Ensure that event (especially user_irq) is cleared when the
+ 	 * interrupt did not result in a schedule and therefore the
+-	 * rseq processing did not clear it.
++	 * rseq processing could not clear it.
+ 	 */
+ 	ev->events = 0;
+ }
+@@ -550,7 +562,8 @@ static inline bool rseq_exit_to_user_mod
+ {
+ 	return false;
+ }
+-static inline void rseq_exit_to_user_mode(void) { }
++static inline void rseq_syscall_exit_to_user_mode(void) { }
++static inline void rseq_irqentry_exit_to_user_mode(void) { }
+ static inline void rseq_debug_syscall_return(struct pt_regs *regs) { }
+ #endif /* !CONFIG_RSEQ */
+ 
 
 
