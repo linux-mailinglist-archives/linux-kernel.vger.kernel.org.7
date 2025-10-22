@@ -1,156 +1,167 @@
-Return-Path: <linux-kernel+bounces-865592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF3CBFD843
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:17:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5765EBFD8AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A88304F99E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:14:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C383A3B5EAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5893327FB32;
-	Wed, 22 Oct 2025 17:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2E2272813;
+	Wed, 22 Oct 2025 17:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yYhkhmFO"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dcfC7PHn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09DE272813
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A24279DCF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761153270; cv=none; b=mhEMtYqcBVuAVLIPdhcfRC+nhQhjtL1tzTWAqEKXWgDLBCQVzou1I4CNUbnx/j57Y5tosZd3hBdYvTou/8dFyFdXh4hBHgPEmWySVe2N0q6wc6Qs9nO3pD75yl0cm9CzlU42x9GMKXXg4MUZNL8D2CM4pYNQk4EA+TaWht6osL8=
+	t=1761153278; cv=none; b=PAcJsc6NE6Z8rZ9QM2Twk+vdw89MiUoUmsTmBj/DWd+r3Rwmof60FWBZAPsfBgjYH3WWZWkyTUHfG+21he0kySXMxcm68Fig3weNNesaXm6Col7k3ANc/CMREIoqJM5uI26pz5HqXea23oaawxwHHDAt58oVM98f57/gKwT7G1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761153270; c=relaxed/simple;
-	bh=alRvOln8Nm7xlD06ADuHu4fWBMIFmyhc0+nC9Kjtgz0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=u092sajrctMJ5Lt13sPNq5N1M+Wj3buVwmBg6lvHx7yzWaJM5oYFZYrTWoGppzMDz4YNvgbHI+GWkl4sywxmbjoQL6c0bisg0znlZs+kmLlHNMGZZdov7y0p2BpN/rSTI9tjjkIx52l+XDEm/o05aymzmFsTGSD3yV64QzOiX8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yYhkhmFO; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-93e8d7d177aso161748639f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761153268; x=1761758068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=02MaJ5QNPtaAAnY4QmtoKQvBiiM3OxRwrbvkWHDbg0A=;
-        b=yYhkhmFOGHZ79ceAeRzsTTx0uIufp2jrNynNpQGjS7S+3KCfVr2bpmUpwJYH/OkF+1
-         b9mIzOGpiNrIrauCc69AFuJoYt3+qRbNIDK8l/4rRoFv6Cw2ac1uqGl5MnnGe09P1vES
-         qv2URYzJ5eGZAYcdCZ65BvMGL1rjbFXYFFKOXkToGWXhxLTr5UoPZAH1+0cQuiacRG60
-         tuTcGb5GLXAAeOY2pikrwWIS8Ci5qQOt39KHYEsmsRNtXwZEVoBPhLkvlSgnITJMv7Cy
-         58Ai49HfLjqrdEd54yvYAU1xC5SThHzljHjD3mvlCyer8zmZ1zWm+tnAWBVII86K4Ets
-         7f5g==
+	s=arc-20240116; t=1761153278; c=relaxed/simple;
+	bh=W0hYyw+FFxFPIcjLI6cLC2huES89KHfpD4J6D4BemPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s6aOfIl5izmLQFvLg3DhVEgaTKMpnX+3hhS6htHjoEMGaju3FOI/z33aGxpoCf/TOJ9NmNPTOLAwKZBjShqgSgHaI4820p5APx9DgbECfx+3JJq78drsEG97YSIcQKWoQQ4GrdGUOUjZ1Um/4GPrCOFpHL8OQo0OYM2qQWem9/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dcfC7PHn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MAsl5q024237
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:14:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3n7GuKanrjFBNn+S6EEEj55UDKDMqVUCfv5KZTHI70M=; b=dcfC7PHnQ57SVoYy
+	5d1E8fYZT5HTzt8RzOBJJnKF8vDcrQ7Az7FqhBpcmiN9++w6o6jpWN202ZEPKQvX
+	px/aEbaUC2xuV+9jl25QCCp1xq3+/xN1GxA5TkiUwsYtjadptpbvu09aLxJai31Q
+	ZQJK0ijKHwRvgtrfPByQvk1ypRK/nGw7/OgUKU8Hv24IdZiRO8HCfUdG+96tgS1w
+	1YGptPzr5X/OWZz7iejg0kiLzIJky5sx2KV5XC1iEPybkjJhJn6Nq5iy0z2Z7X8x
+	3wHfMo7DU6VicCs8kndTmKr9Daanju4X+P20sD47KoszzHnP3wTKDP6tOaT/7R43
+	KwJ+gA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1w85hja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:14:36 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e892b1c102so5008681cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:14:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761153268; x=1761758068;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=02MaJ5QNPtaAAnY4QmtoKQvBiiM3OxRwrbvkWHDbg0A=;
-        b=tCBnDxela1O0ljhNU7hKrHHQULCbP/mmbGi1tETHPu1TaBsrCkhMuRr6xNN8D6V35G
-         ayQwEnQtYAW5uqWpQk2njAdv4GzBpOkw8OK0WAO9UNrNKEyfqSgzXe9MQeC/UvNoy1BL
-         Z6Tjjwgn9TQCqL9E5Fdf2+FrP3Ex9y0ynQlAsk8sK36dEIaKirbDStWH8FnqWOqxkR8c
-         /xGmROFjRqsLd2WO306Ree1KzGP720jVTcKJ4UJftN8DUyKS8zW2mjGT9mjBufyd2VVP
-         IVFP2zOLu5BqRETz0MfkS3cPtgRredNRTOENi94lbluJFGHVhbV7SGRwkBVYKUAA+xE4
-         qLeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTHPAkEFN+rDxC5IyIAByiLyK5VI8CRgQAcpUjo5PSM3m8Cv4WNhZCBaZAlFvTWlRwYSDqXax3vKR64MU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHUfUyP3NFUVMVrpcwNKIcKVD7HlQ2FRRO9ixO0jjm6cJIV9iW
-	hK6qIKZ85vaYDPWaY1k672xr1FM7HPtgaXXeKPZR2zbrtpWbq8W8bLGpaHYFPEPqJPw=
-X-Gm-Gg: ASbGnctmM+X/YAnPWQT44z4U3TIxZ8aWGWVo4WT7Ah9E8Hekdy/mN0Ma5yBIBp3w+Zb
-	wvguynOD5aA1eoMW0k3vmKgDdMxtha+5g0U1go4M4tQw5gLUUjtN3IXQRKYx1U5/agp1fOWrb3f
-	y+UeGYeGOEf7bNFhQmRB3V9bdpYnFNAdKMTXQGil5H2BPB9sfkPC9dl6gwGfNDjyF3FpyTZUjgB
-	a/BqrDwBcm1DzmHXTKJPj1zx3LpQyEr+OaSidLp+zg0RKXUyDMONq2R7FxFpIC+3aaN98+19r1j
-	VhPyIHcPPGmaXJPgnTxpiIWvSDjUXzqT2RdOKvlPCsTbAqEhd0Z/++QuDDSMrRtM0DPVUVrf5lI
-	EAprXyWw0vkC9wMFsjysRL4ySt56WKuesw8xBNMJ52gmrZrUu2VCSrnnf7solrDpnogwxcFfGFW
-	EQbw==
-X-Google-Smtp-Source: AGHT+IHTj61GCU43Ny9CqJZTcArqcqLG4N55exTJ/CO6XywRSm8cR6B046X/oK+en5lUBxrNojHA2Q==
-X-Received: by 2002:a05:6e02:1a66:b0:426:c373:25f5 with SMTP id e9e14a558f8ab-430c527dc0bmr294941715ab.17.1761153267700;
-        Wed, 22 Oct 2025 10:14:27 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d07a82ebsm58994535ab.22.2025.10.22.10.14.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 10:14:27 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc: chaitanyak@nvidia.com, dlemoal@kernel.org, hare@suse.de, hch@lst.de, 
- john.g.garry@oracle.com, linux-block@vger.kernel.org, 
- linux-btrace@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, martin.petersen@oracle.com, 
- mathieu.desnoyers@efficios.com, mhiramat@kernel.org, naohiro.aota@wdc.com, 
- rostedt@goodmis.org, shinichiro.kawasaki@wdc.com
-In-Reply-To: <20251022114115.213865-1-johannes.thumshirn@wdc.com>
-References: <20251022114115.213865-1-johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v5 00/16] block: add blktrace support for zoned block
- devies
-Message-Id: <176115326663.119946.495631617143867642.b4-ty@kernel.dk>
-Date: Wed, 22 Oct 2025 11:14:26 -0600
+        d=1e100.net; s=20230601; t=1761153275; x=1761758075;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3n7GuKanrjFBNn+S6EEEj55UDKDMqVUCfv5KZTHI70M=;
+        b=eU39pGt+2KGuxN6WiM2n1Q6Mybbqj1dIYZg3gMB7gtWhxJz0RysuIJgIMrrMCabPBP
+         x0jbg9SmjNYsw+kCkft7AIyqOUVxlHx8EaMD4oDBCCazrvlg64lKW1RKAqSFhC4/yosp
+         7ZeGyIhLDHWch2ejvIh5OKV7oT9w542ycYl4xvd6/Wt1hFHKEAn62YIrXyVI3DqCaU5S
+         H7OCYFGH7t6K6PudYP6aEhc7ejn12NWcw2dF43qM/oon39duVUCRMnhhyCz+VaXpjKIy
+         ljv3EpiPYUhCAWqbnO77iGmrHL/zXREFojMyZkogdDKxPDKaUCRm1TQSx0Xoivx/zuD3
+         GoNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqMcqEeO/XyZR2UvlW0gsUn1gdVidgz0XYNRB96r9Ndh/1JVLdzJMhG0SwXpbZbpgeUKGFbDHB7If9xnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxmb1wLOscp7FrI3N4SxIiUuH4UH4mWr8ikQ3UAvUyxXtTthab
+	kopLsTmgjGgC1L3KrYcYhyuu+ZR5nS9iVUk8FciyBEeqquzvIcs1iU0sTaccMeF4/ManU8sCuSw
+	ME9CKvrIBAwcul9mTq4ZCF1CcvK5bZPwaT1rjL2mioUMPzZyCiguzn2TkWsi/IQQx1FY=
+X-Gm-Gg: ASbGncsTKYLwURsuBgGwRAnwj+sid/0yUNSzo4FaSSVD8SNjp/jOPapLOSRHk/sVZBT
+	NB3XFnwCTi0NeHJ+FGspvp9AyrUtT1eURvKYW/GwgEMy3oPDR7uQUF00L70d2mSyYKPb+inuqOu
+	y2DjPAzUp4DKUgKeLP4eQxnezSviTsN3DRlYtaCtFfMRbNDzhPVn3ojz0giMJKxZUHb/Te/zyQ2
+	9fiGkl3GT3LW9x898/VcZ1ciPGrZTr6kRb9umkk7sF9I0OOpQPv0Jp54X0My9jn/hMmaVfbgG8g
+	GCFaTjDGggIJoZg5lLRI6RXyN4y5PAM+9f7qKlEhMkRRyg4a5VDaXnDXahhXUGB4eqcEd8V0gGy
+	4qzRhT1zslf6vOIRNyofRLMNdle1hQCn1aw//4iyJzXKn/3ldx1JYTWYA
+X-Received: by 2002:a05:622a:1492:b0:4b7:94af:2998 with SMTP id d75a77b69052e-4e89d2cb636mr181110591cf.6.1761153275297;
+        Wed, 22 Oct 2025 10:14:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElUs2ccLws+09dJCicur/nb+FwFaszJn1D/TePDNT/7C+eYSqLSDOVvQDTj/XCFdnCKCnLTw==
+X-Received: by 2002:a05:622a:1492:b0:4b7:94af:2998 with SMTP id d75a77b69052e-4e89d2cb636mr181110211cf.6.1761153274818;
+        Wed, 22 Oct 2025 10:14:34 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb0365e1sm1394344166b.48.2025.10.22.10.14.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 10:14:34 -0700 (PDT)
+Message-ID: <280f1e92-36a1-450b-b6df-b36c3aed3c1c@oss.qualcomm.com>
+Date: Wed, 22 Oct 2025 19:14:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] backlight: qcom-wled: fix unbalanced ovp irq enable
+To: foss@joelselvaraj.com, Lee Jones <lee@kernel.org>,
+        Daniel Thompson <danielt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-v2-1-7ff115b4ffe7@joelselvaraj.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251021-qcom-wled-fix-unbalanced-ovp-irq-enable-v2-1-7ff115b4ffe7@joelselvaraj.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNSBTYWx0ZWRfX4zcJK0M7jxuN
+ 4Z1bLVus1WMLvjV4KjCDYXBktoav/w1xZtRQC4j+irssry24lMgcGr/K/szVsusjmZkB82wESlo
+ Rhr3aMWhDkmUqpMSIVYILj957eYThnRKP+bPqvnMnUPojIqzBURPdbhFkpCTwbsg3dmJKCdBMpg
+ 5bqoq735os/7hDMsicK4ZnAGszF4tmZmnBKrsA0sGODH2mI+n0jR2IckKG8VAey8mmooyTZ0YcC
+ 8xhgl4XawBknaiajI+Ixc5WG3M1G6GZWqSBP/Sd34I+1fFFnvPq7952OogC5FQEV90WallZI+d3
+ d8P8kvr2s7U7PHGaHogYuW9e2Z9VZKvgNW8CDG+Gi4BVrXgnyh8GZx3FDO9+duWIsfKPfdlWLVg
+ QKTzLlUz62n9OdxORm+qC3dYMm3Juw==
+X-Authority-Analysis: v=2.4 cv=bNUb4f+Z c=1 sm=1 tr=0 ts=68f910fc cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=WFa1dZBpAAAA:8 a=pW9aVPEJbd2O5lHr0_EA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=MZguhEFr_PtxzKXayD1K:22
+X-Proofpoint-GUID: 6GYRHJfgEIQ0hyCOYGfShj-X-QcGJP4O
+X-Proofpoint-ORIG-GUID: 6GYRHJfgEIQ0hyCOYGfShj-X-QcGJP4O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_07,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180015
 
-
-On Wed, 22 Oct 2025 13:40:59 +0200, Johannes Thumshirn wrote:
-> This patch series extends the kernel blktrace infrastructure to support
-> tracing zoned block device commands. Zoned block devices (e.g., ZAC/ZBC and
-> ZNS) introduce command types such as zone open, close, reset, finish, and zone
-> append. These are currently not visible in blktrace, making it difficult to
-> debug and analyze I/O workloads on zoned devices.
+On 10/21/25 8:53 PM, Joel Selvaraj via B4 Relay wrote:
+> From: Joel Selvaraj <foss@joelselvaraj.com>
 > 
-> The patches in this series utilize the new trace points for these zone
-> management operations, and propagate the necessary context to the blktrace
-> logging path. These additions are designed to be backward-compatible, and are
-> only active when zoned devices are in use.
+> In Xiaomi Poco F1 and at least few other devices, the qcom wled driver
+> triggers unbalanced ovp irq enable warning like the following during
+> boot up.
 > 
-> [...]
+> [    1.151677] ------------[ cut here ]------------
+> [    1.151680] Unbalanced enable for IRQ 176
+> [    1.151693] WARNING: CPU: 0 PID: 160 at kernel/irq/manage.c:774 __enable_irq+0x50/0x80
+> [    1.151710] Modules linked in:
+> [    1.151717] CPU: 0 PID: 160 Comm: kworker/0:11 Not tainted 5.17.0-sdm845 #4
+> [    1.151724] Hardware name: Xiaomi Pocophone F1 (DT)
+> [    1.151728] Workqueue: events wled_ovp_work
+> ...<snip>...
+> [    1.151833] Call trace:
+> [    1.151836]  __enable_irq+0x50/0x80
+> [    1.151841]  enable_irq+0x48/0xa0
+> [    1.151846]  wled_ovp_work+0x18/0x24
+> [    1.151850]  process_one_work+0x1d0/0x350
+> [    1.151858]  worker_thread+0x13c/0x460
+> [    1.151862]  kthread+0x110/0x114
+> [    1.151868]  ret_from_fork+0x10/0x20
+> [    1.151876] ---[ end trace 0000000000000000 ]---
+> 
+> Fix it by storing and checking the state of ovp irq before enabling and
+> disabling it.
+> 
+> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+> ---
+> I was able to debug the issue a little further. This happens mainly because
+> devm_request_threaded_irq already enables the ovp irq during probe. Then ovp
+> work gets scheduled when update_status happens and in turn enables the irq again.
+> Tracking the status makes it easy to avoid the double irq enable. But I am
+> open to try a different approach if there is any suggestion.
 
-Applied, thanks!
+Would reverting this change and adding (| IRQF_NO_AUTOEN) to that call
+fix it?
 
-[01/16] blktrace: only calculate trace length once
-        commit: a65988a0ad047dbdb8a1eb6f07540b980858b522
-[02/16] blktrace: factor out recording a blktrace event
-        commit: 472eca538358fc8a56884a8adb0cc6047bf05cf3
-[03/16] blktrace: split out relaying a blktrace event
-        commit: 04678e72e95f4165d58442b3ed108e06605984df
-[04/16] blktrace: untangle if/else sequence in __blk_add_trace
-        commit: 70e3c62b891281b94b9d449a381e033ce592acc8
-[05/16] blktrace: change the internal action to 64bit
-        commit: 370cd70a402f972f6d7a7e54ba5a82d1a72c762f
-[06/16] blktrace: split do_blk_trace_setup into two functions
-        commit: 42da88a724d8a3b92ade35ae2ef4d5e5a491df2d
-[07/16] blktrace: add definitions for blk_user_trace_setup2
-        commit: 0d8627cc936de8ea04f3cc1e6921c63fb72cc199
-[08/16] blktrace: pass blk_user_trace2 to setup functions
-        commit: 113cbd62824afdf62d2f3f092809cf37cc7f1dd8
-[09/16] blktrace: add definitions for struct blk_io_trace2
-        commit: c44347d606260f36a81f6d8415a5af33cb3015fa
-[10/16] blktrace: differentiate between blk_io_trace versions
-        commit: 915bb53860c3a6cc3dd2c9a5e0d1988ada0e377d
-[11/16] blktrace: move trace_note to blk_io_trace2
-        commit: 67bfa74d81bae9271f6ec72d2058d081732949cb
-[12/16] blktrace: move ftrace blk_io_tracer to blk_io_trace2
-        commit: 4d8bc7bd4f73c6b34ba29d3e8277864c6e0a44a7
-[13/16] blktrace: add block trace commands for zone operations
-        commit: f9ee38bbf70fb20584625849a253c8652176fa66
-[14/16] blktrace: expose ZONE APPEND completions to blktrace
-        commit: 1c164fcc1b08e75f1cad1532718f09cddc0ddebe
-[15/16] blktrace: trace zone write plugging operations
-        commit: 3f6722816a73e2017599d965683dbe71833afd7a
-[16/16] blktrace: handle BLKTRACESETUP2 ioctl
-        commit: 4ae8efb4f907383a16abf3c59b353763e31ae106
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Konrad
 
