@@ -1,162 +1,167 @@
-Return-Path: <linux-kernel+bounces-865776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C65BFDFA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:12:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C568BFDFAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14A3B4E4F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC1A1A60CEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4980234EF01;
-	Wed, 22 Oct 2025 19:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A28434FF46;
+	Wed, 22 Oct 2025 19:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M/rmej+e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPxm6oeD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A642EFD86
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 19:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AE93148DB;
+	Wed, 22 Oct 2025 19:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761160360; cv=none; b=mvKt6KMTBz0v7S+7IBup/4QScpM10RrTeFr8gx4IoJZlOaglRoEZbg6IfUwf0Fs0YHMLkxOSjWWctyIv6qME3wwRlxRJuiWmV+nzh1SECcxYcWixiVI6zxPjzqAX6Utz8XP5BLvcbsha7YUUwXcKZ+bfE0z2jnd8YcBgmY5ezaY=
+	t=1761160395; cv=none; b=enhsIC3L2WnL03RvKaPs29xxi/zZHTBHEBHqsxtM7M2WeLV+QSf3setGx4f7clL/Ec1Mtkup3yCyYCmcORDUfY1QK6iU78b6COEsQ050hA/3+Rcy8KvLIZxOM3gCjbD1hu4WaOhOrDRRGZNJgBfNLkGQlLsCjCfdH9/LE40zzxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761160360; c=relaxed/simple;
-	bh=l6xmB6cEZmbsRUmTIY9DFLEmMzBpKp+bIf5sHUIX+IQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sXxjNrFJswBCSlrlNq16srUs+FEBPiJgLiLOG77Z1FsemX2o6UvEQMqIUHr+G06+HVjNPTiqrhCjia87HVDWvbkE+jT/J/JNuUWmyYkMVUYjaApd+RlNW7XqI30KSM8Z3UgzxRqbptSfnHlkTvTxDc4Ky+oRc2IE0fn8EkNcv1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M/rmej+e; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761160359; x=1792696359;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=l6xmB6cEZmbsRUmTIY9DFLEmMzBpKp+bIf5sHUIX+IQ=;
-  b=M/rmej+ekNj3+7yiqA9/yYm3PiGCv8/xWGDlxFhjHlQP+2bQH2WND3Ra
-   9DGglufdXc20fj3Ln9I0VIQtENOSmsZH6BLAgTDEICooEdyB5LhcBDl2e
-   oWsPEgxNqNrh5DeQKdqxyWadDSW0WErW/GlZKMMt+UCVQPyDnEgP37tAx
-   iEMv8ye9ca2KCqqNDpIOalLV7XlJA1B00y+ubjWVV4+AAwQB5lxyz8vaB
-   dKhBfTuIRya5K9euyy3hCErgQO6iGH3yz4OeutW97cXSsZTTHMyI4kDpG
-   eSOPZ2lIj/PRFeK7REtr7llNnIEH+/yHmmXrq/hVVpzmMN9N2rlcOWdtT
-   Q==;
-X-CSE-ConnectionGUID: Nyj9jrZLT0moqEIrsiZmdw==
-X-CSE-MsgGUID: tl0TdboRTSCRxuewti+UrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67157002"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67157002"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 12:12:39 -0700
-X-CSE-ConnectionGUID: ZRB78qpyRqm79B6FCilF/Q==
-X-CSE-MsgGUID: QGZ6xIBWQ7Gh0OgeGMsXew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="188357832"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.226]) ([10.125.108.226])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 12:12:37 -0700
-Message-ID: <fd0147dc-d785-4676-9c8d-824d2c709320@intel.com>
-Date: Wed, 22 Oct 2025 12:12:36 -0700
+	s=arc-20240116; t=1761160395; c=relaxed/simple;
+	bh=8uGN4FvBftrBvLhOTmco3a7alnRnF6eitTO3wGVcb24=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TR+YSRkH+M59kwlsSdftMOEtO5CE0QXwqefoOyCp782S3PV5cQqLgPzq0gYCIfccBquRMFhhD3FtXvrg0czkHT7BLvYCimrprhPgjAvpbwLovWrFNHI21DioREtmmd7mC++LDQRdkCP1fwDdjn4E/d1VUCydwp5H60AKMKovAp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPxm6oeD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B31C4CEE7;
+	Wed, 22 Oct 2025 19:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761160394;
+	bh=8uGN4FvBftrBvLhOTmco3a7alnRnF6eitTO3wGVcb24=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mPxm6oeDeQTUXPncQnkBskDqKjnRisrRwYzjJg/CbY4xAjjde4Sx22mgo3jZy0r8i
+	 +uWOZooEx7G0qi9mWpJQIIeaRm619EUgqnYNvW0hDImmr1Gw1vwF+6ENGHOqJ+PiWK
+	 kyTulr+mkl2dzM9KQBYcMxSxuu1c3vtyxJr0pToeX5VjiRfqeauQwpY46jqzssBKdS
+	 FuAdv4qeiCEtLA/jq17huLRNffdBRxQFJprJ/lX6ZXTVxLX461VJBSS9dzPFK6Z1ri
+	 0bfl+Z8uf+yvTt9SCpOyunV1PMHqlDB4LL8T9cwrvGks2L8+rhUPfIyFuVwuv5C+bx
+	 rQX5Zg/3wFIcA==
+Date: Wed, 22 Oct 2025 14:13:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
+	FUKAUMI Naoki <naoki@radxa.com>, linux-rockchip@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
+Message-ID: <20251022191313.GA1265088@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/8] mm: Introduce deferred freeing for kernel page
- tables
-To: David Hildenbrand <david@redhat.com>, Lu Baolu
- <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>,
- Matthew Wilcox <willy@infradead.org>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
- <20251022082635.2462433-8-baolu.lu@linux.intel.com>
- <dabf557c-d83b-4edb-8cf3-1ab8581e5406@redhat.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <dabf557c-d83b-4edb-8cf3-1ab8581e5406@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020221217.1164153-1-helgaas@kernel.org>
 
-On 10/22/25 11:34, David Hildenbrand wrote:
-...
-> I was briefly wondering whether the pages can get stuck in there
-> sufficiently long that we would want to wire up the shrinker to say
-> "OOM, hold your horses, we can still free something here".
+Christian, Naoki, any chance you could test this patch on top of
+v6.18-rc1 to see whether it resolves the problem you reported?
+
+I'd like to verify that it works before merging it.
+
+On Mon, Oct 20, 2025 at 05:12:07PM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> But I'd assume the workqueue will get scheduled in a reasonable
-> timeframe either so this is not a concern?
-
-First, I can't fathom there will ever be more than a couple of pages in
-there.
-
-If there's an OOM going on, there's probably no shortage of idle time
-leading up to and during the OOM as threads plow into mutexes and wait
-for I/O. That's when the work will get handled even more quickly than
-normal.
-
-I suspect it'll work itself out naturally. It wouldn't be hard to toss a
-counter in there for the list length and dump it at OOM, or pr_info() if
-it's got more than a few pages on it.
+> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
+> platforms") enabled Clock Power Management and L1 Substates, but that
+> caused regressions because these features depend on CLKREQ#, and not all
+> devices and form factors support it.
+> 
+> Enable only ASPM L0s and L1, and only when both ends of the link advertise
+> support for them.
+> 
+> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
+> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
+> Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
+> ---
+> 
+> Mani, not sure what you think we should do here.  Here's a stab at it as a
+> strawman and in case anybody can test it.
+> 
+> Not sure about the message log message.  Maybe OK for testing, but might be
+> overly verbose ultimately.
+> 
+> ---
+>  drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
+>  1 file changed, 9 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 7cc8281e7011..dbc74cc85bcb 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -243,8 +243,7 @@ struct pcie_link_state {
+>  	/* Clock PM state */
+>  	u32 clkpm_capable:1;		/* Clock PM capable? */
+>  	u32 clkpm_enabled:1;		/* Current Clock PM state */
+> -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+> -					   override */
+> +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+>  	u32 clkpm_disable:1;		/* Clock PM disabled */
+>  };
+>  
+> @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+>  	pcie_set_clkpm_nocheck(link, enable);
+>  }
+>  
+> -static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+> -						   int enabled)
+> -{
+> -	struct pci_dev *pdev = link->downstream;
+> -
+> -	/* For devicetree platforms, enable ClockPM by default */
+> -	if (of_have_populated_dt() && !enabled) {
+> -		link->clkpm_default = 1;
+> -		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
+> -	}
+> -}
+> -
+>  static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>  {
+>  	int capable = 1, enabled = 1;
+> @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>  	}
+>  	link->clkpm_enabled = enabled;
+>  	link->clkpm_default = enabled;
+> -	pcie_clkpm_override_default_link_state(link, enabled);
+>  	link->clkpm_capable = capable;
+>  	link->clkpm_disable = blacklist ? 1 : 0;
+>  }
+> @@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+>  	struct pci_dev *pdev = link->downstream;
+>  	u32 override;
+>  
+> -	/* For devicetree platforms, enable all ASPM states by default */
+> +	/* For devicetree platforms, enable L0s and L1 by default */
+>  	if (of_have_populated_dt()) {
+> -		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> +		if (link->aspm_support & PCIE_LINK_STATE_L0S)
+> +			link->aspm_default |= PCIE_LINK_STATE_L0S;
+> +		if (link->aspm_support & PCIE_LINK_STATE_L1)
+> +			link->aspm_default |= PCIE_LINK_STATE_L1;
+>  		override = link->aspm_default & ~link->aspm_enabled;
+>  		if (override)
+> -			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
+> -				 FLAG(override, L0S_UP, " L0s-up"),
+> -				 FLAG(override, L0S_DW, " L0s-dw"),
+> -				 FLAG(override, L1, " L1"),
+> -				 FLAG(override, L1_1, " ASPM-L1.1"),
+> -				 FLAG(override, L1_2, " ASPM-L1.2"),
+> -				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
+> -				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
+> +			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
+> +				 FLAG(override, L0S, " L0s"),
+> +				 FLAG(override, L1, " L1"));
+>  	}
+>  }
+>  
+> -- 
+> 2.43.0
+> 
 
