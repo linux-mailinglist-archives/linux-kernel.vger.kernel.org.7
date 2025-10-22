@@ -1,131 +1,205 @@
-Return-Path: <linux-kernel+bounces-864105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7958BF9EA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:13:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D18BF9EB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F02482E75
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:13:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92B7734863C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB262D2481;
-	Wed, 22 Oct 2025 04:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D79F2D6604;
+	Wed, 22 Oct 2025 04:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayY85GMb"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ajgvE1+F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EFB199E9D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BAE262815
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761106392; cv=none; b=PAbp/98Gjih84x1A5yeMS1fqXOzCxF4NV4crMYFcdkvMZGfP5qs8WvgtMhEot/Vn8KsxLeQSzBc6Z/+mEn5A9iGYQRlUK/49e9sqzp/sHHM5os1yoDTIGGB0C5sU1OSDdLjO3BkoNBr0xsrXSp/pKWUDdGTqcX2B8NcxwpKJ3NE=
+	t=1761106467; cv=none; b=kU5aASpur3hV5wGz9OLZ0f37Zfmsw0M80Kgq4yLat0Xf2QkZqhp51mC0QyDCM+NYg4xb0CFMn4fPhidGB/HQOs87s73b8ydX1q6/Ros5a8COIWz+9CVLRbaMzBANZwgOfnnxGBstA/BxMrEx/d9ZKaW7dQgjoyQNXWNskXUVeKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761106392; c=relaxed/simple;
-	bh=wMdXKUhX7T4LxRey1VbyhcyL/HYUi2WjbP9WuaJWrIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TYEXzg73PLrC8n5gBUqLVDRny9sdYoCWKxJywBBYyvbrFzNjfNUmr/e1T4LBNKBA8DtjFQEgwHQTU44cMXeEJwgHJTqQPJnC2hDY/WwGSI3RtXNeU72PuE6fqWxWruhVe0KNVDt8QxGB9a1FhUsznmVUO3MqQLauv7iASJRWRLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayY85GMb; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57a960fe78fso8191603e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761106386; x=1761711186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HTarvr5NQrK1UQUHCo4kav4SXNLG6y74vPoWa3KRT+Q=;
-        b=ayY85GMbLkl/vTjQqmo1YAsRADU5+fht7FZ5Em3bkWJQao8obgh2ttp+V2wAzb8f4p
-         KMWubZVPCIm6DCLzkG75NMh+O/sRkrAaHnEm1Rj65gozcsEkBzWCINGeN/cdkRL3MJPM
-         6oyRl9fiiT24qWkCakPO9PGhnsV7PnTMZYPqUfkmuTEByFtpNE5nH0V7Jlis1eNdUG9l
-         90z4MMiM6H3DgNyi/DNbI+OVSs2R4msKvK0AlcJOpLW2kaTGzkmVieUGOwtrKc8ErZ5m
-         Vf+hmvqhWY8E8WM2Axm4uHDyUVTXFD5se/aeaYAZKallC8hzVkJ6gk8imPCbxsywEEDD
-         MmCA==
+	s=arc-20240116; t=1761106467; c=relaxed/simple;
+	bh=/YK74OFvNm+U/NK9V91Agty4VqiOzSvqpl6lzRexgiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qKz9NBXId8ONzwPyFGh+uasp/JrWUAY+rpiVLU4BLjqSE04MwwLGmpyb/11cIYJ5swdK7E+efwRbDcH8psogpnH36NMLKgjte8QEbAUEZF7OenAclsthUHvCcTffp/sMpsEVH+1feIS8H0ZwNEzj69v2I5HsLL600Xqbatd27/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ajgvE1+F; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761106465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hUAdbHJJDms7ZY1czykoAQHdXjKj1mkwQUBG6ypiQMA=;
+	b=ajgvE1+FuaCM7h1q3EWyLw6w73xgOnncXFHCyfv6/AGUifW5umRzgEEOxeZVVpyN7wc53R
+	JX+RO24CazikyWx3NvOH+EfQaXvQKhDS6t6a3BsmAzvgwP+3JGaL9jWG5ltaNhlJ507Taz
+	n9OoVJ35kbIEsMribwxl4ACr/uJSb98=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-277-urdQ0YO6N9y1R-E1LbFrkg-1; Wed, 22 Oct 2025 00:14:23 -0400
+X-MC-Unique: urdQ0YO6N9y1R-E1LbFrkg-1
+X-Mimecast-MFC-AGG-ID: urdQ0YO6N9y1R-E1LbFrkg_1761106462
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-33da1f30fdfso6984990a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:14:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761106386; x=1761711186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HTarvr5NQrK1UQUHCo4kav4SXNLG6y74vPoWa3KRT+Q=;
-        b=UE+MFyinjdfxZu1he9k0KjPJUbVUsLb9TxjBDtJ8Jt4xSi1ri8ASPUmJ4UigsWHBk3
-         cZ3hlxwiJgkZo/oNJeSFxSxliH7dZsTaD8GeUsH/yqn63itayCbeKFPR5keb2V+LyFbw
-         HIofk61AfeSbfFWya3CPyhLggZTlKHUFKGu9uw/nInc4X5c0NNi9i23nTI88pQeCdLl8
-         /uiJy7xM4vpmC0jp9rypx+8FgwvY1xsVwMoOf7o/da4i0+qgOI9Jbyn0Ic7dJpMjiSRQ
-         BVTQn1bHA7o+kPGr94C6afG15NU65A/RzbdhCZzCu9JjevGhKIeniq1Rf9xf0cRQs+vM
-         VtIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCPl6cu1uOAFaXCR+CJE462wpjBSOcKW+d/ESpZ6KJlI18hgAk5NUALQdX2/7eefkYx07/31p9ZSGtXi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSKLieQDdbWU+LeboG0GZgTU8zeB286uXiF89QezOBsrk3uuSi
-	8e1AdMLXghja9R/7Bp6htY2Rqw6byfDXKBSTFX4FeRfYbSPZYPLrXK18
-X-Gm-Gg: ASbGnctMe20UlTeBKXi7hYZjd1/5pNnfUJYYOOm91F0B0dE99Ran+DQRQIXkBFb7em6
-	aN6GBTwfyv3TDFa56TaLpMUV6f7i78J9SVRos53OiQau9P1wY/Nwd9L3cS6szL2d2Q0aRcikN7z
-	qEhetFTgyoUAM+BZcLuW034ShjbGwCaF1uqbAmL+KexFhtZnh+tWHfyi9JV4nBhBkh3wX4+9b4J
-	cIQnnpUGOrZrbWReSFpD2PCdjK6hoBM8ZPkpxpMWTdwCjG26ybE+k7ksVCwvDSrq6kAxMwM2aBi
-	7lyk9soX58fPGgfqSGRfEQ8GBBG0kx0e6BSxriVhrRobwuV5g84YSIo06wJxEqlnb/K1kyjUlld
-	n72eBqvcS8A3RznIXIf4Vj+yZ4UmJY0f6EnI31MzMWdoc84ni3F7VUgJvk6RL2fBMnecdpUIw15
-	3KqkOQI7HeW5OTga5Lk/yBnMONlgjXwDSJsdXTAQX5moJ0lWEN1puQuJBSDv9WxbgFg7zC+Qg/5
-	MuYji1d
-X-Google-Smtp-Source: AGHT+IHY7I4DBmj7a1FpDVM7msh9gcYm7KPVmZxtgTaCyBA4vmSmAHD2ToTDDsFBgGtcjxwcP6lO+w==
-X-Received: by 2002:a05:6512:220f:b0:567:ef90:f519 with SMTP id 2adb3069b0e04-591d850d08fmr6278217e87.12.1761106385519;
-        Tue, 21 Oct 2025 21:13:05 -0700 (PDT)
-Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deeaf6e2sm4252192e87.32.2025.10.21.21.13.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 21:13:05 -0700 (PDT)
-From: Alexandr Sapozhnikov <alsp705@gmail.com>
-To: Ben Skeggs <bskeggs@redhat.com>,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] drm/nouveau: handle division by zero and overflow in nouveau_bo_fixup_align()
-Date: Wed, 22 Oct 2025 07:12:59 +0300
-Message-ID: <20251022041302.13-1-alsp705@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1761106462; x=1761711262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hUAdbHJJDms7ZY1czykoAQHdXjKj1mkwQUBG6ypiQMA=;
+        b=dVBlcKfpyXW2zqaAAVTrgi1yWbh5qYJMDKkid8b3UrL/2EsQ6gTwwrBGWcweaLPWxx
+         2deiWIkXVv1QvuWZWy/J2Y/t2S33KxQtaQPUeOKmE/73V80F5D2W3fgpZI0+FAXiWz70
+         zl+5RFKk3I5E504CH4me9sWt6JDKoI4PPUuQb8VaAljAwpakNRidOAcytFgJaOgqhdBv
+         60tGN0THUo7oyMkR1qJVBDuSujK74IkDAkJ2PeeSMuZRw93ZzaBys00w815nlG7kDpDs
+         yi3MZd1M0ofA4ipGvkLnwCjJy3rQBCybhFgWstLrQnafr5ROmRUKmnXee7GGsCM/3Mqt
+         Lw7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWVyVwP97lmVTkzAJrycwb4BtFnMCT4wNCQoZRLsbH48d2ZRI96ot0VVXq2y2VKQDE/5FVINIH8z6H471E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqePufQnrVo7FRY7jgxhUzlG3NkSur9FQAFWlD3/NV6BUOmCc9
+	bZ/j1tI+/WFqrP3phN/VQbjWMq2UFUoZCIGa7WLuKg0PDlTB+NQgSYVc84do9TGVPY+WH9WTyN5
+	aumefXV7JyeXb+XVGPZhsKKpABCfTz1NLm4SQz/nQI/Y2AmskVkNHLsHwO4p3mRkxWY7s/7wviH
+	Jm7TjBLxe711pTSyOGclZ8kkalHQo4IgstuGcHNMcM
+X-Gm-Gg: ASbGncuwSnqP32rAc96msfpGRx6wrwc0IE56rB1JtDdhtGfy957uo9TnxOXhBx/kEhL
+	oYCKxSWSAEaMuJSgaWgFwub36YqeeEZ8szxelDgq8cQKu8V2I5FygKKh1txkvRq3TIwLGGZa5w7
+	PrjDDAfKSEQh9piYSZzKgb9Ly8RA0U6oo7FHgMtR2/65qM1MHP1vwLo0b2
+X-Received: by 2002:a17:90b:2690:b0:33b:b453:c900 with SMTP id 98e67ed59e1d1-33bcf8e3d67mr26649548a91.19.1761106462035;
+        Tue, 21 Oct 2025 21:14:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIUMZaIUzpc8Rxr02WJzVEzisclYzz9qmbLvGprq+pA2MZKonKoejJwxaXte8l4j7HaaizvKvkxrnAFJnFsCw=
+X-Received: by 2002:a17:90b:2690:b0:33b:b453:c900 with SMTP id
+ 98e67ed59e1d1-33bcf8e3d67mr26649518a91.19.1761106461631; Tue, 21 Oct 2025
+ 21:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251021154534.53045-1-minhquangbui99@gmail.com>
+In-Reply-To: <20251021154534.53045-1-minhquangbui99@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 22 Oct 2025 12:14:07 +0800
+X-Gm-Features: AS18NWCsdhMJwpFLoRlCEFP860iPuuqUM526GSI4cDr6maYOOoS-jKv9Ni-IaOc
+Message-ID: <CACGkMEv3KzWjxtBuyga5NDcvBUQzsytu00g-2CwMrQGf0vrqAQ@mail.gmail.com>
+Subject: Re: [PATCH net v3] virtio-net: fix received length check in big packets
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Gavin Li <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The expression 64 * nvbo->mode can evaluate to 0 when 
-nvbo->mode = U32_MAX/64, which results in division by zero 
-in the do_div() function. A value greater than U32_MAX/64 
-causes a u32 overflow, and the division result may be 
-incorrect. The nvbo->mode value depends on the data 
-passed from the user via ioctl. Generally, the kernel 
-should distrust userspace data (an attacker could operate 
-from there, and there's no guarantee that mesa and similar 
-software are bug-free) and validate it to avoid crashing.
+On Tue, Oct 21, 2025 at 11:45=E2=80=AFPM Bui Quang Minh
+<minhquangbui99@gmail.com> wrote:
+>
+> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
+> for big packets"), the allocated size for big packets is not
+> MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on negotiated MTU
 
-Found by Linux Verification Center (linuxtesting.org) with svace.
+And guest gso features.
 
-Fixes: a0af9add499c ("drm/nouveau: Make the MM aware of pre-G80 tiling.")
+>. The
+> number of allocated frags for big packets is stored in
+> vi->big_packets_num_skbfrags. This commit fixes the received length
+> check corresponding to that change. The current incorrect check can lead
+> to NULL page pointer dereference in the below while loop when erroneous
+> length is received.
 
-Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
----
- drivers/gpu/drm/nouveau/nouveau_bo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It might also be helpful to describe how you can reproduce this issue.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-index 7daa12eec01b..afe4e73b6190 100644
---- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-@@ -168,7 +168,7 @@ nouveau_bo_fixup_align(struct nouveau_bo *nvbo, int *align, u64 *size)
- 	struct nvif_device *device = &drm->client.device;
- 
- 	if (device->info.family < NV_DEVICE_INFO_V0_TESLA) {
--		if (nvbo->mode) {
-+		if (nvbo->mode && nvbo->mode < U32_MAX / 64) {
- 			if (device->info.chipset >= 0x40) {
- 				*align = 65536;
- 				*size = roundup_64(*size, 64 * nvbo->mode);
--- 
-2.43.0
+>
+> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big p=
+ackets")
+
+Cc: stable@vger.kernel.org
+
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+> ---
+> Changes in v3:
+> - Convert BUG_ON to WARN_ON_ONCE
+> Changes in v2:
+> - Remove incorrect give_pages call
+> ---
+>  drivers/net/virtio_net.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index a757cbcab87f..e7b33e40ea99 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -852,7 +852,7 @@ static struct sk_buff *page_to_skb(struct virtnet_inf=
+o *vi,
+>  {
+>         struct sk_buff *skb;
+>         struct virtio_net_common_hdr *hdr;
+> -       unsigned int copy, hdr_len, hdr_padded_len;
+> +       unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
+>         struct page *page_to_free =3D NULL;
+>         int tailroom, shinfo_size;
+>         char *p, *hdr_p, *buf;
+> @@ -916,12 +916,16 @@ static struct sk_buff *page_to_skb(struct virtnet_i=
+nfo *vi,
+>          * tries to receive more than is possible. This is usually
+>          * the case of a broken device.
+>          */
+> -       if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
+> +       if (WARN_ON_ONCE(offset >=3D PAGE_SIZE))
+> +               goto err;
+
+I'd stick to BUG_ON or at least it needs an independent patch.
+
+> +
+> +       max_remaining_len =3D (unsigned int)PAGE_SIZE - offset;
+> +       max_remaining_len +=3D vi->big_packets_num_skbfrags * PAGE_SIZE;
+
+Let's add a comment to explain the algorithm here or at least mention
+to refer add_recvbuf_big().
+
+> +       if (unlikely(len > max_remaining_len)) {
+>                 net_dbg_ratelimited("%s: too much data\n", skb->dev->name=
+);
+> -               dev_kfree_skb(skb);
+> -               return NULL;
+> +               goto err;
+
+It looks like this change is not needed?
+
+>         }
+> -       BUG_ON(offset >=3D PAGE_SIZE);
+> +
+
+Unnecessary changes.
+
+>         while (len) {
+>                 unsigned int frag_size =3D min((unsigned)PAGE_SIZE - offs=
+et, len);
+>                 skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, off=
+set,
+> @@ -941,6 +945,10 @@ static struct sk_buff *page_to_skb(struct virtnet_in=
+fo *vi,
+>                 put_page(page_to_free);
+>
+>         return skb;
+> +
+> +err:
+> +       dev_kfree_skb(skb);
+> +       return NULL;
+>  }
+>
+>  static void virtnet_rq_unmap(struct receive_queue *rq, void *buf, u32 le=
+n)
+> --
+> 2.43.0
+>
+
+Thanks
 
 
