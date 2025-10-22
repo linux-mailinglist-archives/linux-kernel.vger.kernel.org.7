@@ -1,158 +1,182 @@
-Return-Path: <linux-kernel+bounces-864889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90C1BFBC79
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:08:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129E0BFBC88
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3C742415B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173C83A23C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C382340D87;
-	Wed, 22 Oct 2025 12:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7570134165E;
+	Wed, 22 Oct 2025 12:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mAb/BAuD"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ksvjElMm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5A3126BA
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34263126BA;
+	Wed, 22 Oct 2025 12:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134900; cv=none; b=rBe7jNeNzuo/MGgGiud7X0i/0YD7OYJGItcGS7pUV+Dw+BoJAwQwA+HFDMgMe/23wumZbmNcEjzTTLWRtMyFJi6WBeabU2o164JBNHS/Vso+VOfyV+P7WeYyUuPsxsIB8a7ZVGzsWrrpwxwlwmBdV26f7KKBZYAk4jUBLKT3lNw=
+	t=1761134946; cv=none; b=lbv2et1vo+SVqASnfAGZPBRpJwalbhu6L5CoYH/5DzD6r4WNiS1OOi3b7g0wDi35+CiQ4DGmExmz2XCD5NQodxSACq/p0xkVK0tM43WWSYLBpoNpm1CX2v3wJEh+5TisJfPTh0EuU3XUEdZfrDt7H+GMusUul45nHjlz+G5BHzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134900; c=relaxed/simple;
-	bh=tZhHNi5tiOiq5ZyFScnnqPfCNqj/bQHHe9aIYrpZW4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PVh8DahNDJVB8AeZbDMwJHdsPzxK71+LrdTjtNnQNoA58K8UdDtyxT8HchsWBKh+4YwzDYwPBiNIjMWGQaq0KUgJxYsLAeitSyFJNURhpvhXYi/61XhKJ7do1P3T/SCXWAWu90I5zCvJJHOI1AJJZ9maChZOqns5FqdyUP3c8E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mAb/BAuD; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so4777216f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761134895; x=1761739695; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DvbnSMIYk5HD128ctAAfLOD94aj1lQC5qodcVPOSef8=;
-        b=mAb/BAuDoSfCWnlXuhzOZxDIIkeYs1WisznnsMqjrFqo98GMGDq/bZOuWeKp1aQcry
-         +Jph9qfwTrxt2IK4e2YaizdedWsKnmnifSTkoGjx6hcYuBAAY6VX2aWvOPgGeb5V0w5B
-         4+JG9QD0Uu7qFWT4z+rxiz8j/1GbyP5c9vT1t1rKF8W+aMHAAVP3KybcO3YsUV272ZNt
-         2r3xdqKtV8BYIsIMPBcDHssOEvAi+T5YAH2LTMAomGrKvg/1Szbo72ZQw52kxqxviGEu
-         AFn6qjKTqw9ecfjgxFsUbG5m0BL32XQyQLtDf64P/syrq8I97t7Lto6oPC4s3PH7HEM/
-         QgVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761134895; x=1761739695;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DvbnSMIYk5HD128ctAAfLOD94aj1lQC5qodcVPOSef8=;
-        b=mvr3CjINwJxVL5UdVbIyugXT+NJPsKJgVFFcSwcbUjp5IMY6aVN4Y33nHiSEk5SrpH
-         xg4ysau9joYknOg80gyNgZIJtBMXAZGnnz7S9ythPnzJfS0SBKeBRjL3BeOQtnt/zRwc
-         0gG32qoFPhODhpbCWgTqIyOaiPL7hIlih868qEXTM773O6DMMRv/4g0LZFY0iP8hLeJY
-         3X8O6J7eJdjO0Rm4fM44CQzpWwoc0IZNT2YF7bZVXpKnxGD7nGoGmFh/WAbQyossCMn9
-         8rJHho1aK86KijOpAzOWeSdTbl7hoiHohYW/nH+2U9O4hyItGDj3W2rQigeW7tKQZ1jD
-         Dw8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTiuryxrUvAQbWYL3W9vqRYOecEyeoGafIHB4d3j8eP9FokZJ8dyWJvddZ/toe2mH9tTKPYAzSJmhPA3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIs1xhaF9E81k+Cnepg9Ta7OKj7ItjQOdXrlazU+97BsMb3082
-	4ImSCQkAe4Vt7s9ZxDlzXlmxZw+iO2EGcEl5QGEMR0k+UmrFBhOZJnL3Pcj92967EHE=
-X-Gm-Gg: ASbGncuWrWRZN9ALJdcS8oSz94vj2sWGUnD0KTrepKmG7GUksagG5aXL+rbzKizD3ww
-	+eiRSx4xlx1w2NrGRNuZyi7Lo4Jmkm0CF6psXJgtcENFRs/DcZPE+ZlKXzZLyMX55047oy9F27c
-	F4w3Y/tY/DESiqOFXtgUFvM+FqBwWiD2PEyuiroOh9i5tpJLXpoImC6E0ZmBZFHOy3bVSPQeLMh
-	2nnOSakjinTCBIS3jwpHmGVZ57tIywiXjp2iRYBJFew110sGKb9YDAfVWCBYRuWgr6PjOr5+fOS
-	QlEWsKdESgC+Z5xA8EXr/eD5Bl/57OR6xU+LC9/677Md6g+n/9JRp6gGkcMe/QVaFOwVe6HoyAZ
-	aboOLFLGbf3EKIASSf1vcdxRXvaQ3o0tWtIv5k48zpXFgRmHs71C5Izpkem8/dOMmFS6Pn9KDjh
-	HNMZ4P47zsEwuGdYOk
-X-Google-Smtp-Source: AGHT+IFtLElvxR81Tckw5mAAABXqwaPNv/lBu1tgkcuWlvZJfGpip3RMbzFOLoUXkftAvfjFkop/kg==
-X-Received: by 2002:a5d:5f82:0:b0:3fa:5925:4b07 with SMTP id ffacd0b85a97d-42704d74f9fmr12489147f8f.18.1761134895206;
-        Wed, 22 Oct 2025 05:08:15 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47496cf3b51sm35168225e9.9.2025.10.22.05.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 05:08:14 -0700 (PDT)
-Date: Wed, 22 Oct 2025 15:08:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Artem Shimko <a.shimko.dev@gmail.com>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Artem Shimko <a.shimko.dev@gmail.com>, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] dmaengine: dw-axi-dmac: add reset control support
-Message-ID: <202510221508.PY6fB9CB-lkp@intel.com>
+	s=arc-20240116; t=1761134946; c=relaxed/simple;
+	bh=ZwhqgodgvDxpBNdeOXB9Q9P2LbZErwotxNaIasBmTqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EWjF3lQnR4sGxKYWctUWo6W8jDzQ7ajcG9h4JHqQ18UgGk9e1EX8S2wVq15Zg1YErxIElhWINhIUulIyC67QczMFZ3Pc/yA4IPRVt3d8zgvo8InKuDlK0GzZZFb7HjjwPRQ9uHITXNJ6I7ucypJb4Th/Grb55Cmpj47Xt3bSc88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ksvjElMm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 77AFA83D;
+	Wed, 22 Oct 2025 14:07:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761134836;
+	bh=ZwhqgodgvDxpBNdeOXB9Q9P2LbZErwotxNaIasBmTqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ksvjElMmEgq2mrzAS1/SsUr+EyE9oGawbLR0RigDm8wONXO8StRIgExAdamgV+uPq
+	 E19sf2pdHySUP7W6sBQmM5b8sTNm6RhqxvxsNH8VYsQ72TBdcmtmpYparyS6vtq9T9
+	 RRaXbQ2t3Q32VpFvLQ9/U7+3423OLV+ZR5a+ZwZs=
+Date: Wed, 22 Oct 2025 15:08:49 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Create a specific id namespace for
+ output entities
+Message-ID: <20251022120849.GD727@pendragon.ideasonboard.com>
+References: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251017102950.206443-3-a.shimko.dev@gmail.com>
+In-Reply-To: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
 
-Hi Artem,
+On Wed, Oct 22, 2025 at 11:55:16AM +0000, Ricardo Ribalda wrote:
+> Nothing can be connected from an output entity. Which means that no
 
-kernel test robot noticed the following build warnings:
+s/output entity/output terminal. Same below.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Did you mean s/from an/to an/ ?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Artem-Shimko/dmaengine-dw-axi-dmac-simplify-PM-functions-and-use-modern-macros/20251017-183103
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
-patch link:    https://lore.kernel.org/r/20251017102950.206443-3-a.shimko.dev%40gmail.com
-patch subject: [PATCH v4 2/2] dmaengine: dw-axi-dmac: add reset control support
-config: loongarch-randconfig-r072-20251019 (https://download.01.org/0day-ci/archive/20251022/202510221508.PY6fB9CB-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 15.1.0
+> other entity can reference an output entity as baSourceId.
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202510221508.PY6fB9CB-lkp@intel.com/
+Some output terminals have controls, so we need to preserve their ID.
+That's why my proposal only set the UVC_TERM_OUTPUT bit for the
+*streaming* output terminals, not for all output terminals.
 
-New smatch warnings:
-drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c:1355 axi_dma_resume() warn: 'chip->core_clk' from clk_prepare_enable() not released on lines: 1350.
+> Use this fact to move all the output entities to a different namespace
+> id.
+> 
+> The output entities are usually named after the dev_name() of the usb
+> device, so there should not be any uAPI change from this change.
+> 
+> Although with this change we can handle some id collisions
+> automagically, change the logic of uvc_alloc_new_entity() to keep
+> showing a warning when a camera has invalid descriptors. Hopefully this
+> message will help vendors fix their invalid descriptors.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Hi, this patch fixes support for some devices with invalid USB
+> descriptor.
+> 
+> It is orthogonal to:
+> https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
+> 
+> Some devices will be fixed by the other patch, other devices will be
+> fixed by this. In my opinion is worth to land both patches.
+> 
+> Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..40f8ae0df89e104992f5d55af3d3539dea3d146e 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -165,10 +165,14 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
+>  	return NULL;
+>  }
+>  
+> +#define ENTITY_HARDWARE_ID(id) ((id) & ~UVC_TERM_OUTPUT)
 
-Old smatch warnings:
-drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c:1237 dma_chan_pause() warn: inconsistent indenting
-drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c:1284 axi_chan_resume() warn: inconsistent indenting
-drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c:1355 axi_dma_resume() warn: 'chip->cfgr_clk' from clk_prepare_enable() not released on lines: 1346,1350.
+This needs a UVC_ prefix, and should probably go to uvcvideo.h. You can
+also & 0xff, as the UVC descriptors store IDs in 8-bit fields.
 
-vim +1355 drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+> +
+>  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
+>  {
+>  	struct uvc_streaming *stream;
+>  
+> +	id = ENTITY_HARDWARE_ID(id);
+> +
+>  	list_for_each_entry(stream, &dev->streams, list) {
+>  		if (stream->header.bTerminalLink == id)
+>  			return stream;
+> @@ -810,10 +814,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
+>  	}
+>  
+>  	/* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
+> -	if (uvc_entity_by_id(dev, id)) {
+> -		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
+> +	if (uvc_entity_by_id(dev, ENTITY_HARDWARE_ID(id)))
+> +		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
+> +			ENTITY_HARDWARE_ID(id));
 
-45fdf99125b2bf7 Artem Shimko    2025-10-17  1335  static int axi_dma_resume(struct device *dev)
+It's not an error anymore if there's no collision of the full 16-bit ID,
+right ? Should it be demoted to a dev_warn() ?
 
-I guess kbuild bot thinks these are new warnings because the function
-was renamed.  In the past we've just ignored clk_prepare_enable() warnings.
-Perhaps that's the correct thing to do in a resume function.
-The indenting in dma_chan_pause() and axi_chan_resume() could be cleaned up.
-
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1336  {
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1337  	int ret;
-45fdf99125b2bf7 Artem Shimko    2025-10-17  1338  	struct axi_dma_chip *chip = dev_get_drvdata(dev);
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1339  
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1340  	ret = clk_prepare_enable(chip->cfgr_clk);
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1341  	if (ret < 0)
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1342  		return ret;
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1343  
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1344  	ret = clk_prepare_enable(chip->core_clk);
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1345  	if (ret < 0)
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1346  		return ret;
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1347  
-9c360f02c387f93 Artem Shimko    2025-10-17  1348  	ret = reset_control_deassert(chip->resets);
-9c360f02c387f93 Artem Shimko    2025-10-17  1349  	if (ret)
-9c360f02c387f93 Artem Shimko    2025-10-17  1350  		return ret;
-9c360f02c387f93 Artem Shimko    2025-10-17  1351  
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1352  	axi_dma_enable(chip);
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1353  	axi_dma_irq_enable(chip);
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1354  
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06 @1355  	return 0;
-1fe20f1b84548bb Eugeniy Paltsev 2018-03-06  1356  }
+> +
+> +	if (uvc_entity_by_id(dev, id))
+>  		id = UVC_INVALID_ENTITY_ID;
+> -	}
+>  
+>  	extra_size = roundup(extra_size, sizeof(*entity->pads));
+>  	if (num_pads)
+> @@ -969,6 +975,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+>  	struct usb_host_interface *alts = dev->intf->cur_altsetting;
+>  	unsigned int i, n, p, len;
+>  	const char *type_name;
+> +	unsigned int id;
+>  	u16 type;
+>  
+>  	switch (buffer[2]) {
+> @@ -1107,8 +1114,16 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+>  			return 0;
+>  		}
+>  
+> +		/*
+> +		 * Nothing can be connected from an output terminal. To avoid
+> +		 * entity-id's collisions in devices with invalid USB
+> +		 * descriptors, move the output terminal id to its own
+> +		 * namespace.
+> +		 */
+> +		id = buffer[3] | UVC_TERM_OUTPUT;
+> +
+>  		term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
+> -					    buffer[3], 1, 0);
+> +					    id, 1, 0);
+>  		if (IS_ERR(term))
+>  			return PTR_ERR(term);
+>  
+> 
+> ---
+> base-commit: ea299a2164262ff787c9d33f46049acccd120672
+> change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
 
+Laurent Pinchart
 
