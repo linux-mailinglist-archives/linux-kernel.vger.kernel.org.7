@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-865010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF48BFC053
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F58BFC05C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E4D8560D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:03:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC8AE560E80
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2054634AB11;
-	Wed, 22 Oct 2025 12:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6951934B1A6;
+	Wed, 22 Oct 2025 12:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yxYpEy4a";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LPBFUrpr"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sWIm/PMz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MQ7ba5+2"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5EB3491FC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161AC34A3CE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137735; cv=none; b=iREr1Uz5ho7Q05R2n8WIsdzuL078l6g2GalEYqpHr3HGBigU2wL62gAB5FixWdZWnJqpC2DlW51WQM53AEcTmLUWp7PcL8FbCjQyDm4UfZmv885coO17SZW56MrzjnDWAWKEveWkd6+DRldHcDGNJFeTVkVYzPJpCmhpvurIcik=
+	t=1761137736; cv=none; b=R2bMxyMp8kbh8BBHC+ROYqyebYkH/l1thiXU0i8Xpm95tLa1Ig11Oj+FpuCELusGaTyC2cryMlhPSwNP//J+BfSbJhoo44IjHR3SEsK/Yj8PIadKDPL//Zbts37ot6Tc5v6tu2NHqnR0ANmemk6Srlcpwuu+LZ1ciWECGSK4sjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137735; c=relaxed/simple;
-	bh=zmSeg3GAj46dk7wW4jScL07/yltg9V0+INXyHKDTjrk=;
+	s=arc-20240116; t=1761137736; c=relaxed/simple;
+	bh=sVVOLJ04FLiXzMFuKLHgl6shJ7ESejpdQtdjqeTZW1k=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=lFOTj/K38+B2wsf02SBEXOAOzAnmro8LfoZYh9wDY5kKDATmzUmrjsI2oO1jOxXxTudtFg1wEB913MZYp28oqOTJ10zCcQpTqjFrVb7XDuFQ5hbz9QuARM+LC/lFmSa0/17x0Wo+NtJXvKzWh6U6IMZxwxHuQ/bLktc/ELOfoto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yxYpEy4a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LPBFUrpr; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=I5aXQ8vQBVNUQUWP+GcEo8gHMEHEw0IbNPB79Rk7ACLy6JJ2k19r1iQe9Gmfm8oONlt7dxuTC3i2To2r0mATgl0SQ+iPmWKLhwN3B537lvgO0RgKfz8z6OLS4wKbrXL5/Z9pzEvnesBmcLvy1Zdu6iueHaVagxjQfLzOC+mfGFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sWIm/PMz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MQ7ba5+2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251022110556.029862568@linutronix.de>
+Message-ID: <20251022110556.090376957@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761137732;
+	s=2020; t=1761137733;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=5/lVt6qrQlW858HA8ahJtIUcMN8Q+Oem8wfsTePp2Js=;
-	b=yxYpEy4argIXbyPief92RqFlif5mCg7E6EpotVV1LKdXkEEMpjGue1VTrfc4gvhfktrFTv
-	01mFC/9exl8qxjl0nWR1QQ8ZF56rXneydpik7mJpjjDTGrWXuZTOAnRJeLWkyJHFbrlveC
-	+UituQ3ma3u4s8tlwTuDB6ZTsvjQagtL+rWY73MBkKwMBqUwguZcp44i5Xhte4dZdEhtd3
-	tQRvjm3NNsY7b06BFptVBpQrVM4cfNO2eSHWkbmJQNFGAEu+zM77MHKoIkjC8txCCmywGG
-	lwdXeAMjipNiTW1e5XAmJu0phgSly0zeo1kK11hKyCXfI0METP2SpaSSet8cCA==
+	 references:references; bh=nhXvK7LQ+EPsk8jngP+4j+16QKubg1O3sO55JG7Yy+E=;
+	b=sWIm/PMzyXm3rsG8g3jSl5AnjvTtxLVdqwJ2EaL9caJSM3lWMfLzyscfZ8FYb1+NJaOkCt
+	YOed4Omvqb3w0b6LENOS5MMn48ZeGAkGG/jAIAaiCTm/44z7QB4+4PEJOYN0o+DCOhsg/a
+	INOj1piSMJGGArXWI3qjvMA1NoVeD1qPol1Wa1/kUHtGwYUTt/ZiwljSNjAerEozwugzZS
+	Dgl+8Sq2hAKJjv69FvVYfiVhsCvzKyIUvDyE5mC/m5gbmwDcEtWLgzKsWHCJhZo1Df6Jcx
+	M/HfEb/7XLfo29D3WcfdQBum+N7b3RmOF9d9znA3XEa0tNu3WwvfnHJNq1a84w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761137732;
+	s=2020e; t=1761137733;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=5/lVt6qrQlW858HA8ahJtIUcMN8Q+Oem8wfsTePp2Js=;
-	b=LPBFUrprRfu2XXe0Lt4q53k44seWRBLoGh38NqnaCNFjoJMdp/rpKdO+lKlkW0idHn6g9k
-	rLSUwdGfYzSgEADw==
+	 references:references; bh=nhXvK7LQ+EPsk8jngP+4j+16QKubg1O3sO55JG7Yy+E=;
+	b=MQ7ba5+2FXjxV/Jy6IGmNGT0DWY2OHYm2CQZyYndy7U4+TGT3OKbAgcTzU3Po8SM66hFX4
+	v8a02SlVBbi1spAA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -61,7 +61,7 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
  Florian Weimer <fweimer@redhat.com>,
  Tim Chen <tim.c.chen@intel.com>,
  Yury Norov <yury.norov@gmail.com>
-Subject: [patch V2 10/20] sched/mmcid: Convert mm CID mask to a bitmap
+Subject: [patch V2 11/20] signal: Move MMCID exit out of sighand lock
 References: <20251022104005.907410538@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,88 +70,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 Oct 2025 14:55:32 +0200 (CEST)
+Date: Wed, 22 Oct 2025 14:55:33 +0200 (CEST)
 
-This is truly a bitmap and just conveniently uses a cpumask because the
-maximum size of the bitmap is nr_cpu_ids.
+There is no need anymore to keep this under sighand lock as the current
+code and the upcoming replacement are not depending on the exit state of a
+task anymore.
 
-But that prevents to do searches for a zero bit in a limited range, which
-is helpful to provide an efficient mechanism to consolidate the CID space
-when the number of users decreases.
+That allows to use a mutex in the exit path.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/mm_types.h |    6 +++---
- kernel/sched/core.c      |    2 +-
- kernel/sched/sched.h     |    6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ include/linux/sched.h |    4 ++--
+ kernel/exit.c         |    1 +
+ kernel/sched/core.c   |    4 ++--
+ kernel/signal.c       |    2 --
+ 4 files changed, 5 insertions(+), 6 deletions(-)
 
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1342,13 +1342,13 @@ static inline cpumask_t *mm_cpus_allowed
- }
- 
- /* Accessor for struct mm_struct's cidmask. */
--static inline cpumask_t *mm_cidmask(struct mm_struct *mm)
-+static inline unsigned long *mm_cidmask(struct mm_struct *mm)
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2298,7 +2298,7 @@ static __always_inline void alloc_tag_re
+ void sched_mm_cid_before_execve(struct task_struct *t);
+ void sched_mm_cid_after_execve(struct task_struct *t);
+ void sched_mm_cid_fork(struct task_struct *t);
+-void sched_mm_cid_exit_signals(struct task_struct *t);
++void sched_mm_cid_exit(struct task_struct *t);
+ static inline int task_mm_cid(struct task_struct *t)
  {
- 	unsigned long cid_bitmap = (unsigned long)mm_cpus_allowed(mm);
+ 	return t->mm_cid.cid;
+@@ -2307,7 +2307,7 @@ static inline int task_mm_cid(struct tas
+ static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
+ static inline void sched_mm_cid_after_execve(struct task_struct *t) { }
+ static inline void sched_mm_cid_fork(struct task_struct *t) { }
+-static inline void sched_mm_cid_exit_signals(struct task_struct *t) { }
++static inline void sched_mm_cid_exit(struct task_struct *t) { }
+ static inline int task_mm_cid(struct task_struct *t)
+ {
+ 	/*
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -910,6 +910,7 @@ void __noreturn do_exit(long code)
+ 	user_events_exit(tsk);
  
- 	/* Skip mm_cpus_allowed */
- 	cid_bitmap += cpumask_size();
--	return (struct cpumask *)cid_bitmap;
-+	return (unsigned long *)cid_bitmap;
- }
+ 	io_uring_files_cancel();
++	sched_mm_cid_exit(tsk);
+ 	exit_signals(tsk);  /* sets PF_EXITING */
  
- static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
-@@ -1363,7 +1363,7 @@ static inline void mm_init_cid(struct mm
- 	mm->mm_cid.nr_cpus_allowed = p->nr_cpus_allowed;
- 	raw_spin_lock_init(&mm->mm_cid.lock);
- 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
--	cpumask_clear(mm_cidmask(mm));
-+	bitmap_zero(mm_cidmask(mm), cpumask_size());
- }
- 
- static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
+ 	seccomp_filter_release(tsk);
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -10399,7 +10399,7 @@ void sched_mm_cid_exit_signals(struct ta
- 	guard(preempt)();
- 	t->mm_cid.active = 0;
- 	if (t->mm_cid.cid != MM_CID_UNSET) {
--		cpumask_clear_cpu(t->mm_cid.cid, mm_cidmask(mm));
-+		clear_bit(t->mm_cid.cid, mm_cidmask(mm));
- 		t->mm_cid.cid = MM_CID_UNSET;
- 	}
- }
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3558,7 +3558,7 @@ static inline bool __mm_cid_get(struct t
- 
- 	if (cid >= max_cids)
- 		return false;
--	if (cpumask_test_and_set_cpu(cid, mm_cidmask(mm)))
-+	if (test_and_set_bit(cid, mm_cidmask(mm)))
- 		return false;
- 	t->mm_cid.cid = t->mm_cid.last_cid = cid;
- 	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
-@@ -3581,7 +3581,7 @@ static inline bool mm_cid_get(struct tas
- 		return true;
- 
- 	/* Try the first zero bit in the cidmask. */
--	return __mm_cid_get(t, cpumask_first_zero(mm_cidmask(mm)), max_cids);
-+	return __mm_cid_get(t, find_first_zero_bit(mm_cidmask(mm), num_possible_cpus()), max_cids);
+@@ -10390,7 +10390,7 @@ static inline void mm_update_cpus_allowe
+ 	WRITE_ONCE(mm->mm_cid.nr_cpus_allowed, weight);
  }
  
- static inline void mm_cid_select(struct task_struct *t)
-@@ -3602,7 +3602,7 @@ static inline void switch_mm_cid(struct
+-void sched_mm_cid_exit_signals(struct task_struct *t)
++void sched_mm_cid_exit(struct task_struct *t)
  {
- 	if (prev->mm_cid.active) {
- 		if (prev->mm_cid.cid != MM_CID_UNSET)
--			cpumask_clear_cpu(prev->mm_cid.cid, mm_cidmask(prev->mm));
-+			clear_bit(prev->mm_cid.cid, mm_cidmask(prev->mm));
- 		prev->mm_cid.cid = MM_CID_UNSET;
- 	}
+ 	struct mm_struct *mm = t->mm;
  
+@@ -10408,7 +10408,7 @@ void sched_mm_cid_exit_signals(struct ta
+ /* Deactivate MM CID allocation across execve() */
+ void sched_mm_cid_before_execve(struct task_struct *t)
+ {
+-	sched_mm_cid_exit_signals(t);
++	sched_mm_cid_exit(t);
+ }
+ 
+ /* Reactivate MM CID after successful execve() */
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3125,7 +3125,6 @@ void exit_signals(struct task_struct *ts
+ 	cgroup_threadgroup_change_begin(tsk);
+ 
+ 	if (thread_group_empty(tsk) || (tsk->signal->flags & SIGNAL_GROUP_EXIT)) {
+-		sched_mm_cid_exit_signals(tsk);
+ 		tsk->flags |= PF_EXITING;
+ 		cgroup_threadgroup_change_end(tsk);
+ 		return;
+@@ -3136,7 +3135,6 @@ void exit_signals(struct task_struct *ts
+ 	 * From now this task is not visible for group-wide signals,
+ 	 * see wants_signal(), do_signal_stop().
+ 	 */
+-	sched_mm_cid_exit_signals(tsk);
+ 	tsk->flags |= PF_EXITING;
+ 
+ 	cgroup_threadgroup_change_end(tsk);
 
 
