@@ -1,145 +1,108 @@
-Return-Path: <linux-kernel+bounces-865528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE13CBFD523
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:45:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C43BBFD518
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3F61883448
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:44:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ACB7935895D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0566270551;
-	Wed, 22 Oct 2025 16:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E34283FC4;
+	Wed, 22 Oct 2025 16:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZYttj0Nl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EH7cZwPd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2876B25782D;
-	Wed, 22 Oct 2025 16:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1162417DE;
+	Wed, 22 Oct 2025 16:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761150863; cv=none; b=d/W7rBGTOPSXfyWkwm9OsE8VNdiUxv1ApLXEsHHzlOpDWeg9YtnWhIedhn5FahTUTdirL7P4gnpIlPrBD67gWNBePPcGoIoSQXFUrfTCbg9BZN2SzROQ3/rtyNQf5wO74MlBUO6CGD+BhT2aQlLN/1S1dlq+j+Own5jZObjcC2Q=
+	t=1761150892; cv=none; b=ZgQ7dWokgHnUDibUxWjCHk2V51q7j4SL1/id4PqVEbpdUUgqnP+3ihR23FT3icE23iAh9vXAF+Bw8cDTbkaytPw8i2R6w3tZ9jSdgUl2vFXE6cOpARxXh72T7wI5/t/H6+/fy8TQo8HQVw2Ro9B9+MyKcABqHiuYIAQOJEOy9lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761150863; c=relaxed/simple;
-	bh=HAhQ/HsnWHIBcI2BhcqVo/RcuYa+M+SMPj4DaF/UVf8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CXJC/Kqev4V4rZdl3b7RXJrnZsWzQY/6TawTUUvD1lkIS64C8CkyfZyNTwz2Dm14/LN7pR/PEmLC7hyvNuFXBviY2SHvyEORP61aubYZd88eInk2JtfK+seqqRYzBUNDXsgB1IHh5lGQUwfl11CuH2icS+Fj9AWoGInacN6+plA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZYttj0Nl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761150859;
-	bh=HAhQ/HsnWHIBcI2BhcqVo/RcuYa+M+SMPj4DaF/UVf8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=ZYttj0NlJDpX9YsaCcv2SCRukiG1G46h9zTQ9F19s+RC6c64e77XCksFYmWI7Udsi
-	 pXQmytaGNCOB3eTl7XowGKBPFne+X8fZnpAhHyIsKDSwK8QAkk6rxa3mqT2+izospN
-	 owGXaQFe7QKejVZJIzrLfI53qS0XpqErFwFD1L0qJCHo1+KXjWJdeKCv9aKP9AHwZq
-	 E3+9DrA1R3QwWoQRKm+9Fl4b9pzn9VyoSZco2xtGyKWJL1tjIoMCiY3iLLdrT5JQpv
-	 LVEgZf0ABDCH4gfr8/cxuo8UTmHJZkWwpydRFUsdR/l5Sa0n7iolIAGDhWmtSFvaaD
-	 vcFSo87fySJTg==
-Received: from [192.168.100.50] (unknown [144.48.130.189])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1CAA717E00AC;
-	Wed, 22 Oct 2025 18:34:13 +0200 (CEST)
-Message-ID: <bd186145-c85c-41e3-bdc6-c2aaba4e874f@collabora.com>
-Date: Wed, 22 Oct 2025 21:33:42 +0500
+	s=arc-20240116; t=1761150892; c=relaxed/simple;
+	bh=AngP8/mlQWQYwojKFyXedg6xPWRyaDsaL7RxI6w7Ovo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CKk/YbRCb9uNGqNabNIG703GvBlq0Y1MbXXcYgRD7RxoFmi38UyZau/K8l+3INrxYTJOtmVks7TP58TuKjL9ZiTiHqeyGuxcSHiuFNuY8/sOT/Bt48RrwU/B2e/+01p9ECnEen3xSsV2eHNzrjEkWsVoQnWuFlSBLYudWe9tekY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EH7cZwPd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BBAC4CEE7;
+	Wed, 22 Oct 2025 16:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761150892;
+	bh=AngP8/mlQWQYwojKFyXedg6xPWRyaDsaL7RxI6w7Ovo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EH7cZwPddvMinVu2oho3mPHwKsT8hmzKVvxpCK/P0kGxNB8QkQ86LT2VM4ajeb3Rn
+	 ptEGKhy1BddyuqcE+FFRzAJdop3ASVm725WpxQ14ZbqPPSLt2BtVylVQFtxnr8phFK
+	 Xz3Rd4U+iVTRF7I2/hzFESCTMBi1YmzkNbdxsvqU9su+QVju+cFApxXeHJ2o8udg7u
+	 Z4mbSgGwcSctBn42QYexFO+X++7JCk/NZmCv0qawYv2M17/iuozZInD7b/mkV/gnQ+
+	 7B4Xv2/32saFv+E+jtffHHe/+A+/YqwhZjZ21vM02g5V4VwnU5//8mF1LcIEsd7/rm
+	 yLYOaBGRZARiw==
+Date: Wed, 22 Oct 2025 06:34:50 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 sched_ext/for-6.19] sched_ext: Use ___v2 suffix for
+ new kfuncs and fix scx build errors
+Message-ID: <aPkHqpPGZ-9EBGUz@slm.duckdns.org>
+References: <20251022093826.113508-1-arighi@nvidia.com>
+ <20251022153610.20111-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: usama.anjum@collabora.com, kernel@collabora.com
-Subject: Re: [RFC 3/4] Input: Ignore the KEY_POWER events if hibernation is in
- progress
-To: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Pavel Machek <pavel@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-input@vger.kernel.org
-References: <20251018142114.897445-1-usama.anjum@collabora.com>
- <20251018142114.897445-4-usama.anjum@collabora.com>
- <7308c2c0-3881-445d-9771-fad5c3259518@kernel.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <7308c2c0-3881-445d-9771-fad5c3259518@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022153610.20111-1-arighi@nvidia.com>
 
-On 10/22/25 2:14 AM, Mario Limonciello (AMD) (kernel.org) wrote:
-> 
-> 
-> On 10/18/2025 9:21 AM, Muhammad Usama Anjum wrote:
->> Serio drivers call input_handle_event(). Although the serio drivers have
->> duplicate events, they have separate code path and call
->> input_handle_event(). Ignore the KEY_POWER such that this event isn't
->> sent to the userspace if hibernation is in progress.
->>
->> Abort the hibernation by calling pm awake API as well.
-> 
-> So do you observe events both from ACPI and from input?  Or was this patch based upon an earlier version of the ACPI patch?
-Yes, I observe events from both ACPI and input driver when power button is pressed.
-AFAIU this happens because of historic reasons of button wired through keyboard
-controller.
+Hello,
 
-The call to pm_wakeup_dev_event() can be removed. But I've added it for non-ACPI
-devices. Maybe those devices handle only input events through this path. Do you
-think this can be the case?
- > 
-> Because it feels like to me perhaps another way to solve this would be for patch 2 to to send the input event and just keep pm_wakeup_dev_event() here instead of both places.
-I was sending input event in patch 2 earlier. I was having difficulty in managing
-so many dependencies in acpi_button_notify(). It suspends the button events. I'll
-reiterate and see if I can achieve this in next series because this would be most
-clean solution.
+On Wed, Oct 22, 2025 at 05:36:10PM +0200, Andrea Righi wrote:
+> Following commit 2dbbdeda77a61 ("sched_ext: Fix scx_bpf_dsq_insert()
+> backward binary compatibility"), consistently use the ___v2 suffix also
+> to the new scx_bpf_dsq_insert_vtime() and scx_bpf_select_cpu_and()
+> kfuncs.
 
-> 
->>
->> Without this, the event is sent to the userspace and it suspends the
->> device after hibernation cancellation.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>   drivers/input/input.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/input/input.c b/drivers/input/input.c
->> index a500e1e276c21..0979f18aae6a2 100644
->> --- a/drivers/input/input.c
->> +++ b/drivers/input/input.c
->> @@ -26,6 +26,7 @@
->>   #include <linux/kstrtox.h>
->>   #include <linux/mutex.h>
->>   #include <linux/rcupdate.h>
->> +#include <linux/suspend.h>
->>   #include "input-compat.h"
->>   #include "input-core-private.h"
->>   #include "input-poller.h"
->> @@ -362,6 +363,11 @@ void input_handle_event(struct input_dev *dev,
->>         lockdep_assert_held(&dev->event_lock);
->>   +    if (code == KEY_POWER && hibernation_in_progress()) {
->> +        pm_wakeup_dev_event(&dev->dev, 0, true);
->> +        return;
->> +    }
->> +
->>       disposition = input_get_disposition(dev, type, code, &value);
->>       if (disposition != INPUT_IGNORE_EVENT) {
->>           if (type != EV_SYN)
-> 
+It's a bit subtle but the assumption around ___VER is that that isn't (going
+to be) visible to BPF users and will eventually be dropped. Here, it's a bit
+different. The arg packing is something we'll need to do indefinitely unless
+BPF lifts the limit on #args. So, we will continue to have the internal
+kfunc which takes the packaged arguments and user-facing wrapper that hides
+that. So, I think __ prefix (something more explicit works top - e.g.
+argpack prefix or suffix) is a better option here.
 
+> Introduce __COMPAT_scx_bpf_select_cpu_and() and
+> __COMPAT_scx_bpf_dsq_insert_vtime(), to ensure schedulers can transition
+> smoothly to the updated interfaces, and temporarily mirror the
+> definitions of struct scx_bpf_select_cpu_and_args and struct
+> scx_bpf_dsq_insert_vtime_args to prevent build failures on kernels where
+> these structs are not yet defined.
+
+Given that there is on capability difference between before and after from
+the scheduler POV, I'm not sure we need to make __COMPAT explicit. There's
+nothing really gained by adding the prefix. This has been evolving over
+time, but I think a reasonable rule of thumb is:
+
+ If the SCX core introduces a new feature which may affect BPF scheduler
+ operations in a noticeable way, that feature should be gated behind
+ __COMPAT. The BPF scheduler using a __COMPAT prefixed interface should then
+ be able to handle cases where the feature is not implemented. If the BPF
+ scheduler depends on the new feature (ie. it doesn't want to stay
+ compatible with older kernels), it should use the interface without
+ __COMPAT.
+
+Here, there is no noticeable feature difference before and after for
+existing schedulers, so I don't think it's necessary to introduce __COMPAT
+prefix.
+
+Thanks.
 
 -- 
----
-Thanks,
-Usama
+tejun
 
