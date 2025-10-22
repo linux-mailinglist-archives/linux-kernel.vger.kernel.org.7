@@ -1,139 +1,248 @@
-Return-Path: <linux-kernel+bounces-865307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB012BFCC75
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:08:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E250BFCC2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D8A6240F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953DF18C4CF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B0734DB41;
-	Wed, 22 Oct 2025 15:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A9830AAC7;
+	Wed, 22 Oct 2025 15:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wDGTaNJa"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bcoA2f2d"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011046.outbound.protection.outlook.com [52.101.62.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D095E34D912
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761145335; cv=none; b=io6VmotTcv/ulhHobXgyl6iHcwu4RzIaNQ7r9Aoh8wLkNkiW7pXhKO9YA0rdX6Uhv9Ao7ourvLWE8rJwrPPKsABZt+EYFPuKWLh5YGbf6ar49KWiMIhJCUJul1UdYT1k/y0dnxMe804ML30zIE5XEA8x6rDxYF4dc9Y8KcTf4Bw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761145335; c=relaxed/simple;
-	bh=hdYfR8VgCU1ZspHH5xOZyDRebDxd3yGnO9egZSHcGHQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bP3Fpf0cZdBOlfkTXsxlbBqY2ZJFKvzVcrOgbPP4N9KxwssoI6vlhQO9lg8BltcPVuDla1P7eTAk0YCk1Y34dqFGXkb3+KTNiZTOFLIgh91MQ8IPvYfgA2s7RkGMCAexqxaZHQASGInfF0soozCwSSPUVhx9yuESHLJNSF53fg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wDGTaNJa; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-87bbee3ba76so2920466d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761145333; x=1761750133; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnIAOSj9hN5H1aKf2wyJor6fNQ1bM8Ks2ytqG7kDK1w=;
-        b=wDGTaNJafp0TkjV2WDjXy2XC8NiDYd9xJwapJG+UdY4c/LxxemLKX9PGb3hvImqsyA
-         3t6Yqz7BFatgFlPJBT5Neo9Ve3MOR2Sr14sAloMgwh3DQa1AC3acTxcbHxHZzE5RiIdA
-         Qj49gmV6weV95hYSBMqbgew1ONIMcWB5hyWpcz/v4Rr3wYhGZwCXdfiZdr3yGTuqJLDz
-         xdFcV23X/HYUnByVCsWdVllwxr/Qh2KCiLgePTkI17t+BNjYDOZs/VmMNEbaR44hYPAf
-         3nPdxdls3CotHnVozYv8a2POLaeWu8jiVitkr/J9sizkc3brm+5RF5JIkxyhI/oNAd3l
-         j7zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761145333; x=1761750133;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BnIAOSj9hN5H1aKf2wyJor6fNQ1bM8Ks2ytqG7kDK1w=;
-        b=QlkxklVHCJ7nNqgopg8oiufJWRVTOhX+lY+tUZ1kmx9Sodq/Ve8+NA+0mcypAkyp7W
-         /g0sBNTgNwdmjy149EfqPKYmmW9HL/JASdMSHIYJjnSX0ZV/3oXcNPubKhtGmFXxxJHv
-         jtnwVp8APCszelx6mF4Dcsi9JN7TFISK454ft3ipiKroskJFlBn1iXJpt8DybzigNoEb
-         pGTFn3YMON1oICtmbYpLbsZy7LPPtF2cbA8nnX04G+xpOYozdkP2KuB4wh0wTYZcBtQX
-         tcyaincPoAWt1aRVVNBAdzlWr+pA5Yf8tY7rey74RXJPDql/kKHiIuuuW9N+Yxk7Z39O
-         VIVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNHWew4EYN/nd/WFYNqdZJbbWMwmODXf4l2ktx7n9bLbiSGYC/m601kiGSq5jYcuKEmYL9+Rd1D6o8Y/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgmVGMaqwoJZ5VtOtJkjhVgglYpJeJbo+MRhRRuzJiGb1I16NN
-	c9tETBdPjAye/G9dlLpB1pYVJHlEKV27Xl2fnM7h0Dvd6PVhJdLDWtbi1yvTiDxp+QAXLBiwDDE
-	w/vSsnPub848QDzt3riSBuTuwoIRMFuflFbuwAkWqVg==
-X-Gm-Gg: ASbGncvWIbGQcc0Rh8eNxh9XRnFqUMe86j994h/Qr5d5yc1OFyIp8XPaztxnJvDp+GK
-	K86oKeT8SbnWUjeitX+7t+YM2i2bfapoKb55HCs5nhX9iJhaKhTjL4ChGMGA5j+FC1nw9Z+kREU
-	QrXumO++SmQ832WGMmMNNGHUURZq8nFjHjQCt2H42C9rSw2t3byQzsvJnGfMjTnW81qkwx/W1tl
-	/FQXtu1H+iA2hPExXt46/TPwLoFZsim/12EBtoTfppHXnRCJcENf++3GHm/ce2/8YGlYg==
-X-Google-Smtp-Source: AGHT+IHDNBWFGq/lO9UqX3OiuCVmV8mj/OamM0dXHm9H8/TY++90uwy4eHmeOOO7ME2KeAOXQVNRoq9F5JuwtjkDp/g=
-X-Received: by 2002:a05:6214:19c6:b0:87d:f8d3:2456 with SMTP id
- 6a1803df08f44-87df8d324a4mr21664096d6.2.1761145331914; Wed, 22 Oct 2025
- 08:02:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B05918E20
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761145432; cv=fail; b=rCEHXLtoMyxNDQ580EbQFu16Cd0NEgaLl3cdPsGTtBRAyIy69m7x54amawSzpwKlBB5enwhChN4Tie6ozep4j70M1EW7yL2wXcPvs1pn97tFBZhIrGyDWrMj9LxwqSwLIf1PWoAJdZC9CEmSqaxQIYauZBZKTI+2w4533Z7fo+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761145432; c=relaxed/simple;
+	bh=Df0HknJR4NREjLR7XwSnazrWVxKDv//bvZNXb/39l1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OMrdgrZvFJ4jgKKSPLaeic7qZHazuzuxrATP2WJCoXJ+w8m3fXPQf0ANFoOFyAxa6snOmm5Fu+0W9s9ZzPDBq+7z6qrEsMRdnCoWMzp1frjx6UTN9C91/rtANCWSBKilonF391gT63ZR7l5r7Nj8ThQ+coiHB8EDeyhdmaTXvI0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bcoA2f2d; arc=fail smtp.client-ip=52.101.62.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QzlTbYM/q3oxx3nQLz5uCfCq9qrFf5PT1W+g0h1KhLn/B0Kq0IZVRDZ6fyJ0cq4oTf46TfusDGqtz+Lm6V7zinB2RJAvDBFiu+6VEczqSbO7XBijMOIggc+sZB9mQW4hVn10yhKKFwMwhj6e8tPH5MezOt0m8zAa/K58xSB24iea+GhHjni7NMy/zJ3uDyPLW869srrMW8KaIn/vxleXtxDDVh5rqvRj3Us/+5ALK/pnu8SNwyd/NusT06MoprDKDmyFjN7qAW8W0FEzn0V3UUYOdehanG2gbi8BPWIp5vrpp+rlnGKK4DWunuRGHya7bSZqMI7PzjHdVOgDI0MUhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/DIpnPBv3DK1HncYmtHMHj2awR6unRpfZs90BMMhKRQ=;
+ b=ecr2TfIk2KVSxC/3uL1IHp052+UGPVm4k0EB+Wl6LbBTqoWQMmq7Ad/Y3sMvk7Aa1nJoHPq9ZuGkYWq2yWL14bgk4J+/aUx6uB8K7L3aLC9bixkRVpM9xMQscaJPJnL1Ahr5QahCJnJWojVyS8lxgq5JpSVl1dGKo2tpxIdg7YlOe1kE6EOiAu99CA1Uso7tZq7Knb/fq+M9GzSChAPD5tfpzLXk7htvSJU1DlsdkUHu5a2SliX4v2e+GjgpgX8+9vlwcUEXNHJHSbdX841l7RI7iVYHaffcg4vngvmaD1J8/L+kg/ALuoyllXRVik6BKe2KtRPOwuFMjMhZrkgf+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/DIpnPBv3DK1HncYmtHMHj2awR6unRpfZs90BMMhKRQ=;
+ b=bcoA2f2dmBLLy7JXMjDCZ9fcniaRdddJtFNHpTM2LzzXa3voQ62mhMeNlg/K0tJrmuB++T+YICfs+nFwFIvx9pKKuNuHprx9Rbo5mxYz2hhww9bcOeNsS9J/hoGvKfkyLY92EsWcLghHFiD6TnZKVhwsYJTYqKr4+fBnm27Xdr5zLxUgqGw0HWQk1ccFUb8b/Yb8Dau018HMOPKCegPAzMB7DKKA1i55Yjy4XkuYtSvHJhiqV3lYOWRU/XwbG/sKHEl7WVsecBPIp/+SkKSjJEQ4yUitWJvNNo492LfkLPLpp2qAug2PJajzM+o8ul1rxEKwOiEII04F7ocv4pHBjQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by MN6PR12MB8590.namprd12.prod.outlook.com (2603:10b6:208:47c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 15:03:47 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 15:03:47 +0000
+Date: Wed, 22 Oct 2025 17:03:30 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Emil Tsalapatis <emil@etsalapatis.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.19] sched_ext: Use ___v2 suffix for new
+ kfuncs and fix scx build errors
+Message-ID: <aPjyQsHoN62zEKOE@gpd4>
+References: <20251022093826.113508-1-arighi@nvidia.com>
+ <CABFh=a4Vn+FCe9DTLt_p7RzNBSJFU-he+OhNqTK_Z3C5NbP7KA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABFh=a4Vn+FCe9DTLt_p7RzNBSJFU-he+OhNqTK_Z3C5NbP7KA@mail.gmail.com>
+X-ClientProxiedBy: ZR2P278CA0048.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:53::13) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvKjQcCBMfXA-z2YuL2L+3Qd-pJjEUDX8PDdz2-EEQd=Q@mail.gmail.com>
- <20251022062948.162852-1-reddybalavignesh9979@gmail.com>
-In-Reply-To: <20251022062948.162852-1-reddybalavignesh9979@gmail.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 22 Oct 2025 17:02:00 +0200
-X-Gm-Features: AS18NWDwE4wLtG7BZRqK8s-_yLrQzlCdiI_YRXplah4qDB6dhd-o_z_6gw0x-cw
-Message-ID: <CADYN=9KxQaQMWNbwDSftj7kcBYHjAQPacE+z7AVRZwxPTpexYQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/x86: Add selftests include path for kselftest.h
- after centralization
-To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Cc: naresh.kamboju@linaro.org, broonie@kernel.org, arnd@arndb.de, 
-	benjamin.copeland@linaro.org, bp@alien8.de, dan.carpenter@linaro.org, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	mingo@redhat.com, regressions@lists.linux.dev, richard.weiyang@gmail.com, 
-	shuah@kernel.org, surenb@google.com, tglx@linutronix.de, x86@kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, 
-	Linux Kernel Functional Testing <lkft@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MN6PR12MB8590:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b09fe4b-63bb-4d50-68b3-08de117c339b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ok1Uwwz8RjEOhl59C/2I0QKvVtYzhdH2vQnT14+8Q0Jsm+rJy7COYX6zjBTH?=
+ =?us-ascii?Q?hIcrzbrQSsKICviCP9uIbb+j5SSWg9dKunZBGH/22iHu/RqtQ0ijYnbEfr3s?=
+ =?us-ascii?Q?8wJgrIGhypM4vVTj/TWICpOgqAAaI2flWzjG5MX281xhe30+Iw6jzSXz9G5i?=
+ =?us-ascii?Q?CIxzieCCeBrXl8hreHZ81Y0drXrT4d5F/m5Md6xnzhExd0I9eiuujrRjrRbw?=
+ =?us-ascii?Q?xoXPCB1pk7ouwYzvyNnzQ0W0j7X2Ir6VXbMNOKuViZUd0iILj4Y9ySpQ3I2i?=
+ =?us-ascii?Q?7YtxjynQgi0JC5D4MQvylikKNlLVWx/ucc5E2BEo0POiLTKLKlm3ewBHEhR1?=
+ =?us-ascii?Q?8Wdtb7xbg2pf6WFS336GQJbn+QYXaV1VWgbahUrPzQSQm5DzVLq7cLRdmNBo?=
+ =?us-ascii?Q?mQQyVZWEh47vfnA8k6f6/Eryo2vPLvVeywma1W022zpU0qjqIk5gr0Cv2UtE?=
+ =?us-ascii?Q?OSVZB9Vd9yoNKcuRumMpNhVOtp/kkgCZJS1A6NLwzquLW2Eo2MHsNZwKh4jj?=
+ =?us-ascii?Q?PF4egc2iYgZL9A9OVGpi2mqbarRIucWaw8IHFNiJeadKxDknJqaeWcsJrk6V?=
+ =?us-ascii?Q?YdcL59S2/zJhvrxJiV8fiwDN6h70ERZVSZ8++br2hgNQRaSVa99qLxWD5Avf?=
+ =?us-ascii?Q?UM6jixtnrh3LhqoULk4HOUBsiBQFvuqyzEGJ3Uf3MJ/6hvFdrh87/WT5GjXM?=
+ =?us-ascii?Q?w1pAupk0xulgN/A1HKI0MkrsUod/fnzjZbPGbQVOWJn6hlC9b+oGaSmTmEu7?=
+ =?us-ascii?Q?WHyey846nWS37CSjjQ6BYj1lipDNdh9ebLOSvwwG/f04g0lqNAzPNxFK0W32?=
+ =?us-ascii?Q?yoVw5YzWpPkWQGXyocXMR6pUh03wsnUVlHN2DEMkt7dVrq/tgOEGyo5A+36N?=
+ =?us-ascii?Q?XYhdr9rB3hAbYvNJ5ES/c71Fix9OfwK3RAcWxoAedq8MqMtgVSRUeuHoXAiC?=
+ =?us-ascii?Q?wS0GIiGj0NihxWRipHM4Y5DHNCFYfCQxfldkt+uH5YSd0/UVeomkRyq8gr7g?=
+ =?us-ascii?Q?5LEuktpZ/t6m+UWVxMD6/VyBu+xLT+FRkgCTSFHWkiZeNGmyDrimwEiXvcQa?=
+ =?us-ascii?Q?sZEk4+xIsOVFanqxf4ehu8g49cYr7jTZsfH9z4ZUutbru9tGFCyHME0o3fbF?=
+ =?us-ascii?Q?r/LtWglNzJDWBuKtFYxS0sUbEWsOLIuZkN2DGe98IxXaCTCwYHVpK77tM/kB?=
+ =?us-ascii?Q?CHGsX5j7VwFmWhsL4dtEFf0jy1iQCLQyAERuoCvNdoiawd4GRKXBMiI+sX71?=
+ =?us-ascii?Q?QlqzNtpZ/QWhtGNdDlabV44/gcJYWCgiRWTrX3uuhQj9/dxZbOrcCL/WVX66?=
+ =?us-ascii?Q?t2lTZ1aRL/6tC1tC2i0IgIHbcZ4GRRh5O66tawKtPeJjKmB6MFHX1AB5hjd4?=
+ =?us-ascii?Q?3s2kBmY11PmtQwTTiWrhdpr7++fGVfSlKaILhTPLKBO0Qh2Hjr62/E2JCxg4?=
+ =?us-ascii?Q?6x2S1KNZvkDwMs7895TyJo+coc4ynXfJ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?btm0cVapVvPuzHJaHWmWG6Tmpe9t7eU/RF+kT/kFg1+Ad3mqSZElaYiodGdF?=
+ =?us-ascii?Q?48E7xZNB1McXWufnkNJQ1Z92ZbffPBLTZmDWyc2Vzqa2wbFhaKP7Fmkcex7R?=
+ =?us-ascii?Q?S8uWA4ec5SVkMjvoDGm4GuuXYD6jZ0cSuZYnV9Nk79XH/IKz11fIBNfSKSG0?=
+ =?us-ascii?Q?cCWvq3be2re/as6nFMDOxQ4H20jbqzaZFaNUlSCZHhPZQ/oAI7TH0n4uTl0u?=
+ =?us-ascii?Q?/+ghcz1Kw9O+iGnnuHy4SiOrV7O0jZu3pXhmvRhtfG9Rf2PMzsZWEJygv0Rx?=
+ =?us-ascii?Q?WWTevd0PfLvT60mPC9w/CJINhYbcA9cYZWxG0IUyrcQO18PIKvtffD8yTp+o?=
+ =?us-ascii?Q?bFiHmNtEwEDZXZO87eCqpQdDkGbLwM2NFj2ISBdBSLAuIV2odRznLP9GdZnX?=
+ =?us-ascii?Q?i54il0zGciqry0Lr0M82OCqve+JDAHy9BC6BTrf6GnOlwfwdL4YiFVpzf2cf?=
+ =?us-ascii?Q?bsBFuCWBg4HPin34LiS3Ohd67ySZbnyH6EWXuNpZ8hX/34sTY5CyRgf5vfMN?=
+ =?us-ascii?Q?R1Qs4w7D5uAxqKrpUcsGkAuqnOvoox/Uf+aqQu5uJsukFUrUv3yRxZR9rnMU?=
+ =?us-ascii?Q?Hr/Tqf1jdQGN9ZP7lffvJN1t9y864Crg0KpGLTbS3JOm/pNXXoJC+DvkHHbV?=
+ =?us-ascii?Q?STW9nOrG4PQ0Pyc6gyFjXU5iClsj1nBPXMKknCzRMPJScfsjFxkiLQzWYmch?=
+ =?us-ascii?Q?yx4FDtaJeCRW5o+4K1QyNIoUAnLHrweRRBDFytHNByrsOzivDJTA2ITN4yor?=
+ =?us-ascii?Q?/iMGZWILtX6fBorwBnMu1hawPb2/9n3HWAwrfHl8UvVJmwhJdPbdSjuzuzDa?=
+ =?us-ascii?Q?phYEeB/d+eBHemfJ01pmQ+JzUPMPZMekHjNeKPg/kyaXLVczZHLYUUD2j/mu?=
+ =?us-ascii?Q?NDHVtfrRRwyZLVlNPuTdZ4WMUDf3hXvRaBgt5bm3TKSfdNwYP0SH5AQ8CKFm?=
+ =?us-ascii?Q?oEf+JTc9cy8c2KZ5W3rLXP+EYgGE83Yb76aDgNKOwHdn6DkszqoDcdzwTKuz?=
+ =?us-ascii?Q?AmSPqdOGijbviV028vNo4UfAmOfPEQ+ND0Z4AbsH/am8hTJKB5baQw797AgK?=
+ =?us-ascii?Q?mt67O91b2+7rntVoAzpKhnPg6UEDvfjZdM6MHGAs2z09P+YqIfHQELWyXiol?=
+ =?us-ascii?Q?Jiahf6jAko/nNKmTRlgRaQSCuKY09mIRVSueO3rjcliyWbOvFD9zG4gppK1s?=
+ =?us-ascii?Q?HwT29mGYf3TLfdC2M3/Mv730sh5UxVJKeYFeawDEiqGnBAAP5/tzGx/9ntyX?=
+ =?us-ascii?Q?l4yz2a+0ZfPeKNMj76mQxGn+uoUHwfQLkhY885fbGBvWLEqx9d//tLrKsqBK?=
+ =?us-ascii?Q?qCKt2shdTlW4kIPvpDQg92nfFaoGFGRWV33fHnnRk6jkpsbLTJX3MNmriDFn?=
+ =?us-ascii?Q?/kmLKmkWVsfBGueuak/I9wmC42KDRjiPfE25hM+fY2/HtYHldD3l/FvPRt8m?=
+ =?us-ascii?Q?/0N+YWCqiniMOkY0WbBLbCkOnKHya3waXfgajuQwEcNP9pKTkyuvH/dk/Igr?=
+ =?us-ascii?Q?ZaQrA5mUhxEfJ4mGKOT0p3/l7vMfT5R8rSj1Xj2oiNsdxp5j6VKucHNa9WKk?=
+ =?us-ascii?Q?/WDhoucpsKLzy7pJbWNIzH4TMQWVxOpLNk3g+BS4?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b09fe4b-63bb-4d50-68b3-08de117c339b
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 15:03:47.8250
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: piywjxj6jSoFAztuJZ22o5oPpE3trHQlc6TIRqsnVjE4dOkffYjLvy/FYVpAfmNzWx8iOBj1AwrGrLhMv9iHIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8590
 
-On Wed, 22 Oct 2025 at 08:29, Bala-Vignesh-Reddy
-<reddybalavignesh9979@gmail.com> wrote:
->
-> The previous change centralizing kselftest.h include path in lib.mk
-> caused x86 selftests to fail, as x86 Makefile overwrites CFLAGS using
-> ":=", dropping the include path added in lib.mk. Therefore, helpers.h
-> could not find kselftest.h during compilation.
->
-> Fix this by adding the tools/testing/sefltest to CFLAGS in x86 Makefile.
->
-> Fixes: 4d89827dfb27 ("selftests: complete kselftest include centralization")
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/lkml/CA+G9fYvKjQcCBMfXA-z2YuL2L+3Qd-pJjEUDX8PDdz2-EEQd=Q@mail.gmail.com/T/#m83fd330231287fc9d6c921155bee16c591db7360
->
-> Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+On Wed, Oct 22, 2025 at 10:44:02AM -0400, Emil Tsalapatis wrote:
+...
+> > +/*
+> > + * v6.19: Mirror the following _args structs, to prevent build errors in
+> > + * kernels that don't have these structs defined yet.
+> > + *
+> > + * The kernel will carry these mirrored structs until v6.23 (see below).
+> > + */
+> > +struct scx_bpf_select_cpu_and_args {
+> > +       s32                     prev_cpu;
+> > +       u64                     wake_flags;
+> > +       u64                     flags;
+> > +};
+> > +
+> > +struct scx_bpf_dsq_insert_vtime_args {
+> > +       u64                     dsq_id;
+> > +       u64                     slice;
+> > +       u64                     vtime;
+> > +       u64                     enq_flags;
+> > +};
+> > +
+> 
+> This redefinition seems to cause compilation problems when compiling
+> the selftests on 6.19 w/ the patch (errors below). Turning the definitions
+> into declarations gets the tests to compile.
+> 
+> Maybe we can gate the definitions behind some ifdef? This issue aside,
+> compiling the tests on a 6.17 system and running them on a 6.19 system
+> still works, so everything else is in order.
+> 
+> # cd /linux/tools/sched_ext
+> # make -j9
 
-Yes, works.
+Ah bummer, yes, we can probably put them behind an ifdef, let me do some
+tests...
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Thanks,
+-Andrea
 
-
-Cheers,
-Anders
-
-> ---
->  tools/testing/selftests/x86/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-> index 83148875a12c..434065215d12 100644
-> --- a/tools/testing/selftests/x86/Makefile
-> +++ b/tools/testing/selftests/x86/Makefile
-> @@ -36,6 +36,7 @@ BINARIES_32 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_32))
->  BINARIES_64 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_64))
->
->  CFLAGS := -O2 -g -std=gnu99 -pthread -Wall $(KHDR_INCLUDES)
-> +CFLAGS += -I $(top_srcdir)/tools/testing/selftests/
->
->  # call32_from_64 in thunks.S uses absolute addresses.
->  ifeq ($(CAN_BUILD_WITH_NOPIE),1)
-> --
-> 2.43.0
->
+> 
+> In file included from scx_simple.bpf.c:23:
+> In file included from /linux/tools/sched_ext/include/scx/common.bpf.h:765:
+> /linux/tools/sched_ext/include/scx/compat.bpf.h:170:8: error: redefinition of
+>       'scx_bpf_select_cpu_and_args'
+>   170 | struct scx_bpf_select_cpu_and_args {
+>       |        ^
+> /linux/tools/sched_ext/build/include/vmlinux.h:83614:8: note: previous
+> definition
+>       is here
+>  83614 | struct scx_bpf_select_cpu_and_args {
+>        |        ^
+> In file included from scx_simple.bpf.c:23:
+> In file included from /linux/tools/sched_ext/include/scx/common.bpf.h:765:
+> /linux/tools/sched_ext/include/scx/compat.bpf.h:176:8: error: redefinition of
+>       'scx_bpf_dsq_insert_vtime_args'
+>   176 | struct scx_bpf_dsq_insert_vtime_args {
+>       |        ^
+> /linux/tools/sched_ext/build/include/vmlinux.h:83607:8: note: previous
+> definition
+>       is here
+>  83607 | struct scx_bpf_dsq_insert_vtime_args {
+>        |        ^
+> 2 errors generated.
+> make: *** [Makefile:176:
+> /linux/tools/sched_ext/build/obj/sched_ext/scx_simple.bpf.o] Error 1
+> make: *** Waiting for unfinished jobs....
+> In file included from scx_qmap.bpf.c:25:
+> In file included from /linux/tools/sched_ext/include/scx/common.bpf.h:765:
+> /linux/tools/sched_ext/include/scx/compat.bpf.h:170:8: error: redefinition of
+>       'scx_bpf_select_cpu_and_args'
+>   170 | struct scx_bpf_select_cpu_and_args {
+>       |        ^
+> /linux/tools/sched_ext/build/include/vmlinux.h:83614:8: note: previous
+> definition
+>       is here
+>  83614 | struct scx_bpf_select_cpu_and_args {
+>        |        ^
+> In file included from scx_qmap.bpf.c:25:
+> In file included from /linux/tools/sched_ext/include/scx/common.bpf.h:765:
+> /linux/tools/sched_ext/include/scx/compat.bpf.h:176:8: error: redefinition of
+>       'scx_bpf_dsq_insert_vtime_args'
+>   176 | struct scx_bpf_dsq_insert_vtime_args {
+>       |        ^
+> /linux/tools/sched_ext/build/include/vmlinux.h:83607:8: note: previous
+> definition
+>       is here
+>  83607 | struct scx_bpf_dsq_insert_vtime_args {
+>        |        ^
+> 2 errors generated.
+> make: *** [Makefile:176:
+> /linux/tools/sched_ext/build/obj/sched_ext/scx_qmap.bpf.o] Error 1
 
