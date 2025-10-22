@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-865283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F077BFCB12
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:53:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB4BBFCB1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8D118C20B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D85C19C6AE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AEB34C811;
-	Wed, 22 Oct 2025 14:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AA333EB09;
+	Wed, 22 Oct 2025 14:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nJwrqEJF"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tR5vlHqf"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39CB34B69D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D042ED161
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144703; cv=none; b=g1fClZZxzfPE8GQEqqfwsyqAAoYYc+3O3UquR2ZB5FoV55VCyZ7WD/ayKg2UTCcnRB7EZqEmZhK87AvAzZghCVYbBe16zq1fDsxZGlC1Qu6HLyVYPXSY13dSQzK4sYwGKbE9cXX0AnFkjx7+l5xZ6YZ3L8ZPjltfNQ7q1Z6Y3sg=
+	t=1761144768; cv=none; b=dXkw/27G/fG3oNUsXuVZD4ikD0NJycBybX42gRReOssRkGRB3gfOeT0r1kO0OQkHnHbQUKTqfc1Ey0GGPkpBg21jjPnFwzpbUoVLmAsrU4O4XvZZkLPHOrDbTC6jxbTu0aDeV1RsxcFEOeRLyOwDKSkyCOAZl9Ek4htuqWUlu7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144703; c=relaxed/simple;
-	bh=+lNmP55ZvOzuboNbO6AIVCl9ja7et+pSFN7b3PWR5y8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PusSAS++E2gjKSJnd+GaJqrw0OzbVJRmIY4mqOIw1Mf1SVl+65UKuzo91Ma1em5XQbKx3siaHZq1VunwxCiBZgsteXSNSMKPKq+aalpwPIuro+RLsnAeClkc/UQqAMldApuoQlKJhHl67fC0faxSmlDACqNoeMqWbVYLq0cK3Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nJwrqEJF; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-475c1f433d8so13294105e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:51:41 -0700 (PDT)
+	s=arc-20240116; t=1761144768; c=relaxed/simple;
+	bh=xh9CmQkxVsV9RC2x2p7KC5RESg+QfKoATUgNDTMz5fQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X1nCyQD2dk7yjO1ecirgRdn6LW7hVaShuOaL0CWQ02UkHt6gd8O0itmj2SBT5EddVB6BYOFZjbHSSLqsaUeMHyGpOSgECTWXgXwTYzYNlax56aWJm66NDW1y5rIm8l6jhfeO1uwK4PczVoxCYyfenYoMzhhtSMO1OGRLkG3Y0Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tR5vlHqf; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-586883eb9fbso8619625e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:52:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761144700; x=1761749500; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E9yHRG4JI34JOJGAAS4v922SyM9JvWMCsMtr/NEHzv4=;
-        b=nJwrqEJFfgmVd1xfG3+yEqcERLAYqQqP7g+emT+JGXxxT0JsxR4pjYAb/5FeuBoycz
-         3tE4G4T5IqH1tV5ExrhfjZZhI83G8R6LDsGm8hjvMXKHjO8m2qV4r01SCkVwUvgCNka1
-         WI6rhCeYbucijaGAYMrWo32Ub6ZYMkDEnbfL6wqQtDRpiXuG0t99EQigE+q6+yl6XuqT
-         M6nVb1z6i3mDqELqkBNRJIonBSVYvRCgTSbV2tMIIUwMMPd+zizVmIxbnnDZICCepPb7
-         yu3c4dpgEzCf9b/C7Z06K2RwGPY0tkGOc9O+mWWOx1Yf+Fvd9Wf/ueabd4IcxWsO3DxB
-         UFSg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761144765; x=1761749565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fmCNP4JPT6ISqq81Ea+ZKZcu4abvsAE5zrLeAHfQet8=;
+        b=tR5vlHqfuSXVYE28ge9VUzTf6lUnWkHHsnEcekvY+oO6K2bkwN2jpan70+6RIa4VtA
+         C8EWzwSoSd/klHob9/l3r19FVIFmZvl/ak9og3cPl5IVT8zAlq47S8hCUUnJ/ZDYBk1F
+         v3ZFkwlkD/gQXW0wmVV4fJaRS7MEvMMjojDtb5B516yYnT8cy8Y5rTSB7PZrX1G3vkoU
+         GqDPFnvTre0s+M7qEgj+oNEC8TH4O4XX1vClYSgtR1F/3PXBVxFzEmlW1/dX0Mi7IPz+
+         4UDKwryVry32gu1LGn+u+x1CmnsZDlPKO+aZBbeAAAXHNMZ5kxgfRZOKwHBU7prvFBrO
+         OIMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761144700; x=1761749500;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E9yHRG4JI34JOJGAAS4v922SyM9JvWMCsMtr/NEHzv4=;
-        b=RXJ5YtsBP0VSCTJ2ye0mSTwLYj7LzzMx2FKvijWvnK/QTA8SIwn6gDSqFHzumq1HH3
-         Dxa4Q5pUBjqzm5NnL7ZqdkKxxrmzSYrz/SxaMXsj9qQqmtc+i84xhsA7MFzJPgULicuK
-         p0cwEVoqAPBwokMt3jjggYFBlWPDpeYgucEJ8D7iB2qwxRTCnDMrctDbiEUwvfh4axwA
-         KW3LHeZpWTwwx3W8bw2nM0rU9jW6jOKxtyUiFcdtNmuzAyaC/uAcXYvcw8ZBHnosICeN
-         hav1Z9lemW9947k5/ZSUDMeGoO00JCitDJHH9n7ivyOFECBEfL4NWNsUr7FShgnY67Al
-         nppA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8f5MP8CnWqTiHymUDzkGmdr3JrXAcBTcDlfuOyYo2hUCrkTm8AZBHtBT5UMRyFc9tYAbwHEFuju16GgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLuFcwIZc6Zx2+a4kt8zkLVd5WX3s5jiFXJIqccMyyjvic0ivV
-	YmH193nUg4wrRBWEG0r+bxMyrKFpR+7nDmprsvCQ/8KMlFzRBO+k7yMnS0XjMhb6kN0=
-X-Gm-Gg: ASbGncu2mKORsEy54wSjHyd1je6jwHsRmwpOMVya5ZbBM6AP/7f93B6HoJ0YHX5+yyZ
-	QanuO7+SlgJxflPF5blqmZqYrCPajiIDehROPU3vbEnR0owgvEZQfuosy/Gk051fBioNI4kgmhf
-	/uXir3NbdpZR9ieGbWdl32h+NvMMk25fdaDxbGa4T1RWcWQo1gGNzHD6KuY1cR5FLQexiEVEas7
-	7ZtBcdIo/uCCk0BT0RYibU1zfhmc30Q4+PnK3VrRSAl9G2xKVrJ2QxGylTB4RQt5VN4IMDJ/tsm
-	TNblkxGbo7tRzuF/xeYiDF3o99nF0adqHAPteHYLKFgVF1lPWIcgd9x2z/zDfGc54EWVVqBn2Ry
-	2ICihtWOPwWEDL1GrmZnlgEN4WSHQNKubeHJP/sz1klcIxCnS1FdD04dj2Og0nbffGEgRrU+5AE
-	sB7t/f3HAuq9Go5TLTFgamSqKTz/bcyP//u9t2l1GdLKccNB/7Pfao
-X-Google-Smtp-Source: AGHT+IFN6BO2X6wxeB5Z3DkFGrzuZyz4TUKDb57huKKbsjsVDAwxVSn99GksYUGwPErkTVppl8SPxw==
-X-Received: by 2002:a05:600c:3b8d:b0:45d:f81d:eae7 with SMTP id 5b1f17b1804b1-471179176b9mr179678425e9.28.1761144699894;
-        Wed, 22 Oct 2025 07:51:39 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c42d828asm48802225e9.17.2025.10.22.07.51.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 07:51:39 -0700 (PDT)
-Message-ID: <bf23808a-4f49-47b6-ba13-1200d4b4c0dc@linaro.org>
-Date: Wed, 22 Oct 2025 15:51:37 +0100
+        d=1e100.net; s=20230601; t=1761144765; x=1761749565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fmCNP4JPT6ISqq81Ea+ZKZcu4abvsAE5zrLeAHfQet8=;
+        b=F1c843exUKN+6BmVQraJlE1O5Gy2pOUVtTr2syESwC+Ar2N27exAQpj6ZhsPzktJeP
+         eztcZ8lPmbazTyGXaoHrLNFkIvjow1bEfcOZC171TSU/Fyr52+3RQLYikvc9KBylZR7D
+         AWGRgZEJUoS5brJB7wJqWCAOHn35nMKGpCR4eCCXKy97qjJN1zwCrhaO1XVG3g8eOb0E
+         I0YQsnqUyjQnEJccwT+Xs+MjIBz19fFWWR9ZkmrNdAaT/qFUGqNx8IfjVZsCGJjFzA7k
+         JtVTAyiZ2/FHz49++huWRAaopVY1Ym8mnMY8O3l2d7bht/17+Ow2LmG/PNockiBLdVcJ
+         BS8w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9YzEfngYCfZ9/7o4tWbmgDEDwDJA/NpbabBa2xxH7rpWb4YrALH9TDHSapVlbQlGWrOQuXvAVOqStD1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHebJh48vdg54VeCJ0NbJxNiJ/Ko5tSHDx5kx2UzyxV8Guz9qt
+	89pdECl/OEiZOqJLl6gkqheoGhkkM8yr9a9M6N+mrRjXRDCZQsC3YLYYNprsrEzpZPE0lqxOpBj
+	WNYSpi9nzmybqQ662VjzkAENg/acRSUD+55BBvo5+sQ==
+X-Gm-Gg: ASbGncv0gOUQX96kswpVnLn2ieVb2C4+rsTqdBz6Nb8wYeut+M9PqyGbA9WmlQX7o7g
+	dO37zM5UE7Io3QR8eO7FD10gah6svZgunpTwo5/OFeHdFKEJYVOCIa7ExyYK6Rgvf5JGY900hml
+	5YTRPQi5szh7SPnStm+1VkW48rnMvHWSvdOiWl+H3s9aS0l/GuaEtFQnevSffqN3Xl1UVemwI6C
+	WXsWDCtK3zfq/mWb/XyeJtPw/fZ52VELg+aJPxg5s+kGhBiZj2Tv8prehTUJ7r/9g3ubNwhN58i
+	vry+OOCqAr4zLEqg
+X-Google-Smtp-Source: AGHT+IGBBhRx0YzsXET+VtFW+sPDELcXEcSsY3fwYo5kG/qbQhoaN0mdJJLMdkf1kGOIwKn1vR6GjMsjzx+KrrXkyto=
+X-Received: by 2002:a05:6512:23a8:b0:590:656c:d10c with SMTP id
+ 2adb3069b0e04-591d84ec157mr7085239e87.16.1761144764601; Wed, 22 Oct 2025
+ 07:52:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
- kaanapali video codec binding
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vishnu Reddy <quic_bvisredd@quicinc.com>
-References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
- <20251017-knp_video-v2-1-f568ce1a4be3@oss.qualcomm.com>
- <c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org>
- <034bf6f4-0a49-4973-8536-28526b3409d1@oss.qualcomm.com>
- <d19b1279-3031-43b9-ac73-7e5f990802ed@kernel.org>
- <e1bfadd4-2d53-1953-beef-1350594c5010@oss.qualcomm.com>
- <miU0eB2Bl_rKVzJMoTPUR2-GweFHwQntP9c8-zLL57CgPPMD3ZEZm3_X61Q9Oao6tZMS4ypn2FsCfdAuauKuhA==@protonmail.internalid>
- <mtlwpa3m46qwrfjcpa7wapjjnllxopoip4mpnomw2ngteb6btf@2z4hrjr74bts>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <mtlwpa3m46qwrfjcpa7wapjjnllxopoip4mpnomw2ngteb6btf@2z4hrjr74bts>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251022-reset-gpios-swnodes-v2-0-69088530291b@linaro.org>
+ <20251022-reset-gpios-swnodes-v2-7-69088530291b@linaro.org> <afdcde3c2ce49f42740e3e436d78d2796bead3ad.camel@pengutronix.de>
+In-Reply-To: <afdcde3c2ce49f42740e3e436d78d2796bead3ad.camel@pengutronix.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 22 Oct 2025 16:52:32 +0200
+X-Gm-Features: AS18NWDHMGlvggGhK5l0kHNgLJMMTVZV0jKA27W2ZbuBaqkCFbwhJFa52Dfg5tw
+Message-ID: <CAMRc=MfxLNPgmNUHOuC8eRf1dyx88i4chzpJZGj7=7_4hrTg=g@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] reset: make the provider of reset-gpios the parent
+ of the reset device
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/10/2025 10:37, Dmitry Baryshkov wrote:
->> EL2 DTS for kaanapali is not yet posted to handle secure SIDs. While it is in
->> development, describing the secure stream-ids would ensure to cover all the
->> hardware generated IDs.
-> EL2 is a slightly different topic, it most likely requires additional
-> changes, etc. I'd suggest focusing on a normal usecase first and getting
-> the EL2 sorted out separately.
+On Wed, Oct 22, 2025 at 4:45=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
+de> wrote:
+>
+> On Mi, 2025-10-22 at 15:41 +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Auxiliary devices really do need a parent so ahead of converting the
+> > reset-gpios driver to registering on the auxiliary bus, make the GPIO
+> > device that provides the reset GPIO the parent of the reset-gpio device=
+.
+> > To that end move the lookup of the GPIO device by fwnode to the
+> > beginning of __reset_add_reset_gpio_device() which has the added benefo=
+r
 
-Is the conversion to EL2 only for compute then, Kanaapali is a gunyah 
-system - Linux running @ EL1 here ?
+Wait... I remember fixing it and even mentioned it in the cover letter. :/
 
----
-bod
+>
+> Still typo: benefit.
+>
+> > of bailing out earlier, before allocating resources for the virtual
+> > device, if the chip is not up yet.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  drivers/reset/core.c | 18 ++++++++++--------
+> >  1 file changed, 10 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> > index 5a696e2dbcc224a633e2b321da53b7bc699cb5f3..ad85ddc8dd9fcf8b512cb09=
+168586e0afca257f1 100644
+> > --- a/drivers/reset/core.c
+> > +++ b/drivers/reset/core.c
+> [...]
+> > @@ -919,6 +915,11 @@ static int __reset_add_reset_gpio_device(const str=
+uct of_phandle_args *args)
+> >       if (args->args_count !=3D 2)
+> >               return -ENOENT;
+> >
+> > +     struct gpio_device *gdev __free(gpio_device_put) =3D
+> > +             gpio_device_find_by_fwnode(of_fwnode_handle(args->np));
+> > +     if (!gdev)
+> > +             return -EPROBE_DEFER;
+> > +
+> >       /*
+> >        * Registering reset-gpio device might cause immediate
+> >        * bind, resulting in its probe() registering new reset controlle=
+r thus
+>
+> Please move this after the lockdep_assert_not_held(), as discussed.
+>
+
+Sorry, I missed that.
+
+Bart
+
+> With that change,
+>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>
+> regards
+> Philipp
 
