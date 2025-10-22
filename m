@@ -1,155 +1,122 @@
-Return-Path: <linux-kernel+bounces-865099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E55BFC393
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:42:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCA3BFC38D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27D79503132
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA92624A50
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956DA34A776;
-	Wed, 22 Oct 2025 13:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A9B347BD4;
+	Wed, 22 Oct 2025 13:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X3IFkUim"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDVnjz5j"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6370B347BB5;
-	Wed, 22 Oct 2025 13:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5367F347BB8
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140146; cv=none; b=LfJ8SoC6tAzprDhUTdN0RcE8xNt9pTE2s+s3OrziTTp7IUcP+PDONGTyYN5Q/OQlN8R4KJsbrFxXYRzP1FCbbCpHG1rKlyLhVavNw+CvYcQFTQNGFI3Bj8SVOon6HBv9/kc8RaIpm5wR6MGAgoG+5V6ppfnN0GeAVNGTMo8ZoVI=
+	t=1761140050; cv=none; b=QtZBZBoRMJNAaGwyvbEAIn+Gcdrf0BOYcEbQ0wbX2RMn8vGpn0jMiNUfwmqmbeq9ECcyfRMQzbtAPvr90TiY5Z6dQwqQruxE7DHoUfD+U6kt9p2xk5a8AQkb6ZLvjc6CUjRIZCiT6+qiG6KCtKLme6CjAwrD4RomZSt67C5rOME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140146; c=relaxed/simple;
-	bh=yXVa8huKIo4elALQY0f1rQ9fwdppHTldQifiFyyguTE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LDfTBcScaJ4aIsFMSwF/8f+91JFpFOZ0g4NeIOJp2CT4NR7Tgji/zw7Uc1/sIHhzGrnfe88pMtvFE6qoybv3QSIcjaZJhFTH8jr6uJKAifCBn5KfACjJvhvT9BgVMJj4xI8lhsZmAoCs6PlVR3ZxhzHiETT1FLUJI2/ZbxoSqhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X3IFkUim; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761140144; x=1792676144;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yXVa8huKIo4elALQY0f1rQ9fwdppHTldQifiFyyguTE=;
-  b=X3IFkUimVw0dOCnoJzMsWzj58e3yjtjnWGnbw5SVjrTjLpiwWDP++xEG
-   jDeETXnyL5mUgoSkbIjzZp9RVPSEa01S2P0+5zuy3bZt5PnBY8vsjnpgz
-   hztoJKRbfNjvoWXoWGoioMZoUIHjIoY19D7idglYEYbCQppsuOFm1G/so
-   Xn4Rf1WVWXq25u/A7WVVS3pKivjhdOIUi29M0xQHFlmLoEyVQpU7ABFPV
-   hdeYbKvyI4Apju/+6t+r2JufrFNs5lQinW1ee720EY98NEE0V4tAPvHSo
-   DZPYIVcq0Y4yMDPtrh4gQkWSBmVkrQVQwpzY7AQmN52S4xwDp4Oi49Nxu
-   g==;
-X-CSE-ConnectionGUID: dpg83dJMSSOIKrpwQG847A==
-X-CSE-MsgGUID: Fbs9MUZgRpuTHi2O7KEALA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67152611"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="67152611"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 06:35:44 -0700
-X-CSE-ConnectionGUID: ooAr2epaTPKL8Jg0+dKHYQ==
-X-CSE-MsgGUID: rmpyhMSrR0y9wAJ9zBSIVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="183814472"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.82])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 06:35:36 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	David Airlie <airlied@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	"Michael J . Ruhl" <mjruhl@habana.ai>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v3 09/11] drm/xe/vram: Use pci_rebar_get_max_size()
-Date: Wed, 22 Oct 2025 16:33:29 +0300
-Message-Id: <20251022133331.4357-10-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251022133331.4357-1-ilpo.jarvinen@linux.intel.com>
-References: <20251022133331.4357-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1761140050; c=relaxed/simple;
+	bh=gWtnyZCMZ79lGvtHTyeCn/sxtckldijN3FKie7XpzK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K2OVBBSVFL8l0/TU81QqxeOKODjEYrt4I5zDKYr2AsdSvOpo3k9JzRlLLzUVqL5Om4yXmC1RQTVAhWQI7Kpzexpd4IvxARksNG54BAWGetDU1wJU0RqPlawCYc6P319KFeZ808yJbMT86AhHzzAwEiZnF8Q/2HBjGaDAZboUxD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDVnjz5j; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c3d7e2217so9837766a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:34:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761140046; x=1761744846; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VnDab3MvBR9d06ZmEVci9R2LEo8WZZltTef4oKgMrxE=;
+        b=CDVnjz5jqOsaNOGf/xUBqTdky530gFLOTueh497tFpB3jkwYJP28o/3s45BjwsT3qr
+         lxtZZfaUu9NuRQXrZQus0kZ+fVkvLKEZlTTPAjnn8L1AK83eyuMn7Wafr0Zx2aPo2m7B
+         fOksJ515XZEh3M9ikP0Zi6ABQa5qKlirVffuN9zigqowVSbr8nMHixoqdkvTuY6pM1iV
+         fQGnCgY4EBxF4s+0B7aI6fKEQq3+tw0kG1+xMoUyanJoZ+Fu6ARAN4wIWfTxh39VwOFr
+         Wx5ZbOHMR6GU5w6ATE1Pq8Wi+CVOQETUwWCPGLKBJ6FEJg3fmGgB3Tv6eWF5BzUXgSL9
+         dcRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761140046; x=1761744846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VnDab3MvBR9d06ZmEVci9R2LEo8WZZltTef4oKgMrxE=;
+        b=s/eJLpU7K5EUnFZpEJbVC0yYbik6MaZjBtJAAvLvF5ji2T0QLRkQnDEsAdFbINr0b2
+         Hu2oaSgLov+EYaOnHRh7bPL0eLOdhFInDoLA8vURDgG7GIkXC0GsRAylmWVaG2JxW3d7
+         N5jx+8M5AP2FaO9GICL3iTjgwNU+xJtrgFhExyoEhQL6LHcbyAaP9OvA4guUvjeATrWv
+         I9ABdmRXfuNayHRZXOCoZwNPOe//Fn7yiU7F6JmdaT1ez0LqN+YT3AjkUrB++Ab8xKiN
+         KAuATy+KeR/ZmgYWKUrDhp8RL3lvq4kIyTZJExAyYO8fZfBRIYWCQIf0X1EOCEqRVSeF
+         Y1fA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7MAcWk7fI0cBf2pt7L//nL/Wm9xWLC714CChN6zfgs1eGouwoLYGcU2SGVGWtXV6ASzknmB3MD2iMpAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+7Hf7E/PoG1k9SQfCneq+DAdECtarO9iTJrtYrgt8Yt8MlOSL
+	v6gOktK6Cbq2mrnbjvNWJPEKwB/5BuVmMGryIQPUvIQqXs5EozBbmOvvnjRLSl0Hm09CnXY45uO
+	usF9gDxWewQjzZVtc2hHi6Sqszz1iE+I=
+X-Gm-Gg: ASbGncudjkHsQI/08fg8AAIND2xPM553MY2yCJAYIZqeElbsZ012q06zoWZyt2CeDr+
+	+zZz4vZlIUNWM5Ngm6KOPbXKf3kIzBATzDwmc312pVfYR8gXQEqvBzNaq3MmTMYVKe2NrG80QQR
+	FIeULKZexiIdjiUR6VhFRNBRsg52GClpkA21WRasWHnM1CJ+Kv/UowrYUUjFYBVf5oTu7+aoFgt
+	9iQSMcBq1YskWq0n1ULlPxyBv6CS0MkFEgmKhS/FG2RGcHJfS9tS78/fnX5IzCC6H+0FjKH
+X-Google-Smtp-Source: AGHT+IF+bGnEQc856DkdZpIAOaRV7nKVJQZfv8gn2VCNIJnjHmyCsahfWQqIidtzCF/ZoRQsNWSOtm7llM7J7h8TBP8=
+X-Received: by 2002:a17:906:7314:b0:b45:420c:81c0 with SMTP id
+ a640c23a62f3a-b6474b36a46mr2340985466b.36.1761140045360; Wed, 22 Oct 2025
+ 06:34:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org> <20251022-gpio-shared-v2-1-d34aa1fbdf06@linaro.org>
+In-Reply-To: <20251022-gpio-shared-v2-1-d34aa1fbdf06@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 22 Oct 2025 16:33:29 +0300
+X-Gm-Features: AS18NWD8eeQXjXIPK4eXDVlSVPojwJxWfrcwXD-jC0yt5VNiNWjvrq9EAmjuWt4
+Message-ID: <CAHp75Vewc2OoD7=eoFtrkPrGRuB9ZGT2vu4Z_wdHZUDZ8igUtw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] string: provide strends()
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use pci_rebar_get_max_size() from PCI core in resize_vram_bar() to
-simplify code.
+On Wed, Oct 22, 2025 at 4:11=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> Implement a function for checking if a string ends with a different
+> string and add its kunit test cases.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Acked-by: Christian König <christian.koenig@amd.com>
-Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
----
- drivers/gpu/drm/xe/xe_vram.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+...
 
-diff --git a/drivers/gpu/drm/xe/xe_vram.c b/drivers/gpu/drm/xe/xe_vram.c
-index 9ac053bb0b2e..55232dfe2cd8 100644
---- a/drivers/gpu/drm/xe/xe_vram.c
-+++ b/drivers/gpu/drm/xe/xe_vram.c
-@@ -56,16 +56,11 @@ static void resize_vram_bar(struct xe_device *xe)
- 	resource_size_t current_size;
- 	resource_size_t rebar_size;
- 	struct resource *root_res;
--	u32 bar_size_mask;
-+	int max_size, i;
- 	u32 pci_cmd;
--	int i;
- 
- 	/* gather some relevant info */
- 	current_size = pci_resource_len(pdev, LMEM_BAR);
--	bar_size_mask = pci_rebar_get_possible_sizes(pdev, LMEM_BAR);
--
--	if (!bar_size_mask)
--		return;
- 
- 	if (force_vram_bar_size < 0)
- 		return;
-@@ -79,7 +74,8 @@ static void resize_vram_bar(struct xe_device *xe)
- 			drm_info(&xe->drm,
- 				 "Requested size: %lluMiB is not supported by rebar sizes: 0x%x. Leaving default: %lluMiB\n",
- 				 (u64)pci_rebar_size_to_bytes(rebar_size) >> 20,
--				 bar_size_mask, (u64)current_size >> 20);
-+				 pci_rebar_get_possible_sizes(pdev, LMEM_BAR),
-+				 (u64)current_size >> 20);
- 			return;
- 		}
- 
-@@ -87,7 +83,10 @@ static void resize_vram_bar(struct xe_device *xe)
- 		if (rebar_size == current_size)
- 			return;
- 	} else {
--		rebar_size = pci_rebar_size_to_bytes(__fls(bar_size_mask));
-+		max_size = pci_rebar_get_max_size(pdev, LMEM_BAR);
-+		if (max_size < 0)
-+			return;
-+		rebar_size = pci_rebar_size_to_bytes(max_size);
- 
- 		/* only resize if larger than current */
- 		if (rebar_size <= current_size)
--- 
-2.39.5
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -562,4 +562,6 @@ static inline bool strstarts(const char *str, const c=
+har *prefix)
+>         return strncmp(str, prefix, strlen(prefix)) =3D=3D 0;
+>  }
+>
+> +bool strends(const char *str, const char *suffix);
 
+Why not static inline as strstarts()?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
