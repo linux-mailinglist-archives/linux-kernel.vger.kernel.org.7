@@ -1,230 +1,152 @@
-Return-Path: <linux-kernel+bounces-864287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C4DBFA674
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:00:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB79BFA683
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47695487894
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F01487209
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9426D2F39D1;
-	Wed, 22 Oct 2025 06:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95182F360E;
+	Wed, 22 Oct 2025 06:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="JNWpi4dr"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="OuGmIJ8O"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEED2EDD6F;
-	Wed, 22 Oct 2025 06:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761116369; cv=none; b=rvqv4hjfA521IzkHtGLOBsqmvfIgz1HeFAFh1AS5DQ4NAYcwwOsGe/R1m++6a3rhDV5uNqP/z4y9GFz2hr0jyKGn9eL9nWCsWjgEEnhTyWop7w8FdOXSv1tfHLOYl920C3KmygWOF9dm8MxT/v+gxAE6hY5nAI5j2cLbpNAO/1g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761116369; c=relaxed/simple;
-	bh=1PhaDSP5B4rAtr4f49e8gnfLLbvLxyEIL3t9mFfVw+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f9DLAbD/j1Gwv4hQlKFhynHws22zabUeGkV6syYWkMaKuwYC35JVtnmX462XVQxi/A0c2oHM/FQQDjij7IbNCjdCMXOgCDpZwt/YRM16n3OApXu5k6lMpY1dKlh+TbUCCPYFaEZZXoO1K7lTugsKMlv6OYHlLjaTy/ckZSvt9nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=JNWpi4dr; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09172F2909;
+	Wed, 22 Oct 2025 06:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761116395; cv=pass; b=j7nwr1KzbRUxHlj14Lf8+9DRA/KsgdAA8waruROYbYD6wbnX/CfEaw7s4JMbYQtBZ0/asmIGnev5QlN+rKTnEDZYJiibTWn+Ixj9Meir4rH0tK9LcsV+D6bWerFxCh9ErOt4t+tHUYST7zkecfKMc9B8ooVPjx4R4/qNd7XoBpE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761116395; c=relaxed/simple;
+	bh=RsWchHbELTivadR+0rIWFwyZFY5yk9Z2SlOJZ7YoLlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFqrjWEPWW3WDOdjh7aF6w576biUg/8m4vyn+/2l+hMaO7/El/M0YmpMczob3BkyESwmiCWf2EHMGtIGFu+y1oXoFq8wyd+Dhj6n0X49ClBUlb9PF9mVv9K7cOoBE/UwLyszSOlMENWybiFN0WqLAAEC26+TYcOacXLtpHCHB/k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=OuGmIJ8O; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cs0QL4pgbz9t8W;
-	Wed, 22 Oct 2025 08:59:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761116362;
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4cs0Qj2FTnz49Q6J;
+	Wed, 22 Oct 2025 09:59:41 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1761116381;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j1fnAapxocpS1PzNNod6wJpD/egeyzDYB/Jrd9dgM4U=;
-	b=JNWpi4drdUs+btd7VToiRgbE6iRRVDP3jzDGp4IdtZxspVPgXzrkVyw6XfZ6VoltxsDAme
-	2cht2i0/8JrZc9EQ0dSFhPa2tbjjnQ8bG+3qZYq9K+j+DgLoSa0jFlhn5wEEsINMOYgadA
-	sWs6weTLZ2y5Br7G+yMjqd7lc9Dj7wFW43WKaehGIb0uF9weDQ4aqUMzGVd23ZJX7dM78D
-	6cbkMfzb6nIZozbWJ6FgZD96p/5LwJZg76fWkSFTnYsyFob3539fRhtxakP3+goUS0/BK8
-	Tv52QQPI/RSlQl6HSAde3lxR5xApuQkjeJ6zgMcbwp3emdxPI+Dp6eg8agHksg==
-Message-ID: <ab1f7c51-bc41-4774-a0dc-850e53c412eb@mailbox.org>
-Date: Wed, 22 Oct 2025 08:59:19 +0200
+	bh=5s9tZ0plDw04XwnJ5ZHGqexlhG4hJB0+iwmd9AJaK6w=;
+	b=OuGmIJ8O0bNLXyfl/DOR87mbWDaGq8s7nrUYgaZdUNx+S2t0ROBOcgxdwOn8gD9jNLtGYm
+	FhWtHLm7XvXW+zrnoGmC9O9QQxaGCnesp5vBwOUZeJmHPiZgIILHYkKjlpRmyRIotkVv0N
+	ZU47G0eHkhD7Y/6iQNXWfi2Lugw2UR+bOmxqqtN1VG1bnr2/m7iLHiY5QjD2lda9a7mtXW
+	xkalyMPp4MRRbpho5Ka0MGoTEt4jNzRpvZDzOXJLP4K8VgR3lGk/gpeNazM/Fy1EeyMh5e
+	ImT5plat6EHVohgjDaY/juuTwc86ECUmwqr88iuizFi6foWRl5mvcYC0MsEtew==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1761116381; a=rsa-sha256;
+	cv=none;
+	b=AsLWqzwwpeSWK7s89tLugPc5/LYNXM8zDE5kJ7H9uLCl36VRGwO25QswhfQSsg5PejbWk4
+	T5xqk7oVZj3l5vheEyvY3+S6t2VXLGTkBKXL/6iJgHyyTj01nbI5gJc+4actapHD1F/ymI
+	yQvW/Wf0YJEdiNXwtOFmwg0qgBsN3wRN58NpYAkI+XfbxEx0OmHNdH+vDRUmUHCsoWQu5l
+	ae9Le61iS3vSQ0tpEyyICym2lNxgD1KJGrUIQRMd6z8Rx2ZuSzwV8b/u0VosObXmF6THOS
+	452ahEM1gqB9Ve6lE2tpb7hZvCUa9LJrN7v4OwXt22SePD4xZpchI+MyBv5acg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1761116381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5s9tZ0plDw04XwnJ5ZHGqexlhG4hJB0+iwmd9AJaK6w=;
+	b=UrwaRpOdekIoCIzNLX/haEcKkfIGnlHb3Arz6cIjfgonkRGB13JVMsfFDiygkN1L3hTuuc
+	OcOJ7TZ+MdLj/H7b45z5TopCkIiWEc2gYH+09VEigvGBOIFneWVkzJO3kltYdZfPDW2uRJ
+	3JBCHc9bgaI/baCgMMGYAxYPqITTJ8S/QdBI4+lOxyuoxfKEhxcun+dEH/8EOSYODWJE4E
+	tHcd487GFCiNJV73gwhU98LS7/oMCYPu98yLfTv8QStULq3tYWToZAt+gCvIBbFUmt/965
+	SAGIzPBceOMRyJLKd8TYKXfhzRdjRWcgVKaSimjGvJ8ZMjTzJUbOajSm1+xgPA==
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id E5D6F634C50;
+	Wed, 22 Oct 2025 09:59:40 +0300 (EEST)
+Date: Wed, 22 Oct 2025 09:59:40 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>, Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:OMNIVISION OV2680 SENSOR DRIVER" <linux-media@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] media: dt-bindings: ovti,ov2680: Use
+ unevaluatedProperties for endpoint
+Message-ID: <aPiA3G9x_RsTL9Mv@valkosipuli.retiisi.eu>
+References: <20250827194919.82725-1-Frank.Li@nxp.com>
+ <aPdLmWM8a_ikhJfK@valkosipuli.retiisi.eu>
+ <aPepRZOL1Ys4PH/u@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-To: Bjorn Helgaas <helgaas@kernel.org>, "Bandi, Ravi Kumar" <ravib@amazon.com>
-Cc: "mani@kernel.org" <mani@kernel.org>,
- "thippeswamy.havalige@amd.com" <thippeswamy.havalige@amd.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "michal.simek@amd.com" <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Sean Anderson <sean.anderson@linux.dev>
-References: <20251021212801.GA1224310@bhelgaas>
-Content-Language: en-US
-From: Stefan Roese <stefan.roese@mailbox.org>
-In-Reply-To: <20251021212801.GA1224310@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: dacca2ed9550b966657
-X-MBO-RS-META: 33d8grajrud4g8etgcmen193gr4s35jn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPepRZOL1Ys4PH/u@lizhi-Precision-Tower-5810>
 
-Hi Bjorn,
-Hi Ravi,
+Hi Frank,
 
-On 10/21/25 23:28, Bjorn Helgaas wrote:
-> On Tue, Oct 21, 2025 at 08:55:41PM +0000, Bandi, Ravi Kumar wrote:
->>> On Tue, Oct 21, 2025 at 05:46:17PM +0000, Bandi, Ravi Kumar wrote:
->>>>> On Oct 21, 2025, at 10:23 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
->>>>> On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi wrote:
->>>>>> The pcie-xilinx-dma-pl driver does not enable INTx interrupts
->>>>>> after initializing the port, preventing INTx interrupts from
->>>>>> PCIe endpoints from flowing through the Xilinx XDMA root port
->>>>>> bridge. This issue affects kernel 6.6.0 and later versions.
->>>>>>
->>>>>> This patch allows INTx interrupts generated by PCIe endpoints
->>>>>> to flow through the root port. Tested the fix on a board with
->>>>>> two endpoints generating INTx interrupts. Interrupts are
->>>>>> properly detected and serviced. The /proc/interrupts output
->>>>>> shows:
->>>>>>
->>>>>> [...]
->>>>>> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
->>>>>> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
->>>>>> [...]
-
-First a comment on this IRQ logging:
-
-These lines do NOT refer to the INTx IRQ(s) but the controller internal
-"events" (errors etc). Please see this log for INTx on my Versal
-platform with pci_irqd_intx_xlate added:
-
-  24:          0          0  pl_dma:RC-Event   0 Level     LINK_DOWN
-  25:          0          0  pl_dma:RC-Event   3 Level     HOT_RESET
-  26:          0          0  pl_dma:RC-Event   8 Level     CFG_TIMEOUT
-  27:          0          0  pl_dma:RC-Event   9 Level     CORRECTABLE
-  28:          0          0  pl_dma:RC-Event  10 Level     NONFATAL
-  29:          0          0  pl_dma:RC-Event  11 Level     FATAL
-  30:          0          0  pl_dma:RC-Event  20 Level     SLV_UNSUPP
-  31:          0          0  pl_dma:RC-Event  21 Level     SLV_UNEXP
-  32:          0          0  pl_dma:RC-Event  22 Level     SLV_COMPL
-  33:          0          0  pl_dma:RC-Event  23 Level     SLV_ERRP
-  34:          0          0  pl_dma:RC-Event  24 Level     SLV_CMPABT
-  35:          0          0  pl_dma:RC-Event  25 Level     SLV_ILLBUR
-  36:          0          0  pl_dma:RC-Event  26 Level     MST_DECERR
-  37:          0          0  pl_dma:RC-Event  27 Level     MST_SLVERR
-  38:         94          0  pl_dma:RC-Event  16 Level     84000000.axi-pcie
-  39:         94          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
-
-The last line shows the INTx IRQs here ('pl_dma:INTx' vs 'pl_dma:RC-
-Event').
-
-More below...
-
->>>>>>
->>>>>> Changes since v1::
->>>>>> - Fixed commit message per reviewer's comments
->>>>>>
->>>>>> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
->>>>>> Cc: stable@vger.kernel.org
->>>>>> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
->>>>>
->>>>> Hi Ravi, obviously you tested this, but I don't know how to reconcile
->>>>> this with Stefan's INTx fix at
->>>>> https://lore.kernel.org/r/20251021154322.973640-1-stefan.roese@mailbox.org
->>>>>
->>>>> Does Stefan's fix need to be squashed into this patch?
->>>>
->>>> Sure, we can squash Stefan’s fix into this.
->>>
->>> I know we *can* squash them.
->>>
->>> I want to know why things worked for you and Stefan when they
->>> *weren't* squashed:
->>>
->>>   - Why did INTx work for you even without Stefan's patch.  Did you
->>>     get INTx interrupts but not the right ones, e.g., did the device
->>>     signal INTA but it was received as INTB?
->>
->> I saw that interrupts were being generated by the endpoint device,
->> but I didn’t specifically check if they were correctly translated in
->> the controller. I noticed that the new driver wasn't explicitly
->> enabling the interrupts, so my first approach was to enable them,
->> which helped the interrupts flow through.
+On Tue, Oct 21, 2025 at 11:39:49AM -0400, Frank Li wrote:
+> On Tue, Oct 21, 2025 at 12:00:09PM +0300, Sakari Ailus wrote:
+> > Hi Frank,
+> >
+> > On Wed, Aug 27, 2025 at 03:49:18PM -0400, Frank Li wrote:
+> > > The endpoint ref to /schemas/media/video-interfaces.yaml#, so replace
+> > > additionalProperties with unevaluatedProperties to allow use common
+> > > properties.
+> > >
+> > > Fix below CHECK_DTBS warnings:
+> > >   arch/arm/boot/dts/nxp/imx/imx7s-warp.dtb: camera@36 (ovti,ov2680): port:endpoint: 'clock-lanes', 'data-lanes' do not match any of the regexes: '^pinctrl-[0-9]+$'
+> > > 	from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov2680.yaml
+> > >
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
+> > > index 634d3b821b8c7..ec5c40684b6bd 100644
+> > > --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
+> > > +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
+> > > @@ -58,7 +58,7 @@ properties:
+> > >      properties:
+> > >        endpoint:
+> > >          $ref: /schemas/media/video-interfaces.yaml#
+> > > -        additionalProperties: false
+> > > +        unevaluatedProperties: false
+> >
+> > There are a lot more than just data-lanes in video-interfaces.yaml.
+> >
+> > Could you instead drop data-lanes and clock-lanes from the bindings? They
+> > are redundant.
 > 
-> OK, I'll assume the interrupts happened but the driver might not have
-> been able to handle them correctly, e.g., it was prepared for INTA but
-> got INTB or similar.
+> What's your means?  drop data-lanes and clock-lanes from the dts file?
 > 
->>>   - Why did Stefan's patch work for him even without your patch.  How
->>>     could Stefan's INTx work without the CSR writes to enable
->>>     interrupts?
->>
->> I'm not entirely sure if there are any other dependencies in the
->> FPGA bitstream. I'll investigate further and get back to you.
-> 
-> Stefan clarified in a private message that he had applied your patch
-> first, so this mystery is solved.
+> The board design may use less data-lanes, why it is reduntant?
 
-Yes. I applied Ravi's patch first and still got no INTx delivered
-to the nvme driver. That's what me triggered to dig deeper here and
-resulted in this v2 patch with pci_irqd_intx_xlate added.
+That would be no data lanes at all then. The sensor supports a single lane
+only, which is why data-lanes isn't listed as a property in bindings.
 
-BTW:
-I re-tested just now w/o Ravi's patch and the INTx worked. Still I think
-Ravi's patch is valid and should be applied...
->>>   - Why you mentioned "kernel 6.6.0 and later versions."
->>>   8d786149d78c appeared in v6.7, so why would v6.6.0 would be
->>>   affected?
->>
->> Apologies for not clearly mentioning the version earlier. This is
->> from the linux-xlnx tree on the xlnx_rebase_v6.6 branch, which
->> includes the new Xilinx root port driver with QDMA support:
->> https://github.com/Xilinx/linux-xlnx/blob/xlnx_rebase_v6.6_LTS/drivers/pci/controller/pcie-xilinx-dma-pl.c
->>
->> In earlier versions, the driver was:
->> https://github.com/Xilinx/linux-xlnx/blob/xlnx_rebase_v6.1_LTS_2023.1_update/drivers/pci/controller/pcie-xdma-pl.c
->> This older driver had no issues with interrupts.
->>
->> The new driver introduced in v6.7 and later is a rewrite of the old
->> one, now with QDMA support, which has issues with INTx interrupts.
-> 
-> OK, this sounds like out-of-tree history that is not relevant in the
-> mainline kernel, so Mani did the right thing in omitting it.
-> 
-> I think the best thing to do is to squash Stefan's patch into this one
-> so we end up with a single patch that makes INTx work correctly.
-> 
-> Ravi and Stefan, does that seem OK to you?
+-- 
+Regards,
 
-Yes, please either apply both separately or squash them. Whatever you
-prefer.
-
-Many thanks,
-Stefan
->>>>>> +++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
->>>>>> @@ -659,6 +659,12 @@ static int xilinx_pl_dma_pcie_setup_irq(struct pl_dma_pcie *port)
->>>>>>              return err;
->>>>>>      }
->>>>>>
->>>>>> +     /* Enable interrupts */
->>>>>> +     pcie_write(port, XILINX_PCIE_DMA_IMR_ALL_MASK,
->>>>>> +                XILINX_PCIE_DMA_REG_IMR);
->>>>>> +     pcie_write(port, XILINX_PCIE_DMA_IDRN_MASK,
->>>>>> +                XILINX_PCIE_DMA_REG_IDRN_MASK);
->>>>>> +
->>>>>>      return 0;
->>>>>> }
->>
+Sakari Ailus
 
