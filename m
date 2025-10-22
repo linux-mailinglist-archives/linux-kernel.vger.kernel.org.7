@@ -1,180 +1,100 @@
-Return-Path: <linux-kernel+bounces-864196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8637DBFA25A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B078CBFA254
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2BC1188D51D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4031888158
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78EB2EC55C;
-	Wed, 22 Oct 2025 06:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZGVsJof6"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6326139D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784B02D5954;
 	Wed, 22 Oct 2025 06:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E622512FF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761112899; cv=none; b=kzDTeke6twcprLgIirwLP4hsSNdsjuhY9eupb24ZcGtz43DRbKusW8V8V4UpvX8RAc1qvmH0rhYs/f+KvgsZ6Xx74JvtKwFqdJ/TFInsMmoTYvOLdcx7JGRgKroz3l9oSH7trjdtTUOyVTzDNKsp8iKkcPfj0d+BB4NU9V8CBFc=
+	t=1761112896; cv=none; b=uxG/ky3Mae3DSH5A4Y2kdvjOFSWfn7ecFoH8gCcUt+dn1GzBAKInqQ4IQ95ToUL8NW4WdeQ2DtO2IzJU7kcZtex1OqQA9IOKrexRXBRCWa4m5imyA6uXjkt8EjPcMtXMqiAWzqClDYiKloTgD8isaYqajaftI0wRniy5oqF3LNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761112899; c=relaxed/simple;
-	bh=+hL0miMu2efF/q8FanVfxv6B9+KLc5IphfM8WVdYgq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=utRLYazPcgnnXsWoBxOl3lOrQ6BNsfpMKPFCEnNUqEuzSFTwoAjypzuGvl+gkb5u0VBDrLYDcGjlMyQjPByodu9cCAhvAtvQWLAvuZ7r899nLFFWuoKBMKg/ZipoGMdFHT0sLahqDL2qW0Axj3oupcZG0s76pIifgp1/0bRG5BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZGVsJof6; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <49bfd367-bb7e-4680-a859-d6ac500d1334@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761112894;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MaKTtydp6I4aIQxhn86P3BAwgNQxEfqBxIOSSlgkBPM=;
-	b=ZGVsJof6iMjWSHuR5ov4Or/qdDwPisoId8W2V45U1a+S7XD/tZMzr6/JEbVKREB0SP8Puz
-	79Y4HFxLemsNK6x1F5k5kdHbjZ/fSUsYBPmDWxA4wWDyZ+pYDs0llCAtpiWe+hgx4HEWKP
-	5qEzcEh0okJCRunHxGYLZJbLwuYY1xQ=
-Date: Wed, 22 Oct 2025 14:01:26 +0800
+	s=arc-20240116; t=1761112896; c=relaxed/simple;
+	bh=Xz+xA4iWmuzbetXgjKWkR0I7OqLt/VHd7+0OLb9nFzA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mVx21B+TajCFN1/h6TR5OxON5vAe0oDCoxKupMr+IzoygIDLygpmqbPiPphXyxtMb+kgkiAFKYxZojtQf2mUNYtKICiiK5Yw2UNKHwPKHALaEoUbZdzabeVXjViRKPItxw7lpcVxpex4UyXN2lkJkCGKM//GkLPdhtVjSCZLiAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430da49fb0aso86107935ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:01:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761112893; x=1761717693;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NAU5nSOSFOEDQ7Ip9vyv0R+/EJBKN0eeOwZiRs0KSA4=;
+        b=sTJG0gEcZY8b6ifCxMml0ef8NMEC2iQ58JasQIxcPHIk3Y2O1NVIE8vUeD4kZuNCXI
+         3UVGqshYgW6D+23myeFUlN+N3Pk0J643RT9yEb3uC2P5hZ10qWq2eb8iWTCf9THxNRFe
+         vtyTdqlty0gZbCTOLBozFHBAuHwdZF8fK58nrVEkv1LlhplX5HwuR1rz/MLQw3yIVQVW
+         4W1QWvr50jLwoderWqyItnPbYfTNNE/KBfb5fdlZDUvn2Viz0DdUH1gKQtV79I6S3a9I
+         NXsx/ChX/uVSqUTCpjws4o2+hVmFbzl5A5DCmCVdax9t4GrQdjLj714YE1hq665NFy0b
+         TYRQ==
+X-Gm-Message-State: AOJu0Yxrm5c3gVQnE1pLFe6OLuQzABE35+12vXt8x5bRSBCBQjQNIRhL
+	/bK9UUleIdSVeSpti+jINxzQg57r9chR+7Uc0KMv51ULBsT87mVqHUbP6x6ul4mlg8VOL7YAbub
+	js9z6TPdT8JVFEeNJ6x+LRftsLUi6trWRh/a4y1zM3DrVd2g2V4+Wh8YF6DY=
+X-Google-Smtp-Source: AGHT+IF08d7r4UTCIPHS7Wi5idcSCTuucx204yQX5zireJZJ5UHssxALo5+Xg2e0Ay3Ob68GZUNgG81RuFpQjjS0ik09Nes63jgD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6.1.y] selftests/mm: Move default_huge_page_size to
- vm_util.c
-Content-Language: en-US
-To: stable@vger.kernel.org, gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- shuah@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Leon Hwang <leon.hwang@linux.dev>
-References: <20251022055138.375042-1-leon.hwang@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251022055138.375042-1-leon.hwang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1d9d:b0:430:ab98:7b1f with SMTP id
+ e9e14a558f8ab-430c52beddbmr295913155ab.18.1761112893716; Tue, 21 Oct 2025
+ 23:01:33 -0700 (PDT)
+Date: Tue, 21 Oct 2025 23:01:33 -0700
+In-Reply-To: <68c9c3bd.050a0220.3c6139.0e65.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8733d.050a0220.346f24.0037.GAE@google.com>
+Subject: Forwarded: [PATCH] testing
+From: syzbot <syzbot+fc241a3fa60015afb3d1@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-+Cc: Greg
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On 2025/10/22 13:51, Leon Hwang wrote:
-> Fix the build error:
-> 
-> map_hugetlb.c: In function 'main':
-> map_hugetlb.c:79:25: warning: implicit declaration of function 'default_huge_page_size' [-Wimplicit-function-declaration]
->     79 |         hugepage_size = default_huge_page_size();
->        |                         ^~~~~~~~~~~~~~~~~~~~~~
-> /usr/bin/ld: /tmp/ccYOogvJ.o: in function 'main':
-> map_hugetlb.c:(.text+0x114): undefined reference to 'default_huge_page_size'
-> 
-> According to the latest selftests, 'default_huge_page_size' has been
-> moved to 'vm_util.c'. So fix the error by the same way.
-> 
-> Reviewed-by: Lance Yang <lance.yang@linux.dev>
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> ---
->   tools/testing/selftests/vm/Makefile      |  1 +
->   tools/testing/selftests/vm/userfaultfd.c | 24 ------------------------
->   tools/testing/selftests/vm/vm_util.c     | 21 +++++++++++++++++++++
->   tools/testing/selftests/vm/vm_util.h     |  1 +
->   4 files changed, 23 insertions(+), 24 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-> index 192ea3725c5c..ed90deebef0d 100644
-> --- a/tools/testing/selftests/vm/Makefile
-> +++ b/tools/testing/selftests/vm/Makefile
-> @@ -100,6 +100,7 @@ $(OUTPUT)/madv_populate: vm_util.c
->   $(OUTPUT)/soft-dirty: vm_util.c
->   $(OUTPUT)/split_huge_page_test: vm_util.c
->   $(OUTPUT)/userfaultfd: vm_util.c
-> +$(OUTPUT)/map_hugetlb: vm_util.c
->   
->   ifeq ($(MACHINE),x86_64)
->   BINARIES_32 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_32))
-> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> index 297f250c1d95..4751b28eba18 100644
-> --- a/tools/testing/selftests/vm/userfaultfd.c
-> +++ b/tools/testing/selftests/vm/userfaultfd.c
-> @@ -1674,30 +1674,6 @@ static int userfaultfd_stress(void)
->   		|| userfaultfd_events_test() || userfaultfd_minor_test();
->   }
->   
-> -/*
-> - * Copied from mlock2-tests.c
-> - */
-> -unsigned long default_huge_page_size(void)
-> -{
-> -	unsigned long hps = 0;
-> -	char *line = NULL;
-> -	size_t linelen = 0;
-> -	FILE *f = fopen("/proc/meminfo", "r");
-> -
-> -	if (!f)
-> -		return 0;
-> -	while (getline(&line, &linelen, f) > 0) {
-> -		if (sscanf(line, "Hugepagesize:       %lu kB", &hps) == 1) {
-> -			hps <<= 10;
-> -			break;
-> -		}
-> -	}
-> -
-> -	free(line);
-> -	fclose(f);
-> -	return hps;
-> -}
-> -
->   static void set_test_type(const char *type)
->   {
->   	if (!strcmp(type, "anon")) {
-> diff --git a/tools/testing/selftests/vm/vm_util.c b/tools/testing/selftests/vm/vm_util.c
-> index fc5743bc1283..613cc61602c9 100644
-> --- a/tools/testing/selftests/vm/vm_util.c
-> +++ b/tools/testing/selftests/vm/vm_util.c
-> @@ -161,6 +161,27 @@ bool check_huge_shmem(void *addr, int nr_hpages, uint64_t hpage_size)
->   	return __check_huge(addr, "ShmemPmdMapped:", nr_hpages, hpage_size);
->   }
->   
-> +unsigned long default_huge_page_size(void)
-> +{
-> +	unsigned long hps = 0;
-> +	char *line = NULL;
-> +	size_t linelen = 0;
-> +	FILE *f = fopen("/proc/meminfo", "r");
-> +
-> +	if (!f)
-> +		return 0;
-> +	while (getline(&line, &linelen, f) > 0) {
-> +		if (sscanf(line, "Hugepagesize:       %lu kB", &hps) == 1) {
-> +			hps <<= 10;
-> +			break;
-> +		}
-> +	}
-> +
-> +	free(line);
-> +	fclose(f);
-> +	return hps;
-> +}
-> +
->   static bool check_vmflag(void *addr, const char *flag)
->   {
->   	char buffer[MAX_LINE_LENGTH];
-> diff --git a/tools/testing/selftests/vm/vm_util.h b/tools/testing/selftests/vm/vm_util.h
-> index 470f85fe9594..a4439db0d6f8 100644
-> --- a/tools/testing/selftests/vm/vm_util.h
-> +++ b/tools/testing/selftests/vm/vm_util.h
-> @@ -11,4 +11,5 @@ uint64_t read_pmd_pagesize(void);
->   bool check_huge_anon(void *addr, int nr_hpages, uint64_t hpage_size);
->   bool check_huge_file(void *addr, int nr_hpages, uint64_t hpage_size);
->   bool check_huge_shmem(void *addr, int nr_hpages, uint64_t hpage_size);
-> +unsigned long default_huge_page_size(void);
->   bool softdirty_supported(void);
+***
+
+Subject: [PATCH] testing
+Author: ankitkhushwaha.linux@gmail.com
+
+Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+---
+
+#syz test
+
+---
+ arch/x86/kernel/kvmclock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index ca0a49eeac4a..7d1c98efa6a4 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -74,7 +74,7 @@ static int kvm_set_wallclock(const struct timespec64 *now)
+ static u64 kvm_clock_read(void)
+ {
+ 	u64 ret;
+-
++	// 
+ 	preempt_disable_notrace();
+ 	ret = pvclock_clocksource_read_nowd(this_cpu_pvti());
+ 	preempt_enable_notrace();
+-- 
+2.51.0
 
 
