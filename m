@@ -1,98 +1,182 @@
-Return-Path: <linux-kernel+bounces-865071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D31FBFC177
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:19:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0D6BFC237
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1BB19C57E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FFB1622A8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2226ED40;
-	Wed, 22 Oct 2025 13:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C45D26ED28;
+	Wed, 22 Oct 2025 13:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OuvXtMjJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZF6RMT/b"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07BD26ED36;
-	Wed, 22 Oct 2025 13:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE3B26ED55
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761139139; cv=none; b=a80uAoxdUHJxKwB6JO8Crbo6xcVdEaCkvvHy6+LgIvfbsWQ1mvLjhSPznO4HnHsTJJnF7cII2TkvGzuTnY5HByfI8KsPztV9uDuWi/53fgjykysrbBvZlV7CviEW7BLvc4T+jWbfWSHxkVD6iWFv1Muj4+gpiYzUHFxNFvmYxy0=
+	t=1761139154; cv=none; b=Y5LpyTk0sQB7WE+L0W55ltK5zZIS/xNMMR5kfnzst0n7iYcS+4t1VupFZJYjM25Hc8dvySjgSQYaux6R5aMabk77r/LdtQjbGJDULJS2iTyamQSckYQnFG5PxhpwO1S+i3zSSIRWpW69MiTBUVFlfi1RD0KhXpZLAA58DHDj4sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761139139; c=relaxed/simple;
-	bh=LqZWVjJfglDzrK9P59MVwBlHq/m6Xj8brgtwQrM+Fqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=juVIyPGlqEKjNzAa6DRuBnYBqhT4buzEiOzUZwxZK6Ua0WDe5Yd1Czy/PNdXPZekHc6UnOaqfNRr1uXbmANMTwdIF9y2lnidRuYVMV82ChjU0lEi0Agd32RcnqWtmSBKP6+4BIrtIoZ4C6BJwSSFojZIBv2D2Oud5K6d698JTd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OuvXtMjJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=LqZWVjJfglDzrK9P59MVwBlHq/m6Xj8brgtwQrM+Fqs=; b=OuvXtMjJVVFBrEXpN1QjxGWgFW
-	XaMtU5twYehQBUY6XfE/qNy0Jy2kHv1eSnorx7LnIGXkhH/TSKSoEX5vJ+MSyl5To0lz4MEBIT8Ab
-	89ctoq33OP6F59NtzGR722OxqG7WS6K5gCbZ1H5SHy2AoeGdn6DR13mhXrAg2BJ6hzV2TmgUKMMvD
-	wxliY/hFn8NB5p5dlQ2SA7xPwNA7F8IWPeHxlgYhFvg88fUDZUw0WzFV+7DJb65sIdB1r93GobUII
-	M5KFKg61LOsreKUPORJTcPx1qYRM3TGWG1O2ABOUuH5HlDBXAAgfmHW7ciOVRUyTOzyPTN0Zq1gzl
-	1A3RgtUQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBYjU-0000000683H-0XSI;
-	Wed, 22 Oct 2025 13:18:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4B99D30039F; Wed, 22 Oct 2025 15:18:28 +0200 (CEST)
-Date: Wed, 22 Oct 2025 15:18:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>
-Subject: Re: [PATCH] module: Fix device table module aliases
-Message-ID: <20251022131828.GO4067720@noisy.programming.kicks-ass.net>
-References: <e52ee3edf32874da645a9e037a7d77c69893a22a.1760982784.git.jpoimboe@kernel.org>
- <13384578-a7e7-439a-8f30-387a2cb92680@sirena.org.uk>
+	s=arc-20240116; t=1761139154; c=relaxed/simple;
+	bh=T/wwnudikjJfd0WN5sp4fJr1hbP7yzlQ2sE97iqYGoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J3TyROrHUiwSjr3wTdVaVR9zCJkSvVRD2u6bqy5bHHLmi/N349LCCFD0jJ70JDfMeYhUY3kJAhVj9yRCO2NbTGBxa4O8mzQTUyLGXAL16riUHUXl/Qkz25m/I2QPFncFWtDThozAbRKN5RoPkaKkn1BPcC5mPLtzEkw1fNpXC0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZF6RMT/b; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59MDIdRk1421518;
+	Wed, 22 Oct 2025 08:18:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761139119;
+	bh=Ydsu4zXx6nfJv25fwi+Bi7oHLbaay9yVkBdRqmrZmF8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ZF6RMT/bADxoYcyC89BYKqPkVKCFBPYn+T0SQDYrugd2U4qnDo97W6g8Y/PKW/c3x
+	 7Q3wx2chYW0j88Duvpac1hsMp73PvWj1PkD+Fcq4KncfG7mpEdmlmlulhRaC0FBKfe
+	 PHt6VkKGjKCLCVA+Dq2r07K2jZXPV0j8Sk7q4aBk=
+Received: from DLEE210.ent.ti.com (dlee210.ent.ti.com [157.170.170.112])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59MDIcDp1622638
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 22 Oct 2025 08:18:39 -0500
+Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE210.ent.ti.com
+ (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
+ 2025 08:18:38 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 22 Oct 2025 08:18:38 -0500
+Received: from [172.24.233.62] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.233.62])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59MDIZlg1236923;
+	Wed, 22 Oct 2025 08:18:35 -0500
+Message-ID: <58893f84-c161-4bf9-ac70-c37ff1607a03@ti.com>
+Date: Wed, 22 Oct 2025 18:48:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <13384578-a7e7-439a-8f30-387a2cb92680@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/tidss: Set vblank (event) time at
+ crtc_atomic_enable
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Jyri Sarha
+	<jyri.sarha@iki.fi>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+CC: Pekka Paalanen <pekka.paalanen@collabora.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20250905-tidss-fix-timestamp-v1-0-c2aedf31e2c9@ideasonboard.com>
+ <20250905-tidss-fix-timestamp-v1-2-c2aedf31e2c9@ideasonboard.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20250905-tidss-fix-timestamp-v1-2-c2aedf31e2c9@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Oct 22, 2025 at 01:01:40PM +0100, Mark Brown wrote:
-> On Mon, Oct 20, 2025 at 10:53:40AM -0700, Josh Poimboeuf wrote:
->=20
-> > Commit 6717e8f91db7 ("kbuild: Remove 'kmod_' prefix from
-> > __KBUILD_MODNAME") inadvertently broke module alias generation for
-> > modules which rely on MODULE_DEVICE_TABLE().
->=20
-> It'd be really good to get this fix applied, modules not loading is
-> hugely impacting CI coverage for -next - a lot of systems aren't even
-> able to get their rootfs due to the drivers for it being built as
-> modules.
+Hi Tomi,
 
-Oh, this needs to go in tip/objtool/core ? This wasn't immediately
-obvious to me.
+Thanks for the patch.
 
-Let me go queue that then.
+On 05/09/25 19:28, Tomi Valkeinen wrote:
+> It was reported that Weston stops at an assert, which checks that the
+> page flip event timestamp is the same or newer than the previous
+> timestamp:
+> 
+> weston_output_finish_frame: Assertion `timespec_sub_to_nsec(stamp, &output->frame_time) >= 0' failed.
+> 
+
+As I understand, this patch fixes above assertion error related to bad 
+time-stamping. I believe it is fixing this issue [0] and probably this 
+[1] ?. So I think it should be better to use a Fixes tag.
+
+> With manual tests, I can see that when I enable the CRTC, I get a page
+> flip event with a timestamp of 0. Tracking this down led to
+> drm_reset_vblank_timestamp() which does "t_vblank = 0" if
+> "high-precision query" is not available.
+> 
+> TI DSS does not have any hardware timestamping, and thus the default
+> ktime_get() is used in the DRM framework to get the vblank timestamp,
+> and ktime_get() is not "high precision" here.
+> 
+> It is not quite clear why the framework behaves this way, but I assume
+> the idea is that drm_crtc_vblank_on(), which calls
+> drm_reset_vblank_timestamp(), can be called at any time, and thus
+> ktime_get() wouldn't give a good timestamp. And, the idea is that the
+> driver would wait until next vblank after the CRTC enable, and then we
+> could get a good timestamp. This is hinted in the comment: "reinitialize
+> delayed at next vblank interrupt and assign 0 for now".
+> 
+> I think that makes sense. However, when we enable the CRTC in TI DSS,
+> i.e. we write the enable bit to the hardware, that's the exact moment
+> when the "vblank cycle" starts. It is the zero point in the cycle, and
+> thus ktime_get() would give a good timestamp.
+> 
+> I am not sure if this is applicable to other hardware, and if so, how
+> should it be solved in the framework. So, let's fix this in the tidss
+> driver at least for now.
+> 
+> This patch updates the vblank->time manually to ktime_get() just before
+> sending the vblank event, and we enable the crtc just before calling
+> ktime_get(). To get even more exact timing, the dispc_vp_enable() is
+> moved inside the event_lock spinlock.
+> 
+> With this, we get a proper timestamp for the page flip event from
+> enabling the CRTC, and Weston is happy.
+> 
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+With the Fixes tag applied,
+Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+
+[0]: 
+https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1553964/processor-sdk-am62x-weston-fails-to-wake-from-idle-time-sleep-restarts-after-sigterm
+[1]: 
+https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1416342/am625-am625-doesn-t-wake-up-from-standy-when-idle-time-is-configured-in-weston-ini
+
+Regards
+Devarsh
+
+
+> ---
+>   drivers/gpu/drm/tidss/tidss_crtc.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+> index 1b767af8e1f6..6898f12bb364 100644
+> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+> @@ -244,11 +244,16 @@ static void tidss_crtc_atomic_enable(struct drm_crtc *crtc,
+>   
+>   	dispc_vp_prepare(tidss->dispc, tcrtc->hw_videoport, crtc->state);
+>   
+> -	dispc_vp_enable(tidss->dispc, tcrtc->hw_videoport);
+> -
+>   	spin_lock_irqsave(&ddev->event_lock, flags);
+>   
+> +	dispc_vp_enable(tidss->dispc, tcrtc->hw_videoport);
+> +
+>   	if (crtc->state->event) {
+> +		unsigned int pipe = drm_crtc_index(crtc);
+> +		struct drm_vblank_crtc *vblank = &ddev->vblank[pipe];
+> +
+> +		vblank->time = ktime_get();
+> +
+>   		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+>   		crtc->state->event = NULL;
+>   	}
+> 
+
 
