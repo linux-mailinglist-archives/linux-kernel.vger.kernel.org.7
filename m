@@ -1,93 +1,173 @@
-Return-Path: <linux-kernel+bounces-863912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D21FBF97E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:42:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A96BF9802
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95EB11887F76
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:42:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CE2B4E251E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D2E1DF723;
-	Wed, 22 Oct 2025 00:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA4F1E0DCB;
+	Wed, 22 Oct 2025 00:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ZOq55LUq"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rqzm/YyG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5334A1D61B7;
-	Wed, 22 Oct 2025 00:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D9A76025;
+	Wed, 22 Oct 2025 00:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761093730; cv=none; b=XSdNS1/rHkrhBDXkHCHOJ1HEn0Us0qDTCovZaFFppuMlYJCC0ZKYBrPmBGYBiphkpUUi4CTZ2uBCBKF1iUeEYhWNcShW7qAxyh96sXYoBpITdROPRI4bPq83/biajfcMJQ1P0FP+U6NBozuAAxyXHbshBUWXfLRZw3zWBXAtJZM=
+	t=1761093870; cv=none; b=hktmPYbKSPxcvY2UYZUqK9KcqKjXlG68y7glzoxPADlddbeOchWpoKY2RqRfDmmQrCB8lyX2AjkTJFy/EoLrnHyHhXsI2wmZnW72wodOh/IlBK6dXL7ITbEbd6bXF9L6yym6Je1gdYUu7WACIzmduOOJfZbiHUmHhnuihXnmINc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761093730; c=relaxed/simple;
-	bh=lrlI8kaKnlQcc6WSTKi2AMrvVDVav+P/m/GQflMXKao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lb0l+p7FhK3Ei3FFAHb+u2ToVgpN4wIoVEwN/9hAwnnStOGaRu4JLHz7YXSAMAlWf24KbyEnOC3qXfPtU7yiVYzaefDVwQVx4+nsGfmSaxrA2j/bSlFFL63LTyXtZik3PgsJ4DC8b4h1GETi76cO6fodGyrzJbYFPeZ7ASa5AAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ZOq55LUq; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=RsCiTjfAJVGKd8jls9/TBL277kk9xNpzA5VJ2++/V68=; b=ZOq55LUqsOYpHtsTa8MaDcX+xO
-	MWsY9mqJYPBQLKWK0jBiOqVABz8CCKXIdOlnZbJ/jChV/HH3dxjEExavHZsP4ixZL7yL/78kJXuWW
-	iqw/d5lbXy7Q/bs3kZzWa5xdZMUZzoQYT9DdKDnzxBU2b7mJaQTlVNMpXlpinoTJ5h3G+CVeToGAS
-	/IkJGwW++ZpcQTNLFTaLmjPHjdbC8xnWrRuMWRkQazqLafdKH9xutHlcXEJnU1LfdByJPCPX87Uye
-	IDJ/x85EeC1MjNm5QwLJv36Vrjjpbkk8leqpIsj3lmO9TvBoS+UAO+29vVUCBYV5+jGyxECr6XnRY
-	uc96Ttkw==;
-Received: from i53875b19.versanet.de ([83.135.91.25] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vBMvT-0007Tx-2P; Wed, 22 Oct 2025 02:42:03 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: broonie@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: spi: spi-rockchip: Add RK3506 compatible
-Date: Wed, 22 Oct 2025 02:41:59 +0200
-Message-ID: <20251022004200.204276-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1761093870; c=relaxed/simple;
+	bh=gr5rO+ucHH2Xhpa6kqotEVBRGlgtbhDPRr2EzQYyVjk=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=UkFz14T7hK4aRqgBt1XqEenkYkaLLppONCYTtV6Ii+NYyYK5eVqigZgJGBmXT9Au3DJSS4ou+XEzbs9FtoaAING1pLRvF0LleAJsabZHj5IeC+c1XeJwLZz3zMZv+AgRgwc4irgvFMIyPGaqyM4miLCL8yd6W2zy40CoosuqWvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rqzm/YyG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDE7C4CEFD;
+	Wed, 22 Oct 2025 00:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761093869;
+	bh=gr5rO+ucHH2Xhpa6kqotEVBRGlgtbhDPRr2EzQYyVjk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Rqzm/YyGtXsMB1dK1YJnSHujShTgNxHVl4jn9lKIZMgP6t3iqs9f6RbPtz6lLhe3S
+	 EP9iVJMo9aqRqHKCRmBs6GY3FUoXZ6cf2rPlUXBs04iHzu5M0Vl9bxhd/+dCSlSxa1
+	 dobsmguLPj7ZrXOILgzdQXpzytdn3qd1DDh5E/7FJ3C2yVv2MXG3p9KtnipTdZHUTE
+	 iRgY//hn4ZOt8FiYWaXPCUhLkFxbpXAIIy0IUqRVNQRDnNk44ZeQzshwruaisNn+iJ
+	 3l2H2tBmT+a3bTfi5tFaABnnex+H/3FhGRFZwCERzfK+UxrEkIuN1m6fnXU0RsaMdX
+	 +lHkbBxuUnYWQ==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1vBMyC-00000002M7f-32Hr;
+	Tue, 21 Oct 2025 20:44:52 -0400
+Message-ID: <20251022004338.731044739@kernel.org>
+User-Agent: quilt/0.68
+Date: Tue, 21 Oct 2025 20:43:38 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v10 0/5] tracepoints: Add warnings for unused tracepoints and trace events
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The SPI controller found in the RK3506 SoC is still compatible to the
-original one introduced with the RK3066, so add the RK3506 compatible
-to the list of its variants.
+Every trace event can take up to 5K of memory in text and metadata regardless
+if they are used or not. Trace events should not be created if they are not
+used.  Currently there's several events in the kernel that are defined
+but unused, either because their callers were removed without removing the
+trace event with it, or a config hides the trace event caller but not the
+trace event itself. And in some cases, trace events were simply added but were
+never called for whatever reason. The number of unused trace events continues
+to grow.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- Documentation/devicetree/bindings/spi/spi-rockchip.yaml | 1 +
- 1 file changed, 1 insertion(+)
+This patch series aims to fix this.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml b/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-index 748faf7f7081..ce6762c92fda 100644
---- a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-@@ -34,6 +34,7 @@ properties:
-               - rockchip,rk3328-spi
-               - rockchip,rk3368-spi
-               - rockchip,rk3399-spi
-+              - rockchip,rk3506-spi
-               - rockchip,rk3528-spi
-               - rockchip,rk3562-spi
-               - rockchip,rk3568-spi
--- 
-2.47.2
+The first patch moves the elf parsing out of sorttable.c so that it can be
+used by other tooling.
 
+The second patch creates a new program to run during build called
+tracepoint-update (note this may be extended to do other tracepoint
+modifications in the future). It also creates a new section called
+__tracepoint_check, where all callers of a tracepoint creates a variable
+that is placed in this section with the name of the tracepoint they use.
+The scripts/tracepoint-update.c is used to find tracepoints that are defined
+but not used which would mean they would not be in the __tracepoint_check
+section. It sorts the names from that section, and then reads the
+__tracepoint_strings section that has all compiled in tracepoint names. It
+makes sure that every tracepoint is found in the check section and if not, it
+prints a warning message about it.  This lists the missing tracepoints at
+build time.
+
+The third patch adds EXPORT_TRACEPOINT() to the __tracepoint_check section as
+well. There was several locations that adds tracepoints in the kernel proper
+that are only used in modules. It was getting quite complex trying to move
+things around that I just decided to make any tracepoint in a
+EXPORT_TRACEPOINT "used". I'm using the analogy of static and global
+functions. An unused static function gets a warning but an unused global one
+does not.
+
+The last patch triggers warnings when a module defines a tracepoint but
+does not use it.
+
+The fourth patch updates the tracepoint-update program to handle modules.
+
+Instead of hiding this behind a config option, where allmodconfig can
+cause the warnings to trigger, and we don't want current warnings
+to suddenly appear. Have the warnings trigger by a new make command line:
+
+   make UT=1
+
+This will enable the unused tracepoints warnings. Now this should not
+be an issue to upstream before all warnings are removed. When all current
+warnings are removed, we can then make this the default option where
+it will always cause the build to warn if there's a unused tracepoint
+defined. The UT=1 command line can then be removed.
+
+Changes since v9: https://lore.kernel.org/linux-trace-kernel/20251015203842.618059565@kernel.org/
+
+- Add backslash to end of __tracepoint_check in vmlinux.lds.h
+  (Nathan Chancellor)
+
+- Put the enabling of this around ifdef CONFIG_TRACEPOINTS as the
+  tracepoint-update is only compiled when that is enabled.
+
+- Add comment in make help that the UT=1 option is only temporary and will
+  be removed when all current unused tracepoints are eliminated.
+
+- Make updating tracepoint-update.c to handle modules a separate
+  patch. This also allowed to pass "--module" to it to denote that
+  the object is a module so that it can handle it differently.
+
+- Remove use of "" in Makefile script (Nathan Chancellor)
+
+- Use $(objtree) instead of ${obtree} (Nathan Chancellor)
+
+- Move the update to tracepoint-update.c to a separate patch
+  (Nathan Chancellor)
+
+- Remove unneeded "else" block for cmd_check_tracepoint define
+  (Nicolas Schier)
+
+
+Steven Rostedt (5):
+      sorttable: Move ELF parsing into scripts/elf-parse.[ch]
+      tracing: Add a tracepoint verification check at build time
+      tracepoint: Do not warn for unused event that is exported
+      tracing: Allow tracepoint-update.c to work with modules
+      tracing: Add warnings for unused tracepoints for modules
+
+----
+ Makefile                          |  21 ++
+ include/asm-generic/vmlinux.lds.h |   1 +
+ include/linux/tracepoint.h        |  13 ++
+ scripts/Makefile                  |   6 +
+ scripts/Makefile.modfinal         |   5 +
+ scripts/elf-parse.c               | 198 ++++++++++++++++
+ scripts/elf-parse.h               | 305 ++++++++++++++++++++++++
+ scripts/link-vmlinux.sh           |   7 +
+ scripts/sorttable.c               | 477 +++-----------------------------------
+ scripts/tracepoint-update.c       | 261 +++++++++++++++++++++
+ 10 files changed, 851 insertions(+), 443 deletions(-)
+ create mode 100644 scripts/elf-parse.c
+ create mode 100644 scripts/elf-parse.h
+ create mode 100644 scripts/tracepoint-update.c
 
