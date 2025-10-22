@@ -1,416 +1,98 @@
-Return-Path: <linux-kernel+bounces-865405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6C5BFCFE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:00:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCA4BFCFFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 761DD4E6F27
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C71723ADE57
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7CB26E6F6;
-	Wed, 22 Oct 2025 16:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381752701C0;
+	Wed, 22 Oct 2025 16:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oLwv1VdS"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQ4wMGVr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05A326E71E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F0026E6F8;
+	Wed, 22 Oct 2025 16:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761148830; cv=none; b=Te87mtugQpdlHc75dCoMs9lsI4ObSrNoeA/u/rSE54iDhW9n/NCHkn4lr6j9CBeZx5OZki/f0KLEgMWhd/Xa/W63t3N93twB/c6Odd8jhcagOoSVZpAZA+L8+l7JkhZYXO4IN5WpQI4C5kexMbjCJDkfJtkvdTjdmVYPHrDCZVo=
+	t=1761148839; cv=none; b=YwVNtD89LKU0HzfC+QSx/UDqJg0hsudPZLkusk3URBResKnwog6J23UpE2jVSGm4m/u8uJeRw82KLOujQdhZs4AhV6fE5TH3H9FcchkUmpyqZdDz6NYPBKulwBKYBvkj+3s8uZ2wOsvNEUraMxxOvKZRx8QWAoAm2MGiNj+JYzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761148830; c=relaxed/simple;
-	bh=aqh+eIb/pAJr1faQbjM3BAw0kdTESmg5XgtIC+w7U7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fI9oUFBnnHo9tYAxo3AklKKytRsb2AdMcyrriJf9vcWE2eBl4JUndShPK9AjQ2q7C2fobW+6FgvwHDZqd6aTdwO4AaWmtX5ZENGexgojOs+hLWK2mmfDMI8WAIziYRRw5trE1RrNdCKaobo5CEDbBr8S+cq32qY3V8mst7hfSA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oLwv1VdS; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-471005e2ba9so68205e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761148826; x=1761753626; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nrE4Qz7SJRI1Enuhm5FI5J4QD5PmBoz82eoX+T/eGMU=;
-        b=oLwv1VdS+JpHpiamz7188I1SWjVkvlQk1bIGBDB2pKKFigqWA98TBo7EDAzHsQ16Mg
-         R/xzzbhorKqaYw0ZCXeiw2eR9hrP5u+LbL1tdeLU5Q8bvIFIeyTQshFbLL3kHlKDzBUC
-         4Baxgmth/hz8AsJUkqaqUYwmX1Yb/X+QCK0qyEHqTxdEcwzUdbTr6itZJrr0xNUBkwaX
-         rDidT4rcKadIMMfejfS0qQTUhEKjQWbFhRecyxMQ+4andv8rzmb9uwslxUlmGOsEVHrS
-         ng4AFUTqUCqK1Kp76kp+8nqOSUEIsPBOZ/1BtVuhvyHwa2AYVorY3q/Ba/oEV+HVQlnQ
-         ucKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761148826; x=1761753626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nrE4Qz7SJRI1Enuhm5FI5J4QD5PmBoz82eoX+T/eGMU=;
-        b=aWqZ0RFTLs0YzwCwbqbd7kOM6EGzhnCou+ekoLXW5ZmTmzZcWfikeqNlkLZNCKvdnG
-         JLVIxmoTA+zL3VIMrnNc2AgqwpfrfLamk5c6mDxtsqcg7sluayB6qF3jCFyOb3qAw9D8
-         v+Pt+oxjvnleVD88DEdybHqNsocYpiUFVdE31ZugSUXLnnC608nDNZ1tAs9e12BgIHAB
-         WEMUvnag8Y/JANlnlSJnoWD49bEUL8crpfsSXxC5C9babG5YahsODGlmfz9CJmaG9I1V
-         mkmoVc3XltFBN3HbG043DamQLzA0xh+LPqFbNcBkqbvsq/CCz/6K6S91rYa9nci4JsPV
-         xuEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUMjij0p75HHu/Lr6P9M6lyGG4KjD9kRkj/0+JqKWuywNXw2UnjJCGH+ScXVc4K2lGv2XrrhvPf7WF7Bk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMYqRcKAsE7rdArV00q+Gp8oitYVRVZr5Yt5bjEBbkUcYNMDNs
-	KZpy48O75fO8BV5Nwdy3l4UbvCj/mVMygoxOIRO1d7NnFqJYnMk5lkOFnCI3CMBryPhKoE4ubTB
-	Y1EIujm4bfXM2GakwIlrRWCQHWnQm8cAypftVdcA2
-X-Gm-Gg: ASbGncsnmdfkCMPTP5XYwUYwHTgB5ULaHVxFshB3loFeAPlEJhUl7JL+PS2/vYd+qNK
-	ON1jFsdTPAsfn8pUS89/9O4HAiPdKCjra7Th3+2vzudcy5BFd+LGUElq5My8plyOKfklg72tQZX
-	ht41C3Vox3F1n2IfSaK/j/goKkASqIclFqn+2ho/L7F03pj5jvWAPCeEpU9eVMyHnS4cVmwiDio
-	EU9IjGRL7sEY/AMDB00Zr/FMLz4wJ3WDVa+cYLL9kczIO1LJkhJMqZa5PA5mRh5QhMWUOYLgcOG
-	FbEhKOX56LO4f8kWFA==
-X-Google-Smtp-Source: AGHT+IGQ5urEAQ9m57T3Tr0rBInJl1kxrVgo9aZA5J1ni84q+HbgDwPfJxL7EgSHQYRd3sVOQI4JW1ylUbWl3BXuheM=
-X-Received: by 2002:a05:600c:c04b:10b0:46f:c587:df17 with SMTP id
- 5b1f17b1804b1-475c5138edbmr772405e9.1.1761148826010; Wed, 22 Oct 2025
- 09:00:26 -0700 (PDT)
+	s=arc-20240116; t=1761148839; c=relaxed/simple;
+	bh=iJWl0LdiMWT7o2aIAcmE3+F+1RtVXkKI8e4PpYCoz5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ILraOleQq5GHEJ1iw2l5peEJK5J8KVjXMu/FSUVaAc/qrBMK15wDr4sZUI3mTel62hJUr7h2Xp9aUUEM6cXT1lvJRmX44RolE1PngOx7vlWsUc17IGoTZS7NZNEKYybwVxbFHWpwpErHSzUOvvyHWyrZvGrnKoWUjjtxq69Y0xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQ4wMGVr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08414C116D0;
+	Wed, 22 Oct 2025 16:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761148837;
+	bh=iJWl0LdiMWT7o2aIAcmE3+F+1RtVXkKI8e4PpYCoz5Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UQ4wMGVr6ibfS1rY71i2UBnGI57CnAMAmD2/nScPuC7BEt12krL2HU/hJFLU9yI8+
+	 2UV8EXQ9GKC2Vf7/9JjaEj8BPUgtkDGWWO+yKGMpSf2BaQvfDDjeP4PNamtFeU+laD
+	 4VuYPJWCkPm886/V6B9RI1/exZqinCKsFVk7QxBCqBxOYI0J8GSWmIDzLcwT4geT1/
+	 as0QgrRv8Tve4lvSLrzYHMV1sayvkf0OihXlf1vMUDOqXRr5pZ1ka09Q7Q1vqpRsfN
+	 nWzDZlAoh3jLREHIwtK5xS2EOx8UOyFXh7A7ZoVeQ5+TI70cwIicb3m99XQmmwfIH+
+	 zje7ByD2VLWLg==
+Message-ID: <3d2b0de7-4c39-42d3-a6fd-d41386559e1a@kernel.org>
+Date: Wed, 22 Oct 2025 17:00:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021102327.199099-1-ankita@nvidia.com> <20251021102327.199099-2-ankita@nvidia.com>
-In-Reply-To: <20251021102327.199099-2-ankita@nvidia.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Wed, 22 Oct 2025 09:00:13 -0700
-X-Gm-Features: AS18NWCpMHMP31ZSlN1pMxGifJCs7kl9OgsJ-oSyN2IYIPEyac80DDLNqIbtKlQ
-Message-ID: <CACw3F5036Kfs_j8np+_+YejC02ADeLoCNYaQVhmBRzQF32NAgA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] mm: handle poisoning of pfn without struct pages
-To: ankita@nvidia.com
-Cc: aniketa@nvidia.com, vsethi@nvidia.com, jgg@nvidia.com, mochs@nvidia.com, 
-	skolothumtho@nvidia.com, linmiaohe@huawei.com, nao.horiguchi@gmail.com, 
-	akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, tony.luck@intel.com, bp@alien8.de, rafael@kernel.org, 
-	guohanjun@huawei.com, mchehab@kernel.org, lenb@kernel.org, 
-	kevin.tian@intel.com, alex@shazbot.org, cjia@nvidia.com, kwankhede@nvidia.com, 
-	targupta@nvidia.com, zhiw@nvidia.com, dnigam@nvidia.com, kjaju@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-edac@vger.kernel.org, 
-	Jonathan.Cameron@huawei.com, ira.weiny@intel.com, 
-	Smita.KoralahalliChannabasappa@amd.com, u.kleine-koenig@baylibre.com, 
-	peterz@infradead.org, linux-acpi@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Enable setting the rate to
+ camnoc_rt_axi clock
+To: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20251014-add-new-clock-in-vfe-matching-list-v1-1-0d965ccc8a3a@oss.qualcomm.com>
+ <9984bc23-05ef-4d46-aeb8-feb0a18e5762@kernel.org>
+ <bc0caeb8-c99b-4bef-a69e-5ce433e6b890@oss.qualcomm.com>
+ <c4fd6bfc-cc9a-4f37-99b3-f36466691a1e@linaro.org>
+ <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
+ <33513b43-f6d1-4c76-887b-39611a75e1f4@kernel.org>
+ <WnfCknsSyJK68PQZkE2q7COZHRpsLOFlr3dcbwiVR6SBWtF9iRQ4MGzp_9q31O0kyhZwoncQWfHjJQvpz7nyfw==@protonmail.internalid>
+ <ab43c5c9-edc5-459e-8ef7-2aa8bec559c0@oss.qualcomm.com>
+ <0e6e1b8a-d9ae-42d1-b1ad-4314e0d76ab7@kernel.org>
+ <2c0011d3-a692-457c-9ac0-a445fc82df37@oss.qualcomm.com>
+ <48bede40-584a-409a-9bca-7ae3cc420667@linaro.org>
+ <124be1cd-1cc8-4c04-8aca-eede808e736c@oss.qualcomm.com>
+ <wQXRQmbUmfMvej8K6_8vXS41CKntPY998YjO9D3oixzxaMuV4isW-ebPocmhNjppbBpEvXx1524Q-BT-UHfh7Q==@protonmail.internalid>
+ <6efe686a-fdd5-4f17-a0dd-d44a16a67a36@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <6efe686a-fdd5-4f17-a0dd-d44a16a67a36@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 3:23=E2=80=AFAM <ankita@nvidia.com> wrote:
->
-> From: Ankit Agrawal <ankita@nvidia.com>
->
-> The kernel MM currently does not handle ECC errors / poison on a memory
-> region that is not backed by struct pages. If a memory region mapped
-> using remap_pfn_range() for example, but not added to the kernel, MM
-> will not have associated struct pages. Add a new mechanism to handle
-> memory failure on such memory.
->
-> Make kernel MM expose a function to allow modules managing the device
-> memory to register the device memory SPA and the address space associated
-> it. MM maintains this information as an interval tree. On poison, MM can
-> search for the range that the poisoned PFN belong and use the address_spa=
-ce
-> to determine the mapping VMA.
->
-> In this implementation, kernel MM follows the following sequence that is
-> largely similar to the memory_failure() handler for struct page backed
-> memory:
-> 1. memory_failure() is triggered on reception of a poison error. An
-> absence of struct page is detected and consequently memory_failure_pfn()
-> is executed.
-> 2. memory_failure_pfn() collects the processes mapped to the PFN.
-> 3. memory_failure_pfn() sends SIGBUS to all the processes mapping the
-> poisoned PFN using kill_procs().
->
-> Note that there is one primary difference versus the handling of the
-> poison on struct pages, which is to skip unmapping to the faulty PFN.
-> This is done to handle the huge PFNMAP support added recently [1] that
-> enables VM_PFNMAP vmas to map in either PMD level. Otherwise, a poison
-> to a PFN would need breaking the PMD mapping into PTEs to unmap only
-> the poisoned PFN. This will have a major performance impact.
->
-> Link: https://lore.kernel.org/all/20240826204353.2228736-1-peterx@redhat.=
-com/ [1]
->
-> Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
-> ---
->  MAINTAINERS                    |   1 +
->  include/linux/memory-failure.h |  17 +++++
->  include/linux/mm.h             |   1 +
->  include/ras/ras_event.h        |   1 +
->  mm/Kconfig                     |   1 +
->  mm/memory-failure.c            | 128 ++++++++++++++++++++++++++++++++-
->  6 files changed, 148 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/memory-failure.h
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 520fb4e379a3..463d062d0386 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11359,6 +11359,7 @@ M:      Miaohe Lin <linmiaohe@huawei.com>
->  R:     Naoya Horiguchi <nao.horiguchi@gmail.com>
->  L:     linux-mm@kvack.org
->  S:     Maintained
-> +F:     include/linux/memory-failure.h
->  F:     mm/hwpoison-inject.c
->  F:     mm/memory-failure.c
->
-> diff --git a/include/linux/memory-failure.h b/include/linux/memory-failur=
-e.h
-> new file mode 100644
-> index 000000000000..bc326503d2d2
-> --- /dev/null
-> +++ b/include/linux/memory-failure.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_MEMORY_FAILURE_H
-> +#define _LINUX_MEMORY_FAILURE_H
-> +
-> +#include <linux/interval_tree.h>
-> +
-> +struct pfn_address_space;
-> +
-> +struct pfn_address_space {
-> +       struct interval_tree_node node;
-> +       struct address_space *mapping;
-> +};
-> +
-> +int register_pfn_address_space(struct pfn_address_space *pfn_space);
-> +void unregister_pfn_address_space(struct pfn_address_space *pfn_space);
-> +
-> +#endif /* _LINUX_MEMORY_FAILURE_H */
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 1ae97a0b8ec7..0ab4ea82ce9e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4006,6 +4006,7 @@ enum mf_action_page_type {
->         MF_MSG_DAX,
->         MF_MSG_UNSPLIT_THP,
->         MF_MSG_ALREADY_POISONED,
-> +       MF_MSG_PFN_MAP,
->         MF_MSG_UNKNOWN,
->  };
->
-> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-> index c8cd0f00c845..fecfeb7c8be7 100644
-> --- a/include/ras/ras_event.h
-> +++ b/include/ras/ras_event.h
-> @@ -375,6 +375,7 @@ TRACE_EVENT(aer_event,
->         EM ( MF_MSG_DAX, "dax page" )                                   \
->         EM ( MF_MSG_UNSPLIT_THP, "unsplit thp" )                        \
->         EM ( MF_MSG_ALREADY_POISONED, "already poisoned" )              \
-> +       EM ( MF_MSG_PFN_MAP, "non struct page pfn" )                    \
->         EMe ( MF_MSG_UNKNOWN, "unknown page" )
->
->  /*
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index e443fe8cd6cf..0b07219390b9 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -777,6 +777,7 @@ config MEMORY_FAILURE
->         depends on ARCH_SUPPORTS_MEMORY_FAILURE
->         bool "Enable recovery from hardware memory errors"
->         select MEMORY_ISOLATION
-> +       select INTERVAL_TREE
->         select RAS
->         help
->           Enables code to recover from some memory failures on systems
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index df6ee59527dd..acfe5a9bde1d 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -38,6 +38,7 @@
->
->  #include <linux/kernel.h>
->  #include <linux/mm.h>
-> +#include <linux/memory-failure.h>
->  #include <linux/page-flags.h>
->  #include <linux/sched/signal.h>
->  #include <linux/sched/task.h>
-> @@ -154,6 +155,10 @@ static const struct ctl_table memory_failure_table[]=
- =3D {
->         }
->  };
->
-> +static struct rb_root_cached pfn_space_itree =3D RB_ROOT_CACHED;
-> +
-> +static DEFINE_MUTEX(pfn_space_lock);
-> +
->  /*
->   * Return values:
->   *   1:   the page is dissolved (if needed) and taken off from buddy,
-> @@ -957,6 +962,7 @@ static const char * const action_page_types[] =3D {
->         [MF_MSG_DAX]                    =3D "dax page",
->         [MF_MSG_UNSPLIT_THP]            =3D "unsplit thp",
->         [MF_MSG_ALREADY_POISONED]       =3D "already poisoned page",
-> +       [MF_MSG_PFN_MAP]                =3D "non struct page pfn",
->         [MF_MSG_UNKNOWN]                =3D "unknown page",
->  };
->
-> @@ -1349,7 +1355,7 @@ static int action_result(unsigned long pfn, enum mf=
-_action_page_type type,
->  {
->         trace_memory_failure_event(pfn, type, result);
->
-> -       if (type !=3D MF_MSG_ALREADY_POISONED) {
-> +       if (type !=3D MF_MSG_ALREADY_POISONED && type !=3D MF_MSG_PFN_MAP=
-) {
->                 num_poisoned_pages_inc(pfn);
->                 update_per_node_mf_stats(pfn, result);
->         }
-> @@ -2216,6 +2222,121 @@ static void kill_procs_now(struct page *p, unsign=
-ed long pfn, int flags,
->         kill_procs(&tokill, true, pfn, flags);
->  }
->
-> +int register_pfn_address_space(struct pfn_address_space *pfn_space)
-> +{
-> +       if (!pfn_space)
-> +               return -EINVAL;
-> +
-> +       mutex_lock(&pfn_space_lock);
-> +
-> +       if (interval_tree_iter_first(&pfn_space_itree,
-> +                                    pfn_space->node.start,
-> +                                    pfn_space->node.last)) {
-> +               mutex_unlock(&pfn_space_lock);
-> +               return -EBUSY;
-> +       }
-> +
-> +       interval_tree_insert(&pfn_space->node, &pfn_space_itree);
-> +       mutex_unlock(&pfn_space_lock);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(register_pfn_address_space);
-> +
-> +void unregister_pfn_address_space(struct pfn_address_space *pfn_space)
-> +{
-> +       if (!pfn_space)
-> +               return;
-> +
-> +       mutex_lock(&pfn_space_lock);
-> +       interval_tree_remove(&pfn_space->node, &pfn_space_itree);
+On 21/10/2025 20:19, Vijay Kumar Tumati wrote:
+> Hope this clarifies. Please let us know if you have any further
+> questions. Thank you very much.
 
-IIRC removing something not in interval tree will panic kernel. If I
-am not mistaken, should here do something like
-interval_tree_iter_first before interval_tree_remove, to avoid
-driver's ill behavior crash the system?
+Eh.
 
-> +       mutex_unlock(&pfn_space_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(unregister_pfn_address_space);
-> +
-> +static void add_to_kill_pfn(struct task_struct *tsk,
-> +                           struct vm_area_struct *vma,
-> +                           struct list_head *to_kill,
-> +                           unsigned long pfn)
-> +{
-> +       struct to_kill *tk;
-> +
-> +       tk =3D kmalloc(sizeof(*tk), GFP_ATOMIC);
-> +       if (!tk)
-> +               return;
-> +
-> +       /* Check for pgoff not backed by struct page */
-> +       tk->addr =3D vma_address(vma, pfn, 1);
-> +       tk->size_shift =3D PAGE_SHIFT;
-> +
-> +       if (tk->addr =3D=3D -EFAULT)
-> +               pr_info("Unable to find address %lx in %s\n",
-> +                       pfn, tsk->comm);
-> +
-> +       get_task_struct(tsk);
-> +       tk->tsk =3D tsk;
-> +       list_add_tail(&tk->nd, to_kill);
-> +}
-> +
-> +/*
-> + * Collect processes when the error hit a PFN not backed by struct page.
-> + */
-> +static void collect_procs_pfn(struct address_space *mapping,
-> +                             unsigned long pfn, struct list_head *to_kil=
-l)
-> +{
-> +       struct vm_area_struct *vma;
-> +       struct task_struct *tsk;
-> +
-> +       i_mmap_lock_read(mapping);
-> +       rcu_read_lock();
-> +       for_each_process(tsk) {
-> +               struct task_struct *t =3D tsk;
-> +
-> +               t =3D task_early_kill(tsk, true);
-> +               if (!t)
-> +                       continue;
-> +               vma_interval_tree_foreach(vma, &mapping->i_mmap, pfn, pfn=
-) {
-> +                       if (vma->vm_mm =3D=3D t->mm)
-> +                               add_to_kill_pfn(t, vma, to_kill, pfn);
-> +               }
-> +       }
-> +       rcu_read_unlock();
-> +       i_mmap_unlock_read(mapping);
-> +}
-> +
-> +static int memory_failure_pfn(unsigned long pfn, int flags)
-> +{
-> +       struct interval_tree_node *node;
-> +       LIST_HEAD(tokill);
-> +
-> +       mutex_lock(&pfn_space_lock);
-> +       /*
-> +        * Modules registers with MM the address space mapping to the dev=
-ice memory they
-> +        * manage. Iterate to identify exactly which address space has ma=
-pped to this
-> +        * failing PFN.
-> +        */
-> +       for (node =3D interval_tree_iter_first(&pfn_space_itree, pfn, pfn=
-); node;
-> +            node =3D interval_tree_iter_next(node, pfn, pfn)) {
-> +               struct pfn_address_space *pfn_space =3D
-> +                       container_of(node, struct pfn_address_space, node=
-);
-> +
-> +               collect_procs_pfn(pfn_space->mapping, pfn, &tokill);
-> +       }
-> +       mutex_unlock(&pfn_space_lock);
-> +
-> +       /*
-> +        * Unlike System-RAM there is no possibility to swap in a differe=
-nt
-> +        * physical page at a given virtual address, so all userspace
-> +        * consumption of direct PFN memory necessitates SIGBUS (i.e.
-> +        * MF_MUST_KILL)
-> +        */
-> +       flags |=3D MF_ACTION_REQUIRED | MF_MUST_KILL;
-> +
-> +       kill_procs(&tokill, true, pfn, flags);
-> +
-> +       return action_result(pfn, MF_MSG_PFN_MAP, MF_RECOVERED);
-> +}
-> +
->  /**
->   * memory_failure - Handle memory failure of a page.
->   * @pfn: Page Number of the corrupted page
-> @@ -2259,6 +2380,11 @@ int memory_failure(unsigned long pfn, int flags)
->         if (!(flags & MF_SW_SIMULATED))
->                 hw_memory_failure =3D true;
->
-> +       if (!pfn_valid(pfn) && !arch_is_platform_page(PFN_PHYS(pfn))) {
-> +               res =3D memory_failure_pfn(pfn, flags);
-> +               goto unlock_mutex;
-> +       }
-> +
->         p =3D pfn_to_online_page(pfn);
->         if (!p) {
->                 res =3D arch_memory_failure(pfn, flags);
-> --
-> 2.34.1
->
->
+So can I take this statement as Review-by: from you ?
+
+That's basically all I really need here, RB or NAK.
+
+---
+bod
 
