@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-864050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41EA5BF9CDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:13:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C85ABF9CDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A6256026E
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C2605602A6
 	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0A4238D52;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D10E239085;
 	Wed, 22 Oct 2025 03:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8NsJU3E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gl4rVPDu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A8A2222C0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A2C221739;
 	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102806; cv=none; b=vB+K1ZRK1OhtFoC6ZSKV520ONJf5w9rleCVYGQSJ7hdsB01z2+cwZS2CVvh/wP6B7YnR7xUKS6hq5oSFmA8z5dIsa8wqMlE/dJ2FOtvvpqCRSvfToeD8G0uNbpBJURp1Fz0NhIuke2Nj8LVgFSY4DQ8j5yWzF20b9RA7rVAgYB4=
+	t=1761102806; cv=none; b=bDM/Vjfcz3EonQK7kL/SGsFsrxFfGEIJFW2H6aiqQoOC+pp/gUlSAE3T+kUZBb6dD8YQiUjQ6NhOvRn4c9otEtJeNdhYbmorRQQ1FcgT1O5N0nLSRWXPxjaCCtfibFIASnqbThHqQs/EJ8CECg7us15ZM7PnVcOnic97BEWQjrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761102806; c=relaxed/simple;
-	bh=sY0LMNg4G27hdJljmt+cFEfQtETCUh15GCY4IWkxMSY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oq+RztcZtZweHFZK24Q51rVit+UrmP9+/OiUoEvjjDWqALO+x1oCGz95m6J/osc91i8mfARyqXWm3+Zu0uznc3bo0zHaTU/hGcLpq337v288loTL3NKYKxwtVAcPz7MQ90316uPJkng0Plgf+aTKnFjETSwhfM4qJKDKv/YXYOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8NsJU3E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4AAE4C4CEF5;
+	bh=/ou2szmYLHFv7ykIjQ/e1wg1hrXhydZMIDKjYoStfrw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AsRbt2TFXeP4lZgV38RED491JmkKoSL0yJ6HnTmX4cagRGP8FW48Wj71I2XR+YX0PChoeCfn8OCQ1y+odW5G804yvWFD7zYnsf/qwtmp6zaXDdhAMgl0D24xG3/SRLxa2oo3yyXyVxIUx86ysqEIPOagliIeZTJ+lO1pSeTedh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gl4rVPDu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58B04C113D0;
 	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761102806;
-	bh=sY0LMNg4G27hdJljmt+cFEfQtETCUh15GCY4IWkxMSY=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=F8NsJU3EwORgNv92pnv2538k2eHtTqYU7w/gJl6YgZEFyCQbQsn91g5tDHLH3inN3
-	 lGc9FiKW/UlVtHyMonjSDHNlNJyYBkpXVgpbuTSHeU7ILIg8OnK+rIdaETL2nDIpC6
-	 ++RH5KBCLH5InX1NFsvAY+VaFiILLzwyOnrDMyD9JD/BC6XmFPuNR5bdybgf884mGV
-	 Z1FSmyY/Vdo4KFBCozYuLY4/tLtqFZUY3n9lzvfu+Ni56Lp1jVqV9CavSyfUwrGAp9
-	 cJJ39Pe2fbv7zR33SchvFsSgISUTFyZPMR+FOjE/p8VQLq3najwj8HvYlAa2aT2Bk6
-	 OCstiZjKww0QQ==
+	bh=/ou2szmYLHFv7ykIjQ/e1wg1hrXhydZMIDKjYoStfrw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Gl4rVPDun0v1CLoiWW0Nu6vQ8D0cpjMKKwo+alGmalQr/MhF0CK9WNOBoRQf4VxU0
+	 593ouhhCTIhU0hCrQIShg31ilEbud20m5m0j7skrsWVcSQihZyf0cw6u0XVLDWZA6l
+	 knOI0X61RBWNkd3QN+4PT9y9yTyzY9wYrJ6j1LuSh7E0g980vJLQ11w9KGM7JQ+nLP
+	 g2+LrBQ1tTpJ5d5uuWn4Ve8sPibVfo8N+LKE2XPMy/hI8F5if5f9omht9Rxx1Vlt3i
+	 2MXbDN0p/tzUZ2U8S25Cse+2qamWsjSuI05wtcrr/zRDLk4gFcQXtHfL4tzLYvMeDT
+	 AYcH802YlH/ow==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A017CCD1AB;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B15CCD1A5;
 	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Subject: [PATCH v5 0/3] arm64: tegra: Enable Tegra210 actmon for EMC
- scaling
-Date: Tue, 21 Oct 2025 22:13:21 -0500
-Message-Id: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
+Date: Tue, 21 Oct 2025 22:13:22 -0500
+Subject: [PATCH v5 1/3] arm64: tegra: tegra210: Add actmon
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,10 +54,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANFL+GgC/x3MQQqAIBBA0avErBtQMYKuEi3MmWoWmahEEN49a
- fkW/7+QOQlnmLoXEt+S5QoNQ9+BP1zYGYWawSgzaGU0FqMVOl/OK2C0aIk8qW0kdiu0KCbe5Pm
- H81LrB1n1bU1gAAAA
-X-Change-ID: 20251021-t210-actmon-p4-4ddcd0f7deab
+Message-Id: <20251021-t210-actmon-p4-v5-1-4a4dbc49fbc8@gmail.com>
+References: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
+In-Reply-To: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Thierry Reding <thierry.reding@gmail.com>, 
@@ -66,11 +64,11 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761102805; l=1891;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761102805; l=1154;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=sY0LMNg4G27hdJljmt+cFEfQtETCUh15GCY4IWkxMSY=;
- b=FbnXxhEB/ukDDzBDlmyXcngghzCYG9Gw//yf+iw9AO55OiCOfAXPZEeJYZkMJrUnXdn91Gdd5
- Zu6Ms4e9gPEBoODc49WZnPKqR8n1dqCJNcf0lHiwWocx8KMnek/jQL/
+ bh=wlz7VuhgvpflHfZWQNafqWTwhXBSYIJPNM/UlFKQ87I=;
+ b=DaMDkkK2cHyMy2Ob070gvtLJNUxq+kymJLdh642Ql5BFy5V32+ILLY7kEKOLbxpxmY++qMo2y
+ u5XxHDkYywPDSP24LZEjdKBpmnty7XbnL1r5C05ZMdowUZeKD8ReWik
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -78,58 +76,41 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-Bindings Dependencies:
-- https://lore.kernel.org/r/20251021-t210-actmon-p1-v5-1-1bc8f9221917@gmail.com
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Runtime/Probe Dependencies:
-- https://lore.kernel.org/r/20251021-t210-actmon-p2-v5-1-a07dc70e948d@gmail.com
-
-Logical Dependencies:
-- https://lore.kernel.org/r/20251021-t210-actmon-p3-v5-1-e1ef5e93909d@gmail.com
-
-Merge Strategy:
-- Merge all patches only after all dependencies are picked up
+This enables the action monitor to facilitate dynamic frequency scaling.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
-Changes in v5:
-- Split series
-- Link to v4: https://lore.kernel.org/r/20250923-t210-actmon-v4-0-442d1eb6377c@gmail.com
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Changes in v4:
-- Various cleanups in patch 5 as requested by review
-- Fix a couple typos in patch 4
-- Link to v3: https://lore.kernel.org/r/20250906-t210-actmon-v3-0-1403365d571e@gmail.com
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 402b0ede1472af625d9d9e811f5af306d436cc98..6da10db893add44a98fde1666c382511212fd43c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -485,6 +485,18 @@ flow-controller@60007000 {
+ 		reg = <0x0 0x60007000 0x0 0x1000>;
+ 	};
+ 
++	actmon@6000c800 {
++		compatible = "nvidia,tegra210-actmon", "nvidia,tegra124-actmon";
++		reg = <0x0 0x6000c800 0x0 0x400>;
++		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA210_CLK_ACTMON>,
++			 <&tegra_car TEGRA210_CLK_EMC>;
++		clock-names = "actmon", "emc";
++		resets = <&tegra_car 119>;
++		reset-names = "actmon";
++		#cooling-cells = <2>;
++	};
++
+ 	gpio: gpio@6000d000 {
+ 		compatible = "nvidia,tegra210-gpio", "nvidia,tegra30-gpio";
+ 		reg = <0x0 0x6000d000 0x0 0x1000>;
 
-Changes in v3:
-- In patch 5, don't fail mc probe if opp tables are missing
-- Add more mc bindings to patch 1
-- Add patch to use tegra210-mc bindings in the mc driver
-- Re-order series to align patches within a subsystem to each other
-- Link to v2: https://lore.kernel.org/r/20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com
-
-Changes in v2:
-- Assume 64-bit dram bus width in patch 4
-- Add dt-bindings patch to document the new properties on the
-  tegra210-emc node.
-- Link to v1: https://lore.kernel.org/r/20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com
-
----
-Aaron Kling (3):
-      arm64: tegra: tegra210: Add actmon
-      arm64: tegra: Add interconnect properties to Tegra210 device-tree
-      arm64: tegra: Add OPP tables on Tegra210
-
- .../boot/dts/nvidia/tegra210-peripherals-opp.dtsi  | 135 +++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  43 +++++++
- 2 files changed, 178 insertions(+)
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251021-t210-actmon-p4-4ddcd0f7deab
-
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
+2.51.0
 
 
 
