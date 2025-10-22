@@ -1,196 +1,166 @@
-Return-Path: <linux-kernel+bounces-864871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D45BFBBE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:55:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE3BBFBBEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDF3587ED5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:55:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95A724E2501
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E1430FF25;
-	Wed, 22 Oct 2025 11:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C3B33FE20;
+	Wed, 22 Oct 2025 11:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F2rQv7FQ"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JAfOlSCa"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E436733F8DE
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D57925EFAE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134121; cv=none; b=NPsXDpIhgs4poBGIAfqN0r35LiqNGdR+eTblfiC450F19x7xBxvaF4SQQ+e12EZn70/PWN2PQBE3hUP1tZAyje0dr834fQMpSllaGn9NEA369EXnWnRXUOkSCCXZQk4UYVnyAJYjyORldikpcadFExMLrMGfsFt+PWUYq1sLdxQ=
+	t=1761134232; cv=none; b=k8TYKsaAATRwWQ8im9gpGQRp1JkmcQW0ghmbVTIU3aMuNx+LFS5hX2SBcJPCTxf0eMFSQjiwapZZQaOqNERS8PoqNgb685B4SCIxDQ+DUdbr5wQZNK7HsWXSarkAwWh7IOGWZwZrLEu4xVO4AbRqQdp9QL+X1LFId78WIgIBfHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134121; c=relaxed/simple;
-	bh=4xFArIFBCi/38kZpFjNp/HhrvCNOBQ0dVzcCEAHfOLg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hovNOWmyGoWogm1CIXabf1OxDzLqGyOz7YALTlZqNcxJqikO0jponz6P30UyVMq1rrb4YMWMScyvc6TfaMz2MiUejGKiatezNNIYyDCmnLeBBgSSY6dJO4PCaa1Lp/GzwEl9lC/feHNfygp9rzbLFHvTzJ3jFIq93y0u+1tRe74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F2rQv7FQ; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-36453927ffaso59635591fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:55:19 -0700 (PDT)
+	s=arc-20240116; t=1761134232; c=relaxed/simple;
+	bh=URTqzJkAAJFoQOPycXd7kEr7wppHxat1qLacnS1FCiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HB5hPTCuoeIlwJcmBYNKDogoPexh78p6m+ZPcuIOrNSLLH7Qy58lz4ab3caXM2nJElgjuncNE6ViUTQ6IopsZwpJRKsfKl9RNLlEwJ39Z1189xYaGAKzKe4HCIWO5IOSVy2j/LoT/L3aS1oiP6jYalhrfGbqNNC6rh9vMcFYF6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JAfOlSCa; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33bafd5d2adso6198561a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761134118; x=1761738918; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jYH9KKHjk03g5K9Bm9ckGVdfxUSlGQea/izXLcw9vU4=;
-        b=F2rQv7FQmM3aEHkTOX/AMdiegHD/zocFpZc+7D0mIKep01SNf2pCPZ33yUP+TfrWXe
-         Et0oWvq3pFPn6LIySn5gZRNK1qnZlNYnPGqqOZ7obYeCO3AVAzv1HyMPTQTMUltH9YEj
-         /DBYYBgNuDcs4UbV4mLg+OkKOzKX5IdsEyFgw=
+        d=linaro.org; s=google; t=1761134229; x=1761739029; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WzfUG+BqfKD/coIQsN8R1l6DNO8bGUEyk6UsV4mKerM=;
+        b=JAfOlSCaYsES8eqnvLfEbXJcW6WxBP77WG4g8H3pSYshm1aaV5ND0ro4E4OHDTS8+G
+         Rq1Op7BFiCWw7iyrjpww+F/hdTU3cS1ZuK+Gw96SdUuaKQMLzf66XjdwCw+FqEYLKBXH
+         EcX3rk5okm/EdxPgi5ml2rtgXZd5a4qweNmZeUsK29hK86xT90KSPE+//HsOmtH2+8Zd
+         eOnH3x1DVi/nwETowceEGoDCpMrm1llsvcjfn3LdOUBHTAaHjMnLydTlvfu4PLes4Ldk
+         7l29PpssC3+PxWGvp1rK9InHT/YmGZSebA/jPCBvo0Ly+JGO53VR4efERbXBQg8XUAHu
+         Hy9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761134118; x=1761738918;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761134229; x=1761739029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jYH9KKHjk03g5K9Bm9ckGVdfxUSlGQea/izXLcw9vU4=;
-        b=Yydu+hSr6Lq+PK1d9XLqnt2oeoUUyc8kzYlvTCKf8Ode/p2Xl6bexRZlFZmGWbE44R
-         jjcjw49iHCTigqj+N/hzVQwkJ32kBTccPEmBInakUL7KuL6V63cSJNSC8Ou19kjEi41j
-         iTDZ+trNmcQDulF9rJ55SBOckI8zCOoxQwa+/hh7SAR/zTzT/ph3Gv+84OdQuhN1trnA
-         zmCC7fwSn4V/2bq3Lypr7SYlOYbI3y4+TXBwDwoGnefoVhGAO5FqwuSM9/rVLz3gyHkT
-         gfiKsLSAeX9lNfcHPnp3ZhvAVVtO6PCzCCPGsFvYLkuEtsj9KgUZQFleKGrT/gEKxgyS
-         8zkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXu5WRGnsnkTXeY6KaOdM3UX7mxZWCY+NgfyaFDuX9dDIrAzho9shyNp98hSMumAYYwhNs+oWxJP7vCdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyptkXzXtpPwFtbkrwYq2K5xH4z7A+UAhYzHcypfintmaRmpq7
-	i2ayHsrI7AkB1rFv0xTKbjmn4E+xTRJlPYl8idJQJ3fzgwC9grNYMqyVANJeI98dIrpwyu7wxsJ
-	hZN8=
-X-Gm-Gg: ASbGncva65cY2CZZx7fmtXXO33XhmMI7cJsAemcvo6Ngsnc5FVxm8Ih/5eicRmR2/vE
-	9x2gEwzqh6Q4OYhVfX3QjB0SSHweNu0i2wRVKdvXLxFF19QmI8UEJNWbn+NM8RSi2U4nHsrIbke
-	gByK7uGKKWI6Ff4VqUOCvC7QFXalqXAzhbQyUuaYjFEh5FCS2uJvhS+jvBx3GcF2E/vU0FJwv8l
-	Pz7fZk7t0WeV8ZbagFB3PWeIILMkdwJb3ju6kAEpdvg8rd8wLleVWYhdxB9OjdKoBzgp46+aJDz
-	S9w+ovh2TgsChFOfNATYky1NbReupU+QGlgHun1xmUBoB+WSxHDSyrF7Qdw0plML5wogery04yB
-	c50EAO/LBCqHy71saZQlfkqpqUv56ihpip1g5t+3fSm93Kl5LbJ2dvmTcYXoAZwHYv9O5X+Urvu
-	A8d2Jp1y9d9BSGBsj98u74kR5ydruHgjF4rdLK2RZyP+jzV+9At5/On5A=
-X-Google-Smtp-Source: AGHT+IFstmSy3ZG7G9hzOLBQ33LR5gBe2+Ou9QgkLX9i4b8zh/4XZITZ7ccSGENfX9u9ghW1D5Ivuw==
-X-Received: by 2002:a2e:a543:0:b0:377:887f:2ea with SMTP id 38308e7fff4ca-37797a56696mr63663261fa.32.1761134117880;
-        Wed, 22 Oct 2025 04:55:17 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377cd7f1e7dsm13689061fa.14.2025.10.22.04.55.17
+        bh=WzfUG+BqfKD/coIQsN8R1l6DNO8bGUEyk6UsV4mKerM=;
+        b=MLlHA4N+tKU5B4erIM/7Ihrgk+MG8ey2EaENUguc6U4AD30/vTF9rzujdEujyNcUiG
+         CKkCGOInS75zuoRe1gwS6v8tYH3/ONwHl44Nroov6FP46PKWDDmRMOejI023zHLdrQhf
+         3H/s97kQ/lY+r2vvdUC6BoWkudCZMDl6y3NvWFEKnCTczeLQYTiGMKmSlc4yWpNYzA0R
+         719+l47iW8ZnMeQt3OI4WjpgEUw3j2tPJEhnGiMWl5nCWJZJRA4uFB/H7ed0Y/FD4XuG
+         ReurfvQqH0Wq5/3rci/HDFVItF/hUQX8B1lAl8NmnPC2pzdXbkM/30l3rWeWGhoHM1ij
+         5w8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVJy/FZYb71LoX8tjPteqTXx71QqZLdYx9Jx61eIlLnGlNyfV/woHRIeTC83vwgdHw3l7RZCDzl5reReSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwACkNavc+FtStSSZIdJlzPTBAZOy6DZiCUOhZ3nTmvlcOiiX3l
+	FF4E+38OKRcu8+EX5YYW+OZf/ceKLDp3tnUFw499jNqxS4Bgd1hrOqbfHI8pXJGWlnk=
+X-Gm-Gg: ASbGncv/tljAbues86b3jw4Oji+t4KAwAFxpZdNc+a6i7bAwvrR1MSb+3x+GGzerNZL
+	eOagxVDk4jYJL20kCUOsOMBy/q/DRZ5CUdmppqHfQqfNhnAImDQqnxUhaocA33S9lxqhA4uaB65
+	352Rhtfyi7FQ/+WTM3rR1taU0/wlUeVWWVjISXimY2r/p+qF0NHbjwe5mA38aNnmI02UdNPF/pG
+	4VDbZVsxwKmRPrNCvxIS7rXzRCzWoAIrT/6AKZPYT+VbHJzeuvagsRdHsA3ZDKmELg/0MH7kt8S
+	AdKpbRSLCPoxhOjUJy/JYdZ1a3ZlokQ1mGM3t8mVtDNpqN08/vqNv9ly4mWcPHarvSUe2o4zoeI
+	VHSTXRAanV0gVxcgcbUWFY+EOAhQ+FsWDbVh69UWnR9ZhXqjIKz2kBlDVn/+2CIIFbS1Ps41XHp
+	sJwEUTlzRtCgGtrTMNNpxOm5bJc9C26e2aodunkiGRkEDS4ZE4gyUGBq6bKQ==
+X-Google-Smtp-Source: AGHT+IEubD0OvI6uVVM+gnAPZHbQP3Rz7U+Y/YydXiR4UWw4SnGLju39L4qJ5sYEmZqdZYH8YZdr7g==
+X-Received: by 2002:a17:90b:1dc6:b0:339:a4ef:c8b1 with SMTP id 98e67ed59e1d1-33bcf8f7802mr26421431a91.22.1761134229471;
+        Wed, 22 Oct 2025 04:57:09 -0700 (PDT)
+Received: from localhost ([2405:201:c00c:2854:21a:7bd8:378:3750])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e22428b1esm2401348a91.22.2025.10.22.04.57.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:55:17 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 22 Oct 2025 11:55:16 +0000
-Subject: [PATCH] media: uvcvideo: Create a specific id namespace for output
- entities
+        Wed, 22 Oct 2025 04:57:08 -0700 (PDT)
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+To: ltp@lists.linux.it
+Cc: lkft@linaro.org,
+	lkft-triage@linaro.org,
+	arnd@kernel.org,
+	dan.carpenter@linaro.org,
+	pvorel@suse.cz,
+	jack@suse.cz,
+	brauner@kernel.org,
+	chrubis@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	lkft-triage@lists.linaro.org,
+	regressions@lists.linux.dev,
+	aalbersh@kernel.org,
+	arnd@arndb.de,
+	viro@zeniv.linux.org.uk,
+	anders.roxell@linaro.org,
+	benjamin.copeland@linaro.org,
+	andrea.cervesato@suse.com,
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: [PATCH] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid errors
+Date: Wed, 22 Oct 2025 17:27:04 +0530
+Message-ID: <20251022115704.46936-1-naresh.kamboju@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
-X-B4-Tracking: v=1; b=H4sIACPG+GgC/x3MwQpAQBCA4VfRnE2tlcKryGHWDqZYmkVK3t3m+
- B3+/4HIKhyhzR5QviTKFhKKPINhpjAxik8Ga2xVGGvxvAaclIKPhzKtuNCpHA4sx4acq8n4ykG
- qd+VR7v/c9e/7AZa1IY5pAAAA
-X-Change-ID: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Nothing can be connected from an output entity. Which means that no
-other entity can reference an output entity as baSourceId.
+Latest kernels return ENOTTY instead of EINVAL when invoking
+ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid).  Update the test to
+accept both EINVAL and ENOTTY as valid errors to ensure compatibility
+across different kernel versions.
 
-Use this fact to move all the output entities to a different namespace
-id.
-
-The output entities are usually named after the dev_name() of the usb
-device, so there should not be any uAPI change from this change.
-
-Although with this change we can handle some id collisions
-automagically, change the logic of uvc_alloc_new_entity() to keep
-showing a warning when a camera has invalid descriptors. Hopefully this
-message will help vendors fix their invalid descriptors.
-
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Link: https://lore.kernel.org/all/CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com
+Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 ---
-Hi, this patch fixes support for some devices with invalid USB
-descriptor.
+ .../kernel/syscalls/ioctl/ioctl_pidfd05.c     | 20 +++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-It is orthogonal to:
-https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
-
-Some devices will be fixed by the other patch, other devices will be
-fixed by this. In my opinion is worth to land both patches.
-
-Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
----
- drivers/media/usb/uvc/uvc_driver.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..40f8ae0df89e104992f5d55af3d3539dea3d146e 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -165,10 +165,14 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
- 	return NULL;
+diff --git a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+index d20c6f074..ec92240a1 100644
+--- a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
++++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+@@ -4,7 +4,7 @@
+  */
+ 
+ /*\
+- * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
++ * Verify that ioctl() raises an EINVAL or ENOTTY error when PIDFD_GET_INFO is used. This
+  * happens when:
+  *
+  * - info parameter is NULL
+@@ -14,6 +14,7 @@
+ #include "tst_test.h"
+ #include "lapi/pidfd.h"
+ #include "lapi/sched.h"
++#include <errno.h>
+ #include "ioctl_pidfd.h"
+ 
+ struct pidfd_info_invalid {
+@@ -43,7 +44,22 @@ static void run(void)
+ 		exit(0);
+ 
+ 	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
+-	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
++	/* Expect ioctl to fail; accept either EINVAL or ENOTTY */
++	TEST(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid));
++	if (TEST_RETURN == -1) {
++		if (TEST_ERRNO == EINVAL || TEST_ERRNO == ENOTTY) {
++			tst_res(TPASS,
++				"ioctl(PIDFD_GET_INFO_SHORT) failed as expected with %s",
++				tst_strerrno(TEST_ERRNO));
++		} else {
++			tst_res(TFAIL,
++				"Unexpected errno: %s (expected EINVAL or ENOTTY)",
++				tst_strerrno(TEST_ERRNO));
++		}
++	} else {
++		tst_res(TFAIL, "ioctl(PIDFD_GET_INFO_SHORT) unexpectedly succeeded");
++	}
++
+ 
+ 	SAFE_CLOSE(pidfd);
  }
- 
-+#define ENTITY_HARDWARE_ID(id) ((id) & ~UVC_TERM_OUTPUT)
-+
- static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
- {
- 	struct uvc_streaming *stream;
- 
-+	id = ENTITY_HARDWARE_ID(id);
-+
- 	list_for_each_entry(stream, &dev->streams, list) {
- 		if (stream->header.bTerminalLink == id)
- 			return stream;
-@@ -810,10 +814,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
- 	}
- 
- 	/* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
--	if (uvc_entity_by_id(dev, id)) {
--		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
-+	if (uvc_entity_by_id(dev, ENTITY_HARDWARE_ID(id)))
-+		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
-+			ENTITY_HARDWARE_ID(id));
-+
-+	if (uvc_entity_by_id(dev, id))
- 		id = UVC_INVALID_ENTITY_ID;
--	}
- 
- 	extra_size = roundup(extra_size, sizeof(*entity->pads));
- 	if (num_pads)
-@@ -969,6 +975,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 	struct usb_host_interface *alts = dev->intf->cur_altsetting;
- 	unsigned int i, n, p, len;
- 	const char *type_name;
-+	unsigned int id;
- 	u16 type;
- 
- 	switch (buffer[2]) {
-@@ -1107,8 +1114,16 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 			return 0;
- 		}
- 
-+		/*
-+		 * Nothing can be connected from an output terminal. To avoid
-+		 * entity-id's collisions in devices with invalid USB
-+		 * descriptors, move the output terminal id to its own
-+		 * namespace.
-+		 */
-+		id = buffer[3] | UVC_TERM_OUTPUT;
-+
- 		term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
--					    buffer[3], 1, 0);
-+					    id, 1, 0);
- 		if (IS_ERR(term))
- 			return PTR_ERR(term);
- 
-
----
-base-commit: ea299a2164262ff787c9d33f46049acccd120672
-change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
-
-Best regards,
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
+2.43.0
 
 
