@@ -1,148 +1,201 @@
-Return-Path: <linux-kernel+bounces-865217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D850EBFC85B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A584EBFC752
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A55188B0D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE46C19A4092
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A79B36CDEC;
-	Wed, 22 Oct 2025 14:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF4A34BA3A;
+	Wed, 22 Oct 2025 14:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qhec2zHm"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kaij6nZO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46C351FB5
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF00343D7C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142927; cv=none; b=NVfiR7BLaqva0JZIlZPL/XS2QXD3zVt8r1PTg1XyskGJs+gHVucXzeZEsyp3pXrVKxK6fEEtnRJ1ppFzgB4VNAJbhTTlKMxZp3epM8B+R3CnsO0ig7OajfEUMj44J5JiWZqjML2E2gXizCIazuvmRaKWXZzo01vvD3YsPEqB16o=
+	t=1761142886; cv=none; b=OEN2Jdu0wDtWvThNAgghG0+vNBnHKOwfjdKEgboBdZaAPIQLGmWPu7fFfrL2qgydjUZCt1hhDbO2Wcemh+PP8hRGJETazxqltPjUcZ6qWsgMfClpz+gnQ9Xhe/jsg2xbXH31AD0mfkLSlKeJtZpqNu5C/IVVHDrx0QSjJCTz8gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142927; c=relaxed/simple;
-	bh=DQG+inBx8ZXDHcXJybTvBi9O4BMU38YbAkGRkU7JaQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UmbUgP2ypjWZeDoLnaE/W0AZFJRe0xO5Tkc9o25wy1LJInA4Vx5ygrBjmxDtdY3Fwd8CaXh5N+sFFOTrs0ZggQuJEa6HCTtci44GZwRHvGpB7e/Ok6bP6O/V7CGcpOAPbmAFxyKl/w8ZFFz2c9BzQaPEByNo5jYUEzwRA/t0ayw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qhec2zHm; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee12807d97so6410964f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761142919; x=1761747719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNRJG9b/INfi23des3nzlgfKaLYdiUShg0Bsn9STYF0=;
-        b=Qhec2zHm/T7JsVU3osGmI8BQsS8DYjJwhZ2LaPla6qkzLZVXdli9geRpBg1hx3Km3Y
-         DXAo8duRdrtM6bobPNMCnD/eqGrZ8/0NC53nil1Sh+8+DJTO4sCg6K4ACVLW8hFkse+H
-         g34cUacGIVuq+U79Q7iDtKiH9H50MYwBICfseRsC/27lDZxCu0mcEBvQJBnDaP0Nup15
-         XvPF82r6MVEc6kmp+It110/ikCxuFZhXN8I5DkJgQo2O82XxX48W7WLbKHsl/QcYoToK
-         J44bFv6IZsARXD9yRY7Gg0ibCcNwUlHrU7qj8giUTJ9odrCeMrD+dIMhdWybum+HaP7T
-         uqzw==
+	s=arc-20240116; t=1761142886; c=relaxed/simple;
+	bh=b3uPlBhFSJi9ZQ1fziRdHC+I8eyaclv1pA5efxRoemk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U3CCVbFYWMuuvTzVCV5pZyqaarm5CJleHjHxXY6CWplFm+WNxM7TovzF42mwi63TXBifAnlQFJ/WAjqbO/1lnr6r9tBtFKH0UHF58Rq96jl9NA8OOxKM4By/eC1aOiwGAWTfNa3a6B7vgTvhjqD7waNTB06bPIdtn+vkuefxPcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kaij6nZO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MA9bAW024537
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:21:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Q8F+X3+wN0oxbBadx3SHyMbf6X2kDJDWo7WkuZHB6Sg=; b=kaij6nZOfzi6M45l
+	rhgTu4EBHYKUVMi+XsvzTeks8HDKCdaTj41W6LNOQgBKjPLBXSSeudVDtXbNK++v
+	4vjI9RGnvS/ufFE5xkXZA6rvXob2k59mWy6xV9eGNdmBhtqmA5zRVtbEmz03nkZq
+	Gg/dkP8QiiSlM9M4iRpdAmuw99sc4uVW8EFZTRzarudY4ZxFcvZXluNF2fnNFuMs
+	jWQcsOJjD83U+RIWkYFLLS5IgDgKj0SdxcFZztcqJAKLiPgAu9fCQQok4btnteOb
+	s7Z2X5cVu5TpPbq7EZsXLZlnt1edTKwPBdjw3Ed3aa34GWa3UsKA5kYG/UcgQT19
+	GW8EZg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49wsws7aaa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:21:23 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-780f914b5a4so6237311b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:21:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142919; x=1761747719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UNRJG9b/INfi23des3nzlgfKaLYdiUShg0Bsn9STYF0=;
-        b=WF85G2RZfZl3rtN/IucLuz3rAd77ybEw42T8EXkFP09XJ5T3TdAnIV6NA7crSvFeij
-         oUKPC/LvVKn9OfA4ee8Ffvd/IZvy/aMo7VGE/JQLJxpE0dsNrreZ/PwjAZlakQwXGAUh
-         MUGfATyU+yGqdSgWwERgrXKpHulhhkPoo/kQWm3JRwXFJqHAHHNV+ErEk8hWMHbNcjyw
-         CgliCbn5mVQfDIj8MqAIflUSTSq+bMgSUqJYVb8c7Da11Bdwj0v74kp3j+qplabaE/Fl
-         xpDQZRxB2mb9pYwN546K14HUJGLcMhcVG7mrcOaQm4UQm1HpMc4nuvTeU7URnof01wBt
-         +fEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFvkxSAs7s7mvZ5U/7J/Jl0dGoZSO6jTt075cmWNa3Yfu/NGX3+lxtApsNKsrYdi7RxzKBe8tGoJuElO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrvqAwu1diVkrsMtYkLWC6rVJW8j2U/ipmDutITXK/CGuVLlpM
-	Dcc1JIdDhWOnxfz3nXEEaCR6c3fYVsqM+Khdp7Doi90od9um1K4+n2dY
-X-Gm-Gg: ASbGncuH4ELNMBcP0dpHJt/Js/WhhWBaddN7gAaiEneBb11E8UjXgy5GyrMwA8RxYJZ
-	grPVDuq+5ZLzB968KKh380MSVliRsk9ij2je+56GUyg2v5d4LWiKWgAjWZJxmGPgALTa6Pm8JKk
-	AbaBg6DmbA3AmbpaJtt/NMgt/EzogMnMM4xMQQeCZCnfTzxhFlbmU1oBcmpKFoZCDcZBCBz3C1I
-	CxkvxYO1C1DPtbejMmUY2vvO2g/IAog+H7OFFTCoVJGPRW4yD2+Ir3vNPLiNlPyemRhtqFASKA5
-	N4NK/8xhk+flz/DbeQyeQbw4x+2f0ayUchmUIgq1iGCf9HPrCNgB5uBQI2eBofofnZ57/Iy1oAz
-	8jcyKxHhOtrLP1y5JGdjtIU3Po4hAZ+fZov+rgvQdJ5mDWXuOG0uyyRsY/FbFVcMeoacDSq2dQF
-	cslg==
-X-Google-Smtp-Source: AGHT+IHXd0IcgPPuddYC43FouBDl7JZ23qUq6zvhrCcNdJja7V9zzVEVqdzVMGBz5q8/P63zDQWKhg==
-X-Received: by 2002:a05:6000:2913:b0:428:3fbb:8409 with SMTP id ffacd0b85a97d-4283fbb8df6mr11330113f8f.46.1761142918838;
-        Wed, 22 Oct 2025 07:21:58 -0700 (PDT)
-Received: from xeon.. ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm24803518f8f.19.2025.10.22.07.21.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 07:21:58 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Aaron Kling <webgeek1234@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v5 20/23] staging: media: tegra-video: tegra20: adjust luma buffer stride
-Date: Wed, 22 Oct 2025 17:20:48 +0300
-Message-ID: <20251022142051.70400-21-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
-References: <20251022142051.70400-1-clamor95@gmail.com>
+        d=1e100.net; s=20230601; t=1761142882; x=1761747682;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q8F+X3+wN0oxbBadx3SHyMbf6X2kDJDWo7WkuZHB6Sg=;
+        b=Nj6BqM+VEjYS5pGZHouKekkLmsMfjm59W0paUkZaHU2WjecYAllsls//fhrskb/jGE
+         iKKVJFuQfW4zyTsxsH159Drf+Gi0k1XjZdkEPMEW20vKAElIgBL5dsgGxnEd6OE2CA46
+         /LSe27YN+zrHhfRHUnlcnVH0Vzn4m0IEwW4LVuR5cQ/3dXITgKFPrGdVPOslciy96JDo
+         S0hoh3EWuDg74BK4OQ+YdTjK0+uQpi/A3JwGt0iD0J69PXbji0Q4YDWJOAso0ubgMQie
+         XdIeRaUxXFMxP7plmS2yqnDdVInRv9/XSxZ07LEEssxBRK7kfUHNoSo6GLIFUFHIjGoE
+         bU2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUL6H9DwGVnwlUr2j3XC/sez4OW+NehzIH2pE27c8v6wmhnVszRe1c44qcQeTT9K9QCuEr/Zv9fSvAuR0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp/RjoXr4pUbRwDrlFJMyAmps8S5lLFNyxa4GDtOOJin57M89+
+	A3bvp8J19JS/zl3zsxNLLRGPmH6YBIeYG0OcWhHKnkPUUQ3VR5BJCuEdcHFVc21ncX4Qbi4JGUm
+	L40MSpJev+vnSROrcRf+ESwtXGrv9EC2FgqTk61zYRC5cLB7QyW2VO8BQOWYh2ubGj3o=
+X-Gm-Gg: ASbGnctYHt65awjp2Ll5jqPt1BHo1Edx0viz/NJ/JEIPbVrNcuHT6joz+yf8ljcOqm4
+	Apbq7jtXUcg/DwbBploWsbhUE6eeGpo97waKq4rMg6KPImh/F2I2q3Vm9pIBHDsQwqhTyeOBC1w
+	xqJCpFF9iAdDrP8R1m4cp0fHnRDeIuKg3XPHCoVuYnAR95F7l2GultAfys8TS4VPmsAEMWpH0ZQ
+	tDxasal+F3nTI1ZqdOXDEtyXRh9k0gOoQBxP0yaqnoU/u/HkoET5YatLs3znewXDeKWEpmUAvCj
+	0GX9p4KAHzWoTvBMdF6KlwedcJlKDmWW0UMhE0m0FsynBtO9NsJ9AVMtK0FgMb22SXxGhE8g7+G
+	xVrjuUpu5xF38Te27OcGxcY8bu5jV3A9+qA==
+X-Received: by 2002:a05:6a00:1c8b:b0:7a2:6a86:c79e with SMTP id d2e1a72fcca58-7a26a86c860mr2191950b3a.24.1761142881546;
+        Wed, 22 Oct 2025 07:21:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFD1if09QbpZ0dFtUilgWx94rYjTY53E2gZyd9bH58StesMW+afVzo8P4m1jCTS9rTSPWBDWg==
+X-Received: by 2002:a05:6a00:1c8b:b0:7a2:6a86:c79e with SMTP id d2e1a72fcca58-7a26a86c860mr2191912b3a.24.1761142880900;
+        Wed, 22 Oct 2025 07:21:20 -0700 (PDT)
+Received: from [10.218.16.150] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff39654sm14567575b3a.31.2025.10.22.07.21.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 07:21:20 -0700 (PDT)
+Message-ID: <efc84b92-43f9-ba25-1259-ae3907273af4@oss.qualcomm.com>
+Date: Wed, 22 Oct 2025 19:51:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v16 05/14] power: reset: reboot-mode: Expose sysfs for
+ registered reboot_modes
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel
+ <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andre Draszik
+ <andre.draszik@linaro.org>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>
+References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
+ <20251015-arm-psci-system_reset2-vendor-reboots-v16-5-b98aedaa23ee@oss.qualcomm.com>
+ <CACMJSetWthCcJo8v7EuUK-aDKhf5KTNG5WQQ9aTQu62B+E=DMA@mail.gmail.com>
+ <8fb6e8e0-cdca-0bd5-d0fe-56b5f6d27a5c@oss.qualcomm.com>
+ <CACMJSetTrze028iXmH3i=JguJy=aNOMcnkLhO1ewYNiusvVmgA@mail.gmail.com>
+Content-Language: en-US
+From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+In-Reply-To: <CACMJSetTrze028iXmH3i=JguJy=aNOMcnkLhO1ewYNiusvVmgA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDE0OCBTYWx0ZWRfX60HUMArru05S
+ vCjBnzP+3PSWEZhma53Ar56K3iPyGCOczZ06oVUJU3hsaZiwObcsBRkH4Kd8I2IZoQZ/mwQ8P0p
+ h8/CAfg6JxuypiTl4s+3eMKsE2kMcuAYqhP2jbODvwy6LtUpxpSBZZSlYH98JZIGH2Br/LTfFDO
+ REA/ABwPRcuSJobQYPrL4aJXfK8cfP3Vrr4hUPwgcoC8HRcuvD3AB9YNdTFcVQOz7HHIn2ktvCO
+ hbKoXGbj45ReelFhrR+LL27pnSINsD5Q7bhOmNQCDjF90Q2Nxm1aUBxM87gM1uK2YFd5gXGhVrR
+ 5zDTKoAiAiKh01O9t0E4Xcw5BdW1wC6BKM3zU3ZQ0PrJxeaXvmjWQiw95MLgbM49lT0tcWkhD3K
+ UlIC7rohPmsSth+sXumfwPCfd6lRVQ==
+X-Proofpoint-GUID: 6xxWw0kV2rtDxDZTjQ6--pqVCbuoGSYz
+X-Proofpoint-ORIG-GUID: 6xxWw0kV2rtDxDZTjQ6--pqVCbuoGSYz
+X-Authority-Analysis: v=2.4 cv=a+E9NESF c=1 sm=1 tr=0 ts=68f8e863 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=vdIc-WJG1MBaYulAjwQA:9 a=QEXdDO2ut3YA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510200148
 
-Luma buffer stride is calculated by multiplying height in pixels of image
-by bytes per line. Adjust that value accordingly.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/staging/media/tegra-video/tegra20.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index 0457209b789a..626f34543853 100644
---- a/drivers/staging/media/tegra-video/tegra20.c
-+++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -504,7 +504,7 @@ static void tegra20_camera_capture_setup(struct tegra_vi_channel *chan)
- 	u32 data_type = chan->fmtinfo->img_dt;
- 	int width  = chan->format.width;
- 	int height = chan->format.height;
--	int stride_l = chan->format.bytesperline;
-+	int stride_l = chan->format.bytesperline * height;
- 	int stride_c = (output_fourcc == V4L2_PIX_FMT_YUV420 ||
- 			output_fourcc == V4L2_PIX_FMT_YVU420) ? 1 : 0;
- 	enum tegra_vi_out output_channel = (data_type == TEGRA_IMAGE_DT_RAW8 ||
--- 
-2.48.1
+On 10/20/2025 1:10 PM, Bartosz Golaszewski wrote:
+> On Fri, 17 Oct 2025 at 21:40, Shivendra Pratap
+> <shivendra.pratap@oss.qualcomm.com> wrote:
+>>
+>>>
+>>> If you're using devres here - at least make it obvious by adding the
+>>> devm_ prefix to the function name and make it take an explicit struct
+>>> device * parameter so that it's clear who owns the managed resource.
+>>>
+>>
+>> sure. we can add devm_ prefix to the function name.
+>> reboot->reboot_dev is an internal member of struct reboot_mode_driver *reboot.
+>> The struct reboot_mode_driver *reboot is owned by the calling driver.
+>> If we want to PASS reboot->reboot_dev to the devm_ prefixed function call, we
+>> will need to kind of split create_reboot_mode_device into two calls - device_create
+>> in a separate function and then call the devm_ prefix function where we add the devres_alloc.
+>> Can you suggest a bit more on this?
+>>
+> 
+> Ah, ok I missed the broken logic here. Devres should only be used in
+> devices already *attached* to a driver as all managed resources will
+> get released on driver *detach*. What you have here may "work" by
+> accident but that's not correct and is very fragile as soon as you
+> have some non-standard behavior or error paths. Devres won't fly here,
+> please just use regular allocation and free whatever you need in the
+> corresponding release/free/whatever routine.
 
+Thanks, got the problem here. Was using devres to associate the reboot_mode struct
+with the driver, so that it could be retrieved later when reboot_modes_show is called.
+
+When reboot_modes_show is invoked, there's no direct way to identify which reboot_mode
+instance is tied to the current driver, as multiple drivers can register with the reboot-mode
+framework at the same time. Without devres, will need to maintain a global list of mapping for
+all device driver structs and their corresponding reboot_mode struct. Then reboot_modes_show
+would have to look up the correct reboot_mode struct using the device driver's pointer.
+
+Hope its ok to maintain that separate logic here?
+
+thanks,
+Shivendra
 
