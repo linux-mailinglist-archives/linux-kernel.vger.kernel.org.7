@@ -1,207 +1,159 @@
-Return-Path: <linux-kernel+bounces-865531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C606BBFD67A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:56:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F8FBFD671
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81BDD582A80
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:45:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2BA2566961
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C6421773D;
-	Wed, 22 Oct 2025 16:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7212C0F6E;
+	Wed, 22 Oct 2025 16:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="l/WRi5Z4"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjOQz/Jl"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E132A35B128
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8BA2C033C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761151055; cv=none; b=OHDR+raX1wnDvr79cpdSwtjXpz6wLd2vkYZSZm9F52sDf61eDU7JwZUNR46wqHVFBw7Hzkiif+77MAccTN4gJayJi7aWBJosyEzP0SuPusEvLr1CRGLDIbQ4I/QOocsdWNql/XJFiGhlDeUOp7zYi9ABrEPyKTZJ6iSebm5ThBQ=
+	t=1761151093; cv=none; b=nEKm13DGtuQh/4P4ARyLb0eODG6CBG8C1TLKLY7YiZDGredhBrTkGlgHFGWtr7TnP3CMzxMW/vQIjAdPWseddH3w6fKAVQd3kB2P4i0CC1KUIk7gR/3xE6RMzZJnHdOG6L3AACUs8Jrxp3wsxnwm8F5uCtFEhL9iw7KwQSZ2sX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761151055; c=relaxed/simple;
-	bh=c6iXq2CXhRSiU/zyPKgk/97y67GG3wPx5D49DMmb4mA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=no1DFdkNIC/2rrEsdhTjXFCcsFOVyKkhJ/yJxo/mY3Lh3FyzfXM6x4KFgk8wgsXcbLS7cp78f/vGI0jvgixpcf6Y4OsqJRSCs2cErW6G85k9VeZ6xlSlAOuH4i1+M6wpWKNpUtkbk1YZMsdWrmmwgPt4VGp0yclMsXx+bgRZswk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=l/WRi5Z4; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 98CB98FA;
-	Wed, 22 Oct 2025 18:35:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761150946;
-	bh=c6iXq2CXhRSiU/zyPKgk/97y67GG3wPx5D49DMmb4mA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l/WRi5Z4ycRNSf9pqsvs2Q3ABA2mElozQDXLWHcQUvbKhIaYza2AnUZ6PmTon8Hj4
-	 A/ayI/sIpY6c9PClpYHGQSYXigtRWYvY7MC6G9MXtyqVXgtatcs/OKX5Lhnce4XBYx
-	 6EGQGGXReu6M24rqCa8mvK0HIerqDAQ9lyvmHVvc=
-Message-ID: <7ebf501a-68f5-4644-9419-49e391caacd8@ideasonboard.com>
-Date: Wed, 22 Oct 2025 19:37:27 +0300
+	s=arc-20240116; t=1761151093; c=relaxed/simple;
+	bh=jd8PdGQoO6wTovaPAdg29/u29zMw+SHvYlnQa0aQ+7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LGyoKN4kJEf3Ue5IXgtC1ZrCqF7++i3rlQmSh/bLyNVL8daaUiUefh5op7QT9tFZ3zY3JBGn+DOhoG3JX96dEeA+kC5Cn0juv5R6Gl2fPQHiNZMQ874uRW+20d8e4v5huIvrVnq4BU8Kr6Uk9hJaCeX7DqmPAPI2zxgouBKImd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjOQz/Jl; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so1401876366b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761151089; x=1761755889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wjxtDCCPNJq4IFLZpgA+ZFNOHtoqxbpot9L2X2MUg3M=;
+        b=NjOQz/Jl8aMO4hJ8aw494qLUh/97MjGMDmzMeRrnyH7kkcARdqv3SD9LsOMRjZZqEN
+         L+pq6V61Mm5ueAlKRsZGg8cJMSoH8eIg3HPIY3KMLTqvxyE/Zn2kolsPAe+6EJJtebc5
+         bNRxDYulpkJTGg1GnZcZjslVAjgTZcLpbXIyQKZoKKMju471u/6zMTiM/nGKky0z74TG
+         K/JL1k0YqTP2XmBm4n64vpgperOUb84bEvctdVo2JC6nZtVABN690A9KfGKkOpH9ovHo
+         2jlYXT9lkpFomDebZ6MORoGtF/9sgTrLwVwWcjYtgkjyz9pSk54n2VHBrtUcwjdpey6m
+         eXmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761151089; x=1761755889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wjxtDCCPNJq4IFLZpgA+ZFNOHtoqxbpot9L2X2MUg3M=;
+        b=RtGIgRBsjlfOJSk8+HH9zlcDU0OR+JU11TiE4ZMl/DLqtj/Rzr/sQxxn5K/JJPpPXa
+         YsaUyPWlaVnw00HYrC6jMuf7u1TgxWJGIZDVGflN+ld83Rp8BDoRdYid3nPdjqAJY9xp
+         zDSHxpTL5wuFoGiYNLLFVjRwUHsTN/+n0rseRlnc2VavAGo3ii2VrMVwKTi8Dy/Tts31
+         wrOwtlqmABD6x5LGzqMG1XlfErF1fNgL9vHAGySa9FxeNU9wYJLYJpiwE8akK4KbSIjt
+         abbukXTf4LPWvoJlL52X/Fy1Mx64zRdZVGljFIzaW+bT0syQcql/YCvgEC5Sav6WISe9
+         /LKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWlETACGy0ejm/Hva4yWlCXslyejUoo/fAHJ+gNRNfw7+gHf8gHg5LNgSj2Q8GQRhtABej2t8PS9MsQIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmSB/f++zeY4bFOj5NuvDFXyUqVr/Z3Fftwz4fXgVmSmbZtbhN
+	TWhlS9NheZHzHF1l6Wo/Bx4nyBKBKU/fr2ff/cYoQqFHojLTojVUjf1AW6Q15KN05tNrkWGKdcw
+	Ea4AAZs5BgExXdyCLX6Ab4LtcbvC9Zepwu1vcyhs=
+X-Gm-Gg: ASbGncuu3raW7CBS2GfcGLOUTM70Z4Z+YumKO9fXsSG2eS9ZzYfXdrezfjoIZVeXWDN
+	E9lH57B4Kfj/tCqEoMYbPUZhZScuFirbjphhBUOr8f2/Ce/uhUb1rh/EVQQ00QMs6rjYAjxvw7I
+	iyhN8XLaex3ersk3fN9PguiHMRB2wntEj0yHLux0y2sNdmVwpyCgwox7oXwAI/j+a958mu+yjTl
+	NRc8syL87hMZpLaVHZTqvgmkBMrXO8foIcrveIPR2isQi+hR0W1xtXkyBMD5lwcABXVb7Ok
+X-Google-Smtp-Source: AGHT+IEQhlldZHkbkWIwjsiQOYHZwHY9bjnkrg5Qfxs+V+/uUM20EoHZr/oHelRYTZyLRY98uAb0GmKzUqC/ua22PeI=
+X-Received: by 2002:a17:907:86a2:b0:b40:f7dd:f8ee with SMTP id
+ a640c23a62f3a-b6473732c83mr2641304266b.28.1761151088562; Wed, 22 Oct 2025
+ 09:38:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/tidss: Add some support for splash-screen
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Maxime Ripard <mripard@kernel.org>, Devarsh Thakkar <devarsht@ti.com>
-Cc: Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-kernel@vger.kernel.org
-References: <20250908-tidss-splash-v2-1-e388b0581dfa@ideasonboard.com>
- <348086ac-b5bc-4ca9-9e5b-82106d319eeb@ti.com>
- <qljdrluxqi3abg7opwvp24ki7255jxrpowf47rpumzlcbnlnon@pccj5wm2kbxt>
- <0d1affe1-1e3c-452a-9052-104acaabef62@suse.de>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <0d1affe1-1e3c-452a-9052-104acaabef62@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
+ <20250925-ltm8054-driver-v2-5-bb61a401a0dc@bootlin.com> <3500149.e9J7NaK4W3@fw-rgant>
+In-Reply-To: <3500149.e9J7NaK4W3@fw-rgant>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 22 Oct 2025 19:37:31 +0300
+X-Gm-Features: AS18NWAmKA0qY-4_Rj927l4qjhXHin0NfP7SGgwOLqwGW9gM3-1uP_V8yDyCw2g
+Message-ID: <CAHp75VciOagW2grjYNxsBLKtwrEqaJZa-mKmUQgW8L8X3mky7A@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] regulator: ltm8054: Support output current limit control
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, 
+	Herve Codina <herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 22, 2025 at 11:06=E2=80=AFAM Romain Gantois
+<romain.gantois@bootlin.com> wrote:
 
-On 22/10/2025 17:59, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 22.10.25 um 16:06 schrieb Maxime Ripard:
->> Hi,
->>
->> On Wed, Oct 22, 2025 at 07:25:10PM +0530, Devarsh Thakkar wrote:
->>> On 08/09/25 14:43, Tomi Valkeinen wrote:
->>>> Currently when the driver's probe is called, we do a full DSS reset. If
->>>> the bootloader has set up a splash-screen, the reset will disable the
->>>> video output, and after that it may still take time until the
->>>> display is
->>>> usable (all the kernel modules have been loaded) and even more time
->>>> until the userspace is able to use the display.
->>>>
->>>> If fbdev is enabled, in a perfect case tidss would take over the fb
->>>> memory set up by the bootloader, and use that memory for tidss's fbdev,
->>>> thus retaining the splash-screen. However, we're not there yet.
->>>>
->>>> As a partial solution, this patch changes the driver so that the driver
->>>> will not reset (or change) the DSS registers until tidss_runtime_get()
->>>> is called when the display is being set up (because of fbdev
->>>> modesetting
->>>> or modesetting from the userspace).
->>>>
->>>> This is achieved in two parts:
->>>>
->>>> 1. Probe
->>>>
->>>> At probe time, in dispc_init_hw(), we check if the DSS is idle
->>>> (videoports disabled). If yes, do a reset and continue as before. If
->>>> not, we know that there's a splash-screen, and we set the
->>>> 'tidss->boot_enabled_vp_mask' field to reflect the enabled VPs.
->>>>
->>>> We then enable the corresponding VP clocks (to ensure they stay on),
->>>> set
->>>> the IRQENABLE to 0 to make sure we won't get any interrupts, and then
->>>> exit leaving the fclk and VP clocks enabled, and the runtime PM status
->>>> active.
->>>>
->>>> 2. Runtime get
->>>>
->>>> Later, when the tidss_runtime_get() is called the first time, we check
->>>> the 'boot_enabled_vp_mask'. If set, we know that we have the
->>>> splash-screen showing on the screen, and thus the clocks are enabled
->>>> and
->>>> runtime PM status is active. This indicates that
->>>> pm_runtime_resume_and_get() call just before in tidss_runtime_get() did
->>>> not cause a runtime_resume callback to get called, so we need to do
->>>> that
->>>> manually.
->>>>
->>>> We call dispc_splash_fini() which essentially returns the DSS into the
->>>> state where it would be in a non-splash-screen case:
->>>> dispc_splash_fini()
->>>> will do a DSS reset, manually call the runtime_resume callback, and
->>>> then
->>>> call clk_disable_unprepare() and pm_runtime_put_noidle() to counter the
->>>> actions at probe time.
->>>>
->>>> Finally 'boot_enabled_vp_mask' is set to zero to mark that we're no
->>>> longer in the "splash-screen mode".
->>>>
->>>> A note about fbdev emulation:
->>>>
->>>> If fbdev emulation is enabled in the DRM, tidss will set up an fbdev.
->>>> This will cause a modeset, and the blank framebuffer from tidss's fbdev
->>>> will be shown instead of the splash-screen.
->>>>
->>>> I see two improvements to this: either we should memcpy the pixel data
->>>> from the bootloader's splash-screen to the new fbdev buffer, or the
->>>> fbdev could use the splash-screen directly as its buffer. I have done
->>>> some hacks for the former, but I'm not sure how to implement either of
->>>> these properly.
->> I still think it's not the kind of driver-specific driver behaviour we
->> want to have.
->>
->> Even more so when we have a generic solution to this problem in the
->> works.
-> 
-> I agree with that sentiment. We want atomic-state readout plus a
-> bootsplash DRM client. This would give us flicker-free booting with
-> smooth transitions across drivers and user space.
+...
 
-I like the sound of it. What does a bootsplash DRM client do? Would this
-give us the ability for the userspace to do some small modifications to
-the fb (e.g. progress bar), and would it work with a built-in dummy
-driver (simpledrm), and the main DRM driver as a module?
+> I've encountered a lockdep splat while testing these callbacks. I've
+> included a summary of the splat at the end of this email [1].
+>
+> After investigating, it seems like the issue lies with IIO callbacks in t=
+he
+> ad5592r driver being called with the LTM8054 regulator device lock held.
+>
+> The ad5592r callbacks themselves call into the regulator core to enable t=
+he
+> DAC's regulators, which might try the LTM8054 lock again in the same
+> thread, causing a deadlock. This would only happen if the LTM8054 was
+> supplying voltage to the ad5592r.
+>
+> There are two parts to this issue:
+>
+> 1. Making sure that the CTL IIO channel used by an LTM8054 device isn't
+> supplied by the LTM8054 itself (or a consumer of the LTM8054). Solving th=
+is
+> removes the risk of an actual deadlock.
+>
+> 2. Silencing the lockdep splat. The splat seems to be triggered by the II=
+O
+> driver taking the general regulator ww_mutex context, which means it will
+> still occur even if we've made sure that the IIO channel isn't a consumer
+> of the LTM8054 regulator.
+>
+> For part 1., a potential solution would be to create a device link with t=
+he
+> LTM8054 device as a consumer and the CTL IIO channel as a supplier. IIUC
+> device links do not tolerate cycles, so this should ensure that the IIO
+> channel isn't a direct or indirect consumer of the LTM8054.
+>
+> However, the LTM8054 driver cannot access the IIO device struct to create=
+ the
+> link, so adding a new IIO consumer API function could be necessary.
+>
+> For part 2., I'm having more trouble finding a proper solution. One
+> potential fix would be to put the IIO channel reads/writes in a LTM8054
+> driver work item and have them run without the regulator lock held. This
+> would incidentally also solve part 1., however it would make the current
+> limit operations asynchronous, and it seems like a lot of unnecessary
+> complexity.
 
- Tomi
+Interesting that locking a single  regulator, there is no context and
+hence the lock class is global. Hence whoever calls a regulator will
+have the same lockdep splat, even when false positive. Basically the
+solution for those cases (and I don't know if yours / this one falls
+into the category) is to enable context for the single regulator
+locking and set up a lockdep class (so the regulator core should call
+lockdep_set_class() at mutex initialisation).
 
+> Please tell me if you have any suggestions for solving this, I'll keep
+> searching on my side in the meantime.
+
+--
+With Best Regards,
+Andy Shevchenko
 
