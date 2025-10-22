@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-864965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F12A3BFBFC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448ACBFBFF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD981A06DDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1112E5E69F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE62834846D;
-	Wed, 22 Oct 2025 12:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A7D34A3AF;
+	Wed, 22 Oct 2025 12:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DHCBGOG3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ug6Jonux"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AU+KnOW4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M8oEg6Rk"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945EA348450
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8EE347BC9
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137526; cv=none; b=PZW+BYGNSg6JwJEb9M8vEE8y6TdbeTfaUI1v9ROpBq8hlVlZX/Z68KgwG4jDBaBvXJ5t9o9p06HPyLZMXjnvvED3WW1+ZDAo36DagLowFrnVR3ANh9xLQ2EM/bGXTifd/HKPTSFu/NvREPyJSAZm1sVCDjv6MZgyEGtEaEKs0P8=
+	t=1761137530; cv=none; b=WfX6OLz9587fftWyDdw3mszsAI6RNB+qC4CXDsQfPpEJS8eRlPdTvPcWzfpPQ7O+rQbdsgExIarGrIT2KCUrFaWQChsVMydDL3zHz7zR4P8niseDYOpbD/lNZRj4LcxfHLNVxbjhqPamG9kvvYZAmkEgWGv6bEIUZPHxJeuDEac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137526; c=relaxed/simple;
-	bh=x0yQP/DDMGlpdA5MPdyJrpRdTXFVdLtp8+GY0cU+ufk=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=HAMrHSwdmGSPu1YNour6pdSiXEWjaL4MFcIqpy40qhb/9ti7HjkRVdP0uzR0LNvmb9Xx0pe9JEr8/nlPr/ZMfrrfoJeEm6/oGoAxp93p/zCLJQV4tKfSNLZDUVSAAM9HFiDRiHksKU3Xl1AyOgcowgpyuU7/b0Gepjj81ly4tE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DHCBGOG3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ug6Jonux; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1761137530; c=relaxed/simple;
+	bh=SxGAivdKRnQtVucR9kOVnYYemmVHPaXNwhhc6VNIou8=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=E6qzDFMjxSFPn3VaptNr3P4ZtYWHHjPcXi5u4jjF8ocuVbfQmPkolAMUorECrxci4jcjwlbIGQuF3mN4D0get5a9FRoK+HeD9oMVbaihJdHybUdngwBc73LVm7L99o3RiWDKRfFAovYe+YA3+eTcgWmykvfBXHAkS/Ekq4w4YAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AU+KnOW4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M8oEg6Rk; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251022121836.019469732@linutronix.de>
+Message-ID: <20251022121941.434831322@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761137521;
+	s=2020; t=1761137522;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=LJrVhjnK3JNkK01lPe27E1NT9Rrq80CDjTjOuJXeGOY=;
-	b=DHCBGOG3PEhWw0C8dZ4vNQP9GGWBbcgxVZ3yev8fMzl6AIsxzxhxw5bqNiuL8jMgaXYd4J
-	8BLeEYbbVPNe26+FzaVEiggS/A3pYzHuswMdC67BjZnJMiY7IyXtJrYgW9NaShEC0qNobF
-	Uu039tIF/+0oBEf48cmLoU41Li3PoPPSmfGjnaFTsh5BUWEMEgbmqXbrjTcRdZWO+hcyJD
-	8P/zsx17t+eND82V4Jk4QEF7DHqy0s6J8v/yLHY5Z2CdeV/dJhLvo7Jxe+xlxNarzZ2KWy
-	op0jsxfCA4gghvSclYks+3vGKVhBAYuiRLsq9UblvUvsuxrNWEja6lKMMLiCcQ==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=KnwJh5XFY2DNKV03sEzh8Zl1PLBPHiHfzgN9LGzdgCQ=;
+	b=AU+KnOW4P+v8f1d1uaszRiG1NxKt6KJ908fMOxcm+4WUZ3dfrc2ccehSWtemOiwHdCAZnh
+	9NP930aVBQjGVuWdo6sAlPh+5JwKKd6RTF7FcxObXVi+u4gn+PAfK/aKIZuX6vS2h6AS1F
+	HowlqrT5CoYer8OGK5IZDtd3XhRTVLpYBiTUMPuA7In9WBlWxlg9sVBbALcUIvWVpF7HOo
+	Gaa6YYMBTrQR68tD6+wXvVf3bIaAgcLdi0sYLpvdw6H5yJlP8OMB/lkWxSmSmDymFrl43N
+	bpilivLQTnsb1jFKkwuF5Jt1XrngjssC050GT9VafjPaEa/G+k68uDxTv53IIw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761137521;
+	s=2020e; t=1761137522;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=LJrVhjnK3JNkK01lPe27E1NT9Rrq80CDjTjOuJXeGOY=;
-	b=ug6JonuxXTZIZsxJ2ic/AhVQLgShdH6gMgA6TPiXhai8RfgTWZN1ku0OgYAqzF2O3CCliI
-	JQhJrL+o8Qmg4qDw==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=KnwJh5XFY2DNKV03sEzh8Zl1PLBPHiHfzgN9LGzdgCQ=;
+	b=M8oEg6RkWAEBF2LloAAKmZtPWfWbC7gAKaz485fjBmo/jNC9p7r8kTIhtw7nQCTm4fXpiU
+	k9IYHuRSpSBMvbBA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
@@ -56,138 +59,225 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  x86@kernel.org,
  Sean Christopherson <seanjc@google.com>,
  Wei Liu <wei.liu@kernel.org>
-Subject: [patch V5 00/31] rseq: Optimize exit to user space
-Date: Wed, 22 Oct 2025 14:52:00 +0200 (CEST)
+Subject: [patch V5 01/31] rseq: Avoid pointless evaluation in
+ __rseq_notify_resume()
+References: <20251022121836.019469732@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 22 Oct 2025 14:52:02 +0200 (CEST)
 
-This is a follow up on the V4 series, which can be found here:
+From: Thomas Gleixner <tglx@linutronix.de>
 
-   https://lore.kernel.org/all/20250908212737.353775467@linutronix.de
+The RSEQ critical section mechanism only clears the event mask when a
+critical section is registered, otherwise it is stale and collects
+bits.
 
-The V2 posting contains a detailed list of the addressed problems:
+That means once a critical section is installed the first invocation of
+that code when TIF_NOTIFY_RESUME is set will abort the critical section,
+even when the TIF bit was not raised by the rseq preempt/migrate/signal
+helpers.
 
-   https://lore.kernel.org/20250916163004.674341701@linutronix.de
+This also has a performance implication because TIF_NOTIFY_RESUME is a
+multiplexing TIF bit, which is utilized by quite some infrastructure. That
+means every invocation of __rseq_notify_resume() goes unconditionally
+through the heavy lifting of user space access and consistency checks even
+if there is no reason to do so.
 
-TLDR:
-    - A significant amount of pointless RSEQ operations on exit to user
-      space, which have been reported by people as measurable impact after
-      glibc switched to use RSEQ
+Keeping the stale event mask around when exiting to user space also
+prevents it from being utilized by the upcoming time slice extension
+mechanism.
 
-    - Suboptimal hotpath handling both in the scheduler and on exit to user
-      space.
+Avoid this by reading and clearing the event mask before doing the user
+space critical section access with interrupts or preemption disabled, which
+ensures that the read and clear operation is CPU local atomic versus
+scheduling and the membarrier IPI.
 
-This series addresses these issues by:
+This is correct as after re-enabling interrupts/preemption any relevant
+event will set the bit again and raise TIF_NOTIFY_RESUME, which makes the
+user space exit code take another round of TIF bit clearing.
 
-  1) Limiting the RSEQ work to the actual conditions where it is
-     required. The full benefit is only available for architectures using
-     the generic entry infrastructure. All others get at least the basic
-     improvements.
+If the event mask was non-zero, invoke the slow path. On debug kernels the
+slow path is invoked unconditionally and the result of the event mask
+evaluation is handed in.
 
-  2) Re-implementing the whole user space handling based on proper data
-     structures and by actually looking at the impact it creates in the
-     fast path.
+Add a exit path check after the TIF bit loop, which validates on debug
+kernels that the event mask is zero before exiting to user space.
 
-  3) Moving the actual handling of RSEQ out to the latest point in the exit
-     path, where possible. This is fully inlined into the fast path to keep
-     the impact confined.
+While at it reword the convoluted comment why the pt_regs pointer can be
+NULL under certain circumstances.
 
-Changes vs. V4:
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-  - Add a comment to the KVM retrigger logic - Sean
-
-  - Reduce the fast path decision to event::sched_switch - Mathieu
-
-  - Initialize IDs on registration, keep them on fork and lift the first
-    exit restriction in the debug code - Mathieu
-
-  - Update comments and fix typos - Mathieu
-
-  - Adapted it to the uaccess changes
-
-  - Dropped the already upstream parts and prerequisites
-
-As for the previous version these patches have a dependency on the uaccess
-scope series:
-
-   https://lore.kernel.org/20251022102427.400699796@linutronix.de
-
-which is available at:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git uaccess/scoped
-
-For your convenience the combination of both is available from git:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/perf
-
-Thanks,
-
-	tglx
 ---
-Thomas Gleixner (31):
-      rseq: Avoid pointless evaluation in __rseq_notify_resume()
-      rseq: Condense the inline stubs
-      rseq: Move algorithm comment to top
-      rseq: Remove the ksig argument from rseq_handle_notify_resume()
-      rseq: Simplify registration
-      rseq: Simplify the event notification
-      rseq, virt: Retrigger RSEQ after vcpu_run()
-      rseq: Avoid CPU/MM CID updates when no event pending
-      rseq: Introduce struct rseq_data
-      entry: Cleanup header
-      entry: Remove syscall_enter_from_user_mode_prepare()
-      entry: Inline irqentry_enter/exit_from/to_user_mode()
-      sched: Move MM CID related functions to sched.h
-      rseq: Cache CPU ID and MM CID values
-      rseq: Record interrupt from user space
-      rseq: Provide tracepoint wrappers for inline code
-      rseq: Expose lightweight statistics in debugfs
-      rseq: Provide static branch for runtime debugging
-      rseq: Provide and use rseq_update_user_cs()
-      rseq: Replace the original debug implementation
-      rseq: Make exit debugging static branch based
-      rseq: Use static branch for syscall exit debug when GENERIC_IRQ_ENTRY=y
-      rseq: Provide and use rseq_set_ids()
-      rseq: Separate the signal delivery path
-      rseq: Rework the TIF_NOTIFY handler
-      rseq: Optimize event setting
-      rseq: Implement fast path for exit to user
-      rseq: Switch to fast path processing on exit to user
-      entry: Split up exit_to_user_mode_prepare()
-      rseq: Split up rseq_exit_to_user_mode()
-      rseq: Switch to TIF_RSEQ if supported
-
- Documentation/admin-guide/kernel-parameters.txt |    4 
- arch/x86/entry/syscall_32.c                     |    3 
- drivers/hv/mshv_root_main.c                     |    3 
- fs/binfmt_elf.c                                 |    2 
- fs/exec.c                                       |    2 
- include/asm-generic/thread_info_tif.h           |    3 
- include/linux/entry-common.h                    |   38 -
- include/linux/irq-entry-common.h                |   68 ++
- include/linux/mm.h                              |   25 
- include/linux/resume_user_mode.h                |    2 
- include/linux/rseq.h                            |  228 +++++---
- include/linux/rseq_entry.h                      |  592 +++++++++++++++++++++
- include/linux/rseq_types.h                      |   93 +++
- include/linux/sched.h                           |   48 +
- include/linux/thread_info.h                     |    5 
- include/trace/events/rseq.h                     |    4 
- include/uapi/linux/rseq.h                       |   21 
- init/Kconfig                                    |   28 -
- kernel/entry/common.c                           |   39 -
- kernel/entry/syscall-common.c                   |    8 
- kernel/ptrace.c                                 |    6 
- kernel/rseq.c                                   |  654 ++++++++++--------------
- kernel/sched/core.c                             |   10 
- kernel/sched/membarrier.c                       |    8 
- kernel/sched/sched.h                            |    5 
- virt/kvm/kvm_main.c                             |    7 
- 26 files changed, 1301 insertions(+), 605 deletions(-)
-
-
+ include/linux/irq-entry-common.h |    7 ++--
+ include/linux/rseq.h             |   10 +++++
+ kernel/rseq.c                    |   66 ++++++++++++++++++++++++++-------------
+ 3 files changed, 58 insertions(+), 25 deletions(-)
+---
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -2,11 +2,12 @@
+ #ifndef __LINUX_IRQENTRYCOMMON_H
+ #define __LINUX_IRQENTRYCOMMON_H
+ 
++#include <linux/context_tracking.h>
++#include <linux/kmsan.h>
++#include <linux/rseq.h>
+ #include <linux/static_call_types.h>
+ #include <linux/syscalls.h>
+-#include <linux/context_tracking.h>
+ #include <linux/tick.h>
+-#include <linux/kmsan.h>
+ #include <linux/unwind_deferred.h>
+ 
+ #include <asm/entry-common.h>
+@@ -226,6 +227,8 @@ static __always_inline void exit_to_user
+ 
+ 	arch_exit_to_user_mode_prepare(regs, ti_work);
+ 
++	rseq_exit_to_user_mode();
++
+ 	/* Ensure that kernel state is sane for a return to userspace */
+ 	kmap_assert_nomap();
+ 	lockdep_assert_irqs_disabled();
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -66,6 +66,14 @@ static inline void rseq_migrate(struct t
+ 	rseq_set_notify_resume(t);
+ }
+ 
++static __always_inline void rseq_exit_to_user_mode(void)
++{
++	if (IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
++		if (WARN_ON_ONCE(current->rseq && current->rseq_event_mask))
++			current->rseq_event_mask = 0;
++	}
++}
++
+ /*
+  * If parent process has a registered restartable sequences area, the
+  * child inherits. Unregister rseq for a clone with CLONE_VM set.
+@@ -118,7 +126,7 @@ static inline void rseq_fork(struct task
+ static inline void rseq_execve(struct task_struct *t)
+ {
+ }
+-
++static inline void rseq_exit_to_user_mode(void) { }
+ #endif
+ 
+ #ifdef CONFIG_DEBUG_RSEQ
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -324,9 +324,9 @@ static bool rseq_warn_flags(const char *
+ 	return true;
+ }
+ 
+-static int rseq_need_restart(struct task_struct *t, u32 cs_flags)
++static int rseq_check_flags(struct task_struct *t, u32 cs_flags)
+ {
+-	u32 flags, event_mask;
++	u32 flags;
+ 	int ret;
+ 
+ 	if (rseq_warn_flags("rseq_cs", cs_flags))
+@@ -339,17 +339,7 @@ static int rseq_need_restart(struct task
+ 
+ 	if (rseq_warn_flags("rseq", flags))
+ 		return -EINVAL;
+-
+-	/*
+-	 * Load and clear event mask atomically with respect to
+-	 * scheduler preemption and membarrier IPIs.
+-	 */
+-	scoped_guard(RSEQ_EVENT_GUARD) {
+-		event_mask = t->rseq_event_mask;
+-		t->rseq_event_mask = 0;
+-	}
+-
+-	return !!event_mask;
++	return 0;
+ }
+ 
+ static int clear_rseq_cs(struct rseq __user *rseq)
+@@ -380,7 +370,7 @@ static bool in_rseq_cs(unsigned long ip,
+ 	return ip - rseq_cs->start_ip < rseq_cs->post_commit_offset;
+ }
+ 
+-static int rseq_ip_fixup(struct pt_regs *regs)
++static int rseq_ip_fixup(struct pt_regs *regs, bool abort)
+ {
+ 	unsigned long ip = instruction_pointer(regs);
+ 	struct task_struct *t = current;
+@@ -398,9 +388,11 @@ static int rseq_ip_fixup(struct pt_regs
+ 	 */
+ 	if (!in_rseq_cs(ip, &rseq_cs))
+ 		return clear_rseq_cs(t->rseq);
+-	ret = rseq_need_restart(t, rseq_cs.flags);
+-	if (ret <= 0)
++	ret = rseq_check_flags(t, rseq_cs.flags);
++	if (ret < 0)
+ 		return ret;
++	if (!abort)
++		return 0;
+ 	ret = clear_rseq_cs(t->rseq);
+ 	if (ret)
+ 		return ret;
+@@ -430,14 +422,44 @@ void __rseq_handle_notify_resume(struct
+ 		return;
+ 
+ 	/*
+-	 * regs is NULL if and only if the caller is in a syscall path.  Skip
+-	 * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
+-	 * kill a misbehaving userspace on debug kernels.
++	 * If invoked from hypervisors or IO-URING, then @regs is a NULL
++	 * pointer, so fixup cannot be done. If the syscall which led to
++	 * this invocation was invoked inside a critical section, then it
++	 * will either end up in this code again or a possible violation of
++	 * a syscall inside a critical region can only be detected by the
++	 * debug code in rseq_syscall() in a debug enabled kernel.
+ 	 */
+ 	if (regs) {
+-		ret = rseq_ip_fixup(regs);
+-		if (unlikely(ret < 0))
+-			goto error;
++		/*
++		 * Read and clear the event mask first. If the task was not
++		 * preempted or migrated or a signal is on the way, there
++		 * is no point in doing any of the heavy lifting here on
++		 * production kernels. In that case TIF_NOTIFY_RESUME was
++		 * raised by some other functionality.
++		 *
++		 * This is correct because the read/clear operation is
++		 * guarded against scheduler preemption, which makes it CPU
++		 * local atomic. If the task is preempted right after
++		 * re-enabling preemption then TIF_NOTIFY_RESUME is set
++		 * again and this function is invoked another time _before_
++		 * the task is able to return to user mode.
++		 *
++		 * On a debug kernel, invoke the fixup code unconditionally
++		 * with the result handed in to allow the detection of
++		 * inconsistencies.
++		 */
++		u32 event_mask;
++
++		scoped_guard(RSEQ_EVENT_GUARD) {
++			event_mask = t->rseq_event_mask;
++			t->rseq_event_mask = 0;
++		}
++
++		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event_mask) {
++			ret = rseq_ip_fixup(regs, !!event_mask);
++			if (unlikely(ret < 0))
++				goto error;
++		}
+ 	}
+ 	if (unlikely(rseq_update_cpu_node_id(t)))
+ 		goto error;
 
 
