@@ -1,171 +1,76 @@
-Return-Path: <linux-kernel+bounces-865761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50996BFDEFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A05BBFDF02
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 801FE3562D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:52:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D1C3A7729
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766322E1F0E;
-	Wed, 22 Oct 2025 18:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNTP4LcO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2C9325480;
+	Wed, 22 Oct 2025 18:52:41 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD5434D4F1;
-	Wed, 22 Oct 2025 18:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8830734B669
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761159139; cv=none; b=f9LKmtwzat2EH90MDQvC3mUQnLIsdF7+F7IIFVrJL13ALV94eaB7zrL3cjeg1fjl2R257qwN+kzpiLccl6Exs3XeAiQcIShfz3O7yuuqojpb59B7s8jfHHbzbUqFURhXd92GHXzNgUFYuE6kEdy5QMyyu2AYSobsQAp+HJ0xlhY=
+	t=1761159161; cv=none; b=ayQ4wR5DGm/4OyWOQtKL9NRq4HzKApNXyD6zzcHzcoM1ydG/6mKRsTYoSeK5zUi3CJU5B0lS9nrKAw9obZ9KwF8LnYVhX2f2w+71CD1V0hV/Mjkt3ShNeuXt/7ysg1GZk7YgGH8dKQStBSGoXVhuYfb9a0qIEFaUuR0YP/XxrS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761159139; c=relaxed/simple;
-	bh=PVZZYAVyvv7egp6gkbuFjCZQu8uS05vLnw8Xj2BSIs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xus079LD/k7MsmwrASt/I/bLsIJJxQAvwDOGRt9MYbLXVbBRBGHWHSntZpGamR1iHWfigfG6cAq99bU9I5xit+e7tg9jCwBba5agkv8dj38seu8Bc1G/IOGR3Ni0tjrDXRUByT9IkvmtrL2J2BVTWY6Z9xl+E3RsZjAn2HWq3Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNTP4LcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B98C4CEE7;
-	Wed, 22 Oct 2025 18:52:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761159139;
-	bh=PVZZYAVyvv7egp6gkbuFjCZQu8uS05vLnw8Xj2BSIs0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RNTP4LcO8Y6DKJwaR7oZ+UzWZs7exVd95CeR5tt6jm6N9nGinD/tjbIwl3wCC/er8
-	 LWDqVvp25rETJ5CDkEvuNrIWC01nA1clI5JyKvTGIvjSolxed3smMshMe19Tq4yZvk
-	 HeaNp94MyW4fctBj0QLro1Jb9dmwlLYpj1iV3AKx4iHQ7v/zzLW+/C0F9xNsKb1GIp
-	 sTgJBdp2ewQn0cC3+YMD/fZHuMvxBrJvHdmvvQVlkUlYJiAUrpiAiWEnKqzLytc2my
-	 sOmt39OZZht6k7cKXDrDrbZN4eEswu9OTvrOhd5reL9a61oTCxkQTvcHH/eh3lqwN0
-	 X5tEe1ZugVMog==
-Received: by pali.im (Postfix)
-	id 34F227F2; Wed, 22 Oct 2025 20:52:14 +0200 (CEST)
-Date: Wed, 22 Oct 2025 20:52:14 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
-	hch@lst.de, tytso@mit.edu, willy@infradead.org, jack@suse.cz,
-	djwong@kernel.org, josef@toxicpanda.com, sandeen@sandeen.net,
-	rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com,
-	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
-	gunho.lee@lge.com
-Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
-Message-ID: <20251022185214.abdbkp7eqmcrnbhx@pali>
-References: <20251020020749.5522-1-linkinjeon@kernel.org>
- <20251020183304.umtx46whqu4awijj@pali>
- <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com>
- <20251021221919.leqrmil77r2iavyo@pali>
- <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+	s=arc-20240116; t=1761159161; c=relaxed/simple;
+	bh=ErPm9thxqfgXSjfDaND7e9YnwwD9pyLOoFbZqNywZkY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YWRVADKWPMXIBWHMXi4fWB8EiaXskSv/zXmRVZOpDhoOjv9roQgEKUkwSqha9qBVnDNBZ1OnX5eZ4flpMw4gdkgVlChbj89TLRb2BE3hrY898X4o3MU3fDGKkLVIxqmWnZE9hwKPIsG/fOTdyhuPfUy3GfZNguu5hJImCfUd9Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-92c122eb2bdso120263639f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:52:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761159158; x=1761763958;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ErPm9thxqfgXSjfDaND7e9YnwwD9pyLOoFbZqNywZkY=;
+        b=jHLi+87Dw0LIrBIP0thO5XKKtXtEQkD0xTSQI6YNI3xNzH9A0mJeyj1QcqMb6t1gAB
+         mFI9rINvDzamGU91Y4fij7s4ttolRIBIppN5/LnVj2vdc0fifbAMQGX514yhyibew3Je
+         NWjKEPROMA6TZ+Uv4mhO5m5IwXopWPFLHkWZ1aPsKrmj8LVluvPDSd7iCU2fLn1e8LzC
+         ZqV84YgBzzqT0lGtng0tF585G7HRSKBMWPOk56xpGwkKz6hj5IORuOJZX+As3yb7mm45
+         7Kbk2tRdXvp4p7rygbR6visk9kydOr7a5F3tN7Ff4l4GpMiROlDY8oWcftcjTsmC4Fdn
+         by/w==
+X-Gm-Message-State: AOJu0Yy/iUY1OpDiqcFfXVkiJirmBhkxuOH87yq5jQ9HKiEMCz84AN15
+	Ogk3HsYgTGjYuXTlSKmyBwlhCosLHXP3b2tdEohh0S6zQoDi0HYywD2vxfH2Wtx7M90mxu6yX0M
+	ju7pcSidZuy+6LDePSHFfoB4qEZkpSugVlWvZPV6KaxU5OBbOMsMW9cxKwIk=
+X-Google-Smtp-Source: AGHT+IEMUeurk7KnyETEHKSXrRWxzzzaocgwTg3BxkFtNh9H5Iba9Z11af6oIjZeqCMUpxDPZiLf3BrH0rbZVMZ4abN6aI4Aw13D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-Received: by 2002:a05:6602:a011:b0:940:d3df:39c2 with SMTP id
+ ca18e2360f4ac-940f44516aamr645081939f.4.1761159158654; Wed, 22 Oct 2025
+ 11:52:38 -0700 (PDT)
+Date: Wed, 22 Oct 2025 11:52:38 -0700
+In-Reply-To: <00000000000097e14f0621951335@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f927f6.a70a0220.3bf6c6.0022.GAE@google.com>
+Subject: Forwarded: Re: NTFS3 : KMSAN: uninit-value in sw842_compress
+From: syzbot <syzbot+17cae3c0a5b0acdc327d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wednesday 22 October 2025 11:13:50 Namjae Jeon wrote:
-> On Wed, Oct 22, 2025 at 7:19 AM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > On Tuesday 21 October 2025 10:49:48 Namjae Jeon wrote:
-> > > On Tue, Oct 21, 2025 at 3:33 AM Pali Rohár <pali@kernel.org> wrote:
-> > > >
-> > > > Hello,
-> > > Hi Pali,
-> > > >
-> > > > Do you have a plan, what should be the future of the NTFS support in
-> > > > Linux? Because basically this is a third NTFS driver in recent years
-> > > > and I think it is not a good idea to replace NTFS driver every decade by
-> > > > a new different implementation.
-> > > Our product is currently using ntfsplus without any issues, but we plan to
-> > > provide support for the various issues that are reported from users or
-> > > developers once it is merged into the mainline kernel.
-> > > This is very basic, but the current ntfs3 has not provided this support
-> > > for the last four years.
-> > > After ntfsplus was merged, our next step will be to implement full journal
-> > > support. Our ultimate goal is to provide stable NTFS support in Linux,
-> > > utilities support included fsck(ntfsprogs-plus) and journaling.
-> >
-> > One important thing here is that all those drivers are implementing
-> > support for same filesystem. So theoretically they should be equivalent
-> > (modulo bugs and missing features).
-> >
-> > So basically the userspace ntfs fs utils should work with any of those
-> > drivers and also should be compatible with Windows ntfs.sys driver.
-> > And therefore independent of the used kernel driver.
-> >
-> > It would be really nice to have working fsck utility for ntfs. I hope
-> > that we would not have 3 ntfs mkfs/fsck tools from 3 different project
-> > and every one would have different set of bugs or limitations.
-> >
-> > > >
-> > > > Is this new driver going to replace existing ntfs3 driver? Or should it
-> > > > live side-by-side together with ntfs3?
-> > > Currently, it is the latter. I think the two drivers should compete.
-> > > A ntfs driver that users can reliably use for ntfs in their
-> > > products is what should be the one that remains.
-> > > Four years ago, ntfs3 promised to soon release the full journal and
-> > > public utilities support that were in their commercial version.
-> > > That promise hasn't been kept yet, Probably, It would not be easy for
-> > > a company that sells a ntfs driver commercially to open some or all sources.
-> > > That's why I think we need at least competition.
-> >
-> > I understand it. It is not really easy.
-> >
-> > Also same thing can happen with your new ntfsplus. Nobody knows what
-> > would happen in next one or two years.
-> Since I publicly mentioned adding write support to ntfs driver, I have devoted
-> a great deal of time and effort to fulfilling that while working on other tasks
-> in parallel. Your comment seems to undermine all the effort I have done
-> over the years.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-I'm really sorry, I did not mean it in that way. I just wanted to point
-that year is a very long period and unexpected things could happen.
-Nothing against your or any others effort.
+***
 
-> >
-> > > >
-> > > > If this new driver is going to replace ntfs3 then it should provide same
-> > > > API/ABI to userspace. For this case at least same/compatible mount
-> > > > options, ioctl interface and/or attribute features (not sure what is
-> > > > already supported).
-> > > Sure, If ntfsplus replace ntfs3, it will support them.
-> > > >
-> > > > You wrote that ntfsplus is based on the old ntfs driver. How big is the
-> > > > diff between old ntfs and new ntfsplus driver? If the code is still
-> > > > same, maybe it would be better to call it ntfs as before and construct
-> > > > commits in a way which will first "revert the old ntfs driver" and then
-> > > > apply your changes on top of it (like write feature, etc..)?
-> > > I thought this patch-set was better because a lot of code clean-up
-> > > was done, resulting in a large diff, and the old ntfs was removed.
-> > > I would like to proceed with the current set of patches rather than
-> > > restructuring the patchset again.
-> >
-> > Sure. In the current form it looks to be more readable and easier for
-> > review.
-> >
-> > But I think that more developers could be curious how similar is the new
-> > ntfsplus to the old removed ntfs. And in the form of revert + changes it
-> > is easier to see what was changed, what was fixed and what new developed.
-> >
-> > I'm just thinking, if the code has really lot of common parts, maybe it
-> > would make sense to have it in git in that "big revert + new changes"
-> > form?
-> >
-> > > >
-> > > > For mount options, for example I see that new driver does not use
-> > > > de-facto standard iocharset= mount option like all other fs driver but
-> > > > instead has nls= mount option. This should be fixed.
-> > > Okay, I will fix it on the next version.
-> > > >
-> > > > Pali
-> > > Thank you for your review:)
+Subject: Re: NTFS3 : KMSAN: uninit-value in sw842_compress
+Author: kubik.bartlomiej@gmail.com
+
+#syz test
 
