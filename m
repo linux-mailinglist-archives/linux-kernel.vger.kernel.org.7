@@ -1,85 +1,90 @@
-Return-Path: <linux-kernel+bounces-863987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EFEBF9A83
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:54:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FE8BF9A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6DD3A9329
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:54:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0D3A4F3387
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A8220C029;
-	Wed, 22 Oct 2025 01:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FB020CCFE;
+	Wed, 22 Oct 2025 01:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUh8V7wO"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sw5f1Pg3"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D941FE451
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEACD1FE47C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761098056; cv=none; b=dd6FZtY0nPJ0vOfGuTtY1Bw4iwYmDU00yiu25rKqKrhz8Y6oshjxk3GmQLdJVYVtdxVl5a/qf+WM+tUu8Z8sv6zf/Vaoue22FtfR2ve+Fz56hTq1jKdgrM1VaLl1RC6ubIPzG3ozJf3pN3NeOnWRZXff6h5LnxqWdU2elF5BJ3o=
+	t=1761098151; cv=none; b=jX5kEFvwJYRXOMbExTuieNR0BWCzBEccFJT+W9uesKbKbnJKF0lVCL2hSNRJiOzW5bbGKkvpJk7btkDXZgUVGSrcKemDJblxPpUxTB94Rx4Kqkxu9fEZYkY6kKGsWGsBqN75O2DDTfyBqMK+GlctJgHm7IA3nCYr7a6Hi/N27MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761098056; c=relaxed/simple;
-	bh=7SWJW/bStU/PcvTcsMTdRhwzcQsK6wMyBdkCxjenGzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EXOv96mtUCBBXyESf85A0i/kkL7ezqFQ7CdPHy27ECawdpifmgttfDGWH1I7NZuo2RQuYTqTEKiRkc6YYkHPXaziNfRTHM6g+fWlqGjc/HTulF04jYxE2r5uoDEmT+pUM7YJAx+c+CWk/7wNT02kgNTVVXGfUzrjlCl9Cz0R4O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jUh8V7wO; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1761098151; c=relaxed/simple;
+	bh=Y5j/Bnfa9vnAcAs2FiaNWlxj6FttS8dn3fKo1856mw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EKfGNfkPkH3Js5Jv6AwQY9p1v9+rgDQ1yyBEj/bu4N3IifvWwG5zU6gwXVtgwkqQLVYiM96Hs63Q2zUbGgyLJPaLSJZJisw0/2cZ37wBwk4OAiI3dL4OHlzMsTZ1h+zM0LrgbJ+rLzpz656CTzyX06YGySmIZyyMN26uTHyFgCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sw5f1Pg3; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-471193a9d9eso56780535e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:54:14 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33255011eafso5907565a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761098053; x=1761702853; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761098149; x=1761702949; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cdEInNnnI8mUaV9oHcjuBVGjC97eLQH2pPXt+cVP+WI=;
-        b=jUh8V7wO1dka79EH6/thwZ3obJCFmx8aVfelpWXXzfEovxpOu44fuAdYR9aK39fK6h
-         m1YQfogdEXwVOxjqBAzXh3yYgHqgq8Zntzc/TNxiUP3tPIwkOyWI9m8BdbQdUSuLVMPv
-         HC6jrN0t8SvY4DsaIKrj9BJ7nsDAAITDjZ8Ijv/H0aTLjSKWq0LVsbiqdFgoHS0h6eNd
-         NPnsfR4G4IeV9Kujag+QA4Pq2xov1pBhe3QS2FSLP30clc6gyjdpL8fX1kbioCu1Q/9F
-         c6sYwq34NKlCNjQRn80/gSEwBtSCYeW9zTLe85w1XrgDIQ0Z+HmQ0fDlfAqkNVWwp+Ph
-         9RTg==
+        bh=vdRGmRFj0+9fhloGjpnhbXyISHONx/9VHecgIuMRmLs=;
+        b=Sw5f1Pg3v9t1VCJMXnm9feA8QOMyp/QKrrr+xxOCvaqkqbXkPvRAtEFT6hqrbpeW/V
+         eMSka3hsE4n90+7chgeJ54zv/z1Y6eGsviMJOdoQ8TcSEOqcVKn/NLmX+xrE6CkggUVz
+         HGwk0Wk7Tg5G8XuSnKFL/HG1Dz/0NkHSnMs93oI/otcY+clTHIkDXj+arS+BfEU79llN
+         2M+lrna7HHA2f2mdvw3OZ9KEtXGrt2aCjXKZmsh2jmGXpF1kB+oc46UzKHCyVjqjzYRj
+         U2GZCB4Plzf2tGLbSQc25/RvBYLjd1Dhd/7tYNCv2Rk/wmgNZYHt8ZjFG32FE1j/WdSM
+         /hxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761098053; x=1761702853;
+        d=1e100.net; s=20230601; t=1761098149; x=1761702949;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cdEInNnnI8mUaV9oHcjuBVGjC97eLQH2pPXt+cVP+WI=;
-        b=GRisYPrbgUexLv/9+mZzmyaA18C3IzW6Kp7Nul/ErPOdozfNWMiXYOK8vfhUwzPGCH
-         18hCISaTo0gAXHlRe3HqyHsP6n+17GhzLa4zRaw+QPO78e+kAU13bmx/tQs0/oChX2Ai
-         dLHLsSeuDYiTas2JXrstJnTrN+x7KLTDhVSHjYEmKGnmS3c4yOwknHIKySY9ebmg7bb0
-         k4N8MflgAySxRmZVRTW9NJhztaEfr90KHo9aKexPLh0LGuPeXeNd55n9U/rcUdUg0act
-         hd87lmCHhBoBN6ulvbum1G+MI9TyZsrFRAnExMqa60e7Rrrk9ZXrhnwb7jYBaKbvwP6G
-         oxkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUlndt8Pac6IAB7peDsoNpVhk9FOBKktBfKtpDdcDg9cF514ZodhDqtFbDK8H00bB5lIfgifiiKmto9Vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUpJPx656T39oM2qAnfevXvulFW9MDF3MipO+W3MCImrd0w8dd
-	3WE8/8h1YaoUugWvjG1GhvJ6me800/K6gqa0JfQGn/cgC6+5zIc5Z6gb
-X-Gm-Gg: ASbGncucEC0SG42et5nEUEjjgJyCZLG5VvG0gnQ+mxhN1EIgyQYIq+uQory0NSvQBQo
-	lG3Z3a0QF64si6Di3RWFp/8TAb8vfFwhAPydAQKVfHIswe27kUWUP7Jb/pj8Cdj/YyGa5iZ2Y3U
-	sX39Da6pVDyRdaizP0C9OImYeON67wBPh/NhG7bVV9/iQ8N82aR59uf7UH+ryahHCJwhyeLD04l
-	ifGu2lvm9xsrzVy3Do49H9mrvm6bHSVmYKuJu7IFZn0k4LH8m5IjS/MSUViM2JRH+WqRnaXLwiY
-	GKwCBVFHbQRdmAr8DteYvsR+rdtnMYm+aSBgH9oB28kXcuAzGtlOoAxUVjn5p/FyOJWUImsn67N
-	Fu8uDlnU+7Va46pPcG3dDJL8D1GJZ7G6w39g4ewa0sq537AbWSa0B+6MOP1hwu4+9PiCBRbdJ83
-	ztUZl5/vyj4cGQabo=
-X-Google-Smtp-Source: AGHT+IG+iNm8EjeDp0NASCXQRsYB7vpkeyR3u30iI3VIRokzzDe0B+HNAmeJ4eO8dQkgDFLMnmcAGA==
-X-Received: by 2002:a05:600c:858c:b0:46d:b665:1d95 with SMTP id 5b1f17b1804b1-47117917bb6mr124309795e9.32.1761098052918;
-        Tue, 21 Oct 2025 18:54:12 -0700 (PDT)
-Received: from shift.. ([86.124.201.90])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4281314sm19309395e9.4.2025.10.21.18.54.12
+        bh=vdRGmRFj0+9fhloGjpnhbXyISHONx/9VHecgIuMRmLs=;
+        b=phGzfvpefxdFAKJZvUfOHdsXeW9BVb+TTJQvvajNJFTqTCMeP0l+KcYYwOYqw+97Rh
+         KJGKL/iSMiDgUUh/peUflFIvitlZ9BLvE2Gj9UBWXg9Tvd0YkuBcy6cQI0HpYgcxnWS5
+         HyRTsuzZE2un4edHkf4eUYhZ8MXzE1dAUhrQyEwp6/7NXz9BA+rh1ZFdBcuP02uTT08D
+         k2gt/+ybNuf1dJ3e9l9/1E7JNrP1th3jm7lxznDBstq2td10iDS4Ch4nULpzLSZZvrhS
+         T9AhQxKUtCf6keHvMKXkBy7/EMTLSwPVP/hGzfKO7weIvh/cUQWj2T9UwjEBzW73gJh9
+         Rpfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWkLnS2iee+dTZm3rigd4EnNmw+ATxGw7we/rgpQdkLGrw6nT+FBZPrpXeYVIUGCE9oEepZ3RVO00z1QM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygwT00IJR5Ecuiw89rXa6YFhCmvQBRNd6ZvgP4pfudwe4xzW+E
+	WemvRfYpg/HZDfIbSpPDwW01d1w87YC+IfNoOrtCiPIht510/ae9rvrQ
+X-Gm-Gg: ASbGncu4ESFN6ETwqr4tpiC5Aayp3biQmGv3JUwz18VzvFddBOVk9vBldjyq5A2S2yy
+	vm6luVLuIsXWEEy9TprvbL4oW0uvz8s1CYqw/SF8RzRhmOnfH3VhFibqdEaPnBBnUezHM5wUHnQ
+	CFvQX/lEjffWDv6ozwFEc/4pEEv//ez0ssAG3Du97MDPJOGc9VbW6lVPGjU6mxQy7C6mv59DHMo
+	lKxhhBSPgy4MYxOGUo/nTohJbMr3mvn3rnRQbtnWAETFS+EnyPhpVzqZ5CQXIfikwjdEDg8VwGn
+	9jNMiVSnQiJDPw+jRgkJD5w/Z1wWTSf/guNZ6olKNT/A0e0DXhrgeuC00Bl8IQTIRWjTRqv467E
+	ZgvNy95z9hh/rDVvAFQlyJDN5qRLyb9S3+kD26iQFLJOL012MPqL1z/57MOhdEOJTYjj1LA9Zvc
+	dSZBxJbvnhRQSw2XCq
+X-Google-Smtp-Source: AGHT+IH4VFJdE+kDCVl6k0I6gA+Y4FWyXYx4XWrJNt2MQHubXgoRL2/ifVMDcCHlbJ/5611GH+xrRg==
+X-Received: by 2002:a17:90b:3d87:b0:339:d227:82fb with SMTP id 98e67ed59e1d1-33bcf8fa579mr26874479a91.26.1761098149249;
+        Tue, 21 Oct 2025 18:55:49 -0700 (PDT)
+Received: from hilb.. ([170.254.111.1])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a22ff14a2esm13163188b3a.9.2025.10.21.18.55.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 18:54:12 -0700 (PDT)
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-To: andi.shyti@kernel.org,
-	wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Cezar Chiru <chiru.cezar.89@gmail.com>
-Subject: [PATCH] i2c: pcf8584: Make pcf_doAddress() function void
-Date: Wed, 22 Oct 2025 04:54:05 +0300
-Message-ID: <20251022015405.7082-1-chiru.cezar.89@gmail.com>
+        Tue, 21 Oct 2025 18:55:48 -0700 (PDT)
+From: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
+To: 
+Cc: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Gabriel Somlo <gsomlo@gmail.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] soc/tegra: Resolve a spelling error in the tegra194-cbb.c
+Date: Wed, 22 Oct 2025 01:54:54 +0000
+Message-ID: <20251022015511.7257-1-brunofrancadevsec@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -87,50 +92,30 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Change pcf_doAddress() function's type from int to void as it is always
-returns 0. This way there is no need for extra assignment and extra checks
-when the function is called.
-Remove assignment of pcf_doAddress() and replace it with a simple function
-call.
+I aim to join the Linux Kernel Mentorship Program, so I'm currently a
+ddressinng minor issues in the kernel.
 
-Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
+Signed-off-by: Bruno Sobreira França <brunofrancadevsec@gmail.com>
 ---
- drivers/i2c/algos/i2c-algo-pcf.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/soc/tegra/cbb/tegra194-cbb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/algos/i2c-algo-pcf.c b/drivers/i2c/algos/i2c-algo-pcf.c
-index d1b0e55fd871..7e4a6d19494b 100644
---- a/drivers/i2c/algos/i2c-algo-pcf.c
-+++ b/drivers/i2c/algos/i2c-algo-pcf.c
-@@ -253,7 +253,7 @@ static int pcf_readbytes(struct i2c_adapter *i2c_adap, char *buf,
+diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+index 846b17ffc2f9..9a52cd3aea65 100644
+--- a/drivers/soc/tegra/cbb/tegra194-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+@@ -1836,7 +1836,7 @@ print_errlog1_2(struct seq_file *file, struct tegra194_cbb *cbb,
  }
  
- 
--static int pcf_doAddress(struct i2c_algo_pcf_data *adap,
-+static void pcf_doAddress(struct i2c_algo_pcf_data *adap,
- 			 struct i2c_msg *msg)
- {
- 	unsigned char addr = i2c_8bit_addr_from_msg(msg);
-@@ -261,8 +261,6 @@ static int pcf_doAddress(struct i2c_algo_pcf_data *adap,
- 	if (msg->flags & I2C_M_REV_DIR_ADDR)
- 		addr ^= 1;
- 	i2c_outb(adap, addr);
--
--	return 0;
- }
- 
- static int pcf_xfer(struct i2c_adapter *i2c_adap,
-@@ -288,7 +286,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 		int ret;
- 
- 		pmsg = &msgs[i];
--		ret = pcf_doAddress(adap, pmsg);
-+		pcf_doAddress(adap, pmsg);
- 
- 		/* Send START */
- 		if (i == 0)
+ /*
+- * Print transcation type, error code and description from ErrLog0 for all
++ * Print transacation type, error code and description from ErrLog0 for all
+  * errors. For NOC slave errors, all relevant error info is printed using
+  * ErrLog0 only. But additional information is printed for errors from
+  * APB slaves because for them:
 -- 
 2.43.0
 
