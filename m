@@ -1,94 +1,134 @@
-Return-Path: <linux-kernel+bounces-864643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CCEBFB3F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A48ABFB419
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D52B3BABED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF11A465CCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD6131A54A;
-	Wed, 22 Oct 2025 09:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EDA31A7ED;
+	Wed, 22 Oct 2025 09:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lOwRt36u"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YdfSi+B2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9963164B1
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6513176E7;
+	Wed, 22 Oct 2025 09:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127022; cv=none; b=UaA9RjtqGZ+efTqW8r/ZrWEKv2ZlVcpDQDJNL6TWsJBvutKEFm+vXhT0D0kRM3paA4LkboPu068aFMd0iPMSbEnXDgW2iZluUnxODnR59b/2YTjSKGmNiAWT0bHiuCaBP5d71gDJAHQqmgiH25VCRuppI3Ngzcl9nBPJwrymj4c=
+	t=1761127062; cv=none; b=FzD6xKGnE2nC/UECq/taTwiKWXYDHJrPJDqmGWvPwi/X+i5MOhRksVO5EQZU3zxLF1DvxJtg9xj62Ew4eQ0tjsXxlbh75M6wZ+byOicWCUpNGAsmerkAOVQYxHn77NqfZ/sX7+L3IchpHyRrGwJyXW9K+TC5faQX/rEeCB+aYG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127022; c=relaxed/simple;
-	bh=Fup2cSAdRDKg7z+e+91hn9H3ZevwS4kdA+FlkNyKtYw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LZcOCkapBkGqQMC6aWN3Vsp4e2K+JspEhmrz66zeKlPAfhM0ugTlf8QEh42O+vXN0VZ1cmqW0+uSc2473iYlcejYhurRKV3WQfVqzo7uiPhASG3HRMZ694HRnLDrEiQHL8tfTxVX1WFSdzU8ENzfXqFSvIP2tIK7xacp5RLj+oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lOwRt36u; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 1C2921A15D0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:56:59 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E4AF7606DC;
-	Wed, 22 Oct 2025 09:56:58 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7D35D102F242A;
-	Wed, 22 Oct 2025 11:56:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761127018; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=dyDM/lHlh9+h2cDK+opXbELVb8qGok73uNfmtfylgmA=;
-	b=lOwRt36u0feYh+E2/gQGjNed5H2r2LrOJN6oUo7PyJilelbyInUX7vC3wmr5iwcIB/ZUhp
-	0y7Lo9Iv8QJkzO93J8EU7cN3FzEq9HNNbB1okb+VZT9EnZm6zb/RtVYaecTXCRppC+jJTp
-	03lTENOGx8qAdQpgpvhNMmeEyx7XavgUdLQdYI8guNK37rdK96kBhLy+dwjGBR1Tz5fa9p
-	r7xn6MXwhCt9C4diJ8y7lZXQZUJBkMZp1CAGwPshwmhoMPb5oV0AycEAs0fmjwa6CvTWYQ
-	XJbhw0EsdMzDjNrF34v40+SLW0BaYVgFX+seqbUE9U5liczZEvM0veld1cyTDw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Markus Stockhausen <markus.stockhausen@gmx.de>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <5109cd228940c246d2e1ef4ff01799315601c285.1759916792.git.geert@linux-m68k.org>
-References: <5109cd228940c246d2e1ef4ff01799315601c285.1759916792.git.geert@linux-m68k.org>
-Subject: Re: [PATCH] mtd: nand: MTD_NAND_ECC_REALTEK should depend on
- HAS_DMA
-Message-Id: <176112701735.140484.10535546133170470087.b4-ty@bootlin.com>
+	s=arc-20240116; t=1761127062; c=relaxed/simple;
+	bh=12nBu83/hcrrA3IfuoG1+VpxOxa+6gKvxzVWo9bQz5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aIw5wizXYfBBfniTZ8o5ZM/SfnsTk1AU8M5wjOsEU2mlAfKBJ/IjA5v6DXmYjVvZjmVEu3UlF7uaB9N9cZuIR2Q4CXjM1r4y5z8opsFTBMEANk82gyOLG3/jC+OXETzciOn3fZ6UC/llkMnJ6NIlweYXAchCnQm1Ke5mvD3s/+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YdfSi+B2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A849840E016E;
+	Wed, 22 Oct 2025 09:57:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1oRRCaHbFJxx; Wed, 22 Oct 2025 09:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761127051; bh=nv5PZVnhgm8mINL4pcw8nhwEQ/HfogSKAt+4CiULJV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YdfSi+B2PlfMIL9tmW0EbtaGJtqmdTm+5+ShHq62l/lMgn+LzQtUoEftbvP9K52EJ
+	 zX48IfoqZLrbqMMj0+LBu5fiFEbGISZam7FaAU/mkWf86V8vT8iEV0Y0fiqyv6W+bl
+	 DU9tWOhg4ej2ffX9nAw28J4xkCVTnGzHhGM/qOpvznJHvlYgvzqfaOSCCQ0Nw7HpV+
+	 C7/O/EPu8FlBZUIMo7F0gj3ap2FUi/MIhf7x3xgfnsw6+ZvC7r4pVw+l2mZDtamtYM
+	 0X/gxtYGHzS6i3Rz6/t0FUzUR5p2GchxY4TT9yUMuM+lH/N+OXN0J/X47Qw4+vUKoO
+	 WIDfQXD1Xa65QMgMX17d9jB33nPQ/4wT4MUoaG2JZ10OdYUpOSuFlrA3wRSASNEx3G
+	 lVQrFJvQupLM7fjF1UX8D01DK6+ygPWrCK8MsbK3Ixht2aunktbzhyR/1MBuMPHUKK
+	 FEQsai6tPoDe2EuzwS8yWTdvyn3itzEH+5iiji435ZJxGTDhHJ2rtCHm1EOJG6unBI
+	 iRa+i25coUezE+oG10qM6g5KIFEFvKU7zHf0iivF0uSqFaxaboN57Kdh21uTTZWcQ8
+	 5FaeYBVazWNSKA0L4M9WDiBEjEjbQBglF1/vXVglAT5PNeBjkLJfo+VQE+mWUGSAug
+	 IwmpsVpMaOK0gVKkdzoGqkgg=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id CE39D40E01CD;
+	Wed, 22 Oct 2025 09:57:03 +0000 (UTC)
 Date: Wed, 22 Oct 2025 11:56:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v10 03/15] x86/alternatives: Disable LASS when patching
+ kernel alternatives
+Message-ID: <20251022095657.GBaPiqaYxPMonQWLtw@fat_crate.local>
+References: <20251007065119.148605-1-sohil.mehta@intel.com>
+ <20251007065119.148605-4-sohil.mehta@intel.com>
+ <20251021200328.GMaPfnEDibnBrhNTmQ@fat_crate.local>
+ <144029e3-30ea-4e94-9afd-4da53ce4a657@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <144029e3-30ea-4e94-9afd-4da53ce4a657@intel.com>
 
-On Wed, 08 Oct 2025 11:47:15 +0200, Geert Uytterhoeven wrote:
-> If CONFIG_NO_DMA=y:
+On Tue, Oct 21, 2025 at 01:55:51PM -0700, Sohil Mehta wrote:
+> In the series, we directly write to the CR4 bits, so they don't have any
+> wrappers. But in the future, lass_enable()/lass_disable() could be
+> confusing if wrappers were added for the CR4 toggling.
+
+Are you envisioning to export the CR4.LASS toggling to users like those two or
+is former going to be done only at those two places?
+
+Because CR4 toggling is expensive so you probably don't want to do that very
+often.
+
+> There is an issue here which you had originally objected to.
+> https://lore.kernel.org/lkml/20240710171836.GGZo7CbFJeZwLCZUAt@fat_crate.local/
+> https://lore.kernel.org/lkml/20240711012333.GAZo80FU30_x77otP4@fat_crate.local/
 > 
->     ERROR: modpost: "dma_free_pages" [drivers/mtd/nand/ecc-realtek.ko] undefined!
->     ERROR: modpost: "dma_alloc_pages" [drivers/mtd/nand/ecc-realtek.ko] undefined!
-> 
-> The driver cannot function without DMA, hence fix this by adding a
-> dependency on HAS_DMA.
-> 
-> [...]
+> These new versions of lass_disable()/lass_enable() will toggle the AC
+> flag on older platforms without X86_FEATURE_LASS. It definitely makes
+> the code easier to read and maintain if we are okay with the minor
+> performance penalty.
 
-Applied to mtd/fixes, thanks!
+Hmm, we probably should measure that. The text poking should be a relatively
+seldom operation but we should at least do a quick measurement to see whether
+something registers on the radar...
 
-[1/1] mtd: nand: MTD_NAND_ECC_REALTEK should depend on HAS_DMA
-      commit: 0d9c80aa572182d4b1464826cd77aa8973213216
+Thx.
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
+-- 
+Regards/Gruss,
+    Boris.
 
-Kind regards,
-Miquèl
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
