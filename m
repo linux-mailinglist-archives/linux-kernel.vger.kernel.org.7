@@ -1,188 +1,190 @@
-Return-Path: <linux-kernel+bounces-865696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A22BFDC43
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:05:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D02BFDC52
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79CBF19C8636
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C721A054FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6E42EA732;
-	Wed, 22 Oct 2025 18:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040E52EBB89;
+	Wed, 22 Oct 2025 18:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQUmVje4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rw6rB9Bf"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2873F8460;
-	Wed, 22 Oct 2025 18:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036C235B131;
+	Wed, 22 Oct 2025 18:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761156273; cv=none; b=GRZNKMw7XYxjWUzwYYSxefnmGH2CXHwq1M7WScrTEdzGS8f/C70RC7K3/3ZaQfUX0IZ2Yiod9afWh6D5qtnia1uchmgfROSThq3bo2um/lXpBlM0MbZVyZEdgv0vDq2BoO2SxKf7ar/G4jdLEEI52IrFanAQA5eSA/WjkEF6iX8=
+	t=1761156460; cv=none; b=DQco6zE+WA5B26NtHpvQG4rmQIcSX4R84t2uEhd34aqnVyWwrc72shjppQnKPMtWoQ1yuSAemtH61tsu/De2dya7rFEtMahJxQIETvem5YafACEJ/tSqhmnE2czkG05RmQ2VDLQAxVkJvEGmb1PkaFlr2ZFCLoiHL93Z0LMmJC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761156273; c=relaxed/simple;
-	bh=LX84Ld6O6Uc5VIZ8xp7cMpdz1V/yl1HsOQOPlaYWJeQ=;
+	s=arc-20240116; t=1761156460; c=relaxed/simple;
+	bh=KwClc8TIJ/aa8VXU6PCjh3jM6QsiqtI/B38/sCJKFuk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0/2PP3RqNr+KKRjzt/RuE0S4V8nSDnppUbma02L9VsUFFaSv2Qe2KEXR9j3f3HDRL9ElWFym3QqsTA1W7VPIQkwOBqY03U7XfE26sfddlzMgDB2ZwgoUiX/sNOenBzCjt8mZOfq2NA2kR6YmHqYwcVS0CYMBUTIKap7avP88bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQUmVje4; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761156271; x=1792692271;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LX84Ld6O6Uc5VIZ8xp7cMpdz1V/yl1HsOQOPlaYWJeQ=;
-  b=hQUmVje4FutHhmEWgwtJ4ZkH+30Ln4HptJSgMYVwOeJKlvutcKBiRzL7
-   zN6cf5tFcCAuFxzQJG8lveaa7hCHTr+8DUnP+nPNeK3M4MsSypWmoi/AI
-   9ISdT+oU9i3db5VTiHSEEca/oMH0nf4VmpJSgEJJW5XegVCPWFYbKSTHw
-   7p607vaWjLPuW4VpgUSj1cUyy1oEuVwHiq9GPUM2ZYo9Nj419TijPMQ2s
-   5sLqC6PNAKnlI89EXP20Yvb+XBpqFEnHR5VRAIfPWWTD71o6CTbPzlKPA
-   lBpOry1WZaJ9tQ7n7AfkpQD0zQf7BZTEfhF/7vgZQSu351xAmmD5Zcrv+
-   Q==;
-X-CSE-ConnectionGUID: g2b0eVLmRUus/PTbHexNPA==
-X-CSE-MsgGUID: cujWg+EjRKSzm3GeORaJoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73984419"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="73984419"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 11:04:30 -0700
-X-CSE-ConnectionGUID: hQfoa2/xR6+4lGjcBV8xAQ==
-X-CSE-MsgGUID: ZsI4OgiDTWux522dWpJ23g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="184332231"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.83])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 11:04:25 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vBdC9-00000001lJ5-3WrO;
-	Wed, 22 Oct 2025 21:04:21 +0300
-Date: Wed, 22 Oct 2025 21:04:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 04/10] gpio: shared-proxy: implement the shared GPIO
- proxy driver
-Message-ID: <aPkcpTWfTb0HOF51@smile.fi.intel.com>
-References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
- <20251022-gpio-shared-v2-4-d34aa1fbdf06@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0kdc9PASAXGgXQSuCsVLHPA79bDtT1CyeQUIvXFlGV9+ZiNEQty56qKrhOBzhrQzlipa5v/cc38ZOqihETg9moQ4SMRu4mv5asZE9ogHRSKJRA4UCpSpVp1/+DaS1grwd+yvSKOHdVRdhc6OcVfleF2PIPTRtFDmIh6IH7Me98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rw6rB9Bf; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 22 Oct 2025 18:07:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761156444;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nmt77XqLA4h4HOvjB7cOXuAgnisoHkJ4aQOvVV8s/M8=;
+	b=rw6rB9Bfe8keztOgjubqLWih4+bcsU19/noPU5h+QOmbGbjPIY1SQzXgGgOTcIPl7WHDR7
+	7ewGlSRgGhn+HGoHKu+MOAmDMx0SBANoxit54V2yE/nLf4MtUh2Mb9Ao/6OONevp4l1GDj
+	Y/02wBa3rSWWC8RMQ+HdFtbtijCNYfE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Jim Mattson <jmattson@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 4/4] KVM: selftests: Add a VMX test for LA57 nested state
+Message-ID: <w75tgbhxh2izz3fstjt7yx2m3ytybsx34goqzkjwg43zodkvqo@cxathxvemb4q>
+References: <20250917215031.2567566-1-jmattson@google.com>
+ <20250917215031.2567566-5-jmattson@google.com>
+ <4owz4js4mvl4dohgkydcyrdhh2j2xblbwbo7zistocb4knjzdo@kvrzl7vmvg67>
+ <CALMp9eRm+xH0b4TUMU3q8Wpo2uo6-OCaY7hD39dVeSm0fA+weA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251022-gpio-shared-v2-4-d34aa1fbdf06@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALMp9eRm+xH0b4TUMU3q8Wpo2uo6-OCaY7hD39dVeSm0fA+weA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 22, 2025 at 03:10:43PM +0200, Bartosz Golaszewski wrote:
+On Tue, Oct 21, 2025 at 04:40:14PM -0700, Jim Mattson wrote:
+> On Mon, Oct 20, 2025 at 10:26 AM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
+> >
+> > On Wed, Sep 17, 2025 at 02:48:40PM -0700, Jim Mattson wrote:
+> > > Add a selftest that verifies KVM's ability to save and restore
+> > > nested state when the L1 guest is using 5-level paging and the L2
+> > > guest is using 4-level paging. Specifically, canonicality tests of
+> > > the VMCS12 host-state fields should accept 57-bit virtual addresses.
+> > >
+> > > Signed-off-by: Jim Mattson <jmattson@google.com>
+> > > ---
+> > > ...
+> > > +void guest_code(struct vmx_pages *vmx_pages)
+> > > +{
+> > > +     if (vmx_pages)
+> > > +             l1_guest_code(vmx_pages);
+> >
+> > I think none of the other tests do the NULL check. Seems like the test
+> > will actually pass if we pass vmx_pages == NULL. I think it's better if
+> > we let L1 crash if we mess up the setup.
 > 
-> Add a virtual GPIO proxy driver which arbitrates access to a single
-> shared GPIO by multiple users. It works together with the core shared
-> GPIO support from GPIOLIB and functions by acquiring a reference to a
-> shared GPIO descriptor exposed by gpiolib-shared and making sure that
-> the state of the GPIO stays consistent.
+> I'll drop the check in the next version.
 > 
-> In general: if there's only one user at the moment: allow it to do
-> anything as if this was a normal GPIO (in essence: just propagate calls
-> to the underlying real hardware driver). If there are more users: don't
-> allow to change the direction set by the initial user, allow to change
-> configuration options but warn about possible conflicts and finally:
-> treat the output-high value as a reference counted, logical "GPIO
-> enabled" setting, meaning: the GPIO value is set to high when the first
-> user requests it to be high and back to low once the last user stops
-> "voting" for high.
+> > > +
+> > > +     GUEST_DONE();
+> > > +}
+> > > +
+> > > +int main(int argc, char *argv[])
+> > > +{
+> > > +     vm_vaddr_t vmx_pages_gva = 0;
+> > > +     struct kvm_vm *vm;
+> > > +     struct kvm_vcpu *vcpu;
+> > > +     struct kvm_x86_state *state;
+> > > +     struct ucall uc;
+> > > +     int stage;
+> > > +
+> > > +     TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX));
+> > > +     TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_LA57));
+> > > +     TEST_REQUIRE(kvm_has_cap(KVM_CAP_NESTED_STATE));
+> > > +
+> > > +     vm = vm_create_shape_with_one_vcpu(VM_SHAPE(VM_MODE_PXXV57_4K), &vcpu,
+> > > +                                        guest_code);
+> > > +
+> > > +     /*
+> > > +      * L1 needs to read its own PML5 table to set up L2. Identity map
+> > > +      * the PML5 table to facilitate this.
+> > > +      */
+> > > +     virt_map(vm, vm->pgd, vm->pgd, 1);
+> > > +
+> > > +     vcpu_alloc_vmx(vm, &vmx_pages_gva);
+> > > +     vcpu_args_set(vcpu, 1, vmx_pages_gva);
+> > > +
+> > > +     for (stage = 1;; stage++) {
+> > > +             vcpu_run(vcpu);
+> > > +             TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
+> > > +
+> > > +             switch (get_ucall(vcpu, &uc)) {
+> > > +             case UCALL_ABORT:
+> > > +                     REPORT_GUEST_ASSERT(uc);
+> > > +                     /* NOT REACHED */
+> > > +             case UCALL_SYNC:
+> > > +                     break;
+> > > +             case UCALL_DONE:
+> > > +                     goto done;
+> > > +             default:
+> > > +                     TEST_FAIL("Unknown ucall %lu", uc.cmd);
+> > > +             }
+> > > +
+> > > +             TEST_ASSERT(uc.args[1] == stage,
+> > > +                         "Expected stage %d, got stage %lu", stage, (ulong)uc.args[1]);
+> > > +             if (stage == 1) {
+> > > +                     pr_info("L2 is active; performing save/restore.\n");
+> > > +                     state = vcpu_save_state(vcpu);
+> > > +
+> > > +                     kvm_vm_release(vm);
+> > > +
+> > > +                     /* Restore state in a new VM. */
+> > > +                     vcpu = vm_recreate_with_one_vcpu(vm);
+> > > +                     vcpu_load_state(vcpu, state);
+> > > +                     kvm_x86_state_cleanup(state);
+> >
+> > It seems like we only load the vCPU state but we don't actually run it
+> > after restoring the nested state. Should we have another stage and run
+> > L2 again after the restore? What is the current failure mode without
+> > 9245fd6b8531?
+> 
+> When everything works, we do actually run the vCPU again after
+> restoring the nested state. L1 has to execute GUEST_DONE() to exit
+> this loop.
 
-I have two Q:s about the design:
-1) why can't the value be counted on the struct gpio_desc level?
-2) can gpio-aggregator facilities be reused (to some extent)?
+Oh I missed the fact that the loop will keep going until GUEST_DONE(),
+now it makes sense. I thought we're just checking that restoring the
+state will fail.
 
-...
+> 
+> Without commit 9245fd6b8531 ("KVM: x86: model canonical checks more
+> precisely"), the test fails with:
+> 
+> KVM_SET_NESTED_STATE failed, rc: -1 errno: 22 (Invalid argument)
 
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/device.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/module.h>
+Right, this failure would happen even if we do not try to run the vCPU
+again tho, which what I initially thought was the case. Sorry for the
+noise.
 
-+ types.h
-
-> +#include "gpiolib-shared.h"
-
-...
-
-> +out:
-> +	if (shared_desc->highcnt)
-> +		dev_dbg(proxy->dev,
-> +			"Voted for value '%s', effective value is 'high', number of votes for 'high': %u\n",
-> +			value ? "high" : "low", shared_desc->highcnt);
-> +	else
-> +		dev_dbg(proxy->dev, "Voted for value 'low', effective value is 'low'\n");
-
-You can unify and maybe save a few bytes here and there by doing something like
-this:
-
-	const char *tmp; // name is a placeholder
-
-	tmp = str_high_low(shared_desc->highcnt);
-	dev_dbg(proxy->dev,
-		"Voted for value '%s', effective value is '%s', number of votes for '%s': %u\n",
-		str_high_low(value), tmp, tmp, shared_desc->highcnt);
-
-...
-
-> +		dev_dbg(proxy->dev,
-> +			"Only one user of this shared GPIO, allowing to set direction to output with value '%s'\n",
-> +			value ? "high" : "low");
-
-str_high_low() ?
-
-> +		ret = gpiod_direction_output(desc, value);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (value) {
-> +			proxy->voted_high = true;
-> +			shared_desc->highcnt = 1;
-> +		} else {
-> +			proxy->voted_high = false;
-> +			shared_desc->highcnt = 0;
-> +		}
-> +
-> +		return 0;
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> 
+> (And, in that case, we do not re-enter the guest.)
+> 
+> 
+> 
+> > > +             }
+> > > +     }
+> > > +
+> > > +done:
+> > > +     kvm_vm_free(vm);
+> > > +     return 0;
+> > > +}
+> > > --
+> > > 2.51.0.470.ga7dc726c21-goog
+> > >
 
