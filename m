@@ -1,86 +1,113 @@
-Return-Path: <linux-kernel+bounces-865711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC1CBFDD01
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:25:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14154BFDD6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A734D18C8A56
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:25:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D70C6358918
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9744D348881;
-	Wed, 22 Oct 2025 18:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFD934FF6E;
+	Wed, 22 Oct 2025 18:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DnOyrUwt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="TcZ7Fiof"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D17226D02;
-	Wed, 22 Oct 2025 18:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2691348475;
+	Wed, 22 Oct 2025 18:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761157447; cv=none; b=JUMB4c/9h11U1czlfNSM8Ww5Vn/s1ef7fZmyK3y5qXafhVoopweVozVnAAi7uXeg7fk01EbNN+D+b0AyV/4OZHWNyewVPySRHk2SXwen/NOLElyNmoZb+wW7Sg1gG0xwhxE8117rPpS0A4nlGh4i0MpCkmlnYijKA14+gbjTi9c=
+	t=1761157644; cv=none; b=Z/7NNct56DYQlXz4TTptUIftCYqVCasH3w4tjGdBPP8SAy9rww9/C9KWaFjgFx8LyEBQtOpQGqCngBeyFl3diuYNldMA1vtCHwTm3qJFoZto8MdG88WC7R0WtVQD83FIedz/R6rqsfgG5nJXIgiafYbxlLjDBFbfZItV2jPdceY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761157447; c=relaxed/simple;
-	bh=lN16kSfzrXPzyaR7YDMKSTzasvBepHm3SWk9ngJJhSs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OWJcScfrPH2zqIhrSWZah2mMZDyjpEOxmsnKDueUM9mFCraohO77QvrPKB2uHuPVKuv4bDyX+BdZtvDsVVmHZcjv4WSzTZxAaiOFN20WQBiP2fP8iSnn5Ne0Fat3lt9uXYUpU3yWHvbypGhjYNo2ORrGCsOigWmQ0WM08X80sxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DnOyrUwt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7753C4CEE7;
-	Wed, 22 Oct 2025 18:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761157446;
-	bh=lN16kSfzrXPzyaR7YDMKSTzasvBepHm3SWk9ngJJhSs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DnOyrUwtRAwzJloHfIE5bmAiAyWXeBHZ9/k3vL9S6xEPKYSyTXIxJdo7XzKzTwln6
-	 ma4xd7hPWcgBS72Jz2UDN0ayuGVM3OSvZIFtEGhvHO+ZvznXRZKk5J4ZzfIpKfYb6C
-	 ISH/gBZ7zPEawCQIJXr8OpfNLdzCebnhUpJG2o0Y=
-Date: Wed, 22 Oct 2025 11:24:05 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, brauner@kernel.org,
- corbet@lwn.net, graf@amazon.com, jgg@ziepe.ca,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, masahiroy@kernel.org, ojeda@kernel.org,
- pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org,
- jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Subject: Re: [PATCH v3 0/3] KHO: kfence + KHO memory corruption fix
-Message-Id: <20251022112405.8ef617335ba0387f0608188c@linux-foundation.org>
-In-Reply-To: <aPhwMitTY9De7md8@kernel.org>
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
-	<aPchmxfh4ACM0vY2@kernel.org>
-	<CA+CK2bAHH1tzMEGxAwbmrLnLTzJANMntRu=cp0J8-n101ER7Pw@mail.gmail.com>
-	<20251021135331.8e0185a173a5fa40add60802@linux-foundation.org>
-	<CA+CK2bDPLAS7EM--stHkZkx8FSgYBjDOz6FdvWBYrdHwZpZZjw@mail.gmail.com>
-	<aPhwMitTY9De7md8@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761157644; c=relaxed/simple;
+	bh=2Q7fGungSbCuzo7lrq7jUELHiNWxvsuz10waRosXiH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bES8JNXYqYgbg2nVhAn5rR4kYNJhy0a5sTS7pDtXxgpgMRvDhfdUQg1+2ZL/pwG/GPMrjRQ8msw1zpH/3BT+q+j5D6NZ2zWpkU6EgfDQv0IAY3Egu6XRLqxkQ36A5vucygJe+eenUdBx153RduLZ+PRG+W//lLJ6UmE8mvwwc/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=TcZ7Fiof; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1761157634;
+	bh=2Q7fGungSbCuzo7lrq7jUELHiNWxvsuz10waRosXiH0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TcZ7FiofIy0Lb2SX5186glIMDrFN9mv6AX9SsG4XyqIqJxVb7+GUS0cIG8qYDfjZz
+	 VIQLN+oliJjkBAprlU9Rwea8MEjW3/4zSHhl+Pcvxdmqgv8thGdHQYnXCMCr7bw6j3
+	 ToHuK4kQJsH+Hxs298x0X73lZrhgDGjysY4DuZuoeyapWJ+0JnRctEIxxqqEgTA+3c
+	 qUDqUBHm+aNPUtGwOXj4OZfVTq7RB/T4lxqBLzZFZTgVsEAJeD6ibPtMsS3GhqU6qK
+	 9RLupzuMFUAlKg2JN3LDBoG4XB7h56jpK/FdSSh0TLt7NdAYlFbVd3WC3GnTWlnHII
+	 r3xmVnuaA1sfQ==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id D437960107;
+	Wed, 22 Oct 2025 18:27:14 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 7B7DD201BEC; Wed, 22 Oct 2025 18:27:09 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next 0/7] ynl: add ignore-index flag for indexed-array
+Date: Wed, 22 Oct 2025 18:26:53 +0000
+Message-ID: <20251022182701.250897-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 22 Oct 2025 08:48:34 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+This patchset adds a way to mark if an indedex array is just an
+array, and the index is uninteresting, as previously discussed[1].
 
-> > We are using KHO and have had obscure crashes due to this memory
-> > corruption, with stacks all over the place. I would prefer this fix to
-> > be properly backported to stable so we can also automatically consume
-> > it once we switch to the upstream KHO. I do not think disabling kfence
-> > in the Google fleet to resolve this problem would work for us, so if
-> > it is not going to be part of stable, we would have to backport it
-> > manually anyway.
-> 
-> The backport to stable is only relevant to 6.17 that's going to be EOL soon
-> anyway. Do you really think it's worth the effort?
+Which is the case in most of the indexed-arrays in the current specs.
 
-If some organization is basing their next kernel on 6.17 then they'd
-like it.
+As the name indexed-array kinda implies that the index is interesting,
+then I am using `ignore-index` to mark if the index is unused.
 
-Do we assume that all organizations follow the LTS schedule?  I haven't
-been doing that.
+This adds some noise to YNL, and as it's only few indexed-arrays which
+actually use the index, then if we can come up with some good naming,
+it may be better to reverse it so it's the default behaviour.
+
+[1]
+https://lore.kernel.org/r/7fff6b2f-f17e-4179-8507-397b76ea24bb@intel.com/
+
+Asbjørn Sloth Tønnesen (7):
+  netlink: specs: add ignore-index flag for indexed-array
+  tools: ynl: support ignore-index in indexed-array decoding
+  tools: ynl: support ignore-index in indexed-array encoding
+  netlink: specs: nl80211: set ignore-index on indexed-arrays
+  netlink: specs: nlctrl: set ignore-index on indexed-arrays
+  netlink: specs: rt-link: set ignore-index on indexed-arrays
+  netlink: specs: tc: set ignore-index on indexed-arrays
+
+ Documentation/netlink/genetlink-c.yaml         |  6 ++++++
+ Documentation/netlink/genetlink-legacy.yaml    |  6 ++++++
+ Documentation/netlink/netlink-raw.yaml         |  6 ++++++
+ Documentation/netlink/specs/nl80211.yaml       |  8 ++++++++
+ Documentation/netlink/specs/nlctrl.yaml        |  2 ++
+ Documentation/netlink/specs/rt-link.yaml       |  2 ++
+ Documentation/netlink/specs/tc.yaml            |  1 +
+ .../userspace-api/netlink/genetlink-legacy.rst |  3 +++
+ tools/net/ynl/pyynl/lib/ynl.py                 | 18 ++++++++++++------
+ 9 files changed, 46 insertions(+), 6 deletions(-)
+
+-- 
+2.51.0
+
 
