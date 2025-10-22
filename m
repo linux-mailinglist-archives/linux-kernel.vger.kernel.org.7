@@ -1,114 +1,212 @@
-Return-Path: <linux-kernel+bounces-864617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB519BFB2FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB19BFB2F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBC1A4EECD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:38:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BC414E4D44
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ACB29994B;
-	Wed, 22 Oct 2025 09:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5F829994B;
+	Wed, 22 Oct 2025 09:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HhA/VdfW"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gh+EwBkl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345392F39B1
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921D7287258
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761125895; cv=none; b=HFk/BfSnMchYKyeI7wNDHQaRoVPSKZ/6R+uAsh15H/pBFb/Yf2Ya0gBR2hfWZldv/31VR03nzGmoiTrtkF2TGyR1Uv1n31dy99XvlpfF00ltPY4E9hUSkiv3JpdYU0JHD+5EsbcI45bUHbcxDv+HY+AA58ASjLnuF2B4AHbq5lo=
+	t=1761125861; cv=none; b=GZH2NEKHonkrItU/7Wu1HN5J9e5cmMeGczfji/Vyvl+lS1eclukZ6GHUrV9xaJgfgiolI7tmsEHJ35XrLZ86qaDOCekBXuYNVzRCEqH5xKGgBKN0wysGHYHlvOPMVzHJYAh6y7ioUSo1hK6Q5qrY/bW7DlcpYIBdw87sMGfBie8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761125895; c=relaxed/simple;
-	bh=bxynnY7gqNmOi/aTMvKArHOmse4FQvgr7PXwb1Utuw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o2Bd3jPsKQgKkhg9G/HNOrW/dMLcxEgxiy8PEhSWtGbewrX7l7kFRR5P/u+Xc8K+mb+d2oWMMH48Y1ICydyJGJZSR1GT5hLCa9jqux7Zxxkbu43vlYlK1xGOB7WQTaR9616WL40bkdbsIEOj1QeLYO29+nluu6Z0EaHcUQc82eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HhA/VdfW; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761125889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GL864tnGf0kR+752wc1z68vVTN9MWgo9+WclWIvl49M=;
-	b=HhA/VdfWsXl45uRI7qP2es2Ham6joM7ZolFWnwcD7e1znItUk8gOFMe+K5SsLXpCotZQpx
-	QJ3O2Z74hrxfl7cfYNffczU1LIJd6dUxYJA8chst6wXtWkH9QHsGm2QITJxhLaueoGaTBv
-	rIezv6bLD49+LYRFH5j7jP0/P/mr7ZM=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: replace sprintf with snprintf in aa_new_learning_profile
-Date: Wed, 22 Oct 2025 11:37:18 +0200
-Message-ID: <20251022093718.206271-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761125861; c=relaxed/simple;
+	bh=+/MjwfbZvPam/0xlcWCDrWKB23vGSjkX/nOorqR0QbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=twPrYTT0fMHBA3Nnc8sNTVw7XdIMC5FWWkJOmE7zQ+r/gT/ZUvp7nuuFcT5OX+wx7CzlsI00cY0lEdxRnGhpU6iqOTANA05E53fmp7HCN+KAjp36y74d0+wwou+iEEw6QZJxvq4jDKGtyzO+L3JXWTmTShsWitRemQsB5R9X1nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gh+EwBkl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M3BAhX028420
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:37:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=wlAiuhzDMbNQ1Fw8Ews+PID2
+	RPtvP6Wo25eJKEmIUEQ=; b=gh+EwBkl4qsCs7HhmSFWn28pRpHeG6IjmIFVe7rm
+	To6R5wI2NT9fzE7S/jHLQZFn6jH62ldmrPmzbWK2Vt1pP/upE0bQn4AyKRZCOqGV
+	1nFd2wW3MAFIAyiKrvyb1s34iHS3bm3txpP0G0eQ2JENL3PLrRaFuJ1GSOy18Lpw
+	A8yhlzSvgJQWAoaipGgHHMaH3xTA85z9WYkUcErhkUhKhBBwjf0/62Wi77fgqPhM
+	oONeSzmzrUJTq276d9/WU8bDZkP7MxOapRCXn5e/zapo33Z2ZUHdtosWE0e+z3Hy
+	TKCRQ4csvlsYJsBUdolyAw/Tksf6hwF/aWzl9aRgFaL2Sg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08pmbuk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:37:38 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8a802113bso26476041cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:37:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761125857; x=1761730657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wlAiuhzDMbNQ1Fw8Ews+PID2RPtvP6Wo25eJKEmIUEQ=;
+        b=VbJLxShr+Ssm0GvBdB6LqZ7xNvFnyD31FjMhhZe/tOzwdpor+31wrsMgsYAkNh8RSr
+         5Zr2IJvkehW3FerDMdzzOE84K2w38u62cRPtRgy4NB91/q3+iULX6fskTq9wQyP1xtVA
+         dH+qlauIVL6arVDF5gdA+pUW6GljwhkN6PAqIniT8KmxJHD1vM3I5Xm0Dk0LFSofe005
+         mGVBLU/4uIO7F83P8FLHD3O6Ey2asCw+VU/YdaCwqi+VwIWMQLYV03xJrlJbMSqNUZlr
+         llG5yCfvOhMdgfDPMUpqI5x40EviA7FNpd79Ke6qFECVx5BeQLFMjuTK02dlgxIbTt2d
+         7ZuA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/f/f9XERmGplClazMV9FT2TbtBXEcNcbGC/mMYIzQ1ZgkEOKBYB2cOFNi1nYOBewrTdg0U03tKfr447g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNnnmQZC88zO+wsg8tNmKjxKniQh4qFGa+fICNgXrSfMnDVElm
+	eXkTQWh/NTzVYMKRU0j6rHI4YDucJpgM8oZkjgmLGu7XU1r9i7epoDYe17FUYv19fKF4W8/2qX6
+	1QnqIUgdbSaVvY/dtCxX+FgSmVgjnmV1OLnJxV3rbBIkIQrsfLJDH2qoqnNOSFrGlsuM=
+X-Gm-Gg: ASbGncvW605hT9LMUqNDXjv9qK8mKaXwAS1FOuIcFbu61aVBfTzIJJUNq+cNb5jjQkf
+	ySIjnOjdKy+/VPJ8DLn7V6ByOg86t6UEq5Jni/PYAtHuuGPkPIIGJ2FRrpnWc9IP48xznYCjUhz
+	OC89GnX9bFUdfxURVDXq8Ja0dc0sCG4r6Ix5yyJhmmVS6dv21e9rimPeUYC7KWe6gWwaWYTcpKN
+	G/wAc78RmFtRYnx0OawD6dtVt/j1hrND6O+ur+NSYIMSMz7//EWCRIzpdJ8KWSlpHYm8CdxshdT
+	H+efs9XlRP6nV7cdosG1N2gs1R26NkTwsDMwrDV5TI6+XV0DhwjHviOGZyLXj92tK9HYjpkFiuA
+	T62GiqUk0oxNHTNxyxS58d5q9Ao+nS5uux43BdXLjXZOcnkXYuIzOzwkDsz3oafkMlGH73oDXZS
+	955LwmTcdiTpM=
+X-Received: by 2002:a05:622a:138a:b0:4e7:2d83:59b7 with SMTP id d75a77b69052e-4e89d2b96efmr232633291cf.37.1761125857566;
+        Wed, 22 Oct 2025 02:37:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE70UH8P0+7IUvRLiwSQa4wdN/h/jWfuzbCFIRtzRPc21GQfKi9T7kEbCCKp2X/mu4mW5+IJw==
+X-Received: by 2002:a05:622a:138a:b0:4e7:2d83:59b7 with SMTP id d75a77b69052e-4e89d2b96efmr232632981cf.37.1761125857114;
+        Wed, 22 Oct 2025 02:37:37 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592ed7e6168sm702834e87.51.2025.10.22.02.37.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 02:37:36 -0700 (PDT)
+Date: Wed, 22 Oct 2025 12:37:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vishnu Reddy <quic_bvisredd@quicinc.com>
+Subject: Re: [PATCH v2 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
+ kaanapali video codec binding
+Message-ID: <mtlwpa3m46qwrfjcpa7wapjjnllxopoip4mpnomw2ngteb6btf@2z4hrjr74bts>
+References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
+ <20251017-knp_video-v2-1-f568ce1a4be3@oss.qualcomm.com>
+ <c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org>
+ <034bf6f4-0a49-4973-8536-28526b3409d1@oss.qualcomm.com>
+ <d19b1279-3031-43b9-ac73-7e5f990802ed@kernel.org>
+ <e1bfadd4-2d53-1953-beef-1350594c5010@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1bfadd4-2d53-1953-beef-1350594c5010@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX2A2uBCMJj/pB
+ cb8uSevjRlG4lSRFJ79wDHizpFNId1M8Op9SRjwD27RjSKwMqJmfJv2GVj7jrm1Tg3nvOfBdEF0
+ vvp/f4V1FQAyfZZNz2Y4li4WeUf2D96flctVhgW7QmFGT2JN8UGBlVsi5cZlDVdgJaEHjfihtTZ
+ 3+Z8qGpwZPkO43A2pvNSGA7/bdEbsNYw1PLW44iwHuWdaIklRhjc2QWeFMGilVWOV048nnLN6CO
+ n+ua1e6Le3NJCcmPQkiHTAj7N3oC1htM1s43Ocuxw372oIgqcoBVBnOAvYQAWDb9p6bIusfveTk
+ tDe/Fv4TQSieyC70tbe0v+QMtRvUiHYISxtvM+hh3upEHtbxwQfVzvfshJrGKHki5xaGP4W/m2i
+ YIFiOywPIxIq69JhEzcXgP50Ia95gw==
+X-Proofpoint-GUID: vkjemhBzFEUV99GvCwSTCecvpolT62o_
+X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68f8a5e2 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=vTb42-yg0zSnFd-snlMA:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: vkjemhBzFEUV99GvCwSTCecvpolT62o_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
 
-Replace unbounded sprintf() calls with snprintf() to prevent potential
-buffer overflows in aa_new_learning_profile(). While the current code
-works correctly, snprintf() is safer and follows secure coding best
-practices.  No functional changes.
+On Wed, Oct 22, 2025 at 02:37:59AM +0530, Vikash Garodia wrote:
+> 
+> On 10/22/2025 12:45 AM, Krzysztof Kozlowski wrote:
+> > On 21/10/2025 20:55, Vikash Garodia wrote:
+> >>
+> >> On 10/18/2025 9:28 PM, Krzysztof Kozlowski wrote:
+> >>> On 17/10/2025 16:16, Vikash Garodia wrote:
+> >>>> +  clock-names:
+> >>>> +    items:
+> >>>> +      - const: iface
+> >>>> +      - const: core
+> >>>> +      - const: vcodec0_core
+> >>>> +      - const: iface1
+> >>>> +      - const: core_freerun
+> >>>> +      - const: vcodec0_core_freerun
+> >>>> +      - const: vcodec_bse
+> >>>> +      - const: vcodec_vpp0
+> >>>> +      - const: vcodec_vpp1
+> >>>> +      - const: vcodec_apv
+> >>>> +
+> >>>> +  dma-coherent: true
+> >>>> +
+> >>>> +  firmware-name:
+> >>>> +    maxItems: 1
+> >>>> +
+> >>>> +  interconnects:
+> >>>> +    maxItems: 2
+> >>>> +
+> >>>> +  interconnect-names:
+> >>>> +    items:
+> >>>> +      - const: cpu-cfg
+> >>>> +      - const: video-mem
+> >>>> +
+> >>>> +  interrupts:
+> >>>> +    maxItems: 1
+> >>>> +
+> >>>> +  iommus:
+> >>>> +    minItems: 3
+> >>>> +    maxItems: 8
+> >>>
+> >>> I don't understand why this is flexible. Make it fixed size and anyway -
+> >>> list the items.
+> >>
+> >> kaanapali vpu generates 8 different stream-ids. Now, boards running kernel in
+> >> EL2 mode can list all of them, while boards running in EL1 can have only non
+> >> secure stream IDs. Min have the list of stream ids which can be enabled for all
+> >> type of boards, while max is for boards which can list all in HLOS given kernel
+> >> is in EL2 mode.
+> >>
+> >> Below crash would be seen if boards running kernel in EL1 mode lists the secure
+> >> ones.
+> > 
+> > 
+> > That has to be explained somewhere, e.g. comment, 
+> 
+> Sure, will add a description for iommus property explaining the same.
+> 
+> and still we need then
+> > EL2 DTS in the kernel. I did not see such so far, but maybe I missed it
+> > - can you link it?
+> > 
+> 
+> EL2 DTS for kaanapali is not yet posted to handle secure SIDs. While it is in
+> development, describing the secure stream-ids would ensure to cover all the
+> hardware generated IDs.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/apparmor/policy.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+EL2 is a slightly different topic, it most likely requires additional
+changes, etc. I'd suggest focusing on a normal usecase first and getting
+the EL2 sorted out separately.
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index 50d5345ff5cb..b09323867fea 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -697,24 +697,27 @@ struct aa_profile *aa_new_learning_profile(struct aa_profile *parent, bool hat,
- 	struct aa_profile *p, *profile;
- 	const char *bname;
- 	char *name = NULL;
-+	size_t name_sz;
- 
- 	AA_BUG(!parent);
- 
- 	if (base) {
--		name = kmalloc(strlen(parent->base.hname) + 8 + strlen(base),
--			       gfp);
-+		name_sz = strlen(parent->base.hname) + 8 + strlen(base);
-+		name = kmalloc(name_sz, gfp);
- 		if (name) {
--			sprintf(name, "%s//null-%s", parent->base.hname, base);
-+			snprintf(name, name_sz, "%s//null-%s",
-+				 parent->base.hname, base);
- 			goto name;
- 		}
- 		/* fall through to try shorter uniq */
- 	}
- 
--	name = kmalloc(strlen(parent->base.hname) + 2 + 7 + 8, gfp);
-+	name_sz = strlen(parent->base.hname) + 2 + 7 + 8;
-+	name = kmalloc(name_sz, gfp);
- 	if (!name)
- 		return NULL;
--	sprintf(name, "%s//null-%x", parent->base.hname,
--		atomic_inc_return(&parent->ns->uniq_null));
-+	snprintf(name, name_sz, "%s//null-%x", parent->base.hname,
-+		 atomic_inc_return(&parent->ns->uniq_null));
- 
- name:
- 	/* lookup to see if this is a dup creation */
 -- 
-2.51.0
-
+With best wishes
+Dmitry
 
