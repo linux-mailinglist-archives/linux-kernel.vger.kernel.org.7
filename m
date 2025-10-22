@@ -1,100 +1,192 @@
-Return-Path: <linux-kernel+bounces-864485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2F3BFAE2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:27:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3468DBFAE32
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3833BD990
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:27:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9065B353C62
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23012309F06;
-	Wed, 22 Oct 2025 08:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC0309F02;
+	Wed, 22 Oct 2025 08:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkMde9Re"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GLezp4tR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB2D309DDC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810FF3081DC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121646; cv=none; b=Kn7FZjjngXpaRmHq8sIQ465R1wcuOBo+dkgeoD03i47/V97DAv4na/bH1vHwBlmIajgrQqGXeZ+QvN9C41C07v7ZwNwir502gsXoEK+LXl1JVUGpkGPrX//1vSJn9ST7DX/6+ih+3YCgcndRQ9M32RYZ4Zsy8lZeLlYl1THnrPQ=
+	t=1761121691; cv=none; b=seargUpIOb57WRk15rI16R8V5Smm32rjs7bEGppj8d++f2H4M0u4Ij/1EErFOzvBPG0ysZauH+QTZDBpCGhZ2lpmVzmm12FirDi7BKoNbhFQKjk0DS5HSIfmN2EPoNEhXdNUQfWcmgc34yjNmhYKQ3DD0BR/O4c86U7P4BKH3rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121646; c=relaxed/simple;
-	bh=tdMCrTS11/V/RG3ZXCpH2xncw9MorPLnFVlPKePhQcE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XX+k/Kuf79MNKFpgtu3yrR0j4SzZ1KhwJyIZat1TmPHHfwew+W20n4Z8AMclDBNDFfBLDAvnhkZGBezRIpofA/hZb1jQRm1VwSRxvk06HEeSjKNgE/ku+jE4/o4eB7nlQGUojWpkekkXdkQg5EQJs4jFX7AMk/lMrYTL5V2dBZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hkMde9Re; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-471005f28d2so24954225e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:27:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761121643; x=1761726443; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EEzCC+9AOK4yZHpfROCb40dtqhboh5xWZdG1MYZMg9M=;
-        b=hkMde9ReTpa9FN58YfFSicanoYc6L5pUWnRZeg1vXxQxKh8wKSGbnWIJE5w2TFm6ya
-         JeJ5iWXFmUMyxVGLmqa/gFqqVS5qllbLnaSV4tJ3ODBoOtb6wj4YYXGONfkJJL7DlZYJ
-         7ZeKUx1+SI03kEoxXwJuPo/6aoYF90icKw+SogR0wB2Vfif3/qPHz3vvGacNgpsEXoGK
-         nkm1lcGlquRP1lxTm/4kSQb9rfxT37QmIQ4La5pOIq+OkO8nYpL+/LrkTIBiTOYt1hL5
-         YDIOTUurf+/996f2r+rYDGusan6Ue966wUKnvOL43bH/4MllRaojKQSOhgyT9jrGoOxK
-         EvDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761121643; x=1761726443;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EEzCC+9AOK4yZHpfROCb40dtqhboh5xWZdG1MYZMg9M=;
-        b=YaCTizSBcIUw86lc+2WgdU7KxLdpPYHO/Et5H3GHq8/2j/aBGKJDfsUipy3JdK26BJ
-         hdF9aqCN8ZPiBEeokT+9gKsdNvigcfqj31EcCLG02qPYT2TNc6zV7kQaj5w6T0T6Fkl1
-         AxljXORdaCSTpwZXJ/Rs3u6s4af2/Eo5iqaHX0rWTY/w+KcYRZ/vhrdHQzpmtlfj3tPL
-         EfsfY1XNlNnn7dsLlu+J5QUUManHiT1wfFx2466rcFudYUkGTbbBp86c/YlM+a3rp0GW
-         tpcMUDxUmGp+8pFpq+3dfz5Tc0+iYpZm0sSarXtvmQYKyr+k+YQUST0qJztpUA5C0Hp+
-         5KmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXc2KUhg1t9b7/KFVJTkiM/D67wZWT0ul/OsA7/ed8ZPEpSMvyshVVc+FhBtO+G2yBgDVlkzQKwg/qHUtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwS92XRP74l4rbknqO9XKECsHiD4mIReP1HYKoio19/17lT186
-	aYD1O8atxgMtTeShKqJgsse1hKaYUSDtxTfHeAv5YNpWRxOGvdx6Hl+0+ZkSlr4THgwxSZHGyMX
-	zydK2w2r8hHpdKJtApA==
-X-Google-Smtp-Source: AGHT+IEWMusiGxmG8q/baznsT+BCENOjAatF/36w38yfM62+imMcUpM6TlM1aCKBP8oAPtZRLy3N/J4JPzr+R+U=
-X-Received: from wmwr16.prod.google.com ([2002:a05:600d:8390:b0:45c:d828:e351])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:548a:b0:46f:b42e:edce with SMTP id 5b1f17b1804b1-47117925db7mr133274735e9.39.1761121643176;
- Wed, 22 Oct 2025 01:27:23 -0700 (PDT)
-Date: Wed, 22 Oct 2025 08:27:22 +0000
-In-Reply-To: <20251022080717.GI4067720@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761121691; c=relaxed/simple;
+	bh=+qDTriJL1I8TlNCkThOTTjYJGjDQws6OfKtI9VmLqYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zn4DK/SRY4a1p3fSzKY4og79TluCMA6vrRgc/HLRbG2NXlLwjhrhI68YS94w8dXML0I9l8hoJRyEwsyCU3AQbaeuOrFX4+biA2gyvGos0JsM5mGb50vKX9nCPzMeMQDYJW/2cJ+NBE+HHgsq/L4n0ocI+rYbmRQUs8LxJW4EX5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GLezp4tR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761121686;
+	bh=+qDTriJL1I8TlNCkThOTTjYJGjDQws6OfKtI9VmLqYU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GLezp4tR0VrbO4ufLefY9gSD9aFklgbAX1ncNafEdBljwnmLzVoZ/n2P6arETT3yx
+	 BhDYxIDpnFVx0OuZ4Mxenaamq9C93PodBccJx9kPbcbs1V8jdmH0gqROMaU4VCMCjR
+	 y2TXGUxy8dzqtvY+WuuJrFW0L+TS1ayxAghS1NF8GVPnZn2xA9Nc+haDd+RSGiwDuM
+	 LZnycgx5dmSetFT4S7nnM1Ej8gVvXyoIvRWgFP66pzUQpRKN/JumjSzNayA8tQBl4r
+	 MQ/R99lq4mQaQ2a2JC+feu3/QSC+AVCkC6LCBRyTA//kwxaRPMb1uVCtAod8qf2zA0
+	 zYZIzAL/bm0Ag==
+Received: from [IPV6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa] (unknown [IPv6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A862E17E00B0;
+	Wed, 22 Oct 2025 10:28:05 +0200 (CEST)
+Message-ID: <64040015-2840-4210-8019-a39e605d87a0@collabora.com>
+Date: Wed, 22 Oct 2025 10:28:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251022035324.70785-1-boqun.feng@gmail.com> <20251022080717.GI4067720@noisy.programming.kicks-ass.net>
-Message-ID: <aPiVajDTiPsxZweo@google.com>
-Subject: Re: [PATCH 0/3] Remove the usage of Rust native atomics in debugfs
-From: Alice Ryhl <aliceryhl@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Matthew Maurer <mmaurer@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/12] drm/i915: Use huge tmpfs mountpoint helpers
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+ kernel test robot <lkp@intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Boris Brezillon <bbrezillon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
+ <andi.shyti@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Christopher Healy <healych@amazon.com>, Matthew Wilcox
+ <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ oe-kbuild-all@lists.linux.dev,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-kernel@vger.kernel.org
+References: <20251021113049.17242-7-loic.molinari@collabora.com>
+ <202510221301.wU3TSqMg-lkp@intel.com> <20251022100548.4dee241e@fedora>
+Content-Language: fr
+From: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
+Organization: Collabora Ltd
+In-Reply-To: <20251022100548.4dee241e@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 10:07:17AM +0200, Peter Zijlstra wrote:
-> On Tue, Oct 21, 2025 at 11:53:21PM -0400, Boqun Feng wrote:
-> > Rust native atomics are not supposed to be used in kernel due to the
-> > mismatch of memory model, since we now have the LKMM atomics in Rust,
-> > remove the usage of Rust native atomics in debugfs.
+Hi Boris,
+
+On 22/10/2025 10:05, Boris Brezillon wrote:
+> On Wed, 22 Oct 2025 11:25:10 +0800
+> kernel test robot <lkp@intel.com> wrote:
 > 
-> Doesn't rust have a language feature that allows you to blacklist them;
-> ensuring they are not used?
+>> Hi Loïc,
+>>
+>> kernel test robot noticed the following build errors:
+>>
+>> [auto build test ERROR on next-20251021]
+>> [also build test ERROR on v6.18-rc2]
+>> [cannot apply to akpm-mm/mm-everything drm-misc/drm-misc-next linus/master v6.18-rc2 v6.18-rc1 v6.17]
+>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> And when submitting patch, we suggest to use '--base' as documented in
+>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Lo-c-Molinari/drm-shmem-helper-Simplify-page-offset-calculation-in-fault-handler/20251021-193355
+>> base:   next-20251021
+>> patch link:    https://lore.kernel.org/r/20251021113049.17242-7-loic.molinari%40collabora.com
+>> patch subject: [PATCH v5 06/12] drm/i915: Use huge tmpfs mountpoint helpers
+>> config: x86_64-randconfig-003-20251022 (https://download.01.org/0day-ci/archive/20251022/202510221301.wU3TSqMg-lkp@intel.com/config)
+>> compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510221301.wU3TSqMg-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202510221301.wU3TSqMg-lkp@intel.com/
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>     drivers/gpu/drm/i915/gem/i915_gem_shmem.c: In function '__create_shmem':
+>>>> drivers/gpu/drm/i915/gem/i915_gem_shmem.c:511:59: error: 'struct drm_device' has no member named 'huge_mnt'
+>>       511 |                 filp = shmem_file_setup_with_mnt(i915->drm.huge_mnt, "i915",
+>>           |                                                           ^
+>>
+>>
+>> vim +511 drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+>>
+>>     486	
+>>     487	static int __create_shmem(struct drm_i915_private *i915,
+>>     488				  struct drm_gem_object *obj,
+>>     489				  resource_size_t size)
+>>     490	{
+>>     491		unsigned long flags = VM_NORESERVE;
+>>     492		struct file *filp;
+>>     493	
+>>     494		drm_gem_private_object_init(&i915->drm, obj, size);
+>>     495	
+>>     496		/* XXX: The __shmem_file_setup() function returns -EINVAL if size is
+>>     497		 * greater than MAX_LFS_FILESIZE.
+>>     498		 * To handle the same error as other code that returns -E2BIG when
+>>     499		 * the size is too large, we add a code that returns -E2BIG when the
+>>     500		 * size is larger than the size that can be handled.
+>>     501		 * If BITS_PER_LONG is 32, size > MAX_LFS_FILESIZE is always false,
+>>     502		 * so we only needs to check when BITS_PER_LONG is 64.
+>>     503		 * If BITS_PER_LONG is 32, E2BIG checks are processed when
+>>     504		 * i915_gem_object_size_2big() is called before init_object() callback
+>>     505		 * is called.
+>>     506		 */
+>>     507		if (BITS_PER_LONG == 64 && size > MAX_LFS_FILESIZE)
+>>     508			return -E2BIG;
+>>     509	
+>>     510		if (drm_gem_has_huge_mnt(&i915->drm))
+>>   > 511			filp = shmem_file_setup_with_mnt(i915->drm.huge_mnt, "i915",
+>>     512							 size, flags);
+> 
+> Maybe instead of this drm_gem_has_huge_mnt() (or in addition to), we
+> should have a drm_gem_get_huge_mnt() helper, so we don't have drivers
+> dereferencing drm_device::huge_mnt directly and we can get rid of it on
+> non THP configs.
 
-I believe clippy lets you do that.
+Yes, drm_gem_get_huge_mnt() should be enough. This would prevent build 
+errors like that for builds with CONFIG_TRANSPARENT_PAGE=n without 
+having to insert ifdefs and would also just compile to a single 
+shmem_file_setup() here. The few places which actually need a boolean 
+value can simply do !!drm_gem_get_huge_mnt(dev).
 
-Alice
+> 
+>>     513		else
+>>     514			filp = shmem_file_setup("i915", size, flags);
+>>     515		if (IS_ERR(filp))
+>>     516			return PTR_ERR(filp);
+>>     517	
+>>     518		/*
+>>     519		 * Prevent -EFBIG by allowing large writes beyond MAX_NON_LFS on shmem
+>>     520		 * objects by setting O_LARGEFILE.
+>>     521		 */
+>>     522		if (force_o_largefile())
+>>     523			filp->f_flags |= O_LARGEFILE;
+>>     524	
+>>     525		obj->filp = filp;
+>>     526		return 0;
+>>     527	}
+>>     528	
+>>
+> 
+
+Regards,
+Loïc
 
