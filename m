@@ -1,172 +1,112 @@
-Return-Path: <linux-kernel+bounces-864867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BA7BFBBB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AC6BFBBC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D77C94E7152
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:53:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40FAE4E3992
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C3533F8C8;
-	Wed, 22 Oct 2025 11:53:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B636233F8BB;
+	Wed, 22 Oct 2025 11:53:52 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C043A33EB0A
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EC12F8BF7;
+	Wed, 22 Oct 2025 11:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761133984; cv=none; b=BmQ0/PT6MJdrGtXsxrz9tC6GdgER+8+KDq3bNIm44KrPtL7X5xVcIX+vRT+Faq188pUq6+pISGDqSard6lyk9i93DDuqJ2Slbm05DUjcvgHNoBKDdGnfN39ddjKcd6C/1QVVjdSz2vlbzZq5z2VsEfKZVP1W74DnY/ni5FEWAAw=
+	t=1761134032; cv=none; b=gR6opx2RZFw4NIAzD7P7E/MpUHsGjUm8UGXxPqPEqgxSOoxkdG9TyCuEuip//gwgl89HNNtFWohc8FkJb/AZeVoXvBM3d6uUuEZ4lyB35Jm3PGaRr4RNZyhHXrlS6wLeRc5IIRq/qn+bDd5g9hC/cq4AIDhWWXs9G3gXEggM0A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761133984; c=relaxed/simple;
-	bh=xITn8FgPNzTngTKdZsYQy1UkUjtiW64ALWolI/P+5HI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HovpChKidEhClqZ2fzbz9OX8iW4kZ3PpPmpnpI/30CnMFDHaP83AMD+x7u20G+rytO30+lOIeD5rFFk3yO/kX4MqQWq9E55AirAt2y1IHn4T40mWQvgAinRTJundUOQv+AoPuiJo7Vy/mZN5CrYY7KUp+VWy6XlWslHs6Ln3m8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430d789ee5aso47346495ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:53:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761133982; x=1761738782;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J2uS3XrNGTpKV2VbD+d8nSHpOKfghfR+E94LknWDOsQ=;
-        b=PEkMw2ox7YMyxRndmMn+8298WbL3o/NRn2In45uU5B9kZQcLmR3dkjyFKrH5dLFoUy
-         IiFCvDJXapHq5vIy9AKtxHH394v9LDOkxkYYEmf2EWvmpy5ntaEw434B2OSrkEPDAUAI
-         1aSUV2lZKzcG+mfy2p43OTF4/bXcAv1h+5JWrynPb0rjs0vyO0X7dBKpGTr9l/w0euPa
-         RJSHG/64tJMLieHyiP6R/SdZiH91iIPySNAPzhh4WOWFWoHtdZ5CH1BUtpCUPc2bqTrt
-         FtiE2FKhc5Vz+2pArJziPZL5EvaCZaHAlDbRabawcUH7Rn8cim3nySgAVBiGl+DT0f4y
-         boPA==
-X-Gm-Message-State: AOJu0YxZzv3TgjqSWes7oK55YFmHRWq5YBgHiAiM6+KTkX2xd4zyAyY9
-	ryBf3SZYhfZkaA+Tl2R86rJ4oEZXG4QkqgX7QWzCFnNLlenzqLpmFBVsHF1JGu4C4w5pp3bmHvF
-	oLkanIgWj62Hsxo0W/yGvw18Z4iBg1RJNpdn6ZdJClaFsAVSUuR83ZMNsYqY=
-X-Google-Smtp-Source: AGHT+IETae1A1mSFKNPbMUVS49YYlh0XAFFI3I6G6oxTEtjr/+naJYUywAYIVGzwR2Ql0fzSxDB5MZGguI/Bxt9nl/Ttm39gyqeE
+	s=arc-20240116; t=1761134032; c=relaxed/simple;
+	bh=pwQk5zAt/ju7QPDJfmEeV5nnlUGY2G1Vk6+0+y39tYM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=mPa8yxzUlDPbFltS3iSDikCJDaeR7WGUlUInXCN3Kt86kUTO0ctCPNzwR0mgyWMz5GHgWYATRzrpyd+TAQLqOycnVRz6w/txTQFrr/LWskVnJ8xf3uB2WT6E9vF6ouTXkarPQ69IxkA5dIQ8Fvj+CjaMqVbG1EYsN9L9oCw+k2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-01 (Coremail) with SMTP id qwCowACnAaS3xfho7Kr3Ew--.6894S2;
+	Wed, 22 Oct 2025 19:53:35 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: will@kernel.org,
+	mark.rutland@arm.com,
+	robin.murphy@arm.com,
+	james.clark@linaro.org,
+	ilkka@os.amperecomputing.com,
+	make24@iscas.ac.cn,
+	u.kleine-koenig@baylibre.com,
+	bwicaksono@nvidia.com,
+	suzuki.poulose@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] perf: arm_cspmu: fix error handling in arm_cspmu_impl_unregister()
+Date: Wed, 22 Oct 2025 19:53:25 +0800
+Message-Id: <20251022115325.25900-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:qwCowACnAaS3xfho7Kr3Ew--.6894S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF1DtrWrtF1DCry5Xr43KFg_yoW8GryUpF
+	47CFW5ZFyvgr4UK39rA3yUZFWUCa1YkwnYkry8G34F9Fn3Zry3t348Kr9ag3W8JFZ8Jayj
+	q34aqrn5G3W5t3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14
+	v_Gw4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
+	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
+	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUO38nUUUU
+	U
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2307:b0:42f:a60a:8538 with SMTP id
- e9e14a558f8ab-430c52b5afemr251762865ab.16.1761133981973; Wed, 22 Oct 2025
- 04:53:01 -0700 (PDT)
-Date: Wed, 22 Oct 2025 04:53:01 -0700
-In-Reply-To: <CAMz+-CMyk977BbuBbKSu1tQOB+4=g0srcqb-EoEfKXE7exAH3w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8c59d.050a0220.346f24.0043.GAE@google.com>
-Subject: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
-From: syzbot <syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	vnranganath.20@gmail.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+driver_find_device() calls get_device() to increment the reference
+count once a matching device is found. device_release_driver()
+releases the driver, but it does not decrease the reference count that
+was incremented by driver_find_device(). At the end of the loop, there
+is no put_device() to balance the reference count. To avoid reference
+count leakage, add put_device() to decrease the reference count.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in sctp_inq_pop
+Found by code review.
 
-=====================================================
-BUG: KMSAN: uninit-value in sctp_inq_pop+0x159c/0x1aa0 net/sctp/inqueue.c:213
- sctp_inq_pop+0x159c/0x1aa0 net/sctp/inqueue.c:213
- sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
- sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
- sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
- sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
- __release_sock+0x1ef/0x380 net/core/sock.c:3180
- release_sock+0x6b/0x270 net/core/sock.c:3735
- sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
- inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x278/0x3d0 net/socket.c:742
- sock_sendmsg+0x170/0x280 net/socket.c:765
- splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
- do_splice_from fs/splice.c:938 [inline]
- do_splice+0x1fd2/0x30d0 fs/splice.c:1351
- __do_splice fs/splice.c:1433 [inline]
- __do_sys_splice fs/splice.c:1636 [inline]
- __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
- __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
- x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Cc: stable@vger.kernel.org
+Fixes: bfc653aa89cb ("perf: arm_cspmu: Separate Arm and vendor module")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/perf/arm_cspmu/arm_cspmu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Uninit was stored to memory at:
- sctp_inq_pop+0x150b/0x1aa0 net/sctp/inqueue.c:209
- sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
- sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
- sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
- sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
- __release_sock+0x1ef/0x380 net/core/sock.c:3180
- release_sock+0x6b/0x270 net/core/sock.c:3735
- sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
- inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x278/0x3d0 net/socket.c:742
- sock_sendmsg+0x170/0x280 net/socket.c:765
- splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
- do_splice_from fs/splice.c:938 [inline]
- do_splice+0x1fd2/0x30d0 fs/splice.c:1351
- __do_splice fs/splice.c:1433 [inline]
- __do_sys_splice fs/splice.c:1636 [inline]
- __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
- __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
- x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4969 [inline]
- slab_alloc_node mm/slub.c:5272 [inline]
- kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
- kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
- __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
- alloc_skb include/linux/skbuff.h:1383 [inline]
- sctp_packet_transmit+0x44b/0x46d0 net/sctp/output.c:598
- sctp_outq_flush_transports net/sctp/outqueue.c:1173 [inline]
- sctp_outq_flush+0x1c7d/0x67c0 net/sctp/outqueue.c:1221
- sctp_outq_uncork+0x9e/0xc0 net/sctp/outqueue.c:764
- sctp_cmd_interpreter net/sctp/sm_sideeffect.c:-1 [inline]
- sctp_side_effects net/sctp/sm_sideeffect.c:1204 [inline]
- sctp_do_sm+0x8c8e/0x9720 net/sctp/sm_sideeffect.c:1175
- sctp_primitive_SEND+0xd7/0x110 net/sctp/primitive.c:163
- sctp_sendmsg_to_asoc+0x1db8/0x2250 net/sctp/socket.c:1873
- sctp_sendmsg+0x3910/0x49f0 net/sctp/socket.c:2031
- inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x278/0x3d0 net/socket.c:742
- sock_sendmsg+0x170/0x280 net/socket.c:765
- splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
- do_splice_from fs/splice.c:938 [inline]
- do_splice+0x1fd2/0x30d0 fs/splice.c:1351
- __do_splice fs/splice.c:1433 [inline]
- __do_sys_splice fs/splice.c:1636 [inline]
- __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
- __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
- x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6609 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-=====================================================
-
-
-Tested on:
-
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=145e2d42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
-dashboard link: https://syzkaller.appspot.com/bug?extid=d101e12bccd4095460e7
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=165fd734580000
+diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+index efa9b229e701..e0d4293f06f9 100644
+--- a/drivers/perf/arm_cspmu/arm_cspmu.c
++++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+@@ -1365,8 +1365,10 @@ void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match *impl_match)
+ 
+ 	/* Unbind the driver from all matching backend devices. */
+ 	while ((dev = driver_find_device(&arm_cspmu_driver.driver, NULL,
+-			match, arm_cspmu_match_device)))
++			match, arm_cspmu_match_device))) {
+ 		device_release_driver(dev);
++		put_device(dev);
++	}
+ 
+ 	mutex_lock(&arm_cspmu_lock);
+ 
+-- 
+2.17.1
 
 
