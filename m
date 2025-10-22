@@ -1,133 +1,86 @@
-Return-Path: <linux-kernel+bounces-864817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22448BFB9C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E1CBFB9DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29D0189554D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4791A056B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A346336ECE;
-	Wed, 22 Oct 2025 11:21:32 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CAA334C21;
+	Wed, 22 Oct 2025 11:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLQNj5rx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB19933374C;
-	Wed, 22 Oct 2025 11:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5DE334C3D;
+	Wed, 22 Oct 2025 11:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761132091; cv=none; b=kKrL/o+mDW3TFP7WrKX+y8U+HlMkV6mbsGMuMOQOLuwM2e8eSOwZSyvmYJRM2vvgNZxjhSW4Jp0O4w6ucPShLcSTLAZy3QPdNY7+Wkryug2flk1npowSUlxO1RWAkDlI6ispupbjQQPvnWodsW9+BTzT3AtlRO+zkw8qnfIxV5U=
+	t=1761132114; cv=none; b=BRZwE/52f/O0tPlK1lCGbshddxdrFiOmM1W+JcQh1daAiNj3cqsmgV8npjXzh3g3xJycgAxoqKGCsIqFQLof0ITrDExxO3hm3UoEItrQ9RSi95ncj+hWJlkAygD7px3/SSVgAu9xyb7aYCAHynEa98nqldHG/0WcZxGA90elAEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761132091; c=relaxed/simple;
-	bh=fP7buK1er2UCVxFe/13kgYi2s+JhBGAJkdAoOJbzpo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U1aGMJLKeKvbSDkY+9NtThFWr3WJefoL40TnCH7h9tVLxRwIm/sO8N6Nd4P/YkvGUXlu0RtaHw6vEnWVcddwd9wDJs8ZRC0vkoHAlEGBUIek3noD2Pq4QX+ks8g/whjYRXqEtV4eApRTxmYKzgbdDGf2CsDrfl8xgfen0VILMTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpgz10t1761132062tf02c5ba1
-X-QQ-Originating-IP: tbMILMwLIwoOeiMjYUPtdlDM1kxUWMOdiuIdLLC3FwQ=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 22 Oct 2025 19:21:00 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2560357849048192699
-Date: Wed, 22 Oct 2025 19:21:00 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	andrew+netdev@lunn.ch, danishanwar@ti.com, geert+renesas@glider.be,
-	mpe@ellerman.id.au, lorenzo@kernel.org, lukas.bulwahn@redhat.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v15 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <3CA6D21491D51426+20251022112100.GA61682@nic-Precision-5820-Tower>
-References: <20251022081351.99446-1-dong100@mucse.com>
- <20251022081351.99446-5-dong100@mucse.com>
- <d46abe01-2f1d-42ec-ab93-a0be3d431c09@linux.dev>
+	s=arc-20240116; t=1761132114; c=relaxed/simple;
+	bh=Lcj0Qx0qwyezejD/kADAZyt/GYYKHsvLTfJ3mUiRsyY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fKfxKkPXUiujm7qZ49JF0AXRG89iMhVZ1vNbKOEvzxKsSC4CiL5OUauDoKba+8jkKfUEhaAvru27Sw3wbTiLQSWu1bmym7eprBK+Za6G8+H6dLgcVzl3IZnZ3MUFigmH2gqAs7RZVnSq7su1T+dOrhdW9sWzan4ziqjg950Q7NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLQNj5rx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFD7C4CEE7;
+	Wed, 22 Oct 2025 11:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761132114;
+	bh=Lcj0Qx0qwyezejD/kADAZyt/GYYKHsvLTfJ3mUiRsyY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=TLQNj5rxH6xWJubcY2oaJJWc6hmgEY9l1P+EDrmNBr1VBHGMtPjSXmKVVgtVgk7hR
+	 oBYTaHFHwfLLls8LRQoMf1ZJ6u2XENcgp31kH3s7d+SgdJYo1czQqASUDZzeyAZ0Wg
+	 k2bpKvizmsDv3mAYHYjdpC1Dv8wxrGyWytZq+4Bs9snKiaCTCzgTqhiof1rAnbz0ox
+	 VnQbjOKnwHJp8iAQbKdGO51Ey0uWmMwpv9OftNF+sVSyJbAK+ylHDV15n2A2Gv1mMp
+	 lSRccoLwFRZV9++4MXJqvlClYXJg16mmiGcGQuGwnrJ5OvQUz+5R+HKGPXLNS7q9dv
+	 zWmW2bhGNxYlg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: "longwei (I)" <longwei27@huawei.com>
+Cc: Alexander Graf <graf@amazon.com>,  Mike Rapoport <rppt@kernel.org>,
+  Changyuan Lyu <changyuanl@google.com>,  <linux-doc@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  "hewenliang (C)"
+ <hewenliang4@huawei.com>
+Subject: Re: [PATCH] kho: debugfs: Fix finalize interface documentation
+In-Reply-To: <fe693f4d-80c7-4d1f-9430-3ab9c8165df0@huawei.com> (longwei's
+	message of "Fri, 17 Oct 2025 18:21:49 +0800")
+References: <fe693f4d-80c7-4d1f-9430-3ab9c8165df0@huawei.com>
+Date: Wed, 22 Oct 2025 13:21:52 +0200
+Message-ID: <mafs05xc7fagf.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d46abe01-2f1d-42ec-ab93-a0be3d431c09@linux.dev>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: Ndw/mc8X39ObfM92LSarzqTzS5nW1avRkMDlxqA0z/KhET26JNUrNDsi
-	QqMhOteiMtOMn8awuvYuu1hFW8lFM5osddR5QE9XHuzOFmSIoILwxyzutdFEeatuOiJ8HFl
-	QJsm5UPm2AXTiT4O/dFaU+JPSbrR4tS3VBOUB5shdaJYOEuYZoQvNjsWRsi+B0IcyFBNwH9
-	VSzJ+nFA7ejCXlesv8lMEIDOViVn4diwD80rMPA+LMlpHrljVaMpAvb5dTZpbiQdzXM1ZUI
-	eDiAO9Put2pLiCIzHD/zxSLnW2kJ+b7lUydml6V8kcEUTYi+JYH7BO94G9+VW1yMBcy7Agk
-	wsRt+qSr35FUiwhbfpEYAgISThnCbU9vSgPwoSmB8h0UBzfb4+/HZwO63vedMgwnUXgjkNy
-	YkMVggVKm7YxeeqLug2g5ZeTPsCG2L3THUNKWQ0xPcDtLKFStB5QhRDg0LyPmCyltPeCPDC
-	hvseNvfKn/HxyPJliUvfEe+mVEWX/uDLHibBgZNDJ2XrHj+mVq1YKprxea/JmlOuR5Msldn
-	Rvxmm4yTznp/rb1ItEN90OCeIUnUPM2t7zY4lBB14FyT5B+dZ1kiJdLoFslx8MnO6COOQ46
-	V3/zaoEipPiflB8MdntY/96WlVAwMCx5PmHWPsosvSjP03PXHHY7p6Twuk+icOwYrIQ+oip
-	8WzSZxrUqRLgt/OX2+dRs+6PgocpqG6n2cJz/GpuJyWc83mfbnwzAB1EErLVbPzT49e+ftY
-	e479Do1l1zEuYbyXPdLlpMUy06mhgTeu3gMi881OAXQ4OJCHvG8QGXf2iYVul3BwWiMczwK
-	QkUdvLlRm1uzM/NVjzivsNCbosoTTF/+ilyP0GsrEMsWsYShJMfvaoPhpzw+PUxPtv+3Jd+
-	QVLnwW4MoJ63ZrHKxEx1WT9rR7stAVZoQ+jaZ3xLpubDF4wSm0TGHUqq/Xtk+gH5reAs8+y
-	ZvAVVVaYtZPnUsv0W+Ska8m5EX9ikAIedHO111eqXOAgvsGBlhIw+WUQ/TRtzolooBMWc4o
-	oKZ6mJfDYCLT9YI51e
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
 
-On Wed, Oct 22, 2025 at 12:07:59PM +0100, Vadim Fedorenko wrote:
-> On 22/10/2025 09:13, Dong Yibo wrote:
-> > Add fundamental firmware (FW) communication operations via PF-FW
-> > mailbox, including:
-> > - FW sync (via HW info query with retries)
-> > - HW reset (post FW command to reset hardware)
-> > - MAC address retrieval (request FW for port-specific MAC)
-> > - Power management (powerup/powerdown notification to FW)
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
-> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |   4 +
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    |   1 +
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c | 194 ++++++++++++++++++
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h |  88 ++++++++
-> >   5 files changed, 289 insertions(+), 1 deletion(-)
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
-> 
-> [...]
-> 
-> > +static int mucse_mbx_get_info(struct mucse_hw *hw)
-> > +{
-> > +	struct mbx_fw_cmd_req req = {
-> > +		.datalen = cpu_to_le16(MUCSE_MBX_REQ_HDR_LEN),
-> > +		.opcode  = cpu_to_le16(GET_HW_INFO),
-> > +	};
-> > +	struct mbx_fw_cmd_reply reply = {};
-> > +	struct mucse_hw_info info = {};
-> > +	int err;
-> > +
-> > +	err = mucse_fw_send_cmd_wait_resp(hw, &req, &reply);
-> > +	if (!err) {
-> > +		memcpy(&info, &reply.hw_info, sizeof(struct mucse_hw_info));
-> > +		hw->pfvfnum = FIELD_GET(GENMASK_U16(7, 0),
-> > +					le16_to_cpu(info.pfnum));
-> 
-> why do you need local struct mucse_hw_info info? The reply is stack
-> allocated, nothing else will use it afterwards. You clear out
-> info on allocation (40 bytes memset), then you copy whole structure from
-> reply to info (another round of 40 bytes reads/writes) and then use only
-> 2 bytes out of it - it does look like an overkill, you can access
-> reply.hwinfo.pfnum directly.
-> 
+On Fri, Oct 17 2025, longwei (I) wrote:
 
-mm, you are right, I should access it directly. Thanks. 
+> From 91c2b24855d55fef0e8919b2d39216d5c9aad558 Mon Sep 17 00:00:00 2001
+> From: Long Wei <longwei27@huawei.com>
+> Date: Wed, 15 Oct 2025 19:58:39 +0800
+> Subject: [PATCH]kho: debugfs: Fix finalize interface documentation
+>
+> Correct the error in the KHO documentation: 
+> when removing the KHO finalization phase, it is necessary 
+> to execute echo 0 > /sys/kernel/debug/kho/out/finalize
+> instead of echo 0 > /sys/kernel/debug/kho/out/active.
+> Fix it.
+>
+> Signed-off-by: Long Wei <longwei27@huawei.com>
 
-> 
-> 
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+[...]
+
+-- 
+Regards,
+Pratyush Yadav
 
