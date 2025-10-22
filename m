@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-864645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60114BFB3FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:57:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E30FBFB425
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9514209FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:57:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCEC534572D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730BB320391;
-	Wed, 22 Oct 2025 09:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28594320A01;
+	Wed, 22 Oct 2025 09:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJeXf9eU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kJd3rLOl"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BDB31D758;
-	Wed, 22 Oct 2025 09:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3F831B13C;
+	Wed, 22 Oct 2025 09:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127026; cv=none; b=DtfSdU7jI5nM1zeGlzatGN04yBxTGb9clI7FQoQT6wKKmSFXlQMAYJ4bU41QduHLqY5Z0voUBaZe4BWFuF66n8q7fJu5AbrNdTiZSVD9FsMdMgQdT8t8prpKK3ISdezW8rfekJeeeRAN2vgxFmeK4DBw1Sd32XhQAtYYRFTfjA0=
+	t=1761127070; cv=none; b=n0IsnvEkUdY8blfZi+FSf7gJh2ocT4p6wD7PcNbQKGCkBUHkASrGnGpcz5wassFtIJWvFfQZGJjUjYwo0eA4zyuzx32sACY+UiZF1GMV0wQReSaszWPs1K4/FSaYsJjqv1u+v/ztEXj9M1kKV8l/nwKLFtRAS2xxWXG63v1i8YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127026; c=relaxed/simple;
-	bh=4ZElJSjJ+Xa62aDZXtKM9SKMWiYHs2dDMSjDGPIPIME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jxo1faAhv5VN1m9Tl+MV0t+S70GqBIWuykKQZNc1TV2Pm3m5Foi/5brAeQ2iThuHKcSOjNmsHcCwQRQM6fj6L2Kgjx1fIghPQw19uCBRHOwNjzPiUgdjIW2Jw09Cj0qdz4piq8LwFJXK/bGVF0cVtyExTb5du/eWsdwZhcaLavs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJeXf9eU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF71C4CEE7;
-	Wed, 22 Oct 2025 09:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761127023;
-	bh=4ZElJSjJ+Xa62aDZXtKM9SKMWiYHs2dDMSjDGPIPIME=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nJeXf9eUeqjcFfQlZU4zRViiAqRV1cg6IuOlJrNlXzTaYCFFFucz0gj2YW288fLAF
-	 2OkkmYmu3mI4UtyWuJoeBgt3a/wnzwqT+SE/e1wo1P25M8qEQTPRtEx9iYcdaA2xJo
-	 6MoMxOHczTqvBgAiHoXnlgMCwekqJMVhmLTWke17NRgtr1Xgb4ZhcjhwyGr5Amr9lO
-	 LNQ+oNq1jxGgA7ec50PxAd+o93z++bXoguKUhvio6r1zNssTeEy41b19blt8zxFfcS
-	 bcFTujEYnfdYyic//362X8u3AO0ys0QGABxnA059DuNmkt+/q8konIVfzLoYANR/UJ
-	 p3cVXlCxcJhJg==
-Message-ID: <0f006338-e69b-4b3f-b91f-0cc683544011@kernel.org>
-Date: Wed, 22 Oct 2025 11:56:59 +0200
+	s=arc-20240116; t=1761127070; c=relaxed/simple;
+	bh=4Y+D80iSt9jpECU5J61hwIKVS1QvaZTv8PlOVYO3NPo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YG3Kq1Ov/V4CH4Q9kAlSjNRKuEvwSA/mZFO7WIJgBNqYh8slrnN0a5J0LaawfPeNKF4+nx8rC4WCZjxb7H/tKkWPAejXs0Wiq+WJC7UmY8PHInmgjefrTA/mDPcCBoviluuDSsiZykCxgdBrYlSUdDq36EFuo8b3EvQKbqLKFKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kJd3rLOl; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59M9vMZ81387139;
+	Wed, 22 Oct 2025 04:57:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761127042;
+	bh=p5zzKjVDjdZgk+qCBL/BN7PWbaszOVdrduoIeN0+Bas=;
+	h=From:To:CC:Subject:Date;
+	b=kJd3rLOlaBNbaS2ejmkek5WmleeL2c812cu0a+FGJYL8WOHf/C0vlz/umDhXisRmL
+	 81hCCUv8XtrSJqV5Gg3n3jXJHhcw26VOqqTgJt5HxchXggwetf4+eX00a58HWptDnI
+	 0mp+82YRvA/dWddubfsBttGT/6HPhIyJOl7bejv4=
+Received: from DFLE204.ent.ti.com (dfle204.ent.ti.com [10.64.6.62])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59M9vMYX2266279
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 22 Oct 2025 04:57:22 -0500
+Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE204.ent.ti.com
+ (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
+ 2025 04:57:22 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE209.ent.ti.com
+ (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 22 Oct 2025 04:57:22 -0500
+Received: from toolbox.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.73.74])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59M9vFcV1029418;
+	Wed, 22 Oct 2025 04:57:16 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+        <quic_wenbyao@quicinc.com>, <inochiama@gmail.com>,
+        <mayank.rana@oss.qualcomm.com>, <thippeswamy.havalige@amd.com>,
+        <shradha.t@samsung.com>, <cassel@kernel.org>, <kishon@kernel.org>,
+        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
+        <rongqianfeng@vivo.com>, <jirislaby@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH v4 0/4] PCI: Keystone: Enable loadable module support
+Date: Wed, 22 Oct 2025 15:27:08 +0530
+Message-ID: <20251022095724.997218-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] DMI: Scan for DMI table from DTS info
-To: adriana@arista.com, linux-arm-kernel@lists.infradead.org,
- jdelvare@suse.com, devicetree@vger.kernel.org, robh+dt@kernel.org,
- frowand.list@gmail.com
-Cc: linux-kernel@vger.kernel.org, vasilykh@arista.com
-References: <20251022082129.138217-1-adriana@arista.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251022082129.138217-1-adriana@arista.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 22/10/2025 10:21, adriana@arista.com wrote:
-> +static bool __init dmi_scan_from_dt(void)
-> +{
-> +	struct device_node *chosen;
-> +	const __be64 *prop;
-> +	char buf[32];
-> +	void __iomem *p;
-> +	bool dmi_available = false;
-> +	u64 addr;
-> +	int len;
-> +
-> +	chosen = of_find_node_by_path("/chosen");
-> +	if (!chosen)
-> +		return false;
-> +
-> +	/* SMBIOSv3 (64-bit entry point) has priority */
-> +	prop = of_get_property(chosen, "linux,smbios3-table", &len);
+Hello,
 
+This series enables support for the 'pci-keystone.c' driver to be built
+as a loadable module. The motivation for the series is that PCIe is not
+a necessity for booting Linux due to which the 'pci-keystone.c' driver
+does not need to be built-in.
 
-Undocumented ABI. You need to document each new ABI/bindings.
+Series is based on 6.18-rc1 tag of Mainline Linux.
 
+DEPENDENCY
+----------
+This series has __NO__ dependencies since the dependencies stated in the
+cover-letter of the v3 series at:
+https://lore.kernel.org/r/20250922071222.2814937-1-s-vadapalli@ti.com/
+have been satisfied.
 
-Best regards,
-Krzysztof
+v3:
+https://lore.kernel.org/r/20250922071222.2814937-1-s-vadapalli@ti.com/
+Changes since v3:
+- Rebased series on 6.18-rc1 tag of Mainline Linux.
+- Patch 4 has been updated to remove the '__init' keyword from functions
+  to avoid triggering an exception due to '__init' memory being freed
+  before functions are invoked. This is the equivalent of:
+  https://lore.kernel.org/r/20250912100802.3136121-3-s-vadapalli@ti.com/
+  while addressing Bjorn's feedback at:
+  https://lore.kernel.org/r/20251002143627.GA267439@bhelgaas/
+  by introducing a new 'init' function specifically for registering the
+  fault handler while the rest of the driver remains the same.
+
+Series has been tested on AM654-EVM with an NVMe SSD connected to the
+PCIe Connector of the EVM. Test Logs:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/332e8d65c66ed93e95c2d89ec1ee3f68
+
+Regards,
+Siddharth.
+
+Siddharth Vadapalli (4):
+  PCI: Export pci_get_host_bridge_device() for use by pci-keystone
+  PCI: dwc: Export dw_pcie_allocate_domains() and
+    dw_pcie_ep_raise_msix_irq()
+  PCI: keystone: Exit ks_pcie_probe() for invalid mode
+  PCI: keystone: Add support to build as a loadable module
+
+ drivers/pci/controller/dwc/Kconfig            |  6 +--
+ drivers/pci/controller/dwc/pci-keystone.c     | 38 +++++++++++++------
+ .../pci/controller/dwc/pcie-designware-ep.c   |  1 +
+ .../pci/controller/dwc/pcie-designware-host.c |  1 +
+ drivers/pci/host-bridge.c                     |  1 +
+ include/linux/pci.h                           |  1 +
+ 6 files changed, 33 insertions(+), 15 deletions(-)
+
+-- 
+2.51.0
+
 
