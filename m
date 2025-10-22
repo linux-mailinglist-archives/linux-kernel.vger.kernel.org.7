@@ -1,192 +1,136 @@
-Return-Path: <linux-kernel+bounces-866015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDC8BFE9B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C053BFE9BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 288674EBA49
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88253A710D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBDD2E8B64;
-	Wed, 22 Oct 2025 23:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9F429617D;
+	Wed, 22 Oct 2025 23:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efeT9fCl"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PI8gSQpa"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDDE2727F8
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C842472AE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761176887; cv=none; b=SVXB9xach84MIryViOI3lYuoiD7DXN/EHWUHhv0XmFg8doQF59JMmhkB0/xQDiM7CjxvyvZ5zr+FtShkyJzuUOeFtctI8qsNSLTtDFD2pVAyWGaJTnDhAnGr0RlVQNYxX06sIF74HQq2Iz87R+1jpU5PcX8w+qw+9qFA4JeqFQs=
+	t=1761176971; cv=none; b=MG4n7Fc5xk3UGBiaPpkWJSsFXBPtZCDF0KDRfkKcQsjV/FshMBChtAztlLp9w/gqyFBlVEIPXNkbdxWUFVHKqIfhhIgxTCkRCwqzrNCXWSBhwmV8ewWGXsIYVSABYLvbvXx9gkkFIvK+hewa0spv4BQz5JjGaLjLLcq33WkayK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761176887; c=relaxed/simple;
-	bh=5WC3d0KpMF9e1+s5VMDuJD8IYrVBfMCqdA+27vs3t+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f1yG6N8mlhde0LWtEkWBNKGFJvv6UxHa1gbemxrhVdz5PORaBRJUf7FR7NYMGS1yg/hiYyEPZAiiIgG0DMd8GgsnhPyNfXSSbrWSpfb8chegMn1H6HCHe3+UAovXUovsnmk1lmneZRyllEKCzhs8OiUA2EufU36kVqT4n7x1xdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efeT9fCl; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1761176971; c=relaxed/simple;
+	bh=fqYMAKlqtZJtiuJ1ERUUL+oJvskTG+jxNptCeiCYtag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QZgvuFxbJyV+8S4H5Xd8BWahX4fYs2b+pHul3jvj9htZWjzIMOSnjnD6pS2ZYttRTYO/5UlFyQTq8xe1vlnrA8LQB8tUnpymb+BpOiIdSJj9Hv8kOuqrTG0EuqPIg86XKnnL00pzTq4GZhg3E0lR/v+/qxy9A9n8b1B3ykM7Njs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PI8gSQpa; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63e0cec110eso248457a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:48:04 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-475c696ab23so683935e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761176883; x=1761781683; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w8mc7PEqKOdaKhhTWaiaacMdTM34oWGDw4sC0YwwFDk=;
-        b=efeT9fCldGu0FwWHmP7IoseAh2X8ED0TgpvCaR2jNVypdAdHLS/v3lWwHoINELvbOy
-         LRR+w87P2RaxwbZ1VwlWkcvttIv+l6sVyGH6plEM1oUhzQ+sbcr1rbj0fqOZVccgW2TG
-         J4SWKbFCiwHI+Rirn9tT03g5d+P01HrJfnp26Q2TLB+TVOVEP3a2qJmB7CYvIhPu2V4r
-         4+QpZQ7WpkqUrrVbjs0S+o8WSRal+Ykxl+7aEqSiU2esr3LTNu3J5235+awk1tpCG5ZG
-         cUFsPukSzk5Uc1jCLTJtovhhqLzRZl+hta6BJmByyZrhIheT3jVy3pQwINcvuAqdc4Em
-         7cuA==
+        d=gmail.com; s=20230601; t=1761176968; x=1761781768; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7iAsIQREh+zGURAyjuCvUwYmGkRo9NPMoW7K+cQ8Syg=;
+        b=PI8gSQpaxmAxoUKAcxlaZycH694Z6BqI5eLDQSYD2or5t367pZWjvTvBG2x/MF6Z75
+         tM1k3g/6GsQ4G26pgonIaBFT7xXT/dDQoC2UJIUMkjiUtA1iRyqpMBlSBGCAfpZIEiKq
+         YHBJ6TZoUcFvwWrrCSVAw6LYlYvKlYk2jf0WpbjE4P3Mexs4Xr2CbtIPB9xlY+v5QmIM
+         eCghWImf8I59o4DvwAe65W0Om+RJZ7c1jLIZ174WLfsuVNmJPKxqurp0L++2DaIaihNI
+         G9nc0Ys1UTYDHsabsFVgs0ozLlN0qIfEbB0+G40kjVzvZAMAh5gvmtenui1mXtU0ptIz
+         SR8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761176883; x=1761781683;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w8mc7PEqKOdaKhhTWaiaacMdTM34oWGDw4sC0YwwFDk=;
-        b=cBiU90YrWh6Fh6P/iN+R3chaC9vXA3I9/sQWEdLHdwO7uEvif6ikCprmrVk4OQUMBd
-         m+jkG3OGo6C27KbFZX857pXKnSdwuu7z+V0ZKYr7ck8nxymTUzRU94rcQeH5ycszftNd
-         a5AM5QqHrUYlW7eo6OxEVAgyG6ioPL/jqXzyIw2d7d5kPM7RMni+B7nssheLw3UjS2cx
-         SpQ7Tse8J67eBT/J4HMMp9Tr9WMDm7le3/uD7L///xna38kZjqW3+Veu6HMfDW942F6z
-         ui6MKlKjMUZyzQ3RV1refdixTedLz/5rBzBddjyQsNbcUyFp0FgpTlB79qnRsueX6BqR
-         nqTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNFQ8LZZk7KKer0kzrkx/M5eN/XH9GKhW9vN2+eNAa4CtVac1CrOiOMHqhv1Wtce0qrCYsFgRLa49VD+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrnL9ejIIG0nCXBOM4DSyI3UWXeDEUJM+aAlVIpuMNatkyBiaK
-	/RN9aTi6oeR8V/hDPJTFSuW397R9wY8HfDbDwg5svfA1v+xT3fNP5k/FCskRNfLo1twNuFrrTRl
-	t1LWKSE9SMlXJgh004pEI0VbkMCSfPow=
-X-Gm-Gg: ASbGncvXtZGH+7jKnsGaxmk01QgAJ7vEGme7PZM6y5aGdj7WCKLXqqqmjjo1xYt+1kd
-	7J7pYLetoHFKsdNXx8G2+LBU6+cDS15Sfq25CaZo3+JpAK7Xce5noTyYg71hF58Ih9oeMSWx29G
-	8l5buU6U1CDD34JX1a5B95/OFxdHGl6QLoykLmI8rYlYMHV/eYLu6/ryo/IrtD4Jm4H43IBb45H
-	cVMsSPxvnNx7YZ9NTKDZZ1vtM4S0KgE8eIr0zeozgPMjxoas7nW3nllns+cokyP2Om3x64Rnxss
-	qbAhv+kJ/HQL0jc=
-X-Google-Smtp-Source: AGHT+IFPvjCt3lhgdIMR/r39w4zk8tY3v7Ryh/JdZW1xA1CBJlkaCdErToOC3Wg0Fzc0bAc9ofaTJC6DzyBMlI3b854=
-X-Received: by 2002:aa7:c958:0:b0:636:a789:beb9 with SMTP id
- 4fb4d7f45d1cf-63c1f6dc078mr15321500a12.37.1761176882672; Wed, 22 Oct 2025
- 16:48:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761176968; x=1761781768;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7iAsIQREh+zGURAyjuCvUwYmGkRo9NPMoW7K+cQ8Syg=;
+        b=nG6//rLJ4dsnrobE5HdiMVWOhDPQ9WTpBVUSZ7yytMpVfG9JcpuKyIG+JqS1ZUFF9Y
+         xkODVotpCMAmp3jmOD8u60BqwROR9tCfvORHk37mFp+M6aInEQriTMiyrqbE9AtSb2Ur
+         t/Ti6krrEK2plc1u+d8Vaz/UH501CpHduH0NaJXOgwwN+ylyPasQYovnuEROxqMAsIA/
+         oSu5vzcn5aPHCEAJps1RpuijscW7ZWoG1yNuQ0tz93NhKvsudu1qY/ayZ83LlSfqgmv1
+         Ull9uZzceQ9GxQQd4xN17D6PqpDK24VrKRlcg4hlWbJe303CKki+WJWzmCPH7r+HD23V
+         miJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLYrbK5AdcSKX2FzSHVO2naMdtYSAArSYrc3DFYfDQklZaKDhXE+wF1mdmcT35nlSF8yHKQLOP5TQ8utE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwocRYzzV94hhcgz1RbMhWJ49tv/cHhzalWkQr6yKZVP5/Rfz3c
+	0kS0jDedyLZ77IuKPr19n2DbaKAjk2wzdlhWdhRU7ZgMwXw+ZiYDo72W
+X-Gm-Gg: ASbGncuOjx1reh985NF8cMedKMzz3Dvlq4kSTgPMyprXfB1C4DTy6gPYhkYX/ZrKfua
+	OekJfwPZkzo/zvpf25VsH6qEPGNKznFQL/M18fTzCDWi6iBQsKTtokvUvKjcD6iyprb5ibeBEUo
+	uhsn/uM2dMNnEYhle3nJ/uWjeP3453X7HtMj43YH/Tdd6RrXNlKJkfA4rwbp7kQhAyT76KMILCj
+	xFgG3ZGZIqxolxw/LPGylvzT3yv/SYGDK6WO73C+emkDmpkJBaq1hJ9L+WQ1WJDcQx0D+J2+lLd
+	94vFxra8wucMXxuhTGBQPm55VhkfevuKHh0TEtywnCy8qLBBwe/XH0C+Y+oVT8y3kLhtgEGBf2z
+	dffi4q7dfQbSpP9/XZf5Lm53kuUyMln1CVMYqCxLVvtqzvRLv9PiSMpYVG9nGnp5Dgl+8c+ioKQ
+	BJ8GEVfv8ZMjokD3DzSTzgOSeYggw9JP2TVBG1/aQSH8G3qpQ9rwdQC3eZNElKVdHzcGBvlU8Y5
+	C5XjLE6Jw==
+X-Google-Smtp-Source: AGHT+IEnIvYXuGkCzSV8+nhk+aDTUal3owkvZ8NNI/eJ4nC+WbM60rYIhbD7kTnRmJpNaU5p4X+VNg==
+X-Received: by 2002:a05:600c:8217:b0:46e:32d4:46a1 with SMTP id 5b1f17b1804b1-4711790c372mr174343665e9.22.1761176967548;
+        Wed, 22 Oct 2025 16:49:27 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5? ([2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47494a91c47sm49161355e9.1.2025.10.22.16.49.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 16:49:26 -0700 (PDT)
+Message-ID: <1a7a28d2-5a49-4522-b6e6-a42a14397aa0@gmail.com>
+Date: Thu, 23 Oct 2025 00:49:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017042312.1271322-1-alistair.francis@wdc.com>
- <20251017042312.1271322-5-alistair.francis@wdc.com> <e7d46c17-5ffd-4816-acd2-2125ca259d20@suse.de>
- <CAKmqyKMsYUPLz9hVmM_rjXKSo52cMEtn8qVwbSs=UknxRWaQUw@mail.gmail.com>
- <CAKmqyKNSV1GdipOrOs3csyoTMKX1+mxTgxnOq9xnb3vmRN0RgA@mail.gmail.com> <7afb2fc0-0da5-4539-a1a4-87360186cf65@suse.de>
-In-Reply-To: <7afb2fc0-0da5-4539-a1a4-87360186cf65@suse.de>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Thu, 23 Oct 2025 09:47:36 +1000
-X-Gm-Features: AS18NWAK6TMWNZNySx8pysumGySsDeNzwXFu97eObXc75NSy-iZ6pjnX1U1P9V0
-Message-ID: <CAKmqyKPuESAp3nGJNDSw13_TnQLtfjSEAUdFyKrtww46ytJdEw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] net/handshake: Support KeyUpdate message types
-To: Hannes Reinecke <hare@suse.de>
-Cc: chuck.lever@oracle.com, hare@kernel.org, 
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] x86/boot: Fix page table access in 5-level to 4-level
+ paging transition
+Content-Language: en-GB
+To: Dave Hansen <dave.hansen@intel.com>, dwmw@amazon.co.uk,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, ardb@kernel.org, hpa@zytor.com
+Cc: x86@kernel.org, apopple@nvidia.com, thuth@redhat.com,
+ nik.borisov@suse.com, kas@kernel.org, linux-kernel@vger.kernel.org,
+ linux-efi@vger.kernel.org, kernel-team@meta.com,
+ Michael van der Westhuizen <rmikey@meta.com>, Tobias Fleig <tfleig@meta.com>
+References: <20251022220755.1026144-1-usamaarif642@gmail.com>
+ <20251022220755.1026144-2-usamaarif642@gmail.com>
+ <8283c1b6-1487-49e2-b220-7dbd043a2913@intel.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <8283c1b6-1487-49e2-b220-7dbd043a2913@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 5:03=E2=80=AFPM Hannes Reinecke <hare@suse.de> wrot=
-e:
->
-> On 10/22/25 06:40, Alistair Francis wrote:
-> > On Tue, Oct 21, 2025 at 1:19=E2=80=AFPM Alistair Francis <alistair23@gm=
-ail.com> wrote:
-> >>
-> >> On Mon, Oct 20, 2025 at 4:09=E2=80=AFPM Hannes Reinecke <hare@suse.de>=
- wrote:
-> >>>
-> >>> On 10/17/25 06:23, alistair23@gmail.com wrote:
-> >>>> From: Alistair Francis <alistair.francis@wdc.com>
-> >>>>
-> [ .. ]>>>> @@ -372,6 +384,44 @@ int tls_client_hello_psk(const struct
-> tls_handshake_args *args, gfp_t flags)
-> >>>>    }
-> >>>>    EXPORT_SYMBOL(tls_client_hello_psk);
-> >>>>
-> >>>> +/**
-> >>>> + * tls_client_keyupdate_psk - request a PSK-based TLS handshake on =
-a socket
-> >>>> + * @args: socket and handshake parameters for this request
-> >>>> + * @flags: memory allocation control flags
-> >>>> + * @keyupdate: specifies the type of KeyUpdate operation
-> >>>> + *
-> >>>> + * Return values:
-> >>>> + *   %0: Handshake request enqueue; ->done will be called when comp=
-lete
-> >>>> + *   %-EINVAL: Wrong number of local peer IDs
-> >>>> + *   %-ESRCH: No user agent is available
-> >>>> + *   %-ENOMEM: Memory allocation failed
-> >>>> + */
-> >>>> +int tls_client_keyupdate_psk(const struct tls_handshake_args *args,=
- gfp_t flags,
-> >>>> +                          handshake_key_update_type keyupdate)
-> >>>> +{
-> >>>> +     struct tls_handshake_req *treq;
-> >>>> +     struct handshake_req *req;
-> >>>> +     unsigned int i;
-> >>>> +
-> >>>> +     if (!args->ta_num_peerids ||
-> >>>> +         args->ta_num_peerids > ARRAY_SIZE(treq->th_peerid))
-> >>>> +             return -EINVAL;
-> >>>> +
-> >>>> +     req =3D handshake_req_alloc(&tls_handshake_proto, flags);
-> >>>> +     if (!req)
-> >>>> +             return -ENOMEM;
-> >>>> +     treq =3D tls_handshake_req_init(req, args);
-> >>>> +     treq->th_type =3D HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE;
-> >>>> +     treq->th_key_update_request =3D keyupdate;
-> >>>> +     treq->th_auth_mode =3D HANDSHAKE_AUTH_PSK;
-> >>>> +     treq->th_num_peerids =3D args->ta_num_peerids;
-> >>>> +     for (i =3D 0; i < args->ta_num_peerids; i++)
-> >>>> +             treq->th_peerid[i] =3D args->ta_my_peerids[i];
-> >>> Hmm?
-> >>> Do we use the 'peerids'?
-> >>
-> >> We don't, this is just copied from the
-> >> tls_client_hello_psk()/tls_server_hello_psk() to provide the same
-> >> information to keep things more consistent.
-> >>
-> >> I can remove setting these
-> >
-> > Actually, ktls-utils (tlshd) expects these to be set, so I think we
-> > should leave them as is
-> >
->
-> Can't we rather fix up tlshd?
-> It feels really pointless, erroring out on values which are completely
-> irrelevant for the operation...
 
-It's not that simple.
 
-For example when we call "done" for a handshake or KeyUpdate we call
-tls_handshake_done() in the kernel, which calls
-tls_handshake_remote_peerids(). So the kernel expects the remote
-peerids to be set.
+On 23/10/2025 00:16, Dave Hansen wrote:
+> On 10/22/25 15:06, Usama Arif wrote:
+>> +		pgdp = (pgd_t *)read_cr3_pa();
+>> +		new_cr3 = (u64 *)(pgd_val(pgdp[0]) & PTE_PFN_MASK);
+>> +		memcpy(trampoline_32bit, new_cr3, PAGE_SIZE);
+> 
+> Heh, somebody like casting, I see!
 
-I think there's a lot of value in re-using the existing flows (as a
-KeyUpdate is similar to a handshake), but the existing flows expect
-remote peerids to be set. We could duplicate everything just to remove
-that requirement, but I don't think that's the right approach.
+haha yeah its a lot here.
+> 
+> But seriously, read_cr3_pa() should be returning a physical address. No?
+> Today it does:
+> 
+> static inline unsigned long read_cr3_pa(void)
+> {
+>         return __read_cr3() & CR3_ADDR_MASK;
+> }
+> 
+> So shouldn't CR3_ADDR_MASK be masking out any naughty non-address bits?
+> Shouldn't we fix read_cr3_pa() and not do this in its caller?
 
-Alistair
+So we need to mask 2 things here:
+- cr3, which is done by read_cr3_pa using CR3_ADDR_MASK/(__sme_clr(PHYSICAL_PAGE_MASK))
+  as you pointed out.
+- pgdp[0] (the deferenced value), i.e. the p4d table pointer (This was previously
+  *(unsigned long *)__native_read_cr3()). This needs to be masked by PTE_PFN_MASK and
+  and not PAGE_MASK which was done previously in order to take care of _PAGE_BIT_NOPTISHADOW.
 
->
-> Cheers,
->
-> Hannes
-> --
-> Dr. Hannes Reinecke                  Kernel Storage Architect
-> hare@suse.de                                +49 911 74053 688
-> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
-> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
+
+
 
