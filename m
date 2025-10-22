@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-864371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FE3BFAA2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:42:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06E4BFAA44
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035711A042EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:42:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 386F05066CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D472FBE1F;
-	Wed, 22 Oct 2025 07:41:36 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0982FB097;
-	Wed, 22 Oct 2025 07:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71782FC882;
+	Wed, 22 Oct 2025 07:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PkTnWtr1"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C04D2F7AA8;
+	Wed, 22 Oct 2025 07:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761118896; cv=none; b=TugCHdXbvFllf/1PolqCUBeaSjI1IsBg6ZvU++ZFVip/h+361E8CQapFn0S2VCBIWFWs3SPmUEu2rA+LnjyfNCRvI92QoL0cncfbszqLrZh3jx3Pc9mOee+vHRn2bW3odQTwc5bOBizzEuOqGMhLcj0Cf/hgiV9gM79v6XCiO1g=
+	t=1761118897; cv=none; b=qMwBKBc1mY/H1Vij9VEv5p/3V89uaoAw3JAtWn4ce6Krh9vMVRA/Zqi8EnGyGT5KTSMkTKZoPsM+TNq9iaYB6OIPbkCgpeuIUe5LFnhhn2sJy3yMADPW8k970u+auqO1gHPvzcMi/2ikfXfFZJODKwdz6aEB6/bUlCKqOv630Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761118896; c=relaxed/simple;
-	bh=QGvghVdZeHNgJp8I5CtrM9Hp+1y1sMOYQhyX0Teuka8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pXTPGaL6Jxw/FE3HdlFC3kaV0gyiDFG7p2JxISHr+NDEcy0itevTaiJmf2GFEPNUkhSLPSr3MI6ToWM2xfyD9ZFfmb444rhPwTx0L7f/AcjVvLGie1s1JQd1F4ssm08n1TWfofAugQUZ8Knt/+2/PMVtE/vpyUH20tqtH1ZlJ8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: aIAKL2f4Q7SXye2L9587IA==
-X-CSE-MsgGUID: xD7YSYiJTEKIp2qUojD5Mw==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Oct 2025 16:41:33 +0900
-Received: from demon-pc.localdomain (unknown [10.226.93.88])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3861C4006DED;
-	Wed, 22 Oct 2025 16:41:29 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: 
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Subject: [PATCH] pinctrl: renesas: rzg2l: remove useless wrappers
-Date: Wed, 22 Oct 2025 10:40:58 +0300
-Message-ID: <20251022074100.1994447-1-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.51.1.dirty
+	s=arc-20240116; t=1761118897; c=relaxed/simple;
+	bh=w6Pk318+uWlJig7kSmhciOgwzKqt9hCCrIYqqL4yqNY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=ogsdqPFBv8wiVq5N9cCniPcwftrOyfiBsR8M9mzeHT4x+OkplVhbX6jxsyrCyRvDFoDtrtS1PStyc2j+A2VLoGT0acKbGatD8X4hfFdIjopgQED9fCBYSA6/Bmo39KbnTb4OEK2B3oG2CJ0p8TWPQb/F1YtGF7u6VAlR4mbdvlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PkTnWtr1; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 4F841C0B8BF;
+	Wed, 22 Oct 2025 07:41:14 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0A58E606DC;
+	Wed, 22 Oct 2025 07:41:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 68B39102F241B;
+	Wed, 22 Oct 2025 09:41:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761118892; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=w6Pk318+uWlJig7kSmhciOgwzKqt9hCCrIYqqL4yqNY=;
+	b=PkTnWtr1jkPN412arglI0mz2NhL3TRAuP2uayrqji+VoDe4d/FIjOWZ1cc63SLUc2Lo+Jd
+	FIt6sYzMUROvjKK/8SgV+CUFUlBPL8rb9ABg11NRZs/srHm3UId29ZEnEIgtzwZi7hu8Bk
+	kMs8qKh0az23BYaou/Ar5XWg2AlYUT9Siy4Oo04ojU8ZXk4QSchJV9XKZvEZQhXNDpszvs
+	oAABVn1+T2IIXdMSECtUVh5yyhkYANZOUz39ovz7lY/SSCagG40w0uUti1Mtx1aEyaKc5L
+	g+6yf9EKsEizPO15T9Qt6fJBKtKZp2axtAOPGBbrxKquY0a8h1C/XZ9rgavKgA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 22 Oct 2025 09:41:24 +0200
+Message-Id: <DDOOJIQS8DK2.1QUEWN5FYYQ32@bootlin.com>
+Subject: Re: [PATCH net-next 00/12] net: macb: EyeQ5 support (alongside
+ generic PHY driver in syscon)
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Paolo Abeni"
+ <pabeni@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Russell
+ King" <linux@armlinux.org.uk>, "Vinod Koul" <vkoul@kernel.org>, "Kishon
+ Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Thomas
+ Bogendoerfer" <tsbogend@alpha.franken.de>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-mips@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, "Maxime
+ Chevallier" <maxime.chevallier@bootlin.com>, "Andrew Lunn"
+ <andrew@lunn.ch>, "Jerome Brunet" <jbrunet@baylibre.com>
+To: "Jakub Kicinski" <kuba@kernel.org>, =?utf-8?q?Th=C3=A9o_Lebrun?=
+ <theo.lebrun@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com>
+ <20251021171430.579211b2@kernel.org>
+In-Reply-To: <20251021171430.579211b2@kernel.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-rzg2l_gpio_irq_set_type() and rzg2l_gpio_irqc_eoi() only call the
-equivalent parent functions, replace their usage with the parent
-functions and remove them.
+On Wed Oct 22, 2025 at 2:14 AM CEST, Jakub Kicinski wrote:
+> On Tue, 21 Oct 2025 18:32:41 +0200 Th=C3=A9o Lebrun wrote:
+>> Merging all this won't be easy, sorry. Is this split across trees OK?
+>> The net-next part is pretty evident, it is the rest that appears
+>> complex to merge to me. I can resend the series exploded if useful
+>> (or at least split net-next versus the rest).
+>
+> Yes, please respin just the patches that need to go via net-next
+> for us (1,3-6?). The rest I don't car^W know :)
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+Sure thing! Only net beauty is present in V2.
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 947bce7bfc0e..f25ecada5c69 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -2494,16 +2494,6 @@ static void rzg2l_gpio_irq_enable(struct irq_data *d)
- 	__rzg2l_gpio_irq_enable(d, true);
- }
- 
--static int rzg2l_gpio_irq_set_type(struct irq_data *d, unsigned int type)
--{
--	return irq_chip_set_type_parent(d, type);
--}
--
--static void rzg2l_gpio_irqc_eoi(struct irq_data *d)
--{
--	irq_chip_eoi_parent(d);
--}
--
- static void rzg2l_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-@@ -2539,8 +2529,8 @@ static const struct irq_chip rzg2l_gpio_irqchip = {
- 	.irq_enable = rzg2l_gpio_irq_enable,
- 	.irq_mask = irq_chip_mask_parent,
- 	.irq_unmask = irq_chip_unmask_parent,
--	.irq_set_type = rzg2l_gpio_irq_set_type,
--	.irq_eoi = rzg2l_gpio_irqc_eoi,
-+	.irq_set_type = irq_chip_set_type_parent,
-+	.irq_eoi = irq_chip_eoi_parent,
- 	.irq_print_chip = rzg2l_gpio_irq_print_chip,
- 	.irq_set_affinity = irq_chip_set_affinity_parent,
- 	.irq_set_wake = rzg2l_gpio_irq_set_wake,
-@@ -2640,7 +2630,7 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
- 		 * interrupt.
- 		 */
- 		raw_spin_lock_irqsave(&pctrl->lock, flags);
--		ret = rzg2l_gpio_irq_set_type(data, irqd_get_trigger_type(data));
-+		ret = irq_chip_set_type_parent(data, irqd_get_trigger_type(data));
- 		if (!ret && !irqd_irq_disabled(data))
- 			__rzg2l_gpio_irq_enable(data, false);
- 		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
--- 
-2.51.1.dirty
+https://lore.kernel.org/lkml/20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.=
+com/
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
