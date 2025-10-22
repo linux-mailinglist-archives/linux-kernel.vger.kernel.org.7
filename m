@@ -1,258 +1,275 @@
-Return-Path: <linux-kernel+bounces-865851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A06BFE2BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:29:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26235BFE2C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9F2C4F2C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0AE91A60110
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE882FB0B1;
-	Wed, 22 Oct 2025 20:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4DF29405;
+	Wed, 22 Oct 2025 20:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Tz14tQ2F"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010056.outbound.protection.outlook.com [52.101.46.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h324Cz4i"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4302F549F;
-	Wed, 22 Oct 2025 20:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761164952; cv=fail; b=MHLUwizMSCgij4eVZDze51LmxudUVQlsbK3pW62BxgxPC7kKnlcIBrhYKqP9VEOHY9usOZmw08/TuHK+aB3utPCmu7n17SUcE916CYJgGRD4T7IqmXlqIf9dxFiwnW5jceyUaFoSYRtnqU8XioIh+bOS87YEY1wXo65zjp0+7w8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761164952; c=relaxed/simple;
-	bh=EtQ6FRDFTb//uQj0IxG/CP2EqDOeIuGwxMgAuytF2Kk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eFxR9LzzIwNq9yL2p2aM9nEXB4XWNps7p4rpFx30alzwKyuqWEw8FGvdr0zwxVwNwgsuxKim3Wp/s7wtjlEhuiR0xGdaVaTfLP1ps+xAH0jNhIFze6IYhvguxP9HB12CocV2ox16UBxNj7fgs1xvMaHMdA8E8fysRg1zNksao6w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Tz14tQ2F; arc=fail smtp.client-ip=52.101.46.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JfpMBKVS8LDyUYiAA57hR266QqYgxuDuScRdjXUB6WXQ3kbzvCVMqbTxFdjYDbmHngBn8YGt2YnLjiCoqUvPHZ0x3jQS6iP1jLTlI5tX9xDIXt79K8ki1HIHLC4/J9u+YtTiIu59XDz/9phgnqMVhBLFoalNTEY1Jr1TvuL4Rn1X45rycyoCLn14uPFC+oCRfRlvTgJktbXvlhVfQ1FkSFddHfztXZKDqTlnglEZ8vP/yvReoGVe/BKJIMVvKP/r3sfLVtB6sKIYTTKLCks1pba84UJxZgyyGpN5cmxyZ2nn5v9w8kHJPixNII/W1JgiWxYm8hZ4z46TtVAv6gmtGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KSXjHM/TMmXXJmZBgJVUDzm3lFdRwIcZxTO26Jem2hU=;
- b=iwIc+yZ79npg4vnCaRa65ly6q85uugtBCnvs3UATkIO6zYJq1RBm3ijrNkzywBHrfr/pV40GV6ppJhyEe5vQrSS9U2w7aXS5MbR6JyMCsa0+eyXQa3/k/Y4IAX16dvnGE6ZJFILbf/7qcMQlwIjfGXpQv+LeFZ4WSlnNI1d3tg3Za5Yw/65I5rJf6M7fhqFvNcv126WvVuZtnYvhC5oKy4yM9a0R8q4lFRw3KcW7OYGY96TW8NjpZeB3jH/oytoEzwhpTBeYQ/8pNUtdISVCqcNE+7pzsAua+CQkCt/3ouQXeKnqAKliuvQ9X3lLgNv+ymCq4dBiXX5GQABtwwiQWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KSXjHM/TMmXXJmZBgJVUDzm3lFdRwIcZxTO26Jem2hU=;
- b=Tz14tQ2FMxBQbcj4y7ZnjjHZOknZleUoGPWgeVYdVO88qqaozoNyU0dpIt9f/CSTKpW0QPDeSvj4HhN2y7ghtvamzHXb23PoGFPEbP3HeJlZPY3VYsQZLD4MjV/rVMoCnkEs49Sce6HQAtJg/KBS4dEwDc3H7WPEXnhtQNFeJ7alXMUSlPpRLcG6yEIPaTdO77lbVtJlHro06KFjkbMT8nz8maJmWECjK68LPpYIfJUSFXySb7T6rhjDkok5cfxuND0d6Wy6dAmP2pim2K/O2Ha3qeA3LfQ2UFnoK+9YG+xyhGn4xUTV81n12tQxSRlwoPQS7Uvh9xJcyP07h1CagA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SJ1PR12MB6194.namprd12.prod.outlook.com (2603:10b6:a03:458::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 20:29:06 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 20:29:06 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linmiaohe@huawei.com, jane.chu@oracle.com, kernel@pankajraghav.com,
- akpm@linux-foundation.org, mcgrof@kernel.org, nao.horiguchi@gmail.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH v3 3/4] mm/memory-failure: improve large block size folio
- handling.
-Date: Wed, 22 Oct 2025 16:29:04 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <3A152581-3A99-4610-B16E-1A34A3039E55@nvidia.com>
-In-Reply-To: <6279a5b3-cb00-49d0-8521-b7b9dfdee2a8@redhat.com>
-References: <20251022033531.389351-1-ziy@nvidia.com>
- <20251022033531.389351-4-ziy@nvidia.com>
- <6279a5b3-cb00-49d0-8521-b7b9dfdee2a8@redhat.com>
-Content-Type: text/plain
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEBF1DF24F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761165042; cv=none; b=o0guSZ/jQBfRDNHEarMF5shIqytEGBhxs1goB7WDLBYWUS4BCmRfPMNm74I7CHog2MIVR9drg0ymTjE5rnTlmjNerP35sSyTJo4AqJCZWtHyIuBpAb9GROC470my+rsgaxXDDXGnl7p+LC4/N4uTIidlnnbv0jIftlidnsUj1CI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761165042; c=relaxed/simple;
+	bh=6dwTuaArewrFPW9XTrKVYuFVTpOc0vAjBp6lSYfiNco=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BCDG/ekuex8duh97wEhiqXk97plC59wi14B5MP2cxURwZbWNNbqEI+ZDwKTpbp1eplq9f6Mm6/FZ/WEp5DIxC4bXtdVUjESsy9hX8u8VAGaphy9+auZalERbmhWscuC2UBU3nAL8tibROynONfD1uw4bHwZjOei44BYUGzVY7lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h324Cz4i; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7a265a02477so42990b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761165040; x=1761769840; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UUz63Xv1tyVTkc9l3Ev4IKLrhQ8gVLar/qaBr5uJLls=;
+        b=h324Cz4i73sm8/sZ+DjVtHzATm/YOWmij7HbD//0M59hZLWvl2JoO83kDte/CCMwW6
+         Gr3tKK1QaKfK1o9jmLwZCEh+9GKbNri2I18pfhb+XYKuFYb1cEYqiNVjX8E97JKnNA43
+         5RA8Xp3rD7fWAZ6RQWbFUD3L9zEimNmU3KB0D2rBIJ4a1z1gD9nZjSeHZFrV4szqvero
+         e4YMQUBIb82gIEg6eLEcTZdXl8qGYb4nqNNfBP6fYrXf8spLJH1E98zvL9jpocY1QnbL
+         dduuVu6xvu3dcFuw4oho4qCW+R5NvEMqmiOgRvtCHZh9S+ojFPL7kXCDLWEzXSMt1dP6
+         MRHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761165040; x=1761769840;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UUz63Xv1tyVTkc9l3Ev4IKLrhQ8gVLar/qaBr5uJLls=;
+        b=dxOYOz64mAXoRnK178MFJm0urNFfHQ65E/EvAkAjjud4fJ6bX3sqLH4jRxIooJg1aE
+         vqfwsi/Qnleyt2SL1cFQ8DuD/wudmYq7DnoDJUZZGn4/RJZfc9hE7GP9IFqecx2JYyRl
+         qi1q8YabekNz1LBiF7RYo8G/hb64n+7AWZx3Cj/LdEZIMU7KnALyBC9pkaTDxnGs8qPk
+         uXJE/Cjh3RwtudqaksixWgouyqDT41cSJ6lhSl+vLXNPxn1K14uvN71fkPRmpGyGXtox
+         mvRNovNvnYKKQZdar9Fxw2HlGim8PIrRtWXCavOdUpeuZ8Ic72PHOwiycwNDIa1A0v/v
+         0kqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUApgUcBfIJHxKqTvs+jTnhDxm7WPOm6QmDRPVwgDT+1O0y3fN6p8g+4sarAo8KDMWeEM3hjgljSgTTTvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKsGBrZEjm7q191X9DCdahNrTuNhBgxEAoIMl+jlrlaX7rseCR
+	jE/faT2xVWfNER/9YHij/uQx8hbfZhTEhWrvIAPBCRGcmCYYjUhfp9aG
+X-Gm-Gg: ASbGncvQv/QC4+NHSQtzQN2tfHb4MUn8M1JOiSzzDP7UDo0cH7j4YDQKgpCWA2DE4kW
+	wBvnAReIiuBxfuJfUCY7pkwESQBeBIjegiIifIYoKroC23V1wW+8/f5tQTbiRNP02FXuJHISEFD
+	VvtmQuRAOjC8T/tRES5i0bdaIxvYDNTGeWgENSXSktRWoa0UGbhVfqBpzAQW7kDjx+946N4DuE6
+	ppPdI8xQ9geGBNuUf6mZMvow7HkcqYWsSociyJ7eAAes5tR2FaytVKiYsTPXmAiLLY1dIehkcHd
+	khnJfnRp5bMOrNDx0mf4g0AeSZK1bhi9HJwMhatccikUsCrtWSJodTYCgoYzO9sxsBetCGICSkr
+	stdOo4fpPFzlEO9UVuEjnJZdJUcwLMRENfKh5f8J4nR03Ws3i4puoW1kvR77cQHXCZMddR1w7tF
+	ycs2ITT3+YinClNKF3asue96Nb
+X-Google-Smtp-Source: AGHT+IGAh3QK/2rcSGZ/RMHSZ8PEYPNj/0DMQgo8cy16gJAExrWLHPor8aPoXEIl6B4Ura2xjBBcPA==
+X-Received: by 2002:a05:6a21:6d8a:b0:2ff:3752:836f with SMTP id adf61e73a8af0-334a86184ecmr28996788637.49.1761165040385;
+        Wed, 22 Oct 2025 13:30:40 -0700 (PDT)
+Received: from ?IPv6:2a03:83e0:115c:1:fa8d:1a05:3c71:d71? ([2620:10d:c090:500::7:b877])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dc12bdsm104612b3a.72.2025.10.22.13.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 13:30:40 -0700 (PDT)
+Message-ID: <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for
+ conditional jumps on same register
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>, KaFai Wan
+ <kafai.wan@linux.dev>,  Alexei Starovoitov	 <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, John Fastabend	
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh
+ <kpsingh@kernel.org>,  Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
+ <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, Matan Shachnai
+	 <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>, 
+	colin.i.king@gmail.com, Harishankar Vishwanathan	
+ <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, LKML	
+ <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"	
+ <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
+ Yinhao Hu <dddddd@hust.edu.cn>
+Date: Wed, 22 Oct 2025 13:30:37 -0700
+In-Reply-To: <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
+References: <20251022164457.1203756-1-kafai.wan@linux.dev>
+	 <20251022164457.1203756-2-kafai.wan@linux.dev>
+	 <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev>
+	 <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
+	 <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL1PR13CA0300.namprd13.prod.outlook.com
- (2603:10b6:208:2bc::35) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SJ1PR12MB6194:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00837a4e-e1e7-4dee-22a6-08de11a9a610
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0Uzz6qGVda+Vyy86GO45oO9LpvCp2HgFuvBFiaMKgb2US4R3R2Mz/UB7VUaa?=
- =?us-ascii?Q?CRPA9ATn8y+hAA1yzsI/uLcEcY1P/Pa6FGuE4rKtLn+JGRNPV9idrosMhdaS?=
- =?us-ascii?Q?KQzAlCPj7qYW6PUz2fivKJg0dJGrAQ/tobMyghb5j32OW3gqnwjbJQiqPPL4?=
- =?us-ascii?Q?/D66NEu0RceS71mfw2u0GvVnjsLVV5Jvvi4g6C9SVi02z9W75psH90aNJmtq?=
- =?us-ascii?Q?jREAF08Rf8MTWR67gbImSKWT0ZnCtb2nZHwxQ5B5ukemZcgFUZWFfZFqXODI?=
- =?us-ascii?Q?DaR3ZYyRgxa0WsvAzLDdb9vGVrhh+YFRS6SVZ7spuVp0CtJan5T+mbmdkuQZ?=
- =?us-ascii?Q?hI/NChU+09Cy8osbJhpDNQwnnLHqt2BmdG5Z2ibahPu+cgJ7ddwBWFICAqT3?=
- =?us-ascii?Q?qHuksDOQzrNiVXpN1FKkDB4+q+OeWF8qMxWGQAT6liQqbAxdgFHUOz4ma+90?=
- =?us-ascii?Q?OjWN2qISVuxNV4T8o46st2pbIanLISC0oPs2+XrjDqADD5qUqpajo/aQ7zFE?=
- =?us-ascii?Q?wPiPy86vkf2M1gmdLSKRwImJksWImREvlsi/LZ0uK6qKZlorJRqv3Y0h8mXg?=
- =?us-ascii?Q?g2FF7pVuqglTWKDlf72W4xhw+a/1MiGzPPNE6GKm8IcB+Fl25ecl8JIcEB2q?=
- =?us-ascii?Q?Yi8vb7Rc8VqD4YdjTFYc9ao6VYvd7o/rllIeHVGyt3UTZNg4zuFkzbQYLgDd?=
- =?us-ascii?Q?BOUwj3H8cB1V7cIfAwfr/0euSpnueD3sN7Xt4NIkYCNQMJQbslKI/RJshpWD?=
- =?us-ascii?Q?OBDKiPeaLCuDyiv9GK7LbQlrhanN4vPy8W6ePrGUL2/3cJdWIg5nmbTITRiQ?=
- =?us-ascii?Q?8tkODWnRBdKwWW0dsIPXVDHEQr+jiMdN4p2cS8JSEOVtCU9TDKXDrQCOUUQd?=
- =?us-ascii?Q?yBfug56tFbx9a5ZgM4y8TRRNObb4KvfALgV3m145ONGtORPQ3+WPjar9Jn15?=
- =?us-ascii?Q?brUcACNNCBSXU6XhD7Frk+NfToajxJbgsR/aVXYieAPvR67i3pcAWmPjCJ1P?=
- =?us-ascii?Q?2+rMPDsN4cSxZQpt2bSsKfzP9Y9FA9XS3E3x0p7vnXaIxOf4vCQB0sQs7eC4?=
- =?us-ascii?Q?xF9i/0+FRNVVvQtr1HbGqdgIUA44Nre9bYapB06AQdilYIrb9H01SyuLcToL?=
- =?us-ascii?Q?/PwzUr8LJgThAOLs6u10ma1pvLLPw3Ql/nIinQfSAPenXpBCKaUTPSadb48b?=
- =?us-ascii?Q?YHJN0+Chq1rziKl9pWI/wgzJ4TxuyoBI6Z5O5qClDfO/36ZBzon1IX/AsMpu?=
- =?us-ascii?Q?bcoZRCUFLW6LgNJhvSepcyShigWRqYJiLYff+ue6ti6Xf15IoeMPGLkS1xO+?=
- =?us-ascii?Q?J7kWAb+Fk+qv/CHWWxSnEJtgPYQLDZXRA9yicXH3QsZfQvm5nOe8Kb03GOll?=
- =?us-ascii?Q?oeLvX2YCNDM451wkYlUQDZNUJmxfMhzV5+pytaIQBUrugtZhXWUoY839r7mF?=
- =?us-ascii?Q?vZIxPhuhJjcHCZBNsjlokX0+HX+LlVzL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AvzXxF+esu1T9kBK4fEpdEdTYT88kjmK1Jp9HVNZTSoEudrU07f/21Om/0hd?=
- =?us-ascii?Q?W9hI5wjQ8cD7jQko9hnFeEUBfNVmG/DhOAjIHPSsYPEp5nlVDW9OkwgUhKB9?=
- =?us-ascii?Q?iDoPNqdXBF3e0zyOel1Kq1SNykvRVb9L2INWGUjCxx9/kYfl9Rjpkapyk17Q?=
- =?us-ascii?Q?c+20FLVY/8meZF7gjSBJDF9vCUOXrHDNO+KW6FLF61ujMOCiLQb7KaFfyyVH?=
- =?us-ascii?Q?fXulwiHEECc01e1gyjlLmX9TL/dd+dZa2o/hRfkKeUCBCIhrscHPjOs4E1HV?=
- =?us-ascii?Q?SXhHWd7bg8PBqQh2v844P+PicEpJmCIWeusoe2FZI+OLm0Px3JDDLABdihcy?=
- =?us-ascii?Q?OUogB7lu9FqJ4s9O27pFsABcTFCRscNqhpUK2dbRhRNeT5b6wjPWUFvCBV7T?=
- =?us-ascii?Q?HTGgxVX3oDkHkXNyNkyXyrVv0Bo/6W7af/juHQK6gDbWBDeW7U0jBrZSApLr?=
- =?us-ascii?Q?X0u+Dg2RsefW1PM/SBvvGGhIqvOAfu0BdVEllC68nrlC6IeUhbsUiBjU3rW+?=
- =?us-ascii?Q?+Qp/f2mWd6cnom4Dbb1eYBJTUFxcBl4z88CiBL3JzjPVXqKsgLHA8ZzWZo1h?=
- =?us-ascii?Q?VgJo1zMoYrL21MRkg7ISfk8oNgO5DGCAzxegjpeqIwtN2S8ESP1VbuTxfiAD?=
- =?us-ascii?Q?+1ggf3vA+gwPqiI70Tfd7X6aa9kkeJlv8cXJqf9hp6UnraFDc9LEJEkbOaq0?=
- =?us-ascii?Q?S+OweTgrvYWwrf+DB2az8efvsjMqErA6o5IRXQLU5LIPUinCbev+Qw/RA9fx?=
- =?us-ascii?Q?RNOLqoOAQ/IpEQVaUFnbO5Ay6M7/SlMTtxYzjCr1sgMIeA6+sxok2HKuZfzz?=
- =?us-ascii?Q?+vjEuosslsE8ymRRZfPwIJCSnyR3+a0I8u29KXm1bLF8gYPpFMvOIYCP45HD?=
- =?us-ascii?Q?9q24cvoM5ZA5LTLQWGHBO0sAPdMl5WqiT+Avf1Z6W9UJDJDA71shffnP5nKA?=
- =?us-ascii?Q?MGiCQCyJiQ0dyqTAJITHE8eklZlVrYbQ3GM4k64U+8j0mX8ZHR+T+n3sp8at?=
- =?us-ascii?Q?o/BNwBRXeBkenF6ofeu3TjlDzpuqlwHghnYxYFTvz5XGxPUMlzkZDy0hDm3+?=
- =?us-ascii?Q?rYylb6YGK/bUY9Rs6OnvyKNtagILFYJp1++WfPjv30jxpRvtwjHz8SUh9CBP?=
- =?us-ascii?Q?Zg2udZMdmpMPQUDJFjuoUOZqCdVSXk1JPYtJjq4M0N6865GvVm7IOxfLcFt0?=
- =?us-ascii?Q?WzXDJhIVm5aluXTm0ZGJuooexspQT1cSI447M046HSDC0loKNthQrBHheJQ4?=
- =?us-ascii?Q?4Yk/boNRzD5qcTsOHvn81m/DDlDuG0iifwUyvzlPAmwaO+8PMlRZ+69ti2UH?=
- =?us-ascii?Q?eHLX6Ijf562+4G3PuuMaiKS1uaiPVy7YuzkuoyGIPhjTMFh/KnTtKy8+29s3?=
- =?us-ascii?Q?N5bL4Y+BSXbP3+89vFwae8wsRRi6yjCbmPwKZ+mlszp3XtB62vB6F4uaVTC/?=
- =?us-ascii?Q?OcAAjInD4xvtMSviIDfktkS9EKSHWRJrUVwpW9/9R9SgBKnFt24sN1mKTCoA?=
- =?us-ascii?Q?KEGwTbNG40c19jSv8pEMcD0eJvNFb2cggJm+qAW7O5YwJv+t5TH81Q8EArYB?=
- =?us-ascii?Q?qxDgbSdpU0/M3NGp52QRZxcf85m9zUwXbqPAlC8w?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00837a4e-e1e7-4dee-22a6-08de11a9a610
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 20:29:06.7988
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pDa5e3geIOHrNxfXRwLa+MA7GoS/0lcoVROSsu71MIeJ142Xr/g3ct2pY6lDngqF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6194
 
-On 22 Oct 2025, at 16:17, David Hildenbrand wrote:
+On Wed, 2025-10-22 at 13:12 -0700, Alexei Starovoitov wrote:
+> On Wed, Oct 22, 2025 at 12:46=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.=
+com> wrote:
+> >=20
+> > On Wed, 2025-10-22 at 11:14 -0700, Yonghong Song wrote:
+> > >=20
+> > > On 10/22/25 9:44 AM, KaFai Wan wrote:
+> > > > When conditional jumps are performed on the same register (e.g., r0=
+ <=3D r0,
+> > > > r0 > r0, r0 < r0) where the register holds a scalar with range, the=
+ verifier
+> > > > incorrectly attempts to adjust the register's min/max bounds. This =
+leads to
+> > > > invalid range bounds and triggers a BUG warning:
+> > > >=20
+> > > > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds vi=
+olation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=3D[0x1, 0x0]=
+ var_off=3D(0x0, 0x0)
+> > > > WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731 reg_bounds_sa=
+nity_check+0x163/0x220
+> > > > Modules linked in:
+> > > > CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G        W          =
+ 6.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
+> > > > Tainted: [W]=3DWARN
+> > > > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.1=
+6.3-debian-1.16.3-2 04/01/2014
+> > > > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
+> > > > Call Trace:
+> > > >   <TASK>
+> > > >   reg_set_min_max.part.0+0x1b1/0x360
+> > > >   check_cond_jmp_op+0x1195/0x1a60
+> > > >   do_check_common+0x33ac/0x33c0
+> > > >   ...
+> > > >=20
+> > > > The issue occurs in reg_set_min_max() function where bounds adjustm=
+ent logic
+> > > > is applied even when both registers being compared are the same. Co=
+mparing a
+> > > > register with itself should not change its bounds since the compari=
+son result
+> > > > is always known (e.g., r0 =3D=3D r0 is always true, r0 < r0 is alwa=
+ys false).
+> > > >=20
+> > > > Fix this by adding an early return in reg_set_min_max() when false_=
+reg1 and
+> > > > false_reg2 point to the same register, skipping the unnecessary bou=
+nds
+> > > > adjustment that leads to the verifier bug.
+> > > >=20
+> > > > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
+> > > > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
+> > > > Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Core=
+mail.kaiyanm@hust.edu.cn/
+> > > > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
+> > > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> > > > ---
+> > > >   kernel/bpf/verifier.c | 4 ++++
+> > > >   1 file changed, 4 insertions(+)
+> > > >=20
+> > > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > > > index 6d175849e57a..420ad512d1af 100644
+> > > > --- a/kernel/bpf/verifier.c
+> > > > +++ b/kernel/bpf/verifier.c
+> > > > @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct bpf_veri=
+fier_env *env,
+> > > >     if (false_reg1->type !=3D SCALAR_VALUE || false_reg2->type !=3D=
+ SCALAR_VALUE)
+> > > >             return 0;
+> > > >=20
+> > > > +   /* If conditional jumps on the same register, skip the adjustme=
+nt */
+> > > > +   if (false_reg1 =3D=3D false_reg2)
+> > > > +           return 0;
+> > >=20
+> > > Your change looks good. But this is a special case and it should not
+> > > happen for any compiler generated code. So could you investigate
+> > > why regs_refine_cond_op() does not work? Since false_reg1 and false_r=
+eg2
+> > > is the same, so register refinement should keep the same. Probably
+> > > some minor change in regs_refine_cond_op(...) should work?
+> > >=20
+> > > > +
+> > > >     /* fallthrough (FALSE) branch */
+> > > >     regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode),=
+ is_jmp32);
+> > > >     reg_bounds_sync(false_reg1);
+> >=20
+> > I think regs_refine_cond_op() is not written in a way to handle same
+> > registers passed as reg1 and reg2. E.g. in this particular case the
+> > condition is reformulated as "r0 < r0", and then the following branch
+> > is taken:
+> >=20
+> >    static void regs_refine_cond_op(struct bpf_reg_state *reg1, struct b=
+pf_reg_state *reg2,
+> >                                  u8 opcode, bool is_jmp32)
+> >    {
+> >         ...
+> >          case BPF_JLT: // condition is rephrased as r0 < r0
+> >                  if (is_jmp32) {
+> >                          ...
+> >                  } else {
+> >                          reg1->umax_value =3D min(reg1->umax_value, reg=
+2->umax_value - 1);
+> >                          reg2->umin_value =3D max(reg1->umin_value + 1,=
+ reg2->umin_value);
+> >                  }
+> >                  break;
+> >         ...
+> >    }
+> >=20
+> > Note that intent is to adjust umax of the LHS (reg1) register and umin
+> > of the RHS (reg2) register. But here it ends up adjusting the same regi=
+ster.
+> >=20
+> > (a) before refinement: u64=3D[0x0, 0x80000000] s64=3D[0x0, 0x80000000] =
+u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
+> > (b) after  refinement: u64=3D[0x1, 0x7fffffff] s64=3D[0x0, 0x80000000] =
+u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
+> > (c) after  sync      : u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x=
+0] s32=3D[0x1, 0x0]
+> >=20
+> > At (b) the u64 range translated to s32 is > 0, while s32 range is <=3D =
+0,
+> > hence the invariant violation.
+> >=20
+> > I think it's better to move the reg1 =3D=3D reg2 check inside
+> > regs_refine_cond_op(), or to handle this case in is_branch_taken().
+>=20
+> hmm. bu then regs_refine_cond_op() will skip it, yet reg_set_min_max()
+> will still be doing pointless work with reg_bounds_sync() and sanity chec=
+k.
+> The current patch makes more sense to me.
 
-> On 22.10.25 05:35, Zi Yan wrote:
->
-> Subject: I'd drop the trailing "."
->
->> Large block size (LBS) folios cannot be split to order-0 folios but
->> min_order_for_folio(). Current split fails directly, but that is not
->> optimal. Split the folio to min_order_for_folio(), so that, after spli=
-t,
->> only the folio containing the poisoned page becomes unusable instead.
->>
->> For soft offline, do not split the large folio if its min_order_for_fo=
-lio()
->> is not 0. Since the folio is still accessible from userspace and prema=
-ture
->> split might lead to potential performance loss.
->>
->> Suggested-by: Jane Chu <jane.chu@oracle.com>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->
-> This is not a fix, correct? Because the fix for the issue we saw was se=
-nt out separately.
+Well, if we want to avoid useless work, we need something like:
 
-No. It is just an optimization.
+@@ -16173,6 +16173,25 @@ static int is_pkt_ptr_branch_taken(struct bpf_reg_=
+state *dst_reg,
+ static int is_branch_taken(struct bpf_reg_state *reg1, struct bpf_reg_stat=
+e *reg2,
+                           u8 opcode, bool is_jmp32)
+ {
++       if (reg1 =3D=3D reg2) {
++               switch (opcode) {
++               case BPF_JGE:
++               case BPF_JLE:
++               case BPF_JSGE:
++               case BPF_JSLE:
++               case BPF_JEQ:
++               case BPF_JSET:
++                       return 1;
++               case BPF_JGT:
++               case BPF_JLT:
++               case BPF_JSGT:
++               case BPF_JSLT:
++               case BPF_JNE:
++                       return 0;
++               default:
++                       return -1;
++               }
++       }
 
->
->> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
->> ---
->>   mm/memory-failure.c | 30 ++++++++++++++++++++++++++----
->>   1 file changed, 26 insertions(+), 4 deletions(-)
->>
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index f698df156bf8..40687b7aa8be 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long p=
-fn, struct page *p,
->>    * there is still more to do, hence the page refcount we took earlie=
-r
->>    * is still needed.
->>    */
->> -static int try_to_split_thp_page(struct page *page, bool release)
->> +static int try_to_split_thp_page(struct page *page, unsigned int new_=
-order,
->> +		bool release)
->>   {
->>   	int ret;
->>    	lock_page(page);
->> -	ret =3D split_huge_page(page);
->> +	ret =3D split_huge_page_to_order(page, new_order);
->>   	unlock_page(page);
->>    	if (ret && release)
->> @@ -2280,6 +2281,9 @@ int memory_failure(unsigned long pfn, int flags)=
-
->>   	folio_unlock(folio);
->>    	if (folio_test_large(folio)) {
->> +		int new_order =3D min_order_for_split(folio);
->
-> could be const
-
-Sure.
->
->> +		int err;
->> +
->>   		/*
->>   		 * The flag must be set after the refcount is bumped
->>   		 * otherwise it may race with THP split.
->> @@ -2294,7 +2298,15 @@ int memory_failure(unsigned long pfn, int flags=
-)
->>   		 * page is a valid handlable page.
->>   		 */
->>   		folio_set_has_hwpoisoned(folio);
->> -		if (try_to_split_thp_page(p, false) < 0) {
->> +		err =3D try_to_split_thp_page(p, new_order, /* release=3D */ false)=
-;
->> +		/*
->> +		 * If the folio cannot be split to order-0, kill the process,
->> +		 * but split the folio anyway to minimize the amount of unusable
->> +		 * pages.
->
-> You could briefly explain here that the remainder of memory failure han=
-dling code cannot deal with large folios, which is why we treat it just l=
-ike failed split.
-
-Sure. Will add.
-
-
---
-Best Regards,
-Yan, Zi
+But that's too much code for an artificial case.
+Idk, either way is fine with me.
 
