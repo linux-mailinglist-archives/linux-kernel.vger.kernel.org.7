@@ -1,266 +1,122 @@
-Return-Path: <linux-kernel+bounces-865077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F280BFC216
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:27:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C81FBFC36F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEDDD355D49
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:27:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9056206C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B677345CDB;
-	Wed, 22 Oct 2025 13:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC56345CBA;
+	Wed, 22 Oct 2025 13:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQ8e8Xas"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wx/3AhbT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ATQpbpH1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929C930E839;
-	Wed, 22 Oct 2025 13:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761139649; cv=fail; b=JKJKsKC2PzzOURbSHUnLnSKM53bi317+6qFXVgHNGy94FoW5xhPKiKUjhv1M3iDZTAwbU8Pq3qYoMUXYShZGXDe/UuFwDLG3RPtDTRWEwKAbrKckIkAHXkW1PkkKoufV95wMY7YK39USRidX3dV0zozjAPdm0gQBIpLSGpqkE1w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761139649; c=relaxed/simple;
-	bh=QaGCTTwMC87Qqxx/PWfI7m+TzZiPqjea7ACC3vB9t28=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VMTOTWP3dPoE9z6UYwOHWP5sT7ulIowTU/Uy3eH1VxxPS80FcqRhdoNaVJI3YQmOG3F8ZphSQ1T3m6CjtChUzSjb3qQh4WRaXY2Y3rLhPKJ6d5+zy7HE1soO88/bDrSDHf/3QGL5DyBcytg4y0sjxvvXzJQjfP5aG9C4h3YZhs0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQ8e8Xas; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761139647; x=1792675647;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=QaGCTTwMC87Qqxx/PWfI7m+TzZiPqjea7ACC3vB9t28=;
-  b=YQ8e8XasgocNMBRzZFW7QH3vqbRI/neyDsSiylqlql5dYULncpBwgoR2
-   Cf/UNq7RRZjz8fqWQiOq3ns7ZTaTAGLqLTYT3vJVmjGJbTu47yWdDDSNB
-   /fcWsvAxhJQUQD2t112BQ6992QehvtlM20TKscVSrAsJesBIPhngfjlwq
-   xUig5dmOx/of3wAWwx4IqM7BbcMZR2JdvjQZwoKQ++13LacPGYHuMOmQu
-   mB8K8dE1H767nE3GfBRmol6jOu0bLwTq6B0w4Am7flbcHCMY8ggYhkKdM
-   wmcSTvFA5ffuDJqcGeuXuKi4MSkZ+bwSQ6UcMplXWyLazyqBHfEct4YvO
-   A==;
-X-CSE-ConnectionGUID: X/afjciBTbKSHD00zROfDA==
-X-CSE-MsgGUID: Q+16eIwSRcWe0OEx0Wj0fQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63324157"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="63324157"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 06:27:27 -0700
-X-CSE-ConnectionGUID: VQTBHs3KT3m9hTOqwHEScw==
-X-CSE-MsgGUID: hjIB8GasReCugnQ9K2NI9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="189150631"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 06:27:27 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 22 Oct 2025 06:27:26 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 22 Oct 2025 06:27:26 -0700
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.56) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 22 Oct 2025 06:27:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fy9h6vttiiseL5E2PhYxDtVgqOmmxyiHBOfqAL9PP4XPK7NKVI3yLnBHQG8XT31zpxAi4G9dHMb8s3l94LJnnNRHoU5aBMeQ0xawLPP4nySQYGrvpnoqwUD3fzWhjuy59BAoz7Nmdo6/YRiCIzmYMUETDqzc/+Qhhv0kcrTUfmhrBoYrj4T1DaUQEIz07fwsajXr6v9mQ7tI0MbxxHtJ5gdzHKx5mm9+6eCWEJitptd1+A3yDmcPY5U2i/+P/p3ZbbL0iIFhNPP3av/U2BvcErSCEfDL3VQOtL3cPVS2tG72sFKz5tX06lgbiv+/rVgxPjgY4EzVRJ/BqJZay7joXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5uPzlufGbxpaWvT7S14n6Fh7MXDxvO0OQQhuq3KZdh4=;
- b=kiItWEYx9tw7A9wjFe0qLRbg7QuwDf7bKImqCTheig6lJs4AUcWMgOXerR1Jne4Pey4QNv4RV0GibREYKzJx495foPfUtW4p6hZ6o7P7JcSOiCazkNXZawoZqXMfDz3u/+M63PLRIeFmIyJtiOQffVklCLupN4KwkyqxtI8lYit/icnmA2x70KHQ/f9spP5o0d9w2K4wT/7i6Yiy5jaOT2Aw67a+GvbIVoVXGG7qxF8/enkk0Q1kqxTqEUBFqa0z6Tp6kb/Tg6xXjytxCB/2KNvPtzGJjmtmWXA6dlU1mjRFwM8btxuAIcmpVMPSLE2LdNlABDg+gpXT2b0PE0UPrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
- SA2PR11MB4922.namprd11.prod.outlook.com (2603:10b6:806:111::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 13:27:23 +0000
-Received: from DM4PR11MB5373.namprd11.prod.outlook.com
- ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
- ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 13:27:23 +0000
-Date: Wed, 22 Oct 2025 15:27:19 +0200
-From: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Christoph Hellwig <hch@infradead.org>, Alex Williamson
-	<alex.williamson@redhat.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	"Rodrigo Vivi" <rodrigo.vivi@intel.com>, Yishai Hadas <yishaih@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>, <intel-xe@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Matthew Brost
-	<matthew.brost@intel.com>, Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	<dri-devel@lists.freedesktop.org>, Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
-	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>
-Subject: Re: [PATCH v2 26/26] vfio/xe: Add vendor-specific vfio_pci driver
- for Intel graphics
-Message-ID: <tqr7r55frkgvdn22rfycm55wni2dnihmhvzxft4xdrjg7laic5@drvc3trbxlrm>
-References: <20251021224133.577765-1-michal.winiarski@intel.com>
- <20251021224133.577765-27-michal.winiarski@intel.com>
- <aPiDwUn-D2_oyx2T@infradead.org>
- <ilv4dmjtei7llmoamwdjb3eb32rowzg6lwpjhdtilouoi6hyop@xnpkhbezzbcv>
- <aPib0tHn1yK9qx2x@infradead.org>
- <4e6ctwhyax2v65mgj3pud5z3vz75yputis6oufju45iptzaypq@zaxo42l23o2r>
- <20251022113355.GC21554@ziepe.ca>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251022113355.GC21554@ziepe.ca>
-X-ClientProxiedBy: VI1P189CA0012.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:802:2a::25) To DM4PR11MB5373.namprd11.prod.outlook.com
- (2603:10b6:5:394::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC37288502;
+	Wed, 22 Oct 2025 13:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761139725; cv=none; b=VvHgPVKABwfp61hhT9BNwhVqaIF34nh4++eK4Mu9gHrfOvBmHSETW1fgib9KZK1lsfsfdcDEy0FL4Tm8XdGw0Om7Scsr9qFtNRv1wauIHIOcqa9dKXYgrnb96ilyKlNP9q5nWr/6zhRygScTC4uiSGghf1hyWMIe36fBsm8Eej0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761139725; c=relaxed/simple;
+	bh=QKksJPOg3Ld65y+A9A7qYmdsNu/AEBhnB776/7uWjaQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Bf423NrwOjOpPwV94J6AjqrP1v8b8vO9BqR3mlNwFt4+zkcaaVjmpLD9Z0ngvTMzUfadcNji8HDsqGhVpnapKyZLSSDs9X3GkOqWfBhlD8saVJ9FOFhlTmZidbMoxYndy+doz7nSct8y/Kko8E7E0P48MwYBBIL+H55YzPtPU2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wx/3AhbT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ATQpbpH1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 22 Oct 2025 13:28:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761139721;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dJ+EdhrldHNMGhJUcDvaVq4BjCLMdnGx8kloR7YyxaI=;
+	b=Wx/3AhbTunPyMThgCX4drIzym6+z9V0rtLlnQKuAn3U81tlS+E+RdzRHMwWQj7TU7VvNo9
+	PfFCn3moeN1hu+8Anm2audZ4uzISbn0DGlaU5F0FqbGRPkyU+gh8kOutjh22wuQlYMTsYN
+	N8BAZ3PycFAeWJ/84s5ukL0RX0bgDD7W8WZKNhW/t8pzlO6PmLxpJg5lyUNbGHB3HqVnkx
+	z7kyj5oG+/5DcWCWZPt3uv2Xflvh1LoffGKfWj7zyYga75rvzgv3Ri7pHrjQRw/ynqM6Ql
+	OGUjU8AWNGidEP2f2gIGysc6xB28V315YsxTmtADHuvU6sbghV+peLRICiQtwA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761139721;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dJ+EdhrldHNMGhJUcDvaVq4BjCLMdnGx8kloR7YyxaI=;
+	b=ATQpbpH1OuQUH9vfN9uX4WLtXH4n38HEku0YktrJOwm/rDIQ/EwAtPbvFITUVeBvo4GdOu
+	ajdU8FceliKG1vCw==
+From: "tip-bot2 for Boqun Feng" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] rust: debugfs: Implement Reader for Mutex<T> only
+ when T is Unpin
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Danilo Krummrich <dakr@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251022034237.70431-1-boqun.feng@gmail.com>
+References: <20251022034237.70431-1-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|SA2PR11MB4922:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40952824-eb41-4ed3-3318-08de116ebc06
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?V1ptQXh1NWdOQWNkN0UxOGY3VTVEZ0tuYVVuSU82eG04K2tVWVFxMjBGSjZM?=
- =?utf-8?B?ZEdnUjk0NGM1UmY0N01lajdseDd0TTN6RytpOUx1WjhPbmJUUWtuMUpTSVdH?=
- =?utf-8?B?aHNyNjU3SU4vK1F1MjRaenB4akFlT3hqWEJuT25rQWcvdzVaL3B1TVE0VDBS?=
- =?utf-8?B?T0RqMDJ1dXA5eVBDRFBGWmd2cGs3Mkx5ZTF3V3F0dDZHV0FsSlZ3cHRsa1V6?=
- =?utf-8?B?TUppY1hwcW9kS3RNVG1qMW02MWFWMWNRbk1oOXlEMnJpWExZR05WblhNWjNP?=
- =?utf-8?B?THlXcVRId3FVdURxZDAvb1NUOXdySERXb0l0R1R6U2lXUXBRTmpQaVNEaG5L?=
- =?utf-8?B?N1IrbXlLM3hFdjc3MnNNYjdnb1lTeUgwdW40T3JJZlEvVVZ2Q1l6a2M0cmdP?=
- =?utf-8?B?eEw0cGpqOENnc2h2dU1VaFd4a0FMSTFYalJOaHpmb2o3YlNyUUI4TzgxUkc1?=
- =?utf-8?B?VjM3dGowSnFJMUhHRnJUM0xNTUM5TXUwa1orWDdjTkVJd1dPUHMrS3l3TWht?=
- =?utf-8?B?bkVia0tBVjZMN0p1ZWJzVkZhYUdhQ1dKTkZRZWM0OFVlNDR4S3QrZ3EwMXYy?=
- =?utf-8?B?cWU5SUUvbnJXUjhNdWVSb0dwMXpGbG1zRjZYd3ZUcldMYTRLMHZtcXB2YTc2?=
- =?utf-8?B?eVJVSlF6ZEMrMUZ4OUNhM3NuUGdwdVU3akdFVmQvMWNiUWhZdExmOXdnRVdR?=
- =?utf-8?B?a3JDZXFmRmdjOGIzZmZ3Z1ZieVluZ2VkVmlDZ2lwMyszRU91SW5PWTJvM2Zl?=
- =?utf-8?B?VU8rR3ZSTGZNNTkzWi9FejZmYXhITzVINWN6Z000aGl2bCtQVWVOcktkbm1t?=
- =?utf-8?B?RUpjMzl4aFMyTm1kZ3BjRGlBNE9VUzFiVzIzK2lqWDFocERpTGd3MjAvVHlL?=
- =?utf-8?B?UEhodERzUEZRQ0lDR1NUdC9tKzdOaWh2VlVTWVh4RHkwQXFPYytzUUs0dlBN?=
- =?utf-8?B?bTFDQWZDU0M5ak1DZDh3WUtEcnVhcGE3M0Q2SCtUekl4UVBxWTIxMTBhT0ox?=
- =?utf-8?B?NkJJUHFDM1lGcFpLNEs3TFlmMlBMWUdUdnVEWWNvV1RJVTVtV00yRVdlakky?=
- =?utf-8?B?aWxMWmZ4LzB1VUhjZHBmdFV4ZWdVSGozQ1MvWVdsUWZzRjF4V2t4bC9yY3dG?=
- =?utf-8?B?emM4VldqMFJaWUtaZnVBbWRQd1prU0tER0l6aXVrbWRYakNiSjV3cnVVcTQz?=
- =?utf-8?B?REc0MG54VmhLclU2K3FIcDV6eGdhaTF0cVRiWUNpY3krSURJS3hFYlRHVjkw?=
- =?utf-8?B?Vk1EOE5jMnNEamM4d3hzZno3alp6WHRSYkNyT1B5b0E2ZGxXTUVoV1B2M0tM?=
- =?utf-8?B?UnE5UlZVNVhOSkpLR1BHZDVhV29DNzFpaExMVFpZS2FlSHFyRTNaUGFDeXo2?=
- =?utf-8?B?UzJxNU5pOXdNKzJLZy80UXhhVVlSU29lTnVTTUtIYzE4aVZlY2xWM3VRWTI5?=
- =?utf-8?B?Um40RmQ0VGttQVA2UFE1dGJJd1ViZ0wwd1MwSU1jK0VZOEg2Sm1uWUxYMmxQ?=
- =?utf-8?B?L2lwT0FxRVVlakhmVi9tbUVxVWxVblkvRHJpaGlJV0VQL3VnNWJkMUMyTGR3?=
- =?utf-8?B?cGQwT2N5UGZ4eUNibjBKUjlkWlVqMWhkSkczWkJCNlhyVG5zcmdNSnhQUEZB?=
- =?utf-8?B?bElYSHdzRDZFUkd4U1BDRnIzRDFnY2sxNnlqUkg0K0gzZFE5RW9hNEg2SUxG?=
- =?utf-8?B?eThsc1dHMFNPcWpwdEZlUFlwdWJ3WlVQMEw3c1RRM25FWk5xL3ZhSFc5YTBC?=
- =?utf-8?B?NGVjemdYY0l6eWx6eVhnU1FyYjVRV2tKVGFRTDRsdUNHTHFqdHVDT2FsSmJh?=
- =?utf-8?B?TUprQ1pHZUtmVkJTMGtidjNLTGk5VloyQ0JtR1RVR1BLS1pFdmdGeUdLTWUr?=
- =?utf-8?B?RGlFdmdPdjJRMFBpTS9xNEcxVFB2cVVNOXJCaWN4cXlENGdOQ3VuY3JBTkY2?=
- =?utf-8?Q?NCUZa/ObBXi4ULm6ihSI38PiH5b0GXm4?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T2RYK3ZESUNVQlRmak52YXFpQ1JqYSs0bTdGQW82aXpKcStQN2NVSVdNd1Fu?=
- =?utf-8?B?Qm5UWDJzeVJIMVhESTkvSDgvbVRsWFkrY3R1dm1JcnNCa09OTmllQUNiYzJ1?=
- =?utf-8?B?UTJ3cXdrUVFWN3hKSzNkbWhaNXZuK2xhRHdScWFOb1JidjdKYTBJb0lJWGZw?=
- =?utf-8?B?ajdmeGNWS0FPNWdBOEd2Y3o1OXZEM0h4dHpRWXRVOCtGYjdSUUcxbWROeXEw?=
- =?utf-8?B?TmR3RDhtcm12aEsyNWFkc0ZnUXd5U28raDNWL1FnRXRBUHBva2Q3L1d4TlF1?=
- =?utf-8?B?RE5abm5SYVdreTdOVmRtUkhFaUk2RDlBTmJtUThJZlY0MkRGd09Kc1h6UXFH?=
- =?utf-8?B?Q1Zkd2ZoekJZTkhrVmlEUEliTG91dk9Gc2lUZE8yTnU3ZjdaZW1XdTBabGF6?=
- =?utf-8?B?a01od09tcmhIWnQ2dzhPVDlIV202RFdWWkp5MUdhSTdKVUZWOWJQSTRwSU54?=
- =?utf-8?B?NFZHRkllZnJRUlc3L2ZCRGJQK3A0Ri9ETEsrTC9NUkVKZzVtSTRPQjZSUnQ1?=
- =?utf-8?B?amhQVHVvWGtvVDVZeUJWWWxhSi9uTEd3UVFIcmJWSnJoNmJXVGs1Wi8yOU1T?=
- =?utf-8?B?T2JST04xaUZ0K2t0ZWEvdndPWlNVLzhWQVR6eUMwQVhRQndPOEtPVVJqWGdH?=
- =?utf-8?B?L1pIQ1IvS281KzRJbDU3V3BaUE1peS9qa1lFaXRCeG5NTi9RN2xzaUFVQnFn?=
- =?utf-8?B?NDJkcW9LRWlRTmV4UkhzT1ByUi9vdzJpWWJ4azl5MStobjdGNEdPTDRSbGdK?=
- =?utf-8?B?Zlhxb1d6NGNieWxqa2hWSUhra2dUTWJiSE52OGZyZnNoVlRBZW1jSUs3UVhX?=
- =?utf-8?B?Q3ZyYU9IQk9yYkdSaWQ2bm9aZEpkalg2Zy9IVlZVelF1dHIvK05kblVDNE5T?=
- =?utf-8?B?c1FLT1NhTVZQQ2c5eWxXemVYMm9CVS9QU1g2RTdPNDYxMTVZUStlSE55NStV?=
- =?utf-8?B?VnUzMEptM3lwbWFVcXRuOGF4dFkyZzloVmlyVFBja1N0NVo1NFI4eVhiKzZM?=
- =?utf-8?B?VGxtb2dzNWt0Zm9sZ2llWEczRHZGKzZEQVRyVXluOHV5a1lwS0lRQ0ZYb09N?=
- =?utf-8?B?K0YrVit1RG5MdnB0QnJhUnhSdkxyUjZLUERwdWFDcExBZXFQbFRzMWF4aGdo?=
- =?utf-8?B?UWs0bUZTSFBuZWMvdHBNbS9HSWxvbjRKQk5relFwVWg4d0FHbjhkQzM4aGpy?=
- =?utf-8?B?SEd4eUpBWGEyNm9nZDI2V2FmMEhHa2N3ejNRazdjdUQzV2lkSVlhbE5rYjFE?=
- =?utf-8?B?bjdqeUNkendtd25nS3NRMXlyazcrdXVseU9JZTRPaDBhZHBYQWFOb3NCbDFt?=
- =?utf-8?B?WExQdlRsYndsOHhKckM2TXQ1cTBSYTRiRzRkV3k1N2hkNDh5ZElQcHZwMElw?=
- =?utf-8?B?Nno1cFJqTGdGdFFIcmoxcFBBWGNTaU5tclFnV0FPNk5FZFFwbndObW9XYjlY?=
- =?utf-8?B?eWZ1WVg5YVRwVEhoeGIyRW5lWS9sRUJJcFR5cEFTa3lIZGd6b2V6T1BoYkdC?=
- =?utf-8?B?cHhRUWNZN2ZFNFJ4U3ltZkxvTnc4TlQveFZiTGpOQUF2SDl1WVFGdEV3RVVT?=
- =?utf-8?B?VmhXdGdxaHF6RHBaMTJLOUJFNzc2QjNNcllpU0UrbDl5NFZHTWw5VDRLM0Rs?=
- =?utf-8?B?bTZZd3FnYzk3RUpYY0hma0ZmSXdXYWw2NXVIMWxKVHZ2SVc1VGRaME9xZVk5?=
- =?utf-8?B?cnczSlZ1czJORjA4cXl1R2htMkdMNklNRTk2ZXRHazRRUlFoQWZucGE2cWFL?=
- =?utf-8?B?WTlYR3NMcTJnaHhkbUlxSHhyYXV2TnhSajVLOWNmckljS09vNjQvUGx0V0N6?=
- =?utf-8?B?Q1pJRW9ZVVVJYlBjZzhRZk9RVnZiV2hiWWZydGNmamJkRC9tUGxNdUllRllz?=
- =?utf-8?B?MWpFQ3dLZDJyUnJ3ZlpwZytjQ3hUSkpTS0V5Q3pLY3BqYzhkVkw0R1hQSitB?=
- =?utf-8?B?RXFRQUxFckR6SFlTVE9CMW1CZHFTZXZBUko0dm03bnRua0pJem1qN0grdVUr?=
- =?utf-8?B?cUtPZTdGZFcxbDZ0dDYrWmJmVDlwUGVoVjBBM0IxNzFPUFhjbVAwQlFpajNt?=
- =?utf-8?B?aElKVVpVOXpGRWNJSVd6M21ocDBXYlJQRDJraXBibFR4M1prODFpMzJxREpX?=
- =?utf-8?B?NlFsalE4UFRHd1QrTkRIRllMS0hUNHVHTnMwak05M29SNkt1ZVJ0MEJRQmox?=
- =?utf-8?B?NEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40952824-eb41-4ed3-3318-08de116ebc06
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 13:27:23.6654
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lGkLNevtbEVzZ1oXV7eSM2euC+Y10+LGib8/ByssTeMsljpR65mkUlgqptByGMTbJTmuGNl1soHCRTamR5jlsimcPTZSLNUSJppEW8fBvlM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4922
-X-OriginatorOrg: intel.com
+Message-ID: <176113972009.2601451.278359003080954159.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 08:33:55AM -0300, Jason Gunthorpe wrote:
-> On Wed, Oct 22, 2025 at 11:12:05AM +0200, Michał Winiarski wrote:
-> > On Wed, Oct 22, 2025 at 01:54:42AM -0700, Christoph Hellwig wrote:
-> > > On Wed, Oct 22, 2025 at 10:52:34AM +0200, Michał Winiarski wrote:
-> > > > On Wed, Oct 22, 2025 at 12:12:01AM -0700, Christoph Hellwig wrote:
-> > > > > There is absolutely nothing vendor-specific here, it is a device variant
-> > > > > driver.  In fact in Linux basically nothing is ever vendor specific,
-> > > > > because vendor is not a concept that does matter in any practical sense
-> > > > > except for tiny details like the vendor ID as one of the IDs to match
-> > > > > on in device probing.
-> > > > > 
-> > > > > I have no idea why people keep trying to inject this term again and
-> > > > > again.
-> > > > 
-> > > > Hi,
-> > > > 
-> > > > The reasoning was that in this case we're matching vendor ID + class
-> > > > combination to match all Intel GPUs, and not just selected device ID,
-> > > > but I get your point.
-> > > 
-> > > Which sounds like a really bad idea.  Is this going to work on i810
-> > > devices?  Or the odd parts povervr based parts?
-> > 
-> > It's using .override_only = PCI_ID_F_VFIO_DRIVER_OVERRIDE, so it only
-> > matters if the user was already planning to override the regular driver
-> > with VFIO one (using driver_override sysfs).
-> > So if it worked on i810 or other odd parts using regular vfio-pci, it
-> > would work with xe-vfio-pci, as both are using the same underlying
-> > functions provided by vfio-pci-core.
-> 
-> I also would rather see you list the actual working PCI IDs :|
-> 
-> Claiming all class devices for a vendor_id is something only DRM
-> does..
+The following commit has been merged into the locking/core branch of tip:
 
-We already have all of the device IDs in include/drm/intel/pciids.h
-So it's just a matter of adding a helper that sets an override and
-including it and using a subset of ID.
+Commit-ID:     37d0472c8ac441af8bc10fc4959ad9d62dd5fa4c
+Gitweb:        https://git.kernel.org/tip/37d0472c8ac441af8bc10fc4959ad9d62dd=
+5fa4c
+Author:        Boqun Feng <boqun.feng@gmail.com>
+AuthorDate:    Tue, 21 Oct 2025 23:42:37 -04:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 22 Oct 2025 15:21:51 +02:00
 
-I'll do that instead of matching on class.
+rust: debugfs: Implement Reader for Mutex<T> only when T is Unpin
 
-Thanks,
--Michał
+Since we are going to make `Mutex<T>` structurally pin the data (i.e.
+`T`), therefore `.lock()` function only returns a `Guard` that can
+dereference a mutable reference to `T` if only `T` is `Unpin`, therefore
+restrict the impl `Reader` block of `Mutex<T>` to that.
 
-> 
-> Jason
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+Link: https://patch.msgid.link/20251022034237.70431-1-boqun.feng@gmail.com
+---
+ rust/kernel/debugfs/traits.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rust/kernel/debugfs/traits.rs b/rust/kernel/debugfs/traits.rs
+index ab009eb..ba7ec5a 100644
+--- a/rust/kernel/debugfs/traits.rs
++++ b/rust/kernel/debugfs/traits.rs
+@@ -50,7 +50,7 @@ pub trait Reader {
+     fn read_from_slice(&self, reader: &mut UserSliceReader) -> Result;
+ }
+=20
+-impl<T: FromStr> Reader for Mutex<T> {
++impl<T: FromStr + Unpin> Reader for Mutex<T> {
+     fn read_from_slice(&self, reader: &mut UserSliceReader) -> Result {
+         let mut buf =3D [0u8; 128];
+         if reader.len() > buf.len() {
 
