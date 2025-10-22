@@ -1,130 +1,149 @@
-Return-Path: <linux-kernel+bounces-865579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DCFBFD8E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:24:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9F0BFD8F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A622E3B0AC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBE9C3AE74C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E972420D51C;
-	Wed, 22 Oct 2025 17:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3AF270551;
+	Wed, 22 Oct 2025 17:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uSaxwcYR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRlhloua"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9FD1F63D9;
-	Wed, 22 Oct 2025 17:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F857270EBB
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761152448; cv=none; b=NisM2vrvwzdju1g6oE0uqaC4iLtARYvHWmPFyEQ2VIppGbezXYhqVyXKrCbpfYA60G/bNKHGfoQzVFeYqbxYhgkpoxdRnv9M0vK6D8QsSmbI87FoqNSpnVVkPJgoiuIq50w8wVTCSTwM2TyarFnUO9eSJTtUjZP/yhDKEuR2Duk=
+	t=1761152570; cv=none; b=c9hFXeA6UO33QqFQ1cn4lsQsKXL+gyL9kRM5WGfQch1DZkCdGjmLSjVT/TFFCRimu26eiAddDQs7JdL0huBgUuUshSkGQL3DMdQam708+ebUO8Q1a0DCnncV1HKtIbOGO++RBWUpsr7OlBErS3CFCMsgO07y+rFzh1m2jXM56gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761152448; c=relaxed/simple;
-	bh=SJFlazEtm8bU1PqI+Ip5NI92gSiRot30yqSpwLlPL5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GfIRoM1gdThHkAz43PM8fJ7AjwoahTzlVecpAc9bVRwRiG7EbrIAqpKauVf2dVRCofC0gTV2VStS8MkTotZiz7Z1sJVhhhJtSwmzDEbpkCqnq8hLWE7wPKAxDunNJFusE4ySy50Y2M398fIDk8VHrob5vDEVcEXixR9Nk7cv2bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uSaxwcYR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B82CC4CEE7;
-	Wed, 22 Oct 2025 17:00:44 +0000 (UTC)
+	s=arc-20240116; t=1761152570; c=relaxed/simple;
+	bh=uQ64JgFOmAzJd+mPkZtVG+ihpVKVYP1nw4V7fBIcKF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ay1/PAfp1CFwybC2s+l0b4t8BTtgB614FWT0AxOpTuPMkSZVPsBA65QIl2nFbX6Gx9jUWJOhqelLWUsZIrCGTSls8tosZ3fNfnnYc4deuHCeeeueye41421LFMikOXrmx0Y+UQaH/Jy3kKWY9WwwjSPAco0iKndQS8A2gEqOqoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRlhloua; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30324C4CEFD
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:02:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761152447;
-	bh=SJFlazEtm8bU1PqI+Ip5NI92gSiRot30yqSpwLlPL5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uSaxwcYR899oCpILFf0Wn06yWMAKWI1bGpOsg2m9KJXUV8EDY/K4t0kThpAEmVkHt
-	 VLYu5yLWkwHukU8oumiGUv6JgfRiIVC4GWjgFDYjotGHFI0e0rioLhMh0Ev8dTkFrw
-	 ttqp8pkuY9UGpym8eyIwp5i2YppqoMCPicg4hi0ukV357zoLDUyolMZj/bl3KDeE7T
-	 /k6wYkL139wjO6HCXSNIA9TOfy/RnZDM/roLdpbCWbsa7ae18ugOo6V1jFeYn6cDJT
-	 zJuTWEzaTXru6zaQiNG25vOtWqTK7Dd1TlZG1blyqj5xUBQNfFrv95OU3aiOmK+eKk
-	 CPei+P8ZF5TPw==
-Date: Wed, 22 Oct 2025 18:00:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoni Pokusinski <apokusinski01@gmail.com>,
-	Vasileios Amoiridis <vassilisamir@gmail.com>,
-	Justin Weiss <justin@justinweiss.com>,
-	"open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: iio: pressure: Remove vdd-supply and
- vddio-supply from required list
-Message-ID: <20251022-obscurity-bulldog-bf9b50dcc127@spud>
-References: <20251022164154.2994517-1-Frank.Li@nxp.com>
+	s=k20201202; t=1761152570;
+	bh=uQ64JgFOmAzJd+mPkZtVG+ihpVKVYP1nw4V7fBIcKF4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sRlhlouas6aCSesmJCpwCgMhuTYNTUv7lLIogOIis+naR8orH2qBwGRtTp6L6Ym66
+	 RbcQ7kgKTBSTA+jqhjHc3DQQ1YbldHrndwPhqSaMfrG050duDP5+xUoknxXHlTR3mU
+	 Y0dgMGREzd843297p5wlSOff3M2Mu3mv9Z2ETUSuhXNudblRQlCxwmeCSJufh2i6N3
+	 P+udSZiF6AFs2XTUVollvSIgeXqIEBQ3hM0cAsWlwqkq0b6WcnRTqrggySzQPibwcZ
+	 fsg3g0A4uEOsnYjqUcU2O+GgQXs4AlT00CfvPE3IzWq/bCWbTP4AqZRrcbmzWpTlSy
+	 Jt+0iQQIs/nRw==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7bb79ad6857so3742701a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:02:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX38aj8hfBRkZ4XrpMr8NWnYOM/kDCRKkD91vFM+C4ZRLCJXShVx1BNi9xTSh2MBkCvTMoJ8if8ZsKKRA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCWbmwb8MrF7ySIFkGbln2AUU1tP8TDSbBt5kRGH0QonwpxY4L
+	sxPjeFys+2W5wUOGon7bH+NAn5gYmoZtiM/4dfZcCWj0eqS+EGHW6gbkrLfu/PYFE4s0Yu/S25C
+	lsGiuV2g5pcBAUn7+ExR954atf1DyNCE=
+X-Google-Smtp-Source: AGHT+IFsSLkS4AfOy5xcoE1SIc1rw+OhHunu+bX6yReuGG38wf86nNthgdGGvrwVmspSg8ngis0UUdzl53ovX1AjJdc=
+X-Received: by 2002:a05:6808:14c8:b0:43f:75f0:3894 with SMTP id
+ 5614622812f47-443a2e90865mr8908912b6e.22.1761152569474; Wed, 22 Oct 2025
+ 10:02:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xWzJRU5tQank2y47"
-Content-Disposition: inline
-In-Reply-To: <20251022164154.2994517-1-Frank.Li@nxp.com>
-
-
---xWzJRU5tQank2y47
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251002113404.3117429-1-srosek@google.com>
+In-Reply-To: <20251002113404.3117429-1-srosek@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 22 Oct 2025 19:02:38 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hO3+eznWztqO2B78wpLXr3EZ+Nj0yOxqesfpb20ykOYQ@mail.gmail.com>
+X-Gm-Features: AS18NWBlxJkUSv4HdoHV9K7LgQY0Hep2BdtAsCZ074SA2uAIDpGbEU_yqZ8QlaI
+Message-ID: <CAJZ5v0hO3+eznWztqO2B78wpLXr3EZ+Nj0yOxqesfpb20ykOYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] ACPI: DPTF: Move INT340X enumeration from DPTF
+ core to thermal drivers
+To: Slawomir Rosek <srosek@google.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Alex Hung <alexhung@gmail.com>, Hans de Goede <hansg@kernel.org>, 
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, AceLan Kao <acelan.kao@canonical.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
+	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 12:41:51PM -0400, Frank Li wrote:
-> Some board designs connect vdd and vddio to the system power supply. Remo=
-ve
-> these properties from the required list and make them optional, since
-> drivers/iio/pressure/mpl3115.c does not use them.
+On Thu, Oct 2, 2025 at 1:34=E2=80=AFPM Slawomir Rosek <srosek@google.com> w=
+rote:
+>
+> The Intel Dynamic Platform and Thermal Framework (DPTF) relies on
+> the INT340X ACPI device objects. The temperature information and
+> cooling ability are exposed to the userspace via those objects.
+>
+> Since kernel v3.17 the ACPI bus scan handler is introduced to prevent
+> enumeration of INT340X ACPI device objects on the platform bus unless
+> related thermal drivers are enabled. However, using the IS_ENABLED()
+> macro in the ACPI scan handler forces the kernel to be recompiled
+> when thermal drivers are enabled or disabled, which is a significant
+> limitation of its modularity. The IS_ENABLED() macro is particularly
+> problematic for the Android Generic Kernel Image (GKI) project which
+> uses unified core kernel while SoC/board support is moved to loadable
+> vendor modules.
+>
+> This patch set moves enumeration of INT340X ACPI device objects on
+> the platform bus from DPTF core to thermal drivers. It starts with
+> some code cleanup and reorganization to eventually remove IS_ENABLED()
+> macro from the ACPI bus scan handler. Brief list of changes is listed
+> below:
+>
+> 1) Remove SOC DTS thermal driver case from the ACPI scan handler
+>    since its dependency on INT340X driver is unrelated to DPTF
+> 2) Move all INT340X ACPI device ids to the common header and update
+>    the DPTF core and thermal drivers accordingly
+> 3) Move dynamic enumeration of ACPI device objects on the platform bus
+>    from the intel-hid and intel-vbtn drivers to the ACPI platform core
+> 4) Move enumeration of INT340X ACPI device objects on the platform bus
+>    from DPTF core to thermal drivers using ACPI platform core methods
+>
+> Link to v1: https://lore.kernel.org/all/20250830053404.763995-1-srosek@go=
+ogle.com/
+> Link to v2: https://lore.kernel.org/all/20250917120719.2390847-1-srosek@g=
+oogle.com/
+>
+> In v3 the SoC DTS thermal explicitly depends on X86_64.
+>
+> Slawomir Rosek (6):
+>   ACPI: DPTF: Ignore SoC DTS thermal while scanning
+>   ACPI: DPTF: Move INT340X device IDs to header
+>   ACPI: DPTF: Move PCH FIVR device IDs to header
+>   ACPI: DPTF: Remove not supported INT340X IDs
+>   ACPI: platform: Add macro for acpi platform driver
+>   ACPI: DPTF: Move INT340X enumeration to modules
+>
+>  drivers/acpi/acpi_platform.c                  | 27 +++++++
+>  drivers/acpi/dptf/dptf_pch_fivr.c             | 10 +--
+>  drivers/acpi/dptf/dptf_power.c                | 20 +----
+>  drivers/acpi/dptf/int340x_thermal.c           | 76 ++++---------------
+>  drivers/acpi/fan.h                            | 10 +--
+>  drivers/acpi/fan_core.c                       |  2 +-
+>  drivers/acpi/int340x_thermal.h                | 76 +++++++++++++++++++
+>  drivers/platform/x86/intel/hid.c              | 33 +-------
+>  drivers/platform/x86/intel/vbtn.c             | 30 +-------
+>  drivers/thermal/intel/Kconfig                 |  3 +-
+>  .../intel/int340x_thermal/int3400_thermal.c   | 12 +--
+>  .../intel/int340x_thermal/int3401_thermal.c   |  5 +-
+>  .../intel/int340x_thermal/int3402_thermal.c   |  5 +-
+>  .../intel/int340x_thermal/int3403_thermal.c   | 12 +--
+>  .../intel/int340x_thermal/int3406_thermal.c   |  5 +-
+>  include/linux/platform_device.h               | 17 +++++
+>  16 files changed, 164 insertions(+), 179 deletions(-)
+>  create mode 100644 drivers/acpi/int340x_thermal.h
+>
+> --
 
-That just reads as if the supplies are still required, just the source
-of the power has changed.
-
->=20
-> Fix below CHECK_DTBS warnings:
-> arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: pressure-sensor@60 (fsl,mpl=
-3115): 'vdd-supply' is a required property
->         from schema $id: http://devicetree.org/schemas/iio/pressure/fsl,m=
-pl3115.yaml#
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.y=
-aml b/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
-> index 2933c2e10695e..04703a01cf7af 100644
-> --- a/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
-> +++ b/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
-> @@ -47,8 +47,6 @@ properties:
->  required:
->    - compatible
->    - reg
-> -  - vdd-supply
-> -  - vddio-supply
-> =20
->  additionalProperties: false
-> =20
-> --=20
-> 2.34.1
->=20
-
---xWzJRU5tQank2y47
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkNtwAKCRB4tDGHoIJi
-0thyAPoDI/5v70JlUWJtZ6WOYrSszKcHZYZPDKhQkDq2sFbI2gD+MRdZiHopbC22
-KW1pIWtYJaGWOq+s7KUUDfYPsjb2Hwo=
-=ZjYD
------END PGP SIGNATURE-----
-
---xWzJRU5tQank2y47--
+Srinivas, do you have any input on this series?
 
