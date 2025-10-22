@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-865042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69266BFC12D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:16:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6111EBFC0F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5E9A565501
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77BEB1884550
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80BB34320D;
-	Wed, 22 Oct 2025 13:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0ED347FED;
+	Wed, 22 Oct 2025 13:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b="EMT3FnbT"
-Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="OTdjX9Ip"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E363451C8
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE108347BDA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761138124; cv=none; b=rxGU/M8kYH9uDk8pOqbZJoOQhkswANjdSmVYkRSIDLNolbqf8E9nqWkyxI096CEcSRJanaemxNF59CwMcnVd1E88e2vXrb94ebbzHrQDh0DFa+fieWXyDo/D+fHILWNhf8DmTm0Djtpu+pzXL6BKcyswWiLK23xJTNXvZDeanXU=
+	t=1761138139; cv=none; b=DvsfWeKCK3mZf3yx3bLxKoHuD/wEsX0yBFTbM1F5RImH4wyD3vsDbhL0vAWu7hQntDFaxqrggqQOHOAa7dCm+RAm38HknN8NK1gXQwMALeJOiYFkHkKfCzCyQ+s5y4FHW7WJT0ei8H75dS+PZBOvkYeRFwFB/qs11eydvmtlTp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761138124; c=relaxed/simple;
-	bh=YyOT6xckVX0MriiIl7HBo2d4T8KTUI4Zs0unfYBtZTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O9HOi9HMqUTP9x4t9xuyWbZ9i3jTtGN2vZptwc+ltigxUlGCN3Xwsfw5LNvj7PGLCrmG0+I0CwLWKxd0Z5etmFaCxIiHkNYR4VjBGrr7JKwgHOGKEYmiUcN0uwV2rJdUjnUdZ0+7a11SFfllKS9l5DqyUupPdStTBumOWG3mz0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vyos.io; spf=pass smtp.mailfrom=vyos.io; dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b=EMT3FnbT; arc=none smtp.client-ip=74.125.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vyos.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vyos.io
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63e1c0fd7ddso5120445d50.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:02:02 -0700 (PDT)
+	s=arc-20240116; t=1761138139; c=relaxed/simple;
+	bh=lancp4F+gIJloseWretT9AZMSRcc8xPslAj7fQu0OfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cr/2U3LrGNGVFrSyc8/x4cs64SwlMF5ZENLOr9pCuFWFCcuTp03oiHxsP52HT7G+7lZu2SL62+m4QGE43yTMJ8qvI3ag+yw3aXBP3XZcRPXeuJQ+4E/oABzUZ9Hu24Ns4jyTX9+y80tE355uOavmrKUkPsE6B+RwgIhePNNJQ4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=OTdjX9Ip; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-88fa5974432so894870685a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vyos.io; s=google; t=1761138122; x=1761742922; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YyOT6xckVX0MriiIl7HBo2d4T8KTUI4Zs0unfYBtZTE=;
-        b=EMT3FnbTWISnp8qFS8tmeCFyrvbxL4ZJ3ydv8XGpLrnSQyGWnNTULQQ1Y4/Uv7YtmJ
-         aejyuE/km3ZFPTNKjgN35GzsNqohMByj2wC3QhKxYd4BTwyYnzO8/PimtHyP4DWyoUmC
-         HbQmXuGB7ijOqy+DW0+cnwrvuyAPzXLvEEvWLH3YlMN5N7hXu1htCCv0Ju4buO0PQYca
-         BKJLZkFB2wj5fDbS8BIdY5l1/ZZC28uY8WFgIbJAQD/y9gzBsEBc9kAXHAh24JO4okOD
-         wdm2j6AkVXrjr920Hq9FSNCStvE9MVB6Q6rWrwny4fxWx8knVoz6lCNVeNEuUjL+jY9z
-         7kQw==
+        d=ziepe.ca; s=google; t=1761138136; x=1761742936; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q4+nptwg+b4cKjk/7eopK4TdMQlKGxJAx/ff9A8jy1A=;
+        b=OTdjX9IpeyqrtY5NsIXVyy4/NNMoO/15SGkB752CL6RNiFDilySoKOcM5vP85qeP7j
+         ePVY4fnMskzqfRw4fitQdPlkdyaNgdwjNQAhclLxkifNcnjogOWHcVwhXEegWCSE5PHA
+         n1wnpmDiDS8c6GXosTGn6Lj97fgX+ApDH1sI60Qo2N/9ZpahbJMSSG9CIdJlbo+xve4z
+         xSdoYi4r0B8ML4PDpZIMWVcXp0FewP64bILtLS4vIuCaKWT+sOfCufjhJkvCBKiEufxg
+         GHfu/9na6a4qdkuwXzRLXVsm/025iLO130PWeP/+OXndbzrBNVt4dUOJ02Mzp1QkIhQz
+         crpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761138122; x=1761742922;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YyOT6xckVX0MriiIl7HBo2d4T8KTUI4Zs0unfYBtZTE=;
-        b=iEzuGdhjnkFmGcBJ7Y9gljHt3lBtOnEeCNbNOFiZxn/+0p9foJT0Coqc+G/HkoRGp1
-         wIN5rApMr8XjVuCvelDgnfpaGOKsyBNkc8TNiIlEii+6uX2rEHKIbRtBDou1JcvX3Otp
-         NQecDrp3HWD9mwPI5LDArJmbmf5nVth33hEtzkck1uUWzDSAWynv9akiNN3aBau5oqVR
-         wSWzJ0oeyXrrGsg+x8FBtivoHOnej680lu1V5wPLlcoep4y2DCyTdt5ZU2BLwXW2b+eF
-         bYO5tn3/Z5i6/UhmNPKQAsjLVhZemJRLDL2E03wNu20lkK8Wj11psNWdhuN0nauLt6P6
-         xzkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWS5BAQinFWF/qVLwezcXvcTqRR4/Tt26F9u9WeMiJpCSxGRIdPByueNs94nIEHXkQAYUAZCwQ8/ZS+HtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzCmqJgWLgj+dEqC+YgwZCjD5WtfI3Mycxr8TFBO0WiYecNzqC
-	aDfiBGEX9FunZRhC6Egax6MFk0GhErdH0nrYRBosLq6DnwqZnesYDpukFsbiOIJBlNbwXxMBxPR
-	7Vi0RsHA+YTiurT//ib+NZ11FqdDpi5DtyNiwBwLyhxlfX03DlvMCelgBng==
-X-Gm-Gg: ASbGncs/f1GDOLbmkamQ695dpqCoClpja/avbkYUPY+ASYIcEGZFjpEon9yrepZjEqT
-	NeDCHOCTOzxUzcEyanHgiDLwtNzStNAPtfSlR9Y8zrOTc/G0IIgKr7r2mIFHzty2CF1r0I9HZio
-	Btmx+77aqnwY8UZJYlVZjeH5Ntb4NDO8QhUZ5dvNbwJ9YukfXdAeXRILrFYzsNai6tonAYthqVl
-	pZ+Cbm97uCvW+2fKeFhdAKYU4Ucr6Nw5Mbq/YCuYAGK2W2nn4579hPVrd2U/qTJbdbbtvKf
-X-Google-Smtp-Source: AGHT+IF9jG7efkMJkLjrKK96cUycd0uKP1eoJk4jV4LE5zYD+KPHywlzQYSMFmQ/paz3aQtOfKK1rFQpJc1+j+AphxY=
-X-Received: by 2002:a05:690e:4182:b0:63e:d1f:d683 with SMTP id
- 956f58d0204a3-63e161c551amr14636102d50.45.1761138121557; Wed, 22 Oct 2025
- 06:02:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761138136; x=1761742936;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q4+nptwg+b4cKjk/7eopK4TdMQlKGxJAx/ff9A8jy1A=;
+        b=pj13AIRSB1oLj+lzu5WnviPNLsELglNBJvcjklMpO1mvQnESgpr5Pzy4Sq8/N07xnU
+         xHT/XM3qyljrFEbn74sr9bcpFUV8O/l8MXKXlRqBqiGZUmvRPXzpoZPpoQ47CVImqxPC
+         hV9bQ69cZyHIpXLpgyBBU9azbApJNGik/Fodxu1l7SfcXFK4b9OE7Pdl7HGSkILlacyl
+         mTBADgrz++r+Rt9x76Updr4RF0XWrCd8HgjRZT2Bu1PkoK5CChxec6vBPDh9q/BahWa2
+         wcKh00i3iJFmvRlAtbcHpD/rWtefU29t8G9QuKsgvPmjprhzahmEQVF/Z365oFDkPp0X
+         txTw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8U0XY8k88GY+SPGQe+LWrCBBIssLyAxC7t5oIXaGmNfDawCrccsUDKDkvqS+QS8tAT4UeAsVaz+0XRVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYhrnhvsFxub8SqY3GICUMHSmuQssqT+14LZlLPuTLkcpLAFdJ
+	j60w/RkKsI7vM8UmEJELi/5mv8bwt42FHXxJ2VHhwoIJkrosW+PfcVvDN+TdBMYi1LU=
+X-Gm-Gg: ASbGncuqvecpVd+AhaNdrXhudxM7QZVfoW4IsvkyCW/d6hjdn4l+M1fmGhuS5enS/qu
+	TrWk+mBwrETfvQWS1C8E3Gtfn/6itRMhytjf2o4ipPW0w6r+CNHXGdU4n9la1EcjBq2HfHHAzI5
+	kBsus2M+M3AFWXp4twxxZvHQ3UEdSFtXZxldDK567Kw4PjaLmTpPy0nPX0ceWH8Lu6ZQ7AeMo66
+	55tchMk3UtuuX6u1oqAF71OCSgZgRLOVdhUNZcPFXt80nbjDOVsb0OZnI2GxVoSKcevUL48u8vs
+	wAauEEiQqz5HB+nCoJNq0e6LCb7RNjfkChsdkENHo5PeURCfNZxTvdmDYiZSBuVV2Wn9s4KaBYJ
+	6kQFSfBfdEzQTYaIOON29YcvccjuwuOEHcwYR/18bsHac041LlzPOFlGBAZ1tsuH9BZVHDLsUtT
+	QLYoUFAqMr8lzDIAz+BW1W7IBfvl/ObQauy6PIa3V5Gc2fdQ==
+X-Google-Smtp-Source: AGHT+IE1fp7nysFYiIihX3mwCtCavGTxjXwNOEmPOD6TCnzoLGlT2YOfHP4QDFq10IqJKetGapnVeA==
+X-Received: by 2002:a05:620a:171e:b0:891:bde8:8120 with SMTP id af79cd13be357-891bde882e8mr2006535485a.85.1761138126706;
+        Wed, 22 Oct 2025 06:02:06 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87d028a9a48sm87209396d6.43.2025.10.22.06.02.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 06:02:05 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vBYTc-00000001288-0pdQ;
+	Wed, 22 Oct 2025 10:02:04 -0300
+Date: Wed, 22 Oct 2025 10:02:04 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Lukasz Laguna <lukasz.laguna@intel.com>
+Subject: Re: [PATCH 26/26] vfio/xe: Add vendor-specific vfio_pci driver for
+ Intel graphics
+Message-ID: <20251022130204.GD21554@ziepe.ca>
+References: <20251011193847.1836454-1-michal.winiarski@intel.com>
+ <20251011193847.1836454-27-michal.winiarski@intel.com>
+ <20251021230328.GA21554@ziepe.ca>
+ <aPgT1u1YO3C3YozC@lstrano-desk.jf.intel.com>
+ <20251021233811.GB21554@ziepe.ca>
+ <aPgwJ8DHhqCfAdpk@lstrano-desk.jf.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021133918.500380-1-a.melnychenko@vyos.io>
- <20251021133918.500380-2-a.melnychenko@vyos.io> <aPeZ_4bano8JJigk@strlen.de>
- <aPghQ2-QVkeNgib1@calendula> <aPi8h_Ervgips4X4@strlen.de>
-In-Reply-To: <aPi8h_Ervgips4X4@strlen.de>
-From: Andrii Melnychenko <a.melnychenko@vyos.io>
-Date: Wed, 22 Oct 2025 15:01:50 +0200
-X-Gm-Features: AS18NWCJ-LY11lV6XRcH3jguswzoDQqltcrK4QfPMuRXpo5tSQWNpGqcBGGDgzU
-Message-ID: <CANhDHd_iPWgSuxi-6EVWE2HVbFUKqfuGoo-p_vcZgNst=RSqCA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] nft_ct: Added nfct_seqadj_ext_add() for NAT'ed conntrack.
-To: Florian Westphal <fw@strlen.de>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@netfilter.org, phil@nwl.cc, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	horms@kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPgwJ8DHhqCfAdpk@lstrano-desk.jf.intel.com>
 
-Hi all,
+On Tue, Oct 21, 2025 at 06:15:19PM -0700, Matthew Brost wrote:
 
-> BTW, this fixes DNAT case, but SNAT case is still broken because flag
-> is set at a later stage, right?
+> Ok, I think I see what you're getting at. The idea is to call
+> dev_set_drvdata on the Xe side, then use pci_iov_get_pf_drvdata on the
+> VFIO side to retrieve that data. This allows passing whatever Xe sets
+> via dev_set_drvdata between the module interfaces, while only
+> forward-declaring the interface struct in the shared header.
 
-I've checked SNAT with the "PORT" FTP command - didn't reproduce the bug.
-I assume that `nft_nat_eval()` -> `nf_nat_setup_info()` sets up seqadj
-for the SNAT case.
+Yes. The other email looks good:
+
+  struct xe_device *xe_sriov_vfio_get_xe_device(struct pci_dev *pdev);
+
+Should call pci_iov_get_pf_drvdata() internally.
+
+And 'struct xe_device' can be a forward declared type that cannot be
+dereferenced by VFIO to enforce some code modularity.
+
+Using strong types is obviously better than passing around pci_dev and
+hoping for the best :)
+
+Jason
 
