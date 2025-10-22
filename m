@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-864675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B31BFB503
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9905DBFB501
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9642420A94
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500AD42269E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D968D320CB5;
-	Wed, 22 Oct 2025 10:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D85A320391;
+	Wed, 22 Oct 2025 10:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H1LAxPRJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OhFs47kf"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF0031B80D;
-	Wed, 22 Oct 2025 10:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B6831DD82
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127681; cv=none; b=BApMuhIRlXMIKxJJe5n3RPSef1Oq3iZ7mpm/FzuChwo/NFfCBTr+SZoD4Mx/7DQwnWmw/oe9ZLD3YgQ1ZgRgP5kVzPEjJzudvyHrrBSDXtkqyJwcB6arSTAqGl0jZ4NG8wwMelDJCU5bIuXcxr2CKrLBKMvljOqX8FrLX+QrO9U=
+	t=1761127679; cv=none; b=fBeEAmUr2R6rnsBxFnAWWl3SQKIEa/azwBLnE9aHgxHSmX6dNctmnnxdSkHpdp4oL8a0GfwOGNh2WSY/tpXFumiYtTVGyjWo+W6j1z6ojGslg0b0Q9CqcEGkvC1OHYEuOs6pxY3tKyStg4J0NACoRhjMpOhY+/VCLM9ugBp+goo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127681; c=relaxed/simple;
-	bh=2gWgs3JtkqrQlNaMUerxSTz5OsBLRFl9X1Eoptbmj+U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Tf/tchjgvFF0dgwmFQjO1/hi41YSUCmB0CJCWJtH5X01aoa8AWjAFomZx+oHpxvOSqENdh+wbaPL/Ntiu9T0igy9ihNSzwSvN2x2P39NCb1kXaB2Pb/bODmsxIiCeCFFaPLLKfCHwz/5hGsfjqJAnb5oMZ2IxtiAdRtxT1DYreU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H1LAxPRJ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761127677; x=1792663677;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2gWgs3JtkqrQlNaMUerxSTz5OsBLRFl9X1Eoptbmj+U=;
-  b=H1LAxPRJbvAmfCA9Y1z1+PvYuM+QwgjaHg/qujkxFwxcRE7YIlD8vyLK
-   qQh2agpfwI/XVlwUgQlxBsljJw9f9qRbG/I4yYK8J/CNmKT5QjVA++t3t
-   rREYOON1kkwpgnljFSwLlFcp/VAT8GXB9atxK1lmTdWx1mF+U4oygsDjB
-   1TMkIkOL6r0NJURx9+DFMLYSJoe8Lib6I3UhZ+/QWisDfwQFGgn+z7qGe
-   NhfdiEjpgbau/bGPwNfN01UytuaxTDpU3e7ndjiBJeFWuSuj0YyCxen5G
-   m3k0CYJnuqMhfnI9syEg3vsBDt9PhjO8HSb/myqufMmacYWpGdNRjzQOD
-   w==;
-X-CSE-ConnectionGUID: KTHn7FDMRVq7yU0SiLopSw==
-X-CSE-MsgGUID: Y5j1jEWITZCNfYCxK+jebA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63173597"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63173597"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 03:07:56 -0700
-X-CSE-ConnectionGUID: sOQyO88fRPmnmtVCeanZ6w==
-X-CSE-MsgGUID: waVFlqmcTgeaiFoWUxhojg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="207506486"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.104])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 03:07:53 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>, sumit.semwal@linaro.org
-Cc: christian.koenig@amd.com, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org, lkp@intel.com, Biancaa Ramesh
- <biancaa2210329@ssn.edu.in>
-Subject: Re: [PATCH v2] Signed-off-by: Biancaa Ramesh
- <biancaa2210329@ssn.edu.in>
-In-Reply-To: <20251022043108.7197-1-biancaa2210329@ssn.edu.in>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251022043108.7197-1-biancaa2210329@ssn.edu.in>
-Date: Wed, 22 Oct 2025 13:07:51 +0300
-Message-ID: <bc4356efa91d65d5a2407ea8a2cfd54bb697cf4b@intel.com>
+	s=arc-20240116; t=1761127679; c=relaxed/simple;
+	bh=Z/VP9qyxz0Ogx+cyT0aY9YmkvjeV15cKSdyDS0qNCn8=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HaCPdRlwyUtc8sSWs5LoQhU53MgT4TJs1fhICZKwDteGaC8QlDo/X4oxiJSdKKTavxy96vOa3Db2WAP6tLcf+2SKgNOIgsQihIzIe5GRaPNLQvltxAsITKEuuosipFQa7ne2r8bTF0AqvANNeN6DcDOVkgKaod75R/pfiJQxNWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OhFs47kf; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4270a072a0bso746660f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761127676; x=1761732476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NJg0GAAknmDdoURqaMYxb4ci3e27SCLBJB5wjnR5uFI=;
+        b=OhFs47kf570UzHxQNjH6Do5b+M94Dtkx5GPfEHP9YqvU9++akK5NEqSQg4eUuh6TjK
+         pvDFhh56mr4xfVKNJjm8NYHLHCw+/Sj8m/jWpIqDM/h7fOfv4Jk5NZrNpbkpnsiU9g36
+         gYez6UZ2B1QlFITmmSDMN5mVLGxpdeN4Onq+NzBRatLJI6BwMPVlMwBvHmpGof+qHDKI
+         p+vKZ2tkVVccT/Wa2dwABnqid6Gbrp1q9oRnGd3aFtRkwN8JlGbgKjupZb316pa4vrME
+         wpQfz1xwniMtrmWKg09a3FLaweakgQ/BpWRr72ZG8GHPaeVXnMBuIn90h3xBbsSjvT1a
+         u7Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761127676; x=1761732476;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NJg0GAAknmDdoURqaMYxb4ci3e27SCLBJB5wjnR5uFI=;
+        b=Ogv2hLpy2hpmFG4SLo2V7VQcczdP5KsrVCqYleo6BXQ3NgNPfUTfoSpbHz6sHpDhZm
+         iMIhDInC1DT4g6S/FqY+8loDH9/PH3rb9c+0MnKMkEnCL28CCuUra8qTgzGOU+qsrB6+
+         eqxqPIe85XOpLa21syH1agw02JwYKT388FSuWSn05lTurEjcugYvCzBOVpH3H/xrJB2g
+         09J5v8a1s/GjwyXyQb7ddp1xAzYyT3C4HoTu8L+1QVCvxww8ng9qeaeeeFCdsjVVAjLV
+         o1c7DpqrRIadZ5dO0wZI9F4qVJzMaxr1iT2bN6CuL4mR6Ix0LdcXp0oY31iJE3AB1ErU
+         1YCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtI3QWIl+CucP1dCyeb/t+Y5KaHwTWemkzn3I4mQPlp/goWL+6i58fSSpNi24mZdjuoMjQyvy8fdkSU64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2YGjjoACuWix/Lb6xTrWFSRfA6bJU267hQIaVlDG1b2c65T1Z
+	pYDTy4C9GV2GOWO/SOWKJxfeTlekkfQYONA/rUzMcpLrpLVMv4XEJLrMUODjPq7yP9c=
+X-Gm-Gg: ASbGncsRjAz0ej7/g+WKWFnaMU0s/8k1IqMPPMq3EDdjrXg+rm/gqReb0Yw7+67axrZ
+	RXfEq3iXFyMoo5THj0dcjSgvqhpIzT+C6rf7UTZIVJqn89Zc5TczD1tb3kaFWtLtAgmC9uVFvgt
+	H2JEQhIvvZg7mcd9Gd0J7WeyFzVsnoklP7JCywWE1iu6D/HdAwH/9xEliV2J8yz8zzM3kz5OYHL
+	Fg/es1dfp6M8BXie5o6Hp/iUC+5KsAnle3oHcBmmLRB16Cqv6y+hB1SlKj6gj8oy22hRJrt7N4n
+	a/+9X672B3RWE+7X7Pwek4dkZY4QIyrbv7XS8Ymvx7IC5QvoQ+d4zkRVAZKnFDzX9AqKABuKmAa
+	Gip95iQUhYOql+cEOhUSUWx/YW0p9ckl3PaH0Kt8fLw3bDTRzlg+ON1DOMnJ9vNHv12bZyZuSyT
+	FEz/mwJiZEDK5ln8ZvosFoWebMYzI=
+X-Google-Smtp-Source: AGHT+IEdX75qrN6US6Y5a5un6NzE8Q7BwB9wmhDu2fD1EZuWaGlaPnM2vNiBGgFCMMmy7GueZmz45A==
+X-Received: by 2002:a05:6000:290e:b0:426:ff0e:b563 with SMTP id ffacd0b85a97d-4284e52d956mr2329372f8f.3.1761127676222;
+        Wed, 22 Oct 2025 03:07:56 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce56csm24001630f8f.50.2025.10.22.03.07.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 03:07:55 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20251021095426.86549-2-krzysztof.kozlowski@linaro.org>
+References: <20251021095426.86549-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: Update Krzysztof Kozlowski's email
+Message-Id: <176112767515.50428.16111691709369055810.b4-ty@linaro.org>
+Date: Wed, 22 Oct 2025 12:07:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Wed, 22 Oct 2025, Biancaa Ramesh <biancaa2210329@ssn.edu.in> wrote:
-> -- 
-> ::DISCLAIMER::
+
+On Tue, 21 Oct 2025 11:54:25 +0200, Krzysztof Kozlowski wrote:
+> Update Krzysztof Kozlowski's email address in mailmap to stay reachable.
 > 
-> ---------------------------------------------------------------------
-> The 
-> contents of this e-mail and any attachment(s) are confidential and
-> intended 
-> for the named recipient(s) only. Views or opinions, if any,
-> presented in 
-> this email are solely those of the author and may not
-> necessarily reflect 
-> the views or opinions of SSN Institutions (SSN) or its
-> affiliates. Any form 
-> of reproduction, dissemination, copying, disclosure,
-> modification, 
-> distribution and / or publication of this message without the
-> prior written 
-> consent of authorized representative of SSN is strictly
-> prohibited. If you 
-> have received this email in error please delete it and
-> notify the sender 
-> immediately.
+> 
 
-There are some obvious issues in the patch itself, but please do figure
-out how to send patches and generally list email without disclaimers
-like this first. Or use the b4 web submission endpoint [1].
+Applied, thanks!
 
-BR,
-Jani.
+[1/1] MAINTAINERS: Update Krzysztof Kozlowski's email
+      (no commit info)
 
-
-[1] https://b4.docs.kernel.org/en/latest/contributor/send.html
-
+Best regards,
 -- 
-Jani Nikula, Intel
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
