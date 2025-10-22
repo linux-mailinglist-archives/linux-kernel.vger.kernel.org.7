@@ -1,158 +1,145 @@
-Return-Path: <linux-kernel+bounces-864703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87E7BFB613
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:22:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E405BFB619
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692B619C578F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 163C519C5B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848EA311958;
-	Wed, 22 Oct 2025 10:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5A93164D0;
+	Wed, 22 Oct 2025 10:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8E7pdZ1"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CCl1vRPU"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1088D3164D0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1310A19CC28;
+	Wed, 22 Oct 2025 10:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128538; cv=none; b=sy4jZiuZeR5E/8hxblMKZUfUnPUmi44ce6l4XPzcAa6YXPLbR0tlcnBdmHK7hKWeZRsZWzbfL93SU/Urm2GlZnVjS8weyEy+PPoXEreYYnpfvITTwK5clBdFionIDGLOoUR8zS2/v7iAjmWww7Ly3vzckH1n/gjJSAGbHt542SI=
+	t=1761128558; cv=none; b=ufvmmRJhvioJLh9VfpAfNM436uFf/+/8mX85mNZCjBZhOfaEMuW30DkB+30IkqNIJpLKmn9h9I+kID5Jl38RuTJJRv0FUYJrE0hwDBIHYuDRmjdJbMP0bdcTR0mLUcRdYeo5vz9fJldCAVNbnvVSbyV570kXpWFeyItQxDmF2fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128538; c=relaxed/simple;
-	bh=JxX8h2yrq3MpbPFrw+JMQfyErcTY4Nr+Dg57grPhra8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RY8J2I5ppoNe067XbdfS9A2FZCdJ6l6n4VdS2gSX6BMtOMs/xa79JD9wEdEOgKRKOM59pwY+2ARwuC82KQoJQC7TxPtJfr8XQnp6O7cGUmMqI6AERJg0oJ/9GKgYTWXHB7sBp9JMCMX/jNvYNs6ukv8Ge/gw8chQfv46DfMUmsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8E7pdZ1; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-890521c116fso775842785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761128534; x=1761733334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tg5CSyFuy1gjgzwuVzeNqzr1hqLjP8/oZVMupaN2ME4=;
-        b=M8E7pdZ1qnxrQ4QbbFlfn/gFH247ze9bFwq6DcWK1Js20H0shc5px6N+wulfKq5QUT
-         Fc37yQSX5uUAE8NdXQyQj4c7tFQadhPw+FqWt+/EBrRecArwPMYeipZawYw76hrrzYMP
-         6GLoHof5brboJqFh8J8I9pMrciD3KaUatnN+9i3GPtb4o7Gq7Y/llgKPYiskViO4mGBS
-         a1flwh8mggmhokE4kn81Gf0iPeyZOhxhTkRH/RTAFta8EzQi0LftQ2RYonHiFmqYkdbx
-         8MIuJda/mLw/KfSrZz2bXPW5GQtm4jTxxBXdUpaNCojiir6jGEtBw/ElnVdzcvSVB0LZ
-         SW7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761128534; x=1761733334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tg5CSyFuy1gjgzwuVzeNqzr1hqLjP8/oZVMupaN2ME4=;
-        b=lLG1VZ5zVqZrPD/qH/pv//9i1MAOHhYqEPP4wPmHeEs778cr7Z/1WXwaHvxjrf1rNH
-         DfuzqnyBvmAa7iS4rPEHkXGpo+L05L2gEBqRrR7Pl+XgHsES9hzyLCzvfdoX90P/p1dZ
-         xrn7iJml69WczRhPILpwfGtmMvkpGWt7YnW5pgFywgKxbatQp182Wlb1YbS4+kqSGun0
-         od8jrG1oL5PBVR+90CM9MpDKZy6ZaLPNQOg421dB3XUiq2QUnOIEwWUHZqSs0WKQTyex
-         t32TISuUQPkhpILkG0rqdq5pvVWWhZFLQm4ozQfBgHPKdQ08KThhOLLFx3LUeET6VJWg
-         bJ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUc/a69xhMkkIDNb90XJqSQwfs9MOXrQaK4G2+hU/odqv2ZgGQPSd6deHMLWht/FVqlUUAfuFPttcjt5OU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz01ItavCdOq0rPGNHgl+R0GZvS9QlAa+GR7TkypUbMmr5XGYZO
-	1sh+PYv87vD67kpK7i3Xl7RJbXCvE/DvjxURxMQPP2VNRkw3Gp0FSjv1uYLOAH1wWkoeDtS1sid
-	DXm3QEBujOmP8X7NYYir9eDxauJSo9OM=
-X-Gm-Gg: ASbGnctUQS9qH+0zx9901NKOlQWaOzzRB6Lst7W5TT+5K1wHH8y2wi5pdNYvMoR+wlS
-	UzpiuET0XdMO55b8o4ark90AjTvesGr2HpCSiijFwUpPRoeRVTr4Tw/qU5gDgrHF/UYCn1KOb2U
-	BehpZd+Paa+5CqRw/QPMty+ybTbJgPvwED21MHVBIzNPIJYmzfR7KR4FwLk5xYSeTNbkUyommgz
-	zpcwRuxqYahipkBhLR9zeQXBH5I3HBzbgx+uQum1g8dTuAgLVz3BqiFE3yKq7+GoXKyGDXTX+oL
-	0gTPt1irko09JZuU
-X-Google-Smtp-Source: AGHT+IHgh/2ue5XLoiEIIP3qVcbBgpSwlGUDyMrIbpcYgXG8Fb2NWv4YHZCQZ79f1++pVClCNC7jVN49zC4Kgu6WL3s=
-X-Received: by 2002:a05:620a:8083:b0:890:cfbb:f9a3 with SMTP id
- af79cd13be357-890cfbc03a5mr1867383185a.87.1761128534358; Wed, 22 Oct 2025
- 03:22:14 -0700 (PDT)
+	s=arc-20240116; t=1761128558; c=relaxed/simple;
+	bh=rtHIcIuW+eyTXpw+CzQkcCzTyOn28HLLhV1J/ymOUHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bVc1gA47K/zSwrX11DD+RYFgKUPInDAFSR3JX14K/CVuFvHs+eis7UkeQMamvo1mi9MIC6L6UteWDPLYe5TFp7YRMRhtWHE7pvpvN7J/tTdB5FFLedrTNwUS7BlGP4WfzlXMLks+u4d0ME/GJpVHPXD7gGP5tR2chdntc/GeW4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CCl1vRPU; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from isaac-ThinkPad-T16-Gen-2.infra.iob (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 63CB5605;
+	Wed, 22 Oct 2025 12:20:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761128450;
+	bh=rtHIcIuW+eyTXpw+CzQkcCzTyOn28HLLhV1J/ymOUHs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CCl1vRPU79fsJ6iCm3SmhgVG26BRv0dwyjX6kONis4hViy8tSXwdjErAmtHDLwc2Q
+	 qRqhUQdarbMrqEQQs0X44jlmN7KcoPoqxkrkrWPosDutvycRhiynysLCv0meeGpWZX
+	 cP8evIncqijhPqwDYhJgYJFzwHWnTev1eXZlHahw=
+From: Isaac Scott <isaac.scott@ideasonboard.com>
+To: mchehab@kernel.org
+Cc: rmfrfs@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	martink@posteo.de,
+	kernel@puri.sm,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	sakari.ailus@linux.intel.com,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Frank.Li@nxp.com,
+	Isaac Scott <isaac.scott@ideasonboard.com>
+Subject: [PATCH v5 0/4] media: imx-mipi-csis: Get the number of active lanes from mbus_config
+Date: Wed, 22 Oct 2025 11:22:24 +0100
+Message-ID: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
- <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
- <87a51jfl44.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
- <871pmv9unr.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
- <875xc78es0.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
- <87a51j6zg7.fsf@DESKTOP-5N7EMDA> <CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
-In-Reply-To: <CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 22 Oct 2025 23:22:02 +1300
-X-Gm-Features: AS18NWBircPFuACNmjNln0NVeJ5pMiUTEtaKbz7xy8k3SeBdgLEYQqjplgyUxCM
-Message-ID: <CAGsJ_4yeygfzna6SRG3poD9cXhFNz21-he9psiKvMTMG8WBgmg@mail.gmail.com>
-Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 10:55=E2=80=AFPM Barry Song <21cnbao@gmail.com> wro=
-te:
->
-> On Wed, Oct 22, 2025 at 10:46=E2=80=AFPM Huang, Ying
-> <ying.huang@linux.alibaba.com> wrote:
->
-> > >
-> > > I agree. Yet the ish barrier can still avoid the page faults during C=
-PU0's PTL.
-> >
-> > IIUC, you think that dsb(ish) compared with dsb(nsh) can accelerate
-> > memory writing (visible to other CPUs).  TBH, I suspect that this is th=
-e
-> > case.
->
-> Why? In any case, nsh is not a smp domain.
->
-> I believe a dmb(ishst) is sufficient to ensure that the new PTE writes
-> are visible
-> to other CPUs. I=E2=80=99m not quite sure why the current flush code uses=
- dsb(ish);
-> it seems like overkill.
+It is possible that the number of desired active MIPI CSI2 data lanes
+does not match the maximum listed in device tree. Add a helper function
+to v4l2_common that calls the get_mbus_config op to get the number of
+actively used data lanes in drivers that support it.
 
-On second thought, the PTE/page table walker might not be a typical
-SMP sync case,
-so a dmb may not be sufficient=E2=80=94we are not dealing with standard loa=
-d/store
-instruction sequences across multiple threads. In any case, my point is tha=
-t
-dsb(ish) might be slightly slower than your dsb(nsh), but it makes the PTE
-visible to other CPUs earlier and helps avoid some page faults after we=E2=
-=80=99ve
-written the PTE. However, if your current nsh version actually provides bet=
-ter
-performance=E2=80=94even when multiple threads may access the data simultan=
-eously=E2=80=94
-It should be completely fine.
+Compare it to the number of lanes configured in device tree, and if its
+invalid, use the number present in device tree.
 
-Now you are
+This series also uses the helper in imx-mipi-csis driver to set the
+currently configured num_data_lanes, while keeping track of the number
+of data lanes set in device tree to ensure we can still use all possible
+lanes if we need to, and the upstream subdev driver requests them.
 
-write pte
-don't broadcast pte
-tlbi
-don't broadcast tlbi
+Tested on v6.17.2, compile tested on media/next.
 
-we might be:
+---------
 
-write pte
-broadcast pte
-tlbi
-don't broadcast tlbi
+Changes v4 -> v5:
 
-Thanks
-Barry
+- Collected tag for patch 2/4
+- Updated commit messages on 3/4 and 4/4
+
+Changes v3 -> v4:
+
+- Updated base tree to media/next
+- Used local 'lanes' variable consistently in
+  v4l2_get_active_data_lanes()
+- Removed device tree references in documentation
+- Made comment a single line
+- Collected tag for patch 1/4
+- Removed unnecessary num_data_lanes assignments in async_register in
+  imx-mipi-csis
+- Removed some debug print changes
+- Checked return value of v4l2_get_active_data_lanes() before assignment
+  to csis->num_data_lanes
+- Added patch to move redundant debug print in mipi_csis_probe()
+
+Changes v2 -> v3:
+
+- Rename dt_lanes to max_data_lanes
+- Remove check for < 0 on unsigned int max_data_lanes in
+  v4l2_get_active_data_lanes()
+- Added comment to explain that mbus_config is expected to be zeroed at
+  init in drivers implementing get_mbus_config subdev pad op
+- Wrapped signature in header file and source for
+  v4l2_get_active_data_lanes()
+- Added kernel-doc documentation for v4l2_get_active_data_lanes()
+- Added debug message to indicate an invalid number of active lanes
+- Changed csis->max_data_lanes to csis->num_data_lanes
+- Changed uses of csis->bus.num_data_lanes to csis->num_data_lanes where
+  appropriate to make csis->bus immutable after probe
+
+Changes v1 -> v2:
+
+- Added helper function to get active data lanes in v4l2-common
+- Store the maximum data lanes possible, as configured in device tree
+- Added media: prefix to commit titles
+
+Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+---
+Isaac Scott (4):
+  media: v4l: Add helper to get number of active lanes via a pad
+  media: imx-mipi-csis: Move redundant debug print in probe
+  media: imx-mipi-csis: Add num_data_lanes to mipi_csis_device
+  media: imx-mipi-csis: Support active data lanes differing from maximum
+
+ drivers/media/platform/nxp/imx-mipi-csis.c | 19 ++++++++------
+ drivers/media/v4l2-core/v4l2-common.c      | 29 ++++++++++++++++++++++
+ include/media/v4l2-common.h                | 20 +++++++++++++++
+ 3 files changed, 61 insertions(+), 7 deletions(-)
+
+-- 
+2.43.0
+
 
