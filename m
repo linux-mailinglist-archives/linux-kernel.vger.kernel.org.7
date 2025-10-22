@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-864163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C06BFA121
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:36:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C912BFA127
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6451896696
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:37:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED1B834658D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A862EC081;
-	Wed, 22 Oct 2025 05:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4512E8882;
+	Wed, 22 Oct 2025 05:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YTnIjTHa"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="0Up3RLUx"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5A4241665;
-	Wed, 22 Oct 2025 05:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709BC21348;
+	Wed, 22 Oct 2025 05:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761111391; cv=none; b=pwu9NTDtCAc10rElRMU24xs+WMK+hjG/KiQ0bToKKkZgzE1HEWHbePEA/s7Ig7WFIwm/HxYBnOkXHCB5gEOLDrqszmC23PyZW+c7/BLJGPEPpYEhKtCu5bM8QxRlX7+Gt1lsXfC4g+LLk/4t/T+lto62tGpbAB2XizdGMu10GZU=
+	t=1761111437; cv=none; b=tDNiwXS/ksjkGJdixphHaWJtc22pr4fkesM/6FB4Dn0jnvfBHdOUVaf8fO8cwAGKJo8w8vmoxyYbdCZoX45tn/CSZscg0pxLRJXIqGS6dNoaHLzN0viKzKXt5UEQRf3aYyOlarxfTJSPkuDeja+uEHkkw27VyZkOWgaANOiAMm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761111391; c=relaxed/simple;
-	bh=awQGtd41A8uGDvsJsAbBEhEhtFv/LAvHYcUY4XbCr5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=q1Id3fUYY8pF0l+Q5hqF2eq5HhLbZdJQTPJFTT9O35skUckImsCzrkvVZM8wyygsuVpYn1wmvyKWLjLsgD1TI0wqE82xKWAGzoD7ze0ut8Vl+PppKL+iKI3FNX2mRqg8bpj5Lc8u1RiT/uYqgg7GELlQi2kYwOotY2V4ZBg21zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YTnIjTHa; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761111386;
-	bh=uefk+q4eodMdyY7iF4SMmw+2quBAIhe7eskFDEaoCNc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YTnIjTHa0nluyLJrVBLmwjT7cpC7X9WpqtV/LSB8ujDMcobE/V6AkA7/7FABezwDG
-	 xIffGRtZrjaQ1p8rN5j/1lQMZ0BEsT6LyZ6fGvC5/mE+7BE/pEThuRCOXeci+R3lgV
-	 iQb8g9khoTgFUFIL8d9lxCwGADSL/enlNVGoWf7rNip5yP/9hR4N3gKHJm5+ZWDmNA
-	 PA9sEsqKsi8VkL9P/uOYWHrDnvPHQheFncOkQI7bOSOFvqsvXZmIhC+1hiKuHTCNP1
-	 8o4XJlxm+Jqfw1Lp0J2i8dnnBaTRDuASxo6JpTtczx8MMg2HIlQKzh/hPuFLucENoX
-	 EWr3FTiXKSoKA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cryZf3t1sz4wCV;
-	Wed, 22 Oct 2025 16:36:26 +1100 (AEDT)
-Date: Wed, 22 Oct 2025 16:36:25 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [PATCH] MAINTAINERS: add Mark Brown as a maintainer
-Message-ID: <20251022163625.5df7542a@canb.auug.org.au>
+	s=arc-20240116; t=1761111437; c=relaxed/simple;
+	bh=Tbwss0nXMa5BTDRSqT/ghsm1C3O/dSOWFT7FaxGnv98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FXaqH8y7IDdCJU7e22hdWrKVfblvtlbByJHRVvfnpG3jB6bc/ZQDsNTpImodoyeEXP6wjnFWVbrUeVEFwqVAcg9q3CrWBOZUXL9mMdyyMZm+/0lWxtzUQ3Qr7ZKxvR0qttOf8w7DFa8SFRbWHlLRNIf+g/IBPODH7UIAjCZXp6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=0Up3RLUx; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=55BpwGusbE0Q6zvfMgJToUDCvwjVEr4QNsPjBG6PryY=; b=0Up3RLUxevg5HmyNmj6t+iLeeh
+	h9sk+cN5AbTz9BrLD/uDPr/dJ6yMTn4STQXIxdDeme1rpDqCwsKSqwtjgDSfuN0WhEqSGTgs9sICn
+	KnndmNcMxh5kNqok6inV4Dp64af+lZ0O3tIsTW5rttpQEwqMuDua7tJl35tz6k6CZo77Zy6IXv1/c
+	VpNDDm7WFADtWKZrKUI87mBA0q1axdv/MErhBQ51WFshpSAiZj84uANBFqG64Yx8a3jFIKMkXkQKL
+	EpyNNauoeWcqTN6ex1m3UZviSnSQ9FW1FYLbRthOB0iYpcMFYvwxelah14H1fjC/wJ5CUg/ohlUXQ
+	PKS92Ryg==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1vBRWp-00H5T8-33;
+	Wed, 22 Oct 2025 07:36:55 +0200
+Date: Wed, 22 Oct 2025 07:36:55 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] driver: reset: spacemit-p1: add driver for
+ poweroff/reboot
+Message-ID: <aPhtd0j6iBpqiGUQ@aurel32.net>
+Mail-Followup-To: Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
+References: <20251021201451.1013640-1-aurelien@aurel32.net>
+ <20251021201451.1013640-2-aurelien@aurel32.net>
+ <20251022004830-GYB1522542@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//e+U.nePsFFNmhLVI+DBgmH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022004830-GYB1522542@gentoo.org>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
---Sig_//e+U.nePsFFNmhLVI+DBgmH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2025-10-22 08:48, Yixun Lan wrote:
+> Hi Aurelien,
+> 
+> On 22:11 Tue 21 Oct     , Aurelien Jarno wrote:
+> > This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
+> > chip, which is commonly paired with the SpacemiT K1 SoC.
+> > 
+> > The SpacemiT P1 support is implemented as a MFD driver, so the access is
+> > done directly through the regmap interface. Reboot or poweroff is
+> > triggered by setting a specific bit in a control register, which is
+> > automatically cleared by the hardware afterwards.
+> > 
+> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> > Reviewed-by: Yixun Lan <dlan@gentoo.org>
+> > ---
+> > v3:
+> >  - Allow building as a module
+> >  - Remove outdated Acked-by and Tested-by
+> >  - Collect Reviewed-by
+> > 
+> >  drivers/power/reset/Kconfig              |  9 +++
+> >  drivers/power/reset/Makefile             |  1 +
+> >  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
+> >  3 files changed, 98 insertions(+)
+> >  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
+> > 
+> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> > index 8248895ca9038..6577d73edbda4 100644
+> > --- a/drivers/power/reset/Kconfig
+> > +++ b/drivers/power/reset/Kconfig
+> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
+> >  	help
+> >  	  Reboot support for the KEYSTONE SoCs.
+> >  
+> > +config POWER_RESET_SPACEMIT_P1
+> > +	tristate "SpacemiT P1 poweroff and reset driver"
+> > +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> ..
+> > +	select MFD_SPACEMIT_P1
+> I'd suggest to use "depends on" instead of "select", the reason is that
+> using "select" will sometimes ignore the dependency, considering
+> the reset driver here is tightly coupled with P1, so I think it's 
+> reasonable to switch to use "depends on", also refer below link
+> 
+> https://lxr.linux.no/#linux+v6.7.1/Documentation/kbuild/kconfig-language.rst#L144
+> 
+>         select should be used with care. select will force
+>         a symbol to a value without visiting the dependencies.
+>         By abusing select you are able to select a symbol FOO even
+>         if FOO depends on BAR that is not set.
+>         In general use select only for non-visible symbols
+>         (no prompts anywhere) and for symbols with no dependencies.
+>         That will limit the usefulness but on the other hand avoid
+>         the illegal configurations all over.
 
+Thanks for the pointer, I'll fix that in the next version. I used 
+REGULATOR_SPACEMIT_P1 and RTC_DRV_SPACEMIT_P1 as examples, they'll also 
+need to be fixed.
 
-Mark has been kindly helping fill in when I have been unavailable over
-the past several years.  Has has also put his hand up to take over
-linux-next maintenance when I finally decide to stop (which may be some
-time yet ;-) ).
+Note also that without the select, a default value has to be added to 
+MFD_SPACEMIT_P1, otherwise this makes the default values on the 
+regulator, rtc and reboot drivers useless.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f2bc6c6a214e..52f9d98091ca 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14420,6 +14420,7 @@ F:	tools/memory-model/
-=20
- LINUX-NEXT TREE
- M:	Stephen Rothwell <sfr@canb.auug.org.au>
-+M:	Mark Brown <broonie@kernel.org>
- L:	linux-next@vger.kernel.org
- S:	Supported
- B:	mailto:linux-next@vger.kernel.org and the appropriate development tree
---=20
-2.51.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//e+U.nePsFFNmhLVI+DBgmH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj4bVkACgkQAVBC80lX
-0Gywgwf6AhXGEGZ3XKbsO0jC+TvXALeXBSrYG6Z5AL1F6Pz9FIbchLUU6mGe+niY
-f7qudv1tnlidUWpBy1D5olsd0kCloFuPfEN+vdp1EgE914/LwVNrHVNO1+oVimsw
-htlc6ZP4HGmbSMkO1HUBUXOmZc16yiInCZsepjAaBcpn18y5bmOPGBxxBtpoSf9P
-rDPo9dQoxomH9Ek94aUvor2b5Gqn9Xed3iLA8NB7uw9GQthIjSSrCUcXt3bNAJ7r
-d7YCmdKwYpMucmonpiGN7cz8wQHsdPlF6O1YZF8Ov5gugay91dQdM9xJ2oSzRIXa
-A0LrXA0L2aoZwdiVsyNSt4BbRputtA==
-=bKyI
------END PGP SIGNATURE-----
-
---Sig_//e+U.nePsFFNmhLVI+DBgmH--
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
