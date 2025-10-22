@@ -1,129 +1,80 @@
-Return-Path: <linux-kernel+bounces-864582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7687DBFB1B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:15:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79ED9BFB1C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE841A0488E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A16188584A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBDE313E00;
-	Wed, 22 Oct 2025 09:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA89E305042;
+	Wed, 22 Oct 2025 09:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="gC+8vG2q"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FF34KdIF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E4B28A72B;
-	Wed, 22 Oct 2025 09:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7C126AAAB;
+	Wed, 22 Oct 2025 09:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761124518; cv=none; b=gHC+KHhFDK+pTmTwzTzc0M10pGu/FANvdjVcrLFd8Xa2wrvvezq/FjWO+UE0wEIrjFW2StjtpHJYqDP24MSpBmee//8/qSvihe3WPkVGcZ/VK9mZjugB2aX8QZe2VLOc7BhHzdLbxszQoxAkfejMANlfBP+Hd1AMAZb4HS3q/6c=
+	t=1761124572; cv=none; b=SSXDw6kPL5a1vcHzLD3H96/LNMfW/LK199uU6Te9mFQq/NMWts5GUx0YyzYlRJ0qk1E2PO9Il6u+GtuxhdBhKJ3bgeD+fOYFzrcRMMDXmiXFdRgU6zSUQLYc/zDyb7tt9Ob/jd/U6OtbMyclCeQIb6rStiJGathuPv58BiHYxDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761124518; c=relaxed/simple;
-	bh=2xq3R/jwURMT3riPJBPbFF6dNSZ4etKP0GyAxX70bV8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X02ovAqVblNtFcDXHSXwOhYSRt7L2oO9f0Doxx47FsZ1J6SAYUIsAIyUdR/T9hjmS2glQ3JRR1Y/lSVhM2/5ER1OcFin7xBJoPrTHkg4PG+1i0uGXIxHNjAUMgTE2WXg9yQSCMajRXCLCMQFlQFyt1RFJqO1FcsJgvxVa5hWwp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=gC+8vG2q; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 24377A0771;
-	Wed, 22 Oct 2025 11:15:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-type:content-type:date:from:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to; s=mail; bh=IjnnSkeO7vyXJXiM/UlwPYh5yPokHe5N0lGveEU0HQk=; b=
-	gC+8vG2qE9BkuL4gh/EFMYPhtvEf9aNatdC8D9hDQAgEFmv9vxXT1Bc4mLFigO1l
-	dv0mB1nRrkbVB6rXpep/8QefXofBk63mZ2U7v9gyMig6TXA5hl2l89o7WUVQaJD+
-	gQXrq/lXHVsGMhQHKLcvPhlhllZiPw5zOFIrvtiRxPiUs52fGLKihkQp6CUScQkH
-	gRh0LwH2Mhg30ZHELML0IlH/S0Vi9gJXZdUUsMB2DqtSZGDhJF21rkdFKDDZNd2/
-	j1pTa2QGKd6W94huNXE/ZHDnbXCIey8MAj1w7mE9d/b/KfNa0Do1Va03KDFeJ4Zy
-	rGQFPRdYzWuUcG+0W71mNcU3vhf9p28aI6xL7Znsb9IJt+V7E8yb/mtBeIREHqw+
-	mnqIdcyLSJaT/vNi8CkdLhxHBLTGgSsgR7oZ07xGctcO2qPpQf/PowrB+9ke+ssA
-	zRsLyb/PrJ5SkQOwt8cQWysXlXXaPfxl5dMMkqiM76k/uQIsBoMVd+bZm2wLoDFU
-	AvzAVN+cOfjnmqd9sJid8ACtOWR/5pBqi+xs8Kju7oMDkaIbQjmzxkYTBHVUNiY2
-	/Y4vCOu/DkGA4wuJB07IzBlCXNI8lospJ+MrfLJMMaM9sCzR1Ugznc8boOWLOItU
-	WCFMqTjGCGzPq80O5/3nNetQQU9wUwhusDIirczGs+4=
-Date: Wed, 22 Oct 2025 11:15:14 +0200
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Rob Herring <robh@kernel.org>
-CC: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian Fainelli
-	<f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] dt-bindings: net: mdio: add
- phy-id-read-needs-reset property
-Message-ID: <aPigoh4E3_g2LzoE@debianbuilder>
-References: <20251015134503.107925-1-buday.csaba@prolan.hu>
- <20251015134503.107925-3-buday.csaba@prolan.hu>
- <20251021201023.GA741540-robh@kernel.org>
+	s=arc-20240116; t=1761124572; c=relaxed/simple;
+	bh=mUqsZ/NHm2T4ZQHnrqEsg1PX9duhULKKJOquWhDfUlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qh5vLe4rMuBFJJleMlur+i0T/Zuy+B2g7NeKn2soqPI2Jb5WX0BnXBJZ3ZaxlqGhHC1pwIBtc2sMsr+dPeAy73d9IwUvhQD3VqXzITutn6Mkab6mcZ0oKn02X4swjuqrA8pCqD8/Tn92TXVaUNLbz505ZGEU8V+d5SPAD2Fd7aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FF34KdIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3491C4CEE7;
+	Wed, 22 Oct 2025 09:16:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761124570;
+	bh=mUqsZ/NHm2T4ZQHnrqEsg1PX9duhULKKJOquWhDfUlE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FF34KdIFNWDaQD7gbwO9qq4HgrK+KDXsNDhRqLYidL8qQGs/UDPI6dtWztAfs8lgH
+	 DgxkkrQlt4KmBDGStixwr2L6yKVNtcQtcLKeesy5HH30Pm/PamY5c5jBuDGhRUM2Hj
+	 YhoNAwbthNuNGD/Uo9z6/qmia2tTc+FyZ2pw7oetpzeCh6kg22uSfEvDJa+5D/adDf
+	 deWFk+ZzemvPilGIhembB3P7B2TYmDblDv0AnrFJcmJGVobh/2SB5TgNBjUyC1UimO
+	 foXMFSsmNKmP1Y8ppAP5hipMu3mFP4Dnk+u99CzJVmdZ4PYCw/8/+UpOJEN8kQ4FLX
+	 O4Tfo39qpknTQ==
+Message-ID: <8e1ca6ac-fd35-464f-9b8e-19bdb2e7410a@kernel.org>
+Date: Wed, 22 Oct 2025 11:16:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251021201023.GA741540-robh@kernel.org>
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761124514;VERSION=8000;MC=63647446;ID=130266;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515F647D62
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Daniel Almeida <daniel.almeida@collabora.com>, linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
+ <20251020-clk-send-sync-v2-1-44ab533ae084@google.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251020-clk-send-sync-v2-1-44ab533ae084@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 03:10:23PM -0500, Rob Herring wrote:
-> On Wed, Oct 15, 2025 at 03:45:02PM +0200, Buday Csaba wrote:
-> > Some Ethernet PHYs require a hard reset before accessing their MDIO
-> > registers. When the ID is not provided by a compatible string,
-> > reading the PHY ID may fail on such devices.
-> > 
-> > This patch introduces a new device tree property called
-> > `phy-id-read-needs-reset`, which can be used to hard reset the
-> > PHY before attempting to read its ID via MDIO.
-> > 
-> > Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
-> > ---
-> >  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > index 2ec2d9fda..b570f8038 100644
-> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > @@ -215,6 +215,14 @@ properties:
-> >        Delay after the reset was deasserted in microseconds. If
-> >        this property is missing the delay will be skipped.
-> >  
-> > +  phy-id-read-needs-reset:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      Some PHYs require a hard reset before accessing MDIO registers.
-> > +      This workaround allows auto-detection of the PHY ID in such cases.
-> > +      When the PHY ID is provided with the 'compatible' string, setting
-> > +      this property has no effect.
+On 10/20/25 11:35 AM, Alice Ryhl wrote:
+> These traits are required for drivers to embed the Clk type in their own
+> data structures because driver data structures are usually required to
+> be Send. Since the Clk type is thread-safe, implement the relevant
+> traits.
 > 
-> If the phy is listed in DT, then it should have a compatible. Therefore, 
-> you don't need this property.
-> 
-> Rob
-> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Actually, please partly ignore my previous letter. I managed to do it
-without a new DT property, and this seems to be a more elegant solution
-after all.
-
-If you wish to take a look at the next patch, you can find it here:
-https://lore.kernel.org/netdev/cover.1761124022.git.buday.csaba@prolan.hu/
-
-Thanks for the feedback!
-
-Csaba
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
 
