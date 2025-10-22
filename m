@@ -1,88 +1,151 @@
-Return-Path: <linux-kernel+bounces-865276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA552BFCAC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:52:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798B5BFCAD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52A86506FB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:50:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 755115025F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE3334CFBE;
-	Wed, 22 Oct 2025 14:49:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624FA281368;
+	Wed, 22 Oct 2025 14:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XI/uhcyF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F2F34C98C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02433321B4
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144545; cv=none; b=py2XZxn3w6bx4EmnxIXAV6oZeVd/GCzZAeho28I9p1cBLLxYbeh5n6Naegbgl8XWqnNRAwrW3eL7iNuLpOMwA9LK151K82DymuDuza9WkomQ2lsqqztkCPPTKVznV120eSwDQydBImPSdE4GERZBVzOG+TwKViEg0E5XBQuV2rM=
+	t=1761144561; cv=none; b=mqPxcci2ZQIaMMGfeYw6UT2aZGpc1at0S6CE5/6FAOYk1FjGoo2n0syjaURJ1n1DuA4GkdIFbYtInjQFL2eJs4qMqZIzpgTYACMWMeu8CF6VpBuqfGBrEdF4g4WOjF5oda76pwirRFMReZYoU0Q57fvFQtvKY3TxRWMtflyh8kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144545; c=relaxed/simple;
-	bh=yb6ko3uW4fBXUIWtO+pl6/cCimILqSsHghzXP6Lw7C4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mKPt+gWe5ZPTrwH4Fy+7TDhwCESYIi4ziCHv0yoq+cer5ZP8gkPXukAlpJVFbUgpBqAZqLl7fi2skiNix/iKINJOQloP4hI5IJalFCGFVIO4K4YpwVn7bgxTdhK0+lbsEVDqzVAXP6yqsXie1wmdyzUfxOFUJmd6YMUgeExzGeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430afceae09so76684595ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761144542; x=1761749342;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+VMEaSXwy0tYSRLUSKZ0QAdWCYXERfWLTXr47ndAhog=;
-        b=gp3rgpWcFFsiuUUpZ7pQejkkzJv7cpfC/SdN/Heqf6/umWs+W1Vt8xjz1ayTzrYXH2
-         ClzL/t33kSXsJHrlsYMNVVDwuyzpu6oqeqlqxe8CFpHSZTatiwdyGoQhP1Ikaxzuy4aG
-         LFFck/MC9qYp3ujz3WYBZC6SUpNSiPyuwsAYYvdcOlxlviCKg+QjaFM/VfDRYb6ftWyd
-         J9NGb7mVSojHCS49aYnJj/OVOl6oCYFzv7uh2m0W1VaMqvSUcllAhraUjQSwXqnGyFt1
-         wgSdeB0H4Qz8R5RBLh2HIOT/oL7e3u/s5MA05/WAd+T1Guo09OKbAWeeCNkCLVYpu2EM
-         pXEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVshDdJ93yB3elZtBVcPy3d9Xm8KUwWhonJcYgdUmR3l7+HFuxh3OVNFt2z6FpjABRN2T8yqfOMnr6mcsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB0DJCTtlCM+Iqw7oVEsr2XE5pGaJutbyYWqonih+/Up6yOjas
-	+Wc3BLBrpg5YPuOgqEmU9zHMhO98pxo3fswncthiq7lm77Yxipa8KiulyVA0w8FuKQhXfHR8we1
-	kOMJ1P+q+2nCz+QSmnOjAIr67Vc5E+9qoNhAzT7QToFEtpdSLjYB57shOAjA=
-X-Google-Smtp-Source: AGHT+IHAtnzh9M1oLX2r3WevE1LAmEhz8gMuVWy9orCDRVPOqOQCMlG3hx91ns27Tkw62sK/0WJGQAmoMDPHjwJkJQiB+UTa4tGE
+	s=arc-20240116; t=1761144561; c=relaxed/simple;
+	bh=ImEiLm7Drt2dfsAciETP34uRxZUNKlR7SI51bEybZBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kVok+jxWbYAY77eBReP7s0IDloxAH0OH4bDoJrIG36bxtMJ/lNt9Me0VeaTxhpsJJb00g55+HyiDU8eMfTHb+Ek/A8pdT1OF2SRdjAXCB+yjr4knZOOe69u7ZjVTda9WFj/jwwukWgKVnSet1jXTKy7b8QSnNPWgVQIAnHl/3Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XI/uhcyF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51221C116C6
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761144561;
+	bh=ImEiLm7Drt2dfsAciETP34uRxZUNKlR7SI51bEybZBY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XI/uhcyFWN5+N44JeFwkXIpOOSVg743wVIpQcmJrjNe70kc3f83uPMsceYrzAGG6L
+	 OU7CmJHSoxY6zUOqymxJo/ABH6858dmnxd+PMpA2ovp5kxwspBVa7c9FR8O/5K33QC
+	 194/vSX1T6G9DM65gfGsUFlLvhT0iotFIb07I2/4dQmfcNx6zSsa5MSSTy5Bm4lVq1
+	 vGyXjvAqZON7RxzYQoUirtfZ9hTSUoEs6uJr0/KK3D0djpN/8GW3YiRROJAbozyywf
+	 1Hne/807eyE+LMKIsEaROO3taAjRpdIZAsq6Igvns3dBnjt32bo8tcdwWzhxwBFb8e
+	 GWhMYlZlfUc6g==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7bb79ad6857so3659016a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:49:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWNVrKzjFYvsxoTPGRZhPuretBbZTFX6ZTB9llmOIgH4MlvynOZ5pWxRQWbS/FhOubI99aw6EsmHqtho4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRWxZqBifgzqLTeFEeaJWESIjztLHwOBjDz3M/CT5ApsLM/kwA
+	j7xQtpeRcI+oh13lTCcwCk4dy4cX88PHejRq2HHhWENJohXDnOdPgmF44EAd9PQKq3iEPiYeovG
+	9vNDT5abq0czz2IR9hmXhZjcG85KgRGo=
+X-Google-Smtp-Source: AGHT+IEi2AgiNYGLe+Y5LsmuUxd00vDbHtazsPbnZGEqn5G4oFCDEYtJ9h/inemvnNSvh7g83pOIB+d0kE/CsGuMT1c=
+X-Received: by 2002:a05:6808:30a1:b0:43f:42d4:aca5 with SMTP id
+ 5614622812f47-443a309898fmr8052852b6e.37.1761144560573; Wed, 22 Oct 2025
+ 07:49:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1568:b0:430:b3e2:a96e with SMTP id
- e9e14a558f8ab-430c529e627mr298565905ab.28.1761144542568; Wed, 22 Oct 2025
- 07:49:02 -0700 (PDT)
-Date: Wed, 22 Oct 2025 07:49:02 -0700
-In-Reply-To: <20251022140056.5Yda7%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8eede.050a0220.346f24.0054.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extents_range
-From: syzbot <syzbot+f2107d999290b8166267@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250929093754.3998136-1-lihuisong@huawei.com> <20250929093754.3998136-5-lihuisong@huawei.com>
+In-Reply-To: <20250929093754.3998136-5-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 22 Oct 2025 16:49:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0htzNf2nPT2GQ8aaunp9gfrFbfZzMaMACA=JaXLBiqz9A@mail.gmail.com>
+X-Gm-Features: AS18NWAvm7p6ma7WJj7phML1NVFtBll2ih0mDP2cJay9Ctfi3-ej0UTb3GVilHI
+Message-ID: <CAJZ5v0htzNf2nPT2GQ8aaunp9gfrFbfZzMaMACA=JaXLBiqz9A@mail.gmail.com>
+Subject: Re: [PATCH v1 4/9] ACPI: processor: idle: Move the initialization of
+ state->flags to acpi_processor_setup_cstates
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei.com> =
+wrote:
+>
+> The acpi_processor_setup_cpuidle_cx() is called by
+> acpi_processor_setup_cpuidle_dev() which is used to setup cpuidle device.
+> However, acpi_processor_setup_cpuidle_cx() also initializes the states
+> in acpi_idle_driver, which isn't good. And acpi_processor_setup_cstates()
+> is aimed to initializes cstates in acpi_idle_driver. So the initializatio=
+n
+> of state->flags should be here.
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_idle.c | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index f36f9514b6c7..5684925338b3 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -737,13 +737,11 @@ static int acpi_processor_setup_cpuidle_cx(struct a=
+cpi_processor *pr,
+>  {
+>         int i, count =3D ACPI_IDLE_STATE_START;
+>         struct acpi_processor_cx *cx;
+> -       struct cpuidle_state *state;
+>
+>         if (max_cstate =3D=3D 0)
+>                 max_cstate =3D 1;
+>
+>         for (i =3D 1; i < ACPI_PROCESSOR_MAX_POWER && i <=3D max_cstate; =
+i++) {
+> -               state =3D &acpi_idle_driver.states[count];
+>                 cx =3D &pr->power.states[i];
+>
+>                 if (!cx->valid)
+> @@ -751,15 +749,6 @@ static int acpi_processor_setup_cpuidle_cx(struct ac=
+pi_processor *pr,
+>
+>                 per_cpu(acpi_cstate[count], dev->cpu) =3D cx;
+>
+> -               if (lapic_timer_needs_broadcast(pr, cx))
+> -                       state->flags |=3D CPUIDLE_FLAG_TIMER_STOP;
+> -
+> -               if (cx->type =3D=3D ACPI_STATE_C3) {
+> -                       state->flags |=3D CPUIDLE_FLAG_TLB_FLUSHED;
+> -                       if (pr->flags.bm_check)
+> -                               state->flags |=3D CPUIDLE_FLAG_RCU_IDLE;
+> -               }
+> -
+>                 count++;
+>                 if (count =3D=3D CPUIDLE_STATE_MAX)
+>                         break;
+> @@ -818,6 +807,15 @@ static int acpi_processor_setup_cstates(struct acpi_=
+processor *pr)
+>                 if (cx->type !=3D ACPI_STATE_C1 && !acpi_idle_fallback_to=
+_c1(pr))
+>                         state->enter_s2idle =3D acpi_idle_enter_s2idle;
+>
+> +               if (lapic_timer_needs_broadcast(pr, cx))
+> +                       state->flags |=3D CPUIDLE_FLAG_TIMER_STOP;
+> +
+> +               if (cx->type =3D=3D ACPI_STATE_C3) {
+> +                       state->flags |=3D CPUIDLE_FLAG_TLB_FLUSHED;
+> +                       if (pr->flags.bm_check)
+> +                               state->flags |=3D CPUIDLE_FLAG_RCU_IDLE;
+> +               }
+> +
+>                 count++;
+>                 if (count =3D=3D CPUIDLE_STATE_MAX)
+>                         break;
+> --
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+f2107d999290b8166267@syzkaller.appspotmail.com
-Tested-by: syzbot+f2107d999290b8166267@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c6ce7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f9a2ca2a8964bd4a
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2107d999290b8166267
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ac4614580000
-
-Note: testing is done by a robot and is best-effort only.
+Applied with rewritten subject and changelog as 6.19 material, thanks!
 
