@@ -1,219 +1,477 @@
-Return-Path: <linux-kernel+bounces-865810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7861BFE182
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:51:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59019BFE18B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2CAEB349E96
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DD8B3A81AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D7E2F39CB;
-	Wed, 22 Oct 2025 19:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF532F9C37;
+	Wed, 22 Oct 2025 19:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hHK5M+y/"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012065.outbound.protection.outlook.com [40.107.209.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDDCCK5a"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DC0270EBC;
-	Wed, 22 Oct 2025 19:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761162661; cv=fail; b=J4CSfxBUIltolN5Y2q4F9ik5xgxO6rJpeRhmqbsmJHYuCZcpxKOyFNLE6qBn/fKs2HubeR1qsuTqBdTBHP1AYPVYZALhUb9T2AKGPGVoYor4Ix/oyPHeDlQLE6RpKi8nvYnSi8AbOjhRULy8njBops24JvLirPQ8T35BCmVO07Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761162661; c=relaxed/simple;
-	bh=MWEBZfrCS9AGLnb50eNk+yW+wqfUP+1rupOukU/2/YU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=J2VqFRqh52NLqHMWmHC9IUbxluKtizgrZA3/+SJrRPiofcy036KHWV7o6WgABkfmyHh0EnrOy39fVCjr+GcPGxpsVEX+e3KeJUaJVuqk6azb70Bjf0jDOmjZudY8lg/5kmpZSzIDqi6aLb3FHBAYv7BNPvMgwz37STvYBpxBGGk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hHK5M+y/; arc=fail smtp.client-ip=40.107.209.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GMCit7FX7H41rih19OERjBkjGvh95EweWU6LFEkaM+cKkSnzy3WkpD3OZQD159GPxJ7sBRLhIA/3wd9XvpzAjYbsb2wIkuM5MOHuPU9biQ8yYy6JZXEXVavoQgGgmW1azicNlrkDHpUwm5fcB+b/JK/ADxdSd20cGZi1LJbPCCfz03O+FmoQjAhQzz0819HXm+QD+n84EyTX1IQaf0R+H2nNsqadz9iqCaeJv6bGOPPWk8TWI+5QuiaaeVChaofCN2250VjyVqxgN1S4hMSn9GKXSyJHvxG9Inlem0TAFIGIAxwzPRXRS/yoTUoLVXPM6NeJi8tG4ZhpROTxtntQnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IIzOnANczyqezrt429reqHU52rfSbWVCBV4PAEVXiaU=;
- b=wgywd+DTTjj3hZJFG6txySPvGhD2pUXXiqq4oZFeo8d9kCdnOzPr27ehDpFLlaXHhlt2K2NDT6Z1kp8Q9PdhwZACK8lQXVPEaqIKERMXxocez+Lwy6uAB+ZNC9zomLOWchLBpCuEbFprxL52nFAJMxhFFPhZ73wBO3K4u7VcKNbOeMXgfi91gaC3O5iaFNtJSysjZCNNflNHjUFHwlc6kfCRy35EZqTEEY8xHOC8zDFBtaQoYOdCjptnmGnPYgcxAM15I0HAT4N8BOgx+1ISgS6xFVju2GITXMtBMNGohvKneL3YGtmUfjc5XET9BHJw626kmSJvjySd7pNfLSK1ZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IIzOnANczyqezrt429reqHU52rfSbWVCBV4PAEVXiaU=;
- b=hHK5M+y/jRd7hsLHXQiCXPQVUgfv/l96BG26zCMLg0eNL8Snk/yowi6N0d2i9trSOkh7y1E8ko2vkgeFrSdQwtulHKOXdgVqiNgPtdA1vGJU9oZpScbBA9uAmAhceVEHHEKmLvB4GFB1qj0WAXZ281FLj+x/PvjedKWpUW7rKzBC1GiYdZA/AyIF6qAobvhShW6R3Atc+kNLQqgACkT6qqWlisHvR19OW/jKB20prSkyBJOLRHZ6DV914KwcmsGPewY2ogVlr8wpZOXo6J9aRoNxfQidSPqvSx7Y6aNxV/totAMKh6XUeRnAYsXQe6qLUwj8TceatmYgfM6YIq0p5w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by BL1PR12MB5948.namprd12.prod.outlook.com (2603:10b6:208:39b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
- 2025 19:50:54 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
- 19:50:54 +0000
-Date: Wed, 22 Oct 2025 16:50:52 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v7 1/8] iommu: Disable SVA when CONFIG_X86 is set
-Message-ID: <20251022195052.GA262900@nvidia.com>
-References: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
- <20251022082635.2462433-2-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022082635.2462433-2-baolu.lu@linux.intel.com>
-X-ClientProxiedBy: YT1PR01CA0124.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2c::33) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FE02F60D6
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 19:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761162668; cv=none; b=k81zCxeGiuURlpeJQxTqao1HoZXi1Cl0No6eORpROpVynabMUlsm+HYAxKO9nkJLgZO3GR7upkPs52ffyboMWhULpIOjRrja+sGYfo4JU6zn4XEIbmCy3IB7QBYiGS+lm74dFF6LWeJOHLIQ7OBHu7ps4ztaxSNC9fnmQ4ey/x0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761162668; c=relaxed/simple;
+	bh=SstUcV2ZpKMxVEws3v7qyscG0YkhYLLxRaSv8i1r0po=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QlT/7s+jOvXlP8jlZJEIqX1WA39NVUvTDR7mgnVnl98DkuGQPxzX0/MDHi7R6s3GKadrwHrxON9F87IIXx7NZ6ewCRJz3vzj8ldmDrAgI5Qa3FyexHdBmqQw/JKZSf5Q7N09Om0OJRaDxsRarEAPdJqPlClHjZ0SJ1q1RF7tDZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDDCCK5a; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57bb7ee3142so13476e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:51:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761162664; x=1761767464; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1ZD1mq8gMBr2IRj7aFqJIJGCl9HbZeyMciW+Dg0MQqU=;
+        b=MDDCCK5aOaKl02bpwbBXLsHaaqZLzK/uSaGRICMwjuoiMIqLeO9gyslz0zcjDeeovo
+         VcCKE+ynynWw9rz0b9lWHsK7qxPZFlLlVyCbgWitd1SwA6oMagD6r/nHoYFg+QQ+lwnL
+         xJU3GphcHdEwra10HFPUw5DtT2o4+XigVgfP8TFyXQCKkQAth+xqstWb3Od7rQXY4RGm
+         XAM8NpNOM/KD3w+TPSKTy8OQjayQHgLhwTwMO4K3Oqz7k3x1JqUar9kftijyd34cvapa
+         X3Cq7tChqOOB0k2TQhphUJVK5POs09PocCe5mchba+yrmJybbvAEDDw7ji4MQSGXmLVy
+         7hSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761162664; x=1761767464;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1ZD1mq8gMBr2IRj7aFqJIJGCl9HbZeyMciW+Dg0MQqU=;
+        b=WRJOIrnGyov+g03rCvHP75VUuEns2OSSV5IU08JqFGdD3VR+eswBY0c+v99LfcjNdC
+         95v1loFynRnVksq6Nnh/5E6jcLgJ9UoiB4D8chT9/bf9DN/c2vHD0Q9L7knrCKIFgiL6
+         i4jWwAKlUwNIXBAToSvCHm9sCOHHypmhzt54NfSgGlhvsr8D8CdZzx3AVvYoXAM7QcYF
+         rP0RBrQREQ+JbG4g6g9YHsN7wRjkjwMKZbfHDBwQsELTZMUMjzbiqlxH4hIVlP/8fOfm
+         T7kGHCkfWXNDJ62BULfwplk3XY67jwFHpbUENLgCf68xJ74PxiT4M+sSiLNoGvJgoo++
+         AVEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVllH65uK8mtSiLpDHR6Bm9kajqVaCwjKKRecG0TBa4n0gFOY72WngGPd0eevi37ZORy1Uu/rbVVWd4vIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcbqH5kqVvZlpxMfbx4l1Q7vw598CyELKDkkrgSaagUle1FVot
+	L+1z0W/JZiIJFtBQNQ9PG0TnC0tfB1UjHks8XbxURjIKWmMV+PQ8d6ct
+X-Gm-Gg: ASbGncs6nD0qyv7g/VTCEW1TMbrWZeUiafK8Nm3CSHFy9sSjh17JaiyoJUb8wTtrqc7
+	K8XRKIXazC+OX4pjkZeejAyb9BAVCxu0sk/TNP/bbD1ak+h2AvM2ppRlBtlshSU5fcRPiaVwxei
+	kcyG0LwyKdYTAjXnNgONwc2KNZy35xwt/0Vbtkdhb00/nU8pnHKR/QmNFpVRrLpBlwzuEvWw6EK
+	op6Nc4rYoKQEXXV4rtMDR0Xw7uAajleOQS8bVrwqC0XIyQb4ZEaKx4iEk0T/tuDlsCHCc3K6VGC
+	G/FyL7qRaszvWR+xgzc4GuV1CjmuXKe8hNIYpkQG46QofMUCWzUZkMTiZ2VVQ4HnQQrz+0k5PK+
+	cnE+8oNsBhZJW2+5N8cUt+ZdDxGW9/Tj+515OpoXdSWiyPz62jB3PBR4XzTU2mY5BnKKhR4PWWI
+	rDoi+NjXUUu7rQThoT39ir610f/vLua7sWBMvr86/NqXytgWPreRkJDXudZu3PM1ucnwOSXbTmK
+	6dIYyoDIzSvsN384SmKjVc=
+X-Google-Smtp-Source: AGHT+IEDPw7SHJLDgw9i/Vf5F7SC3HLiESsRJ1Ii9tuDw3dxdME/S3zTTk+J9dl4oUyuhbFokc8GGA==
+X-Received: by 2002:a05:6512:239a:b0:57e:7040:9c77 with SMTP id 2adb3069b0e04-591d856d7d2mr6589814e87.38.1761162663350;
+        Wed, 22 Oct 2025 12:51:03 -0700 (PDT)
+Received: from t470.station.com (2001-14bb-6d3-208e-36a3-d115-fe36-2b4f.rev.dnainternet.fi. [2001:14bb:6d3:208e:36a3:d115:fe36:2b4f])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4d38714sm50764e87.105.2025.10.22.12.51.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 12:51:03 -0700 (PDT)
+Message-ID: <95685a8d1b0bc73e5d9b926c5c9de983a0802c70.camel@gmail.com>
+Subject: Re: [PATCH] afs: Fix dynamic lookup to fail on cell lookup failure
+From: markus.suvanto@gmail.com
+To: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>, Christian Brauner
+	 <christian@brauner.io>, linux-afs@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 22 Oct 2025 22:51:02 +0300
+In-Reply-To: <1784747.1761158912@warthog.procyon.org.uk>
+References: <1784747.1761158912@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|BL1PR12MB5948:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff747ea2-1cfc-4341-11fe-08de11a44f89
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5ekDqMvcDSR5PpLGth5zAFA8s8xcT79sDcX92YzG03VPZvjhqYOUo3eYyLmh?=
- =?us-ascii?Q?ygUyWpP5qfEBoIgEYol1hRCm0dLt/0oBXK3Xf+vdDlo8Usymd3ako/KkbodY?=
- =?us-ascii?Q?vhPTMG7dTIpVMxNhUY+3whzaUOzApKGZlKfPOEQJqGrdx5pBMpY0xiIiKprg?=
- =?us-ascii?Q?K5hFNCLMdUFDGyb9Wga6+HQMJOKX16nJym8jJiXAXtGg5o0MUTNv/WX0mGLm?=
- =?us-ascii?Q?y22/nnoi5JY7m8gC+P3nxmno+99T3op0T0DWP2oJ9bhkteGKfmWRCQ8yX5VS?=
- =?us-ascii?Q?kQpx3dbBH/cwtIZ3Gh+D9r4s9mSlFe8oVUUVyCS8AmhG5/FckyYpfjHIYFZO?=
- =?us-ascii?Q?HJ+/4yZIgkHANa2sp0tR/2KYrPyKIInxEaNxcfZNsUXMF1RCUyw6gSaJU1be?=
- =?us-ascii?Q?iKiFopgSeA8nIulo5QKT3Tfwe6dCWauj4JdUdGFnHB+rekU93p1URJkU328A?=
- =?us-ascii?Q?Iv1nxK5ZVesrT60nhsW1cMm30CnfAgANCoIZVxg22kmGkRLAz9ePhJ+HlxmN?=
- =?us-ascii?Q?VgSLZKd1TlBMEa/5sbIkR8O8rr/sqh0fpDW+PQWV3SKbQ8xCAqr4dgb3Iis5?=
- =?us-ascii?Q?Samy7LeFdlvDvpmMeZ2VrKKkcHvaS/sUqCeef2Q3ccL94PI1EERROLsPBhNc?=
- =?us-ascii?Q?WVjkepeGwONXv9TZcVNbwaFKfyrNRW7iLfLj+cV0FgsK452cWHKgS8fG4cAI?=
- =?us-ascii?Q?i3gX9dy86+G/pEZ73N8ws/LEmNXNF3UTsxlinzIX75cY3ioaduT4ACZsJqEF?=
- =?us-ascii?Q?VHVaiWMIToRF+Duz9HV8B3X3iL5iHsjLJ2bd7nIvrUelcnR43+bkfPST82F8?=
- =?us-ascii?Q?opCXXzVDlsPeWiswOhLW2CZos1BaMJ5j63Gc5iGV+jcpyk2cCMdpLY5xijFD?=
- =?us-ascii?Q?qL10T9DaD2puuW598hY7o9p13DF0zmTVtKfz5OPMrBJ57Il9U7WW9xJxCUjU?=
- =?us-ascii?Q?YXlpfjygECMP21rFuqIcsgjN9IEjf6tD387VNEzIHrPbccDUBVKT2NGrpEiv?=
- =?us-ascii?Q?UEYjCEV5m4jKt2uOxwpGPqp7TFykUGkq50T/YGsGbODeT/1Pee+SPW251nlu?=
- =?us-ascii?Q?B3n8Xf2SeUrci1oG8FA2nBgGReN0hSuwjbEsSj34B5DoOG8+MW2fgWCme4yq?=
- =?us-ascii?Q?u3KTrobS7Dp39Lu35+3wOaJasHb8qMlTjHGdoi3XM/UDpeyMb3P3Ak37NnR1?=
- =?us-ascii?Q?bsYMCPCeG2F4030b7h4LS4i+dSMfees61OVDLoBunn40vFP/+tljg4Wq9lyF?=
- =?us-ascii?Q?6xhnYXOp1if2ByzHSXenlcHJB0kSug1qEjfcBX22BUWNJ6E2xIlfVv0kECCe?=
- =?us-ascii?Q?vlkGoMe2WDwNVUnCBGwB6Dn/bQKBFPYxoAEYuFqTjeN7VxV66OrAkubah3x0?=
- =?us-ascii?Q?EUfs80Prh2Dng0wRVyE3O0loY5BC+7qTscMEgcEZdmhmCntS1gXo5v+qc+Ej?=
- =?us-ascii?Q?iqSAJhjJxqHFZg0craQzD+m2oxXCUvbI?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fbugoZ7C3a8d56hP39k/F11E3dfiSBQ2wpIzl9GZQeDbJE6nZ98xzd/5KRrf?=
- =?us-ascii?Q?RXwoSTKU5J0hLww4xk2japa6Vozn/uY5v+kDh1/ymDs02Om4j9HlBggR04E3?=
- =?us-ascii?Q?QlwsRGfyHTwEAATxFqn3M/3IZ7sUaOqhZWj52Qna/e+ZxTlKqqqaXCyrL0bJ?=
- =?us-ascii?Q?IE3E0p5BiAP2tNeHeIDSCWSaxDDZCEgf+1acfChIX1GddiyupEocBRXy+y4T?=
- =?us-ascii?Q?a1949zQc9AnefikuKSUjLhrSCacegtGeq08OnjcVcN+MhJ3TCbIhPLQw0gMz?=
- =?us-ascii?Q?JdY+J702SD/E8hGxsVxLVGkl9I2wjFpMvR4ni56ApM2hFEJthBqfLaXkCjQ0?=
- =?us-ascii?Q?nVNJN9Q5pHSGU0ULRCJ3Qm6Jsxk0ehjwa2cUZpAEu3btCReefTnADlNMnHgc?=
- =?us-ascii?Q?AwhLqsZAlEjH3pqADpePGy0KjIGbLcMdFBCM+pGIzNdF4rx0yIh4+X6ZwcRD?=
- =?us-ascii?Q?QevLffJD9JVdA8kYLA1jfKYXtPjjgwOBtAFKmJdGOEf6kQ7YYzBbEpINhkcJ?=
- =?us-ascii?Q?nIDVvjhQLd2tdaA2wzMPIYQtOCT/TLju2DBMe1DYquBwu39W9cpJmhYtvJzn?=
- =?us-ascii?Q?J39/JYzoyUYcn8WhmQ/DBRcmYRX7WGZCHKOh2Z5ung+S9mtUwx+sjLhRxlcJ?=
- =?us-ascii?Q?/KKLky6QrhrAZxKINrNVDTOeIEJT0IoxRx8Lji+0YTpVgqLrnChcWHyvvwvu?=
- =?us-ascii?Q?eXpy4UpIPr2gbXLxOUBGc17RyzuKvM67UG8A5pLFsoRvQfHB5dj8WHCZWvBN?=
- =?us-ascii?Q?LC6bUuvSKBFxC5REmT3uyOyQauJaldowBWf4mOAEZL41DUApmwLYEDs67c4D?=
- =?us-ascii?Q?kSfgO+rhH8RrsX0jHt28xyyjwsqJ9zDPyOxX2z8hzJvAnN5d0TKqDWUMbRhA?=
- =?us-ascii?Q?094L5zj6QRktL/q89EDQIQx7dGqrFstFn+qsXkd7WWCFLYEgS0unAz9FV+Vv?=
- =?us-ascii?Q?hzmksly4guga3jW9wWfXOejlImX4MQaNQMbC7KZLSoch7tg1S1SlEovG88j1?=
- =?us-ascii?Q?tFvDJVONjOdmvyvDR2LqNDfXvyyBUFK9xDjwoSRwWYBf/1dyu/QmggxEpdfs?=
- =?us-ascii?Q?+sxqui8GPCbmT0GNE9uwjbRAcUKGzzOzKtKziFioxgjd1MOFerOECz1tVA7H?=
- =?us-ascii?Q?87BEGYHYqzqHoRoHalChapQDYHaMS/REfyBwt5PRCjVrKEmpErHDneOdGI/b?=
- =?us-ascii?Q?3Czk0u5L3IcaNktSESUU4VjZG0ML81svaRh0NuZZwK8/EuJvIWnti3ow6ieE?=
- =?us-ascii?Q?COQ6Kn6K5j77wZY1IFCtKb8u6Abt2z6UlUIEwkYJgSVxBXn4EMszq6KAkH5n?=
- =?us-ascii?Q?VaXYhd9p7AEZgPkqKr2th32nehPcNfTrJ5rdnZcB8TwrMuDION9suAmk7FaG?=
- =?us-ascii?Q?aU3TmLHSe5yIsagor36p9D5dnwTgxkI4wkzBk+KJ1KJR9DutaGxp8OHlpAfy?=
- =?us-ascii?Q?PW1rAMO6CKToeNDAB88uGGwlzlspFKkvz0WIeuFzm1mNfzpI5OjmdO49lUNH?=
- =?us-ascii?Q?2ZKso0oiSQmV+szgblZEiYiKjs03vZTHAUfdBYX/9knZOBB4evpppqa5sooP?=
- =?us-ascii?Q?SEIvKkToEfjDMBbDPWs=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff747ea2-1cfc-4341-11fe-08de11a44f89
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 19:50:54.1485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kBFr1oET4FYUqCUgKUUA6/ID+6hiIxDzfrNNnqtbxhsHQ6O7oJhd0Bub5Rep7ZW+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5948
 
-On Wed, Oct 22, 2025 at 04:26:27PM +0800, Lu Baolu wrote:
-> In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
-> shares and walks the CPU's page tables. The x86 architecture maps the
-> kernel's virtual address space into the upper portion of every process's
-> page table. Consequently, in an SVA context, the IOMMU hardware can walk
-> and cache kernel page table entries.
-> 
-> The Linux kernel currently lacks a notification mechanism for kernel page
-> table changes, specifically when page table pages are freed and reused.
-> The IOMMU driver is only notified of changes to user virtual address
-> mappings. This can cause the IOMMU's internal caches to retain stale
-> entries for kernel VA.
-> 
-> Use-After-Free (UAF) and Write-After-Free (WAF) conditions arise when
-> kernel page table pages are freed and later reallocated. The IOMMU could
-> misinterpret the new data as valid page table entries. The IOMMU might
-> then walk into attacker-controlled memory, leading to arbitrary physical
-> memory DMA access or privilege escalation. This is also a Write-After-Free
-> issue, as the IOMMU will potentially continue to write Accessed and Dirty
-> bits to the freed memory while attempting to walk the stale page tables.
-> 
-> Currently, SVA contexts are unprivileged and cannot access kernel
-> mappings. However, the IOMMU will still walk kernel-only page tables
-> all the way down to the leaf entries, where it realizes the mapping
-> is for the kernel and errors out. This means the IOMMU still caches
-> these intermediate page table entries, making the described vulnerability
-> a real concern.
-> 
-> Disable SVA on x86 architecture until the IOMMU can receive notification
-> to flush the paging cache before freeing the CPU kernel page table pages.
-> 
-> Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+ke, 2025-10-22 kello 19:48 +0100, David Howells kirjoitti:
+> When a process tries to access an entry in /afs, normally what happens is
+> that an automount dentry is created by ->lookup() and then triggered, whi=
+ch
+> jumps through the ->d_automount() op.  Currently, afs_dynroot_lookup() do=
+es
+> not do cell DNS lookup, leaving that to afs_d_automount() to perform -
+> however, it is possible to use access() or stat() on the automount point,
+> which will always return successfully, have briefly created an afs_cell
+> record if one did not already exist.
+>=20
+> This means that something like:
+>=20
+>         test -d "/afs/.west" && echo Directory exists
+>=20
+> will print "Directory exists" even though no such cell is configured.  Th=
+is
+> breaks the "west" python module available on PIP as it expects this acces=
+s
+> to fail.
+>=20
+> Now, it could be possible to make afs_dynroot_lookup() perform the DNS[*]
+> lookup, but that would make "ls --color /afs" do this for each cell in /a=
+fs
+> that is listed but not yet probed.  kafs-client, probably wrongly, preloa=
+ds
+> the entire cell database and all the known cells are then listed in /afs =
+-
+> and doing ls /afs would be very, very slow, especially if any cell suppli=
+ed
+> addresses but was wholly inaccessible.
+>=20
+>  [*] When I say "DNS", actually read getaddrinfo(), which could use any o=
+ne
+>      of a host of mechanisms.  Could also use static configuration.
+>=20
+> To fix this, make the following changes:
+>=20
+>  (1) Create an enum to specify the origination point of a call to
+>      afs_lookup_cell() and pass this value into that function in place of
+>      the "excl" parameter (which can be derived from it).  There are six
+>      points of origination:
+>=20
+>         - Cell preload through /proc/net/afs/cells
+>         - Root cell config through /proc/net/afs/rootcell
+>         - Lookup in dynamic root
+>         - Automount trigger
+>         - Direct mount with mount() syscall
+>         - Alias check where YFS tells us the cell name is different
+>=20
+>  (2) Add an extra state into the afs_cell state machine to indicate a cel=
+l
+>      that's been initialised, but not yet looked up.  This is separate fr=
+om
+>      one that can be considered active and has been looked up at least
+>      once.
+>=20
+>  (3) Make afs_lookup_cell() vary its behaviour more, depending on where i=
+t
+>      was called from:
+>=20
+>      If called from preload or root cell config, DNS lookup will not happ=
+en
+>      until we definitely want to use the cell (dynroot mount, automount,
+>      direct mount or alias check).  The cell will appear in /afs but stat=
+()
+>      won't trigger DNS lookup.
+>=20
+>      If the cell already exists, dynroot will not wait for the DNS lookup
+>      to complete.  If the cell did not already exist, dynroot will wait.
+>=20
+>      If called from automount, direct mount or alias check, it will wait
+>      for the DNS lookup to complete.
+>=20
+>  (4) Make afs_lookup_cell() return an error if lookup failed in one way o=
+r
+>      another.  We try to return -ENOENT if the DNS says the cell does not
+>      exist and -EDESTADDRREQ if we couldn't access the DNS.
+>=20
+> Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220685
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: linux-afs@lists.infradead.org
 > ---
->  drivers/iommu/iommu-sva.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/afs/cell.c     |   78 +++++++++++++++++++++++++++++++++++++++++++++--=
+-------
+>  fs/afs/dynroot.c  |    3 +-
+>  fs/afs/internal.h |   12 +++++++-
+>  fs/afs/mntpt.c    |    3 +-
+>  fs/afs/proc.c     |    3 +-
+>  fs/afs/super.c    |    2 -
+>  fs/afs/vl_alias.c |    3 +-
+>  7 files changed, 86 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+> index f31359922e98..d9b6fa1088b7 100644
+> --- a/fs/afs/cell.c
+> +++ b/fs/afs/cell.c
+> @@ -229,7 +229,7 @@ static struct afs_cell *afs_alloc_cell(struct afs_net=
+ *net,
+>   * @name:	The name of the cell.
+>   * @namesz:	The strlen of the cell name.
+>   * @vllist:	A colon/comma separated list of numeric IP addresses or NULL=
+.
+> - * @excl:	T if an error should be given if the cell name already exists.
+> + * @reason:	The reason we're doing the lookup
+>   * @trace:	The reason to be logged if the lookup is successful.
+>   *
+>   * Look up a cell record by name and query the DNS for VL server address=
+es if
+> @@ -239,7 +239,8 @@ static struct afs_cell *afs_alloc_cell(struct afs_net=
+ *net,
+>   */
+>  struct afs_cell *afs_lookup_cell(struct afs_net *net,
+>  				 const char *name, unsigned int namesz,
+> -				 const char *vllist, bool excl,
+> +				 const char *vllist,
+> +				 enum afs_lookup_cell_for reason,
+>  				 enum afs_cell_trace trace)
+>  {
+>  	struct afs_cell *cell, *candidate, *cursor;
+> @@ -247,12 +248,18 @@ struct afs_cell *afs_lookup_cell(struct afs_net *ne=
+t,
+>  	enum afs_cell_state state;
+>  	int ret, n;
+> =20
+> -	_enter("%s,%s", name, vllist);
+> +	_enter("%s,%s,%u", name, vllist, reason);
+> =20
+> -	if (!excl) {
+> +	if (reason !=3D AFS_LOOKUP_CELL_PRELOAD) {
+>  		cell =3D afs_find_cell(net, name, namesz, trace);
+> -		if (!IS_ERR(cell))
+> +		if (!IS_ERR(cell)) {
+> +			if (reason =3D=3D AFS_LOOKUP_CELL_DYNROOT)
+> +				goto no_wait;
+> +			if (cell->state =3D=3D AFS_CELL_SETTING_UP ||
+> +			    cell->state =3D=3D AFS_CELL_UNLOOKED)
+> +				goto lookup_cell;
+>  			goto wait_for_cell;
+> +		}
+>  	}
+> =20
+>  	/* Assume we're probably going to create a cell and preallocate and
+> @@ -298,26 +305,69 @@ struct afs_cell *afs_lookup_cell(struct afs_net *ne=
+t,
+>  	rb_insert_color(&cell->net_node, &net->cells);
+>  	up_write(&net->cells_lock);
+> =20
+> -	afs_queue_cell(cell, afs_cell_trace_queue_new);
+> +lookup_cell:
+> +	if (reason !=3D AFS_LOOKUP_CELL_PRELOAD &&
+> +	    reason !=3D AFS_LOOKUP_CELL_ROOTCELL) {
+> +		set_bit(AFS_CELL_FL_DO_LOOKUP, &cell->flags);
+> +		afs_queue_cell(cell, afs_cell_trace_queue_new);
+> +	}
+> =20
+>  wait_for_cell:
+> -	_debug("wait_for_cell");
+>  	state =3D smp_load_acquire(&cell->state); /* vs error */
+> -	if (state !=3D AFS_CELL_ACTIVE &&
+> -	    state !=3D AFS_CELL_DEAD) {
+> +	switch (state) {
+> +	case AFS_CELL_ACTIVE:
+> +	case AFS_CELL_DEAD:
+> +		break;
+> +	case AFS_CELL_UNLOOKED:
+> +	default:
+> +		if (reason =3D=3D AFS_LOOKUP_CELL_PRELOAD ||
+> +		    reason =3D=3D AFS_LOOKUP_CELL_ROOTCELL)
+> +			break;
+> +		_debug("wait_for_cell");
+>  		afs_see_cell(cell, afs_cell_trace_wait);
+>  		wait_var_event(&cell->state,
+>  			       ({
+>  				       state =3D smp_load_acquire(&cell->state); /* vs error */
+>  				       state =3D=3D AFS_CELL_ACTIVE || state =3D=3D AFS_CELL_DEAD;
+>  			       }));
+> +		_debug("waited_for_cell %d %d", cell->state, cell->error);
+>  	}
+> =20
+> +no_wait:
+>  	/* Check the state obtained from the wait check. */
+> +	state =3D smp_load_acquire(&cell->state); /* vs error */
+>  	if (state =3D=3D AFS_CELL_DEAD) {
+>  		ret =3D cell->error;
+>  		goto error;
+>  	}
+> +	if (state =3D=3D AFS_CELL_ACTIVE) {
+> +		switch (cell->dns_status) {
+> +		case DNS_LOOKUP_NOT_DONE:
+> +			if (cell->dns_source =3D=3D DNS_RECORD_FROM_CONFIG) {
+> +				ret =3D 0;
+> +				break;
+> +			}
+> +			fallthrough;
+> +		default:
+> +			ret =3D -EIO;
+> +			goto error;
+> +		case DNS_LOOKUP_GOOD:
+> +		case DNS_LOOKUP_GOOD_WITH_BAD:
+> +			ret =3D 0;
+> +			break;
+> +		case DNS_LOOKUP_GOT_NOT_FOUND:
+> +			ret =3D -ENOENT;
+> +			goto error;
+> +		case DNS_LOOKUP_BAD:
+> +			ret =3D -EREMOTEIO;
+> +			goto error;
+> +		case DNS_LOOKUP_GOT_LOCAL_FAILURE:
+> +		case DNS_LOOKUP_GOT_TEMP_FAILURE:
+> +		case DNS_LOOKUP_GOT_NS_FAILURE:
+> +			ret =3D -EDESTADDRREQ;
+> +			goto error;
+> +		}
+> +	}
+> =20
+>  	_leave(" =3D %p [cell]", cell);
+>  	return cell;
+> @@ -325,7 +375,7 @@ struct afs_cell *afs_lookup_cell(struct afs_net *net,
+>  cell_already_exists:
+>  	_debug("cell exists");
+>  	cell =3D cursor;
+> -	if (excl) {
+> +	if (reason =3D=3D AFS_LOOKUP_CELL_PRELOAD) {
+>  		ret =3D -EEXIST;
+>  	} else {
+>  		afs_use_cell(cursor, trace);
+> @@ -384,7 +434,8 @@ int afs_cell_init(struct afs_net *net, const char *ro=
+otcell)
+>  		return -EINVAL;
+> =20
+>  	/* allocate a cell record for the root/workstation cell */
+> -	new_root =3D afs_lookup_cell(net, rootcell, len, vllist, false,
+> +	new_root =3D afs_lookup_cell(net, rootcell, len, vllist,
+> +				   AFS_LOOKUP_CELL_ROOTCELL,
+>  				   afs_cell_trace_use_lookup_ws);
+>  	if (IS_ERR(new_root)) {
+>  		_leave(" =3D %ld", PTR_ERR(new_root));
+> @@ -777,6 +828,7 @@ static bool afs_manage_cell(struct afs_cell *cell)
+>  	switch (cell->state) {
+>  	case AFS_CELL_SETTING_UP:
+>  		goto set_up_cell;
+> +	case AFS_CELL_UNLOOKED:
+>  	case AFS_CELL_ACTIVE:
+>  		goto cell_is_active;
+>  	case AFS_CELL_REMOVING:
+> @@ -797,7 +849,7 @@ static bool afs_manage_cell(struct afs_cell *cell)
+>  		goto remove_cell;
+>  	}
+> =20
+> -	afs_set_cell_state(cell, AFS_CELL_ACTIVE);
+> +	afs_set_cell_state(cell, AFS_CELL_UNLOOKED);
+> =20
+>  cell_is_active:
+>  	if (afs_has_cell_expired(cell, &next_manage))
+> @@ -807,6 +859,8 @@ static bool afs_manage_cell(struct afs_cell *cell)
+>  		ret =3D afs_update_cell(cell);
+>  		if (ret < 0)
+>  			cell->error =3D ret;
+> +		if (cell->state =3D=3D AFS_CELL_UNLOOKED)
+> +			afs_set_cell_state(cell, AFS_CELL_ACTIVE);
+>  	}
+> =20
+>  	if (next_manage < TIME64_MAX && cell->net->live) {
+> diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+> index 8c6130789fde..dc9d29e3739e 100644
+> --- a/fs/afs/dynroot.c
+> +++ b/fs/afs/dynroot.c
+> @@ -108,7 +108,8 @@ static struct dentry *afs_dynroot_lookup_cell(struct =
+inode *dir, struct dentry *
+>  		dotted =3D true;
+>  	}
+> =20
+> -	cell =3D afs_lookup_cell(net, name, len, NULL, false,
+> +	cell =3D afs_lookup_cell(net, name, len, NULL,
+> +			       AFS_LOOKUP_CELL_DYNROOT,
+>  			       afs_cell_trace_use_lookup_dynroot);
+>  	if (IS_ERR(cell)) {
+>  		ret =3D PTR_ERR(cell);
+> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+> index bcbf828ba31f..a90b8ac56844 100644
+> --- a/fs/afs/internal.h
+> +++ b/fs/afs/internal.h
+> @@ -344,6 +344,7 @@ extern const char afs_init_sysname[];
+> =20
+>  enum afs_cell_state {
+>  	AFS_CELL_SETTING_UP,
+> +	AFS_CELL_UNLOOKED,
+>  	AFS_CELL_ACTIVE,
+>  	AFS_CELL_REMOVING,
+>  	AFS_CELL_DEAD,
+> @@ -1050,9 +1051,18 @@ static inline bool afs_cb_is_broken(unsigned int c=
+b_break,
+>  extern int afs_cell_init(struct afs_net *, const char *);
+>  extern struct afs_cell *afs_find_cell(struct afs_net *, const char *, un=
+signed,
+>  				      enum afs_cell_trace);
+> +enum afs_lookup_cell_for {
+> +	AFS_LOOKUP_CELL_DYNROOT,
+> +	AFS_LOOKUP_CELL_MOUNTPOINT,
+> +	AFS_LOOKUP_CELL_DIRECT_MOUNT,
+> +	AFS_LOOKUP_CELL_PRELOAD,
+> +	AFS_LOOKUP_CELL_ROOTCELL,
+> +	AFS_LOOKUP_CELL_ALIAS_CHECK,
+> +};
+>  struct afs_cell *afs_lookup_cell(struct afs_net *net,
+>  				 const char *name, unsigned int namesz,
+> -				 const char *vllist, bool excl,
+> +				 const char *vllist,
+> +				 enum afs_lookup_cell_for reason,
+>  				 enum afs_cell_trace trace);
+>  extern struct afs_cell *afs_use_cell(struct afs_cell *, enum afs_cell_tr=
+ace);
+>  void afs_unuse_cell(struct afs_cell *cell, enum afs_cell_trace reason);
+> diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
+> index 1ad048e6e164..57c204a3c04e 100644
+> --- a/fs/afs/mntpt.c
+> +++ b/fs/afs/mntpt.c
+> @@ -107,7 +107,8 @@ static int afs_mntpt_set_params(struct fs_context *fc=
+, struct dentry *mntpt)
+>  		if (size > AFS_MAXCELLNAME)
+>  			return -ENAMETOOLONG;
+> =20
+> -		cell =3D afs_lookup_cell(ctx->net, p, size, NULL, false,
+> +		cell =3D afs_lookup_cell(ctx->net, p, size, NULL,
+> +				       AFS_LOOKUP_CELL_MOUNTPOINT,
+>  				       afs_cell_trace_use_lookup_mntpt);
+>  		if (IS_ERR(cell)) {
+>  			pr_err("kAFS: unable to lookup cell '%pd'\n", mntpt);
+> diff --git a/fs/afs/proc.c b/fs/afs/proc.c
+> index 40e879c8ca77..44520549b509 100644
+> --- a/fs/afs/proc.c
+> +++ b/fs/afs/proc.c
+> @@ -122,7 +122,8 @@ static int afs_proc_cells_write(struct file *file, ch=
+ar *buf, size_t size)
+>  	if (strcmp(buf, "add") =3D=3D 0) {
+>  		struct afs_cell *cell;
+> =20
+> -		cell =3D afs_lookup_cell(net, name, strlen(name), args, true,
+> +		cell =3D afs_lookup_cell(net, name, strlen(name), args,
+> +				       AFS_LOOKUP_CELL_PRELOAD,
+>  				       afs_cell_trace_use_lookup_add);
+>  		if (IS_ERR(cell)) {
+>  			ret =3D PTR_ERR(cell);
+> diff --git a/fs/afs/super.c b/fs/afs/super.c
+> index 9b1d8ac39261..354090b3a7e7 100644
+> --- a/fs/afs/super.c
+> +++ b/fs/afs/super.c
+> @@ -305,7 +305,7 @@ static int afs_parse_source(struct fs_context *fc, st=
+ruct fs_parameter *param)
+>  	/* lookup the cell record */
+>  	if (cellname) {
+>  		cell =3D afs_lookup_cell(ctx->net, cellname, cellnamesz,
+> -				       NULL, false,
+> +				       NULL, AFS_LOOKUP_CELL_DIRECT_MOUNT,
+>  				       afs_cell_trace_use_lookup_mount);
+>  		if (IS_ERR(cell)) {
+>  			pr_err("kAFS: unable to lookup cell '%*.*s'\n",
+> diff --git a/fs/afs/vl_alias.c b/fs/afs/vl_alias.c
+> index 709b4cdb723e..fc9676abd252 100644
+> --- a/fs/afs/vl_alias.c
+> +++ b/fs/afs/vl_alias.c
+> @@ -269,7 +269,8 @@ static int yfs_check_canonical_cell_name(struct afs_c=
+ell *cell, struct key *key)
+>  	if (!name_len || name_len > AFS_MAXCELLNAME)
+>  		master =3D ERR_PTR(-EOPNOTSUPP);
+>  	else
+> -		master =3D afs_lookup_cell(cell->net, cell_name, name_len, NULL, false=
+,
+> +		master =3D afs_lookup_cell(cell->net, cell_name, name_len, NULL,
+> +					 AFS_LOOKUP_CELL_ALIAS_CHECK,
+>  					 afs_cell_trace_use_lookup_canonical);
+>  	kfree(cell_name);
+>  	if (IS_ERR(master))
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Jason
+
+Tested-by: Markus Suvanto <markus.suvanto@gmail.com>
 
