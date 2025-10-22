@@ -1,140 +1,232 @@
-Return-Path: <linux-kernel+bounces-865827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF720BFE1EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:07:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62AFBFE1F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B8019C8277
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:07:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 459054E8FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C5C2F8BFC;
-	Wed, 22 Oct 2025 20:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C884D2F83D8;
+	Wed, 22 Oct 2025 20:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hz1qgeCp"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q93ODK5u"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012036.outbound.protection.outlook.com [40.93.195.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAB32F28E3
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761163633; cv=none; b=kXQhxV2VeykS0VNfShPLRsu9kCx3hDNd9APWeVi/c+c/SEIXzZ6kSouXEO+fSe3HGB8QnlrBuBfbjciyBCjcrwuBCaOU8Ies1IVkhasxU87UHR+9u+K6DnrGrEpu1mMz0cJsCbDjZf78qyR9WW8mzZ8zfYZYgiZ005Kl7uYkvKw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761163633; c=relaxed/simple;
-	bh=DztsLj3vdv3FYw0cPl2uS2ogmDunqfckdWo1ml2REqg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gl7o17z4BZu68g70TR5+No1Jnpx839fidwpla37Muzlhmg20yTdLQHjX96JKOacq1XJNcF2HVe482LnwQhLZ/veQmWDwZwqYQVEZlCtz2jYsdwagmArnbhu5u+VX1DAEUBAa6Ljc+s3ttK6xVoriKUR9oUKpo8F2Pi2Sg6CDnvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hz1qgeCp; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-430da09aa87so392165ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761163631; x=1761768431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VwbN+wurLTlI3kZfG9YY+LmisCptQEnBinwXCuD+yAQ=;
-        b=hz1qgeCpqBUZZFb5VyO/yLXkt3Fm0AHzgo8yuuor30thglPC58BBNZ4D3ihi5z/cEM
-         TAN3tpCkzn7jf9Ry82Uj3fItsgdMXyDRBkjIiYEqwfu9a/Dpcttd5AhrXNEThXxvovDV
-         HWnvkN7jrcuyJSnXvzoD0dJiqWDUTm4pCq6jc3h8fmkOs+DpB8lPmYMfYAaFZf6FlJ3I
-         l/5w7hBe5MmoynaNj2VYl7H+aZgoUbaREH0H0sPHveXN8imSuyOXEEgAZWafUAEm8ZKn
-         Kf/BZhMFgrZp/qGK9Mmyq3e3S/OSc9LbSJ04eaPWRkuR7nYogQvHiNAuAAr/TadYgRN6
-         j+0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761163631; x=1761768431;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VwbN+wurLTlI3kZfG9YY+LmisCptQEnBinwXCuD+yAQ=;
-        b=Ohtp5fR5+5ajhf10mfBcQPPdvYAszW6Smnpl9Nc7o/BKO5tIBm82PX1xHX56kvxLac
-         KW8zvlT7ghVCun1c0qiKD3SBL+fCJiRiRw3TtgRiohITvYMOW7Iy2BLqLEHeCqLsFp9p
-         929CePzEVm3LveSthOpnZYAvASUD9GogeJZ4SqlxRN86+QlP6S2WFiU9VTYVLDXvIHYd
-         nGTumtH8z0lNb1uYxsx7U3ocl17kHwyOACW6sVi7auP/n8X0jaEQz60BZrZSlM6KLLf2
-         ODlnEk0IjEBMksF1dqSz3MIiev5JRAqGGriTRZ9AE8fdXkSTuCo8XAiIEKxa9CZeScLI
-         ETIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJdPgPfkqohI7YdASOM2bZELp4Q+DnNQhNZMzNbg/dty8EvdYXuvdTWVFo7VrF0pNAUsJ7UcdlspLU+Wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3RDVoLHi3SeDGN8S3SGATajttVzqG6jQTcvQzisD2c5M79TE2
-	WISuS34NKaxtzFAH+e+JLdDoomF5FmRGXhXE+Jo6hqvmewjqq2H0hj2QSCJzdkCrFuw=
-X-Gm-Gg: ASbGncvDHMrEgMg6pFm6W8APUHMTCprnEi0GtTESBjStuU+fvLH2cUOM0ZP5RS0Kkmw
-	LnUb2kheXs1r5z0m62PhzP2ZZVhEUoxQTPGMXp2Q1xFyHiL4LD5GqLOP5VBnBVwaO/EAVilz8c+
-	4zSMQpptentudomLLqxlf/iFiJkprTJhC/7kdkjPIUX1AZR7HMICfC+zXckfapsMRLz8A1+/m4E
-	cC/YQ22gxCVheHUFANAQjqayJLBxBz1Ttq3bVmLXtcfYntyqAFUkSIHr6Kmfsio2E04mz9TuMaX
-	5S6b3CUjeqa0KWJm95duzdyz4aDra6ADNiH22gvroxeDechNt2WudneoDJHg+3GYpq4EeHvhs1d
-	oueYu1B85rdBoHVAGA8RqIX7r/4/lAVkqh+swSopZeZitfLo5MMvqMVcda4xQhgNb+oxN5/qEDO
-	EkvaTfNRmcIOqNc3eP0RkPN5VEt5izXZw+HV8AGJs44SfAgOGtqSyfnGJgAhGmQUst+4quDe81f
-	Z2P
-X-Google-Smtp-Source: AGHT+IEi13vxAW3QWGvs47oIZZEeT5MJtjo5ggN538BbVhSvNenvFcif8+DslNFd6WG9e5ojjv5SEQ==
-X-Received: by 2002:a05:6e02:156c:b0:430:ad98:981f with SMTP id e9e14a558f8ab-430c524b96bmr287934085ab.4.1761163630603;
-        Wed, 22 Oct 2025 13:07:10 -0700 (PDT)
-Received: from abc-virtual-machine.localdomain (c-76-150-86-52.hsd1.il.comcast.net. [76.150.86.52])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5abb5432ca5sm18991173.16.2025.10.22.13.07.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 13:07:10 -0700 (PDT)
-From: Yuhao Jiang <danisjiang@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Yuhao Jiang <danisjiang@gmail.com>
-Subject: [PATCH v3] ACPI: video: Fix use-after-free in acpi_video_switch_brightness()
-Date: Wed, 22 Oct 2025 15:07:04 -0500
-Message-Id: <20251022200704.2655507-1-danisjiang@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B8042048
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761163707; cv=fail; b=mGYUeRL5RPD3UwryGwj64KenngEiYs1+oWMZWS77kfwBchAT7D5BpXkooSlCilqMf27ViXOIecDp70amcRZ17lAvFzasKCFyb4xZvJ8zvRKheapz3tSEKHbOOEuznqBB9T2OvncbfhVxb5puIwLpz/sCCfE/gYzpkc7dQTt62PA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761163707; c=relaxed/simple;
+	bh=SkPbC0bQ63vDEJ5OGeuJFJab0kunAGOLjLq/ijl6Acs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kdP8o7uFg9JpGVh1C7FlAmOW17NXZHWJ7q79sznD8GhATTNNaCcUEhye3kAcJiSAY+0FFi6mqiHfZ4cl47VmVngdWXFbN4yBA9XIxj2GW4rLQHxtlrIpc3fycz7K2vq2q+od55/VIUHh2Un2G2OIF1NgIte881MgXFwlsGsh9G8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q93ODK5u; arc=fail smtp.client-ip=40.93.195.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tl5C0H2qQOomjnoZuzienuzcVx3sfOo+40Xk4Qu/n4Qz+ejRXqko53QYIMrbgxAfAc2OOUTA2m7fRUzEf8mXBRuJ8yuu272n9X4xLd80RkkAAKPUmRxsIi2t9D9dvjtM1pwsh92ug208v52gGWSMU8mL1GxKP/5cw1KBv3YLkkdi5igJRFHWq6ikn4UcaH/XjXUkEguTgcFTFmmnBai05EWmz4isV+KVPkh6QpauAzzvEYBTJIRbu3dkTlAnmpt2P3BDKS6HjDxB7JQG4kccKvGclcdH8lRYSK/Oa8ADfxFvh0CwNQFw25Debovu1jENShsczw9gPX+lAvz16BE/3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r/eC1fzJ0bhsXK3HSF+MVGphot1HOunMfPjIy81n8bQ=;
+ b=nS85zBCBiEvmWl3bSEeWepyVGWKnxcVj7Y509s+W25nLz+dVnLbRdt6RHv7xwZHqHZoV/EIiJe/oKXuDb+ZiOkQ0SUu1cATIPCkvnCEm2qIE4eGWZUVVAMIjN/Bbu1L6u6lzDBUvPwBD+yBSVPaN0akSc7EGsjlM2LbPJEA8Dt24DxVCEkNTGCp+ueahxTg7I4BknnruVPwTIctjaYJnJiKbZH6NpEbMaLVyq1oBtkp9bVNSgMtSMLkaLfT4Wn5O4VZI5Aac7vTHI7EuLP8+4ruyfJ2dIpQT95jE1GAmrG0RO/aDlKwHMwIYnETVD1be0lIc2Rda9jqhr6hCxWYMAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r/eC1fzJ0bhsXK3HSF+MVGphot1HOunMfPjIy81n8bQ=;
+ b=q93ODK5ueOukv8RjKIg6SEy+zy67JT/f7vLOKQlEAusFLU5ZqcUWrCAA3WUbvZTqEKVz7Y2wNkrVpLSZ0MwpFMIp8A2J7vln546Yub48En6gkPKi4AsYtKPqP8vtrpmAkTjqmQtLwdTKGf+2XPqsPVIpTOqvjK4EDKUl8D2u9TtSRJBDWvEBbn3FXnI7luO9rhErUDN4Ld3h63pqddv/TY3zWVE4dOKC17nG0NCqXHkJ6cmedi/ATdX28WQ0eErV6L9I7Meb2mKch8XBcts8A+mx939yg3Y/WrQXMxrXhOIBPe6VmX0k7wzln0FKr0LYSzk5MR0AqTS9s0mKy7Efhg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by CH2PR12MB4327.namprd12.prod.outlook.com (2603:10b6:610:7d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Wed, 22 Oct
+ 2025 20:08:22 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 20:08:22 +0000
+Date: Wed, 22 Oct 2025 17:08:19 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	will@kernel.org, joro@8bytes.org, kevin.tian@intel.com,
+	jsnitsel@redhat.com, vasant.hegde@amd.com, iommu@lists.linux.dev,
+	santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+	jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+	wnliu@google.com, gptran@google.com, kpsingh@google.com,
+	joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+Subject: Re: [PATCH v4 13/16] iommu/amd: Track host Domain ID mapping for
+ each guest Domain ID
+Message-ID: <20251022200819.GE262900@nvidia.com>
+References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
+ <20251021014324.5837-14-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021014324.5837-14-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: YT4PR01CA0302.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10e::7) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|CH2PR12MB4327:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71e21579-88f4-4fbb-c010-08de11a6c015
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MOtwYWemN/7NbUyzheOwCYUkcO9Qv5KcNq9hONYt1FU0J35O1Eu8BRkasLGd?=
+ =?us-ascii?Q?AQqC5HVgxH4s9N0cf9bgEJ5Oo9Dv58xE3BB4SeQAta+Ayu4JE+ls8XDQnVcr?=
+ =?us-ascii?Q?CvsfbSSdrKz7M1pqh9g14QrwXO2p7A4dHpnamKVH0hTRj1KuWpCrrWesvh31?=
+ =?us-ascii?Q?0mNtGEYZB+4Ul77RguyRritu7eSIFdUceGIu3SrjLJeOfcSxArKJXwWQ0kms?=
+ =?us-ascii?Q?03xYGh/f+ZYeFPIJzlMDbBwvmkLPskYWYB4f8jiaTHZQkKnS2qaW2++r60jJ?=
+ =?us-ascii?Q?QVmNFpdebjRB7oIsplYt/KVDhrFRh44Mhe0Q1zSnordx2gc50mvDlw4fb4Ta?=
+ =?us-ascii?Q?SxTJP0WMGDHIhtNy6g44DBSK6K+3WrUsssC77oMy3MhaNypr25RMbZSMFOgb?=
+ =?us-ascii?Q?/+oYVb97sT+nftdpqEE8KqjW+gJlFiUsqW5ez914BYB5yGqoCPjs7h7vsUcA?=
+ =?us-ascii?Q?8kfxqaiK4xW1cyC3kc4YxxAhIx2xpA8eZy4/hIJB1sKTXYeMGhjPISvZx/8R?=
+ =?us-ascii?Q?T9ru+cqZa4Sr4C28pj1JkSI4H5P2rUw5ThgWf7jtstq4B6TBdFY0z/qnyH27?=
+ =?us-ascii?Q?XZKt1Xh5+oiHM431hAZ4vxTG+uDsCY3TRMmjsarDwf2tc4KVkbma/SFpw/wc?=
+ =?us-ascii?Q?UVeF8QZGs+YgYW9mUvPj1KCYwWOQjRypibqKKVxVKhoPbmr4bF+a3T6bzZKu?=
+ =?us-ascii?Q?VTp3H+hr191jE0rmXON+8WGb+YkHB4T5R3vGdYVvLAv6tsobfIO0dNAMxwUj?=
+ =?us-ascii?Q?4Mb3SFIvOKEtfeLNd1H9nMjvcGKYe3/bm/bMBf0bv74ulLHXbZ1nSqwsh+Tx?=
+ =?us-ascii?Q?LqXDLZ7vvtBuSE3uOml1Ital+BRWt+Z1uqX71sHScNAARrEa/tKn0375m72H?=
+ =?us-ascii?Q?sTuJ4qww5aV2VuzL5X7XeFo9SMYjcAFrrRGfvNvUZjRv6ELpvPCJwPKnWv7r?=
+ =?us-ascii?Q?EGsmuXduw0Plt+jPW6Kz6dxAR+EQk0DEWtGkflIBC6f05JpdVHjFIGamZ0rW?=
+ =?us-ascii?Q?5RXCjJhJP2Yb4o69xrSl0mV6TDVwj5b0YdHDrVrqAJnceO9e4e5rmSovsIwO?=
+ =?us-ascii?Q?C9HapXCO7tzUi1wzlApxHtL5x4Nfe7WhZz+j+mujsB5zLkZH2zdQIUX316n3?=
+ =?us-ascii?Q?5JKpO9ROsM/lDp2FQd9GrBLRRzQj6R09KAPMU6TuTiZkkkjw7gZRwGDrmoeL?=
+ =?us-ascii?Q?qF98K8+Ev9SF1rQGsY/i5OIDcYNyt/797SIuUR7C17Bnw/PHNplqujT33LcE?=
+ =?us-ascii?Q?SyYwlcv37+6+H7L86LuCrWD4yvddWSUtldx6K/85MkTII0BcqU17V3CNeCv2?=
+ =?us-ascii?Q?xEQ7XTpxslr6ifSQm3+oT7w9iXtgq3Vi7PdfBvajD4hca8kV98QO9SHWnoxs?=
+ =?us-ascii?Q?3L6GV+JbeNEVS/8i944M+t2kJ3wW/J0uldP0hwxKjeesFOUbW2mMMDpV8JIo?=
+ =?us-ascii?Q?KLUv2fCsU+YtdjYPyOTVVtCPo+GmgoN+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Ix9Xfao0tDF5hJlh7WAr+XHKkFpiYWlU7Q6Y0NGoMaBJ922r8w+2/FoRTtbS?=
+ =?us-ascii?Q?ugxu+xQjHrJAdgJeMrjNYw0A1reCiWzbLdeTK1wFufnkU3PMPaq5HoC5dB/3?=
+ =?us-ascii?Q?Et3JVj81Ee3BuzlYICS/HXVACkPOGmGt3wsKNpEc23fG9PNRBBzGzG9Yuonc?=
+ =?us-ascii?Q?XT1p9aILmioihIld3Ouhi1UPxA/N0va8q/LcJV1LixejAxj3wkDi/+JTizdZ?=
+ =?us-ascii?Q?ppuTQ6CY6xpBdxFHdff2kierTBBsZioSNopuj11/UGMUbBD6V9rE1b+HcjlT?=
+ =?us-ascii?Q?fabMqfsWK4WwgL46pgHF53ZCF5Hu7D3Q9r9NMxaOiJlXqysBIa+8YLbnly6Q?=
+ =?us-ascii?Q?HuBZy6ZXXrbLTMT5SrDdNTLvG46Lc5hWcxPwdlPfYjY2csowD4nsWGR+YFvm?=
+ =?us-ascii?Q?Mq32YYOsXqMPG9xrhdDOcpuN+ThajjtR166XUZQdv2y3+qKgsfhOf1nTXIaO?=
+ =?us-ascii?Q?ZB2Qq5Hu3Iu19GbPcn1OUcN/xUZfQap4EzWZN+29eXsC1b6q8MzHp4TIkR2K?=
+ =?us-ascii?Q?TpJcgaAAjMc0Ih5D3426wVfHN+9ka4TH04zZVkpNXzYk5GBWNJMYsNH/Utvq?=
+ =?us-ascii?Q?ZKP1URjGdgRhIIWFWmMnGuFxXOKBlGuPeh6RbPRqq9ePYgNrvNI/2XEPK0/B?=
+ =?us-ascii?Q?JGPNBkp0MydhpeGuyF06Zrc1U2+dVj8rI7oUH0c/zTuWb3AFbqSQ2aka9nD2?=
+ =?us-ascii?Q?It7a7u3GppN0Wr6Yrv6wa1A/qxzP9d0Ime4O8aZWx8mqXixHYtkvZ0vAOzVH?=
+ =?us-ascii?Q?EeMuZ9qSNJ0PjP9onRCnpY0JCjbLEnG9cJWxto4J9rBDI2JwaA8cw4AwbYf7?=
+ =?us-ascii?Q?qo8qFjrScursjxOoiYJd4RgCP3upJIpRw7GKAji7kCtN2yREMKsuHjAY55Hb?=
+ =?us-ascii?Q?SZjGflbMAi0hHRuew0oRdMe1xc8Sc806bhmyek/BRdR/kUBsqeSr/rSk2MZi?=
+ =?us-ascii?Q?2aPuV0i3Sg72mKDLWzcgNEF0IqF1XBdlDLCWzi9K7Dr1CGzNkn2HWpyMoruf?=
+ =?us-ascii?Q?TWsDnZP2O+nqO/XQ14VDs5hxdYjcxdpDx0Weo/CXAHsdGOQsLNCMUYGuXKxr?=
+ =?us-ascii?Q?IgO/p4pb9oO6mDmfkZsR5sg9u1G52ZXg1yEFUVyRXF4u/VAubWbOSNUdjAau?=
+ =?us-ascii?Q?oz+XtrANwJqQchLgPN6XpabZ2Ln9yiVSscrQFkSxWyvLU7eC9Dcgxd2NH/KU?=
+ =?us-ascii?Q?f+0Vblg0nCSiFbrYLv2+YHQB/wQUUUB449Iy7uF9b+quXwlPBSPBoiJgHoXK?=
+ =?us-ascii?Q?fciMRVD3BOzLO3gatBTZ4Y1GouiLJSRiNTnsyLr4KsGJya+eqxcVVmkWvb01?=
+ =?us-ascii?Q?JGFg7sO1x/b4kwizlY6WqN/0yQIV3YzD4iT5vN4+kE3o83zrI3rjez69WQCC?=
+ =?us-ascii?Q?gAoISkJXsaeiA89LWqKrTS4U4ELdaQ7JsBUkqh87DpqPudlp/LstoLTdBjA7?=
+ =?us-ascii?Q?wxbMoSVwPp9jwncLk8y6fsmeQ7LNaxEnqo8IDLzA/SfdQhbwwk4VaNFjrlUv?=
+ =?us-ascii?Q?nWG7iJOnur80jFY0P6lTU9yev39YUetLjkkzmm9IaTpduS9e7fhJWZN6n6Mo?=
+ =?us-ascii?Q?rMFs1QrDggxIsKmkWYw=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71e21579-88f4-4fbb-c010-08de11a6c015
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 20:08:22.0776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wWcexkYWMIbS1yTOnZcYSddkV0sYHApH5aEq9Sx+ghEQCcNDQ353TVl0fXzK8m+G
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4327
 
-The switch_brightness_work delayed work accesses device->brightness
-and device->backlight, which are freed by
-acpi_video_dev_unregister_backlight() during device removal.
+On Tue, Oct 21, 2025 at 01:43:21AM +0000, Suravee Suthikulpanit wrote:
+> Each nested domain is assigned guest domain ID (gDomID), which guest OS
+> programs into guest Device Table Entry (gDTE). For each gDomID, the driver
+> assigns a corresponding host domain ID (hDomID), which will be programmed
+> into the host Device Table Entry (hDTE).
+> 
+> The gDTE to hDTE 1:1 mapping is stored in the nest parent domain using
+> an xarray (struct protection_domain.gdomid_array). When invalidate the
+> nest parent domain, the INVALIDATE_IOMMU_PAGES must be issued for each
+> hDomID in the gdomid_array.
 
-If the work executes after acpi_video_bus_unregister_backlight()
-frees these resources, it causes a use-after-free when
-acpi_video_switch_brightness() dereferences device->brightness or
-device->backlight.
+I think this should be stored in the viommu..
 
-Fix this by calling cancel_delayed_work_sync() for each device's
-switch_brightness_work in acpi_video_bus_remove_notify_handler()
-after removing the notify handler that queues the work. This ensures
-the work completes before the memory is freed.
+It is a small unrealistic detail but very pedantically the API allows
+creating two VIOMMU's from the same NEST PARENT domain and if someone
+did this then each of the VIOMMU should have its own private gDomID
+number space and own separated xarray.
 
-Fixes: 8ab58e8e7e097 ("ACPI / video: Fix backlight taking 2 steps on a brightness up/down keypress")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
----
-Changes in v3:
-- Move cancel_delayed_work_sync() to acpi_video_bus_remove_notify_handler()
-  instead of acpi_video_bus_unregister_backlight() for better logic placement
-- Link to v2: https://lore.kernel.org/all/20251022042514.2167599-1-danisjiang@gmail.com/
----
- drivers/acpi/acpi_video.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Allowing two VIOMMUs to share the same hDomID could be problematic
+because we don't know the PASID layout is consistent.
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 103f29661576..be8e7e18abca 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1959,8 +1959,10 @@ static void acpi_video_bus_remove_notify_handler(struct acpi_video_bus *video)
- 	struct acpi_video_device *dev;
- 
- 	mutex_lock(&video->device_list_lock);
--	list_for_each_entry(dev, &video->video_device_list, entry)
-+	list_for_each_entry(dev, &video->video_device_list, entry) {
- 		acpi_video_dev_remove_notify_handler(dev);
-+		cancel_delayed_work_sync(&dev->switch_brightness_work);
-+	}
- 	mutex_unlock(&video->device_list_lock);
- 
- 	acpi_video_bus_stop_devices(video);
--- 
-2.34.1
+> +static int iommu_flush_hdom_ids(struct amd_iommu *iommu,
+> +				u64 address, size_t size,
+> +				struct protection_domain *parent)
+> +{
+> +	int ret = 0;
+> +	unsigned long i;
+> +	struct iommu_cmd cmd;
+> +	struct nested_domain *ndom;
+> +
+> +	xa_for_each(&parent->gdomid_array, i, ndom) {
 
+This doesn't seem right.. There could be many nested_domains sharing
+the same gDomID..
+
+I expect this xarray to have a struct like
+
+struct gdomid {
+   refcount_t users;
+   u32 hdomid;
+};
+
+And each nested_domain will go into the viommu and either allocate a
+new gdomid or ++users for the existing one. Inverse when destroying a
+nested_domain.
+
+> @@ -92,6 +92,49 @@ amd_iommu_alloc_domain_nested(struct iommufd_viommu *viommu, u32 flags,
+>  	ndom->domain.type = IOMMU_DOMAIN_NESTED;
+>  	ndom->viommu = aviommu;
+>  
+> +	/*
+> +	 * Normally, when a guest has multiple pass-through devices,
+> +	 * the IOMMU driver setup DTEs with the same stage-2 table and
+> +	 * use the same host domain ID (hDomId). In case of nested translation,
+> +	 * if the guest setup different stage-1 tables with same PASID,
+> +	 * IOMMU would use the same TLB tag. This will results in TLB
+> +	 * aliasing issue.
+> +	 *
+> +	 * The guest is assigning gDomIDs based on its own algorithm for managing
+> +	 * cache tags of (DomID, PASID). Within a single viommu, the nest parent domain
+> +	 * (w/ S2 table) is used by all DTEs. But we need to consistently map the gDomID
+> +	 * to a single hDomID. This is done using an xarray in the nest parent domain to
+> +	 * keep track of the gDomID mapping. When the S2 is changed, the INVALIDATE_IOMMU_PAGES
+> +	 * command must be issued for each hDomID in the xarray.
+> +	 *
+> +	 * Since there is no invalidation support and no viommu yet, just always use a
+> +	 * unique hDomID for now.
+
+It is not "for now" anymore, this is the correct algorithm..
+
+Jason
 
