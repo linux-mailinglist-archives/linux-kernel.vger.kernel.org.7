@@ -1,205 +1,180 @@
-Return-Path: <linux-kernel+bounces-864106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D18BF9EB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:14:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5262BF9ED0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92B7734863C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:14:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65FD6426B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D79F2D6604;
-	Wed, 22 Oct 2025 04:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613442D640A;
+	Wed, 22 Oct 2025 04:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ajgvE1+F"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zx2D6QcS"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BAE262815
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117B31FBEB0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761106467; cv=none; b=kU5aASpur3hV5wGz9OLZ0f37Zfmsw0M80Kgq4yLat0Xf2QkZqhp51mC0QyDCM+NYg4xb0CFMn4fPhidGB/HQOs87s73b8ydX1q6/Ros5a8COIWz+9CVLRbaMzBANZwgOfnnxGBstA/BxMrEx/d9ZKaW7dQgjoyQNXWNskXUVeKk=
+	t=1761106781; cv=none; b=h5AeVliTiRRV9wGr5U4SK21wWhnbi1mrSFMDM7oYYdforS36raHTvryUUhjVpDSWeLQs1nXDr+7i6d5bwHlOEeD1aWSkzhkxJ/BDe6YszGa28M0vhuKlLHoyWnaxQrYYeNdT33lHJkCCjsR/7w9O2drJFh4t6Mr1wZzuc8uBEZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761106467; c=relaxed/simple;
-	bh=/YK74OFvNm+U/NK9V91Agty4VqiOzSvqpl6lzRexgiA=;
+	s=arc-20240116; t=1761106781; c=relaxed/simple;
+	bh=EgU8rnXynIPhs/BZsA64otPdBcSY9W7JNRXfkBA9twA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qKz9NBXId8ONzwPyFGh+uasp/JrWUAY+rpiVLU4BLjqSE04MwwLGmpyb/11cIYJ5swdK7E+efwRbDcH8psogpnH36NMLKgjte8QEbAUEZF7OenAclsthUHvCcTffp/sMpsEVH+1feIS8H0ZwNEzj69v2I5HsLL600Xqbatd27/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ajgvE1+F; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=f7fa3Sgvp30yC7f++5hKZnlFtbVtOReDZ16fTNAEGZrT4q7m8D7bXrTWC9dZEYBN5fhRxeIXOVMzd7BfkJqr8E27xKYrOtMmUuBIsZ47uDdFZHB5/jgOCdG8Xedt6sb6nrymWSJGLMDSOh0ZLgI3Wo+K+RhtlG/ExzTxw8gZ91s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zx2D6QcS; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761106465;
+	s=mimecast20190719; t=1761106778;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hUAdbHJJDms7ZY1czykoAQHdXjKj1mkwQUBG6ypiQMA=;
-	b=ajgvE1+FuaCM7h1q3EWyLw6w73xgOnncXFHCyfv6/AGUifW5umRzgEEOxeZVVpyN7wc53R
-	JX+RO24CazikyWx3NvOH+EfQaXvQKhDS6t6a3BsmAzvgwP+3JGaL9jWG5ltaNhlJ507Taz
-	n9OoVJ35kbIEsMribwxl4ACr/uJSb98=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cEB1GkxvFRSrK09fb4q7fCqBnMrGabs898MxIlOczVU=;
+	b=Zx2D6QcSU0WMx/j7rNFV1jcbdAkVb/twtxjCXJnrxVUMxMvYjbOFE5dO1nE6oP89CUlx39
+	OL88agAb14g5ujgBCRXKmWPcsr3lRYIqAQ8fSwgw8T5YUIkqSen7tHQYjc8fmj2lwnp2Ty
+	Zi3gtu2kwCICDyEdwSHVniXKiSQ30II=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-277-urdQ0YO6N9y1R-E1LbFrkg-1; Wed, 22 Oct 2025 00:14:23 -0400
-X-MC-Unique: urdQ0YO6N9y1R-E1LbFrkg-1
-X-Mimecast-MFC-AGG-ID: urdQ0YO6N9y1R-E1LbFrkg_1761106462
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-33da1f30fdfso6984990a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:14:22 -0700 (PDT)
+ us-mta-661-PlAjbzIeOYyXiGJyTD72oQ-1; Wed, 22 Oct 2025 00:19:34 -0400
+X-MC-Unique: PlAjbzIeOYyXiGJyTD72oQ-1
+X-Mimecast-MFC-AGG-ID: PlAjbzIeOYyXiGJyTD72oQ_1761106774
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-33da21394adso3194594a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:19:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761106462; x=1761711262;
+        d=1e100.net; s=20230601; t=1761106773; x=1761711573;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hUAdbHJJDms7ZY1czykoAQHdXjKj1mkwQUBG6ypiQMA=;
-        b=dVBlcKfpyXW2zqaAAVTrgi1yWbh5qYJMDKkid8b3UrL/2EsQ6gTwwrBGWcweaLPWxx
-         2deiWIkXVv1QvuWZWy/J2Y/t2S33KxQtaQPUeOKmE/73V80F5D2W3fgpZI0+FAXiWz70
-         zl+5RFKk3I5E504CH4me9sWt6JDKoI4PPUuQb8VaAljAwpakNRidOAcytFgJaOgqhdBv
-         60tGN0THUo7oyMkR1qJVBDuSujK74IkDAkJ2PeeSMuZRw93ZzaBys00w815nlG7kDpDs
-         yi3MZd1M0ofA4ipGvkLnwCjJy3rQBCybhFgWstLrQnafr5ROmRUKmnXee7GGsCM/3Mqt
-         Lw7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWVyVwP97lmVTkzAJrycwb4BtFnMCT4wNCQoZRLsbH48d2ZRI96ot0VVXq2y2VKQDE/5FVINIH8z6H471E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqePufQnrVo7FRY7jgxhUzlG3NkSur9FQAFWlD3/NV6BUOmCc9
-	bZ/j1tI+/WFqrP3phN/VQbjWMq2UFUoZCIGa7WLuKg0PDlTB+NQgSYVc84do9TGVPY+WH9WTyN5
-	aumefXV7JyeXb+XVGPZhsKKpABCfTz1NLm4SQz/nQI/Y2AmskVkNHLsHwO4p3mRkxWY7s/7wviH
-	Jm7TjBLxe711pTSyOGclZ8kkalHQo4IgstuGcHNMcM
-X-Gm-Gg: ASbGncuwSnqP32rAc96msfpGRx6wrwc0IE56rB1JtDdhtGfy957uo9TnxOXhBx/kEhL
-	oYCKxSWSAEaMuJSgaWgFwub36YqeeEZ8szxelDgq8cQKu8V2I5FygKKh1txkvRq3TIwLGGZa5w7
-	PrjDDAfKSEQh9piYSZzKgb9Ly8RA0U6oo7FHgMtR2/65qM1MHP1vwLo0b2
-X-Received: by 2002:a17:90b:2690:b0:33b:b453:c900 with SMTP id 98e67ed59e1d1-33bcf8e3d67mr26649548a91.19.1761106462035;
-        Tue, 21 Oct 2025 21:14:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIUMZaIUzpc8Rxr02WJzVEzisclYzz9qmbLvGprq+pA2MZKonKoejJwxaXte8l4j7HaaizvKvkxrnAFJnFsCw=
-X-Received: by 2002:a17:90b:2690:b0:33b:b453:c900 with SMTP id
- 98e67ed59e1d1-33bcf8e3d67mr26649518a91.19.1761106461631; Tue, 21 Oct 2025
- 21:14:21 -0700 (PDT)
+        bh=cEB1GkxvFRSrK09fb4q7fCqBnMrGabs898MxIlOczVU=;
+        b=vAjGOoaIMCsqYs2bemTQ5NM9nrDbW/h3VQ4s/3hzwA+73aJnlPMbN6WaFz5gddPOrM
+         qgXsWw+8WDvuaVVNV1udhB5bvX9eBOhilWHgig9sKtkrDsYpL9yPhPRueMozJewtaOem
+         KxVTV9aDYyPYax4AaxCPt2hazmgHtffX2ABfgZkPx//6w5E5VmJiSJsC08Et+E70MjbF
+         JV2az2wS0sVUmq9LKpUtfzSyyXzGWIVZ7x0q+DGcLC/hr8MqLTYHwUB9qALPP/UymPJ0
+         Y2tq1lrrbiMHwBNcoUw/rx/geQLW8NaNjRzx+QvQsR65y9muqIQk0hzZHQeHcpC8RP6i
+         ah9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXgS2ahG2HMOTTwcU3zNRM0+bUgrtLpAuuKHGam1zvtr3uJ8YmpSQjuGTWj5+nsI69oT1oSjnhip5eWAjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzka62NGoxbw2ZonodO2t5TLox+/nbVI9dvdYqDBn2fjVPnUnkv
+	4m7bd+YO93Jc7V6cyw9HCCvQUgP3UpjoOSSyD10VBHCFbLekcJJ7rhEZvcFSEY6PDMPbqlcybMS
+	XkpSVEANVWWovdsH5lG1hDZyxvp/bzqZnXSPdo9y+s09fIt59c1yd4O+0/9HkYWM+ZJ3ikMACbx
+	R6sWgqaEae2vZM+WO2mb56DyuteZr3RjJRMXgPmGZB6N13d/Tui3c=
+X-Gm-Gg: ASbGncvYf0t/MKD/Ztj1ujlBbfDHndEUnJdJoYU7A70VGlKVjq1Q0xGFfmFuy4EsI4t
+	qQMsMt+yppcfyt3sjysC+vVYWUCOOvjNu9HaLs7cWmsQ1wk9DJ1WjT8qicSj/bFkP69g/h0Soiz
+	XI0dWswEjWbKbeaJ1vLZvg7I7FI/5zVuPrXF4I5feW4i2C0lt6GiZaUqtR
+X-Received: by 2002:a17:90b:3f10:b0:32e:c6b6:956b with SMTP id 98e67ed59e1d1-33bcf85aba8mr27207003a91.4.1761106773411;
+        Tue, 21 Oct 2025 21:19:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxpm190zeS/O7QhosnTZCJ+sJ0OOtUfB8EF+I18t2uJyG2ctlTvkqQPBgMA4jG+/iqib9IAmxZwYBAa++FoXg=
+X-Received: by 2002:a17:90b:3f10:b0:32e:c6b6:956b with SMTP id
+ 98e67ed59e1d1-33bcf85aba8mr27206962a91.4.1761106772999; Tue, 21 Oct 2025
+ 21:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021154534.53045-1-minhquangbui99@gmail.com>
-In-Reply-To: <20251021154534.53045-1-minhquangbui99@gmail.com>
+References: <20251021-virtio_double_free-v1-1-4dd0cfd258f1@oss.qualcomm.com> <20251021085030-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20251021085030-mutt-send-email-mst@kernel.org>
 From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 22 Oct 2025 12:14:07 +0800
-X-Gm-Features: AS18NWCsdhMJwpFLoRlCEFP860iPuuqUM526GSI4cDr6maYOOoS-jKv9Ni-IaOc
-Message-ID: <CACGkMEv3KzWjxtBuyga5NDcvBUQzsytu00g-2CwMrQGf0vrqAQ@mail.gmail.com>
-Subject: Re: [PATCH net v3] virtio-net: fix received length check in big packets
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Gavin Li <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Wed, 22 Oct 2025 12:19:19 +0800
+X-Gm-Features: AS18NWCKmXJHmGDH1OnrtnkNAc2Gt2Hyx92v8bPZ5LqsjBJ7559XCA-Y6f0OWpQ
+Message-ID: <CACGkMEsU3+OWv=6mvQgP2iGL3Pe09=8PkTVA=2d9DPQ_SbTNSA@mail.gmail.com>
+Subject: Re: [PATCH] virtio_blk: NULL out vqs to avoid double free on failed resume
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Cong Zhang <cong.zhang@oss.qualcomm.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+	linux-arm-msm@vger.kernel.org, virtualization@lists.linux.dev, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pavan.kondeti@oss.qualcomm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 11:45=E2=80=AFPM Bui Quang Minh
-<minhquangbui99@gmail.com> wrote:
+On Tue, Oct 21, 2025 at 8:58=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
 >
-> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
-> for big packets"), the allocated size for big packets is not
-> MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on negotiated MTU
-
-And guest gso features.
-
->. The
-> number of allocated frags for big packets is stored in
-> vi->big_packets_num_skbfrags. This commit fixes the received length
-> check corresponding to that change. The current incorrect check can lead
-> to NULL page pointer dereference in the below while loop when erroneous
-> length is received.
-
-It might also be helpful to describe how you can reproduce this issue.
-
+> On Tue, Oct 21, 2025 at 07:07:56PM +0800, Cong Zhang wrote:
+> > The vblk->vqs releases during freeze. If resume fails before vblk->vqs
+> > is allocated, later freeze/remove may attempt to free vqs again.
+> > Set vblk->vqs to NULL after freeing to avoid double free.
+> >
+> > Signed-off-by: Cong Zhang <cong.zhang@oss.qualcomm.com>
+> > ---
+> > The patch fixes a double free issue that occurs in virtio_blk during
+> > freeze/resume.
+> > The issue is caused by:
+> > 1. During the first freeze, vblk->vqs is freed but pointer is not set t=
+o
+> >    NULL.
+> > 2. Virtio block device fails before vblk->vqs is allocated during resum=
+e.
+> > 3. During the next freeze, vblk->vqs gets freed again, causing the
+> >    double free crash.
 >
-> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big p=
-ackets")
+> this part I don't get. if restore fails, how can freeze be called
+> again?
 
-Cc: stable@vger.kernel.org
-
-> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
-> ---
-> Changes in v3:
-> - Convert BUG_ON to WARN_ON_ONCE
-> Changes in v2:
-> - Remove incorrect give_pages call
-> ---
->  drivers/net/virtio_net.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index a757cbcab87f..e7b33e40ea99 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -852,7 +852,7 @@ static struct sk_buff *page_to_skb(struct virtnet_inf=
-o *vi,
->  {
->         struct sk_buff *skb;
->         struct virtio_net_common_hdr *hdr;
-> -       unsigned int copy, hdr_len, hdr_padded_len;
-> +       unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
->         struct page *page_to_free =3D NULL;
->         int tailroom, shinfo_size;
->         char *p, *hdr_p, *buf;
-> @@ -916,12 +916,16 @@ static struct sk_buff *page_to_skb(struct virtnet_i=
-nfo *vi,
->          * tries to receive more than is possible. This is usually
->          * the case of a broken device.
->          */
-> -       if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
-> +       if (WARN_ON_ONCE(offset >=3D PAGE_SIZE))
-> +               goto err;
-
-I'd stick to BUG_ON or at least it needs an independent patch.
-
-> +
-> +       max_remaining_len =3D (unsigned int)PAGE_SIZE - offset;
-> +       max_remaining_len +=3D vi->big_packets_num_skbfrags * PAGE_SIZE;
-
-Let's add a comment to explain the algorithm here or at least mention
-to refer add_recvbuf_big().
-
-> +       if (unlikely(len > max_remaining_len)) {
->                 net_dbg_ratelimited("%s: too much data\n", skb->dev->name=
-);
-> -               dev_kfree_skb(skb);
-> -               return NULL;
-> +               goto err;
-
-It looks like this change is not needed?
-
->         }
-> -       BUG_ON(offset >=3D PAGE_SIZE);
-> +
-
-Unnecessary changes.
-
->         while (len) {
->                 unsigned int frag_size =3D min((unsigned)PAGE_SIZE - offs=
-et, len);
->                 skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, off=
-set,
-> @@ -941,6 +945,10 @@ static struct sk_buff *page_to_skb(struct virtnet_in=
-fo *vi,
->                 put_page(page_to_free);
->
->         return skb;
-> +
-> +err:
-> +       dev_kfree_skb(skb);
-> +       return NULL;
->  }
->
->  static void virtnet_rq_unmap(struct receive_queue *rq, void *buf, u32 le=
-n)
-> --
-> 2.43.0
->
+For example, could it be triggered by the user?
 
 Thanks
+
+>
+> > ---
+> >  drivers/block/virtio_blk.c | 13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+> > index f061420dfb10c40b21765b173fab7046aa447506..746795066d7f56a01c9a9c0=
+344d24f9fa06841eb 100644
+> > --- a/drivers/block/virtio_blk.c
+> > +++ b/drivers/block/virtio_blk.c
+> > @@ -1026,8 +1026,13 @@ static int init_vq(struct virtio_blk *vblk)
+> >  out:
+> >       kfree(vqs);
+> >       kfree(vqs_info);
+> > -     if (err)
+> > +     if (err) {
+> >               kfree(vblk->vqs);
+> > +             /*
+> > +              * Set to NULL to prevent freeing vqs again during freezi=
+ng.
+> > +              */
+> > +             vblk->vqs =3D NULL;
+> > +     }
+> >       return err;
+> >  }
+> >
+>
+> > @@ -1598,6 +1603,12 @@ static int virtblk_freeze_priv(struct virtio_dev=
+ice *vdev)
+> >
+> >       vdev->config->del_vqs(vdev);
+> >       kfree(vblk->vqs);
+> > +     /*
+> > +      * Set to NULL to prevent freeing vqs again after a failed vqs
+> > +      * allocation during resume. Note that kfree() already handles NU=
+LL
+> > +      * pointers safely.
+> > +      */
+> > +     vblk->vqs =3D NULL;
+> >
+> >       return 0;
+> >  }
+> >
+> > ---
+> > base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
+> > change-id: 20250926-virtio_double_free-7ab880d82a17
+> >
+> > Best regards,
+> > --
+> > Cong Zhang <cong.zhang@oss.qualcomm.com>
+>
 
 
