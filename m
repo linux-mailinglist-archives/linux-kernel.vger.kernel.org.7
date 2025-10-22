@@ -1,170 +1,143 @@
-Return-Path: <linux-kernel+bounces-864763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C43BFB7C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:56:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B71BFB7CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8CE24E6F49
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:56:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15459402F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87496311958;
-	Wed, 22 Oct 2025 10:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A75328B58;
+	Wed, 22 Oct 2025 10:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xbkwqpvg"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrPI57qc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53E5320CBC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC1A322DD4;
+	Wed, 22 Oct 2025 10:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130590; cv=none; b=ulo6pOWdrpF2Fh9Xp/upnl0zu4U4JyX+vlOFyDmtsv1wPCTNzvOVIlsuxria2ovmfr4xKKJTjqbEaIs8KHNJnp17MQ1c7Fl5cIT3iOrcRpQvhwwMMeKGNQZ+TLtMk4Jh9Y57+D/jGOoUl+e/E+pV+iCaN6TLqg8NCFCn3VteXFw=
+	t=1761130597; cv=none; b=E9o9caCGeVD/WxWCUzcVHr8gx15Z9qpmEgFWwSlJnXHMXfcM++fxqw31FkTT6y0LfCnles45WfYkVRIxrKY/tZnjfSnCE16otvL6HIksE8N+1BQM/TUkB7njQJHiMlHCLXWIfMph7YvRsyCrgVj74ISVilt03+Xf/yDscEtMaK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130590; c=relaxed/simple;
-	bh=dUV0ayqZiPaf4NOTXVPmQKKkCug+aByTSr9dcbRPtuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dh2GpQ/4yR0y3eI4QgLAiCqYeoVXkxGWta5622KYegcoiHMW+hCV65UTAGyiNhm0n9Y2iEX/Dt7R4kiWXTq6Z089IN/j2iAbnPJRXLwfVvFan/a/HS3tTg6/zr7D8mzAtZDO5o7X2vjpvhE0vSnjUWse8JXScJLVk2HSCGGYI4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xbkwqpvg; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso12037085a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761130586; x=1761735386; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o0A20oHPdwlwvYfXUnWJzAAzNbt9Wdmj/9G6WPspGzo=;
-        b=XbkwqpvgwNgAqVFgu3Ij22ZaZIg8Dsa3XApkKeXwBwV7IUEsgwYc/0UTGWI94O0iBW
-         nTI0adKhdcjmcORNyvhFS0/OCgQovU7TmEo842ofiGyAgVFi3W2IBwjBJ48Nmwhz6bSl
-         +JXnaK6mRP/WKOC/9zS/GjNt+eU434E8KIz6eUNSvv8CXEYsQ8d/Ju6JE8oeXxLa+jaa
-         S45J+dqY2sXL8dhqdNcUodIbyr3sA1FkFMHiXC8PTdpaGKcs5Ch+6YxyYvx73jXqB8ca
-         q9QKQCt/G4koBFf12sK1+MasypKXaqKO6psmfFi1uYRXc5Xv1u29vY5clVDeAyinWSHR
-         61DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761130586; x=1761735386;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o0A20oHPdwlwvYfXUnWJzAAzNbt9Wdmj/9G6WPspGzo=;
-        b=ZKedbvovv58MzbvkuBajZ3ShCF79LS5h6lGvpLynwODj6+wAZF42u4ePEWmLpnz/ud
-         pufC5rqUU/P+rcWhBrj0ArV0T5wUaHKiWJs4REiPhE32uj+iI9buoalK7Erz9zSvH8At
-         av5rc4lz1URSypO4Se1f8lLK6oqTONDjRad9FGXm0kop/XlCCnH6g6Rr9DHIaVak/O+V
-         93KTWPIC8Wa6YyQcsI3z0Z+9NqFktJ2g90qAD88eJ9hfQLe4BPjxVEiNeIaxhaTl1b1g
-         5NEN4clpv/b/9RPJBYVu2Pwlq443lw4Xi9Iwv40mKllO9C0kKKfjvmA5S+7UwCjfMEAu
-         tTWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWED4FE1fvO+Tk67alvByuEHs7DHSQ5vnivsSdA/4GGDimJhKPZ5Y7u82Y+dPBQfO64DCfA3P7xxdJN9Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOlV8sLS/o2IJHHushyIJkSuIgVaac4XgGcBBjCzxP0BK1rNqs
-	duMRZX0Fwvos3EktFBCjmZX6pssz2BeiNF4SV0/bmoOz9nSPuxGLSR29
-X-Gm-Gg: ASbGncsH28l4RGXUDeqYP5gynRJiI5jfDkgDPHfbI7aNwQb7WXhYczw+EefCmoTOhog
-	w6c+3JlD5h3bbiKa4xsV7tYsWWCzrFN1AVp5c8eqTntFWkqvP1YExvzBRzYT+e0VNm2JAyMa9wa
-	hUngnST0QelIoLVmAIsMXZMHVRS6puOTVpEsS7aTjGXo+TmACrY/5RaXv9IeR+Cu5xEs2SW7gLo
-	dlpYWxGrNr2wroygoVzQsoF4Qp9jYIqDYFuzWzqOGM9BD9PrfJtMamongeUlg/HyRKIPelTWU3t
-	MnaJDb0r/6hM9rOk/sS2n9uFXPdFNw7hvme1OfuvpHu5Yyliap5CWFi4eiadWhgZOzKpC2s4kjz
-	y6ZoXoI0Cjm/FWzQvZUyWgzE5WSk7AIMc3CNUVFjvO1US0yRMsq7/c/qB/TANgsGC8JMgIRvzII
-	TvzLjfABfLxU1ImpxozoSHBTC0phgYdYmsBqxoo99+XfwXpA+L0MK7Yan3hAQcpRK54ljEwIA=
-X-Google-Smtp-Source: AGHT+IEdGRi/hFagoGGgzKcGR3Q9DoSBThXuzMQp+xb2RQm2aipBLwQ9bktG/U+2WDFiA7eALZVStg==
-X-Received: by 2002:a17:906:da09:b0:b6b:a82a:bbbc with SMTP id a640c23a62f3a-b6ba82acfb4mr887771466b.33.1761130585840;
-        Wed, 22 Oct 2025 03:56:25 -0700 (PDT)
-Received: from alb3rt0-ThinkPad-P15-Gen-1 (host-79-17-196-24.retail.telecomitalia.it. [79.17.196.24])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb526175sm1337364466b.56.2025.10.22.03.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 03:56:25 -0700 (PDT)
-Date: Wed, 22 Oct 2025 12:56:22 +0200
-From: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengfei Li <pengfei.li_1@nxp.com>,
-	Marco Felsch <m.felsch@pengutronix.de>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	ye.li@nxp.com, joy.zou@nxp.com
-Subject: Re: [PATCH v7 3/3] arm64: dts: imx91: Add thermal-sensor and
- thermal-zone support
-Message-ID: <aPi4VqxIF/hltDC5@alb3rt0-ThinkPad-P15-Gen-1>
-References: <20251020-imx91tmu-v7-0-48d7d9f25055@nxp.com>
- <20251020-imx91tmu-v7-3-48d7d9f25055@nxp.com>
+	s=arc-20240116; t=1761130597; c=relaxed/simple;
+	bh=oqr78uUyBEWcCUquYVEATITHQrDG4IMUf0U0DRBBgnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F/5ceKA8xGa2uh7yqleWZU6+8Gaqg06Jpgf1jxGwKRgMTCiis6uwo6der9/25RMqv/KS+Xnba2zkQi+8Hf3VgMGvqJ+sWwkAht5zEl2Qpc90Gg/yIKd5LjmhKLvSefgCsgz1yRku3jsxMw0HXUHdjZ1CyEhnpVEKirVyNfl5b6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrPI57qc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54575C4CEE7;
+	Wed, 22 Oct 2025 10:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761130596;
+	bh=oqr78uUyBEWcCUquYVEATITHQrDG4IMUf0U0DRBBgnk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YrPI57qcmHIU9m6kxmjdwTJE/B93EtZE7Vvz8QNrikgtztNC7bT1aaIZ3NvORZ6Kf
+	 naqjWeIxZyuOqglNKgfAIw3F25yu4SJhB50AER83FuwHhkOruatE5iuvKaQN0V5NfT
+	 EozVF4PCExPl9hHmHZzHm44Fh99Jd68+zF9HhYGCdRwApXoGhOv8QsE4oBvfeued43
+	 JqG/6rO33IzIM/ONO0v61TLj4OUKI3P5xtjng3Qoua1B0U4hbCWcUcsEOSisPbftIT
+	 GnJbJ+OXGR+SKuqD83x5DlZ8+zl8A5RUrfnm4wkgqEjpBU+ibGEYkKMxeL0CmRRDD5
+	 t6iRaFhPYSGaA==
+Message-ID: <224288d8-9a04-4a76-95c7-c0af4ed967e3@kernel.org>
+Date: Wed, 22 Oct 2025 12:56:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020-imx91tmu-v7-3-48d7d9f25055@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] ASoC: dt-bindings: qcom,sm8250: Add Dell XPS13
+ 9345 sound card
+To: Abel Vesa <abel.vesa@linaro.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021-dell-xps13-9345-enable-audio-v1-0-6f3f6bbd977b@linaro.org>
+ <20251021-dell-xps13-9345-enable-audio-v1-1-6f3f6bbd977b@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251021-dell-xps13-9345-enable-audio-v1-1-6f3f6bbd977b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 03:00:42PM -0400, Frank Li wrote:
-> Add thermal-sensor and thermal-zone support.
+On 21/10/2025 15:50, Abel Vesa wrote:
+> The Dell XPS13 9345 maps the speakers and tweeters starting from
+> the right side instead of left, which means we need to handle it
+> differently then the rest of the X Elite platforms.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> changes in v7
-> - new patch
-> ---
->  arch/arm64/boot/dts/freescale/imx91.dtsi | 58 ++++++++++++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
+> So document its new compatible.
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx91.dtsi b/arch/arm64/boot/dts/freescale/imx91.dtsi
-> index 4d8300b2a7bca33bd0613db9e79d2fba6b40c052..f075592bfc01f1eb94d2a2bd8eea907cc2aed090 100644
-> --- a/arch/arm64/boot/dts/freescale/imx91.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx91.dtsi
-> @@ -6,6 +6,54 @@
->  #include "imx91-pinfunc.h"
->  #include "imx91_93_common.dtsi"
->  
-> +/{
-> +	thermal-zones {
-> +		cpu-thermal {
-> +			polling-delay-passive = <250>;
-> +			polling-delay = <2000>;
-> +			thermal-sensors = <&tmu 0>;
-> +
-> +			trips {
-> +				cpu_alert: cpu-alert {
-> +					temperature = <80000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu_crit: cpu-crit {
-> +					temperature = <90000>;
-> +					hysteresis = <2000>;
-> +					type = "critical";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu_alert>;
-> +					cooling-device =
-> +						<&A55_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> index 868acc077046596120ea7f427e802282ed03c853..20566224d2e42574ab96f93c11924bbeae22f0bc 100644
+> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> @@ -29,6 +29,7 @@ properties:
+>                - qcom,sm8750-sndcard
+>            - const: qcom,sm8450-sndcard
+>        - enum:
+> +          - dell,xps13-9345-sndcard
 
-Here you define cooling-maps with passive and critical trip points. 
+When I explained you how to proceed, I said - you need front compatible,
+because this sound card is compatible with existing one, with a quirk
+needed.
 
-I was trying test that by enabling CONFIG_THERMAL_EMULATION and setting
-the emulated temp via 
+Might not matter if we go with mixers solution as suggested by Srini.
 
-echo 85000 > /sys/class/thermal/thermal_zone0/emul_temp
-
-By checking with mhz (from lmbench Yocto recipe) command I was expecting that the 91 start
-throttling but is not the case, Am I missing something?
-
-Thanks,
-Alberto
+Best regards,
+Krzysztof
 
