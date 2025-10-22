@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-865689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03D4BFDC16
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:02:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E23BFDC19
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07CD19C3336
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5671419C4320
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9182586E8;
-	Wed, 22 Oct 2025 18:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922E62E7637;
+	Wed, 22 Oct 2025 18:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRSQfzQb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SimVlNKU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5CF2C15A3;
-	Wed, 22 Oct 2025 18:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E008A2D94A2;
+	Wed, 22 Oct 2025 18:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761156166; cv=none; b=CqVXU8zK7Jqstc0XcTvLLT7Wz4FY5YTw8JGmRi3WnWwc56/25uYlTf8ZbjKVOjpKi2U27LiCN6e+YN2t2HJSQgyHYRpBTvjKUwtvcE/nj1zZ9yJ41jqlWlJyx+CEj1JKesdGcYI5s027IoBn0+xlQenbkU4Q0lOZ/dOj9ZRp6DU=
+	t=1761156187; cv=none; b=hAVzs3/8nAxMx/h6RFX1ldXUpne8M6LOxr5uMJQHaeuvAV+ttDrvgBCCKDlLAWwrqJStEbH3Gg37jBDEIJrtoIPSGIwD5nMLMV4SxMKp/ikcQY/Et7j54WFpP0jEUAkeSu504HUfM3zrjTM2k9PdfCuDaQpycqbiv61TzOh18es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761156166; c=relaxed/simple;
-	bh=t6re2ND5xvyQd8HtMTpq3kkOWyOG9TYuAIaDpEvjOQg=;
+	s=arc-20240116; t=1761156187; c=relaxed/simple;
+	bh=Dw3dM6Vb1l7agneatb84ENnPoKJyBFrSmg1DGPom7TE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jv7c0aWb2I1ZVkRd5UIXfdC/tJLKDmMlcRedXsH+kC0CA8Wz5au+37UWB1PEDHzvOmRWzdvPKZzfN8x5AEQ3b2q5h++8OT4dAn317EzsYWqBXqdTAgkDgvnbV3nqnV5IjOVknepFovvxUO8Xul5x2A/fVtxb136gCQMKw/NzE3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRSQfzQb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD82FC4CEF7;
-	Wed, 22 Oct 2025 18:02:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayveO+y/RYLhZggqNY/IhN/egpw4TElMmHlQcjC9Dgu+ArrJfelr1XzGhDwjxFGNcFPW4fIkc/0gUjHfGBI9sLvDTVbSMtO4d64vP1ZkuSWL5tgeHhJF5OZJPv1ze+GDn7En2jO3uVICyQgc7JoMpetRCv9rpHNmqAqlQ2RPF5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SimVlNKU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5055FC4CEE7;
+	Wed, 22 Oct 2025 18:03:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761156166;
-	bh=t6re2ND5xvyQd8HtMTpq3kkOWyOG9TYuAIaDpEvjOQg=;
+	s=k20201202; t=1761156186;
+	bh=Dw3dM6Vb1l7agneatb84ENnPoKJyBFrSmg1DGPom7TE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kRSQfzQbRzHGOr8/Ez2kbRgscly43BftApw4dJ0BsLb/ejI+ra7B+xvXDMQd9ooBQ
-	 mgBsOUDV0WE2xW3CaUxonL67Jx6apEW6UoGmo3JRnQ5ZVZJ3sRmyoKJ7MEkMxjNOXB
-	 6Uc3YJlCVF6BsqEDJjG8W6kLcvbJh/kTOni6dejWT/xUSCjfvT5Y6l9YfeP0q3XKt9
-	 xSMfJ2af8HZ+Xj8h5fwCfnOdVmVemPNUyGZI9OADlRQcc3KO33F/VArTf6wQ4ylIB7
-	 JhCW/pSQGesJabSaDj5R3tPikBonHjcC8dMcd/x8mGPpp38AA5uKdr6RQLvUgvCoot
-	 lLpth379YZ2HQ==
-Date: Wed, 22 Oct 2025 19:02:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/6] iio: adc: ad4080: add support for AD4083, AD4086,
- and AD4087
-Message-ID: <20251022-humility-deplored-6b57f6a003de@spud>
-References: <20251021105349.21145-1-antoniu.miclaus@analog.com>
+	b=SimVlNKU9XfJ5lq9SdwAOtd0LlVh+g5kwGo75tfVxuTCdC/2v/AbJ4yry3mhkTkiN
+	 Vv6mmYAsdSOJQkkv7nknaw/dzBZUHpvmpBRR0huId7tpFMswCEb0pAnxaJxhIsgG+j
+	 NAYHUtjkEcgik63D6E8hLqtyPaC+vulFU9wn9mF3WcQzn0aX5QfAiZoGyHX7niC+bZ
+	 kFHqvr4GrwYLS96sxD+FLCiAdNodyqopF3mcnZIEJIXUs8YKmgky5kDPXaxWgY4pid
+	 b8U9i3E+EJ/MaLoLIWyqlblQkUYc55kIj44RqoXKdCiNk7AWnxddTGvafzpA67LR9/
+	 9oRK+Yp3dNgHQ==
+Date: Wed, 22 Oct 2025 19:02:59 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.17 000/160] 6.17.5-rc2 review
+Message-ID: <9b76ec32-8796-4eb4-828c-776c66a4d335@sirena.org.uk>
+References: <20251022053328.623411246@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,34 +60,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ycL1A/d2LH3RopiF"
+	protocol="application/pgp-signature"; boundary="AOR/dPx7B30x/puz"
 Content-Disposition: inline
-In-Reply-To: <20251021105349.21145-1-antoniu.miclaus@analog.com>
+In-Reply-To: <20251022053328.623411246@linuxfoundation.org>
+X-Cookie: Remember the... the... uhh.....
 
 
---ycL1A/d2LH3RopiF
+--AOR/dPx7B30x/puz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Oct 21, 2025 at 10:53:42AM +0000, Antoniu Miclaus wrote:
+On Wed, Oct 22, 2025 at 07:34:14AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.5 release.
+> There are 160 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
->   dt-bindings: iio: adc: adi,ad4080: add support for AD4083
->   dt-bindings: iio: adc: adi,ad4080: add support for AD4086
->   dt-bindings: iio: adc: adi,ad4080: add support for AD4087
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-
---ycL1A/d2LH3RopiF
+--AOR/dPx7B30x/puz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkcQgAKCRB4tDGHoIJi
-0koeAQCoXdpuPKX9OLkK1soR9DBnPA6rXtb4J6ikRHT+2EpyCwEA9sRs2WP+Bl08
-wzvW9xfY1cYsnP3naSW+Wvco9RH+KwY=
-=0fYs
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj5HFIACgkQJNaLcl1U
+h9AZ0gf/S8msISugJ5i/lkhUz2BAtTlG4+6Z5J8UC+YQj8P559lEagvj0nmZAC9X
+qfA2EnaW5lkxbdullhNpxCW9t6YosdvxyTc7S2vHOZjXCyZoSOi/QSEDMz1gClMf
+UY7tV445W6b0A797HeoZ6P4+4dsdXGYzc1FX1L2PTT2d+YexIpSJ8PPw7BvLs2ua
+wZmjwXxvPd1BIP5nwAT9LBYxljU8IWKscIiq9XNBMRosYz+tJJ15Wn1pGtCPQApR
+fmnMYgzf6t1sHZe57f/ris4ckZ8cinyEbtU4TMqxJ7tXogowIxDQpne7zcLkz85Z
+ytwnCQtpIqPaNR48Q7aZbKCl+K0izQ==
+=zYqU
 -----END PGP SIGNATURE-----
 
---ycL1A/d2LH3RopiF--
+--AOR/dPx7B30x/puz--
 
