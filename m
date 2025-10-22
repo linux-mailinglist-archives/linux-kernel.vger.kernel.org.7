@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-864756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D99BFB788
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:53:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68005BFB794
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17764189B645
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:53:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1A38E354A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5D03233EE;
-	Wed, 22 Oct 2025 10:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8878A328606;
+	Wed, 22 Oct 2025 10:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaB7rgIA"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YYjqdxr0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC98246762
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4582D5A0C;
+	Wed, 22 Oct 2025 10:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130357; cv=none; b=XPHlJmJNVIqC+8S9f6iwYhztplYJ5D8mM5vQrJAnQfU1McO/ub6PDtSbAU9B5GG1TqNc7kVSS/BzXP08kztoptyo9+CKrvzcgCMMVDbpWsEOIvWy5WVLPT5rv2A+3iw4zjvdl0vke5DLXfzKkY2XxYWs3bVNO+NJxA9FwyL4vWw=
+	t=1761130406; cv=none; b=rF/bNsEWEO1BUDRzN3oBsonghq78fvg4idqzmPwdGFA5Y178sr9J1Oi1t2TYAt2M0jkQSqn0kdgvgLpf8i7OAD32e87Q4aI1U6EX4DG8c9x9p9T+GB8nR5pPDfa8bTS4mN+mssN2EdpUf8kDaNFCAsFk9VD4GNCPbDW30Isu4Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130357; c=relaxed/simple;
-	bh=+MHqJhddBVXKtcU8ztFKmj1eMQPN/RlOUsiDFZNENSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HhEcDvrTilFPOvfjSh3TGv3rKMbDMUA6yJzTeXiwYpGOuvFvkE+x/eYK7HAHS9k+vSNgjGaJ+7OZpu+Mjvp7Gx4vUI2PblgXdiHapbfcLk2Dkv8pO32Ioaq08pr/W0xxAt7+V16PadNUy8pi5v/jKsjcbzAAjN4ubfwV+Vja5oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaB7rgIA; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-88f8e855b4eso577432185a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:52:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761130355; x=1761735155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yEuWOBEN/U35xXneOxk8fuulvP+81wWTxzQsKgpzxyU=;
-        b=WaB7rgIAnruCaEO18CYf8JzrQxGp6Utk7SjjB7RDD4VguyvdlTuUCVBqyQ1VWFQISe
-         LiQ2VE+S8unO7YInLk5jK0NgTKXp5jC4kE0tH2OIBFLLj0AOClCHFmevIkwHgRBEgYzo
-         6G1Yu2CsHt2aRf9fkJyvJc0rsSpGXp8aWmstzx8JlVYusz3nQse4TvBNvnQpHyAEMXPq
-         5zQQiLvCMovdDs1XfmZ4zMFWnYI8EbGsZwUwscDxhoRrgm6hLtMROTjqGuE29IuWMzNF
-         vzUhp61BibiX70keIOdJNExED+FisGKztCXlEflM3nocVzdXDSWGqFXE3+V0eZSc4JT8
-         YheA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761130355; x=1761735155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yEuWOBEN/U35xXneOxk8fuulvP+81wWTxzQsKgpzxyU=;
-        b=WtW7leJGstw1z5csgtfvEeEoiTuuUXxvj9ouwATExGA/s7xmbg8gweqw3Y1KvQglrH
-         ATDKJSnk706ZjCJxWOcPKL9LfxVBO/U8SpXvVzJRcCrtV5BVH70up58sy76vjm+2mfA5
-         JeqKzjheHYQncoLLI2PFTHPK98cClJRIkBxcXBQj9CqOrV8GkTpLec8WJ9whW8lID/Ex
-         uf5XniAVMJCoManYyWSoIahJvAkf4bGKNGoZaWk8Q5Hwchmvv8zdL68c+8yxikMLiAut
-         If192/Fn3V/TXbTQzgyGNCitawqM+MN5O0gTEx16gGdMkFibuJ1uVxG6WP4cQv29Ob0z
-         qRhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMLMA1CfChG29HiWyubrHPLvxa81kBUi6/Cu7e1gihXCn1PCVKxqPOos/PYGfDR+NsqvJOrVIqnIRqwE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydiknGm8113bNsaOAkMEabBfJ+jSnfUVqeLEyBNIoFXBKkKcFq
-	008V8KXuCjUGvC6BGZxPfbABbCVpx6hY6s7/8/TmvPXLU0a1lGS4NO6LSLKrytImJDjtyHulQAM
-	r5y/vxK1PmmdR00ohmna2o/VhrC4ocWE=
-X-Gm-Gg: ASbGncvmlk/6lozpKLr0+C8ezY5J3oEBC9KhHehCpO+Dh3OOKc63m3BoVi1iCf4CgN4
-	sq+oQ475uvMGVXoCWeJtE9qnH99gvKoEb7Rmw9YGrGr1hI3W1lRArIjm4B+KteKF60jJyX3i2xE
-	k4lJwcIsm3uDbBZ4sfwNOf9OAm/sylnabkEFwzw4OISnIIHwLtu0un1We69RdLFOBj/QbuHeV1O
-	swf12zgq6WSKTz6CQ6rbxtY+jai/bfpWxFF+lrEuIqx6+JdUxwEINKGQLeFXDUCv1hFTt32pnhL
-	jJzvgrAGgHk/tNIXO5AdUIOS6l4=
-X-Google-Smtp-Source: AGHT+IF+UfILE16/+y31/plfKL4BsKCPsgS9omTYmo7r7nqziwmbbysRvcZ1nTCNlDK4BHMGeEjCaYDlClvwVJdT4QE=
-X-Received: by 2002:a05:620a:25cf:b0:850:b7ad:c978 with SMTP id
- af79cd13be357-890708f2553mr2525779185a.49.1761130354392; Wed, 22 Oct 2025
- 03:52:34 -0700 (PDT)
+	s=arc-20240116; t=1761130406; c=relaxed/simple;
+	bh=wa9y6VC6nk+UaFLQfO+kcz1XNqHz+k0Uix1DKdIowCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgWmpOXFZHhe1yy/gDWcVAvW0J3hhBJfzGEa+DGucDtLsI0ZNXU5kbDNEHRG/koYi6yah/rwwdwbA+4JuWEJwCOcKDZ0mNzxMU0sQMQ2DFjVnNN9ZPaPg8+qrOKJUXCyGKnrlRizMMuaIUKgiYDvXjdMBK8cvfAkEikiA5evBjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YYjqdxr0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8093B40E021B;
+	Wed, 22 Oct 2025 10:53:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id UucJL8v8e33A; Wed, 22 Oct 2025 10:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761130396; bh=tCEcUCjHKCWYK1KKFqmFTHqeTyI6CWgRfbOF0mFOCRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YYjqdxr0iJWnmBGWsR289Yr46Ha/4xxosopgB1DtB+anVpBZmGJpo0+LwXYMN5IxJ
+	 AryrzlrJjYuK27UEMFJmd8/WrEvrm0h3DEPNBpq4y8rsVvdzYP+Yw08rqgczR7CEuz
+	 ncnU0Xt/3QVtBXCJZzMNju1a/CW3izjiHbpGNTj3dfRpyrehVACrvkK0RVsbjdvmhi
+	 jmrX//NTjBB8AjJdYesDYcbFwbVSiHxZ1jbnKI2j5X/pDDYt7kl0eNmjQAiOZAbIKr
+	 5fo8/wtfyvxSE4f8s5+6iXDprREY+3BtSUt594uNddfuk3n0cCVsip1pVKyNvcAG5X
+	 WEsTX67vOTcbDEwS0G5Ck3UTL4Bo3lPiWohPgq6SPVRLlN2MkDZnCaC+biVWPsxyK2
+	 CfZ2TTuNhnaTTmmnOBKIHRTulYZ85cDjezkv2fyWOr1lmjztW4qnxt85l7wROADKAf
+	 sjpErQjdLwZJ+fF7p3ziO2G+iTrs3CTT+DlLk8ictJe78x+dTdhhkrXHY+Y5cwbkZN
+	 ko4VEZEISFW8U+8ExZyH4ECjiOH/nulbCZ/AYSynBAia6PcQGm4dwb4MqW2+vLEXjP
+	 4BB3tA3dOZ+aK0nmaTzBAYteBQCo+yQnjdUQYnclNQtbHyjkapMuvuaSeXR9AgvA9/
+	 P9TkY7gWgcJT/b0wzE7ZBPc8=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C26E240E0200;
+	Wed, 22 Oct 2025 10:52:48 +0000 (UTC)
+Date: Wed, 22 Oct 2025 12:52:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v10 03/15] x86/alternatives: Disable LASS when patching
+ kernel alternatives
+Message-ID: <20251022105242.GCaPi3eps1PdAWEXOh@fat_crate.local>
+References: <20251007065119.148605-1-sohil.mehta@intel.com>
+ <20251007065119.148605-4-sohil.mehta@intel.com>
+ <20251021200328.GMaPfnEDibnBrhNTmQ@fat_crate.local>
+ <20251022082541.GL4067720@noisy.programming.kicks-ass.net>
+ <20251022094019.GAaPimg3VCgRu6eELd@fat_crate.local>
+ <20251022102253.GW3419281@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
- <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
- <87a51jfl44.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
- <871pmv9unr.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
- <875xc78es0.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
- <87a51j6zg7.fsf@DESKTOP-5N7EMDA> <CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
- <87ms5j4444.fsf@DESKTOP-5N7EMDA>
-In-Reply-To: <87ms5j4444.fsf@DESKTOP-5N7EMDA>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 22 Oct 2025 23:52:23 +1300
-X-Gm-Features: AS18NWAP0fbsGHxZLrVjv_J-9bnvKPZdV1GwoS51_2cxWur2X2S3xT3hLu6HdG0
-Message-ID: <CAGsJ_4xhJSLnXOZy4kPmnif5Paq+OPN_Ww+rPk2WO4-ADSC0Yw@mail.gmail.com>
-Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251022102253.GW3419281@noisy.programming.kicks-ass.net>
 
-On Wed, Oct 22, 2025 at 11:34=E2=80=AFPM Huang, Ying
-<ying.huang@linux.alibaba.com> wrote:
->
-> Barry Song <21cnbao@gmail.com> writes:
->
-> > On Wed, Oct 22, 2025 at 10:46=E2=80=AFPM Huang, Ying
-> > <ying.huang@linux.alibaba.com> wrote:
-> >
-> >> >
-> >> > I agree. Yet the ish barrier can still avoid the page faults during =
-CPU0's PTL.
-> >>
-> >> IIUC, you think that dsb(ish) compared with dsb(nsh) can accelerate
-> >> memory writing (visible to other CPUs).  TBH, I suspect that this is t=
-he
-> >> case.
-> >
-> > Why? In any case, nsh is not a smp domain.
->
-> I think dsb(ish) will be slower than dsb(nsh) in theory.  I guess that
-> dsb just wait for the memory write to be visible in the specified
-> shareability domain instead of making write faster.
->
-> > I believe a dmb(ishst) is sufficient to ensure that the new PTE writes
-> > are visible
->
-> dmb(ishst) (smp_wmb()) should pair with dmb(ishld) (smp_rmb()).
->
-> > to other CPUs. I=E2=80=99m not quite sure why the current flush code us=
-es dsb(ish);
-> > it seems like overkill.
->
-> dsb(ish) here is used for tlbi(XXis) broadcast.  It waits until the page
-> table change is visible to the page table walker of the remote CPU.
+On Wed, Oct 22, 2025 at 12:22:53PM +0200, Peter Zijlstra wrote:
+> I'm thinking that machines without LASS don't need the clac/stac in
+> these places. And when reading the asm, the FEATURE_LASS is a clue.
 
-It seems we=E2=80=99re aligned on all points[1], although I=E2=80=99m not s=
-ure whether
-you have data comparing A and B.
+Yeah, makes sense. The second alternative with LASS sounds like the optimal
+thing.
 
-A:
-write pte
-don't broadcast pte
-tlbi
-don't broadcast tlbi
+-- 
+Regards/Gruss,
+    Boris.
 
-with
-
-B:
-write pte
-broadcast pte
-tlbi
-don't broadcast tlbi
-
-I guess the gain comes from "don't broadcat tlbi" ?
-With B, we should be able to share many existing code.
-
-[1] https://lore.kernel.org/linux-mm/20251013092038.6963-1-ying.huang@linux=
-.alibaba.com/T/#m54312d4914c69aa550bee7df36711c03a4280c52
-
-Thanks
-Barry
+https://people.kernel.org/tglx/notes-about-netiquette
 
