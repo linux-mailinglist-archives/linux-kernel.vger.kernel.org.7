@@ -1,84 +1,122 @@
-Return-Path: <linux-kernel+bounces-865840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D36BFE24D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FB4BFE250
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0FAC4EE854
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:19:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80C934E7FFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7D92F8BFC;
-	Wed, 22 Oct 2025 20:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15EC2FA0F3;
+	Wed, 22 Oct 2025 20:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pW7HX13C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="IzQHUWcx"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BF32F7462;
-	Wed, 22 Oct 2025 20:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7756F26F46C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761164395; cv=none; b=qd3bmp/uxPyJ0uGScT0yj5t3r29Rr+Va20TPeORRcYmSIbZxpCTwXleY2bAH3/kNGBwTe4ln6s+OAgtlUAKxOrGT6ZW1dLdRf99LyJeT02LpvtagmrJwOiD3uuAs1ekEFNcxIg0KEf1ESPzcAMaaJI1LvNe/bzL/K6OrK5vGP5Y=
+	t=1761164477; cv=none; b=lnfQ+wzmrcSLdBVni8tdl9uwoNdKPOWDli17jorSUa+GFsJyyqI8ZPJV/DtxGOa3tTQTeUiY8cPKz3su80N3IxcLhrjJRgMqmi7VGeqgduNtAA4Mhf2ZQ/XTMPA5MVqjRb/184R+JJcDQjPoP7OJjKUJ/dFXJiEPdC18DzXkRis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761164395; c=relaxed/simple;
-	bh=EG3mVsC1yxeKs7A0qTyk16cJqQ/GDWU7YdT4fOTnt3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WaSQ5bZ4OE470nY3H+GgFgaDW1+MS9Y5uDNNvtXcIr8jguUzYdu6GlJtVVvzWqA81YtD/J+iYo0SYTMfoUvAt5rL9K8BNcABOsw0rvAqLcKALfyrP0rZ1iRjCQGEQDEK7mCx7WKl16UFXWyxo4wTGpf1DcGPnUfwCpmoXZW9Blk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pW7HX13C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230B8C4CEE7;
-	Wed, 22 Oct 2025 20:19:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761164395;
-	bh=EG3mVsC1yxeKs7A0qTyk16cJqQ/GDWU7YdT4fOTnt3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pW7HX13Cb3lelLqnkCTJJm7wdp/QN4u7Q0pIx2rTHEdGjRGY3jOBah+OZLF+zhSCV
-	 vBskmGkfbrZE9eywK8zWpzUE0ahHOmHUH9NNGu9WXitoZ00qqf762AyP8GzpyyYCJm
-	 ekuphmWb0XaBFWeToFwTWYUz7iIuXeEab/C3qzpY5Er/cgmbmljHBvsOeTa1g7QZK5
-	 LgsWWjzBZ+IsYf+kf4+/sLVgzcT0+KKDfX/wmQ+TC0VpObed7IiimZ7bTg8dZTIBms
-	 44rsGElwDkM15ry+2gKqoQFwBViC11Dt7MFkga5ygEcdb+rNJA+2ns4ZXP1PKAHs/7
-	 AVgkf5lcLe7YQ==
-Date: Wed, 22 Oct 2025 15:19:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: adriana <adriana@arista.com>
-Cc: krzk@kernel.org, jdelvare@suse.com, frowand.list@gmail.com,
-	linux-arm-kernel@lists.infradread.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, vasilykh@arista.com
-Subject: Re: [PATCH v2 0/2] DMI: Scan for DMI table from DTS info
-Message-ID: <20251022201953.GA206947-robh@kernel.org>
-References: <0f006338-e69b-4b3f-b91f-0cc683544011@kernel.org>
- <20251022114527.618908-1-adriana@arista.com>
+	s=arc-20240116; t=1761164477; c=relaxed/simple;
+	bh=8jcUFCa6WkdWMPIKIvDk0frR/KjqcYNQy6lmd0MxBbA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GJIsraXkW+EpTk7DrIMkdG1jttn+scPNU1Gr5x9sYL8SwUx6dBFOjlLhkUf4aMyZ9+g0RWbSzAEWR+LybTfZypiV150Alsi+pV3p3fiYbONg2UjSwWwatdhA2Zmm2rqBWel91xLJdLxVzyoT73PoKLwSi3Ui7wAZ74u/WHOJ/1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=IzQHUWcx; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from [192.168.47.19] (unknown [91.183.56.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 8800468B9C0;
+	Wed, 22 Oct 2025 22:21:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1761164473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8jcUFCa6WkdWMPIKIvDk0frR/KjqcYNQy6lmd0MxBbA=;
+	b=IzQHUWcxaz9Xo4WcPi8Luatks6+AkI8Up1+QsgbiBOaUPKAu9l82u9MZcgl8YTDrushZHs
+	CMgyTKRbUEJMo8HPbzlkWzIlResiGAgcQnRKpeSWTOAVMKeUH12m1atQEKMlR6kbctLnsK
+	+0667I8i+wtaiH/WerwlUg4ZS/4v+1y9My/uZUzv2PGt5rrbkxh/ceAwmOM7NViiyXVxxr
+	P2F0pmnUKWLEYOxvtS9iBOhBrrMuZb9oWMc5fkq1soGFngpADgnF2XrOSYMc/oKU4Uq8y3
+	iCcWwKiUIu+dJ3LPBleIdykUoaYUtijjUhXc/Cmym0UMbbq4c7oV1Ear+mj9kA==
+Message-ID: <9742ddcaa921caa5e3ea70adcdfbe34f0a52c1cd.camel@svanheule.net>
+Subject: Re: [PATCH v3] regmap: add cache validity to REGCACHE_FLAT
+From: Sander Vanheule <sander@svanheule.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	 <rafael@kernel.org>, linux-kernel@vger.kernel.org
+Date: Wed, 22 Oct 2025 22:21:12 +0200
+In-Reply-To: <26abcd6d-ae3a-4ef8-890a-9b209c3c8e03@sirena.org.uk>
+References: <20250109180256.6269-1-sander@svanheule.net>
+	 <a2f7e2c3-f072-40f7-a865-5693b82b636e@sirena.org.uk>
+	 <0b2fa71f1ccd49d66ca02b6c44ba8fe2135e9b6f.camel@svanheule.net>
+	 <ca528e3e-39f1-41cc-9f46-ad787af48a77@sirena.org.uk>
+	 <187bc058ff944dbde0e876efa6e72046bcc2a124.camel@svanheule.net>
+	 <143f0597-7cfa-4b16-ada9-72922f566284@sirena.org.uk>
+	 <baaa378164ae45c43a521eca467b49e0eda38818.camel@svanheule.net>
+	 <26abcd6d-ae3a-4ef8-890a-9b209c3c8e03@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022114527.618908-1-adriana@arista.com>
 
-On Wed, Oct 22, 2025 at 04:45:25AM -0700, adriana wrote:
-> Some bootloaders like U-boot, particularly for the ARM architecture,
-> provide SMBIOS/DMI tables at a specific memory address. However, these
-> systems often do not boot using a full UEFI environment, which means the
-> kernel's standard EFI DMI scanner cannot find these tables.
+Hi Mark,
 
-I thought u-boot is a pretty complete UEFI implementation now. If 
-there's standard way for UEFI to provide this, then that's what we 
-should be using. I know supporting this has been discussed in context of 
-EBBR spec, but no one involved in that has been CC'ed here.
- 
-> This series adds support for the kernel to find these tables by
-> reading properties from the Device Tree /chosen node. The bootloader
-> can specify the physical addresses using "linux,smbios-table" and
-> "linux,smbios3-table".
+On Fri, 2025-10-17 at 14:56 +0100, Mark Brown wrote:
+> On Thu, Oct 16, 2025 at 10:49:40PM +0200, Sander Vanheule wrote:
+> > Some quick grepping turned up 35 drivers which use REGCACHE_FLAT withou=
+t any
+> > cache initialization (see below), thus defaulting to the all-zero cache=
+. This
+> > includes the driver I think you found issues with on the pine64: sun8i-=
+codec.c
+> > If this driver (accidentally) relies on the zero-initialization, I woul=
+d expect
+> > the spurious interrupts to also pop up when switching to a maple cache,=
+ or when
+> > using the num_reg_defaults_raw workaround.
+>=20
+> Yes, that driver is relying on the current behaviour - I'd expect at
+> least some of the other drivers are too.=C2=A0=20
+>=20
+> There's two separate things here, there's what the driver you're working
+> on should do (which is to use a maple tree cache from the sounds of it)
+> and there's potential improvements to the flat cache, or adding a new
+> sparse flat cache.
 
-/chosen node entries go in chosen.yaml schema in dtschema repository. 
-But first, I need to see some agreement this is how we want to support 
-this.
+For my driver I went with a maple cache, as that's the one I can get functi=
+onal.
 
-Rob
+Meanwhile, I also noticed others on the linux-gpio list being unaware of th=
+e pitfalls of
+the flat cache [1]. So I decided to send a v4 [2] of this patch, albeit spl=
+it up in a new
+flat-sparse variant and a warning for the current flat cache. Even with cle=
+arer
+documentation on the limitations of the flat cache, devs/reviewers/maintain=
+ers would need
+to be aware. I feel like it's better to just have less surprises.
+
+[1] https://lore.kernel.org/linux-gpio/e461ca08-ad28-44fe-85f1-afe332c1d43d=
+@topic.nl/
+[2] https://lore.kernel.org/lkml/20251022200408.63027-1-sander@svanheule.ne=
+t/T/
+
+Best,
+Sander
 
