@@ -1,150 +1,102 @@
-Return-Path: <linux-kernel+bounces-864529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C55BFAFE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:54:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974FFBFAFF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBDA58407B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C029E567C12
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EE930C621;
-	Wed, 22 Oct 2025 08:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996DC30DD0B;
+	Wed, 22 Oct 2025 08:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sz9Wv6lq"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="UB9kvIi2"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2C23064B7
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0A8266584;
+	Wed, 22 Oct 2025 08:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123258; cv=none; b=UmgpdpLLPeA4Z2OvfvSKQe763LiuSpj0Nipt9WO40lffscTBQeANql5u+uHU6wFe/nukR67GhmSuWlgGMxKNW6ptpK+KHIlr+ZI8ONE08u0ktkD8oaCu4ZAEbTyGwrOBlWdf31sgFjK1RSlA7UfhlNnlIVsbKh4PoP3YXyLwR7A=
+	t=1761123317; cv=none; b=NyOC46VRx63gdRzjP7PoLdYUQHGMA0XgjS1Cu4AaAPdF99wQTN0EOEKmQ0OrYJB8DvNd+4drI8Avtea7wqrlYoKxmDLlGxtV/yvFAvP7swFxEE+FPipazWvCHZR0cPaXZgWU/hcEJTXZV+n64vzp6c7UPw4KFk9iXTrQ4YFWCPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123258; c=relaxed/simple;
-	bh=DEYRFaSu1tmNBtnf/PK4zwzFUdG2RV3KAPhG/SSA4/E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QZ6hP5ZTGUhUJVdfvgVA9EEhi9iySzIAY0RRUvcXwvWLpshPoKcyfLDklEt6ebdO1j7CN8Liqg5bqsickx7wOLqgNs9m0ZvXOyDRXWAIjKsOeA17NLlHtfCMUVpr5QIHjuHQ6yKpZAMmG4MSwsFSsOyk+TS/pN6DY1JnV46XM2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sz9Wv6lq; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 427974E41260;
-	Wed, 22 Oct 2025 08:54:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0E381606DC;
-	Wed, 22 Oct 2025 08:54:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 557A8102F242F;
-	Wed, 22 Oct 2025 10:54:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761123251; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=UdkqHbshapC7nZY4/zFoditcNqEk/iGcG2EMytEmpUc=;
-	b=sz9Wv6lqYxBw+efub1O+67sRO5hj1GJKSrnQlOg8RP6sH79keyWGAzsK4Q+4n1BMEdB7VS
-	TYOlusTcal3NLBThus+SARMOan5OGVRHZIorH9GQCpJoigQOUA9yFIoEoNLMT3yx+Sjvdd
-	aWFll3rPZFjgq12I1YFpGxjlTEjVrsIAMG94T945WWTouRh4oilP/lVIsQ9J9DYlk3fS0D
-	RCns2kaBXugtb8nVvJoIciKphHOiT+lUAdK7dT+UZflZ4C4hdMp+ZOrBIv5J5MOX5exH06
-	3pUkH8Zf3TmQhgbiLKKoyN6L/DLMNpHiQDj1Jx5+laX7Shvkj31BB/uuvktcWg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Genoud <richard.genoud@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Chen-Yu Tsai
- <wens@csie.org>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Samuel
- Holland <samuel@sholland.org>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,  Wentao Liang <vulab@iscas.ac.cn>,  Johan
- Hovold <johan@kernel.org>,  Maxime Ripard <mripard@kernel.org>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  linux-mtd@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-sunxi@lists.linux.dev,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/15] mtd: rawnand: sunxi: introduce reg_user_data
- in sunxi_nfc_caps
-In-Reply-To: <20251020101311.256819-5-richard.genoud@bootlin.com> (Richard
-	Genoud's message of "Mon, 20 Oct 2025 12:13:00 +0200")
-References: <20251020101311.256819-1-richard.genoud@bootlin.com>
-	<20251020101311.256819-5-richard.genoud@bootlin.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Wed, 22 Oct 2025 10:54:02 +0200
-Message-ID: <87y0p3tiz9.fsf@bootlin.com>
+	s=arc-20240116; t=1761123317; c=relaxed/simple;
+	bh=ozyC0ygxJ42N93avxV/rH2GMQjZoBEuol+LMBQ94Uas=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=noE8hqlasjqcH+5KdvenSjCqwxABKXFZGQWORf15dsmGdY4U5uBPdhw0dets2p/+YqWZqcaN7Lf4PteL9Y92kNwgfzQAXHbqaUHbZs+J/CyV1YB/48b0wuGy/rYslgKy3LsevGgst5QBofOd2koZe0/MOpJWMb70voxrxxB1DtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=UB9kvIi2; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59M8seuvF360758, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1761123281; bh=bWx2M9wpDVpkM4yWZWdCxiRy4DozE9xy5F2FyAkN610=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=UB9kvIi2wewZxZYHhYW0JmLORc7wbQl+aL0WDdCvbLuiSh7woD5eMMcJM9Cuwz/py
+	 RjV8r4IPTrrFEHK+dUmP38LbXO8tQDjLzmSOq1g5Adj2HyCBF6cqsGOLiWeKTYSUKJ
+	 01kUgoEU9Pdc++AhSn3IcARpn+wYCapd3WYIJeYcX3veVbN5E3paIjOEFBlwVnZjnf
+	 vy3KOXal8faxu6CG+oSieD0zWDBfly27lk6Rq+qTPv5RXDQFcsPkKNRDxCg9LH33N8
+	 E804WTtD8fZxTzEpeGIGVcHpN46Vc0swHQo6h7lXYxiyD/6utI8EPv8G6kUNS1Lt1b
+	 +JTlGAKIZCl+Q==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59M8seuvF360758
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 Oct 2025 16:54:41 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 22 Oct 2025 16:54:40 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 22 Oct 2025 16:54:40 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
+ 15.02.1544.027; Wed, 22 Oct 2025 16:54:40 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next v3 8/9] wifi: rtw89: provide TX reports for management frames
+Thread-Topic: [PATCH rtw-next v3 8/9] wifi: rtw89: provide TX reports for
+ management frames
+Thread-Index: AQHcP04MOLWRdkAwuUmNSMnYYSuZ/7TN5D9w
+Date: Wed, 22 Oct 2025 08:54:39 +0000
+Message-ID: <92b8ee77b6b8422bb43e68110034150d@realtek.com>
+References: <20251017100658.66581-1-pchelkin@ispras.ru>
+ <20251017100658.66581-9-pchelkin@ispras.ru>
+In-Reply-To: <20251017100658.66581-9-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Richard,
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> In order to provide TX reports for the management queue rtw89 should
+> configure the firmware.  Do this with SET_CMC_TBL_MGQ_RPT_EN() for the
+> WiFi6 chips and with CCTLINFO_G7_W0_MGQ_RPT_EN flag for the WiFi7 ones.
+>=20
+> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-On 20/10/2025 at 12:13:00 +02, Richard Genoud <richard.genoud@bootlin.com> =
-wrote:
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-> The H6/H616 USER_DATA register is not at the same offset as the
-> A10/A23 one, so move its offset into sunxi_nfc_caps
->
-> No functional change.
->
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/sunxi_nand.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sun=
-xi_nand.c
-> index 0285e4d0ca7f..8f5d8df19e33 100644
-> --- a/drivers/mtd/nand/raw/sunxi_nand.c
-> +++ b/drivers/mtd/nand/raw/sunxi_nand.c
-> @@ -48,7 +48,8 @@
->  #define NFC_REG_DEBUG		0x003C
->  #define NFC_REG_A10_ECC_ERR_CNT	0x0040
->  #define NFC_REG_ECC_ERR_CNT(nfc, x)	((nfc->caps->reg_ecc_err_cnt + (x)) =
-& ~0x3)
-> -#define NFC_REG_USER_DATA(x)	(0x0050 + ((x) * 4))
-> +#define NFC_REG_A10_USER_DATA	0x0050
-> +#define NFC_REG_USER_DATA(nfc, x)	(nfc->caps->reg_user_data + ((x) * 4))
->  #define NFC_REG_SPARE_AREA	0x00A0
->  #define NFC_REG_PAT_ID		0x00A4
->  #define NFC_REG_MDMA_ADDR	0x00C0
-> @@ -214,6 +215,7 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(s=
-truct nand_chip *nand)
->   *			through MBUS on A23/A33 needs extra configuration.
->   * @reg_io_data:	I/O data register
->   * @reg_ecc_err_cnt:	ECC error counter register
-> + * @reg_user_data:	User data register
->   * @dma_maxburst:	DMA maxburst
->   * @ecc_strengths:	Available ECC strengths array
->   * @nstrengths:		Size of @ecc_strengths
-> @@ -222,6 +224,7 @@ struct sunxi_nfc_caps {
->  	bool has_mdma;
->  	unsigned int reg_io_data;
->  	unsigned int reg_ecc_err_cnt;
-> +	unsigned int reg_user_data;
->  	unsigned int dma_maxburst;
->  	const u8 *ecc_strengths;
->  	unsigned int nstrengths;
-> @@ -723,8 +726,8 @@ static void sunxi_nfc_hw_ecc_get_prot_oob_bytes(struc=
-t nand_chip *nand, u8 *oob,
->  {
->  	struct sunxi_nfc *nfc =3D to_sunxi_nfc(nand->controller);
->=20=20
-> -	sunxi_nfc_user_data_to_buf(readl(nfc->regs + NFC_REG_USER_DATA(step)),
-> -				   oob);
-> +	sunxi_nfc_user_data_to_buf(readl(nfc->regs +
-> +					 NFC_REG_USER_DATA(nfc, step)),
-> oob);
-
-Minor nit, column limit is 100 now, so typically for this kind of
-situation everything would fit on a single line.
-
-Don't respin just for that if there is nothing else later, but if a v4
-is needed you can change it.
-
-Looks neat otherwise so far.
-
-Thanks,
-Miqu=C3=A8l
 
