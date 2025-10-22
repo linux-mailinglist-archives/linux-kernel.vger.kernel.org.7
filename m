@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-864572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F220BFB156
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:10:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503A3BFB1A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8A531A04167
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E575E1F25
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BC7312836;
-	Wed, 22 Oct 2025 09:10:04 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E46313533;
+	Wed, 22 Oct 2025 09:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJNmji4J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67BA3126B6
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632D6311C22;
+	Wed, 22 Oct 2025 09:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761124204; cv=none; b=i1HJEUgxmIP5SWPoaeWRDn17/WepyLbGVDy7hrJS5TlQHvusLTyugzw5BWl4MC+87iSm5gh2xN0oTBU2gMMKGis5VmcH3bvegFD7mNwssqJogJuPcbjNQRw7moDVJIwWJqOzY5IIDDivbe9pAWxa5CHC7neB8mhWAK3jkuCtKGk=
+	t=1761124210; cv=none; b=THyffi1ISoAunnnccHlq49HR19PPUPgmRF9IE3kQMDBH3xnXcOftncIttOk3H9sbq+0wo7cx1/DWG3wA7yUOgd6OIrMXnDaBU/FJZmMe4Gjz/eqZM/TO+BlbVMslKgHPS3jhnVCrXB7+wL5R6AhvDZnd5sCVE5bTLg46B6BoIeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761124204; c=relaxed/simple;
-	bh=Xwh3l3BPA4ZgKUZ7PgwsvS6awxKnTMHACbPXbU0DDZU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h1vfG3zpOy4Q8tnrS9tGhC2WMSYh01+2EYdAkEuoIorq/d1yxh8KXNx7hd3dNWK9lnHqU6JffDDhyfHnN042s5vuozpmmBHxbjLflUEKJBMdFyBoQ+Eomhv3Rk3nozkXh+SDDXaicY6W3UofSR4bJmL8il3Nt/LcMYzUR6nM9Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cs3HP4d4Dz6K6HJ;
-	Wed, 22 Oct 2025 17:08:33 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 84AB21400C8;
-	Wed, 22 Oct 2025 17:09:57 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 22 Oct
- 2025 10:09:56 +0100
-Date: Wed, 22 Oct 2025 10:09:50 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Gregory Price <gourry@gourry.net>, <hannes@cmpxchg.org>
-CC: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>, Wei Xu
-	<weixugc@google.com>, David Rientjes <rientjes@google.com>, Matthew Wilcox
-	<willy@infradead.org>, Bharata B Rao <bharata@amd.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<dave.hansen@intel.com>, <mgorman@techsingularity.net>, <mingo@redhat.com>,
-	<peterz@infradead.org>, <raghavendra.kt@amd.com>, <riel@surriel.com>,
-	<sj@kernel.org>, <ying.huang@linux.alibaba.com>, <ziy@nvidia.com>,
-	<dave@stgolabs.net>, <nifan.cxl@gmail.com>, <xuezhengchu@huawei.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>, <byungchul@sk.com>,
-	<kinseyho@google.com>, <joshua.hahnjy@gmail.com>, <yuanchu@google.com>,
-	<balbirs@nvidia.com>, <alok.rathore@samsung.com>, <yiannis@zptcorp.com>, Adam
- Manzanares <a.manzanares@samsung.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-Message-ID: <20251022100950.00002785@huawei.com>
-In-Reply-To: <aPfXloRQgplusnce@gourry-fedora-PF4VCD3F>
-References: <aNVohF0sPNZSuTgI@gourry-fedora-PF4VCD3F>
-	<20250925182308.00001be4@huawei.com>
-	<aNWRuKGurAntxhxG@gourry-fedora-PF4VCD3F>
-	<aNzWwz5OYLOjwjLv@gourry-fedora-PF4VCD3F>
-	<CAOi6=wTsY=EWt=yQ_7QJONsJpTM_3HKp0c42FKaJ8iJ2q8-n+w@mail.gmail.com>
-	<aPJPnZ01Gzi533v4@gourry-fedora-PF4VCD3F>
-	<20251017153613.00004940@huawei.com>
-	<aPJZtQS4wJ1fkJq-@gourry-fedora-PF4VCD3F>
-	<20251020150526.000078b6@huawei.com>
-	<aPfWePBq8d3v979f@gourry-fedora-PF4VCD3F>
-	<aPfXloRQgplusnce@gourry-fedora-PF4VCD3F>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761124210; c=relaxed/simple;
+	bh=XBwcSKAt7pmMIAlH4P9UOJg9seAvmBafg4+HNgtE9uA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cAcTP/bduSSxuc+ZmOeLiBUO6YgSljVMp00rsc0qiTuce66D4rOFiB7EBOqVCEP2gSWsSCS8EM6Lrkp9UgQclevzs9sUGaGnGSXv1bg48A8dNO7LDBS9Q+s1aHU7uhbE2rSYGLQb67joPInKWIPJUCm962LvSsWCvEy9UQcSQ7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJNmji4J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7B0C4CEE7;
+	Wed, 22 Oct 2025 09:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761124207;
+	bh=XBwcSKAt7pmMIAlH4P9UOJg9seAvmBafg4+HNgtE9uA=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tJNmji4J3S+RsYSsWOyEd44dMG2opN4PZ6QTDS9iGf412Ikx4VoOdlQurU1FUDAla
+	 oObwS5j8v51ltDfCZvv/jL7xqCte/Nqfirbd4qy9Pq5kOHd3epBvjxemzr+3QnpBWl
+	 te9XFfCxVnhEQynEi0Cm5sbcS9qCXXvB8S7cvoAoyJbbCE8ze84XPU7NtBRZuuVqmr
+	 A4BPIEzzCs4jMA5H5br2hzjYyBIHcLMc5zA0ehjOcFVk09pyp6Yzr/R4ika9b48lec
+	 nce7YuPUIW5+Zwz267GNLK3dndCsemwbTyyFy7ViVgq+egqXzhn/Itwhfy+pW6MBOd
+	 eNWFNYDAbniVQ==
+Message-ID: <e2c6bc90-9fa4-4880-adf4-212890cf0b51@kernel.org>
+Date: Wed, 22 Oct 2025 11:10:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: debugfs: Implement Reader for Mutex<T> only when T
+ is Unpin
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Matthew Maurer <mmaurer@google.com>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, lossin@kernel.org,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org
+References: <aPhGo5WjbPM1Yu95@tardis-2.local>
+ <20251022034237.70431-1-boqun.feng@gmail.com>
+ <4b556c24-cd4c-4c1a-a757-5df3a6782e11@kernel.org>
+Content-Language: en-US
+In-Reply-To: <4b556c24-cd4c-4c1a-a757-5df3a6782e11@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Tue, 21 Oct 2025 14:57:26 -0400
-Gregory Price <gourry@gourry.net> wrote:
-
-> On Tue, Oct 21, 2025 at 02:52:40PM -0400, Gregory Price wrote:
-> > I would prefer the former, since this is already what's done for
-> > hostbridge interleave vs non-interleave setups, where the host may
-> > expose multiple CFMW for the same devices depending on how the OS.  
+On 10/22/25 11:07 AM, Danilo Krummrich wrote:
+> On 10/22/25 5:42 AM, Boqun Feng wrote:
+>> Since we are going to make `Mutex<T>` structurally pin the data (i.e.
+>> `T`), therefore `.lock()` function only returns a `Guard` that can
+>> dereference a mutable reference to `T` if only `T` is `Unpin`, therefore
+>> restrict the impl `Reader` block of `Mutex<T>` to that.
+>>
+>> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 > 
-> bah, got distracted
-> 
-> "Depending on how the OS may choose to configure things at some unknown
-> point in the future"
+> I assume this can go through the driver-core tree, since it's only about a
+> conflict in linux-next?
 
-My gut feeling is the need to do dynamic NUMA nodes will not be driven
-but this but more by large scale fabrics (if that ever happens)
-and trade offs of host PA space vs QoS in the hardware.  Those
-trade offs might put memory with very different performance
-characteristics behind one window.
+Sorry, I confused this, obviously your tree is broken without this change,
+please feel free to take it.
 
-Maybe it'll become a thing that can be used for compression.
-Otherwise compression from host hardware point of view might be
-like the question of share or separate fixed memory windows for
-persistent / volatile. Ideally they'd be separate but if Host PA space
-is limited, someone might build a system where a single fixed memory
-window is used to support both.
-
-Possible virtualization of some of this stuff will make it more complex
-again.  Any crazy mess can share a fake fixed memory window as the QoS is
-all behind some page tables.
-
-Meh. Let's suggest people burn host PA space for now.  If anyone hits
-that limit they can solve it (crosses fingers it's not my lot :)
-
-Jonathan
-
-
-> 
-> 
-> ~Gregory
-
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
