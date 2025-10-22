@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-864925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB9FBFBDF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:33:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F75BFC1EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7586507202
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18572621B51
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBEB32E142;
-	Wed, 22 Oct 2025 12:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA346348882;
+	Wed, 22 Oct 2025 13:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="gitHoXAy"
-Received: from smtp107.iad3b.emailsrvr.com (smtp107.iad3b.emailsrvr.com [146.20.161.107])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="DWn3zTIq"
+Received: from smtp88.iad3b.emailsrvr.com (smtp88.iad3b.emailsrvr.com [146.20.161.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3FE343D8F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B00133DECB
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761136324; cv=none; b=K1SeDcu5HEEVB5/E+MZRNCRWzANQM0yZHR0jEiDmWe1XTsuoXhFrGuB4F8r1koh6tWH8QB4YBIcUO0HKQ0WkI7G0tS8VJwaGR5f3C5SO+DsW7avE/CFA/p8q8C3JuqbvVtQKIRZwU5x1GTfNO4FamzYRzd+bhEJ++5B7Omtnx6I=
+	t=1761138424; cv=none; b=dZxmeNDA7e1G6tA5y3ZSbzl9DNEiqyhhYZa7MyNg3OVEDmHapaZFBVU0NCu86rW4Wi0VzpnxSrTIhahiGq39VeJWXX+8i2Mj/VqVYOFMEX65bZ7Z1FCSR+UKn19spVgOB8HqlCxqxgjShrYpQbqmcqrXxQNQiRU1/dm7/T+EtMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761136324; c=relaxed/simple;
-	bh=Ahcy1JkWdZhs4Wb0qxaN6FVZjLIHt2HFl5ntqcxUepo=;
+	s=arc-20240116; t=1761138424; c=relaxed/simple;
+	bh=aUlU4Pbad8exeU3PvXAN8EgQadXY4mrcDVLjV83v1HI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lLYSYrPxCiwd5Xle6Ex4Kf+764vNNf2K+ZwHIQc3AlSyYsu1Pg5OmtwPqXkYyXe0zI6Jq3R9OCyX5338+DCyuuzJ44dRibH10O4Q0peMCOYQY0PuunHtBhZjeaDmaKpLSVgq48AdWcZ/DqbGG//bdt3Q/v6MTnsglBtfGaz9Vdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=gitHoXAy; arc=none smtp.client-ip=146.20.161.107
+	 In-Reply-To:Content-Type; b=PGKq9jpzcbUtRhjvJ84MVM/KemVhf5UGs96YHFoe9LIL2tnzLMn6UCXO5rZWAGn7i9D/PnxcWEUHF4ed6pHRjZTzkptXPD1vN3I97tJajZGSP7k6cfd+yItimlWnrJnORnt+eTVxNld4jhIL6PwG3ti7lDLl/zx1qqFwhhbH6R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=DWn3zTIq; arc=none smtp.client-ip=146.20.161.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1761127336;
-	bh=Ahcy1JkWdZhs4Wb0qxaN6FVZjLIHt2HFl5ntqcxUepo=;
+	s=20221208-6x11dpa4; t=1761129535;
+	bh=aUlU4Pbad8exeU3PvXAN8EgQadXY4mrcDVLjV83v1HI=;
 	h=Date:Subject:To:From:From;
-	b=gitHoXAylJKM50saSGT+pMb5FAEmW04gIN4nwhTbntQGhxtoFJzUgayQOqr1ft2V+
-	 lDBJdw4b/syr4BUvl1MT9KUmTsBWQgvahLNG6J+aWJie7RP1jazCw0+bMSYQNPWhAU
-	 nNL6TET0B6jX4MFUfKl79hiLLW1yQ0t7phau0qUs=
+	b=DWn3zTIq/KJAFqF0ULiJljkwhb5pHcX6GmZ7vm/Xna31KvMSrym1y92KdAn9625Ud
+	 x77ZbC1j4Uh/2dGcKbQDLnkNnV9j/HX+SdWIfUTH5b5hvdbV+M97v8RzYvHQXBhxIc
+	 aZx8updX90im00Q5ZhR8S3XAqbw8Jf5HFQuxzH9Q=
 X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp14.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 34931E029E;
-	Wed, 22 Oct 2025 06:02:12 -0400 (EDT)
-Message-ID: <24d288e5-9e98-49c0-964d-40476aadc267@mev.co.uk>
-Date: Wed, 22 Oct 2025 11:02:10 +0100
+Received: by smtp12.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 6140BC0291;
+	Wed, 22 Oct 2025 06:38:54 -0400 (EDT)
+Message-ID: <f0f48940-213b-494e-88f5-0275874fe044@mev.co.uk>
+Date: Wed, 22 Oct 2025 11:38:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,112 +49,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] comedi: pcl818: fix null-ptr-deref in pcl818_ai_cancel()
+Subject: Re: [PATCH] comedi: multiq3: sanitize config options in
+ multiq3_attach()
 To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
  H Hartley Sweeten <hsweeten@visionengravers.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Hillf Danton <hdanton@sina.com>,
- lvc-project@linuxtesting.org
-References: <20251020161208.4151618-1-n.zhandarovich@fintech.ru>
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+ syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com
+References: <20251021145951.260762-1-n.zhandarovich@fintech.ru>
 Content-Language: en-GB
 From: Ian Abbott <abbotti@mev.co.uk>
 Organization: MEV Ltd.
-In-Reply-To: <20251020161208.4151618-1-n.zhandarovich@fintech.ru>
+In-Reply-To: <20251021145951.260762-1-n.zhandarovich@fintech.ru>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Classification-ID: f1f689e8-3ce7-4bfa-9e0c-0e174211ccfe-1-1
+X-Classification-ID: 9b896020-3f0c-42ab-b8b5-f247ea7bd99a-1-1
 
-On 20/10/2025 17:12, Nikita Zhandarovich wrote:
-> Syzbot identified an issue [1] in pcl818_ai_cancel(), which stems from
-> the fact that in case of early device detach via pcl818_detach(),
-> subdevice dev->read_subdev may not have initialized its pointer to
-> &struct comedi_async as intended. Thus, any such dereferencing of
-> &s->async->cmd will lead to general protection fault and kernel crash.
+On 21/10/2025 15:59, Nikita Zhandarovich wrote:
+> Syzbot identified an issue [1] in multiq3_attach() that induces a
+> task timeout due to open() or COMEDI_DEVCONFIG ioctl operations,
+> specifically, in the case of multiq3 driver.
 > 
-> Mitigate this problem by checking in advance whether async struct is
-> properly present.
+> This problem arose when syzkaller managed to craft weird configuration
+> options used to specify the number of channels in encoder subdevice.
+> If a particularly great number is passed to s->n_chan in
+> multiq3_attach() via it->options[2], then multiple calls to
+> multiq3_encoder_reset() at the end of driver-specific attach() method
+> will be running for minutes, thus blocking tasks and affected devices
+> as well.
 > 
-> Original idea for this patch belongs to Hillf Danton
-> <hdanton@sina.com>.
+> While this issue is most likely not too dangerous for real-life
+> devices, it still makes sense to sanitize configuration inputs. Enable
+> a semi-arbitrary limit on the number of encoder chips to stop this
+> behaviour from manifesting.
 > 
-> Note: as suggested by Ian in [2], there may be a different solution to
-> improving the way ISRs are set up (and possibly, this flaw as well).
-> However, until that idea (based on reference counters and completion
-> structs) comes to fruition, it makes sense to fix this now, if only
-> to stop kernel crashing so often during syzkaller runs.
-
-In this case, it seems to be because the driver allows the device to 
-operate without an IRQ, but will not support async commands in that case 
-and the subdevice's `async` pointer will be null.  However, the 
-`pcl818_ai_cancel()` function called from `pcl818_detach()` assumes that 
-the `async` pointer is valid.
-
-The unchecked dereference of the `async` pointer in `pcl818_ai_cancel()` 
-seems to have been introduced by 00aba6e7b5653 ("staging: comedi: 
-pcl818: remove 'neverending_ai' from private data").
-
-
 > [1] Syzbot crash:
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-> CPU: 1 UID: 0 PID: 6050 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-> RIP: 0010:pcl818_ai_cancel+0x69/0x3f0 drivers/comedi/drivers/pcl818.c:762
+> INFO: task syz.2.19:6067 blocked for more than 143 seconds.
 > ...
 > Call Trace:
 >   <TASK>
->   pcl818_detach+0x66/0xd0 drivers/comedi/drivers/pcl818.c:1115
->   comedi_device_detach_locked+0x178/0x750 drivers/comedi/drivers.c:207
->   do_devconfig_ioctl drivers/comedi/comedi_fops.c:848 [inline]
->   comedi_unlocked_ioctl+0xcde/0x1020 drivers/comedi/comedi_fops.c:2178
->   vfs_ioctl fs/ioctl.c:51 [inline]
->   __do_sys_ioctl fs/ioctl.c:597 [inline]
+>   context_switch kernel/sched/core.c:5254 [inline]
+>   __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
+>   __schedule_loop kernel/sched/core.c:6944 [inline]
+>   schedule+0x165/0x360 kernel/sched/core.c:6959
+>   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
+>   __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+>   __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+>   comedi_open+0xc0/0x590 drivers/comedi/comedi_fops.c:2868
+>   chrdev_open+0x4cc/0x5e0 fs/char_dev.c:414
+>   do_dentry_open+0x953/0x13f0 fs/open.c:965
+>   vfs_open+0x3b/0x340 fs/open.c:1097
 > ...
 > 
-> [2] Ian's suggestion on how to fix interrupt handlers in comedi drivers:
-> Link: https://lore.kernel.org/all/9c92913c-c04b-4784-9cdc-5d75b10d2ed9@mev.co.uk/
-> 
-> Reported-by: syzbot+fce5d9d5bd067d6fbe9b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=fce5d9d5bd067d6fbe9b
-> Suggested-by: Hillf Danton <hdanton@sina.com>
-> Fixes: 00aba6e7b565 ("staging: comedi: pcl818: remove 'neverending_ai' from private data")
+> Reported-by: syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=7811bb68a317954a0347
+> Fixes: 77e01cdbad51 ("Staging: comedi: add multiq3 driver")
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
 > ---
-> P.S. Tested with syzkaller reproducers as well as by doing a trial
-> syzkaller run w/wo the patch.
+>   drivers/comedi/drivers/multiq3.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
 > 
->   drivers/comedi/drivers/pcl818.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/comedi/drivers/pcl818.c b/drivers/comedi/drivers/pcl818.c
-> index 4127adcfb229..3c6cfb212492 100644
-> --- a/drivers/comedi/drivers/pcl818.c
-> +++ b/drivers/comedi/drivers/pcl818.c
-> @@ -759,12 +759,15 @@ static int pcl818_ai_cancel(struct comedi_device *dev,
+> diff --git a/drivers/comedi/drivers/multiq3.c b/drivers/comedi/drivers/multiq3.c
+> index 07ff5383da99..0248321e3bfa 100644
+> --- a/drivers/comedi/drivers/multiq3.c
+> +++ b/drivers/comedi/drivers/multiq3.c
+> @@ -67,6 +67,11 @@
+>   #define MULTIQ3_TRSFRCNTR_OL		0x10	/* xfer CNTR to OL (x and y) */
+>   #define MULTIQ3_EFLAG_RESET		0x06	/* reset E bit of flag reg */
+>   
+> +/*
+> + * Semi-arbitrary limit on the number of optional encoder chips
+> + */
+> +#define MULTIQ3_MAX_ENC_CHIPS		16
+> +
+>   static void multiq3_set_ctrl(struct comedi_device *dev, unsigned int bits)
 >   {
->   	struct pcl818_private *devpriv = dev->private;
->   	struct comedi_isadma *dma = devpriv->dma;
-> -	struct comedi_cmd *cmd = &s->async->cmd;
-> +	struct comedi_cmd *cmd;
+>   	/*
+> @@ -312,6 +317,10 @@ static int multiq3_attach(struct comedi_device *dev,
+>   	s->insn_read	= multiq3_encoder_insn_read;
+>   	s->insn_config	= multiq3_encoder_insn_config;
 >   
->   	if (!devpriv->ai_cmd_running)
->   		return 0;
+> +	/* sanity check for number of optional encoders */
+> +	if (s->n_chan > MULTIQ3_MAX_ENC_CHIPS)
+> +		s->n_chan = MULTIQ3_MAX_ENC_CHIPS;
+> +
+>   	for (i = 0; i < s->n_chan; i++)
+>   		multiq3_encoder_reset(dev, i);
 >   
->   	if (dma) {
-> +		if (!s || !s->async)
-> +			return 0;
-> +		cmd = &s->async->cmd;
->   		if (cmd->stop_src == TRIG_NONE ||
->   		    (cmd->stop_src == TRIG_COUNT &&
->   		     s->async->scans_done < cmd->stop_arg)) {
 
-An alternative fix would be to remove the call to `pcl818_ai_cancel()` 
-from `pcl818_detach()`.  If the subdevice was set up to support 
-asynchronous commands (non-null `async` pointer), the subdevice's 
-`->cancel()` hander function would have already been called via 
-`comedi_device_detach_locked()` ==> `comedi_device_cancel_all()` ==> 
-`do_cancel()` before the driver's `->detach()` handler is called.
+Nice, but the limit on number of optional encoder chip channels 
+(s->n_chan) seems to be 8 (it->options[2] = 4 encoder chips with 2 
+channels per chip).  See the `MULTIQ_CTRL_E_CHAN(x)` macro:
+
+#define MULTIQ3_CTRL_E_CHAN(x)		(((x) & 0x7) << 3)
 
 -- 
 -=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
