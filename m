@@ -1,194 +1,95 @@
-Return-Path: <linux-kernel+bounces-865631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF59BFDA37
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:40:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFF7BFDA19
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D9244EF4EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 445B81A0805D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7BB2D97A0;
-	Wed, 22 Oct 2025 17:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5002D73BB;
+	Wed, 22 Oct 2025 17:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V0fLYb71"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNk+wK5/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1012D9481
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65472D481C;
+	Wed, 22 Oct 2025 17:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761154781; cv=none; b=qgx3Tn+GPLicyJ0Iuw+o921G/0kTHe9wMqgzogjSF96lpW5EnGER1M3Qp/8O0E6tW6tliPqjzk/Rm7TfRzQjIw7dPviflVLhCF7nXRm+rAfJdELyRJAVHJk/xtMdqKnl4gjaMdRAgdCp45CBEAOXkLPWl16IY2Mc60VtYHZ9ceA=
+	t=1761154774; cv=none; b=JTqcgaiYKU+cYp5JzpkI8uHCCPb7XA3b4bxVQCI6XqjsFsH6+FNolGwHotf2zHIFdl8NE8u4LSkeRCOoeKT3DzIFvcRpJdDSif+9zpAdwyVJEC4zErOubdt561RWF4nSQGnO+qJUFQazfldNawIzbKXW38EDr7dI845d78CoIrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761154781; c=relaxed/simple;
-	bh=O2rS9th93VdiObqGHqJg9tF9FtBIZpNefdSGlMkHdmY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q9S5+lN2ZqSldxmrEY4stI/K1XsGtMvSATWQeCmG+QyZShOLW1ZMwT7YN09BZwCGPxIjxicoHiPi06vfEiZXQESd4NdPAHjm40REk43vPTmM+WgpGqMzPsjI+ca56y6WD5+R7BrdReVAo6sJqJMBbIpUWbSJF3kxXg7locB8p+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V0fLYb71; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so8930836a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761154778; x=1761759578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DQdE14qwP3ArpvNj7koaLBKy4oXNS6rDuyXrc8Mb3G8=;
-        b=V0fLYb71LWnbHwu7vx+4+aT/VvkpyKipsXg1ezt52QvFAnKAfO/rz8U9SAK3QD+I6M
-         a3HuAHR/dntApw2kb4XyxrlPKGsIblTNQGIM7K4tFoGHgZ6ops7ZEi4ej4IlWOObDJm2
-         IGIrsJfG3ZqjSKhfdC+6zndkFNPU5yo3U9KEVSZ91FQWAFQOEtArWzGhABH71QcRTZOg
-         uvcGXrc7+cns1KPyTfU9cemH2ySU+42kbSGJIqEf8kt2hiXVHOmLb56+1/ID69JrZMux
-         A9Y8GYgN8ATvaCfykkSZtFExjj/YN5o1fkoz8QhJi46JrLqbTSz3oNTO72YXBpdF6oLg
-         QBew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761154778; x=1761759578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DQdE14qwP3ArpvNj7koaLBKy4oXNS6rDuyXrc8Mb3G8=;
-        b=qqFHCPZ/qP81VihtdUvUErzVRGycaa0uUvps9pTMD2II3UGYlmRmdoW5Mt1RsztVUe
-         vsUoEuv0NyFcSNreJtl5YilIkN5lMWAMTG5gG7losuEqi5b/V57Ury1R8vbbp5iUz2o2
-         Ai166Ad0MrJBH8ucxidVK8512Ml6H2RtzffdxbKqaR4CKRSCU3cUsC+58psBGPDgteew
-         FxhKTIUUBtCncU4GaE3hrfIKP2TD8z7VLFkSMW8UGrDIdy7ruSVjWRMTj1jjMvxME5Zf
-         2j91QMOBu+Ce17xgLX4VowzFCZ/yaZdIjRJQ6iRDuD7y8yVNJVJ7RIwH8r/GlOAb43zj
-         8sdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNCzs0hDtP6ruOVFdETlPabgUrOqqhdi4NTY9Z48bIGg9A3P8vvax2KXjBzQl7ex3gi4pbIyVklAu7gGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDya8YzklZo+al7VQkBV5Q3XlUkslU5KAUo3ksz4r/N/Rxv9rK
-	yhFK3DQes09v7xVKZ6vcBTfEQxVb9M2sR2tRB0MZKFFrhz2l5OgDq1Kz
-X-Gm-Gg: ASbGncsxlnLo97kyJcFx23g/TKf8ogUHzqP2Ie3OBdQqMOgnSD8c68Z0ai/hFBRDl5Q
-	+ARzRdq9M1El/Ph0MsdYq2s7hAwkLx59qJdg3JeZX+XIKquaju64KTqpHSlLTHqxQPNDzbPlTOl
-	hWOy5ob7cycY/AnM2WfZnIOln21HVQlCw85Fwx/BcJNtRmOoRw0WHW3Q77NtkK/yhxUtw/Rf2VZ
-	5+YEz+VkrWJJ4f7byW4T9MnYZX3l3qxMOcbFAg5MWarGpDD6wzkn60hP9Um7GgHl13fi8Na29XF
-	IHL+r/qca2eCOyI93PYIpJEoQ8+zHsZlT7l5Hq55eIJHKQCJbFcoPonSjqqG6AURs+swvjv8GPr
-	FgWy89Yv7I+frT3VKhim62lDyLnyNJ0WGjzDC3BcX6QYiVnQQkNCL2WRY7UFFyzNY3CU7Bn4uyy
-	/mbzo=
-X-Google-Smtp-Source: AGHT+IF/wQlvN1PHS4P0FuXHnhUI6gRONo719YP7lTtUWQHYnX87iTmhZHJVAyR2zlOCWjra1Hg12w==
-X-Received: by 2002:a17:90b:3c88:b0:338:3d07:5174 with SMTP id 98e67ed59e1d1-33bcf85d01dmr25963979a91.5.1761154778032;
-        Wed, 22 Oct 2025 10:39:38 -0700 (PDT)
-Received: from lima-default ([104.28.246.147])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223d11c8sm3174342a91.4.2025.10.22.10.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 10:39:37 -0700 (PDT)
-From: Your Name <alessandro.d@gmail.com>
-X-Google-Original-From: Your Name <you@gmail.com>
-Date: Thu, 23 Oct 2025 04:39:29 +1100
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: Alessandro Decina <alessandro.d@gmail.com>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Tirthendu Sarkar <tirthendu.sarkar@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>, bpf@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2 1/1] i40e: xsk: advance next_to_clean on status
- descriptors
-Message-ID: <aPkW0U5xG3ZOekI0@lima-default>
-References: <20251021173200.7908-1-alessandro.d@gmail.com>
- <20251021173200.7908-2-alessandro.d@gmail.com>
- <aPkRoCQikecxLxTS@boxer>
+	s=arc-20240116; t=1761154774; c=relaxed/simple;
+	bh=24OkgosBerV7T+lgYIYHuKbrujn61EaFVukeV2kjpwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UJgk5gw5Q8tm/oU8ESq+2YPnefyM1PgLw3g0fU+0U2FokicKJ8DXmvQyCgr6ZhX2pDfvsTnFhBtwJJdcTLXB/TgT4KStsa+kRpwgJp4VHLH+R+wJabN0i9NchUsjm6eVSL9qstgW3v35z1ceVf1HlPwSBR9qN+OpwN300Nb1Gsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BNk+wK5/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5DFC4CEE7;
+	Wed, 22 Oct 2025 17:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761154774;
+	bh=24OkgosBerV7T+lgYIYHuKbrujn61EaFVukeV2kjpwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BNk+wK5/F5AARFiynLtMZjhIK0/T/uIjd66vNx6B9TgIlKTHJWNVpcEnYlevf/Wb0
+	 WqSJW45hV8z2EC4oTCKgxUUk+PmS4cHKStL6T8i3PFZGHJukcU1qwPh9EyjnvhxGf1
+	 RrFb3JPiGn/Z1+uI8JTdPNQe5vp5s4pRSVK4UaGYs4tCOsf63TBoWkru2riYNbyNU7
+	 0AUfrIDEyn3nN+vdxQZPzMccFMWL7yJCWGAWN8AxUgDevs6J2P5ks3ZXBOjf4pKlbf
+	 ZXxYF/9Zs98v+u2YFW+0wDtgZaz9u2OhWX1c1+9r/pbXDRNekzJHlydj04fwN06Pe8
+	 nBpsBHDsEHTAw==
+Date: Wed, 22 Oct 2025 18:39:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: Add PHYTEC
+ phyBOARD-Segin-i.MX91 board
+Message-ID: <20251022-eraser-latticed-6d0291a07589@spud>
+References: <20251021093704.690410-1-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kvtMwzI9nOsPH2Aq"
+Content-Disposition: inline
+In-Reply-To: <20251021093704.690410-1-primoz.fiser@norik.com>
+
+
+--kvtMwzI9nOsPH2Aq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPkRoCQikecxLxTS@boxer>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 07:17:20PM +0200, Maciej Fijalkowski wrote:
-> On Wed, Oct 22, 2025 at 12:32:00AM +0700, Alessandro Decina wrote:
-> 
-> Hi Alessandro,
+On Tue, Oct 21, 2025 at 11:37:03AM +0200, Primoz Fiser wrote:
+> Add device-tree bindings for PHYTEC phyBOARD-Segin-i.MX91 board based on
+> the PHYTEC phyCORE-i.MX91 SoM (System-on-Module).
+>=20
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 
-Hey,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Thanks for the review!
+--kvtMwzI9nOsPH2Aq
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> > Whenever a status descriptor is received, i40e processes and skips over
-> > it, correctly updating next_to_process but forgetting to update
-> > next_to_clean. In the next iteration this accidentally causes the
-> > creation of an invalid multi-buffer xdp_buff where the first fragment
-> > is the status descriptor.
-> > 
-> > If then a skb is constructed from such an invalid buffer - because the
-> > eBPF program returns XDP_PASS - a panic occurs:
-> 
-> can you elaborate on the test case that would reproduce this? I suppose
-> AF_XDP ZC with jumbo frames, doing XDP_PASS, but what was FDIR setup that
-> caused status descriptors?
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkW0QAKCRB4tDGHoIJi
+0pJqAP0RqklqLO4Tj2pIuOr/1kpPnRUHFAdHRi7L4FSO4wfjMwD+IHHxz9L47553
+PrSJhvtbBG2KwrOsGRDYOkUzyGz2Tw4=
+=ZqaT
+-----END PGP SIGNATURE-----
 
-Doesn't have to be jumbo or multi-frag, anything that does XDP_PASS
-reproduces, as long as status descriptors are posted. 
-
-See the scenarios here https://lore.kernel.org/netdev/aPkDtuVgbS4J-Og_@lima-default/
-
-As for what's causing the status descriptors, I haven't been able to
-figure that out. I just know that I periodically get
-I40E_RX_PROG_STATUS_DESC_FD_FILTER_STATUS. Happy to dig deeper if you
-have any ideas!
-
-> > diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> > index 9f47388eaba5..dbc19083bbb7 100644
-> > --- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> > +++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> > @@ -441,13 +441,18 @@ int i40e_clean_rx_irq_zc(struct i40e_ring *rx_ring, int budget)
-> >  		dma_rmb();
-> >  
-> >  		if (i40e_rx_is_programming_status(qword)) {
-> > +			u16 ntp;
-> > +
-> >  			i40e_clean_programming_status(rx_ring,
-> >  						      rx_desc->raw.qword[0],
-> >  						      qword);
-> >  			bi = *i40e_rx_bi(rx_ring, next_to_process);
-> >  			xsk_buff_free(bi);
-> > -			if (++next_to_process == count)
-> > +			ntp = next_to_process++;
-> > +			if (next_to_process == count)
-> >  				next_to_process = 0;
-> > +			if (next_to_clean == ntp)
-> > +				next_to_clean = next_to_process;
-> 
-> I wonder if this is more readable?
-> 
-> diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> index 9f47388eaba5..36f412a2d836 100644
-> --- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> +++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-> @@ -446,6 +446,10 @@ int i40e_clean_rx_irq_zc(struct i40e_ring *rx_ring, int budget)
->  						      qword);
->  			bi = *i40e_rx_bi(rx_ring, next_to_process);
->  			xsk_buff_free(bi);
-> +			if (next_to_clean == next_to_process) {
-> +				if (++next_to_clean == count)
-> +					next_to_clean = 0;
-> +			}
->  			if (++next_to_process == count)
->  				next_to_process = 0;
->  			continue;
-> 
-> >  			continue;
-> >  		}
-
-Probably because I've looked at it for longer, I find my version clearer
-(I think I copied it from another driver actually). But I don't really
-mind, happy to switch to yours if you prefer!
-
-Ciao
-Alessandro
-
+--kvtMwzI9nOsPH2Aq--
 
