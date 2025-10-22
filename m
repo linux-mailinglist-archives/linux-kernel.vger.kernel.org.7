@@ -1,297 +1,783 @@
-Return-Path: <linux-kernel+bounces-864770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4B1BFB809
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3C2BFB81B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01459406E5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B1C426F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C6E329C65;
-	Wed, 22 Oct 2025 11:00:07 +0000 (UTC)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FD4296BAA;
+	Wed, 22 Oct 2025 11:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RvnXwdWu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EED432861C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0922A28C87C;
+	Wed, 22 Oct 2025 11:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130807; cv=none; b=ZSOARuX0nmPbygkF4QAJW92SSG9nfPWhUHeBaVKhSgLVt77Fq8brvQE/HP2zKtlPniWqXCRDH6MMYIHRG7OF4ciw+mQycNvhZyPqXpcRW7sj7DS4SPzN3Xc7khUs2+ysOwLb7tTvshtXfFuDTY5L/OzG8CbOKO7GhESC1QO58Qo=
+	t=1761130873; cv=none; b=FHqzA5OvXR6xzF1uQoubtntQAS9D77Ek5O5agPKA4fLNmKHD7vzJE4NDyGiWYEx/dSWwOFEezcNfpKHvENB04hQHzbXi38eilrYfSIoif188snQtKMxPEaxXZCxM9LAt6fyLMW1OA3YOrREtyog6zO9gsKh8q9hgMadW06bHajc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130807; c=relaxed/simple;
-	bh=OKz+xmkKiE9OVC+4fDjQc95t5WKflma0N2qOQ8z5SZg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WjCphxhL1FEF/ECmVA9+bI+9LL9nDH2E4gfWdOqIfv0YRVLfuWD3Y2ej1uitbhB2YDhA4TMwJ/tdLaS1qOfBF8ky26bPbEX95v24Lya3+C6rEXaPGA5oo7W7a4BakGdNBAVeqd+SWOshgubXFMBl3Q4LwIG7crwwv59ooZiCezE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fejes.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fejes.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-426ff4f3ad4so3628528f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761130803; x=1761735603;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WMhlNDo8ASWwcI8u3mjsBd+rOMePpOl7Ef330eW/SSU=;
-        b=ZVefEh9q69opmKJAE8WhmigjwKZ7t2a1tENgHZZzNuwS7MNR35shdR/wDfJVVCo6JJ
-         TJOghhgr2JzlBo1dCA/6FliUTZjsiJ7apagtaD0kHs7lNw6/We8zimCAzMIEiJ/GDXr+
-         y1cKKz26hyBj36jItyhx6KgOODoeOQ82xk9oScEdZKHkhf0DW4DlYa4GXRkSFoLun263
-         rR2pOMs/KEv/XwfAqoe3U7aaJ6SLSrRNW6gF1qoOmkPsip3HB0OFi/9jdqfimc4f+xUq
-         LXngWgPNvN82GWd1YjsqSb2g8/MwS4NE9GcWV+jejwhimf+hF3rPTl1sUqie0Lgtq3O2
-         pRww==
-X-Forwarded-Encrypted: i=1; AJvYcCWnwUythRVz+0PnYQKAfA+tIBNrHiXKoBNJgQxFE9TyPD8OqLBPweRYIc5e9H3TGTLZlkPhK/yjKkjCdDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFJdWK0Gzw9DraF2Jqiuir5Z7djDmjqdXxJH4LmuB9ZcI2sMw1
-	Jxx/m8Foee10iN/oexgMoNPfRJgpwG3EJZSFYS0LMk+YkMBm/RK3IxlR
-X-Gm-Gg: ASbGncsMBsP3uG0YboPs8Kbk6RN+qZbvN5csXRpuDwjzKB5SLdQxzQx74dM6vpkiQc0
-	j1TLVoxNx8qFi/6DZarGg0MZeCqoKWDFxLuhUl6YKLwjP9ZfQ0qVfkxpy8QkM5ET3aJcKUoUFAO
-	eYRZ1IermN0zm+zK41INTMM0KaXjkHG14AFFzxCqH1biRclS3twqj3tPoQ0m66pJJPGow3DOt9W
-	oLIqYB+UhhBNt/1JLdKscds/RjD2Oxa6AoOEbSJZjKYzR2ekvhl/baWY3D4LgV8/28LcbTJB7pD
-	6XCYd8GOIMQBKb9Dw+zQJz3pddal8drfXUv57ePU44xrisN5wyc1nXP3mg+R5rnjrKdMoZfwMFH
-	CTjs8KPXBmlLnHo7c0C49AuDYhITYoHMnHEp1FfiCtALxonFLqGVUxEf61ay8ms137jsnvhxwWI
-	sHksTuL5IuG8nh++A2t0TQVNjhCxKP5vb9+Jx43R0QNcu1PdNZPaHTXXDm6pfeHquS
-X-Google-Smtp-Source: AGHT+IH5uo+eTYMpftiVH0dhTJ/g13dymxown9/4klXMfyReEafbuUyOsJCDQx0E42CrJS41YtQEjg==
-X-Received: by 2002:a05:6000:250a:b0:428:3bb5:5813 with SMTP id ffacd0b85a97d-4283bb55a33mr11110213f8f.59.1761130803127;
-        Wed, 22 Oct 2025 04:00:03 -0700 (PDT)
-Received: from [10.148.83.128] (business-89-135-192-225.business.broadband.hu. [89.135.192.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b9f71sm24812193f8f.37.2025.10.22.04.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:00:02 -0700 (PDT)
-Message-ID: <f708a1119b2ad8cf2514b1df128a4ef7cf21c636.camel@fejes.dev>
-Subject: Re: [PATCH RFC DRAFT 00/50] nstree: listns()
-From: Ferenc Fejes <ferenc@fejes.dev>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
- Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
-Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, Zbigniew
- =?UTF-8?Q?J=C4=99drzejewski-Szmek?=	 <zbyszek@in.waw.pl>, Lennart
- Poettering <mzxreary@0pointer.de>, Daan De Meyer	
- <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, Amir
- Goldstein	 <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
-	 <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, Alexander Viro
-	 <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org,
-  Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- netdev@vger.kernel.org, Arnd Bergmann	 <arnd@arndb.de>
-Date: Wed, 22 Oct 2025 13:00:01 +0200
-In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
-References: 
-	<20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-5 
+	s=arc-20240116; t=1761130873; c=relaxed/simple;
+	bh=Yf44YQjwS506f0nDuFRAKJDlycZiHrFmP7pf4HMYL3o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oc53OWXpBXxK6rKlxj3yupsrAPElNVzsl9DqA5JpHO25g4upmOT6FTBDjR1Vj3KPbsTpFoA/PE7lGxlaRQ4t4JpytUo2HTv00NZN+4PTyBootGwKvZaDdzI0fZGMapPSHR5aCBJ82Z4v1HYTTNfQZ6HMjB8EUTqnpOKMr+nGQJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RvnXwdWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1771DC4CEE7;
+	Wed, 22 Oct 2025 11:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761130872;
+	bh=Yf44YQjwS506f0nDuFRAKJDlycZiHrFmP7pf4HMYL3o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=RvnXwdWuQ4mf52KjByvvZ6Su+HMImUkI9XKWdjbe1obOxhxYjlQKfIb5IXRMOXMJs
+	 VLp8APzJDzqGXaohy+BZadeuOdoafj0EuDqAw1Un4VfyrUViJ4x5+q43BnMkRO5TZN
+	 SpIUX8mmP2umQwXBUyRpkrAl384ybrns54mKQp3+Eixb2+ZXjh8FjdHTDB0xDtiCNP
+	 ZlE8tIyo6qeJdSkcuGUPoLpBMLRxKMjmV7bZ9X17BN2jD1d2TeCmtPiPYHUK2UKBn1
+	 Ao79BMi1gXS5r38pJxKbeDsb7JfCFvYq9l4Ath3Lxne+hQJK3qjmPEfrwaQzFfq1ZI
+	 1Aoax4wK9+ysg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
+  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
+  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org
+Subject: Re: [PATCHv7 3/7] kho: drop notifiers
+In-Reply-To: <20251022005719.3670224-4-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Tue, 21 Oct 2025 20:57:15 -0400")
+References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
+	<20251022005719.3670224-4-pasha.tatashin@soleen.com>
+Date: Wed, 22 Oct 2025 13:01:08 +0200
+Message-ID: <mafs0ikg7fbez.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue, 2025-10-21 at 13:43 +0200, Christian Brauner wrote:
-> Hey,
->=20
-> As announced a while ago this is the next step building on the nstree
-> work from prior cycles. There's a bunch of fixes and semantic cleanups
-> in here and a ton of tests.
->=20
-> I need helper here!: Consider the following current design:
->=20
-> Currently listns() is relying on active namespace reference counts which
-> are introduced alongside this series.
->=20
-> The active reference count of a namespace consists of the live tasks
-> that make use of this namespace and any namespace file descriptors that
-> explicitly pin the namespace.
->=20
-> Once all tasks making use of this namespace have exited or reaped, all
-> namespace file descriptors for that namespace have been closed and all
-> bind-mounts for that namespace unmounted it ceases to appear in the
-> listns() output.
->=20
-> My reason for introducing the active reference count was that namespaces
-> might obviously still be pinned internally for various reasons. For
-> example the user namespace might still be pinned because there are still
-> open files that have stashed the openers credentials in file->f_cred, or
-> the last reference might be put with an rcu delay keeping that namespace
-> active on the namespace lists.
->=20
-> But one particularly strange example is CONFIG_MMU_LAZY_TLB_REFCOUNT=3Dy.
-> Various architectures support the CONFIG_MMU_LAZY_TLB_REFCOUNT option
-> which uses lazy TLB destruction.
->=20
-> When this option is set a userspace task's struct mm_struct may be used
-> for kernel threads such as the idle task and will only be destroyed once
-> the cpu's runqueue switches back to another task. So the kernel thread
-> will take a reference on the struct mm_struct pinning it.
->=20
-> And for ptrace() based access checks struct mm_struct stashes the user
-> namespace of the task that struct mm_struct belonged to originally and
-> thus takes a reference to the users namespace and pins it.
->=20
-> So on an idle system such user namespaces can be persisted for pretty
-> arbitrary amounts of time via struct mm_struct.
->=20
-> Now, without the active reference count regulating visibility all
-> namespace that still are pinned in some way on the system will appear in
-> the listns() output and can be reopened using namespace file handles.
->=20
-> Of course that requires suitable privileges and it's not really a
-> concern per se because a task could've also persist the namespace
-> recorded in struct mm_struct explicitly and then the idle task would
-> still reuse that struct mm_struct and another task could still happily
-> setns() to it afaict and reuse it for something else.
->=20
-> The active reference count though has drawbacks itself. Namely that
-> socket files break the assumption that namespaces can only be opened if
-> there's either live processes pinning the namespace or there are file
-> descriptors open that pin the namespace itself as the socket SIOCGSKNS
-> ioctl() can be used to open a network namespace based on a socket which
-> only indirectly pins a network namespace.
->=20
-> So that punches a whole in the active reference count tracking. So this
-> will have to be handled as right now socket file descriptors that pin a
-> network namespace that don't have an active reference anymore (no live
-> processes, not explicit persistence via namespace fds) can't be used to
-> issue a SIOCGSKNS ioctl() to open the associated network namespace.
->=20
-> So two options I see if the api is based on ids:
->=20
-> (1) We use the active reference count and somehow also make it work with
-> =C2=A0=C2=A0=C2=A0 sockets.
-> (2) The active reference count is not needed and we say that listns() is
-> =C2=A0=C2=A0=C2=A0 an introspection system call anyway so we just always =
-list
-> =C2=A0=C2=A0=C2=A0 namespaces regardless of why they are still pinned: fi=
-les,
-> =C2=A0=C2=A0=C2=A0 mm_struct, network devices, everything is fair game.
-> (3) Throw hands up in the air and just not do it.
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> Add a new listns() system call that allows userspace to iterate through
-> namespaces in the system. This provides a programmatic interface to
-> discover and inspect namespaces, enhancing existing namespace apis.
->=20
-> Currently, there is no direct way for userspace to enumerate namespaces
-> in the system. Applications must resort to scanning /proc/<pid>/ns/
-> across all processes, which is:
->=20
-> 1. Inefficient - requires iterating over all processes
-> 2. Incomplete - misses inactive namespaces that aren't attached to any
-> =C2=A0=C2=A0 running process but are kept alive by file descriptors, bind=
- mounts,
-> =C2=A0=C2=A0 or parent namespace references
-> 3. Permission-heavy - requires access to /proc for many processes
-> 4. No ordering or ownership.
-> 5. No filtering per namespace type: Must always iterate and check all
-> =C2=A0=C2=A0 namespaces.
->=20
-> The list goes on. The listns() system call solves these problems by
-> providing direct kernel-level enumeration of namespaces. It is similar
-> to listmount() but obviously tailored to namespaces.
+Hi Pasha,
 
-I've been waiting for such an API for years; thanks for working on it. I mo=
-stly
-deal with network namespaces, where points 2 and 3 are especially painful.
+On Tue, Oct 21 2025, Pasha Tatashin wrote:
 
-Recently, I've used this eBPF snippet to discover (at most 1024, because of=
- the
-verifier's halt checking) network namespaces, even if no process is attache=
-d.
-But I can't do anything with it in userspace since it's not possible to pas=
-s the
-inode number or netns cookie value to setns()...
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> The KHO framework uses a notifier chain as the mechanism for clients to
+> participate in the finalization process. While this works for a single,
+> central state machine, it is too restrictive for kernel-internal
+> components like pstore/reserve_mem or IMA. These components need a
+> simpler, direct way to register their state for preservation (e.g.,
+> during their initcall) without being part of a complex,
+> shutdown-time notifier sequence. The notifier model forces all
+> participants into a single finalization flow and makes direct
+> preservation from an arbitrary context difficult.
+> This patch refactors the client participation model by removing the
+> notifier chain and introducing a direct API for managing FDT subtrees.
+>
+> The core kho_finalize() and kho_abort() state machine remains, but
+> clients now register their data with KHO beforehand.
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  include/linux/kexec_handover.h   |  28 +-----
+>  kernel/kexec_handover.c          | 164 +++++++++++++++++--------------
+>  kernel/kexec_handover_debugfs.c  |  17 ++--
+>  kernel/kexec_handover_internal.h |   5 +-
+>  lib/test_kho.c                   |  30 +-----
+>  mm/memblock.c                    |  62 +++---------
+>  6 files changed, 127 insertions(+), 179 deletions(-)
+>
+> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
+> index 04d0108db98e..2faf290803ce 100644
+> --- a/include/linux/kexec_handover.h
+> +++ b/include/linux/kexec_handover.h
+> @@ -10,14 +10,7 @@ struct kho_scratch {
+>  	phys_addr_t size;
+>  };
+>  
+> -/* KHO Notifier index */
+> -enum kho_event {
+> -	KEXEC_KHO_FINALIZE = 0,
+> -	KEXEC_KHO_ABORT = 1,
+> -};
+> -
+>  struct folio;
+> -struct notifier_block;
+>  struct page;
+>  
+>  #define DECLARE_KHOSER_PTR(name, type) \
+> @@ -37,8 +30,6 @@ struct page;
+>  		(typeof((s).ptr))((s).phys ? phys_to_virt((s).phys) : NULL); \
+>  	})
+>  
+> -struct kho_serialization;
+> -
+>  struct kho_vmalloc_chunk;
+>  struct kho_vmalloc {
+>  	DECLARE_KHOSER_PTR(first, struct kho_vmalloc_chunk *);
+> @@ -57,12 +48,10 @@ int kho_preserve_vmalloc(void *ptr, struct kho_vmalloc *preservation);
+>  struct folio *kho_restore_folio(phys_addr_t phys);
+>  struct page *kho_restore_pages(phys_addr_t phys, unsigned int nr_pages);
+>  void *kho_restore_vmalloc(const struct kho_vmalloc *preservation);
+> -int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt);
+> +int kho_add_subtree(const char *name, void *fdt);
+> +void kho_remove_subtree(void *fdt);
+>  int kho_retrieve_subtree(const char *name, phys_addr_t *phys);
+>  
+> -int register_kho_notifier(struct notifier_block *nb);
+> -int unregister_kho_notifier(struct notifier_block *nb);
+> -
+>  void kho_memory_init(void);
+>  
+>  void kho_populate(phys_addr_t fdt_phys, u64 fdt_len, phys_addr_t scratch_phys,
+> @@ -114,23 +103,16 @@ static inline void *kho_restore_vmalloc(const struct kho_vmalloc *preservation)
+>  	return NULL;
+>  }
+>  
+> -static inline int kho_add_subtree(struct kho_serialization *ser,
+> -				  const char *name, void *fdt)
+> +static inline int kho_add_subtree(const char *name, void *fdt)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline int kho_retrieve_subtree(const char *name, phys_addr_t *phys)
+> +static inline void kho_remove_subtree(void *fdt)
+>  {
+> -	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline int register_kho_notifier(struct notifier_block *nb)
+> -{
+> -	return -EOPNOTSUPP;
+> -}
+> -
+> -static inline int unregister_kho_notifier(struct notifier_block *nb)
+> +static inline int kho_retrieve_subtree(const char *name, phys_addr_t *phys)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> index da071277d85e..0a4234269fe5 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/kexec_handover.c
+> @@ -16,7 +16,6 @@
+>  #include <linux/libfdt.h>
+>  #include <linux/list.h>
+>  #include <linux/memblock.h>
+> -#include <linux/notifier.h>
+>  #include <linux/page-isolation.h>
+>  #include <linux/vmalloc.h>
+>  
+> @@ -103,29 +102,34 @@ struct kho_mem_track {
+>  
+>  struct khoser_mem_chunk;
+>  
+> -struct kho_serialization {
+> -	struct page *fdt;
+> -	struct kho_mem_track track;
+> -	/* First chunk of serialized preserved memory map */
+> -	struct khoser_mem_chunk *preserved_mem_map;
+> +struct kho_sub_fdt {
+> +	struct list_head l;
+> +	const char *name;
+> +	void *fdt;
+>  };
+>  
+>  struct kho_out {
+> -	struct blocking_notifier_head chain_head;
+> -	struct mutex lock; /* protects KHO FDT finalization */
+> -	struct kho_serialization ser;
+> +	void *fdt;
+>  	bool finalized;
+> +	struct mutex lock; /* protects KHO FDT finalization */
+> +
+> +	struct list_head sub_fdts;
+> +	struct mutex fdts_lock;
+> +
+> +	struct kho_mem_track track;
+> +	/* First chunk of serialized preserved memory map */
+> +	struct khoser_mem_chunk *preserved_mem_map;
+> +
+>  	struct kho_debugfs dbg;
+>  };
+>  
+>  static struct kho_out kho_out = {
+> -	.chain_head = BLOCKING_NOTIFIER_INIT(kho_out.chain_head),
+>  	.lock = __MUTEX_INITIALIZER(kho_out.lock),
+> -	.ser = {
+> -		.track = {
+> -			.orders = XARRAY_INIT(kho_out.ser.track.orders, 0),
+> -		},
+> +	.track = {
+> +		.orders = XARRAY_INIT(kho_out.track.orders, 0),
+>  	},
+> +	.sub_fdts = LIST_HEAD_INIT(kho_out.sub_fdts),
+> +	.fdts_lock = __MUTEX_INITIALIZER(kho_out.fdts_lock),
+>  	.finalized = false,
+>  };
+>  
+> @@ -369,7 +373,7 @@ static void kho_mem_ser_free(struct khoser_mem_chunk *first_chunk)
+>  	}
+>  }
+>  
+> -static int kho_mem_serialize(struct kho_serialization *ser)
+> +static int kho_mem_serialize(struct kho_out *kho_out)
+>  {
+>  	struct khoser_mem_chunk *first_chunk = NULL;
+>  	struct khoser_mem_chunk *chunk = NULL;
+> @@ -377,7 +381,7 @@ static int kho_mem_serialize(struct kho_serialization *ser)
+>  	unsigned long order;
+>  	int err = -ENOMEM;
+>  
+> -	xa_for_each(&ser->track.orders, order, physxa) {
+> +	xa_for_each(&kho_out->track.orders, order, physxa) {
+>  		struct kho_mem_phys_bits *bits;
+>  		unsigned long phys;
+>  
+> @@ -409,7 +413,7 @@ static int kho_mem_serialize(struct kho_serialization *ser)
+>  		}
+>  	}
+>  
+> -	ser->preserved_mem_map = first_chunk;
+> +	kho_out->preserved_mem_map = first_chunk;
+>  
+>  	return 0;
+>  
+> @@ -670,7 +674,6 @@ static void __init kho_reserve_scratch(void)
+>  
+>  /**
+>   * kho_add_subtree - record the physical address of a sub FDT in KHO root tree.
+> - * @ser: serialization control object passed by KHO notifiers.
+>   * @name: name of the sub tree.
+>   * @fdt: the sub tree blob.
+>   *
+> @@ -684,34 +687,45 @@ static void __init kho_reserve_scratch(void)
+>   *
+>   * Return: 0 on success, error code on failure
+>   */
+> -int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt)
+> +int kho_add_subtree(const char *name, void *fdt)
+>  {
+> -	int err = 0;
+> -	u64 phys = (u64)virt_to_phys(fdt);
+> -	void *root = page_to_virt(ser->fdt);
+> +	struct kho_sub_fdt *sub_fdt;
+> +	int err;
+>  
+> -	err |= fdt_begin_node(root, name);
+> -	err |= fdt_property(root, PROP_SUB_FDT, &phys, sizeof(phys));
+> -	err |= fdt_end_node(root);
+> +	sub_fdt = kmalloc(sizeof(*sub_fdt), GFP_KERNEL);
+> +	if (!sub_fdt)
+> +		return -ENOMEM;
+>  
+> -	if (err)
+> -		return err;
+> +	INIT_LIST_HEAD(&sub_fdt->l);
+> +	sub_fdt->name = name;
+> +	sub_fdt->fdt = fdt;
+>  
+> -	return kho_debugfs_fdt_add(&kho_out.dbg, name, fdt, false);
+> +	mutex_lock(&kho_out.fdts_lock);
+> +	list_add_tail(&sub_fdt->l, &kho_out.sub_fdts);
+> +	err = kho_debugfs_fdt_add(&kho_out.dbg, name, fdt, false);
 
-extern const void net_namespace_list __ksym;
-static void list_all_netns()
-{
-    struct list_head *nslist =3D=C2=A0
-	bpf_core_cast(&net_namespace_list, struct list_head);
+I think you should remove sub_fdt from the list and kfree() it on error
+here. Otherwise we signal an error to the caller and they might free
+sub_fdt->fdt, which will later result in a use-after-free at
+__kho_finalize().
 
-    struct list_head *iter =3D nslist->next;
+> +	mutex_unlock(&kho_out.fdts_lock);
+> +
+> +	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(kho_add_subtree);
+>  
+> -int register_kho_notifier(struct notifier_block *nb)
+> +void kho_remove_subtree(void *fdt)
+>  {
+> -	return blocking_notifier_chain_register(&kho_out.chain_head, nb);
+> -}
+> -EXPORT_SYMBOL_GPL(register_kho_notifier);
+> +	struct kho_sub_fdt *sub_fdt;
+> +
+> +	mutex_lock(&kho_out.fdts_lock);
+> +	list_for_each_entry(sub_fdt, &kho_out.sub_fdts, l) {
 
-    bpf_repeat(1024) {
-        const struct net *net =3D=C2=A0
-		bpf_core_cast(container_of(iter, struct net, list), struct
-net);
+list_for_each_entry_safe() here since we delete.
 
-        // bpf_printk("net: %p inode: %u cookie: %lu",=C2=A0
-	//	net, net->ns.inum, net->net_cookie);
+> +		if (sub_fdt->fdt == fdt) {
+> +			list_del(&sub_fdt->l);
+> +			kfree(sub_fdt);
+> +			kho_debugfs_fdt_remove(&kho_out.dbg, fdt);
+> +			break;
+> +		}
+> +	}
+> +	mutex_unlock(&kho_out.fdts_lock);
+>  
+> -int unregister_kho_notifier(struct notifier_block *nb)
+> -{
+> -	return blocking_notifier_chain_unregister(&kho_out.chain_head, nb);
+>  }
+> -EXPORT_SYMBOL_GPL(unregister_kho_notifier);
+> +EXPORT_SYMBOL_GPL(kho_remove_subtree);
+>  
+>  /**
+>   * kho_preserve_folio - preserve a folio across kexec.
+> @@ -726,7 +740,7 @@ int kho_preserve_folio(struct folio *folio)
+>  {
+>  	const unsigned long pfn = folio_pfn(folio);
+>  	const unsigned int order = folio_order(folio);
+> -	struct kho_mem_track *track = &kho_out.ser.track;
+> +	struct kho_mem_track *track = &kho_out.track;
+>  
+>  	if (WARN_ON(kho_scratch_overlap(pfn << PAGE_SHIFT, PAGE_SIZE << order)))
+>  		return -EINVAL;
+> @@ -747,7 +761,7 @@ EXPORT_SYMBOL_GPL(kho_preserve_folio);
+>   */
+>  int kho_preserve_pages(struct page *page, unsigned int nr_pages)
+>  {
+> -	struct kho_mem_track *track = &kho_out.ser.track;
+> +	struct kho_mem_track *track = &kho_out.track;
+>  	const unsigned long start_pfn = page_to_pfn(page);
+>  	const unsigned long end_pfn = start_pfn + nr_pages;
+>  	unsigned long pfn = start_pfn;
+> @@ -848,7 +862,7 @@ static struct kho_vmalloc_chunk *new_vmalloc_chunk(struct kho_vmalloc_chunk *cur
+>  
+>  static void kho_vmalloc_unpreserve_chunk(struct kho_vmalloc_chunk *chunk)
+>  {
+> -	struct kho_mem_track *track = &kho_out.ser.track;
+> +	struct kho_mem_track *track = &kho_out.track;
+>  	unsigned long pfn = PHYS_PFN(virt_to_phys(chunk));
+>  
+>  	__kho_unpreserve(track, pfn, pfn + 1);
+> @@ -1030,11 +1044,11 @@ EXPORT_SYMBOL_GPL(kho_restore_vmalloc);
+>  
+>  static int __kho_abort(void)
+>  {
+> -	int err;
+> +	int err = 0;
+>  	unsigned long order;
+>  	struct kho_mem_phys *physxa;
+>  
+> -	xa_for_each(&kho_out.ser.track.orders, order, physxa) {
+> +	xa_for_each(&kho_out.track.orders, order, physxa) {
+>  		struct kho_mem_phys_bits *bits;
+>  		unsigned long phys;
+>  
+> @@ -1044,17 +1058,13 @@ static int __kho_abort(void)
+>  		xa_destroy(&physxa->phys_bits);
+>  		kfree(physxa);
+>  	}
+> -	xa_destroy(&kho_out.ser.track.orders);
+> +	xa_destroy(&kho_out.track.orders);
+>  
+> -	if (kho_out.ser.preserved_mem_map) {
+> -		kho_mem_ser_free(kho_out.ser.preserved_mem_map);
+> -		kho_out.ser.preserved_mem_map = NULL;
+> +	if (kho_out.preserved_mem_map) {
+> +		kho_mem_ser_free(kho_out.preserved_mem_map);
+> +		kho_out.preserved_mem_map = NULL;
+>  	}
+>  
+> -	err = blocking_notifier_call_chain(&kho_out.chain_head, KEXEC_KHO_ABORT,
+> -					   NULL);
+> -	err = notifier_to_errno(err);
+> -
+>  	if (err)
+>  		pr_err("Failed to abort KHO finalization: %d\n", err);
+>  
+> @@ -1077,7 +1087,8 @@ int kho_abort(void)
+>  		return ret;
+>  
+>  	kho_out.finalized = false;
+> -	kho_debugfs_cleanup(&kho_out.dbg);
+> +
+> +	kho_debugfs_fdt_remove(&kho_out.dbg, kho_out.fdt);
+>  
+>  	return 0;
+>  }
+> @@ -1086,41 +1097,46 @@ static int __kho_finalize(void)
+>  {
+>  	int err = 0;
+>  	u64 *preserved_mem_map;
+> -	void *fdt = page_to_virt(kho_out.ser.fdt);
+> +	void *root = kho_out.fdt;
+> +	struct kho_sub_fdt *fdt;
+>  
+> -	err |= fdt_create(fdt, PAGE_SIZE);
+> -	err |= fdt_finish_reservemap(fdt);
+> -	err |= fdt_begin_node(fdt, "");
+> -	err |= fdt_property_string(fdt, "compatible", KHO_FDT_COMPATIBLE);
+> +	err |= fdt_create(root, PAGE_SIZE);
+> +	err |= fdt_finish_reservemap(root);
+> +	err |= fdt_begin_node(root, "");
+> +	err |= fdt_property_string(root, "compatible", KHO_FDT_COMPATIBLE);
+>  	/**
+>  	 * Reserve the preserved-memory-map property in the root FDT, so
+>  	 * that all property definitions will precede subnodes created by
+>  	 * KHO callers.
+>  	 */
+> -	err |= fdt_property_placeholder(fdt, PROP_PRESERVED_MEMORY_MAP,
+> +	err |= fdt_property_placeholder(root, PROP_PRESERVED_MEMORY_MAP,
+>  					sizeof(*preserved_mem_map),
+>  					(void **)&preserved_mem_map);
+>  	if (err)
+>  		goto abort;
+>  
+> -	err = kho_preserve_folio(page_folio(kho_out.ser.fdt));
+> +	err = kho_preserve_folio(virt_to_folio(kho_out.fdt));
+>  	if (err)
+>  		goto abort;
+>  
+> -	err = blocking_notifier_call_chain(&kho_out.chain_head,
+> -					   KEXEC_KHO_FINALIZE, &kho_out.ser);
+> -	err = notifier_to_errno(err);
+> +	err = kho_mem_serialize(&kho_out);
+>  	if (err)
+>  		goto abort;
+>  
+> -	err = kho_mem_serialize(&kho_out.ser);
+> -	if (err)
+> -		goto abort;
+> +	*preserved_mem_map = (u64)virt_to_phys(kho_out.preserved_mem_map);
+> +
+> +	mutex_lock(&kho_out.fdts_lock);
+> +	list_for_each_entry(fdt, &kho_out.sub_fdts, l) {
+> +		phys_addr_t phys = virt_to_phys(fdt->fdt);
+>  
+> -	*preserved_mem_map = (u64)virt_to_phys(kho_out.ser.preserved_mem_map);
+> +		err |= fdt_begin_node(root, fdt->name);
+> +		err |= fdt_property(root, PROP_SUB_FDT, &phys, sizeof(phys));
+> +		err |= fdt_end_node(root);
+> +	}
+> +	mutex_unlock(&kho_out.fdts_lock);
+>  
+> -	err |= fdt_end_node(fdt);
+> -	err |= fdt_finish(fdt);
+> +	err |= fdt_end_node(root);
+> +	err |= fdt_finish(root);
+>  
+>  abort:
+>  	if (err) {
+> @@ -1149,7 +1165,7 @@ int kho_finalize(void)
+>  	kho_out.finalized = true;
+>  
+>  	return kho_debugfs_fdt_add(&kho_out.dbg, "fdt",
+> -				   page_to_virt(kho_out.ser.fdt), true);
+> +				  kho_out.fdt, true);
+>  }
+>  
+>  bool kho_finalized(void)
+> @@ -1232,15 +1248,17 @@ static __init int kho_init(void)
+>  {
+>  	int err = 0;
+>  	const void *fdt = kho_get_fdt();
+> +	struct page *fdt_page;
+>  
+>  	if (!kho_enable)
+>  		return 0;
+>  
+> -	kho_out.ser.fdt = alloc_page(GFP_KERNEL);
+> -	if (!kho_out.ser.fdt) {
+> +	fdt_page = alloc_page(GFP_KERNEL);
+> +	if (!fdt_page) {
+>  		err = -ENOMEM;
+>  		goto err_free_scratch;
+>  	}
+> +	kho_out.fdt = page_to_virt(fdt_page);
+>  
+>  	err = kho_debugfs_init();
+>  	if (err)
+> @@ -1268,8 +1286,8 @@ static __init int kho_init(void)
+>  	return 0;
+>  
+>  err_free_fdt:
+> -	put_page(kho_out.ser.fdt);
+> -	kho_out.ser.fdt = NULL;
+> +	put_page(fdt_page);
+> +	kho_out.fdt = NULL;
+>  err_free_scratch:
+>  	for (int i = 0; i < kho_scratch_cnt; i++) {
+>  		void *start = __va(kho_scratch[i].addr);
+> @@ -1280,7 +1298,7 @@ static __init int kho_init(void)
+>  	kho_enable = false;
+>  	return err;
+>  }
+> -late_initcall(kho_init);
+> +fs_initcall(kho_init);
 
-        if (iter->next =3D=3D nslist)
-            break;
-        iter =3D iter->next;
-    }
-}
+Is this change related to this patch? Also, why fs_initcall?
 
->=20
-> /*
-> =C2=A0* @req: Pointer to struct ns_id_req specifying search parameters
-> =C2=A0* @ns_ids: User buffer to receive namespace IDs
-> =C2=A0* @nr_ns_ids: Size of ns_ids buffer (maximum number of IDs to retur=
-n)
-> =C2=A0* @flags: Reserved for future use (must be 0)
-> =C2=A0*/
-> ssize_t listns(const struct ns_id_req *req, u64 *ns_ids,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 size_t nr_ns_ids, unsigned int flags);
->=20
-> Returns:
-> - On success: Number of namespace IDs written to ns_ids
-> - On error: Negative error code
->=20
-> /*
-> =C2=A0* @size: Structure size
-> =C2=A0* @ns_id: Starting point for iteration; use 0 for first call, then
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 use the last retu=
-rned ID for subsequent calls to paginate
-> =C2=A0* @ns_type: Bitmask of namespace types to include (from enum ns_typ=
-e):
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0: Re=
-turn all namespace types
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MNT_N=
-S: Mount namespaces
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NET_N=
-S: Network namespaces
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 USER_=
-NS: User namespaces
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 etc. =
-Can be OR'd together
-> =C2=A0* @user_ns_id: Filter results to namespaces owned by this user name=
-space:
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 0: Return all namespaces (subject to permission checks)
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 LISTNS_CURRENT_USER: Namespaces owned by caller's user
-> namespace
-> =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 Other value: Namespaces owned by the specified user namespace
-> ID
-> =C2=A0*/
-> struct ns_id_req {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 size;=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* sizeof(struct ns_id_req) */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 spare;=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 /* Reserved, must be 0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u64 ns_id;=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 /* Last seen namespace ID (for pagination) */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 ns_type;=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 /* Filter by namespace type(s) */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 spare2;=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 /* Reserved, must be 0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u64 user_ns_id;=C2=A0=C2=A0 =
-/* Filter by owning user namespace */
-> };
->=20
+>  
+>  static void __init kho_release_scratch(void)
+>  {
+> @@ -1416,7 +1434,7 @@ int kho_fill_kimage(struct kimage *image)
+>  	if (!kho_out.finalized)
+>  		return 0;
+>  
+> -	image->kho.fdt = page_to_phys(kho_out.ser.fdt);
+> +	image->kho.fdt = virt_to_phys(kho_out.fdt);
+>  
+>  	scratch_size = sizeof(*kho_scratch) * kho_scratch_cnt;
+>  	scratch = (struct kexec_buf){
+> diff --git a/kernel/kexec_handover_debugfs.c b/kernel/kexec_handover_debugfs.c
+> index a91b279f1b23..46e9e6c0791f 100644
+> --- a/kernel/kexec_handover_debugfs.c
+> +++ b/kernel/kexec_handover_debugfs.c
+> @@ -61,14 +61,17 @@ int kho_debugfs_fdt_add(struct kho_debugfs *dbg, const char *name,
+>  	return __kho_debugfs_fdt_add(&dbg->fdt_list, dir, name, fdt);
+>  }
+>  
+> -void kho_debugfs_cleanup(struct kho_debugfs *dbg)
+> +void kho_debugfs_fdt_remove(struct kho_debugfs *dbg, void *fdt)
+>  {
+> -	struct fdt_debugfs *ff, *tmp;
+> -
+> -	list_for_each_entry_safe(ff, tmp, &dbg->fdt_list, list) {
+> -		debugfs_remove(ff->file);
+> -		list_del(&ff->list);
+> -		kfree(ff);
+> +	struct fdt_debugfs *ff;
+> +
+> +	list_for_each_entry(ff, &dbg->fdt_list, list) {
 
-After this merged, do you see any chance for backports? Does it rely on rec=
-ent
-bits which is hard/impossible to backport? I'm not aware of backported sysc=
-alls
-but this would be really nice to see in older kernels.
+list_for_each_entry_safe() here too.
 
-Ferenc
+> +		if (ff->wrapper.data == fdt) {
+> +			debugfs_remove(ff->file);
+> +			list_del(&ff->list);
+> +			kfree(ff);
+> +			break;
+> +		}
+>  	}
+>  }
+>  
+> diff --git a/kernel/kexec_handover_internal.h b/kernel/kexec_handover_internal.h
+> index 28c0e971613d..17ae101dc6ae 100644
+> --- a/kernel/kexec_handover_internal.h
+> +++ b/kernel/kexec_handover_internal.h
+> @@ -30,7 +30,7 @@ void kho_in_debugfs_init(struct kho_debugfs *dbg, const void *fdt);
+>  int kho_out_debugfs_init(struct kho_debugfs *dbg);
+>  int kho_debugfs_fdt_add(struct kho_debugfs *dbg, const char *name,
+>  			const void *fdt, bool root);
+> -void kho_debugfs_cleanup(struct kho_debugfs *dbg);
+> +void kho_debugfs_fdt_remove(struct kho_debugfs *dbg, void *fdt);
+>  #else
+>  static inline int kho_debugfs_init(void) { return 0; }
+>  static inline void kho_in_debugfs_init(struct kho_debugfs *dbg,
+> @@ -38,7 +38,8 @@ static inline void kho_in_debugfs_init(struct kho_debugfs *dbg,
+>  static inline int kho_out_debugfs_init(struct kho_debugfs *dbg) { return 0; }
+>  static inline int kho_debugfs_fdt_add(struct kho_debugfs *dbg, const char *name,
+>  				      const void *fdt, bool root) { return 0; }
+> -static inline void kho_debugfs_cleanup(struct kho_debugfs *dbg) {}
+> +static inline void kho_debugfs_fdt_remove(struct kho_debugfs *dbg,
+> +					  void *fdt) { }
+>  #endif /* CONFIG_KEXEC_HANDOVER_DEBUGFS */
+>  
+>  #ifdef CONFIG_KEXEC_HANDOVER_DEBUG
+> diff --git a/lib/test_kho.c b/lib/test_kho.c
+> index 60cd899ea745..8d57049e8c8c 100644
+> --- a/lib/test_kho.c
+> +++ b/lib/test_kho.c
+> @@ -39,33 +39,17 @@ struct kho_test_state {
+>  
+>  static struct kho_test_state kho_test_state;
+>  
+> -static int kho_test_notifier(struct notifier_block *self, unsigned long cmd,
+> -			     void *v)
+> +static int kho_test(void)
+>  {
+>  	struct kho_test_state *state = &kho_test_state;
+> -	struct kho_serialization *ser = v;
+>  	int err = 0;
+>  
+> -	switch (cmd) {
+> -	case KEXEC_KHO_ABORT:
+> -		return NOTIFY_DONE;
+> -	case KEXEC_KHO_FINALIZE:
+> -		/* Handled below */
+> -		break;
+> -	default:
+> -		return NOTIFY_BAD;
+> -	}
+> -
+>  	err |= kho_preserve_folio(state->fdt);
+> -	err |= kho_add_subtree(ser, KHO_TEST_FDT, folio_address(state->fdt));
+> +	err |= kho_add_subtree(KHO_TEST_FDT, folio_address(state->fdt));
+>  
+>  	return err ? NOTIFY_BAD : NOTIFY_DONE;
+>  }
+>  
+> -static struct notifier_block kho_test_nb = {
+> -	.notifier_call = kho_test_notifier,
+> -};
+> -
+>  static int kho_test_save_data(struct kho_test_state *state, void *fdt)
+>  {
+>  	phys_addr_t *folios_info __free(kvfree) = NULL;
+> @@ -102,6 +86,9 @@ static int kho_test_save_data(struct kho_test_state *state, void *fdt)
+>  	if (!err)
+>  		state->folios_info = no_free_ptr(folios_info);
+>  
+> +	if (!err)
+> +		err = kho_test();
+
+This name is very undescriptive. Also, not the right place to add the
+subtree since the FDT isn't finished yet. I think it should be done from
+kho_test_save() instead. This patch is also missing removing the subtree
+at exit, and that can cause a UAF.
+
+I sent you a patch earlier with my take on how it should be done. I
+still think that is the way to go:
+https://lore.kernel.org/all/mafs0347woui2.fsf@kernel.org/
+
+> +
+>  	return err;
+>  }
+>  
+> @@ -203,14 +190,8 @@ static int kho_test_save(void)
+>  	if (err)
+>  		goto err_free_folios;
+>  
+> -	err = register_kho_notifier(&kho_test_nb);
+> -	if (err)
+> -		goto err_free_fdt;
+> -
+>  	return 0;
+>  
+> -err_free_fdt:
+> -	folio_put(state->fdt);
+>  err_free_folios:
+>  	kvfree(folios);
+>  	return err;
+> @@ -326,7 +307,6 @@ static void kho_test_cleanup(void)
+>  
+>  static void __exit kho_test_exit(void)
+>  {
+> -	unregister_kho_notifier(&kho_test_nb);
+>  	kho_test_cleanup();
+>  }
+>  module_exit(kho_test_exit);
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index e23e16618e9b..e3bef9b35d63 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -2444,53 +2444,18 @@ int reserve_mem_release_by_name(const char *name)
+>  #define MEMBLOCK_KHO_FDT "memblock"
+>  #define MEMBLOCK_KHO_NODE_COMPATIBLE "memblock-v1"
+>  #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
+> -static struct page *kho_fdt;
+> -
+> -static int reserve_mem_kho_finalize(struct kho_serialization *ser)
+> -{
+> -	int err = 0, i;
+> -
+> -	for (i = 0; i < reserved_mem_count; i++) {
+> -		struct reserve_mem_table *map = &reserved_mem_table[i];
+> -		struct page *page = phys_to_page(map->start);
+> -		unsigned int nr_pages = map->size >> PAGE_SHIFT;
+> -
+> -		err |= kho_preserve_pages(page, nr_pages);
+> -	}
+> -
+> -	err |= kho_preserve_folio(page_folio(kho_fdt));
+> -	err |= kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho_fdt));
+> -
+> -	return notifier_from_errno(err);
+> -}
+> -
+> -static int reserve_mem_kho_notifier(struct notifier_block *self,
+> -				    unsigned long cmd, void *v)
+> -{
+> -	switch (cmd) {
+> -	case KEXEC_KHO_FINALIZE:
+> -		return reserve_mem_kho_finalize((struct kho_serialization *)v);
+> -	case KEXEC_KHO_ABORT:
+> -		return NOTIFY_DONE;
+> -	default:
+> -		return NOTIFY_BAD;
+> -	}
+> -}
+> -
+> -static struct notifier_block reserve_mem_kho_nb = {
+> -	.notifier_call = reserve_mem_kho_notifier,
+> -};
+>  
+>  static int __init prepare_kho_fdt(void)
+>  {
+>  	int err = 0, i;
+> +	struct page *fdt_page;
+>  	void *fdt;
+>  
+> -	kho_fdt = alloc_page(GFP_KERNEL);
+> -	if (!kho_fdt)
+> +	fdt_page = alloc_page(GFP_KERNEL);
+> +	if (!fdt_page)
+>  		return -ENOMEM;
+>  
+> -	fdt = page_to_virt(kho_fdt);
+> +	fdt = page_to_virt(fdt_page);
+>  
+>  	err |= fdt_create(fdt, PAGE_SIZE);
+>  	err |= fdt_finish_reservemap(fdt);
+> @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
+>  	err |= fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_NODE_COMPATIBLE);
+>  	for (i = 0; i < reserved_mem_count; i++) {
+>  		struct reserve_mem_table *map = &reserved_mem_table[i];
+> +		struct page *page = phys_to_page(map->start);
+> +		unsigned int nr_pages = map->size >> PAGE_SHIFT;
+>  
+> +		err |= kho_preserve_pages(page, nr_pages);
+>  		err |= fdt_begin_node(fdt, map->name);
+>  		err |= fdt_property_string(fdt, "compatible", RESERVE_MEM_KHO_NODE_COMPATIBLE);
+>  		err |= fdt_property(fdt, "start", &map->start, sizeof(map->start));
+> @@ -2507,13 +2475,16 @@ static int __init prepare_kho_fdt(void)
+>  		err |= fdt_end_node(fdt);
+>  	}
+>  	err |= fdt_end_node(fdt);
+> -
+>  	err |= fdt_finish(fdt);
+>  
+> +	err |= kho_preserve_folio(page_folio(fdt_page));
+> +
+> +	if (!err)
+> +		err = kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
+> +
+>  	if (err) {
+>  		pr_err("failed to prepare memblock FDT for KHO: %d\n", err);
+> -		put_page(kho_fdt);
+> -		kho_fdt = NULL;
+> +		put_page(fdt_page);
+>  	}
+>  
+>  	return err;
+> @@ -2529,13 +2500,6 @@ static int __init reserve_mem_init(void)
+>  	err = prepare_kho_fdt();
+>  	if (err)
+>  		return err;
+> -
+> -	err = register_kho_notifier(&reserve_mem_kho_nb);
+> -	if (err) {
+> -		put_page(kho_fdt);
+> -		kho_fdt = NULL;
+> -	}
+> -
+>  	return err;
+>  }
+>  late_initcall(reserve_mem_init);
+
+-- 
+Regards,
+Pratyush Yadav
 
