@@ -1,262 +1,130 @@
-Return-Path: <linux-kernel+bounces-864786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE239BFB8B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6B9BFB79A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 932FF4F27A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:07:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 652D9508EBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100BC32B9B2;
-	Wed, 22 Oct 2025 11:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AD8326D48;
+	Wed, 22 Oct 2025 10:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aizQs/xl"
-Received: from mail-pg1-f226.google.com (mail-pg1-f226.google.com [209.85.215.226])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z3A5pfvH"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C366032AABC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C128325482
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761131239; cv=none; b=BGZJtkywV4HDNqBLbHRDkrQ6o2ejKeAyBsi7GknNiYV6LnlnwCuEw/7cR01c7scIGk8JYz/MeG3cbTcDz79z2Uh/MLn+b4eCyHakRXdfRxc/pbmwuGgwhi1PbUMQBmg7bqcmNlZlK6ihT6DAMp7jVh2V3K78OHGiJuZm4ZkvZTM=
+	t=1761130317; cv=none; b=BDc23rHWYj0seYjPcRTIbHYIRfakw8/bdYcL4ALeB4Yg4THaiiN4zfX4Dm5MOS4lXZDPZdOQHkkRVX6fwUkwDnTOTP7ewBc4Y7v4NF1lF+ghF7gycpWQzYtMTuyirFEnS8uno6689ienRcg44oUhGeOO138bvkyGTfrYYKl8Png=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761131239; c=relaxed/simple;
-	bh=FwmuKze520gii68OMa9zuCrP0na+LNpw1uC7/S6jaX0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WqxWb4TCPXSp/1BUU81CxYnBJYqR+wSLuvWg6CwhwtDM7b0OUDWcPdmqlayL/UgcU0XpWeg22qVy9/6rcAjI+TM9KsKVlfp2E1EGhGRnv3j5eYLKzS+n07dx3ySrgd8BeI/dCtgfJkR1tV/QdKPzCHZEEh02awvXBB4Op7PSVLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aizQs/xl; arc=none smtp.client-ip=209.85.215.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f226.google.com with SMTP id 41be03b00d2f7-b6cdba26639so728102a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:07:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761131236; x=1761736036;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:dkim-signature
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7fB5PRpKOjT2mJVqyOTvbhIcOjE9XXiUVHYGkgGRTqY=;
-        b=DWh1JuwSHa4mINVcrxhy+6otXesCk5jQOfrnhUKbX78lum55TOzC9HuQj0jqRllyM6
-         pxB7fY0Hh8N4hCT+yuPvjFYFeaOtz4hr2c/KCHrrFoXts4cqnaJCas7kySfRCS10B401
-         DD2RGuStF6EGvfOK6I+fL3anTxlWHGt9iBeG3A2NV7xt13CDp2ffGafmYe7jGGodbq9r
-         bNYs2efqh0kUSG37gmFGwtimQZdr3RR9aCiFYqdLpKBTkE/RNrrwcJcZ4O/yyTas8CSo
-         wyoN/sudJhG7Y5yNGgir1c2ZmYPFUJhyp2J6L/G2YadW82VldvgeUToCADDpFEMbOeMl
-         iJ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMzBdy+V3HAAYrTLWF4SATNHlv+CGPbgga7VAa17VgC66IHD5OOypbqMY/Z2yWtrfGdaUTvwuN2jGC//M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBwFRYyjppPWgUhUN6seGhRg40FDyyhn/hpDj43IlsULHMesbB
-	2zVxEjTXXmw7+Df+q2fh9gl0E+YZV9zuiL5XG3E4vqptQokJZA/iVDUBV/Kx8lB3rD1a7sXd5c7
-	NcitHsawGmOwilpTKKXJyoYgrVy6lNME3myPthnhMSYz+VTa/oukw6nK5cAv3pj/VhuA7V7QioS
-	4ZxLhiEel/9INffPPJD9OkBUegcTRkYNpAUdQkuwtY1lxRObHavQQDupOA9CbyBZyVxyU/SiEpT
-	9d+JmNekoO+VOk+5w0=
-X-Gm-Gg: ASbGncuZfDYoCLEtKSEozB0ceUkOkLqCFAm9G36rInX/F/RjFhECnmNQbR8jDsCJX+1
-	8MYQffluL14cjbInCUPdEvJtSbDKw9p3w9sHBoBujQBMB9LCJuSGytuIPsxaVatowwo48vPtSse
-	WYYGIuS/x6FU5/2BT6itFXpyn/ktZUswbaXNNwXMKsUUr5t6bvCa303983qRfNB0YkuMY0RQjqP
-	f4nJUWY6zHLTfeGubza5AhBvJ5kwbtdPes9DfvgciNoeXr0+9i/42PhGHTWhTzYiZ3uTggO2FTT
-	ru5iLFf0mw08Hm1TYPWT+e3TXkHcEPT50dPIpv/U1AH90t2Og8ZHltfiReXsj+Yrm1Qj9xVSRO+
-	4kxs8RGtLbgJVIkadWTAqU3ijC/cYo9svHOsQ5FDrBtPf2UcumH94qv154TqVoUzq+/Uh81ic9T
-	JZZXRUPVLxd37wcZMxJigBkE5Ts0iiqawxTg==
-X-Google-Smtp-Source: AGHT+IHC6UXhfJVWFAAAgdeTZc6vXcuiZuPo79UrqpIwmSoqMw6qSBELHay3kjEUxaLSkQeY7VJooPvq7t4Y
-X-Received: by 2002:a17:903:37c4:b0:290:ad7a:bb50 with SMTP id d9443c01a7336-2935e126d63mr10580785ad.27.1761131236072;
-        Wed, 22 Oct 2025 04:07:16 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-292471c6169sm13917175ad.34.2025.10.22.04.07.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Oct 2025 04:07:16 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290992f9693so7275715ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:07:15 -0700 (PDT)
+	s=arc-20240116; t=1761130317; c=relaxed/simple;
+	bh=0emIbIHta2KZrdaQPWJL6o23SZSpJgnhglkKqaRrkZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzjzVxmyA0ON0shKtYux+keEv3W2wFqzsYkF2MAaGBW19NGbe14tvckeHwP8to2m3ZMOnTrxW3VKVyvPqlyfqizfQlkm0QQk+fvmJrcAp989fzxDIcGnN1jzaVP2NxvA6EczibuTHgAvHtqHLjHvMMGZsKiwuXqE49Nbjg+3DGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z3A5pfvH; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47117f92e32so44801345e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:51:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761131234; x=1761736034; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1761130314; x=1761735114; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wj0NZFWJVRGALI2+fvxHBDNu33Sev5bvshrkRXRWHmY=;
+        b=z3A5pfvHkk8n7wHYf6hZGe3uhD2CtjlY/40Zt9gH8422sKNt3c00rULicZ7Ay7QEXW
+         q+iQKrDqYlPbLnVEpk6cuW9idbQ4AoWC/f/r6BvtRgFpwpuIodK8+LXuDJ8Az6ukeCJO
+         U9z5AL8qT0ukpV+0GVkHtgkJkzvFfq3pX4kF1yd+8mo8KhAl3ruXfm241uKyEqMR1H6F
+         sNuv4JUhwOvyBGcmJhBi8Re77yMLsiCxOUoGJUPrveKm/aBNwJaeUIsJDyZvdtzfaEKK
+         dSm4sBG9HNn4ofHVlk6cmnX+woZTHuqgS6Z/w3mPsw0tQGX2eakfdIfe5o7sJ6xkpRiw
+         tMLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761130314; x=1761735114;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7fB5PRpKOjT2mJVqyOTvbhIcOjE9XXiUVHYGkgGRTqY=;
-        b=aizQs/xl1mUCkYcHScPFtQ7m6Xo42IEhSXoVn1079raFotWqloKvt13J4bHOCksUzb
-         gdzZyeKpbkjSMGuytQ4A2X60bUX/59GitketaHL/ueN++ZAU/RR7S5ZTWk37c2r+W8uH
-         mY6ELD3BEHGQlWKjjzPUg41NxEAvwoZ3lO5Ag=
-X-Forwarded-Encrypted: i=1; AJvYcCXyrXXXw1pnLpo/zXARHMMe2m6xh/n0t3v3fRYpRKmo916U7T/lpy2rJQouUwJMnDBR443CDlUR05av4nk=@vger.kernel.org
-X-Received: by 2002:a17:902:d509:b0:269:8eba:e9b2 with SMTP id d9443c01a7336-292ffc97bfamr41948665ad.29.1761131234306;
-        Wed, 22 Oct 2025 04:07:14 -0700 (PDT)
-X-Received: by 2002:a17:902:d509:b0:269:8eba:e9b2 with SMTP id d9443c01a7336-292ffc97bfamr41948175ad.29.1761131233780;
-        Wed, 22 Oct 2025 04:07:13 -0700 (PDT)
-Received: from photon-dev-haas.. ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ffeec3sm135964955ad.52.2025.10.22.04.07.12
+        bh=wj0NZFWJVRGALI2+fvxHBDNu33Sev5bvshrkRXRWHmY=;
+        b=qSYjqMgPxNF/34RVFmTT0ylX/R5yym6aTvz9txwklRMgoOzEyxj9oXCLNv7OtY/TtJ
+         FcbTxkKO80aOVawUpJeCZq9bT4aHzadHEqP5hIPXEm7Odbjk7i+OOuOBbaprHbqRxMk4
+         tYrbXok2Au1/yBGJtnwDmhzmTarKbCeQsF0uuXRWV2q6oUD0D4XPVcVrgRA4R9Uww2K6
+         Bg/1muEa+UtdhD04xwUDcccCQU1005RzZSJKImIcByoWC43ZSTXzFtqRcA/9668sPDvj
+         ZycURWKxzW3gAYNp6T3zmDCaWV5gfUANgGJQI7bj6jcLBaEql309AtoDCCM7xaISbuQm
+         eTfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSunSFawjxSYqRV4/hjoC5i1ZGWcgk7dmkWHKvrXwruCxss3CZP4qhIQQhn+FM2o1GIfUIMdKJSkE7Snc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuOHydG9ja9qzw5nNiOZMprjCBVF/DrnpU0r7RGkDATkxT0an9
+	JgUQ2BwwTdOb+K1Ggje+fFtfwwJ4YfGtS02Gc19QXPDD1Z9IjYUqxSN2Z3p/sOvPdwI=
+X-Gm-Gg: ASbGnctPXYzlw1IghgwzfThknDcJZ9XRc8CS2f2yKL70hlvOCNMR85kuz/1jT0zET+z
+	opyTpMHSPe+qbmN69PoZkfE5I9siegu9eyYrXO8eAUR8tEmh4Zg4mXMsgGKzBgUif3pUyMPooY/
+	8foCbyHA6vDRsqJJEp7IJClXdVri+fbOWvY+i4xJSmfsRVMLZpz/9UAoII8dgH0m7QK346vxSPK
+	vQEg+jUUhbtMqF3q/9JDj3PVqE4jh0tVDKfdkMIX15DA4nYVybGQnmyXxSXT0X2Pw453EdmpbQj
+	w/Mc8k0Ijgu7XwIwb/R4RQP0nFh3ADxb4/JF5Lc0Ghrbb3TjKPuf7wDPzgZzr6FB/AORfhs9zF1
+	Doxi+4Jn5bjImZ2n6i6d6WX+M777GuSHeTpy9OCFh7iXWQepDniugI/lD7AAOy2lE62WGLJwz
+X-Google-Smtp-Source: AGHT+IFqoTQ2HPqFhE+xoTH5Tzl+i0vK7I5FUuawS0A8siSroPNadoWtujMORQ1HXcf2sw7QAqJLcA==
+X-Received: by 2002:a05:600c:548a:b0:46f:b42e:edce with SMTP id 5b1f17b1804b1-47117925db7mr136759365e9.39.1761130313599;
+        Wed, 22 Oct 2025 03:51:53 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342373sm43403635e9.12.2025.10.22.03.51.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:07:13 -0700 (PDT)
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	richardcochran@gmail.com,
-	nick.shi@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	andrew+netdev@lunn.ch,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	jiashengjiangcool@gmail.com,
-	andrew@lunn.ch,
-	viswanathiyyappan@gmail.com,
-	vadim.fedorenko@linux.dev,
-	wei.fang@nxp.com,
-	rmk+kernel@armlinux.org.uk,
-	vladimir.oltean@nxp.com,
-	cjubran@nvidia.com,
-	dtatulea@nvidia.com,
-	tariqt@nvidia.com
-Cc: netdev@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	florian.fainelli@broadcom.com,
-	vamsi-krishna.brahmajosyula@broadcom.com,
-	tapas.kundu@broadcom.com,
-	shubham-sg.gupta@broadcom.com,
-	karen.wang@broadcom.com,
-	hari-krishna.ginka@broadcom.com,
-	ajay.kaher@broadcom.com
-Subject: [PATCH v2 2/2] ptp/ptp_vmw: load ptp_vmw driver by directly probing the device
-Date: Wed, 22 Oct 2025 10:51:28 +0000
-Message-Id: <20251022105128.3679902-3-ajay.kaher@broadcom.com>
-X-Mailer: git-send-email 2.40.4
-In-Reply-To: <20251022105128.3679902-1-ajay.kaher@broadcom.com>
-References: <20251022105128.3679902-1-ajay.kaher@broadcom.com>
+        Wed, 22 Oct 2025 03:51:52 -0700 (PDT)
+Date: Wed, 22 Oct 2025 13:51:50 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/7] drm/msm: Add display support for Glymur platform
+Message-ID: <d6ivp57mh77gxybjvvwpmqoc5fsy52yydtvs23bepwdxgkxhzj@ahryeick6yaw>
+References: <20251014-glymur-display-v2-0-ff935e2f88c5@linaro.org>
+ <20251020-astonishing-zebra-of-respect-1c2eca@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020-astonishing-zebra-of-respect-1c2eca@kuoka>
 
-For scenerios when ACPI is disabled, allow ptp_vmw driver to be
-loaded by directly probing for the device using VMware hypercalls.
+On 25-10-20 12:40:24, Krzysztof Kozlowski wrote:
+> On Tue, Oct 14, 2025 at 03:38:25PM +0300, Abel Vesa wrote:
+> > The Glymur MDSS is based on the one found in SM8750, with 2 minor number
+> > version bump. Differences are mostly in the DPU IP blocks numbers.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> > Changes in v2:
+> >  - Picked-up Krzysztof's and Dmitry's R-b tags.
+> >  - Fixed the bindings check reported by Rob.
+> >  - Fixed indentation reported by Krzysztof.
+> >  - Re-worded the commits to better explain the incompatibility
+> >    with previous platforms.
+> >  - Add the UBWC config patch, as suggested by Dmitry.
+> 
+> Where are lore links? b4 provides them automatically.
+> 
 
-VMware precision clock virtual device is exposed as a platform ACPI
-device in its virtual chipset hardware. Its driver - ptp_vmw - is
-registered with the ACPI bus for discovery and binding. On systems
-where ACPI is disabled, such as virtual machines optimized for fast
-boot times, this means that the device is not discoverable and cannot
-be loaded. Since the device operations are performed via VMware
-hypercalls, the ACPI sub-system can be by-passed and manually loaded.
+This patchset was enrolled with b4 due to logistical reasons
+which lead to losing initial kernel tree.
 
-Cc: Shubham Gupta <shubham-sg.gupta@broadcom.com>
-Cc: Nick Shi <nick.shi@broadcom.com>
-Tested-by: Karen Wang <karen.wang@broadcom.com>
-Tested-by: Hari Krishna Ginka <hari-krishna.ginka@broadcom.com>
-Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
----
- drivers/ptp/ptp_vmw.c | 70 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 58 insertions(+), 12 deletions(-)
+I thought the b4 prep -e should be the one to use in this case,
+but now I realized that has a different purpose. My bad.
 
-diff --git a/drivers/ptp/ptp_vmw.c b/drivers/ptp/ptp_vmw.c
-index 7d117eee4..a3978501a 100644
---- a/drivers/ptp/ptp_vmw.c
-+++ b/drivers/ptp/ptp_vmw.c
-@@ -98,25 +98,41 @@ static struct ptp_clock_info ptp_vmw_clock_info = {
- 	.enable		= ptp_vmw_enable,
- };
- 
-+static int ptp_vmw_clock_register(void)
-+{
-+	ptp_vmw_clock = ptp_clock_register(&ptp_vmw_clock_info, NULL);
-+	if (IS_ERR(ptp_vmw_clock)) {
-+		pr_err("ptp_vmw: Failed to register ptp clock\n");
-+		return PTR_ERR(ptp_vmw_clock);
-+	}
-+	pr_debug("ptp_vmw: ptp clock registered\n");
-+	return 0;
-+}
-+
-+static void ptp_vmw_clock_unregister(void)
-+{
-+	ptp_clock_unregister(ptp_vmw_clock);
-+	ptp_vmw_clock = NULL;
-+	pr_debug("ptp_vmw: ptp clock unregistered\n");
-+}
-+
- /*
-  * ACPI driver ops for VMware "precision clock" virtual device.
-  */
- 
- static int ptp_vmw_acpi_add(struct acpi_device *device)
- {
--	ptp_vmw_clock = ptp_clock_register(&ptp_vmw_clock_info, NULL);
--	if (IS_ERR(ptp_vmw_clock)) {
--		pr_err("failed to register ptp clock\n");
--		return PTR_ERR(ptp_vmw_clock);
--	}
-+	int ret = ptp_vmw_clock_register();
- 
--	ptp_vmw_acpi_device = device;
--	return 0;
-+	if (ret == 0)
-+		ptp_vmw_acpi_device = device;
-+	return ret;
- }
- 
- static void ptp_vmw_acpi_remove(struct acpi_device *device)
- {
--	ptp_clock_unregister(ptp_vmw_clock);
-+	ptp_vmw_clock_unregister();
-+	ptp_vmw_acpi_device = NULL;
- }
- 
- static const struct acpi_device_id ptp_vmw_acpi_device_ids[] = {
-@@ -135,16 +151,46 @@ static struct acpi_driver ptp_vmw_acpi_driver = {
- 	},
- };
- 
-+/*
-+ * Probe existence of device by poking at a command. If successful,
-+ * register as a PTP clock. This is a fallback option for when ACPI
-+ * is not available.
-+ */
-+static int ptp_vmw_probe(void)
-+{
-+	u64 ns;
-+
-+	return ptp_vmw_pclk_read(VMWARE_CMD_PCLK_GETTIME, &ns);
-+}
-+
- static int __init ptp_vmw_init(void)
- {
--	if (x86_hyper_type != X86_HYPER_VMWARE)
--		return -1;
--	return acpi_bus_register_driver(&ptp_vmw_acpi_driver);
-+	int error = -ENODEV;
-+
-+	if (x86_hyper_type != X86_HYPER_VMWARE) {
-+		error = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (!acpi_disabled) {
-+		error = acpi_bus_register_driver(&ptp_vmw_acpi_driver);
-+		if (!error)
-+			goto out;
-+	}
-+
-+	if (!ptp_vmw_probe())
-+		error = ptp_vmw_clock_register();
-+
-+out:
-+	return error;
- }
- 
- static void __exit ptp_vmw_exit(void)
- {
--	acpi_bus_unregister_driver(&ptp_vmw_acpi_driver);
-+	if (!acpi_disabled && ptp_vmw_acpi_device)
-+		acpi_bus_unregister_driver(&ptp_vmw_acpi_driver);
-+	else if (ptp_vmw_clock)
-+		ptp_vmw_clock_unregister();
- }
- 
- module_init(ptp_vmw_init);
--- 
-2.40.4
+Will make sure links are there in the next version.
 
+Thanks for reviewing.
 
