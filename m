@@ -1,78 +1,124 @@
-Return-Path: <linux-kernel+bounces-865343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D17BFCD81
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:23:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3321ABFCD8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9962F1A060D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A27F1A02A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BA334C9B1;
-	Wed, 22 Oct 2025 15:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684C034CFCC;
+	Wed, 22 Oct 2025 15:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SX6fdOq6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Z6C7Wgut"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88E6347FEC;
-	Wed, 22 Oct 2025 15:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BA3347FEC;
+	Wed, 22 Oct 2025 15:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146542; cv=none; b=sIiH6Gay+LWTTs+DUBNI6oNIzlG6G37tudwE/0Lpmf95gD0fySJJvVPErCNVdkp/zxRQVUUSql853bgJZDRnbfNwQ6v4rz0Rd3Hi7skVYjuhVk55MXQBVeg/ZJ7XtZNKBNBUy75kn7701hhrxJV6ojiwys/Ju1Y3jy2VWEtFqXM=
+	t=1761146613; cv=none; b=djb9fQZ2sOLMdV6+njk92ojnQ/uEJNlzN+PUNVZds1ZuFds4xpv7mX86uB0bbcAX+YBf8ESD2i0e9zUxRCF01tRjRgQx3ZkumRp0geXH3/I1MsNHZ/MEWUqxmqrHvqPuI3/sn012XDs0qhtuHofeGFcpG9ys1XAS1eiUwIN6jhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146542; c=relaxed/simple;
-	bh=TDV+5R+qF/TXk876EtqWFOl53HD3y5c563rqGsqY63E=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MYI2SYQL3pV+5pFJdYW6v9JG5A9NP0FEKta28Rs4yWKpz9sKqu0MW7WUqFumE/26sSTQ7A7p/8K8AJplTKpuot1a0GDFpovThYuYuQL1p0agkzHgEjMIuVYkEXaK5SScqRRVOqSKKf1SWzAh65snya/LtZKvq6zAk2jcaLrIA7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SX6fdOq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B340C4CEF5;
-	Wed, 22 Oct 2025 15:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761146540;
-	bh=TDV+5R+qF/TXk876EtqWFOl53HD3y5c563rqGsqY63E=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=SX6fdOq6gtQWhXh6hNkiPY565Ax+qPJDPulbIxW9o090/9dC7x8HpwH8Wt09ToV9l
-	 WkpUvdpZTcXNNOtJVfrsLW0fGreCkVlpEhrUohnAPUfDc/sK9uaGsqhD6NG68eETOb
-	 YfDOQbLdNlwQIo7qkuACN+edfRdiiNKJlTrs5tGUykmbxiafq5fepOMTPqp2YRd88S
-	 OIQScbM+jFJeLlnxgdNWXTjyMN8Rj3wzzXXfrUldufh4GsjXzrG944goxa/w/0x0bu
-	 2wKycureZJaQAsiqOc5/KwX+u8nhw/yKVby3HgcI3MUo3r+0hXcb4TU34I93XqV3/A
-	 7dpZ779jjKLDA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3407D3A78A6C;
-	Wed, 22 Oct 2025 15:22:02 +0000 (UTC)
-Subject: Re: [GIT PULL] platform-drivers-x86 for v6.18-2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <pdx86-pr-20251022140349-2206824358@linux.intel.com>
-References: <pdx86-pr-20251022140349-2206824358@linux.intel.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <pdx86-pr-20251022140349-2206824358@linux.intel.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.18-2
-X-PR-Tracked-Commit-Id: 34cbd6e07fddf36e186c8bf26a456fb7f50af44e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dd72c8fcf6d35de5d6d976f20dc1ae84ce7af08b
-Message-Id: <176114652068.1975006.9143982855228571607.pr-tracker-bot@kernel.org>
-Date: Wed, 22 Oct 2025 15:22:00 +0000
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hansg@kernel.org>, Andy Shevchenko <andy@kernel.org>
+	s=arc-20240116; t=1761146613; c=relaxed/simple;
+	bh=ANQm8fWq/p+Z/WnKkV5WnEXtHhhWdDQapOL77j2cw5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9/foiJzxUgWUIDaRlBgHuNZkf8mNsV4jGQg3vVAlacbBwMTjQQR9ec+y75AYgk7WOxDP/mGUz9VdwVyvRbpeFNmd4eg6rg5pUN5rkUAICd+77rHHKtNcG7ipmzMbtAyeJc48Jv1SH9sT9M477mSmKH5t40cF+9eZ7FP/jl7a9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Z6C7Wgut; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 14A4E1C007C; Wed, 22 Oct 2025 17:23:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1761146605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sTPnzWhHyeueBFfOlDmvPtS5n8v0m//b2f9NJlRltOM=;
+	b=Z6C7WgutqaVI5CazTrkU1H4soTywmUzKbH/1YU8Llowuof/Dy6EkNVUtJxUerpqseT0tBd
+	To6E0zXObsGF5g2EH0uOcjVYBw2blp3K8t66SHco9Z7br1C1IogtRdiMZ3pc7n/OZM0fVd
+	DNEIxyMC46Yav/rUXpc7vQNjUwLhGHk=
+Date: Wed, 22 Oct 2025 17:23:24 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Casey Connolly <casey.connolly@linaro.org>,
+	Alexander Martinz <amartinz@shiftphones.com>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] arm64: dts: qcom: qcm6490-shift-otter: Enable flash
+ LED
+Message-ID: <aPj27KKCVN9Tn9qi@duo.ucw.cz>
+References: <20250930-otter-further-bringup-v1-0-7fe66f653900@fairphone.com>
+ <20250930-otter-further-bringup-v1-4-7fe66f653900@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Fhbu73dSOXUJXCHg"
+Content-Disposition: inline
+In-Reply-To: <20250930-otter-further-bringup-v1-4-7fe66f653900@fairphone.com>
 
-The pull request you sent on Wed, 22 Oct 2025 14:03:49 +0300:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.18-2
+--Fhbu73dSOXUJXCHg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dd72c8fcf6d35de5d6d976f20dc1ae84ce7af08b
+On Tue 2025-09-30 16:32:22, Luca Weiss wrote:
+> From: Casey Connolly <casey.connolly@linaro.org>
+>=20
+> Describe the flash LED on this phone.
+>=20
+> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 
-Thank you!
+Reviewed-by: Pavel Machek <pavel@ucw.cz>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>  };
+> =20
+> +&pm8350c_flash {
+> +	status =3D "okay";
+> +
+> +	led-0 {
+> +		function =3D LED_FUNCTION_FLASH;
+> +		color =3D <LED_COLOR_ID_WHITE>;
+> +		led-sources =3D <1>, <2>;
+> +		led-max-microamp =3D <500000>;
+> +		flash-max-microamp =3D <1500000>;
+> +		flash-max-timeout-us =3D <1280000>;
+> +	};
+> +};
+> +
+>  &pmk8350_adc_tm {
+>  	status =3D "okay";
+> =20
+>=20
+
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, Netanyahu and Musk!
+
+--Fhbu73dSOXUJXCHg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaPj27AAKCRAw5/Bqldv6
+8kmFAJ4rJ8Tx4NMizkzVOiSWmcIENrA1CQCgsmG9w0ObK7yegGZ+HvSxbkhoevE=
+=HJ8o
+-----END PGP SIGNATURE-----
+
+--Fhbu73dSOXUJXCHg--
 
