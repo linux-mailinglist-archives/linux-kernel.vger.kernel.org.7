@@ -1,111 +1,191 @@
-Return-Path: <linux-kernel+bounces-864415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269A0BFABF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:01:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7148BFAC0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5711352844
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:01:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B3E1A04685
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E942FF151;
-	Wed, 22 Oct 2025 08:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5E52F363E;
+	Wed, 22 Oct 2025 08:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JOICZfpt"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNpOxUlk"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9EC2FD66C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71262E8882
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120110; cv=none; b=rKOpg3K7ie42aPYxr0wiT/H9Dhmc5TaXxHbPzWVcvBNGyi2CEs4xHfPqiJ2rAnPmnkBBNCvbPrjSR0Mjej/jp5v4EBdbfIJm6e+00H+KGJFlqC/5JbBR6usEMtR7j/JDT/QiqnJPIhx/nNsEouebRiJ3n+/R2BODNK9HSkOpqqs=
+	t=1761120132; cv=none; b=Uss6RD13+eFD32XqiyAvRHgsUPnjgEcKdpPru9fuckyWDFWhI8vTe073sHPLiLOXSc0LMEOWrkzLEAaH781soZEKbzhRb3po+yXDVCTKlOSzvrkYmkXwORG6HjLQ1fs1W0kmTiT0z5TTRDUCdtSBet8TlVWGVpeZfsx2vpCUFjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120110; c=relaxed/simple;
-	bh=38r9xfZLwLJKROmeDdkyUpNf+YWWc4TDY/dD0X8glqs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p8ISGc08Lx6NQqcWVJQBRRV5MdKuwUDtoJCzU8DtAqdhZGPpC5ijrJbjQCaThIVARysvMv+rNg3dmgF4PaeIOsoll225vsvCfu2Pj8dG+VlOv1cxR8E/I9ws3bimjxEtZaG7gPC7jf7nGk/dVseI4+fSrZUfBjdWu1tc+XeBSVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JOICZfpt; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33d7589774fso4137994a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:01:47 -0700 (PDT)
+	s=arc-20240116; t=1761120132; c=relaxed/simple;
+	bh=KES1rqhhzVkWHCaQsx5xIA87TR29YUXJ/eVpvlSxQpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B84byX9uK1T42sPqeRwFohBjwZ8JDYM7cUffM7Cq6jQu6OqPirSxrn0ED1KBNLyQNS2k8azaB55jGSmSVDG570mXkeAqXcKYvhMgEWkJl0sJ/Bb0ksEgLF+b1JY8+jjttwP70thWB+c93Z8csTDUYNw3N637DSoCp9NrlUg3anI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNpOxUlk; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-28a5b8b12a1so66354595ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761120107; x=1761724907; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Czcihnqa+RdFrhOYT/oFUcxYUUGz6vVNGz6e5p2QTY=;
-        b=JOICZfptOeDc0oAopeMyt6i2KiQgA9iCOI/ghk0QNTKv7fpQd+kooTmTPfQvZEygsR
-         LKttUu2VwktFx+LwZixNwRHINIptI+5Qfumv3/Bg1xdg5WQcpyiCSWjKJR3C99ZRDyA/
-         cFwHhTMEC8k/NfxrQS7RcmN27YTZV9NQgiEsg=
+        d=gmail.com; s=20230601; t=1761120129; x=1761724929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8IULEjah58/8/ttFr7hd4dbKkGYaqM5HUaRTvDTqwJA=;
+        b=LNpOxUlkLx6W9UIs/CKAvDGW1SsciwZUL0sK46l9oxL3wTNyFT6Z1End3h5mTQ8TX1
+         +7XeLsPXOXHed5O4WYtogL6Z5YB8aUJWEyna8m11RnxAD08qTbzXgDEHdwGTLj3Yrzuo
+         vBjcJv1SZM5poDElEVyC3y4nACyuwfUGkeLWDaBWuDuDtG95BsKz4a6zCssp+tYn0r/I
+         F0fK0VLZaTCWk9cWehJ8dFewGArLaiYZAmkTsJj1vc7GPTPwa3gftQE7MkdisIoVBY1U
+         Um+7HWtIUeKbD1Ekhu/z0t/lc3vtKBlsqS2CnKIySGX9XKfoZ4caET6HuaOXQpnLJZGW
+         1phg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761120107; x=1761724907;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Czcihnqa+RdFrhOYT/oFUcxYUUGz6vVNGz6e5p2QTY=;
-        b=OW9BJ3u3LQk33jdjl/KZHL9mIL6u5Vf6mOESM8p+Je1xUVhbSVhjl1bDXJs5z4d+r6
-         HFmdZkdAOTvjwTHZBgAiuqeK+lcJXrxX02dSszWoXiaV1U3R17gLnaRbtSHCIv9HANb7
-         WsLVSyYf9RBerNbINW6Lhunf+MkBaWQazsp1q5yxn+i4JSe5PUhOlJ7sHMUiDmT9p6mx
-         S3bGo/VZYnNDVagXM8w4NuRvjLv/m8s5IxNuNzYXF1r0aoJhVZEB6bFM6/QwplsmHCRE
-         gptwPeutv7KbB/25RRVZrosMd80Y/Y7VM/RJWbh1bQ+JbUvSNYcL87yguwvrCwX3dY6s
-         IjfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBJar9pLAFv/26GdF6CRk1tJaA/NzsWP11I1ohJtqOXR3lcfgj+iYV9mb3JmWBavKh4BQ4U61GOjyrYI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz18VPwE+oF2jhQpGDGcVLmdfg45tAn6aEbXXdc7wo+RH/79ghi
-	QCdAAemLgXRVH68VjRVeX2KVh+Kyo9hOYu/ztWSrIzLVxI0GnbelURvTcJVXQ5qQTA==
-X-Gm-Gg: ASbGncvGrpt7OnYTFBMJHEl7gN5PRfpQxo8/q6TnNpXx2QJ3cI0W62ClgSNkCXYjTZ/
-	SfpomFoiUuI3TF7fLw/Ft0Qzh5yq3X4Hr070vLtuZLNN0Vh3yLjTthhvYfBIeWc+YCDEotQjkc9
-	fkHfH3sKpKIp9aYUaOxsafw6xhqHndMxQxfg05/I64yFYfCLczaFtBSwGLv4t4AoBVvTmTIBQ3V
-	DFirLN6+K6AS9JVdWlOz66S3onANYOjsyldYSQH1cNk8QaTd1/HoVgNBqPf/zpJpjFz3rvvHJJX
-	hkBxJEIdD0Ya9Vw8VW44xeglXcboiY7l7/xt/YMhJzvgh51UJEGOIdljn9BsYSWMCFnPldJNNd/
-	i3jivkZqcdIpWiUhpV5bAti3YTm4z2nIcAULuzut6ZGf7IduZhTvHgVzyNPkJ+1a2EGGDokSvWj
-	aEuksWVnDG0IMliTxHLKG5imMam2Fn02MVHb5cJgaBPb7BG9eP7G2v
-X-Google-Smtp-Source: AGHT+IEt15ezmGTqR4A8CJGFXTvCgrS4gO8P9rtkeOmGm46bHNcAFHWrZsKB4y1EeUubGMyQT47cig==
-X-Received: by 2002:a17:90b:1dcb:b0:33b:b033:d7e5 with SMTP id 98e67ed59e1d1-33bcf9186f0mr29084769a91.35.1761120106936;
-        Wed, 22 Oct 2025 01:01:46 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:5534:56e9:528e:f9b4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223dfaacsm1771401a91.10.2025.10.22.01.01.44
+        d=1e100.net; s=20230601; t=1761120129; x=1761724929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8IULEjah58/8/ttFr7hd4dbKkGYaqM5HUaRTvDTqwJA=;
+        b=ZCcAlffhfbwMAgoUKvreow3XZR9owfRL917hvPqwH4mZcfrXjPRdhLvF0s5tBwDxGt
+         0hxHGg+IwsrNpZNA7WiTMRw53PGzUaUCCkHAsCTApc8ALgscQQuiN1OsYCUCyAl8rUGo
+         RbwEUYkRJ0cuPP0Wv7Q38ioUJ7yWcpE6FrNWpxv7FtD6vnWUL4hrcAJfsLkpag92Fr6a
+         7Rgwz4v7xCQ+CspgD20nbg2KNLyC4byI/6bkN4bxpBKW0hs6iFFZeGaEHFxSlqrvRHTy
+         k0ei2PLZLVEd98sevCBTR/44q3YI10auKVX6ZsaC1ZI4yaf7cmbFi42xRXZoZM6wMM99
+         1E/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxf5/k98yq4gSWi2ibEia0xUgoChvMTatIwd4Va5SL0f6/L0E6UCajj+1kDj9kwMhDjes+bzzot089Qf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgB0a7dyh47UOAk91KEApPOBeo5BVA2Iv08ETsFciyjqF/BVyd
+	ujThGfM4kiI7tb08mo+GpiQv764YsGoffmFIVFSr5ERlcSJ2WBKhCaXH
+X-Gm-Gg: ASbGncufXwo6BPdihtSsv+AynBQ1j0zbEBGWYYNV1X2NBA6pc/wc0hEViGW9qZPPAg3
+	qu890+ewJWmNc+Lrp0q6T85zEA9fIH1Ykfy37MRC4gIgoBm2j5SFzQ5cyEN7WnwhHVRVwKXeeou
+	3Wos3DVWDW/4z4xJM/M9Yi49wkP4eCeY5q7sSWqLTI9hbpW2xyrrPa+kVXXGECys7S3f5Gv77PT
+	gOKMO5Rdf/gf7yndMSYTD4ZE3/qdqza/e77hlNvcTypQQAd+pTyYtW4oPANt+N+UObKFZu5uBt1
+	fXy8ZB2dRe22o2YIR5ftGGDQVvKFuvQsc/31T1vuz/L6CjnuFVVTay9pZR+OKoqD8gijL5l7UZq
+	nVaJeiGRH98xpMk4tc+JClen4ZZjbgYcxH+yX1faoob2vQgfnDhJenF6QCS47YaVC6MDa73Guwz
+	2DrG778kA=
+X-Google-Smtp-Source: AGHT+IHUvFNEb8ueoRDJavJW321o3FS33gCYT8NQTFkfClnVpzJ7UDlFH8bs4uMSU13s5U8IClXzXw==
+X-Received: by 2002:a17:903:244f:b0:261:e1c0:1c44 with SMTP id d9443c01a7336-290cc2f83a5mr263831745ad.40.1761120128951;
+        Wed, 22 Oct 2025 01:02:08 -0700 (PDT)
+Received: from 7950hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d7e41sm131947785ad.57.2025.10.22.01.02.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 01:01:46 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-X-Google-Original-From: Chen-Yu Tsai <wens@kernel.org>
-To: Jernej Skrabec <jernej@kernel.org>, 
- Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- linux-sunxi@lists.linux.dev, dri-devel@lists.freedesktop.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251020045603.2573544-1-wens@kernel.org>
-References: <20251020045603.2573544-1-wens@kernel.org>
-Subject: Re: [PATCH resend] MAINTAINERS: Update Chen-Yu's email address
-Message-Id: <176112010476.488381.11368848750305962943.b4-ty@kernel.org>
-Date: Wed, 22 Oct 2025 16:01:44 +0800
+        Wed, 22 Oct 2025 01:02:08 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: ast@kernel.org,
+	jolsa@kernel.org
+Cc: daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	leon.hwang@linux.dev,
+	jiang.biao@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 00/10] bpf: tracing session supporting
+Date: Wed, 22 Oct 2025 16:01:49 +0800
+Message-ID: <20251022080159.553805-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+Sometimes, we need to hook both the entry and exit of a function with
+TRACING. Therefore, we need define a FENTRY and a FEXIT for the target
+function, which is not convenient.
 
-On Mon, 20 Oct 2025 12:56:02 +0800, Chen-Yu Tsai wrote:
-> The email forwarder I'm using has run into severe problems with Gmail
-> lately. Switch over to my kernel.org address for kernel development.
-> 
-> 
+Therefore, we add a tracing session support for TRACING. Generally
+speaking, it's similar to kprobe session, which can hook both the entry
+and exit of a function with a single BPF program. Meanwhile, it can also
+control the execution of the fexit with the return value of the fentry.
+Session cookie is also supported with the kfunc bpf_fsession_cookie().
 
-Applied, thanks!
+The kfunc bpf_tracing_is_exit() and bpf_fsession_cookie() are both inlined
+in the verifier.
 
-[1/1] MAINTAINERS: Update Chen-Yu's email address
-      commit: caa2f6ee91d4e2dab39b30de34d2c74b6f45d0a3
+We allow the usage of bpf_get_func_ret() to get the return value in the
+fentry of the tracing session, as it will always get "0", which is safe
+enough and is OK.
 
-Best regards,
+The while fsession stuff is arch related, so the -EOPNOTSUPP will be
+returned if it is not supported yet by the arch. In this series, we only
+support x86_64. And later, other arch will be implemented.
+
+Changes since v1:
+* session cookie support.
+  In this version, session cookie is implemented, and the kfunc
+  bpf_fsession_cookie() is added.
+
+* restructure the layout of the stack.
+  In this version, the session stuff that stored in the stack is changed,
+  and we locate them after the return value to not break
+  bpf_get_func_ip().
+
+* testcase enhancement.
+  Some nits in the testcase that suggested by Jiri is fixed. Meanwhile,
+  the testcase for get_func_ip and session cookie is added too.
+
+Menglong Dong (10):
+  bpf: add tracing session support
+  bpf: add kfunc bpf_tracing_is_exit for TRACE_SESSION
+  bpf: add kfunc bpf_fsession_cookie for TRACING SESSION
+  bpf,x86: add ret_off to invoke_bpf()
+  bpf,x86: add tracing session supporting for x86_64
+  libbpf: add support for tracing session
+  selftests/bpf: test get_func_ip for fsession
+  selftests/bpf: add testcases for tracing session
+  selftests/bpf: add session cookie testcase for fsession
+  selftests/bpf: add testcase for mixing fsession, fentry and fexit
+
+ arch/arm64/net/bpf_jit_comp.c                 |   3 +
+ arch/loongarch/net/bpf_jit.c                  |   3 +
+ arch/powerpc/net/bpf_jit_comp.c               |   3 +
+ arch/riscv/net/bpf_jit_comp64.c               |   3 +
+ arch/s390/net/bpf_jit_comp.c                  |   3 +
+ arch/x86/net/bpf_jit_comp.c                   | 214 ++++++++++++++++--
+ include/linux/bpf.h                           |   2 +
+ include/uapi/linux/bpf.h                      |   1 +
+ kernel/bpf/btf.c                              |   2 +
+ kernel/bpf/syscall.c                          |   2 +
+ kernel/bpf/trampoline.c                       |   5 +-
+ kernel/bpf/verifier.c                         |  45 +++-
+ kernel/trace/bpf_trace.c                      |  59 ++++-
+ net/bpf/test_run.c                            |   1 +
+ net/core/bpf_sk_storage.c                     |   1 +
+ tools/bpf/bpftool/common.c                    |   1 +
+ tools/include/uapi/linux/bpf.h                |   1 +
+ tools/lib/bpf/bpf.c                           |   2 +
+ tools/lib/bpf/libbpf.c                        |   3 +
+ .../selftests/bpf/prog_tests/fsession_test.c  | 161 +++++++++++++
+ .../bpf/prog_tests/get_func_ip_test.c         |   2 +
+ .../bpf/prog_tests/tracing_failure.c          |   2 +-
+ .../selftests/bpf/progs/fsession_cookie.c     |  49 ++++
+ .../selftests/bpf/progs/fsession_mixed.c      |  45 ++++
+ .../selftests/bpf/progs/fsession_test.c       | 175 ++++++++++++++
+ .../selftests/bpf/progs/get_func_ip_test.c    |  14 ++
+ 26 files changed, 776 insertions(+), 26 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fsession_test.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fsession_cookie.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fsession_mixed.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fsession_test.c
+
 -- 
-Chen-Yu Tsai <wens@kernel.org>
+2.51.1.dirty
 
 
