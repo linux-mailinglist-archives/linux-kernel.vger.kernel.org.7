@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-864300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5447EBFA73A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:06:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB1DBFA76A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 01A2334482D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:06:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 984FF507979
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E572F6174;
-	Wed, 22 Oct 2025 07:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B832F7ACA;
+	Wed, 22 Oct 2025 07:06:00 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E7F2F6182;
-	Wed, 22 Oct 2025 07:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0F52F3C1D;
+	Wed, 22 Oct 2025 07:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761116758; cv=none; b=C8fBbIe1NpyJu+8qJ5mpHSFkVxuvM/uKTngiNHCUMWzZWuWemByo/uK0OIhVDsU396t1eRndneI9C6zPAPebahahjchauuGYbIZv71Wnj64rrxRBNkpslii4uc+lXrW/us5Jts1D07Rfli/B3vc07/AdHOQNP0hLFknnOgSmuRc=
+	t=1761116760; cv=none; b=mGrF7H3g5rC6sg5CiWxaTofs0eZi+5oZ7N23oFfJSpCQEHOeqB0lwYdXkaEy0UXYOMklZk4LKw6NfjvmRiQeQzRze++W6z6UGubtzE6w3wD0L0+JSH7bmjteVwQM1ka7jtFlw/seTF5t8+WBlSbuGggvFNFp6dCLRpm7MCnGcJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761116758; c=relaxed/simple;
-	bh=43IdN5grqab5NtUu5trKBJYwk2qqeBRy9PQwFFafD8k=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uc6pg+a+44IHiXVV6AjuJ/NGQCeYDOuORO9o5ksJo5HvdR3YZTGUo1wMJlmus+OSSo8po0J/erVRkm5Q6yZKunP7zAMVCEVGmPY97ao2afaiJXmH5cPEHTQFaFq9cku14twvx0dBVUIlB2v/H2GEkvVSHwieDopkNR7Tja4KWe4=
+	s=arc-20240116; t=1761116760; c=relaxed/simple;
+	bh=ny2XylRjq1EK6h3i/HZ7JxOmnPtg8Rs65J2/1rfDoY8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OosizK3fYvreDNtU1Q3zsmIar9yr/GhEO9QSoT/gwH34Vj5tRm1X0Yi0C1Q42UH9IVpyT5953YOw6ospIVQvrCYTwPqRXL2ckTM3/b0CcIkU7XI0e9FFcLc9LtFLJSRbwHqJ+EiKjBSlIqil008SBa1NWjkzPcG1XzL5Dk+7uRg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -49,9 +49,10 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, <bmc-sw@aspeedtech.com>, Rob Herring
 	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 5/6] arm64: dts: aspeed: Add AST2700 Evaluation Board
-Date: Wed, 22 Oct 2025 15:05:42 +0800
-Message-ID: <20251022070543.1169173-6-ryan_chen@aspeedtech.com>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v6 6/6] arm64: configs: Update defconfig for AST2700 platform support
+Date: Wed, 22 Oct 2025 15:05:43 +0800
+Message-ID: <20251022070543.1169173-7-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
 References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
@@ -64,68 +65,26 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-ASPEED AST2700 EVB is prototype development board based
-on AST2700 SOC.
+Enable options for ASPEED AST2700 SoC.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/Makefile               |  1 +
- arch/arm64/boot/dts/aspeed/Makefile        |  4 ++++
- arch/arm64/boot/dts/aspeed/ast2700-evb.dts | 22 ++++++++++++++++++++++
- 3 files changed, 27 insertions(+)
- create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
- create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index b0844404eda1..5b8fbf5b1061 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -9,6 +9,7 @@ subdir-y += amlogic
- subdir-y += apm
- subdir-y += apple
- subdir-y += arm
-+subdir-y += aspeed
- subdir-y += axiado
- subdir-y += bitmain
- subdir-y += blaize
-diff --git a/arch/arm64/boot/dts/aspeed/Makefile b/arch/arm64/boot/dts/aspeed/Makefile
-new file mode 100644
-index 000000000000..ffe7e15017cc
---- /dev/null
-+++ b/arch/arm64/boot/dts/aspeed/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+dtb-$(CONFIG_ARCH_ASPEED) += \
-+	ast2700-evb.dtb
-diff --git a/arch/arm64/boot/dts/aspeed/ast2700-evb.dts b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-new file mode 100644
-index 000000000000..654b36ec24de
---- /dev/null
-+++ b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+/dts-v1/;
-+#include "aspeed-g7.dtsi"
-+
-+/ {
-+	model = "AST2700 EVB";
-+	compatible = "aspeed,ast2700-evb", "aspeed,ast2700";
-+
-+	chosen {
-+		stdout-path = "serial12:115200n8";
-+	};
-+
-+	memory@400000000 {
-+		device_type = "memory";
-+		reg = <0x4 0x00000000 0x0 0x40000000>;
-+	};
-+};
-+
-+&uart12 {
-+	status = "okay";
-+};
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e3a2d37bd104..ca2978dd1ccc 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -39,6 +39,7 @@ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_ALPINE=y
+ CONFIG_ARCH_APPLE=y
+ CONFIG_ARCH_ARTPEC=y
++CONFIG_ARCH_ASPEED=y
+ CONFIG_ARCH_AXIADO=y
+ CONFIG_ARCH_BCM=y
+ CONFIG_ARCH_BCM2835=y
 -- 
 2.34.1
 
