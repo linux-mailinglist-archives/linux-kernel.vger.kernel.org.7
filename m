@@ -1,69 +1,78 @@
-Return-Path: <linux-kernel+bounces-864227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9842BFA379
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:27:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4712BFA388
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0607D568562
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:27:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 82C273494C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFC32ECE8C;
-	Wed, 22 Oct 2025 06:27:32 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE222ED167;
+	Wed, 22 Oct 2025 06:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h113bMnY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7802EC0B0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC0F2EC0BB;
+	Wed, 22 Oct 2025 06:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761114452; cv=none; b=Gv2xwYYRuXPAeDm1OWtfMPGwIo3nWPe8wrNTZ9ClTPv3HrweH0MSaTlib2q8shTE48tpHhIFXLbiBekeDFY4ChSR9EMGdYcbfCy/uBeHddHrD60SsDEDKukQWe3HjsyaExViu1scdw7i/gn7zInthBdktZV3uzTvnHqxBecvpTA=
+	t=1761114533; cv=none; b=lMXHV2/SjClSTUB6LFjTvVh6nnGZOTINZBMzlIClYE7UJ0d0QFv8dq9CfpJzul9f58mUhxEncvqSofL1SXrP1mab+3iRCel2WjzKKdDL0l88wm1UI3KTZx25iCo1gf3cjV9LReAln0s2EmGsvzJYtEBC/sB9EBTv/omQsoJnv4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761114452; c=relaxed/simple;
-	bh=Wkx7cEliaGkRR89KIZGZM/OnPhWJWG9XswZNUBP8tYE=;
+	s=arc-20240116; t=1761114533; c=relaxed/simple;
+	bh=Ljm2ULtaHnAICwY5sdTetLQkB743kUutmk8GF2iooEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1VlYTS4Ub3JrECowxu7Hfa6pahR+jkDJYYhpenELlNa1CFrkxN+AEfbvqO9ENQLF5enyy/daLc0yh0MG9qNEw+LBxO2Onejaj3rgm4sSfyo4PyUwfh6KVEEN5u4GCc6rpVpYLKFJ7gkA7pQgwhZf4OdN573HLyvv5AGAhx2ipo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6EDE66732A; Wed, 22 Oct 2025 08:27:27 +0200 (CEST)
-Date: Wed, 22 Oct 2025 08:27:27 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Gerd Bayer <gbayer@linux.ibm.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] nvme-pci: Add debug message on fail to read CSTS
-Message-ID: <20251022062727.GB4790@lst.de>
-References: <20251020-nvme_probefail-v1-0-a420046d98f0@linux.ibm.com> <20251020-nvme_probefail-v1-2-a420046d98f0@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7Os33Mhw/WDIKrrIH0R+alryf/TcMSxaEHbqo3KW+vT2FuBUH2vZT5e8qUig4bpoBzYUSbkaDOaWrX4wLYz9lK3h+d9m0qxyp1FXD1qVLnS/Aa/q4SbW0vWag6rq9ohyXrtHCljhLgH7i5lTfQXGai8Li1U9qWOzei/mGc3Svk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h113bMnY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62BDC4CEE7;
+	Wed, 22 Oct 2025 06:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761114533;
+	bh=Ljm2ULtaHnAICwY5sdTetLQkB743kUutmk8GF2iooEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h113bMnY2l5y/tnVT3ynhN5CotZ6Q+5nOgPCFKU83/0Cc8U5vHIoF9RK3+d9hn908
+	 6aQ2ggeu2H723AxMu7rDs6Psyc6+815khC6gxP6tSyGpTgp3WAYJ8d+OQPycMCNzms
+	 +nT5Km8Vp9tirN2fbf20OH8EBzOAvQ/lQrPoOdmPHXbpOBMq2AonwScFfkzelA2bFt
+	 iv8oTXzROTo2jdyQDVaHSffWxks71Fldjf5Nz6W11kHLMwzgQNP6NostPEScnZbCAC
+	 slXk3xlsWhCL8+p7PaqU/7I4HJ+L9E7pCIyojIl0kQI10vMOFhOwPyED/gsJ8NGEqd
+	 9IdXBHDa11Rsg==
+Date: Wed, 22 Oct 2025 08:28:50 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Finley Xiao <finley.xiao@rock-chips.com>
+Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, ulf.hansson@linaro.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, zhangqing@rock-chips.com, sugar.zhang@rock-chips.com, 
+	huangtao@rock-chips.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: power: rockchip: Add support for
+ RV1126B
+Message-ID: <20251022-competent-nondescript-ocelot-fd605f@kuoka>
+References: <20251017093834.331998-1-finley.xiao@rock-chips.com>
+ <20251017093834.331998-2-finley.xiao@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251020-nvme_probefail-v1-2-a420046d98f0@linux.ibm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20251017093834.331998-2-finley.xiao@rock-chips.com>
 
-On Mon, Oct 20, 2025 at 05:29:08PM +0200, Gerd Bayer wrote:
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 7544c4bac2c4a230d32cf729abb9e94bf93a921f..c3b0a9d56ac1f32f67ce0890becd6425eb80ebad 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2906,6 +2906,7 @@ static int nvme_pci_enable(struct nvme_dev *dev)
->  	pci_set_master(pdev);
->  
->  	if (readl(dev->bar + NVME_REG_CSTS) == -1) {
-> +		dev_dbg(dev->ctrl.device, "Read CSTS register failed");
+On Fri, Oct 17, 2025 at 05:38:33PM +0800, Finley Xiao wrote:
+> Add power domain IDs for RV1126B SoC.
+> Add a new compatible because register fields have changed.
+> 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> ---
 
-Should this say "reading" instead of "read"?  Also most (but not
-all) nvme errors don't start with capitalized words, like most drivers
-as far as I can tell.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
