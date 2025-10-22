@@ -1,230 +1,120 @@
-Return-Path: <linux-kernel+bounces-865884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FC2BFE3C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:57:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48744BFE3CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 615673A36A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:57:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F451A0155F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AD93019A4;
-	Wed, 22 Oct 2025 20:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E5A3019AD;
+	Wed, 22 Oct 2025 20:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="g5HhySgO"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v7XkJIrI"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968452EC0A8
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501032E62AC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761166661; cv=none; b=Q5jBVW6SglFGCCktdFpKZ0ZD/HuMQZno/fIHQgCpEVtMOt1QFkbXUM+qqAcP8dqPI63MHZFCseBDXDy107FsEBwrdKhZ8+gf9wKH77+Byfj6d8S6FiZIB27ntlNRu6IpqfeRYmiye2l+al7lzKBnhkr7Mig8Bo8UVonnpWbhH/E=
+	t=1761166691; cv=none; b=piQ7ghK4fZiCJ5oJZ2o+9KbtbzW9+TGnu/E6L36AoMPfrTcrxmqqXrSKROss1rurNplZ9F2va0t5CwTZWbJKEkzMlKHHc+i2sTHjdadQIjTA/MH+rm2qpwqzDorlhuKQfcchSH9kG8Puj6ouAqZ1iol+iSTHa97W85IY58PABz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761166661; c=relaxed/simple;
-	bh=s5zHL3JeW8tjYv9ZHT4cVhmdFxP9v5iEn7jJE/tWsl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMaKuyyMmIbQK7J9X7W7RPV/nm/Yh6dVP6YJoaWJQFRy4sL2s/EcadmrucweAY3/l7YzAJULOYT4i4g6kw9DtL3gRODGQIyw8ladE9NM7Z52Lm0so9s/Xg0JxC+H46vTeSAsqYrLlc1sBq4S0Q61jjxvcnlbbDpIr919pgKB9YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=g5HhySgO; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1761166653;
- bh=S0wz2Pp5BKXToP4WWrNmtTLcJUcbxzUiav7sBmIskes=;
- b=g5HhySgOMIRIQQ+gf8ng3KwLd8Hnbq5lJKl8omwtsClBZEWES/zKYr3ZJlElu66QVQtwnKgb+
- fboug6CMUHLJTHiD60b8p4DXEt7Xr3h9h3hiGtFkesWWaGJRt/LYzAH00TYoHVNw9D2xGdrivpN
- yrYp9JSkGEXphaC+Jx644Y5KuRpi/xQ+P3hIy8Cg2RoKa55KSVpAtVqP8u84h41f4UwXS4kg+cF
- /1+GuGmJ0wtbWX5dKCFQ1FA5WOdzOB2PCAZTJ/rfXZwJ8AlHgHgToh1GMqqet9qX1AnkJGJ6Cxf
- 3JbeaVxEnSlRz7OIWS0m8HND6b7ruXf3TS5CSeGj8WLA==
-X-Forward-Email-ID: 68f945387ffe5c5c38c08363
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.3.0
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <5d2f3b9c-3d1a-47a5-93f1-1a6d6ce540f3@kwiboo.se>
-Date: Wed, 22 Oct 2025 22:57:22 +0200
+	s=arc-20240116; t=1761166691; c=relaxed/simple;
+	bh=TQpYo82do9fbPBhDgOo/xfuRqTcK0JdKSr5C7vhi+wM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l4BXWBe59ol/AHVpb9uzuA212eM0EHI7OJ4VbtTZVQnzAxMKGML2BR4ymnzDNen3axBkZ+5oPFHe6gSRcs7fLHg/OA3T07nTYNPnbNp9AmH0guUp3jZKD5lzeE6SDElwMgqJCF2/I2CQ4Azg2OI9wctbKVlKxvdEu3lc1BH3HAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v7XkJIrI; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so1239a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761166686; x=1761771486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KntpGwyw2h1eRy075Psp2+8kVtmZoXi9VrfpKSJ4LV4=;
+        b=v7XkJIrI7Mdd37n2sXuirq21chYlo91VOEZZVE+iNnlxw/nrfkxFwGYL3J6q8gXcPZ
+         wpzTemHYt+RbcRcTIASA44rzxN1qMzjpRF6OVs41oJKdYGK1cCCBgd0fqvqg5e5S7/hi
+         Pvjb9bp8egNQv/lJlr5sb1pMC++aKLCIhrPvf5oZcUMKmJ/L0i/QyjM8OeNpUSEprhuI
+         76JNV+8BzUNY8ZyIW5QjqfMoOYLoxdj03JDcE1+3Ij5my2SpSqXdsLbSpNberXHbnxnU
+         G2riA+BaPsf5yB4FzraXY+Vp0ZOLtVwQd/571ZbEVJZ6LXZZUL4Ya6rYKeqet7WTxJ5/
+         Q+/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761166686; x=1761771486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KntpGwyw2h1eRy075Psp2+8kVtmZoXi9VrfpKSJ4LV4=;
+        b=uEVMiHNFuxN9AM1bApX9x89v/j+UzAgJPaFd/cLvEktKq15zUt4I1hzMvWUgygSDk4
+         2DKrGEGfAy5/eF9YNoEjz/TO7BbsWiPG7hl+/RK+YYsaCESelVrTVxrp+3MvvEHbuGQK
+         m1ALB4mKQenFFXccfTTOSwqfR0KVpgNPdbfT8f1lOIcDREfoTiGsmQirs2b8R8QVXZD7
+         nOUzV72i7ApvibPRBBInFIWxTAsqZYUIS26xhOE6cmOMAs9Ijn50B9sOzmhXKXfOTZoU
+         TCOHCDDchDUr6xx0GJUwVnmpv9pr189APxSsrTVTXVa/g2GaL0A4Vh2IAMkC7J1LwZkA
+         E90g==
+X-Forwarded-Encrypted: i=1; AJvYcCVAleX6KOi67HUfKpi5a8B0f4WCj/+g23h56O9+FLf3hpANKrWyIWdoD2lgF/MHY8Xfbtyyi6RcpBSJXbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGKROAX36ORKpN2Lzia1FAV6/TSQPtj5mu/oEQTzJq4IbLAXWd
+	SrSK7AacdMSQUn8OWZ5gOb2VHq4yl9R54B8R4flKwVsXVBKkYx+nYIAwKC4pfo0ZNza2NHkLcRb
+	JfVlMSMSaHf2jce8l3pNeUseRu2nJCM93L/+CWtiitvr4PFuIV0cRpM4qog1twQ==
+X-Gm-Gg: ASbGnctMBbgCO0O5t8ZjRzYVcPWhlZjLHA/j3EvRT4UkaZwclfJpX9vq5M0ZjrhsxUA
+	L5ykDWBrLijSIx94gXZ3WaG61rNIssARImrIprbLuFWGJFBQzsSoaWaqUTzKOTsGFg2QcHwSPiT
+	HCyyA2Iy3QfIitsT+wPaMnj8jlgDL4jzhGTCQIKfmqGJ4EoPqlbNG+HKJ/2mQhAseBmYOEjuaMs
+	7frat7o7OT4qWBMuIiWJoJSvIINTi3sh78c8LI3k/yQXinLpq2cNIjM80coHEToQnUznfedjMRl
+	RroUaBmRFkr4vYdnRENqZheYsw==
+X-Google-Smtp-Source: AGHT+IHgF4j/mUZEDqZAl++xOkAYLCnDO8Iy/nIey1xYjKyG9Wp2IkcKh6OYcT7hZgMYLxTQIiT4e0yyMs4NIgQAgdA=
+X-Received: by 2002:a05:6402:461c:20b0:63e:11ae:ff2e with SMTP id
+ 4fb4d7f45d1cf-63e3dfecdf6mr6012a12.3.1761166686350; Wed, 22 Oct 2025 13:58:06
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/15] media: rkvdec: Add generic configuration for
- variants
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>, Ricardo Ribalda <ribalda@chromium.org>,
- Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Yunke Cao <yunkec@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- James Cowgill <james.cowgill@blaize.com>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Diederik de Haas <didi.debian@cknow.org>, linux-kernel@vger.kernel.org
-References: <20251022174508.284929-1-detlev.casanova@collabora.com>
- <20251022174508.284929-9-detlev.casanova@collabora.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20251022174508.284929-9-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251002131900.3252980-1-mclapinski@google.com>
+In-Reply-To: <20251002131900.3252980-1-mclapinski@google.com>
+From: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
+Date: Wed, 22 Oct 2025 13:57:55 -0700
+X-Gm-Features: AS18NWD7w3Vu9VTTfAZBw3yA23oVp-mhN22JxweH_RPe5JsaBthUo_xHsiEjfTs
+Message-ID: <CAAi7L5cJ=D76pD4tb5Bs0ULGXMEOM_yQcftFBQMZmzDJTzBZ+g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] dax: add PROBE_PREFER_ASYNCHRONOUS to the pmem driver
+To: Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Detlev,
+ping
 
-On 10/22/2025 7:45 PM, Detlev Casanova wrote:
-> This is to prepare for adding new versions of the decoder and
-> support specific formats and ops per version.
-> 
-> Different rkvdec_variant instances will be able to share generic
-> decoder configs.
-> 
-> Tested-by: Diederik de Haas <didi.debian@cknow.org>  # Rock 5B
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+On Thu, Oct 2, 2025 at 6:19=E2=80=AFAM Michal Clapinski <mclapinski@google.=
+com> wrote:
+>
+> Comments in linux/device/driver.h say that the goal is to do async
+> probing on all devices. The current behavior unnecessarily slows down
+> the boot by synchronous probing dax_pmem devices, so let's change that.
+>
+> Signed-off-by: Michal Clapinski <mclapinski@google.com>
 > ---
->  .../media/platform/rockchip/rkvdec/rkvdec.c   | 37 ++++++++++++-------
->  .../media/platform/rockchip/rkvdec/rkvdec.h   |  6 +++
->  2 files changed, 30 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index 776149f871b0..a7af1e3fdebd 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -373,15 +373,16 @@ static bool rkvdec_is_capable(struct rkvdec_ctx *ctx, unsigned int capability)
->  static const struct rkvdec_coded_fmt_desc *
->  rkvdec_enum_coded_fmt_desc(struct rkvdec_ctx *ctx, int index)
->  {
-> +	const struct rkvdec_config *cfg = ctx->dev->variant->config;
->  	int fmt_idx = -1;
->  	unsigned int i;
->  
-> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
-> -		if (!rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability))
-> +	for (i = 0; i < cfg->coded_fmts_num; i++) {
-> +		if (!rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability))
->  			continue;
->  		fmt_idx++;
->  		if (index == fmt_idx)
-> -			return &rkvdec_coded_fmts[i];
-> +			return &cfg->coded_fmts[i];
->  	}
->  
->  	return NULL;
-> @@ -390,12 +391,13 @@ rkvdec_enum_coded_fmt_desc(struct rkvdec_ctx *ctx, int index)
->  static const struct rkvdec_coded_fmt_desc *
->  rkvdec_find_coded_fmt_desc(struct rkvdec_ctx *ctx, u32 fourcc)
->  {
-> +	const struct rkvdec_config *cfg = ctx->dev->variant->config;
->  	unsigned int i;
->  
-> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
-> -		if (rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability) &&
-> -		    rkvdec_coded_fmts[i].fourcc == fourcc)
-> -			return &rkvdec_coded_fmts[i];
-> +	for (i = 0; i < cfg->coded_fmts_num; i++) {
-> +		if (rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability) &&
-> +		    cfg->coded_fmts[i].fourcc == fourcc)
-> +			return &cfg->coded_fmts[i];
->  	}
->  
->  	return NULL;
-> @@ -1014,18 +1016,19 @@ static int rkvdec_add_ctrls(struct rkvdec_ctx *ctx,
->  
->  static int rkvdec_init_ctrls(struct rkvdec_ctx *ctx)
->  {
-> +	const struct rkvdec_config *cfg = ctx->dev->variant->config;
->  	unsigned int i, nctrls = 0;
->  	int ret;
->  
-> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++)
-> -		if (rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability))
-> -			nctrls += rkvdec_coded_fmts[i].ctrls->num_ctrls;
-> +	for (i = 0; i < cfg->coded_fmts_num; i++)
-> +		if (rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability))
-> +			nctrls += cfg->coded_fmts[i].ctrls->num_ctrls;
->  
->  	v4l2_ctrl_handler_init(&ctx->ctrl_hdl, nctrls);
->  
-> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
-> -		if (rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability)) {
-> -			ret = rkvdec_add_ctrls(ctx, rkvdec_coded_fmts[i].ctrls);
-> +	for (i = 0; i < cfg->coded_fmts_num; i++) {
-> +		if (rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability)) {
-> +			ret = rkvdec_add_ctrls(ctx, cfg->coded_fmts[i].ctrls);
->  			if (ret)
->  				goto err_free_handler;
->  		}
-> @@ -1240,13 +1243,20 @@ static void rkvdec_watchdog_func(struct work_struct *work)
->  	}
->  }
->  
-> +static const struct rkvdec_config config_rkvdec = {
-> +	.coded_fmts = rkvdec_coded_fmts,
-> +	.coded_fmts_num = ARRAY_SIZE(rkvdec_coded_fmts),
-> +};
-> +
->  static const struct rkvdec_variant rk3288_rkvdec_variant = {
->  	.num_regs = 68,
-> +	.config = &config_rkvdec,
->  	.capabilities = RKVDEC_CAPABILITY_HEVC,
+>  drivers/dax/pmem.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
+> index bee93066a849..737654e8c5e8 100644
+> --- a/drivers/dax/pmem.c
+> +++ b/drivers/dax/pmem.c
+> @@ -77,6 +77,7 @@ static struct nd_device_driver dax_pmem_driver =3D {
+>         .probe =3D dax_pmem_probe,
+>         .drv =3D {
+>                 .name =3D "dax_pmem",
+> +               .probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
+>         },
+>         .type =3D ND_DRIVER_DAX_PMEM,
 >  };
->  
->  static const struct rkvdec_variant rk3328_rkvdec_variant = {
->  	.num_regs = 109,
-> +	.config = &config_rkvdec,
->  	.capabilities = RKVDEC_CAPABILITY_HEVC |
->  			RKVDEC_CAPABILITY_H264 |
->  			RKVDEC_CAPABILITY_VP9,
-> @@ -1255,6 +1265,7 @@ static const struct rkvdec_variant rk3328_rkvdec_variant = {
->  
->  static const struct rkvdec_variant rk3399_rkvdec_variant = {
->  	.num_regs = 78,
-> +	.config = &config_rkvdec,
->  	.capabilities = RKVDEC_CAPABILITY_HEVC |
->  			RKVDEC_CAPABILITY_H264 |
->  			RKVDEC_CAPABILITY_VP9,
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> index f35f6e80ea2e..3b1cc511412e 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> @@ -71,6 +71,7 @@ vb2_to_rkvdec_decoded_buf(struct vb2_buffer *buf)
->  
->  struct rkvdec_variant {
->  	unsigned int num_regs;
-> +	const struct rkvdec_config *config;
->  	unsigned int capabilities;
->  	unsigned int quirks;
->  };
-> @@ -113,6 +114,11 @@ struct rkvdec_coded_fmt_desc {
->  	unsigned int capability;
->  };
->  
-> +struct rkvdec_config {
-> +	const struct rkvdec_coded_fmt_desc *coded_fmts;
-> +	size_t coded_fmts_num;
-> +};
-
-Do we really need a separate config struct? This chould/should me merged
-with the variant struct.
-
-Using a two layer variant/config mostly seem to complicate things based
-on an initial review.
-
-Regards,
-Jonas
-
-> +
->  struct rkvdec_dev {
->  	struct v4l2_device v4l2_dev;
->  	struct media_device mdev;
-
+> --
+> 2.51.0.618.g983fd99d29-goog
+>
 
