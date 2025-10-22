@@ -1,193 +1,129 @@
-Return-Path: <linux-kernel+bounces-864736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8992CBFB6CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:34:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA7FBFB6DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE041A04B81
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3927460B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D0A2EC0A9;
-	Wed, 22 Oct 2025 10:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB26130CDB7;
+	Wed, 22 Oct 2025 10:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UhmDuNmL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="V0JRybgo"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642E6299923
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501471BDCF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761129283; cv=none; b=oAtRi8h9Z90uq49IaIYuhesqYwKana1EzUE0AV06Nf/iMbkxxy/7rjFHcJpfw7AdLj+H+z8aG4LgWcd/NK/qoSIrzacVhf891HsZrCsOaYik996YEx8ZphyXujUuEDwk35ALwD1FuFsRgEH4N4zEiLB6FCiLbqciUJa+a/AGx7A=
+	t=1761129493; cv=none; b=BDc2QbdREefJ1SZqNKNF98aUHlDidAR1q5JM5S2M8+ObxfN+s1VaZK9A3WyzgHtYttLikNKxDvqX4rlRg50VMYZhpOMfTv3963YGcTdeIAlHcq8RSH6FpGyo6ulx9V6jyXcTHiwD3dbUQW5FjsOoJoNzkEzPbctXpBdqQNxLyzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761129283; c=relaxed/simple;
-	bh=QpMNfT7FmfE9DJjiA0JFNPgcEP1z3UGq7yfCQDkFKVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0BFlZCiDrrmT/zGqnAXnMqgN2bFh4Y8c5QT2ZYj21twDKtZIuy6m/ALh5UofRKstgc8IhM1eK+38lDjNmiSMrHXJo/k2ryDB/R5f3x1ZNLJ2sCtvV1bYDzJqA50BvPT/qnqROZN4Ion1AZpKdW8t/dDJoK7d9AD9/2B9H+GtJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UhmDuNmL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MAQBcH005242
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:34:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Ey36IRL4isg0/uNf3V/qgF/w
-	XSf+ypTyipvXiTiDYHg=; b=UhmDuNmLfkLoPHPCiTu0KGf5/uMGk6H/V+wkb8DH
-	xfeaUFz97MZMEsZBsRlgiYG+wZi29raAPyU0udr8HIAkUkgZvdWJt7N+u95ZiSmx
-	HDd8We4o+GwUDoRbjnSpp9wYo5D6/7oADQ6Bhklq5/qZgWPrZKo8VHQgyPVlsqsV
-	K8UJ+t81txXg9EUuk5PPSLcQQw3ycYlKWQ8stgVRHq0vh8SYu7UE9q9KwehH4yHD
-	aoUt7ObmnqqOU5BJeOfU1icpEyehZrwlyoXlXe9alGpVYVsOVrVVtOOkyKoczBPs
-	k+5tEYHUevZZ4FQK1myt5ARguRA2lJP9iS8RJk0UO7INPg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3nfm8nb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:34:41 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8a387d01bso38466791cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:34:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761129280; x=1761734080;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ey36IRL4isg0/uNf3V/qgF/wXSf+ypTyipvXiTiDYHg=;
-        b=KlI1fSudDjWoXBo2KmXTPKJoz4TFNNiLtDvQ0W+eNYD7DrNlFHaOieJq+RaJBy30yw
-         hB1c2Q1e8EGOjdKQ4sgSWQSc2ytZ4FRQWRYIRABGBI7hJtdrCeWDeZYkTKK1fnZSdluO
-         hcC7ZWfmCrjIjY9fa6jglFtz4LHYRNjuDfKLxInaKlrZE4Z+Fs6wbw7J7eqKUaPHeKIu
-         NYKEZ+VisRULXXDCawlmTMRfWaNLKeD6BgL5s1Fu8Gju2N88Qa3gRG8A+Ie5SwHr38pm
-         rKhvpkAwzwD4aJCvN1JZuldvr5ouuRssyvGuhL9cJB7j6aYyH7/DMDQXbImoSCHxOj5v
-         DxtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGG1bdWcGV4vUetfpuHUdDc0wjFIhSz9xPz+LZfLe0crsTm6Iug4RzoasY22kzNUDmR06akNOoLkujZdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz23EPX3OY8RxlnOx569sQ/VxQ6G/ti08q9np+KDJJGz9Cxsskz
-	IHX0jJaZVmy59upDESsDTteXgPcrCaVksRC/SqvgcoGExUoUNwPl0uLYG1xCXvPpvGMnQLt7Wfa
-	xCpbLWoenAotV9izmI6+J77aUXXaUKVd1oKnYNfqJ7Ahq7EWYJuCAqstj8SqOFE6IPps=
-X-Gm-Gg: ASbGncvkt1hi8krOQL3fyiV+VM9uJrnuTkp8qscGYM69OmMKBOUiGNfDmMmJJS5gP9k
-	m6rJWKWQvOXGDNU7DhzdhuJSSSfpOqMyIXLbFpQJBznzympIWqL6g3YugutIl+8bZmZzJcz1YQf
-	dDrSdHjWiX4cqyxXu0DxFestm7iufBvwKgpx6F3wHo1dgf2IcExQuV6cmt6Uxy4q2lU/LqYIgWP
-	RH8aS3zcHLE62eQmcOF7N59AY6KrtEB0K0uZi42PAIAa3PumAIiFEmHEWnej5+SIS+atrs9zqIM
-	/SRVTlmW4Bi2ai/f7ZHmIEwSuR3dnrExEQo/7xTPlDUQ+87OCfZswHR+AzINS/b4Y8Hf2iiQ7AX
-	A5VEZXvJZa7103VvWQVQIkOgCzI83dJcGPwRW19r8ZlwmYjAle3qfqx23yVA6h+Ijr5u0IhYHnG
-	O0e6zQ+blgRPo=
-X-Received: by 2002:a05:622a:3cc:b0:4e8:a8be:5857 with SMTP id d75a77b69052e-4e8a8be5e94mr171268961cf.55.1761129280262;
-        Wed, 22 Oct 2025 03:34:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQLkTKu9y3Ou0mi+Djx6Gq6aJaXaybifcjUti0v+lLVcSxUR5WWEF0kxHzawkEmfJY+aBmeg==
-X-Received: by 2002:a05:622a:3cc:b0:4e8:a8be:5857 with SMTP id d75a77b69052e-4e8a8be5e94mr171268571cf.55.1761129279594;
-        Wed, 22 Oct 2025 03:34:39 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def26992sm4554093e87.103.2025.10.22.03.34.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 03:34:38 -0700 (PDT)
-Date: Wed, 22 Oct 2025 13:34:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-sound@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/3] ASoC: qcom: x1e80100: Add Dell XPS13 9345 support
-Message-ID: <sihiwhcdra2kviuago7r6gnm6b4goqcpjgt43loen5alk4atze@mhklkp2hz5y6>
-References: <20251021-dell-xps13-9345-enable-audio-v1-0-6f3f6bbd977b@linaro.org>
- <20251021-dell-xps13-9345-enable-audio-v1-2-6f3f6bbd977b@linaro.org>
+	s=arc-20240116; t=1761129493; c=relaxed/simple;
+	bh=2TaZ97NyCXK4dJbRqlEcI/nEmLeUSXLGubsnvo9iAQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mxn9itK7UWieyd31DINaX8uaXrB6+wQiTFilpgRgheNm6ObOhSrOeV3Si2iKDK+Lwm5noFs6V/o+7DEiXcbrZ3ybt5oyHHwNakaXPuVzt9IlzM8eCIkDFx28zypaopwDr2mTT+vwR/5NLYWoGAjwmf6KIszxNh7nK6+a2XSUrHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=V0JRybgo; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6006b.ext.cloudfilter.net ([10.0.30.211])
+	by cmsmtp with ESMTPS
+	id BT8pvqsHQjzfwBWCove8Il; Wed, 22 Oct 2025 10:36:34 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id BWChvdKPIMem5BWCivngJ0; Wed, 22 Oct 2025 10:36:28 +0000
+X-Authority-Analysis: v=2.4 cv=bZtrUPPB c=1 sm=1 tr=0 ts=68f8b3b2
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=fINcn6sw8SSkWJO5QzsA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=opEUkDtkRFM9TJVwG8Ew2R5wA4CbCpBdTnNMwTVOIUE=; b=V0JRybgoLJknLLgL4rugS+uQcQ
+	Tp2kMRY8H9P9+T0oN52vPWRffny4dGZisYHWyuqK/BBzP90EKqmzvC9CqzeFr0VOkIgzXLd9Ati+v
+	m9TPvwdXD1YxfAnWrR+/vdPLIDSzqOuwWn2JU4tclotHOL/AkKaGRgRaWoGO1in7Y3/uggWKI7ydW
+	hTHCXIwCWCabuCnfx8lkLSkhx3xINwvqxbyPlwgQWCN7S2acKLkz1+cgow/dfkRliWqXN8jMdjli1
+	qp//K/UCoLcVTEmCW3PXt24kTlNMItIN3IR0hSwLXrDXIvEB0OW95S8tNtVsx53wMzcI+kk4JMX18
+	n6F6bpuw==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:58472 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <re@w6rz.net>)
+	id 1vBWCh-00000000oCE-084h;
+	Wed, 22 Oct 2025 04:36:27 -0600
+Message-ID: <4622bc31-d326-456f-8915-2e3e0cb9f00c@w6rz.net>
+Date: Wed, 22 Oct 2025 03:36:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021-dell-xps13-9345-enable-audio-v1-2-6f3f6bbd977b@linaro.org>
-X-Proofpoint-ORIG-GUID: OI1qKehYD0FSvc8iwjRWLEDfoKYjC2_b
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyNyBTYWx0ZWRfXyQ38IUI5HGiO
- N2d7Lvw3lBYMiaedJXbXcrjTorI4KEO9efU4CkxcCthM2ztxRmEdt0xq4EYAqqSzsaRPP08/qiw
- bBZQtS3ExRiaJx2IkMVe9DC7Dw6zLbs8CNcHXszuJcxEVfPHfMPkGQavqYhadYE6gT4CNMSr0Qv
- uNp6Q4bKLSv5Cb168nBDQpdQfsWUfgfrUn8XvyB21VA9iI7UsD8gX9e/tDi+qeNWE6995l+rZJE
- sOM3opazTLzgC6il3YmMgOKjAwK0sHSpwzm/o698yrtxeue75brlmYKxpA6QT308QUjDM2VXS9o
- hfXNAFt3Y/h79G3P2gI7P57Sbg3lUm8gWOXua60Vg7tOTGxNn5DUkXvXJ+6QaOTZjwygFYqhExz
- d2GLX2O/VuQ0ACnHW4DDVcJzrMcdqw==
-X-Proofpoint-GUID: OI1qKehYD0FSvc8iwjRWLEDfoKYjC2_b
-X-Authority-Analysis: v=2.4 cv=EYjFgfmC c=1 sm=1 tr=0 ts=68f8b341 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8
- a=7aqP5zvjfKpTuSzq1rEA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 spamscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180027
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/135] 6.12.55-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251022060141.370358070@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20251022060141.370358070@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1vBWCh-00000000oCE-084h
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:58472
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 35
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJSkcEAUJWI2wjsKRO+r4OG/pcf23hTlrKTEw58cVx/VIeuiD9bp3UKWgFFCHaRAPTv4/LIihoWwV8WrMoLbmIEjLcG/tacaGjx4ekfWLJf3Zwzrj4KS
+ lK/SqNaPLfM8s9mBpaLdDUVb+m0wGi9N7kNSjd6UBpW+0dzP8jRaO4Nq3UdOaT4Y40bsV9T6xRV/QREi0fkETd9ukosHnwBvQOA=
 
-On Tue, Oct 21, 2025 at 04:50:45PM +0300, Abel Vesa wrote:
-> On Dell XPS13 9345, the PCM channels are mapped starting with right
-> hand side instead of left. So in order to support this, we need to
-> hardcode the mapping and tie it up to a dedicated board compatible.
-> 
-> So define a match data that brings the mapping as well, for the XPS 13,
-> while the rest of the boards will fallback to use the mapping based
-> on number of channels.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  sound/soc/qcom/x1e80100.c | 49 ++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 44 insertions(+), 5 deletions(-)
-> 
-> diff --git a/sound/soc/qcom/x1e80100.c b/sound/soc/qcom/x1e80100.c
-> index 444f2162889f7d9d4b6b06bddc980d8a15dd988b..e21cf534b2ac3875b694f381f260164acb2e3ae4 100644
-> --- a/sound/soc/qcom/x1e80100.c
-> +++ b/sound/soc/qcom/x1e80100.c
-> @@ -15,10 +15,17 @@
->  #include "qdsp6/q6dsp-common.h"
->  #include "sdw.h"
->  
-> +struct x1e80100_snd_cfg {
-> +	const char *driver_name;
-> +	const unsigned int *channels_map;
-> +	int channels_num;
-> +};
-> +
->  struct x1e80100_snd_data {
->  	bool stream_prepared[AFE_PORT_MAX];
->  	struct snd_soc_card *card;
->  	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
-> +	const struct x1e80100_snd_cfg *cfg;
->  	struct snd_soc_jack jack;
->  	struct snd_soc_jack dp_jack[8];
->  	bool jack_setup;
-> @@ -95,8 +102,16 @@ static int x1e80100_snd_hw_params(struct snd_pcm_substream *substream,
->  	return qcom_snd_sdw_hw_params(substream, params, &data->sruntime[cpu_dai->id]);
->  }
->  
-> -static int x1e80100_snd_hw_map_channels(unsigned int *ch_map, int num)
-> +static int x1e80100_snd_hw_map_channels(struct x1e80100_snd_data *data,
-> +					unsigned int *ch_map, int num)
->  {
-> +	if (data->cfg->channels_map) {
-> +		for (int i = 0; i < data->cfg->channels_num; i++)
-> +			ch_map[i] = data->cfg->channels_map[i];
-> +
-> +		return 0;
-> +	}
+On 10/22/25 01:19, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.55 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 24 Oct 2025 06:01:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.55-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Why by default the driver remaps channels depending on the usecase, but
-for XPS we use a static map?
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-> +
->  	switch (num) {
->  	case 1:
->  		ch_map[0] = PCM_CHANNEL_FC;
+Tested-by: Ron Economos <re@w6rz.net>
 
--- 
-With best wishes
-Dmitry
 
