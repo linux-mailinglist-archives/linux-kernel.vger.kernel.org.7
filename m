@@ -1,280 +1,114 @@
-Return-Path: <linux-kernel+bounces-864397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823DDBFAB20
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D83BFAB38
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA435581725
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C530258243B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F7F2FD668;
-	Wed, 22 Oct 2025 07:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5EF2FD69A;
+	Wed, 22 Oct 2025 07:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bQPLxohE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ABypplDr"
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412382FD7CD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65FC2FD673
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761119544; cv=none; b=dPIVVQLXOdQxJw1FFM5ul4AwnLzeQGLWasgYs+HKj3ahvgYvTwaA3WWkK4itcDw9QrFsOUJU5fF6Gd5H9lmDNiX0zetgo5h3cNeAqXBpx4JpgsT1Qi/q1yWHQGRlRrED5ecBdcnWoexNxMUfqY1acAtz4mFI+c47AHCloBx3tDI=
+	t=1761119561; cv=none; b=d8XtXZkrjSQMWIVd3w7BoHnuT5fcAAUAqR368vlORJ9FVIu98++3djyILWUTGuVnhBOdUjFcTkzOR+weFhkLuQe0BBui/91qRDEcrqL4ZMhYvC0xXli8YqwAgRLXk4aoqpnABA51dCWP++RD+vU3F9poInr9/+SQNHleD1Nfg1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761119544; c=relaxed/simple;
-	bh=m8A7Z+/Uzej0uFR6h+286Hezui6tZ0S/gW9IbjKQFa0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rlpe311vk80Cbrf//XUHtkEhGzV0f7mgs7ReFcrgDbg8A4EXP712jjlwY5xdE4Gzo6H/zgQ4of/x8p1t2BdV9tyDD42TNUYb6U41LWQwHVvltKbslOM/1Ef2FfVcVwBE9p2NTo7MQGQOzCx5p1UkJR0WfUi9m0Iv+ssmsQl4ROw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bQPLxohE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M40IRA027963
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:52:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5n1dR5aX+zAriBU+NGLJBsi8Hal8RuHW2RBllIFUj10=; b=bQPLxohEMDFWGsQH
-	Fz8WKZ3W3aPBF+9ytOw1UybxNJWJucWrC33OGj0VmeqNHsNBZTG5P3pYPZiWKWd2
-	kRlX1W0l9w67FmengmSaAYkYwoqLL4soCFi0OxZ9leNdm9fCKrxEdzBmgHVEj7J8
-	D1mSnYjwO2zUtIiNS5LPV619yZoO73aJSRJByXuTsw74mervdvt0xQE+uZY89aKc
-	nQ/deq5YOokqRYeHri85I8tQ/y5Y1FAlIo8Hrum36MJdKyJYdQjy0rwaqIw+Yg0T
-	zzlP/ppTxSE33UJs1SU5VO25HaR8N1vHuiUy3DxL+I5ugqvPBuOsqpyIuBr+Gcif
-	HAeKPw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27j3rhm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:52:19 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290d860acbcso115656735ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:52:19 -0700 (PDT)
+	s=arc-20240116; t=1761119561; c=relaxed/simple;
+	bh=A854G8Q+az7SMF928a56CKf41JBBm3BPM7QWQ64soKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ovTaeU2ELh+kQwCK7w6WoPmKoLOpSRq4R8qT4Mq7G4yStcHDPPcZ4+slauo9F9sruvpZ6gQWOCtWxDY29xZW4zYxcsTtJ1nt8QFWxzF3p3n29CT4RC2do2yyjB7XP0L0wmIMUhG1gmonVhEgmhiUCE40Yk6J4GeWVnutqzYKl0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ABypplDr; arc=none smtp.client-ip=74.125.224.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63e3568f90dso3420875d50.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:52:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761119558; x=1761724358; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5SQfEz/e2hOwh+iWueKx4wWRyZ4LmWDiG7JhS1t4UW0=;
+        b=ABypplDrXNLD4T/kKJ8lfRsP5bAAtauYUpcOOjCU4U3BaAiZ48Ob/t0wWVC7nYxEqn
+         iO3duOiuHQEF319w8UeJEZq1xDYgqXT9br+tNIMGrE8Tga8g472DY7QJxLbRD7B4v1SU
+         oQIaIAtfPyzCkFpqqg2iUvqNk/H8ul9rN8XyMG/C68CxTwiwpLnXxIsayJidKNrtEonr
+         Zcgd6d8LiJGfXl4kcyDR6bup4+G2WIfhnOUaKzewBr2XXA+isVqLHN6aXbFtEaipwaGS
+         fswA7EXWHRQm4e0MWaLN8oivQjea9CRMHOdz/AqyIxgEBpDj0gkQ2T11DjxEI3jGsm8O
+         bqsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761119538; x=1761724338;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761119558; x=1761724358;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5n1dR5aX+zAriBU+NGLJBsi8Hal8RuHW2RBllIFUj10=;
-        b=Qw+t2h0qmyxiGdkqi6NWrrd2XLYAGUHkTuGL4a1PmPqt5mo5zaLKEETsLwRlVPSBMQ
-         sevtfOKN5aAYs7O01ApsSSAOEbUEIbIlG8qF0cS4spVxcwb6lT1kFavFWn1XzjwakEe8
-         dcafYVHiJRlhPl17vu/vi0gcjfCoFdTeiOifdVwLWXdmI3TU5evCWcXqXFkR/8r6GY6S
-         aCcQ4tmeSt5zBUNIEiG8HAJUOkLht3jXUP91hj3vq31ZLMjh7O8vRSdJGUnBahu4BV5g
-         G1iPddJhzlNP+E9rw6cRJx83d3oG4xxajlCffgG4l+As7gUY2whYDhZOmHBtzSQjEVZM
-         jIxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIainHHkTadqQeEjHQH6Zy7xPB2QT1bamLoUEntId4z6039tNH9PdZy7/tyJcRa8zbAH+AAVzrSbdl5Cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwxInr43YFuNl2kygo9vCts5Z3DCRiZ3SOyjEmB8/QDw0N5gWi
-	dXRXafY69neu4aGbVt4ptKFmVFvoDFsPCjwfQ1GJHsfY8TPKHg4oIQIzfejc9MlXwuz17wwoqXF
-	+np45+smrNqzmq71meGHglPLzxCEHynkvfVNcNQtCrbbd9om4K9l3Hg+OiSYsQxFedps=
-X-Gm-Gg: ASbGncvODqJfRKSImmBS+SD5sSEDQ1FNFB9HS8bD6qjI525gKQit+mGtU4RDqVdz1/o
-	SWgqPsuXK4CXk/VZYkfuY5d7sTWnVH4HdJ3XbdUxeCfJJVqPapTo5W7kwX93Q7+vxo/ozc/Ag7Q
-	S7dGEHfMZe3GnMltQJgtOgeVp1Ff2A9tq2I2CS0D+6fLwlM6ON54zqybnCTCQ3EAJxAcdpzljJ4
-	Wn1ZSh0fjGuXgUFUepGU6hhuLokQFavRXf/Bm7IGytdto8iU8t2MMlEkbTxqh4F2z9Cntv3zY5E
-	fSfun13rXKYFB3eH5wWkzKngD8Xe0FrKBAGfI7StC817MafmyBr3QkfCHxMVONIPde6kYcoI7es
-	Mf6L3n2aVnp8TOBZnOYzDrWrIbx7R72GT1g==
-X-Received: by 2002:a17:902:ea01:b0:267:d2f9:2327 with SMTP id d9443c01a7336-290c9cf2d88mr292037245ad.27.1761119537975;
-        Wed, 22 Oct 2025 00:52:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYK0e81sFkQ1GS8jd2/K+lvCaeoR7f2RXyJh4m31HaVclGbSgGzk/dlUQFYsltNq+HqA+vWg==
-X-Received: by 2002:a17:902:ea01:b0:267:d2f9:2327 with SMTP id d9443c01a7336-290c9cf2d88mr292036735ad.27.1761119537526;
-        Wed, 22 Oct 2025 00:52:17 -0700 (PDT)
-Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fe2c2sm130962275ad.79.2025.10.22.00.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 00:52:17 -0700 (PDT)
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Date: Wed, 22 Oct 2025 13:22:01 +0530
-Subject: [PATCH v2 2/2] PCI: dwc: qcom: Revert "PCI: qcom: Prepare for the
- DWC ECAM enablement"
+        bh=5SQfEz/e2hOwh+iWueKx4wWRyZ4LmWDiG7JhS1t4UW0=;
+        b=rB//c5Rd+Coo0GAVS8vhHLH22Ayp651Vgz09xynPdBCEEVt+acY/3InABdZJn1hoIG
+         QyxqdL84o6WoCyLIM/TVN2Ps646ALpHS9uY9htcRNni4p8+1IWsp28Wp9Qmx/33tQKJ4
+         HwW/E9lmjGpXWkEBCeVKzqAMPdsP2HAN0G25qFA8EWUnEnU8VkGZXFclZ/+VaeUJ7UmQ
+         cuesxPTOcXIs8+yWH2DQAbB+AfsV9SiFSSp672HBQHcZoKxeH0fgJW4kVqwFXC/V3M2D
+         JD9W8BOOBHvGZfR+YOmEB3Xmf1fv8X22ztBD2e6EV+xOPY8ngjlaB+ascHrquK/Fle4t
+         eTPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUg4kLd/NaHjNr/2nGqN+H6YcTW3xmSPpXYVJ5eB/leO3OH2dPucwtNjuAOALtec0Zl5kA2/qWloCBe7Do=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT6ot4amCQrfYWoOe1/60FqabyChzytJYotX9czGscaE52NBET
+	nwxsLHd0d89idrehnL769R3PcBvAJ32iJ1lg5OP1ptWpm8ZgVNB8vBuo0cPr2Y+onSf9VlZJohI
+	OM+aucZRM1etR8m24egRSnjZz8j/Kvgxd2DT54Bkb1w==
+X-Gm-Gg: ASbGnctqrFqa1z6UcAF5TVw31jktJSnqbXNYI0wFsK7W/BNDtN/hYUHJWXwYT1vy9KI
+	hfIJA3kBTplKYZo4/0DQ0FT1UL6tRFnSHM6xDlxwrdveLTaLlIXCpj+EIdJc9vpJMk7o4pbAGcV
+	yggM+NOyqA/PqY4pvDsjmkHK+oFpGx9JCYH2QJZL81uO9rrnD0a3ooOCP1MHZqIw4WonjfojG5n
+	I4eyrZddmSh7rZFdtWBBMAwJtyfazF6PHGWnMMPbDvZyIHhJC/9ecpIEV07GdfW10c3RAs=
+X-Google-Smtp-Source: AGHT+IGOnPQWJDBN6sjrOxFjPZZTij/Niq/8Rg21Q+EknYQnuJrFX6ATSFspu4lRM1YW7AwwhMSNREKhsGRl4TKmTgw=
+X-Received: by 2002:a05:690e:4008:b0:63e:1ee2:eb0a with SMTP id
+ 956f58d0204a3-63e1ee2ecb5mr12241395d50.26.1761119557691; Wed, 22 Oct 2025
+ 00:52:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-ecam_fix-v2-2-e293b9d07262@oss.qualcomm.com>
-References: <20251022-ecam_fix-v2-0-e293b9d07262@oss.qualcomm.com>
-In-Reply-To: <20251022-ecam_fix-v2-0-e293b9d07262@oss.qualcomm.com>
-To: Jingoo Han <jingoohan1@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761119527; l=5541;
- i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=m8A7Z+/Uzej0uFR6h+286Hezui6tZ0S/gW9IbjKQFa0=;
- b=34vohxe/AB9YoqTIM7uXejhqFiItgP7v8j14SzhWcI4Jcnu7AgBmd1twlTqLM5Lway7ovQ2fV
- T5uuqcePZ0RAa1wELx0iFoIZ3lEFHexKnuS1ri9mdGZ4oRIVS3tAQoe
-X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
- pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX0kOvcLdEUqJP
- zzzMged3NF0CdED87wfBqQSkm6DAervfvBzMuKNd0m/4YhxTFcJxv7+8l08ndL77Jor6qMkP+0X
- PCYnJJv3jYhhvq885Q8g/EBpY3BF/ENNa1tepFlryia75c4KbEYLxLRtQ3QiYWqH+zU4C1ujPrl
- cY62775JcU/SeLizAVXcC3wNDt7YWWU33cHkpxK3S+1SPglEXWS+tFDtcsyri7Ne+L5qoathKdz
- rdpE9zy4ptdWKu+FYFjzmfNoJoRdZEP/uNyB6drtDT2Eh9LFX4FthTd9khh/1VUNg56LvBnoQ3L
- 0O9a4Ab32gV+2I0aPk+jTpxJGVtWM3eXeja0Sj/UsKBvkJIgmXG3uzdEHqA54p9k5TGIRneH2FU
- 8q/K8Faajzx4VXXLW4lX7FwY/Gb1Kw==
-X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68f88d33 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=oQbQ34n3Jerzy_GFPTkA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: tJBl9Ub9cuaQ3fUULhbA5Au5aNdFs57j
-X-Proofpoint-ORIG-GUID: tJBl9Ub9cuaQ3fUULhbA5Au5aNdFs57j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510180018
+References: <20251021142407.307753-1-sander@svanheule.net> <20251021142407.307753-7-sander@svanheule.net>
+ <CACRpkdYde+=85f6Zfz40bMwOxSE-bszHzvBhQwC+G-E2CZr3Lg@mail.gmail.com>
+In-Reply-To: <CACRpkdYde+=85f6Zfz40bMwOxSE-bszHzvBhQwC+G-E2CZr3Lg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 22 Oct 2025 09:52:25 +0200
+X-Gm-Features: AS18NWChHJVKsQEprXAlHgw_Y74ygS-pAN-Cj80aJrWmlHy4f-JX2hUVSzNGAmI
+Message-ID: <CACRpkdazC7KC7HUZTkN-QqjuWXaJKLQrXfC30=GKUOymfpVJTQ@mail.gmail.com>
+Subject: Re: [PATCH v6 6/8] pinctrl: Add RTL8231 pin control and GPIO support
+To: Sander Vanheule <sander@svanheule.net>
+Cc: Michael Walle <mwalle@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit f6fd357f7afb ("PCI: dwc: Prepare the driver for enabling ECAM
-mechanism using iATU 'CFG Shift Feature'") enabled ECAM access by
-using the config space start as DBI address.
+Replying to self:
 
-However, this approach breaks vendor drivers that rely on the DBI
-address for internal accesses, especially when the vendor config space
-is 256MB aligned.
+On Wed, Oct 22, 2025 at 9:42=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
 
-To resolve this, a new design avoids using the DBI as the start of
-config space and instead introduces a custom ECAM PCI ops
-implementation. As a result, the qcom specific ECAM preparation
-logic is no longer necessary and is being reverted.
+> >  drivers/pinctrl/pinctrl-rtl8231.c | 538 ++++++++++++++++++++++++++++++
+>
+> Should we put the driver in
+> drivers/pinctrl/realtek/*?
 
-Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 68 ----------------------------------
- 1 file changed, 68 deletions(-)
+This is because these are SoC drivers and this is an MFD
+expander, right. Keep it where it is!
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 805edbbfe7eba496bc99ca82051dee43d240f359..6948824642dcdcb1f59730479b5a3d196ebf66ee 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -55,7 +55,6 @@
- #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
- #define PARF_Q2A_FLUSH				0x1ac
- #define PARF_LTSSM				0x1b0
--#define PARF_SLV_DBI_ELBI			0x1b4
- #define PARF_INT_ALL_STATUS			0x224
- #define PARF_INT_ALL_CLEAR			0x228
- #define PARF_INT_ALL_MASK			0x22c
-@@ -65,16 +64,6 @@
- #define PARF_DBI_BASE_ADDR_V2_HI		0x354
- #define PARF_SLV_ADDR_SPACE_SIZE_V2		0x358
- #define PARF_SLV_ADDR_SPACE_SIZE_V2_HI		0x35c
--#define PARF_BLOCK_SLV_AXI_WR_BASE		0x360
--#define PARF_BLOCK_SLV_AXI_WR_BASE_HI		0x364
--#define PARF_BLOCK_SLV_AXI_WR_LIMIT		0x368
--#define PARF_BLOCK_SLV_AXI_WR_LIMIT_HI		0x36c
--#define PARF_BLOCK_SLV_AXI_RD_BASE		0x370
--#define PARF_BLOCK_SLV_AXI_RD_BASE_HI		0x374
--#define PARF_BLOCK_SLV_AXI_RD_LIMIT		0x378
--#define PARF_BLOCK_SLV_AXI_RD_LIMIT_HI		0x37c
--#define PARF_ECAM_BASE				0x380
--#define PARF_ECAM_BASE_HI			0x384
- #define PARF_NO_SNOOP_OVERRIDE			0x3d4
- #define PARF_ATU_BASE_ADDR			0x634
- #define PARF_ATU_BASE_ADDR_HI			0x638
-@@ -98,7 +87,6 @@
- 
- /* PARF_SYS_CTRL register fields */
- #define MAC_PHY_POWERDOWN_IN_P2_D_MUX_EN	BIT(29)
--#define PCIE_ECAM_BLOCKER_EN			BIT(26)
- #define MST_WAKEUP_EN				BIT(13)
- #define SLV_WAKEUP_EN				BIT(12)
- #define MSTR_ACLK_CGC_DIS			BIT(10)
-@@ -146,9 +134,6 @@
- /* PARF_LTSSM register fields */
- #define LTSSM_EN				BIT(8)
- 
--/* PARF_SLV_DBI_ELBI */
--#define SLV_DBI_ELBI_ADDR_BASE			GENMASK(11, 0)
--
- /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
- #define PARF_INT_ALL_LINK_UP			BIT(13)
- #define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
-@@ -326,47 +311,6 @@ static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
- 	qcom_perst_assert(pcie, false);
- }
- 
--static void qcom_pci_config_ecam(struct dw_pcie_rp *pp)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	struct qcom_pcie *pcie = to_qcom_pcie(pci);
--	u64 addr, addr_end;
--	u32 val;
--
--	writel_relaxed(lower_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE);
--	writel_relaxed(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
--
--	/*
--	 * The only device on the root bus is a single Root Port. If we try to
--	 * access any devices other than Device/Function 00.0 on Bus 0, the TLP
--	 * will go outside of the controller to the PCI bus. But with CFG Shift
--	 * Feature (ECAM) enabled in iATU, there is no guarantee that the
--	 * response is going to be all F's. Hence, to make sure that the
--	 * requester gets all F's response for accesses other than the Root
--	 * Port, configure iATU to block the transactions starting from
--	 * function 1 of the root bus to the end of the root bus (i.e., from
--	 * dbi_base + 4KB to dbi_base + 1MB).
--	 */
--	addr = pci->dbi_phys_addr + SZ_4K;
--	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE);
--	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE_HI);
--
--	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE);
--	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE_HI);
--
--	addr_end = pci->dbi_phys_addr + SZ_1M - 1;
--
--	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT);
--	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT_HI);
--
--	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT);
--	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT_HI);
--
--	val = readl_relaxed(pcie->parf + PARF_SYS_CTRL);
--	val |= PCIE_ECAM_BLOCKER_EN;
--	writel_relaxed(val, pcie->parf + PARF_SYS_CTRL);
--}
--
- static int qcom_pcie_start_link(struct dw_pcie *pci)
- {
- 	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-@@ -1320,7 +1264,6 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct qcom_pcie *pcie = to_qcom_pcie(pci);
--	u16 offset;
- 	int ret;
- 
- 	qcom_ep_reset_assert(pcie);
-@@ -1329,17 +1272,6 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
- 	if (ret)
- 		return ret;
- 
--	if (pp->ecam_enabled) {
--		/*
--		 * Override ELBI when ECAM is enabled, as when ECAM is enabled,
--		 * ELBI moves under the 'config' space.
--		 */
--		offset = FIELD_GET(SLV_DBI_ELBI_ADDR_BASE, readl(pcie->parf + PARF_SLV_DBI_ELBI));
--		pci->elbi_base = pci->dbi_base + offset;
--
--		qcom_pci_config_ecam(pp);
--	}
--
- 	ret = qcom_pcie_phy_power_on(pcie);
- 	if (ret)
- 		goto err_deinit;
+Sorry for the noise.
 
--- 
-2.34.1
+This driver is finished.
 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
