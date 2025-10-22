@@ -1,190 +1,231 @@
-Return-Path: <linux-kernel+bounces-865831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B74BFE210
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F07FCBFE216
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3AFE3A8CD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251413A7B7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40542F8BFC;
-	Wed, 22 Oct 2025 20:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C825B2F9DB1;
+	Wed, 22 Oct 2025 20:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJtg2ADQ"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFf/IEyJ"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F9F2F83C4
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247D12F28E3
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761163829; cv=none; b=uQGaGa6xUicS9O5blyLX3oxniI//c0nL91zuiI2wfQJ3YA4hdnMkfUe91hLLDX4t6TKqv/NrJEim+VKJ+7GYMkcUyq+rtqKOOZIgvATcK27KL30URxyEG6zlenTSacNJ+9fW4LmTR0T3jKAaPrgirKTVTkhKCNvOfd7Yo8JQVJ8=
+	t=1761163962; cv=none; b=DJLQlX2pfRPF3VQ0zRIOdC1bi8AHsWPe4SlYyxn0/C94StMdE8ws/phL6N8G3Pzt7kRoYp1EJmtWEB6D+gDEXpj29fAfr49/+GIEhViBXXJ/PQnO845Bl/uuwHX1jFiHqfDRNMBtPeQHsSEk+iEl0p83oeiL8Y1TUbo0RKixASA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761163829; c=relaxed/simple;
-	bh=Ek3haOYmPyu4dgOa5C0zgHctdofHHVO9EUyqAYNfa2g=;
+	s=arc-20240116; t=1761163962; c=relaxed/simple;
+	bh=MrWXo/oLbgS2qAu13/3zNn+8FTGKcN62GCJWKCwRbTE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jO7di1IsAAnGUwWbwc9xiS7z8AOUrRBaNmofIc5dYr/jGr33MGY3uDkQyZ/weDTKRuXwCIrXtJbqqVkiz2S4+D8V8ZMbN8Q4wSU9wsYD02eJXNdpRkwDXthq7ToyCF4IKhfGzYGQQ2el+MgYG4Nms3W4p641f6u9mBAV+m2iyQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJtg2ADQ; arc=none smtp.client-ip=209.85.217.47
+	 To:Cc:Content-Type; b=kqxC3Ef9BaDu6Z2+0wzUKNhjwevyX6Tf1lg6yHF9aMaGelV/Sva/Ihpio6GnP2ZZzEzh+/Ni1y+4xKodcbbDKP61x7dUDReEbUMzVWHPi9vpRpl5bLcq3KUj6VUy1Yb36ECQieW9Mki4GUxCeoxxr4EF0ZDnfQdS6mMVQcYJVBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFf/IEyJ; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-59f64abbb61so2801992137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:10:25 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-421851bca51so37515f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:12:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761163825; x=1761768625; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761163958; x=1761768758; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tn5VKrdn1aznBkaeIAwzuNTcwHsl29o2bnaUn9NgWHw=;
-        b=dJtg2ADQlG39P/7E15ZCN14M1JcnfeGwn8Jh5dVPvJ9O/kq75zKSJkxJfrC3sJAr4o
-         +VWwO1l0Lxx9DzzAARu5Rs2c+2xXmC3SHPY7FpEypfGSNND3HOQ+03gndGGTe03K3SiQ
-         IEuM8Emo6TVAaTC0GETRGviXvh76X2Hwytua6kTTf5szKjFpoHS7wYdpROBGXEBW3V2x
-         ZFcNmQmSJ7v+MHIq1cchaBOekrFfXxZf3srpXHbD9XKVZp56jXAdAFDS79yeRoNrNpHi
-         APpdAHD8/pxbnjx2WuladnFsEDc96LfmDnKpn1KQdZQlZe9M3/v3ytYSXzMVBW4ry7bV
-         E4pw==
+        bh=uimIWSCNOUTt2zhNzo5AJd1qUy6+31S1+/QwnAMbts4=;
+        b=lFf/IEyJd/V0nXjuNc4zcl0mh4bgY0EZxlnWETa850BSjucg/+vo+noBzSGWX3jjp5
+         xVkcbs/2qle4QOT00w3eVAXMH22s1yb3OdUOh2J4oGg2MxBSPAPb0ahc+ublTPnOReYW
+         dPnj/fBymOdQBHlLxX1VdgufYahrAhbMx8Rq6TLFF/t1USROwdI7MzLfAT2t5T1w1Vj9
+         25jaDK3w/zZ9rSzPnQEqhPXsayUL9Fg2Uo5TSCtokz3qw1IBzBvGV8oK2r643Ydn+Zje
+         lx00C20OdqInrckFId6y4zFb2LkGOOPpYOlFZ1uZI9sgz9SyiMbEbCenlIAKxNGyMZAk
+         Vaow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761163825; x=1761768625;
+        d=1e100.net; s=20230601; t=1761163958; x=1761768758;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tn5VKrdn1aznBkaeIAwzuNTcwHsl29o2bnaUn9NgWHw=;
-        b=mk/T3lQXhzUUI6hOiWFYFcXKAU8Wqw8jlarTJKWM9b8LWjTXvxtRhCKXkMvwIE1VbU
-         zBCNErXjhRAO1ULUaRBJoVBC1Pb6s2SplNuBqLvQpMUaiNyrnk+9QWktzzl6RrkgIFzG
-         3vd2JVxR23B5H1XkVr95PHqBRz6Ohp6fjehFk3s5MY10fT1ZDbOiBJ+NsoGaFr0p3BF9
-         ardWlst7njTG5f9gNgORkR2PfKgvBNU3HeI0mqkf2scnXH7zRimSlghW27XJCa7kexG8
-         E0DT93497wCyKNi6rKsSh1VxAM+c0gDZ65+JyXPeqd3MY+rMY2xRNDye58FBNkZtFKeQ
-         S6zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqth1y91Wf8aahEtpSzN4UJm85+wLQZaH+HdgmsNdozVKnVaVVKykTTimxKJjXkcxIPT7jFPsByFjeoKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+7IskVnNV2Llm0s1KLkL6+nlmRsSlY2Bh739xhRSwIzFCSyfS
-	Q/0MeCseTvbFFTfZ6xXQmFLZSFPv+x1JDXlr8mc+GK7Q5kCz874DLmFHr7SwS0JR5EbmBOZaLgZ
-	Cds3vNPO4rQnfO95NrpsXS/YT7SPwsKWRwqkVMl50Ww==
-X-Gm-Gg: ASbGncvwoD/BefNhiJ/gAT9lsNAn6U1cqbNw5BRlJTleLBdkJ5yDHNMRJbdwkT4PFX6
-	EtjPW/JK+JqNuvd3pHKQfyNfjam98SbeYwwTBuDWpBmDRnXjJZ//J1kKL4iDlKviq//5ABS2ZYb
-	bY+tum+ZG/i/yjwnmF9IOuDnrax3i2nFrJRUFemEoqagr/horg90OaEayPtfkDX9/QG97VEJEQ+
-	KCkO6QIxjK8MsdoNvAQK4uxF6ECu5GnEKeSMCz0DExOZY8mGCzRTFVspo2Efxvj/+PK3r5/qf3t
-	AYAnLiDzIrJF3g2XfPbhQbEtuw==
-X-Google-Smtp-Source: AGHT+IEAmpCYQ3I3CaF01f4rD5k8jsO3VFkaaCggeAPNetgcdL42bDO5ziQu0Y8LVdLou4hTbEHf9n0KaVc/TOKWEY4=
-X-Received: by 2002:a05:6102:c48:b0:5d5:f6ae:74b4 with SMTP id
- ada2fe7eead31-5d7dd62a873mr7028676137.40.1761163824525; Wed, 22 Oct 2025
- 13:10:24 -0700 (PDT)
+        bh=uimIWSCNOUTt2zhNzo5AJd1qUy6+31S1+/QwnAMbts4=;
+        b=IWhXqQFJEHuaN1xO4XrXlcU94vRH9lgJQ62LZ5Fs0DWHDChai53P8OGE653+8A+6SW
+         CklamCIxzo16QSGt1eg1zLGskNjPYDL8d34M3kLMx9PIX6T0TKiDldBPX3ZtqiGXMD4v
+         VX9cmun16bP0/OgkAuLHW+z/D2ZCq83q6/whe6zcZQYKy+dGokpMGBfnis7D9nYo5w9w
+         KGnadCB8VoNT8PhvksvHf7hMSyp26g7YliVRMbngCmvS74AYr8HkCu+swZ94H06NAkap
+         uWdIDCbjxvStToIdYIymsoEbClL9dTAbW3Pz7KP0tiW10i2odsu+JHFWeaqtRrUFlQAk
+         xhLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0lJGRc8uTRXdm+hIodb1Reg32Ix9dQHJUeKWXhI/soICM4+qeLTaZVQ3bX1kln4ecpD/lX8XDRTQpy74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7+0QyUOt3JPnMYWO+Ug3lP4d/Y9hXmHRACG5MD5m4HG4jVULm
+	kcOuhhX8jpGaUaAWPEW4g0nU14Av0QEt6ZT3dU/PEp/VvjilVFdDKlNtrprMBQRLwMixiV/MVEd
+	fWXIiwuLctISJUlilWRBGEz1yBffUIBE=
+X-Gm-Gg: ASbGncus2FriL3CmGXdMw5SFQdgAaMN91aRhUvTIMAXGs3y7TCh+SkQHvaHqy6WwG/N
+	APt5qlzh+9EgOe05J1OIDEg0AggSETsj4NiVG/qWTw9yLsM/QEUsC2DjJghVrNL+W+QX0giZHS1
+	pwPdO5vvS8+oSkWiVcqgV5k4I2IwujfzupaxRCamac4dtkkJrA5EqGAOUxXKclWpI4STvveLkGN
+	7Rk2JwEnl5CvOx0dPOzR0D3TmnmmODjtvREu1/a1HctJvIwpGxZqPNFBUrSRh2fxC8DKp8laWr7
+	SPdXFetsml8uJLCIjinhz/xS9AP2
+X-Google-Smtp-Source: AGHT+IHailG3wn+qxyeo1hq00dJetf6nEsAebGE6LvCSSYbpG+jVkKCra1v4ENMBfRr/2am5zenhKGEwvNuw5DUaxw0=
+X-Received: by 2002:a05:6000:2911:b0:3d2:9cbf:5b73 with SMTP id
+ ffacd0b85a97d-42704d7ea6cmr12973901f8f.6.1761163958314; Wed, 22 Oct 2025
+ 13:12:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022042514.2167599-1-danisjiang@gmail.com> <cf501c1e-94eb-4855-b3ad-e0b8c68d1a74@kernel.org>
-In-Reply-To: <cf501c1e-94eb-4855-b3ad-e0b8c68d1a74@kernel.org>
-From: Yuhao Jiang <danisjiang@gmail.com>
-Date: Wed, 22 Oct 2025 15:10:12 -0500
-X-Gm-Features: AWmQ_blNULWk3f3C_pQvJ7TQXzRfUECTP0SyTqgDO42bYPywBEVt3wfIIpRq2Ys
-Message-ID: <CAHYQsXRpG9LL5cL9w_UPWpZpR-TiOp2QZzF5k69NiEzT8+oOFg@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: video: Fix use-after-free in acpi_video_switch_brightness()
-To: Hans de Goede <hansg@kernel.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251022164457.1203756-1-kafai.wan@linux.dev> <20251022164457.1203756-2-kafai.wan@linux.dev>
+ <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev> <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
+In-Reply-To: <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 22 Oct 2025 13:12:26 -0700
+X-Gm-Features: AS18NWA2NaacmcwC62SmVtcNwC7UfHvr48VO3Rwz_BF3omM6GlV8vXoOuYBnblA
+Message-ID: <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for conditional
+ jumps on same register
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>, KaFai Wan <kafai.wan@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, 
+	Matan Shachnai <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>, colin.i.king@gmail.com, 
+	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
+	Yinhao Hu <dddddd@hust.edu.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Hans,
+On Wed, Oct 22, 2025 at 12:46=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.co=
+m> wrote:
+>
+> On Wed, 2025-10-22 at 11:14 -0700, Yonghong Song wrote:
+> >
+> > On 10/22/25 9:44 AM, KaFai Wan wrote:
+> > > When conditional jumps are performed on the same register (e.g., r0 <=
+=3D r0,
+> > > r0 > r0, r0 < r0) where the register holds a scalar with range, the v=
+erifier
+> > > incorrectly attempts to adjust the register's min/max bounds. This le=
+ads to
+> > > invalid range bounds and triggers a BUG warning:
+> > >
+> > > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds viol=
+ation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=3D[0x1, 0x0] v=
+ar_off=3D(0x0, 0x0)
+> > > WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731 reg_bounds_sani=
+ty_check+0x163/0x220
+> > > Modules linked in:
+> > > CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G        W           6=
+.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
+> > > Tainted: [W]=3DWARN
+> > > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.=
+3-debian-1.16.3-2 04/01/2014
+> > > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
+> > > Call Trace:
+> > >   <TASK>
+> > >   reg_set_min_max.part.0+0x1b1/0x360
+> > >   check_cond_jmp_op+0x1195/0x1a60
+> > >   do_check_common+0x33ac/0x33c0
+> > >   ...
+> > >
+> > > The issue occurs in reg_set_min_max() function where bounds adjustmen=
+t logic
+> > > is applied even when both registers being compared are the same. Comp=
+aring a
+> > > register with itself should not change its bounds since the compariso=
+n result
+> > > is always known (e.g., r0 =3D=3D r0 is always true, r0 < r0 is always=
+ false).
+> > >
+> > > Fix this by adding an early return in reg_set_min_max() when false_re=
+g1 and
+> > > false_reg2 point to the same register, skipping the unnecessary bound=
+s
+> > > adjustment that leads to the verifier bug.
+> > >
+> > > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
+> > > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
+> > > Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Corema=
+il.kaiyanm@hust.edu.cn/
+> > > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
+> > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> > > ---
+> > >   kernel/bpf/verifier.c | 4 ++++
+> > >   1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > > index 6d175849e57a..420ad512d1af 100644
+> > > --- a/kernel/bpf/verifier.c
+> > > +++ b/kernel/bpf/verifier.c
+> > > @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct bpf_verifi=
+er_env *env,
+> > >     if (false_reg1->type !=3D SCALAR_VALUE || false_reg2->type !=3D S=
+CALAR_VALUE)
+> > >             return 0;
+> > >
+> > > +   /* If conditional jumps on the same register, skip the adjustment=
+ */
+> > > +   if (false_reg1 =3D=3D false_reg2)
+> > > +           return 0;
+> >
+> > Your change looks good. But this is a special case and it should not
+> > happen for any compiler generated code. So could you investigate
+> > why regs_refine_cond_op() does not work? Since false_reg1 and false_reg=
+2
+> > is the same, so register refinement should keep the same. Probably
+> > some minor change in regs_refine_cond_op(...) should work?
+> >
+> > > +
+> > >     /* fallthrough (FALSE) branch */
+> > >     regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode), i=
+s_jmp32);
+> > >     reg_bounds_sync(false_reg1);
+>
+> I think regs_refine_cond_op() is not written in a way to handle same
+> registers passed as reg1 and reg2. E.g. in this particular case the
+> condition is reformulated as "r0 < r0", and then the following branch
+> is taken:
+>
+>    static void regs_refine_cond_op(struct bpf_reg_state *reg1, struct bpf=
+_reg_state *reg2,
+>                                  u8 opcode, bool is_jmp32)
+>    {
+>         ...
+>          case BPF_JLT: // condition is rephrased as r0 < r0
+>                  if (is_jmp32) {
+>                          ...
+>                  } else {
+>                          reg1->umax_value =3D min(reg1->umax_value, reg2-=
+>umax_value - 1);
+>                          reg2->umin_value =3D max(reg1->umin_value + 1, r=
+eg2->umin_value);
+>                  }
+>                  break;
+>         ...
+>    }
+>
+> Note that intent is to adjust umax of the LHS (reg1) register and umin
+> of the RHS (reg2) register. But here it ends up adjusting the same regist=
+er.
+>
+> (a) before refinement: u64=3D[0x0, 0x80000000] s64=3D[0x0, 0x80000000] u3=
+2=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
+> (b) after  refinement: u64=3D[0x1, 0x7fffffff] s64=3D[0x0, 0x80000000] u3=
+2=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
+> (c) after  sync      : u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0]=
+ s32=3D[0x1, 0x0]
+>
+> At (b) the u64 range translated to s32 is > 0, while s32 range is <=3D 0,
+> hence the invariant violation.
+>
+> I think it's better to move the reg1 =3D=3D reg2 check inside
+> regs_refine_cond_op(), or to handle this case in is_branch_taken().
 
-Thanks for the feedback! I've submitted it in patch v3:
-https://lore.kernel.org/all/20251022200704.2655507-1-danisjiang@gmail.com/.
-
-Best regards,
-Yuhao
-
-On Wed, Oct 22, 2025 at 4:28=E2=80=AFAM Hans de Goede <hansg@kernel.org> wr=
-ote:
->
-> Hi Yuhao,
->
-> On 22-Oct-25 6:25 AM, Yuhao Jiang wrote:
-> > The switch_brightness_work delayed work accesses device->brightness
-> > and device->backlight, which are freed by
-> > acpi_video_dev_unregister_backlight() during device removal.
-> >
-> > If the work executes after acpi_video_bus_unregister_backlight()
-> > frees these resources, it causes a use-after-free when
-> > acpi_video_switch_brightness() dereferences device->brightness or
-> > device->backlight.
-> >
-> > Fix this by calling cancel_delayed_work_sync() for each device's
-> > switch_brightness_work before unregistering its backlight resources.
-> > This ensures the work completes before the memory is freed.
-> >
-> > Fixes: 8ab58e8e7e097 ("ACPI / video: Fix backlight taking 2 steps on a =
-brightness up/down keypress")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
->
-> Thank you for your patch, this is a good catch.
->
-> > ---
-> > Changes in v2:
-> > - Move cancel_delayed_work_sync() to acpi_video_bus_unregister_backligh=
-t()
-> >   instead of acpi_video_bus_put_devices() for better logic clarity and =
-to
-> >   prevent potential UAF of device->brightness
-> > - Correct Fixes tag to point to 8ab58e8e7e097 which introduced the dela=
-yed work
-> > - Link to v1: https://lore.kernel.org/all/20251022040859.2102914-1-dani=
-sjiang@gmail.com
-> > ---
-> >  drivers/acpi/acpi_video.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-> > index 103f29661576..64709658bdc4 100644
-> > --- a/drivers/acpi/acpi_video.c
-> > +++ b/drivers/acpi/acpi_video.c
-> > @@ -1869,8 +1869,10 @@ static int acpi_video_bus_unregister_backlight(s=
-truct acpi_video_bus *video)
-> >       error =3D unregister_pm_notifier(&video->pm_nb);
-> >
-> >       mutex_lock(&video->device_list_lock);
-> > -     list_for_each_entry(dev, &video->video_device_list, entry)
-> > +     list_for_each_entry(dev, &video->video_device_list, entry) {
-> > +             cancel_delayed_work_sync(&dev->switch_brightness_work);
-> >               acpi_video_dev_unregister_backlight(dev);
-> > +     }
-> >       mutex_unlock(&video->device_list_lock);
-> >
-> >       video->backlight_registered =3D false;
->
-> As you mention in your changelog, the cancel_delayed_work_sync() needs
-> to happen before acpi_video_dev_unregister_backlight().
->
-> Since this needs to happen before unregistering things I think it would b=
-e
-> more logical to put the cancel_delayed_work_sync(&dev->switch_brightness_=
-work);
-> call inside acpi_video_bus_remove_notify_handler().
->
-> So do the cancel in the loop there, directly after the
-> acpi_video_dev_remove_notify_handler(dev) call which removes the handler
-> which queues the work.
->
-> E.g. make the loop inside acpi_video_bus_remove_notify_handler() look lik=
-e
-> this:
->
->         mutex_lock(&video->device_list_lock);
->         list_for_each_entry(dev, &video->video_device_list, entry) {
->                 acpi_video_dev_remove_notify_handler(dev);
->                 cancel_delayed_work_sync(&dev->switch_brightness_work);
->         }
->         mutex_unlock(&video->device_list_lock);
->
-> This cancels the work a bit earlier, but more importantly this feels
-> like the more logical place to put the cancel call.
->
-> Regards,
->
-> Hans
->
->
+hmm. bu then regs_refine_cond_op() will skip it, yet reg_set_min_max()
+will still be doing pointless work with reg_bounds_sync() and sanity check.
+The current patch makes more sense to me.
 
