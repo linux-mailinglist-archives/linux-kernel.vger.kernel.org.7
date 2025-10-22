@@ -1,284 +1,201 @@
-Return-Path: <linux-kernel+bounces-864625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E53ABFB344
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 419BBBFB34F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A26580F74
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:44:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D1D3A3B9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A532B3054C8;
-	Wed, 22 Oct 2025 09:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD266311958;
+	Wed, 22 Oct 2025 09:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E8q4d/gx"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RNeiQbXr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A044B299924
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444E92882BE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761126254; cv=none; b=IQF5vPkNnp54M+pRsClt9WOuZtx1X8cd6aqSAWHRlfGNVJ/2qOtyrUEEbwCFkQk6eKkfKtkm72d+4MyamlgDV89l5LA6/Qff0I6dIE437zG39ii3unGASCmBtPh5keQRyg7WNBwaR+0zBXKuqmtencFJUU2l1to1P28I05DTqIk=
+	t=1761126413; cv=none; b=UysuX6rZ6Xgic+UPVhvvm4/WG2MuzttBvnnfbLsenwcai3CSzzp1M2UU6pZlYblQADuj3mtdWP8HbN9t3paA9rfIVLi3+aOmhchqhgvRiuqnmYCpmyqz5kjfpol69psdHM4sjnK1bmW8hDhKbk+1DuytqBbMozz6jffnR1AT8mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761126254; c=relaxed/simple;
-	bh=YSsmQnBs93MkLURrGV5cmfNkALdokMBbIl5S2URZs4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YNUtVv+81ZY/P3CzxFIijt6Abg9AETK+MMhW7liwn4ejxg41Q/a4+WecPEiYP6hHhWg03bhsa9nbIA8XtTcNw4Xg2ZpbYyzS1ep0yYxaaN5MAL16Q8HujIQNtV+pj5Ypoxt5GRJe4mMrWVGv+s3c8CNMq2eyIWFwx6+krp8wrKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E8q4d/gx; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47495477241so16245435e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761126251; x=1761731051; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L2q2OfszUqpeadKayMdXndWnS6PaM7t8jQzEItp97vM=;
-        b=E8q4d/gxobhWW49fipSD2pu/EvWAHXJ/k3jj1gk9LLCCuemvkDrgHPszwGTcpjhyfj
-         5WAnKahSBraUqXjuh/LlJ29vxFP6j4z2h7BzDZDEjQnIh2jBmIBPtHyq40n0JlQl6eex
-         4gOmC3Y9iy5mGOvYiz+4IM+kgTfUEisGbQUsf7n1M8Bqz5rsW45AqtUPo/4UTMKatYge
-         gGWvi5a2KamaGHRV6bIWzFs8wIVscgfDskauk9gaHir0JyYd7Q3wI/2oMOaVfy0e+gSb
-         dAewPaMmLVG/6QxpB8zWowN+iHZtimW2NLyTGT0vKDAVtyV4Wef0sUKNpeFTWdQUX9pD
-         bwuQ==
+	s=arc-20240116; t=1761126413; c=relaxed/simple;
+	bh=88E2EGzq2n20YrkFy9dxISpv1QvuEY8V4SnO7qKbctg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LLpj37YninRyLHkAalLT2qS6aZ4ZKbP49tJitn9E74gfSVUVjsyfntlq0qvzWBAIcJb4TO4Xna3y25drMtw+Da1Bn/PeUGgymJtDqSkgWeKS2grwICt2PbX+CQcnb8p2SP5c8LleS1+B1p2/H4246AseZteJEK3pENVkI/WoSg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RNeiQbXr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761126410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ipyfXFOy/lX9dgJ8MKg8vYqWY4/Yh7BKK6Ctsb29TBQ=;
+	b=RNeiQbXrlLnlyzAMTF+/cL3jWWVqHIWcmpRVQInrSxM62W05Ii+MVjIEIBJ/9/41d9PdOh
+	t5VNwme/wt1erddVpJwiAYcQnrqnDg6LCA+FgE9V5pSMM0ohcQ554jsRmZveIlIi1EZPW1
+	AKuGPrmjxbLA2D8dlJYsKj4T1sycFSw=
+Received: from mail-yx1-f71.google.com (mail-yx1-f71.google.com
+ [74.125.224.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-7rXjqEoVNYS-GPmVXagMRg-1; Wed, 22 Oct 2025 05:46:47 -0400
+X-MC-Unique: 7rXjqEoVNYS-GPmVXagMRg-1
+X-Mimecast-MFC-AGG-ID: 7rXjqEoVNYS-GPmVXagMRg_1761126407
+Received: by mail-yx1-f71.google.com with SMTP id 956f58d0204a3-63e0865b082so9214656d50.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:46:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761126251; x=1761731051;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L2q2OfszUqpeadKayMdXndWnS6PaM7t8jQzEItp97vM=;
-        b=awNtrbUKzxGzVQmCwsUXcmwd9CSiznGEHJNGvuba8Z1JWDmfmbsCr7Swe0PXWAXERk
-         4gTA+rmfC82tlIFWly4/nwI8rWtq/YOFnHDxPJaLdjXiUA0oY6/KuUfRpFmfN2XM3SVN
-         Zb5CSGWTwkohexfpXA2QkT89H3qxh3WLJ9PTpzdbzJeJaJupef0lDSquvfrN5x2flQc+
-         4I2b6gbMKPPRtaHwdgfL1oi6gKjkoJ5bbaUjnUbaV+O1sF6kVzJk0bXceWbu1p+SP57J
-         4O0UKDe1VX3ZdSBpuNbx4GwiBQ3Fy+oR5zkEhBQAhq+PvCVbR/cspTid/r4HYBIjgZOK
-         /yRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXboGu7dKU8+Xa1f3NvcC8KcQ6nNx8uwy8wF4OvMeBJG+ry4VdpVEllbVY71iM4u63byb3ZQx3yEh9NM+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ZKzsj2Dh7Avzv8QvwPRo215aV8ZZUyqw8YIphRJxyFPe+r0A
-	KHztpkayPwWcgdZDsCXWLhR9GmJaol7ZTTx4ZgxgbmtEDrkarXu9MIWDE3X0vId6VqM=
-X-Gm-Gg: ASbGnctA5rx/GW1fp+bxqwVhUL+4tzRY38KMwvWlK21mqMnV1ipJ4fTV/BKcxPhk3NX
-	+ouEAsC4yLqNihxST6EQH6r7C0NcaAKY7eso2EGRPh4pTgS7lItKZK1yOarnNPjrXrlWXPtLCXb
-	yyOWbz+qQN0I8vYn1ydPD5Dpy5J6IR5wZ3lISTdaoMwa2O1Hx+/x8WmnbJd3pcjOipMogAFfrwl
-	oEeuusGDStAphIXZtT8X/qqkAdZYYXgiAffEbMHTb3WuMI7/AZfH9wOlOUislC93QDRggAEg7+o
-	J8Jk6QjXVPw7dF5C4hcDOv+err0/rPw9ICvJnqzCRKpcr+GFSBiV8bvflpHD3uRFsjgYILeCywO
-	ZBnknzgAvTaM/76V/sG7GH4vbxQDHhVY+M+Iad9kDfqnyI75pozMZ3ICe/2BMXKJYVcG9VtrF1M
-	0sFSOjHXqBjJZ9xDd3
-X-Google-Smtp-Source: AGHT+IHyKNaFr6+KT+wcGuk5QcgPZ2E1s+s6FjRqi/hA/8rUpJL4cF8k2yXbn4dNu2GHhIteFm2DEA==
-X-Received: by 2002:a05:600c:4e93:b0:471:9da:524c with SMTP id 5b1f17b1804b1-4711789e39emr140864945e9.12.1761126250776;
-        Wed, 22 Oct 2025 02:44:10 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496d26affsm32511685e9.12.2025.10.22.02.44.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 02:44:10 -0700 (PDT)
-Message-ID: <3c6b723c-d3d4-4be7-9333-9ab46d270194@linaro.org>
-Date: Wed, 22 Oct 2025 10:44:09 +0100
+        d=1e100.net; s=20230601; t=1761126407; x=1761731207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipyfXFOy/lX9dgJ8MKg8vYqWY4/Yh7BKK6Ctsb29TBQ=;
+        b=pbkRY1Rl4D5KcejizhJJdlS/3D8a2XJfTvN7U/Y4lBzPYf+FNvG98LzSS8UTsgteS8
+         lLdqVabUv9I9Dy2Rqma5QhFSirjdNlaWG8Nso8tDmQrHAlr5xIdfTgOqdgOW8CKXYKHb
+         XCL0wpWJMWDB6OaNUQssOxh3YvxkTnHX6KvTHWxQfW36lhTfDQnAqBPWILy27/drzkI4
+         LjsqXTBaWSWOPi7X0tYfAdjT1jbg1qQh7RA7/SRk1jZkLaWSY1GSfMbpKDTRaYD2Tbd3
+         cHHK3POSW/LdOvDlWZGx0ZJxg11wACrMOuMfUb1AJrLpcbqMy8HmSawenDs03PowKiuw
+         UzuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIlkwC+iReiwDoS38ixBvn9JaQT1Y6oJMN+kTqbCWkQwUEbkArO/7ZSNfrzlSO4tdPkh+HUkyBDh7/Wy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIx4tdgGailE1lx9GK4xhrKJPwRXnUt8CRYwEwomWZgGMAOexI
+	7mrIqLIRTvl9Lz5yjOF0Z0VQhxq/t3KpEREFec8LI9ZaSajpI8jJBHnSeGKYhS68szhwVNE/Sep
+	bEBUgP8/kNN9Dpu56IQ5wkkmvM29XBqst1RO3OkzsaVKzVV4oMYYMm5hizmHKkyrrioLg4eJNs3
+	mhCQuSPx2qreM4erjBQz0bSmsWQtT/bqaDisZ4V81O
+X-Gm-Gg: ASbGncvl8Vb3WEh52Nx2EtjB/yqT4K/82FZYB/TMb/qh723TDnlMTMwwkazVKQRYQJu
+	gOA3piQrFsCMR1+NvBqrFrLwDde+xX1R8P8rqGvVUA/gQ8qMhM+mPAYhUYyP8AxcXpeyUHDoq0e
+	xZeIWe+GSewKgn8UhSJmkVXCXx/leSSbaTiRSYJ1UYuUSQ53xI9iWUE2kpEjiNeDF5zFDVRWeMB
+	yEXC/fuDtIxIAKpPHQJlAF8tOeE/gNki/xqav0RtaBRASgpoUjiuervkDmRliVRLwUesViuvkHU
+	hHQ=
+X-Received: by 2002:a53:b10a:0:b0:63f:2db0:997c with SMTP id 956f58d0204a3-63f2db09c49mr743764d50.68.1761126407104;
+        Wed, 22 Oct 2025 02:46:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvur6oK5c8R3K/TCjDX5FSuFjRyp8F3CzZFjcaXGe/kEmJx7VQHl4dG08fr+fgIFPtV66OaqY0dHi5diadPNA=
+X-Received: by 2002:a53:b10a:0:b0:63f:2db0:997c with SMTP id
+ 956f58d0204a3-63f2db09c49mr743754d50.68.1761126406818; Wed, 22 Oct 2025
+ 02:46:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] coresight: Add format attribute for setting the
- timestamp interval
-To: Leo Yan <leo.yan@arm.com>
-Cc: Mike Leach <mike.leach@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20251002-james-cs-syncfreq-v3-0-fe5df2bf91d1@linaro.org>
- <20251002-james-cs-syncfreq-v3-4-fe5df2bf91d1@linaro.org>
- <CAJ9a7Vj1NnikoJyabXnad+=3SDULKCyqoZiNb_S66SkG+HD+dw@mail.gmail.com>
- <bfce6b68-783f-4aa1-b9db-d905230be609@linaro.org>
- <20251021172224.GO281971@e132581.arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20251021172224.GO281971@e132581.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAJaqyWfRmhXM8eV+=wMVKgrc8SJ98OTtBCtNDJj8ZRUM5Y9Nmg@mail.gmail.com>
+ <CAO55csx2rbjxEZk5K3aKcZ501KY3Zfs8ThEQHFqQ1ZB9RSXECA@mail.gmail.com>
+ <20251015040722-mutt-send-email-mst@kernel.org> <CAJaqyWcf3tz17q6G=123Xb+warf8Ckg=PLaPkzLU9hYHiUy9Zg@mail.gmail.com>
+ <CACGkMEuPPFLH1YqTx03fV9N=Rx3aYXK0HMUDpZu-CvO1NYRRQA@mail.gmail.com>
+ <20251016014328-mutt-send-email-mst@kernel.org> <CACGkMEtXWLicmszjkzOhX8Ta=LdGgsDahRUKDEVzBVG8am5vgg@mail.gmail.com>
+ <20251016022131-mutt-send-email-mst@kernel.org> <CAJaqyWe--Hho9EdweqkC-h9=t5vhY0cbAN9uAw=hATpkSMbsEg@mail.gmail.com>
+ <CAJaqyWdEY6KaVbBn5LJhkz7h6kytFg8-b8iXnc9N54L+q_Yrbw@mail.gmail.com>
+ <20251017023902-mutt-send-email-mst@kernel.org> <CAJaqyWcyJU_ghJpQrnEyTf19o_NzE6FXkxgBRZx=1RYqQkN4gA@mail.gmail.com>
+In-Reply-To: <CAJaqyWcyJU_ghJpQrnEyTf19o_NzE6FXkxgBRZx=1RYqQkN4gA@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 22 Oct 2025 11:46:10 +0200
+X-Gm-Features: AS18NWDw4vr0GcTnGRr8VlHsu1oogGDTd7bG2v29nWusnnH3ymm68p-CAB7l3Fo
+Message-ID: <CAJaqyWcGbqRP+KfhtOMLtYA_dNB0d0SvTKLrsH7zYU4CrZb+3g@mail.gmail.com>
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Dragos Tatulea DE <dtatulea@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 17, 2025 at 9:21=E2=80=AFAM Eugenio Perez Martin
+<eperezma@redhat.com> wrote:
+>
+> On Fri, Oct 17, 2025 at 8:39=E2=80=AFAM Michael S. Tsirkin <mst@redhat.co=
+m> wrote:
+> >
+> > On Fri, Oct 17, 2025 at 08:36:41AM +0200, Eugenio Perez Martin wrote:
+> > > On Thu, Oct 16, 2025 at 8:25=E2=80=AFAM Eugenio Perez Martin
+> > > <eperezma@redhat.com> wrote:
+> > > >
+> > > > On Thu, Oct 16, 2025 at 8:22=E2=80=AFAM Michael S. Tsirkin <mst@red=
+hat.com> wrote:
+> > > > >
+> > > > > On Thu, Oct 16, 2025 at 02:03:57PM +0800, Jason Wang wrote:
+> > > > > > On Thu, Oct 16, 2025 at 1:45=E2=80=AFPM Michael S. Tsirkin <mst=
+@redhat.com> wrote:
+> > > > > > >
+> > > > > > > On Thu, Oct 16, 2025 at 01:39:58PM +0800, Jason Wang wrote:
+> > > > > > > > > >
+> > > > > > > > > > Not exactly bufferize, record.  E.g. we do not need to =
+send
+> > > > > > > > > > 100 messages to enable/disable promisc mode - together =
+they
+> > > > > > > > > > have no effect.
+> > > > > > > >
+> > > > > > > > Note that there's a case that multiple commands need to be =
+sent, e.g
+> > > > > > > > set rx mode. And assuming not all the commands are the best=
+ effort,
+> > > > > > > > kernel VDUSE still needs to wait for the usersapce at least=
+ for a
+> > > > > > > > while.
+> > > > > > >
+> > > > > > > Not wait, record. Generate 1st command, after userspace consu=
+med it -
+> > > > > > > generate and send second command and so on.
+> > > > > >
+> > > > > > Right, that's what I asked in another thread, we still need a t=
+imeout
+> > > > > > here.
+> > > > >
+> > > > > we do not need a timeout.
+> > > > >
+> > > > > > Then I think it would not be too much difference whether it is
+> > > > > > VDUSE or CVQ that will fail or break the device. Conceptually, =
+VDUSE
+> > > > > > can only advertise NEEDS_RESET since it's a device implementati=
+on.
+> > > > > > VDUSE can not simply break the device as it requires synchroniz=
+ation
+> > > > > > which is not easy.
+> > > > > >
+> > > > > > > But for each bit of data, at most one command has to be sent,
+> > > > > > > we do not care if guest tweaked rx mode 3 times, we only care=
+ about
+> > > > > > > the latest state.
+> > > > > >
+> > > > > > Yes, but I want to know what's best when VDUSE meets userspace =
+timeout.
+> > > > > >
+> > > > > > Thanks
+> > > > >
+> > > > >
+> > > > > userspace should manage its own timeouts.
+> > > > >
+> > > >
+> > > > Can we just apply the patch 2/2 of this RFC directly and apply the
+> > > > VDUSE CVQ on top then? What are we missing to do it?
+> > > >
+> > >
+> > > Even better, can we just revert commit 56e71885b0349 ("vduse:
+> > > Temporarily fail if control queue feature requested") ?
+> >
+> > No because both would let userspace hang kernels merely by
+> > not consuming buffers.
+> >
+>
+> My understanding was that you want to be able to debug qemu with gdb
+> from that hang [1].
+>
+> Could you put an example of the whole chain of events you expect? From
+> the moment the driver sends a VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET command,
+> the VDUSE CVQ Forwards the command to the VDUSE device in the
+> userspace, and then the vduse userland device does not reply.
+>
+> How does the VDUSE CVQ detect that the VDUSE device implemented in
+> userland does not reply? What are the next steps from that point of
+> the kernel VDUSE module?
+>
+> Thanks!
+>
 
-
-On 21/10/2025 6:22 pm, Leo Yan wrote:
-> On Wed, Oct 15, 2025 at 04:19:04PM +0100, James Clark wrote:
-> 
-> [...]
-> 
->>>> -static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
->>>> +static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata,
->>>> +                                      struct perf_event_attr *attr)
->>>>    {
->>>>           int ctridx;
->>>>           int rselector;
->>>>           struct etmv4_config *config = &drvdata->config;
->>>> +       u8 ts_level = ATTR_CFG_GET_FLD(attr, ts_level);
->>>> +
->>>> +       /* Disable when ts_level == MAX */
->>>> +       if (ts_level == FIELD_GET(ATTR_CFG_FLD_ts_level_MASK, UINT_MAX))
->>>> +               return 0;
->>>>
->>>
->>> Returning 0 from this function _enables_ the timestamps
->>>
->>
->> Returning 0 just means that etm4_parse_event_config() doesn't exit with an
->> error. For ts_level == MAX we want to disable timestamps generated by the
->> counter, but we still want the minimum periodic timestamps.
->>
->> To disable all timestamps you'd need to have attr->config & BIT(ETM_OPT_TS)
->> == false. This is set by the "timestamp" format flag which I tried to
->> explain that in the docs change.
->>
->> I could also change the comment to say "/* Disable counter generated
->> timestamps with ts_level == MAX */"
->>
->> It's unfortunate that there are now two format options for timestamps. Maybe
->> instead of adding a second option we can change "timestamp" from a 1 bit
->> field to 4 bits, with the following meanings:
->>
->>   0:     No counter timestamps or SYNC timestamps
->>   1-14:  Counter timestamps = 2 ^ x. Plus SYNC timestamps
->>   15:    Only SYNC timestamps
-> 
-> I am just wandering how can extend "timestamp" from 1 bit to 4 bits.
-> 
->    #define ETM_OPT_TS              28
->    #define ETM_OPT_RETSTK          29
-> 
->    PMU_FORMAT_ATTR(timestamp,      "config:" __stringify(ETM_OPT_TS));
->    PMU_FORMAT_ATTR(retstack,       "config:" __stringify(ETM_OPT_RETSTK));
-> 
-> "retstack" has occupied a higher bit, we cannot naturelly extend
-> "timestamp" field?
-
-Easy, just put it wherever there is a hole. I think there's one in 
-"config:4-7", but it could be put in config3 or config4:
-
-  /* Old enable timestamp bit for backwards compatibility */
-  #define ETM_OPT_TS_old              28
-  PMU_FORMAT_ATTR(timestamp,      "config:4-7");
-
-The position of the timestamp field is published and tools read it, so 
-as long as we don't change the name of it it works fine.
-
-We only keep the old bit 28 because we know old Perf was buggy and 
-didn't read the bit position, but if it wasn't we wouldn't even need to 
-do that.
-
-> 
-> Even we can extend "timestamp" format to 4 bits, it will be mess when
-> run the updated perf on old kernels.  Let's see an example:
-> 
->    perf record -e cs_etm/timestamp=0/ -- test
->    perf record -e cs_etm/timestamp=2/ -- test
-> 
-> Because the lowest bit is cleared for both timestamp=0 and timestamp=2,
-> the old kernel support only one bit always treats these two setting as
-> timestamp disabled, or the perf tool needs to do extra checking for
-> old kernel.
-
-It won't be. Old kernels report a 1 bit field and Perf errors out if you 
-try to put a 2 into 1 bit. Very old Perfs just set bit 28 which new and 
-old kernels will respect.
-
-> 
->> Now we basically have the same meanings except you also have to set the
->> timestamp bit. Seems a bit pointless.
-> 
->> Previous versions of Perf were hard coding the timestamp format bit rather
->> than reading it out of
->> "/sys/bus/event_source/devices/cs_etm/format/timestamp" though:
->>
->> -       /* All good, let the kernel know */
->> -       evsel->core.attr.config |= (1 << ETM_OPT_TS);
->>
->> For that reason we'd have to leave that one where it is for backwards
->> compatibility. If it's set it would be equivalent to the new wider timestamp
->> field == 1.
-> 
-> Are you suggesting the timestamp field to be extended to two
-> non-consecutive fields?
-
-No, just a new 4 bit field in a new position.
-
-> 
-> For me, this is even worse than current two discrete formats. The reason
-> is it is complex in implementation, and it is not directive for usage
-
-I really don't think the implementation is complex. We just extend the 
-field to 4 bits and make 0 off, max is the lowest rate possible, and 
-every other value in between is in between.
-
-> (users need to digest the field for three different semantics: on/off,
-> counter, and SYNC mode only).
-> 
-
-That's like any enum, it has multiple meanings for each value. I'd argue 
-that two fields for the same thing is more complicated because now this 
-won't work out of the box, and it would work if we did 1 field:
-
-   perf record -e cs_etm/ts_level=2/ -- test
-
-There will be no warning, but no timestamps either. You have to specify 
-both manually. And the only reason for that awkwardness in the API is 
-that we added a new field instead of extending the existing one:
-
-   perf record -e cs_etm/ts_level=2,timestamp/ -- test
-
-> Thanks,
-> Leo
-> 
->> I don't know if there's any precedent for changing the bitfield that backs a
->> format field, but presumably that's the point of publishing them in files
->> rather than a header.
-> 
-> 
->>
->>>>           /* No point in trying if we don't have at least one counter */
->>>>           if (!drvdata->nr_cntr)
->>>> @@ -667,12 +674,8 @@ static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
->>>>                   return -ENOSPC;
->>>>           }
->>>>
->>>> -       /*
->>>> -        * Initialise original and reload counter value to the smallest
->>>> -        * possible value in order to get as much precision as we can.
->>>> -        */
->>>> -       config->cntr_val[ctridx] = 1;
->>>> -       config->cntrldvr[ctridx] = 1;
->>>> +       /* Initialise original and reload counter value. */
->>>> +       config->cntr_val[ctridx] = config->cntrldvr[ctridx] = 1 << ts_level;
->>>>
->>>>           /*
->>>>            * Trace Counter Control Register TRCCNTCTLRn
->>>> @@ -762,7 +765,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
->>>>                    * order to correlate instructions executed on different CPUs
->>>>                    * (CPU-wide trace scenarios).
->>>>                    */
->>>> -               ret = etm4_config_timestamp_event(drvdata);
->>>> +               ret = etm4_config_timestamp_event(drvdata, attr);
->>>>
->>>>                   /*
->>>>                    * No need to go further if timestamp intervals can't
->>>>
->>>> --
->>>> 2.34.1
->>>>
->>>
->>> Regards
->>>
->>>
->>> Mike
->>>
->>> --
->>> Mike Leach
->>> Principal Engineer, ARM Ltd.
->>> Manchester Design Centre. UK
->>
+Friendly ping!
 
 
