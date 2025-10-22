@@ -1,127 +1,147 @@
-Return-Path: <linux-kernel+bounces-864505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF56ABFAED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:36:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB581BFAEC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3BF46614E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94B61A03CB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11E230AAC7;
-	Wed, 22 Oct 2025 08:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F83231836;
+	Wed, 22 Oct 2025 08:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="glKVQn8w"
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rT4OSEDU"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27143231836;
-	Wed, 22 Oct 2025 08:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B556930AAB3
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761122136; cv=none; b=sAc6d2sa09ljrcqiuYNYjDn79vr45qSpR8GPB+XSLuf6gM+BL0fgTqQs0JryXLLC9P8PHPxcW0c2s2w44Flw+0bumfNW4I+cTWWkHIb+Y6aTxEvDvau1u1qKqrF1TAsJgnfXFX1xEuLbrdEtD4g2/ygrV2U1cbhNp/kdybKZd1w=
+	t=1761122166; cv=none; b=CvPplairIJ/w6guaaTmzwm2dGn76frNu42xOnriS3qN8kVVepXIPlSBEgqPJlaP4OE6eFmCHuJcB/LJtc63iody5YpQ37lqI11ZFLzAwRorcYFnche1V/imIVU1vc13bIDz5e/IlyNpGrtHywCmOIeVyURMGrsswF16CFmGvsAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761122136; c=relaxed/simple;
-	bh=L/vGTy9B1KwtO2hrIjD8ekgxf2pecL2RU1QcrP/nFZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V+27LAHX7hxN2fXt9IBE5/MZZuJZ95/T6HIc/HkhL64VG7MBrJGPC8uVq+j3IGaiieGoyVPjDTf/Wwk9+pTNY34gDkd38p01ntlQUeQ8xzeqCD309gr3UqpDfX+LaZtrox8awa+BlNOcv3/AivNvm9w4GXglawx/xzrIBgK7e7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=glKVQn8w; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=qo1GdKEn3CCuaK6Y8fWzfgLn1TKUz0pavTTMmOLW4qw=;
-	b=glKVQn8wj18tptFHj8m6X5rYciJNYiahJQxQ+3zbj7Q4ExWpMvMroXlg3ZvPQXw6dxR/zXFFl
-	rRaPRt4O6Syb5VhyQSxmipNs6sZdz3hAeQgjoQ020iNkQ0m8bubRYe0CrapIFzfH/gbZ3cIKjGl
-	T97n9lWyswlVmYs5kri1Crs=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cs2XT3rwTz12LKG;
-	Wed, 22 Oct 2025 16:34:49 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id BA489180495;
-	Wed, 22 Oct 2025 16:35:30 +0800 (CST)
-Received: from kwepemq200011.china.huawei.com (7.202.195.155) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 16:35:30 +0800
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemq200011.china.huawei.com (7.202.195.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 16:35:29 +0800
-Message-ID: <904828da-402f-499d-8904-250e78feafcf@huawei.com>
-Date: Wed, 22 Oct 2025 16:35:27 +0800
+	s=arc-20240116; t=1761122166; c=relaxed/simple;
+	bh=ft9zQVqN+nzITI87mLbcN5D/HEbMWHnwzUpstiwu0DQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=joM2+H6YGvXOOiISWL0Iox633vIw9AfIqsUME+WzTgmPTkFfn3F8ISilltbxLvFOoR7+/+u7ASuTBqxvZXlWcIJ6K+qglWOgBcZXYNv0UMJAjQ/sAIn+fMVSlad7k6mOegcHS7COj7gAOG7zd99faHr+z3/BQ47KsaydmCI0NDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rT4OSEDU; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-591ec0e4b3fso1637248e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761122162; x=1761726962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=drZoQKRza9HaUOy3briff86rS8ukgG+FU9BhTLti/14=;
+        b=rT4OSEDUcy9F8gSwV3F6ThBO/ZrnFsYBEG3TwLiQSbC2YbIH00+dHjmrwmlCpPFexs
+         B7KRRhVvuaKYryiKQGX81KCwr9Y9jkMK7/NLzgdhM0K0D+RoZoD5FbErG6UN7MSuTx/I
+         s/gVzMEVk4fJuQSdAxSAyNKLidW+xd+P6AQ/kr08yaz/uCjl1wx4Y0iFADhID2ecPDIl
+         8gK2iCi0h2jSoiIN+kXRE434C84SC+YYrLyKUT/tPIYSlskcA1Fcv/wsK/8BidJK7LSX
+         Sh60npT4QsW/wVu/DvRo/GpCKUOvmTgNewOGDE8khb7V5fu6eUjR1q4J6vw95kbPDVgL
+         H2Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761122162; x=1761726962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=drZoQKRza9HaUOy3briff86rS8ukgG+FU9BhTLti/14=;
+        b=sAJYwXMsip89ILPj+VeaEMr21KKWi4tGQLbkWVgeZBIbISPjWKvP/yWTFiB/8+NdJP
+         /VROxD58w0sHJKjijDVYH5RF31zk/b/ILxOAyRH5xVsFpnWCYYrDJ/WGeeMVHMRjpyvj
+         a5R2vvkIHyKD+nBtZYNQfkvNTUfUQQ+IYG1/jaP7VGk+zFvMfJHnx2cayTZ0xELEdrTb
+         Fu4xxLHYTAQsOX6su6fpn2s88y2UxMzkZbV1UR5/v+ZI06lNnGDir/oKAud4OtCZK9zh
+         aCxsw5IxLjgo8iZCRzR7cRVUEJpiQvhRPm7lQfTNpoCxkYHwRYTvJTDr/ElkTAAzZjsD
+         USng==
+X-Forwarded-Encrypted: i=1; AJvYcCVWsJMKUiipfs+TncvsAnvjJtR0gqLD71Yf9Yqn70akYy64kgiDTTtGCBqQWgYvsvR1WtL7hbqDQ4bh+n4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoJhCUvZrtHrFOLT/n2x8x8EZaMuC5lgjcSpW/XnmHWqyNX2jg
+	SLShjKLHF2miXUgEyjAneGrzv5qq20cKtTsvfmqlyexLb+7TuZTFeJty2iylUl+U8zwfUmFa8NZ
+	TArk2Fq7KXizBm9NDPQn8ENgWbTkr/hZIR4ogQwTQSw==
+X-Gm-Gg: ASbGncvvrr1awx1LWKNmVbNldXlzePQCJwsfAEnLxNezulOztc4Wm0EcvQ4X0o/+puA
+	oB9zQEo0GFIveRP/jvvlSenxJk1baR7KX0X8DsusHUmxRUQuT8s83fElrskBajLN2OHulJAisEO
+	WNlPs9uMqRfm2URDndUdyeZ62KNqZrjtFqcWgTxrIUcfeGk6uv8wJI3yEVwAMiNbb0JYiZ4lzjH
+	4t+LUKygdex8gxGCKSQFMvUxljclRK0S6tYL3ISzU/eV7CQfbwtDW7OP3ngBRnmGbh11JS+hcyG
+	awZJjILhJ8DznPPh
+X-Google-Smtp-Source: AGHT+IGX7sCe3yBSSpD0fKQ5qj+HTU9dcCwL0BcXmC3wYc5Oet+hdU0LoqiU9KOpTi1hOGBZHNlYeKYBvgiefJkS4KQ=
+X-Received: by 2002:a05:6512:1509:10b0:591:d903:4384 with SMTP id
+ 2adb3069b0e04-591d90346famr6280364e87.51.1761122161816; Wed, 22 Oct 2025
+ 01:36:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: Add kernel parameter to disable trap EL0 accesses
- to IMPDEF regs
-To: Marc Zyngier <maz@kernel.org>
-CC: <corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<akpm@linux-foundation.org>, <paulmck@kernel.org>,
-	<pawan.kumar.gupta@linux.intel.com>, <mingo@kernel.org>, <bp@alien8.de>,
-	<kees@kernel.org>, <arnd@arndb.de>, <fvdl@google.com>, <broonie@kernel.org>,
-	<oliver.upton@linux.dev>, <yeoreum.yun@arm.com>, <james.morse@arm.com>,
-	<ardb@kernel.org>, <hardevsinh.palaniya@siliconsignals.io>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20251021115428.557084-1-liaochang1@huawei.com>
- <86ecqwwig3.wl-maz@kernel.org>
- <a3663aaf-14c9-4601-90e2-49650af90d7a@huawei.com>
- <867bwnwec8.wl-maz@kernel.org>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <867bwnwec8.wl-maz@kernel.org>
+References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
+ <20251006-reset-gpios-swnodes-v1-1-6d3325b9af42@linaro.org>
+ <aO1bkraNrvHeTQxE@smile.fi.intel.com> <CAMRc=Mc0E33JTettxsCEPf+K5FZ4-JOUX6tF1xq2QGr2gD0vLw@mail.gmail.com>
+ <aPiUwzpunM2FGXhX@kekkonen.localdomain>
+In-Reply-To: <aPiUwzpunM2FGXhX@kekkonen.localdomain>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 22 Oct 2025 10:35:49 +0200
+X-Gm-Features: AS18NWDiPqjfjCHvtf3wzrnnGkJ-9enbGa5nBre5wuJ8Ydlv8uKX6YeUmeqhjwA
+Message-ID: <CAMRc=MdjvbVV-m8f9+GCR3dEqf2yjYnm3q2RJJm2aZTNWYjdMw@mail.gmail.com>
+Subject: Re: [PATCH 1/9] software node: read the reference args via the fwnode API
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq200011.china.huawei.com (7.202.195.155)
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/10/22 16:05, Marc Zyngier 写道:
-> On Wed, 22 Oct 2025 02:35:02 +0100,
-> "Liao, Chang" <liaochang1@huawei.com> wrote:
->>
->> 在 2025/10/21 20:25, Marc Zyngier 写道:
->>> On Tue, 21 Oct 2025 12:54:28 +0100,
->>> Liao Chang <liaochang1@huawei.com> wrote:
->>>>
->>>> Add kernel parameter to allow system-wide EL0 access to IMPDEF system
->>>> regregisters and instructions without trapping to EL1/EL2. Since trap
->>>> overhead will compromises benefits, and it's even worse in
->>>> virtualization on CPU where certain IMPDEF registers and instructions
->>>> are designed for EL0 performance use.
->>>
->>> Since you mention virtualisation, I want to be clear: there is no way
->>> I will consider anything like this for KVM. KVM will always trap and
->>> UNDEF such register accesses, no matter where they come from (EL0 or
->>> EL1).
->>>
->>> Allowing such registers to be accessed from within a guest would make
->>> it impossible to context-switch or save/restore the guest correctly.
->>
->> You've got that right, it seems like both the guest and the host would
->> need to save and restore those IMDDEF registers with the VM or task
->> context.The only exception would be if the registers aren't for saving
->> state or configuration, but instead just act as an interface to trigger
->> a special CPU function, such as ICC_IAR1.
-> 
-> Funny that you mention the IAR register. Because contrary to what you
-> seem to indicate, IAR does impact state outside of simply acknowledging
-> an interrupt. What do you think happens to PMR, APRs, and so on?
+On Wed, Oct 22, 2025 at 10:24=E2=80=AFAM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Bartosz,
+>
+> On Wed, Oct 22, 2025 at 09:51:44AM +0200, Bartosz Golaszewski wrote:
+> > On Sat, Oct 18, 2025 at 7:35=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > On Mon, Oct 06, 2025 at 03:00:16PM +0200, Bartosz Golaszewski wrote:
+> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > >
+> > > > Once we allow software nodes to reference all kinds of firmware nod=
+es,
+> > > > the refnode here will no longer necessarily be a software node so r=
+ead
+> > > > its proprties going through its fwnode implementation.
+> > >
+> > > This needs a comment in the code.
+> > >
+> >
+> > Honestly after a second glance, I disagree. Literally a few lines befor=
+e we do:
+> >
+> > refnode =3D software_node_fwnode(ref->node);
+> >
+> > We know very well what refnode is here and why we should use fwnode
+> > API. If anything, the previous use of direct property routines was
+> > unusual. A comment would be redundant as the code is self-describing,
+> > what do you even want me to write there?
+>
+> Given that the only way the three implementations of fwnode have interact=
+ed
+> in the past has been via the secondary pointer (for software nodes) and
+> that this will continue to be an exception, I'd also add a comment. E.g.
+>
+>         /* ref->node may be non-software node fwnode */
+>
 
-Understood, acknowledging an interrupt will modify the active priority in
-APR and current running priority in RPR.
+But this becomes very clear after patch 3/9 just from looking at the
+code. Even after I removed the union, we still check for ref->swnode
+and ref->fwnode and proceeded accordingly.
 
-BR
-Liao, Chang
+Let me send a v2 and please look at the resulting code after patch
+3/9. Tell me if you still think it needs a comment.
 
-> 
-> 	M.
-> 
-
+Bart
 
