@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-865223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5BDBFC999
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BECD7BFC98D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 249006228C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD6B6E038F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36B334E75E;
-	Wed, 22 Oct 2025 14:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2CB34D936;
+	Wed, 22 Oct 2025 14:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="o3sUwyJC"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EUdSsyti"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2548D34E74D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4403831DD82
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761143203; cv=none; b=mVmlpGZKudF55qazjNYJ2oCzyhvBNitVQs74/X7sBDbpJCXZR5tzco8vaswh5w0CgpI2L7aN4O2att/U8pHFBheuncirNbFvV1c4kvd4esTZYpX36e89TJYfCsKqfT984IyU+JKeCyLl47dxB7O5I0tf0xG45EcfvMIgUEN5MdM=
+	t=1761143230; cv=none; b=OSk04gkuexg5w6Pw9uUczk4FlJ8vhTluAOpgC/GmH5okMChog85nx57JqflFNad3LEHfI+wTSr1dw5n7We25n1iLVElJrm2K34k6fV57NUUpQIx7Zw9Dk0jEUusv6xu/1Ap+E2tvdIHi8fZSIvluP5oZTQuCa73WeFlE/rn4zTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761143203; c=relaxed/simple;
-	bh=0yDEVFPlpDrDY4lSgYlw+L+esP2rwCt9Zxk6fxftYBc=;
+	s=arc-20240116; t=1761143230; c=relaxed/simple;
+	bh=d5XNWgnDyYArk7hUDnjrgs5dU/pkjGFvY/H3+MZJMN8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NgUlcm0Lv7S81uv/Rh2o8WqKrqJqbMfX0JSux4smpwyvTBpnCImT/6X4OJvTyWzvShsyIvdr+PcxL5OxkeKTFztfLyNxHX76k/qv/wwC97jl0RDJc9Nhiw1ptWLwU0jof9t0lfkxMbT/TuUOGJinzdIu1ejASoAAiH0UFP/EKjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=o3sUwyJC; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so1110322b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1761143201; x=1761748001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0HRFxOWUnlei3NJ6xug5QBfMRbuNH1+R/j9zw+bSO+A=;
-        b=o3sUwyJC/acHLcSY9yDOxrFZ7hBKAd5/1enIbUgE07v8gyAPAGSn/eIl9jYF6p+woR
-         DRc/6dMG4Lz3GzFWDZyHAsKQSM5mNeI3SvUufhW9kyAOfy9znICFuLXD/ZQ8OXwppak5
-         nzGBOCc+cVsdtFUQpPYZEPspxjpf7uZarnfsLshWejiBJsVcWUp1lrqPSZ7Sd9at+JR2
-         XVKMhvd3C4o4EbLKlFq9wBUpggphQ+UKHcv3sSHryzmnhiE21AP7JC4E+9IOsAs+0Jxy
-         cq6S9cpeK3Mx4GZgIV6yE+ehP7ISvGgS8YRj1jOmbzttqvb2K4NfGamnbysJj1/p7OA/
-         XZcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761143201; x=1761748001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0HRFxOWUnlei3NJ6xug5QBfMRbuNH1+R/j9zw+bSO+A=;
-        b=xEmqQNFnfdVcfq9aGAvC5/Ik9udjOkNDW5coHvycp30D33v2iFYkeFOVP1P7pWFmsO
-         JZNBqnr0/dvYgbE6+PYcGLYrI33pU5SYWYlRm6vfCos5lvIrWrziqtS24OEQc0nWUk+5
-         VqWVnn2sRmxUxMmHRr40mcqLoum3q505e5+KhL/lb4ZIv3OwKbpcyWRzJZ46fC8mH6Pg
-         jFW/A2eCmCUEsEGT5aUfuacGgW7MjBq7d0DTWXrOv4w865Ck0dBsSpTXBLlRdlaSwsLx
-         OcfvKPPjUJagU4SAF0hHHXkHflQSBKdpG3h5QsYLG/vsP81cEYOb6RQU7DeqsveSM+UM
-         cdYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyONjT765xRUm8b5KfQIu8YWQmqe7wWQt3+SMKNOIzI3FkBWUSbGNs/aae+8qkyJDHFPUheWZ6zeNp5JY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz63lgWUPF7wzqiq0JdfQi4vWi9LOV3usnsGvkpw3Gp0KrugqfA
-	V0vy/PF6/Bv252v4ID+7HD0a4KxLogDdC6wzAMUecMvX/tMJEJ2CtRzA16JUDqYgiw==
-X-Gm-Gg: ASbGncu6nlKPlbD/MhbLQeMbSJEYPK+yfmOTm8XzUhLYAZ9Saphnn5ZqkasrFbfvbkp
-	mbcs0MuM1uuSGOqcegsJ3cfIFOvUjgdHY5gS5Z67CHfvW5e4pKoNaHQ64gTfPxtanb6b+2BX4PQ
-	NElxYNxgCfW6bs9IyGqSrhRsyKn2UdhnME5iaCpYF9NkhmETOSiTkBTRSgMuojcGgnYu04LwgBZ
-	Bb0S2vi0ubb9+o0x0HDUcJg1rMTGzlR8n6Zzyd2KMeE53HyEyIPHEOysb9m6A5BgO5uZa6tlRiZ
-	7GXFXEfC+P9vFimWdxw4InINBlOGvdUFpaWiaLCOZ1NDaUDXdTxybi/qtsl/IQv0bgpZx4jYODO
-	pfHU2uSQ7m9a05qnSXUJQjh9PxcG3FhDhzpHFNMusZ0A6iusdMLy3zWmCxK6zDfr0yrhcCUZikK
-	d89sN/EGyhluMnaVeGoA0lXMMVXp5TyqPCKh8ZwhkGPO5KWKudAg2+bw==
-X-Google-Smtp-Source: AGHT+IFkuD3hlsYA6IEyDaofmb8SoGz5+EWzDF7yLSMdSUeC0iJHJl4cWk4F6gODzG9q9yM9CWSZRg==
-X-Received: by 2002:a17:90b:3812:b0:32e:15e9:2cbc with SMTP id 98e67ed59e1d1-33e905eec80mr2139523a91.5.1761143201070;
-        Wed, 22 Oct 2025 07:26:41 -0700 (PDT)
-Received: from ?IPV6:2401:4900:8898:a21f:edff:5244:379d:6d28? ([2401:4900:8898:a21f:edff:5244:379d:6d28])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223c7e19sm2746875a91.3.2025.10.22.07.26.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 07:26:40 -0700 (PDT)
-Message-ID: <4d87a2ef-4cc1-4774-8716-e4a3f7f346cb@beagleboard.org>
-Date: Wed, 22 Oct 2025 19:56:35 +0530
+	 In-Reply-To:Content-Type; b=oZ70V8RaiXcjM6+xcFItC2UCK52krH1JfauPV3rlsdWRRacYEFz1AuojQnmsxoYCm+WZNxP1BA0oU/4xJzUixzExh5bo+kQ8kCmbEWlbB66wQMqzjqH+z6EusKmmg4iANoym8mcDf9756nZ64d1p8ExUKDVRvRdZf7SwqbvUqMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EUdSsyti; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MAPX7W020537;
+	Wed, 22 Oct 2025 14:26:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5Tfdjt
+	RyftlOzKxBDI3Ba/xWzdPhBDRmqzDZJYzaANQ=; b=EUdSsytiEj6WDsDryz9WdZ
+	wosFz4nP1A3V6opr/fU6tT0572ujl9QcQ3K7mo1P1b6qVFaeGD43maSV+0qpqFu9
+	o6SNAo6pvKRshBc/D70m0RPie5g0gT/wnNOBXT3p6NmkBT4LBaKvpmUQr98edYr4
+	QD4jgRAW7tTjuqUxxANSPIfv1WL8xnY6aZg3eFPWog9jEFC+zVJJ6QI2mPKEkri9
+	aKR1pEAn2uZrfgM/68LgeJQBZc4bF+AbTG0ilClBPeqNR+xPPZdy5Jr61+AbsVeI
+	SF/N6oqPOsXrBonbo24lED3vtJYX26mVhT15m1hpXvrZZ5ncaJyUOwXGn2wqXxEg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31s57g1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 14:26:53 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59MBJvhV024677;
+	Wed, 22 Oct 2025 14:26:52 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqk0q8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Oct 2025 14:26:52 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59MEQcY530081634
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 Oct 2025 14:26:38 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6132B58060;
+	Wed, 22 Oct 2025 14:26:50 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84C0C5803F;
+	Wed, 22 Oct 2025 14:26:47 +0000 (GMT)
+Received: from [9.61.243.114] (unknown [9.61.243.114])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 22 Oct 2025 14:26:47 +0000 (GMT)
+Message-ID: <ee9aaeec-23bf-42ac-8a8d-4ba899cfdd13@linux.ibm.com>
+Date: Wed, 22 Oct 2025 19:56:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,106 +76,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: greybus: fw-download: Fix find firmware req
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason Kridner <jkridner@beagleboard.org>,
- Deepak Khatri <lorforlinux@beagleboard.org>,
- Robert Nelson <robertcnelson@beagleboard.org>, Dhruva Gole <d-gole@ti.com>,
- Viresh Kumar <vireshk@kernel.org>, Johan Hovold <johan@kernel.org>,
- Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251022-gb-fw-v1-1-183b18500cd5@beagleboard.org>
- <aPjIJw3ahPxnDE5Q@stanley.mountain>
- <81d8d424-ad21-490a-b071-e1b3b3564e2c@beagleboard.org>
- <aPjl7G7fmvqtgww1@stanley.mountain>
-Content-Language: en-US
-From: Ayush Singh <ayush@beagleboard.org>
-In-Reply-To: <aPjl7G7fmvqtgww1@stanley.mountain>
+Subject: Re: [next-20251022] Kernel Boot Warnings at
+ arch/powerpc/kernel/trace/ftrace.c:234
+Content-Language: en-GB
+To: Petr Mladek <pmladek@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>, joe.lawrence@redhat.com,
+        Naveen N Rao <naveen@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>, jpoimboe@kernel.org
+References: <72469502-ca37-4287-90b9-a751cecc498c@linux.ibm.com>
+ <cdf7c458-b28f-4657-8708-1f820369baa6@linux.ibm.com>
+ <aPjW3P2AU7L71S-s@pathway.suse.cz>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <aPjW3P2AU7L71S-s@pathway.suse.cz>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 4KKhWbCSXVNx6gKkG9NJUfU6lA_UrVPS
+X-Proofpoint-GUID: 4KKhWbCSXVNx6gKkG9NJUfU6lA_UrVPS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX3r42AfKyCWVy
+ NNlj1jLHeEhaYwM0vIqh8SppJWfz7Lk8AoksalUiNAB05nIX64UuE3jrMXljcoRgZg13pkUl6TS
+ qbqWXx0Fy9T1yfaNvhYLtwqsv2gloHBghF9YM3bJZ96aYDQ9KvScWNrIji3CJzyXqN8RDsTxI4V
+ iARoil7mTbeu2GDNkJTIYj/YlIqRW37sewce8hzEbh7c8R65qeoPVFb1XoUR2VWoR/VyZmGuqfn
+ Lk2qG+lPhBU5PEH4nBiZBQZmvVBhqi7QIi+CWSZtTV9d1R/Fx2ec0NVIeLUgsjLApKqFjkd//6g
+ nQBBc5gV3OH2dUiVZmpioJIjZ+LBH12InB1I+v9X/c6hc4vdKpuAD7vBbyuaZ7VvDOoSmrKlwMB
+ 49N3PcPy86HbLtzZ/ABEgg73hZphlA==
+X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f8e9ad cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=p0AH9lBHCLZ3R6_psTIA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
+ bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On 10/22/25 7:40 PM, Dan Carpenter wrote:
 
-> On Wed, Oct 22, 2025 at 07:22:49PM +0530, Ayush Singh wrote:
->> On 10/22/25 5:33 PM, Dan Carpenter wrote:
->>> On Wed, Oct 22, 2025 at 12:57:57PM +0530, Ayush Singh wrote:
->>>> diff --git a/drivers/staging/greybus/fw-download.c b/drivers/staging/greybus/fw-download.c
->>>> index 9a09bd3af79ba0dcf7efa683f4e86246bcd473a5..06f1be8f3121e29551ea8416d5ee2666339b2fe3 100644
->>>> --- a/drivers/staging/greybus/fw-download.c
->>>> +++ b/drivers/staging/greybus/fw-download.c
->>>> @@ -159,7 +159,7 @@ static int exceeds_release_timeout(struct fw_request *fw_req)
->>>>    /* This returns path of the firmware blob on the disk */
->>>>    static struct fw_request *find_firmware(struct fw_download *fw_download,
->>>> -					const char *tag)
->>>> +					const char *tag, const char *format)
->>>>    {
->>>>    	struct gb_interface *intf = fw_download->connection->bundle->intf;
->>>>    	struct fw_request *fw_req;
->>>> @@ -178,10 +178,17 @@ static struct fw_request *find_firmware(struct fw_download *fw_download,
->>>>    	}
->>>>    	fw_req->firmware_id = ret;
->>>> -	snprintf(fw_req->name, sizeof(fw_req->name),
->>>> -		 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s.tftf",
->>>> -		 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
->>>> -		 intf->vendor_id, intf->product_id, tag);
->>>> +	if (strnlen(format, GB_FIRMWARE_FORMAT_MAX_SIZE) == 0) {
->>> Change this to:
+On 22/10/25 6:36 pm, Petr Mladek wrote:
+> On Wed 2025-10-22 17:36:18, Venkat Rao Bagalkote wrote:
+>> On 22/10/25 1:52 pm, Venkat Rao Bagalkote wrote:
+>>> Greetings!!!
 >>>
->>> 	if (format[0] == '\0') {
 >>>
->>> In the caller, the assumption that format is at least
->>> GB_FIRMWARE_FORMAT_MAX_SIZE makes sense but in this function it
->>> doesn't make sense.
->> Ok, will do in the next version.
->>
->>>> +		snprintf(fw_req->name, sizeof(fw_req->name),
->>>> +			 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s",
->>>> +			 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
->>>> +			 intf->vendor_id, intf->product_id, tag);
->>>> +	} else {
->>>> +		snprintf(fw_req->name, sizeof(fw_req->name),
->>>> +			 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s.%s",
->>>> +			 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
->>>> +			 intf->vendor_id, intf->product_id, tag, format);
->>>> +	}
->>>>    	dev_info(fw_download->parent, "Requested firmware package '%s'\n",
->>>>    		 fw_req->name);
->>>> @@ -225,7 +232,7 @@ static int fw_download_find_firmware(struct gb_operation *op)
->>>>    	struct gb_fw_download_find_firmware_request *request;
->>>>    	struct gb_fw_download_find_firmware_response *response;
->>>>    	struct fw_request *fw_req;
->>>> -	const char *tag;
->>>> +	const char *tag, *format;
->>>>    	if (op->request->payload_size != sizeof(*request)) {
->>>>    		dev_err(fw_download->parent,
->>> We have changed the sizeof(*request) but we haven't changed
->>> ->payload_size so how can this ever be true?  Did you test this change?
->>
->> The request originates in greybus node. The payload size here is calculate
->> from the greybus message header. It is not a hard coded value. So as long as
->> the node sets it correctly, it will work fine.
-> I guess, how was this working for other people then?  It seems like a
-> behavior change.
+>>> IBM CI has reported kernel boot warnings with next-20251022 kernel. I
+>>> see there are couple of warnings hit and eventually system boots to
+>>> emergency mode.
+>>>
+>>>
+>> With the identified first bad commit, is casuing the kernel to boot to
+>> emergency mode. I reverted the bad commit and built the kernel, then kernel
+>> is booting fine, but with boot warnings.
+> I guess that it is the same problem which should get fixed by the patch
+> https://lore.kernel.org/r/e52ee3edf32874da645a9e037a7d77c69893a22a.1760982784.git.jpoimboe@kernel.org
 
 
-Well, it is technically a breaking change, if any device was already 
-using fw download protocol. With that said, I have no idea who is using 
-greybus right now. And since the changes are in staging drivers, it 
-probably is fine.
+Thank you Petr, for pointing to the fix patch. It fixes the kernel 
+booting to emergency mode.
 
-I don't really know if the spec came first or linux implementation. But 
-one of them is currently incorrect.
+But boot warning still persists.
 
-Just to clarify, greybus-for-zephyr is not the original or source of 
-truth implementation of greybus. I just found the inconsistency between 
-what the spec says, and what Linux kernel implements and thought that 
-spec should probably have higher priority.
+Regards,
 
+Venkat.
 
-Best Regards,
-
-Ayush Singh
-
+>
+> Best Regards,
+> Petr
 
