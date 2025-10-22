@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-864504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322FDBFAEB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:35:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF56ABFAED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AECD1A019A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:35:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3BF46614E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E9830AAD3;
-	Wed, 22 Oct 2025 08:35:21 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11E230AAC7;
+	Wed, 22 Oct 2025 08:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="glKVQn8w"
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5324030AABC;
-	Wed, 22 Oct 2025 08:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27143231836;
+	Wed, 22 Oct 2025 08:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761122121; cv=none; b=rrUl8BaeX0K/puAmQP4EfMrat/Xmp9Lq/xjf7cb3DuUv+qefIZSmBnnF1+r5SSzXxnMa6/z+zh+70bFRj/uRgq7Nk2OmRZXrlywzKvTOWrMtVimSrEkkOo0A9+QhtwTI6RthD4QKLKJyY7+ziugIFfcRnDCUt/6EQZbrU0MlS6g=
+	t=1761122136; cv=none; b=sAc6d2sa09ljrcqiuYNYjDn79vr45qSpR8GPB+XSLuf6gM+BL0fgTqQs0JryXLLC9P8PHPxcW0c2s2w44Flw+0bumfNW4I+cTWWkHIb+Y6aTxEvDvau1u1qKqrF1TAsJgnfXFX1xEuLbrdEtD4g2/ygrV2U1cbhNp/kdybKZd1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761122121; c=relaxed/simple;
-	bh=+XIX1vN/LQgjrQdE+e8SVS3VvbPoJ2R48wrnq1lpBU4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=OSGRWV7EG/8wVESO/82H+67pRYY43Hii6kGbTdytnjX8EP2ltrWgRJSWe9kvnPYxyWf7u2rwYjQH9zFKdrrqx+VSTTwyUtmhfugG2i/YgtJgtIJZrP5T6AHAstXbew6UzM4KaRtJgV3R99nqQI6tE7rlOgLOTW7hf0wxDFx/ZhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowAD3T6Ivl_hoxsLREw--.54099S2;
-	Wed, 22 Oct 2025 16:35:07 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: eajames@linux.ibm.com,
-	ninad@linux.ibm.com,
-	joel@jms.id.au,
-	jk@ozlabs.org
-Cc: linux-fsi@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] Once cdev_device_add() failed, we should use put_device() to decrement reference count for cleanup. Or it could cause memory leak. Although operations in err_free_ida are similar to the operations in callback function fsi_slave_release(), put_device() is a correct handling operation as comments require when cdev_device_add() fails.
-Date: Wed, 22 Oct 2025 16:34:52 +0800
-Message-Id: <20251022083452.37409-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowAD3T6Ivl_hoxsLREw--.54099S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrtF45Ary5ur13AF48GF18Grg_yoW8Jrykpa
-	1DGFyFkrW8Gr48GrsrZ3WxZFZ8C3yIv34furWfGw1IkrZxAF909r10g340ka48JFWkCF4x
-	JF9rJrykWF1DJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1761122136; c=relaxed/simple;
+	bh=L/vGTy9B1KwtO2hrIjD8ekgxf2pecL2RU1QcrP/nFZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V+27LAHX7hxN2fXt9IBE5/MZZuJZ95/T6HIc/HkhL64VG7MBrJGPC8uVq+j3IGaiieGoyVPjDTf/Wwk9+pTNY34gDkd38p01ntlQUeQ8xzeqCD309gr3UqpDfX+LaZtrox8awa+BlNOcv3/AivNvm9w4GXglawx/xzrIBgK7e7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=glKVQn8w; arc=none smtp.client-ip=113.46.200.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=qo1GdKEn3CCuaK6Y8fWzfgLn1TKUz0pavTTMmOLW4qw=;
+	b=glKVQn8wj18tptFHj8m6X5rYciJNYiahJQxQ+3zbj7Q4ExWpMvMroXlg3ZvPQXw6dxR/zXFFl
+	rRaPRt4O6Syb5VhyQSxmipNs6sZdz3hAeQgjoQ020iNkQ0m8bubRYe0CrapIFzfH/gbZ3cIKjGl
+	T97n9lWyswlVmYs5kri1Crs=
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cs2XT3rwTz12LKG;
+	Wed, 22 Oct 2025 16:34:49 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA489180495;
+	Wed, 22 Oct 2025 16:35:30 +0800 (CST)
+Received: from kwepemq200011.china.huawei.com (7.202.195.155) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 22 Oct 2025 16:35:30 +0800
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemq200011.china.huawei.com (7.202.195.155) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 22 Oct 2025 16:35:29 +0800
+Message-ID: <904828da-402f-499d-8904-250e78feafcf@huawei.com>
+Date: Wed, 22 Oct 2025 16:35:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: Add kernel parameter to disable trap EL0 accesses
+ to IMPDEF regs
+To: Marc Zyngier <maz@kernel.org>
+CC: <corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<akpm@linux-foundation.org>, <paulmck@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>, <mingo@kernel.org>, <bp@alien8.de>,
+	<kees@kernel.org>, <arnd@arndb.de>, <fvdl@google.com>, <broonie@kernel.org>,
+	<oliver.upton@linux.dev>, <yeoreum.yun@arm.com>, <james.morse@arm.com>,
+	<ardb@kernel.org>, <hardevsinh.palaniya@siliconsignals.io>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20251021115428.557084-1-liaochang1@huawei.com>
+ <86ecqwwig3.wl-maz@kernel.org>
+ <a3663aaf-14c9-4601-90e2-49650af90d7a@huawei.com>
+ <867bwnwec8.wl-maz@kernel.org>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <867bwnwec8.wl-maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq200011.china.huawei.com (7.202.195.155)
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+在 2025/10/22 16:05, Marc Zyngier 写道:
+> On Wed, 22 Oct 2025 02:35:02 +0100,
+> "Liao, Chang" <liaochang1@huawei.com> wrote:
+>>
+>> 在 2025/10/21 20:25, Marc Zyngier 写道:
+>>> On Tue, 21 Oct 2025 12:54:28 +0100,
+>>> Liao Chang <liaochang1@huawei.com> wrote:
+>>>>
+>>>> Add kernel parameter to allow system-wide EL0 access to IMPDEF system
+>>>> regregisters and instructions without trapping to EL1/EL2. Since trap
+>>>> overhead will compromises benefits, and it's even worse in
+>>>> virtualization on CPU where certain IMPDEF registers and instructions
+>>>> are designed for EL0 performance use.
+>>>
+>>> Since you mention virtualisation, I want to be clear: there is no way
+>>> I will consider anything like this for KVM. KVM will always trap and
+>>> UNDEF such register accesses, no matter where they come from (EL0 or
+>>> EL1).
+>>>
+>>> Allowing such registers to be accessed from within a guest would make
+>>> it impossible to context-switch or save/restore the guest correctly.
+>>
+>> You've got that right, it seems like both the guest and the host would
+>> need to save and restore those IMDDEF registers with the VM or task
+>> context.The only exception would be if the registers aren't for saving
+>> state or configuration, but instead just act as an interface to trigger
+>> a special CPU function, such as ICC_IAR1.
+> 
+> Funny that you mention the IAR register. Because contrary to what you
+> seem to indicate, IAR does impact state outside of simply acknowledging
+> an interrupt. What do you think happens to PMR, APRs, and so on?
 
-Found by code review.
+Understood, acknowledging an interrupt will modify the active priority in
+APR and current running priority in RPR.
 
-Cc: stable@vger.kernel.org
-Fixes: 371975b0b075 ("fsi/core: Fix error paths on CFAM init")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/fsi/fsi-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+BR
+Liao, Chang
 
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index c6c115993ebc..444878ab9fb1 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -1084,7 +1084,8 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
- 	rc = cdev_device_add(&slave->cdev, &slave->dev);
- 	if (rc) {
- 		dev_err(&slave->dev, "Error %d creating slave device\n", rc);
--		goto err_free_ida;
-+		put_device(&slave->dev);
-+		return rc;
- 	}
- 
- 	/* Now that we have the cdev registered with the core, any fatal
-@@ -1110,8 +1111,6 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
- 
- 	return 0;
- 
--err_free_ida:
--	fsi_free_minor(slave->dev.devt);
- err_free:
- 	of_node_put(slave->dev.of_node);
- 	kfree(slave);
--- 
-2.17.1
+> 
+> 	M.
+> 
 
 
