@@ -1,221 +1,115 @@
-Return-Path: <linux-kernel+bounces-864701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70439BFB607
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:21:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59650BFB604
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FD33BA3A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:20:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 269614F96AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B792472A8;
-	Wed, 22 Oct 2025 10:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAA930E83A;
+	Wed, 22 Oct 2025 10:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0w1BNJ1Z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JCscBRwS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qrve+zWM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eJitEPD/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q5eXYtvb"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D09E320CBC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC2D3161AF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128446; cv=none; b=mpLzCu9P7DFjpgv0guDFSPv0DA9StPr1WukpUtdAskLAow6ZG14l7pCtap8LbgJ3ZL/9oCbxAYKAd/ShDCO0EoVf4yYju15oS9C0/cStw9oUnm14utXVvmr4u3BFus/oHi/4ISJZdA0CscRFfTs6LQlxnlz678Q4bfZ37hgjgh0=
+	t=1761128443; cv=none; b=db8yXKPw22peiTrQl3C8fxlF/xt3LEJOdjiXMqT8lZJQfJAP8GKRdvuUUUtpeDwnksEmlUsirC665VPONc4g46RrWutGnRlCJdiTmm72vZtIkcKzpPTlpU/88Z0+JtfC4f5dweX0MSTGwx4klEaASNyeu6S5E5FJDTYgQE8uAy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128446; c=relaxed/simple;
-	bh=W9MU3UI0PSgQhppu268MAg9nVnu3hwK8wLZCL+mggs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ww91EYOQulmVYpxF2mLdFYWGOOts5kOxM2CAEnZpaA5ljVFBHQbeXRLUfoZvGwx/g8m8SagB1P4KAe37gzfvRwZ93Fb0shppCInpUy6OF6DsPF/qG7f+19YNVgs5rztiP5o+W3ms/JqfEEdP8tlzG7VJ4jZAEekBRmUp4cFVu/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0w1BNJ1Z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JCscBRwS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qrve+zWM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eJitEPD/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7D0732122A;
-	Wed, 22 Oct 2025 10:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761128438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zskCrnUY2EUoI5XWmRf0itzHSRHNO4h9d9UAbCMcghI=;
-	b=0w1BNJ1Z3PNLTj+jUMAnq1MTR0YHPLMdC9pENR7+80tXHd6hx7UwS7Qav7EG05Hr/NZppc
-	0nV2frKrQCjyDYnKvL5ZpbiXG9zcaEiFzW4QOmhJnIqCE9h+ahCSQYJo/1eg/2EufbFm0D
-	BivNkxZWkXBqU18p5eRh/MucNppnElM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761128438;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zskCrnUY2EUoI5XWmRf0itzHSRHNO4h9d9UAbCMcghI=;
-	b=JCscBRwS8M/H7GhvN3hOOMgzP7cgD8aIq7MPJYck1n4UhSZtNH1bpZtaUj4BRhvVkSobIn
-	iI5TJ1YS8TpH8PBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qrve+zWM;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="eJitEPD/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761128434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zskCrnUY2EUoI5XWmRf0itzHSRHNO4h9d9UAbCMcghI=;
-	b=qrve+zWMBInVlW6h7rK63dAikSSN+XGBW86guFSXYHYSMCd/f+geN+56sTwUN/lsgcue0a
-	BDy+IoGfx5oazFE4sk7ThexrO23S1zgzlTLCmdEhmP3iGt8AimcyMIoy33IggGPcvJvdIb
-	qKILnXryWFvaeZeDp8stJw9Xy7LHPfU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761128434;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zskCrnUY2EUoI5XWmRf0itzHSRHNO4h9d9UAbCMcghI=;
-	b=eJitEPD/4cXM6EV2BB6G0l/Torm1ldQayaIrSDVHgEmps8WM3cIx8pnYQoUxPiXlAvxEKA
-	7q96RilP8JUp7iBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0388713A29;
-	Wed, 22 Oct 2025 10:20:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id I3b/OfGv+GgXNwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 22 Oct 2025 10:20:33 +0000
-Message-ID: <e2462c92-4049-486b-92d7-e78aaec4b05d@suse.de>
-Date: Wed, 22 Oct 2025 12:20:33 +0200
+	s=arc-20240116; t=1761128443; c=relaxed/simple;
+	bh=bsLcKTPJEYIr6iWd2hSD2/QqBkscjLQjYwtElmBwUuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppvFl6HLNeWwfJTD7YAovDoUbYDYKlBH0RPaqugLniS91KOQ2xLbl3WhNT/5AAwG1sfS5MeyywV2jfmvQ5ZR71YZR68jSB9UwlcHZkwKyHsw9ZqjYMxQdrvmD+Ks+ftCDuYKMnkvknaxIB7ZX2ZXdlmrGy1HGYquRr5muagcZW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q5eXYtvb; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33c4252c3c5so4841820a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761128441; x=1761733241; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+BERCfgvcR5X/QpiR51/cu4DL63bwSFg1M/A5GNtaI=;
+        b=Q5eXYtvbRn1VEpYB+ckss1F1GCQzUuvuD/3fl40yNikmpxtheQ7sMn5qQvpyDoulT+
+         NuvQXfh9fYXtofOxyEbl6d7RyO70TDEpg64rLRY8Z4vUP9uKQlEXiNkM1M+iM6F81x/F
+         ua9PH5RaMRdzQEV2yy93eyH5PdcySO3Av4XbIIZheaM0qTCVtAjaw4K1QPiveyzwKtZk
+         IHMzU7jBq7zstnoUb6xfZhwSbD/kOa0yLlP1eyBnchlHBEhyO1/otNkfaRLrm8zT1jgP
+         a1tsraAlVachrcTJG4BJNiELwejevit8YN2V0suucIcaXRrV24RUpbMYkEFrEBAwVusc
+         SddA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761128441; x=1761733241;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v+BERCfgvcR5X/QpiR51/cu4DL63bwSFg1M/A5GNtaI=;
+        b=RLpWsrRTP4dZwX5f4fs6lrxzaqpuyxVBxDblArA/q0MqNAPFqhVptzh3D2J31Gfmzv
+         /aOApR0N0i8ehTVSWgZpXytnifq6gtuRG/PKQKqVEDAMuEPemnOxWCUTaNolfwY2az0U
+         b5Ll+prwKj0mi898KinOtlBKXKQ2XvD4Nn0UCP0+SNOBInA3NxptOGmu6c/+TcQ1Q4Bw
+         0OlzWkEjQpTSK3bUiUrABR0SNm6x5bEdjFL7ulxQF4PLf8DsLe+yrX3fxd0THljrzTFh
+         vbUTbmA5XWbioLXcp5AQjFjqjum0IyqxxV73GABZOKKbtMj3+gx/Fq0bPvWRm7yW/dVz
+         Y3Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpK1TuiE8SXn73G2G1vdIoC0Wv0Su3ez/yXmNMb/AAwV7rfwsIwDOe6UDf7a8UOGz/7GPkw6pb21w8z6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZs1m5T5586l66ItEauDnLW2mAcdufW6DSDjLYw4et5i/4YhmN
+	rLwDSeDaBJBDMUNdORrPIwtJBfpbnC+C/s9mU2Bl+6ZZ2QeBIluTMWo2VFQlyumirGY=
+X-Gm-Gg: ASbGncuNVQhuvHzZzIeIkmiSfGFPMZvKw/62W4jjzzTRmfWn1Udzh+seU3bK3MIMlTm
+	uG6+ZItpY6XeuGL13jRclfJ0/7xGBQOIfmtKr4ChxVXrhyjWegK8zCu+G64/x4FXC+MwBXluhYB
+	g6BlpwJDelLE1MLmNQgFO0xdUYoLj8uqGymQi7GvsJ2SPAwkgPnWOi283FvbEz5NSS5zy4ofdg9
+	ZuJrNIn87/M/eJh2S87W7vsJDqiExMOJ3Qc6y8VHzMuRWRkBkrOgBPJKFhCgWqNT11CEQ57Wbwa
+	gohyKdpNAfNPmZ6pbQ656TRcuSOhsBBE3JRiZzAkqiaOyQ6S+Su662f5rGUukTxD1RZ7FiiJ2+A
+	49fuCeAIyU/nXwAIizwm9OkKW/457TFjvUcd/JRTgTj1jYz2XdKmG/DnLqHyC21+hYk4NulxcML
+	4j8ET77pHBKye8
+X-Google-Smtp-Source: AGHT+IEPudXWObjJLDv2XWqM26sgZsiKQXdb5QBSpUD/P+viWtBD0+IrqTmFx+e1SWZr7yyFfz4vMg==
+X-Received: by 2002:a17:90b:5105:b0:32d:dc3e:5575 with SMTP id 98e67ed59e1d1-33bcf8625b0mr23541723a91.5.1761128440788;
+        Wed, 22 Oct 2025 03:20:40 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223f0124sm2159272a91.11.2025.10.22.03.20.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 03:20:40 -0700 (PDT)
+Date: Wed, 22 Oct 2025 15:50:37 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Joe Perches <joe@perches.com>
+Cc: Ally Heev <allyheev@gmail.com>, 
+	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andy Whitcroft <apw@canonical.com>, workflows@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, David Hunter <david.hunter.linux@gmail.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-pm <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] checkpatch: add uninitialized pointer with __free
+ attribute check
+Message-ID: <a6yf3ms7smzjfcm54z7khg6g3zpepqwxcbhwzm74dk33famolr@s2at2tnyxoed>
+References: <20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com>
+ <5e11f1bacb6430e1331f02e3e0e326a78e5b0d12.camel@perches.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED] Screen goes blank with ASpeed AST2300 in
- 6.18-rc2
-To: Peter Schneider <pschneider1968@googlemail.com>,
- regressions@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Cc: dri-devel@lists.freedesktop.org, stable@vger.kernel.org,
- jfalempe@redhat.com, airlied@redhat.com, dianders@chromium.org,
- nbowler@draconx.ca, Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thorsten Leemhuis <regressions@leemhuis.info>
-References: <20251014084743.18242-1-tzimmermann@suse.de>
- <a40caf8e-58ad-4f9c-af7f-54f6f69c29bb@googlemail.com>
- <43992c88-3a3a-4855-9f46-27a7e5fdec2e@suse.de>
- <798ba37a-41d0-4953-b8f5-8fe6c00f8dd3@googlemail.com>
- <bf827c5c-c4dd-46f1-962d-3a8e2a0a7fdf@suse.de>
- <5f8fba3b-2ee1-4a02-9b41-e6e1de1a507a@googlemail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <5f8fba3b-2ee1-4a02-9b41-e6e1de1a507a@googlemail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7D0732122A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[googlemail.com,lists.linux.dev,vger.kernel.org];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[googlemail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e11f1bacb6430e1331f02e3e0e326a78e5b0d12.camel@perches.com>
 
-Hi
+On 21-10-25, 10:06, Joe Perches wrote:
+> There are many uses in drivers/opp/ that could be updated where
+> the initialization is done after the definition like the below:
+> (I've added the opp maintainers to the cc's)
+> 
+> drivers/opp/core.c-unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
+> drivers/opp/core.c-{
+> drivers/opp/core.c:     struct opp_table *opp_table __free(put_opp_table);
+> drivers/opp/core.c-
+> drivers/opp/core.c-     opp_table = _find_opp_table(dev);
 
-Am 22.10.25 um 11:16 schrieb Peter Schneider:
-> Am 22.10.2025 um 11:11 schrieb Thomas Zimmermann:
->> Hi
->>
->> Am 22.10.25 um 10:08 schrieb Peter Schneider:
->>>
->>> Your patch applied cleanly against 6.18-rc2 and the kernel built 
->>> fine, but unfortunately it did not solve the issue: my console 
->>> screen stays blank after booting. This is regardless whether I do a 
->>> soft reboot, press the reset button or power cycle and do a cold 
->>> boot. They are all the same.
->>
->> Just to be sure: you do see output at the early boot stages (BIOS, 
->> boot loader). It's at some later point during boot, the driver loads 
->> and the display blanks out?
->
-> Yes, that's correct.
->
->> There's another patch attached. does this make a difference?
->
-> Do I have to apply that against base 6.18-rc2 or against 6.18-rc2 + 
-> your previous patch?
-
-Base 6.18-rc2. All the patches are against this.
-
-Best regards
-Thomas
-
->
->
-> Beste Grüße,
-> Peter Schneider
->
+https://lore.kernel.org/all/45a64ff434a027c296d1d5c35f442e51378c9425.1761128347.git.viresh.kumar@linaro.org/
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+viresh
 
