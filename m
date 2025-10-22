@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-865248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38001BFC96C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3821FBFC9B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B46944EABC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011D7189E2D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD6734D4F2;
-	Wed, 22 Oct 2025 14:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP9wbkEh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AD3348440;
+	Wed, 22 Oct 2025 14:36:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6855354AF5
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D47345749
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761143656; cv=none; b=sYct1M2KTONIthzF+AJ3k2VZm57FbccmvfjMVBiGtqR2IAnWs56C3WMp832YtJztdksvmEjOMEUni3gOiWic0UWQwPv5UEOQJIw8Jmgnfj9MVhnCJEhaGAgur/dRtUelrRkb9JUAhmFSTXN82UEd0JxGYzNHrXuez2FD02+3sl8=
+	t=1761143765; cv=none; b=Z3utKDeyCm1E2soGdmxsq2aCYEsWWCq3Zznim3cypYSbIW/yn1E3fCddGulGNsVIv/MIGSy0oVq9aEQ8M09u7LaQo3eMALa4hJoZmhTYxPsJCzQMSBbwPsKKaKz1v1LuOvfuEASvIErU5DdrmYvZCOfi2DxIr8F6IevIXUTrI5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761143656; c=relaxed/simple;
-	bh=PE0w9weBA06UY1ADMvuQ7RDRF1VFjwoEQh225hRpYZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvUQfaFZQUX30gO3Y9Tv092GJXasxdqDwsQLgwwsLwly/aSEpMqDoVOtKQGsLJvBRdV3VTCk4b3nXhfJg2Os3BMVUA6aQHG1oUJ5ijwc1d5VYDsvqMHP+lA25d/CV/GU1pIk3EYulKuJWWBFXVw/X2liqo2ICIZHZxvmvQMTwQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cP9wbkEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96649C4CEE7;
-	Wed, 22 Oct 2025 14:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761143655;
-	bh=PE0w9weBA06UY1ADMvuQ7RDRF1VFjwoEQh225hRpYZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cP9wbkEhPM5LIDakVffo66AHNLBN+38mt7kw0Nz1jjGM2DTXe/G7XuJ/6OFlVBDOR
-	 13ysGZEgl7Yl6Kk7OLgtMXAGd+Rc/TAHxOWT5ohaXNSYIWzV1lGviaTtyV/yQXdjhq
-	 kh6G0Dujl3w7LOIfgQW/e/jH/m9lfkPmqFaif4OrMHSPse4klWA1BdT76iUoBIHvKL
-	 qkzYWKIk6slN1bfOqe+4G2oUCFmRrjagLn1fpxjjhAFqCvjDzlIZd/Jpt7HIfH+a/D
-	 XkxNnpKeeolCDTKG2t0QQK573TSGGgDAGoOHy62RkvYg1tvs9a4RfHZbeRybsew7qp
-	 NBpmfpZajkRGA==
-Date: Wed, 22 Oct 2025 15:34:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: muchun.song@linux.dev, osalvador@suse.de, david@redhat.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
-Subject: Re: [PATCH v8] hugetlbfs: move lock assertions after early returns
- in huge_pmd_unshare()
-Message-ID: <080b64d6-7bc3-4ba6-ab76-e1fe728bff88@sirena.org.uk>
-References: <20251014113344.21194-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1761143765; c=relaxed/simple;
+	bh=Wu5rZHMzYLt2RiYSEnQ1RuSsngV3ZNLqvw84JEA3ca4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=k5+8aQWG5+EKeMdLbrRhM6lGjXbMpB0K4HznXo1vMC1Gysb7qIoF6kdQiZaXhl5wlxyLeQVWEh48qSNMe2XReB63uX70adL/ISg0eTKL5LWVEnch1W3qqypEfMLm/aBbwuih3giduA4R0AtP0CpP28VwhzeEPV9Kl9Ln2NmUm9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430db5635d6so51128185ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:36:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761143762; x=1761748562;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W4UYY90v7X60QSZjwoFVDKF1Ze5jVrj2B7b+JPnxtdc=;
+        b=KtbQXpU+nxkjf7fD/hVcWx06Q8LRpePOiXgXtVt8+Urs9xwy9+fFnTvQi2pC0FsT+A
+         6C2rK0vtI/HERk3nSph6JLqtCpVDnhtGzUttXkKqLCuyxsFM860d04WEGQIVZ5P1AC0M
+         2BKWStebM2hqLTwduhb/R+qP86Kmq9tXLirT0BmTUAqpnIDqZWgRHFeUU05N1rafr3sl
+         GJCg3HFE0DqQJNZFEJM0XQLBZP0KbT4y4HflliCgTXisB+78gHg6rmscvC075e8/U+cg
+         SYh/hKbeA2Rv9wosUYLBVjaAp8HizaunZGvEEslKaoJItd7Qz+qs6mt3n7WOaQU23Zoq
+         6wfw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5O6P6xnmW2hqAxHiP6HGPSdQzbcZXSI3u1hq7syVU3lNdiqdxWMfo9xJ5EGWal9LlANNBHOcoXgTuII4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm7YMamPHWka54BHY7tF8FQPdkB5K5SGR4R13X9Jw1Ahe+0gSI
+	+d+36q8GfgD+62sMUmb9OsWySTz1odaJlqluUTZyO0pm69wkfHFh2ClFsBwAtHaiS8CBP5fyONE
+	dHeo9DpH6be/tXXtYENUcOnZ3YuB55no0YOQqB9Cj0iBIPJg2Lk2Ieoq6jtM=
+X-Google-Smtp-Source: AGHT+IEUH02EUHIhFiH1OpwMHevKs9QpZU7Zt8EoCv9CGBUXlIn9Nt3x36Zb9ilXgdTfy7LLCIl4NG7jSNHUOFNR1OE0dXLWEhAh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A/QWAtEIee2YEtfF"
-Content-Disposition: inline
-In-Reply-To: <20251014113344.21194-1-kartikey406@gmail.com>
-X-Cookie: Thank God I'm an atheist.
+X-Received: by 2002:a05:6e02:1605:b0:430:a7d5:235f with SMTP id
+ e9e14a558f8ab-430c52b5a72mr302828105ab.15.1761143762755; Wed, 22 Oct 2025
+ 07:36:02 -0700 (PDT)
+Date: Wed, 22 Oct 2025 07:36:02 -0700
+In-Reply-To: <20251022140016.A5JqV%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8ebd2.050a0220.346f24.0053.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_set_new_buffer_uptodate (2)
+From: syzbot <syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---A/QWAtEIee2YEtfF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Tue, Oct 14, 2025 at 05:03:44PM +0530, Deepanshu Kartikey wrote:
-> When hugetlb_vmdelete_list() processes VMAs during truncate operations,
-> it may encounter VMAs where huge_pmd_unshare() is called without the
-> required shareable lock. This triggers an assertion failure in
-> hugetlb_vma_assert_locked().
+Reported-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
+Tested-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
 
-On current mainline this translates the test from a fail to a skip on
-the Raspberry Pi 4:
+Tested on:
 
-# # -------------------------
-# # running ./hugetlb-madvise
-# # -------------------------
-# # [SKIP]
-# ok 6 hugetlb-madvise # SKIP
-# # hugepages not supported
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1046ce7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b1620e3721dc97c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=7aef76bdb53b83d62a9e
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10ba43e2580000
 
-due to:
-
-[    0.000000] Kernel command line: console=ttyS1,115200n8 root=/dev/nfs rw nfsroot=172.16.0.2:/var/lib/lava/dispatcher/tmp/1991635/extract-nfsrootfs-9ik0m73w,tcp,hard secretmem.enable hugepagesz=32M hugepages=0:4 default_hugepagesz=2M hugepages=0:128 hugepagesz=64K hugepages=0:4 kpti=off ip=dhcp
-[    0.000000] Unknown kernel command line parameters "hugepagesz=64K hugepages=0:4 default_hugepagesz=2M", will be passed to user space.
-
-which used to DTRT but I doubt is due to this specific patch...
-
---A/QWAtEIee2YEtfF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj462EACgkQJNaLcl1U
-h9C5YQf8DzoRtaemjFkXnj0s/9uWQGFbpRQHBXfRESoB/flbWhlkLXd4iI9D82Nc
-Aaeg06+b4foXvsPsacRLjZTnd65mH73P5gFN35MInqU2RvSb1RCNP8/8eJJyieeu
-s+r+EaPtFciPovmHxXaHkA4xvBVUz0q5Fty7Ndz2perwfPSWryAXyonZyw1cqJFk
-e7gtvXR7FwlZs2KyRl7XPq6RJBpN+jTHUJPMtlNsdlYgaV9n/8LyKAqL6YBHL3QT
-w9wYuSt1ijYYYCcH/xhMbUk02MD+ntabLMMTFs/4kefCvvFCDVZB9u2ucfJ0pE9e
-9oLnPQ3QJ2uo91+tvTbJWhsAEWHsfQ==
-=5pOg
------END PGP SIGNATURE-----
-
---A/QWAtEIee2YEtfF--
+Note: testing is done by a robot and is best-effort only.
 
