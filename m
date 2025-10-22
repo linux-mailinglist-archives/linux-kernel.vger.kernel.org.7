@@ -1,97 +1,346 @@
-Return-Path: <linux-kernel+bounces-865294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A41BFCBA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2ADBFCBAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCABE188CA8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:58:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C6C189086D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E6D345749;
-	Wed, 22 Oct 2025 14:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJBsOMBH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10309334C13;
-	Wed, 22 Oct 2025 14:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A7F347FFF;
+	Wed, 22 Oct 2025 14:58:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D123451C9;
+	Wed, 22 Oct 2025 14:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761145071; cv=none; b=KSNCKvOlO913KNM1hkYEPNx9pC2q2/OdTWzo0ocJJ6LPuPOXPVVKJoaKIMffPcmRIP11ib9CSaiLF8nK9yN4yZLEamyOt76C70aBNfz8jlZXDsE6qPdG0X9tBFhmZQlyOD4dchx3wTNXy7rKqxCfiv6JnLSDZ6u5X/n81JGZ5Po=
+	t=1761145096; cv=none; b=nKrBZFUDffYrDr3W1etfj4E4gC7JMAOfv/4HByzsapCBbCz5b5FvKyzCWlYXQWCg0kFhciI0FmGPJr33fSVPA5PmxD9QSALZJiaYtUEdpGAruSdW6A06sVvcAg4fRYrXhbNIZuB12+Y4ZEEQN6BG1wLbRfo1msCd8lhKnaEesFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761145071; c=relaxed/simple;
-	bh=GZ5QRVkbbDiSJaNKnQQ8671/lTx7F3GslT+/ZGbxUwE=;
+	s=arc-20240116; t=1761145096; c=relaxed/simple;
+	bh=v1fCkFl3oIrtd+iM/6lymWwvzU5bXHffbndCeeRvQjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0qkvlIo70ckQEIN1rfXUbipofzEJUv28Qaw6aZn/7hV3dwoNVrPazVuxI+MsF4/lQUsHLveCDsAheO53YJwtMoKPTQLzZh7sCprcwkoairOYiPylbAg6TII0ZLR39f0dImPFpjpfixPqucjilYlB3lWcNJu3wV2BBbHjoO7Jug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJBsOMBH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0534FC4CEE7;
-	Wed, 22 Oct 2025 14:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761145070;
-	bh=GZ5QRVkbbDiSJaNKnQQ8671/lTx7F3GslT+/ZGbxUwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rJBsOMBHN2fO74VeJwMOk7ese4i8ETeHfgkSQ7TTi1dq6WOjj7vC0yX4FjvkLiYQB
-	 QEOkO69Xb4pUIiGL0e2bBimH71pVij4FN06UzPxlUNaFsa+INGOWOz3j1Cxi4WQOYW
-	 /y/F7FCzCd5qOtZ5Y+dQg613hme1aj+HMxfdAKqMXBPelg4Ql0L+WGGy7XtmprlVG5
-	 BPZJZowVFP48rPPrQH+H14y7UMoA5WfNkIaHiAO4dMQkpsCDTx95RkE4U5BVbeAeiv
-	 Yx/MrhFhYw3bY6EzBw3dv1yfnbWgG44dolbgkuiUDzzCdkLPSNAP23cRU2+mFGDybA
-	 2DT1MvRAhLa2A==
-Date: Wed, 22 Oct 2025 15:57:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.12 000/135] 6.12.55-rc2 review
-Message-ID: <f6f6fb8c-1900-45de-b739-7cd9bd1ccf5b@sirena.org.uk>
-References: <20251022060141.370358070@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hO+e+foSzx2ptVnKZYa2PYdWbrCo1nPlw65Wn3HGFjXWt1Qwbjqf1yX6xJWS0pMtxwGF39zRZjNudoexeKkEd3v0tFPDvSXI0AjvcBT+iRCIGu6ozPPkhIAGtAOMHdYpn0e8KHTLTAqTkW2AeH670RLUXS8CDOwXqb/NVzXs3/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8357E1063;
+	Wed, 22 Oct 2025 07:58:05 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45AB03F63F;
+	Wed, 22 Oct 2025 07:58:11 -0700 (PDT)
+Date: Wed, 22 Oct 2025 15:58:08 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
+ per-arch
+Message-ID: <aPjxAIudLd16aU4Z@e133380.arm.com>
+References: <aO0Oazuxt54hQFbx@e133380.arm.com>
+ <bf18c704-66d0-40cb-8696-435ac1c928b5@intel.com>
+ <aO/CEuyaIyZ5L28d@e133380.arm.com>
+ <dd5ba9e5-9809-4792-966a-e35368ab89f0@intel.com>
+ <aPJP52jXJvRYAjjV@e133380.arm.com>
+ <e788ca62-ec63-4552-978b-9569f369afd5@intel.com>
+ <aPZaTk97RC6sg+uQ@e133380.arm.com>
+ <aPZj1nDVEYmYytY9@agluck-desk3>
+ <aPearyfcnpJJ/e06@e133380.arm.com>
+ <aPf0OKwDZ4XbmVRB@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rbPVXkhgeuN1ogkI"
-Content-Disposition: inline
-In-Reply-To: <20251022060141.370358070@linuxfoundation.org>
-X-Cookie: Remember the... the... uhh.....
-
-
---rbPVXkhgeuN1ogkI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aPf0OKwDZ4XbmVRB@agluck-desk3>
 
-On Wed, Oct 22, 2025 at 10:19:29AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.55 release.
-> There are 135 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Tony,
 
-Tested-by: Mark Brown <broonie@kernel.org>
+On Tue, Oct 21, 2025 at 01:59:36PM -0700, Luck, Tony wrote:
+> Hi Dave,
+> 
+> On Tue, Oct 21, 2025 at 03:37:35PM +0100, Dave Martin wrote:
+> > Hi Tony,
+> > 
+> > On Mon, Oct 20, 2025 at 09:31:18AM -0700, Luck, Tony wrote:
 
---rbPVXkhgeuN1ogkI
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
 
------BEGIN PGP SIGNATURE-----
+> > > Changes to the schemata file are currently "staged" and then applied.
+> > > There's some filesystem level error/sanity checking during the parsing
+> > > phase, but maybe for MB some parts can also be delayed, and re-ordered
+> > > when architecture code applies the changes.
+> > > 
+> > > E.g. while filesystem code could check min <= opt <= max. Architecture
+> > > code would be responsible to write the values to h/w in a sane manner
+> > > (assuming architecture cares about transient effects when things don't
+> > > conform to the ordering).
+> > > 
+> > > E.g. User requests moving from min,opt,max = 10,20,30 to 40,50,60
+> > > Regardless of the order those requests appeared in the write(2) syscall
+> > > architecture bumps max to 60, then opt to 50, and finally min to 40.
+> > 
+> > This could be sorted indeed be sorted out during staging, but I'm not
+> > sure that we can/should rely on it.
+> > 
+> > If we treat the data coming from a single write() as a transaction, and
+> > stage the whole thing before executing it, that's fine.  But I think
+> > this has to be viewed as an optimisation rather than guaranteed
+> > semantics.
+> > 
+> > 
+> > We told userspace that schemata is an S_IFREG regular file, so we have
+> > to accept a write() boundary anywhere in the stream.
+> > 
+> > (In fact, resctrl chokes if a write boundary occurs in the middle of a
+> > line.  In practice, stdio buffering and similar means that this issue
+> > turns out to be difficult to hit, except with shell scripts that try to
+> > emit a line piecemeal -- I have a partial fix for that knocking around,
+> > but this throws up other problems, so I gave up for the time being.)
+> 
+> Is this worth the pain and complexity? Maybe just document the reality
+> of the implementation since day 1 of resctrl that each write(2) must
+> contain one or more lines, each terminated with "\n".
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj48OcACgkQJNaLcl1U
-h9BCVAf/bnyDYnsUiQ3ORHEiMa0REL0oChnA170+LYSuFR8qFkKyRxJ4fOzSY1Ut
-l+z8J8wyMPbc7I0dg/9WfIc2S6xIG28Kj1NWWGMePPXpfUBQwnBhn6vo543/Pk5L
-oNDDbRmC4xXKbYV3P/p6ufu/WWo4tBEDtL2UVb7h74yWuGiRsa8+cN2DH0w0U2q+
-ztpIbd1PEpaigEA4O+ayDYtTtQjY6nule/QfQ2boGCtQ05l6Tii9im40UpFNjVc/
-y3Vqf9SUKMzAlMQ193tQ2AewiStxsQ6sptAMeyLEm9KqOBTPeHAyJhvTX3b9YEj2
-ohE/Tp5QPq/G4mX6bxKCKiTTZUMNyQ==
-=/wal
------END PGP SIGNATURE-----
+<soapbox>
 
---rbPVXkhgeuN1ogkI--
+We could, in the same way that a vendor could wire a UART directly to
+the pins of a regular mains power plug.  They could stick a big label
+on it saying exactly how the pins should be hooked up to another low-
+voltage UART and not plugged into a mains power outlet... but you know
+what's going to happen.
+
+The whole point of a file-like interface is that the user doesn't (or
+shouldn't) have to craft I/O directly at the syscall level.  If they
+have to do that, then the reasons for not relying on ioctl() or a
+binary protocol melt away (like that UART).
+
+Because the easy, unsafe way of working with these files almost always
+works, people are almost certainly going to use it, even if we tell
+them not to (IMHO).
+
+</soapbox>
+
+
+That said, for practical purposes, the interface is reliable enough
+(for now).  We probably shouldn't mess with it unless we can come up
+with something that is clearly better.
+
+(I have some ideas, but I think it's off-topic, here.)
+
+> There are already so many ways that the schemata file does not behave
+> like a regular S_IFREG file. E.g. accepting a write to just update
+> one domain in a resource: # echo L3:2=0xff > schemata
+
+That still feels basically file-like.  I can write something into a
+file, then something else can read what I wrote, interpret it in any
+way it likes, and write back something different for me to read.
+
+In our case, it is as if after each write() the kernel magically reads
+and rewrites the file before userspace gets a chance to do anything
+else.  This doesn't work as a protocol between userspace processes, but
+the kernel can pull tricks that are not available to userspace -- so it
+can be made to work for user <-> kernel protocols (modulo the issues
+about write() boundaries etc.)
+
+> So describe schemata in terms of writing "update commands" rather
+> than "Lines"?
+
+That's reasonable.  In practice, each line written is a request to the
+kernel to do something, but it's already the case that the kernel
+doesn't necessarily do exactly what was asked for (due to rounding,
+etc.)
+
+
+Overall, I think the current state of play is that we need to consider
+the lines to be independent "commands", and execute them in the order
+given.
+
+That's the model I've been assuming here.
+
+
+> > We also cannot currently rely on userspace closing the fd between
+> > "transactions".  We never told userspace to do that, previously.  We
+> > could make a new requirement, but it feels unexpected/unreasonable (?)
+> > 
+> > > > 
+> > > > "So, from now on, only write the things that you actually want to set."
+> > > > 
+> > > > Does that sound about right?
+> > > 
+> > > Users might still use their favorite editor on the schemata file and
+> > > so write everything, while only changing a subset. So if we don't go
+> > > for the full two-phase update I describe above this would be:
+> > > 
+> > >   "only *change* the things that you actually want to set".
+> 
+> I misremembered where the check for "did the user change the value"
+> happened. I thought it was during parsing, but it is actually in
+> resctrl_arch_update_domains() after all input parsing is complete
+> and resctrl is applying changes. So unless we change things to work
+> the way I hallucinated, then ordering does matter the way you
+> described.
+
+Ah, right.
+
+There would be different ways to do this, but yes, that was my
+understanding of how things work today.
+
+> > 
+> > [...]
+> > 
+> > > -Tony
+> > 
+> > This works if the schemata file is output in the right order (and the
+> > user doesn't change the order):
+> > 
+> > # cat schemata
+> > MB:0=100;1=100
+> > # MB_HW:0=1024;1=1024
+> > 
+> > ->
+> > 
+> > # cat <<EOF >schemata
+> > MB:0=100;1=100
+> > MB_HW:0=512,1=512
+> > EOF
+> > 
+> > ... though it may still be inefficient, if the lines are not staged
+> > together.  The hardware memory bandwidth controls may get programmed
+> > twice, here -- though the final result is probably what was intended.
+> > 
+> > I'd still prefer that we tell people that they should be doing this:
+> > # cat <<EOF >schemata
+> > MB_HW:0=512,1=512
+> > EOF
+> > 
+> > ...if they are really tyring to set MB_HW and don't care about the
+> > effect on MB?
+> 
+> I'm starting to worry about this co-existence of old/new syntax for
+> Intel region aware. Life seems simple if there is only one MB_HW
+> connected to the legacy "MB". Updates to either will make both
+> appear with new values when the schemata is read. E.g.
+> 
+> # cat schemata
+> MB:0=100
+> #MB_HW=255
+> 
+> # echo MB:0=50 > schemata
+> 
+> # cat schemata
+> MB:0=50
+> #MB_HW=127
+> 
+> But Intel will have several MB_HW controls, one for each region.
+> [Schemata names TBD, but I'll just call them 0, 1, 2, 3 here]
+> 
+> # cat schemata
+> MB:0=100
+> #MB_HW0=255
+> #MB_HW1=255
+> #MB_HW2=255
+> #MB_HW3=255
+> 
+> If the user sets just one of the HW controls:
+> 
+> # echo MB_HW1=64
+> 
+> what should resctrl display for the legacy "MB:" line?
+>
+> -Tony
+
+Erm, good question.  I hadn't though too carefully about the region-
+aware case.
+
+I think it's reasonable to expect software that writes MB_HW<n>
+independently to pay attention only to these specific schemata when
+reading back -- a bit like accessing a C union.
+
+# echo 'MB:0=100' >schemata
+# cat schemata
+->
+	MB:0=100
+	# MB_HW:0=255
+	# MB_HW0:0=255
+	# MB_HW1:0=255
+	# MB_HW2:0=255
+	# MB_HW3:0=255
+
+# echo 'MB:0=100' >schemata
+# cat schemata
+->
+	MB:0=50
+	# MB_HW:0=128
+	# MB_HW0:0=128
+	# MB_HW1:0=128
+	# MB_HW2:0=128
+	# MB_HW3:0=128
+
+# echo 'MB_HW:0=127' >schemata
+# cat schemata
+->
+	MB:0=50
+	# MB_HW:0=127
+	# MB_HW0:0=127
+	# MB_HW1:0=127
+	# MB_HW2:0=127
+	# MB_HW3:0=127
+
+# echo 'MB_HW1:0=64' >schemata
+# cat schemata
+->
+	MB:0=???
+	# MB_HW:0=???
+	# MB_HW0:0=127
+	# MB_HW1:0=64
+	# MB_HW2:0=127
+	# MB_HW3:0=127
+
+The rules for populating the ??? entries could be designed to be
+somewhat intuitive, or we could just do the easiest thing.
+
+So, could we just pick one, fixed, region to read the MB_HW value from?
+Say, MB_HW0:
+
+	MB:0=50
+	# MB_HW:0=127
+	# MB_HW0:0=127
+	# MB_HW1:0=64
+	# MB_HW2:0=127
+	# MB_HW3:0=127
+
+Or take the average across all regions:
+
+	MB:0=44
+	# MB_HW:0=111
+	# MB_HW0:0=127
+	# MB_HW1:0=64
+	# MB_HW2:0=127
+	# MB_HW3:0=127
+
+The latter may be more costly or complex to implement, and I don't
+know whether it is really useful.  Software that knows about the
+MB_HW<n> entries also knows that once you have looked at these, MB_HW
+and MB tell you nothing else.
+
+What do you think?
+
+I'm wondering whether setting the MB_HW<n> independently may be quite a
+specialised use case, which not everyone will want/need to do, but
+that's an assumption on my part.
+
+Cheers
+---Dave
 
