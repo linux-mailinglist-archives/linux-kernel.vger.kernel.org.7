@@ -1,90 +1,318 @@
-Return-Path: <linux-kernel+bounces-864378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F50BFAA66
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:44:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD0EBFAA78
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0593B1884D14
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:44:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F9CF504EEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432BC2FB63F;
-	Wed, 22 Oct 2025 07:44:12 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A442D2F3C0F;
+	Wed, 22 Oct 2025 07:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtxWl178"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CFB2F363E;
-	Wed, 22 Oct 2025 07:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65C22F363E;
+	Wed, 22 Oct 2025 07:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761119051; cv=none; b=CkFGgPE166L1CPfiGzjRGs6r6UGj8xLP0TLhHWNXB1vDz2UulEZ86vnkyWSMBLovgp0NoFoP0SDP1oZHshYx2IkQXlsAmWIiYbozmXgePj1NwdMt41kcuAC/gjWwUu+jEMhc60vQvNGuMP115au4oUIufvulkBTA+NerVnY1VMw=
+	t=1761119083; cv=none; b=Q3u39RxM4euu5ss7U4ioNu9Lg5Nc+OLb+ur7Uudv1eaxJzfXkzabt+AujZvgRI+2wQJd+AuQ90567Fg9d5QsacKNfIpX4QDlig+bmP+y1aj/XVak31odd1blo4Jnh9SqFoNUaooYsr5LcAIJzjxtbfsy0r+3zn7xFWX+jFdkI8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761119051; c=relaxed/simple;
-	bh=XQx3qbe79Kfhx22bv+5o8DNEVPYQT8TWBHY8L+dYOc4=;
+	s=arc-20240116; t=1761119083; c=relaxed/simple;
+	bh=dOaaUGpCoWK/3UecfDVD5nwyOjAWut3PtEie6hbPpME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rd35Ae63WhY+huhZdSmaAPu9/MByb5WFLDIVjDVjADWZm829BBsukhSEp0up4o/JI6BcI1OHUk+tq7Wd2c3QMNJgVJ6CFOmTNezakGSVtgQ7TLl0v3y5alQo1yolaZjcBd8RvUu3v59YUjOSavVmBwsIH3FKihHVzwmGaf+HODk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vBTVh-000000006x1-3nMh;
-	Wed, 22 Oct 2025 07:43:54 +0000
-Date: Wed, 22 Oct 2025 08:43:33 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=qlpesaSYb8LD1YYSsoec7VWDJ+60E6ze03BeC+CX7THE280lciaGWARstSCQMo3aHzgPxDkuDDD+h+X0oLUnl0SNFRGNkcZne/IPzOfB9HGL5y8UPnEJzMaHQqVmxyb3fTG0bf6NxcwQosTTLrLga2+ydwfjquFUCn/vxEPFqZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtxWl178; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFA7C4CEE7;
+	Wed, 22 Oct 2025 07:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761119083;
+	bh=dOaaUGpCoWK/3UecfDVD5nwyOjAWut3PtEie6hbPpME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UtxWl178ZkpUUG2PeSVOEvkUfpCWl2Z9D/H7AHnF49qhriBnzBKTAomAu0XHM79kP
+	 Qh4OA2nyXfP5c3KXZ0bfpbmrVC+k5IjtHeOjePT3P7vUUM40/ju8ykgOCgjSB84+dP
+	 bvbrOYvPJ6wwSG0253pFzGmNSLmLGf5E4TnWr07wd/Gh8I4DbbSTNMYqwl/DknLWb6
+	 qzzegwwkCUrCNpyA3hXYOCjS8jSsHhuI/GptCDOl0udsIx8KnGUdMOyZpOfaYqlope
+	 2vTADlxjpsBfJtJQj5KU5Bo6lmoUNqFseRrxGFBV/eqaJ5uAyB+JlEndQ8AA/s3wKj
+	 7z2frVqTgDKUw==
+Date: Wed, 22 Oct 2025 09:44:40 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/7] net: dsa: lantiq_gswip: clarify GSWIP
- 2.2 VLAN mode in comment
-Message-ID: <aPiLJXZu_BaZrYX6@pidgin.makrotopia.org>
-References: <cover.1760877626.git.daniel@makrotopia.org>
- <58f05c68362388083cda32805a31bc6b0fcb4bd0.1760877626.git.daniel@makrotopia.org>
- <9d0a589a-23f5-45a9-b3ab-1db10eb56af3@lunn.ch>
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: add exynos8890 SoC
+Message-ID: <20251022-affable-arrogant-coucal-3f7fbc@kuoka>
+References: <20251017161334.1295955-1-ivo.ivanov.ivanov1@gmail.com>
+ <20251017161334.1295955-2-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9d0a589a-23f5-45a9-b3ab-1db10eb56af3@lunn.ch>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251017161334.1295955-2-ivo.ivanov.ivanov1@gmail.com>
 
-Hi Andrew,
+On Fri, Oct 17, 2025 at 07:13:29PM +0300, Ivaylo Ivanov wrote:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-aud
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_AUD PLL clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: pll
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-bus0
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_BUS0 ACLK 528MHz clock (from CMU_TOP)
+> +            - description: CMU_BUS0 ACLK 200MHz clock (from CMU_TOP)
+> +            - description: CMU_BUS0 PCLK 132MHz clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: "528"
+> +            - const: "200"
+> +            - const: "132"
 
-On Wed, Oct 22, 2025 at 04:29:26AM +0200, Andrew Lunn wrote:
-> On Sun, Oct 19, 2025 at 01:46:54PM +0100, Daniel Golle wrote:
-> 61;8003;1c> The comment above writing the default PVID incorrectly states that
-> > "GSWIP 2.2 (GRX300) and later program here the VID directly."
-> > The truth is that even GSWIP 2.2 and newer maintain the behavior of
-> > GSWIP 2.1 unless the VLANMD bit in PCE Global Control Register 1 is
-> > set ("GSWIP2.2 VLAN Mode").
-> > Fix the misleading comment accordingly.
-> > 
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+We do not want the frequency here, for sure not frequency alone. There
+is no such code/syntax. Really.  Please do not invent your own style.
+That's just pclk. You describe here the logical name of this clock
+input.
 
-Thank you for reviewing, however, you've replied to the surperseded v3
-submission while v5 is current. The patches for which you sent a
-Reviewed-by:-tag have not changed since v3, except for 2/7 which is now
-using the `REGMAP_UPSHIFT(2)` macro instead of `-2` as a plain number.
-Would you mind sending the Reviewed-by:-tags again in reply to the v5[1]
-patches?
+ACLK is AXI bus clock, so if this block receives only one ACLK, then
+this is just "axi" or "bus". Recently we were calling this "bus".
 
-Cheers
+Same in other places. If two AXI bus clocks come in, they could be named
+bus0 and bus1, or in this case - because these are sources for
+generating further ACLKs - bus_528 and bus_200, to indicate that one
+will be for AXI bus clocked 528 MHz and other for 200 MHz.
 
-Daniel
+Please wait for some other opinions, because same rule I would like to
+apply to ExynosAuto, Artpec and Google GS.
 
-[1]: https://patchwork.kernel.org/project/netdevbpf/list/?series=1013992 
+@Raghav Sharma, @Alim Akhtar, @Sam Protsenko, @Peter Griffin, @Andr=C3=A9
+Draszik  - share your thoughs please?
+
+And to clarify in simple terms for others or for the future:
+1. HCLK would be the AHB bus, so also bus. Both ACLK and HCLK are for
+memory accesses.
+2. PCLK is APB bus, for registers.
+3. SCLK is for main operation of the block (called special clock, but no
+clue what is so special about it).
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-bus1
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_BUS1 ACLK 528MHz clock (from CMU_BUS0)
+> +            - description: CMU_BUS1 PCLK 132MHz clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: "528"
+> +            - const: "132"
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-ccore
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_CCORE ACLK 800MHz clock (from CMU_TOP)
+> +            - description: CMU_CCORE ACLK 264MHz clock (from CMU_TOP)
+> +            - description: CMU_CCORE ACLK G3D 800MHz clock (from CMU_TOP)
+> +            - description: CMU_CCORE ACLK 528MHz clock (from CMU_TOP)
+> +            - description: CMU_CCORE ACLK 132MHz clock (from CMU_TOP)
+> +            - description: CMU_CCORE PCLK 66MHz clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: "800"
+> +            - const: "264"
+> +            - const: g3d
+> +            - const: "528"
+> +            - const: "132"
+> +            - const: "66"
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-disp0
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_DISP0 ACLK 0 400MHz clock (from CMU_TOP)
+> +            - description: CMU_DISP0 ACLK 1 400MHz clock (from CMU_TOP)
+> +            - description: CMU_DISP0 DECON0 ECLK0 clock (from CMU_TOP)
+> +            - description: CMU_DISP0 DECON0 VCLK0 clock (from CMU_TOP)
+> +            - description: CMU_DISP0 DECON0 VCLK1 clock (from CMU_TOP)
+> +            - description: CMU_DISP0 HDMI audio clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: "0_400"
+> +            - const: "1_400"
+> +            - const: eclk0
+> +            - const: vclk0
+> +            - const: vclk1
+> +            - const: audio
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-disp1
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_DISP1 ACLK 0 400MHz clock (from CMU_TOP)
+> +            - description: CMU_DISP1 ACLK 1 400MHz clock (from CMU_TOP)
+> +            - description: CMU_DISP1 DECON1 ECLK0 clock (from CMU_TOP)
+> +            - description: CMU_DISP1 DECON1 ECLK1 clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: "0_400"
+> +            - const: "1_400"
+> +            - const: eclk0
+> +            - const: eclk01
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-fsys0
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_FSYS0 ACLK 200MHz clock (from CMU_TOP)
+> +            - description: CMU_FSYS0 USB30DRD clock (from CMU_TOP)
+> +            - description: CMU_FSYS0 MMC0 clock (from CMU_TOP)
+> +            - description: CMU_FSYS0 UFS UNIPRO20 clock (from CMU_TOP)
+> +            - description: CMU_FSYS0 PHY 24MHz clock (from CMU_TOP)
+> +            - description: CMU_FSYS0 UFS UNIPRO config clock (from CMU_T=
+OP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: "200"
+> +            - const: usb
+> +            - const: mmc
+> +            - const: unipro20
+
+Just "ufs"
+
+> +            - const: 24m
+
+No... really no. Half of these names feel random. ACLK 200 MHz is "200"
+but PHY 24 MHz is 24m... That's SCLK but I don't know from where does it
+come from, so what is the true source. Since it is used as ref clock for
+PHY, I would rather assume this is not "SCLK" but some fixed oscillator
+input. If you don't find the source of this clock giving any reasonable
+name, let it be just "sclk".
+
+I understand that without hardware manual it is difficult to figure all
+this out and my requirements here do not make it easier. I appreciate
+your work.
+
+> +            - const: unipro_cfg
+
+"ufs_cfg"
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos8890-cmu-fsys1
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (76.8 MHz)
+> +            - description: CMU_FSYS1 ACLK 200MHz clock (from CMU_TOP)
+> +            - description: CMU_FSYS1 MMC2 clock (from CMU_TOP)
+> +            - description: CMU_FSYS1 UFS UNIPRO20 clock (from CMU_TOP)
+> +            - description: CMU_FSYS1 UFS UNIPRO config clock (from CMU_T=
+OP)
+> +            - description: CMU_FSYS1 PCIe PHY clock (from CMU_TOP)
+> +            - description: CMU_FSYS1 PCIe PLL clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: "200"
+> +            - const: mmc2
+
+mmc
+
+> +            - const: unipro20
+> +            - const: unipro_cfg
+
+Please keep common part same with fsys0, so the lists share as much as
+possible.  Same for other blocks.
+
+Best regards,
+Krzysztof
 
 
