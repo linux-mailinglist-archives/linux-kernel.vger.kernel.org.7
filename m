@@ -1,113 +1,212 @@
-Return-Path: <linux-kernel+bounces-865685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D812BFDBF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:59:48 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF26EBFDBFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296BB3AB5AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:59:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 376C435863B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B292E6CDA;
-	Wed, 22 Oct 2025 17:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCA02E7BB4;
+	Wed, 22 Oct 2025 18:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNZ/D84O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S5Ws6VZD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="h8uIG2fp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fVjNoCkz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oPGTYGUM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A3B35B131;
-	Wed, 22 Oct 2025 17:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD092BEFED
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761155976; cv=none; b=F6M6bgy2HhKYTi5mZnkFqQN4gbauS5PVdF6rUFWz8MLC3vI+Nk0dNPl9o+VDJ4BVl6lMwtkn5ho/Hf5bc/OiFoVrsAKgiOvhD2z6u3C1K8d/c7LzPfMXs033DHqhNnuB/RjK4G1xo9seufIVukM1kuyMJN6MBuUr+g9vsgn+KRQ=
+	t=1761156001; cv=none; b=H1wi8eXxDKXzy8pobbMEcfJz7edRBKXvtw8vbSPyZqf7zYgC68c3goaGhq1jJyIebFDDImlYKbX1XOZS2CWUlh+iLL2ehrj+GMwpjm8Cfw1ZIHcUBm9TbxWN2U/Ds6rYvgOf9qtAqHjc0CY6FeDPkToM5ts0GKJMnB2D0DwKFoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761155976; c=relaxed/simple;
-	bh=9gx3OGdb0uIusRT1OUkumJNGerW8QboTuA02KwXp8SA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ALtrFHDsqceMXKlmjnW/nI/dfR9t112PMVdyGiqaFzCihy0PGF84OeQxMxwlIS0MK8eq4qSbd6LVhaezojhr0mDeuWhjGH6UFzhGD2HzLoRr6pDf1bsrjaZ4Db71ZHxM81TcHXu5aJ3qFeoVAmkQaJYq/1wOOQVUKDcVepo/ax4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNZ/D84O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEF8C4CEE7;
-	Wed, 22 Oct 2025 17:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761155976;
-	bh=9gx3OGdb0uIusRT1OUkumJNGerW8QboTuA02KwXp8SA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XNZ/D84OnEvWq0hPHRa2JfYwECvRchIFPwxWBOcwmcTyOTRVtou0qZVOs0Hzqtt55
-	 bmhRtjKgQLPobPbaWutj5XMInarn6n3p0Ci7nSAAhvZol1PyIZz4FlhCO5Xzybk5Ap
-	 p5PPk5+QbMfgNKZVTQwB/ah5K80YdWgL2/CcqClk9T2bsGuUHE7Le1JA0Z27yGsPoC
-	 131sA5lcua4B/QAOwg2wm1MFmn0xbE9nejABosRPJ6wXpLVFtI3oNq5rVu4k6JTrQQ
-	 Zh9fn3pfxrHxaregnyfdSIH+VrcbN5/sPU78OnCS1/MJ/8Ygd7tPpcmt1gMWISTFxL
-	 iTbRaCRExEjXw==
-Date: Wed, 22 Oct 2025 10:59:34 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH 10/10] btrfs: switch to library APIs for checksums
-Message-ID: <20251022175934.GA1646@quark>
-References: <20251018043106.375964-1-ebiggers@kernel.org>
- <20251018043106.375964-11-ebiggers@kernel.org>
- <20251022071141.GV13776@twin.jikos.cz>
+	s=arc-20240116; t=1761156001; c=relaxed/simple;
+	bh=bPFSyO8wYZ+aftzQWiED0d7GI5d9zJJvUeAFRY5v6lM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oe65s5gLsNlVblg9AtMnrxPqgToPmMrdgp1tuh9BKUrogQbZvJ1fDiIvJW7uE9Z9M9mnKYfLL1moA/v8yYIK7hQsvYaXFEj963HrgmERwUbw7eeevKSIylVTI2cz0Ufp0w2kQguo0nkCaxnhrgziiuU943Cnp6jFkorwb92z4Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S5Ws6VZD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=h8uIG2fp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fVjNoCkz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oPGTYGUM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C0B0B211EF;
+	Wed, 22 Oct 2025 17:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761155993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
+	b=S5Ws6VZDQpXUs8hKP+1klrluTXUmm6/DbdW1+GWKalcN8mugpKRJKMO7hoANcuhEVb+Ff2
+	Zr0wH7ArFZWUm7ROsBMAMofen30N1jABYTSr451WX/Mms4BahGeve5g9F9crkSFQDEFITT
+	SEGzNqv7vMK4D6EPsC7RGAdeS/4i+bE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761155993;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
+	b=h8uIG2fpLajdmf8JJafwm4+maTWMS3GAbkprZ80DGDcJpkLjAJZVvXTWfYGE9S2Q2NQSTy
+	StjMcAkVMdsremDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fVjNoCkz;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oPGTYGUM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761155989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
+	b=fVjNoCkz/IH+9cRgyV5by3uyVhZZPW5zcsdv7lWndUrJtcEHk/utbOXmCYmJnmLcvT+n0w
+	H7zrcE+CdCSr+UV38CT4S/ErNBVXCnnbfjf1pFiRArbcD/IM8B3r6OaC+pvwX9NDdl0+GC
+	Ig5qytRywayPc7jZ6sqyvbUJlD3JQzg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761155989;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L1yHQMqazpboWI+TSW3xPU/Qy5qrxJsWnX2WlOm+nFI=;
+	b=oPGTYGUMgMXb5U22xD4oi3PE9iIkNU0DqZgGrjK3t0ll2b8jAbu/Y79cvyr7oEwQ9rRAuR
+	knhdYvyyGyry0UBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AD30213A29;
+	Wed, 22 Oct 2025 17:59:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id B3ruKZUb+WhebAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 22 Oct 2025 17:59:49 +0000
+Message-ID: <53f0cc42-e19a-4b84-8631-390cc5b178f5@suse.cz>
+Date: Wed, 22 Oct 2025 19:59:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022071141.GV13776@twin.jikos.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] slab: perform inc_slabs_node() as part of new_slab()
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Alexei Starovoitov <ast@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20251022-fix-slab-accounting-v1-1-27870ec363ce@suse.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251022-fix-slab-accounting-v1-1-27870ec363ce@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C0B0B211EF
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-On Wed, Oct 22, 2025 at 09:11:41AM +0200, David Sterba wrote:
-> On Fri, Oct 17, 2025 at 09:31:06PM -0700, Eric Biggers wrote:
-> > Make btrfs use the library APIs instead of crypto_shash, for all
-> > checksum computations.  This has many benefits:
-> > 
-> > - Allows future checksum types, e.g. XXH3 or CRC64, to be more easily
-> >   supported.  Only a library API will be needed, not crypto_shash too.
-> > 
-> > - Eliminates the overhead of the generic crypto layer, including an
-> >   indirect call for every function call and other API overhead.  A
-> >   microbenchmark of btrfs_check_read_bio() with crc32c checksums shows a
-> >   speedup from 658 cycles to 608 cycles per 4096-byte block.
-> > 
-> > - Decreases the stack usage of btrfs by reducing the size of checksum
-> >   contexts from 384 bytes to 240 bytes, and by eliminating the need for
-> >   some functions to declare a checksum context at all.
-> > 
-> > - Increases reliability.  The library functions always succeed and
-> >   return void.  In contrast, crypto_shash can fail and return errors.
-> >   Also, the library functions are guaranteed to be available when btrfs
-> >   is loaded; there's no longer any need to use module softdeps to try to
-> >   work around the crypto modules sometimes not being loaded.
-> > 
-> > - Fixes a bug where blake2b checksums didn't work on kernels booted with
-> >   fips=1.  Since btrfs checksums are for integrity only, it's fine for
-> >   them to use non-FIPS-approved algorithms.
-> > 
-> > Note that with having to handle 4 algorithms instead of just 1-2, this
-> > commit does result in a slightly positive diffstat.  That being said,
-> > this wouldn't have been the case if btrfs had actually checked for
-> > errors from crypto_shash, which technically it should have been doing.
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+On 10/22/25 19:23, Vlastimil Babka wrote:
+> Since commit af92793e52c3 ("slab: Introduce kmalloc_nolock() and
+> kfree_nolock().") there's a possibility in alloc_single_from_new_slab()
+> that we discard the newly allocated slab if we can't spin and we fail to
+> trylock. As a result we don't perform inc_slabs_node() later in the
+> function. Instead we perform a deferred deactivate_slab() which can
+> either put the unacounted slab on partial list, or discard it
+> immediately while performing dec_slabs_node(). Either way will cause an
+> accounting imbalance.
 > 
-> Thanks, this simplifies quite a few things. I'd like to take it via the
-> btrfs tree as there may be the hash additions (XXH3, BLAKE3) but
-> currently I'm not sure if it won't make things more complicated. I
-> haven't started the kernel part yet so I can use this patchset for
-> development and rebase once it's merged. 
+> Fix this and also make the code more robust by performing
+> inc_slabs_node() in new_slab() itself, and removing it from its callers.
+> As a side effect, in the theoretical case where the new slab is
+> immediately leaked due to debugging consistency check failure, it will
+> be accounted (as full) in /proc/slabinfo anyway, which is not wrong.
+> 
+> The exceptional caller is early_kmem_cache_node_alloc() where the node
+> for stats is not yet initialized. We can handle it by using
+> allocate_slab() there as the gfp flags are known and fixed and we don't
+> need need new_slab()'s fixups.
+> 
+> Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Great.  I'm planning to take patches 1-9 through libcrypto-next for
-6.19.  You can then take patch 10 through the btrfs tree for 6.20.  Does
-that sound good?  We can work out the XXH3 and BLAKE3 support later.  If
-you'd like to add another checksum algorithm, I'd suggest picking just
-one.  btrfs already supports an awful lot of choices for the checksum.
-But we can discuss that later.
+Pushed to slab/for-next-fixes for testing.
 
-- Eric
+Note I haven't seen the imbalance happening. During the ongoing development
+work I caused a very deterministic underflow elsewhere, decided to make the
+code more robust by creating this patch, and when going through new_slab()
+callers I realized it fixes an existing issue.
 
