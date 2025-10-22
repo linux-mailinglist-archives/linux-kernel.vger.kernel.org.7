@@ -1,183 +1,110 @@
-Return-Path: <linux-kernel+bounces-864503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDD5BFAEBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:35:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322FDBFAEB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120514232F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AECD1A019A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5177930DED8;
-	Wed, 22 Oct 2025 08:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ESLrFtqj"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E9830AAD3;
+	Wed, 22 Oct 2025 08:35:21 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED42309F1E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5324030AABC;
+	Wed, 22 Oct 2025 08:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761122089; cv=none; b=NgqGUWvoqPMyHJ6QKZS2Mna+d3fkuDmSKfo/C+VHU4OGRoHkXjBZmU382x8KMGZoCxr9ztH0zX4bRE4tBH3FG6JDRGSpd/iB9H4V3oOZifatgodrJI+hVbV2Nhv8LkLu5WdfLUu+JSoDVk0FbhGVrkF8w6QOXKp5sO/v2+Cz0mw=
+	t=1761122121; cv=none; b=rrUl8BaeX0K/puAmQP4EfMrat/Xmp9Lq/xjf7cb3DuUv+qefIZSmBnnF1+r5SSzXxnMa6/z+zh+70bFRj/uRgq7Nk2OmRZXrlywzKvTOWrMtVimSrEkkOo0A9+QhtwTI6RthD4QKLKJyY7+ziugIFfcRnDCUt/6EQZbrU0MlS6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761122089; c=relaxed/simple;
-	bh=k7go6gqDrFG2+trft2OBLjhjkE6TWd7DLT++h8m7bw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=AsE4KNwDtqpVCHhAj++4pE+E1A2D6Hzc6gGs5LDs8zB9i/a5hTXzx7sl1sT0/FywAPn7W8cmMFhgQ9XRm4owKhdmmu9sFiP3btI/8ja1bzc9oVe9YPbk+VtDs6gllJQkrrY/Rp6IfiRepRM0ohRbxxktPNhkRtpgf7ptEfpayug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ESLrFtqj; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251022083445euoutp024ae79027b1d74c6bd3fb4a62d7dd92ba~wwzS-e5S70643606436euoutp025
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:34:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251022083445euoutp024ae79027b1d74c6bd3fb4a62d7dd92ba~wwzS-e5S70643606436euoutp025
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761122085;
-	bh=vkkhcjgRhvoU1VOZCS+P7a53/+EplB5Vv+2PW5suPts=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ESLrFtqj26EoOq8ktBxeTtMjZdEY0n/1JoEQJxXxmR4gIREkf6jeguUAYDlLoEhY4
-	 V2ixKYNOa5GU2brC8FwusVALde+DubX41MAqVw4UhG66QTciIItZEHACnnkKNQUvf4
-	 TRZMf0F8p2U8SoBI4J/sswazj31XTnCWHxFXPH2w=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251022083445eucas1p1486781d516d7a401211b0b3b7b465fff~wwzScrPTL1654616546eucas1p1t;
-	Wed, 22 Oct 2025 08:34:45 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251022083443eusmtip2960cf8c9ee5bbaa26be2b023d1a84065~wwzQj4uw_1161111611eusmtip2i;
-	Wed, 22 Oct 2025 08:34:42 +0000 (GMT)
-Message-ID: <3f9ab01c-470e-48b5-a309-71325ecc4906@samsung.com>
-Date: Wed, 22 Oct 2025 10:34:42 +0200
+	s=arc-20240116; t=1761122121; c=relaxed/simple;
+	bh=+XIX1vN/LQgjrQdE+e8SVS3VvbPoJ2R48wrnq1lpBU4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=OSGRWV7EG/8wVESO/82H+67pRYY43Hii6kGbTdytnjX8EP2ltrWgRJSWe9kvnPYxyWf7u2rwYjQH9zFKdrrqx+VSTTwyUtmhfugG2i/YgtJgtIJZrP5T6AHAstXbew6UzM4KaRtJgV3R99nqQI6tE7rlOgLOTW7hf0wxDFx/ZhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-01 (Coremail) with SMTP id qwCowAD3T6Ivl_hoxsLREw--.54099S2;
+	Wed, 22 Oct 2025 16:35:07 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: eajames@linux.ibm.com,
+	ninad@linux.ibm.com,
+	joel@jms.id.au,
+	jk@ozlabs.org
+Cc: linux-fsi@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] Once cdev_device_add() failed, we should use put_device() to decrement reference count for cleanup. Or it could cause memory leak. Although operations in err_free_ida are similar to the operations in callback function fsi_slave_release(), put_device() is a correct handling operation as comments require when cdev_device_add() fails.
+Date: Wed, 22 Oct 2025 16:34:52 +0800
+Message-Id: <20251022083452.37409-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:qwCowAD3T6Ivl_hoxsLREw--.54099S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrtF45Ary5ur13AF48GF18Grg_yoW8Jrykpa
+	1DGFyFkrW8Gr48GrsrZ3WxZFZ8C3yIv34furWfGw1IkrZxAF909r10g340ka48JFWkCF4x
+	JF9rJrykWF1DJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
-	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
-	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
-	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Drew Fustini <fustini@kernel.org>, Daniel Almeida
-	<daniel.almeida@collabora.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20251016-rust-next-pwm-working-fan-for-sending-v16-0-a5df2405d2bd@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251022083445eucas1p1486781d516d7a401211b0b3b7b465fff
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e
-X-EPHeader: CA
-X-CMS-RootMailID: 20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e
-References: <CGME20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e@eucas1p1.samsung.com>
-	<20251016-rust-next-pwm-working-fan-for-sending-v16-0-a5df2405d2bd@samsung.com>
 
+As comment of device_add() says, 'if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count'.
 
+Found by code review.
 
-On 10/16/25 15:38, Michal Wilczynski wrote:
-> This patch series introduces Rust support for the T-HEAD TH1520 PWM
-> controller and demonstrates its use for fan control on the Sipeed Lichee
-> Pi 4A board.
-> 
-> The primary goal of this patch series is to introduce a basic set of
-> Rust abstractions for the Linux PWM subsystem. As a first user and
-> practical demonstration of these abstractions, the series also provides
-> a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
-> of its PWM channels and ultimately enables temperature controlled fan
-> support for the Lichee Pi 4A board. This work aims to explore the use of
-> Rust for PWM drivers and lay a foundation for potential future Rust
-> based PWM drivers.
-> 
-> The core of this series is a new rust/kernel/pwm.rs module that provides
-> abstractions for writing PWM chip provider drivers in Rust. This has
-> been significantly reworked from v1 based on extensive feedback. The key
-> features of the new abstraction layer include:
-> 
->  - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
->    by ARef, correctly tying its lifetime to its embedded struct device
->    reference counter. Chip registration is handled by a pwm::Registration
->    RAII guard, which guarantees that pwmchip_add is always paired with
->    pwmchip_remove, preventing resource leaks.
-> 
->  - Modern and Safe API: The PwmOps trait is now based on the modern
->    waveform API (round_waveform_tohw, write_waveform, etc.) as recommended
->    by the subsystem maintainer. It is generic over a driver's
->    hardware specific data structure, moving all unsafe serialization logic
->    into the abstraction layer and allowing drivers to be written in 100%
->    safe Rust.
-> 
->  - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
->    types (State, Device, etc.) and uses standard kernel error
->    handling patterns.
-> 
-> The series is structured as follows:
->  - Expose static function pwmchip_release.
->  - Rust PWM Abstractions: The new safe abstraction layer.
->  - TH1520 PWM Driver: A new Rust driver for the TH1520 SoC, built on
->    top of the new abstractions.
->  - Device Tree Bindings & Nodes: The remaining patches add the necessary
->    DT bindings and nodes for the TH1520 PWM controller, and the PWM fan
->    configuration for the Lichee Pi 4A board.
-> 
-> Testing:
-> Tested on the TH1520 SoC. The fan works correctly. The duty/period
-> calculations are correct. Fan starts slow when the chip is not hot and
-> gradually increases the speed when PVT reports higher temperatures.
-> 
-> The patches doesn't contain any dependencies that are not currently in
-> the mainline kernel anymore.
-> 
-> ---
-> Changes in v16:
-> - Re-base on top of 6.18-rc1.
-> - Make RUST_PWM_ABSTRACTIONS an invisible Kconfig option and remove the
->   redundant depends on PWM=y.
-> - Handle period requests that are too small by rounding up to 1 cycle,
->   rather than disabling the PWM.
-> - Correctly report a status of 1 to indicate when the period has been
->   rounded up.
-> - Change the error code for an unsupported high clock rate from ERANGE
->   to EINVAL for consistency.
-> - Link to v15: https://lore.kernel.org/r/20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com
-> 
+Cc: stable@vger.kernel.org
+Fixes: 371975b0b075 ("fsi/core: Fix error paths on CFAM init")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/fsi/fsi-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Hi Uwe,
-
-Since you mentioned last time that you were happy with the code, would
-you please consider picking up this series for linux-next? It would be
-great to get it in for wider testing to ensure everything is solid.
-
-On a related note, it looks like Clk is getting Send and Sync traits
-[1], which is excellent news! This will allow the TH1520 PWM driver to
-be 100% safe Rust :-).
-
-I recall you prefer to base your pull requests on -rc1. With that in
-mind, I plan to send a follow up patch to remove the unsafe block for
-the Clk handling after the next merge window closes.
-
-[1] - https://lore.kernel.org/all/20251020-clk-send-sync-v2-0-44ab533ae084@google.com/T/#mdfdfa9947b4d51b9ebc6d667911bf19907761655
-
-
-Best regards,
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index c6c115993ebc..444878ab9fb1 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -1084,7 +1084,8 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
+ 	rc = cdev_device_add(&slave->cdev, &slave->dev);
+ 	if (rc) {
+ 		dev_err(&slave->dev, "Error %d creating slave device\n", rc);
+-		goto err_free_ida;
++		put_device(&slave->dev);
++		return rc;
+ 	}
+ 
+ 	/* Now that we have the cdev registered with the core, any fatal
+@@ -1110,8 +1111,6 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
+ 
+ 	return 0;
+ 
+-err_free_ida:
+-	fsi_free_minor(slave->dev.devt);
+ err_free:
+ 	of_node_put(slave->dev.of_node);
+ 	kfree(slave);
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+2.17.1
+
 
