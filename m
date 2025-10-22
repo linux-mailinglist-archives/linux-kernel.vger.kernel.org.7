@@ -1,143 +1,158 @@
-Return-Path: <linux-kernel+bounces-864702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E31BBFB60A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:21:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87E7BFB613
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B379C19C5369
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692B619C578F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984E8320CBA;
-	Wed, 22 Oct 2025 10:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848EA311958;
+	Wed, 22 Oct 2025 10:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="q1SYJcrD"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8E7pdZ1"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99BD3112B4;
-	Wed, 22 Oct 2025 10:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128462; cv=pass; b=PfmOBDt6xmSVX7/nNagdgLrXTVKARywNro9jEkgviZkIxckqWCMht/qUb2bUGKdOQuaHlblzSW+sQjAsH0x1Ga+hFXQQUP6AQ6NFvNAh1UwCuSUaZbXE9Fn7ZUFHLnsnKDYxNZC1ymxr/RFCHJrwKbx8xUpmohMxjsdrLksm8xg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128462; c=relaxed/simple;
-	bh=WcfCzMLF8yV2yEQ6rPDAP/t771wdXiySU/gL/myOyPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Az6SZtbU86jmYb9X69ju/WDcTdA2pZMdXZ/mBnNC/5AkRwGvvch1YbLp++B26eRaM0yjX+J/piMtMrIFur9oIsEsukgeyopy2LCU2BH2i5JblFESXrU75XajEy9Wtd2mjzFkUVSq/5gXHJeKvJoJI9tUfOzhddh9tvaTMWFcHHo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=q1SYJcrD; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4cs4tr6GKKz49Q6J;
-	Wed, 22 Oct 2025 13:20:52 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1761128453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pn7qKP8Rpk5Pgq16U+bd7DU5EUgj2YSuSsmwYajklnI=;
-	b=q1SYJcrD/B/ahKHshzu27S3V5xQHi01Q0NuSFa/2VCMSLOKjdQGyBzdU71tDo8wQCTA8AI
-	2VMUWhwHowhEuQrASr8dF2mFjlj8cCOugblnJQNyF7ULVSkfUEgnYEUbGcRBvugnmmtGAL
-	LJEl+x3MrZsTIAVtZnF5goWjNJQzlHhQ7+bz9O6G4Wi3JKkzQwS/+0AxTb0RYOfnMqyGoa
-	VgLk3SOJRPRjx3N3bIhg44QqHd5TyVTJONYwThGFl1fcpyGuvBSFa8NsiDs+PPHF6b9nLf
-	9+jY+qis0j1in6LoZ3hCY9hWNqaQREZ6hqGdKT7+/idXccHVGqf+4ZtOGnu4Ug==
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1761128453; a=rsa-sha256;
-	cv=none;
-	b=i1kE/TeqbInP7eLcIo8elgAtVBQERXIz2iRP7kYtU1hgxtiYKFcutgDsbhS6iXhXfvnSnS
-	Qei0AwkGVI+AN8UzlK3tpNRbWJMD2sKOWi4cbbW8XQl81O1IvAq1EAP38l+pLlkUUxx3zY
-	zSJd+/d582b074pm6BVKk1uAa6wJCL9y3mT1bxPN3EgNzjIQm9VZTgVIwO3iTaVPK6egrm
-	O+jlF1psKi4ZcEexP6h1yQ37zYcm8dKDShOoU4PwxWqXDbARlh74qEeP0OIagm1gxNkaxE
-	u577BbhCK/YYo+Lmr5Ix7mbZp/8xfnfXC1DHH7PjIW3SdyCzrgzfk9Qdf1eddQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1761128453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pn7qKP8Rpk5Pgq16U+bd7DU5EUgj2YSuSsmwYajklnI=;
-	b=msEtWGvgAWssFw44DGFf/CvsAMqKV9Viy6jjbtFa0t3uZq9Uc5fRAEQFu3+wKkEwBCA1+/
-	atxBG7cukuauvptvq8FaWTqN2MPaJvMPzsF5OihLsFW2IbL0XtMzCGlNMA3iEF0M3qiqR5
-	PZPgwU7opztlpI+30dlRfUyjCt5cloLnaFcUU0eJbIiZf5M0BFPx2nYpYTOWcbEc8i2I0H
-	9SKDLIjfEAiI5/HErPKIcbHV2opi2NQliTmgUOscvsD54n3xD9yaPeoGq9tVjwCnxvLkjz
-	3FrRrbJHJT42I8ziDzqzWSr2rBYuM/pHTc2vZpUIus7vmIoezv1PYiqAq9Jevg==
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 95B93634C50;
-	Wed, 22 Oct 2025 13:20:52 +0300 (EEST)
-Date: Wed, 22 Oct 2025 13:20:52 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Cc: linux-kernel@vger.kernel.org, awalls@md.metrocast.net,
-	mchehab@kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH] kernel memory safety check in a block
-Message-ID: <aPiwBG0Iusmy3jeZ@valkosipuli.retiisi.eu>
-References: <20251021201704.178535-1-biancaa2210329@ssn.edu.in>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1088D3164D0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761128538; cv=none; b=sy4jZiuZeR5E/8hxblMKZUfUnPUmi44ce6l4XPzcAa6YXPLbR0tlcnBdmHK7hKWeZRsZWzbfL93SU/Urm2GlZnVjS8weyEy+PPoXEreYYnpfvITTwK5clBdFionIDGLOoUR8zS2/v7iAjmWww7Ly3vzckH1n/gjJSAGbHt542SI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761128538; c=relaxed/simple;
+	bh=JxX8h2yrq3MpbPFrw+JMQfyErcTY4Nr+Dg57grPhra8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RY8J2I5ppoNe067XbdfS9A2FZCdJ6l6n4VdS2gSX6BMtOMs/xa79JD9wEdEOgKRKOM59pwY+2ARwuC82KQoJQC7TxPtJfr8XQnp6O7cGUmMqI6AERJg0oJ/9GKgYTWXHB7sBp9JMCMX/jNvYNs6ukv8Ge/gw8chQfv46DfMUmsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8E7pdZ1; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-890521c116fso775842785a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761128534; x=1761733334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tg5CSyFuy1gjgzwuVzeNqzr1hqLjP8/oZVMupaN2ME4=;
+        b=M8E7pdZ1qnxrQ4QbbFlfn/gFH247ze9bFwq6DcWK1Js20H0shc5px6N+wulfKq5QUT
+         Fc37yQSX5uUAE8NdXQyQj4c7tFQadhPw+FqWt+/EBrRecArwPMYeipZawYw76hrrzYMP
+         6GLoHof5brboJqFh8J8I9pMrciD3KaUatnN+9i3GPtb4o7Gq7Y/llgKPYiskViO4mGBS
+         a1flwh8mggmhokE4kn81Gf0iPeyZOhxhTkRH/RTAFta8EzQi0LftQ2RYonHiFmqYkdbx
+         8MIuJda/mLw/KfSrZz2bXPW5GQtm4jTxxBXdUpaNCojiir6jGEtBw/ElnVdzcvSVB0LZ
+         SW7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761128534; x=1761733334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tg5CSyFuy1gjgzwuVzeNqzr1hqLjP8/oZVMupaN2ME4=;
+        b=lLG1VZ5zVqZrPD/qH/pv//9i1MAOHhYqEPP4wPmHeEs778cr7Z/1WXwaHvxjrf1rNH
+         DfuzqnyBvmAa7iS4rPEHkXGpo+L05L2gEBqRrR7Pl+XgHsES9hzyLCzvfdoX90P/p1dZ
+         xrn7iJml69WczRhPILpwfGtmMvkpGWt7YnW5pgFywgKxbatQp182Wlb1YbS4+kqSGun0
+         od8jrG1oL5PBVR+90CM9MpDKZy6ZaLPNQOg421dB3XUiq2QUnOIEwWUHZqSs0WKQTyex
+         t32TISuUQPkhpILkG0rqdq5pvVWWhZFLQm4ozQfBgHPKdQ08KThhOLLFx3LUeET6VJWg
+         bJ4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUc/a69xhMkkIDNb90XJqSQwfs9MOXrQaK4G2+hU/odqv2ZgGQPSd6deHMLWht/FVqlUUAfuFPttcjt5OU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz01ItavCdOq0rPGNHgl+R0GZvS9QlAa+GR7TkypUbMmr5XGYZO
+	1sh+PYv87vD67kpK7i3Xl7RJbXCvE/DvjxURxMQPP2VNRkw3Gp0FSjv1uYLOAH1wWkoeDtS1sid
+	DXm3QEBujOmP8X7NYYir9eDxauJSo9OM=
+X-Gm-Gg: ASbGnctUQS9qH+0zx9901NKOlQWaOzzRB6Lst7W5TT+5K1wHH8y2wi5pdNYvMoR+wlS
+	UzpiuET0XdMO55b8o4ark90AjTvesGr2HpCSiijFwUpPRoeRVTr4Tw/qU5gDgrHF/UYCn1KOb2U
+	BehpZd+Paa+5CqRw/QPMty+ybTbJgPvwED21MHVBIzNPIJYmzfR7KR4FwLk5xYSeTNbkUyommgz
+	zpcwRuxqYahipkBhLR9zeQXBH5I3HBzbgx+uQum1g8dTuAgLVz3BqiFE3yKq7+GoXKyGDXTX+oL
+	0gTPt1irko09JZuU
+X-Google-Smtp-Source: AGHT+IHgh/2ue5XLoiEIIP3qVcbBgpSwlGUDyMrIbpcYgXG8Fb2NWv4YHZCQZ79f1++pVClCNC7jVN49zC4Kgu6WL3s=
+X-Received: by 2002:a05:620a:8083:b0:890:cfbb:f9a3 with SMTP id
+ af79cd13be357-890cfbc03a5mr1867383185a.87.1761128534358; Wed, 22 Oct 2025
+ 03:22:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021201704.178535-1-biancaa2210329@ssn.edu.in>
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+ <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+ <87a51jfl44.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
+ <871pmv9unr.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
+ <875xc78es0.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
+ <87a51j6zg7.fsf@DESKTOP-5N7EMDA> <CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
+In-Reply-To: <CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 22 Oct 2025 23:22:02 +1300
+X-Gm-Features: AS18NWBircPFuACNmjNln0NVeJ5pMiUTEtaKbz7xy8k3SeBdgLEYQqjplgyUxCM
+Message-ID: <CAGsJ_4yeygfzna6SRG3poD9cXhFNz21-he9psiKvMTMG8WBgmg@mail.gmail.com>
+Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Biancaa,
+On Wed, Oct 22, 2025 at 10:55=E2=80=AFPM Barry Song <21cnbao@gmail.com> wro=
+te:
+>
+> On Wed, Oct 22, 2025 at 10:46=E2=80=AFPM Huang, Ying
+> <ying.huang@linux.alibaba.com> wrote:
+>
+> > >
+> > > I agree. Yet the ish barrier can still avoid the page faults during C=
+PU0's PTL.
+> >
+> > IIUC, you think that dsb(ish) compared with dsb(nsh) can accelerate
+> > memory writing (visible to other CPUs).  TBH, I suspect that this is th=
+e
+> > case.
+>
+> Why? In any case, nsh is not a smp domain.
+>
+> I believe a dmb(ishst) is sufficient to ensure that the new PTE writes
+> are visible
+> to other CPUs. I=E2=80=99m not quite sure why the current flush code uses=
+ dsb(ish);
+> it seems like overkill.
 
-On Wed, Oct 22, 2025 at 01:47:04AM +0530, Biancaa Ramesh wrote:
-> Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-> [PATCH] media: cx18: fix potential double free in cx18_stream_alloc
-> 
-> The function cx18_stream_alloc() may free buf->buf and buf multiple times
-> if dma_mapping_error() occurs. This patch:
-> 
-> - Adds checks before kfree() to avoid double free
-> - Sets pointers to NULL after free to make accidental double free less likely
-> - Improves overall memory safety and robustness in error paths
-> ---
->  drivers/media/pci/cx18/cx18-queue.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/pci/cx18/cx18-queue.c b/drivers/media/pci/cx18/cx18-queue.c
-> index eeb5513b1d52..025ba4e6e4be 100644
-> --- a/drivers/media/pci/cx18/cx18-queue.c
-> +++ b/drivers/media/pci/cx18/cx18-queue.c
-> @@ -383,9 +383,16 @@ int cx18_stream_alloc(struct cx18_stream *s)
->  						 buf->buf, s->buf_size,
->  						 s->dma);
->  		if (dma_mapping_error(&s->cx->pci_dev->dev, buf->dma_handle)) {
-> -			kfree(buf->buf);
-> +			if (buf) {
-> +        		if (buf->buf){
-> +            	kfree(buf->buf);
-> +				buf->buf =NULL;
-> +				}
-> +        		kfree(buf);
-> +				buf=NULL;
-> +    		}
->  			kfree(mdl);
-> -			kfree(buf);
-> +			//makes accidental double free less possible
->  			break;
->  		}
->  
+On second thought, the PTE/page table walker might not be a typical
+SMP sync case,
+so a dmb may not be sufficient=E2=80=94we are not dealing with standard loa=
+d/store
+instruction sequences across multiple threads. In any case, my point is tha=
+t
+dsb(ish) might be slightly slower than your dsb(nsh), but it makes the PTE
+visible to other CPUs earlier and helps avoid some page faults after we=E2=
+=80=99ve
+written the PTE. However, if your current nsh version actually provides bet=
+ter
+performance=E2=80=94even when multiple threads may access the data simultan=
+eously=E2=80=94
+It should be completely fine.
 
-Please read Documentation/process/submitting-patches.rst before submitting
-further patches.
+Now you are
 
--- 
-Kind regards,
+write pte
+don't broadcast pte
+tlbi
+don't broadcast tlbi
 
-Sakari Ailus
+we might be:
+
+write pte
+broadcast pte
+tlbi
+don't broadcast tlbi
+
+Thanks
+Barry
 
