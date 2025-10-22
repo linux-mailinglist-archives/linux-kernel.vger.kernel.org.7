@@ -1,103 +1,88 @@
-Return-Path: <linux-kernel+bounces-865897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADBEBFE482
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:18:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983EABFE488
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7A81A074B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:18:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB541A07081
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658F430216F;
-	Wed, 22 Oct 2025 21:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jttfmhjh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECBA301489;
+	Wed, 22 Oct 2025 21:18:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946562F0698;
-	Wed, 22 Oct 2025 21:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44274285CB3
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761167863; cv=none; b=VI/5/fVu570AnGgxcUoAu8Px5cbaqD9nUL5YHx4fBsOqqeYH3IzSvWyNGgJ6eypbQojyms2OASEyFePqw9iIRip0J/cm486BskUTCNznfATjvEExRGuYAz0tR8YszmJK3KVBFKGobn5tgubPm+dwh8IhgXW1ljWpyGDS/8ABUPU=
+	t=1761167886; cv=none; b=qGt+CYkwkO7CeMwvbaP+t+Ip/7Zh7sQLISlwWKmtU7r6NgMUHuB0e8LgQ/b7+/o4cDt/4hZdX5NlV5sogHCdG2J9amhCgkZZgeSO7MgDinKVC5gioRsoam7EBNkcp3FjqWOhcKERoHbssNeqkZd5H+Y+NJ+wn56ViyGIWys56nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761167863; c=relaxed/simple;
-	bh=sclpuT7WvkjmnRQlVfG9mH4zGbkipTjnUhVQVYvaZM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bjjl8ksvDpZvR9RDwsWIqqD+X7+KcOjmPKpLktoLR55Q04Hwv37SZv5/AKEEbMSojwAGZMYgh+R6yJMia1VqCcbkuF+UYhxRhCiFIWXsUw0JYQyK1oUaSvYLNRe2pfZ1EtiLHHnkg2CL1MI5BJ86oFLNW/BKL0o5xUCYHDR12yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jttfmhjh; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761167861; x=1792703861;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sclpuT7WvkjmnRQlVfG9mH4zGbkipTjnUhVQVYvaZM8=;
-  b=JttfmhjhbvhtQ0rNDbztckGwnX4vNDit5rJcmnjCYaJIaUn3C8NMTLIh
-   dwn6R3PlvG12FF5mgq792E74yiwE9c5Aoompq9tEfCkrfrK/2i0eYXfpR
-   dZp544QZJ/jO6BNpbEf2H0jgNHaush147LurSDQD2LOlA0Nbi2gsf+YZd
-   JZ59Udg362FhJEfsml++4y0MzrrymCIRGwAJs6KGI3obBhaUSL/1vBg5R
-   m0TrM7wm7q5Mx3GztiKUQmPANgPKnab2qh5KYXh2g0rnJiI2q3Cto8Hz/
-   nr/khI221vug1L6L4zSQK4zr/cTFA5wv7V6mtodVxxtYykGAsfLm0Xzzf
-   w==;
-X-CSE-ConnectionGUID: hVB8DH9rTQirMPMzayL3eQ==
-X-CSE-MsgGUID: 2sD/tOMkRLqfn3oCYvayWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63367766"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="63367766"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 14:17:41 -0700
-X-CSE-ConnectionGUID: nKgXXpXgTlSX9pda04+DDw==
-X-CSE-MsgGUID: lUJw4KBDTGS5sUg4t7p7Tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="184461936"
-Received: from skuppusw-desk2.jf.intel.com ([10.165.154.101])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 14:17:40 -0700
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] platform/x86: intel-uncore-freq: Add additional client processors
-Date: Wed, 22 Oct 2025 14:17:33 -0700
-Message-ID: <20251022211733.3565526-1-sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761167886; c=relaxed/simple;
+	bh=/L/fPbCoR2XqlDrsRtlPPBd/U8dg77Yv79v+3d5LmzQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=C8YWswW360Diw/ZQdbfQalCI8s7LGR74w2af9Ni+4PDih5gdK8qoLkAdUTgdyY6lyTKLqIGCrrAZ5qO/oDxJ5bkomhOkwFtbrekqw91A0iM9vbg+gMw3fb2oL2V7E4IuZDuGFQ3nK9yjdJvLMvC+der/LY6ln4oMlZUbu0WajfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430b3c32f75so1783495ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761167884; x=1761772684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=38L+WYnMweIaXWmLLBw36vMJPck9XE2in7xrVdZRTNA=;
+        b=p61nFME5fAJWLPuFxZh8LGqzywYt6AyGuEyBfL7J3mDYWRlGpOPLdJ2pdHkqbOUmQW
+         Yn4yuvc6c2qOHsby+byE1bKaGBXveWPb6MY9yH3KNelyL75/UoJu4X+IM32ox8clv24T
+         UIWoLQjVrrRWnKp+A/P/1MGRypiBhKKOKwMtMDLah1Jt0fM+kvALXoGQ2HxIFKu6hD2h
+         YEj/HX+n5XlHBhW7dHm+o9PoiGi5e/koPIA9OLk4dY2ojA394zrnRJrU/H17U+2VHegz
+         fZeVgsuby5X1KW85ysUl1t4IwKMH3IzIqdgn79yIpEa1G8XB7DXGmif8rs6grBwCYngf
+         cF7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUUB6pymFqgUxcoUZmGrsYiNYe2irhmqCJObq0hcGGhEeu3TqITQyNxjyXXVmAjPCHZGhTKGznMfQ85gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJSGAFVqjp/sNAcmmZdC6kNO3RJrzKWHIwkkmoCYUOXTsJXqGM
+	4iWkFU7AKsTXWIa1ExuAHe/o1PGb1pextbSXRPhVHZlqYReRVjTxgG16CJOtnEovYtUtJhnXowF
+	mPpX98k7ZqddgtpBfXUWvz5eoimHj7OWUaCSBQGswKdNmoLKL6TwHER0+bv0=
+X-Google-Smtp-Source: AGHT+IHrUSfO+wBM+XYa1GlvGvMMe+lBfBQsqxYOOsn5NpbJGauDpFdlyQyzzo+MmANocreJib5/WATuse9K/QUzdbg+mA0U/OQf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:4615:b0:431:d726:9ef5 with SMTP id
+ e9e14a558f8ab-431d726a1ecmr31681445ab.28.1761167883822; Wed, 22 Oct 2025
+ 14:18:03 -0700 (PDT)
+Date: Wed, 22 Oct 2025 14:18:03 -0700
+In-Reply-To: <20251022163049.98558-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f94a0b.050a0220.346f24.0062.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_rename2 (2)
+From: syzbot <syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add Intel uncore frequency driver support for Pantherlake, Wildcatlake
-and Novalake processors.
+Hello,
 
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- .../platform/x86/intel/uncore-frequency/uncore-frequency.c    | 4 ++++
- 1 file changed, 4 insertions(+)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-index 2a6897035150..0dfc552b2802 100644
---- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-+++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-@@ -256,6 +256,10 @@ static const struct x86_cpu_id intel_uncore_cpu_ids[] = {
- 	X86_MATCH_VFM(INTEL_ARROWLAKE, NULL),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE_H, NULL),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M, NULL),
-+	X86_MATCH_VFM(INTEL_PANTHERLAKE_L, NULL),
-+	X86_MATCH_VFM(INTEL_WILDCATLAKE_L, NULL),
-+	X86_MATCH_VFM(INTEL_NOVALAKE, NULL),
-+	X86_MATCH_VFM(INTEL_NOVALAKE_L, NULL),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_uncore_cpu_ids);
--- 
-2.43.0
+Reported-by: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
+Tested-by: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         dd72c8fc Merge tag 'platform-drivers-x86-v6.18-2' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c24d2f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f9a2ca2a8964bd4a
+dashboard link: https://syzkaller.appspot.com/bug?extid=632cf32276a9a564188d
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1756e3e2580000
+
+Note: testing is done by a robot and is best-effort only.
 
