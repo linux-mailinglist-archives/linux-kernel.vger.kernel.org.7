@@ -1,207 +1,329 @@
-Return-Path: <linux-kernel+bounces-865599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC3FBFD94E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:29:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82611BFD885
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A3CE3B8652
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB431A00C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BB527FB18;
-	Wed, 22 Oct 2025 17:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF18F270551;
+	Wed, 22 Oct 2025 17:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pqkFYBE6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U4/+3+yk"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A92C27442
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2831E366;
+	Wed, 22 Oct 2025 17:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761153479; cv=none; b=kzeCGkPpNQuTtHVx4KHIVrl17lyrub4iw3I1ygm27KVJlh+Qv3pihNsh6zZ5QUBfTLWXBQUjGtQuW6qjEXI1HuEh4SHLvmmyyCaCh3RmpOyajwftw7hsImPia9nopfSoiv/xGWurJ4KuqbZ9mJGmAfGf/7p4Uvt6FJ/kyvBP8w8=
+	t=1761153637; cv=none; b=KdICpo0pJCKnohHpc3AfrlJskACACZzN5OCHsTLOKdlovWSLAJ+bluc8xvO+1fu9XUz6vd2B7h7BEHtv+Q76vxxq4qGrdel2IXlJQob4fqIadBUQ8+pyHDf67E56UzhH0znkFr0muQ0rO70DaW3hm/QuGIxdtV6RrHTN+LPrmF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761153479; c=relaxed/simple;
-	bh=CExEECZTFOuFYGzdnRRTlZ94V5lWnXLzE5kfc7eohvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i29fxMBPTtJf4qLYSw/aUAlaB2NhYoi4RD5iVY+G7RnBe0MA/bZxdfnhm4gBteyOp3oB71kR1ozYO3+ts11Fh+FmgwLq9M+HTN/4sHtfkxQdxrT8PDtoLRMzur2V/DwM2BaX+82zoyJxmof3ZJQBFYwN71TgBLRm2/Bt7DCV+ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pqkFYBE6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MA6LoK024689
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:17:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LyU88Pot6EZ2LgQ5OCVhej1+8SBV2PixZ/z1OwnNxwk=; b=pqkFYBE672cIdHE3
-	mg+w3U9r20hFTGdfjhhoJ0xXMLlcewwAMkJoo55Yyzbtc8H2tsdSdfLyHOA+/sOK
-	IcLtpaR+peI2tYYYWY+nFFb0COsSgnC1YkwtJHDXSHjAPM2OMLGO6GG44OfGCIix
-	dH1AF8ldaopxEKD22ITuRGkId42JCcl6aAgKcKsl82eDqcZmNGVtUbvPZ4Ho2DNJ
-	ikxVGa1ruS9z8PpAIqNGnH6deXCwyQWSrfbGKRyh1mCgg5ZOWDOJXKLWRJ1t8y7G
-	OVIesfsvFu9ZB0V6J+q63B5Omn4/2ZNEfZZHg9xksLiANOYKy+5wuzSYELSE91RS
-	VIldAA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49wsws7v0v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:17:57 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8b90e9336so1340171cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:17:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761153476; x=1761758276;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LyU88Pot6EZ2LgQ5OCVhej1+8SBV2PixZ/z1OwnNxwk=;
-        b=nh54AhcezWdhqYJrMFLPyH+GBz2yjt8ISlpSPhqYJzKfi2iYEr1jhajdq6VudmTkMP
-         h1ZeeJSvHfwPd2wXpDlUPL3e4gRdGjMDph002FX0SzaAXSe6h2RJg+SvbFCynwyP5PJf
-         988LXbFPaXrOSObkPhl1QTpqOmBA/SsoZOOtXZM9BXEGn/dTlESndHhZr+IQxodXEESL
-         G3TI6+lsOj2woccm+p8VIM0k6AvPYCCFlQDaY7c67re6DUQngVowXPO1YvtrSpPbRYFI
-         gdQr7F3+uQ5aihz6ddap1vWbyzqf7DkRQg+LkIogDtvEEodh9zgHfmiGDhVvgLJY6xQ+
-         RGgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUt54Fjwa9lpdCevmNN6s6syRwhYxRSMUGKFwrK60zjqTZbFM2JVBxDAAYHQ7hLcjuLsBPaOsMTmUL3sUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZZzc0qW3xFkfd1n7wXUx20nw5CdwCmZ3aK8b8N352BL89WhFg
-	nMV6/mpcKge4sQgxSrbgesuRC3BnIRUjSTl1gONd5cyTVoI+lVWlZ0wOhU+FpiJDnmMeoxfWMMj
-	QysbTVjO1Hn7PI+hoNvPeCuzAQDQCOSskKG1PmSEFzBgLc6xYZz+X5vKRxchgd6vjbBU=
-X-Gm-Gg: ASbGnculnXoUZVCn1KVFuW3GE6VaoJTQrYggwKfLxt/hY0JloR3Upl7qG+BPItLHjTx
-	Loq4l84zEACHqDcmpOAb18qIDLV+QVnVawMAB8y+m6gx7sj2Ojnaz1eF/qPrHlts5pF27WvlZhQ
-	Dws/upSWnT+lfFlWe3+huhlPBabwJNtra3rBR43yfKGoLujqIvctIdACg2ZIhVRXOfK8Sm4PcME
-	HOkdZHPxRb2Y8IX1IgY51QnoM5J2IlnFnRlO95NSBJqbVfxqECBnR01chzPjzrwSATr/0jSiVQo
-	3goHlhFkK7eNp6W2fCmJq86kA+aeKSLJ9VbvvmMGxez5KEsuuWk5G68SY7C7qKQ5f3uY7dmeh0b
-	SsOzuFJT+PNYRWSWe093kn4N6V7woIkxwsy5lrCkHH5zvRY8eXujQvilc
-X-Received: by 2002:ac8:7d89:0:b0:4b7:94f1:7722 with SMTP id d75a77b69052e-4ea1155ca2dmr64258911cf.0.1761153476116;
-        Wed, 22 Oct 2025 10:17:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0FvIF8PqRON9r2jQFOp30M/SkUX6E0MHABKJZmBOkOv2WvHcZhGWybIVBgEjPUf0XJZccsQ==
-X-Received: by 2002:ac8:7d89:0:b0:4b7:94f1:7722 with SMTP id d75a77b69052e-4ea1155ca2dmr64258551cf.0.1761153475641;
-        Wed, 22 Oct 2025 10:17:55 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4945ef35sm12967508a12.28.2025.10.22.10.17.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 10:17:54 -0700 (PDT)
-Message-ID: <141450a6-4578-4823-b516-d180eaf3ccc7@oss.qualcomm.com>
-Date: Wed, 22 Oct 2025 19:17:51 +0200
+	s=arc-20240116; t=1761153637; c=relaxed/simple;
+	bh=UzXFscK7ZrDgpE46l6OobuZueeZYS8sRv7hF578oKpI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hmB+Nyi2DpUGWKAX12e7T1lZOo+idnwVya4j6Q+ozoIh0ctJu28Fps2vkMuO1hNLP/XRkOrNlAjOZvzer7E3UY58mpHRumWrrkqC7llmI/Upn4WP+fKzcHSBfBCJbzFfmX09Hxb2LdKm98BLHgQuc6vyR1BjIsUQB0tH/ZoFKRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U4/+3+yk; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59MHKRXF1469374;
+	Wed, 22 Oct 2025 12:20:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761153627;
+	bh=MdvdD5mimjpuIfdxMCPPZDwKw2INByWlalile2YS6KI=;
+	h=From:To:CC:Subject:Date;
+	b=U4/+3+ykakNhQHPvJFsGRzCqh43aYXSBC5sSrjR1u2LYOOlxOgYbgG37hgTjZ0I4j
+	 Eo6VFiRym9SbquVYzqQUFHfP81JbxaFtNqmf8CDFeCmfVyMYnRBceZhs9FUjxXxKOm
+	 YB2kG4Eh2ai4JyX1SPpFE3osIDPCPKC4Qot/LiAc=
+Received: from DFLE204.ent.ti.com (dfle204.ent.ti.com [10.64.6.62])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59MHKR8W1761746
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 22 Oct 2025 12:20:27 -0500
+Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE204.ent.ti.com
+ (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
+ 2025 12:20:27 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 22 Oct 2025 12:20:27 -0500
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59MHKPjs1551845;
+	Wed, 22 Oct 2025 12:20:26 -0500
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>
+CC: T Pratham <t-pratham@ti.com>, Manorit Chawdhry <m-chawdhry@ti.com>,
+        Kamlesh Gurudasani <kamlesh@ti.com>,
+        Shiva Tripathi <s-tripathi1@ti.com>,
+        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+        Vishal Mahaveer <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] crypto: aead - Add support for on-stack AEAD req allocation
+Date: Wed, 22 Oct 2025 22:48:42 +0530
+Message-ID: <20251022171902.724369-2-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sdm630/660: Add CDSP-related nodes
-To: Nickolay Goppen <setotau@mainlining.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
-References: <20251019-qcom-sdm660-cdsp-adsp-dts-v1-0-9ab5f2865a6e@mainlining.org>
- <20251019-qcom-sdm660-cdsp-adsp-dts-v1-1-9ab5f2865a6e@mainlining.org>
- <5hbc24lihvau7s2opzcxxgxkzugmbqmdtqwy23m45j4po23lnh@jyjlbgfjaddw>
- <f8daddfd-e0ec-4acd-afc5-cf0969aebb9f@mainlining.org>
- <0ca0bdfe-b228-49be-9ef7-71482d372e0f@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <0ca0bdfe-b228-49be-9ef7-71482d372e0f@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDE0OCBTYWx0ZWRfX8EbBmda/tsSx
- Wqka3aXBZP+9SMdYUGhSAKqfJ0B1BoXf8EwzG8vAe4rWJslM+z/Yg/bB/gd8T+pWkRDQ8NxlxKn
- 8k/qO6Qif5xqQPyP1jDKhrYYU2lnzN4ETY7RWRv79TyY5oTo+vLlp92NK2+oAL1zNuev7jpki+P
- YG9s8dLsUMyFRAub+CJ7hInIO4XIaJPkZcYrbaYvfipzK6iTN/Hr3bHAcVZ15MuN/y2jl7aKk3q
- t6mXAHirCUgUyei9FNdp2tDEQB7sD7CizKXFlUrdjwYK6NX4VlHXAbuZwLpDSfYfi6ccbv4sSG1
- +OXi2waCRIZR6QemubJepLe/mSMQ+xK/uT+ZDlnuqHCX2pQRR4PVePv3jgRCbYWHAUJ9vXM3v1W
- 361VhENN4GyQnhjpTeIXUGRYyhhoJw==
-X-Proofpoint-GUID: YjjyF-92Hj2L4ZVMG2Wz6tM4fzdc8GbD
-X-Proofpoint-ORIG-GUID: YjjyF-92Hj2L4ZVMG2Wz6tM4fzdc8GbD
-X-Authority-Analysis: v=2.4 cv=a+E9NESF c=1 sm=1 tr=0 ts=68f911c5 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=OuZLqq7tAAAA:8 a=q0T5L8gon9ZBDEW-TvIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22 a=AKGiAy9iJ-JzxKVHQNES:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_07,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510200148
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 10/20/25 5:42 PM, Nickolay Goppen wrote:
-> 
-> 20.10.2025 18:27, Nickolay Goppen пишет:
->>
->> 20.10.2025 16:14, Dmitry Baryshkov пишет:
->>> On Sun, Oct 19, 2025 at 07:27:06PM +0300, Nickolay Goppen wrote:
->>>> In order to enable CDSP support for SDM660 SoC:
->>>>   * add shared memory p2p nodes for CDSP
->>>>   * add CDSP-specific smmu node
->>>>   * add CDSP peripheral image loader node
->>>>
->>>> Memory region for CDSP in SDM660 occupies the same spot as
->>>> TZ buffer mem defined in sdm630.dtsi (which does not have CDSP).
->>>> In sdm660.dtsi replace buffer_mem inherited from SDM630 with
->>>> cdsp_region, which is also larger in size.
->>>>
->>>> SDM636 also doesn't have CDSP, so remove inherited from sdm660.dtsi
->>>> related nodes and add buffer_mem back.
->>>>
->>>> Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/sdm630.dtsi |   2 +-
->>>>   arch/arm64/boot/dts/qcom/sdm636.dtsi |  14 ++++
->>>>   arch/arm64/boot/dts/qcom/sdm660.dtsi | 152 +++++++++++++++++++++++++++++++++++
->>>>   3 files changed, 167 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
->>>> index 8b1a45a4e56e..a6a1933229b9 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
->>>> @@ -563,7 +563,7 @@ modem_smp2p_in: slave-kernel {
->>>>           };
->>>>       };
->>>>   -    soc@0 {
->>>> +    soc: soc@0 {
->>>>           #address-cells = <1>;
->>>>           #size-cells = <1>;
->>>>           ranges = <0 0 0 0xffffffff>;
->>>> diff --git a/arch/arm64/boot/dts/qcom/sdm636.dtsi b/arch/arm64/boot/dts/qcom/sdm636.dtsi
->>>> index ae15d81fa3f9..41e4e97f7747 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sdm636.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/sdm636.dtsi
->>>> @@ -16,6 +16,20 @@
->>>>    * be addressed when the aforementioned
->>>>    * peripherals will be enabled upstream.
->>>>    */
->>>> +/delete-node/ &cdsp_pil;
->>>> +/delete-node/ &cdsp_smmu;
->>>> +/delete-node/ &cdsp_region;
->>>> +
->>>> +/ {
->>>> +    /delete-node/ smp2p-cdsp;
->>>> +
->>>> +    reserved-memory {
->>>> +        buffer_mem: tzbuffer@94a00000 {
->>>> +            reg = <0x00 0x94a00000 0x00 0x100000>;
->>>> +            no-map;
->>>> +        };
->>>> +    };
->>>> +};
->>> This probably means that we need to invert things and make SDM636
->>> inherit SDM630 and SDM660 inherit SDM636. Would you mind doing that as a
->>> part of this patchset?
->> I'd mind
-> Konrad decided to do the split this way for some reason initially
+This patch introduces infrastructure for allocating req objects on the
+stack for AEADs. The additions mirror the existing sync skcipher APIs.
+This can be used in cases where simple sync AEAD operations are being
+done. So allocating the request on stack avoides possible out-of-memory
+errors.
 
-This isn't a very good argument, but I think keeping it as-is is a
-good idea in this case, as opening sdm660.dtsi I see a need for some
-more cleanup work on this platform.. which I don't think anyone
-is willing to do short term, this is less invasive
+The struct crypto_sync_aead is a wrapper around crypto_aead and should
+be used in its place when sync only requests will be done on the stack.
+Correspondingly, the request should be allocated with
+SYNC_AEAD_REQUEST_ON_STACK().
 
-Konrad
+Similar to sync_skcipher APIs, the new sync_aead APIs are wrappers
+around the regular aead APIs to facilitate sync only operations. The
+following crypto APIs are added:
+ - struct crypto_sync_aead
+ - crypto_alloc_sync_aead()
+ - crypto_free_sync_aead()
+ - crypto_aync_aead_tfm()
+ - crypto_sync_aead_setkey()
+ - crypto_sync_aead_setauthsize()
+ - crypto_sync_aead_authsize()
+ - crypto_sync_aead_maxauthsize()
+ - crypto_sync_aead_ivsize()
+ - crypto_sync_aead_blocksize()
+ - crypto_sync_aead_get_flags()
+ - crypto_sync_aead_set_flags()
+ - crypto_sync_aead_clear_flags()
+ - crypto_sync_aead_reqtfm()
+ - aead_request_set_sync_tfm()
+ - SYNC_AEAD_REQUEST_ON_STACK()
+
+Signed-off-by: T Pratham <t-pratham@ti.com>
+---
+ crypto/aead.c         | 19 ++++++++++
+ include/crypto/aead.h | 87 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+)
+
+diff --git a/crypto/aead.c b/crypto/aead.c
+index 51ab3af691af2..08d44c5e5c336 100644
+--- a/crypto/aead.c
++++ b/crypto/aead.c
+@@ -205,6 +205,25 @@ struct crypto_aead *crypto_alloc_aead(const char *alg_name, u32 type, u32 mask)
+ }
+ EXPORT_SYMBOL_GPL(crypto_alloc_aead);
+ 
++struct crypto_sync_aead *crypto_alloc_sync_aead(const char *alg_name, u32 type, u32 mask)
++{
++	struct crypto_aead *tfm;
++
++	/* Only sync algorithms are allowed. */
++	mask |= CRYPTO_ALG_ASYNC;
++	type &= ~(CRYPTO_ALG_ASYNC);
++
++	tfm = crypto_alloc_tfm(alg_name, &crypto_aead_type, type, mask);
++
++	if (!IS_ERR(tfm) && WARN_ON(crypto_aead_reqsize(tfm) > MAX_SYNC_AEAD_REQSIZE)) {
++		crypto_free_aead(tfm);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return (struct crypto_sync_aead *)tfm;
++}
++EXPORT_SYMBOL_GPL(crypto_alloc_sync_aead);
++
+ int crypto_has_aead(const char *alg_name, u32 type, u32 mask)
+ {
+ 	return crypto_type_has_alg(alg_name, &crypto_aead_type, type, mask);
+diff --git a/include/crypto/aead.h b/include/crypto/aead.h
+index 0e8a416386780..8e66a1fa9c786 100644
+--- a/include/crypto/aead.h
++++ b/include/crypto/aead.h
+@@ -159,6 +159,21 @@ struct crypto_aead {
+ 	struct crypto_tfm base;
+ };
+ 
++struct crypto_sync_aead {
++	struct crypto_aead base;
++};
++
++#define MAX_SYNC_AEAD_REQSIZE		384
++
++#define SYNC_AEAD_REQUEST_ON_STACK(name, _tfm)		\
++	char __##name##_desc[sizeof(struct aead_request) +	\
++			     MAX_SYNC_AEAD_REQSIZE		\
++			    ] CRYPTO_MINALIGN_ATTR;		\
++	struct aead_request *name =				\
++		(((struct aead_request *)__##name##_desc)->base.tfm = \
++			crypto_sync_aead_tfm((_tfm)),		\
++		 (void *)__##name##_desc)
++
+ static inline struct crypto_aead *__crypto_aead_cast(struct crypto_tfm *tfm)
+ {
+ 	return container_of(tfm, struct crypto_aead, base);
+@@ -180,11 +195,18 @@ static inline struct crypto_aead *__crypto_aead_cast(struct crypto_tfm *tfm)
+  */
+ struct crypto_aead *crypto_alloc_aead(const char *alg_name, u32 type, u32 mask);
+ 
++struct crypto_sync_aead *crypto_alloc_sync_aead(const char *alg_name, u32 type, u32 mask);
++
+ static inline struct crypto_tfm *crypto_aead_tfm(struct crypto_aead *tfm)
+ {
+ 	return &tfm->base;
+ }
+ 
++static inline struct crypto_tfm *crypto_sync_aead_tfm(struct crypto_sync_aead *tfm)
++{
++	return crypto_aead_tfm(&tfm->base);
++}
++
+ /**
+  * crypto_free_aead() - zeroize and free aead handle
+  * @tfm: cipher handle to be freed
+@@ -196,6 +218,11 @@ static inline void crypto_free_aead(struct crypto_aead *tfm)
+ 	crypto_destroy_tfm(tfm, crypto_aead_tfm(tfm));
+ }
+ 
++static inline void crypto_free_sync_aead(struct crypto_sync_aead *tfm)
++{
++	crypto_free_aead(&tfm->base);
++}
++
+ /**
+  * crypto_has_aead() - Search for the availability of an aead.
+  * @alg_name: is the cra_name / name or cra_driver_name / driver name of the
+@@ -238,6 +265,11 @@ static inline unsigned int crypto_aead_ivsize(struct crypto_aead *tfm)
+ 	return crypto_aead_alg_ivsize(crypto_aead_alg(tfm));
+ }
+ 
++static inline unsigned int crypto_sync_aead_ivsize(struct crypto_sync_aead *tfm)
++{
++	return crypto_aead_ivsize(&tfm->base);
++}
++
+ /**
+  * crypto_aead_authsize() - obtain maximum authentication data size
+  * @tfm: cipher handle
+@@ -255,6 +287,11 @@ static inline unsigned int crypto_aead_authsize(struct crypto_aead *tfm)
+ 	return tfm->authsize;
+ }
+ 
++static inline unsigned int crypto_sync_aead_authsize(struct crypto_sync_aead *tfm)
++{
++	return crypto_aead_authsize(&tfm->base);
++}
++
+ static inline unsigned int crypto_aead_alg_maxauthsize(struct aead_alg *alg)
+ {
+ 	return alg->maxauthsize;
+@@ -265,6 +302,11 @@ static inline unsigned int crypto_aead_maxauthsize(struct crypto_aead *aead)
+ 	return crypto_aead_alg_maxauthsize(crypto_aead_alg(aead));
+ }
+ 
++static inline unsigned int crypto_sync_aead_maxauthsize(struct crypto_sync_aead *tfm)
++{
++	return crypto_aead_maxauthsize(&tfm->base);
++}
++
+ /**
+  * crypto_aead_blocksize() - obtain block size of cipher
+  * @tfm: cipher handle
+@@ -280,6 +322,11 @@ static inline unsigned int crypto_aead_blocksize(struct crypto_aead *tfm)
+ 	return crypto_tfm_alg_blocksize(crypto_aead_tfm(tfm));
+ }
+ 
++static inline unsigned int crypto_sync_aead_blocksize(struct crypto_sync_aead *tfm)
++{
++	return crypto_aead_blocksize(&tfm->base);
++}
++
+ static inline unsigned int crypto_aead_alignmask(struct crypto_aead *tfm)
+ {
+ 	return crypto_tfm_alg_alignmask(crypto_aead_tfm(tfm));
+@@ -300,6 +347,21 @@ static inline void crypto_aead_clear_flags(struct crypto_aead *tfm, u32 flags)
+ 	crypto_tfm_clear_flags(crypto_aead_tfm(tfm), flags);
+ }
+ 
++static inline u32 crypto_sync_aead_get_flags(struct crypto_sync_aead *tfm)
++{
++	return crypto_aead_get_flags(&tfm->base);
++}
++
++static inline void crypto_sync_aead_set_flags(struct crypto_sync_aead *tfm, u32 flags)
++{
++	crypto_aead_set_flags(&tfm->base, flags);
++}
++
++static inline void crypto_sync_aead_clear_flags(struct crypto_sync_aead *tfm, u32 flags)
++{
++	crypto_aead_clear_flags(&tfm->base, flags);
++}
++
+ /**
+  * crypto_aead_setkey() - set key for cipher
+  * @tfm: cipher handle
+@@ -319,6 +381,12 @@ static inline void crypto_aead_clear_flags(struct crypto_aead *tfm, u32 flags)
+ int crypto_aead_setkey(struct crypto_aead *tfm,
+ 		       const u8 *key, unsigned int keylen);
+ 
++static inline int crypto_sync_aead_setkey(struct crypto_sync_aead *tfm,
++					 const u8 *key, unsigned int keylen)
++{
++	return crypto_aead_setkey(&tfm->base, key, keylen);
++}
++
+ /**
+  * crypto_aead_setauthsize() - set authentication data size
+  * @tfm: cipher handle
+@@ -331,11 +399,24 @@ int crypto_aead_setkey(struct crypto_aead *tfm,
+  */
+ int crypto_aead_setauthsize(struct crypto_aead *tfm, unsigned int authsize);
+ 
++static inline int crypto_sync_aead_setauthsize(struct crypto_sync_aead *tfm,
++					       unsigned int authsize)
++{
++	return crypto_aead_setauthsize(&tfm->base, authsize);
++}
++
+ static inline struct crypto_aead *crypto_aead_reqtfm(struct aead_request *req)
+ {
+ 	return __crypto_aead_cast(req->base.tfm);
+ }
+ 
++static inline struct crypto_sync_aead *crypto_sync_aead_reqtfm(struct aead_request *req)
++{
++	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
++
++	return container_of(tfm, struct crypto_sync_aead, base);
++}
++
+ /**
+  * crypto_aead_encrypt() - encrypt plaintext
+  * @req: reference to the aead_request handle that holds all information
+@@ -417,6 +498,12 @@ static inline void aead_request_set_tfm(struct aead_request *req,
+ 	req->base.tfm = crypto_aead_tfm(tfm);
+ }
+ 
++static inline void aead_request_set_sync_tfm(struct aead_request *req,
++					     struct crypto_sync_aead *tfm)
++{
++	aead_request_set_tfm(req, &tfm->base);
++}
++
+ /**
+  * aead_request_alloc() - allocate request data structure
+  * @tfm: cipher handle to be registered with the request
+-- 
+2.43.0
+
 
