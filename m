@@ -1,87 +1,72 @@
-Return-Path: <linux-kernel+bounces-864145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B4FBFA07E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:11:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778C3BFA081
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8163F1A02FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA8418890CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E782E0902;
-	Wed, 22 Oct 2025 05:11:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488762DF12B;
+	Wed, 22 Oct 2025 05:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R0PqgFbX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5656C2D47FF
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9B12DF155;
+	Wed, 22 Oct 2025 05:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761109864; cv=none; b=rRT0+Fcpty4si632E7MBXmQmUICftHGN0N38BSvwi3y4JO4r059MXaZbeKO1mrUdUg1WLsgPO8lg/YIrBNctULSr1flSpDMsgB7xYUFHJpAjFk2wxiBYhIYm2vyyzT3NvgZuy5TrGNjpRLfvEgn8L/qDGuhEAF8JyhGXtb12hqI=
+	t=1761109878; cv=none; b=giOptG5M9BsZgtZbXINwSwO4sdIeAM1Xf+sR5F5vckfvE27b1krrDg+kOHZRn57zuK6KYsZSnAolZDC1D1jajdu7vIdxoBKL8TELibZQ0gcjAeOukOwz1XkLXiq+WN8+b33i/NMzmhNB/5DohzdQNCfA1L7BS/XTkDB1ujnaYeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761109864; c=relaxed/simple;
-	bh=McIaP1rcTmdAz43EJgcG5qyhWa48o1nyUW0xBvfLbMI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LehRYIxQ8Kzw0rNcmeXmWkFv2AIQ3cZ8AdYn7I7/iu4rtISJ69Lg9i7GstZwdJBE/t66tqHuNf4i1vJk2Ya3U5t2wNUQrLCPB21erDYTeCHQHxQ7dFQxKbCNTzdCf4zVMtwg1wJqJd6edMofwE+qGJXGqUZ34R/WuSATFIn5QXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-431d3a4db56so25347735ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761109862; x=1761714662;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IivaJmnHo4syQl/695R3OTIJR+0q0/+G1xkvdlq/z5Y=;
-        b=ElIUmpizLheDfaBWem47k6LEdu+/iBdDe4a3JaXnLkIICLLTwRJxVeWtw/n0gUXgqy
-         I54bI/OHoLTOUXRUt+jgCXh/GwB1WB9Qp/4oUcbMJQ4kQsZKajGowo7p9AatjustDK14
-         CA/9yyQxSBxT4l7ItbM9fjdjjQv+inVp2fy50oorzEFLosBk1dCG8VuS3j/K0XZsnQ6Z
-         RYGbbPC2C3D/9JEWIIx90H0P6bv7jG6SBC9+KwyamjYSv/xPeGmxuKbUt6jFpEHEnI7b
-         2D/fcFgg86JHEAqPv7yXc3gN2VJbmppIy/JI1C1hVzqSYJYZofds0vRzA0mWmT+peMDH
-         kQjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/mltzFJ5bAnHR306y7UIYP4KifJQET/VEFT58ZugqHg7USFAjiA0Y66642vga7MDSJe4yg+nAlSLfG5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEI+ckG7waYeDpD2h/y010t87RlKrDqBE1HMflytE5NQ4GbQxa
-	44iDQ/++GgFNyPdx3pkJ8LaTTX2mjgAbmDqM9SLaZNdZZ/OMsJZE+LvsE12eaOefUHOPiB6hjXY
-	MgCDiAasgi6efnDBFbIqnUSuOr27aAC0czAXvabky9MJlK6XPle2MDDJAkLU=
-X-Google-Smtp-Source: AGHT+IEuYEbcUq2iViHxwbIcLJwREU+NHy/aGMazE2pCPSUJiA6VW3Z0lFa/ew+1fIeuFiizNILvQfoTBfbLNPgyyoQMqpDGVR0G
+	s=arc-20240116; t=1761109878; c=relaxed/simple;
+	bh=HePjcY4qZLOl4GibzWey//O4YmTvcuyAyYHVuZRmKJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=neTWZJbRfHcsMhxqUF+WfIhQnJdlje5JQ95Vroux2dO/ELgf1xCykgzg7Kd2gM1rsu/yKroUtBIviGo9aTIiMlJ6klzQN4LP4fWu6C1vRWX2s7On2VvyeDJOEUgYMVbtNmJhSklcwoOS/CX9b/GwpmN0IZXb5MrHiNJ5jQQYL1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R0PqgFbX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FDCC4CEF7;
+	Wed, 22 Oct 2025 05:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761109877;
+	bh=HePjcY4qZLOl4GibzWey//O4YmTvcuyAyYHVuZRmKJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R0PqgFbXkAAv+2Ti9kJMVJp9KNGOwLPz5gH87/2uQVYyXaX8tj9+tm/CTt8SVqawT
+	 6etHEeYe+7Qdx7YXxunUUCnta6mhzMZkR+sP0nierHNSVFmBBzMZQnPF/5Q8pFyJ9O
+	 2woQ9nwnD68ve3FT95hQWDIO6Q3Msx2CPRfnyYLE=
+Date: Wed, 22 Oct 2025 07:11:15 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Workflows <workflows@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] Documentation: process: Also mention Sasha Levin as
+ stable tree maintainer
+Message-ID: <2025102207-retread-barstool-8916@gregkh>
+References: <20251022034336.22839-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda3:0:b0:430:ac4a:4dcc with SMTP id
- e9e14a558f8ab-430c514b650mr283326985ab.0.1761109862606; Tue, 21 Oct 2025
- 22:11:02 -0700 (PDT)
-Date: Tue, 21 Oct 2025 22:11:02 -0700
-In-Reply-To: <CAHxJ8O-aa8eM1u4J_E6B4Rk6S9fsnLsKdU02+n2FTSdnhDHtvg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f86766.050a0220.346f24.0034.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] WARNING in ocfs2_unlink
-From: syzbot <syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com>
-To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022034336.22839-1-bagasdotme@gmail.com>
 
-Hello,
+On Wed, Oct 22, 2025 at 10:43:35AM +0700, Bagas Sanjaya wrote:
+> Sasha has also maintaining stable branch in conjunction with Greg
+> since cb5d21946d2a2f ("MAINTAINERS: Add Sasha as a stable branch
+> maintainer"). Mention him in 2.Process.rst.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
-Tested-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12689b04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a1215729170d20fc
-dashboard link: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16971b04580000
-
-Note: testing is done by a robot and is best-effort only.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
