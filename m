@@ -1,78 +1,178 @@
-Return-Path: <linux-kernel+bounces-865958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4FFBFE6AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CA7BFE6B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5B67A350CE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:32:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB0F1A0681B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92E5306D52;
-	Wed, 22 Oct 2025 22:32:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA732F12DA;
+	Wed, 22 Oct 2025 22:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="aX3N7Eib"
+Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0963F306495
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F7A288C20
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761172325; cv=none; b=K/6aCz3dUsZclK0lKYs450slJv41hMBJj+gkyOWOxlML0TCEwgSU3GiiqgorR4W6W/VhPsES5CRX16mNhoLgB43gjdiHAunV+4QQQbVCY17lOM9DCGjQbDNIw2S4UYFoMXWVUgpkPfjBi63ABi9aRVmQtbQY8v98p+EEf9B5CGM=
+	t=1761172396; cv=none; b=aZ2gwLyN4nmwnc8WxTpwEg3gRflYAnh3xluG6H0HETLKeQq/N4HQCjXXDufmDbEN9XLhHlEMkNlGTGPZgICQKLPb325+hD3/OJ3gYobsI/nT6jCOI0P9OmtNG6Fu9A1sAxDz6+yL/OZUIh3dNz8rvMpNY7XoM4YGtlWPgZ9BDVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761172325; c=relaxed/simple;
-	bh=pvWzVOStEGQwgHi3jA6touh8RrftYGKegfGz7Yq+Uc0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cfhJcubQdBrAYQPnVbzgH5uJvpiPFEa6s9Mu+G35a62962uG6c2m74cbVB6OWCZNTGwVcEZphnWrgYc6diE4Ko/v/Gtba4BncwYpfpGLizRljNCiwwFQr1hD1eIawXOgsJovUfQKFAmG5UCeF0YMeeJUy0zr4HOQoPZKo8/eyBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-940e4cf730aso28350639f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:32:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761172323; x=1761777123;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pvWzVOStEGQwgHi3jA6touh8RrftYGKegfGz7Yq+Uc0=;
-        b=igQ9SU1cy16H4ai6xMUiGqini+FJcP06DkgEKC7aKvSPtRL6LkCgmYlnKwYE3AUnUW
-         YVwYO4QdkFUe1habgZCDApJ3IGch/fXxtycMN3aGB+cBSqmAXM3CB7W/71qkhkIuqRaa
-         QHUg6GMQwb6yQANfgUkGNF7t8WJfb93Wr/dkUJ6IXGiscIskClkfukatIQzGPvt4ZWmT
-         EwSrGwtHi/ZPjMWcTmAcUQD8UGbQJfpsgJxOU+h0/dt0UN4wizn6CTBGpCLBAPG43hlZ
-         SOHMDPMxbJr7LgqF4lchc/9AlkIlF1NA+xZThK4XKisbmiPRv+wCe5fuT6YS5YER9s5l
-         5tsw==
-X-Gm-Message-State: AOJu0Yzk+R2BN9DICwLxrhd4KI0M6pfc6YlZWbLFXMssl/KC058bp2H9
-	VW62O1YZjmgYzbNNqTl4dhVL3rgrw6c7K0u3/KxvRYeGrOpCb1sowb/REyUlMDzuqMRepQtJfxz
-	kZxo8xV5vb4nxsUqxcd6GH7K759v3eUd99Lqag9aAyTnorCGHRzJ0G8dpvmg=
-X-Google-Smtp-Source: AGHT+IHOkRyM5tHa6TND5ryzDGlGZFpMCF+j8+2izilzDUQOraIZM4ZzEu2OaRkgXyytbozseyEXdv7L8KHjziJPRS3VD7qJMQvR
+	s=arc-20240116; t=1761172396; c=relaxed/simple;
+	bh=dVfgEu9qcwOKno5SLXpEJ3JiPhsTPxK/YObQhXDy+/Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ci4mb/OnoWEPXsz+YgJQ+cVCyN8Q+49+rYL3d43YV0OXti8lkE43m4QFSkV2jzGSb9s3/JQvCyMTjPIvcHUl9po8p4dR8AGdd7mtyupl8fNA0vgt1ElPnXHjeay+GSH9elj4a+vZ5NcCOQvScuVuarBxcsVIZmmQ3ojg4DmPyhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=aX3N7Eib; arc=none smtp.client-ip=61.135.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1761172390;
+	bh=b+8CUta4WIQPuZ+O6n5HcqH79h8cLw/nbd8oqpi9Oss=;
+	h=From:Subject:Date:Message-ID;
+	b=aX3N7EibxIJ4mqaHdXlEVW9siFtOUAQ8plKZfX5A/y6ELXgP6Tq4qT1jGpHV+Po8D
+	 VReo7QwsGZfEn5v7F5k9e9dIIjxN1OH05M8xN0hI2qzK6qM3OIkKQ6yfvlsoImb4r0
+	 1OFlOPQMaRXaR+WnkpUyB69wm4fBBhrva/BRpuiE=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68F95B7C00006FD8; Wed, 23 Oct 2025 06:32:29 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9169206816204
+X-SMAIL-UIID: E56726089A0E4746A66BEF4CFBB6559C-20251023-063229-1
+From: Hillf Danton <hdanton@sina.com>
+To: Samuel Wu <wusamuel@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	kernel-team@android.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
+Date: Thu, 23 Oct 2025 06:32:16 +0800
+Message-ID: <20251022223218.8664-1-hdanton@sina.com>
+In-Reply-To: <CAG2KctoJ+1x61KNmDj_52J1_Y3vyox7UNceFw6_WtbRMA_1vYA@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0c:b0:430:b1ff:74cd with SMTP id
- e9e14a558f8ab-430c522d9f4mr341514425ab.10.1761172323125; Wed, 22 Oct 2025
- 15:32:03 -0700 (PDT)
-Date: Wed, 22 Oct 2025 15:32:03 -0700
-In-Reply-To: <68ef003e.050a0220.91a22.0229.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f95b63.050a0220.346f24.0069.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [gfs2?] kernel BUG in do_xmote
-From: syzbot <syzbot+353de08f32ce69361b89@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, 22 Oct 2025 11:41:37 -0700 Samuel Wu wrote:
+> On Tue, Oct 21, 2025 at 6:16 PM Hillf Danton <hdanton@sina.com> wrote:
+> > On Tue, 21 Oct 2025 13:13:39 -0700 Samuel Wu wrote:
+> > > On Fri, Oct 17, 2025 at 5:17 PM Hillf Danton <hdanton@sina.com> wrote:
+> > > > On Fri, 17 Oct 2025 23:39:06 +0000 Samuel Wu wrote:
+> > > > > +/**
+> > > > > + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
+> > > > > + *
+> > > > > + * Return 0 on successful file system sync, otherwise returns -EBUSY if file
+> > > > > + * system sync was aborted.
+> > > > > + */
+> > > > > +int pm_sleep_fs_sync(void)
+> > > > > +{
+> > > > > +     bool need_pm_sleep_fs_sync_requeue;
+> > > > > +     unsigned long flags;
+> > > > > +
+> > > > > +     do {
+> > > > > +             spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> > > > > +             reinit_completion(&pm_sleep_fs_sync_complete);
+> > > >
+> > > > Given difficulty following up here, can you specify why reinit is needed?
+> > >
+> > > There are two possibilities that make reinit_completion() necessary:
+> > > 1. Suspend abort triggers completion, but is canceled before
+> > > pm_wakeup_pending(), so need reinit to restart the
+> > > wait_for_completion() process.
+> > > 2. Handling back-to-back suspend attempts: after a subsequent suspend
+> > > attempt finishes waiting for a previous suspend's fs_sync to finish,
+> > > we need the reinit to start the wait_for_completion() process of the
+> > > subsequent suspend's fs_sync.
+> > >
+> > If 1. and 2. matches the comment for wait_for_completion() below,
+> >
+> >         static DECLARE_COMPLETION(foo);
+> >
+> >         waiter          waker1          waker2
+> >         ---             ---             ---
+> >         for (;;) {
+> >           reinit_completion(&foo)
+> >           do anything
+> >           wait_for_completion(&foo)
+> >                         do bar1         do bar2
+> >                         complete(&foo)  complete(&foo)
+> >           if (end)
+> >                 break;
+> >         }
+> >
+> > the chance for reinit to drop one wakeup is not zero.
+> > If drop makes sense, for what do you wait after receiving two wakeups?
+> >
+> 
+> If I understand correctly, you are referring to the case where
+> multiple wakers trigger wait_for_complete() simultaneously, hence
+> having at least one waker's complete() being ignored?
+> 
+> If so, I see two possibilities with multiple wakers:
+> 1. fs_sync finishing + suspend abort1 + ... + suspend abortN
+> 2. suspend abort1 + ... + suspend abortN
+> 
+> Simplifying, if two wakers come in simultaneously, while one of the
+> wakers may have its complete() ignored, the state of that waker is
+> still checked after wait_for_completion(), with
+> if(pm_wakeup_pending()) and while(need_pm_sleep_fs_sync_requeue) for
+> suspend aborts and fs_sync finishing respectively.
+> 
+Note one of the two wakeups may come after the two checks.
 
-***
+       reinit_completion(&foo)
+       do anything
+       wait_for_completion(&foo)
+       		complete(&foo) from waker1
+       check1
+       check2
+       		complete(&foo) from waker2 // dropped by reinit
 
-Subject: Re: [syzbot] [gfs2?] kernel BUG in do_xmote
-Author: agruenba@redhat.com
-
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
-for-next
-
+> > > > > +             /*
+> > > > > +              * Handle the case where a sleep immediately follows a previous
+> > > > > +              * sleep that was aborted during fs_sync. In this case, wait for
+> > > > > +              * the previous filesystem sync to finish. Then do another
+> > > > > +              * filesystem sync so any subsequent filesystem changes are
+> > > > > +              * synced before sleeping.
+> > > > > +              */
+> > > > > +             if (pm_sleep_fs_sync_queued) {
+> > > > > +                     need_pm_sleep_fs_sync_requeue = true;
+> > > > > +             } else {
+> > > > > +                     need_pm_sleep_fs_sync_requeue = false;
+> > > > > +                     pm_sleep_fs_sync_queued = true;
+> > > > > +                     schedule_work(&sync_filesystems);
+> > > > > +             }
+> > > > > +             spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
+> > > > > +
+> > > > > +             /*
+> > > > > +              * Completion is triggered by fs_sync finishing or an abort sleep
+> > > > > +              * signal, whichever comes first
+> > > > > +              */
+> > > > > +             wait_for_completion(&pm_sleep_fs_sync_complete);
+> > > > > +             if (pm_wakeup_pending())
+> > > > > +                     return -EBUSY;
+> > > > > +     } while (need_pm_sleep_fs_sync_requeue);
+> > > > > +
+> > > > > +     return 0;
+> > > > > +}
 
