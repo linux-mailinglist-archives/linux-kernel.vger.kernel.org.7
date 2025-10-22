@@ -1,93 +1,178 @@
-Return-Path: <linux-kernel+bounces-864231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2AEBFA3A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:31:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED8EBFA3AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB401896280
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:31:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E71004EF7EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893452EC0AD;
-	Wed, 22 Oct 2025 06:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6AF2EC09C;
+	Wed, 22 Oct 2025 06:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMAHiKg7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YfEISTSp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+uxAEozI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c98A6kAs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NW/WnAUW"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDECC33F3;
-	Wed, 22 Oct 2025 06:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D63225762
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761114652; cv=none; b=NB6OhOcH/hg1rCB0NjfmlN/EQ/DvCVJCbr7sG7c+pwkxjI6PHrG0D/VhSto12J73q+RMVb5PZry16RvEVE/uPidcT92ZPtEbK6IENxxSv0xR/ybGTDiHJ/V5vJGf72DXfXlId2oh/6QnLrFlkU9Uf+n0Cghnd5Db+FYwaLKDOUI=
+	t=1761114677; cv=none; b=Nc3sSZ87nYqUtF74IAHCCfR8Ad8+rgCzXFeKl3NmmrZnvNx3OU8s43zax2F2i+u/ePIqOm5NXAAE4wM2R8YO1l2+J/BRGyi/6dVlvcxfB41Kk0+z4WpDZiEpBaqG1y7jaO29wkZ1nwlfW7K6s03jfdcFcCD1WUtIRbOTg/zwBWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761114652; c=relaxed/simple;
-	bh=KEgp4fU5XhMtbOPuc2WyIySNoZ5jLcw+J/DU2i8WbJU=;
+	s=arc-20240116; t=1761114677; c=relaxed/simple;
+	bh=TLfoUXoCL77yTs/JzVPOgpTaaY/RAoKiE3+KP7OJk4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfRoP0Tmc5JoKvNpipUWuRxxV9dm7tOVQgwYyiX9aYtqbE8FDNufunbdgHutbzRk1706qjeb5q9NWINTgir+zpwIafqy8zffVO1CHBp9BvHjMOhCYRGtq0jhj/+wSkncEE3+jEjWaJDiiOlnI3DciUEpS+Nb60CBboOpUTBW9+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMAHiKg7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC2DC4CEE7;
-	Wed, 22 Oct 2025 06:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761114650;
-	bh=KEgp4fU5XhMtbOPuc2WyIySNoZ5jLcw+J/DU2i8WbJU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IMAHiKg78Y1C7Fkm7JWfmXWxkP7AX1nnigwoF0sQjnZWuHnFs853YwIBqLKNCAtbM
-	 RbHksicBdoVVUgkjng/Nti9dFYEvhuvCVtRXpff61yi92WWQJc11wNflrRLhvuJ7Lx
-	 5CsAcsW9Bi0E+2UvfmJoXo+gKmZKRY13+YZTS6Seacn0kSb+XcGKEusPdg0SmSvXWN
-	 v9HSP52xcR8KN00zUaxAm6rNNYmvrSISAY+Fcxd+7CS0UuNAoPv4jWoxV6f6lvfJsS
-	 189C79XSH6oHA8Tv7Hc+BaBObhNbMtm11VkmCVsQP3Q0zhU59WDmohC3mnUogthTO9
-	 GnZSDbJA9Sv2g==
-Date: Wed, 22 Oct 2025 08:30:47 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Roy Luo <royluo@google.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, 
-	Badhri Jagan Sridharan <badhri@google.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-Message-ID: <20251022-delectable-gabby-hedgehog-35f7d6@kuoka>
-References: <20251017233459.2409975-1-royluo@google.com>
- <20251017233459.2409975-2-royluo@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPPxGKXXKqlHmIHy+6J4BNG4rxIuvCwOug+IPyg9SHPc7w3hqudNHMos8d1uNsw1s6lddvs5Z8GlmAyVb8IeNkh+7Syh1Y2AzAOHyshEuBKJ6C8ZPqDEAYiaH6EKvKsou2VZmCsfMLQ7Do0a+P8n8NkQUrhwsntGQh1Lu08bHq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YfEISTSp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+uxAEozI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=c98A6kAs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NW/WnAUW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 02E7C1F449;
+	Wed, 22 Oct 2025 06:31:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761114670;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZtIUa+RiK10YmXKIYhygEd5F0AIbsac/XqT2ms8i91c=;
+	b=YfEISTSp8XlFjgGhpA+uD7XcT/1nQOpjc/FKl3NJM3wjZ32Qm9fOO6jU5AV6QHGycE6zyr
+	eDYnzK8sPckMop1TpZfed0XL1NFtAFdNj7qyTE6PjWiqbIHQ0Qp2g5ykIsStSqAaTAXnqo
+	MxNAaXeK2Jz9Fs4wALPJbPHSCxBPETI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761114670;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZtIUa+RiK10YmXKIYhygEd5F0AIbsac/XqT2ms8i91c=;
+	b=+uxAEozIk04zTKm1UljJrwJvZsCKk1XIcOe8BnttYzkH4Zv8Q6YjXyALyOc+Rji2CGyBFW
+	V2bzhG9Iqia/9LCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761114666;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZtIUa+RiK10YmXKIYhygEd5F0AIbsac/XqT2ms8i91c=;
+	b=c98A6kAszbGqrSQmaNVkQXUgMmKCW7SQLRrP5qlzymQza5RYvVTHuPgXCs+aX9eahdcmxD
+	+UoSbB4HPrWKayamWi7bdtsMF7CkL4Cuc85JgufUddMGRHd2XYo0E7UP8jlqMgEF635VAJ
+	FtgH3XDsMILuPujznsPnEkhzZ8OZK+A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761114666;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZtIUa+RiK10YmXKIYhygEd5F0AIbsac/XqT2ms8i91c=;
+	b=NW/WnAUWAwGS7KU7Z1F9omF+65CTmAINsuryiOfPtQX5nzGqMJ4Bw6kfsVoziPbA0FXRfA
+	Y8TtmVaKyx2LVfDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C906013A29;
+	Wed, 22 Oct 2025 06:31:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M+/fMCl6+GgsXgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 22 Oct 2025 06:31:05 +0000
+Date: Wed, 22 Oct 2025 08:30:56 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
+	hch@lst.de, tytso@mit.edu, willy@infradead.org, jack@suse.cz,
+	djwong@kernel.org, josef@toxicpanda.com, sandeen@sandeen.net,
+	rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com,
+	pali@kernel.org, ebiggers@kernel.org, neil@brown.name,
+	amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com,
+	cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
+Message-ID: <20251022063056.GR13776@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20251020020749.5522-1-linkinjeon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017233459.2409975-2-royluo@google.com>
+In-Reply-To: <20251020020749.5522-1-linkinjeon@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,infradead.org,lst.de,mit.edu,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com,vger.kernel.org,lge.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-On Fri, Oct 17, 2025 at 11:34:58PM +0000, Roy Luo wrote:
-> Document the device tree bindings for the DWC3 USB controller found in
-> Google Tensor SoCs, starting with the G5 generation.
+On Mon, Oct 20, 2025 at 11:07:38AM +0900, Namjae Jeon wrote:
+> The feature comparison summary
+> ==============================
 > 
-> The Tensor G5 silicon represents a complete architectural departure from
-> previous generations (like gs101), including entirely new clock/reset
-> schemes, top-level wrapper and register interface. Consequently,
-> existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitating
-> this new device tree binding.
-> 
-> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
-> Dual-Role Device single port with hibernation support.
-> 
-> Signed-off-by: Roy Luo <royluo@google.com>
-> ---
->  .../bindings/usb/google,gs5-dwc3.yaml         | 135 ++++++++++++++++++
->  1 file changed, 135 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
+> Feature                               ntfsplus   ntfs3
+> ===================================   ========   ===========
+> Write support                         Yes        Yes
+> iomap support                         Yes        No
+> No buffer head                        Yes        No
+> Public utilities(mkfs, fsck, etc.)    Yes        No
+> xfstests passed                       287        218
+> Idmapped mount                        Yes        No
+> Delayed allocation                    Yes        No
+> Bonnie++                              Pass       Fail
+> Journaling                            Planned    Inoperative
+> ===================================   ========   ===========
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Having two implementations of the same is problematic but I think what
+votes for ntfs+ is that it's using the current internal interfaces like
+iomap and no buffer heads. I'm not familiar with recent ntfs3
+development but it would be good to know if the API conversions are
+planned at all.
 
-Best regards,
-Krzysztof
+There are many filesystems using the old interfaces and I think most of
+them will stay like that. The config options BUFFER_HEAD and FS_IOMAP
+make the distinction what people care about most. In case of ntfs it's
+clearly for interoperability.
 
+As a user I'd be interested in feature parity with ntfs3, eg. I don't
+see the label ioctls supported but it's a minor thing. Ideally there's
+one full featured implementation but I take it that it may not be
+feasible to update ntfs3 so it's equivalent to ntfs+. As this is not a
+native linux filesystem swapping the implementation can be fairly
+transparent, depending only on the config options. The drawback is
+losing the history of fixed bugs that may show up again.
+
+We could do the same as when ntfs3 appeared, but back then it had
+arguably better position as it brought full write support. Right now I
+understand it more of as maintenance problem.
 
