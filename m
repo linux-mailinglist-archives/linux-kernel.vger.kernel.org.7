@@ -1,181 +1,156 @@
-Return-Path: <linux-kernel+bounces-865568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D936BFD833
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:16:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F532BFD677
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4235A422E0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E1D1A06D15
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194DC288C34;
-	Wed, 22 Oct 2025 16:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FD528D82F;
+	Wed, 22 Oct 2025 16:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lEv1KweE"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aF68qPQR"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFF523F431
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B50203706
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761151950; cv=none; b=B6YeNsW2ClXAJnE5sjzlMSenufMB3ZZ1pBI/qt0OqtLZRbgAe7w5B9NuIMeS8TvYSpjVHuRY2wOBvwMcNdi5MS7nUQDV8SPvjmXgGJ9vvaA1yNTF2J+Gq/C34052gbHxZzGSSZx4GSfpdmDqBtixEg3qtlpRFskbpsV+r6cU07s=
+	t=1761151990; cv=none; b=Yw7cZpDAukHtqlqvA19tTaC9m92la69LNVs6WIOrJhkoi7sJeJUANlREF2o474fD5wSXhlE7hro55qbi0EU1+CHSLm4ksu1aeEM3/2oJS+vkOmCltJSMh6N3DBshDpuwoh9mx609KMqFtJ7iiiv7sTQjX6m7t+QCx2HUK+geyGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761151950; c=relaxed/simple;
-	bh=k1lox5HCPqKeslKTFtUQDp54wxWlGvYzkemwVt7zj5A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=P7GBQJ7gukIXuDRbQLA/SfXrbTE7NHWwY0VFQf0utQtasnCgrKNXfCrDk2j/Pdl9Vr3Ukr7SUVC4bEVKBnGkPh8f7gfKTVF1KLR9bHREzCynXMXn8/xE2QORm1e0LYeq/c+UzvAkLDh2rUiOQKfzxiJManPL0VXQqa1HkuM5ZWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lEv1KweE; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4711f156326so56541955e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:52:26 -0700 (PDT)
+	s=arc-20240116; t=1761151990; c=relaxed/simple;
+	bh=TWNVlapC7XDe+7Bz4eFmpoVx9OjVKS5JYFgj3mkvBZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ip7TyFwPuEWUGHOxULesX3psX9a1SLllZLQpthtuFTvL6m9xaWsJZbsKyWD+eSdfNtqkCK4HR3OoIfJw+asI5Pb4+Gtp+n8wYk/GGg/u/V4WGMkz8bj2XVWa3h+t4D5NgXdN+KxVgRfKN5BTiSO0GDrUU4GrElmw/Ah9nMVgquI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aF68qPQR; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so89281195ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761151945; x=1761756745; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=37XacdJ9gFpbky/Uw+xLJQSiuMj+QNcWOMBwNotXM/U=;
-        b=lEv1KweEBDKg9u7eYdVo0a1ZFQFmbcAZxo7jZ0qD0H7f3XM8YtOkhmwLLwT3U3VVbc
-         UFZs3OhHe8ShNYy7060ykLAN+D4w8ttIf24L4/7wKYRSdyRrxi5tyfIkOEjZpbwdqAe7
-         Lp3/wPxXPQLkpMO+GPSERkp/cMwNhHiEGIHhQ1qWLufeG5GJRSRR6J9kZe/wVvchy4zN
-         LTvXYrvtHuu6Ozoa1seu+cF3fp60DIR+T+kyj/O7aWk4pz1ChGyOpGxOVZcDBssNVime
-         juh8jDl+jAWm7GcZZAfYNAbPkSwxrQT9VWfM0Dqel4SU9TlcrDkaZw8YRJzpgIHKJGss
-         1BDg==
+        d=gmail.com; s=20230601; t=1761151987; x=1761756787; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aY4e+rH9vc3mT7h+8PwwOAxT7elBzdw/6Q3LSR8Xjm0=;
+        b=aF68qPQRlvSQbEkuBaqSsPtpNd+BQQLMME/oqbaC/vfQUNuQYVVBdbYliik2biixwL
+         MEp8tyXBuzIFzt2Fm26lfnR8jqESmV0CGXAFVg6VVOW/jzyweSlHjbGDYRE1SdbJWEeW
+         nxAxB2fSYt0swIQB0400GRDh8fVM9Ne5zrAIjmkW7/i01w0AIizg+eOWo4ZXKnvr6ZsL
+         AXHLL4eubLrlvWcmZN5DCyQ1fSTKBFBvbwD/2p+9/W8+/4BUITnZgqTvVtqVSXM0vLdT
+         OHNmqZhuzMQW6woOKa0+LTj0qPr4DascUWfJ2xN/3Ca6ulBW2llJH7v4Npi80Q/4wWjb
+         U4hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761151945; x=1761756745;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=37XacdJ9gFpbky/Uw+xLJQSiuMj+QNcWOMBwNotXM/U=;
-        b=DvOU8fRNvChleWClQ7sfImyzCMUdr69kIqJmrpsG44fILNoYZ10w73RrSwyXahdTnp
-         gGTU06WdRZbuny87P2OxA4+dp07m1KpeXDEov7HNxj3GHAzEb66jikl+7aH8yIUTMwpm
-         zUCsl75gKFddANhGR22ctpKtpi/Un3NTps8EfT6Cmj7vOQIUN+PezvOcKvyOJmUBaoKi
-         GgYbeD7GwhWMKUdpyuwpUgaDGZXMxGDX1WVAYNzGwpdM9aRg/1nW4RqgeayJNjR7cOan
-         mLDevLVg6/gn8lbYDeBJIXFdwLzN4WoM2VQVUPPRigNse7LbglSJXHEWkYRNX160ynn+
-         o2ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWFNSn+v15XC/bZJrJqNPNQSdTFf+JwpABMmZZYBXgcv8Duc5vSUDVyO2Udkf146WFbaHFsqfSGuX3cODg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoS75lShp26ek+zSbwYbXPZqCA5VgXNFtGr/v0gPXm1iQ7+Cr8
-	LglCNwlYG/iHWeH/GBrVYbMN9D9i8dFlFuNrY3z9vHmNAQUJH4AJAtgfegp73wavVsM=
-X-Gm-Gg: ASbGnct8WRTzfXirw0CyIsPgMAfkimYSa70XACbb8sIYd+Kmsc4AthmhQnxuaAYe9JR
-	LBf2PsxMjDM9Ro2RTBPPOa6ec40FgN8+cQ+5ySYKvWyIj0R3jRU6PrPQ2Qy69KcWpWpz6BuN2wf
-	kAd+UJDcshPKGqMQSYjX3FmQF0u2Kp1Xv/zTVydM6gvnH8ZB/DfkCjYVQAAVzEmgm7ePoSqJsF1
-	xTvgvM4aYDFWCX5cH/xkzJLdsMILRyzEFieFIqXlzqu+CX4METaXWFTWegdXWtbDBA3HyFelYcW
-	CPTLjI38gjDVe7JIH6SEbAjybzxdZNNGghoprRqt78Q6mxXXWccY/GznpT9ADJy44lZ2t1AZPR5
-	MPEYlq5Q4YL17r4ZQFOhwgMCwmgcMZJGLuhXS/W01lBbO5voXWE89KCzprCDrtLoLAKRwAZUCpy
-	79n+3pW9EnQ8T0Ohs=
-X-Google-Smtp-Source: AGHT+IGFOe7mdI2kEMdRKUAfbbhGpFj/a5aNDnUXnkpzyrx/acBYIYP5vLTNIADhuJOIFJaea5le2Q==
-X-Received: by 2002:a05:6000:400a:b0:425:769e:515a with SMTP id ffacd0b85a97d-42704d9e8f7mr16851522f8f.42.1761151945204;
-        Wed, 22 Oct 2025 09:52:25 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:11f4:2b3f:7c5a:5c10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce3aesm26307158f8f.48.2025.10.22.09.52.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 09:52:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761151987; x=1761756787;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aY4e+rH9vc3mT7h+8PwwOAxT7elBzdw/6Q3LSR8Xjm0=;
+        b=TysqMILsTf47vzCGLfxrVFLFMNPbXhwrl/PytzhC8LdUyQOQui0MF41pQe3tT5PZGu
+         4kkvS37VQ/aDFdaAHcBNDMunRl7093l3uW4G7h9zm5xJi6NsJBudZOUZQCdJseRilQz+
+         ls19GVw9HzeGKlYmf32ZG2V7OPJOsEUAKadKSNugc9vrzCAb8E4ZUhWXbijFCyKKgmK4
+         A34GRoT4s27jk+sr382TvQbV/4sRTbsyNaNkAqHQjCsGKSJ/YOYoQB9LpKEr56GlL01q
+         5YvmGQ41N7o0iVH4kVcP5HrKjpAWExV300XooPQywRFgMhAa+YI9bzRTh60jnk5ZHWZK
+         AolA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvV+Y0x7iqUrd6oPhLQjf1J1PtdNAKJHBSMOgMJrvWMR0aWYMkoH0nlPsasEzrx3G9rE5PShnVLblFRWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyppk0A/p3li1LZrEuVQflxMtFpPjxuBsDoLwNfkkUBVZEXn1qL
+	HTaMB6EcxjlUtpkFqXxIh3lTRoSef+fb+OxDRF/nkHbF0HoJui8KcOjf
+X-Gm-Gg: ASbGncv5SNltGD80FEslHumelD4bhaiuYPJi3UJZ1iOKpHwi5B5TIIrGg4K6YEuIo1j
+	SdwDAb+rLlSb9VVOGeB5x4vEvtRsLDOM9zKxbaCHwWJvLyRVTVQkj2e0ML+cHOoTIujalm9LTje
+	FbSquhJgaxNee8y5rPNeGAMy7QJF5LeJamRwjUzUNXg9zZ8pYjHB0+nMD9U738aY76wQsEj6tzd
+	o1KbNO5Ri5PvVv0R5VwNvBrPr9/vHBryrKTD+oInF+GYCtY4Cw5+ESi9VAHo1yQ5QS3lGVYcYu2
+	P99jGbAC2Q7+wGNQP0k4ZYGjlGg50XR+Ik2gNcsbKhp2oME9UccnO2HUzAvQZ9iipqmIoLRwJp3
+	sMKrakxuGqB+E/a8Hgj3G0Fe1sSUy57xOzJijB6McMvYFfURMi8gzIFU2Eio1c7Oibb2UAH/rfB
+	QnTj9bQFwY/zo2hVtOYQ==
+X-Google-Smtp-Source: AGHT+IH1hFsCUy1cdTiHqBd/AssFtzguJtx14vMGrFxjJf/na9wGdbimDZUF/jeOmF+hKQXTkZu9Gw==
+X-Received: by 2002:a17:903:8c6:b0:290:c0b1:edb8 with SMTP id d9443c01a7336-290cbb4a2ccmr285811465ad.40.1761151986566;
+        Wed, 22 Oct 2025 09:53:06 -0700 (PDT)
+Received: from localhost ([177.107.87.169])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-29246ffb815sm143661825ad.50.2025.10.22.09.53.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 09:53:05 -0700 (PDT)
+Date: Wed, 22 Oct 2025 13:54:05 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH] iio: adc: ad7124: fix possible OOB array access
+Message-ID: <aPkMLUhm_UAVzRSA@debian-BULLSEYE-live-builder-AMD64>
+References: <20251022-iio-adc-ad7124-fix-possible-oob-array-access-v1-1-2552062cc8e6@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 Oct 2025 17:52:23 +0100
-Message-Id: <DDP09DUCGNDL.24UBAKUA640NO@linaro.org>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
- <konrad.dybcio@oss.qualcomm.com>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Konrad Dybcio" <konradybcio@kernel.org>, "Srinivas Kandagatla"
- <srini@kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: qcm2290: add LPASS LPI pin
- controller
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.0
-References: <20251007-rb1_hdmi_audio-v2-0-821b6a705e4c@linaro.org>
- <20251007-rb1_hdmi_audio-v2-3-821b6a705e4c@linaro.org>
- <b6223af9-2d9e-4ccd-b297-79f63167242b@oss.qualcomm.com>
- <DDEN5NSLDIHD.C1IELQW0VOG3@linaro.org>
- <zmi5grjg2znxddqzfsdsr35ad5olj3xgwwt6hvkiaynxzm5z33@gsgrdguj563n>
- <DDO0LYS7UTEW.3A9WGTAA5DKVO@linaro.org>
- <56vmqgrjy3je7omzirxnfxtuocebbj356iaew5thgkagi35464@hh34y7efssow>
- <450cac8b-598b-4f47-8bf0-43c805038e7c@oss.qualcomm.com>
-In-Reply-To: <450cac8b-598b-4f47-8bf0-43c805038e7c@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022-iio-adc-ad7124-fix-possible-oob-array-access-v1-1-2552062cc8e6@baylibre.com>
 
-On Tue Oct 21, 2025 at 2:13 PM BST, Srinivas Kandagatla wrote:
->
->
-> On 10/21/25 2:03 PM, Dmitry Baryshkov wrote:
->> On Tue, Oct 21, 2025 at 01:56:09PM +0100, Alexey Klimov wrote:
->>> On Fri Oct 17, 2025 at 11:42 PM BST, Bjorn Andersson wrote:
->>>> On Fri, Oct 10, 2025 at 01:29:38PM +0100, Alexey Klimov wrote:
->>>>> On Tue Oct 7, 2025 at 1:39 PM BST, Konrad Dybcio wrote:
->>>>>> On 10/7/25 4:03 AM, Alexey Klimov wrote:
->>>>>>> Add the Low Power Audio SubSystem Low Power Island (LPASS LPI) pin
->>>>>>> controller device node required for audio subsystem on Qualcomm
->>>>>>> QRB2210 RB1. QRB2210 is based on qcm2290 which is based on sm6115.
->>>>>>>
->>>>>>> While at this, also add description of lpi_i2s2 pins (active state)
->>>>>>> required for audio playback via HDMI/I2S.
->>>>>>>
->>>>>>> Cc: Srinivas Kandagatla <srini@kernel.org>
->>>>>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>>>>> ---
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>> +			lpi_i2s2_active: lpi-i2s2-active-state {
->>>>>>> +				data-pins {
->>>>>>> +					pins =3D "gpio12";
->>>>>>> +					function =3D "i2s2_data";
->>>>>>> +					bias-disable;
->>>>>>> +					drive-strength =3D <8>;
->>>>>>> +					output-high;
->>>>>>
->>>>>> I.. doubt output-high is what you want?
->>>>>
->>>>> Why? Or is it because of some in-kernel gpiod?
->>>>>
->>>>
->>>> What does "output-high" mean for a non-gpio function?
->>>
->>> This is not efficient. It will be more useful to go straight to
->>> the point.
->>=20
->> It is efficient. It makes everybody think about it (and ask the same
->> question in future) instead of just depending on maintainers words.
->>=20
->>> This description of pins was taken from Qualcomm downstream code
->>> and the similar patch was applied (see provided URL in the prev email).
->>=20
->> And we all know that downstream can be buggy, incomplete, etc.
->>=20
->>> Back to your question -- does it matter here if it is gpio or non-gpio
->>> function?
->>=20
->> It does. The I2S data pin is supposed to be toggled in some way by a
->> certain IP core. What would it mean if we program output-high? Will the
->> pin still be toggled (by the function) or stay pulled up (because of the
->> output being programmed)?
-> I2S lines are configured in push-pull mode which means that the lines
-> are driven high and low actively, am not sure why output-high is needed
-> an what it means here as these lines are actively driven by the controlle=
-r.
->
-> @Alexey, what issues do you see without this?
->
-> Am not sure if pinctrl driver even cares about this if we are in alt mode=
-.
+Hi David,
 
-No issues. Not sure why the problem (if it exists) wasn't reported or
-fixed, say, for sm4250.
+One minor question inline.
+Nevertheless, the fix looks good to me.
 
-Thanks,
-Alexey
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
+On 10/22, David Lechner wrote:
+> Reorder the channel bounds check before using it to index into the
+> channels array in ad7124_release_config_slot(). This prevents reading
+> past the end of the array.
+> 
+> The value read from invalid memory was not used, so this was mostly
+What is considered using the value in this context? (see other comment below)
+
+> harmless, but we still should not be reading out of bounds in the first
+> place.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-iio/aPi6V-hcaKReSNWK@stanley.mountain/
+> Fixes: 9065197e0d41 ("iio: adc: ad7124: change setup reg allocation strategy")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7124.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index 9d58ced7371d0af7004a81153888714e9795d4f4..ed828a82acb71342fb2eae27abfbbd86861cba53 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -586,13 +586,18 @@ static int ad7124_request_config_slot(struct ad7124_state *st, u8 channel)
+>  
+>  static void ad7124_release_config_slot(struct ad7124_state *st, u8 channel)
+>  {
+> -	unsigned int slot = st->channels[channel].cfg.cfg_slot;
+> +	unsigned int slot;
+>  
+>  	/*
+> -	 * All of these conditions can happen at probe when all channels are
+> -	 * disabled. Otherwise, they should not happen normally.
+> +	 * All of these early return conditions can happen at probe when all
+> +	 * channels are disabled. Otherwise, they should not happen normally.
+>  	 */
+> -	if (channel >= st->num_channels || slot == AD7124_CFG_SLOT_UNASSIGNED ||
+> +	if (channel >= st->num_channels)
+> +		return;
+> +
+> +	slot = st->channels[channel].cfg.cfg_slot;
+> +
+> +	if (slot == AD7124_CFG_SLOT_UNASSIGNED ||
+>  	    st->cfg_slot_use_count[slot] == 0)
+Wasn't the value potentially read from invalid memory used above?
+It's fixed now, so I guess there's no point in nitpicking on that.
+
+>  		return;
+
+Best regards,
+Marcelo
 
