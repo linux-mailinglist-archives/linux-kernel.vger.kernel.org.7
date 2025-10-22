@@ -1,301 +1,242 @@
-Return-Path: <linux-kernel+bounces-865610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B91ABFD936
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4174BFD942
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 00AAF4E2562
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:28:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08E1F4ED711
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68187296BD8;
-	Wed, 22 Oct 2025 17:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A198529B783;
+	Wed, 22 Oct 2025 17:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NG9yHPn2"
-Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kQXFPqMv"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D98A35B123
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D201929B78D;
+	Wed, 22 Oct 2025 17:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761154097; cv=none; b=acbR4MgYBNr5C3dsZBy9meQynqBgd7Sy7DRjne2mD7cWgcxbWw2KynGtfJP6gb3bYMKF9ohFgWfIhj+LQzTwBpcg3PZ0agZ9Yx2LtQcce/cMzoK5+bbOa7YtVDxpNCE1EoyD9ifWfnn0VGKIeqwAAWYsrfoaZwaoOnG802M9wiY=
+	t=1761154110; cv=none; b=gW1HhEA8FlHAFlfJt7d8d+7wyBeI/0a4+Znb96StTTGdkC/00H+LK3ZeNITBqCEoBScfVI8XhTLWIGTzTWxRau2EyKQT5Kn1Q3LnHvYC1Hf9mG2096wFxlHOPjODPpnvvYPtncAiRrZq/I+YfPbupccyvKvypwWuaoRxvQy2Js8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761154097; c=relaxed/simple;
-	bh=gOGiFu5dASQ5QJBkbv/03yuGfi+3Rr1lYTUXJtxWvBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g5IS08oK5rWvYnZnYGbqJwjOypkUed936UtNTs9LtX2dojqJ8zCdsBpY0M6B2vBxBYREc+J1TDjmSNn8Eya1Dg0ZzY8UFyMgLiu216BPm/iN4wZZZa6q7rrIaLEJvlIin2VOCzFfhmZFUKT0a3m1jmUgAgzpGtrZJ/Pl+2BqZvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NG9yHPn2; arc=none smtp.client-ip=209.85.214.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-290b48e09a7so85769025ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:28:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761154091; x=1761758891;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n50KDYMEFZZ+C5aTffr6IxN6ujw2wmpYb3eSsvYTzpE=;
-        b=T5KnlE2BAC1VhyT13H1SO95/NhTHixma4y2V7VDE5oofjQPxxsfJExB8dss8JXZvo4
-         GlVDv+moxL+i6W3YH3EQOUWEo6BeGTD1YJih0pj2u9I5vXUVCxfemYut9byNqXkES0zD
-         JdVRMPAAc32DsIKgErZWpIX+Cuk7bm9aGOEzpnQ8IW1qIbwtQqw8DWw/qFTky+oFMlqo
-         UmrPAmkPwdTN5wnTGM4ekfVC0GzcZPbEhgSczrmsFFHo7qCauXK8PQQWBUzp35HuU830
-         w2/Y8w5s4PIuSj7bfNLGE30wKaJ7WWevJ+orQzcfylNKFPTt4FAc7VDMcsY3/tcwJaK5
-         SHeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOrsg34jua77i2TwBY+8D1+wzDCRZRS+kxwUdYOhp0WwOpb8RzSnY0Nr31BP9YMCpDmsBEVwCuWePhhvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA/noDV/1SdC0bIqnXgrqozGEui/4eKeooz2UPAOJWyn56WzvH
-	8J/U/SE6yPmMloGwUtlrDgdJ9eyUP54qXQsc5OyYlY2KZ9DgfFbvTuVNqQhiv4jc0Zu+HUTKLTI
-	/Miuqz49Li6tLWwlJrtzU2/HHlXBCwgYT08goaMEEfZiLypXHNXrWx/dZGqp6E9hmoo7xVkHZ8R
-	cuY1UYbrKI7OKczqamBfiFXrhpvTUTWEDyFg/baPMtmeGlqMza9vkvzzMDrdJhTjqrHwTTi+asm
-	jnvzkgdv5X8epG75Ho=
-X-Gm-Gg: ASbGnctWdwu2EehpBkynX6ySErFm/ZQfoWMzXihMd3I2zFsbmK233ntZs8vFXXafWaO
-	cyIkfy/njWABaf3MEQJ/RwQaWf2S5f+vISym+9GoSTieIKOvotlngEwT0rlx3ZxQgR3F+Cr2Qgw
-	4WQCUXSzBnZSL9YDgn2cKbPPtRaYY4GVVqQQRLkvONvP3exu+F+bKuXKQuqUzN3bboth2LTM0Ia
-	4FXQ+8ue2JWLJvKpU+OYZ2QSMeEiHhNQ//uG6BsVZUvs0Rlk4fTraSKLT6OdCCFI51duHuL7fDm
-	KNmCj7W41dARFGmkz6mVBSCGDXRxVr+kLxcYqsB/R1Hy8dAq0UJ/Tgl87wM4wDtkYuAyXhMfGyu
-	kWXuq3/GirBb5gsdj37/4TD2RtaTcWlpcknC98Mbt4OGbQf2eO9tnTGH8hrQdeysfugTx5SlZH0
-	w1jxz62J/YFYHsRSArBAwdRkfDlOYhEyU=
-X-Google-Smtp-Source: AGHT+IHWH6YpDnWl8urW9ihX+7pPfFeX6+JQdtdX6Mvek4fJeG+VIcokbLhsfnyZJJ9U2Bvg5uejJme0zqyg
-X-Received: by 2002:a17:902:f647:b0:273:1516:3ed2 with SMTP id d9443c01a7336-290cb756abemr260780205ad.50.1761154091421;
-        Wed, 22 Oct 2025 10:28:11 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-11.dlp.protect.broadcom.com. [144.49.247.11])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29309bed379sm2023585ad.21.2025.10.22.10.28.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Oct 2025 10:28:11 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-54a87b8f9c6so3639969e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:28:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761154090; x=1761758890; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n50KDYMEFZZ+C5aTffr6IxN6ujw2wmpYb3eSsvYTzpE=;
-        b=NG9yHPn2JoUphTRO3+iZPIBt08K/zH9F+zg8OQ9oKIQF2aFG+2EWnXQPWgYMuS+ps+
-         0OLmUrzJDEt/UopJRyXg4cG4KkGcd/IZhTXtHvaEim800XTd+OJV1FPQXUvXaqNIDdF0
-         piBT2emT1xGTkx4VIwgHXUlpCHJoOJWVX8teo=
-X-Forwarded-Encrypted: i=1; AJvYcCXXiAp4Bq8AUvqOLhst7tS9UnxwAYy2zpjDS+Pl0GZ5fhePN/CepTFCKhiWUAA0jGW5c8Vx9O10UOGShHk=@vger.kernel.org
-X-Received: by 2002:a05:6122:787:b0:53c:6d68:1cce with SMTP id 71dfb90a1353d-5564ef858b7mr6581059e0c.16.1761154090131;
-        Wed, 22 Oct 2025 10:28:10 -0700 (PDT)
-X-Received: by 2002:a05:6122:787:b0:53c:6d68:1cce with SMTP id
- 71dfb90a1353d-5564ef858b7mr6581039e0c.16.1761154089700; Wed, 22 Oct 2025
- 10:28:09 -0700 (PDT)
+	s=arc-20240116; t=1761154110; c=relaxed/simple;
+	bh=XzpKKYk70n+O7csNDShGMEPOxFvJZZ6PB/Gl7PvoGoY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tf3mNNf/Np8DEAAVUhQ9BkWzu8G/Gb7hYmIVfiEWV2ieherYwEMm16wKwcPSsEhwZ0sn4X6KFnTadVJr7MeAJ+sea3fnKiMJYbIj8RzqkFAWjDJziYkoSBmPVBqHeGYYw8fRjqNoPnBkdon7gxB+9V8A3F1nB8FUfHYs78/i1tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kQXFPqMv; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=0A86jCSTfoAmqfzHUOzrsEw1o6iDN86N57Hdat6jHAw=; b=kQXFPqMv0MosKqHkAwSI+LFRJp
+	MwsxwRmyN6X8BnJCy32oeo2aUC4yukUf6mfKe4d98EpFgpl/mugH4KBq3swt7wlKi3WcnAJZI3LfU
+	6ScMDn3DPnopurEfgcLpU/iWU4LOqn7QZ/erWq3HkDOlaErNX4EDmSG5+fNuwd5vOANjiWmsoxeFp
+	UmfZaLYxLUK1fXwTe89rBz0tGbO7jEE1tXmkQX6n5TivWSk3ZnWOo0zdKg7F4V00eTP4PmUUcKIjT
+	ai6XOoEAPyD9ZF2BUmeTr3xRKPF0J+0pPXq9p4npIORkpehuPfquXTUFlDorTHLdnWF8tqstOTCCk
+	MUm6Linw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBcdM-00000003mua-06Dx;
+	Wed, 22 Oct 2025 17:28:24 +0000
+Message-ID: <3ff33b45-a47e-4a7b-86d9-45f44794071b@infradead.org>
+Date: Wed, 22 Oct 2025 10:28:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022105128.3679902-1-ajay.kaher@broadcom.com>
- <20251022105128.3679902-2-ajay.kaher@broadcom.com> <fcabc415-17ef-4a68-8651-c55d4388db2b@linux.dev>
-In-Reply-To: <fcabc415-17ef-4a68-8651-c55d4388db2b@linux.dev>
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-Date: Wed, 22 Oct 2025 22:57:56 +0530
-X-Gm-Features: AS18NWCnCyG4GPzrpynUcOqFQw_wFpVV8KTCLGCZBKAevrAFbGQewrY39X7cqpQ
-Message-ID: <CAD2QZ9b9+TP1YnpL0DkNqn5kdgxseMooBr8xJ9fMu+0tgtX=vA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ptp/ptp_vmw: Implement PTP clock adjustments ops
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: kuba@kernel.org, davem@davemloft.net, richardcochran@gmail.com, 
-	nick.shi@broadcom.com, alexey.makhalov@broadcom.com, andrew+netdev@lunn.ch, 
-	edumazet@google.com, pabeni@redhat.com, jiashengjiangcool@gmail.com, 
-	andrew@lunn.ch, viswanathiyyappan@gmail.com, wei.fang@nxp.com, 
-	rmk+kernel@armlinux.org.uk, vladimir.oltean@nxp.com, cjubran@nvidia.com, 
-	dtatulea@nvidia.com, tariqt@nvidia.com, netdev@vger.kernel.org, 
-	bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, 
-	florian.fainelli@broadcom.com, vamsi-krishna.brahmajosyula@broadcom.com, 
-	tapas.kundu@broadcom.com, shubham-sg.gupta@broadcom.com, 
-	karen.wang@broadcom.com, hari-krishna.ginka@broadcom.com
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000f516000641c2a38b"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V2 02/12] rseq: Add fields and constants for time slice
+ extension
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+References: <20251022110646.839870156@linutronix.de>
+ <20251022121427.028021177@linutronix.de>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251022121427.028021177@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---000000000000f516000641c2a38b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 4:43=E2=80=AFPM Vadim Fedorenko
-<vadim.fedorenko@linux.dev> wrote:
->
-> On 22/10/2025 11:51, Ajay Kaher wrote:
-> > Implement PTP clock ops that set time and frequency of the underlying
-> > clock. On supported versions of VMware precision clock virtual device,
-> > new commands can adjust its time and frequency, allowing time transfer
-> > from a virtual machine to the underlying hypervisor.
-> >
-> > In case of error, vmware_hypercall doesn't return Linux defined errno,
-> > converting it to -EIO.
-> >
-> > Cc: Shubham Gupta <shubham-sg.gupta@broadcom.com>
-> > Cc: Nick Shi <nick.shi@broadcom.com>
-> > Tested-by: Karen Wang <karen.wang@broadcom.com>
-> > Tested-by: Hari Krishna Ginka <hari-krishna.ginka@broadcom.com>
-> > Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
-> > ---
-> >   drivers/ptp/ptp_vmw.c | 39 +++++++++++++++++++++++++++++----------
-> >   1 file changed, 29 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/ptp/ptp_vmw.c b/drivers/ptp/ptp_vmw.c
-> > index 20ab05c4d..7d117eee4 100644
-> > --- a/drivers/ptp/ptp_vmw.c
-> > +++ b/drivers/ptp/ptp_vmw.c
-> > @@ -1,6 +1,7 @@
-> >   // SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> >   /*
-> > - * Copyright (C) 2020 VMware, Inc., Palo Alto, CA., USA
-> > + * Copyright (C) 2020-2023 VMware, Inc., Palo Alto, CA., USA
-> > + * Copyright (C) 2024-2025 Broadcom Ltd.
-> >    *
-> >    * PTP clock driver for VMware precision clock virtual device.
-> >    */
-> > @@ -16,20 +17,36 @@
-> >
-> >   #define VMWARE_CMD_PCLK(nr) ((nr << 16) | 97)
-> >   #define VMWARE_CMD_PCLK_GETTIME VMWARE_CMD_PCLK(0)
-> > +#define VMWARE_CMD_PCLK_SETTIME VMWARE_CMD_PCLK(1)
-> > +#define VMWARE_CMD_PCLK_ADJTIME VMWARE_CMD_PCLK(2)
-> > +#define VMWARE_CMD_PCLK_ADJFREQ VMWARE_CMD_PCLK(3)
-> >
-> >   static struct acpi_device *ptp_vmw_acpi_device;
-> >   static struct ptp_clock *ptp_vmw_clock;
-> >
-> > +/*
-> > + * Helpers for reading and writing to precision clock device.
-> > + */
-> >
-> > -static int ptp_vmw_pclk_read(u64 *ns)
-> > +static int ptp_vmw_pclk_read(int cmd, u64 *ns)
-> >   {
-> >       u32 ret, nsec_hi, nsec_lo;
-> >
-> > -     ret =3D vmware_hypercall3(VMWARE_CMD_PCLK_GETTIME, 0,
-> > -                             &nsec_hi, &nsec_lo);
-> > +     ret =3D vmware_hypercall3(cmd, 0, &nsec_hi, &nsec_lo);
-> >       if (ret =3D=3D 0)
-> >               *ns =3D ((u64)nsec_hi << 32) | nsec_lo;
-> > -     return ret;
-> > +
-> > +     return ret !=3D 0 ? -EIO : 0;
-> > +}
->
-> Why do you need to introduce this change? VMWARE_CMD_PCLK_GETTIME is
-> the only command used in read() in both patches of this patchset.
->
 
-Vadim, thanks for looking into patches.
+On 10/22/25 5:57 AM, Thomas Gleixner wrote:
+> Aside of a Kconfig knob add the following items:
+> 
+>    - Two flag bits for the rseq user space ABI, which allow user space to
+>      query the availability and enablement without a syscall.
+> 
+>    - A new member to the user space ABI struct rseq, which is going to be
+>      used to communicate request and grant between kernel and user space.
+> 
+>    - A rseq state struct to hold the kernel state of this
+> 
+>    - Documentation of the new mechanism
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Prakash Sangappa <prakash.sangappa@oracle.com>
+> Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+> V2: Fix Kconfig indentation, fix typos and expressions - Randy
+>     Make the control fields a struct and remove the atomicity requirement - Mathieu
+> ---
+>  Documentation/userspace-api/index.rst |    1 
+>  Documentation/userspace-api/rseq.rst  |  118 ++++++++++++++++++++++++++++++++++
+>  include/linux/rseq_types.h            |   26 +++++++
+>  include/uapi/linux/rseq.h             |   38 ++++++++++
+>  init/Kconfig                          |   12 +++
+>  kernel/rseq.c                         |    7 ++
+>  6 files changed, 202 insertions(+)
+> 
 
-I have added ptp_vmw_pclk_write() where cmd has been passed as argument.
-Keeping the same format for ptp_vmw_pclk_read() as well, also may be useful
-in future.
+> --- /dev/null
+> +++ b/Documentation/userspace-api/rseq.rst
+> @@ -0,0 +1,118 @@
+> +=====================
+> +Restartable Sequences
+> +=====================
+> +
+> +Restartable Sequences allow to register a per thread userspace memory area
+> +to be used as an ABI between kernel and userspace for three purposes:
+> +
+> + * userspace restartable sequences
+> +
+> + * quick access to read the current CPU number, node ID from userspace
+> +
+> + * scheduler time slice extensions
+> +
+> +Restartable sequences (per-cpu atomics)
+> +---------------------------------------
+> +
+> +Restartables sequences allow userspace to perform update operations on
 
-Let me know if you think it's better to keep ptp_vmw_pclk_read() as it
-is. I will
-revert in v3.
+   Restartable
 
--Ajay
+> +per-cpu data without requiring heavyweight atomic operations. The actual
+> +ABI is unfortunately only available in the code and selftests.
+> +
+> +Quick access to CPU number, node ID
+> +-----------------------------------
+> +
+> +Allows to implement per CPU data efficiently. Documentation is in code and
+> +selftests. :(
+> +
+> +Scheduler time slice extensions
+> +-------------------------------
+> +
+> +This allows a thread to request a time slice extension when it enters a
+> +critical section to avoid contention on a resource when the thread is
+> +scheduled out inside of the critical section.
+> +
+> +The prerequisites for this functionality are:
+> +
+> +    * Enabled in Kconfig
+> +
+> +    * Enabled at boot time (default is enabled)
+> +
+> +    * A rseq userspace pointer has been registered for the thread
 
---000000000000f516000641c2a38b
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I would write:  An rseq ...
+but it depends on how someone treats (or speaks or thinks) "rseq."
+I say/think of it as are-seq, so using "An" makes sense.
 
-MIIVIgYJKoZIhvcNAQcCoIIVEzCCFQ8CAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghKPMIIGqDCCBJCgAwIBAgIQfofDCS7XZu8vIeKo0KeY9DANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNTNaFw0yOTA0MTkwMDAwMDBaMFIxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBS
-NiBTTUlNRSBDQSAyMDIzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwjAEbSkPcSyn
-26Zn9VtoE/xBvzYmNW29bW1pJZ7jrzKwPJm/GakCvy0IIgObMsx9bpFaq30X1kEJZnLUzuE1/hlc
-hatYqyORVBeHlv5V0QRSXY4faR0dCkIhXhoGknZ2O0bUJithcN1IsEADNizZ1AJIaWsWbQ4tYEYj
-ytEdvfkxz1WtX3SjtecZR+9wLJLt6HNa4sC//QKdjyfr/NhDCzYrdIzAssoXFnp4t+HcMyQTrj0r
-pD8KkPj96sy9axzegLbzte7wgTHbWBeJGp0sKg7BAu+G0Rk6teO1yPd75arbCvfY/NaRRQHk6tmG
-71gpLdB1ZhP9IcNYyeTKXIgfMh2tVK9DnXGaksYCyi6WisJa1Oa+poUroX2ESXO6o03lVxiA1xyf
-G8lUzpUNZonGVrUjhG5+MdY16/6b0uKejZCLbgu6HLPvIyqdTb9XqF4XWWKu+OMDs/rWyQ64v3mv
-Sa0te5Q5tchm4m9K0Pe9LlIKBk/gsgfaOHJDp4hYx4wocDr8DeCZe5d5wCFkxoGc1ckM8ZoMgpUc
-4pgkQE5ShxYMmKbPvNRPa5YFzbFtcFn5RMr1Mju8gt8J0c+dxYco2hi7dEW391KKxGhv7MJBcc+0
-x3FFTnmhU+5t6+CnkKMlrmzyaoeVryRTvOiH4FnTNHtVKUYDsCM0CLDdMNgoxgkCAwEAAaOCAX4w
-ggF6MA4GA1UdDwEB/wQEAwIBhjBMBgNVHSUERTBDBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQB
-gjcUAgIGCisGAQQBgjcKAwwGCisGAQQBgjcKAwQGCSsGAQQBgjcVBjASBgNVHRMBAf8ECDAGAQH/
-AgEAMB0GA1UdDgQWBBQAKTaeXHq6D68tUC3boCOFGLCgkjAfBgNVHSMEGDAWgBSubAWjkxPioufi
-1xzWx/B/yGdToDB7BggrBgEFBQcBAQRvMG0wLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9i
-YWxzaWduLmNvbS9yb290cjYwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjYuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yNi5jcmwwEQYDVR0gBAowCDAGBgRVHSAAMA0GCSqGSIb3DQEBDAUAA4IC
-AQCRkUdr1aIDRmkNI5jx5ggapGUThq0KcM2dzpMu314mJne8yKVXwzfKBtqbBjbUNMODnBkhvZcn
-bHUStur2/nt1tP3ee8KyNhYxzv4DkI0NbV93JChXipfsan7YjdfEk5vI2Fq+wpbGALyyWBgfy79Y
-IgbYWATB158tvEh5UO8kpGpjY95xv+070X3FYuGyeZyIvao26mN872FuxRxYhNLwGHIy38N9ASa1
-Q3BTNKSrHrZngadofHglG5W3TMFR11JOEOAUHhUgpbVVvgCYgGA6dSX0y5z7k3rXVyjFOs7KBSXr
-dJPKadpl4vqYphH7+P40nzBRcxJHrv5FeXlTrb+drjyXNjZSCmzfkOuCqPspBuJ7vab0/9oeNERg
-nz6SLCjLKcDXbMbKcRXgNhFBlzN4OUBqieSBXk80w2Nzx12KvNj758WavxOsXIbX0Zxwo1h3uw75
-AI2v8qwFWXNclO8qW2VXoq6kihWpeiuvDmFfSAwRLxwwIjgUuzG9SaQ+pOomuaC7QTKWMI0hL0b4
-mEPq9GsPPQq1UmwkcYFJ/Z4I93DZuKcXmKMmuANTS6wxwIEw8Q5MQ6y9fbJxGEOgOgYL4QIqNULb
-5CYPnt2LeiIiEnh8Uuh8tawqSjnR0h7Bv5q4mgo3L1Z9QQuexUntWD96t4o0q1jXWLyrpgP7Zcnu
-CzCCBYMwggNroAMCAQICDkXmuwODM8OFZUjm/0VRMA0GCSqGSIb3DQEBDAUAMEwxIDAeBgNVBAsT
-F0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpH
-bG9iYWxTaWduMB4XDTE0MTIxMDAwMDAwMFoXDTM0MTIxMDAwMDAwMFowTDEgMB4GA1UECxMXR2xv
-YmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2Jh
-bFNpZ24wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCVB+hzymb57BTKezz3DQjxtEUL
-LIK0SMbrWzyug7hBkjMUpG9/6SrMxrCIa8W2idHGsv8UzlEUIexK3RtaxtaH7k06FQbtZGYLkoDK
-RN5zlE7zp4l/T3hjCMgSUG1CZi9NuXkoTVIaihqAtxmBDn7EirxkTCEcQ2jXPTyKxbJm1ZCatzEG
-xb7ibTIGph75ueuqo7i/voJjUNDwGInf5A959eqiHyrScC5757yTu21T4kh8jBAHOP9msndhfuDq
-jDyqtKT285VKEgdt/Yyyic/QoGF3yFh0sNQjOvddOsqi250J3l1ELZDxgc1Xkvp+vFAEYzTfa5MY
-vms2sjnkrCQ2t/DvthwTV5O23rL44oW3c6K4NapF8uCdNqFvVIrxclZuLojFUUJEFZTuo8U4lptO
-TloLR/MGNkl3MLxxN+Wm7CEIdfzmYRY/d9XZkZeECmzUAk10wBTt/Tn7g/JeFKEEsAvp/u6P4W4L
-sgizYWYJarEGOmWWWcDwNf3J2iiNGhGHcIEKqJp1HZ46hgUAntuA1iX53AWeJ1lMdjlb6vmlodiD
-D9H/3zAR+YXPM0j1ym1kFCx6WE/TSwhJxZVkGmMOeT31s4zKWK2cQkV5bg6HGVxUsWW2v4yb3BPp
-DW+4LtxnbsmLEbWEFIoAGXCDeZGXkdQaJ783HjIH2BRjPChMrwIDAQABo2MwYTAOBgNVHQ8BAf8E
-BAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUrmwFo5MT4qLn4tcc1sfwf8hnU6AwHwYD
-VR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwDQYJKoZIhvcNAQEMBQADggIBAIMl7ejR/ZVS
-zZ7ABKCRaeZc0ITe3K2iT+hHeNZlmKlbqDyHfAKK0W63FnPmX8BUmNV0vsHN4hGRrSMYPd3hckSW
-tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
-2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
-phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
-a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
-ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
-07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
-SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
-rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGWDCCBECg
-AwIBAgIMHOhjveZz4dA4V1RmMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
-ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
-MDIzMB4XDTI0MTEyODA2NDMyN1oXDTI2MTEyOTA2NDMyN1owgaUxCzAJBgNVBAYTAlVTMRMwEQYD
-VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
-MDExNzEWMBQGA1UEChMNQlJPQURDT00gSU5DLjETMBEGA1UEAxMKQWpheSBLYWhlcjEmMCQGCSqG
-SIb3DQEJARYXYWpheS5rYWhlckBicm9hZGNvbS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDNjZ3Y5dkTHTpancPgQZJHA3hrjS7nBOzbl31D5MWPeqvdiD2kLd2OtAVVJ2KYTV/Z
-n6ikyYwG/G+SKf4lxmPRf1DBBPlosoYz/d4UUIHO9I7Lw9hTtDlbqmOrFR7BL1vCYKXxM4ByLGzS
-fEfjRz/Z5b6J+pnCj2dzb2Wir3qx4rt1/aShjQasncmTZ0r8rOk2G3RmKolDmTmWPMeCgzL2KeQs
-QRXTsKFFi0np4iUyWo+MDCofsswor1HkoXwlmoIAdrFL+cw3qvOowpOB0pe3+G1rWNvJvYsOAzG6
-2a8X0kwMSTEGjJgAX+jQjqwdP8C4ZxmE7n236E9GiM8kfhFFAgMBAAGjggHYMIIB1DAOBgNVHQ8B
-Af8EBAMCBaAwgZMGCCsGAQUFBwEBBIGGMIGDMEYGCCsGAQUFBzAChjpodHRwOi8vc2VjdXJlLmds
-b2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3I2c21pbWVjYTIwMjMuY3J0MDkGCCsGAQUFBzABhi1o
-dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMwZQYDVR0gBF4wXDAJ
-BgdngQwBBQMBMAsGCSsGAQQBoDIBKDBCBgorBgEEAaAyCgMCMDQwMgYIKwYBBQUHAgEWJmh0dHBz
-Oi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwQQYDVR0fBDowODA2
-oDSgMoYwaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMuY3JsMCIG
-A1UdEQQbMBmBF2FqYXkua2FoZXJAYnJvYWRjb20uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwMEMB8G
-A1UdIwQYMBaAFAApNp5ceroPry1QLdugI4UYsKCSMB0GA1UdDgQWBBQkdXtSp1Dzqn1C33ctprG/
-nnkbNDANBgkqhkiG9w0BAQsFAAOCAgEAQbg6h5rEci8mKF65wFYkl7cvu+zaAia4d24Ef/05x2/P
-WAuBmkkDNwevol3iJzQNwlOuR4yR0sZchzw7mXSsqBhq1dgSNbReQ0qJU0YWze48y5rGlyZvCB1Q
-Z8FbyfrHGx4ZQJcjB1zeXJqqW6DPE5O8XOw+xTEKzIQxJFLgBF71RT5Jg4kJIY560kzMLBYKzS1f
-7fRmy20PR3frP6J2SwKPhNCsXVDP3t0KC5dUnlUf/1Ux2sVe/6G8+G7lBCG3A1TaN4j9woYHN7Y/
-U0LCVM46Gf7bFsu7RzwcrKtSOnfJ3Fs7V+IWCrTMvbCSQylAy3+BMkMGFZ0WwtXNLxbYIEhKAZmH
-npugOtDKS6j4LkLxkHr/dTYZvfdOXZXTIlz8qTfkTKw4ES4KW3EGzfnRZCL2VD27/GAtt0hwPWrY
-HL087+VQLA9RUVdfnigRjZOPWo//78ZaDd9PPWbLKqa6EIboR2nSV5miF9fQinDnxToBGplQEcXG
-WwCF8syc/0n0xzLlb/IOwxmkzMizN/3/vVp5eGh64OGdhSwzZDBQuVS08Wgfd3nVHT6zh1F0jBgZ
-ACv82jjjtABB+Tg1VZ0vcRr5ZzTC1WylB7ik6soemgWAgbrQfhNh0uHr9jq+NAbTA4wqUK6gA5LP
-kPwzH0/UqVP+eM3EQII1r4Uiee8YifwxggJXMIICUwIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBD
-QSAyMDIzAgwc6GO95nPh0DhXVGYwDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIMX9
-t76KVX3L6Cj7280PY4hnQ9DAo42A6yQhmeInCpA2MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEw
-HAYJKoZIhvcNAQkFMQ8XDTI1MTAyMjE3MjgxMFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQME
-ASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJ
-YIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAExRr8b0xob0XCNBH++oiaSCWgEth7ifp4M9O5ZY
-ELQ6VHtH9Gk6Q6W0arlVXPHyNNcdo1H3kQiTQ8GdONNdS7WZnavkyXq2OvksQyfoD6VASILkGiRX
-vLzbfrGzo2yJz9zNpUAti8MnjbWFaZHgEaENaemKP+Q4jbTTyPYAsjqsdt3CjlfxRR+6/J8gp6xJ
-oFxpt3lpfA0mAWnavRWs6iXEWm3B47Shg1Dy6/gDd4P1HOzhurFHu18SoFdSfZmgvM+hGEmq7vxF
-GyNnoDfYmfmhojoBHmAu+1QxUYJWS8Gi8s4mYIGFD5JGlOx134l4UU32O8emTtxbBFYLpazF/hQ=
---000000000000f516000641c2a38b--
+> +
+> +The thread has to enable the functionality via prctl(2)::
+> +
+> +    prctl(PR_RSEQ_SLICE_EXTENSION, PR_RSEQ_SLICE_EXTENSION_SET,
+> +          PR_RSEQ_SLICE_EXT_ENABLE, 0, 0);
+> +
+> +prctl() returns 0 on success and otherwise with the following error codes:
+
+                                or
+
+> +
+> +========= ==============================================================
+> +Errorcode Meaning
+> +========= ==============================================================
+> +EINVAL	  Functionality not available or invalid function arguments.
+> +          Note: arg4 and arg5 must be zero
+> +ENOTSUPP  Functionality was disabled on the kernel command line
+> +ENXIO	  Available, but no rseq user struct registered
+> +========= ==============================================================
+
+
+[snip]> --- a/include/linux/rseq_types.h
+> +++ b/include/linux/rseq_types.h
+> @@ -73,12 +73,35 @@ struct rseq_ids {
+>  };
+>  
+>  /**
+> + * union rseq_slice_state - Status information for rseq time slice extension
+> + * @state:	Compound to access the overall state
+> + * @enabled:	Time slice extension is enabled for the task
+> + * @granted:	Time slice extension was granted to the task
+> + */
+> +union rseq_slice_state {
+> +	u16			state;
+> +	struct {
+> +		u8		enabled;
+> +		u8		granted;
+> +	};
+> +};
+> +
+> +/**
+> + * struct rseq_slice - Status information for rseq time slice extension
+> + * @state:	Time slice extension state
+> + */
+> +struct rseq_slice {
+> +	union rseq_slice_state	state;
+> +};
+> +
+> +/**
+>   * struct rseq_data - Storage for all rseq related data
+>   * @usrptr:	Pointer to the registered user space RSEQ memory
+>   * @len:	Length of the RSEQ region
+>   * @sig:	Signature of critial section abort IPs
+
+                             critical
+
+>   * @event:	Storage for event management
+>   * @ids:	Storage for cached CPU ID and MM CID
+> + * @slice:	Storage for time slice extension data
+>   */
+>  struct rseq_data {
+>  	struct rseq __user		*usrptr;
+> @@ -86,6 +109,9 @@ struct rseq_data {
+>  	u32				sig;
+>  	struct rseq_event		event;
+>  	struct rseq_ids			ids;
+> +#ifdef CONFIG_RSEQ_SLICE_EXTENSION
+> +	struct rseq_slice		slice;
+> +#endif
+>  };
+>  
+>  #else /* CONFIG_RSEQ */
+-- 
+~Randy
+
 
