@@ -1,183 +1,155 @@
-Return-Path: <linux-kernel+bounces-864360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7C3BFA9D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:39:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AD9BFA9F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 008374F4078
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:39:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7004F34EEF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF3D2FD667;
-	Wed, 22 Oct 2025 07:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B642FBDF0;
+	Wed, 22 Oct 2025 07:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KukVtGGW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="veJQOarc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RBDxyTiE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QYPrHAhn"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TnQpMobI"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244792FBE1F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268F22FB0AA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761118725; cv=none; b=VCiIbA5JsQb6ClFaU+hJqsWu0Ef6WP2XInQORM9vfh6m38xVg2DrEPvX4IuaI79KaNrtK0xanS5RsxVAIKWahcpes93HlERuZEy7JdWzOz71Jgl9RDVKiVoTCOZRMi3g1Z4Ja67WD9ZcdjZ6LikU5g/rVMrELnm7K/EY+DLnS9U=
+	t=1761118823; cv=none; b=uRd8BxA1TE3d8X47dx/xeT4d1DaD7yL3Pggf3Nr5H42fGYZSYhYpwq7eH73HOpdJQoL1P31OyJnzodJDYNzGB+w6iVfYSh8kyStvSlg7gTKxlLJtiNeXA2Ud/vA9yKQyu3Xp31uyvb63E2tuWmy2DqUo9LPpgHnM4ykDIEcIBkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761118725; c=relaxed/simple;
-	bh=K960BDuQHcE/jBjNcwfUBPgxb8pUqAI9A3XKJlwc+js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWeagon+mJW+WO2q33i9qWm//lxA9MjGHiVCxQiAPfLO3iLHyhCIpMKwj9WDqaPmAp7QKVh9EUl3xCrTe1FNOgY7IuzkjgLC58n+b65WeeTkQY0EmXREhbJx8FUkvSomk8bqCy1A9Wc2hPD0mu4D6HSTi8RqiLJXgBzLKtmewjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KukVtGGW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=veJQOarc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RBDxyTiE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QYPrHAhn; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 399731F391;
-	Wed, 22 Oct 2025 07:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761118717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
-	b=KukVtGGWqSuem/LJklYW0q+zc5HKvfxVuJPkcHLDHZx8D7vROffVpcP73HtODiay68RRay
-	QN8gAZIdga1NdvQUAg3k1InyPvsKc8O7qNSsf4EgjVJ16tMsksmsvaU2nwQFvt7Qgs1Awz
-	hTNqcp+LKLH6PpY5Cijtjh1i7w05Wyg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761118717;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
-	b=veJQOarcKigKf26sRa6IuzSsBqRioFdBls/D4dmszIC6X38QE3qFdg7IZiEegurQGVUvZ9
-	Yc7a8PLBih3CcJCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RBDxyTiE;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QYPrHAhn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761118713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
-	b=RBDxyTiEJNM7tQqrsbbtjGRrg2f1678Z4QNrLli+dxOSiPMBbJgnOL8ogYjvPpA6JvLqqD
-	yK8Ix6a2uHQgo2neTu596fnX7CxdF645RlJCn2YJFFp6LQAr5Asv4zyQYAE+nCLOxOLnoN
-	d4pY55cHObJe9y2OsWBtn4s8B+V6D10=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761118713;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Myzl7tA1DnESjNsonDhfQ1k0YqDE7S12DaYO8n4h//c=;
-	b=QYPrHAhnO5Xk2QgbkFCm383lUU/0V5g5zF/efIyre3pCxn7kENc2pz342o23/KhxzU8tTe
-	4Xg11GUsOf/GhqDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6651F1339F;
-	Wed, 22 Oct 2025 07:38:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7gOsFfiJ+GiKHAAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 22 Oct 2025 07:38:32 +0000
-Date: Wed, 22 Oct 2025 08:38:30 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <2dyj6zrxbd2wjnor2wswis5p5z7brtfgzjnhbexhjsd3kqnvx2@y6i2wnvr6gdr>
-References: <20251017141536.577466-1-kirill@shutemov.name>
- <zuzs6ucmgxujim4fb67tw5izp3w2t5k6dzk2ktntqyuwjva73d@tqgwkk6stpgz>
- <CAHk-=wgw8oZwA6k8rVuzczkZUP26P2MAtFmM4k8TqdtfDr9eTg@mail.gmail.com>
+	s=arc-20240116; t=1761118823; c=relaxed/simple;
+	bh=eY7bzdosuislIej4pNo5Bez1un/QO4W5oU4SWGD6ZQk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WkHD6/c7V98NGJ9Wbl0LZWLA746PJ9L3eGn3+Cufx37a+ZNua2SYPMMy1sDQapYpDzmfBGprUhxt2h8vewwYJNoo4Wi7b7mc12jwNPXiDoNJvfhFUG5Yb0d+PUBJ9Vlm+wH2s3R0dysiY8QuGQ18DDwZTATNjyO1SMzomOpIz+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TnQpMobI; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id C6166C0B8B2;
+	Wed, 22 Oct 2025 07:39:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 81ACD606DC;
+	Wed, 22 Oct 2025 07:40:18 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4247102F241B;
+	Wed, 22 Oct 2025 09:39:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761118817; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=E/GIhxiJGREabt5t6pmuINC6TuInwOz6srmToa66ACA=;
+	b=TnQpMobIV+klL+FOU004G7Hde1d1JwU4TLBQ1npPkbnzerVtydwp5RTrn971dBZLwhriqf
+	ijkLjVG3nlSiA+YqRMbxZwXRMaV7IJcY/ab8um91M0HVRTq4lBaW+zWnTkIhXsI7RWZxk9
+	faLKwUenRlo21H5TxoKZvYW0v9jOV4yf6k4TO218SuiakwlKA1+eCJuyGbGnTgT1l4QIK4
+	aLOtVhmF17EoBCSv96JnUEha6Zfdv7kiMZEEhIID8WS/w8GNTrepvQt4whelOFfDI0yunW
+	FooibMlisd67ptpIjRo7K8wJl9KQkoH77eUnnasAjABfXJuTP+kOKYWa94UqeA==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Subject: [PATCH bpf-next v2 0/4] selftests/bpf: convert test_tc_tunnel.sh
+ to test_progs
+Date: Wed, 22 Oct 2025 09:39:49 +0200
+Message-Id: <20251022-tc_tunnel-v2-0-a44a0bd52902@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgw8oZwA6k8rVuzczkZUP26P2MAtFmM4k8TqdtfDr9eTg@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 399731F391
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEWK+GgC/02NwQrCMBBEf6Xs2Ug21Rg89T+kiE03dqEmJYmlU
+ vrvxp68DDxmeLNCosiU4FqtEGnmxMEXUIcK7PDwTxLcFwYl1VkaRJHtPb+9p1FYjfVJaVM7NFD
+ 2UyTHy+66QTc54WnJ0JZm4JRD/OwnM+79z4cSL3++GYUUqjfaSFOyU00XQh7ZH214Qbtt2xejk
+ DYergAAAA==
+X-Change-ID: 20250811-tc_tunnel-c61342683f18
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Oct 21, 2025 at 09:13:28PM -1000, Linus Torvalds wrote:
-> On Tue, 21 Oct 2025 at 21:08, Pedro Falcato <pfalcato@suse.de> wrote:
-> >
-> > I think we may still have a problematic (rare, possibly theoretical) race here where:
-> >
-> >    T0                                           T1                                              T3
-> > filemap_read_fast_rcu()    |                                                    |
-> >   folio = xas_load(&xas);  |                                                    |
-> >   /* ... */                |  /* truncate or reclaim frees folio, bumps delete  |
-> >                            |     seq */                                         |       folio_alloc() from e.g secretmem
-> >                            |                                                    |       set_direct_map_invalid_noflush(!!)
-> > memcpy_from_file_folio()   |                                                    |
-> >
-> > We may have to use copy_from_kernel_nofault() here? Or is something else stopping this from happening?
-> 
-> Explain how the sequence count doesn't catch this?
-> 
-> We read the sequence count before we do the xas_load(), and we verify
-> it after we've done the memcpy_from_folio.
-> 
-> The whole *point* is that the copy itself is not race-free. That's
-> *why* we do the sequence count.
-> 
-> And only after the sequence count has been verified do we then copy
-> the result to user space.
-> 
-> So the "maybe this buffer content is garbage" happens, but it only
-> happens in the temporary kernel on-stack buffer, not visibly to the
-> user.
+Hello,
+this is the v2 of test_tc_tunnel conversion into test_progs framework.
+test_tc_tunnel.sh tests a variety of tunnels based on BPF: packets are
+encapsulated by a BPF program on the client egress. We then check that
+those packets can be decapsulated on server ingress side, either thanks
+to kernel-based or BPF-based decapsulation. Those tests are run thanks
+to two veths in two dedicated namespaces.
 
-The problem isn't that the contents might be garbage, but that the direct map
-may be swept from under us, as we don't have a reference to the folio. So the
-folio can be transparently freed under us (as designed), but some user can
-call fun stuff like set_direct_map_invalid_noflush() and we're not handling
-any "oopsie we faulted reading the folio" here. The sequence count doesn't
-help here, because we, uhh, faulted. Does this make sense?
+- patches 1 and 2 are preparatory patches
+- patch 3 introduce tc_tunnel test into test_progs
+- patch 4 gets rid of the test_tc_tunnel.sh script
 
-TL;DR I don't think it's safe to touch the direct map of folios we don't own
-without the seatbelt of a copy_from_kernel_nofault or so.
+The new test has been executed both in some x86 local qemu machine, as
+well as in CI:
 
+  # ./test_progs -a tc_tunnel
+  #454/1   tc_tunnel/ipip_none:OK
+  #454/2   tc_tunnel/ipip6_none:OK
+  #454/3   tc_tunnel/ip6tnl_none:OK
+  #454/4   tc_tunnel/sit_none:OK
+  #454/5   tc_tunnel/vxlan_eth:OK
+  #454/6   tc_tunnel/ip6vxlan_eth:OK
+  #454/7   tc_tunnel/gre_none:OK
+  #454/8   tc_tunnel/gre_eth:OK
+  #454/9   tc_tunnel/gre_mpls:OK
+  #454/10  tc_tunnel/ip6gre_none:OK
+  #454/11  tc_tunnel/ip6gre_eth:OK
+  #454/12  tc_tunnel/ip6gre_mpls:OK
+  #454/13  tc_tunnel/udp_none:OK
+  #454/14  tc_tunnel/udp_eth:OK
+  #454/15  tc_tunnel/udp_mpls:OK
+  #454/16  tc_tunnel/ip6udp_none:OK
+  #454/17  tc_tunnel/ip6udp_eth:OK
+  #454/18  tc_tunnel/ip6udp_mpls:OK
+  #454     tc_tunnel:OK
+  Summary: 1/18 PASSED, 0 SKIPPED, 0 FAILED
+
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+---
+Changes in v2:
+- declare a single tc_prog_attach helper rather than multiple,
+  intermediate helpers
+- move the new helper to network_helpers.c rather than a dedicated
+  file
+- do not rename existing tc_helpers.c/h pair (drop patch)
+- keep only the minimal set of needed NS switches
+- Link to v1: https://lore.kernel.org/r/20251017-tc_tunnel-v1-0-2d86808d86b2@bootlin.com
+
+---
+Alexis Lothoré (eBPF Foundation) (4):
+      selftests/bpf: add tc helpers
+      selftests/bpf: make test_tc_tunnel.bpf.c compatible with big endian platforms
+      selftests/bpf: integrate test_tc_tunnel.sh tests into test_progs
+      selftests/bpf: remove test_tc_tunnel.sh
+
+ tools/testing/selftests/bpf/Makefile               |   1 -
+ tools/testing/selftests/bpf/network_helpers.c      |  45 ++
+ tools/testing/selftests/bpf/network_helpers.h      |  16 +
+ .../selftests/bpf/prog_tests/test_tc_tunnel.c      | 660 +++++++++++++++++++++
+ .../testing/selftests/bpf/prog_tests/test_tunnel.c | 107 +---
+ tools/testing/selftests/bpf/progs/test_tc_tunnel.c |  95 ++-
+ tools/testing/selftests/bpf/test_tc_tunnel.sh      | 320 ----------
+ 7 files changed, 776 insertions(+), 468 deletions(-)
+---
+base-commit: b92bbe400a50e4eb033b378252292d1cc19cabae
+change-id: 20250811-tc_tunnel-c61342683f18
+
+Best regards,
 -- 
-Pedro
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
