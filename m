@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-865082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E908BFC252
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:29:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8175FBFC372
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53B90356D3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:29:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0895E7E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FB8347FF2;
-	Wed, 22 Oct 2025 13:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F0233FE23;
+	Wed, 22 Oct 2025 13:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mA+nzBVN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J7mzJ7up"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Rivw26z"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677A3347BB5;
-	Wed, 22 Oct 2025 13:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AA726ED42
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761139746; cv=none; b=s4m6Wcaenr5mCtBcrxYd2uNteyUYtA8feaED/Lku6DjGV8nwFJEMCGi6WtkqKwlG7kbw3JbVUo43fpbvZb9o4EI3G1I2VTu439kwXjgk8/90YFdh8dtfujY6m8Bj0KKeG/hs+EGESRfVouqd7+kKRt51d6Qkg1zxBN10SYou77g=
+	t=1761139869; cv=none; b=imo2p+4Gsl3Hr0UJnOOqGfguLQdt5NAYSGSgclxoA5yiq70TutsXAAHvrveEsPCSqFiPjThaMbdgn5GVUpwvxvw2+VFyu38EKikV/JIHML2lROWlyIcu2IKQQKPH7MP1F5fdczO6U4urfmlJQwoNYY8quyb0yY1Nw2IxzXVcN1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761139746; c=relaxed/simple;
-	bh=lASrV+lg74tI5vkAZ1p8e1vRd8+2vg9y+XEuoj3s9Uw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=SIRJTr22B/pjaUbdUBQIMVdLD/HRjZ4V4WeCWXx/GTlkr9x4neKcCs6v0TuNRWBqQL+O/c3YM6trsjWVT2sz5onmljRIT38WLafK+TV1q0XkIQ8Im6To98Pr6TGchNSRGN+FzgG9GBKaziT3JeaSQl+yT9BQ4YkAGV3HUULbYwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mA+nzBVN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J7mzJ7up; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 22 Oct 2025 13:28:59 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761139740;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L2nGgeh8WCh5wwSwOMhpS9Pzc4rU4sUJV1uqh4EHJzU=;
-	b=mA+nzBVNSLBZkuMhX1lxV1a0RM1BSrzV9l/hgZkLknPK+VtYHp3QxYY7NVM3u/iii6slue
-	M6wFHXnOZ/d1v6uTSShCGzouilbsSEEOFHHtjxHW2PPNgPIKrhW1pAHbZZ2UzeKK0WmtEP
-	ELrRZ4x5Cg8dod8LnOiiaPW5AICzF9IoGBGJ6PGDGVsftQBGzWiK1nsEfGAbUP7KU2BaHk
-	d0WmYvg8q3KsAXPU8eEUcSbepEa28TotSMjkRPD9WugoMW099rIuwpcWKdKq8kOii5+7Xv
-	Z2S+ij1TkhJn8beBJB80rplwAZHJqVM4kWJueT3t6zxZtWUKW7jxID5y8eLMkw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761139740;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L2nGgeh8WCh5wwSwOMhpS9Pzc4rU4sUJV1uqh4EHJzU=;
-	b=J7mzJ7upEd8C4mSzAwDiwRinxvVbvlD9ZbVmQYrujjmBvaAfJsvpel+oy/vVoRlOhmy32N
-	Rm+eIF4vfjC89QAg==
-From: "tip-bot2 for Miguel Ojeda" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: objtool/urgent] objtool/rust: add one more `noreturn` Rust function
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Alice Ryhl <aliceryhl@google.com>, stable@vger.kernel.org,
-	#@tip-bot2.tec.linutronix.de, Needed@tip-bot2.tec.linutronix.de,
-	in@tip-bot2.tec.linutronix.de, 6.12.y@tip-bot2.tec.linutronix.de,
-	and@tip-bot2.tec.linutronix.de, "later."@tip-bot2.tec.linutronix.de,
-	x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251020020714.2511718-1-ojeda@kernel.org>
-References: <20251020020714.2511718-1-ojeda@kernel.org>
+	s=arc-20240116; t=1761139869; c=relaxed/simple;
+	bh=sel1HJtAS2O29cIWNqiKkkEz1pxvKt1v3uFl2gMTlX8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lN3IBTw97G8RrvL2wPK8X0VTfxL7suqUti86GmLzC3lbuPoSV5/XgzAToziHUJNhVZ1T+alGSi/DLuejv5sTTRoXuEjEgbqvMqEVCwVvSxQ13EJ9zA5zD2DEUaSyAw8q8kKfXmyQkaoyEIMpjfKYdBa1CX/07zSjdh1LyMVnqDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Rivw26z; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28a5b8b12bbso173796385ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761139867; x=1761744667; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h3wO07hafJRdUwd+XoJw2gU8nsUOjd7xuiaFKufh6dM=;
+        b=2Rivw26zoT07dXFGuU99Fc+QhnBrGwbiLUYizEKB7oQ6PNQ9BMBi4l+vDveb67b+Ev
+         COvxyMwcOLlnsbmZtlUJBISItyQwxbSOuLNfM5l4xN/K26VllUAaVDuNYvK/njBc3IJs
+         O/1BuIl4e+Rt2hCr3Fsc4zb/8X2rS/RC7HOVnzbIX35BhzFPwWN+xUHbKU2Wy1mkHG/x
+         j1fiGh8grMOs6z0SmthoLFCSQkyACfM55QAPtTmCFJXqyt2aPIbCgGMmzuqAk2CeTKHi
+         38GMYuOqVMVhlm+yPZaPGESVW+4JEne56d+1WSH58uz7HmtbqGHWcKLXp6K42/PeV1bK
+         v/5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761139867; x=1761744667;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h3wO07hafJRdUwd+XoJw2gU8nsUOjd7xuiaFKufh6dM=;
+        b=N2BbAjFhROeYN4C1C46KBNMWeNa3tLwZw4BzKHTfWCn4H2PXS53tB11FkeOmh1vuOS
+         pLJtunFdeJcgRq6x/ZuWDc4jGCjMTTAHlKxHhkkZcT0szCifh/Xp5tcbFll+UoCIWoNZ
+         JS3Z6WKXyySS6/buIc2vXkDvlmUhACnoqjqNPC1kWZOhn42iceOzFBTT3XeGk3ngHsYZ
+         79EYc4+UvUeOLF4vPfDGsMuAZwLzZveAbPmwWyICzFGDktXIxbaazWovuok1CGfOMbQe
+         mj7F8ooalE2LN12MYJbtOrjamHo/890kMENXUqaPN+MhUY9UvIQsaWw3nBx4ZEQW9Ozj
+         t8og==
+X-Gm-Message-State: AOJu0YwtIOGYIM1ADUBnqSuHq8ijlV3v558Xx+xMQfdRH8mc11DBqwwK
+	jQgwdFntbAwsA8gbu1xE/ICZleYzdH8LFnb2CtMjzl6UwwumDB6mWNQMWgOD9pF5aBz03V0nF5H
+	Hm3cztA==
+X-Google-Smtp-Source: AGHT+IGJIc5VeJ0Kn0KHRl1biYqCs1Kr1sT+eUo6DoK17Mdbvu7kTK5JgmVyg0c8Pu9nxDAlhxIns2nxqs0=
+X-Received: from pjsi1.prod.google.com ([2002:a17:90a:65c1:b0:33e:2d15:8e39])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:19f0:b0:269:6052:3536
+ with SMTP id d9443c01a7336-290cbc3e8b8mr236260295ad.45.1761139867555; Wed, 22
+ Oct 2025 06:31:07 -0700 (PDT)
+Date: Wed, 22 Oct 2025 06:31:06 -0700
+In-Reply-To: <20251022121942.971014155@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <176113973927.2601451.11243642514167472736.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20251022121836.019469732@linutronix.de> <20251022121942.971014155@linutronix.de>
+Message-ID: <aPjcmhnOm1R-9euo@google.com>
+Subject: Re: [patch V5 25/31] rseq: Rework the TIF_NOTIFY handler
+From: Sean Christopherson <seanjc@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson <mjeanson@efficios.com>, 
+	Jens Axboe <axboe@kernel.dk>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
+	Wei Liu <wei.liu@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-The following commit has been merged into the objtool/urgent branch of tip:
+On Wed, Oct 22, 2025, Thomas Gleixner wrote:
+> ---
+>  include/linux/rseq_entry.h |   29 +++++++++++++++++
+>  kernel/rseq.c              |   76 +++++++++++++++++++--------------------------
+>  2 files changed, 62 insertions(+), 43 deletions(-)
+> --- a/include/linux/rseq_entry.h
+> +++ b/include/linux/rseq_entry.h
+> @@ -368,6 +368,35 @@ bool rseq_set_ids_get_csaddr(struct task
+>  	return false;
+>  }
+>  
+> +/*
+> + * Update user space with new IDs and conditionally check whether the task
+> + * is in a critical section.
+> + */
+> +static rseq_inline bool rseq_update_usr(struct task_struct *t, struct pt_regs *regs,
+> +					struct rseq_ids *ids, u32 node_id)
+> +{
+> +	u64 csaddr;
+> +
+> +	if (!rseq_set_ids_get_csaddr(t, ids, node_id, &csaddr))
+> +		return false;
+> +
+> +	/*
+> +	 * On architectures which utilize the generic entry code this
+> +	 * allows to skip the critical section when the entry was not from
+> +	 * a user space interrupt, unless debug mode is enabled.
+> +	 */
+> +	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY)) {
+> +		if (!static_branch_unlikely(&rseq_debug_enabled)) {
+> +			if (likely(!t->rseq.event.user_irq))
+> +				return true;
+> +		}
+> +	}
 
-Commit-ID:     dbdf2a7feb422f9bacfd12774e624cf26f503eb0
-Gitweb:        https://git.kernel.org/tip/dbdf2a7feb422f9bacfd12774e624cf26f5=
-03eb0
-Author:        Miguel Ojeda <ojeda@kernel.org>
-AuthorDate:    Mon, 20 Oct 2025 04:07:14 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 22 Oct 2025 15:21:54 +02:00
+This can be:
 
-objtool/rust: add one more `noreturn` Rust function
+	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY) &&
+	    !static_branch_unlikely(&rseq_debug_enabled) &&
+	    likely(!t->rseq.event.user_irq))
+		return true;
 
-Between Rust 1.79 and 1.86, under `CONFIG_RUST_KERNEL_DOCTESTS=3Dy`,
-`objtool` may report:
-
-    rust/doctests_kernel_generated.o: warning: objtool:
-    rust_doctest_kernel_alloc_kbox_rs_13() falls through to next
-    function rust_doctest_kernel_alloc_kvec_rs_0()
-
-(as well as in rust_doctest_kernel_alloc_kvec_rs_0) due to calls to the
-`noreturn` symbol:
-
-    core::option::expect_failed
-
-from code added in commits 779db37373a3 ("rust: alloc: kvec: implement
-AsPageIter for VVec") and 671618432f46 ("rust: alloc: kbox: implement
-AsPageIter for VBox").
-
-Thus add the mangled one to the list so that `objtool` knows it is
-actually `noreturn`.
-
-This can be reproduced as well in other versions by tweaking the code,
-such as the latest stable Rust (1.90.0).
-
-Stable does not have code that triggers this, but it could have it in
-the future. Downstream forks could too. Thus tag it for backport.
-
-See commit 56d680dd23c3 ("objtool/rust: list `noreturn` Rust functions")
-for more details.
-
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Cc: stable@vger.kernel.org # Needed in 6.12.y and later.
-Link: https://patch.msgid.link/20251020020714.2511718-1-ojeda@kernel.org
----
- tools/objtool/check.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index a577057..3c7ab91 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -217,6 +217,7 @@ static bool is_rust_noreturn(const struct symbol *func)
- 	 * these come from the Rust standard library).
- 	 */
- 	return str_ends_with(func->name, "_4core5sliceSp15copy_from_slice17len_mism=
-atch_fail")		||
-+	       str_ends_with(func->name, "_4core6option13expect_failed")				||
- 	       str_ends_with(func->name, "_4core6option13unwrap_failed")				||
- 	       str_ends_with(func->name, "_4core6result13unwrap_failed")				||
- 	       str_ends_with(func->name, "_4core9panicking5panic")					||
+> +	if (likely(!csaddr))
+> +		return true;
+> +	/* Sigh, this really needs to do work */
+> +	return rseq_update_user_cs(t, regs, csaddr);
+> +}
+> +
+>  static __always_inline void rseq_exit_to_user_mode(void)
+>  {
+>  	struct rseq_event *ev = &current->rseq.event;
 
