@@ -1,170 +1,127 @@
-Return-Path: <linux-kernel+bounces-865184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB117BFC678
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:11:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7DDBFC696
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D1FA4E9798
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:11:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04E3E4FBA28
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E0134B409;
-	Wed, 22 Oct 2025 14:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6598234BA5F;
+	Wed, 22 Oct 2025 14:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A4OfaFzj"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HlHWlNEj"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1621DEFE9
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15C434B689;
+	Wed, 22 Oct 2025 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142260; cv=none; b=dgTVJKRkfJKZ/XZc2OQwKb6WCAVdExj9uHdgx7x24nUSJK6yS+9KM4G7Z4g9+6U2nOTWlYHuxc55pCDuwwNWxYLIR7z8mDonW+j6S2YVkOfAvgnD2RJVLiaaK6jfSNI3xfme7WS1ApoT6A8IYeI02Ph2XIT+vcFcxyO+hMNtRA4=
+	t=1761142320; cv=none; b=LZQWIACoa6CiKjC2xbOBD7RSZ29kZsVl0bsfz3Q5Xj6jaztHr3YaEJyT4wgE9oBeRRisiaBQC8RzdoflIQlg5ju399yurm7Sv9Z1aHIU4oOZzPwwBuG+9TvSGEng3D/kB/xuYIQqtHhiGK5nkywzsiYFZxThi3wRLMH3bMbgSDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142260; c=relaxed/simple;
-	bh=vn67jnrcXDL2Y7Uu/c/3XWuBZ3gr/ImeBq5pl8zrkgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2kVIeVtsWYcOZ5QDj+tn5yPBpwyISAfxmO/0YIQZFLowSTxSmE6m7+l5d7unWQJtsJ6sGYF5LG9WQEa3oTRuufv1WcTVTvQvfynPY/JDEwXJenIzm7SqtFelv44C5fROhcpyaX+1zazhK/PifpTRnd9eW3EY7jwTT2mV8xHDmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A4OfaFzj; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ece1102998so5667100f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761142257; x=1761747057; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vkLs9KoLLMdMCW70UI4iz7uHdABAQO8YgtAVQOgKTXk=;
-        b=A4OfaFzjyct0tzbfve+hnMnBUU1YjMY2kAB8/AF4eVYGLFkeuWZDqHmLMjVSUs0Ga1
-         QkT2Sc6qVhv0vnFe1PsvNAyVt8Z1Ky1/aomCKxzDI66NlpRXm8jiw0RH+VJ8O8dsNXtQ
-         uCHCMij2UL/oZ9R1ldzgmzIxwHMPKOlsVHiVGJXqaeeQnFYeCg+tzPcPk4/kaYVBu+YC
-         6JevPXKX+2QNob4Ghyt3ABrEh1DEnmkmkNX+fTfF9UD0FBlpea5gEJO0m9m4qRRKLtsS
-         WSy92XVJY9TGMLcPed9k0BSUZ4bc3Ep3zpxhfpDrVZWlsz737gdf/lRoRcKFD2iubRDF
-         Kjmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142257; x=1761747057;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vkLs9KoLLMdMCW70UI4iz7uHdABAQO8YgtAVQOgKTXk=;
-        b=ZsctrAG3xk0gYaWFrqp9VsydbQyVWAQLtNDH7PMGw2tnDNuEHCGgyvZ+OD8aMEw5pO
-         7f9jyvDsgVUFjMuTPz8VWgERCOiLwRIzpsJrWyNx0PaSEJ8QfLyDSLcV5R5t8RilJ23z
-         spJoaKgqkO9FvaGolcmoJJjZGUktJCaeIs0r0177f8T+L3jHuSx1t+5cEtXoMtNEh3wK
-         yW837NWiUjdiqtFw7UVgjLcLD4qegagTLyS9Kz8IgHV4grxUZD/N8jIiiEx/Wl+K/yjp
-         Z9UmzrU/VIXWTny+dipXC/ZoSMI6H2nv/e9dKq/C+K8AdU9BtHjCvJvn5JJSJ4KvwOZd
-         cr1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXqGcsOIDIem3QH9soOU7uxAWWEf4qPGADpxN/kR+5ZnjeA9ulNU9DI4bhMJ4IaX4YK3JkrwWUznh9Hr2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT1EJOcCqgYSHRZYikh38B3rC5q2QDb6ZNYAaBfQb/vZnUoWWz
-	I7XIsiwuTsOhX51EgM5sbNAQ6HoMPMjPNng4EZQDW5xsxaKSGL1DyOH2yzLUUdO4qnk=
-X-Gm-Gg: ASbGnctFcXl2Mz+/ucPrJOpyYn+OLfQAcEfXEfKuchZYA0xTMz55rueaaXROpBjidEh
-	axc4FyPz5dlMm38LK4c2Ev5JSYuvpuW62NQZqYDMulgKagIUDuL51Q5JDFQzvEoP8VP8dU7GCK6
-	S5lYhr62X0ClgvsZSwfFYkiO1oel73jN0nNF1IPRc6vesSaRAiwPN76eUVfu5HFa7BrO+nV2QAd
-	Ni9wNi9LNY8jYoNUqOq6X9lZvjXkwwoMGayyPnCDP8CoHiW7BIB15rQ6EdN1qr2Hhf73dTgb9Mp
-	nftWyz7/KYsfs3yOOsLCExQeVMeyTnVugWmFW7GVWVPMsk3hpY9Z3Gki340GVyDC+XhSMGN0CbZ
-	danco7yUvDj47iPJpxuVZMRXLmhGSddnZfpizwfm0/8AOuvpQOlwWfI8gJ1EtXv/DwCnfzSmMDl
-	iP4XOytIK51anV7cu+jgM5U5pjyks=
-X-Google-Smtp-Source: AGHT+IE6akp/2Dc2iEjje5ectRAOzvnt5Fnjh0DmNxZXmwTBAAK6Oke63zjnbBgDMPvQctvH8W4krg==
-X-Received: by 2002:a5d:5849:0:b0:426:eef2:fa86 with SMTP id ffacd0b85a97d-42704d83873mr14817512f8f.11.1761142256609;
-        Wed, 22 Oct 2025 07:10:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427ea5b3c65sm25232989f8f.15.2025.10.22.07.10.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 07:10:56 -0700 (PDT)
-Date: Wed, 22 Oct 2025 17:10:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Jason Kridner <jkridner@beagleboard.org>,
-	Deepak Khatri <lorforlinux@beagleboard.org>,
-	Robert Nelson <robertcnelson@beagleboard.org>,
-	Dhruva Gole <d-gole@ti.com>, Viresh Kumar <vireshk@kernel.org>,
-	Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: fw-download: Fix find firmware req
-Message-ID: <aPjl7G7fmvqtgww1@stanley.mountain>
-References: <20251022-gb-fw-v1-1-183b18500cd5@beagleboard.org>
- <aPjIJw3ahPxnDE5Q@stanley.mountain>
- <81d8d424-ad21-490a-b071-e1b3b3564e2c@beagleboard.org>
+	s=arc-20240116; t=1761142320; c=relaxed/simple;
+	bh=HKERCs0/X58PIAEuo0fOh8DefQnZ03wa8TS06sVQNqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jcVU2y2KOGPiGOX3WNfzwCJksON0TTukg+D94OziKjkfS62Tt+RkHc45R4AN/OdRPjYPgFkjY2cY1rt/fos7FmW264MROg9GycuOqN83PFMJIp+vqDqRsESCUi70LwY9XkBaQijYFbSp7s7cjGBWN2Sbq0sBZQ2+SCWJ9B+egoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HlHWlNEj; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761142306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r/kbH6CnWKj5FbZWIMHjiro5IcUf/Mw/d63e1Fq2vhU=;
+	b=HlHWlNEjfmh9Wzf3BZjk5wPRNIiFQ+8SHLNzbf/Ejsptz70t88kp9ildu+PiiMuSeHPNWY
+	G7ARw4JIiS4a0jsq8SoycH1AN6rnUtWvcMh2gQP4twF309wJiBQguoIlNFMAeravBaIFrr
+	mtowp5d9Tnz/WcZzpCihDQSfSYZebns=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: ast@kernel.org, jolsa@kernel.org, Menglong Dong <menglong8.dong@gmail.com>
+Cc: daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, leon.hwang@linux.dev,
+ jiang.biao@linux.dev, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH bpf-next v2 07/10] selftests/bpf: test get_func_ip for fsession
+Date: Wed, 22 Oct 2025 22:11:23 +0800
+Message-ID: <5933395.DvuYhMxLoT@7950hx>
+In-Reply-To: <20251022080159.553805-8-dongml2@chinatelecom.cn>
+References:
+ <20251022080159.553805-1-dongml2@chinatelecom.cn>
+ <20251022080159.553805-8-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81d8d424-ad21-490a-b071-e1b3b3564e2c@beagleboard.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 22, 2025 at 07:22:49PM +0530, Ayush Singh wrote:
+On 2025/10/22 16:01, Menglong Dong wrote:
+> As the layout of the stack changed for fsession, we'd better test
+> bpf_get_func_ip() for it.
 > 
-> On 10/22/25 5:33 PM, Dan Carpenter wrote:
-> > On Wed, Oct 22, 2025 at 12:57:57PM +0530, Ayush Singh wrote:
-> > > diff --git a/drivers/staging/greybus/fw-download.c b/drivers/staging/greybus/fw-download.c
-> > > index 9a09bd3af79ba0dcf7efa683f4e86246bcd473a5..06f1be8f3121e29551ea8416d5ee2666339b2fe3 100644
-> > > --- a/drivers/staging/greybus/fw-download.c
-> > > +++ b/drivers/staging/greybus/fw-download.c
-> > > @@ -159,7 +159,7 @@ static int exceeds_release_timeout(struct fw_request *fw_req)
-> > >   /* This returns path of the firmware blob on the disk */
-> > >   static struct fw_request *find_firmware(struct fw_download *fw_download,
-> > > -					const char *tag)
-> > > +					const char *tag, const char *format)
-> > >   {
-> > >   	struct gb_interface *intf = fw_download->connection->bundle->intf;
-> > >   	struct fw_request *fw_req;
-> > > @@ -178,10 +178,17 @@ static struct fw_request *find_firmware(struct fw_download *fw_download,
-> > >   	}
-> > >   	fw_req->firmware_id = ret;
-> > > -	snprintf(fw_req->name, sizeof(fw_req->name),
-> > > -		 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s.tftf",
-> > > -		 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
-> > > -		 intf->vendor_id, intf->product_id, tag);
-> > > +	if (strnlen(format, GB_FIRMWARE_FORMAT_MAX_SIZE) == 0) {
-> > Change this to:
-> > 
-> > 	if (format[0] == '\0') {
-> > 
-> > In the caller, the assumption that format is at least
-> > GB_FIRMWARE_FORMAT_MAX_SIZE makes sense but in this function it
-> > doesn't make sense.
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+>  .../selftests/bpf/prog_tests/get_func_ip_test.c    |  2 ++
+>  .../testing/selftests/bpf/progs/get_func_ip_test.c | 14 ++++++++++++++
+>  2 files changed, 16 insertions(+)
 > 
-> Ok, will do in the next version.
-> 
-> > > +		snprintf(fw_req->name, sizeof(fw_req->name),
-> > > +			 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s",
-> > > +			 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
-> > > +			 intf->vendor_id, intf->product_id, tag);
-> > > +	} else {
-> > > +		snprintf(fw_req->name, sizeof(fw_req->name),
-> > > +			 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s.%s",
-> > > +			 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
-> > > +			 intf->vendor_id, intf->product_id, tag, format);
-> > > +	}
-> > >   	dev_info(fw_download->parent, "Requested firmware package '%s'\n",
-> > >   		 fw_req->name);
-> > > @@ -225,7 +232,7 @@ static int fw_download_find_firmware(struct gb_operation *op)
-> > >   	struct gb_fw_download_find_firmware_request *request;
-> > >   	struct gb_fw_download_find_firmware_response *response;
-> > >   	struct fw_request *fw_req;
-> > > -	const char *tag;
-> > > +	const char *tag, *format;
-> > >   	if (op->request->payload_size != sizeof(*request)) {
-> > >   		dev_err(fw_download->parent,
-> > We have changed the sizeof(*request) but we haven't changed
-> > ->payload_size so how can this ever be true?  Did you test this change?
-> 
-> 
-> The request originates in greybus node. The payload size here is calculate
-> from the greybus message header. It is not a hard coded value. So as long as
-> the node sets it correctly, it will work fine.
+> diff --git a/tools/testing/selftests/bpf/prog_tests/get_func_ip_test.c b/tools/testing/selftests/bpf/prog_tests/get_func_ip_test.c
+> index c40242dfa8fb..a9078a1dbb07 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/get_func_ip_test.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/get_func_ip_test.c
+> @@ -46,6 +46,8 @@ static void test_function_entry(void)
+>  	ASSERT_EQ(skel->bss->test5_result, 1, "test5_result");
+>  	ASSERT_EQ(skel->bss->test7_result, 1, "test7_result");
+>  	ASSERT_EQ(skel->bss->test8_result, 1, "test8_result");
+> +	ASSERT_EQ(skel->bss->test9_result1, 1, "test9_result1");
+> +	ASSERT_EQ(skel->bss->test9_result2, 1, "test9_result2");
 
-I guess, how was this working for other people then?  It seems like a
-behavior change.
+Oops, the fsession part should be factor out, and be skipped
+if not X86_64, which failed the CI for !X86_64 arch :(
 
-regards,
-dan carpenter
+I'll fix it in the next version.
+
+>  
+>  cleanup:
+>  	get_func_ip_test__destroy(skel);
+> diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> index 2011cacdeb18..9acb79fc7537 100644
+> --- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> +++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> @@ -103,3 +103,17 @@ int BPF_URETPROBE(test8, int ret)
+>  	test8_result = (const void *) addr == (const void *) uprobe_trigger;
+>  	return 0;
+>  }
+> +
+> +__u64 test9_result1 = 0;
+> +__u64 test9_result2 = 0;
+> +SEC("fsession/bpf_fentry_test1")
+> +int BPF_PROG(test9, int a)
+> +{
+> +	__u64 addr = bpf_get_func_ip(ctx);
+> +
+> +	if (bpf_tracing_is_exit(ctx))
+> +		test9_result1 = (const void *) addr == &bpf_fentry_test1;
+> +	else
+> +		test9_result2 = (const void *) addr == &bpf_fentry_test1;
+> +	return 0;
+> +}
+> 
+
+
 
 
 
