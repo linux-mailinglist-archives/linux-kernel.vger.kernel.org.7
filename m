@@ -1,75 +1,85 @@
-Return-Path: <linux-kernel+bounces-864535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB9BBFB02A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:57:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8D3BFB02D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE56C3B0A60
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:56:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 890EC4F4757
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3756830DEAF;
-	Wed, 22 Oct 2025 08:56:47 +0000 (UTC)
-Received: from bregans-0.gladserv.net (bregans-0.gladserv.net [185.128.210.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9B030DEA9;
+	Wed, 22 Oct 2025 08:57:12 +0000 (UTC)
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAE730CDB7;
-	Wed, 22 Oct 2025 08:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.210.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD2E266584;
+	Wed, 22 Oct 2025 08:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123406; cv=none; b=crkTQf58tKA6GddFvRsSJM3ND0GE6AZHMcexla0jXeDIgJ4DHFd3vytV1seoGE2Mp55BjPPNJTuzIUjbJ4jBI1srMtOa+EZEd0++2M9577sWYjrKSJdIrkoVMLxSMqdHjpxRojuDZyFKencaD3xmnG4R86B8WDIAnHcZE9th5Jw=
+	t=1761123432; cv=none; b=AveveFSX83p776LR994nzoARBTF5Qvx8300gLquahsKZSjeImStq77Jc8JQSoA2eD/mIrjw8XEWknSud9y6xYys7lSM/fKg8DIuBdZ8UT/CiMbvZQt3N7KTspdwTcjv2XYjPh1KfN6NWqQz6ATA+XeYpyDuyswqviiHlV5Mpvo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123406; c=relaxed/simple;
-	bh=2UaMPM+XEE4PKWwxOkREkoG+56CZYhIWp/g5dEP4MOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sw7FoDqL8WKyyOcCbA0zdrGjcNkhZs6SlpdBG3aRGu73HFcynkeGoFA7bajwDWiBaI7B8H8Krcna4H9LQqOzWU2zM/vJsPMbShoxiazFBs6UiNRaxEpVtQBovLIl/mo6l4hLkHsZxZEjB52jGak6Hum5SUQOTfS0AbO1dYl0S/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.210.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-From: Brett A C Sheffield <bacs@librecast.net>
-To: gregkh@linuxfoundation.org
-Cc: stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org,
-	Brett A C Sheffield <bacs@librecast.net>
-Subject: Re: [PATCH 6.6 000/105] 6.6.114-rc1 review
-Date: Wed, 22 Oct 2025 08:56:20 +0000
-Message-ID: <20251022085625.3785-1-bacs@librecast.net>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251021195021.492915002@linuxfoundation.org>
-References: <20251021195021.492915002@linuxfoundation.org>
+	s=arc-20240116; t=1761123432; c=relaxed/simple;
+	bh=1cEWqNCWQO3BrKIPjk3XHU+mFCpURXGNIyp9pcPbofc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dk1unHFqyVLA6Oyv+nwOh5IGyCHG7TJ8onibek3LZVQn4baNsbm5jnNxIydIQuZLv/+Yn7h4Hd+lJkSKrSzdUhwWLqklY13BD/FfJU8jdS8IOsEr0OKiO0lH0RtS5eUg/7TLLPnxrQXKj6VsRU/WwGqdul4C/vcsjsJMA4/9iX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 91050A82E9;
+	Wed, 22 Oct 2025 10:57:06 +0200 (CEST)
+Date: Wed, 22 Oct 2025 10:57:05 +0200
+From: Gabriel Goller <g.goller@proxmox.com>
+To: Ido Schimmel <idosch@idosch.org>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: Wrong source address selection in arp_solicit for forwarded
+ packets
+Message-ID: <t6emma5j63fsaujkxgxpkihap5qena6yp5qhfbr3u7rkgv2brq@loognuyll4ut>
+Mail-Followup-To: Ido Schimmel <idosch@idosch.org>, davem@davemloft.net, 
+	dsahern@kernel.org, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <eykjh3y2bse2tmhn5rn2uvztoepkbnxpb7n2pvwq62pjetdu7o@r46lgxf4azz7>
+ <aPZB33C-C1t1z7Dk@shredder>
+ <76z4ckbvjimtrf2foaislezs4vlru5upxn3i5ysu4au2m2pfei@slgxispho2iv>
+ <aPetQ3LZo0Uikke5@shredder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aPetQ3LZo0Uikke5@shredder>
+User-Agent: NeoMutt/20241002-35-39f9a6
+X-Bm-Milter-Handled: 55990f41-d878-4baa-be0a-ee34c49e34d2
+X-Bm-Transport-Timestamp: 1761123418050
 
-# Librecast Test Results
+On 21.10.2025 18:56, Ido Schimmel wrote:
+> On Tue, Oct 21, 2025 at 02:31:51PM +0200, Gabriel Goller wrote:
+> > Hmm I don't know how this would help? There is a link-local address set
+> > on the interface, but we would have to add a ipv6 source address to the
+> > arp packet which wouldn't be right?
+> 
+> There are no ARP packets. Neighbour resolution is performed via IPv6
+> NA/NS messages. The script below [1] replicates your setup as I
+> understand, but it uses IPv6 link-local addresses for the nexthops.
 
-020/020 [ OK ] liblcrq
-010/010 [ OK ] libmld
-120/120 [ OK ] liblibrecast
+Ah yes, I understand what you mean now. Still, in an IPv4-only
+environment (e.g. OSPFv2, which does not support IPv6, where we would
+have to add route-maps [0] for every interface to rewrite the routes)
+you still have that problem.
 
-CPU/kernel: Linux auntie 6.6.114-rc1-g8ed83e981d68 #117 SMP PREEMPT_DYNAMIC Wed Oct 22 08:52:13 -00 2025 x86_64 AMD Ryzen 9 9950X 16-Core Processor AuthenticAMD GNU/Linux
+[0]: https://docs.frrouting.org/en/latest/routemap.html#clicmd-set-ip-next-hop-peer-address
 
-Tested-by: Brett A C Sheffield <bacs@librecast.net>
+> [snip]
+
+Thanks,
+Gabriel
+
 
