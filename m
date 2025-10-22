@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-864778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BF8BFB860
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:03:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EABBFB88D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7A819A7125
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:04:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E3D14F048E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EE63128D4;
-	Wed, 22 Oct 2025 11:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE53328B50;
+	Wed, 22 Oct 2025 11:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OMLxvlHs"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hCjDfkdy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD292777FC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF00619D074;
+	Wed, 22 Oct 2025 11:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761131011; cv=none; b=THFgXmQLRzrSf++o8UYAemqdOXvy0PjqySvS5ytF9p8PkxFILRJHfz7LNZ03c+8dGrLqSw+5TmQ037bv3VmuvM/ectGEWXAV4LPqllCx3sNO959xNnH6EYlcT3uqVbRchq2lWckheceVykzv5iW10RjQcUJqbOJ7TIjdLRC6f/g=
+	t=1761131112; cv=none; b=hDcIyfa8h0ClprzyVYKv/kHrwTDWKmlX57qzOCVV8igeOo8A2noTt8a45wPJHLXjQFfpKQ2cXPxMOMcc7p5e3NsBqkt2yzQ4kX2Jx+xvTlAgPoT0Iotv8GTz3PnhzoN0Ux3S4INWg4aWolO17I8ELoKkdZigQ/PGogBfUG8SRsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761131011; c=relaxed/simple;
-	bh=9Uy/GbSSbrHH+J1cYw/X1Mkj5ppEIj6A+wXow5MOoZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pPD4n6umA/mfYW8EC0qgEqEH1sIGHydLBEdtsmaJTHGiX18tVHSJf5vOdg3WIMuiUC8nXAMft+7LHjdoFKNLw5cFgr5G9/rQYgJlwLesn3exYFR4SfS+QIdUOzM2Je9P0YvMK18K5uzk/vmyumQQqo0rJSkurdQKSTap0ohV5V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OMLxvlHs; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4270a3464bcso3649115f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761131008; x=1761735808; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NXsoFSKSD+Jxnxd3GCdpg7hzwIK45uE+7Oq4mebbZTI=;
-        b=OMLxvlHsHPYWxDDfKrfCcfJoehPNralEwh6Pw0I5Udm+OBYp3YvwNz04s/HAw6d26M
-         PtYxBO0ypue+JIe1Tshop/EAGyR6zGUeG3eGGWO07Z6STRLfZhlcwZleohZ5jMJw9ID4
-         C6ncMiS5+qhx54JPnCLfZq5nACHk9i7RYoVnsJrRAUw0Bi7S7glOKL3z+XgPhvp29wmM
-         vb2e7XJTIfu5ttx+p0//sU2dtm0eghdiAZ/A32bUeuQ1fcoLqoqu3OKuFn35Z1wsJKAE
-         jXa4w9aKyWXB2WUldrMVJBnoDZHdmfh80f0JAImWuZS0sW556kRNkjbohkA8Aln1vA1A
-         PerQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761131008; x=1761735808;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NXsoFSKSD+Jxnxd3GCdpg7hzwIK45uE+7Oq4mebbZTI=;
-        b=D1hHIZ5LIA7QqqvYwxo2NhnTkxsWpcbYKAdb/i32P0IwL9Z9a8pLQmP+l+rd3UxQHf
-         EWLV3ISKut5XJ+HMeV9UCgYABhUybd3S4vh4sG9m7WhOqVGGECkbtCGeJ3S3fA5O7eQT
-         7tCISxgmRmg4ATgkJV2tuIevToLpm6V97zidVEV7VkCeVjY/BBr4MZMhPergOFxO9Vt3
-         z8gJo2/nHD6IbqCAVBEVZb6FEK6NXRdjSO1S5vD/IMuQ3TuGRzBGzrWOiaYyp3GPFc25
-         0ayyMIWwZ+QqTuanPopyjjradf3rEjvPZH1E11Hn+vs8GUVkJCvvoKCv49qNoIrfklO3
-         kbOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjaBoGlom1D+2ZlDaZs/jkAxWEyXWzgpNsOe4xHjmjJaOWUmez65tkBFL/Pc1qqy2oAXkPgvtp9V09ezU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2jyaeSTmMbLAQBm9K300ll5cpEh5pA7byUcmrF7TW3nCV/1+7
-	Qpm3l+P5bYs1hq8xQt7LLuDPolmBscpsPrvdGYqYV7t93OdqNLwZyj5hTYnUGcfMQCM=
-X-Gm-Gg: ASbGncs4WyNY1McgLVdbMcmhgf4SxlZXR5/Q/ZY54WjV9OU8yNwGqGqRKCwUgEzXZ8Y
-	6d2lb7o5EUolnOb5GjDxTxZ18R9f6TZWbPpZpxg39CDiOANL0/me+SQAff2NZDI80PmcRNqD0D7
-	4njsb38RaEeQtfK/GlS7fnpEt2Fnurwaq7LBm9J1yMQ/+KYgwE5jwePugXyFgoUBhfBteqVssVi
-	Eu6SHfp7CBQeMmUAYTB/nbrFbe6SjtKiu2wifclBxNdxomP/6plLwY63MmL26l7rSQLehScpfdF
-	Pw4bdrk/OUq2o2WR/g8AuBPeCZTtxRfDyRVf+zc+6pRoIjbVGiUeaoidZDCmxT9yxSf2PFRX27V
-	eaaQO8AsKBmf5pS7mgf57Xw8D22+l8ckYSu8mCpuH47Z/YyH63RtVn2gp60uPOskhS4qmOP4/7v
-	nzGMX5qU9bN54lhG5o
-X-Google-Smtp-Source: AGHT+IGqGsmmm51ejlY0k7sOzKGZrFx3JPVXLYQMM7eHv3uJuXOnG04Xu33Xnd/PMxPWMzgUajg6yQ==
-X-Received: by 2002:a05:6000:470a:b0:427:491:e77d with SMTP id ffacd0b85a97d-42704da9e16mr13267011f8f.36.1761131007920;
-        Wed, 22 Oct 2025 04:03:27 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427ea5b3c65sm24546043f8f.15.2025.10.22.04.03.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:03:27 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:03:24 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Prike Liang <Prike.Liang@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sunil Khatri <sunil.khatri@amd.com>,
-	Shashank Sharma <shashank.sharma@amd.com>,
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/amdgpu/userqueue: Fix use after free in
- amdgpu_userq_buffer_vas_list_cleanup()
-Message-ID: <aPi5_CILMKn3ZrVd@stanley.mountain>
+	s=arc-20240116; t=1761131112; c=relaxed/simple;
+	bh=osJGDS37NazLmjN0e6+Zu9bkiQjkOAcBm/73aoNH/iA=;
+	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=nSi2zuLjXbcEb9+cVNbpokg3Na73SANUVrw3DKoRLescixqxvQPOCRjg/kqepQmpekskX8t5iNH64nM2RNlItzIlCaz6WxPJ1BdvIzr3cIdhIe5/W7ht+k7BegOQuV8KPpZizSqmJ+c91TUw+MFV9VSQk+t3cdf4xg1ivg0gA9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hCjDfkdy; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761131111; x=1792667111;
+  h=from:to:cc:date:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=osJGDS37NazLmjN0e6+Zu9bkiQjkOAcBm/73aoNH/iA=;
+  b=hCjDfkdytGypOAeAx+aRdNmMteUPYI2qgLACeUqyphs56LDRqHLU9uZG
+   BbxeOKzuys4L6D61+sAefUmZCuDo90H9p2J2F1Z6eRvi0AUV9x74qQNc2
+   55VM4cH6qu7bw7FvHnqYnp9L47vouGBebb4dR259ciAOZnhMZiPT9m6nQ
+   4LxX2kO7NOGT/D56PI+oUA9SpIGEMV+1WvV7V8cKazOdcD50Sx9R/LD6j
+   0HGHomO1HH7E7bmLNcWknpIPcEvqoPOISaHcs5RgVFbFgKyRep9FZNB+8
+   /P+G6zvNWAXkZqYcRQ5dGNq01q6CgnXFzJWtMrZs3p6/ExlKGLx6Vovg0
+   g==;
+X-CSE-ConnectionGUID: 3r8a6+afQnGx5UOJGOunSw==
+X-CSE-MsgGUID: RdUgsiIOSkiAzo783yijVw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73879463"
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="73879463"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 04:05:09 -0700
+X-CSE-ConnectionGUID: KbyYTW4fRwyWB2Ywo1bl4g==
+X-CSE-MsgGUID: +HuE0kZFRdaeDr9iRCCCiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
+   d="scan'208";a="183013092"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.82])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 04:05:06 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hansg@kernel.org>, Andy Shevchenko <andy@kernel.org>
+Date: Wed, 22 Oct 2025 14:03:49 +0300
+Subject: [GIT PULL] platform-drivers-x86 for v6.18-2
+Message-ID: <pdx86-pr-20251022140349-2206824358@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The amdgpu_userq_buffer_va_list_del() function frees "va_cursor" but it
-is dereferenced on the next line when we print the debug message.  Print
-the debug message first and then free it.
+Hi Linus,
 
-Fixes: 2a28f9665dca ("drm/amdgpu: track the userq bo va for its obj management")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here is a platform-drivers-x86 fixes PR for v6.18.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-index 9d4751a39c20..2200e0bbf040 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-@@ -159,9 +159,9 @@ static int amdgpu_userq_buffer_vas_list_cleanup(struct amdgpu_device *adev,
- 			r = -EINVAL;
- 			goto err;
- 		}
--		amdgpu_userq_buffer_va_list_del(mapping, va_cursor);
- 		dev_dbg(adev->dev, "delete the userq:%p va:%llx\n",
- 			queue, va_cursor->gpu_addr);
-+		amdgpu_userq_buffer_va_list_del(mapping, va_cursor);
- 	}
- err:
- 	amdgpu_bo_unreserve(queue->vm->root.bo);
--- 
-2.51.0
+Fixes and New HW Support
 
+- alienware-wmi-wmax:
+
+  - Fix NULL pointer dereference in sleep handlers
+
+  - Add AWCC support to Dell G15 5530
+
+- mellanox: mlxbf-pmc: add sysfs_attr_init() to count_clock init
+
+Regards, i.
+
+
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.18-2
+
+for you to fetch changes up to 34cbd6e07fddf36e186c8bf26a456fb7f50af44e:
+
+  platform/x86: alienware-wmi-wmax: Add AWCC support to Dell G15 5530 (2025-10-15 11:22:35 +0300)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v6.18-2
+
+Fixes and New HW Support
+
+- alienware-wmi-wmax:
+
+  - Fix NULL pointer dereference in sleep handlers
+
+  - Add AWCC support to Dell G15 5530
+
+- mellanox: mlxbf-pmc: add sysfs_attr_init() to count_clock init
+
+The following is an automated shortlog grouped by driver:
+
+alienware-wmi-wmax:
+ -  Add AWCC support to Dell G15 5530
+ -  Fix NULL pointer dereference in sleep handlers
+
+MAINTAINERS:
+ -  add Denis Benato as maintainer for asus notebooks
+
+mlxbf-pmc:
+ -  add sysfs_attr_init() to count_clock init
+
+----------------------------------------------------------------
+David Thompson (1):
+      platform/mellanox: mlxbf-pmc: add sysfs_attr_init() to count_clock init
+
+Denis Benato (1):
+      MAINTAINERS: add Denis Benato as maintainer for asus notebooks
+
+Kurt Borja (1):
+      platform/x86: alienware-wmi-wmax: Fix NULL pointer dereference in sleep handlers
+
+tr1x_em (1):
+      platform/x86: alienware-wmi-wmax: Add AWCC support to Dell G15 5530
+
+ MAINTAINERS                                    |  1 +
+ drivers/platform/mellanox/mlxbf-pmc.c          |  1 +
+ drivers/platform/x86/dell/alienware-wmi-wmax.c | 12 ++++++++++--
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
