@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-863980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD65BF9A50
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:50:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C07BF9A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 433E7354FAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:50:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B4664FF4B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6B2199FB0;
-	Wed, 22 Oct 2025 01:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76585221F00;
+	Wed, 22 Oct 2025 01:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PU1Dr3hx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYyzoQ9B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB1D1DDA18;
-	Wed, 22 Oct 2025 01:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE0F201113;
+	Wed, 22 Oct 2025 01:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761097835; cv=none; b=FKHQGwMWt4I0ZQdsFr0gcpmDPA6ixmvT0/t7ViAygv4/vJVJsWVnCQlexfznxTZJKCGqVHrzzX1iuSW5klq/CuICGhjUWCLtCBrm43l5WK1sOKXGdbS4V7ic0MTC7fAQsismF3CD8A++xoEVTY1uPQXbgxzVIEnuR0wlEWhFF5Y=
+	t=1761097840; cv=none; b=ISqBHqPlZOQfgm4hFYLac3KHo0THySeEi8PiWZo1JHX5qqqA5M3+hHuPWFtGNdVXIRg29MR6/DYaXBEbPLhk9VTCQZnCTKNTUl5wJB2owucUv5YP4xnUwM1FvMa0MJXHAQd7/WRLmtdQLYnHTh8CVnAbOabXS69cepOcHGCrkS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761097835; c=relaxed/simple;
-	bh=TQ/mavWsHuoNpQiqCCMpP+RtoHVCdQRMg1o4FgK++1s=;
+	s=arc-20240116; t=1761097840; c=relaxed/simple;
+	bh=g1H3vfd0ItlDEmCaC+S/5OdME7Lz4rA1NpEFbqw11NY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Lmoj0BPWVZz0JMWZWERGtiRWYS/69F8/WWuqd6F9bEGN1UPtsok2Cx0WO4Bqgwa/ZQIHp8hc29Lg7Q80EkbCq0f/D01W7sHDyzV6KXElwSE3qgHV+OvJID4IOGQR073HQY1IBF2FwmimO24XbCNxtAxb11ZWdFb1C/Rp27LvxrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PU1Dr3hx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E612C4CEF1;
-	Wed, 22 Oct 2025 01:50:34 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Iab+DRrgAt2x7RSV3cpjvWw6RXsm+x0zUdv5xOgt7jCk5pI7c5NFKrprnQEdpWPpSELYGmbAmYF/9ZMq62jfwACfRpiyzQKPv6YgywldP+wU9jzj2WEd0cR6ZRHtZUjxG8pUegtxvguJf6jEUdzdhE44g5ZvntQe/fgmtyk4jDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYyzoQ9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A02DC4CEF1;
+	Wed, 22 Oct 2025 01:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761097834;
-	bh=TQ/mavWsHuoNpQiqCCMpP+RtoHVCdQRMg1o4FgK++1s=;
+	s=k20201202; t=1761097840;
+	bh=g1H3vfd0ItlDEmCaC+S/5OdME7Lz4rA1NpEFbqw11NY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=PU1Dr3hxWRFtjrVymeNyrYaXVVHFPC/51DC/vp9eO0jKF6nbFm2Khs8amaHnvhcNV
-	 bNO8w+JGl9rkAWk5q3gDOKn/ujK/8DbOaNzsuuIEPI4yuDVgjzaVB7q+TY9UZe4Gyq
-	 Pc3UvcAg+N1hBHK91D34u3QcY2H4cPcdhQCQdZAjOkqEaBLod9aBjsJyyjELGmd7FY
-	 aFNOB8bxtQn2uiP3milEiXcWYqdkODlXO7CJguH2diVwSi4PBUQu5+HGQ9JEjs3ovA
-	 uigedLQZjsVUpCcUXMejM7+FJVNkf85nTgrf8iS2t+tiYLyhRbCBxm81IiMDP/5R5I
-	 HHeUTysa8ZNxg==
+	b=nYyzoQ9BTUZyrVc6SevPqOKu6lwPUc6A/k9Iyx2ynB5OatRN9ZZ/0heRUgM9Taxoy
+	 Y9ja2TK+hNRTzLp3SI07F02cc4yFO9QKYhPH3sj5seL1omHz4rQtt1T6OiV++UqssG
+	 KdJmrf/OPPX+qKF72QS8w71J1g4wjUfth5bsL5B+tX51VHFUXDxKm5UdAYM6aqRWIV
+	 aacJTo191G8VHsjJp+zPt8f93PEXs+2ecQVp515HhSyKkor3571VQ5p6NocFY7agLp
+	 57aKVjguJSdzJVukb5dq+OY1FHNR/fcDg9n7+h6fsRMsdKmhJUNHaDd6Pq9uFm4n6a
+	 7kW8qKW1mkxgw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0E23A55FAA;
-	Wed, 22 Oct 2025 01:50:16 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF7D3A55FAA;
+	Wed, 22 Oct 2025 01:50:22 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,46 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v14 0/4] net: dsa: yt921x: Add support for
- Motorcomm
- YT921x
+Subject: Re: [PATCH -next] net: macb: Remove duplicate linux/inetdevice.h
+ header
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176109781575.1305042.9201504571790055583.git-patchwork-notify@kernel.org>
-Date: Wed, 22 Oct 2025 01:50:15 +0000
-References: <20251017060859.326450-1-mmyangfl@gmail.com>
-In-Reply-To: <20251017060859.326450-1-mmyangfl@gmail.com>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, horms@kernel.org,
- linux@armlinux.org.uk, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <176109782149.1305042.10173858234581566767.git-patchwork-notify@kernel.org>
+Date: Wed, 22 Oct 2025 01:50:21 +0000
+References: <20251020014441.2070356-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20251020014441.2070356-1-jiapeng.chong@linux.alibaba.com>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, abaci@linux.alibaba.com
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 17 Oct 2025 14:08:52 +0800 you wrote:
-> Motorcomm YT921x is a series of ethernet switches developed by Shanghai
-> Motorcomm Electronic Technology, including:
+On Mon, 20 Oct 2025 09:44:41 +0800 you wrote:
+> ./drivers/net/ethernet/cadence/macb_main.c: linux/inetdevice.h is included more than once.
 > 
->   - YT9215S / YT9215RB / YT9215SC: 5 GbE phys
->   - YT9213NB / YT9214NB: 2 GbE phys
->   - YT9218N / YT9218MB: 8 GbE phys
-> 
-> [...]
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=26474
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>  drivers/net/ethernet/cadence/macb_main.c | 1 -
+>  1 file changed, 1 deletion(-)
 
 Here is the summary with links:
-  - [net-next,v14,1/4] dt-bindings: net: dsa: yt921x: Add Motorcomm YT921x switch support
-    https://git.kernel.org/netdev/net-next/c/a9dff2b5f72b
-  - [net-next,v14,2/4] net: dsa: tag_yt921x: add support for Motorcomm YT921x tags
-    https://git.kernel.org/netdev/net-next/c/ca4709843b7e
-  - [net-next,v14,3/4] net: dsa: yt921x: Add support for Motorcomm YT921x
-    https://git.kernel.org/netdev/net-next/c/186623f4aa72
-  - [net-next,v14,4/4] MAINTAINERS: add entry for Motorcomm YT921x ethernet switch driver
-    https://git.kernel.org/netdev/net-next/c/0c5480ac96a4
+  - [-next] net: macb: Remove duplicate linux/inetdevice.h header
+    https://git.kernel.org/netdev/net-next/c/962ac5ca99a5
 
 You are awesome, thank you!
 -- 
