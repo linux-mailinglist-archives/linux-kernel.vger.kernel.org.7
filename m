@@ -1,202 +1,193 @@
-Return-Path: <linux-kernel+bounces-865480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85005BFD416
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:35:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426C6BFD4E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2781889CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:32:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9E79581316
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1308935B152;
-	Wed, 22 Oct 2025 16:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D1534D4F1;
+	Wed, 22 Oct 2025 16:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KtRD/+oP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PQCxKTJ3"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013008.outbound.protection.outlook.com [40.107.201.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179AB35B148;
-	Wed, 22 Oct 2025 16:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761149529; cv=none; b=XHsCYC71t3jfV9o1OT1ZvmWpI86VSxQy+c7x2+RCI9meL9GkxWFrCHK37+qqYUYVQYGouMx6piTXFjqN/1srs1rlmUalAu8ZGw3NSlXTd8RGQJohA1i8R8EPlWmmxW0VYNx8Z6SSVYcO3nTzX7dYxBVo6Hhqjk+hs+mPNB4GMlo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761149529; c=relaxed/simple;
-	bh=IaRshFLfVcx/emGoPV1f+QYE4VS3CjYShnZJTxeFLog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0ZAgARK1vHcTp+6uZdHzZqkJiUaRv84osn3GTnbLBLfwP7WTjL2DEFJtLMprsUeQVO0fOlW5EFSX4X92+eGTGsGINzuLoL01gi4mMIwq+HnwR1XoW9I3iTYFIRLCU3TKuOaRtCeyR09zkuCwQuWWg3oPtv/pv4lisHO7NxlaQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KtRD/+oP; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761149527; x=1792685527;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=IaRshFLfVcx/emGoPV1f+QYE4VS3CjYShnZJTxeFLog=;
-  b=KtRD/+oPEX6e4H8O4aXKy7N/UwmwDK7/moUSkmezbYXHQbWqnlgqgvLT
-   rimkXun03rEnKarcaYCQIc3TFmjRKI0uGtQ1ktCTRtkgfpbwvDh7xKQhS
-   cOJmXlIwVOJypEtK8JciLglShc5iKgI0k9Zv6yHs+R6w2UB7SGLTRbfm1
-   rM5yCFD2mo6qOsmwbgSXyLRrBv8iQJbiyqaVLrHFHg8j5Vi8Z92qwA9J6
-   X8NjuqogJWbazATVdWd96Abm2vJY8HIEg1tYSmI44BnUiP4/uHey69+il
-   z14Ojf4rF1KDOw4hIthguBW1BeBLj1axmBu+4sbuqHdu8a3/dy8v9CDBq
-   A==;
-X-CSE-ConnectionGUID: c3u/WTaoQx2Hwph3C8ym3g==
-X-CSE-MsgGUID: u3jPCo/DSKaKjSvAorJckA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63211270"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="63211270"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 09:12:05 -0700
-X-CSE-ConnectionGUID: aYLLBjbMSyuYEeaxbXLYaw==
-X-CSE-MsgGUID: +gVc5kqQSNWrVGu6XV4sMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="183962211"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.83])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 09:12:02 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vBbRO-00000001jnj-2bzi;
-	Wed, 22 Oct 2025 19:11:58 +0300
-Date: Wed, 22 Oct 2025 19:11:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent
- of the reset device
-Message-ID: <aPkCTgaqPHaTsFDH@smile.fi.intel.com>
-References: <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
- <CAMRc=Md4DUSuwv07EuBVDJbY1Uzezq+TONxyCvLtOHD=iFXrcQ@mail.gmail.com>
- <050d74d7619bdfdf5ca81d8914a2a8836a0d4e2e.camel@pengutronix.de>
- <CAMRc=MfPqRLFHPW988oMry7vVoTgtQHrxxND4=nr_40dOa5owg@mail.gmail.com>
- <aPeexuA1nu-7Asws@smile.fi.intel.com>
- <aPegyVyONkPWRgi9@smile.fi.intel.com>
- <CAMRc=McPpFEmg7dpfiYWJaPR4yMynOaU5Hp37E7rTzWSCNxBuA@mail.gmail.com>
- <aPerDcMFdbWecGEv@smile.fi.intel.com>
- <804b4b8cf23444fe5dc9400ac1de3a738a77e09e.camel@pengutronix.de>
- <CAMRc=Md-KuNp1o6GLA0WTbknbN-qtt8YJqy5fJs0P0EyE7KY3Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F272868BD;
+	Wed, 22 Oct 2025 16:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761149553; cv=fail; b=k+5p+KGPEkkTa57iHd90nkwQGc+exv280KhjGVYWE/WVQdQMUqIHhpLoYR0oz7nNFLAqrVQMF24a8P7HyENuX/ELMFEty9CU9V/m3FYcEXPE0vjI+3RgwEm5649cR0BHjIU/vtJtEyQPp+hGDG7ZUWY9vaWxg+RpnLHLlU2NbwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761149553; c=relaxed/simple;
+	bh=cs4Gzr1JVfrNo4uAaXDi38FapKBbR+8LjaHyQVYSNUs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ipld0XBqK8l9bJ8mvYfoCPPn9VrWPH92KZ7EU/2NIqkbb4hke6GwNAvQVbVUrUbuXhs+jqG2hyA64Q800jOUFEN9jaUlNvTYRMgO5+Bn8/qf/DwgNaOxCcInQIJrzUqqjZWWysJI8K4RvDDFpjjqS1qkLc3JqEWBAjaYjyP1u6A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PQCxKTJ3; arc=fail smtp.client-ip=40.107.201.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TBtZpZaXzMCCGrAUL6E+Lq+tIBoLB15mlh89F0Ht8liit+UAHwqwrBZziwfcK+Ht5ET6ywK6PnGhs2u2pNU2DKZmNl3tJYZktIis3DW6dV7jHnKcfSn6c305zl0iK6cIt9R3IfXl5WsnRCGue34B7+hrm0ZIU5ePse58iFJvEiQJNHdSTpjO92qXor55HAJ9nh0Hy8EsHWG+BVJsG+a40Ide3zWgY5VzOal8dY0ZRyrDvc/iSYvzaUlIzUMX39qXEeDx2h8ILuxv2aYDjbmHUOP1YthEHBmut3/yI51wxkY+S6VSXeRFegr8+W2gjRwVLfriMHt2g00e04BHbVLK0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VQ48Vnt9cNZ3Hb2XI5nxFkXX+VpWGmljjghbjtW8at0=;
+ b=jU/FrzpDckCHNT31qigB0hYpm0QGhpm+XkH5jpJ8qZLyEi2Et5Rw86bQKYKjSHgJD/JYuRhIv4J6K212UX8ZBpgniSbP4PHbLI5anm6aWllLtzupDxrh4MTwrz+SjigpnUG6WU87m3zUTPBsAXf3E2VQYsoqJ40DAflvUvdkqWkjAf6f0z2u0iqdlX0gqs4QztXbWw/WOwArTM8MmMWuejOUqs0am1i7Th7F00fL70EqH19/2TW6ATylKTHm4dBXVvd8j10NNoQ4o4XRmU/aMmcsieQ/0g0hgiZbDlEmea8DixGy7H+5+ZtChlG1cMmjoF64l1ijkXR5qd3DMFCWYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VQ48Vnt9cNZ3Hb2XI5nxFkXX+VpWGmljjghbjtW8at0=;
+ b=PQCxKTJ3n+mluU5eADqRceV+dM28zuoN4p5b/hgRHL8+bdGnI2mJyKc5Dd+o7kgqjEwwm/t8rbwC2UVRFaSWJaXJtZU/wiIa4jweyn5Q6yWbTMQbc5UwdyJmGZnhZCAUUBI62ndfCLbmdSIvOs7BaerTVcxnN1DsLQlfRSUgqivUV09n/nqc55dY6wZY79BB6/O0e2ZG1CQkltTTZr51NRDvU0Af7I8cON47u7U25TD6OLhKzm1s6Q24B2Tfqu0qc4yaZKv2uVrsOyCOQ6UiPDa81tVZbtrN4PharDizGQzEK3/AGmV5lxCm8glUCbJjj5+fNdb/17IjDqkTp5PN5g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by MW4PR12MB7000.namprd12.prod.outlook.com (2603:10b6:303:208::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 16:12:27 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Wed, 22 Oct 2025
+ 16:12:27 +0000
+Message-ID: <46447e7c-5fd6-4e81-b963-b5e1e6afbb1b@nvidia.com>
+Date: Wed, 22 Oct 2025 12:12:23 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] gpu: nova-core: bitfield: simplify expression
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Edwin Peer <epeer@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+ Timur Tabi <ttabi@nvidia.com>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20251022-nova-bitfield-v1-0-73bc0988667b@nvidia.com>
+ <20251022-nova-bitfield-v1-2-73bc0988667b@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <20251022-nova-bitfield-v1-2-73bc0988667b@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0084.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::29) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Md-KuNp1o6GLA0WTbknbN-qtt8YJqy5fJs0P0EyE7KY3Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MW4PR12MB7000:EE_
+X-MS-Office365-Filtering-Correlation-Id: d886676f-f049-4a88-0ae7-08de1185cb38
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c09GbEltY3lYRHg0aDIxL0RtN0p3dmMwRVpPVVdMWlRqMmxOSUMxeGNKeU03?=
+ =?utf-8?B?TXg1RkpwdmJIbko3WU9WV3RHQUlhQTFyNFFzNFI3QTZZSzFYR0FuOFhOVlNW?=
+ =?utf-8?B?cWxNQTZCMHNUVFZGaFdoWVhzbGY2UEV5aG1naFlKL05aditlbkJrZjVDRC9u?=
+ =?utf-8?B?c3MwcUN5bG56dlhxL1h1andURmNidlFIUEZCd3l1UkIvWHZiMkU4YTJXaTNC?=
+ =?utf-8?B?SDRySUk2dnFHQVprMHJQMmVnT3pjN213d1FYci83Qk5SRDh5T3QwKytac05y?=
+ =?utf-8?B?Q1BCcHBEcGZkUUExWTNqOHQzRjBFTE9wbzIyU2ZUTW4xRWxydy9ISHVoNW1u?=
+ =?utf-8?B?T25tZmVkS3ZqY0Z6R0d4MlZESzNQdFQ2c0JZM1NJZ1NMMmp3WkhVNTh4NVF5?=
+ =?utf-8?B?VTMvdmJuNjFremtmRHBJSlV6VVBKdDBaZ2p2QTl0MTZ1VUQ4bkFSSG9GbGUr?=
+ =?utf-8?B?STdKbGVtTlo4cDZhUGI4TFprak4yNmZsZTZ3a1MvaWVDMEc4V1BPTXErSm90?=
+ =?utf-8?B?OExuVzFibjRGc3lybXpma3doZ0l3REl2VC9BS0RNZHpObnFucHdwSjE2emdG?=
+ =?utf-8?B?RHVsNlJOcS9YWHdCajN5b3QrajVlZVZvaHVFQmg3ak05TTc0dHdhTXBHWEFr?=
+ =?utf-8?B?bEpRNjZtYkErNkFQakRsTTk4NWtoQ0RhYUNKZFZ0NzFiSEN3MzlUNzZKNmFS?=
+ =?utf-8?B?My9GWU9pZVNycHhtVUxldmRCVGN1NEVneDhxRlFGb2NuMWk1aU5leDAxTk1t?=
+ =?utf-8?B?d3RkTGwrOEVNMDBDTDhvOTZVZU9QRkt6RmNSV2RQT3RoY25uMjhpUFI1TTV0?=
+ =?utf-8?B?TEljRE1QZ0NnblNlNVJOUTMyN2F4V0l3dG1JUm9XZ0JmRWttZytHVXRsRUFo?=
+ =?utf-8?B?czVuN2U0STgyWWpGNFdIQ2VZcUNzQ2R2ZnZVVG1Vb0xGaDdmdXdnNXRXVm9p?=
+ =?utf-8?B?cjd3cDVwckprQmVORUFBVHU4bXNFMHZEZk52RjJmMExNc21sWEFFMVkraVRU?=
+ =?utf-8?B?MmxYazU3azd1bmF6SFcwTHRPdUkyV1pPOE1zc3k1eW1YSGVKQmpHbE9neWwx?=
+ =?utf-8?B?WXBiMnIyTHZsV0FEUkNtY3U2eWo0QkVkb0RwS3FLcmt3OHJpZzFVRWFJMDF0?=
+ =?utf-8?B?Y2dqR3JQdFZvYjZ0ZzVzaUU3SUxzQTlLL1ZyYTh6bDFYK3JsNVdJVDZoM0cz?=
+ =?utf-8?B?ZWZidURSQzRCVnQ0WjJBOGdlalNkTEsxTjRvTmNLM0R4VCsrc1I2eXJRRXI2?=
+ =?utf-8?B?emNKckVObWNaWXRCbXIrNHdOVmxQZnFjcUxoWWl0MmJ2b2ZvbkYxTDJqYjZr?=
+ =?utf-8?B?Wk5RKzFRWTRXcmdsN2p2NHRubWY0c3pVS1JDOEdIc29GNjdNTXRmQURmNUN6?=
+ =?utf-8?B?Snl4ejhkK3l2dm4rZ01jSGlvdm51ZjNUenlqbW5EeGtRTkJ1bytVd01hWkx6?=
+ =?utf-8?B?VzVuOFkrZEYzZHlWbnMvME40czZQYytobmNlZFZseEZkK2FlREhLMzRTN0Zm?=
+ =?utf-8?B?eTZJeWcvR0dOWUlTekhDck90alIwUVVmaStEWTl0MWlUVVAwYklWai9Xa0dk?=
+ =?utf-8?B?cmFOK05qcE5YM0p5SDBIQjU0a2xRUEJ2VXc4MHJxdm1vS1V0SFFCMVlzdUF0?=
+ =?utf-8?B?dk1KRVBzaWRmZHMxYW5IakxtcHhwSWo3K2ZoSFM0TW9DZ21wWXo5TVgxczZ2?=
+ =?utf-8?B?RmN2OFl5OTZ1aXRpdWhHRmM2NVdZdXBrNHJnR3d2d3hKcVVjdzlJV0ZlWElq?=
+ =?utf-8?B?a2draVBVN083UHNEUG9yOWdzSEc4ZEM1Z1FFeEtIbGk5OWEvbFZnblNmYUVG?=
+ =?utf-8?B?TmcvQXFzMWtCVHFjQ3EwWXZVYm5aeXlVZkRGa2luWEtwTExFLzgxN1RkaVZF?=
+ =?utf-8?B?NEttVHp6dE9adE5nek1GV2I0VnFPQktJVXFrdmRJTEcrd3RoR2cvb0lqdVU1?=
+ =?utf-8?B?UGlhRi9MQ053UE9ZVzVIaS9jbzVRNGZLSzZlTnlXSXBJZCtvc0xLTGxBMDVF?=
+ =?utf-8?B?SkhVZjFOd1dBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OXpERXBGQ2FQSlNQcTRIU0VhWnJ4OUF1ZEtvK0tGNWh2SFlQa1NMZjFadk16?=
+ =?utf-8?B?eG5QNlA0SEJTMnBnR0VzMnNPMkxLbjY2R0djRXRCemNuWFRPdzlEUDZYK2VE?=
+ =?utf-8?B?YTdPSm9DWnVETW5sT21LN2ZEMUF1bEwwcmhGRnUwWG1mRmx0THo5cnFHUFQy?=
+ =?utf-8?B?aldXb0xQdHZ6bnZNOWQ3V3BnYWhRMWtJT3NiM1FqWWpRQ3RLd05VRGQzQkNB?=
+ =?utf-8?B?T3BGRG93c01na29rdFNwdFJRazNMcHdtMEk1Z3NyUGJyRWkrRElyNlU4anBn?=
+ =?utf-8?B?TFVSZ3NrVi9oQXhhdHkrTEdYTCtFWmpKVnFSTm5DK2hvdEJXZUFJbDBsQ0lE?=
+ =?utf-8?B?VGtZZnovaUxYbkZZVWYxNWFzUTJ6bzlkYmdkK1dvWlB4QXlaM0M1U2QzNE1Y?=
+ =?utf-8?B?dEdVc3BjVXl6bFA4L1U5M0UyYllUS1RTdFdoSnRXNk93UnlYbHNTNWNubkt5?=
+ =?utf-8?B?dVJwcEN6TE82M0YzWmRyeWtyZzBzUXo2cGFjNDBVb2g5M2srazFSZ0RYVXdr?=
+ =?utf-8?B?eWQvdndLM3VvV1pDeTArVXFEN3MrVnY3dHRmdGx3YWFaYm9ReWxsSE1FUjdy?=
+ =?utf-8?B?WkkxUU5xMHNSaGlRNTByaTc1ZUZncHBjeS8zZUFRemRhR3hoZXV6a1dlVEFU?=
+ =?utf-8?B?dHhnbk45aWtvT0J0dVZHWFNRS3l6NDQ3aDRVdms4a2JaeFVOdVFiejdLSm9K?=
+ =?utf-8?B?dXBaS3Rsd2RXNFlvY00weUIxdUIrYnBaWE1JWnVEbU1HQ2hJZThIRHg5T1VZ?=
+ =?utf-8?B?YWdPNWY0dUdiN1JFQnBzbHVRb0U3V3BxTXVjVnAyWWlvekNGY3V5WUYvWW1u?=
+ =?utf-8?B?VWg2ZkFsNGZhdWJCTmVsRU9HUTQ5N3laa0NLcGR6MUNIOVFMamlmbUZHYkky?=
+ =?utf-8?B?bXBUeVJHOE9ZZ3BUUWZxTUJOQU9XMXVYTHE3SkY1SVVMVlpPaW5qcXNWMk1j?=
+ =?utf-8?B?YjU4ZlJVRXhjRWZiVDQwUjR1TXJlMzdhQmtWVDI3ZEdwc3c3WjROVHlMQ1Rq?=
+ =?utf-8?B?eWRkUlR3TW9vMVZxOVlIQXV3ZTFKUjBRL2t4SzZKRHRmS3FaekpVQXNmT1NJ?=
+ =?utf-8?B?WG5SMFdVOVFjNGJBVittZ2J1bUN2WjB5VEdUNU5PbnVXdGY0aHlnckxqWU1h?=
+ =?utf-8?B?RXdhZVJ5alRGRXNldlVYS2EwbGVBNS9HRW5jaFFuUm9qUVRBUmlyekc2NVJj?=
+ =?utf-8?B?TlBZdHRPR0M3VTVsQkVtSmYxNnNFTVNIb2pJT3NFUTM3TzhCRzI2cFdLRXly?=
+ =?utf-8?B?eVpnTVdEMlV2UXNablhIMVV1ZEJVY2tDaUFUZENJUjRHYzRPeStUTmRsREJ2?=
+ =?utf-8?B?Qnl3Qm1RYkZ5R0huL0NJaTZwVFJjL1gxNllHak52WUVIcUNJRjNzRUJpa3Bu?=
+ =?utf-8?B?VEg3TFBNOG5XaUlNRGFkY3VqNDhXeU9NejUxR3Urcm5KaEIrZWdYdE45Q091?=
+ =?utf-8?B?YVNRMko4d3cyVUIwK0hiZGw2TDZHYTVNalZFZURzQjM1VTgraCt3T3U4eWhM?=
+ =?utf-8?B?Q3BHUkFCVFBxelE5dnBpUHZSMmdXYnppcUt2ZlpwaVdtVVJnSVoyQnNIYndw?=
+ =?utf-8?B?NmREMnVQZnM4dk00b1hQdXpGcEhsemxRZzF4em9UNnlnYXh1WnFmeGk5YVpy?=
+ =?utf-8?B?QkEvZWRTRW5ycmk4cnc5MmV4RFdmSG9ONWJsVUJTNEtkTDJkQUpBakptMEhX?=
+ =?utf-8?B?U29QSkU3UTdtQzFYN253ZEhPTDRNZDhBWDU4S2FxbDFnSGVVc2pwRTM0N1FU?=
+ =?utf-8?B?SVhTN2MzZUpPeHJDMk85bUEwdEd3OHFBdGlmN2huellqejZBRUExOHlyMDJJ?=
+ =?utf-8?B?aXZFd1FVdUpVZTJvVTdMVHR2WWZGWjgxTFpMN2pRK1NPU05pVm9FbStjdWRj?=
+ =?utf-8?B?enlIUWNuUzNYU015LzlvamNmTFRBRGpWZE9kdlJqRURjREdFMlRHS0h4VnNQ?=
+ =?utf-8?B?dkJBTmNoS3Ixa2xHMGNsZzVIaHBlNHpwMmMvaGpYbWhGSjRuamlHTFZTMFJL?=
+ =?utf-8?B?Wk1lSzFIeWhkNS9CdU9Ccnp5YjczTE1OWTRPb2tpUGU5NHhERE1qTWUrd1NO?=
+ =?utf-8?B?Y2l0cldTdHpucXBWTWx5UFRLYTkzNlZVZVVHNXhPb3phMVlneHNWdU0vdFZy?=
+ =?utf-8?B?clZuMlU2bHZnb3NsL080eXFXVDV5dWRTS1IrdmNVRklCL0loOHFkTjhUZjFp?=
+ =?utf-8?B?c2c9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d886676f-f049-4a88-0ae7-08de1185cb38
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 16:12:27.3348
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Tg0yy3VBa7zOrqjvGGUR00ErsKcC99rFmKcZzTBPkP81DIjN8MoH9jFbBr9Vga6+UoJdhfYYLcZNGbVI4TyOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7000
 
-On Wed, Oct 22, 2025 at 02:17:53PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Oct 22, 2025 at 10:39 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > On Di, 2025-10-21 at 18:47 +0300, Andy Shevchenko wrote:
-> > > On Tue, Oct 21, 2025 at 05:23:33PM +0200, Bartosz Golaszewski wrote:
-> > > > On Tue, Oct 21, 2025 at 5:03 PM Andy Shevchenko
-> > > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > On Tue, Oct 21, 2025 at 05:55:02PM +0300, Andy Shevchenko wrote:
-> > > > > > On Tue, Oct 21, 2025 at 11:39:41AM +0200, Bartosz Golaszewski wrote:
-> > > > > > > On Tue, Oct 21, 2025 at 11:31 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > > > > > > > On Di, 2025-10-21 at 11:27 +0200, Bartosz Golaszewski wrote:
 
-[...]
 
-> > > > > > > > No need to convert all existing drivers right away, but I'd like to see
-> > > > > > > > a user that benefits from the conversion.
-> > > > > > > >
-> > > > > > >
-> > > > > > > The first obvious user will be the reset-gpio driver which will see
-> > > > > > > its core code simplified as we won't need to cast between OF and
-> > > > > > > fwnodes.
-> > > > > >
-> > > > > > +1 to Bart's work. reset-gpio in current form is useless in all my cases
-> > > > > > (it's OF-centric in 2025! We should not do that in a new code).
-> > > > > >
-> > > > > > More over, conversion to reset-gpio from open coded GPIO APIs is a clear
-> > > > > > regression and I want to NAK all those changes (if any already done) for
-> > > > > > the discrete components that may be used outside of certainly OF-only niche of
-> > > > > > the platforms.
-> > > > >
-> > > > > To be clear, the conversion that's done while reset-gpio is kept OF-centric.
-> > > > > I'm in favour of using it, but we need to make it agnostic.
-> > > >
-> > > > As of now, the whole reset framework is completely OF-centric, I don't
-> > > > know what good blocking any such conversions would bring? I intend to
-> > > > convert the reset core but not individual drivers.
-> > >
-> > > Blocking making new regressions?
-> > >
-> > > Otherwise as long as reset framework and reset-gpio are agnostic, I'm pretty
-> > > much fine with the idea and conversion.
-> >
-> > I think we might be talking about different "conversions" and different
-> > "blocking" here?
-> >
-> > 1) Conversion of the reset core from of_node to fwnode.
-> > 2) Conversion of reset controller drivers from of_node to fwnode.
-> > 3) Conversion of consumer drivers from gpiod to reset_control API.
-> >
-> > My understanding is:
-> >
-> > Bartosz would like to convert the reset core to fwnode (1) but not
-> > convert all the individual reset controller drivers (2). He doesn't
-> > like blocking (1) - this statement was partially in reaction to me
-> > bringing up a previous attempt that didn't go through.
-> >
-> > Andy would like to block consumer driver conversions from gpiod to
-> > reset_control API (3) while the reset-gpio driver only works on OF
-> > platforms.
-> >
-> > Please correct me if and where I misunderstood.
+On 10/22/2025 6:50 AM, Alexandre Courbot wrote:
+> The shift is more easily expressed by the index of the lowest bit of the
+> field.
 > 
-> I think Andy is afraid that people will convert drivers that are used
-> in the fwnode world to reset-gpio which only works with OF. I don't
-> think that anyone's trying to do it though.
+> Reported-by: Edwin Peer <epeer@nvidia.com>
+> Link: https://lore.kernel.org/rust-for-linux/F3853912-2C1C-4F9B-89B0-3168689F35B3@nvidia.com/
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-You are both right about my worries and there is of course the case.
-https://patch.msgid.link/1720009575-11677-1-git-send-email-shengjiu.wang@nxp.com
+Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-The mentioned change should be reverted.
-
-And this was just found by a couple of minutes of `git log --grep`. I am pretty
-sure there are handful of a such wrong patches.
-
-Compare to https://patch.msgid.link/20250815172353.2430981-3-mohammad.rafi.shaik@oss.qualcomm.com
-which is done correctly (it doesn't  break old functionality on non-OF platforms).
-
-> > I think fwnode conversion of the reset controller framework core is a
-> > good idea, I'd just like to see a use case accompanying the conversion.
-> > It seems like enabling the reset-gpio driver to be used on non-OF
-> > platforms could be that. Andy, do you have an actual case in mind?
-> 
-> I'd say converting the reset core to fwnode has merits on its own. We
-> should typically use the highest available abstraction layer (which is
-> fwnode in this case) unless we absolutely have no choice (for
-> instance: using some very OF-specific APIs).
-> 
-> That being said: the reset-gpio driver will be able to work with any
-> firmware node once we do the conversion which is a good first
-> use-case.
-
-+1, as I already mentioned I am in favour of this change.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks.
 
