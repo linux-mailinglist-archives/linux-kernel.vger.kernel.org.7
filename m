@@ -1,102 +1,104 @@
-Return-Path: <linux-kernel+bounces-864531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974FFBFAFF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:55:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769F0BFAFE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C029E567C12
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84971585245
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996DC30DD0B;
-	Wed, 22 Oct 2025 08:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5E830CDB7;
+	Wed, 22 Oct 2025 08:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="UB9kvIi2"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qLcz8g00"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0A8266584;
-	Wed, 22 Oct 2025 08:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBB320B7E1;
+	Wed, 22 Oct 2025 08:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123317; cv=none; b=NyOC46VRx63gdRzjP7PoLdYUQHGMA0XgjS1Cu4AaAPdF99wQTN0EOEKmQ0OrYJB8DvNd+4drI8Avtea7wqrlYoKxmDLlGxtV/yvFAvP7swFxEE+FPipazWvCHZR0cPaXZgWU/hcEJTXZV+n64vzp6c7UPw4KFk9iXTrQ4YFWCPw=
+	t=1761123288; cv=none; b=CJvkMwmjOT/wLk7aJ0agqSzQvY9K/Ynl47lE5OcObrhuIIwfQ+kH9NJ+NeBk+Iyhi2Lx1eg5x+THw/rRf29ehRXStmE2VWZj+5OhgJ8BEYQLMCElqLArNcG5uo2SNS/lMgY+Pgjd41M4obGDGKtO+lOV+hGk1VYR4tS9wZ6udwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123317; c=relaxed/simple;
-	bh=ozyC0ygxJ42N93avxV/rH2GMQjZoBEuol+LMBQ94Uas=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=noE8hqlasjqcH+5KdvenSjCqwxABKXFZGQWORf15dsmGdY4U5uBPdhw0dets2p/+YqWZqcaN7Lf4PteL9Y92kNwgfzQAXHbqaUHbZs+J/CyV1YB/48b0wuGy/rYslgKy3LsevGgst5QBofOd2koZe0/MOpJWMb70voxrxxB1DtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=UB9kvIi2; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59M8seuvF360758, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1761123281; bh=bWx2M9wpDVpkM4yWZWdCxiRy4DozE9xy5F2FyAkN610=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=UB9kvIi2wewZxZYHhYW0JmLORc7wbQl+aL0WDdCvbLuiSh7woD5eMMcJM9Cuwz/py
-	 RjV8r4IPTrrFEHK+dUmP38LbXO8tQDjLzmSOq1g5Adj2HyCBF6cqsGOLiWeKTYSUKJ
-	 01kUgoEU9Pdc++AhSn3IcARpn+wYCapd3WYIJeYcX3veVbN5E3paIjOEFBlwVnZjnf
-	 vy3KOXal8faxu6CG+oSieD0zWDBfly27lk6Rq+qTPv5RXDQFcsPkKNRDxCg9LH33N8
-	 E804WTtD8fZxTzEpeGIGVcHpN46Vc0swHQo6h7lXYxiyD/6utI8EPv8G6kUNS1Lt1b
-	 +JTlGAKIZCl+Q==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59M8seuvF360758
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Oct 2025 16:54:41 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 22 Oct 2025 16:54:40 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 22 Oct 2025 16:54:40 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
- 15.02.1544.027; Wed, 22 Oct 2025 16:54:40 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bernie Huang
-	<phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: RE: [PATCH rtw-next v3 8/9] wifi: rtw89: provide TX reports for management frames
-Thread-Topic: [PATCH rtw-next v3 8/9] wifi: rtw89: provide TX reports for
- management frames
-Thread-Index: AQHcP04MOLWRdkAwuUmNSMnYYSuZ/7TN5D9w
-Date: Wed, 22 Oct 2025 08:54:39 +0000
-Message-ID: <92b8ee77b6b8422bb43e68110034150d@realtek.com>
-References: <20251017100658.66581-1-pchelkin@ispras.ru>
- <20251017100658.66581-9-pchelkin@ispras.ru>
-In-Reply-To: <20251017100658.66581-9-pchelkin@ispras.ru>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761123288; c=relaxed/simple;
+	bh=R3jzD6CzBSxf1gumv5ZW163Wkyn/4GrrIV6HRnjDdNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExydYOmlcroZi6h4E6dgrckP/FCGXL/tf/Su2MLqi+G9SY6JXzQuEilZ50VKiMLHveBnkkojZSCjWajppzqed8rSv617DdfSQpWLqcX3WXX76ujmpUA+j6TRvHE/bVfLFsU9lgzWaYZ/sItBgiNZ5ASAHGXWOltR6Cst3J4jCvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qLcz8g00; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ekrlHcjYC4m+Xa92FKOsdA1s49hcSWsjk1pkcgl5E+k=; b=qLcz8g00L1gzbpYWiRi/cu4S1p
+	usSj8RVOMmWMZgf4y2wbCSdJhgMsMX1N73GTCjukUVhY6b6sJmzuCtQ1q+PdvNK2j3jJ6gkdxrXUD
+	4PHLPPkxikg13WgqYYIy2yii8vwE3DtXYc4GizGh4pptGBzuuvGcRzWz5L7vzyBJ7fmkLphcp5BbH
+	xSkrzJDZOfLNWaEG0/5MoKNxcgKLDjb1T2lO9Stgd1pGTOTVWKWWdvpLFwblsY4hSIqhZzbD9aJyk
+	dReYdVT2/Rwq3bgM4jL0y6MXDSts9kssqRURqwMz67+sQuXFCprDicW1aGK+k9N6jTXdsc1bSXx/Q
+	kK4o/EYg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBUcE-000000029rJ-20Q7;
+	Wed, 22 Oct 2025 08:54:42 +0000
+Date: Wed, 22 Oct 2025 01:54:42 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>, intel-xe@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Matthew Brost <matthew.brost@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	dri-devel@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Lukasz Laguna <lukasz.laguna@intel.com>
+Subject: Re: [PATCH v2 26/26] vfio/xe: Add vendor-specific vfio_pci driver
+ for Intel graphics
+Message-ID: <aPib0tHn1yK9qx2x@infradead.org>
+References: <20251021224133.577765-1-michal.winiarski@intel.com>
+ <20251021224133.577765-27-michal.winiarski@intel.com>
+ <aPiDwUn-D2_oyx2T@infradead.org>
+ <ilv4dmjtei7llmoamwdjb3eb32rowzg6lwpjhdtilouoi6hyop@xnpkhbezzbcv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ilv4dmjtei7llmoamwdjb3eb32rowzg6lwpjhdtilouoi6hyop@xnpkhbezzbcv>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> In order to provide TX reports for the management queue rtw89 should
-> configure the firmware.  Do this with SET_CMC_TBL_MGQ_RPT_EN() for the
-> WiFi6 chips and with CCTLINFO_G7_W0_MGQ_RPT_EN flag for the WiFi7 ones.
->=20
-> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+On Wed, Oct 22, 2025 at 10:52:34AM +0200, Michał Winiarski wrote:
+> On Wed, Oct 22, 2025 at 12:12:01AM -0700, Christoph Hellwig wrote:
+> > There is absolutely nothing vendor-specific here, it is a device variant
+> > driver.  In fact in Linux basically nothing is ever vendor specific,
+> > because vendor is not a concept that does matter in any practical sense
+> > except for tiny details like the vendor ID as one of the IDs to match
+> > on in device probing.
+> > 
+> > I have no idea why people keep trying to inject this term again and
+> > again.
+> 
+> Hi,
+> 
+> The reasoning was that in this case we're matching vendor ID + class
+> combination to match all Intel GPUs, and not just selected device ID,
+> but I get your point.
 
-Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Which sounds like a really bad idea.  Is this going to work on i810
+devices?  Or the odd parts povervr based parts?
 
 
