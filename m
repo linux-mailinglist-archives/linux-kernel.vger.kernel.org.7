@@ -1,123 +1,222 @@
-Return-Path: <linux-kernel+bounces-864292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD46BFA6C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:03:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84958BFA6E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F42C4FD9A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:02:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCFE54FB4DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0FE2F39CB;
-	Wed, 22 Oct 2025 07:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A2B2F3C26;
+	Wed, 22 Oct 2025 07:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="hLYeRF9L"
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Yqt7Im04";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EpOyLeAN";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Vc6/2KJn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nKEBI8Zr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D599221F26;
-	Wed, 22 Oct 2025 07:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8E1221F26
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761116528; cv=none; b=aGbF/ZPdOjAOcsgiw5f4NKKAFI3KbrnlRBYf24Ce1sp1gaqSnfXloJ1D7Jw2EJ8RchvAZbmaPERDbMo07Cc5GzOLOWTQ36IrisCcc1bG9A5A9v4N1hu6dUB+r/AoBcf3md5Av1FWBfdlO74j3XT8lSU2u67N8gOgBODZGfleZPE=
+	t=1761116603; cv=none; b=g5CiXmo9pegSTtzDIGETovQ2BChDigpIGSUYcBnXkqq4aDYfjREW9Ko5nTK5jEcqOAfKJqDr/+4PsXi5D0INlDLLkzc8kD6EhKi+VRnMDnCxtKc256HxXe4b7PG/1qYtGQnyben1NwLKqSgIlPFAmEv6pDvG19pLXWLbQj517Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761116528; c=relaxed/simple;
-	bh=m5moemwbfxGnLQM9kLTf22NBmKRkzKjT2BG3uZGegRg=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Oin3JJf3834qIhI2fqSUJ92dVqmbgYpRzowMoziAqXP7lifuqA0x+j3wcErJrV6ckR//xpcUKw8z/qnNH9MtkBE1AhoVq1BWFe6fOFgdUWnBWoLVzKm1b8M8xrDRLGrkcr9K1bTSCazBZkZLT18IuIW1YwD/rxnQQgZgfrRRXFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=hLYeRF9L; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=EHRP3uMAXDZCSqG6N+1vlxdAszjhwtbW5deaNWABMWQ=;
-	b=hLYeRF9L/tbm9BwldRUCM0HeZZginJ4h9+WkMWqRPxsH4LOMDzdz4E90zWmQoRNClMEbzpw6P
-	HhjKSYDkRwZ2uCj7ymzFT6szIKGDFnNRZM+ap2hGY40M4HwKRxDqZ/Ya2/Isgg0s0kqfxqwWzTv
-	pfyvUnykgL7dyh/ykueDH9I=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4cs0Ss0Xn4zmV66;
-	Wed, 22 Oct 2025 15:01:33 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8B80A18001B;
-	Wed, 22 Oct 2025 15:01:57 +0800 (CST)
-Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 15:01:57 +0800
-Received: from [10.173.125.37] (10.173.125.37) by
- kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 15:01:49 +0800
-Subject: Re: [PATCH v3] mm/huge_memory: do not change split_huge_page*()
- target order silently.
-To: Zi Yan <ziy@nvidia.com>
-CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
-	<nao.horiguchi@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett"
-	<Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
-	<ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
-	<baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, "Matthew Wilcox
- (Oracle)" <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <stable@vger.kernel.org>, Pankaj Raghav
-	<p.raghav@samsung.com>, <david@redhat.com>, <jane.chu@oracle.com>,
-	<kernel@pankajraghav.com>,
-	<syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-References: <20251017013630.139907-1-ziy@nvidia.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <73c5557a-bc84-e1aa-d5d0-ad0ae57b55bb@huawei.com>
-Date: Wed, 22 Oct 2025 15:01:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1761116603; c=relaxed/simple;
+	bh=0rbDaM68YWnlopO11SkcD7rAYHxOpMyGy/WOhOBQAD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pS0dsHZJC4KpluTMjGNiSgCw4iEI2UwF5HhKpAauhQJP2LFwFofvCnNpmq+G8EKEEgaCwK9CwWYYGGtk79BslRipzfA20MFgRL9kyS6U8Q4S4uMU9fRT00+bm94kUViaPgkk0grOM8x1Z8QAtEsMxhvSt8U0tgzgRr0jM68cccI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Yqt7Im04; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EpOyLeAN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Vc6/2KJn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nKEBI8Zr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 805E31F391;
+	Wed, 22 Oct 2025 07:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761116595; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tlxJGX9jmOI/wD5Rfy1iJYXebHEOfbhjGU0gFhwqz/4=;
+	b=Yqt7Im04iuAbx4JPcGFjXhCh26p8TrP2xHtxdlJVXzLFiu/lnu2T6bzQSwPl3lB7DivkMR
+	s0i1WOmkB+AJFcBuINdBFxFjNvvsEfQXhPwQ7MUF/keyxeqL5uObBq3q9n0/eg11AATvDt
+	QnGoOAUEbL/OSLQAvy1/SzleVWitnvA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761116595;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tlxJGX9jmOI/wD5Rfy1iJYXebHEOfbhjGU0gFhwqz/4=;
+	b=EpOyLeANziBPyk4Wmxj/9bm1z/YYBdb0CrHUaofCK4ZS7toeY/r52azhxrIQ3Yo1Yc60Bk
+	6MhTDHZhRxRpC2CQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="Vc6/2KJn";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=nKEBI8Zr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761116591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tlxJGX9jmOI/wD5Rfy1iJYXebHEOfbhjGU0gFhwqz/4=;
+	b=Vc6/2KJnrJVn5tUpUCliUNHUfjO6I+Kb0WJa/PFhCVYTD3UDqHf6Qb76uSUg+i77R6n9ef
+	Do1/XR325WhiFd5f+sYEeIJ/ae1NtgWvGV8lA7zGQj8zRYxtE9xlx6qxee8tRzLRHd0t5m
+	IafmiwSH2rAcY6CopUE2AEXl93VXuQY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761116591;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tlxJGX9jmOI/wD5Rfy1iJYXebHEOfbhjGU0gFhwqz/4=;
+	b=nKEBI8ZrYU5sgkq5y6xHHHJWxfvkIKD0LvDbUqA1VeFHbeGeF3yHPRQJC9WRfeyZO3D/k3
+	NUOgHMIniLvnpgAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E1D113A29;
+	Wed, 22 Oct 2025 07:03:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pFegI66B+GjcegAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 22 Oct 2025 07:03:10 +0000
+Message-ID: <7afb2fc0-0da5-4539-a1a4-87360186cf65@suse.de>
+Date: Wed, 22 Oct 2025 09:03:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20251017013630.139907-1-ziy@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/7] net/handshake: Support KeyUpdate message types
+To: Alistair Francis <alistair23@gmail.com>
+Cc: chuck.lever@oracle.com, hare@kernel.org,
+ kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
+ kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+ kch@nvidia.com, Alistair Francis <alistair.francis@wdc.com>
+References: <20251017042312.1271322-1-alistair.francis@wdc.com>
+ <20251017042312.1271322-5-alistair.francis@wdc.com>
+ <e7d46c17-5ffd-4816-acd2-2125ca259d20@suse.de>
+ <CAKmqyKMsYUPLz9hVmM_rjXKSo52cMEtn8qVwbSs=UknxRWaQUw@mail.gmail.com>
+ <CAKmqyKNSV1GdipOrOs3csyoTMKX1+mxTgxnOq9xnb3vmRN0RgA@mail.gmail.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq500010.china.huawei.com (7.202.194.235)
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <CAKmqyKNSV1GdipOrOs3csyoTMKX1+mxTgxnOq9xnb3vmRN0RgA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 805E31F391
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:mid,suse.de:dkim];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-On 2025/10/17 9:36, Zi Yan wrote:
-> Page cache folios from a file system that support large block size (LBS)
-> can have minimal folio order greater than 0, thus a high order folio might
-> not be able to be split down to order-0. Commit e220917fa507 ("mm: split a
-> folio in minimum folio order chunks") bumps the target order of
-> split_huge_page*() to the minimum allowed order when splitting a LBS folio.
-> This causes confusion for some split_huge_page*() callers like memory
-> failure handling code, since they expect after-split folios all have
-> order-0 when split succeeds but in reality get min_order_for_split() order
-> folios and give warnings.
+On 10/22/25 06:40, Alistair Francis wrote:
+> On Tue, Oct 21, 2025 at 1:19 PM Alistair Francis <alistair23@gmail.com> wrote:
+>>
+>> On Mon, Oct 20, 2025 at 4:09 PM Hannes Reinecke <hare@suse.de> wrote:
+>>>
+>>> On 10/17/25 06:23, alistair23@gmail.com wrote:
+>>>> From: Alistair Francis <alistair.francis@wdc.com>
+>>>>
+[ .. ]>>>> @@ -372,6 +384,44 @@ int tls_client_hello_psk(const struct 
+tls_handshake_args *args, gfp_t flags)
+>>>>    }
+>>>>    EXPORT_SYMBOL(tls_client_hello_psk);
+>>>>
+>>>> +/**
+>>>> + * tls_client_keyupdate_psk - request a PSK-based TLS handshake on a socket
+>>>> + * @args: socket and handshake parameters for this request
+>>>> + * @flags: memory allocation control flags
+>>>> + * @keyupdate: specifies the type of KeyUpdate operation
+>>>> + *
+>>>> + * Return values:
+>>>> + *   %0: Handshake request enqueue; ->done will be called when complete
+>>>> + *   %-EINVAL: Wrong number of local peer IDs
+>>>> + *   %-ESRCH: No user agent is available
+>>>> + *   %-ENOMEM: Memory allocation failed
+>>>> + */
+>>>> +int tls_client_keyupdate_psk(const struct tls_handshake_args *args, gfp_t flags,
+>>>> +                          handshake_key_update_type keyupdate)
+>>>> +{
+>>>> +     struct tls_handshake_req *treq;
+>>>> +     struct handshake_req *req;
+>>>> +     unsigned int i;
+>>>> +
+>>>> +     if (!args->ta_num_peerids ||
+>>>> +         args->ta_num_peerids > ARRAY_SIZE(treq->th_peerid))
+>>>> +             return -EINVAL;
+>>>> +
+>>>> +     req = handshake_req_alloc(&tls_handshake_proto, flags);
+>>>> +     if (!req)
+>>>> +             return -ENOMEM;
+>>>> +     treq = tls_handshake_req_init(req, args);
+>>>> +     treq->th_type = HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE;
+>>>> +     treq->th_key_update_request = keyupdate;
+>>>> +     treq->th_auth_mode = HANDSHAKE_AUTH_PSK;
+>>>> +     treq->th_num_peerids = args->ta_num_peerids;
+>>>> +     for (i = 0; i < args->ta_num_peerids; i++)
+>>>> +             treq->th_peerid[i] = args->ta_my_peerids[i];
+>>> Hmm?
+>>> Do we use the 'peerids'?
+>>
+>> We don't, this is just copied from the
+>> tls_client_hello_psk()/tls_server_hello_psk() to provide the same
+>> information to keep things more consistent.
+>>
+>> I can remove setting these
 > 
-> Fix it by failing a split if the folio cannot be split to the target order.
-> Rename try_folio_split() to try_folio_split_to_order() to reflect the added
-> new_order parameter. Remove its unused list parameter.
+> Actually, ktls-utils (tlshd) expects these to be set, so I think we
+> should leave them as is
 > 
-> Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks")
-> [The test poisons LBS folios, which cannot be split to order-0 folios, and
-> also tries to poison all memory. The non split LBS folios take more memory
-> than the test anticipated, leading to OOM. The patch fixed the kernel
-> warning and the test needs some change to avoid OOM.]
-> Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@google.com/
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-Thanks for your patch. LGTM.
+Can't we rather fix up tlshd?
+It feels really pointless, erroring out on values which are completely
+irrelevant for the operation...
 
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+Cheers,
 
-Thanks.
-.
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
