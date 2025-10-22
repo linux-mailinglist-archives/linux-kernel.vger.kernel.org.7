@@ -1,116 +1,157 @@
-Return-Path: <linux-kernel+bounces-864589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB143BFB1F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:18:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4A4BFB202
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EAA64250F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:18:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAE984F24A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A6C311C1B;
-	Wed, 22 Oct 2025 09:18:39 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23663128D7;
+	Wed, 22 Oct 2025 09:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WjMkYcGE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E162571A0;
-	Wed, 22 Oct 2025 09:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546D2305962;
+	Wed, 22 Oct 2025 09:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761124718; cv=none; b=sSFytcDJkVIVvmJxkrOLt2AnqqjbqaL0PR8yJNhLRh9CcEcIVLuHjRDbdWchrIe9wa+YuciLN3BKMh666iDm9T+eInLTyGpse3IDnTPG++aX0FQ5IkXOxtBtS25c2TPVWarELMMgT0BBA3gO8bcDNmLGa0I4zOEgOjhf9z/xYVA=
+	t=1761124788; cv=none; b=LW1VWTlZ3MsqzweVKnE65BzgOmTV+C6nEdHshWrTivoNwcfbuPpfBYj8tlEbJCBM+yntKY0uZTwi9DVDsvbq/O3U39xMl4ZaT6QVtNZVuo5ttWi8vGiPOrw+VljlGM/Xt/WNDtKT2aPOeBn9GObRHPGulK0CDMmRxOXDHx2Gozw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761124718; c=relaxed/simple;
-	bh=iFDCalLskXW9rVP0zzspDtQbMZaXfTw4fPS+22BIkQ0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=uUTAVzPd6NUXbpch/p2JQF4gPAlm/zdbssnntjmpvT37fP/pyUtQKua78P4DBiuXPpwpPeOOjOlXi+sH5F0GiSzAq7o8HcQnU2EN3DMXexRzBhyiROZq7ST86GLGQ5brqsh1c0kd3iR+6ZP25fgisIuMeDZtpcmoxXuaBFufl/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowADXK55Qofhopw_aEw--.35253S2;
-	Wed, 22 Oct 2025 17:18:21 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: eajames@linux.ibm.com,
-	ninad@linux.ibm.com,
-	joel@jms.id.au,
-	jk@ozlabs.org
-Cc: linux-fsi@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] fsi/core: fix error handling in fsi_slave_init()
-Date: Wed, 22 Oct 2025 17:18:07 +0800
-Message-Id: <20251022091807.3300-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowADXK55Qofhopw_aEw--.35253S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WryrKw4rWw17XFW8GFyDJrb_yoW8Wr4kpa
-	1DGa4FyrWUGr1kKrsrZas7ZF98C3yIv34furWrGwn2krZxXr90vryjg340ya48JFWkCF48
-	X3srXrykW3WDXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjWxR3UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1761124788; c=relaxed/simple;
+	bh=GRsPTdvm7/2p/+wIHnQtvB/W0mC2JSIpvLdg/hkAUK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EcAyt+bQ3Axu5sYVQCqOwPJ2iJ+wrGGThRVttSfN35hhyqn5cwG2nFTSziVpizYb3Ou4T/ESExsifnMRu8UD9ycNgPBOBizsRiradc02bMqUWe/mAlJvhfRsc7OIjLbIRglRKd4NvkDIJfd4vEEvMrHwqggqGfxEa2psvmwshZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WjMkYcGE; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761124787; x=1792660787;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=GRsPTdvm7/2p/+wIHnQtvB/W0mC2JSIpvLdg/hkAUK4=;
+  b=WjMkYcGE+ZilPHXZtpIyzkhSi2yaLA3O0ItIiTdCNLJJbhGUiD4L24ab
+   8nMImaQgHh1TfaDg8h8R48UPDyqF8xb/ou5WESQ5KYXaNcHqlWMCNw34S
+   JojC7ZWyMaKk0xULQxyD3c+MAxmTKO+iSdd0p3pfvITUwedeA70vSFCau
+   szHpCdGUqIC1xQCHpTbyXVLfs/Fnq5pXoMZX9zXgPcJhyhMr1iQjMY0p4
+   SQ9e8uy9wiuKIdGFG0PlsnCBFLgOcuPTlXfo+mOS+YphmUSHShno1GrDX
+   AH4RszLKjkOlUTtqncuj+lPgqdQjyjO0jjjzjki3fk4Wx6qaI995pHGQu
+   w==;
+X-CSE-ConnectionGUID: uGHcB43LR/OvQda+XTooPQ==
+X-CSE-MsgGUID: hYde8P4dTi6q7xyhUJRscQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65883125"
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="65883125"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 02:19:46 -0700
+X-CSE-ConnectionGUID: t8b9FqDyRBWv5iv65/6BbA==
+X-CSE-MsgGUID: kbDOcfajRPifz7UrA4sqOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="184226178"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 22 Oct 2025 02:19:43 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBV0P-000CBd-20;
+	Wed, 22 Oct 2025 09:19:41 +0000
+Date: Wed, 22 Oct 2025 17:18:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joel Granados <joel.granados@kernel.org>, Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Joel Granados <joel.granados@kernel.org>
+Subject: Re: [PATCH 7/7] sysctl: Wrap do_proc_douintvec with the public
+ function proc_douintvec_conv
+Message-ID: <202510221719.3ggn070M-lkp@intel.com>
+References: <20251017-jag-sysctl_jiffies-v1-7-175d81dfdf82@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017-jag-sysctl_jiffies-v1-7-175d81dfdf82@kernel.org>
 
-Once cdev_device_add() failed, we should use put_device() to decrement
-reference count for cleanup. Or it could cause memory leak. Although
-operations in err_free_ida are similar to the operations in callback
-function fsi_slave_release(), put_device() is a correct handling
-operation as comments require when cdev_device_add() fails.
+Hi Joel,
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+kernel test robot noticed the following build warnings:
 
-Found by code review.
+[auto build test WARNING on 130e5390ba572bffa687f32ed212dac1105b654a]
 
-Cc: stable@vger.kernel.org
-Fixes: 371975b0b075 ("fsi/core: Fix error paths on CFAM init")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/fsi/fsi-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Joel-Granados/sysctl-Allow-custom-converters-from-outside-sysctl/20251017-163832
+base:   130e5390ba572bffa687f32ed212dac1105b654a
+patch link:    https://lore.kernel.org/r/20251017-jag-sysctl_jiffies-v1-7-175d81dfdf82%40kernel.org
+patch subject: [PATCH 7/7] sysctl: Wrap do_proc_douintvec with the public function proc_douintvec_conv
+config: i386-randconfig-063-20251022 (https://download.01.org/0day-ci/archive/20251022/202510221719.3ggn070M-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510221719.3ggn070M-lkp@intel.com/reproduce)
 
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index c6c115993ebc..444878ab9fb1 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -1084,7 +1084,8 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
- 	rc = cdev_device_add(&slave->cdev, &slave->dev);
- 	if (rc) {
- 		dev_err(&slave->dev, "Error %d creating slave device\n", rc);
--		goto err_free_ida;
-+		put_device(&slave->dev);
-+		return rc;
- 	}
- 
- 	/* Now that we have the cdev registered with the core, any fatal
-@@ -1110,8 +1111,6 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
- 
- 	return 0;
- 
--err_free_ida:
--	fsi_free_minor(slave->dev.devt);
- err_free:
- 	of_node_put(slave->dev.of_node);
- 	kfree(slave);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510221719.3ggn070M-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> kernel/kstack_erase.c:34:56: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void *buffer @@     got void [noderef] __user *buffer @@
+   kernel/kstack_erase.c:34:56: sparse:     expected void *buffer
+   kernel/kstack_erase.c:34:56: sparse:     got void [noderef] __user *buffer
+   kernel/kstack_erase.c:54:35: sparse: sparse: incorrect type in initializer (incompatible argument 3 (different address spaces)) @@     expected int ( [usertype] *proc_handler )( ... ) @@     got int ( * )( ... ) @@
+   kernel/kstack_erase.c:54:35: sparse:     expected int ( [usertype] *proc_handler )( ... )
+   kernel/kstack_erase.c:54:35: sparse:     got int ( * )( ... )
+
+vim +34 kernel/kstack_erase.c
+
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  23  
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  24  #ifdef CONFIG_SYSCTL
+78eb4ea25cd5fd kernel/stackleak.c Joel Granados    2024-07-24  25  static int stack_erasing_sysctl(const struct ctl_table *table, int write,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  26  			void __user *buffer, size_t *lenp, loff_t *ppos)
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  27  {
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  28  	int ret = 0;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  29  	int state = !static_branch_unlikely(&stack_erasing_bypass);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  30  	int prev_state = state;
+0e148d3cca0dc1 kernel/stackleak.c Thomas Weiﬂschuh 2024-05-03  31  	struct ctl_table table_copy = *table;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  32  
+0e148d3cca0dc1 kernel/stackleak.c Thomas Weiﬂschuh 2024-05-03  33  	table_copy.data = &state;
+0e148d3cca0dc1 kernel/stackleak.c Thomas Weiﬂschuh 2024-05-03 @34  	ret = proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  35  	state = !!state;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  36  	if (ret || !write || state == prev_state)
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  37  		return ret;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  38  
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  39  	if (state)
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  40  		static_branch_disable(&stack_erasing_bypass);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  41  	else
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  42  		static_branch_enable(&stack_erasing_bypass);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  43  
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  44  	pr_warn("stackleak: kernel stack erasing is %s\n",
+62e9c1e8ecee87 kernel/stackleak.c Thorsten Blum    2024-12-22  45  					str_enabled_disabled(state));
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  46  	return ret;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  47  }
+1751f872cc97f9 kernel/stackleak.c Joel Granados    2025-01-28  48  static const struct ctl_table stackleak_sysctls[] = {
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  49  	{
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  50  		.procname	= "stack_erasing",
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  51  		.data		= NULL,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  52  		.maxlen		= sizeof(int),
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  53  		.mode		= 0600,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  54  		.proc_handler	= stack_erasing_sysctl,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  55  		.extra1		= SYSCTL_ZERO,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  56  		.extra2		= SYSCTL_ONE,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  57  	},
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  58  };
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  59  
+
 -- 
-2.17.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
