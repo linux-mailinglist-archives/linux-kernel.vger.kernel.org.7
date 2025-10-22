@@ -1,326 +1,230 @@
-Return-Path: <linux-kernel+bounces-865883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9731BFE3BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FC2BFE3C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7A41A01CDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 615673A36A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45722301472;
-	Wed, 22 Oct 2025 20:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AD93019A4;
+	Wed, 22 Oct 2025 20:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzFlzQpR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="g5HhySgO"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADB5303A2E;
-	Wed, 22 Oct 2025 20:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968452EC0A8
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761166594; cv=none; b=uYtckQrvcNTJ0kuMtgT1g/CAL6G4S7tnAV2aUvF/Df1p5VMH2m8Ig7nTQJmIp32/iX+xSpLbPLkHp1qh0CqkElheRLoqYJa0aq6HcuNteBbiRBn6fJ62JtXFH5v5yHpP1HeOXgxYlmxJM1dkj+IVb1aYdyXkJCUFMDB+NkTbW1U=
+	t=1761166661; cv=none; b=Q5jBVW6SglFGCCktdFpKZ0ZD/HuMQZno/fIHQgCpEVtMOt1QFkbXUM+qqAcP8dqPI63MHZFCseBDXDy107FsEBwrdKhZ8+gf9wKH77+Byfj6d8S6FiZIB27ntlNRu6IpqfeRYmiye2l+al7lzKBnhkr7Mig8Bo8UVonnpWbhH/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761166594; c=relaxed/simple;
-	bh=VKWFVy7XCQrFd2DdX5VPfAMp0XUdeIkTX4YYGvHGvD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tIuk1XAUbzYVh2NfFlZnWxaDUGt4VOKZewRmSssyvlPXmDrnucBiSdCcjehdtPXwCEJXstmd7zlqQFk7ZM5jFhnnwF9u1bfGKe8p253Hc/2a+wZ1rLm0DYfDzsN2wPhkyJVL247/WqB2rPuLwGIrV/Dc6iEBQZTTDpmwZf9jucg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzFlzQpR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FFFC4CEFF;
-	Wed, 22 Oct 2025 20:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761166593;
-	bh=VKWFVy7XCQrFd2DdX5VPfAMp0XUdeIkTX4YYGvHGvD4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VzFlzQpRsGN96aDCwHJbf4FZyY2AagSDyf0SOjeemI6JeAnJBMsoYaxzrA2KTqt9Z
-	 DKzzeVemopKdAqifS9PCOa24ZVYP30ZfiLBYsz59X5YMZ1Az25hKvIDcsey/j/k63o
-	 /wddOzG15mzGVOGJ5u/l9q6XMI6L4+IvtWS0bhSiHMB0YouIniJVTvgT6EoedKbgZN
-	 3+za9KLbnn51j/RzzAOiRG8579GAsVyMvWm7+iI5LV9ivhvIlA6Sxzr1DCLjZyKrWf
-	 1Eem5a1G012FHUfSmOLc8cSPm/zfkwBMQKQrIn2a4wmENMGJ3vDkicSRUntX5ePDNz
-	 br8oBIvmzwA8Q==
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com,
-	arighi@nvidia.com,
-	changwoo@igalia.com
-Cc: linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev,
-	peterz@infradead.org,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH RESEND v2 3/3] sched_ext: Rename pnt_seq to kick_sync
-Date: Wed, 22 Oct 2025 10:56:29 -1000
-Message-ID: <20251022205629.845930-4-tj@kernel.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251022205629.845930-1-tj@kernel.org>
-References: <20251022205629.845930-1-tj@kernel.org>
+	s=arc-20240116; t=1761166661; c=relaxed/simple;
+	bh=s5zHL3JeW8tjYv9ZHT4cVhmdFxP9v5iEn7jJE/tWsl4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tMaKuyyMmIbQK7J9X7W7RPV/nm/Yh6dVP6YJoaWJQFRy4sL2s/EcadmrucweAY3/l7YzAJULOYT4i4g6kw9DtL3gRODGQIyw8ladE9NM7Z52Lm0so9s/Xg0JxC+H46vTeSAsqYrLlc1sBq4S0Q61jjxvcnlbbDpIr919pgKB9YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=g5HhySgO; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1761166653;
+ bh=S0wz2Pp5BKXToP4WWrNmtTLcJUcbxzUiav7sBmIskes=;
+ b=g5HhySgOMIRIQQ+gf8ng3KwLd8Hnbq5lJKl8omwtsClBZEWES/zKYr3ZJlElu66QVQtwnKgb+
+ fboug6CMUHLJTHiD60b8p4DXEt7Xr3h9h3hiGtFkesWWaGJRt/LYzAH00TYoHVNw9D2xGdrivpN
+ yrYp9JSkGEXphaC+Jx644Y5KuRpi/xQ+P3hIy8Cg2RoKa55KSVpAtVqP8u84h41f4UwXS4kg+cF
+ /1+GuGmJ0wtbWX5dKCFQ1FA5WOdzOB2PCAZTJ/rfXZwJ8AlHgHgToh1GMqqet9qX1AnkJGJ6Cxf
+ 3JbeaVxEnSlRz7OIWS0m8HND6b7ruXf3TS5CSeGj8WLA==
+X-Forward-Email-ID: 68f945387ffe5c5c38c08363
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.3.0
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <5d2f3b9c-3d1a-47a5-93f1-1a6d6ce540f3@kwiboo.se>
+Date: Wed, 22 Oct 2025 22:57:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/15] media: rkvdec: Add generic configuration for
+ variants
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>, Ricardo Ribalda <ribalda@chromium.org>,
+ Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Yunke Cao <yunkec@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ James Cowgill <james.cowgill@blaize.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>, linux-kernel@vger.kernel.org
+References: <20251022174508.284929-1-detlev.casanova@collabora.com>
+ <20251022174508.284929-9-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20251022174508.284929-9-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pnt_seq field and related infrastructure were originally named for
-"pick next task sequence", reflecting their original implementation in
-scx_next_task_picked(). However, the sequence counter is now incremented in
-both put_prev_task_scx() and pick_task_scx() and its purpose is to
-synchronize kick operations via SCX_KICK_WAIT, not specifically to track
-pick_next_task events.
+Hi Detlev,
 
-Rename to better reflect the actual semantics:
-- pnt_seq -> kick_sync
-- scx_kick_pseqs -> scx_kick_syncs
-- pseqs variables -> ksyncs
-- Update comments to refer to "kick_sync sequence" instead of "pick_task
-  sequence"
+On 10/22/2025 7:45 PM, Detlev Casanova wrote:
+> This is to prepare for adding new versions of the decoder and
+> support specific formats and ops per version.
+> 
+> Different rkvdec_variant instances will be able to share generic
+> decoder configs.
+> 
+> Tested-by: Diederik de Haas <didi.debian@cknow.org>  # Rock 5B
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  .../media/platform/rockchip/rkvdec/rkvdec.c   | 37 ++++++++++++-------
+>  .../media/platform/rockchip/rkvdec/rkvdec.h   |  6 +++
+>  2 files changed, 30 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> index 776149f871b0..a7af1e3fdebd 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> @@ -373,15 +373,16 @@ static bool rkvdec_is_capable(struct rkvdec_ctx *ctx, unsigned int capability)
+>  static const struct rkvdec_coded_fmt_desc *
+>  rkvdec_enum_coded_fmt_desc(struct rkvdec_ctx *ctx, int index)
+>  {
+> +	const struct rkvdec_config *cfg = ctx->dev->variant->config;
+>  	int fmt_idx = -1;
+>  	unsigned int i;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
+> -		if (!rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability))
+> +	for (i = 0; i < cfg->coded_fmts_num; i++) {
+> +		if (!rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability))
+>  			continue;
+>  		fmt_idx++;
+>  		if (index == fmt_idx)
+> -			return &rkvdec_coded_fmts[i];
+> +			return &cfg->coded_fmts[i];
+>  	}
+>  
+>  	return NULL;
+> @@ -390,12 +391,13 @@ rkvdec_enum_coded_fmt_desc(struct rkvdec_ctx *ctx, int index)
+>  static const struct rkvdec_coded_fmt_desc *
+>  rkvdec_find_coded_fmt_desc(struct rkvdec_ctx *ctx, u32 fourcc)
+>  {
+> +	const struct rkvdec_config *cfg = ctx->dev->variant->config;
+>  	unsigned int i;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
+> -		if (rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability) &&
+> -		    rkvdec_coded_fmts[i].fourcc == fourcc)
+> -			return &rkvdec_coded_fmts[i];
+> +	for (i = 0; i < cfg->coded_fmts_num; i++) {
+> +		if (rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability) &&
+> +		    cfg->coded_fmts[i].fourcc == fourcc)
+> +			return &cfg->coded_fmts[i];
+>  	}
+>  
+>  	return NULL;
+> @@ -1014,18 +1016,19 @@ static int rkvdec_add_ctrls(struct rkvdec_ctx *ctx,
+>  
+>  static int rkvdec_init_ctrls(struct rkvdec_ctx *ctx)
+>  {
+> +	const struct rkvdec_config *cfg = ctx->dev->variant->config;
+>  	unsigned int i, nctrls = 0;
+>  	int ret;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++)
+> -		if (rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability))
+> -			nctrls += rkvdec_coded_fmts[i].ctrls->num_ctrls;
+> +	for (i = 0; i < cfg->coded_fmts_num; i++)
+> +		if (rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability))
+> +			nctrls += cfg->coded_fmts[i].ctrls->num_ctrls;
+>  
+>  	v4l2_ctrl_handler_init(&ctx->ctrl_hdl, nctrls);
+>  
+> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
+> -		if (rkvdec_is_capable(ctx, rkvdec_coded_fmts[i].capability)) {
+> -			ret = rkvdec_add_ctrls(ctx, rkvdec_coded_fmts[i].ctrls);
+> +	for (i = 0; i < cfg->coded_fmts_num; i++) {
+> +		if (rkvdec_is_capable(ctx, cfg->coded_fmts[i].capability)) {
+> +			ret = rkvdec_add_ctrls(ctx, cfg->coded_fmts[i].ctrls);
+>  			if (ret)
+>  				goto err_free_handler;
+>  		}
+> @@ -1240,13 +1243,20 @@ static void rkvdec_watchdog_func(struct work_struct *work)
+>  	}
+>  }
+>  
+> +static const struct rkvdec_config config_rkvdec = {
+> +	.coded_fmts = rkvdec_coded_fmts,
+> +	.coded_fmts_num = ARRAY_SIZE(rkvdec_coded_fmts),
+> +};
+> +
+>  static const struct rkvdec_variant rk3288_rkvdec_variant = {
+>  	.num_regs = 68,
+> +	.config = &config_rkvdec,
+>  	.capabilities = RKVDEC_CAPABILITY_HEVC,
+>  };
+>  
+>  static const struct rkvdec_variant rk3328_rkvdec_variant = {
+>  	.num_regs = 109,
+> +	.config = &config_rkvdec,
+>  	.capabilities = RKVDEC_CAPABILITY_HEVC |
+>  			RKVDEC_CAPABILITY_H264 |
+>  			RKVDEC_CAPABILITY_VP9,
+> @@ -1255,6 +1265,7 @@ static const struct rkvdec_variant rk3328_rkvdec_variant = {
+>  
+>  static const struct rkvdec_variant rk3399_rkvdec_variant = {
+>  	.num_regs = 78,
+> +	.config = &config_rkvdec,
+>  	.capabilities = RKVDEC_CAPABILITY_HEVC |
+>  			RKVDEC_CAPABILITY_H264 |
+>  			RKVDEC_CAPABILITY_VP9,
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> index f35f6e80ea2e..3b1cc511412e 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> @@ -71,6 +71,7 @@ vb2_to_rkvdec_decoded_buf(struct vb2_buffer *buf)
+>  
+>  struct rkvdec_variant {
+>  	unsigned int num_regs;
+> +	const struct rkvdec_config *config;
+>  	unsigned int capabilities;
+>  	unsigned int quirks;
+>  };
+> @@ -113,6 +114,11 @@ struct rkvdec_coded_fmt_desc {
+>  	unsigned int capability;
+>  };
+>  
+> +struct rkvdec_config {
+> +	const struct rkvdec_coded_fmt_desc *coded_fmts;
+> +	size_t coded_fmts_num;
+> +};
 
-This is a pure renaming with no functional changes.
+Do we really need a separate config struct? This chould/should me merged
+with the variant struct.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/ext.c   | 80 ++++++++++++++++++++++++++--------------------------
- kernel/sched/sched.h |  2 +-
- 2 files changed, 41 insertions(+), 41 deletions(-)
+Using a two layer variant/config mostly seem to complicate things based
+on an initial review.
 
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -68,18 +68,18 @@ static unsigned long scx_watchdog_timest
- static struct delayed_work scx_watchdog_work;
- 
- /*
-- * For %SCX_KICK_WAIT: Each CPU has a pointer to an array of pick_task sequence
-+ * For %SCX_KICK_WAIT: Each CPU has a pointer to an array of kick_sync sequence
-  * numbers. The arrays are allocated with kvzalloc() as size can exceed percpu
-  * allocator limits on large machines. O(nr_cpu_ids^2) allocation, allocated
-  * lazily when enabling and freed when disabling to avoid waste when sched_ext
-  * isn't active.
-  */
--struct scx_kick_pseqs {
-+struct scx_kick_syncs {
- 	struct rcu_head		rcu;
--	unsigned long		seqs[];
-+	unsigned long		syncs[];
- };
- 
--static DEFINE_PER_CPU(struct scx_kick_pseqs __rcu *, scx_kick_pseqs);
-+static DEFINE_PER_CPU(struct scx_kick_syncs __rcu *, scx_kick_syncs);
- 
- /*
-  * Direct dispatch marker.
-@@ -2301,7 +2301,7 @@ static void put_prev_task_scx(struct rq
- 	struct scx_sched *sch = scx_root;
- 
- 	/* see kick_cpus_irq_workfn() */
--	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
-+	smp_store_release(&rq->scx.kick_sync, rq->scx.kick_sync + 1);
- 
- 	update_curr_scx(rq);
- 
-@@ -2357,7 +2357,7 @@ do_pick_task_scx(struct rq *rq, struct r
- 	struct task_struct *p;
- 
- 	/* see kick_cpus_irq_workfn() */
--	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
-+	smp_store_release(&rq->scx.kick_sync, rq->scx.kick_sync + 1);
- 
- 	rq_modified_clear(rq);
- 
-@@ -3883,24 +3883,24 @@ static const char *scx_exit_reason(enum
- 	}
- }
- 
--static void free_kick_pseqs_rcu(struct rcu_head *rcu)
-+static void free_kick_syncs_rcu(struct rcu_head *rcu)
- {
--	struct scx_kick_pseqs *pseqs = container_of(rcu, struct scx_kick_pseqs, rcu);
-+	struct scx_kick_syncs *ksyncs = container_of(rcu, struct scx_kick_syncs, rcu);
- 
--	kvfree(pseqs);
-+	kvfree(ksyncs);
- }
- 
--static void free_kick_pseqs(void)
-+static void free_kick_syncs(void)
- {
- 	int cpu;
- 
- 	for_each_possible_cpu(cpu) {
--		struct scx_kick_pseqs **pseqs = per_cpu_ptr(&scx_kick_pseqs, cpu);
--		struct scx_kick_pseqs *to_free;
-+		struct scx_kick_syncs **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
-+		struct scx_kick_syncs *to_free;
- 
--		to_free = rcu_replace_pointer(*pseqs, NULL, true);
-+		to_free = rcu_replace_pointer(*ksyncs, NULL, true);
- 		if (to_free)
--			call_rcu(&to_free->rcu, free_kick_pseqs_rcu);
-+			call_rcu(&to_free->rcu, free_kick_syncs_rcu);
- 	}
- }
- 
-@@ -4038,7 +4038,7 @@ static void scx_disable_workfn(struct kt
- 	free_percpu(scx_dsp_ctx);
- 	scx_dsp_ctx = NULL;
- 	scx_dsp_max_batch = 0;
--	free_kick_pseqs();
-+	free_kick_syncs();
- 
- 	mutex_unlock(&scx_enable_mutex);
- 
-@@ -4287,10 +4287,10 @@ static void scx_dump_state(struct scx_ex
- 		seq_buf_init(&ns, buf, avail);
- 
- 		dump_newline(&ns);
--		dump_line(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ops_qseq=%lu pnt_seq=%lu",
-+		dump_line(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ops_qseq=%lu ksync=%lu",
- 			  cpu, rq->scx.nr_running, rq->scx.flags,
- 			  rq->scx.cpu_released, rq->scx.ops_qseq,
--			  rq->scx.pnt_seq);
-+			  rq->scx.kick_sync);
- 		dump_line(&ns, "          curr=%s[%d] class=%ps",
- 			  rq->curr->comm, rq->curr->pid,
- 			  rq->curr->sched_class);
-@@ -4401,7 +4401,7 @@ static void scx_vexit(struct scx_sched *
- 	irq_work_queue(&sch->error_irq_work);
- }
- 
--static int alloc_kick_pseqs(void)
-+static int alloc_kick_syncs(void)
- {
- 	int cpu;
- 
-@@ -4410,19 +4410,19 @@ static int alloc_kick_pseqs(void)
- 	 * can exceed percpu allocator limits on large machines.
- 	 */
- 	for_each_possible_cpu(cpu) {
--		struct scx_kick_pseqs **pseqs = per_cpu_ptr(&scx_kick_pseqs, cpu);
--		struct scx_kick_pseqs *new_pseqs;
-+		struct scx_kick_syncs **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
-+		struct scx_kick_syncs *new_ksyncs;
- 
--		WARN_ON_ONCE(rcu_access_pointer(*pseqs));
-+		WARN_ON_ONCE(rcu_access_pointer(*ksyncs));
- 
--		new_pseqs = kvzalloc_node(struct_size(new_pseqs, seqs, nr_cpu_ids),
--					  GFP_KERNEL, cpu_to_node(cpu));
--		if (!new_pseqs) {
--			free_kick_pseqs();
-+		new_ksyncs = kvzalloc_node(struct_size(new_ksyncs, syncs, nr_cpu_ids),
-+					   GFP_KERNEL, cpu_to_node(cpu));
-+		if (!new_ksyncs) {
-+			free_kick_syncs();
- 			return -ENOMEM;
- 		}
- 
--		rcu_assign_pointer(*pseqs, new_pseqs);
-+		rcu_assign_pointer(*ksyncs, new_ksyncs);
- 	}
- 
- 	return 0;
-@@ -4578,14 +4578,14 @@ static int scx_enable(struct sched_ext_o
- 		goto err_unlock;
- 	}
- 
--	ret = alloc_kick_pseqs();
-+	ret = alloc_kick_syncs();
- 	if (ret)
- 		goto err_unlock;
- 
- 	sch = scx_alloc_and_add_sched(ops);
- 	if (IS_ERR(sch)) {
- 		ret = PTR_ERR(sch);
--		goto err_free_pseqs;
-+		goto err_free_ksyncs;
- 	}
- 
- 	/*
-@@ -4788,8 +4788,8 @@ static int scx_enable(struct sched_ext_o
- 
- 	return 0;
- 
--err_free_pseqs:
--	free_kick_pseqs();
-+err_free_ksyncs:
-+	free_kick_syncs();
- err_unlock:
- 	mutex_unlock(&scx_enable_mutex);
- 	return ret;
-@@ -5119,7 +5119,7 @@ static bool can_skip_idle_kick(struct rq
- 	return !is_idle_task(rq->curr) && !(rq->scx.flags & SCX_RQ_IN_BALANCE);
- }
- 
--static bool kick_one_cpu(s32 cpu, struct rq *this_rq, unsigned long *pseqs)
-+static bool kick_one_cpu(s32 cpu, struct rq *this_rq, unsigned long *ksyncs)
- {
- 	struct rq *rq = cpu_rq(cpu);
- 	struct scx_rq *this_scx = &this_rq->scx;
-@@ -5146,7 +5146,7 @@ static bool kick_one_cpu(s32 cpu, struct
- 
- 		if (cpumask_test_cpu(cpu, this_scx->cpus_to_wait)) {
- 			if (cur_class == &ext_sched_class) {
--				pseqs[cpu] = rq->scx.pnt_seq;
-+				ksyncs[cpu] = rq->scx.kick_sync;
- 				should_wait = true;
- 			} else {
- 				cpumask_clear_cpu(cpu, this_scx->cpus_to_wait);
-@@ -5182,20 +5182,20 @@ static void kick_cpus_irq_workfn(struct
- {
- 	struct rq *this_rq = this_rq();
- 	struct scx_rq *this_scx = &this_rq->scx;
--	struct scx_kick_pseqs __rcu *pseqs_pcpu = __this_cpu_read(scx_kick_pseqs);
-+	struct scx_kick_syncs __rcu *ksyncs_pcpu = __this_cpu_read(scx_kick_syncs);
- 	bool should_wait = false;
--	unsigned long *pseqs;
-+	unsigned long *ksyncs;
- 	s32 cpu;
- 
--	if (unlikely(!pseqs_pcpu)) {
--		pr_warn_once("kick_cpus_irq_workfn() called with NULL scx_kick_pseqs");
-+	if (unlikely(!ksyncs_pcpu)) {
-+		pr_warn_once("kick_cpus_irq_workfn() called with NULL scx_kick_syncs");
- 		return;
- 	}
- 
--	pseqs = rcu_dereference_bh(pseqs_pcpu)->seqs;
-+	ksyncs = rcu_dereference_bh(ksyncs_pcpu)->syncs;
- 
- 	for_each_cpu(cpu, this_scx->cpus_to_kick) {
--		should_wait |= kick_one_cpu(cpu, this_rq, pseqs);
-+		should_wait |= kick_one_cpu(cpu, this_rq, ksyncs);
- 		cpumask_clear_cpu(cpu, this_scx->cpus_to_kick);
- 		cpumask_clear_cpu(cpu, this_scx->cpus_to_kick_if_idle);
- 	}
-@@ -5209,7 +5209,7 @@ static void kick_cpus_irq_workfn(struct
- 		return;
- 
- 	for_each_cpu(cpu, this_scx->cpus_to_wait) {
--		unsigned long *wait_pnt_seq = &cpu_rq(cpu)->scx.pnt_seq;
-+		unsigned long *wait_kick_sync = &cpu_rq(cpu)->scx.kick_sync;
- 
- 		/*
- 		 * Busy-wait until the task running at the time of kicking is no
-@@ -5223,7 +5223,7 @@ static void kick_cpus_irq_workfn(struct
- 		 * the wait when $cpu is taken by a higher sched class.
- 		 */
- 		if (cpu != cpu_of(this_rq))
--			smp_cond_load_acquire(wait_pnt_seq, VAL != pseqs[cpu]);
-+			smp_cond_load_acquire(wait_kick_sync, VAL != ksyncs[cpu]);
- 
- 		cpumask_clear_cpu(cpu, this_scx->cpus_to_wait);
- 	}
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -803,7 +803,7 @@ struct scx_rq {
- 	cpumask_var_t		cpus_to_kick_if_idle;
- 	cpumask_var_t		cpus_to_preempt;
- 	cpumask_var_t		cpus_to_wait;
--	unsigned long		pnt_seq;
-+	unsigned long		kick_sync;
- 	struct balance_callback	deferred_bal_cb;
- 	struct irq_work		deferred_irq_work;
- 	struct irq_work		kick_cpus_irq_work;
--- 
-2.47.1
+Regards,
+Jonas
+
+> +
+>  struct rkvdec_dev {
+>  	struct v4l2_device v4l2_dev;
+>  	struct media_device mdev;
+
 
