@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-865526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CC9BFD5C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:50:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE13CBFD523
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 564285665D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:44:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3F61883448
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F5535B124;
-	Wed, 22 Oct 2025 16:32:43 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0566270551;
+	Wed, 22 Oct 2025 16:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZYttj0Nl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F6B35B121;
-	Wed, 22 Oct 2025 16:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2876B25782D;
+	Wed, 22 Oct 2025 16:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761150762; cv=none; b=HVaAD1DLjVFpKubYTly/kM2B+GBwZon7XqJk2KK23Gh3rfArSCWjqDmpYH5GUUsOQqOI0XSUCItILE7diXjhW/6rxECmIMieapPj2/W0Ixt69Xd0Z3mmgItdOLUg/zJ9c5kIeOmrE1A0yyrcqlW0HNcrDxyk7DjRoVRuxLziUKo=
+	t=1761150863; cv=none; b=d/W7rBGTOPSXfyWkwm9OsE8VNdiUxv1ApLXEsHHzlOpDWeg9YtnWhIedhn5FahTUTdirL7P4gnpIlPrBD67gWNBePPcGoIoSQXFUrfTCbg9BZN2SzROQ3/rtyNQf5wO74MlBUO6CGD+BhT2aQlLN/1S1dlq+j+Own5jZObjcC2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761150762; c=relaxed/simple;
-	bh=Rabe9jUuVL6lmA4d/LYRw8joJ8siQMuCn73qAvRcDYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VGHPpEnO07TcPZU0f/7NWpzfxhHT3C9P2nlGIZnM8hLfLPi7Z0U9VdntP6/wjG7tip1tjc6EbcLVtOPcNrW9+jHO3QdLiESy2csUiuNGxzr4iG6zK6Bmc74LcsfJiK1EyhHOR9zo86tX5QFsox9daMAWaLvQZ6bMmdk+sy3ZUg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 2080788C98;
-	Wed, 22 Oct 2025 16:32:37 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 5A59F17;
-	Wed, 22 Oct 2025 16:32:35 +0000 (UTC)
-Date: Wed, 22 Oct 2025 12:32:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] tracing: Add an option to show symbols in
- _text+offset for function profiler
-Message-ID: <20251022123259.59ada139@gandalf.local.home>
-In-Reply-To: <176114749146.315239.7968358300215825393.stgit@devnote2>
-References: <176114747153.315239.6863821259073466010.stgit@devnote2>
-	<176114749146.315239.7968358300215825393.stgit@devnote2>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761150863; c=relaxed/simple;
+	bh=HAhQ/HsnWHIBcI2BhcqVo/RcuYa+M+SMPj4DaF/UVf8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CXJC/Kqev4V4rZdl3b7RXJrnZsWzQY/6TawTUUvD1lkIS64C8CkyfZyNTwz2Dm14/LN7pR/PEmLC7hyvNuFXBviY2SHvyEORP61aubYZd88eInk2JtfK+seqqRYzBUNDXsgB1IHh5lGQUwfl11CuH2icS+Fj9AWoGInacN6+plA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZYttj0Nl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761150859;
+	bh=HAhQ/HsnWHIBcI2BhcqVo/RcuYa+M+SMPj4DaF/UVf8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ZYttj0NlJDpX9YsaCcv2SCRukiG1G46h9zTQ9F19s+RC6c64e77XCksFYmWI7Udsi
+	 pXQmytaGNCOB3eTl7XowGKBPFne+X8fZnpAhHyIsKDSwK8QAkk6rxa3mqT2+izospN
+	 owGXaQFe7QKejVZJIzrLfI53qS0XpqErFwFD1L0qJCHo1+KXjWJdeKCv9aKP9AHwZq
+	 E3+9DrA1R3QwWoQRKm+9Fl4b9pzn9VyoSZco2xtGyKWJL1tjIoMCiY3iLLdrT5JQpv
+	 LVEgZf0ABDCH4gfr8/cxuo8UTmHJZkWwpydRFUsdR/l5Sa0n7iolIAGDhWmtSFvaaD
+	 vcFSo87fySJTg==
+Received: from [192.168.100.50] (unknown [144.48.130.189])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1CAA717E00AC;
+	Wed, 22 Oct 2025 18:34:13 +0200 (CEST)
+Message-ID: <bd186145-c85c-41e3-bdc6-c2aaba4e874f@collabora.com>
+Date: Wed, 22 Oct 2025 21:33:42 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: u5mptu14riymcqi7hzzpmo9o19uinth3
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 5A59F17
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18uuuJWouDJhM0SKC4/KiNJCN4drf9VQ3I=
-X-HE-Tag: 1761150755-921461
-X-HE-Meta: U2FsdGVkX1//Qbs0RgUySDwaAPXDS8SNn6repQBp8bBiFvuHJIprS8dMO6gsOD6z4yPHWo+6moSoPK6AzhdRXffXUj337KLEuLvh6XQKB9oQ/aqyChoVy1iLbTR2jZJ0z1F+f3zhdCllygrmdwzxMqL8iFfr9GQVU4C+7nizWCV+jY0soaotXOBNV6qgW5+6KAlHM77DC71+T7rB5Dsjt4WkahZy99lkpkNnHOv+exfZi4fSvmIq+RAaLiPShi9TzUcEz7FPbFChP8Mbqc0jCzZOaD7/JMAhE8QFa/t41EmrMY2Kue4fWUSyeZ/Uevgalv3JDtNa2zVGgjWBn8iQiEa3qEvDejSf
+User-Agent: Mozilla Thunderbird
+Cc: usama.anjum@collabora.com, kernel@collabora.com
+Subject: Re: [RFC 3/4] Input: Ignore the KEY_POWER events if hibernation is in
+ progress
+To: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Pavel Machek <pavel@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-input@vger.kernel.org
+References: <20251018142114.897445-1-usama.anjum@collabora.com>
+ <20251018142114.897445-4-usama.anjum@collabora.com>
+ <7308c2c0-3881-445d-9771-fad5c3259518@kernel.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <7308c2c0-3881-445d-9771-fad5c3259518@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 23 Oct 2025 00:38:11 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+On 10/22/25 2:14 AM, Mario Limonciello (AMD) (kernel.org) wrote:
+> 
+> 
+> On 10/18/2025 9:21 AM, Muhammad Usama Anjum wrote:
+>> Serio drivers call input_handle_event(). Although the serio drivers have
+>> duplicate events, they have separate code path and call
+>> input_handle_event(). Ignore the KEY_POWER such that this event isn't
+>> sent to the userspace if hibernation is in progress.
+>>
+>> Abort the hibernation by calling pm awake API as well.
+> 
+> So do you observe events both from ACPI and from input?  Or was this patch based upon an earlier version of the ACPI patch?
+Yes, I observe events from both ACPI and input driver when power button is pressed.
+AFAIU this happens because of historic reasons of button wired through keyboard
+controller.
 
-> @@ -554,7 +556,29 @@ static int function_stat_show(struct seq_file *m, void *v)
->  		return 0;
->  #endif
->  
-> -	kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-> +	if (tr->trace_flags & TRACE_ITER(PROF_TEXT_OFFSET)) {
-> +		long offset;
-> +
-> +		if (core_kernel_text(rec->ip)) {
-> +			refsymbol = "_text";
-> +			offset = rec->ip - (unsigned long)_text;
-> +		} else {
-> +			struct module *mod;
-> +
-> +			guard(rcu)();
-> +			mod = __module_text_address(rec->ip);
-> +			if (mod) {
-> +				refsymbol = mod->name;
-> +				/* Calculate offset from module's text entry address. */
-> +				offset = rec->ip - (unsigned long)mod->mem[MOD_TEXT].base;
-> +			}
-> +		}
-> +		if (refsymbol)
-> +			snprintf(str, sizeof(str), "  %s%+ld", refsymbol, offset);
+The call to pm_wakeup_dev_event() can be removed. But I've added it for non-ACPI
+devices. Maybe those devices handle only input events through this path. Do you
+think this can be the case?
+ > 
+> Because it feels like to me perhaps another way to solve this would be for patch 2 to to send the input event and just keep pm_wakeup_dev_event() here instead of both places.
+I was sending input event in patch 2 earlier. I was having difficulty in managing
+so many dependencies in acpi_button_notify(). It suspends the button events. I'll
+reiterate and see if I can achieve this in next series because this would be most
+clean solution.
 
-Let's be consistent as offsets are printed as hex every place else:
+> 
+>>
+>> Without this, the event is sent to the userspace and it suspends the
+>> device after hibernation cancellation.
+>>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>>   drivers/input/input.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/input/input.c b/drivers/input/input.c
+>> index a500e1e276c21..0979f18aae6a2 100644
+>> --- a/drivers/input/input.c
+>> +++ b/drivers/input/input.c
+>> @@ -26,6 +26,7 @@
+>>   #include <linux/kstrtox.h>
+>>   #include <linux/mutex.h>
+>>   #include <linux/rcupdate.h>
+>> +#include <linux/suspend.h>
+>>   #include "input-compat.h"
+>>   #include "input-core-private.h"
+>>   #include "input-poller.h"
+>> @@ -362,6 +363,11 @@ void input_handle_event(struct input_dev *dev,
+>>         lockdep_assert_held(&dev->event_lock);
+>>   +    if (code == KEY_POWER && hibernation_in_progress()) {
+>> +        pm_wakeup_dev_event(&dev->dev, 0, true);
+>> +        return;
+>> +    }
+>> +
+>>       disposition = input_get_disposition(dev, type, code, &value);
+>>       if (disposition != INPUT_IGNORE_EVENT) {
+>>           if (type != EV_SYN)
+> 
 
-			snprintf(str, sizeof(str), "  %s+%#lx", refsymbol, offset);
 
-Also, did you mean to add the '+' after the '%'?
-
--- Steve
-
-
-> +	}
-> +	if (!refsymbol)
-> +		kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-> +
->  	seq_printf(m, "  %-30.30s  %10lu", str, rec->counter);
->  
->  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-- 
+---
+Thanks,
+Usama
 
