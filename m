@@ -1,159 +1,183 @@
-Return-Path: <linux-kernel+bounces-864002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A20BF9B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:12:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AEBEBF9B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36AD519A826F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:13:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BCB54E4DAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C909621D5BC;
-	Wed, 22 Oct 2025 02:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171E4212578;
+	Wed, 22 Oct 2025 02:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="vLqw44vt"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lx5ZNXbj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0E8215F4A;
-	Wed, 22 Oct 2025 02:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED351D63C7
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761099147; cv=none; b=C8o5hZSqKQCQs6gY1bR14r5pErq1hDlfMZJlKpCAVsqAC5RcWLetm64tu4/LL+nQt/NKrcqBz46dEEUFVjRs9kcaaRV3JkUqxyHB693SYOW8uO8f9lMWGMLymRC2/wvUTaeIN2++2E/YdAxo5b5V3B+NiVeDFha1HjieO322fH0=
+	t=1761099244; cv=none; b=VdoCz32rNwUkx6XxeHemZ45ofYh3Q6Z46/fQ0zi4ZX1/eHQJ9Ris1qunsaIUNn+VTxTXRaSJoJ/1nJhX/G/PlKy8auV4r2XUYCQJo2qc4X1lSA1kpdjWOcxMar2wAreHIkc21oUFdQk/SpFcJbEudR2P0HBr3ZmznNhd+SV0GQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761099147; c=relaxed/simple;
-	bh=FcifkQOS+dBr/vn3OYs1w6Gw9GUuWFoQQyBnMWK9FKE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gHaqmZJ9gnzkNqAdGiUPrS5va7CD8QSUfG5mSv9R3Nqo7euyOBDlNNHPToda6r1juP5lLupsjhJNcVNLcEbMvuqvInD2HJNa6i8iN7yPIpcmWxiXlFB01VDYEOXXcgN21r3tf97FUJ57BCuvXq1m0qP+cCcI8jQ+qFl1pRidEmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=vLqw44vt; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Gu7YG9ZKv2zwbOqBSxqywLmciCCExDjuXMYKBAXjCBA=;
-	b=vLqw44vtL6S7SEaf/7sdF+VktCQbldE1a/Ey0dFxgjalvAaDohPfszHc2A/gav+9M6E9SXvXi
-	ehneThyJBN8d5PE2MInVtLT7HccoMd44qV+5xMabWBHlyPPcttOakR5YgRzCQgCDXBmOe89Tnhx
-	YZcI/dzxl4bSrrRpgdR64BY=
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4crt2j4LWSzLlsB;
-	Wed, 22 Oct 2025 10:11:57 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 076D11A0195;
-	Wed, 22 Oct 2025 10:12:22 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 10:11:53 +0800
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 10:11:52 +0800
-From: Chenghai Huang <huangchenghai2@huawei.com>
-To: <gregkh@linuxfoundation.org>, <zhangfei.gao@linaro.org>,
-	<wangzhou1@hisilicon.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
-	<qianweili@huawei.com>, <linwenkai6@hisilicon.com>
-Subject: [PATCH v4 4/4] uacce: ensure safe queue release with state management
-Date: Wed, 22 Oct 2025 10:11:49 +0800
-Message-ID: <20251022021149.1771168-5-huangchenghai2@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20251022021149.1771168-1-huangchenghai2@huawei.com>
-References: <20251022021149.1771168-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1761099244; c=relaxed/simple;
+	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FIpT8aD36dID1I8/obJa4RiATLcFvv9zTvsuxFDLb6o2ak844IOLugfZGBG6rE/tdomzqyMrcKl+NAO9P9wAzCF8jOoFpu60iULkBLNDKfTEfkP2deynofXRQhQhyIARI/oVTILEs2bk5++aDQXcIkGdN/gkV94UxkPzLyzpAf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lx5ZNXbj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032CDC4CEFD
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761099244;
+	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Lx5ZNXbjFRLltyuRgvoNRyCzTXSu0FK4LgExZTa8UjQFP1m3TuIXXSrzbjiiQWpmk
+	 VzITnBZIScuWIvHZ4lq3jbw619G0nZipjrOv4LKXKXQd9uUKeStM18DY3CJRxL7itU
+	 gn6v9PN5iSV85/umWkJSYlTZShKtAvXfVe0nsyc17s+ZsmxzJS13mCMnQpsxaUpEsn
+	 rxdEPJlsah8tek/SiehXfgSzXvLPfUTtQHtHue6HNFZoaZXnYBFsvvdiOOUS4Ll4MZ
+	 0eLxcKuyjFQFJooCzHP088V4x7Zy7GHUZCq3odyvjOUn4UmO6H1/qgKd12zU1/6GJy
+	 H718tJYLg/Z8g==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3e234fcd4bso1132022266b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:14:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgjJxlLL3YNJcmW+N72FKP4H/4Xu6wJfqE4cTC0r1Yahx3tWk/Hvpq01o/7iJeHYgpp7O7jU2GESyV6HE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoV8zhrZumO0GySvXuOIXcnq4IMpJ7atcuCSEz5085FOBhVVGi
+	1MWiLaFKy00/c+F2H41BwOCj7ZoFe0vB4lT8yhNBdmqQCeF/EnbPZuh60cZC+ElzutMF2cjWYAc
+	k2FxkUTQMg0iRuuh0qFUZutNBgql9Jnw=
+X-Google-Smtp-Source: AGHT+IFt7FAknz2XTlPPH7Tjv30M3nEp+LdrCx3vX81xk7xwmr8jzVAH1KIIedv4le/Wpjp3OZCAVUvGcwL0/Jdx8j4=
+X-Received: by 2002:a17:906:6a1d:b0:b0d:d831:6fba with SMTP id
+ a640c23a62f3a-b647453ff67mr2193646466b.59.1761099242372; Tue, 21 Oct 2025
+ 19:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251020183304.umtx46whqu4awijj@pali>
+ <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com> <20251021221919.leqrmil77r2iavyo@pali>
+In-Reply-To: <20251021221919.leqrmil77r2iavyo@pali>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 22 Oct 2025 11:13:50 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+X-Gm-Features: AS18NWC6mAMxQP9NZ3c7BvWoYtCMOJQRY4IgXvJlRe3WjgtE6NSrE_XJ0LMcBGg
+Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, ebiggers@kernel.org, neil@brown.name, 
+	amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
+	jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Directly calling `put_queue` carries risks since it cannot
-guarantee that resources of `uacce_queue` have been fully released
-beforehand. So adding a `stop_queue` operation for the
-UACCE_CMD_PUT_Q command and leaving the `put_queue` operation to
-the final resource release ensures safety.
-
-Queue states are defined as follows:
-- UACCE_Q_ZOMBIE: Initial state
-- UACCE_Q_INIT: After opening `uacce`
-- UACCE_Q_STARTED: After `start` is issued via `ioctl`
-
-When executing `poweroff -f` in virt while accelerator are still
-working, `uacce_fops_release` and `uacce_remove` may execute
-concurrently. This can cause `uacce_put_queue` within
-`uacce_fops_release` to access a NULL `ops` pointer. Therefore, add
-state checks to prevent accessing freed pointers.
-
-Fixes: 015d239ac014 ("uacce: add uacce driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
-Signed-off-by: Yang Shen <shenyang39@huawei.com>
----
- drivers/misc/uacce/uacce.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
-index 34fd07b4e7c5..2b35599f1d98 100644
---- a/drivers/misc/uacce/uacce.c
-+++ b/drivers/misc/uacce/uacce.c
-@@ -40,20 +40,34 @@ static int uacce_start_queue(struct uacce_queue *q)
- 	return 0;
- }
- 
--static int uacce_put_queue(struct uacce_queue *q)
-+static int uacce_stop_queue(struct uacce_queue *q)
- {
- 	struct uacce_device *uacce = q->uacce;
- 
--	if ((q->state == UACCE_Q_STARTED) && uacce->ops->stop_queue)
-+	if (q->state != UACCE_Q_STARTED)
-+		return 0;
-+
-+	if (uacce->ops->stop_queue)
- 		uacce->ops->stop_queue(q);
- 
--	if ((q->state == UACCE_Q_INIT || q->state == UACCE_Q_STARTED) &&
--	     uacce->ops->put_queue)
-+	q->state = UACCE_Q_INIT;
-+
-+	return 0;
-+}
-+
-+static void uacce_put_queue(struct uacce_queue *q)
-+{
-+	struct uacce_device *uacce = q->uacce;
-+
-+	uacce_stop_queue(q);
-+
-+	if (q->state != UACCE_Q_INIT)
-+		return;
-+
-+	if (uacce->ops->put_queue)
- 		uacce->ops->put_queue(q);
- 
- 	q->state = UACCE_Q_ZOMBIE;
--
--	return 0;
- }
- 
- static long uacce_fops_unl_ioctl(struct file *filep,
-@@ -80,7 +94,7 @@ static long uacce_fops_unl_ioctl(struct file *filep,
- 		ret = uacce_start_queue(q);
- 		break;
- 	case UACCE_CMD_PUT_Q:
--		ret = uacce_put_queue(q);
-+		ret = uacce_stop_queue(q);
- 		break;
- 	default:
- 		if (uacce->ops->ioctl)
--- 
-2.33.0
-
+On Wed, Oct 22, 2025 at 7:19=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> On Tuesday 21 October 2025 10:49:48 Namjae Jeon wrote:
+> > On Tue, Oct 21, 2025 at 3:33=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.or=
+g> wrote:
+> > >
+> > > Hello,
+> > Hi Pali,
+> > >
+> > > Do you have a plan, what should be the future of the NTFS support in
+> > > Linux? Because basically this is a third NTFS driver in recent years
+> > > and I think it is not a good idea to replace NTFS driver every decade=
+ by
+> > > a new different implementation.
+> > Our product is currently using ntfsplus without any issues, but we plan=
+ to
+> > provide support for the various issues that are reported from users or
+> > developers once it is merged into the mainline kernel.
+> > This is very basic, but the current ntfs3 has not provided this support
+> > for the last four years.
+> > After ntfsplus was merged, our next step will be to implement full jour=
+nal
+> > support. Our ultimate goal is to provide stable NTFS support in Linux,
+> > utilities support included fsck(ntfsprogs-plus) and journaling.
+>
+> One important thing here is that all those drivers are implementing
+> support for same filesystem. So theoretically they should be equivalent
+> (modulo bugs and missing features).
+>
+> So basically the userspace ntfs fs utils should work with any of those
+> drivers and also should be compatible with Windows ntfs.sys driver.
+> And therefore independent of the used kernel driver.
+>
+> It would be really nice to have working fsck utility for ntfs. I hope
+> that we would not have 3 ntfs mkfs/fsck tools from 3 different project
+> and every one would have different set of bugs or limitations.
+>
+> > >
+> > > Is this new driver going to replace existing ntfs3 driver? Or should =
+it
+> > > live side-by-side together with ntfs3?
+> > Currently, it is the latter. I think the two drivers should compete.
+> > A ntfs driver that users can reliably use for ntfs in their
+> > products is what should be the one that remains.
+> > Four years ago, ntfs3 promised to soon release the full journal and
+> > public utilities support that were in their commercial version.
+> > That promise hasn't been kept yet, Probably, It would not be easy for
+> > a company that sells a ntfs driver commercially to open some or all sou=
+rces.
+> > That's why I think we need at least competition.
+>
+> I understand it. It is not really easy.
+>
+> Also same thing can happen with your new ntfsplus. Nobody knows what
+> would happen in next one or two years.
+Since I publicly mentioned adding write support to ntfs driver, I have devo=
+ted
+a great deal of time and effort to fulfilling that while working on other t=
+asks
+in parallel. Your comment seems to undermine all the effort I have done
+over the years.
+>
+> > >
+> > > If this new driver is going to replace ntfs3 then it should provide s=
+ame
+> > > API/ABI to userspace. For this case at least same/compatible mount
+> > > options, ioctl interface and/or attribute features (not sure what is
+> > > already supported).
+> > Sure, If ntfsplus replace ntfs3, it will support them.
+> > >
+> > > You wrote that ntfsplus is based on the old ntfs driver. How big is t=
+he
+> > > diff between old ntfs and new ntfsplus driver? If the code is still
+> > > same, maybe it would be better to call it ntfs as before and construc=
+t
+> > > commits in a way which will first "revert the old ntfs driver" and th=
+en
+> > > apply your changes on top of it (like write feature, etc..)?
+> > I thought this patch-set was better because a lot of code clean-up
+> > was done, resulting in a large diff, and the old ntfs was removed.
+> > I would like to proceed with the current set of patches rather than
+> > restructuring the patchset again.
+>
+> Sure. In the current form it looks to be more readable and easier for
+> review.
+>
+> But I think that more developers could be curious how similar is the new
+> ntfsplus to the old removed ntfs. And in the form of revert + changes it
+> is easier to see what was changed, what was fixed and what new developed.
+>
+> I'm just thinking, if the code has really lot of common parts, maybe it
+> would make sense to have it in git in that "big revert + new changes"
+> form?
+>
+> > >
+> > > For mount options, for example I see that new driver does not use
+> > > de-facto standard iocharset=3D mount option like all other fs driver =
+but
+> > > instead has nls=3D mount option. This should be fixed.
+> > Okay, I will fix it on the next version.
+> > >
+> > > Pali
+> > Thank you for your review:)
 
