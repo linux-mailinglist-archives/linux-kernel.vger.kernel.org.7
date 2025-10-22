@@ -1,160 +1,122 @@
-Return-Path: <linux-kernel+bounces-865955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DABBFE69B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:28:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9F1BFE6A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FF0C4E7279
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:28:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A5194E7EE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F4530595B;
-	Wed, 22 Oct 2025 22:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175BD306498;
+	Wed, 22 Oct 2025 22:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MvHQN306"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RR1CnWz9"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ECC305051
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119D630506D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761172100; cv=none; b=WRkkOPzhxZGfPcgbBFEbBQcaQFVBKWTar/bxRnV+lVmjlaiIBQHBq7d8jaoDba+FIJSBQH1r01rVs/6/U6nEDYQJFceSNK4esRKw6kL+jiLIMlwThsL42T0McPvTDa0M42otsX9QOAFT1PYwVO4317omm7HnD0UcNgF/vztJ1D4=
+	t=1761172159; cv=none; b=EwhjYVFeg35NRhtR2GOdrq1xEQOCp4Kuy415GyELpBy/xjSq/sOZcudibdee+IjceoGeY/GMQmvSmzoL5SqkOkFMxzhinzTD3SYRTp8h1+FwUXad744vL/uzsoXV82wZEYttMge8VSS9WhZ2VVgYve0zimKZxEsoMhXiB1RxQTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761172100; c=relaxed/simple;
-	bh=isfyGf+q4j0GyX+Zx0JQ48+InVacVB/eM3aODMGSFN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SpylKkfVEE9XpZRDLrRuaRmkuS/1fZSxY6eEy49OvzwOKk13JovZRkbMfAKC9cukuAshM8jV4+H1yxlFwPyrUkwXiCdZQtmz9dKcJamiTwASMPNeomBq05GA3rrVlQ39Yx9ciU5UlQR5AVQOOEo6xOZwCnaUu8gH8bWxQL1/dWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MvHQN306; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c4c346bd9so215772a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:28:18 -0700 (PDT)
+	s=arc-20240116; t=1761172159; c=relaxed/simple;
+	bh=n8ISGRabhAFNs3WUlciNSIjwBswMQEjwmH+FuJiXVgY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IHtIj3l7nJzt9i/1IbZxVZJBlqnMfjy9YA5XG5Url4r29Z9OAco2wsa3RkD3XiEoZzIYEq07DgOr/ScfZK80kggcx8aCF+t21+ymxwabgdNR8vqPSG5CKZXNlHfVft/LMWdI+LDNtLSJvsqaJOzluk60HU+wwBlL3JQ66r73wFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RR1CnWz9; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2698b5fbe5bso1560575ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:29:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761172097; x=1761776897; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2VBBjigv3CT5N8O/I+Hvzhx/gBfj5BueEjexvjIc/bI=;
-        b=MvHQN3066CnON4zduJPOui+fSTJeKGpDQPrDlqGEnrR0Q1KZTzklnCzk5a53q5oC5M
-         f6l2WmJtUK/eqU5b/3RZVQd6suKyJ6uqXkXTWzKiBTlP4FlRqzpHtWDzMY4eA7YInqUx
-         CMf3C9YntD0edXEzM0Ew92/MxAULk2wHrhA7lrmVIk+AWpMx8w27B/dePZyDCT1xc6Sb
-         jPBFK5IT51wv8awZbArc+swy92Hl9b1O0GIXKfls+P0wyAHIQm+K3w5LjR/oZ06vJzfj
-         YzlPvRrQCkDo6ulIId5+M6ezwRi7DmH4dnit0UAwuPoFBILrSmYu7g8rx81IPwxWUvPK
-         9Kug==
+        d=google.com; s=20230601; t=1761172157; x=1761776957; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kCJw8vrTps08USD66tSqWHMpSbjCtAd/5PGnI8+iP/c=;
+        b=RR1CnWz9h1j1B6AZkb+WXaZgVxigAc8X1lbJ5is2hajecmccQVwa7Lx+DL2F3SkJB4
+         UtQcXoN3cc4ZpXCKrNkg55PyQ/38UMzZuEQwdYTikKOK5H99TEecIRZROoajhELxH6UH
+         zZiiAWLyRRDDKuGUphLTNTSk8EFNhbe+RFBj0sEN1NjxbvfzVE0W8vw6VpcVmr2qvl8w
+         6Flyu5YbO+ZRnjY5WTVYZhiXDC9U5779I7Limv5kjSESufXE43Qwyr9pSGjB6tiBi6gB
+         Dk0sPTQohcGlKHK5QRabSyYKqZdvkPN4z/tn6Zc+jXFAT9DcZPAosHnd46od06T1QLsq
+         L14Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761172097; x=1761776897;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2VBBjigv3CT5N8O/I+Hvzhx/gBfj5BueEjexvjIc/bI=;
-        b=dVK3daQKph7Fwwx0BBpmBQR0dEWBjtq421x5KkCfDnUYpsFhGUgaQ1e2/pxm5/t9ot
-         kPZCFyhR6EHKuqGtH9ozi6gmZL1JPBdgl3lzJAhBdzxOLUwX0DY7bCgSb3ug9yGziTXY
-         QAUH462qP6CdVrvb62w9R385vNyEVMohr4E53fNtniKaBWtmT/t8rAJRgz6aURqMrqfF
-         iUg3JMIqf2n2Z9Wltit4G32s1Tk3P3yOwtbquhc6dJXS60AE74dYN2gh9n9ECaVew648
-         Ti9Qt0cn95UAWPaqc/PCAujcTrM1MauxIQSQ09I7gtOnEyKlsUL/STZLicABlxhWU0o4
-         putQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBKrxnosMSTjDGHR7XmdnGHpfyUEK6bSKvxJFOd3PvJtRt4fya1PJvKv4WIRkG9mz0C06NxGBE4wQ1M8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2zT0ZFVnLtptDpPJ+usNc/xC/OzSz0gf06D72nQKfZzvA0uod
-	bv76uM78jJTGkB5OTlDt3NYZkkxDwjFs915z8pbXpm0K1ku/jFSVbATz
-X-Gm-Gg: ASbGncsUovPxGjMyuXwtTznN61Jw1VkCY//UM11OGoxfwzTUXZU2yOGZZmOiN7ZmUgb
-	RI1/nHYV0UK2xiezbsvaMklJ+gbKFZJcUOIFoBWNfglCuO7cYZjzzqJWt8tBMMYhCJlB5MsAK7g
-	BRrdjLCT9sWEh4iCyNg4GzY/eYFxDwjJOKR/TwJngB/N5xpHXRVQw4+lk05N2MXmn7GH9vBF083
-	wIlbtKw9pfO2+fszxws07hK6y/JuHP/ydt0fOmUPf2dJIhHt5Wwh0j6mKL+I97DLGOAtAAuVpid
-	7mUnb7fD2hp4aEcLVR9s//c572Z5R6UNa27fOxrXVOxVEKvOKnZqeEmY78MnqFYknQyNQsBc/8B
-	VdmrOFigcUi7WR3wWEqFLJ96IV510hExJZiKyqEdJYyDgOq1UvjHccRtbMdnsOhNFCeFSC/gmHz
-	OklQ==
-X-Google-Smtp-Source: AGHT+IFKy4BxL63HMi3F50TzZgIj7aS//0dgKOpQCa8zsKJgTdxjsokDGki3wOZJJ9x2140UA9Oyog==
-X-Received: by 2002:a17:906:ee8c:b0:b3f:1028:a86a with SMTP id a640c23a62f3a-b6472d5bbb7mr2707762666b.3.1761172096233;
-        Wed, 22 Oct 2025 15:28:16 -0700 (PDT)
-Received: from eray-kasa.. ([2a02:4e0:2d06:1636:dfb5:40c5:809c:aa06])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d51417523sm28512966b.50.2025.10.22.15.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 15:28:15 -0700 (PDT)
-From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-To: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com
-Cc: ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	Ahmet Eray Karadag <eraykrdg1@gmail.com>,
-	syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: [RFC RFT PATCH] ocfs2: Invalidate inode if i_mode is zero after block read
-Date: Thu, 23 Oct 2025 01:27:53 +0300
-Message-ID: <20251022222752.46758-2-eraykrdg1@gmail.com>
+        d=1e100.net; s=20230601; t=1761172157; x=1761776957;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kCJw8vrTps08USD66tSqWHMpSbjCtAd/5PGnI8+iP/c=;
+        b=XPde4e7dXwC1MaRu4cC3c2dBAtjEzh7UyqxW+e7PBJiI0THrXJXioEzOcckBeiiv7s
+         V1dGR9336ODXL+24wmqWlTbzTBVQikNXceqSZ5bLueejEEZv9Xzzp7WG6KHIHwhkwfXM
+         7GiGTcdfKs7vjqFjS+A8QY59oaz5DO1UYsgPGoTnQEccjsuDkD2bYqp5tiYYQlHbM4Ig
+         RM6YhmfCYCq5MML4rfdOvp8RTszVvchm0SxKoJTdDh2gPW2Zj/bTlgIw9BuFZExltPHh
+         Z7wS8PeyaGab2Jcw//FvvYK32KpA1YwuUYOcTkrYvje4AYoxpGYa/quUHijgXxT+4i5E
+         vb5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlSM6hcmKw+DqVY+8ois1bBlK9kwbzLqtReGZJM1WmL5yCXILOyopl3b40/T7VJ7toQ49A1HqLJeailic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbs/HsIYszgvglqXsfDmVs11vgXRbjGQzPdzIsgKcpWFl2UdlY
+	c9sTTacNpWS6hLuT59+BmJKkwTK2ouSxqyLvhJ8m0wh9a0AaNedX783s3+JYi48VHp7yBi/bx/f
+	K/lKR8a94bQMRxg==
+X-Google-Smtp-Source: AGHT+IGDnhb3gQM49Ot8BnCEQLTjCXnCbba67ygs3SVunQnP3Gt3wyYp/GX4VsBUKR6zA6NfebgaCmX3mUlTQA==
+X-Received: from plcq12.prod.google.com ([2002:a17:902:e30c:b0:290:28e2:ce4e])
+ (user=wusamuel job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:cece:b0:292:fc65:3579 with SMTP id d9443c01a7336-292fc65380cmr74528845ad.17.1761172157403;
+ Wed, 22 Oct 2025 15:29:17 -0700 (PDT)
+Date: Wed, 22 Oct 2025 22:28:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.814.gb8fa24458f-goog
+Message-ID: <20251022222830.634086-1-wusamuel@google.com>
+Subject: [PATCH v1] Revert "PM: sleep: Make pm_wakeup_clear() call more clear"
+From: Samuel Wu <wusamuel@google.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: Samuel Wu <wusamuel@google.com>, Saravana Kannan <saravanak@google.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-A panic occurs in ocfs2_unlink due to WARN_ON(inode->i_nlink == 0) when
-handling a corrupted inode with i_mode=0 and i_nlink=0 in memory.
+This reverts commit 56a232d93cea0ba14da5e3157830330756a45b4c.
 
-This "zombie" inode is created because ocfs2_read_locked_inode proceeds
-even after ocfs2_validate_inode_block successfully validates a block
-that structurally looks okay (passes checksum, signature etc.) but
-contains semantically invalid data (specifically i_mode=0). The current
-validation function doesn't check for i_mode being zero.
+The original patch changes the position of pm_wakeup_clear() for the
+suspend call path, but other call paths with references to
+freeze_processes() were not updated. This means that other call paths,
+such as hibernate(), will not have pm_wakeup_clear() called.
 
-This results in an in-memory inode with i_mode=0 being added to the VFS
-cache, which later triggers the panic during unlink.
-
-Prevent this by adding an explicit check for i_mode == 0 within
-ocfs2_validate_inode_block. If i_mode is zero, return -EFSCORRUPTED to signal
-corruption. This causes the caller (ocfs2_read_locked_inode) to invoke
-make_bad_inode(), correctly preventing the zombie inode from entering
-the cache.
-
+Suggested-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Samuel Wu <wusamuel@google.com>
 ---
-[RFC]:
-The current fix handles i_mode=0 corruption detected during inode read
-by returning -EFSCORRUPTED from ocfs2_validate_inode_block, which leads to
-make_bad_inode() being called, preventing the corrupted inode from
-entering the cache. This approach avoids immediately forcing the entire
-filesystem read-only, assuming the corruption might be localized to
-this inode.
+ kernel/power/process.c | 1 +
+ kernel/power/suspend.c | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-Is this less aggressive error handling strategy appropriate for i_mode=0
-corruption? Or is this condition considered severe enough that we *should*
-explicitly call ocfs2_error() within the validation function to guarantee
-the filesystem is marked read-only immediately upon detection?
-Feedback and testing on the correct severity assessment and error
-handling for this type of corruption would be appreciated.
----
-
-Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
-Fixes: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
-Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
----
- fs/ocfs2/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 14bf440ea4df..d4142ff9ce65 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1456,6 +1456,12 @@ int ocfs2_validate_inode_block(struct super_block *sb,
- 		goto bail;
+diff --git a/kernel/power/process.c b/kernel/power/process.c
+index 8ff68ebaa1e0..dc0dfc349f22 100644
+--- a/kernel/power/process.c
++++ b/kernel/power/process.c
+@@ -132,6 +132,7 @@ int freeze_processes(void)
+ 	if (!pm_freezing)
+ 		static_branch_inc(&freezer_active);
+ 
++	pm_wakeup_clear(0);
+ 	pm_freezing = true;
+ 	error = try_to_freeze_tasks(true);
+ 	if (!error)
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 4bb4686c1c08..b4ca17c2fecf 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -595,7 +595,6 @@ static int enter_state(suspend_state_t state)
  	}
  
-+	if (unlikely(le16_to_cpu(di->i_mode) == 0)) {
-+		mlog(ML_ERROR, "Invalid dinode #%llu: i_mode is zero!\n",
-+                           (unsigned long long)bh->b_blocknr);
-+		rc = -EFSCORRUPTED;
-+		goto bail;
-+	}
- 	/*
- 	 * Errors after here are fatal.
- 	 */
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
+-	pm_wakeup_clear(0);
+ 	pm_suspend_clear_flags();
+ 	error = suspend_prepare(state);
+ 	if (error)
 -- 
-2.43.0
+2.51.1.814.gb8fa24458f-goog
 
 
