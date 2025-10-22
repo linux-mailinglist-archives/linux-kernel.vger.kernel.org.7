@@ -1,231 +1,199 @@
-Return-Path: <linux-kernel+bounces-865832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07FCBFE216
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:12:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35377BFE225
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251413A7B7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:12:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 477284F70BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C825B2F9DB1;
-	Wed, 22 Oct 2025 20:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963C92FB973;
+	Wed, 22 Oct 2025 20:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFf/IEyJ"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DH1U30eA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247D12F28E3
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CD22F8BFF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761163962; cv=none; b=DJLQlX2pfRPF3VQ0zRIOdC1bi8AHsWPe4SlYyxn0/C94StMdE8ws/phL6N8G3Pzt7kRoYp1EJmtWEB6D+gDEXpj29fAfr49/+GIEhViBXXJ/PQnO845Bl/uuwHX1jFiHqfDRNMBtPeQHsSEk+iEl0p83oeiL8Y1TUbo0RKixASA=
+	t=1761163994; cv=none; b=CGVLIIxa22YGd4513FWHxxb6xK7AQdF9OTILPMHPlPl+cFirKsIHw5SEZXD8NMR6nr+ixQVIaaoV/ahBZn6EQvzdFOJOretcNOSL+tvYm4N2MtSdjUtLH00nXH4o4iope4G0L4+ya6J3A+nrvBBXTlL9tn+buLTRE2TndwtIfBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761163962; c=relaxed/simple;
-	bh=MrWXo/oLbgS2qAu13/3zNn+8FTGKcN62GCJWKCwRbTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kqxC3Ef9BaDu6Z2+0wzUKNhjwevyX6Tf1lg6yHF9aMaGelV/Sva/Ihpio6GnP2ZZzEzh+/Ni1y+4xKodcbbDKP61x7dUDReEbUMzVWHPi9vpRpl5bLcq3KUj6VUy1Yb36ECQieW9Mki4GUxCeoxxr4EF0ZDnfQdS6mMVQcYJVBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFf/IEyJ; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-421851bca51so37515f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761163958; x=1761768758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uimIWSCNOUTt2zhNzo5AJd1qUy6+31S1+/QwnAMbts4=;
-        b=lFf/IEyJd/V0nXjuNc4zcl0mh4bgY0EZxlnWETa850BSjucg/+vo+noBzSGWX3jjp5
-         xVkcbs/2qle4QOT00w3eVAXMH22s1yb3OdUOh2J4oGg2MxBSPAPb0ahc+ublTPnOReYW
-         dPnj/fBymOdQBHlLxX1VdgufYahrAhbMx8Rq6TLFF/t1USROwdI7MzLfAT2t5T1w1Vj9
-         25jaDK3w/zZ9rSzPnQEqhPXsayUL9Fg2Uo5TSCtokz3qw1IBzBvGV8oK2r643Ydn+Zje
-         lx00C20OdqInrckFId6y4zFb2LkGOOPpYOlFZ1uZI9sgz9SyiMbEbCenlIAKxNGyMZAk
-         Vaow==
+	s=arc-20240116; t=1761163994; c=relaxed/simple;
+	bh=ZeX1LuDnBfPCxTy1JXca9eWWigLWkrzMDGYEfCRHs/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b1j44AcxQfikQ8SJ3WISngxZwyR9kO9qaotIvgwCBFHxhoIofjKZPlqvtl2o/ppyClPvxNhpOi8M5jzpgGUe7pQ2n22PfAm6BfTuX9QioAcS+ggsZmsXiN0Zsowp3smjF0n8V5BXXVqtUCxADruEOoYTQ5WYdKABb4q+Izkg1lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DH1U30eA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761163991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MFSmZK4gFSd0PHQz/xlqwyuF7ltItWEnpq4f0/0wTQ8=;
+	b=DH1U30eATWaJQ9IT9SRTTSFa7abnThg+uukGqhfENwaRvUioFfelaRcLMmFghPhCzx0FUh
+	hEUa1t/3UwJSHLCpK31ZA3HHH/C9JMc2cbUXzlxe/EHcJ4Lgyz/pKqF5wlYBwVVHp7dQvq
+	GqesOfq7SyjeuDdmv/CGm19mGDwvfRk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-0RrVhqf8Pt2YzoibJS8Aog-1; Wed, 22 Oct 2025 16:13:10 -0400
+X-MC-Unique: 0RrVhqf8Pt2YzoibJS8Aog-1
+X-Mimecast-MFC-AGG-ID: 0RrVhqf8Pt2YzoibJS8Aog_1761163989
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4710c04a403so39585e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:13:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761163958; x=1761768758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uimIWSCNOUTt2zhNzo5AJd1qUy6+31S1+/QwnAMbts4=;
-        b=IWhXqQFJEHuaN1xO4XrXlcU94vRH9lgJQ62LZ5Fs0DWHDChai53P8OGE653+8A+6SW
-         CklamCIxzo16QSGt1eg1zLGskNjPYDL8d34M3kLMx9PIX6T0TKiDldBPX3ZtqiGXMD4v
-         VX9cmun16bP0/OgkAuLHW+z/D2ZCq83q6/whe6zcZQYKy+dGokpMGBfnis7D9nYo5w9w
-         KGnadCB8VoNT8PhvksvHf7hMSyp26g7YliVRMbngCmvS74AYr8HkCu+swZ94H06NAkap
-         uWdIDCbjxvStToIdYIymsoEbClL9dTAbW3Pz7KP0tiW10i2odsu+JHFWeaqtRrUFlQAk
-         xhLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0lJGRc8uTRXdm+hIodb1Reg32Ix9dQHJUeKWXhI/soICM4+qeLTaZVQ3bX1kln4ecpD/lX8XDRTQpy74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7+0QyUOt3JPnMYWO+Ug3lP4d/Y9hXmHRACG5MD5m4HG4jVULm
-	kcOuhhX8jpGaUaAWPEW4g0nU14Av0QEt6ZT3dU/PEp/VvjilVFdDKlNtrprMBQRLwMixiV/MVEd
-	fWXIiwuLctISJUlilWRBGEz1yBffUIBE=
-X-Gm-Gg: ASbGncus2FriL3CmGXdMw5SFQdgAaMN91aRhUvTIMAXGs3y7TCh+SkQHvaHqy6WwG/N
-	APt5qlzh+9EgOe05J1OIDEg0AggSETsj4NiVG/qWTw9yLsM/QEUsC2DjJghVrNL+W+QX0giZHS1
-	pwPdO5vvS8+oSkWiVcqgV5k4I2IwujfzupaxRCamac4dtkkJrA5EqGAOUxXKclWpI4STvveLkGN
-	7Rk2JwEnl5CvOx0dPOzR0D3TmnmmODjtvREu1/a1HctJvIwpGxZqPNFBUrSRh2fxC8DKp8laWr7
-	SPdXFetsml8uJLCIjinhz/xS9AP2
-X-Google-Smtp-Source: AGHT+IHailG3wn+qxyeo1hq00dJetf6nEsAebGE6LvCSSYbpG+jVkKCra1v4ENMBfRr/2am5zenhKGEwvNuw5DUaxw0=
-X-Received: by 2002:a05:6000:2911:b0:3d2:9cbf:5b73 with SMTP id
- ffacd0b85a97d-42704d7ea6cmr12973901f8f.6.1761163958314; Wed, 22 Oct 2025
- 13:12:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761163989; x=1761768789;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MFSmZK4gFSd0PHQz/xlqwyuF7ltItWEnpq4f0/0wTQ8=;
+        b=R0yh16OgvOxkGG23zpsuzHj0N0H0hFC+Hg3Sto4S1YjYjOy1IQvBFTiV6Gni2ZZB/K
+         fmaXpiKCFQBchxZhYgFafhjKgmUhhFmHlRJhBiwlIrqG4Q6hpzHuoeSK6Z7r1Fsvleqb
+         JO7Db3om4bmyzaBf6k5Tx8WZBOWIjY/M1HfJD6rd5gpoD6PJwln43pT/5AZQVIbItdid
+         qHNEIe4HoFu8ZZHsuvqz28eX8JhXjSGhQbFILKOZ8rPy0xvmUXlvd2AQm3udmHmCZ0KO
+         dSVuPgIdvu6EBuQI4RjeAKFlDNyrzRnm0Bt3m6NFZLDV342Opa/fFcfpDDZrlu6GHZUL
+         BKwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWz80lk/zylO7lext8Fqs/7xVxftXRcmUtGE78F6LI6W0HV7p1SxXX6rVQKzoXc7X0IacDuupVvwCiIlHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwcj8Fx/eLc1ax+kyk962CndlUR3EaWoqAKQigRUnLTefZCGTi
+	LBDUfG/sqvVL6NVjl0iSLbeiG3LhywPnaJMDZN0lwYpI6cCWzZnjtaqRJje/sjQ4Oqjn+Qs0Y6b
+	sxgy1vMuC0/VpNNMhCfZNg/51uraaKXK3CWtFXHn7NZghKeb8JIURyhJvBXgo0saP0Q==
+X-Gm-Gg: ASbGncsO9upkCvXaoAWEG4AYaOszuiohIer8UDPMtM5WtcPUST6pSfWbnTbXixWjL1l
+	yysI13snyoYWFK4Q0J+FbtuXCgKePRRnKARfqVsT/Rj82i04X7D/o6ClO5dvWw6Ae30pLMLvfSS
+	LOtpj5SeVBbuXckrka0zSoiYdICVvomvJyV9VXS4i6Ay/++lDm4FH+BhfGaToyV0dZNmIuy22mp
+	Auq2L1yXKZh02W19egd1AjrBoauhoI64xqfsmOsU6gtdqW3ctGTJtAilGqm7XVsbpVskmPrZ45c
+	BTmQg6886Oq4Wn5R0BMRSMXu2tVS5G3snkHuBbj2XiGXwAwWyzWje0Mfx+AftURf+33r9+Fb7+4
+	vaepFDG9Jy4UaESf8OzO9VQFdwQL3wFQoysIK6aWooCRHpEiI7QizF0zPqeW8WDVSCNfUJKvjAI
+	tpMLhVYIKSON954XNJw0G/2J938is=
+X-Received: by 2002:a05:600c:1e1f:b0:46f:b42e:e38d with SMTP id 5b1f17b1804b1-4711792a2admr156597445e9.40.1761163989349;
+        Wed, 22 Oct 2025 13:13:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZxZ5g6TBCinUHJsu3ifBaIcG02y2noD8tegfqlqJZdwjDCU2wn8DQ8gbi106rA8kB0IfEHg==
+X-Received: by 2002:a05:600c:1e1f:b0:46f:b42e:e38d with SMTP id 5b1f17b1804b1-4711792a2admr156597255e9.40.1761163988959;
+        Wed, 22 Oct 2025 13:13:08 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898ecadbsm173105f8f.45.2025.10.22.13.13.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 13:13:07 -0700 (PDT)
+Message-ID: <b63f9223-4c5c-4e2c-9986-02052a3d7f78@redhat.com>
+Date: Wed, 22 Oct 2025 22:13:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022164457.1203756-1-kafai.wan@linux.dev> <20251022164457.1203756-2-kafai.wan@linux.dev>
- <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev> <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
-In-Reply-To: <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 22 Oct 2025 13:12:26 -0700
-X-Gm-Features: AS18NWA2NaacmcwC62SmVtcNwC7UfHvr48VO3Rwz_BF3omM6GlV8vXoOuYBnblA
-Message-ID: <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for conditional
- jumps on same register
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, KaFai Wan <kafai.wan@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, 
-	Matan Shachnai <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>, colin.i.king@gmail.com, 
-	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
-	Yinhao Hu <dddddd@hust.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] mm/huge_memory: add split_huge_page_to_order()
+To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, jane.chu@oracle.com
+Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
+ nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20251022033531.389351-1-ziy@nvidia.com>
+ <20251022033531.389351-3-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251022033531.389351-3-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 12:46=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.co=
-m> wrote:
->
-> On Wed, 2025-10-22 at 11:14 -0700, Yonghong Song wrote:
-> >
-> > On 10/22/25 9:44 AM, KaFai Wan wrote:
-> > > When conditional jumps are performed on the same register (e.g., r0 <=
-=3D r0,
-> > > r0 > r0, r0 < r0) where the register holds a scalar with range, the v=
-erifier
-> > > incorrectly attempts to adjust the register's min/max bounds. This le=
-ads to
-> > > invalid range bounds and triggers a BUG warning:
-> > >
-> > > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds viol=
-ation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=3D[0x1, 0x0] v=
-ar_off=3D(0x0, 0x0)
-> > > WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731 reg_bounds_sani=
-ty_check+0x163/0x220
-> > > Modules linked in:
-> > > CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G        W           6=
-.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
-> > > Tainted: [W]=3DWARN
-> > > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.=
-3-debian-1.16.3-2 04/01/2014
-> > > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
-> > > Call Trace:
-> > >   <TASK>
-> > >   reg_set_min_max.part.0+0x1b1/0x360
-> > >   check_cond_jmp_op+0x1195/0x1a60
-> > >   do_check_common+0x33ac/0x33c0
-> > >   ...
-> > >
-> > > The issue occurs in reg_set_min_max() function where bounds adjustmen=
-t logic
-> > > is applied even when both registers being compared are the same. Comp=
-aring a
-> > > register with itself should not change its bounds since the compariso=
-n result
-> > > is always known (e.g., r0 =3D=3D r0 is always true, r0 < r0 is always=
- false).
-> > >
-> > > Fix this by adding an early return in reg_set_min_max() when false_re=
-g1 and
-> > > false_reg2 point to the same register, skipping the unnecessary bound=
-s
-> > > adjustment that leads to the verifier bug.
-> > >
-> > > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> > > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> > > Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Corema=
-il.kaiyanm@hust.edu.cn/
-> > > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
-> > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> > > ---
-> > >   kernel/bpf/verifier.c | 4 ++++
-> > >   1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > > index 6d175849e57a..420ad512d1af 100644
-> > > --- a/kernel/bpf/verifier.c
-> > > +++ b/kernel/bpf/verifier.c
-> > > @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct bpf_verifi=
-er_env *env,
-> > >     if (false_reg1->type !=3D SCALAR_VALUE || false_reg2->type !=3D S=
-CALAR_VALUE)
-> > >             return 0;
-> > >
-> > > +   /* If conditional jumps on the same register, skip the adjustment=
- */
-> > > +   if (false_reg1 =3D=3D false_reg2)
-> > > +           return 0;
-> >
-> > Your change looks good. But this is a special case and it should not
-> > happen for any compiler generated code. So could you investigate
-> > why regs_refine_cond_op() does not work? Since false_reg1 and false_reg=
-2
-> > is the same, so register refinement should keep the same. Probably
-> > some minor change in regs_refine_cond_op(...) should work?
-> >
-> > > +
-> > >     /* fallthrough (FALSE) branch */
-> > >     regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode), i=
-s_jmp32);
-> > >     reg_bounds_sync(false_reg1);
->
-> I think regs_refine_cond_op() is not written in a way to handle same
-> registers passed as reg1 and reg2. E.g. in this particular case the
-> condition is reformulated as "r0 < r0", and then the following branch
-> is taken:
->
->    static void regs_refine_cond_op(struct bpf_reg_state *reg1, struct bpf=
-_reg_state *reg2,
->                                  u8 opcode, bool is_jmp32)
->    {
->         ...
->          case BPF_JLT: // condition is rephrased as r0 < r0
->                  if (is_jmp32) {
->                          ...
->                  } else {
->                          reg1->umax_value =3D min(reg1->umax_value, reg2-=
->umax_value - 1);
->                          reg2->umin_value =3D max(reg1->umin_value + 1, r=
-eg2->umin_value);
->                  }
->                  break;
->         ...
->    }
->
-> Note that intent is to adjust umax of the LHS (reg1) register and umin
-> of the RHS (reg2) register. But here it ends up adjusting the same regist=
-er.
->
-> (a) before refinement: u64=3D[0x0, 0x80000000] s64=3D[0x0, 0x80000000] u3=
-2=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> (b) after  refinement: u64=3D[0x1, 0x7fffffff] s64=3D[0x0, 0x80000000] u3=
-2=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> (c) after  sync      : u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0]=
- s32=3D[0x1, 0x0]
->
-> At (b) the u64 range translated to s32 is > 0, while s32 range is <=3D 0,
-> hence the invariant violation.
->
-> I think it's better to move the reg1 =3D=3D reg2 check inside
-> regs_refine_cond_op(), or to handle this case in is_branch_taken().
+On 22.10.25 05:35, Zi Yan wrote:
+> When caller does not supply a list to split_huge_page_to_list_to_order(),
+> use split_huge_page_to_order() instead.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   include/linux/huge_mm.h | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 7698b3542c4f..34f8d8453bf3 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -381,6 +381,10 @@ static inline int split_huge_page_to_list_to_order(struct page *page, struct lis
+>   {
+>   	return __split_huge_page_to_list_to_order(page, list, new_order, false);
+>   }
+> +static inline int split_huge_page_to_order(struct page *page, unsigned int new_order)
+> +{
+> +	return split_huge_page_to_list_to_order(page, NULL, new_order);
+> +}
+>   
+>   /*
+>    * try_folio_split_to_order - try to split a @folio at @page to @new_order using
+> @@ -400,8 +404,7 @@ static inline int try_folio_split_to_order(struct folio *folio,
+>   		struct page *page, unsigned int new_order)
+>   {
+>   	if (!non_uniform_split_supported(folio, new_order, /* warns= */ false))
+> -		return split_huge_page_to_list_to_order(&folio->page, NULL,
+> -				new_order);
+> +		return split_huge_page_to_order(&folio->page, new_order);
+>   	return folio_split(folio, new_order, page, NULL);
 
-hmm. bu then regs_refine_cond_op() will skip it, yet reg_set_min_max()
-will still be doing pointless work with reg_bounds_sync() and sanity check.
-The current patch makes more sense to me.
+Much more readable
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers
+
+David / dhildenb
+
 
