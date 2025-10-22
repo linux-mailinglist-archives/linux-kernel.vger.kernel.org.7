@@ -1,96 +1,117 @@
-Return-Path: <linux-kernel+bounces-864669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EE2BFB4EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:07:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B31BFB503
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44F154E8B43
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9642420A94
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC38319851;
-	Wed, 22 Oct 2025 10:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D968D320CB5;
+	Wed, 22 Oct 2025 10:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dx1tBiyq"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H1LAxPRJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED93C316183
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF0031B80D;
+	Wed, 22 Oct 2025 10:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127651; cv=none; b=VjUt8hKOwbDTLGoy4gAlv8fFRjG1J1lGYYy51cenDmAU8q360khT+61I5HWC8IW1z+qM9KGKWJxRxX/F31G9MxJsLjqj/yrlAKjN42DqMfmhqOdKI4/zjMAUJ7zPwYhAbV+f2gnowoGPDBiBpcdsZy0fxGkfziMMRLTH6xE0RWw=
+	t=1761127681; cv=none; b=BApMuhIRlXMIKxJJe5n3RPSef1Oq3iZ7mpm/FzuChwo/NFfCBTr+SZoD4Mx/7DQwnWmw/oe9ZLD3YgQ1ZgRgP5kVzPEjJzudvyHrrBSDXtkqyJwcB6arSTAqGl0jZ4NG8wwMelDJCU5bIuXcxr2CKrLBKMvljOqX8FrLX+QrO9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127651; c=relaxed/simple;
-	bh=iFjjzRCUrFEqnFFuf8dtrADntolucnbypUul4hlI83E=;
+	s=arc-20240116; t=1761127681; c=relaxed/simple;
+	bh=2gWgs3JtkqrQlNaMUerxSTz5OsBLRFl9X1Eoptbmj+U=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NuukZMYcgH9OBJlgmGPHc+vMO3oNqWKUVfQjvFyjgnVNTkOc6J6d8zzQXHM8SsZzkC00Ij+C9Uvi6S/fHPNLaYsTIan4uVnpBNs5+OthM/Lck8uffSp0Ap67bdNjE1rXwz3cIVuwJk8vFIQjTVFNJhdvfq0W32w63A1npZvjt1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dx1tBiyq; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 84814C0B8B3;
-	Wed, 22 Oct 2025 10:07:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 44C59606DC;
-	Wed, 22 Oct 2025 10:07:28 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 11C60102F2393;
-	Wed, 22 Oct 2025 12:07:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761127647; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=iFjjzRCUrFEqnFFuf8dtrADntolucnbypUul4hlI83E=;
-	b=Dx1tBiyqF0HvcOXwH/oDh9QgXjdUyAjD5CG6wdkoHHp9duLQx6526AU5IsWJ7SHkuFx23r
-	VcY62jBSz6etYxQvTc1kacbaL2+CHOtMzTuBjgRQoD61VfroK6ytrnUPJEffcpZz9VZtoE
-	1pQgVNJQem5FQewPJZXa/dqBUxaQq3+5f7orZjC6Kj7Bs44V1aOM/3stV7mafxExABBcUP
-	ana+cc9LZ2YQihtmSPFkloCOuIGGan6iZ0iGH45or8eXunorRy1CUo+KebGoK3MGK4t4OP
-	DE1JxoGOC1SzcGQkLnFJGgK5JCZSEka2u7kix1st2QXLwA8hyyq9Q6I+wufaAQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Reuven Abliyev
- <reuven.abliyev@intel.com>,  Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: Re: [PATCH v2] mtd: intel-dg: wake card on operations
-In-Reply-To: <20251021123246.3629282-1-alexander.usyskin@intel.com> (Alexander
-	Usyskin's message of "Tue, 21 Oct 2025 15:32:46 +0300")
-References: <20251021123246.3629282-1-alexander.usyskin@intel.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Wed, 22 Oct 2025 12:07:24 +0200
-Message-ID: <87wm4ns10j.fsf@bootlin.com>
+	 MIME-Version:Content-Type; b=Tf/tchjgvFF0dgwmFQjO1/hi41YSUCmB0CJCWJtH5X01aoa8AWjAFomZx+oHpxvOSqENdh+wbaPL/Ntiu9T0igy9ihNSzwSvN2x2P39NCb1kXaB2Pb/bODmsxIiCeCFFaPLLKfCHwz/5hGsfjqJAnb5oMZ2IxtiAdRtxT1DYreU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H1LAxPRJ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761127677; x=1792663677;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=2gWgs3JtkqrQlNaMUerxSTz5OsBLRFl9X1Eoptbmj+U=;
+  b=H1LAxPRJbvAmfCA9Y1z1+PvYuM+QwgjaHg/qujkxFwxcRE7YIlD8vyLK
+   qQh2agpfwI/XVlwUgQlxBsljJw9f9qRbG/I4yYK8J/CNmKT5QjVA++t3t
+   rREYOON1kkwpgnljFSwLlFcp/VAT8GXB9atxK1lmTdWx1mF+U4oygsDjB
+   1TMkIkOL6r0NJURx9+DFMLYSJoe8Lib6I3UhZ+/QWisDfwQFGgn+z7qGe
+   NhfdiEjpgbau/bGPwNfN01UytuaxTDpU3e7ndjiBJeFWuSuj0YyCxen5G
+   m3k0CYJnuqMhfnI9syEg3vsBDt9PhjO8HSb/myqufMmacYWpGdNRjzQOD
+   w==;
+X-CSE-ConnectionGUID: KTHn7FDMRVq7yU0SiLopSw==
+X-CSE-MsgGUID: Y5j1jEWITZCNfYCxK+jebA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63173597"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63173597"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 03:07:56 -0700
+X-CSE-ConnectionGUID: sOQyO88fRPmnmtVCeanZ6w==
+X-CSE-MsgGUID: waVFlqmcTgeaiFoWUxhojg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="207506486"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.104])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 03:07:53 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>, sumit.semwal@linaro.org
+Cc: christian.koenig@amd.com, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, lkp@intel.com, Biancaa Ramesh
+ <biancaa2210329@ssn.edu.in>
+Subject: Re: [PATCH v2] Signed-off-by: Biancaa Ramesh
+ <biancaa2210329@ssn.edu.in>
+In-Reply-To: <20251022043108.7197-1-biancaa2210329@ssn.edu.in>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20251022043108.7197-1-biancaa2210329@ssn.edu.in>
+Date: Wed, 22 Oct 2025 13:07:51 +0300
+Message-ID: <bc4356efa91d65d5a2407ea8a2cfd54bb697cf4b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
 
-Hi Alexander,
+On Wed, 22 Oct 2025, Biancaa Ramesh <biancaa2210329@ssn.edu.in> wrote:
+> -- 
+> ::DISCLAIMER::
+> 
+> ---------------------------------------------------------------------
+> The 
+> contents of this e-mail and any attachment(s) are confidential and
+> intended 
+> for the named recipient(s) only. Views or opinions, if any,
+> presented in 
+> this email are solely those of the author and may not
+> necessarily reflect 
+> the views or opinions of SSN Institutions (SSN) or its
+> affiliates. Any form 
+> of reproduction, dissemination, copying, disclosure,
+> modification, 
+> distribution and / or publication of this message without the
+> prior written 
+> consent of authorized representative of SSN is strictly
+> prohibited. If you 
+> have received this email in error please delete it and
+> notify the sender 
+> immediately.
 
-On 21/10/2025 at 15:32:46 +03, Alexander Usyskin <alexander.usyskin@intel.c=
-om> wrote:
+There are some obvious issues in the patch itself, but please do figure
+out how to send patches and generally list email without disclaimers
+like this first. Or use the b4 web submission endpoint [1].
 
-> The Intel DG cards do not have separate power control for
-> persistent memory.
-> The memory is available when the whole card is awake.
->
-> Enable runtime PM in mtd driver to notify parent graphics driver
-> that whole card should be kept awake while nvm operations are
-> performed through this driver.
->
-> CC: Lucas De Marchi <lucas.demarchi@intel.com>
-> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-> ---
+BR,
+Jani.
 
-I am curious to know why this now works, whereas in your previous
-attempt (which had to be reverted) we had to do a lot more.
 
-Thanks,
-Miqu=C3=A8l
+[1] https://b4.docs.kernel.org/en/latest/contributor/send.html
+
+-- 
+Jani Nikula, Intel
 
