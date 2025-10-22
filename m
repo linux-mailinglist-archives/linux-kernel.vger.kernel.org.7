@@ -1,175 +1,164 @@
-Return-Path: <linux-kernel+bounces-865535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76D9BFD54B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:46:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4C6BFD71C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17B0519C207A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:46:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76144580793
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C83F26E709;
-	Wed, 22 Oct 2025 16:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2F32C21C6;
+	Wed, 22 Oct 2025 16:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8TNOZFv"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NOnaTDWD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D762C0282
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BC12C033C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761151091; cv=none; b=ntAX0yoOMGLDBXkmY9luC+SzTxlSpIn69ZFzCzB5fXEm7NfcBnKtbxknpzKvGY+jQmvVGfGCDT9HmiZbE6ldzoOfZoDe3QlMYX7tEFaSN3boAb3m4iHaz0yZTWc91LsLMfb1RV/V365i8pMm9/0iEhP3oy/FrBr54URH+C8U0BU=
+	t=1761151112; cv=none; b=JVEcF5QXwlOsJ7fx/yJpObseQpDmy3ISA30Ky1aXPvy0vkYOd5yvq7UljQW7pDplDoZGUvtSwUC9RlnDwQu9GeRfsWjSOXGE9ksJUO8SozC3aaNtMONrAqizWEDpZSA1KV7Q6GN3AvlSJziPu7sJ/f3ysju4fpBPpc3q7C21n5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761151091; c=relaxed/simple;
-	bh=+hpV4vedpfetjV9Sb+SG47OMjYDV8jGDb2DbIwvD3/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E9x/heGemrCesuaLeMlxIrcYF7G/5JM2u2OCF6Lvj241r4JVaT22Nu1+3SFIIT7tVHuer02I8WYh5nz1OqHti6detJhVNvXGQYJ3m8u8oo94JeLu+O15sQP4vBDUe4p+VC4xOKUiXb/qqSQCQ4jdqTj4hhh9biD+28+e6xSI5Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8TNOZFv; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-421851bca51so5880743f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761151086; x=1761755886; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dk/4ZoqQnuZjGsM9q5wggvWU1iFzfw9iqDvZDTlZi+Q=;
-        b=f8TNOZFv7zpkrZPVE5rkN7DQGoHCxk9tILa5PqkXjfxgMAQkQVcVdxVcdI17DtKzYi
-         dBrN4R8UMNfRXFhMtU12WZAHaZPG+piQ4PORD2e8df1CJEff5V1nMheP1UrCqsdMNw5E
-         l1DssKV1pSDIAUfEC998POJos+fk4BCQbhRpqeGQJCOtMFt/8rRmep9CVOM5l2WknteI
-         ea54vhJEwMQx/gDx83H53za4wM4yrDUUeNEYq97OJU7g3dM7v5zUFf+H+18uvLlNk5rB
-         ojFiPGDv2NQBw70IHbABvSQMEKsM8TvyfrNZNaOWTfmnqvJ4o1xWmOiQ9xQTRUCvnCpy
-         FKbw==
+	s=arc-20240116; t=1761151112; c=relaxed/simple;
+	bh=ptTXlSwGKwMBwM41aPaSp9jgtyBevA5FsiIBwd9TsaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pxjaByV0ZCOEhd8r0/cdRQX4BI3Z4aVoFNo2+gFjtQG/FNZgoioOib/qjXi+DysyZ954Wh5aWIWTYVodT/nBD8gm1P/wpj0VAjgJ0tdLjQE9UPNC1nv8s4nh1ekgT4P5ZoGYiJOdHKsP9GRxlpSfqSc/4wEZ35MtnDusc8ELJ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NOnaTDWD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MFqpiF013592
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:38:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	07OU1z1hNxrGxA+md7kscEsHiEoFwg7IhtIMFNGGHkY=; b=NOnaTDWDqHKfBvMg
+	gkcJw2k12CGgYvyybuCsPTbcYgdeP/z4OmxpqVKNhDaTS7PvB2Q6ceZH90bmYUKq
+	T/GY8YsXKZ1KbLNgeTKwoS+DRqepBTwNNY4AV/9qNGJUWJNN3WcrMJaSF3uVHxxw
+	1GwkGlGKlEMXYGrE3IsUk8mSgR5htAFyQq0vZT0dIvb+lsxB+P4gXhyKkh2c8nr+
+	Y0K8pD7jTKFOnLF/aC270TyCXQ8gEu+VpxRsVQgcggc23zBSDFkujHZiUsrm4Dj3
+	IEgmhAjSLnd43uw9oyloPNgZhac7FgFbzIcFc5Nh228enP8swqNnWq8JjoTCzBUW
+	mFCRrA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xhe0k7sd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:38:29 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8934ae68aso5675581cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761151086; x=1761755886;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dk/4ZoqQnuZjGsM9q5wggvWU1iFzfw9iqDvZDTlZi+Q=;
-        b=IlF/1aRMNE3Eq2vMl1yBFXGV1TFMklmWbdWDJYJ+/NV8DmJEafDUqgk9rdOD+QJHCN
-         hy0KGLym2xqkxvyrTwMxZAeWXPR+mHnfZxAQpg/01dul8jXznICrGpka4rxtdpyuUMQH
-         n1mH4tVFZwWTjxA3KbGbGnI7n2pVKHudWpEkZNnoQDcR76LdovCwSXhbIyUeRnDs7+Sr
-         g6jK22YOxP5atjVG1ZpEIAsCiJvuBCIrItF/7uyMjDOUoZxibDhY0ZYJ9xRY14T2g8s1
-         AyK1Xn9djsnQAvCxNy8lQUOwpJuYV8v/aT8SyUvzeWpQxtur8kPawB1QviuMYNXLtzdj
-         Sjqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUUtw2jYaZuBiX9aJqNRNL0vOn3FTHceXGOixGOq9GQBDD18lNpUwjONz8zKig65UfVBuBJO7vuSwa0IQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX8fhPurj8mF708lz6TPpgMm95yKoJz+GLu80Ok52n3aL2iVs4
-	gmFI1glnvpJF7DYdsPbDeMY7Uac5S5M5f9UXGz3rQBH6QlDtxCNgfigr
-X-Gm-Gg: ASbGncu07iaBDo3lXd5HvwsUAqEOwQFCo54VnElzOjXRIRh3rGIJ2+OY9glZFv8U/9p
-	OproG2W8vKzdhpZn3fecyGF9hJ6/qRMUW5VNymEcLJPQU+otXZLXBtGH2AQTww9iIyZ0H+Gbmj4
-	dFxjjFhv1JfmgSmUzalrwthYkVO4YpZOPzE5siSwAa6SvpOGXPPy3VcTRBUrCBD3i5jD4qmPXsD
-	h3oqVoN25aIJ2KqC3H00qJwiRy9mWrPbAbzn21Mm0BOsY39Gtw+CTJ7fRAgtpIzt7b1jvzOPYF4
-	igNIRitzXsJiuDOb9rLaWDV6Uw0AoPvfIOrRpzjONoVc4APEZeWVLbWwF7JKbKl4Z5f2KWvLkXD
-	anZCLD9BYKuk0ptAcnqw4K7LtnAIg3NZQoySR4JU0XwhQmGXAnDDlTfA55y8IpVQKefmyAIrMnY
-	16JZsvZ7gRxDy8e9X2g2bWc6DZIwnLKFuQQXv6A1PySw==
-X-Google-Smtp-Source: AGHT+IHnj3ehGxJN2+JHKpPdZQwBjMorNnDAsuy0gAmpVUMFwxWZqRD/ApfaITrwLRrw0TIRv+66RA==
-X-Received: by 2002:a5d:5850:0:b0:428:3ee0:6959 with SMTP id ffacd0b85a97d-4283ee06d92mr10911700f8f.63.1761151086240;
-        Wed, 22 Oct 2025 09:38:06 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a78csm26028279f8f.26.2025.10.22.09.38.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 09:38:06 -0700 (PDT)
-Date: Wed, 22 Oct 2025 17:38:04 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Ryan Neph <ryanneph@google.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/xe/configfs: fix clang warnings for missing
- parameter name
-Message-ID: <20251022173804.26af8d39@pumpkin>
-In-Reply-To: <20251021063957.GA757076@ax162>
-References: <20251017-rn-cfi-v1-0-bf66e6ad4fcd@google.com>
-	<20251017-rn-cfi-v1-2-bf66e6ad4fcd@google.com>
-	<20251020110513.48d18788@pumpkin>
-	<20251021063957.GA757076@ax162>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1761151109; x=1761755909;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=07OU1z1hNxrGxA+md7kscEsHiEoFwg7IhtIMFNGGHkY=;
+        b=QAuwhhWDhCBEIrAuG20zanuYjySsvrGiyq1OzchXoKI+PGr3t3Hqa1d179IRnxoVWw
+         FpU6ofJt/t+Nb66eP0gKKGVP0A+rawJOql8v09mZWrLunZrun3YH8ZIIeauckHqVBbDY
+         2FRMnfrTyiNuJN2sLo5vF0zN9v02hKR9K5V04mRmM1sVxlcJi1loWRI3SwrAGa9zPndo
+         OREWS9KZWUfBaPDuB2f6Bl6ZSeLOgkxiCIikdCYNrSn0NfRd9DzA3dYkMkJh6+sgMuyB
+         5HrZj+KqHL5SpVgAn9Gk/Gn/hrXahp+dfGo+hVrdr0btDj1ERt/WF+bgZmNT77DaYCTA
+         rzTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF4GMUvxMJrXqg9TJqSl3V+gL3dELOOEZcdPdy3u8Qw4RrpsrHNYLZrHKCIQnYESruTLr/syQF70tdd70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxodBDyYkM/d+JeHmsuSWnf6Fqt6sIsaimu4miPf3NiT/BWAWl+
+	ewmzLV3hYL6oxI7UhEkq9RXQwv3pPxsUMF7U9BGLZf/LI/8a9vf5iJPsH1yePADaAYXvkP4skW5
+	Db6AV8IxTj60cGyGTIlt9iREAqkhVkCUSHpn30R+DpxNJT8RnROn1hIEkHDyhOYx4Sk8=
+X-Gm-Gg: ASbGncthaD7HRdE+uqVk50ei5e1+d7pBz+kWANrkl6ENM3FMmioFdXbyMsj+7QJcAFU
+	Kd1EdJGyW5uhaSRVGHhyRTVVGifOdL174AmUaKh+Ih4z+5KbL6HWP4EZmtPpAPn653LHXk43dyx
+	r4xci4RetPMzY2yzgjmtODYjCNUJ+EHUKEK+0BbO74cHsvdgW6+5e2q00X2ensfcEP122fEMoYY
+	yvfWGxcoLbIiX2raELCTWdKvvIFD/qnRoVzGcymiyfTXUYc3qlKounhbHUQ0o0DvNtbDEO+UU/u
+	l/nMt5oPzZNZZuJLNItLdSQY/x6DZVLF/ZKF11Fu6RYP3Kf75vHzSomUKGtck1G+SaKzpc0PvvR
+	e5FPbzgP81YM+YnyrCtlAcrkFCMtw4R5YcPsUi887pUQXZzPO/ch9q5K4
+X-Received: by 2002:a05:622a:548:b0:4e8:b910:3a7f with SMTP id d75a77b69052e-4e8b9103edemr124725471cf.13.1761151108951;
+        Wed, 22 Oct 2025 09:38:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRYPknr9Uj0amxUOYfxOvPxxQnoEoW4H0vD0Htc0V340Pcq+BvtCrnq9gFpLvh3TOojHocGg==
+X-Received: by 2002:a05:622a:548:b0:4e8:b910:3a7f with SMTP id d75a77b69052e-4e8b9103edemr124724941cf.13.1761151108268;
+        Wed, 22 Oct 2025 09:38:28 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb03649dsm1375160666b.50.2025.10.22.09.38.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 09:38:27 -0700 (PDT)
+Message-ID: <06f74fee-9ab5-4b26-9497-9f617edd97f0@oss.qualcomm.com>
+Date: Wed, 22 Oct 2025 18:38:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] phy: qcom: qmp-combo: get the USB3 & DisplayPort
+ lanes mapping from DT
+To: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul
+ <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Xilin Wu <sophon@radxa.com>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20251013-topic-x1e80100-hdmi-v6-0-3a9c8f7506d6@linaro.org>
+ <20251013-topic-x1e80100-hdmi-v6-2-3a9c8f7506d6@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251013-topic-x1e80100-hdmi-v6-2-3a9c8f7506d6@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE2NyBTYWx0ZWRfX9foNPprzkAud
+ 8Xfh5apG08VKys9jr4kDk7K8ZqZsr8OHF2JOvkY4Ku/YDxK0QLVBPjt/oTZry712IxGALVGaZpe
+ v1XrYds5QCw+sU5JuyDIiodpnS87yeIy11d9vzKvVTBmocoVTB5jviPOboTBwIAtDkw6A50NQ3O
+ nW03+FN0ejq/cI0Kn20fGcq51t4DwXAbu5haXF237pvK0IH5C9d9JNS+KukN8jA9Y7MRaertl9z
+ DQdiT8nsSEoRsl+bCdfXOHIS81Ua/yzCzJCWLBP0MWzxyo0o9s9NZx184qwLS+JV7hqjWRzylm2
+ OO3BO30zxeUksOk7aIBbTjFEJvHhgHsbJ3Gmz1Us1l5RhKptzWsRdjWxo2gAW9B9aMmK07HJSTO
+ BZlW1+uDV6fJ5uLlz0SZFHw+eM5Rrw==
+X-Proofpoint-ORIG-GUID: b9RLEombeclF91Mi4SyiAVJoD4Z4uvpY
+X-Authority-Analysis: v=2.4 cv=WYUBqkhX c=1 sm=1 tr=0 ts=68f90885 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=ksxQWNrZAAAA:8 a=KKAkSRfTAAAA:8 a=HJemwo2QgkXW1dxJUx8A:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=l7WU34MJF0Z5EO9KEJC3:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: b9RLEombeclF91Mi4SyiAVJoD4Z4uvpY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_07,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510210167
 
-On Tue, 21 Oct 2025 08:39:57 +0200
-Nathan Chancellor <nathan@kernel.org> wrote:
-
-> On Mon, Oct 20, 2025 at 11:05:13AM +0100, David Laight wrote:
-> > On Fri, 17 Oct 2025 12:46:26 -0700
-> > Ryan Neph <ryanneph@google.com> wrote:
-> >   
-> > > Fixes warning from clang-17 that look like:
-> > > 
-> > > drivers/gpu/drm/xe/xe_configfs.h:35:97: error: omitting the parameter name in a function definition is a C2x extension [-Werror,-Wc2x-extensions]
-> > >    35 | static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,  
-> > 
-> > Why did that become invalid?
-> > It has pretty much always been used - and can be used to avoid -Wshadow warnings.
-> > This looks like a clang bug.
-> > And you'd want a specific -W 'knob' for it as well.
-> > 
-> > At a guess the C2x extension lets the name be omitted in the function body for
-> > an unused parameter (the same as C++).
-> > I think that is the 'definition' and the ones being changed here are the 'declaration'.
-> > But I might be wrong.  
+On 10/13/25 10:55 AM, Neil Armstrong wrote:
+> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+> of a combo glue to route either lanes to the 4 shared physical lanes.
 > 
-> I don't think you read the patch clearly enough. Both declarations and
-> 'static inline' definitions are being updated in this patch, likely for
-> consistency rather than necessity (but the commit message could call
-> this out). I don't see how there is a clang bug here.
-
-Ah, I only looked closely at the declaration, thought the second change was the
-same.
-
-	David
-
+> The routing of the lanes can be:
+> - 2 DP + 2 USB3
+> - 4 DP
+> - 2 USB3
 > 
-> > > 
-> > > Signed-off-by: Ryan Neph <ryanneph@google.com>
-> > > ---
-> > >  drivers/gpu/drm/xe/xe_configfs.h | 10 ++++++----
-> > >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/xe/xe_configfs.h b/drivers/gpu/drm/xe/xe_configfs.h
-> > > index fed57be0b90e146d57d966bab0e55e1723513997..a0d614b37efd54b89390f04a238aef1a8d4df4e2 100644
-> > > --- a/drivers/gpu/drm/xe/xe_configfs.h
-> > > +++ b/drivers/gpu/drm/xe/xe_configfs.h
-> > > @@ -21,9 +21,9 @@ bool xe_configfs_primary_gt_allowed(struct pci_dev *pdev);
-> > >  bool xe_configfs_media_gt_allowed(struct pci_dev *pdev);
-> > >  u64 xe_configfs_get_engines_allowed(struct pci_dev *pdev);
-> > >  bool xe_configfs_get_psmi_enabled(struct pci_dev *pdev);
-> > > -u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class class,
-> > >  				       const u32 **cs);
-> > > -u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class class,
-> > >  					const u32 **cs);
-> > >  #ifdef CONFIG_PCI_IOV
-> > >  unsigned int xe_configfs_get_max_vfs(struct pci_dev *pdev);
-> > > @@ -37,9 +37,11 @@ static inline bool xe_configfs_primary_gt_allowed(struct pci_dev *pdev) { return
-> > >  static inline bool xe_configfs_media_gt_allowed(struct pci_dev *pdev) { return true; }
-> > >  static inline u64 xe_configfs_get_engines_allowed(struct pci_dev *pdev) { return U64_MAX; }
-> > >  static inline bool xe_configfs_get_psmi_enabled(struct pci_dev *pdev) { return false; }
-> > > -static inline u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +static inline u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev,
-> > > +						     enum xe_engine_class class,
-> > >  						     const u32 **cs) { return 0; }
-> > > -static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,
-> > > +static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev,
-> > > +						      enum xe_engine_class class,
-> > >  						      const u32 **cs) { return 0; }
-> > >  static inline unsigned int xe_configfs_get_max_vfs(struct pci_dev *pdev) { return UINT_MAX; }
-> > >  #endif
-> > >   
-> >   
+> Get the lanes mapping from DT and stop registering the USB-C
+> muxes in favor of a static mode and orientation detemined
+> by the lanes mapping.
+> 
+> This allows supporting boards with direct connection of USB3 and
+> DisplayPort lanes to the QMP Combo PHY lanes, not using the
+> USB-C Altmode feature.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Tested-by: Xilin Wu <sophon@radxa.com> # qcs6490-radxa-dragon-q6a
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
 
