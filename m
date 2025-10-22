@@ -1,94 +1,45 @@
-Return-Path: <linux-kernel+bounces-864271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A637BFA573
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:53:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD67BFA587
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7EA460A92
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4FB4460E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B402F2613;
-	Wed, 22 Oct 2025 06:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25C82F2909;
+	Wed, 22 Oct 2025 06:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AZVQ0MDx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Rk8UB9e/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BirebAOg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nw+uOeZ3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FTwnnr0N"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD80E2F2608
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FA2246BB0;
+	Wed, 22 Oct 2025 06:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761115962; cv=none; b=lQRBHxdx0LdH0HfrqvcHY0njRlFHv6omX6FIHpqxDfHFjb/PCEcuFZX1IIzj37DqzO5F4PfucWPVcLP4cvGPq6u0a4KfBXL3zuR5X54V2OWDClsMZNSNUlTTvihddx4NfgX2VMw4xOZUhXL+P5PABTsJpUixqnWQIA9/TLzKdxU=
+	t=1761116007; cv=none; b=g0/B1qe88X9apBs7tZJkGdp58z8m+xh/G1BIB6cs+VzJgYgcIWHKZXZEpuwK+GSXU/RQRoMXzlMzfuLsScVQRL1hOfiqwBGIgSjaeREa0tmI8be/FsU6rOZ5dQpQwRLUA67G7+BHS7boT1LVuc3EAlZ39VTubqUkM+039KBBBsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761115962; c=relaxed/simple;
-	bh=02mJ+fx+4txM90mccUbgdSYG0/40aCVn/z017tAmjQI=;
+	s=arc-20240116; t=1761116007; c=relaxed/simple;
+	bh=8NQWyS1IcbxGD4Id05IwMMBC7+tBGiBE2LzZjTde18A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VLak/4zK0dG4coMQEjYiQKNjVzCU6tbf/OjFEyQ/pQysexiy4+iAk0H3p8rVR44J2mJ5GvPe6OU8chM/9BOiXLaJNgc/m3MrYU3yUGba0NEmx3P7wvB1WB5GhSVNMKQCUWBzIQBv94XprF+xEycTbn/NTR1cueBn2mW24MZWu/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AZVQ0MDx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Rk8UB9e/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BirebAOg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nw+uOeZ3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3D8B91F391;
-	Wed, 22 Oct 2025 06:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761115954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vMZi22sC9kDQAYxuCp4E5dadMxEEsvUH8RSCUZCh46s=;
-	b=AZVQ0MDxGr3YBQ4Wsh+PJMVKewJUPwMZI57lUxlNQG9rhPSYjdNUxj697n/Vwg++dUz4Jb
-	s0v+M9o4Ixp3pIi3e/DTl5DwUwuZ987vJjEbUa5wRIq7XlVuc80E3DuGclhQ7pCyY7DNUH
-	QahUQexjtIPMadpn9sEW2Yr0ZBAGWk4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761115954;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vMZi22sC9kDQAYxuCp4E5dadMxEEsvUH8RSCUZCh46s=;
-	b=Rk8UB9e/ojiHKWWe/SrjCFnkFayt16ng1k+huSYnoS0XhNWn5pIw+z6b2qjq4XHCkXXBuq
-	qbgkTeomcLYDV4Bw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761115950; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vMZi22sC9kDQAYxuCp4E5dadMxEEsvUH8RSCUZCh46s=;
-	b=BirebAOgPG8i85VOAFm6QboA1mCI/uMWmW9zg7THjZtfc8cysMqCVOMRofPr/2/KCZ9PTi
-	CaiborHfTiEMLtvgsCbznmSuXeDsSlHwxe1MOUBX3W2z5tEBja4Sxp3HdiveQGlVz3PXZu
-	F2oWdwk0aAyKOo7eehKIA1TkQFkVSS0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761115950;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vMZi22sC9kDQAYxuCp4E5dadMxEEsvUH8RSCUZCh46s=;
-	b=nw+uOeZ3rksS0g8Pq4MWg/Bm58BIIiZV6da/halqdzKatfSSjwTpNePae8Vuxk41RBQObk
-	eb7f+ybzkgptS0Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E9D1F13A29;
-	Wed, 22 Oct 2025 06:52:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fHhjNy1/+GhHcQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 22 Oct 2025 06:52:29 +0000
-Message-ID: <ed3ce22d-ee90-410e-8f69-88c7b44711a2@suse.de>
-Date: Wed, 22 Oct 2025 08:52:29 +0200
+	 In-Reply-To:Content-Type; b=Mhvuna6ZU/tLDj6VNJhGFgqFG8lsz5WPteRFAMujMZtXRe39nBKMumE1/jgEy7cCjDZGrnM/epp9ouVo1z+D3krAe3l+UuQqnASevw4gTE/IIBF6b6mgMEM3CtBWx40W4h6nGHmTvwlDmG0zISWzeL05vr+X+z0O2tMQMuEkv84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FTwnnr0N; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761115995; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=lQL6SeVGx4c1D991//YZKaa0cyRKwryW27KFK0xeilY=;
+	b=FTwnnr0N+YHQ/tBs+S2lYWBtSpcJnr6LuoLAShI4lBmq5lkFgBSl80WWxUegvi+GazI3oEmVWPqY0ko+eEjvcZkSdpmWwnY9aXHGxTY/SArSdPzcCEt2cIvWDM+GTAGmXD4vsoZEs2ktnFkTw9tyBFS/k9XFA9K3hxvIDnzbXcg=
+Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wqlkw1q_1761115990 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 22 Oct 2025 14:53:12 +0800
+Message-ID: <81b1f1c6-4308-41bb-9f65-f158d30f27bd@linux.alibaba.com>
+Date: Wed, 22 Oct 2025 14:53:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,113 +47,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sitronix/st7571-i2c: remove unneeded semicolon
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20251022-st7571-semicolon-v1-1-83d322618ff4@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251022-st7571-semicolon-v1-1-83d322618ff4@gmail.com>
+Subject: Re: [PATCH v3 2/3] mm: Change ghes code to allow poison of non-struct
+ pfn
+To: "Luck, Tony" <tony.luck@intel.com>, "Weiny, Ira" <ira.weiny@intel.com>,
+ "ankita@nvidia.com" <ankita@nvidia.com>,
+ "aniketa@nvidia.com" <aniketa@nvidia.com>, "Sethi, Vikram"
+ <vsethi@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+ "mochs@nvidia.com" <mochs@nvidia.com>,
+ "skolothumtho@nvidia.com" <skolothumtho@nvidia.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "david@redhat.com" <david@redhat.com>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
+ "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
+ <mhocko@suse.com>, "bp@alien8.de" <bp@alien8.de>,
+ "rafael@kernel.org" <rafael@kernel.org>,
+ "guohanjun@huawei.com" <guohanjun@huawei.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "Tian, Kevin" <kevin.tian@intel.com>,
+ "alex@shazbot.org" <alex@shazbot.org>
+Cc: "cjia@nvidia.com" <cjia@nvidia.com>,
+ "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+ "targupta@nvidia.com" <targupta@nvidia.com>,
+ "zhiw@nvidia.com" <zhiw@nvidia.com>, "dnigam@nvidia.com"
+ <dnigam@nvidia.com>, "kjaju@nvidia.com" <kjaju@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+ "Smita.KoralahalliChannabasappa@amd.com"
+ <Smita.KoralahalliChannabasappa@amd.com>,
+ "u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20251021102327.199099-1-ankita@nvidia.com>
+ <20251021102327.199099-3-ankita@nvidia.com>
+ <68f7bf2d6d591_1668f310061@iweiny-mobl.notmuch>
+ <SJ1PR11MB6083BF0885BC19E715C1A96EFCF2A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <SJ1PR11MB6083BF0885BC19E715C1A96EFCF2A@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[intel.com:email,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,intel.com:email,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
 
 
-Am 22.10.25 um 08:10 schrieb Marcus Folkesson:
-> Fix style issue reported by Kernel test robot.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510221125.Cg0sM4xJ-lkp@intel.com/
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+在 2025/10/22 01:19, Luck, Tony 写道:
+>>>      pfn = PHYS_PFN(physical_addr);
+>>> -   if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) {
+>>
+>> Tony,
+>>
+>> I'm not an SGX expert but does this break SGX by removing
+>> arch_is_platform_page()?
+>>
+>> See:
+>>
+>> 40e0e7843e23 ("x86/sgx: Add infrastructure to identify SGX EPC pages")
+>> Cc: Tony Luck <tony.luck@intel.com>
+>>
+> Ira,
+> 
+> I think this deletion makes the GHES code always call memory_failure()
+> instead of bailing out here on "bad" page frame numbers.
+> 
+> That centralizes the checks for different types of memory into
+> memory_failure().
+> 
+> -Tony
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Hi, Tony, Ankit and Ira,
 
-> ---
->   drivers/gpu/drm/sitronix/st7571-i2c.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
-> index 32b91d65b768b26caa7dcef42a00d36f236fbc32..4e73c8b415d677dab5b421666b56f4bb3697b982 100644
-> --- a/drivers/gpu/drm/sitronix/st7571-i2c.c
-> +++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
-> @@ -322,7 +322,7 @@ static void st7571_prepare_buffer_grayscale(struct st7571_device *st7571,
->   		size = (rect->x2 - rect->x1) * (rect->y2 - rect->y1) / 4;
->   		memcpy(st7571->hwbuf, vmap->vaddr, size);
->   		break;
-> -	};
-> +	}
->   }
->   
->   static int st7571_fb_update_rect_monochrome(struct drm_framebuffer *fb, struct drm_rect *rect)
->
-> ---
-> base-commit: c1a7cc00cd412505e070eb4e62bc0b0ca85243e0
-> change-id: 20251022-st7571-semicolon-bc5287cde264
->
-> Best regards,
+Finally, we're seeing other use cases that need to handle errors for
+non-struct page PFNs :)
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+IMHO, non-struct page PFNs are common in production environments.
+Besides NVIDIA Grace GPU device memory, we also use reserved DRAM memory
+managed by a separate VMEM allocator. This VMEM allocator is designed
+for virtual machine memory allocation, significantly reducing kernel
+memory management overhead by minimizing page table maintenance.
 
+To enable hardware error isolation for these memory pages, we've already
+removed this sanity check internally. This change makes memory_failure()
+the central point for handling all memory types, which is a much cleaner
+architecture.
 
+Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
+
+Thanks.
+Shuai
 
