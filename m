@@ -1,230 +1,173 @@
-Return-Path: <linux-kernel+bounces-864053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8124BF9CE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11DCBF9CED
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 205324E7A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:15:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5FD189A3B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAACD221F39;
-	Wed, 22 Oct 2025 03:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD3710A1E;
+	Wed, 22 Oct 2025 03:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN5cAa8g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i4nG5H7p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4908479;
-	Wed, 22 Oct 2025 03:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393F12F29;
+	Wed, 22 Oct 2025 03:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102924; cv=none; b=m/V3mWU0ZfdZqQOLsyjCKOUYnlNdy2BveXh07MjCzApXGPlBch2r6+XjaJr85DwibN1ublWr72eGdgTkDRdiduFH7tC+KeSY7GZB/i71F55VeczNxj+WHk+SuYWnFlJ4Ir5MKPc1Toqs3N6uTtxu03CwQS9F5I/hLLJxsKBW1l8=
+	t=1761102958; cv=none; b=IxiK9GBFegIBgT3udD9RhmwofRqWf+r7Ro3P+gV9ZepT88UZ0VIfX7bfRcvMUtDfDAoaw8erXhHRMVmb3WxSEd1VZjLTwq94O1ujn/xe8CMbBt68ozRf52VyQeaSWtN5KQzHZxaFs0suKYD1qIAEyR9szlOYx4YiZXqEgd2jddI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102924; c=relaxed/simple;
-	bh=TXfpuvjKdRMbKKS6U0EEJNLifN65D/mzRp/Bp10kmAA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GzCFGdYBmoPkzYBQIY1TFR44H/HN0H13eZjuSKXRWIvCiQC3DaxAxt0ASo4oA3WqoMeXT5uEuZAyNj6wMf/NaXUihikQu38TCabNFczddv7JNlnKMbdO7cns/+A9rnMsngtFWMdCo3X1h0nGZ2Z9yxtZKrRhqoM5FL22UNyNCng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN5cAa8g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2357C4CEE7;
-	Wed, 22 Oct 2025 03:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761102923;
-	bh=TXfpuvjKdRMbKKS6U0EEJNLifN65D/mzRp/Bp10kmAA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HN5cAa8g/9IBQoGySj7TZr+Qe5JA1+ckGl3IvmmSOovA9K+d2NMlnrbwlL0W9Yhe/
-	 dyZODPX4BDRjWiCxgMPCelC/zWvjBcNtDb1f7hg/H6C0atNwATIFvujRRwSETZricz
-	 UkncTcJ8JU4rjSuyGri9DfNPmWO/bRaROlBdvmjYOmqiYDDBDNuYgTBhkISI1tLbK9
-	 jLzxjpdrHq3lm1oEyF3Nl6xC8U7wX4iVbJmbWgwLBttWFx7omggB9fV+EG8nSUUdVi
-	 TsOTKrp2NekjH/oYOPBp5H58WMj3oml6awDhJxMugvrnufYtcx5cPQHvIg0VRgOhc+
-	 Dv6YlCa9UriLQ==
-Message-ID: <ee0bb5eec4b43328749735150c5505f02e7a1842.camel@kernel.org>
-Subject: Re: [PATCH v1] NFS: Fix possible NULL pointer dereference in
- nfs_inode_remove_request()
-From: Trond Myklebust <trondmy@kernel.org>
-To: liubaolin <liubaolin12138@163.com>, anna@kernel.org, Dan Carpenter
-	 <dan.carpenter@linaro.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Liu
-	 <liubaolin@kylinos.cn>
-Date: Tue, 21 Oct 2025 23:15:21 -0400
-In-Reply-To: <b928fe1b-77ba-4189-8f75-56106e9fac19@163.com>
-References: <20251012083957.532330-1-liubaolin12138@163.com>
-	 <5f1eb044728420769c5482ea95240717c0748f46.camel@kernel.org>
-	 <9243fe19-8e38-43e4-8ea4-077fa4512395@163.com>
-	 <a0accbb0e4ea7ad101dcaecf6ded576fc0c43a56.camel@kernel.org>
-	 <b928fe1b-77ba-4189-8f75-56106e9fac19@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761102958; c=relaxed/simple;
+	bh=C4vq3UaKFDwToRnrsRh+czOcOkuL3mJDA1+8OYAo9rg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gu4Fq4ThJouKmI059knzqUexvDUURd7s58dOQH7l8KoDyOR9z+bHr8PVwm4TR9Eh+kGnRg/tPEvN0XAQX/cYqU5JcNAfDRl5CWwJQvEzmkRDlT7bVzax/3lFHvcQo9AXG8WFtNUDFN+gSDbg3VFWQQnZ4jhhFB3LI9I7jufewZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i4nG5H7p; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761102956; x=1792638956;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=C4vq3UaKFDwToRnrsRh+czOcOkuL3mJDA1+8OYAo9rg=;
+  b=i4nG5H7pT/VjYzRliiapnet3/p7dQh4EvBS6SoFyAvhOCNkK0uG1mYYg
+   YdJOcK/dLkdKQ+RX/ywKDkLf/tmA7KoG+Pt9Ea4gqXavFKaHDPRiAITJ2
+   SPXw/dbG0I0vPXiJiqpmLJBxJWWuq5AYWsyK5AaOq1HlUh3lIzYIHNRgc
+   IpE+3XLUo43fFGuP7xCq78nnC9SH5HiFJbQdbTsuEfVx33bSt3SYekoB6
+   oowsbd0JufKwMQWlmVro1CkQVQ56QQyjHz6wV/rTzxrY59IzonpxUztMk
+   q643KEwK7OR1NsZSRdXZsNdIzlFHWpBPqbe5YgNLyWd0L22kFor700HgE
+   A==;
+X-CSE-ConnectionGUID: VgRBMjEkTEmUOh64IBq9rg==
+X-CSE-MsgGUID: D65/HnjER2KQQS/QlZmkTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88708844"
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="88708844"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 20:15:56 -0700
+X-CSE-ConnectionGUID: rS/w9ShoRTOr0LOxJ5xyUg==
+X-CSE-MsgGUID: oNdfq1G9T4yNJ67V9X9aAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="184159739"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 20:15:49 -0700
+Message-ID: <eb6a2ca0-84eb-4770-8300-cd8892eae6ad@linux.intel.com>
+Date: Wed, 22 Oct 2025 11:15:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/25] KVM: TDX: Drop PROVE_MMU=y sanity check on
+ to-be-populated mappings
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20251017003244.186495-1-seanjc@google.com>
+ <20251017003244.186495-4-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251017003244.186495-4-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-10-22 at 10:44 +0800, liubaolin wrote:
-> > Sorry, I didn=E2=80=99t actually see any case where req->wb_head =3D=3D=
- NULL.=20
-> > I found this through a smatch warning that pointed out a potential
-> > null pointer dereference.=20
-> > Instead of removing the NULL folio check, I prefer to keep it to
-> > prevent this potential issue. Checking pointer validity before use
-> > is a good practice.=20
-> > From a maintenance perspective, we can=E2=80=99t rule out the possibili=
-ty
-> > that future changes might introduce a req->wb_head =3D=3D NULL case, so
-> > I suggest keeping the NULL folio check.
->=20
 
-I think you need to look at how smatch works in these situations. It is
-not looking at the call chain, but is rather looking at how the
-function is structured.
-Specifically, as I understand it, smatch looks at whether a test for a
-NULL pointer exists, and whether it is placed before or after the
-pointer is dereferenced. So it has nothing to say about whether the
-check is needed; all it says is that *if* the check is needed, then it
-should be placed differently.
-Dan Carpenter, please correct me if my information above is outdated...
 
-So in this case, since we've never seen a case where the NULL check is
-violated, and an analysis of the call chain doesn't show up any
-(remaining) cases where that NULL pointer test is needed, my
-recommendation is that we just remove the test going forward.
+On 10/17/2025 8:32 AM, Sean Christopherson wrote:
+> Drop TDX's sanity check that a mirror EPT mapping isn't zapped between
+> creating said mapping and doing TDH.MEM.PAGE.ADD, as the check is
+> simultaneously superfluous and incomplete.  Per commit 2608f1057601
+> ("KVM: x86/tdp_mmu: Add a helper function to walk down the TDP MMU"), the
+> justification for introducing kvm_tdp_mmu_gpa_is_mapped() was to check
+> that the target gfn was pre-populated, with a link that points to this
+> snippet:
+>
+>   : > One small question:
+>   : >
+>   : > What if the memory region passed to KVM_TDX_INIT_MEM_REGION hasn't been pre-
+>   : > populated?  If we want to make KVM_TDX_INIT_MEM_REGION work with these regions,
+>   : > then we still need to do the real map.  Or we can make KVM_TDX_INIT_MEM_REGION
+>   : > return error when it finds the region hasn't been pre-populated?
+>   :
+>   : Return an error.  I don't love the idea of bleeding so many TDX details into
+>   : userspace, but I'm pretty sure that ship sailed a long, long time ago.
+>
+> But that justification makes little sense for the final code, as the check
+> on nr_premapped after TDH.MEM.PAGE.ADD will detect and return an error if
+> KVM attempted to zap a S-EPT entry (tdx_sept_zap_private_spte() will fail
+> on TDH.MEM.RANGE.BLOCK due lack of a valid S-EPT entry).  And as evidenced
+> by the "is mapped?" code being guarded with CONFIG_KVM_PROVE_MMU=y, KVM is
+> NOT relying on the check for general correctness.
+>
+> The sanity check is also incomplete in the sense that mmu_lock is dropped
+> between the check and TDH.MEM.PAGE.ADD, i.e. will only detect KVM bugs that
+> zap SPTEs in a very specific window (note, this also applies to the check
+> on nr_premapped).
+>
+> Removing the sanity check will allow removing kvm_tdp_mmu_gpa_is_mapped(),
+> which has no business being exposed to vendor code, and more importantly
+> will pave the way for eliminating the "pre-map" approach entirely in favor
+> of doing TDH.MEM.PAGE.ADD under mmu_lock.
+>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-We should not need to add a "Tested" or "stable" tag, since this test
-is harmless, and so the change is just an optimisation.
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
->=20
-> =E5=9C=A8 2025/10/17 23:02, Trond Myklebust =E5=86=99=E9=81=93:
-> > On Fri, 2025-10-17 at 14:57 +0800, liubaolin wrote:
-> > > [You don't often get email from liubaolin12138@163.com. Learn why
-> > > this is important at
-> > > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
-> > >=20
-> > > > This modification addresses a potential issue detected by
-> > > > Smatch
-> > > > during a scan of the NFS code. After reviewing the relevant
-> > > > code, I
-> > > > confirmed that the change is required to remove the potential
-> > > > risk.
-> > >=20
-> > >=20
-> >=20
-> > I'm sorry, but I'm still not seeing why we can't just remove the
-> > check
-> > for a NULL folio.
-> >=20
-> > Under what circumstances do you see us calling
-> > nfs_inode_remove_request() with a request that has req->wb_head =3D=3D
-> > NULL? I'm asking for a concrete example.
-> >=20
-> > >=20
-> > > =E5=9C=A8 2025/10/13 12:47, Trond Myklebust =E5=86=99=E9=81=93:
-> > > > On Sun, 2025-10-12 at 16:39 +0800, Baolin Liu wrote:
-> > > > > [You don't often get email from liubaolin12138@163.com. Learn
-> > > > > why
-> > > > > this is important at
-> > > > > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
-> > > > >=20
-> > > > > From: Baolin Liu <liubaolin@kylinos.cn>
-> > > > >=20
-> > > > > nfs_page_to_folio(req->wb_head) may return NULL in certain
-> > > > > conditions,
-> > > > > but the function dereferences folio->mapping and calls
-> > > > > folio_end_dropbehind(folio) unconditionally. This may cause a
-> > > > > NULL
-> > > > > pointer dereference crash.
-> > > > >=20
-> > > > > Fix this by checking folio before using it or calling
-> > > > > folio_end_dropbehind().
-> > > > >=20
-> > > > > Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
-> > > > > ---
-> > > > > =C2=A0=C2=A0 fs/nfs/write.c | 11 ++++++-----
-> > > > > =C2=A0=C2=A0 1 file changed, 6 insertions(+), 5 deletions(-)
-> > > > >=20
-> > > > > diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-> > > > > index 0fb6905736d5..e148308c1923 100644
-> > > > > --- a/fs/nfs/write.c
-> > > > > +++ b/fs/nfs/write.c
-> > > > > @@ -739,17 +739,18 @@ static void
-> > > > > nfs_inode_remove_request(struct
-> > > > > nfs_page *req)
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nfs_page_g=
-roup_lock(req);
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (nfs_pa=
-ge_group_sync_on_bit_locked(req,
-> > > > > PG_REMOVE)) {
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct folio *folio =3D
-> > > > > nfs_page_to_folio(req-
-> > > > > > wb_head);
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 struct address_space *mapping =3D folio-
-> > > > > >mapping;
-> > > > >=20
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 spin_lock(&mapping->i_private_lock);
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (likely(folio)) {
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struc=
-t address_space *mapping =3D
-> > > > > folio-
-> > > > > > mapping;
-> > > > > +
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_=
-lock(&mapping->i_private_lock);
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 folio->private =3D NULL;
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 folio_clear_private(folio);
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 clear_bit(PG_MAPPED, &req->wb_head-
-> > > > > > wb_flags);
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 }
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&mapping->i_private_lock);
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_=
-unlock(&mapping-
-> > > > > >i_private_lock);
-> > > > >=20
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 folio_end_dropbehind(folio);
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 folio=
-_end_dropbehind(folio);
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 }
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nfs_page_g=
-roup_unlock(req);
-> > > > >=20
-> > > > > --
-> > > > > 2.39.2
-> > > > >=20
-> > > >=20
-> > > > What reason is there to believe that we can ever call
-> > > > nfs_inode_remove_request() with a NULL value for req->wb_head-
-> > > > > wb_folio, or even with a NULL value for req->wb_head-
-> > > > > >wb_folio-
-> > > > > mapping?
-> > > >=20
-> > > >=20
-> > >=20
-> >=20
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 14 --------------
+>   1 file changed, 14 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 326db9b9c567..4c3014befe9f 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -3181,20 +3181,6 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+>   	if (ret < 0)
+>   		goto out;
+>   
+> -	/*
+> -	 * The private mem cannot be zapped after kvm_tdp_map_page()
+> -	 * because all paths are covered by slots_lock and the
+> -	 * filemap invalidate lock.  Check that they are indeed enough.
+> -	 */
+> -	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
+> -		scoped_guard(read_lock, &kvm->mmu_lock) {
+> -			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, gpa), kvm)) {
+> -				ret = -EIO;
+> -				goto out;
+> -			}
+> -		}
+> -	}
+> -
+>   	ret = 0;
+>   	err = tdh_mem_page_add(&kvm_tdx->td, gpa, pfn_to_page(pfn),
+>   			       src_page, &entry, &level_state);
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
 
