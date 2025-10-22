@@ -1,90 +1,118 @@
-Return-Path: <linux-kernel+bounces-865861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E322BFE313
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C122BFE317
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB4919A49F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EAC219A4572
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02F12FCBF0;
-	Wed, 22 Oct 2025 20:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EAE2FC006;
+	Wed, 22 Oct 2025 20:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UpJbNPMN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPPDAOuU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2043F2FBDFB;
-	Wed, 22 Oct 2025 20:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C99D2FC014;
+	Wed, 22 Oct 2025 20:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761165575; cv=none; b=JJAukJd+fZYYmOZFhIETK5pJEycFgpqKU32bJCHSHzMLsOs6KTr1gUMEN+0t84EEtEK4HpJtarZibbgZyTgErKfoT8nG3hLNe+/cKfsCDZ1bMtDbO2rj+Ya1KJoBcBX0tML6RHD18dUdl/bVafqJrnv/GHB6j8IBxTajPxX029o=
+	t=1761165600; cv=none; b=SyHBnTFTe57IILxV4qd9yZ+Dz2fELRS5HemzWQddHu9/2xDqp2igc8cBgQ16y8kReBLkUkN35y0MHFVrzdjcG7U8h5ankDn3o6R7oQwuTzr9tYQ3ezPJSGfYGd5HoyJj9Oqa1rq5QxN9GYsEOJU5D/my8WaSuhBEGmcPydBcfIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761165575; c=relaxed/simple;
-	bh=Mv96Ed+x0MGsCybuHkpz+hgXUvhyD19vRt09uvNP3kE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=A8nfi155Pyw7aEz3FjXV+i5LMptpnUlkxSv0w2dhd1lfLy4NdbrtOUBLBiIMEzZgPGtq8l18VM+8H7Nl9zwLCiquBc5trRpOQQKQAg3bS7bxUanZ+tBR772nRqcZJ+HJl+FdvSmEF1Mp1L/tTlsdoLv7caXmkbe479dpH28plVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UpJbNPMN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 877CEC4CEE7;
-	Wed, 22 Oct 2025 20:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761165574;
-	bh=Mv96Ed+x0MGsCybuHkpz+hgXUvhyD19vRt09uvNP3kE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UpJbNPMNCZxnQgBXufWkrUDNWXaRkU2uoX4SsZyzBaIruBWzGMHftF6ISsvsJSlaY
-	 tQOMu7i3QJDXR0tYconjL8RMNZP/aXpj4p6xIKob1pGpGM/OU8o21ClRsHQAfx4pJo
-	 6Ai80zzqEZ3McBKxRvniDh2jBFGV7SHpN1Xfd7a8=
-Date: Wed, 22 Oct 2025 13:39:32 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org, Steven Rostedt
- <rostedt@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, Kees
- Cook <kees@kernel.org>, "Carlos O'Donell" <codonell@redhat.com>, Sam James
- <sam@gentoo.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Suren
- Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v11 00/15] unwind_deferred: Implement sframe handling
-Message-Id: <20251022133932.5e8b419d3525da07453b137d@linux-foundation.org>
-In-Reply-To: <20251022144326.4082059-1-jremus@linux.ibm.com>
-References: <20251022144326.4082059-1-jremus@linux.ibm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761165600; c=relaxed/simple;
+	bh=AevBZfXR7mA8ZnH9HWgorzVav2B7P6NBElfvYO+vjlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdVxeIk2TSs/H7MZhRgN81s7lbJMYFugGVbW4ZcqQShDXj1B/CGjfnGrztoWPj3x64mD0CsJtARXvw8CFTYaR7b3Jk1XAaXKLWG4EvYmNVsGQaPkI/C+0tP0LTQXrXEoxmNtMwimCgMvxCx1V1j6iMljZSfuTdGz/sILtNNLgAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPPDAOuU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5087BC4CEE7;
+	Wed, 22 Oct 2025 20:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761165599;
+	bh=AevBZfXR7mA8ZnH9HWgorzVav2B7P6NBElfvYO+vjlY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rPPDAOuUvFY0jCYru+MHrPI93MylUWaXw777ymJyl9vpVwt8WWpsQQWwhEFbgxQLY
+	 upYRPmL7ID+lSpFamhWUBQJqLzQiDC1PLx+ilTtE/hh9MqjTSwuCienC9/exfo0Rsv
+	 Ose7y9fR3PVBQy2y59EI7QG4UkcyZy7h94SGxT/ATSdk9+XX5cfLwUzfRhWiUn49EZ
+	 vfaN8w1SWkMmtAXdoOLlwWP/GxgDOxVvkTqWJuDMMo9jrgQozPh0+Jpus0wo3OzGSp
+	 AqhbxRUblMlvpajd1dT6OKda2dFEM1/zxm4VVYb5GiTbsyEmQo+hEfpgv5U5zgxz8/
+	 icHcCiGr45FFw==
+Date: Wed, 22 Oct 2025 22:39:55 +0200
+From: Nathan Chancellor <nathan@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] modpost: drop '*_probe' from section check whitelist
+Message-ID: <20251022203955.GA3256590@ax162>
+References: <20251020091613.22562-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020091613.22562-1-johan@kernel.org>
 
-On Wed, 22 Oct 2025 16:43:11 +0200 Jens Remus <jremus@linux.ibm.com> wrote:
+On Mon, Oct 20, 2025 at 11:16:13AM +0200, Johan Hovold wrote:
+> Several symbol patterns used to be whitelisted to allow drivers to refer
+> to functions annotated with __devinit and __devexit, which have since
+> been removed.
+> 
+> Commit e1dc1bfe5b27 ("modpost: remove more symbol patterns from the
+> section check whitelist") removed most of these patterns but left
+> '*_probe' after a reported warning in an irqchip driver.
+> 
+> Turns out that was indeed an incorrect reference which has now been
+> fixed by commit 9b685058ca93 ("irqchip/qcom-irq-combiner: Fix section
+> mismatch").
+> 
+> A recently added clocksource driver also relies on this suffix to
+> suppress another valid warning, and that is being fixed separately. [1]
+> 
+> Note that drivers with valid reasons for suppressing the warnings can
+> use the __ref macros.
+> 
+> Link: https://lore.kernel.org/lkml/20251017054943.7195-1-johan@kernel.org/ [1]
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+> 
+> As mentioned above there are still two drivers relying on the "_probe"
+> pattern to suppress valid warnings so perhaps it's best to hold off on
+> merging this until the corresponding fixes are in mainline (e.g. next
+> cycle or so unless Thomas can fast-track them).
 
-> This is the implementation of parsing the SFrame section in an ELF file.
+Yeah, if it were fast tracked as a fix for 6.18, we could either use
+that tag as the base for kbuild-next (as we have not take any patches
+for 6.19 yet) or if they are 6.19 material, Thomas could provide us with
+a signed tag or stable shared branch so that we could take this for 6.19
+and have a clean tree. Whatever works.
 
-Presently x86_64-only, it seems.  Can we expect to see this implemented
-for other architectures?
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Would a selftest for this be appropriate?  To give testers some way of
-exercising the code and make to life better for people who are enabling
-this on other architectures.
-
-In what tree do you anticipate this project being carried?
-
-
+>  scripts/mod/modpost.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 47c8aa2a6939..5c499dace0bb 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -953,7 +953,7 @@ static int secref_whitelist(const char *fromsec, const char *fromsym,
+>  	/* symbols in data sections that may refer to any init/exit sections */
+>  	if (match(fromsec, PATTERNS(DATA_SECTIONS)) &&
+>  	    match(tosec, PATTERNS(ALL_INIT_SECTIONS, ALL_EXIT_SECTIONS)) &&
+> -	    match(fromsym, PATTERNS("*_ops", "*_probe", "*_console")))
+> +	    match(fromsym, PATTERNS("*_ops", "*_console")))
+>  		return 0;
+>  
+>  	/* Check for pattern 3 */
+> -- 
+> 2.49.1
+> 
 
