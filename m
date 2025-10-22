@@ -1,187 +1,151 @@
-Return-Path: <linux-kernel+bounces-864695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70788BFB5DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:17:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D228DBFB5CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51270422BC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:17:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 154963ADA71
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCAF31D377;
-	Wed, 22 Oct 2025 10:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F6D31A042;
+	Wed, 22 Oct 2025 10:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EN2BwmZ8"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoLwvyZI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEA83112B4
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43854DF59;
+	Wed, 22 Oct 2025 10:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128224; cv=none; b=knxsjMuI28xra4TvuEKpcpjgsWisqdY2IsoOcXpcVgFnDYiXpMkiCLLgGZP58tzl2IKq6IIRW2K0nI2DNj1XcCRF96pezJ8FWHzF0e7fBr3oqcJA9WddoA+qbu39LbjqxPCzwsPkISJFSELCHQfkX/gWcVcnaXSnjYIHYdMun7w=
+	t=1761128217; cv=none; b=V/PoMmcq6kV97kmFGK0YXW3w10BUWmXxykJXFvj3zcnRioEU5KJiQ2PQFGWfch+/zOMN7rft8KHtVgbGZ0pBFKxxTqGQMyrUmVTxBtCJtrYExbFLHIOUPWqhOjQwRnYkgs2TbeH3SyvZhICsaoW1Qokjhjcd517SI5R2TJRHqEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128224; c=relaxed/simple;
-	bh=MOfnKJSokBhEykhaIEQ9e0dlA9aH+M2wOpsTtdzrEBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bVTnqfCz6nkUqngeM3QfIiXDU6P8TaYQRIGXBUXGOa1Z6hakc08crCMl+dm8vXj941hX8c1M8Sa8RpHQAf26ajul0yRSJ0wcLTByoHIZ6aam0dYuK8tNOSPsCdvSArAzOWyhGE3Vg/gNbrHrbrgzo9f1qedKn0+NFvF8h2XZoto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EN2BwmZ8; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so6161324b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761128221; x=1761733021; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=haEcx+owQUrAtI+Twa4lANyM7LrcsC0gpzpLCA3x0ZA=;
-        b=EN2BwmZ8hwQNOx5QcH2aMlfGe4VjO4VYjcwotMA65k1bXwCyeZPKygWuHnCJzNQ7RH
-         hH2oDFQd1v23PZcQvZvDZtP0XGdGYy0jkX1Rny07Y80qMgf2FHSI9apv50gYfzBmpjha
-         8w5/Wh0G7CiE4Opdj38dDBDXii34Hp5+OARPs72pbA4hisHDWacJjHuEcCyMzAfBJEkn
-         sDaglxxX4BerD+rBPQZSjqxOm9EbPb0ALt/7gX1SgEFN+BRltA3muswQwxwmyvOFV4JF
-         CzPGTuJiqEclIZ555o/yzFCox3hGTQsC9UTbTMgeHh/RVi4KvhskvfVodIb2i4peZeE5
-         30mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761128221; x=1761733021;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=haEcx+owQUrAtI+Twa4lANyM7LrcsC0gpzpLCA3x0ZA=;
-        b=XyAexoHNCfxjXEl9KlK4sKVWId9ZEnTsD6OOoW0wPoR3tFosRhCB4KuXhMvnCjp6Km
-         bFUsan8SNQI7vrSaOzkh2og36lhpXDMyQCFfLlg7B+AZ4iOW5nBZnHBFeYCc8kWN1Waa
-         aGQMaI7m6mcyzA1coT1noK/MzvuBGiryt1/rehGY5qrIyOET6vIQLbnRfYAErmWPVi0D
-         jHEXRGLQ8ee14DVlwsi9YFhDyDXJKkLWzcOKyf3rLLF0Pbm6EkbuIgsXkxpegOEouJtF
-         RYJRBrg4eOCV3IhBHBCxPMphRvlLspJmXMzOjMowkOqOHiNTygGs3WblNLWbNfmCThdw
-         F9zw==
-X-Gm-Message-State: AOJu0YyiWVxU8dFQS3fIOj16hAw0DoKEzq9ELYvzpjuHzoljDFx5kmpe
-	ybIG7y/8W8f/QtS6Ujyo65rMY8GuUPhptJYxkxIoqiRtZLK0+iAlUwlIi+JwOrZIgWhRjERFTS/
-	7aMLKO/yQ4xayrM55PVafqVdMCQN3bARJDGYh
-X-Gm-Gg: ASbGncs3HripC3hwgVdX1F8exD8gJid0g+P3wcMiLoRHbWw/R5u0O+fl0PajPTNnreo
-	U1vnGIpnj9aTK+VdC22UZwEXV3jMg0Ug/dZjANASPUCNIfXcHKs5ltYuarEwCBdi+mF7nliJJ3g
-	jesuC9BCgXXykDUr59OEPPmP4QYvwjuc8DRQA4Eg+J2onmmrLoeJAwD1rrYha7d4doMmzGSgi1k
-	z88xNUZjR4vpnjYSCwiR2UYmNcj5OpgXof1641egAs4+mUx6uRnl7Gpedawcw==
-X-Google-Smtp-Source: AGHT+IFJTEE/HiXWIG5TrFeKs4d/L4HVAF/6dXh5N41lm9MqW0h0eE/vtqgH9ezqqCt3yptuBI/ANyhTR2qjHPJdc28=
-X-Received: by 2002:a17:903:3806:b0:24c:bc02:788b with SMTP id
- d9443c01a7336-290cb27d765mr263955945ad.44.1761128221090; Wed, 22 Oct 2025
- 03:17:01 -0700 (PDT)
+	s=arc-20240116; t=1761128217; c=relaxed/simple;
+	bh=ASljoI6RlOZFKah3hE5ZjjsizLnskFRWTFPUgS3RSs8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tUsYkGhhfNQBzU7T8ea17IBX7XFAFrn8R7O12FJz8jMUbyeUSzBw11UNjmN7jpK6zr3YQEn5c1cT4S5uHNaA/l2i8r83UiNUN/X1UqtmSds7HDfLVNmfmJND5RKSpTXy3m/RXI67Y1euWQPZgk4/9kCdvicN3+CwbeoD1ghDwDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoLwvyZI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47579C4CEE7;
+	Wed, 22 Oct 2025 10:16:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761128216;
+	bh=ASljoI6RlOZFKah3hE5ZjjsizLnskFRWTFPUgS3RSs8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ZoLwvyZIR3wkGWsSSJ01nMy3gKSQBaekRNoa1WnK450nvy1u9zM1K8PGdmwrgk+JI
+	 LyBCdTigR+N0A4dJFNfWwsvQKZakO4ltLsP6r2uOFzlaKV3VTOnsimfmgViqgNY+Z3
+	 cuX6a96V8HnPksNz84QeVJ5SdezQQWc8oM1VpX8ffXtXzVWmw/o8ATzAkOD+7Au354
+	 P6tXjQnsj1zkApt3CBmPBMNWLJ/6vZnjtwqN9sittQ64Xu2p0DfXKq5S53+fZVaME+
+	 QNwO9yLDgbB12MXZ+++weokDtMAGHmjPoSDX3W3USXPxT85cP85M0a5Nt/1YVUBJWc
+	 O2lI5ZvoEyIlw==
+Message-ID: <f2b76db28f459720ccbb7fb584e530b31485de3f.camel@kernel.org>
+Subject: Re: Where can I find nfs-utils?
+From: Jeff Layton <jlayton@kernel.org>
+To: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>, 
+	chuck.lever@oracle.com, trondmy@kernel.org, anna@kernel.org
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 22 Oct 2025 06:16:55 -0400
+In-Reply-To: <39c67bcd-5369-44e7-9c7e-e9702ff95d53@linux.dev>
+References: <39c67bcd-5369-44e7-9c7e-e9702ff95d53@linux.dev>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009233837.10283-1-mohamedahmedegypt2001@gmail.com> <20251009233837.10283-3-mohamedahmedegypt2001@gmail.com>
-In-Reply-To: <20251009233837.10283-3-mohamedahmedegypt2001@gmail.com>
-From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Date: Wed, 22 Oct 2025 13:16:47 +0300
-X-Gm-Features: AS18NWBQRfdO1-l7UglbvLD1hS6ztsSHvm9zOj3-1-7RwG9-CwiA8rLqNmZ653w
-Message-ID: <CAA+WOBvVasy2wRP_wmP-R6Q8y5B4sN08jNYfHuDVjiWXV+m23Q@mail.gmail.com>
-Subject: Re: [PATCH 2/5] drm/nouveau/uvmm: Allow larger pages
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Mary Guillemard <mary@mary.zone>, 
-	Faith Ekstrand <faith.ekstrand@collabora.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, 2025-10-22 at 15:51 +0800, ChenXiaoSong wrote:
+> Greetings,
+>=20
+> Previously, the nfs-utils repository could be found at=20
+> https://web.git.kernel.org/ , but it can no longer be found there. Where=
+=20
+> can I find the nfs-utils repository now?
 
-Pinging again re: review and also was asking if we can revert the
-select_page_shift() handling back to v1 behavior with a fall-back
-path, as it looks like there are some cases where
-nouveau_bo_fixup_align() isn't enough;
-https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36450#note_315919=
-9.
+The canonical repo is here:
 
-Thanks!
+http://git.linux-nfs.org/?p=3Dsteved/nfs-utils.git
 
-On Fri, Oct 10, 2025 at 2:39=E2=80=AFAM Mohamed Ahmed
-<mohamedahmedegypt2001@gmail.com> wrote:
->
-> From: Mary Guillemard <mary@mary.zone>
->
-> Now that everything in UVMM knows about the variable page shift, we can
-> select larger values.
->
-> The proposed approach relies on nouveau_bo::page unless if it would cause
-> alignment issues (in which case we fall back to searching for an
-> appropriate shift)
->
-> Signed-off-by: Mary Guillemard <mary@mary.zone>
-> Co-developed-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-> Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-> ---
->  drivers/gpu/drm/nouveau/nouveau_uvmm.c | 29 ++++++++++++++++++++++++--
->  1 file changed, 27 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nou=
-veau/nouveau_uvmm.c
-> index 2cd0835b05e8..26edc60a530b 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> @@ -454,6 +454,31 @@ op_unmap_prepare_unwind(struct drm_gpuva *va)
->         drm_gpuva_insert(va->vm, va);
->  }
->
-> +static bool
-> +op_map_aligned_to_page_shift(const struct drm_gpuva_op_map *op, u8 page_=
-shift)
-> +{
-> +       u64 page_size =3D 1ULL << page_shift;
-> +
-> +       return op->va.addr % page_size =3D=3D 0 && op->va.range % page_si=
-ze =3D=3D 0 &&
-> +                  op->gem.offset % page_size =3D=3D 0;
-> +}
-> +
-> +static u8
-> +select_page_shift(struct nouveau_uvmm *uvmm, struct drm_gpuva_op_map *op=
-)
-> +{
-> +       struct nouveau_bo *nvbo =3D nouveau_gem_object(op->gem.obj);
-> +
-> +       /* nouveau_bo_fixup_align() guarantees for us that the page size =
-will be aligned
-> +        * but just in case, make sure that it is aligned.
-> +        */
-> +       if (op_map_aligned_to_page_shift(op, nvbo->page))
-> +               return nvbo->page;
-> +
-> +       /* This should never happen, but raise a warning and return 4K if=
- we get here. */
-> +       WARN_ON(1);
-> +       return PAGE_SHIFT;
-> +}
-> +
->  static void
->  nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *uvmm,
->                                struct nouveau_uvma_prealloc *new,
-> @@ -506,7 +531,7 @@ nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *u=
-vmm,
->                         if (vmm_get_range)
->                                 nouveau_uvmm_vmm_put(uvmm, vmm_get_start,
->                                                      vmm_get_range,
-> -                                                    PAGE_SHIFT);
-> +                                                    select_page_shift(uv=
-mm, &op->map));
->                         break;
->                 }
->                 case DRM_GPUVA_OP_REMAP: {
-> @@ -599,7 +624,7 @@ op_map_prepare(struct nouveau_uvmm *uvmm,
->
->         uvma->region =3D args->region;
->         uvma->kind =3D args->kind;
-> -       uvma->page_shift =3D PAGE_SHIFT;
-> +       uvma->page_shift =3D select_page_shift(uvmm, op);
->
->         drm_gpuva_map(&uvmm->base, &uvma->va, op);
->
-> --
-> 2.51.0
->
+Cheers,
+--=20
+Jeff Layton <jlayton@kernel.org>
 
