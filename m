@@ -1,165 +1,360 @@
-Return-Path: <linux-kernel+bounces-864255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC73BFA4D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C0CBFA4CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D220C400A3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:47:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A01344002A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC222F2619;
-	Wed, 22 Oct 2025 06:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93182F25FA;
+	Wed, 22 Oct 2025 06:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ritesh.sarraf@collabora.com header.b="XMgxKuCN"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ydOkPqfF"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527EB2F066D;
-	Wed, 22 Oct 2025 06:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761115636; cv=pass; b=cpbnoE8TML8ajcCQUQXTPQccvMZTWr8QAope1apIDb9Is86zxI5N2X8Z9sl7lqwkJBaYxGrC/ZnetiMzb04KQKc9zN5heFSWaKzSh/BsL+nsK9i2uXHAatNOi+IayYUlwKB/hZ2AYLuM905t2HjbYU/oGICGiJnLeF/9rmvpslo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761115636; c=relaxed/simple;
-	bh=iXPWz2QjbUvP+ZhaYmRd2U0MHIe5TJkZINXJqdyQAoQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QFaHSqXaEpNf4ecQD6auOqVYrYHOGU/U+lCrHxcO8CVP5HnOfQV5X22qoXjc7ptkHweyx0AbdjrLjQeIK4zv5lKckCKSq6PrljRHqUm9ktV3zE3JGTQ4JThITNiwPVM/izx0EgWhAh9ojKhptTRfylBuCzw6tl4n5aQHNDhN3Gg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ritesh.sarraf@collabora.com header.b=XMgxKuCN; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761115602; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OY5eI8FiK89nDoLUMlm4zXMg31ZKUmKDZiHJGJrnqMK4av+BnVW5ryByC0OZeGNwcLT/q3wGkqH4brRpHHkiUd1m/9vCGNaK1gPQzW6fLszqOJSsfUiOwBjspbzJi4fGeqMs7337WkdfXkH8qY2M9lR09AOGLo/gzikr6G39V1k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761115602; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:Reply-To:References:Subject:Subject:To:To:Message-Id; 
-	bh=iXPWz2QjbUvP+ZhaYmRd2U0MHIe5TJkZINXJqdyQAoQ=; 
-	b=ZwBIeZ/0duREMR6pV2Ya4Hk42PMKU22Te2lz4U8Dkp2Jb6/ZllboY4q9e7T4+unjV9XVWnH99F6/PegY0xkGqixcyQuzYqIB9CkgEIRLw3JsUHI03WqbkNQCgLab4ksk1z90pHnVRsKdV1af3Z8+lCwANG/hrY/skxRgoKzPQkk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ritesh.sarraf@collabora.com;
-	dmarc=pass header.from=<ritesh.sarraf@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761115602;
-	s=zohomail; d=collabora.com; i=ritesh.sarraf@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:Reply-To:Reply-To:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id;
-	bh=iXPWz2QjbUvP+ZhaYmRd2U0MHIe5TJkZINXJqdyQAoQ=;
-	b=XMgxKuCNC+tlU1KEKBYTot2jTmw67numFN2dMUMA8zxwGaOiIT+zlDBXNRgiWik8
-	7X2c+hpSRrorksDoysHO2IgMfs5xuqFHvWngH6QJuAAJsmwahAXFK+51rF6ArJf9UYu
-	NQ6KizUydHvMClaXRyMJ4LovL71pahDhcIdZBScY=
-Received: by mx.zohomail.com with SMTPS id 176111559636163.48776361928731;
-	Tue, 21 Oct 2025 23:46:36 -0700 (PDT)
-Message-ID: <4240cc29adb6707005cba18c956a70ab414edc07.camel@collabora.com>
-Subject: Re: [PATCH] drm/mediatek: fix device use-after-free on unbind
-From: Ritesh Raj Sarraf <ritesh.sarraf@collabora.com>
-Reply-To: ritesh.sarraf@collabora.com
-To: Johan Hovold <johan@kernel.org>, Chun-Kuang Hu
- <chunkuang.hu@kernel.org>,  Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  CK Hu <ck.hu@mediatek.com>, Ma
- Ke <make24@iscas.ac.cn>, Sjoerd Simons <sjoerd@collabora.com>, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date: Wed, 22 Oct 2025 12:16:21 +0530
-In-Reply-To: <20251006093937.27869-1-johan@kernel.org>
-References: <20251006093937.27869-1-johan@kernel.org>
-Autocrypt: addr=ritesh.sarraf@collabora.com; prefer-encrypt=mutual;
- keydata=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
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-5 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925232DAFB9;
+	Wed, 22 Oct 2025 06:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761115634; cv=none; b=s5HO+9j/McU5K7ZHePk399vfiQR8jPH4zBNbCs56OglG7Gaf5LYyDe5+K/ZYn+MU/ZHSRSl+wJePLFvhYTZsiBtps3bO52HAkCjO8x/NDx5HnUdbJCdq6DGgLET7K+E8nIloLtDpDCuKNCYY6LOCurr8qJCbBcWCHEWQmbOgvKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761115634; c=relaxed/simple;
+	bh=G7dayAQv5ZRa6jMwnD0jvsb+pjUyevU3TM3k7L1mdHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYg93R4kaW7LC/wLH79gDJYC1KHmBcZ145ZTbkZQ8KXWoUloVJ2Syj9arl8+vfJJe+3+pL6cCNxPHOBq4eaecObefxWMF5+SSCrykyj76yjaENknN5bIXDnnGaFrkVDwValDQU7ulwHEFp4PjLe7fhEYynwmpvCq4w3f8Yfm5a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ydOkPqfF; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yps/DoJ74xCH7LKaUk7bfRUU8Jdecw5+xxO3zciKsXg=; b=ydOkPqfFQJfLbk7/4eJ1nENLB/
+	7ico0BBBJlHdZytu4u2JI53ikj+afFUK6Esvzk3movFUM6Eo452gx3KDnRbg5jdNb9VNfLI4eb9oU
+	OSh2rbJxhv+/xwwrooRiabHli0lVrBPD58cR6V0dp2X0FtcU9qnl5/xBmLi+Bzv6jamky3YuiR6Ht
+	7Nipb9xy14H4yKZqlgkSYa7VbHExeD+aA85T+YzxoN1ywS7/kRZpvJme/gYPmNlKtZ5RD76rRITAX
+	jL52eu8xA9ARiwVmNnLAaHO+RC9WzAz85vk3qSkn2C0SG38Dtw+ZFk9T6XObMYyq/GOiSt0VIGdJM
+	X4jaQx4g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBSck-00000001iFh-3FyY;
+	Wed, 22 Oct 2025 06:47:06 +0000
+Date: Tue, 21 Oct 2025 23:47:06 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	maple-tree@lists.infradead.org, Alexei Starovoitov <ast@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+	Qianfeng Rong <rongqianfeng@vivo.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	WangYuli <wangyuli@uniontech.com>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>
+Subject: Re: [PATCH v8 00/23] SLUB percpu sheaves
+Message-ID: <aPh96jn2NcqXY4IC@infradead.org>
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+ <aOS0Z5N4HaBNeb_J@infradead.org>
+ <c750ab62-a3d4-422e-ac5b-c531dfcc749d@suse.cz>
+ <aOX-87tPdtuPb9Uh@infradead.org>
+ <c0eb4acf-47ff-4e39-8d32-4e5f3857a851@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0eb4acf-47ff-4e39-8d32-4e5f3857a851@suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, 2025-10-06 at 11:39 +0200, Johan Hovold wrote:
-> A recent change fixed device reference leaks when looking up drm
-> platform device driver data during bind() but failed to remove a
-> partial
-> fix which had been added by commit 80805b62ea5b ("drm/mediatek: Fix
-> kobject put for component sub-drivers").
->=20
-> This results in a reference imbalance on component bind() failures
-> and
-> on unbind() which could lead to a user-after-free.
->=20
-> Make sure to only drop the references after retrieving the driver
-> data
-> by effectively reverting the previous partial fix.
->=20
-> Note that holding a reference to a device does not prevent its driver
-> data from going away so there is no point in keeping the reference.
->=20
+On Wed, Oct 15, 2025 at 10:32:44AM +0200, Vlastimil Babka wrote:
+> Yeah, not a replacement for mempools which have their special semantics.
+> 
+> > to implement a mempool_alloc_batch to allow grabbing multiple objects
+> > out of a mempool safely for something I'm working on.
+> 
+> I can imagine allocating multiple objects can be difficult to achieve with
+> the mempool's guaranteed progress semantics. Maybe the mempool could serve
+> prefilled sheaves?
 
-We ran into the same issue in mesaci[1] and have test validated this
-proposed fix. It was tested with Linux 6.17.3 + this fix.
+It doesn't look too bad, but I'd be happy for even better versions.
 
-[1] https://gitlab.freedesktop.org/RickXy/mesa/-/jobs/86389548
+This is wht I have:
 
+---
+From 9d25a3ce6cff11b7853381921c53a51e51f27689 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Mon, 8 Sep 2025 18:22:12 +0200
+Subject: mempool: add mempool_{alloc,free}_bulk
 
-Tested-by: Ritesh Raj Sarraf <ritesh.sarraf@collabora.com>
+Add a version of the mempool allocator that works for batch allocations
+of multiple objects.  Calling mempool_alloc in a loop is not safe
+because it could deadlock if multiple threads are attemping such an
+allocation at the same time.
 
-> Fixes: 1f403699c40f ("drm/mediatek: Fix device/node reference count
-> leaks in mtk_drm_get_all_drm_priv")
-> Reported-by: Sjoerd Simons <sjoerd@collabora.com>
-> Link:
-> https://lore.kernel.org/r/20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@col=
-labora.com
-> Cc: stable@vger.kernel.org
-> Cc: Ma Ke <make24@iscas.ac.cn>
-> Cc: AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+As an extra benefit the interface is build so that the same array
+can be used for alloc_pages_bulk / release_pages so that at least
+for page backed mempools the fast path can use a nice batch optimization.
 
---=20
-Ritesh Raj Sarraf
-Collabora
+Still WIP, this needs proper documentation, and mempool also seems to
+miss error injection to actually easily test the pool code.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ include/linux/mempool.h |   6 ++
+ mm/mempool.c            | 131 ++++++++++++++++++++++++----------------
+ 2 files changed, 86 insertions(+), 51 deletions(-)
+
+diff --git a/include/linux/mempool.h b/include/linux/mempool.h
+index 34941a4b9026..59f14e94596f 100644
+--- a/include/linux/mempool.h
++++ b/include/linux/mempool.h
+@@ -66,9 +66,15 @@ extern void mempool_destroy(mempool_t *pool);
+ extern void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask) __malloc;
+ #define mempool_alloc(...)						\
+ 	alloc_hooks(mempool_alloc_noprof(__VA_ARGS__))
++int mempool_alloc_bulk_noprof(mempool_t *pool, void **elem,
++		unsigned int count, gfp_t gfp_mask);
++#define mempool_alloc_bulk(...)						\
++	alloc_hooks(mempool_alloc_bulk_noprof(__VA_ARGS__))
+ 
+ extern void *mempool_alloc_preallocated(mempool_t *pool) __malloc;
+ extern void mempool_free(void *element, mempool_t *pool);
++unsigned int mempool_free_bulk(mempool_t *pool, void **elem,
++		unsigned int count);
+ 
+ /*
+  * A mempool_alloc_t and mempool_free_t that get the memory from
+diff --git a/mm/mempool.c b/mm/mempool.c
+index 1c38e873e546..d8884aef2666 100644
+--- a/mm/mempool.c
++++ b/mm/mempool.c
+@@ -371,26 +371,13 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
+ }
+ EXPORT_SYMBOL(mempool_resize);
+ 
+-/**
+- * mempool_alloc - allocate an element from a specific memory pool
+- * @pool:      pointer to the memory pool which was allocated via
+- *             mempool_create().
+- * @gfp_mask:  the usual allocation bitmask.
+- *
+- * this function only sleeps if the alloc_fn() function sleeps or
+- * returns NULL. Note that due to preallocation, this function
+- * *never* fails when called from process contexts. (it might
+- * fail if called from an IRQ context.)
+- * Note: using __GFP_ZERO is not supported.
+- *
+- * Return: pointer to the allocated element or %NULL on error.
+- */
+-void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
++int mempool_alloc_bulk_noprof(mempool_t *pool, void **elem,
++		unsigned int count, gfp_t gfp_mask)
+ {
+-	void *element;
+ 	unsigned long flags;
+ 	wait_queue_entry_t wait;
+ 	gfp_t gfp_temp;
++	unsigned int i;
+ 
+ 	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
+ 	might_alloc(gfp_mask);
+@@ -401,15 +388,24 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+ 
+ 	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
+ 
++	i = 0;
+ repeat_alloc:
++	for (; i < count; i++) {
++		if (!elem[i])
++			elem[i] = pool->alloc(gfp_temp, pool->pool_data);
++		if (unlikely(!elem[i]))
++			goto use_pool;
++	}
+ 
+-	element = pool->alloc(gfp_temp, pool->pool_data);
+-	if (likely(element != NULL))
+-		return element;
++	return 0;
+ 
++use_pool:
+ 	spin_lock_irqsave(&pool->lock, flags);
+-	if (likely(pool->curr_nr)) {
+-		element = remove_element(pool);
++	if (likely(pool->curr_nr >= count - i)) {
++		for (; i < count; i++) {
++			if (!elem[i])
++				elem[i] = remove_element(pool);
++		}
+ 		spin_unlock_irqrestore(&pool->lock, flags);
+ 		/* paired with rmb in mempool_free(), read comment there */
+ 		smp_wmb();
+@@ -417,8 +413,9 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+ 		 * Update the allocation stack trace as this is more useful
+ 		 * for debugging.
+ 		 */
+-		kmemleak_update_trace(element);
+-		return element;
++		for (i = 0; i < count; i++)
++			kmemleak_update_trace(elem[i]);
++		return 0;
+ 	}
+ 
+ 	/*
+@@ -434,10 +431,12 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+ 	/* We must not sleep if !__GFP_DIRECT_RECLAIM */
+ 	if (!(gfp_mask & __GFP_DIRECT_RECLAIM)) {
+ 		spin_unlock_irqrestore(&pool->lock, flags);
+-		return NULL;
++		if (i > 0)
++			mempool_free_bulk(pool, elem + i, count - i);
++		return -ENOMEM;
+ 	}
+ 
+-	/* Let's wait for someone else to return an element to @pool */
++	/* Let's wait for someone else to return elements to @pool */
+ 	init_wait(&wait);
+ 	prepare_to_wait(&pool->wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+@@ -452,6 +451,30 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+ 	finish_wait(&pool->wait, &wait);
+ 	goto repeat_alloc;
+ }
++EXPORT_SYMBOL_GPL(mempool_alloc_bulk_noprof);
++
++/**
++ * mempool_alloc - allocate an element from a specific memory pool
++ * @pool:      pointer to the memory pool which was allocated via
++ *             mempool_create().
++ * @gfp_mask:  the usual allocation bitmask.
++ *
++ * this function only sleeps if the alloc_fn() function sleeps or
++ * returns NULL. Note that due to preallocation, this function
++ * *never* fails when called from process contexts. (it might
++ * fail if called from an IRQ context.)
++ * Note: using __GFP_ZERO is not supported.
++ *
++ * Return: pointer to the allocated element or %NULL on error.
++ */
++void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
++{
++	void *elem[1] = { };
++
++	if (mempool_alloc_bulk_noprof(pool, elem, 1, gfp_mask) < 0)
++		return NULL;
++	return elem[0];
++}
+ EXPORT_SYMBOL(mempool_alloc_noprof);
+ 
+ /**
+@@ -491,20 +514,11 @@ void *mempool_alloc_preallocated(mempool_t *pool)
+ }
+ EXPORT_SYMBOL(mempool_alloc_preallocated);
+ 
+-/**
+- * mempool_free - return an element to the pool.
+- * @element:   pool element pointer.
+- * @pool:      pointer to the memory pool which was allocated via
+- *             mempool_create().
+- *
+- * this function only sleeps if the free_fn() function sleeps.
+- */
+-void mempool_free(void *element, mempool_t *pool)
++unsigned int mempool_free_bulk(mempool_t *pool, void **elem, unsigned int count)
+ {
+ 	unsigned long flags;
+-
+-	if (unlikely(element == NULL))
+-		return;
++	bool added = false;
++	unsigned int freed = 0;
+ 
+ 	/*
+ 	 * Paired with the wmb in mempool_alloc().  The preceding read is
+@@ -541,15 +555,11 @@ void mempool_free(void *element, mempool_t *pool)
+ 	 */
+ 	if (unlikely(READ_ONCE(pool->curr_nr) < pool->min_nr)) {
+ 		spin_lock_irqsave(&pool->lock, flags);
+-		if (likely(pool->curr_nr < pool->min_nr)) {
+-			add_element(pool, element);
+-			spin_unlock_irqrestore(&pool->lock, flags);
+-			if (wq_has_sleeper(&pool->wait))
+-				wake_up(&pool->wait);
+-			return;
++		while (pool->curr_nr < pool->min_nr && freed < count) {
++			add_element(pool, elem[freed++]);
++			added = true;
+ 		}
+ 		spin_unlock_irqrestore(&pool->lock, flags);
+-	}
+ 
+ 	/*
+ 	 * Handle the min_nr = 0 edge case:
+@@ -560,20 +570,39 @@ void mempool_free(void *element, mempool_t *pool)
+ 	 * allocation of element when both min_nr and curr_nr are 0, and
+ 	 * any active waiters are properly awakened.
+ 	 */
+-	if (unlikely(pool->min_nr == 0 &&
++	} else if (unlikely(pool->min_nr == 0 &&
+ 		     READ_ONCE(pool->curr_nr) == 0)) {
+ 		spin_lock_irqsave(&pool->lock, flags);
+ 		if (likely(pool->curr_nr == 0)) {
+-			add_element(pool, element);
+-			spin_unlock_irqrestore(&pool->lock, flags);
+-			if (wq_has_sleeper(&pool->wait))
+-				wake_up(&pool->wait);
+-			return;
++			add_element(pool, elem[freed++]);
++			added = true;
+ 		}
+ 		spin_unlock_irqrestore(&pool->lock, flags);
+ 	}
+ 
+-	pool->free(element, pool->pool_data);
++	if (unlikely(added) && wq_has_sleeper(&pool->wait))
++		wake_up(&pool->wait);
++
++	return freed;
++}
++EXPORT_SYMBOL_GPL(mempool_free_bulk);
++
++/**
++ * mempool_free - return an element to the pool.
++ * @element:   pool element pointer.
++ * @pool:      pointer to the memory pool which was allocated via
++ *             mempool_create().
++ *
++ * this function only sleeps if the free_fn() function sleeps.
++ */
++void mempool_free(void *element, mempool_t *pool)
++{
++	if (likely(element)) {
++		void *elem[1] = { element };
++
++		if (!mempool_free_bulk(pool, elem, 1))
++			pool->free(element, pool->pool_data);
++	}
+ }
+ EXPORT_SYMBOL(mempool_free);
+ 
+-- 
+2.47.3
+
 
