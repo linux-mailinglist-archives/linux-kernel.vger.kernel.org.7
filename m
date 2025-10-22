@@ -1,95 +1,99 @@
-Return-Path: <linux-kernel+bounces-865779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69637BFDFBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:14:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FF0BFDFC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00CC13A7FC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:14:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B613A7FED
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B691734FF4C;
-	Wed, 22 Oct 2025 19:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0A834FF70;
+	Wed, 22 Oct 2025 19:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUZieSO0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NmziISPK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D07E3491CE;
-	Wed, 22 Oct 2025 19:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C1D2EFD86;
+	Wed, 22 Oct 2025 19:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761160490; cv=none; b=REhZnn9MWcBGSuDowATZeEfGnU9/wUF4eNK9NXXlGYANJExn+0nKk/Mr/vhF2Odfeo3vNRZ8xAH+dOH/F+6zvD9Rg7UkmEaXxvKxi9PVMROa5HbnECtIxQpYloyhY6fWuyktfCiwC7DOdMTRu9qdb/vN3ZWJpDslV/dub1nnZck=
+	t=1761160500; cv=none; b=IKt8XdVvCPcc8EIWAAd9Z52+hUPSivj/hY6VUlWH78SPfZG/ZnwVn956oNxpbB7y76MRLa/RMjNTAImLImce1xko7Xs8LdJ7aeh5vZRgZCVIAb3YsUuxqd/3quYFFzLEWEXWuUabvFP6JXGlZhLBJg6vB0fpHpuUhOQYPpboVos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761160490; c=relaxed/simple;
-	bh=hURW5DcSkdr2tfeJqYEYZTWHctPkRCz4Sn3A1K9EHEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q65uT+fMsPUuZsqiwugf/VdrAlYEP36G2d6w4xzcEYi2HfpX2wXY7ZcICYirV0tLq1eJcvBd6TQkN5J1D1eLefDaA4rQH8rjFAxwxmua1wcq0Kqzg6n+srJNS8wCTN6GyacGOK714Xt2x3HcoI9DlLT1BH52R0d/WVnyvbg44Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUZieSO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A741C4CEFD;
-	Wed, 22 Oct 2025 19:14:48 +0000 (UTC)
+	s=arc-20240116; t=1761160500; c=relaxed/simple;
+	bh=Jj4YEIsqQhqZWmMJ/tIr/DjyokV4153P61w7wWugois=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nc6kJ1RXH6TiH3n++0tMAcPXQLLqo/cnjy5RlKJtC3r74YgiPQcTu/g/TIcVJXi+7BL/wiQf5JRU57+kovKyH0ExFBFuibydG5MAtcoOSms1qOUwwgLkYncSV1BSEWvrDrCokNdnS+u/gigCrnM6MvB88ejPgs7ycXh9p+JOocg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NmziISPK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DEF0C4CEE7;
+	Wed, 22 Oct 2025 19:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761160489;
-	bh=hURW5DcSkdr2tfeJqYEYZTWHctPkRCz4Sn3A1K9EHEU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oUZieSO0ecVzDev6rdkh2UznFVWUlXsergR+pN+iXaI8JQ2TWOOLBPet4fBzWl2CW
-	 7LXRKSTaLgXjB7BrbC6CME9uB6xlLOjbCA2FDEVcszSwkyzwB+ESI12lus0oPLLOCs
-	 AUcpy8MxnLKfO3Snk0otx6DdvX0cpMfvVXSUwA+K5igQhpF5nPJoEA07KKIqsrGbsA
-	 OuOr+fgwfesPvrr36DSOXPS3dQET4AEZV4Vrfz+nT8vQ9L1g29Cu+/WsP91F4dd9lr
-	 q1hKcHwTPkpxmH7VKbx72aqllfq238AozA4EEvRC5TCqEfMXeIG0pDTTCn91w3Qen2
-	 NYiXAuXzzjClg==
-Date: Wed, 22 Oct 2025 20:14:45 +0100
+	s=k20201202; t=1761160499;
+	bh=Jj4YEIsqQhqZWmMJ/tIr/DjyokV4153P61w7wWugois=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=NmziISPKLTWkjCzS7qn2h1p24U8fSEHKoVmBSHvaLDq4gssyxrReLIDLmVGaOy/Mr
+	 PVBqSguvH0YP+NZdxwCKnpHwVE1Do4lLS/X3XEJNHcekRHUUy2wlJEeUr/S3mfkHFu
+	 JbSmtz9l7WhgoAaxYIT/bP+TEYWtfXLkibySvA+rbBwIPvgREjpbjXWIwt6ZQdIHjR
+	 fzwMbvLIagfOUPypz8M9HRYm2Mz26PMD+gbbHeGRDwobMUMZW0qDO/gFzFWTHwiY2g
+	 e/LvMqvWZVd2tK2VJ3VjsJiBc3o5QJXCNzMeHBrtjmmwf03fxAJB988//DpeB4RBJ7
+	 eP+V37QA4m2uw==
 From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: tiwai@suse.com, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH v2 00/11] ALSA: cs35l56: Add support for factory
- calibration
-Message-ID: <c45840e4-af1e-4658-9e13-bd6b9f66598f@sirena.org.uk>
-References: <20251021105022.1013685-1-rf@opensource.cirrus.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251022004200.204276-1-heiko@sntech.de>
+References: <20251022004200.204276-1-heiko@sntech.de>
+Subject: Re: [PATCH] dt-bindings: spi: spi-rockchip: Add RK3506 compatible
+Message-Id: <176116049600.324570.1351275211432564524.b4-ty@kernel.org>
+Date: Wed, 22 Oct 2025 20:14:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UdjxIjMgDuuXbRJk"
-Content-Disposition: inline
-In-Reply-To: <20251021105022.1013685-1-rf@opensource.cirrus.com>
-X-Cookie: Remember the... the... uhh.....
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-52d38
 
+On Wed, 22 Oct 2025 02:41:59 +0200, Heiko Stuebner wrote:
+> The SPI controller found in the RK3506 SoC is still compatible to the
+> original one introduced with the RK3066, so add the RK3506 compatible
+> to the list of its variants.
+> 
+> 
 
---UdjxIjMgDuuXbRJk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to
 
-On Tue, Oct 21, 2025 at 11:50:11AM +0100, Richard Fitzgerald wrote:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-> NOTE: unfortunately this is yet another series that is mainly ASoC but
-> also needs some changes to the HDA driver, and they have build dependencies
-> on the ASoC code. I suggest taking this all through Mark's tree and we'll
-> avoid sending any other commits to the HDA driver until it has all landed
-> in Takashi's tree.
+Thanks!
 
-That seems like a reasonable plan to me, Takashi?
+[1/1] dt-bindings: spi: spi-rockchip: Add RK3506 compatible
+      commit: 1b824134261d2db08fb6583ccbd05cb71861bd53
 
---UdjxIjMgDuuXbRJk
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj5LSQACgkQJNaLcl1U
-h9AH9wf/WNwNqR1tEwxDCrFilaDQPFuZyFlv+hKP4pTf2xddtrWoUlHkhTYZ3Qkz
-fknrzfOyRI7hIbT370nEPimYHRq7BYEUwYu5ovE+3fY1Nrdn/Cyob7gk+PZb8kKe
-oXeTBoIeD8GSDoStSnf+/OcRTul5sijjZVyZyaX+Yhno/UNZXLoVBcpAhZupx/O+
-qMzQxxoN5BtGzouy+Nb972LIuOiRZaD74zBC9FlgbxiLsCAnQBmg5UczVJjqF8Mv
-EgGLNUGiXDzXkYMAj0vXp1rZvhGakSad9RNPo2nBkTY+Ev9qZzI6wW5Sb2Y25u58
-QT4Lm0ixR73e/o0Eq4JsDzIK2a/aug==
-=70Le
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---UdjxIjMgDuuXbRJk--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
