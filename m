@@ -1,66 +1,47 @@
-Return-Path: <linux-kernel+bounces-864744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A78BFB70C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:43:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFDDBFBC22
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23BE467415
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:43:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D10AA506E99
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0051A319879;
-	Wed, 22 Oct 2025 10:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61940342C8C;
+	Wed, 22 Oct 2025 12:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="o5j7WoI0"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="cbqX0cO8"
+Received: from smtp101.iad3a.emailsrvr.com (smtp101.iad3a.emailsrvr.com [173.203.187.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDB921FF4D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C242C1589
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761129803; cv=none; b=fANlcB/7Lwk+5H4nRAu1RRyvoFYn5LaPsP0jKZ3v6Vv5/WitC6/FO8Fhp2QMqvsJ7BlCwHhUhb4+VgYLHMrKfRIjWJhZzrZUKFZaG819poZydKb4UToSWF78P799h4OZfVOPu+ukn2ZCDjojkhU5t+gZPQXhMtQ/RmPh2nBLEOg=
+	t=1761134509; cv=none; b=cFxTF9YJpCzo+LD3iRBaebh1X/rqralZ7YeSEjauUPQOaZp2iVKShCHq7q704psSEBBuuz41bAagrISThE3dVRaLyBoKWqv+c8C08g+z3ksXI5syTjp3icHDmfLmdNdmiAsb2mErpmh4AkxGcGK13mz12nbygU8R/qpkPQm7tJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761129803; c=relaxed/simple;
-	bh=JZ4P+wYE8YZdEKQsH+NfoSABTfJNMWLi6rL0+6dUT14=;
+	s=arc-20240116; t=1761134509; c=relaxed/simple;
+	bh=pPEZwLoqiNHqobxebiaft2GmQVPSD9t5ByN28cFccVs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pXaVmfe45pPbjfFOD4cPPSMAbrRkc4iOibBy0mu9VOFDxK/9o+q3hWUH0hs7TZvWv+blVVKQUG2NP4zHgTmy6es0qefEARVyTjDaxY6ehkxkbqojkCGxNU47qv655iDProWOkdY13uh4qynRzcbI0dzT1UX6ZSb8MsfIlTmVQAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=o5j7WoI0; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
-	by cmsmtp with ESMTPS
-	id BHQqvPT9HeNqiBWJNvkgjt; Wed, 22 Oct 2025 10:43:21 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id BWJEvVXiNfjrXBWJEvwoSZ; Wed, 22 Oct 2025 10:43:12 +0000
-X-Authority-Analysis: v=2.4 cv=ItcecK/g c=1 sm=1 tr=0 ts=68f8b549
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=fB1EUuAJHaHnRYsFKpoA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dlFZvav2JxkX6DXRhpjf71y+Kb2+lLpOvXc+C6RSZuM=; b=o5j7WoI0NEjXbsiqdG1K/WaJDC
-	If7ZMcgxhUox+4mEypQsuOIewqHPfhyHqKOaZ8DvoeGk+LjNhS5kIxIVpsNzSIYXvAaYo64AUEzzl
-	gQYbE4AuEfYlNDcnoqT/3Y64UmkNuwgz7Iqnt5ieLq8MVtIFi7h7qvI7xJ4NTxBwo/1+YtuB4Hhu+
-	ukA1ZVQ2zJYmnWNUAZeTLXBh9MF3EiPqGr/S1rgBE0goMjLEGlr8CUCmFGSdK7ICDo3VHGtgJi7pI
-	r3U0uCHDJQUDtM1je3ZIQ/ygbeyzTaj0GhARsUXkSsW6x51g9ZcqfUmO0++xrIFf7rFDQoOZxLH5n
-	8SqSO2iA==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:49900 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <re@w6rz.net>)
-	id 1vBWJD-00000000q4O-2xIr;
-	Wed, 22 Oct 2025 04:43:11 -0600
-Message-ID: <8e8997f8-f266-4237-9325-3ae602f4304c@w6rz.net>
-Date: Wed, 22 Oct 2025 03:43:00 -0700
+	 In-Reply-To:Content-Type; b=fKlcJpKfnJ68Q7stetlQdTs83xEd/t8w3SELtmqXmZ+X/Jf5IfBIK6MgM773uFndmKCaCg3mwSGVgqqcZEZ1HY0MqGrwlra+0k3oTce//tVDcR+v7VlwxydP+j6+iWP1wk0wUflkmKr3exwYW/6t3p0M5zckCTV6XQfjOaK8hbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=cbqX0cO8; arc=none smtp.client-ip=173.203.187.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1761129917;
+	bh=pPEZwLoqiNHqobxebiaft2GmQVPSD9t5ByN28cFccVs=;
+	h=Date:Subject:To:From:From;
+	b=cbqX0cO801sflqWh84FiEU2C2JyVaYZXoM6rR3u+5wZU5boci+P7f5Vt39LVvtjaY
+	 oN9F7ygEuQYutszvgHdRuH+E8hOBLau7ZZyVEvNRlt3IjipmOHzQs8ifcBhrP6NWF7
+	 /5eLrHtaD73FKffIB2xgSB7ULfyjAIP7MfG8UP+g=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp13.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 76D1154EB;
+	Wed, 22 Oct 2025 06:45:16 -0400 (EDT)
+Message-ID: <fb39d407-622b-4480-a146-2e754f74bcbf@mev.co.uk>
+Date: Wed, 22 Oct 2025 11:45:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +49,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/105] 6.6.114-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251021195021.492915002@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20251021195021.492915002@linuxfoundation.org>
+Subject: Re: [PATCH] comedi: drivers: do not detach device if driv->attach()
+ fails
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, Hillf Danton <hdanton@sina.com>,
+ syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com,
+ lvc-project@linuxtesting.org
+References: <20251021131656.164783-1-n.zhandarovich@fintech.ru>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20251021131656.164783-1-n.zhandarovich@fintech.ru>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1vBWJD-00000000q4O-2xIr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:49900
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 54
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfDcN4UP7pxitbyIdTG7SrxR70AMH4LipjE/HnYB8nDVWLIqoCeX0XCuWJYpb5QBQ/ks0c5mbCs7S823BdRBituYO/whzkeOvw3+aA1z0raYnPsnd4cbn
- Pb9FeaG1shqeea3Ffbpg8SkVyuA+QwxNTjCy0uypcbQkAphZfjdLJJdmvFtNbBC236Dnva7Te13peISs5D7kadLN0qSNBSybaIM=
+X-Classification-ID: 95286933-d525-4870-a7e0-9d0eb0e9dc26-1-1
 
-On 10/21/25 12:50, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.114 release.
-> There are 105 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 23 Oct 2025 19:49:51 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.114-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 21/10/2025 14:16, Nikita Zhandarovich wrote:
+> Syzbot identified an issue [1] in comedi_device_attach() that occurs
+> when kernel attempts to detach a comedi device via
+> comedi_device_detach() even if a driver-specific attach() method
+> already failed. Attempts to follow through with detaching the
+> device and unregistering the driver trigger a warning.
+> 
+> Fix this by rearranging cleanup calls so that comedi_device_detach()
+> runs only if the device in question has been successfully attached.
+> 
+> Original idea for this patch belongs to Hillf Danton
+> <hdanton@sina.com>.
+> 
+> [1] Syzbot crash:
+> Unexpected driver unregister!
+> WARNING: CPU: 0 PID: 5970 at drivers/base/driver.c:273 driver_unregister drivers/base/driver.c:273 [inline]
+> WARNING: CPU: 0 PID: 5970 at drivers/base/driver.c:273 driver_unregister+0x90/0xb0 drivers/base/driver.c:270
+> ...
+> Call Trace:
+>   <TASK>
+>   comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
+>   comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
+>   comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
+>   do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
+>   comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:597 [inline]
+> ...
+> 
+> Reported-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=6616bba359cec7a1def1
+> Suggested-by: Hillf Danton <hdanton@sina.com>
+> Fixes: 74ece108f9e5 ("staging: comedi: move detach out of post-config")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+>   drivers/comedi/drivers.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
+> index c9ebaadc5e82..001083f96138 100644
+> --- a/drivers/comedi/drivers.c
+> +++ b/drivers/comedi/drivers.c
+> @@ -1005,10 +1005,13 @@ int comedi_device_attach(struct comedi_device *dev, struct comedi_devconfig *it)
+>   	dev->board_name = dev->board_ptr ? *(const char **)dev->board_ptr
+>   					 : dev->driver->driver_name;
+>   	ret = driv->attach(dev, it);
+> -	if (ret >= 0)
+> +	if (ret >= 0) {
+>   		ret = comedi_device_postconfig(dev);
+> -	if (ret < 0) {
+> -		comedi_device_detach(dev);
+> +		if (ret < 0) {
+> +			comedi_device_detach(dev);
+> +			module_put(driv->module);
+> +		}
+> +	} else {
+>   		module_put(driv->module);
+>   	}
+>   	/* On success, the driver module count has been incremented. */
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Unfortunately, the low-level drivers expect the `->detach()` handler to 
+be called to clean up even if the `->attach()` handler returns an error. 
+  So this won't work.
 
-Tested-by: Ron Economos <re@w6rz.net>
-
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
