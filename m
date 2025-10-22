@@ -1,87 +1,230 @@
-Return-Path: <linux-kernel+bounces-865914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B9FBFE51E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A99BFE536
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 321F34E7F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:31:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 129C94EA14A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB95027B355;
-	Wed, 22 Oct 2025 21:31:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666C22F4A19;
+	Wed, 22 Oct 2025 21:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YD/zEhKO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB6627EC7C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54ED312CDA5
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761168667; cv=none; b=sSKupdAfv6kdl1TzPDwF3Nrhp+CYKZliSde/jqX8s0MZnMt7R6LaSyWl+dobQqm+Q+PjgTaY8lxzbnsEgvYY4WvzO/vIxu8x+VgDh+pQcUcVjMezuStUNi5NA2RzliyaHJDukjcsdLcfkUztg7dxFTO1+ic/lRANS/2eFbZFBts=
+	t=1761168966; cv=none; b=qtQukMQJa76UJZsDdCdJIwMu2g2XsXpTUsI09f9W6Aj6RLzZBX6ojtcM1wn57wxLGX3yXp3LdsxZ083XBe3WG+mDf+t1h7vSffoHEmm3D4Y/868G7wA2XHcMqK165RF9fe479fQ5ObDuFnH6YGtMunmzrvWxv3P259DZy+LUAOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761168667; c=relaxed/simple;
-	bh=qh+eS6JHKi9iXUDyJPSvioVa2zztpifK5Qth0Vh1j0U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l3Rav3h7E1gIsau/UKCcnOj08Z05YpqcLZQFJVsVVBe95a87lqaGwUtVho4VlWimDeFphCj2ItPIJnBkqsDteikL/glxXtpttO3LCyD45GU6GosVTcVTW6qm8Anzk1C2N3RTNEOxL0efyhuNI/XjVioaDdyXpUuLvxW3CQO+WkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430c6b6ce73so4766615ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:31:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761168665; x=1761773465;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCwGs/KsJr8Cj3UWTpj3LDzpF+YxforV5TEbIODcEPw=;
-        b=r9+icW8EK0grNqPx57TUVQoVW3h926cWoUQQK2H1+icI2nijPXwc3qLF6sw7Bq4z/O
-         ioRdH/fBZ3PoeWcCi/zmyvGv2AJg5K+VE8fggCiGZu75zGTZvGDKipozlUdHUsBtc6Fm
-         LnmIEC0RDQJfJfYhk0eO/jUqWGFoQumosgUxYd4pvkLxqDAE5vWAfLVZANxzpPHjB9ne
-         W4MQDZupVb3YZBPRZWE/HPi83ZeyFnEQvf6Pnb4Bl/edmU500blqZwwrzXeHY49Pkqk7
-         j7GoWicpDyvXcilqWaVBobmFlPO9j3KycibxjUUrdSTeYJio6Cyv8nxcq5p2CHyOwC3A
-         6OxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKqpi2Y7UqAHlFrDo4I5aBD5bdx1YK5vYbN/oD6kuuuMCNX5I/4sVDgfO7miyI3FRZ4syMGF3Un9a6fN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+ZaLYm6uD71o3Usuh3WQm8wP8KCmmHQ+DomCDUtVn6VyzMSbI
-	KOIf14PRsP0Ry1+ZuYqyFVz5WxingZPhbPWpVLJeREhvLQVyu5VDgXxgAxVIlQsKlXgrAusr0KZ
-	cktp6NbfJZ/5TGzzX7W4LNQY/1ZehrVU+4IqUe+YMhnlenIx7aA/rwdAmVVA=
-X-Google-Smtp-Source: AGHT+IFxbZr+ckHUFiv8a47cp6o6HuP9r54+qvojzlBc0inzglwq5sDE5zmGTbPbeDvEJOYJfhmn+kHjDfomnOxd/olh1TKAX/IG
+	s=arc-20240116; t=1761168966; c=relaxed/simple;
+	bh=xzJFHS05vq/gzblbNJCK/TcArYaZ4JncDoxITCAkLaY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=m0abrCtl/ojR2Imi8o2THXRJKv2RiDDiKFHJDKzxhc8TIXV9ZwXPyf9cSehlzh3NXXKhz1MWMGAQ2lmKd+i8lkrhYcBNxixDME5Ij9+N3yuCoUsUJIF7s3gaYjwC10987ycQpHUMbDLtT1rlHbihpOqR0AdCz+xf+iN+t17DaV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YD/zEhKO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81401C4CEE7;
+	Wed, 22 Oct 2025 21:36:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761168965;
+	bh=xzJFHS05vq/gzblbNJCK/TcArYaZ4JncDoxITCAkLaY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YD/zEhKOHgEYpglKaPhtMClD31p30giEdTFT17IwmiXfer+aiI+vhBszRJP0giJZJ
+	 eG2wyFYkb0Ca9YMP19vLrq8LvCIie8zJLDpkh81fViVa+wJVVggvnJmvqxkvU2mAoL
+	 KpvHzFeQSLVqxbnRE+K1StBZGaU930yoNKcxhxQ4=
+Date: Wed, 22 Oct 2025 14:36:04 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>, Alexander Potapenko
+ <glider@google.com>, Marco Elver <elver@google.com>, Dmitry Vyukov
+ <dvyukov@google.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>, Alexei
+ Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH] mm/kmsan: Fix kmsan kmalloc hook when no stack depots
+ are allocated yet
+Message-Id: <20251022143604.1ac1fcb18bfaf730097081ab@linux-foundation.org>
+In-Reply-To: <20251022030213.GA35717@sol>
+References: <20250930115600.709776-2-aleksei.nikiforov@linux.ibm.com>
+	<20251008203111.e6ce309e9f937652856d9aa5@linux-foundation.org>
+	<335827e0-0a4c-43c3-a79b-6448307573fd@linux.ibm.com>
+	<20251022030213.GA35717@sol>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156c:b0:430:acb1:e785 with SMTP id
- e9e14a558f8ab-430c5208dacmr319857325ab.6.1761168663904; Wed, 22 Oct 2025
- 14:31:03 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:31:03 -0700
-In-Reply-To: <5499f25e-99fc-4720-8d5b-a6606aad6d6a@mev.co.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f94d17.a70a0220.3bf6c6.0027.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] WARNING in driver_unregister (2)
-From: syzbot <syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com>
-To: abbotti@mev.co.uk, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Tue, 21 Oct 2025 20:02:13 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Fri, Oct 10, 2025 at 10:07:04AM +0200, Aleksei Nikiforov wrote:
+> > On 10/9/25 05:31, Andrew Morton wrote:
+> > > On Tue, 30 Sep 2025 13:56:01 +0200 Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com> wrote:
+> > > 
+> > > > If no stack depot is allocated yet,
+> > > > due to masking out __GFP_RECLAIM flags
+> > > > kmsan called from kmalloc cannot allocate stack depot.
+> > > > kmsan fails to record origin and report issues.
+> > > > 
+> > > > Reusing flags from kmalloc without modifying them should be safe for kmsan.
+> > > > For example, such chain of calls is possible:
+> > > > test_uninit_kmalloc -> kmalloc -> __kmalloc_cache_noprof ->
+> > > > slab_alloc_node -> slab_post_alloc_hook ->
+> > > > kmsan_slab_alloc -> kmsan_internal_poison_memory.
+> > > > 
+> > > > Only when it is called in a context without flags present
+> > > > should __GFP_RECLAIM flags be masked.
+> > > > 
+> > > > With this change all kmsan tests start working reliably.
+> > > 
+> > > I'm not seeing reports of "hey, kmsan is broken", so I assume this
+> > > failure only occurs under special circumstances?
+> > 
+> > Hi,
+> > 
+> > kmsan might report less issues than it detects due to not allocating stack
+> > depots and not reporting issues without stack depots. Lack of reports may go
+> > unnoticed, that's why you don't get reports of kmsan being broken.
+> 
+> Yes, KMSAN seems to be at least partially broken currently.  Besides the
+> fact that the kmsan KUnit test is currently failing (which I reported at
+> https://lore.kernel.org/r/20250911175145.GA1376@sol), I've confirmed
+> that the poly1305 KUnit test causes a KMSAN warning with Aleksei's patch
+> applied but does not cause a warning without it.  The warning did get
+> reached via syzbot somehow
+> (https://lore.kernel.org/r/751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn/),
+> so KMSAN must still work in some cases.  But it didn't work for me.
 
-Reported-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
-Tested-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
+OK, thanks, I pasted the above para into the changelog to help people
+understand the impact of this.
 
-Tested on:
+> (That particular warning in the architecture-optimized Poly1305 code is
+> actually a false positive due to memory being initialized by assembly
+> code.  But that's besides the point.  The point is that I should have
+> seen the warning earlier, but I didn't.  And Aleksei's patch seems to
+> fix KMSAN to work reliably.  It also fixes the kmsan KUnit test.)
+> 
+> I don't really know this code, but I can at least give:
+> 
+> Tested-by: Eric Biggers <ebiggers@kernel.org>
+> 
+> If you want to add a Fixes commit I think it is either 97769a53f117e2 or
+> 8c57b687e8331.  Earlier I had confirmed that reverting those commits
+> fixed the kmsan test too
+> (https://lore.kernel.org/r/20250911192953.GG1376@sol).
 
-commit:         dd72c8fc Merge tag 'platform-drivers-x86-v6.18-2' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ee4614580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=6616bba359cec7a1def1
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14e92d42580000
+Both commits affect the same kernel version so either should be good
+for a Fixes target.
 
-Note: testing is done by a robot and is best-effort only.
+I'll add a cc:stable to this and shall stage it for 6.18-rcX.
+
+The current state is below - if people want to suggest alterations,
+please go for it.
+
+
+
+From: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+Subject: mm/kmsan: fix kmsan kmalloc hook when no stack depots are allocated yet
+Date: Tue, 30 Sep 2025 13:56:01 +0200
+
+If no stack depot is allocated yet, due to masking out __GFP_RECLAIM
+flags kmsan called from kmalloc cannot allocate stack depot.  kmsan
+fails to record origin and report issues.  This may result in KMSAN
+failing to report issues.
+
+Reusing flags from kmalloc without modifying them should be safe for kmsan.
+For example, such chain of calls is possible:
+test_uninit_kmalloc -> kmalloc -> __kmalloc_cache_noprof ->
+slab_alloc_node -> slab_post_alloc_hook ->
+kmsan_slab_alloc -> kmsan_internal_poison_memory.
+
+Only when it is called in a context without flags present should
+__GFP_RECLAIM flags be masked.
+
+With this change all kmsan tests start working reliably.
+
+Eric reported:
+
+: Yes, KMSAN seems to be at least partially broken currently.  Besides the
+:_fact that the kmsan KUnit test is currently failing (which I reported at
+:_https://lore.kernel.org/r/20250911175145.GA1376@sol), I've confirmed that
+:_the poly1305 KUnit test causes a KMSAN warning with Aleksei's patch
+:_applied but does not cause a warning without it.  The warning did get
+:_reached via syzbot somehow
+:_(https://lore.kernel.org/r/751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn/),
+:_so KMSAN must still work in some cases.  But it didn't work for me.
+
+Link: https://lkml.kernel.org/r/20250930115600.709776-2-aleksei.nikiforov@linux.ibm.com
+Link: https://lkml.kernel.org/r/20251022030213.GA35717@sol
+Fixes: 97769a53f117 ("mm, bpf: Introduce try_alloc_pages() for opportunistic page allocation")
+Signed-off-by: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
+Tested-by: Eric Biggers <ebiggers@kernel.org>
+Cc: Dmitriy Vyukov <dvyukov@google.com>
+Cc: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Marco Elver <elver@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/kmsan/core.c   |    3 ---
+ mm/kmsan/hooks.c  |    6 ++++--
+ mm/kmsan/shadow.c |    2 +-
+ 3 files changed, 5 insertions(+), 6 deletions(-)
+
+--- a/mm/kmsan/core.c~mm-kmsan-fix-kmsan-kmalloc-hook-when-no-stack-depots-are-allocated-yet
++++ a/mm/kmsan/core.c
+@@ -72,9 +72,6 @@ depot_stack_handle_t kmsan_save_stack_wi
+ 
+ 	nr_entries = stack_trace_save(entries, KMSAN_STACK_DEPTH, 0);
+ 
+-	/* Don't sleep. */
+-	flags &= ~(__GFP_DIRECT_RECLAIM | __GFP_KSWAPD_RECLAIM);
+-
+ 	handle = stack_depot_save(entries, nr_entries, flags);
+ 	return stack_depot_set_extra_bits(handle, extra);
+ }
+--- a/mm/kmsan/hooks.c~mm-kmsan-fix-kmsan-kmalloc-hook-when-no-stack-depots-are-allocated-yet
++++ a/mm/kmsan/hooks.c
+@@ -84,7 +84,8 @@ void kmsan_slab_free(struct kmem_cache *
+ 	if (s->ctor)
+ 		return;
+ 	kmsan_enter_runtime();
+-	kmsan_internal_poison_memory(object, s->object_size, GFP_KERNEL,
++	kmsan_internal_poison_memory(object, s->object_size,
++				     GFP_KERNEL & ~(__GFP_RECLAIM),
+ 				     KMSAN_POISON_CHECK | KMSAN_POISON_FREE);
+ 	kmsan_leave_runtime();
+ }
+@@ -114,7 +115,8 @@ void kmsan_kfree_large(const void *ptr)
+ 	kmsan_enter_runtime();
+ 	page = virt_to_head_page((void *)ptr);
+ 	KMSAN_WARN_ON(ptr != page_address(page));
+-	kmsan_internal_poison_memory((void *)ptr, page_size(page), GFP_KERNEL,
++	kmsan_internal_poison_memory((void *)ptr, page_size(page),
++				     GFP_KERNEL & ~(__GFP_RECLAIM),
+ 				     KMSAN_POISON_CHECK | KMSAN_POISON_FREE);
+ 	kmsan_leave_runtime();
+ }
+--- a/mm/kmsan/shadow.c~mm-kmsan-fix-kmsan-kmalloc-hook-when-no-stack-depots-are-allocated-yet
++++ a/mm/kmsan/shadow.c
+@@ -208,7 +208,7 @@ void kmsan_free_page(struct page *page,
+ 		return;
+ 	kmsan_enter_runtime();
+ 	kmsan_internal_poison_memory(page_address(page), page_size(page),
+-				     GFP_KERNEL,
++				     GFP_KERNEL & ~(__GFP_RECLAIM),
+ 				     KMSAN_POISON_CHECK | KMSAN_POISON_FREE);
+ 	kmsan_leave_runtime();
+ }
+_
+
 
