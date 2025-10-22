@@ -1,310 +1,147 @@
-Return-Path: <linux-kernel+bounces-865157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7680BFC4D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD999BFC5CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D891883412
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19D55E6808
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83825346E4C;
-	Wed, 22 Oct 2025 13:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CB83446B6;
+	Wed, 22 Oct 2025 13:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/rrnTIK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tvNmJjLb"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA9F9460;
-	Wed, 22 Oct 2025 13:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64517345752
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141064; cv=none; b=gBZkSGeZrRyZD2846134+IhjPqgEZ9TxxKiro6ed/6ExfzNQokh3aqSgnZ8qpIrlAqvKmbM7hy+/ubnJQyZzhJJ22FwG4kwq/ytCcOhlqyEVt1cuHmrbvmvHBe0yddN4fmaZbyVss5ATB0Zjk6GTYDu/72/FCDmf/+6IUuyBmlg=
+	t=1761141106; cv=none; b=hlYTnMXOTl2hW1W802czP8/5W0JsZ5Nogf8Yd2405nHSGd7BLx6gJT6m3VkcEehHCN7eCK7NOSscIQOQZMQyraUsG5eXWX2IAVVuBvZwsTzP4hLDFWlD+nvbUkEGbrib+WCH4y6vjw+VgIVS9TDrvv/qSFneNuhlfZ63lVYJKLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141064; c=relaxed/simple;
-	bh=Rpb1fxIgPELCh+dgDZI2maIQUBucGAUYh2YiqPjgSHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvTri2PDgaVTNjGc1VlZ0HnyfapeLNO1yF60znxk61bbSC9SWeuCQgHYNBdXD7QoINRXUcrFNrY6R56wAO400b7gDDbdbCheWxwwYaEJiaSCoxtwcOZ5so3ByteGn/CX8D4g8RhrAkJML6mzQW48jdMS9z5u/aQR9FcSw8BFyRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/rrnTIK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089FFC4CEE7;
-	Wed, 22 Oct 2025 13:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761141063;
-	bh=Rpb1fxIgPELCh+dgDZI2maIQUBucGAUYh2YiqPjgSHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H/rrnTIKtylDAqUvpgE+ID+wpERQf3+u9yMq2XxfY09sTDL1jN+xGw2vdltmMojXE
-	 fZkbncDdJK9HWWrc5WUBmbEEntW/O8C+v2ImWSCUCOfcC09zvrtlpl3DVRT6MwHURB
-	 H0lS0TTqul2FxNR5LafiRzAh5tm4R0/btDUU7dx8BVySISmZbQbhGdbXvNvbMEXFnQ
-	 iSjPpDbge01TqilEMFv8mxav1QNrNveMRgn8aUiwbORwpcZJ7vzW4rDMNLlqobEkiY
-	 wrPzqp0vpLOp7sgTsjm0V+91rv3ZrpcnWbG7upqSqo1VhQkvtitL4lwGTutT2zybtR
-	 Hj5HIbFnXa6xQ==
-Date: Wed, 22 Oct 2025 08:51:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	jk@codeconstruct.com.au, Kevin Chen <kevin_chen@aspeedtech.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: interrupt-controller:
- aspeed,ast2700: Add support for INTC hierarchy
-Message-ID: <20251022135101.GA3349934-robh@kernel.org>
-References: <20251022065507.1152071-1-ryan_chen@aspeedtech.com>
- <20251022065507.1152071-2-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1761141106; c=relaxed/simple;
+	bh=U74wioQnuceda/q2sXRx79FU1EiFVj6GAjFp3nVj0E0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OwmyKbTswXUd//pZQmOvSxzSF1mNs3U7uZhaGfD42eGH0pb29hoMmBALoavwq4bY8QODv2u9094xCe7SSw44XGomrez94r6uS2QBIDJa1Fh0KdEZBLd7o7lcxNS/RQaOWeDvCeS52BcrYex4Aq82PV9QFt8s1sUQm/Nal0nNZWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tvNmJjLb; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4711f156326so54487505e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761141102; x=1761745902; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EORvstfENo4plQ/h9GLmP9GLzzW3c5B2lznPYlyShI0=;
+        b=tvNmJjLbBZ2+JlQmR48Fl/0BTNMmp6PIVUaaITrvF9rfyjsk+zC9qWXZ3qD5AWvqop
+         6D1imaZuaoAMJoKiF43wF3PqtVOxDzd1ZdTTmHfBOsDOEyUQXQRVhCHqvplG8mPvIBJ1
+         yg2qGZhh53u9m2jiR/GRDe6xMbEx8scZdzEYJoHIhv+74odaoRt7mmhmOGLYkFMlbQ9m
+         zyXrM7xUqVrSoSXXu10x1I7OZgvowhNFhwxNmV75VtGFUlQHeE4bhC+TKcNL50SjIDp7
+         P0ED39C0aPD5319YMZPzpQ1gNlrzky9R7T7hEGxiVg6g10OJzSW8FcKkosjkYWVX0Qrn
+         U4BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761141102; x=1761745902;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EORvstfENo4plQ/h9GLmP9GLzzW3c5B2lznPYlyShI0=;
+        b=p9Z/e9l4azZvC5KwI7ZHYzAKwa3ua8T2LM9FlZfNbFFZe3z22v6sui5SRjN/ugENcb
+         T3qnZSr0iMeCNRf2nr0D+MDYxAJ/wqNtTaapNRcR61YFjVq7aksqX2IUGb1E+oWSsTDB
+         HvWhmpeF2t8jhBRyrJ3Qs1B7163zsZIhu+dD9554tWye+ZMdlypbnI0WJJ9N5rEeAUEh
+         9iCZnNrcSuNANXoqTD3DnH40XPO8JslYljLsI9jZOeULIQIr/DX8Gu1mZcIm4WVqK8jZ
+         omQe2Ap2a1oilVeCjHAcfA8c8bu1zNzEbEtGK4gZfoHEchXIRDuFlgcj2r2hQp/cZc5m
+         Ne8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUctRs4lqvDmR4IvuyWm0/ppVWWGvi1djpLAmriCT2U2KWUaksbTNozbxrj8eydwbgiCkhsutHgqVQvTdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVCBwg02PyU4KX6PxrY5wPII0i05gUmgSxVhZrz8gTWOaBtir5
+	mjUPtE0kbAttx03fZSqPY/e40KW+kwfxbKT/+xJlzbcR11KhDX8Tj0+W+VE0oeYGSQw=
+X-Gm-Gg: ASbGnctNvxGKYbJ7CoujfpCSHSMi7AQiBgZxkNHSLkKYVViFM2/+x5ohtTZyMXULh6N
+	gz6Y/txh4SX/DcgB8SVdAHLit4AfRFbDpsLMpG8Ogzfp0Ar5Cl3H8Q6btYTW/+k2huoBz3+kyfz
+	FLTP7EXf89roAomnbvizqP2fUExFx50sLz42P+ERixWguhW1NXk51Kyksy3MKg2VGoGeD3H/LN0
+	aDkgGeffuA/44fOinJCof9zHb17iSkpNJyXnfylhCpL4rIMpAiNl3J19/JTnNiKX3vu9OBSkaix
+	oc1dJTqwtjrFwC4bKLBO1W+U/rPtSneWJET6tc21xEZrjtjbZ0QLIquVQjgLV0Zg1FSrskP75+6
+	sVGZwYO8B7S7bdpMYUZVFooLGS8zOrlGAIKX/uFCFO98Li3q4LKet0814W7ZV+z2GOBZiPQ==
+X-Google-Smtp-Source: AGHT+IHgKrkNbpQTEKm9A6howyV8sS439Mh/bF1HfCO6EObvZ7XnGkbmh43ZP5i1Er51qjnFckLAxg==
+X-Received: by 2002:a05:600c:4710:b0:471:115e:9605 with SMTP id 5b1f17b1804b1-4711791fc13mr149827175e9.35.1761141102312;
+        Wed, 22 Oct 2025 06:51:42 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:69df:73af:f16a:eada])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496c2c9dasm38474625e9.4.2025.10.22.06.51.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 06:51:41 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/2] reset: remove last remaining user of the legacy
+ lookup and drop unused code
+Date: Wed, 22 Oct 2025 15:51:30 +0200
+Message-Id: <20251022-da850-reset-lookup-v2-0-c80f03831f63@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022065507.1152071-2-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGLh+GgC/32NQQ6CMBBFr0Jm7Zi2BLGuuIdhUekAEwklUyQa0
+ rtbOYDL95L//g6RhCnCrdhBaOPIYc5gTgV0o5sHQvaZwShTaaVr9O5aKRSKtOIUwvO1IHWurL3
+ xtbcPyMNFqOf3Eb23mUeOa5DP8bHpn/2b2zQqLC/Glco62yvbTDw7CecgA7QppS8eb6MvtQAAA
+ A==
+X-Change-ID: 20251017-da850-reset-lookup-eca37d2d7d9b
+To: David Lechner <david@lechnology.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1202;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=U74wioQnuceda/q2sXRx79FU1EiFVj6GAjFp3nVj0E0=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo+OFjMB8dfknrX7tjnUQViDL236Lb5paODHeCM
+ O3TzhGtOsSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaPjhYwAKCRARpy6gFHHX
+ ctcHD/sF0P6BUcY/DGS2EQIZokY4U30syA3CkCEYxkAuHG/Ot3hEd+KjGsnQQn5pkGUzjYpH13U
+ Gu/GU876AhEKAxyZrHOtPojC/B/eOO8yvm0AaIXOnEGfgq1Tz0s6Aj69h3cmbZpiRzY2SQlHPVP
+ MC+POqRbEg4yZQhh/5ha3vLgv03hNWkejDiORn8x3zs384/WdIxAOwh1nXXLJaXdz5Y6O4Mz46v
+ cYBQNwmupsjxUdTV9oQLGFwLKFOg4bnj1L6sv+oC1l/TrjPM/kiZGeBRSHGur2hCprPQ5XIcoy7
+ QEo6J/rS8jmjJ7m1LSHqepQJ2YrZaJRESWVTr4yLY1sXKws0uObA3Y5ZImrW4oXa8LyPUzx6Ctg
+ LFsU1NorUTVhI39hf4UKWKsgCsD+2K4ohqc1glJGM+h6073L6PUWGZXqSq2BGDEj13Om2ybW/IR
+ ByrYvF5G4pbpmRCacoNQ15m9eNK5jXgH0CcqUuXC5HYDrbyXmpiCiSREgj+3qcBMmx1b6HBuWw9
+ BED6Dwivqu5XUJO//Lk0UKnaweZlW1IDZiSHVwiM/qyMJbNYfU2Pzoya0V/GzAjhQiaz3FXM6F9
+ rqlXBQRW7/vyGpuB3AQiabTECQe+NzT5EnMcvitPMqZLpu8PmKg93FPmpgirYjYYaS96M/hlAbk
+ 3lFNpwd62NwxuAw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Wed, Oct 22, 2025 at 02:55:05PM +0800, Ryan Chen wrote:
-> AST2700 contains two-level interrupt controllers (INTC0 and INTC1),
-> each with its own register space and handling different sets of
-> peripherals.
+The TI DaVinci platform is the only remaining user of reset platform
+lookup. Except that we no longer have any legacy, non-DT boards in
+mainline so we can now safely remove it from the PSC driver and drop the
+legacy lookup support from reset core.
 
-This is a mess!
+The DaVinci clock driver doesn't see a lot of traffic these days so I
+suggest a simple Ack from the clock maintainers and routing it through
+the reset core for v6.19.
 
-How does this relate to the existing "aspeed,ast2700-intc-ic"? Its 
-schema has a block diagram of connections which I can understand. This 
-does not.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- Fix handling of optional resets
+- Link to v1: https://lore.kernel.org/r/20251017-da850-reset-lookup-v1-0-362a309a9f09@linaro.org
 
-The use of child nodes here is questionable. A variable number of 
-interrupt banks is not a reason to have child nodes. I'm only guessing 
-that's what's happening here because you haven't explained it.
+---
+Bartosz Golaszewski (2):
+      clk: davinci: psc: drop unused reset lookup
+      reset: remove legacy reset lookup code
 
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  .../aspeed,ast2700-intc0.yaml                 | 97 +++++++++++++++++++
->  .../aspeed,ast2700-intc1.yaml                 | 94 ++++++++++++++++++
->  2 files changed, 191 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc0.yaml
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc1.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc0.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc0.yaml
-> new file mode 100644
-> index 000000000000..93a5b142b0a2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc0.yaml
-> @@ -0,0 +1,97 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc0.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +maintainers:
-> +  - Ryan Chen <ryan_chen@aspeedtech.com>
-> +
-> +title: ASPEED AST2700 Interrupt Controller 0
-> +
-> +description:
-> +  This interrupt controller hardware is first level interrupt controller that
-> +  is hooked to the GIC interrupt controller. It's useful to combine multiple
-> +  interrupt sources into 1 interrupt to GIC interrupt controller.
-> +
-> +properties:
-> +  compatible:
-> +    const: aspeed,ast2700-intc0
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 1
-> +
-> +  ranges: true
-> +
-> +patternProperties:
-> +  "^interrupt-controller@":
-> +    type: object
-> +    description: A child interrupt controller node
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      compatible:
-> +        enum:
-> +          - aspeed,ast2700-intc0-ic
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      '#interrupt-cells':
-> +        const: 1
-> +
-> +      interrupt-controller: true
-> +
-> +      interrupts:
-> +        minItems: 1
-> +        maxItems: 10
+ drivers/clk/davinci/psc-da850.c  |   7 ---
+ drivers/reset/core.c             | 121 +--------------------------------------
+ include/linux/reset-controller.h |  33 -----------
+ 3 files changed, 3 insertions(+), 158 deletions(-)
+---
+base-commit: 2433b84761658ef123ae683508bc461b07c5b0f0
+change-id: 20251017-da850-reset-lookup-eca37d2d7d9b
 
-What are the 10 different interrupts? You have to define what each one 
-is.
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - interrupt-controller
-> +      - '#interrupt-cells'
-> +      - interrupts
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#address-cells'
-> +  - '#size-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    intc0: interrupt-controller@12100000 {
-
-This node is not an interrupt-controller.
-
-> +        compatible = "aspeed,ast2700-intc0";
-> +        reg = <0x12100000 0x4000>;
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0x0 0x12100000 0x4000>;
-> +
-> +        intc0_11: interrupt-controller@1b00 {
-> +            #interrupt-cells = <1>;
-> +            interrupt-controller;
-> +            compatible = "aspeed,ast2700-intc0-ic";
-> +            reg = <0x1b00 0x10>;
-> +            interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
-> +        };
-> +    };
-> \ No newline at end of file
-
-Fix.
-
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc1.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc1.yaml
-> new file mode 100644
-> index 000000000000..2f807d074211
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc1.yaml
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc1.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +maintainers:
-> +  - Ryan Chen <ryan_chen@aspeedtech.com>
-> +
-> +title: ASPEED AST2700 Interrupt Controller 1
-> +
-> +description:
-> +  This interrupt controller hardware is second level interrupt controller that
-> +  is hooked to a parent interrupt controller. It's useful to combine multiple
-> +  interrupt sources into 1 interrupt to parent interrupt controller.
-> +
-> +properties:
-> +  compatible:
-> +    const: aspeed,ast2700-intc1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 1
-> +
-> +  ranges: true
-> +
-> +patternProperties:
-> +  "^interrupt-controller@":
-> +    type: object
-> +    description: A child interrupt controller node
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      compatible:
-> +        enum:
-> +          - aspeed,ast2700-intc1-ic
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      '#interrupt-cells':
-> +        const: 1
-> +
-> +      interrupt-controller: true
-> +
-> +      interrupts-extended:
-> +        minItems: 1
-> +        maxItems: 1
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - interrupt-controller
-> +      - '#interrupt-cells'
-> +      - interrupts-extended
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#address-cells'
-> +  - '#size-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    intc1: interrupt-controller@14c18000 {
-> +        compatible = "aspeed,ast2700-intc1";
-> +        reg = <0x14c18000 0x400>;
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0x0 0x14c18000 0x400>;
-> +
-> +        intc1_0: interrupt-controller@100 {
-> +            compatible = "aspeed,ast2700-intc1-ic";
-> +            reg = <0x100 0x10>;
-> +            #interrupt-cells = <1>;
-> +            interrupt-controller;
-> +            interrupts-extended = <&intc0_11 0>;
-> +        };
-> +
-> +        intc1_1: interrupt-controller@110 {
-> +            compatible = "aspeed,ast2700-intc1-ic";
-> +            reg = <0x110 0x10>;
-> +            #interrupt-cells = <1>;
-> +            interrupt-controller;
-> +            interrupts-extended = <&intc0_11 1>;
-> +        };
-> +    };
-> \ No newline at end of file
-> -- 
-> 2.34.1
-> 
 
