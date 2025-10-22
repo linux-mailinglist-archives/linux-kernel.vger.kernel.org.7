@@ -1,50 +1,52 @@
-Return-Path: <linux-kernel+bounces-864047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954A7BF9CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:11:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EA5BF9CDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 237754E6BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A6256026E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36DC2264CB;
-	Wed, 22 Oct 2025 03:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0A4238D52;
+	Wed, 22 Oct 2025 03:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2gWudvl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8NsJU3E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1841121B195;
-	Wed, 22 Oct 2025 03:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A8A2222C0;
+	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102684; cv=none; b=qY9iOhj1gTKgbkTibl3/usklczO1FnzZXx4wNDiqMHBobmE1LhmcVCYj3NnL/aXoSk9WeaGAERw85ZmdE0YgMDIB2+GfOmPlWfd3YhtZG4n7wlQuHacLAU1ErmX7dqbVILnAmntzl93oJjOgETyAHNyei10Pj1P8K5S8TqctPj0=
+	t=1761102806; cv=none; b=vB+K1ZRK1OhtFoC6ZSKV520ONJf5w9rleCVYGQSJ7hdsB01z2+cwZS2CVvh/wP6B7YnR7xUKS6hq5oSFmA8z5dIsa8wqMlE/dJ2FOtvvpqCRSvfToeD8G0uNbpBJURp1Fz0NhIuke2Nj8LVgFSY4DQ8j5yWzF20b9RA7rVAgYB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102684; c=relaxed/simple;
-	bh=J3joio7QLYgqlTYEASCEXu7uQck3iJxX3gB8UvFLwo4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rUhwyDPmylptx+UmFT60dTGBtMOUGRR1oWTehiObEDc6MLSyYx6kNpjAUhRKI3tRoLawTEQIpbP8cHFoLtTtHbaj1CaoiGpRnYmXjUdmVNxYSMa6RXHFiWNR5hNJTnONzbO0MZvo9gqNv6EIg8oNk+J0yyVQBaQ5nEy1A4CHuuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2gWudvl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A8798C4CEE7;
-	Wed, 22 Oct 2025 03:11:22 +0000 (UTC)
+	s=arc-20240116; t=1761102806; c=relaxed/simple;
+	bh=sY0LMNg4G27hdJljmt+cFEfQtETCUh15GCY4IWkxMSY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oq+RztcZtZweHFZK24Q51rVit+UrmP9+/OiUoEvjjDWqALO+x1oCGz95m6J/osc91i8mfARyqXWm3+Zu0uznc3bo0zHaTU/hGcLpq337v288loTL3NKYKxwtVAcPz7MQ90316uPJkng0Plgf+aTKnFjETSwhfM4qJKDKv/YXYOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8NsJU3E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4AAE4C4CEF5;
+	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761102682;
-	bh=J3joio7QLYgqlTYEASCEXu7uQck3iJxX3gB8UvFLwo4=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=F2gWudvlYx5xBhl1AFiBuuq2up7dDBCjrE/U2qNgt07yPH58kgqkod4dHKyaRlgyx
-	 sY/QDvEJkTnPd6q0+KNKdSuqtDg7nKL9/bOEPI/FFH4Kiv7OS8CXnoxQ5fLgXB8+xW
-	 dc++dgqBWw1owkVwcpufja3KmKtCUklzAM0tqU2K96HJrgIs43keIVZ3eFW/sqEdne
-	 BM7RDfPnEpWmb+wbn8hWasRds6UCdVdVk3FgOxi7dGOFYKuS6e1vzgh4KED7G2GTc3
-	 mgHYKnkaaYfwmo+VFNUiKGIy8E9lDVd7QtAjUMWhs0gnKj2ePcjjWYG9fRSqDb/0az
-	 WMRyZC8feyz8w==
+	s=k20201202; t=1761102806;
+	bh=sY0LMNg4G27hdJljmt+cFEfQtETCUh15GCY4IWkxMSY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=F8NsJU3EwORgNv92pnv2538k2eHtTqYU7w/gJl6YgZEFyCQbQsn91g5tDHLH3inN3
+	 lGc9FiKW/UlVtHyMonjSDHNlNJyYBkpXVgpbuTSHeU7ILIg8OnK+rIdaETL2nDIpC6
+	 ++RH5KBCLH5InX1NFsvAY+VaFiILLzwyOnrDMyD9JD/BC6XmFPuNR5bdybgf884mGV
+	 Z1FSmyY/Vdo4KFBCozYuLY4/tLtqFZUY3n9lzvfu+Ni56Lp1jVqV9CavSyfUwrGAp9
+	 cJJ39Pe2fbv7zR33SchvFsSgISUTFyZPMR+FOjE/p8VQLq3najwj8HvYlAa2aT2Bk6
+	 OCstiZjKww0QQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D540CCD1B9;
-	Wed, 22 Oct 2025 03:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A017CCD1AB;
+	Wed, 22 Oct 2025 03:13:26 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 21 Oct 2025 22:11:15 -0500
-Subject: [PATCH v5] soc: tegra: fuse: speedo-tegra210: Add soc speedo 2
+Subject: [PATCH v5 0/3] arm64: tegra: Enable Tegra210 actmon for EMC
+ scaling
+Date: Tue, 21 Oct 2025 22:13:21 -0500
+Message-Id: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,22 +55,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-t210-actmon-p3-v5-1-e1ef5e93909d@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFJL+GgC/0XMyw7CIBCF4VdpWEsyM4ClfRXTBcJUWfQiYGPS+
- O5SXbj8T3K+XWROkbPom10k3mKOy1zDnBrh726+sYyhtiAgg0AoCyFI58u0zHJVUlkEUF2wyK2
- opzXxGF9f8DL8OvHjWd3yG/9s3xwoWCRZ+JbcAeeVOSxSt3DukO3Vet9v+oCvLrP0yzTFUo+II
- QQGS2pErYm1C2DI0ahgBAOojfcuODG83x8N0R9P4wAAAA==
-X-Change-ID: 20251021-t210-actmon-p3-3810039d81e7
-To: Thierry Reding <thierry.reding@gmail.com>, 
+X-B4-Tracking: v=1; b=H4sIANFL+GgC/x3MQQqAIBBA0avErBtQMYKuEi3MmWoWmahEEN49a
+ fkW/7+QOQlnmLoXEt+S5QoNQ9+BP1zYGYWawSgzaGU0FqMVOl/OK2C0aIk8qW0kdiu0KCbe5Pm
+ H81LrB1n1bU1gAAAA
+X-Change-ID: 20251021-t210-actmon-p4-4ddcd0f7deab
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
  Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761102682; l=2079;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761102805; l=1891;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=MW8HFEQS9R+lPS9/S1KOlskDpwqUZBJBLhRfvIhSwIQ=;
- b=yWz3YwMw+bcDfQX1L+ueM+/Hyb7SfKE3PywfHQxpycJ9twMvzt9NPJP4u+8wr/tEV0lzwPynB
- dItkF6oCM1ZBMcNqIwok9eKEX+9YUjDQP/l0kxPRqt2Df5iEDoX0eCD
+ bh=sY0LMNg4G27hdJljmt+cFEfQtETCUh15GCY4IWkxMSY=;
+ b=FbnXxhEB/ukDDzBDlmyXcngghzCYG9Gw//yf+iw9AO55OiCOfAXPZEeJYZkMJrUnXdn91Gdd5
+ Zu6Ms4e9gPEBoODc49WZnPKqR8n1dqCJNcf0lHiwWocx8KMnek/jQL/
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -76,12 +78,17 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Bindings Dependencies:
+- https://lore.kernel.org/r/20251021-t210-actmon-p1-v5-1-1bc8f9221917@gmail.com
 
-The Jetson Nano series of modules only have 2 emc table entries,
-different from other soc sku's. As the emc driver uses the soc speedo to
-populate the emc opp tables, add a new speedo id to uniquely identify
-this.
+Runtime/Probe Dependencies:
+- https://lore.kernel.org/r/20251021-t210-actmon-p2-v5-1-a07dc70e948d@gmail.com
+
+Logical Dependencies:
+- https://lore.kernel.org/r/20251021-t210-actmon-p3-v5-1-e1ef5e93909d@gmail.com
+
+Merge Strategy:
+- Merge all patches only after all dependencies are picked up
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
@@ -106,28 +113,19 @@ Changes in v2:
 - Add dt-bindings patch to document the new properties on the
   tegra210-emc node.
 - Link to v1: https://lore.kernel.org/r/20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com
+
 ---
- drivers/soc/tegra/fuse/speedo-tegra210.c | 1 +
- 1 file changed, 1 insertion(+)
+Aaron Kling (3):
+      arm64: tegra: tegra210: Add actmon
+      arm64: tegra: Add interconnect properties to Tegra210 device-tree
+      arm64: tegra: Add OPP tables on Tegra210
 
-diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
-index a8cc3632977230fbfda0f8c3bfa7b7b25c2378fe..06c2bcbee5734207e3ebacb4057da2195f85321c 100644
---- a/drivers/soc/tegra/fuse/speedo-tegra210.c
-+++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
-@@ -97,6 +97,7 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
- 			break;
- 
- 		case 0x8F:
-+			sku_info->soc_speedo_id = 2;
- 			sku_info->cpu_speedo_id = 9;
- 			sku_info->gpu_speedo_id = 2;
- 			break;
-
+ .../boot/dts/nvidia/tegra210-peripherals-opp.dtsi  | 135 +++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  43 +++++++
+ 2 files changed, 178 insertions(+)
 ---
 base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251021-t210-actmon-p3-3810039d81e7
-prerequisite-change-id: 20250812-tegra210-speedo-470691e8b8cc:v4
-prerequisite-patch-id: d32dd215b54ac46086377c1ce2c8d53d746690c9
+change-id: 20251021-t210-actmon-p4-4ddcd0f7deab
 
 Best regards,
 -- 
