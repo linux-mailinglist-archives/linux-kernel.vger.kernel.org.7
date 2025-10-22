@@ -1,162 +1,178 @@
-Return-Path: <linux-kernel+bounces-865290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B160BFCB6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:56:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B58BFCB6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD0C1A00DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A1419A7D7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20E635BDAD;
-	Wed, 22 Oct 2025 14:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03772343D6E;
+	Wed, 22 Oct 2025 14:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fqx1HCRR"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="ysNv8ldh"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A2B28031C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787AA35BDAD
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144916; cv=none; b=rByVTNJagDablFY5phOyFyA2HzPPIfyEGP5kkvQc4b8rN7P/qGfBf8mgots9vnFyhIC4Kojxbp4a/nsMN6l5OzpuW2Jc+iNgf7k2cIAzfeJlp+wkozi4YeBZgIlA5eImcq78ramYtw2MD3kNoyHmNV5zNnPVsF1GCW93a02YYLE=
+	t=1761144948; cv=none; b=cKU/FQom71P4TJJvMrG4kNsWF0F6IbCocLR0qnoYVP9Tm4wkdb6yCGA6slwpHxQB3X6smStGwJ2XKYkbz1t857dVmW4Y2n0GGEi3tGqEBGxa/sNliq08C13TYQ0oPbyyG3WvNysfcox2mfW+AJvm9hlTwYgLcowtR2OwcHa7rLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144916; c=relaxed/simple;
-	bh=xixcZTX0eL1d7xfnAtnsiDVqngsxSpBsAPH4d0uTQCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o9JTRjQyAEQekYeBMmF/A/nzG9tb3hl+L8Grrmt/OZvZZUSzHfavRjfqOStWXibW0bSTsc/qaVhqhWmfjKe1dzxi8IbEdY2zVykP0vmQFKOpQPZC9M4ZecLvGrEpLmNiNhPGqwGze9HQ6XF6lVcXVSl02xQ5FH2Jdc1Xbwu76OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fqx1HCRR; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MAxsGx001260;
-	Wed, 22 Oct 2025 14:55:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	s=arc-20240116; t=1761144948; c=relaxed/simple;
+	bh=mTXEDhbPklwnuwXoHo+JEFvJqInjrTql1fJnNdnVWLI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l71QvudTOp+6K27Gj+c1pM2ihDSPjyEO++zBbvxC4t3ASuiMB4ZtlERC35d1KlZNkKA0QRMkfbaugkQ4BYXpxna2kyvRtiUhmwH5x32HDMWUEdyCJ4FtOVBPEB4/bb3/5HgKbL2BRkEUkXTFe+3mnknjtVPVUfdfQ048rYUgbWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=ysNv8ldh; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 59ME1BRf495057
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:55:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=l27BBe
-	gJyx7DxIFqkcgjXnfZZVih1LLKp87o90TDHU0=; b=Fqx1HCRRVx9WeK+DDWklsR
-	BdFHpylF1AJjYn1AxUG3hzJSFl/Q7GfrIrnrL1SE1hYPjuhXCkfPAMISQsFGAFFL
-	Sb4w/eCMa1Rm4yUiol2QSgITh8n5G/9LdnZEmOAGbGVJomACxQV/flVIDOi1BCN+
-	7zhwQRiXl7UCdjCVEDdIh3I0T6uaCWYZt0ptlLbVpgy2AwTrTRhM6lMEjDyW7bPl
-	n//mHI691q5yybNqd7oKLR5VtlPYoh8i/TPBerXZ2SDb4clur2Y5FI/O3+ATuxQv
-	TPi8RQBPsdg/XQb4Mf8tOmIV5I+y4CtstZMg1ioYQjmgceyPVxY5jB5Tabw1cN5A
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31s5cc0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 14:55:08 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59ME0HEn017058;
-	Wed, 22 Oct 2025 14:55:07 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vnky117s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 14:55:06 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59MEt3rF59572706
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Oct 2025 14:55:03 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 05CDC2004B;
-	Wed, 22 Oct 2025 14:55:03 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E97820043;
-	Wed, 22 Oct 2025 14:55:02 +0000 (GMT)
-Received: from [9.111.139.78] (unknown [9.111.139.78])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 22 Oct 2025 14:55:02 +0000 (GMT)
-Message-ID: <5bdb1c91-8862-44b1-9f12-c5afa9e1806c@linux.ibm.com>
-Date: Wed, 22 Oct 2025 16:55:01 +0200
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=3Pxq7adyZuGRjMYC5LoHOzZm+NXukvXLEAUXf/pfmxI=; b=ysNv8ldhADFR
+	9OIOs0r/axpxcVw7nhFTF/+6n21gJs+XoQ76eTb2uA0YEMpDtiTG5U7mixtluGAZ
+	i2rd+ThcEsCTTmI+em1JPb+9g5GM8AlsvgH+yV+LsKuVatT83/YsJmllY+uDH06j
+	0VSUIHmM7hgIohSIuWv3nPUpCeuOodnj/NCxWTwdMpX8m5IVSfXj6PFdxgzt2Uzx
+	dAih3CxEqW3G9i77NhxIMHO5PVFullHL90rfXqkKr/m7l1TCd/330IkKMRiMM0v9
+	mpO1j8rjOOxCjQi4QX1yVF3GunCrOpkvGGfTtlMuWhfY3P2k0jaXTavPVyIkswNj
+	m9zLpKj7jw==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0001303.ppops.net (PPS) with ESMTPS id 49xr0q3tme-6
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:55:45 -0700 (PDT)
+Received: from twshared0973.10.ash9.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Wed, 22 Oct 2025 14:55:43 +0000
+Received: by devgpu012.nha5.facebook.com (Postfix, from userid 23751)
+	id 4F811591CCA; Wed, 22 Oct 2025 07:55:35 -0700 (PDT)
+Date: Wed, 22 Oct 2025 07:55:35 -0700
+From: Alex Mastro <amastro@fb.com>
+To: David Matlack <dmatlack@google.com>
+CC: Alex Williamson <alex@shazbot.org>,
+        Alejandro Jimenez
+	<alejandro.j.jimenez@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
+ limit
+Message-ID: <aPjwZ1Fh9hmFJyok@devgpu012.nha5.facebook.com>
+References: <20251015132452.321477fa@shazbot.org>
+ <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
+ <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
+ <20251016160138.374c8cfb@shazbot.org>
+ <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
+ <20251020153633.33bf6de4@shazbot.org>
+ <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
+ <CALzav=ebeVvg5jyFjkAN-Ud==6xS9y1afszSE10mpa9PUOu+Dw@mail.gmail.com>
+ <aPfbU4rYkSUDG4D0@devgpu012.nha5.facebook.com>
+ <CALzav=cyDaiKbQfkjF_UUQ0PB6cAKZhnSqM3ZvodqqEe8kQEqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/12] unwind: Implement compat fp unwind
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: jpoimboe@kernel.org, rostedt@kernel.org,
-        Indu Bhagat <indu.bhagat@oracle.com>, linux-kernel@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-References: <20250924075948.579302904@infradead.org>
- <20250924080119.613695709@infradead.org>
- <bd9bac99-208c-426d-b828-e23188d93226@linux.ibm.com>
- <cc6f34bb-7d05-4260-bc02-299fef2bcb01@linux.ibm.com>
- <20251020103940.GP3419281@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20251020103940.GP3419281@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: hTbVpASIbEPY8NAoi_K5Tvqqd8d0yyWp
-X-Proofpoint-GUID: hTbVpASIbEPY8NAoi_K5Tvqqd8d0yyWp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX9+GXXEZo0DWS
- /8LNZxjI2mKX5cOWV7Lxxcabo4fX3SF5H7tr+cerQc6JnpxJIH8GSFz5ggPx1I7U2h2e4aJE+6X
- VuuaKA/8DXhbeNgDJ14BLc4a0vXdnBAeVGaUlyuQ8yVEKbU2rT3vbsTUtVH5RdfUWICYaYnHQlC
- sjWF+6TWAaqLV7yGODXT/vV9oisCp2udKAZ9JTEwOHzEUpxU5WNPl7oOGR5GHcjfuoldyK62Jf8
- ViBdeISq6pUB0pVfGZvgaww2MtGoGDmYKmZjnaHDYESF2bCSTXO6EuQmSIJjDnDQklFhPTqKQGq
- uUNRydkY7VBcTzTCw6QEpGNZOf1Ptzv6DCpvb9KFhVcTCQuSbLRouotXTIn6oYjRqgWOVj1OLk/
- LyUWUgiDInUXtHxellJ2f4zW2Cya8A==
-X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f8f04c cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <CALzav=cyDaiKbQfkjF_UUQ0PB6cAKZhnSqM3ZvodqqEe8kQEqw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+X-Proofpoint-GUID: FOcERoVfADb1W5YIDPXWRRmazVB73TyV
+X-Authority-Analysis: v=2.4 cv=dLSrWeZb c=1 sm=1 tr=0 ts=68f8f071 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
  a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=0MvmVg10__VCTnNSAJcA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=FOH2dFAWAAAA:8 a=v4r7LAIuhmP5iyC60hwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDEyMiBTYWx0ZWRfX5lXHFR2MptvC
+ pQMW0WeNZQY8WBGMtZg9VqLZiQALbsz0sTN4B2n8i0ARXGMB8degbWMf37ERtDKxSnVScXp4Xc+
+ tAzBZqQMsh3c4DmyPB+0OMH9Rdn2HLHHfYeiZhyQswxNmiLd3oywW4kTlvkZkW4vYvhhgyaSLlG
+ MIghm3FBmPE1avIaNcku8Zx8lAiBWR0fc5V/V/117rybCboq/GOswA0BCerWcH3njSpLEi6AB/Q
+ 7e4Wez1+v+vNgZn/D5xxScWVuLQyJDjEbop76VBZUMYPJImatn+ehG+TPxUfliS4ePCofTt1XPW
+ yAAsnnrGWXX2P39MVmUAemFTyE5Nq+Fsp/BLhexGroVVReamx0jaosWmh4ZJmpY7kHVi/w7Ch0G
+ qFkoVg6948XF8+kD51Ue2GHKmYe7bg==
+X-Proofpoint-ORIG-GUID: FOcERoVfADb1W5YIDPXWRRmazVB73TyV
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_06,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Hello Peter!
+Thanks David -- this is good feedback. Will roll these suggestions into v=
+5.
 
-On 10/20/2025 12:39 PM, Peter Zijlstra wrote:
-> On Mon, Oct 20, 2025 at 11:16:45AM +0200, Jens Remus wrote:
->> On 10/17/2025 5:47 PM, Jens Remus wrote:
+On Tue, Oct 21, 2025 at 05:38:31PM -0700, David Matlack wrote:
+> On Tue, Oct 21, 2025 at 12:13=E2=80=AFPM Alex Mastro <amastro@fb.com> w=
+rote:
+> > I updated the *_unmap function signatures to return the count of byte=
+s unmapped,
+> > since that is part of the test pass criteria. Also added unmap_all fl=
+avors,
+> > since those exercise different code paths than range-based unmap.
+>=20
+> When you send, can you introduce these in a separate commit and update
+> the existing test function in vfio_dma_mapping_test.c to assert on it?
 
->>> In SFrame the CFA, FP, and RA offsets are unscaled.  Would it be ok, if
->>> unwind user sframe would factor state->ws from those offset values?  What
->>> if they were not aligned?  unwind user sframe would then have to fail.
->>
->> Sorry that I did not immediately think about the most obvious solution
->> tho above issues:  to not factor out the word size from the frame CFA,
->> FP, and RA offsets.  What do you think about making the following
->> changes to this and giyour subsequent patch?  That would work nicely
->> with unwind user sframe.
-> 
-> 
-> Yes, this should do nicely. I've made the changes, I'll do a test build
-> and then push out to the robots.
+SGTM
 
-Thanks!  Looking at your following updated patch I found that your
-change from "pointer to const struct unwind_user_frame" to
-"const struct unwind_user_frame" (done for obvious reasons) will require
-unwind user sframe to undo this when refactoring unwind_user_next_fp()
-into unwind_user_next_common().  Would that be the usual procedure or
-could you leave it as "pointer to const struct unwind_user_frame" for
-now?
+> > +#undef FIXTURE_VARIANT_ADD_IOMMU_MODE
+>=20
+> I think this can/should go just after the
+> FIXTURE_VARIANT_ADD_ALL_IOMMU_MODES(); statement. The same below.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=unwind/cleanup&id=f3624d64ba4862067b620fbd5bfbc0bfaf5368ae
+Ack.
 
-Thanks and regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
+> > +       unmapped =3D vfio_pci_dma_unmap_all(self->device);
+> > +       ASSERT_EQ(unmapped, size);
+>=20
+> The unmap_all test should probably be in a separate TEST_F. You can
+> put the struct vfio_dma_region in the FIXTURE and initialize it in the
+> FIXTURE_SETUP() to reduce code duplication.
+> > +}
 
-IBM
+Make sense.
 
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+> Would it be useful to add negative map/unmap tests as well? If so we'd
+> need a way to plumb the return value of the ioctl up to the caller so
+> you can assert that it failed, which will conflict with returning the
+> amount of unmapped bytes.
 
+Testing negative cases would be useful. Not sure about the mechanics yet.
+
+>=20
+> Maybe we should make unmapped an output parameter like so?
+>=20
+> int __vfio_pci_dma_map(struct vfio_pci_device *device,
+>         struct vfio_dma_region *region);
+>=20
+> void vfio_pci_dma_map(struct vfio_pci_device *device,
+>         struct vfio_dma_region *region);
+>=20
+> int __vfio_pci_dma_unmap(struct vfio_pci_device *device,
+>         struct vfio_dma_region *region, u64 *unmapped);
+>=20
+> void vfio_pci_dma_unmap(struct vfio_pci_device *device,
+>         struct vfio_dma_region *region, u64 *unmapped);
+>=20
+> int __vfio_pci_dma_unmap_all(struct vfio_pci_device *device, u64 *unmap=
+ped);
+> void vfio_pci_dma_unmap_all(struct vfio_pci_device *device, u64 *unmapp=
+ed);
+>=20
+> unmapped can be optional and callers that don't care can pass in NULL.
+> It'll be a little gross though to see NULL on all the unmap calls
+> though... Maybe unmapped can be restricted to __vfio_pci_dma_unmap().
+> So something like this:
+>=20
+> int __vfio_pci_dma_unmap(struct vfio_pci_device *device,
+>         struct vfio_dma_region *region, u64 *unmapped);
+>=20
+> void vfio_pci_dma_unmap(struct vfio_pci_device *device,
+>         struct vfio_dma_region *region);
+
+I'll put some thought into this and propose something in v5.
 
