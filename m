@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-864553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AD6BFB0FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E27BFB123
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808C2588335
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05FE33AED8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC933101B8;
-	Wed, 22 Oct 2025 09:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B9A3126D6;
+	Wed, 22 Oct 2025 09:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n2Z4tkf6"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="X4igsVL1"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423D230E0E2
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123915; cv=none; b=UyfOsYh2ZgO+uo9Id4DqqEhFvQVQ2xHjj4kfSlKSy+tdXwp8/fRv0QY6jhXSXDqo4YyHlE8kSwkEptB0RhbfpC3EXPUWOdjDcTBlx3dMHFxZbpe0sWkiIz4AogCBr2R3tgwC0gpY7EaGUZj+c9nxWWR4w7IPLhL4sKFjNocQlLo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123915; c=relaxed/simple;
-	bh=Wdyf7HnCAayl1DdEyrGs4CIPuT2p3NlnmLcxp4BvcEg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ndz3fB/fB/HtEKNn/eQsyurqBq5bE5sqhimMyiOmJRIV8iMLd+yHB0N3wRHXWVfxbZeEAYXqs0MIxChxPMCr30RHikF+hOSAJUqt7wB7FiiqSSr3SIsyNzkDaXRbULg1nAgQoy/XyQmNKwm4niD4KAo9IQ2pi638gbvEeiCuZ+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n2Z4tkf6; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id AF30D1A15D0;
-	Wed, 22 Oct 2025 09:05:11 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 86033606DC;
-	Wed, 22 Oct 2025 09:05:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5D3DE102F2424;
-	Wed, 22 Oct 2025 11:05:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761123910; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=6yeLxlHF1ExWB5DZwZRxEYNkaxzkbdpoSKjymzjUJmE=;
-	b=n2Z4tkf6o5U9c0lipN+o3XifhRcaEsIcWUSNkB4T/+bkjiLI0YovdjgK0wcw/J7+w+RMbP
-	XXXJAB5sk0AgXJ84LV6w1+bAF7TfewA7Ru9eQQUYtqRfc5Mz8hPSjomJ0vzJimC6f6WSwx
-	/RxHncJUqmBumvBArZb2tIXudRxorWrI/LUSkof3LpNucgeWNsVEkRp5WEsVVZK+YJCiDt
-	2WpyPYSkFUyw42NtZYWtYA8vW4rVY8qo9IfQUOl2gFlEZkXCUFjf+zwFrTIIUZqhmy41P1
-	zPVa0GTV+6s2TmWVoPZN/nw4n5xoyv9dLP8khMJ85WIi/0FKybbmO1lGqDabAQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Genoud <richard.genoud@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Chen-Yu Tsai
- <wens@csie.org>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Samuel
- Holland <samuel@sholland.org>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,  Wentao Liang <vulab@iscas.ac.cn>,  Johan
- Hovold <johan@kernel.org>,  Maxime Ripard <mripard@kernel.org>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  linux-mtd@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-sunxi@lists.linux.dev,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/15] mtd: rawnand: sunxi: introduce ecc_mode_mask
- in sunxi_nfc_caps
-In-Reply-To: <20251020101311.256819-8-richard.genoud@bootlin.com> (Richard
-	Genoud's message of "Mon, 20 Oct 2025 12:13:03 +0200")
-References: <20251020101311.256819-1-richard.genoud@bootlin.com>
-	<20251020101311.256819-8-richard.genoud@bootlin.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Wed, 22 Oct 2025 11:05:02 +0200
-Message-ID: <87jz0ntigx.fsf@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5946D30F54C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761123944; cv=pass; b=sahCb1sXn0RTYIwkOH+BEZdC0G3otBz5nwCRXo6ZO+VLABF3wLb0K1rqp8NgqoMVsNyyeyquDRSoxBCQEUIo/6CBYSTvXXmm3ORCNCRCcFp6XEJhh0OXKb+992MQMz87y14bWf8M7ToXRmyxXGQtyxKveWwbax7+PSf9dX/htX4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761123944; c=relaxed/simple;
+	bh=w8C1mR5NpC9uLWZC0BdgLO5Qa3biKDfHAVjDNs0OqW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BC7kO0OaqAPXbeUXAuQTmWIJJt/1OV+sGAtMqx9GLee3l4Puz1K3T/EIAB25Uy+M7i5yljkSPqJSde6UC8RpfZD2T4Qdg9NeR0AWkQ2RnVPiqgjgNqeYpJ3XzXzu8QWgMMRHpkmi5vu0kGLaQDPhyBE/qu2WbvF3CAOIH6ubkKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=X4igsVL1; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761123914; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=N1zT1LoITEaXg6uFoKJ16beKnG/GMxkfajcmVkTHlaX41N4oG4BpsF8SDon2pFWpITL+IWagXTaaSn3P12RG9u5KNKIV1DTR5k1rpa4dqJBRHRp2NGGbYOFNu+xqlNBcd744TEURYz6ildyWklXNN3H4mTFqV8CMkgsldLLk6bM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761123914; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/lGdJwyhtIySF6KxmF/9wuYIVdEuMadoSOJkGcO8qpI=; 
+	b=LUgIKk8lkJqucnaDu7xkHEVix/XvP2sKOFkDSrxQ+WRIythWEGjDERYLYZ9HpBk1QsK5VyUicaFk78T1FVWTuWkiJ3ULx/0r59a2MvfqBewB8lHOltOvFQfqeiQzm4deel9oD0UJpolET77ZlIh0+teNCi6KDpiuj2kwujMtJBw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761123914;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=/lGdJwyhtIySF6KxmF/9wuYIVdEuMadoSOJkGcO8qpI=;
+	b=X4igsVL14RSBxWz2z9jPR9IVbA7ddDIO6mIXII3m5C3qxKe4PYynaYzTz4sfxLoO
+	yGIEmxGr3nTTwEUSwt6oMlgRlD/57uxPWUZDeHwbYcXWBjMK1fMvYdWHm72qvvF5e3b
+	FyN4LMxJ1uzR2f302V9qhtwxvCS0f52UsGKAbh0c=
+Received: by mx.zohomail.com with SMTPS id 1761123911201126.70037465089842;
+	Wed, 22 Oct 2025 02:05:11 -0700 (PDT)
+Date: Wed, 22 Oct 2025 10:05:03 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Steven Price <steven.price@arm.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	kernel@collabora.com, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
+Message-ID: <clyss5dw6nzcfhryfobb6nrjywbyx6osfkxrxga4cigjhqx6cr@trdunwxzxeor>
+References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
+ <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
+ <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
+ <ba782636-2517-4087-9b23-005ec6ca9a47@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,45 +72,268 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba782636-2517-4087-9b23-005ec6ca9a47@arm.com>
 
-Hi Richard,
-
-On 20/10/2025 at 12:13:03 +02, Richard Genoud <richard.genoud@bootlin.com> =
-wrote:
-
-> The H6/H616 ECC_MODE field is not at the same offset, and has not the
-> same size.
-> So move the mask into sunxi_nfc_caps.
+On 22.10.2025 05:45, Akash Goel wrote:
 >
-> No functional change.
 >
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/sunxi_nand.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+> On 10/21/25 18:39, Adrián Larumbe wrote:
+> > Hi Akash,
+> >
+> > On 21.10.2025 15:32, Akash Goel wrote:
+> > >
+> > >
+> > > On 10/19/25 04:19, Adrián Larumbe wrote:
+> > > > Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
+> > > > behavior") did away with the treatment of partial unmaps of huge IOPTEs.
+> > > >
+> > >
+> > > Sorry have a doubt.
+> > >
+> > > Corresponding to the commit 33729a5fc0ca, can we now remove the code to
+> > > pre-allocate L3 page table pages i.e. 'op_ctx->rsvd_page_tables.pages' inside
+> > > panthor_vm_prepare_unmap_op_ctx() ?.
+> > >
+> > > > In the case of Panthor, that means an attempt to run a VM_BIND unmap
+> > > > operation on a memory region whose start address and size aren't 2MiB
+> > > > aligned, in the event it intersects with a huge page, would lead to ARM
+> > > > IOMMU management code to fail and a warning being raised.
+> > > >
+> > > > Presently, and for lack of a better alternative, it's best to have
+> > > > Panthor handle partial unmaps at the driver level, by unmapping entire
+> > > > huge pages and remapping the difference between them and the requested
+> > > > unmap region.
+> > > >
+> > > > This could change in the future when the VM_BIND uAPI is expanded to
+> > > > enforce huge page alignment and map/unmap operational constraints that
+> > > > render this code unnecessary.
+> > > >
+> > > > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > > > ---
+> > > >    drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
+> > > >    1 file changed, 126 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > > index 2d041a2e75e9..f9d200e57c04 100644
+> > > > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > > @@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+> > > >    	return 0;
+> > > >    }
+> > > > +static bool
+> > > > +is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
+> > > > +			   const struct drm_gpuva_op_map *op,
+> > > > +			   u64 unmap_start, u64 unmap_range,
+> > > > +			   u64 sz2m_prev, u64 sz2m_next)
+> > > > +{
+> > > > +	size_t pgcount, pgsize;
+> > > > +	const struct page *pg;
+> > > > +	pgoff_t bo_offset;
+> > > > +
+> > > > +	if (op->va.addr < unmap_vma->base.va.addr) {
+> > >
+> > >
+> > > Sorry, another doubt.
+> > >
+> > > Will this condition ever be true ?
+> > >
+> > > For 'op->remap.prev', 'op->va.addr' will always be equal to
+> > > 'unmap_vma->base.va.addr'.
+> >
+> > I believe it will always be less than that.
 >
-> diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sun=
-xi_nand.c
-> index 70c940840dda..4118307cac15 100644
-> --- a/drivers/mtd/nand/raw/sunxi_nand.c
-> +++ b/drivers/mtd/nand/raw/sunxi_nand.c
-> @@ -29,8 +29,9 @@
->  #include <linux/iopoll.h>
->  #include <linux/reset.h>
->=20=20
-> -/* non compile-time field get */
-> +/* non compile-time field get/prep */
->  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) &
-> (_mask))
+>
+> Thanks Adrian for having a look.
+>
+> static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> {
+> 	struct panthor_vma *unmap_vma = container_of(op->remap.unmap->va, struct
+> panthor_vma, base);
+>
+>
+> IIUC, the 'unmap_vma' passed to panthor_gpuva_sm_step_remap() will always
+> cover the entire VA range of 'drm_gpuva'.
+> That's why drm_gpuva_op_remap_to_unmap_range() is called to know the exact
+> range to be unmapped.
+>
+> In __drm_gpuvm_sm_unmap() and __drm_gpuvm_sm_map(), you can see this,
+>
+> struct drm_gpuva_op_unmap u = { .va = va };
+>
+>
+> > What will be equal to unmap_vma->base.va.addr is op->remap.prev->va.addr +
+> op->remap.prev->va.range
+>
+>
+> I think op->remap.prev->va.addr + op->remap.prev->va.range will be equal to
+> 'unmap_start' after the call to drm_gpuva_op_remap_to_unmap_range().
+>
+> Sorry I may have again misunderstood the code.
 
-This could probably require a mention in the commit message, as for the
-introduction of the field_get() helper.
+I had a second look __drm_gpuvm_sm_unmap() and you're right. I should've said it's always
+the case that op->va.addr < unmap_start inside is_huge_page_partial_unmap.
 
-No need to resend just for this either.
+This is a bug and it makes me wonder why when I ran some tests, the unmap intervals
+I got seemed fine. I'll go try again and also test Boris' implementation suggestion.
 
-Thanks,
-Miqu=C3=A8l
+> Please can you check.
+>
+> Best regards
+> Akash
+>
+>
+> > > And for 'op->remap.next', 'op->va.addr' will always be greater than
+> > > 'unmap_vma->base.va.addr'.
+> >
+> > Yes, I believe so.
+> >
+> > > Please can you clarify.
+> > >
+> > > Best regards
+> > > Akash
+> > >
+> > >
+> > > > +		bo_offset = unmap_start - unmap_vma->base.va.addr + unmap_vma->base.gem.offset;
+> > > > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+> > > > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+> > > > +		pgsize = get_pgsize(unmap_start, unmap_range, &pgcount);
+> > > > +
+> > > > +	} else {
+> > > > +		bo_offset = ((unmap_start + unmap_range - 1) - unmap_vma->base.va.addr)
+> > > > +			+ unmap_vma->base.gem.offset;
+> > > > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> > > > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+> > > > +		pgsize = get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev, &pgcount);
+> > > > +	}
+> > > > +
+> > > > +	pg = to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> PAGE_SHIFT];
+> > > > +
+> > > > +	if (pgsize == SZ_4K && folio_order(page_folio(pg)) == PMD_ORDER &&
+> > > > +	    unmap_vma->base.va.addr <= sz2m_prev && unmap_vma->base.va.addr +
+> > > > +	    unmap_vma->base.va.range >= sz2m_next)
+> > > > +		return true;
+> > > > +
+> > > > +	return false;
+> > > > +}
+> > > > +
+> > > > +struct remap_params {
+> > > > +	u64 prev_unmap_start, prev_unmap_range;
+> > > > +	u64 prev_remap_start, prev_remap_range;
+> > > > +	u64 next_unmap_start, next_unmap_range;
+> > > > +	u64 next_remap_start, next_remap_range;
+> > > > +	u64 unmap_start, unmap_range;
+> > > > +};
+> > > > +
+> > > > +static struct remap_params
+> > > > +get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
+> > > > +			const struct panthor_vma *unmap_vma)
+> > > > +{
+> > > > +	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
+> > > > +	struct remap_params params = {0};
+> > > > +
+> > > > +	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
+> > > > +
+> > > > +	if (op->prev) {
+> > > > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+> > > > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+> > > > +
+> > > > +		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
+> > > > +					       unmap_range, sz2m_prev, sz2m_next)) {
+> > > > +			params.prev_unmap_start = sz2m_prev;
+> > > > +			params.prev_unmap_range = SZ_2M;
+> > > > +			params.prev_remap_start = sz2m_prev;
+> > > > +			params.prev_remap_range = unmap_start & (SZ_2M - 1);
+> > > > +
+> > > > +			u64 diff = min(sz2m_next - unmap_start, unmap_range);
+> > > > +
+> > > > +			unmap_range -= diff;
+> > > > +			unmap_start += diff;
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	if (op->next) {
+> > > > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> > > > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+> > > > +
+> > > > +		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
+> > > > +					       unmap_range, sz2m_prev, sz2m_next)) {
+> > > > +			if (unmap_range) {
+> > > > +				params.next_unmap_start = sz2m_prev;
+> > > > +				params.next_unmap_range = SZ_2M;
+> > > > +				unmap_range -= op->next->va.addr & (SZ_2M - 1);
+> > > > +			}
+> > > > +
+> > > > +			params.next_remap_start = op->next->va.addr;
+> > > > +			params.next_remap_range = SZ_2M - (op->next->va.addr & (SZ_2M - 1));
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	params.unmap_start = unmap_start;
+> > > > +	params.unmap_range = unmap_range;
+> > > > +
+> > > > +	return params;
+> > > > +}
+> > > > +
+> > > >    static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> > > >    				       void *priv)
+> > > >    {
+> > > > @@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> > > >    	struct panthor_vm *vm = priv;
+> > > >    	struct panthor_vm_op_ctx *op_ctx = vm->op_ctx;
+> > > >    	struct panthor_vma *prev_vma = NULL, *next_vma = NULL;
+> > > > -	u64 unmap_start, unmap_range;
+> > > > +	struct remap_params params;
+> > > >    	int ret;
+> > > > -	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_range);
+> > > > -	ret = panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
+> > > > +	/*
+> > > > +	 * ARM IOMMU page table management code disallows partial unmaps of huge pages,
+> > > > +	 * so when a partial unmap is requested, we must first unmap the entire huge
+> > > > +	 * page and then remap the difference between the huge page minus the requested
+> > > > +	 * unmap region. Calculating the right offsets and ranges for the different unmap
+> > > > +	 * and map operations is the responsibility of the following function.
+> > > > +	 */
+> > > > +	params = get_map_unmap_intervals(&op->remap, unmap_vma);
+> > > > +
+> > > > +	ret = panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_range);
+> > > >    	if (ret)
+> > > >    		return ret;
+> > > >    	if (op->remap.prev) {
+> > > > +		ret = panthor_vm_unmap_pages(vm, params.prev_unmap_start,
+> > > > +					     params.prev_unmap_range);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +		ret = panthor_vm_map_pages(vm, params.prev_remap_start,
+> > > > +					   flags_to_prot(unmap_vma->flags),
+> > > > +					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
+> > > > +					   op->remap.prev->gem.offset, params.prev_remap_range);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +
+> > > >    		prev_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+> > > >    		panthor_vma_init(prev_vma, unmap_vma->flags);
+> > > >    	}
+> > > >    	if (op->remap.next) {
+> > > > +		ret = panthor_vm_unmap_pages(vm, params.next_unmap_start,
+> > > > +					     params.next_unmap_range);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +
+> > > > +		ret = panthor_vm_map_pages(vm, params.next_remap_start,
+> > > > +					   flags_to_prot(unmap_vma->flags),
+> > > > +					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
+> > > > +					   op->remap.next->gem.offset, params.next_remap_range);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +
+> > > >    		next_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+> > > >    		panthor_vma_init(next_vma, unmap_vma->flags);
+> > > >    	}
+> > > >
+> > > > base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
+> > > > prerequisite-patch-id: 3b0f61bfc22a616a205ff7c15d546d2049fd53de
+> >
+> > Adrian Larumbe
 
