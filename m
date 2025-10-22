@@ -1,198 +1,88 @@
-Return-Path: <linux-kernel+bounces-865275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFC5BFCA8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:50:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA552BFCAC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E156119A7B85
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:50:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52A86506FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A6D34CFC8;
-	Wed, 22 Oct 2025 14:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1QpJ40o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE3334CFBE;
+	Wed, 22 Oct 2025 14:49:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE8C34C9BE;
-	Wed, 22 Oct 2025 14:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F2F34C98C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144470; cv=none; b=hgiG+xBTUPSbJ1qZ/TdbsEXcUAwRZ1WsDEaLZzW2n/F7enJwsrmtVTlWt1IepQhjcUxWvDrE/U4dlq1VZaBaYBJ15Q+6f1u6njEwNLWlmQogD4zvFAznXXYpl8iaHuZPYnEjOiV3/6CZiVzOB1u8m9rQg21tTICvZQS4umBRnPk=
+	t=1761144545; cv=none; b=py2XZxn3w6bx4EmnxIXAV6oZeVd/GCzZAeho28I9p1cBLLxYbeh5n6Naegbgl8XWqnNRAwrW3eL7iNuLpOMwA9LK151K82DymuDuza9WkomQ2lsqqztkCPPTKVznV120eSwDQydBImPSdE4GERZBVzOG+TwKViEg0E5XBQuV2rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144470; c=relaxed/simple;
-	bh=Z1awYP775zcmRIPxtIP7LDM5gU9pja6nxuYhnSfCHwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDewiGv6/OeH8wzBbVxR1y621yfYH3eI1IlJpURMJli8/w/3hXcLq1ipTgeCRFAY3ywY6wYkt9IF4NdH+sJm3YnyImoSm1NFmziBtUd1DlTBSJ/SEeOkIJsUgnsoscjFjjbKEgO5GFhKyJADzoT+LVae7LDB/gsrPzcF4rvcd3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1QpJ40o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F13DBC4CEE7;
-	Wed, 22 Oct 2025 14:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761144469;
-	bh=Z1awYP775zcmRIPxtIP7LDM5gU9pja6nxuYhnSfCHwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U1QpJ40o66G6/TVUkWpx0/dz1vlGkwNZ1VOIZyJUGJszkMRpjvNLXc4+vcHL+cvuQ
-	 nuTA8alGqU9uNl/jhWZ3gdqiEK5Z7UHaISu50Nc2LJR5xXdrj+Pj9LxPo5NwVW6TX2
-	 zSxS14I0cjYf94gFsOxjidhXAWTe7sztaWJn/xrkNSMbvpRveODQTtos9GFonls1+8
-	 Ce+PVi6NsMeDMZUyDq5pF2ZGhQ8193V7agtk1l2CQOW/sDEhIWTuXfh88E6smHURsz
-	 qHEVeawHqp9S5XSnwz537mLA+9ZdtA8udXLXr/B7Tk7uxEW+Mc7DsWNoumPnZrqW3I
-	 p3nvHrkxxctJQ==
-Date: Wed, 22 Oct 2025 17:47:41 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: dan.j.williams@intel.com
-Cc: Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com,
-	=?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM
- DIMM devices
-Message-ID: <aPjujSjgLSWsAtsb@kernel.org>
-References: <20251015080020.3018581-1-rppt@kernel.org>
- <20251015080020.3018581-2-rppt@kernel.org>
- <68f2da6bd013e_2a201008c@dwillia2-mobl4.notmuch>
+	s=arc-20240116; t=1761144545; c=relaxed/simple;
+	bh=yb6ko3uW4fBXUIWtO+pl6/cCimILqSsHghzXP6Lw7C4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mKPt+gWe5ZPTrwH4Fy+7TDhwCESYIi4ziCHv0yoq+cer5ZP8gkPXukAlpJVFbUgpBqAZqLl7fi2skiNix/iKINJOQloP4hI5IJalFCGFVIO4K4YpwVn7bgxTdhK0+lbsEVDqzVAXP6yqsXie1wmdyzUfxOFUJmd6YMUgeExzGeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430afceae09so76684595ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:49:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761144542; x=1761749342;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VMEaSXwy0tYSRLUSKZ0QAdWCYXERfWLTXr47ndAhog=;
+        b=gp3rgpWcFFsiuUUpZ7pQejkkzJv7cpfC/SdN/Heqf6/umWs+W1Vt8xjz1ayTzrYXH2
+         ClzL/t33kSXsJHrlsYMNVVDwuyzpu6oqeqlqxe8CFpHSZTatiwdyGoQhP1Ikaxzuy4aG
+         LFFck/MC9qYp3ujz3WYBZC6SUpNSiPyuwsAYYvdcOlxlviCKg+QjaFM/VfDRYb6ftWyd
+         J9NGb7mVSojHCS49aYnJj/OVOl6oCYFzv7uh2m0W1VaMqvSUcllAhraUjQSwXqnGyFt1
+         wgSdeB0H4Qz8R5RBLh2HIOT/oL7e3u/s5MA05/WAd+T1Guo09OKbAWeeCNkCLVYpu2EM
+         pXEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVshDdJ93yB3elZtBVcPy3d9Xm8KUwWhonJcYgdUmR3l7+HFuxh3OVNFt2z6FpjABRN2T8yqfOMnr6mcsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB0DJCTtlCM+Iqw7oVEsr2XE5pGaJutbyYWqonih+/Up6yOjas
+	+Wc3BLBrpg5YPuOgqEmU9zHMhO98pxo3fswncthiq7lm77Yxipa8KiulyVA0w8FuKQhXfHR8we1
+	kOMJ1P+q+2nCz+QSmnOjAIr67Vc5E+9qoNhAzT7QToFEtpdSLjYB57shOAjA=
+X-Google-Smtp-Source: AGHT+IHAtnzh9M1oLX2r3WevE1LAmEhz8gMuVWy9orCDRVPOqOQCMlG3hx91ns27Tkw62sK/0WJGQAmoMDPHjwJkJQiB+UTa4tGE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68f2da6bd013e_2a201008c@dwillia2-mobl4.notmuch>
+X-Received: by 2002:a05:6e02:1568:b0:430:b3e2:a96e with SMTP id
+ e9e14a558f8ab-430c529e627mr298565905ab.28.1761144542568; Wed, 22 Oct 2025
+ 07:49:02 -0700 (PDT)
+Date: Wed, 22 Oct 2025 07:49:02 -0700
+In-Reply-To: <20251022140056.5Yda7%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8eede.050a0220.346f24.0054.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extents_range
+From: syzbot <syzbot+f2107d999290b8166267@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 17, 2025 at 05:08:11PM -0700, dan.j.williams@intel.com wrote:
-> Mike Rapoport wrote:
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > 
-> > There are use cases, for example virtual machine hosts, that create
-> > "persistent" memory regions using memmap= option on x86 or dummy
-> > pmem-region device tree nodes on DT based systems.
-> > 
-> > Both these options are inflexible because they create static regions and
-> > the layout of the "persistent" memory cannot be adjusted without reboot
-> > and sometimes they even require firmware update.
-> > 
-> > Add a ramdax driver that allows creation of DIMM devices on top of
-> > E820_TYPE_PRAM regions and devicetree pmem-region nodes.
-> > 
-> > The DIMMs support label space management on the "device" and provide a
-> > flexible way to access RAM using fsdax and devdax.
-> > 
-> > Signed-off-by: Mike Rapoport (Mircosoft) <rppt@kernel.org>
-> > ---
-> >  drivers/nvdimm/Kconfig  |  17 +++
-> >  drivers/nvdimm/Makefile |   1 +
-> >  drivers/nvdimm/ramdax.c | 272 ++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 290 insertions(+)
-> >  create mode 100644 drivers/nvdimm/ramdax.c
-> > 
-> > diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
-> > index fde3e17c836c..9ac96a7cd773 100644
-> > --- a/drivers/nvdimm/Kconfig
-> > +++ b/drivers/nvdimm/Kconfig
-> > @@ -97,6 +97,23 @@ config OF_PMEM
-> >  
-> >  	  Select Y if unsure.
-> >  
-> > +config RAMDAX
-> > +	tristate "Support persistent memory interfaces on RAM carveouts"
-> > +	depends on OF || X86
-> 
-> I see no compile time dependency for CONFIG_OF. The one call to
-> dev_of_node() looks like it still builds in the CONFIG_OF=n case. For
-> CONFIG_X86 the situation is different because the kernel needs
-> infrastructure to build the device.
-> 
-> So maybe change the dependency to drop OF and make it:
-> 
-> 	depends on X86_PMEM_LEGACY if X86
+Hello,
 
-We can't put if in a depends statement :(
-My intention with "depends on OF || X86" was that if it's not really
-possible to use this driver if it's not X86 or OF because there's nothing
-to define a platform device for ramdax to bind.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Maybe what we actually need is
+Reported-by: syzbot+f2107d999290b8166267@syzkaller.appspotmail.com
+Tested-by: syzbot+f2107d999290b8166267@syzkaller.appspotmail.com
 
-	select X86_PMEM_LEGACY_DEVICE if X86
-	default n
+Tested on:
 
-so that it could be only explicitly enabled in the configuration and if it
-is, it will also enable X86_PMEM_LEGACY_DEVICE on x86.
-With default set to no it won't be build "accidentailly", but OTOH cloud
-providers can disable X86_PMEM_LEGACY and enable RAMDAX and distros can
-build them as modules on x86 and architectures that support OF. 
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c6ce7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f9a2ca2a8964bd4a
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2107d999290b8166267
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ac4614580000
 
-What do you think?
-
-> > +	select X86_PMEM_LEGACY_DEVICE
-> 
-> ...and drop this select.
-> 
-> > +	default LIBNVDIMM
-> > +	help
-> > +	  Allows creation of DAX devices on RAM carveouts.
-> > +
-> > +	  Memory ranges that are manually specified by the
-> > +	  'memmap=nn[KMG]!ss[KMG]' kernel command line or defined by dummy
-> > +	  pmem-region device tree nodes would be managed by this driver as DIMM
-> > +	  devices with support for dynamic layout of namespaces.
-> > +	  The driver can be bound to e820_pmem or pmem-region platform
-> > +	  devices using 'driver_override' device attribute.
-> 
-> Maybe some notes for details like:
-> 
-> * 128K stolen at the end of the memmap range
-> * supports 509 namespaces (see 'ndctl create-namespace --help')
-> * must be force bound via driver_override
-
-Sure.
- 
-> [..]
-> > +static int ramdax_probe(struct platform_device *pdev)
-> > +{
-> > +	static struct nvdimm_bus_descriptor nd_desc;
-> > +	struct device *dev = &pdev->dev;
-> > +	struct nvdimm_bus *nvdimm_bus;
-> > +	struct device_node *np;
-> > +	int rc = -ENXIO;
-> > +
-> > +	nd_desc.provider_name = "ramdax";
-> > +	nd_desc.module = THIS_MODULE;
-> > +	nd_desc.ndctl = ramdax_ctl;
-> > +	nvdimm_bus = nvdimm_bus_register(dev, &nd_desc);
-> > +	if (!nvdimm_bus)
-> > +		goto err;
-> > +
-> > +	np = dev_of_node(&pdev->dev);
-> > +	if (np)
-> > +		rc = ramdax_probe_of(pdev, nvdimm_bus, np);
-> 
-> Hmm, I do not see any confirmation that this node is actually a
-> "pmem-region". If you attach the kernel to the wrong device I think you
-> get fireworks that could be avoided with a manual of_match_node() check
-> of the same device_id list as the of_pmem driver.
-> 
-> That still would not require a "depends on OF" given of_match_node()
-> compiles away in the CONFIG_OF=n case.
-
-With how driver_override is implemented it's possible to get fireworks with
-any platform device :)
-
-I'll add a manual check for of_match_node() to be on the safer side.
-
-> [..]
-> 
-> This looks good to me. With the above comments addressed you can add:
-> 
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-
--- 
-Sincerely yours,
-Mike.
+Note: testing is done by a robot and is best-effort only.
 
