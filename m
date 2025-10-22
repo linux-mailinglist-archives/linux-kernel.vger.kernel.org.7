@@ -1,182 +1,136 @@
-Return-Path: <linux-kernel+bounces-864891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129E0BFBC88
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A753BFBC91
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173C83A23C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64DC83A1FE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7570134165E;
-	Wed, 22 Oct 2025 12:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5BA341663;
+	Wed, 22 Oct 2025 12:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ksvjElMm"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="lLl8SCmj"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34263126BA;
-	Wed, 22 Oct 2025 12:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246F33F8BB;
+	Wed, 22 Oct 2025 12:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134946; cv=none; b=lbv2et1vo+SVqASnfAGZPBRpJwalbhu6L5CoYH/5DzD6r4WNiS1OOi3b7g0wDi35+CiQ4DGmExmz2XCD5NQodxSACq/p0xkVK0tM43WWSYLBpoNpm1CX2v3wJEh+5TisJfPTh0EuU3XUEdZfrDt7H+GMusUul45nHjlz+G5BHzo=
+	t=1761135086; cv=none; b=bDnFBJjE4AAZ5noqZDo/gflrQx42rMopZRQQ2gdqy4Sk+UnUhAbvfTre7+ATh61+APrGV8wvAW2vGNr9XTHRPbb9AvY7PInaSdmG1mY+iw3pRPzg5lERM1cOyhWCWUorvpIyZ9BpfvtGcGX/bnviTenL/xsqopYTeLA8fb42rlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134946; c=relaxed/simple;
-	bh=ZwhqgodgvDxpBNdeOXB9Q9P2LbZErwotxNaIasBmTqU=;
+	s=arc-20240116; t=1761135086; c=relaxed/simple;
+	bh=tkrprbrk+8tZuog422XZG37Z2QXOb9I1chAizsk7NAE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWjF3lQnR4sGxKYWctUWo6W8jDzQ7ajcG9h4JHqQ18UgGk9e1EX8S2wVq15Zg1YErxIElhWINhIUulIyC67QczMFZ3Pc/yA4IPRVt3d8zgvo8InKuDlK0GzZZFb7HjjwPRQ9uHITXNJ6I7ucypJb4Th/Grb55Cmpj47Xt3bSc88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ksvjElMm; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 77AFA83D;
-	Wed, 22 Oct 2025 14:07:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761134836;
-	bh=ZwhqgodgvDxpBNdeOXB9Q9P2LbZErwotxNaIasBmTqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ksvjElMmEgq2mrzAS1/SsUr+EyE9oGawbLR0RigDm8wONXO8StRIgExAdamgV+uPq
-	 E19sf2pdHySUP7W6sBQmM5b8sTNm6RhqxvxsNH8VYsQ72TBdcmtmpYparyS6vtq9T9
-	 RRaXbQ2t3Q32VpFvLQ9/U7+3423OLV+ZR5a+ZwZs=
-Date: Wed, 22 Oct 2025 15:08:49 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Create a specific id namespace for
- output entities
-Message-ID: <20251022120849.GD727@pendragon.ideasonboard.com>
-References: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QnZJwdDDDw391QRs/+vxcPISUDygWDZR3sd7pRP/NAdoeaL5sZhwpujkcwp4e3SXpAvZp+Ymyv6Hn7HdloPfYLCdAIGUAY/cP+8eqyGgwtaan26xfM9ckRGG3ewAPvtsLg5EsY/0Jd/SJLfC3ZftQU07hahPnmLPCfOUCfZ1XLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=lLl8SCmj; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 4E8631C008F; Wed, 22 Oct 2025 14:11:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1761135080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8CZAyeo2gXZA3vhy5DvKfZKov9u9r0S6FpowockZMvg=;
+	b=lLl8SCmjEcJgaNs/QavwGsENCBBjhd0ueHRhL2T5VuXrVYy1VPEuHteLR1xhec/kADyaSo
+	OgvTVaBD0FJT3CXsUCxTZ13rA8uEPMI0MEB8NjG9fUOkUoGWRU6xYrf+MQ1QLSLKNRoxAW
+	9P8RfAs5qlvBAKWM1Aenp0tb2l63tSU=
+Date: Wed, 22 Oct 2025 14:11:19 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+	Fam Zheng <fam.zheng@bytedance.com>, linux-kernel@vger.kernel.org,
+	Lukasz Luba <lukasz.luba@arm.com>, linyongting@bytedance.com,
+	songmuchun@bytedance.com, satish.kumar@bytedance.com,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>, yuanzhu@bytedance.com,
+	Ingo Molnar <mingo@redhat.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, fam@euphon.net, x86@kernel.org,
+	liangma@bytedance.com, Dave Hansen <dave.hansen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	guojinhui.liam@bytedance.com, linux-pm@vger.kernel.org,
+	Thom Hughes <thom.hughes@bytedance.com>
+Subject: Re: [RFC 0/5] parker: PARtitioned KERnel
+Message-ID: <aPjJ53F8kBV0/wLH@duo.ucw.cz>
+References: <20250923153146.365015-1-fam.zheng@bytedance.com>
+ <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
+ <AEC34AE1-AEB5-4678-AC9D-39155E97D86C@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ss7tpEO8/hjYlNAz"
 Content-Disposition: inline
-In-Reply-To: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
+In-Reply-To: <AEC34AE1-AEB5-4678-AC9D-39155E97D86C@zytor.com>
 
-On Wed, Oct 22, 2025 at 11:55:16AM +0000, Ricardo Ribalda wrote:
-> Nothing can be connected from an output entity. Which means that no
 
-s/output entity/output terminal. Same below.
+--ss7tpEO8/hjYlNAz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Did you mean s/from an/to an/ ?
+On Wed 2025-09-24 12:01:52, H. Peter Anvin wrote:
+> On September 24, 2025 8:22:54 AM PDT, Dave Hansen <dave.hansen@intel.com>=
+ wrote:
+> >On 9/23/25 08:31, Fam Zheng wrote:
+> >> In terms of fault isolation or security, all kernel instances share
+> >> the same domain, as there is no supervising mechanism. A kernel bug
+> >> in any partition can cause problems for the whole physical machine.
+> >> This is a tradeoff for low-overhead / low-complexity, but hope in
+> >> the future we can take advantage of some hardware mechanism to
+> >> introduce some isolation.
+> >I just don't think this is approach is viable. The buck needs to stop
+> >_somewhere_. You can't just have a bunch of different kernels, with
+> >nothing in charge of the system as a whole.
+> >
+> >Just think of bus locks. They affect the whole system. What if one
+> >kernel turns off split lock detection? Or has a different rate limit
+> >than the others? What if one kernel is a big fan of WBINVD? How about
+> >when they use resctrl to partition an L3 cache? How about microcode upda=
+tes?
+> >
+> >I'd just guess that there are a few hundred problems like that. Maybe mo=
+re.
+> >
+> >I'm not saying this won't be useful for a handful of folks in a tightly
+> >controlled environment. But I just don't think it has a place in
+> >mainline where it needs to work for everyone.
+>=20
+> Again, this comes down to why a partitioning top level hypervisor is The =
+Right Thing[TM].
+>=20
+> IBM mainframes are, again, the archetype here, having done it
+> standard since VM/370 in 1972. This was running on machines with a
+> *maximum* of 4 MB memory.
 
-> other entity can reference an output entity as baSourceId.
-> 
+Is there a good resource on IBM mainframes, prefferably written in
+language that can be understood by mostly x86 kernel hacker?
 
-Some output terminals have controls, so we need to preserve their ID.
-That's why my proposal only set the UVC_TERM_OUTPUT bit for the
-*streaming* output terminals, not for all output terminals.
+BR,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, Netanyahu and Musk!
 
-> Use this fact to move all the output entities to a different namespace
-> id.
-> 
-> The output entities are usually named after the dev_name() of the usb
-> device, so there should not be any uAPI change from this change.
-> 
-> Although with this change we can handle some id collisions
-> automagically, change the logic of uvc_alloc_new_entity() to keep
-> showing a warning when a camera has invalid descriptors. Hopefully this
-> message will help vendors fix their invalid descriptors.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Hi, this patch fixes support for some devices with invalid USB
-> descriptor.
-> 
-> It is orthogonal to:
-> https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
-> 
-> Some devices will be fixed by the other patch, other devices will be
-> fixed by this. In my opinion is worth to land both patches.
-> 
-> Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 23 +++++++++++++++++++----
->  1 file changed, 19 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..40f8ae0df89e104992f5d55af3d3539dea3d146e 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -165,10 +165,14 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
->  	return NULL;
->  }
->  
-> +#define ENTITY_HARDWARE_ID(id) ((id) & ~UVC_TERM_OUTPUT)
+--ss7tpEO8/hjYlNAz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This needs a UVC_ prefix, and should probably go to uvcvideo.h. You can
-also & 0xff, as the UVC descriptors store IDs in 8-bit fields.
+-----BEGIN PGP SIGNATURE-----
 
-> +
->  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
->  {
->  	struct uvc_streaming *stream;
->  
-> +	id = ENTITY_HARDWARE_ID(id);
-> +
->  	list_for_each_entry(stream, &dev->streams, list) {
->  		if (stream->header.bTerminalLink == id)
->  			return stream;
-> @@ -810,10 +814,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
->  	}
->  
->  	/* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
-> -	if (uvc_entity_by_id(dev, id)) {
-> -		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
-> +	if (uvc_entity_by_id(dev, ENTITY_HARDWARE_ID(id)))
-> +		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
-> +			ENTITY_HARDWARE_ID(id));
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaPjJ5wAKCRAw5/Bqldv6
+8qdmAKCq9aYQRiOyTwhd79KoNue/iyLH+gCfclVJI8E1mVVDi3nacu7Cjp9qv7g=
+=enlG
+-----END PGP SIGNATURE-----
 
-It's not an error anymore if there's no collision of the full 16-bit ID,
-right ? Should it be demoted to a dev_warn() ?
-
-> +
-> +	if (uvc_entity_by_id(dev, id))
->  		id = UVC_INVALID_ENTITY_ID;
-> -	}
->  
->  	extra_size = roundup(extra_size, sizeof(*entity->pads));
->  	if (num_pads)
-> @@ -969,6 +975,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
->  	struct usb_host_interface *alts = dev->intf->cur_altsetting;
->  	unsigned int i, n, p, len;
->  	const char *type_name;
-> +	unsigned int id;
->  	u16 type;
->  
->  	switch (buffer[2]) {
-> @@ -1107,8 +1114,16 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
->  			return 0;
->  		}
->  
-> +		/*
-> +		 * Nothing can be connected from an output terminal. To avoid
-> +		 * entity-id's collisions in devices with invalid USB
-> +		 * descriptors, move the output terminal id to its own
-> +		 * namespace.
-> +		 */
-> +		id = buffer[3] | UVC_TERM_OUTPUT;
-> +
->  		term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
-> -					    buffer[3], 1, 0);
-> +					    id, 1, 0);
->  		if (IS_ERR(term))
->  			return PTR_ERR(term);
->  
-> 
-> ---
-> base-commit: ea299a2164262ff787c9d33f46049acccd120672
-> change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
-
--- 
-Regards,
-
-Laurent Pinchart
+--ss7tpEO8/hjYlNAz--
 
