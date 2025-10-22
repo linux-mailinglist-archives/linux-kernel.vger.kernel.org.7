@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-865791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE77BFE0C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:32:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2A1BFE0D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0553A30BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744D218C66C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B1E2EBBA9;
-	Wed, 22 Oct 2025 19:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9582F60B4;
+	Wed, 22 Oct 2025 19:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wyKIboF8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1V+LIdKI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E681C8606;
-	Wed, 22 Oct 2025 19:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386DA2F0671;
+	Wed, 22 Oct 2025 19:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761161517; cv=none; b=D+JNRJLiBbHFtYgAyN7mIOX/sEVfDdp+jm/v7X/endRsavVly70gNQmKJ5ZCnO5PLQlw2v8k42Ms3Kb0BRUEngpK0tek+jxna9u40/dOl8JV1Vqj0oe6YGqsR4VU8L5ZohLRGpHJsozY6WG8RvPWYTq+assBM8krnp4q2Yoi7Vc=
+	t=1761161636; cv=none; b=Rv90Kf/sAiHZIbSB2+zrP7Gi+jg7/16SqYsHkie8WA1nEJRz7l+mzjvIp+mv0YcW7Rkv+nD4UugpiE37hkIg90lWDTN4Ua2WU7DvIBDntKXKXctsxAshgYBM0/rOdC8LWghQih1xnpXrcrcIMgHj9zOtgKs8wHuZ/2DKpdYbeRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761161517; c=relaxed/simple;
-	bh=DMCBbT9Aq24u+PasVGHAJczYG7vG6quPlA3iyJvngc8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SccOTSVssQFuZiII28MQSuPsRSxW1+uqQKAJf+sYm8he48ql5HGiuIr7M+4WuvMuGayjkNwKeMlpgFy8Dbx5FW7/ZNvUL1p6itRc8pVeH0c+6bNkkz/qG2SYmfPnuEkRUFdfXhlsilCpxkSDBwwkAppb2m6ekVypT/8Blb0S87E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wyKIboF8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=lrrq2Cj27BdBpTnOZHqUUMrh+hMufS7NHhrHWF4hvLk=; b=wyKIboF8s6GuGVkClVVD26u6Uo
-	xBtjebvWxH/I7IRBa7Pcwc4EzmipTJ/Rw/+8eaeANTbwPmwarOKUUAy/4hRswBgZXQ+Jp3cdzonGG
-	dC2zPS39EExW8AbUclFMrhsxbJjAgs/9IsgXA4R2TKsWaJ/JLjwyS79JtXQkyezfGxJ6ouMQFKjbI
-	hKhjL9Fr1vf5fF2MGrL/12zX+fkvs9Eoz4gWjeYDyi97X7VyhuhqdKhIPBlYfS0A5HjFTK5514S8n
-	mnoud0+4cfOXLNDL8pkgiQLTwvK+VQwXDEQQp/dNvsyDtNi984+wmOvPCMfZpxsmgzhWmrwY97T3Z
-	1FjFnZmQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBeYq-000000048wp-0o0S;
-	Wed, 22 Oct 2025 19:31:52 +0000
-Message-ID: <caf949d7-09b4-4a36-bf38-43af13e8e308@infradead.org>
-Date: Wed, 22 Oct 2025 12:31:51 -0700
+	s=arc-20240116; t=1761161636; c=relaxed/simple;
+	bh=EhmrM/rrZkqdkcIvkN3sA3FlTAW1QyALgArWs2KuzpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUGj5vaqdbfpgUXA7IiW5tIMjySxPMgOFfc5GW/Q5+nIDVJEk6l4JtsQj5fG2/7yhBJ4eCqKU9QLX7AiGQH+9MjPp2rybnwosyv7hN0azZZkj1EjPBTaGsEDIHpIlcJiW08EZarZ0pNQQcr0X74bRn4eZvSrZL+MrOdEwdgfhOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1V+LIdKI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=B0MoY2AgpEB5vSiVMVo5RoknNJN0kCXnUeivnHXYIXs=; b=1V
+	+LIdKI4P+Icu/8ukHThqV1tbQgarFsVugvL5WRk0IRB8NJDX0TH+kApHCwP1cdGzgbIvRCnOheSIR
+	cuTGsJXE2FC5JdvywAS7Zim7m0qZqc2BtETLen57s1NSGOCUiNCU2E5sedkDQ5rFPexMsebbwJZ0S
+	U06ymByNQI5yog0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vBeae-00Bo3f-Q2; Wed, 22 Oct 2025 21:33:44 +0200
+Date: Wed, 22 Oct 2025 21:33:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+Subject: Re: [PATCH net-next v2 5/5] net: macb: Add "mobileye,eyeq5-gem"
+ compatible
+Message-ID: <51833ec4-e417-4ba3-a6d1-c383ee9ea839@lunn.ch>
+References: <20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com>
+ <20251022-macb-eyeq5-v2-5-7c140abb0581@bootlin.com>
+ <ef92f3be-176d-4e83-8c96-7bd7f5af365f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] taint/module: Remove unnecessary taint_flag.module field
-To: Petr Pavlu <petr.pavlu@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>,
- Petr Mladek <pmladek@suse.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251022082938.26670-1-petr.pavlu@suse.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251022082938.26670-1-petr.pavlu@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef92f3be-176d-4e83-8c96-7bd7f5af365f@bootlin.com>
 
-
-
-On 10/22/25 1:28 AM, Petr Pavlu wrote:
-> The TAINT_RANDSTRUCT and TAINT_FWCTL flags are mistakenly set in the
-> taint_flags table as per-module flags. While this can be trivially
-
-Ah, I had just noticed these this morning.
-
-> corrected, the issue can be avoided altogether by removing the
-> taint_flag.module field.
+On Wed, Oct 22, 2025 at 10:09:49AM +0200, Maxime Chevallier wrote:
+> Hi,
 > 
-> This is possible because, since commit 7fd8329ba502 ("taint/module: Clean
-> up global and module taint flags handling") in 2016, the handling of module
-> taint flags has been fully generic. Specifically, module_flags_taint() can
-> print all flags, and the required output buffer size is properly defined in
-> terms of TAINT_FLAGS_COUNT. The actual per-module flags are always those
-> added to module.taints by calls to add_taint_module().
+> On 22/10/2025 09:38, Théo Lebrun wrote:
+> > Add support for the two GEM instances inside Mobileye EyeQ5 SoCs, using
+> > compatible "mobileye,eyeq5-gem". With it, add a custom init sequence
+> > that must grab a generic PHY and initialise it.
+> > 
+> > We use bp->phy in both RGMII and SGMII cases. Tell our mode by adding a
+> > phy_set_mode_ext() during macb_open(), before phy_power_on(). We are
+> > the first users of bp->phy that use it in non-SGMII cases.
+> > 
+> > Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> This seems good to me. I was worried that introducing the unconditionnal
+> call to phy_set_mode_ext() could trigger spurious errors should the
+> generic PHY driver not support the requested interface, but AFAICT
+> there's only the zynqmp in-tree that use the 'phys' property with macb,
+> and the associated generic PHY driver (drivers/phy/phy-zynqmp.c) doesn't
+> implement a .set_mode, so that looks safe.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+I was thinking along the same lines, is this actually safe? It would
+be good to add something like this to the commit message to indicate
+this change is safe, the needed code analysis has been performed.
 
-> ---
-> The patch is based on linux-next (20251021) because I wanted to avoid
-> a conflict with "taint: add reminder about updating docs and scripts" [1],
-> which is currently queued in mm-nonmm-unstable.
-> 
-> [1] https://lore.kernel.org/all/20251015221626.1126156-1-rdunlap@infradead.org/
-> 
-> ---
->  include/linux/panic.h |  1 -
->  kernel/module/main.c  |  2 +-
->  kernel/panic.c        | 46 ++++++++++++++++++++-----------------------
->  3 files changed, 22 insertions(+), 27 deletions(-)
-> 
-
--- 
-~Randy
+	Andrew
 
