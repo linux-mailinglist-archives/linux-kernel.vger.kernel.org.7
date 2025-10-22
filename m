@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-864355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8628BBFA9AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:37:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC8DBFA9EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AD918C805A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:38:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A68BF4FB4C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5662FB0AA;
-	Wed, 22 Oct 2025 07:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="RqwbGJUO"
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E2B221F26;
-	Wed, 22 Oct 2025 07:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C1D2FB96A;
+	Wed, 22 Oct 2025 07:39:09 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D8D2F363E;
+	Wed, 22 Oct 2025 07:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761118661; cv=none; b=o2wRX613gNWx61VgqN5mK8WUaJO/UDwAcKqVWgdvOwQuxEsAxNYIonv4Rtlo34Ka68mRLOV5hnHHeklD76BSJjgPSICi7HVwrTkEzC349ONBzpBcdhScUld66L4r2ffv4T6FBTBpGNf/tlLgGxJI2I6CxNBLtlmwMIzano0zCIE=
+	t=1761118748; cv=none; b=inO1b0VRQHPjtles9DHMHTS75vCg6uCfbZ0rdxGuw9EvkRHyb9UbO5UhWObBNswjs9DqEnQY+armP0tYMYZjvyM3V8obQGakVXHCnRVgEsJwM9vq9wwbz1/u6cNY2jqgnATzytFZHxcB36ouv4YlU52qpPrHeUZKnDTSBu8ge+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761118661; c=relaxed/simple;
-	bh=CNXsacZrYlCizcNkP14G0p+hbYUYpHwtpracQ0YFDWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AcXMv5Xv8a2jh2VsW7ZAk2deLc8+KEAa2eTFJg2gxYtkYmcuaHGV2bgTFvcM/J7Q3CppVZR40JIiDJiTXlRX2kAnYHbl1xc98HZJEmuC4zGNbB2kC/btkovPufCbm+Iu+TdmUUU97yyCeB7r9aYw3u6IDrT1MwAfdCcyHCkvxWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=RqwbGJUO; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from canpmsgout12.his.huawei.com (unknown [172.19.92.144])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cs1FV4pzgznfm2;
-	Wed, 22 Oct 2025 15:36:46 +0800 (CST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=uMulYN+qePmxL2vU5StmzMeZjoafSCMQNt2A3M/a23A=;
-	b=RqwbGJUOHi7tAE2d7phDKzoo9ZtzuVj/7aJuYLNnleM3ilmd2ysq5hnzUB58XiON8Ud0mev4d
-	15iA3PgL+HRtkdGIUGBdCkaMjjnsep1EMn9VI3NpidZ3qOYmG0PyUvyKax728QvHjoO0nu7AUo7
-	fIDIjE1ziPuZpf+vyhQ/t2Y=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cs1FV0hWSznTVF;
-	Wed, 22 Oct 2025 15:36:46 +0800 (CST)
-Received: from kwepemk200007.china.huawei.com (unknown [7.202.194.73])
-	by mail.maildlp.com (Postfix) with ESMTPS id 487911A016C;
-	Wed, 22 Oct 2025 15:37:27 +0800 (CST)
-Received: from [10.67.121.172] (10.67.121.172) by
- kwepemk200007.china.huawei.com (7.202.194.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 15:37:26 +0800
-Message-ID: <2523f498-3723-48a1-8594-83bac35a4ead@hisilicon.com>
-Date: Wed, 22 Oct 2025 15:37:26 +0800
+	s=arc-20240116; t=1761118748; c=relaxed/simple;
+	bh=SVhcG/IkEsCLlLoYPNdIRgyFtOQdzIcIRvyXcYlz5XY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LgF3UdZO69SR3aLl/kA5EKQvb85RT25QXgxKHfKZJghjK9QJf7NmNArWG107D6Z0H6Ru1d+mc/XpTyfryMTk0FUbEuYNNckkIU/vThIVJ6Uc7vVm7N/lWOQju6Z756wu8LT5/kL2dJDbqRd9bsTCPxpoQcKXFKjLlbQKwu8hfwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: X+cxSG5tTriEpfsJ3S5Cog==
+X-CSE-MsgGUID: zo+bzUg2TzKy/vu0s6E1Pw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 22 Oct 2025 16:39:02 +0900
+Received: from demon-pc.localdomain (unknown [10.226.93.88])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 56E654005E3B;
+	Wed, 22 Oct 2025 16:39:00 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH] dmaengine: sh: rz_dmac: remove braces around single statement if block
+Date: Wed, 22 Oct 2025 10:37:57 +0300
+Message-ID: <20251022073800.1993223-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] uacce: fix for cdev memory leak
-To: Zhangfei Gao <zhangfei.gao@linaro.org>, Chenghai Huang
-	<huangchenghai2@huawei.com>
-CC: <gregkh@linuxfoundation.org>, <wangzhou1@hisilicon.com>,
-	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
-	<qianweili@huawei.com>
-References: <20251022021149.1771168-1-huangchenghai2@huawei.com>
- <20251022021149.1771168-2-huangchenghai2@huawei.com>
- <CABQgh9HFHSstR19NtOw5c6E+qS7_d_=6qnCYq9VY6DNKT6o3ng@mail.gmail.com>
-From: "linwenkai (C)" <linwenkai6@hisilicon.com>
-In-Reply-To: <CABQgh9HFHSstR19NtOw5c6E+qS7_d_=6qnCYq9VY6DNKT6o3ng@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk200007.china.huawei.com (7.202.194.73)
 
+Braces around single statement if blocks are unnecessary, remove them.
 
-在 2025/10/22 14:17, Zhangfei Gao 写道:
-> On Wed, 22 Oct 2025 at 10:12, Chenghai Huang <huangchenghai2@huawei.com> wrote:
->> From: Wenkai Lin <linwenkai6@hisilicon.com>
->>
->> In uacce_register(), if cdev_device_add() fails, we should properly
->> decrease the reference count of the cdev kobject and set uacce->cdev
->> to NULL to avoid potential use-after-free or double free issues.
->>
->> This change adds proper error handling after cdev_device_add() fails,
->> ensuring that kobject_put() is called and uacce->cdev is cleared.
->>
->> Fixes: 015d239ac014 ("uacce: add uacce driver")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
->> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
->> ---
->>   drivers/misc/uacce/uacce.c | 11 ++++++++++-
->>   1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
->> index 42e7d2a2a90c..9b82a6731832 100644
->> --- a/drivers/misc/uacce/uacce.c
->> +++ b/drivers/misc/uacce/uacce.c
->> @@ -519,6 +519,8 @@ EXPORT_SYMBOL_GPL(uacce_alloc);
->>    */
->>   int uacce_register(struct uacce_device *uacce)
->>   {
->> +       int ret;
->> +
->>          if (!uacce)
->>                  return -ENODEV;
->>
->> @@ -529,7 +531,14 @@ int uacce_register(struct uacce_device *uacce)
->>          uacce->cdev->ops = &uacce_fops;
->>          uacce->cdev->owner = THIS_MODULE;
->>
->> -       return cdev_device_add(uacce->cdev, &uacce->dev);
->> +       ret = cdev_device_add(uacce->cdev, &uacce->dev);
->> +       if (ret) {
->> +               kobject_put(&uacce->cdev->kobj);
-> Not understanding this,
-> What if kobject_put(&p->kobj) is called twice?
-> cdev_device_add would call cdev_del->kobject_put(&p->kobj) as well.
->
-> If you think cdev_device_add has an issue, maybe fixing
-> cdev_device_add itself is better?
->
-> Thanks
-Regarding your concern, cdev_device_add() use cdev_del rolls back
-its cdev_add operations (add the refcount to 2) upon failure when
-dev->devt is not null, the refcount of cdev is still 1 after the
-rollback, so it does not free the memory of the cdev structure itself.
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+---
+ drivers/dma/sh/rz-dmac.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-Therefore, in the error path of uacce_register, we still need to
-manually call kobject_put to decrement the refcount of the kobject to
-zero within cdev and free it.
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index 1f687b08d6b8..a6db74e86c18 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -336,13 +336,12 @@ static void rz_dmac_prepare_desc_for_memcpy(struct rz_dmac_chan *channel)
+ 	lmdesc->chext = 0;
+ 	lmdesc->header = HEADER_LV;
+ 
+-	if (dmac->has_icu) {
++	if (dmac->has_icu)
+ 		rzv2h_icu_register_dma_req(dmac->icu.pdev, dmac->icu.dmac_index,
+ 					   channel->index,
+ 					   RZV2H_ICU_DMAC_REQ_NO_DEFAULT);
+-	} else {
++	else
+ 		rz_dmac_set_dmars_register(dmac, channel->index, 0);
+-	}
+ 
+ 	channel->chcfg = chcfg;
+ 	channel->chctrl = CHCTRL_STG | CHCTRL_SETEN;
+@@ -393,12 +392,11 @@ static void rz_dmac_prepare_descs_for_slave_sg(struct rz_dmac_chan *channel)
+ 
+ 	channel->lmdesc.tail = lmdesc;
+ 
+-	if (dmac->has_icu) {
++	if (dmac->has_icu)
+ 		rzv2h_icu_register_dma_req(dmac->icu.pdev, dmac->icu.dmac_index,
+ 					   channel->index, channel->mid_rid);
+-	} else {
++	else
+ 		rz_dmac_set_dmars_register(dmac, channel->index, channel->mid_rid);
+-	}
+ 
+ 	channel->chctrl = CHCTRL_SETEN;
+ }
+@@ -671,13 +669,12 @@ static void rz_dmac_device_synchronize(struct dma_chan *chan)
+ 	if (ret < 0)
+ 		dev_warn(dmac->dev, "DMA Timeout");
+ 
+-	if (dmac->has_icu) {
++	if (dmac->has_icu)
+ 		rzv2h_icu_register_dma_req(dmac->icu.pdev, dmac->icu.dmac_index,
+ 					   channel->index,
+ 					   RZV2H_ICU_DMAC_REQ_NO_DEFAULT);
+-	} else {
++	else
+ 		rz_dmac_set_dmars_register(dmac, channel->index, 0);
+-	}
+ }
+ 
+ /*
+-- 
+2.51.1.dirty
 
-Thanks,
-Wenkai
 
