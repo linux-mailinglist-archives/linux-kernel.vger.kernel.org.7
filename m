@@ -1,50 +1,62 @@
-Return-Path: <linux-kernel+bounces-865172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C36EBFC604
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:06:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3D0BFC5EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BD5E4FCCA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:04:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA3E9351234
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0FE34AAF2;
-	Wed, 22 Oct 2025 14:04:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D313431F6
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CEC34B402;
+	Wed, 22 Oct 2025 14:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STCa7qfp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A777342C81;
+	Wed, 22 Oct 2025 14:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141854; cv=none; b=rzRXEen1NsVDKcccCmOihe8w/aA5XV6ekaER/YI9peK2XxKklQ0kL1fA7mm5INel63RlflY0p0mo8UTa2XtPhBqGm2cjJ+K7xov/tg72N34AH1ocNxDSRGJL/BX9hoYW/9xjc/rGiOoh23SRPGusdhn0jKhWetoWvfYFdifd52A=
+	t=1761141908; cv=none; b=SX6sdV/EfOeFjplHiJeqEFaphvYW+OplerVevJYJXVqC8DH65IdbNTASYbBUPt2x1FY3nAw3U9pnNUx0oVPWUafAz8gOtUN3y3+t21o6Fb60qxAZn59tWVvLGcICIBwxLmYw4DpustUyoLOE9PVXX/uvR2FhUh/klr7t/MM60jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141854; c=relaxed/simple;
-	bh=YzBpX1Rsl4XSQwmf9N1iBG77ffs5D0DzM3KdMidVw7U=;
+	s=arc-20240116; t=1761141908; c=relaxed/simple;
+	bh=Z2fhMvuqsJ3srCnp+0oTmljFG+7/qaPNlbN0encLOvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Di+GOed2PICHN3FSp5MdaboCGFMQfrulGT96E0BqxMDAy7JSrfymro2gW1QWMxdTlB7OPNZKJX8+mVfa1JPGoo5kyYBiE/9NwRi0rr0wia2C9sGgtAQeDDqdbTWNrtbZ49n6yngSB9I2fdbHmY4KZ4uXXUOiz+Psbx/En2AjaV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B6B61063;
-	Wed, 22 Oct 2025 07:04:03 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF2633F59E;
-	Wed, 22 Oct 2025 07:04:10 -0700 (PDT)
-Date: Wed, 22 Oct 2025 15:04:09 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Mike Leach <mike.leach@linaro.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-	james.clark@linaro.org
-Subject: Re: [PATCH 1/1] coresight: fix issue where coresight component has
- no claimtags
-Message-ID: <20251022140409.GR281971@e132581.arm.com>
-References: <20251021234520.3355-1-mike.leach@linaro.org>
- <20251021234520.3355-2-mike.leach@linaro.org>
- <20251022092958.GQ281971@e132581.arm.com>
- <CAJ9a7Vi+Oq3Zma0Cs+w8m0kRE0pG6ax3=26EQK=u7d=vQfNFQw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsrCWLyssKILYQp/9OoJWioYkz+XKPlUYPKD0vWs3s+pQBCg+vBGEdpnpcdZmIvDa5ZIwzaQhLDY7EBYJYLWBAJHCgsUx4x/OutK+1QCowfHBxtqjFNp0ZuVwlQtIE1swDLfz6U0Ia1itgnHzFvSFhdFyHrze560OADflVXmuXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STCa7qfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D67BC4CEF5;
+	Wed, 22 Oct 2025 14:05:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761141903;
+	bh=Z2fhMvuqsJ3srCnp+0oTmljFG+7/qaPNlbN0encLOvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=STCa7qfpl6r6uM36aHFZSqIEcjThWmFFBHbZeEBZwFO8JG1xNRTCUnIFxQwB6AxUZ
+	 hFGYpNVAxqNd/I5p46l4Cy2SAgYZFO0TyIto+xhaTBnNIYsfvM/lV4ldsIP/iNifBq
+	 gE58Huk8mbgwiMyUZjii1IrxZV9ADPPrUHDNf9Y9C6QY8lTjbU3B0+w6cMcKIOu8Xa
+	 bEYRm1nNNEslseeSK3INJlTQ8i4LbnZT3sU3ZVCPUj+1muSl74dFB/aY2Q27r29DTd
+	 +kYcYEV9n/v4mMHuLHXl3qqCPIavBR6pW4a+gaAyKZDIdI3kb7suetdkM1v/xj4A3b
+	 Rwp0XZcyISUcg==
+Date: Wed, 22 Oct 2025 09:05:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v4 3/5] of/irq: Export of_msi_xlate() for module usage
+Message-ID: <20251022140501.GA3390144-robh@kernel.org>
+References: <20251021124103.198419-1-lpieralisi@kernel.org>
+ <20251021124103.198419-4-lpieralisi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,64 +65,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJ9a7Vi+Oq3Zma0Cs+w8m0kRE0pG6ax3=26EQK=u7d=vQfNFQw@mail.gmail.com>
+In-Reply-To: <20251021124103.198419-4-lpieralisi@kernel.org>
 
-Hi Mike,
-
-On Wed, Oct 22, 2025 at 01:35:46PM +0100, Mike Leach wrote:
-
-[...]
-
-> > - We can add a new flag ("bool claim_impl" in the struct csdev_access),
-> >   by default the field will be zero.
-> >
+On Tue, Oct 21, 2025 at 02:41:01PM +0200, Lorenzo Pieralisi wrote:
+> of_msi_xlate() is required by drivers that can be configured
+> as modular, export the symbol.
 > 
-> I considered a bool - but the correct place for this would be
-> coresight_device - where we keep all the information about the
-> hardware features.
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Cc: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/of/irq.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Maybe coresight_device is suitable. But this might require to update
-furthermore for claim function arguments (e.g., need to pass "csdev"
-rather than "csdev_access").
+I guess just iproc needs this, so:
 
-> > - The drivers support claim tags call coresight_clear_self_claim_tag()
-> >   in probe (see __catu_probe() as an example), we can call a new
-> >   function coresight_init_claim_tag() to replace it, this function sets
-> >   "claim_impl" properly and clear the tag if supported.
-> >
-> 
-> I considered moving this initialisation to the common coresight code
-> where we create the coresight_device.
-
-Seems to me, this is dangerous. If a module is not CoreSight compliant
-and claim registers are absent, when access we will get unknown values
-or even cause serious result (external abort or bus lockup).
-
-[...]
-
-> > > +/*
-> > > + * Coresight specification defines a maximum of 8 claim tag bits.
-> > > + * The precise number is implementation defined, and may be obtained by
-> > > + * reading the CLAIMSET register.
-> > > + */
-> > > +#define CORESIGHT_CLAIM_BITS_MAX_MASK        GENMASK(7, 0)
-> > > +#define CORESIGHT_CLAIM_SELF_HOSTED_BIT      BIT(1)
-> >
-> > Now we only care about the self-host bit. Can reuse existed macros ?
-> >
-> 
-> I feel that drivers should be written to match the specification - the
-> macros above are a correct mask value per specification and the
-> correct bitfield comparison for the MSBit of the protocol.
-> 
-> The ones below are a protocol masks field, and a specific protocol
-> value that is used in value rather than bit comparisons in the
-> claimtag code. I felt it clearer to differentiate between the uses
-> when reading the code.
-
-How about change CORESIGHT_CLAIM_EXTERNAL and
-CORESIGHT_CLAIM_SELF_HOSTED to MSBit ?
-
-Thanks,
-Leo
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
