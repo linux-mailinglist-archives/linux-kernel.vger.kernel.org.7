@@ -1,203 +1,160 @@
-Return-Path: <linux-kernel+bounces-864656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854F6BFB462
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:00:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B263BFB45C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA363B1776
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:59:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06D8B4ED5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18020316193;
-	Wed, 22 Oct 2025 09:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CA72882A1;
+	Wed, 22 Oct 2025 10:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="N+ivhJdU"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BiwqGmaR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D28830F53E;
-	Wed, 22 Oct 2025 09:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD5FF9EC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127168; cv=none; b=mglLpQwL9GGQW+9E8q2jnNkcoICGzzfCKg1X/e95V1hfTJHUyEsy1b0tEGLel3RLVkpTlwgUvzb2z+GVug4kLsMX+k5MkVySvUopfoCpAkvAkd4DRG2xzIWdWAac2KAp2rd1GjZlzIOzFSDuayOy1hKlro/vLX7o6tFDQ5JgfwY=
+	t=1761127240; cv=none; b=Bjz6N5oT1MdY7qKqDZgohxjx0mAwqrBU0poxcllbpZkag7p9Qmv3HZzOuEeZP5/TmTrS8RpgceV0pDpgq1eCgRfiSzhEvfbjxpNJHd7XeiLmSTJ8LIdCgZLLpOXiS0pO5YIz/qB/Lg0Y1cxUSFEoNCiTG5VA8qFiU5J/uoWuEBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127168; c=relaxed/simple;
-	bh=QmEpF6sPqLGtPfR97ODlWi8K2yCDWkjPz1yM9eoEWZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cCELPSzJgExu0dAksMqOoTu61hkdjzmYW5bntlNwqNFGoCgFDMZBf5kRjJXVRKuRNXi3CT+rLCgIff1m8dFRjhn6LKpFaoufC5AnM9NrueUy4+NcNaUuB2lNJMo/SjW9ifCwU2Mk0Jqt8BEHpFR1nhl470MON3rwdiuNy8KlDyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=N+ivhJdU; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cs4Q20Hn5z9tm8;
-	Wed, 22 Oct 2025 11:59:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761127162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rs9gC2MuUAS+IiZaGoI5syk4lSYwDHEmE+5KRFDk2J8=;
-	b=N+ivhJdUViE2sx8JFuqurvh6YesjViJsAfOk6IZ+HoHyiqnBEGcpE2j+L/CCRW0M5ucsL7
-	Xon9ZukDAIY5YQjrCATS/9RJZl9VM0L6qORNgjwPpEdK92UNhxWRC2hVjlRtJSGA/wZvA+
-	zAAOn+Ltj3A52VpZ+QMGuhAlFe7O22IVwr1bFg+/XWAJu+ljWO2gU3Pbfccj0XqCXb5cHH
-	50KgDJH7KcL15jY7IT0SzIDTaemRvYyPk1lOoTZOSZrWsvlMxYK5eu+qhqo7sYVa8Cga6K
-	UbEzSiKHdzw7JG3vtZ/PhtE6e74egcYx9dKUL9wLEw8WGv1ZnHPP5x+Vyj4TDw==
-Message-ID: <72267a6c-13c7-40bd-babb-f73a28625ca4@mailbox.org>
-Date: Wed, 22 Oct 2025 11:59:18 +0200
+	s=arc-20240116; t=1761127240; c=relaxed/simple;
+	bh=D/RdzgerUXxdXIxLj3ueFDUpefwcXH+Z33lWnyzuBUU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=tIXDlPkFeo0EUQh/DiVx1bmQvt3dsAIhuWMsQlqF+NqOxTjML6AP7RPqB7gNU2k3AM9yFsfuqsxRfc9kIJHmTclZAFG3Er0YG3VN+X/lD7vwTyyXYqQTSuT/8yx04e+pShd9JFPdnDNQzAy4fIeagx7xhYeWNbyDKCtQJAKDHeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BiwqGmaR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M2RLIL018585
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:00:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=djuXN475bvh4
+	H2/HkJC0UnX8Fj8yGhy4ORyfJcb7uws=; b=BiwqGmaRgdJksXydFdsWBqdvG3EB
+	hCIEKOmFOpVqU9RnvQlhaL3yjBLvd+8HbtxYPwZ0DuPo/uq4kFJ+RVIVhQivhvX3
+	a6sVrjsqoRPVjTVdBso857okpC1QFjHTV4bBTbUHwIFZhGhDw1cM8d+JJP2mu7OX
+	2stPItmWg7TrtlXzEhLpas0OEK9Wbht/1IG4GUtcP5eRM6AATNQfdHMVSy54ezOD
+	0P9HH0f9Q3jv+lQ2SKVbxNXrWpVM91iTM61lFmrAeZk3zp9kTUZkQ1oEQ4lQOTNn
+	aqlo5Zn3ZQxjMlesUXo0Aa3aSKAPXujb3RvDGt3pP7TxySAuPjvFFVkAQQ==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v469m59m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:00:38 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290b13e3ac0so65110245ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:00:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761127237; x=1761732037;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=djuXN475bvh4H2/HkJC0UnX8Fj8yGhy4ORyfJcb7uws=;
+        b=WetesYnVhwdgI6ejrXpViLXii7gTRg9Z9vqW7hiJIRhkTsYhJhkS/PbmvceZ+66KjE
+         VttbHxLVYM+qbsWq1fDfrkPgBPmdPFVzoE2Bo3GjVH2nLGcKFF41XLjz3TYUkhfM1bOf
+         EAEbodPGF/SfFOQD0HQAl4/7QaEuQPEEqT88ihEYGaBn9an2gzBwyPNg7kSrzrpv4DPI
+         BeIaWCfSFK1PPELrzE74zkVlWa1vbW7cdJw7lb382mwWQjGOdvDZEOE9bvUc6aPmecrq
+         VZ2T7Kbl3fF/jCcgtpbGdMDD79fpbVULjpYWLlQGJMTpNbWe74jLTA8mvHw+CY8Wbu/a
+         z8bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjw1xNRAHT/eMGQ86QftETKamz8SRUrSAYNdvdLbALxlbhJ7Iq4Vu+KZQrJmVll3sd89Om5zjK6RE2SW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP17/XnmPNvHqXDhPzVGC0r7wp6vGNfjow73wQy1IZIGVagZ3Y
+	FlBiMoavZ0t78mQuiXEOl4sP8TN0WTcZX4XLdpxxccZd5J/9bJ7LU5RSGMOebUyqMpXApYWVusw
+	naasAgNmKO1HDQrycyBecsa57PBZDtXtnhX/4DOc+6l86A9D+oi4psi5rkL1WrGE/bHA=
+X-Gm-Gg: ASbGncskGeoOh1JsYJH1wMsOpaqpCwSlZbFwigph6LWtxcRNVnoWbqjnKHuTmlLH7mf
+	ubBhUhar8h5JEf5johBZHBNkTdOYzVe5n2mbHs0IZ4O+42ihTmIy9veVJZW0dfr1xUgozXy5D+g
+	e4Zz3xcdwe/WBNelbBN4HeD3NCtHZK0i9ghQbQiLL/5f1SfK5Ga/c9jKQ+g/+91+RumzX2Fs7Lh
+	cnqXbOA8W8P8+sVmwcmBg7jV/MJAcNfo9BgSIn0GLoEn7GeLn8YRPV8KlASiqmnrL3FRfVthD7P
+	tUqULC6fm1hszqssB730O7Bg10LqW19XhMIUMXj3CvRl7FehVGhmpNkao4T9uHP4ObfdeRRoz5k
+	4/2envBDA5/TCFrsvaFA/5o7Ef3oq09W0eaXbQw==
+X-Received: by 2002:a17:902:eccb:b0:290:b53b:745b with SMTP id d9443c01a7336-290cb07cfe3mr316250615ad.39.1761127237091;
+        Wed, 22 Oct 2025 03:00:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEDROATh3RnjU12HIGSqCJPoOyvjjLYGo0+tf1o+/B9ssy41BPcCGsaC62K96HQ8/uSNiOU/w==
+X-Received: by 2002:a17:902:eccb:b0:290:b53b:745b with SMTP id d9443c01a7336-290cb07cfe3mr316250005ad.39.1761127236434;
+        Wed, 22 Oct 2025 03:00:36 -0700 (PDT)
+Received: from hu-uaggarwa-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebcce8sm134729785ad.18.2025.10.22.03.00.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 03:00:36 -0700 (PDT)
+From: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathias Nyman <mathias.nyman@intel.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wesley.cheng@oss.qualcomm.com,
+        Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
+Subject: [RFC PATCH] usb: host: xhci: Release spinlock before xhci_handshake in command ring abort
+Date: Wed, 22 Oct 2025 15:30:29 +0530
+Message-Id: <20251022100029.14189-1-uttkarsh.aggarwal@oss.qualcomm.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-ORIG-GUID: O-v13LFtB3VNmvef_gGk7NoSWYsyDqB7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMiBTYWx0ZWRfX38+RKYD6vd2x
+ vSXoCycjrn1F9PWzI/kcZZyvtEKStXsO9G/g42S0YJNgIEuUMFsGb1g21SPtxi2QB7+BdsD/3jh
+ 9mss/Kl8rCQ5U5E4OWHohU5a/EIUMxuwXYh5eL8IwuVEdz2N6BtQz66OLPBt9WDD9tNRg9ySxDi
+ wjKy+W4qCp/kRErD9Cs13bgFe7OGaSZIYkXuDzbwG8IHfbumlqse80KuRPbQVGxZseyO2JIXoaR
+ wUp03LQJ2pBNgR0WXSYnk1A9JGqcl814eGJLR1W3tC7s+7HlWjmVXgsnXj1sYKhuAubGteZvpkQ
+ Qhb1iuhXn1d+zoecg18GvUXba+KQtWaD10KaU7mLPgr7bdB2AM+Rjaf5NTO3TDTZCr865upTqFy
+ 9BWzIfZZB3FLxoPC3rsqQ6xPeUL3YA==
+X-Authority-Analysis: v=2.4 cv=U8qfzOru c=1 sm=1 tr=0 ts=68f8ab46 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=bdA4XEzNU97oe6VxBpoA:9 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: O-v13LFtB3VNmvef_gGk7NoSWYsyDqB7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
+ spamscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180032
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-To: "mani@kernel.org" <mani@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, "Bandi, Ravi Kumar"
- <ravib@amazon.com>,
- "thippeswamy.havalige@amd.com" <thippeswamy.havalige@amd.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "michal.simek@amd.com" <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Sean Anderson <sean.anderson@linux.dev>
-References: <20251021212801.GA1224310@bhelgaas>
- <ab1f7c51-bc41-4774-a0dc-850e53c412eb@mailbox.org>
- <3it5l556vmfpuu6kz5yvulwosi4ecmcgfbzcizrc5wi7ifddkh@mpzfxf2v6v3f>
-Content-Language: en-US
-From: Stefan Roese <stefan.roese@mailbox.org>
-In-Reply-To: <3it5l556vmfpuu6kz5yvulwosi4ecmcgfbzcizrc5wi7ifddkh@mpzfxf2v6v3f>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 6e55d69c8ea0868a40e
-X-MBO-RS-META: az7nnbuxz6o4bpe17pfhm65i8n7q5a34
 
-On 10/22/25 11:55, mani@kernel.org wrote:
-> On Wed, Oct 22, 2025 at 08:59:19AM +0200, Stefan Roese wrote:
->> Hi Bjorn,
->> Hi Ravi,
->>
->> On 10/21/25 23:28, Bjorn Helgaas wrote:
->>> On Tue, Oct 21, 2025 at 08:55:41PM +0000, Bandi, Ravi Kumar wrote:
->>>>> On Tue, Oct 21, 2025 at 05:46:17PM +0000, Bandi, Ravi Kumar wrote:
->>>>>>> On Oct 21, 2025, at 10:23 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
->>>>>>> On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi wrote:
->>>>>>>> The pcie-xilinx-dma-pl driver does not enable INTx interrupts
->>>>>>>> after initializing the port, preventing INTx interrupts from
->>>>>>>> PCIe endpoints from flowing through the Xilinx XDMA root port
->>>>>>>> bridge. This issue affects kernel 6.6.0 and later versions.
->>>>>>>>
->>>>>>>> This patch allows INTx interrupts generated by PCIe endpoints
->>>>>>>> to flow through the root port. Tested the fix on a board with
->>>>>>>> two endpoints generating INTx interrupts. Interrupts are
->>>>>>>> properly detected and serviced. The /proc/interrupts output
->>>>>>>> shows:
->>>>>>>>
->>>>>>>> [...]
->>>>>>>> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
->>>>>>>> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
->>>>>>>> [...]
->>
->> First a comment on this IRQ logging:
->>
->> These lines do NOT refer to the INTx IRQ(s) but the controller internal
->> "events" (errors etc). Please see this log for INTx on my Versal
->> platform with pci_irqd_intx_xlate added:
->>
->>   24:          0          0  pl_dma:RC-Event   0 Level     LINK_DOWN
->>   25:          0          0  pl_dma:RC-Event   3 Level     HOT_RESET
->>   26:          0          0  pl_dma:RC-Event   8 Level     CFG_TIMEOUT
->>   27:          0          0  pl_dma:RC-Event   9 Level     CORRECTABLE
->>   28:          0          0  pl_dma:RC-Event  10 Level     NONFATAL
->>   29:          0          0  pl_dma:RC-Event  11 Level     FATAL
->>   30:          0          0  pl_dma:RC-Event  20 Level     SLV_UNSUPP
->>   31:          0          0  pl_dma:RC-Event  21 Level     SLV_UNEXP
->>   32:          0          0  pl_dma:RC-Event  22 Level     SLV_COMPL
->>   33:          0          0  pl_dma:RC-Event  23 Level     SLV_ERRP
->>   34:          0          0  pl_dma:RC-Event  24 Level     SLV_CMPABT
->>   35:          0          0  pl_dma:RC-Event  25 Level     SLV_ILLBUR
->>   36:          0          0  pl_dma:RC-Event  26 Level     MST_DECERR
->>   37:          0          0  pl_dma:RC-Event  27 Level     MST_SLVERR
->>   38:         94          0  pl_dma:RC-Event  16 Level     84000000.axi-pcie
->>   39:         94          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
->>
->> The last line shows the INTx IRQs here ('pl_dma:INTx' vs 'pl_dma:RC-
->> Event').
->>
->> More below...
->>
->>>>>>>>
->>>>>>>> Changes since v1::
->>>>>>>> - Fixed commit message per reviewer's comments
->>>>>>>>
->>>>>>>> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
->>>>>>>> Cc: stable@vger.kernel.org
->>>>>>>> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
->>>>>>>
->>>>>>> Hi Ravi, obviously you tested this, but I don't know how to reconcile
->>>>>>> this with Stefan's INTx fix at
->>>>>>> https://lore.kernel.org/r/20251021154322.973640-1-stefan.roese@mailbox.org
->>>>>>>
->>>>>>> Does Stefan's fix need to be squashed into this patch?
->>>>>>
->>>>>> Sure, we can squash Stefan’s fix into this.
->>>>>
->>>>> I know we *can* squash them.
->>>>>
->>>>> I want to know why things worked for you and Stefan when they
->>>>> *weren't* squashed:
->>>>>
->>>>>    - Why did INTx work for you even without Stefan's patch.  Did you
->>>>>      get INTx interrupts but not the right ones, e.g., did the device
->>>>>      signal INTA but it was received as INTB?
->>>>
->>>> I saw that interrupts were being generated by the endpoint device,
->>>> but I didn’t specifically check if they were correctly translated in
->>>> the controller. I noticed that the new driver wasn't explicitly
->>>> enabling the interrupts, so my first approach was to enable them,
->>>> which helped the interrupts flow through.
->>>
->>> OK, I'll assume the interrupts happened but the driver might not have
->>> been able to handle them correctly, e.g., it was prepared for INTA but
->>> got INTB or similar.
->>>
->>>>>    - Why did Stefan's patch work for him even without your patch.  How
->>>>>      could Stefan's INTx work without the CSR writes to enable
->>>>>      interrupts?
->>>>
->>>> I'm not entirely sure if there are any other dependencies in the
->>>> FPGA bitstream. I'll investigate further and get back to you.
->>>
->>> Stefan clarified in a private message that he had applied your patch
->>> first, so this mystery is solved.
->>
->> Yes. I applied Ravi's patch first and still got no INTx delivered
->> to the nvme driver. That's what me triggered to dig deeper here and
->> resulted in this v2 patch with pci_irqd_intx_xlate added.
->>
->> BTW:
->> I re-tested just now w/o Ravi's patch and the INTx worked. Still I think
->> Ravi's patch is valid and should be applied...
-> 
-> How come INTx is working without the patch from Ravi which enabled INTx routing
-> in the controller? Was it enabled by default in the hardware?
+Currently xhci_handshake is a polling loop that waits for change of state.
+If this loop is executed while holding a spinlock with IRQs disabled, it
+can block interrupts for up to 5 seconds.
 
-Yes, this is my best guess right now. I could double-check here, but
-IMHO it makes sense to enable it "manually" as done with Ravi's patch
-to not rely on this default setup at all.
+To prevent prolonged IRQ disable durations that may lead to watchdog
+timeouts, release the spinlock before invoking xhci_handshake() in
+xhci_abort_cmd_ring().
 
-Thanks,
-Stefan
+The spinlock is reacquired after the handshake to continue with controller
+halt and recovery if needed.
+
+Signed-off-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
+---
+ drivers/usb/host/xhci-ring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 8e209aa33ea7..fca4df6a4699 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -518,10 +518,12 @@ static int xhci_abort_cmd_ring(struct xhci_hcd *xhci, unsigned long flags)
+ 	 * In the future we should distinguish between -ENODEV and -ETIMEDOUT
+ 	 * and try to recover a -ETIMEDOUT with a host controller reset.
+ 	 */
++	spin_unlock_irqrestore(&xhci->lock, flags);
+ 	ret = xhci_handshake(&xhci->op_regs->cmd_ring,
+ 			CMD_RING_RUNNING, 0, 5 * 1000 * 1000);
+ 	if (ret < 0) {
+ 		xhci_err(xhci, "Abort failed to stop command ring: %d\n", ret);
++		spin_lock_irqsave(&xhci->lock, flags);
+ 		xhci_halt(xhci);
+ 		xhci_hc_died(xhci);
+ 		return ret;
+@@ -532,7 +534,6 @@ static int xhci_abort_cmd_ring(struct xhci_hcd *xhci, unsigned long flags)
+ 	 * but the completion event in never sent. Wait 2 secs (arbitrary
+ 	 * number) to handle those cases after negation of CMD_RING_RUNNING.
+ 	 */
+-	spin_unlock_irqrestore(&xhci->lock, flags);
+ 	ret = wait_for_completion_timeout(&xhci->cmd_ring_stop_completion,
+ 					  msecs_to_jiffies(2000));
+ 	spin_lock_irqsave(&xhci->lock, flags);
+-- 
+2.17.1
 
 
