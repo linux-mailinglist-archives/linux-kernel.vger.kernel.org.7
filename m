@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-865698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A312BFDC70
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F53BFDC79
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FBD91A059BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56F43A534D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DEB2E1C63;
-	Wed, 22 Oct 2025 18:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3AE2D8DCA;
+	Wed, 22 Oct 2025 18:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ewT9VmjD"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0RyvbQA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DD02EA732
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D5B2DC770;
+	Wed, 22 Oct 2025 18:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761156642; cv=none; b=ml695Kqu/7NQGxqjpUrKAAXWVeivr9gadxMDMKRLgfXHDGnNi59dZI4fVoh8hJIz5ioDdWY/hDxlBkzfp0tkLeLqNywSdMRCqDYVp96NBT1X7eeArDQD4b2HX5sCfzFZ1Xtzkojdv4F7zZHgzSKHFZ/3R/0o7icNP6xIKHr+ojs=
+	t=1761156681; cv=none; b=F+pgqUPJyIOjhgNRXjYNL+CVymUammFUh48d0VYeWRM3m8GMlQIlg5WOU6kmX8+XgTvRsbmCQSFWaLndJUeRL+DN1qdy8fvnxpGxMr9J9eF/VwOK2sMSjoTyaxbQPEIoFEs7ZtvRA5cBv/a7drggg+PDm8vCMmJz9nOifc04QZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761156642; c=relaxed/simple;
-	bh=EY76L4CGdRUn2iTq3A8LXWqtQ45P62GbtJbmIsCh5cA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KQ6JoN8Qi7vgZh3RMtkYAMPZrbWIe6+g4PoL4aeTxZhc2OXWbRDAyBiqMKTVVRvuJr5/gkoDt6eulOZl0lKP60T4wMbaGL5cLWsaPGCOEObSk8PNkih4bQdnuwPTvWnZi7zVhThOTMAqU8GORAvpQ1FddiTGs32TE/YG9gUqnhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ewT9VmjD; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761156628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oguebMI32HO2qu+qTFZ3a4OfXPITAp8SRQtXmR8DU0=;
-	b=ewT9VmjD7fTQPe1Npsb/bC39b2Tzxw6BCjJHe1M8WUB/Q2xBU9/d7L11V6Vb5wHFwQkqr8
-	oSNvVeGhpWgBJ7R7fiHC0RpiHou+2eQte79hbL/RqkaC5+9NPXswBassBgdxbSf1mH/NRJ
-	b772Rg8EO0Wab8lYZl/nE8lHfRnMQoI=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: SeongJae Park <sj@kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Johannes Weiner <hannes@cmpxchg.org>,
-  Michal Hocko <mhocko@kernel.org>,  Muchun Song <muchun.song@linux.dev>,
-  linux-mm@kvack.org,  cgroups@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: manually uninline __memcg_memory_event
-In-Reply-To: <3h26sozqgksxn4fvh7i6qjhtbnrtzit6eluyieyhsvycs3fbs5@ddblsq2crkit>
-	(Shakeel Butt's message of "Tue, 21 Oct 2025 18:28:02 -0700")
-References: <20251021234425.1885471-1-shakeel.butt@linux.dev>
-	<20251022005801.120250-1-sj@kernel.org>
-	<3h26sozqgksxn4fvh7i6qjhtbnrtzit6eluyieyhsvycs3fbs5@ddblsq2crkit>
-Date: Wed, 22 Oct 2025 11:10:22 -0700
-Message-ID: <87v7k67qpd.fsf@linux.dev>
+	s=arc-20240116; t=1761156681; c=relaxed/simple;
+	bh=Kg9bj8dltL2quBuLo0LPL/S1RrUO7siegCEIv0GXcug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NONcuKJrkKdpJ700W6SG77arpK/vlEhpFA8V7LT5efYQM/jaH6s4BR5JE6eGe4nG+AiRR9tRDaTU6o9cgSIosUhXK61ihPsiLdVHcCuVjGbx5jR4ZF70kDcyHXLayc6E3CdmJ5+Fo7S98kGlJ9SJvfC6gB8QwxdInh5aeAr3VK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0RyvbQA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79BAC4CEE7;
+	Wed, 22 Oct 2025 18:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761156680;
+	bh=Kg9bj8dltL2quBuLo0LPL/S1RrUO7siegCEIv0GXcug=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o0RyvbQAxoWtf5oGwZ8PFX9BSQD24HyxEmWY/+BjO5hY7RuGcxomGptJkg3DNAh1K
+	 8F3CJ6PHtb/9zJM7EahXJkUuQW1KIY4K8DHgqlZ4Lai3ZHZUBrLLGd9oZ27Y1COAXH
+	 RpNEfMs1pY+X/F66smwstsc6ZswcgO7mHdksbtGD04JzJAUiN5omvsC91wWn49iOdS
+	 b+Im5UWXHeCOFJy5vOer1fdnDaq4Uezh7ZnciDtuyFAZiKS2Q4/xTt1WYACMWFgAXN
+	 B+qN+amNvwvjjoG7pNVbbvsBn3TPMfMjmMXUfBfRmQ8MP+cfxAtP8OL+KtlZx8P8D2
+	 GkZNWW00Fflgg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: Add missing AMD Seattle SoC platforms
+Date: Wed, 22 Oct 2025 13:11:11 -0500
+Message-ID: <20251022181112.4147188-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Shakeel Butt <shakeel.butt@linux.dev> writes:
+AMD Seattle SoC has been in use for some time, but the root compatibles
+have not been documented. Add them.
 
-> On Tue, Oct 21, 2025 at 05:58:00PM -0700, SeongJae Park wrote:
->> On Tue, 21 Oct 2025 16:44:25 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
->> 
->> > The function __memcg_memory_event has been unnecessarily marked inline
->> > even when it is not really performance critical. It is usually called
->> > to track extreme conditions. Over the time, it has evolved to include
->> > more functionality and inlining it is causing more harm.
->> > 
->> > Before the patch:
->> > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
->> >    text    data     bss     dec     hex filename
->> >   35645   10574    4192   50411    c4eb mm/memcontrol.o
->> >   54738    1658       0   56396    dc4c net/ipv4/tcp_input.o
->> >   34644    1065       0   35709    8b7d net/ipv4/tcp_output.o
->> > 
->> > After the patch:
->> > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
->> >    text    data     bss     dec     hex filename
->> >   35137   10446    4192   49775    c26f mm/memcontrol.o
->> >   54322    1562       0   55884    da4c net/ipv4/tcp_input.o
->> >   34492    1017       0   35509    8ab5 net/ipv4/tcp_output.o
->> > 
->> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/amd,seattle.yaml  | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/amd,seattle.yaml
 
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+diff --git a/Documentation/devicetree/bindings/arm/amd,seattle.yaml b/Documentation/devicetree/bindings/arm/amd,seattle.yaml
+new file mode 100644
+index 000000000000..7a3fc05b19eb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/amd,seattle.yaml
+@@ -0,0 +1,24 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/amd,seattle.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: AMD Seattle SoC Platforms
++
++maintainers:
++  - Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
++  - Tom Lendacky <thomas.lendacky@amd.com>
++
++properties:
++  $nodename:
++    const: "/"
++  compatible:
++    oneOf:
++      - description: Boards with AMD Seattle SoC
++        items:
++          - const: amd,seattle-overdrive
++          - const: amd,seattle
++
++additionalProperties: true
++...
+-- 
+2.51.0
 
-Thanks!
 
