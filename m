@@ -1,109 +1,80 @@
-Return-Path: <linux-kernel+bounces-865516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D33BFD585
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:48:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCA1BFD5B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46F4B581134
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:41:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FB9A583C70
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AF12D47E1;
-	Wed, 22 Oct 2025 16:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39E3359FA1;
+	Wed, 22 Oct 2025 16:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dYczUrc6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="amfEaIVO"
+Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D7F279DCE;
-	Wed, 22 Oct 2025 16:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72784246763;
+	Wed, 22 Oct 2025 16:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761150478; cv=none; b=BGVTolP9b20JmMZVEDIyxyYNZJ2ysZ/8ax0i0U+zcBtkY1rK+7ODD4GGe0Az3Q/UT56adhLQrT/J6X2jW1j5BsZjxu0p5vUyRE4RRSZ3TTX+QDpU4PgTKrSSmyYzDwTMhL/LNkkVSJBz5CuyhZu/DnywDWpiM6Yqh2cWRGsHaqs=
+	t=1761150516; cv=none; b=qfIUxQOFOffZ9rjyPt9MDkaYmFJfUSd+5h41gEEdailZuzMp0y3WzVezqorgdhlxQjSC2d/hZKXjedTon7jkCmwX4JU/R+Dd28SCGhDu0euKzRIn3kDNUldCSjbDrS3ZcMk1QhbH3bgEG1RgUyHBPZVCL4tPyfQlk2lQDwO8Kp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761150478; c=relaxed/simple;
-	bh=N7WMcy+tGgF0xedszwzLTPEiMBWrFIt4qQGWiXS/g98=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o2x0jo0TR1CmjefxAOOsuAeEFbwVnUlMqFW6iUqNmxyp21DexaNrWf46gRkNV20XR3f346LN3oMO+O6f6OjHpCEy/RtzfnEPM4yWhllYHaONUL6dE8eRdW3Qw0f+JvRZrbh0kajGyRwETQSkGIdEq+4m6ynDUZw44VGTwObdsco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dYczUrc6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761150475;
-	bh=N7WMcy+tGgF0xedszwzLTPEiMBWrFIt4qQGWiXS/g98=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dYczUrc6/E+YlrOT4SMTk0efo1CZfEw961xQ6ObrcmuL+YLYrJo1DTe+CE6i0grnZ
-	 F+5GpCQ1g2s8wATI6WkoxC8Zcje4s03PLICfFd6v4sk5GRUuoZtX0UoJjf7o0tl7sQ
-	 Ndnmm26XXasPe+AEWFDUuvsJKmcAqHyu5awvmKoolOmXkeh1Wpq9EQlKAD95nHwZyg
-	 OyA9QPlaFJvPZFDWKXkcXGMK63eNuPW2mKCmWvR8IyBSX/HPDSML8aZBLtIwimNOs0
-	 rWutCeHG2amoPelADZ2h6vBPi18rp0pjUA5M6v374MHch9tdiBCw1UwbyDQWw2wMLH
-	 Ko+56MRdnE7Mw==
-Received: from [192.168.100.50] (unknown [144.48.130.189])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 22BE017E108C;
-	Wed, 22 Oct 2025 18:27:50 +0200 (CEST)
-Message-ID: <288e4d9c-a3e4-4f7e-a68c-330704e5125d@collabora.com>
-Date: Wed, 22 Oct 2025 21:27:21 +0500
+	s=arc-20240116; t=1761150516; c=relaxed/simple;
+	bh=dtqckjTvzjMKvbZnmKtPZeOTaQC1Vv5Jcaeggx2e1FQ=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QckuMgVYJITrKpvC5fsTPvOTvYn3xSbuaEwviOVY0xtmw4xiYTvNJOfs55VFLjCu+u0C2Vnisg2PwoMX6X0yl2rqRuVjriINFQRC9xDgK3YyeHxPBrD8fiH3EIfAdS+6wkhbtuxlhMPm3j4DtDDsq6mJK7kwxc1PmuADs36qytE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=amfEaIVO; arc=none smtp.client-ip=91.227.220.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
+Date: Wed, 22 Oct 2025 18:28:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
+	s=202107; t=1761150507;
+	bh=dtqckjTvzjMKvbZnmKtPZeOTaQC1Vv5Jcaeggx2e1FQ=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
+	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
+	 mime-version:references:reply-to:Sender:Subject:Subject:To:To;
+	b=amfEaIVOS4KQ6bYFo2NBQV3AypZXQHAkaTct0TUv0nqVj+YcqormVoM4BXbXZ0xLo
+	 QMoKPLrHegCSAVAmuXI/JDycF7fKRSKjKKWXL5P3BbUs+qUH3U39IJcEB5CP4DG1x+
+	 Aqo2r56jsj7Ec86ienwmlD2T1bwkG24l1nKiZk/JCgWZPDeZ/meYVQ5D4ycG0Ca9er
+	 7Vsfm0lR1cCqN2hTx3tfWlUEwH3RghgPw/ehDS8KFy9XkNIsHliN/0p62JkGJ3igQE
+	 YjmR9XgZAJ67GNGozbyxmhqaMl9Z2CPjZFlmwJcmQEi0Asb26os7Zpz5v9D0P7VlX9
+	 C2j4siRsK2REA==
+From: Markus Reichelt <lkt+2023@mareichelt.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.17 000/160] 6.17.5-rc2 review
+Message-ID: <20251022162826.GB3227@pc21.mareichelt.com>
+Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251022053328.623411246@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: usama.anjum@collabora.com, Len Brown <lenb@kernel.org>,
- Pavel Machek <pavel@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-input@vger.kernel.org, kernel@collabora.com
-Subject: Re: [RFC 1/4] PM: hibernate: export hibernation_in_progress()
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-References: <20251018142114.897445-1-usama.anjum@collabora.com>
- <20251018142114.897445-2-usama.anjum@collabora.com>
- <68a8c1ba-275c-4908-a4c8-2e8b83367703@kernel.org>
- <CAJZ5v0hCxpWXdnoQeW79kaDFmHcfE0A4k7JuA9T+RR1OyCw29w@mail.gmail.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CAJZ5v0hCxpWXdnoQeW79kaDFmHcfE0A4k7JuA9T+RR1OyCw29w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022053328.623411246@linuxfoundation.org>
 
-On 10/22/25 2:53 PM, Rafael J. Wysocki wrote:
-> On Tue, Oct 21, 2025 at 11:07 PM Mario Limonciello (AMD) (kernel.org)
-> <superm1@kernel.org> wrote:
->>
->>
->>
->> On 10/18/2025 9:21 AM, Muhammad Usama Anjum wrote:
->>> Export hibernation_in_progress() to be used by other modules. Add its
->>> signature when hibernation config isn't enabled as well.
->>
->> I wonder if you actually want to have pm_sleep_transition_in_progress()
->> exported instead.  "Logically" I would expect cancelling a hibernate and
->> cancelling a suspend should work similarly.
+* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> This is the start of the stable review cycle for the 6.17.5 release.
+> There are 160 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Well, it does AFAICS, except that only the "freeze" and "poweroff"
-> transitions can be aborted during hibernation.  This is analogous to
-> aborting a suspend transition.
-I'll switch up with pm_sleep_transition_in_progress().
+> Responses should be made by Fri, 24 Oct 2025 05:33:10 +0000.
+> Anything received after that time might be too late.
 
-> 
-> The missing part is a mechanism to cancel hibernation between image
-> creation and the "poweroff" transition.
-I'll add wakeup checking there and see if it works.
+Hi Greg
 
+6.17.5-rc2 compiles on x86_64 (Xeon E5-1620 v2, Slackware64-15.0),
+and boots & runs on x86_64 (AMD Ryzen 5 7520U, Slackware64-current).
+No regressions observed.
 
--- 
----
-Thanks,
-Usama
+Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
 
