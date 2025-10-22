@@ -1,100 +1,151 @@
-Return-Path: <linux-kernel+bounces-864195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B078CBFA254
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:01:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA87BFA260
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4031888158
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BEA51892DFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784B02D5954;
-	Wed, 22 Oct 2025 06:01:36 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9FB2D5954;
+	Wed, 22 Oct 2025 06:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eKqpF+hP"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E622512FF
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95191D8DE1
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761112896; cv=none; b=uxG/ky3Mae3DSH5A4Y2kdvjOFSWfn7ecFoH8gCcUt+dn1GzBAKInqQ4IQ95ToUL8NW4WdeQ2DtO2IzJU7kcZtex1OqQA9IOKrexRXBRCWa4m5imyA6uXjkt8EjPcMtXMqiAWzqClDYiKloTgD8isaYqajaftI0wRniy5oqF3LNY=
+	t=1761112925; cv=none; b=GsP06lhBLGXbPaxNJoiRKQjJuK5uiE5lRA+SbGAr+VQRJozrtsjwEEYeaa+A7gXEAKM/i7qw4EAdHJBtiunC3+Mo193FhCdAHeZ9c+o+WIoScOO/zpXK/BWsenKZ0lEJd8cflS+zI6YLQMefrEom+c9lwLG99iYXSD/1AugFTLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761112896; c=relaxed/simple;
-	bh=Xz+xA4iWmuzbetXgjKWkR0I7OqLt/VHd7+0OLb9nFzA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mVx21B+TajCFN1/h6TR5OxON5vAe0oDCoxKupMr+IzoygIDLygpmqbPiPphXyxtMb+kgkiAFKYxZojtQf2mUNYtKICiiK5Yw2UNKHwPKHALaEoUbZdzabeVXjViRKPItxw7lpcVxpex4UyXN2lkJkCGKM//GkLPdhtVjSCZLiAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430da49fb0aso86107935ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:01:34 -0700 (PDT)
+	s=arc-20240116; t=1761112925; c=relaxed/simple;
+	bh=uNd0RlezKmVOkkCFnO3wa4SdchHNHXgBhmGRBya+TZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMGey4M1M3PBlbz+dNBRJmqSEuJjzG4wDZbmYr2+tLLjOn2OZOmAjtRsl1XKV3Jzc7+J9h28RwPUEFnT2ij9HtTuPdAhIPhuNcDTG52WY/vZ+0rAJgnLkK8Tire67geMbYgoaj3lvoyrzVptprlZwLs31jCy69DCTupbjtroZKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eKqpF+hP; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b58445361e8so535292a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761112923; x=1761717723; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XKqDAZxx1reZjTRMo7FvolWvlhv6pTm58+Z40R0DLEQ=;
+        b=eKqpF+hP8Qbu3WbRL1Cu/e12XbVa8+AAEYIMi0P31MHcpq1v81UMrb/4C9zSK6AuOr
+         z7Wjz61qr72WZxGlM0KXV+POp8WVj1nuV6yHeHG772YwOaJbcPx7ZU5VGQTxSsBKNsDD
+         tC3BH8JAiYDj0y4N2XzwRyuolOTakgMmdRckXqQxSyMXTg0Szy3qtK4nMH2fPqkrPR/a
+         D7YJuAcE1qmNXJBfoQDcqJQ70CUVxWehHcqWgC/Kn74BS8ejG+o8fCaC9PDKE4X7Uvi/
+         A0gFJ3dfYeplAM1H86RVUfwBbqUsr4tDmv6CfS1s3aWtiKKfvVJSsvD7F239+xR2rA8P
+         HAew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761112893; x=1761717693;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NAU5nSOSFOEDQ7Ip9vyv0R+/EJBKN0eeOwZiRs0KSA4=;
-        b=sTJG0gEcZY8b6ifCxMml0ef8NMEC2iQ58JasQIxcPHIk3Y2O1NVIE8vUeD4kZuNCXI
-         3UVGqshYgW6D+23myeFUlN+N3Pk0J643RT9yEb3uC2P5hZ10qWq2eb8iWTCf9THxNRFe
-         vtyTdqlty0gZbCTOLBozFHBAuHwdZF8fK58nrVEkv1LlhplX5HwuR1rz/MLQw3yIVQVW
-         4W1QWvr50jLwoderWqyItnPbYfTNNE/KBfb5fdlZDUvn2Viz0DdUH1gKQtV79I6S3a9I
-         NXsx/ChX/uVSqUTCpjws4o2+hVmFbzl5A5DCmCVdax9t4GrQdjLj714YE1hq665NFy0b
-         TYRQ==
-X-Gm-Message-State: AOJu0Yxrm5c3gVQnE1pLFe6OLuQzABE35+12vXt8x5bRSBCBQjQNIRhL
-	/bK9UUleIdSVeSpti+jINxzQg57r9chR+7Uc0KMv51ULBsT87mVqHUbP6x6ul4mlg8VOL7YAbub
-	js9z6TPdT8JVFEeNJ6x+LRftsLUi6trWRh/a4y1zM3DrVd2g2V4+Wh8YF6DY=
-X-Google-Smtp-Source: AGHT+IF08d7r4UTCIPHS7Wi5idcSCTuucx204yQX5zireJZJ5UHssxALo5+Xg2e0Ay3Ob68GZUNgG81RuFpQjjS0ik09Nes63jgD
+        d=1e100.net; s=20230601; t=1761112923; x=1761717723;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XKqDAZxx1reZjTRMo7FvolWvlhv6pTm58+Z40R0DLEQ=;
+        b=hg6YBiMAytGEJW3NUmYz3D/6Bc7atlMDJnIX/ei876b1gloluvYXnPSLT2OVTtCrHK
+         i6j4pBi8xwuwy+wWNdZXnE4QAB8xYVIiJ7V4MdvammIFjqpmQRgzJ5QOp63WsPgFI+ZX
+         jbcHwcbElws3DHHuPB0Iks1PARo19ac5rJymN8+vy8zVMIo+YNZhj1kf4dMWgtSIRgJ4
+         9JRsCiZUi/wSdmrKHSGawuAFsclmqyrj3UhnjacP/q/nsmFg5ajUJstT2KEVpg4vGdY1
+         Op9T7AECVTGL59z0oIcjKcr1mIFKocmbGxgWYpvANtVGV/Gc206uz9UyJ9uAg3jTsFFu
+         68gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVirKCxzsMgUd4+PKS1jmBM3f7Y25+oE+S1RE0oOtPs3w1oNF8SjqSDbAsdH7GFKGxjQ+BQ63vxDzB+hLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnXdZC0go6nHdp1lP+M5C02ez8J0iBB6TateM+O69JuoeiCyFZ
+	iYGzymxJpm+1CxVE9UAwQ0T6RV3Om1kgFlrj2RS3xUOX61QqLQVxtzQMvRZAMhMP3DzIfCD4TFl
+	IqtCh
+X-Gm-Gg: ASbGncuby3QPUaQssqiTsnS2C/0VVZyqdzGPg2O24v8fLa2vP767e46JKbVFsAJafrc
+	y4uByHb2OmchndHvQ9oCCrKKZvfbs8TxOC2bQGWIcw0sDnsRYgGdbtcMHFj9OD3PlW8YmXcNlq1
+	BDNqA/bUwHQSmIzAryb8ywvp7+JBJb5v+yQPh3VJ6SN1LlxHNb9bybdsxHICzIugDVbc+I75OYp
+	2uyIwMqu+8fRmRceq8Rkd21MKT6ymUOjrIIX/GLfTHouRAE7dAwGU3JknoyFFUvSamuZy6mnhF6
+	mXQ2d06PnCNZdAPIO8o6HeIYgiOFT5LoN5+YVfpxG+R4hA7MazH+H9rkcLfdRJeESIaK9wpbIIO
+	TeSCp0MuxnJDxcjUULr65gKob6mOD/uI83YNlHFK+E/OWCG2pE4A4PNzmrEebpFDg9cBYVv53fi
+	q9Ew==
+X-Google-Smtp-Source: AGHT+IGnZYhZ63rWNSf5aRz/1B5HoUov1Sbx9ncDDRSOtX2wKHaECGMRKtQmrnXwpxWiNTSuOjN5Bw==
+X-Received: by 2002:a17:902:ecc2:b0:269:a6b2:2463 with SMTP id d9443c01a7336-292ffc0b82emr31764605ad.16.1761112922908;
+        Tue, 21 Oct 2025 23:02:02 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292469104edsm128908115ad.0.2025.10.21.23.02.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 23:02:01 -0700 (PDT)
+Date: Wed, 22 Oct 2025 11:31:59 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: webgeek1234@gmail.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] cpufreq: tegra186: add OPP support and set bandwidth
+Message-ID: <bxec7gq3b62g5jdyxs7oo4dvq4dd5hwczdsvbimjka7u4zwye5@iubxkvn2mbre>
+References: <20251021-tegra186-icc-p1-v3-1-7e6db3b070c4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9d:b0:430:ab98:7b1f with SMTP id
- e9e14a558f8ab-430c52beddbmr295913155ab.18.1761112893716; Tue, 21 Oct 2025
- 23:01:33 -0700 (PDT)
-Date: Tue, 21 Oct 2025 23:01:33 -0700
-In-Reply-To: <68c9c3bd.050a0220.3c6139.0e65.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8733d.050a0220.346f24.0037.GAE@google.com>
-Subject: Forwarded: [PATCH] testing
-From: syzbot <syzbot+fc241a3fa60015afb3d1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021-tegra186-icc-p1-v3-1-7e6db3b070c4@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 21-10-25, 20:08, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+> 
+> Add support to use OPP table from DT in Tegra186 cpufreq driver.
+> Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
+> Cross check the OPP's present in DT against the LUT from BPMP-FW
+> and enable only those DT OPP's which are present in LUT also.
+> 
+> The OPP table in DT has CPU Frequency to bandwidth mapping where
+> the bandwidth value is per MC channel. DRAM bandwidth depends on the
+> number of MC channels which can vary as per the boot configuration.
+> This per channel bandwidth from OPP table will be later converted by
+> MC driver to final bandwidth value by multiplying with number of
+> channels before being handled in the EMC driver.
+> 
+> If OPP table is not present in DT, then use the LUT from BPMP-FW
+> directy as the CPU frequency table and not do the DRAM frequency
 
-***
+  directly
 
-Subject: [PATCH] testing
-Author: ankitkhushwaha.linux@gmail.com
+> scaling which is same as the current behavior.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 
-Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
----
+Applied with:
 
-#syz test
-
----
- arch/x86/kernel/kvmclock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index ca0a49eeac4a..7d1c98efa6a4 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -74,7 +74,7 @@ static int kvm_set_wallclock(const struct timespec64 *now)
- static u64 kvm_clock_read(void)
- {
- 	u64 ret;
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index 35f1c1371f6a..34ed943c5f34 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -127,9 +127,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+ 
+        /* Disable all opps and cross-validate against LUT later */
+        for (rate = 0; ; rate++) {
+-               struct dev_pm_opp *opp __free(put_opp);
 -
-+	// 
- 	preempt_disable_notrace();
- 	ret = pvclock_clocksource_read_nowd(this_cpu_pvti());
- 	preempt_enable_notrace();
--- 
-2.51.0
+-               opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
++               struct dev_pm_opp *opp __free(put_opp) =
++                       dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
+                if (IS_ERR(opp))
+                        break;
+ 
+@@ -145,9 +144,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+         * Enable only those DT OPP's which are present in LUT also.
+         */
+        cpufreq_for_each_valid_entry(pos, bpmp_lut) {
+-               struct dev_pm_opp *opp __free(put_opp);
+-
+-               opp = dev_pm_opp_find_freq_exact(cpu_dev, pos->frequency * HZ_PER_KHZ, false);
++               struct dev_pm_opp *opp __free(put_opp) =
++                       dev_pm_opp_find_freq_exact(cpu_dev, pos->frequency * HZ_PER_KHZ, false);
+                if (IS_ERR(opp))
+                        continue;
 
+-- 
+viresh
 
