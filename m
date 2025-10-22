@@ -1,120 +1,122 @@
-Return-Path: <linux-kernel+bounces-864635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305C2BFB3C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:54:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C9EBFB3CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A138D356624
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:54:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A085535670A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD36F316183;
-	Wed, 22 Oct 2025 09:54:25 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E82B315D41;
+	Wed, 22 Oct 2025 09:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MrKHwu/4"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C4D314A78;
-	Wed, 22 Oct 2025 09:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC8D313E37
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761126865; cv=none; b=CFpjLnNQ3kULLcu3gbQtkZ+AJdTsOeIZh7+sizFuIvMZSy1lOp+CN8hgj80qgjzgdgtJQzWQIgmH368yEP8E2yt2zXIOYlbPJ2FWzfN37ahs4zDObB0JiDoIk6K2DFsJYiCLcx+otxyGLh3v2y7b4PPxtU2Sqt+dwksu0dy6bCY=
+	t=1761126886; cv=none; b=WU0veUM+k8ijKx0DU7V0EZ8wUQiNOV7uziWZdaw449w0qcNWMyFbdY0myZOVr/QNrJ8VcNXP8Q4i+tXHO7ZmRfzsCEBnNfeFPWysBqSHlXCqtkcorGUVs6MVfMdP63xaXvCC/dBJ/TvUEbkPwT0rdIEsfSXGyEy8O5e3qczR+lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761126865; c=relaxed/simple;
-	bh=21fruIWNLjdivA6RFgeOV9STlHPvkZB2T0WctS2B14M=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=VyL/No0GP+A9PknVtgf6q3vVxs82L72yu6XK+0nGkFCWHU3zPLKbL5ZmvIM+3h2D0uBr95L7+rwKu1bT1CEvor5qalvtys6444FJpqWDPBRQFqybxTjEbdW5oS3jnWjoReFvT3R7VcwqBr1NZUV0hsTylC5srck+licAsRh8OC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowABnvZ+8qfhoyUDhEw--.32721S2;
-	Wed, 22 Oct 2025 17:54:14 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: syniurge@gmail.com,
-	shyam-sundar.s-k@amd.com,
-	andi.shyti@kernel.org,
-	wsa@kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] i2c: fix reference leak in MP2 PCI device
-Date: Wed, 22 Oct 2025 17:54:02 +0800
-Message-Id: <20251022095402.8846-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowABnvZ+8qfhoyUDhEw--.32721S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw17JF1rXr47XrWDGw4UJwb_yoW8Aw4fpF
-	WUJFWfArykGF4vgw1DX3W8ZFy3Aw4vvw4rWrWxCw1F93WrZas0kryktr909w15ArWqyF43
-	tFW7tayruFyjqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeF4EDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1761126886; c=relaxed/simple;
+	bh=HB1y7cWvJVBaffceb4N2grQDkRK84MOxaGljtCDtKQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOL2H0eOiX4dVIC3d1cicrBDaa4QJwQ/vx8zL65HE/IA7TW4hNCrJo+bCmPXKJwrYKnMnTYhm3Xix3DbTQrjGjiuv/beGyXoE43byTWh6Fd9l01862oeAhPKhf7u6M9ehIVmdtVkIJZPztCKVtGoDYpK/cc/4Hw9cO11SfRsI3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MrKHwu/4; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c3d913b3bso8875272a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:54:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761126883; x=1761731683; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/BE3p8f/tb4AmnzEBEYSIcdIiv74xFJHBlZnCilZ3pE=;
+        b=MrKHwu/4HGuNYZRe9NfyEn/r6PYiIzIyDjhvEywd38xFpAjXvTbeBjxbJb9ncwGMA7
+         BmgGTxiqVR5ujIx2nyrueqN6Vh5Hr+uOqHnz0b69YfDJhqlU0ytNKMLcwXeRkyYhayUU
+         NQJCY1qYsAmw45rDACQP/EJfWr585ufAc2XgU82MNMIJJUanEEmDDwJRHiWea/JR95f4
+         2zO2l3ZIjV0dRlmrKr8VFcokTlx7n2bW4aTaSpV2xSKY5/Lrz44BVqx25oFv4qVu4ffa
+         qtHre8Bn/CTMSJ/rgPL5luimvWFH429lu0yN4wyfxjVou9EZbRo8f/umIGycNlEl2SmR
+         /LMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761126883; x=1761731683;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/BE3p8f/tb4AmnzEBEYSIcdIiv74xFJHBlZnCilZ3pE=;
+        b=nDiV+tSMtRY+NglpWSN7NabbfuUbJv+gYi6TBmXW2Fu42Azo7SOFUQ/H36SBblWqgn
+         TjHki3yY2wfBZEmnglCQNwINIKQJhzJfEtKSsxcu/oYDwzPTF/Ph25RXcrA9KMrPr3xM
+         Cm223ipknRV9lmN0YRCWz0PI/yHRu2nPDiflVm8IUcednaJt+vM6HWoqZ1UtvJwA3O0Z
+         zErLdaii4I3JNL3u1qMlwfGa1IqIXwEnx+oDVT+agI8dVQTlv2mx41dgrDqsk42wNueK
+         RqkY+e3lGFXDyjeMkU3Q4N/PSdPuUfIuXuBY9KgT2VnXvUFkFvvXy5l2apq5l7QuXWXL
+         MYIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ8cTID2dJUx0qxd39PXrcrhXP3p51GAx0B9+bFuFGdc31LwCG2g4DfZICnYr7qMPis5ygpjlloUK+p4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIFbgvtIHdnt13bXM2/NWoZgNF6RtF9O7ie0qgbP+KSt/arTkX
+	QxeQ215I3/Ms6fbXTR7XulyyFwCKbU1MDnNbS5BuDRFbkdHSLJu30acE++H0K7dJyzh6tABZPkn
+	NRiB5c3ocndmJay78hoq0fpjyIoqtKb4ZUyf2dcqPFA==
+X-Gm-Gg: ASbGnctbeTFZ6EsHmsgbw3OWE+S4vdLquT20SDsEExVAkSCy1VFkfT7Bg3La9Dka7dj
+	pmODmimuFvAxSxrF47fiNt4/n7sqPAFA91g3afw0+sTSrWSdT+n4H0dLkegHR+j/NnfGaGLPUQE
+	APNTYwRY1uIpJBaYOg06NlcBvgBChafH78DH9sSQ6bcY3Sd6qVqtf9AJHWeXRWQJPDcdrRg3P5G
+	eixeWVqfesCaWJXReOEEHxtYa9jchoLlr5/KrEsijPqi9bt5IbFT8vcmdYbi6zYK3Sbk/1Z
+X-Google-Smtp-Source: AGHT+IGxvyYJRi71ypaY/f+2tvs/h/Gx3CtsJRVjqydJdRQpedqCN+n+dBFxLmYoHUas/Vv3sBj08NYXtnVui6clXA8=
+X-Received: by 2002:a05:6402:5212:b0:639:dbe7:37b6 with SMTP id
+ 4fb4d7f45d1cf-63c1f63081dmr20417683a12.3.1761126883450; Wed, 22 Oct 2025
+ 02:54:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251021222955.193323-1-heiko@sntech.de>
+In-Reply-To: <20251021222955.193323-1-heiko@sntech.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 22 Oct 2025 11:54:05 +0200
+X-Gm-Features: AS18NWAUdMZHC3UmuDzl3MkQoA2Eup4bT1W9-ZX5g9xcPcRU8J3IcH9rg1TAlQY
+Message-ID: <CAPDyKFpGC292uOpWh542_=yS2XP5tAUWiJhj6tp_CPVrZ5VKkw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: rockchip-dw-mshc: Add compatible string
+ for RK3506
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In i2c_amd_probe(), amd_mp2_find_device() utilizes
-driver_find_next_device() which internally calls driver_find_device()
-to locate the matching device. driver_find_device() increments the
-reference count of the found device by calling get_device(), but
-amd_mp2_find_device() fails to call put_device() to decrement the
-reference count before returning. This results in a reference count
-leak of the PCI device each time i2c_amd_probe() is executed, which
-may prevent the device from being properly released and cause a memory
-leak.
+On Wed, 22 Oct 2025 at 00:30, Heiko Stuebner <heiko@sntech.de> wrote:
+>
+> The dw-mshc controller in the RK3506 is compatible to the one first found
+> in the RK3288 SoC, so add the RK3506 to the variant list.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-Found by code review.
+Applied for next, thanks!
 
-Cc: stable@vger.kernel.org
-Fixes: 529766e0a011 ("i2c: Add drivers for the AMD PCIe MP2 I2C controller")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v3:
-- kept the temporary variable to store pci_get_drvdata() result before releasing the device reference;
-Changes in v2:
-- modified the missing initialization in the patch. Sorry for the omission.
----
- drivers/i2c/busses/i2c-amd-mp2-pci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Kind regards
+Uffe
 
-diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-index ef7370d3dbea..60edbabc2986 100644
---- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
-+++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-@@ -458,13 +458,16 @@ struct amd_mp2_dev *amd_mp2_find_device(void)
- {
- 	struct device *dev;
- 	struct pci_dev *pci_dev;
-+	struct amd_mp2_dev *mp2_dev;
- 
- 	dev = driver_find_next_device(&amd_mp2_pci_driver.driver, NULL);
- 	if (!dev)
- 		return NULL;
- 
- 	pci_dev = to_pci_dev(dev);
--	return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-+	mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-+	put_device(dev);
-+	return mp2_dev;
- }
- EXPORT_SYMBOL_GPL(amd_mp2_find_device);
- 
--- 
-2.17.1
-
+> ---
+>  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> index bf273115235b..acb9fb9a92cd 100644
+> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> @@ -38,6 +38,7 @@ properties:
+>                - rockchip,rk3328-dw-mshc
+>                - rockchip,rk3368-dw-mshc
+>                - rockchip,rk3399-dw-mshc
+> +              - rockchip,rk3506-dw-mshc
+>                - rockchip,rk3528-dw-mshc
+>                - rockchip,rk3562-dw-mshc
+>                - rockchip,rk3568-dw-mshc
+> --
+> 2.47.2
+>
 
