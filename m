@@ -1,379 +1,323 @@
-Return-Path: <linux-kernel+bounces-865988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46D1BFE816
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:15:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804D7BFE7D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6126518C8AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:15:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61B2F4F8A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7D730C375;
-	Wed, 22 Oct 2025 23:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6D4306495;
+	Wed, 22 Oct 2025 23:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="FKG+sKvH"
-Received: from mail-lf1-f98.google.com (mail-lf1-f98.google.com [209.85.167.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kI2riUze"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDFF307AF7
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.98
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761174828; cv=none; b=hT33wPCo6UOVmR0NThooAae9V14YJ/j2phzh6uwucd1t+zDke4JnA9HURTfJ3ONun0JwgNtQK5Fmqobs7emLkSI+FQt6S3Qb9cbbdPNfx7ZkXcnPTLeI/QpmgoIFKi5Z6es1TWk8be68QCcPz5XXzNBsxgXhLY3yVN+LLBhGCD0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761174828; c=relaxed/simple;
-	bh=Npt8CIamNyEuH3sVd1A1KqiVJoYsn6LwQFxIQ9NJE+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oa9zo3KUZCeysk6oFc6Fsjw4O5oZ73tkSth+Vcv6q9oklVx7A5Gb30jgCmKCyj54Kw1sUMJUMPVOOxM3YxJbPPAlR+UFeXwgAdAKBXor9GidFyvZRp3XrIxEmuwtJxSHiQnZW6pNckx1mPuc7wprPoCQBNQDG8U53BSb6Uti44E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=FKG+sKvH; arc=none smtp.client-ip=209.85.167.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-lf1-f98.google.com with SMTP id 2adb3069b0e04-57b35d221e2so37935e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1761174823; x=1761779623; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NE/3amh4M7tNgNnZVfHQb2pFOExzJd/f5eLPCJymwKM=;
-        b=FKG+sKvHTvGcglwczO8wfj2/qFsvKpmkan7Z2dvNuGaNMH4b6mohpLKvaBPjCLdnVj
-         m5d2P3GEmi82guV2rsVe5LJn6XJLAEWJwS3tj4mBbwI+8u0emVR6vXHVpjkKp2WHmFmi
-         HeFKKgIWd+aYDGxqxRp+ciZZFg63dHTIUFxlmIYZe/fAJbVEUX0F6/spr8ZBztFsqN7R
-         iLYjL7LzOd9bJ//8mJZAtTMEcuM5ir/jOAFbON4z5eTfVfFJDO8qqisIFxJmIH7KXY4x
-         145zSd3Bjk+qmQj9S7CMJHIdPMjqqynkemZkaGRIw6kuBCws2IulbKUN7X+GN3TVbdi/
-         sncw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761174823; x=1761779623;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NE/3amh4M7tNgNnZVfHQb2pFOExzJd/f5eLPCJymwKM=;
-        b=OWlFyRGJVtDYpMwbfr7aVy4aQNXeP2XGG8PcmLcwHp3COiDaJpApqoPkHljHWkVEqT
-         P0j0lBgHDcFPNEM8JtGT3Nj2dzmrbWLWI+Vsi0nrYggpPjd69ZeAyS0p9PSiauhkk59+
-         DHnoHTOT3GbBzYMw3fH24PYYD/iBxk/WNTvvx/Yrwfn8JO9eeCATcGdrKkMcKVXhD1VX
-         FPn8VifOTd2sfZdgsCbWvkL9WM/PKn2gR4SMbQxW9Fo+5iPcfo98ahVBUrFB3Iu8BBW8
-         HARClfAR2mev/jA6jPayS6lBNRRKzpwKVJYEE2NsBcyfvMwHWvknM2GUWMyI4wZR0vBy
-         84VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUINzn5zS06uv/pAUSsPdIA5Us7ah4mThkKzaZEARUwdXeM2JHzgoQGuq2K2gKveaRLxnzqWi1l3QZJKKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR/KAK5FYlv/yvT5PhIN6MQ/3ST4Y9MdAU/KQBMLuiZrjdCoIk
-	5c9cWk3KVXmQeLS3r4dq4Id6+VVC/zRCmx110f/WYC+jGTw0atgssBesyhOkZlgvmKmc2f3Iu5s
-	I+1z/OIKGhJZemdUWubuD2To8KRdgMNDszTtSE89N+/PVO9xjSBPe
-X-Gm-Gg: ASbGnctb64lzg/JOxr2AN6PFtxWuhDSD/sYbDeoW7ebJyCQygzc9CQNQu7MCibnNLjD
-	yP5WViHXVsdG5NfDM74jUqe07tkPC2N0pSMtR87CM3dd8CJvYDm+ETtfeQq62ev3zDB/XReLk4r
-	Hoqy1HpJmwR2Qpl7bkbzdaywN+PFr11sEnwHNaRTERKOZfd9BOBanXfsnJgEedhg/xyM/CUbb1d
-	W/4LEA6uCxaHShFMqfwbY9CpD/b00V+aFsSK2xKd++amZ6IHGURPWnpC7rWF98UiBgSowhaKreV
-	RxmxIBZDvfV0ALHanySM6dOAmCy1P5G3WnklOBD7dIBFZCGs47e6k5K9upcnbr5jmq16SPg4Zw6
-	08z1DNO499yWrs7dE
-X-Google-Smtp-Source: AGHT+IEu6qVydvgz5FX5gNAmjAkNmVg8S3aqqXExnZUf61/Sip3v+pDczaTy7pMfPzfVmQFRBGfoB1U3Opib
-X-Received: by 2002:a05:6512:401b:b0:58b:212:b0b5 with SMTP id 2adb3069b0e04-591ea30a314mr1687437e87.7.1761174823283;
-        Wed, 22 Oct 2025 16:13:43 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 2adb3069b0e04-592f4e502d3sm34119e87.55.2025.10.22.16.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 16:13:43 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 2290F3407D1;
-	Wed, 22 Oct 2025 17:13:39 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 20207E4181C; Wed, 22 Oct 2025 17:13:39 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Ming Lei <ming.lei@redhat.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>
-Cc: io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
-Date: Wed, 22 Oct 2025 17:13:26 -0600
-Message-ID: <20251022231326.2527838-4-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251022231326.2527838-1-csander@purestorage.com>
-References: <20251022231326.2527838-1-csander@purestorage.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6253E275861;
+	Wed, 22 Oct 2025 23:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761174818; cv=fail; b=Svc3eFKn+9g53v/71J1QwaBsBv9g3naeVXb6FaRtaJk9FVes3MLKKVTnoEViHD97htCyWcUJknt1HMOkZAyZjk2vOMn2zGdGN8XY9e80ZGZalH6EPLk8QcrcGYVK0wMbLgLUvHT3IC0xzKbREsaMtYvji2gQotsZ1c8yYiAMdcc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761174818; c=relaxed/simple;
+	bh=T7oyDpOYIm4yJ/Z+FTtgN7Utp1pHTRRFGEtRREu3sEY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SRCVs/txoVPc1iE7kjeZVGcKL+egqz3khPjVYnVh9+6v0MHy/Xxea4psyeGDX05AkljHB7xMeVkJ/xMXj1ddAPzHU+zGe2DM5zZkwQhMSF9hyRHbPg4YNRad3ZggRgAg8nFZoelyMpHEl7yzm6+EdbFhh9qmNkiaq0w+kgs5Fu0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kI2riUze; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761174817; x=1792710817;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=T7oyDpOYIm4yJ/Z+FTtgN7Utp1pHTRRFGEtRREu3sEY=;
+  b=kI2riUzeJZlGGaXoTpO29IsrWNu6Hd86eA43q63fi0L87ZOKT2FLiBFc
+   /rF+lNIhjqte9z8hTBUlUFAkEUn7FR9ohO95Bu8WR0CBieqPOau1c2GMl
+   C7xOM3Zft/l4Q9WMRmnWQZKYwRV1+FZT7ZReRNz/uGPoSszCkzalexC7G
+   bHwUCEDIWXfs7U0H2Hd0usSQL27o9jUzhB4wNLjfn5w4hKEpkEv9Rw8Ds
+   cPAZPBlKACIrBdLd/11NlyXWKbnqmF7BfZ4mxiMsCOA/VHL+oeWL9UYRV
+   4zFe98JwluWantgyVXmF4KiNxuYQGIdwVwnDola0P1YZAQhqNyZwROq2d
+   A==;
+X-CSE-ConnectionGUID: BccXJSRSQtO3P1aMqnEgVQ==
+X-CSE-MsgGUID: DGUv5gnXRfy/Hc989IC+0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80963260"
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="80963260"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 16:13:36 -0700
+X-CSE-ConnectionGUID: ro5xMcjdQ7GWQwvxafdtRA==
+X-CSE-MsgGUID: oxlrBD//RB+f1J8Cv2RMKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="183935250"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 16:13:35 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 16:13:34 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 22 Oct 2025 16:13:34 -0700
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.35) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 16:13:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RR2S8tKEVWQ3xqKz5pCwLIUMFt1kwXsnAtJie9jlAoyqRociUAi/Eyf0eM7e7Wt+GLB04ptVGZ2kzzLP6r7GkVl+Cyjx+w61TI8Yyny/qbNGvTEpC28X7G4NcqF5CCli74wdNb+D4Jpn8aZ+TK0nKAYjCkk5D7AvEvOh/4ndKN1L5zhTMxOrnWOrqnIw9/B/+EojeEcA5P9jYrOCg3bDP5q3bWS8oB7XQekygcMmTDx+lD5pLC7xHb+rX9WFxOOeUhs4sL9jgFiynIRZvUj99dFX4wybkB7VNNYSkdr6A04cVZIgF9JIbXdiEzt+ULGGLnMWBxkxoResWlr3VUDDUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PhuvhwfqvTUBvVE/dKDbrBzl6P9bJhlcVq54HzxJKSk=;
+ b=thLlSYdspQ6zaZw7vmNIsPDBol+r/OncDofphhT8jRZOFgN7FU0uP7BXKK8KdMaDbo3tyK5PPQrEhkvWQxFy750Bn/ytKkZLrmm7XwAHOaqvs0Rq4Bu7SrWAabtJLnnF9JB3TUNNHYjK6IbMhH7BguM2e0/1CqxyRZaKg2Y4k9RPqu9k+xMCodUwtzvx69MAlFv1BMFN/akkWD69vKHfXOcxvPYjCOU47SFCfkLnSVFcJDES+Tj5pUYqx5XZCfXZEOMuKorKpr08/U7C+w/8hIQcJwsqDhxn+pqgn9WCeR8cERcoosxPm/WuuN2v7fLNMp8HJttdQte3stIxZ6gx6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
+ by DS7PR11MB9497.namprd11.prod.outlook.com (2603:10b6:8:263::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 23:13:32 +0000
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 23:13:32 +0000
+Message-ID: <dc361e6e-a5bd-429f-8988-038723450a03@intel.com>
+Date: Thu, 23 Oct 2025 01:13:26 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/26] drm/xe: Allow the caller to pass guc_buf_cache
+ size
+To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
+ Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Matthew Brost
+	<matthew.brost@intel.com>
+CC: <dri-devel@lists.freedesktop.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
+ Laguna" <lukasz.laguna@intel.com>
+References: <20251021224133.577765-1-michal.winiarski@intel.com>
+ <20251021224133.577765-11-michal.winiarski@intel.com>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <20251021224133.577765-11-michal.winiarski@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: WA2P291CA0036.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1f::9) To MN0PR11MB6011.namprd11.prod.outlook.com
+ (2603:10b6:208:372::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|DS7PR11MB9497:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a94ecf7-be13-4838-1c15-08de11c09e3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?UVU2ZWk3RVg5dlRodzcwYUd1RUduR0M2azM2bFVEVDBod2pOZ2RDTVZkOG1S?=
+ =?utf-8?B?N21rUUJ1WXQ5S3R4SVJoVHZ2em9wZTQ1cHlGVU4ydktzSHgwZ1d3M2d6YURa?=
+ =?utf-8?B?QmE2cGZ6N3BMZ2FVb3R3ZVU1MS9JZzhoZ2JlNDJqSmV2STdWbzUrQTZlc0tV?=
+ =?utf-8?B?WFlLdjBpSUQ5eDB4WmNBMXd5NTF5cWVjNWpGVnlsR1NZcEtuai9Fb1kxMWY1?=
+ =?utf-8?B?QTBvT01sZ3ZzaXdGdmdLZG5VQmlkZUZCcTRzQkcvQ0RxVFdaN0dyMlp0UXJD?=
+ =?utf-8?B?RksrVDZnY2pZOW1nVjA0bHdMeTJqUzhXUWw5OU0vRkNGQlJjc3E5YmZ6SkQ2?=
+ =?utf-8?B?TmwrS0N2YzFuWU9NYW03VkZPYWFmdituRncvZ0dwMEJjd1NyZzZTd2dIQ3Ns?=
+ =?utf-8?B?cmw0MURGQ2RORjcvL1JmOUFZSlR2dXd3bXRKTDdhOW1qKzkrdUtlOEpFT2dR?=
+ =?utf-8?B?QUs5cEtSQ0NFbEdvU3F0SFd0cmRBWUxXTUZnY3k2RVZ5SFV3T0V0VVpaMWdi?=
+ =?utf-8?B?aVl2Y1FPUGI4Y1k0K0wyd2tKTHc0TVNRSnVKbm1uOGpyYThPUlNzN2IrUW1J?=
+ =?utf-8?B?bnluS1JMN1oxUzZVNUZKRWxBczhveCtlTGlXbE9aQjJnc2hEc2N3S0gwR0tW?=
+ =?utf-8?B?cHlsd2FxWWYzQ0E4Sk1OUW9xUTdHSE4raTgzbHFvNUM1dDRmYkhuSGllTmlm?=
+ =?utf-8?B?bzA3a09OaXpnL2xEeExRUTFlRXcvbVA4eGJRbWlReGdkcVBGcEZ4b0NhVXBH?=
+ =?utf-8?B?V0R3SnpCRy9qSnM2Um9tdmZVdlJDKy9xTGJScDl3N0pzVFdQUTBwTC8wcjFw?=
+ =?utf-8?B?Q0VDNHgwdUdRVkJVQmtpNFpwVUpVSnRvbitHMjJFaVNZd05UcC8rVGtoZzZt?=
+ =?utf-8?B?MDQyaG5QbXpxcXEzOE55TTQyR2o4SUZMT3VoSXNyUkZPV1Nyd08yeVNQNlZF?=
+ =?utf-8?B?OHhNVlozdmJWdXRVSW1LRWtKcGdNRVZSVjNORm1QOEdYc2dBMDIzUWIvVGdk?=
+ =?utf-8?B?YU1VSzFrUktRcUZFTnhidWVqeXlwWmUzMUpUa3dPL05udUozb2pNTzNrbXdG?=
+ =?utf-8?B?QXNIcXJaWFFlRDRRWlFNdVE2QUh0M3pQd2xNejhVcEdzMDl2RTNpZVZ2VWxG?=
+ =?utf-8?B?cFBUYzN5TjVvVDFPT0ZwcmIxN0c4R3VaaXBDMVpTR29mY0pVWWd4cERDQms5?=
+ =?utf-8?B?KytSdGtTYmxnMU1lSDg4N1B5ZnZjejF6TUptRmNMdmpOeWs0ckhPRDNCQUI2?=
+ =?utf-8?B?eW9iS1lWN3ByaVYxKzZKVEQrVVYxZnJrSCtUTUlKZDZ3TU5jM0NIc0dHZkJE?=
+ =?utf-8?B?ZG5JVUJjTTNmd0RlTFdtZlhrM21kUDRjcGt0T09ucTl6NGt0aW54ZUtKVitO?=
+ =?utf-8?B?NFk1MnFtY2Nsekg5blVtblNEK2NxKzlTY3gyLzhZZ01QdGN0cW5DczdaRUVQ?=
+ =?utf-8?B?d1l5NjRRMnU2bExIOFZ3a3RmWmZNZTZTKzdQNHI0S3VHREJuY2hGYitSSGFD?=
+ =?utf-8?B?Qjd4Q0RDQU5hWGh1NDBKdzBXOTllYWM4ODkyTVBrK252L3hEa1VhcXF5aVhq?=
+ =?utf-8?B?LzVNVG5Jc2xDUytsTHNSV2hBSm5ocjZ4dFBiTWQrNE10Yzg3dERtU1VTVHRj?=
+ =?utf-8?B?QXk3alU2T3JaWllXV0MwQnM2Y2RHWjBBKzZYZEUwNGNFU0FObFRTVDJBVUJu?=
+ =?utf-8?B?TlpqOTNiSENYUzhQVVd4ZE4wcktXUURqUWg0eFJUeDBlWk1TWkFsSVZDMzB6?=
+ =?utf-8?B?TmVPWkNKZVRwdHlVWlVUQTZlT3owM1Zxa2czUTJaYjNpczVwWmcrcnNiWUUy?=
+ =?utf-8?B?bHNiVnFUaXdMOXB5OC9YR1JYRkFTWFpBMDBtSEUxM0xwVUN6blJzRVdxTkpE?=
+ =?utf-8?B?dnQ4eXhQV2FhaTJSZ0M4ZDY3V2Rla2xSeUd3bE8xSUIzdGV3RTdIOFNjM1ph?=
+ =?utf-8?B?SnoydEQzaDVhaS9NU1JxQWVjdDlOZDNWRldBRUF5SHNPT1BFcGo2N2NtUWlF?=
+ =?utf-8?Q?LieTVwHyjjfgwUAs+dPy5OjTSqdqGM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N2lDeitGUWhQajlxMVFrdmZtbk9uT1Nrc2YrWUk3bDlrMFRQRmlnQ244TnNM?=
+ =?utf-8?B?TlJqVzVaMldYRTBpdWZqdjhRVXRIUTlCTlhrRnpiMUdBQnRCMW5wcmZPWW92?=
+ =?utf-8?B?bHlGbWo0NTBOdEo0THVJOWZxejlmSFhuSDg2RUhkMFoycVgwdE9hUnVXSUVl?=
+ =?utf-8?B?L1UrVktDVlVDWTlUUi9xYnYvRk1qbjJ4ekJUNWFiQmVJTVNzYVRFR0FkUXNM?=
+ =?utf-8?B?SjJLbE1oOW9icFhERUI3QXJmOWJES0tnSHdoQU1tbkZwczB6bnovL0pjYXh1?=
+ =?utf-8?B?R0FHNkFSUmV2MVJVdDc4VE04Q3FGanZzM1RlSjZwTjVHZkMyaW1wZE16d1Vs?=
+ =?utf-8?B?cE5pTnRYbWxJOTJib1JKM0pDcXdqNnhReE16MVlpY0cvaGFCSkVhV0FUU2ty?=
+ =?utf-8?B?ZzYxcGZZZHJZQ2lBRVk4Q0I3NjZlSFBVWWd0SDd2YnpNcWZjNXhGSWR4Mmk4?=
+ =?utf-8?B?bUtDN1h5dFZkWXZYZEFYVXI1NTRmV05xVS9QSUJlZ2FBQTdRYVovVDd0T2l5?=
+ =?utf-8?B?ZjVQSFA5V0JPSDYyMTlpWERpeUdDM3prdGVBUm1oai94b2F4SEVtdjh3cWYv?=
+ =?utf-8?B?emo1b2lsRTc0UTlMRmMraVBoODMxZUgycU0rKzFPWFFPLzYrSmVwSVVWQWxX?=
+ =?utf-8?B?c2JWQjlJN2JCYnUzYzF2bWRZM2xLZGNGRXpxclZQRmdZVmNXaGpaZEgwY01i?=
+ =?utf-8?B?K0YwS0R3RU1MNmpKMmtrUkZ5ZTB0R0hqUWRTaXF6R2h4NVNWRmFOc2ZpS1k5?=
+ =?utf-8?B?RVIzWENQUGxySmpuNWdHazlDbUt3UGxTQzlhRVNOaFVCSjZtaTA5RWhiMzhE?=
+ =?utf-8?B?bWJ2VHhOM0ZXcGFJQjhzc1RZb3hLMUtra0tDcmF4Y090YS9EaEt5aFZ3cUxo?=
+ =?utf-8?B?Z2ZWeE9vM0ljU25pK0gyak9kekhWM1k3bitxRFBJWFhoZVBBV3dJQUcrd0RZ?=
+ =?utf-8?B?RSsxNHdZNkRZZjRzeFJEay9QMGk4V3RjMVlhRlBMYWdEbzQ5eWkzZ1JLVENp?=
+ =?utf-8?B?V1AraGYrUzEvbzM3ZDFYUFdDOW5LdC9NdjhXcHZoeW5JUUhFd0tKbW02aVhC?=
+ =?utf-8?B?aDBhQkFyZDM4REh3K3p4THVzTW1rMEV2TWVXNkJtaTBCeGZTQkNtby9UYWpx?=
+ =?utf-8?B?RE9BR2hwRTBwbm9WZ2lraURYTXNuMVlvc2liM292WDduVklhSlA0TmlwZUgw?=
+ =?utf-8?B?aWpXazJnRnkxWTY0TEsvVjdIVDJ6anlDMFkrclB6dTl2MWZVMTg4NG9IUGN2?=
+ =?utf-8?B?U1dYVVA0T1dYUGlpV3RsZzhXaThUeEVMR250L0I4bDhGOGNpTjI5dXRsNVE5?=
+ =?utf-8?B?SlR4Y3BWWkd3a0Q4QmgwVVpLVlNtK1R2NkpnK2JQelJyVWZQVzM3c0UvcERh?=
+ =?utf-8?B?azN6dHIrZU9nVTNRSzFGUXVObUlra3AycFV1TVJ2RnhXZG1yR1ExVXhzWlV3?=
+ =?utf-8?B?TnVWNnltRHhjdW9jRU9jT3BQUkNHTm1TZVJ4NmdiNTdpQTBUTnBDZml4cjN3?=
+ =?utf-8?B?MThMVFhwK21qRXVkQU55SDExeHRMUW9lTWdwY0I4TVhtSVYzVFV0bEdKSC9x?=
+ =?utf-8?B?dndvK1Yyc09XUGdSNTVMNG5kNGgwSzc1STFyc094akloUkhuWFZJY0JMbG5Z?=
+ =?utf-8?B?YUx4b1YwRFBMWkJLUEgxR2dZM3lsTTNMNlpuQTYyUlhBc1hzUFMyQlNCV3Zv?=
+ =?utf-8?B?cFJlazY2Y1FZNFJEd0NCamZXaTJlUWpjQU1adDB3OWZBSk5XUCtBbzNYTjhO?=
+ =?utf-8?B?Yno0L0I0ZWsvOFpCQmFXWStacHNBVEFFS3FtTkk3bndkem1CTThPbi8xVUZj?=
+ =?utf-8?B?Tytxcy9aUC9BNldrL0FaQW1vamw0eTI4WVBQM2VWZzUvK244bi93REJwZXRm?=
+ =?utf-8?B?Z2hLT3N2emRHQlI1VzJMS0VrMUJxR2ZFeDR6RmlybzkrS3lyNUNkYnVhT0Uw?=
+ =?utf-8?B?MVFpUlJqK1ZYZStDQ3p1Y1lNS1FOL3ZTVnd0RmNxWnpURlpaNmFZY1FqRXla?=
+ =?utf-8?B?Ty9qc2NybVNHTW1YbGtWQVEzaFZCSWx3SHZ1UXdOaTJzNFlFaEhCeW1UYjF4?=
+ =?utf-8?B?cWdta0tTZ2NUamRqd0FFdmw2ZXNQL0Z6YlErSEs2NE1EaWc3MjYvdHg4REZV?=
+ =?utf-8?B?YjlXUHgra2VwYzNUNmpVc3RXckZRbW9uOWVLZHBDRGpISkhXQWlQcDJicC9Z?=
+ =?utf-8?B?elE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a94ecf7-be13-4838-1c15-08de11c09e3e
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 23:13:32.2014
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4eMLf+qJ7HmcMEcH9jElq5iGGiuFcV0HTTU/wPbYwi5HjLpT8ve2R5C7Xy4kqNqFHrLWkQ+jSm+qdCKuRQkGM2Km+RX6KiY0kIcpgDjNevw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB9497
+X-OriginatorOrg: intel.com
 
-io_uring task work dispatch makes an indirect call to struct io_kiocb's
-io_task_work.func field to allow running arbitrary task work functions.
-In the uring_cmd case, this calls io_uring_cmd_work(), which immediately
-makes another indirect call to struct io_uring_cmd's task_work_cb field.
-Introduce a macro DEFINE_IO_URING_CMD_TASK_WORK() to define a
-io_req_tw_func_t function wrapping an io_uring_cmd_tw_t. Convert the
-io_uring_cmd_tw_t function to the io_req_tw_func_t function in
-io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy().
-Use DEFINE_IO_URING_CMD_TASK_WORK() to define a io_req_tw_func_t
-function for each existing io_uring_cmd_tw_t function. Now uring_cmd
-task work dispatch makes a single indirect call to the io_req_tw_func_t
-wrapper function, which can inline the io_uring_cmd_tw_t function. This
-also allows removing the task_work_cb field from struct io_uring_cmd,
-freeing up some additional storage space.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- block/ioctl.c                |  1 +
- drivers/block/ublk_drv.c     |  3 +++
- drivers/nvme/host/ioctl.c    |  1 +
- fs/btrfs/ioctl.c             |  1 +
- fs/fuse/dev_uring.c          |  1 +
- include/linux/io_uring/cmd.h | 45 +++++++++++++++++++++---------------
- io_uring/uring_cmd.c         | 13 ++---------
- 7 files changed, 36 insertions(+), 29 deletions(-)
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index d7489a56b33c..7a3756863c9b 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -776,10 +776,11 @@ static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 	if (bic->res == -EAGAIN && bic->nowait)
- 		io_uring_cmd_issue_blocking(cmd);
- 	else
- 		io_uring_cmd_done(cmd, bic->res, issue_flags);
- }
-+static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
- 
- static void bio_cmd_bio_end_io(struct bio *bio)
- {
- 	struct io_uring_cmd *cmd = bio->bi_private;
- 	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 0c74a41a6753..829b049c7c75 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1354,10 +1354,11 @@ static void ublk_cmd_tw_cb(struct io_uring_cmd *cmd,
- 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
- 	struct ublk_queue *ubq = pdu->ubq;
- 
- 	ublk_dispatch_req(ubq, pdu->req, issue_flags);
- }
-+static DEFINE_IO_URING_CMD_TASK_WORK(ublk_cmd_tw_cb)
- 
- static void ublk_queue_cmd(struct ublk_queue *ubq, struct request *rq)
- {
- 	struct io_uring_cmd *cmd = ubq->ios[rq->tag].cmd;
- 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
-@@ -1378,10 +1379,11 @@ static void ublk_cmd_list_tw_cb(struct io_uring_cmd *cmd,
- 		rq->rq_next = NULL;
- 		ublk_dispatch_req(rq->mq_hctx->driver_data, rq, issue_flags);
- 		rq = next;
- 	} while (rq);
- }
-+static DEFINE_IO_URING_CMD_TASK_WORK(ublk_cmd_list_tw_cb)
- 
- static void ublk_queue_cmd_list(struct ublk_io *io, struct rq_list *l)
- {
- 	struct io_uring_cmd *cmd = io->cmd;
- 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
-@@ -2529,10 +2531,11 @@ static void ublk_ch_uring_cmd_cb(struct io_uring_cmd *cmd,
- 	int ret = ublk_ch_uring_cmd_local(cmd, issue_flags);
- 
- 	if (ret != -EIOCBQUEUED)
- 		io_uring_cmd_done(cmd, ret, issue_flags);
- }
-+static DEFINE_IO_URING_CMD_TASK_WORK(ublk_ch_uring_cmd_cb)
- 
- static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- {
- 	if (unlikely(issue_flags & IO_URING_F_CANCEL)) {
- 		ublk_uring_cmd_cancel_fn(cmd, issue_flags);
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index c212fa952c0f..d4ca46b3abc7 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -405,10 +405,11 @@ static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
- 
- 	if (pdu->bio)
- 		blk_rq_unmap_user(pdu->bio);
- 	io_uring_cmd_done32(ioucmd, pdu->status, pdu->result, issue_flags);
- }
-+static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
- 
- static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
- 						blk_status_t err)
- {
- 	struct io_uring_cmd *ioucmd = req->end_io_data;
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 185bef0df1c2..9d395f034403 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4704,10 +4704,11 @@ static void btrfs_uring_read_finished(struct io_uring_cmd *cmd, unsigned int iss
- 	kfree(priv->pages);
- 	kfree(priv->iov);
- 	kfree(priv);
- 	kfree(bc->data);
- }
-+static DEFINE_IO_URING_CMD_TASK_WORK(btrfs_uring_read_finished)
- 
- void btrfs_uring_read_extent_endio(void *ctx, int err)
- {
- 	struct btrfs_uring_priv *priv = ctx;
- 	struct io_btrfs_cmd *bc = io_uring_cmd_to_pdu(priv->cmd, struct io_btrfs_cmd);
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 71b0c9662716..e2c87c01e021 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -1226,10 +1226,11 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
- 		err = -ECANCELED;
- 	}
- 
- 	fuse_uring_send(ent, cmd, err, issue_flags);
- }
-+static DEFINE_IO_URING_CMD_TASK_WORK(fuse_uring_send_in_task)
- 
- static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_ring *ring)
- {
- 	unsigned int qid;
- 	struct fuse_ring_queue *queue;
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index b84b97c21b43..5d6e30cc9b0b 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -9,18 +9,13 @@
- /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
- #define IORING_URING_CMD_CANCELABLE	(1U << 30)
- /* io_uring_cmd is being issued again */
- #define IORING_URING_CMD_REISSUE	(1U << 31)
- 
--typedef void (*io_uring_cmd_tw_t)(struct io_uring_cmd *cmd,
--				  unsigned issue_flags);
--
- struct io_uring_cmd {
- 	struct file	*file;
- 	const struct io_uring_sqe *sqe;
--	/* callback to defer completions to task context */
--	io_uring_cmd_tw_t task_work_cb;
- 	u32		cmd_op;
- 	u32		flags;
- 	u8		pdu[32]; /* available inline for free use */
- };
- 
-@@ -58,13 +53,29 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
-  */
- void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret, u64 res2,
- 			 unsigned issue_flags, bool is_cqe32);
- 
- void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
--			    io_uring_cmd_tw_t task_work_cb,
-+			    io_req_tw_func_t task_work_cb,
- 			    unsigned flags);
- 
-+/*
-+ * uring_cmd_cb should be a function with the signature
-+ * void (struct io_uring_cmd *cmd, unsigned issue_flags)
-+ */
-+#define IO_URING_CMD_TASK_WORK(uring_cmd_cb) uring_cmd_cb##_tw
-+
-+#define DEFINE_IO_URING_CMD_TASK_WORK(uring_cmd_cb)				\
-+void										\
-+IO_URING_CMD_TASK_WORK(uring_cmd_cb)(struct io_kiocb *req, io_tw_token_t tw)	\
-+{										\
-+	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);\
-+										\
-+	/* task_work executor checks the deferred list completion */		\
-+	uring_cmd_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);			\
-+}
-+
- /*
-  * Note: the caller should never hard code @issue_flags and only use the
-  * mask provided by the core io_uring code.
-  */
- void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-@@ -107,11 +118,11 @@ static inline int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
- static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret,
- 		u64 ret2, unsigned issue_flags, bool is_cqe32)
- {
- }
- static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
--			    io_uring_cmd_tw_t task_work_cb, unsigned flags)
-+			    io_req_tw_func_t task_work_cb, unsigned flags)
- {
- }
- static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
-@@ -131,21 +142,19 @@ static inline bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
- 	return true;
- }
- #endif
- 
- /* users must follow the IOU_F_TWQ_LAZY_WAKE semantics */
--static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
--			io_uring_cmd_tw_t task_work_cb)
--{
--	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
--}
--
--static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
--			io_uring_cmd_tw_t task_work_cb)
--{
--	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
--}
-+#define io_uring_cmd_do_in_task_lazy(ioucmd, uring_cmd_cb)			\
-+	__io_uring_cmd_do_in_task((ioucmd),					\
-+				  IO_URING_CMD_TASK_WORK(uring_cmd_cb),		\
-+				  IOU_F_TWQ_LAZY_WAKE)
-+
-+#define io_uring_cmd_complete_in_task(ioucmd, uring_cmd_cb)			\
-+	__io_uring_cmd_do_in_task((ioucmd),					\
-+				  IO_URING_CMD_TASK_WORK(uring_cmd_cb),		\
-+				  0)
- 
- static inline bool io_uring_cmd_should_terminate_tw(struct io_uring_cmd *cmd)
- {
- 	return io_should_terminate_tw(cmd_to_io_kiocb(cmd)->ctx);
- }
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 35bdac35cf4d..5a80d35658dc 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -111,29 +111,20 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- 		io_ring_submit_unlock(ctx, issue_flags);
- 	}
- }
- EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
- 
--static void io_uring_cmd_work(struct io_kiocb *req, io_tw_token_t tw)
--{
--	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
--
--	/* task_work executor checks the deffered list completion */
--	ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
--}
--
- void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
--			io_uring_cmd_tw_t task_work_cb,
-+			io_req_tw_func_t task_work_cb,
- 			unsigned flags)
- {
- 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
- 
- 	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
- 		return;
- 
--	ioucmd->task_work_cb = task_work_cb;
--	req->io_task_work.func = io_uring_cmd_work;
-+	req->io_task_work.func = task_work_cb;
- 	__io_req_task_work_add(req, flags);
- }
- EXPORT_SYMBOL_GPL(__io_uring_cmd_do_in_task);
- 
- static inline void io_req_set_cqe32_extra(struct io_kiocb *req,
--- 
-2.45.2
+On 10/22/2025 12:41 AM, Michał Winiarski wrote:
+> An upcoming change will use GuC buffer cache as a place where GuC
+> migration data will be stored, and the memory requirement for that is
+> larger than indirect data.
+> Allow the caller to pass the size based on the intended usecase.
+> 
+> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> ---
+>  drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c | 2 +-
+>  drivers/gpu/drm/xe/xe_guc.c                 | 4 ++--
+>  drivers/gpu/drm/xe/xe_guc_buf.c             | 6 +++---
+>  drivers/gpu/drm/xe/xe_guc_buf.h             | 4 +++-
+>  4 files changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c b/drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c
+> index d266882adc0e0..485e7a70e6bb7 100644
+> --- a/drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c
+> +++ b/drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c
+> @@ -72,7 +72,7 @@ static int guc_buf_test_init(struct kunit *test)
+>  	kunit_activate_static_stub(test, xe_managed_bo_create_pin_map,
+>  				   replacement_xe_managed_bo_create_pin_map);
+>  
+> -	KUNIT_ASSERT_EQ(test, 0, xe_guc_buf_cache_init(&guc->buf));
+> +	KUNIT_ASSERT_EQ(test, 0, xe_guc_buf_cache_init(&guc->buf, XE_GUC_BUF_CACHE_DEFAULT_SIZE));
+>  
+>  	test->priv = &guc->buf;
+>  	return 0;
+> diff --git a/drivers/gpu/drm/xe/xe_guc.c b/drivers/gpu/drm/xe/xe_guc.c
+> index ecc3e091b89e6..7c65528859ecb 100644
+> --- a/drivers/gpu/drm/xe/xe_guc.c
+> +++ b/drivers/gpu/drm/xe/xe_guc.c
+> @@ -812,7 +812,7 @@ static int vf_guc_init_post_hwconfig(struct xe_guc *guc)
+>  	if (err)
+>  		return err;
+>  
+> -	err = xe_guc_buf_cache_init(&guc->buf);
+> +	err = xe_guc_buf_cache_init(&guc->buf, XE_GUC_BUF_CACHE_DEFAULT_SIZE);
+>  	if (err)
+>  		return err;
+>  
+> @@ -860,7 +860,7 @@ int xe_guc_init_post_hwconfig(struct xe_guc *guc)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = xe_guc_buf_cache_init(&guc->buf);
+> +	ret = xe_guc_buf_cache_init(&guc->buf, XE_GUC_BUF_CACHE_DEFAULT_SIZE);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/drivers/gpu/drm/xe/xe_guc_buf.c b/drivers/gpu/drm/xe/xe_guc_buf.c
+> index 4d8a4712309f4..ed096a0331244 100644
+> --- a/drivers/gpu/drm/xe/xe_guc_buf.c
+> +++ b/drivers/gpu/drm/xe/xe_guc_buf.c
+> @@ -28,16 +28,16 @@ static struct xe_gt *cache_to_gt(struct xe_guc_buf_cache *cache)
+>   * @cache: the &xe_guc_buf_cache to initialize
+>   *
+>   * The Buffer Cache allows to obtain a reusable buffer that can be used to pass
+> - * indirect H2G data to GuC without a need to create a ad-hoc allocation.
+> + * data to GuC or read data from GuC without a need to create a ad-hoc allocation.
+>   *
+>   * Return: 0 on success or a negative error code on failure.
+>   */
+> -int xe_guc_buf_cache_init(struct xe_guc_buf_cache *cache)
+> +int xe_guc_buf_cache_init(struct xe_guc_buf_cache *cache, u32 size)
+>  {
+>  	struct xe_gt *gt = cache_to_gt(cache);
+>  	struct xe_sa_manager *sam;
+>  
+> -	sam = __xe_sa_bo_manager_init(gt_to_tile(gt), SZ_8K, 0, sizeof(u32));
+> +	sam = __xe_sa_bo_manager_init(gt_to_tile(gt), size, 0, sizeof(u32));
+>  	if (IS_ERR(sam))
+>  		return PTR_ERR(sam);
+>  	cache->sam = sam;
+> diff --git a/drivers/gpu/drm/xe/xe_guc_buf.h b/drivers/gpu/drm/xe/xe_guc_buf.h
+> index c5e0f1fd24d74..5210703309e81 100644
+> --- a/drivers/gpu/drm/xe/xe_guc_buf.h
+> +++ b/drivers/gpu/drm/xe/xe_guc_buf.h
+> @@ -11,7 +11,9 @@
+>  
+>  #include "xe_guc_buf_types.h"
+>  
+> -int xe_guc_buf_cache_init(struct xe_guc_buf_cache *cache);
+> +#define XE_GUC_BUF_CACHE_DEFAULT_SIZE SZ_8K
+> +
+> +int xe_guc_buf_cache_init(struct xe_guc_buf_cache *cache, u32 size);
+
+alternatively, to minimize code changes, we can have:
+
+int xe_guc_buf_cache_init_size(struct xe_guc_buf_cache *cache, u32 size);
+
+static inline int xe_guc_buf_cache_init(struct xe_guc_buf_cache *cache)
+{
+	return xe_guc_buf_cache_init_size(cache, XE_GUC_BUF_CACHE_DEFAULT_SIZE);
+}
+
+but up to you,
+
+Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+
+>  u32 xe_guc_buf_cache_dwords(struct xe_guc_buf_cache *cache);
+>  struct xe_guc_buf xe_guc_buf_reserve(struct xe_guc_buf_cache *cache, u32 dwords);
+>  struct xe_guc_buf xe_guc_buf_from_data(struct xe_guc_buf_cache *cache,
 
 
