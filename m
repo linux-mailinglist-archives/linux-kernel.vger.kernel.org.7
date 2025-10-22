@@ -1,182 +1,265 @@
-Return-Path: <linux-kernel+bounces-864766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F893BFB7D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B47C0BFB7E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4543BC857
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57D8465BD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0311E32779B;
-	Wed, 22 Oct 2025 10:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4528B26E71E;
+	Wed, 22 Oct 2025 10:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G43QsmnS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElU56uLl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61D830CDB6;
-	Wed, 22 Oct 2025 10:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FB5287246;
+	Wed, 22 Oct 2025 10:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130658; cv=none; b=mqQhSgYw1eFdjxIZ8zf4c1WL0To8V2PV6NT8aHamgppUCluTjK3UuQSsXUiV7GYODRSE+QK43pf+5kr0/4Tdm0vvmzLGHEjyN20J9hluAkwca2/XR+JJaAwiWl+frlQQ5ose3ps/wAgQ3EUZDmyOgCfWxENe2mbK5PTnAWw4lSk=
+	t=1761130707; cv=none; b=qiLvtGxxI988qebEbH7LCAqV1vSsx/zkm5oQAZJLMuGdSLTNptjDpjD+oO9N2nL3aU/sppWuMRww4EtlaiDBGNG29tHZVUzekXSzMzsz4lPOAckUq9VEbr/PxweQ8eJuD2MOSubokg/RTS/ttuXGDC4/P0tLmQCQ8msMNzACCj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130658; c=relaxed/simple;
-	bh=44hU0A5XT2BwsHVd3ivjnoGEMq7A5g8C8+pnZd5xNew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dGfuuXd18QSbzSbkpYQEzby7CmT6L21sM0nrhMBPbDDu2yiynHA2/SfhyM3mZikLUkRtuxaIlENr3obnKTbcCCO51FGSzxXNguLWRmPdbZ63RvaHBdOL5zX6GVxgX/8qk5NX3apBZSF2rJPQE0+EKunWl7+vJly5D1ktfKHT4jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G43QsmnS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MARP7p032755;
-	Wed, 22 Oct 2025 10:57:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	f06OL6NZEmM+0LyUYN42vSElcbvRsxauO9buSCOP0xo=; b=G43QsmnStAGReJFk
-	a0GPsgu1GU17zVgRkJCtXHCKoibRL/Fedh8z4otafFYddhsatKfy9I2mEADaKt+V
-	B+eOfUHkkyiEuQq3XQYyekzvfou92PfS3eS8BMAq2ST9ODYM3SzChu3yY12B+hD7
-	uji9xTeKsP4FdHJUtNVpQ0XEI/vP5TBYqsXiEHiAQsJb9d3/pMcF0iOP1yaFnyFG
-	vMABVryUIeJ5KST79fBZGOI1MWjFuEcB9vRZyXoe3ikR2Vk5gzrEJN4oRhp1qptk
-	tNqBo5AlxZyZD1BfZm5qv4LyktvUDv0dqlHfg7PUJmZai9dA/Sz9Dvs1dtzi0MwR
-	JEN4ug==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08w9yxb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 10:57:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59MAvXAn000484
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 10:57:33 GMT
-Received: from [10.217.239.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 22 Oct
- 2025 03:57:31 -0700
-Message-ID: <f2a46da9-23f1-425e-8978-0fa412ed1dfa@quicinc.com>
-Date: Wed, 22 Oct 2025 16:27:28 +0530
+	s=arc-20240116; t=1761130707; c=relaxed/simple;
+	bh=uP7wmgWPNro5aHZPJ9Sbf+zUHTY0T4bM7DTfOvPzk6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZyhhWS/vvEkqifwcfnYqPsnXBDjKiOpil70yDrhd8rcOJewCvvPRMcsVtURXt9q3Jka1mE5Av1hT7j9DLT546NIbafqGDdfV/G0Mn8G/aQtf2Zw9vnSuxQEO/Fi5ftvabVSYG78aqCmlfYkBGpO4xFXIChaFmF/IpDR188U5XWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElU56uLl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21BFC4CEE7;
+	Wed, 22 Oct 2025 10:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761130706;
+	bh=uP7wmgWPNro5aHZPJ9Sbf+zUHTY0T4bM7DTfOvPzk6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ElU56uLl53ecsF3fuxfxvkbzZD/3/bG7M9Z2Pi0n4KtvuGb11/0p/HaK2b+li95SZ
+	 mJrGkTUXILsjuOabDPcNJ/G9VD5Iqh+ExzVWiDpdQqtalVFL18cn3QCJ6Dqo5sfdFn
+	 /BuNRET3hcUjeyRVex2L44Le91VIE/MtFV03q6Dq4TMaxXzGLsBM72HtN2uj3+yy3D
+	 p7vEEjnS3r/285SA05pxpqce9DqiA2VFMwLqM3o+Kz7S3nSEmZ0RLecXVt+bRykRZH
+	 51bSXbACvsCR5BO3bdvgakU6FQKoBTd44N+BeWlezp8StzhQK0BOIuIAwBDVn2NfCR
+	 nlYRrQcx3B8DA==
+Date: Wed, 22 Oct 2025 16:28:08 +0530
+From: "mani@kernel.org" <mani@kernel.org>
+To: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
+Cc: Stefan Roese <stefan.roese@mailbox.org>, 
+	Bjorn Helgaas <helgaas@kernel.org>, "Bandi, Ravi Kumar" <ravib@amazon.com>, 
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>, 
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, Sean Anderson <sean.anderson@linux.dev>, 
+	"Yeleswarapu, Nagaradhesh" <nagaradhesh.yeleswarapu@amd.com>, "Musham, Sai Krishna" <sai.krishna.musham@amd.com>
+Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+Message-ID: <zuj6puxpqgjmaa3y3wwyixlru7e7locplnjev37i5fnh6zummw@72t5prkfsrpk>
+References: <20251021212801.GA1224310@bhelgaas>
+ <ab1f7c51-bc41-4774-a0dc-850e53c412eb@mailbox.org>
+ <3it5l556vmfpuu6kz5yvulwosi4ecmcgfbzcizrc5wi7ifddkh@mpzfxf2v6v3f>
+ <72267a6c-13c7-40bd-babb-f73a28625ca4@mailbox.org>
+ <SN7PR12MB7201CF621AF0A38AA905799D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
+ <brekq5jmgnotwpshcksxefpg2adm4vlsbuncazdg32sdpxqjwj@annnvyzshrys>
+ <SN7PR12MB7201C6B5B64F8847DD6D816D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] soc: qcom: smp2p: Add irqchip state support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Jingyi Wang
-	<jingyi.wang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Chris Lew
-	<chris.lew@oss.qualcomm.com>
-References: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
- <20250923-smp2p-v1-1-2c045af73dac@oss.qualcomm.com>
- <15c56c70-928a-4939-86a2-e7b81f1596a6@oss.qualcomm.com>
- <c239bce2-4bef-4085-8a74-c6d7c863febf@quicinc.com>
- <344f0f72-27c5-4b88-99ee-f71065cc3a5f@oss.qualcomm.com>
-Content-Language: en-US
-From: Deepak Kumar Singh <quic_deesin@quicinc.com>
-In-Reply-To: <344f0f72-27c5-4b88-99ee-f71065cc3a5f@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hekN36Yw8v3FeFHKGgHl-ERJY-yNqlM6
-X-Proofpoint-GUID: hekN36Yw8v3FeFHKGgHl-ERJY-yNqlM6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX7xpFnLzN7OaQ
- 6KMX0s4EOsypsG5nYKjym5yGSp3gSYF0+aaz9aR7wN79hXS6W9souT3DHM71aTlg2ji54R8w2fc
- zt9WSBEx/jMSlTXtUtiozvlReQUETLZvt3Rlvd96wAwNFko0SkAlnyRpfi8tWPVbm1W2Sd48H8N
- vLkrOKUfQwuvP+DMWeEqk8X57UDZiMfIO3jwM5sab4tZ/9ywDeINZhe4gwVk8t9pLM7OWYx1j+K
- O8sOQSPR7Sc9qi3SQSuRYmZ2sv+MRF0Nq4mwFowyAZYQnhV4PKuVFGqlb9deXk9zmwhOKvIsdYP
- eOCH460jiG5iIhu8g8MA/SyYrVS/AVG4MFfi+p63YMC4o64dGgFn8D7/8lPS+Odw5afXJiHDRSv
- P50aAsDNu4iIaD7IXV3wMNFo2JrNUg==
-X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68f8b89e cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=JP9Gpur_04sB__cSA64A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
+In-Reply-To: <SN7PR12MB7201C6B5B64F8847DD6D816D8BF3A@SN7PR12MB7201.namprd12.prod.outlook.com>
 
-
-
-On 10/21/2025 3:05 PM, Konrad Dybcio wrote:
-> On 10/21/25 10:12 AM, Deepak Kumar Singh wrote:
->>
->>
->> On 9/24/2025 8:20 PM, Konrad Dybcio wrote:
->>> On 9/24/25 6:18 AM, Jingyi Wang wrote:
->>>> From: Chris Lew <chris.lew@oss.qualcomm.com>
->>>>
->>>> A remoteproc booted during earlier boot stages such as UEFI or the
->>>> bootloader, may need to be attached to without restarting the remoteproc
->>>> hardware. To do this the remoteproc will need to check the ready and
->>>> handover states in smp2p without an interrupt notification.
->>>>
->>>> Add support for the .irq_get_irqchip_state callback so remoteproc can
->>>> read the current state of the fatal, ready and handover bits.
->>>>
->>>> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
->>>> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>> ---
->>>>    drivers/soc/qcom/smp2p.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>    1 file changed, 55 insertions(+)
->>>>
->>>> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
->>>> index cb515c2340c1..e2cfd9ec8875 100644
->>>> --- a/drivers/soc/qcom/smp2p.c
->>>> +++ b/drivers/soc/qcom/smp2p.c
->>>> @@ -222,6 +222,39 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
->>>>        }
->>>>    }
->>>>    +static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
->>>> +{
->>>> +    unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
->>>> +    unsigned int pid = smp2p->remote_pid;
->>>> +    char buf[SMP2P_MAX_ENTRY_NAME];
->>>> +    struct smp2p_smem_item *in;
->>>> +    struct smp2p_entry *entry;
->>>> +    size_t size;
->>>> +    int i;
->>>> +
->>>> +    in = qcom_smem_get(pid, smem_id, &size);
->>>> +    if (IS_ERR(in))
->>>> +        return;
->>>> +
->>>> +    smp2p->in = in;
->>>> +
->>>> +    /* Check if version is initialized and set to v2 */
->>>> +    if (in->version == 0)
->>>> +        return;
->>>
->>> This doesn't seem to be fully in line with the comment
->>>
->>> Konrad
->>>
->> Hi Konard,
->>
->> Can you please elaborate more on this?
->> in->version == 0 means remote has not initialized the version yet, so no need of enumerating entries. For other case i.e in->version == 1 or 2, in entries added by early booted remote has to be enumerated.
+On Wed, Oct 22, 2025 at 10:36:28AM +0000, Havalige, Thippeswamy wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> It's not at all obvious that 0 is supposed to mean "uninitialized"
+> Hi Mani,
 > 
-> Please #define it
+> > -----Original Message-----
+> > From: mani@kernel.org <mani@kernel.org>
+> > Sent: Wednesday, October 22, 2025 4:02 PM
+> > To: Havalige, Thippeswamy <thippeswamy.havalige@amd.com>
+> > Cc: Stefan Roese <stefan.roese@mailbox.org>; Bjorn Helgaas
+> > <helgaas@kernel.org>; Bandi, Ravi Kumar <ravib@amazon.com>;
+> > lpieralisi@kernel.org; bhelgaas@google.com; linux-pci@vger.kernel.org;
+> > kwilczynski@kernel.org; robh@kernel.org; Simek, Michal
+> > <michal.simek@amd.com>; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; stable@vger.kernel.org; Sean Anderson
+> > <sean.anderson@linux.dev>
+> > Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+> >
+> > On Wed, Oct 22, 2025 at 10:08:44AM +0000, Havalige, Thippeswamy wrote:
+> > > [AMD Official Use Only - AMD Internal Distribution Only]
+> > >
+> > > Hi Stefan,
+> > >
+> > > > -----Original Message-----
+> > > > From: Stefan Roese <stefan.roese@mailbox.org>
+> > > > Sent: Wednesday, October 22, 2025 3:29 PM
+> > > > To: mani@kernel.org
+> > > > Cc: Bjorn Helgaas <helgaas@kernel.org>; Bandi, Ravi Kumar
+> > > > <ravib@amazon.com>; Havalige, Thippeswamy
+> > > > <thippeswamy.havalige@amd.com>; lpieralisi@kernel.org;
+> > > > bhelgaas@google.com; linux-pci@vger.kernel.org;
+> > > > kwilczynski@kernel.org; robh@kernel.org; Simek, Michal
+> > > > <michal.simek@amd.com>; linux-arm- kernel@lists.infradead.org;
+> > > > linux-kernel@vger.kernel.org; stable@vger.kernel.org; Sean Anderson
+> > > > <sean.anderson@linux.dev>
+> > > > Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+> > > >
+> > > > On 10/22/25 11:55, mani@kernel.org wrote:
+> > > > > On Wed, Oct 22, 2025 at 08:59:19AM +0200, Stefan Roese wrote:
+> > > > >> Hi Bjorn,
+> > > > >> Hi Ravi,
+> > > > >>
+> > > > >> On 10/21/25 23:28, Bjorn Helgaas wrote:
+> > > > >>> On Tue, Oct 21, 2025 at 08:55:41PM +0000, Bandi, Ravi Kumar wrote:
+> > > > >>>>> On Tue, Oct 21, 2025 at 05:46:17PM +0000, Bandi, Ravi Kumar
+> > wrote:
+> > > > >>>>>>> On Oct 21, 2025, at 10:23 AM, Bjorn Helgaas
+> > > > >>>>>>> <helgaas@kernel.org>
+> > > > wrote:
+> > > > >>>>>>> On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi
+> > > > wrote:
+> > > > >>>>>>>> The pcie-xilinx-dma-pl driver does not enable INTx
+> > > > >>>>>>>> interrupts after initializing the port, preventing INTx
+> > > > >>>>>>>> interrupts from PCIe endpoints from flowing through the
+> > > > >>>>>>>> Xilinx XDMA root port bridge. This issue affects kernel 6.6.0 and
+> > later versions.
+> > > > >>>>>>>>
+> > > > >>>>>>>> This patch allows INTx interrupts generated by PCIe
+> > > > >>>>>>>> endpoints to flow through the root port. Tested the fix on
+> > > > >>>>>>>> a board with two endpoints generating INTx interrupts.
+> > > > >>>>>>>> Interrupts are properly detected and serviced. The
+> > > > >>>>>>>> /proc/interrupts output
+> > > > >>>>>>>> shows:
+> > > > >>>>>>>>
+> > > > >>>>>>>> [...]
+> > > > >>>>>>>> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-
+> > pcie,
+> > > > azdrv
+> > > > >>>>>>>> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-
+> > pcie,
+> > > > azdrv
+> > > > >>>>>>>> [...]
+> > > > >>
+> > > > >> First a comment on this IRQ logging:
+> > > > >>
+> > > > >> These lines do NOT refer to the INTx IRQ(s) but the controller
+> > > > >> internal "events" (errors etc). Please see this log for INTx on
+> > > > >> my Versal platform with pci_irqd_intx_xlate added:
+> > > > >>
+> > > > >>   24:          0          0  pl_dma:RC-Event   0 Level     LINK_DOWN
+> > > > >>   25:          0          0  pl_dma:RC-Event   3 Level     HOT_RESET
+> > > > >>   26:          0          0  pl_dma:RC-Event   8 Level     CFG_TIMEOUT
+> > > > >>   27:          0          0  pl_dma:RC-Event   9 Level     CORRECTABLE
+> > > > >>   28:          0          0  pl_dma:RC-Event  10 Level     NONFATAL
+> > > > >>   29:          0          0  pl_dma:RC-Event  11 Level     FATAL
+> > > > >>   30:          0          0  pl_dma:RC-Event  20 Level     SLV_UNSUPP
+> > > > >>   31:          0          0  pl_dma:RC-Event  21 Level     SLV_UNEXP
+> > > > >>   32:          0          0  pl_dma:RC-Event  22 Level     SLV_COMPL
+> > > > >>   33:          0          0  pl_dma:RC-Event  23 Level     SLV_ERRP
+> > > > >>   34:          0          0  pl_dma:RC-Event  24 Level     SLV_CMPABT
+> > > > >>   35:          0          0  pl_dma:RC-Event  25 Level     SLV_ILLBUR
+> > > > >>   36:          0          0  pl_dma:RC-Event  26 Level     MST_DECERR
+> > > > >>   37:          0          0  pl_dma:RC-Event  27 Level     MST_SLVERR
+> > > > >>   38:         94          0  pl_dma:RC-Event  16 Level     84000000.axi-pcie
+> > > > >>   39:         94          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
+> > > > >>
+> > > > >> The last line shows the INTx IRQs here ('pl_dma:INTx' vs
+> > > > >> 'pl_dma:RC- Event').
+> > > > >>
+> > > > >> More below...
+> > > > >>
+> > > > >>>>>>>>
+> > > > >>>>>>>> Changes since v1::
+> > > > >>>>>>>> - Fixed commit message per reviewer's comments
+> > > > >>>>>>>>
+> > > > >>>>>>>> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA
+> > > > >>>>>>>> Root Port driver")
+> > > > >>>>>>>> Cc: stable@vger.kernel.org
+> > > > >>>>>>>> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
+> > > > >>>>>>>
+> > > > >>>>>>> Hi Ravi, obviously you tested this, but I don't know how to
+> > > > >>>>>>> reconcile this with Stefan's INTx fix at
+> > > > >>>>>>> https://lore.kernel.org/r/20251021154322.973640-1-
+> > > > stefan.roese@m
+> > > > >>>>>>> ailbox.org
+> > > > >>>>>>>
+> > > > >>>>>>> Does Stefan's fix need to be squashed into this patch?
+> > > > >>>>>>
+> > > > >>>>>> Sure, we can squash Stefan’s fix into this.
+> > > > >>>>>
+> > > > >>>>> I know we *can* squash them.
+> > > > >>>>>
+> > > > >>>>> I want to know why things worked for you and Stefan when they
+> > > > >>>>> *weren't* squashed:
+> > > > >>>>>
+> > > > >>>>>    - Why did INTx work for you even without Stefan's patch.  Did you
+> > > > >>>>>      get INTx interrupts but not the right ones, e.g., did the device
+> > > > >>>>>      signal INTA but it was received as INTB?
+> > > > >>>>
+> > > > >>>> I saw that interrupts were being generated by the endpoint
+> > > > >>>> device, but I didn’t specifically check if they were correctly
+> > > > >>>> translated in the controller. I noticed that the new driver
+> > > > >>>> wasn't explicitly enabling the interrupts, so my first approach
+> > > > >>>> was to enable them, which helped the interrupts flow through.
+> > > > >>>
+> > > > >>> OK, I'll assume the interrupts happened but the driver might not
+> > > > >>> have been able to handle them correctly, e.g., it was prepared
+> > > > >>> for INTA but got INTB or similar.
+> > > > >>>
+> > > > >>>>>    - Why did Stefan's patch work for him even without your patch.
+> > How
+> > > > >>>>>      could Stefan's INTx work without the CSR writes to enable
+> > > > >>>>>      interrupts?
+> > > > >>>>
+> > > > >>>> I'm not entirely sure if there are any other dependencies in
+> > > > >>>> the FPGA bitstream. I'll investigate further and get back to you.
+> > > > >>>
+> > > > >>> Stefan clarified in a private message that he had applied your
+> > > > >>> patch first, so this mystery is solved.
+> > > > >>
+> > > > >> Yes. I applied Ravi's patch first and still got no INTx delivered
+> > > > >> to the nvme driver. That's what me triggered to dig deeper here
+> > > > >> and resulted in this v2 patch with pci_irqd_intx_xlate added.
+> > > > >>
+> > > > >> BTW:
+> > > > >> I re-tested just now w/o Ravi's patch and the INTx worked. Still
+> > > > >> I think Ravi's patch is valid and should be applied...
+> > > > >
+> > > > > How come INTx is working without the patch from Ravi which enabled
+> > > > > INTx routing in the controller? Was it enabled by default in the hardware?
+> > > >
+> > > > Yes, this is my best guess right now. I could double-check here, but
+> > > > IMHO it makes sense to enable it "manually" as done with Ravi's
+> > > > patch to not rely on this default setup at all.
+> > > Hardware doesn't enable this bits by default, INTx didn't work since there is a
+> > miss match in the DT property which doesn't require pci_irqd_intx_xlate.
+> > >
+> > > interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
+> > > <0 0 0 2 &pcie_intc_0 1>,
+> > > <0 0 0 3 &pcie_intc_0 2>,
+> > > <0 0 0 4 &pcie_intc_0 3>;
+> > >
+> >
+> > Ok. This makes me believe that we do not need Stefan's patch [1] and need
+> > just this patch from Ravi.
+> >
+> > - Mani
+> >
+> > [1] https://lore.kernel.org/linux-pci/20251021154322.973640-1-
+> > stefan.roese@mailbox.org/
 > 
-> Konrad
-I think that can be added or instead we can replace (in->version == 0 
-)with (in->version != SMP2P_VERSION_2).
+> We even don’t need ravi patch, as we have tested this at our end it works fine by just updating interrupt-map
+> Property. We need to now understand the difference in design.
 
+Ok, please let us know with your findings. In the meantime, I'll keep Ravi's
+patch in tree, as it seems to be required on his setup.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
