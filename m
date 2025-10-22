@@ -1,132 +1,182 @@
-Return-Path: <linux-kernel+bounces-865141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82203BFC577
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C12BFC53D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5320666A23
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:46:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A604D542ECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EF0346793;
-	Wed, 22 Oct 2025 13:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B83E3491F2;
+	Wed, 22 Oct 2025 13:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAbY+kjK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cuElKqF0"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011047.outbound.protection.outlook.com [40.107.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD44347BC5;
-	Wed, 22 Oct 2025 13:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140583; cv=none; b=AD6wb7n/g8YXxbMeqIWgQG9mVTFwTdY2d8BOXBVCheX01x0E7oInxsLPalTBlmqkYerUTSQGYbd22hNkGk7ktQFjTgNnWuCWCjMUFooZEXs4mK77sfWHfqZSzakJKPRXi0s6r2+5kOUGSXvcP6NyDAx1bOrAL+0Wto+We0vh7Ug=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140583; c=relaxed/simple;
-	bh=OHIuqSYAMSWwC2mR3fyIfTLQ2n23hPsjeCdK4RwoUn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mzLgO3NJMczP9c0fyBTMd3Smdx3JFyWVMNBcWbaBJ59AeVgvbzY5GkhZ0WmlcHulDD7MM8z63Vz7IfEjKm8pXD7sLrFyhEU1jHX7Hm5xJJYkL88n2oV9eRW2KcC1LOubSQzFH6WrYeOQVxkwIxCShCmcDFavMoZiS/82FDLnnRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAbY+kjK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB09FC4CEE7;
-	Wed, 22 Oct 2025 13:42:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761140583;
-	bh=OHIuqSYAMSWwC2mR3fyIfTLQ2n23hPsjeCdK4RwoUn0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fAbY+kjKCv3HaCjh5V3vAJRRvydwad+CX10uiQ8rwomSRwNYR6yaB91wsu166tcrG
-	 d1pROnlOV2Bm6G/3OoF5jmylmWYDZ8Gy40n7O8HmYvkTbK1+xaMbZEYeKO4Miw1N0F
-	 DiGDCx0HtSnopCOa5EZ+821eO2URZm+9OHfmWEmEv5u/yP9yJrTAXSdhHBo0otL1Z5
-	 n7f2F2uV5sl67moeBsRCbVWa4VQI3s8eOBCkFz+H6tXpRmVoa5SSpnFw23DTKM21Gz
-	 QlQVECmQ/HgikfqM09g8sv8WOQ1RZluXKGcfpLk4wU05EFyEB1hyTHb5Ap92EaC6ch
-	 9LM8y01p1U7sA==
-Message-ID: <882aa222-fe4f-4724-87eb-4480de91919d@kernel.org>
-Date: Wed, 22 Oct 2025 15:42:58 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5D034889D;
+	Wed, 22 Oct 2025 13:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761140681; cv=fail; b=WpkiT5JkbQmmpSHzfxiRr7ErPic07O+tSyGcb2/CB2gEa2d0spYHZDHJgDkVN8fO1bBJZ21gIAWCUO8jW4OBEKZ08sR90iTxBhKWnBsmWDaSP+VxDicwml1d9jOibgySWMVH36fkYOc3nfrcgVxJVsRqEkGVGu11aANKFtOWh0I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761140681; c=relaxed/simple;
+	bh=zF4AdzbptOj3pY49uwmBzQGvnedbSbL3tCSsPr3ekZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BfiWcaDiTcp+rV7s1v3j9IEKkd5MXMYIViUf2k8rp5eB5AKB7m82B3hrxm3/OBINtCzj6bVDEgZwJzVBZaaVYePhpYRr/ez9ZeAvN4aNpSru4/Ljh5P0FF7cAjYW9z6w5vBtBcLNCE6yUB9gBjeOv0kJhbBb6MR88gt/VfFa84Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cuElKqF0; arc=fail smtp.client-ip=40.107.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hpnbVNcqEAH9pizq7FG4C9n2HP7HpHf0oSjcqGk9mzjIPuc5oRmzZNpGrnw5u1IJvF9GBZRCEYCIhJ9OCcXmskAO2Z6E2ImFJQfTCbvlxm0x73ZqxvSdu7dUnKlYjKyypn/bLpO7FQVy+Cg4ci55pZTIYzx2nfQeZtKhlI8WjFDht62rjMvxGJOMeb3deOuqFWZS8U9H8YSQO6pXZMGmhDbz6EDfhigekOvUmZ9ZucQLMe1X2RFnmAs9DziBMO2+Udjw5oloMMHRHzCGaZGx/zGguDz8kVQFCrKM5yNZPGi22CDYDTJkb7KdqgOzFsqsOZqppmT+IVP9lT+uDKySzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ICQAm5/dlAVwJonttUgCMP/heKugQLmurFxbFSmslXg=;
+ b=WQWcG8Hlc/Z1cCxxGuEdd2Gc8TZkM0CzdTaHMXEbbQ0ry6pQme5pRx0PWIIfcHmsAyedta0aIYgsthlnZgtdXsrhm+CnLmHzFvYbUKy3B7bd5M55TTUQo5rMfXgeM2esv5uoXKvblFK3+Qde/kkyzMlQL1WapPbMHhrm8e9bj7n8sbekpJnH2U3tmfXxYBinbO3/XkNtQSdE8sEggxYaZ1zVH3hBHr+b+Zn8WglW0t9qTsLsjVszvT9OQjkqnzSNcSg15AaADHwKtnU/qxHN9ZD/eWg4dEm6Aq1v96p+wQ0+DYh+Hr9DFX8vNvSHuMSJ2S6y8hUo+IG0zjFzNYxdQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ICQAm5/dlAVwJonttUgCMP/heKugQLmurFxbFSmslXg=;
+ b=cuElKqF0Yy7kAktTpQQEeliwF2wmyHiI1bddCT8Yn0yD/9rzwNIDgr98gtD6f41X5+0A8fdT3KBLIpJCc0koHAOqj1k280rSwT4pxJGgqt63BWSVcD+jfoswo3sbPpBMIU0zOpNXrnP+E0FcugGrfkfpe0qLnL3l2H0MEq2on+ARHi64/K6vwbiou+fEpH2kZ9gJBUNUZP5nswRg5t1QApTjNA3pQWIv9yQZcEL07P/Um/cASbhFPmtWxo8Qk16746ZEtZ21MU0Aw6O86ExinTvUCBd8/DK1NHU1+VSXHrhWXpwHSoxSfPWFMuTiAQthiUmSPQ+1v+ATeq8Zfn5P3A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB8294.namprd12.prod.outlook.com (2603:10b6:8:f4::16) by
+ PH8PR12MB6889.namprd12.prod.outlook.com (2603:10b6:510:1c9::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 13:44:35 +0000
+Received: from DS0PR12MB8294.namprd12.prod.outlook.com
+ ([fe80::d6a9:5e83:27dc:a968]) by DS0PR12MB8294.namprd12.prod.outlook.com
+ ([fe80::d6a9:5e83:27dc:a968%7]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 13:44:35 +0000
+From: Colin Ian King <coking@nvidia.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>,
+	io-uring@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring: Fix incorrect ordering of assinments of sqe and opcode
+Date: Wed, 22 Oct 2025 14:44:31 +0100
+Message-ID: <20251022134431.8220-1-coking@nvidia.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P265CA0371.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a3::23) To DS0PR12MB8294.namprd12.prod.outlook.com
+ (2603:10b6:8:f4::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/12] ASoC: dt-bindings: sound: cirrus: cs530x: add
- spi bus properties
-To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>,
- Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
- devicetree@vger.kernel.org
-References: <20251022133914.160905-1-vitalyr@opensource.cirrus.com>
- <20251022133914.160905-12-vitalyr@opensource.cirrus.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251022133914.160905-12-vitalyr@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB8294:EE_|PH8PR12MB6889:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9a929ac-2522-4fd8-0b2b-08de1171231a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?V8/gP/yZ1wWoDpqG8dboludUWhKFOKxiCVjpY+Djlb32tkNPvxQxFafiEzl4?=
+ =?us-ascii?Q?ZARBRRh6z2BykPoCQ5I+EHHq2XCFyXOpViElA+hZKom6phZOc3tUdDpq+LlB?=
+ =?us-ascii?Q?nscLW+CEfoWiW3bRMF/CZdSk60+mYvrvlSR63KjAzC6z7N0zP7Wz3xyL55rq?=
+ =?us-ascii?Q?kkY+PfVBjg97+4Q56HjM3cMmkpOGqxUWcS00mEbt6CA+X6Lisl5eYJ+m4xRT?=
+ =?us-ascii?Q?5TZpsDxOXgCjtKuV+UFIaskINSTkcMW4syjcO1xYGFqNHZAjXat3epOMkQk7?=
+ =?us-ascii?Q?mANNm7m/uYaIYiPsQezP6ulGV5SPMZK5mpNHYLA77RYIhk3CHDwAvmBarxXU?=
+ =?us-ascii?Q?LzZymIb6kRhIbt7PYHvwdn2yR4PZLeTjAgpYLo9THlWI5SD2MTO4PPssHVit?=
+ =?us-ascii?Q?YZcyJBu+iVeYbgnLGV0eFmuq9FWWd+eLIZBshYh37k3qHOODg9c49LKW8R0X?=
+ =?us-ascii?Q?GCTziK4MQMSBK6zaRGzu6rLY1tA9zDS5/mOHTgV22o4ushHLzdkXt37yGaRr?=
+ =?us-ascii?Q?zixIuzlXJHaDmNdoCnAq1wc6varkpUEXPWuoFJly3U301D4rqGm299ntQIJB?=
+ =?us-ascii?Q?jHVzgHo6JKwuYs2P9NuFP+DUQKzar6efMge3zo7xwy3MGfhumgPcNeHako1n?=
+ =?us-ascii?Q?1zNOEWpb5pbU4oLFeFLfEF+YQB07kNiFeD4VRG8Y7sLjkIO1Es25zIo+ejuJ?=
+ =?us-ascii?Q?8XFXFZqgT9h1scdClCAMfpCBDnLW4cwkMGvJBeAdPtSCvcfmiYIJQM7e1Per?=
+ =?us-ascii?Q?mpHmUa2bSkRCIRSiuYm5dxGKYSVf1iSayMx0f8TfiRmr/WVgms+AWRqSthyN?=
+ =?us-ascii?Q?3ACCXFiyofjrcd/I4eEEb3sSM59FLUM9No40URwOb83LlK2Iy9YhcAKtKCzy?=
+ =?us-ascii?Q?37KgGBbdl0SyNuLeA3Pv/RtI9u4xxRmwvLzd2s5VVgrWkChS0B1kkTsSUlR9?=
+ =?us-ascii?Q?i4qJY3xqOYLnE/n2+DQX3XdZob5C2p3Xzn/lcNqWBaTUtjuEWAC2bb54Ndze?=
+ =?us-ascii?Q?y6fxr3pS6PXgmCqlh2AXYUpJBdNMxO+f4ZqiP+zf97UegWIkwzO1K8hFPDIT?=
+ =?us-ascii?Q?Ghi8NVuXHyMCOWLPUiz2Ybq/z7bDi/ul7yFL7RFvQQ3KT4i6kixfzeuK/Ytj?=
+ =?us-ascii?Q?HPrzXDZX1ysjgG8z9B/VSNWBq7O+QtQpBNCMxdgvHkum956NQDJb5CTib0GA?=
+ =?us-ascii?Q?Zcb7xoxbakdA4kWoxVcgRgex66ej6ptlC/IF9mY9lsnO88or4H1vyAGJ+625?=
+ =?us-ascii?Q?3ROaW3LDs3Pk5DNenw9Wp+IXrSd0//KVna1TFMLYVuR6zNwwa6UQ3Z01UlVI?=
+ =?us-ascii?Q?rCBUSw1XxluVwPXyQv6NU/nwPM9Ngb2omQadc2QeYRPQGW53hSw2TFi3O2Yt?=
+ =?us-ascii?Q?gwFrkI4pMFxeIcMnHil52f8lrsRNsrfFm6TMVs4bI0nW53Bn04Clo21lnbnv?=
+ =?us-ascii?Q?zg7NiQuSeJToCl7C+KpLzfYDWp8Bpsey?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8294.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Q3Y5DMYCAHMNeQnEHfrz/xemXkd+gx1z5lE4qZdD1wsMc7zFA7yDK+kIjRIo?=
+ =?us-ascii?Q?ibuI+RNnWrk2p4oAp+HZ86D5UeIs6aj+3gYVe/yHLFUvMOZA2mNC3mpPnugX?=
+ =?us-ascii?Q?vM0EZgZWTgObPAEZHXMj/6WEkOmfJgcxMJ1Xjexk8c8EeEch0gwhnr9/HjUw?=
+ =?us-ascii?Q?yCCTRp3pSAFTkuLg5idSDHa2nZUqzV8uwblu9BMteqOwqbIu9qylJahWCPne?=
+ =?us-ascii?Q?Q4B6+NXikY7pfcDHa2mbEd2+4BykWpNJY3VgoIzkEJWZnLrWMkMdpRxgZk5b?=
+ =?us-ascii?Q?/ebIZIih2Kxtdc4pokxLERj9k1DqsFPdQUYrrxNg7/4E5bTJJz588eiGPuB3?=
+ =?us-ascii?Q?+4IoM+GvRSti+3sjubGkFDaZeQZ5RQWrf0BhdtL1RN3q85gAi7NfGwa4MXQL?=
+ =?us-ascii?Q?jDOyyRdT2poksScsZrmDfYDv7dQBrh9xH9wJZrpUfD3P2U6CsFP8sFfY7MsA?=
+ =?us-ascii?Q?iGnvgbSLoVFPkhHHn9ccUrjv2FIuNuxa5hVOMQTg8Jr5yO8o78jCjFjPfLwC?=
+ =?us-ascii?Q?AFkf8gcnkQaYOt1dZfYbGIGTaBrzNXSGphrVElfUZzlXaRSjhiisU87mOD3k?=
+ =?us-ascii?Q?3Vvx/okXTNhbkyRnwwMXmk7P+ErLhi6j76O+SicI9j3U/b6rH/S/24KWYXGd?=
+ =?us-ascii?Q?rh0UqhpxP8nn5K1xwDa4wLvEfkQgCsXwzEDsy97wBgaqOm6z2dS+fpWf/M1U?=
+ =?us-ascii?Q?dvDQ+IJJ7U35UUYJNZHU+UD6esyBky8FwAlQZyyQ6mo4wTWyfXBvswxjah9r?=
+ =?us-ascii?Q?yC95jiKvXHYoxMuGb2UeYtM4rNGaZS3tFXg4wdsECDWjiiGngXsb4048ROo3?=
+ =?us-ascii?Q?dJy8H+LAhX5RlwCMaG0/IPC7mD6jh38aEkl2+USPpxYGZ6kU5P+ffcSKFYix?=
+ =?us-ascii?Q?/R3M/ZUpixDMD87Cj/XWNWJjAHe3HEJSauXe/8bhy1C82gZpZFCqepDEcqC1?=
+ =?us-ascii?Q?zzH9I7qa1hy2ox/intUSreHQ4y/nJmyHbqMnUb6+Q+hsYs5t4Sq8npim0YV8?=
+ =?us-ascii?Q?RnqmoPDe9ui1IRuJ7tvvAaQIxVKppe9+ui0DmdpC1cY3WlSRbFsIg+Wvo3T+?=
+ =?us-ascii?Q?g9yeOk+6tFef0T3rh3o3ET0gT5FdtSW/Q4w8PULkC6ke4lqwBK67YR7yVFD7?=
+ =?us-ascii?Q?fMOWbimjnx9FjdzGwCOTAHoU2DdnZAsPD8PZOAMDi1L1qJi7Relol8MyxzrW?=
+ =?us-ascii?Q?c0M6XCyxfEXruRoDTZhR8iicj0bxosZiQdrLWE5ubBi5T5GHLR5qBognc1WG?=
+ =?us-ascii?Q?3BcbAjwpG1ix8R7fHF5kUYhctHoBbJCa6ixtgnH0v+b28UYaWG5JK2kqoSi6?=
+ =?us-ascii?Q?Rjlter2LkRxjB9DisnEkFrIN8zXF0ItQ6V6K+LVUd98wGAduLzDNwyKMBeZx?=
+ =?us-ascii?Q?ATbunEJs5TSrPyl7tZ1vecAWUv3kT2K3QGRZfEcd09GInG59wKpnpb1RxvY/?=
+ =?us-ascii?Q?Z2KH+lhIImtQUbS2IcfDBPs5opi4lSDcWQegnepx5Lf+EoDvmsBkurn7K650?=
+ =?us-ascii?Q?w+77cCMmY+/4y5fM5H+zt3ztbf3/GeBKwft5nFBFF7xIrQXHjtYCLCzePSc/?=
+ =?us-ascii?Q?JDDv+2v87UeZ+bQi1DtUbAel2gfKuH2q/kNP0ERx?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9a929ac-2522-4fd8-0b2b-08de1171231a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8294.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 13:44:35.3160
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EIFRfLYGVoVpfhI4OGilX6YxISOLgFtKLhaEwFf0h6NBhw0uLgj94t8dmvNliadLX4QN+8RTY+iH6ZP9yG18Hw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6889
 
-On 22/10/2025 15:38, Vitaly Rodionov wrote:
-> This patch adds property for cs530x SPI control bus
-> with max frequency 24MHz.
+Currently opcode is being assigned to a dereferenced pointer sqe before
+sqe is being assigned. It appears the order of these two assignments cs
+the wrong way around. Fix this by swapping the order of the assignments.
 
-Why?
+Fixes: 31dc41afdef2 ("io_uring: add support for IORING_SETUP_SQE_MIXED")
 
-You described what you did, we see that from the diff. Explain why you
-are doing this, e.g. hardware is like that? Old hardware? New hardware?
-Both? If only new, then why this is a separate patch?
+Signed-off-by: Colin Ian King <coking@nvidia.com>
+---
+ io_uring/fdinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also, since I expect new version:
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index d5aa64203de5..5b26b2a97e1b 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -100,8 +100,8 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 		if (sq_idx > sq_mask)
+ 			continue;
+ 
+-		opcode = READ_ONCE(sqe->opcode);
+ 		sqe = &ctx->sq_sqes[sq_idx << sq_shift];
++		opcode = READ_ONCE(sqe->opcode);
+ 		if (sq_shift) {
+ 			sqe128 = true;
+ 		} else if (io_issue_defs[opcode].is_128) {
+-- 
+2.51.0
 
-
-Best regards,
-Krzysztof
 
