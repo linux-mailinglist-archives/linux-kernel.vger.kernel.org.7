@@ -1,171 +1,159 @@
-Return-Path: <linux-kernel+bounces-863911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A89BF97DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:42:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5ACBF97E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0670A4E609A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:42:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E261C3B630B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85151CBEAA;
-	Wed, 22 Oct 2025 00:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90761D5141;
+	Wed, 22 Oct 2025 00:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgSi1rDL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HJAkcmwf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40447D2FB;
-	Wed, 22 Oct 2025 00:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5531ACEDF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 00:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761093726; cv=none; b=MDkSFzv54n19rJyYsbl7AX5dYuENHjuBjHohMDStKRgINY1H4hbFi/ptqHatW9z7PYjC1++erFC2QqBtFm7kretP20qDNvaOsEit9nXNaHvnOpbLeH7Klpfrwl9urPFOPsPvacEUC9eQbaV5+Qr9PpW4m0RlCVc0lP5aIQ2JCKM=
+	t=1761093761; cv=none; b=I3Y6qPPi9RH9bJDojQnTfXI4ycgMxm0fuzoOicN/MWZfhkP4UhkIWgQwYolXk4l9M+L9/twcYmA41EYa+sHJ8u8ij5zJPYDHc6FzLRDCliBPRJHlv6IrGg6QbLqzrSQdz1YXdNiroIEq0xHQ7LPHbEV4xNYoBn8Oxq/ry0gMFRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761093726; c=relaxed/simple;
-	bh=LnhsXoBcNxtEasvKkLZV5gjzwsUsenbpgPgL7jkUjl8=;
+	s=arc-20240116; t=1761093761; c=relaxed/simple;
+	bh=2hJSSDjXFAtycKzGHNXMUfkoGs9eSHIsgvQX1xkelMQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P1T6lffWN8c5GbkCHNOJ0weU7dPq4SKAOIfyJ7vQ72ZGZ2EGYnSxrT1V8jrdecpftGUrMEtvTkcZjAgWbVsvta+LtuvAem2wanpUF8wzyCaEwEQsnWDcl5BXIwPCljQTc1FoOwYN9J6ibLHYsT/naZi3vm5kCE99oGmSFcipld4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgSi1rDL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409A2C4CEF1;
-	Wed, 22 Oct 2025 00:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761093725;
-	bh=LnhsXoBcNxtEasvKkLZV5gjzwsUsenbpgPgL7jkUjl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BgSi1rDLmnzf3yQSa+2FTfYs1O2nzKyq7UwwLjQ1Dq6KeugwGOU4wwtu/0bmocy2Y
-	 a49gK8PHnP9XCrqNU4CaGNM/wy7Zir23gI9biWEjYdrWgQ88n8ys15DiBvlyJLpq7K
-	 woQXkmJV83+iRtKNpVxxWN5XMjGgW2slJewort5GEB9rkJNrnmISKBErTHEQ/d5Stj
-	 tIG2Dr+CA8Vm4dnZ+Yqh/V9Ap7H2jqPg5I3rQHsbNstBKH2g7uS8u/FhVbaWGGyAiI
-	 pABxFjut7OtZjshTSvFG2tNApPr7esiX50iF56GaDn1B4Al1oqtk8Qm7kHRxWM8ljw
-	 yXkvrujtjluXA==
-Date: Wed, 22 Oct 2025 09:41:57 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Zecheng Li <zecheng@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHgzVXAYRkLCCNrEWduEHM3AL90ZBPbajI1/wuu5y9ao3fAuFZCX90pMTZaS34/QFZGc2g0Pftj/sTtFUW0BSMbbg/3MEbL/8Vb2l3wJaUvLnohlS7fHpdCcokyRzZ18H8gEv016IYb6mP1yAoCbhi/jcJaodcporfgkjNQ4VWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HJAkcmwf; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761093758; x=1792629758;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2hJSSDjXFAtycKzGHNXMUfkoGs9eSHIsgvQX1xkelMQ=;
+  b=HJAkcmwf/6sXz84BPYG0cs7UTzPdqjEN/ekIKp5N1sr4oHPCFl2IxFJA
+   qR8hY0fYw/onw3pNjnrSrq5M5vGOl2gwpwquUH+O0USYSGVO9+0kSRNrw
+   Znwkeru/UKqXQwF1+gzo12Gwx8eh5+/pqlycP/rTL3XBA0p2EL8XePLhb
+   eUZvaQ+HBkicqIS7Mg/WVvmHqcsoTnb/mo7OJafOQaT6s6zXtezHezoit
+   Y9iIeUIBJTyKLepEfv0THzEkF7RO3R/ModR8lLs400KkMXKeDjLaq9hG2
+   TnpK+VmvZA0fzUoj9cxsRaAyn+G8iUX3r2qsFSFdjtYRuUvJm1Gb48w8s
+   w==;
+X-CSE-ConnectionGUID: Fw/6DowUSQSYGslIwC2lsg==
+X-CSE-MsgGUID: p87HtHH+TZeqpacpnZcgTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67096005"
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="67096005"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 17:42:38 -0700
+X-CSE-ConnectionGUID: BvgKpkZQScmdObRcScbiFQ==
+X-CSE-MsgGUID: QTz4Q1PfQ2yOrslB8fd+KQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
+   d="scan'208";a="183302643"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 21 Oct 2025 17:42:36 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBMvj-000Brp-2l;
+	Wed, 22 Oct 2025 00:42:22 +0000
+Date: Wed, 22 Oct 2025 08:41:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/9] perf tools: Some improvements on data type
- profiler
-Message-ID: <aPgoVTfCFxqTpCaK@google.com>
-References: <20251013181607.2745653-1-zecheng@google.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Subject: Re: [PATCH] dma-buf: improve dma_buf_show_fdinfo output
+Message-ID: <202510220802.svbgdYsJ-lkp@intel.com>
+References: <20251021133132.29751-1-biancaa2210329@ssn.edu.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013181607.2745653-1-zecheng@google.com>
+In-Reply-To: <20251021133132.29751-1-biancaa2210329@ssn.edu.in>
 
-Hello,
+Hi Biancaa,
 
-On Mon, Oct 13, 2025 at 06:15:57PM +0000, Zecheng Li wrote:
-> Hi all,
-> 
-> I've identified several missing data type annotations within the perf
-> tools when annotating the Linux kernel. This patch series improves the
-> coverage and correctness of data type annotations.
-> 
-> Some patches from the previous version of this series were
-> cherry-picked. This revision adds new improvements based on feedback and
-> further development.
-> 
-> Here's a breakdown of the changes in this revision:
-> 
-> Patch 1 skips annotations for LEA instructions in x86, as these do not
-> involve memory access. It now returns NO_TYPE.
-> 
-> Patches 2 implements the TSR_KIND_POINTER to represent registers holding
-> memory addresses of the type. We are using the size of void* to get the
-> pointer size. This could be improved to use an architecture dependent
-> pointer size, but may require more work.
-> 
-> Patches 3-5 implement a basic approach for register offset tracking that
-> supports add, sub, and lea operations. The register state is invalidated
-> when an unsupported arithmetic instruction is encountered. This revision
-> uses TSR_KIND_POINTER to avoid finding the pointer type in DWARF and
-> preserves the pointer offset information in the stack state.
+kernel test robot noticed the following build warnings:
 
-I've applied up to this to perf-tools-next, will review the rest later.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.18-rc2 next-20251021]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
-Namhyung
+url:    https://github.com/intel-lab-lkp/linux/commits/Biancaa-Ramesh/dma-buf-improve-dma_buf_show_fdinfo-output/20251021-213541
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20251021133132.29751-1-biancaa2210329%40ssn.edu.in
+patch subject: [PATCH] dma-buf: improve dma_buf_show_fdinfo output
+config: x86_64-buildonly-randconfig-002-20251022 (https://download.01.org/0day-ci/archive/20251022/202510220802.svbgdYsJ-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251022/202510220802.svbgdYsJ-lkp@intel.com/reproduce)
 
-> 
-> Patches 6-8 split patch 8 from v2 with some minor improvements. It skips
-> check_variable when the type is found directly by register, since
-> sufficient checking is already performed in match_var_offset.
-> check_variable lacks some DWARF information to correctly determine if a
-> variable is valid. I also found it is able to find members for
-> typedef'd types so I preserve them in match_var_offset.
-> 
-> Patch 9 implements support for DW_OP_piece. Currently, this is allowed
-> in check_allowed_ops but is handled like other single location
-> expressions. This patch splits any expression containing DW_OP_piece
-> into multiple parts and handle them separately.
-> 
-> I have tested each patch on a vmlinux and manually checked the results.
-> After applying all patches, there are less missing or incorrect
-> annotations. No obvious regressions were observed.
-> 
-> v4:
-> Merged patch in v3:
-> perf annotate: Rename TSR_KIND_POINTER to TSR_KIND_PERCPU_POINTER
-> 
-> Updated patches 1-5 based on the feedback from Namhyung.
-> 
-> v3:
-> https://lore.kernel.org/all/20250917195808.2514277-1-zecheng@google.com/
-> Merged patches in v2:
-> 
-> perf dwarf-aux: Use signed variable types in match_var_offset
-> perf dwarf-aux: More accurate variable type match for breg
-> perf dwarf-aux: Better variable collection for insn tracking
-> perf dwarf-aux: Skip check_variable for die_find_variable_by_reg
-> 
-> v2:
-> https://lore.kernel.org/all/20250825195412.223077-1-zecheng@google.com/
-> 1. update the match_var_offset function signature to s64
-> 2. correct the comment for is_breg_access_indirect. Use simpler logic to
-> match the expressions we support.
-> 3. add is_reg_var_addr to indicate whether a register holds an address
-> of the variable. This defers the type dereference logic to
-> update_var_state.
-> 4. invalidate register state for unsupported instructions.
-> 5. include two new patches related to improving data type profiler.
-> 
-> v1:
-> https://lore.kernel.org/linux-perf-users/20250725202809.1230085-1-zecheng@google.com/
-> 
-> Zecheng Li (9):
->   perf annotate: Skip annotating data types to lea instructions
->   perf annotate: Track address registers via TSR_KIND_POINTER
->   perf annotate: Track arithmetic instructions on pointers
->   perf annotate: Save pointer offset in stack state
->   perf annotate: Invalidate register states for untracked instructions
->   perf dwarf-aux: Skip check_variable for die_find_variable_by_reg
->   perf dwarf-aux: Preserve typedefs in match_var_offset
->   perf annotate: Improve type comparison from different scopes
->   perf dwarf-aux: Support DW_OP_piece expressions
-> 
->  tools/perf/arch/x86/annotate/instructions.c | 183 +++++++++++++-
->  tools/perf/util/annotate-data.c             | 102 ++++++--
->  tools/perf/util/annotate-data.h             |  14 +-
->  tools/perf/util/annotate.c                  |  20 ++
->  tools/perf/util/dwarf-aux.c                 | 266 +++++++++++++++-----
->  tools/perf/util/dwarf-aux.h                 |   2 +-
->  6 files changed, 493 insertions(+), 94 deletions(-)
-> 
-> -- 
-> 2.51.0
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510220802.svbgdYsJ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/dma-buf/dma-buf.c: In function 'dma_buf_show_fdinfo':
+>> drivers/dma-buf/dma-buf.c:581:30: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'unsigned int' [-Wformat=]
+     581 |     seq_printf(s, "flags:\t%lu\n", f->f_flags);
+         |                            ~~^     ~~~~~~~~~~
+         |                              |      |
+         |                              |      unsigned int
+         |                              long unsigned int
+         |                            %u
+>> drivers/dma-buf/dma-buf.c:582:30: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'size_t' {aka 'long unsigned int'} [-Wformat=]
+     582 |     seq_printf(s, "size:\t%llu\n", dmabuf->size);
+         |                           ~~~^     ~~~~~~~~~~~~
+         |                              |           |
+         |                              |           size_t {aka long unsigned int}
+         |                              long long unsigned int
+         |                           %lu
+   drivers/dma-buf/dma-buf.c:584:62: error: 'struct dma_buf' has no member named 'num_attachments'; did you mean 'attachments'?
+     584 |     seq_printf(s, "attachments:\t%d\n", atomic_read(&dmabuf->num_attachments));
+         |                                                              ^~~~~~~~~~~~~~~
+         |                                                              attachments
+   drivers/dma-buf/dma-buf.c:585:57: error: 'struct dma_buf' has no member named 'num_mappings'
+     585 |     seq_printf(s, "mappings:\t%d\n", atomic_read(&dmabuf->num_mappings));
+         |                                                         ^~
+
+
+vim +581 drivers/dma-buf/dma-buf.c
+
+   573	
+   574	static void dma_buf_show_fdinfo(struct seq_file *s, struct file *f)
+   575	{
+   576	    struct dma_buf *dmabuf = f->private_data;
+   577	
+   578	    if (!dmabuf)
+   579	        return;
+   580	
+ > 581	    seq_printf(s, "flags:\t%lu\n", f->f_flags);
+ > 582	    seq_printf(s, "size:\t%llu\n", dmabuf->size);
+   583	    seq_printf(s, "count:\t%ld\n", file_count(dmabuf->file) - 1);
+   584	    seq_printf(s, "attachments:\t%d\n", atomic_read(&dmabuf->num_attachments));
+   585	    seq_printf(s, "mappings:\t%d\n", atomic_read(&dmabuf->num_mappings));
+   586	    seq_printf(s, "exp_name:\t%s\n", dmabuf->exp_name ? dmabuf->exp_name : "N/A");
+   587	
+   588	    spin_lock(&dmabuf->name_lock);
+   589	    if (dmabuf->name)
+   590	        seq_printf(s, "name:\t%s\n", dmabuf->name);
+   591	    spin_unlock(&dmabuf->name_lock);
+   592	}
+   593	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
