@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-864881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD90BFBC3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:03:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315DEBFBC37
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE3934FBA3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D049A400535
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E9F340A73;
-	Wed, 22 Oct 2025 12:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="u1/DgKoO"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A69341665
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134549; cv=none; b=W1MgML84iwn5x5wm5MUeIJ2xKJLRe00gNzNRIatkx/7Papf6cfKP9a7//6O/MVVbqMR3nT7HvIegIb/MzT99QQXcM431TYTcoEdUJpept67p75ivCpPcsPhjZPZc/5dxMZ2DoVwcuJg1NmC9ZVxd3zPWxKf7O2sZbD9kqJciaNI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134549; c=relaxed/simple;
-	bh=Xg9zum0JkYFm+Mf6Zk0H4rMBEJOV3In/rTcJRxHSB7Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=THKUrd0s9lzktZqfY11Qw5oDx8FhSpb8iHIoSOa3pRb3t6NLeCfXXbhCjwmBeXHl7B6l3TX6fCXeteGkXtKHQ431hE9+Y4yropz33WEhPSHXQxlgcdnQhlAjdM1aGsUZjVSa9Q9EkxSVC9aqU30iaMGcrhEw/ScNccKrGjvR5z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=u1/DgKoO; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 1F5E1C0B8BE;
-	Wed, 22 Oct 2025 12:01:58 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CBAEA606DC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF97D341663;
 	Wed, 22 Oct 2025 12:02:17 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D2BCB102F23A9;
-	Wed, 22 Oct 2025 14:02:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761134536; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=pPxJMHRq1l2rmXPvs2hWIXztWS7OsJftqAuKJvbSq2A=;
-	b=u1/DgKoOMDae0wpLByNIw1iXCHZaEPUH/CPq3mejkEtMKyQrMFrT3+OVkGCMBo98uaShXI
-	PUnqmjvS6/BlHsHKS5jVQQQkFIvjetly+eQTvmIec7ksLPoTrTqUfd0K9XOofGgXIZqGQk
-	ckNpX59vM0pr9vwH9qJAhwigxIAwTB78QFe/pAKMzYqFbLGZBYUA68BDyAj/1XIVX5usOw
-	SxXJEUCaVIWmB1+O8ZGtKkFxBkYX3uih6/6RImgQTmHwVXkAerkZR447TEBoULV14m2DUM
-	pe9MabgNRcGuAxwEY7J3tKYMJ16J3m/8iZtxeSHAJcqWnRwuz4pu04qjpBRAuA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: louis.chauvet@bootlin.com, 
- =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com, 
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
- airlied@gmail.com, sebastian.wick@redhat.com, xaver.hugl@kde.org, 
- victoria@system76.com, a.hindborg@kernel.org, leitao@debian.org, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251016175618.10051-1-jose.exposito89@gmail.com>
-References: <20251016175618.10051-1-jose.exposito89@gmail.com>
-Subject: Re: [PATCH v7 00/16] drm/vkms: Add configfs support
-Message-Id: <176113452848.3036504.515555677643836936.b4-ty@bootlin.com>
-Date: Wed, 22 Oct 2025 14:02:08 +0200
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846A230506E;
+	Wed, 22 Oct 2025 12:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761134537; cv=none; b=YntNtc7K5flpI/MYrTBRKuPRZkkqOJl817RVTJxnJKZ/G61OXh1e7TSxjZKPQEgxaQ9wOr68Aq1D/zDt6RQvuLv+/QPyiA8vyf3TSANywoGdVOXY31U/DAte0o819+4V0lG1YM1RM4GUB1Aq4G8eAMQHHTRpWWwbUoZt3vw6vzU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761134537; c=relaxed/simple;
+	bh=IsuZfxhGKpHeb5TgVu9VxMiAddZ0SUSvHT55nq8MAaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sd9qeJ/pSf5+rNSWxkzxGC9yQ0M1LxnUujX70vu7nIBMqOjO0q86ul/npeQ3FNXDuyANFaRjjPT1a7UerjGOfxwy5LT9HQiEzzfjz3WdupYjU5sLTUj5akKiQBiq9QcXlU6CGu60ZmcFKpxFgBE3PG/8mxXOQBt/sqEcEDZDh70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B54CB1063;
+	Wed, 22 Oct 2025 05:02:05 -0700 (PDT)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FE633F63F;
+	Wed, 22 Oct 2025 05:02:13 -0700 (PDT)
+Date: Wed, 22 Oct 2025 13:02:11 +0100
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
+	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
+	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
+	gautham.shenoy@amd.com, mario.limonciello@amd.com,
+	perry.yuan@amd.com, linux-pm@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, treding@nvidia.com,
+	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
+	sanjayc@nvidia.com, bbasu@nvidia.com
+Subject: Re: [PATCH v3 6/8] cpufreq: CPPC: Add sysfs for min/max_perf and
+ perf_limited
+Message-ID: <aPjHw5Sr4IYw+Dum@arm.com>
+References: <20251001150104.1275188-1-sumitg@nvidia.com>
+ <20251001150104.1275188-7-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001150104.1275188-7-sumitg@nvidia.com>
 
+Hi,
 
-On Thu, 16 Oct 2025 19:56:02 +0200, José Expósito wrote:
-> This series allow to configure one or more VKMS instances without having
-> to reload the driver using configfs.
+On Wednesday 01 Oct 2025 at 20:31:02 (+0530), Sumit Gupta wrote:
+> Add sysfs interfaces for Minimum Performance, Maximum Performance
+> and Performance Limited Register in the cppc_cpufreq driver.
 > 
-> The process of configuring a VKMS device is documented in "vkms.rst".
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  .../ABI/testing/sysfs-devices-system-cpu      | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
 > 
-> In addition, I created a CLI tool to easily control VKMS instances from the
-> command line: vkmsctl [1].
+> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> index ab8cd337f43a..82141b45d58c 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> @@ -327,6 +327,49 @@ Description:	Energy performance preference
+>  
+>  		This file is only present if the cppc-cpufreq driver is in use.
+>  
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file
+> +		conveys the minimum performance level at which the platform
+> +		may run. Minimum performance may be set to any performance
+> +		value in the range [Lowest Performance, Highest Performance],
+> +		inclusive but must be set to a value that is less than or
+> +		equal to that specified by the Maximum Performance Register.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection
+> +		is enabled.
+
+In the ACPI specification I don't see a clear dependency between the
+minimum and maximum performance registers and autonomous selection.
+There's nothing to say that min and max do not have meaning with
+autonomous selection is disabled.
+
+Thanks,
+Ionela.
+
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file conveys
+> +		the maximum performance level at which the platform may run.
+> +		Maximum performance may be set to any performance value in the
+> +		range [Lowest Performance, Highest Performance], inclusive.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection is
+> +		enabled.
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file indicates
+> +		to OSPM that an unpredictable event has limited processor
+> +		performance, and the delivered performance may be less than
+> +		desired/minimum performance.
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+>  
+>  What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
+>  Date:		August 2008
+> -- 
+> 2.34.1
 > 
-> [...]
-
-Applied, thanks!
-
-[01/16] drm/vkms: Expose device creation and destruction
-        commit: 7965d1c5354a868063f61eb101f892480ede892f
-[02/16] drm/vkms: Add and remove VKMS instances via configfs
-        commit: 13fc9b9745cc5dbf38c4d559114cf98f8179b95f
-[03/16] drm/vkms: Allow to configure multiple planes via configfs
-        commit: 2f1734ba271bb98d582b02f72d77d1c7710a8d7a
-[04/16] drm/vkms: Allow to configure the plane type via configfs
-        commit: 187bc30625f3e0ee8d0b3694592c4b8ff771c845
-[05/16] drm/vkms: Allow to configure multiple CRTCs via configfs
-        commit: 3e4d5b30d2b262c6db84773cafe9097f7ec61ff5
-[06/16] drm/vkms: Allow to configure CRTC writeback support via configfs
-        commit: ee5c2c7d4bb6998ff11778436acbdc3154ce74ef
-[07/16] drm/vkms: Allow to attach planes and CRTCs via configfs
-        commit: 95fa73787a7947a8fdfbb1ad310c3f11b26065d3
-[08/16] drm/vkms: Allow to configure multiple encoders via configfs
-        commit: 67d8cf92e13ec05e64745ae7b63545de5d8e867a
-[09/16] drm/vkms: Allow to attach encoders and CRTCs via configfs
-        commit: fad1138b2377aa094b1c80fad852eadbcf3a85c3
-[10/16] drm/vkms: Allow to configure multiple connectors via configfs
-        commit: 272acbca96a3c6f43414e10d433befe2bb906d7c
-[11/16] drm/vkms: Allow to attach connectors and encoders via configfs
-        commit: 64229b846a7e5b54cc076092475280888f74c92c
-[12/16] drm/vkms: Allow to configure the default device creation
-        commit: 8c29107a6119289b57d2a80a9db849c4bda66a74
-[13/16] drm/vkms: Remove completed task from the TODO list
-        commit: 085dadb3101d7c37d8296580c946f5f1a2153628
-[14/16] drm/vkms: Allow to configure connector status
-        commit: 6f00987f5ce39bfbc01af7230d3939149b006f74
-[15/16] drm/vkms: Allow to update the connector status
-        commit: 466f43885ac0b75efe8107d82f7c60d7daf64f54
-[16/16] drm/vkms: Allow to configure connector status via configfs
-        commit: f97180f094aed00bae9776f00ae61c7c020b4d79
-
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+> 
 
