@@ -1,226 +1,189 @@
-Return-Path: <linux-kernel+bounces-864411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68F4BFABCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:00:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90FABFABD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 808844FB6F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E941A038A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFE93002D8;
-	Wed, 22 Oct 2025 08:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9712749DC;
+	Wed, 22 Oct 2025 08:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nQ+WIKNp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Nvca4rWi"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7A42FF15E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E62C2F2916
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120028; cv=none; b=CC8fxACCAdv6ir3chLfVH0PCRKlL7njTQrnth1aFP9/EDE3ngTwu91BF+OVRz0nyNnHcaYM3ibn2IX1nZa8/PZD0/u+UcnD1zCXDHrcDZQRXUFIkoxrp0m/Ycsj84olr2awiody6918jiSjE6EBF5GpH6YoxzaQ4axrxtHL1/x8=
+	t=1761120036; cv=none; b=BP3x5ySuKeJoAv+ghjedffkfMZ2fcxvTT2MhIwMvMzW2cyp0V6n5L5AwFRM6cI9s9keGHnLhAxkHvQaaT4KbNM8efS85BS45sS3Rsjlu1cJUDTXzDjvbCJpQBx3oPq5ZAW66b9UmZfVP8ut7TwA9tzuCum3ONtcJzzouWwwfZ8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120028; c=relaxed/simple;
-	bh=L6JYs4ivoCFvVciQgaMIR/lmHduqqGaaz0VtISeqwJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HQJliuGEK+Z5tvxTkrPMIuymGY5RSg1CWULCk8udauoPlG/zFkaEJLaz+OS//cO7L9jvRQEvQMsZI+ReLNjuVLMfFy/0jlHXt+20KtctjtUnLu6gRQkQCpN9isZy1K3ti3zzjBDvZOwJAo2bqPtzf77tIC/guUObTZJo55Hacp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nQ+WIKNp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M366iY031133
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:00:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XYXVFaAaMLwr6fG2n4FdstC9bqlVQImA3Ymx6v8/8mI=; b=nQ+WIKNppkakuGoq
-	HNCN57+udiDo9ZKqUV2gpSbuppm2Gs7W6lfqPcebpF21aUqbzMPsxh399Vr7Q/XM
-	+u0aLJxhQa68vIJ1qmxla0JukMwXMSzCeKWxTPnWAU8H9khPMG2V7/Skixpdyybc
-	NqdB05mXyKXpFkC8eD+BrMiEtXBDueQQkDwnOM6JS8G4OclIQCL+mf+QEwwF+luJ
-	//eNrKanvzCpAyKY2bzUhgYg5+T+GFcNuYh4yVRSc2mibI4hvwMVag0wNq+Qwq98
-	IZs3U8YVfxfeexExDzk6fIGJYWDdpgNHWs+hkU4G/0ucAYVTOm2kc4k9IpghZlSp
-	8y9QCQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v42kbm6a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:00:26 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-781253de15aso14696683b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:00:26 -0700 (PDT)
+	s=arc-20240116; t=1761120036; c=relaxed/simple;
+	bh=MkLK0qPpYtKZpjcAyMQTkYlFiGwAm7/ThuH7elBveD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQcD4if5GQeQU1fxlxrTddVK+xaTqkW2yzoxjAQSCBzugzx64bIzrsc/3InSQtUlL26JMpLIQTZHubGmJidncROFqxS99+0hEKSxtX9+ZJkLGZMviFSHVJVxC8xfofBJpWRuEhj3PcpncVDEhIft46/HZUTvbTMkvU0BbpSPBIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Nvca4rWi; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b6cdba26639so597555a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:00:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1761120032; x=1761724832; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vi75g88dnn+ezywzRSA2gvfzEVMFz+4qzKUpyRCo3Yc=;
+        b=Nvca4rWi4l7T2gBXo6fdci7yl1kamaS2cn6EJU9UpDSiC2jCfOB74W5WVeFEC1UQY+
+         BKiMNuJyaiSrt3gro1ZDbbfzzr0OdLhIGsQodBWv48FzoZzMuHIc4BTVEtBYILpCZiX9
+         YTrJXjqXINFRdUm6Y+lkezHIxP724kuK2NvZ/HybqKxVEbiYd1hn59MtT0Zrw0h3CmZb
+         piEdGtQIaewqiVFEaSfCY978HX/Ex+pILd5+nUBZURWllYCVA2Ry7O7+qIm6arwM2AdC
+         s3ooRvX2bQo9K4C9pQQr4XHw/b9TuSs3/voaMq68aqC1K9M7uIKnoBiEf8sAgJmpsRRb
+         tARg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761120025; x=1761724825;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XYXVFaAaMLwr6fG2n4FdstC9bqlVQImA3Ymx6v8/8mI=;
-        b=mRnUCyU9tkERnsNDXgx0cF3PpNQXKPEnDnflAWZZ6ovSc632vG8m8ajTLpdBgk8dL9
-         9lqU8W4+8dEeeWAsDioVPL8W3uqs597x6D9vDyP8/qXNrySBaA7yGj1E6zzhzkIH2O0c
-         932S6AUrI6u5NT5wIxYINAzofZumjw99fSpPccK5k8vcPymAFN31OV3s0zVr7lIsRfuB
-         VrM4EeYMF0hHr0csvUmBWiXBVJZ378HMl9nI6cSZFjlSMG3oKVkesCdtAMEnYdXSeeAN
-         w+cT6NO3RwzikMazYW3lXfmEhGuf0UHAXpCE8AvavJj1Gg18Uw9gaIWRu6EjLV2m7dwH
-         ySGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBD1J+nYqHRh8kPOuKAs5Al9mSlD2ctxS0skCTH1F39dkkFRAqSFdkTaYhmRq7OigltcklBmF4fweaBZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOFdFOeLru0SoVplL1FvJbUPuAkqcqr+FKMdcODgP+Yb66kBuz
-	cLjoo9tWb64sTdtkJZgw8EEtUnbWi4lT/WlFiLzkVkRecp5PnNdJqjzaxCo+Hw0WEAWXQWX33mS
-	20+FdM+6lRgzL7uth91sbIC0iTbCjiyxRTxUglXdAueFbapT5NgM0J53aa13D23Wc4WI=
-X-Gm-Gg: ASbGncv5f5ZwJc6QlsdO9AmyQdLoLBjAiH3qGMd5oOE6MGxeCT4rDKktV5Xkxckz+T3
-	uzrXJ8ioQkzY8rbEFyjlp5CdkiuRTkgbZ8NrovDfO1qAdBuOcgGbWUq5wCg+CXFlHFVF9NzBjr5
-	A/CU3DCalzyiugficuZLRtF6vsmkvCZnkRzIrUfFSprTExlv6q3B+rnVSJf+XdyiU03JhnDIkqS
-	Uv7imQc7EcKsSxnkexkEheP2SZvIOEGxCeqOJJOYCZXXixHb0EIalWgIpDMXV2oEyCoO1gGKW5a
-	2Qx1r1TNc15+omTVguHGLiM7sxxkB7Cqkr5MP2jyilqjFAayMbTxnTWyVl0o4vtM0n2KOMN6nVb
-	A1F1zVxk7bT7mpTvXX8mM4v0th86EDVY2JJvSdHCLtK1fGAgjf5fNySxrSzu9XfRnCyjdguyb
-X-Received: by 2002:a05:6a00:99b:b0:793:1955:2384 with SMTP id d2e1a72fcca58-7a220ada794mr29166882b3a.17.1761120025196;
-        Wed, 22 Oct 2025 01:00:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVyRz86S4Hw9/gYeNtzxJUUmTcx16JDUBodGshnXBo7XeH/deuGV1Ia/yK2XgOqxc89Wmg0Q==
-X-Received: by 2002:a05:6a00:99b:b0:793:1955:2384 with SMTP id d2e1a72fcca58-7a220ada794mr29166840b3a.17.1761120024635;
-        Wed, 22 Oct 2025 01:00:24 -0700 (PDT)
-Received: from [10.133.33.147] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a230121ebfsm13617531b3a.70.2025.10.22.01.00.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 01:00:24 -0700 (PDT)
-Message-ID: <5466e122-9143-482e-a9ab-7f956e19bf86@oss.qualcomm.com>
-Date: Wed, 22 Oct 2025 16:00:20 +0800
+        d=1e100.net; s=20230601; t=1761120032; x=1761724832;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vi75g88dnn+ezywzRSA2gvfzEVMFz+4qzKUpyRCo3Yc=;
+        b=KT5olFG66hl2rC081M99On0ZVX8/nQvyWGqs9Y5AHB+Z0AFqtyA/NipNgKta3/G5fx
+         p2UIwcdpZVUvtsukSetRPrtOJif/3mvL2y1ev6uuWrBCeUCQTa018iXEWEbf5UUA38a8
+         FVwM3E6cEr4o9qW+I1BRVJWfZIFD/okVAgnYuPBOL6wcz0t9tuCUNAndlBZ6m91QuTJ1
+         5Cuicl01q74JNncnB/ywpaHKDLHHhQMtnuEhsKbaj7vJWT0aGfuO553byrD2Fh73V8C+
+         E0LK4QodrCD5iDCvYqt6hAGtKwGWc/WkmO0rDoPqy3P0ae4k4IxJWXhK5cpbcJNRBUCq
+         vR0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUTP2nWJIrz3k77pi/SOMasiDF/vcZkGTX2nRctDQczXFe1UHbCHfarP4dqKZJLYXVMm7YIvT3fydkm+SY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhT+zDYZq3wsf9sii37900yMhrC1GRbnDy6EWJ0n6b32gkETir
+	90gHJg5iI6iEVPnyGTRWduSVti/snC5tLnuE0hJohvQXfpDkyVt/Kv7gab0cr+kIZcsYya49MnQ
+	sCZZb
+X-Gm-Gg: ASbGncsFUD+oOFy+6Vse9tW70QUEAxUXeqEq309tjewGP16UkSen//ZJJU9n5BfB0LY
+	5xlVaZTPmiOmh1R+ufENbIApRI8km1GcM62ZXlbHbclKR6ibdoRhBkdeqSv5l7zCmwYcwOrTS5N
+	O6QmxTTL+HgkaZBA35rLWUqqdA2RSLY7hrIYwmoVpfXgA8y5I3I2r+N6BIEo/X5bQtMzeoKrh7g
+	fHoSBIqR3geBV5bo8JQLELAHNNgnfmayKGW+TM5qUVoZd98S/f200ALJsX24ocxFVPT52RQVk37
+	NgZRBFOMRi1Y7vixrL3YW41kIv1XN5hz1hj9oZypbODsKXTHsZKPzTsG/R8YUqlBYLDSkAlURo5
+	Wr0fTYx+so7RfAgaTBEanxv6LAjlDA/vMDwLwPFPneETbNl+rGYwRbJdp8BvBhIRzZlrunU0y1V
+	D5bppMOQgA3NzgdV9AaDewvZnZ8CK7KTiwh2F6Zz92ZSOb8YuicSne0ngDs/LD95Dfs5M4wgdy
+X-Google-Smtp-Source: AGHT+IGduvry/wYzrkfuxXUxa8wdplbLIidGYgQBi3n47WTXCWsmsGQK5w2XtRr8wN1GQkSurJM/mw==
+X-Received: by 2002:a17:903:245:b0:279:373b:407f with SMTP id d9443c01a7336-2935b50852amr7825425ad.5.1761120032249;
+        Wed, 22 Oct 2025 01:00:32 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fdee2sm131384155ad.92.2025.10.22.01.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 01:00:30 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1vBTlj-00000000Wcc-3XuP;
+	Wed, 22 Oct 2025 19:00:27 +1100
+Date: Wed, 22 Oct 2025 19:00:27 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kiryl Shutsemau <kirill@shutemov.name>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <aPiPG1-VDV7ZV2_F@dread.disaster.area>
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
+ <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
+ <aPgZthYaP7Flda0z@dread.disaster.area>
+ <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] ath10k fails initialization, bisected to "wifi:
- ath10k: avoid unnecessary wait for service ready message"
-To: Klaus Kudielka <klaus.kudielka@gmail.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
-        regressions@lists.linux.dev
-References: <20250811-ath10k-avoid-unnecessary-wait-v1-1-db2deb87c39b@oss.qualcomm.com>
- <175823924851.3217488.17742065327824732992.b4-ty@oss.qualcomm.com>
- <6d41bc00602c33ffbf68781f563ff2e6c6915a3e.camel@gmail.com>
- <76d4235d-db4e-40f4-9ede-8cb536b82fbd@oss.qualcomm.com>
- <10919281648e306fd3f6713437b4793c50bb6692.camel@gmail.com>
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <10919281648e306fd3f6713437b4793c50bb6692.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: Mh5F65IhmbofXpgg2Ytee9ovdEksPplU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMSBTYWx0ZWRfXxqNGg796/upS
- 7X6LorPHvyAD3Q31TP2/jowGQdDKrCXb/zC8Ntja6Aw3vkhauVenoWPJmnb7I7pcXCUgsqVSB56
- Ov0g1T0il8AvBwqMP4fFq2SBc54Iq1vH23MxerB4UjWO2mEMupimY8BF/UqyLqzi0J6kSMniLKM
- ACQVXIb8KQ0B/+MKHGom1D1UlFx58me117BO1WflfEb12mfFMi3/aQzKJnen9cdvmDhsE2nmpQa
- L7bNdYSCaMt8aGOzbp7S4swSG3BynXTC8MzwRzycNcFtwrzixD2gMHHLuQyfZT+Kh8FDQEqXET9
- XqkjchQcNQbwkb/A8rv26AoSoB8+PwKMUJobj2KO5fsy8rQb7jKt7kcTJJ3aT+5F1JxSzm9TknF
- CJAHzcD5RubRV03t6V857bTkKltg7Q==
-X-Authority-Analysis: v=2.4 cv=QYNrf8bv c=1 sm=1 tr=0 ts=68f88f1a cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=PjCq7wsziC7u3JKYlTIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: Mh5F65IhmbofXpgg2Ytee9ovdEksPplU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- spamscore=0 bulkscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
 
-
-
-On 10/18/2025 9:50 PM, Klaus Kudielka wrote:
-> On Fri, 2025-10-17 at 08:57 -0700, Jeff Johnson wrote:
->> On 10/17/2025 8:37 AM, Klaus Kudielka wrote:
->>> Unfortunately, this particular commit completely breaks the ath10k driver in my setup.
->>>
->>>
->>> Hardware:
->>> - Turris Omnia (arch/arm/boot/dts/marvell/armada-385-turris-omnia.dts)
->>> - Wifi card (output from lspci): Network controller: Qualcomm Atheros QCA986x/988x 802.11ac Wireless Network Adapter
->>
->> This issue was previously reported with that particular chipset.
->> This is currently being tracked at:
->> https://bugzilla.kernel.org/show_bug.cgi?id=220671
->>
->> It may be useful to supply your information as a separate record to that bug.
->>
->> /jeff
+On Tue, Oct 21, 2025 at 06:25:30PM -1000, Linus Torvalds wrote:
+> On Tue, 21 Oct 2025 at 13:39, Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > > > >   1. Locate a folio in XArray.
+> > > > >   2. Obtain a reference on the folio using folio_try_get().
+> > > > >   3. If successful, verify that the folio still belongs to
+> > > > >      the mapping and has not been truncated or reclaimed.
+> >
+> > What about if it has been hole-punched?
 > 
-> Some more observations on that topic with the hardware shown above.
-> 
-> ath10k_core_start() calls ath10k_wmi_wait_for_service_ready(), and later ath10k_wmi_wait_for_unified_ready().
-> 
-> The now *unconditional* call to ath10k_hif_send_complete_check() inside ath10k_wmi_wait_for_service_ready()
-> makes the later call to ath10k_wmi_wait_for_unified_ready() fail.
-> 
-> If I call and handle wait_for_completion_timeout() first (as it was before the patch),
-> ath10k_hif_send_complete_check() is *not* called, and both ath10k_wmi_wait_for_service_ready() and
-> ath10k_wmi_wait_for_unified_ready() succeed. Everything is back to normal.
-> 
-> Side note:
-> ath10k_wmi_wait_for_service_ready() succeeds in both cases with time_left == WMI_SERVICE_READY_TIMEOUT_HZ.
-> 
-> 
-> #regzbot monitor: https://bugzilla.kernel.org/show_bug.cgi?id=220671
+> The sequence number check should take care of anything like that. Do
+> you have any reason to believe it doesn't?
 
-Thank you Klaus, can you please try if below diff can fix this regression?
+Invalidation doing partial folio zeroing isn't covered by the page
+cache delete sequence number.
 
-diff --git a/drivers/net/wireless/ath/ath10k/ce.c b/drivers/net/wireless/ath/ath10k/ce.c
-index 7bbda46cfd93..1a981d333b5c 100644
---- a/drivers/net/wireless/ath/ath10k/ce.c
-+++ b/drivers/net/wireless/ath/ath10k/ce.c
-@@ -1256,6 +1256,19 @@ void ath10k_ce_per_engine_service(struct ath10k *ar, unsigned int
-ce_id)
- }
- EXPORT_SYMBOL(ath10k_ce_per_engine_service);
+> Yes, you can get the "before or after or between" behavior, but you
+> can get that with perfectly regular reads that take the refcount on
+> the page.
 
-+void ath10k_ce_per_engine_check(struct ath10k *ar, unsigned int ce_id)
-+{
-+       struct ath10k_ce *ce = ath10k_ce_priv(ar);
-+       struct ath10k_ce_pipe *ce_state = &ce->ce_states[ce_id];
-+
-+       if (ce_state->recv_cb)
-+               ce_state->recv_cb(ce_state);
-+
-+       if (ce_state->send_cb)
-+               ce_state->send_cb(ce_state);
-+}
-+EXPORT_SYMBOL(ath10k_ce_per_engine_check);
-+
- /*
-  * Handler for per-engine interrupts on ALL active CEs.
-  * This is used in cases where the system is sharing a
-diff --git a/drivers/net/wireless/ath/ath10k/ce.h b/drivers/net/wireless/ath/ath10k/ce.h
-index 27367bd64e95..9923530e51eb 100644
---- a/drivers/net/wireless/ath/ath10k/ce.h
-+++ b/drivers/net/wireless/ath/ath10k/ce.h
-@@ -255,6 +255,7 @@ int ath10k_ce_cancel_send_next(struct ath10k_ce_pipe *ce_state,
- /*==================CE Interrupt Handlers====================*/
- void ath10k_ce_per_engine_service_any(struct ath10k *ar);
- void ath10k_ce_per_engine_service(struct ath10k *ar, unsigned int ce_id);
-+void ath10k_ce_per_engine_check(struct ath10k *ar, unsigned int ce_id);
- void ath10k_ce_disable_interrupt(struct ath10k *ar, int ce_id);
- void ath10k_ce_disable_interrupts(struct ath10k *ar);
- void ath10k_ce_enable_interrupt(struct ath10k *ar, int ce_id);
-diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
-index 97b49bf4ad80..ce8e0c2fb975 100644
---- a/drivers/net/wireless/ath/ath10k/pci.c
-+++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@ -1812,7 +1812,7 @@ void ath10k_pci_hif_send_complete_check(struct ath10k *ar, u8 pipe,
-                if (resources > (ar_pci->attr[pipe].src_nentries >> 1))
-                        return;
-        }
--       ath10k_ce_per_engine_service(ar, pipe);
-+       ath10k_ce_per_engine_check(ar, pipe);
- }
+Yes, and it is the "in between" behaviour that is the problem here.
 
- static void ath10k_pci_rx_retry_sync(struct ath10k *ar)
+Hole punching (and all the other fallocate() operations) are
+supposed to be atomic w.r.t. user IO. i.e. you should see either the
+non-punched data or the punched data, never a mix of the two. A mix
+of the two is a transient data corruption event....
+
+This invalidation race does not exist on XFS, even on this
+new fast path.  We protect all buffered reads with the
+inode->i_rwsem, so we guarantee they can't race
+with fallocate() operations performing invalidations because
+fallocate() takes the i_rwsem exclusively. This IO exclusion model
+was baked into the XFS locking architecture over 30 years ago.
+
+The problem is the other filesystems don't use this sort of IO
+exclusion model (ext4, btrfs, etc) but instead use the page cache
+folio locking to only avoid concurrent modification to the same file
+range.
+
+Hence they are exposed to this transient state because they rely on
+folio locks for arbitrating concurrent access to the page cache and
+buffered reads run completely unlocked. i.e. because....
+
+> Reads have never taken the page lock, and have never been serialized that way.
+
+... they are exposed to transient data states in the page cache
+during invalidation operations. The i_size checks avoid these
+transient states for truncation, but there are no checks that can be
+made to avoid them for other sources of invalidation operations.
 
 
+The mapping->invalidate_lock only prevents page cache instantiation
+from occurring, allowing filesystems to create a barrier that
+prevents page cache repopulation after invalidation until the
+invalidate lock is dropped. This allows them to complete the
+fallocate() operation before exposing the result to users.
 
+However, it does not prevent buffered read cache hits racing with
+overlapping invalidation operations, and that's the problem I'm
+pointing out that this new fast path will still hit, even though it
+tries to bounce-buffer it's way around transient states.
+
+So, yes, you are right when you say:
+
+> So the fast case changes absolutely nothing in this respect that I can see.
+
+But that does not make the existing page cache behaviour desirable.
+Reading corrupt data faster is still reading corrupt data :/
+
+Really, though, I'm only mentioning this stuff beacuse both the
+author of the patch and the reviewer did not seem to know how i_size
+is used in this code to avoid truncate races. truncate races are the
+simple part of the problem, hole punching is a lot harder to get
+right.  If the author hasn't thought about it, it is likely there
+are subtle bugs lurking....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
