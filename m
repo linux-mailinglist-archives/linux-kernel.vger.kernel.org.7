@@ -1,93 +1,113 @@
-Return-Path: <linux-kernel+bounces-865683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23568BFDBE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:58:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D812BFDBF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF121188C3F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296BB3AB5AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EAD272E6E;
-	Wed, 22 Oct 2025 17:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B292E6CDA;
+	Wed, 22 Oct 2025 17:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7h2pCjU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNZ/D84O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4C42E2EF1;
-	Wed, 22 Oct 2025 17:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A3B35B131;
+	Wed, 22 Oct 2025 17:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761155887; cv=none; b=UAHANhH7yYxJDK5NCAiOqafb1oFhbPClk2A3g4JvWkAdmYWwRlTWPBVtR+XLevlsyPVjC8GPURUKGr59+5juWNJLMR5EyP205+79Y8ZTbF/zl8E557RgFyEd4v6DDerbaRCixxYIhrUM5/3fOaYmE9cRGEA1FhcNyppvQBXGyuA=
+	t=1761155976; cv=none; b=F6M6bgy2HhKYTi5mZnkFqQN4gbauS5PVdF6rUFWz8MLC3vI+Nk0dNPl9o+VDJ4BVl6lMwtkn5ho/Hf5bc/OiFoVrsAKgiOvhD2z6u3C1K8d/c7LzPfMXs033DHqhNnuB/RjK4G1xo9seufIVukM1kuyMJN6MBuUr+g9vsgn+KRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761155887; c=relaxed/simple;
-	bh=jr9JB+acUWFLl0PRQSeU+Vdvre5khnKT1FDyCMV0CLs=;
+	s=arc-20240116; t=1761155976; c=relaxed/simple;
+	bh=9gx3OGdb0uIusRT1OUkumJNGerW8QboTuA02KwXp8SA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZK0/Zfzzcy47HEh4WMOnAQi1zL4P0D/WhEfeW/2aPD2tDhcW3NpT8WwiIVAy6gD55yMJ4F0XGEncDSnp9kvF0iB+PWDPx/XRXL9Yrt2LwUkQmunmFZOEN2D0+6wTYljukKFyiCeh29MtObt/5uwkbOMXfisfdWJECuAYczDi6hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7h2pCjU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23184C4CEE7;
-	Wed, 22 Oct 2025 17:58:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ALtrFHDsqceMXKlmjnW/nI/dfR9t112PMVdyGiqaFzCihy0PGF84OeQxMxwlIS0MK8eq4qSbd6LVhaezojhr0mDeuWhjGH6UFzhGD2HzLoRr6pDf1bsrjaZ4Db71ZHxM81TcHXu5aJ3qFeoVAmkQaJYq/1wOOQVUKDcVepo/ax4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNZ/D84O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEF8C4CEE7;
+	Wed, 22 Oct 2025 17:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761155887;
-	bh=jr9JB+acUWFLl0PRQSeU+Vdvre5khnKT1FDyCMV0CLs=;
+	s=k20201202; t=1761155976;
+	bh=9gx3OGdb0uIusRT1OUkumJNGerW8QboTuA02KwXp8SA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S7h2pCjUS3QZ8ZD5neVd3YErybx5CULzDQ9huY8d1OH4XKhvNP3nHfVBpAAh9/oax
-	 +4/gpP0B+2p4/nslO+zsJQgiMv+ET/v/3bTEPbI8mmgmpmUyF2pEjoC9pK56lKMMJN
-	 k7p1SAaWcz+EhNOCwegklcmbGEVCQATBr6lfy12TnAgIX6DZb4mc/NCOYDuMkiTLKA
-	 Cy2hgwbE+AHxG+pfGcb0nyN7PzIDMljw0DPsPWWFGXCzFijBPW2hrhMRHjdDE47omq
-	 xvkkL1LmzuK1K3t99lQpWyLMVK4+C1/6SWqCEHKI+cu6Z/PvLDkDxnrqAuK8ioxVDn
-	 1mXhSBZD7WNnA==
-Date: Wed, 22 Oct 2025 18:58:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mmc: rockchip-dw-mshc: Add compatible
- string for RK3506
-Message-ID: <20251022-selector-matron-e1c0331f821b@spud>
-References: <20251021222955.193323-1-heiko@sntech.de>
+	b=XNZ/D84OnEvWq0hPHRa2JfYwECvRchIFPwxWBOcwmcTyOTRVtou0qZVOs0Hzqtt55
+	 bmhRtjKgQLPobPbaWutj5XMInarn6n3p0Ci7nSAAhvZol1PyIZz4FlhCO5Xzybk5Ap
+	 p5PPk5+QbMfgNKZVTQwB/ah5K80YdWgL2/CcqClk9T2bsGuUHE7Le1JA0Z27yGsPoC
+	 131sA5lcua4B/QAOwg2wm1MFmn0xbE9nejABosRPJ6wXpLVFtI3oNq5rVu4k6JTrQQ
+	 Zh9fn3pfxrHxaregnyfdSIH+VrcbN5/sPU78OnCS1/MJ/8Ygd7tPpcmt1gMWISTFxL
+	 iTbRaCRExEjXw==
+Date: Wed, 22 Oct 2025 10:59:34 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Sterba <dsterba@suse.cz>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [PATCH 10/10] btrfs: switch to library APIs for checksums
+Message-ID: <20251022175934.GA1646@quark>
+References: <20251018043106.375964-1-ebiggers@kernel.org>
+ <20251018043106.375964-11-ebiggers@kernel.org>
+ <20251022071141.GV13776@twin.jikos.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Keo+0uZWAkw8FPLF"
-Content-Disposition: inline
-In-Reply-To: <20251021222955.193323-1-heiko@sntech.de>
-
-
---Keo+0uZWAkw8FPLF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251022071141.GV13776@twin.jikos.cz>
 
-On Wed, Oct 22, 2025 at 12:29:55AM +0200, Heiko Stuebner wrote:
-> The dw-mshc controller in the RK3506 is compatible to the one first found
-> in the RK3288 SoC, so add the RK3506 to the variant list.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Wed, Oct 22, 2025 at 09:11:41AM +0200, David Sterba wrote:
+> On Fri, Oct 17, 2025 at 09:31:06PM -0700, Eric Biggers wrote:
+> > Make btrfs use the library APIs instead of crypto_shash, for all
+> > checksum computations.  This has many benefits:
+> > 
+> > - Allows future checksum types, e.g. XXH3 or CRC64, to be more easily
+> >   supported.  Only a library API will be needed, not crypto_shash too.
+> > 
+> > - Eliminates the overhead of the generic crypto layer, including an
+> >   indirect call for every function call and other API overhead.  A
+> >   microbenchmark of btrfs_check_read_bio() with crc32c checksums shows a
+> >   speedup from 658 cycles to 608 cycles per 4096-byte block.
+> > 
+> > - Decreases the stack usage of btrfs by reducing the size of checksum
+> >   contexts from 384 bytes to 240 bytes, and by eliminating the need for
+> >   some functions to declare a checksum context at all.
+> > 
+> > - Increases reliability.  The library functions always succeed and
+> >   return void.  In contrast, crypto_shash can fail and return errors.
+> >   Also, the library functions are guaranteed to be available when btrfs
+> >   is loaded; there's no longer any need to use module softdeps to try to
+> >   work around the crypto modules sometimes not being loaded.
+> > 
+> > - Fixes a bug where blake2b checksums didn't work on kernels booted with
+> >   fips=1.  Since btrfs checksums are for integrity only, it's fine for
+> >   them to use non-FIPS-approved algorithms.
+> > 
+> > Note that with having to handle 4 algorithms instead of just 1-2, this
+> > commit does result in a slightly positive diffstat.  That being said,
+> > this wouldn't have been the case if btrfs had actually checked for
+> > errors from crypto_shash, which technically it should have been doing.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> 
+> Thanks, this simplifies quite a few things. I'd like to take it via the
+> btrfs tree as there may be the hash additions (XXH3, BLAKE3) but
+> currently I'm not sure if it won't make things more complicated. I
+> haven't started the kernel part yet so I can use this patchset for
+> development and rebase once it's merged. 
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
-(too late I know)
+Great.  I'm planning to take patches 1-9 through libcrypto-next for
+6.19.  You can then take patch 10 through the btrfs tree for 6.20.  Does
+that sound good?  We can work out the XXH3 and BLAKE3 support later.  If
+you'd like to add another checksum algorithm, I'd suggest picking just
+one.  btrfs already supports an awful lot of choices for the checksum.
+But we can discuss that later.
 
---Keo+0uZWAkw8FPLF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkbKgAKCRB4tDGHoIJi
-0qQFAP9rodx4+UEvE9Qi13OZz2yDdQL3rr3ZChSxpq7Kd1E2IgEA/+4ccILN26B0
-FgWsR2Y7VQTJloYNoFuSVSBTnwzILw0=
-=iD8Q
------END PGP SIGNATURE-----
-
---Keo+0uZWAkw8FPLF--
+- Eric
 
