@@ -1,129 +1,197 @@
-Return-Path: <linux-kernel+bounces-865920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8439ABFE551
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:40:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF811BFE557
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F04335436F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BE0C3A3099
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90F030216F;
-	Wed, 22 Oct 2025 21:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3904A302CD9;
+	Wed, 22 Oct 2025 21:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b="Qej/k9Qr"
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="qYP0kvWR"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C375C2D0601
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26688301486;
+	Wed, 22 Oct 2025 21:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761169195; cv=none; b=Q5iBD+Nd3o4f6TbvAgz2Q7ywEcaFx7Nh2TOyD7nZW4632hOGreCqf6DbMoQIWH+idiUMuUuhQZplfQR3xRJnSVv/5E3M4NOR0VJDwmXWa6eLmdKAk5XdUDT2Y/58NDLPT4GyZt+TgGtzWnTbKqmxmiG1gDYyt7s6PR08XOq1YJQ=
+	t=1761169315; cv=none; b=ppyCYoGSfadAJzkUW/zlfetDqvHUGb8H2s04nH3ix2QZoPb+bOu75wNWuCaV2dS1BXTMmWFy7OaARkr4/ebCq5tnHEis64kHdulxRVP+tucaficApyAkrQqxft+VDGin6Mh8krmNXsKxKdtIJhcLd414SO5C73oZwRNtcW9kYF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761169195; c=relaxed/simple;
-	bh=XY/fVzl28BJXNG49hJlcZcehSDNURMQ7FS8BdFDQScQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OqLZnAjb3uC9xys13eSarGXUe9B+8SVzONPNR2O+1/3H3IEOmaRGvf5OmRgpxyOdsU6QP1PjeJW/mUjZIgn9y5Qf4J0OPCDs6vX2tfTpoiUdUqqks8pQQNWBH/zEAQgiR6om87DVaJeehnTH5mqgfBxVGNG50sv26E/E3laollE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone; spf=none smtp.mailfrom=mary.zone; dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b=Qej/k9Qr; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mary.zone
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63e1e1bf882so83372d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mary.zone; s=google; t=1761169191; x=1761773991; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XY/fVzl28BJXNG49hJlcZcehSDNURMQ7FS8BdFDQScQ=;
-        b=Qej/k9QrMzUWcdY4zLY6+cbgSJxDys9C2DtCnZDNDU9kxqETXOd5U9xVtmpjQOCIBV
-         eFG0D4tNzsI4f7kCf5KLX3CZJMwQqejqjm1UKFaRckJ+h4gvB9JuCdVULS783xkwggIb
-         GLa9vWDsJeX56dMGYBdrOxSqkK7Pk1pfUT5drEJ5a4wnMA7Q3wsTgpBe4V8JOrhHGRN1
-         e+x3u/Fngjz19hvKLF4RJARo32XrWS7X1oqi6kvDVZl9Mvp0DWIIJTyrtRxRhS8UOTUd
-         8/4Q6OyYXVSdGafA3c4IDo9j3m2InrfPs4FAZQHy3YNHZ2il2sko43g1FvqUzApyWzuh
-         /BZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761169191; x=1761773991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XY/fVzl28BJXNG49hJlcZcehSDNURMQ7FS8BdFDQScQ=;
-        b=g3lppQApxHeBtpjti/nHmiNj6rOH59xGCNEMjiJBY1Qq7sBKbH02aO3S+FwpB/ETDs
-         oprTBcpXk81fGy/7yxvF0orWmxZyFm61uaJZ8R273AaA/sWMGKQirH+1qvpKVSoJDLcr
-         rCPLpJpVCTTlZ+I7TtfwjtT43v3ogOHuBGsU9Z8BLlNrutCJIj49dE2IPKz7lkugrKCV
-         x/WrEgEaBMDCpY3dRuPNO4sTOA30CTOEX4tst4fzS8+KLUoBX27v0gomAsR0rKxSj/PS
-         sXurdke10RoTPPxJUfhMsGiXUh+24X9eCiHmzDWh9oPQ3ZTtqZb2rJEDYEddz/SRWbM7
-         eWCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYcz95xL0xUrL/gmRd14DRC8xESj8cKX7AKL4tU6MFNMz+b38bsiKGfLsasfRjW99jQDuz9oOLuEhLIG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqfeYzrsXSaAMHe0K/M5uuoY1JFfYGJek5htuE8DKCYo/p1O/X
-	heEKZP26YtBviKshRfzkGaGVPemsb+A547zXduyo6dmWkp6NbLji5r1LXp2wOjw5feHlJhHfdyJ
-	dN3KhuuMV6ZZW3Hu8Rh3NJjmMNgKLgNKtZfdmmwAzl115ELkLY+dXwTO2XaiC
-X-Gm-Gg: ASbGncugBZ03sVFeDS6NtODonquncw7h8Be3cAltKmfvA8HHZiA6deFeoWmfvEA0hte
-	CWYcWsJIPBP+lKDX0fgAdtP+mnHIuqI98H3xaMbnhrsJs36PwtXcFK1YL1rrHCHmaapRpqDi2S4
-	Ud9tDO5UfNQQALbnuyjPT5ygpbnrn6DOCrfbySgG3V9BxOOeyg3Zlygb6o/kv3c0FfxEee1Bmq2
-	zfYFtJsWx8RmnQryHLOIhfosiKIm1A95Q0Nw2TJfS83e0mqK0ONcdEI/I7KXSXnyxsC1K2I4SBL
-	cdfHmlAcX9h2P4EELO4pDZQTSyLV
-X-Google-Smtp-Source: AGHT+IHLticEoUHzz+5YlBnUoC99gaUTyPszn1BD+u/JBN5hlfiJhQmAcF37pUbO0+8+V7Ij2JZoZtpIzB/MD40J78o=
-X-Received: by 2002:a05:690c:25c6:b0:780:fdbb:5265 with SMTP id
- 00721157ae682-7836d1c62b1mr345947707b3.19.1761169191371; Wed, 22 Oct 2025
- 14:39:51 -0700 (PDT)
+	s=arc-20240116; t=1761169315; c=relaxed/simple;
+	bh=p/mAYt43J0W6iqg63P0K25fa940k8v1dIFzHLOIhXJY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KMiVIfQQPJL6FdqtaVf7VwHyaoN08haRRxHelIxXpHkr917JVw21GGPX5SA174tTUwPHlMxJYyv5pkAl0TltbPPdeG9T3J1keRqTpu+0pv04v+Qoa+1gjP8AIuz/m8SZRLFB7BlnivZmOA0fPIHLHW4dzt8pbVPuXxLjdP4nA9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=qYP0kvWR; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1761169305; x=1761774105; i=w_armin@gmx.de;
+	bh=0A2xiVitmtPNzCKvmEya6TA8pQzQ8Q65w4mjQ+YGMNk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qYP0kvWR0HsJ522LPbI2crmGLSlmzGX+UZDwRK0INpRFOXqS7WP8ZSWYD01R3nEu
+	 yFxS9JVg4U1aNwBkRrmRp0V0uXTSL4+iWZ7WV95IsdG4lkO0Es37lJUqxoXIwu9gQ
+	 Mi5G34DFRb3BsARA2anSpYYL5tamiO4cEHbdKVS491ZxsLS0mEZSMLULB29IzEHbQ
+	 aHAb5Daa4WUgjEr1w9wEr5gMsM00TrvUYE/Qt1VQLaYWhnfAAio3uzjgPbIk24ggF
+	 noOqAzlDJRM7CLw8x+cVVDEB31HqHJ3UNTIAcwalZh7lThPDqAcj54ckSfh1j9PHb
+	 /KYhiJNOUkPAvGhTBw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Md6Mj-1uctfW1I15-00dtSb; Wed, 22
+ Oct 2025 23:41:45 +0200
+Message-ID: <ec099f39-89a2-46ee-a10c-1350ecf7fc83@gmx.de>
+Date: Wed, 22 Oct 2025 23:41:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009233837.10283-1-mohamedahmedegypt2001@gmail.com>
- <20251009233837.10283-3-mohamedahmedegypt2001@gmail.com> <CAA+WOBvVasy2wRP_wmP-R6Q8y5B4sN08jNYfHuDVjiWXV+m23Q@mail.gmail.com>
- <904ba70f-b1bf-4745-8e92-d27a6c903673@kernel.org>
-In-Reply-To: <904ba70f-b1bf-4745-8e92-d27a6c903673@kernel.org>
-From: Mary Guillemard <mary@mary.zone>
-Date: Wed, 22 Oct 2025 23:39:40 +0200
-X-Gm-Features: AS18NWBm422X6XetKOPBkLZPJQB9QiYJm8O_YbBTYHKPk9yZbZPBR3qyH8LezJU
-Message-ID: <CAPv6GL2DQ_wY=r4eV_V=nBGaj20HtYzRfJg==rQJtuO8Fo+HAg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] drm/nouveau/uvmm: Allow larger pages
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, 
-	Faith Ekstrand <faith.ekstrand@collabora.com>, Lyude Paul <lyude@redhat.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] ACPI fan _DSM support
+From: Armin Wolf <W_Armin@gmx.de>
+To: rafael@kernel.org, lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251007234149.2769-1-W_Armin@gmx.de>
+Content-Language: en-US
+In-Reply-To: <20251007234149.2769-1-W_Armin@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:+0/bPmpeNKAh/1P46KpapQx4KSU49BLsflC3V18GstLnmW9ALMN
+ wirJDyyptLOwiycbZ6vIuOWg2xILDTJcX1dPs4IJt2nHM1K2ewO4KX9NEeKMVLB5pN8FcxS
+ bBjxzTAkWa/340SWBPJEdoIX2ElrR9twXt97EnV2iLp1GQqwH/50E3DIFtyzbigdurOVLoI
+ o1BoGlJa8/+rsJmAO8RHw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9M/O/dwkGHw=;dzRwNA1RfgDx+kHBhHpmm8xNUOz
+ 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
+ g
 
-On Wed, Oct 22, 2025 at 10:56=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
+Am 08.10.25 um 01:41 schrieb Armin Wolf:
+
+> Microsoft has designed a _DSM interface for the ACPI fan device [1]
+> that allows the OS to set fan speed trip points. The ACPI firmware
+> will notify the ACPI fan device when said trip points are triggered.
 >
-> On 10/22/25 12:16 PM, Mohamed Ahmed wrote:
-> > Pinging again re: review and also was asking if we can revert the
-> > select_page_shift() handling back to v1 behavior with a fall-back
-> > path, as it looks like there are some cases where
-> > nouveau_bo_fixup_align() isn't enough;
-> > https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36450#note_31=
-59199.
+> Unfortunately some device manufacturers (like HP) blindly assume that
+> the OS will use this _DSM interface and thus only update the fan speed
+> value returned by the _FST control method when sending a notification
+> to the ACPI fan device. This results in stale fan speed values being
+> reported by the ACPI fan driver [2].
 >
-> I don't think we should add a fallback for something that is expected to =
-be
-> sufficient.
+> The first patch performs a simple cleanup in order to reduce the usage
+> of the acpi_device struct. The second patch fixes an issue with some
+> 64-bit ACPI implementations where an invalid value was reported
+> instead of the standard ACPI placeholder value (0xFFFFFFFF). The third
+> patch fixes an unrelated issue inside the hwmon support code while the
+> next two patches add support for the ACPI fan notifications as
+> specified in ACPI 11.2.3. The last patch finally adds support for the
+> Microsoft _DSM interface.
 >
-> Instead we should figure out in which exact case the WARN_ON() was hit an=
-d why.
+> All patches where tested with a custom SSDT [3] and the acpi_call [4]
+> kernel module and appear to work just fine.
 
-The reason I wrote this code initially was to handle addresses
-provided by userspace that aren't aligned to the page size selected
-during BO creation.
-This is something I did trigger when typing this patch initially with
-my distro provided version of mesa (likely 25.0.x but it has been a
-while)
-Thomas Andersen also confirmed on nouveau irc channel that he did hit
-this case with an old version of NVK and this patchset.
+Any thought on this? I tested it with a custom SSDT, so i can prove that
+those patches work.
 
-I think we could just remove the WARN_ON and properly document that
-this was previously allowed and is there for backward compatibility.
+Thanks,
+Armin Wolf
 
-Regards,
-Mary Guillemard
+> [1] https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/design-guide
+> [2] https://github.com/lm-sensors/lm-sensors/issues/506
+> [3] https://github.com/Wer-Wolf/acpi-fan-ssdt/blob/master/ssdt-dsm.asl
+> [4] https://github.com/nix-community/acpi_call
+>
+> Changes since v1:
+> - use acpi_evaluate_dsm_typed() during _DSM initialization
+> - send ACPI netlink event when after handling a ACPI notification
+>
+> Armin Wolf (6):
+>    ACPI: fan: Use ACPI handle when retrieving _FST
+>    ACPI: fan: Workaround for 64-bit firmware bug
+>    ACPI: fan: Use platform device for devres-related actions
+>    ACPI: fan: Add basic notification support
+>    ACPI: fan: Add hwmon notification support
+>    ACPI: fan: Add support for Microsoft fan extensions
+>
+>   drivers/acpi/fan.h       |  47 +++++++-
+>   drivers/acpi/fan_attr.c  |   2 +-
+>   drivers/acpi/fan_core.c  | 254 ++++++++++++++++++++++++++++++++++++---
+>   drivers/acpi/fan_hwmon.c |  32 ++---
+>   4 files changed, 302 insertions(+), 33 deletions(-)
+>
 
