@@ -1,232 +1,142 @@
-Return-Path: <linux-kernel+bounces-865253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDF7BFC9CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:44:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E20BFCA8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E66B189B5E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:44:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 923554FF2C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AAB337119;
-	Wed, 22 Oct 2025 14:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SSrRvcnz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EA2336EC9;
+	Wed, 22 Oct 2025 14:45:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B91624728F;
-	Wed, 22 Oct 2025 14:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EA72144C9
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144261; cv=none; b=A8xhlkWd1fMaMRl+SOTVqmBglj/r5wiwi81SLP5roE3c33bcoSbhm0c90cYvYNh3LGDgojlcqwEUbPSLUDMEGxPPTFaFHZjTX0lKaKvqRqAZ7uiYV58zxY8i9IincvvGdoVKddS8MKFTvPEk330UWxzNPa6/MbUWltsMN6web4w=
+	t=1761144346; cv=none; b=fkp7wfqSja9hja/YzD0bNtMukKZv3doxKevhBr6k36gbMZ5faThZN8vsgpgxm+ITavmVn1Ey2vt5D+OeygtbvL+sLVy2JEfi3BLt0Pk3fxU4ZhgKOMdEEqVNJpjmOpfCgqUDg246lsC6mdADnGgdMinhvxR3xaGZNOTc9wzLWdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144261; c=relaxed/simple;
-	bh=tCZTO0W751GktTbJXelH69v6OSj5y2VH2L80rPuRgHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2NJFdwbGYS0JnZnXfeMHoFp78ev7Jt3QMzOtM6No/SWf0HKWTHKH2DY/PWjE9UMZSAZYWT/P7vGUf73XQDdqWd1T78GhbZ6xjIYKawuBII2n40J+ME6xoR45KXi7HPodrsZL9JIu1FqEGc/IT7Xo+vdxpZGa8KJAajHeeGIH20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SSrRvcnz; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761144259; x=1792680259;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tCZTO0W751GktTbJXelH69v6OSj5y2VH2L80rPuRgHA=;
-  b=SSrRvcnze3nxJSaeS7cUFgNeFkRjHKqEgmF3cbh3Z4HPs1g79FkNvNIq
-   o6eXmNH8sLC+PeZUk/63+jN0wHnRDo7eYZFuQnZySgMUD5Yzjt+7ve3ZD
-   5fUtpAdXqU9Z8ofZ56WX5YVoM6LN3eVfwhD38d0DE3LuVY4MkwcHjJ2dZ
-   tUSjeLu//i/3cjJsRcZ01Oko/aY1rI8/97ZChz7ox6tHY0Ub9lduN4Gem
-   95ySCCn5KpirvnCA/JYHoWxUAFExiS3GQMVjSU/3/Z1dyZC7T5cSf9IKX
-   Yww6ko3yKbyqq0se+9Hp6LZVNGiuC4oascq6mZKbSgN4Je5QJhHQPHHWq
-   Q==;
-X-CSE-ConnectionGUID: VJXOwtJ1RR6/J7d6waKqqg==
-X-CSE-MsgGUID: 7Bm+5fyQSqOgCuIoY8TVhg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="85918196"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="85918196"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 07:44:19 -0700
-X-CSE-ConnectionGUID: 9Wg7VTI7Q2OOgnCwuxUASA==
-X-CSE-MsgGUID: v2vMYJCrQm6A7dQNpHXWig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="183596475"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.83])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 07:44:15 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vBa4S-00000001iaZ-3dG1;
-	Wed, 22 Oct 2025 17:44:12 +0300
-Date: Wed, 22 Oct 2025 17:44:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] regulator: Support the LTM8054 voltage regulator
-Message-ID: <aPjtvPmc_7IBV7og@smile.fi.intel.com>
-References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
- <20250925-ltm8054-driver-v2-4-bb61a401a0dc@bootlin.com>
+	s=arc-20240116; t=1761144346; c=relaxed/simple;
+	bh=tSw6rQZlMQn+CQgaVhZKZ/LPnP71EM4OXUrLskqgNhI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Hk72V7cY7m1XT+xx96QokSw7Z/g47pZYkuu6l5RPa3/nYxqS+Tg2rTFiOufqSQ8+Op8dg9vqdTR88JJP6VeGiOxrdfLOdj0D8MDQ7oxRt8fMZl6inq+3MRGBpNIIGEqjI0hZX1wE73+jHL1bFrma5HiCRKUR+/iDucAdILU6MgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vBa5f-00088u-0v; Wed, 22 Oct 2025 16:45:27 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vBa5e-004uKx-0o;
+	Wed, 22 Oct 2025 16:45:26 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vBa5e-00000000BDI-0hMt;
+	Wed, 22 Oct 2025 16:45:26 +0200
+Message-ID: <939b13c69ade5e574c33777bc4f7b368f83764ff.camel@pengutronix.de>
+Subject: Re: [PATCH v2 9/9] reset: gpio: use software nodes to setup the
+ GPIO lookup
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij	
+ <linus.walleij@linaro.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>,  Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus	
+ <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski	 <krzk@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>
+Date: Wed, 22 Oct 2025 16:45:25 +0200
+In-Reply-To: <20251022-reset-gpios-swnodes-v2-9-69088530291b@linaro.org>
+References: <20251022-reset-gpios-swnodes-v2-0-69088530291b@linaro.org>
+	 <20251022-reset-gpios-swnodes-v2-9-69088530291b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925-ltm8054-driver-v2-4-bb61a401a0dc@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Sep 25, 2025 at 02:37:36PM +0200, Romain Gantois wrote:
-> Add a stub driver for the  Linear Technology LTM8054 Buck-Boost voltage
-> regulator. This version only supports enabling/disabling the regulator via
-> a GPIO, and reporting the output voltage level from the resistor divider
-> values given in the device tree.
-
-...
-
-It's a bit an interesting grouping of headers...
-
-> +#include <asm/div64.h>
-
-...starting with leading asm/*.
-
-> +#include <linux/array_size.h>
+On Mi, 2025-10-22 at 15:41 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> GPIO machine lookup is a nice mechanism for associating GPIOs with
+> consumers if we don't know what kind of device the GPIO provider is or
+> when it will become available. However in the case of the reset-gpio, we
+> are already holding a reference to the device and so can reference its
+> firmware node. Let's setup a software node that references the relevant
+> GPIO and attach it to the auxiliary device we're creating.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/reset/core.c | 131 ++++++++++++++++++++++++++++++---------------=
+------
+>  1 file changed, 77 insertions(+), 54 deletions(-)
+>=20
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index c9f13020ca3a7b9273488497a7d4240d0af762b0..20378de4b813ab79a103ea81c=
+f2cbcd2b76c0ccf 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+[...]
+> @@ -915,11 +913,30 @@ static int __reset_add_reset_gpio_device(const stru=
+ct of_phandle_args *args)
+>  	if (args->args_count !=3D 2)
+>  		return -ENOENT;
+> =20
+> +	offset =3D args->args[0];
+> +	of_flags =3D args->args[1];
 > +
-> +#include <linux/device.h>
-> +#include <linux/device/devres.h>
-> +#include <linux/device/driver.h>
-> +
-> +#include <linux/dev_printk.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-
-I would expect above to be (but not limited to)
-
-#include <linux/array_size.h>
-#include <linux/device.h>
-#include <linux/device/devres.h>
-#include <linux/device/driver.h>
-#include <linux/dev_printk.h>
-#include <linux/err.h>
-
-#include <linux/errno.h>
-
-#include <linux/gpio/consumer.h>
-#include <linux/math64.h>
-#include <linux/module.h>
-#include <linux/of.h>
-#include <linux/platform_device.h>
-#include <linux/property.h>
-
-Also missing
-types.h
-
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/regulator/driver.h>
-> +#include <linux/regulator/of_regulator.h>
-
-...
-
-> +static int ltm8054_of_parse(struct device *dev, struct ltm8054_priv *priv,
-> +			    struct regulator_config *config)
-> +{
-> +	struct device_node *np = dev->of_node;
-
-No need, see below how.
-
-> +	u32 r[2];
-> +	int ret;
-
-> +	config->of_node = np;
-
-Better to move it...
-
-> +
-> +	ret = device_property_read_u32_array(dev, "lltc,fb-voltage-divider", r, ARRAY_SIZE(r));
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv->rdesc.fixed_uV = ltm8054_scale(LTM8054_FB_uV, r[0], r[1]);
-> +	priv->rdesc.min_uV = priv->rdesc.fixed_uV;
-> +	priv->rdesc.n_voltages = 1;
-
-...here and reuse.
-
-> +	config->init_data = of_get_regulator_init_data(dev,
-> +						       np,
-> +						       &priv->rdesc);
-
-	config->of_node = dev_of_node(dev);
-	config->init_data = of_get_regulator_init_data(dev,
-						       config->of_node,
-						       &priv->rdesc);
-
-> +	if (!config->init_data)
+> +	/*
+> +	 * Later we map GPIO flags between OF and Linux, however not all
+> +	 * constants from include/dt-bindings/gpio/gpio.h and
+> +	 * include/linux/gpio/machine.h match each other.
+> +	 *
+> +	 * FIXME: Find a better way of translating OF flags to GPIO lookup
+> +	 * flags.
+> +	 */
+> +	if (of_flags > GPIO_ACTIVE_LOW) {
+> +		pr_err("reset-gpio code does not support GPIO flags %u for GPIO %u\n",
+> +		       of_flags, offset);
 > +		return -EINVAL;
+> +	}
 > +
-> +	config->ena_gpiod = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_LOW);
-> +	if (IS_ERR(config->ena_gpiod))
-> +		return PTR_ERR(config->ena_gpiod);
-> +
-> +	return 0;
-> +}
 
-> +static int ltm8054_probe(struct platform_device *pdev)
-> +{
-> +	struct regulator_config config = { };
-> +	struct device *dev = &pdev->dev;
-> +	struct regulator_dev *rdev;
-> +	struct ltm8054_priv *priv;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->rdesc.name = "ltm8054-regulator",
-> +	priv->rdesc.ops = &ltm8054_regulator_ops,
-> +	priv->rdesc.type = REGULATOR_VOLTAGE,
-> +	priv->rdesc.owner = THIS_MODULE,
+Please move this ...
 
-The commas should be replaced by semicolons.
+>  	struct gpio_device *gdev __free(gpio_device_put) =3D
+>  		gpio_device_find_by_fwnode(of_fwnode_handle(args->np));
+>  	if (!gdev)
+>  		return -EPROBE_DEFER;
+> =20
+> +	parent =3D gpio_device_to_device(gdev);
+> +
 
-> +	config.dev = dev;
-> +	config.driver_data = priv;
-> +
-> +	ret = ltm8054_of_parse(dev, priv, &config);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to parse device tree\n");
-> +
-> +	rdev = devm_regulator_register(dev, &priv->rdesc, &config);
-> +	if (IS_ERR(rdev))
-> +		return dev_err_probe(dev, PTR_ERR(rdev), "failed to register regulator\n");
-> +
-> +	return 0;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
+... and this after the lockdep_asset_held() below.
 
 
+With that,
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
 
