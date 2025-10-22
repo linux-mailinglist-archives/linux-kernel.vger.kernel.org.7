@@ -1,182 +1,155 @@
-Return-Path: <linux-kernel+bounces-865552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2B7BFD749
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:06:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B823BFD7B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD93758259F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7278A3B8FE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE802C0294;
-	Wed, 22 Oct 2025 16:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7143F35B142;
+	Wed, 22 Oct 2025 16:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sqliODd1"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j88yYiUQ"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608F8270EBB;
-	Wed, 22 Oct 2025 16:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B50835B132
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761151662; cv=none; b=OrRUcxrXe1L2a5V8+XRPU0fIiapYrJTKPYMbdehb8UqP2m2OHbX+XRJUpwSr1YdixKhv1ZtK5UWfWsRO9hRYxOcjBNEakAfzXyQ3zmpMvaKL6e69YOzJ+Qhw7WPEe1TwV8B8eqUav4y9vvLtoumMc1MilVTuQ07uoJ1l95CBDVY=
+	t=1761151726; cv=none; b=RqQrQgEaWToGMBfYw/X0jBGHWbaAMGevGBu5JaORAXYJO0/AjMLFErnZqJyFnx5iNDX9bWR0Cxfd2W9SVj/RXHgnNOeAlh9t6+205Sf7DDuUphyQ3hlOAxJHJqGLfHzBnlhwvz45/8+NFrULFINNOEnnxQZxEuCvBL+3cvCfsv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761151662; c=relaxed/simple;
-	bh=ZGKj/X+4kfRisKLKyIIFymXu5/w8VYUlbMsRM3JhQzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cCOvj2wVsTDQrfMSHI+VaBDVamFEyKflYjg/b7wk8YOKPuwylngkHQfmCaI7W485pnOamhszH0N6aFyZZNYP719A+UkRYnTUu6gKqhxrXyFrPy5oZx+6ZL3s8xAlgTC2Bh1c4n0GtUTQACqaXEKk00LHv7klFRYdDFH0bFj2ikU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sqliODd1; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MD1NBe027261;
-	Wed, 22 Oct 2025 16:47:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=DoZrReXIg69lxw6JXyfiUB5ZF9wUO3Aag26A4LoBY
-	+Y=; b=sqliODd12JAFb00H88QYMR2nTzsYb3UUchPo2quWa057liJERfe0/58Kn
-	GemDwzEXlPOwsMM3cysMt4ykFU46w3mORRdH0dGjkBej/4XlVtYIYXZphR5fE4Lr
-	YJuAlcUpzbCR7nuukUW/4but/jYqyxcyE4AlfbVLAqxdzu4w5f8s9hKAtucvWVyG
-	Q5k4p+dry0AyB3ZgaGA8VZhZF01MWDaxdJnhdKuer4u4NC9VH75OKsFVWUF2j1gH
-	JnCoCOynh4tlWYiKA86/wXZ8uSwTq4EOkjKDgKhitov2odgqMO50I0YCuvNa8IVm
-	g7nkARG6y0K080fUCO4q4le66dxTg==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33fdx6k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 16:47:39 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59MEFruF032099;
-	Wed, 22 Oct 2025 16:47:30 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vp7n1byk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Oct 2025 16:47:30 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59MGlTOC23003886
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Oct 2025 16:47:29 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 048C45805D;
-	Wed, 22 Oct 2025 16:47:29 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 031D45805F;
-	Wed, 22 Oct 2025 16:47:28 +0000 (GMT)
-Received: from IBM-D32RQW3.ibm.com (unknown [9.61.243.77])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 22 Oct 2025 16:47:27 +0000 (GMT)
-From: Farhan Ali <alifm@linux.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: alifm@linux.ibm.com, schnelle@linux.ibm.com, mjrosato@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com
-Subject: [PATCH v1 1/1] s390/pci: Restore IRQ unconditionally for the zPCI device
-Date: Wed, 22 Oct 2025 09:47:26 -0700
-Message-ID: <20251022164727.882-1-alifm@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761151726; c=relaxed/simple;
+	bh=3HUrOy3HliEzxynSTd2AGPEdNfQmqeEcuJoORxQB0DY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QxtiIWG0FchiMByLBrqD1XArjpXyFJZbIVl1qAV9FKLtwYirvEpsA4eLVa9nIzZbv6h8gqQpsR6Vrp5AukaFTYeTUR00UYKbObAUEXTReZ9QuCpZ+l/tRHjJU8Mj/Oi5LxWdZg0R98fAnP0zqTdD70AWjxFsMdYP9jn0s2wSMnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j88yYiUQ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso6648827f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761151723; x=1761756523; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EkGmrtBUxnIumAL8xu9/6QKpgwGH5LjIxRJ/PIq9w9k=;
+        b=j88yYiUQYyC10kiCa9WxLaaa5F7AyE4UEJYnQSjTn2uIvz8kspqXoPYaMTW2tLwMiS
+         jLu8TFmugt77ECz/I2dB1QiFwFxDGVKpkidhOp0mI9LtJu5mf7GAdEv/NLVrK+aAnIR8
+         9D3yeR1RZlSPLSYd6/RrbwEqEer7WuCR1eYduNMZwPmhtMZ6EgMM2iR7hVP65ocQL8dt
+         qIboEkNQKi6f6vpeFBya9uNVdo/b/kmBDKqgiAQ6h/Y7de4OsKcXMDIgzK+gd0lp1b+D
+         jz0hOBOD8ODJkCJBhtuQ2lK6I+xsaVFHWmNoNOGACxjf30+k8r68bujpglgUrdQPPF9U
+         2YKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761151723; x=1761756523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EkGmrtBUxnIumAL8xu9/6QKpgwGH5LjIxRJ/PIq9w9k=;
+        b=uqWnczxeXKZkrlDwZ3iJU3RkVRdIQ33F0YwkTWk8cgFbtS+b8q1yjLodTVgSOtIxi5
+         jWGYdyE4PR8K5NUIqD2409b43hKULQ/LVcxsboQO/gMM0E6hj6hFbuQPa/Ges1RAqbuo
+         TtbzjKQ+VtYCsByA6atEBRp7EqqI05b+VeKzCOubJd5SHcJtRUoJsrOxC+G9Pqq14o+j
+         OsAp4o/+4m5rZjPIRW2pLEOrR9pQsIXU086LV73ijyiegHmsXU95pAxPi03ZJNIOUhgi
+         cbCx26oXbX9gNm40pzLzcXTm5RwchUyBMB7WwZ4flfhdLR7N70+JjxtzYwKfX12s3twh
+         X/gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFn/y1TzIx2cz+IwRFcgmqYS1O1FU3mNZ28+6dIJOhCJPg6WeASOY+0KNOnrVEIR6LW+y8ogU8Z1UDplk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO5Cj5bhIeomUHraX9zC0PjLpahOqKAmJkoFOEgpCVukzFozsd
+	0+dplNBFSoxVMF7dagC9JHO3ejNETsuvPYztp7V5mwzyFpGV+UbMHUty2YNuGIRClgT3t/fkaeU
+	TVIE0kmdQdxNZVwQDSDkmckZw8brOcDU=
+X-Gm-Gg: ASbGnctMomC1xKxrMx+csnUbiJ+bHwl8Q23zZeoq/eXSHUZOsYCIZQ8pwws94tDNsc2
+	F4c4eI7+XlwhIHl4JZczOHQKm72PCVoyKhM7IzIpi8gThIqMOgXoY6LXAgs82xu6g87i3G1xA4y
+	XPclfEfd531RG5pqVwSK8DZ1axagbMC4Q3Vz1rpGnzVW/kdRifcUh07gV1Fdl8NFB4SpLdE116o
+	mhKPFL45Ob4o+KD7zu7UMllq1eUdpwVgxgAxoWdU8M0ltEG5fDjnV12169uPQigHX3/Xg3JOAaE
+	pRRcjuwhYAiMdU71Y/tS+R8Z7sAa
+X-Google-Smtp-Source: AGHT+IHGQIWEFvzltLOJQOUIBl0GmO2xOGuzPoNl+eqhJzTaJN/V9bP/9n1hi/0plGJ1ExPlMoQ5BrW5WAhxCBHLYSg=
+X-Received: by 2002:a5d:5f82:0:b0:425:8bc2:9c4b with SMTP id
+ ffacd0b85a97d-42704d83537mr12406127f8f.6.1761151722349; Wed, 22 Oct 2025
+ 09:48:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FMYWBuos c=1 sm=1 tr=0 ts=68f90aab cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8
- a=ove13Onh8FEOJJhcmoIA:9
-X-Proofpoint-GUID: -oAVz4vN4esdr7QcQdgIEV8te4QGVYb6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX0YCe4N6YHTOr
- y2pFQDgXxY0XpawUQhfqEcSJSRWTjgO7G7YIjuMZHrr1EqExb3mIV4noCZTVtYamRRCryOY87vC
- kf/98lg9XWFEBodRzaU+ckA3FX29tn3/Zy3QMXXe1cptwWlXpBETi1ObXSG4b9mE5NiPdwr6pTC
- l9eenI0CzvA+WN6QVRVhQJ6BjgWLSldRaE5e6LD7bwmt4zDjPgF9rcLPCxR1pRA6eHh6r6J0OSJ
- D/i7t5zivgRYe5FF43WArALJbXZ45uSnsb8QbsesFz3LyIcQdweSq1lIyngs+X024rADOKaNzww
- 6MccYL9l8lsDyUcT89Zb4zebs/OD+LMaN20IO/eh+2Ys5+QPrffeQOk06OlS77nYQ2b04pzXnMa
- 2W0w6eI1I0pFTmDZep7yXde1FyN8fg==
-X-Proofpoint-ORIG-GUID: -oAVz4vN4esdr7QcQdgIEV8te4QGVYb6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_07,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+References: <20251022071825.238909-1-jiayuan.chen@linux.dev> <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
+In-Reply-To: <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 22 Oct 2025 09:48:29 -0700
+X-Gm-Features: AS18NWDmayCCUbz8NqfwUZbauZk3a75e37wRBA-4fyqo7UIquVdyDsJAWiI6ZH4
+Message-ID: <CAADnVQL7RtTFsr36hbT331X6XQHat4XKRcun=0e5jPohX+TF0Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v1] selftests/bpf: Guard addr_space_cast code
+ with __BPF_FEATURE_ADDR_SPACE_CAST
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf <bpf@vger.kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Puranjay Mohan <puranjay@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit c1e18c17bda6 ("s390/pci: add zpci_set_irq()/zpci_clear_irq()"),
-introduced the zpci_set_irq() and zpci_clear_irq(), to be used while
-resetting a zPCI device.
+On Wed, Oct 22, 2025 at 8:33=E2=80=AFAM Yonghong Song <yonghong.song@linux.=
+dev> wrote:
+>
+>
+>
+> On 10/22/25 12:18 AM, Jiayuan Chen wrote:
+> > When compiling the BPF selftests with Clang versions that do not suppor=
+t
+> > the addr_space_cast builtin, the build fails with assembly errors in
+> > "verifier_ldsx.c" [1].
+> >
+> > The root cause is that the inline assembly using addr_space_cast is
+> > being processed by a compiler that lacks this feature. To resolve this,
+> > wrap the affected code sections (specifically the arena_ldsx_* test
+> > functions) with #if defined(__BPF_FEATURE_ADDR_SPACE_CAST). This
+> > ensures the code is only compiled when the Clang supports the necessary
+> > feature, preventing build failures on older or incompatible compiler
+> > versions.
+> >
+> > This change maintains test coverage for systems with support while
+> > allowing the tests to build successfully in all environments.
+> >
+> > [1]:
+> > root:tools/testing/selftests/bpf$ make
+> >
+> >    CLNG-BPF [test_progs] verifier_ldsx.bpf.o
+> > progs/verifier_ldsx.c:322:2: error: invalid operand for instruction
+> >    322 |         "r1 =3D %[arena] ll;"
+> >        |         ^
+> > <inline asm>:1:52: note: instantiated into assembly here
+> >      1 |         r1 =3D arena ll;r0 =3D 0xdeadbeef;r0 =3D addr_space_ca=
+st(r0,...
+> >        |                                                           ^
+>
+> I think you are using llvm18 and earlier. Why can you upgrade to llvm19 a=
+nd later
+> which should solve the problem?
+>
+> > Fixes: f61654912404 ("selftests: bpf: Add tests for signed loads from a=
+rena")
+>
+> We do not need to have Fixes. compiler is also moving forward, we cannot =
+support
+> really old compiler and it is no point to have __BPF_FEATURE_ADDR_SPACE_C=
+AST
+> for really old compilers. So at some point, __BPF_FEATURE_ADDR_SPACE_CAST=
+ will
+> become default.
 
-Commit da995d538d3a ("s390/pci: implement reset_slot for hotplug slot"),
-mentions zpci_clear_irq() being called in the path for zpci_hot_reset_device().
-But that is not the case anymore and these functions are not called
-outside of this file. Instead zpci_hot_reset_device() relies on
-zpci_disable_device() also clearing the IRQs, but misses to reset the
-zdev->irqs_registered flag.
++1
+and this is not the first time we're seeing this type of patches.
+Upgrade your compiler. That's the only way.
 
-However after a CLP disable/enable reset, the device's IRQ are
-unregistered, but the flag zdev->irq_registered does not get cleared. It
-creates an inconsistent state and so arch_restore_msi_irqs() doesn't
-correctly restore the device's IRQ. This becomes a problem when a PCI
-driver tries to restore the state of the device through
-pci_restore_state(). Restore IRQ unconditionally for the device and remove
-the irq_registered flag as its redundant.
-
-Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
-Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
----
- arch/s390/include/asm/pci.h | 1 -
- arch/s390/pci/pci_irq.c     | 9 +--------
- 2 files changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
-index 6890925d5587..a32f465ecf73 100644
---- a/arch/s390/include/asm/pci.h
-+++ b/arch/s390/include/asm/pci.h
-@@ -145,7 +145,6 @@ struct zpci_dev {
- 	u8		has_resources	: 1;
- 	u8		is_physfn	: 1;
- 	u8		util_str_avail	: 1;
--	u8		irqs_registered	: 1;
- 	u8		tid_avail	: 1;
- 	u8		rtr_avail	: 1; /* Relaxed translation allowed */
- 	unsigned int	devfn;		/* DEVFN part of the RID*/
-diff --git a/arch/s390/pci/pci_irq.c b/arch/s390/pci/pci_irq.c
-index 84482a921332..e73be96ce5fe 100644
---- a/arch/s390/pci/pci_irq.c
-+++ b/arch/s390/pci/pci_irq.c
-@@ -107,9 +107,6 @@ static int zpci_set_irq(struct zpci_dev *zdev)
- 	else
- 		rc = zpci_set_airq(zdev);
- 
--	if (!rc)
--		zdev->irqs_registered = 1;
--
- 	return rc;
- }
- 
-@@ -123,9 +120,6 @@ static int zpci_clear_irq(struct zpci_dev *zdev)
- 	else
- 		rc = zpci_clear_airq(zdev);
- 
--	if (!rc)
--		zdev->irqs_registered = 0;
--
- 	return rc;
- }
- 
-@@ -427,8 +421,7 @@ bool arch_restore_msi_irqs(struct pci_dev *pdev)
- {
- 	struct zpci_dev *zdev = to_zpci(pdev);
- 
--	if (!zdev->irqs_registered)
--		zpci_set_irq(zdev);
-+	zpci_set_irq(zdev);
- 	return true;
- }
- 
--- 
-2.43.0
-
+pw-bot: cr
 
