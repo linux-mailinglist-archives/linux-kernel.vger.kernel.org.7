@@ -1,131 +1,253 @@
-Return-Path: <linux-kernel+bounces-864218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6421BFA32E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:21:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC6ABFA33D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A129C1A021F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC47D567C91
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DA22ECD2E;
-	Wed, 22 Oct 2025 06:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31412ECD33;
+	Wed, 22 Oct 2025 06:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3l7noDS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="lJ1kGnYh"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3132E6CD2;
-	Wed, 22 Oct 2025 06:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22682EC098;
+	Wed, 22 Oct 2025 06:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761114071; cv=none; b=u2vKfei9R128Z4MAONNRVfl1nbB5a3FXKTf15Ji5ZZ48uO6VVK0BaYRWFAWnk0eAksK2B1Xmgc1m/4lKA+gcidQNplp20glBtcv1inmBGECcr64Sa/d0aK42ZYaHJJ8jiMcJtXpPVJFFZxuVEw7ACBvckswZlMrLTacWLc6BH6k=
+	t=1761114116; cv=none; b=O1ksPTUS2OfVY3ZagkPH8Rajkbrd3dzgphpzaEQOmpr1hKzqBX+7jULt1w/eFXibsiCUzdh0wN6iuojznALs0FZcUZyANcohVt/YjBHxVBrYq8Y1xnMWtvC7YZLjYcguGrvnenYkMwUjPkgmV6l7m7+4RqAD4So2W0mlGlu3p1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761114071; c=relaxed/simple;
-	bh=soAJAWuijHkoXpW5tHntcBS85jB31vJDiMGx6v3OUiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fN/x6MCpt2bpJu9yrigcwMVeRXgO5lo7cbyVyw8d4M+bK2YznwyqX1cPt6OYMq9iAX1kpd5kXXIp6NDiCMcDJhgJxXTZUIXh4Vg9pKVp5fYHwexezSrhiUkeXvKOn5Jkwd+r6sleevc1YIbt5pw1i3WMJrfkTsZPIgU+ONpLoDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3l7noDS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0F1DC4CEE7;
-	Wed, 22 Oct 2025 06:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761114068;
-	bh=soAJAWuijHkoXpW5tHntcBS85jB31vJDiMGx6v3OUiE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E3l7noDSLqu9c410W4nOr0J6IqmVi90QIFRUvbM34po4mRLfS8hbVtp8b081XjULo
-	 tNcdACmmd4n5QXF9UTUHOeesjdYB5KJV0/R7OKfva8fOCwhY8T3ec6trK1j8KIeDMf
-	 HSwnPQDehoyLhNgf59r6pfFq9mXkJ52QualLpx8OsR6Ic5MW0y9c8kV+fQoBypiqQv
-	 VuoW2BebQoNkCmyS10Tn5FVru1y0vu+7ouXJNvxTulZFDWn0hiMK0Xn0jcIaM8J+tY
-	 W0W7fq++783DwanO/a5n7HvVc/AKa8ZC1IsurQnBe/HQiG2Q6voXPhSVvsaNn21sjW
-	 V1+N637g/fGhA==
-Message-ID: <31000935-dbf2-415d-a38e-d9cec098f963@kernel.org>
-Date: Wed, 22 Oct 2025 08:21:03 +0200
+	s=arc-20240116; t=1761114116; c=relaxed/simple;
+	bh=OC3F52ADrWP/59GalCSeXz8yrsYxVmTOYL6SAp7OzzI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kLqwBEGZAsF+pK/EYvJHRgGreRV2kRvWDVjEqyNy9EhR9eFOyUDD3su7ZjjkEsV8lwVGZtXkPxBGiI/hsshTLB21Xd7OoUCmdsFgFWXKCMkL32m8L+XwcH7yTjWScwAmfzo8qcO5ILElyObODegzu9sa9zBSJ3j3a4K68RaM+XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=lJ1kGnYh; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59M6LPHz8161193, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1761114086; bh=/sBWd5M1erAr+Fm6dqF8QBFlZvDD8JDJzHaoZPregQw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=lJ1kGnYhQnCW/zVpFQvREgsN2+rGxEmjgYERrMEaxZDE7/cTV9VqIkD3OO2sxXF80
+	 yqOWgdoK+TRa9bPF3uY64krFsiR1PSZBTyVFdl6tKD+yA/IHyk5jmyv8r049xDhiYh
+	 Kke4EXJitEweQ0NMdqf4SqElcLYrXqe1ooVPUELe8uHM1a+AEw0wCdZfWfW7smsEOL
+	 W37+6FBLMe7dVTipLU2UuHl+A9AoJACfD6AnZ/YlpSLLxq1v/ZDc/C+fTPFW6rHEUw
+	 92eYrF0PL7C8Dx7uh2Ji8nrOhaFv/P5BULNmkBZyGf/J5RB9hBXAs5f0fTxbKLAnEh
+	 bUSUYqMhH34mg==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59M6LPHz8161193
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 Oct 2025 14:21:26 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 22 Oct 2025 14:21:26 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 22 Oct 2025 14:21:25 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
+ 15.02.1544.027; Wed, 22 Oct 2025 14:21:25 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next v3 5/9] wifi: rtw89: implement C2H TX report handler
+Thread-Topic: [PATCH rtw-next v3 5/9] wifi: rtw89: implement C2H TX report
+ handler
+Thread-Index: AQHcP04Zo3fbbkHRTkiig8Q9g2Z2oLTNsmTQ
+Date: Wed, 22 Oct 2025 06:21:25 +0000
+Message-ID: <6dc0740a095f4a38ae2427169b1d100c@realtek.com>
+References: <20251017100658.66581-1-pchelkin@ispras.ru>
+ <20251017100658.66581-6-pchelkin@ispras.ru>
+In-Reply-To: <20251017100658.66581-6-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: arm-smmu: Add compatible for Kaanapali
- and Glymur SoCs
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Will Deacon
- <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-References: <20251021-b4-knp-smmu-v2-1-88774e6d2def@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251021-b4-knp-smmu-v2-1-88774e6d2def@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 22/10/2025 08:15, Jingyi Wang wrote:
-> Qualcomm Kaanapali and Glymur SoCs include apps smmu that implements
-> arm,mmu-500, which is used to translate device-visible virtual addresses
-> to physical addresses. Add compatible for these items.
-> 
-> Co-developed-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - squash glymur binding: https://lore.kernel.org/all/20250919133439.965595-1-pankaj.patil@oss.qualcomm.com/
-> - Link to v1: https://lore.kernel.org/r/20250924-knp-smmu-v1-1-c93c998dd04c@oss.qualcomm.com
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> rtw89 has several ways of handling TX status report events.  The first on=
+e
+> is based on RPP feature which is used by PCIe HCI.  The other one depends
+> on firmware sending a corresponding C2H message, quite similar to what
+> rtw88 has.
+>=20
+> Toggle a bit in the TX descriptor to indicate to the firmware that TX
+> report for the frame is expected.   This will allow handling TX wait skbs
+> and the ones flagged with IEEE80211_TX_CTL_REQ_TX_STATUS correctly.
+>=20
+> Do the bulk of the patch according to the vendor driver for RTL8851BU.
+> However, there are slight differences in C2H message format between
+> different types of chips.  RTL885xB ones follow format V0.  RTL8852C has
+> format V1, and RTL8922AU has format V2.
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 > ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+[...]
 
-Best regards,
-Krzysztof
+> diff --git a/drivers/net/wireless/realtek/rtw89/fw.h b/drivers/net/wirele=
+ss/realtek/rtw89/fw.h
+> index ddebf7972068..e0e587ec4592 100644
+> --- a/drivers/net/wireless/realtek/rtw89/fw.h
+> +++ b/drivers/net/wireless/realtek/rtw89/fw.h
+> @@ -3747,6 +3747,47 @@ struct rtw89_c2h_scanofld {
+>  #define RTW89_GET_MAC_C2H_MCC_REQ_ACK_H2C_FUNC(c2h) \
+>         le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(15, 8))
+>=20
+> +struct rtw89_c2h_mac_tx_rpt {
+> +       struct rtw89_c2h_hdr hdr;
+> +       __le32 w2;
+> +       __le32 w3;
+> +       __le32 w4;
+> +       __le32 w5;
+> +       __le32 w6;
+> +       __le32 w7;
+> +};
+
+__packed
+
+> +
+> +#define RTW89_C2H_MAC_TX_RPT_W2_TX_STATE GENMASK(7, 6)
+> +#define RTW89_C2H_MAC_TX_RPT_W2_SW_DEFINE GENMASK(11, 8)
+> +#define RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT GENMASK(13, 8)
+> +#define RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT_V1 GENMASK(15, 10)
+> +
+> +struct rtw89_c2h_mac_tx_rpt_v2 {
+> +       struct rtw89_c2h_hdr hdr;
+> +       __le32 w2;
+> +       __le32 w3;
+> +       __le32 w4;
+> +       __le32 w5;
+> +       __le32 w6;
+> +       __le32 w7;
+> +       __le32 w8;
+> +       __le32 w9;
+> +       __le32 w10;
+> +       __le32 w11;
+> +       __le32 w12;
+> +       __le32 w13;
+> +       __le32 w14;
+> +       __le32 w15;
+> +       __le32 w16;
+> +       __le32 w17;
+> +       __le32 w18;
+> +       __le32 w19;
+> +};
+
+__packed
+
+> +
+> +#define RTW89_C2H_MAC_TX_RPT_W12_TX_STATE_V2 GENMASK(9, 8)
+> +#define RTW89_C2H_MAC_TX_RPT_W12_SW_DEFINE_V2 GENMASK(15, 12)
+> +#define RTW89_C2H_MAC_TX_RPT_W14_DATA_TX_CNT_V2 GENMASK(15, 10)
+> +
+>  struct rtw89_mac_mcc_tsf_rpt {
+>         u32 macid_x;
+>         u32 macid_y;
+> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
+ess/realtek/rtw89/mac.c
+> index fd11b8fb3c89..2fe239f18534 100644
+> --- a/drivers/net/wireless/realtek/rtw89/mac.c
+> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
+> @@ -5457,6 +5457,35 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtw=
+dev, struct sk_buff *c2h, u32
+>         rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
+>  }
+>=20
+> +static void
+> +rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 =
+len)
+> +{
+> +       u8 sw_define, tx_status, data_txcnt;
+> +
+> +       if (rtwdev->chip->chip_id =3D=3D RTL8922A) {
+
+Add a chip_ops c2h_tx_rpt? Then, no need chip_id checking, and reduce line
+length (normally we prefer shorter than 80 or 90 characters; over 100 chara=
+cters
+isn't a good idea).
+
+Maybe this is because you want to store the status into local variables.
+With a chip_ops, you should define another struct to store them.
+
+Or, you just keep it as was, but wrap lines to be shorter, and give shorter
+naming. For example,
+  - rpt_v2 -> v2
+
+  - data_txcnt -> txcnt
+
+		if (rtwdev->chip->chip_id =3D=3D RTL8852C)
+			txcnt =3D le32_get_bits(rpt->w5,
+					              RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT_V1);
+		else
+			txcnt =3D le32_get_bits(rpt->w5,
+					              RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT);
+
+
+> +               const struct rtw89_c2h_mac_tx_rpt_v2 *rpt_v2;
+> +
+> +               rpt_v2 =3D (const struct rtw89_c2h_mac_tx_rpt_v2 *)c2h->d=
+ata;
+> +               sw_define =3D le32_get_bits(rpt_v2->w12, RTW89_C2H_MAC_TX=
+_RPT_W12_SW_DEFINE_V2);
+> +               tx_status =3D le32_get_bits(rpt_v2->w12, RTW89_C2H_MAC_TX=
+_RPT_W12_TX_STATE_V2);
+> +               data_txcnt =3D le32_get_bits(rpt_v2->w14, RTW89_C2H_MAC_T=
+X_RPT_W14_DATA_TX_CNT_V2);
+> +       } else {
+> +               const struct rtw89_c2h_mac_tx_rpt *rpt;
+> +
+> +               rpt =3D (const struct rtw89_c2h_mac_tx_rpt *)c2h->data;
+> +               sw_define =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT=
+_W2_SW_DEFINE);
+> +               tx_status =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT=
+_W2_TX_STATE);
+> +               if (rtwdev->chip->chip_id =3D=3D RTL8852C)
+> +                       data_txcnt =3D le32_get_bits(rpt->w5, RTW89_C2H_M=
+AC_TX_RPT_W5_DATA_TX_CNT_V1);
+> +               else
+> +                       data_txcnt =3D le32_get_bits(rpt->w5, RTW89_C2H_M=
+AC_TX_RPT_W5_DATA_TX_CNT);
+> +       }
+> +
+> +       rtw89_debug(rtwdev, RTW89_DBG_TXRX,
+> +                   "C2H TX RPT: sn %d, tx_status %d, data_txcnt %d\n",
+> +                   sw_define, tx_status, data_txcnt);
+> +}
+> +
+>  static void
+>  rtw89_mac_c2h_mrc_tsf_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h,=
+ u32 len)
+>  {
+
+[...]
+
 
