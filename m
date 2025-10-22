@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-864774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316D3BFB857
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:03:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8BEBFB84E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FDA3BAA9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:02:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CAF24EBC2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033B7328621;
-	Wed, 22 Oct 2025 11:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I0UpFBcm"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939E5299A8C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C4C31B810;
+	Wed, 22 Oct 2025 11:02:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2D819D074
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130947; cv=none; b=CKQfmFZuhUYXygfET5s+S5QtAiKJv/TClZHWW7VOkx63dw+p1sj2Lbn4OTI2XxDbkwZNRptCpl0z/r6bLwEe4MkSOX+NW8o1HhnRdyKrBvoWcj2ur3szRvfgny1TwgYZyuTjqTGaw5CHj2/zff4wBh5Y7Xg05iwgGFnh34k+QiE=
+	t=1761130969; cv=none; b=KtpzEtVDR+K3fneE/u9SAd25TaPotIaF+S6u6rB8ofSJ2TX+RJY+X6Rk/wl4koVccsycrZj0eBb3tnd8irECdx8I3Mw6Y570s1BrzV0O2R8WSOmTvDA3tSGGWmvR+Jz4ohRgEg20qk85C7DfSitqw0sqYly4llLOQD2aRr4RXJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130947; c=relaxed/simple;
-	bh=U6QL/+JJidHtZRcPOVlNbuzyRSsR+FDJqN50LjHQQA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ECGU1YpN8t4v1fQtjkZJu0iYznZ4LhAoXFSR4BeJOpq4Xn6dDv5ATdU1yPhvP3c/q1S3kUQakr9qKbk7S1mApDFIW1tG5a+/FDWepbmK+lvx+bjJKGBy2d91TjTqRPAWjVkV/bxcJljpOVdEr1cUB9almDgLbEfQKZJ/Lly/HhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I0UpFBcm; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-475c1f433d8so10970875e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761130944; x=1761735744; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vr6iKNjWerf9nOZB9LbbHl2ovGZqdFL4pZFz4dDFkR4=;
-        b=I0UpFBcm6UnH98+cDRl7QpFxdB76mz4rMfoUgTjFVvtPgoXeLYMGzWKw+3VYhZChR0
-         DPDvBaaz4LSe0KqX5pfQnfFU+dqxi73jjsU2FwjjPcR3RIrXkxv+El5j2aZgytjK16ti
-         rliI4lzjmPy40U2nMid12v47jozRuIspYA8K7iiGMALMKk9mV+Clnf5lcpqLmh67+zF2
-         tmQMYcPMsGvw2nfmqwTQULA1tk6/VIG9L8XJ1MjFUHCtab3J4K1KowdQuCXegjmxG8R2
-         OtWp1mdFaUAQFRNwXSBONuLhWmWxBRRy7IzIoYUpy1tIFDqsTLwAcnpoyHpLNrW88W4N
-         k6Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761130944; x=1761735744;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vr6iKNjWerf9nOZB9LbbHl2ovGZqdFL4pZFz4dDFkR4=;
-        b=vEKD1LP2t6VIM884tdVrEexJATEA/adkTwdlgY4eW6rfetxOFATld3PXAkG7AjHCJ/
-         UEPTHvZqzy7ARJ42bvPSpt7Za+G9ef/W9wYYRcRJNEv1EVExSe6bTBKPaBVDqqcrFfym
-         Gqya+MuH6doyjHZSyMDXUxHP3OmktFSW4ddE/MLdI1myrzWW81zBbeCwPnmZu7h4K0wJ
-         v8DXPDH/mucFA3mHWvFgOpXKVjnxNDufqI7VFcAWesx5NU6HuC2ZfSGvJz/DO915M8/w
-         jgBZA6S0dSQ/KR1eqaNXrvgKbsIVpejCbh4xPVKwaY3t3hx3GPpEa8F+iTLW/Ai6tvw3
-         4FGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCRCyVC4WYISmsiaahS5uzPN0LGy0rNIVhhzgi768X9UwL7zvYcketEBiEeN0Jo62oyZq/yKKR/QC1m78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZA18kb+rE1aXY+hvv9YjWmMIYVTOtsCFoZiUj7DKDTva63DtY
-	dfAVFY61vszu9YDAe2arEg38Ap7/Po1ew/pF1ArnCEaBLm/HnE4ikkvvnaCVT31+2PU=
-X-Gm-Gg: ASbGncug2SLJrmwHWMy3UCYqKHziguh3schfIEdo8GCZrpQfgWo7NpJaBfAB0AcqAp0
-	MFdjLvnKJhizMVwV+He/XSKdiEeL4Z8mhFAmmAt3ISGEhf3r4hZyk9kGeMujIuH5xOgc+3Qpp/o
-	BSsqnQFP/SmdKTq4jNLadJI6gN62wFnph7OI2FVw1I+ZSQw16xuowDYOoKntUI+6yqAFYbb2h7e
-	6ZgCO4RlvZ+gST/RnwwF96Bc0BDWkADEcExAF0ZLJRPLWlvQOycKuB5W6uDHa+B9sX+NctqBSRH
-	zeRWCng6TFzWTKiaZsv5A7l65RqoSloz+C0kzYXkX7u/dS4BSFOl0Nu+v1rQ+5kYxw2iQwztJxq
-	TtPHGYqUfoVvSzpp0Hghas0rQYCvdzOr0VA/E3rU5I1m9uXiWGBM6h5CLVIt2wVFLknZaLw4qTU
-	ESTCNNPg==
-X-Google-Smtp-Source: AGHT+IH25nwlFz4tq4G1fC0j/+8ilfgBKiuMxxceSNPKsvkrvfcWUC6/1PbTIDPovElQDzNqkYF4Ag==
-X-Received: by 2002:a05:600c:540c:b0:471:12be:743 with SMTP id 5b1f17b1804b1-471178a3f93mr153198455e9.15.1761130943947;
-        Wed, 22 Oct 2025 04:02:23 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475c427c3casm38651185e9.4.2025.10.22.04.02.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:02:23 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:02:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Remi Buisson <remi.buisson@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] iio: imu: inv_icm45600: Add a missing return statement
- in probe()
-Message-ID: <aPi5vEp75jH0imQc@stanley.mountain>
+	s=arc-20240116; t=1761130969; c=relaxed/simple;
+	bh=ZyEF/RL1pft+ckVefYF1LGuyMxaoM8RNwGAC+KmPfSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNyXFF8kOu6WiB6D57jn2CCe3u7XaWLKv3kW3ocy8bc+IuPd4tMciQbQNbEdYy908kRRUMTZES5dGaiqlR+BTtkiMTjgBkTGfS+xx6myyR9u+XiQ4t/tPvAyVsUHaMEZz0IwHXZaUsyZ88YbASutJcZVKkYOU42bDB9RNV0v1aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24B7C1C00
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:02:39 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BE5D83F59E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:02:46 -0700 (PDT)
+Date: Wed, 22 Oct 2025 12:02:34 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Ketil Johnsen <ketil.johnsen@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and
+ FW event processing
+Message-ID: <aPi5yi9oND0b-7g5@e110455-lin.cambridge.arm.com>
+References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251022103014.1082629-1-ketil.johnsen@arm.com>
 
-The intention here was clearly to return -ENODEV but the return statement
-was missing.  It would result in an off by one read in i3c_chip_info[] on
-the next line.  Add the return statement.
+On Wed, Oct 22, 2025 at 12:30:13PM +0200, Ketil Johnsen wrote:
+> The function panthor_fw_unplug() will free the FW memory sections.
+> The problem is that there could still be pending FW events which are yet
+> not handled at this point. process_fw_events_work() can in this case try
+> to access said freed memory.
+> 
+> This fix introduces a destroyed state for the panthor_scheduler object,
+> and we check for this before processing FW events.
+> 
+> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
 
-Fixes: 1bef24e9007e ("iio: imu: inv_icm45600: add I3C driver for inv_icm45600 driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
-index b5df06b97d44..9247eae9b3e2 100644
---- a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
-+++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
-@@ -57,7 +57,8 @@ static int inv_icm45600_i3c_probe(struct i3c_device *i3cdev)
- 	}
- 
- 	if (chip == nb_chip)
--		dev_err_probe(&i3cdev->dev, -ENODEV, "Failed to match part id %d\n", whoami);
-+		return dev_err_probe(&i3cdev->dev, -ENODEV,
-+				     "Failed to match part id %d\n", whoami);
- 
- 	return inv_icm45600_core_probe(regmap, i3c_chip_info[chip], false, NULL);
- }
+Best regards,
+Liviu
+
+> ---
+> v2:
+> - Followed Boris's advice and handle the race purely within the
+>   scheduler block (by adding a destroyed state)
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 0cc9055f4ee52..4996f987b8183 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -315,6 +315,13 @@ struct panthor_scheduler {
+>  		 */
+>  		struct list_head stopped_groups;
+>  	} reset;
+> +
+> +	/**
+> +	 * @destroyed: Scheduler object is (being) destroyed
+> +	 *
+> +	 * Normal scheduler operations should no longer take place.
+> +	 */
+> +	bool destroyed;
+>  };
+>  
+>  /**
+> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
+>  	u32 events = atomic_xchg(&sched->fw_events, 0);
+>  	struct panthor_device *ptdev = sched->ptdev;
+>  
+> -	mutex_lock(&sched->lock);
+> +	guard(mutex)(&sched->lock);
+> +
+> +	if (sched->destroyed)
+> +		return;
+>  
+>  	if (events & JOB_INT_GLOBAL_IF) {
+>  		sched_process_global_irq_locked(ptdev);
+> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
+>  		sched_process_csg_irq_locked(ptdev, csg_id);
+>  		events &= ~BIT(csg_id);
+>  	}
+> -
+> -	mutex_unlock(&sched->lock);
+>  }
+>  
+>  /**
+> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
+>  	cancel_delayed_work_sync(&sched->tick_work);
+>  
+>  	mutex_lock(&sched->lock);
+> +	sched->destroyed = true;
+>  	if (sched->pm.has_ref) {
+>  		pm_runtime_put(ptdev->base.dev);
+>  		sched->pm.has_ref = false;
+> -- 
+> 2.47.2
+> 
+
 -- 
-2.51.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
