@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-865387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD48BFCF37
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:41:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AADBFCF13
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22EFC3ADF21
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21C01A60416
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8875134EEEC;
-	Wed, 22 Oct 2025 15:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390E034CFCC;
+	Wed, 22 Oct 2025 15:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EjtcJcxs"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dRsEDB8N"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5435534B18F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E9234D4DC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761147580; cv=none; b=dPf1TRScbbr+ZCWu9M72ksgljJh4o7qrpC/zFuCgpTxKY2ejGfnPGa2vNw/wA2MG2XCbYfDDs7+a2VAoKMfUh1ot8h9ogNKZ5Fz9/c9FhKIQshxzI/U07YCa0thSyjCdU7IEg09iAxKXu5aumUTpniipw9MUz1XUqEAR/Dz1XP8=
+	t=1761147579; cv=none; b=iv0C+/HzWvsyhQZxNJj2j5gePcORIYuf0NfSvoorlntsZVUp8EC6hzFgNq7O6X4F0oUExaEhM6yBSMniA9bnjtxpA9IuNzpmf84rdFzXv62flNU4GHqt5I9eOgQry4oJ83tL4qGeSqdrvd0FCsiAj/ndzLvlPlMCoUeK1FLCyO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761147580; c=relaxed/simple;
-	bh=NYG+ETPj2x0u/ibgpjtgBYkOFUnLc2KAk3q8zgMWzxY=;
+	s=arc-20240116; t=1761147579; c=relaxed/simple;
+	bh=rgtM81TJHrWSLfa7vgXN8x+VRWEr3crk3rI32ufCnI8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GYSX6GItOUrnCu23VfVIHoUGVXhih+tsaUEwUHRwXhGxH+SSsDc9fJze5Da0pwlpNZr5rs/XmDxus53/R0Hh2Mn31HFuvpoBmiLc3wQoOBHs64AnC3z8zuudddqjteQ80ykKxiJkVUcG02C9eQ9bzdE3NpWUBYaD1sNvwV9ai10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EjtcJcxs; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=hV+vLKha1MRZLYYQW0oZtS2yIw48CzVzW49hBkdYpfxYIZBbyPFKK4pc4NZI0emhphNIYYOYK8SaZYccINeocSO4NamMoN77sjw1DYERz7/L4rJJRx84D2sAMHvRKADg11Zc9WWK+iY0yr2XobFjZEQ+CqSdRbz1ryTAzMdnKQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dRsEDB8N; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 135104E41280;
-	Wed, 22 Oct 2025 15:39:31 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 79472C0AFFF;
+	Wed, 22 Oct 2025 15:39:12 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E0DBB606DC;
-	Wed, 22 Oct 2025 15:39:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3D59F102F243E;
-	Wed, 22 Oct 2025 17:39:28 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 43A38606DC;
+	Wed, 22 Oct 2025 15:39:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F02FB102F2446;
+	Wed, 22 Oct 2025 17:39:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761147569; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761147571; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=xGfi/wxxIWJSZ/P38qx/iDvGfCPuBRfGoA+hd2Uxo10=;
-	b=EjtcJcxs+0UCdQ+pznvyHrNM1liawuZYM64F72qC2RqV+9x8rEl+WJsipSOUhzltGfQfUd
-	gBiTdtw1ZZxUCRebSgzTMAAPNws1L3zFKJ1Xlwxwcf+fnJ8fti+0604ZNbxXB0qH8yI6lx
-	VilmT1rrFnuhdSTfu+O71skgHWxiIAr/JGHziMomXH+VRq2REjfAVzT/jLjRezJognCr8h
-	fXRWaEwIRWCcndBTQvG4tvPL7gTyYsJpYPVln/RB2EqM1n/pdozp7wH4rt9ZVRLV3DGa5y
-	nHCqCL0LfZoj3SZXujhtdJIiBLYUhf13nTXnrLxur2Hwv5AWUzuJISgr4PHYMw==
+	bh=rXG4FkA1j+W5VMPKCg2jc3dsIgNY9MiT6EY2h7XkH50=;
+	b=dRsEDB8N5JneNQn7hxvFvYDTFZXB94M8drF7Nw3EldISxvI7QUOhni5q7rJ8sLYL+9bS9j
+	fOJ4ihmj+2MHrAhbXPZP78MGYclF8pjtLvu+ko5sS3Vq77w9xCmxjoTI/tZTCx4RHV3Ex6
+	1AXI4kYPfiT0WhNGCCGFdGftCH7AY4Ma5H4HCpS5u/kReA31cOBCAqVWVKoYD6b352KjhQ
+	lvGNBohNxwRbt4UBSQ9SyIp81sFejQaL2wTcaBFMlEc4rZY0g25/JNyE5gFiAWlfpNbN/O
+	RzQpjSrGunvinQEMl453OqYRMRJW2uEQLB2VyzT6uylU2QUIqUFnHwjK9CkQtw==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 22 Oct 2025 17:39:06 +0200
-Subject: [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for
- generic PHYs
+Date: Wed, 22 Oct 2025 17:39:07 +0200
+Subject: [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done
+ by parent
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251022-macb-phy-v1-4-f29f28fae721@bootlin.com>
+Message-Id: <20251022-macb-phy-v1-5-f29f28fae721@bootlin.com>
 References: <20251022-macb-phy-v1-0-f29f28fae721@bootlin.com>
 In-Reply-To: <20251022-macb-phy-v1-0-f29f28fae721@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -77,46 +77,67 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
  Maxime Chevallier <maxime.chevallier@bootlin.com>, 
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Grow our clk-eyeq family; it knows how to spawn reset provider and pin
-controller children. Expand with a generic PHY driver on EyeQ5.
+Our parent driver (clk-eyeq) now does the
+	device_set_of_node_from_dev(dev, dev->parent)
+call through the newly introduced devm_auxiliary_device_create() helper.
+
+Doing it again in the reset-eyeq probe would be redundant.
+Drop both the WARN_ON() and the device_set_of_node_from_dev() call.
+Also fix the following comment that talks about "our newfound OF node".
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/clk-eyeq.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/reset/reset-eyeq.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
-index 664ce7d7868d..a9de57315e48 100644
---- a/drivers/clk/clk-eyeq.c
-+++ b/drivers/clk/clk-eyeq.c
-@@ -109,6 +109,7 @@ struct eqc_match_data {
+diff --git a/drivers/reset/reset-eyeq.c b/drivers/reset/reset-eyeq.c
+index 2d3998368a1c..8018fa895427 100644
+--- a/drivers/reset/reset-eyeq.c
++++ b/drivers/reset/reset-eyeq.c
+@@ -410,13 +410,6 @@ static int eqr_of_xlate_twocells(struct reset_controller_dev *rcdev,
+ 	return eqr_of_xlate_internal(rcdev, reset_spec->args[0], reset_spec->args[1]);
+ }
  
- 	const char		*reset_auxdev_name;
- 	const char		*pinctrl_auxdev_name;
-+	const char		*eth_phy_auxdev_name;
+-static void eqr_of_node_put(void *_dev)
+-{
+-	struct device *dev = _dev;
+-
+-	of_node_put(dev->of_node);
+-}
+-
+ static int eqr_probe(struct auxiliary_device *adev,
+ 		     const struct auxiliary_device_id *id)
+ {
+@@ -427,21 +420,8 @@ static int eqr_probe(struct auxiliary_device *adev,
+ 	int ret;
  
- 	unsigned int		early_clk_count;
- };
-@@ -361,6 +362,7 @@ static int eqc_probe(struct platform_device *pdev)
- 	/* Init optional auxiliary devices. */
- 	eqc_auxdev_create_optional(dev, base, data->reset_auxdev_name);
- 	eqc_auxdev_create_optional(dev, base, data->pinctrl_auxdev_name);
-+	eqc_auxdev_create_optional(dev, base, data->eth_phy_auxdev_name);
- 
- 	if (data->pll_count + data->div_count + data->fixed_factor_count == 0)
- 		return 0; /* Zero clocks, we are done. */
-@@ -521,6 +523,7 @@ static const struct eqc_match_data eqc_eyeq5_match_data = {
- 
- 	.reset_auxdev_name = "reset",
- 	.pinctrl_auxdev_name = "pinctrl",
-+	.eth_phy_auxdev_name = "phy",
- 
- 	.early_clk_count = ARRAY_SIZE(eqc_eyeq5_early_plls) +
- 			   ARRAY_SIZE(eqc_eyeq5_early_fixed_factors),
+ 	/*
+-	 * We are an auxiliary device of clk-eyeq. We do not have an OF node by
+-	 * default; let's reuse our parent's OF node.
+-	 */
+-	WARN_ON(dev->of_node);
+-	device_set_of_node_from_dev(dev, dev->parent);
+-	if (!dev->of_node)
+-		return -ENODEV;
+-
+-	ret = devm_add_action_or_reset(dev, eqr_of_node_put, dev);
+-	if (ret)
+-		return ret;
+-
+-	/*
+-	 * Using our newfound OF node, we can get match data. We cannot use
+-	 * device_get_match_data() because it does not match reused OF nodes.
++	 * Get match data. We cannot use device_get_match_data() because it does
++	 * not accept reused OF nodes; see device_set_of_node_from_dev().
+ 	 */
+ 	match = of_match_node(dev->driver->of_match_table, dev->of_node);
+ 	if (!match || !match->data)
 
 -- 
 2.51.1
