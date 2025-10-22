@@ -1,129 +1,404 @@
-Return-Path: <linux-kernel+bounces-864431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D74BFAC84
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:07:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBD6BFACAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD56E1A05B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F7718C6E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9D03009E2;
-	Wed, 22 Oct 2025 08:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CB430147E;
+	Wed, 22 Oct 2025 08:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFfAo+E7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OT+7p63A"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD722FFFA4;
-	Wed, 22 Oct 2025 08:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581202FD66C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120363; cv=none; b=HM3aJJRIkG7eQcTciyo5QFbJ6FqxQAbrp9svVChqqIsqUtZOLKNN3cah0wczp4NYBCVuiaEx61bjD+wGqSn67ixCdXmh745XtyFzPCN84et8fAM/D5Y72nDOlQPgNVMAnKdbzKwaOhvJaqz3qTqtNrMTowAFQm2Jh5Qd1mkNeZs=
+	t=1761120385; cv=none; b=R0KJAu9pp+H/SqOebt3nAIb8Nx/7NXwd5G+6tV0xwHryeUTJCqME7Bh1TR3u2d7UVQJ0yrrUrq+aIFGUxWAvzYtCQ0QCs+gkmej+Auwju7qdMVS6zCAEYf2yg6052S9wDHIrdACXRc2G4LaMAGkXnWOgCPTp30gg7NLlBrqCKMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120363; c=relaxed/simple;
-	bh=sEGPFxVuNAAvcbxq9cmERi5JemJMBcOvQ+wey3400IM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pZhEbrIrJvGQa9tYbrSbGyrG7OmYiX1xo57oMINicNOyDEbvHoBRAblXSpFK5R7tGYyL7QtReB9K2Vkneo7lcvik38KAYOaZGo1MeVseqCQ1howXn4k6HFQyyJiUh2szpQaLNshHCsdG4YLiuPcOYNGc5U7Of9WlxDiUIvKtLB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFfAo+E7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14654C4CEE7;
-	Wed, 22 Oct 2025 08:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761120363;
-	bh=sEGPFxVuNAAvcbxq9cmERi5JemJMBcOvQ+wey3400IM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kFfAo+E7F7mRth6Qp6bcZHzRhYDaHJ1asp5cb2jSUky6GXKe0h26lajT6YkeNahBh
-	 iXitqeoJRyGNUi+OA3B4bit9M/7fzpupAY++s7JK+zw4LXxY/APb3lHefJZ1s+SMnp
-	 VHdDht+/dvp/u1UtDeLPn03qXOBFiFyoU8zNxwCiHt2gQN6XT2oBqX6xOD+JTQ9kY8
-	 igU7gVk1bf16OLvFepxZ3rIjn+PgMQUsQ7bvlHeGLfsk5tY+AYQ88RPaELTWDJdaWz
-	 nJvs17nvzrUjd6a6FRUv8JyFl34omRMviDlT8KrrF5cDW0WtncjJ1nOO2sq234EeQK
-	 tDHIsEttYFU0w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vBTr6-0000000G6ap-1UvE;
-	Wed, 22 Oct 2025 08:06:00 +0000
-Date: Wed, 22 Oct 2025 09:05:59 +0100
-Message-ID: <867bwnwec8.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: <corbet@lwn.net>,
-	<catalin.marinas@arm.com>,
-	<will@kernel.org>,
-	<akpm@linux-foundation.org>,
-	<paulmck@kernel.org>,
-	<pawan.kumar.gupta@linux.intel.com>,
-	<mingo@kernel.org>,
-	<bp@alien8.de>,
-	<kees@kernel.org>,
-	<arnd@arndb.de>,
-	<fvdl@google.com>,
-	<broonie@kernel.org>,
-	<oliver.upton@linux.dev>,
-	<yeoreum.yun@arm.com>,
-	<james.morse@arm.com>,
-	<ardb@kernel.org>,
-	<hardevsinh.palaniya@siliconsignals.io>,
-	<linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: Add kernel parameter to disable trap EL0 accesses to IMPDEF regs
-In-Reply-To: <a3663aaf-14c9-4601-90e2-49650af90d7a@huawei.com>
-References: <20251021115428.557084-1-liaochang1@huawei.com>
-	<86ecqwwig3.wl-maz@kernel.org>
-	<a3663aaf-14c9-4601-90e2-49650af90d7a@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1761120385; c=relaxed/simple;
+	bh=11h9/7cLSx4w9Nlnk3G5SzB3wO2oo6urxq94rUmhgIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m3Cl+SAq1V1V4CI89wB59+paYrh6frub8YBpEMy3vjaXeota5jl25g7q1wkQabGS23K0ZfEN5pNfKJO5AI37udzmKONoxzmWQWxZuvvQtO5tdGWeWUcwg4iEPzn9NIEQiyIpIeIQG7DRfwBMMxjcv6g4WRkqicxcDBT71AFu4WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OT+7p63A; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso5831838a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761120382; x=1761725182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7pd1xamI1Z87Z/xGHN+zpZ0EaiU7Q5JCHed+8W4tHa8=;
+        b=OT+7p63A8dISxStTvo9VrMpayqSkKAjaP1vSYqkVnPTCZd63OD5So4W/qdMytcc5JV
+         RPpef6kzJf3PsKWDy9CssdnYD1lko9oVffl0irluGLkB0WMoV96K1KMdPX6eYFOpE79R
+         uIH+zEh1XQyeWsEIfm1gL4VaQM8FtzNgrMQ7zKLOl7X6d9LIJnk9fSYnf7Vs+mvgGni8
+         zx8S8jiIkzlOX7r5Tao4NET6l/ob2SvDodsizlT/EadDIgxFdsjkOmgjJVzsRvoEMe/r
+         U7efk7mq6X2fY9bMIN0Sposqgmqt2irN65wIqCQmH8KeYwnZsAAJunp4qHwHwb5bbpiO
+         nwAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761120382; x=1761725182;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7pd1xamI1Z87Z/xGHN+zpZ0EaiU7Q5JCHed+8W4tHa8=;
+        b=LFz0OCITVMLhZ0+0KeHCg32h1rZKaf3WxNBcZlshFK6y2mW/8OjavutVFDoj/a6wSe
+         sVEsIeCXrg5C3gFZzaaKrljtPL8U9oBTFV2RTr2D07At/EaGYVuw5yXZ+qfyA1jwSJh8
+         V2x1oRebps2iTdFV4U/zfLM/GHVtvTyTcIQ+vFz+QL1f2DUVwZGJaDTVQxnOGoztUnEU
+         6qqtjXb6Qq7na3Dre4B+lhdijLs+w4GJ2vi6au+1XZMHjW4vW4ZlLDR9c5hsbrEUTkGE
+         waa7RnOnuLrsbafZMsU6mr6t7vZeQQwxUyOOG4DRt0XRNHIKrJFMWIXNHRcrpR1Y2bCR
+         aMQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnz3/lDbwDLaT+T2sF0fCBRRw6EiVGsp/6SnP0vTWAhCCIpmeAkJzE9IPj2ULWC6ZNJy8U/FHtXR/sBWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwueRQJwRc+fjPtywvQBZ0w36T7NLoUUvWlT3/dCKyNyqa+0Lam
+	Trp8bu55jlrJrZSSGQ9au0yh+eiPaXe0lFRuc7xbtk9IXZMqfdHdyw0f
+X-Gm-Gg: ASbGnctzNQItBo8EQcHQFz5Q1Ip8DBSiPlfRjthbRpuWZkzo5eCKh065uYIAxeFtyf1
+	pR1vIzOKCbL1DBWSCZx9Amgncy25v2hUjil35/N/Pge8Bwt3ZtMzH8MlvxliHXnC3KrU97ZK9PT
+	d0J6juRvu69GcwM5e0YOpXwKtepa8uy0V4hwzF7HIlKWbcpUWWxRvcE/5BP8SdorfNR5hgLrUnX
+	f7sKsABYh04Qg4z3oSiQxXIIeSjiuVCgIGC6Crqr2CkbNThs5oLra/N5/UKoHsvBzKt4XBfIV1V
+	r58F+LoURfzwcaUouxjYQPgsSyWXiDpDV5O9MraQFrPiOzC8dBB0Qpeu1xx7xVdtLQ6my/O9VNN
+	g+WWo+PzEk19Y2xLZmT6v0KCQURcEc0h/qo48p4QfHHvpv7A/AS/S2luObNoCJEMRpx+sA7/6gv
+	afKhmBBj0=
+X-Google-Smtp-Source: AGHT+IE70+TREWXzMJPqDOGvy7TIW4dMzKInSqb2lFkSA22INPn9248XY9+0iTdOyzuydSqJYdoiQQ==
+X-Received: by 2002:a17:90b:3942:b0:336:b60f:3936 with SMTP id 98e67ed59e1d1-33bcf87ab20mr29204108a91.12.1761120382423;
+        Wed, 22 Oct 2025 01:06:22 -0700 (PDT)
+Received: from 7950hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223c7fb5sm1805330a91.2.2025.10.22.01.06.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 01:06:21 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: ast@kernel.org,
+	jolsa@kernel.org
+Cc: daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	leon.hwang@linux.dev,
+	jiang.biao@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 08/10] selftests/bpf: add testcases for tracing session
+Date: Wed, 22 Oct 2025 16:06:11 +0800
+Message-ID: <20251022080613.555463-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: liaochang1@huawei.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, paulmck@kernel.org, pawan.kumar.gupta@linux.intel.com, mingo@kernel.org, bp@alien8.de, kees@kernel.org, arnd@arndb.de, fvdl@google.com, broonie@kernel.org, oliver.upton@linux.dev, yeoreum.yun@arm.com, james.morse@arm.com, ardb@kernel.org, hardevsinh.palaniya@siliconsignals.io, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 22 Oct 2025 02:35:02 +0100,
-"Liao, Chang" <liaochang1@huawei.com> wrote:
->=20
-> =E5=9C=A8 2025/10/21 20:25, Marc Zyngier =E5=86=99=E9=81=93:
-> > On Tue, 21 Oct 2025 12:54:28 +0100,
-> > Liao Chang <liaochang1@huawei.com> wrote:
-> >>
-> >> Add kernel parameter to allow system-wide EL0 access to IMPDEF system
-> >> regregisters and instructions without trapping to EL1/EL2. Since trap
-> >> overhead will compromises benefits, and it's even worse in
-> >> virtualization on CPU where certain IMPDEF registers and instructions
-> >> are designed for EL0 performance use.
-> >=20
-> > Since you mention virtualisation, I want to be clear: there is no way
-> > I will consider anything like this for KVM. KVM will always trap and
-> > UNDEF such register accesses, no matter where they come from (EL0 or
-> > EL1).
-> >=20
-> > Allowing such registers to be accessed from within a guest would make
-> > it impossible to context-switch or save/restore the guest correctly.
->=20
-> You've got that right, it seems like both the guest and the host would
-> need to save and restore those IMDDEF registers with the VM or task
-> context.The only exception would be if the registers aren't for saving
-> state or configuration, but instead just act as an interface to trigger
-> a special CPU function, such as ICC_IAR1.
+Add testcases for BPF_TRACE_SESSION.
 
-Funny that you mention the IAR register. Because contrary to what you
-seem to indicate, IAR does impact state outside of simply acknowledging
-an interrupt. What do you think happens to PMR, APRs, and so on?
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+ .../selftests/bpf/prog_tests/fsession_test.c  |  95 ++++++++++
+ .../selftests/bpf/progs/fsession_test.c       | 175 ++++++++++++++++++
+ 2 files changed, 270 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fsession_test.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fsession_test.c
 
-	M.
+diff --git a/tools/testing/selftests/bpf/prog_tests/fsession_test.c b/tools/testing/selftests/bpf/prog_tests/fsession_test.c
+new file mode 100644
+index 000000000000..d70bdb683691
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/fsession_test.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 ChinaTelecom */
++#include <test_progs.h>
++#include "fsession_test.skel.h"
++
++static int check_result(struct fsession_test *skel)
++{
++	LIBBPF_OPTS(bpf_test_run_opts, topts);
++	int err, prog_fd;
++
++	/* Trigger test function calls */
++	prog_fd = bpf_program__fd(skel->progs.test1);
++	err = bpf_prog_test_run_opts(prog_fd, &topts);
++	if (!ASSERT_OK(err, "test_run_opts err"))
++		return err;
++	if (!ASSERT_OK(topts.retval, "test_run_opts retval"))
++		return topts.retval;
++
++	for (int i = 0; i < sizeof(*skel->bss) / sizeof(__u64); i++) {
++		if (!ASSERT_EQ(((__u64 *)skel->bss)[i], 1, "test_result"))
++			return -EINVAL;
++	}
++
++	/* some fields go to the "data" sections, not "bss" */
++	for (int i = 0; i < sizeof(*skel->data) / sizeof(__u64); i++) {
++		if (!ASSERT_EQ(((__u64 *)skel->data)[i], 1, "test_result"))
++			return -EINVAL;
++	}
++	return 0;
++}
++
++static void test_fsession_basic(void)
++{
++	struct fsession_test *skel = NULL;
++	int err;
++
++	skel = fsession_test__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "fsession_test__open_and_load"))
++		goto cleanup;
++
++	err = fsession_test__attach(skel);
++	if (!ASSERT_OK(err, "fsession_attach"))
++		goto cleanup;
++
++	check_result(skel);
++cleanup:
++	fsession_test__destroy(skel);
++}
++
++static void test_fsession_reattach(void)
++{
++	struct fsession_test *skel = NULL;
++	int err;
++
++	skel = fsession_test__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "fsession_test__open_and_load"))
++		goto cleanup;
++
++	/* First attach */
++	err = fsession_test__attach(skel);
++	if (!ASSERT_OK(err, "fsession_first_attach"))
++		goto cleanup;
++
++	if (check_result(skel))
++		goto cleanup;
++
++	/* Detach */
++	fsession_test__detach(skel);
++
++	/* Reset counters */
++	memset(skel->bss, 0, sizeof(*skel->bss));
++
++	/* Second attach */
++	err = fsession_test__attach(skel);
++	if (!ASSERT_OK(err, "fsession_second_attach"))
++		goto cleanup;
++
++	if (check_result(skel))
++		goto cleanup;
++
++cleanup:
++	fsession_test__destroy(skel);
++}
++
++void test_fsession_test(void)
++{
++#if !defined(__x86_64__)
++	test__skip();
++	return;
++#endif
++	if (test__start_subtest("fsession_basic"))
++		test_fsession_basic();
++	if (test__start_subtest("fsession_reattach"))
++		test_fsession_reattach();
++}
+diff --git a/tools/testing/selftests/bpf/progs/fsession_test.c b/tools/testing/selftests/bpf/progs/fsession_test.c
+new file mode 100644
+index 000000000000..3a756272374d
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/fsession_test.c
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 ChinaTelecom */
++#include <vmlinux.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++char _license[] SEC("license") = "GPL";
++
++__u64 test1_entry_result = 0;
++__u64 test1_exit_result = 0;
++
++SEC("fsession/bpf_fentry_test1")
++int BPF_PROG(test1, int a, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		/* This is entry */
++		test1_entry_result = a == 1 && ret == 0;
++		/* Return 0 to allow exit to be called */
++		return 0;
++	}
++
++	/* This is exit */
++	test1_exit_result = a == 1 && ret == 2;
++	return 0;
++}
++
++__u64 test2_entry_result = 0;
++__u64 test2_exit_result = 1;
++
++SEC("fsession/bpf_fentry_test2")
++int BPF_PROG(test2, int a, __u64 b, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		/* This is entry */
++		test2_entry_result = a == 2 && b == 3 && ret == 0;
++		/* Return non-zero value to block exit call */
++		return 1;
++	}
++
++	/* This is exit - should not be called due to blocking */
++	test2_exit_result = 0;
++	return 0;
++}
++
++__u64 test3_entry_result = 0;
++__u64 test3_exit_result = 0;
++
++SEC("fsession/bpf_fentry_test3")
++int BPF_PROG(test3, char a, int b, __u64 c, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		test3_entry_result = a == 4 && b == 5 && c == 6 && ret == 0;
++		return 0;
++	}
++
++	test3_exit_result = a == 4 && b == 5 && c == 6 && ret == 15;
++	return 0;
++}
++
++__u64 test4_entry_result = 0;
++__u64 test4_exit_result = 0;
++
++SEC("fsession/bpf_fentry_test4")
++int BPF_PROG(test4, void *a, char b, int c, __u64 d, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		test4_entry_result = a == (void *)7 && b == 8 && c == 9 && d == 10 && ret == 0;
++		return 0;
++	}
++
++	test4_exit_result = a == (void *)7 && b == 8 && c == 9 && d == 10 && ret == 34;
++	return 0;
++}
++
++__u64 test5_entry_result = 0;
++__u64 test5_exit_result = 0;
++
++SEC("fsession/bpf_fentry_test5")
++int BPF_PROG(test5, __u64 a, void *b, short c, int d, __u64 e, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		test5_entry_result = a == 11 && b == (void *)12 && c == 13 && d == 14 &&
++			e == 15 && ret == 0;
++		return 0;
++	}
++
++	test5_exit_result = a == 11 && b == (void *)12 && c == 13 && d == 14 &&
++		e == 15 && ret == 65;
++	return 0;
++}
++
++__u64 test6_entry_result = 0;
++__u64 test6_exit_result = 1;
++
++SEC("fsession/bpf_fentry_test6")
++int BPF_PROG(test6, __u64 a, void *b, short c, int d, void *e, __u64 f, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		test6_entry_result = a == 16 && b == (void *)17 && c == 18 && d == 19 &&
++			e == (void *)20 && f == 21 && ret == 0;
++		return 1;
++	}
++
++	test6_exit_result = 0;
++	return 0;
++}
++
++__u64 test7_entry_result = 0;
++__u64 test7_exit_result = 0;
++
++SEC("fsession/bpf_fentry_test7")
++int BPF_PROG(test7, struct bpf_fentry_test_t *arg, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		if (!arg)
++			test7_entry_result = ret == 0;
++		return 0;
++	}
++
++	if (!arg)
++		test7_exit_result = 1;
++	return 0;
++}
++
++__u64 test8_entry_result = 0;
++__u64 test8_exit_result = 1;
++/*
++ * test1, test8 and test9 hook the same target to verify the "ret" is always
++ * 0 in the entry.
++ */
++SEC("fsession/bpf_fentry_test1")
++int BPF_PROG(test8, int a, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		test8_entry_result = a == 1 && ret == 0;
++		return -21;
++	}
++
++	/* This is exit */
++	test8_exit_result = 0;
++	return 0;
++}
++
++__u64 test9_entry_result = 0;
++__u64 test9_exit_result = 1;
++
++SEC("fsession/bpf_fentry_test1")
++int BPF_PROG(test9, int a, int ret)
++{
++	bool is_exit = bpf_tracing_is_exit(ctx);
++
++	if (!is_exit) {
++		test9_entry_result = a == 1 && ret == 0;
++		return -22;
++	}
++
++	test9_exit_result = 0;
++	return 0;
++}
+-- 
+2.51.1.dirty
 
---=20
-Without deviation from the norm, progress is not possible.
 
