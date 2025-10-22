@@ -1,227 +1,180 @@
-Return-Path: <linux-kernel+bounces-865877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2921BFE3A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:54:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9203FBFE367
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A11019C776E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:54:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFED34FACA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0571530103C;
-	Wed, 22 Oct 2025 20:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989EF2FC03F;
+	Wed, 22 Oct 2025 20:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="p2yos3Nf"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DxOz1zgT"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DDD2F4A19
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C982FC037
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761166457; cv=none; b=uNYPzNk3FKOtTBEr8UnfgG2YA+JJrDqSMD08clhRsYTnAZqko6wHZbnN/FdSiAl6EwyHQAc2YSLAVo+JFflZiwWkhWsG9Kc1tZfac2wcswoyxoyuYDjROdW3El/Q9/T2mSAqqkRuzKp5wjST6tm6COmh/1qXSj5qcAu/NcpsmYw=
+	t=1761165864; cv=none; b=eQ5L/gVnJhEs8aGujQYuf68NN4otbcibKVALPlDk9YyOWvgOe+TlAh1OpL4k+GpLdGo+qsdm/+mSjFjdSnIuZXDdzWYJLWgvA8IchJhC9uJH4lIGcIB8NIey5fz7rft0Tcuc2Iubm/3W214NTh0q3hadH1I17RWsJYUkRFstBC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761166457; c=relaxed/simple;
-	bh=XuoRQpGu85uToua5aCbvckIW16Pk6aE3sHCJvIzxZIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iDNbAaG4KUYn4eoTlCcAPc7q+GgYhh5eDoqzBZdKaRZlbdASX61ql7AMkj7Hn11LC7n9tXl/7zs/Tni7CYmK2zv05Bk8dXEmeGNKlPLOZgtuCiACoKRfPX3own0dYVp77V3x1fTtOp9eZCy9tPrEhSO5Y5LdiWU/yCajk69RDVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=p2yos3Nf; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1761166454;
- bh=6By88Zpn3m6uq4P5zQ8yb72SxI9R7gfGj/HM/rNU4uY=;
- b=p2yos3NfqiRj77gGHMWV9fn4tyyltj4MxIca5FvX6Yf0laIC9h2aFJRqhRDVkHR9i6W7KqxLO
- lP65HcezySG1vAZNrjjodkkUsgunqw48sbdwoaethLWQSXn9iMwxliwQyA9nIzDZOVLuK6r69LK
- IU45JEL+SxhjGKHwUk+nMCzbQKYdqOYaF6ZdbdTwtfIOp1uoXIuAILZdZOIyelVCkJ7TurLik7U
- vJZyGZ14lMgxf+mRJaUmqItejqcORIs9s/ms2uWebQ93rn3tKgTUfTAGeLf5jPPVa4bma575eeL
- waFWmp9damENvyNUn2MoU5fKzIU9WxfEjdtjMEAj6eGw==
-X-Forward-Email-ID: 68f94203b0b13797a645472d
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.3.0
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <fe54009a-ee39-43a0-a337-93c46cd7dabe@kwiboo.se>
-Date: Wed, 22 Oct 2025 22:43:41 +0200
+	s=arc-20240116; t=1761165864; c=relaxed/simple;
+	bh=rvDeefinbPv2YGUj1NeXEsIjJLXYrRehCCRZXtg9eUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3EwIia+8I+eMeDGlGTavuijdJScBMZ2GNKhEwbZ8+zD/DYF0ArFbKZCtE3eHLxU5AbDAOzqMs9HpNcmFbthhcF6hNQdrxURaw9/ysGNpBfTDxiRWtAimquxNV/nJ+B6Guxuth2KwuWFTPDuObAFixaW3AdofW2Cv7LTsRZnx+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DxOz1zgT; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-27c369f8986so65455ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761165862; x=1761770662; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJ1rvUId+C38Hp2S9OgFvth2ijSipK3zgN+vwBP9Rlo=;
+        b=DxOz1zgT62K10+GLVClGykQOGp9nHgzJ0cU0l2qSIbi9wc3rMcg6v9BfPHj8J1RrHS
+         xNsWCGzI3fdwyubH7lvVDl6AR2LgSP0dRUCCprOU6b4pimCTIy4obGf8t+lN/f6dniRT
+         VvcikHbeKjo2eUXSmvRnWghxlrNE+pvE+8IPA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761165862; x=1761770662;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJ1rvUId+C38Hp2S9OgFvth2ijSipK3zgN+vwBP9Rlo=;
+        b=gqan0U7LaNxnLmXTO+36ClBaE+KRkrPnYxz2eZwhJBmZ4pKO7Xs07gfExY/vJiWdS5
+         YqJttk/gJnZpeAKWsAe6Dhhx8Q3CIxTxz3XJQgu84/JEpsRDjuDycuFL/ABb2ZGIhDDW
+         C3ivfqj7hHwIVFlZTNjJaCyKEW+MgzVhtvJH1lHN/cU9Ij5SYKO8jkZGExFFXT8ipCey
+         1qkZmJNMUDbSLTdd4WnNohfnwYHFSGrt7mrdI89+CDaP/0FPTvvbHrrZtnL5ver2QwBZ
+         mL0TbhnwMVIBmWpFlPN1ziNg4plMP5fKFZwxL+Wea9zEd+TyDlgoUNqMvDkrmYnyJOTR
+         O22g==
+X-Forwarded-Encrypted: i=1; AJvYcCVRXzun3f4RjRnvw0akNylJNddTRtRFAGai1hqQFBUyBjFhkmz6/S1psebgL3DaGfK+067YVYc/k4gZWpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE+ioxF9NFRiFeLoc/JN2mzBs/FLkPIIeKn7DzqilcA9pd9oJR
+	5XRGMNb62kwvE/dpjqMPprZ1P6vjOR4Bc4fwGW3z4dnNigzsRnu4DXiAw5+APET/2Q==
+X-Gm-Gg: ASbGncvkOiNlK7Yl7PDxAWL25OIhTKBQs2db3nWZyj/TrW6sANzJfS4hlw77Wf2+7eE
+	IKQzB7PTcWpTaw2Ac0P+g5pWriuahtthAhTr8tm8ss6en/IfIYgUJrHV2PEkWs0uQvltak9mWoF
+	PSAeZs/l2a1+L6wUKkpKzAR8RISAAOTzweP77CZjVocuhCHOXJjngcsEgx3B1bzzpeYTfnXBhtx
+	yqC7Lgd/fjPbnvp2nPrzvll/vXHBsNCAXm9N3QYi8+mV/eDF5usydHzGnbwYr5J+gQNLIWns7Fk
+	TKSxi0P+tjD1Zmxacg2JgnB/Nhd6sf9kz/db83Ta6yzoAWWRlkUBMiVf1qrSOX8lO22SUrnxBVs
+	Qs8RwLlqW1gwFrJKTpFqOqniFFnwpS6+6LfO0720ItUtfds8khtG4anIM255O01twtsFGoURjmR
+	804dt2cgDF40h5ugxxYbKHckSLLgCtDoo3RPIBcDetoroEEB/B
+X-Google-Smtp-Source: AGHT+IFgbVcDkHTMHyBa1wbxhDGJdwbBOb+XzqgTR8+4V5KD8VlmeRYetYHI2XsnBS3QCNh2s92Yig==
+X-Received: by 2002:a17:903:19f0:b0:286:d3c5:4d15 with SMTP id d9443c01a7336-290cb947798mr327720635ad.36.1761165862351;
+        Wed, 22 Oct 2025 13:44:22 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:4874:d890:58d4:a06b])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2946de02cb7sm349135ad.40.2025.10.22.13.44.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 13:44:21 -0700 (PDT)
+Date: Wed, 22 Oct 2025 13:44:20 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v1] PM: runtime: docs: Update pm_runtime_allow/forbid()
+ documentation
+Message-ID: <aPlCJB3nzSbpO-S2@google.com>
+References: <12780841.O9o76ZdvQC@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] ethernet: stmmac: dwmac-rk: Add RK3506 GMAC support
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- David Wu <david.wu@rock-chips.com>
-References: <20251021224357.195015-1-heiko@sntech.de>
- <20251021224357.195015-5-heiko@sntech.de>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20251021224357.195015-5-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12780841.O9o76ZdvQC@rafael.j.wysocki>
 
-Hi Heiko,
+Hi Rafael,
 
-On 10/22/2025 12:43 AM, Heiko Stuebner wrote:
-> From: David Wu <david.wu@rock-chips.com>
+On Wed, Oct 22, 2025 at 10:26:23PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Add the needed glue blocks for the RK3506-specific setup.
+> Drop confusing descriptions of pm_runtime_allow() and pm_runtime_forbid()
+> from Documentation/power/runtime_pm.rst and update the kerneldoc comments
+> of these functions to better explain their purpose.
 > 
-> The RK3506 dwmac only supports up to 100MBit with a RMII PHY,
-> but no RGMII.
-> 
-> Signed-off-by: David Wu <david.wu@rock-chips.com>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Link: https://lore.kernel.org/linux-pm/08976178-298f-79d9-1d63-cff5a4e56cc3@linux.intel.com/
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
->  .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 79 +++++++++++++++++++
->  1 file changed, 79 insertions(+)
+>  Documentation/power/runtime_pm.rst |   10 ----------
+>  drivers/base/power/runtime.c       |   17 +++++++++++++----
+>  2 files changed, 13 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> index 51ea0caf16c1..e1e036e7163c 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> @@ -827,6 +827,84 @@ static const struct rk_gmac_ops rk3399_ops = {
->  	.set_speed = rk3399_set_speed,
->  };
+> --- a/Documentation/power/runtime_pm.rst
+> +++ b/Documentation/power/runtime_pm.rst
+> @@ -480,16 +480,6 @@ drivers/base/power/runtime.c and include
+>    `bool pm_runtime_status_suspended(struct device *dev);`
+>      - return true if the device's runtime PM status is 'suspended'
 >  
-> +#define RK3506_GRF_SOC_CON8		0X0020
-> +#define RK3506_GRF_SOC_CON11		0X002c
+> -  `void pm_runtime_allow(struct device *dev);`
+> -    - set the power.runtime_auto flag for the device and decrease its usage
+> -      counter (used by the /sys/devices/.../power/control interface to
+> -      effectively allow the device to be power managed at run time)
+> -
+> -  `void pm_runtime_forbid(struct device *dev);`
+> -    - unset the power.runtime_auto flag for the device and increase its usage
+> -      counter (used by the /sys/devices/.../power/control interface to
+> -      effectively prevent the device from being power managed at run time)
+> -
 
-Maybe 0x0020 and 0x002c (lower case x) ?
+It feels a little odd just to strip 2 of the APIs from this doc, while
+the rest remain. I'm not too familiar with ReST, nor with kerneldoc
+integration, but would something like this work as a replacement?
 
-> +
-> +#define RK3506_GMAC_RMII_MODE		GRF_BIT(1)
-> +
-> +#define RK3506_GMAC_CLK_RMII_DIV2	GRF_BIT(3)
-> +#define RK3506_GMAC_CLK_RMII_DIV20	GRF_CLR_BIT(3)
-> +
-> +#define RK3506_GMAC_CLK_SELET_CRU	GRF_CLR_BIT(5)
-> +#define RK3506_GMAC_CLK_SELET_IO	GRF_BIT(5)
+.. kernel-doc:: drivers/base/power/runtime.c
+   :export:
 
-s/SELET/SELECT/
+.. kernel-doc:: include/linux/pm_runtime.h
 
-> +
-> +#define RK3506_GMAC_CLK_RMII_GATE	GRF_BIT(2)
-> +#define RK3506_GMAC_CLK_RMII_NOGATE	GRF_CLR_BIT(2)
-> +
-> +static void rk3506_set_to_rmii(struct rk_priv_data *bsp_priv)
-> +{
-> +	struct device *dev = bsp_priv->dev;
-> +	unsigned int id = bsp_priv->id, offset;
-> +
-> +	if (IS_ERR(bsp_priv->grf)) {
-> +		dev_err(dev, "%s: Missing rockchip,grf property\n", __func__);
-> +		return;
-> +	}
+>    `void pm_runtime_no_callbacks(struct device *dev);`
+>      - set the power.no_callbacks flag for the device and remove the runtime
+>        PM attributes from /sys/devices/.../power (or prevent them from being
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -1664,9 +1664,12 @@ EXPORT_SYMBOL_GPL(devm_pm_runtime_get_no
+>   * pm_runtime_forbid - Block runtime PM of a device.
+>   * @dev: Device to handle.
+>   *
+> - * Increase the device's usage count and clear its power.runtime_auto flag,
+> - * so that it cannot be suspended at run time until pm_runtime_allow() is called
+> - * for it.
+> + * Resume @dev if already suspended and block runtime suspend of @dev in such
+> + * a way that it can be unblocked via the /sys/devices/.../power/control
+> + * interface, or otherwise by calling pm_runtime_allow().
+> + *
+> + * Calling this function many times in a row has the same effect as calling it
+> + * once.
+>   */
+>  void pm_runtime_forbid(struct device *dev)
+>  {
+> @@ -1687,7 +1690,13 @@ EXPORT_SYMBOL_GPL(pm_runtime_forbid);
+>   * pm_runtime_allow - Unblock runtime PM of a device.
+>   * @dev: Device to handle.
+>   *
+> - * Decrease the device's usage count and set its power.runtime_auto flag.
+> + * Unblock runtime suspend of @dev after it has been blocked by
+> + * pm_runtime_forbid() (for instance, if it has been blocked via the
+> + * /sys/devices/.../power/control interface), check if @dev can be
+> + * suspended and suspend it in that case.
+> + *
+> + * Calling this function many times in a row has the same effect as calling it
+> + * once.
+>   */
+>  void pm_runtime_allow(struct device *dev)
+>  {
 
-Please drop this, it is already checked in rk_gmac_setup().
+The rewording looks helpful, as it's much more API-user-oriented now. So
+this looks good to me as-is, even if there are other potential
+improvements to make:
 
-> +
-> +	offset = (id == 1) ? RK3506_GRF_SOC_CON11 : RK3506_GRF_SOC_CON8;
-> +	regmap_write(bsp_priv->grf, offset, RK3506_GMAC_RMII_MODE);
-> +}
-> +
-> +static int rk3506_set_speed(struct rk_priv_data *bsp_priv,
-> +			    phy_interface_t interface, int speed)
-> +{
-> +	struct device *dev = bsp_priv->dev;
-> +	unsigned int val, offset, id = bsp_priv->id;
-> +
-> +	switch (speed) {
-> +	case 10:
-> +		val = RK3506_GMAC_CLK_RMII_DIV20;
-> +		break;
-> +	case 100:
-> +		val = RK3506_GMAC_CLK_RMII_DIV2;
-> +		break;
-> +	default:
-> +		dev_err(dev, "unknown speed value for RMII! speed=%d", speed);
-> +		return -EINVAL;
-> +	}
-> +
-> +	offset = (id == 1) ? RK3506_GRF_SOC_CON11 : RK3506_GRF_SOC_CON8;
-> +	regmap_write(bsp_priv->grf, offset, val);
-> +
-> +	return 0;
+Reviewed-by: Brian Norris <briannorris@chromium.org>
 
-This should probably be converted to use rk_reg_speed_data with
-something like:
-
-static const struct rk_reg_speed_data rk3506_reg_speed_data = {
-	.rmii_10 = RK3506_GMAC_CLK_RMII_DIV20,
-	.rmii_100 = RK3506_GMAC_CLK_RMII_DIV2,
-};
-
-and:
-
-	return rk_set_reg_speed(bsp_priv, &rk3506_reg_speed_data,
-				offset, interface, speed);
-
-> +}
-> +
-> +static void rk3506_set_clock_selection(struct rk_priv_data *bsp_priv,
-> +				       bool input, bool enable)
-> +{
-> +	unsigned int value, offset, id = bsp_priv->id;
-> +
-> +	offset = (id == 1) ? RK3506_GRF_SOC_CON11 : RK3506_GRF_SOC_CON8;
-> +
-> +	value = input ? RK3506_GMAC_CLK_SELET_IO :
-> +			RK3506_GMAC_CLK_SELET_CRU;
-
-s/SELET/SELECT/
-
-Regards,
-Jonas
-
-> +	value |= enable ? RK3506_GMAC_CLK_RMII_NOGATE :
-> +			  RK3506_GMAC_CLK_RMII_GATE;
-> +	regmap_write(bsp_priv->grf, offset, value);
-> +}
-> +
-> +static const struct rk_gmac_ops rk3506_ops = {
-> +	.set_to_rmii = rk3506_set_to_rmii,
-> +	.set_speed = rk3506_set_speed,
-> +	.set_clock_selection = rk3506_set_clock_selection,
-> +	.regs_valid = true,
-> +	.regs = {
-> +		0xff4c8000, /* gmac0 */
-> +		0xff4d0000, /* gmac1 */
-> +		0x0, /* sentinel */
-> +	},
-> +};
-> +
->  #define RK3528_VO_GRF_GMAC_CON		0x0018
->  #define RK3528_VO_GRF_MACPHY_CON0	0x001c
->  #define RK3528_VO_GRF_MACPHY_CON1	0x0020
-> @@ -1808,6 +1886,7 @@ static const struct of_device_id rk_gmac_dwmac_match[] = {
->  	{ .compatible = "rockchip,rk3366-gmac", .data = &rk3366_ops },
->  	{ .compatible = "rockchip,rk3368-gmac", .data = &rk3368_ops },
->  	{ .compatible = "rockchip,rk3399-gmac", .data = &rk3399_ops },
-> +	{ .compatible = "rockchip,rk3506-gmac", .data = &rk3506_ops },
->  	{ .compatible = "rockchip,rk3528-gmac", .data = &rk3528_ops },
->  	{ .compatible = "rockchip,rk3568-gmac", .data = &rk3568_ops },
->  	{ .compatible = "rockchip,rk3576-gmac", .data = &rk3576_ops },
-
+Thanks!
 
