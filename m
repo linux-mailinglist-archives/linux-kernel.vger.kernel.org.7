@@ -1,264 +1,232 @@
-Return-Path: <linux-kernel+bounces-865297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63D9BFCC21
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:05:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5515BFCBC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF933A2980
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CD0189236E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA87D347FFF;
-	Wed, 22 Oct 2025 14:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBBC34C14E;
+	Wed, 22 Oct 2025 15:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FgYCUYYN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OxD0FsVx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HC9MwwDk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cqraaotP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TzK86C84"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010015.outbound.protection.outlook.com [52.101.84.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3468334C13
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761145190; cv=none; b=R844CgrkKlkkItTbquMrAcI0QSJP5NBgTusTeruwcs2uKI0DNiD3endv2b2EQmBaUGGuOzsLSJTilk4FKueofqBaym5AXGVhLNyVOvj2BKBbYSxWoo0YJbc011votXP4B4Z6LlzXcoeTW+rNqrVcw0ZBsghMPNijq6yAsijtISo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761145190; c=relaxed/simple;
-	bh=i/naCX/oKLD6qFGPZQj401JA46MhUpPWdHVPy18BIkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TczIfhfWNrBWrtrJzJ6De0KWDRrh7+/H0kdbnRDV/WLBo1xB2P+gf6ggGFhTo5Lz59b/GpUifsQgjL+PX5hPBdX/zxDMcx37MrRFmOK//+VJnX4Is08cA9ptxyqgHAG2yAFaKowY60Wtoub4GzKr2EtUVvDkzQJMRR1UZVaPTuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FgYCUYYN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OxD0FsVx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HC9MwwDk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cqraaotP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C48E1211B0;
-	Wed, 22 Oct 2025 14:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761145182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kJRe14lXO8+Q4511d6OrUEQHfX+t56hx4yTEPXEsO68=;
-	b=FgYCUYYNEjTkPtjuZ6TesC6ukMK8CIsktyvvw5w0D/x4BPc2JFPxc8GECCb/b7AKO0KXua
-	k5NB/1ql2Kfv4v6QzpaRG5s9XZgPs05esbdyqtWrZeGEwREo7I1qyfMS3l1l7Rv5UIZwBS
-	V8c06PjWas8gdz5vFpv4A0UNZ+8Rivo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761145182;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kJRe14lXO8+Q4511d6OrUEQHfX+t56hx4yTEPXEsO68=;
-	b=OxD0FsVxw8844f4JrnjQkYjatuj64DbCh2v2/5uuvRK05rkUcesYzYoi/K6edOFaXOeING
-	0k0VdOHD/+JoERCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HC9MwwDk;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cqraaotP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761145177; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kJRe14lXO8+Q4511d6OrUEQHfX+t56hx4yTEPXEsO68=;
-	b=HC9MwwDkCrMe6l/XoUTqy99tLQk19pjQkx0goO8jzk7i0jxyRpHHcd87tuX1J0MtMHCnsN
-	M05kIFrCIvIGkezYc7N995zCMB/36zVfo/rDtLyZv82dgoZTboZQfR83Og0PP3D7Lsqxdm
-	XAlWrI1PuFEKjWl0h7IKUsaxHMwyDX8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761145177;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kJRe14lXO8+Q4511d6OrUEQHfX+t56hx4yTEPXEsO68=;
-	b=cqraaotPEW7PNEM3xtE32FtEmnA4mbn0UaMEiBSaJJkttLO0CZxGH1IFgaE8Vhe3EX98KB
-	bJkIht5ICfljkNBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 868AA13A29;
-	Wed, 22 Oct 2025 14:59:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id D/yWH1nx+GjXQAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 22 Oct 2025 14:59:37 +0000
-Message-ID: <0d1affe1-1e3c-452a-9052-104acaabef62@suse.de>
-Date: Wed, 22 Oct 2025 16:59:37 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E75347BC9;
+	Wed, 22 Oct 2025 15:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761145205; cv=fail; b=LadjG9O5VNzxMZsQmeD9Ksw6eEjhFm+p0RKLEwtdHjPyjc3jNr41vQkTcO2zD1lXlpzrahxEMKKAymZ53OXTAzN5BeUnejcxLEgbzOWnkjNguBQ8dq9YPU/T8A3osu9+CDKcEs7J06g++31kfAleRKS3IeoawNvUuZLl6xn0ylE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761145205; c=relaxed/simple;
+	bh=2zpwWBAbctkmG9DmysT5r9iPWnLXysmG1eG968tdmR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=poLUZ0kl/j5y1I40ipYAoRsPdOYBemUvs7//Llgw0Zf1VW5JpXyBlwVK4Kmfofhlt0Xz+zF8sx6laUg3S004gFjdbVcNUnkJgBhMDUL2lOP3SLLt7QW6MAlvSKhRPAx5OKW7G4C3o+n64SIIswB8QO+dAx9ox7lC8f1xdDPkxZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TzK86C84; arc=fail smtp.client-ip=52.101.84.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=norYVE520gmLlzA64Q/32A8314a23OxEcb0zCIxkxuHBmZqmO5nloA4uWdFOuAEp11pNyBPPpiGSpu3b1d9q3I5ib+HR6QBnnjbMcDPESQSOMmdE1GD7I2iGwc9GJ205xZmRV/qoibqJ8+6tFXgcK939yAYEdEFMiwhkm5o1EO0poIG7j0wxMvEM6xGYre3H5BS7Auj+n7dbQMED87CvMcG+5FSNAOE+EDOb4VlzESEoXjSHJd2YXDUEfLFZJF63ayDAsr8tVlXay85Ak4ZWQsTj8KBo7YSIWkwxh3dCRC8lSdywQbV6A5xw4CdSwAilXPmKWeCXpEmHrrfVSTU8TQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HYi0eyksFfBlPTJhx+OQLxtjQIGOooxJfIeYlinU3oA=;
+ b=uz8+o8thinI/R9or9/ELOJMJiisOh2Lmq1Wwwp/R3yH5mzd6auThFB9rEpLRubFel04cE5Lx1gK9sdH7JTRHfKB8pPf6X9fSgijb6XRSk6UZ3H6Z6ExW4p7icpjJySbLAMqCSYO3Pu5JFyrKDK1izAisPTt9yyxUlc4nwwdolU3syTcrDA3Gy5sfmqx8ZV9+mo6xwUO4Uv3WnCQvdjdgr+w+BBU4xse9saFM8h/2SQ3ys+U0zoeLlDnh/5Ygnzyfvw9cuA46GHE0p+LmGzUa7GKI3BjW/4BJ/2MEOEikwXr++IOg1KykKk3sTAg0wPPYEfKbLTCkX7LfiwtYNrjfZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HYi0eyksFfBlPTJhx+OQLxtjQIGOooxJfIeYlinU3oA=;
+ b=TzK86C843XSm2GorSC/y/sHOKjFtj6HSRO0aPF42LPw8RIY+xIto6z6xx6m9LW9CfyibgvkYKnoZo6JN85eXd7WkXhDhMQ2+oR15Yrq1ym9vErLXnwpbdVhHLCDVr9+ePFYaasO2uFp/gQpi34YUQCRzmkTzMcq3ieVNjQBBhIiRC42UId9zsTbSNcB/xuwHp4+3DXJOL3f0WbP4lkRciIpFD/+ayU499Hxdd5ZC2joI8deltDQlq/ofadsw85AvfETHV4eom/VoKD9XDyziQaHYQF4woEGfw0veStNkQdGHl8rVRSOlw4twe2oNAo+N9l/3CBOc98AjQqlRJaMpxg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by VI0PR04MB11540.eurprd04.prod.outlook.com (2603:10a6:800:2c7::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 14:59:59 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 14:59:59 +0000
+Date: Wed, 22 Oct 2025 10:59:48 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: mchehab@kernel.org, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+	martink@posteo.de, kernel@puri.sm, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	sakari.ailus@linux.intel.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 3/4] media: imx-mipi-csis: Add num_data_lanes to
+ mipi_csis_device
+Message-ID: <aPjxZNIqDHHkZH+O@lizhi-Precision-Tower-5810>
+References: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
+ <20251022102228.275627-4-isaac.scott@ideasonboard.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022102228.275627-4-isaac.scott@ideasonboard.com>
+X-ClientProxiedBy: BY5PR04CA0015.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::25) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/tidss: Add some support for splash-screen
-To: Maxime Ripard <mripard@kernel.org>, Devarsh Thakkar <devarsht@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-kernel@vger.kernel.org
-References: <20250908-tidss-splash-v2-1-e388b0581dfa@ideasonboard.com>
- <348086ac-b5bc-4ca9-9e5b-82106d319eeb@ti.com>
- <qljdrluxqi3abg7opwvp24ki7255jxrpowf47rpumzlcbnlnon@pccj5wm2kbxt>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <qljdrluxqi3abg7opwvp24ki7255jxrpowf47rpumzlcbnlnon@pccj5wm2kbxt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: C48E1211B0
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[ideasonboard.com,iki.fi,linux.intel.com,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI0PR04MB11540:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8ac43b1-c566-4263-674e-08de117babd6
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|19092799006|376014|52116014|7416014|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?XnP5oHAZZBNtae/a9EmGr5oHPJBNxyt98Z+zFHCNsMnjc00Zd2e7mt+LLjhZ?=
+ =?us-ascii?Q?GVuEx5hKMjJc7OqKXfeH8aF3Mnnhyml7mwjwgIXlF69bjc9RDKlYdGvKnOUT?=
+ =?us-ascii?Q?olYrg9SOqtS3v90pcRhZTGabbm/e4i0Ea2uqMftambO5Qbevp6RJJSJneMSK?=
+ =?us-ascii?Q?eltiTNl8Cnbz/oQpgfYedzfvjkBxUwq+QvRlW+KJlysxwGeF+NEo6uWJEvtg?=
+ =?us-ascii?Q?zhTklYXxU8w7zSM/8/IwkmFNFY9lVLgcKXV0M1TuMUzRandH7MscOHJZYXv+?=
+ =?us-ascii?Q?FfhGCBKsrlqYyj3N+KXn5Lr8bW88G8h6zWEfyHZZBH9jXa+njRkpW8MHfmLs?=
+ =?us-ascii?Q?oaYsSj5EsT2m2oYodg6F4pX8RgUtOGkZ4FLerOmR0ZqpIlLlJBZbPphtCl7z?=
+ =?us-ascii?Q?755q1calYrOqVdvZp3RxaigMEFzJN+MBYz8kOQZAG+1IcGaoUE1rfmaQjo+7?=
+ =?us-ascii?Q?c74ZXJOFdi3yT/TWnQUbvguK7crV6+CivySa7qEhRKcfSJbgzLMppwxZtvvB?=
+ =?us-ascii?Q?B2idpDjF5wlMAZkeF5THeAqRCgzBeCCa4RThArmQfBvQgcuz0LbrQx5vimKm?=
+ =?us-ascii?Q?bD6h2yyxxQZxN4C/aqUcsjVrJ+Xu5b8BPopilpp0+YMl+9inVS5Yq4soW+Il?=
+ =?us-ascii?Q?nMrTdYsOx7ta8yK4tvQzEZcG0tl4PfI5c5DywFWMiQ5lSPLIuPXO9qyxhaJd?=
+ =?us-ascii?Q?/ja0sZcZRcnXp/s6wymwGwWB9GrzC8/Lts7HeXOgBpnX2uDnRia6XtFPM7pX?=
+ =?us-ascii?Q?SkPSMRAk6+46Uspes1vdhwbHeFY6d5ZMCSqQt+v03BRNFJM7NeJ/0qYuqGZX?=
+ =?us-ascii?Q?PiHUKLGUjsem3vwa+7y3OgBlmQ8/bjzxF4CvmSRIXVl3afHN763bLMp8yZG9?=
+ =?us-ascii?Q?etzyvP7AHLr41ExLD0yFDhrrjKqHfC3Hd1jqR6W55uBrg6rMjvG7RYz+qgJy?=
+ =?us-ascii?Q?NYzypq3pXdeEduajpiO7PHntq3YZTHyqOuSGKUwNqdXvuJLP72A7T1ERKdZp?=
+ =?us-ascii?Q?w67pmMi/jpEccHjiVw1f8GGOArgB85PyAlFb7YEbKe8luHBLtrXfcRMtCP+p?=
+ =?us-ascii?Q?CXMyfgJRKRt8JlFL3raH7SoorveYz0JnYtsu44xQQGs89mvf22Md4AwyLRQH?=
+ =?us-ascii?Q?a50v7gm+eHsb9R7S71IlBSuMrAqwGjxPvp90EQu2ZUJQ1WBXcqNpIcmBAZGL?=
+ =?us-ascii?Q?SwBno2JhT8r9+3Ys0K0W0bd84knTVi0ykvQ2KMQZTv9pKGoWDxgsbpMP8xN/?=
+ =?us-ascii?Q?f4U4oZPu8zecAajOPUjCt1aRKbFwQTp5l3ljk5E+g9EMzLEat9wfyNmG67BO?=
+ =?us-ascii?Q?UNmSG9dJQTsdbkM6gO/GuSo28tJ9cn9Tdw8Wo4Z73eouC9TGb3UiC/ZEHq6o?=
+ =?us-ascii?Q?AdWs5IDFjCsHQF931YqGVz5ybvNuZ4vFbxo+qcBlcfuS8dD2z0bkU6IW53fa?=
+ =?us-ascii?Q?7yvcjC2BvZHUO0dcTJDq1aRV5AXEC8+YlsQ65tNXuwvJXEvgb6/gTN4K6g5D?=
+ =?us-ascii?Q?YTgLUz2FZQRU37iZYNEdeGZnDf8PkeGAgK2Q?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(52116014)(7416014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?0veP51nBFa9ZgjRQo6hj5CtuXiEW40SP1ww+11VfjUfxrTl9lvpVMmhux9R0?=
+ =?us-ascii?Q?L/JG1ScUNViHlHiJDe+yHzutDoL4/Ch40Y3qV6mG0b9C/5CgELlGhteva/Kj?=
+ =?us-ascii?Q?K/34hMs3hZFTxwaPJMJT6RwhqO5VQZvLP7Neb7Kl0i+CoSN3s1I67fSclhLC?=
+ =?us-ascii?Q?Yu4oDndl4oZ5IvCu3Y86MtEhLesJ/BAKkNC75u/fFgCq1OSgj6zYGOErnBZf?=
+ =?us-ascii?Q?0rSy87iHuwcAOePo/b8xl4VcoVNrqdGzzEYEB9aklSLD67XDbghlEV1Himj4?=
+ =?us-ascii?Q?3AsbClpMXFESeaNTIwc2KtKiYR/niPTKWv7wrg4nwFpudKJIvbUiYGVPrrzw?=
+ =?us-ascii?Q?Rzox7/C8dcvu7HQtPXY6ddvmaqFg0GanVbKdRzB/BvqTZ3mKURZnkuMknQAo?=
+ =?us-ascii?Q?wMSzVdkpOcUqRMC56vHCWM7/HSdJJ+4kRmUzLnq4PLhAhmjoBtaaXGi1lreZ?=
+ =?us-ascii?Q?RSZ9f35x/J6sp0EH3xTKDoQJIqlUZ2NWxS0jDISjoP9QraegbZeyw6PEkqL6?=
+ =?us-ascii?Q?z2R/xIUXfPJZm3sfXxXWQpRxUrlRoPudfFFp6K8YanBAtvjSTIAeuic6xHaK?=
+ =?us-ascii?Q?k4ndTKpJyKzjIbDgUBbVfRHYKpnM1T9zQB0Q4Zebhr+13ICyaS9zN+Nno5Wo?=
+ =?us-ascii?Q?Cn4CY0Nsko2tc6ITaZTKumXFsC5T83hteP6hLZKZwyS1hesRYxJ18JghUHGq?=
+ =?us-ascii?Q?T1RSAxZEwbj9TLKU/VhTkjg4IbDXoEywdpdneLe1O5NfK+00xsZcUj1JDrfz?=
+ =?us-ascii?Q?+nwXbj2rcJRYWRevJxpPCehWrJ9bJ7dAtX6//oTHLq6scEaTjJfjXezfLSSp?=
+ =?us-ascii?Q?G1cfFsCZGw7wLw/+FLALP7AdttBWmwGk4MXXh/Nm2qjuXkCyiTOQIuHty4Fn?=
+ =?us-ascii?Q?JM+9YQfeNBAcgNaJB73r5FLtNVesdEvRVAGCfATkaMgOnDpRcMouz75ksbCK?=
+ =?us-ascii?Q?C3N2McmWCJ7JHklBvfRiBDP+bbJ2AeiWkC5e9ERCIcl/PW3jpQFnJHCMyszs?=
+ =?us-ascii?Q?Hf7u5gbjxXzs1bWIHEeU/9FEu23LGrS93u9GupfZJUFrA1zmAhgwE+7NxwIC?=
+ =?us-ascii?Q?aIldFQOlIqEOw12mXDoSofqKpblA4vKv+HH5VXnWE0Hsr/QGx/LvD9UxafpV?=
+ =?us-ascii?Q?T6T4L5qE8BWnv8gVrwBdMmu0oqNiR+5qnS/8nZDD5rrwWIvveWdiVCvxZj1L?=
+ =?us-ascii?Q?RE+4s0AtxE3TpU8enhMrtlxOaGkD8jZH79wHC2O16S289ABUQDZnD81wTLs6?=
+ =?us-ascii?Q?RDuNDJU009Bgl2Q4Gk5n08yu1UD6e/t0fmA+D0oDh3zLTKUZimVfY0UPCycZ?=
+ =?us-ascii?Q?K5+hG1rGb2p6zimNM6Ne1w0EEOTb0BhfrVr+EVMvxw2ZAlV7bWj13xbDjJr9?=
+ =?us-ascii?Q?zS8D5mLMPwa2oZToNR/FkF4/k+SLRUrHSmDaGiQn/Fcv+rfzdXiGOsz9xgZY?=
+ =?us-ascii?Q?rpS9L4c+uh/f6ChpofF9O1oGvd2O9ZbhkQjuL8TdkASY9sm9pXFIjGm8DVTh?=
+ =?us-ascii?Q?Iots8AuVpkbizlzLh3r6gJdsIqm+fQRoyCJEos+TSV7t6Rcivk6Xc+R9ql2g?=
+ =?us-ascii?Q?TqlmHX/KJrxf6LshaB0=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8ac43b1-c566-4263-674e-08de117babd6
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 14:59:59.6496
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zq4THAx7xAY3WyH7soHYrvFmlKjBZk4pxSdu4eJmWDnDLk7+fXY+/r+A9cJH5RL9NudNfbr5hk5WtKBNkDPKRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11540
 
-Hi
-
-Am 22.10.25 um 16:06 schrieb Maxime Ripard:
-> Hi,
+On Wed, Oct 22, 2025 at 11:22:27AM +0100, Isaac Scott wrote:
+> Add the num_data_lanes field to the mipi_csis_device struct, and set it
+> equal to csis->bus.num_data_lanes. This is in preparation to support
+> cases when the data lanes actively used differs from the maximum
+> supported data lanes.
 >
-> On Wed, Oct 22, 2025 at 07:25:10PM +0530, Devarsh Thakkar wrote:
->> On 08/09/25 14:43, Tomi Valkeinen wrote:
->>> Currently when the driver's probe is called, we do a full DSS reset. If
->>> the bootloader has set up a splash-screen, the reset will disable the
->>> video output, and after that it may still take time until the display is
->>> usable (all the kernel modules have been loaded) and even more time
->>> until the userspace is able to use the display.
->>>
->>> If fbdev is enabled, in a perfect case tidss would take over the fb
->>> memory set up by the bootloader, and use that memory for tidss's fbdev,
->>> thus retaining the splash-screen. However, we're not there yet.
->>>
->>> As a partial solution, this patch changes the driver so that the driver
->>> will not reset (or change) the DSS registers until tidss_runtime_get()
->>> is called when the display is being set up (because of fbdev modesetting
->>> or modesetting from the userspace).
->>>
->>> This is achieved in two parts:
->>>
->>> 1. Probe
->>>
->>> At probe time, in dispc_init_hw(), we check if the DSS is idle
->>> (videoports disabled). If yes, do a reset and continue as before. If
->>> not, we know that there's a splash-screen, and we set the
->>> 'tidss->boot_enabled_vp_mask' field to reflect the enabled VPs.
->>>
->>> We then enable the corresponding VP clocks (to ensure they stay on), set
->>> the IRQENABLE to 0 to make sure we won't get any interrupts, and then
->>> exit leaving the fclk and VP clocks enabled, and the runtime PM status
->>> active.
->>>
->>> 2. Runtime get
->>>
->>> Later, when the tidss_runtime_get() is called the first time, we check
->>> the 'boot_enabled_vp_mask'. If set, we know that we have the
->>> splash-screen showing on the screen, and thus the clocks are enabled and
->>> runtime PM status is active. This indicates that
->>> pm_runtime_resume_and_get() call just before in tidss_runtime_get() did
->>> not cause a runtime_resume callback to get called, so we need to do that
->>> manually.
->>>
->>> We call dispc_splash_fini() which essentially returns the DSS into the
->>> state where it would be in a non-splash-screen case: dispc_splash_fini()
->>> will do a DSS reset, manually call the runtime_resume callback, and then
->>> call clk_disable_unprepare() and pm_runtime_put_noidle() to counter the
->>> actions at probe time.
->>>
->>> Finally 'boot_enabled_vp_mask' is set to zero to mark that we're no
->>> longer in the "splash-screen mode".
->>>
->>> A note about fbdev emulation:
->>>
->>> If fbdev emulation is enabled in the DRM, tidss will set up an fbdev.
->>> This will cause a modeset, and the blank framebuffer from tidss's fbdev
->>> will be shown instead of the splash-screen.
->>>
->>> I see two improvements to this: either we should memcpy the pixel data
->>> from the bootloader's splash-screen to the new fbdev buffer, or the
->>> fbdev could use the splash-screen directly as its buffer. I have done
->>> some hacks for the former, but I'm not sure how to implement either of
->>> these properly.
-> I still think it's not the kind of driver-specific driver behaviour we
-> want to have.
+> No functional changes intended by this commit.
 >
-> Even more so when we have a generic solution to this problem in the
-> works.
+> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
 
-I agree with that sentiment. We want atomic-state readout plus a 
-bootsplash DRM client. This would give us flicker-free booting with 
-smooth transitions across drivers and user space.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Best regards
-Thomas
-
+> ---
+>  drivers/media/platform/nxp/imx-mipi-csis.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 >
-> Maxime
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+> index 7c2a679dca2e..838a1ad123b5 100644
+> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> @@ -351,6 +351,8 @@ struct mipi_csis_device {
+>  	u32 hs_settle;
+>  	u32 clk_settle;
+>
+> +	unsigned int num_data_lanes;
+> +
+>  	spinlock_t slock;	/* Protect events */
+>  	struct mipi_csis_event events[MIPI_CSIS_NUM_EVENTS];
+>  	struct dentry *debugfs_root;
+> @@ -573,7 +575,7 @@ static void mipi_csis_system_enable(struct mipi_csis_device *csis, int on)
+>  	val = mipi_csis_read(csis, MIPI_CSIS_DPHY_CMN_CTRL);
+>  	val &= ~MIPI_CSIS_DPHY_CMN_CTRL_ENABLE;
+>  	if (on) {
+> -		mask = (1 << (csis->bus.num_data_lanes + 1)) - 1;
+> +		mask = (1 << (csis->num_data_lanes + 1)) - 1;
+>  		val |= (mask & MIPI_CSIS_DPHY_CMN_CTRL_ENABLE);
+>  	}
+>  	mipi_csis_write(csis, MIPI_CSIS_DPHY_CMN_CTRL, val);
+> @@ -623,7 +625,7 @@ static int mipi_csis_calculate_params(struct mipi_csis_device *csis,
+>
+>  	/* Calculate the line rate from the pixel rate. */
+>  	link_freq = v4l2_get_link_freq(csis->source.pad, csis_fmt->width,
+> -				       csis->bus.num_data_lanes * 2);
+> +				       csis->num_data_lanes * 2);
+>  	if (link_freq < 0) {
+>  		dev_err(csis->dev, "Unable to obtain link frequency: %d\n",
+>  			(int)link_freq);
+> @@ -668,7 +670,7 @@ static void mipi_csis_set_params(struct mipi_csis_device *csis,
+>  				 const struct v4l2_mbus_framefmt *format,
+>  				 const struct csis_pix_format *csis_fmt)
+>  {
+> -	int lanes = csis->bus.num_data_lanes;
+> +	int lanes = csis->num_data_lanes;
+>  	u32 val;
+>
+>  	val = mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
+> @@ -1366,8 +1368,9 @@ static int mipi_csis_async_register(struct mipi_csis_device *csis)
+>  	}
+>
+>  	csis->bus = vep.bus.mipi_csi2;
+> +	csis->num_data_lanes = csis->bus.num_data_lanes;
+>
+> -	dev_dbg(csis->dev, "data lanes: %d\n", csis->bus.num_data_lanes);
+> +	dev_dbg(csis->dev, "max data lanes: %d\n", csis->bus.num_data_lanes);
+>  	dev_dbg(csis->dev, "flags: 0x%08x\n", csis->bus.flags);
+>
+>  	asd = v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
+> --
+> 2.43.0
+>
 
