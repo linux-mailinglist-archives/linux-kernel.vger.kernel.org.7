@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-865015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6253CBFC083
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:10:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A83BFC16B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6636956144C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7CF3A83E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B703502B3;
-	Wed, 22 Oct 2025 12:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726BB351FB7;
+	Wed, 22 Oct 2025 12:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZWlSOi5e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tD8zcJ0r"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="blBUkjoa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q4qLi6t8"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0595834EEF4
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E92034FF4E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137741; cv=none; b=B08M94jjN/03FeYYnVVKl9zUjfuUsqFIriJycFi03Vxp2iN9GJH2htF7TZCNNuqMq4GMyaq5Ym2rx/HBFEOU7oGt830NIylCgx7aNUPpb1+F9S9K3t/6bwco4xqtBSn7qsK5wJgvW88c2qZ7x7GJGNZSRYEy9EM+seQRJdX06bY=
+	t=1761137743; cv=none; b=YjnGDqOmYuGXpt8wBG047P/Kdum3v+mZSIrFkIUT+AH/AvC0MA/nAJiPM3J7GC3m7OKaANM31ihJKq8IPQaN8XEn9xRu+Z4iEj27JHm4sGmuKFUIStyM8i+FyimobSZPtSEI018O8hefUWjBp4v4lWCKKpGTjYM+8fQMwgvo+iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137741; c=relaxed/simple;
-	bh=LhoeG5Sl5U1YvG2tcNa1+c1VLUr8frqFbogewBECCaE=;
+	s=arc-20240116; t=1761137743; c=relaxed/simple;
+	bh=xCUKtbYHYrEUhe/5kTe16Y0mAzYli+u0iaE3XImUUzM=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=ugXIARCE2/ca6p/uoMZyBHBcqljXHfMyWPj/5BRYxh0nRUMo+aJahP1uuQfM0jQKMkE8nwaEDIFiLVKzUgUyiqRd68rXInMM1ozdGy8KUZ/UzxyvjA2eURI+GC/Eev19nNd3hvbRFh0laoLWdNlL5G5kf/gnrcj+KqcujnlbquE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZWlSOi5e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tD8zcJ0r; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=HYDHljjuURNYlBM7ntxhzoz3c97BjDMPnggBTiHmE6UuJghrNaekdgNBaDtjR2DAyxv6ueqOB4bkHc5nf4g4734KB1A9demnAZ4+H1n8V6wZ3ybjA+6TkIA5PVygT9B4ElAMPeR2/YP4BeV2l+WVbjTek2pfMW/svP4K4iMZ6Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=blBUkjoa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q4qLi6t8; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251022110556.337519919@linutronix.de>
+Message-ID: <20251022110556.399477196@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761137738;
+	s=2020; t=1761137739;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=sr7XuKZQPrnCIhneABHVkNv/cYzkTVEaqBtcQ7pzXPw=;
-	b=ZWlSOi5e136yeghswTGxsrrRm8XHjGmHv9Ju9Vuvp07vc30WD4fGlsxR0yzaTJ5f9WEFAL
-	Zi3pPGwFxINy+frIB+5xenMQ+ktI0q7xwUPLWA5IrAxjlm8zV37lESrdnxPR3hA49KnNn5
-	3bUcuEvKicf+XTU1JxQdC4Gx7X4VNKz+3oNkDsEMAnfy4D0TEdoq/RuHMYeVrKwEZdat4p
-	a3UvIhJ8GDlk1ifI4ADHDYPqEeahSPGmFppSX8FaoJ/y/q694OUp+imeHKBSPVCZjSBlBz
-	sv8VKivQQztClBUsgZg2hjOPODneOlVcxkk9rP7DKcIl+sdmVMZJK9Ul3VZBnQ==
+	 references:references; bh=2ecRtsPcmkrRlC4SHI9jS/j/6nJKkkbLGPpbUOMleQY=;
+	b=blBUkjoaPc6R3f7ohVY4wKLhKpe6IYgu6cgn7+ovS1Mj386f8VROHXzdmjVMsHAdgot8oE
+	scxOCI581Te7zRc2EemOKkhVDy0oiXthz/sqtbRqBfsTifx3JawlOBR4tQa05eMeMfG0t7
+	btopyR8IBNXYH2IQ2WugkkP4U9rzC0PJCSnw0sc9zgFYzk1zgRdzgUMtmJ8P2Gieb6GimC
+	MMgCnqy3IDfWvsipHbKoLZK4aEZOatzuy4sk5JHjcJHmaT8NRTOBZoflNz72qu2gPHlJKj
+	u1F0NF0V9+bbL9eHwbglBl6pybU2lQckzbNGl7rN7cBG5sXLvkxtdIqZGqykUA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761137738;
+	s=2020e; t=1761137739;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=sr7XuKZQPrnCIhneABHVkNv/cYzkTVEaqBtcQ7pzXPw=;
-	b=tD8zcJ0rheVviapXbKPsgjxYSulq/UwtSQ2mvU36VDXm7EBvYlWFTGYwTBq2Y7hOO5RxS5
-	bVzLnf0uV53Cd0Ag==
+	 references:references; bh=2ecRtsPcmkrRlC4SHI9jS/j/6nJKkkbLGPpbUOMleQY=;
+	b=Q4qLi6t8oEF7QkL0l6r6Kyc7dWMSa3tbATI2Wq543Er1u9OqYV86JsV1qKyu4g89zDwXfr
+	0Sf81ATX3Myn8BDg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -61,8 +61,7 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
  Florian Weimer <fweimer@redhat.com>,
  Tim Chen <tim.c.chen@intel.com>,
  Yury Norov <yury.norov@gmail.com>
-Subject: [patch V2 15/20] sched/mmcid: Introduce per task/CPU ownership
- infrastrcuture
+Subject: [patch V2 16/20] sched/mmcid: Provide new scheduler CID mechanism
 References: <20251022104005.907410538@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,7 +70,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 Oct 2025 14:55:38 +0200 (CEST)
+Date: Wed, 22 Oct 2025 14:55:39 +0200 (CEST)
 
 The MM CID management has two fundamental requirements:
 
@@ -112,153 +111,282 @@ has to do the CID space consolidation work from a task work in the exit to
 user space path. As that work is assigned to a random task related to a MM
 this can inflict unwanted exit latencies.
 
-This can be done differently by implementing a strict CID ownership
-mechanism. Either the CIDs are owned by the tasks or by the CPUs. The
-latter provides less locality when tasks are heavily migrating, but there
-is no justification to optimize for overcommit scenarios and thereby
-penalazing everyone else.
+Implement the context switch parts of a strict ownership mechanism to
+address this.
 
-Provide the basic infrastructure to implement this:
+This removes most of the work from the task which schedules out. Only
+during transitioning from per CPU to per task ownership it is required to
+drop the CID when leaving the CPU to prevent CID space exhaustion. Other
+than that scheduling out is just a single check and branch.
 
-  - Change the UNSET marker to BIT(31) from ~0U
-  - Add the ONCPU marker as BIT(30)
-  - Add the TRANSIT marker as BIT(29)
+The task which schedules in has to check whether:
 
-That allows to check for ownership trivialy and provides a simple check for
-UNSET as well. The TRANSIT marker is required to prevent CID space
-exhaustion when switching from per CPU to per task mode.
+    1) The ownership mode changed
+    2) The CID is within the optimal CID space
+
+In stable situations this results in zero work. The only short disruption
+is when ownership mode changes or when the associated CID is not in the
+optimal CID space. The latter only happens when tasks exit and therefore
+the optimal CID space shrinks.
+
+That mechanism is strictly optimized for the common case where no change
+happens. The only case where it actually causes a temporary one time spike
+is on mode changes when and only when a lot of tasks related to a MM
+schedule exactly at the same time and have eventually to compete on
+allocating a CID from the bitmap.
+
+In the sysbench test case which triggered the spinlock contention in the
+initial CID code, __schedule() drops significantly in perf top on a 128
+Core (256 threads) machine when running sysbench with 255 threads, which
+fits into the task mode limit of 256 together with the parent thread:
+
+  Upstream  rseq/perf branch  +CID rework  
+  0.42%     0.37%             0.32%          [k] __schedule
+
+Increasing the number of threads to 256, which puts the test process into
+per CPU mode looks about the same.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
-V2: Add the TRANSIT(ion) bit
+V2: Adjust to the mode transition changes
 ---
- include/linux/rseq_types.h |    4 ++-
- include/linux/sched.h      |    6 ++--
- kernel/sched/core.c        |   10 +++++++
- kernel/sched/sched.h       |   59 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 75 insertions(+), 4 deletions(-)
+ include/linux/rseq.h       |    8 +-
+ include/linux/rseq_types.h |    5 +
+ kernel/sched/core.c        |    1 
+ kernel/sched/sched.h       |  149 ++++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 158 insertions(+), 5 deletions(-)
 
---- a/include/linux/rseq_types.h
-+++ b/include/linux/rseq_types.h
-@@ -92,7 +92,9 @@ struct rseq_data { };
- 
- #ifdef CONFIG_SCHED_MM_CID
- 
--#define MM_CID_UNSET	(~0U)
-+#define MM_CID_UNSET	BIT(31)
-+#define MM_CID_ONCPU	BIT(30)
-+#define MM_CID_TRANSIT	BIT(29)
- 
- /**
-  * struct sched_mm_cid - Storage for per task MM CID data
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2299,16 +2299,16 @@ void sched_mm_cid_before_execve(struct t
- void sched_mm_cid_after_execve(struct task_struct *t);
- void sched_mm_cid_fork(struct task_struct *t);
- void sched_mm_cid_exit(struct task_struct *t);
--static inline int task_mm_cid(struct task_struct *t)
-+static __always_inline int task_mm_cid(struct task_struct *t)
- {
--	return t->mm_cid.cid;
-+	return t->mm_cid.cid & ~(MM_CID_ONCPU | MM_CID_TRANSIT);
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -73,13 +73,13 @@ static __always_inline void rseq_sched_s
  }
- #else
- static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
- static inline void sched_mm_cid_after_execve(struct task_struct *t) { }
- static inline void sched_mm_cid_fork(struct task_struct *t) { }
- static inline void sched_mm_cid_exit(struct task_struct *t) { }
--static inline int task_mm_cid(struct task_struct *t)
-+static __always_inline int task_mm_cid(struct task_struct *t)
- {
- 	/*
- 	 * Use the processor id as a fall-back when the mm cid feature is
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10384,6 +10384,16 @@ void call_trace_sched_update_nr_running(
-  *
-  * The mm::mm_cid:pcpu per CPU storage is protected by the CPUs runqueue
-  * lock.
-+ *
-+ * CID ownership:
-+ *
-+ * A CID is either owned by a task (stored in task_struct::mm_cid.cid) or
-+ * by a CPU (stored in mm::mm_cid.pcpu::cid). CIDs owned by CPUs have the
-+ * MM_CID_ONCPU bit set. During transitioning from CPU to task ownership
-+ * mode, MM_CID_TRANSIT is set on the per task CIDs. When this bit is set
-+ * the task needs to drop the CID into the pool when scheduling out.  Both
-+ * bits (ONCPU and TRANSIT) are filtered out by task_cid() when the CID is
-+ * actualy handed over to user space in the RSEQ memory.
-  */
  
  /*
+- * Invoked from __set_task_cpu() when a task migrates to enforce an IDs
+- * update.
++ * Invoked from __set_task_cpu() when a task migrates or from
++ * mm_cid_schedin() when the CID changes to enforce an IDs update.
+  *
+  * This does not raise TIF_NOTIFY_RESUME as that happens in
+  * rseq_sched_switch_event().
+  */
+-static __always_inline void rseq_sched_set_task_cpu(struct task_struct *t, unsigned int cpu)
++static __always_inline void rseq_sched_set_ids_changed(struct task_struct *t)
+ {
+ 	t->rseq.event.ids_changed = true;
+ }
+@@ -169,7 +169,7 @@ static inline void rseq_fork(struct task
+ static inline void rseq_handle_slowpath(struct pt_regs *regs) { }
+ static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
+ static inline void rseq_sched_switch_event(struct task_struct *t) { }
+-static inline void rseq_sched_set_task_cpu(struct task_struct *t, unsigned int cpu) { }
++static inline void rseq_sched_set_ids_changed(struct task_struct *t) { }
+ static inline void rseq_sched_set_task_mm_cid(struct task_struct *t, unsigned int cid) { }
+ static inline void rseq_force_update(void) { }
+ static inline void rseq_virt_userspace_exit(void) { }
+--- a/include/linux/rseq_types.h
++++ b/include/linux/rseq_types.h
+@@ -119,6 +119,8 @@ struct mm_cid_pcpu {
+ /**
+  * struct mm_mm_cid - Storage for per MM CID data
+  * @pcpu:		Per CPU storage for CIDs associated to a CPU
++ * @percpu:		Set, when CIDs are in per CPU mode
++ * @transit:		Set to MM_CID_TRANSIT during a mode change transition phase
+  * @max_cids:		The exclusive maximum CID value for allocation and convergance
+  * @nr_cpus_allowed:	The number of CPUs in the per MM allowed CPUs map. The map
+  *			is growth only.
+@@ -130,7 +132,10 @@ struct mm_cid_pcpu {
+  * @mutex:		Mutex to serialize forks and exits related to this mm
+  */
+ struct mm_mm_cid {
++	/* Hotpath read mostly members */
+ 	struct mm_cid_pcpu	__percpu *pcpu;
++	unsigned int		percpu;
++	unsigned int		transit;
+ 	unsigned int		max_cids;
+ 	unsigned int		nr_cpus_allowed;
+ 	unsigned int		users;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -10493,6 +10493,7 @@ void mm_init_cid(struct mm_struct *mm, s
+ 		per_cpu_ptr(pcpu, cpu)->cid = MM_CID_UNSET;
+ 
+ 	mm->mm_cid.max_cids = 0;
++	mm->mm_cid.percpu = 0;
+ 	mm->mm_cid.nr_cpus_allowed = p->nr_cpus_allowed;
+ 	mm->mm_cid.users = 0;
+ 	raw_spin_lock_init(&mm->mm_cid.lock);
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -3539,6 +3539,65 @@ extern void sched_dynamic_update(int mod
- extern const char *preempt_modes[];
+@@ -2208,7 +2208,7 @@ static inline void __set_task_cpu(struct
+ 	smp_wmb();
+ 	WRITE_ONCE(task_thread_info(p)->cpu, cpu);
+ 	p->wake_cpu = cpu;
+-	rseq_sched_set_task_cpu(p, cpu);
++	rseq_sched_set_ids_changed(p);
+ #endif /* CONFIG_SMP */
+ }
  
- #ifdef CONFIG_SCHED_MM_CID
-+
-+static __always_inline bool cid_on_cpu(unsigned int cid)
+@@ -3597,6 +3597,152 @@ static __always_inline void mm_drop_cid_
+ 	mm_drop_cid(mm, pcp->cid);
+ }
+ 
++static inline unsigned int __mm_get_cid(struct mm_struct *mm, unsigned int max_cids)
 +{
-+	return cid & MM_CID_ONCPU;
++	unsigned int cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
++
++	if (cid >= max_cids)
++		return MM_CID_UNSET;
++	if (test_and_set_bit(cid, mm_cidmask(mm)))
++		return MM_CID_UNSET;
++	return cid;
 +}
 +
-+static __always_inline bool cid_in_transit(unsigned int cid)
++static inline unsigned int mm_get_cid(struct mm_struct *mm)
 +{
-+	return cid & MM_CID_TRANSIT;
++	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
++
++	for (; cid == MM_CID_UNSET; cpu_relax())
++		cid = __mm_get_cid(mm, num_possible_cpus());
++
++	return cid;
 +}
 +
-+static __always_inline unsigned int cpu_cid_to_cid(unsigned int cid)
++static inline unsigned int mm_cid_converge(struct mm_struct *mm, unsigned int orig_cid,
++					   unsigned int max_cids)
 +{
-+	return cid & ~MM_CID_ONCPU;
++	unsigned int new_cid, cid = cpu_cid_to_cid(orig_cid);
++
++	/* Is it in the optimal CID space? */
++	if (likely(cid < max_cids))
++		return orig_cid;
++
++	/* Try to find one in the optimal space. Otherwise keep the provided. */
++	new_cid = __mm_get_cid(mm, max_cids);
++	if (new_cid != MM_CID_UNSET) {
++		mm_drop_cid(mm, cid);
++		/* Preserve the ONCPU mode of the original CID */
++		return new_cid | (orig_cid & MM_CID_ONCPU);
++	}
++	return orig_cid;
 +}
 +
-+static __always_inline unsigned int cid_to_cpu_cid(unsigned int cid)
++static __always_inline void mm_cid_update_task_cid(struct task_struct *t, unsigned int cid)
 +{
-+	return cid | MM_CID_ONCPU;
++	if (t->mm_cid.cid != cid) {
++		t->mm_cid.cid = cid;
++		rseq_sched_set_ids_changed(t);
++	}
 +}
 +
-+static __always_inline unsigned int cid_to_transit_cid(unsigned int cid)
++static __always_inline void mm_cid_update_pcpu_cid(struct mm_struct *mm, unsigned int cid)
 +{
-+	return cid | MM_CID_TRANSIT;
++	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
 +}
 +
-+static __always_inline unsigned int cid_from_transit_cid(unsigned int cid)
++static __always_inline void mm_cid_from_cpu(struct task_struct *t, unsigned int cpu_cid)
 +{
-+	return cid & ~MM_CID_TRANSIT;
++	unsigned int max_cids, tcid = t->mm_cid.cid;
++	struct mm_struct *mm = t->mm;
++
++	max_cids = READ_ONCE(mm->mm_cid.max_cids);
++	/* Optimize for the common case where both have the ONCPU bit set */
++	if (likely(cid_on_cpu(cpu_cid & tcid))) {
++		if (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
++			mm_cid_update_task_cid(t, cpu_cid);
++			return;
++		}
++		/* Try to converge into the optimal CID space */
++		cpu_cid = mm_cid_converge(mm, cpu_cid, max_cids);
++	} else {
++		/* Hand over or drop the task owned CID */
++		if (cid_on_task(tcid)) {
++			if (cid_on_cpu(cpu_cid))
++				mm_unset_cid_on_task(t);
++			else
++				cpu_cid = cid_to_cpu_cid(tcid);
++		}
++		/* Still nothing, allocate a new one */
++		if (!cid_on_cpu(cpu_cid))
++			cpu_cid = cid_to_cpu_cid(mm_get_cid(mm));
++	}
++	mm_cid_update_pcpu_cid(mm, cpu_cid);
++	mm_cid_update_task_cid(t, cpu_cid);
 +}
 +
-+static __always_inline bool cid_on_task(unsigned int cid)
++static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int cpu_cid)
 +{
-+	/* True if none of the MM_CID_ONCPU, MM_CID_TRANSIT, MM_CID_UNSET bits is set */
-+	return cid < MM_CID_TRANSIT;
++	unsigned int max_cids, tcid = t->mm_cid.cid;
++	struct mm_struct *mm = t->mm;
++
++	max_cids = READ_ONCE(mm->mm_cid.max_cids);
++	/* Optimize for the common case, where both have the ONCPU bit clear */
++	if (likely(cid_on_task(tcid | cpu_cid))) {
++		if (likely(tcid < max_cids)) {
++			mm_cid_update_pcpu_cid(mm, tcid);
++			return;
++		}
++		/* Try to converge into the optimal CID space */
++		tcid = mm_cid_converge(mm, tcid, max_cids);
++	} else {
++		/* Hand over or drop the CPU owned CID */
++		if (cid_on_cpu(cpu_cid)) {
++			if (cid_on_task(tcid))
++				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
++			else
++				tcid = cpu_cid_to_cid(cpu_cid);
++		}
++		/* Still nothing, allocate a new one */
++		if (!cid_on_task(tcid))
++			tcid = mm_get_cid(mm);
++		/* Set the transition mode flag if required */
++		tcid |= READ_ONCE(mm->mm_cid.transit);
++	}
++	mm_cid_update_pcpu_cid(mm, tcid);
++	mm_cid_update_task_cid(t, tcid);
 +}
 +
-+static __always_inline void mm_drop_cid(struct mm_struct *mm, unsigned int cid)
++static __always_inline void mm_cid_schedin(struct task_struct *next)
 +{
-+	clear_bit(cid, mm_cidmask(mm));
++	struct mm_struct *mm = next->mm;
++	unsigned int cpu_cid;
++
++	if (!next->mm_cid.active)
++		return;
++
++	cpu_cid = __this_cpu_read(mm->mm_cid.pcpu->cid);
++	if (likely(!READ_ONCE(mm->mm_cid.percpu)))
++		mm_cid_from_task(next, cpu_cid);
++	else
++		mm_cid_from_cpu(next, cpu_cid);
 +}
 +
-+static __always_inline void mm_unset_cid_on_task(struct task_struct *t)
++static __always_inline void mm_cid_schedout(struct task_struct *prev)
 +{
-+	unsigned int cid = t->mm_cid.cid;
++	/* During mode transitions CIDs are temporary and need to be dropped */
++	if (likely(!cid_in_transit(prev->mm_cid.cid)))
++		return;
 +
-+	t->mm_cid.cid = MM_CID_UNSET;
-+	if (cid_on_task(cid))
-+		mm_drop_cid(t->mm, cid);
++	mm_drop_cid(prev->mm, cid_from_transit_cid(prev->mm_cid.cid));
++	prev->mm_cid.cid = MM_CID_UNSET;
 +}
 +
-+static __always_inline void mm_drop_cid_on_cpu(struct mm_struct *mm, struct mm_cid_pcpu *pcp)
++static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next)
 +{
-+	/* Clear the ONCPU bit, but do not set UNSET in the per CPU storage */
-+	pcp->cid = cpu_cid_to_cid(pcp->cid);
-+	mm_drop_cid(mm, pcp->cid);
++	mm_cid_schedout(prev);
++	mm_cid_schedin(next);
 +}
 +
-+/* Active implementation */
+ /* Active implementation */
  static inline void init_sched_mm_cid(struct task_struct *t)
  {
- 	struct mm_struct *mm = t->mm;
+@@ -3674,6 +3820,7 @@ static inline void switch_mm_cid(struct
+ #else /* !CONFIG_SCHED_MM_CID: */
+ static inline void mm_cid_select(struct task_struct *t) { }
+ static inline void switch_mm_cid(struct task_struct *prev, struct task_struct *next) { }
++static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next) { }
+ #endif /* !CONFIG_SCHED_MM_CID */
+ 
+ extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
 
 
