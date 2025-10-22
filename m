@@ -1,200 +1,158 @@
-Return-Path: <linux-kernel+bounces-866006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFF4BFE957
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5701EBFE972
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B73FD3571A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F337E3A6467
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA5F35B133;
-	Wed, 22 Oct 2025 23:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A2730AD05;
+	Wed, 22 Oct 2025 23:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M/JzQISI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="StTRIB3i"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D20307AE1;
-	Wed, 22 Oct 2025 23:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304F7309DA5
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761175838; cv=none; b=KXR6KSv53MenmNgeSX6LBR1srzy9izVJ0u14xoAUnjE2telhB6J0eU6WAU+GEMQaoxUUavzte2DJhk7aPIsdPB/tbfrwfd7/ck2hl7ojU/Cp7+ttffxbnJLzDXvoQX0jiDvIAI172bOQT7hKHiLGyoqrfaBzz2n+7Nbcunl7wg0=
+	t=1761175855; cv=none; b=doMLEfCiIKWe9aZUWZaTfzJpteM5Ma/zFtVw6kwji9EeOFtAZapR+7SpCGb7gKmENigQsj+JVVTk4v5JTtS0lmOckLC8CiuAdBmPVFDe77EFp74RM9BnxQXuyMjQNPEGOGDq1kTRar2j1aCR1DC2mbIW3nYFQFdtW0z77jpDgSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761175838; c=relaxed/simple;
-	bh=Hde4fcdX6Fyj9O/1wekIbmldLfZqWfz5Xy8fCMVdArc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=vCMSavIudV9VK3mprmhZLM+rJ+E0bmPJY8iG4jhdko9hKrhDLSA+jAWau3XmARPKJkL6dLtDSeNoTwTZeyQMw9oIiMusV6ZDbcQyun6ga+ZGwqwiGoyAWGfrTZib294gIbO5vVpz0E00aggOWxyVAyCL/gPpVX2cVegshrc4JIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=M/JzQISI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761175823;
-	bh=O60pWPgOGUhvOYfOoKTxF1PQ//SHYjvxwW3qGmCjajY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=M/JzQISIrvliA3sHltpQpiCtFt0IY151EGEANz14CSAdVXpoTktzG6nysGOdxtoMS
-	 neaFXvet57Y4w6cE+YnYXFKvLdPsnYVZMBbwyTZzBR2nozEUliI/vmFmMueqsiZ8o/
-	 w5z5PTKdKCW+NQ3/CR5f5xN9TOUcYiwTnAm1J4dT5ggkcMwRIDp96o2BBKAyfJrET9
-	 2CIT5z4eAv+ca+BTB7eHtL3dJDDGA3gTbl65Bol5E36Q1oPMEC1ZoO0izhimyeVObw
-	 yoMc/xXz94FfkvB9G8yeJpeV+Lx1IDpJbVi27MMNoqPvl/VKizJpHHoxIhxGudOPEc
-	 2WxBXq8qKkY4Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4csQPp55mfz4wMF;
-	Thu, 23 Oct 2025 10:30:22 +1100 (AEDT)
-Date: Thu, 23 Oct 2025 10:30:20 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the pmdomain tree
-Message-ID: <20251023103020.20e9c1cf@canb.auug.org.au>
+	s=arc-20240116; t=1761175855; c=relaxed/simple;
+	bh=FJ5dPWeuTDRG2VX7FLyUJF0mD0hnFePTCkWS6C5Q3EA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=g1AxSoUEkM2SUajO/bC4tyMr/YmTr7FNjlpdqpH7uyJxI1dZ2vHji/GCFj2BIVcq7HBGl9ebzqd8aSiN3aEfp80F0ERzcYvI5yg9pbNkyZsbVUxVnFwP+ADE3weAu82/amgtPXoXFv7M/XqDDzDZ7Z6KdfPqMbB8IMKXIVvBIuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=StTRIB3i; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b630753cc38so277195a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761175851; x=1761780651; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3jEiO6iBxzy6fxnsgwrsRYGtWZsrwu6A5X9ZJxUc05s=;
+        b=StTRIB3ia4VotH0oNfRldoeYZy7DFSoBOunCAH3g3FV7Z3yvRspTKvfuj7IksqTWM0
+         R0IGmqesgalhEVemC6wY0/JcqcHSCrVBcdV27rgotEr/LL5jPQmnubqvILp06jqVzMkP
+         P+aBREszcp1bnHDr7+/rtkyO1qHtbSDdJ9O4+d5lvjOF/AoISE8PaTDxYhB+A1t2XLqa
+         hsUhjohqIeoIO4W2CenPOOkeusZFMnDYxB/RCpKwCXevQ1om0P+6YrwQBuJFqIwZZ6Ze
+         RavicgAg0YBneomDyrLWdIZZFVDGKwPcbwbJ1IzZBqTsOOPFnRTm6e3kui9aNwTZ6Sct
+         Sqqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761175851; x=1761780651;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3jEiO6iBxzy6fxnsgwrsRYGtWZsrwu6A5X9ZJxUc05s=;
+        b=oNoV6sk0+9y0suamQL2uYOSbyXhVWqKGIBiRSYoJtZXiDfFhDsvC81pcKvrAc5DlCa
+         0PEfkauB3pprSKEvx31xhCtvpRbWDIVAZN3cW535fvifvQ1ho1sOGItPVjZv3Ph2MuzJ
+         OMHtskR5+Ca4w+i8+ZegoRdYNLpxNSIuZ9CCNxOP0Ynl5PlRkiu5EzLxWH9n5XiCXZU6
+         CSvRSk+H6IHFvebs6j64buOCPDeAEUO/USViJONkozjDewBn4vW5mPqtq+8mH6oe35vS
+         PiJyzbufPuKl1Z/TsMXbAeOAAfzcRJutsNpP4KgGq63Wls0wNc2ReLCxjNNKyz7nN6/t
+         Kd+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVh4jQFst7nCNj72qpuOgvAu5w2QoepgpsE5jqn9CQOtBJcJsAHFCWq4bLC919jPxVqI7y0PPnCycc0yFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymwA8hh0ROnSrsuz9n5XMMZemX6/05scNXeCwnoHSr7aYLeDZM
+	40VEvQ2vd7n7iOdOjjPR50/VQk3IYA+8A/EZMeSsLeamZv0Rm1Z3g9mAztUBJFAI0nWiTSTd60M
+	XZ3UPmQ==
+X-Google-Smtp-Source: AGHT+IFg265zLGl2bQmWCvkKPU4u2q3qfh913c9juw3tQPbolW7ChzJ4nSIfXk8wuAQ4jQwhmqRekZFnQlI=
+X-Received: from pjnj13.prod.google.com ([2002:a17:90a:840d:b0:329:7261:93b6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d84:b0:2f9:39b0:fd88
+ with SMTP id adf61e73a8af0-334a84da4b1mr29081038637.21.1761175851395; Wed, 22
+ Oct 2025 16:30:51 -0700 (PDT)
+Date: Wed, 22 Oct 2025 16:30:49 -0700
+In-Reply-To: <diqzy0p2eet3.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/XK0CxmqGDsz_NTNzsubdBH0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
+ <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com> <diqzy0p2eet3.fsf@google.com>
+Message-ID: <aPlpKbHGea90IebS@google.com>
+Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
+	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
+	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
+	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
+	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
+	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
+	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com
+Content-Type: text/plain; charset="us-ascii"
 
---Sig_/XK0CxmqGDsz_NTNzsubdBH0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 22, 2025, Ackerley Tng wrote:
+> Ackerley Tng <ackerleytng@google.com> writes:
+> 
+> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
+> 
+> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
+> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
+> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
+> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
 
-Hi all,
+No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
+exists is largely irrelevant.  We can even provide the same -ENOTTY errno by
+checking that _any_ attributes are supported, i.e. so that doing
+KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
+same way that KVM with code support but no attributes fails.
 
-After merging the pmdomain tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+In other words, I don't see why it can't do both.  Even if we can't massage the
+right errno, I would much rather KVM_SET_MEMORY_ATTRIBUTES2 enumerate the set of
+supported attributes than simply '1'.  E.g. we have no plans to support
+KVM_SET_MEMORY_ATTRIBUTES on guest_memfd, and so returning simply '1' creates an
+unwanted and unnecessary dependency.
 
-drivers/pmdomain/mediatek/mtk-pm-domains.c: In function 'scpsys_sec_infra_p=
-ower_on':
-drivers/pmdomain/mediatek/mtk-pm-domains.c:128:30: error: storage size of '=
-res' isn't known
-  128 |         struct arm_smccc_res res;
-      |                              ^~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:131:9: error: implicit declarati=
-on of function 'arm_smccc_smc' [-Wimplicit-function-declaration]
-  131 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0=
-, 0, 0, &res);
-      |         ^~~~~~~~~~~~~
-In file included from drivers/pmdomain/mediatek/mtk-pm-domains.c:18:
-include/linux/soc/mediatek/mtk_sip_svc.h:22:9: error: implicit declaration =
-of function 'ARM_SMCCC_CALL_VAL' [-Wimplicit-function-declaration]
-   22 |         ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, MTK_SIP_SMC_CONVENT=
-ION, \
-      |         ^~~~~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:56:41: note: in expansion of mac=
-ro 'MTK_SIP_SMC_CMD'
-   56 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
-      |                                         ^~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:131:23: note: in expansion of ma=
-cro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
-  131 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0=
-, 0, 0, &res);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/soc/mediatek/mtk_sip_svc.h:22:28: error: 'ARM_SMCCC_FAST_CALL=
-' undeclared (first use in this function)
-   22 |         ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, MTK_SIP_SMC_CONVENT=
-ION, \
-      |                            ^~~~~~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:56:41: note: in expansion of mac=
-ro 'MTK_SIP_SMC_CMD'
-   56 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
-      |                                         ^~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:131:23: note: in expansion of ma=
-cro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
-  131 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0=
-, 0, 0, &res);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/soc/mediatek/mtk_sip_svc.h:22:28: note: each undeclared ident=
-ifier is reported only once for each function it appears in
-   22 |         ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, MTK_SIP_SMC_CONVENT=
-ION, \
-      |                            ^~~~~~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:56:41: note: in expansion of mac=
-ro 'MTK_SIP_SMC_CMD'
-   56 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
-      |                                         ^~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:131:23: note: in expansion of ma=
-cro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
-  131 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0=
-, 0, 0, &res);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/soc/mediatek/mtk_sip_svc.h:18:41: error: 'ARM_SMCCC_SMC_32' u=
-ndeclared (first use in this function)
-   18 | #define MTK_SIP_SMC_CONVENTION          ARM_SMCCC_SMC_32
-      |                                         ^~~~~~~~~~~~~~~~
-include/linux/soc/mediatek/mtk_sip_svc.h:22:49: note: in expansion of macro=
- 'MTK_SIP_SMC_CONVENTION'
-   22 |         ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, MTK_SIP_SMC_CONVENT=
-ION, \
-      |                                                 ^~~~~~~~~~~~~~~~~~~=
-~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:56:41: note: in expansion of mac=
-ro 'MTK_SIP_SMC_CMD'
-   56 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
-      |                                         ^~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:131:23: note: in expansion of ma=
-cro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
-  131 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0=
-, 0, 0, &res);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/soc/mediatek/mtk_sip_svc.h:23:28: error: 'ARM_SMCCC_OWNER_SIP=
-' undeclared (first use in this function)
-   23 |                            ARM_SMCCC_OWNER_SIP, fn_id)
-      |                            ^~~~~~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:56:41: note: in expansion of mac=
-ro 'MTK_SIP_SMC_CMD'
-   56 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
-      |                                         ^~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:131:23: note: in expansion of ma=
-cro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
-  131 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0=
-, 0, 0, &res);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:128:30: warning: unused variable=
- 'res' [-Wunused-variable]
-  128 |         struct arm_smccc_res res;
-      |                              ^~~
-drivers/pmdomain/mediatek/mtk-pm-domains.c:133:1: error: control reaches en=
-d of non-void function [-Werror=3Dreturn-type]
-  133 | }
-      | ^
-cc1: some warnings being treated as errors
+> @@ -1617,4 +1618,15 @@ struct kvm_pre_fault_memory {
+>  	__u64 padding[5];
+>  };
+>  
+> +/* Available with KVM_CAP_MEMORY_ATTRIBUTES2 */
+> +#define KVM_SET_MEMORY_ATTRIBUTES2              _IOWR(KVMIO,  0xd6, struct kvm_memory_attributes2)
 
-Caused by commit
+Please use the same literal number, 0xd2, as
 
-  df4e9ec1ed86 ("pmdomain: mediatek: Add support for secure HWCCF infra pow=
-er on")
+  #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
 
-(and maybe others)
+The "final" ioctl number that userspace sees incorporates the directionality and
+the size of the struct, i.e. KVM_SET_MEMORY_ATTRIBUTES and KVM_SET_MEMORY_ATTRIBUTES2
+are guaranteed to be distinct even if they both use 0xd2 as the "minor" number.
 
-I have used the pmdomain tree from next-20251022 for today.
+> +
+> +struct kvm_memory_attributes2 {
+> +	__u64 address;
+> +	__u64 size;
+> +	__u64 attributes;
+> +	__u64 flags;
+> +	__u64 reserved[4];
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XK0CxmqGDsz_NTNzsubdBH0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj5aQwACgkQAVBC80lX
-0Gx9PQf/cFq1PjiIiwxSS2K3dVSMWqocjRkquJqTNfMmeLLCXNzjl6PRADr+q9lo
-R4Tv7TY+Tq0+WJLRsk9suiSDfSeDjqT1Rn4ZpUbvjliKTGG1Qq5gfFAGbpvpTfid
-esIwV+3T7ruKm53Kk6ZipWhKNSj0EzJGFlmEiuX/u482vK/4/Wt6IqfUy+cJ+lds
-RLuMUiABm/W/G3WnrYCnTiRI6DQeAQ9z0vjR057DN52za3TgtoSy9r0Fvwg45wgo
-gWefGVlIb1ComgJWhVgZLhS97pKPUSxj33qV2eKqcPq4zh060b1humD2iKyvFHP+
-vWrn0J68djkOH8Rngm48jhzkWtzTBQ==
-=g3mt
------END PGP SIGNATURE-----
-
---Sig_/XK0CxmqGDsz_NTNzsubdBH0--
+Maybe be paranoid and reserve 12 u64s?
 
