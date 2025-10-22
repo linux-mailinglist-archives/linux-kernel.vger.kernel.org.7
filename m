@@ -1,173 +1,106 @@
-Return-Path: <linux-kernel+bounces-864054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11DCBF9CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B48BF9CFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5FD189A3B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A9519A150B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 03:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD3710A1E;
-	Wed, 22 Oct 2025 03:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A14221F39;
+	Wed, 22 Oct 2025 03:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i4nG5H7p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fCiRjH/H"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393F12F29;
-	Wed, 22 Oct 2025 03:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E26319E82A;
+	Wed, 22 Oct 2025 03:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761102958; cv=none; b=IxiK9GBFegIBgT3udD9RhmwofRqWf+r7Ro3P+gV9ZepT88UZ0VIfX7bfRcvMUtDfDAoaw8erXhHRMVmb3WxSEd1VZjLTwq94O1ujn/xe8CMbBt68ozRf52VyQeaSWtN5KQzHZxaFs0suKYD1qIAEyR9szlOYx4YiZXqEgd2jddI=
+	t=1761103033; cv=none; b=M2T1cHCv3sBCUpnNyu1gXrvIsugDRVarWWwKsNGLSLDSVkiEoR2n21N1Rp1Kpf7Ca8Ci+oi8Wx+1jn97pz0+3GRMjh8Ou6GuI2DVdFW23kYYSwsq+ftAvFnqfae312UtyLR/c0afBEMnMywKiwXavDNT8q5eyaqrYuOU57HRqZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761102958; c=relaxed/simple;
-	bh=C4vq3UaKFDwToRnrsRh+czOcOkuL3mJDA1+8OYAo9rg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gu4Fq4ThJouKmI059knzqUexvDUURd7s58dOQH7l8KoDyOR9z+bHr8PVwm4TR9Eh+kGnRg/tPEvN0XAQX/cYqU5JcNAfDRl5CWwJQvEzmkRDlT7bVzax/3lFHvcQo9AXG8WFtNUDFN+gSDbg3VFWQQnZ4jhhFB3LI9I7jufewZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i4nG5H7p; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761102956; x=1792638956;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=C4vq3UaKFDwToRnrsRh+czOcOkuL3mJDA1+8OYAo9rg=;
-  b=i4nG5H7pT/VjYzRliiapnet3/p7dQh4EvBS6SoFyAvhOCNkK0uG1mYYg
-   YdJOcK/dLkdKQ+RX/ywKDkLf/tmA7KoG+Pt9Ea4gqXavFKaHDPRiAITJ2
-   SPXw/dbG0I0vPXiJiqpmLJBxJWWuq5AYWsyK5AaOq1HlUh3lIzYIHNRgc
-   IpE+3XLUo43fFGuP7xCq78nnC9SH5HiFJbQdbTsuEfVx33bSt3SYekoB6
-   oowsbd0JufKwMQWlmVro1CkQVQ56QQyjHz6wV/rTzxrY59IzonpxUztMk
-   q643KEwK7OR1NsZSRdXZsNdIzlFHWpBPqbe5YgNLyWd0L22kFor700HgE
-   A==;
-X-CSE-ConnectionGUID: VgRBMjEkTEmUOh64IBq9rg==
-X-CSE-MsgGUID: D65/HnjER2KQQS/QlZmkTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88708844"
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="88708844"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 20:15:56 -0700
-X-CSE-ConnectionGUID: rS/w9ShoRTOr0LOxJ5xyUg==
-X-CSE-MsgGUID: oNdfq1G9T4yNJ67V9X9aAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="184159739"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 20:15:49 -0700
-Message-ID: <eb6a2ca0-84eb-4770-8300-cd8892eae6ad@linux.intel.com>
-Date: Wed, 22 Oct 2025 11:15:46 +0800
+	s=arc-20240116; t=1761103033; c=relaxed/simple;
+	bh=nior2QHsSfqjXt7gF5sqo0VrHudLeQr6Vhei1aA4Ohk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jwI8idqvIckHTALojSrvyP0ebE8Nhx1lLlm5rvsswL3amsib3zaCRw9e3FvM1I2hhIh5kgTAhZiQQd5qSXnJYFbmd1PXkyrXnohxkYQmkYGwRcrMTNttMiEdxmR3/1QIbjcwZjh+fo1sGgJIe/KjBpm7TcOaHqDsp6wulRf9jnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fCiRjH/H; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761103026;
+	bh=u+kD9LptVizFe7Bpv5czGKc/bHfylT4QBDtA0fUC0rE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fCiRjH/HzAOQHlgL66X2qgV/7oov6vv7IJPBxCSS0LEY9BvHlrbgRNTgVcc+82sqm
+	 EdX5oNdWue7wYB/SGZ7uQHRIZxxUZ68nasSN/xMgYvtUpX/4vD43nr3tESJEhFmSrI
+	 ox+OUX7m5+ozFG4M3nUj/jxe4vF0kobe+QO6lf5YhCe95IvjoO1H+B6YEDVNBEEj6m
+	 Em50+qMb9i9dnommEemYV/K3xYWSDSRugl+2C0yPfnZMj/RVxV6F1wxBPllG/f7qjl
+	 8/rfFWEXRWIeXm97AD6U1pyaXkWI0LYI/b0jggoTUxiE3ncuEOSwLidC97lIYzQ/uk
+	 q24AzONMUdNDA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4crvTt2prCz4wCV;
+	Wed, 22 Oct 2025 14:17:06 +1100 (AEDT)
+Date: Wed, 22 Oct 2025 14:17:05 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Jinmei Wei <weijinmei@linux.spacemit.com>, Troy Mitchell
+ <troy.mitchell@linux.spacemit.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Message-ID: <20251022141705.714b19b5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/25] KVM: TDX: Drop PROVE_MMU=y sanity check on
- to-be-populated mappings
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20251017003244.186495-1-seanjc@google.com>
- <20251017003244.186495-4-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251017003244.186495-4-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/bShkLQBYTl6yB_oh_26ckZZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/bShkLQBYTl6yB_oh_26ckZZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 10/17/2025 8:32 AM, Sean Christopherson wrote:
-> Drop TDX's sanity check that a mirror EPT mapping isn't zapped between
-> creating said mapping and doing TDH.MEM.PAGE.ADD, as the check is
-> simultaneously superfluous and incomplete.  Per commit 2608f1057601
-> ("KVM: x86/tdp_mmu: Add a helper function to walk down the TDP MMU"), the
-> justification for introducing kvm_tdp_mmu_gpa_is_mapped() was to check
-> that the target gfn was pre-populated, with a link that points to this
-> snippet:
->
->   : > One small question:
->   : >
->   : > What if the memory region passed to KVM_TDX_INIT_MEM_REGION hasn't been pre-
->   : > populated?  If we want to make KVM_TDX_INIT_MEM_REGION work with these regions,
->   : > then we still need to do the real map.  Or we can make KVM_TDX_INIT_MEM_REGION
->   : > return error when it finds the region hasn't been pre-populated?
->   :
->   : Return an error.  I don't love the idea of bleeding so many TDX details into
->   : userspace, but I'm pretty sure that ship sailed a long, long time ago.
->
-> But that justification makes little sense for the final code, as the check
-> on nr_premapped after TDH.MEM.PAGE.ADD will detect and return an error if
-> KVM attempted to zap a S-EPT entry (tdx_sept_zap_private_spte() will fail
-> on TDH.MEM.RANGE.BLOCK due lack of a valid S-EPT entry).  And as evidenced
-> by the "is mapped?" code being guarded with CONFIG_KVM_PROVE_MMU=y, KVM is
-> NOT relying on the check for general correctness.
->
-> The sanity check is also incomplete in the sense that mmu_lock is dropped
-> between the check and TDH.MEM.PAGE.ADD, i.e. will only detect KVM bugs that
-> zap SPTEs in a very specific window (note, this also applies to the check
-> on nr_premapped).
->
-> Removing the sanity check will allow removing kvm_tdp_mmu_gpa_is_mapped(),
-> which has no business being exposed to vendor code, and more importantly
-> will pave the way for eliminating the "pre-map" approach entirely in favor
-> of doing TDH.MEM.PAGE.ADD under mmu_lock.
->
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+After merging the sound-asoc tree, today's linux-next build (powercp
+allyesconfig) produced this warning:
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+WARNING: unmet direct dependencies detected for DMA_CMA
+  Depends on [n]: HAVE_DMA_CONTIGUOUS [=3Dn] && CMA [=3Dy]
+  Selected by [y]:
+  - SND_SOC_K1_I2S [=3Dy] && SOUND [=3Dy] && SND [=3Dy] && SND_SOC [=3Dy] &=
+& (COMPILE_TEST [=3Dy] || ARCH_SPACEMIT) && HAVE_CLK [=3Dy]
 
-> ---
->   arch/x86/kvm/vmx/tdx.c | 14 --------------
->   1 file changed, 14 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 326db9b9c567..4c3014befe9f 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -3181,20 +3181,6 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
->   	if (ret < 0)
->   		goto out;
->   
-> -	/*
-> -	 * The private mem cannot be zapped after kvm_tdp_map_page()
-> -	 * because all paths are covered by slots_lock and the
-> -	 * filemap invalidate lock.  Check that they are indeed enough.
-> -	 */
-> -	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
-> -		scoped_guard(read_lock, &kvm->mmu_lock) {
-> -			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, gpa), kvm)) {
-> -				ret = -EIO;
-> -				goto out;
-> -			}
-> -		}
-> -	}
-> -
->   	ret = 0;
->   	err = tdh_mem_page_add(&kvm_tdx->td, gpa, pfn_to_page(pfn),
->   			       src_page, &entry, &level_state);
+Probably introduced by commit
 
+  fce217449075 ("ASoC: spacemit: add i2s support for K1 SoC")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bShkLQBYTl6yB_oh_26ckZZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj4TLEACgkQAVBC80lX
+0Gxgogf9Ean8AdS8yIU3f//+KXGCC4LMIc/wCKdL54dl+EGdehBdRIn/6H4rh0HW
+8vyLi9v2KIHKyAY40543x76anOUsVYwjOnJJDdsWk/La8nsUQ7szcEAnGtU69u0Z
+JkbKlJM9kZ3ilS/76EsXc8PQQXKF/BArJ/ZqLjBjkvLated6lWsXsNkL2wUZ/yIp
+5FJZJlzH/TPWpoeQR5gLPENETN/5lFWvawdHGuE+/wfK93/BLF5hTyEjQn+yX9x1
+IeHuXohiMrKLi5xjOXp+jl/Axeu+qMEQqHVW04fikH2+qFpVYqCyd2Ns8hSEJmFP
+lWiDko4BPsk5EKuI0iVLeysi2SAL4g==
+=QQaG
+-----END PGP SIGNATURE-----
+
+--Sig_/bShkLQBYTl6yB_oh_26ckZZ--
 
