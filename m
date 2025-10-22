@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-864489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76727BFAE41
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9364BFAE48
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CF681885F36
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDD74231F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069B1309F14;
-	Wed, 22 Oct 2025 08:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC3530B517;
+	Wed, 22 Oct 2025 08:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HO48mn1E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIC6nwIj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CE130AAA9;
-	Wed, 22 Oct 2025 08:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D352D30AAB3
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121760; cv=none; b=WNU5AG+BAUydlRqjLssNj6/GAZRr1Po1jOAtOnjfAvrq3pKsxCaahNFNPeknfv0KL+c1t23lKrDQP3EdrGkNBvaLuNF/r6/cCil7B3l3E84VvtkT55ckKxO1DmSjEhf1qak0RGXubn6nggN9Y2fnW5wYfUfYNn6I2uVxutrmCf0=
+	t=1761121766; cv=none; b=Rik5WPm9ABXS9CMb+C1Tr+Ztm1FRT+tmBrO8ezJ8/646s593WKZ7u/rSCrqM1BhJ4tPGAyKI7Ic5Tw8UNbADhROR3dPyWn2hujEFNEXp9vlvO2SxyiHDFL7OSv7qIKdq2IUuHdmICY/NGENtj3sHy6dHFyzNtiSG1PARJsHKm/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121760; c=relaxed/simple;
-	bh=X8hpluMqUjHyF3NnFKeki1ZNOZ9A7wW3hfxRIst9gNk=;
+	s=arc-20240116; t=1761121766; c=relaxed/simple;
+	bh=PamdCW5SIExW2MSTVmRrUvcUix6foLzr9uopaA+M2pw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kJqWRNUW2hXuzx9sihvEzkI7nkSJAd8LGKxme736+6hiw831f+UuAyXthfzuT/JF9AyZDic9lc9I6IyA7vKHHOcyBM9Y2Rd0erhadfeDU26mTfohY4Z0t0mkQ/AaFq8oB4pyeqOzjMBjZBI73wa0UTrvBI6vS9TiThvbZR3riL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HO48mn1E; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=RbU+j3i4W2XhW+tkLNIz68etd6gwdkaQzkNxM0D5cHngo5VmSOQtTicj/r1TbO/CtnzeJqGlephZJmpRuFXx752pLqrNot1zFpoUnysd3yWVe/vxht6o8xPpAaOnZfKQ/SECA17Ib83IkJ1M/n9YmNF638HNxo3fQqZWQu0Q3ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIC6nwIj; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761121758; x=1792657758;
+  t=1761121765; x=1792657765;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=X8hpluMqUjHyF3NnFKeki1ZNOZ9A7wW3hfxRIst9gNk=;
-  b=HO48mn1EaWM6bikVLYXswOm+wWf7J103gcxVuf89BePxwmBPzfryGGhY
-   2rbWBd4ETjBOHyBQyJfUu+INYn8s4yuIn5EHnrdIPcooZQDmLm9SyjLge
-   HdRc1l/jDECz46SOKUkKLNokuBcyZ4r6QKYkd75jOUiYAgnTOs6QAH80z
-   cZww6i/czqqYexvB4gBBWukEsw8KQ54YgA7yJZZYfXWHpQp8VkurB2966
-   XXr7LF27vBNOQMdC8sylTIdnTkHnUgtA/VxA6SB5aPR3xKN+An0GDR0Xs
-   GeSdnv/EbyFYgR8ZZuojsjPoIy4R5U+LJ0JfStu/3yCX+90Hz+RqpUjis
-   g==;
-X-CSE-ConnectionGUID: Sa3ljfcdTBaBkvNaOgXIxw==
-X-CSE-MsgGUID: eJKOQM1BRzGD8RkWXZTqmQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74382487"
+  bh=PamdCW5SIExW2MSTVmRrUvcUix6foLzr9uopaA+M2pw=;
+  b=YIC6nwIjODsMzvMatCwTCe3l95MmT4F+gFqNkzkCGi8Amfjgvt3ALQZK
+   fO4NCnUjLBI4XcUWncCJTMxzehsmM5wNgy72xsKshgWX1kAajPkNsnGec
+   OKUIqVWB6rDGj4avV4T0YpHYLWAHg2ZX2eyil1e8PvSZEnArB0pESrdQI
+   uSrhXoVDlYDnXxyedaMyunesOlyUxdXUyH598rbvIn3NE2PaFJ9le43Fc
+   k+kzqJXOYeKrbHo7DJD6Y1+X1DgVHWekkQ4A4ZqHHfp08zxzVDqNMwCZk
+   Y4qv5zxa3O1lzohtmDNtwoVKW42ipR5iShNmo9Be8D5uYqutnqfh2qv+J
+   Q==;
+X-CSE-ConnectionGUID: 9XHQceP0Tv+YlFhZRehNgw==
+X-CSE-MsgGUID: +V1Vd6XPTR6JJPGEgBHGsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62471552"
 X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="74382487"
+   d="scan'208";a="62471552"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 01:29:17 -0700
-X-CSE-ConnectionGUID: V+b1HRBlR6SJ4CzEl3BbxA==
-X-CSE-MsgGUID: akeshMYnSd64ObPki9LPvA==
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 01:29:24 -0700
+X-CSE-ConnectionGUID: uYNe54tGQT2jRkTDg8M2GQ==
+X-CSE-MsgGUID: 96m6+PNSSlueQgOErfr6UA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="183516218"
+   d="scan'208";a="183516242"
 Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa007.fm.intel.com with ESMTP; 22 Oct 2025 01:29:11 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 22 Oct 2025 01:29:17 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -89,11 +89,11 @@ Cc: iommu@lists.linux.dev,
 	x86@kernel.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v7 1/8] iommu: Disable SVA when CONFIG_X86 is set
-Date: Wed, 22 Oct 2025 16:26:27 +0800
-Message-ID: <20251022082635.2462433-2-baolu.lu@linux.intel.com>
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v7 2/8] mm: Add a ptdesc flag to mark kernel page tables
+Date: Wed, 22 Oct 2025 16:26:28 +0800
+Message-ID: <20251022082635.2462433-3-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
 References: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
@@ -105,58 +105,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
-shares and walks the CPU's page tables. The x86 architecture maps the
-kernel's virtual address space into the upper portion of every process's
-page table. Consequently, in an SVA context, the IOMMU hardware can walk
-and cache kernel page table entries.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-The Linux kernel currently lacks a notification mechanism for kernel page
-table changes, specifically when page table pages are freed and reused.
-The IOMMU driver is only notified of changes to user virtual address
-mappings. This can cause the IOMMU's internal caches to retain stale
-entries for kernel VA.
+The page tables used to map the kernel and userspace often have very
+different handling rules. There are frequently *_kernel() variants of
+functions just for kernel page tables. That's not great and has lead
+to code duplication.
 
-Use-After-Free (UAF) and Write-After-Free (WAF) conditions arise when
-kernel page table pages are freed and later reallocated. The IOMMU could
-misinterpret the new data as valid page table entries. The IOMMU might
-then walk into attacker-controlled memory, leading to arbitrary physical
-memory DMA access or privilege escalation. This is also a Write-After-Free
-issue, as the IOMMU will potentially continue to write Accessed and Dirty
-bits to the freed memory while attempting to walk the stale page tables.
+Instead of having completely separate call paths, allow a 'ptdesc' to
+be marked as being for kernel mappings. Introduce helpers to set and
+clear this status.
 
-Currently, SVA contexts are unprivileged and cannot access kernel
-mappings. However, the IOMMU will still walk kernel-only page tables
-all the way down to the leaf entries, where it realizes the mapping
-is for the kernel and errors out. This means the IOMMU still caches
-these intermediate page table entries, making the described vulnerability
-a real concern.
+Note: this uses the PG_referenced bit. Page flags are a great fit for
+this since it is truly a single bit of information.  Use PG_referenced
+itself because it's a fairly benign flag (as opposed to things like
+PG_lock). It's also (according to Willy) unlikely to go away any time
+soon.
 
-Disable SVA on x86 architecture until the IOMMU can receive notification
-to flush the paging cache before freeing the CPU kernel page table pages.
+PG_referenced is not in PAGE_FLAGS_CHECK_AT_FREE. It does not need to
+be cleared before freeing the page, and pages coming out of the
+allocator should have it cleared. Regardless, introduce an API to
+clear it anyway. Having symmetry in the API makes it easier to change
+the underlying implementation later, like if there was a need to move
+to a PAGE_FLAGS_CHECK_AT_FREE bit.
 
-Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
-Cc: stable@vger.kernel.org
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/iommu/iommu-sva.c | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/mm.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
-index 1a51cfd82808..a0442faad952 100644
---- a/drivers/iommu/iommu-sva.c
-+++ b/drivers/iommu/iommu-sva.c
-@@ -77,6 +77,9 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
- 	if (!group)
- 		return ERR_PTR(-ENODEV);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index d16b33bacc32..354d7925bf77 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2940,6 +2940,7 @@ static inline pmd_t *pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long a
+ #endif /* CONFIG_MMU */
  
-+	if (IS_ENABLED(CONFIG_X86))
-+		return ERR_PTR(-EOPNOTSUPP);
+ enum pt_flags {
++	PT_kernel = PG_referenced,
+ 	PT_reserved = PG_reserved,
+ 	/* High bits are used for zone/node/section */
+ };
+@@ -2965,6 +2966,46 @@ static inline bool pagetable_is_reserved(struct ptdesc *pt)
+ 	return test_bit(PT_reserved, &pt->pt_flags.f);
+ }
+ 
++/**
++ * ptdesc_set_kernel - Mark a ptdesc used to map the kernel
++ * @ptdesc: The ptdesc to be marked
++ *
++ * Kernel page tables often need special handling. Set a flag so that
++ * the handling code knows this ptdesc will not be used for userspace.
++ */
++static inline void ptdesc_set_kernel(struct ptdesc *ptdesc)
++{
++	set_bit(PT_kernel, &ptdesc->pt_flags.f);
++}
 +
- 	mutex_lock(&iommu_sva_lock);
- 
- 	/* Allocate mm->pasid if necessary. */
++/**
++ * ptdesc_clear_kernel - Mark a ptdesc as no longer used to map the kernel
++ * @ptdesc: The ptdesc to be unmarked
++ *
++ * Use when the ptdesc is no longer used to map the kernel and no longer
++ * needs special handling.
++ */
++static inline void ptdesc_clear_kernel(struct ptdesc *ptdesc)
++{
++	/*
++	 * Note: the 'PG_referenced' bit does not strictly need to be
++	 * cleared before freeing the page. But this is nice for
++	 * symmetry.
++	 */
++	clear_bit(PT_kernel, &ptdesc->pt_flags.f);
++}
++
++/**
++ * ptdesc_test_kernel - Check if a ptdesc is used to map the kernel
++ * @ptdesc: The ptdesc being tested
++ *
++ * Call to tell if the ptdesc used to map the kernel.
++ */
++static inline bool ptdesc_test_kernel(const struct ptdesc *ptdesc)
++{
++	return test_bit(PT_kernel, &ptdesc->pt_flags.f);
++}
++
+ /**
+  * pagetable_alloc - Allocate pagetables
+  * @gfp:    GFP flags
 -- 
 2.43.0
 
