@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-864021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570D2BF9BF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:37:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F40BF9BF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2D219C48BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:37:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CA142186B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD83219E8C;
-	Wed, 22 Oct 2025 02:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D48922259F;
+	Wed, 22 Oct 2025 02:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UoyoDwFs"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="hX8VbUsh"
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32181153BED;
-	Wed, 22 Oct 2025 02:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C4A17BB35;
+	Wed, 22 Oct 2025 02:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761100632; cv=none; b=V0Wxfr4Oc5Np5WnwErWTYr5erPDp7QRW5SCC2izExT0VUsnjkEcH/eX3nDj2PULAc7omdwuUbUmnxHb0DgNnpcFpO63Jy1vdLVcNnKt0w1tCpP6w02rVfdOoGrQGZYmSascWDbfALIrWzxx+DaM6L5oMSbh2h0HhmFeSmXvEqgY=
+	t=1761100633; cv=none; b=rTLEY8Y0c1YcX0zYUfkrVpsmXQ1VYg9bwBZsMD0Ttb4ztwChy62NeVklPVpCHxSjjHdKWVupdGFpt5d5g99uCtszea0MOhIiPUG8s9DbwzvI0iSopsvv2WwwpUOtUhLv9mHisstTaeUS6bpJgDbb9cYhtNLGa7GLkUj5qlMatIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761100632; c=relaxed/simple;
-	bh=XhyYllBfwHf72vSC18rS/Cm87Saoovo31wHcPD36wlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o64KoajkbRZYjmlVP9XYJdGrXCilmIbPZgEYqSXijGEeJ19ORNHvsiYgHiTm2rgIKivDdLVi+X47DR1HrxJhifrmWob1QhsqWiXxZDEz5RhOzL9AToZU5Xkb4sOIxdGLiXYkO95D/FJGJxJPXS9mZkTK2pTvNVkwacenWGH/9fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UoyoDwFs; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XfctmnZLfrlop/d15JrrVkXBGMbnmekiyc6xg+1wABw=; b=UoyoDwFs9etYeDMMLLtSnNHExS
-	g9rTXhzqWXFOS5U1MFw1G6zwBZtqRu/iCO2I8jzjj5hTM27eqQ741MAyNHrHMOHoxkp25UB+PYL8c
-	QI3S3MnBIXUIQdu1CL7SaaKALe8xVTLcRka29pg1uiqWSfEnNHg7WYaB4eeIu+sT0hkg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vBOie-00BhgU-0x; Wed, 22 Oct 2025 04:36:56 +0200
-Date: Wed, 22 Oct 2025 04:36:56 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v3 5/7] net: dsa: lantiq_gswip: replace *_mask()
- functions with regmap API
-Message-ID: <cf92b303-33c0-4e53-9406-0a9d33d05e21@lunn.ch>
-References: <cover.1760877626.git.daniel@makrotopia.org>
- <f7726b479ee82457823260280d5b6057c19188a7.1760877626.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1761100633; c=relaxed/simple;
+	bh=s/j/zE/pGha7NcQLwNECP/pulc7Xztwb0zhdqlSqzh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nHV+s4Jt38m23cYQyQ1FJw6MTKryKZN/lnCSoAowHNxO8wGS1PvNKLyeHBpLPkVPzIegTWRXX4uwAC3IX9pjW9JlSj8O7ncH85lYeNuB9a8o2/0bMU1FZo929UKOJ1wdEE3nHpzGezfpo/6dW8o4wgOgzfP5Ocup6vBgGm9xsF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=hX8VbUsh; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=5n0B2RsLs10RONEsKYshZ66umgt/mNFNyqb6vFixnsU=;
+	b=hX8VbUshRg3DZ4q6x48tQ5ypzt33D2WMIsQ9qspL35DA53e8cSL7FPGXJ8pOVfzLcCgT9NQTY
+	frbZQ9kfFEwih4GxbQWeeDveRhi2X90Cuof9ySUAdIvK3hrBYHVvFdmxXRoSMD4i4/dIdfWrcwp
+	N6Z9W8p2Eu6RCQmdtxSSTd4=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4crtZN5bBFzcb1W;
+	Wed, 22 Oct 2025 10:35:56 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 618C3140292;
+	Wed, 22 Oct 2025 10:37:07 +0800 (CST)
+Received: from kwepemq200011.china.huawei.com (7.202.195.155) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 22 Oct 2025 10:37:07 +0800
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemq200011.china.huawei.com (7.202.195.155) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 22 Oct 2025 10:37:06 +0800
+Message-ID: <0e885995-c85e-4f0f-b0e6-edac9928d854@huawei.com>
+Date: Wed, 22 Oct 2025 10:37:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7726b479ee82457823260280d5b6057c19188a7.1760877626.git.daniel@makrotopia.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: Add kernel parameter to disable trap EL0 accesses
+ to IMPDEF regs
+To: Marc Zyngier <maz@kernel.org>
+CC: <corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<akpm@linux-foundation.org>, <paulmck@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>, <mingo@kernel.org>, <bp@alien8.de>,
+	<kees@kernel.org>, <arnd@arndb.de>, <fvdl@google.com>, <broonie@kernel.org>,
+	<oliver.upton@linux.dev>, <yeoreum.yun@arm.com>, <yangyicong@hisilicon.com>,
+	<james.morse@arm.com>, <ardb@kernel.org>,
+	<hardevsinh.palaniya@siliconsignals.io>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20251021115428.557084-1-liaochang1@huawei.com>
+ <86ecqwwig3.wl-maz@kernel.org>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <86ecqwwig3.wl-maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq200011.china.huawei.com (7.202.195.155)
 
-On Sun, Oct 19, 2025 at 01:48:43PM +0100, Daniel Golle wrote:
-> Use coccinelle to replace all uses of *_mask() with an equivalent call
-> to regmap_write_bits().
-> 
-> // Replace gswip_switch_mask with regmap_write_bits
-> @@
-> expression priv, clear, set, offset;
-> @@
-> - gswip_switch_mask(priv, clear, set, offset)
-> + regmap_write_bits(priv->gswip, offset, clear | set, set)
-> 
-> // Replace gswip_mdio_mask with regmap_write_bits
-> @@
-> expression priv, clear, set, offset;
-> @@
-> - gswip_mdio_mask(priv, clear, set, offset)
-> + regmap_write_bits(priv->mdio, offset, clear | set, set)
-> 
-> // Replace gswip_mii_mask with regmap_write_bits
-> @@
-> expression priv, clear, set, offset;
-> @@
-> - gswip_mii_mask(priv, clear, set, offset)
-> + regmap_write_bits(priv->mii, offset, clear | set, set)
-> 
-> Remove the new unused *_mask() functions.
-> This naive approach will be further optmized manually in the next commit.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Hi Marc,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+在 2025/10/21 20:25, Marc Zyngier 写道:
+> On Tue, 21 Oct 2025 12:54:28 +0100,
+> Liao Chang <liaochang1@huawei.com> wrote:
+>>
+>> Add kernel parameter to allow system-wide EL0 access to IMPDEF system
+>> regregisters and instructions without trapping to EL1/EL2. Since trap
+>> overhead will compromises benefits, and it's even worse in
+>> virtualization on CPU where certain IMPDEF registers and instructions
+>> are designed for EL0 performance use.
+> 
+> Since you mention virtualisation, I want to be clear: there is no way
+> I will consider anything like this for KVM. KVM will always trap and
+> UNDEF such register accesses, no matter where they come from (EL0 or
+> EL1).
+> 
+> Allowing such registers to be accessed from within a guest would make
+> it impossible to context-switch or save/restore the guest correctly.
+> 
+> You can of course do what you want in your downstream kernel or your
+> own hypervisor, but I wanted to set the expectations on the upstream
+> side.
 
-    Andrew
+Does it make sense to allow EL0 access IMPDEF without trapping for some
+special vendor CPUID, instead of forbidding it as the default setting on
+the upstream code?
+
+BR
+Liao, Chang
+
+> 
+> 	M.
+> 
+
 
