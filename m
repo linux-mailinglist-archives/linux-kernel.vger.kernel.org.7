@@ -1,186 +1,187 @@
-Return-Path: <linux-kernel+bounces-864942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E9DBFBEA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:47:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67069BFBEAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE6B1A04518
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:48:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5453C34BBB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B68E344055;
-	Wed, 22 Oct 2025 12:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01156345CAB;
+	Wed, 22 Oct 2025 12:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tdhn8DOV"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="UxGR4x5p";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fT55qfJg"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DDF347BB4
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52CB3191A1;
+	Wed, 22 Oct 2025 12:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137246; cv=none; b=TpVDMrl4z7f87G69hEdfYk4U2RI2IGT0VQQZh7yMqpxLYoalCeULsnOnx8QOHNb5xPQO7WX+sZCRk7NL03mFgqVzkVOgt2NuzK/9oGTKA7eO1G52eF44lq8FVNTvVRPpPs08lnuUEmhxFbVfPDls78dnU4E/8Au/VsU3ybAigO4=
+	t=1761137274; cv=none; b=iS9ZBhgR45njmPbpUBIuHwdhzNtGdg487O2XV3QSmWUavucxLVwm8U9MjMPXRAG0FvJajZDmrdsFImpZrt6/7G+tZyCuj3FZmbaQ+o5FZuG9tu0C0yKX4UQoEghAeHTgU3jSiGmQfM8kK/R0HuLQUgZtAmGcy+6eZnutCmqZdK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137246; c=relaxed/simple;
-	bh=i2VcWiJcaFfPTCfVHKG4siZQy2DpZw6VAq2A15maDIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJvpbbORiXEhg+67KKIwY+wJ/YPFhI/V3e98sj9qOPfcDd4lYkPoyjRaM2ldzUyRDEOzOZD7xnm4zQc7KG/MR7ojQNQRb5XxhMr9T0uXRI86MP27u8ICBoUi7pGmuAoGwbU22MA4sjav4bzWqndY3E2NvfgTtZQLwoFMwoN4OU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tdhn8DOV; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so1312896766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761137231; x=1761742031; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WLynAwLummNFnWwX4n28DdGVDlN0LC2dmV54+Wl5oe0=;
-        b=Tdhn8DOVRg2EVZ3wofTU94frCbS96NR1xAJ9wdc/UlBMiTtyzlrSfoVCuW8tcmqNuZ
-         B1JTn+GJ34yPPeLiiuPtQh/aFv2rae54m/ddD6jtnm4nH2CiTFp0NTFTZbpKHH0pe9G6
-         yAhOFJIpklLnm1Hw4z1tFt3GVtSdo6m4Eb4BGH8Wcs2QIj3dPKp0PrVvv+Ko+i3YlGir
-         6yuJy0T+0QNTcioqhxWXZkejk5oH8kXupucEu6PxK2P3kmOnmmUSS+bB8ogilhxWo7gP
-         zTeiypLj9BgKu38l0FFoNuf1dvVu666kI7cGnFz0YBO6Ea2+ERT4VT3n5MnwUY+yX5Iq
-         qXMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761137231; x=1761742031;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WLynAwLummNFnWwX4n28DdGVDlN0LC2dmV54+Wl5oe0=;
-        b=H4Fb8kH4dUV++J79QHIdhIe+1LzeV91+nicgBXryL8/iaH1S9Uxr+gg9/NwlWrcBnv
-         +mPpzJV1osSEX1anD68jOfkntu3m+T8b7Os1nPal1jc2uESvaWkGFXgP1wWdV4oxGxsO
-         RE5RCGsv8CftSuy0ocoCFmmhqqC7imno7pwZ3b1fztj+IBZB1ue9q02tvnH6AB8AgdwO
-         IydTBq6rA4koxZv3kxyJ0Jb4pfvGapRvrVro7+Z6AYF9+WOTt6UT8bzj6grGtdBevFe9
-         iMM8Yol23u3mTZO+a+n/y+xFsNK8Qwq6lz9XvZFnwTql6KF4GFtQABaxd+ofANhPz+V4
-         mzxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtnN5ptBaFRMOlmm4uRu73aFRLAgAyXH2tFjX0XiKfQzrABRAVsJrmJtALs134GpNWuyVkipZTAoywecY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBtk6LMV/0+0amnA9+up1ELwHPvIPJlE3wgLuTjTeJqMC9ptsU
-	lyOp9elwrrm5/eFY/H/XOmw1uH7KNorsjuupV289mZgLT572h2i9ihOI
-X-Gm-Gg: ASbGncueRAGQo/AVUTtJlWzzTF4djZbYGBoQUrMzHcG37Kz2lylrMt7PbGaL+QZdaxA
-	keJKkECQPo+o3VZaongH0ZbJoCLemGXnufbAZ4jM8GMopr+BQgjHkhYv2PZ9hbVI7oQxGcxen+V
-	qJFB10LaVkIeWxNFUhMy8lWdnc0HgkEZlQWLjVDsMegB+QNw4Ij2XSvZ6wKXEe80e2xE4FoLnaV
-	I/xlCvZYexTGcA6/Z4BDwrNX8WcW/vo5bMsizqXfQXscKIEvlIxPtF1WCZOf4fj+fm1NQV4dI9Q
-	lBVmG61Tk3LXJwFc2Ho/96FKtmDX/P/9NhgTDW/ebw9vnfJ4SUXlNSZJhfd2Rv6o3BfEqFQX7U2
-	Nnru7Gt00HZEeA2j3TuQvUsdhUomKW0s0YCsXs7Sbox46dnb/9zeGbQNKE1G7ISOwT0vugb/6dF
-	v/l23LdCmxmuqnxAFAa6/xP8RJVJlauDzh
-X-Google-Smtp-Source: AGHT+IGCiRZUzBeTTRPZMe41X5ri9BkZhxAmfickbiqaWRlTqLIQgiyG0FTuaEpUWryBaH8SWItowg==
-X-Received: by 2002:a17:907:6ea8:b0:b3c:f0a4:b324 with SMTP id a640c23a62f3a-b647463a1a4mr2231638666b.21.1761137230559;
-        Wed, 22 Oct 2025 05:47:10 -0700 (PDT)
-Received: from [10.25.209.134] ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da25c9sm1360292166b.11.2025.10.22.05.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 05:47:10 -0700 (PDT)
-Message-ID: <41ab3845-6d6e-44d1-9bb6-b62e58ab6522@gmail.com>
-Date: Wed, 22 Oct 2025 05:47:07 -0700
+	s=arc-20240116; t=1761137274; c=relaxed/simple;
+	bh=cG8noai2W8YSEH0BaQ/J3UBAfOo9Q7IkDxX/lpAP9nQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wvk9QTKVCbKv+5H5OnTzOWyXnaWJ9bRAR/QJW+N3RXvO7/5e0HXccrQUlGWE7IQJIGYDD3FPOlnEgMuACzk13UUjF4+nOpF9MTJZkclcUARY9NhNzR24uDxw/tRkIQsa+0n1Wo0/wLPWUuctLNZsfRMzIuC9v5sNrD0Dq58o0G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=UxGR4x5p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fT55qfJg; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6DA88EC0169;
+	Wed, 22 Oct 2025 08:47:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 22 Oct 2025 08:47:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1761137263; x=
+	1761223663; bh=A0VTtOmF5fNkFsxu94lUPFDgCfNpNIBkLTSLEFv6gqo=; b=U
+	xGR4x5prz5fCol3kOscuXG6QOjiCn0+d5bvyN2/wF7nRE/NMK/RhAabi9O+c+nuf
+	nDAcgE6XY3iauM5Qu8cQtKNFA2W3ICgXdriFYVh14gI8MQzcJPw7wcr0pkrPkW4A
+	mw/LQWjcwx07IWBiRSzxlWkrWkTmgKDQRLyLRS1mleeqLH1Har+jIFYexmy47IQf
+	PEvleO9SVwlJi8wW154c6ymwKDmWwN+M4DBmXRNYsbiG9rhCWYpFYsZPmDaELFVC
+	FaYPs05NhRzx8BQm/2BI9flN7IBkmAa7xQfG59cm8voFvXeEPdFRTcWXQCCnjUqf
+	OVNCWmf/hOpGEmkaPAJwA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761137263; x=1761223663; bh=A0VTtOmF5fNkFsxu94lUPFDgCfNpNIBkLTS
+	LEFv6gqo=; b=fT55qfJgjWEqR5nUDft9SPPWdfqaK0ng3PrjLypNe4ShSJKHrft
+	+AXpGh6ACch5/deY9frIrWqmztWoYRn+CiY9fw4W+pCJYPZL2MIOx1v5xaO7bzKH
+	O4bvrcha2WS4eYPgnuZupFxUhcr/yzvkx6onxv6spmtPYXeByVeZer8T8oEkRQEV
+	D2FaW/R8aSkNWKVf1SJEa1ivplEti6MFemvpO9xrwhmxNSH59ryOSQ6UXsIZis5P
+	GhxCTapHGGQYcw5IQxkuRy1YE9v99gJwt7yUCp7uHOj7fIIwXukqNQMBL4k1SnRh
+	1Ns6LNnh1WKEOyI6Ygl3nM8q2dClmmomSVg==
+X-ME-Sender: <xms:btL4aNEQ3e6Bezih54dU1Et7tIqNvDCmiNdX6sBTGk4i42AdrCbDYg>
+    <xme:btL4aBwTTyt1ogYxKQIYe4Pk6j16O-TUUPBIGTl2890ozGNYDWf4QFdjLaVJqlyOt
+    4ai49zpQ6sCvVBKLvZH0zMltspK_Uig1WiWNmguMJRi2qvl3F__LBk>
+X-ME-Received: <xmr:btL4aANQ0fXjMGQrweBEeB5jSNSHGiUCqlLL99WZytnwIIN_rJEGuv8wSkN2>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeefiedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
+    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeduhedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhhshhhihhtrhhithesnhhvihguihgrrd
+    gtohhmpdhrtghpthhtohepthgrrhhiqhhtsehnvhhiughirgdrtghomhdprhgtphhtthho
+    pegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhr
+    tghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhope
+    gurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepshgrvggvughmsehn
+    vhhiughirgdrtghomhdprhgtphhtthhopehlvghonheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:btL4aHY2cEgQ5oAEwnbWjKGTQJXkrLeTgxOlPHDif_ZVBHJfHP0s1w>
+    <xmx:btL4aHCkYJI7e_tAGd7oK2eUrwXHE9FnycAOK1tKUr0z0bxn7xc-Eg>
+    <xmx:btL4aFFztDSOhYWv6as5lPawGIKsfpfePls_vebU0jVM1eE1sKqRNw>
+    <xmx:btL4aCPqxjcguybzLXs9GpJRrXrFnyhhQogzZnxlLe3Ui4jjnua84g>
+    <xmx:b9L4aD6aVsdbAZnIoIe_n-m7skbUYKWwR6azazsP8Bs5320J6r1k4Lct>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Oct 2025 08:47:41 -0400 (EDT)
+Date: Wed, 22 Oct 2025 14:47:40 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Shahar Shitrit <shshitrit@nvidia.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>
+Subject: Re: [PATCH net V2 2/3] net: tls: Cancel RX async resync request on
+ rdc_delta overflow
+Message-ID: <aPjSbFE-nQwDHUu1@krikkit>
+References: <1760943954-909301-1-git-send-email-tariqt@nvidia.com>
+ <1760943954-909301-3-git-send-email-tariqt@nvidia.com>
+ <aPemno8TB-McfE24@krikkit>
+ <ae854fd5-dda1-416a-9327-ac8f9f7d25ba@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
-To: Frank Li <Frank.li@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
- <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
- <aPJZ6dDRyyl3Qg4o@lizhi-Precision-Tower-5810>
- <cdecae8a-7fb9-4ac2-a412-1a18c4783ffa@kernel.org>
- <aPZTwf8O8tkqnDhx@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <aPZTwf8O8tkqnDhx@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ae854fd5-dda1-416a-9327-ac8f9f7d25ba@nvidia.com>
 
+2025-10-22, 14:38:17 +0300, Shahar Shitrit wrote:
+> 
+> 
+> On 21/10/2025 18:28, Sabrina Dubroca wrote:
+> > nit if you end up respinning, there's a typo in the subject:
+> > s/rdc_delta/rcd_delta/
+> > 
+> > 
+> > 2025-10-20, 10:05:53 +0300, Tariq Toukan wrote:
+> >> From: Shahar Shitrit <shshitrit@nvidia.com>
+> >>
+> >> When a netdev issues a RX async resync request for a TLS connection,
+> >> the TLS module handles it by logging record headers and attempting to
+> >> match them to the tcp_sn provided by the device. If a match is found,
+> >> the TLS module approves the tcp_sn for resynchronization.
+> >>
+> >> While waiting for a device response, the TLS module also increments
+> >> rcd_delta each time a new TLS record is received, tracking the distance
+> >> from the original resync request.
+> >>
+> >> However, if the device response is delayed or fails (e.g due to
+> >> unstable connection and device getting out of tracking, hardware
+> >> errors, resource exhaustion etc.), the TLS module keeps logging and
+> >> incrementing, which can lead to a WARN() when rcd_delta exceeds the
+> >> threshold.
+> >>
+> >> To address this, introduce tls_offload_rx_resync_async_request_cancel()
+> >> to explicitly cancel resync requests when a device response failure is
+> >> detected. Call this helper also as a final safeguard when rcd_delta
+> >> crosses its threshold, as reaching this point implies that earlier
+> >> cancellation did not occur.
+> >>
+> >> Fixes: 138559b9f99d ("net/tls: Fix wrong record sn in async mode of device resync")
+> > 
+> > The patch itself looks good, but what issue is fixed within this
+> > patch? The helper will be useful in the next patch, but right now
+> > we're only resetting the resync_async status. The only change I see
+> > (without patch 3) is that we won't call tls_device_rx_resync_async()
+> > next time we decrypt a record in SW, but it wouldn't have done
+> > anything.
+> > 
+> > Actually, also in patch 1/3, there is no "fix" is in that patch.
+> > 
+> 
+> I agree about patch 1/3 so I'll remove the fixes tag.
+> 
+> For this patch, indeed at this point the WARN() was already fired,
+> however, the bug being addressed is the unnecessary work the TLS module
+> continues to do. For my liking, the wasted CPU cycles and resources
+> alone justify the fix, even if we've already issued a warning.
+> What do you think?
 
-On 10/20/2025 8:22 AM, Frank Li wrote:
-> On Sun, Oct 19, 2025 at 12:05:27PM +0200, Krzysztof Kozlowski wrote:
->> On 17/10/2025 16:59, Frank Li wrote:
->>> On Fri, Oct 17, 2025 at 04:20:19AM -0700, Laurentiu Mihalcea wrote:
->>>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>>>
->>>> Add documentation for i.MX8ULP's SIM LPAV module.
->>>>
->>>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>>> ---
->>>>  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 72 +++++++++++++++++++
->>>>  include/dt-bindings/clock/imx8ulp-clock.h     |  5 ++
->>>>  .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  | 16 +++++
->>>>  3 files changed, 93 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
->>>>  create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
->>>> new file mode 100644
->>>> index 000000000000..fb3b9028a4c3
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
->>>> @@ -0,0 +1,72 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
->>>> +
->>>> +maintainers:
->>>> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>>> +
->>>> +description:
->>>> +  The i.MX8ULP LPAV subsystem contains a block control module known as
->>>> +  SIM LPAV, which offers functionalities such as clock gating or reset
->>>> +  line assertion/de-assertion.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: fsl,imx8ulp-sim-lpav
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 3
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: lpav_bus
->>>> +      - const: hifi_core
->>>> +      - const: hifi_plat
->>> dt prefer use -
->>
->> I don't think we ever expressed such preference. Where did you find it?
-> It should come from review message when submit binding-doc patch.  but I
-> can't find it now. But at least, compatible string and node-name use "-".
->
-> It'd better to add to writing-bindings.rst. It is hard to search whole
-> linux-devicetree mail list or brain may cheat me. It is good to keep
-> everything consistent.
->
-> like:
->      " vs '
->      VCC-supply vs vcc-supply
->      ...
->
->>
->>> lpav-bus, ...
->> Then just "bus" or "apb".
-> core, plat is also better than hifi_core, hifi_plat
+Is there any work being done/avoided other than calling
+tls_device_rx_resync_async and returning immediately?
 
+With or without the patch, tls_device_rx_resync_new_rec will be called
+during stream parsing.
 
-sure, let's go with "bus", "core", "plat" then
+Currently, resync_async->req doesn't get reset so we'll call
+tls_device_rx_resync_async. We're still in async phase, rcd_delta is
+still USHRT_MAX, and we're done, tls_device_rx_resync_new_rec returns.
 
+With the patch, we'll see that resync_async->req is 0 and avoid
+calling tls_device_rx_resync_async.
+
+Did I miss something else?
+
+-- 
+Sabrina
 
