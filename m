@@ -1,127 +1,89 @@
-Return-Path: <linux-kernel+bounces-864725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAC2BFB694
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5BE6BFB69A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7521F34F132
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5F218C6E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3C32FD7CD;
-	Wed, 22 Oct 2025 10:30:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E24322C70
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9B3320CC9;
+	Wed, 22 Oct 2025 10:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWN+f88k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902272EC0A9;
+	Wed, 22 Oct 2025 10:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761129033; cv=none; b=pfymNo2X2ZEylcx8IuDDtyLw7z0XWsV8U74k6X3/VxAPCc5A5KEWoLJpyI4LjBeKuolDvrI31DtnSHwCkE/2WIQEWqBhRY3KPivdpE7g61nLhV5CY91PUUM+ajrcisEd9LE4ko5+ah9apb9gaKidFV3GXWwySAvMS1XlG8xWNRU=
+	t=1761129066; cv=none; b=ixmpUnZzOGvVk8yklSwL/GcOqdZ+0SXdYoNOkmBV0PHRmCwhM5tteXMBnTrHRG0+/cs1q3zKburSOvIQ0NNHfGQz0Is1rZXtSgKe7tW4Plp8hskRwXhGpDjZ8JUZoFbNQLY/qhY9CEbiC4OYXSFGvpRG7Vng98FqSYWRFyx94BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761129033; c=relaxed/simple;
-	bh=aD6XyuR7K01qcJEkjdhYbtcXdjBYvp/UzfIpOZaS7jY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QGOCMux22MeXWiRUuXlvPjiPEKzA4V7Zw0FUPUiL2Z3TyDjgW8DH0L2nqyodKfILeTcLD40cwHJpUk7+bv4TTtZxDI88HIcNsZjszClXl85MQ4jNalPas8XVwEYMdgNoldgfj0N/TqVKMWXPe1zwoF4UhYfhc+J8baP6+IO7NEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A11A1063;
-	Wed, 22 Oct 2025 03:30:21 -0700 (PDT)
-Received: from e120398-lin.trondheim.arm.com (e120398-lin.trondheim.arm.com [10.40.16.110])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73E363F63F;
-	Wed, 22 Oct 2025 03:30:26 -0700 (PDT)
-From: Ketil Johnsen <ketil.johnsen@arm.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Ketil Johnsen <ketil.johnsen@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/panthor: Fix UAF race between device unplug and FW event processing
-Date: Wed, 22 Oct 2025 12:30:13 +0200
-Message-ID: <20251022103014.1082629-1-ketil.johnsen@arm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761129066; c=relaxed/simple;
+	bh=nxiK/SmuUZ/eJ7+8qPPttAoIuFOLIAmNOtowfTn06Zw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UtJanJV3WdYO04n+do5vtipGGLSg7em9PcnIVGZZDSYEA/nAK4CsQ0HxwaQrzGdc1hJ+6a27Qoo+xARqJntr6ufuj9civJijf0lYxG216j/AXcxnUzPpRwUOeZj6NJgsW2rVjvm2seq0vvRjvflaEX3WHHnrX9hbX+7Gc9DcdtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWN+f88k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D9EC4CEE7;
+	Wed, 22 Oct 2025 10:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761129064;
+	bh=nxiK/SmuUZ/eJ7+8qPPttAoIuFOLIAmNOtowfTn06Zw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=aWN+f88kmsR31F7356Nhjbat0XtNCNhOhXxy+mj03RUY7LWerEd1yedbWOXdr5vi4
+	 tNC+xKsZSg2//FpnqZYu4HGomHdWZWKoWc4J0F163zczx7hJ134hS+2cI7rg4UBcBa
+	 XULRgorW9kn/jRM+mwrHuIsfgAm9Feu+WSSlfWZaK8bF5cXpLuoNB5oQOnt9nO/eTV
+	 PFj5BTL4kV1aXEPl1qTK/lkP91bINYUNHfh3yNabcAkBxQeumFTNfYyuMGkMlfSWTu
+	 Ixo9tEXjSj5WrW0BDvq9FRVpnEYEXdeit9JcP7F8YmMqoDfwTE1pDA+TcIQPAuu6kL
+	 QBEndSkG/yiOA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
+  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
+  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org
+Subject: Re: [PATCHv7 2/7] kho: make debugfs interface optional
+In-Reply-To: <20251022005719.3670224-3-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Tue, 21 Oct 2025 20:57:14 -0400")
+References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
+	<20251022005719.3670224-3-pasha.tatashin@soleen.com>
+Date: Wed, 22 Oct 2025 12:31:00 +0200
+Message-ID: <mafs0ms5jfct7.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The function panthor_fw_unplug() will free the FW memory sections.
-The problem is that there could still be pending FW events which are yet
-not handled at this point. process_fw_events_work() can in this case try
-to access said freed memory.
+On Tue, Oct 21 2025, Pasha Tatashin wrote:
 
-This fix introduces a destroyed state for the panthor_scheduler object,
-and we check for this before processing FW events.
+> Currently, KHO is controlled via debugfs interface, but once LUO is
+> introduced, it can control KHO, and the debug interface becomes
+> optional.
+>
+> Add a separate config CONFIG_KEXEC_HANDOVER_DEBUGFS that enables
+> the debugfs interface, and allows to inspect the tree.
+>
+> Move all debugfs related code to a new file to keep the .c files
+> clear of ifdefs.
+>
+> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
-Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
----
-v2:
-- Followed Boris's advice and handle the race purely within the
-  scheduler block (by adding a destroyed state)
----
- drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index 0cc9055f4ee52..4996f987b8183 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -315,6 +315,13 @@ struct panthor_scheduler {
- 		 */
- 		struct list_head stopped_groups;
- 	} reset;
-+
-+	/**
-+	 * @destroyed: Scheduler object is (being) destroyed
-+	 *
-+	 * Normal scheduler operations should no longer take place.
-+	 */
-+	bool destroyed;
- };
- 
- /**
-@@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
- 	u32 events = atomic_xchg(&sched->fw_events, 0);
- 	struct panthor_device *ptdev = sched->ptdev;
- 
--	mutex_lock(&sched->lock);
-+	guard(mutex)(&sched->lock);
-+
-+	if (sched->destroyed)
-+		return;
- 
- 	if (events & JOB_INT_GLOBAL_IF) {
- 		sched_process_global_irq_locked(ptdev);
-@@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
- 		sched_process_csg_irq_locked(ptdev, csg_id);
- 		events &= ~BIT(csg_id);
- 	}
--
--	mutex_unlock(&sched->lock);
- }
- 
- /**
-@@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
- 	cancel_delayed_work_sync(&sched->tick_work);
- 
- 	mutex_lock(&sched->lock);
-+	sched->destroyed = true;
- 	if (sched->pm.has_ref) {
- 		pm_runtime_put(ptdev->base.dev);
- 		sched->pm.has_ref = false;
+[...]
+
 -- 
-2.47.2
-
+Regards,
+Pratyush Yadav
 
