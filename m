@@ -1,88 +1,135 @@
-Return-Path: <linux-kernel+bounces-864677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A96BFB522
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:10:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024F5BFB52E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DFCB50801F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C121319C542A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9820D19CC28;
-	Wed, 22 Oct 2025 10:09:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632AA31A7FE;
+	Wed, 22 Oct 2025 10:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsPsk/xz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4C3168F8
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CFE3164B1;
+	Wed, 22 Oct 2025 10:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761127744; cv=none; b=Le2A24c1Ujo59ORh0hl0FW8ippUbZf6RW58Q1ei+pbz7SnhgAGCjym93rUapwkY4TReANfWsNKDtSIBUNqPZggXszXFakX6oXXOCiAFUMkLcm64Wtn09V/hO1CFnwV82R9t140EMIdsPjTi7RSp8hj0d9k7mXDvqnpIwChybVZ4=
+	t=1761127826; cv=none; b=AUJ1Hw8qbHWXB5dlHbzCJL3mFV1SRbyYM7PFHnlHm4UsEY95oGliR0KXpDn7vP8MvVxUdfO75yMEsgd9Cc96gcjn6D403uJoxCJqdESKQNQ02c5CzG6S6cMRT/UwioSKgge0S7n6Wrbj+s+nJ9+eD4bw0bWz0hHd4IYqwVYsdPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761127744; c=relaxed/simple;
-	bh=aZAGFJfp/MBBgSkq0BF6H6LXQVTg3SL+3I6+A6rzAwo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=C/FFcPW+mkMAmlsBtgiKHzds9mxER89SISjI4qogWvy1Satn6FXngcLeOLmlKjuw6+z/+D27tMf3yBFrZvd/8yOrAJIRUOm3hFycYOBkJz8LuM1vhehsVbXyfu2+aFRN8Axp4YbTysYd3iDr9VhFHpwXf4IHJgyak1kcY4kkccU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430bee303f7so208020585ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:09:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761127741; x=1761732541;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4xsrRR48PD0s1VvuTmihRLJlFX0Kb4jTgCxyBlTJO+8=;
-        b=V7RklLuT2efbYgOlVuzxLvdom1p2ygQh3MYJ8GqLwV0NfRs4jZ/anLLT7CAb7ZMuOA
-         fyMeY9oJJoUQvKnzgr3H0YFzEFwFejkQPJuMT6yOyv/bqZMmOHdMYMTlASYTLVUIiCFH
-         ePXttOAPx56T0/NnUdBLovfVp23zoJ30N8wfLEnbzMvKbH164lYuUgI6FYdo2RVKVsHH
-         a09cT6sXUnKiFSlZiEKtUjPo2zrHKG4/sykh39G5ey7SKdS0VH9MPtaaKB3k9AGN8xNw
-         4CLrzmnJKchnKJEJeEStl8lSABO+fj9eM4xvNlRdsqNADxfZp51MCmsaArSG5SYR+BFX
-         G99g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxA2mnP6PJFZ162Cqq4wItX6ZLEV8XGOuZjiQRaln5Id1gMxML6ll1a5GZ9XZ+dB7eqWiBSHkOMkI3whA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsrkdvVjve+EyXVG9qSAqOEbRQR6Fv9hxdOzrMq1pAVf2P2LCw
-	dWnJnh/Q9AQVij5MOXvRYQIO0shNWBa/b7oZDUI98fbcjRnIatczxCphPJN2mZjWrTfNx/iwz0I
-	4LR52aI6CIz3kw3HenfUcmuqhLWdJ2lZrEjy/JVsTVe6a+lajABCNZvrOi9o=
-X-Google-Smtp-Source: AGHT+IF8gb6OtKvsarDywe1nOwpYk0pKXabvBNYXnEq4eHpi/ecuqEqc2dzdETICU/buN0vmEtdt4JH66PSf73iORmETDz0l/zD6
+	s=arc-20240116; t=1761127826; c=relaxed/simple;
+	bh=KcpHIh2NiJ8Pm4+tZb/r09mFVlwELwD9hRpxdQwhsdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UyQF5Y1qYginUojQj3dsvOy2CJFSJieukSr4NUefacchGi5GGxYwNZBQAtEABGvUrngHtV8i9DfS+u3Ipl7jDW369PXnX8XzMLNhaHQvDE0MBHZZV5b6F+EDDrPTBCWGxEsAuazsUStlzRHcaRPVb+2bAl+UZHAsBrKgNzkXckk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MsPsk/xz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF8BC4CEF5;
+	Wed, 22 Oct 2025 10:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761127826;
+	bh=KcpHIh2NiJ8Pm4+tZb/r09mFVlwELwD9hRpxdQwhsdA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MsPsk/xz7Wb9JzTJJpillBjCFymCN/4sxSbdvQiq974dH/UiZlIFkFtXifMZ+YaCk
+	 tP46iYXuraFNTb/mMMkY6sv9fUwifZxVkMIzWS5jBBPRMy978EZWk+Z1SApuZq5czd
+	 EEY/zJauU2wBIbSLTuF8RjM4iywmGns/hR2KWB+r9sLur75SE6uqWyhxVV38RZK9cn
+	 4zKbW8vf6m3M4EPgVdh7Alb4sXwM+VcTHTqSuBDIBibyowFvLto/9ijkEjAhNGzaam
+	 v1wQorFJDxHYkesMN7b7RLM+srU7nULor8MZkpVxzLGkayrdVPWpKLCR2Ax6hy4Kki
+	 VnQ3a9XMkvTCg==
+From: Conor Dooley <conor@kernel.org>
+To: linus.walleij@linaro.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Valentina.FernandezAlanis@microchip.com
+Subject: [PATCH v3 0/5] Microchip mpfs/pic64gx pinctrl
+Date: Wed, 22 Oct 2025 11:09:08 +0100
+Message-ID: <20251022-dash-refinance-ac3387657ae4@spud>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:300a:b0:431:d864:364c with SMTP id
- e9e14a558f8ab-431d86438femr2807355ab.17.1761127741749; Wed, 22 Oct 2025
- 03:09:01 -0700 (PDT)
-Date: Wed, 22 Oct 2025 03:09:01 -0700
-In-Reply-To: <20251022090931.38191-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8ad3d.050a0220.346f24.003d.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_rename2 (2)
-From: syzbot <syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2578; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=daO8WkZ3qWEA6XQ9SEdpimlvNKc0kNZUUmrQYnrz5cg=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBk/1rop8284+Wd3Qurh+HkJn9aGZ10+42b/+/+szkIei WfXwuJsO0pZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRq9YM/9NkGsPs1igvfD/B UeEnQ59d+6UZMVmqN39FyblXCdZVfGVkWHeKUWbn5AM3FosxtfPpfAyal7muJPvipiDt3J13C98 9YgUA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Conor Dooley <conor.dooley@microchip.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hey Linus,
 
-Reported-by: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
-Tested-by: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
+Here's a v3, with the COMPILE_TEST added, and a select that the lkp bot
+told me that I was missing when I pushed it yesterday for testing.
 
-Tested on:
+There's a tag below for you to pull that has the syscon binding that
+gets edited in this series, since that's not in mainline yet.
 
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d7d734580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f9a2ca2a8964bd4a
-dashboard link: https://syzkaller.appspot.com/bug?extid=632cf32276a9a564188d
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12f0e3e2580000
+Cheers,
+Conor.
 
-Note: testing is done by a robot and is best-effort only.
+Changes in v3:
+- Add COMPILE_TEST to drivers
+- Drop a TODO
+- Add select for GENERIC_PINCONF
+
+The binding dep mentioned above is available here:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/ tags/mpfs-pinctrl-binding-base
+
+for you to fetch changes up to feaa716adc514fb5fbcb60b3e1620ac5dcf8505a:
+
+  dt-bindings: soc: microchip: document the simple-mfd syscon on PolarFire SoC (2025-10-21 14:29:34 +0100)
+
+----------------------------------------------------------------
+mpfs pinctrl binding base
+
+The pinctrl binding patch for iomux0 mpfs adds a ref to itself to the
+syscon/mfd mss-top-sysreg binding, and therefore needs that file to
+exist.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+
+----------------------------------------------------------------
+
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: linux-kernel@vger.kernel.org
+CC: linux-gpio@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: Valentina.FernandezAlanis@microchip.com
+
+Conor Dooley (5):
+  dt-bindings: pinctrl: document pic64gx "gpio2" pinmux
+  pinctrl: add pic64gx "gpio2" pinmux driver
+  dt-bindings: pinctrl: document polarfire soc iomux0 pinmux
+  pinctrl: add polarfire soc iomux0 pinmux driver
+  MAINTAINERS: add Microchip RISC-V pinctrl drivers/bindings to entry
+
+ .../microchip,mpfs-pinctrl-iomux0.yaml        |  88 +++++
+ .../microchip,pic64gx-pinctrl-gpio2.yaml      |  73 ++++
+ .../microchip,mpfs-mss-top-sysreg.yaml        |  13 +-
+ MAINTAINERS                                   |   4 +
+ drivers/pinctrl/Kconfig                       |  16 +
+ drivers/pinctrl/Makefile                      |   2 +
+ drivers/pinctrl/pinctrl-mpfs-iomux0.c         | 278 ++++++++++++++
+ drivers/pinctrl/pinctrl-pic64gx-gpio2.c       | 356 ++++++++++++++++++
+ 8 files changed, 829 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,mpfs-pinctrl-iomux0.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml
+ create mode 100644 drivers/pinctrl/pinctrl-mpfs-iomux0.c
+ create mode 100644 drivers/pinctrl/pinctrl-pic64gx-gpio2.c
+
+-- 
+2.51.0
+
 
