@@ -1,140 +1,176 @@
-Return-Path: <linux-kernel+bounces-865706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E997BFDCC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D68ABFDCE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8142C3A4BA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E358D3A72A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29E32E0406;
-	Wed, 22 Oct 2025 18:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468A53446B6;
+	Wed, 22 Oct 2025 18:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UzEve8Fr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZR8HU3s5"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BEB1D5141;
-	Wed, 22 Oct 2025 18:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA54A337100
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761157051; cv=none; b=HZXta45zagXVxQhr0V4Z6nsP2hfFPxGGL7txvRTjSBKksOLJrzpaoyiQScR3CLq6ptPHVl5lNx0IUIr5NK6Y9sOMSVHvNgXGrvJUL1B8ZOt2i7uQNF4IyHenOLD0P+DSoW/BNFIwHtYTrRbLmMGt384NMBUB4pHo0BOWmEMF0q8=
+	t=1761157405; cv=none; b=VKbSUYwK1yIPJuYwig+P0trlzbCYqaEnDD4jEY8pfMlm5SVtHh019iYSXKRNKThBEI7Na7DdMmF57/EBeTR18QRH8lDMPN/BT73vID9mCVlPXFS32ypNW6HJIhn/vBepCrnk9Psh84QprYSjCU5033T43okcyH6Kxwvv+skjVds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761157051; c=relaxed/simple;
-	bh=VrRkp96TdUXfWdgJg0N2j+dDuC04eq5WN8H7LtYOQEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pL58xRBcLNeUn/sCJK5bkn8K1VgX57zf/xwQ+pzqWepiGxSH0lwdIkt0HEsTfr78u51CdvlR+KmPPS3A3Djv/420rECtzbU1pAXmHCCrpDTPKBwX4zHmui74HpUpfv+YWHNt++l2WDdJTTWFq9KPzdSLjRtPDSD9M2SF6cWoxkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UzEve8Fr; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761157049; x=1792693049;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VrRkp96TdUXfWdgJg0N2j+dDuC04eq5WN8H7LtYOQEE=;
-  b=UzEve8Fr6Vqb8bWBz9dfJtAcqoszdmw+DQHnXuXrEtiS24gLbq1xp6SL
-   mhHVbr1xYOwDekKAP9tUFVuZtQ1kSuvDaKRX8a/q5N7edqqISAt0cIg+h
-   9y3oCPJlVVF2VvmmEDZGa+AWvd8NRTbnhYWUhgm2R0WL5vXkTaJF+vh8a
-   pfzYdlI4HwKPMWnXMn2mVGO4pQWFFBsVErDFdXYRXTt7xrlySEM7m1Xhb
-   qQ0PGvEneo+m8/K9/TN/M6SdR7A/p7CZmkAXbygYiq4jK+dyb+81ttgoB
-   QD2gF9oKx8CTBU+yCV3XJq0LSzxoNUcsipTbv4jOqvp3eJlruxVyTKKVU
-   g==;
-X-CSE-ConnectionGUID: gHZi9msbSnazzZxiXhPVfg==
-X-CSE-MsgGUID: QKVa46xERKajaSTp1Sa9Hw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65932528"
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="65932528"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 11:17:28 -0700
-X-CSE-ConnectionGUID: vqBnbYezR12iAHo5CNh3ow==
-X-CSE-MsgGUID: 178MEu8WT7CEjrAUbrivRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,247,1754982000"; 
-   d="scan'208";a="189065719"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.83])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 11:17:25 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vBdOk-00000001lP2-3aC1;
-	Wed, 22 Oct 2025 21:17:22 +0300
-Date: Wed, 22 Oct 2025 21:17:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jack Xu <jack.xu@intel.com>,
-	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
-	Qianfeng Rong <rongqianfeng@vivo.com>, qat-linux@intel.com,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: qat - use strscpy_pad to simplify buffer
- initialization
-Message-ID: <aPkfsuliKYy5UAbB@smile.fi.intel.com>
-References: <20251022123622.349544-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761157405; c=relaxed/simple;
+	bh=Mtn2S0bnI8t9f5MzmCAQjaNwa/k1YvIYY2gLwi4xrFM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZO7bBSzSFvNmR8KEc2szWU1tL/0K8FsCxQPdY8VjazrCgCA+cNLllZ0viY12VUCcT5xrpUFDlFy8GwyCyvcpf3ztJsYr1t5ykPxNCp+9Yo/ox1cy0P+32NdXeCd8sSTnWnvCBjnTvpIPd7wj4u2N3piec9YYgi1B4E9XuD8sTlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZR8HU3s5; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3324538ceb0so12231979a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761157403; x=1761762203; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BSjvwoj3QY8YDFwz6g2xMO+Jxrb6UQbJ+DExnyviC1c=;
+        b=ZR8HU3s5HSykCA8r1kKXxukBUG5NEIuQWaHSUbOqhBRO8GtrSppkAKAK6fIVJKj24v
+         SguBa+QP4fus1J4yAzBjk7ggJBCbDPqMNIUK8i4QwP2+hJautN0gaBXIRuqed7I1CqW8
+         EdyAthZkOiQidk92mVGlUusT+l5D1iBZf6IoI3I+GBEFlOE2FLyzr5Fy3vLvserZqQbl
+         xuGPdPasoF3kHd14XYNVRT+dwgHUzc6EswyOQ7jONZs3c7dynthRlnsEuZ1JZJfSQcT1
+         Dpe5Zkyd9Z6/WvcIRf/l7cb0TuPpwM6oqI9H8bgPACsdFFU4hrnOpQoChOZyPIabg5XW
+         g+QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761157403; x=1761762203;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BSjvwoj3QY8YDFwz6g2xMO+Jxrb6UQbJ+DExnyviC1c=;
+        b=vsETB+/FWA5e6gVx7c4x2Xyo7kNLuhPCGcbj6hncg+JbjwFf++hzeY13HHBWfUFN44
+         5IrRCqsTRhuk6xSZdygqIYMP2CEY3ySnVBivobGuUbCsG2SgXn+bsuvCMwTF6+n1usw+
+         A89lkI1yG28JRwNV5yzRnNkO1FUkBhaB9K2P51H7zynh0J++hQnIu78WT4xKy6VTPW+t
+         Bd/wjHbT1XfAFgP11jg6j2LaQDjTrCdH5FakJZ3u3QdYenQbp/er2gi+Z0igveUC77yL
+         G7hm7tbWqJAky0u6jwjnP3enaBQ3z3hQaOSuBeFmk996xlcoVPhwgQaY8MokvpieFeOD
+         kJlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/y847fGxEzpbccfCnLycBHNXWzx75TmGlOXHszM/tgA6Twlmy/u8eedIATeh+OH1IPkINNe91jSR0jsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgPFSOdk/35NNl/74BMJjzJR0z9oFDSwioAyrtRcvDrQFJZNJO
+	mis/BAMnVyEWPgdGAqq34CpWJdrDpGf7oxEqlIpcUF8QoC7tJiAZESbfmbiyXKcVoI1xuB8/WPD
+	pGoNKECkXjTRw9w==
+X-Google-Smtp-Source: AGHT+IFSGiEBHzmUJ9Zm6BjG0EdjwrD2yFch0TYJtxCLqhBdri6M5unSRtixX3MkKfUYqoMBDsSlJFJSIffG9g==
+X-Received: from pjbkr5.prod.google.com ([2002:a17:90b:4905:b0:33e:384c:7327])
+ (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90a:ec8b:b0:32e:9a24:2df9 with SMTP id 98e67ed59e1d1-33bcf86c09emr25106830a91.14.1761157403088;
+ Wed, 22 Oct 2025 11:23:23 -0700 (PDT)
+Date: Wed, 22 Oct 2025 11:22:23 -0700
+In-Reply-To: <20251022182301.1005777-1-joshwash@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022123622.349544-1-thorsten.blum@linux.dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+References: <20251022182301.1005777-1-joshwash@google.com>
+X-Mailer: git-send-email 2.51.1.814.gb8fa24458f-goog
+Message-ID: <20251022182301.1005777-2-joshwash@google.com>
+Subject: [PATCH net-next 1/3] gve: Decouple header split from RX buffer length
+From: Joshua Washington <joshwash@google.com>
+To: netdev@vger.kernel.org
+Cc: Ankit Garg <nktgrg@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Jordan Rhee <jordanrhee@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Joshua Washington <joshwash@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Ziwei Xiao <ziweixiao@google.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 22, 2025 at 02:36:19PM +0200, Thorsten Blum wrote:
-> Use strscpy_pad() to copy the string and zero-pad the destination buffer
-> in a single step instead of zero-initializing the buffer first and then
-> immediately overwriting it using strscpy().
-> 
-> Replace the magic number 16 with sizeof(buf) and remove the redundant
-> parentheses around kstrtoul() while we're at it.
+From: Ankit Garg <nktgrg@google.com>
 
-I understand that you focused on strscpy*() conversions, but the below I think
-needs a bigger refactoring, see my remarks.
+Previously, enabling header split via `gve_set_hsplit_config` also
+implicitly changed the RX buffer length to 4K (if supported by the
+device). This coupled two settings that should be orthogonal; this patch
+removes that side effect.
 
-...
+After this change, `gve_set_hsplit_config` only toggles the header
+split configuration. The RX buffer length is no longer affected and
+must be configured independently.
 
-> -	char buf[16] = {0};
-> +	char buf[16] = {};
->  	unsigned long ae = 0;
->  	int i;
->  
-> -	strscpy(buf, str, sizeof(buf));
-> -	for (i = 0; i < 16; i++) {
-> +	strscpy_pad(buf, str);
+Signed-off-by: Ankit Garg <nktgrg@google.com>
+Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+Reviewed-by: Jordan Rhee <jordanrhee@google.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Joshua Washington <joshwash@google.com>
+---
+ drivers/net/ethernet/google/gve/gve.h         |  3 ---
+ drivers/net/ethernet/google/gve/gve_ethtool.c |  2 --
+ drivers/net/ethernet/google/gve/gve_main.c    | 10 ----------
+ 3 files changed, 15 deletions(-)
 
-First of all, why do we need a _pad() version here? Is the data somehow being
-used as a whole?
-
-> +	for (i = 0; i < sizeof(buf); i++) {
->  		if (!isdigit(buf[i])) {
->  			buf[i] = '\0';
->  			break;
->  		}
->  	}
-> -	if ((kstrtoul(buf, 10, &ae)))
-> +	if (kstrtoul(buf, 10, &ae))
->  		return -EFAULT;
-
-Looking at this, it tries to work around the kstrtoul() inability to perform
-partial parses. Instead, this should do something like
-
-	unsigned long long x;
-	const char *end;
-
-	simple_strtoull(...);
-	if (x > UINT_MAX || end == buf)
-		return $ERR; // wrong input / overflow
-
+diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
+index cf95ec25b11a..c237d00c5ab3 100644
+--- a/drivers/net/ethernet/google/gve/gve.h
++++ b/drivers/net/ethernet/google/gve/gve.h
+@@ -59,8 +59,6 @@
+ 
+ #define GVE_DEFAULT_RX_BUFFER_SIZE 2048
+ 
+-#define GVE_MAX_RX_BUFFER_SIZE 4096
+-
+ #define GVE_XDP_RX_BUFFER_SIZE_DQO 4096
+ 
+ #define GVE_DEFAULT_RX_BUFFER_OFFSET 2048
+@@ -1249,7 +1247,6 @@ void gve_rx_free_rings_gqi(struct gve_priv *priv,
+ 			   struct gve_rx_alloc_rings_cfg *cfg);
+ void gve_rx_start_ring_gqi(struct gve_priv *priv, int idx);
+ void gve_rx_stop_ring_gqi(struct gve_priv *priv, int idx);
+-u16 gve_get_pkt_buf_size(const struct gve_priv *priv, bool enable_hplit);
+ bool gve_header_split_supported(const struct gve_priv *priv);
+ int gve_set_hsplit_config(struct gve_priv *priv, u8 tcp_data_split,
+ 			  struct gve_rx_alloc_rings_cfg *rx_alloc_cfg);
+diff --git a/drivers/net/ethernet/google/gve/gve_ethtool.c b/drivers/net/ethernet/google/gve/gve_ethtool.c
+index b030a84b678c..db6fc855a511 100644
+--- a/drivers/net/ethernet/google/gve/gve_ethtool.c
++++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
+@@ -606,8 +606,6 @@ static int gve_set_ringparam(struct net_device *netdev,
+ 	} else {
+ 		/* Set ring params for the next up */
+ 		priv->header_split_enabled = rx_alloc_cfg.enable_header_split;
+-		priv->rx_cfg.packet_buffer_size =
+-			rx_alloc_cfg.packet_buffer_size;
+ 		priv->tx_desc_cnt = tx_alloc_cfg.ring_size;
+ 		priv->rx_desc_cnt = rx_alloc_cfg.ring_size;
+ 	}
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index 29845e8f3c0d..8d825218965a 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -2041,14 +2041,6 @@ static void gve_tx_timeout(struct net_device *dev, unsigned int txqueue)
+ 	priv->tx_timeo_cnt++;
+ }
+ 
+-u16 gve_get_pkt_buf_size(const struct gve_priv *priv, bool enable_hsplit)
+-{
+-	if (enable_hsplit && priv->max_rx_buffer_size >= GVE_MAX_RX_BUFFER_SIZE)
+-		return GVE_MAX_RX_BUFFER_SIZE;
+-	else
+-		return GVE_DEFAULT_RX_BUFFER_SIZE;
+-}
+-
+ /* Header split is only supported on DQ RDA queue format. If XDP is enabled,
+  * header split is not allowed.
+  */
+@@ -2080,8 +2072,6 @@ int gve_set_hsplit_config(struct gve_priv *priv, u8 tcp_data_split,
+ 		return 0;
+ 
+ 	rx_alloc_cfg->enable_header_split = enable_hdr_split;
+-	rx_alloc_cfg->packet_buffer_size =
+-		gve_get_pkt_buf_size(priv, enable_hdr_split);
+ 
+ 	return 0;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.51.1.814.gb8fa24458f-goog
 
 
