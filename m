@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-864454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036B9BFAD47
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5850ABFAD5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34CE18C478A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6E7484DAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BFC30506D;
-	Wed, 22 Oct 2025 08:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E73305078;
+	Wed, 22 Oct 2025 08:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6vAg3qhU"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1VWLxkLz"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A9B303C9C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C1A304BB3
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120860; cv=none; b=uV2ZzmkAMj7pEIcDiuy8MpotKaLrjykmxHTELDteHyrtET+SekV3aohd8sqghb9RF1NWOgmdD2UF+SFERZIHnb8Es96e3y+gArVj+ffhrOmWWlD7FNrlT+yZvzPhgY3vf1wuABbd/IsLYQEDGlu3aO+3mu7Pj/uXd2kllgMyRX4=
+	t=1761120876; cv=none; b=eS7tZCFz/hLINH60kutI4+OJlpaLz/r/D0WMw9fyuNHJXBFhjD1KqPZxKg8TYT+/FUX6DnpT52PIW0FSIbLOUMHS6wevp4tficDdaLFsvOPnCSsCV7dFQevPE8qGdSY97lrjLZ5CiyDCVphllkGByn9bF7IVicjjcLK5WJw30w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120860; c=relaxed/simple;
-	bh=H9i6UoljCf2JzBJEdyRvJAkrbPTI8slSCJvsw63srs4=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=brGGh+MzR1jPFmY0aPGNtcTvFBgFZDQmq6tdmpkymxcf88C4jxSjs2C+jGT48HZiS/gmjXg+U54/NZhmywe+dp73mru3ZO8sjaA5zdWwxgDMwDymgVecOqRISzzdCjcrTQFD7AFVWpsxDwUa5eadu3bUqbwrhtVIprLXIA5sxao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6vAg3qhU; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=sNQMxguYxRy5VmNUSveNNzxqqUyeH9podY9lGnXUEKo=;
-	b=6vAg3qhUDJ5RoF9ZrHjqd6OTnzE5kTGTK1P8PScxd7qM1jpEVufX1BeZjGuK6rFT2ptBe5o1N
-	b1ukOcwKnq+sinNo39BtsoOHDTNy8ZFWy5DEG5d+d9LO88pFxPfTGjPv086xVgazz6EEMdcX+1O
-	fsgwCaQi0Kt7Tz+YYrT6EoE=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cs24F6SgGz1prPw;
-	Wed, 22 Oct 2025 16:13:49 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id CF19D1401F4;
-	Wed, 22 Oct 2025 16:14:14 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 22 Oct 2025 16:14:14 +0800
-Subject: Re: [PATCH] ubifs: using vmalloc_array() to handle the code
-To: tanze <tanze@kylinos.cn>, <richard@nod.at>, <hengzhihao1@huawei.com>,
-	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20251022080200.526003-1-tanze@kylinos.cn>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <e345c2fa-3151-d8b6-6cd2-b0afd5e13d86@huawei.com>
-Date: Wed, 22 Oct 2025 16:14:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1761120876; c=relaxed/simple;
+	bh=nDmcqom4nRH1kg8OrqhgJ/APXOzAvqbtVdtI9YTYb/w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dvrHR2nVD+pVMlonaF+skDWqQ3WBvMtRguo/tk75VgtTM2fFgl2EcUXa0GPAv3+I5500kXFQvvYxIbGAqRo7W1nfEjOFV36YeGmtqVdduDfHZm12fjdoCGFA5PYzZNOKTXpan+bKK/ALeK8HW23i4vP3OH1KHioLRPDWBxP/aiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1VWLxkLz; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-471125c8bc1so72735195e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761120873; x=1761725673; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ogsn3X1mobn8/e1uiGkS9XQJsz3R6ivSIjiDXFm3+Q=;
+        b=1VWLxkLzd0y2N/vipoDX6gubUhI1J9Uq+NBzcVpmjU45fBdPQ8wI7HsotLqO/dEe5u
+         GxAfjYXzFhEgPDw6EhCb4UqLLTXUDoYJW7SwvkJp6z9u51+lmtEUJ8UMk4H43XMUZJjq
+         TM7udf/bDj1U2q8zPZel4UBB4olVLrWlnAiTjky8ov21Nv2uFzNJwGpsgtSbcdBoyyth
+         88zi6VAQZEH7KwLwnVRcPSKQjqX23KnmpDQZ8pwzbk5ry6Ypu4tCEqtp5TBtXeJ6kW6N
+         3KZcNHsOR8lKcqQhu0Atc1DWEvcyL6O3aRVi0a8wDuV1el91WWO8Guo702K483Qb8jkP
+         YG+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761120873; x=1761725673;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ogsn3X1mobn8/e1uiGkS9XQJsz3R6ivSIjiDXFm3+Q=;
+        b=b6PfFD8u9oPxltR/0CoiR+QNUiK8DatMfbTDPUoouIEo38pU5+rCQKJaOwn7U2tYm8
+         ZPDt21ZXdGG/efhAx5Fy77oxwFOV6KfFLiDTxjtJq5Xu8qQQTY5aZ8GRUeugDR5BHlUm
+         yyVTizjCMRMkQUw0jRaH7eaH8S9PR6UpVYOlJgkhW4/L34okrD9oE+rqkxlpW7HKUl0U
+         bYGpLHjMN5YmERPtU+3E+v/XtDJ+CPQZ0YfzFvqSJMOWvLt5FTJZ77mYFbqp8KRuhjNt
+         G/uwmSSkZ7jGKj+OUjavETvyBcgM0qiWMqBhOyu6GwMRMXkmlmbhdfBSuqCIsT0wyZmu
+         BT3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVGZlNuxe9z5+ifKGU2bFv4rQsmqRg40UKtOxfg/ytCKCH1TCUag1O+qVqjxjYyHm699x3mLb175FDLA5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSC4DZk3cHr/uRxLFHeiadz5P0akBkeBeqFuj9ZyB8PxrxuEYD
+	xusSvQqUz+CsuEztHFtTDRtB+9tTNiKF+gCI8M6FLeYNlvUC0B6OWEfFFvQzYVeB7/hHqBnejPg
+	C+SaOneNziCOg7eUogg==
+X-Google-Smtp-Source: AGHT+IHVymDPMVFRxtz+pEpsqCDA+1l2F++eBCPDtyYxS79P5clFYGmutl6mMG3GyLc2Iqc0bUnGJy61wcbICgU=
+X-Received: from wmwr3.prod.google.com ([2002:a05:600d:8383:b0:46e:1f9e:6471])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3b03:b0:471:15df:9fc7 with SMTP id 5b1f17b1804b1-47117906a72mr141554885e9.26.1761120872959;
+ Wed, 22 Oct 2025 01:14:32 -0700 (PDT)
+Date: Wed, 22 Oct 2025 08:14:31 +0000
+In-Reply-To: <25717cdeac76376fbcf7ba10a1b2e855800d3778.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20251022080200.526003-1-tanze@kylinos.cn>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+Mime-Version: 1.0
+References: <20251016210955.2813186-1-lyude@redhat.com> <20251016210955.2813186-3-lyude@redhat.com>
+ <aPJDGqsRFzuARlgP@google.com> <25717cdeac76376fbcf7ba10a1b2e855800d3778.camel@redhat.com>
+Message-ID: <aPiSZ_CGLD4o755q@google.com>
+Subject: Re: [PATCH v4 2/9] rust/drm: Add gem::impl_aref_for_gem_obj!
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Asahi Lina <lina+kernel@asahilina.net>, Shankari Anand <shankari.ak0208@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
-ÔÚ 2025/10/22 16:02, tanze Ð´µÀ:
-> Change array_size() to vmalloc_array(), Due to vmalloc_array()
-> is optimized better,uses fewer instructions, and handles
-> overflow more concisely
+On Tue, Oct 21, 2025 at 01:33:00PM -0400, Lyude Paul wrote:
+> On Fri, 2025-10-17 at 13:22 +0000, Alice Ryhl wrote:
+> > 1. Annotated with #[macro_export]
+> > 2. Export with `pub use impl_aref_for_gem_obj`
 > 
-> Signed-off-by: tanze <tanze@kylinos.cn>
-> ---
->   fs/ubifs/lpt.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
+> I assume you meant pub(crate) here? (Since we don't really want to expose
+> impl_aref_for_gem_object! to users outside of the drm crate).
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> diff --git a/fs/ubifs/lpt.c b/fs/ubifs/lpt.c
-> index 441d0beca4cf..dde0aa3287f4 100644
-> --- a/fs/ubifs/lpt.c
-> +++ b/fs/ubifs/lpt.c
-> @@ -628,8 +628,8 @@ int ubifs_create_dflt_lpt(struct ubifs_info *c, int *main_lebs, int lpt_first,
->   	pnode = kzalloc(sizeof(struct ubifs_pnode), GFP_KERNEL);
->   	nnode = kzalloc(sizeof(struct ubifs_nnode), GFP_KERNEL);
->   	buf = vmalloc(c->leb_size);
-> -	ltab = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
-> -				  c->lpt_lebs));
-> +	ltab = vmalloc_array(c->lpt_lebs,
-> +			     sizeof(struct ubifs_lpt_lprops));
->   	if (!pnode || !nnode || !buf || !ltab || !lsave) {
->   		err = -ENOMEM;
->   		goto out;
-> @@ -1777,8 +1777,8 @@ static int lpt_init_rd(struct ubifs_info *c)
->   {
->   	int err, i;
->   
-> -	c->ltab = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
-> -				     c->lpt_lebs));
-> +	c->ltab = vmalloc_array(c->lpt_lebs,
-> +				sizeof(struct ubifs_lpt_lprops));
->   	if (!c->ltab)
->   		return -ENOMEM;
->   
-> @@ -1846,8 +1846,8 @@ static int lpt_init_wr(struct ubifs_info *c)
->   {
->   	int err, i;
->   
-> -	c->ltab_cmt = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
-> -					 c->lpt_lebs));
-> +	c->ltab_cmt = vmalloc_array(c->lpt_lebs,
-> +				    sizeof(struct ubifs_lpt_lprops));
->   	if (!c->ltab_cmt)
->   		return -ENOMEM;
->   
-> 
+We will probably need it to be pub later when we split up kernel, but
+feel free to put pub(crate).
 
+Alice
 
