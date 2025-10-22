@@ -1,167 +1,205 @@
-Return-Path: <linux-kernel+bounces-865777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C568BFDFAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:13:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E732BFDFB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC1A1A60CEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:13:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 808A94E413D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A28434FF46;
-	Wed, 22 Oct 2025 19:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C6D34FF4C;
+	Wed, 22 Oct 2025 19:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPxm6oeD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NQGy8+pJ"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010063.outbound.protection.outlook.com [52.101.85.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AE93148DB;
-	Wed, 22 Oct 2025 19:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761160395; cv=none; b=enhsIC3L2WnL03RvKaPs29xxi/zZHTBHEBHqsxtM7M2WeLV+QSf3setGx4f7clL/Ec1Mtkup3yCyYCmcORDUfY1QK6iU78b6COEsQ050hA/3+Rcy8KvLIZxOM3gCjbD1hu4WaOhOrDRRGZNJgBfNLkGQlLsCjCfdH9/LE40zzxQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761160395; c=relaxed/simple;
-	bh=8uGN4FvBftrBvLhOTmco3a7alnRnF6eitTO3wGVcb24=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=TR+YSRkH+M59kwlsSdftMOEtO5CE0QXwqefoOyCp782S3PV5cQqLgPzq0gYCIfccBquRMFhhD3FtXvrg0czkHT7BLvYCimrprhPgjAvpbwLovWrFNHI21DioREtmmd7mC++LDQRdkCP1fwDdjn4E/d1VUCydwp5H60AKMKovAp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPxm6oeD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B31C4CEE7;
-	Wed, 22 Oct 2025 19:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761160394;
-	bh=8uGN4FvBftrBvLhOTmco3a7alnRnF6eitTO3wGVcb24=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=mPxm6oeDeQTUXPncQnkBskDqKjnRisrRwYzjJg/CbY4xAjjde4Sx22mgo3jZy0r8i
-	 +uWOZooEx7G0qi9mWpJQIIeaRm619EUgqnYNvW0hDImmr1Gw1vwF+6ENGHOqJ+PiWK
-	 kyTulr+mkl2dzM9KQBYcMxSxuu1c3vtyxJr0pToeX5VjiRfqeauQwpY46jqzssBKdS
-	 FuAdv4qeiCEtLA/jq17huLRNffdBRxQFJprJ/lX6ZXTVxLX461VJBSS9dzPFK6Z1ri
-	 0bfl+Z8uf+yvTt9SCpOyunV1PMHqlDB4LL8T9cwrvGks2L8+rhUPfIyFuVwuv5C+bx
-	 rQX5Zg/3wFIcA==
-Date: Wed, 22 Oct 2025 14:13:13 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
-	FUKAUMI Naoki <naoki@radxa.com>, linux-rockchip@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
-Message-ID: <20251022191313.GA1265088@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FF43491CE;
+	Wed, 22 Oct 2025 19:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761160427; cv=fail; b=Pqyjzh1PhkEQ3KJcpE/TN+lSP+fnHHOPrgULR7sYIzzvf7BTjn2/QOvGOEeoLf/1dKCinrdwI0t8Xw0LxxjB896scyi2ZRSS3HPB2EPNQYLC3yE+C7Fw6Hkz3dYqNjYeK0yAJ0iJzehM3dYGUE53lj8YOn2tt0TLkl7l6YPYLLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761160427; c=relaxed/simple;
+	bh=bIMYE7czL4N6bqsB4H8Ng7PQKJKkVJ5kiaTz1awfL50=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uw99KLUoBVCliIaE3RUSGLbI8M3N2cGvFyfxjvBMvLDjEbdrlqucv40vMcSNxRCCn0nZgUCRQlJIqNI9QzY47SY6QjPmzYhVM3dV2v89gGavzQO69QtAxOexwt7GeeSn2pMN2Bh85EFjeZ2gQH0mV0h2jiAKxDHIZYE9yGEEzTQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NQGy8+pJ; arc=fail smtp.client-ip=52.101.85.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WIzb35kDfsaHhokA1w6iOlhSswDF08ADTNOT0a5J5QI3Aeb3KVXDCCS+/nKc9Yfdk1EH8FR9n83T6PgFxmXgxEa/m/5tpBeyJ7MWoYGwE+UO+ZjeXouqyAqVJLj1oDhCTHw2vkPUhJrtmGgBN0G/KfjZ9IV74at/0FBniR8ISrMeuK9/giqcOMAkqvEFqLEzLfEkVvhCShuiKOKnpNz1PTktKBYa6NwbY4G+ld9WG3p15dAxpHPdwagrhcr34R90sD3mGkzljwHL3qdI8LkhtkO6oxHVKilYa4a72etIpZgLu25B2CZps8UE+b5PJpXxdp6O8iOwQTxmH/0unV2Ypw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bIMYE7czL4N6bqsB4H8Ng7PQKJKkVJ5kiaTz1awfL50=;
+ b=Wwbt6E5vStXygkP0DYvhKPrxLddRjKgjDnOzZ+YY3fTqY0EmlcFpv3qD681j29FX+SmQTxsJzn7HvcgchyCKuaK4ELfOIyonYWmpQhUb8Iz1gy/tGrjDllHCeLvLvmhafh9/3pZdXLoorn36U/5PIj30DGA/CBRO3Mhah1ZuRC96zZKlND6i6TnGbtDLI+8qMDbW3+fP4OS00YAQZcBXwm0+ZiIzq3k+8eVPeTiHhyh1t4ia6kBVpuqhvSDAxwUviErmajwT7emCpGdZVJ6Kj0tUi46qlveVrEeCr0T5NYhWrttkp1B6Upm7GBWki8v8wJt3Fpfi8FQztA7zFYBF5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bIMYE7czL4N6bqsB4H8Ng7PQKJKkVJ5kiaTz1awfL50=;
+ b=NQGy8+pJ6KiSy5+8l0l8AqlUA7DkrK1x1VZi0I8yhgpnHXVpDmBi1ZoOD0xPB+DhtBiifyYaI+nCuyD1uSd9tx7NYRcYFeMjRSvE5YtlryEdUtV0Ur9L+c+DxLDfm49tq/BGAbRHSk7cuFt5kX5ce95TdsBVnWZojsx//lIjMYeyHtPh7re3ZGpA927udJWIpWMnIYWIuKBxLDC4RnBnQv4EdAOWsURRVafAzXSrI0UwWB5hZOvHGn0BqYpYvCLOB03L5Q9hiM6MRWSM59ui050B24x92ul58LcmkXG52Hd+yrFdcFJTc25fMZjMVXleU/xMmvJE8gTZLLTGq/AkBQ==
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by CH0PR12MB8552.namprd12.prod.outlook.com (2603:10b6:610:18e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 19:13:40 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Wed, 22 Oct 2025
+ 19:13:40 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"dakr@kernel.org" <dakr@kernel.org>, Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, Benno Lossin
+	<lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl
+	<aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, "joel@joelfernandes.org"
+	<joel@joelfernandes.org>, Elle Rhumsaa <elle@weathered-steel.dev>, Daniel
+ Almeida <daniel.almeida@collabora.com>, "nouveau@lists.freedesktop.org"
+	<nouveau@lists.freedesktop.org>, Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH 7/7] nova-core: mm: Add data structures for page table
+ management
+Thread-Topic: [PATCH 7/7] nova-core: mm: Add data structures for page table
+ management
+Thread-Index: AQHcQfMtaAN7hmZj90ONxNxJIQOdf7TOCEOAgACDybg=
+Date: Wed, 22 Oct 2025 19:13:40 +0000
+Message-ID: <ADA086D9-C352-43AD-AD3B-35BCE84265BB@nvidia.com>
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+ <20251020185539.49986-8-joelagnelf@nvidia.com>
+ <DDOT8EL6RMYA.3SR2XSN6953HA@nvidia.com>
+In-Reply-To: <DDOT8EL6RMYA.3SR2XSN6953HA@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR12MB8059:EE_|CH0PR12MB8552:EE_
+x-ms-office365-filtering-correlation-id: 676b87ce-71c4-4ea9-7d3f-08de119f1c63
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|7416014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?djBvNWdsZGkyTE4xVnc3dmN6NVJsYmNoTWJjbm9qRzRodUlwdDhxZ3E0ODcy?=
+ =?utf-8?B?MTdqMU5vSlpkY091WWJNeEVmUEM2TlJGSFhXa3A2dXpmNVFwZVF2eGRlZTBm?=
+ =?utf-8?B?M0d3a1ZVQWVkaHIyaVNVRm1UY1lEV1RkVnF5OVpwVFcrTERRekhnd3FvMlpI?=
+ =?utf-8?B?dC9hWkhFYU9UbG92QVR5UmlFU0xpRW5Lc3NnQ2xjdkwrc1ZJeVdFVmJudno0?=
+ =?utf-8?B?ODBRcWpkV3J1bWVGbjNublM4ODlqOGZ6Y25ONWpXbUxYTkhUYnFkaUh6ckY1?=
+ =?utf-8?B?MlVsU292bFJudXNnSmV1SHdNenZWOE12cWNXZ0twZC83blR4Ylk4a05TZlJo?=
+ =?utf-8?B?ZE8zNlNJd29WSTFFMFUza202UW5qbWNnZmdyUEJTamo3bTRtNWx5S0kxRzY0?=
+ =?utf-8?B?S0FjRjA4OFdVVjg5MUdONmdXWEMxQ2F1TUppdDRZVWJNTTNpcTRuY1pSR1Jr?=
+ =?utf-8?B?Wi9PUlVKOGlGZUhEcHpENnBOdDFoK2s3ekJJM2pLbE5lcTRBZHFuR01TdkZG?=
+ =?utf-8?B?blNLbEQ4VG5QTzlvcHlnRDY5UEo0aU1QaWltM0E5dlpiNGh0M2U2bm1uNlBt?=
+ =?utf-8?B?dEYwVjhRci9uT2NCRmh0c0VBRzhROE9xRFJXcCt5Q2hDdnluM0ZSdk1JNEVN?=
+ =?utf-8?B?cnNMTVl1L0YxaUc3Nkc0Znk5RWk0enIvaVBMcFBIK2k2d2psUXBxb05oYllO?=
+ =?utf-8?B?ZmQ4OGV3c1QvRlNndUpQQTBiTU04dXUyazA4UXFLUmhYY1VjMktTVzJBUkIr?=
+ =?utf-8?B?SUFyNnhsVmVFZzFqd3JCenRrQUh5UmpET1JwSWpTR1FKVTRpM3JQWlZlZU9p?=
+ =?utf-8?B?M3IrV0E5clp3NkYzOGo1ZW5US0RveHlGRU9WRFY4WDBUSW1mQWd0YXJMRG40?=
+ =?utf-8?B?OEZ4Q1VmZFJ3cks4cElGNlUzQkJKa2NIRFRjUHUxbVJ5SjYzRXNRdGhKZFNC?=
+ =?utf-8?B?cjRuWmcwQTdrd2JSOHhZZGRjbEJ2eDJiYTZtQldZZkVxK3JWVTc2SWx4b2J4?=
+ =?utf-8?B?VGZWUytLQ2I0OGhreDV1R2xvRUhNVjJmUjhyM01FWmhRd2Y0cFI4S1RWcEFH?=
+ =?utf-8?B?SzVOTG1vaUZUTFBlc1Voc09EcE51WVUxQzIycDdzUGd0R2lLN0svWmNHZG9S?=
+ =?utf-8?B?NiszR2RVM1JPcy9MNFEzS0ZJRXN4NUtwSTRvVkdxb2VUeTl4NlVBcWpkQUlN?=
+ =?utf-8?B?V0dFZkU0Sml5UG0vQ28vMnRVRVp1OEhzenJSOSsxYTJIa09hM1pJSUU0MU5G?=
+ =?utf-8?B?dUdlQnVWZUFMZTNGRXB4QzFQRkVxQTh2amJDQ2c0YlhVVFg1WDY1RWo4SnBU?=
+ =?utf-8?B?eXVQMGVmcEJMb2JsN1Fld3VGL3VJZzg1aWp2NDRibWVkRlc0SVJNOXN1eld6?=
+ =?utf-8?B?OHdlWGx3MG9ObU9heVpzM0h3QWZFQ3JRblV5UzV5NGdvSk1PcENTU0piR1NH?=
+ =?utf-8?B?cXRDb2t4K2c5QWRaRlpXRDNxZTRDQ01uQWEvK3M1MStMaU1LQUFvOUJCN2NP?=
+ =?utf-8?B?THJFUlI1YzlHTXZhMCswK2dYK1BOS3hvZHIxcjBKdWJjdW9GWnlEUVdFUWZt?=
+ =?utf-8?B?dXhJUEtMR2hoc3F6dU5YRi9zZ2xpd3JCdlpzNVovQ0xEYVRRR0o2Rml2ZFRB?=
+ =?utf-8?B?SVVCRTlQRSt4aW5qV203MGhmSUl1T0RHMzNnaHJyd25jWTREQ0c5SFdEcTFm?=
+ =?utf-8?B?Znkybm8vZnlIQ3M5M0hUZ3RYTlUwbzJuanBDWGNrTjdJYXQ3U3Foa1NxQjZL?=
+ =?utf-8?B?WHBhREFpSXdKTDZXQkYvekxnbVZod2FiV3NlVzVYdjY0aUZWMWxZSUFKV0oz?=
+ =?utf-8?B?Y01aUVB3TjFZT05kbDdSTU5OWVUrSHMzb2s4RFJES2QyUlJZWGVjc1FyTFVq?=
+ =?utf-8?B?K3cybGgzZ0I5NDAzcThGZzhYV3NFcG1wcCtCdEZISW9zZEIvVDRIY2NHMTRy?=
+ =?utf-8?B?eDRZVkVZcmFCSE8wbWdRQVYzdEFOVzBGVnVodGZjRTFuWG5QQlh5c01oWFlF?=
+ =?utf-8?B?TVpVaEw2b2Y0czgvL05mVWJFS011OHEyRVZnQjl2T013Tm02a1l5eUc2dm80?=
+ =?utf-8?Q?ew8psp?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TUJlVUNYSjZ0SUtsbE1ZelBKcnltN0pYRmlsd1RQLy80c3Y0c1czU01INGRP?=
+ =?utf-8?B?MHdMdGVEa1U3cVQrNll4UnNYSEE3WFl4c1l1UXJvQzJpSDFCMGt1Z0dPMW9Y?=
+ =?utf-8?B?NWhtSlAzbEtkMVQrQ0VlOERoMThYNCtVS2lkZTBmSlZBNVN4aUxLbjYxUUo0?=
+ =?utf-8?B?Zi92SDVVK2hOeHNacEFNR05NT3FzNktrblJoSXI0M1A5QURsRi9MS0RzcTFU?=
+ =?utf-8?B?NHdUaHBGejNyemxxR1E3WXRiRXpiREhtMlpLZ0lOamhuQUJNVU4vaTZHZWZJ?=
+ =?utf-8?B?R2d2a1YwNytua2JUKysrc0hEZ002NzBxMSsrczl3bW5CSGllRS9mTmlDRlNP?=
+ =?utf-8?B?MW1McW92Zzg3V0NHeDRtR29QR2JFSVZoemFSZWRmWWNGZTlYcjdCWjluZTd6?=
+ =?utf-8?B?bzZxNWdNKzF0elZxNFlMaGsyK3puU2orSFk4c1laQjNEaTk4Mlk5N1FhYmtv?=
+ =?utf-8?B?dmMvdHZ3VlFUYm9FK3VGSTh5dnErS0hveU1rZm1KMDlpa01wLy9aQmh6eUpG?=
+ =?utf-8?B?NUpVYm5VL1NBOHBtcE0wcEFhY2RGTFZycmlCbVk0N29MR0FucXl1QkdyWXpu?=
+ =?utf-8?B?WU9vRnZDL1VPNmN1ZXphaXdsY1M4YUVpY0Z4bk5qcjk4b0JXMkhXQlkyblpG?=
+ =?utf-8?B?UGlvcE4xTnVzRllIYnd5dFVZUFMrZ1F1Z1VkdWUySnE0aFJiM1h2elhvd2JL?=
+ =?utf-8?B?WHZZSkg3T1FtL3hOSzNqVVVHY3RRMlVVS1JuZkFWem54bk9KanJCQnBlV1ly?=
+ =?utf-8?B?LzR4SS9SRE1Fc2xpTXloY0VpdGVOd3kxd3RodWw3NmNBZzhJS3lyQ3RPN3Bh?=
+ =?utf-8?B?N3FNRFR0blVnRVVOWGdqQ3pnamw4Wjhib0pBODN1Z1lvamV5SzdTYmE3by9a?=
+ =?utf-8?B?dTdtUGFMbFZReFNOVDhOMWg0aHdyOHQ2b3A0eVZvdHNRWk1PcmVxNjRjTDRq?=
+ =?utf-8?B?RlJCdWhMTmxGaUwzSElFZklwTGttM0ZuMkh0U2dFZkExVjRSN2F3THkwZ1g1?=
+ =?utf-8?B?YWkzTUorMDVJMnhSbGFZRlNKMFVrSGR2aFY0ZUZkWm91eHdTSFJyYWtqK0Yz?=
+ =?utf-8?B?TDI4c0tnRThsMkJQL09yakI1WHBlWmozTXVIQStldjF2WWc2N2xHSDVPa2xw?=
+ =?utf-8?B?VStYZE0vSVA4K1JGdGtDazNxU0RsUnk1Slo4V1c0cHZRRXFiSFdBQ3lvZG56?=
+ =?utf-8?B?RDRPOWhsL2tKUEdwMXFvaHB1ZndycFVYWVY3YnQ1SzBHaFVONWN5c0o1ZitF?=
+ =?utf-8?B?TlFZK2VLS0N1Zkl0Mm1aL0ZiZE5seVBaOEh6RjJvanJ4Y2p1b3BUbXR3M1BB?=
+ =?utf-8?B?M1VYd1FyOFRrazVqWFc0K01LaEZYcExhcno2VkxGdUE5cTE4RHhleTZ3eEZs?=
+ =?utf-8?B?alZxcGVUOFR6YktORDhjVlNtNTVhdU1WeUFvL1YzVHdjaVhjMjZGbGx6WTV4?=
+ =?utf-8?B?dXZmQnVSbUkrY2ppYmZIaWVzZGJYMjZ2alh6MXQyV2hrcWU0RHJMQ1lwbjBy?=
+ =?utf-8?B?clJMbkhCSWhHOG9TT0tKbCtZOFpVNHJwS1IyYjlUL3RNTSt4anA5VXloL0gr?=
+ =?utf-8?B?aDVKR1pSbEsxS3BDV0lZajhyUldlcmpsMVFqaFJ1ck8xaGl1dys3MlhBSURZ?=
+ =?utf-8?B?WEZySERhMVRVViszTEMrWFkvRFd5cmdraUxZTmxMNkMwckVmOGZVelRiejNB?=
+ =?utf-8?B?VmJONWVkRG02cytjNFhlMExha3ZxdERPMUJrMHhiODVPNlBkSXJzSnlZS3lz?=
+ =?utf-8?B?RS9NVnNKNlpGNzdJb0U0VEI4YnllaE9vOVpnRW1HdldvcGhscForc3VkcEF5?=
+ =?utf-8?B?MG5YQVZhb2VkL3NTdEM3M2JXT3ZUcUFnZkJ1Nm1odE5VL2p1MnREOE1KbFdk?=
+ =?utf-8?B?RzQ1ZjQxaUozWmVpcDN3YXczZE1XYTk1ZkV6OHNjVmNIeFVkYTB2NmF2RjJn?=
+ =?utf-8?B?VHlXcFFDZFJnR2NmeWtVazlyVHREbXd1NVc3YjhXVjhidjk0QkgvK2YwSllY?=
+ =?utf-8?B?UkZML2EzU0VsY1BJYVlKM093c3FhQWJrQXI0WlNuWDh1RDdnZjU0YWdZQ0h2?=
+ =?utf-8?B?NzVZN2drc1pWdDdyVUx3TmZRVnNCcTh4OFBqRGVDaTBZY3pXNWRHS0RtTG5H?=
+ =?utf-8?Q?zgy2elDu7UtI4g7cA7OgmcghU?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020221217.1164153-1-helgaas@kernel.org>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 676b87ce-71c4-4ea9-7d3f-08de119f1c63
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2025 19:13:40.6441
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WTd/hLN3d0PPyV8EdxcuyStHs3EIyFcxkkpEaJKjQFa5ygHTCXpXyJVwo/ab0kmW5wMvixc/RSZR3/LDD8+WrQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8552
 
-Christian, Naoki, any chance you could test this patch on top of
-v6.18-rc1 to see whether it resolves the problem you reported?
-
-I'd like to verify that it works before merging it.
-
-On Mon, Oct 20, 2025 at 05:12:07PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
-> platforms") enabled Clock Power Management and L1 Substates, but that
-> caused regressions because these features depend on CLKREQ#, and not all
-> devices and form factors support it.
-> 
-> Enable only ASPM L0s and L1, and only when both ends of the link advertise
-> support for them.
-> 
-> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
-> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
-> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
-> Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
-> ---
-> 
-> Mani, not sure what you think we should do here.  Here's a stab at it as a
-> strawman and in case anybody can test it.
-> 
-> Not sure about the message log message.  Maybe OK for testing, but might be
-> overly verbose ultimately.
-> 
-> ---
->  drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
->  1 file changed, 9 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 7cc8281e7011..dbc74cc85bcb 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -243,8 +243,7 @@ struct pcie_link_state {
->  	/* Clock PM state */
->  	u32 clkpm_capable:1;		/* Clock PM capable? */
->  	u32 clkpm_enabled:1;		/* Current Clock PM state */
-> -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
-> -					   override */
-> +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
->  	u32 clkpm_disable:1;		/* Clock PM disabled */
->  };
->  
-> @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
->  	pcie_set_clkpm_nocheck(link, enable);
->  }
->  
-> -static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
-> -						   int enabled)
-> -{
-> -	struct pci_dev *pdev = link->downstream;
-> -
-> -	/* For devicetree platforms, enable ClockPM by default */
-> -	if (of_have_populated_dt() && !enabled) {
-> -		link->clkpm_default = 1;
-> -		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
-> -	}
-> -}
-> -
->  static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->  {
->  	int capable = 1, enabled = 1;
-> @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->  	}
->  	link->clkpm_enabled = enabled;
->  	link->clkpm_default = enabled;
-> -	pcie_clkpm_override_default_link_state(link, enabled);
->  	link->clkpm_capable = capable;
->  	link->clkpm_disable = blacklist ? 1 : 0;
->  }
-> @@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
->  	struct pci_dev *pdev = link->downstream;
->  	u32 override;
->  
-> -	/* For devicetree platforms, enable all ASPM states by default */
-> +	/* For devicetree platforms, enable L0s and L1 by default */
->  	if (of_have_populated_dt()) {
-> -		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
-> +		if (link->aspm_support & PCIE_LINK_STATE_L0S)
-> +			link->aspm_default |= PCIE_LINK_STATE_L0S;
-> +		if (link->aspm_support & PCIE_LINK_STATE_L1)
-> +			link->aspm_default |= PCIE_LINK_STATE_L1;
->  		override = link->aspm_default & ~link->aspm_enabled;
->  		if (override)
-> -			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
-> -				 FLAG(override, L0S_UP, " L0s-up"),
-> -				 FLAG(override, L0S_DW, " L0s-dw"),
-> -				 FLAG(override, L1, " L1"),
-> -				 FLAG(override, L1_1, " ASPM-L1.1"),
-> -				 FLAG(override, L1_2, " ASPM-L1.2"),
-> -				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
-> -				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
-> +			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
-> +				 FLAG(override, L0S, " L0s"),
-> +				 FLAG(override, L1, " L1"));
->  	}
->  }
->  
-> -- 
-> 2.43.0
-> 
+DQoNCj4gT24gT2N0IDIyLCAyMDI1LCBhdCA3OjIy4oCvQU0sIEFsZXhhbmRyZSBDb3VyYm90IDxh
+Y291cmJvdEBudmlkaWEuY29tPiB3cm90ZToNCj4gDQo+IO+7v09uIFR1ZSBPY3QgMjEsIDIwMjUg
+YXQgMzo1NSBBTSBKU1QsIEpvZWwgRmVybmFuZGVzIHdyb3RlOg0KPiA8c25pcD4NCj4+ICsjIVtl
+eHBlY3QoZGVhZF9jb2RlKV0NCj4+ICsNCj4+ICsvLy8gTWVtb3J5IHNpemUgY29uc3RhbnRzDQo+
+PiArcHViKGNyYXRlKSBjb25zdCBLQjogdXNpemUgPSAxMDI0Ow0KPj4gK3B1YihjcmF0ZSkgY29u
+c3QgTUI6IHVzaXplID0gS0IgKiAxMDI0Ow0KPiANCj4gWW91IGNhbiB1c2UgYGtlcm5lbDo6dHlw
+ZXM6OlNaXzFLYCBhbmQgYFNaXzFNYCBpbnN0ZWFkLg0KPiANCj4+ICsNCj4+ICsvLy8gUGFnZSBz
+aXplOiA0IEtpQg0KPj4gK3B1YihjcmF0ZSkgY29uc3QgUEFHRV9TSVpFOiB1c2l6ZSA9IDQgKiBL
+QjsNCj4gDQo+IFNaXzRLIGV4aXN0cyBhcyB3ZWxsLiA6KQ0KDQpUaGFua3MgYSBsb3QsIHdpbGwg
+ZG8uDQoNCi0gSm9lbA0KDQoNCj4gDQo=
 
