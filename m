@@ -1,108 +1,143 @@
-Return-Path: <linux-kernel+bounces-865793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2A1BFE0D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:34:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9CDBFE0DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 21:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744D218C66C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:34:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F00C04F8A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9582F60B4;
-	Wed, 22 Oct 2025 19:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1V+LIdKI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37B92F4A1B;
+	Wed, 22 Oct 2025 19:35:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386DA2F0671;
-	Wed, 22 Oct 2025 19:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A9337160
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 19:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761161636; cv=none; b=Rv90Kf/sAiHZIbSB2+zrP7Gi+jg7/16SqYsHkie8WA1nEJRz7l+mzjvIp+mv0YcW7Rkv+nD4UugpiE37hkIg90lWDTN4Ua2WU7DvIBDntKXKXctsxAshgYBM0/rOdC8LWghQih1xnpXrcrcIMgHj9zOtgKs8wHuZ/2DKpdYbeRs=
+	t=1761161705; cv=none; b=nLsTLEtYlvTapvK8ZgfssTpB0aoao+bCCvbhDKOaDVTChUavEe1aksq5AdJ/owOE1CSFIXvk+z29zcAnKlzUrL7i9kgG8NWjoAa+lHVTnBCthtzcNamybcYYaU8HDMkgSvdzXsaYrcFcsRdk+hTiH01BWrtbzyokQZKiwNiexew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761161636; c=relaxed/simple;
-	bh=EhmrM/rrZkqdkcIvkN3sA3FlTAW1QyALgArWs2KuzpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUGj5vaqdbfpgUXA7IiW5tIMjySxPMgOFfc5GW/Q5+nIDVJEk6l4JtsQj5fG2/7yhBJ4eCqKU9QLX7AiGQH+9MjPp2rybnwosyv7hN0azZZkj1EjPBTaGsEDIHpIlcJiW08EZarZ0pNQQcr0X74bRn4eZvSrZL+MrOdEwdgfhOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1V+LIdKI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=B0MoY2AgpEB5vSiVMVo5RoknNJN0kCXnUeivnHXYIXs=; b=1V
-	+LIdKI4P+Icu/8ukHThqV1tbQgarFsVugvL5WRk0IRB8NJDX0TH+kApHCwP1cdGzgbIvRCnOheSIR
-	cuTGsJXE2FC5JdvywAS7Zim7m0qZqc2BtETLen57s1NSGOCUiNCU2E5sedkDQ5rFPexMsebbwJZ0S
-	U06ymByNQI5yog0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vBeae-00Bo3f-Q2; Wed, 22 Oct 2025 21:33:44 +0200
-Date: Wed, 22 Oct 2025 21:33:44 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Subject: Re: [PATCH net-next v2 5/5] net: macb: Add "mobileye,eyeq5-gem"
- compatible
-Message-ID: <51833ec4-e417-4ba3-a6d1-c383ee9ea839@lunn.ch>
-References: <20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com>
- <20251022-macb-eyeq5-v2-5-7c140abb0581@bootlin.com>
- <ef92f3be-176d-4e83-8c96-7bd7f5af365f@bootlin.com>
+	s=arc-20240116; t=1761161705; c=relaxed/simple;
+	bh=GYdhCebkmdsPx+EA+OG3EtmMGa1Tgacoi1W3Eb9XOuY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SNSz5928UwTqwbuyCgO9WOJyzJfa793sUQscAixQQjZ+CzEENZhMYaK7KYOVkrHygGTDY44YqTZjqNp/rfkCQ6Va/XpIjgDRCioaIn6qUUYoC0SJK5szt0m/gWNWs/RIYIm9Lj37/gFg4V1n9MmZ+islzLcxjMl621toueU3YWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d4a4dec5so1614335ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:35:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761161703; x=1761766503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7CcaC11LGbW2w6XQP1Btvq/QO8W43D6kYeGBH5iPK0=;
+        b=n2PzD8em6zy1mNWUwUBJrzbc+iT7WmKerTAiFENTbYg9tIMo8lNqyIO4szcSbhWxgy
+         +mXaixjeXI2YyC0UQg3zJ3ZgEc+Fxdsu1Szc0fk3r8RQk/hrXAV57oWY6Jq+tAnvLNvl
+         O5TIU1uuWA0sbVoPahPwOAEkOp8LtxCklQ60aBu3soKOGwzDPd1oIYWDXHp6Ha6zGXvP
+         Fe+BOlt9ymneCmlL089Zr+xyohIkRFihOF5RAkXtM3KdOVn75aO1aFg1lO7lrbIqsbhB
+         ju5sLRVvIxdJYD6GbyaLSylHo/FOOebRjEaZFXRokUeMhOoNOiAG1lvgf1FpsahdXGGe
+         JroQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlqHVguhPARdiIhgVAuOrjW7g8gMdVQC15fgibuYuVxC93iQhPvXFC1Y6/An7xuQvNvFYJ/jxI9XStIqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLVcDJ/cwzhpnLrFlPfdVm1jNhm51Up5Gawhlhd5yUNP2f7Rt8
+	IicoiVdQ7QFfIoVCLj7Zo/vPJWGtVNkx3KJgv2tVEEjJN/KKGVVJEhjS/bj7WUQD8rcV/LXNncu
+	R1GwnvTgOY5VVVePuMgQWE5gnNfZLyzxZ/vWNWDeZiAh6uCHP/SGyC1YAgcw=
+X-Google-Smtp-Source: AGHT+IGpsNpGq9rk3bfH1s/PuajgDCd3G9iQK2xnNgndf2nCsgym5lzm7IQSp7iDb+ClqemnXotu0AvYQk65kv6fzheIPmKkEVVp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef92f3be-176d-4e83-8c96-7bd7f5af365f@bootlin.com>
+X-Received: by 2002:a05:6e02:2291:b0:42f:9187:f6e0 with SMTP id
+ e9e14a558f8ab-430c5270233mr343148535ab.13.1761161702988; Wed, 22 Oct 2025
+ 12:35:02 -0700 (PDT)
+Date: Wed, 22 Oct 2025 12:35:02 -0700
+In-Reply-To: <20251022150431.jNFth%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f931e6.a70a0220.3bf6c6.0024.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
+From: syzbot <syzbot+5bdd4953bc58c8fbd6eb@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 22, 2025 at 10:09:49AM +0200, Maxime Chevallier wrote:
-> Hi,
-> 
-> On 22/10/2025 09:38, Théo Lebrun wrote:
-> > Add support for the two GEM instances inside Mobileye EyeQ5 SoCs, using
-> > compatible "mobileye,eyeq5-gem". With it, add a custom init sequence
-> > that must grab a generic PHY and initialise it.
-> > 
-> > We use bp->phy in both RGMII and SGMII cases. Tell our mode by adding a
-> > phy_set_mode_ext() during macb_open(), before phy_power_on(). We are
-> > the first users of bp->phy that use it in non-SGMII cases.
-> > 
-> > Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> 
-> This seems good to me. I was worried that introducing the unconditionnal
-> call to phy_set_mode_ext() could trigger spurious errors should the
-> generic PHY driver not support the requested interface, but AFAICT
-> there's only the zynqmp in-tree that use the 'phys' property with macb,
-> and the associated generic PHY driver (drivers/phy/phy-zynqmp.c) doesn't
-> implement a .set_mode, so that looks safe.
+Hello,
 
-I was thinking along the same lines, is this actually safe? It would
-be good to add something like this to the commit message to indicate
-this change is safe, the needed code analysis has been performed.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in ocfs2_iget
 
-	Andrew
+(syz.0.17,6559,0):ocfs2_read_locked_inode:612 ERROR: Inode 66: system file state is ambiguous
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/inode.c:612!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 6559 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:ocfs2_read_locked_inode fs/ocfs2/inode.c:609 [inline]
+RIP: 0010:ocfs2_iget+0x19a3/0x1a90 fs/ocfs2/inode.c:157
+Code: bc 24 60 01 00 00 4c 8b 84 24 a0 01 00 00 4c 89 f7 48 c7 c6 f0 55 d7 8c ba 64 02 00 00 48 c7 c1 00 c9 0a 8b e8 9e 65 15 00 90 <0f> 0b e8 a6 cb 23 fe 90 0f 0b e8 9e cb 23 fe 31 f6 65 ff 0d 65 3f
+RSP: 0018:ffffc90003f66d40 EFLAGS: 00010246
+RAX: 8f703e25fe532600 RBX: ffffc90003f66e80 RCX: 8f703e25fe532600
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003f66fb0 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101710487b R12: ffff888044f6642c
+R13: 1ffff920007ecdb0 R14: ffffc90003f66ea0 R15: 1000000000000000
+FS:  00007f4a52cbe6c0(0000) GS:ffff888127012000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f45247a7000 CR3: 000000003fd50000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ocfs2_init_global_system_inodes+0x16c/0x660 fs/ocfs2/super.c:449
+ ocfs2_initialize_super fs/ocfs2/super.c:2196 [inline]
+ ocfs2_fill_super+0x447b/0x65f0 fs/ocfs2/super.c:993
+ get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1751
+ fc_mount fs/namespace.c:1208 [inline]
+ do_new_mount_fc fs/namespace.c:3651 [inline]
+ do_new_mount+0x302/0xa10 fs/namespace.c:3727
+ do_mount fs/namespace.c:4050 [inline]
+ __do_sys_mount fs/namespace.c:4238 [inline]
+ __se_sys_mount+0x313/0x410 fs/namespace.c:4215
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4a5365066a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4a52cbde68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f4a52cbdef0 RCX: 00007f4a5365066a
+RDX: 0000200000004440 RSI: 00002000000000c0 RDI: 00007f4a52cbdeb0
+RBP: 0000200000004440 R08: 00007f4a52cbdef0 R09: 00000000000008c0
+R10: 00000000000008c0 R11: 0000000000000246 R12: 00002000000000c0
+R13: 00007f4a52cbdeb0 R14: 0000000000004446 R15: 0000200000000240
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_read_locked_inode fs/ocfs2/inode.c:609 [inline]
+RIP: 0010:ocfs2_iget+0x19a3/0x1a90 fs/ocfs2/inode.c:157
+Code: bc 24 60 01 00 00 4c 8b 84 24 a0 01 00 00 4c 89 f7 48 c7 c6 f0 55 d7 8c ba 64 02 00 00 48 c7 c1 00 c9 0a 8b e8 9e 65 15 00 90 <0f> 0b e8 a6 cb 23 fe 90 0f 0b e8 9e cb 23 fe 31 f6 65 ff 0d 65 3f
+RSP: 0018:ffffc90003f66d40 EFLAGS: 00010246
+RAX: 8f703e25fe532600 RBX: ffffc90003f66e80 RCX: 8f703e25fe532600
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003f66fb0 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101710487b R12: ffff888044f6642c
+R13: 1ffff920007ecdb0 R14: ffffc90003f66ea0 R15: 1000000000000000
+FS:  00007f4a52cbe6c0(0000) GS:ffff888127012000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4524799000 CR3: 000000003fd50000 CR4: 00000000003526f0
+
+
+Tested on:
+
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a64614580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b1620e3721dc97c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=5bdd4953bc58c8fbd6eb
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b19b04580000
+
 
