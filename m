@@ -1,173 +1,87 @@
-Return-Path: <linux-kernel+bounces-864924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB83BFBDE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:32:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E55BFBDF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB994058B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:32:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E69294E3B38
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960013446AD;
-	Wed, 22 Oct 2025 12:31:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC7732E142;
-	Wed, 22 Oct 2025 12:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC3B34166B;
+	Wed, 22 Oct 2025 12:35:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32F41F2BA4
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761136314; cv=none; b=dNVdr69rJ+vkpto5YIYTA2k6GpQDPmUt0HcLqMsnnKiggk7GBFQj/QdKLJ7yPBqy1k2miye8QFHWLJqdrxIMIZM6qhqf9doMge2Ku+/P4SeXURdUSsDeOn9Y2Q/4v6Aqp1TaKq2Hh9jfiguhCqqdcM82llb1R1NCHVqmfLcE2UE=
+	t=1761136508; cv=none; b=CC4ZNBvqj9a7SupwuK/riUtzaMdpcZZwRuEU25v0TwU2CrMahazP0iRokZEgVFu37yp7ye5f/SQJuDFVcbqLvMC5H9eq4t5xrjaTPpBkYkz5NaXixMNZ7ZBE8FQfzy1lT4zLSWld4FU+zsXzw/JxzH2/uOn1jjMFBbIEZiUGXgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761136314; c=relaxed/simple;
-	bh=MteqNTWmwdipz8GKr3klzBPnQjl/Q+Wgw1Tgv4va9ao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HeRhb5fXqDN1lU+iQ1bYQDFLPzImdd5OMM0VdQLOq6RpPuC523QoXzZHbm5txV0IW7em354jjICwuj6XilGuKx543RctXaQvg69SDCIfHjRv+TNJgKObrgRnpmb2AgP9tQ1DlNZIbyhiCLVbQx4jhEXaORv3sp8KMccwvrmRhFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7DA91063;
-	Wed, 22 Oct 2025 05:31:42 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0871B3F63F;
-	Wed, 22 Oct 2025 05:31:45 -0700 (PDT)
-Message-ID: <1a1a3522-313a-46e7-bc13-fcbbd9ccf81f@arm.com>
-Date: Wed, 22 Oct 2025 13:31:44 +0100
+	s=arc-20240116; t=1761136508; c=relaxed/simple;
+	bh=Yf0j/+qEbrwnwzJDU0rEuCQnUw54MRNdxLQCcnHmg4o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=osNBhC4j5iA5Ep3Gj0i0ETyTsn0nOFLfUgKGkSXbHMMGk3+kMUgezRbUuLvAupiGl43eKN/tqeqsKhiI3WX5IkpJbQfX3RVuJ0NYjcdMrDuTjE7KGcq/IgAzwmap3bSxoQWzC97+IMcYui5UXHQ8d+cmNoyFC3E/LSt0wQNegJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430d003e87eso189633055ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:35:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761136505; x=1761741305;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4PV4BZrX3AoRhuqg0dhvxq1dgZwuu8c+iaK6pFWSTu4=;
+        b=gVU701tsqKWVbAOJCMEoDbE5fP6XncNRuowOr78NPSULS/jwEPalnHG7t8ZAEGvan+
+         pLL3A0nedjitAXpdzrJCsmOBPTo7dDi3T0ikwTcjEXx4Q32798co9FfoUOXD8joIDlti
+         MZDM4rkgPLFmpWHYEKUAOXSXWGgf+2iALwJO5rOH53IMz/a/rogyuz/i374XHUFq48fQ
+         QxlHbw8y73lC0f1mCkgQN4dOVzents1rDyiIdsHydK/f6195ck53U1SwzfLJF3noGXZ8
+         WoVzCxGhT/miMHnYCrMd/7N2BjcYHXUOAFaOU0UWknyg83hMFoZd9EWuf6Ey4WaNlLft
+         N84Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+uEufIUYgWOnba5UPHuF+AZVd0pMwvPgOi9yFc8Vt1MrkPHI4PA4KbbqeVTODMuYE+mPdgAyl83aTucA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3MQv6yeWIMqX7CfFqkeJZQ9AHa83ul+SGZfMdnxDjHJXTAtr8
+	SPpdSYq23ifPSqUJ9sEj7cj1BXmJJvCqdyj8YNDxZPxeCkX6RWBhOJgLQ2jYK2aVPAm2fZvlU01
+	RygeYpvvH7s5pxKrMO0Zg6cc4angMQ1Riw4lGEudajqZxgbnj3JyVpWf6apc=
+X-Google-Smtp-Source: AGHT+IEgTgo4V3aD3O77n2yOC4kDVs1bwe9LOksnYqm6TEGTMZia2Q/VyepZFT42cUKwWP5CB/t8JfJYU4myRHs0ItIHm0KMgpzE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 26/29] arm_mpam: Use long MBWU counters if supported
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
- Gavin Shan <gshan@redhat.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
- <20251017185645.26604-27-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251017185645.26604-27-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2702:b0:430:a8c5:fdb7 with SMTP id
+ e9e14a558f8ab-430c52092f0mr310952595ab.3.1761136504739; Wed, 22 Oct 2025
+ 05:35:04 -0700 (PDT)
+Date: Wed, 22 Oct 2025 05:35:04 -0700
+In-Reply-To: <20251022121135.b09g-%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8cf78.050a0220.346f24.0049.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
+From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi James,
+Hello,
 
-On 10/17/25 19:56, James Morse wrote:
-> From: Rohit Mathew <rohit.mathew@arm.com>
-> 
-> Now that the larger counter sizes are probed, make use of them.
-> 
-> Callers of mpam_msmon_read() may not know (or care!) about the different
-> counter sizes. Allow them to specify mpam_feat_msmon_mbwu and have the
-> driver pick the counter to use.
-> 
-> Only 32bit accesses to the MSC are required to be supported by the
-> spec, but these registers are 64bits. The lower half may overflow
-> into the higher half between two 32bit reads. To avoid this, use
-> a helper that reads the top half multiple times to check for overflow.
-> 
-> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
-> [morse: merged multiple patches from Rohit, added explicit counter selection ]
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> ---
-> Changes since v2:
->  * Removed mpam_feat_msmon_mbwu as a top-level bit for explicit 31bit counter
->    selection.
->  * Allow callers of mpam_msmon_read() to specify mpam_feat_msmon_mbwu and have
->    the driver pick a supported counter size.
->  * Rephrased commit message.
-> 
-> Changes since v1:
->  * Only clear OFLOW_STATUS_L on MBWU counters.
-> 
-> Changes since RFC:
->  * Commit message wrangling.
->  * Refer to 31 bit counters as opposed to 32 bit (registers).
-> ---
->  drivers/resctrl/mpam_devices.c | 134 ++++++++++++++++++++++++++++-----
->  1 file changed, 116 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index f4d07234ce10..c207a6d2832c 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -897,6 +897,48 @@ struct mon_read {
-[...]
-> +static void mpam_msc_zero_mbwu_l(struct mpam_msc *msc)
-> +{
-> +	mpam_mon_sel_lock_held(msc);
-> +
-> +	WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
-> +	WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
-> +
-> +	__mpam_write_reg(msc, MSMON_MBWU_L, 0);
-> +	__mpam_write_reg(msc, MSMON_MBWU_L + 4, 0);
-> +}
-> +
-[...]
-> @@ -978,10 +1027,15 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->  		mpam_write_monsel_reg(msc, CSU, 0);
->  		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
->  		break;
-> -	case mpam_feat_msmon_mbwu:
-> +	case mpam_feat_msmon_mbwu_44counter:
-> +	case mpam_feat_msmon_mbwu_63counter:
-> +		mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
-> +		fallthrough;
-> +	case mpam_feat_msmon_mbwu_31counter:
->  		mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
->  		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
->  		mpam_write_monsel_reg(msc, MBWU, 0);
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Already zeroed if it's a long counter.
+Reported-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
+Tested-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
 
-> +
->  		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
->  
->  		mbwu_state = &m->ris->mbwu_state[m->ctx->mon];
-[...]
-> +static enum mpam_device_features mpam_msmon_choose_counter(struct mpam_class *class)
-> +{
-> +	struct mpam_props *cprops = &class->props;
-> +
-> +	if (mpam_has_feature(mpam_feat_msmon_mbwu_44counter, cprops))
-> +		return mpam_feat_msmon_mbwu_44counter;
+Tested on:
 
-This should check the longest counter first.
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b03734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb89820a01e5d251
+dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15dcf492580000
 
-> +	if (mpam_has_feature(mpam_feat_msmon_mbwu_63counter, cprops))
-> +		return mpam_feat_msmon_mbwu_63counter;
-> +
-> +	return mpam_feat_msmon_mbwu_31counter;
-> +}
-> +
--- 
-Thanks,
-
-Ben
-
+Note: testing is done by a robot and is best-effort only.
 
