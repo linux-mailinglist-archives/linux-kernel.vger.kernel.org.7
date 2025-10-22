@@ -1,212 +1,157 @@
-Return-Path: <linux-kernel+bounces-864615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB19BFB2F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0AABFB2FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BC414E4D44
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:37:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F74E4E37E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5F829994B;
-	Wed, 22 Oct 2025 09:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2563E295DB8;
+	Wed, 22 Oct 2025 09:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gh+EwBkl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPK+dzsm"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921D7287258
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DA928488D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761125861; cv=none; b=GZH2NEKHonkrItU/7Wu1HN5J9e5cmMeGczfji/Vyvl+lS1eclukZ6GHUrV9xaJgfgiolI7tmsEHJ35XrLZ86qaDOCekBXuYNVzRCEqH5xKGgBKN0wysGHYHlvOPMVzHJYAh6y7ioUSo1hK6Q5qrY/bW7DlcpYIBdw87sMGfBie8=
+	t=1761125889; cv=none; b=CBYMAiEJOB0pQmmX74PRsj76CsKnQ6w8/3XwuqD44iJpIz/FCYCuiSSztBj4erjtTmdzxz9J9iUWIUOR6Nb/c8E/9LnXFLxWpLysb42sXOtU2GBeaRxU2vNLENIfOE6qxGJa2eo6x1JxmjK5i4hgOMldkocf9AxDETybDTmDGG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761125861; c=relaxed/simple;
-	bh=+/MjwfbZvPam/0xlcWCDrWKB23vGSjkX/nOorqR0QbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twPrYTT0fMHBA3Nnc8sNTVw7XdIMC5FWWkJOmE7zQ+r/gT/ZUvp7nuuFcT5OX+wx7CzlsI00cY0lEdxRnGhpU6iqOTANA05E53fmp7HCN+KAjp36y74d0+wwou+iEEw6QZJxvq4jDKGtyzO+L3JXWTmTShsWitRemQsB5R9X1nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gh+EwBkl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59M3BAhX028420
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:37:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=wlAiuhzDMbNQ1Fw8Ews+PID2
-	RPtvP6Wo25eJKEmIUEQ=; b=gh+EwBkl4qsCs7HhmSFWn28pRpHeG6IjmIFVe7rm
-	To6R5wI2NT9fzE7S/jHLQZFn6jH62ldmrPmzbWK2Vt1pP/upE0bQn4AyKRZCOqGV
-	1nFd2wW3MAFIAyiKrvyb1s34iHS3bm3txpP0G0eQ2JENL3PLrRaFuJ1GSOy18Lpw
-	A8yhlzSvgJQWAoaipGgHHMaH3xTA85z9WYkUcErhkUhKhBBwjf0/62Wi77fgqPhM
-	oONeSzmzrUJTq276d9/WU8bDZkP7MxOapRCXn5e/zapo33Z2ZUHdtosWE0e+z3Hy
-	TKCRQ4csvlsYJsBUdolyAw/Tksf6hwF/aWzl9aRgFaL2Sg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08pmbuk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:37:38 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8a802113bso26476041cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:37:38 -0700 (PDT)
+	s=arc-20240116; t=1761125889; c=relaxed/simple;
+	bh=y+I/LwqqDB9pXpDXKCV/nv/6aZw2Lg2pKBs/RJwW6Gg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nrn4VenGyoBgzfzTzS+tKt2iOIpAtTJX9eoYO6mJuxYlast+UsyMUzUT3hvRLGrVbBCOuoEGxF2OilFSZBt5JAylKWUGVpxGYoYv5MVmpLQeMMB0f3mily8h1X0qbetUFZCiGYObhZvIP0b38Y31OwKCAuU0vBWBdujuYoGo8W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPK+dzsm; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e89de04d62so8353441cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761125886; x=1761730686; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJdPu+39G4lB6AuXLRBW7mSkqYwO4pjl1bYy6jRlyTM=;
+        b=iPK+dzsmqqwd8Dm05OY+3GPj7Fjm4DLGbG0b18ba96l42j3aNvj9I+Y8yVXFL4230Z
+         QIeyKJLcHyUJTaVwrVBxMr3Otufe20Ihp7WmD9g4VIN1SD8dNu5QR40ecMP2HYA+Dadk
+         nJCCUqlZg68KwCf+XkfBGfu15ohmm4iPLRd9mKbybSqeoS9/y/3pvFaWIZgjDdvetvrk
+         jhociuFMRNPrqq5ysJjyZENMpfy3pGrxMfhr1tmzxGoV/+1b7D0+H+ILtOCaw4GJPmAD
+         XQ74iLzaIMOA+K/7YnjZ6x7VVYECW+a9U+stkPK6W80xHOzsUJVSiKgwggxvSHzbcjGo
+         meUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761125857; x=1761730657;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wlAiuhzDMbNQ1Fw8Ews+PID2RPtvP6Wo25eJKEmIUEQ=;
-        b=VbJLxShr+Ssm0GvBdB6LqZ7xNvFnyD31FjMhhZe/tOzwdpor+31wrsMgsYAkNh8RSr
-         5Zr2IJvkehW3FerDMdzzOE84K2w38u62cRPtRgy4NB91/q3+iULX6fskTq9wQyP1xtVA
-         dH+qlauIVL6arVDF5gdA+pUW6GljwhkN6PAqIniT8KmxJHD1vM3I5Xm0Dk0LFSofe005
-         mGVBLU/4uIO7F83P8FLHD3O6Ey2asCw+VU/YdaCwqi+VwIWMQLYV03xJrlJbMSqNUZlr
-         llG5yCfvOhMdgfDPMUpqI5x40EviA7FNpd79Ke6qFECVx5BeQLFMjuTK02dlgxIbTt2d
-         7ZuA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/f/f9XERmGplClazMV9FT2TbtBXEcNcbGC/mMYIzQ1ZgkEOKBYB2cOFNi1nYOBewrTdg0U03tKfr447g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNnnmQZC88zO+wsg8tNmKjxKniQh4qFGa+fICNgXrSfMnDVElm
-	eXkTQWh/NTzVYMKRU0j6rHI4YDucJpgM8oZkjgmLGu7XU1r9i7epoDYe17FUYv19fKF4W8/2qX6
-	1QnqIUgdbSaVvY/dtCxX+FgSmVgjnmV1OLnJxV3rbBIkIQrsfLJDH2qoqnNOSFrGlsuM=
-X-Gm-Gg: ASbGncvW605hT9LMUqNDXjv9qK8mKaXwAS1FOuIcFbu61aVBfTzIJJUNq+cNb5jjQkf
-	ySIjnOjdKy+/VPJ8DLn7V6ByOg86t6UEq5Jni/PYAtHuuGPkPIIGJ2FRrpnWc9IP48xznYCjUhz
-	OC89GnX9bFUdfxURVDXq8Ja0dc0sCG4r6Ix5yyJhmmVS6dv21e9rimPeUYC7KWe6gWwaWYTcpKN
-	G/wAc78RmFtRYnx0OawD6dtVt/j1hrND6O+ur+NSYIMSMz7//EWCRIzpdJ8KWSlpHYm8CdxshdT
-	H+efs9XlRP6nV7cdosG1N2gs1R26NkTwsDMwrDV5TI6+XV0DhwjHviOGZyLXj92tK9HYjpkFiuA
-	T62GiqUk0oxNHTNxyxS58d5q9Ao+nS5uux43BdXLjXZOcnkXYuIzOzwkDsz3oafkMlGH73oDXZS
-	955LwmTcdiTpM=
-X-Received: by 2002:a05:622a:138a:b0:4e7:2d83:59b7 with SMTP id d75a77b69052e-4e89d2b96efmr232633291cf.37.1761125857566;
-        Wed, 22 Oct 2025 02:37:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE70UH8P0+7IUvRLiwSQa4wdN/h/jWfuzbCFIRtzRPc21GQfKi9T7kEbCCKp2X/mu4mW5+IJw==
-X-Received: by 2002:a05:622a:138a:b0:4e7:2d83:59b7 with SMTP id d75a77b69052e-4e89d2b96efmr232632981cf.37.1761125857114;
-        Wed, 22 Oct 2025 02:37:37 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592ed7e6168sm702834e87.51.2025.10.22.02.37.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 02:37:36 -0700 (PDT)
-Date: Wed, 22 Oct 2025 12:37:34 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vishnu Reddy <quic_bvisredd@quicinc.com>
-Subject: Re: [PATCH v2 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
- kaanapali video codec binding
-Message-ID: <mtlwpa3m46qwrfjcpa7wapjjnllxopoip4mpnomw2ngteb6btf@2z4hrjr74bts>
-References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
- <20251017-knp_video-v2-1-f568ce1a4be3@oss.qualcomm.com>
- <c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org>
- <034bf6f4-0a49-4973-8536-28526b3409d1@oss.qualcomm.com>
- <d19b1279-3031-43b9-ac73-7e5f990802ed@kernel.org>
- <e1bfadd4-2d53-1953-beef-1350594c5010@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1761125886; x=1761730686;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HJdPu+39G4lB6AuXLRBW7mSkqYwO4pjl1bYy6jRlyTM=;
+        b=vDldlZ5eMgDcoc3AT41SHL+xO+xWWhJWqQQajQYzjCj0xyuQobINOZmYULVWyNjndU
+         dZmvsr41jRPGOE22R8iUrocZLcRlbrYnNgbxt+Y5Jf2BKZ4X+NZrbmqe1Ggm6EgLlZWT
+         BZm+zQWgNyMAAh24Yc4WcZ+YQvERQuf/CRUL+b17G03ByDOjgaPgy9stwi4jOZ81kw4J
+         utyBcSI9agC8OHfNo5DMhF3YEfKsNPHjQPc9gKsWXXt/ysZ+m45kXh09AF+YWqgiaqde
+         LI7BTf42Dm+hfEXY6XXW0wRAy2YCO59+0rsXYNq7FOBaVuOvE4leZxlJAzosySPlu+Uk
+         tBAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqDluRPL/KlXPWoVqI9+Lf32AcUAKs/Wr869lUkAEhaZ0BnIFqkg+s4pCwGPO6P/mKJuC3vVQLd21cAKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOWFev8XtDpG4wXYqAVEWZEQeZiZ5BiDW308gRkvumwOLVadUP
+	WoMj/j4cydmXxRbuVrG2KmjISCIaYZ3ad9Q79mc40FJSeQnq64EVPDkjwrT6Q3oLFoGq93Wb5VW
+	kfZphQapDcJ/KriIOCnF+MZDfIUFqqjf+Vts6
+X-Gm-Gg: ASbGncs+NUUXF/55tm6MsozXF/NWKW05MM5EeDA41Cbhao9xChHwiZ/TXwJxR0qhLeq
+	gSDGSJDsKmGkvpNrMAAz/gK3wKkMPHMQM8vv0LrsTARuaAI7bWguJPEn+32/KIKPYhmVGrEJf14
+	RSEreLvbLtuWz3LMhKFEkQFoOhdq2ECHt+YlGZ+jMobcBnuFyM1AbKmXo9uZz6U9HhEBoHTp+hi
+	7EnmL92XSSBVPkJnnLQUYDvTjcvP5LSizyOvbP0AxCUytkzIHsLWAw6zBpoTNIsH3hDB81ZQ7xA
+	d5OG5HxNKV1avQT6FvLLy+AnEDY=
+X-Google-Smtp-Source: AGHT+IG7gcxDomeEPXSQvywf68coWtEHDrJFLjeKkKBNT49t32BEMq0zgoHm8kjhpWZ3V5AxfkOg+1IItd2+7snHvHM=
+X-Received: by 2002:ac8:588d:0:b0:4e8:a2e8:3473 with SMTP id
+ d75a77b69052e-4e8a2e8360amr228927981cf.13.1761125885712; Wed, 22 Oct 2025
+ 02:38:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1bfadd4-2d53-1953-beef-1350594c5010@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX2A2uBCMJj/pB
- cb8uSevjRlG4lSRFJ79wDHizpFNId1M8Op9SRjwD27RjSKwMqJmfJv2GVj7jrm1Tg3nvOfBdEF0
- vvp/f4V1FQAyfZZNz2Y4li4WeUf2D96flctVhgW7QmFGT2JN8UGBlVsi5cZlDVdgJaEHjfihtTZ
- 3+Z8qGpwZPkO43A2pvNSGA7/bdEbsNYw1PLW44iwHuWdaIklRhjc2QWeFMGilVWOV048nnLN6CO
- n+ua1e6Le3NJCcmPQkiHTAj7N3oC1htM1s43Ocuxw372oIgqcoBVBnOAvYQAWDb9p6bIusfveTk
- tDe/Fv4TQSieyC70tbe0v+QMtRvUiHYISxtvM+hh3upEHtbxwQfVzvfshJrGKHki5xaGP4W/m2i
- YIFiOywPIxIq69JhEzcXgP50Ia95gw==
-X-Proofpoint-GUID: vkjemhBzFEUV99GvCwSTCecvpolT62o_
-X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68f8a5e2 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=vTb42-yg0zSnFd-snlMA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: vkjemhBzFEUV99GvCwSTCecvpolT62o_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+ <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+ <87a51jfl44.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
+ <871pmv9unr.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
+ <875xc78es0.fsf@DESKTOP-5N7EMDA>
+In-Reply-To: <875xc78es0.fsf@DESKTOP-5N7EMDA>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 22 Oct 2025 22:37:54 +1300
+X-Gm-Features: AS18NWA2mUCn-m7yzg54mG9Xj4DEjFUtxQVduHJ8uk8kWT6HeuKAOvMULXrelik
+Message-ID: <CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
+Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 22, 2025 at 02:37:59AM +0530, Vikash Garodia wrote:
-> 
-> On 10/22/2025 12:45 AM, Krzysztof Kozlowski wrote:
-> > On 21/10/2025 20:55, Vikash Garodia wrote:
-> >>
-> >> On 10/18/2025 9:28 PM, Krzysztof Kozlowski wrote:
-> >>> On 17/10/2025 16:16, Vikash Garodia wrote:
-> >>>> +  clock-names:
-> >>>> +    items:
-> >>>> +      - const: iface
-> >>>> +      - const: core
-> >>>> +      - const: vcodec0_core
-> >>>> +      - const: iface1
-> >>>> +      - const: core_freerun
-> >>>> +      - const: vcodec0_core_freerun
-> >>>> +      - const: vcodec_bse
-> >>>> +      - const: vcodec_vpp0
-> >>>> +      - const: vcodec_vpp1
-> >>>> +      - const: vcodec_apv
-> >>>> +
-> >>>> +  dma-coherent: true
-> >>>> +
-> >>>> +  firmware-name:
-> >>>> +    maxItems: 1
-> >>>> +
-> >>>> +  interconnects:
-> >>>> +    maxItems: 2
-> >>>> +
-> >>>> +  interconnect-names:
-> >>>> +    items:
-> >>>> +      - const: cpu-cfg
-> >>>> +      - const: video-mem
-> >>>> +
-> >>>> +  interrupts:
-> >>>> +    maxItems: 1
-> >>>> +
-> >>>> +  iommus:
-> >>>> +    minItems: 3
-> >>>> +    maxItems: 8
-> >>>
-> >>> I don't understand why this is flexible. Make it fixed size and anyway -
-> >>> list the items.
-> >>
-> >> kaanapali vpu generates 8 different stream-ids. Now, boards running kernel in
-> >> EL2 mode can list all of them, while boards running in EL1 can have only non
-> >> secure stream IDs. Min have the list of stream ids which can be enabled for all
-> >> type of boards, while max is for boards which can list all in HLOS given kernel
-> >> is in EL2 mode.
-> >>
-> >> Below crash would be seen if boards running kernel in EL1 mode lists the secure
-> >> ones.
-> > 
-> > 
-> > That has to be explained somewhere, e.g. comment, 
-> 
-> Sure, will add a description for iommus property explaining the same.
-> 
-> and still we need then
-> > EL2 DTS in the kernel. I did not see such so far, but maybe I missed it
-> > - can you link it?
-> > 
-> 
-> EL2 DTS for kaanapali is not yet posted to handle secure SIDs. While it is in
-> development, describing the secure stream-ids would ensure to cover all the
-> hardware generated IDs.
+>
+> With PTL, this becomes
+>
+> CPU0:                           CPU1:
+>
+> page fault                      page fault
+> lock PTL
+> write PTE
+> do local tlbi
+> unlock PTL
+>                                 lock PTL        <- pte visible to CPU 1
+>                                 read PTE        <- new PTE
+>                                 do local tlbi   <- new PTE
+>                                 unlock PTL
 
-EL2 is a slightly different topic, it most likely requires additional
-changes, etc. I'd suggest focusing on a normal usecase first and getting
-the EL2 sorted out separately.
+I agree. Yet the ish barrier can still avoid the page faults during CPU0's PTL.
 
--- 
-With best wishes
-Dmitry
+CPU0:                                                                  CPU1:
+
+lock PTL
+
+write pte;
+Issue ish barrier
+do local tlbi;
+
+
+    No page fault occurs if tlb misses
+
+
+unlock PTL
+
+
+Otherwise, it could be:
+
+
+CPU0:                                                                  CPU1:
+
+lock PTL
+
+write pte;
+Issue nsh barrier
+do local tlbi;
+
+
+    page fault occurs if tlb misses
+
+
+unlock PTL
+
+
+Not quite sure if adding an ish right after the PTE modification has any
+noticeable performance impact on the test? I assume the most expensive part
+is still the tlbi broadcast dsb, not the PTE memory sync barrier?
+
+Thanks
+Barry
 
