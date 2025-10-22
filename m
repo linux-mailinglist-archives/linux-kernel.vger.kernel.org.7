@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-864710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5813EBFB64C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:24:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41078BFB64F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A295837D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:23:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D080507662
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF88D318136;
-	Wed, 22 Oct 2025 10:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE3728C840;
+	Wed, 22 Oct 2025 10:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Epi7j6zd"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CBNflJgz"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5E326CE2D;
-	Wed, 22 Oct 2025 10:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A95287243
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761128605; cv=none; b=LvGRTbyVamuADMuzD/645HsPmZGKn6A7QkB1DSk5p2F+zOFHo9PIzOvMbLrEoifwLSseXqCNBxVAndm3ljuHnZaKGlyF6Oo2Dgtv701uOFBrhg2DkVdOPeql5mVtNidPZT3obr5hydfC7EypMPKQbtlH+uMqlkb9DqaipHtWphA=
+	t=1761128625; cv=none; b=nJOgGz2womY2aL4S1QghqpuH1oJW8yyWWWbbOd/idOzu9XG/pqGyn6x/LWN7giy6HnwMoba2pgEESYWTAbq3HO3e1rguQDyozn1unKfD87rFCrZ9yQTwW00j5jv9vPG+aOdtqxDDgDA7oC/DH7Ljfvqr7a3UBkXq73IZ0q0eY9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761128605; c=relaxed/simple;
-	bh=AfH0HOp6dIRA6LJbVwBgTMvik8DPOlQ3HjTpgrwJ9/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L0FEsnHMAhjxRWlQfQ3vd59rgPcHjI8Ygs5e0WxglSA4EZCVKheOw1V6ugPE17aKvSDujLEtceXYohHOg3B9tLGUOtxiTkV0CLj9bEUAog4JBVaoEIYJe9lnpnUh2pFS6YYh9ExIYPoH48jKW9HtOSBXUG7kzsVOOkekNJS65mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Epi7j6zd; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=etZw5gn8CVF/PJZZ4oulMIW858XJRdicPsa/oqCkWQI=; b=Epi7j6zdJk8KGMZHyT9bkaxOI4
-	EOkbySSC9iaf4a4NyCEn3I2+GiQAwbaNQPUj32RdKYHw1dPZEKj8iaPw544CNzldd6qlDiQ1Fj9kq
-	rpBvw2c9yfg6xRTu3uLbHDvrV7Xcf609lMo9OgErB+auUwZBMEG/uen9uPYWhSmZfq+22G4aekcC3
-	zOjF49qN1B8bOHOnHweXNeTGkQmu3Bm0HplSSYuEjVhDC0tZXSfxniUhT9aZvldEJIds3NlQQf/W+
-	ox9GBg5Tia4hnroj28WsMObDGTzUIo08IoV300jL/A+ijZocARd77OaHPCOwfzRbKrOHDiiW5I5Ed
-	vvYm0haA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBV7u-00000000SY9-3I9H;
-	Wed, 22 Oct 2025 09:27:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D4AF730039F; Wed, 22 Oct 2025 12:22:53 +0200 (CEST)
-Date: Wed, 22 Oct 2025 12:22:53 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Sean Christopherson <seanjc@google.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v10 03/15] x86/alternatives: Disable LASS when patching
- kernel alternatives
-Message-ID: <20251022102253.GW3419281@noisy.programming.kicks-ass.net>
-References: <20251007065119.148605-1-sohil.mehta@intel.com>
- <20251007065119.148605-4-sohil.mehta@intel.com>
- <20251021200328.GMaPfnEDibnBrhNTmQ@fat_crate.local>
- <20251022082541.GL4067720@noisy.programming.kicks-ass.net>
- <20251022094019.GAaPimg3VCgRu6eELd@fat_crate.local>
+	s=arc-20240116; t=1761128625; c=relaxed/simple;
+	bh=YMRyZre+kBbFoPiHrqjDWIN+c5UsSggZobEPZ5cklR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lG9EDnoaA27Pj+KYwyANp6na6PGpacYOSuncpQI2VKf0SPED4LONGWKPeocScI1TQgSNySc7pKMIHTwjuAYFsGGCdxI6Gq8x62OrI4EqVENoYX0Pq5MWbcWZKjMdtuUtPRl428z3Fjv0K5OaPhUcmMQYYsPtbsns+79z2aNsGo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=CBNflJgz; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-421851bcb25so3982908f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1761128622; x=1761733422; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=14Z/Egm0ib+pyI7E20I7AQcOKcoL8J1lei7NXkr+nVY=;
+        b=CBNflJgz6IF8ioY3RtZRqC/RQrVpIyON73Nk6TpSC3y0xnv10Gyf3/dq+Z5HPzdxDm
+         2esW8vZevm2hJ3K/0bcfWk8BuCvD6ZAKvtv0qIr2TtO9jxL/6j2fJhgyDdbEg/GtJw2D
+         +dupHc+FdB2nn9uVEfCROBvT1QDUhBsK+SUhj3qIxywVMU8VOwfFVp4rrLrLQND1sGIG
+         2asgeAnk03tpisYi6NS94j/rShIB1OiA7qIRKb/6I3hw2gh2EM5woJ5m1zqnLdiD8IDM
+         M4FoTZpSxA+Am5/AbjMUqU3bScOu9DvFm2j9xA2ze9qXhc4pO280YkdVy9Dbs7Ta2jRB
+         n+KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761128622; x=1761733422;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=14Z/Egm0ib+pyI7E20I7AQcOKcoL8J1lei7NXkr+nVY=;
+        b=JK1z23ZkxhZYScm+XAUDKKwG84vkVmhDfsd+br6J2Hwvi9nFY0XECHUtNI99gzlrcd
+         YnqxaowlnqwRgkGS0EJuKehp0sgR1UStyLi4iuNwRqIYx1XH2IYTHgrgLUhXqt6dvcap
+         3SUMo2XRhaYU7IsFrZWqLhDEK5XG5HDYgmhM8EGchz2BeE6/yyxJLcL1891BQ84rMl9N
+         EvZSbnFx3YykoJnLjXRtFjxeSoJBzrDNq08uryy7f1xIICFAVy4Vz1WmBEDIM2qulgG/
+         4VV13W8pVWNX3QJeo/69iFLZDXUMiE69VqSDhQpW1rqUtxyi2cBMiZ7O3jmjUrIpLhFP
+         AEqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHPEkBliwwV48wL8Q3m/4Ii7YaJbuK3m07dsSddycQARBbpL+1ApyJzkETxqm/vl841Q0kqMbtiND768s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxefRcixDPhLHF5TOh+9Rqr3QAAXzLKnu7SiX0pF/mPPeYpCcAG
+	kdXnrU2xW3drYg1oMe7Mwyqr6lv2bcxFLu/N5Fydi4OEjmjjOU9GfCw=
+X-Gm-Gg: ASbGncvziHIhuxuG0t0Yy13CIilXdq2jUSbdp5ZJoCLFONhlwy5XTizFof7O8aDdQBH
+	ERwnODyANduEjqMe4knh1lsconIT3uZk+352rkt43UK6YQ0OlUwpPUOP+A1JnITYHatIknhCEPQ
+	lBua4YaNsu+JIH5a+maLtIzvACs4tZfuxB3ShHUo0udVletOqFQ39nSTsLTaCjDDftIYYiGJQRZ
+	6RMiIQdhvjtcVqPAQZt/VW9D1Y/OwL6Y5tl6InxFQqfy11hZLIDDRHJc3M5yAslyTc/KNdsyEj0
+	FjgYkgEcLnP18vmbUgwTk1e6jfTrZppezsE4gUNEorFx1iqEzgmqeIcv+fF6E6N/+uDjOj6tUyh
+	ZKpteLxIZyzQgJU0dz2MkFdrcALCoVO97SyDQFAJ9fui1eWdXICGBn+HNgmnRvLn0B+fBb8W1VK
+	h501TYIG27T2fp+gFH5yM3iMII0SaoHz8QtbBDdwzl7tg8SQnjUp8=
+X-Google-Smtp-Source: AGHT+IHC3YeUejmKrYXNkUxhYAL7YEasRTosBZae2wnCLum1tuqcSZ/3cUYt2n/DhFVyS/dLVqcNaA==
+X-Received: by 2002:a5d:5c89:0:b0:427:241:cb86 with SMTP id ffacd0b85a97d-42704d1461bmr10607226f8f.7.1761128622241;
+        Wed, 22 Oct 2025 03:23:42 -0700 (PDT)
+Received: from [192.168.1.3] (p5b057850.dip0.t-ipconnect.de. [91.5.120.80])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42855c2fb92sm2193439f8f.46.2025.10.22.03.23.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 03:23:41 -0700 (PDT)
+Message-ID: <36369902-7be0-4517-833b-71a69ed870c1@googlemail.com>
+Date: Wed, 22 Oct 2025 12:23:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022094019.GAaPimg3VCgRu6eELd@fat_crate.local>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 000/135] 6.12.55-rc2 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251022060141.370358070@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20251022060141.370358070@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 11:40:19AM +0200, Borislav Petkov wrote:
+Am 22.10.2025 um 10:19 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.55 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> > But that's not the same, stac() and clac() are FEATURE_SMAP, these are
-> > FEATURE_LASS.
-> 
-> So?
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No more screen problems, no dmesg oddities or 
+regressions found.
 
-That's confusing. Just keep them separate alternatives.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-> Are you thinking of toggling features and then something else getting disabled
-> in the process?
 
-I'm thinking that machines without LASS don't need the clac/stac in
-these places. And when reading the asm, the FEATURE_LASS is a clue.
+Beste Grüße,
+Peter Schneider
 
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
