@@ -1,156 +1,164 @@
-Return-Path: <linux-kernel+bounces-865569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F532BFD677
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:56:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29C3BFD855
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 19:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E1D1A06D15
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544093B6AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FD528D82F;
-	Wed, 22 Oct 2025 16:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8060D35B13D;
+	Wed, 22 Oct 2025 16:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aF68qPQR"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uq1OVB0N"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B50203706
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89C335B123
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761151990; cv=none; b=Yw7cZpDAukHtqlqvA19tTaC9m92la69LNVs6WIOrJhkoi7sJeJUANlREF2o474fD5wSXhlE7hro55qbi0EU1+CHSLm4ksu1aeEM3/2oJS+vkOmCltJSMh6N3DBshDpuwoh9mx609KMqFtJ7iiiv7sTQjX6m7t+QCx2HUK+geyGw=
+	t=1761152076; cv=none; b=ru3UDrxAus9Zl2m20X0Qxh5QhR8Or3JU9YKWAfvwq/vdcmWII36UCXnybS4/p4wCbIeeaShYxh1stNWNH0Z9nDr0Jcov9N7FSuUFpKDT0ClsdmCZyTSGsg3wmy9VUluUphIhjb0M9BGsMHg4mPIuFX7MgPy6WZxrVEBghX350kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761151990; c=relaxed/simple;
-	bh=TWNVlapC7XDe+7Bz4eFmpoVx9OjVKS5JYFgj3mkvBZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ip7TyFwPuEWUGHOxULesX3psX9a1SLllZLQpthtuFTvL6m9xaWsJZbsKyWD+eSdfNtqkCK4HR3OoIfJw+asI5Pb4+Gtp+n8wYk/GGg/u/V4WGMkz8bj2XVWa3h+t4D5NgXdN+KxVgRfKN5BTiSO0GDrUU4GrElmw/Ah9nMVgquI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aF68qPQR; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so89281195ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:53:07 -0700 (PDT)
+	s=arc-20240116; t=1761152076; c=relaxed/simple;
+	bh=AUYzAbLdyJHeYVfJdOZybgTvaRtFfMWE4gViY0FngSw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bqQ2uqE4oJtyy7YWiUZ1dehwjB6LBjw8/cWV0yYBsi7ek3uRdKdb3Y/VkiC8rCJgVxZah4OtqEPu4wTWnDQ9LYUoPUJrn4E1ncwkmDZGT2PWSQavQNhoU4rpU2UJfpEJePXcoCL9dMnKAs4JokPT8GqoKd76W9Kf0wZ00VOhQhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uq1OVB0N; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso12713770a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:54:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761151987; x=1761756787; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aY4e+rH9vc3mT7h+8PwwOAxT7elBzdw/6Q3LSR8Xjm0=;
-        b=aF68qPQRlvSQbEkuBaqSsPtpNd+BQQLMME/oqbaC/vfQUNuQYVVBdbYliik2biixwL
-         MEp8tyXBuzIFzt2Fm26lfnR8jqESmV0CGXAFVg6VVOW/jzyweSlHjbGDYRE1SdbJWEeW
-         nxAxB2fSYt0swIQB0400GRDh8fVM9Ne5zrAIjmkW7/i01w0AIizg+eOWo4ZXKnvr6ZsL
-         AXHLL4eubLrlvWcmZN5DCyQ1fSTKBFBvbwD/2p+9/W8+/4BUITnZgqTvVtqVSXM0vLdT
-         OHNmqZhuzMQW6woOKa0+LTj0qPr4DascUWfJ2xN/3Ca6ulBW2llJH7v4Npi80Q/4wWjb
-         U4hQ==
+        d=linaro.org; s=google; t=1761152073; x=1761756873; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wf3QlU/cjxjriFxv9DrIX/nceHDFzc/cOYnNx1kv6p0=;
+        b=Uq1OVB0NOwABoiG8MMcnhKpD0yBgpRrwgg0b+uuhj5i7kjFO3zCkR5DE4ef/fLEZuE
+         bYIM/lfNDZ9xKXC8EfQB0bIALaSvqRCKL+Gd/Qn06+eBiSAz632W+HyMoQ0GIfRxdBo7
+         8FlEP9PPpZAwncrp/dG1fHu40NeDGBFvunilhPMiFVQ3CJgCaJD1ZS2uuD3GW3J6jcf7
+         0DYxHD84o3qD1Jg5WeY2Mls53o87aeriJ+TGhZdQ3OrV39D5/2fvcd+I06aoKMVgytGL
+         n2B4d4l6gre/kG1+eBIhSAUNbZMCG2L8L3UHeTxbmGtXDZls6SaRTqoeM4YeokPlaKFM
+         8cOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761151987; x=1761756787;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aY4e+rH9vc3mT7h+8PwwOAxT7elBzdw/6Q3LSR8Xjm0=;
-        b=TysqMILsTf47vzCGLfxrVFLFMNPbXhwrl/PytzhC8LdUyQOQui0MF41pQe3tT5PZGu
-         4kkvS37VQ/aDFdaAHcBNDMunRl7093l3uW4G7h9zm5xJi6NsJBudZOUZQCdJseRilQz+
-         ls19GVw9HzeGKlYmf32ZG2V7OPJOsEUAKadKSNugc9vrzCAb8E4ZUhWXbijFCyKKgmK4
-         A34GRoT4s27jk+sr382TvQbV/4sRTbsyNaNkAqHQjCsGKSJ/YOYoQB9LpKEr56GlL01q
-         5YvmGQ41N7o0iVH4kVcP5HrKjpAWExV300XooPQywRFgMhAa+YI9bzRTh60jnk5ZHWZK
-         AolA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvV+Y0x7iqUrd6oPhLQjf1J1PtdNAKJHBSMOgMJrvWMR0aWYMkoH0nlPsasEzrx3G9rE5PShnVLblFRWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyppk0A/p3li1LZrEuVQflxMtFpPjxuBsDoLwNfkkUBVZEXn1qL
-	HTaMB6EcxjlUtpkFqXxIh3lTRoSef+fb+OxDRF/nkHbF0HoJui8KcOjf
-X-Gm-Gg: ASbGncv5SNltGD80FEslHumelD4bhaiuYPJi3UJZ1iOKpHwi5B5TIIrGg4K6YEuIo1j
-	SdwDAb+rLlSb9VVOGeB5x4vEvtRsLDOM9zKxbaCHwWJvLyRVTVQkj2e0ML+cHOoTIujalm9LTje
-	FbSquhJgaxNee8y5rPNeGAMy7QJF5LeJamRwjUzUNXg9zZ8pYjHB0+nMD9U738aY76wQsEj6tzd
-	o1KbNO5Ri5PvVv0R5VwNvBrPr9/vHBryrKTD+oInF+GYCtY4Cw5+ESi9VAHo1yQ5QS3lGVYcYu2
-	P99jGbAC2Q7+wGNQP0k4ZYGjlGg50XR+Ik2gNcsbKhp2oME9UccnO2HUzAvQZ9iipqmIoLRwJp3
-	sMKrakxuGqB+E/a8Hgj3G0Fe1sSUy57xOzJijB6McMvYFfURMi8gzIFU2Eio1c7Oibb2UAH/rfB
-	QnTj9bQFwY/zo2hVtOYQ==
-X-Google-Smtp-Source: AGHT+IH1hFsCUy1cdTiHqBd/AssFtzguJtx14vMGrFxjJf/na9wGdbimDZUF/jeOmF+hKQXTkZu9Gw==
-X-Received: by 2002:a17:903:8c6:b0:290:c0b1:edb8 with SMTP id d9443c01a7336-290cbb4a2ccmr285811465ad.40.1761151986566;
-        Wed, 22 Oct 2025 09:53:06 -0700 (PDT)
-Received: from localhost ([177.107.87.169])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-29246ffb815sm143661825ad.50.2025.10.22.09.53.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 09:53:05 -0700 (PDT)
-Date: Wed, 22 Oct 2025 13:54:05 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] iio: adc: ad7124: fix possible OOB array access
-Message-ID: <aPkMLUhm_UAVzRSA@debian-BULLSEYE-live-builder-AMD64>
-References: <20251022-iio-adc-ad7124-fix-possible-oob-array-access-v1-1-2552062cc8e6@baylibre.com>
+        d=1e100.net; s=20230601; t=1761152073; x=1761756873;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wf3QlU/cjxjriFxv9DrIX/nceHDFzc/cOYnNx1kv6p0=;
+        b=cAbOIorff/744oE5Fn+n3YjIizx2i3vjTPglW4/G5pFs0E/P7rhOp7n/uFwjqvwKg5
+         IuO12J7hNONhB9+56AkckGvRqMbulc96zPUwl82vsiLQADO36xflKGUZC12bnDSj+m2E
+         Kj7ZqriLgQi46G65nuKqJMzSdmb2MkaUIB9X/3uEZuf3muuZQtWEVFpX2N0cCanCPjpX
+         y+CbWVJaNArpSjIaon/bTZpPl3Ck43/VVDUAsc73eTFQKkUiNG7FI9T75LYVrnB0U5+w
+         7ajEBQ2tEI4hFe4lSdPb7fdid0xT1JjQGNnqOYevZ+2uCDajnBFJrt2Bj3miX4Y42yG1
+         bQsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVa0A+YOiju0kFq4TSXK68jvbxGZbgiFDptKKWnEyljhc0lxdqAnCiKzAeWuV8LsPNsor8FOTbOvbEA8Xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyezx+XS87q0bhGaku9/vjSKGEkSyX3133Mai0q066VljDUHFVd
+	tSruPxXYdVED5GTVcFQtZfdHrZao9qYMGYwWwnPt0/1cMr7sEff5nlV4s6PFlY+WP0X1l4yP3WW
+	9AfT8dwxTMP+IV1+TKtX8JJOMjmgWo/OgUiQi75Udxw==
+X-Gm-Gg: ASbGncsa/YB3mPaky4SHbB7+MqgatSloH4kx7s8dGi41iAlAdp/MqjlBo3Dzj41gYTa
+	jqVwF2yDHYLG0o/JI7PLV5Ge3ZpHg2EeirRFjG+okC3D8okuFwpirixQEPnZ6FbDDHXRWyb7Iw0
+	VSoTOvSCNlZMJ9oDyqW0TfF3N3DsnoVwoH/dxqfWTHRf3aps8HsXV7S/kaBR6yPj5apHtCPmPt4
+	sOxs3bH6+2NdaOLPXoDp2s3I2Tu/7bnh7Hlri/JxPxgimkvSk3yE8OWm3u7PzCb4eFze25noPTi
+	Qqp5Umdn3scCcQsSCf705Bwt
+X-Google-Smtp-Source: AGHT+IFHXMjRw6e+gK077Fhej9HymCtjhFeg5jz/6fU7N7fVbBLjFtgHT6WMsOZ49fusMvzUX8EIvlVu5hyjkDRv1GI=
+X-Received: by 2002:a05:6402:2788:b0:639:dbe7:37b4 with SMTP id
+ 4fb4d7f45d1cf-63c1f64ebf5mr20151170a12.1.1761152073053; Wed, 22 Oct 2025
+ 09:54:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022-iio-adc-ad7124-fix-possible-oob-array-access-v1-1-2552062cc8e6@baylibre.com>
+References: <20251017-b4-sched-cfs-refactor-propagate-v1-1-1eb0dc5b19b3@os.amperecomputing.com>
+In-Reply-To: <20251017-b4-sched-cfs-refactor-propagate-v1-1-1eb0dc5b19b3@os.amperecomputing.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 22 Oct 2025 18:54:21 +0200
+X-Gm-Features: AS18NWCOyFUr-MMbOscjzvpVHi-z5Un2iJrFW2AJ72SLAjJFH4yGe8bhEL8PllQ
+Message-ID: <CAKfTPtAVzgq5HxVc6q9VnD8i9wFtAWH0tnLHD81TBAudj2yFmA@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Prefer cache-hot prev_cpu for wakeup
+To: shubhang@os.amperecomputing.com
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Shubhang Kaushik <sh@gentwo.org>, 
+	Shijie Huang <Shijie.Huang@amperecomputing.com>, Frank Wang <zwang@amperecomputing.com>, 
+	Christopher Lameter <cl@gentwo.org>, Adam Li <adam.li@amperecomputing.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
-
-One minor question inline.
-Nevertheless, the fix looks good to me.
-
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-
-On 10/22, David Lechner wrote:
-> Reorder the channel bounds check before using it to index into the
-> channels array in ad7124_release_config_slot(). This prevents reading
-> past the end of the array.
-> 
-> The value read from invalid memory was not used, so this was mostly
-What is considered using the value in this context? (see other comment below)
-
-> harmless, but we still should not be reading out of bounds in the first
-> place.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-iio/aPi6V-hcaKReSNWK@stanley.mountain/
-> Fixes: 9065197e0d41 ("iio: adc: ad7124: change setup reg allocation strategy")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On Sat, 18 Oct 2025 at 01:01, Shubhang Kaushik via B4 Relay
+<devnull+shubhang.os.amperecomputing.com@kernel.org> wrote:
+>
+> From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+>
+> Modify the wakeup path in `select_task_rq_fair()` to prioritize cache
+> locality for waking tasks. The previous fast path always attempted to
+> find an idle sibling, even if the task's prev CPU was not truly busy.
+>
+> The original problem was that under some circumstances, this could lead
+> to unnecessary task migrations away from a cache-hot core, even when
+> the task's prev CPU was a suitable candidate. The scheduler's internal
+> mechanism `cpu_overutilized()` provide an evaluation of CPU load.
+>
+> To address this, the wakeup heuristic is updated to check the status of
+> the task's `prev_cpu` first:
+> - If the `prev_cpu` is  not overutilized (as determined by
+>   `cpu_overutilized()`, via PELT), the task is woken up on
+>   its previous CPU. This leverages cache locality and avoids
+>   a potentially unnecessary migration.
+> - If the `prev_cpu` is considered busy or overutilized, the scheduler
+>   falls back to the existing behavior of searching for an idle sibling.
+>
+> Signed-off-by: Shubhang Kaushik <shubhang@os.amperecomputing.com>
 > ---
->  drivers/iio/adc/ad7124.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index 9d58ced7371d0af7004a81153888714e9795d4f4..ed828a82acb71342fb2eae27abfbbd86861cba53 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -586,13 +586,18 @@ static int ad7124_request_config_slot(struct ad7124_state *st, u8 channel)
->  
->  static void ad7124_release_config_slot(struct ad7124_state *st, u8 channel)
->  {
-> -	unsigned int slot = st->channels[channel].cfg.cfg_slot;
-> +	unsigned int slot;
->  
->  	/*
-> -	 * All of these conditions can happen at probe when all channels are
-> -	 * disabled. Otherwise, they should not happen normally.
-> +	 * All of these early return conditions can happen at probe when all
-> +	 * channels are disabled. Otherwise, they should not happen normally.
->  	 */
-> -	if (channel >= st->num_channels || slot == AD7124_CFG_SLOT_UNASSIGNED ||
-> +	if (channel >= st->num_channels)
-> +		return;
+> This patch optimizes the scheduler's wakeup path to prioritize cache
+> locality by keeping a task on its previous CPU if it is not overutilized,
+> falling back to a sibling search only when necessary.
+> ---
+>  kernel/sched/fair.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index bc0b7ce8a65d6bbe616953f530f7a02bb619537c..bb0d28d7d9872642cb5a4076caeb3ac9d8fe7bcd 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8618,7 +8618,16 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+>                 new_cpu = sched_balance_find_dst_cpu(sd, p, cpu, prev_cpu, sd_flag);
+>         } else if (wake_flags & WF_TTWU) { /* XXX always ? */
+>                 /* Fast path */
+> -               new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
 > +
-> +	slot = st->channels[channel].cfg.cfg_slot;
-> +
-> +	if (slot == AD7124_CFG_SLOT_UNASSIGNED ||
->  	    st->cfg_slot_use_count[slot] == 0)
-Wasn't the value potentially read from invalid memory used above?
-It's fixed now, so I guess there's no point in nitpicking on that.
+> +               /*
+> +                * Avoid wakeup on an overutilized CPU.
+> +                * If the previous CPU is not overloaded, retain the same for cache locality.
+> +                * Otherwise, search for an idle sibling.
+> +                */
+> +               if (!cpu_overutilized(prev_cpu))
 
->  		return;
+cpu_overutilized() returns false if (!sched_energy_enabled())
 
-Best regards,
-Marcelo
+so  new_cpu is always prev_cpu for non EAS aware system which is
+probably not what you want
+
+> +                       new_cpu = prev_cpu;
+> +               else
+> +                       new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
+>         }
+>         rcu_read_unlock();
+>
+>
+> ---
+> base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
+> change-id: 20251017-b4-sched-cfs-refactor-propagate-2c4a820998a4
+>
+> Best regards,
+> --
+> Shubhang Kaushik <shubhang@os.amperecomputing.com>
+>
+>
 
