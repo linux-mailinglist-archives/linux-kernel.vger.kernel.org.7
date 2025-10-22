@@ -1,96 +1,57 @@
-Return-Path: <linux-kernel+bounces-864174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996E8BFA190
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2E1BFA1B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57936501B4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:45:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 413BC503E96
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0AF2ED165;
-	Wed, 22 Oct 2025 05:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA912F0686;
+	Wed, 22 Oct 2025 05:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BuMxb/kb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujacSTim"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A122ECD2E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836172EFD98;
+	Wed, 22 Oct 2025 05:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761111871; cv=none; b=fPHlZA7DrshTo12/xVFQ+HSkou029ucx9SGI1Ixt9ZVHgqHNbIXomvqTw+xstApv8bcq9FuE6YxH1TBlNwZFdFcjhQztZyBFO3cGTebTqjooNgLTOjERv53RQQ5dAIz4mCcuVmNSySEcF5E/pQScpnN8+5XkiGJ9Lh2FvyiZVtA=
+	t=1761111957; cv=none; b=cKyvsRoHd5R1OTbO8taXSbD3/tj9DSxE+nUEequA9c8xDFHXe6b3GCobp1rs8xR3in6/QYw/qOoIbkqXHDT3FArWb+bJVEhO772VvgWut8mkVxrfonA86c4p8UfXsvx16mJESKq2Hcb2ehVObrs4TNO2IWIyPB1Sz69OXHOBTRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761111871; c=relaxed/simple;
-	bh=jmByzIvyAMZeLV+wtG8rPMReTA4JZzhcWHtX39WBB6I=;
+	s=arc-20240116; t=1761111957; c=relaxed/simple;
+	bh=nzVEduC9/Kkg41xlskrupc7IxgWOKnClJj35t5wA9hI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBZ242uIaZvv9O6N3SRB7AXanp+QagF3wWydhd6CN4FzjMz9H6Kp8Yyzi9bxZ/MWoLIq+DXbcYkyLN8OciWNPsibBwx3p00aKQvl0KuFgS6F9c0Lrvuj0pyPl8z35q4ThafwnLp3TSnBW/EdOKv/vCW2UYNNyDm+Ez3QASQFUV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BuMxb/kb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761111869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v6cdA2aJ7ieWhAWAgXBTiUs2hf+dl3MLq/XdzHHs4TM=;
-	b=BuMxb/kbrYIUdSubONZH8XdWixOEvXpFhaRvC4tI41/+t0GfpoQFpxU5671KiB6Ox8TsqK
-	2WqjGEbParkhrHCGJPglGZI4FBkQrJ5TeegIFsmHCzBjLoAX2NrKV+XOOiH03x5JVvclPG
-	Mkw/4ttY4pohaYHSqpOerD4rPG+dVlc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-160-UOOPXe1GMPKT4KrbN3beOQ-1; Wed, 22 Oct 2025 01:44:27 -0400
-X-MC-Unique: UOOPXe1GMPKT4KrbN3beOQ-1
-X-Mimecast-MFC-AGG-ID: UOOPXe1GMPKT4KrbN3beOQ_1761111866
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-470fd59d325so31826495e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:44:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761111866; x=1761716666;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v6cdA2aJ7ieWhAWAgXBTiUs2hf+dl3MLq/XdzHHs4TM=;
-        b=UQJu5VLIJQzsYIF2Dk0BQo368SFfAp7uKlsnz4f0MXDUleaW1hoRTJOIT8fldyVCLJ
-         nTkIOW+7pUWZ+/L5Hi8PKTgrnFCGvbwcxTpIAZkKGfdwBoQiMaXKewIjSmFKMV8fPjvp
-         a4V5nOoEfpjbJohYhZv7iAsoC42f8dfbDRFPCnneg3vNGiNc78+qquDgTG3ORxEWkeox
-         t5a2m4D0Fe1rZOf8UWADVVa0pLLWGtT9dZZqasPX51F73MfgwQBZYmTUersj9WhfPu6S
-         mehlXnYxdPZy9wJXQPveUIVVjxIq+XEvqVGDMq0/5qWuAP0+Z7HH847U28rFUlgVMQCh
-         taEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKvQRjOEYLcxW7CmirJlsGJz1fKxl64fULnLOvPps34AWpzWQE3ttyPQHhmI/EtUM4xHZskMf6RSBrnjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkaLOLB4GO6+L1/bYwcOpiSFI6B2C4+kZ1ficn4hY+ccndBMxb
-	d33pACHjPDRxWcZ3QTr/QQS207Diz9Lvsq3iTvpHS2mN3T0FopQ12E+ZHvsSI/dYsuPRluzQXme
-	3Os/A3C2cyZzdO+Ezn4RKeIiGjqZ4+nmqIkzJOY97OM/Y4F6ErbMSWq/ckyio5Xsyaw==
-X-Gm-Gg: ASbGncvgO5GlRZdirEn5Aq0gXjbPkyvXuN2OfVaxg5KHXoG0FvrLTmQKdc/GcU++6DM
-	ND85dpWWoZ3ygIPcRkyVsl9oVsUSwUi9jAwCzvBkEs1fH6rk0dClDLwInz7R8XkDL1XyOJwuDIq
-	rzhttjxyRcgaQLUukm8rOxHA6xemxX3bK2vZxZqegvj02+yix0blLI9/Q5I6qBGZ6v7yLuyt6Zr
-	ewWZeVOrV4gqjxuzGakNdM08vgkF3iZ4TtHftUD4RjpXX4jQMnBsDLrQBAIOBNf6AVySe8g6rue
-	IzS2PClNTa9dIj2n3lp2mygz44sSOwIIa0PNcg4Pq2sB7TUHr9DKz7DIYQuw32hoPysc
-X-Received: by 2002:a05:600c:681b:b0:45f:2ed1:d1c5 with SMTP id 5b1f17b1804b1-47117925e39mr149599185e9.36.1761111866091;
-        Tue, 21 Oct 2025 22:44:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBq1miswWQ2JCO8xHuPt/netB6Eb5sGpcEeZAGKbvglwUn+sN/OhElR3T7xQtx3Z99OyygIA==
-X-Received: by 2002:a05:600c:681b:b0:45f:2ed1:d1c5 with SMTP id 5b1f17b1804b1-47117925e39mr149599085e9.36.1761111865601;
-        Tue, 21 Oct 2025 22:44:25 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c428dafesm25481835e9.6.2025.10.21.22.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 22:44:25 -0700 (PDT)
-Date: Wed, 22 Oct 2025 01:44:22 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V8 18/19] virtio_ring: factor out split detaching logic
-Message-ID: <20251022014109-mutt-send-email-mst@kernel.org>
-References: <20251020071003.28834-1-jasowang@redhat.com>
- <20251020071003.28834-19-jasowang@redhat.com>
- <20251020111413-mutt-send-email-mst@kernel.org>
- <CACGkMEsRmkaBiU2WCQTepayhrhR18M1+bDQJXxTVxOUDG4sZyg@mail.gmail.com>
- <20251021042325-mutt-send-email-mst@kernel.org>
- <CACGkMEskSf-mLZPaSYxkACu1z_hH_jXTKawzW1yZwZZOnSAFAg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NtjK1pR7Oq0Iu1yaU5Gd2wIxKl//uxLYSVdEkQxu2pzhHcXYF+YY6fPXdvtiY+20uvsKHg2QvSR5LewL6kvrNhLfKZ0weTBOvGi0t5CIKjGT5qRirckiPE3w7JDPpfVKxc2l+zjCe4a7+sGEyFSxWwJcQ0D9OsXzMtg3J9GhciU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujacSTim; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9C7C4CEE7;
+	Wed, 22 Oct 2025 05:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761111956;
+	bh=nzVEduC9/Kkg41xlskrupc7IxgWOKnClJj35t5wA9hI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ujacSTimhXFiNzI+QS5vS1VcWvJ/ObCZ2k4ylXsBiZLkvrx9r0arFl8ow926/IUXY
+	 UntKck/iTa3LhOteVg6ZnohKChf8vT6HCWZ2oxGoQZJrIksxkaodVfBTBbTc0Zf8WY
+	 58MZnTLs0eLm6beZwikPRN1pX0giRqiG0gGpAGT/qFN6JM+JIxiZcYQklzQ8s3VL+Z
+	 pBCOa1X5vTsoWn46LD3kD/meaFXbhpTnDgFaKm3vUVJvW8RLfNQH871XoMKeVclU5A
+	 VWIAFVflSkdaVSDmODaC8k20Qva65nnLWTIImUvkgJmfz1PNe3/KvRfBVYKz7u98BD
+	 ZYBoER9Hm7+9Q==
+Date: Tue, 21 Oct 2025 22:44:23 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_varada@quicinc.com
+Subject: Re: [PATCH v2] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC
+ devices
+Message-ID: <20251022054423.GB35717@sol>
+References: <20251014093503.347678-1-quic_mdalam@quicinc.com>
+ <20251017173835.GA161400@sol>
+ <abe89411-e590-29df-e9e9-b50402e08aac@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,117 +61,91 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEskSf-mLZPaSYxkACu1z_hH_jXTKawzW1yZwZZOnSAFAg@mail.gmail.com>
+In-Reply-To: <abe89411-e590-29df-e9e9-b50402e08aac@quicinc.com>
 
-On Wed, Oct 22, 2025 at 12:00:53PM +0800, Jason Wang wrote:
-> On Tue, Oct 21, 2025 at 4:27 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Tue, Oct 21, 2025 at 11:36:12AM +0800, Jason Wang wrote:
-> > > On Mon, Oct 20, 2025 at 11:18 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Mon, Oct 20, 2025 at 03:10:02PM +0800, Jason Wang wrote:
-> > > > > This patch factors out the split core detaching logic that could be
-> > > > > reused by in order feature into a dedicated function.
-> > > > >
-> > > > > Acked-by: Eugenio Pérez <eperezma@redhat.com>
-> > > > > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > > ---
-> > > > >  drivers/virtio/virtio_ring.c | 18 ++++++++++++++----
-> > > > >  1 file changed, 14 insertions(+), 4 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > > index 0f07a6637acb..96d7f165ec88 100644
-> > > > > --- a/drivers/virtio/virtio_ring.c
-> > > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > > @@ -802,8 +802,9 @@ static void detach_indirect_split(struct vring_virtqueue *vq,
-> > > > >       vq->split.desc_state[head].indir_desc = NULL;
-> > > > >  }
-> > > > >
-> > > > > -static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
-> > > > > -                          void **ctx)
-> > > > > +static unsigned detach_buf_split_in_order(struct vring_virtqueue *vq,
-> > > > > +                                       unsigned int head,
-> > > > > +                                       void **ctx)
-> > > >
-> > > >
-> > > > Well not really _inorder, right? This is a common function.
-> > >
-> > > Yes, but inorder is a subset for ooo so I use this name.
-> >
-> > Can't say it is consistent. I suggest for example:
-> >         _in_order -> specific to in order
-> >         _ooo -> specific to ooo
-> >         no suffix - common
-> >
-> > or some other scheme where it's clear which is which.
+On Wed, Oct 22, 2025 at 10:49:23AM +0530, Md Sadre Alam wrote:
+> Hi,
 > 
-> Will do that.
-> 
-> >
-> >
-> >
-> > > > You want to call it __detach_buf_split or something maybe.
-> > > >
-> > > > Additionally the very first line in there is:
-> > > >
-> > > >         __virtio16 nextflag = cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_NEXT);
-> > > >
-> > > > and the byte swap is not needed for inorder.
-> > >
-> > > I don't see why?
-> >
-> > To be more precise we do need a swap we do not need it
-> > conditional.
-> >
-> >
-> > No, I mean inorder is a modern only feature. So we do not
-> > need a branch in the inorder path,
-> > you can use __cpu_to_virtio16 with true flag,
-> > not cpu_to_virtio16.
-> 
-> The problem is that the core logic will be reused by the ooo as well.
-> I'm not sure it's worthwhile to introduce a new flag parameter for the
-> logic like:
-> 
-> detach_buf_split_in_order()
-> {
->         __virtio16 nextflag = __cpu_to_virtio16(true, VRING_DESC_F_NEXT);
->         detach_buf_split(..., nextflag);
-> }
-> 
-> ?
+> On 10/17/2025 11:08 PM, Eric Biggers wrote:
+> > On Tue, Oct 14, 2025 at 03:05:03PM +0530, Md Sadre Alam wrote:
+> > > Enable Inline Crypto Engine (ICE) support for eMMC devices that operate
+> > > without Command Queue Engine (CQE).This allows hardware-accelerated
+> > > encryption and decryption for standard (non-CMDQ) requests.
+> > > 
+> > > This patch:
+> > > - Adds ICE register definitions for non-CMDQ crypto configuration
+> > > - Implements a per-request crypto setup via sdhci_msm_ice_cfg()
+> > > - Hooks into the request path via mmc_host_ops.request
+> > > - Initializes ICE hardware during CQE setup for compatible platforms
+> > > 
+> > > With this, non-CMDQ eMMC devices can benefit from inline encryption,
+> > > improving performance for encrypted I/O while maintaining compatibility
+> > > with existing CQE crypto support.
+> > > 
+> > > Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> > 
+> > How was this tested?
+> I tested this using fscrypt on a Phison eMMC device. However, since that
+> particular eMMC does not support CMDQ, inline encryption (ICE) was bypassed
+> during testing.
 
-If it's common code then no.
+What do you mean by "inline encryption (ICE) was bypassed during
+testing"?
 
+> +static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq,
+> +			     u32 slot)
 
-> >
-> > > > you could just do __cpu_to_virtio16(true, VRING_DESC_F_NEXT)
-> > >
-> > > Probably you mean a leftover for hardening? E.g should we check
-> > > desc_extra.flag instead of desc.flag here?
-> > >
-> > > while (vq->split.vring.desc[i].flags & nextflag) {
-> > >                 vring_unmap_one_split(vq, &extra[i]);
-> > >         i = vq->split.desc_extra[i].next;
-> > >                 vq->vq.num_free++;
-> > >         }
-> > >
-> > > Thanks
-> >
-> > If it is not exploitable we do not care.
+Could you also remove the unused 'slot' parameter from this function?
+
+> > > @@ -2185,6 +2241,18 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+> > >   	if (ret)
+> > >   		goto cleanup;
+> > > +	/* Initialize ICE for non-CMDQ eMMC devices */
+> > > +	config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
+> > > +	config &= ~DISABLE_CRYPTO;
+> > > +	sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
+> > > +	ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
+> > > +	if (ice_cap & ICE_HCI_SUPPORT) {
+> > > +		config = cqhci_readl(cq_host, CQHCI_CFG);
+> > > +		config |= CRYPTO_GENERAL_ENABLE;
+> > > +		cqhci_writel(cq_host, config, CQHCI_CFG);
+> > > +	}
+> > > +	sdhci_msm_ice_enable(msm_host);
+> > 
+> > This is after __sdhci_add_host() was called, which is probably too late.
+> ok,I’ll move the ICE initialization earlier in the probe flow, ideally
+> before __sdhci_add_host() is called.
+> > 
+> > > +#ifdef CONFIG_MMC_CRYPTO
+> > > +	host->mmc_host_ops.request = sdhci_msm_request;
+> > > +#endif
+> > >   	/* Set the timeout value to max possible */
+> > >   	host->max_timeout_count = 0xF;
+> > 
+> > A lot of the code in this patch also seems to actually run on
+> > CQE-capable hosts.  Can you explain?  Why is it needed?  Is there any
+> > change in behavior on them?
+> Thanks for raising this. You're right that some parts of the patch interact
+> with CQE-related structures, such as cqhci_host, even on CQE-capable hosts.
+> However, the intent is to reuse existing CQE infrastructure (like register
+> access helpers and memory-mapped regions) to configure ICE for non-CMDQ
+> requests.
 > 
-> It looks like it can be triggered by the device as the descriptor ring
-> is writable. Will post a fix.
+> Importantly, actual CQE functionality is only enabled if the eMMC device
+> advertises CMDQ support. For devices without CMDQ, the CQE engine remains
+> disabled, and the request path falls back to standard non-CMDQ flow. In this
+> case, we're simply leveraging the CQE register space to program ICE
+> parameters.
 > 
-> Thanks
+> So while the code runs on CQE-capable hosts, there's no change in behavior
+> for CMDQ-enabled devices — the patch does not interfere with CQE operation.
+> It only enables ICE for non-CMDQ requests when supported by the platform.
 
-question is if the guest is exploitable as a result.
+So, we're dealing only with hosts that do support a command queue, but
+support eMMC devices either with or without using it?
 
-> >
-> > --
-> > MST
-> >
-> >
+Could you explain why sdhci_msm_ice_enable() is called twice: once from
+sdhci_msm_cqe_add_host() and once from sdhci_msm_cqe_enable()?
 
+- Eric
 
