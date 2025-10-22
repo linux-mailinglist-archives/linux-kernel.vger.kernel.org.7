@@ -1,87 +1,194 @@
-Return-Path: <linux-kernel+bounces-864932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D077CBFBE2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CF8BFBE3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CFE519C4767
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:37:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6007C1A0162A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14563344044;
-	Wed, 22 Oct 2025 12:37:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5832C344036;
+	Wed, 22 Oct 2025 12:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nXuYgllD"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231037261D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885F818FC97
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761136624; cv=none; b=XIT8AFAF0JL2Ti07HOW8iuIW1b9YHm7gJD8AGZEt7YUhC+lCjJ/k+GuXBgo3n2Ia9QbY5uA5d2QCul8yJKnlWBhp40tAZ6s6o4ZNjS7viXy4rZYQCazc4NNrRseru19NDuWn8DLi/k7wh2MvqX3Tku41roFlwKU3v9qCnXelpNw=
+	t=1761136687; cv=none; b=cqVTV+dfVIRAJ3r7sHDE0NMJ3DohzaRqUrNewzqu4BpeLdDZtWzDGYP52nYCdGBImViz95z03p6/S1dk8lZpy39QGiNLi7tpE2jRkNjhfTOygchrYB+dZXEJGCFjLxE+AfoJVwPvS1CzJyl+rGoZGwGB3yk0u8K8DeMFVoIqUHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761136624; c=relaxed/simple;
-	bh=cUyO2P8tTi8ZiAFAnRYzRGVV1ISAbxMSuy97OojJnqo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cCHVOeys7t+D3ZItgQrTCJPicvvWVYCoVYzWG3IwY2VxUI9hC7H4irHyJI43ShgBk/HuvVSvZUq5qmyAhOZPKum4rp/mYvaiL65Tw4pvjPlyT09aI+8mYXI++K/2zOXXxA5poRn0eeD/D5WDpW8t6pg1D4b6CQVC2tkAOllRnS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430ca53080bso56165745ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:37:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761136622; x=1761741422;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+7Kos3bS84gWeogZ/FtXsz4+pX13gI1WuND126ynBdQ=;
-        b=rxY7kM3TYe/Jbj1YsghvaQxfzNL56C4pV+KQl9b/22sg5wtqBDUNo0pc/kaWfMovdP
-         S9uJ9ZtMq1V50jgSjxyFNvRtJrFpFfPvtpBXur9Clce7B36Pu/CXl/GrDAjVpMRmq+/z
-         2yLMpyDP/9cOfoEuVdWP3W4sXyFRdrZubqAFCZcfpG3iIYW8XlmXmPurM2mc6t+ccKGZ
-         +sUASPj9UERBfls7rx04ksn0JSEOHGOBgzCjPBE2tRpyH79ChBUT/3vKGr/Bn/xpGt3h
-         PWQGlGKLwwhJ+EN77EJV9sQAeb/Q8lbVaPJFkmElVkxk55sBU4gaC5USQRUw/Dhw85za
-         xVRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrK3jHpPFsueUWGxVzKm0Pb+7nhj46+PQ545Bufkr3/7JsPuuDMFQ8nI9opQ7RI5RFClxgzLmWjbjfpVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJtj/pwHGeG8D57W5q9C4QZoWrU7JupFkzczurf/s+yyDVjNpC
-	4weSF5WtV7EeWtMPoZH2MQxxTkmDUOvbGoaye5GEJvLIM3JuRgjcBKjWPG6h+9s9xEzrsar3UOt
-	O3RO2QlH7nVwnv3BwlZ1UsF8VDQ90i0iwIuzDKNPggqUUvJTyvtSO3bDsdsE=
-X-Google-Smtp-Source: AGHT+IF2XQVvy04ATEOPmgqZTq23h7XATRKyk526gnWzOidIrV9gqGAK2Q37qHiNXjBzs1ht+Rxg2K+xrR/MCSFAMbglZPN/wQdo
+	s=arc-20240116; t=1761136687; c=relaxed/simple;
+	bh=kuoFaGo1lFWbIqr/873RAd2sTYktB7+UNWZKq7cfbJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WbHd9m/dFBwqdyVLAUObMQjupVrYgv95SHEMghaL6jaOHn4QbTwqSLYFM4FghKOK2U90zZuW5d0lN6z3/yOVGeT90yigxqNIoZWLEWWB0LJkiOXzqB51tINgC0j0/4QGvbUHpZ/l2MzsS9PF7zv9DPid0YHWPVOesHDyYoDSIxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nXuYgllD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761136678;
+	bh=kuoFaGo1lFWbIqr/873RAd2sTYktB7+UNWZKq7cfbJs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nXuYgllDeWhpaFxvCbTo2kiVnG1MXxMHkHlx/2y+xUS2ga8VHsSGmDT70jPriKFMW
+	 eBYKwYw3ZKQ3kqabRPSKfrFSPdzQyY56gvBzB64YIM/r8w28qT5WDECk5PfM810nYk
+	 3nu0AsFwBPq4dG1jmsX3vsqSrtAFYbS/EJF03Ar2OaFVHE+BjUNUzsEaRUWcjDoMs0
+	 BpHjobTE0/Bh4bwVX52pnkxIKUZs53GY3DLtgZlKzT2zZnJPvhy0DyKikpgzZNf7wn
+	 lsHJHeyEhpFD5AQgwn5hLMNJ0nkZrD3/rFEMCtvVMBgmIOwTwIOfrLjOdZQ+o81Sq2
+	 Uldcsx/TWvw2w==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8014917E12AF;
+	Wed, 22 Oct 2025 14:37:57 +0200 (CEST)
+Date: Wed, 22 Oct 2025 14:37:51 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Ketil Johnsen <ketil.johnsen@arm.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Heiko Stuebner
+ <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and
+ FW event processing
+Message-ID: <20251022143751.769c1f23@fedora>
+In-Reply-To: <20251022103014.1082629-1-ketil.johnsen@arm.com>
+References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156c:b0:430:ad98:981f with SMTP id
- e9e14a558f8ab-430c524b96bmr264569355ab.4.1761136622257; Wed, 22 Oct 2025
- 05:37:02 -0700 (PDT)
-Date: Wed, 22 Oct 2025 05:37:02 -0700
-In-Reply-To: <20251022121245.D9ZlN%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f8cfee.050a0220.346f24.004a.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dir_foreach_blk
-From: syzbot <syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, 22 Oct 2025 12:30:13 +0200
+Ketil Johnsen <ketil.johnsen@arm.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> The function panthor_fw_unplug() will free the FW memory sections.
+> The problem is that there could still be pending FW events which are yet
+> not handled at this point. process_fw_events_work() can in this case try
+> to access said freed memory.
+> 
+> This fix introduces a destroyed state for the panthor_scheduler object,
+> and we check for this before processing FW events.
+> 
+> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
+> ---
+> v2:
+> - Followed Boris's advice and handle the race purely within the
+>   scheduler block (by adding a destroyed state)
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 0cc9055f4ee52..4996f987b8183 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -315,6 +315,13 @@ struct panthor_scheduler {
+>  		 */
+>  		struct list_head stopped_groups;
+>  	} reset;
+> +
+> +	/**
+> +	 * @destroyed: Scheduler object is (being) destroyed
+> +	 *
+> +	 * Normal scheduler operations should no longer take place.
+> +	 */
+> +	bool destroyed;
 
-Reported-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
-Tested-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
+Do we really need a new field for that? Can't we just reset
+panthor_device::scheduler to NULL early enough in the unplug path?
+I guess it's not that simple if we have works going back to ptdev
+and then dereferencing ptdev->scheduler, but I think it's also
+fundamentally broken to have scheduler works active after the
+scheduler teardown has started, so we might want to add some more
+checks in the work callbacks too.
 
-Tested on:
+>  };
+>  
+>  /**
+> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
+>  	u32 events = atomic_xchg(&sched->fw_events, 0);
+>  	struct panthor_device *ptdev = sched->ptdev;
+>  
+> -	mutex_lock(&sched->lock);
+> +	guard(mutex)(&sched->lock);
+> +
+> +	if (sched->destroyed)
+> +		return;
+>  
+>  	if (events & JOB_INT_GLOBAL_IF) {
+>  		sched_process_global_irq_locked(ptdev);
+> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
+>  		sched_process_csg_irq_locked(ptdev, csg_id);
+>  		events &= ~BIT(csg_id);
+>  	}
+> -
+> -	mutex_unlock(&sched->lock);
+>  }
+>  
+>  /**
+> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
+>  	cancel_delayed_work_sync(&sched->tick_work);
+>  
+>  	mutex_lock(&sched->lock);
+> +	sched->destroyed = true;
+>  	if (sched->pm.has_ref) {
+>  		pm_runtime_put(ptdev->base.dev);
+>  		sched->pm.has_ref = false;
 
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=167b8d2f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b1620e3721dc97c0
-dashboard link: https://syzkaller.appspot.com/bug?extid=b20bbf680bb0f2ecedae
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16c2ce7c580000
+Hm, I'd really like to see a cancel_work_sync(&sched->fw_events_work)
+rather than letting the work execute after we've started tearing down
+the scheduler object.
 
-Note: testing is done by a robot and is best-effort only.
+If you follow my suggestion to reset the ptdev->scheduler field, I
+guess something like that would do:
+
+void panthor_sched_unplug(struct panthor_device *ptdev)
+{
+        struct panthor_scheduler *sched = ptdev->scheduler;
+
+	/* We want the schedu */
+	WRITE_ONCE(*ptdev->scheduler, NULL);
+
+	cancel_work_sync(&sched->fw_events_work);
+        cancel_delayed_work_sync(&sched->tick_work);
+
+        mutex_lock(&sched->lock);
+        if (sched->pm.has_ref) {
+                pm_runtime_put(ptdev->base.dev);
+                sched->pm.has_ref = false;
+        }
+        mutex_unlock(&sched->lock);
+}
+
+and
+
+void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events) {
+	struct panthor_scheduler *sched = READ_ONCE(*ptdev->scheduler);
+
+	/* Scheduler is not initialized, or it's gone. */
+        if (!sched)
+                return;
+
+        atomic_or(events, &sched->fw_events);
+        sched_queue_work(sched, fw_events);
+}
+
+
+sched_queue_[delayed_]work() could also be automated to issue a drm_WARN_ON()
+when it's called and ptdev->scheduler = NULL.
 
