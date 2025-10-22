@@ -1,126 +1,84 @@
-Return-Path: <linux-kernel+bounces-864761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9571BFB7B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:55:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6949CBFB7A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32AEE505FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:54:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E683B1EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1D3328621;
-	Wed, 22 Oct 2025 10:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvK2+WOc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFE332549C;
+	Wed, 22 Oct 2025 10:54:08 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BFE30CDB6
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B117F2F363F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130456; cv=none; b=TuTfe72PsoUpSwv7hJHBrdQS1YcluZTOY/x8oW3SkWxGak5sUT9Dfu86t6sBgvmnSOC9IwXENXUFF9olEKaoefHIaHzfZ47s4OigGPZq/bi/wav6PjurwQHhV8vXZYX34VN86b1AEPEazi40nt9CrMi9pvZQgUHJY5tgHnGP8SQ=
+	t=1761130448; cv=none; b=QXPhX4v9g5jtnCEHJs1olG81mojTudXe+QH0K9h4ZiHLLfQVC0hh/ThomgCX2ZO79zEEJUK+5oSiU8VT6d3vOFbnWP+eDbR8NjYsJLp33KFGpzkxfpZs3acROyHvGgCuowe+deA1zL+CQ86sXxDVlpVSGTu3JxguG9wGx64Ikk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130456; c=relaxed/simple;
-	bh=yAme9gZz0jsPec+TiumN1DBQ0+B9qNdo1HlM5nTPaxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZsfNzeV+Hek34JvFzFvs5V3lUbYr88uIUt3d+4fFMwgjAFRZbXNByrHSZxCt2nJji1tsbhiC9Pw/kLrvX+oUb31oT0bJcDz+6dzTvuTzQfI30c9nmFLImkpkX6+zsS5Fj9ZV6mAy9Z78xJiVw4La/KPG8rXICnVSO8hgzd9z+HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvK2+WOc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761130453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yAme9gZz0jsPec+TiumN1DBQ0+B9qNdo1HlM5nTPaxM=;
-	b=DvK2+WOcsvBH3W+uPssJvwJqnahdFI8dnJym0MBVAL5na9ZZs5lgfSyJX126eGPbnoIoEI
-	Z1HLmz170l9DiQ6iyEwdHibdHaVEKVVppSpzOsoBDKxdTDNZrvlcux44g25X4jVX+ony5g
-	T3uOgOBg+3H7sABud0Wj+9ZZHpffGJU=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-275-x00l2-dWNEKmXW9ljphlYA-1; Wed, 22 Oct 2025 06:54:12 -0400
-X-MC-Unique: x00l2-dWNEKmXW9ljphlYA-1
-X-Mimecast-MFC-AGG-ID: x00l2-dWNEKmXW9ljphlYA_1761130451
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-63c41bc2d58so6222255a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:54:12 -0700 (PDT)
+	s=arc-20240116; t=1761130448; c=relaxed/simple;
+	bh=YHVd2CJRLwdWpuyVn6bMGQrYX7Ui4wr/jYNQs+OHyw8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XY3cMUPlXHTXVdo5MFj+K5fnnuH9q6CY8DmMU7332awVKjBpLLsJxDSebOqpXCguYANjQVCoVj/KO7SN1EGkEoDGmPLNq8Wire0/edJ7PS6Ge3T8GCMKtTmLzwo24EYusE42tNn5QdFk6bAZwEUi+tokIuUtSdbeDE9jPddA/1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430cf6c6e20so60720175ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:54:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761130450; x=1761735250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yAme9gZz0jsPec+TiumN1DBQ0+B9qNdo1HlM5nTPaxM=;
-        b=wETdlB4YClRjHVimuDjcrJmTXH/TOI80yY3Vjl0/dsZgFN2RQAkBWaLsOJawS1LAor
-         hTqR8AmNF8PADm90QpYULyMCSY7RD2nSNZxXXJsbRcC/0nfWIcqR0F+LyrR3fVKWX1wL
-         qi+BJCXasIaqs41bQgpGnBMEpzZnTm7Rr7j7eTjM6zVG+8DpI9Vgmvd1wfe4+ybK8sbp
-         RM3+YQeKgKqihGvmOX7sNwLtMAQ3XyeubBlTIm/qoBOvrEi0xADlWxbxe3cVfGfIMdw2
-         5xXeR/BPbI6e2XBgedOK+EVosuNjtlYh34pr//V9Kbw14vxow6qc9rQiMq4Kygn0AhvY
-         Yotg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGPUEdGqOtDVquY8wIXu57dOIEiDYtaOxJSIm7+ZWjhpBq9NDuSyiYT2zN7REWf3iS/J9r9HwoJN9ew9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1LSln8YIo0cb4jyt9V6JxYFcbnYNsa5vrQ9RdfvhDgnTd0QZL
-	kSio1I4iZwY1CHhD6IIN2PfMsu42isUQetZq6EhTrpXXL7Rn2e9NCBES7ib0O+7LziXR6MfsNSO
-	/0EoOa/OZ4667hNZMrZicE8H9dU3rbOWqcVFgRMcTYRQxQ7NCp/zKZYrDOhCC2vySKJYGYYQzei
-	DwYg8cpTO3uAa7UbbVuEb9UXs9UtTMtalPmqwc4nGNduE8WLj0kek=
-X-Gm-Gg: ASbGncvTIhcT7fhRmJTBc2I35l2VQFlq1MxLflq88vHIkX7ty4fxuNZnl79fF63UDlr
-	NC2jAtfTDsOsULL9w97f48CyA23Br3GgVZzwpsHXV9EoHhcj6o/MNH2W5JGoBhC72CCTLMDHDOV
-	EcAcfbitlZsqOoaJqaM2CsGBBFebO0XGt0mzqmZW5nuysqVvgKECV1ppGFGQ==
-X-Received: by 2002:a05:6402:3554:b0:63c:4d42:993d with SMTP id 4fb4d7f45d1cf-63c4d429b92mr14924955a12.31.1761130450608;
-        Wed, 22 Oct 2025 03:54:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwXo2Nnikbm4tEQdmgmkZp9TZORUaZ7NSsb6jc2EYon1wJHlulaxXg07EbqzbJhz2+0tqMwSZX80MVwHLznqQ=
-X-Received: by 2002:a05:6402:3554:b0:63c:4d42:993d with SMTP id
- 4fb4d7f45d1cf-63c4d429b92mr14924933a12.31.1761130450205; Wed, 22 Oct 2025
- 03:54:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761130443; x=1761735243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PKADYd98ihTh+c+m4upK4clzAEmrdd6108yoWSCzqQk=;
+        b=feuzLUMLgvm1rh/iTv4J1jfbBO2EzQXKuTreK+YHqHJ8cGqY8LzUqdsRW6sKf/qsq0
+         lDjr2XS5IZqrh9kx4626vO3PJ1oUQcjR54NHJ5d9XyDNg0cFxalPkOcoUWEoY75xbT7o
+         63WEZljGTxzJ876j7JfRwmy93gt7fbsYr5izyhy+FG98xlnjXeCaCCOYBHIm77M6t7eZ
+         h7IpEoB9QPbqxTVS3zqaVPGAUz/b6RYtk29uSypKoXPET5prG9F9aMEmpO0ZAI4Jh0Mu
+         2FZmiJ7LupvJvsvZEn1X+uz1QXd3lHYIbJAGbee6iJmxGYhUFv3CGVWxahKJLmZkhPNw
+         0Oqw==
+X-Gm-Message-State: AOJu0YxelR074KgJZLuN6/0epyhlidjS52nBm4mTqmaAeY0FWsVzVznh
+	4YlNiZSA20tHKmULyHdSxoiGORvd0815G1GaKe/aX4wWjWroFFt1DNoMl12xjfzB2XpoxsfMm6p
+	vj5UeGr8/MnHHtSU9YbtATVE1LqTZcvaqMA94MmUxzC3ZyaDoTUO3zPopsoQ=
+X-Google-Smtp-Source: AGHT+IEJC4f/LBJ7iaDt/iPsz9H3NSstdNcHuAh9D0dp24ezEJsI05DsdFzYlt6PW1tXCC2I0KXDFyMCWT+LrTz+k5OQBhW3pqmP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013193028.89570-1-mrout@redhat.com> <20251014053608.pwlnexeh7mwjrvsc@lcpd911>
- <fdac8d84f266ba85d517542bdad0592bdc33b95d.camel@redhat.com> <CAJZ5v0iLCcCpiBqgQM=GcEAnQvZxgbtMy+bWGrWDQEikYOgC=Q@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iLCcCpiBqgQM=GcEAnQvZxgbtMy+bWGrWDQEikYOgC=Q@mail.gmail.com>
-From: Malaya Kumar Rout <mrout@redhat.com>
-Date: Wed, 22 Oct 2025 16:23:58 +0530
-X-Gm-Features: AS18NWDcKkqLf4WGgRCf3VkZNzrXzmQMf2fm-cuEeYgk3yjR7d7XbHLUsCk1kdU
-Message-ID: <CADD9qegh88p3gBWbAhV02ScWR7GOc9Tby6QQouLFAzN7ceozDw@mail.gmail.com>
-Subject: Re: [PATCH] PM: console: Fix memory allocation error handling in pm_vt_switch_required()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>, Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org, 
-	malayarout91@gmail.com, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	linux-pm@vger.kernel.org
+X-Received: by 2002:a05:6e02:190c:b0:42f:9eb7:759b with SMTP id
+ e9e14a558f8ab-430c5306894mr268462855ab.28.1761130442748; Wed, 22 Oct 2025
+ 03:54:02 -0700 (PDT)
+Date: Wed, 22 Oct 2025 03:54:02 -0700
+In-Reply-To: <CAMz+-CNpOeZG5hbHmarKRtfWD8kcR2s_ma=k9F3dJRFw_XFq5g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8b7ca.a70a0220.3bf6c6.0014.GAE@google.com>
+Subject: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
+From: syzbot <syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	vnranganath.20@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 18, 2025 at 6:11=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Tue, Oct 14, 2025 at 6:54=E2=80=AFPM Lyude Paul <lyude@redhat.com> wro=
-te:
-> >
-> > On Tue, 2025-10-14 at 11:06 +0530, Dhruva Gole wrote:
-> > > Btw you can't include a R-by tag in the very first revision of the
-> > > patch. This needs to come from Lyude on a public mailing list and onl=
-y
-> > > then can it be picked up.
-> >
-> > JFYI - I don't know how consistent this is across subsystems. I do usua=
-lly
-> > post my R-bys on mailing lists, but it's not unheard of/unusual for fol=
-ks to
-> > pass R-bs through means other then mailing lists (like IRC).
->
-> IMV, they should be on a public record.
->
-> > Regardless, happy to post it again:
-> >
-> > Reviewed-by: Lyude Paul <lyude@redhat.com>
->
-> Patch applied as 6.19 material, thanks!
->
-Thanks for applying, much appreciated!
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+net/sctp/inqueue.c:123:34: error: use of undeclared identifier 'gfp'
+
+
+Tested on:
+
+commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=d101e12bccd4095460e7
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1044ce7c580000
 
 
