@@ -1,78 +1,138 @@
-Return-Path: <linux-kernel+bounces-865332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A8FBFCD4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:20:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F37BFCD1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD763A63A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:17:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322B219C833E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FC4333745;
-	Wed, 22 Oct 2025 15:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF2534C12E;
+	Wed, 22 Oct 2025 15:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8xrS+EH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UNKHtIv5"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6AA202960
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C02634B41D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146269; cv=none; b=Bg8PJ5xndk/R82ema7gabpKleBuXS6V65ubkwzc3HWHx1R4eTyoYCebpAtS1XFrUYlzeYWE3zYveiC282d1jT4NY4ZNj+Y7K6kGPn9VwP5AxgmpcptXsDYwkXY1rhDnzZFKc6FpegTmhOV7eNZVfvKqsdyPCUSjd+cjcPDrnBBc=
+	t=1761146281; cv=none; b=QRdN27/HIx0IUx5ZO+h9jyU/wl9yHh7mJMX7Q9ccz3qwx7FG4NVTY3NyBYzeKPFoHa/nBx1FF6xFN7Aei6cu/k5+5QrISd2FiBl9FgH9QU6dywX3zEwbqzV6QmS660VdvssPnLQe2pLeUF/YZfS+wTjJkaJmrWzqcuLVTAPi7nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146269; c=relaxed/simple;
-	bh=Xt+lKHQhO5uqz21P3uQZy09wOgF1ujie9GTUJ388NwI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DATpQJEQWTpxxNh85snFDvMJo76V2FJV0pNZgShhOEcCOMr+A8UET0dGwTT8yq5sOhyi/pEkTmcLsfhEeSmK+kGArniNkgsOaV65LZlDlcE/J08rFp6L2jDPoklTQRb0OHmNkWlUZ3bFiX5vH3Q4fWWPvDw/HgCklLqt6aRxT+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8xrS+EH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7FFC4CEE7;
-	Wed, 22 Oct 2025 15:17:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761146268;
-	bh=Xt+lKHQhO5uqz21P3uQZy09wOgF1ujie9GTUJ388NwI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=G8xrS+EHuFW2JEH2qhgr/uVPrJGDYMgjQvqk9PoKCPZAF4pBQxIAjDAPSrtl0JnNY
-	 9m54eHgzJiHiZqy8gIe4pnzeoHdmesynkHbjP7wXcWUvavBFkwzEPjdvNm1y4IN95x
-	 5fXZ2h/uhpO1vo/WmrDr6+fy4Ix+imSAt9glP4OnkkCrzF4vRpj29M5hh9oqQLhLgu
-	 88ReI9/1qGN4PpAIsW4ERIM+dTQTfSzbqlWX5JRXZqkZaXJV/CuYLW94J/NIx8sYg/
-	 sm8W5h+nfihgrSDOVbXHqVwPaEnk8Mor8DdpHSFbnmaYNrUyIGwu/QUZnucP83TTJI
-	 Yb9bx4vHWG58g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 343873A78A6C;
-	Wed, 22 Oct 2025 15:17:30 +0000 (UTC)
-Subject: Re: [GIT PULL] erofs fixes for 6.18-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aPjpkWvwoMrKHxvc@debian>
-References: <aPjpkWvwoMrKHxvc@debian>
-X-PR-Tracked-List-Id: <linux-erofs.lists.ozlabs.org>
-X-PR-Tracked-Message-Id: <aPjpkWvwoMrKHxvc@debian>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.18-rc3-fixes
-X-PR-Tracked-Commit-Id: 2a13fc417f493e28bdd368785320dd4c2b3d732e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 250a17e8f9555f5c5207581068ebfa2aa1f540a2
-Message-Id: <176114624867.1971781.6453629058093549500.pr-tracker-bot@kernel.org>
-Date: Wed, 22 Oct 2025 15:17:28 +0000
-To: Gao Xiang <xiang@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>, Hongbo Li <lihongbo22@huawei.com>
+	s=arc-20240116; t=1761146281; c=relaxed/simple;
+	bh=eEi5uGSy32lg1YEn4uhchHVaozmcMy+gUlUoOl32tFg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XRETHEbvOPgWdNGqGyhTtCIrzRoOpoY4wvfzPyKzJ/sl/KUylwVOfzOwdKpOzu9NrY+QiD+4kN2jRh4+emTRnkMLpBgaTsvu7ZqWATI0RMK7lSGgS0yh2KyFfNoBh3Bx+J4z/xOBcqG0AUx+Y7lrK7PzUidOavAbciewtr7Q8hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UNKHtIv5; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id F204B4E4127B;
+	Wed, 22 Oct 2025 15:17:52 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B9620606DC;
+	Wed, 22 Oct 2025 15:17:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B185D102F23AD;
+	Wed, 22 Oct 2025 17:17:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761146271; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=CChA9h90pM92X6zpGVU45uXBGsE28460coNy6HElnTo=;
+	b=UNKHtIv5f1DzlxegUyhHSDfJ7g25b/CPCEU3SM9RVlJIpi6E0EBTl6jl7VFNlEpJ4NTWV2
+	HcfDK+MtQX0e4N747aUnearfX70ksr/PyZkeevsJTT7nNSW9ZpGExcEc+zA4HYpJJfg1sK
+	AJUAfvAsW3OdDMfP2WzJ6jw4XQYfRULAmPSaaoqKvjtCmLz61sbyC5hXDgRNvOoFVDbDvR
+	S2OhtLkr0zhAYk30l8KVPulymsRD/PtA229eg2kOF+SHPnAFtoqGBFdqYgNj+H+IetJKwJ
+	jGDrqHNXZZCTIjw+P4todOqIqXWFf4bhXCRRtrC3MilgZ4DKL2xHf5BH2dpRUw==
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Douglas Anderson <dianders@chromium.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Bajjuri Praneeth <praneeth@ti.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	"Kory Maincent (TI.com)" <kory.maincent@bootlin.com>,
+	stable@vger.kernel.org,
+	Swamil Jain <s-jain1@ti.com>,
+	thomas.petazzoni@bootlin.com,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH v2] drm/tilcdc: Fix removal actions in case of failed probe
+Date: Wed, 22 Oct 2025 17:17:38 +0200
+Message-ID: <20251022151739.864344-1-kory.maincent@bootlin.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The pull request you sent on Wed, 22 Oct 2025 22:26:25 +0800:
+From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.18-rc3-fixes
+The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() helpers
+should only be called when the device has been successfully registered.
+Currently, these functions are called unconditionally in tilcdc_fini(),
+which causes warnings during probe deferral scenarios.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/250a17e8f9555f5c5207581068ebfa2aa1f540a2
+[    7.972317] WARNING: CPU: 0 PID: 23 at drivers/gpu/drm/drm_atomic_state_helper.c:175 drm_atomic_helper_crtc_duplicate_state+0x60/0x68
+...
+[    8.005820]  drm_atomic_helper_crtc_duplicate_state from drm_atomic_get_crtc_state+0x68/0x108
+[    8.005858]  drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0x1c8
+[    8.005885]  drm_atomic_helper_disable_all from drm_atomic_helper_shutdown+0x90/0x144
+[    8.005911]  drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc]
+[    8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [tilcdc]
 
-Thank you!
+Fix this by moving both drm_kms_helper_poll_fini() and
+drm_atomic_helper_shutdown() inside the priv->is_registered conditional
+block, ensuring they only execute after successful device registration.
 
+Cc: stable@vger.kernel.org
+Reviewed-by: Swamil Jain <s-jain1@ti.com>
+Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at shutdown/remove time for misc drivers")
+Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
+---
+
+I'm working on removing the usage of deprecated functions as well as
+general improvements to this driver, but it will take some time so for
+now this is a simple fix to a functional bug.
+
+Change in v2:
+- Add missing cc: stable tag
+- Add Swamil reviewed-by
+---
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+index 7caec4d38ddf..2031267a3490 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+@@ -172,11 +172,11 @@ static void tilcdc_fini(struct drm_device *dev)
+ 	if (priv->crtc)
+ 		tilcdc_crtc_shutdown(priv->crtc);
+ 
+-	if (priv->is_registered)
++	if (priv->is_registered) {
+ 		drm_dev_unregister(dev);
+-
+-	drm_kms_helper_poll_fini(dev);
+-	drm_atomic_helper_shutdown(dev);
++		drm_kms_helper_poll_fini(dev);
++		drm_atomic_helper_shutdown(dev);
++	}
+ 	tilcdc_irq_uninstall(dev);
+ 	drm_mode_config_cleanup(dev);
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 
