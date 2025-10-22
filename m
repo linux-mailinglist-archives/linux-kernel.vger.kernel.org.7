@@ -1,119 +1,352 @@
-Return-Path: <linux-kernel+bounces-864781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB1EBFB887
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:04:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1D9BFB8A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5065A19A5B4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6BB5665E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2A4328625;
-	Wed, 22 Oct 2025 11:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C89328621;
+	Wed, 22 Oct 2025 11:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZJx1bT2T"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="XG+Omxsx"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658A2320A0C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761131090; cv=none; b=tftYTDMr/rPkdjGG7dSbZgKkeW5TURiC7LYuqXUdiQTW4SBgWEkNMVnB1l90A1c3yFm2jc2Eo+Fe0jTfZzdcNDmKaNr9zAazBx/I8km00yrrsgTmFypP1dTKEB1PVUEcoGh4VSd/wYHmRu4gHLdoVEspwx3Ue4o45SMuqg3D+bw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761131090; c=relaxed/simple;
-	bh=fbnf82wilN+OInKBeOAmH7SupbMbH8ConaawoIHXamk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=N6jo7wUa9RRkqLefqUmqM3BvABf0nd21mU0zP3sTZtAewAZ3/dsWCccDTVoZzCuo4j9OXz/6AfN8GHkPHfgJjdIYGH/PSNpFtqN/XDI6a3P1SzY+FARfquQeTw1oP2hycPYkNXi/g+xP4wDDhKg7iCSYgYXRqBYESpLXoGlsw/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZJx1bT2T; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4711f156326so52583795e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 04:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761131086; x=1761735886; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ec4fethFoS2+SPeTVw+Fwof3KrdKYWIF/kwJYkEKmFY=;
-        b=ZJx1bT2Ta+/gas6V6KLQ0yqH2DsgFbKU6MUOk1SLPCzuZYdVw0pPkfvvwhZFWsYiUN
-         Tv79scr8JZBRRkKSrRvjoZ1tL3fiCMYWvAEsfPc4/DWy2HvsSVKtt2llfIyUtSfosfp7
-         GuGicd6mVL/f7yuBlWVdXPyptpSDn2ZGHT0qh+MCOiO31u5qdm7SiN65HslDeOwgyzcl
-         XtmY94gjJVN7fh7mNMWRaa70JXXj9iO3B609h8g4Exs6z6KJxmoTOYrL6+HI06DQ6yLL
-         tq227ffNak8KQwyhbp34lxfKqXEGYyhGPHjcWmaEIqbYyLonMFRGnpNS7oSeXHNzd6jP
-         Ydew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761131086; x=1761735886;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ec4fethFoS2+SPeTVw+Fwof3KrdKYWIF/kwJYkEKmFY=;
-        b=H6Iyou2OBMDIuRKKpejk0Ub6iMbU7+7vbjUtfbw49BE/ufzY7le61JbzyPYw4gdxVx
-         Ey7dTzuMvIOZXXvfZOGZ/e95QvsHKBSo60ZGVtl9W2WNMQ4c6G7zpLKPJ7F3yN5Ib0At
-         09HwEleaRDwr5kNC6GNZIazM+Jg1E4fwSljapRt72/QfyKolpCRBFX1AtyPwNmyGa9uw
-         D3ErOQbidN/uD60VvdE56PuOAIQELXNgzoNDVYbeWQhtJ8i8lPmhtwVgD2iXh3EyBQMe
-         q5PHjXxAch6BP55pfKYFylHSf5a7Vgt3OSNtKT5AvMNmOm7kZmIs8vLcOFr8wi9yQNPb
-         92fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUASnYtOZwBVzzlOlrFVueMrBZKX1vrGyHt6BPzgEbFW1bkMeQnRTbu33wEQLuuDFsz1wvHUd65joTllwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuI6RjBZYn8uBDCCidlSK7PU5T/6zKX/zwBkUzV1k6ks/glH6r
-	7sFHK8wsXGnwvqDrKJYiZyyvn0KNuErmqDCI7fRODsIMhghwFGIbPxhigsK++4aDq+U=
-X-Gm-Gg: ASbGncvrx1rtmwjXH8N86UqEnQq4K9hMA8lFnDPeZfDr8ohq7RMrYZLqRlfEqsIm3gM
-	a0HGF+UlzZtxHJ6ITfOTjnD04t/vimGNVrcmiN/zMGso7G8Sqp71W/4uX0J9AEX0egeb/YzH0kJ
-	GYjJDJJyXaMTp3Xzg/NJNqIUfqiDtwns8oUTD3hWOE9MnW1g9HwoExPkxT/J9hY8vCeQ6WXiiP7
-	vdZXi01waUMJ2DbZpMMOdCYNx0Eiix3EvkXovUuM6F0yDunDTnIuqiqvi5b1XYWuiuuWhwgbBuB
-	0Mq9pJ+IYs+883ZKkEFX2k187ixaXtQednOFSQUgACYDuvXdQRl/Tqs54OGt+GbuuXaXLg8+QnQ
-	qDtU7IosZfqb1J5XDKFejJ2tj9gos4ujnOqZDJBCa9iMsSvcDFw740q/SfphIBWUn9ctOAVtcCx
-	KKQGjsT9bLdJh1ZrrC
-X-Google-Smtp-Source: AGHT+IGMYkocvaBnPACpDrQqTQlINhZBUKIMjE+J1fPKEeBjdhwvP+lt5c1FWsAPVXg7BnBQuKDcjw==
-X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr156254735e9.33.1761131085678;
-        Wed, 22 Oct 2025 04:04:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47496d4b923sm33430975e9.14.2025.10.22.04.04.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:04:45 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:04:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hawking Zhang <Hawking.Zhang@amd.com>, Tao Zhou <tao.zhou1@amd.com>,
-	YiPeng Chai <YiPeng.Chai@amd.com>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/ras: delete an unnecessary NULL check
-Message-ID: <aPi6SqcrGtBvK24S@stanley.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B7D19D074
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761131123; cv=pass; b=C7tagadRuSR/f9SBv75Gqhy2BS/OhlbCK4fMxoakaq1MS3Q+ug7+SZ6TY3XClP/PVEKTo6Pv0zjs2TkmOE5hRjbZMbStYSw2YsJ89u0hssbHc2WEbrFQ16dAus1QrBiLEeM76vMPpzGKHlbg/nrcgM4SUies5r9Q02u6A5LFxwQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761131123; c=relaxed/simple;
+	bh=uEUIPMoo6COCoW7iF7Lcty5ru3OOXyby7Suqt+7mQL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8d+/XhM4PNz7025LuBAx8QJOwC4dRWz/hvnSlEFWdjigPrc6feOLsSSkUqmUjC1qDTV/baamAwTwpwdFoB0auNkMhm6KE4h5r67v8skLFq8O6frrfty2b5f6mpu3BhNFnahqBdvNutxKSamjke4TsOwjbXGgRyfHc/hsWsUhUU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=XG+Omxsx; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761131095; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nZHFhzVd92HiKbPIMux4II2oLis+9xTXe1U7OVQG6AG3uXA2+VF6MtxqWjKLHzuHuPknmM8g/uM/Qcw8EiM3UOXg00wVfmWvuag20nJAnP6nkhK9zsWiaxMjszbDs+gF3O326lDERTv+PqJcGUyzI4WtlbSbPrn4HWHTy6qjdzA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761131095; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lmBsaKO1EJUM6MF81i58ioHDAB53fMQdxr/9Ml5YHsM=; 
+	b=BsVZnHd8eJgD7sSJgnc8yaqAkFkZLok8bcPwVF+Qc8LuymsPduBQyRexje16HWPR5SlPzXVM1+fIPALoHvPfD/PtWEBcvA0P9R+nRRFRZDanTiYPbIuOFywBzB4diVKcZzGMk0taTZhxOzVXJiBrb1YcR6rgtGmrdePOm34iDoM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761131095;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=lmBsaKO1EJUM6MF81i58ioHDAB53fMQdxr/9Ml5YHsM=;
+	b=XG+OmxsxrPhRS7+WiwdLfTNfpM9day7D55kMxok6GOZgOeE3HI1dwkKeAvqnvdIf
+	w6/+Eho1jmAWxHM8UgEA0NQYO/RbcItnUMqb2cuAcCusUCBqRrg6eHzbeepSrtlExwh
+	EeymCsE1FHA87f894uhwDqRZ0mNk90QTEM2uXzwU=
+Received: by mx.zohomail.com with SMTPS id 1761131093875887.4064497620421;
+	Wed, 22 Oct 2025 04:04:53 -0700 (PDT)
+Date: Wed, 22 Oct 2025 12:04:46 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Steven Price <steven.price@arm.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	kernel@collabora.com, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
+Message-ID: <rionzgtulanvxm4rgzofirnucrfio2azzeic6nqa67l2kzvu24@oesvlq22ndwd>
+References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
+ <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
+ <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
+ <ba782636-2517-4087-9b23-005ec6ca9a47@arm.com>
+ <clyss5dw6nzcfhryfobb6nrjywbyx6osfkxrxga4cigjhqx6cr@trdunwxzxeor>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <clyss5dw6nzcfhryfobb6nrjywbyx6osfkxrxga4cigjhqx6cr@trdunwxzxeor>
 
-The list iterator in a list_for_each_entry() loop can never be NULL.
-Delete the unnecessary NULL check.
+On 22.10.2025 10:05, Adrián Larumbe wrote:
+> On 22.10.2025 05:45, Akash Goel wrote:
+> >
+> >
+> > On 10/21/25 18:39, Adrián Larumbe wrote:
+> > > Hi Akash,
+> > >
+> > > On 21.10.2025 15:32, Akash Goel wrote:
+> > > >
+> > > >
+> > > > On 10/19/25 04:19, Adrián Larumbe wrote:
+> > > > > Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
+> > > > > behavior") did away with the treatment of partial unmaps of huge IOPTEs.
+> > > > >
+> > > >
+> > > > Sorry have a doubt.
+> > > >
+> > > > Corresponding to the commit 33729a5fc0ca, can we now remove the code to
+> > > > pre-allocate L3 page table pages i.e. 'op_ctx->rsvd_page_tables.pages' inside
+> > > > panthor_vm_prepare_unmap_op_ctx() ?.
+> > > >
+> > > > > In the case of Panthor, that means an attempt to run a VM_BIND unmap
+> > > > > operation on a memory region whose start address and size aren't 2MiB
+> > > > > aligned, in the event it intersects with a huge page, would lead to ARM
+> > > > > IOMMU management code to fail and a warning being raised.
+> > > > >
+> > > > > Presently, and for lack of a better alternative, it's best to have
+> > > > > Panthor handle partial unmaps at the driver level, by unmapping entire
+> > > > > huge pages and remapping the difference between them and the requested
+> > > > > unmap region.
+> > > > >
+> > > > > This could change in the future when the VM_BIND uAPI is expanded to
+> > > > > enforce huge page alignment and map/unmap operational constraints that
+> > > > > render this code unnecessary.
+> > > > >
+> > > > > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > > > > ---
+> > > > >    drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
+> > > > >    1 file changed, 126 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > > > index 2d041a2e75e9..f9d200e57c04 100644
+> > > > > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > > > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > > > @@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+> > > > >    	return 0;
+> > > > >    }
+> > > > > +static bool
+> > > > > +is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
+> > > > > +			   const struct drm_gpuva_op_map *op,
+> > > > > +			   u64 unmap_start, u64 unmap_range,
+> > > > > +			   u64 sz2m_prev, u64 sz2m_next)
+> > > > > +{
+> > > > > +	size_t pgcount, pgsize;
+> > > > > +	const struct page *pg;
+> > > > > +	pgoff_t bo_offset;
+> > > > > +
+> > > > > +	if (op->va.addr < unmap_vma->base.va.addr) {
+> > > >
+> > > >
+> > > > Sorry, another doubt.
+> > > >
+> > > > Will this condition ever be true ?
+> > > >
+> > > > For 'op->remap.prev', 'op->va.addr' will always be equal to
+> > > > 'unmap_vma->base.va.addr'.
+> > >
+> > > I believe it will always be less than that.
+> >
+> >
+> > Thanks Adrian for having a look.
+> >
+> > static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> > {
+> > 	struct panthor_vma *unmap_vma = container_of(op->remap.unmap->va, struct
+> > panthor_vma, base);
+> >
+> >
+> > IIUC, the 'unmap_vma' passed to panthor_gpuva_sm_step_remap() will always
+> > cover the entire VA range of 'drm_gpuva'.
+> > That's why drm_gpuva_op_remap_to_unmap_range() is called to know the exact
+> > range to be unmapped.
+> >
+> > In __drm_gpuvm_sm_unmap() and __drm_gpuvm_sm_map(), you can see this,
+> >
+> > struct drm_gpuva_op_unmap u = { .va = va };
+> >
+> >
+> > > What will be equal to unmap_vma->base.va.addr is op->remap.prev->va.addr +
+> > op->remap.prev->va.range
+> >
+> >
+> > I think op->remap.prev->va.addr + op->remap.prev->va.range will be equal to
+> > 'unmap_start' after the call to drm_gpuva_op_remap_to_unmap_range().
+> >
+> > Sorry I may have again misunderstood the code.
+>
+> I had a second look __drm_gpuvm_sm_unmap() and you're right. I should've said it's always
+> the case that op->va.addr < unmap_start inside is_huge_page_partial_unmap.
+>
+> This is a bug and it makes me wonder why when I ran some tests, the unmap intervals
+> I got seemed fine. I'll go try again and also test Boris' implementation suggestion.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/amd/ras/rascore/ras_umc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Turns out the reason the code worked was all the testing I've done is
+over previous mappings that were always a multiple of 2MiB in length, so
+even when the op in question was previous to the original 'unmap' one
+and 'if (op->va.addr < unmap_vma->base.va.addr) evaluated to false', the
+ending address of next.va would also belong to a 2MiB huge page, so the
+condition would still hold.
 
-diff --git a/drivers/gpu/drm/amd/ras/rascore/ras_umc.c b/drivers/gpu/drm/amd/ras/rascore/ras_umc.c
-index 4067359bb299..03c4cddfbfd9 100644
---- a/drivers/gpu/drm/amd/ras/rascore/ras_umc.c
-+++ b/drivers/gpu/drm/amd/ras/rascore/ras_umc.c
-@@ -207,7 +207,7 @@ int ras_umc_log_pending_bad_bank(struct ras_core_context *ras_core)
- 	mutex_lock(&ras_umc->pending_ecc_lock);
- 	list_for_each_entry_safe(ecc_node,
- 		tmp, &ras_umc->pending_ecc_list, node){
--		if (ecc_node && !ras_umc_log_bad_bank(ras_core, &ecc_node->ecc)) {
-+		if (!ras_umc_log_bad_bank(ras_core, &ecc_node->ecc)) {
- 			list_del(&ecc_node->node);
- 			kfree(ecc_node);
- 		}
--- 
-2.51.0
+This is a glaring bug and would show up when the end address of
+remap->next.va doesn't belong to a huge page. This means I need to
+provide a more detailed testing plan for the next revision.
 
+> > Please can you check.
+> >
+> > Best regards
+> > Akash
+> >
+> >
+> > > > And for 'op->remap.next', 'op->va.addr' will always be greater than
+> > > > 'unmap_vma->base.va.addr'.
+> > >
+> > > Yes, I believe so.
+> > >
+> > > > Please can you clarify.
+> > > >
+> > > > Best regards
+> > > > Akash
+> > > >
+> > > >
+> > > > > +		bo_offset = unmap_start - unmap_vma->base.va.addr + unmap_vma->base.gem.offset;
+> > > > > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+> > > > > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+> > > > > +		pgsize = get_pgsize(unmap_start, unmap_range, &pgcount);
+> > > > > +
+> > > > > +	} else {
+> > > > > +		bo_offset = ((unmap_start + unmap_range - 1) - unmap_vma->base.va.addr)
+> > > > > +			+ unmap_vma->base.gem.offset;
+> > > > > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> > > > > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+> > > > > +		pgsize = get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev, &pgcount);
+> > > > > +	}
+> > > > > +
+> > > > > +	pg = to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> PAGE_SHIFT];
+> > > > > +
+> > > > > +	if (pgsize == SZ_4K && folio_order(page_folio(pg)) == PMD_ORDER &&
+> > > > > +	    unmap_vma->base.va.addr <= sz2m_prev && unmap_vma->base.va.addr +
+> > > > > +	    unmap_vma->base.va.range >= sz2m_next)
+> > > > > +		return true;
+> > > > > +
+> > > > > +	return false;
+> > > > > +}
+> > > > > +
+> > > > > +struct remap_params {
+> > > > > +	u64 prev_unmap_start, prev_unmap_range;
+> > > > > +	u64 prev_remap_start, prev_remap_range;
+> > > > > +	u64 next_unmap_start, next_unmap_range;
+> > > > > +	u64 next_remap_start, next_remap_range;
+> > > > > +	u64 unmap_start, unmap_range;
+> > > > > +};
+> > > > > +
+> > > > > +static struct remap_params
+> > > > > +get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
+> > > > > +			const struct panthor_vma *unmap_vma)
+> > > > > +{
+> > > > > +	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
+> > > > > +	struct remap_params params = {0};
+> > > > > +
+> > > > > +	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
+> > > > > +
+> > > > > +	if (op->prev) {
+> > > > > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+> > > > > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+> > > > > +
+> > > > > +		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
+> > > > > +					       unmap_range, sz2m_prev, sz2m_next)) {
+> > > > > +			params.prev_unmap_start = sz2m_prev;
+> > > > > +			params.prev_unmap_range = SZ_2M;
+> > > > > +			params.prev_remap_start = sz2m_prev;
+> > > > > +			params.prev_remap_range = unmap_start & (SZ_2M - 1);
+> > > > > +
+> > > > > +			u64 diff = min(sz2m_next - unmap_start, unmap_range);
+> > > > > +
+> > > > > +			unmap_range -= diff;
+> > > > > +			unmap_start += diff;
+> > > > > +		}
+> > > > > +	}
+> > > > > +
+> > > > > +	if (op->next) {
+> > > > > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> > > > > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+> > > > > +
+> > > > > +		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
+> > > > > +					       unmap_range, sz2m_prev, sz2m_next)) {
+> > > > > +			if (unmap_range) {
+> > > > > +				params.next_unmap_start = sz2m_prev;
+> > > > > +				params.next_unmap_range = SZ_2M;
+> > > > > +				unmap_range -= op->next->va.addr & (SZ_2M - 1);
+> > > > > +			}
+> > > > > +
+> > > > > +			params.next_remap_start = op->next->va.addr;
+> > > > > +			params.next_remap_range = SZ_2M - (op->next->va.addr & (SZ_2M - 1));
+> > > > > +		}
+> > > > > +	}
+> > > > > +
+> > > > > +	params.unmap_start = unmap_start;
+> > > > > +	params.unmap_range = unmap_range;
+> > > > > +
+> > > > > +	return params;
+> > > > > +}
+> > > > > +
+> > > > >    static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> > > > >    				       void *priv)
+> > > > >    {
+> > > > > @@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> > > > >    	struct panthor_vm *vm = priv;
+> > > > >    	struct panthor_vm_op_ctx *op_ctx = vm->op_ctx;
+> > > > >    	struct panthor_vma *prev_vma = NULL, *next_vma = NULL;
+> > > > > -	u64 unmap_start, unmap_range;
+> > > > > +	struct remap_params params;
+> > > > >    	int ret;
+> > > > > -	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_range);
+> > > > > -	ret = panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
+> > > > > +	/*
+> > > > > +	 * ARM IOMMU page table management code disallows partial unmaps of huge pages,
+> > > > > +	 * so when a partial unmap is requested, we must first unmap the entire huge
+> > > > > +	 * page and then remap the difference between the huge page minus the requested
+> > > > > +	 * unmap region. Calculating the right offsets and ranges for the different unmap
+> > > > > +	 * and map operations is the responsibility of the following function.
+> > > > > +	 */
+> > > > > +	params = get_map_unmap_intervals(&op->remap, unmap_vma);
+> > > > > +
+> > > > > +	ret = panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_range);
+> > > > >    	if (ret)
+> > > > >    		return ret;
+> > > > >    	if (op->remap.prev) {
+> > > > > +		ret = panthor_vm_unmap_pages(vm, params.prev_unmap_start,
+> > > > > +					     params.prev_unmap_range);
+> > > > > +		if (ret)
+> > > > > +			return ret;
+> > > > > +		ret = panthor_vm_map_pages(vm, params.prev_remap_start,
+> > > > > +					   flags_to_prot(unmap_vma->flags),
+> > > > > +					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
+> > > > > +					   op->remap.prev->gem.offset, params.prev_remap_range);
+> > > > > +		if (ret)
+> > > > > +			return ret;
+> > > > > +
+> > > > >    		prev_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+> > > > >    		panthor_vma_init(prev_vma, unmap_vma->flags);
+> > > > >    	}
+> > > > >    	if (op->remap.next) {
+> > > > > +		ret = panthor_vm_unmap_pages(vm, params.next_unmap_start,
+> > > > > +					     params.next_unmap_range);
+> > > > > +		if (ret)
+> > > > > +			return ret;
+> > > > > +
+> > > > > +		ret = panthor_vm_map_pages(vm, params.next_remap_start,
+> > > > > +					   flags_to_prot(unmap_vma->flags),
+> > > > > +					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
+> > > > > +					   op->remap.next->gem.offset, params.next_remap_range);
+> > > > > +		if (ret)
+> > > > > +			return ret;
+> > > > > +
+> > > > >    		next_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+> > > > >    		panthor_vma_init(next_vma, unmap_vma->flags);
+> > > > >    	}
+> > > > >
+> > > > > base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
+> > > > > prerequisite-patch-id: 3b0f61bfc22a616a205ff7c15d546d2049fd53de
+> > >
+> > > Adrian Larumbe
 
