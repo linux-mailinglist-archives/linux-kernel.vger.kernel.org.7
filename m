@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-865878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63321BFE3A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A9BBFE3B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 22:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E293A7A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E163A8FCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB89030146E;
-	Wed, 22 Oct 2025 20:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9EC302158;
+	Wed, 22 Oct 2025 20:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dfff7yyT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2OQ3pXJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CF729405
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 20:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF75301489;
+	Wed, 22 Oct 2025 20:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761166579; cv=none; b=vA0Mtgjn38D3HSZ17a0aN/fkXxWtBGmQrue7CHJY+j723ORQCg4D8+aS6RYF1giwkT27pPNWkNdu8axNOuAo2CLrZ8C8RIMCVOPNozKaUdAXqydFMlL7cOmR9sP7Waj5ebGhHCRSqHKLz6Xy9WJK32a9jAOh+xeA/2f2zyH/B/Q=
+	t=1761166591; cv=none; b=iuSvmzK+hteBEpiH0nUtYX2Mou3uw/YjQy1l4KbItJXWxT2vRo3Wj9/hf1c6UC0J1dG1ay69t77vlwzw22qsp5Ecd71UKY5bGYe/Z78BSr3pTBQejG2t+ekjIXUPMtmZZvYHMrwVioYLDJ5NPcpSUnrHvBP2pobcplEO1f4MkbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761166579; c=relaxed/simple;
-	bh=inAMQyKAc1Q8OSBoBIraOPZUOkirC95Di7Iww6dYpAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OwCGEK6p7H4s+32euVBHsc83OqzLHENDJ5B5G4fSBOeETO5I5xihzPHzJlqfcRnxbh5qDNUJPxJB41e0/O/v2uFKtCwfe25FYqxBttmn9ZRnclmn/cWz7KeGzTAV47bNZo0RRRTThMRk0MFuxUrbbr0ClM9X5tp3NrJIYWkX658=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dfff7yyT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39B90C4CEFD;
-	Wed, 22 Oct 2025 20:56:16 +0000 (UTC)
+	s=arc-20240116; t=1761166591; c=relaxed/simple;
+	bh=jb7Yzd3Lj40X7MyHDOMKC7vlfciGvtL9XYo30IpStT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iL/NIkbMDjYU8a/kHe0+ycmYkNC4i/0+bA0A6j8EQFGugfEzF06DGFVfyr4boOvwr9LCqxMLn9dYcYVvIAtnbGHWxWktQuDGdO+LJ7+8C0ZnkaNi6wEfWSLLscZM3kZXRRWJntnacEV12+F72BY+pDvtvHpX2unL7hmlUEACI1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2OQ3pXJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6801FC4CEE7;
+	Wed, 22 Oct 2025 20:56:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761166578;
-	bh=inAMQyKAc1Q8OSBoBIraOPZUOkirC95Di7Iww6dYpAk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Dfff7yyTETuXCELBEpQeQ7Gl/odWr5fAovIYkxNdoLMFkbpUoGOy0qlwzNA6oz8HC
-	 D1VVrBI6LrqRPANuP+v0x8ZM/UbeNWtFxIXb9bcoLBwiUWtC9w1HDllnPqldYlKBhj
-	 zD7/KQVbhy1VASnoy1Iz4118HpSZUMh0qz24wZi+EtIh0N2xVKbebLbmioPF1gJJpx
-	 h6OeD6t0dw0tWKTW4j8w4kI6Jwu6UOVY+5ypezoV+K6Caaxp5XvMIJMFeqpWMPEcX7
-	 jmz0VsYeI0LPj2XDU1/Dzcm05oh+oeQuistKvEQ8cXMYjQ2c04YFZdfSn/CogGeq36
-	 rbMqXMstfcSig==
-Message-ID: <904ba70f-b1bf-4745-8e92-d27a6c903673@kernel.org>
-Date: Wed, 22 Oct 2025 22:56:14 +0200
+	s=k20201202; t=1761166590;
+	bh=jb7Yzd3Lj40X7MyHDOMKC7vlfciGvtL9XYo30IpStT0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=M2OQ3pXJFoYoV5Q1SLe9ZwHs5MAnAqhgPCuLNPGcHOcLA5/aMrjBW6D9vL8p8/+0a
+	 g3oyQURhVzv6ffitmoHahZsw3FzWq9OruQhoY8xwzBGrNf7WCcNuU8YtYd8c5GQtRo
+	 Kc7GynGRVlkWlXW24ibpLRdeBCji8U9IfWpsZAxcpgqGfZ5mbUB/Sf2HFm7V0eD2jN
+	 qGyvxf2em/C/Peitk7vRg3YfU76FwoWCbqsBxxQcVh7qkclbLe8K+MvqFnAaJxku6R
+	 p62gFpq3/ldTGsCea1y2cyxDqUzT2PTVCZjvN2QozGU6ReH/tSIp2YGbbjxiW60ux1
+	 lKkIryOmg7L1w==
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com,
+	arighi@nvidia.com,
+	changwoo@igalia.com
+Cc: linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev,
+	peterz@infradead.org
+Subject: [PATCHSET RESEND v2 sched_ext/for-6.19] sched_ext: Fix SCX_KICK_WAIT reliability
+Date: Wed, 22 Oct 2025 10:56:26 -1000
+Message-ID: <20251022205629.845930-1-tj@kernel.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] drm/nouveau/uvmm: Allow larger pages
-To: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Mary Guillemard <mary@mary.zone>,
- Faith Ekstrand <faith.ekstrand@collabora.com>, Lyude Paul
- <lyude@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- nouveau@lists.freedesktop.org
-References: <20251009233837.10283-1-mohamedahmedegypt2001@gmail.com>
- <20251009233837.10283-3-mohamedahmedegypt2001@gmail.com>
- <CAA+WOBvVasy2wRP_wmP-R6Q8y5B4sN08jNYfHuDVjiWXV+m23Q@mail.gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <CAA+WOBvVasy2wRP_wmP-R6Q8y5B4sN08jNYfHuDVjiWXV+m23Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/22/25 12:16 PM, Mohamed Ahmed wrote:
-> Pinging again re: review and also was asking if we can revert the
-> select_page_shift() handling back to v1 behavior with a fall-back
-> path, as it looks like there are some cases where
-> nouveau_bo_fixup_align() isn't enough;
-> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36450#note_3159199.
+Resending because the original v2 posting didn't include the full recipient
+list on the individual patches due to git send-email invocation error. Sorry
+about the noise.
 
-I don't think we should add a fallback for something that is expected to be
-sufficient.
+SCX_KICK_WAIT is used to synchronously wait for the target CPU to complete
+a reschedule and can be used to implement operations like core scheduling.
+However, recent scheduler refactorings broke its reliability. This series
+fixes the issue and improves the code clarity.
 
-Instead we should figure out in which exact case the WARN_ON() was hit and why.
+v2: - In patch #2, also increment pnt_seq in pick_task_scx() to handle
+      same-task re-selection (Andrea Righi).
+    - In patch #2, use smp_cond_load_acquire() for the busy-wait loop for
+      better architecture optimization (Peter Zijlstra).
+    - Added patch #3 to rename pnt_seq to kick_sync for clarity.
+
+v1: http://lkml.kernel.org/r/20251021210354.89570-1-tj@kernel.org
+
+Based on sched_ext/for-6.19 (2dbbdeda77a6).
+
+ 1 sched_ext: Don't kick CPUs running higher classes
+ 2 sched_ext: Fix SCX_KICK_WAIT to work reliably
+ 3 sched_ext: Rename pnt_seq to kick_sync
+
+Git tree: git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-fix-kick_wait
+
+ kernel/sched/ext.c          | 129 ++++++++++++++++++++++++--------------------
+ kernel/sched/ext_internal.h |   6 ++-
+ kernel/sched/sched.h        |   2 +-
+ 3 files changed, 75 insertions(+), 62 deletions(-)
+
+--
+tejun
 
