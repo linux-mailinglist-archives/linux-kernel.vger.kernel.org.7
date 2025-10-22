@@ -1,152 +1,239 @@
-Return-Path: <linux-kernel+bounces-865047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F75BFC1EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A7BBFBC5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18572621B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:11:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775B73B920E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA346348882;
-	Wed, 22 Oct 2025 13:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2A2340295;
+	Wed, 22 Oct 2025 12:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="DWn3zTIq"
-Received: from smtp88.iad3b.emailsrvr.com (smtp88.iad3b.emailsrvr.com [146.20.161.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k2L9lDhs"
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B00133DECB
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C7027465C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761138424; cv=none; b=dZxmeNDA7e1G6tA5y3ZSbzl9DNEiqyhhYZa7MyNg3OVEDmHapaZFBVU0NCu86rW4Wi0VzpnxSrTIhahiGq39VeJWXX+8i2Mj/VqVYOFMEX65bZ7Z1FCSR+UKn19spVgOB8HqlCxqxgjShrYpQbqmcqrXxQNQiRU1/dm7/T+EtMs=
+	t=1761134748; cv=none; b=fZ54zif/3DN8eu+IdDigYRDYtcvtxPdJOK/pRbIwo0EPO5H1evz6H4PHn6eSnLzhalzyIWhvfWa3H9kwHuHQ3OAR2m8L5LurBD4FucVhH2WTGAYHTpXUeHa+6nTXRLBHoswwtAJUrMcZha8l+9GPy10mZ1kiNzhGSA/892psEN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761138424; c=relaxed/simple;
-	bh=aUlU4Pbad8exeU3PvXAN8EgQadXY4mrcDVLjV83v1HI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PGKq9jpzcbUtRhjvJ84MVM/KemVhf5UGs96YHFoe9LIL2tnzLMn6UCXO5rZWAGn7i9D/PnxcWEUHF4ed6pHRjZTzkptXPD1vN3I97tJajZGSP7k6cfd+yItimlWnrJnORnt+eTVxNld4jhIL6PwG3ti7lDLl/zx1qqFwhhbH6R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=DWn3zTIq; arc=none smtp.client-ip=146.20.161.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1761129535;
-	bh=aUlU4Pbad8exeU3PvXAN8EgQadXY4mrcDVLjV83v1HI=;
-	h=Date:Subject:To:From:From;
-	b=DWn3zTIq/KJAFqF0ULiJljkwhb5pHcX6GmZ7vm/Xna31KvMSrym1y92KdAn9625Ud
-	 x77ZbC1j4Uh/2dGcKbQDLnkNnV9j/HX+SdWIfUTH5b5hvdbV+M97v8RzYvHQXBhxIc
-	 aZx8updX90im00Q5ZhR8S3XAqbw8Jf5HFQuxzH9Q=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp12.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 6140BC0291;
-	Wed, 22 Oct 2025 06:38:54 -0400 (EDT)
-Message-ID: <f0f48940-213b-494e-88f5-0275874fe044@mev.co.uk>
-Date: Wed, 22 Oct 2025 11:38:53 +0100
+	s=arc-20240116; t=1761134748; c=relaxed/simple;
+	bh=RNj2koT6/Jg9iN8a8+Er+ObY3cVJy0QTKD4UCscfYnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VmKwS8A+jVjbp5NxhmR4vhJOh7pEsmQ8L+JTj0wgmpsMzn2CUZ6YIeA9d39tfG8Mhp9VoX8Y6X3EVdHHu9TB7a75NdTiD8HlBJ0x6E+ClMrp8lgoeev43i9bnKAFY3SkSM3XnLdxpQ1MTRsXQveDDLGAwhIE7dlqSQYRtvmHmwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k2L9lDhs; arc=none smtp.client-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63e255e9a20so5113436d50.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761134745; x=1761739545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jsbxYdewfvfh2UHA2Tl3D1IaYpjBuKyP2US1/dOI7NQ=;
+        b=k2L9lDhsuqurx2oe6laCCQ52NVmuPs34Vebxm5CHGUq538C7HOlEGI5D2SOjZxVQ/M
+         iIwwNp4hLUqAj9ltmL0dpF831HPlKB9dfvuRrPbrsPz8eeXln6zijz6oK9EV35bF5qYI
+         4J+bR58p4gV4Vnd+2SgE2DYtJ9ljg2Uzsf9thg65B3caKhODp3JUq6q1w1/I8eIse3Z8
+         M7iqPSTqGrv3sXik3NqrKztGAOd/jDeuxZ8y8Ua1tXwap4eZ0LnFdlW3ONwBrxvOIDZL
+         o0ArdENseE33AdNsPOPfJzg7seulpFI3w7m8JDjTZJ6tnA2TbZ6Vpto/7q0XWH5ijYEq
+         NZ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761134745; x=1761739545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jsbxYdewfvfh2UHA2Tl3D1IaYpjBuKyP2US1/dOI7NQ=;
+        b=snQGgK9fRqA/JifWiwiER7fUAm9Gl1zU8QOTVN9TdYt2y+LYh/YL0u1ohyf9KwZZ3B
+         kgEkcympaErXQgiuJSyuiTmVjxq9YY80gQDRxoOsx+tAO3dUMIwdUJ51WHNbePxubLQy
+         sUNiAXQyCws2hoqH7t7irxZ9ReTroTh6d8/Eh5qwjnZtFvh6fr83VV2xOiT4Pm3taLXJ
+         tHtyADu/7Br/UE9cRPuo/ht04cQ5fgDHR2R5zTxj8VJnkmoK4akG+DiVQCp47oEdRczc
+         IYovElE0+IzNf2o4yC1u8BGfMk3akQT7ZlrYk32rXpI9LTGkn3I/v0MH8RJnDrpU10ne
+         7Jog==
+X-Forwarded-Encrypted: i=1; AJvYcCWqLOEpwN+tyM/IIyxIMg1uOkxdJcqAr72KJQwxJ/a5ORYCothjIy2UWG9ASIC60VeMuf36zLOyQ2UvqHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuMvXmS79gF+O/YdpatP+rRWpmMevv0fVGbobYDgufgyuT44o7
+	QhCjl0X6mq4lVcBV3zrfN8rii15v3zvpWDmc9k+vZWQZ+s5tFnn8M92Vbig5xI3Bcvg4G1Mvnkd
+	QAHqVFdDpEGDtS49zecB+wG3prbQ1GU3W8D4fFJo5pw==
+X-Gm-Gg: ASbGncsOyJKwFlVMTM+cGY32eynRI9wUXAQdVemmXDKvgyqnUZJ+07C1oglUGuE/L7W
+	1+JFXEBNGbccij1UpYKiCeHD04C+BP6tiCUcXNXVhyZ/qATvfVRZJaZVMuCN7HC6BiiDS7/leZ9
+	JhrndQ3F05g9L470H9cPMMqDhr9cwwHl52vPcAraLzTy5CxQxeZ+gE4xSMpjoWOrnDbIr8RSn5R
+	9SFrU5Ln8v712WHygVDf/Vf2bpgLYmGshMqJT2x8Bvco4We0duy2Os1RaDx+X+JhqJFPJP0sDrL
+	U9W4vxvXupvTR1xojvVFHmvIlz+GkhjXQMyqBJ5Cfl3BIsE=
+X-Google-Smtp-Source: AGHT+IEVIK7tQKmoArMHFnvXs66lZp2ZJesGI2vCEWC8RihiAm1lX4iHvyouvLFSKyiioGMo2OeoztXCogIKnK/gcyI=
+X-Received: by 2002:a05:690e:d59:b0:63f:2b0c:2d6e with SMTP id
+ 956f58d0204a3-63f2b0c2e74mr1569504d50.3.1761134745547; Wed, 22 Oct 2025
+ 05:05:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] comedi: multiq3: sanitize config options in
- multiq3_attach()
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
- H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
- syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com
-References: <20251021145951.260762-1-n.zhandarovich@fintech.ru>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <20251021145951.260762-1-n.zhandarovich@fintech.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: 9b896020-3f0c-42ab-b8b5-f247ea7bd99a-1-1
+References: <20251021195021.492915002@linuxfoundation.org>
+In-Reply-To: <20251021195021.492915002@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 22 Oct 2025 17:35:32 +0530
+X-Gm-Features: AS18NWBSyT6dQcKb1MqntEcC897UCpgSrWukoniGLQKQve0iUkiFAwPQt8eraPU
+Message-ID: <CA+G9fYvfjjqBqxEoWudw6PUCz07_r=OxiA26e=cJ7bWBGNGCTQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/105] 6.6.114-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/10/2025 15:59, Nikita Zhandarovich wrote:
-> Syzbot identified an issue [1] in multiq3_attach() that induces a
-> task timeout due to open() or COMEDI_DEVCONFIG ioctl operations,
-> specifically, in the case of multiq3 driver.
-> 
-> This problem arose when syzkaller managed to craft weird configuration
-> options used to specify the number of channels in encoder subdevice.
-> If a particularly great number is passed to s->n_chan in
-> multiq3_attach() via it->options[2], then multiple calls to
-> multiq3_encoder_reset() at the end of driver-specific attach() method
-> will be running for minutes, thus blocking tasks and affected devices
-> as well.
-> 
-> While this issue is most likely not too dangerous for real-life
-> devices, it still makes sense to sanitize configuration inputs. Enable
-> a semi-arbitrary limit on the number of encoder chips to stop this
-> behaviour from manifesting.
-> 
-> [1] Syzbot crash:
-> INFO: task syz.2.19:6067 blocked for more than 143 seconds.
-> ...
-> Call Trace:
->   <TASK>
->   context_switch kernel/sched/core.c:5254 [inline]
->   __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
->   __schedule_loop kernel/sched/core.c:6944 [inline]
->   schedule+0x165/0x360 kernel/sched/core.c:6959
->   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
->   __mutex_lock_common kernel/locking/mutex.c:676 [inline]
->   __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
->   comedi_open+0xc0/0x590 drivers/comedi/comedi_fops.c:2868
->   chrdev_open+0x4cc/0x5e0 fs/char_dev.c:414
->   do_dentry_open+0x953/0x13f0 fs/open.c:965
->   vfs_open+0x3b/0x340 fs/open.c:1097
-> ...
-> 
-> Reported-by: syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=7811bb68a317954a0347
-> Fixes: 77e01cdbad51 ("Staging: comedi: add multiq3 driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-> ---
->   drivers/comedi/drivers/multiq3.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/comedi/drivers/multiq3.c b/drivers/comedi/drivers/multiq3.c
-> index 07ff5383da99..0248321e3bfa 100644
-> --- a/drivers/comedi/drivers/multiq3.c
-> +++ b/drivers/comedi/drivers/multiq3.c
-> @@ -67,6 +67,11 @@
->   #define MULTIQ3_TRSFRCNTR_OL		0x10	/* xfer CNTR to OL (x and y) */
->   #define MULTIQ3_EFLAG_RESET		0x06	/* reset E bit of flag reg */
->   
-> +/*
-> + * Semi-arbitrary limit on the number of optional encoder chips
-> + */
-> +#define MULTIQ3_MAX_ENC_CHIPS		16
-> +
->   static void multiq3_set_ctrl(struct comedi_device *dev, unsigned int bits)
->   {
->   	/*
-> @@ -312,6 +317,10 @@ static int multiq3_attach(struct comedi_device *dev,
->   	s->insn_read	= multiq3_encoder_insn_read;
->   	s->insn_config	= multiq3_encoder_insn_config;
->   
-> +	/* sanity check for number of optional encoders */
-> +	if (s->n_chan > MULTIQ3_MAX_ENC_CHIPS)
-> +		s->n_chan = MULTIQ3_MAX_ENC_CHIPS;
-> +
->   	for (i = 0; i < s->n_chan; i++)
->   		multiq3_encoder_reset(dev, i);
->   
+On Wed, 22 Oct 2025 at 01:22, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.114 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 23 Oct 2025 19:49:51 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.114-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Nice, but the limit on number of optional encoder chip channels 
-(s->n_chan) seems to be 8 (it->options[2] = 4 encoder chips with 2 
-channels per chip).  See the `MULTIQ_CTRL_E_CHAN(x)` macro:
 
-#define MULTIQ3_CTRL_E_CHAN(x)		(((x) & 0x7) << 3)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.6.114-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 8ed83e981d68359d06ea8e83da61f55c4a5fc71c
+* git describe: v6.6.113-106-g8ed83e981d68
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.1=
+13-106-g8ed83e981d68
+
+## Test Regressions (compared to v6.6.112-202-gef9fd03595ef)
+
+## Metric Regressions (compared to v6.6.112-202-gef9fd03595ef)
+
+## Test Fixes (compared to v6.6.112-202-gef9fd03595ef)
+
+## Metric Fixes (compared to v6.6.112-202-gef9fd03595ef)
+
+## Test result summary
+total: 91363, pass: 76815, fail: 2923, skip: 11410, xfail: 215
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 128 total, 127 passed, 1 failed
+* arm64: 44 total, 40 passed, 4 failed
+* i386: 21 total, 21 passed, 0 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 31 total, 30 passed, 1 failed
+* riscv: 15 total, 14 passed, 1 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 9 total, 9 passed, 0 failed
+* sparc: 7 total, 7 passed, 0 failed
+* x86_64: 37 total, 33 passed, 3 failed, 1 skipped
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
