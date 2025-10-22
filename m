@@ -1,149 +1,180 @@
-Return-Path: <linux-kernel+bounces-864010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1E9BF9B4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:19:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6CCBF9B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB5994E5EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:19:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA12C189A52D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB192153ED;
-	Wed, 22 Oct 2025 02:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8264B21A457;
+	Wed, 22 Oct 2025 02:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6skFHix"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwDZScFN"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271C41F4190;
-	Wed, 22 Oct 2025 02:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4552A1F4190
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761099566; cv=none; b=fzywO5pigpdS8Jx/t2U2/Tu58aiiNiPN0Jlx6n+MTYOnGQ7fP/Pg6NtghYh6JqUR9ja/yj2nqGRjuQIGhbtKjYZehmZH6n1zay1ujNa+DVugfCdugS45PdaJmGqIKTqER0yDuZozKkstPtczgwcJUDGJYAkNkvsLAO5oGm9ZREk=
+	t=1761099542; cv=none; b=HjvI9BP9Vp2BwQO9c/H3/p5iE7RVMOnBWQWnd3nth/p85RL43ZNE5lKBcdb2bA80uOet0b6dgkw7EVuAKjWQwgu5JnrJBEJxgNNbQ6YMaxi0c68DjZlM8DcqNbz8y535QVfeywAGrOGIfxcZsnaXw2Yx8tyDRfbcfdyQaHRYSj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761099566; c=relaxed/simple;
-	bh=bkgKqKQu5VAs+o04k4pRDHaDrNwYZ7TNN0PJnstGpEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nQrLSou1DM/9cAB879IqJDl+ZznTm64riGoU7U9iDs/VGCQ3XS+wJS7kxoSenZsqTdX5VCQ0iKsmIU7yIGduIcNaYkUnod790ow+9u57jO1K12B4pEGLZxtI2+XbvvF4WY8JEKNLnKNjLBWeGTyQDOw2GwVejcDNdpFH5tTiGE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6skFHix; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E6BC4CEF1;
-	Wed, 22 Oct 2025 02:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761099565;
-	bh=bkgKqKQu5VAs+o04k4pRDHaDrNwYZ7TNN0PJnstGpEw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P6skFHixOawFwhl98VgAmuIWpiWM0leim+twCMleNYAr3GZa0q5S9Q8k+tgMcdKGb
-	 rmIyorY90KpEoO96IdP9IU2nh9HKDEcXJ0BEy+ZuAkxgZogzyk0tw4WC1zX8RAyq3D
-	 OgF044q5OjW27nvfhTLm4/CUw9ClvXwyLQRwj6vtSj5pQrDDyC22I5R0Dz6cUdMPHf
-	 w9l9hO640BCXsGAwiLhFe5w/6lYbidAujKoaQ1wYPlzxEjFFpmx+K/lmpwuePCBxY9
-	 RQYMsQfkWgef6o00ysTLpTfcDzXrQ2C1IgP5UN1tV2eR4Sjnyr62LlrnB3NRdTPtE+
-	 KkBVZ/WfrGMlQ==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Cave-Ayland <mark.caveayland@nutanix.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] gpio: idio-16: Define fixed direction of the GPIO lines
-Date: Wed, 22 Oct 2025 11:18:42 +0900
-Message-ID: <20251022021843.6073-1-wbg@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <CAMRc=MeFZTDk4cgzEJNnkrJOEneFUBLwtKjkpV3-cLSm=xsxNg@mail.gmail.com>
-References: <CAMRc=MeFZTDk4cgzEJNnkrJOEneFUBLwtKjkpV3-cLSm=xsxNg@mail.gmail.com>
+	s=arc-20240116; t=1761099542; c=relaxed/simple;
+	bh=BWGUKDVRP/T6icTkv4fm1loBRi7OcK6/7pesRsu8/AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OlOMT6TmNXBCLhs2um6As3aQkrFVeHxGfOPDKnUhpWg2llSVxRCEEnj1RBt+WowGmN13Uzp4zsOaCKW+i04YDLIQFi2Tj1FePSJLLVYhdHYZmms7I06Z9NNQB1xykxb7uxGflfAsa2C0fk1iA2fIJY6/3W0H1ugkqjZ40vb0dzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PwDZScFN; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-795be3a3644so52140616d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:19:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761099540; x=1761704340; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Unvmh2ruzLsZCnmE4tSnjjhwCv09SGt96yN+BEwTbEQ=;
+        b=PwDZScFNJSsGEOaj1xIRuK4RT1g9MtQgbeSzbkj0NNZ1tTXxJmjbnn0zezdMpmhgoH
+         R4VwSFa5XJAK4Mb3bG+nEL4C3tAOucCgYE7ciRofpjnUQeN9QuJkABUL4R7TTvPszR6R
+         3jPDqO6TjRavB8IsxGtdKZNccAK8jcfNWb3EHftki8rKcZ2cRb8STlPuyRMH6sYDy9oG
+         nv0T7r5L934UsPGRUzpq7IhY8HIg9bkeT0cHnjbZMuGAaJK/oBbCUaj7teR/i90ktEZ5
+         +9x3L+f527Y8rffx0QtraSyx9+MjcMydNsk+01YPFPoxtbZhwr3jqaE4HVHeqIpPjrtS
+         2DjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761099540; x=1761704340;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Unvmh2ruzLsZCnmE4tSnjjhwCv09SGt96yN+BEwTbEQ=;
+        b=uC8d25Oi8Boz8O//DxZZYYUfweQjtUqweVeOkk6ecxBGdjS0kS1ht5x3o/oLgZE41R
+         o+BRaTx5DIPjQeODBJY+B2Mzu1l3qbAS1C3exlQ7Nwa4aUZLFY7rgPxUZHjgL1u8XvPB
+         Wn9U31rfUD2qeOlo3qtfG8FtI6ywFiWnLleK7PdD/x+QznNWC+ffwf7JsqYw9ujSDDlk
+         WKv34UeMZiNCouxhz0b/shayj1WmPgezaB1T4fI5KXYXq7hot5E1jhxoH4fJov3ljF/U
+         PgYP1kUg5yjxBDDcC518s3wl2Z8ty5JRJd4t8gDLWv7W55wNIDXTdrsNBNa9zSeVbb0M
+         B8Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFhs6PZxWVrthX5YwBazPFHIUNQcA5bODeC+hRodCtFx65VALh77SLUyxEtHavoOark9W4jHYxVvGD3oQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxav++1yB73ESydQVREnVkJaISQrpIv3W9DzYuW8PMmgg3XvY2u
+	JlyzKXFOrxoXccwQBhaVAQQHWQ8hypUwc9FOkEq89+zbsXqymy52oGX5
+X-Gm-Gg: ASbGncv6mIBS0wSbmutA7Yl0HONB80kujacz7ZYZgby4r7z8ycHpIaW8sqvgcr4OWYR
+	xCJPKkW1N2vnrvc/vyGW1MeyrC1E7HDRAz32l6cofyXvwJZeYkdGVbNlU6d9HXGHvdY0PNS/ifH
+	kQMovqaziMQ7V8pb6WNrVVTFM/H71A096AaJY8itHHC8fbCtvy9I5ZDfJP9Pxo/d8hn7a1ezLQQ
+	iKv+HK9XYz/cjPncYe7FlxoksF0kZ0O63Y1V3T+KxdGk6xHzBDRVISr6M47JD1aK/gjU4EQguKT
+	dNW0LAAh8MrfISr4LERitrL8TrxuhbyWBLc2pMWALBPquzeELS/aUMumktPXcWLwI6ZGtk4gioJ
+	gQL1gWm7ItIBwEvhwRaTnKrAj2GSUapoiUh/Rf9h70PHifxO3jQ15C/78RHf2pxb8p6U4mqnV2X
+	/2SkX11kJ1RODpMU9C+A16T1sMQzwEr4Anu6BvBsIGhS3IGux8rQM62IOffZnady6lXPE6vRvwd
+	KtRcVE0Dl9nHfw=
+X-Google-Smtp-Source: AGHT+IEvJfWi+IobdsNPqzDQQa/e2phAlQYHRxKgL1tMIjSc01h/eT5CzWCXeeI5/w7EGpZjqLxkcQ==
+X-Received: by 2002:a05:6214:20e5:b0:773:b324:c5b2 with SMTP id 6a1803df08f44-87c2061dd4emr275271236d6.38.1761099539924;
+        Tue, 21 Oct 2025 19:18:59 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87d028afad8sm79485486d6.45.2025.10.21.19.18.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 19:18:59 -0700 (PDT)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 28828F40068;
+	Tue, 21 Oct 2025 22:18:59 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 21 Oct 2025 22:18:59 -0400
+X-ME-Sender: <xms:Ez_4aO2HGAp1Y6EcACQJuyGQzoiAUrz3P_QHQ3u1TXFsee0Svh5dmA>
+    <xme:Ez_4aNq02KJTuQ_T1YhqT1TyNekgtGfxghF6To7Wsi55h7Y8AuGtToBBeOkIrI-Mv
+    2CKbRI4L3FvVWP5_oZgFQ1lz4Yp2Vq5zu0tsILWomf6jPfdoOUqzw>
+X-ME-Received: <xmr:Ez_4aLUVX0GApraQjrlmWmLpN42szeNmt_Zfc5KYACV2sHvxlvIuMzewClutojsxVCiYH0SMLQZ-4iIbS9bwGWjThACDfC1V8fI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvfeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffei
+    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupdhrtghpthhtohepthhglh
+    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhinhhgoheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphhtthhopehpvg
+    htvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegurghnihgvlhdrrghl
+    mhgvihgurgestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhn
+    vgigthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsohhquhhnsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:Ez_4aGrdTWzaq1X7jktBUoZzase07cSqShQuZ-cxAli_eLzxNPi5JQ>
+    <xmx:Ez_4aCBa6ncaewMEyQpxWgXz49DOz06woOL8rOnzjkULyQHeRJX9yg>
+    <xmx:Ez_4aCiXQ0q0lq-Lv7chNn3xSGGn7QbdnmaC8rHepRY41scuC7hRWw>
+    <xmx:Ez_4aAa1NfUTC9pHVG4bl-J3qSfVwkxN4uSzVZoCxsocd7v1ZGk1Mg>
+    <xmx:Ez_4aDmIe4AoBVy7tZ6wEkjlyxGBf-Xn10HjkxUGa7kcQzuiKg7gPaAm>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 22:18:58 -0400 (EDT)
+Date: Tue, 21 Oct 2025 22:18:58 -0400
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <aPg_EnqRSqmFVdOX@tardis-2.local>
+References: <20251022114644.4437c2d9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3324; i=wbg@kernel.org; h=from:subject; bh=bkgKqKQu5VAs+o04k4pRDHaDrNwYZ7TNN0PJnstGpEw=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBk/7L498rw30T48yGLlj1+S+VOXS0yfcGjGadcfWdeZ9 szanj97a0cpC4MYF4OsmCJLr/nZuw8uqWr8eDF/G8wcViaQIQxcnAIwkQ3XGRnOdYm0p6n7Fk1p CbFX4Jfo0NixbPsaAf2rMVsT8y4JfeNlZDjXZtLPwqky4Yhn0Nydj9ZOe7D4m1mua/kTE3GrGZP WTWUEAA==
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022114644.4437c2d9@canb.auug.org.au>
 
-On Tue, Oct 21, 2025 at 09:21:38AM -0400, Bartosz Golaszewski wrote:
-> On Mon, 20 Oct 2025 10:51:46 +0200, William Breathitt Gray
-> <wbg@kernel.org> said:
-> > The direction of the IDIO-16 GPIO lines is fixed with the first 16 lines
-> > as output and the remaining 16 lines as input. Set the gpio_config
-> > fixed_direction_output member to represent the fixed direction of the
-> > GPIO lines.
-> >
-> > Fixes: db02247827ef ("gpio: idio-16: Migrate to the regmap API")
-> > Reported-by: Mark Cave-Ayland <mark.caveayland@nutanix.com>
-> > Closes: https://lore.kernel.org/r/9b0375fd-235f-4ee1-a7fa-daca296ef6bf@nutanix.com
-> > Suggested-by: Michael Walle <mwalle@kernel.org>
-> > Cc: stable@vger.kernel.org # ae495810cffe: gpio: regmap: add the .fixed_direction_output configuration parameter
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Signed-off-by: William Breathitt Gray <wbg@kernel.org>
-> > ---
-> >  drivers/gpio/gpio-idio-16.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/gpio/gpio-idio-16.c b/drivers/gpio/gpio-idio-16.c
-> > index 0103be977c66bb8d165c1c92123368be6832d120..4fbae6f6a49727df40f2793b42ca207d78ec272b 100644
-> > --- a/drivers/gpio/gpio-idio-16.c
-> > +++ b/drivers/gpio/gpio-idio-16.c
-> > @@ -6,6 +6,7 @@
-> >
-> >  #define DEFAULT_SYMBOL_NAMESPACE "GPIO_IDIO_16"
-> >
-> > +#include <linux/bitmap.h>
-> >  #include <linux/bits.h>
-> >  #include <linux/device.h>
-> >  #include <linux/err.h>
-> > @@ -107,6 +108,7 @@ int devm_idio_16_regmap_register(struct device *const dev,
-> >  	struct idio_16_data *data;
-> >  	struct regmap_irq_chip *chip;
-> >  	struct regmap_irq_chip_data *chip_data;
-> > +	DECLARE_BITMAP(fixed_direction_output, IDIO_16_NGPIO);
-> >
-> >  	if (!config->parent)
-> >  		return -EINVAL;
-> > @@ -164,6 +166,9 @@ int devm_idio_16_regmap_register(struct device *const dev,
-> >  	gpio_config.irq_domain = regmap_irq_get_domain(chip_data);
-> >  	gpio_config.reg_mask_xlate = idio_16_reg_mask_xlate;
-> >
-> > +	bitmap_from_u64(fixed_direction_output, GENMASK_U64(15, 0));
-> > +	gpio_config.fixed_direction_output = fixed_direction_output;
-> > +
-> >  	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
-> >  }
-> >  EXPORT_SYMBOL_GPL(devm_idio_16_regmap_register);
-> >
-> > --
-> > 2.51.0
-> >
-> >
+On Wed, Oct 22, 2025 at 11:46:44AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Turns out, this requires commit ae495810cffe ("gpio: regmap: add the
-> .fixed_direction_output configuration parameter") so I cannot queue it for
-> v6.18. What do you want me to do? Send the first two ones upstream and apply
-> this for v6.19?
+
+Hi Stephen,
+
+Thanks for reporting this.
+
+Cc Mathhew and Danilo,
+
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> Bartosz
+> error[E0594]: cannot assign to data in dereference of `lock::Guard<'_, T, MutexBackend>`
+>   --> rust/kernel/debugfs/traits.rs:64:9
+>    |
+> 64 |         *self.lock() = val;
+>    |         ^^^^^^^^^^^^ cannot assign
+>    |
+>    = help: trait `DerefMut` is required to modify through a dereference, but it is not implemented for `lock::Guard<'_, T, MutexBackend>`
+> 
 
-Sorry for the confusion this caused. It looks like `b4 prep --edit-deps`
-will add explict dependencies, so I'll use that from now on to hopefully
-prevent this kind of problem in the future.
+Could we make the `impl Reader` for `Mutex<T>` to bound where `T:
+Unpin`? Since `Mutex<T>` is structurally pinning `T`, you cannot use
+`*self.lock()` to overwrite `T` directly. And that'll fix this.
 
-So we'll need this fix in v6.18 as well because the IDIO-16 drivers are
-completely broken right now. In theory we could revert the entire GPIO
-regmap migration series [^1], but that would be a far more invasive
-solution prone to further regressions. Instead, picking the commit
-ae495810cffe dependency with the remaining patches is the cleanest
-solution to this regression.
+Thanks!
 
-William Breathitt Gray
+Regards,
+Boqun
 
-[^1] https://lore.kernel.org/r/cover.1680618405.git.william.gray@linaro.org
+> error: aborting due to 1 previous error
+> 
+> For more information about this error, try `rustc --explain E0594`.
+> 
+> Caused by commit
+> 
+>   da123f0ee40f ("rust: lock: guard: Add T: Unpin bound to DerefMut")
+> 
+> I have used the tip tree from next-20251021 for today.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
 
