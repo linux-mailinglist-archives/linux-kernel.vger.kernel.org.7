@@ -1,136 +1,204 @@
-Return-Path: <linux-kernel+bounces-864892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A753BFBC91
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:11:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCB1BFBCA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64DC83A1FE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:11:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6891B18C2427
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5BA341663;
-	Wed, 22 Oct 2025 12:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DF434217D;
+	Wed, 22 Oct 2025 12:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="lLl8SCmj"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="I2Tx7BWj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="afgs+hpx"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246F33F8BB;
-	Wed, 22 Oct 2025 12:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669C9340A74;
+	Wed, 22 Oct 2025 12:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761135086; cv=none; b=bDnFBJjE4AAZ5noqZDo/gflrQx42rMopZRQQ2gdqy4Sk+UnUhAbvfTre7+ATh61+APrGV8wvAW2vGNr9XTHRPbb9AvY7PInaSdmG1mY+iw3pRPzg5lERM1cOyhWCWUorvpIyZ9BpfvtGcGX/bnviTenL/xsqopYTeLA8fb42rlA=
+	t=1761135100; cv=none; b=c4Socs6UcM39QloVFhQEapAGJknnESFKZ45uSc1FHMoPS848wjOxVpyQX0cMRXP54PLtKEp9Xz6JQmDdO8cV8mdSIQFkmqY7+IHXT5sIW+pNYm6BRxUDY9lPGXW/CZRfbu2OFdHT635j9zAZg3pSYmsDoiMR1Mmv0h0TV0AkfeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761135086; c=relaxed/simple;
-	bh=tkrprbrk+8tZuog422XZG37Z2QXOb9I1chAizsk7NAE=;
+	s=arc-20240116; t=1761135100; c=relaxed/simple;
+	bh=mECsDdFjCrIKMYgGoxnHbPdtkOYxeUoa0WgtVRPLbCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QnZJwdDDDw391QRs/+vxcPISUDygWDZR3sd7pRP/NAdoeaL5sZhwpujkcwp4e3SXpAvZp+Ymyv6Hn7HdloPfYLCdAIGUAY/cP+8eqyGgwtaan26xfM9ckRGG3ewAPvtsLg5EsY/0Jd/SJLfC3ZftQU07hahPnmLPCfOUCfZ1XLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=lLl8SCmj; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 4E8631C008F; Wed, 22 Oct 2025 14:11:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1761135080;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8CZAyeo2gXZA3vhy5DvKfZKov9u9r0S6FpowockZMvg=;
-	b=lLl8SCmjEcJgaNs/QavwGsENCBBjhd0ueHRhL2T5VuXrVYy1VPEuHteLR1xhec/kADyaSo
-	OgvTVaBD0FJT3CXsUCxTZ13rA8uEPMI0MEB8NjG9fUOkUoGWRU6xYrf+MQ1QLSLKNRoxAW
-	9P8RfAs5qlvBAKWM1Aenp0tb2l63tSU=
-Date: Wed, 22 Oct 2025 14:11:19 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Fam Zheng <fam.zheng@bytedance.com>, linux-kernel@vger.kernel.org,
-	Lukasz Luba <lukasz.luba@arm.com>, linyongting@bytedance.com,
-	songmuchun@bytedance.com, satish.kumar@bytedance.com,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>, yuanzhu@bytedance.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, fam@euphon.net, x86@kernel.org,
-	liangma@bytedance.com, Dave Hansen <dave.hansen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	guojinhui.liam@bytedance.com, linux-pm@vger.kernel.org,
-	Thom Hughes <thom.hughes@bytedance.com>
-Subject: Re: [RFC 0/5] parker: PARtitioned KERnel
-Message-ID: <aPjJ53F8kBV0/wLH@duo.ucw.cz>
-References: <20250923153146.365015-1-fam.zheng@bytedance.com>
- <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
- <AEC34AE1-AEB5-4678-AC9D-39155E97D86C@zytor.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CAktgxk6WJQ7xjJQjsqGIF/c/nPLXW+fwcAUEbS9DEN4jd9vAlrUGXqMUjnOZffh27cB6t9YuqXrOaVKuWztQahkY7pQEw0JFUrGYPbauaC2VW1wwH4hW0CMcwJrDV0LycdpSKJ5msVf/9yG7f9lkpxCfI05f1kIvSqsoScyA1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=I2Tx7BWj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=afgs+hpx; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 71CD714001ED;
+	Wed, 22 Oct 2025 08:11:36 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Wed, 22 Oct 2025 08:11:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1761135096;
+	 x=1761221496; bh=qJPg3aLK9s15SicvkiJXtX8ZgHxMs/B0zeAkFcOouJE=; b=
+	I2Tx7BWjdjjc51baoFXGsWv5FhGrqOruRxWsrm2tX4xWlHc0kQrHSXH4cXtkPaXO
+	NbSj1cchh/toWayPSH4fL/F1fHSdiFq8kBL3ceEGxdQ0V/kl5eyaQBTeMailfuGT
+	3OokqFxV3rOfvJNPAEV5ePTWSFWku77jFs8VaOLDlHpJPNn2r9sRnWrg62Lro/DA
+	EEnhENzbHICBuq9lo+wbUTIh1J37DEOWG0NwgV9bYi6qseMvs3Nl462QzFbs5mvr
+	KCByhxSna6acnsjtTw6Ix76JxIKAeLSAlq9jZb5QFw0N3ZP2iCVMZIJXgOYS303t
+	y0MVhQGWKC2jg042sCZvEg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761135096; x=
+	1761221496; bh=qJPg3aLK9s15SicvkiJXtX8ZgHxMs/B0zeAkFcOouJE=; b=a
+	fgs+hpxE7/RGgKxOfdm++DvjqR69+dtu7L7KSqLObP44akuyURMZspBclVt4xbGF
+	7G+DOqX2GL3UuHAgFsyvlrZp1+9Hma1gxfy0xjXVqIjtaZPUxOXECnUHu3wiHoz5
+	kHZ4ak9XZUMF9mngp8E5N6SO8qnPNOamsD4+W/0AgG1LtIEJ7K6n6a+HagFQzW+P
+	PlaZXbrGhXD8KE+SeI3DPXv0g7vKWaVYG9NZOJ5U+x5BnxCwgQjd2Iwt6edpnGRF
+	EpV8Ml8RaiPFMCFFaM/obsZoNduWTMgKgPGwaTNrYjwNF6qzFfwRY18x5O7Wz3YJ
+	8l2JmPuP3S+27ugpbkPIA==
+X-ME-Sender: <xms:9sn4aGPTPm834jlamya7NAeigdJC3z38O4K-447PjZh7YTjwBISftw>
+    <xme:9sn4aF5xJ8VLHI8tnvWYe7K8uV-It0e_PsegPCt8iz0ZpnzySlpFTPeVDsFb_j8q1
+    U4Fz4mF1KpbWrVD0w_kBlwbeHSjlp8ER2gDTZFU17F0TY_j1VlrGg>
+X-ME-Received: <xmr:9sn4aNm--kaXzOyzb6gtQ05-c2zxNRLYIlj24oa878jKbKfYTV7RuSoeMxXSlEIne1QY2g33ZWyG5iswVOMhWKG6ACjaLnY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeefheehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
+    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
+    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeefheet
+    heekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhn
+    rghtvggthhdrshgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtohepphhrrggshhgrkhgrrhdrtghsvghnghhgsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepphgruhhlsehpsggrrhhkvghrrdguvghvpdhrtghpthhtoheprghnughrvg
+    ifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghm
+    lhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
+    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
+    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghsse
+    hglhhiuggvrhdrsggvpdhrtghpthhtohepmhhithhsuhhhihhrohdrkhhimhhurhgrrdhk
+    tgesrhgvnhgvshgrshdrtghomh
+X-ME-Proxy: <xmx:9sn4aFICyEvoFkLZuebjDM0obzhW197JCBKKHa3eLBdtZTSrpVIS6A>
+    <xmx:98n4aFRLzO8qzRPU6_HvhrrFR_aF2BkBPFusDxJ0ylHKlf5rd78z_g>
+    <xmx:98n4aKtJXjgz87Xy3APNh4oCit2x05Ov0249Ew5MDdZXatvtaVDTNQ>
+    <xmx:98n4aA-c2qwHenZASkOKgSp8ZL62ufiD0lw5czFj6fb0Z-J-bH-7Qw>
+    <xmx:-Mn4aC7AyMVu8uWSFzUI7Mwqv9APZmo_-oKx4w9rAlmyCsNMVCturHCL>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Oct 2025 08:11:34 -0400 (EDT)
+Date: Wed, 22 Oct 2025 14:11:32 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] net: ravb: Enforce descriptor type ordering
+Message-ID: <20251022121132.GD1694476@ragnatech.se>
+References: <20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251017151830.171062-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ss7tpEO8/hjYlNAz"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <AEC34AE1-AEB5-4678-AC9D-39155E97D86C@zytor.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017151830.171062-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Hi Lad,
 
---ss7tpEO8/hjYlNAz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for reworking this and making it very clear what's going on.
 
-On Wed 2025-09-24 12:01:52, H. Peter Anvin wrote:
-> On September 24, 2025 8:22:54 AM PDT, Dave Hansen <dave.hansen@intel.com>=
- wrote:
-> >On 9/23/25 08:31, Fam Zheng wrote:
-> >> In terms of fault isolation or security, all kernel instances share
-> >> the same domain, as there is no supervising mechanism. A kernel bug
-> >> in any partition can cause problems for the whole physical machine.
-> >> This is a tradeoff for low-overhead / low-complexity, but hope in
-> >> the future we can take advantage of some hardware mechanism to
-> >> introduce some isolation.
-> >I just don't think this is approach is viable. The buck needs to stop
-> >_somewhere_. You can't just have a bunch of different kernels, with
-> >nothing in charge of the system as a whole.
-> >
-> >Just think of bus locks. They affect the whole system. What if one
-> >kernel turns off split lock detection? Or has a different rate limit
-> >than the others? What if one kernel is a big fan of WBINVD? How about
-> >when they use resctrl to partition an L3 cache? How about microcode upda=
-tes?
-> >
-> >I'd just guess that there are a few hundred problems like that. Maybe mo=
-re.
-> >
-> >I'm not saying this won't be useful for a handful of folks in a tightly
-> >controlled environment. But I just don't think it has a place in
-> >mainline where it needs to work for everyone.
->=20
-> Again, this comes down to why a partitioning top level hypervisor is The =
-Right Thing[TM].
->=20
-> IBM mainframes are, again, the archetype here, having done it
-> standard since VM/370 in 1972. This was running on machines with a
-> *maximum* of 4 MB memory.
+On 2025-10-17 16:18:29 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Ensure the TX descriptor type fields are published in a safe order so the
+> DMA engine never begins processing a descriptor chain before all descriptor
+> fields are fully initialised.
+> 
+> For multi-descriptor transmits the driver writes DT_FEND into the last
+> descriptor and DT_FSTART into the first. The DMA engine begins processing
+> when it observes DT_FSTART. Move the dma_wmb() barrier so it executes
+> immediately after DT_FEND and immediately before writing DT_FSTART
+> (and before DT_FSINGLE in the single-descriptor case). This guarantees
+> that all prior CPU writes to the descriptor memory are visible to the
+> device before DT_FSTART is seen.
+> 
+> This avoids a situation where compiler/CPU reordering could publish
+> DT_FSTART ahead of DT_FEND or other descriptor fields, allowing the DMA to
+> start on a partially initialised chain and causing corrupted transmissions
+> or TX timeouts. Such a failure was observed on RZ/G2L with an RT kernel as
+> transmit queue timeouts and device resets.
+> 
+> Fixes: 2f45d1902acf ("ravb: minimize TX data copying")
+> Cc: stable@vger.kernel.org
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Is there a good resource on IBM mainframes, prefferably written in
-language that can be understood by mostly x86 kernel hacker?
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-BR,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
+> ---
+> v1->v2:
+> - Reflowed the code and updated the comment to clarify the ordering
+>   requirements.
+> - Updated commit message.
+> - Split up adding memory barrier change before ringing doorbell
+>   into a separate patch.
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index a200e205825a..0e40001f64b4 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -2211,13 +2211,25 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+>  
+>  		skb_tx_timestamp(skb);
+>  	}
+> -	/* Descriptor type must be set after all the above writes */
+> -	dma_wmb();
+> +
+>  	if (num_tx_desc > 1) {
+>  		desc->die_dt = DT_FEND;
+>  		desc--;
+> +		/* When using multi-descriptors, DT_FEND needs to get written
+> +		 * before DT_FSTART, but the compiler may reorder the memory
+> +		 * writes in an attempt to optimize the code.
+> +		 * Use a dma_wmb() barrier to make sure DT_FEND and DT_FSTART
+> +		 * are written exactly in the order shown in the code.
+> +		 * This is particularly important for cases where the DMA engine
+> +		 * is already running when we are running this code. If the DMA
+> +		 * sees DT_FSTART without the corresponding DT_FEND it will enter
+> +		 * an error condition.
+> +		 */
+> +		dma_wmb();
+>  		desc->die_dt = DT_FSTART;
+>  	} else {
+> +		/* Descriptor type must be set after all the above writes */
+> +		dma_wmb();
+>  		desc->die_dt = DT_FSINGLE;
+>  	}
+>  	ravb_modify(ndev, TCCR, TCCR_TSRQ0 << q, TCCR_TSRQ0 << q);
+> -- 
+> 2.43.0
+> 
 
---ss7tpEO8/hjYlNAz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaPjJ5wAKCRAw5/Bqldv6
-8qdmAKCq9aYQRiOyTwhd79KoNue/iyLH+gCfclVJI8E1mVVDi3nacu7Cjp9qv7g=
-=enlG
------END PGP SIGNATURE-----
-
---ss7tpEO8/hjYlNAz--
+-- 
+Kind Regards,
+Niklas Söderlund
 
