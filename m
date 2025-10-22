@@ -1,132 +1,92 @@
-Return-Path: <linux-kernel+bounces-864591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFA7BFB211
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0B7BFB217
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 11:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DA124F903E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:20:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62BBA4FA4A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 09:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EE331329E;
-	Wed, 22 Oct 2025 09:20:13 +0000 (UTC)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5073128A4;
+	Wed, 22 Oct 2025 09:20:42 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A398311C1B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A27B2F99AA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 09:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761124812; cv=none; b=CRXex5mllZcVz2hSVUf1UfP9ViTad3Av5kup4onL36hCJr3tbysAEVpAQNrdpmZOMDt3TfVYQPsCO2mvHQjGbQ54b3QiF58jphNtFUYFjUZpsTtbF7JBA0jCweb5iN8T34nfhF5lmhWu6DG08lBeOKxl7ql4/c46IwE2Yq+FY/k=
+	t=1761124841; cv=none; b=cHl+yibpfYtZZ8MyAOx18E2C6ECA8LwyscIISCzjyFtCu14Kk2dQQm4kWuGHMkoX3MM7Fbow5lbHfHcaofYV98DnTHJ11ZV4mV3PsuUQ3Xj0KI7PrWxnr0lHe7PPKIg5we0PqEby1REHJx1R/IA+kZhS+NwWnLKHA1VDiz2LxjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761124812; c=relaxed/simple;
-	bh=G1iH8NrfXxiIzi56l5MFL/KIcTZCh+2ywldp0HMaEXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WETWMr7+AAfl5KYFOxMXDOn4rHADb12w0dq1XZmDxetHr34ul1B/aTSf6zNbfJfI0T9wMoLmBU1KCv2TRcC+tdg0dhCo4qWkpwJr0gNzQ49yKzm4keuGijgNYzGDAkz8R8dn6tojjPtQgEV7w5FEjHFBuXbdDM5XyQ7NIVFg2Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-932e88546a8so511454241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:20:10 -0700 (PDT)
+	s=arc-20240116; t=1761124841; c=relaxed/simple;
+	bh=og81uqBUgz5EaG+0WapXOEXJIvjR7PWSLxAz2EYeLUQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EwGnNlmWGUDxqTgPQuwHrzrg9gXVoW5lnbbgd9lxn+x/Z8ohWtzZtlvyUbVLuLr5cipL+cuQbrCfXFnUB5u9//5fN8bD2+BWC6ildc95NY7DkH6u+B4L0LVw+hDZwQqNr2nwNqkFmONsUUkidLHWAiG2NHEYXtFpYXSMK5uPkzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d082fc3dso136093185ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:20:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761124809; x=1761729609;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SzTfM6hHw1WxEGlErp6V2knAaHaB2xPtuGLl169CGwA=;
-        b=K+nBJLpcjX9qpW0Ts997Cg1/W24jzJbkMDlbPt1WPBu8e/4C9LJopZsfegiVZ9dQG0
-         OK3E1KMq19ddUz/hz0pOjkQDfqgFm3CvPjwXDFvd8va8wg/pQ/wNY4T9lx/+t459PcNr
-         8cUMin7yJIjX0QVXJlGBVnEGubfJDP89jPZfxLy66H/lRfOz9hi7/XImG2Y9PMeMl1c/
-         i3gYBkYqsyP6EH++gefMH3kjYe4mWnqK7ITeDPrv6OzzGRNKdHB2mE6uOA+morujtQkp
-         okGh0JnsqVEbw+ke+wFiqLDSzcFMlIt/4okalDiAGloohTOQOJlluGq2sMlnLJ7uSz7+
-         NBOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjjL5262/daXgTW7sL4ClcMP1T0j14bYHkFNcDzlJt+1qmTIjRRbSPsSAhBCZbqyAfKiUvL1ZU17YFzHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/wwFfb3IDAba3wFnyrs94Tpned8CwPDr1t59Eu7rY0/CwtEf2
-	p0hT45j1I+QI3cAkmiXfNZBq2yI35J4fsp4jXiu6mJjtCpjgHkqvxZUwdsPsdjVG
-X-Gm-Gg: ASbGncvk65DlQ6IEF2OmrsCzN9prU0ZO8rUeHAE+I1buiMKdD5AT3JulGNYQtm+o8ma
-	yPF8VeQ8G6o5EP7nBK5o6BYwisPWlxfg4fTmQe12yG7IRTRH1w0Kr27Lroc3Iw9Mv266QjwtMsf
-	DUSptDj3bWH/ewz+sey9+0rfSkb35RDS2IaeiIcTxiuUhzPn2wIoy2Vh1z4IMuxenQFeEOjWLOy
-	TmVArFFjTpoxvo+MNSOznkMXfcTcQWgKs1UdJwXZ9aqRvgLpztuJMslatLizQo2T1Gdv+wtlPEs
-	Vz1ideRbAfLwNECsnIrtOj2YoCsx2LIBXEypp1Lvalc2Dhz0zbOY+o/Hr6D8DfZjNayf0PNIykX
-	rHgAEGhqpAiwRWDDzo1B1Lbws5e7Cd92nIAO86P1pbzA8VyfWVSvd1uRDAO14teMKV5cc5j/L0m
-	tFK/J7yy5N/SiOgg/PP0ATnx5k3hCxPHnODwes9w==
-X-Google-Smtp-Source: AGHT+IFDx3GaRZF4HqV1tam76kzZEd2GNLDj4GoULGlZedkLnFdkbmLHxje1TMQ/AwD4jlWcm8N6Cw==
-X-Received: by 2002:a67:f04f:0:b0:5db:2168:77bd with SMTP id ada2fe7eead31-5db237966ccmr210156137.2.1761124809546;
-        Wed, 22 Oct 2025 02:20:09 -0700 (PDT)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-932c3da29f5sm4396218241.6.2025.10.22.02.20.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 02:20:09 -0700 (PDT)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5d967a34203so748199137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:20:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVxGPL8IRH2AqQlnaPRGJxzA1oYo6uCDo07X7hUILLjoCM3uz1tm8y8vA5SbckSN5NQx7enbsISdZ4d29Q=@vger.kernel.org
-X-Received: by 2002:a05:6102:81c6:b0:5d5:f6ae:3902 with SMTP id
- ada2fe7eead31-5db23866f45mr206045137.19.1761124808623; Wed, 22 Oct 2025
- 02:20:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761124839; x=1761729639;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=90yOoCa4BFbTwgoSk02jTAOXOk2iWof/2nKMp5Vf6Ik=;
+        b=GfVH45Q7huoCdv/cM9fHFzT4H7uTz5JGpJB5i6x7W8vDxC8nnukrqHlX3uMXWyREvo
+         uwTfp7IAwHv5LqYZOc/9THb/2BIcyKy20cF9cLEZXFEyaw3GtFs+mIBRuwfNDvVIwcs+
+         BDNzTGhu/BpNMDAUmTGmPUJuf3tVYn40sHK1f4+Oh0wsDNCo3pZb10Lw/qIAO7fscEvX
+         EHYF7v5N6XaKKk8drI6DqpK1mhJ2eLGnRYSRNCrPTf09T8I0xhiHrN18KwVNgLdfLlO8
+         ktPrvhbCjy8y4eYIPLNhlE0C/lyQuHcTlKcRhMSAD5vpLSmssUrX/rwdcWQ6DF0R1IhF
+         6eJg==
+X-Gm-Message-State: AOJu0YxqwyDPaj7Vd3c+quOBr7xrvsaPpWoy+jUwpMbwrP39hO//J7xS
+	5BujF9ycTqAe0JcZkTdskOoe6xC64VlX9PZ+kPuIM5CJFTWksWjArbvZgkUh4KpAABuwz+4Prtb
+	TLnJjv4TqcC4Ei+dqEcle2mv96nAnfAbUwZ4G5aO0bg4chRTUdhmahT/S6Zw=
+X-Google-Smtp-Source: AGHT+IGkDxoOO6lpPsVpOkkn94G2nfNDVd5taDUKuKUIWaLso8AozHBW11IPAI0h7dBtIv3uSjpSDPEZUL4noZnieXdhMFsEZDz1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022073800.1993223-1-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251022073800.1993223-1-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Oct 2025 11:19:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXqXGPfQNB3SUQkcsHkaWhxjfN2KG0CNeYdoKwNAT7dYQ@mail.gmail.com>
-X-Gm-Features: AS18NWAO1T4xKgR0pZBbqyleSonlF8IGxjXfESnWqWSdqh6DHcID-GTrRDaxhws
-Message-ID: <CAMuHMdXqXGPfQNB3SUQkcsHkaWhxjfN2KG0CNeYdoKwNAT7dYQ@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: sh: rz_dmac: remove braces around single
- statement if block
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, dmaengine@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:2218:b0:431:b1fe:147f with SMTP id
+ e9e14a558f8ab-431b1fe1670mr68989245ab.18.1761124839647; Wed, 22 Oct 2025
+ 02:20:39 -0700 (PDT)
+Date: Wed, 22 Oct 2025 02:20:39 -0700
+In-Reply-To: <68f659cd.050a0220.91a22.044c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8a1e7.050a0220.346f24.003c.GAE@google.com>
+Subject: Forwarded: Test patch for KMSAN: uninit-value in sctp_inq_pop
+From: syzbot <syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Cosmin,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-On Wed, 22 Oct 2025 at 09:39, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> Braces around single statement if blocks are unnecessary, remove them.
->
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+***
 
-Thanks for your patch!
+Subject: Test patch for KMSAN: uninit-value in sctp_inq_pop
+Author: vnranganath.20@gmail.com
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+#syz test
 
-> --- a/drivers/dma/sh/rz-dmac.c
-> +++ b/drivers/dma/sh/rz-dmac.c
-> @@ -336,13 +336,12 @@ static void rz_dmac_prepare_desc_for_memcpy(struct rz_dmac_chan *channel)
->         lmdesc->chext = 0;
->         lmdesc->header = HEADER_LV;
->
-> -       if (dmac->has_icu) {
-> +       if (dmac->has_icu)
->                 rzv2h_icu_register_dma_req(dmac->icu.pdev, dmac->icu.dmac_index,
->                                            channel->index,
->                                            RZV2H_ICU_DMAC_REQ_NO_DEFAULT);
-> -       } else {
-> +       else
->                 rz_dmac_set_dmars_register(dmac, channel->index, 0);
-> -       }
-
-Seeing this same construct being repeated three times, I think it
-would be good to introduce a helper (in a separate patch, of course).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/net/sctp/inqueue.c b/net/sctp/inqueue.c
+index 5c1652181805..8c0a5e23bbb9 100644
+--- a/net/sctp/inqueue.c
++++ b/net/sctp/inqueue.c
+@@ -120,7 +120,9 @@ struct sctp_chunk *sctp_inq_pop(struct sctp_inq *queue)
+  /* The assumption is that we are safe to process the chunks
+  * at this time.
+  */
+-
++ chunk = kzalloc(sizeof(*chunk), gfp);
++ if (!chunk)
++ return NULL;
+  chunk = queue->in_progress;
+  if (chunk) {
+  /* There is a packet that we have been working on.
 
