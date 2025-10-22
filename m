@@ -1,103 +1,145 @@
-Return-Path: <linux-kernel+bounces-864455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5850ABFAD5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105CABFAD87
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6E7484DAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:14:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E373BF080
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E73305078;
-	Wed, 22 Oct 2025 08:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B826306B06;
+	Wed, 22 Oct 2025 08:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1VWLxkLz"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLD4BJX1"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C1A304BB3
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C150306491
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120876; cv=none; b=eS7tZCFz/hLINH60kutI4+OJlpaLz/r/D0WMw9fyuNHJXBFhjD1KqPZxKg8TYT+/FUX6DnpT52PIW0FSIbLOUMHS6wevp4tficDdaLFsvOPnCSsCV7dFQevPE8qGdSY97lrjLZ5CiyDCVphllkGByn9bF7IVicjjcLK5WJw30w4=
+	t=1761120902; cv=none; b=ca6aG2TBaoa/1tkHwVU/yCjA7iFFspOUbW7sUyLPqFWkSPi+21bQPCVCfqWyuhm/LHUM31W2j1/9POUBjqd13fBfPUwv98/JCxeRyJipQcfSRSuoSi1JHaitObW10u5Zm/OoUR5P3FwSBJ8PqSgg5mVEDQSHWdnPeB2QnkYFC0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120876; c=relaxed/simple;
-	bh=nDmcqom4nRH1kg8OrqhgJ/APXOzAvqbtVdtI9YTYb/w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dvrHR2nVD+pVMlonaF+skDWqQ3WBvMtRguo/tk75VgtTM2fFgl2EcUXa0GPAv3+I5500kXFQvvYxIbGAqRo7W1nfEjOFV36YeGmtqVdduDfHZm12fjdoCGFA5PYzZNOKTXpan+bKK/ALeK8HW23i4vP3OH1KHioLRPDWBxP/aiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1VWLxkLz; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-471125c8bc1so72735195e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:14:34 -0700 (PDT)
+	s=arc-20240116; t=1761120902; c=relaxed/simple;
+	bh=cyBpFy8UVkMelmryAwIuaBdqPxaLwG651keCJoXKZYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iqqjCrdLWIlOw/H8mSYA2JKxaWD8uZGgRCwF3BjngqYu5u2ABFXjC01SdxOjSjJgp2vXu54Bk7a/5icndmzJIyLw1BCV8zMn6PscbD4g1YfrVPJNg5IbS29uidcgkYw90OloUiybgVuY4rMGjr9iKWQTzQQnsti8zpMsVGEJTn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cLD4BJX1; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-88ed6837e2eso1373318485a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:15:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761120873; x=1761725673; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ogsn3X1mobn8/e1uiGkS9XQJsz3R6ivSIjiDXFm3+Q=;
-        b=1VWLxkLzd0y2N/vipoDX6gubUhI1J9Uq+NBzcVpmjU45fBdPQ8wI7HsotLqO/dEe5u
-         GxAfjYXzFhEgPDw6EhCb4UqLLTXUDoYJW7SwvkJp6z9u51+lmtEUJ8UMk4H43XMUZJjq
-         TM7udf/bDj1U2q8zPZel4UBB4olVLrWlnAiTjky8ov21Nv2uFzNJwGpsgtSbcdBoyyth
-         88zi6VAQZEH7KwLwnVRcPSKQjqX23KnmpDQZ8pwzbk5ry6Ypu4tCEqtp5TBtXeJ6kW6N
-         3KZcNHsOR8lKcqQhu0Atc1DWEvcyL6O3aRVi0a8wDuV1el91WWO8Guo702K483Qb8jkP
-         YG+w==
+        d=gmail.com; s=20230601; t=1761120899; x=1761725699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kc+KKthH3EZzvZbA3/zNivfsabMNFBxOZip1Q8c96nE=;
+        b=cLD4BJX12pa6PX1uQH+dN3e2c54eYJ8Lh3xC2yQ7f+7lfdQdRiwlbjtCYSK+oiI3LK
+         CX5B0vX8T9aLou18D5/2xMwuuBMn3CRdugJneFGjlK8bwHi77gNUfx4+pnTi+mm7Kx5Z
+         8h0pCDfjaNH6X5+p/Desd7wWiotvFMd8Xa0LiEKzv/+USFU0QwiqJ1cAqXgEBAfuAEsu
+         /GnGu9EjwvZPpRJ3F9jnCtuJOMHGwzGMdkUICaDmvO99TErgmdbryQgxP6850UwdwRjf
+         FmzMWIuqyDjenqVGElM+M7VJUK0asHkfcctX/8ctR1IS8dHhKW4ONYOD/Cl0XGzbD/XK
+         MhNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761120873; x=1761725673;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ogsn3X1mobn8/e1uiGkS9XQJsz3R6ivSIjiDXFm3+Q=;
-        b=b6PfFD8u9oPxltR/0CoiR+QNUiK8DatMfbTDPUoouIEo38pU5+rCQKJaOwn7U2tYm8
-         ZPDt21ZXdGG/efhAx5Fy77oxwFOV6KfFLiDTxjtJq5Xu8qQQTY5aZ8GRUeugDR5BHlUm
-         yyVTizjCMRMkQUw0jRaH7eaH8S9PR6UpVYOlJgkhW4/L34okrD9oE+rqkxlpW7HKUl0U
-         bYGpLHjMN5YmERPtU+3E+v/XtDJ+CPQZ0YfzFvqSJMOWvLt5FTJZ77mYFbqp8KRuhjNt
-         G/uwmSSkZ7jGKj+OUjavETvyBcgM0qiWMqBhOyu6GwMRMXkmlmbhdfBSuqCIsT0wyZmu
-         BT3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGZlNuxe9z5+ifKGU2bFv4rQsmqRg40UKtOxfg/ytCKCH1TCUag1O+qVqjxjYyHm699x3mLb175FDLA5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSC4DZk3cHr/uRxLFHeiadz5P0akBkeBeqFuj9ZyB8PxrxuEYD
-	xusSvQqUz+CsuEztHFtTDRtB+9tTNiKF+gCI8M6FLeYNlvUC0B6OWEfFFvQzYVeB7/hHqBnejPg
-	C+SaOneNziCOg7eUogg==
-X-Google-Smtp-Source: AGHT+IHVymDPMVFRxtz+pEpsqCDA+1l2F++eBCPDtyYxS79P5clFYGmutl6mMG3GyLc2Iqc0bUnGJy61wcbICgU=
-X-Received: from wmwr3.prod.google.com ([2002:a05:600d:8383:b0:46e:1f9e:6471])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3b03:b0:471:15df:9fc7 with SMTP id 5b1f17b1804b1-47117906a72mr141554885e9.26.1761120872959;
- Wed, 22 Oct 2025 01:14:32 -0700 (PDT)
-Date: Wed, 22 Oct 2025 08:14:31 +0000
-In-Reply-To: <25717cdeac76376fbcf7ba10a1b2e855800d3778.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1761120899; x=1761725699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kc+KKthH3EZzvZbA3/zNivfsabMNFBxOZip1Q8c96nE=;
+        b=CfGWh/+CV8m5D96Ol6X4hNRi7lNHpxeN21ery66JWaxEnOC8LcZYbxmxoOym4m+CnX
+         HhuP2GgBVIN05Dnrh4ZWsk+48dl7p7QeqIlH+8Wd8a/O5YYNNRDeaYZv52xVp7GPLOvy
+         cpuVUbhRhEPyXYo8+W7uR5t/tiAdJ0+RgjnjAqfCsnNeDcjt81EkwXo3mhpJ+W22TQPg
+         Zut5RwoDRr4qBrPbfL+8wRTzGvglqpZ9MPlnlAKuLKVHBlH5p9ZwSaj/yWXN2Bfewcss
+         sASOpPAYlkkr/098HU1tHQBAF0MXFLrvO2wi1eM7aUgd8IszwdZgr58XAJLWDgpRFHkO
+         v9aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrDlE1bxx24JodTzVqSMDCQtZSZdEd7DjCeGVpzzTR/Q6owQMEi/yi7xZfZlJAwe0Nb7g2Q9BvFgY23ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyxKW5su8zLkrApsJPzB/lpKzStPSNJgnSKGMKM7mjWCVgVcNF
+	NU7BhjnePpOMptSnV6c/uGauX72/QV1+sdZ62hfl9DTc2vAyDUCuw+f53GdANqbVLUEv17gLTwS
+	xXPrJMueUIa7EJKRhdyLHGLmkL0G4gZ0=
+X-Gm-Gg: ASbGnctsacpnpPsD3W6CTIys4wjgd22t5C4Kujfti9jxM17n8tibMDZbt2OtjvVMq5J
+	LR2ByJTh6suh+IoM1RS+tUv9cT7F+XM5uITGhUkFNviMG4usrNbrnuxDBCE/Ft5sb9gL3ItCY6+
+	UAYrLmvOpg5v1/3O3NDdsYrzvuUaKx5HIsni99S8+c0JDflQjsgDWU59LMtTWpaiBjrs9YVsimV
+	Kaq+q3cwzAPmD3xTU+4XHic/TiBPXqsA5qvE1+baUPqiAyXQRipHlTmq6Aj1uQunrWv8W1ZEvBJ
+	ExGS9GQc725JexLP
+X-Google-Smtp-Source: AGHT+IEhER7MQg3744Yoz4/uML1arKqJYpMl8e42fCr1hdvltEI2c6JTn5tM+Uei72z9xIzjCvWCn/SXFXsGhGVB7zM=
+X-Received: by 2002:a05:620a:471e:b0:892:624f:7f71 with SMTP id
+ af79cd13be357-892624f82b4mr1714089585a.88.1761120899131; Wed, 22 Oct 2025
+ 01:14:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016210955.2813186-1-lyude@redhat.com> <20251016210955.2813186-3-lyude@redhat.com>
- <aPJDGqsRFzuARlgP@google.com> <25717cdeac76376fbcf7ba10a1b2e855800d3778.camel@redhat.com>
-Message-ID: <aPiSZ_CGLD4o755q@google.com>
-Subject: Re: [PATCH v4 2/9] rust/drm: Add gem::impl_aref_for_gem_obj!
-From: Alice Ryhl <aliceryhl@google.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Asahi Lina <lina+kernel@asahilina.net>, Shankari Anand <shankari.ak0208@gmail.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+ <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+ <87a51jfl44.fsf@DESKTOP-5N7EMDA>
+In-Reply-To: <87a51jfl44.fsf@DESKTOP-5N7EMDA>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 22 Oct 2025 21:14:48 +1300
+X-Gm-Features: AS18NWBLKZ7qT2Y1R89WO7GO8UtVmSMjKHbsauP0TH-Q88ewqIZQTW6sMd0AXws
+Message-ID: <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
+Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 01:33:00PM -0400, Lyude Paul wrote:
-> On Fri, 2025-10-17 at 13:22 +0000, Alice Ryhl wrote:
-> > 1. Annotated with #[macro_export]
-> > 2. Export with `pub use impl_aref_for_gem_obj`
-> 
-> I assume you meant pub(crate) here? (Since we don't really want to expose
-> impl_aref_for_gem_object! to users outside of the drm crate).
+> >
+> > static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
+> >                                            unsigned long uaddr)
+> > {
+> >         unsigned long addr;
+> >
+> >         dsb(ishst);
+> >         addr =3D __TLBI_VADDR(uaddr, ASID(mm));
+> >         __tlbi(vale1is, addr);
+> >         __tlbi_user(vale1is, addr);
+> >         mmu_notifier_arch_invalidate_secondary_tlbs(mm, uaddr & PAGE_MA=
+SK,
+> >                                                 (uaddr & PAGE_MASK) +
+> > PAGE_SIZE);
+> > }
+>
+> IIUC, _nosync() here means doesn't synchronize with the following code.
+> It still synchronizes with the previous code, mainly the page table
+> changing.  And, Yes.  There may be room to improve this.
+>
+> > On the other hand, __ptep_set_access_flags() doesn=E2=80=99t seem to us=
+e
+> > set_ptes(), so there=E2=80=99s no guarantee the updated PTEs are visibl=
+e to all
+> > cores. If a remote CPU later encounters a page fault and performs a TLB
+> > invalidation, will it still see a stable PTE?
+>
+> I don't think so.  We just flush local TLB in local_flush_tlb_page()
+> family functions.  So, we only needs to guarantee the page table changes
+> are available for the local page table walking.  If a page fault occurs
+> on a remote CPU, we will call local_flush_tlb_page() on the remote CPU.
+>
 
-We will probably need it to be pub later when we split up kernel, but
-feel free to put pub(crate).
+My concern is that:
 
-Alice
+We don=E2=80=99t have a dsb(ish) to ensure the PTE page table is visible to=
+ remote
+CPUs, since you=E2=80=99re using dsb(nsh). So even if a remote CPU performs
+local_flush_tlb_page(), the memory may not be synchronized yet, and it coul=
+d
+still see the old PTE.
+
+Thanks
+Barry
 
