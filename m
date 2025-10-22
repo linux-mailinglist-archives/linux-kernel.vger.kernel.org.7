@@ -1,183 +1,164 @@
-Return-Path: <linux-kernel+bounces-864918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09452BFBDAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B4FBFBD95
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED2818C4904
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2295018C7FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7825D344043;
-	Wed, 22 Oct 2025 12:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029BC343218;
+	Wed, 22 Oct 2025 12:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="STwHVQrJ"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010011.outbound.protection.outlook.com [40.93.198.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3BVQuZy"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054B87080D;
-	Wed, 22 Oct 2025 12:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761136243; cv=fail; b=K/IB25ueayA2X4h/qJyrVsQ21GT0uJlcyVOfFb58CqoNyokt44YJlgF10L0xQpShWa/TH+upw/aW3MHA6K7gsjeqxM4UY3lbi66YTU8jmzke1Mf4ErhQymJRqiyyJEnSVDA7qvZQw8xwXRw3hx2T8Rq1VyO3OIhh6+ye6/WWA90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761136243; c=relaxed/simple;
-	bh=Hujk4fm4dX23g6LYyJTf/2VblM8mPD1hmUCikesM4Us=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iacIomtTr6SPiwEjrachN1p+Gl9Co4tU9wfXNWJ8NrzX7eGRvm52IkWQe53QPcEN6/aNEgHicGCwg+4ekMIWxrlAdqmaYwXpOK1vedlJAWzJ1K8DflqrbPgoAnZdTXiQmDAO/MB2BPMl20B7S2hLb6njfDNAwl7HK4Yz5nOfjK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=STwHVQrJ; arc=fail smtp.client-ip=40.93.198.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uFI1OHbXhjbm3Pg5kW0ZgIcXBTZJNFjrWH1wVtMPZndgHrluvq/5hNyfdNGlugnmWZo7ZN5Ot9OwVX0TuponofjXV33lhrEFkgVjbNKrMH9kdxIO/1y53IhFU5aIe6f1X+1Na9eU9CUXpkxGkNfgtM2mSfxWGz6xdSvIYhNjwmSA3u8+qLFKOa/exXnM+6ZyDaOAzVIX2WJ7vUJaiLtx1WC9Kse2KMf9HOCDpZywaE9t2+uw1UNyYROAWge4+Z/Zv3axvQiZco2xIbU67Da+sDnaKY2iZHb6awTcN1FB7+zMrrkIOmLXFelHXAqzE4f1l+z1dGMVu8Bd0Kz3teMI1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NU4H4a2TXrrqo6pnsifNWSnLe++V93v70E4WeDYFHwU=;
- b=gPm+60iHWOEBeig1wQycaqziORaeBTPCnUeo6UizjojLntNc2Cf3BU9tGG8hfzpuVudVWQ3fjgJEDxGegVxi/DgStOejtcZImtHSbPdLJXi01b95LfmfyHmfgVBmSt4LBmHUXCQWRhtEqJ9VsuhQml7syIk6e/OpXowBpRA1ikedp5/ApMWZCt44sgG4JgJVfU6klbgNJz16x7PEuWE2E7AURol6M57t5YIR0wz9eHENmutPDXJJv9yG5KWTklm1AHFoxekWQ0HWQcw3CFty4LgkPykbgt9ucotdnsGwoAohGKM3AbIQOGjsvbjVeGb6Vy92i2Vow0XSoPEuTdIrFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NU4H4a2TXrrqo6pnsifNWSnLe++V93v70E4WeDYFHwU=;
- b=STwHVQrJ4l15ZoAoiC7EbqyBSv+sc77pFx7DldgtiW0Y75OUv/dZRzVBcYFO5jTrZ8n0SraGle1nYlbJU1WYJXgyfSCDfSeb6gy0/0iEpZzvlMQwDdKvoqiPU1vFCpG4YrWz224LOkj7KI1MrUpRZBQkFie8eWJH05Q3o8A1XXtD0SEA64KNbyuI7Lk86jkFAy0we50c0DrtQ6IXZ6v4XeBhV3DHaq+Sg9YsGS8YlegUDbFX8f0sqWZEwDo6iMNwOOeDrGgJlVX54q0l5fpMK1k0e3lsAlZbSKAZYa0jWfQxgsdecNPw/3WSOjj7CECxMLvSnYvIS15SfNLsnhZeOg==
-Received: from PH5P220CA0007.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:34a::12)
- by DM4PR12MB6012.namprd12.prod.outlook.com (2603:10b6:8:6c::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.12; Wed, 22 Oct 2025 12:30:38 +0000
-Received: from SA2PEPF000015CA.namprd03.prod.outlook.com
- (2603:10b6:510:34a:cafe::9c) by PH5P220CA0007.outlook.office365.com
- (2603:10b6:510:34a::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Wed,
- 22 Oct 2025 12:30:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF000015CA.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Wed, 22 Oct 2025 12:30:37 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 22 Oct
- 2025 05:30:13 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
- 2025 05:30:13 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Wed, 22
- Oct 2025 05:30:09 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>
-Subject: [PATCH net 0/4] mlx5 misc fixes 2025-10-22
-Date: Wed, 22 Oct 2025 15:29:38 +0300
-Message-ID: <1761136182-918470-1-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A60285C8B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761136191; cv=none; b=oNnu+RYjBmXLrcFpaSFnBQesNapdh2SRinIVkTCKiw4CHVB/iHcakHRmTYFws50NbbM+QkSvQom7xWDaPlYnCcohfQ9jwT9UVazqy0PlRMs4R/ct+c9Mg2aNDFw23dzi6WlXeoIxN1SLaQmzevn+dWbvLhmSzWY3Bl/Jx1oHw8Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761136191; c=relaxed/simple;
+	bh=vgC3n0OZ1bnLi7NXIKoKa5wMxZUzOLDPYVTIZbfJmj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kQxdsy1NdvORFKXN7vnKNlO6DgxIzZlgVjzjIgtj4weIJiBUqFZ57AVA4WS5m/liWAozGAmY6LRd9Vx3mJksc4WtNeGzJjwximimYDWFmffmZc1CrR+uXSh0YYrG7G4twAEEZrWUmC52xqakszp8IK5xZ2l0OrHSJBH5pa8VJQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3BVQuZy; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33db8fde85cso3392166a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:29:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761136189; x=1761740989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vgC3n0OZ1bnLi7NXIKoKa5wMxZUzOLDPYVTIZbfJmj4=;
+        b=S3BVQuZyQDMihY1DiOQhTqoHrc0JSezF+SrIm/6crpMEl2SBzFHXrEYHDNsL2CkGQu
+         MwogX241XB9DVfcBpWxIRvn0mGp4wPYlxyt4GQA/iBhzSPmzYupj7wo76NqEp4aH/I4A
+         f/P7Lj6kJM+rjp+4hvqZ6AnDRp71DjmYTu0t3DJujtdDa+aq8XNBdwHLeOzQuDUKOmkU
+         5HXtspHgRVPpsMILr9J2avxLtphr++dNgPS0dtUntattN5Z5j3WX7WThhy+8gK2KYTq6
+         NEJBRayXi/ZicMZ3+GZudY7v59gp1b3sy401Xl6ePDjajXfEzma4cqwjioGuieHWuOEh
+         lZTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761136189; x=1761740989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vgC3n0OZ1bnLi7NXIKoKa5wMxZUzOLDPYVTIZbfJmj4=;
+        b=C8s0oiXeM35HG4r/huc52Y98sf8ZC/JvgztGJGu/dOaNxYP0j64r38Z6Fp8m40A50x
+         4A9dN9K9fDEHOPNjvKyxAQYcp1CopNaKTsOrvKfM2knWXC55sLv2HyLbmkwfvLJEoErD
+         4/LLMDFpYdfLFThC5lTD5JKSog0BdsWsWwqkNB/r7uQE6FPLdGf965Hx9NdLZb/PvjCd
+         0fw0aazE6MOdw6SoyqWa/ZfdLhitO/CVa6WR7x/GNfM2IU84ZUWp6FRNm9G6TYOIbR0K
+         af25Oia8po4AH8nkwcVjFUaJGUNkzeiRyh2pWE8oZBGEnZ/Oy1RUVr7D2mMX9WMrzCWl
+         vH/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Ywh61N8X9ZqRPHbCTIcspwSBvxrXGPN3baAnZdQ1uq29NdpNNeCKOd9S7pfC/1EqZNFIJ1GV5snFr4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5V/YrPY7ql4S8j9cPzwiprV0Oq9yECK4329WcYFzTHm1XSSkE
+	mPWD2KUBCXp7Nh2EsOlpHPsGnvPgJbhNXNIgvlPNb4RlzIsAfv91YMNbkuXyDPwwLytGIeZlONU
+	uEHZj+eHFXVFm1O7rB1cGyQMJTsYsibQ0bQ==
+X-Gm-Gg: ASbGncvDDj2VeARm7WgCuV1E+cDPCtemx/4QNS6RsMFVOEXJvBR7BigjDQFZqOJveIZ
+	HhJmLUt1XUb+JFtdTl8Ad4SFrVNvcGVWA7OXRsdQrMhmIAs4GKxkjSkb/vSd3A23ve5LGMQznjo
+	K4IxJ5KYPTwfzrF6KMBqqeK+TCeyNNHiL3oCEDVkiMM84SPzspjvpXBO1APybVYHT2Wzd6NqwSR
+	dgXB0iOm1bq8aLtdl7ew+UJeaVqCIA8SyQFEmqW4a/pQRUcIkCsRjD+g60G
+X-Google-Smtp-Source: AGHT+IFk5lUB3XklutyN+j9IdIuo6/klqXs33Xtsaz01xAhHZvg8eDzK6DGwTKzo99rOs65RxDj4T2Swtuqtu02nU9M=
+X-Received: by 2002:a17:90a:e7d0:b0:32e:5d87:8abc with SMTP id
+ 98e67ed59e1d1-33bcf9146e9mr23394414a91.36.1761136189075; Wed, 22 Oct 2025
+ 05:29:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CA:EE_|DM4PR12MB6012:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0bf16803-9f5d-44aa-1c5f-08de1166ce1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2ix/hcZNl17hZRfhRfJayh7JtPKFUt7KLnJMmdp55OxRXpOBHwezOWkdnzAR?=
- =?us-ascii?Q?UT4gLvk38ogd9Wd1Rx73DqlmEvQrLWAMPVinaPnpofvhF00kF2bGunUCIulT?=
- =?us-ascii?Q?rEWFCO5LmZ0bUn6ig3K5ZZCvMrn5ni87D0neueW/uOQximLxutvWA07/0/yb?=
- =?us-ascii?Q?x5AnSOjtu3VsV2cPyihwpQ0gccm6U4A9OuGNmwYuqTBw2lV/Mtgc0DZI+2F0?=
- =?us-ascii?Q?BPfO322X1PgXO0J/Ue560W7B9QouKrCDeKTVr+Zp1yAKlu7IaLxaeuhBNcow?=
- =?us-ascii?Q?U1s3daaGP+1AXJcIIWccpJ+7UMvXw3jyaeX6s+c/bF0Qwvpbk3gk78rjlZj3?=
- =?us-ascii?Q?cncVLUIg2Yxx8JBZlc3YBkMj8Pe/Qhhj12SjrQ0+RQxBpLD/lek8qwihuuZq?=
- =?us-ascii?Q?o7zJnhFtgnkHB/hpbrQI1n8An0h4AdKgD8MJprO2dH7BcA0Df/uViLy/UJJT?=
- =?us-ascii?Q?OtSmOXxQtKLBBaCuvce5oeLXCiP6VuvVBAGhepCoE+LgEwI7d7BzgbBejZAu?=
- =?us-ascii?Q?X2erUs9/KjKWGJWGiRdp99YIpPFQfPvgUs4HtkrMxJFeYGJ5+9yOdQFnMTk0?=
- =?us-ascii?Q?bexXH1ueynMnhlSOonPzQiiw07ftvZkdp6Lek8G2shAITnwwtVX3QobMZAEH?=
- =?us-ascii?Q?hqijXZvqaXvqakMbmc1cMChA1NgKQefbSr6xAo6IE42bMJPE9RXnesbXbdmK?=
- =?us-ascii?Q?bnAw2ZN+EQxD4tK1zvJlnxYUWURJxXa6zmVAL25VbnvAiLlhpqPkCR/0/lkn?=
- =?us-ascii?Q?CznoP9T114bZ8Qr9i7v3BQtjGioHr2QuzOiEceud/Bguob07oC5wimbASs1M?=
- =?us-ascii?Q?Ob4k/Jsz9EFba09vM1QS61R0cSw+3WOht6aSz4nepBZm6S2RgjP/IU3mpAfb?=
- =?us-ascii?Q?hkJCchbgjoHVXeYDp8MJAfieuc8Pe9/OIXliarFbKr46Lf2r70/5PhXZ2Wk5?=
- =?us-ascii?Q?484HtTSpGNNrdzx6mgU547i7WcM3lvZYBpDvGnK8Ib5f7m8zEx2TFoBQktEK?=
- =?us-ascii?Q?mwkkYJ7OXQap/Kq3iSch3w8TvdNfHHXb/mnqdkRydw9jPjJ3tiuemWk+rBHs?=
- =?us-ascii?Q?DTMfuHR146fgruA3O0FJR3ukS8eBG7TfE7J/H7/kwl4W/QEbTxxRNxkFVks7?=
- =?us-ascii?Q?fYxxfJKj7/L2JnDPGWcucqn0WKq5EOHCasQl18epJANrdoTwR181o6YUUwY+?=
- =?us-ascii?Q?EEh8Kg09mObksirtP2KKNOp4vPxQtnM8vwXzSUkZogwwF5mCERNlx3yW1WEW?=
- =?us-ascii?Q?QZjnlfBadLDJ8WC6tGTazfNh7zCT5wVseTk+87UWtWgfMxZ7co2K613i+yjR?=
- =?us-ascii?Q?FpsSJ3VT7GsjVBMfKrmgcyqY+LqJWfjeFmUz5MNmUwtjl+vecMyBT++aaXOl?=
- =?us-ascii?Q?2WuAiuvmEo9NETEbZj333wGoj7xLIG7lTBNKCIAQjBCbfJGNGvbBMsfiU4dF?=
- =?us-ascii?Q?vq5dNUTl4m6Yc+GlWEej2LOUjEScRPeVu1U/p40U+dlBv1WKiX29K60OjxY4?=
- =?us-ascii?Q?X9MaIp1eOop9/TBGcfjzbBPdixodeSgeRZpJDm6uYS+ZjkUsdYg88IQ3cafh?=
- =?us-ascii?Q?Z02coPkf8y5DmqOrn3I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 12:30:37.4177
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bf16803-9f5d-44aa-1c5f-08de1166ce1f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CA.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6012
+References: <20251022072729.14820-1-xion.wang@mediatek.com> <CAFqZXNuPqwfqA23LH8NOG6KM1Nb7WvW77wnpp-vZ5omU40j_qQ@mail.gmail.com>
+In-Reply-To: <CAFqZXNuPqwfqA23LH8NOG6KM1Nb7WvW77wnpp-vZ5omU40j_qQ@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Wed, 22 Oct 2025 08:29:38 -0400
+X-Gm-Features: AS18NWDSicEYx03TrEtOYVQuMO2BdGJlpNak_oI6vlqZpLBKSoJCcwBSCBuNhu8
+Message-ID: <CAEjxPJ5BWjvDmQ37PPLHrmcTwRnOy6eW_uNoKG=ERZqRMAc3dw@mail.gmail.com>
+Subject: Re: [PATCH 0/1] selinux: export current_sid API for use in other
+ kernel modules
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: xion.wang@mediatek.com, Paul Moore <paul@paul-moore.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, wsd_upstream@mediatek.com, 
+	huadian.liu@mediatek.com, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 22, 2025 at 4:08=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
+m> wrote:
+>
+> On Wed, Oct 22, 2025 at 9:43=E2=80=AFAM <xion.wang@mediatek.com> wrote:
+> >
+> > From: Xion Wang <xion.wang@mediatek.com>
+> >
+> > We have a kernel driver designed to monitor the status of the Android
+> > userspace watchdog. The implementation works as follows: we modify the
+> > Android userspace watchdog code to periodically send a "kick" signal to
+> > the kernel driver via ioctl, so that the kernel driver can determine
+> > whether the userspace is still responsive. If the kernel driver does no=
+t
+> > receive a kick signal from the userspace watchdog within a certain
+> > period, it infers that the userspace is stuck. In this case, the kernel
+> > driver will dump key process information at the kernel level and trigge=
+r
+> > a full system reboot.
+> >
+> > To ensure that only the legitimate Android userspace watchdog process c=
+an
+> > access the ioctl interface and perform the kick operation, and to preve=
+nt
+> > malicious or unauthorized processes from spoofing the kick action (whic=
+h
+> > could compromise system reliability), we want to identify the calling
+> > task by its security identifier (sid). By checking the sid, we can
+> > effectively prevent unauthorized processes from sending kick signals.
+> >
+> > Currently, the current_sid() function in the kernel is defined as
+> > static inline and cannot be directly called from modules or drivers. We
+> > propose to export this function, so that the kernel driver can call
+> > current_sid() to obtain the sid of the current process and decide wheth=
+er
+> > to allow the kick operation.
+> >
+> > This change will help enhance system security and robustness by
+> > preventing the watchdog mechanism from being bypassed or abused.
+> >
+> > I would like to ask the maintainers if there are any additional securit=
+y
+> > concerns regarding exporting current_sid() as a public API, or if there
+> > are any alternative or more recommended approaches to achieve this goal=
+.
+> > Any feedback or suggestions would be greatly appreciated.
+>
+> Couldn't you just use security_cred_getsecid() or the new
+> security_cred_getlsmprop()?
+>
+> Untested:
+>
+> u32 sid;
+> security_cred_getsecid(current_cred(), &sid);
+>
+> -- or --
+>
+> lsm_prop prop;
+> security_cred_getlsmprop(current_cred(), &prop);
+> u32 sid =3D prop.selinux->secid;
+>
 
-This patchset provides misc bug fixes from the team to the mlx5 core and
-Eth drivers.
-
-Thanks,
-Tariq.
-
-
-Alexei Lazar (2):
-  net/mlx5: Add PPHCR to PCAM supported registers mask
-  net/mlx5e: Skip PPHCR register query if not supported by the device
-
-Patrisious Haddad (2):
-  net/mlx5: Refactor devcom to return NULL on failure
-  net/mlx5: Fix IPsec cleanup over MPV device
-
- .../mellanox/mlx5/core/en_accel/ipsec.h       |  5 ++
- .../mellanox/mlx5/core/en_accel/ipsec_fs.c    | 25 ++++++++-
- .../net/ethernet/mellanox/mlx5/core/en_main.c |  8 +--
- .../ethernet/mellanox/mlx5/core/en_stats.c    |  4 +-
- .../mellanox/mlx5/core/eswitch_offloads.c     |  4 +-
- .../net/ethernet/mellanox/mlx5/core/lag/lag.c |  7 ++-
- .../ethernet/mellanox/mlx5/core/lib/clock.c   |  2 +-
- .../ethernet/mellanox/mlx5/core/lib/devcom.c  | 53 +++++++++----------
- .../net/ethernet/mellanox/mlx5/core/lib/sd.c  |  4 +-
- .../net/ethernet/mellanox/mlx5/core/main.c    |  5 +-
- include/linux/mlx5/mlx5_ifc.h                 |  4 +-
- 11 files changed, 75 insertions(+), 46 deletions(-)
-
-
-base-commit: d63f0391d6c7b75e1a847e1a26349fa8cad0004d
--- 
-2.31.1
-
+I suppose the next logical question would be what will you do with the
+secid - you can't just compare it to a fixed value since they are
+dynamically assigned.
+Normally you would instead just pass it to a SELinux permission check
+to see if that SID is allowed the permission required to perform this
+operation.
+But this too would require using a LSM hook to perform the permission
+check (in which case you don't need to fetch the SID separately; it
+can all be done within the same hook).
 
