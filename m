@@ -1,221 +1,358 @@
-Return-Path: <linux-kernel+bounces-865170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6CEBFC589
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:00:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4FCBFC58F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7E1334EF5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:00:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D700350164
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9F834B196;
-	Wed, 22 Oct 2025 14:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UFs2IzEY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8014834AAED;
+	Wed, 22 Oct 2025 14:01:03 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8785734AB00
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDB634575F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141644; cv=none; b=NmMfjBhdYdjvzzQwAhCTe4845b7l5vgqOQtZ5dMYNlbnpQHXD1UDTpzEfCBmwXpQ/gBF5vFJwrAos2/qgMa/+SoMoy8ZJ+1YSq8CAmDWa8E0Gr2eQ22n/5YEUl8vmwYUeqs+5zcJ0rr6p0ttX7I2TL4tMDdKPz9EvlCWwwwQsLw=
+	t=1761141662; cv=none; b=oQ1L+dQDNsm5uPeQGgi8NlMzvqiscld5xAl7imsqMykccUEMDHqHuZBdixolqDSZ/RFYlILAQ3iB2vQ8K+rtAHAjsBTflADvdlQYf8pxRQe0TEChSltX9UkxB6rn/TygM12aqYRjzOr5qALrHNQeOTuxzvrSDnTO6TnqN71/41Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141644; c=relaxed/simple;
-	bh=zOPxlm/0EYVQxFC7IMu+gn/aku8ed9bw1wifjimq8ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hG6XVE5zMZOcY7Sex7L4DIwY3gFBCkXV3SYGAor2w6C68EKQYeEjpmD3CU9PPUFBXk2LUf7alHGKMfSdS/9jcvR2FDOM8nraTTZ+SpZxvr0/ScP3jbVHixbPArpTQwWKmGfWwA2IOny1qbNl9mGkfwfGn96F1s8zjFmzGM2xKjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UFs2IzEY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761141640;
-	bh=zOPxlm/0EYVQxFC7IMu+gn/aku8ed9bw1wifjimq8ZA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UFs2IzEYHyl/wYBzwTtJZpHsasZfqPT2DGYw7UqtJ95Z9lmCpnXv00k3/rcpUBCYb
-	 O22QyImKGv1R6Jp+vzXIbgYIadmYmGMRdmzDNwFZUrSyBQRUsZfOJ0uivFTH5gukva
-	 rwaWtSQ3BTH+Tg+agEbv9wDhJsd61W4csZOh6YNwrubMfgON1JU3qZhUN5KPJmauAq
-	 Ctmrm7PbSy6/8852G8Kgy4Um9E9Es+tvhBenPntXSmlVj3YR7qSaqTzP1wAj4ZmnpZ
-	 vnkvqFVliBnAndlkcq/YMxmfiPPmXNVryQXNDek2zyea3PdhCFWoc/5h/ak9aALDbz
-	 AkYLckihDyWQA==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 13E8F17E12DF;
-	Wed, 22 Oct 2025 16:00:40 +0200 (CEST)
-Date: Wed, 22 Oct 2025 16:00:33 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Ketil Johnsen <ketil.johnsen@arm.com>, Liviu Dudau
- <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Heiko Stuebner <heiko@sntech.de>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and
- FW event processing
-Message-ID: <20251022160033.2f645528@fedora>
-In-Reply-To: <e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
-References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
-	<20251022143751.769c1f23@fedora>
-	<e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761141662; c=relaxed/simple;
+	bh=Sm4GWPNeJcL5gEwJZRJ5PrguqKuzIn1kzPolyeVZzsY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QkqxOR5rLZ5wOk+arevpjmXeKeZJH6Ft0wpaOrn0oSvRm1VoNLdhA73F7q/NC7oRZIFYUmllW30RnOFCCv2Jpg35C4wNwUhj7aQ8QVOc+l+pk2OTWikR3F2NJhenKWnN4fDlkdTpKzD/CABKQrgKNBYvBtgvvX9/sLW+geLscQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430db6d36c6so128691815ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:00:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761141659; x=1761746459;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOrJBT4oSmGN7Bwjcc4GP8AOfbxTb3nBv75gJrMjeOQ=;
+        b=IZnRJVuaPWpjuMEMDnPPEP53GlBEQielwKYBCKkYiT6gVtWiaKIocMoftE0BouyLM0
+         OVWLP+W4vbLMAwPCLGiy63hKp9zwLbT9NyQ5GyrBvoo7F3cQgYnh3YlqL8bosIcCBB6q
+         85J49KSAxQ1Jq3R9kvnl7K3DKk5yTWjHQNhPn32kE8QOwFuKWwOK4PinC3+qZiZPZVpj
+         vrQzHxjQLYxq42QJ7Mvc5wmzKw8XZ8hGWCMX6bn3wl2JfVOHkUdlfYRy6UhpJ5MBOO8m
+         WPteQypgSyz56lWu/h4GgW44zeIgTL276dmcnU8u6WBN8k9sO2QW/c648LlsjibLS5M3
+         QwQw==
+X-Gm-Message-State: AOJu0YyRUh8+do7vTTp2kowgCbOCitQ7qIBSO8LYm5NZBGYX7p/Kgxp0
+	yRauMDyX+ugBzkCJPmSCo60748FLD1OFTY0TiWHa0XkZtFTKdjwhdjcyaxZoXrZLv0QneX9v6zG
+	QfXzzHm+zeNjsP0due11QaSdKl1xpRoPWPcZ1Riolg4CdIskmAJN5hostXK4=
+X-Google-Smtp-Source: AGHT+IFzj2iY+bqoOEapafstXhvXKFTf80xCN3KBqN8fdOhdMD+xYLfj0VR9/it7DAow/M4eu8WPVYTzDPk8+ObvNkj39cIggDVh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1947:b0:430:9f96:23bb with SMTP id
+ e9e14a558f8ab-430c522319amr270063175ab.8.1761141658581; Wed, 22 Oct 2025
+ 07:00:58 -0700 (PDT)
+Date: Wed, 22 Oct 2025 07:00:58 -0700
+In-Reply-To: <67ff1158.050a0220.d2ea7.0004.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8e39a.050a0220.346f24.0052.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ 552c50713f273b494ac6c77052032a49bc9255e2
+From: syzbot <syzbot+f2107d999290b8166267@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 22 Oct 2025 14:36:23 +0100
-Steven Price <steven.price@arm.com> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> On 22/10/2025 13:37, Boris Brezillon wrote:
-> > On Wed, 22 Oct 2025 12:30:13 +0200
-> > Ketil Johnsen <ketil.johnsen@arm.com> wrote:
-> >   
-> >> The function panthor_fw_unplug() will free the FW memory sections.
-> >> The problem is that there could still be pending FW events which are yet
-> >> not handled at this point. process_fw_events_work() can in this case try
-> >> to access said freed memory.
-> >>
-> >> This fix introduces a destroyed state for the panthor_scheduler object,
-> >> and we check for this before processing FW events.
-> >>
-> >> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
-> >> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
-> >> ---
-> >> v2:
-> >> - Followed Boris's advice and handle the race purely within the
-> >>   scheduler block (by adding a destroyed state)
-> >> ---
-> >>  drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
-> >>  1 file changed, 12 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> >> index 0cc9055f4ee52..4996f987b8183 100644
-> >> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> >> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> >> @@ -315,6 +315,13 @@ struct panthor_scheduler {
-> >>  		 */
-> >>  		struct list_head stopped_groups;
-> >>  	} reset;
-> >> +
-> >> +	/**
-> >> +	 * @destroyed: Scheduler object is (being) destroyed
-> >> +	 *
-> >> +	 * Normal scheduler operations should no longer take place.
-> >> +	 */
-> >> +	bool destroyed;  
-> > 
-> > Do we really need a new field for that? Can't we just reset
-> > panthor_device::scheduler to NULL early enough in the unplug path?
-> > I guess it's not that simple if we have works going back to ptdev
-> > and then dereferencing ptdev->scheduler, but I think it's also
-> > fundamentally broken to have scheduler works active after the
-> > scheduler teardown has started, so we might want to add some more
-> > checks in the work callbacks too.
-> >   
-> >>  };
-> >>  
-> >>  /**
-> >> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
-> >>  	u32 events = atomic_xchg(&sched->fw_events, 0);
-> >>  	struct panthor_device *ptdev = sched->ptdev;
-> >>  
-> >> -	mutex_lock(&sched->lock);
-> >> +	guard(mutex)(&sched->lock);
-> >> +
-> >> +	if (sched->destroyed)
-> >> +		return;
-> >>  
-> >>  	if (events & JOB_INT_GLOBAL_IF) {
-> >>  		sched_process_global_irq_locked(ptdev);
-> >> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
-> >>  		sched_process_csg_irq_locked(ptdev, csg_id);
-> >>  		events &= ~BIT(csg_id);
-> >>  	}
-> >> -
-> >> -	mutex_unlock(&sched->lock);
-> >>  }
-> >>  
-> >>  /**
-> >> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
-> >>  	cancel_delayed_work_sync(&sched->tick_work);
-> >>  
-> >>  	mutex_lock(&sched->lock);
-> >> +	sched->destroyed = true;
-> >>  	if (sched->pm.has_ref) {
-> >>  		pm_runtime_put(ptdev->base.dev);
-> >>  		sched->pm.has_ref = false;  
-> > 
-> > Hm, I'd really like to see a cancel_work_sync(&sched->fw_events_work)
-> > rather than letting the work execute after we've started tearing down
-> > the scheduler object.
-> > 
-> > If you follow my suggestion to reset the ptdev->scheduler field, I
-> > guess something like that would do:
-> > 
-> > void panthor_sched_unplug(struct panthor_device *ptdev)
-> > {
-> >         struct panthor_scheduler *sched = ptdev->scheduler;
-> > 
-> > 	/* We want the schedu */
-> > 	WRITE_ONCE(*ptdev->scheduler, NULL);
-> > 
-> > 	cancel_work_sync(&sched->fw_events_work);
-> >         cancel_delayed_work_sync(&sched->tick_work);
-> > 
-> >         mutex_lock(&sched->lock);
-> >         if (sched->pm.has_ref) {
-> >                 pm_runtime_put(ptdev->base.dev);
-> >                 sched->pm.has_ref = false;
-> >         }
-> >         mutex_unlock(&sched->lock);
-> > }
-> > 
-> > and
-> > 
-> > void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events) {
-> > 	struct panthor_scheduler *sched = READ_ONCE(*ptdev->scheduler);
-> > 
-> > 	/* Scheduler is not initialized, or it's gone. */
-> >         if (!sched)
-> >                 return;
-> > 
-> >         atomic_or(events, &sched->fw_events);
-> >         sched_queue_work(sched, fw_events);
-> > }  
-> 
-> Note there's also the path of panthor_mmu_irq_handler() calling
-> panthor_sched_report_mmu_fault() which will need to READ_ONCE() as well
-> to be safe.
+***
 
-This could be hidden behind a panthor_device_get_sched() helper, I
-guess. Anyway, it's not so much that I'm against the addition of an
-extra bool, but AFAICT, the problem is not entirely solved, as there
-could be a pending work that gets executed after sched_unplug()
-returns, and I adding this bool check just papers over the real bug
-(which is that we never cancel the fw_event work).
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
+Author: dmantipov@yandex.ru
 
-> 
-> I agree having an extra bool is ugly, but it easier to reason about than
-> the lock-free WRITE_ONCE/READ_ONCE dance. It worries me that this will
-> be regressed in the future. I can't immediately see how to wrap this in
-> a helper to ensure this is kept correct.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
 
-Sure, but you're not really catching cases where the work runs after
-the scheduler component has been unplugged in case someone forgot to
-cancel some works. I think I'd rather identify those cases with a
-kernel panic, than a random UAF when the work is being executed.
-Ultimately, we should probably audit all works used in the driver, to
-make sure they are properly cancelled at unplug() time by the relevant
-<component>_unplug() functions.
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 162711cc5b20..ce38505a823c 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6164,7 +6164,7 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 	struct buffer_head *bh = NULL;
+ 	struct ocfs2_dinode *di;
+ 	struct ocfs2_truncate_log *tl;
+-	unsigned int tl_count;
++	unsigned int tl_count, tl_used;
+ 
+ 	inode = ocfs2_get_system_file_inode(osb,
+ 					   TRUNCATE_LOG_SYSTEM_INODE,
+@@ -6184,9 +6184,10 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 
+ 	di = (struct ocfs2_dinode *)bh->b_data;
+ 	tl = &di->id2.i_dealloc;
++	tl_used = le16_to_cpu(tl->tl_used);
+ 	tl_count = le16_to_cpu(tl->tl_count);
+ 	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
+-		     tl_count == 0)) {
++		     tl_count == 0 || tl_used > tl_count)) {
+ 		status = -EFSCORRUPTED;
+ 		iput(inode);
+ 		brelse(bh);
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index 8c9c4825f984..2785ff245e79 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
+ 				 unsigned long offset)
+ {
+ 	const char *error_msg = NULL;
+-	const int rlen = le16_to_cpu(de->rec_len);
+-	const unsigned long next_offset = ((char *) de - buf) + rlen;
++	unsigned long next_offset;
++	int rlen;
++
++	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
++		/* Dirent is (maybe partially) beyond the buffer
++		 * boundaries so touching 'de' members is unsafe.
++		 */
++		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
++		     "too close to end or out-of-bounds",
++		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
++		return 0;
++	}
++
++	rlen = le16_to_cpu(de->rec_len);
++	next_offset = ((char *) de - buf) + rlen;
+ 
+ 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
+ 		error_msg = "rec_len is smaller than minimal";
+@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+ 	struct ocfs2_extent_block *eb;
+ 	struct ocfs2_extent_rec *rec = NULL;
+ 
++	if (le16_to_cpu(el->l_count) !=
++	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %lu has invalid extent list length %u\n",
++				  inode->i_ino, le16_to_cpu(el->l_count));
++		goto out;
++	}
++
+ 	if (el->l_tree_depth) {
+ 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+ 				      &eb_bh);
+@@ -3423,6 +3444,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 		offset += le16_to_cpu(de->rec_len);
+ 	}
+ 
++	if (!last_de) {
++		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
++				  "is unexpectedly short",
++				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
++				  i_size_read(dir));
++		goto out;
++	}
++
+ 	/*
+ 	 * We're going to require expansion of the directory - figure
+ 	 * out how many blocks we'll need so that a place for the
+@@ -4104,10 +4133,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
+ 	}
+ 
+ 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
+-	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
+-	       offsetof(struct ocfs2_dx_root_block, dr_list));
++
++	dx_root->dr_list.l_tree_depth = 0;
+ 	dx_root->dr_list.l_count =
+ 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
++	dx_root->dr_list.l_next_free_rec = 0;
++	memset(&dx_root->dr_list.l_recs, 0,
++	       osb->sb->s_blocksize -
++	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
++		offsetof(struct ocfs2_extent_list, l_recs)));
+ 
+ 	/* This should never fail considering we start with an empty
+ 	 * dx_root. */
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index d1aa04a5af1b..56be21c695d6 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -905,13 +905,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
+ static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
+ {
+ 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
+-	int i;
+ 
+ 	alloc->id1.bitmap1.i_total = 0;
+ 	alloc->id1.bitmap1.i_used = 0;
+ 	la->la_bm_off = 0;
+-	for(i = 0; i < le16_to_cpu(la->la_size); i++)
+-		la->la_bitmap[i] = 0;
++	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
+ }
+ 
+ #if 0
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 86f2631e6360..ba4952b41602 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
+ 
+ 	rec = &el->l_recs[index];
+ 
+-	BUG_ON(ext_flags != rec->e_flags);
++	if (ext_flags != rec->e_flags) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
++				  (unsigned long long)ino, index, rec->e_flags, cpos);
++		goto out;
++	}
++
+ 	/*
+ 	 * after moving/defraging to new location, the extent is not going
+ 	 * to be refcounted anymore.
+@@ -1031,6 +1037,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 	if (range.me_threshold > i_size_read(inode))
+ 		range.me_threshold = i_size_read(inode);
+ 
++	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
++			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
++		status = -EINVAL;
++		goto out_free;
++	}
++
+ 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
+ 		context->auto_defrag = 1;
+ 
+diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+index ae0e44e5f2ad..c501eb3cdcda 100644
+--- a/fs/ocfs2/ocfs2_fs.h
++++ b/fs/ocfs2/ocfs2_fs.h
+@@ -468,7 +468,8 @@ struct ocfs2_extent_list {
+ 	__le16 l_reserved1;
+ 	__le64 l_reserved2;		/* Pad to
+ 					   sizeof(ocfs2_extent_rec) */
+-/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
++					/* Extent records */
++/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
+ };
+ 
+ /*
+@@ -482,7 +483,8 @@ struct ocfs2_chain_list {
+ 	__le16 cl_count;		/* Total chains in this list */
+ 	__le16 cl_next_free_rec;	/* Next unused chain slot */
+ 	__le64 cl_reserved1;
+-/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
++					/* Chain records */
++/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
+ };
+ 
+ /*
+@@ -494,7 +496,8 @@ struct ocfs2_truncate_log {
+ /*00*/	__le16 tl_count;		/* Total records in this log */
+ 	__le16 tl_used;			/* Number of records in use */
+ 	__le32 tl_reserved1;
+-/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
++					/* Truncate records */
++/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
+ };
+ 
+ /*
+@@ -638,7 +641,7 @@ struct ocfs2_local_alloc
+ 	__le16 la_size;		/* Size of included bitmap, in bytes */
+ 	__le16 la_reserved1;
+ 	__le64 la_reserved2;
+-/*10*/	__u8   la_bitmap[];
++/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
+ };
+ 
+ /*
+@@ -651,7 +654,7 @@ struct ocfs2_inline_data
+ 				 * for data, starting at id_data */
+ 	__le16	id_reserved0;
+ 	__le32	id_reserved1;
+-	__u8	id_data[];	/* Start of user data */
++	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
+ };
+ 
+ /*
+@@ -796,9 +799,10 @@ struct ocfs2_dx_entry_list {
+ 					 * possible in de_entries */
+ 	__le16		de_num_used;	/* Current number of
+ 					 * de_entries entries */
+-	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
+-							 * in a packed array of
+-							 * length de_num_used */
++					/* Indexed dir entries in a packed
++					 * array of length de_num_used.
++					 */
++	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
+ };
+ 
+ #define OCFS2_DX_FLAG_INLINE	0x01
+@@ -934,7 +938,8 @@ struct ocfs2_refcount_list {
+ 	__le16 rl_used;		/* Current number of used records */
+ 	__le32 rl_reserved2;
+ 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
+-/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
++				/* Refcount records */
++/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
+ };
+ 
+ 
+@@ -1020,7 +1025,8 @@ struct ocfs2_xattr_header {
+ 						    buckets.  A block uses
+ 						    xb_check and sets
+ 						    this field to zero.) */
+-	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
++						/* xattr entry list. */
++	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
+ };
+ 
+ /*
+diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+index 6ac4dcd54588..9969a041ab18 100644
+--- a/fs/ocfs2/suballoc.c
++++ b/fs/ocfs2/suballoc.c
+@@ -649,6 +649,16 @@ ocfs2_block_group_alloc_discontig(handle_t *handle,
+ 	return status ? ERR_PTR(status) : bg_bh;
+ }
+ 
++static int ocfs2_check_chain_list(struct ocfs2_chain_list *cl,
++				  struct super_block *sb)
++{
++	if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb))
++		return -EINVAL;
++	if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count))
++		return -EINVAL;
++	return 0;
++}
++
+ /*
+  * We expect the block group allocator to already be locked.
+  */
+@@ -671,6 +681,10 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
+ 	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
+ 
+ 	cl = &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, alloc_inode->i_sb);
++	if (status)
++		goto bail;
++
+ 	status = ocfs2_reserve_clusters_with_limit(osb,
+ 						   le16_to_cpu(cl->cl_cpg),
+ 						   max_block, flags, &ac);
+@@ -1992,6 +2006,9 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
+ 	}
+ 
+ 	cl = (struct ocfs2_chain_list *) &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, ac->ac_inode->i_sb);
++	if (status)
++		goto bail;
+ 
+ 	victim = ocfs2_find_victim_chain(cl);
+ 	ac->ac_chain = victim;
 
