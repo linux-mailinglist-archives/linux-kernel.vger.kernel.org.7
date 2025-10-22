@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-864466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61B2BFADA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:19:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16899BFADBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 91E66350F41
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2753ADEC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B446309DD2;
-	Wed, 22 Oct 2025 08:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93B63081A4;
+	Wed, 22 Oct 2025 08:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V/YiIvEV"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dJvJ5L6k"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70533081B5
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936AF3054C8;
+	Wed, 22 Oct 2025 08:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121183; cv=none; b=PGvGRlAfXSxq56CS7UJDgBGzVt/SXz+cuCaOATMNoMM9NdMase5pr9qwWtsRLKoH99zXybOaf9BRdxpg4XNRLCL+xQhEE2XSfmLbExZNpBUGgHqbE0X0rdXKSsKrejhAK73XwMOPnshwLFlUSnzL7jXUTQleXTh1irR3e/1VHHk=
+	t=1761121245; cv=none; b=bSenC+eabTh2vmAxgaPCTazznFrNemZE2l5W2MtvOTYeKeEI/x/55uhZUGtgFk0eG2fdlKilNABoufisAIenwD+hGTSifzdMxHnrRGTCHunD9OHirk9nAaX2syQyIt/2brCs7NuoTUi1kyS2ARlfkSvAe3tWc9DsVr5j9PuaBPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121183; c=relaxed/simple;
-	bh=RHEi92BrqYPevwcCSHph3ISxaBSTH5yv2OoBTfvdyOA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QRmjFtPUnL0TvaCgWGVCEhfgC+YUngHSguI6D+Hr+dFlbZCew6YF58SRnN3hrHXihLGLwYh+SNQ7f6UEAasgpGWVPReWM7Xw/pI1AGA75rTi+/nqpsqeYIGpq6Q/qQbH+emIHkyHSgfJ+Euy7iTEYDVWNA/uD0/8/b+df5FXiJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V/YiIvEV; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-471193dacffso43552495e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 01:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761121180; x=1761725980; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEK/i+XAkLQEgOG+ywHekwqAFjmlaiDFBYJQ7FDBQr0=;
-        b=V/YiIvEVvbIymPXqtJLPYRTu4QnlxPwJaj7UzB5jcs2VXVsyvnrPtwGNn2IBXwVoKc
-         q8lPuDNLUgUfYBNKFpMjtFJZC9Tx3bnnNylsXcyA1d/O+AXh/ADvunks/o/Gz/nsAUU0
-         QIhHnad9Vjz6T3BzhAPjVvuew70SHMNu/0BbKJhXqLny4Bwiedcphq6vkJBweYDcmQKg
-         YZEBYDP0N7pzX+xAAFeBN+l5AYSmFUgp45C/bUi7IG5V2YqFLISitjmDuRtD/seEeiOV
-         0MXlG7A+VGZPYYJ/6fowVvSW4JWe1N1YpDsqRsnTJY+DYvOCS0fhqeuMiujA+tQymzRV
-         BSzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761121180; x=1761725980;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEK/i+XAkLQEgOG+ywHekwqAFjmlaiDFBYJQ7FDBQr0=;
-        b=uS7u6RC/DfSSWyPvkO0qaeA0rexwb9EKQd7eJ/2DcMhfqpQj+62fEXEqUCwCrUAL1H
-         lfrJiA2O2fuzFUhW7g80SiBTNiJ1u9Na8OOerwRDMdw+W7J6Cz60+l8ucasvKSjmVOQv
-         GLYDrL1/UxFV9LEQNEAdiO7coEjsifb1oII0jnJbU+pI/nLg+Zyoy8p6V7hzUktzQGNc
-         N9Er6AivWhSD0wibBBSwf4SEF2+H/egwjURjoY0DzNymZP7XCfdbB2/DN6KdlgyS00A5
-         Q4UJSq2MRKdWoM6oXqwqwCjfZssRXQ/puzS00QAVKgEfqrc270QAN4U1pgOuj7ZTibY1
-         Exlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoF0xGq6VthznTPJm4T35qkgr2CHquzw7peYlJ/hyotQTHYoMgY0VWbk+MMWnYTULPKmGNDIndeF08B2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyjyHgj/ta8lDIjKvYHoyLY9rthoaj0m9II+R9tOp/rbmYbJn5
-	oJoSm2sVOerM5AIpIU9AlLc7byhqsthHt0yMdBxRg4QhbzQrP2QRk7IczH1tI89sG6sFofTSRyt
-	LeKF+m9pXzcmuHQxJLQ==
-X-Google-Smtp-Source: AGHT+IETajWDiqpRqa12EaVRu6fAxwYa+sMKITK3BOKL9H9yAMyU5Oa/ffCwAo+MISi9sybobSyD7GdOvUHfNzo=
-X-Received: from wmpv36.prod.google.com ([2002:a05:600c:4da4:b0:46e:2eb4:38d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8509:b0:471:16e5:6d7a with SMTP id 5b1f17b1804b1-4711787dca0mr106715285e9.13.1761121180045;
- Wed, 22 Oct 2025 01:19:40 -0700 (PDT)
-Date: Wed, 22 Oct 2025 08:19:39 +0000
-In-Reply-To: <ghaqgzgnk6mkv6tm4inm2e24jyidsk7qhbff6zwc46kefojw5p@3jvwnn3q4bxw>
+	s=arc-20240116; t=1761121245; c=relaxed/simple;
+	bh=NaBVnYfiCGBUleVgENfqy+6MTH7byS2p6Wtyv6/P8ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rn9b/U80OjPVXYvloS+DNUPsw7gJQaXnmSIZ1yzk0BchPfQQEp6v5MoYAWd6BB0H7WxnvN+Idy1odDCH2RGKc06l2HoJ7Zi+m2nTqgxflrrAgvhojLJiBu0rwZ+TnnIK/Uhls6QgWo+rHzeJ9WXqvPMfEKqGSTEg+OCNOfazk9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dJvJ5L6k; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GBiS77jacBsAV5FtDUoak5VLXkPdQf0nis8KTJqTfW4=; b=dJvJ5L6kzK0cWDQUXS+9Sv/+VK
+	d0CkMXZ8LBVpyOFapysJs3nZUl8zg9jTWIWcs7hMsJWUEWdw593rfTsyMVuBrGOxp7kergFX2kDAu
+	kRHlMRJjX66XPkxAzIXHxKzcAfWzVZxuKDsExmSD0CeQS3y2h8LVClTy6lALGeurbtbN08tcGCYsL
+	/vQ0qw1qBCzpwe3TRNnSukrnJKItuh8uQv7oB/ibvZYDRFJnxGZgGj3hljyUiY5aaxa8T1u6tEUgt
+	R30bNScOmi92rDSwQ+MJbXLrbKxu56TMtKAKqiNxmdw3XTNl50zs1smUC/tD8rqphtpHS7p2v2heZ
+	Evo5QUhw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBTDO-00000000P2b-0jqI;
+	Wed, 22 Oct 2025 07:24:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7E1C730039F; Wed, 22 Oct 2025 10:20:25 +0200 (CEST)
+Date: Wed, 22 Oct 2025 10:20:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Marco Elver <elver@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
+	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Shuah Khan <shuah@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	kernel test robot <lkp@intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Marc Herbert <Marc.Herbert@linux.intel.com>,
+	Christopher Ferris <cferris@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Jeff Xu <jeffxu@chromium.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
+Message-ID: <20251022082025.GK4067720@noisy.programming.kicks-ass.net>
+References: <20251020220005.work.095-kees@kernel.org>
+ <20251020220118.1226740-1-kees@kernel.org>
+ <20251021095447.GL3245006@noisy.programming.kicks-ass.net>
+ <202510211210.84D670D1C@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
- <20251020-clk-send-sync-v2-1-44ab533ae084@google.com> <ghaqgzgnk6mkv6tm4inm2e24jyidsk7qhbff6zwc46kefojw5p@3jvwnn3q4bxw>
-Message-ID: <aPiTm7Pb9WguOd9j@google.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Alice Ryhl <aliceryhl@google.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202510211210.84D670D1C@keescook>
 
-On Wed, Oct 22, 2025 at 09:21:38AM +0530, Viresh Kumar wrote:
-> On 20-10-25, 09:35, Alice Ryhl wrote:
-> > These traits are required for drivers to embed the Clk type in their own
-> > data structures because driver data structures are usually required to
-> > be Send. Since the Clk type is thread-safe, implement the relevant
-> > traits.
-> > 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/clk.rs | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-> > index 1e6c8c42fb3a321951e275101848b35e1ae5c2a8..0a290202da69669d670ddad2b6762a1d5f1d912e 100644
-> > --- a/rust/kernel/clk.rs
-> > +++ b/rust/kernel/clk.rs
-> > @@ -129,6 +129,13 @@ mod common_clk {
-> >      #[repr(transparent)]
-> >      pub struct Clk(*mut bindings::clk);
-> >  
-> > +    // SAFETY: It is safe to call `clk_put` on another thread than where `clk_get` was called.
-> > +    unsafe impl Send for Clk {}
-> > +
-> > +    // SAFETY: It is safe to call any combination of the `&self` methods in parallel, as the
-> > +    // methods are synchronized internally.
-> > +    unsafe impl Sync for Clk {}
-> > +
-> >      impl Clk {
-> >          /// Gets [`Clk`] corresponding to a [`Device`] and a connection id.
-> >          ///
+On Tue, Oct 21, 2025 at 12:24:05PM -0700, Kees Cook wrote:
+> On Tue, Oct 21, 2025 at 11:54:47AM +0200, Peter Zijlstra wrote:
+
+> > So why do we need both __counted_by_ptr() and this __sized_by(), won't
+> > one be good enough?
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> I remain extraordinarily frustrated that counted_by can't be used with
+> "void *". I hit a brick wall on this, though, and don't know how to
+> convince either GCC or Clang devs to fix it. It's so obviously correct
+> to me: "void *" uses a 1 byte iterator for arithmetic... so asking how
+> big a given allocation is should be byte sized!
 
-I'm guessing this means you want me to take it through drm-rust? See
-what I put in the cover letter about choice of tree.
+Right, at least for gnu11 language variants this really should work. I
+mean, disallow the usage for c11 if you're pedantic but for crying out
+loud, have the GNU extensions be consistent and all that.
 
-Alice
+Feel free to use my feedback if it would help.
+
+> Let me take another stab at it...
+
+Thanks!
+
+> As for avoiding __counted_by_ptr(), we could just raise the minimum
+> Clang and GCC versions to require this, but that means dropping existing
+> coverage (e.g GCC 15 supports only flexible array counted_by).
+> 
+> Maybe we could do a global __counted_by_ptr -> __counted_by replacement
+> once GCC 16 is released?
+
+That sounds like a plan! :-)
 
