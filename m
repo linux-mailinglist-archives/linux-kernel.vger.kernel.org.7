@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-864278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F66BFA5D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:56:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A04BFA617
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 08:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E546C19A16EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:56:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D999F5017EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 06:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401862F25F7;
-	Wed, 22 Oct 2025 06:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F6A2F28EA;
+	Wed, 22 Oct 2025 06:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRm6jnI7"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="ab3jiVYY"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25782F2916
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761116158; cv=none; b=fz564bkMyTEmgNWrspqRbFV5XIz4RSLl1ITqskhRoCbWFTC2QnID2l3Df0yMyV0h3IhiGq6RJOkgoD7/XttAntheWNhlstYNn+6Hgv9XYU8h/31A1UsizgsqHK6EvO0QgBSEM3JIk0pvDGnNs+pdM033PaIxnxzWoe2EiTwR14w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761116158; c=relaxed/simple;
-	bh=WkDEzB5N4V8tlJFRXR5ysA8N/DAcuP7R5T1XoyuKbJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wa17iMccoFNPX6YtgVtBP2BcstZFUcEZC+p7BkNEozArKQRLXWA9KY2mLGl/IUHCVbQrNkip+Alx0oKFRwIio1ARPkEygWmlJr+A1ZwNhqF3HBeW/gX3tny7yjGX7tSWnI8IMhl6L/7vrUJXhpY+bbDUlPGvkqoRRbK/9m3C5os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRm6jnI7; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-3799fc8ada6so1618623fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761116155; x=1761720955; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+geXNLPoYT+g7n3ssTeMIPZBREGJuzg2Y1yRpcxjwI=;
-        b=KRm6jnI7vvLFmAuj/rRP4uicZRWQYt7BKFYx3TAzNT7bHcAmJCzw2WZrJwd4dOHRC0
-         9hIu7/hC9pgFhulagq6z/8pzMABp8a8zW63aHg9Yd3HLoc0j/A1Fo9YVAAwbvqGZhXFg
-         vFZCT0K0wu+2pNukzBDIS7WpPdw7BUFo6Qfu5GLrH4uoqGIvWD5qCb9UdzbsHAaOsbjT
-         paCdtDTWYa0gcEla2FBKD0NU9a5BCE4b/A6SfTlMW5vmKgcK33WzWhgIO2HA/4WwEypA
-         GIyFmOhX7XP639gNKAKgMhxXDgFOg8F0Kjv70wM9zsarIacYm8pfE4hAqEE1tx4suaww
-         oxgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761116155; x=1761720955;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T+geXNLPoYT+g7n3ssTeMIPZBREGJuzg2Y1yRpcxjwI=;
-        b=o3048r1v5ebxcjgHW7vP4Xg56pSURv+XEDdJmA0BFovyy1Qnx1b9IoBUjXEIGXG7MY
-         t2C/sCZsAkr9ixPTyBX3kN5OGgpSAXGuG0NBJ2vjrBh3g2/zR9ye4OLA3LzH7F5YY/iH
-         +stZbY/j6oBm7bWLc+eABHv9hHVzvYdV3C/iGcLfQpi5Grtz8Mlszetc3zwWmF0Au0ze
-         0osqZzhzUIW9U5p9cYQ7zPo/FnuNBBrrB6ltohk84qeFsuWInph56irahBU4hYfHyLgs
-         Himc2BbGudK6LRcRWh53zdWdmPrMdchB03q245zCr/Ep126uUDzZfGqaW/mDJFVpS1i/
-         CzKA==
-X-Forwarded-Encrypted: i=1; AJvYcCV56pjvgNcJCSgbFOZbd5zBcEgB92dCPOkCxn0A+g+GWtv5+ZfwI3M+3xMYJBjLFBqFUoALoC/rtKa7NOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDHhDWjxOGJOzhSjRgrgmiEeWBHxxc3JAoP3BeGbfUW4hkzN6j
-	3b2/FVEp3tOoDOfpETozBHjQ5JdK2dVxLJ33aCvEeCqvd6oCw9h57BhPbFngWPZe7IqR4Qch0M7
-	Cs5obIm7C+M+9PnR4hFo4CgZn62H2gPQ=
-X-Gm-Gg: ASbGncvPQVN/E2yB7eODyF0Xja+G5BCVI0OZYEOURyZFYpohQRA04wT0+IVNz9OhGxR
-	IeRmFYnFfG3ymWqHATYw4m0kKf47+8yWu31Yy1iETGXoUwy/9yQZ3aT1y6swTG46ZuaJtb2NQsM
-	GBlCgoyy/4zFKjjAeRZC1KQXxetbP880GB96yvEQoOVKMZ/sNfqmtB6lMe8ZCOLKwQNF69VuQmx
-	aW9WKVHvhfkcJUVGQQd/KuJfwWxkV45H9KB/k02TNH1kmj2r/bxMeqk2+2hB35pvHvHvg==
-X-Google-Smtp-Source: AGHT+IGwWUfJwaZxrSmSqwuOc1uIOsgsZY0s0HRs122BLbIZBBj56tnMVXEMMc5Eyr21rdDe3zOExr3hezrVk3Px2gw=
-X-Received: by 2002:a05:6870:4e8c:b0:30b:cd02:297c with SMTP id
- 586e51a60fabf-3c98d17dc37mr8955692fac.35.1761116155546; Tue, 21 Oct 2025
- 23:55:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C1A2F12A0;
+	Wed, 22 Oct 2025 06:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761116222; cv=pass; b=AUc+9ri95eONHz05h5D+q96PXy8JusNNn+Yvfv68MvKdpAYVrb38ILY0Jp9OP3vcqP0zk9pDX+RiXJuQR1WAP6zaHyzRl1btZ7m4fdAihwbW6U8naz8/pvUfAdwMTSX0gqtLMmISFNn7d5AvGO5+jEpFDhtKlHWlazev+mMekwQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761116222; c=relaxed/simple;
+	bh=k0AFrLQpMvYTZ6e0/r3ZxrQZZgzaAE/lf0wJqFdFDCE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DZohoqMiI9mbKneh1cyg9qcFJ4g8sgiiCi2FRuzkKZwoCijz5wMMzx0dRObvrsdCGtKVTfBpPno10ew0ToblfFTxDl7h/xFGJW6OU1F5/0GKkUvjV/lBt3k2xqoZEeHDOVZXMDhY/DOeH1c1OfLHQ00oAe569M845XwolOYEXiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=ab3jiVYY; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761116176; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YSmM6fHht8tI+Hs+g3L2P7wAvCYMuoBQzlDwjFWZUc/615269p6rktPjsz9WB8gsEUaznRxJERQb24bpRaDKzrdYcYK/BCP1fRoIYIkHbZNCFroSJYoM4xkKGX8PfngiOOsW0lddLPUDC1+owWVcPmBpreXcSajaAPpWDQig0LU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761116176; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VrTdEMBjb9J8SLRrC3vLxTtsIJrVCIippWcA6vJQ+Sc=; 
+	b=YfK9QluAXmmxX9kSbNdrBDhfxEV3S7KtbwKeNmyucgOl6EReqAb680Mf1fsYYidgwmbXUaJa/snr9j3FJNMtpJ6W7cHRjv0HL6imBTobge1AE1HrufuX0SxByyu2DIYaZ8AbqYWpBNeNuuGnJ/OhK2oHeTPzGZcLBH8xvMlJ22A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
+	dmarc=pass header.from=<sjoerd@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761116176;
+	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=VrTdEMBjb9J8SLRrC3vLxTtsIJrVCIippWcA6vJQ+Sc=;
+	b=ab3jiVYYnku8HtA+3wdNILGqr/Nsdqmzhy2eGZ8glKkkzc7JF7u3I+5iDVjER+Bb
+	1DdPzxEQm91Xm/GFKyO5TQc1PulKRvfSCTQEK6kd9ql9kv13uKykLZYEgcU187WjO36
+	MjOUNnri8IEPm+Eg119HPZMSnnqIwv1mH6NjzZ8A=
+Received: by mx.zohomail.com with SMTPS id 17611161732831018.5532421915162;
+	Tue, 21 Oct 2025 23:56:13 -0700 (PDT)
+Message-ID: <9280864d0eba182d06d1e191fdc0aad1fb4ce5b3.camel@collabora.com>
+Subject: Re: [PATCH 12/15] arm64: dts: mediatek: mt7981b-openwrt-one: Enable
+ Ethernet
+From: Sjoerd Simons <sjoerd@collabora.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Eric Woudstra <ericwouds@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger	 <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno	 <angelogioacchino.delregno@collabora.com>,
+ Ryder Lee <ryder.lee@mediatek.com>,  Jianjun Wang
+ <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo
+ Pieralisi	 <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
+ <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Chunfeng
+ Yun	 <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>, Andrew
+ Lunn <andrew+netdev@lunn.ch>,  "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Felix
+ Fietkau <nbd@nbd.name>, 	kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, 	linux-pci@vger.kernel.org,
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org,  Daniel Golle
+ <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>
+Date: Wed, 22 Oct 2025 08:56:06 +0200
+In-Reply-To: <fd52be11-ccff-4f34-b86b-9c2f9f485756@lunn.ch>
+References: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
+	 <20251016-openwrt-one-network-v1-12-de259719b6f2@collabora.com>
+	 <4f82aa17-1bf8-4d72-bc1f-b32f364e1cf6@lunn.ch>
+	 <8f5335a703905dea9d8d0c1840862a3478da1ca7.camel@collabora.com>
+	 <fd52be11-ccff-4f34-b86b-9c2f9f485756@lunn.ch>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-5 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022030840.956589-1-Wenhua.Lin@unisoc.com>
-In-Reply-To: <20251022030840.956589-1-Wenhua.Lin@unisoc.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Wed, 22 Oct 2025 14:55:17 +0800
-X-Gm-Features: AS18NWBdi_EIGFjDegtPbIDhcO6RDB-JPNHUp1fKzjacRS6sWcnJcGCwsuuLi3E
-Message-ID: <CAAfSe-uq6GszSLgtM+UBuwJ6V1Bt0_1Ard8cb6e9MMCsdpJPqw@mail.gmail.com>
-Subject: Re: [PATCH] serial: sprd: Return -EPROBE_DEFER when uart clock is not ready
-To: Wenhua Lin <Wenhua.Lin@unisoc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Cixi Geng <cixi.geng@linux.dev>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, wenhua lin <wenhua.lin1994@gmail.com>, 
-	Xiongpeng Wu <xiongpeng.wu@unisoc.com>, Zhaochen Su <Zhaochen.Su@unisoc.com>, 
-	Zhirong Qiu <Zhirong.Qiu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+X-ZohoMailClient: External
 
-On Wed, 22 Oct 2025 at 11:09, Wenhua Lin <Wenhua.Lin@unisoc.com> wrote:
->
-> In sprd_clk_init(), when devm_clk_get() returns -EPROBE_DEFER
-> for either uart or source clock, we should propagate the
-> error instead of just warning and continuing with NULL clocks.
->
-> Currently the driver only emits a warning when clock acquisition
-> fails and proceeds with NULL clock pointers. This can lead to
-> issues later when the clocks are actually needed. More importantly,
-> when the clock provider is not ready yet and returns -EPROBE_DEFER,
-> we should return this error to allow deferred probing.
->
-> This change adds explicit checks for -EPROBE_DEFER after both:
-> 1. devm_clk_get(uport->dev, uart)
-> 2. devm_clk_get(uport->dev, source)
->
-> When -EPROBE_DEFER is encountered, the function now returns
-> -EPROBE_DEFER to let the driver framework retry probing
-> later when the clock dependencies are resolved.
->
-> Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
-> ---
->  drivers/tty/serial/sprd_serial.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-> index 8c9366321f8e..092755f35683 100644
-> --- a/drivers/tty/serial/sprd_serial.c
-> +++ b/drivers/tty/serial/sprd_serial.c
-> @@ -1133,6 +1133,9 @@ static int sprd_clk_init(struct uart_port *uport)
->
->         clk_uart = devm_clk_get(uport->dev, "uart");
->         if (IS_ERR(clk_uart)) {
-> +               if (PTR_ERR(clk_uart) == -EPROBE_DEFER)
-> +                       return -EPROBE_DEFER;
-> +
+On Tue, 2025-10-21 at 22:40 +0200, Andrew Lunn wrote:
+> On Tue, Oct 21, 2025 at 10:21:31PM +0200, Sjoerd Simons wrote:
+> > On Fri, 2025-10-17 at 19:31 +0200, Andrew Lunn wrote:
+> > > > +&mdio_bus {
+> > > > +	phy15: ethernet-phy@f {
+> > > > +		compatible =3D "ethernet-phy-id03a2.a411";
+> > > > +		reg =3D <0xf>;
+> > > > +		interrupt-parent =3D <&pio>;
+> > > > +		interrupts =3D <38 IRQ_TYPE_EDGE_FALLING>;
+> > >=20
+> > > This is probably wrong. PHY interrupts are generally level, not edge.
+> >=20
+> > Sadly i can't find a datasheet for the PHY, so can't really validate th=
+at
+> > easily.
+>=20
+> What PHY is it? Look at the .handle_interrupt function in the
+> driver. If the hardware supports a single interrupt bit, it could in
+> theory support edge. However, as soon as you have multiple bits, you
+> need level, to avoid races where an interrupt happens while you are
+> clearing other interrupts.
 
-You are making this clock mandatory, sprd_serial driver could work as
-serial ports for logs output without this "uart" clock.
+ethernet-phy-id03a2.a411 is Airoha EN8811H (air_en8811h driver). Handle
+interrupt there seems to just be a general interrupt clear followed by a
+`phy_trigger_machine`. It doesn't seem to read specific interrupt status.=
+=20
 
->                 dev_warn(uport->dev, "uart%d can't get uart clock\n",
->                          uport->line);
->                 clk_uart = NULL;
-> @@ -1140,6 +1143,9 @@ static int sprd_clk_init(struct uart_port *uport)
->
->         clk_parent = devm_clk_get(uport->dev, "source");
->         if (IS_ERR(clk_parent)) {
-> +               if (PTR_ERR(clk_parent) == -EPROBE_DEFER)
-> +                       return -EPROBE_DEFER;
-> +
->                 dev_warn(uport->dev, "uart%d can't get source clock\n",
->                          uport->line);
->                 clk_parent = NULL;
-> --
-> 2.34.1
->
+Testing with IRQ_TYPE_LEVEL_LOW does seem to work as expected and results i=
+n
+detecting 4 interrupts rather then just 1 with edges when enabling the
+interface. However I'm not sure what can be concluded from that if anything=
+ :)..
+=C2=A0
+I can stick a scope on the line in the coming days to see how the interrupt=
+ line
+behaves if interrupts aren't cleared, which may clarify things.
+=20
+
+--=20
+Sjoerd Simons
+Collabora
 
