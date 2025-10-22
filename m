@@ -1,158 +1,309 @@
-Return-Path: <linux-kernel+bounces-864006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7363CBF9B2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:16:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9514DBF9B32
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 04:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CE454FA765
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:16:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F4356210B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 02:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB2821FF30;
-	Wed, 22 Oct 2025 02:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3482153ED;
+	Wed, 22 Oct 2025 02:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGvnAwwZ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChpT2ElF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BAD21773F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 02:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369E20FAA4;
+	Wed, 22 Oct 2025 02:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761099366; cv=none; b=GzZMiwH1z0GbOtKR5WLmuiF1q4fCmpEjy1pZHfBL6VGqb7dBJaRNRJ1YHI09qpBjfn5KlZULtEUacw8Q7ED9fLWt5gyhscIGuesd7SllJrKjXNReVaW6ry3M2ppX8Fxu3qMx4A+7DQ2TJW5E3acVNcwJ4q4lZ9mMArL218krKVo=
+	t=1761099379; cv=none; b=n3iz3OX2RumkcMYnrbSYbehBD281bZ9jot6Rg7Wab6ljbBCNt9xD8jJRGV/sNVSlRCeIeymAO2dgMtkzAmgFg/So6+/uRoP1Aixmc1andgqLZZad6JqjuiJnd/jO0Fzby/tSrGKx6Orum+M69dxLXrrTdZWhN50jRRsRe8ZbgG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761099366; c=relaxed/simple;
-	bh=ZNYpaJWfK2uX7fNuNpV/cydFuI7wkAz8CLs/mB6yfTU=;
+	s=arc-20240116; t=1761099379; c=relaxed/simple;
+	bh=5uBReC+Nm3JU22cYwRs3/seQf4x2ViZdw46rln3YfJ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UNLMcCd4Xl/k2icNdV9r+jEV86tHLQdwOSXtkceyThSdOUEuJ8t8ZoUrpUoiw56cGb+iL2KOC5Adnd+TuEdq2lJcEtJipyo/CPdmGgcVoneOhIiABYRvZzoMN57nf6bil1CmLPSRRwzMo9Cflc+z510QR4YJDJQJVUEZF2ogc88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGvnAwwZ; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7a265a02477so308168b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761099363; x=1761704163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yFbQwKVrg4ulSzHTYcdE0/YBPiD7WzPZ8N0zJ6yfUg=;
-        b=dGvnAwwZt24nsiLUJRQ+UeeMvxr4qhMK7hbIRNA/JtjRZm+MyX5aOyGPmAE9+aG63s
-         sIPjbmktHkBIYrux7vtL2hYmwgKy0ZO3SrjGJoinbBzGJ0vhWAzp3oFa2NwKF+6HSpaF
-         U33/acgsn/aL38aB64HDrZvRVH3aNZwo/M+146H2/AR8b2/2Bsd1Sx4Ti5+ucnXNz4rP
-         jDfYjgKGeoOKPPUszAjZK8/F2YJ5RlC+Z7nmDvQ5Hymjjng1sFkw+m7TSR13ClGpOhwb
-         mWuP6aVNTUZKshV9RAdycFKEF39Uue+m3oIL87XatFOPv0ffaBxrpAiEi6kShMe0dkda
-         r2sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761099363; x=1761704163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+yFbQwKVrg4ulSzHTYcdE0/YBPiD7WzPZ8N0zJ6yfUg=;
-        b=YWsVBSu4KEWcv2eAG37jkzXkJ3NHLxUvdvBEF+6Y24Hro26sX1FwgxmjhRkfc9iYd/
-         Gkwo0zK1q9hAiKPot93veklyn1jb5PSeypz83L6XYi99QgiPaCJ/dfs4H3wEUi8dDvFa
-         4NYjhakRmLxRJckka6ZLMWES+rBqUoDd0ZDajtFwRRc4vGiEcUM4ntMOt+e6vpB3U/KT
-         zP2294i17e7mYTTdQhaE2r//hfloKweudt0M5jbp3ToWrFvavMnK1V1bueYQhsk0a1hw
-         wHOtuneASbO8OdKQ6LkqWdo03o8fHA7ruPmuN696n3RKyINQDuyVR6ptKT5syCdbPfwW
-         uPUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA7QZr5+Y2SP9w5yTKtgSbELG0w5bDQg7OJV13HO7owKs5RWLjLClC+MeK6KJw33gwb4W9iOl3OX45a+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSVypN8akHuvVBNqmUWCl3PN+tqgiO/yqIY30ZKPI3kgr19M4D
-	/F6YV/wGA7fQm2Ionl2BbjKOnP+SMI/YGQmj8RKcFuedmrLy4sNAUw8C
-X-Gm-Gg: ASbGncsLzUvg0g3W+7k3AFkIEGav5mwQIp0zGsIwoiJ0M9w9crMyoI964inhke7RfpR
-	VO3ESvGxwza0PoBJ1IaHSluPA1rvZPAnbPhaXPI2IkAb/Ig93b1fxkAHV7spF2p6H/iBZhAJBsV
-	p8Onw+wiU21pn+/ccbyZXU8od3mEpwjJuD2aJNmuSN8tlMvIaQ2imknLu9n1/KTeu4ksra9vw4u
-	IZ2Z8fmpb36raJ2EhGtSV1qOVtQH+HQOaZXfGU7hQDZ5s3M8nsyb2n3TwDSLEQ2G47u0xkO1j/p
-	n8vcZofuF6a5gpNPTz08vnXTqn2nxbuJpDQx01csfGUNRHZxFLT6ZERIb+DvYxtIdjuQW+f+C1s
-	JISX5SNXVH+XjN//h2is2Sp+j9EkK8wI6dJvUetCFZbtcqS08IKb9osoPeSmodcU0mAdPdEuR+P
-	7cPKkPcZD1s16d
-X-Google-Smtp-Source: AGHT+IHgcLczGY0gNkz46ZH3wqYDdp+xytg9WZxLoXNNek71M0Z3I+LEtQXMo7LSXlQTlq9C1XGtow==
-X-Received: by 2002:a05:6a20:5493:b0:304:4f7c:df90 with SMTP id adf61e73a8af0-334a861852amr26222250637.50.1761099363079;
-        Tue, 21 Oct 2025 19:16:03 -0700 (PDT)
-Received: from archie.me ([103.124.138.80])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a23010da0bsm12753936b3a.55.2025.10.21.19.16.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 19:16:02 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 48C344209E4B; Wed, 22 Oct 2025 09:16:00 +0700 (WIB)
-Date: Wed, 22 Oct 2025 09:16:00 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgbRvYyDU/ve0Mz2aqFB9bTx6dFBRu1MzZr3tPe2su2ubU/nyr1JXcFzbDRKVjvrqFE3zaVSJuwK+nOMoNU8CJltrHa8HPWQIwT91jm3V+38MvV4pE2N5stVtpv0KfM/Q9zXoBoyppQT4OEtYWz5FEjroQiX7xrbwSH5l65yZCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChpT2ElF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFBCC4CEF1;
+	Wed, 22 Oct 2025 02:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761099379;
+	bh=5uBReC+Nm3JU22cYwRs3/seQf4x2ViZdw46rln3YfJ0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ChpT2ElFZrRY3kW6mCgHCcc7mkJkIqcrlz5+QhcvrD/10dkiofJMWRq42JLCZTP7A
+	 ouVlPNn2uM2jJdFGZ2FayuqhtUIbMfsc/PtHNtf03exRFDah+baNFTUsQVz7RAn427
+	 aoY9WpTrNDhvHz774Fxq5l2/j8FQP2mtv46B05pG09hDFYLmEDgE4+HGBVzcrtm2i0
+	 EgmDpL+k1atGJM+K54GiYCv1cPsZXvO/iJ3wfEe4GZrVEaLtLb/8Oz+P468tNaA2oq
+	 BGqWvAgV2qYXikRcfWsSHCDWMw6KvHCyxD23XihS0lUILxliVLXJQcpToNkCSB5mpI
+	 iDNUIsKkkGZ8Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 81D27CE0CFD; Tue, 21 Oct 2025 19:16:18 -0700 (PDT)
+Date: Tue, 21 Oct 2025 19:16:18 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	linux-s390 <linux-s390@vger.kernel.org>,
+	Andrew Chant <achant@google.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
 	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Art Nikpal <email2tema@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	linux-arch@vger.kernel.org, linux-block@vger.kernel.org,
-	initramfs@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-doc@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Heiko Carstens <hca@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Dave Young <dyoung@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Jessica Clarke <jrtc27@jrtc27.com>,
-	Nicolas Schichan <nschichan@freebox.fr>,
-	David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
-Subject: Re: [PATCH v3 2/3] initrd: remove deprecated code path (linuxrc)
-Message-ID: <aPg-YF2pcyI-HusN@archie.me>
-References: <20251017060956.1151347-1-safinaskar@gmail.com>
- <20251017060956.1151347-3-safinaskar@gmail.com>
+	Francesco Valla <francesco@valla.it>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu <jeffxu@chromium.org>,
+	Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Subject: Re: [PATCH v2] init/main.c: Wrap long kernel cmdline when printing
+ to logs
+Message-ID: <8bc35675-13ab-4444-ba45-be910ebc4ff4@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20251021173939.v2.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m/ueW+980/ea0Wf8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017060956.1151347-3-safinaskar@gmail.com>
+In-Reply-To: <20251021173939.v2.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
 
+On Tue, Oct 21, 2025 at 05:39:48PM -0700, Douglas Anderson wrote:
+> The kernel cmdline length is allowed to be longer than what printk can
+> handle. When this happens the cmdline that's printed to the kernel
+> ring buffer at bootup is cutoff and some kernel cmdline options are
+> "hidden" from the logs. This undercuts the usefulness of the log
+> message.
+> 
+> Specifically, grepping for COMMAND_LINE_SIZE shows that 2048 is common
+> and some architectures even define it as 4096. s390 allows a
+> CONFIG-based maximum up to 1MB (though it's not expected that anyone
+> will go over the default max of 4096 [1]).
+> 
+> The maximum message pr_notice() seems to be able to handle (based on
+> experiment) is 1021 characters. This appears to be based on the
+> current value of PRINTKRB_RECORD_MAX as 1024 and the fact that
+> pr_notice() spends 2 characters on the loglevel prefix and we have a
+> '\n' at the end.
+> 
+> While it would be possible to increase the limits of printk() (and
+> therefore pr_notice()) somewhat, it doesn't appear possible to
+> increase it enough to fully include a 2048-character cmdline without
+> breaking userspace. Specifically on at least two tested userspaces
+> (ChromeOS plus the Debian-based distro I'm typing this message on) the
+> `dmesg` tool reads lines from `/dev/kmsg` in 2047-byte chunks. As per
+> `Documentation/ABI/testing/dev-kmsg`:
+> 
+>   Every read() from the opened device node receives one record
+>   of the kernel's printk buffer.
+>   ...
+>   Messages in the record ring buffer get overwritten as whole,
+>   there are never partial messages received by read().
+> 
+> We simply can't fit a 2048-byte cmdline plus the "Kernel command
+> line:" prefix plus info about time/log_level/etc in a 2047-byte read.
+> 
+> The above means that if we want to avoid the truncation we need to do
+> some type of wrapping of the cmdline when printing.
+> 
+> Add wrapping to the printout of the kernel command line. By default,
+> the wrapping is set to 1021 characters to avoid breaking anyone, but
+> allow wrapping to be set lower by a Kconfig knob
+> "CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN". Any tools that are correctly
+> parsing the cmdline today (because it is less than 1021 characters)
+> will see no difference in their behavior. The format of wrapped output
+> is designed to be matched by anyone using "grep" to search for the
+> cmdline and also to be easy for tools to handle. Anyone who is sure
+> their tools (if any) handle the wrapped format can choose a lower
+> wrapping value and have prettier output.
+> 
+> Wrapping is based on spaces, ignoring quotes. All lines are prefixed
+> with "Kernel command line: " and lines that are not the last line have
+> a " \" suffix added to them. The prefix and suffix count towards the
+> line length for wrapping purposes. The ideal length will be exceeded
+> if no appropriate place to wrap is found.
+> 
+> The wrapping function added here is fairly generic and could be made a
+> library function (somewhat like print_hex_dump()) if it's needed
+> elsewhere in the kernel. However, having printk() directly incorporate
+> this wrapping would be unlikely to be a good idea since it would break
+> printouts into more than one record without any obvious common line
+> prefix to tie lines together. It would also be extra overhead when, in
+> general, kernel log message should simply be kept smaller than 1021
+> bytes. For some discussion on this topic, see responses to the v1
+> posting of this patch [2].
+> 
+> [1] https://lore.kernel.org/r/20251021131633.26700Dd6-hca@linux.ibm.com
+> [2] https://lore.kernel.org/r/CAD=FV=VNyt1zG_8pS64wgV8VkZWiWJymnZ-XCfkrfaAhhFSKcA@mail.gmail.com
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
---m/ueW+980/ea0Wf8
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Nice!!!
 
-On Fri, Oct 17, 2025 at 06:09:55AM +0000, Askar Safin wrote:
-> +		if (rd_load_image()) {
-> +			pr_warn("using deprecated initrd support, will be removed in Septembe=
-r 2026; "
-> +				"use initramfs instead or (as a last resort) /sys/firmware/initrd; "
-> +				"see section \"Workaround\" in "
-> +				"https://lore.kernel.org/lkml/20251010094047.3111495-1-safinaskar@gm=
-ail.com\n");
->  		}
+However, there is tooling that will choke on the line-wrapping.  :-(
 
-Do you mean that initrd support will be removed in LTS kernel release of 20=
-26?
+So would it be possible to have a Kconfig option (or a special value for
+your new CMDLINE_LOG_WRAP_IDEAL_LEN Kconfig option) that preserves the
+old behavior?  (Yes, I am of course looking into making things line-wrap
+tolerant here, but...)
 
-Thanks.=20
+							Thanx, Paul
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---m/ueW+980/ea0Wf8
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPg+YAAKCRD2uYlJVVFO
-o9OtAQCr/giTF4+FVt9hiDGkb1l4yn/kE0D0NKGYI1gigRnAqAEAhLIU0ssllGOB
-IgSBphGX7ddV9bgZvHiqagtFYOgJwwo=
-=plLG
------END PGP SIGNATURE-----
-
---m/ueW+980/ea0Wf8--
+> ---
+> v1 link: https://lore.kernel.org/r/20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid
+> 
+> NOTE: I _didn't_ add any "max characters printed" in v2 to try to
+> handle someone on s390 having an absurdly long cmdline after the
+> discussoin in v1. If someone truly puts a giant cmdline then it will
+> all be printed out to dmesg. If this truly turns out to be a problem
+> for someone then it's easy to add a maximum at a later time.
+> 
+> Changes in v2:
+> - Much longer commit message after discussion in v1.
+> 
+>  init/Kconfig | 10 +++++++
+>  init/main.c  | 83 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 92 insertions(+), 1 deletion(-)
+> 
+> diff --git a/init/Kconfig b/init/Kconfig
+> index cab3ad28ca49..905b2ece4127 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1512,6 +1512,16 @@ config BOOT_CONFIG_EMBED_FILE
+>  	  This bootconfig will be used if there is no initrd or no other
+>  	  bootconfig in the initrd.
+>  
+> +config CMDLINE_LOG_WRAP_IDEAL_LEN
+> +	int "Length to try to wrap the cmdline when logged at boot"
+> +	default 1021
+> +	range 40 1021
+> +	help
+> +	  At boot time, the kernel command line is logged to the console.
+> +	  It will attempt to be wrapped at this many characters. If there
+> +	  are more than this many non-space characters in a row, log lines
+> +	  may exceed this ideal maximum length.
+> +
+>  config INITRAMFS_PRESERVE_MTIME
+>  	bool "Preserve cpio archive mtimes in initramfs"
+>  	depends on BLK_DEV_INITRD
+> diff --git a/init/main.c b/init/main.c
+> index 07a3116811c5..0adc1575a2cb 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -906,6 +906,87 @@ static void __init early_numa_node_init(void)
+>  #endif
+>  }
+>  
+> +#define KERNEL_CMDLINE_PREFIX		"Kernel command line: "
+> +#define KERNEL_CMDLINE_PREFIX_LEN	(sizeof(KERNEL_CMDLINE_PREFIX) - 1)
+> +#define KERNEL_CMDLINE_CONTINUATION	" \\"
+> +#define KERNEL_CMDLINE_CONTINUATION_LEN	(sizeof(KERNEL_CMDLINE_CONTINUATION) - 1)
+> +
+> +#define IDEAL_CMDLINE_LEN		(CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN - \
+> +					 KERNEL_CMDLINE_PREFIX_LEN)
+> +#define IDEAL_CMDLINE_SPLIT_LEN		(IDEAL_CMDLINE_LEN - KERNEL_CMDLINE_CONTINUATION_LEN)
+> +
+> +/**
+> + * print_kernel_cmdline() - Print the kernel cmdline with wrapping.
+> + * @cmdline: The cmdline to print.
+> + *
+> + * Print the kernel command line, trying to wrap based on the Kconfig knob
+> + * CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN.
+> + *
+> + * Wrapping is based on spaces, ignoring quotes. All lines are prefixed
+> + * with "Kernel command line: " and lines that are not the last line have
+> + * a " \" suffix added to them. The prefix and suffix count towards the
+> + * line length for wrapping purposes. The ideal length will be exceeded
+> + * if no appropriate place to wrap is found.
+> + *
+> + * Example output if CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN is 40:
+> + *   Kernel command line: loglevel=7 \
+> + *   Kernel command line: init=/sbin/init \
+> + *   Kernel command line: root=PARTUUID=8c3efc1a-768b-6642-8d0c-89eb782f19f0/PARTNROFF=1 \
+> + *   Kernel command line: rootwait ro \
+> + *   Kernel command line: my_quoted_arg="The \
+> + *   Kernel command line: quick brown fox \
+> + *   Kernel command line: jumps over the \
+> + *   Kernel command line: lazy dog."
+> + */
+> +static void print_kernel_cmdline(const char *cmdline)
+> +{
+> +	size_t len = strlen(cmdline);
+> +
+> +	while (len > IDEAL_CMDLINE_LEN) {
+> +		const char *first_space;
+> +		const char *prev_cutoff;
+> +		const char *cutoff;
+> +		int to_print;
+> +		size_t used;
+> +
+> +		/* Find the last ' ' that wouldn't make the line too long */
+> +		prev_cutoff = NULL;
+> +		cutoff = cmdline;
+> +		while (true) {
+> +			cutoff = strchr(cutoff + 1, ' ');
+> +			if (!cutoff || cutoff - cmdline > IDEAL_CMDLINE_SPLIT_LEN)
+> +				break;
+> +			prev_cutoff = cutoff;
+> +		}
+> +		if (prev_cutoff)
+> +			cutoff = prev_cutoff;
+> +		else if (!cutoff)
+> +			break;
+> +
+> +		/* Find the beginning and end of the string of spaces */
+> +		first_space = cutoff;
+> +		while (first_space > cmdline && first_space[-1] == ' ')
+> +			first_space--;
+> +		to_print = first_space - cmdline;
+> +		while (*cutoff == ' ')
+> +			cutoff++;
+> +		used = cutoff - cmdline;
+> +
+> +		/* If the whole string is used, break and do the final printout */
+> +		if (len == used)
+> +			break;
+> +
+> +		if (to_print)
+> +			pr_notice("%s%.*s%s\n", KERNEL_CMDLINE_PREFIX,
+> +				  to_print, cmdline, KERNEL_CMDLINE_CONTINUATION);
+> +
+> +		len -= used;
+> +		cmdline += used;
+> +	}
+> +	if (len)
+> +		pr_notice("%s%s\n", KERNEL_CMDLINE_PREFIX, cmdline);
+> +}
+> +
+>  asmlinkage __visible __init __no_sanitize_address __noreturn __no_stack_protector
+>  void start_kernel(void)
+>  {
+> @@ -942,7 +1023,7 @@ void start_kernel(void)
+>  	early_numa_node_init();
+>  	boot_cpu_hotplug_init();
+>  
+> -	pr_notice("Kernel command line: %s\n", saved_command_line);
+> +	print_kernel_cmdline(saved_command_line);
+>  	/* parameters may set static keys */
+>  	parse_early_param();
+>  	after_dashes = parse_args("Booting kernel",
+> -- 
+> 2.51.0.915.g61a8936c21-goog
+> 
 
