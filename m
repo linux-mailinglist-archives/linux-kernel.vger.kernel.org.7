@@ -1,204 +1,125 @@
-Return-Path: <linux-kernel+bounces-865687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CBFFBFDBFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D99BFDC0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A72C189B3D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA3CC3A6B1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3A12E7637;
-	Wed, 22 Oct 2025 18:00:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532572E7BC3;
+	Wed, 22 Oct 2025 18:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5+JwXBM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0FA24634F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A438C28C00D;
+	Wed, 22 Oct 2025 18:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761156007; cv=none; b=ZXdXWXuycwmQZgVD9Oir4UVaupczW6Bxsj7ZuHLoU4dnm+UTFDuhQlLFa+TjwD6bRguDiCUB+5OymE3M5Zoc1MHc/p9N8xsKwyCl5FWow1D0sXs0WJCTa0pqVZIzxJpDvQqajjq0SG47RdrTLNAJ8CoaC0X4O96f66CpzSc3OGc=
+	t=1761156116; cv=none; b=JPk1Cm5FRuru5F0G7d5Bnb1AD0iqi0loSKVo+d7DXWDuvAJtSmYKup45+l9prxUX13NkUoRTjrq2krC/OreG5n9hX2gngixhwgZIF+vQoTU4ZDSNf122+ijsRwq6f/0gDOBHI2s6s0dpKUVv0IzuHjvgE4TTxyug7I3LwRHQePA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761156007; c=relaxed/simple;
-	bh=Iy23dOk2Xws00AQtshp2ZfIqszeR9BuoSWSsqdFbTVc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rGgKQcDfZa3iQYylz0WinCnXyfOHe4z65gCRksoKNQ9oMYXl188rMMQs5kNOHQIOuFjlpE6YefxJPjJyxgAeLHHO4FfRNh21U3vvt8aSDqwr6col8e6VjrGcrNpzcqlD8p3EFPzAQ/Hyg/ruhHewAHuOIpICcePJF2+BXiO/HVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430e1a4a129so52256715ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 11:00:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761156004; x=1761760804;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I6TRX+0wa09P5DS+E74Lm/QP3pffhgmywZN35ZMF9YM=;
-        b=kW/r5N5uE7UYJ2vbseRGZ+Zp36sZvg18yRXKSvQJXPc9jyOsUsqcqQE/OE75/bl3hF
-         nkZkbxpOm7y3/winis1Y6e3731T461VyiPOS0bIbcLLv7RU77nX1rifm0EeLzyFa0HMB
-         vJPHLmO0UVS48S/zqlxjPYmsHJ/4aVpbJ0zuZxEtsUpdqKYKM8kiEQUXKUvGi2zF8RBe
-         oTJBcbfCbYHBpiEHU0wMlDkYAU8AgIDczakoQC4mO/H2RO89KyjeRQeZ3vRroyMpvsTA
-         MpxiE4faPH5QfXkGZqdr54neWYzZehs0f/SF+n/PIO4cRA8nzojOUW0kWVVunvT93k71
-         syMQ==
-X-Gm-Message-State: AOJu0YxAh+l50c6VZ9P/VAXTVH4J7iNk93HBIp4+955Gd/JUqTHRkca7
-	i4K1ubxqCeHA+XGGxu7R8CkCkosFaSBD/Y7vjPHMhzcuP6JEvV0o+FXbWV9DKxFhQE0/rVjpUr6
-	CiqsjMqTv2zXi0lveYmCPxF48YpIiGVmpnkvMYLpd5179Z+/jdrbEJgcdZDE=
-X-Google-Smtp-Source: AGHT+IG4rN14vgA5HcFiSADqEn3X4IKsIXdKFBt36khE0pl5tJKuQPSBg/F0aJP467viLwzjjhrH76w3TYiC0WjAq69QqJbQuoxM
+	s=arc-20240116; t=1761156116; c=relaxed/simple;
+	bh=58mumSNUhT46WTT88usq3EBfCwuN7mWOryWKIRMP894=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKWLgkHv97MYfZ7gnbZ0zKbsMZIAZxKvuxsKA+RJK+Vy7kjaYpCcKh7yDzJuYfTDJIfUGxcdhEfKcibRjfQ1ky0i1PTeX89IVec4afxSATeWGNPXB3Tq94SxZJO/78Owlgkg8oChJ7kkzyH9aHaYexxYLjUDgN5RsJchi9mfHUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5+JwXBM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3271C4CEE7;
+	Wed, 22 Oct 2025 18:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761156116;
+	bh=58mumSNUhT46WTT88usq3EBfCwuN7mWOryWKIRMP894=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a5+JwXBMT9Ig31v7lnuHVKebhGBLlQX1guunqcbnTCumZiNYDHnbbMymmFdqNyQEH
+	 d8/0EhLte9mrD2DbuGWdyyTywxog6DNTLyYm3K9BhNq9ftjLdzT3yOhDpZy3s0DnAe
+	 oNGSvBvZa3PVPLS7lO7k0Da9goykOjlXCuZ6BxkdJHuX+A8gCEQEBZM5Dw4vSrYVp/
+	 Nrm5uPYtjXBzb8YkkVHA4LwBsAxXdFFE/sJKFG4qowFqgbS2Fr+nXm/5SKNdGk6L62
+	 zy9cfhMcZDR9i/CXKbu5HWbSLW2e98+RZmBG5FLEUjAE6b1pgrnuDPgH/8PYcSQwWa
+	 b7ukLPxpUyjGg==
+Date: Wed, 22 Oct 2025 19:01:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Herve Codina <herve.codina@bootlin.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Axel Lin <axel.lin@ingics.com>,
+	Brian Austin <brian.austin@cirrus.com>, linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+Message-ID: <4240deca-6dc5-4353-afd8-9b4d2819570b@sirena.org.uk>
+References: <e7873e6ce07cd92f4b5ce8880aa81b12c2a08ed3.camel@gmail.com>
+ <d38779a7-a1af-49e4-b429-5ebd791e2168@sirena.org.uk>
+ <d42ab1a0665f55731aabd1e9fcb31b8401b7913f.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1745:b0:42f:91aa:510b with SMTP id
- e9e14a558f8ab-430c51eac3dmr281711575ab.4.1761156004367; Wed, 22 Oct 2025
- 11:00:04 -0700 (PDT)
-Date: Wed, 22 Oct 2025 11:00:04 -0700
-In-Reply-To: <68f659cd.050a0220.91a22.044c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f91ba4.050a0220.346f24.005f.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
-From: syzbot <syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J98ESMF++UfUzSbY"
+Content-Disposition: inline
+In-Reply-To: <d42ab1a0665f55731aabd1e9fcb31b8401b7913f.camel@gmail.com>
+X-Cookie: Remember the... the... uhh.....
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
+--J98ESMF++UfUzSbY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Subject: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_inq_pop (3)
-Author: vnranganath.20@gmail.com
+On Wed, Oct 22, 2025 at 07:46:26PM +0200, Alexander Sverdlin wrote:
+> On Wed, 2025-10-22 at 15:56 +0100, Mark Brown wrote:
 
-#syz test
+> > > Now declaring "of:" to be the new I2C bus prefix for uevents starting from
+> > > Linux v4.18 sounds strange.
 
-On Wed, Oct 22, 2025 at 5:23=E2=80=AFPM syzbot <
-syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com> wrote:
+> > I think a robust solution would involve having the OF aliases namespaced
+> > by bus, or just not using the OF aliases but potentially having
+> > collisions if two vendors pick the same device name.
 
-> Hello,
->
-> syzbot has tested the proposed patch but the reproducer is still
-> triggering an issue:
-> KMSAN: uninit-value in sctp_inq_pop
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in sctp_inq_pop+0x159c/0x1aa0
-> net/sctp/inqueue.c:213
->  sctp_inq_pop+0x159c/0x1aa0 net/sctp/inqueue.c:213
->  sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
->  sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
->  sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
->  sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
->  __release_sock+0x1ef/0x380 net/core/sock.c:3180
->  release_sock+0x6b/0x270 net/core/sock.c:3735
->  sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
->  inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
->  sock_sendmsg_nosec net/socket.c:727 [inline]
->  __sock_sendmsg+0x278/0x3d0 net/socket.c:742
->  sock_sendmsg+0x170/0x280 net/socket.c:765
->  splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
->  do_splice_from fs/splice.c:938 [inline]
->  do_splice+0x1fd2/0x30d0 fs/splice.c:1351
->  __do_splice fs/splice.c:1433 [inline]
->  __do_sys_splice fs/splice.c:1636 [inline]
->  __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
->  __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
->  x64_sys_call+0x3140/0x3e30
-> arch/x86/include/generated/asm/syscalls_64.h:276
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Uninit was stored to memory at:
->  sctp_inq_pop+0x150b/0x1aa0 net/sctp/inqueue.c:209
->  sctp_assoc_bh_rcv+0x1a0/0xbc0 net/sctp/associola.c:980
->  sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
->  sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
->  sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
->  __release_sock+0x1ef/0x380 net/core/sock.c:3180
->  release_sock+0x6b/0x270 net/core/sock.c:3735
->  sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
->  inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
->  sock_sendmsg_nosec net/socket.c:727 [inline]
->  __sock_sendmsg+0x278/0x3d0 net/socket.c:742
->  sock_sendmsg+0x170/0x280 net/socket.c:765
->  splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
->  do_splice_from fs/splice.c:938 [inline]
->  do_splice+0x1fd2/0x30d0 fs/splice.c:1351
->  __do_splice fs/splice.c:1433 [inline]
->  __do_sys_splice fs/splice.c:1636 [inline]
->  __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
->  __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
->  x64_sys_call+0x3140/0x3e30
-> arch/x86/include/generated/asm/syscalls_64.h:276
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Uninit was created at:
->  slab_post_alloc_hook mm/slub.c:4969 [inline]
->  slab_alloc_node mm/slub.c:5272 [inline]
->  kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
->  kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
->  __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
->  alloc_skb include/linux/skbuff.h:1383 [inline]
->  sctp_packet_transmit+0x44b/0x46d0 net/sctp/output.c:598
->  sctp_outq_flush_transports net/sctp/outqueue.c:1173 [inline]
->  sctp_outq_flush+0x1c7d/0x67c0 net/sctp/outqueue.c:1221
->  sctp_outq_uncork+0x9e/0xc0 net/sctp/outqueue.c:764
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:-1 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1204 [inline]
->  sctp_do_sm+0x8c8e/0x9720 net/sctp/sm_sideeffect.c:1175
->  sctp_primitive_SEND+0xd7/0x110 net/sctp/primitive.c:163
->  sctp_sendmsg_to_asoc+0x1db8/0x2250 net/sctp/socket.c:1873
->  sctp_sendmsg+0x3910/0x49f0 net/sctp/socket.c:2031
->  inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
->  sock_sendmsg_nosec net/socket.c:727 [inline]
->  __sock_sendmsg+0x278/0x3d0 net/socket.c:742
->  sock_sendmsg+0x170/0x280 net/socket.c:765
->  splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
->  do_splice_from fs/splice.c:938 [inline]
->  do_splice+0x1fd2/0x30d0 fs/splice.c:1351
->  __do_splice fs/splice.c:1433 [inline]
->  __do_sys_splice fs/splice.c:1636 [inline]
->  __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
->  __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
->  x64_sys_call+0x3140/0x3e30
-> arch/x86/include/generated/asm/syscalls_64.h:276
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> CPU: 1 UID: 0 PID: 6609 Comm: syz.0.18 Not tainted syzkaller #0
-> PREEMPT(none)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 10/02/2025
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->
->
-> Tested on:
->
-> commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D145e2d4258000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbbd3e7f3c2e28=
-265
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3Dd101e12bccd4095460e7
-> compiler:       Debian clang version 20.1.8
-> (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.=
-1.8
-> patch:
-> https://syzkaller.appspot.com/x/patch.diff?x=3D165fd734580000
->
->
+> But this sounds like the situation before the above mentioned commit
+> af503716ac14, when both i2c and spi were symmetrically namespaced with
+> i2c: and spi: respectively and contained the "compatible" stripped of the
+> vendor prefix.
+
+> And I must admit that I had more understanding for the prior state of things.
+
+Right, it is.  The issue with this situation is that if the compatible
+strings for a device are not simply vendor,part or if two vendors happen
+to end up with the same part name (Wondermedia and Wolfson used to both
+use wmNNNN for example, there were actual collisions though not on the
+same bus type) we will have trouble figuring things out.  We don't have
+a robust mechanism for translating from a compatible string to a
+platform registration style name for a device.
+
+--J98ESMF++UfUzSbY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj5HA0ACgkQJNaLcl1U
+h9AnMwf/UoP4jFW0QyET4m3qBDFOUGnnzxPsai2Xhqz68QODoAl0x/LFs0r2ifoD
+Nxwj88oeFMh0ptXtO7wv5YKXQy54Bxr4KcoT+chP2GFK6BdM3gt3cC/SRfL/7vaE
+Uz8soMcnaTWEM0Sjkp/tbWlFprpvsk+60lAUNRtQ+DNdwdT0IkkBYc2bjVv2DoGl
+PrEQRE1sV2YcJB1Sh4m8o8tBevGeeEflDp3gijX873INXup6EZfdc7bZ7+GsciGl
+/ssc8Actm+koiXuAAyvWnsa6D0jgxVWdDc9vtT6BQlPakATCjZLvQBt3ccIU6EKM
+8U5Kry0PJh1oNGbKfIX4jdaXgce32g==
+=OVIe
+-----END PGP SIGNATURE-----
+
+--J98ESMF++UfUzSbY--
 
