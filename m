@@ -1,133 +1,358 @@
-Return-Path: <linux-kernel+bounces-865310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7DEBFCCAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF91CBFCC33
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 17:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE40C5802D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F375189A446
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A44234C987;
-	Wed, 22 Oct 2025 15:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iZjB6egw"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107CD34B695;
+	Wed, 22 Oct 2025 15:04:50 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C5434B695
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FD220298D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 15:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761145480; cv=none; b=LpFsnn9xNDzkrM72f7NAVXKf+lS4Hcs3uWrWCAZxxlYakkLEY/39J986qHZmQO34xSZPKuqhidqdOXdnpiQR9rUuXu6eoIU7ux4L0YHMwaXcxdY8CQknqm7vxqg0e6p97aOV4Uj+Bf6lvUUM4TdfJAfIMg+rsMDaaYNGPP4rkf0=
+	t=1761145489; cv=none; b=m6GF5crAZEMD1ostvWRCq4gxbT42Qk8HS/030JyrWu+H5gyGlCkh+jYq0X33vq+JEq/p18otFM2O1Ayk66Jlb26LksXAU/zMfAwzX0M9PahWD1iYZMAwu/xGLeUILh48em9PjW3Q0xdABydFf8l5wclw7DqOCvADdVwfzx6A7mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761145480; c=relaxed/simple;
-	bh=nZQfmaq7moybwbWzm06XV/8/By6UQtVLqwmofRufDnI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UXDAjfXFVlx7+WWNPkOGnK4WYwy/abkyAG/I8DYsP3Cpu2TusTOqXwXMWL56ZeJR7MIS8x5/3RjXX6Pct1GwNvLHXy414blv2bYKvtA0fT4Okgf/II/vvUSRRhRT9wZukY6eqr0jnlTA50ZMl/F8WzBYsLguzY3Ts+9khCCU7G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iZjB6egw; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-277f0ea6fbaso89114925ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:04:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761145478; x=1761750278; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZeDoTHxRwcTS0U/KOB71AKaMICpadOQ/ESmZ45ZtCPU=;
-        b=iZjB6egwfkGRQW7asm1yvaNn79dpx8H2GCe5grmgzEUmJED4jl41MeTrCx/8JrAaS+
-         67Z7o20X9u3jPgoOIExf33r9nih7ylWjcTdRmJOhRYQftxsnj4FoiBJ39XJSfhkMpInm
-         SQLnPMMUtl6o008CaZZsSesp4hjiM7S0c/4saT3kjGfP9BOzo+Wy+b7xEtPTywZyhNPK
-         HvlnEGQRAdl37M7i0niCrUUpPSXhfNlu7oJdONff3vUr/75WkiLf9ZEsdOufQl4H+L3Q
-         ZNf4H/FWLc5vOOZ9NBIVvV4OqCzUoOQ8ffNHbFOkJYjB84qckOHPVcR9pfH6cQI9yACz
-         Os2g==
+	s=arc-20240116; t=1761145489; c=relaxed/simple;
+	bh=Sm4GWPNeJcL5gEwJZRJ5PrguqKuzIn1kzPolyeVZzsY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PA5OUnYHW1UVr5NgzqYZRzYZuE0RyCfjYxyGoiIQCKHStzlaTisYYh9Gg9tW6NWDpGzb51yxfur2yglfhATBhnsCaDDkBLRM2CQdn4cG1gKFxza0Fx81vEEcArOECLlEkB2LjzCe2kdJqetNaYrsfnyUMQGXbgKRLxJp/vSzyYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431d84fdb91so11133765ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 08:04:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761145478; x=1761750278;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZeDoTHxRwcTS0U/KOB71AKaMICpadOQ/ESmZ45ZtCPU=;
-        b=NyrM6fBsxFu63SJuwoTE3ZOsFsx0QcPwcJPwbClu5g+P+M7mdsrJse1NoEHhX053Ap
-         f5Z9t2fuBmRTVlK63Woyg/gggcK8rmq2nGlhjoWZBqUsAa0CJPZ9QkaHQhka8VRGw3pr
-         E0p9tdw4JCH+mIeEIYugtzypyZQaqDVsT8iRrfbqtcWUyLwozHpCbVlAsHusodKyDehv
-         9c8ly2MGhcdGe6PABkySd9ERlfBxGxU31zB/LdXewn2BPDZgbbNboAIBU+mfLdViyeVH
-         fajP4FfvsDXSWi9X73kr9Z5SSAlGqUl0qgQ2aMFsoOqfHTUlTRzc23WUxWbgtdIjdBYo
-         XL2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUr1HbdTB1gvu2hb0bb5HUbgIprmOELmKWJ3qyIFBd7pkwIXi3A4a6g9U7yfJjBcq4GdGDP1PvUIlG4bp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysUExjBNQ7cQPPknxgGRK0+B5vMkBFZ1guiA/TIJMa12kgfBOD
-	AXpu7kn0F6kvsG39gAtv06skDT2qUYtAT/6OT8673ZC9c4ZkMOHk2bu7wICW+6HGjTHT5tKKV05
-	hisiJOA==
-X-Google-Smtp-Source: AGHT+IE1dZw0eGxjpS+GgO8lvLCozsqVIb14AspJ8xG436SZwB7we6zJwtkw1VmC+yZCSr85pE3qdf5/kZE=
-X-Received: from pjbrr12.prod.google.com ([2002:a17:90b:2b4c:b0:33d:b520:bb61])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b30:b0:27e:e55f:c6c3
- with SMTP id d9443c01a7336-290ccaca5cemr259712015ad.55.1761145478495; Wed, 22
- Oct 2025 08:04:38 -0700 (PDT)
-Date: Wed, 22 Oct 2025 08:04:37 -0700
-In-Reply-To: <DDOH9JW22RZ9.3BMRT1XHHJAVL@google.com>
+        d=1e100.net; s=20230601; t=1761145486; x=1761750286;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOrJBT4oSmGN7Bwjcc4GP8AOfbxTb3nBv75gJrMjeOQ=;
+        b=igzolxnpb+BY86Z46u7DzTD5SdSlh6qO3SfdA1UzKlLhVhUf5g2TcaFXycA1qZeXQ1
+         U0/XyauDA1vY6aF6eAHcYN9wdZ++SnD1Uq2bko2Og3r+7OL2z77/IDJNKymP3FJBP4CD
+         TGuz1DvOZaStwcx/XxlUP6iTeZgIm8DAp2fOWK2GwE8y9ZvPT6cqf04yIGR4r9BInK5I
+         Ntavv+LRYSOq8C28vQGGbB7RBu8qjVo+N+rhZSQGEGiyHuK/vMM61M5O4cmI2xwVYlOy
+         VhEXRIszNnQYM1fR27gQLqlM5Nd9QiOf5mYuQZ6HxGrlupaHRtP8F6ZPtBO9lxum1Glp
+         w0rg==
+X-Gm-Message-State: AOJu0Ywr/hh+5cjv3pXk79/y3Fcjc1T3YTOsi7nD/s3x9pdd/G+BmU7G
+	a4oKtt3WJyztdvEfALeD1xpLJfrXRaBjLNeoOmUIR2+dSIofmTfH51us5IVkeha44pgCUaCn5nk
+	Rmxiun7NKwlvB7c20eIeyqA0Qw7wG7opvhYe3jY7kj4Tw2Oy4DptHKIu/szw=
+X-Google-Smtp-Source: AGHT+IECcZNVcQ6SGt8NNpln/NmGHXtQsfJ0wYaLVmWDoo9fmX1iYfN/kJ1kJSFIiSWUzE61vj0IwEtSkKtlUsu0k67QU6vZk6H9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016200417.97003-1-seanjc@google.com> <20251016200417.97003-2-seanjc@google.com>
- <20251021231831.lofzy6frinusrd5s@desk> <DDOH9JW22RZ9.3BMRT1XHHJAVL@google.com>
-Message-ID: <aPjyhYS-jZxtx4zr@google.com>
-Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D cache
- flush is skipped
-From: Sean Christopherson <seanjc@google.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:156c:b0:430:b32d:c1a1 with SMTP id
+ e9e14a558f8ab-430c524e127mr299972295ab.7.1761145486652; Wed, 22 Oct 2025
+ 08:04:46 -0700 (PDT)
+Date: Wed, 22 Oct 2025 08:04:46 -0700
+In-Reply-To: <683bef14.a70a0220.1a6ae.0011.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f8f28e.050a0220.346f24.0056.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ 552c50713f273b494ac6c77052032a49bc9255e2
+From: syzbot <syzbot+8882b2f5f48a7170a726@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 22, 2025, Brendan Jackman wrote:
-> On Tue Oct 21, 2025 at 11:18 PM UTC, Pawan Gupta wrote:
-> > On Thu, Oct 16, 2025 at 01:04:14PM -0700, Sean Christopherson wrote:
-> >> If the L1D flush for L1TF is conditionally enabled, flush CPU buffers to
-> >> mitigate MMIO Stale Data as needed if KVM skips the L1D flush, e.g.
-> >> because none of the "heavy" paths that trigger an L1D flush were tripped
-> >> since the last VM-Enter.
-> >>
-> >> Note, the flaw goes back to the introduction of the MDS mitigation.
-> >
-> > I don't think it is a flaw. If L1D flush was skipped because VMexit did not
-> > touch any interested data, then there shouldn't be any need to flush CPU
-> > buffers.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-But as Brendan alludes to below, that assumes certain aspects of L1TF and MDS are
-equal.  Obliterating the L1D is far more costly than flushing CPU buffers, as
-evidenced by the much more conditional flushing for L1TF.  My read of the L1TF
-mitigation is that the conditional flushing is that it's a compromise between
-performance and security.  Skipping the flush doesn't necessarily mean nothing
-interesting was accessed, it just means that KVM didn't hit any of the flows
-where a large amount of interesting data was guaranteed to have been accessed.
+***
 
-> > Secondly, when L1D flush is skipped, flushing MDS affected buffers is of no
-> > use, because the data could still be extracted from L1D cache using L1TF.
-> > Isn't it?
-> 
-> This is assuming an equivalence between what L1TF and MMIO Stale Data
-> exploits can do, that isn't really captured in the code/documentation
-> IMO.
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
+Author: dmantipov@yandex.ru
 
-And again, the cost.  To fully mitigate L1TF, KVM would need to flush on every
-entry, but that completely tanks performance.  But that doesn't 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 552c50713f273b494ac6c77052032a49bc9255e2
 
-> This probably felt much more obvious when the vulns were new...
-> 
-> I dunno, in the end this definitely doesn't seem like a terrifying big
-> deal, I'm not saying the current behaviour is crazy or anything, it's
-> just slightly surprising and people with sophisticated opinions about
-> this might not be getting what they think they are out of the default
-> setup.
-
-Ya.  I highly doubt this particular combination matters in practice, but I don't
-like surprises.  And I find it surprising that the behavior of KVM's mitigation
-for MMIO Stale Data changes based on whether or not the L1TF mitigation is enabled.
-
-> But I have no evidence that these sophisticated dissidents actually
-> exist, maybe just adding commentary about this rationale is more than
-> good enough here.
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 162711cc5b20..ce38505a823c 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6164,7 +6164,7 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 	struct buffer_head *bh = NULL;
+ 	struct ocfs2_dinode *di;
+ 	struct ocfs2_truncate_log *tl;
+-	unsigned int tl_count;
++	unsigned int tl_count, tl_used;
+ 
+ 	inode = ocfs2_get_system_file_inode(osb,
+ 					   TRUNCATE_LOG_SYSTEM_INODE,
+@@ -6184,9 +6184,10 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 
+ 	di = (struct ocfs2_dinode *)bh->b_data;
+ 	tl = &di->id2.i_dealloc;
++	tl_used = le16_to_cpu(tl->tl_used);
+ 	tl_count = le16_to_cpu(tl->tl_count);
+ 	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
+-		     tl_count == 0)) {
++		     tl_count == 0 || tl_used > tl_count)) {
+ 		status = -EFSCORRUPTED;
+ 		iput(inode);
+ 		brelse(bh);
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index 8c9c4825f984..2785ff245e79 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
+ 				 unsigned long offset)
+ {
+ 	const char *error_msg = NULL;
+-	const int rlen = le16_to_cpu(de->rec_len);
+-	const unsigned long next_offset = ((char *) de - buf) + rlen;
++	unsigned long next_offset;
++	int rlen;
++
++	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
++		/* Dirent is (maybe partially) beyond the buffer
++		 * boundaries so touching 'de' members is unsafe.
++		 */
++		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
++		     "too close to end or out-of-bounds",
++		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
++		return 0;
++	}
++
++	rlen = le16_to_cpu(de->rec_len);
++	next_offset = ((char *) de - buf) + rlen;
+ 
+ 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
+ 		error_msg = "rec_len is smaller than minimal";
+@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+ 	struct ocfs2_extent_block *eb;
+ 	struct ocfs2_extent_rec *rec = NULL;
+ 
++	if (le16_to_cpu(el->l_count) !=
++	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %lu has invalid extent list length %u\n",
++				  inode->i_ino, le16_to_cpu(el->l_count));
++		goto out;
++	}
++
+ 	if (el->l_tree_depth) {
+ 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+ 				      &eb_bh);
+@@ -3423,6 +3444,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 		offset += le16_to_cpu(de->rec_len);
+ 	}
+ 
++	if (!last_de) {
++		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
++				  "is unexpectedly short",
++				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
++				  i_size_read(dir));
++		goto out;
++	}
++
+ 	/*
+ 	 * We're going to require expansion of the directory - figure
+ 	 * out how many blocks we'll need so that a place for the
+@@ -4104,10 +4133,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
+ 	}
+ 
+ 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
+-	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
+-	       offsetof(struct ocfs2_dx_root_block, dr_list));
++
++	dx_root->dr_list.l_tree_depth = 0;
+ 	dx_root->dr_list.l_count =
+ 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
++	dx_root->dr_list.l_next_free_rec = 0;
++	memset(&dx_root->dr_list.l_recs, 0,
++	       osb->sb->s_blocksize -
++	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
++		offsetof(struct ocfs2_extent_list, l_recs)));
+ 
+ 	/* This should never fail considering we start with an empty
+ 	 * dx_root. */
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index d1aa04a5af1b..56be21c695d6 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -905,13 +905,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
+ static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
+ {
+ 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
+-	int i;
+ 
+ 	alloc->id1.bitmap1.i_total = 0;
+ 	alloc->id1.bitmap1.i_used = 0;
+ 	la->la_bm_off = 0;
+-	for(i = 0; i < le16_to_cpu(la->la_size); i++)
+-		la->la_bitmap[i] = 0;
++	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
+ }
+ 
+ #if 0
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 86f2631e6360..ba4952b41602 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
+ 
+ 	rec = &el->l_recs[index];
+ 
+-	BUG_ON(ext_flags != rec->e_flags);
++	if (ext_flags != rec->e_flags) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
++				  (unsigned long long)ino, index, rec->e_flags, cpos);
++		goto out;
++	}
++
+ 	/*
+ 	 * after moving/defraging to new location, the extent is not going
+ 	 * to be refcounted anymore.
+@@ -1031,6 +1037,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 	if (range.me_threshold > i_size_read(inode))
+ 		range.me_threshold = i_size_read(inode);
+ 
++	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
++			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
++		status = -EINVAL;
++		goto out_free;
++	}
++
+ 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
+ 		context->auto_defrag = 1;
+ 
+diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+index ae0e44e5f2ad..c501eb3cdcda 100644
+--- a/fs/ocfs2/ocfs2_fs.h
++++ b/fs/ocfs2/ocfs2_fs.h
+@@ -468,7 +468,8 @@ struct ocfs2_extent_list {
+ 	__le16 l_reserved1;
+ 	__le64 l_reserved2;		/* Pad to
+ 					   sizeof(ocfs2_extent_rec) */
+-/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
++					/* Extent records */
++/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
+ };
+ 
+ /*
+@@ -482,7 +483,8 @@ struct ocfs2_chain_list {
+ 	__le16 cl_count;		/* Total chains in this list */
+ 	__le16 cl_next_free_rec;	/* Next unused chain slot */
+ 	__le64 cl_reserved1;
+-/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
++					/* Chain records */
++/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
+ };
+ 
+ /*
+@@ -494,7 +496,8 @@ struct ocfs2_truncate_log {
+ /*00*/	__le16 tl_count;		/* Total records in this log */
+ 	__le16 tl_used;			/* Number of records in use */
+ 	__le32 tl_reserved1;
+-/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
++					/* Truncate records */
++/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
+ };
+ 
+ /*
+@@ -638,7 +641,7 @@ struct ocfs2_local_alloc
+ 	__le16 la_size;		/* Size of included bitmap, in bytes */
+ 	__le16 la_reserved1;
+ 	__le64 la_reserved2;
+-/*10*/	__u8   la_bitmap[];
++/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
+ };
+ 
+ /*
+@@ -651,7 +654,7 @@ struct ocfs2_inline_data
+ 				 * for data, starting at id_data */
+ 	__le16	id_reserved0;
+ 	__le32	id_reserved1;
+-	__u8	id_data[];	/* Start of user data */
++	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
+ };
+ 
+ /*
+@@ -796,9 +799,10 @@ struct ocfs2_dx_entry_list {
+ 					 * possible in de_entries */
+ 	__le16		de_num_used;	/* Current number of
+ 					 * de_entries entries */
+-	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
+-							 * in a packed array of
+-							 * length de_num_used */
++					/* Indexed dir entries in a packed
++					 * array of length de_num_used.
++					 */
++	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
+ };
+ 
+ #define OCFS2_DX_FLAG_INLINE	0x01
+@@ -934,7 +938,8 @@ struct ocfs2_refcount_list {
+ 	__le16 rl_used;		/* Current number of used records */
+ 	__le32 rl_reserved2;
+ 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
+-/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
++				/* Refcount records */
++/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
+ };
+ 
+ 
+@@ -1020,7 +1025,8 @@ struct ocfs2_xattr_header {
+ 						    buckets.  A block uses
+ 						    xb_check and sets
+ 						    this field to zero.) */
+-	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
++						/* xattr entry list. */
++	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
+ };
+ 
+ /*
+diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+index 6ac4dcd54588..9969a041ab18 100644
+--- a/fs/ocfs2/suballoc.c
++++ b/fs/ocfs2/suballoc.c
+@@ -649,6 +649,16 @@ ocfs2_block_group_alloc_discontig(handle_t *handle,
+ 	return status ? ERR_PTR(status) : bg_bh;
+ }
+ 
++static int ocfs2_check_chain_list(struct ocfs2_chain_list *cl,
++				  struct super_block *sb)
++{
++	if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb))
++		return -EINVAL;
++	if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count))
++		return -EINVAL;
++	return 0;
++}
++
+ /*
+  * We expect the block group allocator to already be locked.
+  */
+@@ -671,6 +681,10 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
+ 	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
+ 
+ 	cl = &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, alloc_inode->i_sb);
++	if (status)
++		goto bail;
++
+ 	status = ocfs2_reserve_clusters_with_limit(osb,
+ 						   le16_to_cpu(cl->cl_cpg),
+ 						   max_block, flags, &ac);
+@@ -1992,6 +2006,9 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
+ 	}
+ 
+ 	cl = (struct ocfs2_chain_list *) &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, ac->ac_inode->i_sb);
++	if (status)
++		goto bail;
+ 
+ 	victim = ocfs2_find_victim_chain(cl);
+ 	ac->ac_chain = victim;
 
