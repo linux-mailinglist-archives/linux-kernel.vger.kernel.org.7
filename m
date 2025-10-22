@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-864764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B71BFB7CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:56:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85344BFB7D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15459402F94
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672D2189A8D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 10:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A75328B58;
-	Wed, 22 Oct 2025 10:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA62322DD4;
+	Wed, 22 Oct 2025 10:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrPI57qc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8rBLIzo"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC1A322DD4;
-	Wed, 22 Oct 2025 10:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D69126E71E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 10:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130597; cv=none; b=E9o9caCGeVD/WxWCUzcVHr8gx15Z9qpmEgFWwSlJnXHMXfcM++fxqw31FkTT6y0LfCnles45WfYkVRIxrKY/tZnjfSnCE16otvL6HIksE8N+1BQM/TUkB7njQJHiMlHCLXWIfMph7YvRsyCrgVj74ISVilt03+Xf/yDscEtMaK4=
+	t=1761130649; cv=none; b=ZsScsccqCK2KGVl+Js4gCAsbm1JpcRgMqheoHc7P2rAjz8zrKcU8RJj7g8iRRFjWzU9klXw+V3bpnlhxzn31ZmTdQBgowt/yQCXjDc/G2tbaqv42puiM1LEhf/2jLCDzGTABwb1QJamUKIRkHEmJ9vSXbaaZEoTAMPYlaBBskxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130597; c=relaxed/simple;
-	bh=oqr78uUyBEWcCUquYVEATITHQrDG4IMUf0U0DRBBgnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F/5ceKA8xGa2uh7yqleWZU6+8Gaqg06Jpgf1jxGwKRgMTCiis6uwo6der9/25RMqv/KS+Xnba2zkQi+8Hf3VgMGvqJ+sWwkAht5zEl2Qpc90Gg/yIKd5LjmhKLvSefgCsgz1yRku3jsxMw0HXUHdjZ1CyEhnpVEKirVyNfl5b6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrPI57qc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54575C4CEE7;
-	Wed, 22 Oct 2025 10:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761130596;
-	bh=oqr78uUyBEWcCUquYVEATITHQrDG4IMUf0U0DRBBgnk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YrPI57qcmHIU9m6kxmjdwTJE/B93EtZE7Vvz8QNrikgtztNC7bT1aaIZ3NvORZ6Kf
-	 naqjWeIxZyuOqglNKgfAIw3F25yu4SJhB50AER83FuwHhkOruatE5iuvKaQN0V5NfT
-	 EozVF4PCExPl9hHmHZzHm44Fh99Jd68+zF9HhYGCdRwApXoGhOv8QsE4oBvfeued43
-	 JqG/6rO33IzIM/ONO0v61TLj4OUKI3P5xtjng3Qoua1B0U4hbCWcUcsEOSisPbftIT
-	 GnJbJ+OXGR+SKuqD83x5DlZ8+zl8A5RUrfnm4wkgqEjpBU+ibGEYkKMxeL0CmRRDD5
-	 t6iRaFhPYSGaA==
-Message-ID: <224288d8-9a04-4a76-95c7-c0af4ed967e3@kernel.org>
-Date: Wed, 22 Oct 2025 12:56:31 +0200
+	s=arc-20240116; t=1761130649; c=relaxed/simple;
+	bh=Bm+cJgJrGpbVpo2k4DHQR58J+3jHfjbzIIQ76OGCebU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FRlg86csYAAFFr+P8SX+bKj6MQ6Fu/Tcw6a3E/2RCh5PEc9/PCBrqOGR1vwr0Y0JaJP/boxEosTTiUh2y2uS22FkJVrDi39cr64cBv3rGdJ5ufl8U94SHbBDYgng7wDEuWwzHefZELpuQGuW97AHJQJMwOIM+aaCtIThmZs/Wkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A8rBLIzo; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a26dab3a97so103929b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 03:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761130647; x=1761735447; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kk2BPiYFNzn3CXG6RkzldSGrwb1ZpVic8o4pFAU0ZkE=;
+        b=A8rBLIzoqevJLIFI1ChgF1XZV+SVli+A/0eRmOvhnv5gLj/GyhqXXKFchjPqKteESk
+         clh3X4FaO7E+dVPaIkzjuYQ6rWgYCy7TcREMxj9FTtEHVIrBNC7WMi0mRG0xC/OteSdd
+         C1/R4QZHF00kkGQgMryvryGiWS362CwqM/AAzrpfnpwSqBS1K6gTk5xatA/MkLA1XlFt
+         rk1XZYgoTHO65Z08OlPkfLHOKK1qXdfNoM9BKk13p4mk9tiqikwd55g/A/Er7tyVNzix
+         2cgD5RO1f1zeE7i7FrQLJtBpDC3F5lIMEViSu19d4f2ORsGooN/SBGA8cFnJs2h1EA2W
+         I1nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761130647; x=1761735447;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kk2BPiYFNzn3CXG6RkzldSGrwb1ZpVic8o4pFAU0ZkE=;
+        b=BAjo9DCMbMqgZJQPuaQ6kStiHSCsjIeSAdrB+XAAEptzl9Ad1mFQbq8dNTlGoO+2Ce
+         gOUXnDAFxFXZy8DzRN7t0Q4JmLDaz/aPoQTmRHInKRWO3dIPQyuTDjwYLos0nnj0xuIf
+         Hsm89lzoXpyim5mzcr2ALtB2A1u4RCVs1PLPfRTUquPwjbcqKF5uBIZYTobBurRIaChI
+         tUmRgtSQq52fRTUPhES2lLrpCaoopJBX5c4fUmfPjrjm9tFu/urFRq4yp8Ba9oOO72vD
+         QkBvMcoD1zBaMG8b4WtMrqNqELK7tkP6h7deJrhI84e7F083A5wI4m8Kc0DA7Fe+N7dL
+         J3oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtipRh1SwQDU1zIHGFSSgq2n+JtOc0a/xAe9RmsCXwdFzfKU9Jfr3S7lfJLLcL2PlA4FqiFt1RdJvWvII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjB6Cn77FXmKhYqT2SyOKb5Vk73aBVIvpO/hQYchnjJr0vqnzB
+	zlU/Rey73fdLwU5SyGTkc7Q41l3ERd2G2Am36HWGBIxTKu9Y3PfZnsjC
+X-Gm-Gg: ASbGncsdWRlFMmdh7TJr+KCuqJR6ahsxTyd3CtOxvaxVXTgx9ouwiPu5oSsKUojws7s
+	zsllTbgwVOI0Bwcmy6hjoN2y1qZllYqtkjSzmK4Q9onymab4XcendvalFtTLGXwiIcvZgI05EJA
+	O3egiSmZ1x5RLOu+gwzm6b3+yYdIzuODX9c45dR1E8b0TQTzxnrRS+Nwd546dc88w7627vEF5C9
+	IeYjKjK/CMw7rvPzQyNS8jYh1Vx5RgXM5Vs8RtCYGia3NDJfIUY2uap8GcWISZyJjy2+X822acW
+	8o0ys7tRj4a1iZiuYo3gaQhjkr3kI/UW6inF9SFf8l2pmsyMbs9STjvnPXPYO5UYNG2T8nFL+dk
+	2qz8WYHKA7YJ3WHLUcfz21h4ANHsbowcoTm+4H/GAzEXCSlMv9pQzFdFV6KOYJuCsdHLvNrWnu3
+	ftsWB2sK9TLF6IkQ88G3I7hbjI9bJu800=
+X-Google-Smtp-Source: AGHT+IFWysXp9eqMZj5Qi90FK5sw1pd9AH0StflzodduEPErD8Q0fn6Hmz60MpZnfpCZjB1sS9bTuA==
+X-Received: by 2002:a05:6a20:5483:b0:334:93f3:9b28 with SMTP id adf61e73a8af0-334a8644249mr25233224637.56.1761130647394;
+        Wed, 22 Oct 2025 03:57:27 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b35dadsm13346482a12.26.2025.10.22.03.57.23
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 22 Oct 2025 03:57:26 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Hugh Dickins <hughd@google.com>,
+	Dev Jain <dev.jain@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Liam Howlett <liam.howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Mariano Pache <npache@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mm/shmem: fix THP allocation and fallback loop
+Date: Wed, 22 Oct 2025 18:57:19 +0800
+Message-ID: <20251022105719.18321-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.51.0
+Reply-To: Kairui Song <ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] ASoC: dt-bindings: qcom,sm8250: Add Dell XPS13
- 9345 sound card
-To: Abel Vesa <abel.vesa@linaro.org>, Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251021-dell-xps13-9345-enable-audio-v1-0-6f3f6bbd977b@linaro.org>
- <20251021-dell-xps13-9345-enable-audio-v1-1-6f3f6bbd977b@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251021-dell-xps13-9345-enable-audio-v1-1-6f3f6bbd977b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/10/2025 15:50, Abel Vesa wrote:
-> The Dell XPS13 9345 maps the speakers and tweeters starting from
-> the right side instead of left, which means we need to handle it
-> differently then the rest of the X Elite platforms.
-> 
-> So document its new compatible.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> index 868acc077046596120ea7f427e802282ed03c853..20566224d2e42574ab96f93c11924bbeae22f0bc 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> @@ -29,6 +29,7 @@ properties:
->                - qcom,sm8750-sndcard
->            - const: qcom,sm8450-sndcard
->        - enum:
-> +          - dell,xps13-9345-sndcard
+From: Kairui Song <kasong@tencent.com>
 
-When I explained you how to proceed, I said - you need front compatible,
-because this sound card is compatible with existing one, with a quirk
-needed.
+The order check and fallback loop is updating the index value on
+every loop, this will cause the index to be aligned by a larger
+value while the loop shrinks the order.
 
-Might not matter if we go with mixers solution as suggested by Srini.
+This may result in inserting and returning a folio of the wrong index
+and cause data corruption with some userspace workloads [1].
 
-Best regards,
-Krzysztof
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/linux-mm/CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n4-Hqpgottedy0S6YYeUw@mail.gmail.com/ [1]
+Fixes: e7a2ab7b3bb5d ("mm: shmem: add mTHP support for anonymous shmem")
+Signed-off-by: Kairui Song <kasong@tencent.com>
+---
+
+Changes from V1:
+- Link to V1: https://lore.kernel.org/linux-mm/20251021190436.81682-1-ryncsn@gmail.com/
+- Remove unnecessary cleanup and simplify the commit message.
+
+ mm/shmem.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b50ce7dbc84a..7559773ebb30 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1895,10 +1895,11 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 		order = highest_order(suitable_orders);
+ 		while (suitable_orders) {
+ 			pages = 1UL << order;
+-			index = round_down(index, pages);
+-			folio = shmem_alloc_folio(gfp, order, info, index);
+-			if (folio)
++			folio = shmem_alloc_folio(gfp, order, info, round_down(index, pages));
++			if (folio) {
++				index = round_down(index, pages);
+ 				goto allocated;
++			}
+ 
+ 			if (pages == HPAGE_PMD_NR)
+ 				count_vm_event(THP_FILE_FALLBACK);
+-- 
+2.51.0
+
 
