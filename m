@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-864923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D6DBFBDF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:33:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB83BFBDE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B29E18C06AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:33:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB994058B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 12:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C60F34404E;
-	Wed, 22 Oct 2025 12:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSYiSoIj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E3B32E142;
-	Wed, 22 Oct 2025 12:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960013446AD;
+	Wed, 22 Oct 2025 12:31:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC7732E142;
+	Wed, 22 Oct 2025 12:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761136297; cv=none; b=gAY/nfv75yRjYG3nE46YytQFGU+l6QvPbqxSWBUeJky3VQC8+/xnJMTM5muD8oNPv9ersIwhTOopKNeWNihlHsNngduj9Ya0IE/KeiPrxmg0ba6Sxr5HdNwnaaYSsGuxpJnimjWuO2TriuBhbmKSkbgvgrQOE5XcTCm02QMG0h8=
+	t=1761136314; cv=none; b=dNVdr69rJ+vkpto5YIYTA2k6GpQDPmUt0HcLqMsnnKiggk7GBFQj/QdKLJ7yPBqy1k2miye8QFHWLJqdrxIMIZM6qhqf9doMge2Ku+/P4SeXURdUSsDeOn9Y2Q/4v6Aqp1TaKq2Hh9jfiguhCqqdcM82llb1R1NCHVqmfLcE2UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761136297; c=relaxed/simple;
-	bh=pNMPXPWs7eegnY7nqPZGRkQuPaLcdwIr+YGQQYhJAzA=;
+	s=arc-20240116; t=1761136314; c=relaxed/simple;
+	bh=MteqNTWmwdipz8GKr3klzBPnQjl/Q+Wgw1Tgv4va9ao=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j8tK7GdnI8oXQFw1rqNngkDpL977qHNQkjWQSWQmx9jLlm7x3FTh2QsAZUK7ESEU3D6+a+ndUGmbMuO2kjbdcJkQsERyk2EYm5BYV4inBNc+Wd3QVJhhAIVHsJq9xcwXRZqUd/RQBDI1txJ4pyhUw5ZNlZIibvVA1sRnNSDhKvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSYiSoIj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B225C4CEE7;
-	Wed, 22 Oct 2025 12:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761136297;
-	bh=pNMPXPWs7eegnY7nqPZGRkQuPaLcdwIr+YGQQYhJAzA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HSYiSoIjkbusGUoqYxYnpwc2eRnGbDfs792n2Pzyo4LRaJPCR6ry27kRf+9Gcdui2
-	 DB/7vao2QpysvVEWImRedaO9AUZKIWYEalOVvfGjypDkAx4Z4XsrXXLyGwMCUeIUL9
-	 jYbDOrTl4m5ehAl7dL2wiRIaHSJJpByQGYQmS8ZFiGm0a4AeFl7YICgIx+U5OSP/a5
-	 edjH6+orS8ksF9d6bokocaqacGBC84Ke6heZuPoPpBVNv7GC2XJLVARno4Wo4VgfA0
-	 wygvnLcHP9fw8ELGQwt73xw0APh1UPu03sM2oXRC6f2PSyQP4oNd756inHGVncP7at
-	 h8t5eGdylBfgQ==
-Message-ID: <acc7399f-8c91-4274-8f01-d3aca31395e9@kernel.org>
-Date: Wed, 22 Oct 2025 21:31:35 +0900
+	 In-Reply-To:Content-Type; b=HeRhb5fXqDN1lU+iQ1bYQDFLPzImdd5OMM0VdQLOq6RpPuC523QoXzZHbm5txV0IW7em354jjICwuj6XilGuKx543RctXaQvg69SDCIfHjRv+TNJgKObrgRnpmb2AgP9tQ1DlNZIbyhiCLVbQx4jhEXaORv3sp8KMccwvrmRhFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7DA91063;
+	Wed, 22 Oct 2025 05:31:42 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0871B3F63F;
+	Wed, 22 Oct 2025 05:31:45 -0700 (PDT)
+Message-ID: <1a1a3522-313a-46e7-bc13-fcbbd9ccf81f@arm.com>
+Date: Wed, 22 Oct 2025 13:31:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,37 +41,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/16] blktrace: add block trace commands for zone
- operations
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>, axboe@kernel.dk
-Cc: chaitanyak@nvidia.com, hare@suse.de, hch@lst.de, john.g.garry@oracle.com,
- linux-block@vger.kernel.org, linux-btrace@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- martin.petersen@oracle.com, mathieu.desnoyers@efficios.com,
- mhiramat@kernel.org, naohiro.aota@wdc.com, rostedt@goodmis.org,
- shinichiro.kawasaki@wdc.com
-References: <20251022114115.213865-1-johannes.thumshirn@wdc.com>
- <20251022114115.213865-14-johannes.thumshirn@wdc.com>
-From: Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH v3 26/29] arm_mpam: Use long MBWU counters if supported
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-27-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20251022114115.213865-14-johannes.thumshirn@wdc.com>
+In-Reply-To: <20251017185645.26604-27-james.morse@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/22/25 20:41, Johannes Thumshirn wrote:
-> Add block trace commands for zone operations. These commands can only be
-> handled with version 2 of the blktrace protocol. For version 1, warn if a
-> command that does not fit into the 16 bits reserved for the command in
-> this version is passed in.
+Hi James,
+
+On 10/17/25 19:56, James Morse wrote:
+> From: Rohit Mathew <rohit.mathew@arm.com>
 > 
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Now that the larger counter sizes are probed, make use of them.
+> 
+> Callers of mpam_msmon_read() may not know (or care!) about the different
+> counter sizes. Allow them to specify mpam_feat_msmon_mbwu and have the
+> driver pick the counter to use.
+> 
+> Only 32bit accesses to the MSC are required to be supported by the
+> spec, but these registers are 64bits. The lower half may overflow
+> into the higher half between two 32bit reads. To avoid this, use
+> a helper that reads the top half multiple times to check for overflow.
+> 
+> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
+> [morse: merged multiple patches from Rohit, added explicit counter selection ]
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> ---
+> Changes since v2:
+>  * Removed mpam_feat_msmon_mbwu as a top-level bit for explicit 31bit counter
+>    selection.
+>  * Allow callers of mpam_msmon_read() to specify mpam_feat_msmon_mbwu and have
+>    the driver pick a supported counter size.
+>  * Rephrased commit message.
+> 
+> Changes since v1:
+>  * Only clear OFLOW_STATUS_L on MBWU counters.
+> 
+> Changes since RFC:
+>  * Commit message wrangling.
+>  * Refer to 31 bit counters as opposed to 32 bit (registers).
+> ---
+>  drivers/resctrl/mpam_devices.c | 134 ++++++++++++++++++++++++++++-----
+>  1 file changed, 116 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index f4d07234ce10..c207a6d2832c 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -897,6 +897,48 @@ struct mon_read {
+[...]
+> +static void mpam_msc_zero_mbwu_l(struct mpam_msc *msc)
+> +{
+> +	mpam_mon_sel_lock_held(msc);
+> +
+> +	WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
+> +	WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+> +
+> +	__mpam_write_reg(msc, MSMON_MBWU_L, 0);
+> +	__mpam_write_reg(msc, MSMON_MBWU_L + 4, 0);
+> +}
+> +
+[...]
+> @@ -978,10 +1027,15 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+>  		mpam_write_monsel_reg(msc, CSU, 0);
+>  		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+>  		break;
+> -	case mpam_feat_msmon_mbwu:
+> +	case mpam_feat_msmon_mbwu_44counter:
+> +	case mpam_feat_msmon_mbwu_63counter:
+> +		mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
+> +		fallthrough;
+> +	case mpam_feat_msmon_mbwu_31counter:
+>  		mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
+>  		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+>  		mpam_write_monsel_reg(msc, MBWU, 0);
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Already zeroed if it's a long counter.
 
+> +
+>  		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+>  
+>  		mbwu_state = &m->ris->mbwu_state[m->ctx->mon];
+[...]
+> +static enum mpam_device_features mpam_msmon_choose_counter(struct mpam_class *class)
+> +{
+> +	struct mpam_props *cprops = &class->props;
+> +
+> +	if (mpam_has_feature(mpam_feat_msmon_mbwu_44counter, cprops))
+> +		return mpam_feat_msmon_mbwu_44counter;
 
+This should check the longest counter first.
+
+> +	if (mpam_has_feature(mpam_feat_msmon_mbwu_63counter, cprops))
+> +		return mpam_feat_msmon_mbwu_63counter;
+> +
+> +	return mpam_feat_msmon_mbwu_31counter;
+> +}
+> +
 -- 
-Damien Le Moal
-Western Digital Research
+Thanks,
+
+Ben
+
 
