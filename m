@@ -1,185 +1,196 @@
-Return-Path: <linux-kernel+bounces-865163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBFBBFC4FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:55:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B24BFC43B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9FC1887900
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E50188914F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80492348883;
-	Wed, 22 Oct 2025 13:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0315034B1B1;
+	Wed, 22 Oct 2025 13:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CZryngLg"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXWn21+l"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77A4346E79
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3DD34B18E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761141181; cv=none; b=n1uxjf7uQvb+aC7XR6ZxKE98sve9mSjsaTfX1csB3g9XZFFbmBV68kd9dSlVLBXcIxD1L8/mUPHLNaKNC/ugPYU9mHbLdQ2Cxk5kAejbzL6iDzvJzbb9TXSlITFIt6sAYwlSmNR6QcZL8+6j4TmKCCquG8fMUuv6+36pGpOFNuo=
+	t=1761140746; cv=none; b=cOryVh86PP6tYk264RbraXf20SxfQ5RVWYf9tlDjfahxAIrSUqQqZ6LybWjBL2WLSednQVF/ls/2I8a+DB3PIzWb1YmMtHnqZsvGEj1vXeopXiMMGVp4Z/4J59xiZQUw/vNpJ0R6fd+iNG0lU2Oc4hGT83vBZupwenQ+YPrjCxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761141181; c=relaxed/simple;
-	bh=/m4NmFCniT6JSPGXkBNpQ06V7pNeEBakNlH8t8yHOEM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type:References; b=GFRNJgIzX7tas1FCZXFsDY7qYPHtfNwK7KlIZqyInJr0pnXUWvBl6gfmn0Mzvfd7NWq1Lu8CSl3Fc9CxRKfjquBcZJYMwIDeP4+fDL2wNAkmU77Fb0gacdoS5yRTvRHspfpcfbrtuJx2NADgU+Xpfz67bHayo0AokbE1q3GldL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CZryngLg; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251022134510euoutp0137c1b544b3cfe740ace1a128fca3eeaa~w1CUd-8642259022590euoutp01Y
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 13:45:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251022134510euoutp0137c1b544b3cfe740ace1a128fca3eeaa~w1CUd-8642259022590euoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761140710;
-	bh=uVOoyF07iVYQ24dFE2kJcX0p9ox+bw4w5ywwtjuXGNM=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=CZryngLgbYRbGFm/ihPNVB9ukl/429AnUUsVxxCUcbjSI/Lu1diT/A7KiU7IzeeG6
-	 coz4p5Uhslnv5JVHPlOadDhREbFd5sVox2JbdDYoJu+XDDJr8pNc9UWrpteHVZRPAo
-	 bYBObZC5/v+zcbjyxqZ0qdHqps6WOfHuAXkKc8Ns=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251022134509eucas1p1789fd89e07d10b550b7f21decd862d52~w1CT44nK50583205832eucas1p1W;
-	Wed, 22 Oct 2025 13:45:09 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251022134508eusmtip2d638eeea6ab8ba407c25e72a5591ac57~w1CS6lJHO0945309453eusmtip2K;
-	Wed, 22 Oct 2025 13:45:08 +0000 (GMT)
-Message-ID: <5c19e4ef-c4fd-4bf5-88b3-46c86751b14e@samsung.com>
-Date: Wed, 22 Oct 2025 15:45:07 +0200
+	s=arc-20240116; t=1761140746; c=relaxed/simple;
+	bh=yqtWMn6RCYhT2LdGTuph46Dc3SLko07nw0VF1z3B/5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GnjBS3IOdmMkYVWYQso0IRrtL9nSd8vVr4MrTwS1I+phyzDV/vD2cB99/MPIprdnHftnTqD3NxL/fRh7OQqVxN2D33YR4VGfaCg79JSYulfR/qbzW19QfMAO0Zu20N3upb2120pZ2PtsHUPbBANOqyD2sKoNQIiPyfj0BQ+PedQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXWn21+l; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4e886550a26so5496091cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 06:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761140743; x=1761745543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nIYOJe3ka8O5pu8oWdxkEFZ87xWcphksyqXgF6ADSq4=;
+        b=QXWn21+lhnWemyDGKYzpTp5YuPr9Cv9xB3m9j1DM5C2aoFbaS+gnxvmS9bY23HvJB6
+         9k28CwSbjnKN2bOBlHTCUkupxqTn0+FbxZqoZ5BLNAgg8WG255sqxYfvWbV0IGpC3jr8
+         eA0d6qgq6Cfx+MHLBKhfu0zGiRTi6NEHixy49F+XPVh1sKs1Ks9QNWKnznmxNmnHGTax
+         4siqZ2iWiGcwP8EQJn+oAjT8izw3KJVNAfiO2j18Ia+/6LNDbG11uXj13zwiJpxOv2vw
+         towD/o1zTOtmmjcimxpj7aQqwgole707b6RM+jDg2i90trKpQif3lEvRunsX5q22g5EP
+         OEtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761140743; x=1761745543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nIYOJe3ka8O5pu8oWdxkEFZ87xWcphksyqXgF6ADSq4=;
+        b=arIOs9c+opOgoM5OgIxjoYMw8y5IPszWnggLaKWB2wEyvNdDlhwin5ZnnZP54vzFyi
+         JffwqdkreO4XSAQ0fuK1Zli1yTDYs/fTzv66Di9oFZ2hiM7DdT5eOSey0Inw9mPdHcwP
+         nahXY/IBirHljc9pf971PvgpwOmlVW39eNpXSVrGYmHwjF8iqq4KFtsPK+Jd9W7+iA6F
+         ASVB3ioHHzUOJY8enxk/383Rrl5KAexhRopuKYiSPQCmumWACEqtVGn7AGTVB/BucebY
+         dVAYK7d+4zO1PgWuE5jZlpHFm4o33g2mIGxHH0eHRWoRd7yvvolKQM6vhKJvQ7UXQ4cz
+         JZyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWd8LuosbMeN3gSNLrBKZOdkt+ZDBstAyKlOXCTsX8lEtNVGNooeynbOHdd0YiAhHDJ73hhJ2NNdxNOlvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytE4HfCayNAAZGy4F17Am65NGk2m1vz1mBZyBSK2mM5b+ifxoH
+	djjdnloMO3srvLgopWX33qI6F+cPvpnasnYO88uqSioxW+s4F2KNfsgVcbSsHd5Xj5kWZ8ZvmC+
+	bF3wlkx5lF5Jd7Pods6K/87YEH07LlhQ=
+X-Gm-Gg: ASbGncv0VJy60zPbwiJD0ZxVQFq50JqAUcMKQusoaNeDx6A+4m61kW4hwvfp8xabkw2
+	ct/xysIfqnqnSUn4r5tTCLrxry8QSLCaL6H1MdNlxsaHl5Bltfzoo9uXTA7EQsXc83zOm+qn6Tw
+	XDLhSkJ2f+F/E3Z1RtpSJca5lsor5Xlq8qv5gPapizF+EHY4lCiVF2o+Ik5Z8x5MIUdGlug0IVp
+	iHIFS37GiDSo62+DgBjACY4yUpb67MeUHXqiT+27G5Sqoqn1JHk1tFtFsj7OkMXdHjdNzjatR9L
+	OscudU3Bp4e/9lsZq0u1i+dMkuo6
+X-Google-Smtp-Source: AGHT+IF56YHvRH/MTqGxxROGVcRUQbEr+0Cm42TWPTnoLlTvbvuksg92K6kAb7Dfb8VEB6gK91z+Obd6Zd2mBQqg7Ck=
+X-Received: by 2002:ac8:7e88:0:b0:4e8:b5af:ab4c with SMTP id
+ d75a77b69052e-4e8b5afb667mr177959231cf.72.1761140742906; Wed, 22 Oct 2025
+ 06:45:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v3 06/10] pmdomain: samsung: convert to
- regmap_read_poll_timeout()
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>,
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Language: en-US
-In-Reply-To: <2e38e6c2-0548-432f-ae34-daf3972877ac@samsung.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251022134509eucas1p1789fd89e07d10b550b7f21decd862d52
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251016155855eucas1p2ccc516861548e963761133fc52fc560e
-X-EPHeader: CA
-X-CMS-RootMailID: 20251016155855eucas1p2ccc516861548e963761133fc52fc560e
-References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
-	<CGME20251016155855eucas1p2ccc516861548e963761133fc52fc560e@eucas1p2.samsung.com>
-	<20251016-gs101-pd-v3-6-7b30797396e7@linaro.org>
-	<2e38e6c2-0548-432f-ae34-daf3972877ac@samsung.com>
+References: <20251022102015.1345696-1-b-padhi@ti.com>
+In-Reply-To: <20251022102015.1345696-1-b-padhi@ti.com>
+From: Hiago De Franco <hiagofranco@gmail.com>
+Date: Wed, 22 Oct 2025 10:45:31 -0300
+X-Gm-Features: AS18NWAO0plVB9Z0NPP2vcgWMYOyC6CXUfEU8yV4bMVN_eMDJ2EcKqZ81g6EuHc
+Message-ID: <CAK4ZnzmKOFYcC8YhZ47DgAp3oDhZmwhQ211u76-UaPYFmz_F+Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] mailbox: omap-mailbox: Flush out pending msgs before
+ entering suspend
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, afd@ti.com, 
+	hnagalla@ti.com, u-kumar1@ti.com, Hiago De Franco <hiago.franco@toradex.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21.10.2025 22:38, Marek Szyprowski wrote:
-> On 16.10.2025 17:58, André Draszik wrote:
->> Replace the open-coded PD status polling with
->> regmap_read_poll_timeout(). This change simplifies the code without
->> altering functionality.
->>
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->> ---
->>   drivers/pmdomain/samsung/exynos-pm-domains.c | 29 
->> ++++++++--------------------
->>   1 file changed, 8 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c 
->> b/drivers/pmdomain/samsung/exynos-pm-domains.c
->> index 
->> 383126245811cb8e4dbae3b99ced3f06d3093f35..431548ad9a7e40c0a77ac6672081b600c90ddd4e 
->> 100644
->> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
->> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
->> @@ -13,7 +13,6 @@
->>   #include <linux/platform_device.h>
->>   #include <linux/slab.h>
->>   #include <linux/pm_domain.h>
->> -#include <linux/delay.h>
->>   #include <linux/of.h>
->>   #include <linux/pm_runtime.h>
->>   #include <linux/regmap.h>
->> @@ -35,7 +34,8 @@ struct exynos_pm_domain {
->>   static int exynos_pd_power(struct generic_pm_domain *domain, bool 
->> power_on)
->>   {
->>       struct exynos_pm_domain *pd;
->> -    u32 timeout, pwr;
->> +    unsigned int val;
->> +    u32 pwr;
->>       int err;
->>         pd = container_of(domain, struct exynos_pm_domain, pd);
->> @@ -45,25 +45,12 @@ static int exynos_pd_power(struct 
->> generic_pm_domain *domain, bool power_on)
->>       if (err)
->>           return err;
->>   -    /* Wait max 1ms */
->> -    timeout = 10;
->> -    while (timeout-- > 0) {
->> -        unsigned int val;
->> -
->> -        err = regmap_read(pd->regmap, 0x4, &val);
->> -        if (err || ((val & pd->local_pwr_cfg) != pwr)) {
->> -            cpu_relax();
->> -            usleep_range(80, 100);
->> -            continue;
->> -        }
->> -
->> -        return 0;
->> -    }
->> -
->> -    if (!err)
->> -        err = -ETIMEDOUT;
->> -    pr_err("Power domain %s %sable failed: %d\n", domain->name,
->> -           power_on ? "en" : "dis", err);
->> +    err = regmap_read_poll_timeout(pd->regmap, 0x4, val,
->> +                       (val & pd->local_pwr_cfg) == pwr,
->> +                       100, 1 * USEC_PER_MSEC);
->> +    if (err)
->> +        pr_err("Power domain %s %sable failed: %d (%#.2x)\n",
->> +               domain->name, power_on ? "en" : "dis", err, val);
+On 22.10.2025 15:50, Beleswar Padhi wrote:
+> There may be pending messages in the mailbox FIFO that are not consumed
+> by the remote processor for various reasons; the remote processor may
+> already be powered off or may be in a bad state. Instead of aborting
+> suspend because of these pending messages, flush the FIFOs and proceed
+> with suspend. Pending messages could also be restored in the resume
+> context, but since remote processors are typically rebooted during
+> suspend/resume today, there is no point in restoring stale messages.
 >
-> I've posted my 'tested-by' tag for this patchset, but in meantime I 
-> found that this patch causes regression from time to time on old 
-> Exynos SoCs (especially when all debugs are disabled). It looks that 
-> there are some subtle differences between reading the status register 
-> up to 10 times with cpu_relax()+usleep_range() and the 
-> regmap_read_poll_timeout(). I will try to analyze this a bit more and 
-> provide details, but I suspect that the old loop might take a bit 
-> longer than the 1ms from the comment above this code.
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 
-It looks that during the early boot all calls to 
-regmap_read_poll_timeout() lasts exactly 10ms (measured with ktime_get() 
-and ktime_to_ms()), what means that timekeeping source doesn't provide 
-resolution high enough for the 1ms timeout. This in turn results in 
-premature end of regmap_read_poll_timeout() loop after only one cycle of 
-read+wait+read, what is not always enough for power domain to turn on/off.
+Thanks for your patch, I tested it on Verdin AM62 and it is working
+fine.
 
-According to the commit 7349a69cf312 ("iopoll: Do not use timekeeping in 
-read_poll_timeout_atomic()"), ktime_get(), which is used also by 
-regmap_read_poll_timeout(), is not reliable in all contexts, so I think 
-that this patch should be dropped as there is no easy way to fix this.
+Please add the following tags:
 
-The alternative would be to use regmap_read_poll_timeout_atomic(), which 
-need to be fixed the same way as regmap_read_poll_timeout_atomic() by 
-the mentioned commit, but in such case we would effectively switch from 
-usleep to udelay.
+Closes: https://lore.kernel.org/all/sid7gtg5vay5qgicsl6smnzwg5mnneoa35cempt=
+5ddwjvedaio@hzsgcx6oo74l/
+Fixes: 1d6161617c10 ("arm64: dts: ti: k3-am62-ti-ipc-firmware:
+Refactor IPC cfg into new dtsi")
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+With that,
 
+Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Verdin AM62
+
+Best regards,
+Hiago.
+
+> ---
+>  drivers/mailbox/omap-mailbox.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
+x.c
+> index 680243751d62..5e6373911630 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -341,13 +341,10 @@ static int omap_mbox_suspend(struct device *dev)
+>      if (pm_runtime_status_suspended(dev))
+>          return 0;
+>
+> -    for (fifo =3D 0; fifo < mdev->num_fifos; fifo++) {
+> -        if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
+> -            dev_err(mdev->dev, "fifo %d has unexpected unread messages\n=
+",
+> -                fifo);
+> -            return -EBUSY;
+> -        }
+> -    }
+> +    /* Flush out pending mbox messages before entering suspend */
+> +    for (fifo =3D 0; fifo < mdev->num_fifos; fifo++)
+> +        while (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo)) !=3D 0)
+> +            mbox_read_reg(mdev, MAILBOX_MESSAGE(fifo));
+>
+>      for (usr =3D 0; usr < mdev->num_users; usr++) {
+>          reg =3D MAILBOX_IRQENABLE(mdev->intr_type, usr);
+> --
+> 2.34.1
+>
+
+On Wed, Oct 22, 2025 at 7:20=E2=80=AFAM Beleswar Padhi <b-padhi@ti.com> wro=
+te:
+>
+> There may be pending messages in the mailbox FIFO that are not consumed
+> by the remote processor for various reasons; the remote processor may
+> already be powered off or may be in a bad state. Instead of aborting
+> suspend because of these pending messages, flush the FIFOs and proceed
+> with suspend. Pending messages could also be restored in the resume
+> context, but since remote processors are typically rebooted during
+> suspend/resume today, there is no point in restoring stale messages.
+>
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+>  drivers/mailbox/omap-mailbox.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
+x.c
+> index 680243751d62..5e6373911630 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -341,13 +341,10 @@ static int omap_mbox_suspend(struct device *dev)
+>         if (pm_runtime_status_suspended(dev))
+>                 return 0;
+>
+> -       for (fifo =3D 0; fifo < mdev->num_fifos; fifo++) {
+> -               if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
+> -                       dev_err(mdev->dev, "fifo %d has unexpected unread=
+ messages\n",
+> -                               fifo);
+> -                       return -EBUSY;
+> -               }
+> -       }
+> +       /* Flush out pending mbox messages before entering suspend */
+> +       for (fifo =3D 0; fifo < mdev->num_fifos; fifo++)
+> +               while (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo)) !=3D =
+0)
+> +                       mbox_read_reg(mdev, MAILBOX_MESSAGE(fifo));
+>
+>         for (usr =3D 0; usr < mdev->num_users; usr++) {
+>                 reg =3D MAILBOX_IRQENABLE(mdev->intr_type, usr);
+> --
+> 2.34.1
+>
 
