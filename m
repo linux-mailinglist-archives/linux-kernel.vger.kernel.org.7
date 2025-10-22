@@ -1,164 +1,135 @@
-Return-Path: <linux-kernel+bounces-866008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAC3BFE97E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:36:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36B8BFE984
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7E13A587E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3491A0797A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 23:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BD3299923;
-	Wed, 22 Oct 2025 23:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB68286897;
+	Wed, 22 Oct 2025 23:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJCPbqjF"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VvWgiDg5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3295289376
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFB323E25B;
+	Wed, 22 Oct 2025 23:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761176039; cv=none; b=uZMhFGcFCD8VXA/yIV4fNB13jNJIBjTtT9AtW4NoTvIoGCTEHL4/o2Cynxot2H2pbWD2fLq+RNp+8wW7CrWUdQYO4a0CmYTuTo7DXdXOkTeM2BcgFdBRRSgeSYuHX+DwV8eXDNwXVEwlnDsZFvr3aK5SKAllQHM3xKw6wZuP7hY=
+	t=1761176142; cv=none; b=hqG/9AtuN57vMfPh8vdd1pSq4xv0ZVolMfpQOoYIfnqIlTgJNNMhtc8Ppj4Zu6u23RH4YQEuXNxjH0KVjff8KEFcdH3BwdakIVywJlYUwRspKGNqkvbQhatmjS1+Bo6ozs1sv/S1wYmGevM1ovo61T4jtPsnbz+gV25fgLMaNXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761176039; c=relaxed/simple;
-	bh=tC+LN4ArABgmjhoTqmL7lKSO0v9oWlL/UItloU+HQUM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ugzHPjab6/SSoV2XQeEt7X4Gm5aOnpDSwBZOZeyadhHohYFqJqcuhLXHeWf5hSDvTGy1F9d/ucgMm0avb1pjdJNNYlSNLGSlL4c8wBiRXbdpi0qJW/M+Ug1r81EEw3ukGcIQvj2Tw5+TQuzg+Q4qvg80n23FauQymlFs8Uy6v8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJCPbqjF; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-33255011eafso192967a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 16:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761176037; x=1761780837; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mHGULrbhrQZXqL21jsyCNIXz//QNSU5dqpIYMZ4CNA=;
-        b=VJCPbqjF+MN8VirEXRP+4maTI4MD0Si9Qw4KHKul/dqO6xMFQZKrzUZXnx1fdgnnil
-         RIxLvIgkXyoAvbQpo8Hf9YscdRX5gYy5TeXPIEJ305zLmyCC/PP8PaaacSHl+yWTUl9z
-         ewHd8tU8Ln3z/IusYS6y+8NnMHnHhmA+ipLd4Y0NOizEj0g11zrL02Exl4MjPZ8sW8Nk
-         RZGsMW5ENSIrIBaMUtZox4thGfwom/8CD3JZRC1ltG9uC5r0hiOMMefGxbqKUPgf5uTK
-         2Lq/qyunLthjWPh0KVg+vYL97+vLis8BtUgwv/n2APMKHgNoxTowa/VApiP7Q1mOvAnD
-         FZMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761176037; x=1761780837;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1mHGULrbhrQZXqL21jsyCNIXz//QNSU5dqpIYMZ4CNA=;
-        b=UUxTLZuA2e4ioYp2pVQEHLwpJ4vfFuvLyBxN+CV4jOIWNlTI8PS6oWYe3K70/ioeNe
-         BiUNrLzJNVVVXrA3goEKx/5j+f71X494iMfqDyaLWfnnAeYZdWP3i5CEsyR6KfMMkqIs
-         6rNHHjhO6RERosc85d8ZzHXmLa8APR2f1ef3eKy1HcVGTqAADgk/H6O7uqcNaruaVJiK
-         iih1f+gTgCMwMUi7DDk7wIOjkBfdiqfKj/pu0qhYx+fdKBg+Zhy3eRGJmmY2zfNWcQlI
-         MSOjNkVQtpi5FXXlAlOT9JeCPdahkISCxEv/vpnJtB8urYSPvLt74XqNBbGFehVe+Fcw
-         +ekA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgTvy54AxI9LXvZQioCGx6k692WRTwg8OwDJhmFdI4ThrAB46sQ2OaRSS3thv3r9+QjgeQJpJ679dcFTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhdVnkyGliRNG1oZ6J1k73lpc6F+0UazzOV0tH2YEmqqtuI7Oq
-	d2qVkjP8TcYW72gNCISmi38k4282vEolfro4c0EOK+zXVmL2fwVr/8jo
-X-Gm-Gg: ASbGncuo2uwSPUKVpBXf7R/PKMB+Nw1wCwSOzenTQj5NOcKmrdJYmGOqUBHvFaEgK9o
-	mHs3t4JHlGmKlFdzLIhySoNvarjZsBJ7+IgDpNWi7lETA4VqdgqUxEWMdGsEsZnicGRBBoSi243
-	h2/4SyY6e1LQ4l8ioJgB7hmvCdw3s4Ok0n9c6zfrV4L5WoOzcf/YZSALT2hZsoroQaj+jprPhmV
-	RhreKf3m+6p+rSPzGnce1jAI7CzQQ6p52YRTg3EPftKquA1gj9Xj3Xj7oZh+UYdXKpXaHCDl5Ic
-	6I2ynlR1mmTpibeUCp7ByU0PeBL/RvImhNqgPYS6cSBrUdcukvlphacF2QiTQS9EzdMUy4dDS59
-	ziJpUQjY7or9+arQt96NfTwV5/qmtKCCAb4oDhNhRuPw0HDbuTodMdr79Q8fk4shPYfm+q6rhh8
-	N/73XqW88xeeCyptTq50E5KuIJQD0KmuYKhh4=
-X-Google-Smtp-Source: AGHT+IEpDb5bUgRrfuih7BhbijCAQcSf9aUmP/xnPQr+15ne4Jw27HzUw1UD5BeHNG7z0+PEo93KNw==
-X-Received: by 2002:a17:90b:2412:b0:33e:1ed8:334d with SMTP id 98e67ed59e1d1-33e1ed835a8mr5313886a91.16.1761176036922;
-        Wed, 22 Oct 2025 16:33:56 -0700 (PDT)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:9293:1f1b:ba8e:b77d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e2d19d364sm3023608a91.10.2025.10.22.16.33.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 16:33:56 -0700 (PDT)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Cc: Deepanshu Kartikey <kartikey406@gmail.com>,
-	syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
-Subject: [PATCH] f2fs: invalidate dentry cache on failed whiteout creation
-Date: Thu, 23 Oct 2025 05:03:47 +0530
-Message-ID: <20251022233349.102728-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761176142; c=relaxed/simple;
+	bh=L8noicn6rv+RLx4+F7NyGdfmCgnaS2YLiZN5zG/kExQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ibEpiXZq3jhmLQ0xAYvB6gAll2kdvkG17EKC9JD2kEAGs37/SOyFpbtVC4E6R0M0NDEHnBnhDI/hlhLfVXZKxxNNNg7ui62+5GiNH9bEIw5mLJv/+mEIXs366veVaEt0AeN6ljqQ94RDKcXDuLFYBcR/kl7KbuuYh1SmhHZ9DlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VvWgiDg5; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761176141; x=1792712141;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=L8noicn6rv+RLx4+F7NyGdfmCgnaS2YLiZN5zG/kExQ=;
+  b=VvWgiDg54bRdX76Pi8NKQL+Y8akfYFBSVJNgQ8fi2syJYTWcFmwyzgZG
+   KQoOlkc3yCEd1sywIaLtMkVK7AxVQtxg9UyN8TFTj6mSFXf+9Ovjq5MCe
+   pz/wjhqBjBxpfUufNrWmtKPMG0j8s+oVSPwecg/9eHZB/rS0gMcejM+QI
+   CFfNcGMiNm1klOIf/Gy5vgC23ZI0UWtLevhODsBVCAG7q+Z7rReqKjN2d
+   Wygvnb7nfgFNuy38vJMqDnyELOU5qfgCyjNH4h2izeYNKdHdGrSLPKJwL
+   ZmQK3q++jXp58G4dTWEbBU1dgKXyxVxctiw5oHtxOUjESPsyC3J4ZXHh6
+   Q==;
+X-CSE-ConnectionGUID: qyPR/WQ0S5iiukd2amqGzQ==
+X-CSE-MsgGUID: /Cmqb25ZTwyH2CvCiutMNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63375826"
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="63375826"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 16:35:40 -0700
+X-CSE-ConnectionGUID: qXr92ns8Q6e6bKC3/So1Pw==
+X-CSE-MsgGUID: MKN1zQztSmWdXz6DtxdvVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="188403983"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.226]) ([10.125.108.226])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 16:35:39 -0700
+Message-ID: <98bc658f-2ec6-43f5-a7e1-e9424450a850@intel.com>
+Date: Wed, 22 Oct 2025 16:35:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] x86/mm: Move _PAGE_BIT_NOPTISHADOW from bit 58 to bit
+ 9
+To: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, ardb@kernel.org, hpa@zytor.com
+Cc: x86@kernel.org, apopple@nvidia.com, thuth@redhat.com,
+ nik.borisov@suse.com, kas@kernel.org, linux-kernel@vger.kernel.org,
+ linux-efi@vger.kernel.org, kernel-team@meta.com,
+ Michael van der Westhuizen <rmikey@meta.com>, Tobias Fleig <tfleig@meta.com>
+References: <20251022220755.1026144-1-usamaarif642@gmail.com>
+ <20251022220755.1026144-4-usamaarif642@gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251022220755.1026144-4-usamaarif642@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-F2FS can mount filesystems with corrupted directory depth values that
-get runtime-clamped to MAX_DIR_HASH_DEPTH. When RENAME_WHITEOUT
-operations are performed on such directories, f2fs_rename performs
-directory modifications (updating target entry and deleting source
-entry) before attempting to add the whiteout entry via f2fs_add_link.
+On 10/22/25 15:06, Usama Arif wrote:
+> Instead, move _PAGE_BIT_NOPTISHADOW to use _PAGE_BIT_SOFTW1 (bit 9),
 
-If f2fs_add_link fails due to the corrupted directory structure, the
-function returns an error to VFS, but the partial directory
-modifications have already been committed to disk. VFS assumes the
-entire rename operation failed and does not update the dentry cache,
-leaving stale mappings.
+Wait a sec, though...
 
-This causes subsequent operations to use cached dentry information that
-no longer matches the on-disk state. When a second rename targets the
-same entry, VFS attempts to decrement i_nlink on the stale inode, which
-may already have i_nlink=0, triggering a WARNING in drop_nlink().
-
-Example sequence:
-1. First rename (RENAME_WHITEOUT): file2 → file1
-   - f2fs updates file1 entry on disk (points to inode 8)
-   - f2fs deletes file2 entry on disk
-   - f2fs_add_link(whiteout) fails (corrupted directory)
-   - Returns error to VFS
-   - VFS cache still has: file1 → inode 7 (stale!)
-
-2. Second rename: file3 → file1
-   - VFS uses stale cache: file1 → inode 7
-   - Tries to drop_nlink on inode 7 (i_nlink already 0)
-   - WARNING in drop_nlink()
-
-Fix this by explicitly invalidating old_dentry and new_dentry when
-f2fs_add_link fails during whiteout creation. This forces VFS to
-refresh from disk on subsequent operations, ensuring cache consistency
-even when the rename partially succeeds.
-
-Reproducer:
-1. Mount F2FS image with corrupted i_current_depth
-2. renameat2(file2, file1, RENAME_WHITEOUT)
-3. renameat2(file3, file1, 0)
-4. System triggers WARNING in drop_nlink()
-
-Reported-by: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
-Tested-by: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=632cf32276a9a564188d
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/f2fs/namei.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index b882771e4699..712479b7b93d 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1053,9 +1053,11 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	if (whiteout) {
- 		set_inode_flag(whiteout, FI_INC_LINK);
- 		err = f2fs_add_link(old_dentry, whiteout);
--		if (err)
-+		if (err) {
-+			d_invalidate(old_dentry);
-+			d_invalidate(new_dentry);
- 			goto put_out_dir;
--
-+		}
- 		spin_lock(&whiteout->i_lock);
- 		whiteout->i_state &= ~I_LINKABLE;
- 		spin_unlock(&whiteout->i_lock);
--- 
-2.43.0
-
+This isn't necessary once the previous 2 patches are applied, right?
 
