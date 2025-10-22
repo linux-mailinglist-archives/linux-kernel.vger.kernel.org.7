@@ -1,190 +1,96 @@
-Return-Path: <linux-kernel+bounces-865697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D02BFDC52
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:07:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A312BFDC70
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 20:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C721A054FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FBD91A059BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 18:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040E52EBB89;
-	Wed, 22 Oct 2025 18:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DEB2E1C63;
+	Wed, 22 Oct 2025 18:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rw6rB9Bf"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ewT9VmjD"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036C235B131;
-	Wed, 22 Oct 2025 18:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DD02EA732
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761156460; cv=none; b=DQco6zE+WA5B26NtHpvQG4rmQIcSX4R84t2uEhd34aqnVyWwrc72shjppQnKPMtWoQ1yuSAemtH61tsu/De2dya7rFEtMahJxQIETvem5YafACEJ/tSqhmnE2czkG05RmQ2VDLQAxVkJvEGmb1PkaFlr2ZFCLoiHL93Z0LMmJC8=
+	t=1761156642; cv=none; b=ml695Kqu/7NQGxqjpUrKAAXWVeivr9gadxMDMKRLgfXHDGnNi59dZI4fVoh8hJIz5ioDdWY/hDxlBkzfp0tkLeLqNywSdMRCqDYVp96NBT1X7eeArDQD4b2HX5sCfzFZ1Xtzkojdv4F7zZHgzSKHFZ/3R/0o7icNP6xIKHr+ojs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761156460; c=relaxed/simple;
-	bh=KwClc8TIJ/aa8VXU6PCjh3jM6QsiqtI/B38/sCJKFuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0kdc9PASAXGgXQSuCsVLHPA79bDtT1CyeQUIvXFlGV9+ZiNEQty56qKrhOBzhrQzlipa5v/cc38ZOqihETg9moQ4SMRu4mv5asZE9ogHRSKJRA4UCpSpVp1/+DaS1grwd+yvSKOHdVRdhc6OcVfleF2PIPTRtFDmIh6IH7Me98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rw6rB9Bf; arc=none smtp.client-ip=91.218.175.184
+	s=arc-20240116; t=1761156642; c=relaxed/simple;
+	bh=EY76L4CGdRUn2iTq3A8LXWqtQ45P62GbtJbmIsCh5cA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KQ6JoN8Qi7vgZh3RMtkYAMPZrbWIe6+g4PoL4aeTxZhc2OXWbRDAyBiqMKTVVRvuJr5/gkoDt6eulOZl0lKP60T4wMbaGL5cLWsaPGCOEObSk8PNkih4bQdnuwPTvWnZi7zVhThOTMAqU8GORAvpQ1FddiTGs32TE/YG9gUqnhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ewT9VmjD; arc=none smtp.client-ip=91.218.175.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 22 Oct 2025 18:07:16 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761156444;
+	t=1761156628;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nmt77XqLA4h4HOvjB7cOXuAgnisoHkJ4aQOvVV8s/M8=;
-	b=rw6rB9Bfe8keztOgjubqLWih4+bcsU19/noPU5h+QOmbGbjPIY1SQzXgGgOTcIPl7WHDR7
-	7ewGlSRgGhn+HGoHKu+MOAmDMx0SBANoxit54V2yE/nLf4MtUh2Mb9Ao/6OONevp4l1GDj
-	Y/02wBa3rSWWC8RMQ+HdFtbtijCNYfE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Jim Mattson <jmattson@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
-	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 4/4] KVM: selftests: Add a VMX test for LA57 nested state
-Message-ID: <w75tgbhxh2izz3fstjt7yx2m3ytybsx34goqzkjwg43zodkvqo@cxathxvemb4q>
-References: <20250917215031.2567566-1-jmattson@google.com>
- <20250917215031.2567566-5-jmattson@google.com>
- <4owz4js4mvl4dohgkydcyrdhh2j2xblbwbo7zistocb4knjzdo@kvrzl7vmvg67>
- <CALMp9eRm+xH0b4TUMU3q8Wpo2uo6-OCaY7hD39dVeSm0fA+weA@mail.gmail.com>
+	bh=2oguebMI32HO2qu+qTFZ3a4OfXPITAp8SRQtXmR8DU0=;
+	b=ewT9VmjD7fTQPe1Npsb/bC39b2Tzxw6BCjJHe1M8WUB/Q2xBU9/d7L11V6Vb5wHFwQkqr8
+	oSNvVeGhpWgBJ7R7fiHC0RpiHou+2eQte79hbL/RqkaC5+9NPXswBassBgdxbSf1mH/NRJ
+	b772Rg8EO0Wab8lYZl/nE8lHfRnMQoI=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: SeongJae Park <sj@kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Johannes Weiner <hannes@cmpxchg.org>,
+  Michal Hocko <mhocko@kernel.org>,  Muchun Song <muchun.song@linux.dev>,
+  linux-mm@kvack.org,  cgroups@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: manually uninline __memcg_memory_event
+In-Reply-To: <3h26sozqgksxn4fvh7i6qjhtbnrtzit6eluyieyhsvycs3fbs5@ddblsq2crkit>
+	(Shakeel Butt's message of "Tue, 21 Oct 2025 18:28:02 -0700")
+References: <20251021234425.1885471-1-shakeel.butt@linux.dev>
+	<20251022005801.120250-1-sj@kernel.org>
+	<3h26sozqgksxn4fvh7i6qjhtbnrtzit6eluyieyhsvycs3fbs5@ddblsq2crkit>
+Date: Wed, 22 Oct 2025 11:10:22 -0700
+Message-ID: <87v7k67qpd.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALMp9eRm+xH0b4TUMU3q8Wpo2uo6-OCaY7hD39dVeSm0fA+weA@mail.gmail.com>
+Content-Type: text/plain
 X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 21, 2025 at 04:40:14PM -0700, Jim Mattson wrote:
-> On Mon, Oct 20, 2025 at 10:26 AM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
-> >
-> > On Wed, Sep 17, 2025 at 02:48:40PM -0700, Jim Mattson wrote:
-> > > Add a selftest that verifies KVM's ability to save and restore
-> > > nested state when the L1 guest is using 5-level paging and the L2
-> > > guest is using 4-level paging. Specifically, canonicality tests of
-> > > the VMCS12 host-state fields should accept 57-bit virtual addresses.
-> > >
-> > > Signed-off-by: Jim Mattson <jmattson@google.com>
-> > > ---
-> > > ...
-> > > +void guest_code(struct vmx_pages *vmx_pages)
-> > > +{
-> > > +     if (vmx_pages)
-> > > +             l1_guest_code(vmx_pages);
-> >
-> > I think none of the other tests do the NULL check. Seems like the test
-> > will actually pass if we pass vmx_pages == NULL. I think it's better if
-> > we let L1 crash if we mess up the setup.
-> 
-> I'll drop the check in the next version.
-> 
-> > > +
-> > > +     GUEST_DONE();
-> > > +}
-> > > +
-> > > +int main(int argc, char *argv[])
-> > > +{
-> > > +     vm_vaddr_t vmx_pages_gva = 0;
-> > > +     struct kvm_vm *vm;
-> > > +     struct kvm_vcpu *vcpu;
-> > > +     struct kvm_x86_state *state;
-> > > +     struct ucall uc;
-> > > +     int stage;
-> > > +
-> > > +     TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX));
-> > > +     TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_LA57));
-> > > +     TEST_REQUIRE(kvm_has_cap(KVM_CAP_NESTED_STATE));
-> > > +
-> > > +     vm = vm_create_shape_with_one_vcpu(VM_SHAPE(VM_MODE_PXXV57_4K), &vcpu,
-> > > +                                        guest_code);
-> > > +
-> > > +     /*
-> > > +      * L1 needs to read its own PML5 table to set up L2. Identity map
-> > > +      * the PML5 table to facilitate this.
-> > > +      */
-> > > +     virt_map(vm, vm->pgd, vm->pgd, 1);
-> > > +
-> > > +     vcpu_alloc_vmx(vm, &vmx_pages_gva);
-> > > +     vcpu_args_set(vcpu, 1, vmx_pages_gva);
-> > > +
-> > > +     for (stage = 1;; stage++) {
-> > > +             vcpu_run(vcpu);
-> > > +             TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-> > > +
-> > > +             switch (get_ucall(vcpu, &uc)) {
-> > > +             case UCALL_ABORT:
-> > > +                     REPORT_GUEST_ASSERT(uc);
-> > > +                     /* NOT REACHED */
-> > > +             case UCALL_SYNC:
-> > > +                     break;
-> > > +             case UCALL_DONE:
-> > > +                     goto done;
-> > > +             default:
-> > > +                     TEST_FAIL("Unknown ucall %lu", uc.cmd);
-> > > +             }
-> > > +
-> > > +             TEST_ASSERT(uc.args[1] == stage,
-> > > +                         "Expected stage %d, got stage %lu", stage, (ulong)uc.args[1]);
-> > > +             if (stage == 1) {
-> > > +                     pr_info("L2 is active; performing save/restore.\n");
-> > > +                     state = vcpu_save_state(vcpu);
-> > > +
-> > > +                     kvm_vm_release(vm);
-> > > +
-> > > +                     /* Restore state in a new VM. */
-> > > +                     vcpu = vm_recreate_with_one_vcpu(vm);
-> > > +                     vcpu_load_state(vcpu, state);
-> > > +                     kvm_x86_state_cleanup(state);
-> >
-> > It seems like we only load the vCPU state but we don't actually run it
-> > after restoring the nested state. Should we have another stage and run
-> > L2 again after the restore? What is the current failure mode without
-> > 9245fd6b8531?
-> 
-> When everything works, we do actually run the vCPU again after
-> restoring the nested state. L1 has to execute GUEST_DONE() to exit
-> this loop.
+Shakeel Butt <shakeel.butt@linux.dev> writes:
 
-Oh I missed the fact that the loop will keep going until GUEST_DONE(),
-now it makes sense. I thought we're just checking that restoring the
-state will fail.
+> On Tue, Oct 21, 2025 at 05:58:00PM -0700, SeongJae Park wrote:
+>> On Tue, 21 Oct 2025 16:44:25 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>> 
+>> > The function __memcg_memory_event has been unnecessarily marked inline
+>> > even when it is not really performance critical. It is usually called
+>> > to track extreme conditions. Over the time, it has evolved to include
+>> > more functionality and inlining it is causing more harm.
+>> > 
+>> > Before the patch:
+>> > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
+>> >    text    data     bss     dec     hex filename
+>> >   35645   10574    4192   50411    c4eb mm/memcontrol.o
+>> >   54738    1658       0   56396    dc4c net/ipv4/tcp_input.o
+>> >   34644    1065       0   35709    8b7d net/ipv4/tcp_output.o
+>> > 
+>> > After the patch:
+>> > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
+>> >    text    data     bss     dec     hex filename
+>> >   35137   10446    4192   49775    c26f mm/memcontrol.o
+>> >   54322    1562       0   55884    da4c net/ipv4/tcp_input.o
+>> >   34492    1017       0   35509    8ab5 net/ipv4/tcp_output.o
+>> > 
+>> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-> 
-> Without commit 9245fd6b8531 ("KVM: x86: model canonical checks more
-> precisely"), the test fails with:
-> 
-> KVM_SET_NESTED_STATE failed, rc: -1 errno: 22 (Invalid argument)
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-Right, this failure would happen even if we do not try to run the vCPU
-again tho, which what I initially thought was the case. Sorry for the
-noise.
-
-> 
-> (And, in that case, we do not re-enter the guest.)
-> 
-> 
-> 
-> > > +             }
-> > > +     }
-> > > +
-> > > +done:
-> > > +     kvm_vm_free(vm);
-> > > +     return 0;
-> > > +}
-> > > --
-> > > 2.51.0.470.ga7dc726c21-goog
-> > >
+Thanks!
 
