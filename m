@@ -1,178 +1,130 @@
-Return-Path: <linux-kernel+bounces-865291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B58BFCB6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:56:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2307CBFCB78
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 16:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A1419A7D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:56:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19C8D4F135F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 14:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03772343D6E;
-	Wed, 22 Oct 2025 14:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F0B3469EC;
+	Wed, 22 Oct 2025 14:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="ysNv8ldh"
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="paOWUNtT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787AA35BDAD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 14:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B20635BDB8;
+	Wed, 22 Oct 2025 14:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761144948; cv=none; b=cKU/FQom71P4TJJvMrG4kNsWF0F6IbCocLR0qnoYVP9Tm4wkdb6yCGA6slwpHxQB3X6smStGwJ2XKYkbz1t857dVmW4Y2n0GGEi3tGqEBGxa/sNliq08C13TYQ0oPbyyG3WvNysfcox2mfW+AJvm9hlTwYgLcowtR2OwcHa7rLU=
+	t=1761144990; cv=none; b=KPCBZt0sFTPg3p7V7C4OWvzVpOpRGKs/JMGtZu09Vig15/p0AF9Ne28nOqZcro0wDFJj/2hO5Pj9qHuVZtYDfUPS1pYQvkByY6P4Fx4C3BAeTW3QXc+3GZiXGlJtO16EoAyvJWJY1rS7xu/OLwLRbkiZi+vq4VezjW8gm/yOo98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761144948; c=relaxed/simple;
-	bh=mTXEDhbPklwnuwXoHo+JEFvJqInjrTql1fJnNdnVWLI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l71QvudTOp+6K27Gj+c1pM2ihDSPjyEO++zBbvxC4t3ASuiMB4ZtlERC35d1KlZNkKA0QRMkfbaugkQ4BYXpxna2kyvRtiUhmwH5x32HDMWUEdyCJ4FtOVBPEB4/bb3/5HgKbL2BRkEUkXTFe+3mnknjtVPVUfdfQ048rYUgbWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=ysNv8ldh; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 59ME1BRf495057
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:55:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=3Pxq7adyZuGRjMYC5LoHOzZm+NXukvXLEAUXf/pfmxI=; b=ysNv8ldhADFR
-	9OIOs0r/axpxcVw7nhFTF/+6n21gJs+XoQ76eTb2uA0YEMpDtiTG5U7mixtluGAZ
-	i2rd+ThcEsCTTmI+em1JPb+9g5GM8AlsvgH+yV+LsKuVatT83/YsJmllY+uDH06j
-	0VSUIHmM7hgIohSIuWv3nPUpCeuOodnj/NCxWTwdMpX8m5IVSfXj6PFdxgzt2Uzx
-	dAih3CxEqW3G9i77NhxIMHO5PVFullHL90rfXqkKr/m7l1TCd/330IkKMRiMM0v9
-	mpO1j8rjOOxCjQi4QX1yVF3GunCrOpkvGGfTtlMuWhfY3P2k0jaXTavPVyIkswNj
-	m9zLpKj7jw==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by m0001303.ppops.net (PPS) with ESMTPS id 49xr0q3tme-6
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 07:55:45 -0700 (PDT)
-Received: from twshared0973.10.ash9.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Wed, 22 Oct 2025 14:55:43 +0000
-Received: by devgpu012.nha5.facebook.com (Postfix, from userid 23751)
-	id 4F811591CCA; Wed, 22 Oct 2025 07:55:35 -0700 (PDT)
-Date: Wed, 22 Oct 2025 07:55:35 -0700
-From: Alex Mastro <amastro@fb.com>
-To: David Matlack <dmatlack@google.com>
-CC: Alex Williamson <alex@shazbot.org>,
-        Alejandro Jimenez
-	<alejandro.j.jimenez@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
- limit
-Message-ID: <aPjwZ1Fh9hmFJyok@devgpu012.nha5.facebook.com>
-References: <20251015132452.321477fa@shazbot.org>
- <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
- <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
- <20251016160138.374c8cfb@shazbot.org>
- <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
- <20251020153633.33bf6de4@shazbot.org>
- <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
- <CALzav=ebeVvg5jyFjkAN-Ud==6xS9y1afszSE10mpa9PUOu+Dw@mail.gmail.com>
- <aPfbU4rYkSUDG4D0@devgpu012.nha5.facebook.com>
- <CALzav=cyDaiKbQfkjF_UUQ0PB6cAKZhnSqM3ZvodqqEe8kQEqw@mail.gmail.com>
+	s=arc-20240116; t=1761144990; c=relaxed/simple;
+	bh=Y0/Qsj5JIMYuznL9ResIUaTDl4hth2V0/GJK4iH2b6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLpXgMjJb3ZBkTo4G2W9T4eCGXA9UQlTX3LeF/5zrZxDz03PILXRXa3vwyP0ike3SqQFVrAmvPZy7Ww2JIUbVUeCyhNsINW2HEffFzXPAih5/QqFdw7jHGn29LFAEb5h04Dy8RbhnNYnEaVGzUyrjByOBoBeo0jc/ctI6rHZj0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=paOWUNtT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87040C4CEE7;
+	Wed, 22 Oct 2025 14:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761144989;
+	bh=Y0/Qsj5JIMYuznL9ResIUaTDl4hth2V0/GJK4iH2b6A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=paOWUNtTBD4Qy/+mQnAgI1bho5pkHdRpk5XmyrpTkjalZeXoUoiLIayDZofCtytkh
+	 yqLsP1lEo9MyU/klHMGqlaBWkEET+ANXU0UZoehxyfTLm5Wvpc2jHif5sINR8aSc68
+	 c0M7skBTbvK4wKYhZ3NGbSTvzGb/pJtuAe4uj2dm0+RDPxWDdv2D9s+ihMfwC9fXJ5
+	 G2BTK/OfofMykbtyhqGlNeRYxn2NEzZpSFTFM0qXd7Q4DoIctgbwNfviaZKNzaoWRx
+	 Zj8JO0pdrwlFVQDDGNNbsICI8dVHe1WmqjsPmjVGnSlwofo4xC6d6s2eqXAdMZnXoX
+	 phmzfit+96CTw==
+Date: Wed, 22 Oct 2025 15:56:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Herve Codina <herve.codina@bootlin.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Axel Lin <axel.lin@ingics.com>,
+	Brian Austin <brian.austin@cirrus.com>, linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+Message-ID: <d38779a7-a1af-49e4-b429-5ebd791e2168@sirena.org.uk>
+References: <e7873e6ce07cd92f4b5ce8880aa81b12c2a08ed3.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tOG5GnSnDDCzxrVp"
 Content-Disposition: inline
-In-Reply-To: <CALzav=cyDaiKbQfkjF_UUQ0PB6cAKZhnSqM3ZvodqqEe8kQEqw@mail.gmail.com>
+In-Reply-To: <e7873e6ce07cd92f4b5ce8880aa81b12c2a08ed3.camel@gmail.com>
+X-Cookie: Remember the... the... uhh.....
+
+
+--tOG5GnSnDDCzxrVp
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-X-Proofpoint-GUID: FOcERoVfADb1W5YIDPXWRRmazVB73TyV
-X-Authority-Analysis: v=2.4 cv=dLSrWeZb c=1 sm=1 tr=0 ts=68f8f071 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=FOH2dFAWAAAA:8 a=v4r7LAIuhmP5iyC60hwA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDEyMiBTYWx0ZWRfX5lXHFR2MptvC
- pQMW0WeNZQY8WBGMtZg9VqLZiQALbsz0sTN4B2n8i0ARXGMB8degbWMf37ERtDKxSnVScXp4Xc+
- tAzBZqQMsh3c4DmyPB+0OMH9Rdn2HLHHfYeiZhyQswxNmiLd3oywW4kTlvkZkW4vYvhhgyaSLlG
- MIghm3FBmPE1avIaNcku8Zx8lAiBWR0fc5V/V/117rybCboq/GOswA0BCerWcH3njSpLEi6AB/Q
- 7e4Wez1+v+vNgZn/D5xxScWVuLQyJDjEbop76VBZUMYPJImatn+ehG+TPxUfliS4ePCofTt1XPW
- yAAsnnrGWXX2P39MVmUAemFTyE5Nq+Fsp/BLhexGroVVReamx0jaosWmh4ZJmpY7kHVi/w7Ch0G
- qFkoVg6948XF8+kD51Ue2GHKmYe7bg==
-X-Proofpoint-ORIG-GUID: FOcERoVfADb1W5YIDPXWRRmazVB73TyV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_06,2025-10-13_01,2025-03-28_01
 
-Thanks David -- this is good feedback. Will roll these suggestions into v=
-5.
+On Tue, Oct 21, 2025 at 09:12:13PM +0200, Alexander Sverdlin wrote:
+> On Tue, 2025-10-21 at 20:00 +0100, Mark Brown wrote:
 
-On Tue, Oct 21, 2025 at 05:38:31PM -0700, David Matlack wrote:
-> On Tue, Oct 21, 2025 at 12:13=E2=80=AFPM Alex Mastro <amastro@fb.com> w=
-rote:
-> > I updated the *_unmap function signatures to return the count of byte=
-s unmapped,
-> > since that is part of the test pass criteria. Also added unmap_all fl=
-avors,
-> > since those exercise different code paths than range-based unmap.
->=20
-> When you send, can you introduce these in a separate commit and update
-> the existing test function in vfio_dma_mapping_test.c to assert on it?
+> > Or at least you'd get both modules loaded with one being redundant.=A0 =
+TBH
 
-SGTM
+> I'm quite confident that udev/modprobe will load only the first module
+> from modules.alias file.
 
-> > +#undef FIXTURE_VARIANT_ADD_IOMMU_MODE
->=20
-> I think this can/should go just after the
-> FIXTURE_VARIANT_ADD_ALL_IOMMU_MODES(); statement. The same below.
+Oh, I'm sure that's the case now but I can see someone changing that.
 
-Ack.
+> > I'm very reluctant to touch this stuff for SPI without some very careful
+> > analysis that it's not going to cause things to explode on people, right
+> > now things seem to be working well enough so I'm not clear we'd be
+> > solving an actual problem.
 
-> > +       unmapped =3D vfio_pci_dma_unmap_all(self->device);
-> > +       ASSERT_EQ(unmapped, size);
->=20
-> The unmap_all test should probably be in a separate TEST_F. You can
-> put the struct vfio_dma_region in the FIXTURE and initialize it in the
-> FIXTURE_SETUP() to reduce code duplication.
-> > +}
+> The actual problem is that i2c-core is producing "of:" prefixed uevents
+> instead of "i2c:" prefixed uevents starting from v4.18.
 
-Make sense.
+> Most of the dual-bus ASoC CODECs are affected.
 
-> Would it be useful to add negative map/unmap tests as well? If so we'd
-> need a way to plumb the return value of the ioctl up to the caller so
-> you can assert that it failed, which will conflict with returning the
-> amount of unmapped bytes.
+That's a description of what change but not of a concrete problem that
+users are experiencing.
 
-Testing negative cases would be useful. Not sure about the mechanics yet.
+> Now declaring "of:" to be the new I2C bus prefix for uevents starting from
+> Linux v4.18 sounds strange.
 
->=20
-> Maybe we should make unmapped an output parameter like so?
->=20
-> int __vfio_pci_dma_map(struct vfio_pci_device *device,
->         struct vfio_dma_region *region);
->=20
-> void vfio_pci_dma_map(struct vfio_pci_device *device,
->         struct vfio_dma_region *region);
->=20
-> int __vfio_pci_dma_unmap(struct vfio_pci_device *device,
->         struct vfio_dma_region *region, u64 *unmapped);
->=20
-> void vfio_pci_dma_unmap(struct vfio_pci_device *device,
->         struct vfio_dma_region *region, u64 *unmapped);
->=20
-> int __vfio_pci_dma_unmap_all(struct vfio_pci_device *device, u64 *unmap=
-ped);
-> void vfio_pci_dma_unmap_all(struct vfio_pci_device *device, u64 *unmapp=
-ed);
->=20
-> unmapped can be optional and callers that don't care can pass in NULL.
-> It'll be a little gross though to see NULL on all the unmap calls
-> though... Maybe unmapped can be restricted to __vfio_pci_dma_unmap().
-> So something like this:
->=20
-> int __vfio_pci_dma_unmap(struct vfio_pci_device *device,
->         struct vfio_dma_region *region, u64 *unmapped);
->=20
-> void vfio_pci_dma_unmap(struct vfio_pci_device *device,
->         struct vfio_dma_region *region);
+I think a robust solution would involve having the OF aliases namespaced
+by bus, or just not using the OF aliases but potentially having
+collisions if two vendors pick the same device name.
 
-I'll put some thought into this and propose something in v5.
+--tOG5GnSnDDCzxrVp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj48JUACgkQJNaLcl1U
+h9An0Af9EGASCGgg9J0nbEkxfOLan+MEdKSUHqCxepMM6NXEHuCA/sRRv4zz2lnS
+SY3xPDrq6KjkhdkAjGCTKGpL6xMQ3LHSVcsDlLle4C/h+nIvPirFyPVh9OqqHSi+
+KwE94+8b5/YmoRtb5zw5T3TpBCHLcT1w2tdsSWbNaY4IcXRmaE+qzt/s9QRT9dgq
+2RrcMS1m956Ll6sg0K1DjRK7LPVx9KKOwKhSJQHLzTX1pvtWmr5JYDHaqrl1wgIJ
+zqLOeAePbm0jwnKedgG1/pphbckXTNTmOtdJNb9kWV+Y2feXYyh+vERtoNJ9HxYG
+jbVav2epAVmTcFa97pqz5NVim3zl1g==
+=Uwr2
+-----END PGP SIGNATURE-----
+
+--tOG5GnSnDDCzxrVp--
 
