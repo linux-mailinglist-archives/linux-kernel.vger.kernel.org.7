@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-865009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-865010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DA8BFC089
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:10:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF48BFC053
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 15:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62136625AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:02:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E4D8560D21
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 13:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107053491EB;
-	Wed, 22 Oct 2025 12:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2054634AB11;
+	Wed, 22 Oct 2025 12:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u/zASjt2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fBCefB5b"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yxYpEy4a";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LPBFUrpr"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CD8348898
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5EB3491FC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 12:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137734; cv=none; b=ZsmEzQioiZdhKFLYbfjBHFqKRJ5/UOE4U9ct1Adk8bkxz9Ru3wzB8GEYv8tgYSpaqHd8oygTriAgNhHSAkWA9DhwbRP1ZPKezLmQgYRYrtgxGxKTPcQx+vGsSC0oQPuXi0qDHmPrgsAv8WlzuPfMXmqVQqP3VESfXYYFygIvwEM=
+	t=1761137735; cv=none; b=iREr1Uz5ho7Q05R2n8WIsdzuL078l6g2GalEYqpHr3HGBigU2wL62gAB5FixWdZWnJqpC2DlW51WQM53AEcTmLUWp7PcL8FbCjQyDm4UfZmv885coO17SZW56MrzjnDWAWKEveWkd6+DRldHcDGNJFeTVkVYzPJpCmhpvurIcik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761137734; c=relaxed/simple;
-	bh=qzcYv3Fx0pUG5kkasfl8Z10bwB0vkmf5ZryCYVPmIPI=;
+	s=arc-20240116; t=1761137735; c=relaxed/simple;
+	bh=zmSeg3GAj46dk7wW4jScL07/yltg9V0+INXyHKDTjrk=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=Sh9hjgKVRHmSSAcNm2UUr1dxSkFzuxv8pIJXcTyjuXSHTgoCb9KL44BcENJFaVriy6vx6f+51fbF9Gc3OPd9CknozrG0/6dYw+rTO0MFkABcp/YWdWvr/XFa2fpOHhmxvbuWDc7SxB7LxwhTLyKny3ETHsTptQ72MDtFZQrcBNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u/zASjt2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fBCefB5b; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=lFOTj/K38+B2wsf02SBEXOAOzAnmro8LfoZYh9wDY5kKDATmzUmrjsI2oO1jOxXxTudtFg1wEB913MZYp28oqOTJ10zCcQpTqjFrVb7XDuFQ5hbz9QuARM+LC/lFmSa0/17x0Wo+NtJXvKzWh6U6IMZxwxHuQ/bLktc/ELOfoto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yxYpEy4a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LPBFUrpr; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251022110555.967170782@linutronix.de>
+Message-ID: <20251022110556.029862568@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761137731;
+	s=2020; t=1761137732;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=wONNCeIqy4BcniWfIGuVA9uUPJUNPBq8TskX/3SruDw=;
-	b=u/zASjt2Ltb/wjtQStWrr2lIfv5hEYtesPfglOHDMS2yntdZLOhA51g7jVszPqgGj4YuYa
-	b8r6d4xzg6Q7jjbO+Lie/b7cbiGmp4zKtMJrSjywLGdx1VvNUgO0qkM/y2HWjjnjmz21Ul
-	9FYo3rPo2iqRRt6pcKSP1aMhne7YkV3fnw0RWV6+B323JRSzQytvfEc5IoeJTSvgjzN18y
-	OpMdwLM+0mMOrILaPW3vcCnleJY7a14eQYp3FOxFx2DDlz0TGboJ6261S3EIt9VTS1z4Ht
-	DO9ehdhqh/UQRsgzZqDO1pMTWBS5bAO4/RvYNYviQYtBM+mtVTYQBTctvQq2dw==
+	 references:references; bh=5/lVt6qrQlW858HA8ahJtIUcMN8Q+Oem8wfsTePp2Js=;
+	b=yxYpEy4argIXbyPief92RqFlif5mCg7E6EpotVV1LKdXkEEMpjGue1VTrfc4gvhfktrFTv
+	01mFC/9exl8qxjl0nWR1QQ8ZF56rXneydpik7mJpjjDTGrWXuZTOAnRJeLWkyJHFbrlveC
+	+UituQ3ma3u4s8tlwTuDB6ZTsvjQagtL+rWY73MBkKwMBqUwguZcp44i5Xhte4dZdEhtd3
+	tQRvjm3NNsY7b06BFptVBpQrVM4cfNO2eSHWkbmJQNFGAEu+zM77MHKoIkjC8txCCmywGG
+	lwdXeAMjipNiTW1e5XAmJu0phgSly0zeo1kK11hKyCXfI0METP2SpaSSet8cCA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761137731;
+	s=2020e; t=1761137732;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=wONNCeIqy4BcniWfIGuVA9uUPJUNPBq8TskX/3SruDw=;
-	b=fBCefB5bCiUnabfB4p2T/A+ZK0Fa+w7xipFMNkgUFv4CiYIqsdLk4CEF27ddJna9/WSJ3a
-	SB3WGoxIKVZMCxCQ==
+	 references:references; bh=5/lVt6qrQlW858HA8ahJtIUcMN8Q+Oem8wfsTePp2Js=;
+	b=LPBFUrprRfu2XXe0Lt4q53k44seWRBLoGh38NqnaCNFjoJMdp/rpKdO+lKlkW0idHn6g9k
+	rLSUwdGfYzSgEADw==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -61,7 +61,7 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
  Florian Weimer <fweimer@redhat.com>,
  Tim Chen <tim.c.chen@intel.com>,
  Yury Norov <yury.norov@gmail.com>
-Subject: [patch V2 09/20] cpumask: Cache num_possible_cpus()
+Subject: [patch V2 10/20] sched/mmcid: Convert mm CID mask to a bitmap
 References: <20251022104005.907410538@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,98 +70,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 Oct 2025 14:55:30 +0200 (CEST)
+Date: Wed, 22 Oct 2025 14:55:32 +0200 (CEST)
 
-Reevaluating num_possible_cpus() over and over does not make sense. That
-becomes a constant after init as cpu_possible_mask is marked ro_after_init.
+This is truly a bitmap and just conveniently uses a cpumask because the
+maximum size of the bitmap is nr_cpu_ids.
 
-Cache the value during initialization and provide that for consumption.
+But that prevents to do searches for a zero bit in a limited range, which
+is helpful to provide an efficient mechanism to consolidate the CID space
+when the number of users decreases.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yury Norov <yury.norov@gmail.com>
 ---
-V2: New patch
----
- include/linux/cpumask.h |   10 ++++++++--
- kernel/cpu.c            |   15 +++++++++++++++
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ include/linux/mm_types.h |    6 +++---
+ kernel/sched/core.c      |    2 +-
+ kernel/sched/sched.h     |    6 +++---
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -126,6 +126,7 @@ extern struct cpumask __cpu_dying_mask;
- #define cpu_dying_mask    ((const struct cpumask *)&__cpu_dying_mask)
- 
- extern atomic_t __num_online_cpus;
-+extern unsigned int __num_possible_cpus;
- 
- extern cpumask_t cpus_booted_once_mask;
- 
-@@ -1152,13 +1153,13 @@ void init_cpu_possible(const struct cpum
- #define __assign_cpu(cpu, mask, val)	\
- 	__assign_bit(cpumask_check(cpu), cpumask_bits(mask), (val))
- 
--#define set_cpu_possible(cpu, possible)	assign_cpu((cpu), &__cpu_possible_mask, (possible))
- #define set_cpu_enabled(cpu, enabled)	assign_cpu((cpu), &__cpu_enabled_mask, (enabled))
- #define set_cpu_present(cpu, present)	assign_cpu((cpu), &__cpu_present_mask, (present))
- #define set_cpu_active(cpu, active)	assign_cpu((cpu), &__cpu_active_mask, (active))
- #define set_cpu_dying(cpu, dying)	assign_cpu((cpu), &__cpu_dying_mask, (dying))
- 
- void set_cpu_online(unsigned int cpu, bool online);
-+void set_cpu_possible(unsigned int cpu, bool possible);
- 
- /**
-  * to_cpumask - convert a NR_CPUS bitmap to a struct cpumask *
-@@ -1211,7 +1212,12 @@ static __always_inline unsigned int num_
- {
- 	return raw_atomic_read(&__num_online_cpus);
- }
--#define num_possible_cpus()	cpumask_weight(cpu_possible_mask)
-+
-+static __always_inline unsigned int num_possible_cpus(void)
-+{
-+	return __num_possible_cpus;
-+}
-+
- #define num_enabled_cpus()	cpumask_weight(cpu_enabled_mask)
- #define num_present_cpus()	cpumask_weight(cpu_present_mask)
- #define num_active_cpus()	cpumask_weight(cpu_active_mask)
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -3108,6 +3108,9 @@ EXPORT_SYMBOL(__cpu_dying_mask);
- atomic_t __num_online_cpus __read_mostly;
- EXPORT_SYMBOL(__num_online_cpus);
- 
-+unsigned int __num_possible_cpus __ro_after_init = NR_CPUS;
-+EXPORT_SYMBOL(__num_possible_cpus);
-+
- void init_cpu_present(const struct cpumask *src)
- {
- 	cpumask_copy(&__cpu_present_mask, src);
-@@ -3116,6 +3119,7 @@ void init_cpu_present(const struct cpuma
- void init_cpu_possible(const struct cpumask *src)
- {
- 	cpumask_copy(&__cpu_possible_mask, src);
-+	__num_possible_cpus = cpumask_weight(&__cpu_possible_mask);
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1342,13 +1342,13 @@ static inline cpumask_t *mm_cpus_allowed
  }
  
- void set_cpu_online(unsigned int cpu, bool online)
-@@ -3139,6 +3143,17 @@ void set_cpu_online(unsigned int cpu, bo
+ /* Accessor for struct mm_struct's cidmask. */
+-static inline cpumask_t *mm_cidmask(struct mm_struct *mm)
++static inline unsigned long *mm_cidmask(struct mm_struct *mm)
+ {
+ 	unsigned long cid_bitmap = (unsigned long)mm_cpus_allowed(mm);
+ 
+ 	/* Skip mm_cpus_allowed */
+ 	cid_bitmap += cpumask_size();
+-	return (struct cpumask *)cid_bitmap;
++	return (unsigned long *)cid_bitmap;
+ }
+ 
+ static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
+@@ -1363,7 +1363,7 @@ static inline void mm_init_cid(struct mm
+ 	mm->mm_cid.nr_cpus_allowed = p->nr_cpus_allowed;
+ 	raw_spin_lock_init(&mm->mm_cid.lock);
+ 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
+-	cpumask_clear(mm_cidmask(mm));
++	bitmap_zero(mm_cidmask(mm), cpumask_size());
+ }
+ 
+ static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -10399,7 +10399,7 @@ void sched_mm_cid_exit_signals(struct ta
+ 	guard(preempt)();
+ 	t->mm_cid.active = 0;
+ 	if (t->mm_cid.cid != MM_CID_UNSET) {
+-		cpumask_clear_cpu(t->mm_cid.cid, mm_cidmask(mm));
++		clear_bit(t->mm_cid.cid, mm_cidmask(mm));
+ 		t->mm_cid.cid = MM_CID_UNSET;
  	}
  }
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3558,7 +3558,7 @@ static inline bool __mm_cid_get(struct t
  
-+void set_cpu_possible(unsigned int cpu, bool possible)
-+{
-+	if (possible) {
-+		if (!cpumask_test_and_set_cpu(cpu, &__cpu_possible_mask))
-+			__num_possible_cpus++;
-+	} else {
-+		if (cpumask_test_and_clear_cpu(cpu, &__cpu_possible_mask))
-+			__num_possible_cpus--;
-+	}
-+}
-+
- /*
-  * Activate the first processor.
-  */
+ 	if (cid >= max_cids)
+ 		return false;
+-	if (cpumask_test_and_set_cpu(cid, mm_cidmask(mm)))
++	if (test_and_set_bit(cid, mm_cidmask(mm)))
+ 		return false;
+ 	t->mm_cid.cid = t->mm_cid.last_cid = cid;
+ 	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
+@@ -3581,7 +3581,7 @@ static inline bool mm_cid_get(struct tas
+ 		return true;
+ 
+ 	/* Try the first zero bit in the cidmask. */
+-	return __mm_cid_get(t, cpumask_first_zero(mm_cidmask(mm)), max_cids);
++	return __mm_cid_get(t, find_first_zero_bit(mm_cidmask(mm), num_possible_cpus()), max_cids);
+ }
+ 
+ static inline void mm_cid_select(struct task_struct *t)
+@@ -3602,7 +3602,7 @@ static inline void switch_mm_cid(struct
+ {
+ 	if (prev->mm_cid.active) {
+ 		if (prev->mm_cid.cid != MM_CID_UNSET)
+-			cpumask_clear_cpu(prev->mm_cid.cid, mm_cidmask(prev->mm));
++			clear_bit(prev->mm_cid.cid, mm_cidmask(prev->mm));
+ 		prev->mm_cid.cid = MM_CID_UNSET;
+ 	}
+ 
 
 
