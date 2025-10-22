@@ -1,86 +1,124 @@
-Return-Path: <linux-kernel+bounces-864153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-864154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384ABBFA0BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0E1BFA0D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 07:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE65818C1B6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:22:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351F83B2746
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 05:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770BE2E7F25;
-	Wed, 22 Oct 2025 05:22:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68EB2E9EAA;
+	Wed, 22 Oct 2025 05:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Hn48pNTX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6340A22F74D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 05:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206782E8B7C;
+	Wed, 22 Oct 2025 05:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761110527; cv=none; b=KWmmHQirfsdp0W1G85vV2QVhRBYXwTTO0SwKmBUXkWuyMUr3MO4sjRcc+mA3Vm4gYaY8ETmwPeP2QkpMSYP4syI6FIjwW5Yk2ZvMT4j69FQOgqeoBl/0PfBEtgCsD9QekCleFrBEQJVsOLq4AydZntAs+Q9egv8njrYP5CojwSg=
+	t=1761110762; cv=none; b=G7dQxVfRJ1Ns5Nzq11YS4ubwnDoZKC0ep1WtOL1MmAOFQzk7aOnZtUDba1vB7PjADVmFS3cyAIr+vcVIburaWHBDews2mfYt9o+VjFyVL/1ttupJxyWrgmg+S49f/wdpsdv/q7Z8A0hMC8Aqc2RZgGkvx9Z5KomeGrPEq/7nEb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761110527; c=relaxed/simple;
-	bh=2sznMRp/bdPRVJkd/g0tMpcu+dGdQSOjQYO8U2XlRPA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=giFUj3WxwYt3s41SuTq19EVHvyFs9nyzqHb/rc8Fazp4ryyKFlCK11mLno+NLzoZtTu4UUEpsgczZmHmWa6Ifx5hJ3ZsLnSyjxRN7Ic/nO36Irf0W+pUFCj4c0ULJbHZmAdnwoHPyBu0bSnTZMHjdGg68Ra/qZVfv9yPuqPiZdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430d83d262fso135587555ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:22:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761110523; x=1761715323;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nioKUxa+xaBTezQGJbEueQ6vMMU8as1svR/9k3DuJtI=;
-        b=nJhMuOSWVibaqdNb9gUiJUmwshnPX7S08w4breFIdsqpkKa8d3r9AA9wUVPxILqvsT
-         wyh8u6MHJStjYn2gubSzttvM6dATN9R4ziGbUGP69dy8Sjpl8gKPTIxcxuhULcAMKRgC
-         dFHdamhuoeIWGbz63w3Kndcx0X5E8CbYdTOKFyBwKs2Fm1vf7pNo3vpoFOtxauxOy7Ey
-         WUs1lGELE/voaxkzHcJUqboMjgjwoVl97kL5LZ/SbFgAnruU90VOwDlCrW8O7gXNDwMv
-         qtq2ObDyYo9/1dyX6wCT2x+2vh5cT6nu5AFv4qGO1OI6C3adUK1bYPZYQ+z6PtNwI4vU
-         Xmbw==
-X-Gm-Message-State: AOJu0YySYZPn7f02apVRAcYsc6njyz8o4sn5jIQGf6pw1+ch+G0b5ltB
-	TfNUiOWaD9kGLa56xxqy1E2OfyjGM/252Z0nJBmrPggOe/rtpYYc4Md3C+DooIKE22UgaSjkNhj
-	vo9uAC8tFO4whR5DH2iQCcx1UMRhhXipJaC2dQd4vg0Y4jg09BPiqPXLHsGw=
-X-Google-Smtp-Source: AGHT+IHnuMeqNByWsh7bPdj0NStJL1dKHai73XL1q359yZA1IeMydfvg4wMp01GeKj5552+bu4nlZ1DLEfsNTzsBBJLmUr4Mo19m
+	s=arc-20240116; t=1761110762; c=relaxed/simple;
+	bh=mXpas3Q7II2E3RIoc0YNALZ0k7lZjrC4FDNfZkG9wws=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JFxuqj9HF8rKnGeJioWLNZ5q8GpNe4i7sfFwuKfQo2YlImuyTUqTZtTbg7elSRZBj15jlS2JV6qN2cdu8fAtkdSIBYzr+zkVsGMNw5Wypnfms5kbsWnsTrnMHSlHWJst1JOTxaBWyFxYFMpxBG+WzCTp4a8jmgUhWXsbviue7So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Hn48pNTX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761110755;
+	bh=Czzn4YjA0DxoPNd1smsST42zqWunupnU/PC+dbX27q0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Hn48pNTXmbmy0HLGHugXg6Mara41fmRu4FlwF1r5eBInq3XSbdg9W4Ug6CpEerpTc
+	 zMDglorDskudJJoadv4JKEzi9fGA+aNSE7ax65IJV+zrwkrVUjiYU+KK82IChi9xj3
+	 NlYHOsAwE25JMDLi6ijibjHgHQm6PkLe5pwyo9S8J1iaTyrbTTjWfHLhX/rLvN7eDR
+	 4O2h6ielaXzohBVKnuU7MU7kVywl2mVisMjo6uPkHZ5OYtaIXfx9POsudCp5Ozmubd
+	 mvAJMV8lo3uhXxPgP5Vrh/gekeg2Yd0aUsKvKtMsB3ISvFwPx0i80Thrb3nArlDRBX
+	 2N25eV2OMMlRQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cryLV6bXTz4w9Q;
+	Wed, 22 Oct 2025 16:25:54 +1100 (AEDT)
+Date: Wed, 22 Oct 2025 16:25:53 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Keith Busch <kbusch@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "kernelci.org bot" <bot@kernelci.org>
+Subject: linux-next: build failure after merge of the block tree
+Message-ID: <20251022162553.5dfb4df9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fca:b0:425:8c47:13fb with SMTP id
- e9e14a558f8ab-430c527bc9amr294639925ab.17.1761110523548; Tue, 21 Oct 2025
- 22:22:03 -0700 (PDT)
-Date: Tue, 21 Oct 2025 22:22:03 -0700
-In-Reply-To: <aPgEdIAnSTBroJuS@rpthibeault-XPS-13-9305>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f869fb.050a0220.346f24.0035.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KMSAN: uninit-value in hci_cmd_complete_evt
-From: syzbot <syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/4Cy70XElTL/JV3ERhJ7mIjd";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello,
+--Sig_/4Cy70XElTL/JV3ERhJ7mIjd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi all,
 
-Reported-by: syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com
-Tested-by: syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com
+After merging the block tree, today's linux-next build (x86_64 defconfig
+clang-17) failed like this:
 
-Tested on:
+io_uring/fdinfo.c:103:22: error: variable 'sqe' is uninitialized when used =
+here [-Werror,-Wuninitialized]
+  103 |                 opcode =3D READ_ONCE(sqe->opcode);
+      |                                    ^~~
+./include/asm-generic/rwonce.h:50:14: note: expanded from macro 'READ_ONCE'
+   50 |         __READ_ONCE(x);                                            =
+     \
+        AR      drivers/irqchip/built-in.a
+|                     ^
+./include/asm-generic/rwonce.h:44:72: note: expanded from macro '__READ_ONC=
+E'
+   44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x)=
+ *)&(x))
+      |                                                                    =
+     ^
+io_uring/fdinfo.c:92:27: note: initialize the variable 'sqe' to silence thi=
+s warning
+   92 |                 struct io_uring_sqe *sqe;
+      |                                         ^
+      |                                          =3D NULL
+1 error generated.
 
-commit:         552c5071 Merge tag 'vfio-v6.18-rc3' of https://github...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b5d734580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed2b1ae1fa9a0fdc
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9a4bedfca6aa9d7fa24
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16f98614580000
+Introduced by commit
 
-Note: testing is done by a robot and is best-effort only.
+  31dc41afdef2 ("io_uring: add support for IORING_SETUP_SQE_MIXED")
+
+See the KerneCI report here:
+https://d.kernelci.org/i/maestro:764471d48b9e1faab06d96f79a325cdcf2a995b7
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4Cy70XElTL/JV3ERhJ7mIjd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj4auEACgkQAVBC80lX
+0GzLvQf/XqMj9cyI3VRKC3CHrDrAvKoc++cyQw284WK6XLPsZjJ0DxBQWyt5xe/F
+0yodv5ebJzP/KaF+HBHVaVCihu2sFX6GXHdO9kNnnQFaWVqLA3hAevfyTyv+kV7m
+4e8lv3x8HIIYsKwJLttnWgkUAqm9F5wOD6C3eYBGQIIevkUNQs+9M7x2WRYpLnQs
+cVzj2ZINDhbSYv7UQCmgd/hwp0VCbM6fpwIjmKRv0Fu6cCKk4xg4uY5zDMJ7dvbu
+xlthtgjEZ+JrPkapChii41+gx5l5IudVA4iFXNaw57vRtND6cw8cus/H1PoT7K0f
+fC5KBSiMsN83SYDqiFZWK4cANlI5KA==
+=tgp6
+-----END PGP SIGNATURE-----
+
+--Sig_/4Cy70XElTL/JV3ERhJ7mIjd--
 
