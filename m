@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-867617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F456C031FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:01:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DE5C03208
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 484314E6D2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272EB3A1991
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09AB2F691B;
-	Thu, 23 Oct 2025 19:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABC134C143;
+	Thu, 23 Oct 2025 19:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdmDjyF4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBxltq1H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583112571D4;
-	Thu, 23 Oct 2025 19:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B504527467E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761246100; cv=none; b=qXuJgASUS+T7yoFk91zQRjm359D/2XvSLW+B0YwfIT3+1NGGJojhPc/prJrEwTMPDBiI5T4TpGBp+a6DyTpVU+yDBgS/feS4lCL6l6YX1gTp8ad5vbiwYRB6U0/IfyB13Sq5trkYVNjU9BiKEGOM3L2hesfKZZheeBBaIIMTRNU=
+	t=1761246207; cv=none; b=Vy58ArLlEdjR4QGFSM/y0xaYHWK1fPPlxW3MIP5TRJjwZcI1xRjnnaSOYMw/QEVnDZtdwLcgFbNBTpIH+fl2LPXx21+ere76JUVptk/ExtlCV/uqX7LB8BgBbNLVlmWi+BMZRbAlGvhIzVzEX10qd9t+4frxFjZ/azWRAIQu8Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761246100; c=relaxed/simple;
-	bh=Rl/OP3FUtJNNdUtSALnXRPKL3CMR9JuwjVxR8uU0OvA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hdyNnbmEQIN02kgNe4wS1Qf8mkMbOIwhUyrMVp9Kj6oKr7F9tmZFAqKt5mP5GTkyQ7hQcl8/X6Ut8QmBiEx+lQ1Ec0+qni25ev6LCNrUNgDzUfn+QzJf6EcezRFnsHvhro00m4O09gJFFehGn9NbWqEWfO/QB1mEEGSv3dS0ubg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdmDjyF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F97C4CEE7;
-	Thu, 23 Oct 2025 19:01:37 +0000 (UTC)
+	s=arc-20240116; t=1761246207; c=relaxed/simple;
+	bh=jF4QxaOOV7BenJ0JZ6Ow6uSb2fxSAcL6IJ/z1Z5H/lM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kHv8x9WmEVelGShoKmIbSUO55Ano4hg3ws1rU6fzOZhz1CO8HESXlftPHgmTGVd0mgEHQ43f86C5CwqyZFVDKa2xbfchf7cbEmpAsoErs2ZgMHiVkJnOSPk6CmFlHl1fmNo5cm2sP9Cz0SR4YjaKM79bSGn10+3bPPOWFPSKzzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBxltq1H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE9EC116B1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761246099;
-	bh=Rl/OP3FUtJNNdUtSALnXRPKL3CMR9JuwjVxR8uU0OvA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=KdmDjyF4mvdZ/KlLwBcAWfYN+cmsezIappNMctorGGbd+64oe3Xbv2d8bFQf0w+Ca
-	 7OxtqMf3GUxC1pvHSHD9HF/hg5KZMjK4hmL++1GSp665lcTl8kljxzYpsFxfREs+yU
-	 S5Uyd/fk63E4NkxE+wmeZXJUJpQYwMP29dHaRXf7MKNU5Z5jUcCL7Hguu2orA8gZhk
-	 ba3XYKBWlQM+mO8mJY6fJC5JD9rjpSnIOAWDGlGtzqb4VW4mBtWHiAfL/2dlnyQB++
-	 INZS0sprULDtDZuJlt1lp2uN2p0GimKrQNv4J2qc7CGFidlu8nQXqbhh+z9vf7KEse
-	 EKd+MPjxvfo4A==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Thu, 23 Oct 2025 21:01:29 +0200
-Subject: [PATCH] KMSAN: Restore dynamic check for
- '-fsanitize=kernel-memory'
+	s=k20201202; t=1761246207;
+	bh=jF4QxaOOV7BenJ0JZ6Ow6uSb2fxSAcL6IJ/z1Z5H/lM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PBxltq1HSz7wGLkbSNpYCnm0mC9Ys8TzbXORIPbxotWACCgL9Xfj5hl+r/qHyV2ig
+	 4lnjDlB4/UtYaHs5D81RCJf+GnBmCn6F9SQV+HQ6rbtjDRM+AFVhjzojC9k8FzZMkX
+	 M+tXVAQ4btTv5M+QV5SfnVbZwgNCWjqOjHP7a2h8Fn+86/DzQzI/tJhWH69cj3XbLK
+	 5Bdqqu6VIWfcfrJf6igaZLFVlM7XWuz1iBQiUAvu6Per2ifGtaze4casXprsbZyFI1
+	 iTKWb+cgjbabU9AmJurjMLDLWC5Na0If8sPg5SGk2Lhr6mux74uJmYAbMPpeISVZ2G
+	 ZRZmZ+/OlXZEA==
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-4439f1df5f6so366338b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:03:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPB3QLiVNUA9d4MFGkg7U3KOPrghLEt5n1oKH9s0GDrARlXYyInz7p6ITr4uvaeAkv7hmT+ZL6DFdsnw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJCxoaQuVmS4Yy5GetabIASuP4o34kvUah8Xd5sEnr6MWn+kqX
+	P4sBYWoPWj23NTd/RVDUgmUF+rsdZF1iZADWeLojqMR2z5cN3pBYuYgoQ+KxBp9EdzGS3ia2Mm7
+	t2Iq8Za+C3u5GYOJcVJhplYZVzrajsGE=
+X-Google-Smtp-Source: AGHT+IEPRBHAjsdcilrTqwwguunsLPHTYuaz5DDb0+ikA4JiSTezczQo7UoF0rcuBIerbAUkyM7gTcWYeF4lZqFVkW8=
+X-Received: by 2002:a05:6808:4f50:b0:43f:b3e0:7959 with SMTP id
+ 5614622812f47-443a30139b7mr11630703b6e.49.1761246206614; Thu, 23 Oct 2025
+ 12:03:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-fix-kmsan-check-s390-clang-v1-1-4e6df477a4cc@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAIh7+mgC/x3MTQqDQAxA4atI1gbmBynTqxQXGjM1TDvKBKQg3
- r3B5YOPd4JyE1Z4dic0PkRlqxa+74DWqb4ZZbGG4MLgXYiY5Yflq1NFWpkKakwO6WMUfXJLfMw
- z5RzBBntj0/f8NV7XH/7mBb1sAAAA
-X-Change-ID: 20251023-fix-kmsan-check-s390-clang-190d37bbcff3
-To: Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
- Dmitry Vyukov <dvyukov@google.com>
-Cc: Nicolas Schier <nsc@kernel.org>, Kees Cook <kees@kernel.org>, 
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, kernel test robot <lkp@intel.com>, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1869; i=nathan@kernel.org;
- h=from:subject:message-id; bh=Rl/OP3FUtJNNdUtSALnXRPKL3CMR9JuwjVxR8uU0OvA=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBm/qiced1v7d/lK5Smz3a4c4Np8yvxnmv2BiNWeplO29
- S3fdbaov6OUhUGMi0FWTJGl+rHqcUPDOWcZb5yaBDOHlQlkCAMXpwBM5PxpRoaT+72Ltly+qla7
- +8WsD+m/dlx7eObXHXWJN7PuOvL89xUpZfifuvvo8lWik+0Kf687Kbsi4Gthn6lF+u3d5+ZWyW7
- 5fMuHHQA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+References: <20251007234149.2769-1-W_Armin@gmx.de> <20251007234149.2769-4-W_Armin@gmx.de>
+In-Reply-To: <20251007234149.2769-4-W_Armin@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 Oct 2025 21:03:15 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hA3eqJEmr=TCdRTQXybdpudLc31Xfre7ea72aHgzpXbw@mail.gmail.com>
+X-Gm-Features: AS18NWAa4GfxmMauVB78Bvpyahe4TIiqnrwsgYvENjy10G0GKjOiJqhjR95cR9k
+Message-ID: <CAJZ5v0hA3eqJEmr=TCdRTQXybdpudLc31Xfre7ea72aHgzpXbw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] ACPI: fan: Use platform device for devres-related actions
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 5ff8c11775c7 ("KMSAN: Remove tautological checks") changed
-CONFIG_HAVE_KMSAN_COMPILER from a dynamic check for
-'-fsanitize=kernel-memory' to just being true for CONFIG_CC_IS_CLANG.
-This missed the fact that not all architectures supported
-'-fsanitize=kernel-memory' at the same time. For example, SystemZ / s390
-gained support for KMSAN in clang-18 [1], so builds with clang-15
-through clang-17 can select KMSAN but they error with:
+On Wed, Oct 8, 2025 at 1:42=E2=80=AFAM Armin Wolf <W_Armin@gmx.de> wrote:
+>
+> Device-managed resources are cleaned up when the driver unbinds from
+> the underlying device. In our case this is the platform device as this
+> driver is a platform driver. Registering device-managed resources on
+> the associated ACPI device will thus result in a resource leak when
+> this driver unbinds.
+>
+> Ensure that any device-managed resources are only registered on the
+> platform device to ensure that they are cleaned up during removal.
+>
+> Fixes: 35c50d853adc ("ACPI: fan: Add hwmon support")
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/acpi/fan.h       | 4 ++--
+>  drivers/acpi/fan_core.c  | 2 +-
+>  drivers/acpi/fan_hwmon.c | 8 ++++----
+>  3 files changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
+> index 022bc215cdbc..0d73433c3889 100644
+> --- a/drivers/acpi/fan.h
+> +++ b/drivers/acpi/fan.h
+> @@ -98,9 +98,9 @@ int acpi_fan_create_attributes(struct acpi_device *devi=
+ce);
+>  void acpi_fan_delete_attributes(struct acpi_device *device);
+>
+>  #if IS_REACHABLE(CONFIG_HWMON)
+> -int devm_acpi_fan_create_hwmon(struct acpi_device *device);
+> +int devm_acpi_fan_create_hwmon(struct device *dev);
+>  #else
+> -static inline int devm_acpi_fan_create_hwmon(struct acpi_device *device)=
+ { return 0; };
+> +static inline int devm_acpi_fan_create_hwmon(struct device *dev) { retur=
+n 0; };
+>  #endif
+>
+>  #endif
+> diff --git a/drivers/acpi/fan_core.c b/drivers/acpi/fan_core.c
+> index ea2c646c470c..46e7fe7a506d 100644
+> --- a/drivers/acpi/fan_core.c
+> +++ b/drivers/acpi/fan_core.c
+> @@ -347,7 +347,7 @@ static int acpi_fan_probe(struct platform_device *pde=
+v)
+>         }
+>
+>         if (fan->has_fst) {
+> -               result =3D devm_acpi_fan_create_hwmon(device);
+> +               result =3D devm_acpi_fan_create_hwmon(&pdev->dev);
+>                 if (result)
+>                         return result;
+>
+> diff --git a/drivers/acpi/fan_hwmon.c b/drivers/acpi/fan_hwmon.c
+> index 5581aa6fdfa0..47a02ef5a606 100644
+> --- a/drivers/acpi/fan_hwmon.c
+> +++ b/drivers/acpi/fan_hwmon.c
+> @@ -162,12 +162,12 @@ static const struct hwmon_chip_info acpi_fan_hwmon_=
+chip_info =3D {
+>         .info =3D acpi_fan_hwmon_info,
+>  };
+>
+> -int devm_acpi_fan_create_hwmon(struct acpi_device *device)
+> +int devm_acpi_fan_create_hwmon(struct device *dev)
+>  {
+> -       struct acpi_fan *fan =3D acpi_driver_data(device);
+> +       struct acpi_fan *fan =3D dev_get_drvdata(dev);
+>         struct device *hdev;
+>
+> -       hdev =3D devm_hwmon_device_register_with_info(&device->dev, "acpi=
+_fan", fan,
+> -                                                   &acpi_fan_hwmon_chip_=
+info, NULL);
+> +       hdev =3D devm_hwmon_device_register_with_info(dev, "acpi_fan", fa=
+n, &acpi_fan_hwmon_chip_info,
+> +                                                   NULL);
+>         return PTR_ERR_OR_ZERO(hdev);
+>  }
+> --
 
-  clang-16: error: unsupported option '-fsanitize=kernel-memory' for target 's390x-unknown-linux-gnu'
-
-Restore the cc-option check for '-fsanitize=kernel-memory' to make sure
-the compiler target properly supports '-fsanitize=kernel-memory'. The
-check for '-msan-disable-checks=1' does not need to be restored because
-all supported clang versions for building the kernel support it.
-
-Fixes: 5ff8c11775c7 ("KMSAN: Remove tautological checks")
-Link: https://github.com/llvm/llvm-project/commit/a3e56a8792ffaf3a3d3538736e1042b8db45ab89 [1]
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202510220236.AVuXXCYy-lkp@intel.com/
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
-I plan to take this via kbuild-fixes for 6.18-rc3 or -rc4.
----
- lib/Kconfig.kmsan | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/Kconfig.kmsan b/lib/Kconfig.kmsan
-index 7251b6b59e69..cae1ddcc18e1 100644
---- a/lib/Kconfig.kmsan
-+++ b/lib/Kconfig.kmsan
-@@ -3,7 +3,7 @@ config HAVE_ARCH_KMSAN
- 	bool
- 
- config HAVE_KMSAN_COMPILER
--	def_bool CC_IS_CLANG
-+	def_bool $(cc-option,-fsanitize=kernel-memory)
- 
- config KMSAN
- 	bool "KMSAN: detector of uninitialized values use"
-
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251023-fix-kmsan-check-s390-clang-190d37bbcff3
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
-
+Applied as 6.18-rc material, thanks!
 
