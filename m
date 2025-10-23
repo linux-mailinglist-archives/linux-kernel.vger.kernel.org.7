@@ -1,200 +1,177 @@
-Return-Path: <linux-kernel+bounces-867375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2826FC02707
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:26:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BC4C02725
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D5231AA05D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C65F3AF4EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C618A2D29C7;
-	Thu, 23 Oct 2025 16:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815482DC320;
+	Thu, 23 Oct 2025 16:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiXrrjh1"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="WlOenW9l"
+Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.42.203.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3222222B4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111012D46A7;
+	Thu, 23 Oct 2025 16:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.42.203.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761236753; cv=none; b=DtuNPeu/ZSmocl48j2t1HTeiNqYiEE2SRLQVFfVdpXcToJhchrzf32pOzTx0Q+ppImOrPcF1yc6wNRe4kVJ0nt2GCxmFae2ga2I+iPPRcjMQOXOENEQ2cGukBPkpl6uPI/6mOlCfrgFykWJkSqVJW3SdySefQGl6PGzpvfHjhU0=
+	t=1761236846; cv=none; b=GT1wwpavC+QEWjH9uiD7mTGyhhKpM0wmaCAAvMPuyIgwIOxCHyfenFd1wmQ04ZkDPP8iExppwtRZBzsYsHp9aoYHvxQfAahhfqWLlSOXGoKSMPEYGcZwKWmRIKRFGjuz7ER/Bu4bzfFm2kcDSUc4qPf5tv4e4N5PZVHuUkHOEmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761236753; c=relaxed/simple;
-	bh=lr7ZpEfUTblHv2cs0jdXC1lYYkcUYLNrFIEnYLxBmw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oFc32TW87mQc2ulvPmhNadtowfTbo7b+i6mPU7RBqZzsMv3QUuHsNtClsFG59f/TZeig/herCBCGnUqTLgBAPV2+/KTYizCPW/EsDOxkvxYBdXjavE4xRitlfaIkfpi7qG8wCEWsJyauV4RfZoJkL8e9uSOvhjZnGSXiRko9nZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiXrrjh1; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7ea50f94045so22964926d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:25:51 -0700 (PDT)
+	s=arc-20240116; t=1761236846; c=relaxed/simple;
+	bh=Grs0gM9dzqfJn35R0W9gZX6wLE9dzv8v3TtYtjxwN38=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wyqm1qSRGXNEiyJJEyF6ZGH/DxycLuI7QChmrYA7SBlNcZaHsx760W7xd3xNtqb9PxcAQm7LLZVgOkboEWhUpcVUo953mvdUUI3sg3FvYD9WBC9uXF4poOU/11oENwxLw8yQ8gYcSfi4k0CMDs8PFCrB+PNfPQl0vLv1l0gq3lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=WlOenW9l; arc=none smtp.client-ip=52.42.203.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761236750; x=1761841550; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwWq3klYnM7mVmzkADxrDU7jnRpb8xn47Rgf/EnvKqQ=;
-        b=JiXrrjh1oYyPz7+DI85ivkDeWj3eIpNfTHjpVH0rErNJVSEq2En1ilYiC+pFCZ/fbp
-         UIVtvyqkAU4n5HFuggpItY0zIgRYH9pGwFWTSY3hFsV1nNGuNJCvnDXch9wrzEuS7rNT
-         pVbdu5LpGw3CwVyz/eZOVDJvTIJuso9ke+CEZbbYhE6kuOz6NEeQaUjQEXzbMe981XXe
-         FliNSctTFDg3R8MhcQNpsv93k1WmTi2O7RAbUh0zvbwADR0w5z1HEf9rpzjyMnNPVTro
-         phmbjRpaYCc3B5EeUbRbUteE2Wo+vsTxnyE90L2h57HQv5F4ZEq1QjGvMbWubrBnbViR
-         BzPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761236750; x=1761841550;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FwWq3klYnM7mVmzkADxrDU7jnRpb8xn47Rgf/EnvKqQ=;
-        b=tdX3DDwVsvugiEF/g7GP8Kbq04xjZJSmjviDn+klw824QJt/R6dVDMSzgXRwh4c/Sg
-         gT73nMnu9MRZytNJtIjeqakubtEAanzOoPwWN0qx8q1tkVvE+6gn9shhpyzEHf+ijDQW
-         H9lUJZhEpndkDTGlOuceTaQvs3MWLNnP2uVg7IxNi27h8ousz3Vdwczjf0XwhQS+efKP
-         6340wY3K5ubAub1LTNxoN5efVVULzOtxX40AOHXGVF46FhhXZesI+mRLnXz9R/b9DGIq
-         nPOOjFGQEqoR2zJTlJBs55rLxHdyYkvgmBV6YwJTSXVSWSYFds0b4dFEoLz2d4wW+363
-         ulNQ==
-X-Gm-Message-State: AOJu0YybmjgXFpMGVwNBrHrMm0aEslbHhevbTCyWkA99VeHU++OsDfCf
-	snKi8a7Q05uO8gXCW0N/LvbI5PrVl18yb0QZeGCSYhKNwg+DmtYJCJ1y
-X-Gm-Gg: ASbGnct2k7jsPuHYhO8GC6/qE2cbVTzZ88Zp4CrQ8L1Tr8hWT8TVhVI3SsH1kWVSM8K
-	AbHOSZB+4JG5H6gJWIv9UVT1wOKLZb10BrmEi1CfP+EA9zuAAiofXEzmhKkC/zn4P6RYhUhtb9S
-	JzcsIhRYFAgj1brvTwNqXCJ/+LwISNuVKMXR58zFvo53ooS9FahUbINjm0SFK4FkfzRMQihpASF
-	Mmcfcd01bLMikX+yGGd01ogKR3dhY6qhDt9lJKGQ+Gg2V3bxebHzZXe80Ww9JSrVmPqrra3dPOf
-	9m44ZDFbhVOSJjT6A9IqvJWO8BBKKBydsI7yeCBHffx9hM/yg9N+25QEaR7Hqydn9LwiJmxrp2/
-	FEjUtpBSSoIjc8gkYTRtEc8jxfdgjkrtW/YuUuuBCVslWfimeoChqwMyyZxCsFlW12SWizsP8vB
-	FdJSpE8cU=
-X-Google-Smtp-Source: AGHT+IFg69drPBMSEy8Z6jAHB2VINR3EOFfZdbsVuiw9/IfHr9uzdH3eP13eRf51bd0kzLp09W6TsA==
-X-Received: by 2002:a05:6214:e8e:b0:87a:97f:de8c with SMTP id 6a1803df08f44-87df6760e0dmr95414096d6.28.1761236750247;
-        Thu, 23 Oct 2025 09:25:50 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87f9e7fc743sm18265046d6.52.2025.10.23.09.25.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 09:25:49 -0700 (PDT)
-Date: Thu, 23 Oct 2025 12:25:48 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Tim Chen <tim.c.chen@intel.com>
-Subject: Re: [patch V2 09/20] cpumask: Cache num_possible_cpus()
-Message-ID: <aPpXDLxcRq-TZMxL@yury>
-References: <20251022104005.907410538@linutronix.de>
- <20251022110555.967170782@linutronix.de>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1761236845; x=1792772845;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=2lBkDsdUPck2BkjmBB98y45Ia11Tv+czovWMGGK0xbU=;
+  b=WlOenW9l1lxRKm1tsARaU42w+BfCrASyqYJS50zecnFcdsZ+/PHVot+C
+   Yr0a1jnkHVWEtJbuLdZirwe+hdGsoVdsXtkXe5DhVyJ8MFBlxDZTVXxDK
+   MftfWeJqFTGFLIpm+JQPBnQg9BE31k/kOl1W3OdO6pIWF1hg2jNIyfv9W
+   c4obKXTbtYs32sCli22NXOd7zxu6EnY7gXcf4e5GnUriEiaNHHG+usY6i
+   dQrP+3rZIpNHffkKY9M/r8VFlK3Jhillht5lvicofKPH9UY7TfETFyZDa
+   RPr23vvIEllz1MEwRq1pJpsVhzqAhgYvFZLYeiVNskoL70S6fEAy4R0s0
+   g==;
+X-CSE-ConnectionGUID: 13dYSAKUR5iCcQWCEwQOCA==
+X-CSE-MsgGUID: FTESq6ZuRNqRxO6Pwk4pSw==
+X-IronPort-AV: E=Sophos;i="6.19,250,1754956800"; 
+   d="scan'208";a="5573970"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 16:27:22 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [205.251.233.236:31281]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.51:2525] with esmtp (Farcaster)
+ id 8f5bdf07-dcf1-41c5-b591-846f69aa12e2; Thu, 23 Oct 2025 16:27:22 +0000 (UTC)
+X-Farcaster-Flow-ID: 8f5bdf07-dcf1-41c5-b591-846f69aa12e2
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 23 Oct 2025 16:27:22 +0000
+Received: from b0be8375a521.amazon.com (10.37.244.11) by
+ EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 23 Oct 2025 16:27:19 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <kuba@kernel.org>
+CC: <aleksander.lobakin@intel.com>, <andrew+netdev@lunn.ch>,
+	<anthony.l.nguyen@intel.com>, <corbet@lwn.net>, <davem@davemloft.net>,
+	<edumazet@google.com>, <enjuk@amazon.com>, <horms@kernel.org>,
+	<jacob.e.keller@intel.com>, <jiri@resnulli.us>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>, <sx.rinitha@intel.com>
+Subject: Re: [PATCH net-next v2 13/14] ixgbe: preserve RSS indirection table across admin down/up
+Date: Fri, 24 Oct 2025 01:26:38 +0900
+Message-ID: <20251023162711.97625-2-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251022172649.0faa0548@kernel.org>
+References: <20251022172649.0faa0548@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022110555.967170782@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D036UWB004.ant.amazon.com (10.13.139.170) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Wed, Oct 22, 2025 at 02:55:30PM +0200, Thomas Gleixner wrote:
-> Reevaluating num_possible_cpus() over and over does not make sense. That
-> becomes a constant after init as cpu_possible_mask is marked ro_after_init.
-> 
-> Cache the value during initialization and provide that for consumption.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Yury Norov <yury.norov@gmail.com>
-> ---
-> V2: New patch
-> ---
->  include/linux/cpumask.h |   10 ++++++++--
->  kernel/cpu.c            |   15 +++++++++++++++
->  2 files changed, 23 insertions(+), 2 deletions(-)
-> 
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -126,6 +126,7 @@ extern struct cpumask __cpu_dying_mask;
->  #define cpu_dying_mask    ((const struct cpumask *)&__cpu_dying_mask)
->  
->  extern atomic_t __num_online_cpus;
-> +extern unsigned int __num_possible_cpus;
->  
->  extern cpumask_t cpus_booted_once_mask;
->  
-> @@ -1152,13 +1153,13 @@ void init_cpu_possible(const struct cpum
->  #define __assign_cpu(cpu, mask, val)	\
->  	__assign_bit(cpumask_check(cpu), cpumask_bits(mask), (val))
->  
-> -#define set_cpu_possible(cpu, possible)	assign_cpu((cpu), &__cpu_possible_mask, (possible))
->  #define set_cpu_enabled(cpu, enabled)	assign_cpu((cpu), &__cpu_enabled_mask, (enabled))
->  #define set_cpu_present(cpu, present)	assign_cpu((cpu), &__cpu_present_mask, (present))
->  #define set_cpu_active(cpu, active)	assign_cpu((cpu), &__cpu_active_mask, (active))
->  #define set_cpu_dying(cpu, dying)	assign_cpu((cpu), &__cpu_dying_mask, (dying))
->  
->  void set_cpu_online(unsigned int cpu, bool online);
-> +void set_cpu_possible(unsigned int cpu, bool possible);
->  
->  /**
->   * to_cpumask - convert a NR_CPUS bitmap to a struct cpumask *
-> @@ -1211,7 +1212,12 @@ static __always_inline unsigned int num_
->  {
->  	return raw_atomic_read(&__num_online_cpus);
->  }
-> -#define num_possible_cpus()	cpumask_weight(cpu_possible_mask)
-> +
-> +static __always_inline unsigned int num_possible_cpus(void)
-> +{
-> +	return __num_possible_cpus;
-> +}
-> +
->  #define num_enabled_cpus()	cpumask_weight(cpu_enabled_mask)
->  #define num_present_cpus()	cpumask_weight(cpu_present_mask)
->  #define num_active_cpus()	cpumask_weight(cpu_active_mask)
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -3108,6 +3108,9 @@ EXPORT_SYMBOL(__cpu_dying_mask);
->  atomic_t __num_online_cpus __read_mostly;
->  EXPORT_SYMBOL(__num_online_cpus);
->  
-> +unsigned int __num_possible_cpus __ro_after_init = NR_CPUS;
-> +EXPORT_SYMBOL(__num_possible_cpus);
-> +
->  void init_cpu_present(const struct cpumask *src)
->  {
->  	cpumask_copy(&__cpu_present_mask, src);
-> @@ -3116,6 +3119,7 @@ void init_cpu_present(const struct cpuma
->  void init_cpu_possible(const struct cpumask *src)
->  {
->  	cpumask_copy(&__cpu_possible_mask, src);
-> +	__num_possible_cpus = cpumask_weight(&__cpu_possible_mask);
->  }
->  
->  void set_cpu_online(unsigned int cpu, bool online)
-> @@ -3139,6 +3143,17 @@ void set_cpu_online(unsigned int cpu, bo
->  	}
->  }
->  
-> +void set_cpu_possible(unsigned int cpu, bool possible)
-> +{
-> +	if (possible) {
-> +		if (!cpumask_test_and_set_cpu(cpu, &__cpu_possible_mask))
-> +			__num_possible_cpus++;
-> +	} else {
-> +		if (cpumask_test_and_clear_cpu(cpu, &__cpu_possible_mask))
-> +			__num_possible_cpus--;
-> +	}
-> +}
+On Wed, 22 Oct 2025 17:26:49 -0700, Jakub Kicinski wrote:
 
-You can save a couple conditionals:
+>On Wed, 22 Oct 2025 12:40:45 +0900 Kohei Enju wrote:
+>> On Tue, 21 Oct 2025 16:10:06 -0700, Jakub Kicinski wrote:
+>> >On Tue, 21 Oct 2025 12:59:34 +0900 Kohei Enju wrote:  
+>> >> For example, consider a scenario where the queue count is 8 with user
+>> >> configuration containing values from 0 to 7. When queue count changes
+>> >> from 8 to 4 and we skip the reinitialization in this scenario, entries
+>> >> pointing to queues 4-7 become invalid. The same issue applies when the
+>> >> RETA table size changes.  
+>> >
+>> >Core should reject this. See ethtool_check_max_channel()  
+>> 
+>> Indeed, you're right that the situation above will be rejected. I missed
+>> it.
+>> 
+>> BTW, I think reinitializing the RETA table when queue count changes or
+>> RETA table size changes is reasonable for predictability and safety.
+>> Does this approach make sense to you?
+>
+>Yes, if !netif_is_rxfh_configured() re-initializing is expected.
 
-        if (possible)
-                __num_possible_cpus += !cpumask_test_and_set_cpu(cpu, &__cpu_possible_mask));
-        else
-                __num_possible_cpus -= cpumask_test_and_clear_cpu(cpu, &__cpu_possible_mask));
+I got it.
 
-Otherwise,
+>
+>> >> Furthermore, IIUC, adding netif_is_rxfh_configured() to the current
+>> >> condition wouldn't provide additional benefit. When parameters remain
+>> >> unchanged, regardless of netif_is_rxfh_configured(), we already preserve
+>> >> the RETA entries which might be user-configured or default values,   
+>> >
+>> >User may decide to "isolate" (take out of RSS) a lower queue,
+>> >to configure it for AF_XDP or other form of zero-copy. Install
+>> >explicit rules to direct traffic to that queue. If you reset
+>> >the RSS table random traffic will get stranded in the ZC queue
+>> >(== dropped).
+>> 
+>> You're correct about the ZC queue scenario. The original implementation
+>> (before this patch) would indeed cause this problem by unconditionally
+>> reinitializing.
+>> 
+>> I believe this patch addresses that issue - it preserves the user
+>> configuration since neither queue count nor RETA table size changes in
+>> that case. If I'm misunderstanding your scenario, please let me know.
+>> 
+>> I could update the logic to explicitly check netif_is_rxfh_configured()
+>> as in [1], though the actual behavior would be the same as [2] since
+>> the default RETA table is a deterministic function of (rss_indices,
+>> reta_entries):
+>> 
+>> [1] Check user configuration explicitly:
+>>     if (!netif_is_rxfh_configured(adapter->netdev) ||
+>>         adapter->last_rss_indices != rss_i ||
+>>         adapter->last_reta_entries != reta_entries) {
+>>         // reinitialize
+>>     }
+>> 
+>> [2] Current patch:
+>>     if (adapter->last_rss_indices != rss_i ||
+>>         adapter->last_reta_entries != reta_entries) {
+>>         // reinitialize
+>>     }
+>> 
+>> Do you have any preference between these approaches, or would you
+>> recommend a different solution?
+>
+>I was expecting something like:
+>
+>if (netif_is_rxfh_configured(adapter->netdev)) {
+>	if (!check_that_rss_is_okay()) {
+>		/* This should never happen, barring FW errors etc */
+>		warn("user configuration lost due to XYZ");
+>		reinit();
+>	}
+>} else if (...rss_ind != rss_id ||
+>           ...reta_entries != reta_entries) {
+>	reinit();
+>}
 
-Reviewed-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+Thank you for clarification. 
+
+At first glance, noting that check_that_rss_is_okay() would return false
+when the RETA table size is larger than the previous one, since
+user-configuration doesn't exist for the expanded portion of the RETA
+table. This should happen in realistic scenarios even though there are
+no hardware-related or HW errors.
+
+Anyway I'll refine the patch using netif_is_rxfh_configured() and then
+submit to iwl-next first.
 
