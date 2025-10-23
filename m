@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-866440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BA8BFFC34
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F0D6BFFC43
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 787724E6926
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:02:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A10B4F0183
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8AC2797AC;
-	Thu, 23 Oct 2025 08:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E1D2E7BC3;
+	Thu, 23 Oct 2025 08:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RA7j75QV"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EvCplDRy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECA32EA170
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ADB2E7F32
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761206515; cv=none; b=bP7sfZsbJ6df+PDxRkkPfmsjmcE+infw1rlTbM5rZ9nfdlrrCo2DgjjApKF5pQOnLM9emRLjPFpITWyxn65UJPDckTjK0vogTXF9sORuds3kbl4p2u5Hq5gfjMH9luDgCpV+04zGC70DnKqB7YCJztYj04JWNHsjzsVwBk5OmfQ=
+	t=1761206590; cv=none; b=KwNa/LYxw5++DqSMnKyQusjVorpOI851ilEOlWSvoh2SlBlzo/cl5LWQo/C246AOzktCPJ+DuDq9300Lapmfe0tpHVk0sN/Iw+3K9apa7equHHZzrlC/opvsgtzHT66Zbf4UHrT9nKKOwD/KUmrF8+EdAlSDBUICdn/X7TRuBbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761206515; c=relaxed/simple;
-	bh=m7tbJmNH1DXNfTU+Xp3xL+FoPO8IvUCQ4iTCgB6ek3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j0WFOOpEwNvAgJ7zgPIulOyKSiy+vRdcj4pnibnwk97FWKfbBZOid5C/DTQMzfB/B3XGi+1+9IIM8G7mlAaONNi7W6HzH2d1r+zPwC4Dq1Fzs84KpZ8p+uV166McWnlEvcXdQCY687UAYheiVHL1r+2keNXaSF0/4p/NP6+aU9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RA7j75QV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15146C4CEFD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761206515;
-	bh=m7tbJmNH1DXNfTU+Xp3xL+FoPO8IvUCQ4iTCgB6ek3o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RA7j75QVc5ILMBKj/72NMEFdIwS9ZPlfJ+fJQRtKqD0/4aaYhy4lPNds6GfmVwrWu
-	 UtqfHK9gl7XEDWTigFsMA54w2QInEqrGnLNBO8Aoy4v0NL7WQgdFnFs6NjZ/b1UaFn
-	 sj6UOzmRYkylU87ieA6GjjFup20n57aQmQlUE95CA4nZlsGZcyaBLpdcrrRelcysdk
-	 Em77VyHtM7uo7W3ghXZdiwRzsLEmGVrZdCt2U+zEx39jChNcRsO27jUp4vDgH2uXkR
-	 YOFNQtkGMCvaNrU7GcXZnQkojb4cm+kctXgFic+peHScM083oEo4zScim4Er6s6jvg
-	 nfpXjd6z7zk7Q==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c31c20b64so897552a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:01:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUO5FC2hkVo784QzkSpx5utEsVrEoUgMAfzxahTbOHBoKB02tzXXO46h1I2XM0wPIIbnJmL4FU2+wCIQKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUzmyOaZEQRreUv9JHdtFL1dMxyKgZ7Cj0LWLChKHnZ9QLECdz
-	snRslCXqjGSrvXrV99qtqWQuJbRft+iXYC6kt2z+VjV7Gjsk3LF5Gna55l68Jdwq3yGQjRDZaB0
-	yBUqPubX/qgBm4t1QKvpr2GNMFVCckxU=
-X-Google-Smtp-Source: AGHT+IHfBLH/GBfgXrqchxfxu9l1VaoEMJ8tUkoEMadPUjtpN04Dne7DQiXnlqVZI5khk1s5nO6HkYPeLlaWwbhf/8k=
-X-Received: by 2002:a05:6402:1e8f:b0:636:9129:882f with SMTP id
- 4fb4d7f45d1cf-63c1f6e1e4dmr22674073a12.30.1761206513683; Thu, 23 Oct 2025
- 01:01:53 -0700 (PDT)
+	s=arc-20240116; t=1761206590; c=relaxed/simple;
+	bh=rehX5U5sGqovWpENmiWjiGU6NEx7SoTVGuqmG6acA1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=llOO+SEKkCAxsCViXil/tqMIyCQ0sJ/Ax7uQhX6FT2DcN5RtG8OAb63TQgCffHRFW+srYudhJ8CGGQfYkIwXAc46utSORPU4NSTHn95oXsYoVGhVffwMQ3xeI/7S0awT+zEOGNE9bXDnT8xxNQBJSKIdnUsTxpXIRIqR7+wehig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EvCplDRy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C657C4CEE7;
+	Thu, 23 Oct 2025 08:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761206588;
+	bh=rehX5U5sGqovWpENmiWjiGU6NEx7SoTVGuqmG6acA1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EvCplDRy04t9EuxBFFE/8RCI4689tWrPcN0aZqAfSYsQh0Y/5um5xzxD9uILnuo0w
+	 XQYJCmzMKkQ2yqVr8oEwAANe1cl+Hd5sLasic3BFOAJZLAPEcrmfKbFUaVUdWqXjIK
+	 CF585rqvkBMeoSHImf/RXTgfB0gpJUGGrHvN/a4Y=
+Date: Thu, 23 Oct 2025 10:03:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Tariq Toukan <ttoukan.linux@gmail.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+	Aya Levin <ayal@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Simon Horman <horms@kernel.org>,
+	Shay Drory <shayd@nvidia.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Parav Pandit <parav@nvidia.com>, Amir Tzin <amirtz@nvidia.com>
+Subject: Re: [PATCH net] driver core: auxiliary bus: Fix sysfs creation on
+ bind
+Message-ID: <2025102344-hesitancy-washtub-a97f@gregkh>
+References: <1761200367-922346-1-git-send-email-tariqt@nvidia.com>
+ <2025102347-fridge-happier-ea97@gregkh>
+ <3450b913-d205-4b19-8690-d3191cb680a2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
- <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
- <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
- <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
- <rhnei6wovxmoqs36wdysomfsul3faxtmgde73wrrqdt3qo3b2j@akd7vzne76rq>
- <CAMj1kXF+hDJy0vRWNgwoijHxvA-scvhGODMj9A3dv19v3jf2yw@mail.gmail.com>
- <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
- <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com>
- <wlx6pt5crtfdwtop4w5vjznjfarrwitq44wdbufncjdvtsx647@tgobruak66yb>
- <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
- <jxfb5a2c2qber623l2gwewirwod54bbgfnvt7t7f3jah2ea33g@2uyhy3auzmpx>
- <d9f3352a-1c1f-464a-a8fd-741cd96b5f8e@loongson.cn> <CAAhV-H6m5vszCyiF3qi94cpHBPVuqM2xH93D=gfsQqOSYvC-sA@mail.gmail.com>
- <33612d85-e70b-26da-8460-ea6b9064ce08@loongson.cn>
-In-Reply-To: <33612d85-e70b-26da-8460-ea6b9064ce08@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 23 Oct 2025 16:01:43 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5ZSTFDxvm-W1CrgEoQ5d_jw5yVsfetQ_J_qL5pqLtzgg@mail.gmail.com>
-X-Gm-Features: AS18NWATDqwQc-mvgyc-6ppP82QmD732g4zxHKYB9A2rEPJ5_4tzPE-f0_vNffE
-Message-ID: <CAAhV-H5ZSTFDxvm-W1CrgEoQ5d_jw5yVsfetQ_J_qL5pqLtzgg@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, loongarch@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3450b913-d205-4b19-8690-d3191cb680a2@gmail.com>
 
-On Thu, Oct 23, 2025 at 2:55=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> Hi Josh and Ard,
->
-> On 2025/10/20 =E4=B8=8B=E5=8D=882:55, Huacai Chen wrote:
-> > On Mon, Oct 20, 2025 at 9:24=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongso=
-n.cn> wrote:
-> >>
-> >> Hi Josh, Ard and Huacai,
-> >>
-> >> On 2025/10/18 =E4=B8=8A=E5=8D=881:05, Josh Poimboeuf wrote:
-> >>
-> >> ...
-> >>
-> >>> But IIUC, the libstub code runs *very* early, and wouldn't show up in=
- a
-> >>> stack trace anyway, because there are no traces of it on the stack on=
-ce
-> >>> it branches to head.S code (which doesn't save the link register).
-> >>
-> >> Thanks for your discussions.
-> >>
-> >> Are you OK with this current patch?
-> > For me the current patch is just OK.
->
-> We have discussed this a few times but there is almost no consensus
-> of what should happen next and nothing changes.
->
-> Could you please give me a clear reply? Then I can make progress for
-> the following series:
->
-> https://lore.kernel.org/loongarch/20250917112716.24415-1-yangtiezhu@loong=
-son.cn/
-For me, this patch is OK, ignore __efistub_ prefix in objtool is also
-OK [1]. But I cannot accept the way that modifying the efistub part
-only for LoongArch.
+On Thu, Oct 23, 2025 at 10:14:29AM +0300, Tariq Toukan wrote:
+> 
+> 
+> On 23/10/2025 9:46, Greg Kroah-Hartman wrote:
+> > On Thu, Oct 23, 2025 at 09:19:27AM +0300, Tariq Toukan wrote:
+> > > From: Amir Tzin <amirtz@nvidia.com>
+> > > 
+> > > In case an auxiliary device with IRQs directory is unbinded, the
+> > > directory is released, but auxdev->sysfs.irq_dir_exists remains true.
+> > > This leads to a failure recreating the directory on bind [1].
+> > > 
+> > > Using the attributes group visibility interface, expose the IRQs
+> > > attributes group if"f the xarray storing IRQs entries is not empty. Now
+> > > irq_dir_exists field is redundant and can be removed.
+> > > 
+> > > [1]
+> > > [] mlx5_core.sf mlx5_core.sf.2: mlx5_irq_affinity_request:167:(pid 1939):
+> > >     Failed to create sysfs entry for irq 56, ret = -2
+> > > [] mlx5_core.sf mlx5_core.sf.2: mlx5_eq_table_create:1195:(pid 1939):
+> > >     Failed to create async EQs
+> > > [] mlx5_core.sf mlx5_core.sf.2: mlx5_load:1362:(pid 1939):
+> > >     Failed to create EQs
+> > > 
+> > > Fixes: a808878308a8 ("driver core: auxiliary bus: show auxiliary device IRQs")
+> > > Signed-off-by: Amir Tzin <amirtz@nvidia.com>
+> > > Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+> > > Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> > > ---
+> > >   drivers/base/auxiliary.c       |  13 +++-
+> > >   drivers/base/auxiliary_sysfs.c | 117 +++++++++++++++++++++++++--------
+> > >   include/linux/auxiliary_bus.h  |  26 ++++++--
+> > >   3 files changed, 118 insertions(+), 38 deletions(-)
+> > > 
+> > > diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> > > index 04bdbff4dbe5..b0fb31279257 100644
+> > > --- a/drivers/base/auxiliary.c
+> > > +++ b/drivers/base/auxiliary.c
+> > > @@ -225,7 +225,16 @@ static int auxiliary_bus_probe(struct device *dev)
+> > >   		return ret;
+> > >   	}
+> > > -	return auxdrv->probe(auxdev, auxiliary_match_id(auxdrv->id_table, auxdev));
+> > > +	ret = auxiliary_bus_irq_dir_res_probe(auxdev);
+> > > +	if  (ret)
+> > > +		return ret;
+> > 
+> > Please always use scripts/checkpatch.pl so that you don't get grumpy
+> > maintainers asking you why you didn't use scripts/checkpatch.pl...
+> > 
+> 
+> Sure. Always running it before submissions.
+> It passes for me. Anything I miss?
+> 
+> total: 0 errors, 0 warnings, 258 lines checked
+> patch has no obvious style problems and is ready for submission.
 
-Clear enough?
+Odd, why did it not catch that extra ' ' after the "if"?
 
-[1] https://lore.kernel.org/loongarch/20250917112716.24415-1-yangtiezhu@loo=
-ngson.cn/T/#meef7411abd14f4c28c85e686614aa9211fccdca0
+thanks,
 
-Huacai
-
->
-> Thanks,
-> Tiezhu
->
+greg k-h
 
