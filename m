@@ -1,150 +1,122 @@
-Return-Path: <linux-kernel+bounces-867021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6896BC015A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:26:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8BFC0159F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 479FB4EB307
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB44E3AE3D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABA73161A2;
-	Thu, 23 Oct 2025 13:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9844331577B;
+	Thu, 23 Oct 2025 13:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leun2FQi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoZCcD3j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCCD314D11
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D0A314D3F;
+	Thu, 23 Oct 2025 13:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225936; cv=none; b=WpvZ+3l/53FrplGmO+AwWyNTz2djsJq230TbWHHp3UtpzBd/rNgaN8/uuWTtCVEbgnaJo2JpXP4xCNmZD4Qv/xWsr8GpE3JPJHPiayl89wqyqPLHskKKforoJQ4QSHCZO5khUjnubjp6Z4RV9vRTrqDmGgufV7rOnfweQWmXhck=
+	t=1761225932; cv=none; b=Zc82l2ShsIh2kZppI3IpnQi41jOvTOjySEMroMxIphUVlOxqOcCIkzM3L4QHBwBq3po/9gfYF5aylmUqqV3kbAM2kZUOqLHH1cE3lDYjUMomJ8tP0TMYNEbbxgJUeyqO+kB226vfeOpA6pGpmDBwE7N/VACUPGnKrxTGGEXL5oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225936; c=relaxed/simple;
-	bh=vTFnJ06KEKXrVEI0mBGwvSblp5jfCxMuSkM0lraKhos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OhCfblTU0gt9wxZSjyoKq3qyEK+B3HEKobO1ZKslWp6VOZ3WX2tTHfwRWGgLVcA1FRCkT+yMt8tk2Vxs8lhIK5FisT1GYjdwVpxd3ctb8Z0wN/jENeMs+hI/ijGCluqMpaQDQlQeVN6Hf58Y3wFa9BqW2xpCfAtgdK6xPwJNIoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leun2FQi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B0CC116D0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:25:36 +0000 (UTC)
+	s=arc-20240116; t=1761225932; c=relaxed/simple;
+	bh=Zlg/UQfIaIuf9IsruPRVzFlKEWA8F1iJyRojvd82SZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSjNJyVPfj7QxcetpRjP+Xwpfry+aCStTP39EqPyFxEBmnv6Y0i7OQGt07dra+mfsD4BQMEjEMYrb5Xa74BVWGPYhHykiP25FXKI4UgM+FknLlTTj1GzYWY0dmuygIsbWpK4D5NaF7mU3BQoXxwbxKPMTHe10tY03uxhgxAXbI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PoZCcD3j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9CC5C4CEE7;
+	Thu, 23 Oct 2025 13:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761225936;
-	bh=vTFnJ06KEKXrVEI0mBGwvSblp5jfCxMuSkM0lraKhos=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=leun2FQi+LfxDvGkHXiW1jCuw5q8CfpK+TswofyaVu9edE4Y7owuyuSMk+5VFAbnr
-	 vOPwVSOWFlidJKmFbqaXkcbTWOWxF/qbpVduuCPtmNXrkxbtnuoGcFEJv1Mlziapw/
-	 RvpHruqdKHaAr6R3gHF+1dPcFU92TRxlIJ8R0uZMAkbuQfKmwAA4w4sy1+eVor7Sqp
-	 9KGoQpk8zGycXhVXOtTLiaaUXzCjmFDe3UWvi/ndoBl42nuGSZBzbVih/qmj0Fd3gk
-	 AXqx+DACkPg5CW3Mf2iVi60LmcXXr7XTuT6CAIUAOTqeEyH7nVnWWlWACyCF/RYwPT
-	 x6Zpod6WJsLVA==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57b8fc6097fso767398e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:25:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWL3uM7eBj2Jr9xqxGTHCYWseAsXK0dTxxqAhDK/fy4Bx0iwribgkGWV7HDZ3bkgrAT/qzdNiNPrQYpvGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTRUtPMarDm/sVXLc3ub6WgcofycL99p+0HzFwTM40aSND0NiF
-	4sEAE2N29hlguG2i4QVnwTTPTsQCtTeg7UX8AkiXBVsBccDuFFtOW0bWbnlg8CjFQ0kXhE8aGE0
-	4Bimbznt2poosLj+UlG9MesD4tpMYLBE=
-X-Google-Smtp-Source: AGHT+IF/QxGh0Uh18+Vu5oFqndQ9eTFAFuChF/l1T7L2YcTuBk6NAJrEmSDaYAY6Oqq46nktI15zolAHjgRe4JbZsyg=
-X-Received: by 2002:a05:6512:ba1:b0:57c:2474:3733 with SMTP id
- 2adb3069b0e04-591d85982ebmr8129374e87.42.1761225934764; Thu, 23 Oct 2025
- 06:25:34 -0700 (PDT)
+	s=k20201202; t=1761225931;
+	bh=Zlg/UQfIaIuf9IsruPRVzFlKEWA8F1iJyRojvd82SZ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PoZCcD3j6lpk6hGUA7zcWc4uqYSs8XX3435JYqTRvSMafzK3INIpVT+lhIczSBzVk
+	 mOf5MZcM+fmCN7UnBNGI4wtSMgFJ6PmzJEZu6SJhgpHc9HkYFKjnpJTcy7+rEISglu
+	 7NBdIVSY8VzE/p7qYxnyfwnT9pAmkT2YHIhddzU3emnbHPWdPuEteFxaYUa+3rt0ZI
+	 WE3vZuvoTGkwr5diZF379L4WBkqZspTGt5Hg0bSoui3a4csiP+7LQZ3Bf5AYOK1w1F
+	 LQ0zjSZlQ2f8Qbgjl5zb/fhfLSogt1fbOPOL4lXyUbN//TKwslAwM9i23MAgo32+SV
+	 GXZnmw9QyDu2w==
+Message-ID: <83852558-0fdc-493c-8f44-95356480c8aa@kernel.org>
+Date: Thu, 23 Oct 2025 15:25:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020-opp-simpler-code-v1-1-04f7f447712f@kernel.org>
- <ms55ue7qqbvoyfhptzu2a5cuthusihtobremhuqfm7lyu7b62o@qasunalgkptl>
- <CAJ-ks9mKiXR-8m_9x_k6YcL64h+QWExkiWCHMFNJbdUYQvPsNA@mail.gmail.com> <44k7h2wzksrp4eghvdim5kiq5tsul3p7yhy44d3eii7hyvivch@xx3x762acknd>
-In-Reply-To: <44k7h2wzksrp4eghvdim5kiq5tsul3p7yhy44d3eii7hyvivch@xx3x762acknd>
-From: Tamir Duberstein <tamird@kernel.org>
-Date: Thu, 23 Oct 2025 09:24:56 -0400
-X-Gmail-Original-Message-ID: <CAJ-ks9=2217VUNyGq9Z9hiZJfcjSYzzXy8WMh-0jD0a=a2eYJA@mail.gmail.com>
-X-Gm-Features: AS18NWAygUjF8kk0etHernlCfpEOLEdv1BAMj1gRH37qVZmZ0TnzMAcb8jNH7mU
-Message-ID: <CAJ-ks9=2217VUNyGq9Z9hiZJfcjSYzzXy8WMh-0jD0a=a2eYJA@mail.gmail.com>
-Subject: Re: [PATCH] rust: opp: simplify callers of `to_c_str_array`
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ACPI: video: Fix use-after-free in
+ acpi_video_switch_brightness()
+To: Yuhao Jiang <danisjiang@gmail.com>, "Rafael J . Wysocki"
+ <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251022200704.2655507-1-danisjiang@gmail.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20251022200704.2655507-1-danisjiang@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 23, 2025 at 7:32=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 22-10-25, 07:22, Tamir Duberstein wrote:
-> > I believe the `{clk,regulator}_names` vector bindings remain alive for
-> > the whole scope, even if they are shadowed. See
-> > https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=3D202=
-4&gist=3D800b334c514c2024d7b5e47fc54c1f2d.
->
-> I tried to print the name of the regulator and clk in the C code:
->
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index d67d392e16d4..89b65fe07b99 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2565,6 +2565,8 @@ int dev_pm_opp_set_config(struct device *dev, struc=
-t dev_pm_opp_config *config)
->                 goto err;
->         }
->
-> +       pr_info("%s: %d: %s: %s\n", __func__, __LINE__, config->clk_names=
-[0], config->regulator_names[0]);
->
-> and I get this:
->
-> [    2.358437] core: dev_pm_opp_set_config: 2568: =EF=BF=BD<=EF=BF=BD=EF=
-=BF=BDy=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD<=EF=BF=BD=EF=BF=BDy=EF=BF=BD=EF=
-=BF=BD=EF=BF=BDx=EF=BF=BD=EF=BF=BD: =EF=BF=BD<=EF=BF=BD=EF=BF=BDy=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD<=EF=BF=BD=EF=BF=BDy=EF=BF=BD=EF=BF=BD=EF=BF=BDx=
-=EF=BF=BD=EF=BF=BD
->
->
->
-> With following diff applied over your patch, it works again:
->
-> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
-> index 743080e14292..02cb754c4abd 100644
-> --- a/rust/kernel/opp.rs
-> +++ b/rust/kernel/opp.rs
-> @@ -444,13 +444,13 @@ pub fn set_supported_hw(mut self, hw: KVec<u32>) ->=
- Result<Self> {
->      /// The returned [`ConfigToken`] will remove the configuration when =
-dropped.
->      pub fn set(self, dev: &Device) -> Result<ConfigToken> {
->          let clk_names =3D self.clk_names.as_deref().map(to_c_str_array).=
-transpose()?;
-> -        let clk_names =3D clk_names.map_or(ptr::null(), |c| c.as_ptr());
-> +        let clk_names =3D clk_names.as_ref().map_or(ptr::null(), |c| c.a=
-s_ptr());
->          let regulator_names =3D self
->              .regulator_names
->              .as_deref()
->              .map(to_c_str_array)
->              .transpose()?;
-> -        let regulator_names =3D regulator_names.map_or(ptr::null(), |c| =
-c.as_ptr());
-> +        let regulator_names =3D regulator_names.as_ref().map_or(ptr::nul=
-l(), |c| c.as_ptr());
->
->          let prop_name =3D self
->              .prop_name
->
->
-> and I get:
->
-> [    2.460149] core: dev_pm_opp_set_config: 2568: dummy_clk: dummy_reg
+Hi,
 
-Good catch. This should really be a lot more defensive so the compiler
-catches this kind of use-after-free. I'll send v2 shortly.
+On 22-Oct-25 10:07 PM, Yuhao Jiang wrote:
+> The switch_brightness_work delayed work accesses device->brightness
+> and device->backlight, which are freed by
+> acpi_video_dev_unregister_backlight() during device removal.
+> 
+> If the work executes after acpi_video_bus_unregister_backlight()
+> frees these resources, it causes a use-after-free when
+> acpi_video_switch_brightness() dereferences device->brightness or
+> device->backlight.
+> 
+> Fix this by calling cancel_delayed_work_sync() for each device's
+> switch_brightness_work in acpi_video_bus_remove_notify_handler()
+> after removing the notify handler that queues the work. This ensures
+> the work completes before the memory is freed.
+> 
+> Fixes: 8ab58e8e7e097 ("ACPI / video: Fix backlight taking 2 steps on a brightness up/down keypress")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
+> ---
+> Changes in v3:
+> - Move cancel_delayed_work_sync() to acpi_video_bus_remove_notify_handler()
+>   instead of acpi_video_bus_unregister_backlight() for better logic placement
+> - Link to v2: https://lore.kernel.org/all/20251022042514.2167599-1-danisjiang@gmail.com/
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hansg@kernel.org>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/acpi/acpi_video.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+> index 103f29661576..be8e7e18abca 100644
+> --- a/drivers/acpi/acpi_video.c
+> +++ b/drivers/acpi/acpi_video.c
+> @@ -1959,8 +1959,10 @@ static void acpi_video_bus_remove_notify_handler(struct acpi_video_bus *video)
+>  	struct acpi_video_device *dev;
+>  
+>  	mutex_lock(&video->device_list_lock);
+> -	list_for_each_entry(dev, &video->video_device_list, entry)
+> +	list_for_each_entry(dev, &video->video_device_list, entry) {
+>  		acpi_video_dev_remove_notify_handler(dev);
+> +		cancel_delayed_work_sync(&dev->switch_brightness_work);
+> +	}
+>  	mutex_unlock(&video->device_list_lock);
+>  
+>  	acpi_video_bus_stop_devices(video);
+
 
