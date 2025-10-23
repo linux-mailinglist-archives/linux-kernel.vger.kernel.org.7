@@ -1,109 +1,166 @@
-Return-Path: <linux-kernel+bounces-867510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D62FC02CEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02724C02D00
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B66314F18C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:56:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9CA0F4E22A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DDB7262B;
-	Thu, 23 Oct 2025 17:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C614C34B406;
+	Thu, 23 Oct 2025 17:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBte238+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="CX5aE2BB"
+Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CC81E25E3;
-	Thu, 23 Oct 2025 17:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C21304982
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761242157; cv=none; b=UwkNIGXjddYLXJ80ixQbVVxp08RqF8hfFZbzl4YScV6Y6cDLXURgS5H9PCpEvJHEBDfdVjYPAV+YirnyT7gkeN0eZBDolJCl80VPgo1eP1PPsqjZyfeHRPSuoojUSxKHkZ+VC8qjz9rMxlwN5LEtwnz8hJX9v2mBN3h5zR0ALJ0=
+	t=1761242367; cv=none; b=kMvq1SF18rggrt9Jfs6Db0tEW9O9YoaxWKXdM9XIy8rfn+65MOleDKZl1UeRTNo1y4tGTu3AASjQaf+7Hjx02sNllJfVedDTJJAppVuIjnORHk8cvhNLz0psPMaFXHq6WqmA++rQZ1TPyOfkRTlszCX6J72BKwMIbsWuTOUrPOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761242157; c=relaxed/simple;
-	bh=W9hOllCYjZkW3SsDFZQQTRthlKx0vsY0rDZ8rrKvmQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CFMjYPPxHHIRq+AMXIsjVjljQo5eV/lWM/KbWnBUKnisLxNHddOgDn+K3jG4QJnDUmNdHuAVnvfweo81sVCz46tHt02xkilpTdM/8Rx2J3oyexN6J1b3eNHtkPyPuBtJkBVPlyLvRri6TL/CAlkfvYcxh+PlU6Ulj6hulYOQQ2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBte238+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1529AC4CEE7;
-	Thu, 23 Oct 2025 17:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761242157;
-	bh=W9hOllCYjZkW3SsDFZQQTRthlKx0vsY0rDZ8rrKvmQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hBte238+k1/axF3N8c26hoGmfeKKV8DJiZQ5kJWfF/qv3ZHSXBHdGOE4pikrwyUp+
-	 51kFOgwjCYBAm5XZ2L+W1gQffNcVQha2RwUya6xOfyHg6hW/W7YuULfmGUK/j111AL
-	 3A3GUSSQcFOcoIsc0YiLdBFZs8tIyW0Ruf8+0Y2cNvLkA6n2pepqznFa9apxJYVaKn
-	 x47tCaE+2utlW4E5Dwfv3xRN3pCWQBBu7ymWeTMFxgk9mZqMUctxkZo/GNCxBY6vJ8
-	 EvC9ZwbK0NfgQfsMfSgipj15G4J+zocmuiR+dAEkk1NPF3rIjFm8PCJm9hQaHMWcBc
-	 yt2mxzePn8hFw==
-Date: Thu, 23 Oct 2025 10:55:56 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Brian Foster <bfoster@redhat.com>, Zorro Lang <zlang@redhat.com>,
-	fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <20251023175556.GS6178@frogsfrogsfrogs>
-References: <aOJrNHcQPD7bgnfB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <aOPCAzx0diQy7lFN@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <66470caf-ec35-4f7d-adac-4a1c22a40a3e@oracle.com>
- <aPdgR5gdA3l3oTLQ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <aPdu2DtLSNrI7gfp@bfoster>
- <aPd1aKVFImgXpULn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20251021174406.GR6178@frogsfrogsfrogs>
- <aPiKYvb2C-VECybc@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <3b201807-439f-4dc9-af20-7e2cdad112f3@oracle.com>
+	s=arc-20240116; t=1761242367; c=relaxed/simple;
+	bh=cmoQL7/EOLRFUL/HDkJZjuFWcItHG3aLGx55fZGpJDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c+TPLU+Y0pG8Hou8Tb5LWaho6vB/9hkkfThxtnchmvDZAX1eqLMJcSXbWjpMTFgvaDncKZPv43fq9/WHaXYa9lBnGJOnYeZHHyI30zVZS/UK97NRCvzvMrveU1rSSv9Xk3OIITYfmnzOQUUEDNj+H+6eL7NTzry07oSBPN/ZJqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=CX5aE2BB; arc=none smtp.client-ip=209.85.215.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-b679450ecb6so866483a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761242365; x=1761847165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zZKnZFdnM3oZwGqheXR0h641QYDnGOp0D351J3S+oms=;
+        b=CX5aE2BBNKN74+HDW2YndtKOFsSy4X+rslQnz5Kpdk/25xIV6Gu7jS5k1YjS9UPSje
+         nm6JRSrqNT9ATEDog+u5mUYQ92TxlFX+pQb4yuwGqOYQmcW2aF+ZN1suntTHPncdtBwM
+         SMfC9LyhHoAVUD6Nr/EbjQBys+4y7FxOb7Cahl09wO/ANp3AZsxLGkhr+FJApMO+Q2TD
+         2HOS9R9UyT5DH4yi4g4DCdFQLTLa/leGBrf4JY+5pb0pAiTYmpsrdt0DRTtnAVUWe0hC
+         EYi6N87JwvF+VdA8ZliBIqLTJqMG5F8+OowviyCsAqu9DfmPcy8H4bN43zIj+h6idTAO
+         dOsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761242365; x=1761847165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zZKnZFdnM3oZwGqheXR0h641QYDnGOp0D351J3S+oms=;
+        b=h2GuDIF0l0dLNFP5lNzVASri8Gw1fiHk8WbrRghPswLFyRocXh0f3rpQ3GqFhLgrKV
+         ZBVrBoVEHX9lWTlhqi545hB1qOfHFyRd3w4GL+KOwOv+mPHrHjjQ7swq9jswj/MM5zJO
+         egHwRpbukbadpjCy+cubRWZYnolYXamuKjuT0y7Oc8jHd5jw+ug9/VsWeAbsZGdeFQw+
+         bbD/hAtiZuRJ5nxbAJmsnZrCAwsOTpVb0kbTnYDaOjJIpCJtwt2PW82JvSOsdkNCT7Sc
+         E989Bs2cXs9UGAu7xMyXYNc+g8r0LuQDGYW5IjAdK4JbJGi73Jhl8kn4Zh4vz2yfYKI5
+         CbdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMfXKKxzRtOPM1Y/N36MrutDwotZxkO8b0ZZtIwXE1Pit2TZ82LcBK+7+mS+hEZnpPOakf32Vd+uy+pxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXGiII31N2JZCpKgWZ+Pc1w5C6qr7vO4eXm38yD58RFuqtl3I5
+	5VoRPptP1uWDKPIjwgroYhTfzlfnvSxj4/520mwwFsFobZxif2Dme2mqrU2XnRGL168=
+X-Gm-Gg: ASbGncsxNnHtRzY/Ohjam6Xd6g+FNgZtCSV4vI6pKJ9LU5mfBTXj9ZaZDK9gobODXSU
+	NDImhvDscVtI+m2oa9mK0IaPrJkWYLkon/9kSMQOp/ToWXyFuOSqdWCsnfAivoZ2hGqZlMLwV8f
+	QqHjr6NgwWCmN2HI9LmgMj6WUE+CjEuRKpKRsnRD6aq1rs473vqlK9PzGIrpZrLpAqj5E7TG1xh
+	AK3VsWqZgNWABiQSXFooWQqik66fUsa091Z8Yc4ho09x2ynD3Gn+Hud+ubEhCln1qmwpi6Y8xt6
+	dye7AX+bGafC90gcxHQDBh9wzLGnnGCYeMxefrIb1KHQWEefuuDfuApbx9PNp0wCz76wU02thY8
+	m5WGtEY+w+yIN2SpkFFi35I35FkEXsY+obonsmyC7o48U6xWz9tr4iOofxUEfsJyi2IOz1Lnidn
+	fpwtvl3DS7IgD23GrmImIaVas+HxF3BZDy5A==
+X-Google-Smtp-Source: AGHT+IG8JoJ2ND1pyiQh1ApMIuQ8AB6jOUuqQ1+8XSa1Ou2nNF3k3D9kPXQ1PKRoMYU7/mYJQIadTQ==
+X-Received: by 2002:a17:902:cecb:b0:27e:ec72:f6d with SMTP id d9443c01a7336-2946de3d929mr41775405ad.11.1761242365381;
+        Thu, 23 Oct 2025 10:59:25 -0700 (PDT)
+Received: from zoltan.localdomain ([208.115.86.150])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223d1265sm6447431a91.3.2025.10.23.10.59.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 10:59:24 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	han.xu@nxp.com,
+	broonie@kernel.org,
+	dlan@gentoo.org,
+	pjw@kernel.org
+Cc: Frank.li@nxp.com,
+	p.zabel@pengutronix.de,
+	guodong@riscstar.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	apatel@ventanamicro.com,
+	joel@jms.id.au,
+	geert+renesas@glider.be,
+	cyy@cyyself.name,
+	heylenay@4d2.org,
+	conor.dooley@microchip.com,
+	fustini@kernel.org,
+	linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/9] spi: enable the SpacemiT K1 SoC QSPI
+Date: Thu, 23 Oct 2025 12:59:12 -0500
+Message-ID: <20251023175922.528868-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b201807-439f-4dc9-af20-7e2cdad112f3@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 04:44:36PM +0100, John Garry wrote:
-> On 22/10/2025 08:40, Ojaswin Mujoo wrote:
-> > > FWIW I see a somewhat different failure -- not data corruption, but
-> > > pwrite returning failure:
-> > > --- /run/fstests/bin/tests/generic/521.out      2025-07-15 14:45:15.100315255 -0700
-> > > +++ /var/tmp/fstests/generic/521.out.bad        2025-10-21 10:33:39.032263811 -0700
-> > > @@ -1,2 +1,668 @@
-> > >   QA output created by 521
-> > > +dowrite: write: Input/output error
-> > Hmm that's strange. Can you try running the above command with
-> > prep.fsxops that I've shared. You'll need to pull the fsx atomic write
-> > changes in this patch for it to work. I've been running on non atomic
-> > write device btw.
-> 
-> JFYI, I can see this issue with v6.18-rc2 and generic/760
-> 
-> I'll investigate...
+This series adds support for the SpacemiT K1 SoC QSPI.  This IP
+is generally compatible with the Freescale QSPI driver, requiring
+three minor changes to enable it to be supported.  The changes
+are:
+  - Adding support for optional resets
+  - Having the clock *not* be disabled when changing its rate
+  - Allowing the size of storage blocks written to flash chips
+    to be set to something different from the AHB buffer size
 
-I figured out why I'm seeing EIO from the ftrace output.  Apparently
-xfs_atomic_write_cow_iomap_begin isn't detecting delalloc extents in the
-cow fork and converting them to unwritten:
+    					-Alex
 
-fsx-35984 [003]  1996.389571: xfs_file_direct_write: dev 8:0 ino 0x127 disize 0x88000 pos 0x20000 bytecount 0x10000
-fsx-35984 [003]  1996.389572: iomap_dio_rw_begin:   dev 8:0 ino 0x127 size 0x88000 offset 0x20000 length 0x10000 done_before 0x0 flags ATOMIC|DIRECT dio_flags  aio 0
-fsx-35984 [003]  1996.389583: iomap_iter:           dev 8:0 ino 0x127 pos 0x20000 length 0x10000 status 0 flags WRITE|DIRECT|ATOMIC (0x211) ops xfs_atomic_write_cow_iomap_ops caller __iomap_dio_rw+0x1cb
-fsx-35984 [003]  1996.389583: xfs_iomap_atomic_write_cow: dev 8:0 ino 0x127 pos 0x20000 bytecount 0x10000
-fsx-35984 [003]  1996.389584: xfs_iomap_found:      dev 8:0 ino 0x127 disize 0x88000 pos 0x20000 bytecount 0x10000 fork cow startoff 0x20 startblock 0xffffffffe0007 fsbcount 0x10
-fsx-35984 [003]  1996.389584: iomap_iter_dstmap:    dev 8:0 ino 0x127 bdev 8:0 addr 0xffffffffffffffff offset 0x20000 length 0x10000 type DELALLOC (0x1) flags DIRTY|SHARED (0x6)
-fsx-35984 [003]  1996.389595: console:              Direct I/O collision with buffered writes! File: /junk Comm: fsx
-fsx-35984 [003]  1996.391183: iomap_iter:           dev 8:0 ino 0x127 pos 0x20000 length 0x10000 status -5 flags WRITE|DIRECT|ATOMIC (0x211) ops xfs_atomic_write_cow_iomap_ops caller __iomap_dio_rw+0x1cb
-fsx-35984 [003]  1996.391184: iomap_dio_complete:   dev 8:0 ino 0x127 size 0x88000 offset 0x20000 flags ATOMIC|DIRECT aio 0 error -5 ret -5
+This series is available here:
+  https://github.com/riscstar/linux/tree/outgoing/qspi-v2
+  
+Version 2 addresses comments recieved during review of v1:
+- The "reset" property now only applies to spacemit,k1-qspi compatible.
+- Patch 1 (previously patch 2) now points out that this is the first
+  non-Freescale device using the binding.
+- Added Frank Li's Reviewed-by on patch 3.
+- A quirk flag has been renamed to be QUADSPI_QUIRK_SKIP_CLK_DISABLE.
+- The predicate for that quirk now returns bool type.
+- All other similar predicates now return bool type; this is done in a new
+  patch (patch 4).
+- If non-zero, new field fsl_qspi_devtype_data->sfa_size defines the
+  size of the serial flash regions, rather than ahb_buf_size.
+- A continued line in the Kconfig is now aligned.
+- Patch descriptions are wrapped at 75 columns.
 
-I suspect this needs a xfs_bmapi_convert_delalloc call somewhere around
-the end of that function.
+Alex Elder (9):
+  dt-bindings: spi: fsl-qspi: support SpacemiT K1
+  dt-bindings: spi: fsl-qspi: add optional resets
+  spi: fsl-qspi: add optional reset support
+  spi: fsl-qspi: switch predicates to bool
+  spi: fsl-qspi: add a clock disable quirk
+  spi: fsl-qspi: allot 1KB per chip
+  spi: fsl-qspi: support the SpacemiT K1 SoC
+  riscv: dts: spacemit: enable K1 SoC QSPI on BPI-F3
+  riscv: defconfig: enable SPI_FSL_QUADSPI as a module
 
---D
+ .../bindings/spi/fsl,spi-fsl-qspi.yaml        | 16 ++++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      |  6 ++
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  | 21 +++++
+ arch/riscv/boot/dts/spacemit/k1.dtsi          | 16 ++++
+ arch/riscv/configs/defconfig                  |  1 +
+ drivers/spi/Kconfig                           |  3 +-
+ drivers/spi/spi-fsl-qspi.c                    | 87 +++++++++++++------
+ 7 files changed, 124 insertions(+), 26 deletions(-)
+
+
+base-commit: efb26a23ed5f5dc3554886ab398f559dcb1de96b
+-- 
+2.43.0
+
 
